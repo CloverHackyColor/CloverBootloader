@@ -3,6 +3,7 @@
  */
 
 #include "../entry_scan/entry_scan.h"
+#include "../entry_scan/loader.h"
 #include "kernel_patcher.h"
 #include "ati.h"
 #include "../libeg/nanosvg.h"

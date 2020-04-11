@@ -98,6 +98,7 @@ extern "C" {
 #include "../cpp_util/remove_ref.h"
 #endif
 
+#include "../libeg/BmLib.h"
 #include "BootLog.h"
 #include "BasicIO.h"
 #include "../refit/lib.h"

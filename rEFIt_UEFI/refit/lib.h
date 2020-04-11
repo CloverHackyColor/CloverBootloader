@@ -374,19 +374,11 @@ EFI_STATUS  ReinitSelfLib(VOID);
 //extern EFI_STATUS FinishInitRefitLib(VOID); -- static
 
 BOOLEAN     IsEmbeddedTheme(VOID);
-UINT8       GetOSTypeFromPath (IN CONST CHAR16 *Path);
 
 //VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
 //VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
 //VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback*/);
 
-VOID GetListOfThemes(VOID);
-VOID GetListOfConfigs(VOID);
-VOID GetListOfACPI(VOID);
-VOID GetListOfDsdts(VOID);
-
-// syscl - get list of inject kext(s)
-VOID GetListOfInjectKext(CHAR16 *);
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
 
@@ -539,70 +531,6 @@ VOID ReadConfig(INTN What);
 //
 // BmLib
 //
-extern EFI_STATUS
-EfiLibLocateProtocol (
-                      IN  EFI_GUID    *ProtocolGuid,
-                      OUT VOID        **Interface
-                      );
-
-
-extern EFI_FILE_HANDLE
-EfiLibOpenRoot (
-                IN EFI_HANDLE                   DeviceHandle
-                );
-
-extern EFI_FILE_SYSTEM_VOLUME_LABEL *
-EfiLibFileSystemVolumeLabelInfo (
-                                 IN EFI_FILE_HANDLE      FHand
-                                 );
-extern CHAR16 *
-EfiStrDuplicate (
-                 IN CONST CHAR16   *Src
-                 );
-
-extern INTN StriCmp (
-                     IN      CONST CHAR16              *FirstString,
-                     IN      CONST CHAR16              *SecondString
-                     );
-
-extern INTN EFIAPI AsciiStriCmp (
-                          IN      CONST CHAR8              *FirstString,
-                          IN      CONST CHAR8              *SecondString
-                          );
-
-extern BOOLEAN AsciiStriNCmp (
-                              IN      CONST CHAR8              *FirstString,
-                              IN      CONST CHAR8              *SecondString,
-                              IN      CONST UINTN               sSize
-                              );
-
-extern BOOLEAN AsciiStrStriN (
-                              IN      CONST CHAR8              *WhatString,
-                              IN      CONST UINTN               sWhatSize,
-                              IN      CONST CHAR8              *WhereString,
-                              IN      CONST UINTN               sWhereSize
-                              );
-
-extern EFI_FILE_INFO * EfiLibFileInfo (IN EFI_FILE_HANDLE      FHand);
-extern EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root);
-
-extern UINTN
-EfiDevicePathInstanceCount (
-                            IN EFI_DEVICE_PATH_PROTOCOL      *DevicePath
-                            );
-
-extern VOID *
-EfiReallocatePool (
-                   IN VOID                 *OldPool,
-                   IN UINTN                OldSize,
-                   IN UINTN                NewSize
-                   );
-
-extern BOOLEAN
-TimeCompare (
-             IN EFI_TIME               *FirstTime,
-             IN EFI_TIME               *SecondTime
-             );
 
 extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 #ifdef DUMP_KERNEL_KEXT_PATCHES
@@ -611,8 +539,6 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 #endif
 //VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 
-
-CHAR8* GetUnicodeChar(CHAR8 *s, CHAR16* UnicodeChar);
 
 #define KERNEL_MAX_SIZE 40000000
 

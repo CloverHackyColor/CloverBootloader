@@ -50,6 +50,7 @@
   entry_scan/common.cpp
   entry_scan/common.h
   entry_scan/legacy.cpp
+  entry_scan/loader.h
   entry_scan/loader.cpp
   entry_scan/tool.cpp
   entry_scan/secureboot.cpp
@@ -78,6 +79,7 @@
   libeg/egemb_icons_dark.cpp
   libeg/egemb_font.cpp
   libeg/scroll_images.cpp
+  libeg/BmLib.h
   libeg/BmLib.cpp
   libeg/image.cpp
 #  libeg/load_bmp.cpp
@@ -181,7 +183,7 @@
 	Platform/b64cdecode.h
 	Platform/b64cdecode.cpp
 	Platform/FixBiosDsdt.cpp
-	Platform/loader.h
+	Platform/MachO-loader.h
 	Platform/LoaderUefi.h
 	Platform/kernel_patcher.h
 	Platform/kernel_patcher.cpp

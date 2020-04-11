@@ -33,6 +33,7 @@
  */
 
 
+#include "../../Platform/Platform.h"
 #include "menu_items.h"
 
 #include "../../libeg/libeg.h"

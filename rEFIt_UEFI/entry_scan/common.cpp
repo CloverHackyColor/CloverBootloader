@@ -33,6 +33,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "../Platform/Platform.h"
 #include "entry_scan.h"
 #include "../refit/menu.h"
 
