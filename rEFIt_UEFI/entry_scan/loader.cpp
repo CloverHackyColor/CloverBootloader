@@ -982,7 +982,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls in text mode", FileName);
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions.SPrintf("-v");
+      SubEntry->LoadOptions.SPrintf("  -v");
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       SubScreen->AddMenuEntry(SubEntry, true);
     }
