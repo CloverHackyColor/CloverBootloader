@@ -287,13 +287,14 @@ VOID ATIConnectorsPatchInit(LOADER_ENTRY *Entry)
   snprintf(ATIKextBundleId[0],
               sizeof(ATIKextBundleId[0]),
 		   "com.apple.kext.ATI%sController", // when it was AsciiSPrint, %a was used with KPATIConnectorsController which is CHAR16 ??? Result is printing stop at first char <= 255
-              (CHAR8*)Entry->KernelAndKextPatches->KPATIConnectorsController // cast to CHAR8* to not change behavior. Looks like a bug though
+           //now it is CHAR8*
+              Entry->KernelAndKextPatches->KPATIConnectorsController
               );
   // ML
   snprintf(ATIKextBundleId[1],
               sizeof(ATIKextBundleId[1]),
 		   "com.apple.kext.AMD%sController", // when it was AsciiSPrint, %a was used with KPATIConnectorsController which is CHAR16 ??? Result is printing stop at first char <= 255
-              (CHAR8*)Entry->KernelAndKextPatches->KPATIConnectorsController // cast to CHAR8* to not change behavior. Looks like a bug though
+              Entry->KernelAndKextPatches->KPATIConnectorsController
               );
   
   ATIConnectorsPatchInited = TRUE;
@@ -311,11 +312,11 @@ VOID ATIConnectorsPatchRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_
   
   // for future?
   FSInject->AddStringToList(ForceLoadKexts,
-                            PoolPrint(L"\\AMD%sController.kext\\Contents\\Info.plist", Entry->KernelAndKextPatches->KPATIConnectorsController)
+                            PoolPrint(L"\\AMD%aController.kext\\Contents\\Info.plist", Entry->KernelAndKextPatches->KPATIConnectorsController)
                             );
   // Lion, ML, SnowLeo 10.6.7 2011 MBP
   FSInject->AddStringToList(ForceLoadKexts,
-                            PoolPrint(L"\\ATI%sController.kext\\Contents\\Info.plist", Entry->KernelAndKextPatches->KPATIConnectorsController)
+                            PoolPrint(L"\\ATI%aController.kext\\Contents\\Info.plist", Entry->KernelAndKextPatches->KPATIConnectorsController)
                             );
   // SnowLeo
   FSInject->AddStringToList(ForceLoadKexts, L"\\ATIFramebuffer.kext\\Contents\\Info.plist");
@@ -338,7 +339,7 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
   
   UINTN   Num = 0;
   
-	DBG_RT(Entry, "\nATIConnectorsPatch: driverAddr = %s, driverSize = %x\nController = %ls\n",
+	DBG_RT(Entry, "\nATIConnectorsPatch: driverAddr = %s, driverSize = %x\nController = %s\n",
          Driver, DriverSize, Entry->KernelAndKextPatches->KPATIConnectorsController);
   ExtractKextBundleIdentifier(InfoPlist);
 	DBG_RT(Entry, "Kext: %s\n", gKextBundleIdentifier);

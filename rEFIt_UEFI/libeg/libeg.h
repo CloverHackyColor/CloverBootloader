@@ -308,7 +308,7 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   UINT8   pad[3];
   UINT32  FakeCPUID;
   //  UINT32  align0;
-  CHAR16  *KPATIConnectorsController;
+  CHAR8   *KPATIConnectorsController;
 #if defined(MDE_CPU_IA32)
   UINT32  align1;
 #endif

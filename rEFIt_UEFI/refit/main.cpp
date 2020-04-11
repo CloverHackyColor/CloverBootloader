@@ -376,7 +376,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   // Dell smbios truncate fix
   DBG("\tDellSMBIOSPatch: %c\n", Patches->KPDELLSMBIOS ? 'y' : 'n');
   DBG("\tFakeCPUID: 0x%X\n", Patches->FakeCPUID);
-  DBG("\tATIController: %ls\n", (Patches->KPATIConnectorsController == NULL) ? L"null": Patches->KPATIConnectorsController);
+  DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? "(null)": Patches->KPATIConnectorsController);
   DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
   DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
   if (Patches->ForceKexts) {

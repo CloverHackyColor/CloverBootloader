@@ -408,6 +408,8 @@
 		<false/>
 		<key>#LegacyBiosDefaultEntry</key>
 		<integer>0</integer>
+		<key>CustomLogo</key>
+		<string>Apple</string>
 	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>

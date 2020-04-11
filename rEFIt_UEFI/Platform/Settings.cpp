@@ -774,7 +774,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   Dst->KPPanicNoKextDump = Src->KPPanicNoKextDump;
 
   if (Src->KPATIConnectorsController != NULL) {
-    Dst->KPATIConnectorsController = EfiStrDuplicate (Src->KPATIConnectorsController);
+    Dst->KPATIConnectorsController = (__typeof__(Dst->KPATIConnectorsController))AllocateCopyPool (AsciiStrSize(Src->KPATIConnectorsController) ,Src->KPATIConnectorsController);
   }
 
   if ((Src->KPATIConnectorsDataLen > 0) &&
@@ -1000,8 +1000,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     UINTN len = 0, i=0;
 
     // ATIConnectors patch
-    Patches->KPATIConnectorsController = (__typeof__(Patches->KPATIConnectorsController))AllocateZeroPool (AsciiStrSize(Prop->string) * sizeof(CHAR16));
-    AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrSize(Prop->string));
+    Patches->KPATIConnectorsController = (__typeof__(Patches->KPATIConnectorsController))AllocateCopyPool (AsciiStrSize(Prop->string), Prop->string);
+ //   AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrSize(Prop->string));
 
     Patches->KPATIConnectorsData = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
     Patches->KPATIConnectorsDataLen = len;
