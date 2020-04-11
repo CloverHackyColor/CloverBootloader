@@ -165,10 +165,10 @@ XString AddLoadOption(IN CONST XString& LoadOptions, IN CONST XString& LoadOptio
 {
   // LoadOptions assumed out
   // If either option strings are null nothing to do
-  if (LoadOption.isEmpty()) //nothing to add
+  if (LoadOptions.isEmpty()) //initially empty so return new option even if empty
   {
-    // return LoadOption as nothing to add
-    return LoadOptions;
+    // return LoadOption
+    return LoadOption;
   }
   // If there is no option or it is already present duplicate original
   else {
