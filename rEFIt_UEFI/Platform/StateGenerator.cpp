@@ -236,6 +236,13 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
           case CPU_MODEL_KABYLAKE1:
           case CPU_MODEL_KABYLAKE2:
           case CPU_MODEL_CANNONLAKE:
+          case CPU_MODEL_ICELAKE_A:
+          case CPU_MODEL_ICELAKE_C:
+          case CPU_MODEL_ICELAKE_D:
+          case CPU_MODEL_ICELAKE:
+          case CPU_MODEL_COMETLAKE_S:
+          case CPU_MODEL_COMETLAKE_Y:
+          case CPU_MODEL_COMETLAKE_U:
           {
             maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             if (gSettings.MaxMultiplier) {
@@ -297,7 +304,14 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_GOLDMONT) ||
                     (gCPUStructure.Model == CPU_MODEL_KABYLAKE1) ||
                     (gCPUStructure.Model == CPU_MODEL_KABYLAKE2) ||
-                    (gCPUStructure.Model == CPU_MODEL_CANNONLAKE)) {
+                    (gCPUStructure.Model == CPU_MODEL_CANNONLAKE) ||
+                    (gCPUStructure.Model == CPU_MODEL_ICELAKE_A) ||
+                    (gCPUStructure.Model == CPU_MODEL_ICELAKE_C) ||
+                    (gCPUStructure.Model == CPU_MODEL_ICELAKE_D) ||
+                    (gCPUStructure.Model == CPU_MODEL_ICELAKE) ||
+                    (gCPUStructure.Model == CPU_MODEL_COMETLAKE_S) ||
+                    (gCPUStructure.Model == CPU_MODEL_COMETLAKE_Y) ||
+                    (gCPUStructure.Model == CPU_MODEL_COMETLAKE_U)) {
                     j = i << 8;
                     p_states[p_states_count].Frequency = (UINT32)(100 * i);
                 } else {

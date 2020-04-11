@@ -312,9 +312,16 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_ATOM_X3:
       case CPU_MODEL_SKYLAKE_D:
       case CPU_MODEL_SKYLAKE_S:
-      case CPU_MODEL_CANNONLAKE:
       case CPU_MODEL_KABYLAKE1:
       case CPU_MODEL_KABYLAKE2:
+      case CPU_MODEL_CANNONLAKE:
+      case CPU_MODEL_ICELAKE_A:
+      case CPU_MODEL_ICELAKE_C:
+      case CPU_MODEL_ICELAKE_D:
+      case CPU_MODEL_ICELAKE:
+      case CPU_MODEL_COMETLAKE_S:
+      case CPU_MODEL_COMETLAKE_Y:
+      case CPU_MODEL_COMETLAKE_U:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
 			DBG("MSR 0x35    %16llX\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
@@ -490,6 +497,13 @@ VOID GetCPUProperties (VOID)
            case CPU_MODEL_KABYLAKE1:
            case CPU_MODEL_KABYLAKE2:
            case CPU_MODEL_CANNONLAKE:
+           case CPU_MODEL_ICELAKE_A:
+           case CPU_MODEL_ICELAKE_C:
+           case CPU_MODEL_ICELAKE_D:
+           case CPU_MODEL_ICELAKE:
+           case CPU_MODEL_COMETLAKE_S:
+           case CPU_MODEL_COMETLAKE_Y:
+           case CPU_MODEL_COMETLAKE_U:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
@@ -1361,6 +1375,14 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_SKYLAKE_S:
           case CPU_MODEL_KABYLAKE1:
           case CPU_MODEL_KABYLAKE2:
+          case CPU_MODEL_CANNONLAKE:
+          case CPU_MODEL_ICELAKE_A:
+          case CPU_MODEL_ICELAKE_C:
+          case CPU_MODEL_ICELAKE_D:
+          case CPU_MODEL_ICELAKE:
+          case CPU_MODEL_COMETLAKE_S:
+          case CPU_MODEL_COMETLAKE_Y:
+          case CPU_MODEL_COMETLAKE_U:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
               return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))

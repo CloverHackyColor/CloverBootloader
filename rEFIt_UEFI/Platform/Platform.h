@@ -249,7 +249,9 @@ extern "C" {
 #define CPU_MODEL_ATOM_TM       0x86  /* Tremont */
 #define CPU_MODEL_KABYLAKE1     0x8E  /* Kabylake Mobile */
 #define CPU_MODEL_KABYLAKE2     0x9E  /* Kabylake Dektop, CoffeeLake */
-#define CPU_MODEL_COMETLAKE     0xA6
+#define CPU_MODEL_COMETLAKE_S   0x9F  /* desktop Comet Lake */
+#define CPU_MODEL_COMETLAKE_Y   0xA5  /* aka 10th generation Amber Lake Y */
+#define CPU_MODEL_COMETLAKE_U   0xA6
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
