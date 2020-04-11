@@ -347,14 +347,14 @@ class REFIT_ABSTRACT_MENU_ENTRY
         EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
 
 				UINT8             CustomBoot;
-				EG_IMAGE         *CustomLogo;
+				XImage            CustomLogo;
 				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
 				CONST CHAR16            *Settings;
 
 				LOADER_ENTRY()
 						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
               BootBgColor({0,0,0,0}),
-        CustomBoot(0), CustomLogo(0), KernelAndKextPatches(0), Settings(0)
+        CustomBoot(0), KernelAndKextPatches(0), Settings(0)
 						{};
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };

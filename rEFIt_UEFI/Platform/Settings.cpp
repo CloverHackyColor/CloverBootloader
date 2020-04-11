@@ -1894,41 +1894,33 @@ FillinCustomEntry (
       } else if (AsciiStriCmp (Prop->string, "Theme") == 0) {
         Entry->CustomBoot  = CUSTOM_BOOT_THEME;
       } else {
-        CHAR16 *customLogo = PoolPrint(L"%a", Prop->string);
+   //     CHAR16 *customLogo = PoolPrint(L"%a", Prop->string);
+        XStringW customLogo = XStringW().takeValueFrom(Prop->string);
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
-        if (Entry->CustomLogo != NULL) {
-          egFreeImage (Entry->CustomLogo);
-        }
-        Entry->CustomLogo  = egLoadImage (SelfRootDir, customLogo, TRUE);
-        if (Entry->CustomLogo == NULL) {
-          DBG ("Custom boot logo not found at path `%ls`!\n", customLogo);
-        }
-        if (customLogo != NULL) {
-          FreePool (customLogo);
+        Entry->CustomLogo.LoadXImage(SelfRootDir, customLogo);
+        if (Entry->CustomLogo.isEmpty()) {
+          DBG ("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
+          Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
         }
       }
     } else if ((Prop->type == kTagTypeData) &&
                (Prop->data != NULL) && (Prop->dataLen > 0)) {
       Entry->CustomBoot = CUSTOM_BOOT_USER;
-
-      if (Entry->CustomLogo != NULL) {
-        egFreeImage (Entry->CustomLogo);
-      }
-
-      Entry->CustomLogo = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-      if (Entry->CustomLogo == NULL) {
+      Entry->CustomLogo.FromPNG(Prop->data, Prop->dataLen);
+      if (Entry->CustomLogo.isEmpty()) {
         DBG ("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
+        Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
       }
     } else {
       Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
     }
-	  DBG ("Custom entry boot %ls (0x%llX)\n", CustomBootModeToStr(Entry->CustomBoot), (uintptr_t)Entry->CustomLogo);
+	  DBG ("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomBoot), Entry->CustomLogo.GetWidth());
   }
 
-  Prop = GetProperty (DictPointer, "BootBgColor");
+  Prop = GetProperty(DictPointer, "BootBgColor");
   if (Prop != NULL && Prop->type == kTagTypeString) {
     UINTN   Color;
-    Color = AsciiStrHexToUintn (Prop->string);
+    Color = AsciiStrHexToUintn(Prop->string);
 
     Entry->BootBgColor.Red = (Color >> 24) & 0xFF;
     Entry->BootBgColor.Green = (Color >> 16) & 0xFF;
@@ -1940,10 +1932,10 @@ FillinCustomEntry (
   // - No (show the entry)
   // - Yes (hide the entry but can be show with F3)
   // - Always (always hide the entry)
-  Prop = GetProperty (DictPointer, "Hidden");
+  Prop = GetProperty(DictPointer, "Hidden");
   if (Prop != NULL) {
     if ((Prop->type == kTagTypeString) &&
-        (AsciiStriCmp (Prop->string, "Always") == 0)) {
+        (AsciiStriCmp(Prop->string, "Always") == 0)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyTrue (Prop)) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
@@ -1954,18 +1946,18 @@ FillinCustomEntry (
 
   Prop = GetProperty (DictPointer, "Type");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if ((AsciiStriCmp (Prop->string, "OSX") == 0) ||
-        (AsciiStriCmp (Prop->string, "macOS") == 0)) {
+    if ((AsciiStriCmp(Prop->string, "OSX") == 0) ||
+        (AsciiStriCmp(Prop->string, "macOS") == 0)) {
       Entry->Type = OSTYPE_OSX;
-    } else if (AsciiStriCmp (Prop->string, "OSXInstaller") == 0) {
+    } else if (AsciiStriCmp(Prop->string, "OSXInstaller") == 0) {
       Entry->Type = OSTYPE_OSX_INSTALLER;
-    } else if (AsciiStriCmp (Prop->string, "OSXRecovery") == 0) {
+    } else if (AsciiStriCmp(Prop->string, "OSXRecovery") == 0) {
       Entry->Type = OSTYPE_RECOVERY;
-    } else if (AsciiStriCmp (Prop->string, "Windows") == 0) {
+    } else if (AsciiStriCmp(Prop->string, "Windows") == 0) {
       Entry->Type = OSTYPE_WINEFI;
-    } else if (AsciiStriCmp (Prop->string, "Linux") == 0) {
+    } else if (AsciiStriCmp(Prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
-    } else if (AsciiStriCmp (Prop->string, "LinuxKernel") == 0) {
+    } else if (AsciiStriCmp(Prop->string, "LinuxKernel") == 0) {
       Entry->Type = OSTYPE_LINEFI;
     } else {
       DBG ("** Warning: unknown custom entry Type '%s'\n", Prop->string);
@@ -1974,7 +1966,7 @@ FillinCustomEntry (
   } else {
     if (Entry->Type == 0 && Entry->Path) {
       // Try to set Entry->type from Entry->Path
-      Entry->Type = GetOSTypeFromPath (Entry->Path);
+      Entry->Type = GetOSTypeFromPath(Entry->Path);
     }
   }
 
@@ -1984,24 +1976,24 @@ FillinCustomEntry (
     Entry->Options.SPrintf("-s -h");
   }
   if (Entry->Title.isEmpty()) {
-    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
+    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->Title = L"Recovery"_XSW;
-    } else if (OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
+    } else if (OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
       Entry->Title = L"Install macOS"_XSW;
     }
   }
   if (Entry->Image.isEmpty() && (Entry->ImagePath == NULL)) {
-    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
+    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->ImagePath = L"mac";
     }
   }
   if (Entry->DriveImage.isEmpty() && (Entry->DriveImagePath == NULL)) {
-    if (OSTYPE_IS_OSX_RECOVERY (Entry->Type)) {
+    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->DriveImagePath = L"recovery";
     }
   }
   // OS Specific flags
-  if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY (Entry->Type) || OSTYPE_IS_OSX_INSTALLER (Entry->Type)) {
+  if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
 
     // InjectKexts default values
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
@@ -2012,10 +2004,10 @@ FillinCustomEntry (
       if (Prop->type == kTagTypeTrue) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else if ((Prop->type == kTagTypeString) &&
-                 (AsciiStriCmp (Prop->string, "Yes") == 0)) {
+                 (AsciiStriCmp(Prop->string, "Yes") == 0)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else if ((Prop->type == kTagTypeString) &&
-                 (AsciiStriCmp (Prop->string, "Detect") == 0)) {
+                 (AsciiStriCmp(Prop->string, "Detect") == 0)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else {
@@ -2035,9 +2027,9 @@ FillinCustomEntry (
     // NoCaches default value
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
 
-    Prop = GetProperty (DictPointer, "NoCaches");
+    Prop = GetProperty(DictPointer, "NoCaches");
     if (Prop != NULL) {
-      if (IsPropertyTrue (Prop)) {
+      if (IsPropertyTrue(Prop)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
       } else {
         // Use global settings
@@ -2624,10 +2616,10 @@ GetEarlyUserSettings (
             CHAR16 *customLogo   = PoolPrint (L"%a", Prop->string);
             gSettings.CustomBoot = CUSTOM_BOOT_USER;
             if (gSettings.CustomLogo != NULL) {
-              egFreeImage (gSettings.CustomLogo);
+              delete gSettings.CustomLogo;
             }
-
-            gSettings.CustomLogo = egLoadImage (RootDir, customLogo, TRUE);
+            gSettings.CustomLogo = new XImage;
+            gSettings.CustomLogo->LoadXImage(RootDir, customLogo);
             if (gSettings.CustomLogo == NULL) {
               DBG ("Custom boot logo not found at path `%ls`!\n", customLogo);
             }
@@ -2640,12 +2632,13 @@ GetEarlyUserSettings (
                    (Prop->data != NULL) && (Prop->dataLen > 0)) {
           gSettings.CustomBoot = CUSTOM_BOOT_USER;
           if (gSettings.CustomLogo != NULL) {
-            egFreeImage (gSettings.CustomLogo);
+            delete gSettings.CustomLogo;
           }
-
-          gSettings.CustomLogo = egDecodePNG (Prop->data, Prop->dataLen, TRUE);
-          if (gSettings.CustomLogo == NULL) {
+          gSettings.CustomLogo = new XImage;
+          gSettings.CustomLogo->FromPNG(Prop->data, Prop->dataLen);
+          if (gSettings.CustomLogo->isEmpty()) {
             DBG ("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
+            gSettings.CustomBoot   = CUSTOM_BOOT_DISABLED;
           }
         } else {
           gSettings.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
@@ -2654,7 +2647,7 @@ GetEarlyUserSettings (
         gSettings.CustomBoot   = CUSTOM_BOOT_DISABLED;
       }
 
-		DBG ("Custom boot %ls (0x%llX)\n", CustomBootModeToStr(gSettings.CustomBoot), (uintptr_t)gSettings.CustomLogo);
+		DBG ("Custom boot %s (0x%llX)\n", CustomBootModeToStr(gSettings.CustomBoot), (uintptr_t)gSettings.CustomLogo);
     }
 
     //*** SYSTEM ***
@@ -2949,17 +2942,17 @@ GetEarlyUserSettings (
         }
       }
       // Custom entries
-      Dict2 = GetProperty (DictPointer, "Custom");
+      Dict2 = GetProperty(DictPointer, "Custom");
       if (Dict2 != NULL) {
-        Prop = GetProperty (Dict2, "Entries");
+        Prop = GetProperty(Dict2, "Entries");
         if (Prop != NULL) {
 //          CUSTOM_LOADER_ENTRY *Entry;
-          INTN   i, Count = GetTagCount (Prop);
+          INTN   i, Count = GetTagCount(Prop);
           TagPtr Dict3;
 
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
-              if (EFI_ERROR (GetElement (Prop, i, &Dict3))) {
+              if (EFI_ERROR (GetElement(Prop, i, &Dict3))) {
                 continue;
               }
 
@@ -2971,22 +2964,22 @@ GetEarlyUserSettings (
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
 
               // Fill it in
-              if (Entry != NULL && (!FillinCustomEntry (Entry, Dict3, FALSE) || !AddCustomEntry (Entry))) {
+              if (Entry != NULL && (!FillinCustomEntry(Entry, Dict3, FALSE) || !AddCustomEntry(Entry))) {
                 delete Entry;
               }
             }
           }
         }
 
-        Prop = GetProperty (Dict2, "Legacy");
+        Prop = GetProperty(Dict2, "Legacy");
         if (Prop != NULL) {
           CUSTOM_LEGACY_ENTRY *Entry;
-          INTN   i, Count = GetTagCount (Prop);
+          INTN   i, Count = GetTagCount(Prop);
           TagPtr Dict3;
 
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
-              if (EFI_ERROR (GetElement (Prop, i, &Dict3))) {
+              if (EFI_ERROR(GetElement(Prop, i, &Dict3))) {
                 continue;
               }
 
@@ -2994,10 +2987,10 @@ GetEarlyUserSettings (
                 break;
               }
               // Allocate an entry
-              Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LEGACY_ENTRY));
+              Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LEGACY_ENTRY));
               if (Entry) {
                 // Fill it in
-                if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry (Entry)) {
+                if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry(Entry)) {
                   FreePool (Entry);
                 }
               }
@@ -3005,14 +2998,14 @@ GetEarlyUserSettings (
           }
         }
 
-        Prop = GetProperty (Dict2, "Tool");
+        Prop = GetProperty(Dict2, "Tool");
         if (Prop != NULL) {
           CUSTOM_TOOL_ENTRY *Entry;
-          INTN   i, Count = GetTagCount (Prop);
+          INTN   i, Count = GetTagCount(Prop);
           TagPtr Dict3;
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
-              if (EFI_ERROR (GetElement (Prop, i, &Dict3))) {
+              if (EFI_ERROR (GetElement(Prop, i, &Dict3))) {
                 continue;
               }
 
@@ -3021,10 +3014,10 @@ GetEarlyUserSettings (
               }
 
               // Allocate an entry
-              Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_TOOL_ENTRY));
+              Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_TOOL_ENTRY));
               if (Entry) {
                 // Fill it in
-                if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry (Entry)) {
+                if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry(Entry)) {
                   FreePool (Entry);
                 }
               }
@@ -3034,17 +3027,17 @@ GetEarlyUserSettings (
       }
     }
 
-    DictPointer = GetProperty (Dict, "Graphics");
+    DictPointer = GetProperty(Dict, "Graphics");
     if (DictPointer != NULL) {
 
-      Prop                              = GetProperty (DictPointer, "PatchVBios");
-      gSettings.PatchVBios              = IsPropertyTrue (Prop);
+      Prop                              = GetProperty(DictPointer, "PatchVBios");
+      gSettings.PatchVBios              = IsPropertyTrue(Prop);
 
       gSettings.PatchVBiosBytesCount    = 0;
 
-      Dict2 = GetProperty (DictPointer, "PatchVBiosBytes");
+      Dict2 = GetProperty(DictPointer, "PatchVBiosBytes");
       if (Dict2 != NULL) {
-        INTN   i, Count = GetTagCount (Dict2);
+        INTN   i, Count = GetTagCount(Dict2);
         if (Count > 0) {
           VBIOS_PATCH_BYTES *VBiosPatch;
           UINTN             FindSize    = 0;
@@ -3052,7 +3045,7 @@ GetEarlyUserSettings (
           BOOLEAN           Valid;
 
           // alloc space for up to 16 entries
-          gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool (Count * sizeof(VBIOS_PATCH_BYTES));
+          gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
 
           // get all entries
           for (i = 0; i < Count; i++) {

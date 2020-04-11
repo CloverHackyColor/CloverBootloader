@@ -72,7 +72,7 @@ VOID ScanTool(VOID);
 VOID AddCustomTool(VOID);
 
 // locked graphics
-CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode);
+CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode);
 EFI_STATUS LockBootScreen(VOID);
 EFI_STATUS UnlockBootScreen(VOID);
 

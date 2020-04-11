@@ -34,6 +34,12 @@
 
 #include "entry_scan.h"
 #include "../refit/screen.h"
+#include "../libeg/XImage.h"
+#include "../libeg/XTheme.h"
+
+extern "C" {
+#include <Protocol/GraphicsOutput.h>
+}
 
 #ifndef DEBUG_ALL
 #define DEBUG_BOOT_SCREEN 1
@@ -47,7 +53,7 @@
 #define DBG(...) DebugLog(DEBUG_BOOT_SCREEN, __VA_ARGS__)
 #endif
 
-STATIC const EG_PIXEL grayBackgroundPixel = { 0xBF, 0xBF, 0xBF, 0xFF };
+STATIC const EFI_GRAPHICS_OUTPUT_BLT_PIXEL grayBackgroundPixel = { 0xBF, 0xBF, 0xBF, 0xFF };
 STATIC UINT8 grayAppleLogo[] = {
    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
    0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x00, 0x5F, 0x08, 0x06, 0x00, 0x00, 0x00, 0x7F, 0x47, 0x40,
@@ -415,7 +421,7 @@ STATIC UINT8 grayAppleLogo[] = {
    0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82, 0x82,
 };
 
-STATIC const EG_PIXEL blackBackgroundPixel = { 0x00, 0x00, 0x00, 0xFF };
+STATIC const EFI_GRAPHICS_OUTPUT_BLT_PIXEL blackBackgroundPixel = { 0x00, 0x00, 0x00, 0xFF };
 STATIC UINT8 whiteAppleLogo[] = {
    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
    0x00, 0x00, 0x00, 0x54, 0x00, 0x00, 0x00, 0x67, 0x08, 0x06, 0x00, 0x00, 0x00, 0x9E, 0x85, 0x65,
@@ -710,18 +716,18 @@ STATIC UINT8 whiteAppleLogo[] = {
    0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82, 0x82,
 };
 
-static CONST CHAR16 *CustomBootModeStr[] = {
-   L"CUSTOM_BOOT_DISABLED",
-   L"CUSTOM_BOOT_DISABLED",
-   L"CUSTOM_BOOT_NONE",
-   L"CUSTOM_BOOT_APPLE",
-   L"CUSTOM_BOOT_ALT_APPLE",
-   L"CUSTOM_BOOT_THEME",
-   L"CUSTOM_BOOT_USER",
+static CONST CHAR8 *CustomBootModeStr[] = {
+   "CUSTOM_BOOT_DISABLED",
+   "CUSTOM_BOOT_DISABLED",
+   "CUSTOM_BOOT_NONE",
+   "CUSTOM_BOOT_APPLE",
+   "CUSTOM_BOOT_ALT_APPLE",
+   "CUSTOM_BOOT_THEME",
+   "CUSTOM_BOOT_USER",
 };
-CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode)
+CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode)
 {
-  if (Mode >= (sizeof(CustomBootModeStr) / sizeof(CHAR16 *))) {
+  if (Mode >= (sizeof(CustomBootModeStr) / sizeof(CustomBootModeStr[0]))) {
     return CustomBootModeStr[0];
   }
   return CustomBootModeStr[Mode];
@@ -729,15 +735,11 @@ CONST CHAR16 *CustomBootModeToStr(IN UINT8 Mode)
 
 EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 {
-  EG_PIXEL *backgroundPixel = (EG_PIXEL *)&Entry->BootBgColor;
-  EG_PIXEL thePixel = {0,0,0,0};
-  EG_IMAGE *logo = NULL;
-  INTN      screenWidth, screenHeight;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL thePixel = Entry->BootBgColor;
+  XImage logo;
+//  INTN      screenWidth, screenHeight;
   UINT8     customBoot = Entry->CustomBoot;
 
-  if (backgroundPixel == NULL) {
-    backgroundPixel = &thePixel;
-  }
   if (OSFLAG_ISUNSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
     DBG("Custom boot screen not used because entry has unset use graphics\n");
     return EFI_ABORTED;
@@ -747,11 +749,10 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   } else if (customBoot == CUSTOM_BOOT_DISABLED) {
     customBoot = gSettings.CustomBoot;
     if (customBoot == CUSTOM_BOOT_USER) {
-      logo = gSettings.CustomLogo;
+      logo = *gSettings.CustomLogo;
     }
   }
   switch (customBoot) {
-
   case CUSTOM_BOOT_NONE:
      // No logo
      DBG("Custom boot is using no logo\n");
@@ -759,29 +760,30 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
 
   case CUSTOM_BOOT_APPLE:
      // Gray on gray apple
-     logo = egDecodePNG(grayAppleLogo, sizeof(grayAppleLogo), TRUE);
+     logo.FromPNG(grayAppleLogo, sizeof(grayAppleLogo));
      thePixel = grayBackgroundPixel;
      DBG("Custom boot is using apple logo\n");
      break;
 
   case CUSTOM_BOOT_ALT_APPLE:
      // Alternate white on black apple
-     logo = egDecodePNG(whiteAppleLogo, sizeof(whiteAppleLogo), TRUE);
+     logo.FromPNG(whiteAppleLogo, sizeof(whiteAppleLogo));
      thePixel = blackBackgroundPixel;
      DBG("Custom boot is using alternate logo\n");
      break;
 
   case CUSTOM_BOOT_THEME:
      // TODO: Custom boot theme
-     DBG("Custom boot is using theme logo\n");
-     return EFI_ABORTED;
+      DBG("Custom boot is using theme logo\n");
+      ThemeX.ClearScreen();
+      return EFI_SUCCESS;
 
   case CUSTOM_BOOT_USER:
      // Custom user logo
-     if (logo != NULL) {
+     if (!logo.isEmpty()) {
        thePixel = grayBackgroundPixel;
-        DBG("Custom boot is using custom logo\n");
-        break;
+       DBG("Custom boot is using custom logo\n");
+       break;
      }
 
   default:
@@ -790,15 +792,10 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   }
 
   // Clear the screen
-  egGetScreenSize(&screenWidth, &screenHeight);
-  egClearScreen(backgroundPixel);
+  egClearScreen(&thePixel);
   // Draw the background logo
-  if (logo != NULL) {
-    BltImageAlpha(logo,
-                  (screenWidth - logo->Width) / 2,
-                  (screenHeight - logo->Height) / 2,
-                  backgroundPixel,
-                  16);
+  if (!logo.isEmpty()) {
+    logo.Draw((UGAWidth - logo.GetWidth()) / 2, (UGAHeight - logo.GetHeight()) / 2);
   }
   return EFI_SUCCESS;
 }

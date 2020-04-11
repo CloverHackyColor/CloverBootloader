@@ -832,12 +832,12 @@ struct CUSTOM_LOADER_ENTRY {
   UINT8                   VolumeType;
   UINT8                   KernelScan;
   UINT8                   CustomBoot;
-  EG_IMAGE                *CustomLogo;
+  XImage                  CustomLogo;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 
   CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(0), DriveImagePath(0), Volume(0), Path(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
-                          KernelScan(0), CustomBoot(0), CustomLogo(0), BootBgColor({0,0,0,0})
+                          KernelScan(0), CustomBoot(0), BootBgColor({0,0,0,0})
 						{ memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
@@ -1167,7 +1167,7 @@ typedef struct {
 
 //  UINT8                   pad7[6];
   UINT8                   CustomBoot;
-  EG_IMAGE                *CustomLogo;
+  XImage                  *CustomLogo;
 
   UINT32                  RefCLK;
 

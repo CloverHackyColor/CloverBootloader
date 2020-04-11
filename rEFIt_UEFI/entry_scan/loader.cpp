@@ -438,7 +438,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
                                        IN CHAR16 Hotkey,
                                        EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor,
                                        IN UINT8 CustomBoot,
-                                       IN EG_IMAGE *CustomLogo,
+                                       IN XImage *CustomLogo,
                                        IN KERNEL_AND_KEXT_PATCHES *Patches,
                                        IN BOOLEAN CustomEntry)
 {
@@ -603,7 +603,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionDetails;
   Entry->CustomBoot = CustomBoot;
-  Entry->CustomLogo = CustomLogo;
+  if (CustomLogo != nullptr) {
+    Entry->CustomLogo = *CustomLogo; //else empty ximage already constructed
+  }
+
   Entry->LoaderType = OSType;
   Entry->BuildVersion = NULL;
   Entry->OSVersion = GetOSVersion(Entry);
@@ -1561,7 +1564,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DBG("    Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
 
     // skip volume if its kind is configured as disabled
-    if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||
+/*    if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||
         (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
@@ -1569,8 +1572,13 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because media is disabled\n");
       continue;
     }
+ */
+    if (((1<<Volume->DiskKind) & GlobalConfig.DisableFlags) == 0) {
+      DBG("skipped because media is disabled\n");
+      continue;
+    }
 
-    if (Custom->VolumeType != 0) {
+/*    if (Custom->VolumeType != 0) {
       if ((Volume->DiskKind == DISK_KIND_OPTICAL  && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0))  ||
           (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
           (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
@@ -1579,6 +1587,12 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         continue;
       }
     }
+ */
+    if (((1<<Volume->DiskKind) & Custom->VolumeType) == 0) {
+      DBG("skipped because media is ignored\n");
+      continue;
+    }
+
 
     if (Volume->Hidden) {
       DBG("skipped because volume is hidden\n");
@@ -1737,15 +1751,16 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             if (FileInfo != NULL) {
               if (FileInfo->FileSize > 0) {
                 // get the kernel file path
-                CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) > 0)) {
+          //      CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                XStringW NewPath = LINUX_BOOT_PATH"\\"_XSW + FileInfo->FileName;
+                if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath.wc_str()) > 0)) {
                   if (CustomPath != NULL) {
                     FreePool(CustomPath);
                   }
-                  CustomPath = NewPath;
-                } else {
+                  CustomPath = EfiStrDuplicate(NewPath.wc_str());
+                } /*else {
                   FreePool(NewPath);
-                }
+                } */
               }
               // free the file info
               FreePool(FileInfo);
@@ -1932,7 +1947,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
       DBG("match!\n");
       // Create an entry for this volume
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, &Image, &DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, &Image, &DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, &Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
 
       if (Entry != NULL) {
         DBG("Custom settings: %ls.plist will %s be applied\n",
