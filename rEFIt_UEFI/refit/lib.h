@@ -264,9 +264,9 @@ typedef struct _pointers {
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
 
-#define VOLTYPE_OPTICAL    (0x0001)
+#define VOLTYPE_INTERNAL   (0x0001)
 #define VOLTYPE_EXTERNAL   (0x0002)
-#define VOLTYPE_INTERNAL   (0x0004)
+#define VOLTYPE_OPTICAL    (0x0004)
 #define VOLTYPE_FIREWIRE   (0x0008)
 
 #define HIDEUI_FLAG_SHELL             (0x0010)
