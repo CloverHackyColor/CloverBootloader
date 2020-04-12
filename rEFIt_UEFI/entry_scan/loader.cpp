@@ -1573,7 +1573,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
  */
-    if (((1<<Volume->DiskKind) & GlobalConfig.DisableFlags) == 0) {
+    if ((1<<Volume->DiskKind) & GlobalConfig.DisableFlags) {
       DBG("skipped because media is disabled\n");
       continue;
     }
@@ -1588,7 +1588,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
     }
  */
-    if (((1<<Volume->DiskKind) & Custom->VolumeType) == 0) {
+    if (Custom->VolumeType != 0 && ((1<<Volume->DiskKind) & Custom->VolumeType) == 0) {
       DBG("skipped because media is ignored\n");
       continue;
     }
@@ -1779,7 +1779,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
 
     // Change to custom image if needed
-
     Image = Custom->Image;
     if (Image.isEmpty() && Custom->ImagePath) {
       Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
@@ -1787,9 +1786,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 
     // Change to custom drive image if needed
     DriveImage = Custom->DriveImage;
-
     if (DriveImage.isEmpty() && Custom->DriveImagePath) {
-      Image.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
+      DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
     }
 
     do
@@ -1946,7 +1944,10 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
       DBG("match!\n");
       // Create an entry for this volume
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume, &Image, &DriveImage, Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, &Custom->CustomLogo, /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume,
+                                (Image.isEmpty() ? NULL : &Image), (DriveImage.isEmpty() ? NULL : &DriveImage),            
+                                Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, &Custom->CustomLogo, 
+                                /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
 
       if (Entry != NULL) {
         DBG("Custom settings: %ls.plist will %s be applied\n",

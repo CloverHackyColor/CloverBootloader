@@ -154,7 +154,7 @@ final class SettingsViewController:
     }
     
     
-    let authors = ["CloverHackyColor", "badruzeus", "HelmoHass"]
+    let authors = ["CloverHackyColor", "badruzeus", "LAbyOne"]
     self.themeUserCBox.removeAllItems()
     self.themeUserCBox.addItems(withObjectValues: authors)
     self.themeUserCBox.numberOfVisibleItems = authors.count

@@ -235,9 +235,11 @@
   cpp_unit_test/global_test.cpp
   cpp_unit_test/LoadOptions_test.cpp
   cpp_unit_test/LoadOptions_test.h
+  cpp_unit_test/poolprint-test.h
   cpp_unit_test/printf_lite-test.cpp
   cpp_unit_test/printf_lite-test.h
   cpp_unit_test/printf_lite-test-cpp_conf.h
+  cpp_unit_test/printlib-test.h
   cpp_unit_test/strlen_test.cpp
   cpp_unit_test/strlen_test.h
   cpp_unit_test/strcmp_test.cpp
