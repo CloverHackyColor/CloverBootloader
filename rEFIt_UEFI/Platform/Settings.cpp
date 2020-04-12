@@ -1850,7 +1850,14 @@ FillinCustomEntry (
       FreePool (Entry->ImagePath);
       Entry->ImagePath = NULL;
     }
-    Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->string);
+    if (!Entry->Image.isEmpty()) { 
+      XImage EmptyImage;
+      Entry->Image     = EmptyImage;
+    }
+    if (Prop->type == kTagTypeString) {
+      Entry->ImagePath = PoolPrint (L"%a", Prop->string);
+    }
+    // we can't load the file yet, as ThemeDir is not initialized
   } else {
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
@@ -1866,7 +1873,14 @@ FillinCustomEntry (
       FreePool (Entry->DriveImagePath);
       Entry->DriveImagePath = NULL;
     }
-    Entry->DriveImage.LoadXImage(ThemeX.ThemeDir, Prop->string);
+    if (!Entry->DriveImage.isEmpty()) {
+      XImage EmptyImage;
+      Entry->DriveImage     = EmptyImage;
+    }
+    if (Prop->type == kTagTypeString) {
+      Entry->DriveImagePath = PoolPrint (L"%a", Prop->string);
+    }
+    // we can't load the file yet, as ThemeDir is not initialized
   } else {
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
