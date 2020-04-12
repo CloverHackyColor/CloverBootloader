@@ -699,17 +699,18 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       // if theme doesn't exist in the repository is up to date since is not part of it!
       return true
     }
-    var isOptimized = false
-    
+   
     /*
      if the repo is not the current one return true
      */
+     let isOptimized = false
+    /* fix a crash
     if let info = ThemeInfo.unarchive(at: path.addPath(kThemeInfoFile)) {
       if info.user != self.user || info.repo != self.repo {
         return true
       }
       isOptimized = info.optimized
-    }
+    }*/
     
     let plistPath = "\(self.themeManagerIndexDir)/Themes/\(theme).plist"
     guard var plist = NSMutableDictionary(contentsOfFile: plistPath) as? [String : String] else {
@@ -799,12 +800,12 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       
       var images : [String] = [String]()
       let enumerator = fm.enumerator(atPath: path)
-      
+      /*
       if var info = ThemeInfo.unarchive(at: path.addPath(kThemeInfoFile)) {
         info.optimized = true
         // write back
         try? info.archive().write(to: URL(fileURLWithPath: path.addPath(kThemeInfoFile)))
-      }
+      }*/
       
       while let file = enumerator?.nextObject() as? String {
         if file.fileExtension == "png" || file.fileExtension == "icns" {
