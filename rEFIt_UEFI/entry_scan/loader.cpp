@@ -1779,7 +1779,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
 
     // Change to custom image if needed
-
     Image = Custom->Image;
     if (Image.isEmpty() && Custom->ImagePath) {
       Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
@@ -1787,9 +1786,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 
     // Change to custom drive image if needed
     DriveImage = Custom->DriveImage;
-
     if (DriveImage.isEmpty() && Custom->DriveImagePath) {
-      Image.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
+      DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
     }
 
     do
