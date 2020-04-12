@@ -454,6 +454,7 @@ void XTheme::FillByEmbedded()
 
 void XTheme::ClearScreen() //and restore background and banner
 {
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL FirstBannerPixel = MenuBackgroundPixel;
   if (BanHeight < 2) {
     BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
   }
@@ -461,6 +462,8 @@ void XTheme::ClearScreen() //and restore background and banner
   if (!(HideUIFlags & HIDEUI_FLAG_BANNER)) {
     //Banner image prepared before
     if (!Banner.isEmpty()) {
+      FirstBannerPixel = Banner.GetPixel(0,0);
+
       BannerPlace.Width = Banner.GetWidth();
       BannerPlace.Height = (BanHeight >= Banner.GetHeight()) ? Banner.GetHeight() : BanHeight;
       BannerPlace.XPos = BannerPosX;
@@ -501,15 +504,22 @@ void XTheme::ClearScreen() //and restore background and banner
       } else {
         BlueBackgroundPixel = DarkEmbeddedBackgroundPixel;
       }
+    } else {
+      BlueBackgroundPixel = FirstBannerPixel;
     }
     Background.Fill(BlueBackgroundPixel); //blue opaque. May be better to set black opaque?
   }
 // now we are sure Background has UGA sizes
+  float BigScale;
+  float BigScaleY;
   if (!BigBack.isEmpty()) {
     switch (BackgroundScale) {
     case imScale:
-//        DBG("back copy scaled\n");
-      Background = XImage(BigBack, Scale);
+//    DBG("back copy scaled\n");
+//    Background.setSizeInPixels(UGAWidth, UGAHeight); //anyway set
+      BigScale = (float)UGAWidth/BigBack.GetWidth();
+      BigScaleY = (float)UGAHeight/BigBack.GetHeight();
+      Background.CopyScaled(BigBack, MAX(BigScale, BigScaleY));
       break;
     case imCrop:
     {

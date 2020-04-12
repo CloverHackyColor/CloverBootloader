@@ -66,12 +66,6 @@ XImage& XImage::operator= (const XImage& other)
 	return *this;
 }
 
-UINT8 XImage::Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale)
-{
-  return (UINT8)((*(p + a01) * (scale - dx) * 3.f + *(p + a10) * (scale - dy) * 3.f + *(p + a21) * dx * 3.f +
-    *(p + a12) * dy * 3.f + *(p) * 2.f *scale) / (scale * 8.f));
-}
-
 XImage::XImage(const XImage& Image, float scale)
 {
   UINTN SrcWidth = Image.GetWidth();
@@ -228,6 +222,13 @@ void XImage::FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect)
   }
 }
 
+
+UINT8 XImage::Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  float dx, float dy, float scale)
+{
+  return (UINT8)((*(p + a01) * (scale - dx) * 3.f + *(p + a10) * (scale - dy) * 3.f + *(p + a21) * dx * 3.f +
+                  *(p + a12) * dy * 3.f + *(p) * 2.f *scale) / (scale * 8.f));
+}
+
 //sizes remain as were assumed input image is large enough?
 void XImage::CopyScaled(const XImage& Image, float scale)
 {
@@ -240,14 +241,14 @@ void XImage::CopyScaled(const XImage& Image, float scale)
 
   const XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL>& Source = Image.GetData();
 
-  for (INTN y = 0; y < H; y++)
+  for (INTN y = 0; y < H; y++) //destination coordinates
   {
-    int ly = (int)(y / scale);
-    int dy = (int)(y - ly * scale);
+    int ly = (int)(y / scale); //integer part of src coord
+    float dy = y - ly * scale; //fractional part
     for (INTN x = 0; x < W; x++)
     {
       int lx = (int)(x / scale);
-      int dx = (int)(x - lx * scale);
+      float dx = x - lx * scale;
       int a01 = (x == 0) ? 0 : -Pixel;
       int a10 = (y == 0) ? 0 : -Row;
       int a21 = (x == W - 1) ? 0 : Pixel;

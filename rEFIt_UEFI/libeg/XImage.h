@@ -113,7 +113,7 @@ public:
   void EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight);
   void DummyImage(IN UINTN PixelSize);
 protected:
-  UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  int dx, int dy, float scale);
+  UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  float dx, float dy, float scale);
 };
 
 #endif //__XSTRINGW_H__
