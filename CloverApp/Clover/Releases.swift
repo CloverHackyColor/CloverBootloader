@@ -59,7 +59,7 @@ func getLatestReleases(reply: @escaping (String?, String?, String?, String?) -> 
           appvers = applink!.components(separatedBy: "Clover.app_v")[1]
           //print(appvers)
           appvers = appvers!.components(separatedBy: ".pkg")[0]
-          if let pkgName = applink?.deletingFileExtension.lastPath {
+          if let pkgName = applink?.lastPath {
             let donwPath = NSHomeDirectory().addPath("Desktop/Clover_app_download").addPath(pkgName)
             if fm.fileExists(atPath: donwPath) {
               applink = nil
