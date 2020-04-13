@@ -1850,9 +1850,7 @@ FillinCustomEntry (
       FreePool (Entry->ImagePath);
       Entry->ImagePath = NULL;
     }
-    if (!Entry->Image.isEmpty()) { 
-      Entry->Image.setEmpty();
-    }
+    Entry->Image.setEmpty();
     if (Prop->type == kTagTypeString) {
       Entry->ImagePath = PoolPrint (L"%a", Prop->string);
     }
@@ -1872,9 +1870,7 @@ FillinCustomEntry (
       FreePool (Entry->DriveImagePath);
       Entry->DriveImagePath = NULL;
     }
-    if (!Entry->DriveImage.isEmpty()) {
-      Entry->DriveImage.setEmpty();
-    }
+    Entry->DriveImage.setEmpty();
     if (Prop->type == kTagTypeString) {
       Entry->DriveImagePath = PoolPrint (L"%a", Prop->string);
     }
