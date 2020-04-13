@@ -485,6 +485,13 @@ NSComboBoxDataSource {
                                   try? fm.removeItem(atPath: themeDest)
                                   do {
                                     try fm.moveItem(atPath: themePath, toPath: themeDest)
+                                    /*
+                                    let ti = ThemeInfo(user: self.manager!.user,
+                                                       repo: self.manager!.repo,
+                                      optimized: false).archive()
+                                    try ti.write(to:
+                                      URL(fileURLWithPath: themeDest.addPath(kThemeInfoFile)))*/
+                                    
                                     NSSound(named: "Glass")?.play()
                                   } catch {
                                     NSSound(named: "Basso")?.play()

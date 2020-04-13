@@ -964,7 +964,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         }
         break;
       case SCAN_F8:
-        testSVG();
+ //       testSVG();
         SaveHdaDumpBin();
         SaveHdaDumpTxt();
         break;

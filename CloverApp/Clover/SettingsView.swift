@@ -108,6 +108,7 @@ final class SettingsViewController:
   var timeUpdateInterval : TimeInterval = UpdateInterval.never.rawValue
   
   var downloadTask : URLSessionDownloadTask? = nil
+  var downloading : Bool = false
   
   var loaded : Bool = false
   
@@ -950,6 +951,10 @@ final class SettingsViewController:
   }
   
   @IBAction func checkNow(_ sender: NSButton!) {
+    if self.downloading {
+      NSSound.beep()
+      return
+    }
     self.searchUpdate()
   }
   
@@ -1258,7 +1263,7 @@ final class SettingsViewController:
       UDs.synchronize()
       
       // Clover.app
-      if appvers != nil && applink != nil {
+      if appvers != nil && applink != nil && !self.downloading {
         let currVerS = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
         
         if appvers!.count > 0 && applink!.count > 0 {
@@ -1291,10 +1296,12 @@ final class SettingsViewController:
     if AppSD.isInstalling ||
       AppSD.isInstallerOpen ||
       self.lastReleaseLink == nil ||
-      self.lastReleaseRev == nil {
+      self.lastReleaseRev == nil ||
+      self.downloading {
       NSSound.beep()
       return
     }
+    
     self.progressBar.isHidden = false
     self.progressBar.doubleValue = 0.0
     let url = URL(string: self.lastReleaseLink!)
@@ -1303,6 +1310,7 @@ final class SettingsViewController:
     let session = Foundation.URLSession(configuration: b, delegate: self, delegateQueue: nil)
     
     if (url != nil) {
+      self.downloading = true
       self.installCloverButton.isEnabled = false
       self.downloadTask = session.downloadTask(with: url!)
       self.downloadTask?.resume()
@@ -1310,10 +1318,7 @@ final class SettingsViewController:
   }
   
   func updateCloverApp(at url: URL) {
-    if AppSD.isInstalling ||
-      AppSD.isInstallerOpen ||
-      self.lastReleaseLink == nil ||
-      self.lastReleaseRev == nil {
+    if AppSD.isInstalling || AppSD.isInstallerOpen || self.downloading {
       NSSound.beep()
       return
     }
@@ -1323,6 +1328,7 @@ final class SettingsViewController:
     let b = URLSessionConfiguration.default
     let session = Foundation.URLSession(configuration: b, delegate: self, delegateQueue: nil)
     
+    self.downloading = true
     self.installCloverButton.isEnabled = false
     self.downloadTask = session.downloadTask(with: url)
     self.downloadTask?.resume()
@@ -1331,7 +1337,7 @@ final class SettingsViewController:
   func urlSession(_ session: URLSession,
                   downloadTask: URLSessionDownloadTask,
                   didFinishDownloadingTo location: URL) {
-   
+   self.downloading = false
     DispatchQueue.main.async {
       self.progressBar.doubleValue = 100
       self.progressBar.isHidden = true
@@ -1342,8 +1348,8 @@ final class SettingsViewController:
       let lastPath = downloadTask.originalRequest!.url!.lastPathComponent
       let data = try Data(contentsOf: location)
 
-      if lastPath.fileExtension == "zip" &&
-        (lastPath.hasPrefix("CloverV2") || lastPath.hasPrefix("Clover.app")) {
+      if (lastPath.fileExtension == "zip" && lastPath.hasPrefix("CloverV2")) ||
+        (lastPath.hasPrefix("Clover.app") && lastPath.fileExtension == "pkg") {
         let isApp = lastPath.hasPrefix("Clover.app")
 
         // Decompress the zip archive
@@ -1361,27 +1367,7 @@ final class SettingsViewController:
         try data.write(to: URL(fileURLWithPath: file))
         
         if isApp {
-          DispatchQueue.main.async {
-            let task : Process = Process()
-            task.environment = ProcessInfo().environment
-            let bash = "/bin/bash"
-            // unzip -d output_dir/ zipfiles.zip
-            let cmd = "/usr/bin/unzip -qq -d \(tempDir) \(file)"
-            if #available(OSX 10.13, *) {
-              task.executableURL = URL(fileURLWithPath: bash)
-            } else {
-              task.launchPath = bash
-            }
-            
-            task.arguments = ["-c", cmd]
-            task.terminationHandler = { t in
-              if t.terminationStatus == 0 {
-                self.moveCloverApp(at: file.deletingFileExtension)
-              }
-            }
-            
-            task.launch()
-          }
+          self.moveCloverApp(at: file)
         } else {
           DispatchQueue.main.async {
             let task : Process = Process()
@@ -1416,7 +1402,7 @@ final class SettingsViewController:
   func urlSession(_ session: URLSession,
                   task: URLSessionTask,
                   didCompleteWithError error: Error?) {
-    
+    self.downloading = false
     DispatchQueue.main.async {
       self.installCloverButton.isEnabled = true
     }

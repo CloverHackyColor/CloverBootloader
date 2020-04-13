@@ -409,7 +409,6 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     UINT32 FakeID = gSettings.FakeLAN >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
     snprintf(compatible, 64, "pci%04x,%04x", (gSettings.FakeLAN & 0xFFFF), FakeID);
-//    LowCase(compatible);
     devprop_add_value(device, "compatible", (UINT8*)&compatible[0], 12);
     FakeID = gSettings.FakeLAN & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);

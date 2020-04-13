@@ -1305,7 +1305,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.17;
+				CURRENT_PROJECT_VERSION = 1.18;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1332,7 +1332,7 @@
 					"$(PROJECT_DIR)/Clover/Library",
 					"$(PROJECT_DIR)",
 				);
-				MARKETING_VERSION = 1.17;
+				MARKETING_VERSION = 1.18;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1353,7 +1353,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1.17;
+				CURRENT_PROJECT_VERSION = 1.18;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Clover/Frameworks",
@@ -1379,7 +1379,7 @@
 					"$(PROJECT_DIR)/Clover/Library",
 					"$(PROJECT_DIR)",
 				);
-				MARKETING_VERSION = 1.17;
+				MARKETING_VERSION = 1.18;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.slice.Clover;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -275,9 +275,9 @@ options=( 'build Clover'
           'test build (no autogen, no boot files)'
           'status'
           'update Clover'
-          'update Clover (reset changes)'
           'show diff'
           'open drivers directory'
+          'update Clover (reset changes)'
           'clean BaseTools'
           'quit')
 
@@ -324,7 +324,11 @@ do
       break
     ;;
     "update Clover (reset changes)")
-      updateResetClover
+      read -p "Are you sure? (y = true)" -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        updateResetClover
+      fi
       break
     ;;
     "status")
@@ -345,7 +349,11 @@ do
       break
     ;;
     "clean BaseTools")
-      cleanBaseTools
+      read -p "Are you sure? (y = true)" -n 1 -r
+      echo
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        cleanBaseTools
+      fi
       break
     ;;
     "quit")

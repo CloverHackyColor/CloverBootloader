@@ -9,6 +9,7 @@
 import Cocoa
 import CommonCrypto
 
+let kThemeInfoFile = ".CTv1_i"
 let kThemeUserKey = "themeUser"
 let kThemeRepoKey = "themeRepo"
 
@@ -24,6 +25,33 @@ enum ThemeDownload {
 enum GitProtocol : String {
   case https = "https"
   case git  = "git"
+}
+
+struct ThemeInfo {
+  let version : Int = 1
+  var user: String
+  var repo: String
+  var optimized : Bool
+  
+  func archive() -> Data {
+    var me = self
+    return Data(bytes: &me, count: MemoryLayout<ThemeInfo>.stride)
+  }
+  
+  static func unarchive(at path: String) -> ThemeInfo? {
+    var ti: ThemeInfo?
+    if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
+      guard data.count == MemoryLayout<ThemeInfo>.stride else {
+        return ti
+      }
+      
+      ti = data.withUnsafeBytes {
+        $0.baseAddress?.assumingMemoryBound(to: ThemeInfo.self).pointee
+      }
+    }
+    
+    return ti
+  }
 }
 
 let kCloverThemeAttributeKey = "org.cloverTheme.sha"
@@ -671,6 +699,18 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       // if theme doesn't exist in the repository is up to date since is not part of it!
       return true
     }
+   
+    /*
+     if the repo is not the current one return true
+     */
+     let isOptimized = false
+    /* fix a crash
+    if let info = ThemeInfo.unarchive(at: path.addPath(kThemeInfoFile)) {
+      if info.user != self.user || info.repo != self.repo {
+        return true
+      }
+      isOptimized = info.optimized
+    }*/
     
     let plistPath = "\(self.themeManagerIndexDir)/Themes/\(theme).plist"
     guard var plist = NSMutableDictionary(contentsOfFile: plistPath) as? [String : String] else {
@@ -692,27 +732,35 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
          Check only files.
          If extra directories exists inside the user theme it's not our business...
          */
+        
         if !isDir.boolValue {
           // ..it is if a file doesn't exist
           let key = theme.addPath(file)
+          
           if let githubSha = plist[key] {
-            // ok compare the sha1
-            if let fileData = try? Data(contentsOf: URL(fileURLWithPath: fp)) {
-              var gitdata = Data()
-              let encoding : String.Encoding = .utf8
-              gitdata.append("blob ".data(using: encoding)!)
-              gitdata.append("\(fileData.count)".data(using: encoding)!)
-              gitdata.append(0x00)
-              gitdata.append(fileData)
-              
-              let gitsha1 = gitdata.sha1
-              if gitsha1 != githubSha {
-                // sha doesn't match, this is a different file
+            /*
+             if the theme is optimized check only file existence.
+             otherwise compare the sha1
+             */
+            if !isOptimized {
+              // ok compare the sha1
+              if let fileData = try? Data(contentsOf: URL(fileURLWithPath: fp)) {
+                var gitdata = Data()
+                let encoding : String.Encoding = .utf8
+                gitdata.append("blob ".data(using: encoding)!)
+                gitdata.append("\(fileData.count)".data(using: encoding)!)
+                gitdata.append(0x00)
+                gitdata.append(fileData)
+                
+                let gitsha1 = gitdata.sha1
+                if gitsha1 != githubSha {
+                  // sha doesn't match, this is a different file
+                  return false
+                }
+              } else {
+                print("Error: Theme Manager can't load \(fp)")
                 return false
               }
-            } else {
-              print("Error: Theme Manager can't load \(fp)")
-              return false
             }
             
             plist[key] = nil // no longer needed
@@ -752,6 +800,12 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       
       var images : [String] = [String]()
       let enumerator = fm.enumerator(atPath: path)
+      /*
+      if var info = ThemeInfo.unarchive(at: path.addPath(kThemeInfoFile)) {
+        info.optimized = true
+        // write back
+        try? info.archive().write(to: URL(fileURLWithPath: path.addPath(kThemeInfoFile)))
+      }*/
       
       while let file = enumerator?.nextObject() as? String {
         if file.fileExtension == "png" || file.fileExtension == "icns" {
