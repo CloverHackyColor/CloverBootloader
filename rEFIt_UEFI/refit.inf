@@ -103,6 +103,8 @@
   libeg/XPointer.h
   libeg/XTheme.cpp
   libeg/XTheme.h
+  libeg/XCinema.cpp
+  libeg/XCinema.h
   Platform/Posix/posix.h
   Platform/Posix/limits.h
   Platform/Posix/stdarg.h

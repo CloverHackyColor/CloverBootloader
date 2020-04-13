@@ -43,6 +43,7 @@
 #include "../cpp_foundation/XStringWArray.h"
 #include "../cpp_foundation/XStringW.h"
 #include "../libeg/XPointer.h"
+#include "../libeg/XCinema.h"
 #include "menu_items/menu_items.h"
 
 
@@ -72,30 +73,38 @@ public:
   static   XPointer mPointer;
 //  XPointer mPointer;
   UINTN             ID;
-  XStringW Title;
-  XImage  TitleImage;
+  XStringW          Title;
+  XImage            TitleImage;
   XStringWArray     InfoLines;
+
   XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
+  
   INTN              TimeoutSeconds;
-  XStringW  TimeoutText;
-  XStringW  ThemeName;  //?
-  EG_RECT OldTextBufferRect;
-  XImage  OldTextBufferImage;
-  BOOLEAN isBootScreen;
+  XStringW          TimeoutText;
+  XStringW          ThemeName;  //?
+  EG_RECT           OldTextBufferRect;
+  XImage            OldTextBufferImage;
+  BOOLEAN           isBootScreen;
   BOOLEAN           AnimeRun;
   BOOLEAN           Once;
+  //same for xcinema
   UINT64            LastDraw;
   INTN              CurrentFrame;
   INTN              Frames;
   UINTN             FrameTime; //ms
   EG_RECT           FilmPlace;
-  EG_IMAGE        **Film;
 
-  ACTION      mAction;
-  UINTN       mItemID;
-  SCROLL_STATE ScrollState;
-  BOOLEAN ScrollEnabled;
-  INTN TextStyle;
+#if XCINEMA
+  FILM            *FilmX;
+#else
+  EG_IMAGE        **Film;
+#endif
+
+  ACTION          mAction;
+  UINTN           mItemID;
+  SCROLL_STATE    ScrollState;
+  BOOLEAN         ScrollEnabled;
+  INTN            TextStyle;
 //  MENU_STYLE_FUNC StyleFunc;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
@@ -120,7 +129,12 @@ public:
               OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
               AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0),
-						  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+#if XCINEMA
+  FilmX(),
+#else
+  Film(0),
+#endif
+  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
 						{};
   REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
   : ID(ID), Title(TTitle), TitleImage(),
@@ -128,14 +142,24 @@ public:
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
-  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+#if XCINEMA
+  FilmX(),
+#else
+  Film(0),
+#endif
+  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {};
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC)
   : ID(ID), Title(), TitleImage(),
   TimeoutSeconds(0), TimeoutText(), ThemeName(), AnimeRun(0),
   Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
-  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+#if XCINEMA
+  FilmX(),
+#else
+  Film(0),
+#endif
+  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {
     Title.takeValueFrom(TitleC);
     TimeoutText.takeValueFrom(TimeoutTextC);
@@ -147,7 +171,12 @@ public:
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
-  Film(0), mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+#if XCINEMA
+  FilmX(),
+#else
+  Film(0),
+#endif
+  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {
     Entries.AddReference(entry1, false);
     Entries.AddReference(entry2, false);
@@ -192,9 +221,11 @@ public:
   VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   VOID CountItems();
   VOID InitAnime();
-  BOOLEAN GetAnime();
+  BOOLEAN GetAnime(); //same for xcinema
   VOID UpdateAnime();
-
+#if XCINEMA
+  VOID UpdateFilm(); // for future use instead of UpdateAnime
+#endif
 
   //Style functions
 

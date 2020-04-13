@@ -478,6 +478,18 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
   }
   return pos;
 }
+#if XCINEMA
+BOOLEAN REFIT_MENU_SCREEN::GetAnime()
+{
+  FilmX = ThemeX.Cinema.GetFilm(ID);
+  return FilmX != nullptr;
+}
+
+VOID REFIT_MENU_SCREEN::InitAnime()
+{
+  //something
+}
+#else
 
 static EG_IMAGE *AnimeImage = NULL;
 
@@ -672,7 +684,7 @@ BOOLEAN REFIT_MENU_SCREEN::GetAnime()
   
   return TRUE;
 }
-
+#endif
 //
 // Sets next/previous available screen resolution, according to specified offset
 //

@@ -7,6 +7,7 @@
 #include "libeg.h"
 //#include "nanosvg.h"
 #include "XImage.h"
+#include "XCinema.h"
 
 
 #define INDICATOR_SIZE (52)
@@ -118,6 +119,9 @@ public:
   XImage  FontImage;
 
   EG_RECT  BannerPlace;
+#if XCINEMA
+  XCinema Cinema;
+#endif
 
   //fill the theme
 //  const XImage& GetIcon(const char* Name);
