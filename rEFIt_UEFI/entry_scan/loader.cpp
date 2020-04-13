@@ -1784,6 +1784,15 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
       if (Image.isEmpty()) {
         Image.LoadXImage(ThemeX.ThemeDir, XStringW() + L"os_"_XSW + Custom->ImagePath);
+        if (Image.isEmpty()) {
+          Image.LoadXImage(SelfDir, Custom->ImagePath);
+          if (Image.isEmpty()) {
+            Image.LoadXImage(SelfRootDir, Custom->ImagePath);
+            if (Image.isEmpty()) {
+              Image.LoadXImage(Volume->RootDir, Custom->ImagePath);
+            }
+          }
+        }
       }
     }
 
@@ -1791,6 +1800,15 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DriveImage = Custom->DriveImage;
     if (DriveImage.isEmpty() && Custom->DriveImagePath) {
       DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
+      if (DriveImage.isEmpty()) {
+        DriveImage.LoadXImage(SelfDir, Custom->ImagePath);
+        if (DriveImage.isEmpty()) {
+          DriveImage.LoadXImage(SelfRootDir, Custom->ImagePath);
+          if (DriveImage.isEmpty()) {
+            DriveImage.LoadXImage(Volume->RootDir, Custom->ImagePath);
+          }
+        }
+      }
     }
 
     do
