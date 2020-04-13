@@ -1257,7 +1257,6 @@ VOID ScanLoader(VOID)
         XImage ImageX;
         XStringW IconXSW = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
         ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.SubString(0, IconXSW.IdxOf(','))).wc_str());
-        ImageX.LoadXImage(ThemeX.ThemeDir, LinuxEntryData[Index].Icon);
         AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
                        (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
       }
