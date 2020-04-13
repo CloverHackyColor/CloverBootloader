@@ -6855,8 +6855,8 @@ GetDevices ()
 
             default:
               gfx->Vendor = Unknown;
-              snprintf (gfx->Model, 64, "pci%04X,%04X", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
-              LowCase(gfx->Model);
+              snprintf (gfx->Model, 64, "pci%04x,%04x", Pci.Hdr.VendorId, Pci.Hdr.DeviceId);
+     //         LowCase(gfx->Model);
               gfx->Ports  = 1;
               gfx->Connectors = (1 << NGFX);
               gfx->ConnChanged = FALSE;

@@ -2225,8 +2225,22 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #if 0
   //testing place
   {
-    CHAR16 *aaa = L"12345";
-    DBG(" string %ls, size=%d, len=%d sizeof=%d\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa));
+    const CHAR16 *aaa = L"12345  ";
+    const CHAR8 *bbb = "12345  ";
+    DBG(" string %ls, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa), iStrLen(bbb, 10));
+
+    CHAR8           compatible[64];
+    UINT32 FakeLAN = 0x0030168c;
+    UINT32 FakeID = FakeLAN >> 16;
+    UINTN FakeVendor = FakeLAN & 0xFFFF;
+    snprintf(compatible, 64, "pci%04llx,%04x", FakeVendor, FakeID);
+    DBG(" FakeLAN = 0x%x\n", FakeLAN);
+    DBG(" Compatible=%s strlen=%ld sizeof=%ld iStrLen=%lld\n", compatible,
+        strlen(compatible), sizeof(compatible), iStrLen(compatible, 64));
+//    LowCase(compatible);
+//    DBG(" Low Compatible=%s strlen=%ld sizeof=%ld iStrLen=%lld\n", compatible,
+//        strlen(compatible), sizeof(compatible), iStrLen(compatible, 64));
+
   }
 #endif
   if (!GlobalConfig.FastBoot) {

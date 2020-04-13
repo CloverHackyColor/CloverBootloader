@@ -1838,7 +1838,7 @@ LibGetPageBreak (
   return mPrintMode.PageBreak;
 }
 */
-//
+/*
 VOID LowCase (IN OUT CHAR8 *Str)
 {
   while (*Str) {
@@ -1848,7 +1848,7 @@ VOID LowCase (IN OUT CHAR8 *Str)
     Str++;
   }
 }
-
+*/
 
 UINT8 hexstrtouint8 (CHAR8* buf)
 {

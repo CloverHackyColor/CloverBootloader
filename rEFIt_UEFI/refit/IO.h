@@ -289,7 +289,7 @@ WaitFor2EventWithTsc (
 EFI_STATUS
 WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
-VOID        LowCase (IN OUT CHAR8 *Str);
+//VOID        LowCase (IN OUT CHAR8 *Str);
 UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
 BOOLEAN     IsHexDigit (CHAR8 c);
 UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
