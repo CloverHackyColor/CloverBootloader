@@ -28,29 +28,37 @@ enum GitProtocol : String {
 }
 
 struct ThemeInfo {
-  let version : Int = 1
   var user: String
   var repo: String
   var optimized : Bool
   
-  func archive() -> Data {
-    var me = self
-    return Data(bytes: &me, count: MemoryLayout<ThemeInfo>.stride)
+  func archive() -> Data? {
+    var dict = [String : String]()
+    dict["user"] = self.user
+    dict["repo"] = self.repo
+    dict["optimized"] = self.optimized ? "1" : "0"
+  
+    return try? JSONEncoder().encode(dict)
   }
   
   static func unarchive(at path: String) -> ThemeInfo? {
-    var ti: ThemeInfo?
     if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
-      guard data.count == MemoryLayout<ThemeInfo>.stride else {
-        return ti
-      }
       
-      ti = data.withUnsafeBytes {
-        $0.baseAddress?.assumingMemoryBound(to: ThemeInfo.self).pointee
+      if let dict = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String : String] {
+        
+        let new : ThemeInfo = ThemeInfo(user: dict["user"] ?? "",
+                                        repo: dict["repo"] ?? "",
+                                        optimized: (dict["optimized"] == "1") ? true : false)
+        /*
+        print(new.user)
+        print(new.repo)
+        print(new.optimized)
+        */
+        return new
       }
     }
     
-    return ti
+    return nil
   }
 }
 
@@ -703,14 +711,15 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     /*
      if the repo is not the current one return true
      */
-     let isOptimized = false
-    /* fix a crash
+    
+    var isOptimized = false
+    
     if let info = ThemeInfo.unarchive(at: path.addPath(kThemeInfoFile)) {
       if info.user != self.user || info.repo != self.repo {
         return true
       }
       isOptimized = info.optimized
-    }*/
+    }
     
     let plistPath = "\(self.themeManagerIndexDir)/Themes/\(theme).plist"
     guard var plist = NSMutableDictionary(contentsOfFile: plistPath) as? [String : String] else {
@@ -800,12 +809,12 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       
       var images : [String] = [String]()
       let enumerator = fm.enumerator(atPath: path)
-      /*
+      
       if var info = ThemeInfo.unarchive(at: path.addPath(kThemeInfoFile)) {
         info.optimized = true
         // write back
-        try? info.archive().write(to: URL(fileURLWithPath: path.addPath(kThemeInfoFile)))
-      }*/
+        try? info.archive()?.write(to: URL(fileURLWithPath: path.addPath(kThemeInfoFile)))
+      }
       
       while let file = enumerator?.nextObject() as? String {
         if file.fileExtension == "png" || file.fileExtension == "icns" {
