@@ -128,7 +128,7 @@ final class SettingsViewController:
       super.viewDidLoad()
     }
 
-    let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String + " Beta"
+    let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
     self.appVersionField.stringValue = "v\(appVersion)"
     localize(view: self.view)
     
