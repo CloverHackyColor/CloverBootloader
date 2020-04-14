@@ -31,6 +31,18 @@
 		9A105B1F244644C50006DE06 /* XCinema.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B19244644C50006DE06 /* XCinema.h */; };
 		9A105B20244644C50006DE06 /* XCinema.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B19244644C50006DE06 /* XCinema.h */; };
 		9A105B21244644C50006DE06 /* XCinema.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B19244644C50006DE06 /* XCinema.h */; };
+		9A105B2524464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
+		9A105B2624464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
+		9A105B2724464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
+		9A105B2824464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
+		9A105B2924464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
+		9A105B2A24464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
+		9A105B2B24464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
+		9A105B2C24464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
+		9A105B2D24464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
+		9A105B2E24464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
+		9A105B2F24464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
+		9A105B3024464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
 		9A28CC93241AB33700F3D247 /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC91241AB33700F3D247 /* XString.cpp */; };
 		9A28CC94241AB33700F3D247 /* XString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CC92241AB33700F3D247 /* XString.h */; };
 		9A28CC97241AB34800F3D247 /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CC95241AB34800F3D247 /* XString_test.cpp */; };
@@ -850,6 +862,9 @@
 		9A0986362438A15400826276 /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
 		9A105B18244644C50006DE06 /* XCinema.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XCinema.cpp; sourceTree = "<group>"; };
 		9A105B19244644C50006DE06 /* XCinema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XCinema.h; sourceTree = "<group>"; };
+		9A105B2224464A830006DE06 /* VectorGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorGraphics.h; sourceTree = "<group>"; };
+		9A105B2324464A830006DE06 /* ftol.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ftol.asm; sourceTree = "<group>"; };
+		9A105B2424464A830006DE06 /* BmLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BmLib.h; sourceTree = "<group>"; };
 		9A28CC91241AB33700F3D247 /* XString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString.cpp; sourceTree = "<group>"; };
 		9A28CC92241AB33700F3D247 /* XString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString.h; sourceTree = "<group>"; };
 		9A28CC95241AB34800F3D247 /* XString_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString_test.cpp; sourceTree = "<group>"; };
@@ -1290,6 +1305,8 @@
 		9AC77F5C24176C04005CDD5C /* libeg */ = {
 			isa = PBXGroup;
 			children = (
+				9A105B2424464A830006DE06 /* BmLib.h */,
+				9A105B2324464A830006DE06 /* ftol.asm */,
 				9A105B18244644C50006DE06 /* XCinema.cpp */,
 				9A105B19244644C50006DE06 /* XCinema.h */,
 				9AC77F5F24176C04005CDD5C /* BmLib.cpp */,
@@ -1311,6 +1328,7 @@
 				9AC77F6E24176C04005CDD5C /* nanosvgrast.cpp */,
 				9AC77F6924176C04005CDD5C /* scroll_images.cpp */,
 				9AC77F6624176C04005CDD5C /* text.cpp */,
+				9A105B2224464A830006DE06 /* VectorGraphics.h */,
 				9AC77F6524176C04005CDD5C /* VectorGraphics.cpp */,
 				9AC77F7524176C04005CDD5C /* XImage.cpp */,
 				9AC77F7124176C04005CDD5C /* XImage.h */,
@@ -1456,6 +1474,7 @@
 				9AC7803124176C04005CDD5C /* loader.h in Headers */,
 				9AC7800724176C04005CDD5C /* AmlGenerator.h in Headers */,
 				9AC7808F24176C04005CDD5C /* XStringW.h in Headers */,
+				9A105B2D24464A830006DE06 /* BmLib.h in Headers */,
 				9AF4173F242F15CC00D2644C /* BootLog.h in Headers */,
 				9A28CCAA241B66EA00F3D247 /* stdarg.h in Headers */,
 				9A28CCA9241B66EA00F3D247 /* posix.h in Headers */,
@@ -1511,6 +1530,7 @@
 				9AC7807F24176C04005CDD5C /* menu.h in Headers */,
 				9AC7806224176C04005CDD5C /* MSUEFICADB.h in Headers */,
 				9AC7800324176C04005CDD5C /* Hibernate.h in Headers */,
+				9A105B2524464A830006DE06 /* VectorGraphics.h in Headers */,
 				9A28CD35241BC0DF00F3D247 /* strlen_test.h in Headers */,
 				9AC77FBA24176C04005CDD5C /* XArray_tests.h in Headers */,
 				9A09863B2438A15400826276 /* shared_with_menu.h in Headers */,
@@ -1552,6 +1572,7 @@
 				9ACFE65124309AF80071CC93 /* XTheme.h in Headers */,
 				9ACFE65324309AF80071CC93 /* nvidia.h in Headers */,
 				9ACFE65424309AF80071CC93 /* operatorNewDelete.h in Headers */,
+				9A105B3024464A830006DE06 /* BmLib.h in Headers */,
 				9ACFE65524309AF80071CC93 /* BasicIO.h in Headers */,
 				9ACFE65724309AF80071CC93 /* XStringWArray_test.h in Headers */,
 				9ACFE65824309AF80071CC93 /* syslinux_mbr.h in Headers */,
@@ -1616,6 +1637,7 @@
 				9ACFE69624309AF80071CC93 /* kernel_patcher.h in Headers */,
 				9ACFE69724309AF80071CC93 /* memory.h in Headers */,
 				9ACFE69824309AF80071CC93 /* menu.h in Headers */,
+				9A105B2824464A830006DE06 /* VectorGraphics.h in Headers */,
 				9ACFE69924309AF80071CC93 /* MSUEFICADB.h in Headers */,
 				9ACFE69A24309AF80071CC93 /* Hibernate.h in Headers */,
 				9ACFE69B24309AF80071CC93 /* strlen_test.h in Headers */,
@@ -1654,6 +1676,7 @@
 			files = (
 				9AF41584242CD75C00D2644C /* panic.h in Headers */,
 				9AF41585242CD75C00D2644C /* MSKEK.h in Headers */,
+				9A105B2624464A830006DE06 /* VectorGraphics.h in Headers */,
 				9AF41586242CD75C00D2644C /* menu_items.h in Headers */,
 				9AF41587242CD75C00D2644C /* XTheme.h in Headers */,
 				9AF41589242CD75C00D2644C /* nvidia.h in Headers */,
@@ -1732,6 +1755,7 @@
 				9AF415D7242CD75C00D2644C /* HdaCodecDump.h in Headers */,
 				9AF415D8242CD75C00D2644C /* kext_inject.h in Headers */,
 				9AF415D9242CD75C00D2644C /* Nvram.h in Headers */,
+				9A105B2E24464A830006DE06 /* BmLib.h in Headers */,
 				9AF415DA242CD75C00D2644C /* poolprint-test-cpp_conf.h in Headers */,
 				9AF415DB242CD75C00D2644C /* gma.h in Headers */,
 				9AF415DC242CD75C00D2644C /* sse3_patcher.h in Headers */,
@@ -1758,6 +1782,7 @@
 			files = (
 				9AF41661242CDA5800D2644C /* panic.h in Headers */,
 				9AF41662242CDA5800D2644C /* MSKEK.h in Headers */,
+				9A105B2724464A830006DE06 /* VectorGraphics.h in Headers */,
 				9AF41663242CDA5800D2644C /* menu_items.h in Headers */,
 				9AF41664242CDA5800D2644C /* XTheme.h in Headers */,
 				9AF41666242CDA5800D2644C /* nvidia.h in Headers */,
@@ -1836,6 +1861,7 @@
 				9AF416B4242CDA5800D2644C /* HdaCodecDump.h in Headers */,
 				9AF416B5242CDA5800D2644C /* kext_inject.h in Headers */,
 				9AF416B6242CDA5800D2644C /* Nvram.h in Headers */,
+				9A105B2F24464A830006DE06 /* BmLib.h in Headers */,
 				9AF416B7242CDA5800D2644C /* poolprint-test-cpp_conf.h in Headers */,
 				9AF416B8242CDA5800D2644C /* gma.h in Headers */,
 				9AF416B9242CDA5800D2644C /* sse3_patcher.h in Headers */,
@@ -2095,6 +2121,7 @@
 				9AC77FC224176C04005CDD5C /* XObjArray_tests.cpp in Sources */,
 				9AC7808224176C04005CDD5C /* memory.cpp in Sources */,
 				9AC7803B24176C04005CDD5C /* cpu.cpp in Sources */,
+				9A105B2924464A830006DE06 /* ftol.asm in Sources */,
 				9AC7800124176C04005CDD5C /* LegacyBoot.cpp in Sources */,
 				9AC7807524176C04005CDD5C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AC7801F24176C04005CDD5C /* LegacyBiosThunk.cpp in Sources */,
@@ -2212,6 +2239,7 @@
 				9ACFE6E924309AF80071CC93 /* XObjArray_tests.cpp in Sources */,
 				9ACFE6EB24309AF80071CC93 /* memory.cpp in Sources */,
 				9ACFE6EC24309AF80071CC93 /* cpu.cpp in Sources */,
+				9A105B2C24464A830006DE06 /* ftol.asm in Sources */,
 				9ACFE6ED24309AF80071CC93 /* LegacyBoot.cpp in Sources */,
 				9ACFE6EE24309AF80071CC93 /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9ACFE6EF24309AF80071CC93 /* LegacyBiosThunk.cpp in Sources */,
@@ -2329,6 +2357,7 @@
 				9AF41621242CD75C00D2644C /* memory.cpp in Sources */,
 				9AF41622242CD75C00D2644C /* cpu.cpp in Sources */,
 				9AF41623242CD75C00D2644C /* LegacyBoot.cpp in Sources */,
+				9A105B2A24464A830006DE06 /* ftol.asm in Sources */,
 				9AF41624242CD75C00D2644C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AF41625242CD75C00D2644C /* LegacyBiosThunk.cpp in Sources */,
 				9A09863224389A6A00826276 /* menu.cpp in Sources */,
@@ -2446,6 +2475,7 @@
 				9AF416FE242CDA5800D2644C /* memory.cpp in Sources */,
 				9AF416FF242CDA5800D2644C /* cpu.cpp in Sources */,
 				9AF41700242CDA5800D2644C /* LegacyBoot.cpp in Sources */,
+				9A105B2B24464A830006DE06 /* ftol.asm in Sources */,
 				9AF41701242CDA5800D2644C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AF41702242CDA5800D2644C /* LegacyBiosThunk.cpp in Sources */,
 				9A09863324389A6A00826276 /* menu.cpp in Sources */,

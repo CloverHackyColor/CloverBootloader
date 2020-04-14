@@ -378,8 +378,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 EFI_STATUS XTheme::LoadSvgFrame(INTN i, OUT XImage* XFrame)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
-  XString XFrameName("frame_"_XS);
-  XFrameName += SPrintf("%04lld", i+1);
+  XString XFrameName = SPrintf("frame_%04lld", i+1);
   Status = ParseSVGXIcon(BUILTIN_ICON_ANIME, XFrameName, XFrame);
   if (EFI_ERROR(Status)) {
     DBG("frame '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
