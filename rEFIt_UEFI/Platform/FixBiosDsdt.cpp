@@ -2961,7 +2961,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   if (gSettings.FakeLAN) {
     FakeID = gSettings.FakeLAN >> 16;
     FakeVen = gSettings.FakeLAN & 0xFFFF;
-    snprintf(NameCard, 32, "pci%04x,%04x", FakeVen, FakeID);
+    snprintf(NameCard, 32, "pci%x,%x", FakeVen, FakeID);
     Netmodel[card] = get_net_model((FakeVen << 16) + FakeID);
   }
 
@@ -3163,7 +3163,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   if (gSettings.FakeWIFI) {
     FakeID = gSettings.FakeWIFI >> 16;
     FakeVen = gSettings.FakeWIFI & 0xFFFF;
-    snprintf(NameCard, 32, "pci%04x,%04x", FakeVen, FakeID);
+    snprintf(NameCard, 32, "pci%x,%x", FakeVen, FakeID);
   }
 
   PCIADR = GetPciDevice(dsdt, len);

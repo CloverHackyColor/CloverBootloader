@@ -2232,8 +2232,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     CHAR8           compatible[64];
     UINT32 FakeLAN = 0x0030168c;
     UINT32 FakeID = FakeLAN >> 16;
-    UINTN FakeVendor = FakeLAN & 0xFFFF;
-    snprintf(compatible, 64, "pci%04llx,%04x", FakeVendor, FakeID);
+    UINT32 FakeVendor = FakeLAN & 0xFFFF;
+    snprintf(compatible, 64, "pci%x,%x", FakeVendor, FakeID);
     DBG(" FakeLAN = 0x%x\n", FakeLAN);
     DBG(" Compatible=%s strlen=%ld sizeof=%ld iStrLen=%lld\n", compatible,
         strlen(compatible), sizeof(compatible), iStrLen(compatible, 64));
