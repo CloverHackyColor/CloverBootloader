@@ -838,6 +838,20 @@
 				<dict>
 					<key>Hidden</key>
 					<false/>
+					<key>Disabled</key>
+					<false/>
+					<key>Image</key>
+					<string>os_mageia</string>
+					<key>Path</key>
+					<string>\EFI\MAGEIA\GRUBX64.efi</string>
+					<key>Title</key>
+					<string>Mageia Linux</string>
+					<key>Type</key>
+					<string>Linux</string>
+				</dict>
+				<dict>
+					<key>Hidden</key>
+					<false/>
 					<key>Hotkey</key>
 					<string>M</string>
 					<key>Volume</key>
