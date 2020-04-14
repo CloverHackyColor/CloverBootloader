@@ -119,12 +119,12 @@ protected:
 class IndexedImage
 {
 public:
-  INTN Id;
 protected:
+  INTN Id;
 
   XImage Image;
 public:
-  INTN getIndex() { return  Id; }
+  INTN getIndex() const { return  Id; }
   void setIndex(INTN Index) { Id = Index; }
   const XImage& getImage() const { return Image; }
   void setImage(const XImage& Sample) { Image = Sample; }

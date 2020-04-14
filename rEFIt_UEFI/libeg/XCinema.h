@@ -23,10 +23,11 @@ class XTheme;
 
 class FILM
 {
+protected:
+  INTN      Id; //ScreenID, enumeration value but keep it to be int for extensibility
 public:
   //I see no reason to make they protected
   bool      RunOnce;
-  INTN      Id; //ScreenID, enumeration value but keep it to be int for extensibility
   INTN      NumFrames; //set by user in Theme.plist or in Theme.svg
   INTN      FrameTime; //usually 50, 100, 200 ms
   INTN      FilmX, FilmY;  //relative
@@ -45,9 +46,12 @@ public:
 
 public:
   FILM() {}
-  FILM(INTN Id) : RunOnce(false), Id(Id)
+  FILM(INTN Id) : Id(Id), RunOnce(false)
    {}
   ~FILM() {}
+
+  INTN GetIndex() { return  Id; }
+  void SetIndex(INTN Index) { Id = Index; }
 
   const XImage& GetImage(INTN Index) const;
   const XImage& GetImage() const;
@@ -55,7 +59,7 @@ public:
   size_t Size() { return Frames.size(); }
   INTN LastFrameID() { return LastIndex; }
   bool Finished() { return CurrentFrame == 0; }
-  void GetFrames(XTheme& TheTheme, const XStringW& Path); //read image sequence from Theme/Path/
+  void GetFrames(XTheme& TheTheme/*, const XStringW& Path*/); //read image sequence from Theme/Path/
   void SetPlace(const EG_RECT& Rect) { FilmPlace = Rect; }
   void Advance() { ++CurrentFrame %= (LastIndex + 1); }
   void Reset() { CurrentFrame = 0; }

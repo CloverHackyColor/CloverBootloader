@@ -3750,7 +3750,7 @@ XTheme::GetThemeTagSettings (void* DictP)
         break;
       }
       Dict2 = GetProperty (Dict3, "ID");
-      NewFilm->Id = (UINTN)GetPropertyInteger (Dict2, 1); //default=main screen
+      NewFilm->SetIndex((UINTN)GetPropertyInteger (Dict2, 1)); //default=main screen
 
       Dict2 = GetProperty (Dict3, "Path");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {

@@ -52,7 +52,7 @@ VOID REFIT_MENU_SCREEN::UpdateFilm()
 FILM* XCinema::GetFilm(INTN Id)
 {
   for (size_t i = 0; i < Cinema.size(); ++i) {
-    if (Cinema[i].Id == Id) {
+    if (Cinema[i].GetIndex() == Id) {
       return &Cinema[i];
     }
   }
@@ -68,7 +68,7 @@ static XImage NullImage;
 const XImage& FILM::GetImage(INTN Index) const
 {
   for (size_t i = 0; i < Frames.size(); ++i) {
-    if (Frames[i].Id == Index) {
+    if (Frames[i].getIndex() == Index) {
       return Frames[i].getImage();
     }
   }
@@ -78,7 +78,7 @@ const XImage& FILM::GetImage(INTN Index) const
 const XImage& FILM::GetImage() const
 {
   for (size_t i = 0; i < Frames.size(); ++i) {
-    if (Frames[i].Id == CurrentFrame) {
+    if (Frames[i].getIndex() == CurrentFrame) {
       return Frames[i].getImage();
     }
   }
@@ -96,7 +96,7 @@ void FILM::AddFrame(XImage* Frame, INTN Index)
   }
 }
 
-void FILM::GetFrames(XTheme& TheTheme, const XStringW& Path)
+void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path already exist as a member. Is it the same ?
 {
   EFI_FILE *ThemeDir = TheTheme.ThemeDir;
   EFI_STATUS Status;
