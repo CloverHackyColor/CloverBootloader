@@ -319,19 +319,19 @@ const XImage& XTheme::GetIcon(INTN Id)
         return Icons[i].Image;
       }
       //if not found then create new one from embedded
-      Icon* NewIcon = new Icon(Id, true);
+      Icon NewIcon(Id, true);
 //      NewIcon.GetEmbedded();
 //      DBG("got embedded icon %lld name{%s}\n", Id, IconsNames[Id]);
-      if (!Daylight && !NewIcon->ImageNight.isEmpty()) {
+      if (!Daylight && !NewIcon.ImageNight.isEmpty()) {
 //        DBG("got night icon and cache\n");
-        Icons[i].ImageNight = NewIcon->ImageNight; //
-        return NewIcon->ImageNight;
+        Icons[i].ImageNight = NewIcon.ImageNight; //
+        return Icons[i].ImageNight; // Do not return NewIcon.ImageNight, it'll freed
       }
       //if daylight or night icon absent
-      if (!NewIcon->Image.isEmpty()) {
+      if (!NewIcon.Image.isEmpty()) {
  //       DBG("got day icon and cache\n");
-        Icons[i].Image = NewIcon->Image;
-        return NewIcon->Image;
+        Icons[i].Image = NewIcon.Image;
+        return Icons[i].Image;; // Do not return NewIcon.ImageNight, it'll freed
       }
     }
   }
