@@ -481,13 +481,49 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
 #if XCINEMA
 BOOLEAN REFIT_MENU_SCREEN::GetAnime()
 {
-  FilmX = ThemeX.Cinema.GetFilm(ID);
-  return FilmX != nullptr;
+  FilmC = ThemeX.Cinema.GetFilm(ID);
+  return FilmC != nullptr;
 }
 
 VOID REFIT_MENU_SCREEN::InitAnime()
 {
-  //something
+  if (FilmC && (FilmC->FilmX >=0) && (FilmC->FilmX <=100) &&
+      (FilmC->FilmY >=0) && (FilmC->FilmY <=100)) {
+    // Check if screen size being used is different from theme origination size.
+    // If yes, then recalculate the animation placement % value.
+    // This is necessary because screen can be a different size, but anim is not scaled.
+    XImage FirstFrame = FilmC->GetImage(FilmC->LastFrameID()); //can not be absent
+    INTN CWidth = FirstFrame.GetWidth();
+    INTN CHeight = FirstFrame.GetHeight();
+    FilmC->FilmPlace.XPos = HybridRepositioning(FilmC->ScreenEdgeHorizontal, FilmC->FilmX, CWidth,  UGAWidth,  ThemeX.ThemeDesignWidth );
+    FilmC->FilmPlace.YPos = HybridRepositioning(FilmC->ScreenEdgeVertical,   FilmC->FilmY, CHeight, UGAHeight, ThemeX.ThemeDesignHeight);
+
+    // Does the user want to fine tune the placement?
+    FilmC->FilmPlace.XPos = CalculateNudgePosition(FilmC->FilmPlace.XPos, FilmC->NudgeX, CWidth, UGAWidth);
+    FilmC->FilmPlace.YPos = CalculateNudgePosition(FilmC->FilmPlace.YPos, FilmC->NudgeY, CHeight, UGAHeight);
+
+    FilmC->FilmPlace.Width = CWidth;
+    FilmC->FilmPlace.Height = CHeight;
+    DBG("recalculated Film position [%lld, %lld]\n", FilmC->FilmPlace.XPos, FilmC->FilmPlace.YPos);
+  } else {
+    // We are here if there is no anime, or if we use oldstyle placement values
+    // For both these cases, FilmPlace will be set after banner/menutitle positions are known
+    FilmPlace.XPos = 0;
+    FilmPlace.YPos = 0;
+    FilmPlace.Width = 0;
+    FilmPlace.Height = 0;
+  }
+  if (FilmC != NULL && FilmC->NumFrames != 0) {
+    DBG(" Anime seems OK, init it\n");
+    AnimeRun = TRUE;
+    FilmC->Reset();
+    LastDraw = 0;
+  } else {
+    //    DBG("not run anime\n");
+    AnimeRun = FALSE;
+  }
+
+
 }
 #else
 

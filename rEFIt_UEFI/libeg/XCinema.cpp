@@ -29,22 +29,22 @@
 VOID REFIT_MENU_SCREEN::UpdateFilm()
 {
   // here we propose each screen has own link to a Film
-  UINT64      Now = AsmReadTsc();
+  INT64      Now = AsmReadTsc();
 
   if (LastDraw == 0) {
-    //save background into last frame
+    //save background into special place
+    FilmPlaceImage.GetArea(FilmC->FilmPlace);
   }
 
-  if (TimeDiff(LastDraw, Now) < FrameTime) return;
-  XImage *Frame = nullptr; // a link to frame needed
-//  EFI_STATUS Status = ThemeX.Cinema.GetFrame(CurrentFrame);
-  EFI_STATUS Status = FilmX->GetFrame(CurrentFrame, Frame); //get a pointer to existing frame
-  if (!EFI_ERROR(Status) && Frame != nullptr) {
-    Frame->Draw(FilmPlace.XPos, FilmPlace.YPos);
+  if (TimeDiff(LastDraw, Now) < (UINTN)FilmC->FrameTime) return;
+
+  XImage Frame = FilmC->GetImage(); //take current image
+  if (!Frame.isEmpty()) {
+    Frame.DrawOnBack(FilmC->FilmPlace.XPos, FilmC->FilmPlace.YPos, FilmPlaceImage);
   }
-  FilmX->Advance(CurrentFrame); //next frame no matter if previous was not found
-  if (CurrentFrame == 0) { //first loop finished
-    AnimeRun = !Once; //will stop anime
+  FilmC->Advance(); //next frame no matter if previous was not found
+  if (FilmC->Finished()) { //first loop finished
+    AnimeRun = !FilmC->RunOnce; //will stop anime if it set as RunOnce
   }
   LastDraw = Now;
 }
@@ -59,13 +59,60 @@ FILM* XCinema::GetFilm(INTN Id)
   return nullptr;
 }
 
-EFI_STATUS FILM::GetFrame(IN INTN Index, OUT XImage *Image)
+void XCinema::AddFilm(FILM* NewFilm)
+{
+  Cinema.AddReference(NewFilm, true);
+}
+
+static XImage NullImage;
+const XImage& FILM::GetImage(INTN Index) const
 {
   for (size_t i = 0; i < Frames.size(); ++i) {
-    if (Frames[i].Index == Index) {
-      Image = &Frames[i].Image;
-      return EFI_SUCCESS;
+    if (Frames[i].Id == Index) {
+      return Frames[i].getImage();
     }
   }
-  return EFI_NOT_FOUND;
+  return NullImage;
+}
+
+const XImage& FILM::GetImage() const
+{
+  for (size_t i = 0; i < Frames.size(); ++i) {
+    if (Frames[i].Id == CurrentFrame) {
+      return Frames[i].getImage();
+    }
+  }
+  return NullImage;
+}
+
+
+void FILM::AddFrame(XImage* Frame, INTN Index)
+{
+  IndexedImage* NewFrame = new IndexedImage(Index);
+  NewFrame->setImage(*Frame);
+  Frames.AddReference(NewFrame, true);
+  if (Index > LastIndex) {
+    LastIndex = Index;
+  }
+}
+
+void FILM::GetFrames(XTheme& TheTheme, const XStringW& Path)
+{
+  EFI_FILE *ThemeDir = TheTheme.ThemeDir;
+  EFI_STATUS Status;
+  for (INTN Index = 0; Index < NumFrames; Index++) {
+    XImage NewImage;
+    Status = EFI_NOT_FOUND;
+    if (TheTheme.TypeSVG) {
+      Status = TheTheme.LoadSvgFrame(Index, &NewImage);
+    } else {
+      XStringW Name = SWPrintf("%ls\\%ls_%03lld.png", Path.wc_str(), Path.wc_str(), Index);
+      if (FileExists(ThemeDir, Name.wc_str())) {
+        Status = NewImage.LoadXImage(ThemeDir, Name);
+      }
+    }
+    if (!EFI_ERROR(Status)) {
+      AddFrame(&NewImage, Index);
+    }
+  }
 }

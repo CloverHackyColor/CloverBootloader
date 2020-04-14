@@ -55,7 +55,7 @@ public:
   XImage(UINTN W, UINTN H);
   XImage(EG_IMAGE* egImage);
   XImage(const XImage& Image, float scale = 0.f); //the constructor can accept 0 scale as 1.f
-  ~XImage();
+  virtual ~XImage();
 
   XImage& operator= (const XImage& other);
 
@@ -114,6 +114,24 @@ public:
   void DummyImage(IN UINTN PixelSize);
 protected:
   UINT8 Smooth(const UINT8* p, int a01, int a10, int a21, int a12,  float dx, float dy, float scale);
+};
+
+class IndexedImage
+{
+public:
+  INTN Id;
+protected:
+
+  XImage Image;
+public:
+  INTN getIndex() { return  Id; }
+  void setIndex(INTN Index) { Id = Index; }
+  const XImage& getImage() const { return Image; }
+  void setImage(const XImage& Sample) { Image = Sample; }
+
+  IndexedImage() : Id(0), Image() {}
+  IndexedImage(INTN ID) : Id(ID), Image() {}
+  ~IndexedImage() {}
 };
 
 #endif //__XSTRINGW_H__

@@ -238,7 +238,7 @@ void XTheme::Init()
   BadgeScale = 4;   // TODO now we have float scale = BadgeScale/16
   ThemeDesignWidth = 0xFFFF;
   ThemeDesignHeight = 0xFFFF;
-  BannerPosX = 0xFFFF; // the value out of range [0,1000]
+  BannerPosX = 0xFFFF; // the value out of range [0,1000] means default
   BannerPosY = 0xFFFF;
   BannerEdgeHorizontal = 0;
   BannerEdgeVertical = 0;
@@ -580,14 +580,7 @@ void XTheme::ClearScreen() //and restore background and banner
   if (!Banner.isEmpty()) {
     Background.Compose(BannerPlace.XPos, BannerPlace.YPos, Banner, true);
   }
-
   Background.DrawWithoutCompose(0, 0, UGAWidth, UGAHeight);
-//  Background.Draw(0,0,0,true);
-  //then draw banner
-//  if (!Banner.isEmpty()) {
-//    Banner.Draw(BannerPlace.XPos, BannerPlace.YPos, Scale);
-//  }
-  
 }
 
 #if 0

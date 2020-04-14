@@ -53,13 +53,12 @@ extern BOOLEAN DayLight;
 
 
 textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
-NSVGparser      *mainParser = NULL;  //it must be global variable
 
-EFI_STATUS XTheme::ParseSVGXIcon(void *parser, INTN Id, const XString& IconNameX, XImage* Image)
+EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
-  NSVGparser *p = (NSVGparser *)parser;
+  NSVGparser *p = (NSVGparser *)SVGParser;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   SVGimage = p->image;
   NSVGshape   *shape;
@@ -237,6 +236,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 {
   EFI_STATUS      Status;
   NSVGimage       *SVGimage;
+  NSVGparser     *mainParser = (NSVGparser*)SVGParser;
 
   Icons.Empty();
 
@@ -274,20 +274,20 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, &BigBack);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background"_XS, &BigBack);
   }
   DBG(" Background parsed [%lld, %lld]\n", BigBack.GetWidth(), BigBack.GetHeight()); //Background parsed [1067, 133]
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
   }
   DBG("Banner parsed\n");
   BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
@@ -300,14 +300,14 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       continue;
     }
     Icon* NewIcon = new Icon(i, false); //initialize without embedded
-    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name, &NewIcon->Image);
+    Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image);
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
         (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
       NewIcon->Image = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
     }
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
-    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
+    Status = ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
 //    DBG("...night status %s\n", strerror(Status));
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
@@ -329,10 +329,10 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
+    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &SelectionImages[4]);
+    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &SelectionImages[4]);
   }
 
   //buttons
@@ -343,6 +343,9 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   //SelectionImages[i].Draw(i*100, 0);
   //}
 
+#if XCINEMA
+  //nothing to do?
+#else
   //banner animation
   GUI_ANIME *Anime = (__typeof__(Anime))AllocateZeroPool (sizeof(GUI_ANIME));
   Anime->ID = 1; //main screen
@@ -355,7 +358,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   Anime->NudgeX = INITVALUE;
   Anime->NudgeY = INITVALUE;
   GuiAnime = Anime;
-  
+#endif
 //  nsvgDeleteRasterizer(rast);
   
   TypeSVG = TRUE;
@@ -371,10 +374,26 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   return Status;
 }
 
+#if XCINEMA
+EFI_STATUS XTheme::LoadSvgFrame(INTN i, OUT XImage* XFrame)
+{
+  EFI_STATUS Status = EFI_NOT_FOUND;
+  XString XFrameName("frame_"_XS);
+  XFrameName += SPrintf("%04lld", i+1);
+  Status = ParseSVGXIcon(BUILTIN_ICON_ANIME, XFrameName, XFrame);
+  if (EFI_ERROR(Status)) {
+    DBG("frame '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
+  }
+
+  return Status;
+}
+#else
+
 EG_IMAGE * LoadSvgFrame(INTN i)
 {
 //  EG_IMAGE  *Frame = NULL;
   XImage XFrame;
+//  NSVGparser     *mainParser = (NSVGparser*)ThemeX.SVGParser;
   EFI_STATUS Status;
 //  CHAR8 FrameName[64];
   XString XFrameName("frame_"_XS);
@@ -383,13 +402,13 @@ EG_IMAGE * LoadSvgFrame(INTN i)
   XFrameName += SPrintf("%04lld", i+1); //I need exactly 4 symbols with leading zero
 //  printf(FrameName, 63, "frame_%lld", i+1);
 
-  Status = ThemeX.ParseSVGXIcon(mainParser, BUILTIN_ICON_ANIME, XFrameName, &XFrame);
+  Status = ThemeX.ParseSVGXIcon(BUILTIN_ICON_ANIME, XFrameName, &XFrame);
   if (EFI_ERROR(Status)) {
     DBG("icon '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
   }
   return XFrame.ToEGImage();
 }
-
+#endif
 // it is not draw, it is render and mainly used in egRenderText
 // which is used in icns.cpp as an icon replacement if no image found, looks like not used
 // in menu.cpp 3 places

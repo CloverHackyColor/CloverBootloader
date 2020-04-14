@@ -572,6 +572,6 @@ struct NSVGrasterizer
 };
 
 extern NSVGfontChain *fontsDB;
-extern struct NSVGparser *mainParser;
+//extern struct NSVGparser *mainParser;
 
 #endif

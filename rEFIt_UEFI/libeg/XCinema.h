@@ -17,42 +17,50 @@ extern "C" {
 #include "../cpp_foundation/XStringW.h"
 #include "../libeg/libeg.h"
 #include "XImage.h"
+#include "XTheme.h"
 
-typedef struct FRAME {
-  INTN Index;
-  XImage Image;
-} FRAME;
+class XTheme;
 
 class FILM
 {
 public:
-  bool RunOnce;
-  INTN Id; //ScreenID, enumeration value but keep it to be int for extensibility
-protected:
+  //I see no reason to make they protected
+  bool      RunOnce;
+  INTN      Id; //ScreenID, enumeration value but keep it to be int for extensibility
+  INTN      NumFrames; //set by user in Theme.plist or in Theme.svg
+  INTN      FrameTime; //usually 50, 100, 200 ms
+  INTN      FilmX, FilmY;  //relative
+  INTN      ScreenEdgeHorizontal;
+  INTN      ScreenEdgeVertical;
+  INTN      NudgeX, NudgeY;
+  XStringW  Path; //user defined name for folder and files Path/Path_002.png etc
 
-  INTN FrameTime; //usually 50, 100, 200 ms
-  XString Path; //user defined name for folder and files Path/Path_002.png etc
-  XObjArray<FRAME> Frames; //Frames can be not sorted
+protected:
+  XObjArray<IndexedImage> Frames; //Frames can be not sorted
   INTN LastIndex; // it is not Frames.size(), it is last index inclusive, so frames 0,1,2,5,8 be LastIndex = 8
-  EG_RECT FilmPlace;
-//  INTN CurrentFrame; // like a static value will be increased between 0..LastIndex, no it's a part of Screen
+  INTN CurrentFrame; // must be unique for each film
 
 public:
-  FILM(): RunOnce(false), Id(0), FrameTime(0), Path(), Frames(), LastIndex(0), FilmPlace()
-  {}
-  FILM(INTN Id) : RunOnce(false), Id(Id), FrameTime(0), Path(), Frames(),
-    LastIndex(0), FilmPlace() {}
+  EG_RECT FilmPlace;  // Screen has several Films each in own place
+
+public:
+  FILM() {}
+  FILM(INTN Id) : RunOnce(false), Id(Id)
+   {}
   ~FILM() {}
 
-  const XImage& GetImage(INTN Index);
-  void AddFrame(const FRAME& Frame, INTN Index);
+  const XImage& GetImage(INTN Index) const;
+  const XImage& GetImage() const;
+  void AddFrame(XImage* Frame, INTN Index); //IndexedImage will be created
   size_t Size() { return Frames.size(); }
-  INTN LastFrame() { return LastIndex; }
-  void GetFilm(const XStringW& Path); //read from Theme
-  void SetPlace(const EG_RECT& Rect);
-  void Advance(INTN& Current) { ++Current %= (LastIndex + 1); }
-  EFI_STATUS GetFrame(IN INTN Index, OUT XImage *Frame); //usually Index=CurrentFrame
-  EFI_STATUS GetFrame(OUT XImage *Frame); 
+  INTN LastFrameID() { return LastIndex; }
+  bool Finished() { return CurrentFrame == 0; }
+  void GetFrames(XTheme& TheTheme, const XStringW& Path); //read image sequence from Theme/Path/
+  void SetPlace(const EG_RECT& Rect) { FilmPlace = Rect; }
+  void Advance() { ++CurrentFrame %= (LastIndex + 1); }
+  void Reset() { CurrentFrame = 0; }
+//  EFI_STATUS GetFrame(IN INTN Index, OUT XImage *Frame); //usually Index=CurrentFrame
+//  EFI_STATUS GetFrame(OUT XImage *Frame); 
   
 };
 
@@ -62,6 +70,7 @@ public:
 // then it should contain Screen->ID for each film
 // but for next future we want to have other animated images in addition to screen->titleimage
 // so let it be frames arrays each with own purpose (Id)
+//
 // XTheme contains Cinema which is an array of FILMs
 // Each Screen contains a pointer to a FILM. And moreover titleFilm, or BackgroundFilm or even entryFilm
 // Next problem is a timeout between frames.
@@ -70,7 +79,7 @@ public:
 // if yes then update. Static index?
 //
 // in the far future I'll plan to make dynamic SVG: parse SVGIcon with a variable argument
-// and then rasterize it. Real SVG contains constants only so it will be dynamicSVG.
+// and then rasterize it. Real SVG contains constants only so it will be new dynamicSVG.
 // then Entry->Image should be reparsed each time it created or contains flag to update every frameTime
 
 class XCinema
@@ -78,14 +87,12 @@ class XCinema
   protected:
   XObjArray<FILM> Cinema;
 
-
   public:
   XCinema() {}
   ~XCinema() {}
 
   FILM* GetFilm(INTN Id);
-  void AddFilm(const FILM& NewFilm, INTN Id);
-
+  void AddFilm(FILM* NewFilm);
 
 };
 

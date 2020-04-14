@@ -350,7 +350,10 @@ extern CHAR16           *OEMPath;
 extern EFI_FILE         *OemThemeDir;
 
 //extern BOOLEAN          MainAnime;
+#if XCINEMA
+#else
 extern GUI_ANIME        *GuiAnime;
+#endif
 
 extern REFIT_VOLUME     *SelfVolume;
 #ifdef __cplusplus

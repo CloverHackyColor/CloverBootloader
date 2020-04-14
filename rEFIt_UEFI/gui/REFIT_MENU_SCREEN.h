@@ -95,7 +95,8 @@ public:
   EG_RECT           FilmPlace;
 
 #if XCINEMA
-  FILM            *FilmX;
+  FILM            *FilmC;
+  XImage          FilmPlaceImage;
 #else
   EG_IMAGE        **Film;
 #endif
@@ -130,7 +131,7 @@ public:
               AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
 						  Frames(0), FrameTime(0),
 #if XCINEMA
-  FilmX(),
+  FilmC(), FilmPlaceImage(),
 #else
   Film(0),
 #endif
@@ -143,7 +144,7 @@ public:
   AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
 #if XCINEMA
-  FilmX(),
+  FilmC(), FilmPlaceImage(),
 #else
   Film(0),
 #endif
@@ -155,7 +156,7 @@ public:
   Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
 #if XCINEMA
-  FilmX(),
+  FilmC(), FilmPlaceImage(),
 #else
   Film(0),
 #endif
@@ -172,7 +173,7 @@ public:
   AnimeRun(0), Once(0), LastDraw(0), CurrentFrame(0),
   Frames(0), FrameTime(0),
 #if XCINEMA
-  FilmX(),
+  FilmC(), FilmPlaceImage(),
 #else
   Film(0),
 #endif
