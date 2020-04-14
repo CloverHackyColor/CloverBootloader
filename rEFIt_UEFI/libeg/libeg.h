@@ -142,6 +142,7 @@ extern "C" {
 } // extern "C"
 #endif
 
+#include "../cpp_foundation/XString.h"
 /* types */
 
 typedef enum {
@@ -459,7 +460,7 @@ VOID    egDumpGOPVideoModes(VOID);
 EFI_STATUS egSetMode(INT32 Next);
 
 VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
-CONST CHAR16* egScreenDescription(VOID);
+XString egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);
 BOOLEAN egIsGraphicsModeEnabled(VOID);
 VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);

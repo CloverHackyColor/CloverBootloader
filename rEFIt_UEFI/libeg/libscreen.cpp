@@ -439,20 +439,18 @@ VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
         *ScreenHeight = egScreenHeight;
 }
 
-CONST CHAR16 * egScreenDescription(VOID)
+XString egScreenDescription(VOID)
 {
     if (egHasGraphics) {
         if (GraphicsOutput != NULL) {
-            return PoolPrint(L"Graphics Output (UEFI), %dx%d",
-                             egScreenWidth, egScreenHeight);
+            return SPrintf("Graphics Output (UEFI), %lldx%lld", egScreenWidth, egScreenHeight);
         } else if (UgaDraw != NULL) {
-            return PoolPrint(L"UGA Draw (EFI 1.10), %dx%d",
-                             egScreenWidth, egScreenHeight);
+            return SPrintf("UGA Draw (EFI 1.10), %lldx%lld", egScreenWidth, egScreenHeight);
         } else {
-            return L"Internal Error";
+            return "Internal Error"_XS;
         }
     } else {
-        return L"Text Console";
+        return "Text Console"_XS;
     }
 }
 

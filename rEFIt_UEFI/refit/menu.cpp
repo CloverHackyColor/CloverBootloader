@@ -1266,7 +1266,7 @@ VOID AboutRefit(VOID)
     AboutMenu.AddMenuInfo_f(" Platform: unknown");
 #endif
 	  AboutMenu.AddMenuInfo_f(" Firmware: %ls rev %d.%04d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1));
-	  AboutMenu.AddMenuInfo_f(" Screen Output: %ls", egScreenDescription());
+	  AboutMenu.AddMenuInfo_f(" Screen Output: %s", egScreenDescription().c_str());
     AboutMenu.AnimeRun = AboutMenu.GetAnime();
     AboutMenu.AddMenuEntry(&MenuEntryReturn, false);
   } else if (AboutMenu.Entries.size() >= 2) {
@@ -1275,7 +1275,7 @@ VOID AboutRefit(VOID)
     */
  //   FreePool(AboutMenu.Entries[AboutMenu.Entries.size()-2].Title); //what is FreePool(XStringW)?
 
-    AboutMenu.Entries[AboutMenu.Entries.size()-2].Title.SWPrintf(" Screen Output: %ls", egScreenDescription());
+    AboutMenu.Entries[AboutMenu.Entries.size()-2].Title.SWPrintf(" Screen Output: %s", egScreenDescription().c_str());
   }
 
   AboutMenu.RunMenu(NULL);
