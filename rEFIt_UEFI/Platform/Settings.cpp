@@ -1907,13 +1907,13 @@ FillinCustomEntry (
       } else if (AsciiStriCmp (Prop->string, "Theme") == 0) {
         Entry->CustomBoot  = CUSTOM_BOOT_THEME;
       } else {
-   //     CHAR16 *customLogo = PoolPrint(L"%a", Prop->string);
+        // CHAR16 *customLogo = PoolPrint(L"%a", Prop->string);
         XStringW customLogo = XStringW().takeValueFrom(Prop->string);
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
         Entry->CustomLogo.LoadXImage(SelfRootDir, customLogo);
         if (Entry->CustomLogo.isEmpty()) {
           DBG ("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
-          Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+          Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
         }
       }
     } else if ((Prop->type == kTagTypeData) &&
@@ -1922,12 +1922,14 @@ FillinCustomEntry (
       Entry->CustomLogo.FromPNG(Prop->data, Prop->dataLen);
       if (Entry->CustomLogo.isEmpty()) {
         DBG ("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
-        Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+        Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
       }
     } else {
       Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
     }
-	  DBG ("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomBoot), Entry->CustomLogo.GetWidth());
+    DBG ("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomBoot), Entry->CustomLogo.GetWidth());
+  } else {
+    Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
   }
 
   Prop = GetProperty(DictPointer, "BootBgColor");
@@ -2626,19 +2628,17 @@ GetEarlyUserSettings (
           } else if (AsciiStriCmp (Prop->string, "Theme") == 0) {
             gSettings.CustomBoot = CUSTOM_BOOT_THEME;
           } else {
-            CHAR16 *customLogo   = PoolPrint (L"%a", Prop->string);
+            // CHAR16 *customLogo   = PoolPrint (L"%a", Prop->string);
+            XStringW customLogo = XStringW().takeValueFrom(Prop->string);
             gSettings.CustomBoot = CUSTOM_BOOT_USER;
             if (gSettings.CustomLogo != NULL) {
               delete gSettings.CustomLogo;
             }
             gSettings.CustomLogo = new XImage;
             gSettings.CustomLogo->LoadXImage(RootDir, customLogo);
-            if (gSettings.CustomLogo == NULL) {
-              DBG ("Custom boot logo not found at path `%ls`!\n", customLogo);
-            }
-
-            if (customLogo != NULL) {
-              FreePool (customLogo);
+            if (gSettings.CustomLogo->isEmpty()) {
+              DBG ("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
+              gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
             }
           }
         } else if ((Prop->type == kTagTypeData) &&
@@ -2651,7 +2651,7 @@ GetEarlyUserSettings (
           gSettings.CustomLogo->FromPNG(Prop->data, Prop->dataLen);
           if (gSettings.CustomLogo->isEmpty()) {
             DBG ("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
-            gSettings.CustomBoot   = CUSTOM_BOOT_DISABLED;
+            gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
           }
         } else {
           gSettings.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
@@ -2659,8 +2659,7 @@ GetEarlyUserSettings (
       } else {
         gSettings.CustomBoot   = CUSTOM_BOOT_DISABLED;
       }
-
-		DBG ("Custom boot %s (0x%llX)\n", CustomBootModeToStr(gSettings.CustomBoot), (uintptr_t)gSettings.CustomLogo);
+      DBG ("Custom boot %s (0x%llX)\n", CustomBootModeToStr(gSettings.CustomBoot), (uintptr_t)gSettings.CustomLogo);
     }
 
     //*** SYSTEM ***
