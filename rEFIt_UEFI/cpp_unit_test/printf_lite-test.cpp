@@ -75,7 +75,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 	int vsnwprintf_ret = PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnwprint, PRINTF_CFUNCTION_SUFFIX)(wbuf, sizeof(wbuf)/sizeof(wchar_t), format, valist);
 	va_end(valist);
 //delay_ms(10);
-	if ( memcmp(wbuf, expectResult, wchar_len(expectResult)*sizeof(expectResult[0])) != 0 ) {
+	if ( memcmp(wbuf, expectResult, size_of_utf_string(expectResult)*sizeof(expectResult[0])) != 0 ) {
 //		loggf(F(" -> ERROR. Expect " PRILF " and get %ls\n"), expectResult, buf);
 //      not using wprintf, it crashes sometimes, it doesn't work for short-wchar
 		loggf(F("%s -> ERROR. Expect "), label);

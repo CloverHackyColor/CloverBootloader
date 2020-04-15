@@ -35,10 +35,6 @@
 		9A105B2624464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
 		9A105B2724464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
 		9A105B2824464A830006DE06 /* VectorGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2224464A830006DE06 /* VectorGraphics.h */; };
-		9A105B2924464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
-		9A105B2A24464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
-		9A105B2B24464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
-		9A105B2C24464A830006DE06 /* ftol.asm in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B2324464A830006DE06 /* ftol.asm */; };
 		9A105B2D24464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
 		9A105B2E24464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
 		9A105B2F24464A830006DE06 /* BmLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A105B2424464A830006DE06 /* BmLib.h */; };
@@ -2121,7 +2117,6 @@
 				9AC77FC224176C04005CDD5C /* XObjArray_tests.cpp in Sources */,
 				9AC7808224176C04005CDD5C /* memory.cpp in Sources */,
 				9AC7803B24176C04005CDD5C /* cpu.cpp in Sources */,
-				9A105B2924464A830006DE06 /* ftol.asm in Sources */,
 				9AC7800124176C04005CDD5C /* LegacyBoot.cpp in Sources */,
 				9AC7807524176C04005CDD5C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AC7801F24176C04005CDD5C /* LegacyBiosThunk.cpp in Sources */,
@@ -2239,7 +2234,6 @@
 				9ACFE6E924309AF80071CC93 /* XObjArray_tests.cpp in Sources */,
 				9ACFE6EB24309AF80071CC93 /* memory.cpp in Sources */,
 				9ACFE6EC24309AF80071CC93 /* cpu.cpp in Sources */,
-				9A105B2C24464A830006DE06 /* ftol.asm in Sources */,
 				9ACFE6ED24309AF80071CC93 /* LegacyBoot.cpp in Sources */,
 				9ACFE6EE24309AF80071CC93 /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9ACFE6EF24309AF80071CC93 /* LegacyBiosThunk.cpp in Sources */,
@@ -2357,7 +2351,6 @@
 				9AF41621242CD75C00D2644C /* memory.cpp in Sources */,
 				9AF41622242CD75C00D2644C /* cpu.cpp in Sources */,
 				9AF41623242CD75C00D2644C /* LegacyBoot.cpp in Sources */,
-				9A105B2A24464A830006DE06 /* ftol.asm in Sources */,
 				9AF41624242CD75C00D2644C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AF41625242CD75C00D2644C /* LegacyBiosThunk.cpp in Sources */,
 				9A09863224389A6A00826276 /* menu.cpp in Sources */,
@@ -2475,7 +2468,6 @@
 				9AF416FE242CDA5800D2644C /* memory.cpp in Sources */,
 				9AF416FF242CDA5800D2644C /* cpu.cpp in Sources */,
 				9AF41700242CDA5800D2644C /* LegacyBoot.cpp in Sources */,
-				9A105B2B24464A830006DE06 /* ftol.asm in Sources */,
 				9AF41701242CDA5800D2644C /* REFIT_MENU_SCREEN.cpp in Sources */,
 				9AF41702242CDA5800D2644C /* LegacyBiosThunk.cpp in Sources */,
 				9A09863324389A6A00826276 /* menu.cpp in Sources */,

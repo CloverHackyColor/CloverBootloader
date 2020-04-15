@@ -81,11 +81,11 @@ void PauseForKey(const wchar_t* msg)
 
 UINTN StrLen(const wchar_t* String)
 {
-	return wchar_len(String);
+	return size_of_utf_string(String);
 }
 UINTN StrLen(const char16_t* String)
 {
-	return char16_len(String);
+	return size_of_utf_string(String);
 }
 
 
