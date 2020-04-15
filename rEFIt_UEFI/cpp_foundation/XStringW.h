@@ -122,13 +122,13 @@ public:
 //	const XStringW &operator =(const wchar_t* S) {fdsf};
 //	const XStringW &operator =(wchar_t);
 
-	const XStringW& takeValueFrom(const wchar_t* S);
-	const XStringW& takeValueFrom(const wchar_t* S, xsize count);
-	const XStringW& takeValueFrom(const char* S);
+	XStringW& takeValueFrom(const wchar_t* S);
+	XStringW& takeValueFrom(const wchar_t* S, xsize count);
+	XStringW& takeValueFrom(const char* S);
 
-	const XStringW &operator += (const XStringW &);
-	const XStringW &operator += (const wchar_t* S);
-	const XStringW &operator += (wchar_t);
+	XStringW& operator += (const XStringW &);
+	XStringW& operator += (const wchar_t* S);
+	XStringW& operator += (wchar_t);
 
 	XStringW SubString(xsize pos, xsize count) const;
 	xsize IdxOf(wchar_t c, xsize Pos = 0) const;
