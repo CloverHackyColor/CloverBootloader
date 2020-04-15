@@ -54,11 +54,11 @@ extern BOOLEAN DayLight;
 
 textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
 
-EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Image)
+EFI_STATUS XTheme::ParseSVGXIcon(void * pars, INTN Id, const XString& IconNameX, XImage* Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
-  NSVGparser *p = (NSVGparser *)SVGParser;
+  NSVGparser *p = (NSVGparser *)pars;
   NSVGrasterizer* rast = nsvgCreateRasterizer();
   SVGimage = p->image;
   NSVGshape   *shape;
@@ -69,7 +69,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
-
   shape = SVGimage->shapes;
   shapePrev = NULL;
   while (shape) {
@@ -81,7 +80,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
       }
       group = group->next;
     }
-
     if (group) { //the shape is in the group
       // keep this sample for debug purpose
 /*    DBG("found shape %s", shape->id);
@@ -106,7 +104,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
         if ( IconImage->height < 1.f ) {
           IconImage->height = 200.f;
         }
-
         if (IconNameX.ExistIn("selection_big") && (!SelectionOnTop)) {
           MainEntriesSize = (int)(IconImage->width * Scale); //xxx
           row0TileSize = MainEntriesSize + (int)(16.f * Scale);
@@ -151,12 +148,14 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
     shape = shapeNext;
   } //while shape
   shapesTail->next = NULL;
-
   //add clipPaths  //xxx
   NSVGclipPath* clipPaths = SVGimage->clipPaths;
   NSVGclipPath* clipNext = NULL;
   while (clipPaths) {
     //   ClipCount += clipPaths->shapes->clip.count;
+    if (!clipPaths->shapes) {
+      break;
+    }
     group = clipPaths->shapes->group;
     clipNext = clipPaths->next;
     while (group) {
@@ -180,7 +179,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
   //    IconImage->clipPaths = SVGimage->clipPaths;
   //  }
 
-
   float bounds[4];
   bounds[0] = FLT_MAX;
   bounds[1] = FLT_MAX;
@@ -199,7 +197,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
 
   float Height = IconImage->height * Scale;
   float Width = IconImage->width * Scale;
-  //  DBG("icon %s width=%f height=%f\n", IconName, Width, Height);
+//    DBG("icon %s width=%f height=%f\n", IconNameX.c_str(), Width, Height);
   int iWidth = (int)(Width + 0.5f);
   int iHeight = (int)(Height + 0.5f);
 //  EG_IMAGE  *NewImage = egCreateFilledImage(iWidth, iHeight, TRUE, &MenuBackgroundPixel);
@@ -210,7 +208,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
     return Status;
   }
 
-  //  DBG("begin rasterize %s\n", IconName);
+//    DBG("begin rasterize %s\n", IconNameX.c_str());
   float tx = 0.f, ty = 0.f;
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
       (Id != BUILTIN_ICON_ANIME) &&
@@ -274,20 +272,20 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background"_XS, &BigBack);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BACKGROUND, "Background"_XS, &BigBack);
   }
   DBG(" Background parsed [%lld, %lld]\n", BigBack.GetWidth(), BigBack.GetHeight()); //Background parsed [1067, 133]
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
   }
   DBG("Banner parsed\n");
   BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
@@ -300,14 +298,14 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       continue;
     }
     Icon* NewIcon = new Icon(i, false); //initialize without embedded
-    Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image);
+    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name, &NewIcon->Image);
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
         (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
       NewIcon->Image = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
     }
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
-    Status = ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
+    Status = ParseSVGXIcon(mainParser, i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
 //    DBG("...night status %s\n", strerror(Status));
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
@@ -329,10 +327,10 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
   if (!DayLight) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &SelectionImages[4]);
+    Status = ParseSVGXIcon(mainParser, BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &SelectionImages[4]);
   }
 
   //buttons
@@ -379,7 +377,7 @@ EFI_STATUS XTheme::LoadSvgFrame(INTN i, OUT XImage* XFrame)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   XString XFrameName = SPrintf("frame_%04lld", i+1);
-  Status = ParseSVGXIcon(BUILTIN_ICON_ANIME, XFrameName, XFrame);
+  Status = ParseSVGXIcon(SVGParser, BUILTIN_ICON_ANIME, XFrameName, XFrame);
   if (EFI_ERROR(Status)) {
     DBG("frame '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
   }

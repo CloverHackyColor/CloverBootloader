@@ -17,7 +17,7 @@
 #define DEBUG_CINEMA DEBUG_ALL
 #endif
 
-#if DEBUG_CINEMA == 1
+#if DEBUG_CINEMA == 0
 #define DBG(...)
 #else
 #define DBG(...) DebugLog(DEBUG_CINEMA, __VA_ARGS__)
