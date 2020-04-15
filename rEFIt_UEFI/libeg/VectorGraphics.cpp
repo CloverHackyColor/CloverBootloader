@@ -417,12 +417,12 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
 {
   XImage& TextBufferXY = *TextBufferXY_ptr;
   INTN Width;
-  UINTN i;
+//  UINTN i;
   UINTN len;
   NSVGparser* p;
   NSVGrasterizer* rast;
   if (!textFace[textType].valid) {
-    for (i=0; i<4; i++) {
+    for (decltype(textType) i=0; i<4; i++) {
       if (textFace[i].valid) {
         textType = i;
         break;
@@ -472,7 +472,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
-  for (i=0; i < len; i++) {
+  for (UINTN i=0; i < len; i++) {
     CHAR16 letter = string.wc_str()[i];
     if (!letter) {
       break;

@@ -248,20 +248,20 @@ INTN XTheme::GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&
 }
 
 INTN XTheme::RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
-                        IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType, float textScale)
+                        IN INTN PosX, IN INTN PosY, IN UINTN Cursor, INTN textType, float textScale)
 {
   const XStringW& UTF16Text = XStringW().takeValueFrom(Text.c_str());
   return RenderText(UTF16Text, CompImage_ptr, PosX, PosY, Cursor, textType, textScale);
 }
 
 INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
-                  IN INTN PosX, IN INTN PosY, IN INTN Cursor, INTN textType, float textScale)
+                  IN INTN PosX, IN INTN PosY, IN UINTN Cursor, INTN textType, float textScale)
 {
   XImage& CompImage = *CompImage_ptr;
 
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL    FontPixel;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL    FirstPixel;
-  INTN           TextLength;
+  UINTN           TextLength;
   UINTN          Cho = 0, Jong = 0, Joong = 0;
   INTN           LeftSpace, RightSpace;
 
@@ -301,7 +301,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   Bukva.Width = FontWidth;
   Bukva.Height = FontHeight;
   DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
-  for (INTN i = 0; i < TextLength && c0 != 0; i++) {
+  for (UINTN i = 0; i < TextLength && c0 != 0; i++) {
     UINT16 c = Text.wc_str()[i]; //including UTF8 -> UTF16 conversion
     DBG("initial char to render 0x%x\n", c); //good
     if (gLanguage != korean) { //russian Codepage = 0x410

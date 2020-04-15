@@ -1403,7 +1403,7 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
 
 }
 
-VOID REFIT_MENU_SCREEN::DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
+VOID REFIT_MENU_SCREEN::DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor)
 {
   XImage TextBufferX(UGAWidth-XPos, ThemeX.TextHeight);
   XImage SelectionBar(UGAWidth-XPos, ThemeX.TextHeight);
