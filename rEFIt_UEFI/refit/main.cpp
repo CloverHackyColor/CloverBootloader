@@ -2503,6 +2503,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
         DBG("change theme\n");
+        ThemeX.FillByEmbedded();
         InitTheme(FALSE, NULL);
         OptionMenu.FreeMenu();
       }

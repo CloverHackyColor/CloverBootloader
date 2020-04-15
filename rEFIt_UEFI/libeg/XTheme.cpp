@@ -218,6 +218,7 @@ void XTheme::Init()
   Font = FONT_GRAY;      // FONT_TYPE   
   CharWidth = 9;  
   SelectionColor = 0x80808080;
+  SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
   FontFileName.setEmpty();     
   Theme.takeValueFrom("embedded");
   embedded = true;
@@ -244,6 +245,7 @@ void XTheme::Init()
   BannerEdgeVertical = 0;
   BannerNudgeX = 0;
   BannerNudgeY = 0;
+  BanHeight = 0;
   VerticalLayout = FALSE;
   NonSelectedGrey = FALSE;    //TODO what about SVG?
   MainEntriesSize = 128;
