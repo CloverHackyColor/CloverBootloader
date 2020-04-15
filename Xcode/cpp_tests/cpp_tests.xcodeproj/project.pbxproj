@@ -85,7 +85,6 @@
 		9ACAB117242623EE00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
-		9AF41576242CBE7600D2644C /* poolprint-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AF41571242CBE7600D2644C /* poolprint-test.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -536,7 +535,6 @@
 				9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */,
 				9A28CD0C241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
-				9AF41576242CBE7600D2644C /* poolprint-test.cpp in Sources */,
 				9AC780AE2417DD2F005CDD5C /* panic.cpp in Sources */,
 				9A0B085F240308E400E2B470 /* XStringW.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
