@@ -177,6 +177,9 @@ int XStringW_tests()
 		}
 	}
 	
+	wchar_t* s = XStringW().takeValueFrom("aa").forgetDataWithoutFreeing();
+	if ( s != L"aa"_XSW ) return 102;
+	
 //  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
 //  for (UINTN Index = 0; Index < 20; Index++) {
 //   XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";

@@ -97,7 +97,7 @@ wchar_t * XStringW::forgetDataWithoutFreeing()
 	return ret;
 }
 
-const XStringW& XStringW::takeValueFrom(const wchar_t* S, xsize count)
+XStringW& XStringW::takeValueFrom(const wchar_t* S, xsize count)
 {
 	if ( !S ) {
 //		DebugLog(2, "takeValueFrom(const wchar_t* S) called with NULL. Use setEmpty()\n");
@@ -110,14 +110,14 @@ const XStringW& XStringW::takeValueFrom(const wchar_t* S, xsize count)
 	return *this;
 }
 
-const XStringW& XStringW::takeValueFrom(const wchar_t* S)
+XStringW& XStringW::takeValueFrom(const wchar_t* S)
 {
 	if ( S ) return takeValueFrom(S, wcslen(S));
 	Init(0);
         return *this;
 }
 
-const XStringW& XStringW::takeValueFrom(const char* S)
+XStringW& XStringW::takeValueFrom(const char* S)
 {
 	xsize newLen = utf8_string_wchar_count(S);
 	Init(newLen);
@@ -523,21 +523,21 @@ const XStringW &XStringW::operator =(const XStringW &aString)
 //
 //*************************************************************************************************
 
-const XStringW &XStringW::operator +=(wchar_t aChar)
+XStringW &XStringW::operator +=(wchar_t aChar)
 {
 //TRACE("Operator +=wchar_t \n");
 	StrnCat(&aChar, 1);
 	return *this;
 }
 
-const XStringW &XStringW::operator +=(const XStringW &aString)
+XStringW &XStringW::operator +=(const XStringW &aString)
 {
 //TRACE("Operator +=const XStringW&\n");
 	StrnCat(aString.data(), aString.size());
 	return *this;
 }
 
-const XStringW &XStringW::operator +=(const wchar_t *S)
+XStringW &XStringW::operator +=(const wchar_t *S)
 {
 //TRACE("operator +=const wchar_t *\n");
 	StrCat(S);
