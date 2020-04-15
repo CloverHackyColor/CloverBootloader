@@ -1927,7 +1927,7 @@ VOID SystemVersionInit(VOID)
   RecoveryPlists[1] = NULL;
   /************************************************************************/
   //Fill Plists 
-  for (i = 0; i < APFSUUIDBankCounter+1; i++) {
+  for (i = 0; i < APFSUUIDBankCounter; i++) {
     //Store UUID from bank
     CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
     //Init temp string with system/install/recovery APFS path
