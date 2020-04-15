@@ -482,11 +482,13 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
 BOOLEAN REFIT_MENU_SCREEN::GetAnime()
 {
   FilmC = ThemeX.Cinema.GetFilm(ID);
+  DBG("ScreenID=%lld Film found=%d\n", ID, (FilmC != nullptr)?1:0);
   return FilmC != nullptr;
 }
 
 VOID REFIT_MENU_SCREEN::InitAnime()
 {
+  
   if (FilmC && (FilmC->FilmX >=0) && (FilmC->FilmX <=100) &&
       (FilmC->FilmY >=0) && (FilmC->FilmY <=100)) {
     // Check if screen size being used is different from theme origination size.

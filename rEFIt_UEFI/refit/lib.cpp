@@ -1066,7 +1066,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
         if (!Bootable)
           Volume->HasBootCode = FALSE;
         
-        Volumes.AddReference(Volume, true);
+        Volumes.AddReference(Volume, false);
 //        AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       }
     }
@@ -1115,7 +1115,7 @@ VOID ScanVolumes(VOID)
     
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
-      Volumes.AddReference(Volume, true);
+      Volumes.AddReference(Volume, false);
 //      AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       if (!gSettings.ShowHiddenEntries) {
         for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
