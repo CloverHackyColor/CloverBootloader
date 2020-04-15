@@ -11,17 +11,20 @@
 #include "XCinema.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_CINEMA 1
+#else
+#define DEBUG_CINEMA DEBUG_ALL
+#endif
+
+#if DEBUG_CINEMA == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_CINEMA, __VA_ARGS__)
+#endif
+
+
 //Screen.UpdateAnime(); called from Menu cycle wait for event
-//Now = AsmReadTsc();
-//if (TimeDiff(LastDraw, Now) < FrameTime) return;
-//if (Film[CurrentFrame]) { Draw }
-// else skip draw
-//  CurrentFrame++;
-//if (CurrentFrame >= Frames) {
-//  AnimeRun = !Once;
-//  CurrentFrame = 0;
-//}
-//LastDraw = Now;
 
 // object XCinema::Cinema is a part of Theme
 // object FILM::FilmX is a part or current Screen. Must be initialized from Cinema somewhere on Screen init
@@ -51,7 +54,9 @@ VOID REFIT_MENU_SCREEN::UpdateFilm()
 #endif
 FILM* XCinema::GetFilm(INTN Id)
 {
+  DBG("ask film %lld\n", Id);
   for (size_t i = 0; i < Cinema.size(); ++i) {
+    DBG("check film %lld\n", Cinema[i].GetIndex());
     if (Cinema[i].GetIndex() == Id) {
       return &Cinema[i];
     }
@@ -67,8 +72,10 @@ void XCinema::AddFilm(FILM* NewFilm)
 static XImage NullImage;
 const XImage& FILM::GetImage(INTN Index) const
 {
+  DBG("ask for frame #%lld\n", Index);
   for (size_t i = 0; i < Frames.size(); ++i) {
     if (Frames[i].getIndex() == Index) {
+      DBG("...found\n");
       return Frames[i].getImage();
     }
   }
@@ -84,7 +91,6 @@ const XImage& FILM::GetImage() const
   }
   return NullImage;
 }
-
 
 void FILM::AddFrame(XImage* Frame, INTN Index)
 {
@@ -107,9 +113,11 @@ void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path alread
       Status = TheTheme.LoadSvgFrame(Index, &NewImage);
     } else {
       XStringW Name = SWPrintf("%ls\\%ls_%03lld.png", Path.wc_str(), Path.wc_str(), Index);
+ //     DBG("try to load %ls\n", Name.wc_str()); //fine
       if (FileExists(ThemeDir, Name.wc_str())) {
         Status = NewImage.LoadXImage(ThemeDir, Name);
       }
+//      DBG("  read status=%s\n", strerror(Status));
     }
     if (!EFI_ERROR(Status)) {
       AddFrame(&NewImage, Index);

@@ -3739,8 +3739,8 @@ XTheme::GetThemeTagSettings (void* DictP)
 #if XCINEMA
   Dict = GetProperty (DictPointer, "Anime");
   if (Dict != NULL) {
-    INTN   i, Count = GetTagCount (Dict);
-    for (i = 0; i < Count; i++) {
+    INTN  Count = GetTagCount (Dict);
+    for (INTN i = 0; i < Count; i++) {
       FILM *NewFilm = new FILM();
       if (EFI_ERROR (GetElement (Dict, i, &Dict3))) {
         continue;
@@ -3797,10 +3797,13 @@ XTheme::GetThemeTagSettings (void* DictP)
       Dict2 = GetProperty (Dict3, "Once");
       NewFilm->RunOnce = IsPropertyTrue (Dict2);
 
+      NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
       ThemeX.Cinema.AddFilm(NewFilm);
  //     delete NewFilm; //looks like already deleted
 
     }
+
+
   }
 #else
   Dict = GetProperty (DictPointer, "Anime");
@@ -4165,7 +4168,7 @@ finish:
     Status = StartupSoundPlay(ThemeX.ThemeDir, NULL);
   } else { // theme loaded successfully
     ThemeX.embedded = false;
-    ThemeX.Theme.takeValueFrom(GlobalConfig.Theme);
+    ThemeX.Theme.takeValueFrom(GlobalConfig.Theme); //XStringW from CHAR16*)
     // read theme settings
     if (!ThemeX.TypeSVG) {
       TagPtr DictPointer = GetProperty(ThemeDict, "Theme");

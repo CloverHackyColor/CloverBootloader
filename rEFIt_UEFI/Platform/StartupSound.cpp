@@ -69,25 +69,34 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   UINT8           OutputIndex = (OldChosenAudio & 0xFF);
   UINT8           OutputVolume = DefaultAudioVolume;
   UINT16          *TempData = NULL;
+  BOOLEAN       AllocAsPage = FALSE;
+
+  if (!AudioIo) {
+    Status = EFI_DEVICE_ERROR;
+    //    DBG("not found AudioIo to play\n");
+    goto DONE_ERROR;
+  }
 
   if (SoundFile) {
     Status = egLoadFile(Dir, SoundFile, &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
-      DBG("file sound read: %ls %s\n", SoundFile, strerror(Status));
+//      DBG("file sound read: %ls %s\n", SoundFile, strerror(Status));
       return Status;
     }
   } else {
     FileData = EmbeddedSound;
     FileDataLength = EmbeddedSoundLength;
-    DBG("got embedded sound\n");
+//    DBG("got embedded sound\n");
   }
 
   WaveData.Samples = NULL;
-  Status = WaveGetFileData(FileData, (UINT32)FileDataLength, &WaveData);
+  Status = WaveGetFileData(FileData, (UINT32)FileDataLength, &WaveData); //
   if (EFI_ERROR(Status)) {
     MsgLog(" wrong sound file, wave status=%s\n", strerror(Status));
+    //if error then data not allocated
     return Status;
   }
+  AllocAsPage = TRUE;
   MsgLog("  Channels: %u  Sample rate: %u Hz  Bits: %u\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
 
   EFI_AUDIO_IO_PROTOCOL_BITS bits;
@@ -108,7 +117,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
       bits = EfiAudioIoBits32;
       break;
     default:
-      return EFI_UNSUPPORTED;
+      goto DONE_ERROR;
   }
 
   EFI_AUDIO_IO_PROTOCOL_FREQ freq;
@@ -144,14 +153,14 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
       freq = EfiAudioIoFreq192kHz;
       break;
     default:
-      return EFI_UNSUPPORTED;
+      goto DONE_ERROR;
   }
 
   DBG("output to channel %d with volume %d, len=%d\n", OutputIndex, OutputVolume, WaveData.SamplesLength);
   DBG(" sound channels=%d bits=%d freq=%d\n", WaveData.Format->Channels, WaveData.Format->BitsPerSample, WaveData.Format->SamplesPerSec);
 
   if (!WaveData.SamplesLength || !OutputVolume) {
-//    DBG("nothing to play\n");
+//    DBG("nothing to play\n"); //but data allocated
     Status = EFI_NOT_FOUND;
     goto DONE_ERROR;
   }
@@ -185,14 +194,9 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
     WaveData.SamplesLength *= 6;
     DBG("sound converted to 48kHz\n");
     WaveData.Samples = (UINT8*)TempData;
+    AllocAsPage = FALSE;
   } else {
     TempData = (UINT16*)WaveData.Samples;
-  }
-
-  if (!AudioIo) {
-    Status = EFI_DEVICE_ERROR;
-//    DBG("not found AudioIo to play\n");
-    goto DONE_ERROR;
   }
 
   // Setup playback.
@@ -210,13 +214,13 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   // Start playback.
   if (gSettings.PlayAsync) {
     Status = AudioIo->StartPlaybackAsync(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0,                                       NULL, NULL);
-    DBG("async started, status=%s\n", strerror(Status));
+//    DBG("async started, status=%s\n", strerror(Status));
   } else {
     Status = AudioIo->StartPlayback(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0);
 //    DBG("sync started, status=%s\n", strerror(Status));
-    if (!EFI_ERROR(Status)) {
-      FreePool(TempData);
-    }
+//    if (!EFI_ERROR(Status)) {
+//      FreePool(TempData);
+//    }
   }
 
   if (EFI_ERROR(Status)) {
@@ -224,9 +228,19 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   }
 
 DONE_ERROR:
+  // here we have memory leak with TempData == WaveData.Samples
+  // TempData allocated as AllocatePool while Samples allocated as AllocatePages
+  // and we can't keep the info up to stop AsyncPlay
   if (FileData && SoundFile) {  //dont free embedded sound
 //    DBG("free sound\n");
     FreePool(FileData);
+  }
+  if (!gSettings.PlayAsync) { //dont free sound when async play
+    if (AllocAsPage) {
+      FreePages(WaveData.Samples,EFI_SIZE_TO_PAGES(WaveData.SamplesLength+4095));
+    } else {
+      FreePool(TempData);
+    }
   }
   DBG("sound play end with status=%s\n", strerror(Status));
   return Status;

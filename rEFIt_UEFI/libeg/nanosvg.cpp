@@ -2861,7 +2861,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     fontChain = fontChain->next;
   }
   if (!fontChain && fontChainSimilar) { //font with this style is not found but we have same font with other style
-    DBG("found similar font with style=%c\n", fontChainSimilar->font->fontStyle);
+//    DBG("found similar font with style=%c\n", fontChainSimilar->font->fontStyle);
     fontChain = fontChainSimilar;
     fontSVG = fontChain->font;
   }
@@ -2871,13 +2871,11 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
     UINTN           FileDataLength = 0;
     NSVGparser      *p1 = NULL;
     EFI_STATUS      Status;
-    DBG("required font %s not found, try to load external\n", text->fontFace->fontFamily);
-//    CONST CHAR16 *FontFileName = PoolPrint(L"%a.svg", text->fontFace->fontFamily);
+//    DBG("required font %s not found, try to load external\n", text->fontFace->fontFamily);
     XStringW FontFileName = XStringW().takeValueFrom(text->fontFace->fontFamily) + L".svg"_XSW;
-    DBG(" file name =%ls\n", FontFileName.wc_str());
+//    DBG(" file name =%ls\n", FontFileName.wc_str());
     Status = egLoadFile(ThemeX.ThemeDir, FontFileName.wc_str(), &FileData, &FileDataLength);
-//    FreePool(FontFileName);
-    DBG(" font %s loaded status=%lld, %s\n", text->fontFace->fontFamily, Status, strerror(Status));
+//    DBG(" font %s loaded status=%lld, %s\n", text->fontFace->fontFamily, Status, strerror(Status));
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1
       if (!p1) {
@@ -2923,7 +2921,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[1].size = (INTN)text->fontSize;
           textFace[1].color = text->fontColor;
           textFace[1].valid = TRUE;
-                 DBG("set message->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
+          DBG("set message_night->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       } else if (strcmp(group->id, "MenuRows") == 0) {
         if (!textFace[2].valid) {
@@ -2954,15 +2952,12 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           textFace[0].size = (INTN)text->fontSize;
           textFace[0].color = text->fontColor;
           textFace[0].valid = TRUE;
-                    DBG("set help->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
+          DBG("set help_night->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
           break;
       }
       group = group->next;
     }
   }
-//  if ((!text->font || !text->font->glyphs) && fontsDB) {
-//    text->font = fontsDB->font; //first found
-//  }
 
   //add to head
   text->next = p->text;

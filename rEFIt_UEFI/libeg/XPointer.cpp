@@ -10,7 +10,7 @@
 #include "../refit/menu.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_MOUSE 1
+#define DEBUG_MOUSE 0
 #else
 #define DEBUG_MOUSE DEBUG_ALL
 #endif
