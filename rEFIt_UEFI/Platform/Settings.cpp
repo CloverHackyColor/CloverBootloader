@@ -6267,14 +6267,17 @@ GetUserSettings(
     } else {
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
-    if (gThemeChanged && ThemeX.Theme.notEmpty()) {
+    if (gThemeChanged) {
+      if (GlobalConfig.Theme) {
+        FreePool(GlobalConfig.Theme);
+      }
       DictPointer = GetProperty (Dict, "GUI");
       if (DictPointer != NULL) {
         Prop = GetProperty (DictPointer, "Theme");
         if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
-  //        ThemeX.Theme.takeValueFrom(Prop->string);
-          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
-          DBG ("Theme from new config: %ls\n", ThemeX.Theme.data());
+ //         GlobalConfig.Theme = XStringW().takeValueFrom(Prop->string).forgetDataWithoutFreeing();
+          GlobalConfig.Theme = PoolPrint(L"%a", Prop->string);
+          DBG ("Theme from new config: %ls\n", GlobalConfig.Theme);
         }
       }
     }

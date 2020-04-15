@@ -79,8 +79,9 @@ EG_IMAGE * LoadSvgFrame(INTN i);
 INTN   UGAWidth;
 INTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
-
+#if !XCINEMA
 EG_RECT  BannerPlace; // default ctor called, so it's zero
+#endif
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
@@ -143,7 +144,7 @@ VOID SetupScreen(VOID)
 
 static VOID SwitchToText(IN BOOLEAN CursorEnabled)
 {
-    egSetGraphicsModeEnabled(FALSE);
+  egSetGraphicsModeEnabled(FALSE);
 	gST->ConOut->EnableCursor(gST->ConOut, CursorEnabled);
 }
 
@@ -151,8 +152,8 @@ static VOID SwitchToGraphics(VOID)
 {
     if (AllowGraphicsMode && !egIsGraphicsModeEnabled()) {
       InitScreen(FALSE);
-        egSetGraphicsModeEnabled(TRUE);
-        GraphicsScreenDirty = TRUE;
+      egSetGraphicsModeEnabled(TRUE);
+      GraphicsScreenDirty = TRUE;
     }
 }
 
@@ -479,18 +480,36 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
   return pos;
 }
 #if XCINEMA
-BOOLEAN REFIT_MENU_SCREEN::GetAnime()
+void REFIT_MENU_SCREEN::GetAnime()
 {
   FilmC = ThemeX.Cinema.GetFilm(ID);
-  DBG("ScreenID=%lld Film found=%d\n", ID, (FilmC != nullptr)?1:0);
-  return FilmC != nullptr;
+//  DBG("ScreenID=%lld Film found=%d\n", ID, (FilmC != nullptr)?1:0);
+  if (FilmC != nullptr) {
+    AnimeRun = true;
+  }
 }
 
 VOID REFIT_MENU_SCREEN::InitAnime()
 {
-  
-  if (FilmC && (FilmC->FilmX >=0) && (FilmC->FilmX <=100) &&
-      (FilmC->FilmY >=0) && (FilmC->FilmY <=100)) {
+  if (gThemeChanged) {
+    FilmC = nullptr;
+  }
+  if (FilmC == nullptr) {
+    DBG("Screen %lld inited without anime\n", ID);
+    AnimeRun = FALSE;
+    return;
+  }
+//  DBG("=== Debug Film ===\n");
+//  DBG("FilmX=%lld\n", FilmC->FilmX);
+//  DBG("ID=%lld\n", FilmC->GetIndex());
+//  DBG("RunOnce=%d\n", FilmC->RunOnce?1:0);
+//  DBG("NumFrames=%lld\n", FilmC->NumFrames);
+//  DBG("FrameTime=%lld\n", FilmC->FrameTime);
+//  DBG("Path=%ls\n", FilmC->Path.wc_str());
+//  DBG("LastFrame=%lld\n\n", FilmC->LastFrameID());
+
+  if ((FilmC->FilmX >=0) && (FilmC->FilmX <=100) &&
+      (FilmC->FilmY >=0) && (FilmC->FilmY <=100)) { //default is 0xFFFF
     // Check if screen size being used is different from theme origination size.
     // If yes, then recalculate the animation placement % value.
     // This is necessary because screen can be a different size, but anim is not scaled.
@@ -506,26 +525,22 @@ VOID REFIT_MENU_SCREEN::InitAnime()
 
     FilmC->FilmPlace.Width = CWidth;
     FilmC->FilmPlace.Height = CHeight;
-    DBG("recalculated Film position [%lld, %lld]\n", FilmC->FilmPlace.XPos, FilmC->FilmPlace.YPos);
+//    DBG("recalculated Film position [%lld, %lld]\n", FilmC->FilmPlace.XPos, FilmC->FilmPlace.YPos);
   } else {
     // We are here if there is no anime, or if we use oldstyle placement values
     // For both these cases, FilmPlace will be set after banner/menutitle positions are known
-    FilmPlace.XPos = 0;
-    FilmPlace.YPos = 0;
-    FilmPlace.Width = 0;
-    FilmPlace.Height = 0;
+//    FilmC->FilmPlace.XPos = 0;
+//    FilmC->FilmPlace.YPos = 0;
+//    FilmC->FilmPlace.Width = 0;
+//    FilmC->FilmPlace.Height = 0;
+    FilmC->FilmPlace = ThemeX.BannerPlace;
   }
-  if (FilmC != NULL && FilmC->NumFrames != 0) {
+  if (FilmC->NumFrames != 0) {
     DBG(" Anime seems OK, init it\n");
     AnimeRun = TRUE;
     FilmC->Reset();
     LastDraw = 0;
-  } else {
-    //    DBG("not run anime\n");
-    AnimeRun = FALSE;
   }
-
-
 }
 #else
 
@@ -707,20 +722,24 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   //  DBG("anime inited\n");
 }
 
-BOOLEAN REFIT_MENU_SCREEN::GetAnime()
+VOID REFIT_MENU_SCREEN::GetAnime()
 {
   GUI_ANIME   *Anime;
   
-  if (!GuiAnime) return FALSE;
+  if (!GuiAnime) {
+    AnimeRun = FALSE;
+    return;
+  }
   
   for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
   if (Anime == NULL || Anime->Path == NULL) {
-    return FALSE;
+    AnimeRun = FALSE;
+    return;
   }
   
 	DBG("Use anime=%ls frames=%llu\n", Anime->Path, Anime->Frames);
-  
-  return TRUE;
+  AnimeRun = TRUE;
+  return;
 }
 #endif
 //

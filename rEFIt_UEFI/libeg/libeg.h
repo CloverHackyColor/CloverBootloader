@@ -37,7 +37,7 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
-#define XCINEMA 0
+#define XCINEMA 1
 
 #ifdef __cplusplus
 extern "C" {

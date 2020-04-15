@@ -126,7 +126,7 @@ static INTN MaxItemOnScreen = -1;
 static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 //
-BOOLEAN MainAnime = FALSE;
+//BOOLEAN MainAnime = FALSE;
 //
 ////TODO Scroll variables must be a part of REFIT_SCREEN
 ////BOOLEAN ScrollEnabled = FALSE;
@@ -2533,7 +2533,8 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
   }
 
   while (!MenuExit) {
-    AnimeRun = MainAnime;
+    GetAnime();
+    DBG("AnimeRun=%d\n", AnimeRun?1:0);
     MenuExit = RunGenericMenu(MainStyle, &DefaultEntryIndex, &MainChosenEntry);
     TimeoutSeconds = 0;
 

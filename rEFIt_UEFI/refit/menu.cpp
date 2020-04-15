@@ -1267,7 +1267,7 @@ VOID AboutRefit(VOID)
 #endif
 	  AboutMenu.AddMenuInfo_f(" Firmware: %ls rev %d.%04d", gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1));
 	  AboutMenu.AddMenuInfo_f(" Screen Output: %s", egScreenDescription().c_str());
-    AboutMenu.AnimeRun = AboutMenu.GetAnime();
+    AboutMenu.GetAnime();
     AboutMenu.AddMenuEntry(&MenuEntryReturn, false);
   } else if (AboutMenu.Entries.size() >= 2) {
     /*
@@ -1645,7 +1645,7 @@ VOID HelpRefit(VOID)
         HelpMenu.AddMenuInfo_f("S - Shell");
         break;
     }
-    HelpMenu.AnimeRun = HelpMenu.GetAnime();
+    HelpMenu.GetAnime();
     HelpMenu.AddMenuEntry(&MenuEntryReturn, false);
   }
 
@@ -1692,7 +1692,7 @@ REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MEN
   (*SubScreen)->Title = Entry->Title;
   (*SubScreen)->TitleImage = Entry->Image;
   (*SubScreen)->ID = ID;
-  (*SubScreen)->AnimeRun = (*SubScreen)->GetAnime();
+  (*SubScreen)->GetAnime();
   Entry->SubScreen = *SubScreen;
   return Entry;
 }
@@ -1981,7 +1981,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 	LOADER_ENTRY       *SubEntry;
 	REFIT_MENU_SCREEN  *SubScreen;
 	CHAR16             *kextDir = NULL;
-	UINTN               i;
+//	UINTN               i;
 	CHAR8               ShortOSVersion[8];
 //	CHAR16             *UniSysVer = NULL;
 	CHAR8              *ChosenOS = Entry->OSVersion;
@@ -1992,7 +1992,7 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 	if (ChosenOS) {
 //    DBG("chosen os %s\n", ChosenOS);
 		//shorten os version 10.11.6 -> 10.11
-		for (i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++) {
 			ShortOSVersion[i] = ChosenOS[i];
 			if (ShortOSVersion[i] == '\0') {
 				break;
@@ -2770,7 +2770,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   if (OptionMenu.Entries.size() == 0) {
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
-    OptionMenu.AnimeRun = OptionMenu.GetAnime(); //FALSE;
+    OptionMenu.GetAnime(); //FALSE;
 
     OptionMenu.AddMenuItemInput(0, "Boot Args:", TRUE);
 

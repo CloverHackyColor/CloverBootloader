@@ -789,9 +789,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen->Title.SWPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
 
   SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = Entry->LoaderType + 20;
-  //  DBG("get anime for os=%d\n", SubScreen->ID);
-  SubScreen->AnimeRun = SubScreen->GetAnime();
+  SubScreen->ID = Entry->LoaderType + 20; //wow
+    DBG("get anime for os=%lld\n", SubScreen->ID);
+  SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
 	SubScreen->AddMenuInfoLine_f("Volume size: %lluMb", VolumeSize);
   SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Entry->DevicePath));
@@ -1991,7 +1991,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title.wc_str() : CustomPath, Entry->VolName);
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
-            SubScreen->AnimeRun = SubScreen->GetAnime();
+            SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
             SubScreen->AddMenuInfoLine_f("Volume size: %lldMb", VolumeSize);
             SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Entry->DevicePath));

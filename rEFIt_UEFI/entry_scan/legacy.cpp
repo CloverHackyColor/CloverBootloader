@@ -169,7 +169,8 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle.wc_str(), VolDesc);
 
   SubScreen->TitleImage = Entry->Image;
-  SubScreen->AnimeRun = SubScreen->GetAnime();
+  SubScreen->ID = SCREEN_BOOT;
+  SubScreen->GetAnime();
   // default entry
   SubEntry =  new LEGACY_ENTRY();
   SubEntry->Title = L"Boot "_XSW + LoaderTitle;

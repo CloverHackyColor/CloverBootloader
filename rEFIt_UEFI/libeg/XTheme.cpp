@@ -271,6 +271,8 @@ void XTheme::Init()
   FontWidth = 9;
   FontHeight = 18;
   TextHeight = 19;
+
+  Cinema.setEmpty();
 }
 
 /*
@@ -490,7 +492,7 @@ void XTheme::ClearScreen() //and restore background and banner
       }
     }
   }
-  
+  DBG("BannerPlace at Clear Screen [%lld,%lld]\n",  BannerPlace.XPos, BannerPlace.YPos);
   //Then prepare Background from BigBack
   if (!Background.isEmpty() && (Background.GetWidth() != UGAWidth || Background.GetHeight() != UGAHeight)) { // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
     // Resolution changed

@@ -222,10 +222,12 @@ public:
   VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   VOID CountItems();
   VOID InitAnime();
-  BOOLEAN GetAnime(); //same for xcinema
-  VOID UpdateAnime();
+  VOID GetAnime(); //same for xcinema
+
 #if XCINEMA
   VOID UpdateFilm(); // for future use instead of UpdateAnime
+#else
+  VOID UpdateAnime();
 #endif
 
   //Style functions

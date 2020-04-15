@@ -46,7 +46,7 @@ public:
 
 public:
   FILM() {}
-  FILM(INTN Id) : Id(Id), RunOnce(false)
+  FILM(INTN Id) : Id(Id), RunOnce(false), NumFrames(0)
    {}
   ~FILM() {}
 
@@ -97,7 +97,7 @@ class XCinema
 
   FILM* GetFilm(INTN Id);
   void AddFilm(FILM* NewFilm);
-
+  void setEmpty() { Cinema.Empty(); }
 };
 
 #endif /* XCinema_h */

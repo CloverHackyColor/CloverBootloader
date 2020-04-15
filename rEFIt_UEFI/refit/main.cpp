@@ -2586,12 +2586,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
 // font already changed and this message very quirky, clear line here
-      if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+//     if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
 //        XStringW Message = L"                          "_XSW;
-        BootScreen.EraseTextXY();
+//        BootScreen.EraseTextXY();
 //        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
-
-      }
+//      }
     }
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
@@ -2614,7 +2613,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                            DefaultEntry->getLOADER_ENTRY()
                            && OSFLAG_ISSET(DefaultEntry->getLOADER_ENTRY()->Flags, OSFLAG_HIBERNATED)
                          )
-             )
+                        )
         )
     {
       if (DefaultEntry->getLOADER_ENTRY()) {
@@ -2624,7 +2623,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
-    BOOLEAN MainAnime = MainMenu.GetAnime();
+//    BOOLEAN MainAnime = MainMenu.GetAnime();
 //    DBG("MainAnime=%d\n", MainAnime);
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
@@ -2634,7 +2633,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         // go strait to DefaultVolume loading
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
-        MainMenu.AnimeRun = MainAnime;
+        MainMenu.GetAnime();
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
 //		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
