@@ -29,6 +29,7 @@
 #include "../include/Pci.h"
 #include "../include/Devices.h"
 #include "ati_reg.h"
+#include "../../Version.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -130,9 +131,10 @@ DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variabl
 //CONST CHAR16 gFirmwareRevisionM[] = FIRMWARE_REVISION;
 //CONST CHAR16 *gFirmwareRevision = &gFirmwareRevisionM[0];
 CONST CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
-
+CONST CHAR8* gRevisionStr = REVISION_STR;
 #else
 CONST CHAR16 *gFirmwareRevision = NULL;
+CONST CHAR8* gRevisionStr = NULL;
 #endif
 
 EFI_GUID            gUuid;

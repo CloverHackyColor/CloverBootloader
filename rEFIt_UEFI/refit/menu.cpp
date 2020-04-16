@@ -40,7 +40,6 @@
 //#include "../include/scroll_images.h"
 
 #include "../Platform/Settings.h"
-#include "../../Version.h"
 //#include "colors.h"
 
 #include "../libeg/nanosvg.h"
@@ -1221,7 +1220,7 @@ VOID AboutRefit(VOID)
 #ifdef REVISION_STR
 	  AboutMenu.AddMenuInfo_f(" %s ", REVISION_STR);
 #else
-    AboutMenu.AddMenuInfo_f("Clover Revision %s", gFirmwareRevision);
+	  AboutMenu.AddMenuInfo_f("Clover Revision %ls", gFirmwareRevision);
 #endif
 #ifdef FIRMWARE_BUILDDATE
     AboutMenu.AddMenuInfo_f(" Build: %s", FIRMWARE_BUILDDATE);

@@ -38,7 +38,6 @@
 #include "../libeg/libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
 
-#include "../../Version.h"
 //#include "colors.h"
 
 #include "../libeg/nanosvg.h"

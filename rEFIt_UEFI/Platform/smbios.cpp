@@ -21,7 +21,6 @@
 
 #include "Platform.h"
 #include "smbios.h"
-#include "../../Version.h"
 #include "cpu.h"
 #include "platformdata.h"
 #include "AcpiPatcher.h"
@@ -1106,11 +1105,11 @@ VOID PatchTableType11()
   //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
-#ifdef REVISION_STR
-	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by %s\n", REVISION_STR);
-#else
-  snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %s\n", gFirmwareRevision);
-#endif
+//#ifdef REVISION_STR
+//	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by %s\n", REVISION_STR);
+//#else
+  snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %ls\n", gFirmwareRevision);
+//#endif
   AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
 
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);

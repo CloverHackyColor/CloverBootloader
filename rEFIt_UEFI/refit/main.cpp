@@ -39,7 +39,6 @@
 #include "../cpp_util/globals_dtor.h"
 #include "../cpp_unit_test/all_tests.h"
 
-#include "Version.h"
 #include "../entry_scan/entry_scan.h"
 #include "../libeg/nanosvg.h"
 #include "../gui/menu_items/menu_globals.h"
@@ -1943,7 +1942,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   if (!gFirmwareRevision) {
-    gFirmwareRevision = PoolPrint(L"%d", gST->FirmwareRevision);
+//    gFirmwareRevision = PoolPrint(L"%d", gST->FirmwareRevision);
   }
   InitializeConsoleSim();
   InitBooterLog();
@@ -1959,7 +1958,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
   }
   //MsgLog("Starting Clover rev %ls on %ls EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
-  MsgLog("Starting %s on %ls EFI\n", REVISION_STR, gST->FirmwareVendor);
+	MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
 
   #ifdef BUILDINFOS_STR
     DBG("Build with: [%s]\n", BUILDINFOS_STR);
