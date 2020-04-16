@@ -2162,7 +2162,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetListOfConfigs();
   }
 
-  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
+//  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
 
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
@@ -2417,7 +2417,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
         DBG("change theme\n");
-        ThemeX.FillByEmbedded();
         InitTheme(FALSE, NULL);
         OptionMenu.FreeMenu();
       }

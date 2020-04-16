@@ -106,8 +106,6 @@ int nsvg__shapesBound(NSVGshape *shapes, float* bounds);
 void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
 void nsvg__deleteShapes(NSVGshape* shape);
 
-extern BOOLEAN DayLight;
-
 void DumpFloat2 (CONST char* s, float* t, int N)
 {
 #if DEBUG_SVG
@@ -2917,8 +2915,8 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           DBG("set message->font=%s color=%X size=%f as in MessageRow\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
-      } else if (!DayLight && strcmp(group->id, "MessageRow_night") == 0) {
-          //replace daylight settings
+      } else if (!ThemeX.Daylight && strcmp(group->id, "MessageRow_night") == 0) {
+          //replace ThemeX.Daylight settings
           p->font = fontSVG;
           p->fontSize = text->fontSize;
           p->fontColor = text->fontColor;
@@ -2937,7 +2935,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           DBG("set menu->font=%s color=%X size=%f as in MenuRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
-      } else if (!DayLight && strcmp(group->id, "MenuRows_night") == 0) {
+      } else if (!ThemeX.Daylight && strcmp(group->id, "MenuRows_night") == 0) {
           textFace[2].font = fontSVG;
           textFace[2].size = (INTN)text->fontSize;
           textFace[2].color = text->fontColor;
@@ -2952,7 +2950,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
           DBG("set help->font=%s color=%X size=%f as in HelpRows\n", fontSVG->fontFamily, text->fontColor, text->fontSize);
         }
         break;
-      } else if (!DayLight && strstr(group->id, "HelpRows_night") != NULL) {
+      } else if (!ThemeX.Daylight && strstr(group->id, "HelpRows_night") != NULL) {
           textFace[0].font = fontSVG;
           textFace[0].size = (INTN)text->fontSize;
           textFace[0].color = text->fontColor;
@@ -3518,12 +3516,12 @@ void XTheme::parseTheme(void* parser, const char** dict)
       BadgeScale = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "SelectionColor") == 0) {
       Color = getIntegerDict(dict[i + 1]);
-      if (DayLight) {
+      if (ThemeX.Daylight) {
         SelectionColor = Color;
       }
     } else if (strcmp(dict[i], "SelectionColor_night") == 0) {
       found = TRUE;
-      if (!DayLight) {
+      if (!ThemeX.Daylight) {
         SelectionColor = getIntegerDict(dict[i + 1]);
       }
     } else if (strcmp(dict[i], "VerticalLayout") == 0) {

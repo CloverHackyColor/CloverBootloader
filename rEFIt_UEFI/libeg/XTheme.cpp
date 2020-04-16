@@ -220,8 +220,8 @@ void XTheme::Init()
   SelectionColor = 0x80808080;
   SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff };
   FontFileName.setEmpty();     
-  Theme.takeValueFrom("embedded");
-  embedded = true;
+//  Theme.takeValueFrom("embedded");
+  embedded = false;
   BannerFileName.setEmpty();    
   SelectionSmallFileName.setEmpty();  
   SelectionBigFileName.setEmpty();  
@@ -254,13 +254,13 @@ void XTheme::Init()
 //  IconFormat = ICON_FORMAT_DEF;
   Proportional = FALSE;
 //  ShowOptimus = FALSE;
-  DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
+//  DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
   TypeSVG = FALSE;
 //  Codepage = 0xC0;           //this is for PNG theme
 //  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
   Scale = 1.0f;
   CentreShift = 0.0f;
-  Daylight = true;
+//  Daylight = true;
   LayoutHeight = 376;
   LayoutBannerOffset                    = 64; //default value if not set
   LayoutButtonOffset                    = 0; //default value if not set
@@ -419,23 +419,25 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
 
 void XTheme::FillByEmbedded()
 {
+  embedded = true;
+  Theme.takeValueFrom("embedded");
+  SelectionColor = 0xA0A0A080;
+  SelectionBackgroundPixel = { 0xa0, 0xa0, 0xa0, 0x80 };
+
   Icons.Empty();
   for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) { //this is embedded icon count
     Icon* NewIcon = new Icon(i, true);
     Icons.AddReference(NewIcon, true);
   }
 
-  Background = XImage(UGAWidth, UGAHeight);
-  if (DarkEmbedded) {
-    Background.Fill(DarkEmbeddedBackgroundPixel);
-  } else {
-    Background.Fill(StdBackgroundPixel);
-  }
   BigBack.setEmpty();
+  Background = XImage(UGAWidth, UGAHeight);
 
   if (Daylight) {
+    Background.Fill(StdBackgroundPixel);
     Banner.FromPNG(ACCESS_EMB_DATA(emb_logo), emb_logo_size);
   } else {
+    Background.Fill(DarkEmbeddedBackgroundPixel);
     Banner.FromPNG(ACCESS_EMB_DATA(emb_dark_logo), emb_dark_logo_size);
   }
   
