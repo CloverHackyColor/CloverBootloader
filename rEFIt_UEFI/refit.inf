@@ -225,7 +225,7 @@
   Platform/sse3_5_patcher.h
 	Platform/VersionString.cpp
 	Platform/VersionString.h
-  Version.h
+  ../Version.h
   cpp_util/panic.h
   cpp_util/panic.cpp
   cpp_util/memory.cpp

@@ -466,8 +466,8 @@ MainBuildScript() {
     # we are building the same rev as before?
     local SkipAutoGen=0
     #
-    if [[ -f "$CLOVERROOT"/rEFIt_UEFI/Version.h ]]; then
-        local builtedRev=$(cat "$CLOVERROOT"/rEFIt_UEFI/Version.h  \
+    if [[ -f "$CLOVERROOT"/Version.h ]]; then
+        local builtedRev=$(cat "$CLOVERROOT"/Version.h  \
                            | grep '#define FIRMWARE_REVISION L' | awk -v FS="(\"|\")" '{print $2}')
 #    echo "old revision ${builtedRev}" >echo.txt
 #    echo "new revision ${repoRev}" >>echo.txt
@@ -620,7 +620,7 @@ MainBuildScript() {
 
       echo "#define BUILDINFOS_STR \"${clover_build_info}\"" >> "$CLOVERROOT"/Version.h
 
-      cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
+#      cp "$CLOVERROOT"/Version.h "$CLOVERROOT"/rEFIt_UEFI/
     fi
 
     eval "$cmd"
