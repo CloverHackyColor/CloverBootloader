@@ -121,7 +121,6 @@ BOOLEAN                         SetTable132                 = FALSE;
 
 //EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
-BOOLEAN DayLight;
 
 //
 DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variables
@@ -190,7 +189,7 @@ REFIT_CONFIG   GlobalConfig = {
   FALSE,          // BOOLEAN     CustomIcons;
   ICON_FORMAT_DEF, // INTN       IconFormat;
   FALSE,          // BOOLEAN     NoEarlyProgress;
-  0,              // INT32       Timezone;
+  0xFF,           // INT32       Timezone; / 0xFF - not set
   FALSE,          // BOOLEAN     ShowOptimus;
   0xC0,           // INTN        Codepage;
   0xC0,           // INTN        CodepageSize; //extended latin
@@ -2668,7 +2667,7 @@ GetEarlyUserSettings (
       INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
       if (NowHour <  0 ) NowHour += 24;
       if (NowHour >= 24 ) NowHour -= 24;
-      DayLight = (NowHour > 8) && (NowHour < 20);
+      ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
 
       Prop = GetProperty (DictPointer, "Theme");
       if (Prop != NULL) {
@@ -2694,8 +2693,8 @@ GetEarlyUserSettings (
                 ThemeX.DarkEmbedded = FALSE;
                 ThemeX.Font = FONT_ALFA;
               } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
-                ThemeX.DarkEmbedded = !DayLight;
-                ThemeX.Font = DayLight?FONT_ALFA:FONT_GRAY;
+                ThemeX.DarkEmbedded = !ThemeX.Daylight;
+                ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
               }
             }
           }
@@ -2710,8 +2709,8 @@ GetEarlyUserSettings (
             ThemeX.DarkEmbedded = FALSE;
             ThemeX.Font = FONT_ALFA;
           } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
-            ThemeX.DarkEmbedded = !DayLight;
-            ThemeX.Font = DayLight?FONT_ALFA:FONT_GRAY;
+            ThemeX.DarkEmbedded = !ThemeX.Daylight;
+            ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
           }
         }
       }
@@ -3861,15 +3860,26 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
   CHAR8      *ChosenTheme = NULL;
   CHAR16     *TestTheme   = NULL;
   UINTN      Rnd;
-
-  DbgHeader("InitXTheme");
-  ThemeX.Init();
-
-  if (DayLight) {
-    DBG("use daylight theme\n");
+  EFI_TIME   Now;
+	
+  //initialize Daylight when we know timezone
+  if (GlobalConfig.Timezone != 0xFF) { // 0xFF:default=timezone not set
+    gRT->GetTime(&Now, NULL);
+    INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+    if (NowHour <  0 ) NowHour += 24;
+    if (NowHour >= 24 ) NowHour -= 24;
+    ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+  } else {
+    ThemeX.Daylight = TRUE; // when timezone is not set
+  }
+  if (ThemeX.Daylight) {
+    DBG("use Daylight theme\n");
   } else {
     DBG("use night theme\n");
   }
+
+  DbgHeader("InitXTheme");
+  ThemeX.Init();
 
   for (i = 0; i < 3; i++) {
     //    DBG("validate %d face\n", i);
@@ -3996,7 +4006,13 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
 finish:
   if (!ThemeDict) {  // No theme could be loaded, use embedded
     DBG (" using embedded theme\n");
-    ThemeX.Init();
+    if (ThemeX.DarkEmbedded) { // when using embedded, set Daylight according to darkembedded
+      ThemeX.Daylight = FALSE;
+    } else {
+      ThemeX.Daylight = TRUE;
+    }
+
+    ThemeX.FillByEmbedded();
     OldChosenTheme = 0xFFFF;
     if (ThemePath != NULL) {
       FreePool (ThemePath);
@@ -4030,7 +4046,7 @@ finish:
     }
     FreeTag(ThemeDict);
 
-    if (!DayLight) {
+    if (!ThemeX.Daylight) {
       Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound_night.wav");
       if (EFI_ERROR(Status)) {
         Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound.wav");

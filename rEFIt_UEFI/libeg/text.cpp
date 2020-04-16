@@ -158,7 +158,8 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
             (PixelPtr->Red == FirstPixel.Red)
             ) {
           PixelPtr->Reserved = 0; //if a pixel has same color as first pixel then it will be transparent
-        } else if (ThemeX.DarkEmbedded) {
+        //} else if (ThemeX.DarkEmbedded) {
+        } else if (!ThemeX.Daylight) {
           *PixelPtr = SemiWhitePixel;  //special case to change a text to semi white, not blue pixels
         }
         FontPtr[Ypos + x] = *PixelPtr++; //not (x, YPos) !!!

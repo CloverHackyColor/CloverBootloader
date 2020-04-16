@@ -49,8 +49,6 @@ extern void DumpFloat2 (CONST char* s, float* t, int N);
 
 extern UINTN NumFrames;
 extern UINTN FrameTime;
-extern BOOLEAN DayLight;
-
 
 textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
 
@@ -272,7 +270,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     BigBack.setEmpty();
   }
   Status = EFI_NOT_FOUND;
-  if (!DayLight) {
+  if (!ThemeX.Daylight) {
     Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
   }
   if (EFI_ERROR(Status)) {
@@ -282,7 +280,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
-  if (!DayLight) {
+  if (!ThemeX.Daylight) {
     Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
   }
   if (EFI_ERROR(Status)) {
@@ -327,7 +325,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
   //selection for bootcamp style
   Status = EFI_NOT_FOUND;
-  if (!DayLight) {
+  if (!ThemeX.Daylight) {
     Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
   }
   if (EFI_ERROR(Status)) {
