@@ -634,6 +634,7 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
     Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
       FileName = IconName + L".png";
+      Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
       if (EFI_ERROR(Status)) {
         FileName = IconName; //may be it already contain extension, for example Logo.png
         Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
