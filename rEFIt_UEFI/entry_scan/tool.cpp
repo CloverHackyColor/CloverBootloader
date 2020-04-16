@@ -71,7 +71,6 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_TOOL, __VA_ARGS__)
 #endif
 
-extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XImage& Image,
                             IN CHAR16 ShortcutLetter, IN CONST XString& Options)

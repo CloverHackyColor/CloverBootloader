@@ -36,6 +36,9 @@
 #include "../Platform/Platform.h"
 #include "entry_scan.h"
 #include "../refit/menu.h"
+#include "../Platform/guid.h"
+#include "../Platform/APFS.h"
+#include "../Platform/cpu.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_COMMON_MENU 1
@@ -534,3 +537,13 @@ BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCO
   }
   return AskUserForFilePathFromVolumes(Title, Result);
 }
+
+// input - tsc
+// output - milliseconds
+// the caller is responsible for t1 > t0
+UINT64 TimeDiff(UINT64 t0, UINT64 t1)
+{
+  return DivU64x64Remainder((t1 - t0), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
+}
+
+

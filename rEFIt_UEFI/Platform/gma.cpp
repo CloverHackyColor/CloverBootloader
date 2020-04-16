@@ -63,6 +63,7 @@
 
 #include "Platform.h"
 #include "gma.h"
+#include "platformdata.h"
 
 #ifndef DEBUG_GMA
 #ifndef DEBUG_ALL

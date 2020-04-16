@@ -38,7 +38,11 @@
 
 
 #include "Platform.h"
-//#include "Version.h"
+#include "Nvram.h"
+#include "platformdata.h"
+#include "smbios.h"
+#include "cpu.h"
+
 
 #include <Guid/DataHubRecords.h>
 

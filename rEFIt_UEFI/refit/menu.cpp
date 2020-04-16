@@ -52,6 +52,9 @@
 #include "../libeg/XTheme.h"
 #include "../libeg/VectorGraphics.h" // for testSVG
 #include "../gui/shared_with_menu.h"
+#include "../Platform/platformdata.h"
+#include "../Platform/cpu.h"
+#include "../Platform/Nvram.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -126,14 +129,6 @@ REFIT_MENU_SCREEN MainMenu(1, L"Main Menu"_XSW, L"Automatic boot"_XSW);
 REFIT_MENU_SCREEN AboutMenu(2, L"About"_XSW, L""_XSW);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
 
-
-// input - tsc
-// output - milliseconds
-// the caller is responsible for t1 > t0
-UINT64 TimeDiff(UINT64 t0, UINT64 t1)
-{
-  return DivU64x64Remainder((t1 - t0), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
-}
 
 
 VOID FillInputs(BOOLEAN New)

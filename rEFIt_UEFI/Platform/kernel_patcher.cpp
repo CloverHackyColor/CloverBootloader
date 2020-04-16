@@ -8,7 +8,9 @@
 
 #include "Platform.h"
 #include "LoaderUefi.h"
-//#include "device_tree.h"
+#include "Nvram.h"
+#include "FixBiosDsdt.h"
+#include "cpu.h"
 
 #include "kernel_patcher.h"
 #include "sse3_patcher.h"

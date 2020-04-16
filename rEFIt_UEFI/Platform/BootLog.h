@@ -41,4 +41,11 @@ DebugLog (
   IN  CONST CHAR8 *FormatString, ...) __attribute__((format(printf, 2, 3)));
 
 
+/** Prints series of bytes. */
+VOID
+PrintBytes (
+  IN  VOID *Bytes,
+  IN  UINTN Number
+  );
+
 #endif

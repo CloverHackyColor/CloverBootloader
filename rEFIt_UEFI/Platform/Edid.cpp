@@ -1,6 +1,7 @@
 //Slice 2013
 
 #include "Platform.h"
+#include "AcpiPatcher.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_EDID 1

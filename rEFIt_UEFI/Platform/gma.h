@@ -26,5 +26,10 @@ switch (ram)
     break;
   default:
 */    
+
+CONST CHAR8
+*get_gma_model (
+  IN UINT16 DeviceID
+  );
     
 #endif /* !__LIBSAIO_GMA_H */

@@ -30,7 +30,9 @@
 
 
 #include "Platform.h"
+#include "StartupSound.h"
 #include "Settings.h"
+#include "Nvram.h"
 
 extern BOOLEAN DayLight;
 extern UINTN                           AudioNum;

@@ -19,7 +19,7 @@
 #include "Platform.h"
 #include "spd.h"
 #include "memvendors.h"
-
+#include "cpu.h"
 
 #ifndef DEBUG_SPD
 #ifndef DEBUG_ALL

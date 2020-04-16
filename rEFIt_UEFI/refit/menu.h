@@ -33,7 +33,13 @@ extern INTN LayoutMainMenuHeight;
 VOID OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 VOID FreeScrollBar(VOID);
 
-UINT64 TimeDiff(UINT64 t0, UINT64 t1); //double in Platform.h
+VOID
+FillInputs (
+  BOOLEAN New
+  );
+
+VOID
+ApplyInputs (VOID);
 
 
 

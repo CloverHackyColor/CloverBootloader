@@ -176,4 +176,8 @@ Byte Number Function Described Notes
 382~383 0x17E~0x17F Reserved; must be coded as 0x00
  */
 
+
+VOID
+ScanSPD (VOID);
+
 #endif /* !__LIBSAIO_SPD_H */

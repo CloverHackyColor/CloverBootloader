@@ -51,6 +51,9 @@
 #include "../libeg/VectorGraphics.h" // for testSVG
 #include "shared_with_menu.h"
 #include "../refit/menu.h"  // for DrawTextXY. Must disappear soon.
+#include "../Platform/AcpiPatcher.h"
+#include "../Platform/Nvram.h"
+
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
 #else

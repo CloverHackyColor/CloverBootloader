@@ -12,7 +12,9 @@ Copyright (c) 2006 JLA
 */
 #include "Platform.h"
 #include "LegacyBiosThunk.h"
-#include <Protocol/Bds.h>
+//#include <Protocol/Bds.h>
+#include "AcpiPatcher.h"
+
 
 #ifndef DEBUG_ALL
 #define DEBUG_LBOOT 1

@@ -19,6 +19,11 @@
 
 #include "StateGenerator.h"
 #include "AmlGenerator.h"
+#include "AcpiPatcher.h"
+#include "FixBiosDsdt.h"
+#include "platformdata.h"
+#include "smbios.h"
+#include "cpu.h"
 
 #define HPET_SIGN        SIGNATURE_32('H','P','E','T')
 #define APIC_SIGN        SIGNATURE_32('A','P','I','C')

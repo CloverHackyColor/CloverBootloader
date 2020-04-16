@@ -21,6 +21,9 @@
 
 #include "Platform.h"
 #include "../../Version.h"
+#include "cpu.h"
+#include "platformdata.h"
+#include "AcpiPatcher.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,7 +49,6 @@ extern "C" {
 #define CPUID_FEATURE_EST         _HBit(7)
 #define MAX_OEM_STRING            256
 
-EFI_GUID            gUuid;
 EFI_GUID            *gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
 
 const CHAR8 unknown[] = "unknown";

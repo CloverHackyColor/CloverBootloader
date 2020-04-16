@@ -50,6 +50,8 @@
 #include "Platform.h"
 #include "nvidia.h"
 #include "device_inject.h"
+#include "smbios.h"
+#include "card_vlist.h"
 
 #ifndef DEBUG_NVIDIA
 #ifndef DEBUG_ALL

@@ -37,6 +37,8 @@
 
 #include "nanosvg.h"
 #include "FloatLib.h"
+#include "../Platform/b64cdecode.h"
+#include "image.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 0

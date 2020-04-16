@@ -29,6 +29,7 @@
  */
 //Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer
 #include "Platform.h"
+#include "b64cdecode.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_PLIST 0
@@ -1045,4 +1046,70 @@ SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
   }
 
   return symbol;
+}
+
+
+
+/*
+ return TRUE if the property present && value = TRUE
+ else return FALSE
+ */
+BOOLEAN
+IsPropertyTrue (
+                TagPtr Prop
+                )
+{
+  return Prop != NULL &&
+  ((Prop->type == kTagTypeTrue) ||
+   ((Prop->type == kTagTypeString) && Prop->string &&
+    ((Prop->string[0] == 'y') || (Prop->string[0] == 'Y'))));
+}
+
+/*
+ return TRUE if the property present && value = FALSE
+ else return FALSE
+ */
+BOOLEAN
+IsPropertyFalse (
+                 TagPtr Prop
+                 )
+{
+  return Prop != NULL &&
+  ((Prop->type == kTagTypeFalse) ||
+   ((Prop->type == kTagTypeString) && Prop->string &&
+    ((Prop->string[0] == 'N') || (Prop->string[0] == 'n'))));
+}
+
+/*
+ Possible values
+ <integer>1234</integer>
+ <integer>+1234</integer>
+ <integer>-1234</integer>
+ <string>0x12abd</string>
+ */
+INTN
+GetPropertyInteger (
+                    TagPtr Prop,
+                    INTN Default
+                    )
+{
+  if (Prop == NULL) {
+    return Default;
+  }
+
+  if (Prop->type == kTagTypeInteger) {
+    return (INTN)Prop->string; //this is union char* or size_t
+  } else if ((Prop->type == kTagTypeString) && Prop->string) {
+    if ((Prop->string[1] == 'x') || (Prop->string[1] == 'X')) {
+      return (INTN)AsciiStrHexToUintn (Prop->string);
+    }
+
+    if (Prop->string[0] == '-') {
+      return -(INTN)AsciiStrDecimalToUintn (Prop->string + 1);
+    }
+
+//    return (INTN)AsciiStrDecimalToUintn (Prop->string);
+    return (INTN)AsciiStrDecimalToUintn((Prop->string[0] == '+') ? (Prop->string + 1) : Prop->string);
+  }
+  return Default;
 }

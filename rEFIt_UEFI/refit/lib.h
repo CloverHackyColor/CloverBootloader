@@ -439,10 +439,7 @@ VOID DebugPause(VOID);
 #else
 #define DebugPause()
 #endif
-VOID EndlessIdleLoop(VOID);
 
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
 
 
 #define BUILTIN_ICON_FUNC_ABOUT                (0)
@@ -501,34 +498,39 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
 #define ICON_FORMAT_ICNS      (1)
 #define ICON_FORMAT_PNG       (2)
 #define ICON_FORMAT_BMP       (3)
-VOID ReinitVolumes(VOID);
 
-BOOLEAN ReadAllKeyStrokes(VOID);
+
+
+#ifdef _cplusplus
+extern XObjArray<REFIT_VOLUME> Volumes;
+#endif
+
+
 //
 // config module
 //
 
 extern REFIT_CONFIG GlobalConfig;
 
-VOID ReadConfig(INTN What);
 //
 // BmLib
 //
 
 extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
-#ifdef DUMP_KERNEL_KEXT_PATCHES
-// Utils functions
-VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
-#endif
 //VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 
 #define KERNEL_MAX_SIZE 40000000
 
 
+
+
+VOID ReinitVolumes(VOID);
+
+
 VOID DbgHeader(CONST CHAR8 *str);
 
+UINTN
+NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type);
+
 #endif
-/*
- 
- EOF */

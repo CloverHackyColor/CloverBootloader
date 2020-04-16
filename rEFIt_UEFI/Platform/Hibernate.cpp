@@ -9,7 +9,11 @@
 
 
 #include <Platform.h>
-
+#include "AcpiPatcher.h"
+#include "guid.h"
+#include "APFS.h"
+#include "Nvram.h"
+#include "BootOptions.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_HIB 1

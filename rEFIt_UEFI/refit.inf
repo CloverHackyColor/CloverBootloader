@@ -81,6 +81,7 @@
   libeg/scroll_images.cpp
   libeg/BmLib.h
   libeg/BmLib.cpp
+  libeg/image.h
   libeg/image.cpp
 #  libeg/load_bmp.cpp
   libeg/load_icns.cpp
@@ -119,7 +120,10 @@
   Platform/Posix/wchar.h
   Platform/Posix/wchar.cpp
   Platform/Posix/abort.cpp
+  Platform/AcpiPatcher.h
   Platform/AcpiPatcher.cpp
+	Platform/APFS.h
+	Platform/APFS.cpp
 	Platform/ati_reg.h
 	Platform/AmlGenerator.cpp
 	Platform/AmlGenerator.h
@@ -132,44 +136,60 @@
 	Platform/boot.h
 	Platform/BootLog.cpp
 	Platform/BootLog.h
+	Platform/BootOptions.h
 	Platform/BootOptions.cpp
+    Platform/card_vlist.h
+    Platform/card_vlist.cpp
+	Platform/Console.h
 	Platform/Console.cpp
+	Platform/cpu.h
 	Platform/cpu.cpp
-	Platform/DataHubCpu.cpp
 	Platform/DataHubCpu.h
+	Platform/DataHubCpu.cpp
 #	Platform/DataHubRecords.h
 	Platform/device_inject.cpp
 	Platform/device_inject.h
 #	Platform/device_tree.cpp
 #	Platform/device_tree.h
+	Platform/Edid.h
 	Platform/Edid.cpp
 	Platform/Events.cpp
 	Platform/Events.h
-	Platform/hda.cpp
-	Platform/hda.h
-    Platform/HdaCodecDump.cpp
-    Platform/HdaCodecDump.h
-	Platform/gma.cpp
+	Platform/FixBiosDsdt.h
+	Platform/FixBiosDsdt.cpp
 	Platform/gma.h
+	Platform/gma.cpp
+	Platform/guid.h
 	Platform/guid.cpp
+	Platform/hda.h
+	Platform/hda.cpp
+    Platform/HdaCodecDump.h
+    Platform/HdaCodecDump.cpp
+	Platform/Injectors.h
 	Platform/Injectors.cpp
-	Platform/LegacyBiosThunk.cpp
 	Platform/LegacyBiosThunk.h
+	Platform/LegacyBiosThunk.cpp
+	Platform/LegacyBoot.h
 	Platform/LegacyBoot.cpp
 	Platform/memvendors.h
-	Platform/nvidia.cpp
 	Platform/nvidia.h
-	Platform/Nvram.cpp
+	Platform/nvidia.cpp
+    Platform/Net.h
+    Platform/Net.cpp
 	Platform/Nvram.h
+	Platform/Nvram.cpp
 	Platform/Platform.h
+	Platform/platformdata.h
 	Platform/platformdata.cpp
+    Platform/PlatformDriverOverride.h
+    Platform/PlatformDriverOverride.cpp
 	Platform/plist.h
 	Platform/plist.cpp
 # Platform/Pointer.cpp
 	Platform/Settings.cpp
 	Platform/Settings.h
+	Platform/smbios.h
 	Platform/smbios.cpp
-#	Platform/SmBios.h
 	Platform/spd.cpp
 	Platform/spd.h
 	Platform/string.cpp
@@ -177,6 +197,7 @@
 	Platform/StateGenerator.cpp
 	Platform/StateGenerator.h
 #	Platform/stringTable.cpp
+	Platform/usbfix.h
 	Platform/usbfix.cpp
 #	Platform/UsbMass.h
 #	Platform/UsbMassBoot.h
@@ -184,7 +205,6 @@
 #	Platform/VesaBiosExtensions.h
 	Platform/b64cdecode.h
 	Platform/b64cdecode.cpp
-	Platform/FixBiosDsdt.cpp
 	Platform/MachO-loader.h
 	Platform/LoaderUefi.h
 	Platform/kernel_patcher.h
@@ -192,11 +212,8 @@
 	Platform/kext_patcher.cpp
 	Platform/kext_inject.cpp
 	Platform/kext_inject.h
-  Platform/card_vlist.cpp
-  Platform/PlatformDriverOverride.cpp
 	Platform/Hibernate.cpp
 	Platform/Hibernate.h
-  Platform/Net.cpp
   Platform/sound.cpp
   Platform/StartupSound.cpp
   Platform/StartupSound.h

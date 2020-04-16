@@ -12,6 +12,18 @@
 #include "../refit/menu.h"
 #include "gma.h"
 #include "../libeg/VectorGraphics.h"
+#include "Nvram.h"
+#include "BootOptions.h"
+#include "StartupSound.h"
+#include "Edid.h"
+#include "platformdata.h"
+#include "smbios.h"
+#include "guid.h"
+#include "card_vlist.h"
+#include "Injectors.h"
+#include "cpu.h"
+#include "APFS.h"
+#include "hda.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -102,6 +114,21 @@ BOOLEAN                         SetTable132                 = FALSE;
 const INTN BCSMargin = 11;
 BOOLEAN DayLight;
 
+//
+DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variables
+
+#ifdef FIRMWARE_REVISION
+//CONST CHAR16 gFirmwareRevisionM[] = FIRMWARE_REVISION;
+//CONST CHAR16 *gFirmwareRevision = &gFirmwareRevisionM[0];
+CONST CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
+
+#else
+CONST CHAR16 *gFirmwareRevision = NULL;
+#endif
+
+EFI_GUID            gUuid;
+
+EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 
 extern MEM_STRUCTURE            gRAM;
@@ -244,70 +271,6 @@ GetCrc32 (
   return x;
 }
 #endif
-
-/*
- return TRUE if the property present && value = TRUE
- else return FALSE
- */
-BOOLEAN
-IsPropertyTrue (
-                TagPtr Prop
-                )
-{
-  return Prop != NULL &&
-  ((Prop->type == kTagTypeTrue) ||
-   ((Prop->type == kTagTypeString) && Prop->string &&
-    ((Prop->string[0] == 'y') || (Prop->string[0] == 'Y'))));
-}
-
-/*
- return TRUE if the property present && value = FALSE
- else return FALSE
- */
-BOOLEAN
-IsPropertyFalse (
-                 TagPtr Prop
-                 )
-{
-  return Prop != NULL &&
-  ((Prop->type == kTagTypeFalse) ||
-   ((Prop->type == kTagTypeString) && Prop->string &&
-    ((Prop->string[0] == 'N') || (Prop->string[0] == 'n'))));
-}
-
-/*
- Possible values
- <integer>1234</integer>
- <integer>+1234</integer>
- <integer>-1234</integer>
- <string>0x12abd</string>
- */
-INTN
-GetPropertyInteger (
-                    TagPtr Prop,
-                    INTN Default
-                    )
-{
-  if (Prop == NULL) {
-    return Default;
-  }
-
-  if (Prop->type == kTagTypeInteger) {
-    return (INTN)Prop->string; //this is union char* or size_t
-  } else if ((Prop->type == kTagTypeString) && Prop->string) {
-    if ((Prop->string[1] == 'x') || (Prop->string[1] == 'X')) {
-      return (INTN)AsciiStrHexToUintn (Prop->string);
-    }
-
-    if (Prop->string[0] == '-') {
-      return -(INTN)AsciiStrDecimalToUintn (Prop->string + 1);
-    }
-
-//    return (INTN)AsciiStrDecimalToUintn (Prop->string);
-    return (INTN)AsciiStrDecimalToUintn((Prop->string[0] == '+') ? (Prop->string + 1) : Prop->string);
-  }
-  return Default;
-}
 
 ACPI_NAME_LIST *
 ParseACPIName(CHAR8 *String)

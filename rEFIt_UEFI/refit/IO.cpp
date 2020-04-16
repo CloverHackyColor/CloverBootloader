@@ -24,6 +24,8 @@ Revision History
 //#include "EfiShellLib.h"
 #include "Platform.h"
 #include "screen.h"
+#include "../Platform/cpu.h"
+#include "../Platform/StartupSound.h"
 
 #define PRINT_STRING_LEN        1024
 #define PRINT_ITEM_BUFFER_LEN   100

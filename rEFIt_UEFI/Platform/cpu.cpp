@@ -35,6 +35,7 @@
  */
 
 #include "Platform.h"
+#include "smbios.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_CPU 1

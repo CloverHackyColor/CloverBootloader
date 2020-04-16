@@ -103,6 +103,8 @@ extern UINT32       PrelinkInfoSize;
 extern UINT32 DisplayVendor[];
 //VOID findCPUfamily();
 
+extern BOOLEAN                         SSSE3;
+
 
 //UINT64 kernelsize;
 

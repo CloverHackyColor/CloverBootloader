@@ -10,6 +10,7 @@
 
 #include "Platform.h"
 #include "BasicIO.h"
+#include "Nvram.h"
 
 
 #ifndef DEBUG_ALL

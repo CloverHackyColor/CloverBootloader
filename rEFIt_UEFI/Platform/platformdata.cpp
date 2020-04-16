@@ -4,6 +4,9 @@
 
 #include "Platform.h"
 #include "nvidia.h"
+#include "smbios.h"
+#include "cpu.h"
+#include "Nvram.h"
 
 /* Machine Default Data */
 

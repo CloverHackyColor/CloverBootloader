@@ -6,8 +6,8 @@
  */
 
 #include "Platform.h"
-
 #include "ati.h"
+#include "smbios.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_ATI 1

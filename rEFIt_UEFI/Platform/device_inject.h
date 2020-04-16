@@ -154,6 +154,7 @@ struct DevPropString {
 
 typedef struct DevPropString  DevPropString;
 
+extern UINT32                          devices_number;
 extern DevPropString *device_inject_string;
 extern UINT8 *device_inject_stringdata;
 extern UINT32 device_inject_stringlength;
@@ -168,5 +169,7 @@ VOID			devprop_free_string(DevPropString *string);
 
 BOOLEAN set_eth_props(pci_dt_t *eth_dev);
 BOOLEAN set_usb_props(pci_dt_t *usb_dev);
+
+UINT32 PciAddrFromDevicePath(EFI_DEVICE_PATH_PROTOCOL* DevicePath);
 
 #endif /* !__LIBSAIO_DEVICE_INJECT_H */

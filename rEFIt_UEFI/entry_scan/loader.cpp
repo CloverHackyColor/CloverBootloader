@@ -40,6 +40,9 @@
 #include "../refit/screen.h"
 #include "../refit/menu.h"
 #include "common.h"
+#include "../Platform/Nvram.h"
+#include "../Platform/APFS.h"
+#include "../Platform/guid.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LOADER 1
@@ -52,8 +55,6 @@
 #else
 #define DBG(...) DebugLog(DEBUG_SCAN_LOADER, __VA_ARGS__)
 #endif
-
-//#define DUMP_KERNEL_KEXT_PATCHES 1
 
 #define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
 

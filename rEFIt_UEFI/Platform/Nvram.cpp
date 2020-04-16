@@ -6,6 +6,8 @@
  */
 
 #include "Platform.h"
+#include "Nvram.h"
+#include "BootOptions.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -1417,4 +1419,29 @@ RemoveStartupDiskVolume ()
     /*Status =*/ DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
 //    DBG ("  * BootCampHD = %s\n", strerror(Status));
 //    DBG ("Removed efi-boot-device-data variable: %s\n", strerror(Status));
+}
+
+
+VOID ResetNvram ()
+{
+  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+    }
+  }
+
+  ResetNativeNvram ();
+
+  if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }
+  }
+
+  // Attempt warm reboot
+  //    gRT->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+  // Warm reboot may not be supported attempt cold reboot
+  //    gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+  // Terminate the screen and just exit
+  //    TerminateScreen();
 }

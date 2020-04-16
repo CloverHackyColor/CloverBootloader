@@ -9,8 +9,8 @@
 
 
 #include "Platform.h"
-#include <Library/MemLogLib.h>
-
+//#include <Library/MemLogLib.h>
+#include "DataHubCpu.h"
 
 extern  EFI_GUID  gEfiMiscSubClassGuid;
 

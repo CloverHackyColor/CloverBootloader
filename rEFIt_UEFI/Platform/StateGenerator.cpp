@@ -4,7 +4,9 @@
  */
 
 #include "StateGenerator.h"
-
+#include "cpu.h"
+#include "smbios.h"
+#include "AcpiPatcher.h"
 
 CONST UINT8 pss_ssdt_header[] =
 {
