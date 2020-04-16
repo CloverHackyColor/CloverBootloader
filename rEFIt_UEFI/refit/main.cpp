@@ -1957,12 +1957,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MsgLog("Now is %02d.%02d.%d,  %02d:%02d:%02d (GMT+%d)\n",
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
   }
-  //MsgLog("Starting Clover rev %ls on %ls EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  //MsgLog("Starting Clover rev %ls on %ls EFI\n", gFirmwareRevision, gST->FirmwareVendor);
 	MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
 
-  #ifdef BUILDINFOS_STR
-    DBG("Build with: [%s]\n", BUILDINFOS_STR);
-  #endif // BUILDINFOS_STR
+	if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
 
 
   Status = InitRefitLib(gImageHandle);
@@ -2025,10 +2023,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("SimpleTextEx Status=%s\n", strerror(Status));
 
   PrepatchSmbios();
-
-//#ifdef REVISION_STR
-//  DBG(REVISION_STR);
-//#endif
 
   //replace / with _
   Size = iStrLen(gSettings.OEMProduct, 64);

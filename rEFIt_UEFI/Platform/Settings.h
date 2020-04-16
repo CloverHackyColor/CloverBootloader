@@ -667,6 +667,8 @@ extern CHAR16                         *IconFormat;
 
 extern CONST CHAR16                   *gFirmwareRevision;
 extern CONST CHAR8* gRevisionStr;
+extern CONST CHAR8* gFirmwareBuildDate;
+extern CONST CHAR8* gBuildInfo;
 
 extern BOOLEAN                        ResumeFromCoreStorage;
 extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here

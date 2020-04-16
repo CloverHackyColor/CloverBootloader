@@ -127,13 +127,15 @@ const INTN BCSMargin = 11;
 DRIVERS_FLAGS gDriversFlags;  //the initializer is not needed for global variables
 
 #ifdef FIRMWARE_REVISION
-//CONST CHAR16 gFirmwareRevisionM[] = FIRMWARE_REVISION;
-//CONST CHAR16 *gFirmwareRevision = &gFirmwareRevisionM[0];
 CONST CHAR16 *gFirmwareRevision = FIRMWARE_REVISION;
 CONST CHAR8* gRevisionStr = REVISION_STR;
+CONST CHAR8* gFirmwareBuildDate = FIRMWARE_BUILDDATE;
+CONST CHAR8* gBuildInfo = BUILDINFOS_STR;
 #else
-CONST CHAR16 *gFirmwareRevision = NULL;
-CONST CHAR8* gRevisionStr = NULL;
+CONST CHAR16 *gFirmwareRevision = "unknown";
+CONST CHAR8* gRevisionStr = "unknown";
+CONST CHAR8* gFirmwareBuildDate = "unknown";
+CONST CHAR8* gBuildInfo = NULL;
 #endif
 
 EFI_GUID            gUuid;

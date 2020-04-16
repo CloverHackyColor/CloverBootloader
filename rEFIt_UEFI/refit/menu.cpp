@@ -1217,16 +1217,9 @@ VOID AboutRefit(VOID)
 
   if (AboutMenu.Entries.size() == 0) {
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
-#ifdef REVISION_STR
-	  AboutMenu.AddMenuInfo_f(" %s ", REVISION_STR);
-#else
+	  AboutMenu.AddMenuInfo_f(" %s ", gRevisionStr);
 	  AboutMenu.AddMenuInfo_f("Clover Revision %ls", gFirmwareRevision);
-#endif
-#ifdef FIRMWARE_BUILDDATE
-    AboutMenu.AddMenuInfo_f(" Build: %s", FIRMWARE_BUILDDATE);
-#else
-    AboutMenu.AddMenuInfo_f(" Build: unknown");
-#endif
+    AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
     AboutMenu.AddMenuInfo_f(" ");
     AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
     AboutMenu.AddMenuInfo_f("Portions Copyright (c) Intel Corporation");
