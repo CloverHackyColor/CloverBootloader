@@ -95,8 +95,11 @@
 #define NSVG_INLINE inline
 #endif
 
+//TODO there are anime properties should be properties of FilmC
+//which is not accessible here
 UINTN NumFrames;
 UINTN FrameTime;
+
 int nsvg__shapesBound(NSVGshape *shapes, float* bounds);
 void takeXformBounds(NSVGshape *shape, float *xform, float *bounds);
 void nsvg__deleteShapes(NSVGshape* shape);

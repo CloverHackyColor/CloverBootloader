@@ -2137,12 +2137,9 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
           //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
-      // initial painting
- //     ThemeX.InitSelection();  //not here
 
       // Update FilmPlace only if not set by InitAnime
       if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
-     //   CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
         FilmPlace = ThemeX.BannerPlace;
       }
 

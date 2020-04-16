@@ -79,9 +79,6 @@ EG_IMAGE * LoadSvgFrame(INTN i);
 INTN   UGAWidth;
 INTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
-#if !XCINEMA
-EG_RECT  BannerPlace; // default ctor called, so it's zero
-#endif
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 const EFI_GRAPHICS_OUTPUT_BLT_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
@@ -411,18 +408,6 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 
 #define MAX_SIZE_ANIME 256
 
-VOID FreeAnime(GUI_ANIME *Anime)
-{
-   if (Anime) {
-     if (Anime->Path) {
-       FreePool(Anime->Path);
-       Anime->Path = NULL;
-     }
-     FreePool(Anime);
-//     Anime = NULL;
-   }
-}
-
 static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension)
 {
   if (Edge == SCREEN_EDGE_LEFT || Edge == SCREEN_EDGE_TOP) {
@@ -479,7 +464,7 @@ INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN Screen
   }
   return pos;
 }
-#if XCINEMA
+
 void REFIT_MENU_SCREEN::GetAnime()
 {
   FilmC = ThemeX.Cinema.GetFilm(ID);
@@ -529,10 +514,6 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   } else {
     // We are here if there is no anime, or if we use oldstyle placement values
     // For both these cases, FilmPlace will be set after banner/menutitle positions are known
-//    FilmC->FilmPlace.XPos = 0;
-//    FilmC->FilmPlace.YPos = 0;
-//    FilmC->FilmPlace.Width = 0;
-//    FilmC->FilmPlace.Height = 0;
     FilmC->FilmPlace = ThemeX.BannerPlace;
   }
   if (FilmC->NumFrames != 0) {
@@ -542,206 +523,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
     LastDraw = 0;
   }
 }
-#else
 
-static EG_IMAGE *AnimeImage = NULL;
-
-VOID REFIT_MENU_SCREEN::UpdateAnime()
-{
-  UINT64      Now;
-  INTN        x, y;
-  
-  //INTN LayoutAnimMoveForMenuX = 0;
-  INTN MenuWidth = 50;
-  
-  if (!AnimeRun || !Film || GlobalConfig.TextOnly) return;
-  if (!AnimeImage ||
-      (AnimeImage->Width != Film[0]->Width) ||
-      (AnimeImage->Height != Film[0]->Height)){
-    if (AnimeImage) {
-      egFreeImage(AnimeImage);
-    }
-//    DBG("create new AnimeImage [%d,%d]\n", Film[0]->Width, Film[0]->Height);
-    AnimeImage = egCreateImage(Film[0]->Width, Film[0]->Height, TRUE);
-  }
-//  DBG("anime rect pos=[%d,%d] size=[%d,%d]\n", Place->XPos, Place->YPos,
-//      Place->Width, Place->Height);
-//  DBG("anime size=[%d,%d]\n", AnimeImage->Width, AnimeImage->Height);
-  
-  // Retained for legacy themes without new anim placement options.
-  x = FilmPlace.XPos + (FilmPlace.Width - AnimeImage->Width) / 2;
-  y = FilmPlace.YPos + (FilmPlace.Height - AnimeImage->Height) / 2;
-  
-  if (!IsImageWithinScreenLimits(x, Film[0]->Width, UGAWidth) || !IsImageWithinScreenLimits(y, Film[0]->Height, UGAHeight)) {
- //   DBG(") This anime can't be displayed\n");
-    return;
-  }
-  
-  // Check if the theme.plist setting for allowing an anim to be moved horizontally in the quest 
-  // to avoid overlapping the menu text on menu pages at lower resolutions is set.
-  if ((ID > 1) && (ThemeX.LayoutAnimMoveForMenuX != 0)) { // these screens have text menus which the anim may interfere with.
-    MenuWidth = (INTN)(TEXT_XMARGIN * 2 + (50 * ThemeX.CharWidth * ThemeX.Scale)); // taken from menu.c
-    if ((x + Film[0]->Width) > (UGAWidth - MenuWidth) >> 1) {
-      if ((x + ThemeX.LayoutAnimMoveForMenuX >= 0) || (UGAWidth-(x + ThemeX.LayoutAnimMoveForMenuX + Film[0]->Width)) <= 100) {
-        x += ThemeX.LayoutAnimMoveForMenuX;
-      }
-    }
-  }
-
-  Now = AsmReadTsc();
-  if (LastDraw == 0) {
-    //first start, we should save background into last frame
-    egFillImageArea(AnimeImage, 0, 0, AnimeImage->Width, AnimeImage->Height, (EG_PIXEL*)&MenuBackgroundPixel);
-    egTakeImage(Film[Frames],
-                x, y,
-                Film[Frames]->Width,
-                Film[Frames]->Height);
-  }
-  if (TimeDiff(LastDraw, Now) < FrameTime) return;
-  if (Film[CurrentFrame]) {
-    egRawCopy(AnimeImage->PixelData, Film[Frames]->PixelData,
-              Film[Frames]->Width, 
-              Film[Frames]->Height,
-              AnimeImage->Width,
-              Film[Frames]->Width);
-    AnimeImage->HasAlpha = FALSE;
-    egComposeImage(AnimeImage, Film[CurrentFrame], 0, 0);  //aaaa
-    BltImage(AnimeImage, x, y);
-  }
-  CurrentFrame++;
-  if (CurrentFrame >= Frames) {
-    AnimeRun = !Once;
-    CurrentFrame = 0;
-  }
-  LastDraw = Now;
-}
-//by initial we use EG_IMAGE anime
-//TODO will be rewritten by XCinema class
-VOID REFIT_MENU_SCREEN::InitAnime()
-{
-  CHAR16      FileName[256];
-  CHAR16      *Path;
-  EG_IMAGE    *p = NULL;
-  EG_IMAGE    *Last = NULL;
-  GUI_ANIME   *Anime;
-
-  if (GlobalConfig.TextOnly) return;
-  //
-  for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
-
-  // Check if we should clear old film vars (no anime or anime path changed)
-  //
-  if (gThemeOptionsChanged || !Anime || !Film || IsEmbeddedTheme() ||
-      gThemeChanged) {
-    //    DBG(" free screen\n");
-    if (Film) {
-      //free images in the film
-      for (INTN i = 0; i <= Frames; i++) { //really there are N+1 frames
-        // free only last occurrence of repeated frames
-        if (Film[i] != NULL && (i == Frames || Film[i] != Film[i+1])) {
-          FreePool(Film[i]);
-        }
-      }
-      FreePool(Film);
-      Film = NULL;
-      Frames = 0;
-    }
-  }
-  // Check if we should load anime files (first run or after theme change)
-  if (Anime && Film == NULL) {
-    Path = Anime->Path;
-    Film = (EG_IMAGE**)AllocateZeroPool((Anime->Frames + 1) * sizeof(VOID*));
-    if ((ThemeX.TypeSVG || Path) && Film) {
-      // Look through contents of the directory
-      UINTN i;
-      for (i = 0; i < Anime->Frames; i++) {
-        //       DBG("Try to load file %ls\n", FileName);
-        if (ThemeX.TypeSVG) {
-          p = LoadSvgFrame(i);
-          //       DBG("frame %d loaded\n", i);
-        } else {
-          snwprintf(FileName, 512, "%ls\\%ls_%03llu.png", Path, Path, i);
-          p = egLoadImage(ThemeX.ThemeDir, FileName, TRUE);
-        }
-        if (!p) {
-          p = Last;
-          if (!p) break;
-        } else {
-          Last = p;
-        }
-        Film[i] = p;
-      }
-      if (Film[0] != NULL) {
-        Frames = i;
-        DBG(" found %llu frames of the anime\n", i);
-        // Create background frame
-        Film[i] = egCreateImage(Film[0]->Width, Film[0]->Height, FALSE);
-        // Copy some settings from Anime into Screen
-        FrameTime = Anime->FrameTime;
-        Once = Anime->Once;
-//        Theme = (__typeof__(Theme))AllocateCopyPool(StrSize(GlobalConfig.Theme), GlobalConfig.Theme);
-      } /*else {
-         DBG("Film[0] == NULL\n");
-         } */
-    }
-  }
-  // Check if a new style placement value has been specified
-  if (Anime && (Anime->FilmX >=0) && (Anime->FilmX <=100) &&
-      (Anime->FilmY >=0) && (Anime->FilmY <=100) &&
-      (Film != NULL) && (Film[0] != NULL)) {
-    // Check if screen size being used is different from theme origination size.
-    // If yes, then recalculate the animation placement % value.
-    // This is necessary because screen can be a different size, but anim is not scaled.
-    FilmPlace.XPos = HybridRepositioning(Anime->ScreenEdgeHorizontal, Anime->FilmX, Film[0]->Width,  UGAWidth,  ThemeX.ThemeDesignWidth );
-    FilmPlace.YPos = HybridRepositioning(Anime->ScreenEdgeVertical,   Anime->FilmY, Film[0]->Height, UGAHeight, ThemeX.ThemeDesignHeight);
-
-    // Does the user want to fine tune the placement?
-    FilmPlace.XPos = CalculateNudgePosition(FilmPlace.XPos, Anime->NudgeX, Film[0]->Width, UGAWidth);
-    FilmPlace.YPos = CalculateNudgePosition(FilmPlace.YPos, Anime->NudgeY, Film[0]->Height, UGAHeight);
-
-    FilmPlace.Width = Film[0]->Width;
-    FilmPlace.Height = Film[0]->Height;
-    DBG("recalculated Film position\n");
-  } else {
-    // We are here if there is no anime, or if we use oldstyle placement values
-    // For both these cases, FilmPlace will be set after banner/menutitle positions are known
-    FilmPlace.XPos = 0;
-    FilmPlace.YPos = 0;
-    FilmPlace.Width = 0;
-    FilmPlace.Height = 0;
-  }
-  if (Film != NULL && Film[0] != NULL) {
-    DBG(" Anime seems OK, init it\n");
-    AnimeRun = TRUE;
-    CurrentFrame = 0;
-    LastDraw = 0;
-  } else {
-    //    DBG("not run anime\n");
-    AnimeRun = FALSE;
-  }
-  //  DBG("anime inited\n");
-}
-
-VOID REFIT_MENU_SCREEN::GetAnime()
-{
-  GUI_ANIME   *Anime;
-  
-  if (!GuiAnime) {
-    AnimeRun = FALSE;
-    return;
-  }
-  
-  for (Anime = GuiAnime; Anime != NULL && Anime->ID != ID; Anime = Anime->Next);
-  if (Anime == NULL || Anime->Path == NULL) {
-    AnimeRun = FALSE;
-    return;
-  }
-  
-	DBG("Use anime=%ls frames=%llu\n", Anime->Path, Anime->Frames);
-  AnimeRun = TRUE;
-  return;
-}
-#endif
 //
 // Sets next/previous available screen resolution, according to specified offset
 //

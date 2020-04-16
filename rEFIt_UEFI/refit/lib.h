@@ -321,21 +321,7 @@ typedef struct {
 #define SCREEN_EDGE_TOP     60000
 #define SCREEN_EDGE_RIGHT   70000
 #define SCREEN_EDGE_BOTTOM  80000
-/*
-typedef struct GUI_ANIME GUI_ANIME;
-struct GUI_ANIME {
-  UINTN      ID;
-  CHAR16    *Path;
-  UINTN      Frames;
-  UINTN      FrameTime;
-  INTN       FilmX, FilmY;  //relative
-  INTN       ScreenEdgeHorizontal;
-  INTN       ScreenEdgeVertical;
-  INTN       NudgeX, NudgeY;
-  BOOLEAN    Once;
-  GUI_ANIME *Next;
-};
-*/
+
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_HANDLE       SelfDeviceHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;
@@ -348,12 +334,6 @@ extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
 extern EFI_FILE         *OemThemeDir;
-
-//extern BOOLEAN          MainAnime;
-#if XCINEMA
-#else
-extern GUI_ANIME        *GuiAnime;
-#endif
 
 extern REFIT_VOLUME     *SelfVolume;
 #ifdef __cplusplus

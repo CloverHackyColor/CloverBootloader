@@ -9,13 +9,6 @@ VOID FinishExternalScreen(VOID);
 VOID TerminateScreen(VOID);
 VOID SetNextScreenMode(INT32);
 
-
-//VOID    GetAnime(REFIT_MENU_SCREEN *Screen);
-//VOID    InitAnime(REFIT_MENU_SCREEN *Screen);
-//VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, const EG_RECT *Place);
-VOID    FreeAnime(GUI_ANIME *Anime);
-
-
 VOID SwitchToGraphicsAndClear(VOID);
 VOID BltClearScreen();
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos);

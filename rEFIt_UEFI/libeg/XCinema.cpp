@@ -28,7 +28,7 @@
 
 // object XCinema Cinema is a part of Theme
 // object FILM* FilmC is a part or current Screen. Must be initialized from Cinema somewhere on Screen init
-#if XCINEMA
+
 VOID REFIT_MENU_SCREEN::UpdateFilm()
 {
   if (FilmC == nullptr || !AnimeRun) {
@@ -62,7 +62,7 @@ VOID REFIT_MENU_SCREEN::UpdateFilm()
   }
   LastDraw = Now;
 }
-#endif
+
 FILM* XCinema::GetFilm(INTN Id)
 {
 //  DBG("ask film %lld from total of %lld\n", Id, Cinema.size());

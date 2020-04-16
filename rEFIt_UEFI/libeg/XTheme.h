@@ -119,9 +119,9 @@ public:
   XImage  FontImage;
 
   EG_RECT  BannerPlace;
-#if XCINEMA
+
   XCinema Cinema;
-#endif
+
   void *SVGParser;
   //fill the theme
 //  const XImage& GetIcon(const char* Name);

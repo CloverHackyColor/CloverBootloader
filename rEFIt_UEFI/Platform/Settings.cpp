@@ -98,12 +98,6 @@ CONST CHAR16                        **RecoveryPlists              = NULL;
 // QPI
 BOOLEAN                         SetTable132                 = FALSE;
 
-
-#if XCINEMA
-// it is a part of Theme
-#else
-GUI_ANIME                       *GuiAnime                   = NULL;
-#endif
 //EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
 BOOLEAN DayLight;
@@ -3467,11 +3461,6 @@ XTheme::GetThemeTagSettings (void* DictP)
   ScrollBarDecorationsHeight            = 5;
   ScrollScrollDecorationsHeight         = 7;
   Font                     = FONT_LOAD; //not default
-#if XCINEMA
-#else
-  GuiAnime = NULL;
-#endif
-
 
   // if NULL parameter, quit after setting default values, this is embedded theme
   if (DictP == NULL) {
@@ -3736,7 +3725,6 @@ XTheme::GetThemeTagSettings (void* DictP)
     Proportional = IsPropertyTrue (Dict2);
   }
   
-#if XCINEMA
   Dict = GetProperty (DictPointer, "Anime");
   if (Dict != NULL) {
     INTN  Count = GetTagCount (Dict);
@@ -3800,106 +3788,9 @@ XTheme::GetThemeTagSettings (void* DictP)
       NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
       ThemeX.Cinema.AddFilm(NewFilm);
  //     delete NewFilm; //looks like already deleted
-
-    }
-
-
-  }
-#else
-  Dict = GetProperty (DictPointer, "Anime");
-  if (Dict != NULL) {
-    INTN   i, Count = GetTagCount (Dict);
-    for (i = 0; i < Count; i++) {
-      GUI_ANIME *Anime;
-      if (EFI_ERROR (GetElement (Dict, i, &Dict3))) {
-        continue;
-      }
-
-      if (Dict3 == NULL) {
-        break;
-      }
-
-      Anime = (__typeof__(Anime))AllocateZeroPool (sizeof(GUI_ANIME));
-      if (Anime == NULL) {
-        break;
-      }
-
-      Dict2 = GetProperty (Dict3, "ID");
-      Anime->ID = (UINTN)GetPropertyInteger (Dict2, 1); //default=main screen
-
-      Dict2 = GetProperty (Dict3, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        Anime->Path = PoolPrint(L"%a", Dict2->string);
-      }
-
-      Dict2 = GetProperty (Dict3, "Frames");
-      Anime->Frames = (UINTN)GetPropertyInteger (Dict2, Anime->Frames);
-
-      Dict2 = GetProperty (Dict3, "FrameTime");
-      Anime->FrameTime = (UINTN)GetPropertyInteger (Dict2, Anime->FrameTime);
-
-      Dict2 = GetProperty (Dict3, "ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "left") == 0) {
-          Anime->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (AsciiStrCmp (Dict2->string, "right") == 0) {
-          Anime->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
-        }
-      }
-
-      Dict2 = GetProperty (Dict3, "ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "top") == 0) {
-          Anime->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (AsciiStrCmp (Dict2->string, "bottom") == 0) {
-          Anime->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
-        }
-      }
-
-      //default values are centre
-
-      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeX%");
-      Anime->FilmX = GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeY%");
-      Anime->FilmY = GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "NudgeX");
-      Anime->NudgeX = GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "NudgeY");
-      Anime->NudgeY = GetPropertyInteger (Dict2, INITVALUE);
-
-      Dict2 = GetProperty (Dict3, "Once");
-      Anime->Once = IsPropertyTrue (Dict2);
-
-      // Add the anime to the list
-      if ((Anime->ID == 0) || (Anime->Path == NULL)) {
-        FreePool (Anime);
-      } else if (GuiAnime != NULL) { //second anime or further
-        if (GuiAnime->ID == Anime->ID) { //why the same anime here?
-          Anime->Next = GuiAnime->Next;
-          FreeAnime (GuiAnime); //free double
-        } else {
-          GUI_ANIME *Ptr = GuiAnime;
-          while (Ptr->Next) {
-            if (Ptr->Next->ID == Anime->ID) { //delete double from list
-              GUI_ANIME *Next = Ptr->Next;
-              Ptr->Next = Next->Next;
-              FreeAnime (Next);
-              break;
-            }
-            Ptr       = Ptr->Next;
-          }
-          Anime->Next = GuiAnime;
-        }
-        GuiAnime      = Anime;
-      } else {
-        GuiAnime      = Anime; //first anime
-      }
     }
   }
-#endif
+
 //not sure if it needed
   if (BackgroundName.isEmpty()) {
     BackgroundName.takeValueFrom("background");
@@ -4036,25 +3927,10 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
      mainParser = NULL;
    }
    */
-//TODO switch to XImage
-//  if (FontImage != NULL) {
-    //    DBG("free font image\n");  //raster font
-//    egFreeImage (FontImage);
-//    FontImage = NULL;
-//  }
   ThemeX.FontImage.setEmpty();
 
   Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
 
-//TODO remake GuiAnime
-#if !XCINEMA
-  while (GuiAnime != NULL) {
-    GUI_ANIME *NextAnime = GuiAnime->Next;
-    //    DBG("free anime %d\n", GuiAnime->ID);
-    FreeAnime (GuiAnime);
-    GuiAnime             = NextAnime;
-  }
-#endif
   //  DBG("...done\n");
   ThemeX.GetThemeTagSettings(NULL);
 

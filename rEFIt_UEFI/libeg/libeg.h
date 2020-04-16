@@ -37,8 +37,6 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
-#define XCINEMA 1
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -389,7 +387,7 @@ typedef struct {
     EG_PIXEL    *PixelData;
     BOOLEAN     HasAlpha;   //moved here to avoid alignment issue
 } EG_IMAGE;
-
+/*
 typedef struct GUI_ANIME GUI_ANIME;
 struct GUI_ANIME {
   UINTN      ID;
@@ -403,7 +401,7 @@ struct GUI_ANIME {
   BOOLEAN    Once;
   GUI_ANIME *Next;
 };
-
+*/
 #ifdef __cplusplus
 class EG_RECT {
 public:
