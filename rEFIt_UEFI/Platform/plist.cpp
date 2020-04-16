@@ -44,6 +44,16 @@
 #endif
 
 
+struct Symbol {
+  UINTN         refCount;
+  struct Symbol *next;
+  CHAR8         string[1];
+};
+
+typedef struct Symbol Symbol, *SymbolPtr;
+
+
+
 SymbolPtr gSymbolsHead = NULL;
 TagPtr    gTagsFree = NULL;
 CHAR8* buffer_start = NULL;

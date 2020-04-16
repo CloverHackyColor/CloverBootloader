@@ -9,6 +9,14 @@
 #define PLATFORM_FIXBIOSDSDT_H_
 
 
+struct _oper_region {
+  CHAR8  Name[8];
+  UINT32 Address;
+  struct _oper_region *next;
+};
+typedef struct _oper_region OPER_REGION;
+
+
 VOID
 FixBiosDsdt (
   UINT8                                     *Dsdt,

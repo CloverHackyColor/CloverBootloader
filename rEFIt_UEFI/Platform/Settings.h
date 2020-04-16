@@ -1,6 +1,16 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
+
+//// SysVariables
+//typedef struct SYSVARIABLES SYSVARIABLES;
+//struct SYSVARIABLES
+//{
+//  SYSVARIABLES      *Next;
+//  CHAR16            *Key;
+//  INPUT_ITEM        MenuItem;
+//};
+
 typedef struct {
   CHAR16          *Name;
 //  CHAR8           *LineName;
@@ -579,6 +589,14 @@ struct SIDELOAD_KEXT {
   CHAR16         *Version;
   INPUT_ITEM     MenuItem;
 };
+
+typedef struct RT_VARIABLES RT_VARIABLES;
+struct RT_VARIABLES {
+//  BOOLEAN  Disabled;
+  CHAR16   *Name;
+  EFI_GUID VarGuid;
+};
+extern RT_VARIABLES                 *RtVariables;
 
 extern UINTN       AudioNum;
 extern HDA_OUTPUTS AudioList[20];

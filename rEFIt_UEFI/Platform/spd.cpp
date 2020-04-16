@@ -20,6 +20,7 @@
 #include "spd.h"
 #include "memvendors.h"
 #include "cpu.h"
+#include "smbios.h"
 
 #ifndef DEBUG_SPD
 #ifndef DEBUG_ALL
@@ -37,7 +38,6 @@
 
 //extern EFI_DATA_HUB_PROTOCOL			*gDataHub;
 
-extern MEM_STRUCTURE		gRAM;
 //extern DMI*					gDMI;
 
 //==>

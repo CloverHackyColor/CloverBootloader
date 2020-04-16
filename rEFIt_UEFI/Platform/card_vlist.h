@@ -9,6 +9,20 @@
 #define PLATFORM_CARD_VLIST_H_
 
 
+typedef struct {
+  UINT32            Signature;
+  LIST_ENTRY        Link;
+  CHAR8             Model[64];
+  UINT32            Id;
+  UINT32            SubId;
+  UINT64            VideoRam;
+  UINTN             VideoPorts;
+  BOOLEAN           LoadVBios;
+} CARDLIST;
+
+
+#define CARDLIST_SIGNATURE SIGNATURE_32('C','A','R','D')
+
 
 VOID
 FillCardList (

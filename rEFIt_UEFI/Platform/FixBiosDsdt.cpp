@@ -6,6 +6,7 @@
 // NForce additions by Oscar09, 2013
 
 #include "Platform.h"
+#include "FixBiosDsdt.h"
 #include "StateGenerator.h"
 #include "AcpiPatcher.h"
 #include "cpu.h"
@@ -31,6 +32,8 @@ extern "C" {
 #else
 #define DBG(...) DebugLog(DEBUG_FIX, __VA_ARGS__)
 #endif
+
+
 
 OPER_REGION *gRegions = NULL;
 

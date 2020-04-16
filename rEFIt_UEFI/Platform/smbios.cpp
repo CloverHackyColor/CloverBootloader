@@ -20,6 +20,7 @@
  **/
 
 #include "Platform.h"
+#include "smbios.h"
 #include "../../Version.h"
 #include "cpu.h"
 #include "platformdata.h"
@@ -42,6 +43,8 @@ extern "C" {
 #else
 #define DBG(...) DebugLog(DEBUG_SMBIOS, __VA_ARGS__)
 #endif
+
+#define REMAP_SMBIOS_TABLE_GUID { 0xeb9d2d35, 0x2d88, 0x11d3, {0x9a, 0x16, 0x0, 0x90, 0x27, 0x3f, 0xc1, 0x4d } }
 
 #define CPUID_EXTFEATURE_EM64T    _Bit(29)
 #define CPUID_EXTFEATURE_XD       _Bit(20)

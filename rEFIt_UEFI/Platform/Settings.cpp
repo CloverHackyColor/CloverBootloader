@@ -131,7 +131,6 @@ EFI_GUID            gUuid;
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 
-extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                  NeedPMfix;
 
 //extern INTN                     OldChosenAudio;

@@ -9,6 +9,7 @@
 
 
 #include "Platform.h"
+#include "BootOptions.h"
 #include "BasicIO.h"
 #include "Nvram.h"
 

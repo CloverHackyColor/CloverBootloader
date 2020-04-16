@@ -8,6 +8,29 @@
 #ifndef PLATFORM_ACPIPATCHER_H_
 #define PLATFORM_ACPIPATCHER_H_
 
+
+
+#pragma pack(push)
+#pragma pack(1)
+
+typedef struct {
+
+  EFI_ACPI_DESCRIPTION_HEADER Header;
+  UINT32                      Entry;
+
+} RSDT_TABLE;
+
+typedef struct {
+
+  EFI_ACPI_DESCRIPTION_HEADER Header;
+  UINT64                      Entry;
+
+} XSDT_TABLE;
+
+#pragma pack(pop)
+
+
+
 extern UINT64                          BiosDsdt;
 extern UINT32                          BiosDsdtLen;
 #define                                acpi_cpu_max 128

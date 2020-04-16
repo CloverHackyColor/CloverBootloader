@@ -8,6 +8,48 @@
 #ifndef PLATFORM_BOOTOPTIONS_H_
 #define PLATFORM_BOOTOPTIONS_H_
 
+typedef struct {
+    ///
+    /// XXXX in BootXXXX.
+    ///
+  UINT16                     BootNum;
+    ///
+    /// Pointer to raw EFI_LOAD_OPTION (BootXXXX) variable content.
+    ///
+    VOID                     *Variable;
+    ///
+    /// Variable size in bytes.
+    ///
+    UINTN                    VariableSize;
+    ///
+    /// BootOption Attributes (first 4 bytes from Variable).
+    ///
+    UINT32                   Attributes;
+    ///
+    /// BootOption FilePathListLength (next 2 bytes from Variable).
+    ///
+    UINT16                   FilePathListLength;
+    ///
+    /// Null terminated BootOption Description (pointer to 6th byte of Variable).
+    ///
+    CONST CHAR16                   *Description;
+    ///
+    /// Size in bytes of BootOption Description.
+    ///
+    UINTN                    DescriptionSize;
+    ///
+    /// Pointer to BootOption FilePathList.
+    ///
+    EFI_DEVICE_PATH_PROTOCOL *FilePathList;
+    ///
+    /// Pointer to BootOption OptionalData.
+    ///
+    UINT8                    *OptionalData;
+    ///
+    /// BootOption OptionalData size in bytes.
+    ///
+    UINTN                    OptionalDataSize;
+} BO_BOOT_OPTION;
 
 
 /** Finds and returns pointer to specified DevPath node in DevicePath or NULL. */

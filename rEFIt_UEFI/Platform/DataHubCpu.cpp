@@ -69,7 +69,6 @@ EFI_GUID gDataHubPlatformGuid = {
 extern EFI_GUID                     gDataHubPlatformGuid;
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
 extern UINTN                        RtVariablesNum;
-extern RT_VARIABLES                 *RtVariables;
 
 
 typedef union {

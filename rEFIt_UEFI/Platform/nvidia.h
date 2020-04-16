@@ -50,7 +50,8 @@
 #ifndef __LIBSAIO_NVIDIA_H
 #define __LIBSAIO_NVIDIA_H
 
-#include "device_inject.h"
+//#include "device_inject.h"
+#include "card_vlist.h"
 
 extern CHAR8* gDeviceProperties;
   

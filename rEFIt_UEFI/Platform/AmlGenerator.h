@@ -18,6 +18,26 @@ static inline BOOLEAN aml_isvalidchar(char c)
 	return IS_UPPER(c) || IS_DIGIT(c) || c == '_';
 };
 */
+
+
+struct aml_chunk
+{
+  UINT8              Type;
+  UINT8              pad;
+  UINT16             Length;
+  UINT32             pad2;
+  CHAR8              *Buffer;
+
+  UINT16             Size;
+  UINT16             pad3[3];
+
+  struct aml_chunk*  Next;
+  struct aml_chunk*  First;
+  struct aml_chunk*  Last;
+};
+typedef struct aml_chunk AML_CHUNK;
+
+
 BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node);
 AML_CHUNK* aml_create_node(AML_CHUNK* parent);
 VOID aml_destroy_node(AML_CHUNK* node);
