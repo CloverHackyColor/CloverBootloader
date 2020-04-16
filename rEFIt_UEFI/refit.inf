@@ -37,6 +37,11 @@
   Platform/BdsConnect.cpp #included into GenericBdsLib
   ../Include/Library/printf_lite-conf.h
   ../Include/Library/printf_lite.h
+  include/Devices.h
+  include/Efi.h
+  include/Handle.h
+  include/OneLinerMacros.h
+  include/Pci.h
   refit/main.cpp
   refit/icns.cpp
   refit/lib.cpp
@@ -53,6 +58,7 @@
   entry_scan/loader.h
   entry_scan/loader.cpp
   entry_scan/tool.cpp
+  entry_scan/secureboot.h
   entry_scan/secureboot.cpp
   entry_scan/securehash.cpp
   entry_scan/securemenu.cpp
@@ -192,8 +198,6 @@
 	Platform/smbios.cpp
 	Platform/spd.cpp
 	Platform/spd.h
-	Platform/string.cpp
-	Platform/string.h
 	Platform/StateGenerator.cpp
 	Platform/StateGenerator.h
 #	Platform/stringTable.cpp
@@ -219,6 +223,8 @@
   Platform/StartupSound.h
   Platform/sse3_patcher.h
   Platform/sse3_5_patcher.h
+	Platform/VersionString.cpp
+	Platform/VersionString.h
   Version.h
   cpp_util/panic.h
   cpp_util/panic.cpp
