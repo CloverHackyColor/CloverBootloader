@@ -122,6 +122,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
           InitScreen(FALSE);
           if (gThemeNeedInit) {
             InitTheme(TRUE, NULL);
+            ThemeX.ClearScreen();
             gThemeNeedInit = FALSE;
           }
           gGuiIsReady = TRUE;

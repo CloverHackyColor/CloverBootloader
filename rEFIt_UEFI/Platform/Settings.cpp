@@ -4073,7 +4073,7 @@ finish:
     ThemeX.PrepareFont();
   }
 
-  ThemeX.ClearScreen();
+  //ThemeX.ClearScreen();
   return Status;
 }
 

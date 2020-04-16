@@ -2409,13 +2409,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
+        gThemeChanged = TRUE;
       } else if (gThemeChanged) {
         DBG("change theme\n");
         InitTheme(FALSE, NULL);
         OptionMenu.FreeMenu();
       }
       DBG("theme inited\n");
-      gThemeChanged = FALSE;
       if (ThemeX.embedded) {
         DBG("Chosen embedded theme\n");
       } else {
@@ -2542,6 +2542,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         MainMenu.GetAnime();
+        if (gThemeChanged) {
+          gThemeChanged = FALSE;
+          ThemeX.ClearScreen();
+        }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
 //		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
