@@ -55,6 +55,9 @@
 #include "../Platform/platformdata.h"
 #include "../Platform/cpu.h"
 #include "../Platform/Nvram.h"
+#include "../Platform/FixBiosDsdt.h"
+#include "../include/Devices.h"
+#include "../Platform/boot.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -69,18 +72,9 @@
 #endif
 
 
-//#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
-//#define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
-//CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin"; // tmporarily moved in shared_wint_menu
-
-//#define LSTR(s) L##s
-
-
 REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 
 extern CONST CHAR8      *AudioOutputNames[];
-
-#include "../Platform/string.h"
 
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;

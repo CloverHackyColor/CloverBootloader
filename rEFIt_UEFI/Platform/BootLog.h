@@ -16,6 +16,18 @@ extern "C" {
 } // extern "C"
 #endif
 
+
+//#define SAFE_LOG_SIZE  80
+//#define MSG_LOG_SIZE (256 * 1024)
+#define PREBOOT_LOG  L"EFI\\CLOVER\\misc\\preboot.log"
+#define LEGBOOT_LOG  L"EFI\\CLOVER\\misc\\legacy_boot.log"
+#define BOOT_LOG     L"EFI\\CLOVER\\misc\\boot.log"
+#define SYSTEM_LOG   L"EFI\\CLOVER\\misc\\system.log"
+#define DEBUG_LOG    L"EFI\\CLOVER\\misc\\debug.log"
+//#define PREWAKE_LOG  L"EFI\\CLOVER\\misc\\prewake.log"
+
+
+
 VOID
 InitBooterLog (VOID);
 

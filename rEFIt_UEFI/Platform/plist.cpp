@@ -44,6 +44,23 @@
 #endif
 
 
+
+/* XML Tags */
+#define kXMLTagPList     "plist"
+#define kXMLTagDict      "dict"
+#define kXMLTagKey       "key"
+#define kXMLTagString    "string"
+#define kXMLTagInteger   "integer"
+#define kXMLTagData      "data"
+#define kXMLTagDate      "date"
+#define kXMLTagFalse     "false/"
+#define kXMLTagTrue      "true/"
+#define kXMLTagArray     "array"
+#define kXMLTagReference "reference"
+#define kXMLTagID        "ID="
+#define kXMLTagIDREF     "IDREF="
+
+
 struct Symbol {
   UINTN         refCount;
   struct Symbol *next;

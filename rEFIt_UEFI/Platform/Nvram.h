@@ -8,6 +8,10 @@
 #ifndef PLATFORM_NVRAM_H_
 #define PLATFORM_NVRAM_H_
 
+#define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
+
+
+
 extern EFI_GUID                       *gEfiBootDeviceGuid;
 extern EFI_DEVICE_PATH_PROTOCOL       *gEfiBootDeviceData;
 

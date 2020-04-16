@@ -52,6 +52,7 @@
 
 //#include "device_inject.h"
 #include "card_vlist.h"
+#include "../include/Pci.h"
 
 extern CHAR8* gDeviceProperties;
   

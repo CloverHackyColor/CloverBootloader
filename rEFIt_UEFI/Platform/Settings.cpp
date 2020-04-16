@@ -24,6 +24,11 @@
 #include "cpu.h"
 #include "APFS.h"
 #include "hda.h"
+#include "FixBiosDsdt.h"
+#include "../entry_scan/secureboot.h"
+#include "../include/Pci.h"
+#include "../include/Devices.h"
+#include "ati_reg.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -44,6 +49,10 @@
 //#define kXMLTagArray      "array"
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
+
+#define NUM_OF_CONFIGS 3
+#define GEN_PMCON_1                 0xA0
+
 
 INTN OldChosenTheme;
 INTN OldChosenConfig;

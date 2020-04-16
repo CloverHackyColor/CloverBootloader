@@ -9,6 +9,9 @@
 
 
 #include "Platform.h"
+#include "device_inject.h"
+#include "FixBiosDsdt.h"
+#include "../include/Devices.h"
 
 #ifndef DEBUG_INJECT
 #ifndef DEBUG_ALL
@@ -23,6 +26,8 @@
 #else
 #define DBG(...) DebugLog(DEBUG_INJECT, __VA_ARGS__)
 #endif
+
+#define MAX_NUM_DEVICES  64
 
 UINT32 devices_number = 1;
 UINT32 builtin_set    = 0;

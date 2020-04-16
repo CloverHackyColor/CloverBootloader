@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "Platform.h"
-//#include "InternalBdsLib.h"
+#include "../include/Handle.h"
 
 
 /**

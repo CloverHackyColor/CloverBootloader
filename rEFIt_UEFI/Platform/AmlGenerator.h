@@ -38,6 +38,39 @@ struct aml_chunk
 typedef struct aml_chunk AML_CHUNK;
 
 
+#define  AML_CHUNK_NONE          0xff
+#define  AML_CHUNK_ZERO          0x00
+#define  AML_CHUNK_ONE           0x01
+#define  AML_CHUNK_ALIAS         0x06
+#define  AML_CHUNK_NAME          0x08
+#define  AML_CHUNK_BYTE          0x0A
+#define  AML_CHUNK_WORD          0x0B
+#define  AML_CHUNK_DWORD         0x0C
+#define  AML_CHUNK_STRING        0x0D
+#define  AML_CHUNK_QWORD         0x0E
+#define  AML_CHUNK_SCOPE         0x10
+#define  AML_CHUNK_PACKAGE       0x12
+#define  AML_CHUNK_METHOD        0x14
+#define AML_CHUNK_RETURN         0xA4
+#define AML_LOCAL0               0x60
+#define AML_STORE_OP             0x70
+//-----------------------------------
+// defines added by pcj
+#define  AML_CHUNK_BUFFER        0x11
+#define  AML_CHUNK_STRING_BUFFER 0x15
+#define  AML_CHUNK_OP            0x5B
+#define  AML_CHUNK_REFOF         0x71
+#define  AML_CHUNK_DEVICE        0x82
+#define  AML_CHUNK_LOCAL0        0x60
+#define  AML_CHUNK_LOCAL1        0x61
+#define  AML_CHUNK_LOCAL2        0x62
+
+#define  AML_CHUNK_ARG0          0x68
+#define  AML_CHUNK_ARG1          0x69
+#define  AML_CHUNK_ARG2          0x6A
+#define  AML_CHUNK_ARG3          0x6B
+
+
 BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node);
 AML_CHUNK* aml_create_node(AML_CHUNK* parent);
 VOID aml_destroy_node(AML_CHUNK* node);

@@ -1,4 +1,5 @@
 #include "Platform.h"
+#include "kext_inject.h"
 #include "DataHubCpu.h"
 
 #ifndef DEBUG_ALL

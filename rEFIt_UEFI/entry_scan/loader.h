@@ -10,6 +10,16 @@
 
 //#define DUMP_KERNEL_KEXT_PATCHES 1
 
+// Kernel scan states
+#define KERNEL_SCAN_ALL        (0)
+#define KERNEL_SCAN_NEWEST     (1)
+#define KERNEL_SCAN_OLDEST     (2)
+#define KERNEL_SCAN_FIRST      (3)
+#define KERNEL_SCAN_LAST       (4)
+#define KERNEL_SCAN_MOSTRECENT (5)
+#define KERNEL_SCAN_EARLIEST   (6)
+#define KERNEL_SCAN_NONE       (100)
+
 
 UINT8       GetOSTypeFromPath (IN CONST CHAR16 *Path);
 

@@ -35,6 +35,7 @@
  */
 
 #include "Platform.h"
+#include "screen.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LIB 1

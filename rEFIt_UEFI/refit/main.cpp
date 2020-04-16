@@ -68,6 +68,8 @@
 #include "../Platform/Injectors.h"
 #include "../Platform/StartupSound.h"
 #include "../Platform/BootOptions.h"
+#include "../Platform/boot.h"
+#include "../Platform/kext_inject.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MAIN 1
@@ -89,6 +91,10 @@
 #ifndef CHECK_SMC
 #define CHECK_SMC 0
 #endif
+
+
+#define PCAT_RTC_ADDRESS_REGISTER 0x70
+#define PCAT_RTC_DATA_REGISTER    0x71
 
 
 // variables

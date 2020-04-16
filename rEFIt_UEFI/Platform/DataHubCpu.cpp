@@ -43,7 +43,6 @@
 #include "smbios.h"
 #include "cpu.h"
 
-
 #include <Guid/DataHubRecords.h>
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100

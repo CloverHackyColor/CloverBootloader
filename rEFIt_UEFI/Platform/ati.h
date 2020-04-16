@@ -7,8 +7,11 @@
  *  big thank to Islam M. Ahmed Zaid for the updating the collection
  */
 
-#include "Platform.h"  //this include needed for Uefi types
-#include "ati_reg.h"
+//#include "Platform.h"  //this include needed for Uefi types
+//#include "ati_reg.h"
+#include "../include/Pci.h"
+#include "device_inject.h"
+
 
 #define OFFSET_TO_GET_ATOMBIOS_STRINGS_START 0x6e
 #define DATVAL(x)   {kPtr, sizeof(x), (UINT8 *)x}

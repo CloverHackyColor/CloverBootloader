@@ -37,6 +37,7 @@
 #include "Platform.h"
 #include "cpu.h"
 #include "smbios.h"
+#include "kernel_patcher.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_CPU 1

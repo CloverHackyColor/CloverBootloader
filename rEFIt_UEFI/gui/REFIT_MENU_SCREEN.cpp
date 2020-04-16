@@ -53,6 +53,7 @@
 #include "../refit/menu.h"  // for DrawTextXY. Must disappear soon.
 #include "../Platform/AcpiPatcher.h"
 #include "../Platform/Nvram.h"
+#include "../refit/screen.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -67,13 +68,8 @@
 #endif
 
 XPointer REFIT_MENU_SCREEN::mPointer;
-//
-//
-////#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
-//
-////#define LSTR(s) L##s
-//
-//// scrolling definitions
+
+// scrolling definitions
 static INTN MaxItemOnScreen = -1;
 
 

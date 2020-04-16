@@ -33,6 +33,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "loader.h"
 #include "../cpp_foundation/XStringW.h"
 #include "entry_scan.h"
 #include "../Platform/Settings.h"
@@ -71,6 +72,7 @@ const XString LINUX_DEFAULT_OPTIONS = "ro add_efi_memmap quiet splash vt.handoff
 #else
 #define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTIA32.efi"
 #endif
+
 
 extern LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry);
 

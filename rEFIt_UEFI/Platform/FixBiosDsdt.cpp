@@ -10,6 +10,9 @@
 #include "StateGenerator.h"
 #include "AcpiPatcher.h"
 #include "cpu.h"
+#include "../include/Pci.h"
+#include "../include/Devices.h"
+
 
 extern "C" {
 #include <IndustryStandard/PciCommand.h>

@@ -1,6 +1,11 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
+#define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
+#define HEIGHT_2K 1100
+
+#include "../gui/menu_items/menu_items.h"
+#include "../Platform/plist.h"
 
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;

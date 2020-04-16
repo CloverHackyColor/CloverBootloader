@@ -19,7 +19,10 @@
  */
 
 #include "Platform.h"
-//#include <Library/HdaModels.h>
+#include "FixBiosDsdt.h"
+#include "../include/Devices.h"
+#include "../include/Pci.h"
+#include "device_inject.h"
 
 #ifndef DEBUG_HDA
 #ifndef DEBUG_ALL
