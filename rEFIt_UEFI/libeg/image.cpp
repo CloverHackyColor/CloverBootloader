@@ -54,7 +54,7 @@
 //
 // Basic image handling
 //
-
+#if USE_EG_IMAGE
 EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
 {
   EG_IMAGE        *NewImage;
@@ -184,7 +184,7 @@ VOID egFreeImage(IN EG_IMAGE *Image)
     FreePool(Image);
   }
 }
-
+#endif
 //
 // Basic file operations should be separated into separate file
 //
@@ -381,6 +381,7 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 
 //will be replaced by Image.LoadXImage(BaseDir, Name);
 //caller is responsible for free image
+#if USE_EG_IMAGE
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN BOOLEAN WantAlpha)
 {
   EFI_STATUS      Status;
@@ -704,6 +705,6 @@ EG_IMAGE * egDecodePNG(IN const UINT8 *FileData, IN UINTN FileDataLength, IN BOO
   lodepng_free(PixelData);
   return NewImage;
 }
-
+#endif
 
 /* EOF */

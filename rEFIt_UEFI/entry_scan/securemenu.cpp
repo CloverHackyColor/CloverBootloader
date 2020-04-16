@@ -84,25 +84,7 @@ VOID AddSecureBootTool(VOID)
   Entry->AtRightClick = ActionHelp;
   MainMenu.AddMenuEntry(Entry);
 }
-/*
- typedef struct _refit_menu_entry {
- CHAR16            *Title;
- UINTN              Tag;
- UINTN              Row;
- CHAR16             ShortcutDigit;
- CHAR16             ShortcutLetter;
- EG_IMAGE          *Image;
- EG_IMAGE          *DriveImage;
- EG_IMAGE          *BadgeImage;
- EG_RECT            Place;
- ACTION             AtClick;
- ACTION             AtDoubleClick;
- ACTION             AtRightClick;
- ACTION             AtMouseOver;
- REFIT_MENU_SCREEN *SubScreen;
- } REFIT_MENU_ENTRY;
 
-*/
 
 STATIC REFIT_MENU_ENTRY   QueryEntry[] = {
   { L"Deny authentication"_XSW, SECURE_BOOT_POLICY_DENY, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionNone, ActionNone, ActionNone, NULL },

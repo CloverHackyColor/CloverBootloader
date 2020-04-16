@@ -93,7 +93,7 @@ Image.FromPNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico)); \
 ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 }
 
-Icon::Icon(INTN Index, bool TakeEmbedded) : Image(0), ImageNight(0)
+Icon::Icon(INTN Index, bool TakeEmbedded) : Image(), ImageNight()
 {
   Id = Index;
   Name.setEmpty();

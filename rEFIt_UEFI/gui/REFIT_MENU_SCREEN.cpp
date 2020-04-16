@@ -150,7 +150,7 @@ static INTN row1Count, row1PosX, row1PosXRunning;
 static INTN *itemPosX = NULL;
 static INTN *itemPosY = NULL;
 static INTN row0PosY, row1PosY, textPosY, FunctextPosY;
-////static EG_IMAGE* MainImage;
+
 static INTN OldX = 0, OldY = 0;
 static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
@@ -1293,7 +1293,6 @@ INTN REFIT_MENU_SCREEN::DrawTextXY(IN const XStringW& Text, IN INTN XPos, IN INT
   INTN      XText = 0;
   INTN      Height;
   INTN      TextXYStyle = 1;
-//  EG_IMAGE  *TextBufferXY = NULL;
   XImage TextBufferXY(0,0);
 
   if (Text.isEmpty()) {

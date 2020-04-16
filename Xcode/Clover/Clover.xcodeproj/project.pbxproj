@@ -2288,6 +2288,7 @@
 		A51F63C922DFB81700086DB7 /* AppleApfsInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleApfsInfo.h; sourceTree = "<group>"; };
 		A51F63CA22DFB84500086DB7 /* ApfsEfiBootRecordInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsEfiBootRecordInfo.h; sourceTree = "<group>"; };
 		A51F63CB22DFB86F00086DB7 /* ApplePartitionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePartitionInfo.h; sourceTree = "<group>"; };
+		A523130F2448792B00421FB2 /* image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = image.h; sourceTree = "<group>"; };
 		A5429219233538250001F42A /* Clover */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clover; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5456CC423FC5A81000BF18C /* CanonicalDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanonicalDB.h; sourceTree = "<group>"; };
 		A5456CC623FC5A81000BF18C /* securemenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = securemenu.cpp; sourceTree = "<group>"; };
@@ -6182,6 +6183,7 @@
 				A5456CE723FC5AB0000BF18C /* FloatLib.h */,
 				A5456CF623FC5AB7000BF18C /* ftol.asm */,
 				A5456CE823FC5AB0000BF18C /* image.cpp */,
+				A523130F2448792B00421FB2 /* image.h */,
 				A5456CE423FC5AAE000BF18C /* libeg.h */,
 				A5456CE523FC5AAF000BF18C /* libegint.h */,
 				A5456CE223FC5AAE000BF18C /* libscreen.cpp */,

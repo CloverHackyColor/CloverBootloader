@@ -71,9 +71,9 @@ static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN S
 static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension);
 static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
-
+#if USE_EG_IMAGE
 EG_IMAGE * LoadSvgFrame(INTN i);
-
+#endif
 // UGA defines and variables
 
 INTN   UGAWidth;
@@ -341,7 +341,7 @@ typedef struct {
  // moreover it is class EG_RECT;
  //same as EgRect but INTN <-> UINTN
 */
-
+#if USE_EG_IMAGE
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
 {
   if (!Image) {
@@ -393,7 +393,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   egDrawImageArea(NewImage, 0, 0, 0, 0, XPos, YPos);
   egFreeImage(NewImage);
 }
-
+#endif
 /*
   --------------------------------------------------------------------
   Pos                           : Bottom    -> Mid        -> Top

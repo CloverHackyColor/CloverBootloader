@@ -30,7 +30,7 @@ XImage::XImage(UINTN W, UINTN H)
 //  Height = H; //included below
   setSizeInPixels(W, H);
 }
-
+#if USE_EG_IMAGE
 XImage::XImage(EG_IMAGE* egImage)
 {
   if ( egImage) {
@@ -58,6 +58,7 @@ EFI_STATUS XImage::FromEGImage(const EG_IMAGE* egImage)
   }
   return EFI_SUCCESS;
 }
+#endif
 
 XImage& XImage::operator= (const XImage& other)
 {
@@ -734,7 +735,7 @@ void XImage::CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_REC
   }
 }
 
-
+#if USE_EG_IMAGE
 EG_IMAGE* XImage::ToEGImage()
 {
   if (isEmpty()) {
@@ -744,6 +745,7 @@ EG_IMAGE* XImage::ToEGImage()
   CopyMem(&Tmp->PixelData[0], &PixelData[0], GetSizeInBytes());
   return Tmp;
 }
+#endif
 
 //
 // Load an image from a .icns file
@@ -757,7 +759,8 @@ EFI_STATUS XImage::LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileNam
     UINT8           *FileData = NULL;
     UINTN           FileDataLength = 0;
     //TODO - make XImage
-    EG_IMAGE        *NewImage;
+ //   EG_IMAGE        *NewImage;
+
 
     // load file
     Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
@@ -766,8 +769,9 @@ EFI_STATUS XImage::LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileNam
     }
 
     // decode it
-    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
-    Status = FromEGImage(NewImage);
+//    NewImage = egDecodeICNS(FileData, FileDataLength, PixelSize, TRUE);
+//    Status = FromEGImage(NewImage);
+    Status = FromICNS(FileData, FileDataLength, PixelSize);
     FreePool(FileData);
     return Status;
 

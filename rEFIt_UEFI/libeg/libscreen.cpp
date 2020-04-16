@@ -531,7 +531,7 @@ VOID egClearScreen(IN const void *Color)
   }
 }
 
-
+#if USE_EG_IMAGE
 VOID egDrawImageArea(IN EG_IMAGE *Image,
                      IN INTN AreaPosX, IN INTN AreaPosY,
                      IN INTN AreaWidth, IN INTN AreaHeight,
@@ -615,7 +615,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
 
 //  }
 }
-
+#endif
 //
 // Make a screenshot
 //

@@ -35,6 +35,7 @@
  */
 //#if !defined(LODEPNG)
 #include "libegint.h"
+#include "XImage.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_IMG 0
@@ -47,8 +48,11 @@
 #else
 #define DBG(...) DebugLog(DEBUG_IMG, __VA_ARGS__)
 #endif
-
+#if USE_EG_IMAGE
 #define PLPTR(imagevar, colorname) ((UINT8 *) &((imagevar)->PixelData->colorname))
+#else
+#define PLPTR(imagevar, colorname) ((UINT8 *) &((imagevar).GetPixelPtr(0,0)->colorname))
+#endif
 
 
 //these functions used for icns, not with png
@@ -148,22 +152,22 @@ VOID egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
 // Load Apple .icns icons
 //
 
-EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha)
+EFI_STATUS XImage::FromICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize)
 {
-    EG_IMAGE            *NewImage;
+ //   EG_IMAGE            *NewImage;
     UINT8               *Ptr, *BufferEnd, *DataPtr, *MaskPtr;
     UINT32              BlockLen, DataLen, MaskLen;
     UINTN               FetchPixelSize, PixelCount, i;
     UINT8               *CompData;
     UINTN               CompLen;
     UINT8               *SrcPtr;
-    EG_PIXEL            *DestPtr;
+    EFI_GRAPHICS_OUTPUT_BLT_PIXEL            *DestPtr;
     
     if (FileDataLength < 8 || FileData == NULL ||
         FileData[0] != 'i' || FileData[1] != 'c' || FileData[2] != 'n' || FileData[3] != 's') {
         // not an icns file...
       DBG("not icns\n");
-      return NULL;
+      return EFI_NOT_FOUND; //it is null at this moment
     }
     
     FetchPixelSize = IconSize;
@@ -236,13 +240,14 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
     
   if (DataPtr == NULL) {
     DBG("not found such IconSize\n");
-    return NULL;   // no image found
+    return EFI_NOT_FOUND;   // no image found
   }
     
     // allocate image structure and buffer
-    NewImage = egCreateImage(FetchPixelSize, FetchPixelSize, WantAlpha);
-    if (NewImage == NULL)
-        return NULL;
+//    NewImage = egCreateImage(FetchPixelSize, FetchPixelSize, WantAlpha);
+ //   if (NewImage == NULL)
+ //       return NULL;
+    setSizeInPixels(FetchPixelSize, FetchPixelSize);
     PixelCount = FetchPixelSize * FetchPixelSize;
     
     if (DataLen < PixelCount * 3) {
@@ -250,36 +255,36 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
         // pixel data is compressed, RGB planar
         CompData = DataPtr;
         CompLen  = DataLen;
-        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, r), PixelCount);
-        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, g), PixelCount);
-        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(NewImage, b), PixelCount);
+        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(*this, Red), PixelCount);
+        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(*this, Green), PixelCount);
+        egDecompressIcnsRLE(&CompData, &CompLen, PLPTR(*this, Blue), PixelCount);
         // possible assertion: CompLen == 0
         if (CompLen > 0) {
-			DBG(" egLoadICNSIcon: %llu bytes of compressed data left\n", CompLen);
+          DBG(" egLoadICNSIcon: %llu bytes of compressed data left\n", CompLen);
         }
         
     } else {
         
         // pixel data is uncompressed, RGB interleaved
         SrcPtr  = DataPtr;
-        DestPtr = NewImage->PixelData;
+        DestPtr = GetPixelPtr(0,0);
         for (i = 0; i < PixelCount; i++, DestPtr++) {
-            DestPtr->r = *SrcPtr++;
-            DestPtr->g = *SrcPtr++;
-            DestPtr->b = *SrcPtr++;
+            DestPtr->Red = *SrcPtr++;
+            DestPtr->Green = *SrcPtr++;
+            DestPtr->Blue = *SrcPtr++;
         }
         
     }
     
     // add/set alpha plane
-    if (MaskPtr != NULL && MaskLen >= PixelCount && WantAlpha)
-        egInsertPlane(MaskPtr, PLPTR(NewImage, a), PixelCount);
+    if (MaskPtr != NULL && MaskLen >= PixelCount)
+        egInsertPlane(MaskPtr, PLPTR(*this, Reserved), PixelCount);
     else
-        egSetPlane(PLPTR(NewImage, a), WantAlpha ? 255 : 0, PixelCount);
+        egSetPlane(PLPTR(*this, Reserved),  255, PixelCount);
     
     // FUTURE: scale to originally requested size if we had to load another size
     
-    return NewImage;
+    return EFI_SUCCESS;
 }
 //#endif
 /* EOF */

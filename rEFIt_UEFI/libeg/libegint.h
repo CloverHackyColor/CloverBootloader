@@ -152,7 +152,7 @@ DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_checkbox_checked)
 //typedef EG_IMAGE * (*EG_DECODE_FUNC)(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 /* functions */
-
+#if USE_EG_IMAGE
 VOID egRestrictImageArea(IN EG_IMAGE *Image,
                          IN INTN AreaPosX, IN INTN AreaPosY,
                          IN OUT INTN *AreaWidth, IN OUT INTN *AreaHeight);
@@ -177,7 +177,7 @@ VOID egRawComposeOnFlat(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
 EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 EG_IMAGE * egDecodePNG(IN const UINT8 *FileData, IN UINTN FileDataLength, IN BOOLEAN WantAlpha);
-
+#endif
 
 //VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 

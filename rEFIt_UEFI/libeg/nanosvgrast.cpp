@@ -1212,37 +1212,40 @@ static void nsvg__scanlineSolid(unsigned char* row, int count, unsigned char* co
     // TODO
     float fx, fy, dx, gx, gy;
     float* t = cache->xform;
-    EG_IMAGE *Pattern = (EG_IMAGE *)cache->image;
+//    EG_IMAGE *Pattern = (EG_IMAGE *)cache->image;
+    XImage *Pattern = (XImage*)cache->image;
     if (!Pattern) {
       DBG("no pattern to fill\n");
       return;
     }
-    INTN Width = Pattern->Width;
-    INTN Height = Pattern->Height;
-    int i, cr, cg, cb, ca, ix, iy;
-    INTN j;
+    INTN Width = Pattern->GetWidth();
+    INTN Height = Pattern->GetHeight();
+    int ix, iy;
+ //   INTN j;
     fx = (float)x;
     fy = (float)y;
     dx = 1.0f;
 
     //    unsigned int c;
-    for (i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
       int r,g,b,a,ia;
       gx = fx*t[0] + fy*t[2] + t[4];
       gy = fx*t[1] + fy*t[3] + t[5];
       ix = dither(gx * Width, 2) % Width;
       iy = dither(gy * Height, 2) % Height;
-      j = iy * Width + ix;
-      cr = Pattern->PixelData[j].r;
-      cb = Pattern->PixelData[j].b;
-      cg = Pattern->PixelData[j].g;
-      ca = Pattern->PixelData[j].a;
-      a = nsvg__div255((int)cover[0] * ca);
+//      j = iy * Width + ix;
+      EFI_GRAPHICS_OUTPUT_BLT_PIXEL cp = Pattern->GetPixel(ix, iy);
+//      cr = Pattern->PixelData[j].r;
+//      cb = Pattern->PixelData[j].b;
+//      cg = Pattern->PixelData[j].g;
+//      ca = Pattern->PixelData[j].a;
+ //     cr = cp.Red;
+      a = nsvg__div255((int)cover[0] * cp.Reserved);
       ia = 255 - a;
       // Premultiply
-      r = nsvg__div255(cr * a);
-      g = nsvg__div255(cg * a);
-      b = nsvg__div255(cb * a);
+      r = nsvg__div255(cp.Red * a);
+      g = nsvg__div255(cp.Green * a);
+      b = nsvg__div255(cp.Blue * a);
 
       // Blend over
       r += nsvg__div255(ia * (int)dst[0]);

@@ -38,7 +38,7 @@
 #include "nanosvg.h"
 #include "FloatLib.h"
 #include "../Platform/b64cdecode.h"
-#include "image.h"
+#include "XImage.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 0
@@ -3172,7 +3172,8 @@ static void parseImage(NSVGparser* p, const char** dict)
   float w,h;
   const char *href = NULL;
   UINT8 *tmpData = NULL;
-  EG_IMAGE *NewImage = NULL;
+//  EG_IMAGE *NewImage = NULL;
+  XImage *NewImage = new XImage;
 
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "width") == 0) {
@@ -3196,7 +3197,8 @@ static void parseImage(NSVGparser* p, const char** dict)
   if (len == 0) {
     DBG("image not decoded from base64\n");
   }
-  NewImage = egDecodePNG(tmpData, len, TRUE);
+//  NewImage = egDecodePNG(tmpData, len, TRUE);
+  NewImage->FromPNG(tmpData, len);
   pt->image = (void *)NewImage;
   if (tmpData) {
     FreePool(tmpData);

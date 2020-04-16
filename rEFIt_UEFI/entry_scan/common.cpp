@@ -54,7 +54,7 @@
 
 extern CONST CHAR8* IconsNames[];
 
-#if 0
+#if USE_EG_IMAGE
 static CONST CHAR16 *BuiltinIconNames[] = {
   /*
    L"About",

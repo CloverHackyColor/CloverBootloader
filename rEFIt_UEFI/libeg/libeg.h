@@ -37,6 +37,8 @@
 #ifndef __LIBEG_LIBEG_H__
 #define __LIBEG_LIBEG_H__
 
+#define USE_EG_IMAGE 0
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -380,28 +382,15 @@ typedef union {
 } EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION;
 */
 
-
+#if USE_EG_IMAGE
 typedef struct {
     INTN      Width;
     INTN      Height;
     EG_PIXEL    *PixelData;
     BOOLEAN     HasAlpha;   //moved here to avoid alignment issue
 } EG_IMAGE;
-/*
-typedef struct GUI_ANIME GUI_ANIME;
-struct GUI_ANIME {
-  UINTN      ID;
-  CHAR16    *Path;
-  UINTN      Frames;
-  UINTN      FrameTime;
-  INTN       FilmX, FilmY;  //relative
-  INTN       ScreenEdgeHorizontal;
-  INTN       ScreenEdgeVertical;
-  INTN       NudgeX, NudgeY;
-  BOOLEAN    Once;
-  GUI_ANIME *Next;
-};
-*/
+#endif
+
 #ifdef __cplusplus
 class EG_RECT {
 public:
@@ -440,15 +429,6 @@ typedef struct EG_RECT {
 #define EG_EICOMPMODE_RLE           (1)
 #define EG_EICOMPMODE_EFICOMPRESS   (2)
 
-
-typedef struct {
-  EG_IMAGE    *Image;
-  CONST CHAR16      *Path;
-  CONST CHAR16      *Format;
-  UINTN       PixelSize;
-} BUILTIN_ICON;
-
-
 /* functions */
 
 VOID    egInitScreen(IN BOOLEAN SetMaxResolution);
@@ -466,7 +446,7 @@ VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 //  call egSetGraphicsModeEnabled(FALSE) to ensure the system
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
-
+#if USE_EG_IMAGE
 EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha);
 EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
@@ -478,24 +458,25 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN IconSize);
 
 EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
-
+#endif
 EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
                       IN CONST VOID *FileData, IN UINTN FileDataLength);
 EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *DirName);
 EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir);
-
+#if USE_EG_IMAGE
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color);
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN INTN AreaPosX, IN INTN AreaPosY,
                      IN INTN AreaWidth, IN INTN AreaHeight,
                      IN EG_PIXEL *Color);
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
-
+#endif
 
 VOID egClearScreen(IN const void *Color);
 
+#if USE_EG_IMAGE
 //VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY);
 // will be replaced by XImage.Draw(ScreenPosX, ScreenPosY, 1.f); assuming Area* = 0
 VOID egDrawImageArea(IN EG_IMAGE *Image,
@@ -504,7 +485,7 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
                      IN INTN ScreenPosX, IN INTN ScreenPosY);
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                  IN INTN AreaWidth, IN INTN AreaHeight);
-
+#endif
 EFI_STATUS egScreenShot(VOID);
 
 
