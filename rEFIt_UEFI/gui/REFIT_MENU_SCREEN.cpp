@@ -1658,6 +1658,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
           if (inputDialogEntry->Item && inputDialogEntry->Item->ItemType == BoolValue) {
             Entry->Place.Width = ResultString.size() * ScaledWidth;
             //possible artefacts
+            DrawMenuText(XStringW().takeValueFrom(" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
                          ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
