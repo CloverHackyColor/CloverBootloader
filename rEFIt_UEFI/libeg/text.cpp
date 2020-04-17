@@ -304,7 +304,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
   for (UINTN i = 0; i < TextLength && c0 != 0; i++) {
     UINT16 c = Text.wc_str()[i]; //including UTF8 -> UTF16 conversion
-    DBG("initial char to render 0x%x\n", c); //good
+	  DBG("initial char to render 0x%hx\n", c); //good
     if (gLanguage != korean) { //russian Codepage = 0x410
       if (c >= 0x410 && c < 0x450) {
         //we have russian raster fonts with chars at 0xC0
@@ -313,7 +313,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
         INTN c2 = (c >= GlobalConfig.Codepage) ? (c - GlobalConfig.Codepage + AsciiPageSize) : c; //International letters
         c = c2 & 0xFF; //this maximum raster font size
       }
-//      DBG("char to render 0x%x\n", c);
+//      DBG("char to render 0x%hhx\n", c);
       if (Proportional) {
         //find spaces {---comp--__left__|__right__--char---}
         if (c0 <= 0x20) {  // space before or at buffer edge

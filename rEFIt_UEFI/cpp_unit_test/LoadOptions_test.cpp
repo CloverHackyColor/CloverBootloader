@@ -195,22 +195,22 @@ int BootOptions_tests()
 		CHAR16* LoadOptions3 = Old1_RemoveLoadOption(LoadOptions, L"opt3");
 		if ( XString().takeValueFrom(LoadOptions3) != "opt1 opt2"_XS ) return 1;
 	}
-	{
-		XString LoadOptions;
-		
-		LoadOptions = AddLoadOption(LoadOptions, "opt1"_XS);
-		LoadOptions = AddLoadOption(LoadOptions, "opt2"_XS);
-		LoadOptions = AddLoadOption(LoadOptions, "opt3"_XS);
-		
-		if ( LoadOptions != "opt1 opt2 opt3"_XS ) return 1;
-		
-		XString LoadOptions1 = RemoveLoadOption(LoadOptions, "opt1"_XS);
-		if ( LoadOptions1 != "opt2 opt3"_XS ) return 1;
-		XString LoadOptions2 = RemoveLoadOption(LoadOptions, "opt2"_XS);
-		if ( LoadOptions2 != "opt1 opt3"_XS ) return 1;
-		XString LoadOptions3 = RemoveLoadOption(LoadOptions, "opt3"_XS);
-		if ( LoadOptions3 != "opt1 opt2"_XS ) return 1;
-	}
+//	{
+//		XString LoadOptions;
+//		
+//		LoadOptions = AddLoadOption(LoadOptions, "opt1"_XS);
+//		LoadOptions = AddLoadOption(LoadOptions, "opt2"_XS);
+//		LoadOptions = AddLoadOption(LoadOptions, "opt3"_XS);
+//		
+//		if ( LoadOptions != "opt1 opt2 opt3"_XS ) return 1;
+//		
+//		XString LoadOptions1 = RemoveLoadOption(LoadOptions, "opt1"_XS);
+//		if ( LoadOptions1 != "opt2 opt3"_XS ) return 1;
+//		XString LoadOptions2 = RemoveLoadOption(LoadOptions, "opt2"_XS);
+//		if ( LoadOptions2 != "opt1 opt3"_XS ) return 1;
+//		XString LoadOptions3 = RemoveLoadOption(LoadOptions, "opt3"_XS);
+//		if ( LoadOptions3 != "opt1 opt2"_XS ) return 1;
+//	}
 	{
 		XStringArray LoadOptions;
 		

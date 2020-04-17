@@ -1050,7 +1050,7 @@ PutNvramPlistToRtVars ()
       if (!GlobalConfig.DebugLog) {
 		  DBG ("Size = %lld, Data: ", Size);
         for (i = 0; i < Size; i++) {
-          DBG("%02X ", *((__typeof__(ValTag->string))Value + i));
+          DBG("%02hhX ", *((__typeof__(ValTag->string))Value + i));
         }
       }
       if (!GlobalConfig.DebugLog) {

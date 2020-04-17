@@ -1700,9 +1700,9 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     }
 
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-    ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04x]->", gSettings.BooterConfig); // TODO jief : cast to fix
+	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.BooterConfig); // TODO jief : cast to fix
   } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-    ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04x]->", dropDSM); // TODO jief : cast to fix
+	  ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04hx]->", dropDSM); // TODO jief : cast to fix
   }
 }
 
@@ -1724,7 +1724,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 
   for (i = 0; i < NGFX; i++) {
     SubScreen->AddMenuInfo_f("----------------------");
-    SubScreen->AddMenuInfo_f("Card DeviceID=%04x", gGraphics[i].DeviceID);
+	  SubScreen->AddMenuInfo_f("Card DeviceID=%04hx", gGraphics[i].DeviceID);
     N = 20 + i * 6;
     SubScreen->AddMenuItemInput(N, "Model:", TRUE);
 
@@ -2265,7 +2265,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
 
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSM, NULL);
-  //  Entry->Title.SPrintf("Drop OEM _DSM [0x%04x]->", gSettings.DropOEM_DSM);
+  //  Entry->Title.SPrintf("Drop OEM _DSM [0x%04hhx]->", gSettings.DropOEM_DSM);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose devices to drop OEM _DSM methods from DSDT");
@@ -2298,7 +2298,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 //  REFIT_INPUT_DIALOG *InputBootArgs;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NULL);
-  //  Entry->Title.SPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+  //  Entry->Title.SPrintf("DSDT fix mask [0x%08hhx]->", gSettings.FixDsdt);
 
   SubScreen->AddMenuCheck("Add DTGP",     FIX_DTGP, 67);
   SubScreen->AddMenuCheck("Fix Darwin as WinXP",   FIX_WARNING, 67);
@@ -2646,7 +2646,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NULL);
-//  Entry->Title.SPrintf("boot_args->flags [0x%02x]->", gSettings.BooterConfig);
+//  Entry->Title.SPrintf("boot_args->flags [0x%02hhx]->", gSettings.BooterConfig);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Modify flags for boot.efi");

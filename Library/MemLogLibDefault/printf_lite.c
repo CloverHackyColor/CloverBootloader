@@ -39,7 +39,7 @@ static void print_timestamp(PrintfParams* printfParams);
 #elif PRINTF_UNICODE_OUTPUT_SUPPORT == 1
 	#define print_char_macro(c, printfParams) print_wchar(c, printfParams);
 #elif PRINTF_UTF8_OUTPUT_SUPPORT == 1
-	#define print_char_macro(c, printfParams) print_char(c, printfParams);
+	#define print_char_macro(c, printfParams) print_utf8_char(c, printfParams);
 #endif
 
 typedef struct PrintfParams PrintfParams;
@@ -104,7 +104,7 @@ typedef struct PrintfParams {
 #if PRINTF_UTF8_OUTPUT_SUPPORT == 1
 // Print a char as is. No analyse is made to check if it's a utf8 partial char
 // c is an int for prototype compatibility, but must be < 255
-static void print_char(int c, PrintfParams* printfParams)
+static void print_utf8_char(int c, PrintfParams* printfParams)
 {
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
 		if ( printfParams->newlinePtr )
@@ -115,7 +115,7 @@ static void print_char(int c, PrintfParams* printfParams)
 				if ( printfParams->timestamp ) print_timestamp(printfParams);
 			}
 			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_char('\r', printfParams);
+				if ( c == '\n' ) print_utf8_char('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 				printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
@@ -125,7 +125,7 @@ static void print_char(int c, PrintfParams* printfParams)
 			if ( c == '\n' ) *printfParams->newlinePtr = 1;
 		}else{
 			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_char('\r', printfParams);
+				if ( c == '\n' ) print_utf8_char('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
@@ -136,7 +136,7 @@ static void print_char(int c, PrintfParams* printfParams)
   #else
 		{
 			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_char('\r', printfParams);
+				if ( c == '\n' ) print_utf8_char('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
@@ -238,29 +238,29 @@ static inline char32_t printf_surrogate_to_utf32(char16_t high, char16_t low) {
  * Print char32_t to utf8 string.
  * Only needed if PRINTF_UNICODE_OUTPUT_SUPPORT == 1 && PRINTF_UTF8_INPUT_SUPPORT == 1
  */
-static void print_char32(const char32_t utf32_char, PrintfParams* printfParams)
+static void print_char32_as_utf8_string(const char32_t utf32_char, PrintfParams* printfParams)
 {
 	/* assertion: utf32_char is a single UTF-4 value */
 	int bits;
 	
 	if (utf32_char < 0x80) {
-		print_char((char)utf32_char, printfParams);
+		print_utf8_char((char)utf32_char, printfParams);
 		bits = -6;
 	}
 	else if (utf32_char < 0x800) {
-		print_char((char)(((utf32_char >> 6) & 0x1F) | 0xC0), printfParams);
+		print_utf8_char((char)(((utf32_char >> 6) & 0x1F) | 0xC0), printfParams);
 		bits = 0;
 	}
 	else if (utf32_char < 0x10000) {
-		print_char((char)(((utf32_char >> 12) & 0x0F) | 0xE0), printfParams);
+		print_utf8_char((char)(((utf32_char >> 12) & 0x0F) | 0xE0), printfParams);
 		bits = 6;
 	}
 	else {
-		print_char((char)(((utf32_char >> 18) & 0x07) | 0xF0), printfParams);
+		print_utf8_char((char)(((utf32_char >> 18) & 0x07) | 0xF0), printfParams);
 		bits = 12;
 	}
 	for (; bits >= 0; bits -= 6) {
-		print_char((char)(((utf32_char >> bits) & 0x3F) | 0x80), printfParams);
+		print_utf8_char((char)(((utf32_char >> bits) & 0x3F) | 0x80), printfParams);
 	}
 }
 
@@ -277,16 +277,16 @@ static void output_wchar_string_as_utf8(const wchar_t* s, PrintfParams* printfPa
 #if __WCHAR_MAX__ <= 0xFFFFu
         const char16_t uc = *s++;
         if (!printf_is_surrogate(uc)) {
-			print_char32((char32_t)uc, printfParams);
+			print_char32_as_utf8_string((char32_t)uc, printfParams);
         } else {
             if (printf_is_high_surrogate(uc) && *s && printf_is_low_surrogate(*s)) {
-				print_char32(printf_surrogate_to_utf32(uc, *s++), printfParams);
+				print_char32_as_utf8_string(printf_surrogate_to_utf32(uc, *s++), printfParams);
             } else {
 				continue;
 			}
         }
 #else
-		print_char32((char32_t)(*s++), printfParams);
+		print_char32_as_utf8_string((char32_t)(*s++), printfParams);
 #endif
 	}
 }
@@ -402,11 +402,11 @@ __attribute__((noinline, section(".output_utf8_string")))
 #elif DEFINE_SECTIONS == 2
 __attribute__((noinline, section(".printf_lite")))
 #endif
-static void output_utf8_string(const char* s, PrintfParams* printfParams)
+static void output_utf8_string_as_utf8(const char* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	if ( printfParams->width_specifier ) while ( *s && printfParams->width_specifier-- ) print_char(*s++, printfParams);
-	else while ( *s ) print_char(*s++, printfParams);
+	if ( printfParams->width_specifier ) while ( *s && printfParams->width_specifier-- ) print_utf8_char(*s++, printfParams);
+	else while ( *s ) print_utf8_char(*s++, printfParams);
 }
 
 #if DEFINE_SECTIONS == 1
@@ -659,7 +659,7 @@ static void print_double(double number, PrintfParams* printfParams)
 #if PRINTF_UNICODE_OUTPUT_SUPPORT == 1  &&  PRINTF_UTF8_OUTPUT_SUPPORT == 0
         output_utf8_string(L"<large double>", printfParams);
 #else
-		output_utf8_string("<large double>", printfParams);
+		output_utf8_string_as_utf8("<large double>", printfParams);
 #endif
     }
 
@@ -810,7 +810,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
   #if PRINTF_LITE_ZSPECIFIER_SUPPORT == 1
 				printfParams->z_modifier = 1;
   #else
-                printfParams->l_modifier = 2;
+                printfParams->l_modifier = 12;
   #endif
 				break;
 #endif // PRINTF_LITE_FALLBACK_FOR_UNSUPPORTED == 1  ||  PRINTF_LITE_ZSPECIFIER_SUPPORT == 1
@@ -821,16 +821,29 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
   #if PRINTF_LITE_XSPECIFIER_SUPPORT == 1
 				printfParams->uppercase = c == 'X';
   #if PRINTF_LITE_ZSPECIFIER_SUPPORT == 1
-				if ( printfParams->z_modifier ) print_ulonglong(va_arg(VALIST_ACCESS(valist), size_t), 16, printfParams, 0);
-				else
+				if ( printfParams->z_modifier ) {
+					print_ulonglong(va_arg(VALIST_ACCESS(valist), size_t), 16, printfParams, 0);
+				}else
   #endif
   #if PRINTF_LITE_LONGLONGINT_SUPPORT == 1  &&  PRINTF_LITE_LONGINT_SUPPORT == 1
-				if ( printfParams->l_modifier == 2 ) print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long long int), 16, printfParams, 0);
-				else
+				if ( printfParams->l_modifier > 11 ) {
+					print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long long int), 16, printfParams, 0);
+				}else
   #endif
   #if PRINTF_LITE_LONGINT_SUPPORT == 1
-				if ( printfParams->l_modifier != 0 ) print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long int), 16, printfParams, 0);
-				else
+				if ( printfParams->l_modifier == 11 ) {
+					print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long int), 16, printfParams, 0);
+				}else
+  #endif
+  #if PRINTF_LITE_SHORTINT_SUPPORT == 1
+				if ( printfParams->l_modifier == 9 ) {
+					print_ulonglong((unsigned short)va_arg(VALIST_ACCESS(valist), unsigned int), 16, printfParams, 0); // we are using longlong version for every int to save code size.
+				}else
+  #endif
+  #if PRINTF_LITE_SHORTSHORTINT_SUPPORT == 1
+				if ( printfParams->l_modifier < 9 ) {
+					print_ulonglong((unsigned char)va_arg(VALIST_ACCESS(valist), unsigned int), 16, printfParams, 0); // we are using longlong version for every int to save code size.
+				}else
   #endif
 					print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned int), 16, printfParams, 0);
 				printfParams->inDirective = 0;
@@ -846,13 +859,23 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 				else
     #endif
   #if PRINTF_LITE_LONGLONGINT_SUPPORT == 1  &&  PRINTF_LITE_LONGINT_SUPPORT == 1
-				if ( printfParams->l_modifier == 2 ) print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long long int), 10, printfParams, 0);
+				if ( printfParams->l_modifier > 11 ) print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long long int), 10, printfParams, 0);
 				else
   #endif // PRINTF_LITE_LONGLONGINT_SUPPORT == 1  &&  PRINTF_LITE_LONGINT_SUPPORT == 1
   #if PRINTF_LITE_LONGINT_SUPPORT == 1
-				if ( printfParams->l_modifier != 0 ) print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long int), 10, printfParams, 0);
+				if ( printfParams->l_modifier == 11 ) print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned long int), 10, printfParams, 0);
 				else
   #endif // PRINTF_LITE_LONGINT_SUPPORT == 1
+  #if PRINTF_LITE_SHORTINT_SUPPORT == 1
+				if ( printfParams->l_modifier == 9 ) {
+					print_ulonglong((unsigned short)va_arg(VALIST_ACCESS(valist), unsigned int), 10, printfParams, 0); // we are using longlong version for every int to save code size.
+				}else
+  #endif
+  #if PRINTF_LITE_SHORTSHORTINT_SUPPORT == 1
+				if ( printfParams->l_modifier < 9 ) {
+					print_ulonglong((unsigned char)va_arg(VALIST_ACCESS(valist), unsigned int), 10, printfParams, 0); // we are using longlong version for every int to save code size.
+				}else
+  #endif
 					print_ulonglong(va_arg(VALIST_ACCESS(valist), unsigned int), 10, printfParams, 0);
 				printfParams->inDirective = 0;
 				break;
@@ -865,13 +888,21 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 				else
   #endif
   #if PRINTF_LITE_LONGLONGINT_SUPPORT == 1  &&  PRINTF_LITE_LONGINT_SUPPORT == 1
-				if ( printfParams->l_modifier == 2 ) print_longlong(va_arg(VALIST_ACCESS(valist), long long int), 10, printfParams); // we are using longlong version for every int to save code size.
+				if ( printfParams->l_modifier > 11 ) print_longlong(va_arg(VALIST_ACCESS(valist), long long int), 10, printfParams); // we are using longlong version for every int to save code size.
 				else
   #endif
   #if PRINTF_LITE_LONGINT_SUPPORT == 1
-				if ( printfParams->l_modifier != 0 ) print_longlong(va_arg(VALIST_ACCESS(valist), long int), 10, printfParams); // we are using longlong version for every int to save code size.
+				if ( printfParams->l_modifier == 11 ) print_longlong(va_arg(VALIST_ACCESS(valist), long int), 10, printfParams); // we are using longlong version for every int to save code size.
 				else
   #endif
+//  #if PRINTF_LITE_SHORTINT_SUPPORT == 1
+//				if ( printfParams->l_modifier == 9 ) print_longlong(va_arg(VALIST_ACCESS(valist), short int), 10, printfParams); // we are using longlong version for every int to save code size.
+//				else
+//  #endif
+//  #if PRINTF_LITE_SHORTSHORTINT_SUPPORT == 1
+//				if ( printfParams->l_modifier < 9 ) print_longlong(va_arg(VALIST_ACCESS(valist), char), 10, printfParams); // we are using longlong version for every int to save code size.
+//				else
+//  #endif
 					print_longlong(va_arg(VALIST_ACCESS(valist), int), 10, printfParams);
 				printfParams->inDirective = 0;
 				break;
@@ -895,24 +926,25 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 				printfParams->l_modifier += 1;
   #endif
 				break;
+			case 'h':
+  #if PRINTF_LITE_LONGINT_SUPPORT == 1
+				printfParams->l_modifier -= 1;
+  #endif
+				break;
 #endif
 			case 'c':
 			{
 				int c1 = va_arg(VALIST_ACCESS(valist), int);
-//#if PRINTF_UNICODE_OUTPUT_SUPPORT == 1
-//				if ( printfParams->l_modifier >= 1 ) {
-//					printfParams->printCharFunction((wchar_t)c1, printfParams); // 'char' is promoted to 'int' when passed through '...'
-//				}else
-//#endif
 #if PRINTF_UTF8_INPUT_SUPPORT == 1
 				{
 //					wchar_t tmp2 = L'a';
 //					int tmp1 = va_arg(VALIST_ACCESS(valist), int);
 //					int tmp3 = va_arg(VALIST_ACCESS(valist), wchar_t);
-					if ( !printfParams->unicode_output  && printfParams->l_modifier == 1 ) {
-						print_char32((char32_t)c1, printfParams);
+					if ( !printfParams->unicode_output  && printfParams->l_modifier > 10 ) { // print unicode char to utf8
+						print_char32_as_utf8_string((char32_t)c1, printfParams);
 					}else{
-						print_char_macro((int)c1, printfParams); // 'char' is promoted to 'int' when passed through '...'
+						// c1 might be a char (<255) or a unicode char. UTF16 char < 255 are the same as UTF8. Ne need to check.
+						print_char_macro(c1, printfParams); // 'char' is promoted to 'int' when passed through '...'
 					}
 				}
 #endif
@@ -948,11 +980,11 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 // If both input support disabled, we can't even print "unsupported"
 #  if PRINTF_UTF8_INPUT_SUPPORT == 1 || PRINTF_UNICODE_INPUT_SUPPORT== 1
 #    if PRINTF_UTF8_INPUT_SUPPORT == 0
-                if ( printfParams->l_modifier == 0 ) {
+                if ( printfParams->l_modifier <= 10 ) {
 					va_arg(VALIST_ACCESS(valist), const char*);
 #    endif
 #    if PRINTF_UNICODE_INPUT_SUPPORT == 0
-                if ( printfParams->l_modifier == 1 ) {
+                if ( printfParams->l_modifier > 10 ) {
 					va_arg(VALIST_ACCESS(valist), const wchar_t*);
 #    endif
 #    if PRINTF_UNICODE_OUTPUT_SUPPORT == 1  &&  PRINTF_UTF8_INPUT_SUPPORT == 0
@@ -967,7 +999,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 #endif
 
 #if PRINTF_UNICODE_INPUT_SUPPORT == 1
-					if ( printfParams->l_modifier == 1 ) {
+					if ( printfParams->l_modifier > 10 ) {
 						const wchar_t* s = va_arg(VALIST_ACCESS(valist), const wchar_t*);
 						if ( printfParams->unicode_output ) {
 							output_wchar_string(s, printfParams);
@@ -984,7 +1016,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 						if ( printfParams->unicode_output ) {
 							output_utf8_string_as_wchar(s, printfParams);
 						}else{
-							output_utf8_string(s, printfParams);
+							output_utf8_string_as_utf8(s, printfParams);
 						}
 #elif PRINTF_UTF8_OUTPUT_SUPPORT == 1
 						output_utf8_string(s, printfParams);
@@ -1029,7 +1061,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 		if ( c == '%' )
 		{
 				printfParams->inDirective = 1;
-				printfParams->l_modifier = 0;
+				printfParams->l_modifier = 10;
   #if PRINTF_LITE_ZSPECIFIER_SUPPORT == 1
 				printfParams->z_modifier = 0;
   #endif
@@ -1049,7 +1081,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 		}
 		else
 		{
-//			print_char(c, printfParams);
+//			print_utf8_char(c, printfParams);
 			print_char_macro(c, printfParams);
 		}
 	}
@@ -1077,7 +1109,7 @@ void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBa
 	printfParams.inDirective = 0;
 	#if PRINTF_UTF8_OUTPUT_SUPPORT == 1  &&  PRINTF_UNICODE_OUTPUT_SUPPORT == 1
 		printfParams.unicode_output = 0;
-		printfParams.printCharFunction = print_char;
+		printfParams.printCharFunction = print_utf8_char;
 	#endif
 	printfParams.transmitBufCallBack.transmitBufCallBack = transmitBufCallBack;
 	printfParams.context = context;

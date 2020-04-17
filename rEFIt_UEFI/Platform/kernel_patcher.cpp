@@ -1741,7 +1741,7 @@ FindBootArgs(IN LOADER_ENTRY *Entry)
       //DBG("bootArgs2->kaddr = 0x%08X and bootArgs2->ksize =  0x%08X\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG("bootArgs2->efiMode = 0x%02X\n", bootArgs2->efiMode);
 		DBG_RT(Entry, "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
-      DBG_RT(Entry, "bootArgs2->flags = 0x%x\n", bootArgs2->flags);
+      DBG_RT(Entry, "bootArgs2->flags = 0x%hx\n", bootArgs2->flags);
       DBG_RT(Entry, "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
 		DBG_RT(Entry, "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
       if (Entry && Entry->KernelAndKextPatches && Entry->KernelAndKextPatches->KPDebug)
