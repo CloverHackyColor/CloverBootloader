@@ -9,14 +9,5 @@
 #define LIBEG_IMAGE_H_
 
 
-#ifdef USE_EG_IMAGE
-EG_IMAGE
-*egDecodePNG (
-  IN const UINT8 *FileData,
-  IN UINTN FileDataLength,
-  IN BOOLEAN WantAlpha
-  );
-#endif
-
 
 #endif /* LIBEG_IMAGE_H_ */

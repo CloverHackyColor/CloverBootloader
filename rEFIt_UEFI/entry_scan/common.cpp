@@ -54,50 +54,6 @@
 
 extern CONST CHAR8* IconsNames[];
 
-#if USE_EG_IMAGE
-static CONST CHAR16 *BuiltinIconNames[] = {
-  /*
-   L"About",
-   L"Options",
-   L"Clover",
-   L"Reset",
-   L"Shutdown",
-   L"Help",
-   L"Shell",
-   L"Part",
-   L"Rescue",
-   L"Pointer",
-   */
-  L"Internal",
-  L"External",
-  L"Optical",
-  L"FireWire",
-  L"Boot",
-  L"HFS",
-  L"APFS",
-  L"NTFS",
-  L"EXT",
-  L"Recovery",
-};
-static const UINTN BuiltinIconNamesCount = (sizeof(BuiltinIconNames) / sizeof(CHAR16 *));
-
-EG_IMAGE *LoadBuiltinIcon(IN CONST CHAR16 *IconName)
-{
-  UINTN Index = 0;
-  if (IconName == NULL) {
-    return NULL;
-  }
-  while (Index < BuiltinIconNamesCount) {
-    if (StriCmp(IconName, BuiltinIconNames[Index]) == 0) {
-      XImage IconX = ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL + Index);
-      return IconX.ToEGImage();
-    }
-    ++Index;
-  }
-  return NULL;
-}
-#endif
-
 const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 
 {

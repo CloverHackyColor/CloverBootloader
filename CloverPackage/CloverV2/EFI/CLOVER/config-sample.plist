@@ -409,7 +409,7 @@
 		<key>#LegacyBiosDefaultEntry</key>
 		<integer>0</integer>
 		<key>CustomLogo</key>
-		<string>Apple</string>
+		<false/>
 	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>

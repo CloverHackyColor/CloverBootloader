@@ -198,21 +198,7 @@ typedef enum {
   MouseMove
 } MOUSE_EVENT;
 */
-/*
-typedef struct _pointers {
-  EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
-  EG_IMAGE *Pointer;
-  EG_IMAGE *newImage;
-  EG_IMAGE *oldImage;
-  
-  EG_RECT  newPlace;
-  EG_RECT  oldPlace;
-  
-  UINT64	LastClickTime;  //not EFI_TIME
-  EFI_SIMPLE_POINTER_STATE    State;
-  MOUSE_EVENT MouseEvent;
-} POINTERS;
-*/
+
 //GUI types
 
 

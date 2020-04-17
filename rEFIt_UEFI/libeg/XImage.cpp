@@ -30,35 +30,6 @@ XImage::XImage(UINTN W, UINTN H)
 //  Height = H; //included below
   setSizeInPixels(W, H);
 }
-#if USE_EG_IMAGE
-XImage::XImage(EG_IMAGE* egImage)
-{
-  if ( egImage) {
-//	  Width = egImage->Width;
-//	  Height = egImage->Height;
-	  setSizeInPixels(egImage->Width, egImage->Height); // change the size, ie the number of element in the array. Reaalocate buffer if needed
-	  CopyMem(&PixelData[0], egImage->PixelData, GetSizeInBytes());
-  }else{
-//	  Width = 0;
-//	  Height = 0;
-	  setSizeInPixels(0, 0); // change the size, ie the number of element in the array. Reallocate buffer if needed
-  }
-}
-
-EFI_STATUS XImage::FromEGImage(const EG_IMAGE* egImage)
-{
-  if ( egImage) {
-    setSizeInPixels(egImage->Width, egImage->Height);
-    CopyMem(&PixelData[0], egImage->PixelData, GetSizeInBytes());
-  } else {
-    setSizeInPixels(0, 0);
-  }
-  if (GetSizeInBytes() == 0) {
-    return EFI_NOT_FOUND;
-  }
-  return EFI_SUCCESS;
-}
-#endif
 
 XImage& XImage::operator= (const XImage& other)
 {
@@ -734,18 +705,6 @@ void XImage::CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_REC
     }
   }
 }
-
-#if USE_EG_IMAGE
-EG_IMAGE* XImage::ToEGImage()
-{
-  if (isEmpty()) {
-    return NULL; // what is better, return NULL or empty image?
-  }
-  EG_IMAGE* Tmp = egCreateImage(Width, Height, TRUE);  //memory leak
-  CopyMem(&Tmp->PixelData[0], &PixelData[0], GetSizeInBytes());
-  return Tmp;
-}
-#endif
 
 //
 // Load an image from a .icns file

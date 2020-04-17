@@ -71,9 +71,6 @@ static BOOLEAN IsImageWithinScreenLimits(INTN Value, INTN ImageDimension, INTN S
 static INTN RepositionFixedByCenter(INTN Value, INTN ScreenDimension, INTN DesignScreenDimension);
 static INTN RepositionRelativeByGapsOnEdges(INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
-#if USE_EG_IMAGE
-EG_IMAGE * LoadSvgFrame(INTN i);
-#endif
 // UGA defines and variables
 
 INTN   UGAWidth;
@@ -341,59 +338,6 @@ typedef struct {
  // moreover it is class EG_RECT;
  //same as EgRect but INTN <-> UINTN
 */
-#if USE_EG_IMAGE
-VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
-{
-  if (!Image) {
-    return;
-  }
-  egDrawImageArea(Image, 0, 0, 0, 0, XPos, YPos);
-  GraphicsScreenDirty = TRUE;
-}
-
-VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale)
-{
-  EG_IMAGE *CompImage;
-  EG_IMAGE *NewImage = NULL;
-  INTN Width = Scale << 3;
-  INTN Height = Width;
-
-  GraphicsScreenDirty = TRUE;
-  if (Image) {
-    NewImage = egCopyScaledImage(Image, Scale); //will be Scale/16
-    Width = NewImage->Width;
-    Height = NewImage->Height;
-  }
-//  DBG("w=%d, h=%d\n", Width, Height);
-  // compose on background
-  CompImage = egCreateFilledImage(Width, Height, !ThemeX.Background.isEmpty(), BackgroundPixel); //no matter
-
-  egComposeImage(CompImage, NewImage, 0, 0);
-  if (NewImage) {
-    egFreeImage(NewImage);
-  }
-  if (ThemeX.Background.isEmpty()) {
-    egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
-    egFreeImage(CompImage);
-    return;
-  }
-  NewImage = egCreateImage(Width, Height, FALSE);
-  if (!NewImage) return;
-//  DBG("draw on background\n");
-  egRawCopy(NewImage->PixelData,
-            (EG_PIXEL*)ThemeX.Background.GetPixelPtr(0,0) + YPos * ThemeX.Background.GetWidth() + XPos,
-            Width, Height,
-            Width,
-            ThemeX.Background.GetWidth());
-
-  egComposeImage(NewImage, CompImage, 0, 0);
-  egFreeImage(CompImage);
-
-  // blit to screen and clean up
-  egDrawImageArea(NewImage, 0, 0, 0, 0, XPos, YPos);
-  egFreeImage(NewImage);
-}
-#endif
 /*
   --------------------------------------------------------------------
   Pos                           : Bottom    -> Mid        -> Top

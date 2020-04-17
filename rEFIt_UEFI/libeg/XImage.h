@@ -53,9 +53,6 @@ protected:
 public:
   XImage();
   XImage(UINTN W, UINTN H);
-#if USE_EG_IMAGE
-  XImage(EG_IMAGE* egImage);
-#endif
   XImage(const XImage& Image, float scale = 0.f); //the constructor can accept 0 scale as 1.f
   virtual ~XImage();
 
@@ -97,10 +94,7 @@ public:
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);
   EFI_STATUS FromSVG(const CHAR8 *SVGData, float scale);
   EFI_STATUS FromICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize);
-#if USE_EG_IMAGE
-  EFI_STATUS FromEGImage(const EG_IMAGE* egImage);
-  EG_IMAGE* ToEGImage();
-#endif
+
   void GetArea(const EG_RECT& Rect);
   void GetArea(INTN x, INTN y, UINTN W, UINTN H);
   void Draw(INTN x, INTN y, float scale, bool Opaque);

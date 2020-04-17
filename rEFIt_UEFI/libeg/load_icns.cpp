@@ -48,11 +48,8 @@
 #else
 #define DBG(...) DebugLog(DEBUG_IMG, __VA_ARGS__)
 #endif
-#if USE_EG_IMAGE
-#define PLPTR(imagevar, colorname) ((UINT8 *) &((imagevar)->PixelData->colorname))
-#else
+
 #define PLPTR(imagevar, colorname) ((UINT8 *) &((imagevar).GetPixelPtr(0,0)->colorname))
-#endif
 
 
 //these functions used for icns, not with png
@@ -154,7 +151,6 @@ VOID egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT
 
 EFI_STATUS XImage::FromICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize)
 {
- //   EG_IMAGE            *NewImage;
     UINT8               *Ptr, *BufferEnd, *DataPtr, *MaskPtr;
     UINT32              BlockLen, DataLen, MaskLen;
     UINTN               FetchPixelSize, PixelCount, i;
