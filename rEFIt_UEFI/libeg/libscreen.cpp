@@ -174,8 +174,8 @@ VOID egDumpSetConsoleVideoModes(VOID)
 			MsgLog(" - [%02llu]: %llux%llu%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         }
         // Select highest mode (-1) or lowest mode (-2) as/if requested
-        if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Width > BestWidth || (Width == BestWidth && Height > BestHeight))) ||
-            (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Width < BestWidth || (Width == BestWidth && Height < BestHeight)))) {
+        if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Height > BestHeight || (Height == BestHeight && Width > BestWidth))) ||
+            (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Height < BestHeight || (Height == BestHeight && Width < BestWidth)))) {
           BestMode = i;
           BestWidth = Width;
           BestHeight = Height;
