@@ -2687,19 +2687,18 @@ GetEarlyUserSettings (
               break;
             }
           }
-          if ((AsciiStriCmp (Prop->string, "embedded") == 0) || (AsciiStriCmp (Prop->string, "") == 0)) {
-            Prop = GetProperty (DictPointer, "EmbeddedThemeType");
-            if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
-              if (AsciiStriCmp (Prop->string, "Dark") == 0) {
-                ThemeX.DarkEmbedded = TRUE;
-                ThemeX.Font = FONT_GRAY;
-              } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
-                ThemeX.DarkEmbedded = FALSE;
-                ThemeX.Font = FONT_ALFA;
-              } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
-                ThemeX.DarkEmbedded = !ThemeX.Daylight;
-                ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
-              }
+          // get embedded theme property even when starting with other themes, as they may be changed later
+          Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+          if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+            if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+              ThemeX.DarkEmbedded = TRUE;
+              ThemeX.Font = FONT_GRAY;
+            } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+              ThemeX.DarkEmbedded = FALSE;
+              ThemeX.Font = FONT_ALFA;
+            } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
+              ThemeX.DarkEmbedded = !ThemeX.Daylight;
+              ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
             }
           }
         }
