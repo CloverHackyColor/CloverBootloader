@@ -286,20 +286,27 @@ int printf_lite_tests(void)
     Test1arg(F("|    C|"), F("|%5X|"), 12);
 
     Test1arg(F("|  -12|"), F("|%5hhd|"), (char)-12);
+    Test1arg(F("|  -12|"), F("|%5d|"), (char)-12);
     Test1arg(F("|  -12|"), F("|%5hd|"), (short)-12);
     Test1arg(F("|  -12|"), F("|%5d|"), -12);
     Test1arg(F("|  -12|"), F("|%5ld|"), -12L);
     Test1arg(F("|  -12|"), F("|%5lld|"), -12LL);
+	
     Test1arg(F("|  244|"), F("|%5hhu|"), (char)-12);
+    Test1arg(F("|4294967284|"), F("|%5u|"), (char)-12);
     Test1arg(F("|65524|"), F("|%5hu|"), (short)-12);
     Test1arg(F("|4294967284|"), F("|%5u|"), -12);
     Test1arg(F("|18446744073709551604|"), F("|%5lu|"), -12L);
     Test1arg(F("|18446744073709551604|"), F("|%5llu|"), -12LL);
+	
     Test1arg(F("|   f4|"), F("|%5hhx|"), (char)-12);
+    Test1arg(F("|fffffff4|"), F("|%5x|"), (char)-12);
     Test1arg(F("| fff4|"), F("|%5hx|"), (short)-12);
     Test1arg(F("|fffffff4|"), F("|%5x|"), -12);
     Test1arg(F("|fffffffffffffff4|"), F("|%5lx|"), -12L);
     Test1arg(F("|fffffffffffffff4|"), F("|%5llx|"), -12LL);
+
+    Test1arg(F("|FFFFFFF4|"), F("|%5X|"), -12);
 
     // test pad char but no width (no effect)
     Test1arg(F("|c|"), F("|%0x|"), 12);
