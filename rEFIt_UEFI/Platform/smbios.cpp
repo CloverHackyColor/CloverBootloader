@@ -1105,7 +1105,7 @@ VOID PatchTableType11()
   //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.EfiVersion, iStrLen(gSettings.EfiVersion, 64));
   AsciiStrCatS(OEMString, MAX_OEM_STRING, "  Board-ID       : ");
   AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
-	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by Clover %s\n", gRevisionStr);
+	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by %s\n", gRevisionStr);
   AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
 
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
