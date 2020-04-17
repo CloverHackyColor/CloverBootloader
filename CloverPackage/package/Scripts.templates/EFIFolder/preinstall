@@ -201,8 +201,8 @@ if [[ -d  "${EFI_ROOT_DIR}/EFI/CLOVER/drivers64UEFI" && \
 fi
 
 # issue 117, even if the fault lies with some other program that uses these files
-rm -f "${EFI_ROOT_DIR}/EFI/BOOT/BOOTX64.efi
-rm -f "${EFI_ROOT_DIR}/EFI/CLOVER/CLOVERX64.efi
+rm -f "${EFI_ROOT_DIR}"/EFI/BOOT/BOOTX64.efi
+rm -f "${EFI_ROOT_DIR}"/EFI/CLOVER/CLOVERX64.efi
 
 # Remove old CloverEFI files
 #rm -fv "$EFI_ROOT_DIR"/boot{3,6,7}
