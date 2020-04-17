@@ -290,17 +290,17 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
   if(!buffer)
     return NULL;
 
-  snprintf(buffer, len, "%08X%08X%04X%04X", SwapBytes32(StringBuf->length), StringBuf->WHAT2,
+	snprintf(buffer, len, "%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2,
               SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
   buffer += 24;
 
   while(i < StringBuf->numentries) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
-    snprintf(buffer, len, "%08X%04X%04X", SwapBytes32(StringBuf->entries[i]->length),
+	  snprintf(buffer, len, "%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
                 SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 
     buffer += 16;
-    snprintf(buffer, len, "%02X%02X%04X%08X%08X", StringBuf->entries[i]->acpi_dev_path.type,
+	  snprintf(buffer, len, "%02hhX%02hhX%04hX%08X%08X", StringBuf->entries[i]->acpi_dev_path.type,
                 StringBuf->entries[i]->acpi_dev_path.subtype,
                 SwapBytes16(StringBuf->entries[i]->acpi_dev_path.length),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
@@ -308,7 +308,7 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
 
     buffer += 24;
     for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
-      snprintf(buffer, len, "%02X%02X%04X%02X%02X", StringBuf->entries[i]->pci_dev_path[x].type,
+		snprintf(buffer, len, "%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
                   StringBuf->entries[i]->pci_dev_path[x].subtype,
                   SwapBytes16(StringBuf->entries[i]->pci_dev_path[x].length),
                   StringBuf->entries[i]->pci_dev_path[x].function,
@@ -316,13 +316,13 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
       buffer += 12;
     }
 
-    snprintf(buffer, len, "%02X%02X%04X", StringBuf->entries[i]->path_end.type,
+	  snprintf(buffer, len, "%02hhX%02hhX%04hX", StringBuf->entries[i]->path_end.type,
                 StringBuf->entries[i]->path_end.subtype,
                 SwapBytes16(StringBuf->entries[i]->path_end.length));
 
     buffer += 8;
     for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
-      snprintf(buffer, len, "%02X", *dataptr++);
+      snprintf(buffer, len, "%02hhX", *dataptr++);
       buffer += 2;
     }
     i++;

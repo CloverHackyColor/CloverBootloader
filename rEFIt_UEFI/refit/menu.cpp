@@ -201,7 +201,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(36);
   }
-  snwprintf(InputItems[InputItemsCount++].SValue, 36, "0x%X", gSettings.BacklightLevel);
+	snwprintf(InputItems[InputItemsCount++].SValue, 36, "0x%hX", gSettings.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
@@ -236,7 +236,7 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount++].BValue = gSettings.InjectNVidia;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       for (j=0; j<8; j++) {
-        snprintf((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.Dcfg[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.Dcfg[j]);
       }
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(40);
@@ -251,7 +251,7 @@ VOID FillInputs(BOOLEAN New)
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(20);
       }
-      snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.IgPlatform);
+		snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.IgPlatform);
  //     InputItemsCount += 3;
  //     continue;
     }
@@ -269,7 +269,7 @@ VOID FillInputs(BOOLEAN New)
     if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = ASString; //24+6i
       for (j=0; j<20; j++) {
-        snprintf((CHAR8*)&tmp[2*j], 3, "%02X", gSettings.NVCAP[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.NVCAP[j]);
       }
       if (New) {
         InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(84);
@@ -322,12 +322,12 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.VendorEDID);
+	snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04hX", gSettings.VendorEDID);
   InputItems[InputItemsCount].ItemType = Decimal;  //54
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.ProductEDID);
+	snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04hX", gSettings.ProductEDID);
 
   // ErmaC: NvidiaGeneric menu selector y/n
   InputItems[InputItemsCount].ItemType = BoolValue; //55
@@ -405,7 +405,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
   }
-  snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04X", gSettings.C3Latency);
+	snwprintf(InputItems[InputItemsCount++].SValue, 16, "0x%04hX", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
@@ -487,7 +487,7 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
-  snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeATI);
+	snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeATI);
   InputItems[InputItemsCount].ItemType = Hex;  //95
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
@@ -1806,7 +1806,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
   SubScreen->AddMenuInfoLine_f("Choose options to tune the HDA devices");
 	SubScreen->AddMenuInfoLine_f("Number of Audio Controller%s=%llu", ((NHDA!=1)?"s":""), NHDA);
   for (i = 0; i < NHDA; i++) {
-	  SubScreen->AddMenuInfoLine_f("%llu) %ls [%04X][%04X]",
+	  SubScreen->AddMenuInfoLine_f("%llu) %ls [%04hX][%04hX]",
                                            (i+1),
                                            gAudios[i].controller_name,
                                            gAudios[i].controller_vendor_id,
@@ -2139,7 +2139,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
 
 	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
-  SubScreen->AddMenuInfoLine_f("Real CPUID: 0x%06X", gCPUStructure.Signature);
+	SubScreen->AddMenuInfoLine_f("Real CPUID: 0x%06X", gCPUStructure.Signature);
 
 
   SubScreen->AddMenuItemInput(64,  "Debug", FALSE);

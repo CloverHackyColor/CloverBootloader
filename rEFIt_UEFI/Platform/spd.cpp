@@ -198,7 +198,7 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
                              DivU64x32(gCPUStructure.TSCFrequency, 1000),
                              0);
       if (t > 5) {
-        DBG("host is busy for too long for byte %2X:%d!\n", adr, cmd);
+        DBG("host is busy for too long for byte %2hhX:%d!\n", adr, cmd);
         return 0xFF;                  // break
       }
     }
@@ -223,16 +223,16 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
         t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
         /*
          if (c != p) {
-         DBG("%02d %02X spd page change status %2X\n", t, cmd, c);
+         DBG("%02d %02hhX spd page change status %2hhX\n", t, cmd, c);
          p = c;
          }
          */
         if (c & 4) {
-          DBG("spd page change error for byte %2X:%d!\n", adr, cmd);
+          DBG("spd page change error for byte %2hhX:%d!\n", adr, cmd);
           break;
         }
         if (t > 5) {
-          DBG("spd page change taking too long for byte %2X:%d!\n", adr, cmd);
+          DBG("spd page change taking too long for byte %2hhX:%d!\n", adr, cmd);
           break;									// break after 5ms
         }
       }
@@ -251,18 +251,18 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
       t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
       /*
        if (c != p) {
-       DBG("%02d %02X spd read status %2X\n", t, cmd, c);
+       DBG("%02d %02hhX spd read status %2hhX\n", t, cmd, c);
        p = c;
        }
        */
       if (c & 4) {
         // This alway happens when trying to read the memory type (cmd 2) of an empty slot
-        // DBG("spd byte read error for byte %2X:%d!\n", adr, cmd);
+        // DBG("spd byte read error for byte %2hhX:%d!\n", adr, cmd);
         break;
       }
       if (t > 5) {
         // if (cmd != 2)
-        DBG("spd byte read taking too long for byte %2X:%d!\n", adr, cmd);
+        DBG("spd byte read taking too long for byte %2hhX:%d!\n", adr, cmd);
         break;									// break after 5ms
       }
     }
@@ -316,7 +316,7 @@ VOID init_spd(UINT16* spd_indexes, UINT8* spd, UINT32 base, UINT8 slot)
   DBG("Reading entire spd data\n");
   for (i = 0; i < 512; i++) {
     UINT8 b = smb_read_byte(base, 0x50 + slot, i);
-    DBG("%02X", b);
+    DBG("%02hhX", b);
   }
   DBG(".\n");
 #endif
@@ -338,7 +338,7 @@ CONST CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 s
     testbit = bank;
     for (INTN i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
     if ( (parity & 0x80) == 0 ) {
-      DBG("Bad parity bank=0x%2X code=0x%2X\n", bank, code);
+      DBG("Bad parity bank=0x%2hhX code=0x%2hhX\n", bank, code);
     }
     bank &= 0x7f;
     for (UINTN i=0; i < VEN_MAP_SIZE; i++) {
@@ -346,7 +346,7 @@ CONST CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 s
         return vendorMap[i].name;
       }
     }
-    DBG("Unknown vendor bank=0x%2X code=0x%2X\n", bank, code);
+    DBG("Unknown vendor bank=0x%2hhX code=0x%2hhX\n", bank, code);
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
     bank = spd[SPD_DDR3_MEMORY_BANK]; // constructors like Patriot use b7=1
     code = spd[SPD_DDR3_MEMORY_CODE];
@@ -354,7 +354,7 @@ CONST CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 s
     testbit = bank;
     for (INTN i=6; i >= 0; i--) { parity ^= (testbit <<= 1); }
     if ( (parity & 0x80) == 0 ) {
-      DBG("Bad parity bank=0x%2X code=0x%2X\n", bank, code);
+      DBG("Bad parity bank=0x%2hhX code=0x%2hhX\n", bank, code);
     }
     bank &= 0x7f;
 
@@ -542,12 +542,12 @@ CHAR8* getDDRSerial(UINT8* spd)
   CHAR8* asciiSerial; //[16];
   asciiSerial = (__typeof__(asciiSerial))AllocatePool(17);
   if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR4) { // DDR4
-    snprintf(asciiSerial, 17, "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
+    snprintf(asciiSerial, 17, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
-    snprintf(asciiSerial, 17, "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
+    snprintf(asciiSerial, 17, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 ||
              spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {  // DDR2 or DDR
-    snprintf(asciiSerial, 17, "%02X%02X%02X%02X%02X%02X%02X%02X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
+    snprintf(asciiSerial, 17, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
   } else {
     AsciiStrCpyS(asciiSerial, 17, "0000000000000000");
   }
@@ -624,7 +624,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
                                  &Command
                                  );
 
-  DBG("SMBus CmdReg: 0x%X\n", Command);
+	DBG("SMBus CmdReg: 0x%hX\n", Command);
 
   /*Status = */PciIo->Pci.Read (
                                 PciIo,
@@ -665,7 +665,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
                                 );
 
 
-  MsgLog("Scanning SMBus [%04X:%04X], mmio: 0x%X, ioport: 0x%X, hostc: 0x%X\n",
+	MsgLog("Scanning SMBus [%04hX:%04hX], mmio: 0x%X, ioport: 0x%X, hostc: 0x%X\n",
          vid, did, mmio, base, hostc);
 
   // needed at least for laptops
@@ -898,7 +898,7 @@ VOID ScanSPD()
         //SmBus controller has class = 0x0c0500
         if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5)
             && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE)) {
-          DBG ("SMBus device : %04X %04X class=%02X%02X%02X status=%s\n",
+			DBG ("SMBus device : %04hX %04hX class=%02hhX%02hhX%02hhX status=%s\n",
                gPci.Hdr.VendorId,
                gPci.Hdr.DeviceId,
                gPci.Hdr.ClassCode[2],

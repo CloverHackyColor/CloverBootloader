@@ -192,13 +192,13 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	SetMem (&Regs, sizeof (Regs), 0);
   
 	// first reset disk controller as the controller seems to be in an undefined state sometimes
-	DBG("Reset disk controller: %X\n", DriveNum);
+	DBG("Reset disk controller: %hhX\n", DriveNum);
 	Regs.H.AH = 0x00;		// INT 13h AH=00h: Reset disk controller
 	Regs.H.DL = DriveNum;
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
 		// TRUE = error
-    DBG("Reset 0 disk controller: %X\n", DriveNum);
+    DBG("Reset 0 disk controller: %hhX\n", DriveNum);
     Regs.H.AH = 0x0D;		// INT 13h AH=00h: Reset disk controller
     Regs.H.DL = DriveNum;
     if (LegacyBiosInt86(0x13, &Regs)) {
@@ -214,9 +214,9 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	Regs.E.DS = (UINT16) (((UINTN) Dap >> 16) << 12);
 	Regs.X.SI = (UINT16) (UINTN) Dap;
 	
-//	DBG("Drive: %X, Dap=%p, Buffer=%p, d.size=%X, d.nsect=%d, d.buff=[%X:%X]\n",
+//	DBG("Drive: %hhX, Dap=%p, Buffer=%p, d.size=%hhX, d.nsect=%d, d.buff=[%hhX:%hhX]\n",
 //		DriveNum, Dap, Buffer, Dap->size, Dap->numSectors, Dap->buffSegment, Dap->buffOffset);
-//	DBG("Dap: Reg.DS:SI = [%X:%X]\n", Regs.E.DS, Regs.X.SI);
+//	DBG("Dap: Reg.DS:SI = [%hhX:%hhX]\n", Regs.E.DS, Regs.X.SI);
 	
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
@@ -225,7 +225,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
     LegacyBiosInt86(0x13, &Regs);
 		Status = EFI_NOT_FOUND;
 	}
-	DBG("LegacyBiosInt86 status=%s, AH=%X\n", strerror(Status), Regs.H.AH);
+	DBG("LegacyBiosInt86 status=%s, AH=%hhX\n", strerror(Status), Regs.H.AH);
 	return Status;
 }
 
@@ -263,7 +263,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	UINTN						LegacyRegionPages;
 	EFI_PHYSICAL_ADDRESS		LegacyRegion;
 	
-//	DBG("Expected volume CRC32 = %X\n", Volume->DriveCRC32);
+//	DBG("Expected volume CRC32 = %hhX\n", Volume->DriveCRC32);
 	LegacyRegion = 0x0C0000;
 	LegacyRegionPages = EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET) + 2 * 512)+1 /* dap + 2 sectors */;
 	Status = gBS->AllocatePages(AllocateMaxAddress,
@@ -286,17 +286,17 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 		if (EFI_ERROR(Status)) {
 			// error or no more disks
 			//DriveNum = 0;
-      DBG("Can't get drive 0x%X CRC32\n", DriveNum);
+      DBG("Can't get drive 0x%hhX CRC32\n", DriveNum);
 			continue;
 		}
     BestNum = DriveNum;
-    DBG("Calculated CRC=%X at drive 0x%X\n", Volume->DriveCRC32, BestNum);
+		DBG("Calculated CRC=%X at drive 0x%hhX\n", Volume->DriveCRC32, BestNum);
 		if (Volume->DriveCRC32 == DriveCRC32) {
 			break;
 		}
 	}
 	gBS->FreePages(LegacyRegion, LegacyRegionPages);
-	DBG("Returning Bios drive %X\n", BestNum);
+	DBG("Returning Bios drive %hhX\n", BestNum);
 	return BestNum;
 }
 
@@ -507,7 +507,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
     for (i=0; i<16; i++) {
 		DBG("%04llX: ", i*16);
         for (j=0; j<16; j++) {
-            DBG("%02X ", pMBR[i*16+j]);
+            DBG("%02hhX ", pMBR[i*16+j]);
         }
         DBG("\n");
     }
@@ -526,7 +526,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
     
 	// Check validity of MBR
 	if (pMBR[510] != 0x55 || pMBR[511] != 0xAA) {
-		DBG("HDBoot: Invalid MBR signature 0x%02X%02X (not 0xAA55)\n", pMBR[511], pMBR[510]);
+		DBG("HDBoot: Invalid MBR signature 0x%02hhX%02hhX (not 0xAA55)\n", pMBR[511], pMBR[510]);
 		Status = EFI_NOT_FOUND; 
 		return Status;
 	}
@@ -550,7 +550,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 		
 		// Is the partition valid?
 		if (partition->StartLBA == 0 || partition->Size == 0) {
-			DBG("HDBoot: Invalid active partition %d: (%08X L %08X)\n", partition->StartLBA, partition->Size);
+			DBG("HDBoot: Invalid active partition %d: (%08hhX L %08hhX)\n", partition->StartLBA, partition->Size);
 			return Status;
 		}
 		
@@ -577,7 +577,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	
 	// Check boot sector
 	if (pBootSector[0x1FE] != 0x55 || pBootSector[0x1FF] != 0xAA) {
-		DBG("HDBoot: Invalid Boot Sector signature 0x%02X%02X (not 0xAA55)\n", pBootSector[0x1FF], pBootSector[0x1FE]);
+		DBG("HDBoot: Invalid Boot Sector signature 0x%02hhX%02hhX (not 0xAA55)\n", pBootSector[0x1FF], pBootSector[0x1FE]);
 		Status = EFI_NOT_FOUND;
 		return Status;
 	}
@@ -661,7 +661,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   for (i=0; i<4; i++) {
 	  DBG("%04llX: ", i*16);
     for (j=0; j<16; j++) {
-      DBG("%02X ", pBootSector[i*16+j]);
+      DBG("%02hhX ", pBootSector[i*16+j]);
     }
     DBG("\n");
   }
@@ -855,7 +855,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
           break;
       }
 
-		DBG("%llu: Drv: %X P: %X %ls PCI(%X,%X,%X), DT: %X %ls SF: %X Txt: '%s'\n",
+		DBG("%llu: Drv: %hhX P: %hX %ls PCI(%X,%X,%X), DT: %hX %ls SF: %X Txt: '%s'\n",
           i, BbsTableIt->AssignedDriveNumber, BbsTableIt->BootPriority, BbsPriorityTxt,
           BbsTableIt->Bus, BbsTableIt->Device, BbsTableIt->Function,
           BbsTableIt->DeviceType, BbsDevTypeTxt, *(UINT32*)(&BbsTableIt->StatusFlags),
@@ -911,7 +911,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   for (i=0; i<4; i++) {
 	  DBG("%04llX: ", i*16);
     for (j=0; j<16; j++) {
-      DBG("%02X ", pBootSector[i*16+j]);
+      DBG("%02hhX ", pBootSector[i*16+j]);
     }
     DBG("\n");
   }
@@ -957,7 +957,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
     Regs.X.SI = (UINT16)(UINTN)pMBR;
   }
 
-	DBG("mbr: %X index: %llX pointer: %llX dx: %X si: %X\n", volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
+	DBG("mbr: %hhX index: %llX pointer: %llX dx: %hX si: %hX\n", volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
 	DBG("pmbr: %llX start: %X size: %X\n", (uintptr_t)&pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
 
   //

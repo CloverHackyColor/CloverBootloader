@@ -1543,7 +1543,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   if (Custom->Options != NULL) {
     DBG("Options:\"%ls\" ", Custom->Options);
   }
-  DBG("Type:%d Flags:0x%X matching ", Custom->Type, Custom->Flags);
+  DBG("Type:%d Flags:0x%hhX matching ", Custom->Type, Custom->Flags);
   if (Custom->Volume) {
     DBG("Volume:\"%ls\"\n", Custom->Volume);
   } else {

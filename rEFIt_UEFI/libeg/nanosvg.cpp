@@ -2825,7 +2825,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
       nsvg__parseAttr(p, dict[i], dict[i + 1]);
     }
   }
-  DBG("text: x=%f y=%f attr:Style=%X, size=%f, id=%s\n", x, y, attr->fontFace->fontStyle, attr->fontFace->fontSize, attr->id);
+  DBG("text: x=%f y=%f attr:Style=%hhX, size=%f, id=%s\n", x, y, attr->fontFace->fontStyle, attr->fontFace->fontSize, attr->id);
   text->x = x;
   text->y = y;
   text->fontSize = attr->fontFace->fontSize;

@@ -1245,7 +1245,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   /*
    if (DbgCount < 3) {
    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
-   DBG(L"Found num: %X\n", NumValue);
+   DBG(L"Found num: %hhX\n", NumValue);
    gBS->Stall(10000000);
    }
    DbgCount++;
@@ -1346,7 +1346,7 @@ VOID PatchPrelinkedKexts(LOADER_ENTRY *Entry)
         /*if (DbgCount < 3
          || DbgCount == 100 || DbgCount == 101 || DbgCount == 102
          ) {
-         DBG(L"\n\nKext: St = %X, Size = %X\n", KextAddr, KextSize);
+         DBG(L"\n\nKext: St = %hhX, Size = %hhX\n", KextAddr, KextSize);
          DBG(L"Info: St = %p, End = %p\n%s\n", InfoPlistStart, InfoPlistEnd, InfoPlistStart);
          gBS->Stall(20000000);
          }
@@ -1403,7 +1403,7 @@ VOID PatchLoadedKexts(LOADER_ENTRY *Entry)
         if (AsciiStrStr(PropName,"Driver-")) {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
           PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
-          //if (DbgCount < 3) DBG(L"%s: paddr = %X, length = %X\n", PropName, PropEntry->paddr, PropEntry->length);
+          //if (DbgCount < 3) DBG(L"%s: paddr = %hhX, length = %hhX\n", PropName, PropEntry->paddr, PropEntry->length);
           
           // PropEntry->paddr points to _BooterKextFileInfo
           KextFileInfo = (_BooterKextFileInfo *)(UINTN)PropEntry->paddr;

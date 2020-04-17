@@ -131,7 +131,7 @@ OurPlatformDriverLoaded (
   }
   Status = CompName->GetDriverName(CompName, "eng", &DriverName);
   if (!EFI_ERROR(Status)) {
-    DBG(" DriverName=%ls at Controller=%X\n", DriverName, ControllerHandle);
+    DBG(" DriverName=%ls at Controller=%hhX\n", DriverName, ControllerHandle);
   }
 
 #endif

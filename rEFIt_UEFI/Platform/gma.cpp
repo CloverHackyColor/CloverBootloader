@@ -989,7 +989,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   }
   //DBG("Finally model=%s\n", model);
 
-  MsgLog("%s [%04X:%04X] :: %s\n",
+	MsgLog("%s [%04hX:%04hX] :: %s\n",
       model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
 
   // Resolution
@@ -3387,7 +3387,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
 
     default:
-      DBG("  Intel card id=%X unsupported, please report to the clover thread\n", gma_dev->device_id);
+		  DBG("  Intel card id=%hX unsupported, please report to the clover thread\n", gma_dev->device_id);
       return FALSE;
   }
 

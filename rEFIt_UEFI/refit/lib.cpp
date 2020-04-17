@@ -460,7 +460,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     Volume->HasBootCode = TRUE; //we assume that all CD are bootable
     /*      DBG("check SectorBuffer\n");
      for (i=0; i<32; i++) {
-     DBG("%2X ", SectorBuffer[i]);
+     DBG("%2hhX ", SectorBuffer[i]);
      }
      DBG("\n"); */
     VCrc32 = GetCrc32(SectorBuffer, 512 * 2);
@@ -479,7 +479,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
      default:
      break;
      }
-     DBG("Volume kind=%ls CRC=0x%X\n", kind, VCrc32); */
+     DBG("Volume kind=%ls CRC=0x%hhX\n", kind, VCrc32); */
     if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
       CHAR8* p = (CHAR8*)&SectorBuffer[8];
       while (*p == 0x20) {
@@ -879,7 +879,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       // look at the BlockIO protocol
       Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
       if (!EFI_ERROR(Status)) {
-        //          DBG("WholeDiskBlockIO %X BlockSize=%d\n", Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->BlockSize);
+        //          DBG("WholeDiskBlockIO %hhX BlockSize=%d\n", Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->BlockSize);
         // check the media block size
         if (Volume->WholeDiskBlockIO->Media->BlockSize == 2048)
           Volume->DiskKind = DISK_KIND_OPTICAL;
@@ -1373,7 +1373,7 @@ BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
       File->Close(File);
       return FALSE;
     }
-    //DBG(" FileInfo attr: %X\n", FileInfo->Attribute);
+    //DBG(" FileInfo attr: %hhX\n", FileInfo->Attribute);
     if ((FileInfo->Attribute & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY) {
       // it's directory - return error
       //DBG(" File is DIR\n");
@@ -1692,7 +1692,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
     } else {
 		DBG("%ls var size=%llu\n", Name, dataSize);
       for (i = 0; i < dataSize; i++) {
-        DBG("%02X ", data[i]);
+        DBG("%02hhX ", data[i]);
       }
       DBG("\n");
       if (DevicePathAt >= 0) {

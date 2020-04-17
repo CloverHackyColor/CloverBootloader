@@ -133,7 +133,7 @@ GetMacAddress()
 		  DBG("MAC address of LAN #%llu= ", nLanPaths);
         HwAddress = &MacAddressNode->MacAddress.Addr[0];
         for (Index2 = 0; Index2 < HwAddressSize; Index2++) {
-          DBG("%02X:", *HwAddress++);
+          DBG("%02hhX:", *HwAddress++);
         }
         DBG("\n");
         Found = TRUE;
@@ -222,7 +222,7 @@ GetMacAddress()
 		DBG("Legacy MAC address of LAN #%llu= ", Index);
       HwAddress = &gLanMac[Index][0];
       for (Index2 = 0; Index2 < HwAddressSize; Index2++) {
-        DBG("%02X:", *HwAddress++);
+        DBG("%02hhX:", *HwAddress++);
       }
       DBG("\n");
 

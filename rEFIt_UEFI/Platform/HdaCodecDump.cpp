@@ -66,7 +66,7 @@ HdaCodecDumpPrintRatesFormats(
     IN UINT32 Rates,
     IN UINT32 Formats) {
     // Print sample rates.
-    HdaLog("    rates [0x%04X]:", (UINT16)Rates);
+	HdaLog("    rates [0x%04hX]:", (UINT16)Rates);
     if (Rates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_8KHZ)
         HdaLog(" 8000");
     if (Rates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_11KHZ)
@@ -94,7 +94,7 @@ HdaCodecDumpPrintRatesFormats(
     HdaLog("\n");
 
     // Print bits.
-    HdaLog("    bits [0x%04X]:", (UINT16)(Rates >> 16));
+	HdaLog("    bits [0x%04hX]:", (UINT16)(Rates >> 16));
     if (Rates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_8BIT)
         HdaLog(" 8");
     if (Rates & HDA_PARAMETER_SUPPORTED_PCM_SIZE_RATES_16BIT)
@@ -123,7 +123,7 @@ EFIAPI
 HdaCodecDumpPrintAmpCaps(
     IN UINT32 AmpCaps) {
     if (AmpCaps) {
-        HdaLog("ofs=0x%02X, nsteps=0x%02X, stepsize=%02X, mute=%u\n",
+        HdaLog("ofs=0x%02hhX, nsteps=0x%02hhX, stepsize=%02hhX, mute=%u\n",
             HDA_PARAMETER_AMP_CAPS_OFFSET(AmpCaps), HDA_PARAMETER_AMP_CAPS_NUM_STEPS(AmpCaps),
             HDA_PARAMETER_AMP_CAPS_STEP_SIZE(AmpCaps), (AmpCaps & HDA_PARAMETER_AMP_CAPS_MUTE) != 0);
     } else
@@ -140,7 +140,7 @@ HdaCodecDumpPrintWidgets(
     // Print each widget.
     for (UINTN w = 0; w < WidgetCount; w++) {    
         // Print header and capabilities.
-        HdaLog("Node 0x%02X [%s] wcaps 0x%08X:", Widgets[w].NodeId,
+		HdaLog("Node 0x%02hhX [%s] wcaps 0x%08X:", Widgets[w].NodeId,
             gWidgetNames[HDA_PARAMETER_WIDGET_CAPS_TYPE(Widgets[w].Capabilities)], Widgets[w].Capabilities);
         if (Widgets[w].Capabilities & HDA_PARAMETER_WIDGET_CAPS_STEREO)
             HdaLog(" Stereo");
@@ -166,9 +166,9 @@ HdaCodecDumpPrintWidgets(
             HdaLog("  Amp-In vals:");
             for (UINT8 i = 0; i < HDA_PARAMETER_CONN_LIST_LENGTH_LEN(Widgets[w].ConnectionListLength); i++) {
                 if (Widgets[w].Capabilities & HDA_PARAMETER_WIDGET_CAPS_STEREO)
-                    HdaLog(" [0x%02X 0x%02X]", Widgets[w].AmpInLeftDefaultGainMute[i], Widgets[w].AmpInRightDefaultGainMute[i]);
+                    HdaLog(" [0x%02hhX 0x%02hhX]", Widgets[w].AmpInLeftDefaultGainMute[i], Widgets[w].AmpInRightDefaultGainMute[i]);
                 else
-                    HdaLog(" [0x%02X]", Widgets[w].AmpInLeftDefaultGainMute[i]);
+                    HdaLog(" [0x%02hhX]", Widgets[w].AmpInLeftDefaultGainMute[i]);
             }
             HdaLog("\n");
         }
@@ -182,9 +182,9 @@ HdaCodecDumpPrintWidgets(
             // Print default values.
             HdaLog("  Amp-Out vals:");
             if (Widgets[w].Capabilities & HDA_PARAMETER_WIDGET_CAPS_STEREO)
-                HdaLog(" [0x%02X 0x%02X]\n", Widgets[w].AmpOutLeftDefaultGainMute, Widgets[w].AmpOutRightDefaultGainMute);
+                HdaLog(" [0x%02hhX 0x%02hhX]\n", Widgets[w].AmpOutLeftDefaultGainMute, Widgets[w].AmpOutRightDefaultGainMute);
             else
-                HdaLog(" [0x%02X]\n", Widgets[w].AmpOutLeftDefaultGainMute);
+                HdaLog(" [0x%02hhX]\n", Widgets[w].AmpOutLeftDefaultGainMute);
         }
 
         // Print pin complexe info.
@@ -213,7 +213,7 @@ HdaCodecDumpPrintWidgets(
 
             // Print EAPD info.
             if (Widgets[w].PinCapabilities & HDA_PARAMETER_PIN_CAPS_EAPD) {
-                HdaLog("  EAPD 0x%X:", Widgets[w].DefaultEapd);
+                HdaLog("  EAPD 0x%hhX:", Widgets[w].DefaultEapd);
                 if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_BTL)
                     HdaLog(" BTL");
                 if (Widgets[w].DefaultEapd & HDA_EAPD_BTL_ENABLE_EAPD)
@@ -236,12 +236,12 @@ HdaCodecDumpPrintWidgets(
                 gColors[HDA_VERB_GET_CONFIGURATION_DEFAULT_COLOR(Widgets[w].DefaultConfiguration)]);
 
             // Print default association and sequence.
-            HdaLog("    DefAssociation = 0x%1X, Sequence = 0x%1X\n",
+            HdaLog("    DefAssociation = 0x%1hhX, Sequence = 0x%1hhX\n",
                 HDA_VERB_GET_CONFIGURATION_DEFAULT_ASSOCIATION(Widgets[w].DefaultConfiguration),
                 HDA_VERB_GET_CONFIGURATION_DEFAULT_SEQUENCE(Widgets[w].DefaultConfiguration));
 
             // Print default pin control.
-            HdaLog("  Pin-ctls: 0x%02X:", Widgets[w].DefaultPinControl);
+            HdaLog("  Pin-ctls: 0x%02hhX:", Widgets[w].DefaultPinControl);
             if (Widgets[w].DefaultPinControl & HDA_PIN_WIDGET_CONTROL_VREF_EN)
                 HdaLog(" VREF");
             if (Widgets[w].DefaultPinControl & HDA_PIN_WIDGET_CONTROL_IN_EN)
@@ -255,9 +255,9 @@ HdaCodecDumpPrintWidgets(
         
         // Print connections.
         if (Widgets[w].Capabilities & HDA_PARAMETER_WIDGET_CAPS_CONN_LIST) {
-            HdaLog("  Connection: %u\n    ", HDA_PARAMETER_CONN_LIST_LENGTH_LEN(Widgets[w].ConnectionListLength));
+            HdaLog("  Connection: %hhu\n    ", HDA_PARAMETER_CONN_LIST_LENGTH_LEN(Widgets[w].ConnectionListLength));
             for (UINT8 c = 0; c < HDA_PARAMETER_CONN_LIST_LENGTH_LEN(Widgets[w].ConnectionListLength); c++) {
-                HdaLog(" 0x%02X", Widgets[w].Connections[c]);
+				HdaLog(" 0x%02hX", Widgets[w].Connections[c]);
                 //if (c == Widgets[w].ConnectionSelect)
                 //	HdaLog("*");
             }
@@ -306,10 +306,10 @@ EFI_STATUS SaveHdaDumpTxt() {
 		// Get address
 		UINT8 CodecAddress;
 		Status = HdaIo->GetAddress(HdaIo, &CodecAddress);
-		HdaLog("Address: %u\n", CodecAddress);
+		HdaLog("Address: %hhu\n", CodecAddress);
 		
 		// Get AFG ID.
-		HdaLog("AFG Function Id: 0x%1X (unsol %u)\n", AudioFuncGroup->NodeId, AudioFuncGroup->UnsolCapable);
+		HdaLog("AFG Function Id: 0x%1hhX (unsol %hhu)\n", AudioFuncGroup->NodeId, AudioFuncGroup->UnsolCapable);
 
 		HdaLog("Vendor ID: 0x%08X\n", HdaCodecDev->VendorId);
 		HdaLog("Revision ID: 0x%08X\n", HdaCodecDev->RevisionId);

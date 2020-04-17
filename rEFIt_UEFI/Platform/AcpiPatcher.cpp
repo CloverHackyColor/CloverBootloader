@@ -933,7 +933,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
 			DBG("      * %llu: '%s', '%s', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
               ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
           for (k = 0; k < 16; k++) {
-            DBG("%02X ", ((UINT8*)adr)[k]);
+            DBG("%02hhX ", ((UINT8*)adr)[k]);
           }
           if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
             FileName = GenerateFileName(FileNamePrefix, SsdtCount, ChildCount, OemTableId);
@@ -979,7 +979,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
 		  DBG("      * %llu: '%s', '%s', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
             ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
         for(k=0; k<16; k++){
-          DBG("%02X ", ((UINT8*)adr)[k]);
+          DBG("%02hhX ", ((UINT8*)adr)[k]);
         }
         if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
           FileName = GenerateFileName(FileNamePrefix, SsdtCount, ChildCount, OemTableId);
@@ -2063,7 +2063,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
   DBG("Apply DsdtFixMask=0x%08X\n", gSettings.FixDsdt);
-  DBG("   drop _DSM mask=0x%04X\n", dropDSM);
+  DBG("   drop _DSM mask=0x%04hX\n", dropDSM);
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer, OSVersion);
   if (gSettings.DebugDSDT) {
     for (Index=0; Index < 60; Index++) {
@@ -2179,10 +2179,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
             // here we're trying to assign first IDs found in DSDT to enabled processors in MADT, such that macOS assumption to be true
             if (ProcLocalApic->Flags & EFI_ACPI_4_0_LOCAL_APIC_ENABLED) {
               if (ProcLocalApic->AcpiProcessorId != acpi_cpu_processor_id[Index]) {
-                DBG("AcpiProcessorId changed: 0x%02X to 0x%02X\n", ProcLocalApic->AcpiProcessorId, acpi_cpu_processor_id[Index]);
+                DBG("AcpiProcessorId changed: 0x%02hhX to 0x%02hhX\n", ProcLocalApic->AcpiProcessorId, acpi_cpu_processor_id[Index]);
                 ProcLocalApic->AcpiProcessorId = acpi_cpu_processor_id[Index];
               } else {
-                DBG("AcpiProcessorId: 0x%02X\n", ProcLocalApic->AcpiProcessorId);
+                DBG("AcpiProcessorId: 0x%02hhX\n", ProcLocalApic->AcpiProcessorId);
               }
               Index++;
             }

@@ -23,7 +23,7 @@ PrintBytesRow(IN UINT8 *Bytes, IN UINTN Number, IN UINTN MaxNumber)
 	
 	// print hex vals
 	for (Index = 0; Index < Number; Index++) {
-		DebugLog(1, "%02X ", Bytes[Index]);
+		DebugLog(1, "%02hhX ", Bytes[Index]);
 	}
 	
 	// pad to MaxNumber if needed

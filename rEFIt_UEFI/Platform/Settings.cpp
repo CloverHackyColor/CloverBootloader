@@ -567,7 +567,7 @@ UINT8
       /*
        DBG ("Data: %p, Len: %d = ", Data, Prop->dataLen);
        for (i = 0; i < Prop->dataLen; i++) {
-       DBG ("%02X ", Data[i]);
+       DBG ("%02hhX ", Data[i]);
        }
        DBG ("\n");
        */
@@ -583,7 +583,7 @@ UINT8
       /*
        DBG ("Data(str): %p, Len: %d = ", data, len);
        for (i = 0; i < Len; i++) {
-       DBG ("%02X ", data[i]);
+       DBG ("%02hhX ", data[i]);
        }
        DBG ("\n");
        */
@@ -4434,7 +4434,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "BoardType");
   if (Prop != NULL) {
     gSettings.BoardType = (UINT8)GetPropertyInteger (Prop, gSettings.BoardType);
-    DBG ("BoardType: 0x%X\n", gSettings.BoardType);
+    DBG ("BoardType: 0x%hhX\n", gSettings.BoardType);
   }
 
   Prop = GetProperty (DictPointer, "Mobile");
@@ -4465,7 +4465,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty (DictPointer, "ChassisType");
   if (Prop != NULL) {
     gSettings.ChassisType = (UINT8)GetPropertyInteger (Prop, gSettings.ChassisType);
-    DBG ("ChassisType: 0x%X\n", gSettings.ChassisType);
+    DBG ("ChassisType: 0x%hhX\n", gSettings.ChassisType);
   }
 
   Prop = GetProperty (DictPointer, "NoRomInfo");
@@ -4583,7 +4583,7 @@ GetUserSettings(
         DBG ("Read NVCAP:");
 
         for (i = 0; i<20; i++) {
-          DBG ("%02X", gSettings.NVCAP[i]);
+          DBG ("%02hhX", gSettings.NVCAP[i]);
         }
 
         DBG ("\n");
@@ -4811,7 +4811,7 @@ GetUserSettings(
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
               DeviceAddr = PCIADDR(Bus, Dev, Func);
-              snprintf(Label, 64, "[%02X:%02X.%02X] ", Bus, Dev, Func);
+              snprintf(Label, 64, "[%02hhX:%02hhX.%02hhX] ", Bus, Dev, Func);
               DBG(" %s", Label);
             } else {
               DBG (" no PciAddr\n");
@@ -5528,13 +5528,13 @@ GetUserSettings(
           gSettings.ResetVal = 0x06;
         }
 
-        DBG ("Calc ResetVal: 0x%X\n", gSettings.ResetVal);
+        DBG ("Calc ResetVal: 0x%hhX\n", gSettings.ResetVal);
       }
 
       Prop = GetProperty (DictPointer, "ResetValue");
       if (Prop) {
         gSettings.ResetVal = (UINT8)GetPropertyInteger (Prop, gSettings.ResetVal);
-        DBG ("ResetVal: 0x%X\n", gSettings.ResetVal);
+        DBG ("ResetVal: 0x%hhX\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
 
@@ -5869,7 +5869,7 @@ GetUserSettings(
       gSettings.CpuType = GetAdvancedCpuType();
       if (Prop != NULL) {
         gSettings.CpuType = (UINT16)GetPropertyInteger (Prop, gSettings.CpuType);
-        DBG ("CpuType: %X\n", gSettings.CpuType);
+		  DBG ("CpuType: %hX\n", gSettings.CpuType);
       }
 
       Prop = GetProperty (DictPointer, "QEMU");
@@ -6250,7 +6250,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR (Status) && PlistBuffer != NULL && ParseXML (PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty (Dict, "Kernel Flags");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mavericks.app")) {
+            if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mavericks.app")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (5, "10.9");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Catalina") || AsciiStrStr (Prop->string, "Install%20macOS%2010.15")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (6, "10.15");
@@ -6258,15 +6258,15 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (6, "10.14");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20High%20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (6, "10.13");
-            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.12")) {
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.12")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (6, "10.12");
-            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.11")) {
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.11")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (6, "10.11");
-            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20X%2010.10")) {
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.10")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (6, "10.10");
-            } else if (AsciiStrStr (Prop->string, "Install%20OS%20X%20Mountain%20Lion")) {
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mountain%20Lion")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (5, "10.8");
-            } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20X%20Lion")) {
+            } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20hhX%20Lion")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool (5, "10.7");
             }
           }
@@ -6655,7 +6655,7 @@ GetDevices ()
                                   &Pci
                                   );
 
-		  DBG ("PCI (%02llX|%02llX:%02llX.%02llX) : %04X %04X class=%02X%02X%02X\n",
+		  DBG ("PCI (%02llX|%02llX:%02llX.%02llX) : %04hX %04hX class=%02hhX%02hhX%02hhX\n",
              Segment,
              Bus,
              Device,
@@ -6796,7 +6796,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                           );
 
-              DBG(" - GFX: Model=%s family %X (%s)\n", gfx->Model, gfx->Family, CardFamily);
+				  DBG(" - GFX: Model=%s family %hX (%s)\n", gfx->Model, gfx->Family, CardFamily);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];
@@ -7146,7 +7146,7 @@ SetDevices (LOADER_ENTRY *Entry)
               if (gSettings.InjectIntel) {
                 TmpDirty    = setup_gma_devprop(Entry, &PCIdevice);
                 StringDirty |=  TmpDirty;
-                MsgLog ("Intel GFX revision  = 0x%X\n", PCIdevice.revision);
+                MsgLog ("Intel GFX revision  = 0x%hhX\n", PCIdevice.revision);
               } else {
                 MsgLog ("Intel GFX injection not set\n");
               }
@@ -7708,7 +7708,7 @@ SetDevices (LOADER_ENTRY *Entry)
         {
           if (gSettings.LpcTune) {
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
-            MsgLog ("Initial PmCon value=%X\n", PmCon);
+			  MsgLog ("Initial PmCon value=%hX\n", PmCon);
 
             if (gSettings.EnableC6) {
               PmCon |= 1 << 11;
@@ -7745,7 +7745,7 @@ SetDevices (LOADER_ENTRY *Entry)
             PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
 
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16,GEN_PMCON_1, 1, &PmCon);
-            MsgLog ("Set PmCon value=%X\n", PmCon);
+			  MsgLog ("Set PmCon value=%hX\n", PmCon);
 
           }
           Rcba   = 0;

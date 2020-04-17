@@ -100,6 +100,24 @@
 		9A4185BB2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
 		9A4185BC2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
 		9A4185BD2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4F68532449D4AB004B2F7E /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4A24483AE30006DE06 /* strcmp.cpp */; };
+		9A4F68542449D4AB004B2F7E /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4A24483AE30006DE06 /* strcmp.cpp */; };
+		9A4F68552449D4AB004B2F7E /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4A24483AE30006DE06 /* strcmp.cpp */; };
+		9A4F68562449D4AE004B2F7E /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4C24483AE30006DE06 /* stdio.cpp */; };
+		9A4F68572449D4AE004B2F7E /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4C24483AE30006DE06 /* stdio.cpp */; };
+		9A4F68582449D4AE004B2F7E /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4C24483AE30006DE06 /* stdio.cpp */; };
+		9A4F68592449D4B4004B2F7E /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4D24483AE30006DE06 /* abort.cpp */; };
+		9A4F685A2449D4B4004B2F7E /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4E24483AE30006DE06 /* wchar.cpp */; };
+		9A4F685B2449D4B4004B2F7E /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B5124483AE30006DE06 /* strlen.cpp */; };
+		9A4F685C2449D4B4004B2F7E /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4D24483AE30006DE06 /* abort.cpp */; };
+		9A4F685D2449D4B4004B2F7E /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4E24483AE30006DE06 /* wchar.cpp */; };
+		9A4F685E2449D4B4004B2F7E /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B5124483AE30006DE06 /* strlen.cpp */; };
+		9A4F685F2449D4B5004B2F7E /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4D24483AE30006DE06 /* abort.cpp */; };
+		9A4F68602449D4B5004B2F7E /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4E24483AE30006DE06 /* wchar.cpp */; };
+		9A4F68612449D4B5004B2F7E /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B5124483AE30006DE06 /* strlen.cpp */; };
+		9A4F68622449D4CB004B2F7E /* APFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4624483AE30006DE06 /* APFS.cpp */; };
+		9A4F68642449D4CC004B2F7E /* APFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4624483AE30006DE06 /* APFS.cpp */; };
+		9A4F68652449D533004B2F7E /* APFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4624483AE30006DE06 /* APFS.cpp */; };
 		9A637AE82430D927000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9A637AE92430D928000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9A637AEA2430D928000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
@@ -2216,6 +2234,7 @@
 				9ACFE6C924309AF80071CC93 /* XStringW_test.cpp in Sources */,
 				9ACFE6CA24309AF80071CC93 /* tool.cpp in Sources */,
 				9ACFE6CB24309AF80071CC93 /* BasicIO.cpp in Sources */,
+				9A4F68582449D4AE004B2F7E /* stdio.cpp in Sources */,
 				9ACFE6CC24309AF80071CC93 /* lib.cpp in Sources */,
 				9ACFE6CD24309AF80071CC93 /* Injectors.cpp in Sources */,
 				9ACFE6CF24309AF80071CC93 /* b64cdecode.cpp in Sources */,
@@ -2230,6 +2249,7 @@
 				9ACFE6D824309AF80071CC93 /* strncmp_test.cpp in Sources */,
 				9ACFE6D924309AF80071CC93 /* list.cpp in Sources */,
 				9ACFE6DA24309AF80071CC93 /* IO.cpp in Sources */,
+				9A4F68552449D4AB004B2F7E /* strcmp.cpp in Sources */,
 				9ACFE6DB24309AF80071CC93 /* sound.cpp in Sources */,
 				9ACFE6DC24309AF80071CC93 /* usbfix.cpp in Sources */,
 				9ACFE6DD24309AF80071CC93 /* BmLib.cpp in Sources */,
@@ -2237,6 +2257,7 @@
 				9ACFE6DF24309AF80071CC93 /* global_test.cpp in Sources */,
 				9ACFE6E024309AF80071CC93 /* XTheme.cpp in Sources */,
 				9ACFE6E124309AF80071CC93 /* load_icns.cpp in Sources */,
+				9A4F68642449D4CC004B2F7E /* APFS.cpp in Sources */,
 				9ACFE6E224309AF80071CC93 /* egemb_font.cpp in Sources */,
 				9ACFE6E324309AF80071CC93 /* securemenu.cpp in Sources */,
 				9ACFE6E424309AF80071CC93 /* text.cpp in Sources */,
@@ -2255,6 +2276,7 @@
 				9A9AEB9F243F7B9200FBD7D8 /* XStringArray.cpp in Sources */,
 				9ACFE6F324309AF80071CC93 /* lockedgraphics.cpp in Sources */,
 				9A4185BD2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
+				9A4F68612449D4B5004B2F7E /* strlen.cpp in Sources */,
 				9ACFE6F424309AF80071CC93 /* XString_test.cpp in Sources */,
 				9ACFE6F524309AF80071CC93 /* device_inject.cpp in Sources */,
 				9A09863A2438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2266,6 +2288,7 @@
 				9ACFE6FB24309AF80071CC93 /* spd.cpp in Sources */,
 				9ACFE6FC24309AF80071CC93 /* printf_lite-test.cpp in Sources */,
 				9ACFE6FD24309AF80071CC93 /* kext_patcher.cpp in Sources */,
+				9A4F685F2449D4B5004B2F7E /* abort.cpp in Sources */,
 				9ACFE6FF24309AF80071CC93 /* gma.cpp in Sources */,
 				9ACFE70024309AF80071CC93 /* FloatLib.cpp in Sources */,
 				9ACFE70124309AF80071CC93 /* menu_items.cpp in Sources */,
@@ -2294,6 +2317,7 @@
 				9ACFE71B24309AF80071CC93 /* StartupSound.cpp in Sources */,
 				9ACFE71C24309AF80071CC93 /* globals_ctor.cpp in Sources */,
 				9ACFE71D24309AF80071CC93 /* screen.cpp in Sources */,
+				9A4F68602449D4B5004B2F7E /* wchar.cpp in Sources */,
 				9ACFE71E24309AF80071CC93 /* VectorGraphics.cpp in Sources */,
 				9ACFE71F24309AF80071CC93 /* common.cpp in Sources */,
 				9ACFE72024309AF80071CC93 /* egemb_icons.cpp in Sources */,
@@ -2328,6 +2352,7 @@
 				9AF415FF242CD75C00D2644C /* XStringW_test.cpp in Sources */,
 				9AF41600242CD75C00D2644C /* tool.cpp in Sources */,
 				9AF41742242F15D600D2644C /* BasicIO.cpp in Sources */,
+				9A4F68562449D4AE004B2F7E /* stdio.cpp in Sources */,
 				9AF41601242CD75C00D2644C /* lib.cpp in Sources */,
 				9AF41602242CD75C00D2644C /* Injectors.cpp in Sources */,
 				9AF41604242CD75C00D2644C /* b64cdecode.cpp in Sources */,
@@ -2342,6 +2367,7 @@
 				9AF4160D242CD75C00D2644C /* strncmp_test.cpp in Sources */,
 				9AF4160E242CD75C00D2644C /* list.cpp in Sources */,
 				9AF4160F242CD75C00D2644C /* IO.cpp in Sources */,
+				9A4F68532449D4AB004B2F7E /* strcmp.cpp in Sources */,
 				9AF41610242CD75C00D2644C /* sound.cpp in Sources */,
 				9AF41611242CD75C00D2644C /* usbfix.cpp in Sources */,
 				9AF41612242CD75C00D2644C /* BmLib.cpp in Sources */,
@@ -2349,6 +2375,7 @@
 				9AF41614242CD75C00D2644C /* global_test.cpp in Sources */,
 				9AF41616242CD75C00D2644C /* load_icns.cpp in Sources */,
 				9AF41617242CD75C00D2644C /* egemb_font.cpp in Sources */,
+				9A4F68622449D4CB004B2F7E /* APFS.cpp in Sources */,
 				9AF41618242CD75C00D2644C /* securemenu.cpp in Sources */,
 				9AF41619242CD75C00D2644C /* text.cpp in Sources */,
 				9AF4161A242CD75C00D2644C /* AmlGenerator.cpp in Sources */,
@@ -2367,6 +2394,7 @@
 				9A9AEB9D243F7B9000FBD7D8 /* XStringArray.cpp in Sources */,
 				9AF4162A242CD75C00D2644C /* XString_test.cpp in Sources */,
 				9A4185BB2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
+				9A4F685B2449D4B4004B2F7E /* strlen.cpp in Sources */,
 				9AF4162B242CD75C00D2644C /* device_inject.cpp in Sources */,
 				9AF4162C242CD75C00D2644C /* Settings.cpp in Sources */,
 				9A0986382438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2378,6 +2406,7 @@
 				9AF41632242CD75C00D2644C /* printf_lite-test.cpp in Sources */,
 				9AF41633242CD75C00D2644C /* kext_patcher.cpp in Sources */,
 				9AF41635242CD75C00D2644C /* gma.cpp in Sources */,
+				9A4F68592449D4B4004B2F7E /* abort.cpp in Sources */,
 				9AF41636242CD75C00D2644C /* FloatLib.cpp in Sources */,
 				9AF41637242CD75C00D2644C /* menu_items.cpp in Sources */,
 				9AF41638242CD75C00D2644C /* lodepng.cpp in Sources */,
@@ -2406,6 +2435,7 @@
 				9AF41651242CD75C00D2644C /* StartupSound.cpp in Sources */,
 				9AF41652242CD75C00D2644C /* globals_ctor.cpp in Sources */,
 				9AF41653242CD75C00D2644C /* screen.cpp in Sources */,
+				9A4F685A2449D4B4004B2F7E /* wchar.cpp in Sources */,
 				9AF41654242CD75C00D2644C /* VectorGraphics.cpp in Sources */,
 				9AF41655242CD75C00D2644C /* common.cpp in Sources */,
 				9AF41656242CD75C00D2644C /* egemb_icons.cpp in Sources */,
@@ -2440,6 +2470,7 @@
 				9AF416DC242CDA5800D2644C /* XStringW_test.cpp in Sources */,
 				9AF416DD242CDA5800D2644C /* tool.cpp in Sources */,
 				9AF41743242F15D700D2644C /* BasicIO.cpp in Sources */,
+				9A4F68572449D4AE004B2F7E /* stdio.cpp in Sources */,
 				9AF416DE242CDA5800D2644C /* lib.cpp in Sources */,
 				9AF416DF242CDA5800D2644C /* Injectors.cpp in Sources */,
 				9AF416E1242CDA5800D2644C /* b64cdecode.cpp in Sources */,
@@ -2454,6 +2485,7 @@
 				9AF416EA242CDA5800D2644C /* strncmp_test.cpp in Sources */,
 				9AF416EB242CDA5800D2644C /* list.cpp in Sources */,
 				9AF416EC242CDA5800D2644C /* IO.cpp in Sources */,
+				9A4F68542449D4AB004B2F7E /* strcmp.cpp in Sources */,
 				9AF416ED242CDA5800D2644C /* sound.cpp in Sources */,
 				9AF416EE242CDA5800D2644C /* usbfix.cpp in Sources */,
 				9AF416EF242CDA5800D2644C /* BmLib.cpp in Sources */,
@@ -2461,6 +2493,7 @@
 				9AF416F1242CDA5800D2644C /* global_test.cpp in Sources */,
 				9AF416F3242CDA5800D2644C /* load_icns.cpp in Sources */,
 				9AF416F4242CDA5800D2644C /* egemb_font.cpp in Sources */,
+				9A4F68652449D533004B2F7E /* APFS.cpp in Sources */,
 				9AF416F5242CDA5800D2644C /* securemenu.cpp in Sources */,
 				9AF416F6242CDA5800D2644C /* text.cpp in Sources */,
 				9AF416F7242CDA5800D2644C /* AmlGenerator.cpp in Sources */,
@@ -2479,6 +2512,7 @@
 				9A9AEB9E243F7B9100FBD7D8 /* XStringArray.cpp in Sources */,
 				9AF41707242CDA5800D2644C /* XString_test.cpp in Sources */,
 				9A4185BC2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
+				9A4F685E2449D4B4004B2F7E /* strlen.cpp in Sources */,
 				9AF41708242CDA5800D2644C /* device_inject.cpp in Sources */,
 				9AF41709242CDA5800D2644C /* Settings.cpp in Sources */,
 				9A0986392438A15400826276 /* shared_with_menu.cpp in Sources */,
@@ -2490,6 +2524,7 @@
 				9AF4170F242CDA5800D2644C /* printf_lite-test.cpp in Sources */,
 				9AF41710242CDA5800D2644C /* kext_patcher.cpp in Sources */,
 				9AF41712242CDA5800D2644C /* gma.cpp in Sources */,
+				9A4F685C2449D4B4004B2F7E /* abort.cpp in Sources */,
 				9AF41713242CDA5800D2644C /* FloatLib.cpp in Sources */,
 				9AF41714242CDA5800D2644C /* menu_items.cpp in Sources */,
 				9AF41715242CDA5800D2644C /* lodepng.cpp in Sources */,
@@ -2518,6 +2553,7 @@
 				9AF4172E242CDA5800D2644C /* StartupSound.cpp in Sources */,
 				9AF4172F242CDA5800D2644C /* globals_ctor.cpp in Sources */,
 				9AF41730242CDA5800D2644C /* screen.cpp in Sources */,
+				9A4F685D2449D4B4004B2F7E /* wchar.cpp in Sources */,
 				9AF41731242CDA5800D2644C /* VectorGraphics.cpp in Sources */,
 				9AF41732242CDA5800D2644C /* common.cpp in Sources */,
 				9AF41733242CDA5800D2644C /* egemb_icons.cpp in Sources */,

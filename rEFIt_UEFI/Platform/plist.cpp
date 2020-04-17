@@ -683,7 +683,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
         integer = (integer * 16) + (*val++ - 'a' + 10);
       }
       else {
-        MsgLog("ParseTagInteger hex error (0x%X) in buffer %s\n", *val, buffer);
+        MsgLog("ParseTagInteger hex error (0x%hhX) in buffer %s\n", *val, buffer);
         //        getchar();
         FreeTag(tmpTag);
         return EFI_UNSUPPORTED;
@@ -700,7 +700,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
     for (integer = 0; size > 0; size--) {
       if(*val) { // UGLY HACK, fix me.
         if (*val < '0' || *val > '9') {
-          MsgLog("ParseTagInteger decimal error (0x%X) in buffer %s\n", *val, buffer);
+          MsgLog("ParseTagInteger decimal error (0x%hhX) in buffer %s\n", *val, buffer);
           //          getchar();
           FreeTag(tmpTag);
           return EFI_UNSUPPORTED;

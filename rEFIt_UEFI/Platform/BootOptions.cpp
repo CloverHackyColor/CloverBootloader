@@ -324,7 +324,7 @@ PrintBootOrder (
     if (Index > 0) {
       DBG(", ");
     }
-    DBG("Boot%04X", BootOrder[Index]);
+	  DBG("Boot%04hX", BootOrder[Index]);
   }
   DBG("\n");
   //WaitForKeyPress(L"press a key to continue\n");
@@ -383,7 +383,7 @@ AddToBootOrder (
   UINTN               Index;
 
 
-	DBG("AddToBootOrder: Boot%04X at index %llu\n", BootNumNew, BootIndexNew);
+	DBG("AddToBootOrder: Boot%04hX at index %llu\n", BootNumNew, BootIndexNew);
   Status = GetBootOrder (&BootOrder, &BootOrderLen);
   if (EFI_ERROR(Status)) {
     return Status;
@@ -461,7 +461,7 @@ DeleteFromBootOrder (
     UINTN               Index;
     
     
-    DBG("DeleteFromBootOrder: %04X\n", BootNum);
+	DBG("DeleteFromBootOrder: %04hX\n", BootNum);
     
     Status = GetBootOrder (&BootOrder, &BootOrderLen);
     if (EFI_ERROR(Status)) {
@@ -532,7 +532,7 @@ PrintBootOption (
     CHAR16              *FPStr;
     
     
-	DBG("%2llu) Boot%04X: %ls, Attr: 0x%X\n",
+	DBG("%2llu) Boot%04hX: %ls, Attr: 0x%X\n",
         Index, BootOption->BootNum, BootOption->Description, BootOption->Attributes);
     FPStr = FileDevicePathToStr(BootOption->FilePathList);
     DBG("    %ls\n", FPStr);
@@ -699,7 +699,7 @@ GetBootOption (
   // Get BootXXXX var.
   //
   BootOption->BootNum = BootNum;
-  snwprintf(VarName, sizeof(VarName), "Boot%04X", BootNum);
+	snwprintf(VarName, sizeof(VarName), "Boot%04hX", BootNum);
 
   BootOption->Variable = (__typeof__(BootOption->Variable))GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
   if (BootOption->Variable == NULL) {
@@ -801,7 +801,7 @@ FindBootOptionForFile (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-      DBG("FindBootOptionForFile: Boot%04X: %s\n", BootOrder[Index], strerror(Status));
+		DBG("FindBootOptionForFile: Boot%04hX: %s\n", BootOrder[Index], strerror(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
       continue;
     }
@@ -810,7 +810,7 @@ FindBootOptionForFile (
 
     if (DevicePathEqual (SearchedDevicePath[0], BootOption.FilePathList) ||
         DevicePathEqual (SearchedDevicePath[1], BootOption.FilePathList)) {
-		DBG("FindBootOptionForFile: Found Boot%04X, at index %llu\n", BootOrder[Index], Index);
+		DBG("FindBootOptionForFile: Found Boot%04hX, at index %llu\n", BootOrder[Index], Index);
       if (BootNum != NULL) {
         *BootNum = BootOrder[Index];
       }
@@ -867,7 +867,7 @@ PrintBootOptions (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-		DBG("%2llu) Boot%04X: ERROR, not found: %s\n", Index, BootOrder[Index], strerror(Status));
+		DBG("%2llu) Boot%04hX: ERROR, not found: %s\n", Index, BootOrder[Index], strerror(Status));
       continue;
     }
 
@@ -948,8 +948,8 @@ AddBootOption (
     DBG("FindFreeBootNum: %s\n", strerror(Status));
     return Status;
   }
-  DBG(" Found BootNum: %04X\n", BootOption->BootNum);
-  snwprintf(VarName, sizeof(VarName), "Boot%04X", BootOption->BootNum);
+	DBG(" Found BootNum: %04hX\n", BootOption->BootNum);
+	snwprintf(VarName, sizeof(VarName), "Boot%04hX", BootOption->BootNum);
 
   //
   // Prepare BootOption variable
@@ -1072,9 +1072,9 @@ DeleteBootOption (
   CHAR16              VarName[16];
 
 
-  DBG("DeleteBootOption: Boot%04X\n", BootNum);
+	DBG("DeleteBootOption: Boot%04hX\n", BootNum);
 
-  snwprintf(VarName, sizeof(VarName), "Boot%04X", BootNum);
+	snwprintf(VarName, sizeof(VarName), "Boot%04hX", BootNum);
 
   //
   // Delete BootXXXX var
@@ -1119,7 +1119,7 @@ DeleteBootOptionForFile (
   do {
     Status = FindBootOptionForFile (FileDeviceHandle, FileName, &BootNum, NULL);
     if (!EFI_ERROR(Status)) {
-      DBG("\tdeleted option: %04X\n", BootNum);
+		DBG("\tdeleted option: %04hX\n", BootNum);
       DeleteBootOption (BootNum);
     }
   } while (!EFI_ERROR(Status));
@@ -1170,7 +1170,7 @@ DeleteBootOptionsContainingFile (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-      DBG("DeleteBootOptionContainingFile: Boot%04X: ERROR: %s\n", BootOrder[Index], strerror(Status));
+		DBG("DeleteBootOptionContainingFile: Boot%04hX: ERROR: %s\n", BootOrder[Index], strerror(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
       continue;
     }
@@ -1181,7 +1181,7 @@ DeleteBootOptionsContainingFile (
 
     if ((FilePathDP != NULL) &&
         (StriStr (FilePathDP->PathName, FileName) != NULL)) {
-		DBG("DeleteBootOptionContainingFile: Found Boot%04X, at index %llu\n", BootOrder[Index], Index);
+		DBG("DeleteBootOptionContainingFile: Found Boot%04hX, at index %llu\n", BootOrder[Index], Index);
       Status = DeleteBootOption (BootOrder[Index]);
       if (!EFI_ERROR(Status)) {
         ReturnStatus = EFI_SUCCESS;

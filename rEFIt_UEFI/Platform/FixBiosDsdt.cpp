@@ -727,7 +727,7 @@ VOID CheckHardware()
             ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
             ArptDID = Pci.Hdr.DeviceId;
             if (ArptAtheros) {
-              DBG("Found Airport Atheros at 0x%X, 0x%X, DeviceID=0x%04X\n", ArptADR1, ArptADR2, ArptDID);
+				DBG("Found Airport Atheros at 0x%X, 0x%X, DeviceID=0x%04hX\n", ArptADR1, ArptADR2, ArptDID);
             }
           }
 
@@ -1048,7 +1048,7 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 
         if (!(IS_UPPER(c) || IS_DIGIT(c) || c == '_')) {
           add_name = FALSE;
-          DBG("Invalid character found in ProcessorOP 0x%X!\n", c);
+          DBG("Invalid character found in ProcessorOP 0x%hhX!\n", c);
           break;
         }
       }
@@ -1753,7 +1753,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToRe
     DBG(" invalid patches!\n");
     return len;
   }
-  MsgLog(" pattern %02X%02X%02X%02X,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  MsgLog(" pattern %02hhX%02hhX%02hhX%02hhX,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     MsgLog(" the patch is too large!\n");
     return len;
@@ -1808,7 +1808,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, UINT8* To
     return len;
   }
 
-  DBG(" pattern %02X%02X%02X%02X,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  DBG(" pattern %02hhX%02hhX%02hhX%02hhX,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
   if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     DBG(" the patch is too large!\n");
     return len;
@@ -2277,7 +2277,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
           ((dsdt[i+1] & 0xF0) == 0x40)) {
         RESADR = i+1;  //Format 11, size1, size2, 0A, size-4,... 79, 00
         IOADR = i+4;  //IO (Decode16 ==> 47, 01
-        DBG("found CRS at %X size %X\n", RESADR, dsdt[IOADR]);
+		  DBG("found CRS at %X size %hhX\n", RESADR, dsdt[IOADR]);
         continue;
       }
     }
@@ -4958,7 +4958,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
           // get USB name
           UsbName[j] = (__typeof__(UsbName[j]))AllocateZeroPool(5);
           CopyMem(UsbName[j], dsdt+i, 4);
-          DBG("found USB device NAME(_ADR,0x%08X) And Name is %s\n",
+          DBG("found USB device NAME(_ADR,0x%08hhX) And Name is %s\n",
               USBADR[j], UsbName[j]);
 
           k = (i+1);

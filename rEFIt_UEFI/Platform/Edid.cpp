@@ -90,7 +90,7 @@ VOID DebugDumpEDID(CONST CHAR8 *Message, INTN N)
 	  DBG("%03lld  |", i);
     for (j=0; j<10; j++) {
       if (i+j > N-1) break;
-      DBG("  %02X", gSettings.CustomEDID[i+j]);
+      DBG("  %02hhX", gSettings.CustomEDID[i+j]);
     }
     DBG("\n");
   }

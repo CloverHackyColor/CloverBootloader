@@ -117,7 +117,7 @@ FixOwnership(VOID)
                   IoWrite16 (PortBase, 0);
                 }
                 
-                MsgLog("USB UHCI reset for device %04X\n", Pci.Hdr.DeviceId); 
+					MsgLog("USB UHCI reset for device %04hX\n", Pci.Hdr.DeviceId); 
                 break;
   /*            case PCI_IF_OHCI:
                 
@@ -127,7 +127,7 @@ FixOwnership(VOID)
                 Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
                 *(UINT32 *)(UINTN)(Base + OHCI_CONTROL) = Command & OHCI_CTRL_MASK;
                 Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
-                MsgLog("USB OHCI reset for device %04X control=0x%X\n", Pci.Hdr.DeviceId, Command);
+                MsgLog("USB OHCI reset for device %04hhX control=0x%hhX\n", Pci.Hdr.DeviceId, Command);
                 break;*/
               case PCI_IF_EHCI:
                 //Slice - the algo is reworked from Chameleon
@@ -282,7 +282,7 @@ FixOwnership(VOID)
                   Status = EFI_NOT_FOUND; //Slice - why? :)
                   break;
                 }
-                MsgLog("USB EHCI Ownership for device %04X value=%X\n", Pci.Hdr.DeviceId, Value); 
+					MsgLog("USB EHCI Ownership for device %04hX value=%X\n", Pci.Hdr.DeviceId, Value); 
                 
                 break;
              case PCI_IF_XHCI:

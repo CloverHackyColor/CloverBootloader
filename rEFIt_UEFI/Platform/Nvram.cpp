@@ -456,7 +456,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
  /*     UINTN                       Index;
       DBG("   %ls:", Name);
       for (Index = 0; Index < DataSize; Index++) {
-        DBG("%02X ", *((UINT8*)Data + Index));
+        DBG("%02hhX ", *((UINT8*)Data + Index));
       }
       DBG("\n"); */
       if (gAppleSmc && WriteToSMC) {

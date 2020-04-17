@@ -1607,7 +1607,7 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
   option_rom_pci_header_t *rom_pci_header;
 
   if (rom_header->signature != 0xaa55) {
-    DBG("invalid ROM signature %X\n", rom_header->signature);
+	  DBG("invalid ROM signature %hX\n", rom_header->signature);
     return FALSE;
   }
 
@@ -1619,7 +1619,7 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
   }
 
   if (rom_pci_header->vendor_id != pci_dev->vendor_id || rom_pci_header->device_id != pci_dev->device_id){
-    DBG("invalid ROM vendor=%04X deviceID=%04X\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
+	  DBG("invalid ROM vendor=%04hX deviceID=%04hX\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
     return FALSE;
   }
 
@@ -1633,15 +1633,15 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   CHAR16 FileName[64];
   UINT8*  buffer = 0;
 
-  snwprintf(FileName, 128, "\\ROM\\%04X_%04X.rom", vendor_id, device_id);
+	snwprintf(FileName, 128, "\\ROM\\%04hX_%04hX.rom", vendor_id, device_id);
   if (FileExists(OEMDir, FileName)) {
-    DBG("Found generic VBIOS ROM file (%04X_%04X.rom)\n", vendor_id, device_id);
+	  DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
     Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status)) {
-    snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\%04X_%04X.rom", vendor_id, device_id);
+	  snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\%04hX_%04hX.rom", vendor_id, device_id);
     if (FileExists(SelfRootDir, FileName)){
-      DBG("Found generic VBIOS ROM file (%04X_%04X.rom)\n", vendor_id, device_id);
+		DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
       Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
     }
   }
@@ -1959,7 +1959,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   }
 
   if (!card->info || !card->info->device_id || !card->info->cfg_name) {
-    DBG("Unsupported ATI card! Device ID: [%04X:%04X] Subsystem ID: [%08X] \n",
+	  DBG("Unsupported ATI card! Device ID: [%04hX:%04hX] Subsystem ID: [%08X] \n",
         pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id);
     DBG("search for brothers family\n");
     for (i = 0; radeon_cards[i].device_id ; i++) {
@@ -2157,7 +2157,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   }
 
 
-  DBG("ATI %s %s %dMB (%s) [%04X:%04X] (subsys [%04X:%04X]):: %s\n",
+	DBG("ATI %s %s %dMB (%s) [%04hX:%04hX] (subsys [%04hX:%04hX]):: %s\n",
       chip_family_name[card->info->chip_family], card->info->model_name,
       (UINT32)RShiftU64(card->vram_size, 20), card->cfg_name,
       ati_dev->vendor_id, ati_dev->device_id,

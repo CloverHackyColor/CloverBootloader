@@ -374,7 +374,7 @@ LegacyBiosFarCall86 (
 	ThunkRegSet.E.CS   = Segment;
 	ThunkRegSet.E.Eip  = Offset;
 	mThunkContext->RealModeState = &ThunkRegSet;
-    DBG("SS=%X, ESP=%X, CS=%X, Eip=%X\n", ThunkRegSet.E.SS, ThunkRegSet.E.ESP, ThunkRegSet.E.CS, ThunkRegSet.E.Eip);
+	DBG("SS=%hX, ESP=%X, CS=%hX, Eip=%X\n", ThunkRegSet.E.SS, ThunkRegSet.E.ESP, ThunkRegSet.E.CS, ThunkRegSet.E.Eip);
     #if DEBUG_LBTHUNK == 2
     PauseForKey(L"LegacyBiosFarCall86");
     #endif

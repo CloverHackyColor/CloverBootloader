@@ -98,7 +98,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
     return Status;
   }
   AllocAsPage = TRUE;
-  MsgLog("  Channels: %u  Sample rate: %u Hz  Bits: %u\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
+	MsgLog("  Channels: %hu  Sample rate: %u Hz  Bits: %hu\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
 
   EFI_AUDIO_IO_PROTOCOL_BITS bits;
   switch (WaveData.Format->BitsPerSample) {

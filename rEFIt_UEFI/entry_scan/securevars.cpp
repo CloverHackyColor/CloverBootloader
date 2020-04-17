@@ -389,7 +389,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
   if ((DatabaseName == NULL) || (DatabaseGuid == NULL)) {
     return EFI_INVALID_PARAMETER;
   }
-  DBG("Setting secure variable: %s %ls 0x%X (0x%X)\n", strguid(DatabaseGuid), DatabaseName, Database, DatabaseSize);
+  DBG("Setting secure variable: %s %ls 0x%hhX (0x%hhX)\n", strguid(DatabaseGuid), DatabaseName, Database, DatabaseSize);
   NameLen = StrLen(DatabaseName);
   if (NameLen == 0) {
     return EFI_INVALID_PARAMETER;
@@ -488,7 +488,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
   } else {
     CopyMem(((UINT8 *)Authentication) + sizeof(EFI_TIME) + sizeof(EFI_GUID) + sizeof(UINT32) + sizeof(UINT16) + sizeof(UINT16), Database, DatabaseSize); //Payload, PayloadSize);
   }
-  DBG("Writing secure variable 0x%X (0x%X) ...\n", Authentication, Size);
+  DBG("Writing secure variable 0x%hhX (0x%hhX) ...\n", Authentication, Size);
   // Write the database variable
   Status = gRT->SetVariable(DatabaseName, DatabaseGuid, SET_DATABASE_ATTRIBUTES, Size, Authentication);
   // Cleanup the authentication buffer

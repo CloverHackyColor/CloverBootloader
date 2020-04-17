@@ -671,7 +671,7 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 		}
 		
 		if (offset - old != node->Size) {
-			MsgLog("Node size incorrect: type=0x%X size=%X offset=%X\n",
+			MsgLog("Node size incorrect: type=0x%hhX size=%hX offset=%X\n",
              node->Type, node->Size, (offset - old));
     }
 	}
