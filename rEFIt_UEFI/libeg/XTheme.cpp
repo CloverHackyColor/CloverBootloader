@@ -511,8 +511,8 @@ void XTheme::ClearScreen() //and restore background and banner
           //         DBG("banner position new style\n");
         } else {
           // Use rEFIt default (no placement values speicifed)
-          BannerPlace.XPos = (UGAWidth - Banner.GetWidth()) >> 1;
-          BannerPlace.YPos = (BanHeight >= Banner.GetHeight()) ? (BanHeight - Banner.GetHeight()) : 0;
+          BannerPlace.XPos = (UGAWidth  >= Banner.GetWidth() ) ? (UGAWidth  - Banner.GetWidth() ) >> 1 : 0;
+          BannerPlace.YPos = (BanHeight >= Banner.GetHeight()) ? (BanHeight - Banner.GetHeight())      : 0;
           //        DBG("banner position old style\n");
         }
       }
