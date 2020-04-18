@@ -450,8 +450,8 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   if (W == 0) W = Width;
   if (H == 0) H = Height;
 
-  Width = (x + W > (UINTN)UGAWidth) ? (UGAWidth - x) : W;
-  Height = (y + H > (UINTN)UGAHeight) ? ((UINTN)UGAHeight - y) : H;
+  Width  = (x + W > (UINTN)UGAWidth)  ? (x > UGAWidth  ? 0 : UGAWidth  - x) : W;
+  Height = (y + H > (UINTN)UGAHeight) ? (y > UGAHeight ? 0 : UGAHeight - y) : H;
 
   setSizeInPixels(Width, Height); // setSizeInPixels BEFORE, so &PixelData[0]
   if ( Width == 0 || Height == 0 ) return; // nothing to get, area is zero. &PixelData[0] would crash
@@ -490,8 +490,9 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
 
   if ( width == 0 ) width = Width;
   if ( height == 0 ) height = Height;
-  UINTN AreaWidth = (x + width > (UINTN)UGAWidth) ? (UGAWidth - x) : width;
-  UINTN AreaHeight = (y + height > (UINTN)UGAHeight) ? (UGAHeight - y) : height;
+  UINTN AreaWidth  = (x + width  > (UINTN)UGAWidth)  ? (x > UGAWidth  ? 0 : UGAWidth  - x) : width;
+  UINTN AreaHeight = (y + height > (UINTN)UGAHeight) ? (y > UGAHeight ? 0 : UGAHeight - y) : height;
+
 //  DBG("area=%d,%d\n", AreaWidth, AreaHeight);
   // prepare protocols
   EFI_STATUS Status;
@@ -545,8 +546,9 @@ void XImage::Draw(INTN x, INTN y, float scale, bool Opaque)
 
   XImage Top(*this, scale); //can accept 0 as scale
   XImage Background(Width, Height);
-  UINTN AreaWidth = (x + Width > (UINTN)UGAWidth) ? (UGAWidth - x) : Width;
-  UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (UGAHeight - y) : Height;
+  UINTN AreaWidth  = (x + Width  > (UINTN)UGAWidth)  ? (x > UGAWidth  ? 0 : UGAWidth  - x) : Width;
+  UINTN AreaHeight = (y + Height > (UINTN)UGAHeight) ? (y > UGAHeight ? 0 : UGAHeight - y) : Height;
+
   Background.GetArea(x, y, AreaWidth, AreaHeight); //it will resize the Background image
   Background.Compose(0, 0, Top, Opaque);
   Background.DrawWithoutCompose(x, y);

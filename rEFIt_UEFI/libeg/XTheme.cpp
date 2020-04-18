@@ -922,10 +922,10 @@ VOID XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN 
     X = 0;
   }
   if (X + Width > UGAWidth) {
-    Width = UGAWidth - X;
+    Width = (X > UGAWidth) ? 0 : (UGAWidth - X);
   }
   if (YPos + Height > UGAHeight) {
-    Height = UGAHeight - YPos;
+    Height = (YPos > UGAHeight) ? 0 : (UGAHeight - YPos);
   }
 
   XImage TmpBuffer(Width, Height);
