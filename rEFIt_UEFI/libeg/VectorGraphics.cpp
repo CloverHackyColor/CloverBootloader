@@ -231,15 +231,13 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
 EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 {
   EFI_STATUS      Status;
-  NSVGimage       *SVGimage;
-  NSVGparser     *mainParser;
 
   Icons.Empty();
 
   // --- Parse theme.svg --- low case
-  SVGParser = (void *)nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works
-  mainParser = (NSVGparser*)SVGParser;
-  SVGimage = mainParser->image;
+  NSVGparser   *mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works
+  SVGParser = (void *)mainParser; //store the pointer for future use
+  NSVGimage    *SVGimage = mainParser->image;
   if (!SVGimage) {
     DBG("Theme not parsed!\n");
     return EFI_NOT_STARTED;
@@ -247,7 +245,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
   // --- Get scale as theme design height vs screen height
 
-  // must be svg view-box
+  // must be svg view-box. This is Design Width and Heigth
   float vbx = mainParser->viewWidth;
   float vby = mainParser->viewHeight;
   DBG("Theme view-bounds: w=%f h=%f units=px\n", vbx, vby); //Theme view-bounds: w=1600.000000 h=900.000000 units=px
@@ -260,10 +258,6 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   DBG("using scale %f\n", ScaleF); // using scale 0.666667
   Scale = ScaleF;
   CentreShift = (vbx * Scale - (float)UGAWidth) * 0.5f;
-
-//  if (mainParser->font) { //this is strange like last found font
-//    DBG("theme contains font-family=%s\n", mainParser->font->fontFamily);
-//  }
 
   Background = XImage(UGAWidth, UGAHeight);
   if (!BigBack.isEmpty()) {
@@ -286,22 +280,23 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   if (EFI_ERROR(Status)) {
     Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
   }
-  DBG("Banner parsed\n");
+//  DBG("Banner parsed\n");
   BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
   DBG(" parsed banner->width=%lld height=%lld\n", Banner.GetWidth(), BanHeight); //parsed banner->width=467 height=89
   
   // --- Make other icons
 
   for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
-    if (i == BUILTIN_ICON_BANNER) { //exclude "logo" as it done other way
+    if (i == BUILTIN_ICON_BANNER) { //exclude "logo" as it done as Banner
       continue;
     }
     Icon* NewIcon = new Icon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image);
+    NewIcon->Native = !EFI_ERROR(Status);
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
         (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
-      NewIcon->Image = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
+      NewIcon->Image = GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL); //copy existing
     }
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     Status = ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
@@ -309,7 +304,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
         (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
-      NewIcon->ImageNight = GetIcon(BUILTIN_ICON_VOL_INTERNAL); //copy existing
+      NewIcon->ImageNight = GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL); //copy existing
     }
     Icons.AddReference(NewIcon, true);
   }

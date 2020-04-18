@@ -19,6 +19,7 @@ public:
   XString Name; //for example "os_moja", "vol_internal"
   XImage Image;
   XImage ImageNight;
+  bool Native;
 
   Icon(INTN Id, bool Embedded = false);
   ~Icon();
@@ -131,6 +132,7 @@ public:
   const XImage& GetIconAlt(INTN Id, INTN Alt); //if id not found
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XImage& LoadOSIcon(const XString& Full);
+  bool CheckNative(INTN Id);
 
   //fonts
   void LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols);

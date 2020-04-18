@@ -97,6 +97,7 @@ Icon::Icon(INTN Index, bool TakeEmbedded) : Image(), ImageNight()
 {
   Id = Index;
   Name.setEmpty();
+  Native = false;
   if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index <= BUILTIN_CHECKBOX_CHECKED) {
     Name.takeValueFrom(IconsNames[Index]);
   }
@@ -307,7 +308,19 @@ const XImage& XTheme::GetIcon(const XString& Name)
   return NullIcon; //if name is not found
 }
 
-const XImage& XTheme::GetIcon(INTN Id)
+bool XTheme::CheckNative(INTN Id)
+{
+  for (size_t i = 0; i < Icons.size(); i++)
+  {
+    if (Icons[i].Id == Id)
+    {
+      return Icons[i].Native;
+    }
+  }
+  return false;
+}
+
+const XImage& XTheme::GetIcon(INTN Id) //if not found then take embedded
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -342,6 +355,12 @@ const XImage& XTheme::GetIcon(INTN Id)
   return NullIcon; //such Id is not found in the database
 }
 
+/*
+ * Get Icon with this ID=id, for example vol_internal_hfs
+ * if not found then search for ID=Alt, for example vol_internal
+ * if not found then check embedded with ID=id
+ * if not found then check embedded with ID=Alt
+ */
 const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt)
 {
   for (size_t i = 0; i < Icons.size(); i++)
@@ -355,8 +374,11 @@ const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt)
       if (!Icons[i].Image.isEmpty()) {
         return Icons[i].Image;
       }
-      //if daylight or night icon absent
-      return GetIcon(Alt); //including NullIcon
+      if (CheckNative(Alt)) {
+        return GetIcon(Alt);
+      }
+      //if Id and Alt native absent return embedded
+      return GetIcon(Id); //including embedded
     }
   }
   return NullIcon; //such Id is not found in the database
@@ -748,6 +770,7 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
     Icon* NewIcon = new Icon(i); //initialize without embedded
     Status = NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
+    NewIcon->Native = !EFI_ERROR(Status);
     if (EFI_ERROR(Status) &&
         (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
         (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
