@@ -2052,6 +2052,10 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
   Back.DrawWithoutCompose(XPos, YPos);
 
+  Entry->Place.XPos = XPos;
+  Entry->Place.YPos = YPos;
+  Entry->Place.Width = MainImage.GetWidth();
+  Entry->Place.Height = MainImage.GetHeight();
 
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
@@ -2065,15 +2069,18 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
 //                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
 //                    &MenuBackgroundPixel, Scale);
       TopImage = ThemeX.SelectionImages[4 + (selected ? 0 : 1)];
-      TopImage.Draw(XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale),
-                    row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale, false);
+      //TopImage.Draw(XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale),
+      //              row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale, false);
+      XPos = XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale);
+      YPos = row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale);
+      CompWidth = INDICATOR_SIZE * ThemeX.Scale;
+      CompHeight = INDICATOR_SIZE * ThemeX.Scale;
+      Back = XImage(CompWidth, CompHeight);
+      Back.CopyRect(ThemeX.Background, XPos, YPos);
+      Back.Compose(0, 0, TopImage, false);
+      Back.DrawWithoutCompose(XPos, YPos);
     }
   }
-
-  Entry->Place.XPos = XPos;
-  Entry->Place.YPos = YPos;
-  Entry->Place.Width = MainImage.GetWidth();
-  Entry->Place.Height = MainImage.GetHeight();
 
 }
 
