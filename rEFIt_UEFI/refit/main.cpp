@@ -2149,6 +2149,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    DBG(" Low Compatible=%s strlen=%ld sizeof=%ld iStrLen=%lld\n", compatible,
 //        strlen(compatible), sizeof(compatible), iStrLen(compatible, 64));
 
+    DBG("void*=%ld int=%ld long=%ld longlong=%ld enum=%ld\n",
+        sizeof(void*), sizeof(int), sizeof(long int), sizeof(long long), sizeof(EFI_ALLOCATE_TYPE));
   }
 #endif
   if (!GlobalConfig.FastBoot) {

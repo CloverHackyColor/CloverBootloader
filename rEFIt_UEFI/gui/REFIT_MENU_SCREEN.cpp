@@ -2092,8 +2092,8 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
       //              row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale, false);
       XPos = XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale);
       YPos = row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale);
-      CompWidth = INDICATOR_SIZE * ThemeX.Scale;
-      CompHeight = INDICATOR_SIZE * ThemeX.Scale;
+      CompWidth = (INTN)(INDICATOR_SIZE * ThemeX.Scale);
+      CompHeight = (INTN)(INDICATOR_SIZE * ThemeX.Scale);
       Back = XImage(CompWidth, CompHeight);
       Back.CopyRect(ThemeX.Background, XPos, YPos);
       Back.Compose(0, 0, TopImage, false);

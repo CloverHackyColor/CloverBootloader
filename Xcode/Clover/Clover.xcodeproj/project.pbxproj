@@ -113,7 +113,6 @@
 		A5816DF924181050003BA66C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF72418104F003BA66C /* REFIT_MENU_SCREEN.cpp */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
 		A5AA044C237F13C0009CD413 /* Nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFD7A237F13BC009CD413 /* Nasm.inc */; };
-		A5AA044D237F13C0009CD413 /* Nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFF1F237F13BD009CD413 /* Nasm.inc */; };
 		A5AA044E237F13C0009CD413 /* PeiServicesTablePointer.c in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFFA8237F13BE009CD413 /* PeiServicesTablePointer.c */; };
 		A5AA044F237F13C0009CD413 /* StandaloneMmServicesTableLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFFAA237F13BE009CD413 /* StandaloneMmServicesTableLib.c */; };
 		A5AA0450237F13C0009CD413 /* PciLib.c in Sources */ = {isa = PBXBuildFile; fileRef = A5AAFFB0237F13BE009CD413 /* PciLib.c */; };
@@ -5372,7 +5371,6 @@
 		A5AAFB10237F13B3009CD413 /* SmiHandlerProfileInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SmiHandlerProfileInfo.c; sourceTree = "<group>"; };
 		A5AAFB11237F13B3009CD413 /* MdeModulePkg.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MdeModulePkg.dsc; sourceTree = "<group>"; };
 		A5AAFD74237F13BC009CD413 /* PiPei.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiPei.h; sourceTree = "<group>"; };
-		A5AAFD76237F13BC009CD413 /* ProcessorBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
 		A5AAFD77237F13BC009CD413 /* PiMm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiMm.h; sourceTree = "<group>"; };
 		A5AAFD78237F13BC009CD413 /* Uefi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uefi.h; sourceTree = "<group>"; };
 		A5AAFD7A237F13BC009CD413 /* Nasm.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Nasm.inc; sourceTree = "<group>"; };
@@ -5790,8 +5788,6 @@
 		A5AAFF1B237F13BD009CD413 /* PiMultiPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiMultiPhase.h; sourceTree = "<group>"; };
 		A5AAFF1C237F13BD009CD413 /* PiFirmwareFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiFirmwareFile.h; sourceTree = "<group>"; };
 		A5AAFF1D237F13BD009CD413 /* PiI2c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiI2c.h; sourceTree = "<group>"; };
-		A5AAFF1F237F13BD009CD413 /* Nasm.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Nasm.inc; sourceTree = "<group>"; };
-		A5AAFF20237F13BD009CD413 /* ProcessorBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
 		A5AAFF21237F13BD009CD413 /* PiSmm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiSmm.h; sourceTree = "<group>"; };
 		A5AAFF24237F13BD009CD413 /* Microcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Microcode.h; sourceTree = "<group>"; };
 		A5AAFF25237F13BD009CD413 /* SmramSaveStateMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmramSaveStateMap.h; sourceTree = "<group>"; };
@@ -5866,7 +5862,6 @@
 		A5AAFF6D237F13BE009CD413 /* GlobalVariable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariable.h; sourceTree = "<group>"; };
 		A5AAFF6E237F13BE009CD413 /* HiiPlatformSetupFormset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HiiPlatformSetupFormset.h; sourceTree = "<group>"; };
 		A5AAFF6F237F13BE009CD413 /* CapsuleReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapsuleReport.h; sourceTree = "<group>"; };
-		A5AAFF71237F13BE009CD413 /* ProcessorBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
 		A5AAFF73237F13BE009CD413 /* PeiCoreFvLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeiCoreFvLocation.h; sourceTree = "<group>"; };
 		A5AAFF74237F13BE009CD413 /* SecHobData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecHobData.h; sourceTree = "<group>"; };
 		A5AAFF75237F13BE009CD413 /* VectorHandoffInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorHandoffInfo.h; sourceTree = "<group>"; };
@@ -5913,7 +5908,6 @@
 		A5AAFF9E237F13BE009CD413 /* SecPlatformInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecPlatformInformation.h; sourceTree = "<group>"; };
 		A5AAFF9F237F13BE009CD413 /* CpuIo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuIo.h; sourceTree = "<group>"; };
 		A5AAFFA0237F13BE009CD413 /* FirmwareVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirmwareVolume.h; sourceTree = "<group>"; };
-		A5AAFFA2237F13BE009CD413 /* ProcessorBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
 		A5AAFFA3237F13BE009CD413 /* Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		A5AAFFA6237F13BE009CD413 /* PeiServicesTablePointerLibIdt.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PeiServicesTablePointerLibIdt.uni; sourceTree = "<group>"; };
 		A5AAFFA7237F13BE009CD413 /* PeiServicesTablePointerLibIdt.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PeiServicesTablePointerLibIdt.inf; sourceTree = "<group>"; };
@@ -14561,7 +14555,6 @@
 			isa = PBXGroup;
 			children = (
 				A5AAFD74237F13BC009CD413 /* PiPei.h */,
-				A5AAFD75237F13BC009CD413 /* Ebc */,
 				A5AAFD77237F13BC009CD413 /* PiMm.h */,
 				A5AAFD78237F13BC009CD413 /* Uefi.h */,
 				A5AAFD79237F13BC009CD413 /* X64 */,
@@ -14570,25 +14563,14 @@
 				A5AAFDD5237F13BD009CD413 /* Library */,
 				A5AAFE16237F13BD009CD413 /* Protocol */,
 				A5AAFF10237F13BD009CD413 /* Pi */,
-				A5AAFF1E237F13BD009CD413 /* Ia32 */,
 				A5AAFF21237F13BD009CD413 /* PiSmm.h */,
 				A5AAFF22237F13BD009CD413 /* Register */,
 				A5AAFF47237F13BE009CD413 /* PiDxe.h */,
 				A5AAFF48237F13BE009CD413 /* Guid */,
-				A5AAFF70237F13BE009CD413 /* Arm */,
 				A5AAFF72237F13BE009CD413 /* Ppi */,
-				A5AAFFA1237F13BE009CD413 /* AArch64 */,
 				A5AAFFA3237F13BE009CD413 /* Base.h */,
 			);
 			path = Include;
-			sourceTree = "<group>";
-		};
-		A5AAFD75237F13BC009CD413 /* Ebc */ = {
-			isa = PBXGroup;
-			children = (
-				A5AAFD76237F13BC009CD413 /* ProcessorBind.h */,
-			);
-			path = Ebc;
 			sourceTree = "<group>";
 		};
 		A5AAFD79237F13BC009CD413 /* X64 */ = {
@@ -15048,15 +15030,6 @@
 			path = Pi;
 			sourceTree = "<group>";
 		};
-		A5AAFF1E237F13BD009CD413 /* Ia32 */ = {
-			isa = PBXGroup;
-			children = (
-				A5AAFF1F237F13BD009CD413 /* Nasm.inc */,
-				A5AAFF20237F13BD009CD413 /* ProcessorBind.h */,
-			);
-			path = Ia32;
-			sourceTree = "<group>";
-		};
 		A5AAFF22237F13BD009CD413 /* Register */ = {
 			isa = PBXGroup;
 			children = (
@@ -15167,14 +15140,6 @@
 			path = Guid;
 			sourceTree = "<group>";
 		};
-		A5AAFF70237F13BE009CD413 /* Arm */ = {
-			isa = PBXGroup;
-			children = (
-				A5AAFF71237F13BE009CD413 /* ProcessorBind.h */,
-			);
-			path = Arm;
-			sourceTree = "<group>";
-		};
 		A5AAFF72237F13BE009CD413 /* Ppi */ = {
 			isa = PBXGroup;
 			children = (
@@ -15226,14 +15191,6 @@
 				A5AAFFA0237F13BE009CD413 /* FirmwareVolume.h */,
 			);
 			path = Ppi;
-			sourceTree = "<group>";
-		};
-		A5AAFFA1237F13BE009CD413 /* AArch64 */ = {
-			isa = PBXGroup;
-			children = (
-				A5AAFFA2237F13BE009CD413 /* ProcessorBind.h */,
-			);
-			path = AArch64;
 			sourceTree = "<group>";
 		};
 		A5AAFFA4237F13BE009CD413 /* Library */ = {
@@ -16615,7 +16572,6 @@
 				A5AA074A237F13C2009CD413 /* SetMem16.nasm in Sources */,
 				A5AAFC95237F13B4009CD413 /* NvmExpressDiskInfo.c in Sources */,
 				A5AAFD16237F13B4009CD413 /* DxeFileExplorerProtocol.c in Sources */,
-				A5AA044D237F13C0009CD413 /* Nasm.inc in Sources */,
 				A5AA06AD237F13C2009CD413 /* ScanMem64Wrapper.c in Sources */,
 				A5AAFBB0237F13B3009CD413 /* regparse.c in Sources */,
 				A5AAFCD5237F13B4009CD413 /* UsbMassBot.c in Sources */,
