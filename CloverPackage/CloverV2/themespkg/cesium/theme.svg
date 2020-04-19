@@ -15,7 +15,7 @@ BackgroundSharp="0x80"
 Badges="swap show"
 BadgeOffsetX="0x0"
 BadgeOffsetY="0xA"
-BadgeScale="0x06"
+BadgeScale="0x08"
 CharWidth="14"
 VerticalLayout="1"
 

@@ -209,10 +209,11 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
 //    DBG("begin rasterize %s\n", IconNameX.c_str());
   float tx = 0.f, ty = 0.f;
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
-      (Id != BUILTIN_ICON_ANIME) &&
-      IconNameX.ExistIn("Banner")) {
+      (Id != BUILTIN_ICON_ANIME) /*&&
+      IconNameX.ExistIn("Banner")*/) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
+        DBG("icon=%s width=%f realwidth=%f\n", IconNameX.c_str(), Width, realWidth);
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
@@ -619,7 +620,7 @@ VOID testSVG()
       Scale = (ScaleX > ScaleY)?ScaleY:ScaleX;
       float tx = 0; //-SVGimage->realBounds[0] * Scale;
       float ty = 0; //-SVGimage->realBounds[1] * Scale;
-		DBG("timing rasterize start tx=%f ty=%f\n", tx, ty);
+		DBG("timing rasterize start tx=%f ty=%f\n", tx, ty); //the aim is measure duration
       nsvgRasterize(rast, SVGimage, tx,ty,Scale,Scale, (UINT8*)NewImage.GetPixelPtr(0,0), (int)Width, (int)Height, (int)Width*4);
       DBG("timing rasterize end\n");
       NewImage.Draw((UGAWidth - Width) / 2,

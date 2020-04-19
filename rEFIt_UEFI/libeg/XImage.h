@@ -84,11 +84,11 @@ public:
   void FillArea(const EG_PIXEL* Color, EG_RECT& Rect);
   void FillArea(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color, EG_RECT& Rect);
   void Copy(XImage* Image);
-  void CopyScaled(const XImage& Image, float scale);
+  void CopyScaled(const XImage& Image, float scale = 0.f);
   void CopyRect(const XImage& Image, INTN X, INTN Y);
   void CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_RECT& InputRect);
   void Compose(const EG_RECT& OwnPlace, const EG_RECT& InputRect, const XImage& TopImage, bool Lowest, float TopScale = 0.f);
-  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
+  void Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest, float topScale = 0); //instead of compose we often can Back.Draw(...) + Top.Draw(...)
   void FlipRB();
   EFI_STATUS FromPNG(const UINT8 * Data, UINTN Lenght);
   EFI_STATUS ToPNG(UINT8** Data, UINTN& OutSize);

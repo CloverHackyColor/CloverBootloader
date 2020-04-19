@@ -238,7 +238,7 @@ void XImage::CopyScaled(const XImage& Image, float scale)
  * Lowest means final image is opaque
  * else transparency will be multiplied
  */
-void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
+void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest, float topScale)
 {
   EG_RECT OutPlace;
   OutPlace.XPos = PosX;
@@ -251,7 +251,7 @@ void XImage::Compose(INTN PosX, INTN PosY, const XImage& TopImage, bool Lowest)
   Area.YPos = 0;
   Area.Width = TopImage.GetWidth();
   Area.Height = TopImage.GetHeight();
-  Compose(OutPlace, Area, TopImage, Lowest, 0.f);
+  Compose(OutPlace, Area, TopImage, Lowest, topScale);
 }
 // TopScale is for scaling TopImage. = 0.f means no scale or = 1.f
 // InPlace is a place in TopImage before scaling
