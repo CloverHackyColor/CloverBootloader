@@ -1971,7 +1971,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
   //this should be inited by the Theme
   if (MainImage.isEmpty()) {
-    DBG(" why MainImage is empty? Report to devs\n");
+ //   DBG(" why MainImage is empty? Report to devs\n");
     if (!IsEmbeddedTheme()) {
       MainImage = ThemeX.GetIcon("os_mac"_XS);
     }
@@ -1981,7 +1981,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
   INTN CompHeight = CompWidth;
-    DBG("Entry title=%ls; MainWidth=%lld\n", Entry->Title.wc_str(), MainImage.GetWidth());
+//    DBG("Entry title=%ls; MainWidth=%lld\n", Entry->Title.wc_str(), MainImage.GetWidth());
   float fScale;
   if (ThemeX.TypeSVG) {
     fScale = (selected ? 1.f : -1.f);
@@ -1991,11 +1991,11 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
 
   if (Entry->Row == 0) {
     BadgeImage = Entry->getBadgeImage();
-    DBG("   BadgeWidth=%lld\n", BadgeImage->GetWidth());
+//    DBG("   BadgeWidth=%lld\n", BadgeImage->GetWidth());
   } //else null
 
   XImage TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
-    DBG("   SelectionWidth=%lld\n", TopImage.GetWidth());
+//    DBG("   SelectionWidth=%lld\n", TopImage.GetWidth());
   if (TopImage.GetWidth() > CompWidth) {
     CompWidth = TopImage.GetWidth();
     CompHeight = CompWidth;
@@ -2014,7 +2014,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   INTN OffsetTY = (CompHeight - TopImage.GetHeight()) / 2;
   OffsetTY = (OffsetTY > 0) ? OffsetTY: 0;
 
-  DBG("  Comp=[%lld,%lld], offset=[%lld,%lld]\n", CompWidth, CompHeight, OffsetX, OffsetY);
+//  DBG("  Comp=[%lld,%lld], offset=[%lld,%lld]\n", CompWidth, CompHeight, OffsetX, OffsetY);
 
   if(ThemeX.SelectionOnTop) {
     //place main image in centre. It may be OS or Drive
@@ -2037,6 +2037,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
       // Check for user badge x offset from theme.plist
       if (ThemeX.BadgeOffsetX != 0xFFFF) {
         // Check if value is between 0 and ( width of the main icon - width of badge )
+        //no, we have crop at Compose so there is safe for extra offset
  //       if (ThemeX.BadgeOffsetX < 0 || ThemeX.BadgeOffsetX > (CompWidth - BadgeWidth)) {
  //         DBG("User offset X %lld is out of range\n", ThemeX.BadgeOffsetX);
  //         ThemeX.BadgeOffsetX = CompWidth  - 8 - BadgeWidth;
@@ -2050,17 +2051,17 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
       // Check for user badge y offset from theme.plist
       if (ThemeX.BadgeOffsetY != 0xFFFF) {
         // Check if value is between 0 and ( height of the main icon - height of badge )
-        if (ThemeX.BadgeOffsetY < 0 || ThemeX.BadgeOffsetY > (CompHeight - BadgeHeight)) {
-          DBG("User offset Y %lld is out of range\n",ThemeX.BadgeOffsetY);
+//        if (ThemeX.BadgeOffsetY < 0 || ThemeX.BadgeOffsetY > (CompHeight - BadgeHeight)) {
+//          DBG("User offset Y %lld is out of range\n",ThemeX.BadgeOffsetY);
  //         ThemeX.BadgeOffsetY = CompHeight - 8 - BadgeHeight;
-          DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetY);
-        }
+ //         DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetY);
+ //       }
         OffsetY += ThemeX.BadgeOffsetY;
       } else {
         // Set default position
         OffsetY += CompHeight - 8 - BadgeHeight;
       }
-      DBG("  badge offset=[%lld,%lld]\n", OffsetX, OffsetY);
+ //     DBG("  badge offset=[%lld,%lld]\n", OffsetX, OffsetY);
       Back.Compose(OffsetX, OffsetY, *BadgeImage, false, fBadgeScale);
     }
   }

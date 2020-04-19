@@ -213,7 +213,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
       IconNameX.ExistIn("Banner")*/) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
-        DBG("icon=%s width=%f realwidth=%f\n", IconNameX.c_str(), Width, realWidth);
+//        DBG("icon=%s width=%f realwidth=%f\n", IconNameX.c_str(), Width, realWidth);
     tx = (Width - realWidth) * 0.5f;
     ty = (Height - realHeight) * 0.5f;
   }
