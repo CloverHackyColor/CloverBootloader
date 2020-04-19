@@ -467,7 +467,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
       }
       FilmC->FilmPlace.YPos += (FilmC->FilmPlace.Height - CHeight) / 2;
       if (FilmC->FilmPlace.YPos < 0) {
-        FilmPlace.XPos = 0;
+        FilmPlace.YPos = 0;
       }
     }
   }
