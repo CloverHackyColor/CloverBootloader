@@ -2544,6 +2544,13 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
   INTN                DefaultEntryIndex = DefaultSelection;
   INTN                SubMenuIndex;
 
+  // initialize static variables when menu runs so that values from previos sessions won't be used
+  OldX = 0;
+  OldY = 0;
+  OldTextWidth = 0;
+  OldRow = 0;
+  OldTimeoutTextWidth = 0;
+
   if (AllowGraphicsMode) {
     Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
     if (ThemeX.VerticalLayout) {
