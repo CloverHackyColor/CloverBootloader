@@ -2674,47 +2674,31 @@ GetEarlyUserSettings (
       ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
 
       Prop = GetProperty (DictPointer, "Theme");
-      if (Prop != NULL) {
-        if ((Prop->type == kTagTypeString) && Prop->string) {
-          ThemeX.Theme.takeValueFrom(Prop->string);
-          GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
-          DBG ("Default theme: %ls\n", GlobalConfig.Theme);
-          OldChosenTheme = 0xFFFF; //default for embedded
-          for (UINTN i = 0; i < ThemesNum; i++) {
-            //now comparison is case sensitive
-            if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
-              OldChosenTheme = i;
-              break;
-            }
-          }
-          // get embedded theme property even when starting with other themes, as they may be changed later
-          Prop = GetProperty (DictPointer, "EmbeddedThemeType");
-          if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
-            if (AsciiStriCmp (Prop->string, "Dark") == 0) {
-              ThemeX.DarkEmbedded = TRUE;
-              ThemeX.Font = FONT_GRAY;
-            } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
-              ThemeX.DarkEmbedded = FALSE;
-              ThemeX.Font = FONT_ALFA;
-            } else if (AsciiStriCmp (Prop->string, "DayTime") == 0) {
-              ThemeX.DarkEmbedded = !ThemeX.Daylight;
-              ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
-            }
+      if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
+        ThemeX.Theme.takeValueFrom(Prop->string);
+        GlobalConfig.Theme = PoolPrint (L"%a", Prop->string);
+        DBG ("Default theme: %ls\n", GlobalConfig.Theme);
+        OldChosenTheme = 0xFFFF; //default for embedded
+        for (UINTN i = 0; i < ThemesNum; i++) {
+          //now comparison is case sensitive
+          if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
+            OldChosenTheme = i;
+            break;
           }
         }
-      } else if (Prop == NULL) {
-        Prop = GetProperty (DictPointer, "EmbeddedThemeType");
-        if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
-          if (AsciiStriCmp (Prop->string, "Dark") == 0) {
-            ThemeX.DarkEmbedded = TRUE;
-            ThemeX.Font = FONT_GRAY;
-          } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
-            ThemeX.DarkEmbedded = FALSE;
-            ThemeX.Font = FONT_ALFA;
-          } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
-            ThemeX.DarkEmbedded = !ThemeX.Daylight;
-            ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
-          }
+      }
+      // get embedded theme property even when starting with other themes, as they may be changed later
+      Prop = GetProperty (DictPointer, "EmbeddedThemeType");
+      if (Prop && (Prop->type == kTagTypeString) && Prop->string) {
+        if (AsciiStriCmp (Prop->string, "Dark") == 0) {
+          ThemeX.DarkEmbedded = TRUE;
+          //ThemeX.Font = FONT_GRAY;
+        } else if (AsciiStriCmp (Prop->string, "Light") == 0) {
+          ThemeX.DarkEmbedded = FALSE;
+          //ThemeX.Font = FONT_ALFA;
+        } else if (AsciiStriCmp (Prop->string, "Daytime") == 0) {
+          ThemeX.DarkEmbedded = !ThemeX.Daylight;
+          //ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
         }
       }
       Prop = GetProperty (DictPointer, "PlayAsync"); //PlayAsync
