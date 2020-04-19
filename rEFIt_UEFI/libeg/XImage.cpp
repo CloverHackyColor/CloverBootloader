@@ -221,10 +221,10 @@ void XImage::CopyScaled(const XImage& Image, float scale)
     {
       int lx = (int)(x / scale);
       float dx = x - lx * scale;
-      int a01 = (x == 0) ? 0 : -Pixel;
-      int a10 = (y == 0) ? 0 : -Row;
-      int a21 = (x == W - 1) ? 0 : Pixel;
-      int a12 = (y == H - 1) ? 0 : Row;
+      int a01 = (lx == 0) ? 0 : -Pixel;
+      int a10 = (ly == 0) ? 0 : -Row;
+      int a21 = (lx == W - 1) ? 0 : Pixel;
+      int a12 = (ly == H - 1) ? 0 : Row;
       EFI_GRAPHICS_OUTPUT_BLT_PIXEL& dst = *GetPixelPtr(x, y);
       dst.Blue = Smooth(&Source[lx + ly * SrcWidth].Blue, a01, a10, a21, a12, dx, dy, scale);
       dst.Green = Smooth(&Source[lx + ly * SrcWidth].Green, a01, a10, a21, a12, dx, dy, scale);
