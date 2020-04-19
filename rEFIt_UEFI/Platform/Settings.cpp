@@ -4013,7 +4013,7 @@ finish:
 
  //   ThemeX.GetThemeTagSettings(NULL); already done
     //fill some fields
-    ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
+    //ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
     ThemeX.embedded = true;
     Status = StartupSoundPlay(ThemeX.ThemeDir, NULL);
   } else { // theme loaded successfully
