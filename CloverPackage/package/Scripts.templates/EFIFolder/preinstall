@@ -82,7 +82,7 @@ old_revision='r0000'
 for cloverfile in BOOT/BOOTX64.efi CLOVER/CLOVERX64.efi CLOVER/CLOVERIA32.efi; do
     cloverpath="${EFI_ROOT_DIR}/EFI/$cloverfile"
     if [[ -f "$cloverpath" ]]; then
-        old_revision=r$(grep --text 'Clover revision:' "$cloverpath" | sed -nE 's/Clover revision: *([0-9]+).*/\1/p')
+        old_revision=r$(grep --text 'Clover revision:' "${cloverpath}" | sed -nE 's/^.*Clover revision: //p' | sed -nE 's/ *([0-9]+).*/\1/p')
         break
     fi
 done
