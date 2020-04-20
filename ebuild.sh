@@ -499,6 +499,7 @@ MainBuildScript() {
         set +u
         source ./edksetup.sh BaseTools
         set -u
+        echo "MTOC=$MTOC_PREFIX/mtoc.NEW_jief" > "$WORKSPACE"/Conf/mtoc_path.txt
         cd "$CLOVERROOT"
  #   else
  #       echo "Building from: $WORKSPACE"
