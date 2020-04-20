@@ -74,6 +74,12 @@
 				<key>Signature</key>
 				<string>SSDT</string>
 			</dict>
+			<dict>
+				<key>Signature</key>
+				<string>BGRT</string>
+				<key>DropForAllOS</key>
+				<true/>
+			</dict>
 		</array>
 		<key>FixHeaders</key>
 		<true/>

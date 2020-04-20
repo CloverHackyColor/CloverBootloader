@@ -86,6 +86,7 @@ struct ACPI_DROP_TABLE
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem;
+  BOOLEAN         OtherOS;
 };
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;

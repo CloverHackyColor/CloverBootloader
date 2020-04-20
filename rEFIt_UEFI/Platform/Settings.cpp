@@ -5109,6 +5109,7 @@ GetUserSettings(
             UINT32 Signature = 0;
             UINT32 TabLength = 0;
             UINT64 TableId = 0;
+            BOOLEAN OtherOS = FALSE;
 
             if (EFI_ERROR (GetElement (Prop, i, &Dict2))) {
 				DBG (" - [%02lld]: Drop table continue\n", i);
@@ -5171,6 +5172,11 @@ GetUserSettings(
               TabLength = (UINT32)GetPropertyInteger (Prop2, 0);
               DBG (" length=%d(0x%X)", TabLength, TabLength);
             }
+            // Check if to drop for other OS as well
+            Prop = GetProperty (Dict2, "DropForAllOS");
+            if (Prop != NULL) {
+              OtherOS = IsPropertyTrue (Prop);
+            }
 
             DBG ("\n");
             //set to drop
@@ -5184,6 +5190,7 @@ GetUserSettings(
                      (!TabLength || (DropTable->Length == TabLength))) ||
                     (!Signature && (DropTable->TableId == TableId))) {
                   DropTable->MenuItem.BValue = TRUE;
+                  DropTable->OtherOS = OtherOS;
                   gSettings.DropSSDT         = FALSE; //if one item=true then dropAll=false by default
                   //DBG (" true");
                   Dropped = TRUE;
