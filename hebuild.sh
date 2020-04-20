@@ -33,7 +33,7 @@ PLATFORMFILE=
 MODULEFILE=
 TARGETRULE=
 
-SCRIPT_VERS="2019-11-09"
+SCRIPT_VERS="2020-04-20"
 
 # Macro
 M_NOGRUB=0
@@ -188,6 +188,7 @@ isNASMGood() {
   # nasm should be greater or equal to 2.12.02 to be good building Clover.
   # There was a bad macho relocation in outmacho.c, fixed by Zenith432
   # and accepted by nasm devel during 2.12.rcxx (release candidate)
+  # modern nasm is 2.14
 
   result=1
   local nasmver=$( "${1}" -v | grep 'NASM version' | awk '{print $3}' )
@@ -239,10 +240,10 @@ usage() {
     print_option_help "-clang"     "use XCode Clang toolchain"
     print_option_help "-llvm"      "use LLVM toolchain"
     print_option_help "-gcc49"     "use GCC 4.9 toolchain"
-    print_option_help "-gcc53"     "use GCC 5.3 toolchain"
-    print_option_help "-unixgcc"   "use UNIXGCC toolchain"
+    print_option_help "-gcc53"     "use GCC 5.3 toolchain, including gcc-9"
+    print_option_help "-unixgcc"   "use UNIXGCC toolchain, unsupported"
     print_option_help "-xcode"     "use XCode 3.2 toolchain"
-    print_option_help "-xcode5"     "use XCode 5-7 toolchain "
+    print_option_help "-xcode5"     "use XCode 5 toolchain, "
     print_option_help "-xcode8"     "use XCode 8 toolchain  [Default]"
     print_option_help "-t TOOLCHAIN, --tagname=TOOLCHAIN" "force to use a specific toolchain"
     echo
@@ -410,6 +411,7 @@ checkCmdlineArguments() {
 checkToolchain() {
     case "$TOOLCHAIN" in
         XCLANG|XCODE*) checkXcode ;;
+                *) export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/" ;;
     esac
 
   if [[ "$SYSNAME" == Linux ]]; then
@@ -423,7 +425,7 @@ checkToolchain() {
     export GCC53_BIN="$TOOLCHAIN_DIR/cross/bin/x86_64-clover-linux-gnu-"
     if [[ $TOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}gcc" ]]; then
       echo "No clover toolchain found !" >&2
-      echo "Build it with the build_gcc8.sh script or define the TOOLCHAIN_DIR variable." >&2
+      echo "Build it with the build_gcc9.sh script or define the TOOLCHAIN_DIR variable." >&2
       exit 1
     fi
   fi
