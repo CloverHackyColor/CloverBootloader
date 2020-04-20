@@ -456,10 +456,8 @@ void XTheme::FillByEmbedded()
   Background = XImage(UGAWidth, UGAHeight);
 
   if (Daylight) {
-    Background.Fill(StdBackgroundPixel);
     Banner.FromPNG(ACCESS_EMB_DATA(emb_logo), emb_logo_size);
   } else {
-    Background.Fill(DarkEmbeddedBackgroundPixel);
     Banner.FromPNG(ACCESS_EMB_DATA(emb_dark_logo), emb_dark_logo_size);
   }
   
@@ -520,22 +518,9 @@ void XTheme::ClearScreen() //and restore background and banner
   }
   DBG("BannerPlace at Clear Screen [%lld,%lld]\n",  BannerPlace.XPos, BannerPlace.YPos);
   //Then prepare Background from BigBack
-  if (!Background.isEmpty() && (Background.GetWidth() != UGAWidth || Background.GetHeight() != UGAHeight)) { // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
-    // Resolution changed
-    Background.setEmpty();
-  }
-  if (Background.isEmpty()) {
+  if (Background.GetWidth() != UGAWidth || Background.GetHeight() != UGAHeight) { // should we type UGAWidth and UGAHeight as UINTN to avoid cast ?
+    // Resolution changed or empty background
     Background = XImage(UGAWidth, UGAHeight);
-    if (embedded) {
-      if (Daylight) {
-        BlueBackgroundPixel = StdBackgroundPixel;
-      } else {
-        BlueBackgroundPixel = DarkEmbeddedBackgroundPixel;
-      }
-    } else {
-      BlueBackgroundPixel = FirstBannerPixel;
-    }
-    Background.Fill(BlueBackgroundPixel); //blue opaque. May be better to set black opaque?
   }
 // now we are sure Background has UGA sizes
   float BigScale;
@@ -603,6 +588,18 @@ void XTheme::ClearScreen() //and restore background and banner
 //        DBG("back copy equal\n");
       break;
     }
+  } else {
+    // no background loaded, fill by default
+    if (!embedded) {
+      BlueBackgroundPixel = FirstBannerPixel;
+    } else if (Daylight) {
+      // embedded light
+      BlueBackgroundPixel = StdBackgroundPixel;
+    } else {
+      // embedded dark
+      BlueBackgroundPixel = DarkEmbeddedBackgroundPixel;
+    }
+    Background.Fill(BlueBackgroundPixel); //blue opaque. May be better to set black opaque?
   }
   //join Banner and Background for menu drawing
   if (!Banner.isEmpty()) {
