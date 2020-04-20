@@ -174,8 +174,11 @@ int printf_lite_tests(void)
     loggf(F("\n"));
 #endif
 
-	
+#ifndef _MSC_VER
     Test1arg(F("|80123456|"), F("|%X|"), (int)0xFFFFFFFF80123456);
+
+#endif // !_MSC_VER
+
     Test1arg(F("|FFFFFFFF80123456|"), F("|%lX|"), 0xFFFFFFFF80123456);
 
 	Test1arg(F("Āࠀ𐀀🧊Выход'utf8'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf8");

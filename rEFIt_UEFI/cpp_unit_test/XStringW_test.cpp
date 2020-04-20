@@ -118,7 +118,7 @@ int XStringW_tests()
 	str2.SWPrintf("%lc", c); // UTF16(32) char. (2 bytes in total if UTF16)
 	if (str2 != s) return 22;
 	str2.takeValueFrom("");
-	if (str2.length() != 0) return 221;
+	if (str2.size() != 0) return 221;
 	str2.takeValueFrom(s); // this is a UTF8 string 2 bytes long
 	if (str2 != s) return 23;
 #else
@@ -177,9 +177,11 @@ int XStringW_tests()
 		}
 	}
 	
+
+#ifndef _MSC_VER
 	wchar_t* s = XStringW().takeValueFrom("aa").forgetDataWithoutFreeing();
 	if ( s != L"aa"_XSW ) return 102;
-	
+#endif	
 //  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
 //  for (UINTN Index = 0; Index < 20; Index++) {
 //   XStringW Name = CommonName + SPrintf("%lld", Index) + L".png";

@@ -18,7 +18,7 @@ typedef uint16_t char16_t;
 #endif
 
 #ifndef __WCHAR_MAX__
-#error __WCHAR_MAX__
+#define __WCHAR_MAX__ 0xFFFFu
 #endif
 
 #if __WCHAR_MAX__ <= 0xFFFFu

@@ -1580,7 +1580,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
  */
-    if ((1<<Volume->DiskKind) & GlobalConfig.DisableFlags) {
+    if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0) {
       DBG("skipped because media is disabled\n");
       continue;
     }
