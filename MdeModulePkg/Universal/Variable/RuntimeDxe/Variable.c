@@ -2865,9 +2865,9 @@ VariableServiceGetVariable (
     }
 
     CopyMem (Data, GetVariableDataPtr (Variable.CurrPtr), VarDataSize);
-    if (Attributes != NULL) {
-      *Attributes = Variable.CurrPtr->Attributes;
-    }
+//    if (Attributes != NULL) {
+//      *Attributes = Variable.CurrPtr->Attributes;
+//    }
 
     *DataSize = VarDataSize;
     UpdateVariableInfo (VariableName, VendorGuid, Variable.Volatile, TRUE, FALSE, FALSE, FALSE);
@@ -2881,6 +2881,11 @@ VariableServiceGetVariable (
   }
 
 Done:
+  if (Status == EFI_SUCCESS || Status == EFI_BUFFER_TOO_SMALL) {
+    if (Attributes != NULL && Variable.CurrPtr != NULL) {
+      *Attributes = Variable.CurrPtr->Attributes;
+    }
+  }
   ReleaseLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
   return Status;
 }
