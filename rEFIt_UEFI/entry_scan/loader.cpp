@@ -741,10 +741,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
 //      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
-      Entry->BadgeImage = XImage(Entry->DriveImage, ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage = XImage(Entry->DriveImage, 0); //ThemeX.BadgeScale/16.f);
        DBG(" Show badge as Drive.");
     } else {
-      Entry->BadgeImage = XImage(Entry->Image, ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage = XImage(Entry->Image, 0); //ThemeX.BadgeScale/16.f);
  //     Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), ThemeX.BadgeScale);
        DBG(" Show badge as OSImage.");
     }

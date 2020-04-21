@@ -153,10 +153,10 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   Entry->AtDoubleClick = ActionEnter;
   Entry->AtRightClick = ActionDetails;
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
-    if (ThemeX.HideBadges & HDBADGES_SWAP) {
-      Entry->BadgeImage = XImage(Entry->DriveImage, ThemeX.BadgeScale/16.f); //0 accepted
+    if (ThemeX.HideBadges & HDBADGES_SWAP) { //will be scaled later
+      Entry->BadgeImage = XImage(Entry->DriveImage, 0); //ThemeX.BadgeScale/16.f); //0 accepted
     } else {
-      Entry->BadgeImage = XImage(Entry->Image, ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage = XImage(Entry->Image, 0); //ThemeX.BadgeScale/16.f);
     }
   }
   Entry->Volume           = Volume;
