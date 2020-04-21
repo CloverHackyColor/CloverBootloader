@@ -219,14 +219,14 @@ inline bool SamePix(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Ptr, const EFI_GRAPHICS
 //used for proportional fonts in raster themes
 //search empty column from begin Step=1 or from end Step=-1 in the input buffer
 // empty means similar to FirstPixel
-INTN XTheme::GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel, INTN Start, INTN Step)
+INTN XTheme::GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& FirstPixel, INTN MaxWidth, INTN Start, INTN Step)
 {
   INTN m, i;
 //  INTN Shift = (Step > 0)?0:1;
-  m = FontWidth;
+  m = MaxWidth;
   if (Step == 1) {
     for (INTN j = 0; j < FontHeight; j++) {
-      for (i = 0; i < FontWidth; i++) {
+      for (i = 0; i < MaxWidth; i++) {
         if (!SamePix(Buffer.GetPixel(Start + i,j), FirstPixel)) { //found not empty pixel
           break;
         }
@@ -235,14 +235,14 @@ INTN XTheme::GetEmpty(const XImage& Buffer, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&
       if (m == 0) break;
     }
   } else { // go back
-    m = 0;
     for (INTN j = 0; j < FontHeight; j++) {
-      for (i = FontWidth - 1; i >= 0; --i) {
-        if (!SamePix(Buffer.GetPixel(Start + i,j), FirstPixel)) { //found not empty pixel
+      for (i = 1; i <= MaxWidth; i++) {
+        if (!SamePix(Buffer.GetPixel(Start - i,j), FirstPixel)) { //found not empty pixel
           break;
         }
       }
-      m = MAX(m, i); //for each line to find minimum
+      m = MIN(m, i); //for each line to find minimum
+      if (m == 0) break;
     }
   }
   return m;
@@ -319,13 +319,13 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
         if (c0 <= 0x20) {  // space before or at buffer edge
           LeftSpace = 2;
         } else {
-          LeftSpace = GetEmpty(CompImage, FirstPixel, PosX, -1);
+          LeftSpace = GetEmpty(CompImage, FirstPixel, RealWidth, PosX, -1);
         }
         if (c <= 0x20) { //new space will be half font width
           RightSpace = 1;
           RealWidth = (CharScaledWidth >> 1) + 1;
         } else {
-          RightSpace = GetEmpty(FontImage, FontPixel, c * FontWidth, 1); //not scaled yet
+          RightSpace = GetEmpty(FontImage, FontPixel, FontWidth, c * FontWidth, 1); //not scaled yet
           if (RightSpace >= FontWidth) {
             RightSpace = 0; //empty place for invisible characters
           }
