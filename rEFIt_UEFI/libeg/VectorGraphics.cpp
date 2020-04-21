@@ -293,22 +293,24 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     }
     Icon* NewIcon = new Icon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image);
+    // DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
-    if (EFI_ERROR(Status) &&
-        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
-        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
-      NewIcon->Image = GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL); //copy existing
-    }
-//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
-    Status = ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
-//    DBG("...night status %s\n", strerror(Status));
-    if (EFI_ERROR(Status) &&
-        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
-        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
-      NewIcon->ImageNight = GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    if (!EFI_ERROR(Status)) {
+      ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
     }
     Icons.AddReference(NewIcon, true);
+    if (EFI_ERROR(Status) && i >= BUILTIN_ICON_VOL_INTERNAL_HFS && i <= BUILTIN_ICON_VOL_INTERNAL_REC) {
+      // call to GetIconAlt will get alternate/embedded into Icon if missing
+      GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL);
+    }
   }
+  //selection for bootcampstyle
+  Icon *NewIcon = new Icon(BUILTIN_ICON_SELECTION);
+  Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &NewIcon->Image);
+  if (!EFI_ERROR(Status)) {
+    ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &NewIcon->ImageNight);
+  }
+  Icons.AddReference(NewIcon, true);
 
   //selections
   SelectionBackgroundPixel.Red      = (SelectionColor >> 24) & 0xFF;
@@ -318,15 +320,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
   SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
-
-  //selection for bootcamp style
-  Status = EFI_NOT_FOUND;
-  if (!ThemeX.Daylight) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &SelectionImages[4]);
-  }
-  if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &SelectionImages[4]);
-  }
+  SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION);
 
   //buttons
   for (INTN i = BUILTIN_RADIO_BUTTON; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
