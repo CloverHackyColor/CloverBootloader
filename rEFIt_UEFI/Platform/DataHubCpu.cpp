@@ -397,6 +397,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
       DeleteNvramVariable(L"previous-system-uuid", &gEfiAppleBootGuid);
     }
   }
+  
+  //one more variable can be set for 10.15.4
+  //sudo nvram wake-failure=%00%00%00%00%00
+  Color = 0;
+  AddNvramVariable(L"wake-failure", &gEfiAppleBootGuid, Attributes, 4, &Color);
 
   return EFI_SUCCESS;
 }
