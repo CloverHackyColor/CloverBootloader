@@ -352,6 +352,13 @@ const XImage& XTheme::GetIcon(INTN Id) //if not found then take embedded
       }
     }
   }
+  // icon ID not found in icons array, but in case an embedded exists, get it and add it to icons array
+  Icon *NewIcon = new Icon(Id, true);
+  if (!Daylight && !NewIcon->ImageNight.isEmpty()) {
+    return Icons[Icons.AddReference(NewIcon, true)].ImageNight;
+  } else if (!NewIcon->Image.isEmpty()) {
+    return Icons[Icons.AddReference(NewIcon, true)].Image;
+  }
   return NullIcon; //such Id is not found in the database
 }
 
@@ -814,11 +821,16 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
     if (EFI_ERROR(Status)) {
       Status = SelectionImages[4].LoadXImage(ThemeDir, "selection_indicator");
     }
+    if (EFI_ERROR(Status)){
+      SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION);
+    }
+/*
     if (EFI_ERROR(Status)) {
       INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
       SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, MenuBackgroundPixel);
       SelectionImages[4].Fill(StdBackgroundPixel);
     }
+*/
   }
 
   //and buttons
