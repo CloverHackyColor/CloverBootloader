@@ -320,76 +320,64 @@ bool XTheme::CheckNative(INTN Id)
   return false;
 }
 
-const XImage& XTheme::GetIcon(INTN Id) //if not found then take embedded
+const XImage& XTheme::GetIcon(INTN Id)
 {
-  for (size_t i = 0; i < Icons.size(); i++)
-  {
-    if (Icons[i].Id == Id)
-    {
-      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
-//        DBG("got night icon %lld name{%s}\n", Id, IconsNames[Id]);
-        return Icons[i].ImageNight;
-      }
-      //if daylight or night icon absent
-      if (!Icons[i].Image.isEmpty()) {
-//        DBG("got day icon %lld name{%s}\n", Id, IconsNames[Id]);
-        return Icons[i].Image;
-      }
-      //if not found then create new one from embedded
-      Icon NewIcon(Id, true);
-//      NewIcon.GetEmbedded();
-//      DBG("got embedded icon %lld name{%s}\n", Id, IconsNames[Id]);
-      if (!Daylight && !NewIcon.ImageNight.isEmpty()) {
-//        DBG("got night icon and cache\n");
-        Icons[i].ImageNight = NewIcon.ImageNight; //
-        return Icons[i].ImageNight; // Do not return NewIcon.ImageNight, it'll freed
-      }
-      //if daylight or night icon absent
-      if (!NewIcon.Image.isEmpty()) {
- //       DBG("got day icon and cache\n");
-        Icons[i].Image = NewIcon.Image;
-        return Icons[i].Image;; // Do not return NewIcon.ImageNight, it'll freed
-      }
-    }
-  }
-  // icon ID not found in icons array, but in case an embedded exists, get it and add it to icons array
-  Icon *NewIcon = new Icon(Id, true);
-  if (!Daylight && !NewIcon->ImageNight.isEmpty()) {
-    return Icons[Icons.AddReference(NewIcon, true)].ImageNight;
-  } else if (!NewIcon->Image.isEmpty()) {
-    return Icons[Icons.AddReference(NewIcon, true)].Image;
-  }
-  return NullIcon; //such Id is not found in the database
+  return GetIconAlt(Id, -1);
 }
 
 /*
- * Get Icon with this ID=id, for example vol_internal_hfs
- * if not found then search for ID=Alt, for example vol_internal
- * if not found then check embedded with ID=id
+ * Get Icon with this ID=id, for example VOL_INTERNAL_HFS
+ * if not found then search for ID=Alt with Native attribute set, for example VOL_INTERNAL
+ * if not found then check embedded with ID=Id
  * if not found then check embedded with ID=Alt
  */
-const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt)
+const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
 {
-  for (size_t i = 0; i < Icons.size(); i++)
-  {
-    if (Icons[i].Id == Id)
-    {
-      if (!Daylight && !Icons[i].ImageNight.isEmpty()) {
-        return Icons[i].ImageNight;
-      }
-      //if daylight or night icon absent
-      if (!Icons[i].Image.isEmpty()) {
-        return Icons[i].Image;
-      }
-      if (CheckNative(Alt)) {
-        return GetIcon(Alt);
-      }
-      //if Id and Alt native absent return embedded
-      return GetIcon(Id); //including embedded
+  INTN IdFound = -1;
+  INTN AltFound = -1;
+
+  for (size_t i = 0; i < Icons.size() && (IdFound < 0 || (Alt >= 0 && AltFound < 0)); i++) {
+    if (Icons[i].Id == Id) {
+      IdFound = i;
+    }
+    if (Icons[i].Id == Alt) {
+      AltFound = i;
     }
   }
-  return NullIcon; //such Id is not found in the database
 
+  // if icon is empty, try to fill it with alternative
+  if (IdFound >= 0 && Icons[IdFound].Image.isEmpty()) {
+    // check for native ID=Alt, if Alt was specified
+    if (Alt >= 0 && AltFound >= 0 && Icons[AltFound].Native && !Icons[AltFound].Image.isEmpty()) {
+      // using Alt icon
+      Icons[IdFound].Image = Icons[AltFound].Image;
+      Icons[IdFound].ImageNight = Icons[AltFound].ImageNight;
+    } else {
+      // check for embedded with ID=Id
+      Icon *NewIcon = new Icon(Id, true);
+      if (NewIcon->Image.isEmpty()) {
+        // check for embedded with ID=Alt
+        NewIcon = new Icon(Alt, true);
+      }
+      if (!NewIcon->Image.isEmpty()) {
+        // using Embedded icon
+        Icons[IdFound].Image = NewIcon->Image;
+        Icons[IdFound].ImageNight = NewIcon->ImageNight;
+      }
+    }
+  }
+
+  if (IdFound >= 0 && !Icons[IdFound].Image.isEmpty()) {
+    // icon not empty, return it
+    if (!Daylight && !Icons[IdFound].ImageNight.isEmpty()) {
+      DBG("got night icon %lld name{%s}\n", Id, IconsNames[Id]);
+      return Icons[IdFound].ImageNight;
+    }
+    //if daylight or night icon absent
+    DBG("got day icon %lld name{%s}\n", Id, IconsNames[Id]);
+    return Icons[IdFound].Image;
+  }
+  return NullIcon; //such Id is not found in the database
 }
 
 const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
@@ -772,20 +760,39 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   EFI_STATUS Status;
   Icons.Empty();
   for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
+    Status = EFI_NOT_FOUND;
     Icon* NewIcon = new Icon(i); //initialize without embedded
-    Status = NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
-    NewIcon->Native = !EFI_ERROR(Status);
-    if (EFI_ERROR(Status) &&
-        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
-        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
-      NewIcon->Image = GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    switch (i) {
+      case BUILTIN_SELECTION_SMALL:
+        Status = NewIcon->Image.LoadXImage(ThemeDir, SelectionSmallFileName);
+        break;
+      case BUILTIN_SELECTION_BIG:
+        Status = NewIcon->Image.LoadXImage(ThemeDir, SelectionBigFileName);
+        break;
     }
-
-    Status = NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
-    if (EFI_ERROR(Status) &&
-        (i >= BUILTIN_ICON_VOL_INTERNAL_HFS) &&
-        (i <= BUILTIN_ICON_VOL_INTERNAL_REC)) {
-      NewIcon->ImageNight = GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL); //copy existing
+    if (EFI_ERROR(Status)) {
+      Status = NewIcon->Image.LoadXImage(ThemeDir, IconsNames[i]);
+    }
+    NewIcon->Native = !EFI_ERROR(Status);
+    if (!EFI_ERROR(Status)) {
+      NewIcon->ImageNight.LoadXImage(ThemeDir, SWPrintf("%s_night", IconsNames[i]));
+    }
+    Icons.AddReference(NewIcon, true);
+    if (EFI_ERROR(Status)) {
+      if (i >= BUILTIN_ICON_VOL_INTERNAL_HFS && i <= BUILTIN_ICON_VOL_INTERNAL_REC) {
+        // call to GetIconAlt will get alternate/embedded into Icon if missing
+        GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL);
+      } else if (i == BUILTIN_SELECTION_BIG) {
+        GetIconAlt(i, BUILTIN_SELECTION_SMALL);
+      }
+    }
+  }
+  if (BootCampStyle) {
+    Icon *NewIcon = new Icon(BUILTIN_ICON_SELECTION);
+    // load indicator selection image
+    Status = NewIcon->Image.LoadXImage(ThemeDir, SelectionIndicatorName);
+    if (EFI_ERROR(Status)) {
+      Status = NewIcon->Image.LoadXImage(ThemeDir, "selection_indicator");
     }
     Icons.AddReference(NewIcon, true);
   }
@@ -795,42 +802,10 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
 
-// try special name
-  SelectionImages[2].setEmpty();
-  SelectionImages[2].LoadXImage(ThemeDir, SelectionSmallFileName);
-// then common name selection_small.png
-  if (SelectionImages[2].isEmpty()){
-    SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
-  }
-  // now the big selection
-  SelectionImages[0].setEmpty();
-  Status = SelectionImages[0].LoadXImage(ThemeDir, SelectionBigFileName);
-  // then common name selection_small.png
-  if (EFI_ERROR(Status)){
-    SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
-  }
-// else use small selection
-  if (SelectionImages[0].isEmpty()) {
-    SelectionImages[0] = SelectionImages[2]; //use same selection if OnTop for example
-  }
-
+  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
+  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   if (BootCampStyle) {
-    // load indicator selection image
-    SelectionImages[4].setEmpty();
-    Status = SelectionImages[4].LoadXImage(ThemeDir, SelectionIndicatorName);
-    if (EFI_ERROR(Status)) {
-      Status = SelectionImages[4].LoadXImage(ThemeDir, "selection_indicator");
-    }
-    if (EFI_ERROR(Status)){
-      SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION);
-    }
-/*
-    if (EFI_ERROR(Status)) {
-      INTN ScaledIndicatorSize = (INTN)(INDICATOR_SIZE * Scale);
-      SelectionImages[4].EnsureImageSize(ScaledIndicatorSize, ScaledIndicatorSize, MenuBackgroundPixel);
-      SelectionImages[4].Fill(StdBackgroundPixel);
-    }
-*/
+    SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION);
   }
 
   //and buttons
