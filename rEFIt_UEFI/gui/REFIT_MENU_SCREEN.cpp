@@ -1870,8 +1870,14 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
       (ThemeX.HideBadges & HDBADGES_INLINE) &&
       (Entries[ScrollState.CurrentSelection].Row == 0)) {
     // Display Inline Badge: small icon before the text
-    Entries[ScrollState.CurrentSelection].Image.Draw((XPos - (TextWidth >> 1) - (BadgeDim + 16)),
-                                                     (YPos - ((BadgeDim - ThemeX.TextHeight) >> 1)));
+    XImage Back(BadgeDim, BadgeDim);
+    INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
+    INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
+    Back.CopyRect(ThemeX.Background, X, Y);
+    Back.Compose(0, 0, Entries[ScrollState.CurrentSelection].Image, false, BadgeDim/128.f);
+//    Entries[ScrollState.CurrentSelection].Image.Draw((XPos - (TextWidth >> 1) - (BadgeDim + 16)),
+//                                                     (YPos - ((BadgeDim - ThemeX.TextHeight) >> 1)));
+    Back.DrawOnBack(X, Y, Back);
   }
 
   OldX = XPos;
@@ -2016,12 +2022,13 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
 
 //  DBG("  Comp=[%lld,%lld], offset=[%lld,%lld]\n", CompWidth, CompHeight, OffsetX, OffsetY);
 
+  float composeScale = (ThemeX.NonSelectedGrey && !selected)? -1.f: 1.f;
   if(ThemeX.SelectionOnTop) {
     //place main image in centre. It may be OS or Drive
-    Back.Compose(OffsetX, OffsetY, MainImage, false);
+    Back.Compose(OffsetX, OffsetY, MainImage, false, composeScale);
   } else {
     Back.Compose(OffsetTX, OffsetTY, TopImage, false); //selection first
-    Back.Compose(OffsetX, OffsetY, MainImage, false);
+    Back.Compose(OffsetX, OffsetY, MainImage, false, composeScale);
   }
 //  DBG("compose size=%lld\n", CompWidth);
   //the badge is already scaled?

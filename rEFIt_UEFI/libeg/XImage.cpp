@@ -261,6 +261,11 @@ void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XIma
   INTN PosY = InPlace.YPos;
   INTN WArea = InPlace.Width;
   INTN HArea = InPlace.Height;
+  bool gray = false;
+  if (TopScale < 0) {
+    gray = true;
+    TopScale = -TopScale;
+  }
   XImage Top2;
   if (TopScale != 0.f && TopScale != 1.f) {
     Top2.setSizeInPixels((UINTN)(TopImage.GetWidth() * TopScale), (UINTN)(TopImage.GetHeight() * TopScale));
@@ -306,6 +311,13 @@ void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XIma
 
         Temp = (CompPtr->Red * TempAlpha) + (Top.GetPixel(x + PosX, y + PosY).Red * TopAlpha);
         CompPtr->Red = (UINT8)(Temp / FinalAlpha);
+      
+        if (gray) {
+          Temp = ((UINT32)CompPtr->Blue + 2 * (UINT32)CompPtr->Red + 4 * (UINT32)CompPtr->Green) / 7;
+          CompPtr->Blue = (UINT8)Temp;
+          CompPtr->Red = (UINT8)Temp;
+          CompPtr->Green = (UINT8)Temp;
+        }
       }
 
       if (Lowest) {

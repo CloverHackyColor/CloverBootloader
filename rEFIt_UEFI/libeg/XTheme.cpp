@@ -248,7 +248,7 @@ void XTheme::Init()
   BannerNudgeY = 0;
   BanHeight = 0;
   VerticalLayout = FALSE;
-  NonSelectedGrey = FALSE;    //TODO what about SVG?
+  NonSelectedGrey = FALSE;    
   MainEntriesSize = 128;
   TileXSpace = 8;
   TileYSpace = 24;
