@@ -320,7 +320,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
   SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
   SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
-  SelectionImages[5] = GetIcon(BUILTIN_ICON_SELECTION);
+  SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION);
 
   //buttons
   for (INTN i = BUILTIN_RADIO_BUTTON; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
