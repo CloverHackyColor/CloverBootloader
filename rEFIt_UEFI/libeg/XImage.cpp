@@ -312,7 +312,7 @@ void XImage::Compose(const EG_RECT& OutPlace, const EG_RECT& InPlace, const XIma
         Temp = (CompPtr->Red * TempAlpha) + (Top.GetPixel(x + PosX, y + PosY).Red * TopAlpha);
         CompPtr->Red = (UINT8)(Temp / FinalAlpha);
       
-        if (gray) {
+        if (gray && (TopAlpha != 0)) {
           Temp = ((UINT32)CompPtr->Blue + 2 * (UINT32)CompPtr->Red + 4 * (UINT32)CompPtr->Green) / 7;
           CompPtr->Blue = (UINT8)Temp;
           CompPtr->Red = (UINT8)Temp;
