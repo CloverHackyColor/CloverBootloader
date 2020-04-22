@@ -994,7 +994,7 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
         case .Number:
           let newNum = numberFromLocalizedString(string: textField.stringValue)
           self.outline.undo_SetValue(node: textField.node!,
-                                     newValue: (newNum is PEReal) ? newNum as! PEReal : newNum as! PEReal,
+                                     newValue: (newNum is PEInt) ? newNum as! PEInt : newNum as! PEReal,
                                      oldValue: ro!.value!)
           break
         case .Data:
