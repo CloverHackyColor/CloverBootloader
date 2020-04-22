@@ -5173,9 +5173,9 @@ GetUserSettings(
               DBG (" length=%d(0x%X)", TabLength, TabLength);
             }
             // Check if to drop for other OS as well
-            Prop = GetProperty (Dict2, "DropForAllOS");
-            if (Prop != NULL) {
-              OtherOS = IsPropertyTrue (Prop);
+            Prop2 = GetProperty (Dict2, "DropForAllOS");
+            if (Prop2 != NULL) {
+              OtherOS = IsPropertyTrue (Prop2);
             }
 
             DBG ("\n");
