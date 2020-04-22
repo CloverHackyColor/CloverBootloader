@@ -10,13 +10,14 @@
 
 @implementation ThemeImage
 
-- (id _Nullable)initWithThemeImageAtPath:(nonnull NSString *)path
-                                   error:(NSError *_Nullable*_Nullable)errorPtr {
+- (id _Nullable)initWithData:(nonnull NSData *)data
+                       error:(NSError *_Nullable*_Nullable)errorPtr
+                      atPath:(nonnull NSString *)path {
   if (!(self = [super init])) {
     return nil;
   }
- 
-  NSData *mainData = [NSData dataWithContentsOfFile: path];
+  
+  NSData *mainData = data;
   NSString *domain = @"org.slice.Clover.PNG8Image.Error";
   if (!mainData || [mainData length] < 4) {
     NSString *desc = [NSString stringWithFormat:@"Size of %@ is too small to be an image\n", path];
@@ -31,7 +32,8 @@
   if (bytes[0] != 0x89 || bytes[0] != 0x50 || bytes[0] != 0x4E || bytes[0] != 0x47) {
     NSBitmapImageRep *bir = [[NSBitmapImageRep alloc] initWithData:mainData];
     if (bir) {
-      mainData = [bir representationUsingType:NSPNGFileType properties:[NSDictionary new]];
+      mainData = [bir representationUsingType:NSPNGFileType properties:@{ NSImageInterlaced: @0,
+                                                                          NSImageCompressionFactor: @1 }];
       if (mainData == nil) {
         NSString *desc = [NSString stringWithFormat:@"Can't convert %@ to png\n", path];
         NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : desc };

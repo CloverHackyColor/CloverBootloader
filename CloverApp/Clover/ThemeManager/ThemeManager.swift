@@ -791,8 +791,46 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     return plist.keys.count == 0
   }
   
+  private func getIconSize(configPlistPath: String) -> Int {
+    let config = NSDictionary(contentsOfFile: configPlistPath) as? [String : Any]
+    
+    let minScreenWidth : Int = 1280
+    var screenWidth : Int = minScreenWidth
+    let ScreenResolution = ((config?["GUI"] as? [String : Any])?["ScreenResolution"] as? String) ?? ""
+    
+    if ScreenResolution.count > 0 {
+      screenWidth = Int(ScreenResolution.components(separatedBy: "x")[0]) ?? 0
+    } else {
+      if let mainScreenFrame = NSScreen.main?.frame {
+        screenWidth = Int(mainScreenFrame.size.width)
+      }
+    }
+    
+    if screenWidth < minScreenWidth {
+      screenWidth = minScreenWidth // default
+    }
+    
+    // determine the icon size
+    var iconSize : Int = 128 // default
+    switch screenWidth {
+    case 0...2048:
+      iconSize = 128
+    case 2049...2560:
+      iconSize = 192
+    case 2561...3840:
+      iconSize = 256
+    case 3841...7680:
+      iconSize = 400
+    case 7681...12000:
+      iconSize = 512
+    default:
+      break
+    }
+    
+    return iconSize
+  }
+  
   public func optimizeTheme(at path: String, completion: @escaping (Error?) -> ()) {
-
     DispatchQueue.global(priority: .background).async(execute: { () -> Void in
       let plist = NSDictionary(contentsOfFile: path.addPath("theme.plist")) as? [String : Any]
       let theme = plist?["Theme"] as? [String : Any]
@@ -816,57 +854,140 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
         try? info.archive()?.write(to: URL(fileURLWithPath: path.addPath(kThemeInfoFile)))
       }
       
+      var minIconSizeWidth : CGFloat? = nil
+      var iconsNeedsResize : Bool = false
+      let cloverDir = path.deletingLastPath.deletingLastPath
+      let suggestedSize = self.getIconSize(configPlistPath: cloverDir.addPath("config.plist"))
+      
       while let file = enumerator?.nextObject() as? String {
         if file.fileExtension == "png" || file.fileExtension == "icns" {
           images.append(file)
+          // load icons to see if they have the same
+          if file.hasPrefix("icons/os_") || file.hasPrefix("icons/vol_") {
+            if let image = NSImage(byReferencingFile: path.addPath(file)) {
+              // ensure width and height are equal
+              if image.size.width != image.size.height {
+                iconsNeedsResize = true
+              }
+              if minIconSizeWidth != nil {
+                // size is same as previous in previous icon?
+                if minIconSizeWidth != image.size.width {
+                  iconsNeedsResize = true
+                }
+                
+                // is this image smaller?
+                if image.size.width < minIconSizeWidth! {
+                  minIconSizeWidth = image.size.width
+                }
+              } else {
+                minIconSizeWidth = image.size.width
+              }
+            }
+          }
+        }
+      }
+      
+      if iconsNeedsResize {
+        // is minIconSizeWidth resonable fro suggestedSize?
+        if minIconSizeWidth != nil && minIconSizeWidth! <= CGFloat(suggestedSize)  {
+          minIconSizeWidth = CGFloat(suggestedSize)
         }
       }
       
       for file in images {
         let fullPath = path.addPath(file)
-        do {
-          let image = try ThemeImage(themeImageAtPath: fullPath)
-          let size = image.size
-          let fileName = fullPath.lastPath
-          if file.hasPrefix("icons/") || file.hasPrefix("alternative_icons/") {
-            if (fileName.hasPrefix("os_") || fileName.hasPrefix("vol_")) { // 128x128 pixels
-              if size.width != 128 || size.height != 128 {
-                image.size = NSMakeSize(128, 128)
+        if var image = NSImage(byReferencingFile: fullPath) {
+          do {
+            let size = image.size
+            let fileName = fullPath.lastPath
+            if file.hasPrefix("icons/") {
+              if (fileName.hasPrefix("os_") || fileName.hasPrefix("vol_")) {
+                if iconsNeedsResize {
+                  image = image.resize(to: NSMakeSize(minIconSizeWidth!, minIconSizeWidth!))
+                }
+              } else if (fileName.hasPrefix("func_") ||
+                fileName.hasPrefix("tool_") ||
+                fileName.hasPrefix("pointer.")) { // 32x32 pixels
+                if size.width != 32 || size.height != 32 {
+                  image = image.resize(to: NSMakeSize(32, 32))
+                }
               }
-            } else if (fileName.hasPrefix("func_") ||
-              fileName.hasPrefix("tool_") ||
-              fileName == "pointer.png") { // 32x32 pixels
-              if size.width != 32 || size.height != 32 {
-                image.size = NSMakeSize(32, 32)
+            } else if file.hasPrefix("scrollbar/") {
+              if fileName.hasPrefix("bar_end.") || fileName.hasPrefix("bar_start.") {
+                image = image.resize(to: NSMakeSize(16, 5))
+              } else if fileName.hasPrefix("bar_fill.") || fileName.hasPrefix("scroll_fill.") {
+                image = image.resize(to: NSMakeSize(16, 1))
+              } else if fileName.hasPrefix("down_button.") || fileName.hasPrefix("up_button.") {
+                image = image.resize(to: NSMakeSize(16, 20))
+              } else if fileName.hasPrefix("scroll_end.") || fileName.hasPrefix("scroll_start.")  {
+                image = image.resize(to: NSMakeSize(16, 7))
+              }
+            } else {
+              if file == logo { // logo 128x128 pixels
+                if size.width != 128 || size.height != 128 {
+                  image = image.resize(to: NSMakeSize(128, 128))
+                }
+              } else if file == Selection_big { // selection_big 144x144 pixels
+                if size.width != 144 || size.height != 144 {
+                  image = image.resize(to: NSMakeSize(144, 144))
+                }
+              } else if file == Selection_small { // selection_small 64x64 pixels
+                if size.width != 64 || size.height != 64 {
+                  image = image.resize(to: NSMakeSize(64, 64))
+                }
+              } else if (fileName.hasPrefix("radio_button.") ||
+                fileName.hasPrefix("radio_button_selected.") ||
+                fileName.hasPrefix("checkbox.") ||
+                fileName.hasPrefix("checkbox_checked.")) { // 15x15 pixels
+                if size.width != 15 || size.height != 15 {
+                  image = image.resize(to: NSMakeSize(15, 15))
+                }
               }
             }
-          } else {
-            if file == logo { // logo 128x128 pixels
-              if size.width != 128 || size.height != 128 {
-                image.size = NSMakeSize(128, 128)
-              }
-            } else if file == Selection_big { // selection_big 144x144 pixels
-              if size.width != 144 || size.height != 144 {
-                image.size = NSMakeSize(144, 144)
-              }
-            } else if file == Selection_small { // selection_small 64x64 pixels
-              if size.width != 64 || size.height != 64 {
-                image.size = NSMakeSize(64, 64)
-              }
-            } else if (file == "radio_button" ||
-              file == "radio_button_selected" ||
-              file == "checkbox" ||
-              file == "checkbox_checked") { // 15x15 pixels
-              if size.width != 15 || size.height != 15 {
-                image.size = NSMakeSize(15, 15)
+            
+            if fullPath.fileExtension == "icns" {
+              try fm.removeItem(atPath: fullPath)
+            }
+            
+            // everythings has now png extensions
+            // optimize
+            var success = false
+            if let tr = image.tiffRepresentation {
+              if let bitmapImage = NSBitmapImageRep(data: tr) {
+                if let data = bitmapImage.representation(using: .png, properties: [:]) {
+                  var err : NSError?  = nil
+                  let optimizedData = ThemeImage(data: data, error: &err, atPath: fullPath)?.pngData
+                  try optimizedData?.write(to: URL(fileURLWithPath: "\(fullPath.deletingFileExtension).png"))
+                  if (err != nil) {
+                    completion(err)
+                    break
+                  }
+                  success = true
+                }
               }
             }
+            
+            if !success {
+              let desc = "Unable to optimize \(fullPath) data."
+              let e = NSError(domain: "org.slice.Clover.NSImage.Error",
+                              code: 1001,
+                              userInfo :[NSLocalizedDescriptionKey : desc])
+              completion(e)
+              break
+            }
+          } catch {
+            completion(error)
+            break
           }
-          try image.pngData.write(to: URL(fileURLWithPath: fullPath))
-        } catch {
-          completion(error)
+        } else {
+          let desc = "Unable to load \(fullPath)."
+          let e = NSError(domain: "org.slice.Clover.NSImage.Error",
+                          code: 1000,
+                          userInfo :[NSLocalizedDescriptionKey : desc])
+          completion(e)
           break
         }
+        
         
         if file == images.last {
           completion(nil)
@@ -875,4 +996,3 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     })
   }
 }
-

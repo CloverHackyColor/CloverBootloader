@@ -417,6 +417,20 @@ extension io_object_t {
   }
 }
 
+extension NSImage {
+  func resize(to newSize: NSSize) -> NSImage {
+    let frame = NSRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+    if let representation = self.bestRepresentation(for: frame, context: nil, hints: nil) {
+      let image = NSImage(size: newSize, flipped: false, drawingHandler: { (_) -> Bool in
+        return representation.draw(in: frame)
+      })
+      
+      return image
+    }
+    return self
+  }
+}
+
 extension NSBitmapImageRep {
   var png: Data? {
     get {

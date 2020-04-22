@@ -14,7 +14,9 @@
 
 @interface ThemeImage : NSImage
 @property (nonatomic, strong) NSData * _Nonnull pngData;
-- (id _Nullable)initWithThemeImageAtPath:(nonnull NSString *)path error:(NSError *_Nullable*_Nullable)errorPtr;
+- (id _Nullable)initWithData:(nonnull NSData *)data
+                       error:(NSError *_Nullable*_Nullable)errorPtr
+                      atPath:(nonnull NSString *)path;
 @end
 
 //NS_ASSUME_NONNULL_END
