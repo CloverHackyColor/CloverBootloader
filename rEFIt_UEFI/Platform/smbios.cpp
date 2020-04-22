@@ -1117,8 +1117,8 @@ VOID PatchTableType11()
 VOID PatchTableTypeSome()
 {
   //some unused but interesting tables. Just log as is
-#define NUM_OTHER_TYPES 13
-  UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
+#define NUM_OTHER_TYPES 14
+  UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 41, 129, 217, 219};
   UINTN  IndexType;
   //
   // Different types
