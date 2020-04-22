@@ -166,7 +166,8 @@ typedef enum {
   kTagTypeDate,
   kTagTypeFalse,
   kTagTypeTrue,
-  kTagTypeArray
+  kTagTypeArray,
+  kTagTypeFloat
 } TAG_TYPE;
 
 typedef struct DEV_PROPERTY DEV_PROPERTY; //yyyy

@@ -9,6 +9,30 @@
 #define PLATFORM_PLIST_H_
 
 
+/* XML Tags */
+#define kXMLTagPList     "plist"
+#define kXMLTagDict      "dict"
+#define kXMLTagKey       "key"
+#define kXMLTagString    "string"
+#define kXMLTagInteger   "integer"
+#define kXMLTagData      "data"
+#define kXMLTagDate      "date"
+#define kXMLTagFalse     "false/"
+#define kXMLTagTrue      "true/"
+#define kXMLTagArray     "array"
+#define kXMLTagReference "reference"
+#define kXMLTagID        "ID="
+#define kXMLTagIDREF     "IDREF="
+#define kXMLTagFloat     "real"
+
+
+struct Symbol {
+  UINTN         refCount;
+  struct Symbol *next;
+  CHAR8         string[1];
+};
+typedef struct Symbol Symbol, *SymbolPtr;
+
 
 typedef struct TagStruct {
 
@@ -22,6 +46,13 @@ typedef struct TagStruct {
 
 } TagStruct, *TagPtr;
 
+typedef union {
+  struct {
+    float  fNum; //4 bytes
+    UINT32 pad;  // else 4
+  } B;
+  CHAR8  *string;
+} FlMix;
 
 
 CHAR8*
@@ -92,6 +123,8 @@ GetPropertyInteger (
   TagPtr Prop,
   INTN Default
   );
+
+float GetPropertyFloat (TagPtr Prop, float Default);
 
 
 #endif /* PLATFORM_PLIST_H_ */

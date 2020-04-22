@@ -2653,6 +2653,11 @@ GetEarlyUserSettings (
       if (IsPropertyTrue (Prop)) {
         gSettings.NoCaches = TRUE;
       }
+      //test float
+      Prop = GetProperty (DictPointer, "BlueValue");
+      float tmpF = GetPropertyFloat(Prop, 1.2f);
+      DBG(" get BlueValue=%f\n", tmpF);
+      
     }
 
     // KernelAndKextPatches

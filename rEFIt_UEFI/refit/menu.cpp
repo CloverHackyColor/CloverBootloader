@@ -2475,7 +2475,9 @@ VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 	case   kTagTypeTrue:
 		SubScreen->AddMenuInfo_f(("     value: true"));
 		break;
-
+  case   kTagTypeFloat:
+    SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value);
+    break;
 	default: //type data, print first 24 bytes
 			 //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
 			SubScreen->AddMenuInfo_f("     value[%llu]: %24s", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen)));
