@@ -400,8 +400,8 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   
   //one more variable can be set for 10.15.4
   //sudo nvram wake-failure=%00%00%00%00%00
-  Color = 0;
-  AddNvramVariable(L"wake-failure", &gEfiAppleBootGuid, Attributes, 4, &Color);
+  LangLen = 0;
+  AddNvramVariable(L"wake-failure", &gEfiAppleBootGuid, Attributes, 5, &LangLen);
 
   return EFI_SUCCESS;
 }
