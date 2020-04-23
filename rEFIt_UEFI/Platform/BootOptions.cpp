@@ -204,12 +204,12 @@ CreateBootOptionDevicePath (
         //
         TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
         if (TmpDevPath != NULL) {
-            FreePool (*DevicePath);
+            FreePool(*DevicePath);
             *DevicePath = TmpDevPath;
         } /* else {
           TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, HARDWARE_DEVICE_PATH, HW_VENDOR_DP));
           if (TmpDevPath != NULL) {
-            FreePool (*DevicePath);
+            FreePool(*DevicePath);
             *DevicePath = TmpDevPath;
           }
         }*/
@@ -439,8 +439,8 @@ AddToBootOrder (
   DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, strerror(Status));
   PrintBootOrder(BootOrderNew, BootOrderLen);
 
-  FreePool (BootOrder);
-  FreePool (BootOrderNew);
+  FreePool(BootOrder);
+  FreePool(BootOrderNew);
 
   // Debug: Get and print new BootOrder value
   //GetBootOrder (&BootOrder, &BootOrderLen);
@@ -508,7 +508,7 @@ DeleteFromBootOrder (
                                );
     DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, strerror(Status));
     
-    FreePool (BootOrder);
+    FreePool(BootOrder);
     
     // Debug: Get and print new BootOrder value
     //GetBootOrder (&BootOrder, &BootOrderLen);
@@ -536,7 +536,7 @@ PrintBootOption (
         Index, BootOption->BootNum, BootOption->Description, BootOption->Attributes);
     FPStr = FileDevicePathToStr(BootOption->FilePathList);
     DBG("    %ls\n", FPStr);
-    FreePool (FPStr);
+    FreePool(FPStr);
     
     VarSizeTmp = sizeof(BootOption->Attributes)
                         + sizeof(BootOption->FilePathListLength)
@@ -793,7 +793,7 @@ FindBootOptionForFile (
   BootOption.Variable = NULL;
   for (Index = 0; Index < BootOrderLen; Index++) {
     if (BootOption.Variable != NULL) {
-      FreePool (BootOption.Variable);
+      FreePool(BootOption.Variable);
       BootOption.Variable = NULL;
     }
     //
@@ -817,7 +817,7 @@ FindBootOptionForFile (
       if (BootIndex != NULL) {
         *BootIndex = Index;
       }
-      FreePool (BootOption.Variable);
+      FreePool(BootOption.Variable);
       //WaitForKeyPress(L"press a key to continue\n\n");
       return EFI_SUCCESS;
     }
@@ -825,7 +825,7 @@ FindBootOptionForFile (
   }
 
   if (BootOption.Variable != NULL) {
-    FreePool (BootOption.Variable);
+    FreePool(BootOption.Variable);
   }
 
   DBG("FindBootOptionForFile: Not found.\n");
@@ -872,7 +872,7 @@ PrintBootOptions (
     }
 
     PrintBootOption (&BootOption, Index);
-    FreePool (BootOption.Variable);
+    FreePool(BootOption.Variable);
   }
 
   if (AllBootOptions) {
@@ -905,7 +905,7 @@ PrintBootOptions (
       }
 
       PrintBootOption (&BootOption, 0);
-      FreePool (BootOption.Variable);
+      FreePool(BootOption.Variable);
       FoundOthers = TRUE;
     }
     if (!FoundOthers) {
@@ -979,7 +979,7 @@ AddBootOption (
   //
   // Free allocated space
   //
-  FreePool (BootOption->Variable);
+  FreePool(BootOption->Variable);
 
   //
   // Update BootOrder - add our new boot option as BootIndex in the list
@@ -1039,7 +1039,7 @@ AddBootOptionForFile (
 
   Status = AddBootOption (&BootOption, BootIndex);
   if (EFI_ERROR(Status)) {
-    FreePool (BootOption.FilePathList);
+    FreePool(BootOption.FilePathList);
     DBG("AddBootOptionForFile: Error: %s\n", strerror(Status));
     return Status;
   }
@@ -1047,7 +1047,7 @@ AddBootOptionForFile (
   //
   // Free allocated space
   //
-  FreePool (BootOption.FilePathList);
+  FreePool(BootOption.FilePathList);
 
   //
   // Output vars
@@ -1162,7 +1162,7 @@ DeleteBootOptionsContainingFile (
   BootOption.Variable = NULL;
   for (Index = 0; Index < BootOrderLen; Index++) {
     if (BootOption.Variable != NULL) {
-      FreePool (BootOption.Variable);
+      FreePool(BootOption.Variable);
       BootOption.Variable = NULL;
     }
     //
@@ -1190,7 +1190,7 @@ DeleteBootOptionsContainingFile (
   }
 
   if (BootOption.Variable != NULL) {
-    FreePool (BootOption.Variable);
+    FreePool(BootOption.Variable);
   }
 
   DBG("DeleteBootOptionContainingFile: %s\n", strerror(ReturnStatus));

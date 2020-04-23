@@ -107,10 +107,10 @@ OrderLegacyBootOption4SameType (
       DeviceTypeArray[Index] = BBS_TYPE_UNKNOWN;
       BbsIndexArray  [Index] = 0xFFFF;
     }
-    FreePool (BootOption->DevicePath);
-    FreePool (BootOption->Description);
-    FreePool (BootOption->LoadOptions);
-    FreePool (BootOption);
+    FreePool(BootOption->DevicePath);
+    FreePool(BootOption->Description);
+    FreePool(BootOption->LoadOptions);
+    FreePool(BootOption);
   }
 
   //
@@ -152,11 +152,11 @@ OrderLegacyBootOption4SameType (
   //
   // Changing content without increasing its size with current variable implementation shouldn't fail.
   //
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
-  FreePool (NewBootOption);
-  FreePool (DeviceTypeArray);
-  FreePool (BbsIndexArray);
+  FreePool(NewBootOption);
+  FreePool(DeviceTypeArray);
+  FreePool(BbsIndexArray);
 }
 
 /**
@@ -237,10 +237,10 @@ GroupMultipleLegacyBootOption4SameType (
       }
     }
   }
-    FreePool (BootOption->DevicePath);
-    FreePool (BootOption->Description);
-    FreePool (BootOption->LoadOptions);
-    FreePool (BootOption);
+    FreePool(BootOption->DevicePath);
+    FreePool(BootOption->Description);
+    FreePool(BootOption->LoadOptions);
+    FreePool(BootOption);
 }
 
   Status = gRT->SetVariable (
@@ -253,7 +253,7 @@ GroupMultipleLegacyBootOption4SameType (
   //
   // Changing content without increasing its size with current variable implementation shouldn't fail.
   //
-  ASSERT_EFI_ERROR (Status);
-        FreePool (BootOrder);
+  ASSERT_EFI_ERROR(Status);
+        FreePool(BootOrder);
     }
 

@@ -95,7 +95,7 @@ FpdtStatusCodeListenerPei (
   S3PerformanceTablePointer = 0;
   VarSize = sizeof (EFI_PHYSICAL_ADDRESS);
   Status = RestoreLockBox (&gFirmwarePerformanceS3PointerGuid, &S3PerformanceTablePointer, &VarSize);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   AcpiS3PerformanceTable = (S3_PERFORMANCE_TABLE *) (UINTN) S3PerformanceTablePointer;
   ASSERT (AcpiS3PerformanceTable != NULL);
@@ -127,7 +127,7 @@ FpdtStatusCodeListenerPei (
              &S3SuspendRecord,
              &VarSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   AcpiS3SuspendRecord->SuspendStart = S3SuspendRecord.SuspendStart;
   AcpiS3SuspendRecord->SuspendEnd   = S3SuspendRecord.SuspendEnd;
@@ -141,7 +141,7 @@ FpdtStatusCodeListenerPei (
              NULL,
              (VOID **) &VariableServices
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Update S3 boot records into the basic boot performance table.
@@ -155,7 +155,7 @@ FpdtStatusCodeListenerPei (
                                &VarSize,
                                &PerformanceVariable
                                );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   BootPerformanceTable = (UINT8*) (UINTN) PerformanceVariable.BootPerformanceTablePointer;
@@ -215,10 +215,10 @@ FirmwarePerformancePeiEntryPoint (
                NULL,
                (VOID **) &RscHandler
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Status = RscHandler->Register (FpdtStatusCodeListenerPei);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return EFI_SUCCESS;

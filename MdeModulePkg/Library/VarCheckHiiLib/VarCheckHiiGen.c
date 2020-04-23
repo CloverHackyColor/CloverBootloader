@@ -384,7 +384,7 @@ InternalVarCheckAllocatePool (
   VOID        *Memory;
 
   Status = gBS->AllocatePool (MemoryType, AllocationSize, &Memory);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Memory = NULL;
   }
   return Memory;
@@ -433,14 +433,14 @@ InternalVarCheckAllocateZeroPool (
 **/
 VOID
 EFIAPI
-InternalVarCheckFreePool (
+InternalVarCheckFreePool(
   IN VOID   *Buffer
   )
 {
   EFI_STATUS    Status;
 
-  Status = gBS->FreePool (Buffer);
-  ASSERT_EFI_ERROR (Status);
+  Status = gBS->FreePool(Buffer);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -476,7 +476,7 @@ InternalVarCheckReallocatePool (
   NewBuffer = InternalVarCheckAllocateZeroPool (NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
-    InternalVarCheckFreePool (OldBuffer);
+    InternalVarCheckFreePool(OldBuffer);
   }
   return NewBuffer;
 }
@@ -516,7 +516,7 @@ MergeHiiQuestion (
   // Do not to merge Hii Question from Fv to Hii Question from Hii Database.
   //
   if (FromFv) {
-    InternalVarCheckFreePool (HiiQuestion);
+    InternalVarCheckFreePool(HiiQuestion);
     return;
   }
 
@@ -609,7 +609,7 @@ MergeHiiQuestion (
         }
 
         HiiVariableNode->HiiQuestionArray[ArrayIndex] = NewHiiQuestion;
-        InternalVarCheckFreePool (HiiQuestion1);
+        InternalVarCheckFreePool(HiiQuestion1);
       }
       break;
 
@@ -734,7 +734,7 @@ MergeHiiQuestion (
         }
 
         HiiVariableNode->HiiQuestionArray[ArrayIndex] = NewHiiQuestion;
-        InternalVarCheckFreePool (HiiQuestion1);
+        InternalVarCheckFreePool(HiiQuestion1);
       }
       break;
 
@@ -748,7 +748,7 @@ MergeHiiQuestion (
   //
   // Hii Question 2 has been merged with Hii Question 1.
   //
-  InternalVarCheckFreePool (HiiQuestion2);
+  InternalVarCheckFreePool(HiiQuestion2);
 }
 
 /**
@@ -1439,12 +1439,12 @@ DestroyHiiVariableNode (
     //
     for (Index = 0; Index < HiiVariableNode->HiiVariable->Size * (UINTN) 8; Index++) {
       if (HiiVariableNode->HiiQuestionArray[Index] != NULL) {
-        InternalVarCheckFreePool (HiiVariableNode->HiiQuestionArray[Index]);
+        InternalVarCheckFreePool(HiiVariableNode->HiiQuestionArray[Index]);
       }
     }
-    InternalVarCheckFreePool (HiiVariableNode->HiiQuestionArray);
-    InternalVarCheckFreePool (HiiVariableNode->HiiVariable);
-    InternalVarCheckFreePool (HiiVariableNode);
+    InternalVarCheckFreePool(HiiVariableNode->HiiQuestionArray);
+    InternalVarCheckFreePool(HiiVariableNode->HiiVariable);
+    InternalVarCheckFreePool(HiiVariableNode);
   }
 }
 
@@ -1571,7 +1571,7 @@ VarCheckHiiGen (
 
   DestroyHiiVariableNode ();
   if (mVarName != NULL) {
-    InternalVarCheckFreePool (mVarName);
+    InternalVarCheckFreePool(mVarName);
   }
 
 #ifdef DUMP_VAR_CHECK_HII

@@ -112,7 +112,7 @@ PartitionInstallElToritoChildHandles (
                        SIZE_2KB,
                        VolDescriptor
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Found = Status;
       break;
     }
@@ -159,7 +159,7 @@ PartitionInstallElToritoChildHandles (
                        SIZE_2KB,
                        Catalog
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DBG ("EltCheckDevice: error reading catalog %r\n", Status);
       continue;
     }
@@ -283,13 +283,13 @@ PartitionInstallElToritoChildHandles (
                 SubBlockSize,
                 FALSE
                 );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Found = EFI_SUCCESS;
       }
     }
   }
 
-  FreePool (VolDescriptor);
+  FreePool(VolDescriptor);
 
   return Found;
 }

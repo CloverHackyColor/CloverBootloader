@@ -44,7 +44,7 @@ GrowBuffer (
   if (*Status == EFI_BUFFER_TOO_SMALL) {
 
     if (*Buffer != NULL) {
-      FreePool (*Buffer);
+      FreePool(*Buffer);
     }
 
     *Buffer = AllocateZeroPool (BufferSize);
@@ -58,8 +58,8 @@ GrowBuffer (
   //
   // If there's an error, free the buffer
   //
-  if (!TryAgain && EFI_ERROR (*Status) && (*Buffer != NULL)) {
-    FreePool (*Buffer);
+  if (!TryAgain && EFI_ERROR(*Status) && (*Buffer != NULL)) {
+    FreePool(*Buffer);
     *Buffer = NULL;
   }
 

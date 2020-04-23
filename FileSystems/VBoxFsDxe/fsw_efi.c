@@ -223,7 +223,7 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
     fsw_efi_DriverBinding_table.DriverBindingHandle  = ImageHandle;
     // install Driver Binding protocol
     Status = BS->InstallProtocolInterface(&fsw_efi_DriverBinding_table.DriverBindingHandle, &PROTO_NAME(DriverBindingProtocol), EFI_NATIVE_INTERFACE, &fsw_efi_DriverBinding_table);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
         return Status;
     }
 
@@ -236,7 +236,7 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
 
     // install Component Name protocol
     Status = BS->InstallProtocolInterface(&fsw_efi_DriverBinding_table.DriverBindingHandle, &PROTO_NAME(ComponentNameProtocol), EFI_NATIVE_INTERFACE, &fsw_efi_ComponentName_table);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
         return Status;
     }
 
@@ -1196,13 +1196,13 @@ EFI_STATUS fsw_efi_dnode_fill_FileInfo(IN FSW_VOLUME_DATA *Volume,
   // if the node is a symlink, resolve it
   Status = fsw_efi_map_status (fsw_dnode_resolve (dno, &target_dno), Volume);
   fsw_dnode_release (dno);
-  if (EFI_ERROR (Status))
+  if (EFI_ERROR(Status))
     return Status;
   dno = target_dno;
   
   // make sure the dnode has complete info
   Status = fsw_efi_map_status (fsw_dnode_fill (dno), Volume);
-  if (EFI_ERROR (Status))
+  if (EFI_ERROR(Status))
     return Status;
   
   FileInfo->Size = RequiredSize;

@@ -147,7 +147,7 @@ FindDim (
                   NULL,
                   (VOID **)&BootLogo
                   );
-  if ((BootLogo == NULL) || (EFI_ERROR (Status))) {
+  if ((BootLogo == NULL) || (EFI_ERROR(Status))) {
     DEBUG ((DEBUG_ERROR, "Failed to locate gEdkiiBootLogo2ProtocolGuid.  No Progress bar support. \n", Status));
     return;
   }
@@ -163,7 +163,7 @@ FindDim (
                        &Width,
                        &Height
                        );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to Get Boot Logo Status = %r.  No Progress bar support. \n", Status));
     return;
   }
@@ -287,7 +287,7 @@ FindDim (
   //
   mBlockBitmap = AllocatePool (mBlockWidth * mBlockHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   if (mBlockBitmap == NULL) {
-    FreePool (mProgressBarBackground);
+    FreePool(mProgressBarBackground);
     DEBUG ((DEBUG_ERROR, "Failed to allocate block\n"));
     return;
   }
@@ -298,8 +298,8 @@ FindDim (
   if ((mBlockHeight > Height) || (mBlockWidth > Width) || (mBlockHeight < 1) || (mBlockWidth < 1)) {
     DEBUG ((DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - Failed to get valid width and height.\n"));
     DEBUG ((DEBUG_ERROR, "DisplayUpdateProgressLib - Progress - mBlockHeight: 0x%X  mBlockWidth: 0x%X.\n", mBlockHeight, mBlockWidth));
-    FreePool (mProgressBarBackground);
-    FreePool (mBlockBitmap);
+    FreePool(mProgressBarBackground);
+    FreePool(mBlockBitmap);
     return;
   }
 
@@ -362,9 +362,9 @@ DisplayUpdateProgress (
                     &gEfiGraphicsOutputProtocolGuid,
                     (VOID**)&mGop
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&mGop);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         mGop = NULL;
         DEBUG ((DEBUG_ERROR, "Show Progress Function could not locate GOP.  Status = %r\n", Status));
         return EFI_NOT_READY;

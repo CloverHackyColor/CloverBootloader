@@ -201,6 +201,14 @@ public:
 	friend bool operator >= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) >= 0; }
 	friend bool operator >= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) <= 0; }
 
+  static wchar_t to_lower(wchar_t ch) {
+    if (ch <= L'Z')
+      return ((ch >= L'A') ? ((ch - L'A') + L'a') : ch);
+    else if (ch == L'Ё') return L'ё';
+    else if (ch <= L'Я')
+      return ((ch >= L'А') ? ((ch - L'А') + L'а') : ch); //русские буквы
+    else return ch;
+  }
 };
 
 extern const XStringW NullXStringW;

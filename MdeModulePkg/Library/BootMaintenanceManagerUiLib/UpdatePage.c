@@ -695,7 +695,7 @@ UpdateConModePage (
   //
   for (Mode = 0; Mode < MaxMode; Mode++) {
     Status = ConOut->QueryMode (ConOut, Mode, &Col, &Row);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     ValidMode++;
@@ -721,7 +721,7 @@ UpdateConModePage (
   //
   for (Mode = 0; Mode < MaxMode; Mode++) {
     Status = ConOut->QueryMode (ConOut, Mode, &Col, &Row);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -776,7 +776,7 @@ UpdateConModePage (
     );
 
   HiiFreeOpCodeHandle (OptionsOpCodeHandle);
-  FreePool (ModeToken);
+  FreePool(ModeToken);
 
   UpdatePageEnd (CallbackData);
 }
@@ -1037,7 +1037,7 @@ UpdateOptionPage(
   }
 
   StringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, String, NULL);
-  FreePool (String);
+  FreePool(String);
 
   if(FormId == FORM_BOOT_ADD_ID){
     if (!CallbackData->BmmFakeNvData.BootOptionChanged) {

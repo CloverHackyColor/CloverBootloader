@@ -193,7 +193,7 @@ IsaSerialComponentNameGetControllerName (
              gSerialControllerDriver.DriverBindingHandle,
              &gEfiIsaIoProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -204,7 +204,7 @@ IsaSerialComponentNameGetControllerName (
                ChildHandle,
                &gEfiIsaIoProtocolGuid
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -219,7 +219,7 @@ IsaSerialComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

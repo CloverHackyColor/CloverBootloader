@@ -191,7 +191,7 @@ EmmcDxeComponentNameGetControllerName (
              gEmmcDxeDriverBinding.DriverBindingHandle,
              &gEfiSdMmcPassThruProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -202,7 +202,7 @@ EmmcDxeComponentNameGetControllerName (
                ChildHandle,
                &gEfiSdMmcPassThruProtocolGuid
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -216,7 +216,7 @@ EmmcDxeComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
 

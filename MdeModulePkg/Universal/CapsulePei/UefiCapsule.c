@@ -465,7 +465,7 @@ ModeSwitch (
 
   Status = Thunk32To64 (LongModeBuffer->PageTableAddress, &Context, &ReturnContext);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *MemoryBase = (VOID *) (UINTN) MemoryBase64;
     *MemorySize = (UINTN) MemorySize64;
   }
@@ -503,13 +503,13 @@ FindCapsuleCoalesceImage (
 
   while (TRUE) {
     Status = PeiServicesFfsFindNextVolume (Instance++, &VolumeHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Status = PeiServicesFfsFindFileByName (PcdGetPtr(PcdCapsuleCoalesceFile), VolumeHandle, &FileHandle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = PeiServicesLocatePpi (&gEfiPeiLoadFilePpiGuid, 0, NULL, (VOID **) &LoadFile);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       Status = LoadFile->LoadFile (
                            LoadFile,
@@ -519,7 +519,7 @@ FindCapsuleCoalesceImage (
                            CoalesceImageEntryPoint,
                            &AuthenticationState
                            );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_ERROR, "Unable to find PE32 section in CapsuleX64 image ffs %r!\n", Status));
         return Status;
       }
@@ -557,7 +557,7 @@ GetLongModeContext (
              NULL,
              (VOID **) &PPIVariableServices
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Size = sizeof (EFI_CAPSULE_LONG_MODE_BUFFER);
   Status = PPIVariableServices->GetVariable (
@@ -568,7 +568,7 @@ GetLongModeContext (
                                   &Size,
                                   LongModeBuffer
                                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG (( DEBUG_ERROR, "Error Get LongModeBuffer variable %r!\n", Status));
   }
   return Status;
@@ -736,7 +736,7 @@ BuildMemoryResourceDescriptor (
     // include extra one NULL terminate memory resource descriptor.
     //
     Status = PeiServicesAllocatePool ((1 + 1) * sizeof (MEMORY_RESOURCE_DESCRIPTOR), (VOID **) &MemoryResource);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     ZeroMem (MemoryResource, (1 + 1) * sizeof (MEMORY_RESOURCE_DESCRIPTOR));
 
     MemoryResource[0].PhysicalStart = 0;
@@ -754,7 +754,7 @@ BuildMemoryResourceDescriptor (
   // include extra one NULL terminate memory resource descriptor.
   //
   Status = PeiServicesAllocatePool ((Index + 1) * sizeof (MEMORY_RESOURCE_DESCRIPTOR), (VOID **) &MemoryResource);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ZeroMem (MemoryResource, (Index + 1) * sizeof (MEMORY_RESOURCE_DESCRIPTOR));
 
   //
@@ -818,7 +818,7 @@ AreCapsulesStaged (
               (VOID **)&PPIVariableServices
               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to find ReadOnlyVariable2PPI\n"));
     return FALSE;
   }
@@ -836,7 +836,7 @@ AreCapsulesStaged (
                                   (VOID *)&CapsuleDataPtr64
                                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return TRUE;
   }
 
@@ -898,7 +898,7 @@ GetScatterGatherHeadEntries (
               (VOID **)&PPIVariableServices
               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to find ReadOnlyVariable2PPI\n"));
     return Status;
   }
@@ -938,7 +938,7 @@ GetScatterGatherHeadEntries (
                                     (VOID *)&CapsuleDataPtr64
                                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Status != EFI_NOT_FOUND) {
         DEBUG ((DEBUG_ERROR, "Unexpected error getting Capsule Update variable.  Status = %r\n"));
       }
@@ -970,7 +970,7 @@ GetScatterGatherHeadEntries (
         return EFI_OUT_OF_RESOURCES;
       }
       CopyMem (EnlargedTempList, TempList, TempListLength);
-      FreePool (TempList);
+      FreePool(TempList);
       TempList = EnlargedTempList;
       TempListLength *= 2;
     }
@@ -1050,7 +1050,7 @@ CapsuleCoalesce (
   // capsule update, then return normally.
   //
   Status = PeiServicesGetBootMode (&BootMode);
-  if (EFI_ERROR (Status) || (BootMode != BOOT_ON_FLASH_UPDATE)) {
+  if (EFI_ERROR(Status) || (BootMode != BOOT_ON_FLASH_UPDATE)) {
     DEBUG ((DEBUG_ERROR, "Boot mode is not correct for capsule update path.\n"));
     Status = EFI_NOT_FOUND;
     goto Done;
@@ -1060,7 +1060,7 @@ CapsuleCoalesce (
   // Get SG list entries
   //
   Status = GetScatterGatherHeadEntries (&ListLength, &VariableArrayAddress);
-  if (EFI_ERROR (Status) || VariableArrayAddress == NULL) {
+  if (EFI_ERROR(Status) || VariableArrayAddress == NULL) {
     DEBUG ((DEBUG_ERROR, "%a failed to get Scatter Gather List Head Entries.  Status = %r\n", __FUNCTION__, Status));
     goto Done;
   }
@@ -1078,14 +1078,14 @@ CapsuleCoalesce (
     //
     CoalesceImageEntryPoint = 0;
     Status = GetLongModeContext (&LongModeBuffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Fail to find the variable for long mode context!\n"));
       Status = EFI_NOT_FOUND;
       goto Done;
     }
 
     Status = FindCapsuleCoalesceImage (&CoalesceImageEntryPoint, &CoalesceImageMachineType);
-    if ((EFI_ERROR (Status)) || (CoalesceImageMachineType != EFI_IMAGE_MACHINE_X64)) {
+    if ((EFI_ERROR(Status)) || (CoalesceImageMachineType != EFI_IMAGE_MACHINE_X64)) {
       DEBUG ((DEBUG_ERROR, "Fail to find CapsuleX64 module in FV!\n"));
       Status = EFI_NOT_FOUND;
       goto Done;

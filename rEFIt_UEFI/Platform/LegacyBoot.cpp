@@ -431,11 +431,11 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 */
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 	Status = InitializeBiosIntCaller(); //mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
   //	InitializeInterruptRedirection(); //gLegacy8259);
@@ -484,14 +484,14 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	}
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
     
     DBG("boot from partition %ls\n", FileDevicePathToStr(volume->DevicePath));
     
 	Status = InitializeBiosIntCaller(); //mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 	//InitializeInterruptRedirection(); //gLegacy8259);
@@ -646,11 +646,11 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   DBG("gEfiLegacy8259ProtocolGuid found\n");
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 	Status = InitializeBiosIntCaller(); //mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 
@@ -891,12 +891,12 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   //
   if (mThunkContext == NULL) {
     Status = gBS->AllocatePool (EfiBootServicesData, sizeof(THUNK_CONTEXT), (VOID **)&mThunkContext);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     DBG("Thunk allocated\n");
     Status = InitializeBiosIntCaller(); //mThunkContext);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1113,11 +1113,11 @@ VOID DumpBiosMemoryMap()
   DBG("gEfiLegacy8259ProtocolGuid found\n");
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return;
 	}
 	Status = InitializeBiosIntCaller(); //mThunkContext);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return;
 	}
   

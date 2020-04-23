@@ -61,7 +61,7 @@ AhciS3GetEumeratePorts (
     }
 
     Status = RestoreLockBox (&gS3StorageDeviceInitListGuid, S3InitDevices, &S3InitDevicesLength);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return 0;
     }
   }
@@ -82,7 +82,7 @@ AhciS3GetEumeratePorts (
                &DevicePathInstLength,
                &EntireEnd
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 

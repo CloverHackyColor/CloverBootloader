@@ -134,7 +134,7 @@ FindAllDeviceTypes (
                   NULL,
                   (VOID**)&LegacyBios
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get all PCI handles and check them to generate a list of matching devices.
@@ -195,7 +195,7 @@ FindAllDeviceTypes (
   //
   // Free any allocated buffers
   //
-  gBS->FreePool (HandleBuffer);
+  gBS->FreePool(HandleBuffer);
 
   if (*DeviceIndex != StartIndex) {
     return EFI_SUCCESS;
@@ -280,13 +280,13 @@ GetSelectedVgaDeviceInfo (
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID**)&PciIo);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Detemine if this is in the correct bus range.
       //
@@ -305,7 +305,7 @@ GetSelectedVgaDeviceInfo (
                         sizeof (Pci) / sizeof (UINT32),
                         &Pci
                         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -333,7 +333,7 @@ GetSelectedVgaDeviceInfo (
     }
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 }
 
 
@@ -496,7 +496,7 @@ GetPlatformHandle (
                        sizeof (PciConfigHeader) / sizeof (UINT32),
                        &PciConfigHeader
                        );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             PciIo->GetLocation (
                      PciIo,
                      &Segment,
@@ -707,7 +707,7 @@ GetRoutingTable (
                     NULL,
                     (VOID**)&LegacyInterrupt
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     LegacyInterrupt->GetLocation (
                        LegacyInterrupt,
                        &Bus,
@@ -799,7 +799,7 @@ GetPlatformInfo (
                    Table,
                    (UINTN *) TableSize
                    );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
         return EFI_SUCCESS;
@@ -857,7 +857,7 @@ TranslatePirq (
                   NULL,
                   (VOID**)&LegacyInterrupt
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   LocalPirq = (UINT8) (*Pirq);
 
   for (Index = 0; Index < MAX_IRQ_ROUTING_ENTRIES; Index++) {

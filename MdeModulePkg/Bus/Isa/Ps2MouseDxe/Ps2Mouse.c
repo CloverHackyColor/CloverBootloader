@@ -60,7 +60,7 @@ PS2MouseDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -109,7 +109,7 @@ PS2MouseDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -170,7 +170,7 @@ PS2MouseDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -193,7 +193,7 @@ PS2MouseDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -257,7 +257,7 @@ PS2MouseDriverStart (
 
   if ((Data & KBC_SYSF) != KBC_SYSF) {
     Status = KbcSelfTest ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       StatusCode = EFI_PERIPHERAL_MOUSE | EFI_P_EC_CONTROLLER_ERROR;
       goto ErrorExit;
     }
@@ -278,7 +278,7 @@ PS2MouseDriverStart (
                      &MouseDev->SimplePointerProtocol,
                      FeaturePcdGet (PcdPs2MouseExtendedVerification)
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // mouse not connected
     //
@@ -303,7 +303,7 @@ PS2MouseDriverStart (
                   MouseDev,
                   &((MouseDev->SimplePointerProtocol).WaitForInput)
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -317,7 +317,7 @@ PS2MouseDriverStart (
                   MouseDev,
                   &MouseDev->TimerEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -325,7 +325,7 @@ PS2MouseDriverStart (
   // Start timer to poll mouse (100 samples per second)
   //
   Status = gBS->SetTimer (MouseDev->TimerEvent, TimerPeriodic, 100000);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -356,7 +356,7 @@ PS2MouseDriverStart (
                   &MouseDev->SimplePointerProtocol,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -396,13 +396,13 @@ ErrorExit:
     // exhaust input data just in case there is still mouse data left
     //
     EmptyStatus = EFI_SUCCESS;
-    while (!EFI_ERROR (EmptyStatus)) {
+    while (!EFI_ERROR(EmptyStatus)) {
       EmptyStatus = In8042Data (&Data);
     }
   }
 
   if (MouseDev != NULL) {
-    FreePool (MouseDev);
+    FreePool(MouseDev);
   }
 
   gBS->CloseProtocol (
@@ -460,7 +460,7 @@ PS2MouseDriverStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   }
 
@@ -480,7 +480,7 @@ PS2MouseDriverStop (
                   &gEfiSimplePointerProtocolGuid,
                   &MouseDev->SimplePointerProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -495,13 +495,13 @@ PS2MouseDriverStop (
   // exhaust input data just in case there is still mouse data left
   //
   Status = EFI_SUCCESS;
-  while (!EFI_ERROR (Status)) {
+  while (!EFI_ERROR(Status)) {
     Status = In8042Data (&Data);
   }
 
   gBS->CloseEvent (MouseDev->SimplePointerProtocol.WaitForInput);
   FreeUnicodeStringTable (MouseDev->ControllerNameTable);
-  FreePool (MouseDev);
+  FreePool(MouseDev);
 
   gBS->CloseProtocol (
          Controller,
@@ -570,7 +570,7 @@ MouseReset (
   // Exhaust input data
   //
   Status = EFI_SUCCESS;
-  while (!EFI_ERROR (Status)) {
+  while (!EFI_ERROR(Status)) {
     Status = In8042Data (&Data);
   }
 
@@ -596,31 +596,31 @@ MouseReset (
     // Send mouse reset command and set mouse default configure
     //
     Status = PS2MouseReset ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseSetSampleRate (MouseDev->SampleRate);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseSetResolution (MouseDev->Resolution);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseSetScaling (MouseDev->Scaling);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseEnable ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -653,7 +653,7 @@ CheckMouseConnect (
   EFI_STATUS     Status;
 
   Status = PS2MouseEnable ();
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return TRUE;
   }
 
@@ -791,7 +791,7 @@ InitializePs2Mouse(
              &gPs2MouseComponentName,
              &gPs2MouseComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 
   return Status;

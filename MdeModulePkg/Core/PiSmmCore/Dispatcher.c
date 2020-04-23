@@ -248,7 +248,7 @@ GetPeCoffImageFixLoadingAssignedAddress(
                               &Size,
                               &SectionHeader
                               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -358,7 +358,7 @@ SmmLoadImage (
   //
   FilePath = OriginalFilePath;
   Status = gBS->HandleProtocol (DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **)&HandleFilePath);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FilePathSize = GetDevicePathSize (HandleFilePath) - sizeof(EFI_DEVICE_PATH_PROTOCOL);
     FilePath = (EFI_DEVICE_PATH_PROTOCOL *) (((UINT8 *)FilePath) + FilePathSize );
   }
@@ -376,7 +376,7 @@ SmmLoadImage (
                  &AuthenticationStatus
                  );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Try reading TE section secondly
     //
@@ -393,9 +393,9 @@ SmmLoadImage (
                   );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
     return Status;
   }
@@ -418,7 +418,7 @@ SmmLoadImage (
   // Only on images that have been read using Firmware Volume protocol.
   // All SMM images are from FV protocol.
   //
-  if (!EFI_ERROR (SecurityStatus) && (mSecurity != NULL)) {
+  if (!EFI_ERROR(SecurityStatus) && (mSecurity != NULL)) {
     SecurityStatus = mSecurity->FileAuthenticationState (
                                   mSecurity,
                                   AuthenticationStatus,
@@ -426,7 +426,7 @@ SmmLoadImage (
                                   );
   }
 
-  if (EFI_ERROR (SecurityStatus) && SecurityStatus != EFI_SECURITY_VIOLATION) {
+  if (EFI_ERROR(SecurityStatus) && SecurityStatus != EFI_SECURITY_VIOLATION) {
     Status = SecurityStatus;
     return Status;
   }
@@ -441,9 +441,9 @@ SmmLoadImage (
   // Get information about the image being loaded
   //
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
     return Status;
   }
@@ -456,7 +456,7 @@ SmmLoadImage (
     // Get the fixed loading address assigned by Build tool
     //
     Status = GetPeCoffImageFixLoadingAssignedAddress (&ImageContext);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Since the memory range to load Smm core alreay been cut out, so no need to allocate and free this range
       // following statements is to bypass SmmFreePages
@@ -477,9 +477,9 @@ SmmLoadImage (
                    PageCount,
                    &DstBuffer
                    );
-       if (EFI_ERROR (Status)) {
+       if (EFI_ERROR(Status)) {
          if (Buffer != NULL) {
-           gBS->FreePool (Buffer);
+           gBS->FreePool(Buffer);
          }
          return Status;
        }
@@ -495,9 +495,9 @@ SmmLoadImage (
                   PageCount,
                   &DstBuffer
                   );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
        if (Buffer != NULL) {
-         gBS->FreePool (Buffer);
+         gBS->FreePool(Buffer);
        }
        return Status;
      }
@@ -514,9 +514,9 @@ SmmLoadImage (
   // Load the image to our new buffer
   //
   Status = PeCoffLoaderLoadImage (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
     SmmFreePages (DstBuffer, PageCount);
     return Status;
@@ -526,9 +526,9 @@ SmmLoadImage (
   // Relocate the image in our new buffer
   //
   Status = PeCoffLoaderRelocateImage (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
     SmmFreePages (DstBuffer, PageCount);
     return Status;
@@ -550,9 +550,9 @@ SmmLoadImage (
   // Allocate a Loaded Image Protocol in EfiBootServicesData
   //
   Status = gBS->AllocatePool (EfiBootServicesData, sizeof (EFI_LOADED_IMAGE_PROTOCOL), (VOID **)&DriverEntry->LoadedImage);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
     SmmFreePages (DstBuffer, PageCount);
     return Status;
@@ -577,9 +577,9 @@ SmmLoadImage (
   // Make an EfiBootServicesData buffer copy of FilePath
   //
   Status = gBS->AllocatePool (EfiBootServicesData, GetDevicePathSize (FilePath), (VOID **)&DriverEntry->LoadedImage->FilePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
     SmmFreePages (DstBuffer, PageCount);
     return Status;
@@ -595,11 +595,11 @@ SmmLoadImage (
   // Make a buffer copy of FilePath
   //
   Status = SmmAllocatePool (EfiRuntimeServicesData, GetDevicePathSize(FilePath), (VOID **)&DriverEntry->SmmLoadedImage.FilePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Buffer != NULL) {
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
     }
-    gBS->FreePool (DriverEntry->LoadedImage->FilePath);
+    gBS->FreePool(DriverEntry->LoadedImage->FilePath);
     SmmFreePages (DstBuffer, PageCount);
     return Status;
   }
@@ -696,7 +696,7 @@ SmmLoadImage (
   // used the UEFI Boot Services AllocatePool() function
   //
   Status = gBS->FreePool(Buffer);
-  if (!EFI_ERROR (Status) && EFI_ERROR (SecurityStatus)) {
+  if (!EFI_ERROR(Status) && EFI_ERROR(SecurityStatus)) {
     Status = SecurityStatus;
   }
   return Status;
@@ -773,7 +773,7 @@ SmmGetDepexSectionAndPreProccess (
                 (UINTN *)&DriverEntry->DepexSize,
                 &AuthenticationStatus
                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Status == EFI_PROTOCOL_ERROR) {
       //
       // The section extraction protocol failed so set protocol error flag
@@ -862,7 +862,7 @@ SmmDispatcher (
         //
         // Update the driver state to reflect that it's been loaded
         //
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           //
           // The SMM Driver could not be loaded, and do not attempt to load or start it again.
           // Take driver from Scheduled to Initialized.
@@ -912,11 +912,11 @@ SmmDispatcher (
                         &gEfiLoadedImageProtocolGuid,
                         DriverEntry->LoadedImage
                         );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if (DriverEntry->LoadedImage->FilePath != NULL) {
-            gBS->FreePool (DriverEntry->LoadedImage->FilePath);
+            gBS->FreePool(DriverEntry->LoadedImage->FilePath);
           }
-          gBS->FreePool (DriverEntry->LoadedImage);
+          gBS->FreePool(DriverEntry->LoadedImage);
         }
         Status = SmmUninstallProtocolInterface (
                    DriverEntry->SmmImageHandle,
@@ -925,7 +925,7 @@ SmmDispatcher (
                    );
         if (!EFI_ERROR(Status)) {
           if (DriverEntry->SmmLoadedImage.FilePath != NULL) {
-            SmmFreePool (DriverEntry->SmmLoadedImage.FilePath);
+            SmmFreePool(DriverEntry->SmmLoadedImage.FilePath);
           }
         }
       }
@@ -1143,7 +1143,7 @@ SmmFvToDevicePath (
   // Remember the device path of the FV
   //
   Status = gBS->HandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FileNameDevicePath = NULL;
   } else {
     //
@@ -1277,7 +1277,7 @@ SmmDriverDispatchHandler (
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -1297,7 +1297,7 @@ SmmDriverDispatchHandler (
     FvIsBeingProcesssed (FvHandle);
 
     Status = gBS->HandleProtocol (FvHandle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Fv);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // FvHandle must have a Firmware Volume2 Protocol thus we should never get here.
       //
@@ -1306,7 +1306,7 @@ SmmDriverDispatchHandler (
     }
 
     Status = gBS->HandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // The Firmware volume doesn't have device path, can't be dispatched.
       //
@@ -1333,7 +1333,7 @@ SmmDriverDispatchHandler (
                                   &Attributes,
                                   &Size
                                   );
-        if (!EFI_ERROR (GetNextFileStatus)) {
+        if (!EFI_ERROR(GetNextFileStatus)) {
           if (Type == EFI_FV_FILETYPE_SMM_CORE) {
             //
             // If this is the SMM core fill in it's DevicePath & DeviceHandle
@@ -1354,7 +1354,7 @@ SmmDriverDispatchHandler (
                               GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath),
                               (VOID **)&mSmmCoreLoadedImage->FilePath
                               );
-              ASSERT_EFI_ERROR (Status);
+              ASSERT_EFI_ERROR(Status);
               CopyMem (mSmmCoreLoadedImage->FilePath, &mFvDevicePath, GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
 
               mSmmCoreLoadedImage->DeviceHandle = FvHandle;
@@ -1375,7 +1375,7 @@ SmmDriverDispatchHandler (
                          GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath),
                          (VOID **)&mSmmCoreDriverEntry->SmmLoadedImage.FilePath
                          );
-              ASSERT_EFI_ERROR (Status);
+              ASSERT_EFI_ERROR(Status);
               CopyMem (mSmmCoreDriverEntry->SmmLoadedImage.FilePath, &mFvDevicePath, GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
 
               mSmmCoreDriverEntry->SmmLoadedImage.DeviceHandle = FvHandle;
@@ -1384,7 +1384,7 @@ SmmDriverDispatchHandler (
             SmmAddToDriverList (Fv, FvHandle, &NameGuid);
           }
         }
-      } while (!EFI_ERROR (GetNextFileStatus));
+      } while (!EFI_ERROR(GetNextFileStatus));
     }
 
     //
@@ -1401,7 +1401,7 @@ SmmDriverDispatchHandler (
                   &SizeOfBuffer,
                   &AuthenticationStatus
                   );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       AprioriEntryCount = SizeOfBuffer / sizeof (EFI_GUID);
     } else {
       AprioriEntryCount = 0;
@@ -1434,7 +1434,7 @@ SmmDriverDispatchHandler (
     // The UEFI Boot Services FreePool() function must be used because Fv->ReadSection
     // used the UEFI Boot Services AllocatePool() function
     //
-    gBS->FreePool (AprioriFile);
+    gBS->FreePool(AprioriFile);
   }
 
   //
@@ -1454,7 +1454,7 @@ SmmDriverDispatchHandler (
         // request the SMM Dispatcher to be restarted.
         //
         *(UINT8 *)CommBuffer = COMM_BUFFER_SMM_DISPATCH_RESTART;
-      } else if (!EFI_ERROR (Status)) {
+      } else if (!EFI_ERROR(Status)) {
         //
         // Set the flag to show that the SMM Dispatcher executed without errors
         //

@@ -1315,7 +1315,7 @@ MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
   MACHINE_TYPES i;
 
   for (i = (MACHINE_TYPES)(0); i < MaxMachineType; i = (MACHINE_TYPES)(i + 1)) {
-    if (AsciiStrCmp (ApplePlatformData[i].productName, ProductName) == 0) {
+    if (AsciiStrCmp(ApplePlatformData[i].productName, ProductName) == 0) {
       return i;
     }
   }

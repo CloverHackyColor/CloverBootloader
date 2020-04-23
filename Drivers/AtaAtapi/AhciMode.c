@@ -752,7 +752,7 @@ AhciPioTransfer (
                     &Map
                     );
 
-  if (EFI_ERROR (Status) || (DataCount != MapLength)) {
+  if (EFI_ERROR(Status) || (DataCount != MapLength)) {
     return EFI_BAD_BUFFER_SIZE;
   }
 
@@ -786,7 +786,7 @@ AhciPioTransfer (
              0,
              Timeout
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -806,7 +806,7 @@ AhciPioTransfer (
       D2hFisReceived = FALSE;
       Offset = FisBaseAddr + EFI_AHCI_PIO_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_PIO_SETUP, NULL);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         PioFisReceived = TRUE;
       }
       //
@@ -818,7 +818,7 @@ AhciPioTransfer (
       //
       Offset = FisBaseAddr + EFI_AHCI_D2H_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, EFI_AHCI_FIS_TYPE_MASK, EFI_AHCI_FIS_REGISTER_D2H, NULL);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         D2hFisReceived = TRUE;
       }
 
@@ -862,7 +862,7 @@ AhciPioTransfer (
                Timeout
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
 
@@ -999,7 +999,7 @@ AhciDmaTransfer (
                       &Map
                       );
 
-    if (EFI_ERROR (Status) || (DataCount != MapLength)) {
+    if (EFI_ERROR(Status) || (DataCount != MapLength)) {
       return EFI_BAD_BUFFER_SIZE;
     }
 
@@ -1036,7 +1036,7 @@ AhciDmaTransfer (
                0,
                Timeout
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
   }
@@ -1065,7 +1065,7 @@ AhciDmaTransfer (
                );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1185,7 +1185,7 @@ AhciNonDataTransfer (
              0,
              Timeout
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1201,7 +1201,7 @@ AhciNonDataTransfer (
                   Timeout
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1311,7 +1311,7 @@ AhciStartCommand (
              Timeout
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1415,7 +1415,7 @@ AhciPortReset (
              Timeout
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1538,7 +1538,7 @@ AhciAtaSmartReturnStatusCheck (
              NULL
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLED)
@@ -1661,7 +1661,7 @@ AhciAtaSmartSupport (
                  );
 
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Send S.M.A.R.T AutoSave command to device
         //
@@ -1686,7 +1686,7 @@ AhciAtaSmartSupport (
                    NULL
                    );
 
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           /*Status = */AhciAtaSmartReturnStatusCheck (
                      PciIo,
                      AhciRegisters,
@@ -2047,7 +2047,7 @@ AhciCreateTransferDescriptor (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -2066,7 +2066,7 @@ AhciCreateTransferDescriptor (
                     &AhciRegisters->MapRFis
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != MaxReceiveFisSize)) {
+  if (EFI_ERROR(Status) || (Bytes != MaxReceiveFisSize)) {
     //
     // Map error or unable to map the whole RFis buffer into a contiguous region.
     //
@@ -2098,7 +2098,7 @@ AhciCreateTransferDescriptor (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Free mapped resource.
     //
@@ -2121,7 +2121,7 @@ AhciCreateTransferDescriptor (
                     &AhciRegisters->MapCmdList
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != MaxCommandListSize)) {
+  if (EFI_ERROR(Status) || (Bytes != MaxCommandListSize)) {
     //
     // Map error or unable to map the whole cmd list buffer into a contiguous region.
     //
@@ -2154,7 +2154,7 @@ AhciCreateTransferDescriptor (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Free mapped resource.
     //
@@ -2177,7 +2177,7 @@ AhciCreateTransferDescriptor (
                     &AhciRegisters->MapCommandTable
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != MaxCommandTableSize)) {
+  if (EFI_ERROR(Status) || (Bytes != MaxCommandTableSize)) {
     //
     // Map error or unable to map the whole cmd list buffer into a contiguous region.
     //
@@ -2277,7 +2277,7 @@ AhciModeInitialization (
 
   Status = AhciReset (PciIo, EFI_AHCI_BUS_RESET_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -2317,7 +2317,7 @@ AhciModeInitialization (
   AhciRegisters = &Instance->AhciRegisters;
   Status = AhciCreateTransferDescriptor (PciIo, AhciRegisters);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 //  DEBUG ((EFI_D_ERROR, "MaxPortNumber = %d\n", MaxPortNumber));
@@ -2382,7 +2382,7 @@ AhciModeInitialization (
                  EFI_AHCI_PORT_CMD_FR_CLEAR_TIMEOUT
                  ); */
       Status = AhciEnableFisReceive( PciIo, Port, EFI_AHCI_PORT_CMD_FR_CLEAR_TIMEOUT );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -2448,7 +2448,7 @@ AhciModeInitialization (
                  0x00000101,
                  EFI_TIMER_PERIOD_SECONDS(16)
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -2456,7 +2456,7 @@ AhciModeInitialization (
       if ((Data & EFI_AHCI_ATAPI_SIG_MASK) == EFI_AHCI_ATAPI_DEVICE_SIG) {
         Status = AhciIdentifyPacket (PciIo, AhciRegisters, Port, 0, &Buffer);
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
 
@@ -2464,7 +2464,7 @@ AhciModeInitialization (
       } else if ((Data & EFI_AHCI_ATAPI_SIG_MASK) == EFI_AHCI_ATA_DEVICE_SIG) {
         Status = AhciIdentify (PciIo, AhciRegisters, Port, 0, &Buffer);
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_EC_NOT_DETECTED));
           continue;
         }
@@ -2506,7 +2506,7 @@ AhciModeInitialization (
                           0,
                           &SupportedModes
                           );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
 //        DEBUG ((EFI_D_ERROR, "Calculate Mode Fail, Status = %r\n", Status));
 //        Print(L"Calculate Mode Fail, Status = %r\n", Status);
         continue;
@@ -2539,7 +2539,7 @@ AhciModeInitialization (
       FreePool(SupportedModes);
 
       Status = AhciDeviceSetFeature (PciIo, AhciRegisters, Port, 0, 0x03, (UINT32)(*(UINT8 *)&TransferMode));
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
 //        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
 //        Print(L"Set transfer Mode Fail, Status = %r\n", Status);
         continue;

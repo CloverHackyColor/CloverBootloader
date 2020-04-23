@@ -706,13 +706,13 @@ DumpCapsuleFromDisk (
   NoFile          = FALSE;
 
   Status = Fs->OpenVolume (Fs, &Root);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print (L"Cannot open volume. Status = %r\n", Status);
     goto Done;
   }
 
   Status = Root->Open (Root, &DirHandle, EFI_CAPSULE_FILE_DIRECTORY, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE , 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print (L"Cannot open %s. Status = %r\n", EFI_CAPSULE_FILE_DIRECTORY, Status);
     goto Done;
   }
@@ -722,7 +722,7 @@ DumpCapsuleFromDisk (
   //
   Status = FileHandleFindFirstFile (DirHandle, &FileInfo);
   do {
-    if (EFI_ERROR (Status) || FileInfo == NULL) {
+    if (EFI_ERROR(Status) || FileInfo == NULL) {
       Print (L"Get File Info Fail. Status = %r\n", Status);
       goto Done;
     }
@@ -732,7 +732,7 @@ DumpCapsuleFromDisk (
     }
 
     Status = FileHandleFindNextFile (DirHandle, FileInfo, &NoFile);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Print (L"Get Next File Fail. Status = %r\n", Status);
       goto Done;
     }
@@ -756,7 +756,7 @@ DumpCapsuleFromDisk (
   //
   Status = FileHandleFindFirstFile (DirHandle, &FileInfo);
   do {
-    if (EFI_ERROR (Status) || FileInfo == NULL) {
+    if (EFI_ERROR(Status) || FileInfo == NULL) {
       Print (L"Get File Info Fail. Status = %r\n", Status);
       goto Done;
     }
@@ -766,7 +766,7 @@ DumpCapsuleFromDisk (
     }
 
     Status = FileHandleFindNextFile (DirHandle, FileInfo, &NoFile);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Print (L"Get Next File Fail. Status = %r\n", Status);
       goto Done;
     }
@@ -798,12 +798,12 @@ DumpCapsuleFromDisk (
   for (Index = 0; Index < FileCount; Index++) {
     FileHandle = NULL;
     Status = DirHandle->Open (DirHandle, &FileHandle, FileInfoBuffer[Index]->FileName, EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
     Status = FileHandleGetSize (FileHandle, (UINT64 *) &FileSize);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Print (L"Cannot read file %s. Status = %r\n", FileInfoBuffer[Index]->FileName, Status);
       FileHandleClose (FileHandle);
       goto Done;
@@ -816,10 +816,10 @@ DumpCapsuleFromDisk (
     }
 
     Status = FileHandleRead (FileHandle, &FileSize, FileBuffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Print (L"Cannot read file %s. Status = %r\n", FileInfoBuffer[Index]->FileName, Status);
       FileHandleClose (FileHandle);
-      FreePool (FileBuffer);
+      FreePool(FileBuffer);
       goto Done;
     }
 
@@ -828,17 +828,17 @@ DumpCapsuleFromDisk (
     Print (L"**************************\n");
     DumpCapsuleFromBuffer ((EFI_CAPSULE_HEADER *) FileBuffer);
     FileHandleClose (FileHandle);
-    FreePool (FileBuffer);
+    FreePool(FileBuffer);
   }
 
 Done:
   if (FileInfoBuffer != NULL) {
     for (Index = 0; Index < FileCount; Index++) {
       if (FileInfoBuffer[Index] != NULL) {
-        FreePool (FileInfoBuffer[Index]);
+        FreePool(FileInfoBuffer[Index]);
       }
     }
-    FreePool (FileInfoBuffer);
+    FreePool(FileInfoBuffer);
   }
 
   return Status;
@@ -940,7 +940,7 @@ DumpProvisionedCapsule (
               (VOID **) &CapsuleDataPtr64,
               NULL
               );
-    if (EFI_ERROR (Status) || CapsuleDataPtr64 == NULL) {
+    if (EFI_ERROR(Status) || CapsuleDataPtr64 == NULL) {
       if (Index == 0) {
         Print (L"No data.\n");
       }
@@ -964,17 +964,17 @@ DumpProvisionedCapsule (
              (VOID **) &BootNext,
              NULL
             );
-  if (EFI_ERROR (Status) || BootNext == NULL) {
+  if (EFI_ERROR(Status) || BootNext == NULL) {
     Print (L"Get BootNext Variable Fail. Status = %r\n", Status);
   } else {
     UnicodeSPrint (BootOptionName, sizeof (BootOptionName), L"Boot%04x", *BootNext);
     Status = EfiBootManagerVariableToLoadOption (BootOptionName, &BootNextOptionEntry);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Display description and device path
       //
       GetEfiSysPartitionFromBootOptionFilePath (BootNextOptionEntry.FilePath, &DevicePath, &Fs);
-      if(!EFI_ERROR (Status)) {
+      if(!EFI_ERROR(Status)) {
         Print (L"Capsules are provisioned on BootOption: %s\n", BootNextOptionEntry.Description);
         Print (L"    %s %s\n", ShellProtocol->GetMapFromDevicePath (&DevicePath), ConvertDevicePathToText(DevicePath, TRUE, TRUE));
         DumpCapsuleFromDisk (Fs, DumpCapsuleInfo);
@@ -1421,7 +1421,7 @@ DumpFmpImage (
   Status = WriteFileFromBuffer(ImageName, ImageSize, Image);
   Print(L"CapsuleApp: Dump %g ImageIndex (0x%x) to %s %r\n", ImageTypeId, ImageIndex, ImageName, Status);
 
-  FreePool (Image);
+  FreePool(Image);
 
   return ;
 }

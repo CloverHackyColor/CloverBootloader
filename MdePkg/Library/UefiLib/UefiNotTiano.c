@@ -231,7 +231,7 @@ EfiSignalEventReadyToBoot (
   EFI_EVENT     ReadyToBootEvent;
 
   Status = EfiCreateEventReadyToBoot (&ReadyToBootEvent);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->SignalEvent (ReadyToBootEvent);
     gBS->CloseEvent (ReadyToBootEvent);
   }
@@ -256,7 +256,7 @@ EfiSignalEventLegacyBoot (
   EFI_EVENT     LegacyBootEvent;
 
   Status = EfiCreateEventLegacyBoot (&LegacyBootEvent);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->SignalEvent (LegacyBootEvent);
     gBS->CloseEvent (LegacyBootEvent);
   }

@@ -232,7 +232,7 @@ LocatePciExpressCapabilityRegBlock (
                                       1,
                                       &CapabilityEntry
                                       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 

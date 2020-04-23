@@ -64,7 +64,7 @@ CoreInitializeDebugImageInfoTable (
              RealPages,
              &Memory
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (PcdGet64 (PcdMaxEfiSystemTablePointerAddress) != 0) {
       DEBUG ((EFI_D_INFO, "Allocate memory for EFI_SYSTEM_TABLE_POINTER below PcdMaxEfiSystemTablePointerAddress failed. \
                           Retry to allocate memroy as close to the top of memory as feasible.\n"));
@@ -79,8 +79,8 @@ CoreInitializeDebugImageInfoTable (
                RealPages,
                &Memory
                );
-    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return;
     }
   }
@@ -95,7 +95,7 @@ CoreInitializeDebugImageInfoTable (
     // Free first unaligned page(s).
     //
     Status = CoreFreePages (Memory, UnalignedPages);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   Memory         = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
   UnalignedPages = RealPages - Pages - UnalignedPages;
@@ -104,7 +104,7 @@ CoreInitializeDebugImageInfoTable (
     // Free last unaligned page(s).
     //
     Status = CoreFreePages (Memory, UnalignedPages);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -125,7 +125,7 @@ CoreInitializeDebugImageInfoTable (
   // Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiDebugImageInfoTableGuid, &mDebugInfoTableHeader);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 
@@ -206,7 +206,7 @@ CoreNewDebugImageInfoEntry (
     //
     // Free the old table
     //
-    CoreFreePool (Table);
+    CoreFreePool(Table);
     //
     // Update the table header
     //
@@ -266,7 +266,7 @@ CoreRemoveDebugImageInfoEntry (
       // Found a match. Free up the record, then NULL the pointer to indicate the slot
       // is free.
       //
-      CoreFreePool (Table[Index].NormalImage);
+      CoreFreePool(Table[Index].NormalImage);
       Table[Index].NormalImage = NULL;
       //
       // Decrease the number of EFI_DEBUG_IMAGE_INFO elements and set the mDebugInfoTable in modified status.

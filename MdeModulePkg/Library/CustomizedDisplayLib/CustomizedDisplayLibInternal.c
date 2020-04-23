@@ -118,7 +118,7 @@ PrintBannerInfo (
         break;
       }
 
-      FreePool (StrFrontPageBanner);
+      FreePool(StrFrontPageBanner);
     }
   }
 }
@@ -195,7 +195,7 @@ PrintFramework (
     TitleStr,
     gScreenDimensions.RightColumn - 1 - TitleColumn
     );
-  FreePool (TitleStr);
+  FreePool(TitleStr);
 
   Character = BOXDRAW_UP_RIGHT;
   PrintCharAt (gScreenDimensions.LeftColumn, gScreenDimensions.TopRow + NONE_FRONT_PAGE_HEADER_HEIGHT - 1, Character);
@@ -234,7 +234,7 @@ PrintFramework (
   Character = BOXDRAW_UP_LEFT;
   PrintCharAt ((UINTN) -1, (UINTN) -1, Character);
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 }
 
 /**
@@ -743,29 +743,29 @@ FreeLibStrings (
   VOID
   )
 {
-  FreePool (gEnterString);
-  FreePool (gEnterCommitString);
-  FreePool (gEnterEscapeString);
-  FreePool (gEscapeString);
-  FreePool (gMoveHighlight);
-  FreePool (gDecNumericInput);
-  FreePool (gHexNumericInput);
-  FreePool (gToggleCheckBox);
+  FreePool(gEnterString);
+  FreePool(gEnterCommitString);
+  FreePool(gEnterEscapeString);
+  FreePool(gEscapeString);
+  FreePool(gMoveHighlight);
+  FreePool(gDecNumericInput);
+  FreePool(gHexNumericInput);
+  FreePool(gToggleCheckBox);
 
-  FreePool (gAreYouSure);
-  FreePool (gYesResponse);
-  FreePool (gNoResponse);
-  FreePool (gPlusString);
-  FreePool (gMinusString);
-  FreePool (gAdjustNumber);
-  FreePool (gSaveChanges);
+  FreePool(gAreYouSure);
+  FreePool(gYesResponse);
+  FreePool(gNoResponse);
+  FreePool(gPlusString);
+  FreePool(gMinusString);
+  FreePool(gAdjustNumber);
+  FreePool(gSaveChanges);
 
-  FreePool (gLibEmptyString);
+  FreePool(gLibEmptyString);
 
-  FreePool (gNvUpdateMessage);
-  FreePool (gInputErrorMessage);
+  FreePool(gNvUpdateMessage);
+  FreePool(gInputErrorMessage);
 
-  FreePool (mSpaceBuffer);
+  FreePool(mSpaceBuffer);
 }
 
 /**
@@ -786,7 +786,7 @@ WaitForKeyStroke (
 
   while (TRUE) {
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, Key);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       break;
     }
 
@@ -939,8 +939,8 @@ PrintInternal (
     Out->OutputString (Out, &mSpaceBuffer[SPACE_BUFFER_SIZE - Width + PrintWidth]);
   }
 
-  FreePool (Buffer);
-  FreePool (BackupBuffer);
+  FreePool(Buffer);
+  FreePool(BackupBuffer);
   return TotalCount;
 }
 

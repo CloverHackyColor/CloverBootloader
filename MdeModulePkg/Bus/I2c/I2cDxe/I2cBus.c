@@ -271,7 +271,7 @@ CheckRemainingDevicePath (
                   &OpenInfoBuffer,
                   &EntryCount
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -285,7 +285,7 @@ CheckRemainingDevicePath (
                       Controller,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Find vendor device path node and compare
         //
@@ -320,13 +320,13 @@ CheckRemainingDevicePath (
           }
           SystemDevicePath = NextDevicePathNode (SystemDevicePath);
         }
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           break;
         }
       }
     }
   }
-  FreePool (OpenInfoBuffer);
+  FreePool(OpenInfoBuffer);
   return Status;
 }
 
@@ -402,11 +402,11 @@ I2cBusDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
+  if ((EFI_ERROR(Status)) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           Controller,
           &gEfiI2cEnumerateProtocolGuid,
@@ -424,11 +424,11 @@ I2cBusDriverSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
+  if ((EFI_ERROR(Status)) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           Controller,
           &gEfiDevicePathProtocolGuid,
@@ -472,7 +472,7 @@ I2cBusDriverSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           Controller,
           &gEfiI2cHostProtocolGuid,
@@ -571,7 +571,7 @@ I2cBusDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     DEBUG ((EFI_D_ERROR, "I2cBus: open I2C host error, Status = %r\n", Status));
     return Status;
   }
@@ -585,7 +585,7 @@ I2cBusDriverStart (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "I2cBus: open private protocol error, Status = %r.\n", Status));
       return Status;
     }
@@ -602,7 +602,7 @@ I2cBusDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     DEBUG ((EFI_D_ERROR, "I2cBus: open I2C enumerate error, Status = %r\n", Status));
     goto Error;
   }
@@ -615,7 +615,7 @@ I2cBusDriverStart (
                    Controller,
                    EFI_OPEN_PROTOCOL_BY_DRIVER
                    );
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     DEBUG ((EFI_D_ERROR, "I2cBus: open device path error, Status = %r\n", Status));
     goto Error;
   }
@@ -675,7 +675,7 @@ I2cBusDriverStart (
                     I2cBusContext,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "I2cBus: install private protocol error, Status = %r.\n", Status));
       goto Error;
     }
@@ -689,7 +689,7 @@ I2cBusDriverStart (
   return Status;
 
 Error:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "I2cBus: Start() function failed, Status = %r\n", Status));
     if (ParentDevicePath != NULL) {
       gBS->CloseProtocol (
@@ -725,7 +725,7 @@ Error:
                       I2cBusContext,
                       NULL
                       );
-      FreePool (I2cBusContext);
+      FreePool(I2cBusContext);
     }
   }
 
@@ -806,7 +806,7 @@ I2cBusDriverStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->UninstallMultipleProtocolInterfaces (
             Controller,
             &gEfiCallerIdGuid,
@@ -816,7 +816,7 @@ I2cBusDriverStop (
       //
       // No more child now, free bus context data.
       //
-      FreePool (I2cBusContext);
+      FreePool(I2cBusContext);
     }
     return Status;
   }
@@ -826,7 +826,7 @@ I2cBusDriverStop (
   for (Index = 0; Index < NumberOfChildren; Index++) {
 
     Status = UnRegisterI2cDevice (This, Controller, ChildHandleBuffer[Index]);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -908,7 +908,7 @@ RegisterI2cDevice (
     //  Get the next I2C device
     //
     Status = I2cBusContext->I2cEnumerate->Enumerate (I2cBusContext->I2cEnumerate, &Device);
-    if (EFI_ERROR (Status) || Device == NULL) {
+    if (EFI_ERROR(Status) || Device == NULL) {
       if (RemainingDevicePath != NULL) {
         Status = EFI_NOT_FOUND;
       } else {
@@ -937,7 +937,7 @@ RegisterI2cDevice (
           //  Get the next I2C device
           //
           Status = I2cBusContext->I2cEnumerate->Enumerate (I2cBusContext->I2cEnumerate, &TempDevice);
-          if (EFI_ERROR (Status) || TempDevice == NULL) {
+          if (EFI_ERROR(Status) || TempDevice == NULL) {
             Status = EFI_SUCCESS;
             break;
           }
@@ -987,8 +987,8 @@ RegisterI2cDevice (
     //  Build the device path
     //
     Status = I2cBusDevicePathAppend (I2cDeviceContext, BuildControllerNode);
-    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1002,7 +1002,7 @@ RegisterI2cDevice (
               &gEfiDevicePathProtocolGuid,
               I2cDeviceContext->DevicePath,
               NULL );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Free resources for this I2C device
       //
@@ -1021,7 +1021,7 @@ RegisterI2cDevice (
                     I2cDeviceContext->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = gBS->UninstallMultipleProtocolInterfaces (
                       I2cDeviceContext->Handle,
                       &gEfiDevicePathProtocolGuid,
@@ -1188,10 +1188,10 @@ ReleaseI2cDeviceContext (
   }
 
   if (I2cDeviceContext->DevicePath != NULL) {
-    FreePool (I2cDeviceContext->DevicePath);
+    FreePool(I2cDeviceContext->DevicePath);
   }
 
-  FreePool (I2cDeviceContext);
+  FreePool(I2cDeviceContext);
 }
 
 /**
@@ -1230,7 +1230,7 @@ UnRegisterI2cDevice (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1262,7 +1262,7 @@ UnRegisterI2cDevice (
                   NULL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Keep parent and child relationship
     //
@@ -1330,7 +1330,7 @@ I2cBusDevicePathAppend (
                                               I2cDeviceContext->DevicePath,
                                               (EFI_DEVICE_PATH_PROTOCOL *) &gControllerDevicePathTemplate
                                               );
-    gBS->FreePool (PreviousDevicePath);
+    gBS->FreePool(PreviousDevicePath);
     ASSERT (I2cDeviceContext->DevicePath != NULL);
     if (I2cDeviceContext->DevicePath == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -1371,7 +1371,7 @@ InitializeI2cBus(
              &gI2cBusComponentName,
              &gI2cBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 
   return Status;
@@ -1415,7 +1415,7 @@ I2cBusUnload (
                   &DeviceHandleBuffer
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Disconnect the driver specified by Driver BindingHandle from all
     // the devices in the handle database.
@@ -1426,7 +1426,7 @@ I2cBusUnload (
                       gI2cBusDriverBinding.DriverBindingHandle,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Done;
       }
     }
@@ -1441,7 +1441,7 @@ I2cBusUnload (
                   &gI2cBusDriverBinding,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Note we have to one by one uninstall the following protocols.
@@ -1457,7 +1457,7 @@ I2cBusUnload (
                   &gEfiComponentNameProtocolGuid,
                   (VOID **) &ComponentName
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->UninstallProtocolInterface (
            gI2cBusDriverBinding.DriverBindingHandle,
            &gEfiComponentNameProtocolGuid,
@@ -1470,7 +1470,7 @@ I2cBusUnload (
                   &gEfiComponentName2ProtocolGuid,
                   (VOID **) &ComponentName2
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->UninstallProtocolInterface (
            gI2cBusDriverBinding.DriverBindingHandle,
            &gEfiComponentName2ProtocolGuid,
@@ -1485,7 +1485,7 @@ Done:
   // Free the buffer containing the list of handles from the handle database
   //
   if (DeviceHandleBuffer != NULL) {
-    gBS->FreePool (DeviceHandleBuffer);
+    gBS->FreePool(DeviceHandleBuffer);
   }
 
   return Status;

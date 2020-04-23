@@ -103,7 +103,7 @@ TrustTransferNvmeDevice (
                            );
 
   if (!IsTrustSend) {
-    if (EFI_ERROR (Status))  {
+    if (EFI_ERROR(Status))  {
       *TransferLengthOut = 0;
     } else {
       *TransferLengthOut = (UINTN) TransferLength;

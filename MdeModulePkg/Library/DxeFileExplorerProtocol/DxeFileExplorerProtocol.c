@@ -48,7 +48,7 @@ FileExplorerConstructor (
                                         NULL,
                                         (VOID**) &mProtocol
                                         );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mProtocol != NULL);
 
   return Status;

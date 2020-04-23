@@ -257,7 +257,7 @@ InitializeFrontPage (
   // Locate Hii relative protocols
   //
   Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &gFormBrowser2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -273,7 +273,7 @@ InitializeFrontPage (
                   &gFrontPagePrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Publish our HII data
@@ -361,14 +361,14 @@ FreeFrontPage(
                   &gFrontPagePrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Publish our HII data
   //
   HiiRemovePackages (gFrontPagePrivate.HiiHandle);
   if (gFrontPagePrivate.LanguageToken != NULL) {
-    FreePool (gFrontPagePrivate.LanguageToken);
+    FreePool(gFrontPagePrivate.LanguageToken);
     gFrontPagePrivate.LanguageToken = NULL;
   }
 }
@@ -526,55 +526,55 @@ UpdateFrontPageBannerStrings (
   NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE4_LEFT), NULL);
   UiCustomizeFrontPageBanner (4, TRUE, &NewString);
   HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE4_LEFT), NewString, NULL);
-  FreePool (NewString);
+  FreePool(NewString);
 
   NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE4_RIGHT), NULL);
   UiCustomizeFrontPageBanner (4, FALSE, &NewString);
   HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE4_RIGHT), NewString, NULL);
-  FreePool (NewString);
+  FreePool(NewString);
 
   NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE5_LEFT), NULL);
   UiCustomizeFrontPageBanner (5, TRUE, &NewString);
   HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE5_LEFT), NewString, NULL);
-  FreePool (NewString);
+  FreePool(NewString);
 
   NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE5_RIGHT), NULL);
   UiCustomizeFrontPageBanner (5, FALSE, &NewString);
   HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_CUSTOMIZE_BANNER_LINE5_RIGHT), NewString, NULL);
-  FreePool (NewString);
+  FreePool(NewString);
 
   //
   // Update Front Page banner strings base on SmBios Table.
   //
   Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **) &Smbios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Smbios protocol not found, get the default value.
     //
     NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_COMPUTER_MODEL), NULL);
     UiCustomizeFrontPageBanner (1, TRUE, &NewString);
     HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_COMPUTER_MODEL), NewString, NULL);
-    FreePool (NewString);
+    FreePool(NewString);
 
     NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_MODEL), NULL);
     UiCustomizeFrontPageBanner (2, TRUE, &NewString);
     HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_MODEL), NewString, NULL);
-    FreePool (NewString);
+    FreePool(NewString);
 
     NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_SPEED), NULL);
     UiCustomizeFrontPageBanner (2, FALSE, &NewString);
     HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_SPEED), NewString, NULL);
-    FreePool (NewString);
+    FreePool(NewString);
 
     NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_BIOS_VERSION), NULL);
     UiCustomizeFrontPageBanner (3, TRUE, &NewString);
     HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_BIOS_VERSION), NewString, NULL);
-    FreePool (NewString);
+    FreePool(NewString);
 
     NewString = HiiGetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_MEMORY_SIZE), NULL);
     UiCustomizeFrontPageBanner (3, FALSE, &NewString);
     HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_MEMORY_SIZE), NewString, NULL);
-    FreePool (NewString);
+    FreePool(NewString);
 
     return;
   }
@@ -589,14 +589,14 @@ UpdateFrontPageBannerStrings (
 
       FirmwareVersionString = (CHAR16 *) PcdGetPtr (PcdFirmwareVersionString);
       if (*FirmwareVersionString != 0x0000 ) {
-        FreePool (NewString);
+        FreePool(NewString);
         NewString = (CHAR16 *) PcdGetPtr (PcdFirmwareVersionString);
         UiCustomizeFrontPageBanner (3, TRUE, &NewString);
         HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_BIOS_VERSION), NewString, NULL);
       } else {
         UiCustomizeFrontPageBanner (3, TRUE, &NewString);
         HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_BIOS_VERSION), NewString, NULL);
-        FreePool (NewString);
+        FreePool(NewString);
       }
     }
 
@@ -606,7 +606,7 @@ UpdateFrontPageBannerStrings (
       GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type1Record + Type1Record->Hdr.Length), StrIndex, &NewString);
       UiCustomizeFrontPageBanner (1, TRUE, &NewString);
       HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_COMPUTER_MODEL), NewString, NULL);
-      FreePool (NewString);
+      FreePool(NewString);
     }
 
     if ((Record->Type == SMBIOS_TYPE_PROCESSOR_INFORMATION) && !FoundCpu) {
@@ -619,12 +619,12 @@ UpdateFrontPageBannerStrings (
         GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type4Record + Type4Record->Hdr.Length), StrIndex, &NewString);
         UiCustomizeFrontPageBanner (2, TRUE, &NewString);
         HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_MODEL), NewString, NULL);
-        FreePool (NewString);
+        FreePool(NewString);
 
         ConvertProcessorToString(Type4Record->CurrentSpeed, 6, &NewString);
         UiCustomizeFrontPageBanner (2, FALSE, &NewString);
         HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_CPU_SPEED), NewString, NULL);
-        FreePool (NewString);
+        FreePool(NewString);
 
         FoundCpu = TRUE;
       }
@@ -650,7 +650,7 @@ UpdateFrontPageBannerStrings (
   ConvertMemorySizeToString ((UINT32)InstalledMemory, &NewString );
   UiCustomizeFrontPageBanner (3, FALSE, &NewString);
   HiiSetString (gFrontPagePrivate.HiiHandle, STRING_TOKEN (STR_FRONT_PAGE_MEMORY_SIZE), NewString, NULL);
-  FreePool (NewString);
+  FreePool(NewString);
 }
 
 /**
@@ -697,7 +697,7 @@ UiSetConsoleMode (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -706,7 +706,7 @@ UiSetConsoleMode (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }
 
@@ -754,7 +754,7 @@ UiSetConsoleMode (
                        &SizeOfInfo,
                        &Info
                        );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution)) {
         if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
@@ -763,12 +763,12 @@ UiSetConsoleMode (
           // Current resolution is same with required resolution, check if text mode need be set
           //
           Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
-          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR(Status);
           if (CurrentColumn == NewColumns && CurrentRow == NewRows) {
             //
             // If current text mode is same with required text mode. Do nothing
             //
-            FreePool (Info);
+            FreePool(Info);
             return EFI_SUCCESS;
           } else {
             //
@@ -782,15 +782,15 @@ UiSetConsoleMode (
                   // Required text mode is supported, set it.
                   //
                   Status = SimpleTextOut->SetMode (SimpleTextOut, Index);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   //
                   // Update text mode PCD.
                   //
                   Status = PcdSet32S (PcdConOutColumn, mSetupTextModeColumn);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   Status = PcdSet32S (PcdConOutRow, mSetupTextModeRow);
-                  ASSERT_EFI_ERROR (Status);
-                  FreePool (Info);
+                  ASSERT_EFI_ERROR(Status);
+                  FreePool(Info);
                   return EFI_SUCCESS;
                 }
               }
@@ -799,7 +799,7 @@ UiSetConsoleMode (
               //
               // If required text mode is not supported, return error.
               //
-              FreePool (Info);
+              FreePool(Info);
               return EFI_UNSUPPORTED;
             }
           }
@@ -809,13 +809,13 @@ UiSetConsoleMode (
           // In this case, the driver which produces simple text out need be restarted.
           //
           Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber);
-          if (!EFI_ERROR (Status)) {
-            FreePool (Info);
+          if (!EFI_ERROR(Status)) {
+            FreePool(Info);
             break;
           }
         }
       }
-      FreePool (Info);
+      FreePool(Info);
     }
   }
 
@@ -831,13 +831,13 @@ UiSetConsoleMode (
   // Set PCD to Inform Consplitter to change text mode.
   //
   Status = PcdSet32S (PcdVideoHorizontalResolution, NewHorizontalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdVideoVerticalResolution, NewVerticalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutColumn, NewColumns);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutRow, NewRows);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Video mode is changed, so restart graphics console driver and higher level driver.
@@ -851,7 +851,7 @@ UiSetConsoleMode (
                    &HandleCount,
                    &HandleBuffer
                    );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
@@ -859,7 +859,7 @@ UiSetConsoleMode (
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
     if (HandleBuffer != NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
     }
   }
 
@@ -902,7 +902,7 @@ InitializeUserInterface (
                     &gEfiGraphicsOutputProtocolGuid,
                     (VOID**)&GraphicsOutput
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       GraphicsOutput = NULL;
     }
 
@@ -911,7 +911,7 @@ InitializeUserInterface (
                     &gEfiSimpleTextOutProtocolGuid,
                     (VOID**)&SimpleTextOut
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       SimpleTextOut = NULL;
     }
 
@@ -1007,7 +1007,7 @@ UiEntry (
   // Boot Logo is corrupted, report it using Boot Logo protocol.
   //
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
-  if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
+  if (!EFI_ERROR(Status) && (BootLogo != NULL)) {
     BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
   }
 
@@ -1018,7 +1018,7 @@ UiEntry (
   FreeFrontPage ();
 
   if (mLanguageString != NULL) {
-    FreePool (mLanguageString);
+    FreePool(mLanguageString);
     mLanguageString = NULL;
   }
 
@@ -1104,8 +1104,8 @@ SetupResetReminder (
       CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);
     } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
-    FreePool (StringBuffer1);
-    FreePool (StringBuffer2);
+    FreePool(StringBuffer1);
+    FreePool(StringBuffer2);
 
     gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
   }

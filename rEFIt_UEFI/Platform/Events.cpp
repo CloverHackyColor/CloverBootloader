@@ -539,7 +539,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
       //TODO - DetectMedia will appear automatically. Do nothing?
 			if (!Media->RemovableMedia) {
 				//Status = UsbBootDetectMedia (UsbMass);
-        //	if (EFI_ERROR (Status)) {
+        //	if (EFI_ERROR(Status)) {
 				Status = EFI_UNSUPPORTED;
         goto ON_EXIT;
         //	}

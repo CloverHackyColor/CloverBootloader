@@ -175,7 +175,7 @@ Returns:
   //
   do {
     Status = FatGetNextDirEnt (OFile, &DirEnt);
-    if (EFI_ERROR (Status) || DirEnt == NULL) {
+    if (EFI_ERROR(Status) || DirEnt == NULL) {
       //
       // Something error occurred or reach the end of directory,
       // return 0 buffersize
@@ -190,7 +190,7 @@ Done:
   //
   // Update IFile's Position
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Update IFile->Position, if everything is all right
     //
@@ -296,7 +296,7 @@ Returns:
   FatAcquireLock ();
 
   Status = OFile->Error;
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (OFile->ODir != NULL) {
       //
       // Read a directory is supported
@@ -323,7 +323,7 @@ Returns:
           // We expand the file size of OFile
           //
           Status = FatGrowEof (OFile, EndPosition);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             //
             // Must update the file's info into the file's Directory Entry
             // and then flush the dirty cache info into disk.
@@ -344,7 +344,7 @@ Returns:
   }
 
   if (Token != NULL) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = FatQueueTask (IFile, Task);
     } else {
       FatDestroyTask (Task);
@@ -361,7 +361,7 @@ Done:
   // 3) Write operation doesn't affect OFile/IFile structure, so
   // Reference checking is not necessary.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = FatCleanupVolume (Volume, OFile, Status, NULL);
   }
 
@@ -538,7 +538,7 @@ Returns:
     // Seek the OFile to the file position
     //
     Status = FatOFilePosition (OFile, Position, BufferSize);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     //
@@ -550,7 +550,7 @@ Returns:
     // Write the data
     //
     Status = FatDiskIo (Volume, IoMode, OFile->PosDisk, Len, UserBuffer, Task);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     //
@@ -603,7 +603,7 @@ Returns:
 
   WritePos  = OFile->FileSize;
   Status    = FatGrowEof (OFile, ExpandedSize);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = FatWriteZeroPool (OFile, WritePos);
   }
 
@@ -661,14 +661,14 @@ Returns:
     WriteSize     = AppendedSize > BufferSize ? BufferSize : (UINTN) AppendedSize;
     AppendedSize -= WriteSize;
     Status = FatAccessOFile (OFile, WRITE_DATA, WritePos, &WriteSize, ZeroBuffer, NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
     WritePos += WriteSize;
   } while (AppendedSize > 0);
 
-  FreePool (ZeroBuffer);
+  FreePool(ZeroBuffer);
   return Status;
 }
 

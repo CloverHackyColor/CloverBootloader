@@ -57,9 +57,9 @@ UsbBootRequestSense (
                         USB_BOOT_GENERAL_CMD_TIMEOUT,
                         &CmdResult
                         );
-  if (EFI_ERROR (Status) || CmdResult != USB_MASS_CMD_SUCCESS) {
+  if (EFI_ERROR(Status) || CmdResult != USB_MASS_CMD_SUCCESS) {
     DEBUG ((EFI_D_ERROR, "UsbBootRequestSense: (%r) CmdResult=0x%x\n", Status, CmdResult));
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
     }
     return Status;
@@ -199,7 +199,7 @@ UsbBootExecCmd (
   // If ExecCommand() returns no error and CmdResult is success,
   // then the commnad transfer is successful.
   //
-  if ((CmdResult == USB_MASS_CMD_SUCCESS) && !EFI_ERROR (Status)) {
+  if ((CmdResult == USB_MASS_CMD_SUCCESS) && !EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   }
 
@@ -256,19 +256,19 @@ UsbBootExecCmdWithRetry (
                   NULL,
                   &TimeoutEvt
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = gBS->SetTimer (TimeoutEvt, TimerRelative, EFI_TIMER_PERIOD_SECONDS(60));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto EXIT;
   }
 
   //
   // Execute the cmd and retry if it fails.
   //
-  while (EFI_ERROR (gBS->CheckEvent (TimeoutEvt))) {
+  while (EFI_ERROR(gBS->CheckEvent (TimeoutEvt))) {
     Status = UsbBootExecCmd (
                UsbMass,
                Cmd,
@@ -375,7 +375,7 @@ UsbBootInquiry (
              sizeof (USB_BOOT_INQUIRY_DATA),
              USB_BOOT_GENERAL_CMD_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -446,7 +446,7 @@ UsbBootReadCapacity16 (
              sizeof (CapacityData),
              USB_BOOT_GENERAL_CMD_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -518,7 +518,7 @@ UsbBootReadCapacity (
              sizeof (USB_BOOT_READ_CAPACITY_DATA),
              USB_BOOT_GENERAL_CMD_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -541,7 +541,7 @@ UsbBootReadCapacity (
 
   if (Media->LastBlock == 0xFFFFFFFF) {
     Status = UsbBootReadCapacity16 (UsbMass);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       UsbMass->Cdb16Byte = TRUE;
     }
   }
@@ -596,7 +596,7 @@ UsbScsiModeSense (
   // Section 8.2.10 of SCSI-2 Spec.
   // BIT7 of this byte is indicates whether the medium is write protected.
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Media->ReadOnly = (BOOLEAN) ((ModeParaHeader.DevicePara & BIT7) != 0);
   }
 
@@ -630,7 +630,7 @@ UsbBootGetParams (
   Media  = &(UsbMass->BlockIoMedia);
 
   Status = UsbBootInquiry (UsbMass);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UsbBootGetParams: UsbBootInquiry (%r)\n", Status));
     return Status;
   }
@@ -694,7 +694,7 @@ UsbBootDetectMedia (
   CmdSet = ((EFI_USB_INTERFACE_DESCRIPTOR *) (UsbMass->Context))->InterfaceSubClass;
 
   Status = UsbBootIsUnitReady (UsbMass);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UsbBootDetectMedia: UsbBootIsUnitReady (%r)\n", Status));
   }
 
@@ -705,7 +705,7 @@ UsbBootDetectMedia (
   //   others: HW error.
   // For either EFI_NO_MEDIA, or HW error, skip to get WriteProtected and capacity information.
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if ((UsbMass->Pdt != USB_PDT_CDROM) && (CmdSet == USB_MASS_STORE_SCSI)) {
       //
       // MODE SENSE is required for the device with PDT of 0x00/0x07/0x0E,
@@ -718,12 +718,12 @@ UsbBootDetectMedia (
     }
 
     Status = UsbBootReadCapacity (UsbMass);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "UsbBootDetectMedia: UsbBootReadCapacity (%r)\n", Status));
     }
   }
 
-  if (EFI_ERROR (Status) && Status != EFI_NO_MEDIA) {
+  if (EFI_ERROR(Status) && Status != EFI_NO_MEDIA) {
     //
     // For NoMedia, BlockIo is still needed.
     //
@@ -860,7 +860,7 @@ UsbBootReadWriteBlocks (
                ByteSize,
                Timeout
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     DEBUG ((
@@ -940,7 +940,7 @@ UsbBootReadWriteBlocks16 (
                ByteSize,
                Timeout
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     DEBUG ((

@@ -139,7 +139,7 @@ Security2StubAuthenticate (
 
   if (FileBuffer != NULL) {
     Status = Defer3rdPartyImageLoad (File, BootPolicy);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -202,7 +202,7 @@ SecurityStubInitialize (
                   &mSecurityStub,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Defer3rdPartyImageLoadInitialize ();
 

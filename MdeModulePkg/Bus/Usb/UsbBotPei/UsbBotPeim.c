@@ -86,7 +86,7 @@ PeimInitializeUsbBot (
   //
   // Shadow this PEIM to run from memory
   //
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -101,7 +101,7 @@ PeimInitializeUsbBot (
                               &TempPpiDescriptor,
                               (VOID **) &UsbIoPpi
                               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -174,7 +174,7 @@ InitUsbBot (
                       UsbIoPpi,
                       &InterfaceDesc
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -191,7 +191,7 @@ InitUsbBot (
              MemPages,
              &AllocateAddress
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -223,7 +223,7 @@ InitUsbBot (
                         &EndpointDesc
                         );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -258,7 +258,7 @@ InitUsbBot (
   PeiBotDevice->BlkIo2PpiList.Ppi = &PeiBotDevice->BlkIo2Ppi;
 
   Status                          = PeiUsbInquiry (PeiServices, PeiBotDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -267,7 +267,7 @@ InitUsbBot (
              1,
              &AllocateAddress
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -275,7 +275,7 @@ InitUsbBot (
 
   Status = PeiServicesInstallPpi (&PeiBotDevice->BlkIoPpiList);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -370,7 +370,7 @@ BotGetMediaInfo (
             PeiBotDev
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -488,7 +488,7 @@ BotReadBlocks (
       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // if any error encountered, detect what happened to the media and
     // update the media info accordingly.
@@ -645,7 +645,7 @@ BotGetMediaInfo2 (
              &PeiBotDev->Media
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -763,7 +763,7 @@ PeiBotDetectMedia (
              1,
              &AllocateAddress
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -845,7 +845,7 @@ PeiBotDetectMedia (
                   PeiServices,
                   PeiBotDev
                   );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           //
           // retry the ReadFormatCapacity command
           //
@@ -874,7 +874,7 @@ PeiBotDetectMedia (
       //
       // If Request Sense data failed,retry.
       //
-      if (EFI_ERROR (FloppyStatus)) {
+      if (EFI_ERROR(FloppyStatus)) {
         continue;
       }
       //

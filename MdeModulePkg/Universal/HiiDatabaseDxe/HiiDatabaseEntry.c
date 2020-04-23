@@ -200,7 +200,7 @@ InitializeHiiDatabase (
                   &gEfiHiiKeyBoardLayoutGuid,
                   &gHiiKeyboardLayoutChanged
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -220,7 +220,7 @@ InitializeHiiDatabase (
                   NULL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -241,7 +241,7 @@ InitializeHiiDatabase (
                NULL,
                &ReadyToBootEvent
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }

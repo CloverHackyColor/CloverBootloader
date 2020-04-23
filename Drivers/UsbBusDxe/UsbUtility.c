@@ -1133,7 +1133,7 @@ UsbBusFreeUsbDPList (
     //
     ListIndex =  ListIndex->ForwardLink;
     RemoveEntryList (&ListItem->Link);
-    FreePool (ListItem);
+    FreePool(ListItem);
   }
 
   InitializeListHead (UsbIoDPList);
@@ -1189,8 +1189,8 @@ UsbBusAddWantedUsbIoDP (
     //
 //    DBG("UsbBusFreeUsbDPList\n");
     Status = UsbBusFreeUsbDPList (&Bus->WantedUsbIoDPList);
-//    ASSERT (!EFI_ERROR (Status));
-    if (EFI_ERROR (Status)) {
+//    ASSERT (!EFI_ERROR(Status));
+    if (EFI_ERROR(Status)) {
       return EFI_NOT_FOUND;
     }
       
@@ -1215,9 +1215,9 @@ UsbBusAddWantedUsbIoDP (
     return EFI_INVALID_PARAMETER;
   }
   Status = AddUsbDPToList (DevicePathPtr, &Bus->WantedUsbIoDPList);
-//  ASSERT (!EFI_ERROR (Status));
-  FreePool (DevicePathPtr);
-  if (EFI_ERROR (Status)) {
+//  ASSERT (!EFI_ERROR(Status));
+  FreePool(DevicePathPtr);
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
   
@@ -1330,7 +1330,7 @@ UsbBusIsWantedUsbIO (
 
     WantedListIndex =  WantedListIndex->ForwardLink;
   }
-  gBS->FreePool (DevicePathPtr);
+  gBS->FreePool(DevicePathPtr);
 
   //
   // Check whether the new Usb device path is wanted
@@ -1381,8 +1381,8 @@ UsbBusRecursivelyConnectWantedUsbIo (
   if (Status == EFI_NOT_FOUND || UsbIoHandleCount == 0) {
     return EFI_SUCCESS;
   }
-//  ASSERT (!EFI_ERROR (Status));
-  if (EFI_ERROR (Status)) {
+//  ASSERT (!EFI_ERROR(Status));
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1393,7 +1393,7 @@ UsbBusRecursivelyConnectWantedUsbIo (
     //
     UsbIoDevicePath = NULL;
     Status = gBS->HandleProtocol (UsbIoBuffer[Index], &gEfiDevicePathProtocolGuid, (VOID *) &UsbIoDevicePath);
-    if (EFI_ERROR (Status) || UsbIoDevicePath == NULL) {
+    if (EFI_ERROR(Status) || UsbIoDevicePath == NULL) {
       continue;
     }
     if (CompareMem (
@@ -1412,7 +1412,7 @@ UsbBusRecursivelyConnectWantedUsbIo (
                      &gEfiUsbIoProtocolGuid,
                      (VOID **) &UsbIo
                      );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     UsbIf   = USB_INTERFACE_FROM_USBIO (UsbIo);
@@ -1424,7 +1424,7 @@ UsbBusRecursivelyConnectWantedUsbIo (
         //
    //     DEBUG ((EFI_D_INFO, "UsbConnectDriver: TPL before connect is %d\n", (UINT32)UsbGetCurrentTpl ()));
         Status            = gBS->ConnectController (UsbIf->Handle, NULL, NULL, TRUE);
-        UsbIf->IsManaged  = (BOOLEAN)!EFI_ERROR (Status);
+        UsbIf->IsManaged  = (BOOLEAN)!EFI_ERROR(Status);
   //      DEBUG ((EFI_D_INFO, "UsbConnectDriver: TPL after connect is %d\n", (UINT32)UsbGetCurrentTpl()));
       }
     }

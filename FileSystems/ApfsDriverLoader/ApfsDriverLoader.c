@@ -104,7 +104,7 @@ StartApfsDriver (
     (VOID **) &ParentDevicePath
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
       ParentDevicePath = NULL;
       DEBUG ((DEBUG_WARN, "ApfsDriver DevicePath not present\n"));
   }
@@ -125,7 +125,7 @@ StartApfsDriver (
   DEBUG ((DEBUG_WARN, "New ImageSize after verification: %lu\n", EfiFileSize));
 
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 */
     Status = gBS->LoadImage (
       FALSE,
@@ -135,7 +135,7 @@ StartApfsDriver (
       EfiFileSize,
       &ImageHandle
       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_WARN, "Load image failed with Status: %r\n", Status));
         return Status;
       }
@@ -153,7 +153,7 @@ StartApfsDriver (
     (VOID *) &LoadedApfsDrvImage
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "Failed to Handle LoadedImage Protool with Status: %r\n", Status));
     gBS->UnloadImage (ImageHandle);
     return Status;
@@ -179,9 +179,9 @@ StartApfsDriver (
     &NewSystemTable->Hdr.CRC32
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "Failed to calculated new system table CRC32 with Status: %r\n", Status));
-    FreePool (NewSystemTable);
+    FreePool(NewSystemTable);
     gBS->UnloadImage (ImageHandle);
     return Status;
   }
@@ -194,14 +194,14 @@ StartApfsDriver (
     NULL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "Failed to start ApfsDriver with Status: %r\n", Status));
 
     //
     // Unload ApfsDriver image from memory
     //
     gBS->UnloadImage (ImageHandle);
-    FreePool (NewSystemTable);
+    FreePool(NewSystemTable);
     return Status;
   }
 
@@ -287,7 +287,7 @@ LegacyApfsContainerScan (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BlockIo2 = NULL;
 
     Status = gBS->OpenProtocol (
@@ -299,7 +299,7 @@ LegacyApfsContainerScan (
       EFI_OPEN_PROTOCOL_GET_PROTOCOL
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   }
@@ -313,7 +313,7 @@ LegacyApfsContainerScan (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DiskIo2 = NULL;
     Status = gBS->OpenProtocol (
       ControllerHandle,
@@ -324,7 +324,7 @@ LegacyApfsContainerScan (
       EFI_OPEN_PROTOCOL_GET_PROTOCOL
       );
 
-    if (EFI_ERROR (Status)){
+    if (EFI_ERROR(Status)){
       return EFI_UNSUPPORTED;
     }
   }
@@ -357,8 +357,8 @@ LegacyApfsContainerScan (
     Block
     );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Block);
+  if (EFI_ERROR(Status)) {
+    FreePool(Block);
     return EFI_DEVICE_ERROR;
   }
 
@@ -380,13 +380,13 @@ LegacyApfsContainerScan (
     //
     // Reallocate Block size to contain all of partition entries.
     //
-    FreePool (Block);
+    FreePool(Block);
     Block = AllocateZeroPool ((UINTN)PartitionNumber * PartitionEntrySize);
     if (Block == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
   } else {
-    FreePool (Block);
+    FreePool(Block);
     return EFI_UNSUPPORTED;
   }
 
@@ -399,8 +399,8 @@ LegacyApfsContainerScan (
     Block
     );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Block);
+  if (EFI_ERROR(Status)) {
+    FreePool(Block);
     return EFI_DEVICE_ERROR;
   }
 
@@ -420,7 +420,7 @@ LegacyApfsContainerScan (
   }
 
   if (ApfsGptEntry == NULL)  {
-    FreePool (Block);
+    FreePool(Block);
     return EFI_UNSUPPORTED;
   }
   LegacyBaseOffset = MultU64x32 (ApfsGptEntry->StartingLBA, BlockSize);
@@ -471,7 +471,7 @@ ApfsDriverLoaderSupported (
     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
     );
 
-   if (!EFI_ERROR (Status)) {
+   if (!EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
    }
 
@@ -489,7 +489,7 @@ ApfsDriverLoaderSupported (
     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
       ControllerHandle,
       &gEfiDiskIoProtocolGuid,
@@ -500,7 +500,7 @@ ApfsDriverLoaderSupported (
       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -513,7 +513,7 @@ ApfsDriverLoaderSupported (
     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol(
       ControllerHandle,
       &gEfiBlockIoProtocolGuid,
@@ -545,7 +545,7 @@ ApfsDriverLoaderSupported (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
       ControllerHandle,
       &gEfiPartitionInfoProtocolGuid,
@@ -555,7 +555,7 @@ ApfsDriverLoaderSupported (
       EFI_OPEN_PROTOCOL_GET_PROTOCOL
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = gBS->OpenProtocol (
         ControllerHandle,
         &gApplePartitionInfoProtocolGuid,
@@ -565,7 +565,7 @@ ApfsDriverLoaderSupported (
         EFI_OPEN_PROTOCOL_GET_PROTOCOL
         );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ApplePartitionInfo = NULL;
         return Status;
       }
@@ -659,7 +659,7 @@ ApfsDriverLoaderStart (
     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
     );
 
-   if (!EFI_ERROR (Status)) {
+   if (!EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
    }
 
@@ -677,7 +677,7 @@ ApfsDriverLoaderStart (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BlockIo2 = NULL;
 
     Status = gBS->OpenProtocol (
@@ -689,7 +689,7 @@ ApfsDriverLoaderStart (
       EFI_OPEN_PROTOCOL_GET_PROTOCOL
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   }
@@ -703,7 +703,7 @@ ApfsDriverLoaderStart (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DiskIo2 = NULL;
     Status = gBS->OpenProtocol (
       ControllerHandle,
@@ -714,7 +714,7 @@ ApfsDriverLoaderStart (
       EFI_OPEN_PROTOCOL_GET_PROTOCOL
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   }
@@ -742,8 +742,8 @@ ApfsDriverLoaderStart (
     ApfsBlock
     );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (ApfsBlock);
+  if (EFI_ERROR(Status)) {
+    FreePool(ApfsBlock);
     return EFI_DEVICE_ERROR;
   }
 
@@ -767,7 +767,7 @@ ApfsDriverLoaderStart (
   DEBUG ((DEBUG_VERBOSE, "Should be: %08x\n", APFS_CSB_SIGNATURE));
 
   if (ContainerSuperBlock->Magic != APFS_CSB_SIGNATURE) {
-    FreePool (ApfsBlock);
+    FreePool(ApfsBlock);
     return EFI_UNSUPPORTED;
   }
 
@@ -802,7 +802,7 @@ ApfsDriverLoaderStart (
   // Free ApfsBlock and allocate one of a correct size.
   // ContainerSuperBlock (& EfiBootRecordBlockPtr ?) will not valid now
   //
-  FreePool (ApfsBlock);
+  FreePool(ApfsBlock);
   ApfsBlock = AllocateZeroPool (ApfsBlockSize);
   if (ApfsBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -820,8 +820,8 @@ ApfsDriverLoaderStart (
     ApfsBlock
     );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (ApfsBlock);
+  if (EFI_ERROR(Status)) {
+    FreePool(ApfsBlock);
     return EFI_DEVICE_ERROR;
   }
 
@@ -829,7 +829,7 @@ ApfsDriverLoaderStart (
   // Verify ContainerSuperblock checksum.
   //
   if (!ApfsBlockChecksumVerify ((UINT8 *) ApfsBlock, ApfsBlockSize)) {
-    FreePool (ApfsBlock);
+    FreePool(ApfsBlock);
     return EFI_UNSUPPORTED;
   }
 
@@ -864,8 +864,8 @@ ApfsDriverLoaderStart (
     ApfsBlock
     );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (ApfsBlock);
+  if (EFI_ERROR(Status)) {
+    FreePool(ApfsBlock);
     return EFI_DEVICE_ERROR;
   }
 
@@ -873,13 +873,13 @@ ApfsDriverLoaderStart (
   // Verify EfiBootRecordBlock checksum.
   //
   if (!ApfsBlockChecksumVerify (ApfsBlock, ApfsBlockSize)) {
-    FreePool (ApfsBlock);
+    FreePool(ApfsBlock);
     return EFI_UNSUPPORTED;
   }
 
   EfiBootRecordBlock = (APFS_EFI_BOOT_RECORD *) ApfsBlock;
   if (EfiBootRecordBlock->Magic != APFS_EFIBOOTRECORD_SIGNATURE) {
-    FreePool (ApfsBlock);
+    FreePool(ApfsBlock);
     return EFI_UNSUPPORTED;
   }
 
@@ -933,7 +933,7 @@ ApfsDriverLoaderStart (
                       );
 
     if (EfiFileBuffer == NULL) {
-      FreePool (ApfsBlock);
+      FreePool(ApfsBlock);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -949,9 +949,9 @@ ApfsDriverLoaderStart (
       (UINT8*)EfiFileBuffer + CurPos
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       FreePool(EfiFileBuffer);
-      FreePool (ApfsBlock);
+      FreePool(ApfsBlock);
       return EFI_DEVICE_ERROR;
     }
     //
@@ -989,7 +989,7 @@ ApfsDriverLoaderStart (
   //
   Private = AllocatePool (sizeof (APFS_DRIVER_INFO_PRIVATE_DATA));
   if (Private == NULL) {
-    FreePool (ApfsBlock);
+    FreePool(ApfsBlock);
     if (EfiFileBuffer) {
       FreePool(EfiFileBuffer);
     }
@@ -1008,19 +1008,19 @@ ApfsDriverLoaderStart (
     NULL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_WARN,
       "ApfsEfiBootRecordInfoProtocol install failed with Status %r\n",
       Status
       ));
     if (EfiFileBuffer != NULL) {
-      FreePool (EfiFileBuffer);
+      FreePool(EfiFileBuffer);
     }
     if (Private != NULL) {
-      FreePool (Private);
+      FreePool(Private);
     }
-    FreePool (ApfsBlock);
+    FreePool(ApfsBlock);
 
     return Status;
   }
@@ -1031,9 +1031,9 @@ ApfsDriverLoaderStart (
     EfiBootRecordBlock->EfiFileLen
     );
 
-  FreePool (ApfsBlock);
+  FreePool(ApfsBlock);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->UninstallProtocolInterface (
       ControllerHandle,
       &gApfsEfiBootRecordInfoProtocolGuid,
@@ -1041,10 +1041,10 @@ ApfsDriverLoaderStart (
       );
 
     if (EfiFileBuffer != NULL) {
-      FreePool (EfiFileBuffer);
+      FreePool(EfiFileBuffer);
     }
     if (Private != NULL) {
-      FreePool (Private);
+      FreePool(Private);
     }
 
     return EFI_UNSUPPORTED;
@@ -1054,10 +1054,10 @@ ApfsDriverLoaderStart (
   // Free memory and close DiskIo protocol
   //
   if (EfiFileBuffer != NULL) {
-    FreePool (EfiFileBuffer);
+    FreePool(EfiFileBuffer);
   }
   if (Private != NULL) {
-    FreePool (Private);
+    FreePool(Private);
   }
   if (DiskIo2 != NULL) {
     gBS->CloseProtocol (
@@ -1115,7 +1115,7 @@ ApfsDriverLoaderStop (
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->CloseProtocol (
       ControllerHandle,
       &gEfiDiskIoProtocolGuid,

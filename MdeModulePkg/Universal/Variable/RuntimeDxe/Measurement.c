@@ -132,7 +132,7 @@ MeasureVariable (
              VarLog,
              VarLogSize
              );
-  FreePool (VarLog);
+  FreePool(VarLog);
   return Status;
 }
 
@@ -192,7 +192,7 @@ InternalGetVariable (
   // Get the variable data.
   //
   Status = gRT->GetVariable ((CHAR16 *) Name, (EFI_GUID *) Guid, NULL, &BufferSize, *Value);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool(*Value);
     *Value = NULL;
   }
@@ -237,7 +237,7 @@ SecureBootHook (
              &VariableData,
              &VariableDataSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Measure DBT only if present and not empty
     //
@@ -260,7 +260,7 @@ SecureBootHook (
   DEBUG ((EFI_D_INFO, "MeasureBootPolicyVariable - %r\n", Status));
 
   if (VariableData != NULL) {
-    FreePool (VariableData);
+    FreePool(VariableData);
   }
 
   //
@@ -274,7 +274,7 @@ SecureBootHook (
                 &VariableData,
                 &VariableDataSize
                 );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
        return;
      }
 

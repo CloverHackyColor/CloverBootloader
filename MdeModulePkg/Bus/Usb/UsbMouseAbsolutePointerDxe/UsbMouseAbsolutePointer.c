@@ -46,7 +46,7 @@ USBMouseAbsolutePointerDriverBindingEntryPoint (
              &gUsbMouseAbsolutePointerComponentName,
              &gUsbMouseAbsolutePointerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -82,7 +82,7 @@ USBMouseAbsolutePointerDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -157,7 +157,7 @@ USBMouseAbsolutePointerDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit1;
   }
 
@@ -179,7 +179,7 @@ USBMouseAbsolutePointerDriverBindingStart (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -248,7 +248,7 @@ USBMouseAbsolutePointerDriverBindingStart (
     );
 
   Status = InitializeUsbMouseDevice (UsbMouseAbsolutePointerDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Fail to initialize USB mouse device.
     //
@@ -275,7 +275,7 @@ USBMouseAbsolutePointerDriverBindingStart (
                   UsbMouseAbsolutePointerDevice,
                   &((UsbMouseAbsolutePointerDevice->AbsolutePointerProtocol).WaitForInput)
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -286,7 +286,7 @@ USBMouseAbsolutePointerDriverBindingStart (
                   &UsbMouseAbsolutePointerDevice->AbsolutePointerProtocol
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -318,7 +318,7 @@ USBMouseAbsolutePointerDriverBindingStart (
                     UsbMouseAbsolutePointerDevice
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // If submit error, uninstall that interface
     //
@@ -353,7 +353,7 @@ USBMouseAbsolutePointerDriverBindingStart (
 // Error handler
 //
 ErrorExit:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           Controller,
           &gEfiUsbIoProtocolGuid,
@@ -366,7 +366,7 @@ ErrorExit:
         gBS->CloseEvent ((UsbMouseAbsolutePointerDevice->AbsolutePointerProtocol).WaitForInput);
       }
 
-      FreePool (UsbMouseAbsolutePointerDevice);
+      FreePool(UsbMouseAbsolutePointerDevice);
       UsbMouseAbsolutePointerDevice = NULL;
     }
   }
@@ -414,7 +414,7 @@ USBMouseAbsolutePointerDriverBindingStop (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -449,7 +449,7 @@ USBMouseAbsolutePointerDriverBindingStop (
                   &gEfiAbsolutePointerProtocolGuid,
                   &UsbMouseAbsolutePointerDevice->AbsolutePointerProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -474,7 +474,7 @@ USBMouseAbsolutePointerDriverBindingStop (
     FreeUnicodeStringTable (UsbMouseAbsolutePointerDevice->ControllerNameTable);
   }
 
-  FreePool (UsbMouseAbsolutePointerDevice);
+  FreePool(UsbMouseAbsolutePointerDevice);
 
   return EFI_SUCCESS;
 
@@ -506,7 +506,7 @@ IsUsbMouse (
                     &InterfaceDescriptor
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -562,7 +562,7 @@ InitializeUsbMouseDevice (
                     UsbIo,
                     &ConfigDesc
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -583,8 +583,8 @@ InitializeUsbMouseDevice (
              Buf,
              &TransferResult
              );
-  if (EFI_ERROR (Status)) {
-    FreePool (Buf);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buf);
     return Status;
   }
 
@@ -617,7 +617,7 @@ InitializeUsbMouseDevice (
   }
 
   if (MouseHidDesc == NULL) {
-    FreePool (Buf);
+    FreePool(Buf);
     return EFI_UNSUPPORTED;
   }
 
@@ -625,7 +625,7 @@ InitializeUsbMouseDevice (
   // Get report descriptor
   //
   if (MouseHidDesc->HidClassDesc[0].DescriptorType != USB_DESC_TYPE_REPORT) {
-    FreePool (Buf);
+    FreePool(Buf);
     return EFI_UNSUPPORTED;
   }
 
@@ -639,9 +639,9 @@ InitializeUsbMouseDevice (
              ReportDesc
              );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Buf);
-    FreePool (ReportDesc);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buf);
+    FreePool(ReportDesc);
     return Status;
   }
 
@@ -654,9 +654,9 @@ InitializeUsbMouseDevice (
              MouseHidDesc->HidClassDesc[0].DescriptorLength
              );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Buf);
-    FreePool (ReportDesc);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buf);
+    FreePool(ReportDesc);
     return Status;
   }
 
@@ -692,15 +692,15 @@ InitializeUsbMouseDevice (
                BOOT_PROTOCOL
                );
 
-    if (EFI_ERROR (Status)) {
-      FreePool (Buf);
-      FreePool (ReportDesc);
+    if (EFI_ERROR(Status)) {
+      FreePool(Buf);
+      FreePool(ReportDesc);
       return Status;
     }
   }
 
-  FreePool (Buf);
-  FreePool (ReportDesc);
+  FreePool(Buf);
+  FreePool(ReportDesc);
 
   //
   // Create event for delayed recovery, which deals with device error.

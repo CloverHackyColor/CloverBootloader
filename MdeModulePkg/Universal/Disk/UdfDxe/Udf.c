@@ -62,7 +62,7 @@ UdfDriverBindingSupported (
     ControllerHandle,
     EFI_OPEN_PROTOCOL_BY_DRIVER
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -134,7 +134,7 @@ UdfDriverBindingStart (
     ControllerHandle,
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Open DiskIo protocol on ControllerHandle
@@ -147,13 +147,13 @@ UdfDriverBindingStart (
     ControllerHandle,
     EFI_OPEN_PROTOCOL_BY_DRIVER
     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Check if ControllerHandle supports an UDF file system
   //
   Status = SupportUdfFileSystem (This, ControllerHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -193,7 +193,7 @@ UdfDriverBindingStart (
     );
 
 Exit:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Close DiskIo protocol on ControllerHandle
     //
@@ -257,7 +257,7 @@ UdfDriverBindingStop (
     ControllerHandle,
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     PrivFsData = PRIVATE_UDF_SIMPLE_FS_DATA_FROM_THIS (SimpleFs);
 
     //
@@ -270,10 +270,10 @@ UdfDriverBindingStop (
       NULL
       );
 
-    FreePool ((VOID *)PrivFsData);
+    FreePool((VOID *)PrivFsData);
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Close DiskIo protocol on ControllerHandle
     //
@@ -325,7 +325,7 @@ InitializeUdf (
     &gUdfComponentName,
     &gUdfComponentName2
     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

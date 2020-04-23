@@ -58,7 +58,7 @@ CoreSetWatchdogTimer (
   //
   // Check for errors
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 

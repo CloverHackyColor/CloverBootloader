@@ -131,7 +131,7 @@ AmlGetChildFromOptionList (
                (VOID **)&Data,
                &DataSize
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
     if (DataType == EFI_ACPI_DATA_TYPE_NONE) {
@@ -202,7 +202,7 @@ AmlGetChildFromObjectChildList (
   // Now, we get the last node.
   //
   Status = AmlGetOffsetAfterLastOption (AmlParentHandle, &CurrentBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -260,7 +260,7 @@ AmlGetChildFromNonRoot (
   // 1. Get Option
   //
   Status = AmlGetChildFromOptionList (AmlParentHandle, AmlHandle, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   if (*Buffer != NULL) {

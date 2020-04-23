@@ -1086,7 +1086,7 @@ HdaCodecDriverBindingStart(
     // Open Device Path protocol.
     Status = gBS->OpenProtocol(ControllerHandle, &gEfiDevicePathProtocolGuid, (VOID**)&HdaCodecDevicePath,
         This->DriverBindingHandle, ControllerHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         goto CLOSE_CODEC;
     // Allocate codec device.
     HdaCodecDev = AllocateZeroPool(sizeof(HDA_CODEC_DEV));
@@ -1102,18 +1102,18 @@ HdaCodecDriverBindingStart(
     HdaCodecDev->ControllerHandle = ControllerHandle;
     // Probe codec.
     Status = HdaCodecProbeCodec(HdaCodecDev);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         goto FREE_CODEC;
 
     // Get ports.
     Status = HdaCodecParsePorts(HdaCodecDev);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         goto FREE_CODEC;
 
     // Publish protocols.
     Status = HdaCodecInstallProtocols(HdaCodecDev);
     ASSERT_EFI_ERROR(Status);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         goto FREE_CODEC;
 
     // Success.

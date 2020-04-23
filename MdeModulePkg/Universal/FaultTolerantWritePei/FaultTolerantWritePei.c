@@ -241,14 +241,14 @@ PeimFaultTolerantWriteInitialize (
                WorkSpaceLength,
                &FtwLastWriteHeader
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = FtwGetLastWriteRecord (
                  FtwLastWriteHeader,
                  &FtwLastWriteRecord
                  );
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       ASSERT (FtwLastWriteRecord != NULL);
       if ((FtwLastWriteRecord->SpareComplete == FTW_VALID_STATE) && (FtwLastWriteRecord->DestinationComplete != FTW_VALID_STATE)) {
         //

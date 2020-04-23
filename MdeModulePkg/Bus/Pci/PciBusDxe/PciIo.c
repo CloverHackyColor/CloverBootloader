@@ -216,7 +216,7 @@ PciIoPollMem (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeMem, Width, 1, &Offset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -230,7 +230,7 @@ PciIoPollMem (
   if (FeaturePcdGet (PcdUnalignedPciIoEnable)) {
     if ((Offset & ((1 << (Width & 0x03)) - 1)) != 0) {
       Status  = PciIoMemRead (This, Width, BarIndex, Offset, 1, Result);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       if ((*Result & Mask) == Value || Delay == 0) {
@@ -243,7 +243,7 @@ PciIoPollMem (
         gBS->Stall (10);
 
         Status  = PciIoMemRead (This, Width, BarIndex, Offset, 1, Result);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
         if ((*Result & Mask) == Value) {
@@ -267,7 +267,7 @@ PciIoPollMem (
                                            Result
                                            );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -323,7 +323,7 @@ PciIoPollIo (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeIo, Width, 1, &Offset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -333,7 +333,7 @@ PciIoPollIo (
   if (FeaturePcdGet (PcdUnalignedPciIoEnable)) {
     if ((Offset & ((1 << (Width & 0x03)) - 1)) != 0) {
       Status  = PciIoIoRead (This, Width, BarIndex, Offset, 1, Result);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       if ((*Result & Mask) == Value || Delay == 0) {
@@ -346,7 +346,7 @@ PciIoPollIo (
         gBS->Stall (10);
 
         Status  = PciIoIoRead (This, Width, BarIndex, Offset, 1, Result);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
         if ((*Result & Mask) == Value) {
@@ -370,7 +370,7 @@ PciIoPollIo (
                                            Result
                                            );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -426,7 +426,7 @@ PciIoMemRead (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeMem, Width, Count, &Offset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -449,7 +449,7 @@ PciIoMemRead (
                                               Buffer
                                               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_READ_ERROR,
@@ -505,7 +505,7 @@ PciIoMemWrite (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeMem, Width, Count, &Offset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -527,7 +527,7 @@ PciIoMemWrite (
                                               Buffer
                                               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_WRITE_ERROR,
@@ -583,7 +583,7 @@ PciIoIoRead (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeIo, Width, Count, &Offset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -605,7 +605,7 @@ PciIoIoRead (
                                               Buffer
                                               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_READ_ERROR,
@@ -661,7 +661,7 @@ PciIoIoWrite (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, BarIndex, PciBarTypeIo, Width, Count, &Offset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -683,7 +683,7 @@ PciIoIoWrite (
                                               Buffer
                                               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_WRITE_ERROR,
@@ -730,7 +730,7 @@ PciIoConfigRead (
 
   Address     = Offset;
   Status      = PciIoVerifyConfigAccess (PciIoDevice, Width, Count, &Address);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -752,7 +752,7 @@ PciIoConfigRead (
                                                Buffer
                                                );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_READ_ERROR,
@@ -799,7 +799,7 @@ PciIoConfigWrite (
 
   Address     = Offset;
   Status      = PciIoVerifyConfigAccess (PciIoDevice, Width, Count, &Address);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -821,7 +821,7 @@ PciIoConfigWrite (
                                               Buffer
                                               );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_WRITE_ERROR,
@@ -893,12 +893,12 @@ PciIoCopyMem (
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, DestBarIndex, PciBarTypeMem, Width, Count, &DestOffset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
   Status = PciIoVerifyBarAccess (PciIoDevice, SrcBarIndex, PciBarTypeMem, Width, Count, &SrcOffset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -920,7 +920,7 @@ PciIoCopyMem (
                                           Count
                                           );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -990,7 +990,7 @@ PciIoMap (
                                           Mapping
                                           );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -999,7 +999,7 @@ PciIoMap (
   }
 
   if (mIoMmuProtocol != NULL) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       switch (Operation) {
       case EfiPciIoOperationBusMasterRead:
         IoMmuAttribute = EDKII_IOMMU_ACCESS_READ;
@@ -1062,7 +1062,7 @@ PciIoUnmap (
                                           Mapping
                                           );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -1127,7 +1127,7 @@ PciIoAllocateBuffer (
                                           Attributes
                                           );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -1169,7 +1169,7 @@ PciIoFreeBuffer (
                                           HostAddress
                                           );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -1205,7 +1205,7 @@ PciIoFlush (
   Status = PciIoDevice->PciRootBridgeIo->Flush (
                                            PciIoDevice->PciRootBridgeIo
                                            );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -1333,7 +1333,7 @@ ModifyRootBridgeAttributes (
                                           &PciRootBridgeSupports,
                                           &PciRootBridgeAttributes
                                           );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1364,7 +1364,7 @@ ModifyRootBridgeAttributes (
                                             NULL,
                                             NULL
                                             );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // The PCI Root Bridge could not modify the attributes, so return the error.
       //
@@ -1556,7 +1556,7 @@ PciIoAttributes (
                                   Attributes,
                                   NULL
                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
 
@@ -1566,7 +1566,7 @@ PciIoAttributes (
                                   (~Attributes) & (PciIoDevice->Supports),
                                   NULL
                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
 
@@ -1685,7 +1685,7 @@ PciIoAttributes (
         //
         Status = SupportPaletteSnoopAttributes (PciIoDevice, Operation);
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
 
           //
           // Enable operation is forbidden, so mask the bit in attributes
@@ -1765,7 +1765,7 @@ PciIoAttributes (
 
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_PCI | EFI_IOB_EC_CONTROLLER_ERROR,
@@ -1802,7 +1802,7 @@ GetMmioAddressTranslationOffset (
                            RootBridgeIo,
                            (VOID **) &Configuration
                            );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return (UINT64) -1;
   }
 
@@ -1962,7 +1962,7 @@ PciIoGetBarAttributes (
                                             Descriptor->AddrLen
                                             );
       if (Descriptor->AddrTranslationOffset == (UINT64) -1) {
-        FreePool (Descriptor);
+        FreePool(Descriptor);
         return EFI_UNSUPPORTED;
       }
     }
@@ -2048,7 +2048,7 @@ PciIoSetBarAttributes (
             (UINT32) *Length,
             &NonRelativeOffset
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 

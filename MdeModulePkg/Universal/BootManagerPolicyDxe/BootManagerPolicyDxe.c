@@ -42,7 +42,7 @@ ConnectAllAndCreateNetworkDeviceList (
   EfiBootManagerConnectAll ();
 
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiManagedNetworkServiceBindingProtocolGuid, NULL, &HandleCount, &Handles);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Handles = NULL;
     HandleCount = 0;
   }
@@ -50,13 +50,13 @@ ConnectAllAndCreateNetworkDeviceList (
   Devices = NULL;
   while (HandleCount-- != 0) {
     Status = gBS->HandleProtocol (Handles[HandleCount], &gEfiDevicePathProtocolGuid, (VOID **) &SingleDevice);
-    if (EFI_ERROR (Status) || (SingleDevice == NULL)) {
+    if (EFI_ERROR(Status) || (SingleDevice == NULL)) {
       continue;
     }
     TempDevicePath = Devices;
     Devices = AppendDevicePathInstance (Devices, SingleDevice);
     if (TempDevicePath != NULL) {
-      FreePool (TempDevicePath);
+      FreePool(TempDevicePath);
     }
   }
 
@@ -72,7 +72,7 @@ ConnectAllAndCreateNetworkDeviceList (
     // Fails to save the network device list to NV storage is not a fatal error.
     // Only impact is performance.
     //
-    FreePool (Devices);
+    FreePool(Devices);
   }
 
   return (Devices == NULL) ? EFI_DEVICE_ERROR : EFI_SUCCESS;
@@ -102,13 +102,13 @@ ConnectNetwork (
   while (TempDevicePath != NULL) {
     SingleDevice = GetNextDevicePathInstance (&TempDevicePath, &Size);
     Status = EfiBootManagerConnectDevicePath (SingleDevice, NULL);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       OneConnected = TRUE;
     }
-    FreePool (SingleDevice);
+    FreePool(SingleDevice);
   }
   if (Devices != NULL) {
-    FreePool (Devices);
+    FreePool(Devices);
   }
 
   if (OneConnected) {
@@ -169,7 +169,7 @@ BootManagerPolicyConnectDevicePath (
     Status = EfiBootManagerConnectDevicePath (DevicePath, NULL);
   } else {
     Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &DevicePath, &Controller);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gBS->ConnectController (Controller, NULL, DevicePath, FALSE);
     }
   }

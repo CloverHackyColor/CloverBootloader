@@ -241,7 +241,7 @@ CoreInternalAllocatePool (
   // Acquire the memory lock and make the allocation
   //
   Status = CoreAcquireLockOrFail (&mPoolMemoryLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -276,7 +276,7 @@ CoreAllocatePool (
   EFI_STATUS  Status;
 
   Status = CoreInternalAllocatePool (PoolType, Size, Buffer);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     CoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionAllocatePool,
@@ -315,7 +315,7 @@ CoreAllocatePoolPagesI (
   EFI_STATUS  Status;
 
   Status = CoreAcquireLockOrFail (&gMemoryLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -542,7 +542,7 @@ Done:
 **/
 EFI_STATUS
 EFIAPI
-CoreInternalFreePool (
+CoreInternalFreePool(
   IN VOID               *Buffer,
   OUT EFI_MEMORY_TYPE   *PoolType OPTIONAL
   )
@@ -570,15 +570,15 @@ CoreInternalFreePool (
 **/
 EFI_STATUS
 EFIAPI
-CoreFreePool (
+CoreFreePool(
   IN VOID  *Buffer
   )
 {
   EFI_STATUS        Status;
   EFI_MEMORY_TYPE   PoolType;
 
-  Status = CoreInternalFreePool (Buffer, &PoolType);
-  if (!EFI_ERROR (Status)) {
+  Status = CoreInternalFreePool(Buffer, &PoolType);
+  if (!EFI_ERROR(Status)) {
     CoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionFreePool,

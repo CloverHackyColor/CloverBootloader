@@ -57,7 +57,7 @@ LocateFvInstanceWithTables (
                    &NumberOfHandles,
                    &HandleBuffer
                    );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Defined errors at this time are not found and out of resources.
     //
@@ -80,7 +80,7 @@ LocateFvInstanceWithTables (
                      &gEfiFirmwareVolume2ProtocolGuid,
                      (VOID**) &FvInstance
                      );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // See if it has the ACPI storage file
@@ -112,7 +112,7 @@ LocateFvInstanceWithTables (
   //
   // Free any allocated buffers
   //
-  gBS->FreePool (HandleBuffer);
+  gBS->FreePool(HandleBuffer);
 
   return Status;
 }
@@ -183,7 +183,7 @@ AcpiPlatformEntryPoint (
   // Find the AcpiTable protocol
   //
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -191,7 +191,7 @@ AcpiPlatformEntryPoint (
   // Locate the firmware volume protocol
   //
   Status = LocateFvInstanceWithTables (&FwVol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   //
@@ -235,7 +235,7 @@ AcpiPlatformEntryPoint (
       //
       // Free memory allocated by ReadSection
       //
-      gBS->FreePool (CurrentTable);
+      gBS->FreePool(CurrentTable);
 
       if (EFI_ERROR(Status)) {
         return EFI_ABORTED;

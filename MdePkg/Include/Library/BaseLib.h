@@ -2009,7 +2009,7 @@ AsciiStrSize (
 **/
 INTN
 EFIAPI
-AsciiStrCmp (
+AsciiStrCmp(
   IN      CONST CHAR8               *FirstString,
   IN      CONST CHAR8               *SecondString
   );

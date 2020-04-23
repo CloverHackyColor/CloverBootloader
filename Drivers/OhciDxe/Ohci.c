@@ -72,7 +72,7 @@ OhciReset (
   if ((Attributes & EFI_USB_HC_RESET_HOST_CONTROLLER) != 0) {
     gBS->Stall (50 * 1000);
     Status = OhciSetHcCommandStatus (Ohc, HC_RESET, HC_RESET);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
     gBS->Stall (50 * 1000);	
@@ -83,7 +83,7 @@ OhciReset (
     do {
       gBS->Stall (1 * 1000);
       Data32 = OhciGetOperationalReg (Ohc->PciIo, HC_COMMAND_STATUS );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_DEVICE_ERROR;
       }
       if ((Data32 & HC_RESET) == 0) {
@@ -100,7 +100,7 @@ OhciReset (
   OhciSetFrameInterval (Ohc, FRAME_INTERVAL, 0x2edf);
   if ((Attributes &  EFI_USB_HC_RESET_GLOBAL) != 0) {
     Status = OhciSetHcControl (Ohc, HC_FUNCTIONAL_STATE, HC_STATE_RESET);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
     gBS->Stall (50 * 1000);
@@ -124,7 +124,7 @@ OhciReset (
   OhciSetRootHubPortStatus (Ohc, 0, RH_SET_PORT_POWER);
   OhciGetRootHubNumOfPorts (This, &NumOfPorts);
   for (Index = 0; Index < NumOfPorts; Index++) {
-    if (!EFI_ERROR (OhciSetRootHubPortFeature (This, Index, EfiUsbPortReset))) {
+    if (!EFI_ERROR(OhciSetRootHubPortFeature (This, Index, EfiUsbPortReset))) {
       gBS->Stall (200 * 1000);
       OhciClearRootHubPortFeature (This, Index, EfiUsbPortReset);
       gBS->Stall (1000);
@@ -1006,7 +1006,7 @@ OhciInterruptTransfer (
                          &MapPyhAddr,
                          &Mapping
                          );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "OhciInterruptTransfer: Failt to PciIo->Map buffer \r\n"));
     goto EXIT;
   }
@@ -1273,7 +1273,7 @@ OhciAsyncInterruptTransfer (
              );
   if ( UCBuffer ) {
 //    if (EFI_ERROR(Status)) {
-      gBS->FreePool (UCBuffer);
+      gBS->FreePool(UCBuffer);
 //    }
   }
   return Status;
@@ -1370,7 +1370,7 @@ OhciSyncInterruptTransfer (
              &HeadTd
              );
              
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = CheckIfDone (Ohc, INTERRUPT_LIST, Ed, HeadTd, &EdResult);
     while (Status == EFI_NOT_READY && TimeOut > 0) {
       gBS->Stall (1000);
@@ -1398,7 +1398,7 @@ OhciSyncInterruptTransfer (
              NULL,
              NULL
              );
-  gBS->FreePool (UCBuffer);  
+  gBS->FreePool(UCBuffer);  
   return Status;
 }
 /**
@@ -1979,7 +1979,7 @@ OHCIDriverBindingSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1991,7 +1991,7 @@ OHCIDriverBindingSupported (
                         &UsbClassCReg
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_UNSUPPORTED;   
     goto ON_EXIT;
   }
@@ -2093,7 +2093,7 @@ OhciAllocateDev (
                     0
                     );
  
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_MEM_POOL;
   }
  
@@ -2106,7 +2106,7 @@ OhciAllocateDev (
                     &Map
                     );
  
-  if (EFI_ERROR (Status) || (Bytes != 4096)) {
+  if (EFI_ERROR(Status) || (Bytes != 4096)) {
     goto FREE_MEM_PAGE;
   }
  
@@ -2160,7 +2160,7 @@ OhciFreeDev (
     FreeUnicodeStringTable (Ohc->ControllerNameTable);
   }
   
-  FreePool (Ohc);
+  FreePool(Ohc);
 }
 /**
 
@@ -2287,7 +2287,7 @@ OHCIDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2302,7 +2302,7 @@ OHCIDriverBindingStart (
                     &OriginalPciAttributes
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CLOSE_PCIIO;
   }
   PciAttributesSaved = TRUE;
@@ -2321,7 +2321,7 @@ OHCIDriverBindingStart (
                     0,
                     &Supports
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
@@ -2331,7 +2331,7 @@ OHCIDriverBindingStart (
                       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CLOSE_PCIIO;
   }
   //
@@ -2344,7 +2344,7 @@ OHCIDriverBindingStart (
   }  
   	
   //Status = OhciInitializeInterruptList ( Uhc );
-  //if (EFI_ERROR (Status)) {
+  //if (EFI_ERROR(Status)) {
   //  goto FREE_OHC;
   //}  
    
@@ -2358,7 +2358,7 @@ OHCIDriverBindingStart (
                   Ohc,
                   &Ohc->HouseKeeperTimer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_OHC;
   }
   
@@ -2366,7 +2366,7 @@ OHCIDriverBindingStart (
   //Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 100 * 1000 * 10);
   Status = gBS->SetTimer (Ohc->HouseKeeperTimer, TimerPeriodic, 50 * 1000 * 10);
  
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_OHC;
   }
   //
@@ -2398,7 +2398,7 @@ OHCIDriverBindingStart (
                   EFI_NATIVE_INTERFACE,
                   &Ohc->UsbHc
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO, "Install protocol error"));
     goto FREE_OHC;
   }
@@ -2413,7 +2413,7 @@ OHCIDriverBindingStart (
                   &gEfiEventExitBootServicesGuid,
                   &Ohc->ExitBootServiceEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO, "Create exit boot event error"));	
     goto UNINSTALL_USBHC;
   }
@@ -2500,7 +2500,7 @@ OHCIDriverBindingStop (
                   Controller, 
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }         
 

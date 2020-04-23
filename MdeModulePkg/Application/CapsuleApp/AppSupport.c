@@ -58,7 +58,7 @@ GetShellProtocol (
                     NULL,
                     (VOID **) &mShellProtocol
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       mShellProtocol = NULL;
     }
   }
@@ -104,7 +104,7 @@ ReadFileToBuffer (
                             &Handle,
                             EFI_FILE_MODE_READ
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -112,7 +112,7 @@ ReadFileToBuffer (
   // Get the file size.
   //
   Status = ShellProtocol->GetFileSize (Handle, &FileSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ShellProtocol->CloseFile (Handle);
     return Status;
   }
@@ -132,7 +132,7 @@ ReadFileToBuffer (
                             &TempBufferSize,
                             TempBuffer
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ShellProtocol->CloseFile (Handle);
     return Status;
   }
@@ -181,7 +181,7 @@ WriteFileFromBuffer (
                             &Handle,
                             EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -203,13 +203,13 @@ WriteFileFromBuffer (
     //
     FileInfo->FileSize = 0;
     Status = ShellProtocol->SetFileInfo (Handle, FileInfo);
-    if (EFI_ERROR (Status)) {
-      FreePool (FileInfo);
+    if (EFI_ERROR(Status)) {
+      FreePool(FileInfo);
       ShellProtocol->CloseFile (Handle);
       return Status;
     }
   }
-  FreePool (FileInfo);
+  FreePool(FileInfo);
 
   //
   // Write the file data from the buffer
@@ -220,7 +220,7 @@ WriteFileFromBuffer (
                             &TempBufferSize,
                             Buffer
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ShellProtocol->CloseFile (Handle);
     return Status;
   }

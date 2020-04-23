@@ -59,7 +59,7 @@ AllocateReservedMemoryBelow4G (
                    Pages,
                    &Address
                    );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Buffer = (VOID *) (UINTN) Address;
   ZeroMem (Buffer, Size);
@@ -87,9 +87,9 @@ VariableLockCapsuleLongModeBufferVariable (
   // Mark EFI_CAPSULE_LONG_MODE_BUFFER_NAME variable to read-only if the Variable Lock protocol exists
   //
   Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = VariableLock->RequestToLock (VariableLock, EFI_CAPSULE_LONG_MODE_BUFFER_NAME, &gEfiCapsuleVendorGuid);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 }
 
@@ -173,7 +173,7 @@ PrepareContextForCapsulePei (
                   sizeof (EFI_CAPSULE_LONG_MODE_BUFFER),
                   &LongModeBuffer
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
       //
       // Register callback function upon VariableLockProtocol
       // to lock EFI_CAPSULE_LONG_MODE_BUFFER_NAME variable to avoid malicious code to update it.

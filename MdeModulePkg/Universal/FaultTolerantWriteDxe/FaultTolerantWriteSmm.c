@@ -178,7 +178,7 @@ GetFvbCountAndBuffer (
   *NumberHandles = BufferSize / sizeof(EFI_HANDLE);
   if (EFI_ERROR(Status)) {
     *NumberHandles = 0;
-    FreePool (*Buffer);
+    FreePool(*Buffer);
     *Buffer = NULL;
   }
 
@@ -218,7 +218,7 @@ GetFvbByAddressAndAttribute (
   // Locate all handles of SMM Fvb protocol.
   //
   Status = GetFvbCountAndBuffer (&HandleCount, &HandleBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -227,14 +227,14 @@ GetFvbByAddressAndAttribute (
   //
   for (Index = 0; Index < HandleCount; Index++) {
     Status = FtwGetFvbByHandle (HandleBuffer[Index], &Fvb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     //
     // Compare the address.
     //
     Status = Fvb->GetPhysicalAddress (Fvb, &FvbBaseAddress);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     if (Address != FvbBaseAddress) {
@@ -245,7 +245,7 @@ GetFvbByAddressAndAttribute (
     // Compare the attribute.
     //
     Status = Fvb->GetAttributes (Fvb, &FvbAttributes);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     if (Attributes != FvbAttributes) {
@@ -256,11 +256,11 @@ GetFvbByAddressAndAttribute (
     // Found the proper FVB handle.
     //
     *SmmFvbHandle = HandleBuffer[Index];
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
     return EFI_SUCCESS;
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
   return EFI_ABORTED;
 }
 
@@ -410,7 +410,7 @@ SmmFaultTolerantWriteHandler (
                  SmmFtwWriteHeader->FvbAttributes,
                  &SmmFvbHandle
                  );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // The SpeculationBarrier() call here is to ensure the previous
         // range/content checks for the CommBuffer have been completed before
@@ -440,7 +440,7 @@ SmmFaultTolerantWriteHandler (
                  SmmFtwRestartHeader->FvbAttributes,
                  &SmmFvbHandle
                  );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = FtwRestart (&mFtwDevice->FtwInstance, SmmFvbHandle);
       }
       break;
@@ -528,7 +528,7 @@ FvbNotificationEvent (
                     NULL,
                     (VOID **) &FtwProtocol
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   }
 
@@ -549,13 +549,13 @@ FvbNotificationEvent (
                     EFI_NATIVE_INTERFACE,
                     &mFtwDevice->FtwInstance
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   ///
   /// Register SMM FTW SMI handler
   ///
   Status = gMmst->MmiHandlerRegister (SmmFaultTolerantWriteHandler, &gEfiSmmFaultTolerantWriteProtocolGuid, &SmmFtwHandle);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Notify the Ftw wrapper driver SMM Ftw is ready
@@ -618,7 +618,7 @@ MmFaultTolerantWriteInitialize (
                     MmEndOfDxeCallback,
                     &MmEndOfDxeRegistration
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register FvbNotificationEvent () notify function.
@@ -628,7 +628,7 @@ MmFaultTolerantWriteInitialize (
                     FvbNotificationEvent,
                     &mFvbRegistration
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   FvbNotificationEvent (NULL, NULL, NULL);
 

@@ -50,17 +50,17 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //   UINT64 Features = 0xFC07E136U; /* Model dependent */
 //   UINT32 SecurityPolicy;
 //   APPLE_PLATFORM_SECURITY_POLICY_PROTOCOL *Policy;
-//   if (!EFI_ERROR (gBS->LocateProtocol(&gApplePlatformSecurityPolicyProtocolGuid, NULL, (VOID **) &Policy))
-//     && (!EFI_ERROR (Policy->GetSecurityPolicy(Policy, &SecurityPolicy)))) {
+//   if (!EFI_ERROR(gBS->LocateProtocol(&gApplePlatformSecurityPolicyProtocolGuid, NULL, (VOID **) &Policy))
+//     && (!EFI_ERROR(Policy->GetSecurityPolicy(Policy, &SecurityPolicy)))) {
 //     if (SecurityPolicy & 1) Features |= 0x400U;
 //     if (SecurityPolicy & 2) Features |= 0x800U;
 //     Features |= 0x1000000U;
 //   }
 //   Features = ((*(UINT64 *)(0xFFFFFF80) != 0x4E15E2F599858AC6ULL) << 12U) | Features & 0xFFFFFFFFFFFFEFFFULL;
-//   if (!EFI_ERROR (gRT->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, 6, sizeof (UINT32), &Mask)))
+//   if (!EFI_ERROR(gRT->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, 6, sizeof (UINT32), &Mask)))
 //     gRT->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid, 6, sizeof (UINT32), &Features);
 //   if ((Features & 0x2000000U)
-//     && !EFI_ERROR (gRT->SetVariable(L"ExtendedFirmwareFeaturesMask", &gEfiAppleNvramGuid, 6, sizeof (UINT64), &Mask)))
+//     && !EFI_ERROR(gRT->SetVariable(L"ExtendedFirmwareFeaturesMask", &gEfiAppleNvramGuid, 6, sizeof (UINT64), &Mask)))
 //     gRT->SetVariable(L"ExtendedFirmwareFeatures", &gEfiAppleNvramGuid, 6, sizeof (UINT64), &Features);
 // }
 //

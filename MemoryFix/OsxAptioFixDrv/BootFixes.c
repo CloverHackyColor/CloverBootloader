@@ -570,7 +570,7 @@ RuntimeServicesFix(BootArgs *BA)
 	Status = ExecSetVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
 	
 	//DBG("SetVirtualAddressMap() = Status: %r\n", Status);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		CpuDeadLoop();
 	}
 	

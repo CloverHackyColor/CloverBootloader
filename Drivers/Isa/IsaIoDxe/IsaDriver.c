@@ -57,7 +57,7 @@ InitializeIsaIo (
              &gIsaIoComponentName,
              &gIsaIoComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -101,14 +101,14 @@ IsaIoDriverSupported (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Get the PciIo protocol from its parent controller.
     //
     Status = gBS->LocateDevicePath (&gEfiPciIoProtocolGuid, &DevicePath, &PciHandle);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -123,7 +123,7 @@ IsaIoDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
            Controller,
            &gEfiSioProtocolGuid,
@@ -192,7 +192,7 @@ IsaIoDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -201,9 +201,9 @@ IsaIoDriverStart (
   //
   TempDevicePath = DevicePath;
   Status = gBS->LocateDevicePath (&gEfiPciIoProtocolGuid, &TempDevicePath, &PciHandle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (PciHandle, &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Open Super IO Protocol
@@ -218,7 +218,7 @@ IsaIoDriverStart (
                     );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Fail due to LocateDevicePath(...) or OpenProtocol(Sio, BY_DRIVER)
     //
@@ -226,7 +226,7 @@ IsaIoDriverStart (
   }
 
   Status = Sio->GetResources (Sio, &Resources);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   IsaIoDevice = AllocatePool (sizeof (ISA_IO_DEVICE));
   ASSERT (IsaIoDevice != NULL);
@@ -248,7 +248,7 @@ IsaIoDriverStart (
                   &IsaIoDevice->IsaIo,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -299,7 +299,7 @@ IsaIoDriverStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -311,15 +311,15 @@ IsaIoDriverStop (
                   &IsaIoDevice->IsaIo,
                   NULL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->CloseProtocol (
                     Controller,
                     &gEfiSioProtocolGuid,
                     This->DriverBindingHandle,
                     Controller
                     );
-    FreePool (IsaIoDevice->IsaIo.ResourceList);
-    FreePool (IsaIoDevice);
+    FreePool(IsaIoDevice->IsaIo.ResourceList);
+    FreePool(IsaIoDevice);
   }
 
    return Status;

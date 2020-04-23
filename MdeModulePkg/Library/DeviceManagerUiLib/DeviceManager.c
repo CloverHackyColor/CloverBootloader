@@ -83,7 +83,7 @@ DmExtractDevicePathFromHiiHandle (
   }
 
   Status = gHiiDatabase->GetPackageListHandle (gHiiDatabase, Handle, &DriverHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   //
@@ -328,7 +328,7 @@ IsMacAddressDevicePath (
   }
 
   if (Buffer != NULL) {
-    FreePool (Buffer);
+    FreePool(Buffer);
   }
 
   return ReturnVal;
@@ -371,14 +371,14 @@ IsNeedAddNetworkMenu (
   *ItemCount = 0;
 
   Status = gHiiDatabase->GetPackageListHandle (gHiiDatabase, Handle, &DriverHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   //
   // Get the device path by the got Driver handle .
   //
   Status = gBS->HandleProtocol (DriverHandle, &gEfiDevicePathProtocolGuid, (VOID **) &DevicePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   TmpDevicePath = DevicePath;
@@ -402,7 +402,7 @@ IsNeedAddNetworkMenu (
   //
   TmpDevicePath = DevicePath;
   Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &TmpDevicePath, &ControllerHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -421,7 +421,7 @@ IsNeedAddNetworkMenu (
                   &OpenInfoBuffer,
                   &EntryCount
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -442,7 +442,7 @@ IsNeedAddNetworkMenu (
                       NULL,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -475,7 +475,7 @@ IsNeedAddNetworkMenu (
 
 Done:
   if (OpenInfoBuffer != NULL) {
-    FreePool (OpenInfoBuffer);
+    FreePool(OpenInfoBuffer);
   }
   return IsNeedAdd;
 }
@@ -543,8 +543,8 @@ CreateDeviceManagerForm(
     NewStringTitle = AllocatePool (NewStringLen);
     UnicodeSPrint (NewStringTitle, NewStringLen, L"%s %s", String, mSelectedMacAddrString);
     HiiSetString (HiiHandle, STRING_TOKEN (STR_FORM_NETWORK_DEVICE_TITLE), NewStringTitle, NULL);
-    FreePool (String);
-    FreePool (NewStringTitle);
+    FreePool(String);
+    FreePool(NewStringTitle);
   }
 
   //
@@ -584,7 +584,7 @@ CreateDeviceManagerForm(
   //
   for (Index = 0; HiiHandles[Index] != NULL; Index++) {
     Status = HiiGetFormSetFromHiiHandle(HiiHandles[Index], &Buffer,&BufferSize);
-    if (EFI_ERROR (Status)){
+    if (EFI_ERROR(Status)){
       continue;
     }
     Ptr = (UINT8 *)Buffer;
@@ -609,7 +609,7 @@ CreateDeviceManagerForm(
           ASSERT (String != NULL);
         }
         Token = HiiSetString (HiiHandle, 0, String, NULL);
-        FreePool (String);
+        FreePool(String);
 
         String = HiiGetString (HiiHandles[Index], ((EFI_IFR_FORM_SET *)Ptr)->Help, NULL);
         if (String == NULL) {
@@ -617,7 +617,7 @@ CreateDeviceManagerForm(
           ASSERT (String != NULL);
         }
         TokenHelp = HiiSetString (HiiHandle, 0, String, NULL);
-        FreePool (String);
+        FreePool(String);
 
         FormSetGuid = ((EFI_IFR_FORM_SET *)Ptr)->Guid;
 
@@ -722,7 +722,7 @@ CreateDeviceManagerForm(
 
   HiiFreeOpCodeHandle (StartOpCodeHandle);
   HiiFreeOpCodeHandle (EndOpCodeHandle);
-  FreePool (HiiHandles);
+  FreePool(HiiHandles);
 }
 
 /**
@@ -878,7 +878,7 @@ DeviceManagerUiLibConstructor (
                   &gDeviceManagerPrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Publish our HII data.
@@ -925,7 +925,7 @@ DeviceManagerUiLibDestructor(
                   &gDeviceManagerPrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   HiiRemovePackages (gDeviceManagerPrivate.HiiHandle);
 

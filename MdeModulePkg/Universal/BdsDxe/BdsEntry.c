@@ -72,7 +72,7 @@ BdsDxeOnConnectConInCallBack (
   // no driver dependency is assumed existing. So use a non-dispatch version
   //
   Status = EfiBootManagerConnectConsoleVariable (ConIn);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Should not enter this case, if enter, the keyboard will not work.
     // May need platfrom policy to connect keyboard.
@@ -119,13 +119,13 @@ CheckDeferredLoadImageOnReadyToBoot (
     &HandleCount,
     &Handles
   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (Handles[Index], &gEfiDeferredImageLoadProtocolGuid, (VOID **) &DeferredImage);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -141,18 +141,18 @@ CheckDeferredLoadImageOnReadyToBoot (
         &ImageSize,
         &BootOption
       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
       DevicePathStr = ConvertDevicePathToText (ImageDevicePath, FALSE, FALSE);
       DEBUG ((DEBUG_LOAD, "[Bds] Image was deferred but not loaded: %s.\n", DevicePathStr));
       if (DevicePathStr != NULL) {
-        FreePool (DevicePathStr);
+        FreePool(DevicePathStr);
       }
     }
   }
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 }
 
@@ -186,7 +186,7 @@ BdsInitialize (
                   &gEfiBdsArchProtocolGuid, &gBds,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   DEBUG_CODE (
     EFI_EVENT   Event;
@@ -201,7 +201,7 @@ BdsInitialize (
                     &gEfiEventReadyToBootGuid,
                     &Event
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   );
   return Status;
 }
@@ -232,7 +232,7 @@ BdsWaitForSingleEvent (
     // Create a timer event
     //
     Status = gBS->CreateEvent (EVT_TIMER, 0, NULL, NULL, &TimerEvent);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Set the timer event
       //
@@ -248,7 +248,7 @@ BdsWaitForSingleEvent (
       WaitList[0] = Event;
       WaitList[1] = TimerEvent;
       Status      = gBS->WaitForEvent (2, WaitList, &Index);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       gBS->CloseEvent (TimerEvent);
 
       //
@@ -263,7 +263,7 @@ BdsWaitForSingleEvent (
     // No timeout... just wait on the event
     //
     Status = gBS->WaitForEvent (1, &Event, &Index);
-    ASSERT (!EFI_ERROR (Status));
+    ASSERT (!EFI_ERROR(Status));
     ASSERT (Index == 0);
   }
 
@@ -290,7 +290,7 @@ BdsReadKeys (
 
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // No more keys.
       //
@@ -326,7 +326,7 @@ BdsWait (
 
     if (HotkeyTriggered != NULL) {
       Status = BdsWaitForSingleEvent (HotkeyTriggered, EFI_TIMER_PERIOD_SECONDS (1));
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         break;
       }
     } else {
@@ -450,7 +450,7 @@ ProcessLoadOptions (
     // Status indicates whether the load option is loaded and executed
     // LoadOptions[Index].Status is what the load option returns
     //
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Stop processing if any PlatformRecovery#### returns success.
       //
@@ -462,7 +462,7 @@ ProcessLoadOptions (
       //
       // Only set ReconnectAll flag when the load option executes successfully.
       //
-      if (!EFI_ERROR (LoadOptions[Index].Status) &&
+      if (!EFI_ERROR(LoadOptions[Index].Status) &&
           (LoadOptions[Index].Attributes & LOAD_OPTION_FORCE_RECONNECT) != 0) {
         ReconnectAll = TRUE;
       }
@@ -510,11 +510,11 @@ BdsFormalizeConsoleVariable (
     //
     // Deleting variable with current variable implementation shouldn't fail.
     //
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   if (DevicePath != NULL) {
-    FreePool (DevicePath);
+    FreePool(DevicePath);
   }
 }
 
@@ -570,7 +570,7 @@ BdsFormalizeOSIndicationVariable (
   //
   // Platform needs to make sure setting volatile variable before calling 3rd party code shouldn't fail.
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // If OsIndications is invalid, remove it.
@@ -707,10 +707,10 @@ BdsEntry (
   //
   Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
   DEBUG ((EFI_D_INFO, "[BdsDxe] Locate Variable Lock protocol - %r\n", Status));
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < ARRAY_SIZE (mReadOnlyVariables); Index++) {
       Status = VariableLock->RequestToLock (VariableLock, mReadOnlyVariables[Index], &gEfiGlobalVariableGuid);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 
@@ -753,7 +753,7 @@ BdsEntry (
   //
   // Platform needs to make sure setting volatile variable before calling 3rd party code shouldn't fail.
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Cache the "BootNext" NV variable before calling any PlatformBootManagerLib APIs
@@ -762,7 +762,7 @@ BdsEntry (
   GetEfiGlobalVariable2 (EFI_BOOT_NEXT_VARIABLE_NAME, (VOID **) &BootNext, &DataSize);
   if (DataSize != sizeof (UINT16)) {
     if (BootNext != NULL) {
-      FreePool (BootNext);
+      FreePool(BootNext);
     }
     BootNext = NULL;
   }
@@ -787,7 +787,7 @@ BdsEntry (
              NULL,
              0
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // System firmware must include a PlatformRecovery#### variable specifying
@@ -808,11 +808,11 @@ BdsEntry (
       }
       PlatformDefaultBootOption.OptionNumber = Index;
       Status = EfiBootManagerLoadOptionToVariable (&PlatformDefaultBootOption);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     EfiBootManagerFreeLoadOptions (LoadOptions, LoadOptionCount);
   }
-  FreePool (FilePath);
+  FreePool(FilePath);
 
   //
   // Report Status Code to indicate connecting drivers will happen
@@ -834,7 +834,7 @@ BdsEntry (
                     &gConnectConInEventGuid,
                     &gConnectConInEvent
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gConnectConInEvent = NULL;
     }
   }
@@ -916,7 +916,7 @@ BdsEntry (
                   &DataSize,
                   &OsIndication
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     OsIndication = 0;
   }
 
@@ -966,7 +966,7 @@ BdsEntry (
     //
     // Changing the content without increasing its size with current variable implementation shouldn't fail.
     //
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -1028,7 +1028,7 @@ BdsEntry (
       //
       UnicodeSPrint (BootNextVariableName, sizeof (BootNextVariableName), L"Boot%04x", *BootNext);
       Status = EfiBootManagerVariableToLoadOption (BootNextVariableName, &LoadOption);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         EfiBootManagerBoot (&LoadOption);
         EfiBootManagerFreeLoadOption (&LoadOption);
         if ((LoadOption.Status == EFI_SUCCESS) &&
@@ -1129,7 +1129,7 @@ BdsDxeSetVariableAndReportStatusCodeOnError (
                   DataSize,
                   Data
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     NameSize = StrSize (VariableName);
     SetVariableStatus = AllocatePool (sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize);
     if (SetVariableStatus != NULL) {
@@ -1151,7 +1151,7 @@ BdsDxeSetVariableAndReportStatusCodeOnError (
         sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize
         );
 
-      FreePool (SetVariableStatus);
+      FreePool(SetVariableStatus);
     }
   }
 

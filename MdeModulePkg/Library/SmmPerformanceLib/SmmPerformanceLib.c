@@ -69,7 +69,7 @@ GetPerformanceMeasurementProtocol (
   }
 
   Status = gSmst->SmmLocateProtocol (&gEdkiiSmmPerformanceMeasurementProtocolGuid, NULL, (VOID **) &PerformanceMeasurement);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     ASSERT (PerformanceMeasurement != NULL);
     //
     // Cache PerformanceMeasurement Protocol.
@@ -116,7 +116,7 @@ StartPerformanceMeasurementEx (
   CONST CHAR8*  String;
 
   Status = GetPerformanceMeasurementProtocol ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_NOT_FOUND;
   }
 
@@ -175,7 +175,7 @@ EndPerformanceMeasurementEx (
   CONST CHAR8*  String;
 
   Status = GetPerformanceMeasurementProtocol ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_NOT_FOUND;
   }
 
@@ -420,7 +420,7 @@ LogPerformanceMeasurement (
   EFI_STATUS  Status;
 
   Status = GetPerformanceMeasurementProtocol ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_OUT_OF_RESOURCES;
   }
 

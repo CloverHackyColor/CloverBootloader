@@ -380,7 +380,7 @@ DisplayCapsuleImage (
   // Try to open GOP
   //
   Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **)&GraphicsOutput);
     if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
@@ -403,7 +403,7 @@ DisplayCapsuleImage (
              &Width
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -621,7 +621,7 @@ DumpAllFmpInfo (
     FreePool(FmpImageInfoBuf);
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 
   return ;
 }
@@ -696,7 +696,7 @@ GetFmpHandleBufferByType (
   if (HandleBuf != NULL) {
     MatchedHandleBuffer = AllocateZeroPool (sizeof(EFI_HANDLE) * NumberOfHandles);
     if (MatchedHandleBuffer == NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -706,9 +706,9 @@ GetFmpHandleBufferByType (
     MatchedResetRequiredBuffer = AllocateZeroPool (sizeof(BOOLEAN) * NumberOfHandles);
     if (MatchedResetRequiredBuffer == NULL) {
       if (MatchedHandleBuffer != NULL) {
-        FreePool (MatchedHandleBuffer);
+        FreePool(MatchedHandleBuffer);
       }
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -790,7 +790,7 @@ GetFmpHandleBufferByType (
     FreePool(FmpImageInfoBuf);
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 
   if (MatchedNumberOfHandles == 0) {
     return EFI_NOT_FOUND;
@@ -919,7 +919,7 @@ SetFmpImageData (
                   &gEdkiiFirmwareManagementProgressProtocolGuid,
                   (VOID **)&mFmpProgress
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mFmpProgress = NULL;
   }
 
@@ -953,7 +953,7 @@ SetFmpImageData (
   //
   ProgressCallback = UpdateImageProgress;
   Status = UpdateImageProgress (0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ProgressCallback = NULL;
   }
 
@@ -1098,7 +1098,7 @@ RecordFmpCapsuleStatus (
   // Update corresponding ESRT entry LastAttemp Status
   //
   Status = gBS->LocateProtocol(&gEsrtManagementProtocolGuid, NULL, (VOID **)&EsrtProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
 
@@ -1591,7 +1591,7 @@ DxeCapsuleLibConstructor (
                   &gEfiEndOfDxeEventGroupGuid,
                   &mDxeCapsuleLibEndOfDxeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   InitCapsuleVariable();
 
@@ -1619,7 +1619,7 @@ DxeCapsuleLibDestructor (
   // Close the End of DXE event.
   //
   Status = gBS->CloseEvent (mDxeCapsuleLibEndOfDxeEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

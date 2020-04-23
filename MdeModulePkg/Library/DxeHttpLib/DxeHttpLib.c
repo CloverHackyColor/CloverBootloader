@@ -405,7 +405,7 @@ HttpParseUrl (
 
     switch (State) {
     case UrlParserStateMax:
-      FreePool (Parser);
+      FreePool(Parser);
       return EFI_INVALID_PARAMETER;
       
     case UrlParserSchemeColon:
@@ -467,8 +467,8 @@ HttpParseUrl (
   //
   if ((Parser->FieldBitMap & BIT (HTTP_URI_FIELD_AUTHORITY)) != 0) {
     Status = NetHttpParseAuthority (Url, FoundAt, Parser);
-    if (EFI_ERROR (Status)) {
-      FreePool (Parser);
+    if (EFI_ERROR(Status)) {
+      FreePool(Parser);
       return Status;
     }
   }
@@ -527,8 +527,8 @@ HttpUrlGetHostName (
              Name,
              &ResultLength
              );
-  if (EFI_ERROR (Status)) {
-    FreePool (Name);
+  if (EFI_ERROR(Status)) {
+    FreePool(Name);
     return Status;
   }
 
@@ -587,14 +587,14 @@ HttpUrlGetIp4 (
              Ip4String,
              &ResultLength
              );
-  if (EFI_ERROR (Status)) {
-    FreePool (Ip4String);
+  if (EFI_ERROR(Status)) {
+    FreePool(Ip4String);
     return Status;
   }
 
   Ip4String[ResultLength] = '\0';
   Status = NetLibAsciiStrToIp4 (Ip4String, Ip4Address);
-  FreePool (Ip4String);
+  FreePool(Ip4String);
 
   return Status;
 }
@@ -663,14 +663,14 @@ HttpUrlGetIp6 (
              Ip6String,
              &ResultLength
              );
-  if (EFI_ERROR (Status)) {
-    FreePool (Ip6String);
+  if (EFI_ERROR(Status)) {
+    FreePool(Ip6String);
     return Status;
   }
   
   Ip6String[ResultLength] = '\0';
   Status = NetLibAsciiStrToIp6 (Ip6String, Ip6Address);
-  FreePool (Ip6String);
+  FreePool(Ip6String);
 
   return Status;
 }
@@ -729,7 +729,7 @@ HttpUrlGetPort (
              PortString,
              &ResultLength
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -753,7 +753,7 @@ HttpUrlGetPort (
   *Port = (UINT16) Data;
 
 ON_EXIT:
-  FreePool (PortString);
+  FreePool(PortString);
   return Status;
 }
 
@@ -807,8 +807,8 @@ HttpUrlGetPath (
              PathStr,
              &ResultLength
              );
-  if (EFI_ERROR (Status)) {
-    FreePool (PathStr);
+  if (EFI_ERROR(Status)) {
+    FreePool(PathStr);
     return Status;
   }
 
@@ -829,7 +829,7 @@ HttpUrlFreeParser (
   IN      VOID               *UrlParser
   )
 {
-  FreePool (UrlParser);
+  FreePool(UrlParser);
 }
 
 /**
@@ -1101,7 +1101,7 @@ HttpInitMsgParser (
   // 3. Check whether the message has a Content-Length header field.
   //
   Status = HttpIoParseContentLengthHeader (HeaderCount, Headers, &Parser->ContentLength);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Parser->ContentLengthIsValid = TRUE;
   }
   //
@@ -1171,7 +1171,7 @@ HttpParseMessageBody (
                          0,
                          Parser->Context
                          );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -1207,7 +1207,7 @@ HttpParseMessageBody (
                            MIN (BodyLength, Parser->ContentLength - Parser->ParsedBodyLength),
                            Parser->Context
                            );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       }
@@ -1222,7 +1222,7 @@ HttpParseMessageBody (
                              0,
                              Parser->Context
                              );
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
         }
@@ -1311,7 +1311,7 @@ HttpParseMessageBody (
                              0,
                              Parser->Context
                              );
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
         }
@@ -1341,7 +1341,7 @@ HttpParseMessageBody (
                            LengthForCallback,
                            Parser->Context
                            );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       }
@@ -1461,7 +1461,7 @@ HttpFreeMsgParser (
   IN  VOID           *MsgParser
   )
 {
-  FreePool (MsgParser);
+  FreePool(MsgParser);
 }
 
 
@@ -1525,10 +1525,10 @@ HttpSetFieldNameAndValue (
   }
 
   if (HttpHeader->FieldName != NULL) {
-    FreePool (HttpHeader->FieldName);
+    FreePool(HttpHeader->FieldName);
   }
   if (HttpHeader->FieldValue != NULL) {
-    FreePool (HttpHeader->FieldValue);
+    FreePool(HttpHeader->FieldValue);
   }
 
   FieldNameSize = AsciiStrSize (FieldName);
@@ -1542,7 +1542,7 @@ HttpSetFieldNameAndValue (
   FieldValueSize = AsciiStrSize (FieldValue);
   HttpHeader->FieldValue = AllocateZeroPool (FieldValueSize);
   if (HttpHeader->FieldValue == NULL) {
-    FreePool (HttpHeader->FieldName);
+    FreePool(HttpHeader->FieldName);
     return EFI_OUT_OF_RESOURCES;
   }
   CopyMem (HttpHeader->FieldValue, FieldValue, FieldValueSize);
@@ -1689,14 +1689,14 @@ HttpFreeHeaderFields (
   if (HeaderFields != NULL) {
     for (Index = 0; Index < FieldCount; Index++) {
       if (HeaderFields[Index].FieldName != NULL) {
-        FreePool (HeaderFields[Index].FieldName);
+        FreePool(HeaderFields[Index].FieldName);
       }
       if (HeaderFields[Index].FieldValue != NULL) {
-        FreePool (HeaderFields[Index].FieldValue);
+        FreePool(HeaderFields[Index].FieldValue);
       }
     }
 
-    FreePool (HeaderFields);
+    FreePool(HeaderFields);
   }
 }
 
@@ -1773,7 +1773,7 @@ HttpGenRequestMessage (
                     (VOID **) &HttpUtilitiesProtocol
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR,"Failed to locate Http Utilities protocol. Status = %r.\n", Status));
       return Status;
     }
@@ -1805,9 +1805,9 @@ HttpGenRequestMessage (
                                       &HttpHdr
                                       );
 
-    FreePool (AppendList);
+    FreePool(AppendList);
 
-    if (EFI_ERROR (Status) || HttpHdr == NULL){
+    if (EFI_ERROR(Status) || HttpHdr == NULL){
       return Status;
     }
   }
@@ -1923,14 +1923,14 @@ Exit:
 
   if (!Success) {
     if (*RequestMsg != NULL) {
-      FreePool (*RequestMsg);
+      FreePool(*RequestMsg);
     }
     *RequestMsg = NULL;
     return Status;
   }
 
   if (HttpHdr != NULL) {
-    FreePool (HttpHdr);
+    FreePool(HttpHdr);
   }
 
   return EFI_SUCCESS;
@@ -2070,7 +2070,7 @@ HttpIsValidHttpHeader (
       continue;
     }
     
-    if (AsciiStrCmp (FieldName, DeleteList[Index]) == 0) {
+    if (AsciiStrCmp(FieldName, DeleteList[Index]) == 0) {
       return FALSE;
     }
   }

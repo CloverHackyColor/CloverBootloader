@@ -27,7 +27,7 @@ VarCheckHiiGenFromHiiDatabase (
   // Locate HII Database protocol
   //
   Status = gBS->LocateProtocol (&gEfiHiiDatabaseProtocolGuid, NULL, (VOID **) &HiiDatabase);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -43,14 +43,14 @@ VarCheckHiiGenFromHiiDatabase (
     // Allocate buffer to hold the HII Database.
     //
     Status = gBS->AllocatePages (AllocateAnyPages, EfiBootServicesData, EFI_SIZE_TO_PAGES (BufferSize), &BufferAddress);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Buffer = (VOID *) (UINTN) BufferAddress;
 
     //
     // Export HII Database into the buffer.
     //
     Status = HiiDatabase->ExportPackageLists (HiiDatabase, 0, &BufferSize, Buffer);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     DEBUG ((DEBUG_INFO , "VarCheckHiiGenDxeFromHii - HII Database exported at 0x%x, size = 0x%x\n", Buffer, BufferSize));
 

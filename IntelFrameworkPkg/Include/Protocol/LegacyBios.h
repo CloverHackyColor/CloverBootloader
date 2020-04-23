@@ -1530,14 +1530,14 @@ struct _EFI_LEGACY_BIOS_PROTOCOL {
                                                                 \
     Desc_.Attributes = 0;                                       \
     Status_ = gDS->GetMemorySpaceDescriptor (0, &Desc_);        \
-    ASSERT_EFI_ERROR (Status_);                                 \
+    ASSERT_EFI_ERROR(Status_);                                 \
     if ((Desc_.Attributes & EFI_MEMORY_RP) != 0) {              \
       Status_ = gDS->SetMemorySpaceAttributes (                 \
                       0,                                        \
                       EFI_PAGES_TO_SIZE(1),                     \
                       Desc_.Attributes & ~(UINT64)EFI_MEMORY_RP \
                       );                                        \
-      ASSERT_EFI_ERROR (Status_);                               \
+      ASSERT_EFI_ERROR(Status_);                               \
     }                                                           \
                                                                 \
     {                                                           \
@@ -1550,7 +1550,7 @@ struct _EFI_LEGACY_BIOS_PROTOCOL {
                       EFI_PAGES_TO_SIZE(1),                     \
                       Desc_.Attributes                          \
                       );                                        \
-      ASSERT_EFI_ERROR (Status_);                               \
+      ASSERT_EFI_ERROR(Status_);                               \
     }                                                           \
   } while (FALSE)
 

@@ -88,7 +88,7 @@ MsgLogEntrypoint (
                  BOOTER_LOG_SIZE,
                  (VOID**) &tmp
                  );
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 //  Print(L"MsgLogProtocol installed!\n");

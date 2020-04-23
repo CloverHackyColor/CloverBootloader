@@ -132,7 +132,7 @@ FvGetNextFile (
   FvDevice = FV_DEVICE_FROM_THIS (This);
 
   Status = FvGetVolumeAttributes (This, &FvAttributes);
-  if (EFI_ERROR (Status)){
+  if (EFI_ERROR(Status)){
     return Status;
   }
 
@@ -311,7 +311,7 @@ FvReadFile (
               &LocalAttributes,
               &FileSize
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_NOT_FOUND;
     }
   } while (!CompareGuid (&SearchNameGuid, NameGuid));
@@ -474,7 +474,7 @@ FvReadFileSection (
   //
   FfsEntry = (FFS_FILE_LIST_ENTRY *) FvDevice->LastKey;
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   if (IS_FFS_FILE2 (FfsEntry->FfsHeader)) {
@@ -499,7 +499,7 @@ FvReadFileSection (
                FileBuffer,
                &FfsEntry->StreamHandle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
   }
@@ -518,7 +518,7 @@ FvReadFileSection (
              FvDevice->IsFfs3Fv
              );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Inherit the authentication status.
     //

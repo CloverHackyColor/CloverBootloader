@@ -48,7 +48,7 @@ EsrtDxeGetEsrtEntry(
   }
 
   Status = EfiAcquireLockOrFail (&mPrivate.NonFmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -65,7 +65,7 @@ EsrtDxeGetEsrtEntry(
 
   if (EFI_ERROR(Status)) {
     Status = EfiAcquireLockOrFail (&mPrivate.FmpLock);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -107,7 +107,7 @@ EsrtDxeUpdateEsrtEntry(
   }
 
   Status = EfiAcquireLockOrFail (&mPrivate.FmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -121,7 +121,7 @@ EsrtDxeUpdateEsrtEntry(
 
 
   Status = EfiAcquireLockOrFail (&mPrivate.NonFmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -154,7 +154,7 @@ EsrtDxeUnRegisterEsrtEntry(
   }
 
   Status = EfiAcquireLockOrFail (&mPrivate.NonFmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -189,7 +189,7 @@ EsrtDxeRegisterEsrtEntry(
   }
 
   Status = EfiAcquireLockOrFail (&mPrivate.NonFmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -413,7 +413,7 @@ EsrtDxeSyncFmp(
 UPDATE_REPOSITORY:
 
   Status = EfiAcquireLockOrFail (&mPrivate.FmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -483,7 +483,7 @@ EsrtDxeLockEsrtRepository(
   // Mark ACPI_GLOBAL_VARIABLE variable to read-only if the Variable Lock protocol exists
   //
   Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = VariableLock->RequestToLock (VariableLock, EFI_ESRT_FMP_VARIABLE_NAME, &gEfiCallerIdGuid);
     DEBUG((EFI_D_INFO, "EsrtDxe Lock EsrtFmp Variable Status 0x%x", Status));
 
@@ -523,7 +523,7 @@ EsrtReadyToBootEventNotify (
   NonFmpRepositorySize = 0;
 
   Status = EfiAcquireLockOrFail (&mPrivate.NonFmpLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -642,7 +642,7 @@ EsrtDxeEntryPoint (
                   &mEsrtManagementProtocolTemplate,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register notify function to install Esrt Table on ReadyToBoot Event.
@@ -655,7 +655,7 @@ EsrtDxeEntryPoint (
                   &gEfiEventReadyToBootGuid,
                   &mPrivate.Event
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

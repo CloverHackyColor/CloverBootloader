@@ -124,7 +124,7 @@ KeyMapCreateKeyStrokesBuffer (
   Aggregator = APPLE_KEY_MAP_AGGREGATOR_PRIVATE_FROM_DATABASE (This);
   
   if (Aggregator->KeyBuffer != NULL) {
-    gBS->FreePool ((VOID *)Aggregator->KeyBuffer);
+    gBS->FreePool((VOID *)Aggregator->KeyBuffer);
   }
   
   BufferSize                 = (Aggregator->KeyBuffersSize + KeyBufferSize);
@@ -179,7 +179,7 @@ KeyMapRemoveKeyStrokesBuffer (
     Aggregator->KeyBuffersSize -= KeyStrokesInfo->Hdr.KeyBufferSize;
     
     RemoveEntryList (&KeyStrokesInfo->Hdr.This);
-    gBS->FreePool ((VOID *)KeyStrokesInfo);
+    gBS->FreePool((VOID *)KeyStrokesInfo);
     
     Status = EFI_SUCCESS;
   }
@@ -336,7 +336,7 @@ SearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
   DbNoKeys = DB_KEYS_NUM;
   Status   = This->ReadKeyState(This, &DbModifiers, &DbNoKeys, DbKeys);
   
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (ExactMatch) {
       Status = EFI_NOT_FOUND;
       
@@ -403,11 +403,11 @@ AggregatorEntryPoint (
                   &Buffer
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
 
     if (Buffer != NULL) {
-      gBS->FreePool ((VOID *)Buffer);
+      gBS->FreePool((VOID *)Buffer);
     }
   } else {
     Aggregator                                          = AllocateZeroPool(sizeof(APPLE_KEY_MAP_AGGREGATOR));
@@ -434,7 +434,7 @@ AggregatorEntryPoint (
                     NULL
                     );
 /*
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gBS->InstallProtocolInterface(ImageHandle, &gAppleEventProtocolGuid, EFI_NATIVE_INTERFACE, &mAppleEventProtocol);
     }
  */

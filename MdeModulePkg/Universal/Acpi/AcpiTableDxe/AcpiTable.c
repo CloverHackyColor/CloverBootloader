@@ -51,8 +51,8 @@ InitializeAcpiTableDxe (
   // Call all constructors per produced protocols
   //
   Status = AcpiTableAcpiTableConstructor (PrivateData);
-  if (EFI_ERROR (Status)) {
-    gBS->FreePool (PrivateData);
+  if (EFI_ERROR(Status)) {
+    gBS->FreePool(PrivateData);
     return EFI_LOAD_ERROR;
   }
 
@@ -77,7 +77,7 @@ InitializeAcpiTableDxe (
                     NULL
                     );
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

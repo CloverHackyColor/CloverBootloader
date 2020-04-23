@@ -276,7 +276,7 @@ ConSplitterTestControllerHandles (
              DriverBindingHandle,
              ProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -379,7 +379,7 @@ ConSplitterConInComponentNameGetControllerName (
              ChildHandle,
              &gEfiConsoleInDeviceGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -479,7 +479,7 @@ ConSplitterSimplePointerComponentNameGetControllerName (
              ChildHandle,
              &gEfiSimplePointerProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -556,7 +556,7 @@ ConSplitterAbsolutePointerComponentNameGetControllerName (
              ChildHandle,
              &gEfiAbsolutePointerProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -656,7 +656,7 @@ ConSplitterConOutComponentNameGetControllerName (
              ChildHandle,
              &gEfiConsoleOutDeviceGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -756,7 +756,7 @@ ConSplitterStdErrComponentNameGetControllerName (
              ChildHandle,
              &gEfiStandardErrorDeviceGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

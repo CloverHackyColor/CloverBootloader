@@ -451,7 +451,7 @@ ConSplitterDriverEntry(
              &gConSplitterConInComponentName,
              &gConSplitterConInComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -461,7 +461,7 @@ ConSplitterDriverEntry(
              &gConSplitterSimplePointerComponentName,
              &gConSplitterSimplePointerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -471,7 +471,7 @@ ConSplitterDriverEntry(
              &gConSplitterAbsolutePointerComponentName,
              &gConSplitterAbsolutePointerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -481,7 +481,7 @@ ConSplitterDriverEntry(
              &gConSplitterConOutComponentName,
              &gConSplitterConOutComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -491,7 +491,7 @@ ConSplitterDriverEntry(
              &gConSplitterStdErrComponentName,
              &gConSplitterStdErrComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Either Graphics Output protocol or UGA Draw protocol must be supported.
@@ -508,7 +508,7 @@ ConSplitterDriverEntry(
   // Create virtual device handle for ConIn Splitter
   //
   Status = ConSplitterTextInConstructor (&mConIn);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &mConIn.VirtualHandle,
                     &gEfiSimpleTextInProtocolGuid,
@@ -521,7 +521,7 @@ ConSplitterDriverEntry(
                     &mConIn.AbsolutePointer,
                     NULL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Update the EFI System Table with new virtual console
       // and update the pointer to Simple Text Input protocol.
@@ -534,14 +534,14 @@ ConSplitterDriverEntry(
   // Create virtual device handle for ConOut Splitter
   //
   Status = ConSplitterTextOutConstructor (&mConOut);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &mConOut.VirtualHandle,
                     &gEfiSimpleTextOutProtocolGuid,
                     &mConOut.TextOut,
                     NULL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Update the EFI System Table with new virtual console
       // and Update the pointer to Text Output protocol.
@@ -556,14 +556,14 @@ ConSplitterDriverEntry(
   // Create virtual device handle for StdErr Splitter
   //
   Status = ConSplitterTextOutConstructor (&mStdErr);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &mStdErr.VirtualHandle,
                     &gEfiSimpleTextOutProtocolGuid,
                     &mStdErr.TextOut,
                     NULL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Update the EFI System Table with new virtual console
       // and update the pointer to Text Output protocol.
@@ -614,7 +614,7 @@ ConSplitterTextInConstructor (
             &ConInPrivate->TextInListCount,
             (VOID **) &ConInPrivate->TextInList
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -628,7 +628,7 @@ ConSplitterTextInConstructor (
                   ConInPrivate,
                   &ConInPrivate->TextIn.WaitForKey
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Allocate buffer for KeyQueue
@@ -639,7 +639,7 @@ ConSplitterTextInConstructor (
              &TextInExListCount,
              (VOID **) &ConInPrivate->KeyQueue
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -651,7 +651,7 @@ ConSplitterTextInConstructor (
              &ConInPrivate->TextInExListCount,
              (VOID **) &ConInPrivate->TextInExList
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -664,7 +664,7 @@ ConSplitterTextInConstructor (
                   ConInPrivate,
                   &ConInPrivate->TextInEx.WaitForKeyEx
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   InitializeListHead (&ConInPrivate->NotifyList);
 
@@ -679,7 +679,7 @@ ConSplitterTextInConstructor (
             &ConInPrivate->AbsolutePointerListCount,
             (VOID **) &ConInPrivate->AbsolutePointerList
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -692,7 +692,7 @@ ConSplitterTextInConstructor (
             ConInPrivate,
             &ConInPrivate->AbsolutePointer.WaitForInput
         );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   ConInPrivate->SimplePointer.Mode = &ConInPrivate->SimplePointerMode;
   //
@@ -703,7 +703,7 @@ ConSplitterTextInConstructor (
             &ConInPrivate->PointerListCount,
             (VOID **) &ConInPrivate->PointerList
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -716,7 +716,7 @@ ConSplitterTextInConstructor (
                   ConInPrivate,
                   &ConInPrivate->SimplePointer.WaitForInput
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   //
   // Create Event to signal ConIn connection request
   //
@@ -778,7 +778,7 @@ ConSplitterTextOutConstructor (
             &ConOutPrivate->TextOutListCount,
             (VOID **) &ConOutPrivate->TextOutList
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -789,7 +789,7 @@ ConSplitterTextOutConstructor (
             &ConOutPrivate->TextOutQueryDataCount,
             (VOID **) &ConOutPrivate->TextOutQueryData
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -896,7 +896,7 @@ ConSplitterSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1088,7 +1088,7 @@ ConSplitterStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1103,7 +1103,7 @@ ConSplitterStart (
                   ConSplitterVirtualHandle,
                   EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Err;
   }
 
@@ -1119,7 +1119,7 @@ ConSplitterStart (
                 EFI_OPEN_PROTOCOL_GET_PROTOCOL
                 );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   }
 
@@ -1184,7 +1184,7 @@ ConSplitterConInDriverBindingStart (
             &gEfiSimpleTextInProtocolGuid,
             (VOID **) &TextIn
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1192,7 +1192,7 @@ ConSplitterConInDriverBindingStart (
   // Add this device into Text In devices list.
   //
   Status = ConSplitterTextInAddDevice (&mConIn, TextIn);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1204,7 +1204,7 @@ ConSplitterConInDriverBindingStart (
                   mConIn.VirtualHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // If Simple Text Input Ex protocol exists,
     // add this device into Text In Ex devices list.
@@ -1251,7 +1251,7 @@ ConSplitterSimplePointerDriverBindingStart (
             &gEfiSimplePointerProtocolGuid,
             (VOID **) &SimplePointer
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1298,7 +1298,7 @@ ConSplitterAbsolutePointerDriverBindingStart (
              (VOID **) &AbsolutePointer
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1348,7 +1348,7 @@ ConSplitterConOutDriverBindingStart (
             &gEfiSimpleTextOutProtocolGuid,
             (VOID **) &TextOut
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1366,7 +1366,7 @@ ConSplitterConOutDriverBindingStart (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     //
     // Open UGA DRAW protocol
     //
@@ -1399,7 +1399,7 @@ ConSplitterConOutDriverBindingStart (
     //
     if (GraphicsOutput != NULL) {
       Status = GraphicsOutput->QueryMode (GraphicsOutput, GraphicsOutput->Mode->Mode, &SizeOfInfo, &Info);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       ASSERT ( SizeOfInfo <= sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
@@ -1409,7 +1409,7 @@ ConSplitterConOutDriverBindingStart (
       mConOut.UgaColorDepth           = 32;
       mConOut.UgaRefreshRate          = 60;
 
-      FreePool (Info);
+      FreePool(Info);
 
     } else if (UgaDraw != NULL) {
       Status = UgaDraw->GetMode (
@@ -1461,7 +1461,7 @@ ConSplitterStdErrDriverBindingStart (
             &gEfiSimpleTextOutProtocolGuid,
             (VOID **) &TextOut
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1518,7 +1518,7 @@ ConSplitterStop (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -1580,13 +1580,13 @@ ConSplitterConInDriverBindingStop (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // If Simple Text Input Ex protocol exists,
     // remove device from Text Input Ex devices list.
     //
     Status = ConSplitterTextInExDeleteDevice (&mConIn, TextInEx);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1602,7 +1602,7 @@ ConSplitterConInDriverBindingStop (
             &gEfiSimpleTextInProtocolGuid,
             (VOID **) &TextIn
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1654,7 +1654,7 @@ ConSplitterSimplePointerDriverBindingStop (
             &gEfiSimplePointerProtocolGuid,
             (VOID **) &SimplePointer
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1706,7 +1706,7 @@ ConSplitterAbsolutePointerDriverBindingStop (
              &gEfiAbsolutePointerProtocolGuid,
              (VOID **) &AbsolutePointer
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1757,7 +1757,7 @@ ConSplitterConOutDriverBindingStop (
             &gEfiSimpleTextOutProtocolGuid,
             (VOID **) &TextOut
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1808,7 +1808,7 @@ ConSplitterStdErrDriverBindingStop (
             &gEfiSimpleTextOutProtocolGuid,
             (VOID **) &TextOut
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -1888,7 +1888,7 @@ ConSplitterTextInAddDevice (
               &Private->TextInListCount,
               (VOID **) &Private->TextInList
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -1976,7 +1976,7 @@ ConSplitterTextInExAddDevice (
                  &TextInExListCount,
                  (VOID **) &CurrentNotify->NotifyHandleList
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_OUT_OF_RESOURCES;
       }
     }
@@ -1987,7 +1987,7 @@ ConSplitterTextInExAddDevice (
                &TextInExListCount,
                (VOID **) &Private->KeyQueue
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1996,7 +1996,7 @@ ConSplitterTextInExAddDevice (
               &Private->TextInExListCount,
               (VOID **) &Private->TextInExList
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -2012,7 +2012,7 @@ ConSplitterTextInExAddDevice (
                          CurrentNotify->KeyNotificationFn,
                          &CurrentNotify->NotifyHandleList[Private->CurrentNumberOfExConsoles]
                          );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       for (Link = Link->BackLink; Link != &Private->NotifyList; Link = Link->BackLink) {
         CurrentNotify = TEXT_IN_EX_SPLITTER_NOTIFY_FROM_THIS (Link);
         TextInEx->UnregisterKeyNotify (
@@ -2106,7 +2106,7 @@ ConSplitterSimplePointerAddDevice (
               &Private->PointerListCount,
               (VOID **) &Private->PointerList
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -2183,7 +2183,7 @@ ConSplitterAbsolutePointerAddDevice (
               &Private->AbsolutePointerListCount,
               (VOID **) &Private->AbsolutePointerList
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -2319,7 +2319,7 @@ ConSplitterGrowMapTable (
     //
     // Free the old buffer
     //
-    FreePool (OldTextOutModeMap);
+    FreePool(OldTextOutModeMap);
   }
 
   return EFI_SUCCESS;
@@ -2360,7 +2360,7 @@ ConSplitterAddOutputMode (
               &Private->TextOutQueryDataCount,
               (VOID **) &Private->TextOutQueryData
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -2368,7 +2368,7 @@ ConSplitterAddOutputMode (
   // Allocate buffer for the output mode map
   //
   Status = ConSplitterGrowMapTable (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -2717,8 +2717,8 @@ ConSplitterGetIntersectionBetweenConOutAndStrErr (
     mStdErr.TextOut.SetMode (&(mStdErr.TextOut), 0);
   }
 
-  FreePool (ConOutMapTable);
-  FreePool (StdErrMapTable);
+  FreePool(ConOutMapTable);
+  FreePool(StdErrMapTable);
 
   return EFI_SUCCESS;
 }
@@ -2795,7 +2795,7 @@ ConSplitterAddGraphicsOutputMode (
         if (ModeBuffer == NULL) {
           return EFI_OUT_OF_RESOURCES;
         }
-        FreePool (Private->GraphicsOutputModeBuffer);
+        FreePool(Private->GraphicsOutputModeBuffer);
         Private->GraphicsOutputModeBuffer = ModeBuffer;
 
         //
@@ -2807,13 +2807,13 @@ ConSplitterAddGraphicsOutputMode (
           // The Info buffer would be allocated by callee
           //
           Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32) Index, &SizeOfInfo, &Info);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
           ASSERT ( SizeOfInfo <= sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
           CopyMem (Mode, Info, SizeOfInfo);
           Mode++;
-          FreePool (Info);
+          FreePool(Info);
         }
     } else {
       //
@@ -2834,7 +2834,7 @@ ConSplitterAddGraphicsOutputMode (
           // The Info buffer would be allocated by callee
           //
           Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32) NumberIndex, &SizeOfInfo, &Info);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
           if ((Info->HorizontalResolution == Mode->HorizontalResolution) &&
@@ -2844,10 +2844,10 @@ ConSplitterAddGraphicsOutputMode (
             // it will be added into matched mode buffer
             //
             Match = TRUE;
-            FreePool (Info);
+            FreePool(Info);
             break;
           }
-          FreePool (Info);
+          FreePool(Info);
         }
 
         if (Match) {
@@ -2884,7 +2884,7 @@ ConSplitterAddGraphicsOutputMode (
       //
       // Drop the old mode buffer, assign it to a new one
       //
-      FreePool (Private->GraphicsOutputModeBuffer);
+      FreePool(Private->GraphicsOutputModeBuffer);
       Private->GraphicsOutputModeBuffer = ModeBuffer;
 
       //
@@ -2982,14 +2982,14 @@ Done:
       //
       for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex ++) {
         Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32) NumberIndex, &SizeOfInfo, &Info);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
         if ((Info->HorizontalResolution == Mode->HorizontalResolution) && (Info->VerticalResolution == Mode->VerticalResolution)) {
-          FreePool (Info);
+          FreePool(Info);
           break;
         }
-        FreePool (Info);
+        FreePool(Info);
       }
       Status = GraphicsOutput->SetMode (GraphicsOutput, (UINT32) NumberIndex);
     }
@@ -3147,14 +3147,14 @@ ConSplitterTextOutAddDevice (
               &Private->TextOutListCount,
               (VOID **) &Private->TextOutList
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     //
     // Also need to reallocate the TextOutModeMap table
     //
     Status = ConSplitterGrowMapTable (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -3202,7 +3202,7 @@ ConSplitterTextOutAddDevice (
     //
     if (GraphicsOutput != NULL) {
       Status = GraphicsOutput->QueryMode (GraphicsOutput, GraphicsOutput->Mode->Mode, &SizeOfInfo, &Info);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       ASSERT ( SizeOfInfo <= sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
@@ -3210,7 +3210,7 @@ ConSplitterTextOutAddDevice (
       UgaHorizontalResolution = Info->HorizontalResolution;
       UgaVerticalResolution   = Info->VerticalResolution;
 
-      FreePool (Info);
+      FreePool(Info);
 
     } else if (UgaDraw != NULL) {
       Status = UgaDraw->GetMode (
@@ -3220,7 +3220,7 @@ ConSplitterTextOutAddDevice (
                     &UgaColorDepth,
                     &UgaRefreshRate
                     );
-      if (!EFI_ERROR (Status) && EFI_ERROR (DeviceStatus)) {
+      if (!EFI_ERROR(Status) && EFI_ERROR(DeviceStatus)) {
         //
         // if GetMode is successfully and UGA device hasn't been set, set it
         //
@@ -3235,7 +3235,7 @@ ConSplitterTextOutAddDevice (
       //
       // If GetMode/SetMode is failed, set to 800x600 mode
       //
-      if(EFI_ERROR (Status)) {
+      if(EFI_ERROR(Status)) {
         Status = ConSplitterUgaDrawSetMode (
                     &Private->UgaDraw,
                     800,
@@ -3247,7 +3247,7 @@ ConSplitterTextOutAddDevice (
     }
   }
 
-  if (((!EFI_ERROR (DeviceStatus)) || (!EFI_ERROR (Status))) &&
+  if (((!EFI_ERROR(DeviceStatus)) || (!EFI_ERROR(Status))) &&
       ((Private->CurrentNumberOfGraphicsOutput + Private->CurrentNumberOfUgaDraw) == 1)) {
     if (!FeaturePcdGet (PcdConOutGopSupport)) {
       //
@@ -3401,7 +3401,7 @@ ConSplitterTextOutDeleteDevice (
     Private->TextOutQueryDataCount * sizeof (TEXT_OUT_SPLITTER_QUERY_DATA)
     );
 
-  FreePool (Private->TextOutModeMap);
+  FreePool(Private->TextOutModeMap);
   Private->TextOutModeMap = NULL;
   TextOutList             = Private->TextOutList;
 
@@ -3464,12 +3464,12 @@ ConSplitterTextInReset (
                                           Private->TextInList[Index],
                                           ExtendedVerification
                                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
 
-  if (!EFI_ERROR (ReturnStatus)) {
+  if (!EFI_ERROR(ReturnStatus)) {
     ToggleStateSyncReInitialization (Private);
     //
     // Empty the key queue.
@@ -3541,7 +3541,7 @@ ConSplitterTextInPrivateReadKeyStroke (
   //
   while (TRUE) {
     Status = ConSplitterTextInExDequeueKey (Private, &KeyData);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar != SCAN_NULL)) {
@@ -3563,7 +3563,7 @@ ConSplitterTextInPrivateReadKeyStroke (
                                           Private->TextInList[Index],
                                           &KeyData.Key
                                           );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // If it is not partial keystorke, return the key. Otherwise, continue
       // to read key from THIS physical console input device.
@@ -3661,7 +3661,7 @@ ConSplitterTextInWaitForKey (
   //
   for (Index = 0; Index < Private->CurrentNumberOfConsoles; Index++) {
     Status = gBS->CheckEvent (Private->TextInList[Index]->WaitForKey);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->SignalEvent (Event);
       Private->KeyEventSignalState = TRUE;
     }
@@ -3749,12 +3749,12 @@ ConSplitterTextInResetEx (
                                              Private->TextInExList[Index],
                                              ExtendedVerification
                                              );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
 
-  if (!EFI_ERROR (ReturnStatus)) {
+  if (!EFI_ERROR(ReturnStatus)) {
     ToggleStateSyncReInitialization (Private);
     //
     // Empty the key queue.
@@ -3818,7 +3818,7 @@ ConSplitterTextInReadKeyStrokeEx (
   // Return the first saved key.
   //
   Status = ConSplitterTextInExDequeueKey (Private, KeyData);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return Status;
   }
   ASSERT (Private->CurrentNumberOfKeys == 0);
@@ -3836,7 +3836,7 @@ ConSplitterTextInReadKeyStrokeEx (
                                              Private->TextInExList[Index],
                                              &CurrentKeyData
                                              );
-    if (EFI_ERROR (Status) && (Status != EFI_NOT_READY)) {
+    if (EFI_ERROR(Status) && (Status != EFI_NOT_READY)) {
       continue;
     }
 
@@ -3850,7 +3850,7 @@ ConSplitterTextInReadKeyStrokeEx (
       KeyState.KeyToggleState |= CurrentKeyData.KeyState.KeyToggleState;
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // If virtual KeyState has been required to be exposed, or it is not
       // partial keystorke, queue the key.
@@ -3881,7 +3881,7 @@ ConSplitterTextInReadKeyStrokeEx (
   // Return the first saved key.
   //
   Status = ConSplitterTextInExDequeueKey (Private, KeyData);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -3942,7 +3942,7 @@ ConSplitterTextInSetState (
                                              Private->TextInExList[Index],
                                              &PhysicalKeyToggleState
                                              );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -4028,7 +4028,7 @@ ConSplitterTextInRegisterKeyNotify (
   }
   NewNotify->NotifyHandleList = (EFI_HANDLE *) AllocateZeroPool (sizeof (EFI_HANDLE) *  Private->TextInExListCount);
   if (NewNotify->NotifyHandleList == NULL) {
-    gBS->FreePool (NewNotify);
+    gBS->FreePool(NewNotify);
     return EFI_OUT_OF_RESOURCES;
   }
   NewNotify->Signature         = TEXT_IN_EX_SPLITTER_NOTIFY_SIGNATURE;
@@ -4046,7 +4046,7 @@ ConSplitterTextInRegisterKeyNotify (
                                              KeyNotificationFunction,
                                              &NewNotify->NotifyHandleList[Index]
                                              );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Un-register the key notify on all physical console input devices
       //
@@ -4056,8 +4056,8 @@ ConSplitterTextInRegisterKeyNotify (
                                         NewNotify->NotifyHandleList[Index]
                                         );
       }
-      gBS->FreePool (NewNotify->NotifyHandleList);
-      gBS->FreePool (NewNotify);
+      gBS->FreePool(NewNotify->NotifyHandleList);
+      gBS->FreePool(NewNotify);
       return Status;
     }
   }
@@ -4112,8 +4112,8 @@ ConSplitterTextInUnregisterKeyNotify (
       }
       RemoveEntryList (&CurrentNotify->NotifyEntry);
 
-      gBS->FreePool (CurrentNotify->NotifyHandleList);
-      gBS->FreePool (CurrentNotify);
+      gBS->FreePool(CurrentNotify->NotifyHandleList);
+      gBS->FreePool(CurrentNotify);
       return EFI_SUCCESS;
     }
   }
@@ -4163,7 +4163,7 @@ ConSplitterSimplePointerReset (
                                             Private->PointerList[Index],
                                             ExtendedVerification
                                             );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -4215,7 +4215,7 @@ ConSplitterSimplePointerPrivateGetState (
                                             Private->PointerList[Index],
                                             &CurrentState
                                             );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (ReturnStatus == EFI_NOT_READY) {
         ReturnStatus = EFI_SUCCESS;
       }
@@ -4313,7 +4313,7 @@ ConSplitterSimplePointerWaitForInput (
   //
   for (Index = 0; Index < Private->CurrentNumberOfPointers; Index++) {
     Status = gBS->CheckEvent (Private->PointerList[Index]->WaitForInput);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->SignalEvent (Event);
       Private->InputEventSignalState = TRUE;
     }
@@ -4358,7 +4358,7 @@ ConSplitterAbsolutePointerReset (
                                                     Private->AbsolutePointerList[Index],
                                                     ExtendedVerification
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -4435,7 +4435,7 @@ ConSplitterAbsolutePointerGetState (
                                                     Private->AbsolutePointerList[Index],
                                                     &CurrentState
                                                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (ReturnStatus == EFI_NOT_READY) {
         ReturnStatus = EFI_SUCCESS;
       }
@@ -4528,7 +4528,7 @@ ConSplitterAbsolutePointerWaitForInput (
   //
   for (Index = 0; Index < Private->CurrentNumberOfAbsolutePointers; Index++) {
     Status = gBS->CheckEvent (Private->AbsolutePointerList[Index]->WaitForInput);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->SignalEvent (Event);
       Private->AbsoluteInputEventSignalState = TRUE;
     }
@@ -4570,7 +4570,7 @@ ConSplitterTextOutReset (
                                                     Private->TextOutList[Index].TextOut,
                                                     ExtendedVerification
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -4631,7 +4631,7 @@ ConSplitterTextOutOutputString (
                                                     Private->TextOutList[Index].TextOut,
                                                     WString
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -4726,7 +4726,7 @@ ConSplitterTextOutTestString (
                                                     Private->TextOutList[Index].TextOut,
                                                     WString
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -4863,7 +4863,7 @@ ConSplitterTextOutSetMode (
                                                       Private->TextOutList[Index].TextOut,
                                                       TextOutModeMap[Index]
                                                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       }
     }
@@ -4924,7 +4924,7 @@ ConSplitterTextOutSetAttribute (
                                                     Private->TextOutList[Index].TextOut,
                                                     Attribute
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -4965,7 +4965,7 @@ ConSplitterTextOutClearScreen (
   //
   for (Index = 0, ReturnStatus = EFI_SUCCESS; Index < Private->CurrentNumberOfConsoles; Index++) {
     Status = Private->TextOutList[Index].TextOut->ClearScreen (Private->TextOutList[Index].TextOut);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -5049,7 +5049,7 @@ ConSplitterTextOutSetCursorPosition (
                                                     Column,
                                                     Row
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }
@@ -5102,7 +5102,7 @@ ConSplitterTextOutEnableCursor (
                                                     Private->TextOutList[Index].TextOut,
                                                     Visible
                                                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ReturnStatus = Status;
     }
   }

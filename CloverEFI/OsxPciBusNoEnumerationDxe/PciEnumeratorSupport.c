@@ -162,7 +162,7 @@ Returns:
                                   Pci
                                   );
 
-  if (!EFI_ERROR (Status) && (Pci->Hdr).VendorId != 0xffff) {
+  if (!EFI_ERROR(Status) && (Pci->Hdr).VendorId != 0xffff) {
 
     //
     // Read the entire config header for the device
@@ -226,14 +226,14 @@ Returns:
                 (UINT8) Func
                 );
 
-      if (EFI_ERROR (Status) && Func == 0) {
+      if (EFI_ERROR(Status) && Func == 0) {
         //
         // go to next device if there is no Function 0
         //
         break;
       }
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
 
         //
         // Collect all the information about the PCI device discovered
@@ -252,7 +252,7 @@ Returns:
         //
         //
 
-        if (!EFI_ERROR (Status) && (IS_PCI_BRIDGE (&Pci) || IS_CARDBUS_BRIDGE (&Pci))) {
+        if (!EFI_ERROR(Status) && (IS_PCI_BRIDGE (&Pci) || IS_CARDBUS_BRIDGE (&Pci))) {
 
           //
           // If it is PPB, we need to get the secondary bus to continue the enumeration
@@ -261,7 +261,7 @@ Returns:
 
           Status  = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x19, 1, &SecBus);
 
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
               
@@ -556,7 +556,7 @@ Returns:
   //
   // test if it supports 64 memory or not
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 
     Status = BarExisted (
               PciIoDevice,
@@ -565,7 +565,7 @@ Returns:
               NULL
               );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       PciIoDevice->Decodes |= EFI_BRIDGE_PMEM32_DECODE_SUPPORTED;
       PciIoDevice->Decodes |= EFI_BRIDGE_PMEM64_DECODE_SUPPORTED;
     } else {
@@ -899,7 +899,7 @@ Returns:
             &OriginalValue
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     PciIoDevice->PciBar[BarIndex].BaseAddress = 0;
     PciIoDevice->PciBar[BarIndex].Length      = 0;
     PciIoDevice->PciBar[BarIndex].Alignment   = 0;
@@ -1001,7 +1001,7 @@ Returns:
                 &OriginalValue
                 );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Offset + 4;
       }
 
@@ -1166,7 +1166,7 @@ Returns:
                   (VOID **) &PciIoDevice
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -1201,8 +1201,8 @@ Returns:
   InitializePciIoInstance (PciIoDevice);
   Status  = InitializePciDriverOverrideInstance (PciIoDevice);
 
-  if (EFI_ERROR (Status)) {
-    gBS->FreePool (PciIoDevice);
+  if (EFI_ERROR(Status)) {
+    gBS->FreePool(PciIoDevice);
     return NULL;
   }
 
@@ -1274,7 +1274,7 @@ Returns:
                   Controller,   
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     return Status;
   }
 
@@ -1289,7 +1289,7 @@ Returns:
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     return Status;
   }
 
@@ -1300,7 +1300,7 @@ Returns:
 
   Status = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **) &Descriptors);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1326,7 +1326,7 @@ Returns:
               (UINT8) MinBus
               );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
 
       //
       // If successfully, insert the node into device pool

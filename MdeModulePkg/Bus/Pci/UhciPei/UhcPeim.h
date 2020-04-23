@@ -1238,7 +1238,7 @@ AllocMemInMemoryBlock (
 
 **/
 VOID
-UhcFreePool (
+UhcFreePool(
   IN USB_UHC_DEV     *UhcDev,
   IN UINT8           *Pool,
   IN UINTN           AllocSize

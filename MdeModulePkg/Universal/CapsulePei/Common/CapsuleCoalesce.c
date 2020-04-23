@@ -1032,7 +1032,7 @@ CapsuleDataCoalesce (
   // Build capsule descriptors list
   //
   Status = BuildCapsuleDescriptors (BlockListBuffer, MemoryResource, &BlockList);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1046,7 +1046,7 @@ CapsuleDataCoalesce (
   // one for a terminator. Do that below.
   //
   Status = GetCapsuleInfo (BlockList, &NumDescriptors, &CapsuleSize, &CapsuleNumber);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   DEBUG ((DEBUG_INFO, "CapsuleSize - 0x%x\n", CapsuleSize));

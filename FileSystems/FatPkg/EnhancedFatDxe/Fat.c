@@ -105,7 +105,7 @@ Returns:
              &gFatComponentName,
              &gFatComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -146,19 +146,19 @@ Returns:
                   &DeviceHandleCount,
                   &DeviceHandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   for (Index = 0; Index < DeviceHandleCount; Index++) {
     Status = EfiTestManagedDevice (DeviceHandleBuffer[Index], ImageHandle, &gEfiDiskIoProtocolGuid);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gBS->DisconnectController (
                       DeviceHandleBuffer[Index],
                       ImageHandle,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
     }
@@ -169,12 +169,12 @@ Returns:
     // Driver is stopped successfully.
     //
     Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentNameProtocolGuid, &ComponentName);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ComponentName = NULL;
     }
 
     Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentName2ProtocolGuid, &ComponentName2);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       ComponentName2 = NULL;
     }
 
@@ -214,7 +214,7 @@ Returns:
   }
 
   if (DeviceHandleBuffer != NULL) {
-    FreePool (DeviceHandleBuffer);
+    FreePool(DeviceHandleBuffer);
   }
 
   return Status;
@@ -263,7 +263,7 @@ Returns:
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -333,12 +333,12 @@ Returns:
   // If caller has already acquired the lock, cannot lock it again.
   //
   Status = FatAcquireLockOrFail ();
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     LockedByMe = TRUE;
   }
 
   Status = InitializeUnicodeCollationSupport (This->DriverBindingHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
   //
@@ -352,7 +352,7 @@ Returns:
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -364,7 +364,7 @@ Returns:
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -376,7 +376,7 @@ Returns:
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DiskIo2 = NULL;
   }
 
@@ -391,7 +391,7 @@ Returns:
   // This will cause a call to our Stop(), and a subsequent reentrant call to our
   // Start() successfully. We should leave the device open when this happen.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
                     ControllerHandle,
                     &gEfiSimpleFileSystemProtocolGuid,
@@ -400,7 +400,7 @@ Returns:
                     ControllerHandle,
                     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseProtocol (
              ControllerHandle,
              &gEfiDiskIoProtocolGuid,
@@ -469,13 +469,13 @@ Returns:
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Volume  = VOLUME_FROM_VOL_INTERFACE (FileSystem);
     DiskIo2 = Volume->DiskIo2;
     Status  = FatAbandonVolume (Volume);
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (DiskIo2 != NULL) {
       Status = gBS->CloseProtocol (
         ControllerHandle,
@@ -483,7 +483,7 @@ Returns:
         This->DriverBindingHandle,
         ControllerHandle
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -493,7 +493,7 @@ Returns:
       This->DriverBindingHandle,
       ControllerHandle
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }

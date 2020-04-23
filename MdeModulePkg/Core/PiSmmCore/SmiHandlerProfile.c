@@ -377,7 +377,7 @@ DumpSmiChildContext (
     Str = ConvertDevicePathToText((EFI_DEVICE_PATH_PROTOCOL *)(((SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT *)Context) + 1), TRUE, TRUE);
     DEBUG ((DEBUG_INFO, "  UsbDevicePath - %s\n", Str));
     if (Str != NULL) {
-      FreePool (Str);
+      FreePool(Str);
     }
   } else {
     DEBUG ((DEBUG_INFO, "  Context - "));
@@ -1030,7 +1030,7 @@ RegisterSmiHandlerProfileHandler (
                     &gSmiHandlerProfileGuid,
                     &DispatchHandle
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   BuildSmiHandlerProfileDatabase();
 }
@@ -1225,9 +1225,9 @@ SmiHandlerProfileRegisterHandler (
   SmiEntry = SmmCoreFindHardwareSmiEntry (HandlerGuid, TRUE);
   if (SmiEntry == NULL) {
     if (SmiHandler->Context != NULL) {
-      FreePool (SmiHandler->Context);
+      FreePool(SmiHandler->Context);
     }
-    FreePool (SmiHandler);
+    FreePool(SmiHandler);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1309,7 +1309,7 @@ SmiHandlerProfileUnregisterHandler (
 
   if (SearchContext != NULL) {
     if (CompareGuid (HandlerGuid, &gEfiSmmUsbDispatch2ProtocolGuid)) {
-      FreePool (SearchContext);
+      FreePool(SearchContext);
     }
   }
 
@@ -1320,13 +1320,13 @@ SmiHandlerProfileUnregisterHandler (
 
   RemoveEntryList (&SmiHandler->Link);
   if (SmiHandler->Context != NULL) {
-    FreePool (SmiHandler->Context);
+    FreePool(SmiHandler->Context);
   }
-  FreePool (SmiHandler);
+  FreePool(SmiHandler);
 
   if (IsListEmpty (&SmiEntry->SmiHandlers)) {
     RemoveEntryList (&SmiEntry->AllEntries);
-    FreePool (SmiEntry);
+    FreePool(SmiEntry);
   }
 
   return EFI_SUCCESS;
@@ -1352,7 +1352,7 @@ SmmCoreInitializeSmiHandlerProfile (
                       SmmReadyToLockInSmiHandlerProfile,
                       &Registration
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Handle = NULL;
     Status = gSmst->SmmInstallProtocolInterface (
@@ -1361,7 +1361,7 @@ SmmCoreInitializeSmiHandlerProfile (
                       EFI_NATIVE_INTERFACE,
                       &mSmiHandlerProfile
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 }
 

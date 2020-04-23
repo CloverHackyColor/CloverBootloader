@@ -69,7 +69,7 @@ InternalVarCheckAllocateZeroPool (
 **/
 VOID
 EFIAPI
-InternalVarCheckFreePool (
+InternalVarCheckFreePool(
   IN VOID   *Buffer
   );
 

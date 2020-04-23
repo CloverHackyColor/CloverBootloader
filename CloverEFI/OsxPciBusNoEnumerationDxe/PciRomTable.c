@@ -64,7 +64,7 @@ PciRomAddImageMapping (
     CopyMem (TempMapping, mRomImageTable, mNumberOfPciRomImages * sizeof (EFI_PCI_ROM_IMAGE_MAPPING));
 
     if (mRomImageTable != NULL) {
-      gBS->FreePool (mRomImageTable);
+      gBS->FreePool(mRomImageTable);
     }
 
     mRomImageTable = TempMapping;
@@ -204,7 +204,7 @@ Returns:
 
         if (EfiRomHeader->CompressionType == EFI_PCI_EXPANSION_ROM_HEADER_COMPRESSED) {
           Status = gBS->LocateProtocol (&gEfiDecompressProtocolGuid, NULL, (VOID **) &Decompress);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             SkipImage = TRUE;
           } else {
             SkipImage = TRUE;
@@ -215,7 +215,7 @@ Returns:
                                   &DestinationSize,
                                   &ScratchSize
                                   );
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
 //              DecompressedImageBuffer = NULL;
               DecompressedImageBuffer = AllocatePool (DestinationSize);
               if (DecompressedImageBuffer != NULL) {
@@ -230,13 +230,13 @@ Returns:
                                         Scratch,
                                         ScratchSize
                                         );
-                  if (!EFI_ERROR (Status)) {
+                  if (!EFI_ERROR(Status)) {
                     ImageBuffer = DecompressedImageBuffer;
                     ImageLength = DestinationSize;
                     SkipImage   = FALSE;
                   }
 
-                  gBS->FreePool (Scratch);
+                  gBS->FreePool(Scratch);
                 }
               }
             }
@@ -260,9 +260,9 @@ Returns:
                           ImageLength,
                           &ImageHandle
                           );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             Status = gBS->StartImage (ImageHandle, NULL, NULL);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               PciRomAddImageMapping (
                 ImageHandle,
                 PciOptionRomDescriptor->Seg,
@@ -274,12 +274,12 @@ Returns:
             }
           }
           if (FilePath != NULL) {
-            gBS->FreePool (FilePath);
+            gBS->FreePool(FilePath);
           }
         }
 
         if (DecompressedImageBuffer != NULL) {
-          gBS->FreePool (DecompressedImageBuffer);
+          gBS->FreePool(DecompressedImageBuffer);
         }
 
       }
@@ -316,7 +316,7 @@ Returns:
   UINT16                            MaxBus;
 
   Status = EfiGetSystemConfigurationTable (&gEfiPciOptionRomTableGuid, (VOID **) &PciOptionRomTable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -327,7 +327,7 @@ Returns:
     if (!PciOptionRomDescriptor->DontLoadEfiRom) {
       if (PciOptionRomDescriptor->Seg == PciRootBridgeIo->SegmentNumber) {
         Status = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **) &Descriptors);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
 
@@ -365,7 +365,7 @@ Returns:
   UINTN                         Index;
 
   Status = EfiGetSystemConfigurationTable (&gEfiPciOptionRomTableGuid, (VOID **) &PciOptionRomTable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 

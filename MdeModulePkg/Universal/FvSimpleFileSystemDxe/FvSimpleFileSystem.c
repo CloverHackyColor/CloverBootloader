@@ -153,7 +153,7 @@ FvFsGetFileSize (
     if (Status == EFI_WARN_BUFFER_TOO_SMALL) {
       return EFI_SUCCESS;
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Didn't find a raw section, just return the whole file's size.
       //
@@ -240,7 +240,7 @@ FvFsReadFile (
                            BufferSize,
                            &AuthenticationStatus
                            );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Didn't find a raw section, just return the whole file.
       //
@@ -572,7 +572,7 @@ FvSimpleFileSystemOpen (
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     NewFile = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE));
     if (NewFile == NULL) {
       return EFI_OUT_OF_RESOURCES;
@@ -615,7 +615,7 @@ FvSimpleFileSystemClose (
 
   if (File != Instance->Root) {
     RemoveEntryList (&File->Link);
-    FreePool (File);
+    FreePool(File);
   }
   return EFI_SUCCESS;
 }
@@ -664,7 +664,7 @@ FvSimpleFileSystemRead (
       // Directory read: populate Buffer with an EFI_FILE_INFO
       //
       Status = FvFsGetFileInfo (File->DirReadNext, BufferSize, Buffer);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Successfully read a directory entry, now update the pointer to the
         // next file, which will be read on the next call to this function
@@ -697,8 +697,8 @@ FvSimpleFileSystemRead (
     }
 
     Status = FvFsReadFile (File->Instance->FvProtocol, File->FvFileInfo, &FileSize, &FileBuffer);
-    if (EFI_ERROR (Status)) {
-      FreePool (FileBuffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(FileBuffer);
       return EFI_DEVICE_ERROR;
     }
 
@@ -709,7 +709,7 @@ FvSimpleFileSystemRead (
     CopyMem (Buffer, (UINT8*)FileBuffer + File->Position, *BufferSize);
     File->Position += *BufferSize;
 
-    FreePool (FileBuffer);
+    FreePool(FileBuffer);
 
     return EFI_SUCCESS;
   }
@@ -877,7 +877,7 @@ FvSimpleFileSystemDelete (
   EFI_STATUS       Status;
 
   Status = FvSimpleFileSystemClose (This);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_WARN_DELETE_FAILURE;
 }
@@ -944,7 +944,7 @@ FvSimpleFileSystemGetInfo (
                         Instance->VolumeLabel,
                         StrLen (Instance->VolumeLabel)
                         );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     FsInfoOut->Size = Size;
     return Status;
   } else if (CompareGuid (InformationType, &gEfiFileInfoGuid)) {
@@ -969,7 +969,7 @@ FvSimpleFileSystemGetInfo (
                               Instance->VolumeLabel,
                               StrLen (Instance->VolumeLabel)
                               );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     return Status;
   } else {
     return EFI_UNSUPPORTED;

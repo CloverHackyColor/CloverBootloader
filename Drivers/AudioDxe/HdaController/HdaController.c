@@ -148,7 +148,7 @@ HdaControllerInitPciHw(
 
     // Get vendor and device IDs of PCI device.
     Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, PCI_VENDOR_ID_OFFSET, 1, &HdaControllerDev->VendorId);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         return Status;
 
 //    DEBUG((DEBUG_INFO, "HdaControllerInitPciHw(): controller %4X:%4X\n",
@@ -158,24 +158,24 @@ HdaControllerInitPciHw(
     if (GET_PCI_VENDOR_ID(HdaControllerDev->VendorId) == VEN_INTEL_ID) {
         // Set TC0 in TCSEL register.
         Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint8, PCI_HDA_TCSEL_OFFSET, 1, &HdaTcSel);
-        if (EFI_ERROR (Status))
+        if (EFI_ERROR(Status))
             return Status;
         HdaTcSel &= PCI_HDA_TCSEL_TC0_MASK;
         Status = PciIo->Pci.Write(PciIo, EfiPciIoWidthUint8, PCI_HDA_TCSEL_OFFSET, 1, &HdaTcSel);
-        if (EFI_ERROR (Status))
+        if (EFI_ERROR(Status))
             return Status;
     }
 
     // Get device control PCI register.
     Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint16, PCI_HDA_DEVC_OFFSET, 1, &HdaDevC);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         return Status;
 
     // If No Snoop is currently enabled, disable it.
     if (HdaDevC & PCI_HDA_DEVC_NOSNOOPEN) {
         HdaDevC &= ~PCI_HDA_DEVC_NOSNOOPEN;
         Status = PciIo->Pci.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_DEVC_OFFSET, 1, &HdaDevC);
-        if (EFI_ERROR (Status))
+        if (EFI_ERROR(Status))
             return Status;
     }
 
@@ -707,13 +707,13 @@ HdaControllerDriverBindingStart(
     // Open PCI I/O protocol.
     Status = gBS->OpenProtocol(ControllerHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo,
         This->DriverBindingHandle, ControllerHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         return Status;
 
     // Open Device Path protocol.
     Status = gBS->OpenProtocol(ControllerHandle, &gEfiDevicePathProtocolGuid, (VOID**)&HdaControllerDevicePath,
         This->DriverBindingHandle, ControllerHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
-    if (EFI_ERROR (Status))
+    if (EFI_ERROR(Status))
         goto CLOSE_PCIIO;
 
     // Allocate controller device.

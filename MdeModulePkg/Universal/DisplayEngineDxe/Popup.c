@@ -32,7 +32,7 @@ FreeSelectableOptions(
     Link = GetFirstNode (OptionList);
     SelectableOption = SELECTABLE_OPTION_FROM_LINK (Link);
     RemoveEntryList (&SelectableOption->Link);
-    FreePool (SelectableOption);
+    FreePool(SelectableOption);
   }
 }
 
@@ -243,7 +243,7 @@ GetUserSelection (
     }
 
     Status = WaitForKeyStroke (&KeyValue);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     HighlightOption = SELECTABLE_OPTION_FROM_LINK (HighlightPos);
     switch (KeyValue.UnicodeChar) {
@@ -452,7 +452,7 @@ CalculatePopupPosition (
     if (gMaxRowWidth < OutputStrWidth) {
       gMaxRowWidth = OutputStrWidth;
     }
-    FreePool (OutputString);
+    FreePool(OutputString);
   }
 
   //
@@ -588,19 +588,19 @@ DrawMessageBox (
       GetStringOffsetWithWidth (OutputString, gMaxRowWidth, &Length);
       TempString = AllocateZeroPool ((Length + 1) * sizeof (CHAR16));
       if (TempString == NULL) {
-        FreePool (OutputString);
+        FreePool(OutputString);
         return EFI_OUT_OF_RESOURCES;
       }
       StrnCpyS (TempString, Length + 1, OutputString, Length - 3);
       StrCatS (TempString, Length + 1, L"...");
       PrintStringAt ((ColDimension - gMaxRowWidth) / 2 + StartCol, Index, TempString);
-      FreePool (TempString);
+      FreePool(TempString);
     } else {
       PrintStringAt ((ColDimension - OutputStrWidth) / 2 + StartCol, Index, OutputString);
     }
     Index ++;
     DrawMesStrRowNum ++;
-    FreePool (OutputString);
+    FreePool(OutputString);
   }
 
   //
@@ -695,7 +695,7 @@ CreatePopup (
   CalculatePopupPosition (PopupType, &gPopupDimensions);
 
   Status = DrawMessageBox (PopupStyle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -703,7 +703,7 @@ CreatePopup (
   // Add user selectable options to option list: gUserSelectableOptions
   //
   Status = AddUserSelectableOptions (PopupType);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -717,7 +717,7 @@ Done:
   ConOut->SetCursorPosition (ConOut, SavedConsoleMode.CursorColumn, SavedConsoleMode.CursorRow);
   ConOut->SetAttribute (ConOut, SavedConsoleMode.Attribute);
   FreeSelectableOptions (&gUserSelectableOptions);
-  FreePool (gMessageString);
+  FreePool(gMessageString);
 
   return Status;
 }

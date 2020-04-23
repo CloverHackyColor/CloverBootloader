@@ -174,7 +174,7 @@ LzmaArchGuidedSectionExtraction (
   //
   // After decompress, the data need to be converted to the raw data.
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = LzmaUefiDecompressGetInfo (
              Source,
              (UINT32) SourceSize,
@@ -182,7 +182,7 @@ LzmaArchGuidedSectionExtraction (
              &ScratchBufferSize
              );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       x86_Convert_Init(X86State);
       x86_Convert(*OutputBuffer, OutputBufferSize, 0, &X86State, 0);
     }

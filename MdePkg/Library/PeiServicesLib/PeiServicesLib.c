@@ -691,7 +691,7 @@ InternalPeiServicesInstallFvInfoPpi (
   FvInfoPpiDescriptor->Flags = EFI_PEI_PPI_DESCRIPTOR_PPI | EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST;
   FvInfoPpiDescriptor->Ppi   = (VOID *) FvInfoPpi;
   Status = PeiServicesInstallPpi (FvInfoPpiDescriptor);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 }
 

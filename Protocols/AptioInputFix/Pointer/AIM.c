@@ -319,7 +319,7 @@ AmiShimPointerGetState (
   if (Index != AIM_MAX_POINTERS) {
     Status = AmiShimPointerUpdateState (Pointer, State);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (State->RelativeMovementX != 0 ||
           State->RelativeMovementY != 0 ||
           State->RelativeMovementZ != 0) {
@@ -351,14 +351,14 @@ AmiShimPointerTimerSetup (
 
   Status = gBS->CreateEvent (EVT_TIMER | EVT_NOTIFY_SIGNAL, TPL_NOTIFY, AmiShimPointerPositionHandler, NULL, &mAmiShimPointer.PositionEvent);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "AmiShimPointerPositionHandler event creation failed %d\n", Status));
     return Status;
   }
 
   Status = gBS->SetTimer (mAmiShimPointer.PositionEvent, TimerPeriodic, AIM_POSITION_POLL_INTERVAL);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "AmiShimPointerPositionHandler timer setting failed %d\n", Status));
     gBS->CloseEvent (mAmiShimPointer.PositionEvent);
     return Status;
@@ -383,7 +383,7 @@ AmiShimPointerTimerUninstall (
 
   if (mAmiShimPointer.PositionEvent != NULL) {
     Status = gBS->SetTimer (mAmiShimPointer.PositionEvent, TimerCancel, 0);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->CloseEvent (mAmiShimPointer.PositionEvent);
       mAmiShimPointer.PositionEvent = NULL;
     } else {
@@ -483,7 +483,7 @@ AmiShimPointerInstall (
     Installed = TRUE;
   }
 
-  gBS->FreePool (Handles);
+  gBS->FreePool(Handles);
 
   if (!Installed) {
     return EFI_NOT_FOUND;
@@ -539,7 +539,7 @@ AIMInit (
   
   Status = gBS->CreateEvent (EVT_NOTIFY_SIGNAL, TPL_NOTIFY, AmiShimPointerArriveHandler, NULL, &mAmiShimPointer.ProtocolArriveEvent);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "AmiShimPointerArriveHandler event creation failed %d\n", Status));
     return Status;
   }
@@ -547,7 +547,7 @@ AIMInit (
   // EfiSimplePointer gets installed after AMI proprietary protocol
   Status = gBS->RegisterProtocolNotify (&gEfiSimplePointerProtocolGuid, mAmiShimPointer.ProtocolArriveEvent, &Registration);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "AmiShimProtocolArriveHandler protocol registration failed %d\n", Status));
     gBS->CloseEvent (mAmiShimPointer.ProtocolArriveEvent);
     return Status;

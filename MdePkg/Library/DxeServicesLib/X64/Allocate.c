@@ -56,7 +56,7 @@ AllocatePeiAccessiblePages (
   }
 
   Status = gBS->AllocatePages (AllocType, MemoryType, Pages, &Memory);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   return (VOID *)(UINTN)Memory;

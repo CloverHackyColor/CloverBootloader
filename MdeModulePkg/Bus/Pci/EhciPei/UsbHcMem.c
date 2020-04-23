@@ -43,7 +43,7 @@ UsbHcAllocMemBlock (
              &TempPtr
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
       return NULL;
   }
   ZeroMem ((VOID   *)(UINTN)TempPtr, PageNumber*EFI_PAGE_SIZE);
@@ -65,7 +65,7 @@ UsbHcAllocMemBlock (
              &TempPtr
              );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
   ZeroMem ((VOID   *)(UINTN)TempPtr, PageNumber*EFI_PAGE_SIZE);
@@ -79,7 +79,7 @@ UsbHcAllocMemBlock (
              &MappedAddr,
              &Mapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   ZeroMem (BufHost, Pages*EFI_PAGE_SIZE);
@@ -318,7 +318,7 @@ UsbHcInitMemPool (
               &TempPtr
              );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
   ZeroMem ((VOID   *)(UINTN)TempPtr, PageNumber*EFI_PAGE_SIZE);

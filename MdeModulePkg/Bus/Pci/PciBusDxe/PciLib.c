@@ -331,7 +331,7 @@ DumpResourceMap (
                   NULL,
                   EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       EFI_D_INFO, "Bridge [%02x|%02x|%02x]\n",
       Bridge->BusNumber, Bridge->DeviceNumber, Bridge->FunctionNumber
@@ -344,7 +344,7 @@ DumpResourceMap (
             );
     DEBUG ((EFI_D_INFO, "Root Bridge %s\n", Str != NULL ? Str : L""));
     if (Str != NULL) {
-      FreePool (Str);
+      FreePool(Str);
     }
   }
 
@@ -372,7 +372,7 @@ DumpResourceMap (
       }
 
       DumpResourceMap (Device, ChildResources, ChildResourceCount);
-      FreePool (ChildResources);
+      FreePool(ChildResources);
     }
   }
 }
@@ -565,17 +565,17 @@ PciHostBridgeResourceAllocator (
         // It's a fatal error so assertion is added.
         //
         DEBUG ((EFI_D_INFO, "PciBus: HostBridge->SubmitResources() - %r\n", Status));
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
 
       //
       // Free acpi resource node
       //
       if (AcpiConfig != NULL) {
-        FreePool (AcpiConfig);
+        FreePool(AcpiConfig);
       }
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Destroy all the resource tree
         //
@@ -601,7 +601,7 @@ PciHostBridgeResourceAllocator (
       //
       // If Hot Plug is not supported
       //
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Allocation failed, then return
         //
@@ -619,7 +619,7 @@ PciHostBridgeResourceAllocator (
       //
       // If Hot Plug is supported
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Allocation succeed, then continue the following
         //
@@ -664,7 +664,7 @@ PciHostBridgeResourceAllocator (
                                 &AcpiConfig
                                 );
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
 
@@ -680,7 +680,7 @@ PciHostBridgeResourceAllocator (
             &Mem64ResStatus,
             &PMem64ResStatus
             );
-          FreePool (AcpiConfig);
+          FreePool(AcpiConfig);
         }
       }
       //
@@ -727,7 +727,7 @@ PciHostBridgeResourceAllocator (
 
       NotifyPhase (PciResAlloc, EfiPciHostBridgeFreeResources);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -751,7 +751,7 @@ PciHostBridgeResourceAllocator (
   //
   Status = NotifyPhase (PciResAlloc, EfiPciHostBridgeSetResources);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -779,7 +779,7 @@ PciHostBridgeResourceAllocator (
                             &AcpiConfig
                             );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -885,7 +885,7 @@ PciHostBridgeResourceAllocator (
       DumpResourceMap (RootBridgeDev, Resources, ARRAY_SIZE (Resources));
     );
 
-    FreePool (AcpiConfig);
+    FreePool(AcpiConfig);
   }
 
   //
@@ -1031,14 +1031,14 @@ PciScanBus (
                 Func
                 );
 
-      if (EFI_ERROR (Status) && Func == 0) {
+      if (EFI_ERROR(Status) && Func == 0) {
         //
         // go to next device if there is no Function 0
         //
         break;
       }
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -1054,7 +1054,7 @@ PciScanBus (
                 &PciDevice
                 );
 
-      ASSERT (!EFI_ERROR (Status));
+      ASSERT (!EFI_ERROR(Status));
 
       PciAddress = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, 0);
 
@@ -1088,7 +1088,7 @@ PciScanBus (
 
               Status = CreateEventForHpc (HpIndex, &Event);
 
-              ASSERT (!EFI_ERROR (Status));
+              ASSERT (!EFI_ERROR(Status));
 
               Status = gPciHotPlugInit->InitializeRootHpc (
                                           gPciHotPlugInit,
@@ -1136,7 +1136,7 @@ PciScanBus (
                                           &Attributes
                                           );
 
-              if (EFI_ERROR (Status)) {
+              if (EFI_ERROR(Status)) {
                 return Status;
               }
 
@@ -1149,9 +1149,9 @@ PciScanBus (
                         &BusRange
                         );
 
-              FreePool (Descriptors);
+              FreePool(Descriptors);
 
-              if (!EFI_ERROR (Status)) {
+              if (!EFI_ERROR(Status)) {
                 BusPadding = TRUE;
               } else if (Status != EFI_NOT_FOUND) {
                 //
@@ -1164,7 +1164,7 @@ PciScanBus (
         }
 
         Status = PciAllocateBusNumber (Bridge, *SubBusNumber, 1, SubBusNumber);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
         SecondBus = *SubBusNumber;
@@ -1217,7 +1217,7 @@ PciScanBus (
                     SubBusNumber,
                     PaddedBusRange
                     );
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
         }
@@ -1235,7 +1235,7 @@ PciScanBus (
             // Reserve the larger one between the actual occupied bus number and padded bus number
             //
             Status = PciAllocateBusNumber (PciDevice, SecondBus, (UINT8) (BusRange), &PaddedSubBus);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               return Status;
             }
             *SubBusNumber = MAX (PaddedSubBus, *SubBusNumber);
@@ -1263,7 +1263,7 @@ PciScanBus (
           if (TempReservedBusNum < PciDevice->ReservedBusNum) {
 
             Status = PciAllocateBusNumber (PciDevice, *SubBusNumber, (UINT8) (PciDevice->ReservedBusNum - TempReservedBusNum), SubBusNumber);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               return Status;
             }
             TempReservedBusNum = PciDevice->ReservedBusNum;
@@ -1339,10 +1339,10 @@ PciRootBridgeP2CProcess (
                                     &State
                                     );
 
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           Status = PciBridgeEnumerator (Temp);
 
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
         }
@@ -1400,7 +1400,7 @@ PciHostBridgeP2CProcess (
     }
 
     Status = PciRootBridgeP2CProcess (RootBridgeDev);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1447,7 +1447,7 @@ PciHostBridgeEnumerator (
   //
   Status = NotifyPhase (PciResAlloc, EfiPciHostBridgeBeginBusAllocation);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1478,7 +1478,7 @@ PciHostBridgeEnumerator (
     } else {
       DestroyRootBridge (RootBridgeDev);
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1505,7 +1505,7 @@ PciHostBridgeEnumerator (
                               RootBridgeHandle,
                               (VOID **) &Configuration
                               );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 
@@ -1519,7 +1519,7 @@ PciHostBridgeEnumerator (
         StartBusNumber
       );
 
-      FreePool (Configuration);
+      FreePool(Configuration);
       Link = RemoveEntryList (Link);
       DestroyRootBridge (RootBridgeDev);
     }
@@ -1529,7 +1529,7 @@ PciHostBridgeEnumerator (
     //
     Status = AllRootHPCInitialized (STALL_1_SECOND * 15);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Some root HPC failed to initialize\n"));
       return Status;
     }
@@ -1539,7 +1539,7 @@ PciHostBridgeEnumerator (
     //
     Status = NotifyPhase (PciResAlloc, EfiPciHostBridgeBeginBusAllocation);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1565,7 +1565,7 @@ PciHostBridgeEnumerator (
                 );
 
       DestroyRootBridge (RootBridgeDev);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -1581,7 +1581,7 @@ PciHostBridgeEnumerator (
   //
   Status = NotifyPhase (PciResAlloc, EfiPciHostBridgeBeginResourceAllocation);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1599,20 +1599,20 @@ PciHostBridgeEnumerator (
 
     Status = StartManagingRootBridge (RootBridgeDev);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     PciRootBridgeIo = RootBridgeDev->PciRootBridgeIo;
     Status          = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **) &Descriptors);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     Status = PciGetBusRange (&Descriptors, &MinBus, NULL, NULL);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1635,7 +1635,7 @@ PciHostBridgeEnumerator (
               (UINT8) MinBus
               );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

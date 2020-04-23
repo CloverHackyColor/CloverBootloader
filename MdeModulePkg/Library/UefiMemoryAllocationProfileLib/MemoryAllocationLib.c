@@ -45,7 +45,7 @@ InternalAllocatePages (
   }
 
   Status = gBS->AllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   return (VOID *) (UINTN) Memory;
@@ -184,7 +184,7 @@ FreePages (
 
   ASSERT (Pages != 0);
   Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -239,7 +239,7 @@ InternalAllocateAlignedPages (
     ASSERT (RealPages > Pages);
 
     Status         = gBS->AllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
     AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
@@ -249,7 +249,7 @@ InternalAllocateAlignedPages (
       // Free first unaligned page(s).
       //
       Status = gBS->FreePages (Memory, UnalignedPages);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     Memory         = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
     UnalignedPages = RealPages - Pages - UnalignedPages;
@@ -258,14 +258,14 @@ InternalAllocateAlignedPages (
       // Free last unaligned page(s).
       //
       Status = gBS->FreePages (Memory, UnalignedPages);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   } else {
     //
     // Do not over-allocate pages in this case.
     //
     Status = gBS->AllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
     AlignedMemory  = (UINTN) Memory;
@@ -424,7 +424,7 @@ FreeAlignedPages (
 
   ASSERT (Pages != 0);
   Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -450,7 +450,7 @@ InternalAllocatePool (
   VOID        *Memory;
 
   Status = gBS->AllocatePool (MemoryType, AllocationSize, &Memory);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Memory = NULL;
   }
   return Memory;
@@ -883,7 +883,7 @@ InternalReallocatePool (
   NewBuffer = InternalAllocateZeroPool (PoolType, NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
-    FreePool (OldBuffer);
+    FreePool(OldBuffer);
   }
   return NewBuffer;
 }
@@ -1039,13 +1039,13 @@ ReallocateReservedPool (
 **/
 VOID
 EFIAPI
-FreePool (
+FreePool(
   IN VOID   *Buffer
   )
 {
   EFI_STATUS        Status;
 
-  Status = gBS->FreePool (Buffer);
-  ASSERT_EFI_ERROR (Status);
+  Status = gBS->FreePool(Buffer);
+  ASSERT_EFI_ERROR(Status);
 }
 

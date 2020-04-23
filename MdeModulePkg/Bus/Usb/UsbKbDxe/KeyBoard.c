@@ -329,7 +329,7 @@ InstallDefaultKeyboardLayout (
                   NULL,
                   (VOID **) &HiiDatabase
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -380,7 +380,7 @@ IsUSBKeyboard (
                     &InterfaceDescriptor
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -419,7 +419,7 @@ GetCurrentKeyboardLayout (
                   NULL,
                   (VOID **) &HiiDatabase
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -444,8 +444,8 @@ GetCurrentKeyboardLayout (
                             &Length,
                             KeyboardLayout
                             );
-    if (EFI_ERROR (Status)) {
-      FreePool (KeyboardLayout);
+    if (EFI_ERROR(Status)) {
+      FreePool(KeyboardLayout);
       KeyboardLayout = NULL;
     }
   }
@@ -631,7 +631,7 @@ SetKeyboardLayoutEvent (
     TableEntry = GetKeyDescriptor (UsbKeyboardDevice, KeyCode);
     if (TableEntry == NULL) {
       ReleaseKeyboardLayoutResources (UsbKeyboardDevice);
-      FreePool (KeyboardLayout);
+      FreePool(KeyboardLayout);
       return;
     }
     CopyMem (TableEntry, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
@@ -683,7 +683,7 @@ SetKeyboardLayoutEvent (
   KeyDescriptor = GetKeyDescriptor (UsbKeyboardDevice, 0x28);
   CopyMem (TableEntry, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
 
-  FreePool (KeyboardLayout);
+  FreePool(KeyboardLayout);
 }
 
 /**
@@ -701,7 +701,7 @@ ReleaseKeyboardLayoutResources (
   LIST_ENTRY      *Link;
 
   if (UsbKeyboardDevice->KeyConvertionTable != NULL) {
-    FreePool (UsbKeyboardDevice->KeyConvertionTable);
+    FreePool(UsbKeyboardDevice->KeyConvertionTable);
   }
   UsbKeyboardDevice->KeyConvertionTable = NULL;
 
@@ -710,8 +710,8 @@ ReleaseKeyboardLayoutResources (
     UsbNsKey = USB_NS_KEY_FORM_FROM_LINK (Link);
     RemoveEntryList (&UsbNsKey->Link);
 
-    FreePool (UsbNsKey->NsKey);
-    FreePool (UsbNsKey);
+    FreePool(UsbNsKey->NsKey);
+    FreePool(UsbNsKey);
   }
 }
 
@@ -757,7 +757,7 @@ InitKeyboardLayout (
                   &gEfiHiiKeyBoardLayoutGuid,
                   &UsbKeyboardDevice->KeyboardLayoutEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -825,7 +825,7 @@ InitUSBKeyboard (
              &ConfigValue,
              &TransferResult
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ConfigValue = 0x01;
     //
     // Uses default configuration to configure the USB Keyboard device.
@@ -835,7 +835,7 @@ InitUSBKeyboard (
                ConfigValue,
                &TransferResult
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // If configuration could not be set here, it means
       // the keyboard interface has some errors and could
@@ -1720,7 +1720,7 @@ InitQueue (
   Queue->Tail      = 0;
 
   if (Queue->Buffer[0] != NULL) {
-    FreePool (Queue->Buffer[0]);
+    FreePool(Queue->Buffer[0]);
   }
 
   Queue->Buffer[0] = AllocatePool (sizeof (Queue->Buffer) / sizeof (Queue->Buffer[0]) * ItemSize);
@@ -1741,7 +1741,7 @@ DestroyQueue (
   IN OUT USB_SIMPLE_QUEUE   *Queue
   )
 {
-  FreePool (Queue->Buffer[0]);
+  FreePool(Queue->Buffer[0]);
 }
 
 

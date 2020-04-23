@@ -61,7 +61,7 @@ PciLibConstructor (
   EFI_STATUS  Status;
 
   Status = gBS->LocateProtocol (&gEfiPciRootBridgeIoProtocolGuid, NULL, (VOID**) &mPciRootBridgeIo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mPciRootBridgeIo != NULL);
 
   return EFI_SUCCESS;

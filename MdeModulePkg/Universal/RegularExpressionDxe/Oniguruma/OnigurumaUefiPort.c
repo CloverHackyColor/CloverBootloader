@@ -22,5 +22,5 @@ int EFIAPI sprintf_s(char *str, size_t sizeOfBuffer, char const *fmt, ...)
 
 int OnigStrCmp (char* Str1, char* Str2)
 {
-  return (int)AsciiStrCmp (Str1, Str2);
+  return (int)AsciiStrCmp(Str1, Str2);
 }

@@ -404,7 +404,7 @@ FVEntrypoint (IN EFI_HANDLE           ImageHandle,
   
   Status = gBS->LocateProtocol (&gEfiFirmwareVolumeProtocolGuid, NULL, (VOID **)&ExistingFirmwareVolume);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->InstallMultipleProtocolInterfaces (
                                                      &mHandle,
                                                      &gEfiFirmwareVolumeProtocolGuid,

@@ -62,7 +62,7 @@ GrowDepexStack (
     //
     // Free The Old Stack
     //
-    FreePool (mDepexEvaluationStack);
+    FreePool(mDepexEvaluationStack);
   }
 
   //
@@ -101,7 +101,7 @@ PushBool (
     // Grow the stack
     //
     Status = GrowDepexStack ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -233,7 +233,7 @@ CoreIsSchedulable (
     //
     Status = CoreAllEfiServicesAvailable ();
     DEBUG ((DEBUG_DISPATCH, "  All UEFI Services Available                     = "));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_DISPATCH, "FALSE\n  RESULT = FALSE\n"));
       return FALSE;
     }
@@ -299,7 +299,7 @@ CoreIsSchedulable (
 
       Status = CoreLocateProtocol (&DriverGuid, NULL, &Interface);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  PUSH GUID(%g) = FALSE\n", &DriverGuid));
         Status = PushBool (FALSE);
       } else {
@@ -307,7 +307,7 @@ CoreIsSchedulable (
         *Iterator = EFI_DEP_REPLACE_TRUE;
         Status = PushBool (TRUE);
       }
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -318,19 +318,19 @@ CoreIsSchedulable (
     case EFI_DEP_AND:
       DEBUG ((DEBUG_DISPATCH, "  AND\n"));
       Status = PopBool (&Operator);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
 
       Status = PopBool (&Operator2);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
 
       Status = PushBool ((BOOLEAN)(Operator && Operator2));
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -339,19 +339,19 @@ CoreIsSchedulable (
     case EFI_DEP_OR:
       DEBUG ((DEBUG_DISPATCH, "  OR\n"));
       Status = PopBool (&Operator);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
 
       Status = PopBool (&Operator2);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
 
       Status = PushBool ((BOOLEAN)(Operator || Operator2));
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -360,13 +360,13 @@ CoreIsSchedulable (
     case EFI_DEP_NOT:
       DEBUG ((DEBUG_DISPATCH, "  NOT\n"));
       Status = PopBool (&Operator);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
 
       Status = PushBool ((BOOLEAN)(!Operator));
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -375,7 +375,7 @@ CoreIsSchedulable (
     case EFI_DEP_TRUE:
       DEBUG ((DEBUG_DISPATCH, "  TRUE\n"));
       Status = PushBool (TRUE);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -384,7 +384,7 @@ CoreIsSchedulable (
     case EFI_DEP_FALSE:
       DEBUG ((DEBUG_DISPATCH, "  FALSE\n"));
       Status = PushBool (FALSE);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -393,7 +393,7 @@ CoreIsSchedulable (
     case EFI_DEP_END:
       DEBUG ((DEBUG_DISPATCH, "  END\n"));
       Status = PopBool (&Operator);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }
@@ -405,7 +405,7 @@ CoreIsSchedulable (
       DEBUG ((DEBUG_DISPATCH, "  PUSH GUID(%g) = TRUE\n", &DriverGuid));
 
       Status = PushBool (TRUE);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE (Unexpected error)\n"));
         return FALSE;
       }

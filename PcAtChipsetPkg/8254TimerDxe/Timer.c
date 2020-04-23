@@ -296,7 +296,7 @@ TimerDriverGenerateSoftInterrupt (
   // If the timer interrupt is enabled, then the registered handler will be invoked.
   //
   Status = mLegacy8259->GetMask (mLegacy8259, NULL, NULL, &IRQMask, NULL);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if ((IRQMask & 0x1) == 0) {
     //
     // Invoke the registered handler
@@ -353,38 +353,38 @@ TimerDriverInitialize (
   // Find the CPU architectural protocol.
   //
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Find the Legacy8259 protocol.
   //
   Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &mLegacy8259);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Force the timer to be disabled
   //
   Status = TimerDriverSetTimerPeriod (&mTimer, 0);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get the interrupt vector number corresponding to IRQ0 from the 8259 driver
   //
   TimerVector = 0;
   Status      = mLegacy8259->GetVector (mLegacy8259, Efi8259Irq0, (UINT8 *) &TimerVector);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install interrupt handler for 8254 Timer #0 (ISA IRQ0)
   //
   Status = mCpu->RegisterInterruptHandler (mCpu, TimerVector, TimerInterruptHandler);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Force the timer to be enabled at its default period
   //
   Status = TimerDriverSetTimerPeriod (&mTimer, DEFAULT_TIMER_TICK_DURATION);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install the Timer Architectural Protocol onto a new handle
@@ -394,7 +394,7 @@ TimerDriverInitialize (
                   &gEfiTimerArchProtocolGuid, &mTimer,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

@@ -45,7 +45,7 @@ VariableExLibFindVariable (
              &mVariableModuleGlobal->VariableGlobal,
              FALSE
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     AuthVariableInfo->Data = NULL;
     AuthVariableInfo->DataSize = 0;
     AuthVariableInfo->Attributes = 0;
@@ -103,7 +103,7 @@ VariableExLibFindNextVariable (
              VendorGuid,
              &VariablePtr
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     AuthVariableInfo->VariableName = NULL;
     AuthVariableInfo->VendorGuid = NULL;
     AuthVariableInfo->Data = NULL;

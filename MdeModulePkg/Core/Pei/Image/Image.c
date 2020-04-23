@@ -186,7 +186,7 @@ GetPeCoffImageFixLoadingAssignedAddress(
                               &Size,
                               &SectionHeader
                               );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
        return Status;
      }
 
@@ -285,7 +285,7 @@ LoadAndRelocatePeCoffImage (
   ImageContext.ImageRead = PeiImageRead;
 
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -313,7 +313,7 @@ LoadAndRelocatePeCoffImage (
   // Get file type first
   //
   Status = PeiServicesFfsGetFileInfo (FileHandle, &FileInfo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Check whether the file type is PEI module.
@@ -360,7 +360,7 @@ LoadAndRelocatePeCoffImage (
 
     if (PcdGet64(PcdLoadModuleAtFixAddressEnable) != 0 && (Private->HobList.HandoffInformationTable->BootMode != BOOT_ON_S3_RESUME)) {
       Status = GetPeCoffImageFixLoadingAssignedAddress(&ImageContext, Private);
-      if (EFI_ERROR (Status)){
+      if (EFI_ERROR(Status)){
         DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED ERROR: Failed to load module at fixed address. \n"));
         //
         // The PEIM is not assiged valid address, try to allocate page to load it.
@@ -374,7 +374,7 @@ LoadAndRelocatePeCoffImage (
                                          EFI_SIZE_TO_PAGES ((UINT32) AlignImageSize),
                                          &ImageContext.ImageAddress);
     }
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Adjust the Image Address to make sure it is section alignment.
       //
@@ -416,7 +416,7 @@ LoadAndRelocatePeCoffImage (
   // Load the image to our new buffer
   //
   Status = PeCoffLoaderLoadImage (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (ImageContext.ImageError == IMAGE_ERROR_INVALID_SECTION_ALIGNMENT) {
       DEBUG ((DEBUG_ERROR, "PEIM Image Address 0x%11p doesn't meet with section alignment 0x%x.\n", (VOID*)(UINTN)ImageContext.ImageAddress, ImageContext.SectionAlignment));
     }
@@ -426,7 +426,7 @@ LoadAndRelocatePeCoffImage (
   // Relocate the image in our new buffer
   //
   Status = PeCoffLoaderRelocateImage (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -509,7 +509,7 @@ PeiLoadImageLoadImage (
   //
   // If we didn't find a first exe section, try to find the second exe section.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = PeiServicesFfsFindSectionData3 (
                SearchType2,
                0,
@@ -517,7 +517,7 @@ PeiLoadImageLoadImage (
                &Pe32Data,
                AuthenticationState
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // PEI core only carry the loader function for TE and PE32 executables
       // If this two section does not exist, just return.
@@ -539,10 +539,10 @@ PeiLoadImageLoadImage (
     &ImageEntryPoint
   );
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -774,7 +774,7 @@ PeiLoadImage (
                   NULL,
                   (VOID **)&LoadFile
                   );
-    if (!EFI_ERROR (PpiStatus)) {
+    if (!EFI_ERROR(PpiStatus)) {
       Status = LoadFile->LoadFile (
                           LoadFile,
                           FileHandle,
@@ -783,7 +783,7 @@ PeiLoadImage (
                           EntryPoint,
                           AuthenticationState
                           );
-      if (!EFI_ERROR (Status) || Status == EFI_WARN_BUFFER_TOO_SMALL) {
+      if (!EFI_ERROR(Status) || Status == EFI_WARN_BUFFER_TOO_SMALL) {
         //
         // The shadowed PEIM must be relocatable.
         //
@@ -806,7 +806,7 @@ PeiLoadImage (
       }
     }
     Index++;
-  } while (!EFI_ERROR (PpiStatus));
+  } while (!EFI_ERROR(PpiStatus));
 
   return PpiStatus;
 }

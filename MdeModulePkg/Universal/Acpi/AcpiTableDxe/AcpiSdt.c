@@ -166,7 +166,7 @@ SdtNotifyAcpiList (
              &AcpiTableInstance->TableList,
              &Table
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Find the notify
@@ -350,7 +350,7 @@ SdtUnregisterNotify (
       // Remove it from list and free the node.
       //
       RemoveEntryList (&(CurrentNotifyList->Link));
-      FreePool (CurrentNotifyList);
+      FreePool(CurrentNotifyList);
       return EFI_SUCCESS;
     }
 
@@ -438,7 +438,7 @@ SdtOpenSdtTable (
              &AcpiTableInstance->TableList,
              &Table
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -528,7 +528,7 @@ SdtOpenEx (
 
   AmlHandle->Size = AmlGetObjectSize (AmlByteEncoding, Buffer, BufferSize);
   if (AmlHandle->Size == 0) {
-    FreePool (AmlHandle);
+    FreePool(AmlHandle);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -568,7 +568,7 @@ Open (
   }
 
   Status = SdtGetMaxAmlBufferSize (Buffer, &MaxSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -610,12 +610,12 @@ Close (
   //
   if (AmlHandle->Modified) {
     Status = SdtUpdateAmlChecksum (AmlHandle->Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
   }
 
-  FreePool (AmlHandle);
+  FreePool(AmlHandle);
 
   return EFI_SUCCESS;
 }
@@ -677,7 +677,7 @@ GetOption (
   // Parse option
   //
   Status = AmlParseOptionHandleCommon (AmlHandle, (AML_OP_PARSE_INDEX)Index, DataType, (VOID **)Data, DataSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -741,7 +741,7 @@ SetOption (
   // Parse option
   //
   Status = AmlParseOptionHandleCommon (AmlHandle, (AML_OP_PARSE_INDEX)Index, &DataType, &OrgData, &OrgDataSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   if (DataType == EFI_ACPI_DATA_TYPE_NONE) {
@@ -816,7 +816,7 @@ GetChild (
     return EFI_INVALID_PARAMETER;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   if (Buffer == NULL) {
@@ -855,7 +855,7 @@ SdtFindPathFromNonRoot (
   // For non-root handle, we need search from THIS node instead of ROOT.
   //
   Status = AmlFindPath (AmlHandle, AmlPath, &Buffer, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   if (Buffer == NULL) {
@@ -929,7 +929,7 @@ SdtFindPathFromRoot (
   ChildHandle = NULL;
   while (TRUE) {
     Status = GetChild (HandleIn, &ChildHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -946,7 +946,7 @@ SdtFindPathFromRoot (
     //
     AmlHandle = (EFI_AML_HANDLE *)ChildHandle;
     Status = AmlFindPath (AmlHandle, AmlPath, &Buffer, TRUE);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -955,7 +955,7 @@ SdtFindPathFromRoot (
       // Great! Find it, open
       //
       Status = SdtOpenEx (Buffer, (UINTN)AmlHandle->Buffer + AmlHandle->Size - (UINTN)Buffer, HandleOut);
-      if (!EFI_ERROR (Status))  {
+      if (!EFI_ERROR(Status))  {
         return EFI_SUCCESS;
       }
       //
@@ -1029,7 +1029,7 @@ FindPath (
     Status = EFI_INVALID_PARAMETER;
   }
 
-  FreePool (AmlPath);
+  FreePool(AmlPath);
 
   return Status;
 }

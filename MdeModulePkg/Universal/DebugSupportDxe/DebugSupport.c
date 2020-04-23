@@ -72,12 +72,12 @@ InitializeDebugSupportDriver (
         //
         // a Debug Support protocol has been installed for this processor
         //
-        FreePool (HandlePtr);
+        FreePool(HandlePtr);
         Status = EFI_ALREADY_STARTED;
         goto ErrExit;
       }
     } while (NumHandles > 0);
-    FreePool (HandlePtr);
+    FreePool(HandlePtr);
   }
 
   //
@@ -91,7 +91,7 @@ InitializeDebugSupportDriver (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  ASSERT (!EFI_ERROR (Status));
+  ASSERT (!EFI_ERROR(Status));
   if (Status != EFI_SUCCESS) {
     goto ErrExit;
   }
@@ -102,7 +102,7 @@ InitializeDebugSupportDriver (
   // Call hook for processor specific initialization
   //
   Status = PlInitializeDebugSupportDriver ();
-  ASSERT (!EFI_ERROR (Status));
+  ASSERT (!EFI_ERROR(Status));
   if (Status != EFI_SUCCESS) {
     goto ErrExit;
   }
@@ -117,7 +117,7 @@ InitializeDebugSupportDriver (
                   EFI_NATIVE_INTERFACE,
                   &mDebugSupportProtocolInterface
                   );
-  ASSERT (!EFI_ERROR (Status));
+  ASSERT (!EFI_ERROR(Status));
   if (Status != EFI_SUCCESS) {
     goto ErrExit;
   }

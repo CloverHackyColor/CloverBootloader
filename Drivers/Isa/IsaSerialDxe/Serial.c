@@ -161,7 +161,7 @@ InitializeIsaSerial (
              &gIsaSerialComponentName,
              &gIsaSerialComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Initialize UART default setting in gSerialDevTempate
@@ -296,7 +296,7 @@ SerialControllerDriverSupported (
                     &OpenInfoBuffer,
                     &EntryCount
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -310,7 +310,7 @@ SerialControllerDriverSupported (
                         Controller,
                         EFI_OPEN_PROTOCOL_GET_PROTOCOL
                         );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           HasFlowControl = ContainsFlowControl (RemainingDevicePath);
           if (HasFlowControl ^ ContainsFlowControl (DevicePath)) {
             Status = EFI_UNSUPPORTED;
@@ -319,11 +319,11 @@ SerialControllerDriverSupported (
         break;
       }
     }
-    FreePool (OpenInfoBuffer);
+    FreePool(OpenInfoBuffer);
     return Status;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -352,7 +352,7 @@ SerialControllerDriverSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -424,7 +424,7 @@ SerialControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     return Status;
   }
   //
@@ -447,7 +447,7 @@ SerialControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     goto Error;
   }
 
@@ -470,7 +470,7 @@ SerialControllerDriverStart (
                     &OpenInfoBuffer,
                     &EntryCount
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -485,7 +485,7 @@ SerialControllerDriverStart (
                         Controller,
                         EFI_OPEN_PROTOCOL_GET_PROTOCOL
                         );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           Uart   = (UART_DEVICE_PATH *) RemainingDevicePath;
           Status = SerialIo->SetAttributes (
                                SerialIo,
@@ -498,9 +498,9 @@ SerialControllerDriverStart (
                                );
 
           FlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *) NextDevicePathNode (Uart);
-          if (!EFI_ERROR (Status) && IsUartFlowControlNode (FlowControl)) {
+          if (!EFI_ERROR(Status) && IsUartFlowControlNode (FlowControl)) {
             Status = SerialIo->GetControl (SerialIo, &Control);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               if (ReadUnaligned32 (&FlowControl->FlowControlMap) == UART_FLOW_CONTROL_HARDWARE) {
                 Control |= EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE;
               } else {
@@ -520,7 +520,7 @@ SerialControllerDriverStart (
       }
     }
 
-    FreePool (OpenInfoBuffer);
+    FreePool(OpenInfoBuffer);
     return Status;
   }
 
@@ -618,7 +618,7 @@ SerialControllerDriverStart (
                                    TempDevicePath,
                                    (EFI_DEVICE_PATH_PROTOCOL *) FlowControl
                                    );
-      FreePool (TempDevicePath);
+      FreePool(TempDevicePath);
     }
   }
   if (SerialDevice->DevicePath == NULL) {
@@ -638,7 +638,7 @@ SerialControllerDriverStart (
   // Issue a reset to initialize the COM port
   //
   Status = SerialDevice->SerialIo.Reset (&SerialDevice->SerialIo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE,
       EFI_P_EC_CONTROLLER_ERROR | EFI_PERIPHERAL_SERIAL_PORT,
@@ -657,7 +657,7 @@ SerialControllerDriverStart (
                   &SerialDevice->SerialIo,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
   //
@@ -673,7 +673,7 @@ SerialControllerDriverStart (
                   );
 
 Error:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
            Controller,
            &gEfiDevicePathProtocolGuid,
@@ -688,11 +688,11 @@ Error:
            );
     if (SerialDevice != NULL) {
       if (SerialDevice->DevicePath != NULL) {
-        gBS->FreePool (SerialDevice->DevicePath);
+        gBS->FreePool(SerialDevice->DevicePath);
       }
 
       FreeUnicodeStringTable (SerialDevice->ControllerNameTable);
-      gBS->FreePool (SerialDevice);
+      gBS->FreePool(SerialDevice);
     }
   }
 
@@ -780,7 +780,7 @@ SerialControllerDriverStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
 
       SerialDevice = SERIAL_DEV_FROM_THIS (SerialIo);
 
@@ -799,7 +799,7 @@ SerialControllerDriverStop (
                       &SerialDevice->SerialIo,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         gBS->OpenProtocol (
                Controller,
                &gEfiIsaIoProtocolGuid,
@@ -810,15 +810,15 @@ SerialControllerDriverStop (
                );
       } else {
         if (SerialDevice->DevicePath != NULL) {
-          gBS->FreePool (SerialDevice->DevicePath);
+          gBS->FreePool(SerialDevice->DevicePath);
         }
 
         FreeUnicodeStringTable (SerialDevice->ControllerNameTable);
-        gBS->FreePool (SerialDevice);
+        gBS->FreePool(SerialDevice);
       }
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -1191,7 +1191,7 @@ IsaSerialReset (
                    (EFI_STOP_BITS_TYPE) This->Mode->StopBits
                    );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->RestoreTPL (Tpl);
     return EFI_DEVICE_ERROR;
   }
@@ -1210,7 +1210,7 @@ IsaSerialReset (
                    Control
                    );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->RestoreTPL (Tpl);
     return EFI_DEVICE_ERROR;
   }
@@ -1884,7 +1884,7 @@ IsaSerialRead (
 
   Status  = IsaSerialReceiveTransmit (SerialDevice);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *BufferSize = 0;
 
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (

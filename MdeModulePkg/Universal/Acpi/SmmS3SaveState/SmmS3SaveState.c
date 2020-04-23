@@ -807,7 +807,7 @@ BootScriptInsert (
     break;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
    Status = S3BootScriptMoveLastOpcode (BeforeOrAfter, Position);
   }
   return Status;

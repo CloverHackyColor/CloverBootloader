@@ -377,7 +377,7 @@ MOExitBootServices (
 	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		// just report error as var in nvram to be visible from OSX with "nvrap -p"
 		gRT->SetVariable(L"OsxAptioFixDrv-ErrorExitingBootServices",
 						 &gEfiAppleBootGuid,
@@ -393,7 +393,7 @@ MOExitBootServices (
 			// we'll try again ExitBootServices with NewMapKey
 			Status = gStoredExitBootServices(ImageHandle, NewMapKey);
 			DBGnvr("ExitBootServices: 2nd try = %r\n", Status);
-			if (EFI_ERROR (Status)) {
+			if (EFI_ERROR(Status)) {
 				// Error!
 				Print(L"OsxAptioFixDrv: Error ExitBootServices() 2nd try = Status: %r\n", Status);
 			}

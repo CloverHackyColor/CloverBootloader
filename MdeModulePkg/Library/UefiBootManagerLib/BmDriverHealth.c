@@ -60,18 +60,18 @@ BmGetControllerName (
                  &gEfiComponentName2ProtocolGuid,
                  (VOID **) &ComponentName
                  );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (
                     DriverHealthHandle,
                     &gEfiComponentNameProtocolGuid,
                     (VOID **) &ComponentName
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Iso639Language = TRUE;
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     GetEfiGlobalVariable2 (Iso639Language ? L"Lang" : L"PlatformLang", (VOID**)&LanguageVariable, NULL);
     BestLanguage     = GetBestLanguage(
                          ComponentName->SupportedLanguages,
@@ -81,7 +81,7 @@ BmGetControllerName (
                          NULL
                          );
     if (LanguageVariable != NULL) {
-      FreePool (LanguageVariable);
+      FreePool(LanguageVariable);
     }
 
     Status = ComponentName->GetControllerName (
@@ -93,7 +93,7 @@ BmGetControllerName (
                               );
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return AllocateCopyPool (StrSize (ControllerName), ControllerName);
   } else {
     return ConvertDevicePathToText (
@@ -140,12 +140,12 @@ BmDisplayMessages (
     if (String != NULL) {
       Print (L"  %s\n", String);
       DEBUG ((EFI_D_INFO, "  %s\n", String));
-      FreePool (String);
+      FreePool(String);
     }
   }
 
   if (ControllerName != NULL) {
-    FreePool (ControllerName);
+    FreePool(ControllerName);
   }
 }
 
@@ -211,7 +211,7 @@ BmGetSingleControllerHealthStatus (
                   &gEfiDriverHealthProtocolGuid,
                   (VOID **) &DriverHealth
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 
   if (ControllerHandle == NULL) {
@@ -219,7 +219,7 @@ BmGetSingleControllerHealthStatus (
     // If ControllerHandle is NULL, the return the cumulative health status of the driver
     //
     Status = DriverHealth->GetHealthStatus (DriverHealth, NULL, NULL, &HealthStatus, NULL, NULL);
-    if (!EFI_ERROR (Status) && HealthStatus == EfiDriverHealthStatusHealthy) {
+    if (!EFI_ERROR(Status) && HealthStatus == EfiDriverHealthStatusHealthy) {
       *DriverHealthInfo = ReallocatePool (
                             (*Count)     * sizeof (EFI_BOOT_MANAGER_DRIVER_HEALTH_INFO),
                             (*Count + 1) * sizeof (EFI_BOOT_MANAGER_DRIVER_HEALTH_INFO),
@@ -245,7 +245,7 @@ BmGetSingleControllerHealthStatus (
   // Collect the health status with the optional HII message list
   //
   Status = DriverHealth->GetHealthStatus (DriverHealth, ControllerHandle, ChildHandle, &HealthStatus, &MessageList, &FormHiiHandle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DriverHealthInfo = ReallocatePool (
                           (*Count)     * sizeof (EFI_BOOT_MANAGER_DRIVER_HEALTH_INFO),
                           (*Count + 1) * sizeof (EFI_BOOT_MANAGER_DRIVER_HEALTH_INFO),
@@ -323,7 +323,7 @@ EfiBootManagerGetDriverHealthInfo (
     return NULL;
   }
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (DriverHealthHandles != NULL);
 
   //
@@ -335,7 +335,7 @@ EfiBootManagerGetDriverHealthInfo (
     // Get the cumulative health status of the driver
     //
     Status = BmGetSingleControllerHealthStatus (&DriverHealthInfo, Count, DriverHealthHandles[DriverHealthIndex], NULL, NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -354,14 +354,14 @@ EfiBootManagerGetDriverHealthInfo (
         &HandleCount,
         &Handles
         );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     //
     // Loop through all the controller handles in the handle database
     //
     for (ControllerIndex = 0; ControllerIndex < HandleCount; ControllerIndex++) {
       Status = BmGetSingleControllerHealthStatus (&DriverHealthInfo, Count, DriverHealthHandles[DriverHealthIndex], Handles[ControllerIndex], NULL);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -370,7 +370,7 @@ EfiBootManagerGetDriverHealthInfo (
       //
       for (ChildIndex = 0; ChildIndex < HandleCount; ChildIndex++) {
         Status = BmGetSingleControllerHealthStatus (&DriverHealthInfo, Count, DriverHealthHandles[DriverHealthIndex], Handles[ControllerIndex], Handles[ChildIndex]);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
       }
@@ -380,10 +380,10 @@ EfiBootManagerGetDriverHealthInfo (
   Status = EFI_SUCCESS;
 
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
   if (DriverHealthHandles != NULL) {
-    FreePool (DriverHealthHandles);
+    FreePool(DriverHealthHandles);
   }
 
   return DriverHealthInfo;
@@ -409,10 +409,10 @@ EfiBootManagerFreeDriverHealthInfo (
 
   for (Index = 0; Index < Count; Index++) {
     if (DriverHealthInfo[Index].MessageList != NULL) {
-      FreePool (DriverHealthInfo[Index].MessageList);
+      FreePool(DriverHealthInfo[Index].MessageList);
     }
   }
-  return gBS->FreePool (DriverHealthInfo);
+  return gBS->FreePool(DriverHealthInfo);
 }
 
 /**
@@ -448,7 +448,7 @@ BmRepairAllControllers (
   }
 
   Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &FormBrowser2);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   MaxRepairCount = PcdGet32 (PcdMaxRepairCount);
   RepairCount = 0;
@@ -477,7 +477,7 @@ BmRepairAllControllers (
                                                          DriverHealthInfo[Index].ChildHandle,
                                                          BmRepairNotify
                                                          );
-        if (!EFI_ERROR (Status) && !ConfigurationRequired) {
+        if (!EFI_ERROR(Status) && !ConfigurationRequired) {
           Status = DriverHealthInfo[Index].DriverHealth->GetHealthStatus (
                                                            DriverHealthInfo[Index].DriverHealth,
                                                            DriverHealthInfo[Index].ControllerHandle,
@@ -486,7 +486,7 @@ BmRepairAllControllers (
                                                            NULL,
                                                            NULL
                                                            );
-          if (!EFI_ERROR (Status) && (HealthStatus == EfiDriverHealthStatusConfigurationRequired)) {
+          if (!EFI_ERROR(Status) && (HealthStatus == EfiDriverHealthStatusConfigurationRequired)) {
             ConfigurationRequired = TRUE;
           }
         }
@@ -506,11 +506,11 @@ BmRepairAllControllers (
                                    NULL,
                                    NULL
                                    );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             break;
           }
         }
-        FreePool (HiiHandles);
+        FreePool(HiiHandles);
       }
     }
 
@@ -527,7 +527,7 @@ BmRepairAllControllers (
 
     if (DriverHealthInfo[Index].HealthStatus == EfiDriverHealthStatusReconnectRequired) {
       Status = gBS->DisconnectController (DriverHealthInfo[Index].ControllerHandle, NULL, NULL);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Disconnect failed. Need to promote reconnect to a reboot.
         //
@@ -563,7 +563,7 @@ BmRepairAllControllers (
         mBmHealthStatusText[DriverHealthInfo[Index].HealthStatus]
         ));
       if (ControllerName != NULL) {
-        FreePool (ControllerName);
+        FreePool(ControllerName);
       }
     }
     EfiBootManagerFreeDriverHealthInfo (DriverHealthInfo, Count);

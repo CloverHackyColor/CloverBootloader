@@ -109,7 +109,7 @@ Unregister (
       // If the function is found in list, delete it and return.
       //
       RemoveEntryList (&CallbackEntry->Node);
-      FreePool (CallbackEntry);
+      FreePool(CallbackEntry);
       return EFI_SUCCESS;
     }
   }
@@ -216,7 +216,7 @@ GenericStatusCodeSmmEntry (
                     EFI_NATIVE_INTERFACE,
                     &mSmmRscHandlerProtocol
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install SmmStatusCode Protocol
@@ -227,7 +227,7 @@ GenericStatusCodeSmmEntry (
                     EFI_NATIVE_INTERFACE,
                     &mSmmStatusCodeProtocol
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

@@ -36,7 +36,7 @@ SetIdtEntry (
   // Setup the default CPU exception handlers
   //
   Status = InitializeCpuExceptionHandlers (NULL);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   DEBUG_CODE (
     //

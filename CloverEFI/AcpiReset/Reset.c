@@ -212,7 +212,7 @@ InitializeReset (
                   &gEfiResetArchProtocolGuid, NULL,
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

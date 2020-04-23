@@ -613,7 +613,7 @@ CoreAddMemoryDescriptor (
                  gMemoryTypeInformation[Index].NumberOfPages,
                  &mMemoryTypeStatistics[Type].BaseAddress
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // If an error occurs allocating the pages for the current memory type, then
         // free all the pages allocates for the previous memory types and return.  This
@@ -1397,7 +1397,7 @@ CoreInternalAllocatePages (
 Done:
   CoreReleaseMemoryLock ();
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (NeedGuard) {
       SetGuardForMemory (Start, NumberOfPages);
     }
@@ -1440,7 +1440,7 @@ CoreAllocatePages (
   NeedGuard = IsPageTypeToGuard (MemoryType, Type) && !mOnGuarding;
   Status = CoreInternalAllocatePages (Type, MemoryType, NumberOfPages, Memory,
                                       NeedGuard);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     CoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionAllocatePages,
@@ -1563,7 +1563,7 @@ CoreFreePages (
   EFI_MEMORY_TYPE   MemoryType;
 
   Status = CoreInternalFreePages (Memory, NumberOfPages, &MemoryType);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     GuardFreedPagesChecked (Memory, NumberOfPages);
     CoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),

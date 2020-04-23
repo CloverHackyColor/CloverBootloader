@@ -197,7 +197,7 @@ SetVariableCheckHandlerMorLock (
         // Unlock
         //
         Status = SetMorLockVariable (MOR_LOCK_DATA_UNLOCKED);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           //
           // return EFI_ALREADY_STARTED to skip variable set.
           //
@@ -213,7 +213,7 @@ SetVariableCheckHandlerMorLock (
         // Lock without key
         //
         Status = SetMorLockVariable (MOR_LOCK_DATA_LOCKED_WITHOUT_KEY);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           //
           // Lock success
           //
@@ -277,7 +277,7 @@ SetVariableCheckHandlerMorLock (
       // Need set here because the data value on flash is different
       //
       Status = SetMorLockVariable (MOR_LOCK_DATA_UNLOCKED);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // SetVar fail
         //
@@ -436,7 +436,7 @@ MorLockInitAtEndOfDxe (
   //
   // We provided a zero-sized buffer, so the above call can never succeed.
   //
-  ASSERT (EFI_ERROR (MorStatus));
+  ASSERT (EFI_ERROR(MorStatus));
 
   if (MorStatus == EFI_BUFFER_TOO_SMALL) {
     //

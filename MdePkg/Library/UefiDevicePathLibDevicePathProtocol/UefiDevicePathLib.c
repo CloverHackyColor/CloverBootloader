@@ -64,7 +64,7 @@ DevicePathLibConstructor (
                   NULL,
                   (VOID**) &mDevicePathLibDevicePathUtilities
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mDevicePathLibDevicePathUtilities != NULL);
   return Status;
 }
@@ -653,7 +653,7 @@ DevicePathFromHandle (
                   &gEfiDevicePathProtocolGuid,
                   (VOID *) &DevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DevicePath = NULL;
   }
   return DevicePath;
@@ -710,7 +710,7 @@ FileDevicePath (
     }
 
     DevicePath = AppendDevicePath (DevicePath, FileDevicePath);
-    FreePool (FileDevicePath);
+    FreePool(FileDevicePath);
   }
 
   return DevicePath;
@@ -735,7 +735,7 @@ UefiDevicePathLibLocateProtocol (
                   NULL,
                   (VOID**) &Protocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   } else {
     return Protocol;

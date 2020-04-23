@@ -176,7 +176,7 @@ UfsRwUfsAttribute (
              Selector,
              &Attribute32
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (Read) {
       CopyMem (Attribute, &Attribute32, *AttrSize);
     }

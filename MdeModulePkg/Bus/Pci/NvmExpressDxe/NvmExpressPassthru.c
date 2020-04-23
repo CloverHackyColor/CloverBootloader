@@ -253,7 +253,7 @@ NvmeCreatePrpList (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -267,7 +267,7 @@ NvmeCreatePrpList (
                     Mapping
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != EFI_PAGES_TO_SIZE (*PrpListNo))) {
+  if (EFI_ERROR(Status) || (Bytes != EFI_PAGES_TO_SIZE (*PrpListNo))) {
     DEBUG ((EFI_D_ERROR, "NvmeCreatePrpList: create PrpList failure!\n"));
     goto EXIT;
   }
@@ -388,7 +388,7 @@ AbortAsyncPassThruTasks (
 
     RemoveEntryList (Link);
     gBS->SignalEvent (AsyncRequest->CallerEvent);
-    FreePool (AsyncRequest);
+    FreePool(AsyncRequest);
   }
 
   if (IsListEmpty (&Private->AsyncPassThruQueue) &&
@@ -619,7 +619,7 @@ NvmExpressPassThru (
                         &PhyAddr,
                         &MapData
                         );
-      if (EFI_ERROR (Status) || (Packet->TransferLength != MapLength)) {
+      if (EFI_ERROR(Status) || (Packet->TransferLength != MapLength)) {
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -637,7 +637,7 @@ NvmExpressPassThru (
                         &PhyAddr,
                         &MapMeta
                         );
-      if (EFI_ERROR (Status) || (Packet->MetadataLength != MapLength)) {
+      if (EFI_ERROR(Status) || (Packet->MetadataLength != MapLength)) {
         PciIo->Unmap (
                  PciIo,
                  MapData
@@ -715,7 +715,7 @@ NvmExpressPassThru (
                &Data
                );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto EXIT;
   }
 
@@ -754,7 +754,7 @@ NvmExpressPassThru (
                   NULL,
                   &TimerEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto EXIT;
   }
 
@@ -768,7 +768,7 @@ NvmExpressPassThru (
   // Wait for completion queue to get filled in.
   //
   Status = EFI_TIMEOUT;
-  while (EFI_ERROR (gBS->CheckEvent (TimerEvent))) {
+  while (EFI_ERROR(gBS->CheckEvent (TimerEvent))) {
     if (Cq->Pt != Private->Pt[QueueId]) {
       Status = EFI_SUCCESS;
       break;
@@ -805,7 +805,7 @@ NvmExpressPassThru (
     // Disable the timer to trigger the process of async transfers temporarily.
     //
     Status = gBS->SetTimer (Private->TimerEvent, TimerCancel, 0);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto EXIT;
     }
 
@@ -813,14 +813,14 @@ NvmExpressPassThru (
     // Reset the NVMe controller.
     //
     Status = NvmeControllerInit (Private);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = AbortAsyncPassThruTasks (Private);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Re-enable the timer to trigger the process of async transfers.
         //
         Status = gBS->SetTimer (Private->TimerEvent, TimerPeriodic, NVME_HC_ASYNC_TIMER);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           //
           // Return EFI_TIMEOUT to indicate a timeout occurs for NVMe PassThru command.
           //
@@ -850,7 +850,7 @@ NvmExpressPassThru (
                );
   // The return status of PciIo->Mem.Write should not override
   // previous status if previous status contains error.
-  Status = EFI_ERROR (PreviousStatus) ? PreviousStatus : Status;
+  Status = EFI_ERROR(PreviousStatus) ? PreviousStatus : Status;
 
   //
   // For now, the code does not support the non-blocking feature for admin queue.
@@ -1171,11 +1171,11 @@ NvmExpressBuildDevicePath (
 
 Exit:
   if(NamespaceData != NULL) {
-    FreePool (NamespaceData);
+    FreePool(NamespaceData);
   }
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Node);
+  if (EFI_ERROR(Status)) {
+    FreePool(Node);
   }
 
   return Status;

@@ -190,7 +190,7 @@ SdDxeComponentNameGetControllerName (
              gSdDxeDriverBinding.DriverBindingHandle,
              &gEfiSdMmcPassThruProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -201,7 +201,7 @@ SdDxeComponentNameGetControllerName (
                ChildHandle,
                &gEfiSdMmcPassThruProtocolGuid
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -215,7 +215,7 @@ SdDxeComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
 

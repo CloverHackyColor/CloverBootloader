@@ -276,7 +276,7 @@ Output1bitPixel (
   ZeroMem (PaletteValue, sizeof (PaletteValue));
   CopyRgbToGopPixel (&PaletteValue[0], &Palette->PaletteValue[0], 1);
   CopyRgbToGopPixel (&PaletteValue[1], &Palette->PaletteValue[1], 1);
-  FreePool (Palette);
+  FreePool(Palette);
 
   //
   // Convert the pixel from one bit to corresponding color.
@@ -365,7 +365,7 @@ Output4bitPixel (
 
   ZeroMem (PaletteValue, sizeof (PaletteValue));
   CopyRgbToGopPixel (PaletteValue, Palette->PaletteValue, MIN (PaletteNum, ARRAY_SIZE (PaletteValue)));
-  FreePool (Palette);
+  FreePool(Palette);
 
   //
   // Convert the pixel from 4 bit to corresponding color.
@@ -442,7 +442,7 @@ Output8bitPixel (
   PaletteNum = (UINT16)(Palette->PaletteSize / sizeof (EFI_HII_RGB_PIXEL));
   ZeroMem (PaletteValue, sizeof (PaletteValue));
   CopyRgbToGopPixel (PaletteValue, Palette->PaletteValue, MIN (PaletteNum, ARRAY_SIZE (PaletteValue)));
-  FreePool (Palette);
+  FreePool(Palette);
 
   //
   // Convert the pixel from 8 bits to corresponding color.
@@ -701,7 +701,7 @@ HiiNewImage (
       ImagePackage->ImageBlock,
       ImagePackage->ImageBlockSize - sizeof (EFI_HII_IIBT_END_BLOCK)
       );
-    FreePool (ImagePackage->ImageBlock);
+    FreePool(ImagePackage->ImageBlock);
     ImagePackage->ImageBlock = ImageBlocks;
 
     //
@@ -760,7 +760,7 @@ HiiNewImage (
     ImagePackage->ImageBlockSize = NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK);
     ImagePackage->ImageBlock = AllocateZeroPool (NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK));
     if (ImagePackage->ImageBlock == NULL) {
-      FreePool (ImagePackage);
+      FreePool(ImagePackage);
       EfiReleaseLock (&mHiiDatabaseLock);
       return EFI_OUT_OF_RESOURCES;
     }
@@ -905,11 +905,11 @@ IGetImage (
     // Spec requires to use the first capable image decoder instance.
     // The first image decoder instance may fail to decode the image.
     //
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Image->Bitmap = ImageOut->Image.Bitmap;
       Image->Height = ImageOut->Height;
       Image->Width = ImageOut->Width;
-      FreePool (ImageOut);
+      FreePool(ImageOut);
     }
     return Status;
 
@@ -1204,7 +1204,7 @@ HiiSetImage (
 
   CopyMem ((UINT8 *) NewImageBlock + NewBlockSize, (UINT8 *) CurrentImageBlock + OldBlockSize, Part2Size);
 
-  FreePool (ImagePackage->ImageBlock);
+  FreePool(ImagePackage->ImageBlock);
   ImagePackage->ImageBlock                       = ImageBlocks;
   ImagePackage->ImageBlockSize                  += NewBlockSize - OldBlockSize;
   ImagePackage->ImagePkgHdr.Header.Length       += NewBlockSize - OldBlockSize;
@@ -1415,7 +1415,7 @@ HiiDrawImage (
 
     }
 
-    FreePool (BltBuffer);
+    FreePool(BltBuffer);
     return Status;
 
   } else {
@@ -1448,7 +1448,7 @@ HiiDrawImage (
 
     ImageOut = (EFI_IMAGE_OUTPUT *) AllocateZeroPool (sizeof (EFI_IMAGE_OUTPUT));
     if (ImageOut == NULL) {
-      FreePool (BltBuffer);
+      FreePool(BltBuffer);
       return EFI_OUT_OF_RESOURCES;
     }
     ImageOut->Width        = Width;
@@ -1460,16 +1460,16 @@ HiiDrawImage (
     // color. Not sure if it need to be updated or not.
     //
     Status = GetSystemFont (Private, &FontInfo, NULL);
-    if (EFI_ERROR (Status)) {
-      FreePool (BltBuffer);
-      FreePool (ImageOut);
+    if (EFI_ERROR(Status)) {
+      FreePool(BltBuffer);
+      FreePool(ImageOut);
       return Status;
     }
     ASSERT (FontInfo != NULL);
     for (Index = 0; Index < (UINTN)Width * Height; Index++) {
       BltBuffer[Index] = FontInfo->BackgroundColor;
     }
-    FreePool (FontInfo);
+    FreePool(FontInfo);
 
     //
     // Draw the incoming image to the new created image.
@@ -1547,7 +1547,7 @@ HiiDrawImageId (
   // Get the specified Image.
   //
   Status = HiiGetImage (This, PackageList, ImageId, &Image);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1556,7 +1556,7 @@ HiiDrawImageId (
   //
   Status = HiiDrawImage (This, Flags, &Image, Blt, BltX, BltY);
   if (Image.Bitmap != NULL) {
-    FreePool (Image.Bitmap);
+    FreePool(Image.Bitmap);
   }
   return Status;
 }

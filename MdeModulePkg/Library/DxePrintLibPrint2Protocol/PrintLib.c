@@ -65,7 +65,7 @@ PrintLibConstructor (
                                         NULL,
                                         (VOID**) &mPrint2SProtocol
                                         );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mPrint2SProtocol != NULL);
 
   return Status;

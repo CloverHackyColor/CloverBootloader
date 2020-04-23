@@ -120,7 +120,7 @@ HiiSetString (
     //
     // If there was an error, then break out of the loop and return a StringId of 0
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -128,9 +128,9 @@ HiiSetString (
   //
   // Free the buffer of supported languages
   //
-  FreePool (AllocatedLanguages);
+  FreePool(AllocatedLanguages);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return (EFI_STRING_ID)(0);
   } else {
     return StringId;
@@ -184,7 +184,7 @@ HiiGetPackageString (
   }
 
   HiiHandle = HiiHandleBuffer[0];
-  FreePool (HiiHandleBuffer);
+  FreePool(HiiHandleBuffer);
 
   return HiiGetString (HiiHandle, StringId, Language);
 }
@@ -319,11 +319,11 @@ HiiGetString (
                          &StringSize,
                          NULL
                          );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Free the buffer and return NULL if the supported languages can not be retrieved.
     //
-    FreePool (String);
+    FreePool(String);
     String = NULL;
   }
 
@@ -332,13 +332,13 @@ Error:
   // Free allocated buffers
   //
   if (SupportedLanguages != NULL) {
-    FreePool (SupportedLanguages);
+    FreePool(SupportedLanguages);
   }
   if (PlatformLanguage != NULL) {
-    FreePool (PlatformLanguage);
+    FreePool(PlatformLanguage);
   }
   if (BestLanguage != NULL) {
-    FreePool (BestLanguage);
+    FreePool(BestLanguage);
   }
 
   //

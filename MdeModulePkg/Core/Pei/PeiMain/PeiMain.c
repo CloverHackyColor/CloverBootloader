@@ -96,7 +96,7 @@ ShadowPeiCore (
              NULL,
              (VOID **) &PeiCoreFvLocationPpi
              );
-  if (!EFI_ERROR (Status) && (PeiCoreFvLocationPpi->PeiCoreFvLocation != NULL)) {
+  if (!EFI_ERROR(Status) && (PeiCoreFvLocationPpi->PeiCoreFvLocation != NULL)) {
     //
     // If PeiCoreFvLocation present, the PEI Core should be found from indicated FV
     //
@@ -117,7 +117,7 @@ ShadowPeiCore (
                                                     PrivateData->Fv[PeiCoreFvIndex].FvHandle,
                                                     &PeiCoreFileHandle
                                                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Shadow PEI Core into memory so it will run faster
@@ -129,7 +129,7 @@ ShadowPeiCore (
               &EntryPoint,
               &AuthenticationState
               );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Compute the PeiCore's function address after shaowed PeiCore.
@@ -427,7 +427,7 @@ PeiCore (
                NULL,
                (VOID**)&TemporaryRamDonePpi
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Disable the use of Temporary RAM after the transition from Temporary RAM to Permanent RAM is complete.
       //
@@ -474,9 +474,9 @@ PeiCore (
              NULL,
              (VOID **)&TempPtr.DxeIpl
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Report status code to indicate DXE IPL PPI could not be found.
     //
@@ -499,7 +499,7 @@ PeiCore (
   //
   // Should never reach here.
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   CpuDeadLoop();
 
   UNREACHABLE ();

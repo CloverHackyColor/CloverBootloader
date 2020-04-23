@@ -78,7 +78,7 @@ Returns:
              &Volume->FatEntryBuffer,
              NULL
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Volume->FatEntryBuffer = (UINT32) -1;
   }
 

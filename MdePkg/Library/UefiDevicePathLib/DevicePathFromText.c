@@ -2787,7 +2787,7 @@ DevPathFromTextDns (
     DnsServerIpCount ++;
   }
 
-  FreePool (DeviceNodeStr);
+  FreePool(DeviceNodeStr);
   DeviceNodeStr = NULL;
 
   //
@@ -3595,10 +3595,10 @@ UefiDevicePathLibConvertTextToDeviceNode (
     DeviceNode = FromText (DeviceNodeStr);
   } else {
     DeviceNode = FromText (ParamStr);
-    FreePool (ParamStr);
+    FreePool(ParamStr);
   }
 
-  FreePool (DeviceNodeStr);
+  FreePool(DeviceNodeStr);
 
   return DeviceNode;
 }
@@ -3644,8 +3644,8 @@ UefiDevicePathLibConvertTextToDevicePath (
     DeviceNode = UefiDevicePathLibConvertTextToDeviceNode (DeviceNodeStr);
 
     NewDevicePath = AppendDevicePathNode (DevicePath, DeviceNode);
-    FreePool (DevicePath);
-    FreePool (DeviceNode);
+    FreePool(DevicePath);
+    FreePool(DeviceNode);
     DevicePath = NewDevicePath;
 
     if (IsInstanceEnd) {
@@ -3655,12 +3655,12 @@ UefiDevicePathLibConvertTextToDevicePath (
       DeviceNode->SubType = END_INSTANCE_DEVICE_PATH_SUBTYPE;
 
       NewDevicePath = AppendDevicePathNode (DevicePath, DeviceNode);
-      FreePool (DevicePath);
-      FreePool (DeviceNode);
+      FreePool(DevicePath);
+      FreePool(DeviceNode);
       DevicePath = NewDevicePath;
     }
   }
 
-  FreePool (DevicePathStr);
+  FreePool(DevicePathStr);
   return DevicePath;
 }

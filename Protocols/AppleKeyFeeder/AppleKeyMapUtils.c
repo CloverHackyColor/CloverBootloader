@@ -54,14 +54,14 @@ static EFI_STATUS getAppleKeyMapDb()
                   NULL,
                   (VOID **)&AppleKeyMapDb
                   );
-	if (!EFI_ERROR (Status))
+	if (!EFI_ERROR(Status))
 	{
 		Status = AppleKeyMapDb->CreateKeyStrokesBuffer (
 								AppleKeyMapDb,
 								6,
 								&AppleKeyMapDbIndex
 								);
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
 			DBG("AppleKeyFeederEntrypoint: CreateKeyStrokesBuffer failed, Status=%x\n", Status);
 		}
 	}else{
@@ -92,7 +92,7 @@ SendKeyRelease (
 							   0,
 							   &appleKey
 							   );
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
     		DBG("SendKeyRelease: SetKeyStrokeBufferKeys failed, Status=%x\n", Status);
 		}
 
@@ -101,7 +101,7 @@ SendKeyRelease (
 					  TimerCancel,
 					  10*1000
 					  );
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
     		DBG("SendKeyRelease: SetTimer failed, Status=%x\n", Status);
 		}
 }
@@ -310,7 +310,7 @@ SendDataToAppleMap(IN EFI_KEY_DATA *KeyData)
 
 	if ( !AppleKeyMapDb ) {
 		Status = getAppleKeyMapDb();
-    	if (EFI_ERROR (Status)) {
+    	if (EFI_ERROR(Status)) {
     		DBG("SendDataToAppleMap: getAppleKeyMapDb() failed, Status=%x\n", Status);
     	}
 	}
@@ -328,7 +328,7 @@ SendDataToAppleMap(IN EFI_KEY_DATA *KeyData)
 							   NumberOfKeys,
 							   &appleKey
 							   );
-    	if (EFI_ERROR (Status)) {
+    	if (EFI_ERROR(Status)) {
     		DBG("SendDataToAppleMap: SetKeyStrokeBufferKeys failed, Status=%x\n", Status);
     		return Status;
     	}
@@ -339,7 +339,7 @@ SendDataToAppleMap(IN EFI_KEY_DATA *KeyData)
 					  TimerPeriodic,
 					  10*1000*15 // 15 ms
 					  );
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
 			// if this fail, we end up having the key repeated.
     		DBG("SendDataToAppleMap: SetTimer failed, Status=%x\n", Status);
     		return Status;
@@ -376,7 +376,7 @@ DBG("AppleKeyMapUtilsInit\n");
 				  NULL,
 				  &eventKeyRelease
 				  );
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("AppleKeyMapUtilsInit: CreateEvent failed, Status=%x\n", Status);
 	}
 

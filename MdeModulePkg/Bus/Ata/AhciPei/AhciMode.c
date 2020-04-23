@@ -649,7 +649,7 @@ AhciStartCommand (
              Port,
              Timeout
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -778,7 +778,7 @@ AhciPioTransfer (
                 &PhyAddr,
                 &MapData
                 );
-  if (EFI_ERROR (Status) || (MapLength != DataCount)) {
+  if (EFI_ERROR(Status) || (MapLength != DataCount)) {
     DEBUG ((DEBUG_ERROR, "%a: Fail to map data buffer.\n", __FUNCTION__));
     return EFI_OUT_OF_RESOURCES;
   }
@@ -841,7 +841,7 @@ AhciPioTransfer (
              0,
              Timeout
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -860,7 +860,7 @@ AhciPioTransfer (
       D2hFisReceived = FALSE;
       Offset = FisBaseAddr + AHCI_PIO_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, AHCI_FIS_TYPE_MASK, AHCI_FIS_PIO_SETUP);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO, "%a: PioFisReceived.\n", __FUNCTION__));
         PioFisReceived = TRUE;
       }
@@ -873,7 +873,7 @@ AhciPioTransfer (
       //
       Offset = FisBaseAddr + AHCI_D2H_FIS_OFFSET;
       Status = AhciCheckMemSet (Offset, AHCI_FIS_TYPE_MASK, AHCI_FIS_REGISTER_D2H);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO, "%a: D2hFisReceived.\n", __FUNCTION__));
         D2hFisReceived = TRUE;
       }
@@ -917,7 +917,7 @@ AhciPioTransfer (
                AHCI_FIS_REGISTER_D2H,
                Timeout
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "%a: AhciWaitMemSet (%r)\n", __FUNCTION__, Status));
       goto Exit;
     }
@@ -1027,7 +1027,7 @@ AhciNonDataTransfer (
              0,
              Timeout
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1043,7 +1043,7 @@ AhciNonDataTransfer (
                   Timeout
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1318,7 +1318,7 @@ AhciCreateTransferDescriptor (
              &DeviceAddress,
              &Mapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   ASSERT (DeviceAddress == ((EFI_PHYSICAL_ADDRESS) (UINTN) Base));
@@ -1339,7 +1339,7 @@ AhciCreateTransferDescriptor (
              &DeviceAddress,
              &Mapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -1360,7 +1360,7 @@ AhciCreateTransferDescriptor (
              &DeviceAddress,
              &Mapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -1614,7 +1614,7 @@ CreateNewDevice (
   DeviceData->Private        = Private;
 
   Status = IdentifyAtaDevice (DeviceData);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1667,7 +1667,7 @@ AhciModeInitialization (
   AhciBar = Private->MmioBase;
 
   Status = AhciReset (AhciBar, AHCI_PEI_RESET_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: AHCI HBA reset failed with %r.\n", __FUNCTION__, Status));
     return EFI_DEVICE_ERROR;
   }
@@ -1686,7 +1686,7 @@ AhciModeInitialization (
   }
 
   Status = AhciCreateTransferDescriptor (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "%a: Transfer-related data allocation failed with %r.\n",
@@ -1721,7 +1721,7 @@ AhciModeInitialization (
   //
   for (PortIndex = 1; PortIndex <= MaxPortNumber; PortIndex ++) {
     Status = AhciGetPortFromMap (PortInitializeBitMap, PortIndex, &Port);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // No more available port, just break out of the loop.
       //
@@ -1840,7 +1840,7 @@ AhciModeInitialization (
                  0x00000101,
                  160000000
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((
           DEBUG_ERROR,
           "%a: Error occured when waiting for the first D2H register FIS - %r\n",
@@ -1852,7 +1852,7 @@ AhciModeInitialization (
       Data = AhciReadReg (AhciBar, Offset);
       if ((Data & AHCI_ATAPI_SIG_MASK) == AHCI_ATA_DEVICE_SIG) {
         Status = AhciIdentify (Private, Port, 0, PortIndex - 1, &IdentifyData);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           DEBUG ((DEBUG_ERROR, "%a: AhciIdentify() failed with %r\n", __FUNCTION__, Status));
           continue;
         }

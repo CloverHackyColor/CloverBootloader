@@ -244,7 +244,7 @@ MemLogVA (
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
   }
@@ -351,7 +351,7 @@ GetMemLogBuffer (
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
   }
@@ -373,7 +373,7 @@ GetMemLogLen (
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return 0;
     }
   }
@@ -394,7 +394,7 @@ SetMemLogCallback (
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
   }
@@ -412,7 +412,7 @@ GetMemLogTscTicksPerSecond (VOID)
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return 0;
     }
   }
@@ -459,7 +459,7 @@ MemLogfVA (
 
   if (mMemLog == NULL) {
     Status = MemLogInit ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
   }

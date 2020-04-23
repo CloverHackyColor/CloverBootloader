@@ -100,8 +100,8 @@ PeimInitializeDxeIpl (
                NULL,
                (VOID **) &Dummy
                );
-    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -110,14 +110,14 @@ PeimInitializeDxeIpl (
     // and section extraction.
     //
     Status = InstallIplPermanentMemoryPpis (NULL, NULL, NULL);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   } else {
     //
     // Install memory discovered PPI notification to install PPIs for
     // decompression and section extraction.
     //
     Status = PeiServicesNotifyPpi (&mMemoryDiscoveredNotifyList);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -281,7 +281,7 @@ DxeLoadCore (
                NULL,
                (VOID **) &S3Resume
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Report Status code that S3Resume PPI can not be found
       //
@@ -290,10 +290,10 @@ DxeLoadCore (
         (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_S3_RESUME_PPI_NOT_FOUND)
         );
     }
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Status = S3Resume->S3RestoreConfig2 (S3Resume);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   } else if (BootMode == BOOT_IN_RECOVERY_MODE) {
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_RECOVERY_BEGIN));
     Status = PeiServicesLocatePpi (
@@ -303,7 +303,7 @@ DxeLoadCore (
                (VOID **) &PeiRecovery
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Locate Recovery PPI Failed.(Status = %r)\n", Status));
       //
       // Report Status code the failure of locating Recovery PPI
@@ -317,7 +317,7 @@ DxeLoadCore (
 
     REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_PC_CAPSULE_LOAD));
     Status = PeiRecovery->LoadRecoveryCapsule (PeiServices, PeiRecovery);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Load Recovery Capsule Failed.(Status = %r)\n", Status));
       //
       // Report Status code that recovery image can not be found
@@ -354,7 +354,7 @@ DxeLoadCore (
       //
       // Whether failed, still goes to Firmware Update boot path. BDS will clear corresponding indicator and reboot later on
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = PeiCapsuleOnDisk->LoadCapsuleOnDisk (PeiServices, PeiCapsuleOnDisk);
       }
     }
@@ -370,7 +370,7 @@ DxeLoadCore (
                NULL,
                (VOID **)&Variable
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       DataSize = sizeof (MemoryData);
       Status = Variable->GetVariable (
                            Variable,
@@ -380,7 +380,7 @@ DxeLoadCore (
                            &DataSize,
                            &MemoryData
                            );
-      if (!EFI_ERROR (Status) && ValidateMemoryTypeInfoVariable(MemoryData, DataSize)) {
+      if (!EFI_ERROR(Status) && ValidateMemoryTypeInfoVariable(MemoryData, DataSize)) {
         //
         // Build the GUID'd HOB for DXE
         //
@@ -407,7 +407,7 @@ DxeLoadCore (
     //
     // These must exist an instance of EFI_PEI_LOAD_FILE_PPI to support to load DxeCore file handle successfully.
     //
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Status = LoadFile->LoadFile (
                          LoadFile,
@@ -417,13 +417,13 @@ DxeLoadCore (
                          &DxeCoreEntryPoint,
                          &AuthenticationState
                          );
-  } while (EFI_ERROR (Status));
+  } while (EFI_ERROR(Status));
 
   //
   // Get the DxeCore File Info from the FileHandle for the DxeCore GUID file name.
   //
   Status = PeiServicesFfsGetFileInfo (FileHandle, &DxeCoreFileInfo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Add HOB for the DXE Core
@@ -485,17 +485,17 @@ DxeIplFindDxeCore (
     // If some error occurs here, then we cannot find any firmware
     // volume that may contain DxeCore.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_CORE_EC_DXE_CORRUPT));
     }
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Find the DxeCore file type from the beginning in this firmware volume.
     //
     FileHandle = NULL;
     Status = PeiServicesFfsFindNextFile (EFI_FV_FILETYPE_DXE_CORE, VolumeHandle, &FileHandle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Find DxeCore FileHandle in this volume, then we skip other firmware volume and
       // return the FileHandle.
@@ -596,7 +596,7 @@ CustomGuidedSectionExtract (
              &SectionAttribute
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "GetInfo from guided section Failed - %r\n", Status));
     return Status;
   }
@@ -628,7 +628,7 @@ CustomGuidedSectionExtract (
              ScratchBuffer,
              AuthenticationStatus
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Decode failed
     //
@@ -715,7 +715,7 @@ Decompress (
                  &DstBufferSize,
                  &ScratchBufferSize
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // GetInfo failed
         //
@@ -744,7 +744,7 @@ Decompress (
                   DstBuffer,
                   ScratchBuffer
                   );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Decompress failed
         //

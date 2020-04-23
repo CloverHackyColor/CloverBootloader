@@ -65,7 +65,7 @@ RamDiskAcpiCheck (
                   NULL,
                   (VOID **)&mAcpiTableProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       EFI_D_INFO,
       "RamDiskAcpiCheck: Cannot locate the EFI ACPI Table Protocol, "
@@ -82,7 +82,7 @@ RamDiskAcpiCheck (
                   NULL,
                   (VOID **)&mAcpiSdtProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       EFI_D_INFO,
       "RamDiskAcpiCheck: Cannot locate the EFI ACPI Sdt Protocol, "
@@ -132,7 +132,7 @@ RamDiskDxeEntryPoint (
                   NULL,
                   &DummyInterface
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO, "Driver already started!\n"));
     return EFI_ALREADY_STARTED;
   }
@@ -149,7 +149,7 @@ RamDiskDxeEntryPoint (
   // Install RAM disk configuration form
   //
   Status = InstallRamDiskConfigForm (ConfigPrivate);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -165,7 +165,7 @@ RamDiskDxeEntryPoint (
                   ConfigPrivate,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -180,7 +180,7 @@ RamDiskDxeEntryPoint (
              NULL,
              &Event
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 
@@ -217,7 +217,7 @@ RamDiskDxeUnload (
                   &gEfiCallerIdGuid,
                   (VOID **) &ConfigPrivate
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

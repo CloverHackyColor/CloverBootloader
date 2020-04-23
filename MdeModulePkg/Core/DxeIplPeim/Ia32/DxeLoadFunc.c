@@ -251,7 +251,7 @@ HandOffToDxeCore (
   }
 
   Status = PeiServicesAllocatePages (EfiBootServicesData, EFI_SIZE_TO_PAGES (STACK_SIZE), &BaseOfStack);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (FeaturePcdGet(PcdDxeIplSwitchToLongMode)) {
     //
@@ -286,7 +286,7 @@ HandOffToDxeCore (
     PERF_EVENT_SIGNAL_BEGIN (gEndOfPeiSignalPpi.Guid);
     Status = PeiServicesInstallPpi (&gEndOfPeiSignalPpi);
     PERF_EVENT_SIGNAL_END (gEndOfPeiSignalPpi.Guid);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Paging might be already enabled. To avoid conflict configuration,
@@ -307,7 +307,7 @@ HandOffToDxeCore (
                EFI_SIZE_TO_PAGES(sizeof (X64_IDT_TABLE) + SizeOfTemplate * IDT_ENTRY_COUNT),
                &VectorAddress
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Store EFI_PEI_SERVICES** in the 4 bytes immediately preceding IDT to avoid that
@@ -410,7 +410,7 @@ HandOffToDxeCore (
     PERF_EVENT_SIGNAL_BEGIN (gEndOfPeiSignalPpi.Guid);
     Status = PeiServicesInstallPpi (&gEndOfPeiSignalPpi);
     PERF_EVENT_SIGNAL_END (gEndOfPeiSignalPpi.Guid);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     if (BuildPageTablesIa32Pae) {
       //

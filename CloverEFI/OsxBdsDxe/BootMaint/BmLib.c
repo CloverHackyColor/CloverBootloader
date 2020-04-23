@@ -46,7 +46,7 @@ EfiLibOpenRoot (
   //
   // Open the root directory of the volume
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = Volume->OpenVolume (
                       Volume,
                       &File
@@ -55,7 +55,7 @@ EfiLibOpenRoot (
   //
   // Done
   //
-  return EFI_ERROR (Status) ? NULL : File;
+  return EFI_ERROR(Status) ? NULL : File;
 }
 
 /**
@@ -96,7 +96,7 @@ EfiGrowBuffer (
   if (*Status == EFI_BUFFER_TOO_SMALL) {
 
     if (*Buffer != NULL) {
-      FreePool (*Buffer);
+      FreePool(*Buffer);
     }
 
     *Buffer = AllocateZeroPool (BufferSize);
@@ -110,8 +110,8 @@ EfiGrowBuffer (
   //
   // If there's an error, free the buffer
   //
-  if (!TryAgain && EFI_ERROR (*Status) && (*Buffer != NULL)) {
-    FreePool (*Buffer);
+  if (!TryAgain && EFI_ERROR(*Status) && (*Buffer != NULL)) {
+    FreePool(*Buffer);
     *Buffer = NULL;
   }
 
@@ -178,8 +178,8 @@ EfiLibDeleteVariable (
                     0,
                     NULL
                     );
-//    ASSERT (!EFI_ERROR (Status));
-    FreePool (VarBuf);
+//    ASSERT (!EFI_ERROR(Status));
+    FreePool(VarBuf);
   }
 
   return Status;
@@ -423,7 +423,7 @@ EfiReallocatePool (
       CopyMem (NewPool, OldPool, OldSize < NewSize ? OldSize : NewSize);
     }
 
-    FreePool (OldPool);
+    FreePool(OldPool);
   }
 
   return NewPool;

@@ -212,7 +212,7 @@ TerminalDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -241,7 +241,7 @@ TerminalDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -286,7 +286,7 @@ TerminalFreeNotifyList (
                    TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE
                    );
     RemoveEntryList (ListHead->ForwardLink);
-    FreePool (NotifyNode);
+    FreePool(NotifyNode);
   }
 
   return EFI_SUCCESS;
@@ -366,14 +366,14 @@ StartTerminalStateMachine (
                   TerminalDevice,
                   &TerminalDevice->TimerEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->SetTimer (
                   TerminalDevice->TimerEvent,
                   TimerPeriodic,
                   KEYBOARD_TIMER_INTERVAL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CreateEvent (
                   EVT_TIMER,
@@ -382,7 +382,7 @@ StartTerminalStateMachine (
                   NULL,
                   &TerminalDevice->TwoSecondTimeOut
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -412,7 +412,7 @@ InitializeControllerNameTable (
              mSerialConsoleNames[TerminalType],
              TRUE
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = AddUnicodeString2 (
                "en",
                gTerminalComponentName2.SupportedLanguages,
@@ -420,11 +420,11 @@ InitializeControllerNameTable (
                mSerialConsoleNames[TerminalType],
                FALSE
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       FreeUnicodeStringTable (Table);
     }
   }
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *ControllerNameTable = Table;
   }
   return Status;
@@ -482,7 +482,7 @@ TerminalDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   ASSERT ((Status == EFI_SUCCESS) || (Status == EFI_ALREADY_STARTED));
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
 
@@ -498,7 +498,7 @@ TerminalDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   ASSERT ((Status == EFI_SUCCESS) || (Status == EFI_ALREADY_STARTED));
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
 
@@ -538,7 +538,7 @@ TerminalDriverBindingStart (
                     &OpenInfoBuffer,
                     &EntryCount
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = EFI_NOT_FOUND;
       for (Index = 0; Index < EntryCount; Index++) {
         if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
@@ -550,20 +550,20 @@ TerminalDriverBindingStart (
                           Controller,
                           EFI_OPEN_PROTOCOL_GET_PROTOCOL
                           );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             TerminalDevice = TERMINAL_CON_IN_DEV_FROM_THIS (SimpleTextInput);
             TerminalType = TerminalTypeFromGuid (&((VENDOR_DEVICE_PATH *) RemainingDevicePath)->Guid);
             ASSERT (TerminalType < ARRAY_SIZE (mTerminalType));
             if (TerminalDevice->TerminalType != TerminalType) {
               Status = InitializeControllerNameTable (TerminalType, &ControllerNameTable);
-              if (!EFI_ERROR (Status)) {
+              if (!EFI_ERROR(Status)) {
                 StopTerminalStateMachine (TerminalDevice);
                 //
                 // Update the device path
                 //
                 Vendor = TerminalDevice->DevicePath;
                 Status = gBS->LocateDevicePath (&gEfiSerialIoProtocolGuid, &Vendor, &SerialIoHandle);
-                ASSERT_EFI_ERROR (Status);
+                ASSERT_EFI_ERROR(Status);
                 CopyGuid (&((VENDOR_DEVICE_PATH *) Vendor)->Guid, mTerminalType[TerminalType]);
                 Status = gBS->ReinstallProtocolInterface (
                                 TerminalDevice->Handle,
@@ -571,7 +571,7 @@ TerminalDriverBindingStart (
                                 TerminalDevice->DevicePath,
                                 TerminalDevice->DevicePath
                                 );
-                if (!EFI_ERROR (Status)) {
+                if (!EFI_ERROR(Status)) {
                   TerminalDevice->TerminalType = TerminalType;
                   StartTerminalStateMachine (TerminalDevice);
                   FreeUnicodeStringTable (TerminalDevice->ControllerNameTable);
@@ -589,7 +589,7 @@ TerminalDriverBindingStart (
           break;
         }
       }
-      FreePool (OpenInfoBuffer);
+      FreePool(OpenInfoBuffer);
     }
     return Status;
   }
@@ -626,7 +626,7 @@ TerminalDriverBindingStart (
   // Build the component name for the child device
   //
   Status = InitializeControllerNameTable (TerminalDevice->TerminalType, &TerminalDevice->ControllerNameTable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeResources;
   }
 
@@ -634,7 +634,7 @@ TerminalDriverBindingStart (
   // Build the device path for the child device
   //
   Status = SetTerminalDevicePath (TerminalDevice->TerminalType, ParentDevicePath, &TerminalDevice->DevicePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeResources;
   }
 
@@ -646,7 +646,7 @@ TerminalDriverBindingStart (
                   TerminalDevice,
                   &TerminalDevice->SimpleInputEx.WaitForKeyEx
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CreateEvent (
                   EVT_NOTIFY_WAIT,
@@ -655,7 +655,7 @@ TerminalDriverBindingStart (
                   TerminalDevice,
                   &TerminalDevice->SimpleInput.WaitForKey
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = gBS->CreateEvent (
                   EVT_NOTIFY_SIGNAL,
                   TPL_CALLBACK,
@@ -663,7 +663,7 @@ TerminalDriverBindingStart (
                   TerminalDevice,
                   &TerminalDevice->KeyNotifyProcessEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Allocates and initializes the FIFO buffer to be zero, used for accommodating
@@ -705,7 +705,7 @@ TerminalDriverBindingStart (
                                        (UINT8) Mode->DataBits,
                                        (EFI_STOP_BITS_TYPE) (Mode->StopBits)
                                        );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // if set attributes operation fails, invalidate
     // the value of SerialInTimeOut,thus make it
@@ -736,10 +736,10 @@ TerminalDriverBindingStart (
   //
   SimpleTextOutput->Mode->CursorVisible = TRUE;
   Status = SimpleTextOutput->SetAttribute (SimpleTextOutput, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = SimpleTextOutput->Reset (SimpleTextOutput, FALSE);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ReportError;
   }
 
@@ -747,7 +747,7 @@ TerminalDriverBindingStart (
   // Initialize SimpleTextInput instance
   //
   Status = SimpleTextInput->Reset (SimpleTextInput, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ReportError;
   }
 
@@ -759,7 +759,7 @@ TerminalDriverBindingStart (
                   &gEfiDevicePathProtocolGuid,        TerminalDevice->DevicePath,
                   NULL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
                     Controller,
                     &gEfiSerialIoProtocolGuid,
@@ -768,7 +768,7 @@ TerminalDriverBindingStart (
                     TerminalDevice->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     StartTerminalStateMachine (TerminalDevice);
     return Status;
   }
@@ -794,16 +794,16 @@ FreeResources:
   }
 
   if (TerminalDevice->RawFiFo != NULL) {
-    FreePool (TerminalDevice->RawFiFo);
+    FreePool(TerminalDevice->RawFiFo);
   }
   if (TerminalDevice->UnicodeFiFo != NULL) {
-    FreePool (TerminalDevice->UnicodeFiFo);
+    FreePool(TerminalDevice->UnicodeFiFo);
   }
   if (TerminalDevice->EfiKeyFiFo != NULL) {
-    FreePool (TerminalDevice->EfiKeyFiFo);
+    FreePool(TerminalDevice->EfiKeyFiFo);
   }
   if (TerminalDevice->EfiKeyFiFoForNotify != NULL) {
-    FreePool (TerminalDevice->EfiKeyFiFoForNotify);
+    FreePool(TerminalDevice->EfiKeyFiFoForNotify);
   }
 
   if (TerminalDevice->ControllerNameTable != NULL) {
@@ -811,14 +811,14 @@ FreeResources:
   }
 
   if (TerminalDevice->DevicePath != NULL) {
-    FreePool (TerminalDevice->DevicePath);
+    FreePool(TerminalDevice->DevicePath);
   }
 
   if (TerminalDevice->TerminalConsoleModeData != NULL) {
-    FreePool (TerminalDevice->TerminalConsoleModeData);
+    FreePool(TerminalDevice->TerminalConsoleModeData);
   }
 
-  FreePool (TerminalDevice);
+  FreePool(TerminalDevice);
 
 CloseProtocols:
 
@@ -836,7 +836,7 @@ CloseProtocols:
                   This->DriverBindingHandle,
                   Controller
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CloseProtocol (
                   Controller,
@@ -844,7 +844,7 @@ CloseProtocols:
                   This->DriverBindingHandle,
                   Controller
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   return Status;
 }
 
@@ -896,7 +896,7 @@ TerminalDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Remove Parent Device Path from
@@ -935,7 +935,7 @@ TerminalDriverBindingStop (
                     ChildHandleBuffer[Index],
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
 
       TerminalDevice = TERMINAL_CON_OUT_DEV_FROM_THIS (SimpleTextOutput);
 
@@ -958,7 +958,7 @@ TerminalDriverBindingStop (
                       TerminalDevice->DevicePath,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         gBS->OpenProtocol (
               Controller,
               &gEfiSerialIoProtocolGuid,
@@ -975,13 +975,13 @@ TerminalDriverBindingStop (
         gBS->CloseEvent (TerminalDevice->SimpleInputEx.WaitForKeyEx);
         gBS->CloseEvent (TerminalDevice->KeyNotifyProcessEvent);
         TerminalFreeNotifyList (&TerminalDevice->NotifyList);
-        FreePool (TerminalDevice->DevicePath);
-        FreePool (TerminalDevice->TerminalConsoleModeData);
-        FreePool (TerminalDevice);
+        FreePool(TerminalDevice->DevicePath);
+        FreePool(TerminalDevice->TerminalConsoleModeData);
+        FreePool(TerminalDevice);
       }
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -1025,11 +1025,11 @@ MatchDevicePaths (
     // return success
     //
     if (CompareMem (Single, DevicePathInst, Size) == 0) {
-      FreePool (DevicePathInst);
+      FreePool(DevicePathInst);
       return TRUE;
     }
 
-    FreePool (DevicePathInst);
+    FreePool(DevicePathInst);
     DevicePathInst = GetNextDevicePathInstance (&DevicePath, &Size);
   }
 
@@ -1066,7 +1066,7 @@ TerminalUpdateConsoleDevVariable (
     Status   = EFI_SUCCESS;
     Variable = NULL;
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -1081,13 +1081,13 @@ TerminalUpdateConsoleDevVariable (
         NewVariable = AppendDevicePathInstance (Variable, TempDevicePath);
         if (NewVariable != NULL) {
           if (Variable != NULL) {
-            FreePool (Variable);
+            FreePool(Variable);
           }
           Variable = NewVariable;
         }
       }
 
-      FreePool (TempDevicePath);
+      FreePool(TempDevicePath);
     }
 
   }
@@ -1102,7 +1102,7 @@ TerminalUpdateConsoleDevVariable (
                   Variable
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     NameSize = StrSize (VariableName);
     SetVariableStatus = AllocatePool (sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + VariableSize);
     if (SetVariableStatus != NULL) {
@@ -1124,11 +1124,11 @@ TerminalUpdateConsoleDevVariable (
         sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + VariableSize
         );
 
-      FreePool (SetVariableStatus);
+      FreePool(SetVariableStatus);
     }
   }
 
-  FreePool (Variable);
+  FreePool(Variable);
 
   return ;
 }
@@ -1179,7 +1179,7 @@ TerminalRemoveConsoleDevVariable (
   //
   Instance = GetNextDevicePathInstance (&Variable, &InstanceSize);
   if (Instance == NULL) {
-    FreePool (OriginalVariable);
+    FreePool(OriginalVariable);
     return ;
   }
   //
@@ -1203,7 +1203,7 @@ TerminalRemoveConsoleDevVariable (
           FoundOne  = TRUE;
         }
 
-        FreePool (TempDevicePath);
+        FreePool(TempDevicePath);
       }
     }
     //
@@ -1213,17 +1213,17 @@ TerminalRemoveConsoleDevVariable (
       SavedNewVariable  = NewVariable;
       NewVariable       = AppendDevicePathInstance (NewVariable, Instance);
       if (SavedNewVariable != NULL) {
-        FreePool (SavedNewVariable);
+        FreePool(SavedNewVariable);
       }
     }
     //
     // Get next device path instance from Variable
     //
-    FreePool (Instance);
+    FreePool(Instance);
     Instance = GetNextDevicePathInstance (&Variable, &InstanceSize);
   } while (Instance != NULL);
 
-  FreePool (OriginalVariable);
+  FreePool(OriginalVariable);
 
   if (FoundOne) {
     VariableSize = GetDevicePathSize (NewVariable);
@@ -1238,11 +1238,11 @@ TerminalRemoveConsoleDevVariable (
     //
     // Shrinking variable with existing variable driver implementation shouldn't fail.
     //
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   if (NewVariable != NULL) {
-    FreePool (NewVariable);
+    FreePool(NewVariable);
   }
 
   return ;
@@ -1320,7 +1320,7 @@ InitializeTerminal(
              &gTerminalComponentName,
              &gTerminalComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

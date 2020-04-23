@@ -312,7 +312,7 @@ PeiUsbHubReadDesc (
   //
   Status = PeiGetHubDescriptor (PeiServices, PeiUsbDevice, UsbIoPpi, 2, HubDescriptor);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -402,7 +402,7 @@ PeiDoHubConfig (
             UsbIoPpi,
             HubDescriptor
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -426,7 +426,7 @@ PeiDoHubConfig (
                 (UINT8) (Index + 1),
                 EfiUsbPortPower
                 );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG (( EFI_D_ERROR, "PeiDoHubConfig: PeiHubSetPortFeature EfiUsbPortPower failed %x\n", Index));
         continue;
       }
@@ -445,7 +445,7 @@ PeiDoHubConfig (
               UsbIoPpi,
               (UINT32 *) &HubStatus
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     } else {
       //
@@ -524,7 +524,7 @@ PeiResetHubPort (
                (UINT32 *) &HubPortStatus
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
 

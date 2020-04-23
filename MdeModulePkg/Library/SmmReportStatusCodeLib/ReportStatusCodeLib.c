@@ -37,7 +37,7 @@ InternalGetReportStatusCode (
   EFI_STATUS                    Status;
 
   Status = gSmst->SmmLocateProtocol (&gEfiSmmStatusCodeProtocolGuid, NULL, (VOID**)&mStatusCodeProtocol);
-  if (!EFI_ERROR (Status) && mStatusCodeProtocol != NULL) {
+  if (!EFI_ERROR(Status) && mStatusCodeProtocol != NULL) {
     return mStatusCodeProtocol->ReportStatusCode;
   }
   return NULL;
@@ -467,7 +467,7 @@ ReportStatusCodeEx (
   //
   // Free the allocated buffer
   //
-  FreePool (StatusCodeData);
+  FreePool(StatusCodeData);
 
   return Status;
 }

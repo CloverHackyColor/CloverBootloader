@@ -56,7 +56,7 @@ Returns:
     FatFreeDirEnt (DirEnt);
   }
 
-  FreePool (ODir);
+  FreePool(ODir);
 }
 
 STATIC

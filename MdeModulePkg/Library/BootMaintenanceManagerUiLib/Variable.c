@@ -41,7 +41,7 @@ Var_DelBootOption (
     }
 
     Status = EfiBootManagerDeleteLoadOptionVariable (NewMenuEntry->OptionNumber,LoadOptionTypeBoot);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
      return Status;
     }
     Index2++;
@@ -96,7 +96,7 @@ Var_DelDriverOption (
       continue;
     }
     Status = EfiBootManagerDeleteLoadOptionVariable (NewMenuEntry->OptionNumber,LoadOptionTypeDriver);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -153,7 +153,7 @@ Var_UpdateConsoleOption (
   GetEfiGlobalVariable2 (ConsoleName, (VOID**)&ConDevicePath, NULL);
   if (ConDevicePath != NULL) {
     EfiLibDeleteVariable (ConsoleName, &gEfiGlobalVariableGuid);
-    FreePool (ConDevicePath);
+    FreePool(ConDevicePath);
     ConDevicePath = NULL;
   };
 
@@ -211,7 +211,7 @@ Var_UpdateConsoleOption (
                     GetDevicePathSize (ConDevicePath),
                     ConDevicePath
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -339,12 +339,12 @@ Var_UpdateDriverOption (
              OptionalDesData,
              OptionalDataSize
            );
-  if (EFI_ERROR (Status)){
+  if (EFI_ERROR(Status)){
     return Status;
   }
 
   Status = EfiBootManagerAddLoadOptionVariable (&LoadOption,(UINTN) -1 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EfiBootManagerFreeLoadOption(&LoadOption);
     return Status;
   }
@@ -457,12 +457,12 @@ Var_UpdateBootOption (
              OptionalData,
              OptionalDataSize
            );
-  if (EFI_ERROR (Status)){
+  if (EFI_ERROR(Status)){
     return Status;
   }
 
   Status = EfiBootManagerAddLoadOptionVariable (&LoadOption,(UINTN) -1 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EfiBootManagerFreeLoadOption(&LoadOption);
     return Status;
   }
@@ -626,7 +626,7 @@ Var_UpdateBootOrder (
                   BootOrderSize,
                   BootOrder
                   );
-  FreePool (BootOrder);
+  FreePool(BootOrder);
 
   BOpt_FreeMenu (&BootOptionMenu);
   BOpt_GetBootOptions (CallbackData);
@@ -675,7 +675,7 @@ Var_UpdateDriverOrder (
   //
   if (DriverOrderList != NULL) {
     EfiLibDeleteVariable (L"DriverOrder", &gEfiGlobalVariableGuid);
-    FreePool (DriverOrderList);
+    FreePool(DriverOrderList);
   }
 
   ASSERT (DriverOptionMenu.MenuNumber <= (sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder) / sizeof (CallbackData->BmmFakeNvData.DriverOptionOrder[0])));
@@ -690,7 +690,7 @@ Var_UpdateDriverOrder (
                   DriverOrderListSize,
                   NewDriverOrderList
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -722,7 +722,7 @@ Var_UpdateConMode (
   Status = gST->ConOut->QueryMode (gST->ConOut, Mode, &(ModeInfo.Column), &(ModeInfo.Row));
   if (!EFI_ERROR(Status)) {
     Status = PcdSet32S (PcdSetupConOutColumn, (UINT32) ModeInfo.Column);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = PcdSet32S (PcdSetupConOutRow, (UINT32) ModeInfo.Row);
     }
   }

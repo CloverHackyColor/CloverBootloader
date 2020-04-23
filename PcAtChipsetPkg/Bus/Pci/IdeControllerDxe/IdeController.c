@@ -90,7 +90,7 @@ InitializeIdeControllerDriver (
              &gIdeControllerComponentName,
              &gIdeControllerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -130,7 +130,7 @@ IdeControllerSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -145,7 +145,7 @@ IdeControllerSupported (
                         1,
                         &PciClass
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -156,7 +156,7 @@ IdeControllerSupported (
                         1,
                         &PciSubClass
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -221,7 +221,7 @@ IdeControllerStart (
   //           opened 'again' by this call.
   // Status != ALREADY_STARTED - Error status, terminate program execution
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -269,7 +269,7 @@ IdeControllerStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
      return EFI_UNSUPPORTED;
   }
 
@@ -288,7 +288,7 @@ IdeControllerStop (
                   &gEfiIdeControllerInitProtocolGuid, &gEfiIdeControllerInit,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

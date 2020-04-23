@@ -174,7 +174,7 @@ RuntimeResetSystemLibConstruct (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mRuntimeResetSystemLibVirtualAddressChangeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -202,7 +202,7 @@ RuntimeResetSystemLibDeconstruct (
 
   ASSERT (gBS != NULL);
   Status = gBS->CloseEvent (mRuntimeResetSystemLibVirtualAddressChangeEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

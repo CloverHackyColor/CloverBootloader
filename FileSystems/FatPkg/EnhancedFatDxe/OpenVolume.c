@@ -56,14 +56,14 @@ Returns:
   // Open Root file
   //
   Status = FatOpenDirEnt (NULL, &Volume->RootDirEnt);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
   //
   // Open a new instance to the root
   //
   Status = FatAllocateIFile (Volume->Root, &IFile);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *File = &IFile->Handle;
   }
 

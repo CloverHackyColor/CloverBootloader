@@ -76,7 +76,7 @@ Arguments:
     Subtask = CR (Link, FAT_SUBTASK, Link, FAT_SUBTASK_SIGNATURE);
     Link = FatDestroySubtask (Subtask);
   }
-  FreePool (Task);
+  FreePool(Task);
 }
 
 VOID
@@ -128,7 +128,7 @@ Returns:
   gBS->CloseEvent (Subtask->DiskIo2Token.Event);
 
   Link = RemoveEntryList (&Subtask->Link);
-  FreePool (Subtask);
+  FreePool(Subtask);
 
   return Link;
 }
@@ -166,7 +166,7 @@ Returns:
   if (IsListEmpty (&Task->Subtasks)) {
     Task->FileIoToken->Status = EFI_SUCCESS;
     gBS->SignalEvent (Task->FileIoToken->Event);
-    FreePool (Task);
+    FreePool(Task);
     return EFI_SUCCESS;
   }
 
@@ -200,12 +200,12 @@ Returns:
                                                 Subtask->Buffer
                                                 );
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EfiAcquireLock (&FatTaskLock);
     //
     // Remove all the remaining subtasks when failure.
@@ -219,7 +219,7 @@ Returns:
 
     if (IsListEmpty (&Task->Subtasks)) {
       RemoveEntryList (&Task->Link);
-      FreePool (Task);
+      FreePool(Task);
     } else {
       //
       // If one or more subtasks have been already submitted, set FileIoToken
@@ -321,7 +321,7 @@ Arguments:
   // Task->FileIoToken is NULL which means the task will be ignored (just recycle the subtask and task memory).
   //
   if (Task->FileIoToken != NULL) {
-    if (IsListEmpty (&Task->Subtasks) || EFI_ERROR (Status)) {
+    if (IsListEmpty (&Task->Subtasks) || EFI_ERROR(Status)) {
       Task->FileIoToken->Status = Status;
       gBS->SignalEvent (Task->FileIoToken->Event);
       //
@@ -333,7 +333,7 @@ Arguments:
 
   if (IsListEmpty (&Task->Subtasks)) {
     RemoveEntryList (&Task->Link);
-    FreePool (Task);
+    FreePool(Task);
   }
 }
 
@@ -415,17 +415,17 @@ Returns:
                           Subtask,
                           &Subtask->DiskIo2Token.Event
                           );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             InsertTailList (&Task->Subtasks, &Subtask->Link);
           } else {
-            FreePool (Subtask);
+            FreePool(Subtask);
           }
         }
       }
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Volume->DiskError = TRUE;
 //    DEBUG ((EFI_D_ERROR, "FatDiskIo: error %r\n", Status));
   }
@@ -526,10 +526,10 @@ Returns:
 --*/
 {
   if (DirEnt->FileString != NULL) {
-    FreePool (DirEnt->FileString);
+    FreePool(DirEnt->FileString);
   }
 
-  FreePool (DirEnt);
+  FreePool(DirEnt);
 }
 
 VOID
@@ -556,13 +556,13 @@ Returns:
   // Free disk cache
   //
   if (Volume->CacheBuffer != NULL) {
-    FreePool (Volume->CacheBuffer);
+    FreePool(Volume->CacheBuffer);
   }
   //
   // Free directory cache
   //
   FatCleanupODirCache (Volume);
-  FreePool (Volume);
+  FreePool(Volume);
 }
 
 VOID
@@ -662,7 +662,7 @@ Returns:
   EFI_TIME   Now;
 
   Status = gRT->GetTime (&Now, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FatEfiTimeToFatTime (&Now, FatNow);
   } else {
     ZeroMem (&Now, sizeof (EFI_TIME));

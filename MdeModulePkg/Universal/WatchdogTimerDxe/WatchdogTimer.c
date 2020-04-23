@@ -228,7 +228,7 @@ WatchdogTimerDriverInitialize (
                   NULL,
                   &mWatchdogTimerEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install the Watchdog Timer Arch Protocol onto a new handle
@@ -239,7 +239,7 @@ WatchdogTimerDriverInitialize (
                   &mWatchdogTimer,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

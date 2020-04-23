@@ -131,14 +131,14 @@ Returns:
   // Verify the source file handle isn't in an error state
   //
   Status = OFile->Error;
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
   // Get new OFile for the file
   //
   Status = FatLocateOFile (&OFile, FileName, Attributes, NewFileName);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -152,13 +152,13 @@ Returns:
     }
 
     Status = FatCreateDirEnt (OFile, NewFileName, Attributes, &DirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     ASSERT (DirEnt != NULL);
     Status = FatOpenDirEnt (OFile, DirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -168,7 +168,7 @@ Returns:
       // If we just created a directory, we need to create "." and ".."
       //
       Status = FatCreateDotDirEnts (OFile);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -185,7 +185,7 @@ Returns:
   // Create an open instance of the OFile
   //
   Status = FatAllocateIFile (OFile, NewIFile);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -295,7 +295,7 @@ Returns:
   //
   // If the file was opened, return the handle to the caller
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *NewHandle = &NewIFile->Handle;
   }
   //
@@ -305,7 +305,7 @@ Returns:
   FatReleaseLock ();
 
   if (Token != NULL) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = FatQueueTask (IFile, Task);
     } else {
       FatDestroyTask (Task);

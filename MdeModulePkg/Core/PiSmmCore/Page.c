@@ -112,8 +112,8 @@ AllocateMemoryMapEntry (
                TRUE,
                FALSE
                );
-    ASSERT_EFI_ERROR (Status);
-    if(!EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR(Status);
+    if(!EFI_ERROR(Status)) {
       FreeDescriptorEntries = (MEMORY_MAP *)(UINTN)Mem;
       //DEBUG((DEBUG_INFO, "New FreeDescriptorEntries - 0x%x\n", FreeDescriptorEntries));
       //
@@ -717,7 +717,7 @@ SmmAllocatePages (
   NeedGuard = IsPageTypeToGuard (MemoryType, Type);
   Status = SmmInternalAllocatePages (Type, MemoryType, NumberOfPages, Memory,
                                      NeedGuard);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     SmmCoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionAllocatePages,
@@ -918,7 +918,7 @@ SmmFreePages (
 
   IsGuarded = IsHeapGuardEnabled () && IsMemoryGuarded (Memory);
   Status = SmmInternalFreePages (Memory, NumberOfPages, IsGuarded);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     SmmCoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionFreePages,

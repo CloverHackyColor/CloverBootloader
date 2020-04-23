@@ -795,13 +795,13 @@ ProcessPpiListFromSec (
       // It is a notification PPI.
       //
       Status = InternalPeiNotifyPpi (PeiServices, (CONST EFI_PEI_NOTIFY_DESCRIPTOR *) PpiList, TRUE);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     } else {
       //
       // It is a normal PPI.
       //
       Status = InternalPeiInstallPpi (PeiServices, PpiList, TRUE);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
 
     if ((PpiList->Flags & EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) == EFI_PEI_PPI_DESCRIPTOR_TERMINATE_LIST) {
@@ -821,11 +821,11 @@ ProcessPpiListFromSec (
   // into the PPI database and before dispatching any PEIMs.
   //
   Status = PeiLocatePpi (PeiServices, &gEfiSecHobDataPpiGuid, 0, NULL, (VOID **) &SecHobDataPpi);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = SecHobDataPpi->GetHobs (SecHobDataPpi, &SecHobList);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = PeiInstallSecHobData (PeiServices, SecHobList);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 }

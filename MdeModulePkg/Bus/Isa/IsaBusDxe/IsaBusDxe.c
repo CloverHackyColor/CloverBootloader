@@ -59,7 +59,7 @@ IsaBusDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
       Controller,
       &gEfiIsaHcProtocolGuid,
@@ -68,7 +68,7 @@ IsaBusDriverBindingSupported (
       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -80,7 +80,7 @@ IsaBusDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
       Controller,
       &gEfiDevicePathProtocolGuid,
@@ -141,8 +141,8 @@ IsaBusCreateChild (
                   &gEfiCallerIdGuid,      Child,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
-    FreePool (Child);
+  if (EFI_ERROR(Status)) {
+    FreePool(Child);
     return Status;
   }
 
@@ -196,7 +196,7 @@ IsaBusDestroyChild (
                   ChildHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -213,15 +213,15 @@ IsaBusDestroyChild (
                   gIsaBusDriverBinding.DriverBindingHandle,
                   ChildHandle
                   );
-  ASSERT_EFI_ERROR (Status);
-  if (!EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (!EFI_ERROR(Status)) {
     Status = gBS->UninstallMultipleProtocolInterfaces (
                     ChildHandle,
                     &gEfiIsaHcProtocolGuid, Private->IsaHc,
                     &gEfiCallerIdGuid,      Child,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->OpenProtocol (
              Private->IsaHcHandle,
              &gEfiIsaHcProtocolGuid,
@@ -233,10 +233,10 @@ IsaBusDestroyChild (
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Child->InDestroying = FALSE;
   } else {
-    FreePool (Child);
+    FreePool(Child);
   }
 
   return Status;
@@ -295,7 +295,7 @@ IsaBusDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -307,7 +307,7 @@ IsaBusDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
            Controller,
            &gEfiIsaHcProtocolGuid,
@@ -327,7 +327,7 @@ IsaBusDriverBindingStart (
                   &gEfiIsaHcServiceBindingProtocolGuid, &Private->ServiceBinding,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -370,7 +370,7 @@ IsaBusDriverBindingStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -382,7 +382,7 @@ IsaBusDriverBindingStop (
                     &gEfiIsaHcServiceBindingProtocolGuid, &Private->ServiceBinding,
                     NULL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->CloseProtocol (
              Controller,
              &gEfiDevicePathProtocolGuid,
@@ -395,7 +395,7 @@ IsaBusDriverBindingStop (
              This->DriverBindingHandle,
              Controller
              );
-      FreePool (Private);
+      FreePool(Private);
     }
 
     return Status;
@@ -404,7 +404,7 @@ IsaBusDriverBindingStop (
   AllChildrenStopped = TRUE;
   for (Index = 0; Index < NumberOfChildren; Index++) {
     Status = ServiceBinding->DestroyChild (ServiceBinding, ChildHandleBuffer[Index]);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -450,6 +450,6 @@ InitializeIsaBus (
              &gIsaBusComponentName,
              &gIsaBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   return Status;
 }

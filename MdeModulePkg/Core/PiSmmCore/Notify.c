@@ -128,7 +128,7 @@ SmmRegisterProtocolNotify (
           //
           ProtNotify->Signature = 0;
           RemoveEntryList (&ProtNotify->Link);
-          FreePool (ProtNotify);
+          FreePool(ProtNotify);
           return EFI_SUCCESS;
         }
       }

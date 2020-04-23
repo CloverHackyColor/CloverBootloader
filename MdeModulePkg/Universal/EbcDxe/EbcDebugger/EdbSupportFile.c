@@ -41,7 +41,7 @@ ReadFileFromVol (
   // Open the root directory
   //
   Status = Vol->OpenVolume (Vol, &RootDir);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -55,7 +55,7 @@ ReadFileFromVol (
                       EFI_FILE_MODE_READ,
                       0
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     RootDir->Close (RootDir);
     return Status;
   }
@@ -79,9 +79,9 @@ ReadFileFromVol (
                      &FileInfoSize,
                      FileInfo
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Handle->Close (Handle);
-    gBS->FreePool (FileInfo);
+    gBS->FreePool(FileInfo);
     return Status;
   }
 
@@ -92,11 +92,11 @@ ReadFileFromVol (
   TempBuffer = AllocateZeroPool (TempBufferSize);
   if (TempBuffer == NULL) {
     Handle->Close (Handle);
-    gBS->FreePool (FileInfo);
+    gBS->FreePool(FileInfo);
     return Status;
   }
 
-  gBS->FreePool (FileInfo);
+  gBS->FreePool(FileInfo);
 
   //
   // Read the file data to the buffer
@@ -106,9 +106,9 @@ ReadFileFromVol (
                      &TempBufferSize,
                      TempBuffer
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Handle->Close (Handle);
-    gBS->FreePool (TempBuffer);
+    gBS->FreePool(TempBuffer);
     return Status;
   }
 
@@ -190,7 +190,7 @@ ReadFileToBuffer (
                    &NoHandles,
                    &HandleBuffer
                    );
-  if (EFI_ERROR (Status) && (NoHandles == 0)) {
+  if (EFI_ERROR(Status) && (NoHandles == 0)) {
     return EFI_NOT_FOUND;
   }
 
@@ -211,7 +211,7 @@ ReadFileToBuffer (
     }
 
     Status = ReadFileFromVol (Vol, FileName, &TempBufferSize, &TempBuffer);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Read file OK, check duplication
       //
@@ -219,8 +219,8 @@ ReadFileToBuffer (
         //
         // Find the duplicated file
         //
-        gBS->FreePool (TempBuffer);
-        gBS->FreePool (*Buffer);
+        gBS->FreePool(TempBuffer);
+        gBS->FreePool(*Buffer);
         EDBPrint (L"Duplicated FileName found!\n");
         return EFI_NO_MAPPING;
       } else {
@@ -293,7 +293,7 @@ GetFileNameUnderDir (
   // Open the root directory
   //
   Status = Vol->OpenVolume (Vol, &RootDir);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -307,7 +307,7 @@ GetFileNameUnderDir (
                       EFI_FILE_MODE_READ,
                       EFI_FILE_DIRECTORY
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     RootDir->Close (RootDir);
     return NULL;
   }
@@ -317,7 +317,7 @@ GetFileNameUnderDir (
   // Set Dir Position
   //
   Status = Handle->SetPosition (Handle, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Handle->Close (Handle);
     return NULL;
   }
@@ -349,7 +349,7 @@ GetFileNameUnderDir (
                        &FileInfoSize,
                        FileInfo
                        );
-    if (EFI_ERROR (Status) || (FileInfoSize == 0)) {
+    if (EFI_ERROR(Status) || (FileInfoSize == 0)) {
       break;
     }
 
@@ -377,7 +377,7 @@ GetFileNameUnderDir (
   //
   // Free resources
   //
-  gBS->FreePool (FileInfo);
+  gBS->FreePool(FileInfo);
   Handle->Close (Handle);
 
   return TempName;

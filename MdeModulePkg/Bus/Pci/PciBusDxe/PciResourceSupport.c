@@ -205,14 +205,14 @@ CalculateApertureIo16 (
                                        );
     }
 
-    if (EFI_ERROR (Status) && gPciOverrideProtocol != NULL) {
+    if (EFI_ERROR(Status) && gPciOverrideProtocol != NULL) {
       Status = gPciOverrideProtocol->GetPlatformPolicy (
                                        gPciOverrideProtocol,
                                        &PciPolicy
                                        );
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((PciPolicy & EFI_RESERVE_ISA_IO_ALIAS) != 0) {
         mReserveIsaAliases = TRUE;
       }
@@ -843,7 +843,7 @@ CreateResourceMap (
           IoBridge
           );
       } else {
-        FreePool (IoBridge);
+        FreePool(IoBridge);
         IoBridge = NULL;
       }
 
@@ -859,7 +859,7 @@ CreateResourceMap (
           Mem32Bridge
           );
       } else {
-        FreePool (Mem32Bridge);
+        FreePool(Mem32Bridge);
         Mem32Bridge = NULL;
       }
 
@@ -875,7 +875,7 @@ CreateResourceMap (
           PMem32Bridge
           );
       } else {
-        FreePool (PMem32Bridge);
+        FreePool(PMem32Bridge);
         PMem32Bridge = NULL;
       }
 
@@ -891,7 +891,7 @@ CreateResourceMap (
           Mem64Bridge
           );
       } else {
-        FreePool (Mem64Bridge);
+        FreePool(Mem64Bridge);
         Mem64Bridge = NULL;
       }
 
@@ -907,7 +907,7 @@ CreateResourceMap (
           PMem64Bridge
           );
       } else {
-        FreePool (PMem64Bridge);
+        FreePool(PMem64Bridge);
         PMem64Bridge = NULL;
       }
 
@@ -1235,7 +1235,7 @@ ProgramResource (
       // Program the PCI devices under this bridge
       //
       Status = ProgramResource (Base + Node->Offset, Node);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 
@@ -1778,7 +1778,7 @@ DestroyResourceTree (
       DestroyResourceTree (Temp);
     }
 
-    FreePool (Temp);
+    FreePool(Temp);
   }
 }
 

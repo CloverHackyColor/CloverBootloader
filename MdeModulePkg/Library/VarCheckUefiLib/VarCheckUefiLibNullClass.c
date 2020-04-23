@@ -854,7 +854,7 @@ SetVariableCheckHandlerUefiDefined (
                DataSize,
                Data
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_INFO, "UEFI Variable Check function fail %r - %g:%s\n", Status, VendorGuid, VariableName));
       return Status;
     }

@@ -63,7 +63,7 @@ PeiPciLibPciCfg2ReadWorker (
   UINT64                       PciCfg2Address;
 
   Status = PeiServicesLocatePpi (&gEfiPciCfg2PpiGuid, 0, NULL, (VOID **) &PciCfg2Ppi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (PciCfg2Ppi != NULL);
 
   PciCfg2Address = PCI_TO_PCICFG2_ADDRESS (Address);
@@ -106,7 +106,7 @@ PeiPciLibPciCfg2WriteWorker (
   UINT64                          PciCfg2Address;
 
   Status = PeiServicesLocatePpi (&gEfiPciCfg2PpiGuid, 0, NULL, (VOID **) &PciCfg2Ppi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (PciCfg2Ppi != NULL);
 
   PciCfg2Address = PCI_TO_PCICFG2_ADDRESS (Address);

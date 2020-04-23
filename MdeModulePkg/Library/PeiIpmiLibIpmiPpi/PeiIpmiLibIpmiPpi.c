@@ -51,7 +51,7 @@ IpmiSubmitCommand (
             NULL,
             (VOID **) &IpmiPpi
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Ipmi Ppi is not installed. So, IPMI device is not present.
     //
@@ -68,7 +68,7 @@ IpmiSubmitCommand (
                             ResponseData,
                             ResponseDataSize
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   return EFI_SUCCESS;

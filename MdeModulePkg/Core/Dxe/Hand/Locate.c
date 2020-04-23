@@ -464,7 +464,7 @@ CoreLocateDevicePath (
   // Get a list of all handles that support the requested protocol
   //
   Status = CoreLocateHandleBuffer (ByProtocol, Protocol, NULL, &HandleCount, &Handles);
-  if (EFI_ERROR (Status) || HandleCount == 0) {
+  if (EFI_ERROR(Status) || HandleCount == 0) {
     return EFI_NOT_FOUND;
   }
 
@@ -472,7 +472,7 @@ CoreLocateDevicePath (
   for(Index = 0; Index < HandleCount; Index += 1) {
     Handle = Handles[Index];
     Status = CoreHandleProtocol (Handle, &gEfiDevicePathProtocolGuid, (VOID **)&TmpDevicePath);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // If this handle doesn't support device path, then skip it
       //
@@ -502,7 +502,7 @@ CoreLocateDevicePath (
     }
   }
 
-  CoreFreePool (Handles);
+  CoreFreePool(Handles);
 
   //
   // If there wasn't any match, then no parts of the device path was found.
@@ -572,7 +572,7 @@ CoreLocateProtocol (
   // Lock the protocol database
   //
   Status = CoreAcquireLockOrFail (&gProtocolDatabaseLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 

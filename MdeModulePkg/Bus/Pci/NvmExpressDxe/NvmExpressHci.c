@@ -625,7 +625,7 @@ NvmeCreateIoCompletionQueue (
                                  &CommandPacket,
                                  NULL
                                  );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -699,7 +699,7 @@ NvmeCreateIoSubmissionQueue (
                                  &CommandPacket,
                                  NULL
                                  );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -742,7 +742,7 @@ NvmeControllerInit (
                     &Private->PciAttributes
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -753,7 +753,7 @@ NvmeControllerInit (
                     &Supports
                     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status    = PciIo->Attributes (
                          PciIo,
@@ -763,7 +763,7 @@ NvmeControllerInit (
                          );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO, "NvmeControllerInit: failed to enable controller\n"));
     return Status;
   }
@@ -777,7 +777,7 @@ NvmeControllerInit (
                     EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
                     NULL
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_WARN, "NvmeControllerInit: failed to enable 64-bit DMA (%r)\n", Status));
   }
 
@@ -785,7 +785,7 @@ NvmeControllerInit (
   // Read the Controller Capabilities register and verify that the NVM command set is supported
   //
   Status = ReadNvmeControllerCapabilities (Private, &Private->Cap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1000,7 +1000,7 @@ NvmeShutdownAllControllers (
                   &HandleCount,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     HandleCount = 0;
   }
 
@@ -1011,7 +1011,7 @@ NvmeShutdownAllControllers (
                     &OpenInfos,
                     &OpenInfoCount
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1030,7 +1030,7 @@ NvmeShutdownAllControllers (
                         NULL,
                         EFI_OPEN_PROTOCOL_GET_PROTOCOL
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
         Private = NVME_CONTROLLER_PRIVATE_DATA_FROM_PASS_THRU (NvmePassThru);
@@ -1093,9 +1093,9 @@ NvmeRegisterShutdownNotification (
   mNvmeControllerNumber++;
   if (mNvmeControllerNumber == 1) {
     Status = gBS->LocateProtocol (&gEfiResetNotificationProtocolGuid, NULL, (VOID **) &ResetNotify);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = ResetNotify->RegisterResetNotify (ResetNotify, NvmeShutdownAllControllers);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     } else {
       DEBUG ((DEBUG_WARN, "NVME: ResetNotification absent! Shutdown notification cannot be performed!\n"));
     }
@@ -1118,9 +1118,9 @@ NvmeUnregisterShutdownNotification (
   mNvmeControllerNumber--;
   if (mNvmeControllerNumber == 0) {
     Status = gBS->LocateProtocol (&gEfiResetNotificationProtocolGuid, NULL, (VOID **) &ResetNotify);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = ResetNotify->UnregisterResetNotify (ResetNotify, NvmeShutdownAllControllers);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 }

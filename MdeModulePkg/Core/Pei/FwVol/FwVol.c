@@ -484,7 +484,7 @@ PeiInitializeFv (
              NULL,
              (VOID**)&FvPpi
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get handle of BFV
@@ -495,7 +495,7 @@ PeiInitializeFv (
                     (UINTN)BfvHeader->FvLength,
                     &FvHandle
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   PrivateData->Fv = AllocateZeroPool (sizeof (PEI_CORE_FV_HANDLE) * FV_GROWTH_STEP);
   ASSERT (PrivateData->Fv != NULL);
@@ -523,7 +523,7 @@ PeiInitializeFv (
   // additional Fvs to PeiCore.
   //
   Status = PeiServicesNotifyPpi (mNotifyOnFvInfoList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 }
 
@@ -601,12 +601,12 @@ FirmwareVolmeInfoPpiNotifyCallback (
              NULL,
              (VOID**)&FvPpi
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Process new found FV and get FV handle.
     //
     Status = FvPpi->ProcessVolume (FvPpi, FvInfo2Ppi.FvInfo, FvInfo2Ppi.FvInfoSize, &FvHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Fail to process new found FV, FV may be corrupted!\n"));
       return Status;
     }
@@ -671,14 +671,14 @@ FirmwareVolmeInfoPpiNotifyCallback (
                         FvHandle,
                         &FileHandle
                        );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = FvPpi->FindSectionByType (
                           FvPpi,
                           EFI_SECTION_PEI_DEPEX,
                           FileHandle,
                           (VOID**)&DepexData
                           );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if (!PeimDispatchReadiness (PeiServices, DepexData)) {
             //
             // Dependency is not satisfied.
@@ -735,7 +735,7 @@ VerifyGuidedSectionGuid (
       // Found the recorded GuidedSectionGuid.
       //
       Status = PeiServicesLocatePpi (GuidedSectionGuid, 0, NULL, (VOID **) &Interface);
-      if (!EFI_ERROR (Status) && Interface != NULL) {
+      if (!EFI_ERROR(Status) && Interface != NULL) {
         //
         // Found the supported Guided Section Extraction Ppi for the Guided Section.
         //
@@ -878,7 +878,7 @@ ProcessSection (
                      &TempAuthenticationStatus,
                      IsFfs3Fv
                    );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             *OutputBuffer = TempOutputBuffer;
             *AuthenticationStatus = TempAuthenticationStatus | Authentication;
             return EFI_SUCCESS;
@@ -926,7 +926,7 @@ ProcessSection (
           }
         } else if (Section->Type == EFI_SECTION_COMPRESSION) {
           Status = PeiServicesLocatePpi (&gEfiPeiDecompressPpiGuid, 0, NULL, (VOID **) &DecompressPpi);
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             Status = DecompressPpi->Decompress (
                                       DecompressPpi,
                                       (CONST EFI_COMPRESSION_SECTION*) Section,
@@ -936,7 +936,7 @@ ProcessSection (
           }
         }
 
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if ((Authentication & EFI_AUTH_STATUS_NOT_TESTED) == 0) {
             //
             // Update cache section data.
@@ -962,7 +962,7 @@ ProcessSection (
                      &TempAuthenticationStatus,
                      IsFfs3Fv
                    );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             *OutputBuffer = TempOutputBuffer;
             *AuthenticationStatus = TempAuthenticationStatus | Authentication;
             return EFI_SUCCESS;
@@ -1446,7 +1446,7 @@ ProcessFvFile (
                               (VOID **)&FvHeader
                               );
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -1505,10 +1505,10 @@ ProcessFvFile (
     }
 
     Status = ParentFvPpi->GetVolumeInfo (ParentFvPpi, ParentFvHandle, &ParentFvImageInfo);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Status = ParentFvPpi->GetFileInfo (ParentFvPpi, ParentFvFileHandle, &FileInfo);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Install FvInfo(2) Ppi
@@ -1729,7 +1729,7 @@ PeiFfsFvPpiFindFileByName (
       //
       if (PrivateData->Fv[Index].FvPpi != NULL) {
         Status = FindFileEx (PrivateData->Fv[Index].FvHandle, FileName, 0, FileHandle, NULL);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           *FvHandle = PrivateData->Fv[Index].FvHandle;
           break;
         }
@@ -1871,7 +1871,7 @@ PeiFfsFvPpiGetFileInfo2 (
   }
 
   Status = PeiFfsFvPpiGetFileInfo (This, FileHandle, (EFI_FV_FILE_INFO *) FileInfo);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FileInfo->AuthenticationStatus = CoreFvHandle->AuthenticationStatus;
   }
 
@@ -2051,7 +2051,7 @@ PeiFfsFvPpiFindSectionByType2 (
              &ExtractedAuthenticationStatus,
              FwVolInstance->IsFfs3Fv
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Inherit the authentication status.
     //
@@ -2137,14 +2137,14 @@ PeiReinitializeFv (
             &OldDescriptor,
             &OldFfsFvPpi
             );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Re-install the EFI_PEI_FIRMWARE_VOLUME_PPI for build-in Ffs2
   // which is shadowed from flash to permanent memory within PeiCore image.
   //
   Status = PeiServicesReInstallPpi (OldDescriptor, &mPeiFfs2FvPpiList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Fixup all FvPpi pointers for the implementation in flash to permanent memory.
@@ -2165,14 +2165,14 @@ PeiReinitializeFv (
              &OldDescriptor,
              &OldFfsFvPpi
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Re-install the EFI_PEI_FIRMWARE_VOLUME_PPI for build-in Ffs3
   // which is shadowed from flash to permanent memory within PeiCore image.
   //
   Status = PeiServicesReInstallPpi (OldDescriptor, &mPeiFfs3FvPpiList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Fixup all FvPpi pointers for the implementation in flash to permanent memory.
@@ -2333,7 +2333,7 @@ ThirdPartyFvPpiNotifyCallback (
 
   do {
     Status = FindUnknownFormatFvInfo (PrivateData, NotifyDescriptor->Guid, &FvInfo, &FvInfoSize, &AuthenticationStatus);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_SUCCESS;
     }
 
@@ -2341,7 +2341,7 @@ ThirdPartyFvPpiNotifyCallback (
     // Process new found FV and get FV handle.
     //
     Status = FvPpi->ProcessVolume (FvPpi, FvInfo, FvInfoSize, &FvHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Fail to process the FV 0x%p, FV may be corrupted!\n", FvInfo));
       continue;
     }
@@ -2408,14 +2408,14 @@ ThirdPartyFvPpiNotifyCallback (
                         FvHandle,
                         &FileHandle
                        );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = FvPpi->FindSectionByType (
                           FvPpi,
                           EFI_SECTION_PEI_DEPEX,
                           FileHandle,
                           (VOID**)&DepexData
                           );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if (!PeimDispatchReadiness (PeiServices, DepexData)) {
             //
             // Dependency is not satisfied.

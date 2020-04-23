@@ -185,7 +185,7 @@ ParseFfs (
                   &FileAttributes,
                   &AuthenticationStatus
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -199,9 +199,9 @@ ParseFfs (
                   &Size,
                   &AuthenticationStatus
                   );
-   if (!EFI_ERROR (Status)) {
+   if (!EFI_ERROR(Status)) {
      Status = SearchVfrBinInFfs (Buffer, 0, Size, &VfrBinBaseAddress, &NumberofMatchingVfrBin);
-     if (!EFI_ERROR (Status)) {
+     if (!EFI_ERROR(Status)) {
         SectionBuffer = NULL;
         Status = Fv2->ReadSection (
                         Fv2,
@@ -212,7 +212,7 @@ ParseFfs (
                         &SectionSize,
                         &AuthenticationStatus
                         );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           DEBUG ((DEBUG_INFO , "FfsNameGuid - %g\n", DriverGuid));
           DEBUG ((DEBUG_INFO , "NumberofMatchingVfrBin - 0x%02x\n", NumberofMatchingVfrBin));
 
@@ -225,13 +225,13 @@ ParseFfs (
             VarCheckParseHiiPackage ((UINT8 *) (UINTN) SectionBuffer + VfrBinBaseAddress[VfrBinIndex] + sizeof (UINT32), TRUE);
           }
 
-          FreePool (SectionBuffer);
+          FreePool(SectionBuffer);
         }
 
-        InternalVarCheckFreePool (VfrBinBaseAddress);
+        InternalVarCheckFreePool(VfrBinBaseAddress);
       }
 
-      FreePool (Buffer);
+      FreePool(Buffer);
     }
 
    return TRUE;
@@ -270,7 +270,7 @@ ParseFv (
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -284,7 +284,7 @@ ParseFv (
                     &gEfiFirmwareVolume2ProtocolGuid,
                     (VOID **) &Fv2
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     DEBUG_CODE (
       EFI_FIRMWARE_VOLUME_BLOCK2_PROTOCOL   *Fvb2;
@@ -296,9 +296,9 @@ ParseFv (
                       &gEfiFirmwareVolumeBlock2ProtocolGuid,
                       (VOID **) &Fvb2
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       Status = Fvb2->GetPhysicalAddress (Fvb2, &FvAddress);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO , "FvAddress - 0x%08x\n", FvAddress));
         FvSize = ((EFI_FIRMWARE_VOLUME_HEADER *) (UINTN) FvAddress)->FvLength;
         DEBUG ((DEBUG_INFO , "FvSize    - 0x%08x\n", FvSize));
@@ -322,14 +322,14 @@ ParseFv (
                         &FileAttributes,
                         &Size
                       );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           break;
         }
 
         ParseFfs (Fv2, &NameGuid);
       }
 
-      InternalVarCheckFreePool (Key);
+      InternalVarCheckFreePool(Key);
     } else {
       //
       // Only parse drivers in the VFR drivers list.
@@ -343,13 +343,13 @@ ParseFv (
           // Found the driver in the FV.
           //
           RemoveEntryList (&VfrDriverInfo->Link);
-          InternalVarCheckFreePool (VfrDriverInfo);
+          InternalVarCheckFreePool(VfrDriverInfo);
         }
       }
     }
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 }
 
 /**
@@ -392,7 +392,7 @@ DestroyVfrDriverList (
     VfrDriverLink = mVfrDriverList.ForwardLink;
     VfrDriverInfo = VAR_CHECK_VFR_DRIVER_INFO_FROM_LINK (VfrDriverLink);
     RemoveEntryList (&VfrDriverInfo->Link);
-    InternalVarCheckFreePool (VfrDriverInfo);
+    InternalVarCheckFreePool(VfrDriverInfo);
   }
 }
 

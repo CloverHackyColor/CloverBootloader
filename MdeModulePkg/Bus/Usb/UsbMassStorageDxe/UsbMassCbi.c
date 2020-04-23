@@ -77,7 +77,7 @@ UsbCbiInit (
   // is a USB Mass Storage CBI interface.
   //
   Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &UsbCbi->Interface);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_ERROR;
   }
 
@@ -93,7 +93,7 @@ UsbCbiInit (
   //
   for (Index = 0; Index < Interface->NumEndpoints; Index++) {
     Status = UsbIo->UsbGetEndpointDescriptor (UsbIo, Index, &EndPoint);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -139,13 +139,13 @@ UsbCbiInit (
   if (Context != NULL) {
     *Context = UsbCbi;
   } else {
-    FreePool (UsbCbi);
+    FreePool(UsbCbi);
   }
 
   return EFI_SUCCESS;
 
 ON_ERROR:
-  FreePool (UsbCbi);
+  FreePool(UsbCbi);
   return Status;
 }
 
@@ -213,7 +213,7 @@ UsbCbiSendCommand (
     // is a "class-specific exemption to the USB specification". Retry
     // if the command is NAKed.
     //
-    if (EFI_ERROR (Status) && (TransStatus == EFI_USB_ERR_NAK)) {
+    if (EFI_ERROR(Status) && (TransStatus == EFI_USB_ERR_NAK)) {
       continue;
     }
 
@@ -301,7 +301,7 @@ UsbCbiDataTransfer (
                               Timeout,
                               &TransStatus
                               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (TransStatus == EFI_USB_ERR_NAK) {
         //
         // The device can NAK the host if either the data/buffer isn't
@@ -395,7 +395,7 @@ UsbCbiGetStatus (
     //
     // The CBI can NAK the interrupt endpoint if the command is in-progress.
     //
-    if (EFI_ERROR (Status) && (TransStatus == EFI_USB_ERR_NAK)) {
+    if (EFI_ERROR(Status) && (TransStatus == EFI_USB_ERR_NAK)) {
       continue;
     }
 
@@ -449,7 +449,7 @@ UsbCbiExecCommand (
   // rejects the command.
   //
   Status = UsbCbiSendCommand (UsbCbi, Cmd, CmdLen, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->Stall(10 * USB_MASS_1_MILLISECOND);
     DEBUG ((EFI_D_ERROR, "UsbCbiExecCommand: UsbCbiSendCommand (%r)\n",Status));
     return Status;
@@ -471,7 +471,7 @@ UsbCbiExecCommand (
   // Get the status. If it succeeds, interpret the result.
   //
   Status = UsbCbiGetStatus (UsbCbi, Timeout, &Result);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UsbCbiExecCommand: UsbCbiGetStatus (%r)\n",Status));
     return Status;
   }
@@ -567,7 +567,7 @@ UsbCbiResetDevice (
   // Send the command to the device. Don't use UsbCbiExecCommand here.
   //
   Status = UsbCbiSendCommand (UsbCbi, ResetCmd, USB_CBI_RESET_CMD_LEN, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -601,6 +601,6 @@ UsbCbiCleanUp (
   IN  VOID                   *Context
   )
 {
-  FreePool (Context);
+  FreePool(Context);
   return EFI_SUCCESS;
 }

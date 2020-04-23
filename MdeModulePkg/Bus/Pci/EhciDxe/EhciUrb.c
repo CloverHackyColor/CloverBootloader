@@ -342,7 +342,7 @@ EhcFreeUrb (
     UsbHcFreeMem (Ehc->MemPool, Urb->Qh, sizeof (EHC_QH));
   }
 
-  gBS->FreePool (Urb);
+  gBS->FreePool(Urb);
 }
 
 
@@ -610,7 +610,7 @@ EhcCreateUrb (
     MapOp   = EfiPciIoOperationBusMasterRead;
     Status  = PciIo->Map (PciIo, MapOp, Request, &Len, &PhyAddr, &Map);
 
-    if (EFI_ERROR (Status) || (Len != sizeof (EFI_USB_DEVICE_REQUEST))) {
+    if (EFI_ERROR(Status) || (Len != sizeof (EFI_USB_DEVICE_REQUEST))) {
       goto ON_ERROR;
     }
 
@@ -629,7 +629,7 @@ EhcCreateUrb (
 
     Status  = PciIo->Map (PciIo, MapOp, Data, &Len, &PhyAddr, &Map);
 
-    if (EFI_ERROR (Status) || (Len != DataLen)) {
+    if (EFI_ERROR(Status) || (Len != DataLen)) {
       goto ON_ERROR;
     }
 
@@ -639,7 +639,7 @@ EhcCreateUrb (
 
   Status = EhcCreateQtds (Ehc, Urb);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_ERROR;
   }
 

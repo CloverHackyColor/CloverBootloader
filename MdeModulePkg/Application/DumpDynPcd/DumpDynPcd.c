@@ -411,7 +411,7 @@ DumpPcdInfo (
   }
 
   if (RetString != NULL) {
-    FreePool (RetString);
+    FreePool(RetString);
   }
   Print (L"\n");
 }
@@ -451,7 +451,7 @@ ProcessPcd (
     TokenNumber = 0;
     do {
       Status = mPiPcd->GetNextToken (TokenSpace, &TokenNumber);
-      if (!EFI_ERROR (Status) && TokenNumber != 0) {
+      if (!EFI_ERROR(Status) && TokenNumber != 0) {
         if (TokenSpace == NULL) {
           //
           // PCD in default Token Space.
@@ -491,10 +491,10 @@ ProcessPcd (
           DumpPcdInfo (TokenSpace, TokenNumber, &PcdInfo);
         }
       }
-    } while (!EFI_ERROR (Status) && TokenNumber != 0);
+    } while (!EFI_ERROR(Status) && TokenNumber != 0);
 
     Status = mPiPcd->GetNextTokenSpace ((CONST EFI_GUID **) &TokenSpace);
-  } while (!EFI_ERROR (Status) && TokenSpace != NULL);
+  } while (!EFI_ERROR(Status) && TokenSpace != NULL);
 
   if ((InputPcdName != NULL) && !Found) {
     //
@@ -532,30 +532,30 @@ DumpDynPcdMain (
   InputPcdName  = NULL;
 
   Status = gBS->LocateProtocol(&gEfiUnicodeCollation2ProtocolGuid, NULL, (VOID **) &mUnicodeCollation);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mUnicodeCollation = NULL;
   }
 
   Status = gBS->LocateProtocol (&gEfiPcdProtocolGuid, NULL, (VOID **) &mPiPcd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print (L"DumpDynPcd: %EError. %NPI PCD protocol is not present.\n");
     return Status;
   }
 
   Status = gBS->LocateProtocol (&gEfiGetPcdInfoProtocolGuid, NULL, (VOID **) &mPiPcdInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print (L"DumpDynPcd: %EError. %NPI PCD info protocol is not present.\n");
     return Status;
   }
 
   Status = gBS->LocateProtocol (&gPcdProtocolGuid, NULL, (VOID **) &mPcd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print (L"DumpDynPcd: %EError. %NPCD protocol is not present.\n");
     return Status;
   }
 
   Status = gBS->LocateProtocol (&gGetPcdInfoProtocolGuid, NULL, (VOID **) &mPcdInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print (L"DumpDynPcd: %EError. %NPCD info protocol is not present.\n");
     return Status;
   }
@@ -602,7 +602,7 @@ DumpDynPcdMain (
   Done:
 
   if (mTempPcdNameBuffer != NULL) {
-    FreePool (mTempPcdNameBuffer);
+    FreePool(mTempPcdNameBuffer);
   }
 
   return Status;

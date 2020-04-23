@@ -230,7 +230,7 @@ UfsPeimReadCapacity (
     *SenseDataLength = Packet.SenseDataLength;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DataLength = Packet.InTransferLength;
   }
 
@@ -288,7 +288,7 @@ UfsPeimReadCapacity16 (
     *SenseDataLength = Packet.SenseDataLength;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DataLength = Packet.InTransferLength;
   }
 
@@ -350,7 +350,7 @@ UfsPeimRead10 (
     *SenseDataLength = Packet.SenseDataLength;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DataLength = Packet.InTransferLength;
   }
 
@@ -412,7 +412,7 @@ UfsPeimRead16 (
     *SenseDataLength = Packet.SenseDataLength;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DataLength = Packet.InTransferLength;
   }
 
@@ -609,7 +609,7 @@ UfsBlockIoPeimGetMediaInfo (
                &SenseData,
                &SenseDataLength
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       break;
     }
 
@@ -618,7 +618,7 @@ UfsBlockIoPeimGetMediaInfo (
     }
 
     Status = UfsPeimParsingSenseKeys (&(Private->Media[Lun]), &SenseData, &NeedRetry);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
@@ -627,7 +627,7 @@ UfsBlockIoPeimGetMediaInfo (
   DataLength      = sizeof (EFI_SCSI_DISK_CAPACITY_DATA);
   SenseDataLength = 0;
   Status = UfsPeimReadCapacity (Private, Lun, &Capacity, (UINT32 *)&DataLength, NULL, &SenseDataLength);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -636,7 +636,7 @@ UfsBlockIoPeimGetMediaInfo (
     DataLength      = sizeof (EFI_SCSI_DISK_CAPACITY_DATA16);
     SenseDataLength = 0;
     Status = UfsPeimReadCapacity16 (Private, Lun, &Capacity16, (UINT32 *)&DataLength, NULL, &SenseDataLength);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
     Private->Media[Lun].LastBlock  = ((UINT32)Capacity16.LastLba3 << 24) | (Capacity16.LastLba2 << 16) | (Capacity16.LastLba1 << 8) | Capacity16.LastLba0;
@@ -755,7 +755,7 @@ UfsBlockIoPeimReadBlocks (
                &SenseData,
                &SenseDataLength
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       break;
     }
 
@@ -764,7 +764,7 @@ UfsBlockIoPeimReadBlocks (
     }
 
     Status = UfsPeimParsingSenseKeys (&(Private->Media[Lun]), &SenseData, &NeedRetry);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
@@ -896,7 +896,7 @@ UfsBlockIoPeimGetMediaInfo2 (
                 DeviceIndex,
                 &Media
                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1043,7 +1043,7 @@ InitializeUfsBlockIoPeim (
   //
   // Shadow this PEIM to run from memory
   //
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -1056,7 +1056,7 @@ InitializeUfsBlockIoPeim (
              NULL,
              (VOID **) &UfsHcPpi
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1069,7 +1069,7 @@ InitializeUfsBlockIoPeim (
     //
     // When status is error, meant no controller is found
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -1087,7 +1087,7 @@ InitializeUfsBlockIoPeim (
     // Initialize the memory pool which will be used in all transactions.
     //
     Status = UfsPeimInitMemPool (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_OUT_OF_RESOURCES;
       break;
     }
@@ -1096,7 +1096,7 @@ InitializeUfsBlockIoPeim (
     // Initialize UFS Host Controller H/W.
     //
     Status = UfsControllerInit (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "UfsDevicePei: Host Controller Initialization Error, Status = %r\n", Status));
       Controller++;
       continue;
@@ -1108,7 +1108,7 @@ InitializeUfsBlockIoPeim (
     // the host shall send a NOP OUT UPIU to verify that the device UTP Layer is ready.
     //
     Status = UfsExecNopCmds (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Ufs Sending NOP IN command Error, Status = %r\n", Status));
       Controller++;
       continue;
@@ -1118,7 +1118,7 @@ InitializeUfsBlockIoPeim (
     // The host enables the device initialization completion by setting fDeviceInit flag.
     //
     Status = UfsSetFlag (Private, UfsFlagDevInit);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Ufs Set fDeviceInit Flag Error, Status = %r\n", Status));
       Controller++;
       continue;
@@ -1128,7 +1128,7 @@ InitializeUfsBlockIoPeim (
     // Get Ufs Device's Lun Info by reading Configuration Descriptor.
     //
     Status = UfsRwDeviceDesc (Private, TRUE, UfsConfigDesc, 0, 0, &Config, sizeof (UFS_CONFIG_DESC));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Ufs Get Configuration Descriptor Error, Status = %r\n", Status));
       Controller++;
       continue;

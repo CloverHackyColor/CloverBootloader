@@ -419,13 +419,13 @@ FileHandleIsDirectory (
     //
     // Attributes say this is not a directory
     //
-    FreePool (DirInfo);
+    FreePool(DirInfo);
     return (EFI_NOT_FOUND);
   }
   //
   // all good...
   //
-  FreePool (DirInfo);
+  FreePool(DirInfo);
   return (EFI_SUCCESS);
 }
 
@@ -839,7 +839,7 @@ FileHandleGetFileName (
       // Move to the parent directory
       //
       Status = CurrentHandle->Open (CurrentHandle, &NextHigherHandle, L"..", EFI_FILE_MODE_READ, 0);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
 
@@ -970,7 +970,7 @@ FileHandleReadLine(
   }
 
   Status = FileHandleGetSize (Handle, &FileSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   } else if (FileSize == 0) {
     *Ascii = TRUE;
@@ -1111,7 +1111,7 @@ FileHandleWriteLine(
   } else {
     CharSize = sizeof (CHAR16);
     Status = FileHandleRead (Handle, &CharSize, &CharBuffer);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (CharBuffer == gUnicodeFileTag) {
       Ascii = FALSE;
     } else {
@@ -1141,7 +1141,7 @@ FileHandleWriteLine(
     Size = AsciiStrSize(AsciiBuffer) - sizeof(CHAR8);
     Status = FileHandleWrite(Handle, &Size, AsciiBuffer);
     if (EFI_ERROR(Status)) {
-      FreePool (AsciiBuffer);
+      FreePool(AsciiBuffer);
       return (Status);
     }
     Size = AsciiStrSize("\r\n") - sizeof(CHAR8);
@@ -1163,7 +1163,7 @@ FileHandleWriteLine(
   }
 
   if (AsciiBuffer != NULL) {
-    FreePool (AsciiBuffer);
+    FreePool(AsciiBuffer);
   }
   return Status;
 }
@@ -1260,7 +1260,7 @@ FileHandleEof(
     RetVal = FALSE;
   }
 
-  FreePool (Info);
+  FreePool(Info);
 
   return (RetVal);
 }

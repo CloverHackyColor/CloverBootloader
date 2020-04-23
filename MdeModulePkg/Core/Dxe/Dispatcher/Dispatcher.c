@@ -260,7 +260,7 @@ CoreGetDepexSectionAndPreProccess (
                 (UINTN *)&DriverEntry->DepexSize,
                 &AuthenticationStatus
                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Status == EFI_PROTOCOL_ERROR) {
       //
       // The section extraction protocol failed so set protocol error flag
@@ -431,7 +431,7 @@ CoreDispatcher (
              &gEfiEventDxeDispatchGuid,
              &DxeDispatchEvent
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -467,7 +467,7 @@ CoreDispatcher (
         //
         // Update the driver state to reflect that it's been loaded
         //
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           CoreAcquireDispatcherLock ();
 
           if (Status == EFI_SECURITY_VIOLATION) {
@@ -538,7 +538,7 @@ CoreDispatcher (
     // so that SMM Dispatcher get chance to dispatch SMM Drivers which depend
     // on UEFI protocols
     //
-    if (!EFI_ERROR (ReturnStatus)) {
+    if (!EFI_ERROR(ReturnStatus)) {
       CoreSignalEvent (DxeDispatchEvent);
     }
 
@@ -720,13 +720,13 @@ FvIsBeingProcesssed (
   //
   FvNameGuidIsFound = FALSE;
   Status = CoreHandleProtocol (FvHandle, &gEfiFirmwareVolumeBlockProtocolGuid, (VOID **)&Fvb);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Get the full FV header based on FVB protocol.
     //
     ASSERT (Fvb != NULL);
     Status = GetFwVolHeader (Fvb, &FwVolHeader);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       ASSERT (FwVolHeader != NULL);
       if (VerifyFvHeaderChecksum (FwVolHeader) && FwVolHeader->ExtHeaderOffset != 0) {
         ExtHeaderOffset = (UINT32) FwVolHeader->ExtHeaderOffset;
@@ -754,11 +754,11 @@ FvIsBeingProcesssed (
         // Read FvNameGuid from FV extension header.
         //
         Status = ReadFvbData (Fvb, &LbaIndex, &LbaOffset, sizeof (FvNameGuid), (UINT8 *) &FvNameGuid);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           FvNameGuidIsFound = TRUE;
         }
       }
-      CoreFreePool (FwVolHeader);
+      CoreFreePool(FwVolHeader);
     }
   }
 
@@ -818,7 +818,7 @@ CoreFvToDevicePath (
   // Remember the device path of the FV
   //
   Status = CoreHandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FileNameDevicePath = NULL;
   } else {
     //
@@ -1048,7 +1048,7 @@ CoreProcessFvImageFile (
                    &BufferSize,
                    &AuthenticationStatus
                    );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
        //
       // Evaluate the authentication status of the Firmware Volume through
       // Security Architectural Protocol
@@ -1061,7 +1061,7 @@ CoreProcessFvImageFile (
                               FvFileDevicePath
                               );
         if (FvFileDevicePath != NULL) {
-          FreePool (FvFileDevicePath);
+          FreePool(FvFileDevicePath);
         }
 
         if (Status != EFI_SUCCESS) {
@@ -1069,7 +1069,7 @@ CoreProcessFvImageFile (
           // Security check failed. The firmware volume should not be used for any purpose.
           //
           if (Buffer != NULL) {
-            FreePool (Buffer);
+            FreePool(Buffer);
           }
           break;
         }
@@ -1113,7 +1113,7 @@ CoreProcessFvImageFile (
           //
           AlignedBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), (UINTN) FvAlignment);
           if (AlignedBuffer == NULL) {
-            FreePool (Buffer);
+            FreePool(Buffer);
             Status = EFI_OUT_OF_RESOURCES;
             break;
           } else {
@@ -1134,7 +1134,7 @@ CoreProcessFvImageFile (
               CopyMem (AlignedBuffer, Buffer, BufferSize);
             }
             FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) AlignedBuffer;
-            FreePool (Buffer);
+            FreePool(Buffer);
             Buffer = NULL;
           }
         }
@@ -1151,12 +1151,12 @@ CoreProcessFvImageFile (
                 );
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // ReadSection or Produce FVB failed, Free data buffer
       //
       if (Buffer != NULL) {
-        FreePool (Buffer);
+        FreePool(Buffer);
       }
 
       if (AlignedBuffer != NULL) {
@@ -1236,7 +1236,7 @@ CoreFwVolEventProtocolNotify (
                &BufferSize,
                &FvHandle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // If no more notification events exit
       //
@@ -1263,7 +1263,7 @@ CoreFwVolEventProtocolNotify (
     }
 
     Status = CoreHandleProtocol (FvHandle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Fv);
-    if (EFI_ERROR (Status) || Fv == NULL) {
+    if (EFI_ERROR(Status) || Fv == NULL) {
       //
       // FvHandle must have Firmware Volume2 protocol thus we should never get here.
       //
@@ -1272,7 +1272,7 @@ CoreFwVolEventProtocolNotify (
     }
 
     Status = CoreHandleProtocol (FvHandle, &gEfiDevicePathProtocolGuid, (VOID **)&FvDevicePath);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // The Firmware volume doesn't have device path, can't be dispatched.
       //
@@ -1300,7 +1300,7 @@ CoreFwVolEventProtocolNotify (
                                   &Attributes,
                                   &Size
                                   );
-        if (!EFI_ERROR (GetNextFileStatus)) {
+        if (!EFI_ERROR(GetNextFileStatus)) {
           if (Type == EFI_FV_FILETYPE_DXE_CORE) {
             //
             // If this is the DXE core fill in it's DevicePath & DeviceHandle
@@ -1343,12 +1343,12 @@ CoreFwVolEventProtocolNotify (
                            &SizeOfBuffer,
                            &AuthenticationStatus
                            );
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               //
               // If SMM depex section is found, this FV image is invalid to be supported.
               // ASSERT FALSE to report this FV image.
               //
-              FreePool (DepexBuffer);
+              FreePool(DepexBuffer);
               ASSERT (FALSE);
             }
 
@@ -1366,7 +1366,7 @@ CoreFwVolEventProtocolNotify (
                            &SizeOfBuffer,
                            &AuthenticationStatus
                            );
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               //
               // If no depex section, produce a firmware volume block protocol for it so it gets dispatched from.
               //
@@ -1375,7 +1375,7 @@ CoreFwVolEventProtocolNotify (
               //
               // If depex section is found, this FV image will be dispatched until its depex is evaluated to TRUE.
               //
-              FreePool (DepexBuffer);
+              FreePool(DepexBuffer);
               CoreAddToDriverList (Fv, FvHandle, &NameGuid, Type);
             }
           } else {
@@ -1385,7 +1385,7 @@ CoreFwVolEventProtocolNotify (
             CoreAddToDriverList (Fv, FvHandle, &NameGuid, Type);
           }
         }
-      } while (!EFI_ERROR (GetNextFileStatus));
+      } while (!EFI_ERROR(GetNextFileStatus));
     }
 
     //
@@ -1401,7 +1401,7 @@ CoreFwVolEventProtocolNotify (
                   &SizeOfBuffer,
                   &AuthenticationStatus
                   );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       AprioriEntryCount = SizeOfBuffer / sizeof (EFI_GUID);
     } else {
       AprioriEntryCount = 0;
@@ -1433,7 +1433,7 @@ CoreFwVolEventProtocolNotify (
     //
     // Free data allocated by Fv->ReadSection ()
     //
-    CoreFreePool (AprioriFile);
+    CoreFreePool(AprioriFile);
   }
 }
 

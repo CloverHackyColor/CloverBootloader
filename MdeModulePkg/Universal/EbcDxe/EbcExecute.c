@@ -1446,7 +1446,7 @@ EbcExecute (
                     NULL,
                     (VOID **) &EbcSimpleDebugger
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       EbcSimpleDebugger = NULL;
     }
   DEBUG_CODE_END ();
@@ -1885,7 +1885,7 @@ ExecuteBREAK (
     // Now create a new thunk
     //
     Status = EbcCreateThunks (VmPtr->ImageHandle, EbcEntryPoint, &Thunk, 0);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

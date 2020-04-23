@@ -544,7 +544,7 @@ IsaIoIoRead (
              Count,
              Offset
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -557,7 +557,7 @@ IsaIoIoRead (
                                     Buffer
                                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -606,7 +606,7 @@ IsaIoIoWrite (
              Count,
              Offset
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -619,7 +619,7 @@ IsaIoIoWrite (
                                     Buffer
                                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -661,7 +661,7 @@ WritePort (
                                     1,
                                     &Value
                                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -705,22 +705,22 @@ WriteDmaPort (
   EFI_STATUS  Status;
 
   Status = WritePort (This, AddrOffset, (UINT8) (BaseAddress & 0xff));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = WritePort (This, AddrOffset, (UINT8) ((BaseAddress >> 8) & 0xff));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = WritePort (This, PageOffset, (UINT8) ((BaseAddress >> 16) & 0xff));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = WritePort (This, CountOffset, (UINT8) (Count & 0xff));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -780,7 +780,7 @@ IsaIoUnmap (
     // Free the mapped buffer and the MAP_INFO structure.
     //
     gBS->FreePages (IsaMapInfo->MappedHostAddress, IsaMapInfo->NumberOfPages);
-    FreePool (IsaMapInfo);
+    FreePool(IsaMapInfo);
   }
 
   return EFI_SUCCESS;
@@ -807,7 +807,7 @@ IsaIoFlush (
 
   Status = IsaIoDevice->PciIo->Flush (IsaIoDevice->PciIo);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -863,7 +863,7 @@ IsaIoMemRead (
              Count,
              Offset
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -876,7 +876,7 @@ IsaIoMemRead (
                                      Buffer
                                      );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -932,7 +932,7 @@ IsaIoMemWrite (
              Count,
              Offset
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -945,7 +945,7 @@ IsaIoMemWrite (
                                      Buffer
                                      );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -1001,7 +1001,7 @@ IsaIoCopyMem (
              Count,
              DestOffset
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1012,7 +1012,7 @@ IsaIoCopyMem (
              Count,
              SrcOffset
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1026,7 +1026,7 @@ IsaIoCopyMem (
                                  Count
                                  );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -1159,8 +1159,8 @@ IsaIoMapOnlySupportSlaveReadWrite (
                     IsaMapInfo->NumberOfPages,
                     &IsaMapInfo->MappedHostAddress
                     );
-    if (EFI_ERROR (Status)) {
-      FreePool (IsaMapInfo);
+    if (EFI_ERROR(Status)) {
+      FreePool(IsaMapInfo);
       *NumberOfBytes  = 0;
       *Mapping        = NULL;
       return Status;
@@ -1230,7 +1230,7 @@ IsaIoMapOnlySupportSlaveReadWrite (
              DmaMask,
              (UINT8) (B_8237_DMA_WRSMSK_CMS | (ChannelNumber & 0x03))
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1239,12 +1239,12 @@ IsaIoMapOnlySupportSlaveReadWrite (
              DmaClear,
              (UINT8) (B_8237_DMA_WRSMSK_CMS | (ChannelNumber & 0x03))
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = WritePort (This, DmaChannelMode, DmaMode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1256,7 +1256,7 @@ IsaIoMapOnlySupportSlaveReadWrite (
              BaseAddress,
              Count
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1265,7 +1265,7 @@ IsaIoMapOnlySupportSlaveReadWrite (
              DmaMask,
              (UINT8) (ChannelNumber & 0x03)
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1462,8 +1462,8 @@ IsaIoMapFullSupport (
                     IsaMapInfo->NumberOfPages,
                     &IsaMapInfo->MappedHostAddress
                     );
-    if (EFI_ERROR (Status)) {
-      FreePool (IsaMapInfo);
+    if (EFI_ERROR(Status)) {
+      FreePool(IsaMapInfo);
       *NumberOfBytes  = 0;
       *Mapping        = NULL;
       return Status;
@@ -1556,7 +1556,7 @@ IsaIoMapFullSupport (
              DmaMask,
              (UINT8) (B_8237_DMA_WRSMSK_CMS | (ChannelNumber & 0x03))
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1565,12 +1565,12 @@ IsaIoMapFullSupport (
              DmaClear,
              (UINT8) (B_8237_DMA_WRSMSK_CMS | (ChannelNumber & 0x03))
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = WritePort (This, DmaChannelMode, DmaMode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1582,7 +1582,7 @@ IsaIoMapFullSupport (
              BaseAddress,
              Count
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1591,7 +1591,7 @@ IsaIoMapFullSupport (
              DmaMask,
              (UINT8) (ChannelNumber & 0x03)
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1745,7 +1745,7 @@ IsaIoAllocateBuffer (
   }
 
   Status = gBS->AllocatePages (Type, MemoryType, Pages, &PhysicalAddress);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR
@@ -1791,7 +1791,7 @@ IsaIoFreeBuffer (
                   (EFI_PHYSICAL_ADDRESS) (UINTN) HostAddress,
                   Pages
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_IO_BUS_LPC | EFI_IOB_EC_CONTROLLER_ERROR

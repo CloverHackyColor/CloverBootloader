@@ -196,7 +196,7 @@ DBG("SimpleTextProxyInit\n");
     AppleKeyFeederSimpleTextProxy.ReadKeyStroke = SimpleTextProxyReadKeyStroke;
 
     Status = SimpleTextExProxyInit(ImageHandle, SystemTable);
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("SimpleTextProxyInit: CreateEvent2 failed, Status=%x\n", Status);
 	}
 

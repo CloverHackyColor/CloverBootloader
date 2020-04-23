@@ -219,7 +219,7 @@ PcdSetNvStoreDefaultIdCallBack (
              PcdToken(PcdSetNvStoreDefaultId),
              PcdSetNvStoreDefaultIdCallBack
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -250,7 +250,7 @@ EndOfPeiSignalPpiNotifyCallback (
   PEI_PCD_DATABASE       *PeiPcdDb;
 
   Status = PeiServicesGetBootMode(&BootMode);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Don't need to report it on S3 boot.
@@ -280,14 +280,14 @@ EndOfPeiSignalPpiNotifyCallback (
     //
     // Error should not happen
     //
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Find PcdDb file from the beginning in this firmware volume.
     //
     FileHandle = NULL;
     Status = PeiServicesFfsFindFileByName (&gEfiCallerIdGuid, VolumeHandle, &FileHandle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Find PcdPeim FileHandle in this volume
       //
@@ -303,7 +303,7 @@ EndOfPeiSignalPpiNotifyCallback (
   // Find PEI PcdDb and Build second PcdDB GuidHob
   //
   Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, FileHandle, &PcdDb);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Length = PeiPcdDb->LengthForAllSkus;
   Database = BuildGuidHob (&gPcdDataBaseHobGuid, Length);
   CopyMem (Database, PcdDb, Length);
@@ -345,23 +345,23 @@ PcdPeimInit (
   // Install PCD_PPI and EFI_PEI_PCD_PPI.
   //
   Status = PeiServicesInstallPpi (&mPpiList[0]);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install GET_PCD_INFO_PPI and EFI_GET_PCD_INFO_PPI.
   //
   Status = PeiServicesInstallPpi (&mPpiList2[0]);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = PeiServicesNotifyPpi (&mEndOfPeiSignalPpiNotifyList[0]);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = PeiRegisterCallBackOnSet (
              &gEfiMdeModulePkgTokenSpaceGuid,
              PcdToken(PcdSetNvStoreDefaultId),
              PcdSetNvStoreDefaultIdCallBack
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -515,14 +515,14 @@ PeiPcdSetSku (
       //
       // Error should not happen
       //
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Find PcdDb file from the beginning in this firmware volume.
       //
       FileHandle = NULL;
       Status = PeiServicesFfsFindFileByName (&gEfiCallerIdGuid, VolumeHandle, &FileHandle);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Find PcdPeim FileHandle in this volume
         //
@@ -538,7 +538,7 @@ PeiPcdSetSku (
     // Find the delta data between the different Skus
     //
     Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, FileHandle, &PcdDb);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Length = PeiPcdDb->LengthForAllSkus;
     Index  = (PeiPcdDb->Length + 7) & (~7);
     SkuDelta = NULL;

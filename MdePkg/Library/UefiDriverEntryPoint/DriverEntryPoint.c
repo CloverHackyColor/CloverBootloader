@@ -47,7 +47,7 @@ _DriverUnloadHandler (
   // library destructors.  If the unload handler returned an error, then the driver can not be
   // unloaded, and the library destructors should not be called
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     ProcessLibraryDestructorList (ImageHandle, gST);
   }
 
@@ -117,7 +117,7 @@ _ModuleEntryPoint (
                     &gEfiLoadedImageProtocolGuid,
                     (VOID **)&LoadedImage
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     LoadedImage->Unload = _DriverUnloadHandler;
   }
 
@@ -129,7 +129,7 @@ _ModuleEntryPoint (
   //
   // If all of the drivers returned errors, then invoke all of the library destructors
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ProcessLibraryDestructorList (ImageHandle, SystemTable);
   }
 

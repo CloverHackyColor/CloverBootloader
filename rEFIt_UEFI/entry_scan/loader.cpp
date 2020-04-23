@@ -87,34 +87,36 @@ typedef struct LINUX_PATH_DATA
 
 STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 #if defined(MDE_CPU_X64)
-  { L"\\EFI\\grub\\grubx64.efi", L"Grub EFI boot menu", L"grub,linux" },
-  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
+  //comment out all common names
+//  { L"\\EFI\\grub\\grubx64.efi", L"Grub EFI boot menu", L"grub,linux" },
+//  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
   { L"\\EFI\\Gentoo\\kernelx64.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
-  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"redhat,linux", "Redhat" },
-  { L"\\EFI\\debian\\grubx64.efi", L"Debian EFI boot menu", L"debian,linux", "Debian" },
-  { L"\\EFI\\kali\\grubx64.efi", L"Kali EFI boot menu", L"kali,linux", "Kali" },
-  { L"\\EFI\\ubuntu\\grubx64.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux", "Ubuntu" },
-  { L"\\EFI\\kubuntu\\grubx64.efi", L"kubuntu EFI boot menu", L"kubuntu,linux", "kubuntu" },
-  { L"\\EFI\\LinuxMint\\grubx64.efi", L"Linux Mint EFI boot menu", L"mint,linux", "Linux Mint" },
-  { L"\\EFI\\Fedora\\grubx64.efi", L"Fedora EFI boot menu", L"fedora,linux", "Fedora" },
-  { L"\\EFI\\opensuse\\grubx64.efi", L"OpenSuse EFI boot menu", L"suse,linux", "openSUSE" },
-  { L"\\EFI\\arch\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
-  { L"\\EFI\\arch_grub\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
-  { L"\\EFI\\ORACLE\\grubx64.efi", L"Oracle Solaris EFI boot menu", L"solaris,linux", "Solaris" },
-  { L"\\EFI\\Endless\\grubx64.efi", L"EndlessOS EFI boot menu", L"endless,linux", "EndlessOS" },
-  { L"\\EFI\\antergos_grub\\grubx64.efi", L"Antergos EFI boot menu", L"antergos,linux", "Antergos" },
-  { L"\\EFI\\Deepin\\grubx64.efi", L"Deepin EFI boot menu", L"deepin,linux", "Deepin" },
-  { L"\\EFI\\elementary\\grubx64.efi", L"Elementary EFI boot menu", L"eos,linux", "Elementary" },
-  { L"\\EFI\\Manjaro\\grubx64.efi", L"Manjaro EFI boot menu", L"manjaro,linux", "Manjaro" },
-  { L"\\EFI\\xubuntu\\grubx64.efi", L"Xubuntu EFI boot menu", L"xubuntu,linux", "Xubuntu" },
-  { L"\\EFI\\zorin\\grubx64.efi", L"Zorin EFI boot menu", L"zorin,linux", "Zorin" },
+//  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"redhat,linux", "Redhat" },
+//  { L"\\EFI\\debian\\grubx64.efi", L"Debian EFI boot menu", L"debian,linux", "Debian" },
+//  { L"\\EFI\\kali\\grubx64.efi", L"Kali EFI boot menu", L"kali,linux", "Kali" },
+//  { L"\\EFI\\ubuntu\\grubx64.efi", L"Ubuntu EFI boot menu", L"ubuntu,linux", "Ubuntu" },
+//  { L"\\EFI\\kubuntu\\grubx64.efi", L"kubuntu EFI boot menu", L"kubuntu,linux", "kubuntu" },
+//  { L"\\EFI\\LinuxMint\\grubx64.efi", L"Linux Mint EFI boot menu", L"mint,linux", "Linux Mint" },
+//  { L"\\EFI\\Fedora\\grubx64.efi", L"Fedora EFI boot menu", L"fedora,linux", "Fedora" },
+//  { L"\\EFI\\opensuse\\grubx64.efi", L"OpenSuse EFI boot menu", L"suse,linux", "openSUSE" },
+//  { L"\\EFI\\arch\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
+//  { L"\\EFI\\arch_grub\\grubx64.efi", L"ArchLinux EFI boot menu", L"arch,linux" },
+//  { L"\\EFI\\ORACLE\\grubx64.efi", L"Oracle Solaris EFI boot menu", L"solaris,linux", "Solaris" },
+//  { L"\\EFI\\Endless\\grubx64.efi", L"EndlessOS EFI boot menu", L"endless,linux", "EndlessOS" },
+//  { L"\\EFI\\antergos_grub\\grubx64.efi", L"Antergos EFI boot menu", L"antergos,linux", "Antergos" },
+//  { L"\\EFI\\Deepin\\grubx64.efi", L"Deepin EFI boot menu", L"deepin,linux", "Deepin" },
+//  { L"\\EFI\\elementary\\grubx64.efi", L"Elementary EFI boot menu", L"eos,linux", "Elementary" },
+//  { L"\\EFI\\Manjaro\\grubx64.efi", L"Manjaro EFI boot menu", L"manjaro,linux", "Manjaro" },
+//  { L"\\EFI\\xubuntu\\grubx64.efi", L"Xubuntu EFI boot menu", L"xubuntu,linux", "Xubuntu" },
+//  { L"\\EFI\\zorin\\grubx64.efi", L"Zorin EFI boot menu", L"zorin,linux", "Zorin" },
   { L"\\EFI\\goofiboot\\goofibootx64.efi", L"Solus EFI boot menu", L"solus,linux", "Solus" },
-  { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
-  { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
-  { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
-  { L"\\EFI\\MX19\\grubx64.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
-  { L"\\EFI\\parrot\\grubx64.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
+//  { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
+//  { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
+//  { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
+//  { L"\\EFI\\MX19\\grubx64.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
+//  { L"\\EFI\\parrot\\grubx64.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
 #else
+  //dont bother about 32bit compilation
   { L"\\EFI\\grub\\grub.efi", L"Grub EFI boot menu", L"grub,linux" },
   { L"\\EFI\\Gentoo\\grub.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
   { L"\\EFI\\Gentoo\\kernel.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
@@ -146,28 +148,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
 };
 
-/* TODO
-  DirIterOpen (SelfRootDir, L"\\EFI", &DirIter);
-  while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
-    if (DirEntry->FileName[0] == '.') {
-      //DBG("Skip folder: %ls\n", DirEntry->FileName);
-      continue;
-    }
-    XStringW OSName = SWPrintf(L"%s", DirEntry->FileName);
-    XStringW File = SWPrintf(L"EFI\\%s\\grubx64.efi", DirEntry->FileName);
- // if exist the linux = DirEntry->FileName
 
- OSIconName = OSName + L",linux"
-  }
-  DirIterClose (&DirIter);
-
- CONST CHAR16 *Path; -- File
- CONST CHAR16 *Title; -- OSName + L" OS EFI boot menu"
- CONST CHAR16 *Icon; -- OSName + L",linux"
- CONST CHAR8  *Issue; -- OSName
-
-
- */
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
 
 #if defined(ANDX86)
@@ -191,9 +172,7 @@ STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
   { L"\\EFI\\PhoenixOS\\boot\\grubx64.efi", L"PhoenixOS", L"phoenix,grub,linux", { L"\\EFI\\PhoenixOS\\boot\\efi.img", L"\\EFI\\PhoenixOS\\initrd.img", L"\\EFI\\PhoenixOS\\kernel" } },
   { L"\\EFI\\boot\\grubx64.efi",            L"Phoenix",   L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
   { L"\\EFI\\boot\\bootx64.efi",            L"Chrome",    L"chrome,grub,linux",  { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
-/*
-#else
-*/
+
 };
 STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(ANDX86_PATH_DATA));
 #endif
@@ -267,12 +246,14 @@ UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
     return OSTYPE_OSX_INSTALLER;
   } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
     return OSTYPE_RECOVERY;
-  } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||
-             (StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi") == 0) ||
-             (StriCmp(Path, L"\\bootmgr.efi") == 0) ||
+  } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi") == 0) || //test first as orig
+             (StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||      //it can be Clover
+    //         (StriCmp(Path, L"\\bootmgr.efi") == 0) || //never worked, just extra icon in menu
              (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
     return OSTYPE_WINEFI;
   } else if (StrniCmp(Path, LINUX_FULL_LOADER_PATH.wc_str(), LINUX_FULL_LOADER_PATH.size()) == 0) {
+    return OSTYPE_LINEFI;
+  } else if (StriStr(Path, L"grubx64.efi") != NULL) {
     return OSTYPE_LINEFI;
   } else {
     UINTN Index;
@@ -309,6 +290,8 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
     ++Index;
   }
 #endif
+  
+  //check not common names
   Index = 0;
   while (Index < LinuxEntryDataCount) {
     if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
@@ -316,6 +299,7 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
     }
     ++Index;
   }
+  
   // Try to open the linux issue
   if ((RootDir != NULL) && (StrniCmp(Path, LINUX_FULL_LOADER_PATH.wc_str(), LINUX_FULL_LOADER_PATH.size()) == 0)) {
     CHAR8 *Issue = NULL;
@@ -448,7 +432,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   EFI_DEVICE_PATH *LoaderDevicePath;
   CONST CHAR16          *LoaderDevicePathString;
   CONST CHAR16          *FilePathAsString;
-  CONST CHAR16          *OSIconName;
+  CONST CHAR16          *OSIconName = NULL;
   CHAR16                ShortcutLetter;
   LOADER_ENTRY          *Entry;
   CONST CHAR8           *indent = "    ";
@@ -521,11 +505,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 
         // Check if the volume_type match
         if (Custom->VolumeType != 0) {
-          volume_type_match =
-            (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+          volume_type_match = (((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0) ? 1 : -1;
+      /*      (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
              ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
              ((Volume->DiskKind == DISK_KIND_OPTICAL)  && (Custom->VolumeType & VOLTYPE_OPTICAL))  ||
-             ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) ? 1 : -1;
+             ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) ? 1 : -1; */
         }
 
         // Check if the path match
@@ -598,9 +582,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
     Entry->LoadOptions    = SPrintf("%s", gSettings.BootArgs);
   }
-//DBG("locate a custom icon \n");
-  // locate a custom icon for the loader
-  //StrCpy(IconFileName, Volume->OSIconName); Sothor - Unused?
   //actions
   Entry->AtClick = ActionSelect;
   Entry->AtDoubleClick = ActionEnter;
@@ -654,7 +635,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       break;
     case OSTYPE_LIN:
     case OSTYPE_LINEFI:
-      OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir);
+    // we already detected linux and have Path and Image
+      Entry->LoaderType = OSType;
+      OSIconName = L"linux";
+      if (Image == nullptr) {
+        OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
+      }
       ShortcutLetter = 'L';
       break;
     case OSTYPE_OTHER:
@@ -725,7 +711,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     Entry->Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     DBG("using VolumeIcon.icns image from Volume\n");
   } else if (Image) {
-    Entry->Image = *Image;
+    Entry->Image = *Image; //copy image from temporary storage
   } else {
     Entry->Image = ThemeX.LoadOSIcon(OSIconName);
   }
@@ -1026,7 +1012,7 @@ BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XString& LoaderOpti
       }
     }
   }
-    Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, L""_XSW, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
+  Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, L""_XSW, LoaderTitle, Volume, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
   if (Entry != NULL) {
     if ((Entry->LoaderType == OSTYPE_OSX) ||
         (Entry->LoaderType == OSTYPE_OSX_INSTALLER ) ||
@@ -1113,12 +1099,13 @@ VOID ScanLoader(VOID)
     }
 
     // skip volume if its kind is configured as disabled
-    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
+ /*   if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
         (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
+        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE))) */
+    if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0)
     {
-      DBG(", hidden\n");
+      DBG(", flagged disable\n");
       continue;
     }
 
@@ -1256,6 +1243,30 @@ VOID ScanLoader(VOID)
 
     if (gSettings.LinuxScan) {
       // check for linux loaders
+      //
+      //----- Test common linux name and path like /EFI/ubuntu/grubx64.efi
+      REFIT_DIR_ITER  DirIter;
+      EFI_FILE_INFO  *DirEntry = NULL;
+      DirIterOpen(SelfRootDir, L"\\EFI", &DirIter);
+      while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+        if (DirEntry->FileName[0] == '.') {
+          //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
+          continue;
+        }
+        XStringW OSName = SWPrintf("%ls", DirEntry->FileName); //this is folder name "ubuntu"
+        XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
+        if (FileExists(SelfRootDir, File.wc_str())) {
+          XStringW LoaderTitle = OSName + L" OS EFI boot menu"_XSW;
+          XStringW IconXSW = OSName + L",linux";
+          IconXSW.ToLower(); //to avoid misconception
+          XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
+          ImageX.LoadXImage(ThemeX.ThemeDir, IconXSW);
+          AddLoaderEntry(File.wc_str(), ""_XS, LoaderTitle, Volume,
+                         (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+        } //anyway continue search other entries
+      }
+      DirIterClose(&DirIter);
+
       for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
         if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
           XImage ImageX;
@@ -1870,10 +1881,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                 // Better path match
                 BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
                                ((Custom->VolumeType == Ptr->VolumeType) ||
-                                (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                                ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
+                         /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
                                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
                                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               }
             } else if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
                        ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
@@ -1883,17 +1895,19 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                   // Better path match
                   BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
                                  ((Custom->VolumeType == Ptr->VolumeType) ||
-                                  (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                                  (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                                  (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                  (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                                  ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
+                  /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                   (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                   (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                   (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
                 } else if (Custom->VolumeType != Ptr->VolumeType) {
                   // More precise volume type match
                   BetterMatch = ((Custom->VolumeType == 0) &&
-                                 ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                                  (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                                  (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                  (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                                 ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
+                  /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                   (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                   (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                   (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
                 } else {
                   // Better match
                   BetterMatch = TRUE;
@@ -1903,18 +1917,20 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                 // Better path match
                 BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
                                ((Custom->VolumeType == Ptr->VolumeType) ||
-                                (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                                ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
+                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               // Duplicate path match
               } else if (Custom->VolumeType != Ptr->VolumeType) {
                 // More precise volume type match
                 BetterMatch = ((Custom->VolumeType == 0) &&
-                               ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                               ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
+                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               } else {
                 // Duplicate entry
                 BetterMatch = (i <= CustomIndex);
@@ -1925,25 +1941,28 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             if (Ptr->Path == NULL) {
               // Less precise path match
               BetterMatch = ((Custom->VolumeType != Ptr->VolumeType) &&
-                              ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                               (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                               (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                               (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                             ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
+              /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+               (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+               (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+               (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
             } else if (StrCmp(CustomPath, Ptr->Path) == 0) {
               if (Custom->Path == NULL) {
                 // More precise path and volume type match
                 BetterMatch = ((Custom->VolumeType == Ptr->VolumeType) ||
-                               (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                               (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                               (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                               (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)));
+                               ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
+                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               } else if (Custom->VolumeType != Ptr->VolumeType) {
                 // More precise volume type match
                 BetterMatch = ((Custom->VolumeType == 0) &&
-                               ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                               ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
+                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               } else {
                 // Duplicate entry
                 BetterMatch = (i <= CustomIndex);
@@ -1953,10 +1972,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           } else if (Custom->VolumeType != Ptr->VolumeType) {
             // More precise volume type match
             BetterMatch = ((Custom->VolumeType == 0) &&
-                           ((Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                            (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                            (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                            (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE))));
+                           ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
+            /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
+             (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
+             (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
+             (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
           } else {
             // Duplicate entry
             BetterMatch = (i <= CustomIndex);

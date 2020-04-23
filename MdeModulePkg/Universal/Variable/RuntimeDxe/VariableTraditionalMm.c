@@ -51,7 +51,7 @@ VariableNotifySmmReady (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -72,7 +72,7 @@ VariableNotifySmmWriteReady (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -117,7 +117,7 @@ VariableHaveTcgProtocols (
                   NULL,                     // Registration
                   &Interface
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return TRUE;
   }
 
@@ -126,5 +126,5 @@ VariableHaveTcgProtocols (
                   NULL,                     // Registration
                   &Interface
                   );
-  return !EFI_ERROR (Status);
+  return !EFI_ERROR(Status);
 }

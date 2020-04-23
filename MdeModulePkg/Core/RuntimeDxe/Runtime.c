@@ -304,7 +304,7 @@ RuntimeDriverSetVirtualAddressMap (
 
       VirtImageBase = (EFI_PHYSICAL_ADDRESS) (UINTN) RuntimeImage->ImageBase;
       Status  = RuntimeDriverConvertPointer (0, (VOID **) &VirtImageBase);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       PeCoffLoaderRelocateImageForRuntime (
         (EFI_PHYSICAL_ADDRESS) (UINTN) RuntimeImage->ImageBase,
@@ -391,7 +391,7 @@ RuntimeDriverInitialize (
                   &gEfiLoadedImageProtocolGuid,
                   (VOID**)&MyLoadedImage
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   mMyImageBase = MyLoadedImage->ImageBase;
 
   //
@@ -410,7 +410,7 @@ RuntimeDriverInitialize (
                   &mRuntime,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

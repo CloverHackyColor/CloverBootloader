@@ -64,7 +64,7 @@ BootLogoEnableLogo (
   UINTN                                 BufferSize;
 
   Status  = gBS->LocateProtocol (&gEdkiiPlatformLogoProtocolGuid, NULL, (VOID **) &PlatformLogo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -73,17 +73,17 @@ BootLogoEnableLogo (
   // Try to open GOP first
   //
   Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
     //
     // Open GOP failed, try to open UGA
     //
     Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiUgaDrawProtocolGuid, (VOID **) &UgaDraw);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       UgaDraw = NULL;
     }
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -91,7 +91,7 @@ BootLogoEnableLogo (
   // Try to open Boot Logo Protocol.
   //
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BootLogo = NULL;
   }
 
@@ -99,7 +99,7 @@ BootLogoEnableLogo (
   // Try to open Boot Logo 2 Protocol.
   //
   Status = gBS->LocateProtocol (&gEdkiiBootLogo2ProtocolGuid, NULL, (VOID **) &BootLogo2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BootLogo2 = NULL;
   }
 
@@ -115,7 +115,7 @@ BootLogoEnableLogo (
   } else {
     ASSERT (UgaDraw != NULL);
     Status = UgaDraw->GetMode (UgaDraw, &SizeOfX, &SizeOfY, &ColorDepth, &RefreshRate);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   }
@@ -143,12 +143,12 @@ BootLogoEnableLogo (
                              &OffsetX,
                              &OffsetY
                              );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
     }
     Blt = Image.Bitmap;
 
@@ -237,7 +237,7 @@ BootLogoEnableLogo (
       //
       // Report displayed Logo information.
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         NumberOfLogos++;
 
         if (NumberOfLogos == 1) {
@@ -269,7 +269,7 @@ BootLogoEnableLogo (
     // No logo displayed.
     //
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
     }
 
     return Status;
@@ -289,7 +289,7 @@ BootLogoEnableLogo (
     // More than one Logo displayed, get merged BltBuffer using VideoToBuffer operation.
     //
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
     }
 
     //
@@ -334,7 +334,7 @@ BootLogoEnableLogo (
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Attempt to register logo with Boot Logo 2 Protocol first
     //
@@ -345,7 +345,7 @@ BootLogoEnableLogo (
     // If Boot Logo 2 Protocol is not available or registration with Boot Logo 2
     // Protocol failed, then attempt to register logo with Boot Logo Protocol
     //
-    if (EFI_ERROR (Status) && BootLogo != NULL) {
+    if (EFI_ERROR(Status) && BootLogo != NULL) {
       Status = BootLogo->SetBootLogo (BootLogo, LogoBlt, LogoDestX, LogoDestY, LogoWidth, LogoHeight);
     }
     //
@@ -354,7 +354,7 @@ BootLogoEnableLogo (
     //
     Status = EFI_SUCCESS;
   }
-  FreePool (LogoBlt);
+  FreePool(LogoBlt);
 
   return Status;
 }
@@ -427,15 +427,15 @@ BootLogoUpdateProgress (
 
   UgaDraw = NULL;
   Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
 
     Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiUgaDrawProtocolGuid, (VOID **) &UgaDraw);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       UgaDraw = NULL;
     }
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -452,7 +452,7 @@ BootLogoUpdateProgress (
                         &ColorDepth,
                         &RefreshRate
                         );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   } else {

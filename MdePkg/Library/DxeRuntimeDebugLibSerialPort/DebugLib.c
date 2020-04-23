@@ -73,7 +73,7 @@ DxeRuntimeDebugLibSerialPortConstructor (
   EFI_STATUS    Status;
 
   Status = SerialPortInitialize ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

@@ -258,7 +258,7 @@ GetMemoryMapAlloc (
         (EFI_PHYSICAL_ADDRESS *)MemoryMap,
         FALSE
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO, "Temp memory map allocation from top failure %r\n", Status));
         *MemoryMap = NULL;
         return Status;
@@ -279,11 +279,11 @@ GetMemoryMapAlloc (
       DescriptorVersion
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (AllocatedTopPages) {
         gBS->FreePages ((EFI_PHYSICAL_ADDRESS)*MemoryMap, *AllocatedTopPages);
       } else {
-        FreePool (*MemoryMap);
+        FreePool(*MemoryMap);
       }
       *MemoryMap = NULL;
     }
@@ -314,7 +314,7 @@ AllocatePagesFromTop (
   EFI_MEMORY_DESCRIPTOR   *Desc;
 
   Status = GetMemoryMapAlloc (NULL, &MemoryMapSize, &MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -360,7 +360,7 @@ AllocatePagesFromTop (
     }
   }
 
-  FreePool (MemoryMap);
+  FreePool(MemoryMap);
 
   return Status;
 }

@@ -70,7 +70,7 @@ SmmInitializeMemoryServices (
             &gLoadFixedAddressConfigurationTableGuid,
            (VOID **) &LMFAConfigurationTable
            );
-  if (!EFI_ERROR (Status) && LMFAConfigurationTable != NULL) {
+  if (!EFI_ERROR(Status) && LMFAConfigurationTable != NULL) {
     gLoadModuleAtFixAddressSmramBase = LMFAConfigurationTable->SmramBase;
   }
 
@@ -141,7 +141,7 @@ InternalAllocPoolByIndex (
     Status = SmmInternalAllocatePages (AllocateAnyPages, PoolType,
                                        EFI_SIZE_TO_PAGES (MAX_POOL_SIZE << 1),
                                        &Address, FALSE);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     Hdr = (FREE_POOL_HEADER *) (UINTN) Address;
@@ -150,7 +150,7 @@ InternalAllocPoolByIndex (
     RemoveEntryList (&Hdr->Link);
   } else {
     Status = InternalAllocPoolByIndex (PoolType, PoolIndex + 1, &Hdr);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Hdr->Header.Signature = 0;
       Hdr->Header.Size >>= 1;
       Hdr->Header.Available = TRUE;
@@ -163,7 +163,7 @@ InternalAllocPoolByIndex (
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Hdr->Header.Signature = POOL_HEAD_SIGNATURE;
     Hdr->Header.Size = MIN_POOL_SIZE << PoolIndex;
     Hdr->Header.Available = FALSE;
@@ -266,7 +266,7 @@ SmmInternalAllocatePool (
     NoPages = EFI_SIZE_TO_PAGES (Size);
     Status = SmmInternalAllocatePages (AllocateAnyPages, PoolType, NoPages,
                                        &Address, NeedGuard);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -332,7 +332,7 @@ SmmAllocatePool (
   EFI_STATUS  Status;
 
   Status = SmmInternalAllocatePool (PoolType, Size, Buffer);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     SmmCoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionAllocatePool,
@@ -356,7 +356,7 @@ SmmAllocatePool (
 **/
 EFI_STATUS
 EFIAPI
-SmmInternalFreePool (
+SmmInternalFreePool(
   IN VOID  *Buffer
   )
 {
@@ -428,14 +428,14 @@ SmmInternalFreePool (
 **/
 EFI_STATUS
 EFIAPI
-SmmFreePool (
+SmmFreePool(
   IN VOID  *Buffer
   )
 {
   EFI_STATUS  Status;
 
-  Status = SmmInternalFreePool (Buffer);
-  if (!EFI_ERROR (Status)) {
+  Status = SmmInternalFreePool(Buffer);
+  if (!EFI_ERROR(Status)) {
     SmmCoreUpdateProfile (
       (EFI_PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS (0),
       MemoryProfileActionFreePool,

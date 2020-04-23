@@ -84,7 +84,7 @@ PciBusEntryPoint (
              &gPciBusComponentName,
              &gPciBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (FeaturePcdGet (PcdPciBusHotplugDeviceSupport)) {
     //
@@ -166,7 +166,7 @@ PciBusDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -195,7 +195,7 @@ PciBusDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -310,7 +310,7 @@ PciBusDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Report Status Code to indicate PCI bus starts
@@ -340,7 +340,7 @@ PciBusDriverBindingStart (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = PciEnumerator (Controller, PciRootBridgeIo->ParentHandle);
     }
   } else {
@@ -350,7 +350,7 @@ PciBusDriverBindingStart (
     Status = PciEnumeratorLight (Controller);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -368,7 +368,7 @@ PciBusDriverBindingStart (
                     EFI_NATIVE_INTERFACE,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return Status;
@@ -438,7 +438,7 @@ PciBusDriverBindingStop (
     //
     Status = DeRegisterPciDevice (Controller, ChildHandleBuffer[Index]);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }

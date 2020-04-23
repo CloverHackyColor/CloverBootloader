@@ -111,7 +111,7 @@ UhcPeimEntry (
   //
   // Shadow this PEIM to run from memory
   //
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -124,7 +124,7 @@ UhcPeimEntry (
   //
   // If failed to locate, it is a bug in dispather as depex has gPeiUsbControllerPpiGuid.
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Index = 0;
   while (TRUE) {
@@ -138,7 +138,7 @@ UhcPeimEntry (
     //
     // When status is error, meant no controller is found
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -157,7 +157,7 @@ UhcPeimEntry (
                MemPages,
                &TempPtr
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -170,7 +170,7 @@ UhcPeimEntry (
     // Init local memory management service
     //
     Status = InitializeMemoryManagement (UhcDev);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -178,7 +178,7 @@ UhcPeimEntry (
     // Initialize Uhc's hardware
     //
     Status = InitializeUsbHC (UhcDev);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -194,7 +194,7 @@ UhcPeimEntry (
     UhcDev->PpiDescriptor.Ppi   = &UhcDev->UsbHostControllerPpi;
 
     Status = PeiServicesInstallPpi (&UhcDev->PpiDescriptor);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Index++;
       continue;
     }
@@ -295,13 +295,13 @@ UhcControlTransfer (
   // then create a list of TD for this transfer
   //
   Status = UhciMapUserRequest (UhcDev, Request, &RequestPhy, &RequestMap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UhciMapUserData (UhcDev, TransferDirection, Data, DataLength, &PktID, &DataPhy, &DataMap);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (RequestMap != NULL) {
       IoMmuUnmap (UhcDev->IoMmu, RequestMap);
     }
@@ -580,7 +580,7 @@ UhcBulkTransfer (
 
   Status = UhciMapUserData (UhcDev, TransferDirection, Data, DataLength, &PktID, &DataPhy, &DataMap);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1037,7 +1037,7 @@ InitializeUsbHC (
   // Create and Initialize Frame List For the Host Controller.
   //
   Status = CreateFrameList (UhcDev);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1290,7 +1290,7 @@ CreateQH (
   // allocate align memory for QH_STRUCT
   //
   Status = AllocateTDorQHStruct (UhcDev, sizeof(QH_STRUCT), (void **)PtrQH);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -1456,7 +1456,7 @@ AllocateTDorQHStruct (
             (UINT8 **) PtrStruct,
             Size
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1486,7 +1486,7 @@ CreateTD (
   // create memory for TD_STRUCT, and align the memory.
   //
   Status = AllocateTDorQHStruct (UhcDev, sizeof(TD_STRUCT), (void **)PtrTD);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1530,7 +1530,7 @@ GenSetupStageTD (
   EFI_STATUS  Status;
 
   Status = CreateTD (UhcDev, &TdStruct);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1645,7 +1645,7 @@ GenDataTD (
   EFI_STATUS  Status;
 
   Status = CreateTD (UhcDev, &TdStruct);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1760,7 +1760,7 @@ CreateStatusTD (
   EFI_STATUS  Status;
 
   Status = CreateTD (UhcDev, &PtrTDStruct);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2657,7 +2657,7 @@ DeleteQueuedTDs (
       Tptr1 = GetTDLinkPtr (Tptr2);
     }
 
-    UhcFreePool (UhcDev, (UINT8 *) Tptr2, sizeof (TD_STRUCT));
+    UhcFreePool(UhcDev, (UINT8 *) Tptr2, sizeof (TD_STRUCT));
   }
 
   return ;
@@ -2782,7 +2782,7 @@ CreateMemoryBlock (
              &MappedAddr,
              &Mapping
              );
-  if (EFI_ERROR (Status) || (TempPtr == NULL)) {
+  if (EFI_ERROR(Status) || (TempPtr == NULL)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -2840,7 +2840,7 @@ InitializeMemoryManagement (
 
   MemPages  = NORMAL_MEMORY_BLOCK_UNIT_IN_PAGES;
   Status    = CreateMemoryBlock (UhcDev, &MemoryHeader, MemPages);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2895,7 +2895,7 @@ UhcAllocatePool (
               (VOID **) Pool,
               RealAllocSize / 32
               );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return EFI_SUCCESS;
     }
   }
@@ -2914,7 +2914,7 @@ UhcAllocatePool (
   }
 
   Status = CreateMemoryBlock (UhcDev, &NewMemoryHeader, MemoryBlockSizeInPages);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -3074,7 +3074,7 @@ AllocMemInMemoryBlock (
 
 **/
 VOID
-UhcFreePool (
+UhcFreePool(
   IN USB_UHC_DEV     *UhcDev,
   IN UINT8           *Pool,
   IN UINTN           AllocSize
@@ -3196,7 +3196,7 @@ UhciMapUserRequest (
              Map
              );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *MappedAddr = (UINT8 *) (UINTN) PhyAddr;
   }
 
@@ -3249,7 +3249,7 @@ UhciMapUserData (
                Map
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto EXIT;
     }
 
@@ -3267,7 +3267,7 @@ UhciMapUserData (
                Map
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto EXIT;
     }
 

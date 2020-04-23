@@ -35,7 +35,7 @@ CoreSetInterruptState (
     return;
   }
   Status = gSmmBase2->InSmm (gSmmBase2, &InSmm);
-  if (!EFI_ERROR (Status) && !InSmm) {
+  if (!EFI_ERROR(Status) && !InSmm) {
     gCpu->EnableInterrupt(gCpu);
   }
 }

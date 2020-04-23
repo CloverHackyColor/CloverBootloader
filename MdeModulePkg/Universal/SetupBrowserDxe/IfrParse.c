@@ -627,7 +627,7 @@ InitializeRequestElement (
     ASSERT (NewStr != NULL);
     if (FormsetStorage->ConfigRequest != NULL) {
       CopyMem (NewStr, FormsetStorage->ConfigRequest, StringSize);
-      FreePool (FormsetStorage->ConfigRequest);
+      FreePool(FormsetStorage->ConfigRequest);
     }
     FormsetStorage->ConfigRequest = NewStr;
     FormsetStorage->SpareStrLen   = CONFIG_REQUEST_STRING_INCREMENTAL;
@@ -679,7 +679,7 @@ InitializeRequestElement (
     ASSERT (NewStr != NULL);
     if (ConfigInfo->ConfigRequest != NULL) {
       CopyMem (NewStr, ConfigInfo->ConfigRequest, StringSize);
-      FreePool (ConfigInfo->ConfigRequest);
+      FreePool(ConfigInfo->ConfigRequest);
     }
     ConfigInfo->ConfigRequest = NewStr;
     ConfigInfo->SpareStrLen   = CONFIG_REQUEST_STRING_INCREMENTAL;
@@ -714,11 +714,11 @@ DestroyExpression (
     RemoveEntryList (&OpCode->Link);
 
     if (OpCode->ValueList != NULL) {
-      FreePool (OpCode->ValueList);
+      FreePool(OpCode->ValueList);
     }
 
     if (OpCode->ValueName != NULL) {
-      FreePool (OpCode->ValueName);
+      FreePool(OpCode->ValueName);
     }
 
     if (OpCode->MapExpressionList.ForwardLink != NULL) {
@@ -734,7 +734,7 @@ DestroyExpression (
   //
   // Free this Expression
   //
-  FreePool (Expression);
+  FreePool(Expression);
 }
 
 /**
@@ -753,10 +753,10 @@ DestroyStorage (
   }
 
   if (Storage->ConfigRequest != NULL) {
-    FreePool (Storage->ConfigRequest);
+    FreePool(Storage->ConfigRequest);
   }
 
-  FreePool (Storage);
+  FreePool(Storage);
 }
 
 
@@ -787,9 +787,9 @@ DestroyStatement (
     RemoveEntryList (&Default->Link);
 
     if (Default->Value.Buffer != NULL) {
-      FreePool (Default->Value.Buffer);
+      FreePool(Default->Value.Buffer);
     }
-    FreePool (Default);
+    FreePool(Default);
   }
 
   //
@@ -799,11 +799,11 @@ DestroyStatement (
     Link = GetFirstNode (&Statement->OptionListHead);
     Option = QUESTION_OPTION_FROM_LINK (Link);
     if (Option->SuppressExpression != NULL) {
-      FreePool (Option->SuppressExpression);
+      FreePool(Option->SuppressExpression);
     }
     RemoveEntryList (&Option->Link);
 
-    FreePool (Option);
+    FreePool(Option);
   }
 
   //
@@ -840,17 +840,17 @@ DestroyStatement (
   }
 
   if (Statement->Expression != NULL) {
-    FreePool (Statement->Expression);
+    FreePool(Statement->Expression);
   }
 
   if (Statement->VariableName != NULL) {
-    FreePool (Statement->VariableName);
+    FreePool(Statement->VariableName);
   }
   if (Statement->BlockName != NULL) {
-    FreePool (Statement->BlockName);
+    FreePool(Statement->BlockName);
   }
   if (Statement->BufferValue != NULL) {
-    FreePool (Statement->BufferValue);
+    FreePool(Statement->BufferValue);
   }
   if (Statement->Operand == EFI_IFR_STRING_OP || Statement->Operand == EFI_IFR_PASSWORD_OP) {
     DeleteString(Statement->HiiValue.Value.string, FormSet->HiiHandle);
@@ -906,12 +906,12 @@ DestroyForm (
     ConfigInfo = FORM_BROWSER_CONFIG_REQUEST_FROM_LINK (Link);
     RemoveEntryList (&ConfigInfo->Link);
 
-    FreePool (ConfigInfo->ConfigRequest);
-    FreePool (ConfigInfo);
+    FreePool(ConfigInfo->ConfigRequest);
+    FreePool(ConfigInfo);
   }
 
   if (Form->SuppressExpression != NULL) {
-    FreePool (Form->SuppressExpression);
+    FreePool(Form->SuppressExpression);
   }
 
   UiFreeMenuList (&Form->FormViewListHead);
@@ -919,7 +919,7 @@ DestroyForm (
   //
   // Free this Form
   //
-  FreePool (Form);
+  FreePool(Form);
 }
 
 
@@ -944,14 +944,14 @@ DestroyFormSet (
     //
     // Uninitialized FormSet
     //
-    FreePool (FormSet);
+    FreePool(FormSet);
     return;
   }
 
   //
   // Free IFR binary buffer
   //
-  FreePool (FormSet->IfrBinaryData);
+  FreePool(FormSet->IfrBinaryData);
 
   //
   // Free FormSet Storage
@@ -975,7 +975,7 @@ DestroyFormSet (
       DefaultStore = FORMSET_DEFAULTSTORE_FROM_LINK (Link);
       RemoveEntryList (&DefaultStore->Link);
 
-      FreePool (DefaultStore);
+      FreePool(DefaultStore);
     }
   }
 
@@ -1004,13 +1004,13 @@ DestroyFormSet (
   }
 
   if (FormSet->StatementBuffer != NULL) {
-    FreePool (FormSet->StatementBuffer);
+    FreePool(FormSet->StatementBuffer);
   }
   if (FormSet->ExpressionBuffer != NULL) {
-    FreePool (FormSet->ExpressionBuffer);
+    FreePool(FormSet->ExpressionBuffer);
   }
 
-  FreePool (FormSet);
+  FreePool(FormSet);
 }
 
 
@@ -1300,7 +1300,7 @@ ParseOpCodes (
         DepthOfDisable++;
       } else if (Operand == EFI_IFR_END_OP) {
         Status = PopScope (&ScopeOpCode);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
 
@@ -1571,7 +1571,7 @@ ParseOpCodes (
           // This is DisableIf expression for Form, it should be a constant expression
           //
           Status = EvaluateExpression (FormSet, CurrentForm, CurrentExpression);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
 
@@ -2552,7 +2552,7 @@ ParseOpCodes (
     case EFI_IFR_END_OP:
       QuestionReferBitField = FALSE;
       Status = PopScope (&ScopeOpCode);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ResetScopeStack ();
         return Status;
       }
@@ -2640,7 +2640,7 @@ ParseOpCodes (
         // Get current expression.
         //
         Status = PopCurrentExpression ((VOID **) &CurrentExpression);
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
         ASSERT (MapScopeDepth > 0);
         MapScopeDepth --;
         break;
@@ -2653,7 +2653,7 @@ ParseOpCodes (
             //
             ASSERT (CurrentExpression != NULL);
             Status = EvaluateExpression (FormSet, CurrentForm, CurrentExpression);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               return Status;
             }
 

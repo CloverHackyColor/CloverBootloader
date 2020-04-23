@@ -77,7 +77,7 @@ NonDiscoverablePciDeviceSupported (
                   &gEdkiiNonDiscoverableDeviceProtocolGuid, (VOID **)&Device,
                   This->DriverBindingHandle, DeviceHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -89,7 +89,7 @@ NonDiscoverablePciDeviceSupported (
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CloseProtocol;
   }
 
@@ -152,7 +152,7 @@ NonDiscoverablePciDeviceStart (
                   &gEdkiiNonDiscoverableDeviceProtocolGuid,
                   (VOID **)&Dev->Device, This->DriverBindingHandle,
                   DeviceHandle, EFI_OPEN_PROTOCOL_BY_DRIVER);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeDev;
   }
 
@@ -165,7 +165,7 @@ NonDiscoverablePciDeviceStart (
   Dev->Signature = NON_DISCOVERABLE_PCI_DEVICE_SIG;
   Status = gBS->InstallProtocolInterface (&DeviceHandle, &gEfiPciIoProtocolGuid,
                   EFI_NATIVE_INTERFACE, &Dev->PciIo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CloseProtocol;
   }
 
@@ -178,7 +178,7 @@ CloseProtocol:
          This->DriverBindingHandle, DeviceHandle);
 
 FreeDev:
-  FreePool (Dev);
+  FreePool(Dev);
 
   return Status;
 }
@@ -212,7 +212,7 @@ NonDiscoverablePciDeviceStop (
   Status = gBS->OpenProtocol (DeviceHandle, &gEfiPciIoProtocolGuid,
                   (VOID **)&PciIo, This->DriverBindingHandle, DeviceHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -223,14 +223,14 @@ NonDiscoverablePciDeviceStop (
   //
   Status = gBS->UninstallProtocolInterface (DeviceHandle,
                   &gEfiPciIoProtocolGuid, &Dev->PciIo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   gBS->CloseProtocol (DeviceHandle, &gEdkiiNonDiscoverableDeviceProtocolGuid,
          This->DriverBindingHandle, DeviceHandle);
 
-  FreePool (Dev);
+  FreePool(Dev);
 
   return EFI_SUCCESS;
 }

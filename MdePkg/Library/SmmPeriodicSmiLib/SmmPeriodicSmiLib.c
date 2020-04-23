@@ -825,7 +825,7 @@ PeriodicSmiDispatchFunction (
                       PeriodicSmiLibraryHandler->Cpu,
                       PeriodicSmiLibraryHandler
                       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Wait for the AP to release the spin lock.
       //
@@ -969,7 +969,7 @@ PeriodicSmiEnable (
                                          &PeriodicSmiLibraryHandler->RegisterContext,
                                          &PeriodicSmiLibraryHandler->DispatchHandle
                                          );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     PeriodicSmiLibraryHandler->DispatchHandle = NULL;
     ReclaimPeriodicSmiLibraryHandler (PeriodicSmiLibraryHandler);
     return EFI_OUT_OF_RESOURCES;
@@ -1025,7 +1025,7 @@ PeriodicSmiDisable (
                                          gSmmPeriodicTimerDispatch2,
                                          PeriodicSmiLibraryHandler->DispatchHandle
                                          );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -1072,7 +1072,7 @@ SmmPeriodicSmiLibConstructor (
                     NULL,
                     (VOID **)&gSmmPeriodicTimerDispatch2
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (gSmmPeriodicTimerDispatch2 != NULL);
 
   //
@@ -1144,7 +1144,7 @@ SmmPeriodicSmiLibDestructor (
   // Free the table of supported periodic SMI tick rates
   //
   if (gSmiTickPeriodTable != NULL) {
-    FreePool (gSmiTickPeriodTable);
+    FreePool(gSmiTickPeriodTable);
   }
 
   //
@@ -1162,7 +1162,7 @@ SmmPeriodicSmiLibDestructor (
   for (Link = GetFirstNode (&gFreePeriodicSmiLibraryHandlers); !IsNull (&gFreePeriodicSmiLibraryHandlers, Link);) {
     PeriodicSmiLibraryHandler = PERIODIC_SMI_LIBRARY_HANDLER_CONTEXT_FROM_LINK (Link);
     Link = RemoveEntryList (Link);
-    FreePool (PeriodicSmiLibraryHandler);
+    FreePool(PeriodicSmiLibraryHandler);
   }
 
   return EFI_SUCCESS;

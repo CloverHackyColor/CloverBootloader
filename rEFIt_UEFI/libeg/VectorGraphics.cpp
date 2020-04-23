@@ -332,64 +332,64 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
   //TODO parse anime like for PNG themes
   /*
-  Dict = GetProperty (DictPointer, "Anime");
+  Dict = GetProperty(DictPointer, "Anime");
   if (Dict != NULL) {
     INTN  Count = GetTagCount (Dict);
     for (INTN i = 0; i < Count; i++) {
       FILM *NewFilm = new FILM();
-      if (EFI_ERROR (GetElement (Dict, i, &Dict3))) {
+      if (EFI_ERROR(GetElement (Dict, i, &Dict3))) {
         continue;
       }
       if (Dict3 == NULL) {
         break;
       }
-      Dict2 = GetProperty (Dict3, "ID");
-      NewFilm->SetIndex((UINTN)GetPropertyInteger (Dict2, 1)); //default=main screen
+      Dict2 = GetProperty(Dict3, "ID");
+      NewFilm->SetIndex((UINTN)GetPropertyInteger(Dict2, 1)); //default=main screen
 
-      Dict2 = GetProperty (Dict3, "Path");
+      Dict2 = GetProperty(Dict3, "Path");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
         NewFilm->Path.takeValueFrom(Dict2->string);
       }
 
-      Dict2 = GetProperty (Dict3, "Frames");
-      NewFilm->NumFrames = (UINTN)GetPropertyInteger (Dict2, 0);
+      Dict2 = GetProperty(Dict3, "Frames");
+      NewFilm->NumFrames = (UINTN)GetPropertyInteger(Dict2, 0);
 
-      Dict2 = GetProperty (Dict3, "FrameTime");
-      NewFilm->FrameTime = (UINTN)GetPropertyInteger (Dict2, 50); //default will be 50ms
+      Dict2 = GetProperty(Dict3, "FrameTime");
+      NewFilm->FrameTime = (UINTN)GetPropertyInteger(Dict2, 50); //default will be 50ms
 
-      Dict2 = GetProperty (Dict3, "ScreenEdgeX");
+      Dict2 = GetProperty(Dict3, "ScreenEdgeX");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "left") == 0) {
+        if (AsciiStrCmp(Dict2->string, "left") == 0) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (AsciiStrCmp (Dict2->string, "right") == 0) {
+        } else if (AsciiStrCmp(Dict2->string, "right") == 0) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
-      Dict2 = GetProperty (Dict3, "ScreenEdgeY");
+      Dict2 = GetProperty(Dict3, "ScreenEdgeY");
       if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp (Dict2->string, "top") == 0) {
+        if (AsciiStrCmp(Dict2->string, "top") == 0) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (AsciiStrCmp (Dict2->string, "bottom") == 0) {
+        } else if (AsciiStrCmp(Dict2->string, "bottom") == 0) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }
 
       //default values are centre
 
-      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeX%");
-      NewFilm->FilmX = GetPropertyInteger (Dict2, INITVALUE);
+      Dict2 = GetProperty(Dict3, "DistanceFromScreenEdgeX%");
+      NewFilm->FilmX = GetPropertyInteger(Dict2, INITVALUE);
 
-      Dict2 = GetProperty (Dict3, "DistanceFromScreenEdgeY%");
-      NewFilm->FilmY = GetPropertyInteger (Dict2, INITVALUE);
+      Dict2 = GetProperty(Dict3, "DistanceFromScreenEdgeY%");
+      NewFilm->FilmY = GetPropertyInteger(Dict2, INITVALUE);
 
-      Dict2 = GetProperty (Dict3, "NudgeX");
-      NewFilm->NudgeX = GetPropertyInteger (Dict2, INITVALUE);
+      Dict2 = GetProperty(Dict3, "NudgeX");
+      NewFilm->NudgeX = GetPropertyInteger(Dict2, INITVALUE);
 
-      Dict2 = GetProperty (Dict3, "NudgeY");
-      NewFilm->NudgeY = GetPropertyInteger (Dict2, INITVALUE);
+      Dict2 = GetProperty(Dict3, "NudgeY");
+      NewFilm->NudgeY = GetPropertyInteger(Dict2, INITVALUE);
 
-      Dict2 = GetProperty (Dict3, "Once");
+      Dict2 = GetProperty(Dict3, "Once");
       NewFilm->RunOnce = IsPropertyTrue (Dict2);
 
       NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames

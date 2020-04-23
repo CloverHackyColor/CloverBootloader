@@ -61,7 +61,7 @@ PeiUsbControlTransfer (
     //
     while (EndpointIndex < MAX_ENDPOINT) {
       Status = PeiUsbGetEndpointDescriptor (PeiServices, This, EndpointIndex, &EndpointDescriptor);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_INVALID_PARAMETER;
       }
 
@@ -174,7 +174,7 @@ PeiUsbBulkTransfer (
 
   while (EndpointIndex < MAX_ENDPOINT) {
     Status = PeiUsbGetEndpointDescriptor (PeiServices, This, EndpointIndex, &EndpointDescriptor);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -347,7 +347,7 @@ PeiUsbPortReset (
             Address
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

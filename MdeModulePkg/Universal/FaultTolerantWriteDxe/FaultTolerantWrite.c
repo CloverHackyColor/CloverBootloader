@@ -82,7 +82,7 @@ FtwAllocate (
   FtwDevice = FTW_CONTEXT_FROM_THIS (This);
 
   Status    = WorkSpaceRefresh (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   //
@@ -110,7 +110,7 @@ FtwAllocate (
   Offset = (UINT8 *) FtwHeader - (UINT8 *) FtwDevice->FtwWorkSpace;
   if (Offset + FTW_WRITE_TOTAL_SIZE (NumberOfWrites, PrivateDataSize) > FtwDevice->FtwWorkSpaceSize) {
     Status = FtwReclaimWorkSpace (FtwDevice, TRUE);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_ABORTED;
     }
 
@@ -135,7 +135,7 @@ FtwAllocate (
              sizeof (EFI_FAULT_TOLERANT_WRITE_HEADER),
              (UINT8 *) FtwHeader
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   //
@@ -148,7 +148,7 @@ FtwAllocate (
             FtwDevice->FtwWorkSpaceBase + Offset,
             WRITES_ALLOCATED
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -217,7 +217,7 @@ FtwWriteRecord (
               FtwDevice->FtwWorkSpaceBaseInSpare + Offset,
               SPARE_COMPLETED
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_ABORTED;
     }
 
@@ -235,7 +235,7 @@ FtwWriteRecord (
     Status = FlushSpareBlockToTargetBlock (FtwDevice, Fvb, Record->Lba, BlockSize, NumberOfWriteBlocks);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   //
@@ -249,7 +249,7 @@ FtwWriteRecord (
             FtwDevice->FtwWorkSpaceBase + Offset,
             DEST_COMPLETED
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -269,7 +269,7 @@ FtwWriteRecord (
               WRITES_COMPLETED
               );
     Header->Complete = FTW_VALID_STATE;
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_ABORTED;
     }
   }
@@ -336,7 +336,7 @@ FtwWrite (
   FtwDevice = FTW_CONTEXT_FROM_THIS (This);
 
   Status    = WorkSpaceRefresh (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -350,7 +350,7 @@ FtwWrite (
       // No additional private data, the private data size is zero. Number of record can be set to 1.
       //
       Status = FtwAllocate (This, &gEfiCallerIdGuid, 0, 1);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     } else {
@@ -390,12 +390,12 @@ FtwWrite (
   // Get the FVB protocol by handle
   //
   Status = FtwGetFvbByHandle (FvBlockHandle, &Fvb);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
   Status = Fvb->GetPhysicalAddress (Fvb, &FvbPhysicalAddress);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "Ftw: Write(), Get FVB physical address - %r\n", Status));
     return EFI_ABORTED;
   }
@@ -404,7 +404,7 @@ FtwWrite (
   // Now, one FVB has one type of BlockSize.
   //
   Status = Fvb->GetBlockSize (Fvb, 0, &BlockSize, &NumberOfBlocks);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "Ftw: Write(), Get block size - %r\n", Status));
     return EFI_ABORTED;
   }
@@ -452,7 +452,7 @@ FtwWrite (
              MyLength,
              (UINT8 *) Record
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   //
@@ -473,8 +473,8 @@ FtwWrite (
   for (Index = 0; Index < NumberOfWriteBlocks; Index += 1) {
     MyLength  = BlockSize;
     Status    = Fvb->Read (Fvb, Lba + Index, 0, &MyLength, Ptr);
-    if (EFI_ERROR (Status)) {
-      FreePool (MyBuffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(MyBuffer);
       return EFI_ABORTED;
     }
 
@@ -493,7 +493,7 @@ FtwWrite (
   SpareBufferSize = FtwDevice->SpareAreaLength;
   SpareBuffer     = AllocatePool (SpareBufferSize);
   if (SpareBuffer == NULL) {
-    FreePool (MyBuffer);
+    FreePool(MyBuffer);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -507,9 +507,9 @@ FtwWrite (
                                         &MyLength,
                                         Ptr
                                         );
-    if (EFI_ERROR (Status)) {
-      FreePool (MyBuffer);
-      FreePool (SpareBuffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(MyBuffer);
+      FreePool(SpareBuffer);
       return EFI_ABORTED;
     }
 
@@ -520,9 +520,9 @@ FtwWrite (
   // Do not assume Spare Block and Target Block have same block size
   //
   Status  = FtwEraseSpareBlock (FtwDevice);
-  if (EFI_ERROR (Status)) {
-    FreePool (MyBuffer);
-    FreePool (SpareBuffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(MyBuffer);
+    FreePool(SpareBuffer);
     return EFI_ABORTED;
   }
   Ptr     = MyBuffer;
@@ -539,9 +539,9 @@ FtwWrite (
                                         &MyLength,
                                         Ptr
                                         );
-    if (EFI_ERROR (Status)) {
-      FreePool (MyBuffer);
-      FreePool (SpareBuffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(MyBuffer);
+      FreePool(SpareBuffer);
       return EFI_ABORTED;
     }
 
@@ -551,7 +551,7 @@ FtwWrite (
   //
   // Free MyBuffer
   //
-  FreePool (MyBuffer);
+  FreePool(MyBuffer);
 
   //
   // Set the SpareComplete in the FTW record,
@@ -564,8 +564,8 @@ FtwWrite (
             FtwDevice->FtwWorkSpaceBase + MyOffset,
             SPARE_COMPLETED
             );
-  if (EFI_ERROR (Status)) {
-    FreePool (SpareBuffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(SpareBuffer);
     return EFI_ABORTED;
   }
 
@@ -576,16 +576,16 @@ FtwWrite (
   //  guaranteed to be completed with fault tolerant manner.
   //
   Status = FtwWriteRecord (This, Fvb, BlockSize);
-  if (EFI_ERROR (Status)) {
-    FreePool (SpareBuffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(SpareBuffer);
     return EFI_ABORTED;
   }
   //
   // Restore spare backup buffer into spare block , if no failure happened during FtwWrite.
   //
   Status  = FtwEraseSpareBlock (FtwDevice);
-  if (EFI_ERROR (Status)) {
-    FreePool (SpareBuffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(SpareBuffer);
     return EFI_ABORTED;
   }
   Ptr     = SpareBuffer;
@@ -598,8 +598,8 @@ FtwWrite (
                                         &MyLength,
                                         Ptr
                                         );
-    if (EFI_ERROR (Status)) {
-      FreePool (SpareBuffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(SpareBuffer);
       return EFI_ABORTED;
     }
 
@@ -608,7 +608,7 @@ FtwWrite (
   //
   // All success.
   //
-  FreePool (SpareBuffer);
+  FreePool(SpareBuffer);
 
   DEBUG (
     (EFI_D_INFO,
@@ -653,7 +653,7 @@ FtwRestart (
   FtwDevice = FTW_CONTEXT_FROM_THIS (This);
 
   Status    = WorkSpaceRefresh (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -665,7 +665,7 @@ FtwRestart (
   // Recover the targt block with the spare block.
   //
   Status = FtwGetFvbByHandle (FvBlockHandle, &Fvb);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -673,7 +673,7 @@ FtwRestart (
   // Now, one FVB has one type of BlockSize
   //
   Status = Fvb->GetBlockSize (Fvb, 0, &BlockSize, &NumberOfBlocks);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "Ftw: Restart(), Get block size - %r\n", Status));
     return EFI_ABORTED;
   }
@@ -701,7 +701,7 @@ FtwRestart (
   //  guaranteed to be completed with fault tolerant manner.
   //
   Status = FtwWriteRecord (This, Fvb, BlockSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -710,7 +710,7 @@ FtwRestart (
   // This is restart, no need to keep spareblock content.
   //
   Status = FtwEraseSpareBlock (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -741,7 +741,7 @@ FtwAbort (
   FtwDevice = FTW_CONTEXT_FROM_THIS (This);
 
   Status    = WorkSpaceRefresh (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -763,7 +763,7 @@ FtwAbort (
             FtwDevice->FtwWorkSpaceBase + Offset,
             WRITES_COMPLETED
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -821,7 +821,7 @@ FtwGetLastWrite (
   FtwDevice = FTW_CONTEXT_FROM_THIS (This);
 
   Status    = WorkSpaceRefresh (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -853,7 +853,7 @@ FtwGetLastWrite (
   //
   if (Record->SpareComplete != FTW_VALID_STATE) {
     Status = GetPreviousRecordOfWrites (Header, &Record);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       FtwAbort (This);
       *Complete = TRUE;
       return EFI_NOT_FOUND;

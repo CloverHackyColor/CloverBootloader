@@ -73,7 +73,7 @@ Returns:
   // Initialize gCpuIo now since the chipset init code requires it.
   //
   Status = gBS->LocateProtocol (&gEfiCpuIo2ProtocolGuid, NULL, (VOID **)&gCpuIo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Initialize variables required to search all PCI segments for PCI devices
@@ -91,7 +91,7 @@ Returns:
                     sizeof (PCAT_PCI_ROOT_BRIDGE_INSTANCE),
                     (VOID **)&PrivateData
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -136,7 +136,7 @@ Returns:
                &PrivateData->PhysicalIoBase, 
                &PrivateData->PhysicalMemoryBase
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -162,7 +162,7 @@ Returns:
     // Build the EFI Device Path Protocol instance for this PCI Root Bridge
     //
     Status = PcatRootBridgeDevicePathConstructor (&PrivateData->DevicePath, PciRootBridgeIndex, (BOOLEAN)((PrivateData->PciExpressBaseAddress != 0) ? TRUE : FALSE));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -170,7 +170,7 @@ Returns:
     // Build the PCI Root Bridge I/O Protocol instance for this PCI Root Bridge
     //
     Status = PcatRootBridgeIoConstructor (&PrivateData->Io, PciSegmentIndex);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     
@@ -196,7 +196,7 @@ Returns:
                                        sizeof (VendorId) / sizeof (UINT16), 
                                        &VendorId
                                        );
-        if ((EFI_ERROR (Status)) || ((VendorId == 0xffff) && (Function == 0))) {
+        if ((EFI_ERROR(Status)) || ((VendorId == 0xffff) && (Function == 0))) {
           //
           // If the PCI Configuration Read fails, or a PCI device does not exist, then 
           // skip this entire PCI device
@@ -220,7 +220,7 @@ Returns:
                                        sizeof (PciConfigurationHeader) / sizeof (UINT16), 
                                        &PciConfigurationHeader
                                        );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           //
           // If the entire PCI Configuration Header can not be read, then skip this entire PCI device
           //
@@ -510,7 +510,7 @@ Returns:
       // Build ACPI descriptors for the resources on the PCI Root Bridge
       //
       Status = ConstructConfiguration(PrivateData);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Create the handle for this PCI Root Bridge 
@@ -523,7 +523,7 @@ Returns:
                      &PrivateData->Io,
                      NULL
                      );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Contruct DeviceIoProtocol
@@ -535,7 +535,7 @@ Returns:
                  (UINT16)PrivateData->PrimaryBus,
                  (UINT16)PrivateData->SubordinateBus
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 #if 0 //patch by nms42
       //
       // Scan this PCI Root Bridge for PCI Option ROMs and add them to the PCI Option ROM Table
@@ -584,7 +584,7 @@ Done:
     if (PrivateData->DevicePath) {
       gBS->FreePool(PrivateData->DevicePath);
     }
-    gBS->FreePool (PrivateData);
+    gBS->FreePool(PrivateData);
   }
 
   //
@@ -652,7 +652,7 @@ Returns:
                     sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR),
                     (VOID **)&PrivateData->Configuration
                     );
-    if (EFI_ERROR (Status )) {
+    if (EFI_ERROR(Status )) {
       return Status;
     }
 
@@ -681,7 +681,7 @@ Returns:
                   sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) * NumConfig + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR),
                   (VOID **)&PrivateData->Configuration
                   );
-  if (EFI_ERROR (Status )) {
+  if (EFI_ERROR(Status )) {
     return Status;
   }
   
@@ -906,7 +906,7 @@ Returns:
                &Value
                );
 
-    if (!EFI_ERROR (Status )) {
+    if (!EFI_ERROR(Status )) {
       if ( Value & 0x01 ) { 
         if (Command & 0x0001) {
           //

@@ -521,7 +521,7 @@ FindStringBlock (
         //
         StringPackage->FontId++;
 
-        FreePool (FontInfo);
+        FreePool(FontInfo);
       }
 
       BlockSize += Ext2.Length;
@@ -639,7 +639,7 @@ GetStringWorker (
              NULL,
              NULL
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -670,7 +670,7 @@ GetStringWorker (
   default:
     return EFI_NOT_FOUND;
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -839,7 +839,7 @@ InsertLackStringBlock (
   } else {
     *BlockType = EFI_HII_SIBT_STRING_UCS2;
   }
-  FreePool (StringPackage->StringBlock);
+  FreePool(StringPackage->StringBlock);
   StringPackage->StringBlock = StringBlock;
   StringPackage->StringPkgHdr->Header.Length += NewBlockSize - OldBlockSize;
 
@@ -911,7 +911,7 @@ SetStringWorker (
              NULL,
              &StartStringId
              );
-  if (EFI_ERROR (Status) && (BlockType == EFI_HII_SIBT_SKIP1 || BlockType == EFI_HII_SIBT_SKIP2)) {
+  if (EFI_ERROR(Status) && (BlockType == EFI_HII_SIBT_SKIP1 || BlockType == EFI_HII_SIBT_SKIP2)) {
     Status = InsertLackStringBlock(StringPackage,
                           StartStringId,
                           StringId,
@@ -919,7 +919,7 @@ SetStringWorker (
                           &StringBlockAddr,
                           (BOOLEAN)(StringFontInfo != NULL)
                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     if (StringFontInfo != NULL) {
@@ -1006,7 +1006,7 @@ SetStringWorker (
       TmpSize
       );
 
-    FreePool (StringPackage->StringBlock);
+    FreePool(StringPackage->StringBlock);
     StringPackage->StringBlock = Block;
     StringPackage->StringPkgHdr->Header.Length += (UINT32) (BlockSize - OldBlockSize);
     break;
@@ -1039,7 +1039,7 @@ SetStringWorker (
       OldBlockSize - (StringTextPtr - StringPackage->StringBlock) - StringSize
       );
 
-    FreePool (StringPackage->StringBlock);
+    FreePool(StringPackage->StringBlock);
     StringPackage->StringBlock = Block;
     StringPackage->StringPkgHdr->Header.Length += (UINT32) (BlockSize - OldBlockSize);
     break;
@@ -1090,7 +1090,7 @@ SetStringWorker (
 
   CopyMem (BlockPtr, StringPackage->StringBlock, OldBlockSize);
 
-  FreePool (StringPackage->StringBlock);
+  FreePool(StringPackage->StringBlock);
   StringPackage->StringBlock = Block;
   StringPackage->StringPkgHdr->Header.Length += Ext2.Length;
 
@@ -1231,7 +1231,7 @@ HiiNewString (
                &NextStringId,
                NULL
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     //
@@ -1275,7 +1275,7 @@ HiiNewString (
       // Append a EFI_HII_SIBT_END block to the end.
       //
       *BlockPtr = EFI_HII_SIBT_END;
-      FreePool (StringPackage->StringBlock);
+      FreePool(StringPackage->StringBlock);
       StringPackage->StringBlock = StringBlock;
       StringPackage->StringPkgHdr->Header.Length += Ucs2BlockSize;
       PackageListNode->PackageListHdr.PackageLength += Ucs2BlockSize;
@@ -1322,7 +1322,7 @@ HiiNewString (
     HeaderSize = (UINT32) (AsciiStrSize ((CHAR8 *) Language) - 1 + sizeof (EFI_HII_STRING_PACKAGE_HDR));
     StringPackage->StringPkgHdr = AllocateZeroPool (HeaderSize);
     if (StringPackage->StringPkgHdr == NULL) {
-      FreePool (StringPackage);
+      FreePool(StringPackage);
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
     }
@@ -1343,8 +1343,8 @@ HiiNewString (
     BlockSize     = Ucs2BlockSize + sizeof (EFI_HII_SIBT_END_BLOCK);
     StringPackage->StringBlock = (UINT8 *) AllocateZeroPool (BlockSize);
     if (StringPackage->StringBlock == NULL) {
-      FreePool (StringPackage->StringPkgHdr);
-      FreePool (StringPackage);
+      FreePool(StringPackage->StringPkgHdr);
+      FreePool(StringPackage);
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
     }
@@ -1406,7 +1406,7 @@ HiiNewString (
     // Append a EFI_HII_SIBT_END block to the end.
     //
     *BlockPtr = EFI_HII_SIBT_END;
-    FreePool (StringPackage->StringBlock);
+    FreePool(StringPackage->StringBlock);
     StringPackage->StringBlock = StringBlock;
     StringPackage->StringPkgHdr->Header.Length += Ucs2BlockSize;
     PackageListNode->PackageListHdr.PackageLength += Ucs2BlockSize;
@@ -1448,7 +1448,7 @@ HiiNewString (
       // Append a EFI_HII_SIBT_END block to the end.
       //
       *BlockPtr = EFI_HII_SIBT_END;
-      FreePool (StringPackage->StringBlock);
+      FreePool(StringPackage->StringBlock);
       StringPackage->StringBlock = StringBlock;
       StringPackage->StringPkgHdr->Header.Length += Ucs2FontBlockSize;
       PackageListNode->PackageListHdr.PackageLength += Ucs2FontBlockSize;
@@ -1509,7 +1509,7 @@ HiiNewString (
       // Append a EFI_HII_SIBT_END block to the end.
       //
       *BlockPtr = EFI_HII_SIBT_END;
-      FreePool (StringPackage->StringBlock);
+      FreePool(StringPackage->StringBlock);
       StringPackage->StringBlock = StringBlock;
       StringPackage->StringPkgHdr->Header.Length += FontBlockSize + Ucs2FontBlockSize;
       PackageListNode->PackageListHdr.PackageLength += FontBlockSize + Ucs2FontBlockSize;
@@ -1523,7 +1523,7 @@ HiiNewString (
   }
 
 Done:
-  if (!EFI_ERROR (Status) && NewStringPackageCreated) {
+  if (!EFI_ERROR(Status) && NewStringPackageCreated) {
     //
     // Trigger any registered notification function for new string package
     //
@@ -1536,7 +1536,7 @@ Done:
       );
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Update MaxString Id to new StringId
     //
@@ -1552,9 +1552,9 @@ Done:
     // Free the allocated new string Package when new string can't be added.
     //
     RemoveEntryList (&StringPackage->StringEntry);
-    FreePool (StringPackage->StringBlock);
-    FreePool (StringPackage->StringPkgHdr);
-    FreePool (StringPackage);
+    FreePool(StringPackage->StringBlock);
+    FreePool(StringPackage->StringPkgHdr);
+    FreePool(StringPackage);
   }
   //
   // The contents of HiiDataBase may updated,need to check.
@@ -1564,7 +1564,7 @@ Done:
   // Only after ReadyToBoot to do the export.
   //
   if (gExportAfterReadyToBoot) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       HiiGetDatabaseInfo(&Private->HiiDatabase);
     }
   }
@@ -1675,7 +1675,7 @@ HiiGetString (
           ) {
       StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
       Status = GetStringWorker (Private, StringPackage, StringId, NULL, NULL, NULL);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         return EFI_INVALID_LANGUAGE;
       }
     }
@@ -1763,7 +1763,7 @@ HiiSetString (
                    (EFI_STRING) String,
                    (EFI_FONT_INFO *) StringFontInfo
                    );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           EfiReleaseLock (&mHiiDatabaseLock);
           return Status;
         }
@@ -2059,14 +2059,14 @@ HiiCompareLanguage (
       //
       // Return FALSE if any characters are different.
       //
-      FreePool (Lan1);
-      FreePool (Lan2);
+      FreePool(Lan1);
+      FreePool(Lan2);
       return FALSE;
     }
   }
 
-  FreePool (Lan1);
-  FreePool (Lan2);
+  FreePool(Lan1);
+  FreePool(Lan2);
 
   //
   // Only return TRUE if Language2[Index] is a Null-terminator which means

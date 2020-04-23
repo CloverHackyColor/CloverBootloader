@@ -58,7 +58,7 @@ InternalGetReportStatusCode (
   //
   if (gBS != NULL && gBS->LocateProtocol != NULL) {
     Status = gBS->LocateProtocol (&gEfiStatusCodeRuntimeProtocolGuid, NULL, (VOID**) &mReportStatusCodeLibStatusCodeProtocol);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       mReportStatusCodeLibStatusCodeProtocol = NULL;
     }
   }
@@ -143,7 +143,7 @@ ReportStatusCodeLibConstructor (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mReportStatusCodeLibVirtualAddressChangeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register notify function for EVT_SIGNAL_EXIT_BOOT_SERVICES
@@ -156,7 +156,7 @@ ReportStatusCodeLibConstructor (
                   &gEfiEventExitBootServicesGuid,
                   &mReportStatusCodeLibExitBootServicesEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -184,10 +184,10 @@ ReportStatusCodeLibDestructor (
 
   ASSERT (gBS != NULL);
   Status = gBS->CloseEvent (mReportStatusCodeLibVirtualAddressChangeEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CloseEvent (mReportStatusCodeLibExitBootServicesEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -679,7 +679,7 @@ ReportStatusCodeEx (
   // Free the allocated buffer
   //
   if (StatusCodeData != (EFI_STATUS_CODE_DATA *) StatusCodeBuffer) {
-    gBS->FreePool (StatusCodeData);
+    gBS->FreePool(StatusCodeData);
   }
 
   return Status;

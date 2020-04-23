@@ -516,7 +516,7 @@ Interrupt8259GetInterruptLine (
                   &gEfiPciIoProtocolGuid,
                   (VOID **) &PciIo
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 

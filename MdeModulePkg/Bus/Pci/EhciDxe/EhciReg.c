@@ -39,7 +39,7 @@ EhcReadCapRegister (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcReadCapRegister: Pci Io read error - %r at %d\n", Status, Offset));
     Data = 0xFFFF;
   }
@@ -75,7 +75,7 @@ EhcReadDbgRegister (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcReadDbgRegister: Pci Io read error - %r at %d\n", Status, Offset));
     Data = 0xFFFF;
   }
@@ -167,7 +167,7 @@ EhcReadOpReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcReadOpReg: Pci Io Read error - %r at %d\n", Status, Offset));
     Data = 0xFFFF;
   }
@@ -204,7 +204,7 @@ EhcWriteOpReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcWriteOpReg: Pci Io Write error: %r at %d\n", Status, Offset));
   }
 }
@@ -513,7 +513,7 @@ EhcResetHC (
   if (!EHC_REG_BIT_IS_SET (Ehc, EHC_USBSTS_OFFSET, USBSTS_HALT)) {
     Status = EhcHaltHC (Ehc, Timeout);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -611,7 +611,7 @@ EhcInitHC (
 
   Status = EhcInitSched (Ehc);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -653,14 +653,14 @@ EhcInitHC (
 
   Status = EhcEnablePeriodSchd (Ehc, EHC_GENERIC_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcInitHC: failed to enable period schedule\n"));
     return Status;
   }
 
   Status = EhcEnableAsyncSchd (Ehc, EHC_GENERIC_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcInitHC: failed to enable async schedule\n"));
     return Status;
   }

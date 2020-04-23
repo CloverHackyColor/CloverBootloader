@@ -103,7 +103,7 @@ SdMmcHcGetSlotInfo (
                         sizeof (SlotInfo),
                         &SlotInfo
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -233,7 +233,7 @@ SdMmcHcOrMmio (
   UINT64                       Or;
 
   Status = SdMmcHcRwMmio (PciIo, BarIndex, Offset, TRUE, Count, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -291,7 +291,7 @@ SdMmcHcAndMmio (
   UINT64                       And;
 
   Status = SdMmcHcRwMmio (PciIo, BarIndex, Offset, TRUE, Count, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -351,7 +351,7 @@ SdMmcHcCheckMmioSet (
   //
   Value  = 0;
   Status = SdMmcHcRwMmio (PciIo, BarIndex, Offset, TRUE, Count, &Value);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -452,7 +452,7 @@ SdMmcHcGetControllerVersion (
   EFI_STATUS                Status;
 
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_CTRL_VER, TRUE, sizeof (UINT16), Version);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -491,7 +491,7 @@ SdMmcHcReset (
                           Slot,
                           EdkiiSdMmcResetPre,
                           NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN,
         "%a: SD/MMC pre reset notifier callback failed - %r\n",
         __FUNCTION__, Status));
@@ -503,7 +503,7 @@ SdMmcHcReset (
   SwReset = BIT0;
   Status  = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_SW_RST, sizeof (SwReset), &SwReset);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "SdMmcHcReset: write SW Reset for All fails: %r\n", Status));
     return Status;
   }
@@ -517,7 +517,7 @@ SdMmcHcReset (
              0x00,
              SD_MMC_HC_GENERIC_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SdMmcHcReset: reset done with %r\n", Status));
     return Status;
   }
@@ -526,7 +526,7 @@ SdMmcHcReset (
   // Enable all interrupt after reset all.
   //
   Status = SdMmcHcEnableInterrupt (PciIo, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SdMmcHcReset: SdMmcHcEnableInterrupt done with %r\n",
       Status));
     return Status;
@@ -542,7 +542,7 @@ SdMmcHcReset (
                           Slot,
                           EdkiiSdMmcResetPost,
                           NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN,
         "%a: SD/MMC post reset notifier callback failed - %r\n",
         __FUNCTION__, Status));
@@ -577,7 +577,7 @@ SdMmcHcEnableInterrupt (
   //
   IntStatus = 0xFFFF;
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_ERR_INT_STS_EN, FALSE, sizeof (IntStatus), &IntStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -611,7 +611,7 @@ SdMmcHcGetCapability (
   UINT64                    Cap;
 
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_CAP, TRUE, sizeof (Cap), &Cap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -675,7 +675,7 @@ SdMmcHcCardDetect (
   // Check Present State Register to see if there is a card presented.
   //
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_PRESENT_STATE, TRUE, sizeof (PresentState), &PresentState);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -689,7 +689,7 @@ SdMmcHcCardDetect (
   // Check Normal Interrupt Status Register
   //
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_NOR_INT_STS, TRUE, sizeof (Data), &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -699,7 +699,7 @@ SdMmcHcCardDetect (
     //
     Data  &= BIT6 | BIT7;
     Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_NOR_INT_STS, FALSE, sizeof (Data), &Data);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -745,7 +745,7 @@ SdMmcHcStopClock (
              0,
              SD_MMC_HC_GENERIC_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -847,7 +847,7 @@ SdMmcHcClockSupply (
   // Stop bus clock at first
   //
   Status = SdMmcHcStopClock (PciIo, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -856,7 +856,7 @@ SdMmcHcClockSupply (
   //
   ClockCtrl |= BIT0;
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_CLOCK_CTRL, FALSE, sizeof (ClockCtrl), &ClockCtrl);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Set SDCLK Frequency Select and Internal Clock Enable fields fails\n"));
     return Status;
   }
@@ -873,7 +873,7 @@ SdMmcHcClockSupply (
              BIT1,
              SD_MMC_HC_GENERIC_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -913,7 +913,7 @@ SdMmcHcPowerControl (
   //
   PowerCtrl &= (UINT8)~BIT0;
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_POWER_CTRL, FALSE, sizeof (PowerCtrl), &PowerCtrl);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -954,7 +954,7 @@ SdMmcHcSetBusWidth (
     Status = SdMmcHcAndMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
   } else if (BusWidth == 4) {
     Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, TRUE, sizeof (HostCtrl1), &HostCtrl1);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     HostCtrl1 |= BIT1;
@@ -962,7 +962,7 @@ SdMmcHcSetBusWidth (
     Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, FALSE, sizeof (HostCtrl1), &HostCtrl1);
   } else if (BusWidth == 8) {
     Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, TRUE, sizeof (HostCtrl1), &HostCtrl1);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     HostCtrl1 &= (UINT8)~BIT1;
@@ -1030,7 +1030,7 @@ SdMmcHcInitV4Enhancements (
       DEBUG ((DEBUG_INFO, "Enabled V4 26 bit data length ADMA support\n"));
     }
     Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1126,7 +1126,7 @@ SdMmcHcInitPowerVoltage (
     HostCtrl2  = BIT3;
     Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
     gBS->Stall (5000);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else {
@@ -1200,7 +1200,7 @@ SdMmcHcInitHost (
                           Slot,
                           EdkiiSdMmcInitHostPre,
                           NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN,
         "%a: SD/MMC pre init notifier callback failed - %r\n",
         __FUNCTION__, Status));
@@ -1212,22 +1212,22 @@ SdMmcHcInitHost (
   Capability = Private->Capability[Slot];
 
   Status = SdMmcHcInitV4Enhancements (PciIo, Slot, Capability, Private->ControllerVersion[Slot]);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcInitClockFreq (PciIo, Slot, Private->BaseClkFreq[Slot], Private->ControllerVersion[Slot]);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcInitPowerVoltage (PciIo, Slot, Capability);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcInitTimeoutCtrl (PciIo, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1241,7 +1241,7 @@ SdMmcHcInitHost (
                           Slot,
                           EdkiiSdMmcInitHostPost,
                           NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN,
         "%a: SD/MMC post init notifier callback failed - %r\n",
         __FUNCTION__, Status));
@@ -1274,7 +1274,7 @@ SdMmcHcUhsSignaling (
 
   HostCtrl2 = (UINT8)~SD_MMC_HC_CTRL_UHS_MASK;
   Status = SdMmcHcAndMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1314,7 +1314,7 @@ SdMmcHcUhsSignaling (
      break;
   }
   Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1325,7 +1325,7 @@ SdMmcHcUhsSignaling (
                           EdkiiSdMmcUhsSignaling,
                           &Timing
                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_ERROR,
         "%a: SD/MMC uhs signaling notifier callback failed - %r\n",
@@ -1365,7 +1365,7 @@ SdMmcSetDriverStrength (
 
   HostCtrl2 = (UINT16)~SD_MMC_HC_CTRL_DRIVER_STRENGTH_MASK;
   Status = SdMmcHcAndMmio (PciIo, SlotIndex, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1497,7 +1497,7 @@ BuildAdmaDescTable (
                     (VOID **)&AdmaDesc,
                     0
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   ZeroMem (AdmaDesc, TableSize);
@@ -1511,7 +1511,7 @@ BuildAdmaDescTable (
                     &Trb->AdmaMap
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != TableSize)) {
+  if (EFI_ERROR(Status) || (Bytes != TableSize)) {
     //
     // Map error or unable to map the whole RFis buffer into a contiguous region.
     //
@@ -1715,7 +1715,7 @@ SdMmcCreateTrb (
                         &Trb->DataPhy,
                         &Trb->DataMap
                         );
-      if (EFI_ERROR (Status) || (Trb->DataLen != MapLength)) {
+      if (EFI_ERROR(Status) || (Trb->DataLen != MapLength)) {
         Status = EFI_BAD_BUFFER_SIZE;
         goto Error;
       }
@@ -1739,7 +1739,7 @@ SdMmcCreateTrb (
         Trb->AdmaLengthMode = SdMmcAdmaLen26b;
       }
       Status = BuildAdmaDescTable (Trb, Private->ControllerVersion[Slot]);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         PciIo->Unmap (PciIo, Trb->DataMap);
         goto Error;
       }
@@ -1811,7 +1811,7 @@ SdMmcFreeTrb (
       Trb->DataMap
     );
   }
-  FreePool (Trb);
+  FreePool(Trb);
   return;
 }
 
@@ -1959,7 +1959,7 @@ SdMmcExecTrb (
   //
   IntStatus = 0xFFFF;
   Status    = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_ERR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -1967,14 +1967,14 @@ SdMmcExecTrb (
   //
   IntStatus = 0xFF3F;
   Status    = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_NOR_INT_STS, FALSE, sizeof (IntStatus), &IntStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   if (Private->ControllerVersion[Trb->Slot] >= SD_MMC_HC_CTRL_VER_400) {
     Status = SdMmcHcCheckMmioSet(PciIo, Trb->Slot, SD_MMC_HC_HOST_CTRL2, sizeof(UINT16),
                                  SD_MMC_HC_64_ADDR_EN, SD_MMC_HC_64_ADDR_EN);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       AddressingMode64 = TRUE;
     }
   }
@@ -1986,13 +1986,13 @@ SdMmcExecTrb (
       (Trb->Mode == SdMmcAdma64bV4Mode)) {
     HostCtrl1 = BIT4;
     Status = SdMmcHcOrMmio (PciIo, Trb->Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else if (Trb->Mode == SdMmcAdma64bV3Mode) {
     HostCtrl1 = BIT4|BIT3;
     Status = SdMmcHcOrMmio (PciIo, Trb->Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -2013,7 +2013,7 @@ SdMmcExecTrb (
       Status = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_SDMA_ADDR, FALSE, sizeof (UINT32), &SdmaAddr);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else if ((Trb->Mode == SdMmcAdma32bMode) ||
@@ -2021,7 +2021,7 @@ SdMmcExecTrb (
              (Trb->Mode == SdMmcAdma64bV4Mode)) {
     AdmaAddr = (UINT64)(UINTN)Trb->AdmaDescPhy;
     Status   = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_ADMA_SYS_ADDR, FALSE, sizeof (AdmaAddr), &AdmaAddr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -2035,7 +2035,7 @@ SdMmcExecTrb (
   }
 
   Status = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_BLK_SIZE, FALSE, sizeof (BlkSize), &BlkSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2051,13 +2051,13 @@ SdMmcExecTrb (
   } else {
     Status = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_BLK_COUNT, FALSE, sizeof (UINT16), &BlkCount);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Argument = Packet->SdMmcCmdBlk->CommandArgument;
   Status   = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_ARG1, FALSE, sizeof (Argument), &Argument);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2083,7 +2083,7 @@ SdMmcExecTrb (
   }
 
   Status = SdMmcHcRwMmio (PciIo, Trb->Slot, SD_MMC_HC_TRANS_MOD, FALSE, sizeof (TransMode), &TransMode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2164,7 +2164,7 @@ SdMmcCheckTrbResult (
              sizeof (IntStatus),
              &IntStatus
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
   //
@@ -2186,7 +2186,7 @@ SdMmcCheckTrbResult (
                  sizeof (IntStatus),
                  &IntStatus
                  );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         if ((IntStatus & BIT4) == BIT4) {
           Status = EFI_SUCCESS;
         } else {
@@ -2211,7 +2211,7 @@ SdMmcCheckTrbResult (
                sizeof (IntStatus),
                &IntStatus
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     if ((IntStatus & 0x0F) != 0) {
@@ -2229,7 +2229,7 @@ SdMmcCheckTrbResult (
                 sizeof (SwReset),
                 &SwReset
                 );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     Status = SdMmcHcWaitMmioSet (
@@ -2241,7 +2241,7 @@ SdMmcCheckTrbResult (
                0,
                SD_MMC_HC_GENERIC_TIMEOUT
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2264,7 +2264,7 @@ SdMmcCheckTrbResult (
                   sizeof (IntStatus),
                   &IntStatus
                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     //
@@ -2292,7 +2292,7 @@ SdMmcCheckTrbResult (
                  );
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     Trb->DataPhy = (UINT64)(UINTN)SdmaAddr;
@@ -2338,7 +2338,7 @@ Done:
   //
   // Get response data when the cmd is executed successfully.
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (Packet->SdMmcCmdBlk->CommandType != SdMmcCommandTypeBc) {
       for (Index = 0; Index < 4; Index++) {
         Status = SdMmcHcRwMmio (
@@ -2349,7 +2349,7 @@ Done:
                    sizeof (UINT32),
                    &Response[Index]
                    );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           SdMmcHcLedOnOff (Private->PciIo, Trb->Slot, FALSE);
           return Status;
         }

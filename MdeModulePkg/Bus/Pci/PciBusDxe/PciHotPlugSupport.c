@@ -103,7 +103,7 @@ InitializeHotPlugSupport (
                   (VOID **) &gPciHotPlugInit
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -113,7 +113,7 @@ InitializeHotPlugSupport (
                               &HpcList
                               );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 
     gPciRootHpcPool   = HpcList;
     gPciRootHpcCount  = HpcCount;
@@ -219,7 +219,7 @@ CreateEventForHpc (
                   &((gPciRootHpcData + HpIndex)->Event)
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *Event = (gPciRootHpcData + HpIndex)->Event;
   }
 
@@ -303,7 +303,7 @@ IsSHPC (
   // If the PCI-PCI bridge has the hot plug controller build-in,
   // then return TRUE;
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return TRUE;
   }
 
@@ -355,7 +355,7 @@ SupportsPcieHotplug (
                                     1,
                                     &Capability
                                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -385,7 +385,7 @@ SupportsPcieHotplug (
                                     1,
                                     &SlotCapability
                                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -429,7 +429,7 @@ GetResourcePaddingForHpb (
                                 &Attributes
                                 );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
 

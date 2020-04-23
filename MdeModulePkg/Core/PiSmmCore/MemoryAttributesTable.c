@@ -1220,8 +1220,8 @@ PublishMemoryAttributesTable (
                &DescriptorSize,
                &DescriptorVersion
                );
-    if (EFI_ERROR (Status)) {
-      FreePool (MemoryMap);
+    if (EFI_ERROR(Status)) {
+      FreePool(MemoryMap);
     }
   } while (Status == EFI_BUFFER_TOO_SMALL);
 
@@ -1255,7 +1255,7 @@ PublishMemoryAttributesTable (
   }
 
   Status = gSmst->SmmInstallConfigurationTable (gSmst, &gEdkiiPiSmmMemoryAttributesTableGuid, MemoryAttributesTable, MemoryAttributesTableSize);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 
@@ -1281,7 +1281,7 @@ SmmInstallImageRecord (
              &NoHandles,
              &HandleBuffer
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
 
@@ -1291,7 +1291,7 @@ SmmInstallImageRecord (
                       &gEfiLoadedImageProtocolGuid,
                       (VOID **)&LoadedImage
                       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     DEBUG ((DEBUG_VERBOSE, "LoadedImage - 0x%x 0x%x ", LoadedImage->ImageBase, LoadedImage->ImageSize));
@@ -1309,7 +1309,7 @@ SmmInstallImageRecord (
     SmmInsertImageRecord (&DriverEntry);
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 }
 
 /**
@@ -1362,7 +1362,7 @@ SmmCoreInitializeMemoryAttributesTable (
                     SmmInstallMemoryAttributesTable,
                     &Registration
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return ;
 }

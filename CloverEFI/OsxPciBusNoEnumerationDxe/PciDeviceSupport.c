@@ -149,7 +149,7 @@ Returns:
 {
   DestroyPciDeviceTree (RootBridge);
 
-  gBS->FreePool (RootBridge);
+  gBS->FreePool(RootBridge);
 
   return EFI_SUCCESS;
 }
@@ -192,7 +192,7 @@ Returns:
     if (IS_PCI_BRIDGE (&(Temp->Pci))) {
       DestroyPciDeviceTree (Temp);
     }
-    gBS->FreePool (Temp);
+    gBS->FreePool(Temp);
   }
   
   return EFI_SUCCESS;
@@ -303,7 +303,7 @@ Returns:
                   );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DBG("PciIo protocol not installed Status=%r\n", Status);
     return Status;
   } else {
@@ -315,7 +315,7 @@ Returns:
                     PciIoDevice->Handle,   
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -334,7 +334,7 @@ Returns:
              &PciExpressCapRegOffset,
              NULL
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     PciIoDevice->IsPciExp = TRUE;
 //    DEBUG ((EFI_D_ERROR, "PciExp - %x (B-%x, D-%x, F-%x)\n", PciIoDevice->IsPciExp, PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber));
     DBG("PciExp - %x (B-%x, D-%x, F-%x)\n", PciIoDevice->IsPciExp, PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber);
@@ -388,7 +388,7 @@ Returns:
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
 
     //
@@ -410,7 +410,7 @@ Returns:
         Node    = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
         Status  = DeRegisterPciDevice (Controller, Node->Handle);
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
 
@@ -462,7 +462,7 @@ Returns:
                       );
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->OpenProtocol (
             Controller,
             &gEfiPciRootBridgeIoProtocolGuid,
@@ -775,7 +775,7 @@ Returns:
                   (VOID **) &Dev
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 

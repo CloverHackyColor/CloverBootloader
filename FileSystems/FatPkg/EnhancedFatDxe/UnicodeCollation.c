@@ -53,7 +53,7 @@ InitializeUnicodeCollationSupportWorker (
                   &NumHandles,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -73,7 +73,7 @@ InitializeUnicodeCollationSupportWorker (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -90,7 +90,7 @@ InitializeUnicodeCollationSupportWorker (
                      NULL
                      );
     if (BestLanguage != NULL) {
-      FreePool (BestLanguage);
+      FreePool(BestLanguage);
       mUnicodeCollationInterface = Uci;
       ReturnStatus = EFI_SUCCESS;
       break;
@@ -98,10 +98,10 @@ InitializeUnicodeCollationSupportWorker (
   }
 
   if (Language != NULL) {
-    FreePool (Language);
+    FreePool(Language);
   }
 
-  FreePool (Handles);
+  FreePool(Handles);
 
   return ReturnStatus;
 }
@@ -140,7 +140,7 @@ InitializeUnicodeCollationSupport (
   // If the attempt to use Unicode Collation 2 Protocol fails, then we fall back
   // on the ISO 639-2 Unicode Collation Protocol.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = InitializeUnicodeCollationSupportWorker (
                AgentHandle,
                &gEfiUnicodeCollationProtocolGuid,

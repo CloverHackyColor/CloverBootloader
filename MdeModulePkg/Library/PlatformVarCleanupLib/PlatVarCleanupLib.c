@@ -70,7 +70,7 @@ InternalGetVarErrorFlag (
                   &Size,
                   &ErrorFlag
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO, "%s - not found\n", VAR_ERROR_FLAG_NAME));
     return VAR_ERROR_FLAG_NO_ERROR;
   }
@@ -111,7 +111,7 @@ IsUserVariable (
                         Guid,
                         &Property
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // No property, it is user variable.
     //
@@ -225,7 +225,7 @@ CreateUserVariableNode (
       Status = gRT->GetNextVariableName (&VarNameSize, VarName, &Guid);
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (IsUserVariable (VarName, &Guid)) {
         DataSize = MaxDataSize;
         GetVariableStatus = gRT->GetVariable (VarName, &Guid, &Attributes, &DataSize, Data);
@@ -235,7 +235,7 @@ CreateUserVariableNode (
           MaxDataSize = DataSize;
           GetVariableStatus = gRT->GetVariable (VarName, &Guid, &Attributes, &DataSize, Data);
         }
-        ASSERT_EFI_ERROR (GetVariableStatus);
+        ASSERT_EFI_ERROR(GetVariableStatus);
 
         if ((Attributes & EFI_VARIABLE_NON_VOLATILE) != 0) {
           UserVariableNode = FindUserVariableNodeByGuid (&Guid);
@@ -278,8 +278,8 @@ CreateUserVariableNode (
   ASSERT (mUserVariableCount <= MAX_USER_VARIABLE_COUNT);
   DEBUG ((EFI_D_INFO, "PlatformVarCleanup - User variable count: 0x%04x\n", mUserVariableCount));
 
-  FreePool (VarName);
-  FreePool (Data);
+  FreePool(VarName);
+  FreePool(Data);
 }
 
 /**
@@ -308,14 +308,14 @@ DestroyUserVariableNode (
 
       RemoveEntryList (&UserVariableNameNode->Link);
 
-      FreePool (UserVariableNameNode->Name);
-      FreePool (UserVariableNameNode->PromptString);
-      FreePool (UserVariableNameNode->HelpString);
-      FreePool (UserVariableNameNode);
+      FreePool(UserVariableNameNode->Name);
+      FreePool(UserVariableNameNode->PromptString);
+      FreePool(UserVariableNameNode->HelpString);
+      FreePool(UserVariableNameNode);
     }
 
-    FreePool (UserVariableNode->PromptString);
-    FreePool (UserVariableNode);
+    FreePool(UserVariableNode->PromptString);
+    FreePool(UserVariableNode);
   }
 }
 
@@ -378,8 +378,8 @@ CreateTimeBasedPayload (
 
   ZeroMem (&Time, sizeof (EFI_TIME));
   Status = gRT->GetTime (&Time, NULL);
-  if (EFI_ERROR (Status)) {
-    FreePool (NewData);
+  if (EFI_ERROR(Status)) {
+    FreePool(NewData);
     return Status;
   }
   Time.Pad1       = 0;
@@ -395,7 +395,7 @@ CreateTimeBasedPayload (
   CopyGuid (&DescriptorData->AuthInfo.CertType, &gEfiCertPkcs7Guid);
 
   if (Payload != NULL) {
-    FreePool (Payload);
+    FreePool(Payload);
   }
 
   *DataSize = DescriptorSize + PayloadSize;
@@ -463,8 +463,8 @@ CreateCounterBasedPayload (
   DescriptorData = (EFI_VARIABLE_AUTHENTICATION *) (NewData);
 
   Status = gBS->GetNextMonotonicCount (&MonotonicCount);
-  if (EFI_ERROR (Status)) {
-    FreePool (NewData);
+  if (EFI_ERROR(Status)) {
+    FreePool(NewData);
     return Status;
   }
   DescriptorData->MonotonicCount = MonotonicCount;
@@ -475,7 +475,7 @@ CreateCounterBasedPayload (
   CopyGuid (&DescriptorData->AuthInfo.CertType, &gEfiCertTypeRsa2048Sha256Guid);
 
   if (Payload != NULL) {
-    FreePool (Payload);
+    FreePool(Payload);
   }
 
   *DataSize = DescriptorSize + PayloadSize;
@@ -520,22 +520,22 @@ DeleteUserVariable (
           DataSize = 0;
           Data = NULL;
           Status = CreateTimeBasedPayload (&DataSize, &Data);
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             Status = gRT->SetVariable (UserVariableNameNode->Name, &UserVariableNode->Guid, UserVariableNameNode->Attributes, DataSize, Data);
-            FreePool (Data);
+            FreePool(Data);
           }
         } else if ((UserVariableNameNode->Attributes & EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS) != 0) {
           DataSize = 0;
           Data = NULL;
           Status = CreateCounterBasedPayload (&DataSize, &Data);
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             Status = gRT->SetVariable (UserVariableNameNode->Name, &UserVariableNode->Guid, UserVariableNameNode->Attributes, DataSize, Data);
-            FreePool (Data);
+            FreePool(Data);
           }
         } else {
           Status = gRT->SetVariable (UserVariableNameNode->Name, &UserVariableNode->Guid, 0, 0, NULL);
         }
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           UserVariableNameNode->Deleted = TRUE;
         } else {
           DEBUG ((EFI_D_INFO, "PlatformVarCleanup - Delete variable fail: %g:%s\n", &UserVariableNode->Guid, UserVariableNameNode->Name));
@@ -615,7 +615,7 @@ VariableCleanupHiiExtractConfig (
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
-    FreePool (ConfigRequestHdr);
+    FreePool(ConfigRequestHdr);
   }
 
   Status = Private->ConfigRouting->BlockToConfig (
@@ -626,13 +626,13 @@ VariableCleanupHiiExtractConfig (
                                      Results,
                                      Progress
                                      );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Free the allocated config request string.
   //
   if (AllocatedRequest) {
-    FreePool (ConfigRequest);
+    FreePool(ConfigRequest);
     ConfigRequest = NULL;
   }
   //
@@ -863,7 +863,7 @@ VariableCleanupHiiRouteConfig (
                             &BufferSize,
                             Progress
                             );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   DeleteUserVariable (FALSE, &Private->VariableCleanupData);
   //
@@ -1077,7 +1077,7 @@ PlatformVarCleanup (
       // Locate FormBrowser2 protocol.
       //
       Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &FormBrowser2);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 
@@ -1096,7 +1096,7 @@ PlatformVarCleanup (
                       NULL,
                       (VOID **) &Private->ConfigRouting
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Done;
       }
 
@@ -1111,7 +1111,7 @@ PlatformVarCleanup (
                       &Private->ConfigAccess,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Done;
       }
 
@@ -1163,7 +1163,7 @@ Done:
     HiiRemovePackages (Private->HiiHandle);
   }
 
-  FreePool (Private);
+  FreePool(Private);
 
   //
   // Destroyed the created user variable nodes
@@ -1241,7 +1241,7 @@ PlatformVarCleanupLibConstructor (
                   &gEfiEndOfDxeEventGroupGuid,
                   &mPlatVarCleanupLibEndOfDxeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -1268,7 +1268,7 @@ PlatformVarCleanupLibDestructor (
   // Close the End of DXE event.
   //
   Status = gBS->CloseEvent (mPlatVarCleanupLibEndOfDxeEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

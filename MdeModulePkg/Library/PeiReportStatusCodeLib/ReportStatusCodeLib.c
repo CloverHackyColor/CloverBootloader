@@ -69,7 +69,7 @@ InternalReportStatusCode (
                                );
     if (Status == EFI_NOT_AVAILABLE_YET) {
       Status = OemHookStatusCodeInitialize ();
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         return OemHookStatusCodeReport (Type, Value, Instance, (EFI_GUID *) CallerId, Data);
       }
     }

@@ -255,7 +255,7 @@ RecordFmpCapsuleStatusVariable (
 
   if (DevicePathStr != NULL) {
     CopyMem ((UINT8 *)CapsuleResultVariableFmp + sizeof(EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize, DevicePathStr, DevicePathStrSize);
-    FreePool (DevicePathStr);
+    FreePool(DevicePathStr);
     DevicePathStr = NULL;
   }
 
@@ -263,7 +263,7 @@ RecordFmpCapsuleStatusVariable (
   if ((CapsuleHeader->Flags & CAPSULE_FLAGS_PERSIST_ACROSS_RESET) != 0) {
     Status = WriteNewCapsuleResultVariable(CapsuleResultVariable, CapsuleResultVariableSize);
   }
-  FreePool (CapsuleResultVariable);
+  FreePool(CapsuleResultVariable);
   return Status;
 }
 
@@ -366,7 +366,7 @@ InitCapsuleLastVariable (
                         );
       } else {
         if (CapsuleResult != NULL) {
-          FreePool (CapsuleResult);
+          FreePool(CapsuleResult);
         }
       }
     }
@@ -418,7 +418,7 @@ InitCapsuleUpdateVariable (
                     0,
                     (VOID *)NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // There is no capsule variables, quit
       //
@@ -446,9 +446,9 @@ InitCapsuleRelocationInfo (
   //
   if (!CoDCheckCapsuleOnDiskFlag()) {
     Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = VariableLock->RequestToLock (VariableLock, COD_RELOCATION_INFO_VAR_NAME, &gEfiCapsuleVendorGuid);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 }

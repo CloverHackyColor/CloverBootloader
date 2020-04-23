@@ -98,7 +98,7 @@ GetMacAddress()
                                     &NumberOfHandles,
                                     &HandleBuffer
                                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -112,7 +112,7 @@ GetMacAddress()
                                   &gEfiDevicePathProtocolGuid,
                                   (VOID **) &Node
                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) Node;
@@ -147,7 +147,7 @@ GetMacAddress()
     }
   }
   if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
   }
   if (!Found && GetLegacyLanAddress) {
     ////

@@ -132,7 +132,7 @@ InitializePcRtc (
   mModuleGlobal.CenturyRtcAddress = GetCenturyRtcAddress ();
 
   Status = PcRtcInit (&mModuleGlobal);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -145,7 +145,7 @@ InitializePcRtc (
                   &gEfiAcpi10TableGuid,
                   &Event
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -158,7 +158,7 @@ InitializePcRtc (
                   &gEfiAcpiTableGuid,
                   &Event
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -174,7 +174,7 @@ InitializePcRtc (
                   NULL,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

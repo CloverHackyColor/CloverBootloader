@@ -60,7 +60,7 @@ AllocateMemoryBelow4G (
                    Pages,
                    &Address
                    );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Buffer = (VOID *) (UINTN) Address;
   ZeroMem (Buffer, Size);
@@ -239,7 +239,7 @@ AcpiS3ContextSaveOnEndOfDxe (
   DEBUG ((EFI_D_INFO, "AcpiS3ContextSave!\n"));
 
   Status = gBS->LocateProtocol (&gEfiLockBoxProtocolGuid, NULL, &Interface);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO | EFI_D_WARN, "ACPI S3 context can't be saved without LockBox!\n"));
     goto Done;
   }
@@ -268,10 +268,10 @@ AcpiS3ContextSaveOnEndOfDxe (
              (VOID *)(UINTN)Idtr,
              (UINTN)sizeof(IA32_DESCRIPTOR)
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = SetLockBoxAttributes (&mAcpiS3IdtrProfileGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Allocate page table
@@ -303,23 +303,23 @@ AcpiS3ContextSaveOnEndOfDxe (
              &AcpiS3ContextBuffer,
              sizeof(AcpiS3ContextBuffer)
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = SaveLockBox (
              &gEfiAcpiS3ContextGuid,
              (VOID *)(UINTN)AcpiS3Context,
              (UINTN)sizeof(*AcpiS3Context)
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = SetLockBoxAttributes (&gEfiAcpiS3ContextGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 Done:
   //
   // Close the event, deregistering the callback and freeing resources.
   //
   Status = gBS->CloseEvent (Event);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 

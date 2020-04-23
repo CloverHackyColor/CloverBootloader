@@ -33,11 +33,11 @@ InitializationDispatcherWorker (
     // Call Serial Port Lib API to initialize serial port.
     //
     Status = SerialPortInitialize ();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   if (FeaturePcdGet (PcdStatusCodeUseMemory)) {
     Status = MemoryStatusCodeInitializeWorker ();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 }
 
@@ -66,7 +66,7 @@ StatusCodeHandlerSmmEntry (
                     NULL,
                     (VOID **) &mRscHandlerProtocol
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Dispatch initialization request to supported devices

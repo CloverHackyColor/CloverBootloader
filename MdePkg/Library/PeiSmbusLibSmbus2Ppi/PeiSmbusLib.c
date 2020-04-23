@@ -27,7 +27,7 @@ InternalGetSmbusPpi (
   EFI_PEI_SMBUS2_PPI     *SmbusPpi;
 
   Status = PeiServicesLocatePpi (&gEfiPeiSmbus2PpiGuid, 0, NULL, (VOID **) &SmbusPpi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (SmbusPpi != NULL);
 
   return SmbusPpi;

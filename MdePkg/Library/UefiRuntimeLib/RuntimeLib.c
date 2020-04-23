@@ -102,7 +102,7 @@ RuntimeDriverLibConstruct (
                   &mEfiVirtualNotifyEvent
                   );
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
@@ -113,7 +113,7 @@ RuntimeDriverLibConstruct (
                   &mEfiExitBootServicesEvent
                   );
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -144,10 +144,10 @@ RuntimeDriverLibDeconstruct (
   //
   ASSERT (gBS != NULL);
   Status = gBS->CloseEvent (mEfiVirtualNotifyEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CloseEvent (mEfiExitBootServicesEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

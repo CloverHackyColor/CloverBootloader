@@ -73,7 +73,7 @@ DataHubStdErrEventHandler (
   Mtc = 0;
   do {
     Status = DataHub->GetNextRecord (DataHub, &Mtc, &mDataHubStdErrEvent, &Record);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (CompareGuid (&Record->DataRecordGuid, &gEfiDataHubStatusCodeRecordGuid)) {
         DataRecord = (DATA_HUB_STATUS_CODE_DATA_RECORD *) (((CHAR8 *) Record) + Record->HeaderSize);
 
@@ -91,7 +91,7 @@ DataHubStdErrEventHandler (
         }
       }
     }
-  } while ((Mtc != 0) && !EFI_ERROR (Status));
+  } while ((Mtc != 0) && !EFI_ERROR(Status));
 }
 
 /**
@@ -130,7 +130,7 @@ DataHubStdErrInitialize (
                   mDataHub,
                   &mDataHubStdErrEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -142,7 +142,7 @@ DataHubStdErrInitialize (
                       DataClass,
                       NULL
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseEvent (mDataHubStdErrEvent);
   }
 

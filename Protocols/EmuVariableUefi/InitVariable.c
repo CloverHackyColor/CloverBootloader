@@ -350,8 +350,8 @@ CopyRTVariables (
   // print just the first time
   //CopyVarsDebugPrint = FALSE;
   
-  FreePool (Name);
-  FreePool (Data);
+  FreePool(Name);
+  FreePool(Data);
 }
 
 ////////////////////////////////////////
@@ -410,7 +410,7 @@ EmuVariableControlProtocolInstallEmulation (
                                &mVirtualAddressChangeEvent
                                );
    DBG(", CreateEventEx VirtualAddressChange = %r\n", Status);
-   ASSERT_EFI_ERROR (Status);
+   ASSERT_EFI_ERROR(Status);
    
    Status = gBS->CreateEventEx (
                               EVT_NOTIFY_SIGNAL,
@@ -421,7 +421,7 @@ EmuVariableControlProtocolInstallEmulation (
                               &mExitBootServicesEvent
                               );
    DBG(", CreateEventEx ExitBootServices = %r\n", Status);
-   ASSERT_EFI_ERROR (Status); 
+   ASSERT_EFI_ERROR(Status); 
   */
   
   // old style CreateEvent
@@ -438,7 +438,7 @@ EmuVariableControlProtocolInstallEmulation (
                              );
   
   DBG(", CreateEvent VirtualAddressChange = %r", Status);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   
   //
   // Create an Exit Boot Services event.
@@ -452,7 +452,7 @@ EmuVariableControlProtocolInstallEmulation (
                              );
   
   DBG(", CreateEvent ExitBootServices = %r", Status);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   
   //
   // Add EmuVariableUefiPresent variable to allow /ect/rc* scripts to detect
@@ -538,7 +538,7 @@ VariableServiceInitialize (
   DBG("EmuVariableUefi Initialize:");
   Status = VariableCommonInitialize (ImageHandle, SystemTable);
   DBG(" VariableCommonInitialize = %r", Status);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   
   //
   // Store orig RS var services

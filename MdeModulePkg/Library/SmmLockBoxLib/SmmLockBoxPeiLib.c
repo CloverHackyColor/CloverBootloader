@@ -259,8 +259,8 @@ InternalRestoreLockBoxFromSmram (
              NULL,
              (VOID **)&SmmAccess
              );
-  if (!EFI_ERROR (Status)) {
-    for (Index = 0; !EFI_ERROR (Status); Index++) {
+  if (!EFI_ERROR(Status)) {
+    for (Index = 0; !EFI_ERROR(Status); Index++) {
       Status = SmmAccess->Open ((EFI_PEI_SERVICES **)GetPeiServicesTablePointer (), SmmAccess, Index);
     }
   }
@@ -360,8 +360,8 @@ InternalRestoreAllLockBoxInPlaceFromSmram (
              NULL,
              (VOID **)&SmmAccess
              );
-  if (!EFI_ERROR (Status)) {
-    for (Index = 0; !EFI_ERROR (Status); Index++) {
+  if (!EFI_ERROR(Status)) {
+    for (Index = 0; !EFI_ERROR(Status); Index++) {
       Status = SmmAccess->Open ((EFI_PEI_SERVICES **)GetPeiServicesTablePointer (), SmmAccess, Index);
     }
   }
@@ -558,7 +558,7 @@ RestoreLockBox (
              NULL,
              (VOID **)&SmmCommunicationPpi
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SmmLockBoxPeiLib LocatePpi - (%r)\n", Status));
     Status = InternalRestoreLockBoxFromSmram (Guid, Buffer, Length);
     DEBUG ((DEBUG_INFO, "SmmLockBoxPeiLib RestoreLockBox - Exit (%r)\n", Status));
@@ -679,7 +679,7 @@ RestoreAllLockBoxInPlace (
              NULL,
              (VOID **)&SmmCommunicationPpi
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SmmLockBoxPeiLib LocatePpi - (%r)\n", Status));
     Status = InternalRestoreAllLockBoxInPlaceFromSmram ();
     DEBUG ((DEBUG_INFO, "SmmLockBoxPeiLib RestoreAllLockBoxInPlace - Exit (%r)\n", Status));
@@ -724,7 +724,7 @@ RestoreAllLockBoxInPlace (
     Status = InternalRestoreAllLockBoxInPlaceFromSmram ();
     LockBoxParameterRestoreAllInPlace->Header.ReturnStatus = (UINT64)Status;
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = (EFI_STATUS)LockBoxParameterRestoreAllInPlace->Header.ReturnStatus;
   if (Status != EFI_SUCCESS) {

@@ -70,9 +70,9 @@ S3BootScriptExecutorEntryFunction (
   //
   // If invalid script table or opcode in S3 boot script table.
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     CpuDeadLoop ();
     return Status;
   }
@@ -230,7 +230,7 @@ RegisterMemoryProfileImage (
 
     FilePath = (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *)TempBuffer;
     Status = gBS->LocateProtocol (&gEdkiiMemoryProfileGuid, NULL, (VOID **) &ProfileProtocol);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       EfiInitializeFwVolDevicepathNode (FilePath, FileName);
       SetDevicePathEndNode (FilePath + 1);
 
@@ -270,7 +270,7 @@ ReadyToLockEventNotify (
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR               MemDesc;
 
   Status = gBS->LocateProtocol (&gEfiDxeSmmReadyToLockProtocolGuid, NULL, &Interface);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -284,7 +284,7 @@ ReadyToLockEventNotify (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Reload BootScriptExecutor image itself to RESERVED mem
@@ -296,14 +296,14 @@ ReadyToLockEventNotify (
              (VOID **) &Buffer,
              &BufferSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ImageContext.Handle    = Buffer;
   ImageContext.ImageRead = PeCoffLoaderImageReadFromMemory;
   //
   // Get information about the image being loaded
   //
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (ImageContext.SectionAlignment > EFI_PAGE_SIZE) {
     Pages = EFI_SIZE_TO_PAGES ((UINTN) (ImageContext.ImageSize + ImageContext.SectionAlignment));
   } else {
@@ -316,13 +316,13 @@ ReadyToLockEventNotify (
                   Pages,
                   &FfsBuffer
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Make sure that the buffer can be used to store code.
   //
   Status = gDS->GetMemorySpaceDescriptor (FfsBuffer, &MemDesc);
-  if (!EFI_ERROR (Status) && (MemDesc.Attributes & EFI_MEMORY_XP) != 0) {
+  if (!EFI_ERROR(Status) && (MemDesc.Attributes & EFI_MEMORY_XP) != 0) {
     gDS->SetMemorySpaceAttributes (
            FfsBuffer,
            EFI_PAGES_TO_SIZE (Pages),
@@ -340,18 +340,18 @@ ReadyToLockEventNotify (
   // Load the image to our new buffer
   //
   Status = PeCoffLoaderLoadImage (&ImageContext);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Relocate the image in our new buffer
   //
   Status = PeCoffLoaderRelocateImage (&ImageContext);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Free the buffer allocated by ReadSection since the image has been relocated in the new buffer
   //
-  gBS->FreePool (Buffer);
+  gBS->FreePool(Buffer);
 
   //
   // Flush the instruction cache so the image data is written before we execute it
@@ -366,7 +366,7 @@ ReadyToLockEventNotify (
     );
 
   Status = ((EFI_IMAGE_ENTRY_POINT)(UINTN)(ImageContext.EntryPoint)) (NewImageHandle, gST);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Additional step for BootScript integrity
@@ -377,10 +377,10 @@ ReadyToLockEventNotify (
              (VOID *)(UINTN)ImageContext.ImageAddress,
              (UINTN)ImageContext.ImageSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = SetLockBoxAttributes (&mBootScriptExecutorImageGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   gBS->CloseEvent (Event);
 }
@@ -428,7 +428,7 @@ BootScriptExecutorEntryPoint (
   // be reloaded be itself.This is a work-around
   //
   Status = gBS->LocateProtocol (&gEfiCallerIdGuid, NULL, &DevicePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
       //
       // Create ReadyToLock event to reload BootScriptExecutor image
       // to RESERVED mem and save it to LockBox.
@@ -465,7 +465,7 @@ BootScriptExecutorEntryPoint (
                       Pages,
                       &BootScriptExecutorBuffer
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       EfiBootScriptExecutorVariable = (BOOT_SCRIPT_EXECUTOR_VARIABLE *)(UINTN)BootScriptExecutorBuffer;
       EfiBootScriptExecutorVariable->BootScriptExecutorEntrypoint = (UINTN) S3BootScriptExecutorEntryFunction ;
@@ -475,7 +475,7 @@ BootScriptExecutorEntryPoint (
                  &BootScriptExecutorBuffer,
                  sizeof(BootScriptExecutorBuffer)
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Additional step for BootScript integrity
@@ -486,10 +486,10 @@ BootScriptExecutorEntryPoint (
                  EfiBootScriptExecutorVariable,
                  sizeof(*EfiBootScriptExecutorVariable)
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       Status = SetLockBoxAttributes (&gEfiBootScriptExecutorContextGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
 
     return EFI_SUCCESS;

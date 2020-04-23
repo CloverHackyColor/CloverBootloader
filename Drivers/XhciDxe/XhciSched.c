@@ -175,10 +175,10 @@ XhcCreateUrb (
   Urb->Context  = Context;
 
   Status = XhcCreateTransferTrb (Xhc, Urb);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcCreateUrb: XhcCreateTransferTrb Failed, Status = %r\n", Status));
-    FreePool (Urb);
+    FreePool(Urb);
     Urb = NULL;
   }
 
@@ -206,7 +206,7 @@ XhcFreeUrb (
     Xhc->PciIo->Unmap (Xhc->PciIo, Urb->DataMap);
   }
 
-  FreePool (Urb);
+  FreePool(Urb);
 }
 
 /**
@@ -276,7 +276,7 @@ XhcCreateTransferTrb (
     Len = Urb->DataLen;
     Status  = Xhc->PciIo->Map (Xhc->PciIo, MapOp, Urb->Data, &Len, &PhyAddr, &Map);
     
-    if (EFI_ERROR (Status) || (Len != Urb->DataLen)) {
+    if (EFI_ERROR(Status) || (Len != Urb->DataLen)) {
       DEBUG ((EFI_D_ERROR, "XhcCreateTransferTrb: Fail to map Urb->Data.\n"));
       return EFI_OUT_OF_RESOURCES;
     }
@@ -561,8 +561,8 @@ XhcInitSched (
                &ScratchPhy,
                &Xhc->ScratchMap
                );
-//    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+//    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return;
     }
 
@@ -582,8 +582,8 @@ XhcInitSched (
                  &ScratchEntryPhy,
                  (VOID **) &ScratchEntryMap[Index]
                  );
-//      ASSERT_EFI_ERROR (Status);
-      if (EFI_ERROR (Status)) {
+//      ASSERT_EFI_ERROR(Status);
+      if (EFI_ERROR(Status)) {
         return;
       }
       ZeroMem ((VOID *)(UINTN)ScratchEntry[Index], Xhc->PageSize);
@@ -1020,8 +1020,8 @@ XhcFreeSched (
     // Free Scratchpad Buffer Array
     //
     UsbHcFreeAlignedPages (Xhc->PciIo, Xhc->ScratchBuf, EFI_SIZE_TO_PAGES (Xhc->MaxScratchpadBufs * sizeof (UINT64)), Xhc->ScratchMap);
-    FreePool (Xhc->ScratchEntryMap);
-    FreePool (Xhc->ScratchEntry);
+    FreePool(Xhc->ScratchEntryMap);
+    FreePool(Xhc->ScratchEntry);
   }
 
   if (Xhc->CmdRing.RingSeg0 != NULL) {
@@ -1423,12 +1423,12 @@ XhciDelAsyncIntTransfer (
       // So the TRB should be removed as well.
       //
       Status = XhcDequeueTrbFromEndpoint (Xhc, Urb);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((EFI_D_ERROR, "XhciDelAsyncIntTransfer: XhcDequeueTrbFromEndpoint failed\n"));
       }
 
       RemoveEntryList (&Urb->UrbList);
-      FreePool (Urb->Data);
+      FreePool(Urb->Data);
       XhcFreeUrb (Xhc, Urb);
       return EFI_SUCCESS;
     }
@@ -1461,12 +1461,12 @@ XhciDelAllAsyncIntTransfers (
     // So the TRB should be removed as well.
     //
     Status = XhcDequeueTrbFromEndpoint (Xhc, Urb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "XhciDelAllAsyncIntTransfers: XhcDequeueTrbFromEndpoint failed\n"));
     }
 
     RemoveEntryList (&Urb->UrbList);
-    FreePool (Urb->Data);
+    FreePool(Urb->Data);
     XhcFreeUrb (Xhc, Urb);
   }
 }
@@ -1488,11 +1488,11 @@ XhcUpdateAsyncRequest (
 
   if (Urb->Result == EFI_USB_NOERROR) {
     Status = XhcCreateTransferTrb (Xhc, Urb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
     Status = RingIntTransferDoorBell (Xhc, Urb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
   }
@@ -1533,7 +1533,7 @@ XhcFlushAsyncIntMap (
 
   if (Urb->DataMap != NULL) {
     Status = PciIo->Unmap (PciIo, Urb->DataMap);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ON_ERROR;
     }
   }
@@ -1541,7 +1541,7 @@ XhcFlushAsyncIntMap (
   Urb->DataMap = NULL;
 
   Status = PciIo->Map (PciIo, MapOp, Urb->Data, &Len, &PhyAddr, &Map);
-  if (EFI_ERROR (Status) || (Len != Urb->DataLen)) {
+  if (EFI_ERROR(Status) || (Len != Urb->DataLen)) {
     goto ON_ERROR;
   }
 
@@ -1606,7 +1606,7 @@ XhcMonitorAsyncRequests (
     // bridge to system memory.
     //
     Status = XhcFlushAsyncIntMap (Xhc, Urb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "XhcMonitorAsyncRequests: Fail to Flush AsyncInt Mapped Memeory\n"));
     }
 
@@ -1653,7 +1653,7 @@ XhcMonitorAsyncRequests (
     }
 
     if (ProcBuf != NULL) {
-      gBS->FreePool (ProcBuf);
+      gBS->FreePool(ProcBuf);
     }
 
     XhcUpdateAsyncRequest (Xhc, Urb);
@@ -2106,7 +2106,7 @@ XhcInitializeDeviceSlot (
               XHC_GENERIC_TIMEOUT,
               (TRB_TEMPLATE **) (UINTN) &EvtTrb
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcInitializeDeviceSlot: Enable Slot Failed, Status = %r\n", Status));
     return Status;
   }
@@ -2277,7 +2277,7 @@ XhcInitializeDeviceSlot (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DeviceAddress = (UINT8) ((DEVICE_CONTEXT *) OutputContext)->Slot.DeviceAddress;
     DEBUG ((EFI_D_INFO, "    Address %d assigned successfully\n", DeviceAddress));
     Xhc->UsbDevContext[SlotId].XhciDevAddr = DeviceAddress;
@@ -2331,7 +2331,7 @@ XhcInitializeDeviceSlot64 (
               XHC_GENERIC_TIMEOUT,
               (TRB_TEMPLATE **) (UINTN) &EvtTrb
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcInitializeDeviceSlot64: Enable Slot Failed, Status = %r\n", Status));
     return Status;
   }
@@ -2502,7 +2502,7 @@ XhcInitializeDeviceSlot64 (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DeviceAddress = (UINT8) ((DEVICE_CONTEXT_64 *) OutputContext)->Slot.DeviceAddress;
     DEBUG ((EFI_D_INFO, "    Address %d assigned successfully\n", DeviceAddress));
     Xhc->UsbDevContext[SlotId].XhciDevAddr = DeviceAddress;
@@ -2546,7 +2546,7 @@ XhcDisableSlotCmd (
 
     Status = XhcDisableSlotCmd (Xhc, Xhc->UsbDevContext[Index + 1].SlotId);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "XhcDisableSlotCmd: failed to disable child, ignore error\n"));
       Xhc->UsbDevContext[Index + 1].SlotId = 0;
     }
@@ -2567,7 +2567,7 @@ XhcDisableSlotCmd (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcDisableSlotCmd: Disable Slot Command Failed, Status = %r\n", Status));
     return Status;
   }
@@ -2585,19 +2585,19 @@ XhcDisableSlotCmd (
       if (RingSeg != NULL) {
         UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
       }
-      FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index]);
+      FreePool(Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index]);
       Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index] = NULL;
     }
   }
 
   for (Index = 0; Index < Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations; Index++) {
     if (Xhc->UsbDevContext[SlotId].ConfDesc[Index] != NULL) {
-      FreePool (Xhc->UsbDevContext[SlotId].ConfDesc[Index]);
+      FreePool(Xhc->UsbDevContext[SlotId].ConfDesc[Index]);
     }
   }
 
   if (Xhc->UsbDevContext[SlotId].ActiveAlternateSetting != NULL) {
-    FreePool (Xhc->UsbDevContext[SlotId].ActiveAlternateSetting);
+    FreePool(Xhc->UsbDevContext[SlotId].ActiveAlternateSetting);
   }
 
   if (Xhc->UsbDevContext[SlotId].InputContext != NULL) {
@@ -2653,7 +2653,7 @@ XhcDisableSlotCmd64 (
 
     Status = XhcDisableSlotCmd64 (Xhc, Xhc->UsbDevContext[Index + 1].SlotId);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "XhcDisableSlotCmd: failed to disable child, ignore error\n"));
       Xhc->UsbDevContext[Index + 1].SlotId = 0;
     }
@@ -2674,7 +2674,7 @@ XhcDisableSlotCmd64 (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcDisableSlotCmd: Disable Slot Command Failed, Status = %r\n", Status));
     return Status;
   }
@@ -2692,19 +2692,19 @@ XhcDisableSlotCmd64 (
       if (RingSeg != NULL) {
         UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
       }
-      FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index]);
+      FreePool(Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index]);
       Xhc->UsbDevContext[SlotId].EndpointTransferRing[Index] = NULL;
     }
   }
 
   for (Index = 0; Index < Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations; Index++) {
     if (Xhc->UsbDevContext[SlotId].ConfDesc[Index] != NULL) {
-      FreePool (Xhc->UsbDevContext[SlotId].ConfDesc[Index]);
+      FreePool(Xhc->UsbDevContext[SlotId].ConfDesc[Index]);
     }
   }
 
   if (Xhc->UsbDevContext[SlotId].ActiveAlternateSetting != NULL) {
-    FreePool (Xhc->UsbDevContext[SlotId].ActiveAlternateSetting);
+    FreePool(Xhc->UsbDevContext[SlotId].ActiveAlternateSetting);
   }
 
   if (Xhc->UsbDevContext[SlotId].InputContext != NULL) {
@@ -3193,7 +3193,7 @@ XhcSetConfigCmd (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcSetConfigCmd: Config Endpoint Failed, Status = %r\n", Status));
   } else {
     Xhc->UsbDevContext[SlotId].ActiveConfiguration = ConfigDesc->ConfigurationValue;
@@ -3286,7 +3286,7 @@ XhcSetConfigCmd64 (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcSetConfigCmd64: Config Endpoint Failed, Status = %r\n", Status));
   } else {
     Xhc->UsbDevContext[SlotId].ActiveConfiguration = ConfigDesc->ConfigurationValue;
@@ -3592,7 +3592,7 @@ XhcSetInterface (
       // 1) Stop any Running Transfer Rings affected by the Alternate Interface setting.
       //
       Status = XhcStopEndpoint (Xhc, SlotId, Dci, NULL);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       //
@@ -3604,7 +3604,7 @@ XhcSetInterface (
         if (RingSeg != NULL) {
           UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
         }
-        FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1]);
+        FreePool(Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1]);
         Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1] = NULL;
       }
 
@@ -3656,7 +3656,7 @@ XhcSetInterface (
                XHC_GENERIC_TIMEOUT,
                (TRB_TEMPLATE **) (UINTN) &EvtTrb
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "SetInterface: Config Endpoint Failed, Status = %r\n", Status));
     } else {
       //
@@ -3794,7 +3794,7 @@ XhcSetInterface64 (
       // 1) Stop any Running Transfer Rings affected by the Alternate Interface setting.
       //
       Status = XhcStopEndpoint (Xhc, SlotId, Dci, NULL);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       //
@@ -3806,7 +3806,7 @@ XhcSetInterface64 (
         if (RingSeg != NULL) {
           UsbHcFreeMem (Xhc->MemPool, RingSeg, sizeof (TRB_TEMPLATE) * TR_RING_TRB_NUMBER);
         }
-        FreePool (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1]);
+        FreePool(Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1]);
         Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci - 1] = NULL;
       }
 
@@ -3858,7 +3858,7 @@ XhcSetInterface64 (
                XHC_GENERIC_TIMEOUT,
                (TRB_TEMPLATE **) (UINTN) &EvtTrb
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "SetInterface64: Config Endpoint Failed, Status = %r\n", Status));
     } else {
       //
@@ -3923,7 +3923,7 @@ XhcEvaluateContext (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcEvaluateContext: Evaluate Context Failed, Status = %r\n", Status));
   }
   return Status;
@@ -3981,7 +3981,7 @@ XhcEvaluateContext64 (
              XHC_GENERIC_TIMEOUT,
              (TRB_TEMPLATE **) (UINTN) &EvtTrb
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcEvaluateContext64: Evaluate Context Failed, Status = %r\n", Status));
   }
   return Status;
@@ -4053,7 +4053,7 @@ XhcConfigHubContext (
               XHC_GENERIC_TIMEOUT,
               (TRB_TEMPLATE **) (UINTN) &EvtTrb
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcConfigHubContext: Config Endpoint Failed, Status = %r\n", Status));
   }
   return Status;
@@ -4124,7 +4124,7 @@ XhcConfigHubContext64 (
               XHC_GENERIC_TIMEOUT,
               (TRB_TEMPLATE **) (UINTN) &EvtTrb
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcConfigHubContext64: Config Endpoint Failed, Status = %r\n", Status));
   }
   return Status;

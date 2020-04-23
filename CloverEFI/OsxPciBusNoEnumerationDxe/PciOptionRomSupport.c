@@ -97,7 +97,7 @@ Returns:
                                   1,
                                   &AllOnes
                                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -111,7 +111,7 @@ Returns:
                                   1,
                                   &AllOnes
                                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -198,7 +198,7 @@ Returns:
 
   RomPcir = AllocatePool (sizeof (PCI_DATA_STRUCTURE));
   if (RomPcir == NULL) {
-    FreePool (RomHeader);
+    FreePool(RomHeader);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -282,8 +282,8 @@ Returns:
     Image     = AllocatePool ((UINT32) RomImageSize);
     if (Image == NULL) {
       RomDecode (PciDevice, RomBarIndex, RomBar, FALSE);
-      gBS->FreePool (RomHeader);
-      gBS->FreePool (RomPcir);
+      gBS->FreePool(RomHeader);
+      gBS->FreePool(RomPcir);
       return EFI_OUT_OF_RESOURCES;
     }
     
@@ -308,8 +308,8 @@ Returns:
   //
   // Free allocated memory
   //
-  gBS->FreePool (RomHeader);
-  gBS->FreePool (RomPcir);
+  gBS->FreePool(RomHeader);
+  gBS->FreePool(RomPcir);
 
   return retStatus;
 }
@@ -492,7 +492,7 @@ Returns:
 
         if (EfiRomHeader->CompressionType == EFI_PCI_EXPANSION_ROM_HEADER_COMPRESSED) {
           Status = gBS->LocateProtocol (&gEfiDecompressProtocolGuid, NULL, (VOID **) &Decompress);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             SkipImage = TRUE;
           } else {
             SkipImage = TRUE;
@@ -503,7 +503,7 @@ Returns:
                                   &DestinationSize,
                                   &ScratchSize
                                   );
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               //DecompressedImageBuffer = NULL;
               DecompressedImageBuffer = AllocatePool (DestinationSize);
               if (DecompressedImageBuffer != NULL) {
@@ -518,13 +518,13 @@ Returns:
                                         Scratch,
                                         ScratchSize
                                         );
-                  if (!EFI_ERROR (Status)) {
+                  if (!EFI_ERROR(Status)) {
                     ImageBuffer = DecompressedImageBuffer;
                     ImageLength = DestinationSize;
                     SkipImage   = FALSE;
                   }
 
-                  gBS->FreePool (Scratch);
+                  gBS->FreePool(Scratch);
                 }
               }
             }
@@ -543,9 +543,9 @@ Returns:
                           ImageLength,
                           &ImageHandle
                           );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             Status = gBS->StartImage (ImageHandle, NULL, NULL);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               AddDriver (PciDevice, ImageHandle);
               retStatus = EFI_SUCCESS;
             }

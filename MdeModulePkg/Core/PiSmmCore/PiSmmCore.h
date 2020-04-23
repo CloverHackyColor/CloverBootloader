@@ -425,7 +425,7 @@ SmmInternalAllocatePool (
 **/
 EFI_STATUS
 EFIAPI
-SmmFreePool (
+SmmFreePool(
   IN      VOID                      *Buffer
   );
 
@@ -440,7 +440,7 @@ SmmFreePool (
 **/
 EFI_STATUS
 EFIAPI
-SmmInternalFreePool (
+SmmInternalFreePool(
   IN      VOID                      *Buffer
   );
 

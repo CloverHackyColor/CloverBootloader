@@ -70,7 +70,7 @@ _ModuleEntryPoint (
   //
   // If all of the drivers returned errors, then invoke all of the library destructors
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ProcessLibraryDestructorList (ImageHandle, MmSystemTable);
   }
 

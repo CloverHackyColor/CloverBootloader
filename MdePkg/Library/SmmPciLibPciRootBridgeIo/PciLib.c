@@ -61,7 +61,7 @@ PciLibConstructor (
   EFI_STATUS  Status;
 
   Status = gSmst->SmmLocateProtocol (&gEfiSmmPciRootBridgeIoProtocolGuid, NULL, (VOID**) &mSmmPciRootBridgeIo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mSmmPciRootBridgeIo != NULL);
 
   return EFI_SUCCESS;

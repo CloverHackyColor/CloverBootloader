@@ -516,7 +516,7 @@ CreatePopUp (
 
       ConOut->SetCursorPosition (ConOut, Column + 1, Row++);
       ConOut->OutputString (ConOut, TmpString);
-      FreePool (TmpString);
+      FreePool(TmpString);
     }
     NumberOfLines--;
   }
@@ -535,7 +535,7 @@ CreatePopUp (
   //
   // Free the allocated line buffer
   //
-  FreePool (Line);
+  FreePool(Line);
 
   //
   // Restore the cursor visibility, position, and attributes
@@ -550,7 +550,7 @@ CreatePopUp (
   if (Key != NULL) {
     while (TRUE) {
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, Key);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         break;
       }
 

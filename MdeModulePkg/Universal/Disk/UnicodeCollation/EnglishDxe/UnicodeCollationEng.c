@@ -131,7 +131,7 @@ InitializeUnicodeCollationEng (
                       &Unicode2Eng,
                       NULL
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     } else {
       Status = gBS->InstallMultipleProtocolInterfaces (
                       &mHandle,
@@ -139,7 +139,7 @@ InitializeUnicodeCollationEng (
                       &Unicode2Eng,
                       NULL
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   } else {
     if (FeaturePcdGet (PcdUnicodeCollationSupport)) {
@@ -149,7 +149,7 @@ InitializeUnicodeCollationEng (
                       &UnicodeEng,
                       NULL
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     } else {
       //
       // This module must support to produce at least one of Unicode Collation Protocol

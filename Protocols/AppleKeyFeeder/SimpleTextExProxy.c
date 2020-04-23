@@ -273,7 +273,7 @@ DBG("SimpleTextExProxyInit\n");
 
 	OriginalConsoleInHandle = SystemTable->ConsoleInHandle;
     Status = gBS->HandleProtocol(gST->ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (VOID **)&OriginalSimpleTextEx);
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("SimpleTextExProxyInit: CreateEvent2 failed, Status=%x\n", Status);
 		goto bail;
 	}
@@ -296,7 +296,7 @@ DBG("SimpleTextExProxyInit: AppleKeyFeederSimpleTextExProxy=%x, AppleKeyFeederSi
 //				  NULL,
 //				  &AppleKeyFeederSimpleTextExProxy.WaitForKeyEx
 //				  );
-//	if ( EFI_ERROR (Status) ) {
+//	if ( EFI_ERROR(Status) ) {
 //		DBG("SimpleTextExProxyInit: CreateEvent2 failed, Status=%x\n", Status);
 //		goto bail;
 //	}

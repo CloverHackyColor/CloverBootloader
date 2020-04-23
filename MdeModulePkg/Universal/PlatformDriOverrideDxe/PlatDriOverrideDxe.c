@@ -157,7 +157,7 @@ GetComponentNameWorker (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -179,11 +179,11 @@ GetComponentNameWorker (
                      BestLanguage,
                      &DriverName
                      );
-    FreePool (BestLanguage);
+    FreePool(BestLanguage);
   }
 
   if (Language != NULL) {
-    FreePool (Language);
+    FreePool(Language);
   }
 
   return DriverName;
@@ -275,7 +275,7 @@ GetImageName (
       //
       // Locate Image EFI UI section to get the image name.
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = Fv2->ReadSection (
                         Fv2,
                         &FvFilePath->FvFileName,
@@ -285,15 +285,15 @@ GetImageName (
                         &BufferSize,
                         &AuthenticationStatus
                         );
-        if (!EFI_ERROR (Status)) {
-          FreePool (AlignedDevPathNode);
+        if (!EFI_ERROR(Status)) {
+          FreePool(AlignedDevPathNode);
           break;
         }
         Buffer = NULL;
       }
     }
 
-    FreePool (AlignedDevPathNode);
+    FreePool(AlignedDevPathNode);
 
     //
     // Next device path node
@@ -395,7 +395,7 @@ UpdateDeviceSelectPage (
   if (HiiSetString (Private->RegisteredHandle, NewStringToken, NewString, NULL) == 0) {
     ASSERT (FALSE);
   }
-  FreePool (NewString);
+  FreePool(NewString);
 
   NewStringToken = STRING_TOKEN (STR_FIRST_REFRESH_HELP);
   NewString = HiiGetString (Private->RegisteredHandle, STRING_TOKEN (STR_REFRESH_HELP), NULL);
@@ -403,7 +403,7 @@ UpdateDeviceSelectPage (
   if (HiiSetString (Private->RegisteredHandle, NewStringToken, NewString, NULL) == 0) {
     ASSERT (FALSE);
   }
-  FreePool (NewString);
+  FreePool(NewString);
 
   //
   // created needed controller device item in first page
@@ -416,7 +416,7 @@ UpdateDeviceSelectPage (
                   &DevicePathHandleCount,
                   &mDevicePathHandleBuffer
                   );
-  if (EFI_ERROR (Status) || (DevicePathHandleCount == 0)) {
+  if (EFI_ERROR(Status) || (DevicePathHandleCount == 0)) {
     return EFI_SUCCESS;
   }
 
@@ -444,7 +444,7 @@ UpdateDeviceSelectPage (
                       NULL,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
       //
@@ -455,7 +455,7 @@ UpdateDeviceSelectPage (
                        &gEfiBusSpecificDriverOverrideProtocolGuid,
                        (VOID **) &BusSpecificDriverOverride
                        );
-      if (EFI_ERROR (Status) || BusSpecificDriverOverride == NULL) {
+      if (EFI_ERROR(Status) || BusSpecificDriverOverride == NULL) {
         continue;
       }
     }
@@ -469,7 +469,7 @@ UpdateDeviceSelectPage (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     //
     // Save the device path protocol interface
     //
@@ -487,7 +487,7 @@ UpdateDeviceSelectPage (
     NewStrSize = Len + StrSize (L"--");
     NewString = AllocateZeroPool (NewStrSize);
     ASSERT (NewString != NULL);
-    if (EFI_ERROR (CheckMapping (ControllerDevicePath,NULL, &mMappingDataBase, NULL, NULL))) {
+    if (EFI_ERROR(CheckMapping (ControllerDevicePath,NULL, &mMappingDataBase, NULL, NULL))) {
       StrCatS (NewString, NewStrSize/sizeof(CHAR16), L"--");
     } else {
       StrCatS (NewString, NewStrSize/sizeof(CHAR16), L"**");
@@ -496,7 +496,7 @@ UpdateDeviceSelectPage (
 
     NewStringToken = HiiSetString (Private->RegisteredHandle, mControllerToken[Index], NewString, NULL);
     ASSERT (NewStringToken != 0);
-    FreePool (NewString);
+    FreePool(NewString);
     //
     // Save the device path string toke for next access use
     //
@@ -566,7 +566,7 @@ GetDriverBindingHandleFromImageHandle (
                   &DriverBindingHandleCount,
                   &DriverBindingHandleBuffer
                   );
-  if (EFI_ERROR (Status) || (DriverBindingHandleCount == 0)) {
+  if (EFI_ERROR(Status) || (DriverBindingHandleCount == 0)) {
     return NULL;
   }
 
@@ -583,7 +583,7 @@ GetDriverBindingHandleFromImageHandle (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -593,7 +593,7 @@ GetDriverBindingHandleFromImageHandle (
     }
   }
 
-  FreePool (DriverBindingHandleBuffer);
+  FreePool(DriverBindingHandleBuffer);
   return DriverBindingHandle;
 }
 
@@ -700,7 +700,7 @@ UpdateBindingDriverSelectPage (
                   &DriverImageHandleCount,
                   &mDriverImageHandleBuffer
                   );
-  if (EFI_ERROR (Status) || (DriverImageHandleCount == 0)) {
+  if (EFI_ERROR(Status) || (DriverImageHandleCount == 0)) {
     return EFI_NOT_FOUND;
   }
 
@@ -733,7 +733,7 @@ UpdateBindingDriverSelectPage (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       mDriSelection[Index] = FALSE;
       continue;
     }
@@ -766,13 +766,13 @@ UpdateBindingDriverSelectPage (
       // only care the driver which is in a Pci device option rom,
       // and the driver's LoadedImage->DeviceHandle must point to a pci device which has efi option rom
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = gBS->HandleProtocol(
                          LoadedImage->DeviceHandle,
                          &gEfiBusSpecificDriverOverrideProtocolGuid,
                          (VOID **) &BusSpecificDriverOverride
                          );
-        if (EFI_ERROR (Status) || BusSpecificDriverOverride == NULL) {
+        if (EFI_ERROR(Status) || BusSpecificDriverOverride == NULL) {
           mDriSelection[Index] = FALSE;
           continue;
         }
@@ -814,7 +814,7 @@ UpdateBindingDriverSelectPage (
     NewStrSize = StrSize (DriverName);
     NewString = AllocateZeroPool (NewStrSize);
     ASSERT (NewString != NULL);
-    if (EFI_ERROR (CheckMapping (mControllerDevicePathProtocol[mSelectedCtrIndex], LoadedImageDevicePath, &mMappingDataBase, NULL, NULL))) {
+    if (EFI_ERROR(CheckMapping (mControllerDevicePathProtocol[mSelectedCtrIndex], LoadedImageDevicePath, &mMappingDataBase, NULL, NULL))) {
       mDriSelection[Index] = FALSE;
     } else {
       mDriSelection[Index] = TRUE;
@@ -824,9 +824,9 @@ UpdateBindingDriverSelectPage (
     NewStringToken = HiiSetString (Private->RegisteredHandle, mDriverImageToken[Index], NewString, NULL);
     ASSERT (NewStringToken != 0);
     mDriverImageToken[Index] = NewStringToken;
-    FreePool (NewString);
+    FreePool(NewString);
     if (FreeDriverName) {
-      FreePool (DriverName);
+      FreePool(DriverName);
     }
 
     //
@@ -841,8 +841,8 @@ UpdateBindingDriverSelectPage (
     NewStringHelpToken = HiiSetString (Private->RegisteredHandle, DriverImageFilePathToken[Index], NewString, NULL);
     ASSERT (NewStringHelpToken != 0);
     DriverImageFilePathToken[Index] = NewStringHelpToken;
-    FreePool (NewString);
-    FreePool (DriverName);
+    FreePool(NewString);
+    FreePool(DriverName);
 
     CheckFlags        = 0;
     if (mDriSelection[Index]) {
@@ -877,11 +877,11 @@ UpdateBindingDriverSelectPage (
   HiiFreeOpCodeHandle (EndOpCodeHandle);
 
   if (DriverImageProtocol != NULL) {
-    FreePool (DriverImageProtocol);
+    FreePool(DriverImageProtocol);
   }
 
   if (DriverImageFilePathToken != NULL) {
-    FreePool (DriverImageFilePathToken);
+    FreePool(DriverImageFilePathToken);
   }
 
   return EFI_SUCCESS;
@@ -1213,7 +1213,7 @@ PlatOverMngrExtractConfig (
     AllocatedRequest = TRUE;
     BufferSize = sizeof (PLAT_OVER_MNGR_DATA);
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
-    FreePool (ConfigRequestHdr);
+    FreePool(ConfigRequestHdr);
   }
 
   //
@@ -1232,7 +1232,7 @@ PlatOverMngrExtractConfig (
   // Free the allocated config request string.
   //
   if (AllocatedRequest) {
-    FreePool (ConfigRequest);
+    FreePool(ConfigRequest);
     ConfigRequest = NULL;
   }
   //
@@ -1424,7 +1424,7 @@ PlatOverMngrCallback (
       case KEY_VALUE_ORDER_SAVE_AND_EXIT:
         Status = CommitChanges (Private, KeyValue, FakeNvData);
         *ActionRequest = EFI_BROWSER_ACTION_REQUEST_SUBMIT;
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, L"Single Override Info too large, Saving Error!", NULL);
           return EFI_DEVICE_ERROR;
         }
@@ -1493,7 +1493,7 @@ GetDriver (
     mEnvironmentVariableRead = TRUE;
 
     Status = InitOverridesMapping (&mMappingDataBase);
-    if (EFI_ERROR (Status)){
+    if (EFI_ERROR(Status)){
       DEBUG ((DEBUG_INFO, "The status to Get Platform Driver Override Variable is %r\n", Status));
       InitializeListHead (&mMappingDataBase);
       return EFI_NOT_FOUND;
@@ -1600,7 +1600,7 @@ PlatDriOverrideDxeInit (
                  NULL,
                  (VOID **) &FormBrowser2
                  );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1617,7 +1617,7 @@ PlatDriOverrideDxeInit (
   //
   // If there was no error, assume there is an installation and return error
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return EFI_ALREADY_STARTED;
   }
 
@@ -1643,7 +1643,7 @@ PlatDriOverrideDxeInit (
                   NULL,
                   (VOID **) &mCallbackInfo->HiiConfigRouting
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Finish;
   }
 
@@ -1661,7 +1661,7 @@ PlatDriOverrideDxeInit (
                   &mCallbackInfo->PlatformDriverOverride,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Finish;
   }
 
@@ -1726,18 +1726,18 @@ PlatDriOverrideDxeUnload (
     HiiRemovePackages (mCallbackInfo->RegisteredHandle);
   }
 
-  FreePool (mCallbackInfo);
+  FreePool(mCallbackInfo);
 
   if (mControllerToken != NULL) {
-    FreePool (mControllerToken);
+    FreePool(mControllerToken);
   }
 
   if (mControllerDevicePathProtocol != NULL) {
-    FreePool (mControllerDevicePathProtocol);
+    FreePool(mControllerDevicePathProtocol);
   }
 
   if (mDriverImageToken != NULL) {
-    FreePool (mDriverImageToken);
+    FreePool(mDriverImageToken);
   }
 
   return EFI_SUCCESS;

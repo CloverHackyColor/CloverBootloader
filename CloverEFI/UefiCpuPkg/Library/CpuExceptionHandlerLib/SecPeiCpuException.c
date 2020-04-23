@@ -82,7 +82,7 @@ InitializeCpuExceptionHandlers (
   if (VectorInfo != NULL) {
     SetMem ((VOID *) ReservedVectorData, sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM, 0xff);
     Status = ReadAndVerifyVectorInfo (VectorInfo, ReservedVectorData, CPU_EXCEPTION_NUM);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
   }

@@ -235,7 +235,7 @@ CustomGuidedSectionExtract (
              &SectionAttribute
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "GetInfo from guided section Failed - %r\n", Status));
     return Status;
   }
@@ -256,7 +256,7 @@ CustomGuidedSectionExtract (
     //
     AllocatedOutputBuffer = AllocatePool (OutputBufferSize);
     if (AllocatedOutputBuffer == NULL) {
-      FreePool (ScratchBuffer);
+      FreePool(ScratchBuffer);
       return EFI_OUT_OF_RESOURCES;
     }
     *OutputBuffer = AllocatedOutputBuffer;
@@ -271,15 +271,15 @@ CustomGuidedSectionExtract (
              ScratchBuffer,
              AuthenticationStatus
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Decode failed
     //
     if (AllocatedOutputBuffer != NULL) {
-      FreePool (AllocatedOutputBuffer);
+      FreePool(AllocatedOutputBuffer);
     }
     if (ScratchBuffer != NULL) {
-      FreePool (ScratchBuffer);
+      FreePool(ScratchBuffer);
     }
     DEBUG ((DEBUG_ERROR, "Extract guided section Failed - %r\n", Status));
     return Status;
@@ -303,7 +303,7 @@ CustomGuidedSectionExtract (
   // Free unused scratch buffer.
   //
   if (ScratchBuffer != NULL) {
-    FreePool (ScratchBuffer);
+    FreePool(ScratchBuffer);
   }
 
   return EFI_SUCCESS;
@@ -347,7 +347,7 @@ SectionExtractionDxeEntry (
                     &ExtractHandlerGuidTable [ExtractHandlerNumber], &mCustomGuidedSectionExtractionProtocol,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return EFI_SUCCESS;

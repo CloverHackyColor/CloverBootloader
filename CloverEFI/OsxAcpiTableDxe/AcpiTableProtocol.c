@@ -164,7 +164,7 @@ SetAcpiTable (
       // Delete the table list entry
       //
       Status = RemoveTableFromList (AcpiTableInstance, Version, *Handle);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Should not get an error here ever, but abort if we do.
         //
@@ -193,7 +193,7 @@ SetAcpiTable (
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Should not get an error here ever, but abort if we do.
     //
@@ -270,7 +270,7 @@ PublishTables (
 	if (((Version & EFI_ACPI_TABLE_VERSION_1_0B) != 0) &&
 		!AcpiTableInstance->TablesInstalled1) {
 		Status = gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, AcpiTableInstance->Rsdp1);
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
 			return EFI_ABORTED;
 		}
 		
@@ -281,7 +281,7 @@ PublishTables (
 		 (Version & EFI_ACPI_TABLE_VERSION_3_0) != 0) &&
 		!AcpiTableInstance->TablesInstalled3) {
 		Status = gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, AcpiTableInstance->Rsdp3);
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
 			return EFI_ABORTED;
 		}
 		
@@ -360,20 +360,20 @@ InstallAcpiTable (
              EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
              TableKey
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = PublishTables (
                AcpiTableInstance,
                EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
                );
   }
-  FreePool (AcpiTableBufferConst);
+  FreePool(AcpiTableBufferConst);
   
   //
   // Add a new table successfully, notify registed callback
   //
 /*	
   if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       SdtNotifyAcpiList (
         AcpiTableInstance,
         EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
@@ -421,14 +421,14 @@ UninstallAcpiTable (
              EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
              &TableKey
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = PublishTables (
                AcpiTableInstance,
                EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
                );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   } else {
     return EFI_SUCCESS;
@@ -491,7 +491,7 @@ ReallocateAcpiTableBuffer (
                   &PageAddress
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -656,8 +656,8 @@ AddTableToList (
   //
   // Check return value from memory alloc.
   //
-  if (EFI_ERROR (Status)) {
-    gBS->FreePool (CurrentTableList);
+  if (EFI_ERROR(Status)) {
+    gBS->FreePool(CurrentTableList);
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -698,7 +698,7 @@ AddTableToList (
         ((Version & EFI_ACPI_TABLE_VERSION_3_0)  != 0 && AcpiTableInstance->Fadt3 != NULL)
         ) {
       gBS->FreePages (CurrentTableList->PageAddress, CurrentTableList->NumberOfPages);
-      gBS->FreePool (CurrentTableList);
+      gBS->FreePool(CurrentTableList);
       return EFI_ABORTED;
     }
     //
@@ -828,7 +828,7 @@ AddTableToList (
         ((Version & EFI_ACPI_TABLE_VERSION_3_0)  != 0 && AcpiTableInstance->Facs3 != NULL)
         ) {
       gBS->FreePages (CurrentTableList->PageAddress, CurrentTableList->NumberOfPages);
-      gBS->FreePool (CurrentTableList);
+      gBS->FreePool(CurrentTableList);
       return EFI_ABORTED;
     }
     //
@@ -905,7 +905,7 @@ AddTableToList (
         ((Version & EFI_ACPI_TABLE_VERSION_3_0)  != 0 && AcpiTableInstance->Dsdt3 != NULL)
         ) {
       gBS->FreePages (CurrentTableList->PageAddress, CurrentTableList->NumberOfPages);
-      gBS->FreePool (CurrentTableList);
+      gBS->FreePool(CurrentTableList);
       return EFI_ABORTED;
     }
     //
@@ -1015,8 +1015,8 @@ AddTableToList (
       //
       if (AcpiTableInstance->NumberOfTableEntries1 >= mEfiAcpiMaxNumTables) {
         Status = ReallocateAcpiTableBuffer (AcpiTableInstance);
-       // ASSERT_EFI_ERROR (Status);
-        if (EFI_ERROR (Status)) {
+       // ASSERT_EFI_ERROR(Status);
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       }
@@ -1052,8 +1052,8 @@ AddTableToList (
        //
        if (AcpiTableInstance->NumberOfTableEntries3 >= mEfiAcpiMaxNumTables) {
          Status = ReallocateAcpiTableBuffer (AcpiTableInstance);
-//         ASSERT_EFI_ERROR (Status);
-         if (EFI_ERROR (Status)) {
+//         ASSERT_EFI_ERROR(Status);
+         if (EFI_ERROR(Status)) {
            return Status;
          }
        }
@@ -1544,7 +1544,7 @@ DeleteTable (
     //
     gBS->FreePages (Table->PageAddress, Table->NumberOfPages);
     RemoveEntryList (&(Table->Link));
-    gBS->FreePool (Table);
+    gBS->FreePool(Table);
   }
   //
   // Done
@@ -1593,14 +1593,14 @@ RemoveTableFromList (
             &AcpiTableInstance->TableList,
             &Table
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
   //
   // Remove the table
   //
   Status = DeleteTable (AcpiTableInstance, Version, Table);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   //
@@ -1805,7 +1805,7 @@ AcpiTableAcpiTableConstructor (
                   &PageAddress
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 

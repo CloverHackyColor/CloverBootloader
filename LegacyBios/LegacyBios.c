@@ -67,7 +67,7 @@ AllocateLegacyMemory (
   // Do not ASSERT on Status error but let caller decide since some cases
   // memory is already taken but that is ok.
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *Result = (EFI_PHYSICAL_ADDRESS) (UINTN) MemPage;
   }
   //
@@ -218,7 +218,7 @@ ShadowAndStartLegacy16 (
                     0x40000/EFI_PAGE_SIZE,
                     &Address
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Bugbug: need to figure out whether C/D/E/F segment should be marked as reserved memory.
       // 
@@ -310,7 +310,7 @@ ShadowAndStartLegacy16 (
                                           0,
                                           0
                                           );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Private->Legacy16Table->PciExpressBase  = (UINT32)Location;
     Location = 0;
   }
@@ -329,7 +329,7 @@ ShadowAndStartLegacy16 (
                                           0,
                                           0
                                           );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 //    Table->TpmSegment = (UINT16)(Location >> 4) & 0xFFFF;
 //    Table->TpmOffset  = (UINT16)(Location & 0xFFFF);
   }
@@ -470,7 +470,7 @@ LegacyBiosInstall (
   // Load this driver's image to memory
   //
   Status = RelocateImageUnder4GIfNeeded (ImageHandle, SystemTable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -482,22 +482,22 @@ LegacyBiosInstall (
   // be a dispatcher bug!.
   //
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &Private->Cpu);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **) &Private->Timer);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->LocateProtocol (&gEfiLegacyRegion2ProtocolGuid, NULL, (VOID **) &Private->LegacyRegion);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->LocateProtocol (&gEfiLegacyBiosPlatformProtocolGuid, NULL, (VOID **) &Private->LegacyBiosPlatform);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &Private->Legacy8259);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->LocateProtocol (&gEfiLegacyInterruptProtocolGuid, NULL, (VOID **) &Private->LegacyInterrupt);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Locate Memory Test Protocol if exists
@@ -507,7 +507,7 @@ LegacyBiosInstall (
                   NULL,
                   (VOID **) &Private->GenericMemoryTest
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Make sure all memory from 0-640K is tested
@@ -625,14 +625,14 @@ LegacyBiosInstall (
              (sizeof (LOW_MEMORY_THUNK) / EFI_PAGE_SIZE) + 2,
              &MemoryAddress
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Private->IntThunk                   = (LOW_MEMORY_THUNK *) (UINTN) MemoryAddress;
   EfiToLegacy16InitTable                   = &Private->IntThunk->EfiToLegacy16InitTable;
   EfiToLegacy16InitTable->ThunkStart       = (UINT32) (EFI_PHYSICAL_ADDRESS) (UINTN) MemoryAddress;
   EfiToLegacy16InitTable->ThunkSizeInBytes = (UINT32) (sizeof (LOW_MEMORY_THUNK));
 
   Status = LegacyBiosInitializeThunk (Private);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Init the legacy memory map in memory < 1 MB.
@@ -652,7 +652,7 @@ LegacyBiosInstall (
              EFI_SIZE_TO_PAGES (MemorySize),
              &MemoryAddress
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     EfiToLegacy16InitTable->HiPmmMemory            = (UINT32) (EFI_PHYSICAL_ADDRESS) (UINTN) MemoryAddress;
     EfiToLegacy16InitTable->HiPmmMemorySizeInBytes = MemorySize;
   }

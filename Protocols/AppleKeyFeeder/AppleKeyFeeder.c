@@ -72,12 +72,12 @@ DBG("AppleKeyFeederEntrypoint\n");
   EFI_STATUS Status = EFI_SUCCESS;
   
     Status = AppleKeyMapUtilsInit(ImageHandle, SystemTable);
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("AppleKeyFeederEntrypoint: AppleKeyMapUtilsInit failed, Status=%x\n", Status);
 	}
 
     Status = SimpleTextProxyInit(ImageHandle, SystemTable);
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("AppleKeyFeederEntrypoint: SimpleTextProxyInit failed, Status=%x\n", Status);
 	}
 
@@ -95,7 +95,7 @@ DBG("AppleKeyFeederEntrypoint\n");
 				  NULL,
 				  &AppleKeyFeederSimpleTextExProxy.WaitForKeyEx
 				  );
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("SimpleTextProxyInit: CreateEvent AppleKeyFeederSimpleTextExProxy.WaitForKeyEx, Status=%x\n", Status);
 	}
 	Status = gBS->CreateEvent (
@@ -105,7 +105,7 @@ DBG("AppleKeyFeederEntrypoint\n");
 				  NULL,
 				  &AppleKeyFeederSimpleTextProxy.WaitForKey
 				  );
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("SimpleTextProxyInit: CreateEvent AppleKeyFeederSimpleTextProxy.WaitForKey, Status=%x\n", Status);
 	}
 
@@ -129,7 +129,7 @@ DBG("AppleKeyFeederEntrypoint\n");
 					  &eventReadKeystroke
 					  );
 	}
-	if ( EFI_ERROR (Status) ) {
+	if ( EFI_ERROR(Status) ) {
 		DBG("SimpleTextProxyInit: CreateEvent2 failed, Status=%x\n", Status);
 	}
 	Status = gBS->SetTimer (
@@ -137,7 +137,7 @@ DBG("AppleKeyFeederEntrypoint\n");
 				  TimerPeriodic,
 				  10*1000*20 // 10*1000*1000 = 1s, so this 20ms
 				  );
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		DBG("SimpleTextProxyInit: SetTimer2 failed, Status=%x\n", Status);
 	}
 
@@ -158,7 +158,7 @@ DBG("AppleKeyFeederEntrypoint\n");
 					NULL
 					);
 	}
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		DBG("SimpleTextProxyInit: InstallMultipleProtocol failed, Status=%x\n", Status);
 	}
 

@@ -380,7 +380,7 @@ SmmMemLibInternalGetGcdMemoryMap (
   UINTN                            Index;
 
   Status = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemSpaceMap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
 
@@ -398,7 +398,7 @@ SmmMemLibInternalGetGcdMemoryMap (
   ASSERT (mSmmMemLibGcdMemSpace != NULL);
   if (mSmmMemLibGcdMemSpace == NULL) {
     mSmmMemLibGcdMemNumberOfDesc = 0;
-    gBS->FreePool (MemSpaceMap);
+    gBS->FreePool(MemSpaceMap);
     return ;
   }
 
@@ -417,7 +417,7 @@ SmmMemLibInternalGetGcdMemoryMap (
     }
   }
 
-  gBS->FreePool (MemSpaceMap);
+  gBS->FreePool(MemSpaceMap);
 }
 
 /**
@@ -433,7 +433,7 @@ SmmMemLibInternalGetUefiMemoryAttributesTable (
   UINTN                        MemoryAttributesTableSize;
 
   Status = EfiGetSystemConfigurationTable (&gEfiMemoryAttributesTableGuid, (VOID **)&MemoryAttributesTable);
-  if (!EFI_ERROR (Status) && (MemoryAttributesTable != NULL)) {
+  if (!EFI_ERROR(Status) && (MemoryAttributesTable != NULL)) {
     MemoryAttributesTableSize = sizeof(EFI_MEMORY_ATTRIBUTES_TABLE) + MemoryAttributesTable->DescriptorSize * MemoryAttributesTable->NumberOfEntries;
     mSmmMemLibMemoryAttributesTable = AllocateCopyPool (MemoryAttributesTableSize, MemoryAttributesTable);
     ASSERT (mSmmMemLibMemoryAttributesTable != NULL);
@@ -490,8 +490,8 @@ SmmLibInternalEndOfDxeNotify (
                &DescriptorSize,
                &DescriptorVersion
                );
-    if (EFI_ERROR (Status)) {
-      gBS->FreePool (MemoryMap);
+    if (EFI_ERROR(Status)) {
+      gBS->FreePool(MemoryMap);
     }
   } while (Status == EFI_BUFFER_TOO_SMALL);
 
@@ -536,7 +536,7 @@ SmmLibInternalEndOfDxeNotify (
   mMemoryMap = SmmMemoryMapStart;
   MemoryMap = MemoryMapStart;
 
-  gBS->FreePool (MemoryMap);
+  gBS->FreePool(MemoryMap);
 
   //
   // Get additional information from GCD memory map.
@@ -595,7 +595,7 @@ SmmMemLibConstructor (
   // Get SMRAM information
   //
   Status = gBS->LocateProtocol (&gEfiSmmAccess2ProtocolGuid, NULL, (VOID **)&SmmAccess);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Size = 0;
   Status = SmmAccess->GetCapabilities (SmmAccess, &Size, NULL);
@@ -605,7 +605,7 @@ SmmMemLibConstructor (
   ASSERT (mSmmMemLibInternalSmramRanges != NULL);
 
   Status = SmmAccess->GetCapabilities (SmmAccess, &Size, mSmmMemLibInternalSmramRanges);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mSmmMemLibInternalSmramCount = Size / sizeof (EFI_SMRAM_DESCRIPTOR);
 
@@ -618,13 +618,13 @@ SmmMemLibConstructor (
   // Register EndOfDxe to get UEFI memory map
   //
   Status = gSmst->SmmRegisterProtocolNotify (&gEfiSmmEndOfDxeProtocolGuid, SmmLibInternalEndOfDxeNotify, &mRegistrationEndOfDxe);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register ready to lock so that we can know when to check valid SMRAM region
   //
   Status = gSmst->SmmRegisterProtocolNotify (&gEfiSmmReadyToLockProtocolGuid, SmmLibInternalReadyToLockNotify, &mRegistrationReadyToLock);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -644,7 +644,7 @@ SmmMemLibDestructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  FreePool (mSmmMemLibInternalSmramRanges);
+  FreePool(mSmmMemLibInternalSmramRanges);
 
   gSmst->SmmRegisterProtocolNotify (&gEfiSmmEndOfDxeProtocolGuid, NULL, &mRegistrationEndOfDxe);
   gSmst->SmmRegisterProtocolNotify (&gEfiSmmReadyToLockProtocolGuid, NULL, &mRegistrationReadyToLock);

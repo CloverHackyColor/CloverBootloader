@@ -1803,7 +1803,7 @@ DevPathToTextUri (
   CopyMem (UriStr, Uri->Uri, UriLength);
   UriStr[UriLength] = '\0';
   UefiDevicePathLibCatPrint (Str, L"Uri(%a)", UriStr);
-  FreePool (UriStr);
+  FreePool(UriStr);
 }
 
 /**
@@ -2439,7 +2439,7 @@ UefiDevicePathLibConvertDevicePathToText (
     // Print this node of the device path
     //
     ToText (&Str, AlignedNode, DisplayOnly, AllowShortcuts);
-    FreePool (AlignedNode);
+    FreePool(AlignedNode);
 
     //
     // Next device path node

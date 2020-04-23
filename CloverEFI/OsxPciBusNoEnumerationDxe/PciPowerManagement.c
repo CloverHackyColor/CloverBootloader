@@ -58,7 +58,7 @@ Returns:
             NULL
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -77,7 +77,7 @@ Returns:
                           1,
                                     &PowerManagementCSR
                           );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Clear PME_Status bit
     //

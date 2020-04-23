@@ -107,7 +107,7 @@ AIKShimTextInputReadKeyStroke (
     // Do not touch any protocol but ours.
     //
     Status = AIKDataReadEntry (&gAikSelf.Data, &AmiKeyData);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // 'Partial' keys should not be returned by SimpleTextInput protocols.
       //
@@ -168,7 +168,7 @@ AIKShimTextInputReadKeyStrokeEx (
     // Do not touch any protocol but ours.
     //
     Status = AIKDataReadEntry (&gAikSelf.Data, &AmiKeyData);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       CopyMem (&KeyData->Key, &AmiKeyData.Key, sizeof (AmiKeyData.Key));
       CopyMem (&KeyData->KeyState, &AmiKeyData.KeyState, sizeof (AmiKeyData.KeyState));
     }

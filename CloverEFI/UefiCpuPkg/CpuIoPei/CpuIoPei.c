@@ -217,7 +217,7 @@ CpuMemoryServiceRead (
   UINT8                     *Uint8Buffer;
 
   Status = CpuIoCheckParameter (TRUE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -291,7 +291,7 @@ CpuMemoryServiceWrite (
   UINT8                     *Uint8Buffer;
 
   Status = CpuIoCheckParameter (TRUE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -365,7 +365,7 @@ CpuIoServiceRead (
   UINT8                     *Uint8Buffer;
 
   Status = CpuIoCheckParameter (FALSE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -437,7 +437,7 @@ CpuIoServiceWrite (
   // Make sure the parameters are valid
   //
   Status = CpuIoCheckParameter (FALSE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -857,7 +857,7 @@ CpuIoInitialize (
  //   DEBUG ((EFI_D_INFO, "CpuIO PPI has been loaded into memory.  Reinstalled PPI=0x%x\n", &gCpuIoPpi));
   } else {
     Status = PeiServicesInstallPpi (&gPpiList);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   
   return EFI_SUCCESS;

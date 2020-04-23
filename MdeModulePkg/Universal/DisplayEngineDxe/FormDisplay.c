@@ -278,57 +278,57 @@ FreeDisplayStrings (
   VOID
   )
 {
-  FreePool (mUnknownString);
-  FreePool (gEmptyString);
-  FreePool (gSaveFailed);
-  FreePool (gNoSubmitIfFailed);
-  FreePool (gReconnectFail);
-  FreePool (gReconnectRequired);
-  FreePool (gChangesOpt);
-  FreePool (gReconnectConfirmChanges);
-  FreePool (gSaveProcess);
-  FreePool (gSaveNoSubmitProcess);
-  FreePool (gDiscardChange);
-  FreePool (gJumpToFormSet);
-  FreePool (gCheckError);
-  FreePool (gPromptForData);
-  FreePool (gPromptForPassword);
-  FreePool (gPromptForNewPassword);
-  FreePool (gConfirmPassword);
-  FreePool (gConfirmError);
-  FreePool (gPassowordInvalid);
-  FreePool (gPressEnter);
-  FreePool (gMiniString);
-  FreePool (gOptionMismatch);
-  FreePool (gFormSuppress);
-  FreePool (gProtocolNotFound);
-  FreePool (gBrowserError);
-  FreePool (gNoSubmitIf);
-  FreePool (gFormNotFound);
-  FreePool (gConfirmDefaultMsg);
-  FreePool (gConfirmSubmitMsg);
-  FreePool (gConfirmDiscardMsg);
-  FreePool (gConfirmResetMsg);
-  FreePool (gConfirmExitMsg);
-  FreePool (gConfirmDefaultMsg2nd);
-  FreePool (gConfirmSubmitMsg2nd);
-  FreePool (gConfirmResetMsg2nd);
-  FreePool (gConfirmExitMsg2nd);
-  FreePool (gConfirmOpt);
-  FreePool (gConfirmOptYes);
-  FreePool (gConfirmOptNo);
-  FreePool (gConfirmOptOk);
-  FreePool (gConfirmOptCancel);
-  FreePool (gYesOption);
-  FreePool (gNoOption);
-  FreePool (gOkOption);
-  FreePool (gCancelOption);
-  FreePool (gErrorPopup);
-  FreePool (gWarningPopup);
-  FreePool (gInfoPopup);
-  FreePool (gConfirmMsgConnect);
-  FreePool (gConfirmMsgEnd);
-  FreePool (gPasswordUnsupported);
+  FreePool(mUnknownString);
+  FreePool(gEmptyString);
+  FreePool(gSaveFailed);
+  FreePool(gNoSubmitIfFailed);
+  FreePool(gReconnectFail);
+  FreePool(gReconnectRequired);
+  FreePool(gChangesOpt);
+  FreePool(gReconnectConfirmChanges);
+  FreePool(gSaveProcess);
+  FreePool(gSaveNoSubmitProcess);
+  FreePool(gDiscardChange);
+  FreePool(gJumpToFormSet);
+  FreePool(gCheckError);
+  FreePool(gPromptForData);
+  FreePool(gPromptForPassword);
+  FreePool(gPromptForNewPassword);
+  FreePool(gConfirmPassword);
+  FreePool(gConfirmError);
+  FreePool(gPassowordInvalid);
+  FreePool(gPressEnter);
+  FreePool(gMiniString);
+  FreePool(gOptionMismatch);
+  FreePool(gFormSuppress);
+  FreePool(gProtocolNotFound);
+  FreePool(gBrowserError);
+  FreePool(gNoSubmitIf);
+  FreePool(gFormNotFound);
+  FreePool(gConfirmDefaultMsg);
+  FreePool(gConfirmSubmitMsg);
+  FreePool(gConfirmDiscardMsg);
+  FreePool(gConfirmResetMsg);
+  FreePool(gConfirmExitMsg);
+  FreePool(gConfirmDefaultMsg2nd);
+  FreePool(gConfirmSubmitMsg2nd);
+  FreePool(gConfirmResetMsg2nd);
+  FreePool(gConfirmExitMsg2nd);
+  FreePool(gConfirmOpt);
+  FreePool(gConfirmOptYes);
+  FreePool(gConfirmOptNo);
+  FreePool(gConfirmOptOk);
+  FreePool(gConfirmOptCancel);
+  FreePool(gYesOption);
+  FreePool(gNoOption);
+  FreePool(gOkOption);
+  FreePool(gCancelOption);
+  FreePool(gErrorPopup);
+  FreePool(gWarningPopup);
+  FreePool(gInfoPopup);
+  FreePool(gConfirmMsgConnect);
+  FreePool(gConfirmMsgEnd);
+  FreePool(gPasswordUnsupported);
 }
 
 /**
@@ -398,7 +398,7 @@ GetWidth (
     if (TestOp->TextTwo != 0) {
       String = GetToken (TestOp->TextTwo, gFormData->HiiHandle);
       Size   = StrLen (String);
-      FreePool (String);
+      FreePool(String);
     }
   }
 
@@ -728,7 +728,7 @@ UiAddMenuOption (
         if (StrLen (&MenuOption->Description[ArrayEntry]) != 0) {
           NumberOfLines++;
         }
-        FreePool (OutputString);
+        FreePool(OutputString);
       }
     } else {
       //
@@ -911,7 +911,7 @@ UpdateSkipInfoForMenu (
       Row++;
     }
 
-    FreePool (OutputString);
+    FreePool(OutputString);
   }
 
   if ((Row > MenuOption->Skip) &&
@@ -940,7 +940,7 @@ UpdateOptionSkipLines (
   if (OptionString != NULL) {
     UpdateSkipInfoForMenu (MenuOption, OptionString);
 
-    FreePool (OptionString);
+    FreePool(OptionString);
   }
 
   if ((MenuOption->ThisTag->OpCode->OpCode  == EFI_IFR_TEXT_OP) && (((EFI_IFR_TEXT*)MenuOption->ThisTag->OpCode)->TextTwo != 0)) {
@@ -949,7 +949,7 @@ UpdateOptionSkipLines (
     if (OptionString != NULL) {
       UpdateSkipInfoForMenu (MenuOption, OptionString);
 
-      FreePool (OptionString);
+      FreePool(OptionString);
     }
   }
 }
@@ -982,11 +982,11 @@ PrintableMenu (
   }
 
   Status = ProcessOptions (MenuOption, FALSE, &OptionString, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if (OptionString != NULL && OptionString[0] != '\0') {
-    FreePool (OptionString);
+    FreePool(OptionString);
     return TRUE;
   }
 
@@ -994,7 +994,7 @@ PrintableMenu (
     OptionString   = GetToken (((EFI_IFR_TEXT*)MenuOption->ThisTag->OpCode)->TextTwo, gFormData->HiiHandle);
     ASSERT (OptionString != NULL);
     if (OptionString[0] != '\0'){
-      FreePool (OptionString);
+      FreePool(OptionString);
       return TRUE;
     }
   }
@@ -1448,7 +1448,7 @@ UiWaitForEvent (
   }
 
   Status = gBS->WaitForEvent (EventNum, WaitList, &Index);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   switch (Index) {
   case 0:
@@ -2026,7 +2026,7 @@ UpdateHighlightMenuInfo (
       // if question id == 0, save the opcode buffer..
       //
       if (gHighligthMenuInfo.HLTOpCode != NULL) {
-        FreePool (gHighligthMenuInfo.HLTOpCode);
+        FreePool(gHighligthMenuInfo.HLTOpCode);
       }
       gHighligthMenuInfo.HLTOpCode = AllocateCopyPool (Statement->OpCode->Length, Statement->OpCode);
       ASSERT (gHighligthMenuInfo.HLTOpCode != NULL);
@@ -2043,7 +2043,7 @@ UpdateHighlightMenuInfo (
       // if question id == 0, save the opcode buffer..
       //
       if (gHighligthMenuInfo.TOSOpCode != NULL) {
-        FreePool (gHighligthMenuInfo.TOSOpCode);
+        FreePool(gHighligthMenuInfo.TOSOpCode);
       }
       gHighligthMenuInfo.TOSOpCode = AllocateCopyPool (Statement->OpCode->Length, Statement->OpCode);
       ASSERT (gHighligthMenuInfo.TOSOpCode != NULL);
@@ -2056,14 +2056,14 @@ UpdateHighlightMenuInfo (
     gHighligthMenuInfo.HLTSequence   = 0;
     gHighligthMenuInfo.HLTQuestionId = 0;
     if (gHighligthMenuInfo.HLTOpCode != NULL) {
-      FreePool (gHighligthMenuInfo.HLTOpCode);
+      FreePool(gHighligthMenuInfo.HLTOpCode);
     }
     gHighligthMenuInfo.HLTOpCode     = NULL;
     gHighligthMenuInfo.HLTIndex      = 0;
 
     gHighligthMenuInfo.TOSQuestionId = 0;
     if (gHighligthMenuInfo.TOSOpCode != NULL) {
-      FreePool (gHighligthMenuInfo.TOSOpCode);
+      FreePool(gHighligthMenuInfo.TOSOpCode);
     }
     gHighligthMenuInfo.TOSOpCode     = NULL;
     gHighligthMenuInfo.TOSIndex      = 0;
@@ -2179,7 +2179,7 @@ HasOptionString (
     if (TestOp->TextTwo != 0) {
       String = GetToken (TestOp->TextTwo, gFormData->HiiHandle);
       Size   = StrLen (String);
-      FreePool (String);
+      FreePool(String);
     }
   }
 
@@ -2339,7 +2339,7 @@ FxConfirmPopup (
     RetVal = FALSE;
   }
 
-  FreePool (CfmStr);
+  FreePool(CfmStr);
 
   return RetVal;
 }
@@ -2408,7 +2408,7 @@ DisplayOneMenu (
   // 1. Paint the option string.
   //
   Status = ProcessOptions (MenuOption, FALSE, &OptionString, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2471,7 +2471,7 @@ DisplayOneMenu (
         }
       }
 
-      FreePool (OutputString);
+      FreePool(OutputString);
       if (Temp2 != 0) {
         Temp2--;
       }
@@ -2479,7 +2479,7 @@ DisplayOneMenu (
 
     Highlight = FALSE;
 
-    FreePool (OptionString);
+    FreePool(OptionString);
   }
 
   //
@@ -2524,7 +2524,7 @@ DisplayOneMenu (
         }
       }
 
-      FreePool (OutputString);
+      FreePool(OutputString);
       if (Temp != 0) {
         Temp--;
       }
@@ -2565,13 +2565,13 @@ DisplayOneMenu (
         }
       }
 
-      FreePool (OutputString);
+      FreePool(OutputString);
       if (Temp3 != 0) {
         Temp3--;
       }
     }
 
-    FreePool (StringPtr);
+    FreePool(StringPtr);
   }
 
   //
@@ -2808,7 +2808,7 @@ UiDisplayMenu (
                             );
           }
 
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             if (gMisMatch) {
               return EFI_SUCCESS;
             } else {
@@ -2978,8 +2978,8 @@ UiDisplayMenu (
               StringPtr = AllocateZeroPool ((StrLen (StringRightPtr) + StrLen (StringErrorPtr)+ 1 ) * sizeof (CHAR16));
               StrCpyS (StringPtr, StrLen (StringRightPtr) + StrLen (StringErrorPtr) + 1, StringRightPtr);
               StrCatS (StringPtr, StrLen (StringRightPtr) + StrLen (StringErrorPtr) + 1, StringErrorPtr);
-              FreePool (StringRightPtr);
-              FreePool (StringErrorPtr);
+              FreePool(StringRightPtr);
+              FreePool(StringErrorPtr);
             } else {
               StringPtr = GetToken (HelpInfo, gFormData->HiiHandle);
             }
@@ -2992,28 +2992,28 @@ UiDisplayMenu (
         // 1.Calculate how many line the help string need to print.
         //
         if (HelpString != NULL) {
-          FreePool (HelpString);
+          FreePool(HelpString);
           HelpString = NULL;
         }
         HelpLine = ProcessHelpString (StringPtr, &HelpString, &EachLineWidth, RowCount);
-        FreePool (StringPtr);
+        FreePool(StringPtr);
 
         if (HelpLine > RowCount) {
           MultiHelpPage   = TRUE;
           StringPtr       = GetToken (STRING_TOKEN(ADJUST_HELP_PAGE_UP), gHiiHandle);
           if (HelpHeaderString != NULL) {
-            FreePool (HelpHeaderString);
+            FreePool(HelpHeaderString);
             HelpHeaderString = NULL;
           }
           HelpHeaderLine  = ProcessHelpString (StringPtr, &HelpHeaderString, &HeaderLineWidth, 0);
-          FreePool (StringPtr);
+          FreePool(StringPtr);
           StringPtr       = GetToken (STRING_TOKEN(ADJUST_HELP_PAGE_DOWN), gHiiHandle);
           if (HelpBottomString != NULL) {
-            FreePool (HelpBottomString);
+            FreePool(HelpBottomString);
             HelpBottomString = NULL;
           }
           HelpBottomLine  = ProcessHelpString (StringPtr, &HelpBottomString, &BottomLineWidth, 0);
-          FreePool (StringPtr);
+          FreePool(StringPtr);
           //
           // Calculate the help page count.
           //
@@ -3155,7 +3155,7 @@ UiDisplayMenu (
       //
       while (TRUE) {
         Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           EventType = UIEventKey;
           break;
         }
@@ -3227,9 +3227,9 @@ UiDisplayMenu (
 
           Status = ProcessOptions (MenuOption, TRUE, &OptionString, TRUE);
           if (OptionString != NULL) {
-            FreePool (OptionString);
+            FreePool(OptionString);
           }
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             //
             // Repaint to clear possible error prompt pop-up
             //
@@ -3356,10 +3356,10 @@ UiDisplayMenu (
         Status = ProcessOptions (MenuOption, TRUE, &OptionString, TRUE);
 
         if (OptionString != NULL) {
-          FreePool (OptionString);
+          FreePool(OptionString);
         }
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           Repaint = TRUE;
           NewLine = TRUE;
           RefreshKeyHelp (gFormData, Statement, FALSE);
@@ -3783,13 +3783,13 @@ UiDisplayMenu (
     case CfExit:
       gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
       if (HelpString != NULL) {
-        FreePool (HelpString);
+        FreePool(HelpString);
       }
       if (HelpHeaderString != NULL) {
-        FreePool (HelpHeaderString);
+        FreePool(HelpHeaderString);
       }
       if (HelpBottomString != NULL) {
-        FreePool (HelpBottomString);
+        FreePool(HelpBottomString);
       }
       return EFI_SUCCESS;
 
@@ -3823,7 +3823,7 @@ FreeMenuOptionData(
       FreePool(Option->Description);
     }
     RemoveEntryList (&Option->Link);
-    FreePool (Option);
+    FreePool(Option);
   }
 }
 
@@ -3966,14 +3966,14 @@ BrowserStatusProcess (
       } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
     } else {
       Status = gBS->CreateEvent (EVT_NOTIFY_WAIT, TPL_CALLBACK, EmptyEventProcess, NULL, &TimeOutEvent);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       EventContext.SyncEvent = TimeOutEvent;
       EventContext.TimeOut   = &TimeOut;
       EventContext.ErrorInfo = ErrorInfo;
 
       Status = gBS->CreateEvent (EVT_TIMER | EVT_NOTIFY_SIGNAL, TPL_CALLBACK, RefreshTimeOutProcess, &EventContext, &RefreshIntervalEvent);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Show the dialog first to avoid long time not reaction.
@@ -3981,11 +3981,11 @@ BrowserStatusProcess (
       gBS->SignalEvent (RefreshIntervalEvent);
 
       Status = gBS->SetTimer (RefreshIntervalEvent, TimerPeriodic, ONE_SECOND);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       while (TRUE) {
         Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-        if (!EFI_ERROR (Status) && Key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
+        if (!EFI_ERROR(Status) && Key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
           break;
         }
 
@@ -3997,7 +3997,7 @@ BrowserStatusProcess (
         WaitList[1] = gST->ConIn->WaitForKey;
 
         Status = gBS->WaitForEvent (2, WaitList, &Index);
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
 
         if (Index == 0) {
           //
@@ -4014,7 +4014,7 @@ BrowserStatusProcess (
   }
 
   if (StringToken != 0) {
-    FreePool (ErrorInfo);
+    FreePool(ErrorInfo);
   }
 }
 
@@ -4058,7 +4058,7 @@ FormDisplay (
   }
 
   Status = DisplayPageFrame (FormData, &gStatementDimensions);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -4185,7 +4185,7 @@ InitializeDisplayEngine (
                   EFI_NATIVE_INTERFACE,
                   &mPrivateData.FromDisplayProt
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install HII Popup Protocol.
@@ -4196,7 +4196,7 @@ InitializeDisplayEngine (
                  EFI_NATIVE_INTERFACE,
                  &mPrivateData.HiiPopup
                 );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   InitializeDisplayStrings();
 
@@ -4207,7 +4207,7 @@ InitializeDisplayEngine (
   // Use BrowserEx2 protocol to register HotKey.
   //
   Status = gBS->LocateProtocol (&gEdkiiFormBrowserEx2ProtocolGuid, NULL, (VOID **) &FormBrowserEx2);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Register the default HotKey F9 and F10 again.
     //
@@ -4216,13 +4216,13 @@ InitializeDisplayEngine (
     NewString         = HiiGetString (gHiiHandle, STRING_TOKEN (FUNCTION_TEN_STRING), NULL);
     ASSERT (NewString != NULL);
     FormBrowserEx2->RegisterHotKey (&HotKey, BROWSER_ACTION_SUBMIT, 0, NewString);
-    FreePool (NewString);
+    FreePool(NewString);
 
     HotKey.ScanCode   = SCAN_F9;
     NewString         = HiiGetString (gHiiHandle, STRING_TOKEN (FUNCTION_NINE_STRING), NULL);
     ASSERT (NewString != NULL);
     FormBrowserEx2->RegisterHotKey (&HotKey, BROWSER_ACTION_DEFAULT, EFI_HII_DEFAULT_CLASS_STANDARD, NewString);
-    FreePool (NewString);
+    FreePool(NewString);
   }
 
   return EFI_SUCCESS;
@@ -4248,11 +4248,11 @@ UnloadDisplayEngine (
   FreeDisplayStrings ();
 
   if (gHighligthMenuInfo.HLTOpCode != NULL) {
-    FreePool (gHighligthMenuInfo.HLTOpCode);
+    FreePool(gHighligthMenuInfo.HLTOpCode);
   }
 
   if (gHighligthMenuInfo.TOSOpCode != NULL) {
-    FreePool (gHighligthMenuInfo.TOSOpCode);
+    FreePool(gHighligthMenuInfo.TOSOpCode);
   }
 
   return EFI_SUCCESS;

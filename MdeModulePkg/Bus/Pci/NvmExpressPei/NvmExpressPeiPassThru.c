@@ -471,7 +471,7 @@ NvmePassThruExecute (
                    &PhyAddr,
                    &MapData
                    );
-        if (EFI_ERROR (Status) || (MapLength != Packet->TransferLength)) {
+        if (EFI_ERROR(Status) || (MapLength != Packet->TransferLength)) {
           Status = EFI_OUT_OF_RESOURCES;
           DEBUG ((DEBUG_ERROR, "%a: Fail to map data buffer.\n", __FUNCTION__));
           goto Exit;
@@ -489,7 +489,7 @@ NvmePassThruExecute (
                    &PhyAddr,
                    &MapMeta
                    );
-        if (EFI_ERROR (Status) || (MapLength != Packet->MetadataLength)) {
+        if (EFI_ERROR(Status) || (MapLength != Packet->MetadataLength)) {
           Status = EFI_OUT_OF_RESOURCES;
           DEBUG ((DEBUG_ERROR, "%a: Fail to map meta data buffer.\n", __FUNCTION__));
           goto Exit;
@@ -554,7 +554,7 @@ NvmePassThruExecute (
   }
   Data32 = ReadUnaligned32 ((UINT32 *)&Private->SqTdbl[QueueId]);
   Status = NVME_SET_SQTDBL (Private, QueueId, &Data32);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NVME_SET_SQTDBL fail, Status - %r\n", __FUNCTION__, Status));
     goto Exit;
   }
@@ -580,7 +580,7 @@ NvmePassThruExecute (
     //
     DEBUG ((DEBUG_ERROR, "%a: Timeout occurs for the PassThru command.\n", __FUNCTION__));
     Status = NvmeControllerInit (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
     } else {
       //

@@ -87,7 +87,7 @@ ValidateCapsuleNameCapsuleIntegrity (
   //
   if (CapsuleNamePtr != CapsuleNameBufEnd) {
     if (CapsuleNameBufStart != (UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize) {
-      FreePool (CapsuleNameBufStart);
+      FreePool(CapsuleNameBufStart);
     }
     return NULL;
   }
@@ -95,7 +95,7 @@ ValidateCapsuleNameCapsuleIntegrity (
   CapsuleNameBuf = AllocatePool (*CapsuleNameNum * sizeof (EFI_PHYSICAL_ADDRESS));
   if (CapsuleNameBuf == NULL) {
     if (CapsuleNameBufStart != (UINT8 *)CapsuleHeader + CapsuleHeader->HeaderSize) {
-      FreePool (CapsuleNameBufStart);
+      FreePool(CapsuleNameBufStart);
     }
     return NULL;
   }
@@ -348,7 +348,7 @@ GetBootOptionByNumber(
   ZeroMem (&BootOption, sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
   Status = EfiBootManagerVariableToLoadOption (BootOptionName, &BootOption);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *OptionBuf = AllocatePool (sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
     if (*OptionBuf != NULL) {
       CopyMem (*OptionBuf, &BootOption, sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
@@ -510,7 +510,7 @@ GetEfiSysPartitionFromActiveBootOption(
       CurFullPath = EfiBootManagerGetNextLoadOptionDevicePath(DevicePath, CurFullPath);
 
       if (PreFullPath != NULL) {
-        FreePool (PreFullPath);
+        FreePool(PreFullPath);
       }
 
       if (CurFullPath == NULL) {
@@ -1266,7 +1266,7 @@ BuildGatherList (
 
 ERREXIT:
   if (BlockDescriptors1 != NULL) {
-    FreePool (BlockDescriptors1);
+    FreePool(BlockDescriptors1);
   }
 
   return Status;
@@ -1751,7 +1751,7 @@ RelocateCapsuleToRam (
   // 1. Load all Capsule On Disks into memory
   //
   Status = GetAllCapsuleOnDisk (MaxRetry, &CapsuleOnDiskBuf, &CapsuleOnDiskNum, &Handle, NULL);
-  if (EFI_ERROR (Status) || CapsuleOnDiskNum == 0 || CapsuleOnDiskBuf == NULL) {
+  if (EFI_ERROR(Status) || CapsuleOnDiskNum == 0 || CapsuleOnDiskBuf == NULL) {
     DEBUG ((DEBUG_ERROR, "GetAllCapsuleOnDisk Status - 0x%x\n", Status));
     return EFI_NOT_FOUND;
   }
@@ -1768,7 +1768,7 @@ RelocateCapsuleToRam (
   CapsuleSize = AllocateZeroPool ((CapsuleOnDiskNum + 1) * sizeof (UINTN));
   if (CapsuleSize == NULL) {
     DEBUG ((DEBUG_ERROR, "Fail to allocate memory for capsules.\n"));
-    FreePool (CapsuleBuffer);
+    FreePool(CapsuleBuffer);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1781,8 +1781,8 @@ RelocateCapsuleToRam (
   FileNameCapsule = AllocateZeroPool (sizeof (EFI_CAPSULE_HEADER) + TotalStringSize);
   if (FileNameCapsule == NULL) {
     DEBUG ((DEBUG_ERROR, "Fail to allocate memory for name capsule.\n"));
-    FreePool (CapsuleBuffer);
-    FreePool (CapsuleSize);
+    FreePool(CapsuleBuffer);
+    FreePool(CapsuleSize);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1805,10 +1805,10 @@ RelocateCapsuleToRam (
   // 3. Build Gather list for the capsules
   //
   Status = BuildGatherList (CapsuleBuffer, CapsuleSize, CapsuleOnDiskNum + 1, &BlockDescriptors);
-  if (EFI_ERROR (Status) || BlockDescriptors == NULL) {
-    FreePool (CapsuleBuffer);
-    FreePool (CapsuleSize);
-    FreePool (FileNameCapsule);
+  if (EFI_ERROR(Status) || BlockDescriptors == NULL) {
+    FreePool(CapsuleBuffer);
+    FreePool(CapsuleSize);
+    FreePool(FileNameCapsule);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1964,7 +1964,7 @@ CoDRemoveTempFile (
 
 EXIT:
   if (LoadOptionNumber != NULL) {
-    FreePool (LoadOptionNumber);
+    FreePool(LoadOptionNumber);
   }
 
   if (RootDir != NULL) {

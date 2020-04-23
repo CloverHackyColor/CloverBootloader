@@ -267,7 +267,7 @@ OSInfoOSVendorImpl (
   if (!OSVendor) {
     return;
   }
-  Result = AsciiStrCmp (OSVendor, OS_INFO_VENDOR_NAME);
+  Result = AsciiStrCmp(OSVendor, OS_INFO_VENDOR_NAME);
   
   if (Result == 0) {
     //   EfiLibNamedEventSignal (&gAppleOsLoadedNamedEventGuid);

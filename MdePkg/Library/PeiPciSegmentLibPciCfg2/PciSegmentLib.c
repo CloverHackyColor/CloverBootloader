@@ -72,7 +72,7 @@ InternalGetPciCfg2Ppi (
                NULL,
                (VOID**) &PciCfg2Ppi
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Instance++;
   } while (PciCfg2Ppi->Segment != SegmentNumber);
 

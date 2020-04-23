@@ -412,7 +412,7 @@ EbcRegisterImage (
     ImageContext.ImageRead = PeCoffLoaderImageReadFromMemory;
 
     Status = PeCoffLoaderGetImageInfo (&ImageContext);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -537,7 +537,7 @@ InitializeEbcDriver (
   }
 
   if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
     HandleBuffer = NULL;
   }
   //
@@ -550,8 +550,8 @@ InitializeEbcDriver (
                     &gEdkiiPeCoffImageEmulatorProtocolGuid, &mPeCoffEmuProtocol,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
-      FreePool (EbcProtocol);
+    if (EFI_ERROR(Status)) {
+      FreePool(EbcProtocol);
       return Status;
     }
   }
@@ -588,8 +588,8 @@ InitializeEbcDriver (
   //
   // This is recoverable, so free the memory and continue.
   //
-  if (EFI_ERROR (Status)) {
-    FreePool (EbcDebugProtocol);
+  if (EFI_ERROR(Status)) {
+    FreePool(EbcDebugProtocol);
     goto ErrorExit;
   }
   //
@@ -640,11 +640,11 @@ ErrorExit:
   }
 
   if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
     HandleBuffer = NULL;
   }
 
-  FreePool (EbcProtocol);
+  FreePool(EbcProtocol);
 
   return Status;
 }
@@ -1185,8 +1185,8 @@ EbcUnloadImage (
   ThunkList = ImageList->ThunkList;
   while (ThunkList != NULL) {
     NextThunkList = ThunkList->Next;
-    FreePool (ThunkList->ThunkBuffer);
-    FreePool (ThunkList);
+    FreePool(ThunkList->ThunkBuffer);
+    FreePool(ThunkList);
     ThunkList = NextThunkList;
   }
   //
@@ -1203,7 +1203,7 @@ EbcUnloadImage (
   //
   // Now free up the image list element
   //
-  FreePool (ImageList);
+  FreePool(ImageList);
 
   EbcDebuggerHookEbcUnloadImage (ImageHandle);
 
@@ -1240,7 +1240,7 @@ EbcAddImageThunk (
   //
   if (mEbcICacheFlush != NULL) {
     Status = mEbcICacheFlush ((EFI_PHYSICAL_ADDRESS) (UINTN) ThunkBuffer, ThunkSize);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1495,8 +1495,8 @@ InitEbcVmTestProtocol (
   //
   Handle  = NULL;
   Status  = gBS->InstallProtocolInterface (&Handle, &gEfiEbcVmTestProtocolGuid, EFI_NATIVE_INTERFACE, EbcVmTestProtocol);
-  if (EFI_ERROR (Status)) {
-    FreePool (EbcVmTestProtocol);
+  if (EFI_ERROR(Status)) {
+    FreePool(EbcVmTestProtocol);
   }
   return Status;
 }
@@ -1535,7 +1535,7 @@ EbcAllocatePoolForThunk (
   EFI_STATUS  Status;
 
   Status = gBS->AllocatePool (EfiBootServicesCode, AllocationSize, &Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   return Buffer;

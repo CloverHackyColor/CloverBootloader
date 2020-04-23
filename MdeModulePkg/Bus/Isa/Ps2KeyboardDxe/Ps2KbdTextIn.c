@@ -209,7 +209,7 @@ KeyboardEfiReset (
   // Call InitKeyboard to initialize the keyboard
   //
   Status = InitKeyboard (ConsoleIn, ExtendedVerification);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Leave critical section and return
     //
@@ -277,7 +277,7 @@ KeyboardReadKeyStroke (
     // If there is no pending key, then return.
     //
     Status = KeyboardReadKeyStrokeWorker (ConsoleIn, &KeyData);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -512,7 +512,7 @@ KeyboardSetState (
   }
 
   Status = UpdateStatusLights (ConsoleInDev);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
   }
 
@@ -664,7 +664,7 @@ KeyboardUnregisterKeyNotify (
       //
       RemoveEntryList (&CurrentNotify->NotifyEntry);
 
-      gBS->FreePool (CurrentNotify);
+      gBS->FreePool(CurrentNotify);
       Status = EFI_SUCCESS;
       goto Exit;
     }
@@ -719,7 +719,7 @@ KeyNotifyProcessHandler (
     // Leave critical section
     //
     gBS->RestoreTPL (OldTpl);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     for (Link = GetFirstNode (NotifyList); !IsNull (NotifyList, Link); Link = GetNextNode (NotifyList, Link)) {

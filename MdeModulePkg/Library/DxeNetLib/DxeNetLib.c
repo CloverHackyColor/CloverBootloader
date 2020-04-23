@@ -162,7 +162,7 @@ SyslogLocateSnp (
                    &Handles
                    );
 
-  if (EFI_ERROR (Status) || (HandleCount == 0)) {
+  if (EFI_ERROR(Status) || (HandleCount == 0)) {
     return NULL;
   }
 
@@ -188,7 +188,7 @@ SyslogLocateSnp (
     Snp = NULL;
   }
 
-  FreePool (Handles);
+  FreePool(Handles);
   return Snp;
 }
 
@@ -242,13 +242,13 @@ SyslogSendPacket (
                   &TimeoutEvent
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = gBS->SetTimer (TimeoutEvent, TimerRelative, NET_SYSLOG_TX_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -276,7 +276,7 @@ SyslogSendPacket (
       //
       Snp->GetStatus (Snp, NULL, (VOID **) &TxBuf);
 
-      if (!EFI_ERROR (gBS->CheckEvent (TimeoutEvent))) {
+      if (!EFI_ERROR(gBS->CheckEvent (TimeoutEvent))) {
         Status = EFI_TIMEOUT;
         break;
       }
@@ -384,7 +384,7 @@ SyslogBuildPacket (
   //
   Pri = ((NET_SYSLOG_FACILITY & 31) << 3) | (Level & 7);
   Status = gRT->GetTime (&Time, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return 0;
   }
 
@@ -554,10 +554,10 @@ NetDebugOutput (
     Status = SyslogSendPacket (Packet, Len);
   }
 
-  FreePool (Packet);
+  FreePool(Packet);
 
 ON_EXIT:
-  FreePool (Message);
+  FreePool(Message);
   return Status;
 }
 /**
@@ -1170,7 +1170,7 @@ NetDestroyLinkList (
     Entry = GetFirstNode (List);
     while (!IsNull (List, Entry)) {
       Status = CallBack (Entry, Context);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       //
@@ -1292,7 +1292,7 @@ NetMapClean (
     RemoveEntryList (&Item->Link);
     Map->Count--;
 
-    gBS->FreePool (Item);
+    gBS->FreePool(Item);
   }
 
   ASSERT ((Map->Count == 0) && IsListEmpty (&Map->Used));
@@ -1301,7 +1301,7 @@ NetMapClean (
     Item = NET_LIST_USER_STRUCT (Entry, NET_MAP_ITEM, Link);
 
     RemoveEntryList (&Item->Link);
-    gBS->FreePool (Item);
+    gBS->FreePool(Item);
   }
 
   ASSERT (IsListEmpty (&Map->Recycled));
@@ -1744,7 +1744,7 @@ NetMapIterate (
     Item   = NET_LIST_USER_STRUCT (Entry, NET_MAP_ITEM, Link);
     Result = CallBack (Map, Item, Arg);
 
-    if (EFI_ERROR (Result)) {
+    if (EFI_ERROR(Result)) {
       return Result;
     }
   }
@@ -1793,7 +1793,7 @@ NetLibDefaultUnload (
                   &DeviceHandleBuffer
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1803,7 +1803,7 @@ NetLibDefaultUnload (
                     &gEfiDriverBindingProtocolGuid,
                     (VOID **) &DriverBinding
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1837,7 +1837,7 @@ NetLibDefaultUnload (
                     &gEfiComponentNameProtocolGuid,
                     (VOID **) &ComponentName
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->UninstallProtocolInterface (
              DriverBinding->DriverBindingHandle,
              &gEfiComponentNameProtocolGuid,
@@ -1850,7 +1850,7 @@ NetLibDefaultUnload (
                     &gEfiComponentName2ProtocolGuid,
                     (VOID **) &ComponentName2
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->UninstallProtocolInterface (
              DriverBinding->DriverBindingHandle,
              &gEfiComponentName2ProtocolGuid,
@@ -1863,7 +1863,7 @@ NetLibDefaultUnload (
   // Free the buffer containing the list of handles from the handle database
   //
   if (DeviceHandleBuffer != NULL) {
-    gBS->FreePool (DeviceHandleBuffer);
+    gBS->FreePool(DeviceHandleBuffer);
   }
 
   return EFI_SUCCESS;
@@ -1915,7 +1915,7 @@ NetLibCreateServiceChild (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1969,7 +1969,7 @@ NetLibDestroyServiceChild (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2013,7 +2013,7 @@ NetLibGetSnpHandle (
   //
   SnpInstance = NULL;
   Status = gBS->HandleProtocol (ServiceHandle, &gEfiSimpleNetworkProtocolGuid, (VOID **) &SnpInstance);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (Snp != NULL) {
       *Snp = SnpInstance;
     }
@@ -2030,7 +2030,7 @@ NetLibGetSnpHandle (
 
   SnpHandle = NULL;
   Status = gBS->LocateDevicePath (&gEfiSimpleNetworkProtocolGuid, &DevicePath, &SnpHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Failed to find SNP handle
     //
@@ -2038,7 +2038,7 @@ NetLibGetSnpHandle (
   }
 
   Status = gBS->HandleProtocol (SnpHandle, &gEfiSimpleNetworkProtocolGuid, (VOID **) &SnpInstance);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (Snp != NULL) {
       *Snp = SnpInstance;
     }
@@ -2148,7 +2148,7 @@ NetLibGetVlanHandle (
     Handle = NULL;
   }
 
-  FreePool (VlanDevicePath);
+  FreePool(VlanDevicePath);
   return Handle;
 }
 
@@ -2211,7 +2211,7 @@ NetLibGetMacAddress (
                     &gEfiManagedNetworkServiceBindingProtocolGuid,
                     (VOID **) &MnpSb
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -2219,7 +2219,7 @@ NetLibGetMacAddress (
     // Create a MNP child
     //
     Status = MnpSb->CreateChild (MnpSb, &MnpChildHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -2231,7 +2231,7 @@ NetLibGetMacAddress (
                     &gEfiManagedNetworkProtocolGuid,
                     (VOID **) &Mnp
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       MnpSb->DestroyChild (MnpSb, MnpChildHandle);
       return Status;
     }
@@ -2240,7 +2240,7 @@ NetLibGetMacAddress (
     // Try to get SNP mode from MNP
     //
     Status = Mnp->GetModeData (Mnp, NULL, &SnpModeData);
-    if (EFI_ERROR (Status) && (Status != EFI_NOT_STARTED)) {
+    if (EFI_ERROR(Status) && (Status != EFI_NOT_STARTED)) {
       MnpSb->DestroyChild (MnpSb, MnpChildHandle);
       return Status;
     }
@@ -2305,7 +2305,7 @@ NetLibGetMacString (
   // Get MAC address of the network device
   //
   Status = NetLibGetMacAddress (ServiceHandle, &MacAddress, &HwAddressSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2430,7 +2430,7 @@ NetLibDetectMedia (
   // Invoke Snp->GetStatus() to refresh MediaPresent field in SNP mode data
   //
   Status = Snp->GetStatus (Snp, &InterruptStatus, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2485,10 +2485,10 @@ NetLibDetectMedia (
     // Shutdown/Stop the simple network
     //
     Status = Snp->Shutdown (Snp);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = Snp->Stop (Snp);
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
 
@@ -2496,10 +2496,10 @@ NetLibDetectMedia (
     // Start/Initialize the simple network
     //
     Status = Snp->Start (Snp);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = Snp->Initialize (Snp, 0, 0);
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
 
@@ -2521,7 +2521,7 @@ NetLibDetectMedia (
                     );
 
     if (MCastFilter != NULL) {
-      FreePool (MCastFilter);
+      FreePool(MCastFilter);
     }
 
     return Status;
@@ -2535,7 +2535,7 @@ NetLibDetectMedia (
     // SNP not start yet, start it
     //
     Status = Snp->Start (Snp);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
   }
@@ -2544,7 +2544,7 @@ NetLibDetectMedia (
   // Initialize the simple network
   //
   Status = Snp->Initialize (Snp, 0, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
     goto Exit;
   }
@@ -2568,7 +2568,7 @@ Exit:
   }
 
   if (MCastFilter != NULL) {
-    FreePool (MCastFilter);
+    FreePool(MCastFilter);
   }
 
   return Status;
@@ -2638,11 +2638,11 @@ NetLibDetectMediaWaitTimeout (
                   &gEfiAdapterInformationProtocolGuid,
                   (VOID *) &Aip
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 
     MediaPresent = TRUE;
     Status = NetLibDetectMedia (ServiceHandle, &MediaPresent);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (MediaPresent) {
         *MediaState = EFI_SUCCESS;
       } else {
@@ -2662,10 +2662,10 @@ NetLibDetectMediaWaitTimeout (
                   (VOID **) &MediaInfo,
                   &DataSize
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 
     *MediaState = MediaInfo->MediaState;
-    FreePool (MediaInfo);
+    FreePool(MediaInfo);
     if (*MediaState != EFI_NOT_READY || Timeout < MEDIA_STATE_DETECT_TIME_INTERVAL) {
 
       return EFI_SUCCESS;
@@ -2673,7 +2673,7 @@ NetLibDetectMediaWaitTimeout (
   } else {
 
     if (MediaInfo != NULL) {
-      FreePool (MediaInfo);
+      FreePool(MediaInfo);
     }
 
     if (Status == EFI_UNSUPPORTED) {
@@ -2683,7 +2683,7 @@ NetLibDetectMediaWaitTimeout (
       //
       MediaPresent = TRUE;
       Status = NetLibDetectMedia (ServiceHandle, &MediaPresent);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         if (MediaPresent) {
           *MediaState = EFI_SUCCESS;
         } else {
@@ -2703,7 +2703,7 @@ NetLibDetectMediaWaitTimeout (
   Timer        = NULL;
   TimeRemained = Timeout;
   Status = gBS->CreateEvent (EVT_TIMER, TPL_CALLBACK, NULL, NULL, &Timer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -2713,14 +2713,14 @@ NetLibDetectMediaWaitTimeout (
                     TimerRelative,
                     MEDIA_STATE_DETECT_TIME_INTERVAL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseEvent(Timer);
       return EFI_DEVICE_ERROR;
     }
 
     do {
       TimerStatus = gBS->CheckEvent (Timer);
-      if (!EFI_ERROR (TimerStatus)) {
+      if (!EFI_ERROR(TimerStatus)) {
 
         TimeRemained -= MEDIA_STATE_DETECT_TIME_INTERVAL;
         Status = Aip->GetInformation (
@@ -2729,14 +2729,14 @@ NetLibDetectMediaWaitTimeout (
                         (VOID **) &MediaInfo,
                         &DataSize
                         );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
 
           *MediaState = MediaInfo->MediaState;
-          FreePool (MediaInfo);
+          FreePool(MediaInfo);
         } else {
 
           if (MediaInfo != NULL) {
-            FreePool (MediaInfo);
+            FreePool(MediaInfo);
           }
           gBS->CloseEvent(Timer);
           return Status;
@@ -2789,12 +2789,12 @@ NetLibDefaultAddressIsStatic (
   // Get Ip4Config2 policy.
   //
   Status = gBS->HandleProtocol (Controller, &gEfiIp4Config2ProtocolGuid, (VOID **) &Ip4Config2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
   Status = Ip4Config2->GetData (Ip4Config2, Ip4Config2DataTypePolicy, &DataSize, &Policy);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
   
@@ -2962,7 +2962,7 @@ NetLibGetNicHandle (
                   &OpenCount
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -2975,7 +2975,7 @@ NetLibGetNicHandle (
     }
   }
 
-  gBS->FreePool (OpenBuffer);
+  gBS->FreePool(OpenBuffer);
   return Handle;
 }
 
@@ -3261,12 +3261,12 @@ NetLibGetSystemGuid (
 
   SmbiosTable = NULL;
   Status = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid, (VOID **) &Smbios30Table);
-  if (!(EFI_ERROR (Status) || Smbios30Table == NULL)) {
+  if (!(EFI_ERROR(Status) || Smbios30Table == NULL)) {
     Smbios.Hdr = (SMBIOS_STRUCTURE *) (UINTN) Smbios30Table->TableAddress;
     SmbiosEnd.Raw = (UINT8 *) (UINTN) (Smbios30Table->TableAddress + Smbios30Table->TableMaximumSize);
   } else {
     Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **) &SmbiosTable);
-    if (EFI_ERROR (Status) || SmbiosTable == NULL) {
+    if (EFI_ERROR(Status) || SmbiosTable == NULL) {
       return EFI_NOT_FOUND;
     }
     Smbios.Hdr    = (SMBIOS_STRUCTURE *) (UINTN) SmbiosTable->TableAddress;

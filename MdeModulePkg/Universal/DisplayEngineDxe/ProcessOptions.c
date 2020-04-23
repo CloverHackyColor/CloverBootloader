@@ -250,14 +250,14 @@ CompareHiiValue (
 
     Str2 = GetToken (Value2->Value.string, HiiHandle);
     if (Str2 == NULL) {
-      FreePool (Str1);
+      FreePool(Str1);
       return EFI_NOT_FOUND;
     }
 
     *Result = StrCmp (Str1, Str2);
 
-    FreePool (Str1);
-    FreePool (Str2);
+    FreePool(Str1);
+    FreePool(Str2);
 
     return EFI_SUCCESS;
   }
@@ -813,17 +813,17 @@ PasswordProcess (
         CreateDialog (&Key, gEmptyString, gPasswordUnsupported, gPressEnter, gEmptyString, NULL);
       } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
     }
-    FreePool (StringPtr);
+    FreePool(StringPtr);
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Old password exist, ask user for the old password
     //
     Status = ReadString (MenuOption, gPromptForPassword, StringPtr);
-    if (EFI_ERROR (Status)) {
-      FreePool (StringPtr);
+    if (EFI_ERROR(Status)) {
+      FreePool(StringPtr);
       return Status;
     }
 
@@ -831,7 +831,7 @@ PasswordProcess (
     // Check user input old password
     //
     Status = Question->PasswordCheck (gFormData, Question, StringPtr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Status == EFI_NOT_READY) {
         //
         // Typed in old password incorrect
@@ -841,7 +841,7 @@ PasswordProcess (
         Status = EFI_SUCCESS;
       }
 
-      FreePool (StringPtr);
+      FreePool(StringPtr);
       return Status;
     }
   }
@@ -851,12 +851,12 @@ PasswordProcess (
   //
   ZeroMem (StringPtr, (Maximum + 1) * sizeof (CHAR16));
   Status = ReadString (MenuOption, gPromptForNewPassword, StringPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Reset state machine for password
     //
     Question->PasswordCheck (gFormData, Question, NULL);
-    FreePool (StringPtr);
+    FreePool(StringPtr);
     return Status;
   }
 
@@ -866,13 +866,13 @@ PasswordProcess (
   TempString = AllocateZeroPool ((Maximum + 1) * sizeof (CHAR16));
   ASSERT (TempString);
   Status = ReadString (MenuOption, gConfirmPassword, TempString);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Reset state machine for password
     //
     Question->PasswordCheck (gFormData, Question, NULL);
-    FreePool (StringPtr);
-    FreePool (TempString);
+    FreePool(StringPtr);
+    FreePool(TempString);
     return Status;
   }
 
@@ -903,8 +903,8 @@ PasswordProcess (
   }
   ZeroMem (TempString, (Maximum + 1) * sizeof (CHAR16));
   ZeroMem (StringPtr, (Maximum + 1) * sizeof (CHAR16));
-  FreePool (TempString);
-  FreePool (StringPtr);
+  FreePool(TempString);
+  FreePool(StringPtr);
 
   return Status;
 }
@@ -1044,7 +1044,7 @@ ProcessOptions (
           }
           SetArrayData (ValueArray, ValueType, Index2, 0);
 
-          FreePool (*OptionString);
+          FreePool(*OptionString);
           *OptionString = NULL;
           return EFI_NOT_FOUND;
         }
@@ -1058,7 +1058,7 @@ ProcessOptions (
         NewStrCat (OptionString[0], MaxLen, Character);
         Character[0] = CHAR_CARRIAGE_RETURN;
         NewStrCat (OptionString[0], MaxLen, Character);
-        FreePool (StringPtr);
+        FreePool(StringPtr);
       }
 
       //
@@ -1093,7 +1093,7 @@ ProcessOptions (
           NewStrCat (OptionString[0], MaxLen, Character);
           Character[0] = CHAR_CARRIAGE_RETURN;
           NewStrCat (OptionString[0], MaxLen, Character);
-          FreePool (StringPtr);
+          FreePool(StringPtr);
 
           continue;
         }
@@ -1124,7 +1124,7 @@ ProcessOptions (
       }
 
       if (ValueInvalid) {
-        FreePool (*OptionString);
+        FreePool(*OptionString);
         *OptionString = NULL;
         return EFI_NOT_FOUND;
       }
@@ -1191,7 +1191,7 @@ ProcessOptions (
           }
           gUserInput->SelectedStatement = Question;
           gMisMatch = TRUE;
-          FreePool (*OptionString);
+          FreePool(*OptionString);
           *OptionString = NULL;
           return EFI_NOT_FOUND;
         }
@@ -1205,7 +1205,7 @@ ProcessOptions (
       Character[0] = RIGHT_ONEOF_DELIMITER;
       NewStrCat (OptionString[0], MaxLen, Character);
 
-      FreePool (StringPtr);
+      FreePool(StringPtr);
     }
     break;
 
@@ -1354,8 +1354,8 @@ ProcessOptions (
       CopyMem(StringPtr, Question->CurrentValue.Buffer, Question->CurrentValue.BufferLen);
 
       Status = ReadString (MenuOption, gPromptForData, StringPtr);
-      if (EFI_ERROR (Status)) {
-        FreePool (StringPtr);
+      if (EFI_ERROR(Status)) {
+        FreePool(StringPtr);
         return Status;
       }
 
@@ -1363,7 +1363,7 @@ ProcessOptions (
       gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
       gUserInput->InputValue.Type = Question->CurrentValue.Type;
       gUserInput->InputValue.Value.string = HiiSetString(gFormData->HiiHandle, gUserInput->InputValue.Value.string, StringPtr, NULL);
-      FreePool (StringPtr);
+      FreePool(StringPtr);
       return EFI_SUCCESS;
     } else {
       *OptionString = AllocateZeroPool (BufferSize);
@@ -1442,7 +1442,7 @@ ProcessHelpString (
     }
 
     TotalRowNum ++;
-    FreePool (OutputString);
+    FreePool(OutputString);
   }
   *EachLineWidth = MaxStringLen;
 
@@ -1457,7 +1457,7 @@ ProcessHelpString (
   while((StringLen = GetLineByWidth (StringPtr, LineWidth, &GlyphWidth, &Index, &OutputString)) != 0) {
     CopyMem (*FormattedString + CheckedNum * MaxStringLen, OutputString, StringLen * sizeof (CHAR16));
     CheckedNum ++;
-    FreePool (OutputString);
+    FreePool(OutputString);
   }
 
   return TotalRowNum;

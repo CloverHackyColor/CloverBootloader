@@ -68,7 +68,7 @@ PlatformBdsShowProgress (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID **) &GraphicsOutput
                   );
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
 
     Status = gBS->HandleProtocol (
@@ -77,7 +77,7 @@ PlatformBdsShowProgress (
                     (VOID **) &UgaDraw
                     );
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -94,7 +94,7 @@ PlatformBdsShowProgress (
                         &ColorDepth,
                         &RefreshRate
                         );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   } else {
@@ -261,8 +261,8 @@ BdsMemoryTest (
                   NULL,
                   (VOID **) &GenMemoryTest
                   );
-  if (EFI_ERROR (Status)) {
-    FreePool (Pos);
+  if (EFI_ERROR(Status)) {
+    FreePool(Pos);
     return EFI_SUCCESS;
   }
 
@@ -279,7 +279,7 @@ BdsMemoryTest (
     // do the test, and then the status of EFI_NO_MEDIA will be returned by
     // "MemoryTestInit". So it does not need to test memory again, just return.
     //
-    FreePool (Pos);
+    FreePool(Pos);
     return EFI_SUCCESS;
   }
 
@@ -288,7 +288,7 @@ BdsMemoryTest (
 
   if (TmpStr != NULL) {
     PrintXY (10, 10, NULL, NULL, TmpStr);
-    FreePool (TmpStr);
+    FreePool(TmpStr);
   }
   } else {
     DEBUG ((EFI_D_INFO, "Enter memory test.\n"));
@@ -305,7 +305,7 @@ BdsMemoryTest (
       TmpStr = GetStringById (STRING_TOKEN (STR_SYSTEM_MEM_ERROR));
       if (TmpStr != NULL) {
         PrintXY (10, 10, NULL, NULL, TmpStr);
-        FreePool (TmpStr);
+        FreePool(TmpStr);
       }
 
 //      ASSERT (0);
@@ -327,7 +327,7 @@ BdsMemoryTest (
         //
           StrnCatS (StrPercent, 80, TmpStr, sizeof (StrPercent) / sizeof (CHAR16) - StrLen (StrPercent) - 1);
         PrintXY (10, 10, NULL, NULL, StrPercent);
-        FreePool (TmpStr);
+        FreePool(TmpStr);
       }
 
       TmpStr = GetStringById (STRING_TOKEN (STR_PERFORM_MEM_TEST));
@@ -340,7 +340,7 @@ BdsMemoryTest (
           TestPercent,
           (UINTN) PreviousValue
           );
-        FreePool (TmpStr);
+        FreePool(TmpStr);
       }
     }
 
@@ -351,7 +351,7 @@ BdsMemoryTest (
 
     if (!PcdGetBool (PcdConInConnectOnDemand)) {
     KeyStatus     = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-    if (!EFI_ERROR (KeyStatus) && (Key.ScanCode == SCAN_ESC)) {
+    if (!EFI_ERROR(KeyStatus) && (Key.ScanCode == SCAN_ESC)) {
       if (!RequireSoftECCInit) {
         if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
         TmpStr = GetStringById (STRING_TOKEN (STR_PERFORM_MEM_TEST));
@@ -364,7 +364,7 @@ BdsMemoryTest (
             100,
             (UINTN) PreviousValue
             );
-          FreePool (TmpStr);
+          FreePool(TmpStr);
         }
 
         PrintXY (10, 10, NULL, NULL, L"100");
@@ -391,7 +391,7 @@ Done:
   TmpStr = GetStringById (STRING_TOKEN (STR_MEM_TEST_COMPLETED));
   if (TmpStr != NULL) {
       StrnCatS (StrTotalMemory, 80, TmpStr, StrTotalMemorySize / sizeof (CHAR16) - StrLen (StrTotalMemory) - 1);
-    FreePool (TmpStr);
+    FreePool(TmpStr);
   }
 
   PrintXY (10, 10, NULL, NULL, StrTotalMemory);
@@ -408,7 +408,7 @@ Done:
     DEBUG ((EFI_D_INFO, "%d bytes of system memory tested OK\r\n", TotalMemorySize));
   }
   
-  FreePool (Pos);
+  FreePool(Pos);
 
 
   //

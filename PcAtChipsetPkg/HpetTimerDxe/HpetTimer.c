@@ -773,7 +773,7 @@ TimerDriverInitialize (
   // Find the CPU architectural protocol.
   //
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Retrieve HPET Capabilities and Configuration Information
@@ -939,8 +939,8 @@ TimerDriverInitialize (
   // Install interrupt handler for selected HPET Timer
   //
   Status = mCpu->RegisterInterruptHandler (mCpu, PcdGet8 (PcdHpetLocalApicVector), TimerInterruptHandler);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to register HPET interrupt with CPU Arch Protocol.  Unload HPET driver.\n"));
     return EFI_DEVICE_ERROR;
   }
@@ -949,8 +949,8 @@ TimerDriverInitialize (
   // Force the HPET Timer to be enabled at its default period
   //
   Status = TimerDriverSetTimerPeriod (&mTimer, PcdGet64 (PcdHpetDefaultTimerPeriod));
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Unable to set HPET default timer rate.  Unload HPET driver.\n"));
     return EFI_DEVICE_ERROR;
   }
@@ -987,7 +987,7 @@ TimerDriverInitialize (
                   &gEfiTimerArchProtocolGuid, &mTimer,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

@@ -171,7 +171,7 @@ OrderedCollectionUninit (
   )
 {
   ASSERT (OrderedCollectionIsEmpty (Tree));
-  FreePool (Tree);
+  FreePool(Tree);
 }
 
 
@@ -1102,7 +1102,7 @@ OrderedCollectionDelete (
     }
   }
 
-  FreePool (Node);
+  FreePool(Node);
 
   //
   // If the node that we unlinked from its original spot (ie. Node itself, or

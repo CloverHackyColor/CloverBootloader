@@ -45,7 +45,7 @@ PeiDebugPrintHobLibConstructor (
              NULL,
              (VOID **)&Variable
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Size = sizeof (GlobalErrorLevel);
     Status = Variable->GetVariable (
                          Variable,
@@ -55,7 +55,7 @@ PeiDebugPrintHobLibConstructor (
                          &Size,
                          &GlobalErrorLevel
                          );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Build the GUID'ed HOB for DXE
       //

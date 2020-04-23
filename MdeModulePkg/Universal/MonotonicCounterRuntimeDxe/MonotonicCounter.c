@@ -220,7 +220,7 @@ MonotonicCounterDriverInitialize (
                   NULL,
                   &mEfiMtcEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Read the last high part
@@ -233,7 +233,7 @@ MonotonicCounterDriverInitialize (
              &BufferSize,
              &HighCount
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     HighCount = 0;
   }
   //
@@ -263,7 +263,7 @@ MonotonicCounterDriverInitialize (
                   NULL,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

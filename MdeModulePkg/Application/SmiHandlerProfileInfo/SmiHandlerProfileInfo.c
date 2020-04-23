@@ -277,7 +277,7 @@ GetDriverNameString (
               (VOID **) &NameString,
               &StringSize
               );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Method 2: Get the name string from FFS UI section
       //
@@ -285,7 +285,7 @@ GetDriverNameString (
         NameString[PROFILE_NAME_STRING_LENGTH] = 0;
       }
       UnicodeStrToAsciiStrS (NameString, mNameString, sizeof (mNameString));
-      FreePool (NameString);
+      FreePool(NameString);
       return mNameString;
     }
   }
@@ -555,7 +555,7 @@ DumpSmiChildContext (
     Str = ConvertDevicePathToText((EFI_DEVICE_PATH_PROTOCOL *)(((SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT *)Context) + 1), TRUE, TRUE);
     Print(L" UsbDevicePath=\"%s\"", Str);
     if (Str != NULL) {
-      FreePool (Str);
+      FreePool(Str);
     }
   } else {
     Print(L" Context=\"");

@@ -517,7 +517,7 @@ SmmCommunicationCommunicate (
     // Generate Software SMI
     //
     Status = mSmmControl2->Trigger (mSmmControl2, NULL, NULL, FALSE, 0);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
 
@@ -672,7 +672,7 @@ SmmIplDxeDispatchEventNotify (
     //       so no need to reset the SMRAM to UC in MTRR.
     //
     Status = mSmmAccess->Close (mSmmAccess);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Print debug message that the SMRAM window is now closed.
@@ -702,7 +702,7 @@ SmmIplSmmConfigurationEventNotify (
   // Make sure this notification is for this handler
   //
   Status = gBS->LocateProtocol (Context, NULL, (VOID **)&SmmConfiguration);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -710,7 +710,7 @@ SmmIplSmmConfigurationEventNotify (
   // Register the SMM Entry Point provided by the SMM Core with the SMM COnfiguration protocol
   //
   Status = SmmConfiguration->RegisterSmmEntry (SmmConfiguration, gSmmCorePrivate->SmmEntryPoint);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Set flag to indicate that the SMM Entry Point has been registered which
@@ -755,7 +755,7 @@ SmmIplReadyToLockEventNotify (
   //
   if (CompareGuid ((EFI_GUID *)Context, &gEfiDxeSmmReadyToLockProtocolGuid)) {
     Status = gBS->LocateProtocol (&gEfiDxeSmmReadyToLockProtocolGuid, NULL, &Interface);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
   } else {
@@ -885,7 +885,7 @@ GetPeCoffImageFixLoadingAssignedAddress(
                               &Size,
                               &SectionHeader
                               );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
        return Status;
      }
 
@@ -959,7 +959,7 @@ ExecuteSmmCoreFromSmram (
              &SourceBuffer,
              &SourceSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -973,7 +973,7 @@ ExecuteSmmCoreFromSmram (
   // Get information about the image being loaded
   //
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -985,7 +985,7 @@ ExecuteSmmCoreFromSmram (
     // Get the fixed loading address assigned by Build tool
     //
     Status = GetPeCoffImageFixLoadingAssignedAddress (&ImageContext);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Since the memory range to load SMM CORE will be cut out in SMM core, so no need to allocate and free this range
       //
@@ -1050,12 +1050,12 @@ ExecuteSmmCoreFromSmram (
   // Load the image to our new buffer
   //
   Status = PeCoffLoaderLoadImage (&ImageContext);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Relocate the image in our new buffer
     //
     Status = PeCoffLoaderRelocateImage (&ImageContext);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Flush the instruction cache so the image data are written before we execute it
       //
@@ -1084,7 +1084,7 @@ ExecuteSmmCoreFromSmram (
   //
   // Always free memory allocted by GetFileBufferByFilePath ()
   //
-  FreePool (SourceBuffer);
+  FreePool(SourceBuffer);
 
   return Status;
 }
@@ -1375,7 +1375,7 @@ GetFullSmramRanges (
     ASSERT (FullSmramRanges != NULL);
 
     Status = mSmmAccess->GetCapabilities (mSmmAccess, &Size, FullSmramRanges);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     return FullSmramRanges;
   }
@@ -1432,7 +1432,7 @@ GetFullSmramRanges (
   SmramRanges = (EFI_SMRAM_DESCRIPTOR *) AllocatePool (Size);
   ASSERT (SmramRanges != NULL);
   Status = mSmmAccess->GetCapabilities (mSmmAccess, &Size, SmramRanges);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   do {
     Rescan = FALSE;
@@ -1505,9 +1505,9 @@ GetFullSmramRanges (
   ASSERT (*FullSmramRangeCount == TempSmramRangeCount);
   *FullSmramRangeCount += AdditionSmramRangeCount;
 
-  FreePool (SmramRanges);
-  FreePool (SmramReservedRanges);
-  FreePool (TempSmramRanges);
+  FreePool(SmramRanges);
+  FreePool(SmramReservedRanges);
+  FreePool(TempSmramRanges);
 
   return FullSmramRanges;
 }
@@ -1554,13 +1554,13 @@ SmmIplEntry (
   // Get SMM Access Protocol
   //
   Status = gBS->LocateProtocol (&gEfiSmmAccess2ProtocolGuid, NULL, (VOID **)&mSmmAccess);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get SMM Control2 Protocol
   //
   Status = gBS->LocateProtocol (&gEfiSmmControl2ProtocolGuid, NULL, (VOID **)&mSmmControl2);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   gSmmCorePrivate->SmramRanges = GetFullSmramRanges (&gSmmCorePrivate->SmramRangeCount);
 
@@ -1568,7 +1568,7 @@ SmmIplEntry (
   // Open all SMRAM ranges
   //
   Status = mSmmAccess->Open (mSmmAccess);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Print debug message that the SMRAM window is now open.
@@ -1614,7 +1614,7 @@ SmmIplEntry (
                     mSmramCacheBase,
                     &MemDesc
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if ((MemDesc.Capabilities & SMRAM_CAPABILITIES) != SMRAM_CAPABILITIES) {
       gDS->SetMemorySpaceCapabilities (
              mSmramCacheBase,
@@ -1630,7 +1630,7 @@ SmmIplEntry (
     //
     CpuArch = NULL;
     Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **)&CpuArch);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       MemDesc.Attributes &= ~(MEMORY_CACHE_ATTRIBUTES | MEMORY_PAGE_ATTRIBUTES);
       MemDesc.Attributes |= EFI_MEMORY_WB;
       Status = gDS->SetMemorySpaceAttributes (
@@ -1638,7 +1638,7 @@ SmmIplEntry (
                       mSmramCacheSize,
                       MemDesc.Attributes
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_WARN, "SMM IPL failed to set SMRAM window to EFI_MEMORY_WB\n"));
       }
 
@@ -1671,7 +1671,7 @@ SmmIplEntry (
                 &gLoadFixedAddressConfigurationTableGuid,
                (VOID **) &mLMFAConfigurationTable
                );
-      if (!EFI_ERROR (Status) && mLMFAConfigurationTable != NULL) {
+      if (!EFI_ERROR(Status) && mLMFAConfigurationTable != NULL) {
         mLMFAConfigurationTable->SmramBase = mCurrentSmramRange->CpuStart;
         //
         // Print the SMRAM base
@@ -1700,7 +1700,7 @@ SmmIplEntry (
                &gSmmCorePrivate->SmramRanges[gSmmCorePrivate->SmramRangeCount - 1],
                gSmmCorePrivate
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Print error message that the SMM Core failed to be loaded and executed.
       //
@@ -1715,7 +1715,7 @@ SmmIplEntry (
                                mSmramCacheSize,
                                EFI_MEMORY_UC
                                );
-        if (EFI_ERROR (SetAttrStatus)) {
+        if (EFI_ERROR(SetAttrStatus)) {
           DEBUG ((DEBUG_WARN, "SMM IPL failed to reset SMRAM window to EFI_MEMORY_UC\n"));
         }
       }
@@ -1731,12 +1731,12 @@ SmmIplEntry (
   // If the SMM Core could not be loaded then close SMRAM window, free allocated
   // resources, and return an error so SMM IPL will be unloaded.
   //
-  if (mCurrentSmramRange == NULL || EFI_ERROR (Status)) {
+  if (mCurrentSmramRange == NULL || EFI_ERROR(Status)) {
     //
     // Close all SMRAM ranges
     //
     Status = mSmmAccess->Close (mSmmAccess);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Print debug message that the SMRAM window is now closed.
@@ -1746,7 +1746,7 @@ SmmIplEntry (
     //
     // Free all allocated resources
     //
-    FreePool (gSmmCorePrivate->SmramRanges);
+    FreePool(gSmmCorePrivate->SmramRanges);
 
     return EFI_UNSUPPORTED;
   }
@@ -1760,7 +1760,7 @@ SmmIplEntry (
                   &gEfiSmmCommunicationProtocolGuid, &mSmmCommunication,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Create the set of protocol and event notififcations that the SMM IPL requires
@@ -1783,7 +1783,7 @@ SmmIplEntry (
                       mSmmIplEvents[Index].Guid,
                       &mSmmIplEvents[Index].Event
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 

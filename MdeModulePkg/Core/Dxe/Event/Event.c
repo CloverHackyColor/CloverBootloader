@@ -399,7 +399,7 @@ CoreCreateEventInternal (
        break;
      }
   }
-  if(EFI_ERROR (Status)) {
+  if(EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -768,8 +768,8 @@ CoreCloseEvent (
   // clear the Signature of Event before free pool.
   //
   Event->Signature = 0;
-  Status = CoreFreePool (Event);
-  ASSERT_EFI_ERROR (Status);
+  Status = CoreFreePool(Event);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

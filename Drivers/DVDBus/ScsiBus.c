@@ -156,7 +156,7 @@ InitializeScsiBus(
              &gScsiBusComponentName,
              &gScsiBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -269,7 +269,7 @@ SCSIBusDriverBindingSupported (
     return EFI_SUCCESS;
   }
   
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -349,7 +349,7 @@ SCSIBusDriverBindingStart (
                             Controller,
                             EFI_OPEN_PROTOCOL_BY_DRIVER
                             );
-  if (EFI_ERROR (DevicePathStatus) && (DevicePathStatus != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(DevicePathStatus) && (DevicePathStatus != EFI_ALREADY_STARTED)) {
     return DevicePathStatus;
   }
 
@@ -383,7 +383,7 @@ SCSIBusDriverBindingStart (
     //
     // Fail to open EFI PassThru Protocol, Close the DevicePathProtocol if it is opened by this time.
     //
-    if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+    if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
       if (!EFI_ERROR(DevicePathStatus)) {
         gBS->CloseProtocol (
                Controller,
@@ -444,7 +444,7 @@ SCSIBusDriverBindingStart (
                     EFI_NATIVE_INTERFACE,
                     &ScsiBusDev->BusIdentify
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ErrorExit;
     }
   } else {
@@ -461,7 +461,7 @@ SCSIBusDriverBindingStart (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     ScsiBusDev = SCSI_BUS_CONTROLLER_DEVICE_FROM_THIS (BusIdentify);
@@ -486,7 +486,7 @@ SCSIBusDriverBindingStart (
       Status = ScsiBusDev->ScsiInterface->GetTargetLun (ScsiBusDev->ScsiInterface, RemainingDevicePath, &ScsiTargetId.ScsiId.Scsi, &Lun);
     }
 	  		DBG(L"GetTargetLun=%d status=%r\n", Status);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else {
@@ -510,7 +510,7 @@ SCSIBusDriverBindingStart (
         Status = ScsiBusDev->ScsiInterface->GetNextDevice (ScsiBusDev->ScsiInterface, &ScsiTargetId.ScsiId.Scsi, &Lun);
       }
 		DBG(L"GetNextDevice=%d status=%r\n", Lun, Status);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // no legal Pun and Lun found any more
         //
@@ -544,7 +544,7 @@ SCSIBusDriverBindingStart (
 ErrorExit:
   
   if (ScsiBusDev != NULL) {
-    FreePool (ScsiBusDev);
+    FreePool(ScsiBusDev);
   }
   
   if (ExtScsiSupport) {
@@ -554,7 +554,7 @@ ErrorExit:
            This->DriverBindingHandle,
            Controller
            );
-    if (!EFI_ERROR (PassThruStatus)) {
+    if (!EFI_ERROR(PassThruStatus)) {
       gBS->CloseProtocol (
              Controller,
              &gEfiScsiPassThruProtocolGuid,
@@ -623,7 +623,7 @@ SCSIBusDriverBindingStop (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
@@ -677,7 +677,7 @@ SCSIBusDriverBindingStop (
            This->DriverBindingHandle,
            Controller
            );
-    FreePool (ScsiBusDev);
+    FreePool(ScsiBusDev);
     return EFI_SUCCESS;
   }
 
@@ -693,7 +693,7 @@ SCSIBusDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
       continue;
     }
@@ -727,7 +727,7 @@ SCSIBusDriverBindingStop (
                     &ScsiIoDevice->ScsiIo,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
       if (ScsiIoDevice->ExtScsiSupport) {
         gBS->OpenProtocol (
@@ -749,7 +749,7 @@ SCSIBusDriverBindingStop (
                );
       }
     } else {
-      FreePool (ScsiIoDevice);
+      FreePool(ScsiIoDevice);
     }
   }
 
@@ -1139,7 +1139,7 @@ ScsiScanCreateDevice (
   DeviceHandle = NULL;
   RemainingDevicePath = DevicePath;
   Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
+  if (!EFI_ERROR(Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
     //
     // The device has been started, directly return to fast boot.
     //
@@ -1192,7 +1192,7 @@ ScsiScanCreateDevice (
                   &ScsiIoDevice->ScsiIo,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   } else {
     if (ScsiBusDev->ExtScsiSupport) {
@@ -1224,14 +1224,14 @@ ErrorExit:
   // ScsiPassThru->BuildDevicePath() function; It is no longer used
   // after AppendDevicePathNode,so free the memory it occupies.
   //
-  FreePool (ScsiDevicePath);
+  FreePool(ScsiDevicePath);
 
   if (DevicePath != NULL) {
-    FreePool (DevicePath);
+    FreePool(DevicePath);
   }
 
   if (ScsiIoDevice != NULL) {
-    FreePool (ScsiIoDevice);
+    FreePool(ScsiIoDevice);
   }
 
   return Status;
@@ -1293,7 +1293,7 @@ DiscoverScsiDevice (
               FALSE
               );
 	  DBG(L"ScsiInquiryCommand Status=%r\n", Status);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       break;
     } else if ((Status == EFI_BAD_BUFFER_SIZE) || 
                (Status == EFI_INVALID_PARAMETER) ||

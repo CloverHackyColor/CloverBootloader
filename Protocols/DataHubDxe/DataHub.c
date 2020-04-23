@@ -83,7 +83,7 @@ DataHubLogData (
   //  atomic operation, so use the lock.
   //
   Status = EfiAcquireLockOrFail (&Private->DataLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Reentrancy detected so exit!
     //
@@ -458,7 +458,7 @@ DataHubRegisterFilterDriver (
   // Search for duplicate entries
   //
   if (FindFilterDriverByEvent (&Private->FilterDriverListHead, FilterEvent) != NULL) {
-    FreePool (FilterDriver);
+    FreePool(FilterDriver);
     return EFI_ALREADY_STARTED;
   }
   //
@@ -564,7 +564,7 @@ DataHubInstall (
   // Make sure we get a bigger MTC number on every boot!
   //
   Status = gRT->GetNextHighMonotonicCount (&HighMontonicCount);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // if system service fails pick a sane value.
     //

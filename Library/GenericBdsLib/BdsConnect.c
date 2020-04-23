@@ -119,7 +119,7 @@ BdsLibConnectDevicePath (
     //
     Instance  = GetNextDevicePathInstance (&DevicePath, &Size);
     if (Instance == NULL) {
-      FreePool (CopyOfDevicePath);
+      FreePool(CopyOfDevicePath);
       return EFI_OUT_OF_RESOURCES;
     }
     
@@ -143,7 +143,7 @@ BdsLibConnectDevicePath (
       RemainingDevicePath = Instance;
       Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &Handle);
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         if (Handle == PreviousHandle) {
           //
           // If no forward progress is made try invoking the Dispatcher.
@@ -166,7 +166,7 @@ BdsLibConnectDevicePath (
           }
         }
 
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           PreviousHandle = Handle;
           //
           // Connect all drivers that apply to Handle and RemainingDevicePath,
@@ -189,12 +189,12 @@ BdsLibConnectDevicePath (
       //
       // Loop until RemainingDevicePath is an empty device path
       //
-    } while (!EFI_ERROR (Status) && !IsDevicePathEnd (RemainingDevicePath));
+    } while (!EFI_ERROR(Status) && !IsDevicePathEnd (RemainingDevicePath));
 
   } while (DevicePath != NULL);
 
   if (CopyOfDevicePath != NULL) {
-    FreePool (CopyOfDevicePath);
+    FreePool(CopyOfDevicePath);
   }
   //
   // All handle with DevicePath exists in the handle database
@@ -231,7 +231,7 @@ BdsLibConnectAllEfi (
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -241,7 +241,7 @@ BdsLibConnectAllEfi (
   }
 
   if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
   }
 
   return EFI_SUCCESS;
@@ -279,7 +279,7 @@ BdsLibDisconnectAllEfi (
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -289,7 +289,7 @@ BdsLibDisconnectAllEfi (
   }
 
   if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
   }
 
   return EFI_SUCCESS;
@@ -318,7 +318,7 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
   // Retrieve the list of all handles from the handle database
   //
   Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, HandleCount, HandleBuffer);
-  if (EFI_ERROR (Status)) goto Error;
+  if (EFI_ERROR(Status)) goto Error;
   
   *HandleType = AllocatePool (*HandleCount * sizeof (UINT32));
   if (*HandleType == NULL) goto Error;
@@ -333,7 +333,7 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
                   &ProtocolGuidArray,
                   &ArrayCount
                   );
-    if (!EFI_ERROR (Status)) {      
+    if (!EFI_ERROR(Status)) {      
       for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
         
         if (CompareGuid (ProtocolGuidArray[ProtocolIndex], &gEfiLoadedImageProtocolGuid)) {
@@ -373,7 +373,7 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
                                                &OpenInfo,
                                                &OpenInfoCount
                                                );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           
           for (OpenInfoIndex = 0; OpenInfoIndex < OpenInfoCount; OpenInfoIndex++) {
             
@@ -397,11 +397,11 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
             }
           }
           
-          FreePool (OpenInfo);
+          FreePool(OpenInfo);
         }
       }
       
-      FreePool (ProtocolGuidArray);
+      FreePool(ProtocolGuidArray);
     }
   }
   
@@ -409,11 +409,11 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
   
 Error:
   if (*HandleType != NULL) {
-    FreePool (*HandleType);
+    FreePool(*HandleType);
   }
   
   if (*HandleBuffer != NULL) {
-    FreePool (*HandleBuffer);
+    FreePool(*HandleBuffer);
   }
   
   *HandleCount  = 0;
@@ -442,14 +442,14 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
   
   
 	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &AllHandleCount, &AllHandleBuffer);
-	if (EFI_ERROR (Status)) 
+	if (EFI_ERROR(Status)) 
 		return Status;
   
 	for (Index = 0; Index < AllHandleCount; Index++) {
 //  for (Index = AllHandleCount - 1; Index >= 0; --Index) {
 		Status = ScanDeviceHandles(AllHandleBuffer[Index], &HandleCount, &HandleBuffer, &HandleType);
     
-		if (EFI_ERROR (Status))
+		if (EFI_ERROR(Status))
 			goto Done;
     
 		Device = TRUE;
@@ -471,9 +471,9 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 			if (!Parent) {
 				if (HandleType[Index] & EFI_HANDLE_TYPE_DEVICE_HANDLE) {
 					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID*)&PciIo);
-					if (!EFI_ERROR (Status)) {
+					if (!EFI_ERROR(Status)) {
 						Status = PciIo->Pci.Read (PciIo,EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-						if (!EFI_ERROR (Status)) {
+						if (!EFI_ERROR(Status)) {
 							if(IS_PCI_VGA(&Pci)==TRUE) {
 								gBS->DisconnectController(AllHandleBuffer[Index], NULL, NULL);
 							}
@@ -484,12 +484,12 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 			}
 		}
     
-		FreePool (HandleBuffer);
-		FreePool (HandleType);
+		FreePool(HandleBuffer);
+		FreePool(HandleType);
 	}
   
 Done:
-	FreePool (AllHandleBuffer);
+	FreePool(AllHandleBuffer);
 	return Status;
 }
 
@@ -524,7 +524,7 @@ BdsLibConnectAllDriversToAllControllers (
     //
     Status = gDS->Dispatch ();
 
-  } while (!EFI_ERROR (Status));
+  } while (!EFI_ERROR(Status));
 
 }
 
@@ -594,19 +594,19 @@ BdsLibConnectUsbDevByShortFormDP(
                   &HandleArrayCount,
                   &HandleArray
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleArrayCount; Index++) {
       Status = gBS->HandleProtocol (
                       HandleArray[Index],
                       &gEfiPciIoProtocolGuid,
                       (VOID **)&PciIo
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Check whether the Pci device is the wanted usb host controller
         //
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x09, 3, &Class);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if ((PCI_CLASS_SERIAL == Class[2]) &&
               (PCI_CLASS_SERIAL_USB == Class[1])) {
             if (HostControllerPI == Class[0] || HostControllerPI == 0xFF) {
@@ -626,7 +626,7 @@ BdsLibConnectUsbDevByShortFormDP(
     }
 
     if (HandleArray != NULL) {
-      FreePool (HandleArray);
+      FreePool(HandleArray);
     }
 
     if (AtLeastOneConnected) {

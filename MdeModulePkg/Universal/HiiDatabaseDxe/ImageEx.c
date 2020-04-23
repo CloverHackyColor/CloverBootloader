@@ -223,7 +223,7 @@ HiiDrawImageIdEx (
   // Get the specified Image.
   //
   Status = HiiGetImageEx (This, PackageList, ImageId, &Image);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -232,7 +232,7 @@ HiiDrawImageIdEx (
   //
   Status = HiiDrawImageEx (This, Flags, &Image, Blt, BltX, BltY);
   if (Image.Bitmap != NULL) {
-    FreePool (Image.Bitmap);
+    FreePool(Image.Bitmap);
   }
   return Status;
 }
@@ -274,17 +274,17 @@ LocateHiiImageDecoder (
   }
 
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiHiiImageDecoderProtocolGuid, NULL, &HandleNum, &Handles);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   for (Index = 0; Index < HandleNum; Index++) {
     Status = gBS->HandleProtocol (Handles[Index], &gEfiHiiImageDecoderProtocolGuid, (VOID **) &Decoder);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
     Status = Decoder->GetImageDecoderName (Decoder, &DecoderNames, &NumberOfDecoderName);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     for (DecoderNameIndex = 0; DecoderNameIndex < NumberOfDecoderName; DecoderNameIndex++) {
@@ -386,11 +386,11 @@ HiiGetImageInfo (
     // Spec requires to use the first capable image decoder instance.
     // The first image decoder instance may fail to decode the image.
     //
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Image->Height = ImageInfo->ImageHeight;
       Image->Width = ImageInfo->ImageWidth;
       Image->Image.Bitmap = NULL;
-      FreePool (ImageInfo);
+      FreePool(ImageInfo);
     }
     return Status;
 

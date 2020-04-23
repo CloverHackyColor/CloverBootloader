@@ -146,7 +146,7 @@ CoreInstallConfigurationTable (
         //
         // Free the old table after updating System Table to the new table pointer.
         //
-        CoreFreePool (OldTable);
+        CoreFreePool(OldTable);
       } else {
         //
         // Update System Table

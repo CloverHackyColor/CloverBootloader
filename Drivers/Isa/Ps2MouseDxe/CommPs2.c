@@ -39,14 +39,14 @@ KbcSelfTest (
   // Keyboard controller self test
   //
   Status = Out8042Command (IsaIo, SELF_TEST);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
   // Read return code
   //
   Status = In8042Data (IsaIo, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -57,23 +57,23 @@ KbcSelfTest (
   // Set system flag
   //
   Status = Out8042Command (IsaIo, READ_CMD_BYTE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = In8042Data (IsaIo, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = Out8042Command (IsaIo, WRITE_CMD_BYTE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Data |= CMD_SYS_FLAG;
   Status = Out8042Data (IsaIo, Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -173,12 +173,12 @@ CheckKbStatus (
   // Send command to read KBC command byte
   //
   Status = Out8042Command (IsaIo, READ_CMD_BYTE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = In8042Data (IsaIo, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -209,12 +209,12 @@ PS2MouseReset (
   UINT8       Data;
 
   Status = Out8042AuxCommand (IsaIo, RESET_CMD, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = In8042AuxData (IsaIo, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -225,7 +225,7 @@ PS2MouseReset (
   }
 
   Status = In8042AuxData (IsaIo, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -258,7 +258,7 @@ PS2MouseSetSampleRate (
   // Send auxiliary command to set mouse sample rate
   //
   Status = Out8042AuxCommand (IsaIo, SETSR_CMD, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -287,7 +287,7 @@ PS2MouseSetResolution (
   // Send auxiliary command to set mouse resolution
   //
   Status = Out8042AuxCommand (IsaIo, SETRE_CMD, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -380,7 +380,7 @@ PS2MouseGetPacket (
       //
       KbcDisableAux (MouseDev->IsaIo);
       Status = PS2MouseRead (MouseDev->IsaIo, &Data, &Count, State);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KbcEnableAux (MouseDev->IsaIo);
         return EFI_NOT_READY;
       }
@@ -403,7 +403,7 @@ PS2MouseGetPacket (
     case PS2_READ_DATA_BYTE:
       Count   = 2;
       Status  = PS2MouseRead (MouseDev->IsaIo, (Packet + 1), &Count, State);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         if (KeyboardEnable) {
           KbcEnableKb (MouseDev->IsaIo);
         }
@@ -503,7 +503,7 @@ PS2MouseRead (
     //
     Status = CheckForInput (IsaIo);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -511,7 +511,7 @@ PS2MouseRead (
   while (BytesRead < *BufSize) {
 
     Status = WaitOutputFull (IsaIo, TIMEOUT);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -555,7 +555,7 @@ Out8042Command (
   // Wait keyboard controller input buffer empty
   //
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -565,7 +565,7 @@ Out8042Command (
   IsaIo->Io.Write (IsaIo, EfiIsaIoWidthUint8, KBC_CMD_STS_PORT, 1, &Data);
 
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -593,7 +593,7 @@ Out8042Data (
   // Wait keyboard controller input buffer empty
   //
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -601,7 +601,7 @@ Out8042Data (
   IsaIo->Io.Write (IsaIo, EfiIsaIoWidthUint8, KBC_DATA_PORT, 1, &Temp);
 
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -675,7 +675,7 @@ Out8042AuxCommand (
   // Wait keyboard controller input buffer empty
   //
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -685,7 +685,7 @@ Out8042AuxCommand (
   IsaIo->Io.Write (IsaIo, EfiIsaIoWidthUint8, KBC_CMD_STS_PORT, 1, &Data);
 
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -697,7 +697,7 @@ Out8042AuxCommand (
   // Read return code
   //
   Status = In8042AuxData (IsaIo, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -718,7 +718,7 @@ Out8042AuxCommand (
     // Resend command
     //
     Status = Out8042AuxCommand (IsaIo, Command, TRUE);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -754,7 +754,7 @@ Out8042AuxData (
   // Wait keyboard controller input buffer empty
   //
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -764,7 +764,7 @@ Out8042AuxData (
   IsaIo->Io.Write (IsaIo, EfiIsaIoWidthUint8, KBC_CMD_STS_PORT, 1, &Temp);
 
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -772,7 +772,7 @@ Out8042AuxData (
   IsaIo->Io.Write (IsaIo, EfiIsaIoWidthUint8, KBC_DATA_PORT, 1, &Temp);
 
   Status = WaitInputEmpty (IsaIo, TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -800,7 +800,7 @@ In8042AuxData (
   // wait for output data
   //
   Status = WaitOutputFull (IsaIo, BAT_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

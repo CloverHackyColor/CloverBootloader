@@ -41,7 +41,7 @@ HandOffToDxeCore (
 
   if (PcdGetBool (PcdSetNxForStack)) {
     Status = ArmSetMemoryRegionNoExec ((UINTN)BaseOfStack, STACK_SIZE);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -55,7 +55,7 @@ HandOffToDxeCore (
   // End of PEI phase singal
   //
   Status = PeiServicesInstallPpi (&gEndOfPeiSignalPpi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Update the contents of BSP stack HOB to reflect the real stack info passed to DxeCore.

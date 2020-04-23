@@ -31,7 +31,7 @@ InitializeI2c(
   // Install driver model protocol(s).
   //
   Status = InitializeI2cHost ( ImageHandle, SystemTable );
-  if ( !EFI_ERROR ( Status ))
+  if ( !EFI_ERROR( Status ))
   {
     Status = InitializeI2cBus ( ImageHandle, SystemTable );
   }
@@ -62,7 +62,7 @@ I2cUnload (
   //  Disconnect the drivers
   //
   Status = I2cBusUnload ( ImageHandle );
-  if ( !EFI_ERROR ( Status )) {
+  if ( !EFI_ERROR( Status )) {
     Status = I2cHostUnload ( ImageHandle );
   }
   return Status;

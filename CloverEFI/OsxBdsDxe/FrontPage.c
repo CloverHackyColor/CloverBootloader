@@ -240,7 +240,7 @@ FrontPageCallback (
 
       *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
 
-      FreePool (Lang);
+      FreePool(Lang);
       break;
 
     default:
@@ -334,7 +334,7 @@ InitializeFrontPage (
     // Locate Hii relative protocols
     //
     Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &gFormBrowser2);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -349,7 +349,7 @@ InitializeFrontPage (
                     &gFrontPagePrivate.ConfigAccess,
                     NULL
                     );
- //   ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR(Status);
 
     //
     // Publish our HII data
@@ -442,7 +442,7 @@ InitializeFrontPage (
     ASSERT (gFrontPagePrivate.LanguageToken != NULL);
 
     Status = gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &HiiString);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     LangCode     = mLanguageString;
   OptionCount = 0;
@@ -455,10 +455,10 @@ InitializeFrontPage (
         StringBuffer = AllocateZeroPool (StringSize);
         ASSERT (StringBuffer != NULL);
         Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         StringBuffer = AllocatePool (AsciiStrSize (Lang) * sizeof (CHAR16));
         ASSERT (StringBuffer != NULL);
         AsciiStrToUnicodeStrS (Lang, StringBuffer, AsciiStrSize(Lang));
@@ -466,7 +466,7 @@ InitializeFrontPage (
 
       ASSERT (StringBuffer != NULL);
       gFrontPagePrivate.LanguageToken[OptionCount] = HiiSetString (HiiHandle, 0, StringBuffer, NULL);
-      FreePool (StringBuffer);
+      FreePool(StringBuffer);
 
       OptionCount++;
     }
@@ -482,7 +482,7 @@ InitializeFrontPage (
   while (*LangCode != 0) {
     GetNextLanguage (&LangCode, Lang);
 
-    if (CurrentLang != NULL && AsciiStrCmp (Lang, CurrentLang) == 0) {
+    if (CurrentLang != NULL && AsciiStrCmp(Lang, CurrentLang) == 0) {
       HiiCreateOneOfOptionOpCode (
         OptionsOpCodeHandle,
         gFrontPagePrivate.LanguageToken[OptionCount],
@@ -504,9 +504,9 @@ InitializeFrontPage (
   }
 
   if (CurrentLang != NULL) {
-    FreePool (CurrentLang);
+    FreePool(CurrentLang);
   }
-  FreePool (Lang);
+  FreePool(Lang);
 
   HiiCreateOneOfOpCode (
     StartOpCodeHandle,
@@ -759,8 +759,8 @@ UpdateFrontPageStrings (
                   NULL,
                   (VOID **) &Smbios
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -777,7 +777,7 @@ UpdateFrontPageStrings (
       GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type0Record + Type0Record->Hdr.Length), StrIndex, &NewString);
       TokenToUpdate = STRING_TOKEN (STR_FRONT_PAGE_BIOS_VERSION);
       HiiSetString (gFrontPagePrivate.HiiHandle, TokenToUpdate, NewString, NULL);
-      FreePool (NewString);
+      FreePool(NewString);
       Find[0] = TRUE;
     }  
 
@@ -787,7 +787,7 @@ UpdateFrontPageStrings (
       GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type1Record + Type1Record->Hdr.Length), StrIndex, &NewString);
       TokenToUpdate = STRING_TOKEN (STR_FRONT_PAGE_COMPUTER_MODEL);
       HiiSetString (gFrontPagePrivate.HiiHandle, TokenToUpdate, NewString, NULL);
-      FreePool (NewString);
+      FreePool(NewString);
       Find[1] = TRUE;
     }
       
@@ -797,7 +797,7 @@ UpdateFrontPageStrings (
       GetOptionalStringByIndex ((CHAR8*)((UINT8*)Type4Record + Type4Record->Hdr.Length), StrIndex, &NewString);
       TokenToUpdate = STRING_TOKEN (STR_FRONT_PAGE_CPU_MODEL);
       HiiSetString (gFrontPagePrivate.HiiHandle, TokenToUpdate, NewString, NULL);
-      FreePool (NewString);
+      FreePool(NewString);
       Find[2] = TRUE;
     }    
 
@@ -806,7 +806,7 @@ UpdateFrontPageStrings (
       ConvertProcessorToString(Type4Record->CurrentSpeed, 6, &NewString);
       TokenToUpdate = STRING_TOKEN (STR_FRONT_PAGE_CPU_SPEED);
       HiiSetString (gFrontPagePrivate.HiiHandle, TokenToUpdate, NewString, NULL);
-      FreePool (NewString);
+      FreePool(NewString);
       Find[3] = TRUE;
     } 
 
@@ -818,7 +818,7 @@ UpdateFrontPageStrings (
         );
       TokenToUpdate = STRING_TOKEN (STR_FRONT_PAGE_MEMORY_SIZE);
       HiiSetString (gFrontPagePrivate.HiiHandle, TokenToUpdate, NewString, NULL);
-      FreePool (NewString);
+      FreePool(NewString);
       Find[4] = TRUE;  
     }
   } while ( !(Find[0] && Find[1] && Find[2] && Find[3] && Find[4]));
@@ -852,7 +852,7 @@ WaitForSingleEvent (
     // Create a timer event
     //
     Status = gBS->CreateEvent (EVT_TIMER, 0, NULL, NULL, &TimerEvent);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Set the timer event
       //
@@ -873,7 +873,7 @@ WaitForSingleEvent (
       //
       // If the timer expired, change the return to timed out
       //
-      if (!EFI_ERROR (Status) && Index == 1) {
+      if (!EFI_ERROR(Status) && Index == 1) {
         Status = EFI_TIMEOUT;
       }
     }
@@ -882,7 +882,7 @@ WaitForSingleEvent (
     // No timeout... just wait on the event
     //
     Status = gBS->WaitForEvent (1, &Event, &Index);
-//    ASSERT (!EFI_ERROR (Status));
+//    ASSERT (!EFI_ERROR(Status));
 //    ASSERT (Index == 0);
   }
 
@@ -962,7 +962,7 @@ ShowProgress (
   }
   
   if (TmpStr != NULL) {
-    gBS->FreePool (TmpStr);
+    gBS->FreePool(TmpStr);
   }
 
   //
@@ -976,7 +976,7 @@ ShowProgress (
   // User pressed some key
   //
   Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1041,7 +1041,7 @@ PlatformBdsEnterFrontPage (
                                   &gEfiGraphicsOutputProtocolGuid,
                                   (VOID**)&GraphicsOutput
                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       GraphicsOutput = NULL;
     }
     
@@ -1050,7 +1050,7 @@ PlatformBdsEnterFrontPage (
                                   &gEfiSimpleTextOutProtocolGuid,
                                   (VOID**)&SimpleTextOut
                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       SimpleTextOut = NULL;
     }  
     
@@ -1100,7 +1100,7 @@ PlatformBdsEnterFrontPage (
     gST->ConOut->ClearScreen (gST->ConOut);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Timeout or user press enter to continue
       //
@@ -1112,7 +1112,7 @@ PlatformBdsEnterFrontPage (
   // Boot Logo is corrupted, report it using Boot Logo protocol.
   //
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
-  if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
+  if (!EFI_ERROR(Status) && (BootLogo != NULL)) {
     BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
   }
 
@@ -1213,7 +1213,7 @@ PlatformBdsEnterFrontPage (
   } while (/*(Status == EFI_SUCCESS) && (*/gCallbackKey != FRONT_PAGE_KEY_CONTINUE); //);
 
   if (mLanguageString != NULL) {
-    FreePool (mLanguageString);
+    FreePool(mLanguageString);
     mLanguageString = NULL;
   }
   //
@@ -1280,7 +1280,7 @@ BdsSetConsoleMode (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -1289,7 +1289,7 @@ BdsSetConsoleMode (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }  
 
@@ -1337,7 +1337,7 @@ BdsSetConsoleMode (
                        &SizeOfInfo,
                        &Info
                        );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution)) {
         if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
@@ -1346,12 +1346,12 @@ BdsSetConsoleMode (
           // Current resolution is same with required resolution, check if text mode need be set
           //
           Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
-   //       ASSERT_EFI_ERROR (Status);
-          if ((EFI_ERROR (Status)) || (CurrentColumn == NewColumns && CurrentRow == NewRows)) {
+   //       ASSERT_EFI_ERROR(Status);
+          if ((EFI_ERROR(Status)) || (CurrentColumn == NewColumns && CurrentRow == NewRows)) {
             //
             // If current text mode is same with required text mode. Do nothing
             //
-            FreePool (Info);
+            FreePool(Info);
             return EFI_SUCCESS;
           } else {
             //
@@ -1365,13 +1365,13 @@ BdsSetConsoleMode (
                   // Required text mode is supported, set it.
                   //
                   Status = SimpleTextOut->SetMode (SimpleTextOut, Index);
-           //       ASSERT_EFI_ERROR (Status);
+           //       ASSERT_EFI_ERROR(Status);
                   //
                   // Update text mode PCD.
                   //
                   //PcdSet32 (PcdConOutColumn, mSetupTextModeColumn);
                   //PcdSet32 (PcdConOutRow, mSetupTextModeRow);
-                  FreePool (Info);
+                  FreePool(Info);
                   return EFI_SUCCESS;
                 }
               }
@@ -1380,7 +1380,7 @@ BdsSetConsoleMode (
               //
               // If requried text mode is not supported, return error.
               //
-              FreePool (Info);
+              FreePool(Info);
               return EFI_UNSUPPORTED;
             }
           }
@@ -1390,13 +1390,13 @@ BdsSetConsoleMode (
           // In this case, the driver which produces simple text out need be restarted.
           //
           Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber);
-          if (!EFI_ERROR (Status)) {
-            FreePool (Info);
+          if (!EFI_ERROR(Status)) {
+            FreePool(Info);
             break;
           }
         }
       }
-      FreePool (Info);
+      FreePool(Info);
     }
   }
 
@@ -1429,7 +1429,7 @@ BdsSetConsoleMode (
                    &HandleCount,
                    &HandleBuffer
                    );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
@@ -1437,7 +1437,7 @@ BdsSetConsoleMode (
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
     if (HandleBuffer != NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
     }
   }
 

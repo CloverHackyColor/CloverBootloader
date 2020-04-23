@@ -51,7 +51,7 @@ IoReadFifoWorker (
   ASSERT (CpuIo != NULL);
 
   Status = CpuIo->Io.Read (PeiServices, CpuIo, Width, Port, Count, Buffer);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -88,7 +88,7 @@ IoWriteFifoWorker (
   ASSERT (CpuIo != NULL);
 
   Status = CpuIo->Io.Write (PeiServices, CpuIo, Width, Port, Count, Buffer);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**

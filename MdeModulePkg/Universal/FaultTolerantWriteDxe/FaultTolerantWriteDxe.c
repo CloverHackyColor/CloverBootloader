@@ -170,7 +170,7 @@ FvbNotificationEvent (
                   NULL,
                   (VOID **) &FtwProtocol
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return ;
   }
 
@@ -192,10 +192,10 @@ FvbNotificationEvent (
                   EFI_NATIVE_INTERFACE,
                   &FtwDevice->FtwInstance
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CloseEvent (Event);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return;
 }
@@ -271,7 +271,7 @@ FtwCalculateCrc32 (
   UINT32        ReturnValue;
 
   Status = gBS->CalculateCrc32 (Buffer, Length, &ReturnValue);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return ReturnValue;
 }

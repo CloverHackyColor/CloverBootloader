@@ -107,14 +107,14 @@ InitializeLogo (
                   NULL,
                   (VOID **) &HiiDatabase
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->LocateProtocol (
                   &gEfiHiiImageExProtocolGuid,
                   NULL,
                   (VOID **) &mHiiImageEx
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Retrieve HII package list from ImageHandle
@@ -127,7 +127,7 @@ InitializeLogo (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "HII Image Package with logo not found in PE/COFF resource section\n"));
     return Status;
   }
@@ -141,7 +141,7 @@ InitializeLogo (
                           NULL,
                           &mHiiHandle
                           );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Handle = NULL;
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &Handle,

@@ -145,7 +145,7 @@ UpdateFileExplorer (
       RemoveEntryList (&NewMenuEntry->Link);
       BOpt_FreeMenu (&DirectoryMenu);
       Status = BOpt_FindFiles (CallbackData, NewMenuEntry);
-       if (EFI_ERROR (Status)) {
+       if (EFI_ERROR(Status)) {
          ExitFileExplorer = TRUE;
          goto exit;
        }
@@ -293,7 +293,7 @@ FileExplorerRouteConfig (
                   NULL, 
                   (VOID**) &ConfigRouting
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -314,11 +314,11 @@ FileExplorerRouteConfig (
                             &BufferSize,
                             Progress
                             );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (FeData->BootDescriptionData[0] != 0x00 || FeData->BootOptionalData[0] != 0x00) {
     Status = Var_UpdateBootOption (Private, FeData);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -334,7 +334,7 @@ FileExplorerRouteConfig (
               FeData->DriverOptionalData,
               FeData->ForceReconnect
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

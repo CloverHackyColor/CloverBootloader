@@ -186,8 +186,8 @@ CoreInitializeTimer (
              NULL,
              &mEfiCheckTimerEvent
              );
-// ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+// ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     mEfiCheckTimerEvent = NULL;
   }
 }

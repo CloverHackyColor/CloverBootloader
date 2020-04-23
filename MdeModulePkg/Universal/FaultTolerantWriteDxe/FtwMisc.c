@@ -166,7 +166,7 @@ GetFvbByAddress (
   // Locate all handles of Fvb protocol
   //
   Status = GetFvbCountAndBuffer (&HandleCount, &HandleBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   //
@@ -174,14 +174,14 @@ GetFvbByAddress (
   //
   for (Index = 0; Index < HandleCount; Index += 1) {
     Status = FtwGetFvbByHandle (HandleBuffer[Index], &Fvb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     //
     // Compare the address and select the right one
     //
     Status = Fvb->GetPhysicalAddress (Fvb, &FvbBaseAddress);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -189,7 +189,7 @@ GetFvbByAddress (
     // Now, one FVB has one type of BlockSize
     //
     Status = Fvb->GetBlockSize (Fvb, 0, &BlockSize, &NumberOfBlocks);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -200,7 +200,7 @@ GetFvbByAddress (
     }
   }
 
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
   return FvbHandle;
 }
 
@@ -235,7 +235,7 @@ IsBootBlock (
   }
 
   Status = FtwGetSarProtocol ((VOID **) &SarProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   //
@@ -248,12 +248,12 @@ IsBootBlock (
                           &BackupBlockBase,
                           &BackupBlockSize
                           );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
   Status = SarProtocol->GetSwapState (SarProtocol, &IsSwapped);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   //
@@ -324,7 +324,7 @@ FlushSpareBlockToBootBlock (
   // Locate swap address range protocol
   //
   Status = FtwGetSarProtocol ((VOID **) &SarProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -339,9 +339,9 @@ FlushSpareBlockToBootBlock (
   // Get TopSwap bit state
   //
   Status = SarProtocol->GetSwapState (SarProtocol, &TopSwap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "Ftw: Get Top Swapped status - %r\n", Status));
-    FreePool (Buffer);
+    FreePool(Buffer);
     return EFI_ABORTED;
   }
 
@@ -350,7 +350,7 @@ FlushSpareBlockToBootBlock (
     // Get FVB of current boot block
     //
     if (GetFvbByAddress (FtwDevice->SpareAreaAddress + FtwDevice->SpareAreaLength, &BootFvb) == NULL) {
-      FreePool (Buffer);
+      FreePool(Buffer);
       return EFI_ABORTED;
     }
     //
@@ -367,8 +367,8 @@ FlushSpareBlockToBootBlock (
                           &Count,
                           Ptr
                           );
-      if (EFI_ERROR (Status)) {
-        FreePool (Buffer);
+      if (EFI_ERROR(Status)) {
+        FreePool(Buffer);
         return Status;
       }
 
@@ -388,8 +388,8 @@ FlushSpareBlockToBootBlock (
                                           &Count,
                                           Ptr
                                           );
-      if (EFI_ERROR (Status)) {
-        FreePool (Buffer);
+      if (EFI_ERROR(Status)) {
+        FreePool(Buffer);
         return Status;
       }
 
@@ -399,8 +399,8 @@ FlushSpareBlockToBootBlock (
     // Set TopSwap bit
     //
     Status = SarProtocol->SetSwapState (SarProtocol, TRUE);
-    if (EFI_ERROR (Status)) {
-      FreePool (Buffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(Buffer);
       return Status;
     }
   }
@@ -409,8 +409,8 @@ FlushSpareBlockToBootBlock (
   // Because TopSwap is set, this actually erase the top block (boot block)!
   //
   Status = FtwEraseSpareBlock (FtwDevice);
-  if (EFI_ERROR (Status)) {
-    FreePool (Buffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buffer);
     return EFI_ABORTED;
   }
   //
@@ -426,16 +426,16 @@ FlushSpareBlockToBootBlock (
                                         &Count,
                                         Ptr
                                         );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Ftw: FVB Write boot block - %r\n", Status));
-      FreePool (Buffer);
+      FreePool(Buffer);
       return Status;
     }
 
     Ptr += Count;
   }
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   //
   // Clear TopSwap bit
@@ -503,8 +503,8 @@ FlushSpareBlockToTargetBlock (
                                         &Count,
                                         Ptr
                                         );
-    if (EFI_ERROR (Status)) {
-      FreePool (Buffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(Buffer);
       return Status;
     }
 
@@ -514,8 +514,8 @@ FlushSpareBlockToTargetBlock (
   // Erase the target block
   //
   Status = FtwEraseBlock (FtwDevice, FvBlock, Lba, NumberOfBlocks);
-  if (EFI_ERROR (Status)) {
-    FreePool (Buffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buffer);
     return EFI_ABORTED;
   }
   //
@@ -525,16 +525,16 @@ FlushSpareBlockToTargetBlock (
   for (Index = 0; Index < NumberOfBlocks; Index += 1) {
     Count   = BlockSize;
     Status  = FvBlock->Write (FvBlock, Lba + Index, 0, &Count, Ptr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Ftw: FVB Write block - %r\n", Status));
-      FreePool (Buffer);
+      FreePool(Buffer);
       return Status;
     }
 
     Ptr += Count;
   }
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return Status;
 }
@@ -606,8 +606,8 @@ FlushSpareBlockToWorkingBlock (
                                         &Count,
                                         Ptr
                                         );
-    if (EFI_ERROR (Status)) {
-      FreePool (Buffer);
+    if (EFI_ERROR(Status)) {
+      FreePool(Buffer);
       return Status;
     }
 
@@ -638,8 +638,8 @@ FlushSpareBlockToWorkingBlock (
             FtwDevice->FtwWorkSpaceBase + sizeof (EFI_GUID) + sizeof (UINT32),
             WORKING_BLOCK_INVALID
             );
-  if (EFI_ERROR (Status)) {
-    FreePool (Buffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buffer);
     return EFI_ABORTED;
   }
 
@@ -649,8 +649,8 @@ FlushSpareBlockToWorkingBlock (
   // Erase the working block
   //
   Status = FtwEraseBlock (FtwDevice, FtwDevice->FtwFvBlock, FtwDevice->FtwWorkBlockLba, FtwDevice->NumberOfWorkBlock);
-  if (EFI_ERROR (Status)) {
-    FreePool (Buffer);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buffer);
     return EFI_ABORTED;
   }
   //
@@ -666,9 +666,9 @@ FlushSpareBlockToWorkingBlock (
                                       &Count,
                                       Ptr
                                       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Ftw: FVB Write block - %r\n", Status));
-      FreePool (Buffer);
+      FreePool(Buffer);
       return Status;
     }
 
@@ -677,7 +677,7 @@ FlushSpareBlockToWorkingBlock (
   //
   // Since the memory buffer will not be used, free memory Buffer.
   //
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   //
   // Update the VALID of the working block
@@ -692,7 +692,7 @@ FlushSpareBlockToWorkingBlock (
             FtwDevice->FtwWorkSpaceBase + sizeof (EFI_GUID) + sizeof (UINT32),
             WORKING_BLOCK_VALID
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -747,7 +747,7 @@ FtwUpdateFvState (
   //
   Length  = sizeof (UINT8);
   Status  = FvBlock->Read (FvBlock, Lba, Offset, &Length, &State);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -985,7 +985,7 @@ InitFtwDevice (
   FtwDevice->SpareAreaLength  = (UINTN) PcdGet32 (PcdFlashNvStorageFtwSpareSize);
   if ((FtwDevice->WorkSpaceLength == 0) || (FtwDevice->SpareAreaLength == 0)) {
     DEBUG ((EFI_D_ERROR, "Ftw: Workspace or Spare block does not exist!\n"));
-    FreePool (FtwDevice);
+    FreePool(FtwDevice);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1042,7 +1042,7 @@ FindFvbForFtw (
   // Get all FVB handle.
   //
   Status = GetFvbCountAndBuffer (&HandleCount, &HandleBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -1052,7 +1052,7 @@ FindFvbForFtw (
   Fvb = NULL;
   for (Index = 0; Index < HandleCount; Index += 1) {
     Status = FtwGetFvbByHandle (HandleBuffer[Index], &Fvb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_NOT_FOUND;
       break;
     }
@@ -1061,14 +1061,14 @@ FindFvbForFtw (
     // Ensure this FVB protocol support Write operation.
     //
     Status = Fvb->GetAttributes (Fvb, &Attributes);
-    if (EFI_ERROR (Status) || ((Attributes & EFI_FVB2_WRITE_STATUS) == 0)) {
+    if (EFI_ERROR(Status) || ((Attributes & EFI_FVB2_WRITE_STATUS) == 0)) {
       continue;
     }
     //
     // Compare the address and select the right one
     //
     Status = Fvb->GetPhysicalAddress (Fvb, &FvbBaseAddress);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1076,7 +1076,7 @@ FindFvbForFtw (
     // Now, one FVB has one type of BlockSize.
     //
     Status = Fvb->GetBlockSize (Fvb, 0, &BlockSize, &NumberOfBlocks);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1104,13 +1104,13 @@ FindFvbForFtw (
             if (((FtwDevice->WorkSpaceAddress & (FtwDevice->WorkBlockSize - 1)) != 0) ||
                 ((FtwDevice->WorkSpaceLength & (FtwDevice->WorkBlockSize - 1)) != 0)) {
               DEBUG ((EFI_D_ERROR, "Ftw: Work space address or length is not block size aligned when work space size is larger than one block size\n"));
-              FreePool (HandleBuffer);
+              FreePool(HandleBuffer);
               ASSERT (FALSE);
               return EFI_ABORTED;
             }
           } else if ((FtwDevice->FtwWorkSpaceBase + FtwDevice->FtwWorkSpaceSize) > FtwDevice->WorkBlockSize) {
             DEBUG ((EFI_D_ERROR, "Ftw: The work space range should not span blocks when work space size is less than one block size\n"));
-            FreePool (HandleBuffer);
+            FreePool(HandleBuffer);
             ASSERT (FALSE);
             return EFI_ABORTED;
           }
@@ -1139,7 +1139,7 @@ FindFvbForFtw (
           //
           if ((FtwDevice->FtwSpareLba + FtwDevice->NumberOfSpareBlock) > NumberOfBlocks) {
             DEBUG ((EFI_D_ERROR, "Ftw: Spare area is out of FV range\n"));
-            FreePool (HandleBuffer);
+            FreePool(HandleBuffer);
             ASSERT (FALSE);
             return EFI_ABORTED;
           }
@@ -1149,7 +1149,7 @@ FindFvbForFtw (
           if (((FtwDevice->SpareAreaAddress & (FtwDevice->SpareBlockSize - 1)) != 0) ||
               ((FtwDevice->SpareAreaLength & (FtwDevice->SpareBlockSize - 1)) != 0)) {
             DEBUG ((EFI_D_ERROR, "Ftw: Spare area address or length is not block size aligned\n"));
-            FreePool (HandleBuffer);
+            FreePool(HandleBuffer);
             //
             // Report Status Code EFI_SW_EC_ABORTED.
             //
@@ -1162,7 +1162,7 @@ FindFvbForFtw (
       }
     }
   }
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 
   if ((FtwDevice->FtwBackupFvb == NULL) || (FtwDevice->FtwFvBlock == NULL) ||
     (FtwDevice->FtwWorkSpaceLba == (EFI_LBA) (-1)) || (FtwDevice->FtwSpareLba == (EFI_LBA) (-1))) {
@@ -1200,7 +1200,7 @@ InitFtwProtocol (
   // Find the right SMM Fvb protocol instance for FTW.
   //
   Status = FindFvbForFtw (FtwDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -1251,7 +1251,7 @@ InitFtwProtocol (
   // Refresh the working space data from working block
   //
   Status = WorkSpaceRefresh (FtwDevice);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   //
   // If the working block workspace is not valid, try the spare block
   //
@@ -1267,7 +1267,7 @@ InitFtwProtocol (
                FtwDevice->FtwWorkSpaceSize,
                FtwDevice->FtwWorkSpace
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // If spare block is valid, then replace working block content.
@@ -1281,7 +1281,7 @@ InitFtwProtocol (
       // Refresh work space.
       //
       Status = WorkSpaceRefresh (FtwDevice);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     } else {
       DEBUG ((EFI_D_INFO,
         "Ftw: Both working and spare blocks are invalid, init workspace\n"));
@@ -1298,7 +1298,7 @@ InitFtwProtocol (
       // Initialize the work space
       //
       Status = FtwReclaimWorkSpace (FtwDevice, FALSE);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
   //
@@ -1335,7 +1335,7 @@ InitFtwProtocol (
 
   if (!IsErasedFlashBuffer (FtwDevice->FtwWorkSpace + Offset, FtwDevice->FtwWorkSpaceSize - Offset)) {
     Status = FtwReclaimWorkSpace (FtwDevice, TRUE);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -1347,7 +1347,7 @@ InitFtwProtocol (
     if (FtwDevice->FtwLastWriteRecord->BootBlockUpdate == FTW_VALID_STATE) {
       Status = FlushSpareBlockToBootBlock (FtwDevice);
       DEBUG ((EFI_D_ERROR, "Ftw: Restart boot block update - %r\n", Status));
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       FtwAbort (&FtwDevice->FtwInstance);
     } else {
       //
@@ -1358,7 +1358,7 @@ InitFtwProtocol (
       if (FvbHandle != NULL) {
         Status = FtwRestart (&FtwDevice->FtwInstance, FvbHandle);
         DEBUG ((EFI_D_ERROR, "Ftw: Restart last write - %r\n", Status));
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
       FtwAbort (&FtwDevice->FtwInstance);
     }

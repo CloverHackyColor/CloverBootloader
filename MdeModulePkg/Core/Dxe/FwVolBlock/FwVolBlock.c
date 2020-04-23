@@ -528,12 +528,12 @@ ProduceFVBProtocolOnBuffer (
   // Second, allocate the cache
   //
   if (FvbDev->NumBlocks >= (MAX_ADDRESS / sizeof (LBA_CACHE))) {
-    CoreFreePool (FvbDev);
+    CoreFreePool(FvbDev);
     return EFI_OUT_OF_RESOURCES;
   }
   FvbDev->LbaCache = AllocatePool (FvbDev->NumBlocks * sizeof (LBA_CACHE));
   if (FvbDev->LbaCache == NULL) {
-    CoreFreePool (FvbDev);
+    CoreFreePool(FvbDev);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -561,7 +561,7 @@ ProduceFVBProtocolOnBuffer (
     //
     FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) AllocateCopyPool (sizeof (FV_MEMMAP_DEVICE_PATH), &mFvMemmapDevicePathTemplate);
     if (FvbDev->DevicePath == NULL) {
-      FreePool (FvbDev);
+      FreePool(FvbDev);
       return EFI_OUT_OF_RESOURCES;
     }
     ((FV_MEMMAP_DEVICE_PATH *) FvbDev->DevicePath)->MemMapDevPath.StartingAddress = BaseAddress;
@@ -572,7 +572,7 @@ ProduceFVBProtocolOnBuffer (
     //
     FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) AllocateCopyPool (sizeof (FV_PIWG_DEVICE_PATH), &mFvPIWGDevicePathTemplate);
     if (FvbDev->DevicePath == NULL) {
-      FreePool (FvbDev);
+      FreePool(FvbDev);
       return EFI_OUT_OF_RESOURCES;
     }
     CopyGuid (

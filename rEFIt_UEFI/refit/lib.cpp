@@ -988,7 +988,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       )
   {
     VOID *Instance;
-    if (!EFI_ERROR (gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {
+    if (!EFI_ERROR(gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {
       Volume->VolName = L"EFI";                                 \
     }
   }

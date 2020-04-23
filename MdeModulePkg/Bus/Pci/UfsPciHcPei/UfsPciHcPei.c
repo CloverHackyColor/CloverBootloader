@@ -83,7 +83,7 @@ InitializeUfsHcPeim (
   //
   // Shadow this PEIM to run from memory
   //
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -141,6 +141,6 @@ InitializeUfsHcPeim (
   ///
   Status = PeiServicesInstallPpi (&Private->PpiList);
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   return Status;
 }

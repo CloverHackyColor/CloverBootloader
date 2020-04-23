@@ -64,7 +64,7 @@ UefiDebugLibDebugPortProtocolWrite (
     //
     if (mDebugPort == NULL) {
         Status = mDebugBS->LocateProtocol (&gEfiDebugPortProtocolGuid, NULL, (VOID **)&mDebugPort);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
             return;
         }
 
@@ -78,7 +78,7 @@ UefiDebugLibDebugPortProtocolWrite (
       Length = BufferLength;
 
       Status = mDebugPort->Write (mDebugPort, WRITE_TIMEOUT, &Length, (VOID *) Buffer);
-      if (EFI_ERROR (Status) || BufferLength < Length) {
+      if (EFI_ERROR(Status) || BufferLength < Length) {
         break;
       }
 

@@ -83,7 +83,7 @@ DiskIoDriverBindingSupported (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -141,7 +141,7 @@ DiskIoDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit1;
   }
 
@@ -153,7 +153,7 @@ DiskIoDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gDiskIoPrivateDataTemplate.BlockIo2 = NULL;
   }
 
@@ -204,7 +204,7 @@ DiskIoDriverBindingStart (
   }
 
 ErrorExit:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Instance != NULL && Instance->SharedWorkingBuffer != NULL) {
       FreeAlignedPages (
         Instance->SharedWorkingBuffer,
@@ -213,7 +213,7 @@ ErrorExit:
     }
 
     if (Instance != NULL) {
-      FreePool (Instance);
+      FreePool(Instance);
     }
 
     gBS->CloseProtocol (
@@ -269,7 +269,7 @@ DiskIoDriverBindingStop (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = gBS->OpenProtocol (
@@ -280,7 +280,7 @@ DiskIoDriverBindingStop (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DiskIo2 = NULL;
   }
 
@@ -292,7 +292,7 @@ DiskIoDriverBindingStop (
     //
     ASSERT (Instance->BlockIo2 != NULL);
     Status = Instance->BlockIo2->Reset (Instance->BlockIo2, FALSE);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Status = gBS->UninstallMultipleProtocolInterfaces (
@@ -308,7 +308,7 @@ DiskIoDriverBindingStop (
                     NULL
                     );
   }
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 
     do {
       EfiAcquireLock (&Instance->TaskQueueLock);
@@ -327,7 +327,7 @@ DiskIoDriverBindingStop (
                     This->DriverBindingHandle,
                     ControllerHandle
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (DiskIo2 != NULL) {
       Status = gBS->CloseProtocol (
                       ControllerHandle,
@@ -335,10 +335,10 @@ DiskIoDriverBindingStop (
                       This->DriverBindingHandle,
                       ControllerHandle
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
 
-    FreePool (Instance);
+    FreePool(Instance);
   }
 
   return Status;
@@ -382,7 +382,7 @@ DiskIoDestroySubtask (
       gBS->CloseEvent (Subtask->BlockIo2Token.Event);
     }
   }
-  FreePool (Subtask);
+  FreePool(Subtask);
 
   return Link;
 }
@@ -414,7 +414,7 @@ DiskIo2OnReadWriteComplete (
   ASSERT (Instance->Signature == DISK_IO_PRIVATE_DATA_SIGNATURE);
   ASSERT (Task->Signature     == DISK_IO2_TASK_SIGNATURE);
 
-  if ((Subtask->WorkingBuffer != NULL) && !EFI_ERROR (TransactionStatus) &&
+  if ((Subtask->WorkingBuffer != NULL) && !EFI_ERROR(TransactionStatus) &&
       (Task->Token != NULL) && !Subtask->Write
      ) {
     CopyMem (Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
@@ -422,7 +422,7 @@ DiskIo2OnReadWriteComplete (
 
   DiskIoDestroySubtask (Instance, Subtask);
 
-  if (EFI_ERROR (TransactionStatus) || IsListEmpty (&Task->Subtasks)) {
+  if (EFI_ERROR(TransactionStatus) || IsListEmpty (&Task->Subtasks)) {
     if (Task->Token != NULL) {
       //
       // Signal error status once the subtask is failed.
@@ -486,8 +486,8 @@ DiskIoCreateSubtask (
                     Subtask,
                     &Subtask->BlockIo2Token.Event
                     );
-    if (EFI_ERROR (Status)) {
-      FreePool (Subtask);
+    if (EFI_ERROR(Status)) {
+      FreePool(Subtask);
       return NULL;
     }
   }
@@ -771,7 +771,7 @@ DiskIo2RemoveCompletedTask (
     if (IsListEmpty (&Task->Subtasks)) {
       Link = RemoveEntryList (&Task->Link);
       ASSERT (Task->Token == NULL);
-      FreePool (Task);
+      FreePool(Task);
     } else {
       Link = GetNextNode (&Instance->TaskQueue, Link);
       QueueEmpty = FALSE;
@@ -856,7 +856,7 @@ DiskIo2ReadWriteDisk (
   InitializeListHead (SubtasksPtr);
   if (!DiskIoCreateSubtaskList (Instance, Write, Offset, BufferSize, Buffer, Blocking, Instance->SharedWorkingBuffer, SubtasksPtr)) {
     if (Task != NULL) {
-      FreePool (Task);
+      FreePool(Task);
     }
     return EFI_OUT_OF_RESOURCES;
   }
@@ -915,7 +915,7 @@ DiskIo2ReadWriteDisk (
                             (Subtask->Length % Media->BlockSize == 0) ? Subtask->Length : Media->BlockSize,
                             (Subtask->WorkingBuffer != NULL) ? Subtask->WorkingBuffer : Subtask->Buffer
                             );
-        if (!EFI_ERROR (Status) && (Subtask->WorkingBuffer != NULL)) {
+        if (!EFI_ERROR(Status) && (Subtask->WorkingBuffer != NULL)) {
           CopyMem (Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
         }
       } else {
@@ -930,7 +930,7 @@ DiskIo2ReadWriteDisk (
       }
     }
 
-    if (SubtaskBlocking || EFI_ERROR (Status)) {
+    if (SubtaskBlocking || EFI_ERROR(Status)) {
       //
       // Make sure the subtask list only contains non-blocking subtasks.
       // Remove failed non-blocking subtasks as well because the callback won't be called.
@@ -938,7 +938,7 @@ DiskIo2ReadWriteDisk (
       DiskIoDestroySubtask (Instance, Subtask);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -949,7 +949,7 @@ DiskIo2ReadWriteDisk (
   // Remove all the remaining subtasks when failure.
   // We shouldn't remove all the tasks because the non-blocking requests have been submitted and cannot be canceled.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     while (!IsNull (SubtasksPtr, NextLink)) {
       Subtask = CR (NextLink, DISK_IO_SUBTASK, Link, DISK_IO_SUBTASK_SIGNATURE);
       NextLink = DiskIoDestroySubtask (Instance, Subtask);
@@ -965,7 +965,7 @@ DiskIo2ReadWriteDisk (
     RemoveEntryList (&Task->Link);
     EfiReleaseLock (&Instance->TaskQueueLock);
 
-    if (!EFI_ERROR (Status) && (Task->Token != NULL)) {
+    if (!EFI_ERROR(Status) && (Task->Token != NULL)) {
       //
       // Task->Token should be set to NULL by the DiskIo2OnReadWriteComplete
       // It it's not, that means the non-blocking request was downgraded to blocking request.
@@ -975,7 +975,7 @@ DiskIo2ReadWriteDisk (
       gBS->SignalEvent (Task->Token->Event);
     }
 
-    FreePool (Task);
+    FreePool(Task);
   }
 
   gBS->RestoreTPL (OldTpl);
@@ -1083,7 +1083,7 @@ DiskIo2OnFlushComplete (
   Task->Token->TransactionStatus = Task->BlockIo2Token.TransactionStatus;
   gBS->SignalEvent (Task->Token->Event);
 
-  FreePool (Task);
+  FreePool(Task);
 }
 
 /**
@@ -1127,16 +1127,16 @@ DiskIo2FlushDiskEx (
                     Task,
                     &Task->BlockIo2Token.Event
                     );
-    if (EFI_ERROR (Status)) {
-      FreePool (Task);
+    if (EFI_ERROR(Status)) {
+      FreePool(Task);
       return Status;
     }
     Task->Signature = DISK_IO2_FLUSH_TASK_SIGNATURE;
     Task->Token     = Token;
     Status = Private->BlockIo2->FlushBlocksEx (Private->BlockIo2, &Task->BlockIo2Token);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseEvent (Task->BlockIo2Token.Event);
-      FreePool (Task);
+      FreePool(Task);
     }
   } else {
     Status = Private->BlockIo2->FlushBlocksEx (Private->BlockIo2, NULL);
@@ -1256,7 +1256,7 @@ InitializeDiskIo (
              &gDiskIoComponentName,
              &gDiskIoComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

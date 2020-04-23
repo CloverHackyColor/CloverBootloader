@@ -59,7 +59,7 @@ PeiUsbInquiry (
             2000
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -120,7 +120,7 @@ PeiUsbTestUnitReady (
             2000
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -191,7 +191,7 @@ PeiUsbRequestSense (
     //
     // failed to get Sense data
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (*SenseCounts == 0) {
         return EFI_DEVICE_ERROR;
       } else {
@@ -264,7 +264,7 @@ PeiUsbReadCapacity (
             2000
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
   LastBlock = ((UINT32) Data.LastLba3 << 24) | (Data.LastLba2 << 16) | (Data.LastLba1 << 8) | Data.LastLba0;
@@ -325,7 +325,7 @@ PeiUsbReadFormattedCapacity (
             2000
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 

@@ -55,7 +55,7 @@ GetVariableStatisticsData (
   SmmVariableFunctionHeader->Function = SMM_VARIABLE_FUNCTION_GET_STATISTICS;
 
   Status = mSmmCommunication->Communicate (mSmmCommunication, SmmCommunicateHeader, SmmCommunicateSize);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = SmmVariableFunctionHeader->ReturnStatus;
   return Status;
@@ -88,12 +88,12 @@ PrintInfoFromSmm (
   UINTN                                          MaxSize;
 
   Status = gBS->LocateProtocol (&gEfiSmmVariableProtocolGuid, NULL, (VOID **) &Smmvariable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = gBS->LocateProtocol (&gEfiSmmCommunicationProtocolGuid, NULL, (VOID **) &mSmmCommunication);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -103,7 +103,7 @@ PrintInfoFromSmm (
              &gEdkiiPiSmmCommunicationRegionTableGuid,
              (VOID **) &PiSmmCommunicationRegionTable
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   ASSERT (PiSmmCommunicationRegionTable != NULL);
@@ -135,7 +135,7 @@ PrintInfoFromSmm (
       return Status;
     }
 
-    if (EFI_ERROR (Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE)) {
+    if (EFI_ERROR(Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE)) {
       break;
     }
 
@@ -165,7 +165,7 @@ PrintInfoFromSmm (
       return Status;
     }
 
-    if (EFI_ERROR (Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE)) {
+    if (EFI_ERROR(Status) || (CommSize <= SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE)) {
       break;
     }
 
@@ -212,18 +212,18 @@ UefiMain (
   VARIABLE_INFO_ENTRY   *Entry;
 
   Status = EfiGetSystemConfigurationTable (&gEfiVariableGuid, (VOID **)&Entry);
-  if (EFI_ERROR (Status) || (Entry == NULL)) {
+  if (EFI_ERROR(Status) || (Entry == NULL)) {
     Status = EfiGetSystemConfigurationTable (&gEfiAuthenticatedVariableGuid, (VOID **)&Entry);
   }
 
-  if (EFI_ERROR (Status) || (Entry == NULL)) {
+  if (EFI_ERROR(Status) || (Entry == NULL)) {
     Status = PrintInfoFromSmm ();
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Status;
     }
   }
 
-  if (!EFI_ERROR (Status) && (Entry != NULL)) {
+  if (!EFI_ERROR(Status) && (Entry != NULL)) {
     Print (L"Non-Volatile EFI Variables:\n");
     VariableInfo = Entry;
     do {

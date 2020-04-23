@@ -422,7 +422,7 @@ LocateVarCheckPcdBin (
              (VOID **) &VarCheckPcdBin,
              &VarCheckPcdBinSize
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // AllocateRuntimeZeroPool () from MemoryAllocateLib is used for runtime access
     // in SetVariable check handler.
@@ -434,7 +434,7 @@ LocateVarCheckPcdBin (
     //
     ASSERT ((((UINTN) mVarCheckPcdBin) & (HEADER_ALIGNMENT - 1)) == 0);
     mVarCheckPcdBinSize = VarCheckPcdBinSize;
-    FreePool (VarCheckPcdBin);
+    FreePool(VarCheckPcdBin);
 
     DEBUG ((EFI_D_INFO, "VarCheckPcdBin - at 0x%x size = 0x%x\n", mVarCheckPcdBin, mVarCheckPcdBinSize));
 

@@ -225,7 +225,7 @@ EdbGetMemoryAddressCount (
     return EFI_INVALID_PARAMETER;
   }
   Status = Symboltoi (CommandStr, &MemAddress);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Status == EFI_NOT_FOUND) {
       MemAddress = Xtoi(CommandStr);
     } else {
@@ -286,7 +286,7 @@ EdbGetMemoryAddressValue (
     return EFI_INVALID_PARAMETER;
   }
   Status = Symboltoi (CommandStr, &MemAddress);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Status == EFI_NOT_FOUND) {
       MemAddress = Xtoi(CommandStr);
     } else {

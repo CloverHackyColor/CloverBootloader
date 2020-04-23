@@ -171,7 +171,7 @@ CpuMemoryServiceRead (
   UINT8       *Uint8Buffer;
 
   Status = CpuIoCheckParameter (TRUE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -231,7 +231,7 @@ CpuMemoryServiceWrite (
   UINT8       *Uint8Buffer;
 
   Status = CpuIoCheckParameter (TRUE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -291,7 +291,7 @@ CpuIoServiceRead (
   UINT8       *Uint8Buffer;
 
   Status = CpuIoCheckParameter (FALSE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -353,7 +353,7 @@ CpuIoServiceWrite (
   // Make sure the parameters are valid
   //
   Status = CpuIoCheckParameter (FALSE, Width, Address, Count, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -407,7 +407,7 @@ SmmCpuIo2Initialize (
                     EFI_NATIVE_INTERFACE,
                     &mSmmCpuIo2
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   
   return Status;
 }

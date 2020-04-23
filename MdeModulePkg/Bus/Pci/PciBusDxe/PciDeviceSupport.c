@@ -93,18 +93,18 @@ FreePciDevice (
   // Assume all children have been removed underneath this device
   //
   if (PciIoDevice->ResourcePaddingDescriptors != NULL) {
-    FreePool (PciIoDevice->ResourcePaddingDescriptors);
+    FreePool(PciIoDevice->ResourcePaddingDescriptors);
   }
 
   if (PciIoDevice->DevicePath != NULL) {
-    FreePool (PciIoDevice->DevicePath);
+    FreePool(PciIoDevice->DevicePath);
   }
 
   if (PciIoDevice->BusNumberRanges != NULL) {
-    FreePool (PciIoDevice->BusNumberRanges);
+    FreePool(PciIoDevice->BusNumberRanges);
   }
 
-  FreePool (PciIoDevice);
+  FreePool(PciIoDevice);
 }
 
 /**
@@ -225,7 +225,7 @@ RegisterPciDevice (
                   &PciIoDevice->PciIo,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -251,7 +251,7 @@ RegisterPciDevice (
                                        &PlatformOpRomBuffer,
                                        &PlatformOpRomSize
                                        );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         PciIoDevice->EmbeddedRom    = FALSE;
         PciIoDevice->RomSize        = (UINT32) PlatformOpRomSize;
         PciIoDevice->PciIo.RomSize  = PlatformOpRomSize;
@@ -277,7 +277,7 @@ RegisterPciDevice (
                                        &PlatformOpRomBuffer,
                                        &PlatformOpRomSize
                                        );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         PciIoDevice->EmbeddedRom    = FALSE;
         PciIoDevice->RomSize        = (UINT32) PlatformOpRomSize;
         PciIoDevice->PciIo.RomSize  = PlatformOpRomSize;
@@ -311,7 +311,7 @@ RegisterPciDevice (
                     &PciIoDevice->LoadFile2,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->UninstallMultipleProtocolInterfaces (
              PciIoDevice->Handle,
              &gEfiDevicePathProtocolGuid,
@@ -349,7 +349,7 @@ RegisterPciDevice (
                     &PciIoDevice->PciDriverOverride,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->UninstallMultipleProtocolInterfaces (
              PciIoDevice->Handle,
              &gEfiDevicePathProtocolGuid,
@@ -379,7 +379,7 @@ RegisterPciDevice (
                   PciIoDevice->Handle,
                   EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -473,7 +473,7 @@ DeRegisterPciDevice (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
 
     //
@@ -495,7 +495,7 @@ DeRegisterPciDevice (
         Node    = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
         Status  = DeRegisterPciDevice (Controller, Node->Handle);
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
 
@@ -539,7 +539,7 @@ DeRegisterPciDevice (
                       );
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Try to uninstall LoadFile2 protocol if exists
       //
@@ -551,7 +551,7 @@ DeRegisterPciDevice (
                       Controller,
                       EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = gBS->UninstallMultipleProtocolInterfaces (
                         Handle,
                         &gEfiLoadFile2ProtocolGuid,
@@ -566,7 +566,7 @@ DeRegisterPciDevice (
     }
 
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->OpenProtocol (
             Controller,
             &gEfiPciRootBridgeIoProtocolGuid,
@@ -852,8 +852,8 @@ CreateRootBridge (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Dev);
+  if (EFI_ERROR(Status)) {
+    FreePool(Dev);
     return NULL;
   }
 
@@ -874,7 +874,7 @@ CreateRootBridge (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePciDevice (Dev);
     return NULL;
   }

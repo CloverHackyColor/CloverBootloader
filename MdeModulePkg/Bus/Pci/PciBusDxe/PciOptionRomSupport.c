@@ -107,7 +107,7 @@ LocalLoadFile2 (
       // Compressed: Uncompress before copying
       //
       Status = gBS->LocateProtocol (&gEfiDecompressProtocolGuid, NULL, (VOID **) &Decompress);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_DEVICE_ERROR;
       }
       Status = Decompress->GetInfo (
@@ -117,7 +117,7 @@ LocalLoadFile2 (
                              &DestinationSize,
                              &ScratchSize
                              );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_DEVICE_ERROR;
       }
 
@@ -141,9 +141,9 @@ LocalLoadFile2 (
                              Scratch,
                              ScratchSize
                              );
-      FreePool (Scratch);
+      FreePool(Scratch);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_DEVICE_ERROR;
       }
       return EFI_SUCCESS;
@@ -273,7 +273,7 @@ GetOpRomInfo (
                                   1,
                                   &AllOnes
                                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -287,7 +287,7 @@ GetOpRomInfo (
                                   1,
                                   &AllOnes
                                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -427,7 +427,7 @@ LoadOpRomImage (
 
   RomPcir = AllocatePool (sizeof (PCI_DATA_STRUCTURE));
   if (RomPcir == NULL) {
-    FreePool (RomHeader);
+    FreePool(RomHeader);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -511,8 +511,8 @@ LoadOpRomImage (
     Image     = AllocatePool ((UINT32) RomImageSize);
     if (Image == NULL) {
       RomDecode (PciDevice, RomBarIndex, RomBar, FALSE);
-      FreePool (RomHeader);
-      FreePool (RomPcir);
+      FreePool(RomHeader);
+      FreePool(RomPcir);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -552,8 +552,8 @@ LoadOpRomImage (
   //
   // Free allocated memory
   //
-  FreePool (RomHeader);
-  FreePool (RomPcir);
+  FreePool(RomHeader);
+  FreePool(RomPcir);
 
   return RetStatus;
 }
@@ -727,7 +727,7 @@ ProcessOpRomImage (
                     BufferSize,
                     &ImageHandle
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Record the Option ROM Image device path when LoadImage fails.
       // PciOverride.GetDriver() will try to look for the Image Handle using the device path later.
@@ -735,7 +735,7 @@ ProcessOpRomImage (
       AddDriver (PciDevice, NULL, PciOptionRomImageDevicePath);
     } else {
       Status = gBS->StartImage (ImageHandle, NULL, NULL);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Record the Option ROM Image Handle
         //
@@ -752,7 +752,7 @@ ProcessOpRomImage (
         RetStatus = EFI_SUCCESS;
       }
     }
-    FreePool (PciOptionRomImageDevicePath);
+    FreePool(PciOptionRomImageDevicePath);
 
 NextImage:
     RomBarOffset += ImageSize;

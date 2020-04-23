@@ -44,7 +44,7 @@ GetPiPcdProtocol (
     // access DynamicEx type PCD.
     //
     Status = gBS->LocateProtocol (&gEfiPcdProtocolGuid, NULL, (VOID **) &mPiPcd);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return NULL;
     }
@@ -72,7 +72,7 @@ GetPcdProtocol (
     // But dynamic type PCD is not required in PI 1.2 specification.
     //
     Status = gBS->LocateProtocol (&gPcdProtocolGuid, NULL, (VOID **)&mPcd);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return NULL;
     }
@@ -95,7 +95,7 @@ GetPiPcdInfoProtocolPointer (
 
   if (mPiPcdInfo == NULL) {
     Status = gBS->LocateProtocol (&gEfiGetPcdInfoProtocolGuid, NULL, (VOID **)&mPiPcdInfo);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return NULL;
     }
@@ -118,7 +118,7 @@ GetPcdInfoProtocolPointer (
 
   if (mPcdInfo == NULL) {
     Status = gBS->LocateProtocol (&gGetPcdInfoProtocolGuid, NULL, (VOID **)&mPcdInfo);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return NULL;
     }
@@ -633,7 +633,7 @@ LibPcdSetPtr (
 
   InputSizeOfBuffer = *SizeOfBuffer;
   Status = GetPcdProtocol()->SetPtr (TokenNumber, SizeOfBuffer, (VOID *) Buffer);
-  if (EFI_ERROR (Status) && (*SizeOfBuffer < InputSizeOfBuffer)) {
+  if (EFI_ERROR(Status) && (*SizeOfBuffer < InputSizeOfBuffer)) {
     return NULL;
   }
 
@@ -844,7 +844,7 @@ LibPcdSetExPtr (
 
   InputSizeOfBuffer = *SizeOfBuffer;
   Status = GetPiPcdProtocol()->SetPtr (Guid, TokenNumber, SizeOfBuffer, Buffer);
-  if (EFI_ERROR (Status) && (*SizeOfBuffer < InputSizeOfBuffer)) {
+  if (EFI_ERROR(Status) && (*SizeOfBuffer < InputSizeOfBuffer)) {
     return NULL;
   }
 
@@ -1259,7 +1259,7 @@ LibPcdCallbackOnSet (
   ASSERT (NotificationFunction != NULL);
 
 /*  Status = */GetPiPcdProtocol()->CallbackOnSet (Guid, TokenNumber, (EFI_PCD_PROTOCOL_CALLBACK) NotificationFunction);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   return;
 }
@@ -1292,7 +1292,7 @@ LibPcdCancelCallback (
   ASSERT (NotificationFunction != NULL);
 
 /*  Status = */GetPiPcdProtocol()->CancelCallback (Guid, TokenNumber, (EFI_PCD_PROTOCOL_CALLBACK) NotificationFunction);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   return;
 }
@@ -1328,8 +1328,8 @@ LibPcdGetNextToken (
   EFI_STATUS    Status;
 
   Status = GetPiPcdProtocol()->GetNextToken (Guid, &TokenNumber);
-  ASSERT (!EFI_ERROR (Status) || TokenNumber == 0);
-  if (EFI_ERROR (Status)) {
+  ASSERT (!EFI_ERROR(Status) || TokenNumber == 0);
+  if (EFI_ERROR(Status)) {
     TokenNumber = 0;
   }
 
@@ -1596,7 +1596,7 @@ LibPcdGetInfo (
   EFI_STATUS Status;
 
   Status = GetPcdInfoProtocolPointer()->GetInfo (TokenNumber, (EFI_PCD_INFO *) PcdInfo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -1623,7 +1623,7 @@ LibPcdGetInfoEx (
   EFI_STATUS Status;
 
   Status = GetPiPcdInfoProtocolPointer()->GetInfo (Guid, TokenNumber, (EFI_PCD_INFO *) PcdInfo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**

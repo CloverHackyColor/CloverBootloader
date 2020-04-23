@@ -41,7 +41,7 @@ GetHobList (
   VOID                  *HobList;
 
   Status = PeiServicesGetHobList (&HobList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (HobList != NULL);
 
   return HobList;
@@ -207,7 +207,7 @@ GetBootModeHob (
   EFI_BOOT_MODE          BootMode;
 
   Status = PeiServicesGetBootMode (&BootMode);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return BootMode;
 }
@@ -235,7 +235,7 @@ InternalPeiCreateHob (
   VOID              *Hob;
 
   Status = PeiServicesCreateHob (Type, Length, &Hob);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Hob = NULL;
   }
   //

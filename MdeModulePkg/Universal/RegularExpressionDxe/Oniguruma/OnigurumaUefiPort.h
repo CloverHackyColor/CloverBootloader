@@ -31,7 +31,7 @@ typedef UINTN size_t;
                             \
     EvalOnce = (p);         \
     if (EvalOnce != NULL) { \
-      FreePool (EvalOnce);  \
+      FreePool(EvalOnce);  \
     }                       \
   } while (FALSE)
 

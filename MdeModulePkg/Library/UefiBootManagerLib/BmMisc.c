@@ -104,11 +104,11 @@ BmMatchDevicePaths (
     // return success
     //
     if (CompareMem (Single, DevicePathInst, Size) == 0) {
-      FreePool (DevicePathInst);
+      FreePool(DevicePathInst);
       return TRUE;
     }
 
-    FreePool (DevicePathInst);
+    FreePool(DevicePathInst);
     DevicePathInst = GetNextDevicePathInstance (&DevicePath, &Size);
   }
 
@@ -183,7 +183,7 @@ BmSetMemoryTypeInformationVariable (
              &gEfiMemoryTypeInformationGuid,
              (VOID **) &CurrentMemoryTypeInformation
              );
-  if (EFI_ERROR (Status) || CurrentMemoryTypeInformation == NULL) {
+  if (EFI_ERROR(Status) || CurrentMemoryTypeInformation == NULL) {
     return;
   }
 
@@ -269,7 +269,7 @@ BmSetMemoryTypeInformationVariable (
                PreviousMemoryTypeInformation
                );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // If the Memory Type Information settings have been modified and the boot option belongs to boot category,
       // then reset the platform so the new Memory Type Information setting will be used to guarantee that an S4
@@ -286,7 +286,7 @@ BmSetMemoryTypeInformationVariable (
       DEBUG ((EFI_D_ERROR, "Memory Type Information settings cannot be saved. OS S4 may fail!\n"));
     }
   }
-  FreePool (PreviousMemoryTypeInformation);
+  FreePool(PreviousMemoryTypeInformation);
 }
 
 /**
@@ -342,7 +342,7 @@ BmSetVariableAndReportStatusCodeOnError (
                   DataSize,
                   Data
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     NameSize = StrSize (VariableName);
     SetVariableStatus = AllocatePool (sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize);
     if (SetVariableStatus != NULL) {
@@ -364,7 +364,7 @@ BmSetVariableAndReportStatusCodeOnError (
         sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize
         );
 
-      FreePool (SetVariableStatus);
+      FreePool(SetVariableStatus);
     }
   }
 
@@ -387,7 +387,7 @@ BmPrintDp (
   Str = ConvertDevicePathToText (DevicePath, FALSE, FALSE);
   DEBUG ((EFI_D_INFO, "%s", Str));
   if (Str != NULL) {
-    FreePool (Str);
+    FreePool(Str);
   }
 }
 
@@ -454,7 +454,7 @@ EfiBootManagerDispatchDeferredImages (
     &HandleCount,
     &Handles
   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -462,7 +462,7 @@ EfiBootManagerDispatchDeferredImages (
   LoadCount  = 0;
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (Handles[Index], &gEfiDeferredImageLoadProtocolGuid, (VOID **) &DeferredImage);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -478,7 +478,7 @@ EfiBootManagerDispatchDeferredImages (
                                 &ImageSize,
                                 &BootOption
                                 );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
       ImageCount++;
@@ -493,7 +493,7 @@ EfiBootManagerDispatchDeferredImages (
         0,
         &ImageHandle
       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         LoadCount++;
         //
         // Before calling the image, enable the Watchdog Timer for
@@ -510,7 +510,7 @@ EfiBootManagerDispatchDeferredImages (
     }
   }
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   if (ImageCount == 0) {

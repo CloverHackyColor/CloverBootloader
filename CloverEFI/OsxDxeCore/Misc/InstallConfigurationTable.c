@@ -142,7 +142,7 @@ CoreInstallConfigurationTable (
         // Free Old Table
         //
  //       Print(L"Free Old Table\n");
-        CoreFreePool (gDxeCoreST->ConfigurationTable);
+        CoreFreePool(gDxeCoreST->ConfigurationTable);
       }
 
       //

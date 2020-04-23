@@ -245,7 +245,7 @@ FindGuardedMemoryMap (
                   &MapMemory,
                   FALSE
                   );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       ASSERT (MapMemory != 0);
 
       SetMem ((VOID *)(UINTN)MapMemory, Size, 0);
@@ -277,7 +277,7 @@ FindGuardedMemoryMap (
                   &MapMemory,
                   FALSE
                   );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       ASSERT (MapMemory != 0);
 
       SetMem ((VOID *)(UINTN)MapMemory, Size, 0);
@@ -517,7 +517,7 @@ SetGuardPage (
   // such as NX memory protection.
   //
   Status = gCpu->SetMemoryAttributes (gCpu, BaseAddress, EFI_PAGE_SIZE, EFI_MEMORY_RP);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   mOnGuarding = FALSE;
 }
 
@@ -564,7 +564,7 @@ UnsetGuardPage (
   // at the same time.
   //
   Status = gCpu->SetMemoryAttributes (gCpu, BaseAddress, EFI_PAGE_SIZE, Attributes);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   mOnGuarding = FALSE;
 }
 
@@ -1317,7 +1317,7 @@ GuardFreedPages (
     // alloc/free involved in SetMemoryAttributes(), which might fail this
     // calling. It's rare case so it's OK to let a few tiny holes be not-guarded.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN, "Failed to guard freed pages: %p (%lu)\n", BaseAddress, (UINT64)Pages));
     }
     mOnGuarding = FALSE;
@@ -1564,7 +1564,7 @@ PromoteGuardedFreePages (
       //
       mOnGuarding = TRUE;
       Status = gCpu->SetMemoryAttributes (gCpu, Start, EFI_PAGES_TO_SIZE(AvailablePages), 0);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       mOnGuarding = FALSE;
     }
 

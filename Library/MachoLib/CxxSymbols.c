@@ -52,7 +52,7 @@ MachoSymbolNameIsPureVirtual (
   )
 {
   ASSERT (Name != NULL);
-  return (AsciiStrCmp (Name, CXX_PURE_VIRTUAL) == 0);
+  return (AsciiStrCmp(Name, CXX_PURE_VIRTUAL) == 0);
 }
 
 /**

@@ -560,7 +560,7 @@ UefiDevicePathLibAppendDevicePathNode (
   //
   NewDevicePath = AppendDevicePath (DevicePath, TempDevicePath);
 
-  FreePool (TempDevicePath);
+  FreePool(TempDevicePath);
 
   return NewDevicePath;
 }
@@ -833,7 +833,7 @@ DevicePathFromHandle (
                   &gEfiDevicePathProtocolGuid,
                   (VOID *) &DevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DevicePath = NULL;
   }
   return DevicePath;
@@ -889,7 +889,7 @@ FileDevicePath (
     }
 
     DevicePath = AppendDevicePath (DevicePath, FileDevicePath);
-    FreePool (FileDevicePath);
+    FreePool(FileDevicePath);
   }
 
   return DevicePath;

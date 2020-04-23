@@ -79,7 +79,7 @@ UdfOpenVolume (
       PrivFsData->DiskIo,
       &PrivFsData->Volume
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error_Read_Udf_Volume;
     }
   }
@@ -95,7 +95,7 @@ UdfOpenVolume (
     &PrivFsData->Volume,
     &PrivFsData->Root
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error_Find_Root_Dir;
   }
 
@@ -219,7 +219,7 @@ UdfOpen (
     &_PARENT_FILE(PrivFileData)->FileIdentifierDesc->Icb,
     &File
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error_Find_File;
   }
 
@@ -252,7 +252,7 @@ UdfOpen (
     &NewPrivFileData->File,
     &NewPrivFileData->FileSize
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "%a: GetFileSize() fails with status - %r.\n",
@@ -274,7 +274,7 @@ UdfOpen (
   return Status;
 
 Error_Get_File_Size:
-  FreePool ((VOID *)NewPrivFileData);
+  FreePool((VOID *)NewPrivFileData);
 
 Error_Alloc_New_Priv_File_Data:
   CleanupFileInformation (&File);
@@ -396,9 +396,9 @@ UdfRead (
         ReadDirInfo,
         &NewFileIdentifierDesc
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         if (Status == EFI_DEVICE_ERROR) {
-          FreePool (ReadDirInfo->DirectoryData);
+          FreePool(ReadDirInfo->DirectoryData);
           ZeroMem ((VOID *)ReadDirInfo, sizeof (UDF_READ_DIRECTORY_INFO));
 
           *BufferSize = 0;
@@ -421,7 +421,7 @@ UdfRead (
         break;
       }
 
-      FreePool ((VOID *)NewFileIdentifierDesc);
+      FreePool((VOID *)NewFileIdentifierDesc);
     }
 
     Status = FindFileEntry (
@@ -431,7 +431,7 @@ UdfRead (
       &NewFileIdentifierDesc->Icb,
       &NewFileEntryData
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error_Find_Fe;
     }
     ASSERT (NewFileEntryData != NULL);
@@ -445,27 +445,27 @@ UdfRead (
         NewFileEntryData,
         &FoundFile
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Error_Resolve_Symlink;
       }
 
-      FreePool ((VOID *)NewFileEntryData);
+      FreePool((VOID *)NewFileEntryData);
       NewFileEntryData = FoundFile.FileEntry;
 
       Status = GetFileNameFromFid (NewFileIdentifierDesc, ARRAY_SIZE (FileName), FileName);
-      if (EFI_ERROR (Status)) {
-        FreePool ((VOID *)FoundFile.FileIdentifierDesc);
+      if (EFI_ERROR(Status)) {
+        FreePool((VOID *)FoundFile.FileIdentifierDesc);
         goto Error_Get_FileName;
       }
 
-      FreePool ((VOID *)NewFileIdentifierDesc);
+      FreePool((VOID *)NewFileIdentifierDesc);
       NewFileIdentifierDesc = FoundFile.FileIdentifierDesc;
     } else {
       FoundFile.FileIdentifierDesc  = NewFileIdentifierDesc;
       FoundFile.FileEntry           = NewFileEntryData;
 
       Status = GetFileNameFromFid (FoundFile.FileIdentifierDesc, ARRAY_SIZE (FileName), FileName);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Error_Get_FileName;
       }
     }
@@ -477,7 +477,7 @@ UdfRead (
       &FoundFile,
       &FileSize
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error_Get_File_Size;
     }
 
@@ -488,7 +488,7 @@ UdfRead (
       BufferSize,
       Buffer
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error_Set_File_Info;
     }
 
@@ -507,12 +507,12 @@ Error_Get_File_Size:
 Error_Get_FileName:
 Error_Resolve_Symlink:
   if (NewFileEntryData != NULL) {
-    FreePool (NewFileEntryData);
+    FreePool(NewFileEntryData);
   }
 
 Error_Find_Fe:
   if (NewFileIdentifierDesc != NULL) {
-    FreePool ((VOID *)NewFileIdentifierDesc);
+    FreePool((VOID *)NewFileIdentifierDesc);
   }
 
 Done:
@@ -556,11 +556,11 @@ UdfClose (
     CleanupFileInformation (&PrivFileData->File);
 
     if (PrivFileData->ReadDirInfo.DirectoryData != NULL) {
-      FreePool (PrivFileData->ReadDirInfo.DirectoryData);
+      FreePool(PrivFileData->ReadDirInfo.DirectoryData);
     }
   }
 
-  FreePool ((VOID *)PrivFileData);
+  FreePool((VOID *)PrivFileData);
 
 Exit:
   gBS->RestoreTPL (OldTpl);
@@ -788,7 +788,7 @@ UdfGetInfo (
       );
   } else if (CompareGuid (InformationType, &gEfiFileSystemInfoGuid)) {
     Status = GetVolumeLabel (&PrivFsData->Volume, ARRAY_SIZE (VolumeLabel), VolumeLabel);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -812,7 +812,7 @@ UdfGetInfo (
       &VolumeSize,
       &FreeSpaceSize
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -827,7 +827,7 @@ UdfGetInfo (
     Status = EFI_SUCCESS;
   } else if (CompareGuid (InformationType, &gEfiFileSystemVolumeLabelInfoIdGuid)) {
     Status = GetVolumeLabel (&PrivFsData->Volume, ARRAY_SIZE (VolumeLabel), VolumeLabel);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

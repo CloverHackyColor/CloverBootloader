@@ -305,7 +305,7 @@ PeimInitializePciCfg (
 
   (**(EFI_PEI_SERVICES **)PeiServices).PciCfg = &gPciCfg2Ppi;
   Status = PeiServicesInstallPpi (&gPciCfg2PpiList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

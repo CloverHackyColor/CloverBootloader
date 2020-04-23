@@ -167,7 +167,7 @@ RegisterSecurityHandler (
     // Allocate more resources for new handler.
     //
     Status = ReallocateSecurityHandlerTable();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return Status;
     }
@@ -267,7 +267,7 @@ ExecuteSecurityHandlers (
           //
           FileBuffer = GetFileBufferByFilePath (TRUE, FilePath, &FileSize, &AuthenticationStatus);
         }
-        if ((FileBuffer != NULL) && (!EFI_ERROR (Status))) {
+        if ((FileBuffer != NULL) && (!EFI_ERROR(Status))) {
           //
           // LoadFile () may cause the device path of the Handle be updated.
           //
@@ -281,16 +281,16 @@ ExecuteSecurityHandlers (
                FileBuffer,
                FileSize
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
 
   if (FileBuffer != NULL) {
-    FreePool (FileBuffer);
+    FreePool(FileBuffer);
   }
   if (FilePathToVerfiy != FilePath) {
-    FreePool (FilePathToVerfiy);
+    FreePool(FilePathToVerfiy);
   }
 
   return Status;
@@ -429,7 +429,7 @@ RegisterSecurity2Handler (
     // Allocate more resources for new handler.
     //
     Status = ReallocateSecurity2HandlerTable();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return Status;
     }
@@ -536,7 +536,7 @@ ExecuteSecurity2Handlers (
                    FileSize,
                    BootPolicy
                    );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       }

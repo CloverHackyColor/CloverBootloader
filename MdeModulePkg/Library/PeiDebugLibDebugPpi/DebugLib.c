@@ -94,7 +94,7 @@ DebugBPrint (
               NULL,
               (VOID **)&DebugPpi
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -307,7 +307,7 @@ DebugAssert (
               NULL,
               (VOID **)&DebugPpi
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings
     //

@@ -203,7 +203,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	 */
 	map->ati_tables.base = map->bios_ptr;
 	map->ati_tables.AtomRomHeader = (ATOM_ROM_HEADER *) (map->bios_ptr + *(UINT16 *) (map->bios_ptr + OFFSET_TO_POINTER_TO_ATOM_ROM_HEADER)); 
-	if (AsciiStrCmp ((CHAR8 *) map->ati_tables.AtomRomHeader->uaFirmWareSignature, "ATOM") == 0)
+	if (AsciiStrCmp((CHAR8 *) map->ati_tables.AtomRomHeader->uaFirmWareSignature, "ATOM") == 0)
 	{
       UINT16 std_vesa_offset;
       ATOM_STANDARD_VESA_TIMING * std_vesa;

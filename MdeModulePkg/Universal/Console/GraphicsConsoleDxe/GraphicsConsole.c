@@ -139,7 +139,7 @@ GraphicsConsoleControllerDriverSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     //
     // Open Graphics Output Protocol failed, try to open UGA Draw Protocol
     //
@@ -152,7 +152,7 @@ GraphicsConsoleControllerDriverSupported (
                     EFI_OPEN_PROTOCOL_BY_DRIVER
                     );
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -169,7 +169,7 @@ GraphicsConsoleControllerDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           Controller,
           &gEfiDevicePathProtocolGuid,
@@ -426,7 +426,7 @@ GraphicsConsoleControllerDriverStart (
                     );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -452,14 +452,14 @@ GraphicsConsoleControllerDriverStart (
                            &SizeOfInfo,
                            &Info
                            );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if ((Info->HorizontalResolution > HorizontalResolution) ||
               ((Info->HorizontalResolution == HorizontalResolution) && (Info->VerticalResolution > VerticalResolution))) {
             HorizontalResolution = Info->HorizontalResolution;
             VerticalResolution   = Info->VerticalResolution;
             ModeNumber           = ModeIndex;
           }
-          FreePool (Info);
+          FreePool(Info);
         }
       }
       if ((HorizontalResolution == 0x0) || (VerticalResolution == 0x0)) {
@@ -476,7 +476,7 @@ GraphicsConsoleControllerDriverStart (
                    VerticalResolution,
                    &ModeNumber
                    );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // if not supporting current mode, try 800x600 which is required by UEFI/EFI spec
         //
@@ -489,7 +489,7 @@ GraphicsConsoleControllerDriverStart (
                      &ModeNumber
                      );
         Mode = Private->GraphicsOutput->Mode;
-        if (EFI_ERROR (Status) && Mode->MaxMode != 0) {
+        if (EFI_ERROR(Status) && Mode->MaxMode != 0) {
           //
           // Set default mode failed or device don't support default mode, then get the current mode information
           //
@@ -505,7 +505,7 @@ GraphicsConsoleControllerDriverStart (
       // set the new graphic mode.
       //
       Status = Private->GraphicsOutput->SetMode (Private->GraphicsOutput, ModeNumber);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // The mode set operation failed
         //
@@ -525,7 +525,7 @@ GraphicsConsoleControllerDriverStart (
                                 ColorDepth,
                                 RefreshRate
                                 );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Try to set 800*600 which is required by UEFI/EFI spec
       //
@@ -536,7 +536,7 @@ GraphicsConsoleControllerDriverStart (
                                   ColorDepth,
                                   RefreshRate
                                   );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = Private->UgaDraw->GetMode (
                                     Private->UgaDraw,
                                     &HorizontalResolution,
@@ -544,7 +544,7 @@ GraphicsConsoleControllerDriverStart (
                                     &ColorDepth,
                                     &RefreshRate
                                     );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto Error;
         }
       }
@@ -564,7 +564,7 @@ GraphicsConsoleControllerDriverStart (
              &Private->ModeData
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -611,7 +611,7 @@ GraphicsConsoleControllerDriverStart (
                   );
 
 Error:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Close the GOP and UGA Draw Protocol
     //
@@ -632,17 +632,17 @@ Error:
     }
 
     if (Private->LineBuffer != NULL) {
-      FreePool (Private->LineBuffer);
+      FreePool(Private->LineBuffer);
     }
 
     if (Private->ModeData != NULL) {
-      FreePool (Private->ModeData);
+      FreePool(Private->ModeData);
     }
 
     //
     // Free private data
     //
-    FreePool (Private);
+    FreePool(Private);
   }
 
   return Status;
@@ -687,7 +687,7 @@ GraphicsConsoleControllerDriverStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_STARTED;
   }
 
@@ -699,7 +699,7 @@ GraphicsConsoleControllerDriverStop (
                   &Private->SimpleTextOutput
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Close the GOP or UGA IO Protocol
     //
@@ -720,17 +720,17 @@ GraphicsConsoleControllerDriverStop (
     }
 
     if (Private->LineBuffer != NULL) {
-      FreePool (Private->LineBuffer);
+      FreePool(Private->LineBuffer);
     }
 
     if (Private->ModeData != NULL) {
-      FreePool (Private->ModeData);
+      FreePool(Private->ModeData);
     }
 
     //
     // Free our instance data
     //
-    FreePool (Private);
+    FreePool(Private);
   }
 
   return Status;
@@ -779,7 +779,7 @@ CheckModeSupported (
                        &SizeOfInfo,
                        &Info
                        );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((Info->HorizontalResolution == HorizontalResolution) &&
           (Info->VerticalResolution == VerticalResolution)) {
         if ((GraphicsOutput->Mode->Info->HorizontalResolution == HorizontalResolution) &&
@@ -787,17 +787,17 @@ CheckModeSupported (
           //
           // If video device has been set to this mode, we do not need to SetMode again
           //
-          FreePool (Info);
+          FreePool(Info);
           break;
         } else {
           Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber);
-          if (!EFI_ERROR (Status)) {
-            FreePool (Info);
+          if (!EFI_ERROR(Status)) {
+            FreePool(Info);
             break;
           }
         }
       }
-      FreePool (Info);
+      FreePool(Info);
     }
   }
 
@@ -827,7 +827,7 @@ EfiLocateHiiProtocol (
   EFI_STATUS  Status;
 
   Status = gBS->LocateProtocol (&gEfiHiiDatabaseProtocolGuid, NULL, (VOID **) &mHiiDatabase);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -866,7 +866,7 @@ GraphicsConsoleConOutReset (
 {
   EFI_STATUS    Status;
   Status = This->SetMode (This, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = This->SetAttribute (This, EFI_TEXT_ATTR (This->Mode->Attribute & 0x0F, EFI_BACKGROUND_BLACK));
@@ -1129,7 +1129,7 @@ GraphicsConsoleConOutOutputString (
       }
 
       Status = DrawUnicodeWeightAtCursorN (This, WString, Count);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Warning = TRUE;
       }
       //
@@ -1206,12 +1206,12 @@ GraphicsConsoleConOutTestString (
                          NULL
                          );
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
       Blt = NULL;
     }
     Count++;
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   }
@@ -1350,7 +1350,7 @@ GraphicsConsoleConOutSetMode (
     //
     FlushCursor (This);
 
-    FreePool (Private->LineBuffer);
+    FreePool(Private->LineBuffer);
   }
 
   //
@@ -1378,7 +1378,7 @@ GraphicsConsoleConOutSetMode (
       // Either no graphics mode is currently set, or it is set to the wrong resolution, so set the new graphics mode
       //
       Status = GraphicsOutput->SetMode (GraphicsOutput, ModeData->GopModeNumber);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // The mode set operation failed
         //
@@ -1412,7 +1412,7 @@ GraphicsConsoleConOutSetMode (
                         &ColorDepth,
                         &RefreshRate
                         );
-    if (EFI_ERROR (Status) || HorizontalResolution != ModeData->GopWidth || VerticalResolution != ModeData->GopHeight) {
+    if (EFI_ERROR(Status) || HorizontalResolution != ModeData->GopWidth || VerticalResolution != ModeData->GopHeight) {
       //
       // Either no graphics mode is currently set, or it is set to the wrong resolution, so set the new graphics mode
       //
@@ -1423,7 +1423,7 @@ GraphicsConsoleConOutSetMode (
                           32,
                           60
                           );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // The mode set operation failed
         //
@@ -1779,7 +1779,7 @@ DrawUnicodeWeightAtCursorN (
 
   String = AllocateCopyPool ((Count + 1) * sizeof (CHAR16), UnicodeWeight);
   if (String == NULL) {
-    FreePool (Blt);
+    FreePool(Blt);
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -1789,8 +1789,8 @@ DrawUnicodeWeightAtCursorN (
 
   FontInfo = (EFI_FONT_DISPLAY_INFO *) AllocateZeroPool (sizeof (EFI_FONT_DISPLAY_INFO));
   if (FontInfo == NULL) {
-    FreePool (Blt);
-    FreePool (String);
+    FreePool(Blt);
+    FreePool(String);
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -1828,8 +1828,8 @@ DrawUnicodeWeightAtCursorN (
 
     Blt->Image.Bitmap = AllocateZeroPool (Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     if (Blt->Image.Bitmap == NULL) {
-      FreePool (Blt);
-      FreePool (String);
+      FreePool(Blt);
+      FreePool(String);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1851,7 +1851,7 @@ DrawUnicodeWeightAtCursorN (
                           NULL
                           );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Line breaks are handled by caller of DrawUnicodeWeightAtCursorN, so the updated parameter RowInfoArraySize by StringToImage will
       // always be 1 or 0 (if there is no valid Unicode Char can be printed). ASSERT here to make sure.
@@ -1872,20 +1872,20 @@ DrawUnicodeWeightAtCursorN (
                           );
     }
 
-    FreePool (RowInfoArray);
-    FreePool (Blt->Image.Bitmap);
+    FreePool(RowInfoArray);
+    FreePool(Blt->Image.Bitmap);
   } else {
     Status = EFI_UNSUPPORTED;
   }
 
   if (Blt != NULL) {
-    FreePool (Blt);
+    FreePool(Blt);
   }
   if (String != NULL) {
-    FreePool (String);
+    FreePool(String);
   }
   if (FontInfo != NULL) {
-    FreePool (FontInfo);
+    FreePool(FontInfo);
   }
   return Status;
 }
@@ -2040,7 +2040,7 @@ RegisterFontPackage (
                   NULL,
                   (VOID **) &HiiDatabase
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -2084,7 +2084,7 @@ RegisterFontPackage (
                  NULL
                  );
   ASSERT (mHiiHandle != NULL);
-  FreePool (Package);
+  FreePool(Package);
 }
 
 /**
@@ -2128,7 +2128,7 @@ InitializeGraphicsConsole (
              &gGraphicsConsoleComponentName,
              &gGraphicsConsoleComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

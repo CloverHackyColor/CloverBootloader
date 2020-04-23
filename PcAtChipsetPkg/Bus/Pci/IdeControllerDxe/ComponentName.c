@@ -153,7 +153,7 @@ IdeControllerComponentNameGetControllerName (
              gIdeControllerDriverBinding.DriverBindingHandle,
              &gEfiPciIoProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

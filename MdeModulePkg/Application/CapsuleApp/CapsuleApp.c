@@ -90,7 +90,7 @@ CreateBmpFmp (
     goto Done;
   }
   if (GopBlt != NULL) {
-    FreePool (GopBlt);
+    FreePool(GopBlt);
   }
   Print(L"BMP image (%s), Width - %d, Height - %d\n", BmpName, Width, Height);
 
@@ -1005,7 +1005,7 @@ UefiMain (
 Done:
   for (Index = 0; Index < CapsuleNum; Index++) {
     if (CapsuleBuffer[Index] != NULL) {
-      FreePool (CapsuleBuffer[Index]);
+      FreePool(CapsuleBuffer[Index]);
     }
   }
 

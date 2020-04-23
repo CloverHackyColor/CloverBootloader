@@ -1295,7 +1295,7 @@ CoreAllocatePool (
 **/
 EFI_STATUS
 EFIAPI
-CoreFreePool (
+CoreFreePool(
   IN VOID        *Buffer
   );
 

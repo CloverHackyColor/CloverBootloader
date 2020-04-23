@@ -126,7 +126,7 @@ TerminalConOutReset (
       );
 
     Status = TerminalDevice->SerialIo->Reset (TerminalDevice->SerialIo);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Report error code here
       //
@@ -259,7 +259,7 @@ TerminalConOutOutputString (
                                           &GraphicChar
                                           );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto OutputError;
       }
 
@@ -273,7 +273,7 @@ TerminalConOutOutputString (
                                           &Length,
                                           (UINT8 *) &Utf8Char
                                           );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto OutputError;
       }
       break;
@@ -332,7 +332,7 @@ TerminalConOutOutputString (
                                                 CrLfStr
                                                 );
 
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             goto OutputError;
           }
         }
@@ -498,14 +498,14 @@ TerminalConOutSetMode (
   Status                        = This->OutputString (This, mSetModeString);
   TerminalDevice->OutputEscChar = FALSE;
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
   This->Mode->Mode  = (INT32) ModeNumber;
 
   Status            = This->ClearScreen (This);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -671,7 +671,7 @@ TerminalConOutSetAttribute (
   Status                        = This->OutputString (This, mSetAttributeString);
   TerminalDevice->OutputEscChar = FALSE;
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
   //
@@ -717,7 +717,7 @@ TerminalConOutClearScreen (
   Status                        = This->OutputString (This, mClearScreenString);
   TerminalDevice->OutputEscChar = FALSE;
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -771,7 +771,7 @@ TerminalConOutSetCursorPosition (
                   &MaxColumn,
                   &MaxRow
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -813,7 +813,7 @@ TerminalConOutSetCursorPosition (
   Status = This->OutputString (This, String);
   TerminalDevice->OutputEscChar = FALSE;
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
   //

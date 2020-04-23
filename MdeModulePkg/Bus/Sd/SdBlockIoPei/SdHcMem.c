@@ -32,7 +32,7 @@ SdPeimAllocMemBlock (
   Block   = NULL;
 
   Status = PeiServicesAllocatePool (sizeof(SD_PEIM_MEM_BLOCK), &TempPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -49,7 +49,7 @@ SdPeimAllocMemBlock (
   Block->BitsLen  = Block->BufLen / (SD_PEIM_MEM_UNIT * 8);
 
   Status = PeiServicesAllocatePool (Block->BitsLen, &TempPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -63,7 +63,7 @@ SdPeimAllocMemBlock (
              &MappedAddr,
              &Mapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -236,7 +236,7 @@ SdPeimInitMemPool (
   Pool    = NULL;
 
   Status = PeiServicesAllocatePool (sizeof (SD_PEIM_MEM_POOL), &TempPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 

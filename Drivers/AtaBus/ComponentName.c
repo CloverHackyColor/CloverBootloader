@@ -198,7 +198,7 @@ AtaBusComponentNameGetControllerName (
              gAtaBusDriverBinding.DriverBindingHandle,
              &gEfiAtaPassThruProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -209,7 +209,7 @@ AtaBusComponentNameGetControllerName (
                ChildHandle,
                &gEfiAtaPassThruProtocolGuid
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -238,7 +238,7 @@ AtaBusComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_UNSUPPORTED;
       }
       AtaDevice = ATA_DEVICE_FROM_BLOCK_IO (BlockIo);

@@ -337,7 +337,7 @@ FatComponentNameGetControllerName (
              gFatDriverBinding.DriverBindingHandle,
              &gEfiDiskIoProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

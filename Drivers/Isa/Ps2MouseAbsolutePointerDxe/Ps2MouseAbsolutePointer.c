@@ -66,7 +66,7 @@ PS2MouseAbsolutePointerDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -155,7 +155,7 @@ PS2MouseAbsolutePointerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -178,7 +178,7 @@ PS2MouseAbsolutePointerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
            Controller,
            &gEfiDevicePathProtocolGuid,
@@ -239,7 +239,7 @@ PS2MouseAbsolutePointerDriverStart (
   IsaIo->Io.Read (IsaIo, EfiIsaIoWidthUint8, KBC_CMD_STS_PORT, 1, &Data);
   if ((Data & KBC_SYSF) != KBC_SYSF) {
     Status = KbcSelfTest (IsaIo);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       StatusCode = EFI_PERIPHERAL_MOUSE | EFI_P_EC_CONTROLLER_ERROR;
       goto ErrorExit;
     }
@@ -260,7 +260,7 @@ PS2MouseAbsolutePointerDriverStart (
                      &MouseAbsolutePointerDev->AbsolutePointerProtocol,
                      FeaturePcdGet (PcdPs2MouseExtendedVerification)
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // mouse not connected
     //
@@ -285,7 +285,7 @@ PS2MouseAbsolutePointerDriverStart (
                   MouseAbsolutePointerDev,
                   &((MouseAbsolutePointerDev->AbsolutePointerProtocol).WaitForInput)
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -299,7 +299,7 @@ PS2MouseAbsolutePointerDriverStart (
                   MouseAbsolutePointerDev,
                   &MouseAbsolutePointerDev->TimerEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -307,7 +307,7 @@ PS2MouseAbsolutePointerDriverStart (
   // Start timer to poll mouse (100 samples per second)
   //
   Status = gBS->SetTimer (MouseAbsolutePointerDev->TimerEvent, TimerPeriodic, 100000);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -338,7 +338,7 @@ PS2MouseAbsolutePointerDriverStart (
                   &MouseAbsolutePointerDev->AbsolutePointerProtocol,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -374,12 +374,12 @@ ErrorExit:
   // exhaust input data just in case there is still mouse data left
   //
   EmptyStatus = EFI_SUCCESS;
-  while (!EFI_ERROR (EmptyStatus)) {
+  while (!EFI_ERROR(EmptyStatus)) {
     EmptyStatus = In8042Data (IsaIo, &Data);
   }
 
   if (MouseAbsolutePointerDev != NULL) {
-    FreePool (MouseAbsolutePointerDev);
+    FreePool(MouseAbsolutePointerDev);
   }
 
   gBS->CloseProtocol (
@@ -437,7 +437,7 @@ PS2MouseAbsolutePointerDriverStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   }
 
@@ -457,7 +457,7 @@ PS2MouseAbsolutePointerDriverStop (
                   &gEfiAbsolutePointerProtocolGuid,
                   &MouseAbsolutePointerDev->AbsolutePointerProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -472,13 +472,13 @@ PS2MouseAbsolutePointerDriverStop (
   // exhaust input data just in case there is still mouse data left
   //
   Status = EFI_SUCCESS;
-  while (!EFI_ERROR (Status)) {
+  while (!EFI_ERROR(Status)) {
     Status = In8042Data (MouseAbsolutePointerDev->IsaIo, &Data);
   }
 
   gBS->CloseEvent (MouseAbsolutePointerDev->AbsolutePointerProtocol.WaitForInput);
   FreeUnicodeStringTable (MouseAbsolutePointerDev->ControllerNameTable);
-  FreePool (MouseAbsolutePointerDev);
+  FreePool(MouseAbsolutePointerDev);
 
   gBS->CloseProtocol (
          Controller,
@@ -546,7 +546,7 @@ MouseAbsolutePointerReset (
   // Exhaust input data
   //
   Status = EFI_SUCCESS;
-  while (!EFI_ERROR (Status)) {
+  while (!EFI_ERROR(Status)) {
     Status = In8042Data (MouseAbsolutePointerDev->IsaIo, &Data);
   }
 
@@ -574,31 +574,31 @@ MouseAbsolutePointerReset (
     // Send mouse reset command and set mouse default configure
     //
     Status = PS2MouseReset (MouseAbsolutePointerDev->IsaIo);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseSetSampleRate (MouseAbsolutePointerDev->IsaIo, MouseAbsolutePointerDev->SampleRate);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseSetResolution (MouseAbsolutePointerDev->IsaIo, MouseAbsolutePointerDev->Resolution);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseSetScaling (MouseAbsolutePointerDev->IsaIo, MouseAbsolutePointerDev->Scaling);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = PS2MouseEnable (MouseAbsolutePointerDev->IsaIo);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -631,7 +631,7 @@ CheckMouseAbsolutePointerConnect (
   EFI_STATUS     Status;
 
   Status = PS2MouseEnable (MouseAbsolutePointerDev->IsaIo);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return TRUE;
   }
 
@@ -770,7 +770,7 @@ InitializePs2MouseAbsolutePointer(
              &gPs2MouseAbsolutePointerComponentName,
              &gPs2MouseAbsolutePointerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 
   return Status;

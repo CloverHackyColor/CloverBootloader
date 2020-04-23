@@ -200,33 +200,33 @@ DiscoverUserArea (
   SdSelect (Device, 0);
 
   Status = SdSetRca (Device, &Rca);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "DiscoverUserArea(): Assign new Rca = 0x%x fails with %r\n", Rca, Status));
     return Status;
   }
 
   Csd    = &Device->Csd;
   Status = SdGetCsd (Device, Rca, Csd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   DumpCsd (Csd);
 
   Cid    = &Device->Cid;
   Status = SdGetCid (Device, Rca, Cid);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   GetSdModelName (Device, Cid);
 
   Status = SdSelect (Device, Rca);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "DiscoverUserArea(): Reselect the device 0x%x fails with %r\n", Rca, Status));
     return Status;
   }
 
   Status = SdSendStatus (Device, Rca, &DevStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -327,7 +327,7 @@ DiscoverSdDevice (
   DeviceHandle = NULL;
   RemainingDevicePath = NewDevicePath;
   Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
+  if (!EFI_ERROR(Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
     //
     // The device has been started, directly return to fast boot.
     //
@@ -388,7 +388,7 @@ DiscoverSdDevice (
                   NULL
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->OpenProtocol (
            Private->Controller,
            &gEfiSdMmcPassThruProtocolGuid,
@@ -400,14 +400,14 @@ DiscoverSdDevice (
   }
 
 Error:
-  FreePool (DevicePath);
+  FreePool(DevicePath);
 
-  if (EFI_ERROR (Status) && (NewDevicePath != NULL)) {
-    FreePool (NewDevicePath);
+  if (EFI_ERROR(Status) && (NewDevicePath != NULL)) {
+    FreePool(NewDevicePath);
   }
 
-  if (EFI_ERROR (Status) && (Device != NULL)) {
-    FreePool (Device);
+  if (EFI_ERROR(Status) && (Device != NULL)) {
+    FreePool(Device);
   }
 
   return Status;
@@ -484,7 +484,7 @@ SdDxeDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -493,7 +493,7 @@ SdDxeDriverBindingSupported (
   //
   if ((RemainingDevicePath != NULL) && !IsDevicePathEnd (RemainingDevicePath)) {
     Status = PassThru->GetSlotNumber (PassThru, RemainingDevicePath, &Slot);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Close the I/O Abstraction(s) used to perform the supported test
       //
@@ -590,7 +590,7 @@ SdDxeDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
+  if ((EFI_ERROR(Status)) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
 
@@ -612,7 +612,7 @@ SdDxeDriverBindingStart (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Private->PassThru            = PassThru;
     Private->Controller          = Controller;
     Private->ParentDevicePath    = ParentDevicePath;
@@ -624,7 +624,7 @@ SdDxeDriverBindingStart (
                     EFI_NATIVE_INTERFACE,
                     Private
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -636,7 +636,7 @@ SdDxeDriverBindingStart (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   }
@@ -645,7 +645,7 @@ SdDxeDriverBindingStart (
     Slot = 0xFF;
     while (TRUE) {
       Status = PassThru->GetNextSlot (PassThru, &Slot);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Cannot find more legal slots.
         //
@@ -654,19 +654,19 @@ SdDxeDriverBindingStart (
       }
 
       Status = DiscoverSdDevice (Private, Slot);
-      if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+      if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
         break;
       }
     }
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     Status = PassThru->GetSlotNumber (PassThru, RemainingDevicePath, &Slot);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = DiscoverSdDevice (Private, Slot);
     }
   }
 
 Error:
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     gBS->CloseProtocol (
            Controller,
            &gEfiSdMmcPassThruProtocolGuid,
@@ -681,7 +681,7 @@ Error:
            Private,
            NULL
            );
-      FreePool (Private);
+      FreePool(Private);
     }
   }
   return Status;
@@ -744,7 +744,7 @@ SdDxeDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
@@ -760,7 +760,7 @@ SdDxeDriverBindingStop (
           Controller
           );
 
-    FreePool (Private);
+    FreePool(Private);
 
     return EFI_SUCCESS;
   }
@@ -778,7 +778,7 @@ SdDxeDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = gBS->OpenProtocol (
                       ChildHandleBuffer[Index],
                       &gEfiBlockIo2ProtocolGuid,
@@ -787,7 +787,7 @@ SdDxeDriverBindingStop (
                       Controller,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         AllChildrenStopped = FALSE;
         continue;
       }
@@ -819,7 +819,7 @@ SdDxeDriverBindingStop (
         gBS->SignalEvent (Request->Token->Event);
       }
 
-      FreePool (Request);
+      FreePool(Request);
     }
     gBS->RestoreTPL (OldTpl);
 
@@ -847,7 +847,7 @@ SdDxeDriverBindingStop (
                     &Device->DiskInfo,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
         gBS->OpenProtocol (
                Controller,
@@ -858,9 +858,9 @@ SdDxeDriverBindingStop (
                EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                );
     } else {
-      FreePool (Device->DevicePath);
+      FreePool(Device->DevicePath);
       FreeUnicodeStringTable (Device->ControllerNameTable);
-      FreePool (Device);
+      FreePool(Device);
     }
   }
 
@@ -901,7 +901,7 @@ InitializeSdDxe (
              &gSdDxeComponentName,
              &gSdDxeComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

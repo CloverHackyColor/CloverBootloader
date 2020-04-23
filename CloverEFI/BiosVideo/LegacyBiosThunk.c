@@ -43,8 +43,8 @@ InitializeBiosIntCaller (
                   EFI_SIZE_TO_PAGES(LegacyRegionSize),
                   &LegacyRegionBase
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return;
   }
   
@@ -99,8 +99,8 @@ InitializeInterruptRedirection (
                   EFI_SIZE_TO_PAGES(LegacyRegionLength),
                   &LegacyRegionBase
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -113,8 +113,8 @@ InitializeInterruptRedirection (
   // Get VectorBase, it should be 0x68
   //
   Status = Legacy8259->GetVector (Legacy8259, Efi8259Irq0, &ProtectedModeBaseVector);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -189,7 +189,7 @@ LegacyBiosInt86 (
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
   Status = BiosDev->Legacy8259->SetMode (BiosDev->Legacy8259, Efi8259LegacyMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   
   Stack16 = (UINT16 *)((UINT8 *) BiosDev->ThunkContext->RealModeBuffer + BiosDev->ThunkContext->RealModeBufferSize - sizeof (UINT16));
 
@@ -205,7 +205,7 @@ LegacyBiosInt86 (
   // Restore protected mode interrupt state
   //
   Status = BiosDev->Legacy8259->SetMode (BiosDev->Legacy8259, Efi8259ProtectedMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   //
   // End critical section

@@ -751,7 +751,7 @@ GetIdeRegisterIoAddr (
                         &PciData
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -854,7 +854,7 @@ AtaIssueCommand (
   AtaCommand = AtaCommandBlock->AtaCommand;
 
   Status = WaitForBSYClear (PciIo, IdeRegisters, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -868,7 +868,7 @@ AtaIssueCommand (
   // Before write to all the following registers, BSY and DRQ must be 0.
   //
   Status = DRQClear2 (PciIo, IdeRegisters, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -958,7 +958,7 @@ AtaPioDataInOut (
   // Issue ATA command
   //
   Status = AtaIssueCommand (PciIo, IdeRegisters, AtaCommandBlock, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
     goto Exit;
   }
@@ -992,7 +992,7 @@ AtaPioDataInOut (
     // Poll DRQ bit set, data transfer can be performed only when DRQ is ready
     //
     Status = DRQReady2 (PciIo, IdeRegisters, Timeout);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -1021,7 +1021,7 @@ AtaPioDataInOut (
     }
 
     Status = CheckStatusRegister (PciIo, IdeRegisters);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -1031,7 +1031,7 @@ AtaPioDataInOut (
   }
 
   Status = DRQClear (PciIo, IdeRegisters, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
     goto Exit;
   }
@@ -1087,7 +1087,7 @@ AtaNonDataCommandIn (
   // Issue ATA command
   //
   Status = AtaIssueCommand (PciIo, IdeRegisters, AtaCommandBlock, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
     goto Exit;
   }
@@ -1096,13 +1096,13 @@ AtaNonDataCommandIn (
   // Wait for command completion
   //
   Status = WaitForBSYClear (PciIo, IdeRegisters, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
     goto Exit;
   }
 
   Status = CheckStatusRegister (PciIo, IdeRegisters);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
     goto Exit;
   }
@@ -1154,7 +1154,7 @@ AtaUdmStatusWait (
 
   do {
     Status = CheckStatusRegister (PciIo, IdeRegisters);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       break;
     }
@@ -1209,7 +1209,7 @@ AtaUdmStatusCheck (
   Task->RetryTimes--;
 
   Status = CheckStatusRegister (PciIo, IdeRegisters);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1386,7 +1386,7 @@ AtaUdmaInOut (
                          (VOID **)&BaseAddr,
                          0
                          );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1399,7 +1399,7 @@ AtaUdmaInOut (
                          &BaseMapAddr,
                          &PrdTableMap
                          );
-    if (EFI_ERROR (Status) || (ByteCount != EFI_PAGES_TO_SIZE (RealPageCount))) {
+    if (EFI_ERROR(Status) || (ByteCount != EFI_PAGES_TO_SIZE (RealPageCount))) {
       //
       // If the data length actually mapped is not equal to the requested amount,
       // it means the DMA operation may be broken into several discontinuous smaller chunks.
@@ -1436,7 +1436,7 @@ AtaUdmaInOut (
                          &BufferMapAddress,
                          &BufferMap
                          );
-    if (EFI_ERROR (Status) || (ByteCount != DataLength)) {
+    if (EFI_ERROR(Status) || (ByteCount != DataLength)) {
       PciIo->Unmap (PciIo, PrdTableMap);
       PciIo->FreeBuffer (PciIo, RealPageCount, (VOID*)(UINTN)BaseAddr);
       return EFI_OUT_OF_RESOURCES;
@@ -1518,13 +1518,13 @@ AtaUdmaInOut (
     //
     Status = AtaIssueCommand (PciIo, IdeRegisters, AtaCommandBlock, Timeout);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
 
     Status = CheckStatusRegister (PciIo, IdeRegisters);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto Exit;
     }
@@ -1705,7 +1705,7 @@ AtaPacketReadWrite (
     // to see whether indicates device is ready to transfer data.
     //
     Status = DRQReady2 (PciIo, IdeRegisters, Timeout);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Status == EFI_NOT_READY) {
         //
         // Device provided less data than we intended to read, or wanted less
@@ -1747,7 +1747,7 @@ AtaPacketReadWrite (
     // read status register to check whether error happens.
     //
     Status = CheckStatusRegister (PciIo, IdeRegisters);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
@@ -1768,7 +1768,7 @@ AtaPacketReadWrite (
   // read status register to check whether error happens.
   //
   Status = CheckStatusRegister (PciIo, IdeRegisters);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1776,7 +1776,7 @@ AtaPacketReadWrite (
   // After data transfer is completed, normally, DRQ bit should clear.
   //
   Status = DRQClear (PciIo, IdeRegisters, Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1851,12 +1851,12 @@ AtaPacketCommandExecute (
   // Issue ATA PACKET command firstly
   //
   Status = AtaIssueCommand (PciIo, IdeRegisters, &AtaCommandBlock, Packet->Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = DRQReady (PciIo, IdeRegisters, Packet->Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2057,7 +2057,7 @@ IdeAtaSmartReturnStatusCheck (
              NULL
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       (EFI_IO_BUS_ATA_ATAPI | EFI_IOB_ATA_BUS_SMART_DISABLED)
@@ -2163,7 +2163,7 @@ IdeAtaSmartSupport (
                  NULL
                  );
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Send S.M.A.R.T AutoSave command to device
         //
@@ -2184,7 +2184,7 @@ IdeAtaSmartSupport (
                    ATA_ATAPI_TIMEOUT,
                    NULL
                    );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           Status = IdeAtaSmartReturnStatusCheck (
                      Instance,
                      Channel,
@@ -2391,7 +2391,7 @@ DetectAndConfigIdeDevice (
     IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, ATA_CMD_EXEC_DRIVE_DIAG);
 
     Status = WaitForBSYClear (PciIo, IdeRegisters, 350000000);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG((EFI_D_ERROR, "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status));
       continue;
     }
@@ -2429,7 +2429,7 @@ DetectAndConfigIdeDevice (
       //
       // if identifying ata device is failure, then try to send identify packet cmd.
       //
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_EC_NOT_DETECTED));
 
         DeviceType = EfiIdeCdrom;
@@ -2440,13 +2440,13 @@ DetectAndConfigIdeDevice (
       //
       // if identifying atapi device is failure, then try to send identify cmd.
       //
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DeviceType = EfiIdeHarddisk;
         Status     = AtaIdentify (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
       }
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // No device is found at this port
       //
@@ -2483,7 +2483,7 @@ DetectAndConfigIdeDevice (
                         IdeDevice,
                         &SupportedModes
                         );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "Calculate Mode Fail, Status = %r\n", Status));
       continue;
     }
@@ -2502,7 +2502,7 @@ DetectAndConfigIdeDevice (
     if (SupportedModes->ExtModeCount == 0){
       Status = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
         continue;
       }
@@ -2519,7 +2519,7 @@ DetectAndConfigIdeDevice (
       TransferMode.ModeNumber   = (UINT8) (SupportedModes->UdmaMode.Mode);
       Status = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
         continue;
       }
@@ -2528,7 +2528,7 @@ DetectAndConfigIdeDevice (
       TransferMode.ModeNumber   = (UINT8) SupportedModes->MultiWordDmaMode.Mode;
       Status = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
         continue;
       }
@@ -2560,7 +2560,7 @@ DetectAndConfigIdeDevice (
     // Now insert the device into device list.
     //
     Status = CreateNewDeviceInfo (Instance, IdeChannel, IdeDevice, DeviceType, &Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -2602,7 +2602,7 @@ IdeModeInitialization (
   // Obtain IDE IO port registers' base addresses
   //
   Status = GetIdeRegisterIoAddr (PciIo, Instance->IdeRegisters);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -2618,7 +2618,7 @@ IdeModeInitialization (
                         &ChannelEnabled,
                         &MaxDevices
                         );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "[GetChannel, Status=%x]", Status));
       continue;
     }

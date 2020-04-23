@@ -84,7 +84,7 @@ BdsInitialize (
                   &gEfiBdsArchProtocolGuid, &gBds,
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -180,7 +180,7 @@ BdsBootDeviceSelect (
     //
     // Deleting variable with current variable implementation shouldn't fail.
     //
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Add the boot next boot option
@@ -378,7 +378,7 @@ BdsFormalizeConsoleVariable (
                     0,
                     NULL
                     );
-//    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR(Status);
   }
 }
 
@@ -455,7 +455,7 @@ BdsFormalizeEfiGlobalVariable (
                       0,
                       NULL
                       );
- //     ASSERT_EFI_ERROR (Status);
+ //     ASSERT_EFI_ERROR(Status);
     }
   }
 
@@ -487,7 +487,7 @@ BdsAllocateMemoryForPerformanceData (
                   EFI_SIZE_TO_PAGES (PERF_DATA_MAX_LENGTH),
                   &AcpiLowMemoryBase
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Save the pointer to variable for use in S3 resume.
     //
@@ -498,7 +498,7 @@ BdsAllocateMemoryForPerformanceData (
       sizeof (EFI_PHYSICAL_ADDRESS),
       &AcpiLowMemoryBase
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "[Bds] PerfDataMemAddr (%08x) cannot be saved to NV storage.\n", AcpiLowMemoryBase));
     }
     //
@@ -506,9 +506,9 @@ BdsAllocateMemoryForPerformanceData (
     // Still lock it even the variable cannot be saved to prevent it's set by 3rd party code.
     //
     Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = VariableLock->RequestToLock (VariableLock, L"PerfDataMemAddr", &gPerformanceProtocolGuid);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 }
@@ -585,10 +585,10 @@ BdsEntry (
   //
   Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
   DEBUG ((EFI_D_INFO, "[BdsDxe] Locate Variable Lock protocol - %r\n", Status));
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < sizeof (mReadOnlyVariables) / sizeof (mReadOnlyVariables[0]); Index++) {
       Status = VariableLock->RequestToLock (VariableLock, mReadOnlyVariables[Index], &gEfiGlobalVariableGuid);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 
@@ -728,7 +728,7 @@ BdsDxeSetVariableAndReportStatusCodeOnError (
                   DataSize,
                   Data
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     NameSize = StrSize (VariableName);
     SetVariableStatus = AllocatePool (sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize);
     if (SetVariableStatus != NULL) {
@@ -750,7 +750,7 @@ BdsDxeSetVariableAndReportStatusCodeOnError (
         sizeof (EDKII_SET_VARIABLE_STATUS) + NameSize + DataSize
         );
 
-      FreePool (SetVariableStatus);
+      FreePool(SetVariableStatus);
     }
   }
 

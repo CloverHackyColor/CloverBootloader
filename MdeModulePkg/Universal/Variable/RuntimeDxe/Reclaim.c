@@ -48,7 +48,7 @@ GetLbaAndOffsetByAddress (
   // Get the proper FVB protocol.
   //
   Status = GetFvbInfoByAddress (Address, NULL, &Fvb);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -56,7 +56,7 @@ GetLbaAndOffsetByAddress (
   // Get the Base Address of FV.
   //
   Status = Fvb->GetPhysicalAddress (Fvb, &FvbBaseAddress);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -117,21 +117,21 @@ FtwVariableSpace (
   // Locate fault tolerant write protocol.
   //
   Status = GetFtwProtocol((VOID **) &FtwProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
   //
   // Locate Fvb handle by address.
   //
   Status = GetFvbInfoByAddress (VariableBase, &FvbHandle, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
   // Get LBA and Offset by address.
   //
   Status = GetLbaAndOffsetByAddress (VariableBase, &VarLba, &VarOffset);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 

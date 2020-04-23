@@ -116,7 +116,7 @@ BmFindBootOptionInVariable (
       );
     Status = EfiBootManagerVariableToLoadOption (OptionName, &BootOption);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       ASSERT (OptionToFind->OptionNumber == BootOption.OptionNumber);
       if ((OptionToFind->Attributes == BootOption.Attributes) &&
           (StrCmp (OptionToFind->Description, BootOption.Description) == 0) &&
@@ -175,7 +175,7 @@ BmAdjustFvFilePath (
   //
   FvFileNode = FilePath;
   Status = gBS->LocateDevicePath (&gEfiFirmwareVolume2ProtocolGuid, &FvFileNode, &FvHandle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return DuplicateDevicePath (FilePath);
   }
 
@@ -198,7 +198,7 @@ BmAdjustFvFilePath (
          );
   NewDevicePath = AppendDevicePathNode (DevicePathFromHandle (LoadedImage->DeviceHandle), FvFileNode);
   FullPath = BmAdjustFvFilePath (NewDevicePath);
-  FreePool (NewDevicePath);
+  FreePool(NewDevicePath);
   if (FullPath != NULL) {
     return FullPath;
   }
@@ -222,14 +222,14 @@ BmAdjustFvFilePath (
     }
     NewDevicePath = AppendDevicePathNode (DevicePathFromHandle (FvHandles[Index]), FvFileNode);
     FullPath = BmAdjustFvFilePath (NewDevicePath);
-    FreePool (NewDevicePath);
+    FreePool(NewDevicePath);
     if (FullPath != NULL) {
       break;
     }
   }
 
   if (FvHandles != NULL) {
-    FreePool (FvHandles);
+    FreePool(FvHandles);
   }
   return FullPath;
 }
@@ -255,7 +255,7 @@ BmIsFvFilePath (
 
   Node = DevicePath;
   Status = gBS->LocateDevicePath (&gEfiFirmwareVolume2ProtocolGuid, &Node, &Handle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return TRUE;
   }
 
@@ -301,7 +301,7 @@ BmMatchUsbClass (
   // Check Vendor Id and Product Id.
   //
   Status = UsbIo->UsbGetDeviceDescriptor (UsbIo, &DevDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -324,7 +324,7 @@ BmMatchUsbClass (
     // Protocol in Interface Descriptor instead.
     //
     Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &IfDesc);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return FALSE;
     }
 
@@ -391,7 +391,7 @@ BmMatchUsbWwid (
   // Check Vendor Id and Product Id.
   //
   Status = UsbIo->UsbGetDeviceDescriptor (UsbIo, &DevDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if ((DevDesc.IdVendor != UsbWwid->VendorId) ||
@@ -403,7 +403,7 @@ BmMatchUsbWwid (
   // Check Interface Number.
   //
   Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &IfDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if (IfDesc.InterfaceNumber != UsbWwid->InterfaceNumber) {
@@ -423,7 +423,7 @@ BmMatchUsbWwid (
   TableSize = 0;
   LangIdTable = NULL;
   Status = UsbIo->UsbGetSupportedLanguages (UsbIo, &LangIdTable, &TableSize);
-  if (EFI_ERROR (Status) || (TableSize == 0) || (LangIdTable == NULL)) {
+  if (EFI_ERROR(Status) || (TableSize == 0) || (LangIdTable == NULL)) {
     return FALSE;
   }
 
@@ -447,18 +447,18 @@ BmMatchUsbWwid (
                       DevDesc.StrSerialNumber,
                       &SerialNumberStr
                       );
-    if (EFI_ERROR (Status) || (SerialNumberStr == NULL)) {
+    if (EFI_ERROR(Status) || (SerialNumberStr == NULL)) {
       continue;
     }
 
     Length = StrLen (SerialNumberStr);
     if ((Length >= CompareLen) &&
         (CompareMem (SerialNumberStr + Length - CompareLen, CompareStr, CompareLen * sizeof (CHAR16)) == 0)) {
-      FreePool (SerialNumberStr);
+      FreePool(SerialNumberStr);
       return TRUE;
     }
 
-    FreePool (SerialNumberStr);
+    FreePool(SerialNumberStr);
   }
 
   return FALSE;
@@ -505,7 +505,7 @@ BmFindUsbDevice (
                   UsbIoHandleCount,
                   &UsbIoHandles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *UsbIoHandleCount = 0;
     UsbIoHandles      = NULL;
   }
@@ -521,7 +521,7 @@ BmFindUsbDevice (
                     );
     UsbIoDevicePath = DevicePathFromHandle (UsbIoHandles[Index]);
     Matched         = FALSE;
-    if (!EFI_ERROR (Status) && (UsbIoDevicePath != NULL)) {
+    if (!EFI_ERROR(Status) && (UsbIoDevicePath != NULL)) {
 
       //
       // Compare starting part of UsbIoHandle's device path with ParentDevicePath.
@@ -601,7 +601,7 @@ BmExpandUsbDevicePath (
       continue;
     }
     NextFullPath = BmGetNextLoadOptionDevicePath (FilePath, NULL);
-    FreePool (FilePath);
+    FreePool(FilePath);
     if (NextFullPath == NULL) {
       //
       // No BlockIo or SimpleFileSystem under FilePath.
@@ -612,13 +612,13 @@ BmExpandUsbDevicePath (
       break;
     } else {
       GetNext = (BOOLEAN)(CompareMem (NextFullPath, FullPath, GetDevicePathSize (NextFullPath)) == 0);
-      FreePool (NextFullPath);
+      FreePool(NextFullPath);
       NextFullPath = NULL;
     }
   }
 
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   return NextFullPath;
@@ -652,7 +652,7 @@ BmExpandFileDevicePath (
 
   EfiBootManagerConnectAll ();
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &HandleCount, &Handles);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     HandleCount = 0;
     Handles = NULL;
   }
@@ -666,7 +666,7 @@ BmExpandFileDevicePath (
   for (MediaType = 0; MediaType < 3; MediaType++) {
     for (Index = 0; Index < HandleCount; Index++) {
       Status = gBS->HandleProtocol (Handles[Index], &gEfiBlockIoProtocolGuid, (VOID *) &BlockIo);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         BlockIo = NULL;
       }
       if ((MediaType == 0 && BlockIo != NULL && BlockIo->Media->RemovableMedia) ||
@@ -678,7 +678,7 @@ BmExpandFileDevicePath (
           break;
         } else {
           GetNext = (BOOLEAN)(CompareMem (NextFullPath, FullPath, GetDevicePathSize (NextFullPath)) == 0);
-          FreePool (NextFullPath);
+          FreePool(NextFullPath);
           NextFullPath = NULL;
         }
       }
@@ -689,7 +689,7 @@ BmExpandFileDevicePath (
   }
 
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   return NextFullPath;
@@ -722,7 +722,7 @@ BmExpandUriDevicePath (
 
   EfiBootManagerConnectAll ();
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiLoadFileProtocolGuid, NULL, &HandleCount, &Handles);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     HandleCount = 0;
     Handles = NULL;
   }
@@ -746,15 +746,15 @@ BmExpandUriDevicePath (
       RamDiskDevicePath = BmGetRamDiskDevicePath (NextFullPath);
       if (RamDiskDevicePath != NULL) {
         BmDestroyRamDisk (RamDiskDevicePath);
-        FreePool (RamDiskDevicePath);
+        FreePool(RamDiskDevicePath);
       }
-      FreePool (NextFullPath);
+      FreePool(NextFullPath);
       NextFullPath = NULL;
     }
   }
 
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   return NextFullPath;
@@ -778,7 +778,7 @@ BmCachePartitionDevicePath (
   if (BmMatchDevicePaths (*CachedDevicePath, DevicePath)) {
     TempDevicePath = *CachedDevicePath;
     *CachedDevicePath = BmDelPartMatchInstance (*CachedDevicePath, DevicePath);
-    FreePool (TempDevicePath);
+    FreePool(TempDevicePath);
   }
 
   if (*CachedDevicePath == NULL) {
@@ -789,7 +789,7 @@ BmCachePartitionDevicePath (
   TempDevicePath = *CachedDevicePath;
   *CachedDevicePath = AppendDevicePathInstance (DevicePath, *CachedDevicePath);
   if (TempDevicePath != NULL) {
-    FreePool (TempDevicePath);
+    FreePool(TempDevicePath);
   }
 
   //
@@ -860,7 +860,7 @@ BmExpandPartitionDevicePath (
   // Delete the invalid 'HDDP' variable.
   //
   if ((CachedDevicePath != NULL) && !IsDevicePathValid (CachedDevicePath, CachedDevicePathSize)) {
-    FreePool (CachedDevicePath);
+    FreePool(CachedDevicePath);
     CachedDevicePath = NULL;
     Status = gRT->SetVariable (
                     L"HDDP",
@@ -869,7 +869,7 @@ BmExpandPartitionDevicePath (
                     0,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   FullPath = NULL;
@@ -889,7 +889,7 @@ BmExpandPartitionDevicePath (
         // e.g. ACPI() /PCI()/ATA()/Partition()
         //
         Status = EfiBootManagerConnectDevicePath (Instance, NULL);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           TempDevicePath = AppendDevicePath (Instance, NextDevicePathNode (FilePath));
           //
           // TempDevicePath = ACPI()/PCI()/ATA()/Partition()
@@ -902,7 +902,7 @@ BmExpandPartitionDevicePath (
           // For simplicity, only #1 is returned.
           //
           FullPath = BmGetNextLoadOptionDevicePath (TempDevicePath, NULL);
-          FreePool (TempDevicePath);
+          FreePool(TempDevicePath);
 
           if (FullPath != NULL) {
             //
@@ -923,8 +923,8 @@ BmExpandPartitionDevicePath (
                 );
             }
 
-            FreePool (Instance);
-            FreePool (CachedDevicePath);
+            FreePool(Instance);
+            FreePool(CachedDevicePath);
             return FullPath;
           }
         }
@@ -943,7 +943,7 @@ BmExpandPartitionDevicePath (
   //
   EfiBootManagerConnectAll ();
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BlockIoHandleCount, &BlockIoBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BlockIoHandleCount = 0;
     BlockIoBuffer      = NULL;
   }
@@ -962,7 +962,7 @@ BmExpandPartitionDevicePath (
       //
       TempDevicePath = AppendDevicePath (BlockIoDevicePath, NextDevicePathNode (FilePath));
       FullPath = BmGetNextLoadOptionDevicePath (TempDevicePath, NULL);
-      FreePool (TempDevicePath);
+      FreePool(TempDevicePath);
 
       if (FullPath != NULL) {
         BmCachePartitionDevicePath (&CachedDevicePath, BlockIoDevicePath);
@@ -985,10 +985,10 @@ BmExpandPartitionDevicePath (
   }
 
   if (CachedDevicePath != NULL) {
-    FreePool (CachedDevicePath);
+    FreePool(CachedDevicePath);
   }
   if (BlockIoBuffer != NULL) {
-    FreePool (BlockIoBuffer);
+    FreePool(BlockIoBuffer);
   }
   return FullPath;
 }
@@ -1029,7 +1029,7 @@ BmExpandMediaDevicePath (
   //
   TempDevicePath = DevicePath;
   Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &TempDevicePath, &Handle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     ASSERT (IsDevicePathEnd (TempDevicePath));
 
     NextFullPath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
@@ -1039,13 +1039,13 @@ BmExpandMediaDevicePath (
     if (GetNext) {
       return NextFullPath;
     } else {
-      FreePool (NextFullPath);
+      FreePool(NextFullPath);
       return NULL;
     }
   }
 
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &TempDevicePath, &Handle);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // For device boot option only pointing to the removable device handle,
@@ -1062,8 +1062,8 @@ BmExpandMediaDevicePath (
   // Block IO read/write will success.
   //
   Status = gBS->HandleProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   Buffer = AllocatePool (BlockIo->Media->BlockSize);
@@ -1075,7 +1075,7 @@ BmExpandMediaDevicePath (
       BlockIo->Media->BlockSize,
       Buffer
       );
-    FreePool (Buffer);
+    FreePool(Buffer);
   }
 
   //
@@ -1105,14 +1105,14 @@ BmExpandMediaDevicePath (
         break;
       } else {
         GetNext = (BOOLEAN)(CompareMem (NextFullPath, FullPath, GetDevicePathSize (NextFullPath)) == 0);
-        FreePool (NextFullPath);
+        FreePool(NextFullPath);
         NextFullPath = NULL;
       }
     }
   }
 
   if (SimpleFileSystemHandles != NULL) {
-    FreePool (SimpleFileSystemHandles);
+    FreePool(SimpleFileSystemHandles);
   }
 
   return NextFullPath;
@@ -1187,7 +1187,7 @@ BmExpandNetworkFileSystem (
                   &HandleCount,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Handles = NULL;
     HandleCount = 0;
   }
@@ -1196,7 +1196,7 @@ BmExpandNetworkFileSystem (
   for (Index = 0; Index < HandleCount; Index++) {
     Node = DevicePathFromHandle (Handles[Index]);
     Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &Node, &Handle);
-    if (!EFI_ERROR (Status) &&
+    if (!EFI_ERROR(Status) &&
         (Handle == LoadFileHandle) &&
         (DevicePathType (Node) == MEDIA_DEVICE_PATH) && (DevicePathSubType (Node) == MEDIA_RAM_DISK_DP)) {
       //
@@ -1208,7 +1208,7 @@ BmExpandNetworkFileSystem (
   }
 
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   if (Index == HandleCount) {
@@ -1247,7 +1247,7 @@ BmGetRamDiskDevicePath (
 
   Node = FilePath;
   Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &Node, &Handle);
-  if (!EFI_ERROR (Status) &&
+  if (!EFI_ERROR(Status) &&
       (DevicePathType (Node) == MEDIA_DEVICE_PATH) &&
       (DevicePathSubType (Node) == MEDIA_RAM_DISK_DP)
       ) {
@@ -1296,7 +1296,7 @@ BmGetRamDiskMemoryInfo (
   // Get the buffer occupied by RAM Disk.
   //
   Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &RamDiskDevicePath, &Handle);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return NULL;
   }
@@ -1339,13 +1339,13 @@ BmDestroyRamDisk (
   //
   if (mRamDisk == NULL) {
     Status = gBS->LocateProtocol (&gEfiRamDiskProtocolGuid, NULL, (VOID *) &mRamDisk);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return;
     }
   }
 /*  Status = */mRamDisk->Unregister (RamDiskDevicePath);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   FreePages (RamDiskBuffer, RamDiskSizeInPages);
 }
 
@@ -1378,7 +1378,7 @@ BmExpandLoadFile (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return NULL;
   }
@@ -1407,7 +1407,7 @@ BmExpandLoadFile (
   }
 
   Status = LoadFile->LoadFile (LoadFile, FilePath, TRUE, &BufferSize, FileBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePages (FileBuffer, EFI_SIZE_TO_PAGES (BufferSize));
     return NULL;
   }
@@ -1459,7 +1459,7 @@ BmExpandLoadFiles (
   //
   Node = FilePath;
   Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &Node, &Handle);
-  if (!EFI_ERROR (Status) && IsDevicePathEnd (Node)) {
+  if (!EFI_ERROR(Status) && IsDevicePathEnd (Node)) {
     //
     // When wide match happens, pass full device path to LoadFile (),
     // otherwise, pass remaining device path to LoadFile ().
@@ -1478,7 +1478,7 @@ BmExpandLoadFiles (
                     &HandleCount,
                     &Handles
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Handles = NULL;
       HandleCount = 0;
     }
@@ -1489,7 +1489,7 @@ BmExpandLoadFiles (
       }
     }
     if (Handles != NULL) {
-      FreePool (Handles);
+      FreePool(Handles);
     }
   }
 
@@ -1560,11 +1560,11 @@ BmGetNextLoadOptionDevicePath (
   //
   Node = FilePath;
   Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &Node, &Handle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &Node, &Handle);
   }
 
-  if (!EFI_ERROR (Status) && IsDevicePathEnd (Node)) {
+  if (!EFI_ERROR(Status) && IsDevicePathEnd (Node)) {
     return BmExpandMediaDevicePath (FilePath, FullPath);
   }
 
@@ -1596,7 +1596,7 @@ BmGetNextLoadOptionDevicePath (
   } else {
     Node = FilePath;
     Status = gBS->LocateDevicePath (&gEfiUsbIoProtocolGuid, &Node, &Handle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Only expand the USB WWID/Class device path
       // when FilePath doesn't point to a physical UsbIo controller.
@@ -1646,7 +1646,7 @@ BmGetNextLoadOptionDevicePath (
   //
   Node   = FilePath;
   Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &Node, &Handle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return DuplicateDevicePath (FilePath);
   }
 
@@ -1674,7 +1674,7 @@ BmIsBootManagerMenuFilePath (
   EFI_STATUS                      Status;
 
   Status = gBS->LocateDevicePath (&gEfiFirmwareVolume2ProtocolGuid, &DevicePath, &FvHandle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     NameGuid = EfiGetNameGuidFromFwVolDevicePathNode ((CONST MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *) DevicePath);
     if (NameGuid != NULL) {
       return CompareGuid (NameGuid, PcdGetPtr (PcdBootManagerMenuFile));
@@ -1783,7 +1783,7 @@ EfiBootManagerBoot (
   OptionNumber = BmFindBootOptionInVariable (BootOption);
   if (OptionNumber == LoadOptionNumberUnassigned) {
     Status = BmGetFreeOptionNumber (LoadOptionTypeBoot, &Uint16);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Save the BootOption->OptionNumber to restore later
       //
@@ -1794,7 +1794,7 @@ EfiBootManagerBoot (
       BootOption->OptionNumber = OriginalOptionNumber;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "[Bds] Failed to create Boot#### for a temporary boot - %r!\n", Status));
       BootOption->Status = Status;
       return ;
@@ -1874,13 +1874,13 @@ EfiBootManagerBoot (
                       );
     }
     if (FileBuffer != NULL) {
-      FreePool (FileBuffer);
+      FreePool(FileBuffer);
     }
     if (FilePath != NULL) {
-      FreePool (FilePath);
+      FreePool(FilePath);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Report Status Code with the failure status to indicate that the failure to load boot option
       //
@@ -1891,7 +1891,7 @@ EfiBootManagerBoot (
       //
       if (RamDiskDevicePath != NULL) {
         BmDestroyRamDisk (RamDiskDevicePath);
-        FreePool (RamDiskDevicePath);
+        FreePool(RamDiskDevicePath);
       }
       return;
     }
@@ -1916,7 +1916,7 @@ EfiBootManagerBoot (
                    NULL,
                    &LegacyBootEvent
                    );
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       );
 
       mBmLegacyBoot (BootOption);
@@ -1932,7 +1932,7 @@ EfiBootManagerBoot (
   // Provide the image with its load options
   //
   Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ImageInfo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (!BmIsAutoCreateBootOption (BootOption)) {
     ImageInfo->LoadOptionsSize = BootOption->OptionalDataSize;
@@ -1961,7 +1961,7 @@ EfiBootManagerBoot (
   Status = gBS->StartImage (ImageHandle, &BootOption->ExitDataSize, &BootOption->ExitData);
   DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
   BootOption->Status = Status;
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Report Status Code with the failure status to indicate that boot failure
     //
@@ -1974,7 +1974,7 @@ EfiBootManagerBoot (
   //
   if (RamDiskDevicePath != NULL) {
     BmDestroyRamDisk (RamDiskDevicePath);
-    FreePool (RamDiskDevicePath);
+    FreePool(RamDiskDevicePath);
   }
 
   //
@@ -1987,9 +1987,9 @@ EfiBootManagerBoot (
   //
   BootLogo = NULL;
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
-  if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
+  if (!EFI_ERROR(Status) && (BootLogo != NULL)) {
     Status = BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -2118,7 +2118,7 @@ BmEnumerateBootOptions (
                       &gEfiBlockIoProtocolGuid,
                       (VOID **) &BlkIo
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -2154,14 +2154,14 @@ BmEnumerateBootOptions (
                  NULL,
                  0
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
-      FreePool (Description);
+      FreePool(Description);
     }
   }
 
   if (HandleCount != 0) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   //
@@ -2180,7 +2180,7 @@ BmEnumerateBootOptions (
                     &gEfiBlockIoProtocolGuid,
                     (VOID **) &BlkIo
                     );
-     if (!EFI_ERROR (Status)) {
+     if (!EFI_ERROR(Status)) {
       //
       //  Skip if the file system handle supports a BlkIo protocol, which we've handled in above
       //
@@ -2204,12 +2204,12 @@ BmEnumerateBootOptions (
                NULL,
                0
                );
-    ASSERT_EFI_ERROR (Status);
-    FreePool (Description);
+    ASSERT_EFI_ERROR(Status);
+    FreePool(Description);
   }
 
   if (HandleCount != 0) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   //
@@ -2248,12 +2248,12 @@ BmEnumerateBootOptions (
                NULL,
                0
                );
-    ASSERT_EFI_ERROR (Status);
-    FreePool (Description);
+    ASSERT_EFI_ERROR(Status);
+    FreePool(Description);
   }
 
   if (HandleCount != 0) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   BmMakeBootOptionDescriptionUnique (BootOptions, *BootOptionCount);
@@ -2311,7 +2311,7 @@ EfiBootManagerRefreshAllBootOption (
         //
         // Deleting variable with current variable implementation shouldn't fail.
         //
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
         if (EFI_ERROR(Status)) break;
       }
     }
@@ -2384,7 +2384,7 @@ BmRegisterBootManagerMenu (
     }
   }
   if (HandleCount != 0) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   if (DevicePath == NULL) {
@@ -2397,9 +2397,9 @@ BmRegisterBootManagerMenu (
                &DataSize
                );
     if (Data != NULL) {
-      FreePool (Data);
+      FreePool(Data);
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_WARN, "[Bds]BootManagerMenu FFS section can not be found, skip its boot option registration\n"));
       return EFI_NOT_FOUND;
     }
@@ -2414,7 +2414,7 @@ BmRegisterBootManagerMenu (
                (VOID **) &Description,
                &DescriptionLength
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Description = NULL;
     }
 
@@ -2424,8 +2424,8 @@ BmRegisterBootManagerMenu (
                     &gEfiLoadedImageProtocolGuid,
                     (VOID **) &LoadedImage
                     );
-    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     DevicePath = AppendDevicePathNode (
@@ -2445,15 +2445,15 @@ BmRegisterBootManagerMenu (
              NULL,
              0
              );
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   if (DevicePath) {
-    FreePool (DevicePath);
+    FreePool(DevicePath);
   }
   if (Description != NULL) {
-    FreePool (Description);
+    FreePool(Description);
   }
 /*
   DEBUG_CODE (
@@ -2505,7 +2505,7 @@ EfiBootManagerGetBootManagerMenu (
                    BootOptions[Index].OptionalData,
                    BootOptions[Index].OptionalDataSize
                    );
- //       ASSERT_EFI_ERROR (Status);
+ //       ASSERT_EFI_ERROR(Status);
       
         break;
     }

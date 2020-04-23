@@ -142,18 +142,18 @@ ConSplitterGraphicsOutputSetMode (
       //
       for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex ++) {
         Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32) NumberIndex, &SizeOfInfo, &Info);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
         if ((Info->HorizontalResolution == Mode->HorizontalResolution) && (Info->VerticalResolution == Mode->VerticalResolution)) {
-          FreePool (Info);
+          FreePool(Info);
           break;
         }
-        FreePool (Info);
+        FreePool(Info);
       }
 
       Status = GraphicsOutput->SetMode (GraphicsOutput, (UINT32) NumberIndex);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       }
     } else if (FeaturePcdGet (PcdUgaConsumeSupport)) {
@@ -166,7 +166,7 @@ ConSplitterGraphicsOutputSetMode (
                             32,
                             60
                             );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           ReturnStatus = Status;
         }
       }
@@ -290,7 +290,7 @@ ConSplitterGraphicsOutputBlt (
                               Height,
                               Delta
                               );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       } else if (BltOperation == EfiBltVideoToBltBuffer) {
         //
@@ -314,7 +314,7 @@ ConSplitterGraphicsOutputBlt (
                               Height,
                               Delta
                               );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       } else if (BltOperation == EfiBltVideoToBltBuffer) {
         //
@@ -432,18 +432,18 @@ ConSplitterUgaDrawSetMode (
       //
       for (NumberIndex = 0; NumberIndex < GraphicsOutput->Mode->MaxMode; NumberIndex ++) {
         Status = GraphicsOutput->QueryMode (GraphicsOutput, (UINT32) NumberIndex, &SizeOfInfo, &Info);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
         if ((Info->HorizontalResolution == HorizontalResolution) && (Info->VerticalResolution == VerticalResolution)) {
-          FreePool (Info);
+          FreePool(Info);
           break;
         }
-        FreePool (Info);
+        FreePool(Info);
       }
 
       Status = GraphicsOutput->SetMode (GraphicsOutput, (UINT32) NumberIndex);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       }
     } else if (FeaturePcdGet (PcdUgaConsumeSupport)){
@@ -456,7 +456,7 @@ ConSplitterUgaDrawSetMode (
                           ColorDepth,
                           RefreshRate
                           );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           ReturnStatus = Status;
         }
       }
@@ -558,7 +558,7 @@ ConSplitterUgaDrawBlt (
                               Height,
                               Delta
                               );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       } else if (BltOperation == EfiUgaVideoToBltBuffer) {
         //
@@ -581,7 +581,7 @@ ConSplitterUgaDrawBlt (
                                                       Height,
                                                       Delta
                                                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         ReturnStatus = Status;
       } else if (BltOperation == EfiUgaVideoToBltBuffer) {
         //

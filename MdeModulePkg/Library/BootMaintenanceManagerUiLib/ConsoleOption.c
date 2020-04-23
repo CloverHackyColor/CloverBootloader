@@ -47,11 +47,11 @@ MatchDevicePaths (
     // return success
     //
     if (CompareMem (Single, DevicePathInst, Size) == 0) {
-      FreePool (DevicePathInst);
+      FreePool(DevicePathInst);
       return TRUE;
     }
 
-    FreePool (DevicePathInst);
+    FreePool(DevicePathInst);
     DevicePathInst = GetNextDevicePathInstance (&DevicePath, &Size);
   }
 
@@ -300,7 +300,7 @@ RetrieveUartUid (
                   &gEfiDevicePathProtocolGuid,
                   (VOID **) &DevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -429,7 +429,7 @@ LocateSerialIo (
                   &NoHandles,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // No serial ports present
     //
@@ -466,7 +466,7 @@ LocateSerialIo (
     if ((Acpi != NULL) && IsIsaSerialNode (Acpi)) {
       NewMenuEntry = BOpt_CreateMenuEntry (BM_TERMINAL_CONTEXT_SELECT);
       if (NewMenuEntry == NULL) {
-        FreePool (Handles);
+        FreePool(Handles);
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -524,7 +524,7 @@ LocateSerialIo (
     }
   }
   if (Handles != NULL) {
-    FreePool (Handles);
+    FreePool(Handles);
   }
 
   //
@@ -569,7 +569,7 @@ LocateSerialIo (
                         (EFI_DEVICE_PATH_PROTOCOL *) &Vendor
                         );
       if (NewMenuEntry->HelpString != NULL) {
-        FreePool (NewMenuEntry->HelpString);
+        FreePool(NewMenuEntry->HelpString);
       }
       //
       // NewMenuEntry->HelpString = UiDevicePathToStr (NewDevicePath);

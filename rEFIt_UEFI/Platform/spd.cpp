@@ -882,10 +882,10 @@ VOID ScanSPD()
                                     &HandleBuffer
                                     );
   
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; ++Index) {
       Status = gBS->HandleProtocol(HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         // Read PCI BUS
         //PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         Status = PciIo->Pci.Read (

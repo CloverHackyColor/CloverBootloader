@@ -266,7 +266,7 @@ DiscoverAllPartitions (
   Slot     = Device->Slot;
 
   Status = EmmcSendStatus (Device, Slot + 1, &DevStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -278,13 +278,13 @@ DiscoverAllPartitions (
   EmmcSelect (Device, 0);
 
   Status = EmmcSendStatus (Device, Slot + 1, &DevStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Csd    = &Device->Csd;
   Status = EmmcGetCsd (Device, Slot + 1, Csd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   DumpCsd (Csd);
@@ -297,18 +297,18 @@ DiscoverAllPartitions (
 
   Cid    = &Device->Cid;
   Status = EmmcGetCid (Device, Slot + 1, Cid);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = EmmcSelect (Device, Slot + 1);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   ExtCsd = &Device->ExtCsd;
   Status = EmmcGetExtCsd (Device, ExtCsd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   DumpExtCsd (ExtCsd);
@@ -433,7 +433,7 @@ InstallProtocolOnPartition (
   DeviceHandle = NULL;
   RemainingDevicePath = DevicePath;
   Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
+  if (!EFI_ERROR(Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
     Status = EFI_ALREADY_STARTED;
     goto Error;
   }
@@ -459,7 +459,7 @@ InstallProtocolOnPartition (
                       &Partition->DiskInfo,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Error;
       }
 
@@ -473,7 +473,7 @@ InstallProtocolOnPartition (
                         EFI_NATIVE_INTERFACE,
                         &Partition->StorageSecurity
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           gBS->UninstallMultipleProtocolInterfaces (
                  Partition->Handle,
                  &gEfiDevicePathProtocolGuid,
@@ -507,8 +507,8 @@ InstallProtocolOnPartition (
   }
 
 Error:
-  if (EFI_ERROR (Status) && (DevicePath != NULL)) {
-    FreePool (DevicePath);
+  if (EFI_ERROR(Status) && (DevicePath != NULL)) {
+    FreePool(DevicePath);
   }
 
   return Status;
@@ -586,7 +586,7 @@ DiscoverEmmcDevice (
   //
   // The device path to the EMMC device doesn't exist. It means the corresponding device private data hasn't been initialized.
   //
-  if (EFI_ERROR (Status) || (DeviceHandle == NULL) || !IsDevicePathEnd (RemainingEmmcDevPath)) {
+  if (EFI_ERROR(Status) || (DeviceHandle == NULL) || !IsDevicePathEnd (RemainingEmmcDevPath)) {
     Device->DevicePath = NewDevicePath;
     Device->Slot       = Slot;
     Device->Private    = Private;
@@ -595,7 +595,7 @@ DiscoverEmmcDevice (
     //
     Status = DiscoverAllPartitions (Device);
     if (EFI_ERROR(Status)) {
-      FreePool (NewDevicePath);
+      FreePool(NewDevicePath);
       goto Error;
     }
 
@@ -606,7 +606,7 @@ DiscoverEmmcDevice (
                     Device->DevicePath
                     );
     if (EFI_ERROR(Status)) {
-      FreePool (NewDevicePath);
+      FreePool(NewDevicePath);
       goto Error;
     }
 
@@ -657,7 +657,7 @@ DiscoverEmmcDevice (
   }
 
 Error:
-  FreePool (DevicePath);
+  FreePool(DevicePath);
 
   return Status;
 }
@@ -733,7 +733,7 @@ EmmcDxeDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -742,7 +742,7 @@ EmmcDxeDriverBindingSupported (
   //
   if ((RemainingDevicePath != NULL) && !IsDevicePathEnd (RemainingDevicePath)) {
     Status = PassThru->GetSlotNumber (PassThru, RemainingDevicePath, &Slot);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Close the I/O Abstraction(s) used to perform the supported test
       //
@@ -839,7 +839,7 @@ EmmcDxeDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
+  if ((EFI_ERROR(Status)) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
 
@@ -861,7 +861,7 @@ EmmcDxeDriverBindingStart (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Private->PassThru            = PassThru;
     Private->Controller          = Controller;
     Private->ParentDevicePath    = ParentDevicePath;
@@ -873,7 +873,7 @@ EmmcDxeDriverBindingStart (
                     EFI_NATIVE_INTERFACE,
                     Private
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -885,7 +885,7 @@ EmmcDxeDriverBindingStart (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   }
@@ -894,7 +894,7 @@ EmmcDxeDriverBindingStart (
     Slot = 0xFF;
     while (TRUE) {
       Status = PassThru->GetNextSlot (PassThru, &Slot);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Cannot find more legal slots.
         //
@@ -903,19 +903,19 @@ EmmcDxeDriverBindingStart (
       }
 
       Status = DiscoverEmmcDevice (Private, Slot, NULL);
-      if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+      if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
         break;
       }
     }
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     Status = PassThru->GetSlotNumber (PassThru, RemainingDevicePath, &Slot);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = DiscoverEmmcDevice (Private, Slot, NextDevicePathNode (RemainingDevicePath));
     }
   }
 
 Error:
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
     gBS->CloseProtocol (
            Controller,
            &gEfiSdMmcPassThruProtocolGuid,
@@ -930,7 +930,7 @@ Error:
              Private,
              NULL
              );
-      FreePool (Private);
+      FreePool(Private);
     }
   }
   return Status;
@@ -996,7 +996,7 @@ EmmcDxeDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
@@ -1010,7 +1010,7 @@ EmmcDxeDriverBindingStop (
                       Controller,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
       ASSERT (DevicePath == Device->DevicePath);
@@ -1019,7 +1019,7 @@ EmmcDxeDriverBindingStop (
              &gEfiDevicePathProtocolGuid,
              DevicePath
              );
-      FreePool (Device->DevicePath);
+      FreePool(Device->DevicePath);
     }
 
     gBS->UninstallProtocolInterface (
@@ -1033,7 +1033,7 @@ EmmcDxeDriverBindingStop (
           This->DriverBindingHandle,
           Controller
           );
-    FreePool (Private);
+    FreePool(Private);
 
     return EFI_SUCCESS;
   }
@@ -1049,7 +1049,7 @@ EmmcDxeDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = gBS->OpenProtocol (
                       ChildHandleBuffer[Index],
                       &gEfiBlockIo2ProtocolGuid,
@@ -1058,7 +1058,7 @@ EmmcDxeDriverBindingStop (
                       Controller,
                       EFI_OPEN_PROTOCOL_GET_PROTOCOL
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         AllChildrenStopped = FALSE;
         continue;
       }
@@ -1086,7 +1086,7 @@ EmmcDxeDriverBindingStop (
         gBS->SignalEvent (Request->Token->Event);
       }
 
-      FreePool (Request);
+      FreePool(Request);
     }
 
     //
@@ -1113,7 +1113,7 @@ EmmcDxeDriverBindingStop (
                     &Partition->DiskInfo,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
       gBS->OpenProtocol (
              Controller,
@@ -1138,13 +1138,13 @@ EmmcDxeDriverBindingStop (
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gBS->UninstallProtocolInterface (
                       ChildHandleBuffer[Index],
                       &gEfiStorageSecurityCommandProtocolGuid,
                       &Partition->StorageSecurity
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         gBS->OpenProtocol (
           Controller,
           &gEfiSdMmcPassThruProtocolGuid,
@@ -1158,7 +1158,7 @@ EmmcDxeDriverBindingStop (
       }
     }
 
-    FreePool (Partition->DevicePath);
+    FreePool(Partition->DevicePath);
   }
 
   if (!AllChildrenStopped) {
@@ -1198,7 +1198,7 @@ InitializeEmmcDxe (
              &gEmmcDxeComponentName,
              &gEmmcDxeComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

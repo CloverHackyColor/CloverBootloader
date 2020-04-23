@@ -69,7 +69,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
  */
         FilePathNode = (FILEPATH_DEVICE_PATH *) FilePath;
         Status = BS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, (EFI_DEVICE_PATH_PROTOCOL **)&FilePathNode, &DeviceHandle);
-        if (!EFI_ERROR (Status))
+        if (!EFI_ERROR(Status))
         {
             Status = BS->HandleProtocol (DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&Volume);
 
@@ -79,7 +79,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
  * Open the Volume to get the File System handle
  */
                 Status = Volume->OpenVolume(Volume, &FileHandle);
-                if (!EFI_ERROR (Status))
+                if (!EFI_ERROR(Status))
                 {
 /*
  * Duplicate the device path to avoid the access to unaligned device path node.
@@ -106,7 +106,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
                                     || DevicePathSubType (&FilePathNode->Header) != MEDIA_FILEPATH_DP)
                                 Status = EFI_UNSUPPORTED;
 
-                            if (EFI_ERROR (Status))
+                            if (EFI_ERROR(Status))
 /*
  * Exit loop on Error
  */
@@ -151,7 +151,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
                             }
                         }
 
-                        if (!EFI_ERROR (Status))
+                        if (!EFI_ERROR(Status))
                         {
 /*
  * Allocate space for the file
@@ -190,7 +190,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
 
         TempFilePath = FilePath;
         Status = BS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, (EFI_DEVICE_PATH_PROTOCOL **) &TempFilePath, &DeviceHandle);
-        if (!EFI_ERROR (Status))
+        if (!EFI_ERROR(Status))
         {
             Status = BS->HandleProtocol (DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&LoadFile);
 

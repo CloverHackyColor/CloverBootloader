@@ -118,7 +118,7 @@ BmSetConsoleMode (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -127,7 +127,7 @@ BmSetConsoleMode (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }
 
@@ -175,7 +175,7 @@ BmSetConsoleMode (
                        &SizeOfInfo,
                        &Info
                        );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution)) {
         if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
@@ -184,12 +184,12 @@ BmSetConsoleMode (
           // Current resolution is same with required resolution, check if text mode need be set
           //
           Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
-          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR(Status);
           if (CurrentColumn == NewColumns && CurrentRow == NewRows) {
             //
             // If current text mode is same with required text mode. Do nothing
             //
-            FreePool (Info);
+            FreePool(Info);
             return EFI_SUCCESS;
           } else {
             //
@@ -203,15 +203,15 @@ BmSetConsoleMode (
                   // Required text mode is supported, set it.
                   //
                   Status = SimpleTextOut->SetMode (SimpleTextOut, Index);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   //
                   // Update text mode PCD.
                   //
                   Status = PcdSet32S (PcdConOutColumn, mBmSetupTextModeColumn);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   Status = PcdSet32S (PcdConOutRow, mBmSetupTextModeRow);
-                  ASSERT_EFI_ERROR (Status);
-                  FreePool (Info);
+                  ASSERT_EFI_ERROR(Status);
+                  FreePool(Info);
                   return EFI_SUCCESS;
                 }
               }
@@ -220,7 +220,7 @@ BmSetConsoleMode (
               //
               // If required text mode is not supported, return error.
               //
-              FreePool (Info);
+              FreePool(Info);
               return EFI_UNSUPPORTED;
             }
           }
@@ -230,13 +230,13 @@ BmSetConsoleMode (
           // In this case, the driver which produces simple text out need be restarted.
           //
           Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber);
-          if (!EFI_ERROR (Status)) {
-            FreePool (Info);
+          if (!EFI_ERROR(Status)) {
+            FreePool(Info);
             break;
           }
         }
       }
-      FreePool (Info);
+      FreePool(Info);
     }
   }
 
@@ -252,13 +252,13 @@ BmSetConsoleMode (
   // Set PCD to Inform Consplitter to change text mode.
   //
   Status = PcdSet32S (PcdVideoHorizontalResolution, NewHorizontalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdVideoVerticalResolution, NewVerticalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutColumn, NewColumns);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutRow, NewRows);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Video mode is changed, so restart graphics console driver and higher level driver.
@@ -272,7 +272,7 @@ BmSetConsoleMode (
                    &HandleCount,
                    &HandleBuffer
                    );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
@@ -280,7 +280,7 @@ BmSetConsoleMode (
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
     if (HandleBuffer != NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
     }
   }
 
@@ -324,8 +324,8 @@ BmSetupResetReminder (
       CreatePopUp (EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE, &Key, StringBuffer1, StringBuffer2, NULL);
     } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
-    FreePool (StringBuffer1);
-    FreePool (StringBuffer2);
+    FreePool(StringBuffer1);
+    FreePool(StringBuffer2);
 
     gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
   }
@@ -373,7 +373,7 @@ GroupMultipleLegacyBootOption4SameType (
   for (Index = 0; Index < BootOrderSize / sizeof (UINT16); Index++) {
     UnicodeSPrint (OptionName, sizeof (OptionName), L"Boot%04x", BootOrder[Index]);
     Status = EfiBootManagerVariableToLoadOption (OptionName, &BootOption);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     if ((DevicePathType (BootOption.FilePath) == BBS_DEVICE_PATH) &&
         (DevicePathSubType (BootOption.FilePath) == BBS_BBS_DP)) {
@@ -417,7 +417,7 @@ GroupMultipleLegacyBootOption4SameType (
          BootOrderSize,
          BootOrder
          );
-  FreePool (BootOrder);
+  FreePool(BootOrder);
 }
 
 /**
@@ -446,7 +446,7 @@ BmDevicePathToStr (
                   NULL,
                   (VOID **) &DevPathToText
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ToText = DevPathToText->ConvertDevicePathToText (
                             DevPath,
                             FALSE,
@@ -713,7 +713,7 @@ BmInitialBootModeInfo (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -722,7 +722,7 @@ BmInitialBootModeInfo (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }
 
@@ -831,7 +831,7 @@ BootManagerCallback (
   EfiBootManagerBoot (&BootOption[QuestionId - 1]);
   BmSetConsoleMode (TRUE);
 
-  if (EFI_ERROR (BootOption[QuestionId - 1].Status)) {
+  if (EFI_ERROR(BootOption[QuestionId - 1].Status)) {
     gST->ConOut->OutputString (
                   gST->ConOut,
                   HiiGetString (gBootManagerPrivate.HiiHandle, STRING_TOKEN (STR_ANY_KEY_CONTINUE), NULL)
@@ -876,7 +876,7 @@ BootManagerUiLibConstructor (
                   &gBootManagerPrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Publish our HII data
@@ -920,7 +920,7 @@ BootManagerUiLibDestructor (
                   &gBootManagerPrivate.ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   HiiRemovePackages (gBootManagerPrivate.HiiHandle);
 

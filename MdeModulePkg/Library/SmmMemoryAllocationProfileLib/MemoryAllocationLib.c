@@ -64,7 +64,7 @@ SmmMemoryAllocationLibConstructor (
                   NULL,
                   (VOID **)&SmmAccess
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get SMRAM range information
@@ -77,7 +77,7 @@ SmmMemoryAllocationLibConstructor (
   ASSERT (mSmramRanges != NULL);
 
   Status = SmmAccess->GetCapabilities (SmmAccess, &Size, mSmramRanges);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mSmramRangeCount = Size / sizeof (EFI_SMRAM_DESCRIPTOR);
 
@@ -100,7 +100,7 @@ SmmMemoryAllocationLibDestructor (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  FreePool (mSmramRanges);
+  FreePool(mSmramRanges);
 
   return EFI_SUCCESS;
 }
@@ -159,7 +159,7 @@ InternalAllocatePages (
   }
 
   Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   return (VOID *) (UINTN) Memory;
@@ -297,7 +297,7 @@ FreePages (
     //
     Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -353,7 +353,7 @@ InternalAllocateAlignedPages (
     ASSERT (RealPages > Pages);
 
     Status         = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, RealPages, &Memory);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
     AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
@@ -363,7 +363,7 @@ InternalAllocateAlignedPages (
       // Free first unaligned page(s).
       //
       Status = gSmst->SmmFreePages (Memory, UnalignedPages);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     Memory         = AlignedMemory + EFI_PAGES_TO_SIZE (Pages);
     UnalignedPages = RealPages - Pages - UnalignedPages;
@@ -372,14 +372,14 @@ InternalAllocateAlignedPages (
       // Free last unaligned page(s).
       //
       Status = gSmst->SmmFreePages (Memory, UnalignedPages);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   } else {
     //
     // Do not over-allocate pages in this case.
     //
     Status = gSmst->SmmAllocatePages (AllocateAnyPages, MemoryType, Pages, &Memory);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
     AlignedMemory  = (UINTN) Memory;
@@ -540,7 +540,7 @@ FreeAlignedPages (
     //
     Status = gBS->FreePages ((EFI_PHYSICAL_ADDRESS) (UINTN) Buffer, Pages);
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -567,7 +567,7 @@ InternalAllocatePool (
   VOID        *Memory;
 
   Status = gSmst->SmmAllocatePool (MemoryType, AllocationSize, &Memory);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Memory = NULL;
   }
   return Memory;
@@ -967,7 +967,7 @@ InternalReallocatePool (
   NewBuffer = InternalAllocateZeroPool (PoolType, NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
-    FreePool (OldBuffer);
+    FreePool(OldBuffer);
   }
   return NewBuffer;
 }
@@ -1111,7 +1111,7 @@ ReallocateReservedPool (
 **/
 VOID
 EFIAPI
-FreePool (
+FreePool(
   IN VOID   *Buffer
   )
 {
@@ -1122,13 +1122,13 @@ FreePool (
     // When Buffer is in SMRAM range, it should be allocated by gSmst->SmmAllocatePool() service.
     // So, gSmst->SmmFreePool() service is used to free it.
     //
-    Status = gSmst->SmmFreePool (Buffer);
+    Status = gSmst->SmmFreePool(Buffer);
   } else {
     //
     // When Buffer is out of SMRAM range, it should be allocated by gBS->AllocatePool() service.
     // So, gBS->FreePool() service is used to free it.
     //
-    Status = gBS->FreePool (Buffer);
+    Status = gBS->FreePool(Buffer);
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }

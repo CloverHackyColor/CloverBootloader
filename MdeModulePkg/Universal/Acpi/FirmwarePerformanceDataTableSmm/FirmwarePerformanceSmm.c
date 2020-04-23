@@ -138,7 +138,7 @@ FpdtStatusCodeListenerSmm (
                &S3SuspendRecord,
                sizeof (EFI_ACPI_5_0_FPDT_S3_SUSPEND_RECORD)
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     mS3SuspendLockBoxSaved = TRUE;
   } else {
@@ -148,7 +148,7 @@ FpdtStatusCodeListenerSmm (
                &S3SuspendRecord,
                sizeof (EFI_ACPI_5_0_FPDT_S3_SUSPEND_RECORD)
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return EFI_SUCCESS;
@@ -299,20 +299,20 @@ FirmwarePerformanceSmmEntryPoint (
                     NULL,
                     (VOID **) &mRscHandlerProtocol
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register report status code listener for BootRecords and S3 Suspend Start and End.
   //
   Status = mRscHandlerProtocol->Register (FpdtStatusCodeListenerSmm);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register SMI handler.
   //
   Handle = NULL;
   Status = gSmst->SmiHandlerRegister (FpdtSmiHandler, &gEfiFirmwarePerformanceGuid, &Handle);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

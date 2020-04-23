@@ -1316,9 +1316,9 @@ ScsiLibNotify (
   }
 
   if (CommandPacket->Cdb != NULL) {
-    FreePool (CommandPacket->Cdb);
+    FreePool(CommandPacket->Cdb);
   }
-  FreePool (Context);
+  FreePool(Context);
 
   gBS->CloseEvent (Event);
   gBS->SignalEvent (CallerEvent);
@@ -1502,7 +1502,7 @@ ScsiRead10CommandEx (
 
 ErrorExit:
   if (Context != NULL) {
-    FreePool (Context);
+    FreePool(Context);
   }
 
   return Status;
@@ -1686,7 +1686,7 @@ ScsiWrite10CommandEx (
 
 ErrorExit:
   if (Context != NULL) {
-    FreePool (Context);
+    FreePool(Context);
   }
 
   return Status;
@@ -1870,7 +1870,7 @@ ScsiRead16CommandEx (
 
 ErrorExit:
   if (Context != NULL) {
-    FreePool (Context);
+    FreePool(Context);
   }
 
   return Status;
@@ -2054,7 +2054,7 @@ ScsiWrite16CommandEx (
 
 ErrorExit:
   if (Context != NULL) {
-    FreePool (Context);
+    FreePool(Context);
   }
 
   return Status;

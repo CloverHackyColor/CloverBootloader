@@ -80,12 +80,12 @@ InternalPrint (
     // To be extra safe make sure Console has been initialized
     //
     Status = Console->OutputString (Console, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Return = 0;
     }
   }
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return Return;
 }
@@ -221,12 +221,12 @@ AsciiInternalPrint (
     // To be extra safe make sure Console has been initialized
     //
     Status = Console->OutputString (Console, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Return = 0;
     }
   }
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return Return;
 }
@@ -390,7 +390,7 @@ InternalPrintGraphic (
                   );
 
   UgaDraw = NULL;
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     //
     // If no GOP available, try to open UGA Draw protocol if supported.
     //
@@ -402,7 +402,7 @@ InternalPrintGraphic (
                     (VOID **) &UgaDraw
                     );
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -412,7 +412,7 @@ InternalPrintGraphic (
                   (VOID **) &Sto
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -428,7 +428,7 @@ InternalPrintGraphic (
   ASSERT ((HorizontalResolution != 0) && (VerticalResolution !=0));
 
   Status = gBS->LocateProtocol (&gEfiHiiFontProtocolGuid, NULL, (VOID **) &HiiFont);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -479,7 +479,7 @@ InternalPrintGraphic (
                          &RowInfoArraySize,
                          NULL
                          );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
 
@@ -518,7 +518,7 @@ InternalPrintGraphic (
                          NULL
                          );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       ASSERT (RowInfoArray != NULL);
       if (!RowInfoArray) {
         goto Error;
@@ -553,7 +553,7 @@ InternalPrintGraphic (
     } else {
       goto Error;
     }
-    FreePool (Blt->Image.Bitmap);
+    FreePool(Blt->Image.Bitmap);
   } else {
     goto Error;
   }
@@ -566,13 +566,13 @@ InternalPrintGraphic (
     PrintNum = 0;
   }
 
-  FreePool (RowInfoArray);
-  FreePool (Blt);
+  FreePool(RowInfoArray);
+  FreePool(Blt);
   return PrintNum;
 
 Error:
   if (Blt != NULL) {
-    FreePool (Blt);
+    FreePool(Blt);
   }
   return 0;
 }
@@ -659,7 +659,7 @@ PrintXY (
 
   ReturnNum = InternalPrintGraphic (PointX, PointY, ForeGround, BackGround, Buffer, PrintNum);
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return ReturnNum;
 }
@@ -743,7 +743,7 @@ AsciiPrintXY (
 
   ReturnNum = InternalPrintGraphic (PointX, PointY, ForeGround, BackGround, Buffer, PrintNum);
 
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return ReturnNum;
 }

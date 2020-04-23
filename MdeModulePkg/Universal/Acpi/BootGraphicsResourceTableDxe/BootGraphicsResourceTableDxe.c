@@ -267,19 +267,19 @@ SetBootLogo2 (
   // The Boot Graphics Resource Table only has 32-bit fields for these values.
   //
   Status = SafeUintnToUint32 (DestinationX, &Result32);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   Status = SafeUintnToUint32 (DestinationY, &Result32);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   Status = SafeUintnToUint32 (Width, &Result32);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
   Status = SafeUintnToUint32 (Height, &Result32);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -292,7 +292,7 @@ SetBootLogo2 (
              Height,
              &BufferSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
   Status = SafeUintnMult (
@@ -300,7 +300,7 @@ SetBootLogo2 (
              sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL),
              &BufferSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -313,7 +313,7 @@ SetBootLogo2 (
   // Free old logo buffer
   //
   if (mLogoBltBuffer != NULL) {
-    FreePool (mLogoBltBuffer);
+    FreePool(mLogoBltBuffer);
     mLogoBltBuffer = NULL;
   }
 
@@ -427,7 +427,7 @@ BgrtReadyToBootEventNotify (
                   NULL,
                   (VOID **) &AcpiTableProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -448,7 +448,7 @@ BgrtReadyToBootEventNotify (
                                     AcpiTableProtocol,
                                     mBootGraphicsResourceTableKey
                                     );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return;
       }
     }
@@ -467,7 +467,7 @@ BgrtReadyToBootEventNotify (
     //
     ImageBuffer = (UINT8 *)(UINTN)mBootGraphicsResourceTableTemplate.ImageAddress;
     if (ImageBuffer != NULL) {
-      FreePool (ImageBuffer);
+      FreePool(ImageBuffer);
     }
 
     //
@@ -482,14 +482,14 @@ BgrtReadyToBootEventNotify (
                &ImageBuffer,
                &BmpSize
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
 
     //
     // Free the logo buffer
     //
-    FreePool (mLogoBltBuffer);
+    FreePool(mLogoBltBuffer);
     mLogoBltBuffer = NULL;
 
     //
@@ -528,7 +528,7 @@ BgrtReadyToBootEventNotify (
                                 sizeof (EFI_ACPI_5_0_BOOT_GRAPHICS_RESOURCE_TABLE),
                                 &mBootGraphicsResourceTableKey
                                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -583,7 +583,7 @@ BootGraphicsDxeEntryPoint (
                   &mBootLogo2ProtocolTemplate,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register notify function to install BGRT on ReadyToBoot Event.
@@ -596,7 +596,7 @@ BootGraphicsDxeEntryPoint (
                   &gEfiEventReadyToBootGuid,
                   &mBootGraphicsReadyToBootEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

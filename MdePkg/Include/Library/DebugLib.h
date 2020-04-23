@@ -382,9 +382,9 @@ DebugPrintLevelEnabled (
   #define ASSERT_EFI_ERROR(StatusParameter)                                              \
     do {                                                                                 \
       if (DebugAssertEnabled ()) {                                                       \
-        if (EFI_ERROR (StatusParameter)) {                                               \
-          DEBUG ((EFI_D_ERROR, "\nASSERT_EFI_ERROR (Status = %r)\n", StatusParameter));  \
-          _ASSERT (!EFI_ERROR (StatusParameter));                                        \
+        if (EFI_ERROR(StatusParameter)) {                                               \
+          DEBUG ((EFI_D_ERROR, "\nASSERT_EFI_ERROR(Status = %r)\n", StatusParameter));  \
+          _ASSERT (!EFI_ERROR(StatusParameter));                                        \
         }                                                                                \
       }                                                                                  \
     } while (FALSE)
@@ -448,11 +448,11 @@ DebugPrintLevelEnabled (
         VOID  *Instance;                                                                \
         ASSERT (Guid != NULL);                                                          \
         if (Handle == NULL) {                                                           \
-          if (!EFI_ERROR (gBS->LocateProtocol ((EFI_GUID *)Guid, NULL, &Instance))) {   \
+          if (!EFI_ERROR(gBS->LocateProtocol ((EFI_GUID *)Guid, NULL, &Instance))) {   \
             _ASSERT (Guid already installed in database);                               \
           }                                                                             \
         } else {                                                                        \
-          if (!EFI_ERROR (gBS->HandleProtocol (Handle, (EFI_GUID *)Guid, &Instance))) { \
+          if (!EFI_ERROR(gBS->HandleProtocol (Handle, (EFI_GUID *)Guid, &Instance))) { \
             _ASSERT (Guid already installed on Handle);                                 \
           }                                                                             \
         }                                                                               \

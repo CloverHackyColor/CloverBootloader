@@ -31,13 +31,13 @@ AITInit (
   // Refresh rate needs to be increased to poll mouse and keyboard frequently enough
   //
   Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **)&mTimerProtocol);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = mTimerProtocol->GetTimerPeriod (mTimerProtocol, &mOriginalTimerPeriod);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "AIFTimerBoostInit Current timer is %u\n", mOriginalTimerPeriod));
       if (mOriginalTimerPeriod > AIT_TIMER_PERIOD) {
         Status = mTimerProtocol->SetTimerPeriod (mTimerProtocol, AIT_TIMER_PERIOD);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           DEBUG ((DEBUG_INFO, "AIFTimerBoostInit changed period %d to %d\n",
             mOriginalTimerPeriod, AIT_TIMER_PERIOD));
         } else {
@@ -73,7 +73,7 @@ AITExit (
     // handler during XNU boot.
     //
     // Status = mTimerProtocol->SetTimerPeriod (mTimerProtocol, mOriginalTimerPeriod);
-    // if (!EFI_ERROR (Status)) {
+    // if (!EFI_ERROR(Status)) {
     //   DEBUG ((DEBUG_INFO, "AmiShimTimerBoostExit changed period %d to %d\n",
     //     AIT_TIMER_PERIOD, mOriginalTimerPeriod));
     // } else {

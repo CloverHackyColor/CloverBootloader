@@ -218,7 +218,7 @@ SerialReset (
   EFI_STATUS    Status;
 
   Status = SerialPortInitialize ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -307,7 +307,7 @@ SerialSetAttributes (
   OriginalDataBits = DataBits;
   OriginalStopBits = StopBits;
   Status = SerialPortSetAttributes (&BaudRate, &ReceiveFifoDepth, &Timeout, &Parity, &DataBits, &StopBits);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // If it is just to set Timeout value and unsupported is returned,
     // do not return error.
@@ -542,7 +542,7 @@ SerialDxeInitialize (
   // Issue a reset to initialize the Serial Port
   //
   Status = mSerialIoTemplate.Reset (&mSerialIoTemplate);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -555,7 +555,7 @@ SerialDxeInitialize (
                   &gEfiDevicePathProtocolGuid, &mSerialDevicePath,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

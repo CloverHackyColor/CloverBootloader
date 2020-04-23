@@ -42,7 +42,7 @@ BmConnectAllDriversToAllControllers (
     }
 
     if (HandleBuffer != NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
     }
 
     //
@@ -53,7 +53,7 @@ BmConnectAllDriversToAllControllers (
     //
     Status = gDS->Dispatch ();
 
-  } while (!EFI_ERROR (Status));
+  } while (!EFI_ERROR(Status));
 }
 
 /**
@@ -134,7 +134,7 @@ EfiBootManagerConnectDevicePath (
     //
     RemainingDevicePath = DevicePathToConnect;
     Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &Handle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (Handle == PreviousHandle) {
         //
         // If no forward progress is made try invoking the Dispatcher.
@@ -155,7 +155,7 @@ EfiBootManagerConnectDevicePath (
       }
 
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         PreviousHandle = Handle;
         //
         // Connect all drivers that apply to Handle and RemainingDevicePath,
@@ -183,9 +183,9 @@ EfiBootManagerConnectDevicePath (
     //
     // Loop until RemainingDevicePath is an empty device path
     //
-  } while (!EFI_ERROR (Status) && !IsDevicePathEnd (RemainingDevicePath));
+  } while (!EFI_ERROR(Status) && !IsDevicePathEnd (RemainingDevicePath));
 
-  ASSERT (EFI_ERROR (Status) || IsDevicePathEnd (RemainingDevicePath));
+  ASSERT (EFI_ERROR(Status) || IsDevicePathEnd (RemainingDevicePath));
 
   return Status;
 }
@@ -222,7 +222,7 @@ EfiBootManagerDisconnectAll (
   }
 
   if (HandleBuffer != NULL) {
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
   }
 }
 
@@ -278,19 +278,19 @@ BmConnectUsbShortFormDevicePath (
                   &HandleCount,
                   &Handles
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       Status = gBS->HandleProtocol (
                       Handles[Index],
                       &gEfiPciIoProtocolGuid,
                       (VOID **) &PciIo
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Check whether the Pci device is the wanted usb host controller
         //
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x09, 3, &Class);
-        if (!EFI_ERROR (Status) &&
+        if (!EFI_ERROR(Status) &&
             ((PCI_CLASS_SERIAL == Class[2]) && (PCI_CLASS_SERIAL_USB == Class[1]))
            ) {
           Status = gBS->ConnectController (
@@ -307,7 +307,7 @@ BmConnectUsbShortFormDevicePath (
     }
 
     if (Handles != NULL) {
-      FreePool (Handles);
+      FreePool(Handles);
     }
   }
 

@@ -181,7 +181,7 @@ UsbMouseComponentNameGetControllerName (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
            ControllerHandle,
            &gEfiUsbIoProtocolGuid,
@@ -207,7 +207,7 @@ UsbMouseComponentNameGetControllerName (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

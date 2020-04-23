@@ -337,7 +337,7 @@ EhcResetHC (
   if (!EHC_REG_BIT_IS_SET (Ehc, EHC_USBSTS_OFFSET, USBSTS_HALT)) {
     Status = EhcHaltHC (Ehc, Timeout);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -470,7 +470,7 @@ EhcInitHC (
 
   Status = EhcInitSched (Ehc);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -501,13 +501,13 @@ EhcInitHC (
 
   Status = EhcEnablePeriodSchd (Ehc, EHC_GENERIC_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = EhcEnableAsyncSchd (Ehc, EHC_GENERIC_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -865,7 +865,7 @@ EhcSetRootHubPortFeature (
     if (EhcIsHalt (Ehc)) {
       Status = EhcRunHC (Ehc, EHC_GENERIC_TIMEOUT);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
     }
@@ -1189,7 +1189,7 @@ EhcPeimEntry (
   //
   // Shadow this PEIM to run from memory
   //
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -1199,7 +1199,7 @@ EhcPeimEntry (
              NULL,
              (VOID **) &ChipSetUsbControllerPpi
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1215,7 +1215,7 @@ EhcPeimEntry (
     //
     // When status is error, meant no controller is found
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -1233,7 +1233,7 @@ EhcPeimEntry (
                MemPages,
                &TempPtr
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1254,7 +1254,7 @@ EhcPeimEntry (
     // Initialize Uhc's hardware
     //
     Status = InitializeUsbHC (EhcDev);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1270,7 +1270,7 @@ EhcPeimEntry (
     EhcDev->PpiDescriptor.Ppi = &EhcDev->Usb2HostControllerPpi;
 
     Status = PeiServicesInstallPpi (&EhcDev->PpiDescriptor);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Index++;
       continue;
     }
@@ -1306,7 +1306,7 @@ InitializeUsbHC (
 
   Status = EhcInitHC (EhcDev);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 

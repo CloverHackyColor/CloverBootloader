@@ -49,7 +49,7 @@ UsbKbSetAppleKeyMapDb (
                             &UsbKeyboardDevice->KeyMapDbIndex
                             );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     UsbKeyboardDevice->KeyMapDb = AppleKeyMapDb;
   }
   return Status;
@@ -81,7 +81,7 @@ UsbKbAppleKeyMapDbInstallNotify (
                   mAppleKeyMapDbRegistration,
                   (VOID **)&mAppleKeyMapDb
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     UsbKbSetAppleKeyMapDb ((USB_KB_DEV *)Context, mAppleKeyMapDb);
     gBS->CloseEvent (Event);
   }
@@ -105,7 +105,7 @@ UsbKbLocateAppleKeyMapDb (
                   NULL,
                   (VOID **)&mAppleKeyMapDb
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     UsbKbSetAppleKeyMapDb (UsbKeyboardDevice, mAppleKeyMapDb);
   } 
     else /*if (PcdGetBool (PcdNotifyAppleKeyMapDbInUsbKbDriver))*/ {  //true

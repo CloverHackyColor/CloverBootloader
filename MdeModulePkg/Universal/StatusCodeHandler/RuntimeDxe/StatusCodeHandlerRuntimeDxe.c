@@ -85,11 +85,11 @@ InitializationDispatcherWorker (
     // Call Serial Port Lib API to initialize serial port.
     //
     Status = SerialPortInitialize ();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   if (FeaturePcdGet (PcdStatusCodeUseMemory)) {
     Status = RtMemoryStatusCodeInitializeWorker ();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -164,7 +164,7 @@ StatusCodeHandlerRuntimeDxeEntry (
                   NULL,
                   (VOID **) &mRscHandlerProtocol
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Dispatch initialization request to supported devices
@@ -195,7 +195,7 @@ StatusCodeHandlerRuntimeDxeEntry (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mVirtualAddressChangeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

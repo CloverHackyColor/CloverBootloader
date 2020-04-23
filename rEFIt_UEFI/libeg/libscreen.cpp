@@ -589,7 +589,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
     MsgLog("Video mode change to mode #%d: %s\n", ModeNumber, strerror(Status));
 
-    if (gFirmwareClover && !EFI_ERROR (Status)) { 
+    if (gFirmwareClover && !EFI_ERROR(Status)) { 
         // When we change mode on GOP, we need to reconnect the drivers which produce simple text out
         // Otherwise, they won't produce text based on the new resolution
         Status = gBS->LocateHandleBuffer (
@@ -599,7 +599,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
             &HandleCount,
             &HandleBuffer
             );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
             for (UINTN Index = 0; Index < HandleCount; Index++) {
                 gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
             }
@@ -607,7 +607,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
                 gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
             }
             if (HandleBuffer != NULL) {
-                FreePool (HandleBuffer);
+                FreePool(HandleBuffer);
             }
             egDumpSetConsoleVideoModes();
         }

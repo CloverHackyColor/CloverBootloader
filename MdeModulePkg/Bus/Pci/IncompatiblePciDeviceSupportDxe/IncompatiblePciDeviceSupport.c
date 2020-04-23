@@ -208,7 +208,7 @@ IncompatiblePciDeviceSupportEntryPoint (
                   EFI_NATIVE_INTERFACE,
                   &mIncompatiblePciDeviceSupport
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

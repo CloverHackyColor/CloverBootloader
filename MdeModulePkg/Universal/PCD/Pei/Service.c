@@ -397,7 +397,7 @@ LocateExPcdBinary (
   ASSERT (FileHandle != NULL);
 
   Status = PeiServicesFfsFindSectionData (EFI_SECTION_RAW, FileHandle, &PcdDb);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Check the first bytes (Header Signature Guid) and build version.
@@ -478,7 +478,7 @@ GetHiiVariable (
   EFI_PEI_READ_ONLY_VARIABLE2_PPI *VariablePpi;
 
   Status = PeiServicesLocatePpi (&gEfiPeiReadOnlyVariable2PpiGuid, 0, NULL, (VOID **) &VariablePpi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Size = 0;
   Status = VariablePpi->GetVariable (
@@ -492,7 +492,7 @@ GetHiiVariable (
 
   if (Status == EFI_BUFFER_TOO_SMALL) {
     Status = PeiServicesAllocatePool (Size, &Buffer);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Status = VariablePpi->GetVariable (
                               VariablePpi,
@@ -502,7 +502,7 @@ GetHiiVariable (
                               &Size,
                               Buffer
                               );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     *VariableSize = Size;
     *VariableData = Buffer;

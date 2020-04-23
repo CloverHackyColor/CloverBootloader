@@ -62,7 +62,7 @@ WaitForSingleEvent (
     // Create a timer event
     //
     Status = gBS->CreateEvent (EVT_TIMER, 0, NULL, NULL, &TimerEvent);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Set the timer event
       //
@@ -83,7 +83,7 @@ WaitForSingleEvent (
       //
       // If the timer expired, change the return to timed out
       //
-      if (!EFI_ERROR (Status) && Index == 1) {
+      if (!EFI_ERROR(Status) && Index == 1) {
         Status = EFI_TIMEOUT;
       }
     }
@@ -92,7 +92,7 @@ WaitForSingleEvent (
     // No timeout... just wait on the event
     //
     Status = gBS->WaitForEvent (1, &Event, &Index);
-    ASSERT (!EFI_ERROR (Status));
+    ASSERT (!EFI_ERROR(Status));
     ASSERT (Index == 0);
   }
 

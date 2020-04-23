@@ -74,11 +74,11 @@ HiiGetSupportedLanguages (
   // Retrieve the supported languages string
   //
   Status = gHiiString->GetLanguages (gHiiString, HiiHandle, SupportedLanguages, &LanguageSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Free the buffer and return NULL if the supported languages can not be retrieved.
     //
-    FreePool (SupportedLanguages);
+    FreePool(SupportedLanguages);
     return NULL;
   }
 

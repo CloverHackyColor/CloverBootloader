@@ -153,7 +153,7 @@ ReleaseAtaResources (
   FreeAlignedBuffer (AtaDevice->Asb, sizeof (EFI_ATA_STATUS_BLOCK));
   FreeAlignedBuffer (AtaDevice->IdentifyData, sizeof (ATA_IDENTIFY_DATA));
   if (AtaDevice->DevicePath != NULL) {
-    FreePool (AtaDevice->DevicePath);
+    FreePool(AtaDevice->DevicePath);
   }
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
   if (!IsListEmpty (&AtaDevice->AtaSubTaskList)) {
@@ -183,11 +183,11 @@ ReleaseAtaResources (
       AtaTask  = ATA_ASYN_TASK_FROM_ENTRY (DelEntry);
 
       RemoveEntryList (DelEntry);
-      FreePool (AtaTask);
+      FreePool(AtaTask);
     }
   }
   gBS->RestoreTPL (OldTpl);
-  FreePool (AtaDevice);
+  FreePool(AtaDevice);
 }
 
 
@@ -233,7 +233,7 @@ RegisterAtaDevice (
   //
   AtaPassThru = AtaBusDriverData->AtaPassThru;
   Status = AtaPassThru->BuildDevicePath (AtaPassThru, Port, PortMultiplierPort, &NewDevicePathNode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -246,9 +246,9 @@ RegisterAtaDevice (
   DeviceHandle = NULL;
   RemainingDevicePath = DevicePath;
   Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-  if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
+  if (!EFI_ERROR(Status) && (DeviceHandle != NULL) && IsDevicePathEnd(RemainingDevicePath)) {
     Status = EFI_ALREADY_STARTED;
-    FreePool (DevicePath);
+    FreePool(DevicePath);
     goto Done;
   }
 
@@ -300,7 +300,7 @@ RegisterAtaDevice (
   // Try to identify the ATA device via the ATA pass through command.
   //
   Status = DiscoverAtaDevice (AtaDevice);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -314,7 +314,7 @@ RegisterAtaDevice (
              AtaDevice->ModelName,
              TRUE
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -325,7 +325,7 @@ RegisterAtaDevice (
              AtaDevice->ModelName,
              FALSE
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -349,7 +349,7 @@ RegisterAtaDevice (
                   &AtaDevice->DiskInfo,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -365,7 +365,7 @@ RegisterAtaDevice (
                     EFI_NATIVE_INTERFACE,
                     &AtaDevice->StorageSecurity
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     DEBUG ((EFI_D_INFO, "Successfully Install Storage Security Protocol on the ATA device\n"));
@@ -382,10 +382,10 @@ RegisterAtaDevice (
 
 Done:
   if (NewDevicePathNode != NULL) {
-    FreePool (NewDevicePathNode);
+    FreePool(NewDevicePathNode);
   }
 
-  if (EFI_ERROR (Status) && (AtaDevice != NULL)) {
+  if (EFI_ERROR(Status) && (AtaDevice != NULL)) {
     ReleaseAtaResources (AtaDevice);
     DEBUG ((EFI_D_ERROR | EFI_D_INIT, "Failed to initialize Port %x PortMultiplierPort %x, status = %r\n", Port, PortMultiplierPort, Status));
   }
@@ -432,7 +432,7 @@ UnregisterAtaDevice (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Locate BlockIo2 protocol
     //
@@ -444,7 +444,7 @@ UnregisterAtaDevice (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -486,7 +486,7 @@ UnregisterAtaDevice (
                   NULL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->OpenProtocol (
           Controller,
           &gEfiAtaPassThruProtocolGuid,
@@ -510,13 +510,13 @@ UnregisterAtaDevice (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->UninstallProtocolInterface (
                     Handle,
                     &gEfiStorageSecurityCommandProtocolGuid,
                     &AtaDevice->StorageSecurity
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->OpenProtocol (
         Controller,
         &gEfiAtaPassThruProtocolGuid,
@@ -607,7 +607,7 @@ AtaBusDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -632,7 +632,7 @@ AtaBusDriverBindingSupported (
   //
   if ((RemainingDevicePath != NULL) && !IsDevicePathEnd (RemainingDevicePath)) {
     Status = AtaPassThru->GetDevice (AtaPassThru, RemainingDevicePath, &Port, &PortMultiplierPort);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Close the I/O Abstraction(s) used to perform the supported test
       //
@@ -731,7 +731,7 @@ AtaBusDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -752,7 +752,7 @@ AtaBusDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
+  if ((EFI_ERROR(Status)) && (Status != EFI_ALREADY_STARTED)) {
     goto ErrorExit;
   }
 
@@ -777,7 +777,7 @@ AtaBusDriverBindingStart (
                     AtaBusDriverData,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ErrorExit;
     }
 
@@ -790,7 +790,7 @@ AtaBusDriverBindingStart (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AtaBusDriverData = NULL;
       goto ErrorExit;
     }
@@ -809,7 +809,7 @@ AtaBusDriverBindingStart (
     Port = 0xFFFF;
     while (TRUE) {
       Status = AtaPassThru->GetNextPort (AtaPassThru, &Port);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // We cannot find more legal port then we are done.
         //
@@ -819,7 +819,7 @@ AtaBusDriverBindingStart (
       PortMultiplierPort = 0xFFFF;
       while (TRUE) {
         Status = AtaPassThru->GetNextDevice (AtaPassThru, Port, &PortMultiplierPort);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           //
           // We cannot find more legal port multiplier port number for ATA device
           // on the port, then we are done.
@@ -832,7 +832,7 @@ AtaBusDriverBindingStart (
     Status = EFI_SUCCESS;
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     Status = AtaPassThru->GetDevice (AtaPassThru, RemainingDevicePath, &Port, &PortMultiplierPort);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = RegisterAtaDevice (AtaBusDriverData,Port, PortMultiplierPort);
     }
   }
@@ -848,7 +848,7 @@ ErrorExit:
            AtaBusDriverData,
            NULL
            );
-    FreePool (AtaBusDriverData);
+    FreePool(AtaBusDriverData);
   }
 
   gBS->CloseProtocol (
@@ -912,14 +912,14 @@ AtaBusDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->UninstallMultipleProtocolInterfaces (
             Controller,
             &gEfiCallerIdGuid,
             AtaBusDriverData,
             NULL
             );
-      FreePool (AtaBusDriverData);
+      FreePool(AtaBusDriverData);
     }
 
     gBS->CloseProtocol (
@@ -937,7 +937,7 @@ AtaBusDriverBindingStop (
   for (Index = 0; Index < NumberOfChildren; Index++) {
 
     Status = UnregisterAtaDevice (This, Controller, ChildHandleBuffer[Index]);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -978,7 +978,7 @@ AtaBlockIoReset (
 
   Status = ResetAtaDevice (AtaDevice);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
   }
 
@@ -1207,7 +1207,7 @@ AtaBlockIoResetEx (
 
   Status = ResetAtaDevice (AtaDevice);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
   }
 
@@ -1705,7 +1705,7 @@ InitializeAtaBus(
              &gAtaBusComponentName,
              &gAtaBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

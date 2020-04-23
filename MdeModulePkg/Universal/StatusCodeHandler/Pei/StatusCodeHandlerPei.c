@@ -38,7 +38,7 @@ StatusCodeHandlerPeiEntry (
              NULL,
              (VOID **) &RscHandlerPpi
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Dispatch initialization request to sub-statuscode-devices.
@@ -47,15 +47,15 @@ StatusCodeHandlerPeiEntry (
   //
   if (FeaturePcdGet (PcdStatusCodeUseSerial)) {
     Status = SerialPortInitialize();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Status = RscHandlerPpi->Register (SerialStatusCodeReportWorker);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   if (FeaturePcdGet (PcdStatusCodeUseMemory)) {
     Status = MemoryStatusCodeInitializeWorker ();
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     Status = RscHandlerPpi->Register (MemoryStatusCodeReportWorker);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return EFI_SUCCESS;

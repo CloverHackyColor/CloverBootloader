@@ -105,7 +105,7 @@ ReadFvbData (
   *StartLba = *StartLba + 1;
   while (DataSize > 0) {
     Status = Fvb->GetBlockSize (Fvb, *StartLba, &BlockSize, &NumberOfBlocks);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -115,7 +115,7 @@ ReadFvbData (
     BlockIndex = 0;
     while (BlockIndex < NumberOfBlocks && DataSize >= BlockSize) {
       Status = Fvb->Read (Fvb, *StartLba + BlockIndex, 0, &BlockSize, Data);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Data += BlockSize;
@@ -141,7 +141,7 @@ ReadFvbData (
   //
   if (DataSize > 0) {
     Status = Fvb->Read (Fvb, *StartLba + BlockIndex, 0, &DataSize, Data);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -191,7 +191,7 @@ GetFwVolHeader (
   Offset   = 0;
   FvhLength = sizeof (EFI_FIRMWARE_VOLUME_HEADER);
   Status = ReadFvbData (Fvb, &StartLba, &Offset, FvhLength, (UINT8 *)&TempFvh);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -230,11 +230,11 @@ GetFwVolHeader (
   FvhLength = TempFvh.HeaderLength - sizeof (EFI_FIRMWARE_VOLUME_HEADER);
   Buffer = (UINT8 *)*FwVolHeader + sizeof (EFI_FIRMWARE_VOLUME_HEADER);
   Status = ReadFvbData (Fvb, &StartLba, &Offset, FvhLength, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Read failed so free buffer
     //
-    CoreFreePool (*FwVolHeader);
+    CoreFreePool(*FwVolHeader);
   }
 
   return Status;
@@ -274,10 +274,10 @@ FreeFvDeviceResource (
       //
       // Free the cached file buffer.
       //
-      CoreFreePool (FfsFileEntry->FfsHeader);
+      CoreFreePool(FfsFileEntry->FfsHeader);
     }
 
-    CoreFreePool (FfsFileEntry);
+    CoreFreePool(FfsFileEntry);
 
     FfsFileEntry = (FFS_FILE_LIST_ENTRY *) NextEntry;
   }
@@ -286,13 +286,13 @@ FreeFvDeviceResource (
     //
     // Free the cached FV buffer.
     //
-    CoreFreePool (FvDevice->CachedFv);
+    CoreFreePool(FvDevice->CachedFv);
   }
 
   //
   // Free Volume Header
   //
-  CoreFreePool (FvDevice->FwVolHeader);
+  CoreFreePool(FvDevice->FwVolHeader);
 
   return;
 }
@@ -341,7 +341,7 @@ FvCheck (
   FwVolHeader = FvDevice->FwVolHeader;
 
   Status = Fvb->GetAttributes (Fvb, &FvbAttributes);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -350,7 +350,7 @@ FvCheck (
     FvDevice->IsMemoryMapped = TRUE;
 
     Status = Fvb->GetPhysicalAddress (Fvb, &PhysicalAddress);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -396,7 +396,7 @@ FvCheck (
         //
         // Not check EFI_BAD_BUFFER_SIZE, for Size = BlockMap->Length
         //
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto Done;
         }
 
@@ -442,7 +442,7 @@ FvCheck (
   while (((UINTN) FfsHeader >= (UINTN) FvDevice->CachedFv) && ((UINTN) FfsHeader <= (UINTN) ((UINTN) TopFvAddress - sizeof (EFI_FFS_FILE_HEADER)))) {
 
     if (FileCached) {
-      CoreFreePool (CacheFfsHeader);
+      CoreFreePool(CacheFfsHeader);
       FileCached = FALSE;
     }
 
@@ -553,9 +553,9 @@ FvCheck (
   }
 
 Done:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (FileCached) {
-      CoreFreePool (CacheFfsHeader);
+      CoreFreePool(CacheFfsHeader);
       FileCached = FALSE;
     }
     FreeFvDeviceResource (FvDevice);
@@ -613,7 +613,7 @@ NotifyFwVolBlock (
       break;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -621,20 +621,20 @@ NotifyFwVolBlock (
     // Get the FirmwareVolumeBlock protocol on that handle
     //
     Status = CoreHandleProtocol (Handle, &gEfiFirmwareVolumeBlockProtocolGuid, (VOID **)&Fvb);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     ASSERT (Fvb != NULL);
 
     //
     // Make sure the Fv Header is O.K.
     //
     Status = GetFwVolHeader (Fvb, &FwVolHeader);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     ASSERT (FwVolHeader != NULL);
 
     if (!VerifyFvHeaderChecksum (FwVolHeader)) {
-      CoreFreePool (FwVolHeader);
+      CoreFreePool(FwVolHeader);
       continue;
     }
 
@@ -642,7 +642,7 @@ NotifyFwVolBlock (
     // Check if there is an FV protocol already installed in that handle
     //
     Status = CoreHandleProtocol (Handle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Fv);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Update Fv to use a new Fvb
       //
@@ -673,7 +673,7 @@ NotifyFwVolBlock (
       //
       FvDevice->AuthenticationStatus = GetFvbAuthenticationStatus (Fvb);
 
-      if (!EFI_ERROR (FvCheck (FvDevice))) {
+      if (!EFI_ERROR(FvCheck (FvDevice))) {
         //
         // Install an New FV protocol on the existing handle
         //
@@ -683,12 +683,12 @@ NotifyFwVolBlock (
                     EFI_NATIVE_INTERFACE,
                     &FvDevice->Fv
                     );
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       } else {
         //
         // Free FvDevice Buffer for the corrupt FV image.
         //
-        CoreFreePool (FvDevice);
+        CoreFreePool(FvDevice);
       }
     }
   }

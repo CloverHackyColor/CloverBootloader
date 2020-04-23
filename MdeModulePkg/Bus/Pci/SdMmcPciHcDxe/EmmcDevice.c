@@ -93,7 +93,7 @@ EmmcGetOcr (
   SdMmcCmdBlk.CommandArgument = *Argument;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
@@ -233,7 +233,7 @@ EmmcGetCsd (
   SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
@@ -422,7 +422,7 @@ EmmcSendStatus (
   SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DevStatus = SdMmcStatusBlk.Resp0;
   }
 
@@ -518,7 +518,7 @@ EmmcTuningClkForHs200 (
   //
   HostCtrl2 = BIT6;
   Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -527,13 +527,13 @@ EmmcTuningClkForHs200 (
   Retry = 0;
   do {
     Status = EmmcSendTuningBlk (PassThru, Slot, BusWidth);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "EmmcTuningClkForHs200: Send tuning block fails with %r\n", Status));
       return Status;
     }
 
     Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, TRUE, sizeof (HostCtrl2), &HostCtrl2);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -552,7 +552,7 @@ EmmcTuningClkForHs200 (
   //
   HostCtrl2 = (UINT8)~(BIT6 | BIT7);
   Status = SdMmcHcAndMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   return EFI_DEVICE_ERROR;
@@ -612,13 +612,13 @@ EmmcSwitchBusWidth (
 
   CmdSet = 0;
   Status = EmmcSwitch (PassThru, Slot, Access, Index, Value, CmdSet);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSwitchBusWidth: Switch to bus width %d fails with %r\n", BusWidth, Status));
     return Status;
   }
 
   Status = EmmcSendStatus (PassThru, Slot, Rca, &DevStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSwitchBusWidth: Send status fails with %r\n", Status));
     return Status;
   }
@@ -699,7 +699,7 @@ EmmcSwitchBusTiming (
   }
 
   Status = EmmcSwitch (PassThru, Slot, Access, Index, Value, CmdSet);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSwitchBusTiming: Switch to bus timing %d fails with %r\n", BusTiming, Status));
     return Status;
   }
@@ -708,12 +708,12 @@ EmmcSwitchBusTiming (
   // Convert the clock freq unit from MHz to KHz.
   //
   Status = SdMmcHcClockSupply (PciIo, Slot, ClockFreq * 1000, Private->BaseClkFreq[Slot], Private->ControllerVersion[Slot]);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = EmmcSendStatus (PassThru, Slot, Rca, &DevStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSwitchBusTiming: Send status fails with %r\n", Status));
     return Status;
   }
@@ -732,7 +732,7 @@ EmmcSwitchBusTiming (
                           EdkiiSdMmcSwitchClockFreqPost,
                           &BusTiming
                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_ERROR,
         "%a: SD/MMC switch clock freq post notifier callback failed - %r\n",
@@ -790,7 +790,7 @@ EmmcSwitchToHighSpeed (
   }
 
   Status = EmmcSwitchBusWidth (PciIo, PassThru, Slot, Rca, IsDdr, BusMode->BusWidth);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -799,12 +799,12 @@ EmmcSwitchToHighSpeed (
   //
   HostCtrl1 = BIT2;
   Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcUhsSignaling (Private->ControllerHandle, PciIo, Slot, BusMode->BusTiming);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -848,19 +848,19 @@ EmmcSwitchToHS200 (
   }
 
   Status = EmmcSwitchBusWidth (PciIo, PassThru, Slot, Rca, FALSE, BusMode->BusWidth);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
   // Stop bus clock at first
   //
   Status = SdMmcHcStopClock (PciIo, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcUhsSignaling (Private->ControllerHandle, PciIo, Slot, BusMode->BusTiming);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -876,7 +876,7 @@ EmmcSwitchToHS200 (
              BIT1,
              SD_MMC_HC_GENERIC_TIMEOUT
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -886,7 +886,7 @@ EmmcSwitchToHS200 (
   Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_CLOCK_CTRL, sizeof (ClockCtrl), &ClockCtrl);
 
   Status = EmmcSwitchBusTiming (PciIo, PassThru, Slot, Rca, BusMode->DriverStrength, BusMode->BusTiming, BusMode->ClockFreq);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -937,7 +937,7 @@ EmmcSwitchToHS400 (
   Hs200BusMode.DriverStrength = BusMode->DriverStrength;
 
   Status = EmmcSwitchToHS200 (PciIo, PassThru, Slot, Rca, &Hs200BusMode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -946,23 +946,23 @@ EmmcSwitchToHS400 (
   // This step is necessary to be able to switch Bus into 8 bit DDR mode which is unsupported in HS200.
   //
   Status = SdMmcHcUhsSignaling (Private->ControllerHandle, PciIo, Slot, SdMmcMmcHsSdr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   HsFreq = BusMode->ClockFreq < 52 ? BusMode->ClockFreq : 52;
   Status = EmmcSwitchBusTiming (PciIo, PassThru, Slot, Rca, BusMode->DriverStrength, SdMmcMmcHsSdr, HsFreq);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = EmmcSwitchBusWidth (PciIo, PassThru, Slot, Rca, TRUE, BusMode->BusWidth);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcUhsSignaling (Private->ControllerHandle, PciIo, Slot, BusMode->BusTiming);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1259,13 +1259,13 @@ EmmcSetBusMode (
   Private = SD_MMC_HC_PRIVATE_FROM_THIS (PassThru);
 
   Status = EmmcGetCsd (PassThru, Slot, Rca, &Csd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSetBusMode: GetCsd fails with %r\n", Status));
     return Status;
   }
 
   Status = EmmcSelect (PassThru, Slot, Rca);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSetBusMode: Select fails with %r\n", Status));
     return Status;
   }
@@ -1276,7 +1276,7 @@ EmmcSetBusMode (
   // Get Device_Type from EXT_CSD register.
   //
   Status = EmmcGetExtCsd (PassThru, Slot, &ExtCsd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcSetBusMode: GetExtCsd fails with %r\n", Status));
     return Status;
   }
@@ -1328,7 +1328,7 @@ EmmcIdentification (
   PassThru = &Private->PassThru;
 
   Status = EmmcReset (PassThru, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd0 fails with %r\n", Status));
     return Status;
   }
@@ -1337,7 +1337,7 @@ EmmcIdentification (
   Retry = 0;
   do {
     Status = EmmcGetOcr (PassThru, Slot, &Ocr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd1 fails with %r\n", Status));
       return Status;
     }
@@ -1351,7 +1351,7 @@ EmmcIdentification (
   } while ((Ocr & BIT31) == 0);
 
   Status = EmmcGetAllCid (PassThru, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_VERBOSE, "EmmcIdentification: Executing Cmd2 fails with %r\n", Status));
     return Status;
   }
@@ -1363,7 +1363,7 @@ EmmcIdentification (
   //
   Rca    = Slot + 1;
   Status = EmmcSetRca (PassThru, Slot, Rca);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EmmcIdentification: Executing Cmd3 fails with %r\n", Status));
     return Status;
   }

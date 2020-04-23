@@ -110,7 +110,7 @@ EfiLoader (
              &ScratchSize
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to get decompress information for BFV!\n");
   }
   
@@ -124,7 +124,7 @@ EfiLoader (
     );
   
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to decompress BFV!\n");
   }
 
@@ -159,7 +159,7 @@ EfiLoader (
              &DestinationSize, 
              &ScratchSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to get decompress information for DxeIpl!\n");
   }
 
@@ -169,7 +169,7 @@ EfiLoader (
              (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS,
              (VOID *)(UINTN)((EFI_DECOMPRESSED_BUFFER_ADDRESS + DestinationSize + 0x1000) & 0xfffff000)
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to decompress DxeIpl image\n");
   }
 
@@ -184,7 +184,7 @@ EfiLoader (
              &NumberOfMemoryMapEntries, 
              EfiMemoryDescriptor
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to load and relocate DxeIpl PE image!\n");
   }
 /*  PrintString (
@@ -216,7 +216,7 @@ EfiLoader (
              &DestinationSize, 
              &ScratchSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to get decompress information for DxeMain FV image!\n");
   }
 
@@ -226,7 +226,7 @@ EfiLoader (
              (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS,
              (VOID *)(UINTN)((EFI_DECOMPRESSED_BUFFER_ADDRESS + DestinationSize + 0x1000) & 0xfffff000)
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to decompress DxeMain FV image!\n");
   }
 
@@ -239,7 +239,7 @@ EfiLoader (
              &NumberOfMemoryMapEntries, 
              EfiMemoryDescriptor
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SystemHang ("Failed to load/relocate DxeMain!\n");
   }
 /*  PrintString (

@@ -278,7 +278,7 @@ EdbClearSymbol (
     // Free source buffer
     //
     for (Index = 0; Object->SourceBuffer[Index] != NULL; Index++) {
-      gBS->FreePool (Object->SourceBuffer[Index]);
+      gBS->FreePool(Object->SourceBuffer[Index]);
       Object->SourceBuffer[Index] = NULL;
     }
   }

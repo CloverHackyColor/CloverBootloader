@@ -514,7 +514,7 @@ PcatRootBridgeIoCopyMem (
                1,
                &Result
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Status = PcatRootBridgeIoMemWrite (
@@ -524,7 +524,7 @@ PcatRootBridgeIoCopyMem (
                1,
                &Result
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     if (Direction) {
@@ -639,7 +639,7 @@ PcatRootBridgeIoMap (
                     sizeof(MAP_INFO), 
                     (VOID **)&MapInfo
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       *NumberOfBytes = 0;
       return Status;
     }
@@ -668,7 +668,7 @@ PcatRootBridgeIoMap (
                     &MapInfo->MappedHostAddress
                     );
     if (EFI_ERROR(Status)) {
-      gBS->FreePool (MapInfo);
+      gBS->FreePool(MapInfo);
       *NumberOfBytes = 0;
       return Status;
     }
@@ -694,7 +694,7 @@ PcatRootBridgeIoMap (
                     );                    
     if (EFI_ERROR(Status)) {
       gBS->FreePages (MapInfo->MappedHostAddress,MapInfo->NumberOfPages);
-      gBS->FreePool (MapInfo);
+      gBS->FreePool(MapInfo);
       *NumberOfBytes = 0;
       return Status;
     }
@@ -780,7 +780,7 @@ PcatRootBridgeIoUnmap (
     // Free the mapped buffer and the MAP_INFO structure.
     //
     gBS->FreePages (MapInfo->MappedHostAddress, MapInfo->NumberOfPages);
-    gBS->FreePool (Mapping);
+    gBS->FreePool(Mapping);
   }
 
   //
@@ -832,7 +832,7 @@ PcatRootBridgeIoAllocateBuffer (
   PhysicalAddress = (EFI_PHYSICAL_ADDRESS)(0xffffffff);
 
   Status = gBS->AllocatePages (AllocateMaxAddress, MemoryType, Pages, &PhysicalAddress);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

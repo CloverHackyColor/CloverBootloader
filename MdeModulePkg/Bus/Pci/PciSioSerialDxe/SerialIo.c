@@ -538,7 +538,7 @@ SerialReset (
                    (EFI_STOP_BITS_TYPE) This->Mode->StopBits
                    );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->RestoreTPL (Tpl);
     return EFI_DEVICE_ERROR;
   }
@@ -557,7 +557,7 @@ SerialReset (
                    Control
                    );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->RestoreTPL (Tpl);
     return EFI_DEVICE_ERROR;
   }
@@ -1134,7 +1134,7 @@ SerialRead (
 
   Status  = SerialReceiveTransmit (SerialDevice);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *BufferSize = 0;
 
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
@@ -1253,7 +1253,7 @@ SerialReadRegister (
       Status = SerialDev->PciDeviceInfo->PciIo->Io.Read (SerialDev->PciDeviceInfo->PciIo, EfiPciIoWidthUint8, EFI_PCI_IO_PASS_THROUGH_BAR,
                                                          SerialDev->BaseAddress + Offset * SerialDev->RegisterStride, 1, &Data);
     }
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     return Data;
   }
 }
@@ -1284,6 +1284,6 @@ SerialWriteRegister (
       Status = SerialDev->PciDeviceInfo->PciIo->Io.Write (SerialDev->PciDeviceInfo->PciIo, EfiPciIoWidthUint8, EFI_PCI_IO_PASS_THROUGH_BAR,
                                                           SerialDev->BaseAddress + Offset * SerialDev->RegisterStride, 1, &Data);
     }
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 }

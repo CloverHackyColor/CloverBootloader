@@ -406,7 +406,7 @@ SmmLockBoxEntryPoint (
                     &gEfiSmmLockBoxCommunicationGuid,
                     &DispatchHandle
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register SMM Ready To Lock Protocol notification
@@ -416,7 +416,7 @@ SmmLockBoxEntryPoint (
                     SmmReadyToLockEventNotify,
                     &Registration
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install NULL to DXE data base as notify
@@ -428,7 +428,7 @@ SmmLockBoxEntryPoint (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

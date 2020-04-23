@@ -57,7 +57,7 @@ NvmeS3SkipThisController (
     }
 
     Status = RestoreLockBox (&gS3StorageDeviceInitListGuid, S3InitDevices, &S3InitDevicesLength);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Skip;
     }
   }
@@ -78,7 +78,7 @@ NvmeS3SkipThisController (
                &DevicePathInstLength,
                &EntireEnd
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 

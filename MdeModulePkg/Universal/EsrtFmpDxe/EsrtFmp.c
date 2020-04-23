@@ -73,7 +73,7 @@ InstallEfiSystemResourceTableInUefiConfigurationTable (
     // Install the pointer into config table
     //
     Status = gBS->InstallConfigurationTable (&gEfiSystemResourceTableGuid, Table);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Can't install ESRT table.  Status: %r. \n", Status));
     } else {
       DEBUG ((DEBUG_INFO, "EsrtFmpDxe: Installed ESRT table. \n"));
@@ -339,11 +339,11 @@ FmpGetFirmwareImageDescriptor (
                   &PackageVersionName         // PackageVersionName
                   );
   if (PackageVersionName != NULL) {
-    FreePool (PackageVersionName);
+    FreePool(PackageVersionName);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failure in GetImageInfo.  Status = %r\n", Status));
-    FreePool (FmpImageInfoBuf);
+    FreePool(FmpImageInfoBuf);
     return NULL;
   }
 
@@ -405,7 +405,7 @@ CreateFmpBasedEsrt (
                         );
     if (FmpImageInfoBuf != NULL) {
       NumberOfDescriptors += FmpImageInfoCount;
-      FreePool (FmpImageInfoBuf);
+      FreePool(FmpImageInfoBuf);
     }
   }
 
@@ -417,15 +417,15 @@ CreateFmpBasedEsrt (
              );
   if (Table == NULL) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to allocate memory for ESRT.\n"));
-    FreePool (Buffer);
+    FreePool(Buffer);
     return NULL;
   }
 
   HardwareInstances = AllocateZeroPool (NumberOfDescriptors * sizeof (GUID_HARDWAREINSTANCE_PAIR));
   if (HardwareInstances == NULL) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to allocate memory for HW Instance Table.\n"));
-    FreePool (Table);
-    FreePool (Buffer);
+    FreePool(Table);
+    FreePool(Buffer);
     return NULL;
   }
 
@@ -469,12 +469,12 @@ CreateFmpBasedEsrt (
       FmpImageInfoBuf = (EFI_FIRMWARE_IMAGE_DESCRIPTOR *)(((UINT8 *)FmpImageInfoBuf) + DescriptorSize);
     }
 
-    FreePool (OrgFmpImageInfoBuf);
+    FreePool(OrgFmpImageInfoBuf);
     OrgFmpImageInfoBuf = NULL;
   }
 
-  FreePool (Buffer);
-  FreePool (HardwareInstances);
+  FreePool(Buffer);
+  FreePool(HardwareInstances);
   return Table;
 }
 
@@ -506,8 +506,8 @@ EsrtReadyToBootEventNotify (
     DEBUG_CODE_END ();
 
     Status = InstallEfiSystemResourceTableInUefiConfigurationTable (Table);
-    if (EFI_ERROR (Status)) {
-      FreePool (Table);
+    if (EFI_ERROR(Status)) {
+      FreePool(Table);
     }
   } else {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Can't install ESRT table because it is NULL. \n"));
@@ -549,8 +549,8 @@ EsrtFmpEntryPoint (
              &EsrtReadyToBootEvent
              );
 
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to register for ready to boot\n"));
   }
 

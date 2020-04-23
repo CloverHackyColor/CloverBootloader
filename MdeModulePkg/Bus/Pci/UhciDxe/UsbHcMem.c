@@ -57,7 +57,7 @@ UsbHcAllocMemBlock (
   Block->Bits     = AllocateZeroPool (Block->BitsLen);
 
   if (Block->Bits == NULL) {
-    gBS->FreePool (Block);
+    gBS->FreePool(Block);
     return NULL;
   }
 
@@ -74,7 +74,7 @@ UsbHcAllocMemBlock (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_BITARRAY;
   }
 
@@ -88,7 +88,7 @@ UsbHcAllocMemBlock (
                     &Mapping
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
+  if (EFI_ERROR(Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
     goto FREE_BUFFER;
   }
 
@@ -111,8 +111,8 @@ FREE_BUFFER:
   PciIo->FreeBuffer (PciIo, Pages, BufHost);
 
 FREE_BITARRAY:
-  gBS->FreePool (Block->Bits);
-  gBS->FreePool (Block);
+  gBS->FreePool(Block->Bits);
+  gBS->FreePool(Block);
   return NULL;
 }
 
@@ -142,8 +142,8 @@ UsbHcFreeMemBlock (
   PciIo->Unmap (PciIo, Block->Mapping);
   PciIo->FreeBuffer (PciIo, EFI_SIZE_TO_PAGES (Block->BufLen), Block->BufHost);
 
-  gBS->FreePool (Block->Bits);
-  gBS->FreePool (Block);
+  gBS->FreePool(Block->Bits);
+  gBS->FreePool(Block);
 }
 
 
@@ -373,7 +373,7 @@ UsbHcInitMemPool (
   Pool->Head    = UsbHcAllocMemBlock (Pool, USBHC_MEM_DEFAULT_PAGES);
 
   if (Pool->Head == NULL) {
-    gBS->FreePool (Pool);
+    gBS->FreePool(Pool);
     Pool = NULL;
   }
 
@@ -410,7 +410,7 @@ UsbHcFreeMemPool (
   }
 
   UsbHcFreeMemBlock (Pool, Pool->Head);
-  gBS->FreePool (Pool);
+  gBS->FreePool(Pool);
   return EFI_SUCCESS;
 }
 

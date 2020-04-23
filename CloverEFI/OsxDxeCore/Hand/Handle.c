@@ -277,7 +277,7 @@ CoreUnregisterProtocolNotify (
 
   do {
     Status = CoreUnregisterProtocolNotifyEvent (Event);
-  } while (!EFI_ERROR (Status));
+  } while (!EFI_ERROR(Status));
 
   return EFI_SUCCESS;
 }
@@ -373,7 +373,7 @@ CoreInstallProtocolInterfaceNotify (
 
   if (*UserHandle != NULL) {
     Status = CoreHandleProtocol (*UserHandle, Protocol, (VOID **)&ExistingInterface);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
   }
@@ -431,7 +431,7 @@ CoreInstallProtocolInterfaceNotify (
   }
 
   Status = CoreValidateHandle (Handle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -479,7 +479,7 @@ Done:
   // Done, unlock the database and return
   //
   CoreReleaseProtocolLock ();
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Return the new handle back to the caller
     //
@@ -489,7 +489,7 @@ Done:
     // There was an error, clean up
     //
     if (Prot != NULL) {
-      CoreFreePool (Prot);
+      CoreFreePool(Prot);
     }
   }
 
@@ -552,7 +552,7 @@ CoreInstallMultipleProtocolInterfaces (
   // Check for duplicate device path and install the protocol interfaces
   //
   VA_START (Args, Handle);
-  for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR (Status); Index++) {
+  for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR(Status); Index++) {
     //
     // If protocol is NULL, then it's the end of the list
     //
@@ -570,7 +570,7 @@ CoreInstallMultipleProtocolInterfaces (
       DeviceHandle = NULL;
       DevicePath   = Interface;
       Status = CoreLocateDevicePath (&gEfiDevicePathProtocolGuid, &DevicePath, &DeviceHandle);
-      if (!EFI_ERROR (Status) && (DeviceHandle != NULL) && IsDevicePathEnd(DevicePath)) {
+      if (!EFI_ERROR(Status) && (DeviceHandle != NULL) && IsDevicePathEnd(DevicePath)) {
         // If we wish to keep installing anyway, we should just prevent the status change here, otherwise function will return EFI_ALREADY_STARTED
         //Status = EFI_ALREADY_STARTED;
         continue;
@@ -587,7 +587,7 @@ CoreInstallMultipleProtocolInterfaces (
   //
   // If there was an error, remove all the interfaces that were installed without any errors
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Reset the va_arg back to the first argument.
     //
@@ -651,7 +651,7 @@ CoreDisconnectControllersUsingProtocolInterface (
         CoreReleaseProtocolLock ();
         Status = CoreDisconnectController (UserHandle, OpenData->AgentHandle, NULL);
         CoreAcquireProtocolLock ();
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
            ItemFound = FALSE;
            break;
         }
@@ -659,7 +659,7 @@ CoreDisconnectControllersUsingProtocolInterface (
     }
   } while (ItemFound);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Attempt to remove BY_HANDLE_PROTOOCL and GET_PROTOCOL and TEST_PROTOCOL Open List items
     //
@@ -674,7 +674,7 @@ CoreDisconnectControllersUsingProtocolInterface (
           ItemFound = TRUE;
           RemoveEntryList (&OpenData->Link);
           Prot->OpenListCount--;
-          CoreFreePool (OpenData);
+          CoreFreePool(OpenData);
         }
       }
     } while (ItemFound);
@@ -683,7 +683,7 @@ CoreDisconnectControllersUsingProtocolInterface (
   //
   // If there are errors or still has open items in the list, then reconnect all the drivers and return an error
   //
-  if (EFI_ERROR (Status) || (Prot->OpenListCount > 0)) {
+  if (EFI_ERROR(Status) || (Prot->OpenListCount > 0)) {
     CoreReleaseProtocolLock ();
     CoreConnectController (UserHandle, NULL, NULL, TRUE);
     CoreAcquireProtocolLock ();
@@ -731,7 +731,7 @@ CoreUninstallProtocolInterface (
   // Check that UserHandle is a valid handle
   //
   Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -756,7 +756,7 @@ CoreUninstallProtocolInterface (
              UserHandle,
              Prot
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // One or more drivers refused to release, so return the error
     //
@@ -786,7 +786,7 @@ CoreUninstallProtocolInterface (
     // Free the memory
     //
     Prot->Signature = 0;
-    CoreFreePool (Prot);
+    CoreFreePool(Prot);
     Status = EFI_SUCCESS;
   }
 
@@ -796,7 +796,7 @@ CoreUninstallProtocolInterface (
   if (IsListEmpty (&Handle->Protocols)) {
     Handle->Signature = 0;
     RemoveEntryList (&Handle->AllHandles);
-    CoreFreePool (Handle);
+    CoreFreePool(Handle);
   }
 
 Done:
@@ -838,7 +838,7 @@ CoreUninstallMultipleProtocolInterfaces (
   UINTN           Index;
 
   VA_START (Args, Handle);
-  for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR (Status); Index++) {
+  for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR(Status); Index++) {
     //
     // If protocol is NULL, then it's the end of the list
     //
@@ -860,7 +860,7 @@ CoreUninstallMultipleProtocolInterfaces (
   // If there was an error, add all the interfaces that were
   // uninstalled without any errors
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Reset the va_arg back to the first argument.
     //
@@ -899,7 +899,7 @@ CoreGetProtocolInterface (
   LIST_ENTRY          *Link;
 
   Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -1017,7 +1017,7 @@ CoreOpenProtocol (
   // Check for invalid UserHandle
   //
   Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1027,11 +1027,11 @@ CoreOpenProtocol (
   switch (Attributes) {
   case EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER :
     Status = CoreValidateHandle (ImageHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Status = CoreValidateHandle (ControllerHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     if (UserHandle == ControllerHandle) {
@@ -1041,17 +1041,17 @@ CoreOpenProtocol (
   case EFI_OPEN_PROTOCOL_BY_DRIVER :
   case EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE :
     Status = CoreValidateHandle (ImageHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Status = CoreValidateHandle (ControllerHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     break;
   case EFI_OPEN_PROTOCOL_EXCLUSIVE :
     Status = CoreValidateHandle (ImageHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     break;
@@ -1138,7 +1138,7 @@ CoreOpenProtocol (
             CoreReleaseProtocolLock ();
             Status = CoreDisconnectController (UserHandle, OpenData->AgentHandle, NULL);
             CoreAcquireProtocolLock ();
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               Status = EFI_ACCESS_DENIED;
               goto Done;
             }
@@ -1228,16 +1228,16 @@ CoreCloseProtocol (
   // Check for invalid parameters
   //
   Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = CoreValidateHandle (AgentHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   if (ControllerHandle != NULL) {
     Status = CoreValidateHandle (ControllerHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1269,7 +1269,7 @@ CoreCloseProtocol (
     if ((OpenData->AgentHandle == AgentHandle) && (OpenData->ControllerHandle == ControllerHandle)) {
         RemoveEntryList (&OpenData->Link);
         ProtocolInterface->OpenListCount--;
-        CoreFreePool (OpenData);
+        CoreFreePool(OpenData);
         Status = EFI_SUCCESS;
     }
   }
@@ -1422,7 +1422,7 @@ CoreProtocolsPerHandle (
   EFI_GUID                            **Buffer;
 
   Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

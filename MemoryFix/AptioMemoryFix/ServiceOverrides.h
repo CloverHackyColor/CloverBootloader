@@ -72,7 +72,7 @@ MOAllocatePool (
 
 EFI_STATUS
 EFIAPI
-MOFreePool (
+MOFreePool(
   IN VOID  *Buffer
   );
 

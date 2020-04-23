@@ -94,7 +94,7 @@ PcatIsaAcpiDriverBindingSupported (
                     sizeof(Pci) / sizeof(UINT32), 
                     &Pci);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = EFI_UNSUPPORTED;
     if ((Pci.Hdr.Command & 0x03) == 0x03) {
       if (Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) {
@@ -122,7 +122,7 @@ PcatIsaAcpiDriverBindingSupported (
                             &DeviceNumber, 
                             &FunctionNumber
                             );
-          if (!EFI_ERROR (Status) && FunctionNumber == 0) {
+          if (!EFI_ERROR(Status) && FunctionNumber == 0) {
             Status = EFI_SUCCESS;
           } else {
             Status = EFI_UNSUPPORTED;
@@ -185,7 +185,7 @@ PcatIsaAcpiDriverBindingStart (
                   Controller,   
                   EFI_OPEN_PROTOCOL_BY_DRIVER 
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -198,7 +198,7 @@ PcatIsaAcpiDriverBindingStart (
                     0,
                     &Supports
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -214,7 +214,7 @@ PcatIsaAcpiDriverBindingStart (
                     0,
                     &OriginalAttributes
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -224,7 +224,7 @@ PcatIsaAcpiDriverBindingStart (
                     EFI_PCI_DEVICE_ENABLE | Supports | EFI_PCI_IO_ATTRIBUTE_ISA_MOTHERBOARD_IO, 
                     NULL 
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -238,7 +238,7 @@ PcatIsaAcpiDriverBindingStart (
                   sizeof(PCAT_ISA_ACPI_DEV),
                   (VOID**)&PcatIsaAcpiDev
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -277,7 +277,7 @@ PcatIsaAcpiDriverBindingStart (
                   );
 
 Done:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (PciIo != NULL && Enabled) {
       PciIo->Attributes (
                PciIo, 
@@ -293,7 +293,7 @@ Done:
            Controller
            );
     if (PcatIsaAcpiDev != NULL) {
-      gBS->FreePool (PcatIsaAcpiDev);
+      gBS->FreePool(PcatIsaAcpiDev);
     }
     return Status;
   }
@@ -340,7 +340,7 @@ PcatIsaAcpiDriverBindingStop (
                   Controller,   
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -358,7 +358,7 @@ PcatIsaAcpiDriverBindingStop (
                                     PcatIsaAcpiDev->OriginalAttributes,
                                     NULL
                                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -369,7 +369,7 @@ PcatIsaAcpiDriverBindingStop (
                   Controller,
                   &gEfiIsaAcpiProtocolGuid, &PcatIsaAcpiDev->IsaAcpi
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -380,7 +380,7 @@ PcatIsaAcpiDriverBindingStop (
          Controller
          );
   
-  gBS->FreePool (PcatIsaAcpiDev);
+  gBS->FreePool(PcatIsaAcpiDev);
   
   return EFI_SUCCESS;
 }

@@ -256,7 +256,7 @@ DxeMain (
     VectorInfoList = (EFI_VECTOR_HANDOFF_INFO *) (GET_GUID_HOB_DATA(GuidHob));
   }
   Status = InitializeCpuExceptionHandlers (VectorInfoList);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -288,7 +288,7 @@ DxeMain (
   // Start the Image Services.
   //
   Status = CoreInitializeImageServices (HobStart);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
     return;
   }
@@ -313,7 +313,7 @@ DxeMain (
   // Initialize the Global Coherency Domain Services
   //
   Status = CoreInitializeGcdServices (&HobStart, MemoryBaseAddress, MemoryLength);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -324,7 +324,7 @@ DxeMain (
   // Install the DXE Services Table into the EFI System Tables's Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiDxeServicesTableGuid, gDxeCoreDS);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -333,7 +333,7 @@ DxeMain (
   // Install the HOB List into the EFI System Tables's Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiHobListGuid, HobStart);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -342,7 +342,7 @@ DxeMain (
   // Install Memory Type Information Table into the EFI System Tables's Configuration Table
   //
   Status = CoreInstallConfigurationTable (&gEfiMemoryTypeInformationGuid, &gMemoryTypeInformation);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -354,7 +354,7 @@ DxeMain (
   //
   if (PcdGet64(PcdLoadModuleAtFixAddressEnable) != 0) {
     Status = CoreInstallConfigurationTable (&gLoadFixedAddressConfigurationTableGuid, &gLoadModuleAtFixAddressConfigurationTable);
-//    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return;
     }
@@ -405,7 +405,7 @@ DxeMain (
   // Initialize the Event Services
   //
   Status = CoreInitializeEventServices ();
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -427,7 +427,7 @@ DxeMain (
  //   ASSERT (VectorInfo != NULL);
  	if (!VectorInfo) return;
     Status = CoreInstallConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID *) VectorInfo);
-//    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status)) {
       return;
     }    
@@ -453,7 +453,7 @@ DxeMain (
              &gEfiDecompressProtocolGuid,           &gEfiDecompress,
              NULL
              );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -469,13 +469,13 @@ DxeMain (
   // Produce Firmware Volume Protocols, one for each FV in the HOB list.
   //
   Status = FwVolBlockDriverInit (gDxeCoreImageHandle, gDxeCoreST);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
 
   Status = FwVolDriverInit (gDxeCoreImageHandle, gDxeCoreST);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -484,7 +484,7 @@ DxeMain (
   // Produce the Section Extraction Protocol
   //
   Status = InitializeSectionExtraction (gDxeCoreImageHandle, gDxeCoreST);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -531,7 +531,7 @@ DxeMain (
       (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_EC_NO_ARCH)
       );    
   }
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return;
   }
@@ -775,7 +775,7 @@ CoreExitBootServices (
   // Terminate memory services if the MapKey matches
   //
   Status = CoreTerminateMemoryMap (MapKey);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Notify other drivers that ExitBootServices fail 
     //
@@ -948,7 +948,7 @@ DxeMainUefiDecompress (
   }
 
   Status = UefiDecompressGetInfo (Source, SourceSize, &TestDestinationSize, &TestScratchSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

@@ -57,7 +57,7 @@ SmmMemoryProfileLibConstructor (
                   NULL,
                   (VOID **)&mLibProfileProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mLibProfileProtocol = NULL;
   }
 
@@ -66,7 +66,7 @@ SmmMemoryProfileLibConstructor (
                     NULL,
                     (VOID **)&mLibSmmProfileProtocol
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mLibSmmProfileProtocol = NULL;
   }
 

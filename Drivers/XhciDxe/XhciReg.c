@@ -43,7 +43,7 @@ XhcReadCapReg8 (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcReadCapReg: Pci Io read error - %r at %d\n", Status, Offset));
     Data = 0xFF;
   }
@@ -79,7 +79,7 @@ XhcReadCapReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcReadCapReg: Pci Io read error - %r at %d\n", Status, Offset));
     Data = 0xFFFFFFFF;
   }
@@ -120,7 +120,7 @@ XhcReadOpReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcReadOpReg: Pci Io Read error - %r at %d\n", Status, Offset));
     Data = 0xFFFFFFFF;
   }
@@ -159,7 +159,7 @@ XhcWriteOpReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcWriteOpReg: Pci Io Write error: %r at %d\n", Status, Offset));
   }
 }
@@ -195,7 +195,7 @@ XhcWriteOpReg16 (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcWriteOpReg16: Pci Io Write error: %r at %d\n", Status, Offset));
   }
 }
@@ -232,7 +232,7 @@ XhcReadDoorBellReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcReadDoorBellReg: Pci Io Read error - %r at %d\n", Status, Offset));
     Data = 0xFFFFFFFF;
   }
@@ -271,7 +271,7 @@ XhcWriteDoorBellReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcWriteOpReg: Pci Io Write error: %r at %d\n", Status, Offset));
   }
 }
@@ -308,7 +308,7 @@ XhcReadRuntimeReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcReadRuntimeReg: Pci Io Read error - %r at %d\n", Status, Offset));
     Data = 0xFFFFFFFF;
   }
@@ -347,7 +347,7 @@ XhcWriteRuntimeReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcWriteRuntimeReg: Pci Io Write error: %r at %d\n", Status, Offset));
   }
 }
@@ -384,7 +384,7 @@ XhcReadExtCapReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcReadExtCapReg: Pci Io Read error - %r at %d\n", Status, Offset));
     Data = 0xFFFFFFFF;
   }
@@ -423,7 +423,7 @@ XhcWriteExtCapReg (
                              &Data
                              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcWriteExtCapReg: Pci Io Write error: %r at %d\n", Status, Offset));
   }
 }
@@ -737,7 +737,7 @@ XhcResetHC (
   if (!XHC_REG_BIT_IS_SET (Xhc, XHC_USBSTS_OFFSET, XHC_USBSTS_HALT)) {
     Status = XhcHaltHC (Xhc, Timeout);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }

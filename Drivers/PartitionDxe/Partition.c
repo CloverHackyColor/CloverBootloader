@@ -135,7 +135,7 @@ PartitionDriverBindingSupported (
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -163,7 +163,7 @@ PartitionDriverBindingSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -265,7 +265,7 @@ PartitionDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -277,7 +277,7 @@ PartitionDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BlockIo2 = NULL;
   }
 
@@ -292,7 +292,7 @@ PartitionDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     goto Exit;
   }
 
@@ -308,7 +308,7 @@ PartitionDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   //Slice - DiskIo already started, what else?                
-  if (EFI_ERROR (Status) /* && Status != EFI_ALREADY_STARTED*/) {
+  if (EFI_ERROR(Status) /* && Status != EFI_ALREADY_STARTED*/) {
     gBS->CloseProtocol (
           ControllerHandle,
           &gEfiDevicePathProtocolGuid,
@@ -329,7 +329,7 @@ PartitionDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     DiskIo2 = NULL;
   }
 
@@ -356,7 +356,7 @@ PartitionDriverBindingStart (
                    BlockIo2,
                    ParentDevicePath
                    );
-      if (!EFI_ERROR (Status) || (Status == EFI_MEDIA_CHANGED)|| (Status == EFI_NO_MEDIA)) {
+      if (!EFI_ERROR(Status) || (Status == EFI_MEDIA_CHANGED)|| (Status == EFI_NO_MEDIA)) {
       	DBG("Handle %x check partition Status=%r\n", ControllerHandle, Status);
         /*if (Status != EFI_NO_MEDIA) {
             DBG("Parent=%s\n", DevicePathToStr(ParentDevicePath)); //have no function
@@ -378,8 +378,8 @@ PartitionDriverBindingStart (
   // when this happen. The "media change" case includes either the status is
   // EFI_MEDIA_CHANGED or it is a "media" to "no media" change. 
   //  
-  if (EFI_ERROR (Status)          &&
-      !EFI_ERROR (OpenStatus)     &&
+  if (EFI_ERROR(Status)          &&
+      !EFI_ERROR(OpenStatus)     &&
       (Status != EFI_MEDIA_CHANGED) &&
       !(MediaPresent && (Status == EFI_NO_MEDIA))) {
     gBS->CloseProtocol (
@@ -540,7 +540,7 @@ PartitionDriverBindingStop (
               );
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
         gBS->OpenProtocol (
               ControllerHandle,
               &gEfiDiskIoProtocolGuid,
@@ -550,11 +550,11 @@ PartitionDriverBindingStop (
               EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
               );
       } else {
-        FreePool (Private->DevicePath);
-        FreePool (Private);
+        FreePool(Private->DevicePath);
+        FreePool(Private);
       }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -834,7 +834,7 @@ PartitionOnAccessComplete (
   Task->BlockIo2Token->TransactionStatus = Task->DiskIo2Token.TransactionStatus;
   gBS->SignalEvent (Task->BlockIo2Token->Event);
 
-  FreePool (Task);
+  FreePool(Task);
 }
 
 /**
@@ -864,8 +864,8 @@ PartitionCreateAccessTask (
                   Task,
                   &Task->DiskIo2Token.Event
                   );
-  if (EFI_ERROR (Status)) {
-    FreePool (Task);
+  if (EFI_ERROR(Status)) {
+    FreePool(Task);
     return NULL;
   }
 
@@ -941,9 +941,9 @@ PartitionReadBlocksEx (
     }
 
     Status = Private->DiskIo2->ReadDiskEx (Private->DiskIo2, MediaId, Offset, &Task->DiskIo2Token, BufferSize, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
-      FreePool (Task);
+      FreePool(Task);
     }
   } else {
     Status = Private->DiskIo2->ReadDiskEx (Private->DiskIo2, MediaId, Offset, NULL, BufferSize, Buffer);
@@ -1017,9 +1017,9 @@ PartitionWriteBlocksEx (
     }
 
     Status =  Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, &Task->DiskIo2Token, BufferSize, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
-      FreePool (Task);
+      FreePool(Task);
     }
   } else {
     Status = Private->DiskIo2->WriteDiskEx (Private->DiskIo2, MediaId, Offset, NULL, BufferSize, Buffer);
@@ -1069,9 +1069,9 @@ PartitionFlushBlocksEx (
     }
 
     Status = Private->DiskIo2->FlushDiskEx (Private->DiskIo2, &Task->DiskIo2Token);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseEvent (Task->DiskIo2Token.Event);
-      FreePool (Task);
+      FreePool(Task);
     }
   } else {
     Status = Private->DiskIo2->FlushDiskEx (Private->DiskIo2, NULL);
@@ -1199,7 +1199,7 @@ PartitionInstallChildHandle (
   Private->DevicePath           = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
 
   if (Private->DevicePath == NULL) {
-    FreePool (Private);
+    FreePool(Private);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1242,7 +1242,7 @@ PartitionInstallChildHandle (
                     );
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Open the Parent Handle for the child
     //
@@ -1255,8 +1255,8 @@ PartitionInstallChildHandle (
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
   } else {
-    FreePool (Private->DevicePath);
-    FreePool (Private);
+    FreePool(Private->DevicePath);
+    FreePool(Private);
   }
 
   return Status;
@@ -1293,7 +1293,7 @@ InitializePartition (
              &gPartitionComponentName,
              &gPartitionComponentName2
              );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
 
   return Status;

@@ -2016,11 +2016,11 @@ EFI_STATUS PrepatchSmbios()
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
   Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, /*EfiACPIReclaimMemory,   */
                                EFI_SIZE_TO_PAGES(BufferLen), &BufferPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //    DBG("There is error allocating pages in EfiACPIMemoryNVS!\n");
     Status = gBS->AllocatePages (AllocateMaxAddress,  /*EfiACPIMemoryNVS, */EfiACPIReclaimMemory,
                                  ROUND_PAGE(BufferLen)/EFI_PAGE_SIZE, &BufferPtr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //      DBG("There is error allocating pages in EfiACPIReclaimMemory!\n");
     }
   }

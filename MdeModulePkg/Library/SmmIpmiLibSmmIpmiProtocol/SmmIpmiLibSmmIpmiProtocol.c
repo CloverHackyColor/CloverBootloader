@@ -51,7 +51,7 @@ IpmiSubmitCommand (
                   NULL,
                   (VOID **) &mIpmiProtocol
                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Smm Ipmi Protocol is not installed. So, IPMI device is not present.
       //
@@ -69,7 +69,7 @@ IpmiSubmitCommand (
                             ResponseData,
                             ResponseDataSize
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   return EFI_SUCCESS;

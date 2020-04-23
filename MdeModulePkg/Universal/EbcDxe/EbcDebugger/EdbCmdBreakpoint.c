@@ -325,7 +325,7 @@ DebuggerBreakpointSet (
   // Get breakpoint address
   //
   Status = Symboltoi (CommandArg, &Address);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Status == EFI_NOT_FOUND) {
       Address = Xtoi(CommandArg);
     } else {

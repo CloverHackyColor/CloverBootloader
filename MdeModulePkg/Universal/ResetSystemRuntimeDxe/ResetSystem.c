@@ -116,7 +116,7 @@ UnregisterResetNotify (
     Entry = RESET_NOTIFY_ENTRY_FROM_LINK (Link);
     if (Entry->ResetNotify == ResetFunction) {
       RemoveEntryList (&Entry->Link);
-      FreePool (Entry);
+      FreePool(Entry);
       return EFI_SUCCESS;
     }
   }
@@ -195,7 +195,7 @@ InitializeResetSystem (
                   &gEdkiiPlatformSpecificResetHandlerProtocolGuid, &mPlatformSpecificResetHandler.ResetNotification,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

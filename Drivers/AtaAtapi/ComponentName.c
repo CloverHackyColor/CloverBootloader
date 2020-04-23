@@ -212,7 +212,7 @@ AtaAtapiPassThruComponentNameGetControllerName (
              gAtaAtapiPassThruDriverBinding.DriverBindingHandle,
              &gEfiIdeControllerInitProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -227,7 +227,7 @@ AtaAtapiPassThruComponentNameGetControllerName (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 

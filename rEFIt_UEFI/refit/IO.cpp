@@ -92,7 +92,7 @@ _PoolCatPrint (
 
 EFI_STATUS
 EFIAPI
-_PoolPrint (
+_PoolPrint(
   IN POOL_PRINT     *Context,
   IN CHAR16         *Buffer
   );
@@ -253,7 +253,7 @@ Returns:
 
 CHAR16 *
 EFIAPI
-PoolPrint (
+PoolPrint(
   IN CONST CHAR16             *fmt,
   ...
   )
@@ -485,7 +485,7 @@ PFLUSH (
     if (mPrintMode.OutputPause) {
 
       Status = EFI_NOT_READY;
-      while (EFI_ERROR (Status)) {
+      while (EFI_ERROR(Status)) {
         Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
       }
 
@@ -728,7 +728,7 @@ Returns:
 
   Buffer = (__typeof__(Buffer))AllocateZeroPool (sizeof (CHAR16) * PRINT_STRING_LEN);
   if (NULL == Buffer) {
-    FreePool (Item.Scratch);
+    FreePool(Item.Scratch);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -962,8 +962,8 @@ Returns:
   //
   PFLUSH (ps);
 
-  FreePool (Item.Scratch);
-  FreePool (Buffer);
+  FreePool(Item.Scratch);
+  FreePool(Buffer);
 
   return ps->Len;
 }
@@ -987,7 +987,7 @@ WaitForSingleEvent (
 		// Create a timer event
 		//
 		Status = gBS->CreateEvent(EVT_TIMER, 0, NULL, NULL, &TimerEvent);
-		if (!EFI_ERROR (Status))
+		if (!EFI_ERROR(Status))
 		{
 			//
 			// Set the timer event
@@ -1002,7 +1002,7 @@ WaitForSingleEvent (
 
 			Status = gBS->WaitForEvent(2, WaitList, &Index);
 			gBS->CloseEvent (TimerEvent);
-			if (!EFI_ERROR (Status) && Index == 1)
+			if (!EFI_ERROR(Status) && Index == 1)
 			{
 				Status = EFI_TIMEOUT;
 			}
@@ -1252,7 +1252,7 @@ SetOutputPause (
 
 EFI_STATUS
 EFIAPI
-_PoolPrint (
+_PoolPrint(
   IN POOL_PRINT     *Context,
   IN CHAR16         *Buffer
   )

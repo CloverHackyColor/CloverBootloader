@@ -118,7 +118,7 @@ BiosBlockIoDriverEntryPoint (
              &gBiosBlockIoComponentName,
              &gBiosBlockIoComponentName2
              );
- // if (EFI_ERROR (Status)) {
+ // if (EFI_ERROR(Status)) {
     return Status;
 //  }
   //
@@ -169,11 +169,11 @@ BiosBlockIoDriverBindingSupported (
   // See if the Legacy BIOS Protocol is available
   //
 /*  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   } */
  	Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &Legacy8259);
-	if (EFI_ERROR (Status)) {
+	if (EFI_ERROR(Status)) {
 		return Status;
 	}
  
@@ -186,7 +186,7 @@ BiosBlockIoDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -208,7 +208,7 @@ BiosBlockIoDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -216,7 +216,7 @@ BiosBlockIoDriverBindingSupported (
   // Class Code Register
   //
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_UNSUPPORTED;
     goto Done;
   }
@@ -284,12 +284,12 @@ BiosBlockIoDriverBindingStart (
   // See if the Legacy BIOS Protocol is available
   //
 /*  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   } */
   if (mLegacy8259 == NULL) {
 		Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &mLegacy8259);
-		if (EFI_ERROR (Status)) {
+		if (EFI_ERROR(Status)) {
 			goto Error;
 		}
 		
@@ -308,7 +308,7 @@ BiosBlockIoDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -321,7 +321,7 @@ BiosBlockIoDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
   //
@@ -333,7 +333,7 @@ BiosBlockIoDriverBindingStart (
                     EFI_PCI_DEVICE_ENABLE,
                     NULL
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
   
@@ -350,7 +350,7 @@ BiosBlockIoDriverBindingStart (
                         NULL,
                         &Flags
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
   //
@@ -366,7 +366,7 @@ BiosBlockIoDriverBindingStart (
                         NULL,
                         NULL
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
  */
@@ -403,11 +403,11 @@ BiosBlockIoDriverBindingStart (
     //
     // Check memory allocation success
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // In checked builds we want to assert if the allocate failed.
       //
-   //   ASSERT_EFI_ERROR (Status);
+   //   ASSERT_EFI_ERROR(Status);
       Status          = EFI_OUT_OF_RESOURCES;
       mBufferUnder1Mb = 0;
       goto Error;
@@ -441,7 +441,7 @@ BiosBlockIoDriverBindingStart (
                     sizeof (BIOS_BLOCK_IO_DEV),
                     (VOID **) &BiosBlockIoPrivate
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
     //
@@ -480,8 +480,8 @@ BiosBlockIoDriverBindingStart (
                       BiosBlockIoPrivate->DevicePath,
                       NULL
                       );
-      if (EFI_ERROR (Status)) {
-        gBS->FreePool (BiosBlockIoPrivate);
+      if (EFI_ERROR(Status)) {
+        gBS->FreePool(BiosBlockIoPrivate);
       }
       //
       // Open For Child Device
@@ -496,14 +496,14 @@ BiosBlockIoDriverBindingStart (
                       );
 
     } else {
-      gBS->FreePool (BiosBlockIoPrivate);
+      gBS->FreePool(BiosBlockIoPrivate);
     }
   }
   
   mBiosDrivesEnumerated = TRUE;
 
 Error:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (PciIo != NULL) {
       if (DeviceEnable) {
         PciIo->Attributes (
@@ -595,8 +595,8 @@ BiosBlockIoDriverBindingStop (
     // Free our global buffer
     //
     Status = gBS->FreePages (mBufferUnder1Mb, BLOCK_IO_BUFFER_PAGE_SIZE);
-//    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+//    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     EfiAcquireLock (&mGlobalDataLock);
@@ -615,7 +615,7 @@ BiosBlockIoDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -632,7 +632,7 @@ BiosBlockIoDriverBindingStop (
                     BiosBlockIoPrivate->DevicePath,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
     //
@@ -652,7 +652,7 @@ BiosBlockIoDriverBindingStop (
           ChildHandleBuffer[Index]
           );
 
-    gBS->FreePool (BiosBlockIoPrivate);
+    gBS->FreePool(BiosBlockIoPrivate);
   }
 
   if (!AllChildrenStopped) {
@@ -706,7 +706,7 @@ SetBiosInitBlockIoDevicePath (
     Status = BuildEdd30DevicePath (BaseDevicePath, Drive, DevicePath);
   }
   
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // EDD 1.1 device case or it is unrecognized EDD 3.0 device
     //

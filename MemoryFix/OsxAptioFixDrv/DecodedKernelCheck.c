@@ -191,7 +191,7 @@ CheckDecodedKernel (
 	
 	for (i = 0; i < mySegDataNum; i++) {
 		segStatus = CheckDecodedSegment(&mySegData[i]);
-		if (EFI_ERROR (segStatus)) {
+		if (EFI_ERROR(segStatus)) {
 			Status = segStatus;
 		}
 	}

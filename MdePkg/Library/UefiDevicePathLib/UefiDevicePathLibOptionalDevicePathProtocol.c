@@ -48,7 +48,7 @@ UefiDevicePathLibOptionalDevicePathProtocolConstructor (
                   NULL,
                   (VOID**) &mDevicePathLibDevicePathUtilities
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mDevicePathLibDevicePathUtilities != NULL);
   return Status;
 }
@@ -348,7 +348,7 @@ UefiDevicePathLibLocateProtocol (
                   NULL,
                   (VOID**) &Protocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   } else {
     return Protocol;

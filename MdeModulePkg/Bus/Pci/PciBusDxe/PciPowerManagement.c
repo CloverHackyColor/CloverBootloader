@@ -37,7 +37,7 @@ ResetPowerManagementFeature (
             NULL
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -56,7 +56,7 @@ ResetPowerManagementFeature (
                                     &PowerManagementCSR
                                     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Clear PME_Status bit
     //

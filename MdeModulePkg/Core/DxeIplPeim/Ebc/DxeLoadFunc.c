@@ -48,7 +48,7 @@ HandOffToDxeCore (
   // End of PEI phase signal
   //
   Status = PeiServicesInstallPpi (&gEndOfPeiSignalPpi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Update the contents of BSP stack HOB to reflect the real stack info passed to DxeCore.

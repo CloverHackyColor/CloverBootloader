@@ -236,7 +236,7 @@ InitializeSectionExtraction (
               EFI_NATIVE_INTERFACE,
               &mCustomGuidedSectionExtractionProtocol
               );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return Status;
@@ -357,7 +357,7 @@ OpenSectionStreamEx (
     if (SectionStreamLength > 0) {
       NewStream->StreamBuffer = AllocatePool (SectionStreamLength);
       if (NewStream->StreamBuffer == NULL) {
-        CoreFreePool (NewStream);
+        CoreFreePool(NewStream);
         return EFI_OUT_OF_RESOURCES;
       }
       //
@@ -519,7 +519,7 @@ VerifyGuidedSectionGuid (
       // Found the recorded GuidedSectionGuid.
       //
       Status = CoreLocateProtocol (GuidedSectionGuid, NULL, (VOID **) &Interface);
-      if (!EFI_ERROR (Status) && Interface != NULL) {
+      if (!EFI_ERROR(Status) && Interface != NULL) {
         //
         // Found the supported Guided Section Extraction Porotocol for the Guided Section.
         //
@@ -572,7 +572,7 @@ NotifyGuidedExtraction (
                                &NewStreamBufferSize,
                                &AuthenticationStatus
                                );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Make sure we initialize the new stream with the correct
@@ -598,14 +598,14 @@ NotifyGuidedExtraction (
              AuthenticationStatus,
              &Context->ChildNode->EncapsulatedStreamHandle
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   //  Close the event when done.
   //
   gBS->CloseEvent (Event);
   Context->ChildNode->Event = NULL;
-  FreePool (Context);
+  FreePool(Context);
 }
 
 /**
@@ -722,7 +722,7 @@ CreateChildNode (
       // Get the CompressionSectionHeader
       //
       if (Node->Size < sizeof (EFI_COMPRESSION_SECTION)) {
-        CoreFreePool (Node);
+        CoreFreePool(Node);
         return EFI_NOT_FOUND;
       }
 
@@ -747,7 +747,7 @@ CreateChildNode (
         NewStreamBufferSize = UncompressedLength;
         NewStreamBuffer = AllocatePool (NewStreamBufferSize);
         if (NewStreamBuffer == NULL) {
-          CoreFreePool (Node);
+          CoreFreePool(Node);
           return EFI_OUT_OF_RESOURCES;
         }
 
@@ -765,7 +765,7 @@ CreateChildNode (
           // Decompress the stream
           //
           Status = CoreLocateProtocol (&gEfiDecompressProtocolGuid, NULL, (VOID **)&Decompress);
-          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR(Status);
           ASSERT (Decompress != NULL);
 
           Status = Decompress->GetInfo (
@@ -775,10 +775,10 @@ CreateChildNode (
                                  (UINT32 *)&NewStreamBufferSize,
                                  &ScratchSize
                                  );
-          if (EFI_ERROR (Status) || (NewStreamBufferSize != UncompressedLength)) {
-            CoreFreePool (Node);
-            CoreFreePool (NewStreamBuffer);
-            if (!EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status) || (NewStreamBufferSize != UncompressedLength)) {
+            CoreFreePool(Node);
+            CoreFreePool(NewStreamBuffer);
+            if (!EFI_ERROR(Status)) {
               Status = EFI_BAD_BUFFER_SIZE;
             }
             return Status;
@@ -786,8 +786,8 @@ CreateChildNode (
 
           ScratchBuffer = AllocatePool (ScratchSize);
           if (ScratchBuffer == NULL) {
-            CoreFreePool (Node);
-            CoreFreePool (NewStreamBuffer);
+            CoreFreePool(Node);
+            CoreFreePool(NewStreamBuffer);
             return EFI_OUT_OF_RESOURCES;
           }
 
@@ -800,10 +800,10 @@ CreateChildNode (
                                  ScratchBuffer,
                                  ScratchSize
                                  );
-          CoreFreePool (ScratchBuffer);
-          if (EFI_ERROR (Status)) {
-            CoreFreePool (Node);
-            CoreFreePool (NewStreamBuffer);
+          CoreFreePool(ScratchBuffer);
+          if (EFI_ERROR(Status)) {
+            CoreFreePool(Node);
+            CoreFreePool(NewStreamBuffer);
             return Status;
           }
         }
@@ -819,9 +819,9 @@ CreateChildNode (
                  Stream->AuthenticationStatus,
                  &Node->EncapsulatedStreamHandle
                  );
-      if (EFI_ERROR (Status)) {
-        CoreFreePool (Node);
-        CoreFreePool (NewStreamBuffer);
+      if (EFI_ERROR(Status)) {
+        CoreFreePool(Node);
+        CoreFreePool(NewStreamBuffer);
         return Status;
       }
       break;
@@ -847,8 +847,8 @@ CreateChildNode (
                                      &NewStreamBufferSize,
                                      &AuthenticationStatus
                                      );
-        if (EFI_ERROR (Status)) {
-          CoreFreePool (*ChildNode);
+        if (EFI_ERROR(Status)) {
+          CoreFreePool(*ChildNode);
           return EFI_PROTOCOL_ERROR;
         }
 
@@ -876,9 +876,9 @@ CreateChildNode (
                    AuthenticationStatus,
                    &Node->EncapsulatedStreamHandle
                    );
-        if (EFI_ERROR (Status)) {
-          CoreFreePool (*ChildNode);
-          CoreFreePool (NewStreamBuffer);
+        if (EFI_ERROR(Status)) {
+          CoreFreePool(*ChildNode);
+          CoreFreePool(NewStreamBuffer);
           return Status;
         }
       } else {
@@ -918,8 +918,8 @@ CreateChildNode (
                        &Node->EncapsulatedStreamHandle
                        );
           }
-          if (EFI_ERROR (Status)) {
-            CoreFreePool (Node);
+          if (EFI_ERROR(Status)) {
+            CoreFreePool(Node);
             return Status;
           }
         }
@@ -1005,7 +1005,7 @@ FindChildNode (
     // So, its size should be >= the size of commen section header.
     //
     Status = CreateChildNode (SourceStream, 0, &CurrentChildNode);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1055,7 +1055,7 @@ FindChildNode (
       // to find the request child node in the rest stream.
       //
       if (*SectionInstance == 0) {
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
         *FoundChild = RecursedChildNode;
         *FoundStream = RecursedFoundStream;
         return EFI_SUCCESS;
@@ -1095,11 +1095,11 @@ FindChildNode (
         // There's an unparsed child remaining in the stream, so create a new child node
         //
         Status = CreateChildNode (SourceStream, NextChildOffset, &CurrentChildNode);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       } else {
-        ASSERT (EFI_ERROR (ErrorStatus));
+        ASSERT (EFI_ERROR(ErrorStatus));
         return ErrorStatus;
       }
     }
@@ -1237,7 +1237,7 @@ GetSection (
   // Locate target stream
   //
   Status = FindStreamNode (SectionStreamHandle, &StreamNode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_INVALID_PARAMETER;
     goto GetSection_Done;
   }
@@ -1265,7 +1265,7 @@ GetSection (
                &ChildStreamNode,
                &ExtractedAuthenticationStatus
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto GetSection_Done;
     }
 
@@ -1348,7 +1348,7 @@ FreeChildNode (
   //
   // Last, free the child node itself
   //
-  CoreFreePool (ChildNode);
+  CoreFreePool(ChildNode);
 }
 
 
@@ -1384,7 +1384,7 @@ CloseSectionStream (
   // Locate target stream
   //
   Status = FindStreamNode (StreamHandleToClose, &StreamNode);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Found the stream, so close it
     //
@@ -1395,9 +1395,9 @@ CloseSectionStream (
       FreeChildNode (ChildNode);
     }
     if (FreeStreamBuffer) {
-      CoreFreePool (StreamNode->StreamBuffer);
+      CoreFreePool(StreamNode->StreamBuffer);
     }
-    CoreFreePool (StreamNode);
+    CoreFreePool(StreamNode);
     Status = EFI_SUCCESS;
   } else {
     Status = EFI_INVALID_PARAMETER;
@@ -1524,7 +1524,7 @@ CustomGuidedSectionExtract (
              &SectionAttribute
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "GetInfo from guided section Failed - %r\n", Status));
     return Status;
   }
@@ -1546,7 +1546,7 @@ CustomGuidedSectionExtract (
     AllocatedOutputBuffer = AllocatePool (OutputBufferSize);
     if (AllocatedOutputBuffer == NULL) {
       if (ScratchBuffer != NULL) {
-        FreePool (ScratchBuffer);
+        FreePool(ScratchBuffer);
       }
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1562,15 +1562,15 @@ CustomGuidedSectionExtract (
              ScratchBuffer,
              AuthenticationStatus
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Decode failed
     //
     if (AllocatedOutputBuffer != NULL) {
-      CoreFreePool (AllocatedOutputBuffer);
+      CoreFreePool(AllocatedOutputBuffer);
     }
     if (ScratchBuffer != NULL) {
-      CoreFreePool (ScratchBuffer);
+      CoreFreePool(ScratchBuffer);
     }
     DEBUG ((DEBUG_ERROR, "Extract guided section Failed - %r\n", Status));
     return Status;
@@ -1594,7 +1594,7 @@ CustomGuidedSectionExtract (
   // Free unused scratch buffer.
   //
   if (ScratchBuffer != NULL) {
-    CoreFreePool (ScratchBuffer);
+    CoreFreePool(ScratchBuffer);
   }
 
   return EFI_SUCCESS;

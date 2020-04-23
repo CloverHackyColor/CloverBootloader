@@ -128,7 +128,7 @@ Returns:
              &gPciBusComponentName,
              &gPciBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   
   InitializePciDevicePool ();
 
@@ -190,7 +190,7 @@ Returns:
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -213,7 +213,7 @@ Returns:
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -260,7 +260,7 @@ Returns:
   //
   Status = PciEnumerator (Controller);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -342,7 +342,7 @@ Returns:
     //
     Status = DeRegisterPciDevice (Controller, ChildHandleBuffer[Index]);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }

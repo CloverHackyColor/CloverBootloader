@@ -403,7 +403,7 @@ CoreCreateEventInternal (
        break;
      }
   }
-  if(EFI_ERROR (Status)) {
+  if(EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -762,8 +762,8 @@ CoreCloseEvent (
   //
   CoreUnregisterProtocolNotify (Event);
 
-  Status = CoreFreePool (Event);
-//  ASSERT_EFI_ERROR (Status);
+  Status = CoreFreePool(Event);
+//  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

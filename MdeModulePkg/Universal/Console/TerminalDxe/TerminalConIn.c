@@ -89,7 +89,7 @@ TerminalConInReset (
   TerminalDevice->EfiKeyFiFo->Head  = TerminalDevice->EfiKeyFiFo->Tail;
   TerminalDevice->EfiKeyFiFoForNotify->Head = TerminalDevice->EfiKeyFiFoForNotify->Tail;
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       (EFI_PERIPHERAL_REMOTE_CONSOLE | EFI_P_EC_CONTROLLER_ERROR),
@@ -130,7 +130,7 @@ TerminalConInReadKeyStroke (
   TerminalDevice  = TERMINAL_CON_IN_DEV_FROM_THIS (This);
 
   Status = ReadKeyStrokeWorker (TerminalDevice, &KeyData);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -220,7 +220,7 @@ TerminalConInResetEx (
   TerminalDevice = TERMINAL_CON_IN_EX_DEV_FROM_THIS (This);
 
   Status = TerminalDevice->SimpleInput.Reset (&TerminalDevice->SimpleInput, ExtendedVerification);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -424,7 +424,7 @@ TerminalConInUnregisterKeyNotify (
       //
       RemoveEntryList (&CurrentNotify->NotifyEntry);
 
-      gBS->FreePool (CurrentNotify);
+      gBS->FreePool(CurrentNotify);
       return EFI_SUCCESS;
     }
   }
@@ -552,7 +552,7 @@ TerminalConInTimerHandler (
                         (EFI_STOP_BITS_TYPE) (Mode->StopBits)
                         );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       TerminalDevice->SerialInTimeOut = 0;
     } else {
       TerminalDevice->SerialInTimeOut = SerialInTimeOut;
@@ -564,7 +564,7 @@ TerminalConInTimerHandler (
   // successfully reports EFI_SERIAL_INPUT_BUFFER_EMPTY.
   //
   Status = SerialIo->GetControl (SerialIo, &Control);
-  if (EFI_ERROR (Status) || ((Control & EFI_SERIAL_INPUT_BUFFER_EMPTY) == 0)) {
+  if (EFI_ERROR(Status) || ((Control & EFI_SERIAL_INPUT_BUFFER_EMPTY) == 0)) {
     //
     // Fetch all the keys in the serial buffer,
     // and insert the byte stream into RawFIFO.
@@ -573,7 +573,7 @@ TerminalConInTimerHandler (
 
       Status = GetOneKeyFromSerial (TerminalDevice->SerialIo, &Input);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         if (Status == EFI_DEVICE_ERROR) {
           REPORT_STATUS_CODE_WITH_DEVICE_PATH (
             EFI_ERROR_CODE | EFI_ERROR_MINOR,
@@ -677,7 +677,7 @@ GetOneKeyFromSerial (
   //
   Status  = SerialIo->Read (SerialIo, &Size, Output);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 
     if (Status == EFI_TIMEOUT) {
       return EFI_NOT_READY;
@@ -1339,7 +1339,7 @@ UnicodeToEfiKey (
 
   TimerStatus = gBS->CheckEvent (TerminalDevice->TwoSecondTimeOut);
 
-  if (!EFI_ERROR (TimerStatus)) {
+  if (!EFI_ERROR(TimerStatus)) {
     UnicodeToEfiKeyFlushState (TerminalDevice);
     TerminalDevice->ResetState = RESET_STATE_DEFAULT;
   }
@@ -1351,7 +1351,7 @@ UnicodeToEfiKey (
       // Check to see if the 2 seconds timer has expired
       //
       TimerStatus = gBS->CheckEvent (TerminalDevice->TwoSecondTimeOut);
-      if (!EFI_ERROR (TimerStatus)) {
+      if (!EFI_ERROR(TimerStatus)) {
         UnicodeToEfiKeyFlushState (TerminalDevice);
         TerminalDevice->ResetState = RESET_STATE_DEFAULT;
       }
@@ -1814,7 +1814,7 @@ UnicodeToEfiKey (
                       TimerRelative,
                       (UINT64)20000000
                       );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       continue;
     }
 

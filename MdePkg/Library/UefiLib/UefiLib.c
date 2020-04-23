@@ -158,7 +158,7 @@ EfiCreateProtocolNotifyEvent(
                   NotifyContext,
                   &Event
                   );
- // ASSERT_EFI_ERROR (Status);
+ // ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return NULL;
   }
@@ -173,7 +173,7 @@ EfiCreateProtocolNotifyEvent(
                   Registration
                   );
 
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return NULL;
   }
@@ -235,7 +235,7 @@ EfiNamedEventListen (
                   (VOID *) NotifyContext,
                   &Event
                   );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -259,7 +259,7 @@ EfiNamedEventListen (
                   Event,
                   RegistrationLocal
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -295,7 +295,7 @@ EfiNamedEventSignal (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-// ASSERT_EFI_ERROR (Status);
+// ASSERT_EFI_ERROR(Status);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -305,7 +305,7 @@ EfiNamedEventSignal (
                   (EFI_GUID *) Name,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -343,7 +343,7 @@ EfiEventGroupSignal (
                   EventGroup,
                   &Event
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -585,7 +585,7 @@ EfiTestManagedDevice (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gBS->CloseProtocol (
            ControllerHandle,
            (EFI_GUID *) ProtocolGuid,
@@ -649,7 +649,7 @@ EfiTestChildHandle (
                   &OpenInfoBuffer,
                   &EntryCount
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -665,7 +665,7 @@ EfiTestChildHandle (
     }
   }
 
-  FreePool (OpenInfoBuffer);
+  FreePool(OpenInfoBuffer);
   return Status;
 }
 
@@ -992,7 +992,7 @@ AddUnicodeString (
       //
       NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (3, Language);
       if (NewUnicodeStringTable[NumberOfEntries].Language == NULL) {
-        FreePool (NewUnicodeStringTable);
+        FreePool(NewUnicodeStringTable);
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -1010,8 +1010,8 @@ AddUnicodeString (
                                                               UnicodeString
                                                               );
       if (NewUnicodeStringTable[NumberOfEntries].UnicodeString == NULL) {
-        FreePool (NewUnicodeStringTable[NumberOfEntries].Language);
-        FreePool (NewUnicodeStringTable);
+        FreePool(NewUnicodeStringTable[NumberOfEntries].Language);
+        FreePool(NewUnicodeStringTable);
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -1025,7 +1025,7 @@ AddUnicodeString (
       // Free the old Unicode String Table
       //
       if (*UnicodeStringTable != NULL) {
-        FreePool (*UnicodeStringTable);
+        FreePool(*UnicodeStringTable);
       }
 
       //
@@ -1203,7 +1203,7 @@ AddUnicodeString2 (
   //
   NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (AsciiStrSize(Language), Language);
   if (NewUnicodeStringTable[NumberOfEntries].Language == NULL) {
-    FreePool (NewUnicodeStringTable);
+    FreePool(NewUnicodeStringTable);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1217,8 +1217,8 @@ AddUnicodeString2 (
   //
   NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (StrSize (UnicodeString), UnicodeString);
   if (NewUnicodeStringTable[NumberOfEntries].UnicodeString == NULL) {
-    FreePool (NewUnicodeStringTable[NumberOfEntries].Language);
-    FreePool (NewUnicodeStringTable);
+    FreePool(NewUnicodeStringTable[NumberOfEntries].Language);
+    FreePool(NewUnicodeStringTable);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1232,7 +1232,7 @@ AddUnicodeString2 (
   // Free the old Unicode String Table
   //
   if (*UnicodeStringTable != NULL) {
-    FreePool (*UnicodeStringTable);
+    FreePool(*UnicodeStringTable);
   }
 
   //
@@ -1278,20 +1278,20 @@ FreeUnicodeStringTable (
     //
     // Free the Language string from the Unicode String Table
     //
-    FreePool (UnicodeStringTable[Index].Language);
+    FreePool(UnicodeStringTable[Index].Language);
 
     //
     // Free the Unicode String from the Unicode String Table
     //
     if (UnicodeStringTable[Index].UnicodeString != NULL) {
-      FreePool (UnicodeStringTable[Index].UnicodeString);
+      FreePool(UnicodeStringTable[Index].UnicodeString);
     }
   }
 
   //
   // Free the Unicode String Table itself
   //
-  FreePool (UnicodeStringTable);
+  FreePool(UnicodeStringTable);
 
   return EFI_SUCCESS;
 }
@@ -1356,7 +1356,7 @@ GetVariable (
   // Get the variable data.
   //
   Status = gRT->GetVariable ((CHAR16 *) Name, (EFI_GUID *) Guid, NULL, &Size, Value);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool(Value);
     return NULL;
   }
@@ -1456,7 +1456,7 @@ GetVariable2 (
   // Get the variable data.
   //
   Status = gRT->GetVariable ((CHAR16 *) Name, (EFI_GUID *) Guid, NULL, &BufferSize, *Value);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool(*Value);
     *Value = NULL;
   }
@@ -1781,7 +1781,7 @@ EfiLocateProtocolBuffer (
                   &NoHandles,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1793,11 +1793,11 @@ EfiLocateProtocolBuffer (
                   NoHandles * sizeof (VOID *),
                   (VOID **)Buffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Free the handle buffer
     //
-    gBS->FreePool (HandleBuffer);
+    gBS->FreePool(HandleBuffer);
     return EFI_OUT_OF_RESOURCES;
   }
   ZeroMem (*Buffer, NoHandles * sizeof (VOID *));
@@ -1814,7 +1814,7 @@ EfiLocateProtocolBuffer (
                     Protocol,
                     &((*Buffer)[*NoProtocols])
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       (*NoProtocols)++;
     }
   }
@@ -1822,13 +1822,13 @@ EfiLocateProtocolBuffer (
   //
   // Free the handle buffer
   //
-  gBS->FreePool (HandleBuffer);
+  gBS->FreePool(HandleBuffer);
 
   //
   // Make sure at least one protocol instance was found
   //
   if (*NoProtocols == 0) {
-    gBS->FreePool (*Buffer);
+    gBS->FreePool(*Buffer);
     *Buffer = NULL;
     return EFI_NOT_FOUND;
   }
@@ -1935,7 +1935,7 @@ EfiOpenFileByDevicePath (
                   FilePath,
                   &FileSystemHandle
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = gBS->OpenProtocol (
@@ -1946,7 +1946,7 @@ EfiOpenFileByDevicePath (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1955,7 +1955,7 @@ EfiOpenFileByDevicePath (
   // we have to release LastFile on error.
   //
   Status = FileSystem->OpenVolume (FileSystem, &LastFile);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2007,9 +2007,9 @@ EfiOpenFileByDevicePath (
     // no longer needed.
     //
     if (AlignedPathName != NULL) {
-      FreePool (AlignedPathName);
+      FreePool(AlignedPathName);
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto CloseLastFile;
     }
 
@@ -2031,6 +2031,6 @@ CloseLastFile:
   // We are on the error path; we must have set an error Status for returning
   // to the caller.
   //
-  ASSERT (EFI_ERROR (Status));
+  ASSERT (EFI_ERROR(Status));
   return Status;
 }

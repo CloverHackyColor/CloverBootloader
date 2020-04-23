@@ -462,7 +462,7 @@ InternalGetLocalDefinedSymbolByNameWorker (
     }
 
     TmpName = MachoGetSymbolName64 (Context, &SymbolTable[Index]);
-    if (AsciiStrCmp (Name, TmpName) == 0) {
+    if (AsciiStrCmp(Name, TmpName) == 0) {
       return &SymbolTable[Index];
     }
   }

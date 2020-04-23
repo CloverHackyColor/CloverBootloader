@@ -130,7 +130,7 @@ KbdControllerDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -159,7 +159,7 @@ KbdControllerDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -211,7 +211,7 @@ KbdControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -234,7 +234,7 @@ KbdControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -299,7 +299,7 @@ KbdControllerDriverStart (
                   ConsoleIn,
                   &((ConsoleIn->ConIn).WaitForKey)
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status      = EFI_OUT_OF_RESOURCES;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
@@ -314,7 +314,7 @@ KbdControllerDriverStart (
                   ConsoleIn,
                   &(ConsoleIn->ConInEx.WaitForKeyEx)
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status      = EFI_OUT_OF_RESOURCES;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
@@ -328,7 +328,7 @@ KbdControllerDriverStart (
                   ConsoleIn,
                   &ConsoleIn->TimerEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status      = EFI_OUT_OF_RESOURCES;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
@@ -339,7 +339,7 @@ KbdControllerDriverStart (
                   TimerPeriodic,
                   KEYBOARD_TIMER_INTERVAL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status      = EFI_OUT_OF_RESOURCES;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
@@ -352,7 +352,7 @@ KbdControllerDriverStart (
                   ConsoleIn,
                   &ConsoleIn->KeyNotifyProcessEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status      = EFI_OUT_OF_RESOURCES;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
@@ -368,7 +368,7 @@ KbdControllerDriverStart (
   // Reset the keyboard device
   //
   Status = ConsoleIn->ConInEx.Reset (&ConsoleIn->ConInEx, FeaturePcdGet (PcdPs2KbdExtendedVerification));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status      = EFI_DEVICE_ERROR;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_NOT_DETECTED;
     goto ErrorExit;
@@ -408,7 +408,7 @@ KbdControllerDriverStart (
                   &ConsoleIn->ConInEx,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     StatusCode = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;
     goto ErrorExit;
   }
@@ -450,13 +450,13 @@ ErrorExit:
   //
   if (ConsoleIn != NULL) {
     Status1 = EFI_SUCCESS;
-    while (!EFI_ERROR (Status1) && (Status != EFI_DEVICE_ERROR)) {
+    while (!EFI_ERROR(Status1) && (Status != EFI_DEVICE_ERROR)) {
       Status1 = KeyboardRead (ConsoleIn, &Data);;
     }
   }
 
   if (ConsoleIn != NULL) {
-    gBS->FreePool (ConsoleIn);
+    gBS->FreePool(ConsoleIn);
   }
 
   gBS->CloseProtocol (
@@ -508,7 +508,7 @@ KbdControllerDriverStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = gBS->OpenProtocol (
@@ -519,7 +519,7 @@ KbdControllerDriverStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -544,7 +544,7 @@ KbdControllerDriverStop (
   // exhaust input data just in case there is still keyboard data left
   //
   Status = EFI_SUCCESS;
-  while (!EFI_ERROR (Status)) {
+  while (!EFI_ERROR(Status)) {
     Status = KeyboardRead (ConsoleIn, &Data);;
   }
   //
@@ -558,7 +558,7 @@ KbdControllerDriverStop (
                   &ConsoleIn->ConInEx,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -586,7 +586,7 @@ KbdControllerDriverStop (
   }
   KbdFreeNotifyList (&ConsoleIn->NotifyList);
   FreeUnicodeStringTable (ConsoleIn->ControllerNameTable);
-  gBS->FreePool (ConsoleIn);
+  gBS->FreePool(ConsoleIn);
 
   return EFI_SUCCESS;
 }
@@ -617,7 +617,7 @@ KbdFreeNotifyList (
                    KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE
                    );
     RemoveEntryList (ListHead->ForwardLink);
-    gBS->FreePool (NotifyNode);
+    gBS->FreePool(NotifyNode);
   }
 
   return EFI_SUCCESS;
@@ -653,7 +653,7 @@ InitializePs2Keyboard(
              &gPs2KeyboardComponentName,
              &gPs2KeyboardComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
 
   return Status;

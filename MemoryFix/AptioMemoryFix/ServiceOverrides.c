@@ -96,7 +96,7 @@ InstallBsOverrides (
     // Enforce memory pool creation when -aptiodump argument is used, but let it slip otherwise.
     //
     Status = AllocatePagesFromTop (EfiBootServicesData, PageNum, &UmmHeap, !gDumpMemArgPresent);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       SetMem((VOID *)UmmHeap, APTIOFIX_CUSTOM_POOL_ALLOCATOR_SIZE, 0);
       UmmSetHeap ((VOID *)UmmHeap);
 
@@ -225,9 +225,9 @@ MOStartImage (
     //
     Gop = NULL;
     Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, &Gop);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, &Gop);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         gBS->InstallMultipleProtocolInterfaces (
           &gST->ConsoleOutHandle,
           &gEfiGraphicsOutputProtocolGuid,
@@ -261,7 +261,7 @@ MOStartImage (
     // proper place and jumping back to it)
     //
     Status = PrepareJumpFromKernel ();
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Force boot.efi to use our copy of system table
       //
@@ -385,7 +385,7 @@ MOAllocatePool (
  */
 EFI_STATUS
 EFIAPI
-MOFreePool (
+MOFreePool(
   IN VOID  *Buffer
   )
 {
@@ -395,7 +395,7 @@ MOFreePool (
   if (UmmFree (Buffer))
     return EFI_SUCCESS;
 
-  return mStoredFreePool (Buffer);
+  return mStoredFreePool(Buffer);
 }
 
 /** gBS->GetMemoryMap override:
@@ -497,7 +497,7 @@ MOExitBootServices (
     Status = ForceExitBootServices (mStoredExitBootServices, ImageHandle, MapKey);
   }
 
-  if (EFI_ERROR (Status))
+  if (EFI_ERROR(Status))
     return Status;
 
   if (!gHibernateWake) {
@@ -537,7 +537,7 @@ ForceExitBootServices (
   //
   Status = ExitBs (ImageHandle, MapKey);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Just report error as var in nvram to be visible from macOS with "nvram -p"
     //
@@ -560,14 +560,14 @@ ForceExitBootServices (
       // We have the latest memory map and its key, try again!
       //
       Status = ExitBs (ImageHandle, MapKey);
-      if (EFI_ERROR (Status))
+      if (EFI_ERROR(Status))
         Print (L"AMF: ExitBootServices failed twice - %r\n", Status);
     } else {
       Print (L"AMF: Failed to get MapKey for ExitBootServices - %r\n", Status);
       Status = EFI_INVALID_PARAMETER;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Print (L"Waiting 10 secs...\n");
       gBS->Stall (SECONDS_TO_MICROSECONDS (10));
     }

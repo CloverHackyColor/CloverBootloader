@@ -59,12 +59,12 @@ BmForEachVariable (
     if (Status == EFI_NOT_FOUND) {
       break;
     }
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Visitor (Name, &Guid, Context);
   }
 
-  FreePool (Name);
+  FreePool(Name);
 }
 
 /**
@@ -129,11 +129,11 @@ BmGetFreeOptionNumber (
     }
   }
   if (OptionOrder != NULL) {
-    FreePool (OptionOrder);
+    FreePool(OptionOrder);
   }
 
   if (BootNext != NULL) {
-    FreePool (BootNext);
+    FreePool(BootNext);
   }
 
   //
@@ -237,9 +237,9 @@ structure.
     // Lock the PlatformRecovery####
     //
     Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = VariableLock->RequestToLock (VariableLock, OptionName, &gEfiGlobalVariableGuid);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     VariableAttributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
   }
@@ -251,7 +251,7 @@ structure.
                   VariableSize,
                   Variable
                   );
-  FreePool (Variable);
+  FreePool(Variable);
 
   return Status;
 }
@@ -294,7 +294,7 @@ BmAddOptionNumberToOrderVariable (
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Position       = MIN (Position, OptionOrderSize / sizeof (UINT16));
 
     NewOptionOrder = AllocatePool (OptionOrderSize + sizeof (UINT16));
@@ -312,11 +312,11 @@ BmAddOptionNumberToOrderVariable (
                     OptionOrderSize + sizeof (UINT16),
                     NewOptionOrder
                     );
-    FreePool (NewOptionOrder);
+    FreePool(NewOptionOrder);
   }
 
   if (OptionOrder != NULL) {
-    FreePool (OptionOrder);
+    FreePool(OptionOrder);
   }
 
   return Status;
@@ -368,7 +368,7 @@ EfiBootManagerAddLoadOptionVariable (
   //
   if (Option->OptionNumber == LoadOptionNumberUnassigned) {
     Status = BmGetFreeOptionNumber (Option->OptionType, &OptionNumber);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Option->OptionNumber = OptionNumber;
@@ -379,12 +379,12 @@ EfiBootManagerAddLoadOptionVariable (
   }
 
   Status = BmAddOptionNumberToOrderVariable (mBmLoadOptionOrderName[Option->OptionType], (UINT16) Option->OptionNumber, Position);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Save the Boot#### or Driver#### variable
     //
     Status = EfiBootManagerLoadOptionToVariable (Option);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Remove the #### from *Order variable when the Driver####/SysPrep####/Boot#### cannot be saved.
       //
@@ -446,9 +446,9 @@ EfiBootManagerSortLoadOptionVariable (
   //
   // Changing the *Order content without increasing its size with current variable implementation shouldn't fail.
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
-  FreePool (OptionOrder);
+  FreePool(OptionOrder);
   EfiBootManagerFreeLoadOptions (LoadOption, LoadOptionCount);
 }
 
@@ -595,7 +595,7 @@ EfiBootManagerDeleteLoadOptionVariable (
       }
     }
     if (OptionOrder != NULL) {
-      FreePool (OptionOrder);
+      FreePool(OptionOrder);
     }
   }
 
@@ -895,7 +895,7 @@ EfiBootManagerVariableToLoadOptionEx (
   // Validate *#### variable data.
   //
   if (!BmValidateOption(Variable, VariableSize)) {
-    FreePool (Variable);
+    FreePool(Variable);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -945,11 +945,11 @@ EfiBootManagerVariableToLoadOptionEx (
              OptionalData,
              OptionalDataSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   CopyGuid (&Option->VendorGuid, VendorGuid);
 
-  FreePool (Variable);
+  FreePool(Variable);
   return Status;
 }
 
@@ -1009,7 +1009,7 @@ BmCollectLoadOptions (
       OptionType == LoadOptionTypePlatformRecovery
      )) {
     Status = EfiBootManagerVariableToLoadOptionEx (Name, Guid, &Option);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       for (Index = 0; Index < Param->OptionCount; Index++) {
         if (Param->Options[Index].OptionNumber > Option.OptionNumber) {
           break;
@@ -1080,7 +1080,7 @@ EfiBootManagerGetLoadOptions (
       UnicodeSPrint (OptionName, sizeof (OptionName), L"%s%04x", mBmLoadOptionName[LoadOptionType], OptionNumber);
 
       Status = EfiBootManagerVariableToLoadOption (OptionName, &Options[OptionIndex]);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((EFI_D_INFO, "[Bds] %s doesn't exist - Update ****Order variable to remove the reference!!", OptionName));
         EfiBootManagerDeleteLoadOptionVariable (OptionNumber, LoadOptionType);
       } else {
@@ -1090,7 +1090,7 @@ EfiBootManagerGetLoadOptions (
     }
 
     if (OptionOrder != NULL) {
-      FreePool (OptionOrder);
+      FreePool(OptionOrder);
     }
 
     if (OptionIndex < *OptionCount) {
@@ -1134,13 +1134,13 @@ EfiBootManagerFreeLoadOption (
   }
 
   if (LoadOption->Description != NULL) {
-    FreePool (LoadOption->Description);
+    FreePool(LoadOption->Description);
   }
   if (LoadOption->FilePath != NULL) {
-    FreePool (LoadOption->FilePath);
+    FreePool(LoadOption->FilePath);
   }
   if (LoadOption->OptionalData != NULL) {
-    FreePool (LoadOption->OptionalData);
+    FreePool(LoadOption->OptionalData);
   }
 
   return EFI_SUCCESS;
@@ -1174,7 +1174,7 @@ EfiBootManagerFreeLoadOptions (
     EfiBootManagerFreeLoadOption (&Option[Index]);
   }
 
-  FreePool (Option);
+  FreePool(Option);
 
   return EFI_SUCCESS;
 }
@@ -1296,7 +1296,7 @@ BmGetNextLoadOptionBuffer (
     // Only free the full path created *inside* this routine
     //
     if ((PreFullPath != NULL) && (PreFullPath != *FullPath)) {
-      FreePool (PreFullPath);
+      FreePool(PreFullPath);
     }
     if (CurFullPath == NULL) {
       break;
@@ -1309,13 +1309,13 @@ BmGetNextLoadOptionBuffer (
       RamDiskDevicePath = BmGetRamDiskDevicePath (FilePath);
       if (RamDiskDevicePath != NULL) {
         BmDestroyRamDisk (RamDiskDevicePath);
-        FreePool (RamDiskDevicePath);
+        FreePool(RamDiskDevicePath);
       }
 
       //
       // Free the invalid load option buffer.
       //
-      FreePool (FileBuffer);
+      FreePool(FileBuffer);
       FileBuffer = NULL;
     }
   } while (FileBuffer == NULL);
@@ -1396,7 +1396,7 @@ EfiBootManagerProcessLoadOption (
     PreFullPath = CurFullPath;
     FileBuffer  = BmGetNextLoadOptionBuffer (LoadOption->OptionType, LoadOption->FilePath, &CurFullPath, &FileSize);
     if (PreFullPath != NULL) {
-      FreePool (PreFullPath);
+      FreePool(PreFullPath);
     }
     if (FileBuffer == NULL) {
       break;
@@ -1409,11 +1409,11 @@ EfiBootManagerProcessLoadOption (
                     FileSize,
                     &ImageHandle
                     );
-    FreePool (FileBuffer);
+    FreePool(FileBuffer);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **)&ImageInfo);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       ImageInfo->LoadOptionsSize = LoadOption->OptionalDataSize;
       ImageInfo->LoadOptions = LoadOption->OptionalData;
@@ -1440,7 +1440,7 @@ EfiBootManagerProcessLoadOption (
   }
 
   if (CurFullPath != NULL) {
-    FreePool (CurFullPath);
+    FreePool(CurFullPath);
   }
 
   return Status;

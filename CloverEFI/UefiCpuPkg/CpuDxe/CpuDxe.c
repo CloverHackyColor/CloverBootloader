@@ -846,7 +846,7 @@ SetGcdMemorySpaceAttributes (
              &StartIndex,
              &EndIndex
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -944,7 +944,7 @@ RefreshGcdMemoryAttributes (
                   &NumberOfDescriptors,
                   &MemorySpaceMap
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   DefaultMemoryType = (UINT8) MtrrGetDefaultMemoryType ();
   DefaultAttributes = GetMemorySpaceAttributeFromMtrrType (DefaultMemoryType);
@@ -1069,7 +1069,7 @@ RefreshGcdMemoryAttributes (
   // Free memory space map allocated by GCD service GetMemorySpaceMap ()
   //
   if (MemorySpaceMap != NULL) {
-    FreePool (MemorySpaceMap);
+    FreePool(MemorySpaceMap);
   }
 
   mIsFlushingGCD = FALSE;
@@ -1213,14 +1213,14 @@ InitInterruptDescriptorTable (
   IdtPtr->Limit = (UINT16) (sizeof (gIdtTable) - 1);
   AsmWriteIdtr (IdtPtr);
 
-  FreePool (IdtPtrAlignmentBuffer);
+  FreePool(IdtPtrAlignmentBuffer);
 
   //
   // Initialize Exception Handlers
   //
   for (Index = OldIdtSize; Index < 32; Index++) {
     Status = CpuRegisterInterruptHandler (&gCpu, Index, CommonExceptionHandler);
-//    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -1301,8 +1301,8 @@ InitializeCpu (
                   &gEfiCpuArchProtocolGuid, &gCpu,
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1322,7 +1322,7 @@ InitializeCpu (
                   &gIdleLoopEventGuid,
                   &IdleLoopEvent
                   );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

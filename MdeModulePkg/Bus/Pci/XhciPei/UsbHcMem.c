@@ -38,7 +38,7 @@ UsbHcAllocMemBlock (
              &TempPtr
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   ZeroMem ((VOID *) (UINTN) TempPtr, EFI_PAGES_TO_SIZE (PageNumber));
@@ -60,7 +60,7 @@ UsbHcAllocMemBlock (
              &TempPtr
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   ZeroMem ((VOID *) (UINTN) TempPtr, EFI_PAGES_TO_SIZE (PageNumber));
@@ -73,7 +73,7 @@ UsbHcAllocMemBlock (
              &MappedAddr,
              &Mapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   ZeroMem ((VOID *) (UINTN) BufHost, EFI_PAGES_TO_SIZE (Pages));
@@ -345,7 +345,7 @@ UsbHcInitMemPool (
              PageNumber,
              &TempPtr
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   ZeroMem ((VOID *) (UINTN) TempPtr, EFI_PAGES_TO_SIZE (PageNumber));
@@ -598,7 +598,7 @@ UsbHcAllocateAlignedPages (
                &DeviceMemory,
                Mapping
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     AlignedMemory = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
@@ -613,7 +613,7 @@ UsbHcAllocateAlignedPages (
                &DeviceMemory,
                Mapping
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     AlignedMemory = (UINTN) Memory;

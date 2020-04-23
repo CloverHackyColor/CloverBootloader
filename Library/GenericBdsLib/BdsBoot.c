@@ -368,7 +368,7 @@ BdsCreateLegacyBootOption (
                         (EFI_DEVICE_PATH_PROTOCOL *) NewBbsDevPathNode
                         );
    if (CurrentBbsDevPath == NULL) {
-    FreePool (NewBbsDevPathNode);
+    FreePool(NewBbsDevPathNode);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -383,8 +383,8 @@ BdsCreateLegacyBootOption (
 
   Buffer = AllocateZeroPool (BufferSize);
   if (Buffer == NULL) {
-    FreePool (NewBbsDevPathNode);
-    FreePool (CurrentBbsDevPath);
+    FreePool(NewBbsDevPathNode);
+    FreePool(CurrentBbsDevPath);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -427,20 +427,20 @@ BdsCreateLegacyBootOption (
                   Buffer
                   );
 
-  FreePool (Buffer);
+  FreePool(Buffer);
   
   Buffer = NULL;
 
   NewBootOrderList = AllocateZeroPool (*BootOrderListSize + sizeof (UINT16));
   if (NULL == NewBootOrderList) {
-    FreePool (NewBbsDevPathNode);
-    FreePool (CurrentBbsDevPath);
+    FreePool(NewBbsDevPathNode);
+    FreePool(CurrentBbsDevPath);
     return EFI_OUT_OF_RESOURCES;
   }
 
   if (*BootOrderList != NULL) {
     CopyMem (NewBootOrderList, *BootOrderList, *BootOrderListSize);
-    FreePool (*BootOrderList);
+    FreePool(*BootOrderList);
   }
 
   BootOrderLastIndex                    = (UINTN) (*BootOrderListSize / sizeof (UINT16));
@@ -448,8 +448,8 @@ BdsCreateLegacyBootOption (
   *BootOrderListSize += sizeof (UINT16);
   *BootOrderList = NewBootOrderList;
 
-  FreePool (NewBbsDevPathNode);
-  FreePool (CurrentBbsDevPath);
+  FreePool(NewBbsDevPathNode);
+  FreePool(CurrentBbsDevPath);
   return Status;
 }
 
@@ -536,7 +536,7 @@ BdsDeleteAllInvalidLegacyBootOptions (
   BbsEntry      = NULL;
 
   Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -585,7 +585,7 @@ BdsDeleteAllInvalidLegacyBootOptions (
           );
         continue;
       } else {
-        FreePool (BootOrder);
+        FreePool(BootOrder);
         return EFI_OUT_OF_RESOURCES;
       }
     }
@@ -595,7 +595,7 @@ BdsDeleteAllInvalidLegacyBootOptions (
     // 
     if (!BdsIsLegacyBootOption (BootOptionVar, &BbsEntry, &BbsIndex)) {
       if (BootOptionVar!= NULL) {
-        FreePool (BootOptionVar);
+        FreePool(BootOptionVar);
       }
       Index++;
       continue;
@@ -627,7 +627,7 @@ BdsDeleteAllInvalidLegacyBootOptions (
     }
 
     if (BootOptionVar != NULL) {
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
     }
     //
     // should delete
@@ -650,7 +650,7 @@ BdsDeleteAllInvalidLegacyBootOptions (
                   BootOrder
                   );
   if (BootOrder != NULL) {
-    FreePool (BootOrder);
+    FreePool(BootOrder);
   }
 
   return Status;
@@ -714,7 +714,7 @@ BdsFindLegacyBootOptionByDevTypeAndName (
     // Skip Non-legacy boot option
     //
     if (!BdsIsLegacyBootOption (BootOptionVar, &BbsEntry, BbsIndex)) {
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
       continue;
     }
 
@@ -722,14 +722,14 @@ BdsFindLegacyBootOptionByDevTypeAndName (
         (BbsEntry->DeviceType != DevType) ||
         (StrCmp (DevName, (CHAR16*)(BootOptionVar + sizeof (UINT32) + sizeof (UINT16))) != 0)
        ) {
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
       continue;
     }
 
     *Attribute    = *(UINT32 *) BootOptionVar;
     *OptionNumber = BootOrder[Index];
     Found         = TRUE;
-    FreePool (BootOptionVar);
+    FreePool(BootOptionVar);
     break;
   }
 
@@ -789,7 +789,7 @@ BdsCreateOneLegacyBootOption (
             );
   BbsItem->BootPriority = 0x00;
 
-  FreePool (DevPath);
+  FreePool(DevPath);
 
   return Status;
 }
@@ -830,7 +830,7 @@ BdsAddNonExistingLegacyBootOptions (
   LocalBbsTable = NULL;
 
   Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -880,7 +880,7 @@ BdsAddNonExistingLegacyBootOptions (
                 &BootOrder,
                 &BootOrderSize
                 );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
       BbsIndex     = Index;
@@ -898,7 +898,7 @@ BdsAddNonExistingLegacyBootOptions (
                   BootOrder
                   );
   if (BootOrder != NULL) {
-    FreePool (BootOrder);
+    FreePool(BootOrder);
   }
 
   return Status;
@@ -1063,7 +1063,7 @@ BdsCreateDevOrder (
                   TotalSize,
                   DevOrder
                   );
-  FreePool (DevOrder);
+  FreePool(DevOrder);
 
   return Status;
 }
@@ -1133,7 +1133,7 @@ BdsUpdateLegacyDevOrder (
   NewDevPtr     = NULL;
 
   Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1144,7 +1144,7 @@ BdsUpdateLegacyDevOrder (
                          &BbsCount,
                          &LocalBbsTable
                          );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1375,7 +1375,7 @@ BdsUpdateLegacyDevOrder (
     }
   }
 
-  FreePool (DevOrder);
+  FreePool(DevOrder);
 
   Status = gRT->SetVariable (
                   VAR_LEGACY_DEV_ORDER,
@@ -1384,7 +1384,7 @@ BdsUpdateLegacyDevOrder (
                   TotalSize,
                   NewDevOrder
                   );
-  FreePool (NewDevOrder);
+  FreePool(NewDevOrder);
 
   return Status;
 }
@@ -1434,7 +1434,7 @@ BdsSetBootPriority4SameTypeDev (
   }
 
   if ((UINT8 *) DevOrderPtr >= (UINT8 *) DevOrder + DevOrderSize) {
-    FreePool (DevOrder);
+    FreePool(DevOrder);
     return EFI_NOT_FOUND;
   }
 
@@ -1456,7 +1456,7 @@ BdsSetBootPriority4SameTypeDev (
     }
   }
 
-  FreePool (DevOrder);
+  FreePool(DevOrder);
   return EFI_SUCCESS;
 }
 
@@ -1551,7 +1551,7 @@ BdsRefreshBbsTableForBoot (
   DevType       = BBS_UNKNOWN;
 
   Status        = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1589,7 +1589,7 @@ BdsRefreshBbsTableForBoot (
               LocalBbsTable,
               &Priority
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1628,7 +1628,7 @@ BdsRefreshBbsTableForBoot (
     Ptr += StrSize ((UINT16 *) Ptr);
     DevPath = (EFI_DEVICE_PATH_PROTOCOL *) Ptr;
     if (BBS_DEVICE_PATH != DevPath->Type || BBS_BBS_DP != DevPath->SubType) {
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
       continue;
     }
 
@@ -1643,7 +1643,7 @@ BdsRefreshBbsTableForBoot (
       //
       // We don't want to process twice for a device type
       //
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
       continue;
     }
 
@@ -1656,16 +1656,16 @@ BdsRefreshBbsTableForBoot (
               LocalBbsTable,
               &Priority
               );
-    FreePool (BootOptionVar);
-    if (EFI_ERROR (Status)) {
+    FreePool(BootOptionVar);
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
 
-  FreePool (DeviceType);
+  FreePool(DeviceType);
 
   if (BootOrder != NULL) {
-    FreePool (BootOrder);
+    FreePool(BootOrder);
   }
 
   DEBUG_CODE_BEGIN();
@@ -1695,7 +1695,7 @@ BdsLibDoLegacyBoot (
 //  EFI_EVENT                 LegacyBootEvent;
 
   Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // If no LegacyBios protocol we do not support legacy boot
     //
@@ -1719,7 +1719,7 @@ BdsLibDoLegacyBoot (
                NULL, 
                &LegacyBootEvent
                );
-//    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR(Status);
              */
   //);
 
@@ -1771,7 +1771,7 @@ IsBootOptionValidNVVarialbe (
     Valid = TRUE;
   }
 
-  FreePool (BootOption);
+  FreePool(BootOption);
 
   return Valid;
 }
@@ -1809,7 +1809,7 @@ BdsMatchUsbClass (
   // Check Vendor Id and Product Id.
   //
   Status = UsbIo->UsbGetDeviceDescriptor (UsbIo, &DevDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -1832,7 +1832,7 @@ BdsMatchUsbClass (
     // Protocol in Interface Descriptor instead.
     //
     Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &IfDesc);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return FALSE;
     }
 
@@ -1899,7 +1899,7 @@ BdsMatchUsbWwid (
   // Check Vendor Id and Product Id.
   //
   Status = UsbIo->UsbGetDeviceDescriptor (UsbIo, &DevDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if ((DevDesc.IdVendor != UsbWwid->VendorId) ||
@@ -1911,7 +1911,7 @@ BdsMatchUsbWwid (
   // Check Interface Number.
   //
   Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &IfDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if (IfDesc.InterfaceNumber != UsbWwid->InterfaceNumber) {
@@ -1931,7 +1931,7 @@ BdsMatchUsbWwid (
   TableSize = 0;
   LangIdTable = NULL;
   Status = UsbIo->UsbGetSupportedLanguages (UsbIo, &LangIdTable, &TableSize);
-  if (EFI_ERROR (Status) || (TableSize == 0) || (LangIdTable == NULL)) {
+  if (EFI_ERROR(Status) || (TableSize == 0) || (LangIdTable == NULL)) {
     return FALSE;
   }
 
@@ -1955,18 +1955,18 @@ BdsMatchUsbWwid (
                       DevDesc.StrSerialNumber,
                       &SerialNumberStr
                       );
-    if (EFI_ERROR (Status) || (SerialNumberStr == NULL)) {
+    if (EFI_ERROR(Status) || (SerialNumberStr == NULL)) {
       continue;
     }
 
     Length = StrLen (SerialNumberStr);
     if ((Length >= CompareLen) &&
         (CompareMem (SerialNumberStr + Length - CompareLen, CompareStr, CompareLen * sizeof (CHAR16)) == 0)) {
-      FreePool (SerialNumberStr);
+      FreePool(SerialNumberStr);
       return TRUE;
     }
 
-    FreePool (SerialNumberStr);
+    FreePool(SerialNumberStr);
   }
 
   return FALSE;
@@ -2020,7 +2020,7 @@ BdsFindUsbDevice (
                   &UsbIoHandleCount,
                   &UsbIoHandleBuffer
                   );
-  if (EFI_ERROR (Status) || (UsbIoHandleCount == 0) || (UsbIoHandleBuffer == NULL)) {
+  if (EFI_ERROR(Status) || (UsbIoHandleCount == 0) || (UsbIoHandleBuffer == NULL)) {
     return NULL;
   }
 
@@ -2034,7 +2034,7 @@ BdsFindUsbDevice (
                     &gEfiUsbIoProtocolGuid,
                     (VOID **) &UsbIo
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -2076,7 +2076,7 @@ BdsFindUsbDevice (
                        0,
                        &ImageHandle
                        );
-        FreePool (FullDevicePath);
+        FreePool(FullDevicePath);
       } else {
         FullDevicePath = UsbIoDevicePath;
         Status = EFI_NOT_FOUND;
@@ -2086,7 +2086,7 @@ BdsFindUsbDevice (
       // If we didn't find an image directly, we need to try as if it is a removable device boot option
       // and load the image according to the default boot behavior for removable device.
       //
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // check if there is a bootable removable media could be found in this device path ,
         // and get the bootable media handle
@@ -2110,7 +2110,7 @@ BdsFindUsbDevice (
                           0,
                           &ImageHandle
                           );
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             //
             // The DevicePath failed, and it's not a valid
             // removable media device.
@@ -2125,7 +2125,7 @@ BdsFindUsbDevice (
     }
   }
 
-  FreePool (UsbIoHandleBuffer);
+  FreePool(UsbIoHandleBuffer);
   return ImageHandle;
 }
 
@@ -2220,7 +2220,7 @@ BdsExpandUsbShortFormDevicePath (
     // doesn't perform ConnectController here.
     //
     ImageHandle = BdsFindUsbDevice (TempDevicePath, ShortFormDevicePath);
-    FreePool (TempDevicePath);
+    FreePool(TempDevicePath);
   }
 
   return ImageHandle;
@@ -2270,7 +2270,7 @@ BdsLibBootViaBootOption (
   // EVT_SIGNAL_LEGACY_BOOT
   //
   Status = gBS->LocateProtocol (&gEfiAcpiS3SaveProtocolGuid, NULL, (VOID **) &AcpiS3Save);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     AcpiS3Save->S3Save (AcpiS3Save, NULL);
   }
   //
@@ -2371,7 +2371,7 @@ BdsLibBootViaBootOption (
       //
       // free the temporary device path created by BdsLibUpdateFvFileDevicePath()
       //
-      FreePool (DevicePath);
+      FreePool(DevicePath);
       DevicePath = Option->DevicePath;
     }
 
@@ -2402,7 +2402,7 @@ BdsLibBootViaBootOption (
     // If we didn't find an image directly, we need to try as if it is a removable device boot option
     // and load the image according to the default boot behavior for removable device.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // check if there is a bootable removable media could be found in this device path ,
       // and get the bootable media handle
@@ -2443,8 +2443,8 @@ BdsLibBootViaBootOption (
   }
 
   Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ImageInfo);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -2478,7 +2478,7 @@ BdsLibBootViaBootOption (
 
   Status = gBS->StartImage (ImageHandle, ExitDataSize, ExitData);
 //  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Report Status Code to indicate that boot failure
     //
@@ -2499,7 +2499,7 @@ Done:
   //
   BootLogo = NULL;
   StatusLogo = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
-  if (!EFI_ERROR (StatusLogo) && (BootLogo != NULL)) {
+  if (!EFI_ERROR(StatusLogo) && (BootLogo != NULL)) {
     BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
   }
 
@@ -2572,7 +2572,7 @@ BdsExpandPartitionPartialDevicePathToFull (
   // Delete the invalid HD_BOOT_DEVICE_PATH_VARIABLE_NAME variable.
   //
   if ((CachedDevicePath != NULL) && !IsDevicePathValid (CachedDevicePath, CachedDevicePathSize)) {
-    FreePool (CachedDevicePath);
+    FreePool(CachedDevicePath);
     CachedDevicePath = NULL;
     Status = gRT->SetVariable (
                     HD_BOOT_DEVICE_PATH_VARIABLE_NAME,
@@ -2581,8 +2581,8 @@ BdsExpandPartitionPartialDevicePathToFull (
                     0,
                     NULL
                     );
- //   ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+ //   ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return NULL;
     }
   }
@@ -2604,7 +2604,7 @@ BdsExpandPartitionPartialDevicePathToFull (
         // e.g. ACPI() /PCI()/ATA()/Partition()
         //
         Status = BdsLibConnectDevicePath (Instance);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           DeviceExist = TRUE;
           break;
         }
@@ -2634,14 +2634,14 @@ BdsExpandPartitionPartialDevicePathToFull (
         //
         TempNewDevicePath = CachedDevicePath;
         CachedDevicePath  = BdsLibDelPartMatchInstance (CachedDevicePath, Instance );
-        FreePool (TempNewDevicePath);
+        FreePool(TempNewDevicePath);
 
         //
         // Second, append the remaining path after the matched instance
         //
         TempNewDevicePath = CachedDevicePath;
         CachedDevicePath = AppendDevicePathInstance (Instance, CachedDevicePath );
-        FreePool (TempNewDevicePath);
+        FreePool(TempNewDevicePath);
         //
         // Save the matching Device Path so we don't need to do a connect all next time
         // Failure to set the variable only impacts the performance when next time expanding the short-form device path.
@@ -2656,9 +2656,9 @@ BdsExpandPartitionPartialDevicePathToFull (
       }
 
 	  if (Instance) {  
-        FreePool (Instance);
+        FreePool(Instance);
       }
-      FreePool (CachedDevicePath);
+      FreePool(CachedDevicePath);
       return FullDevicePath;
     }
   }
@@ -2669,7 +2669,7 @@ BdsExpandPartitionPartialDevicePathToFull (
   //
   BdsLibConnectAllDriversToAllControllers ();
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BlockIoHandleCount, &BlockIoBuffer);
-  if (EFI_ERROR (Status) || BlockIoHandleCount == 0 || BlockIoBuffer == NULL) {
+  if (EFI_ERROR(Status) || BlockIoHandleCount == 0 || BlockIoBuffer == NULL) {
     //
     // If there was an error or there are no device handles that support
     // the BLOCK_IO Protocol, then return.
@@ -2682,7 +2682,7 @@ BdsExpandPartitionPartialDevicePathToFull (
   for (Index = 0; Index < BlockIoHandleCount; Index++) {
 
     Status = gBS->HandleProtocol (BlockIoBuffer[Index], &gEfiDevicePathProtocolGuid, (VOID *) &BlockIoDevicePath);
-    if (EFI_ERROR (Status) || BlockIoDevicePath == NULL) {
+    if (EFI_ERROR(Status) || BlockIoDevicePath == NULL) {
       continue;
     }
 
@@ -2763,10 +2763,10 @@ BdsExpandPartitionPartialDevicePathToFull (
   }
 
   if (CachedDevicePath != NULL) {
-    FreePool (CachedDevicePath);
+    FreePool(CachedDevicePath);
   }
   if (BlockIoBuffer != NULL) {
-    FreePool (BlockIoBuffer);
+    FreePool(BlockIoBuffer);
   }
   return FullDevicePath;
 }
@@ -2919,13 +2919,13 @@ BdsLibDeleteOptionFromHandle (
                       );
 
     if (BootOptionVar == NULL) {
-      FreePool (BootOrder);
+      FreePool(BootOrder);
       return EFI_OUT_OF_RESOURCES;
     }
 
     if (!ValidateOption(BootOptionVar, BootOptionSize)) {
       BdsDeleteBootOption (BootOrder[Index], BootOrder, &BootOrderSize);
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
       Index++;
       continue;
     }
@@ -2942,11 +2942,11 @@ BdsLibDeleteOptionFromHandle (
     if ((OptionDevicePathSize == DevicePathSize) &&
         (CompareMem (DevicePath, OptionDevicePath, DevicePathSize) == 0)) {
       BdsDeleteBootOption (BootOrder[Index], BootOrder, &BootOrderSize);
-      FreePool (BootOptionVar);
+      FreePool(BootOptionVar);
       break;
     }
 
-    FreePool (BootOptionVar);
+    FreePool(BootOptionVar);
     Index++;
   }
 
@@ -2961,7 +2961,7 @@ BdsLibDeleteOptionFromHandle (
                   BootOrder
                   );
 
-  FreePool (BootOrder);
+  FreePool(BootOrder);
 
   return Status;
 }
@@ -3022,7 +3022,7 @@ BdsDeleteAllInvalidEfiBootOption (
                       &BootOptionSize
                       );
     if (NULL == BootOptionVar) {
-      FreePool (BootOrder);
+      FreePool(BootOrder);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -3040,7 +3040,7 @@ BdsDeleteAllInvalidEfiBootOption (
       //
       if ((DevicePathType (OptionDevicePath) == BBS_DEVICE_PATH) &&
           (DevicePathSubType (OptionDevicePath) == BBS_BBS_DP)) {
-        FreePool (BootOptionVar);
+        FreePool(BootOptionVar);
         Index++;
         continue;
       }
@@ -3060,9 +3060,9 @@ BdsDeleteAllInvalidEfiBootOption (
       //
       // Deleting variable with current variable implementation shouldn't fail.
       //
- //     ASSERT_EFI_ERROR (Status);
-      if (EFI_ERROR (Status)) {
-        FreePool (BootOptionVar);
+ //     ASSERT_EFI_ERROR(Status);
+      if (EFI_ERROR(Status)) {
+        FreePool(BootOptionVar);
         break;
       }
       //
@@ -3072,7 +3072,7 @@ BdsDeleteAllInvalidEfiBootOption (
       Corrupted        = FALSE;
     }
 
-    FreePool (BootOptionVar);
+    FreePool(BootOptionVar);
     Index++;
   }
 
@@ -3094,7 +3094,7 @@ BdsDeleteAllInvalidEfiBootOption (
                   BootOrder
                   );
 
-  FreePool (BootOrder);
+  FreePool(BootOrder);
 
   return Status;
 }
@@ -3208,10 +3208,10 @@ BdsLibEnumerateAllBootOption (
     if (!PlatLang) {
       return EFI_NOT_FOUND;
     }
-    if ((LastLang != NULL) && (AsciiStrCmp (LastLang, PlatLang) == 0)) {
+    if ((LastLang != NULL) && (AsciiStrCmp(LastLang, PlatLang) == 0)) {
       Status = BdsLibBuildOptionFromVar (BdsBootOptionList, L"BootOrder");
-      FreePool (LastLang);
-      FreePool (PlatLang);
+      FreePool(LastLang);
+      FreePool(PlatLang);
       return Status;
     } else {
       Status = gRT->SetVariable (
@@ -3226,9 +3226,9 @@ BdsLibEnumerateAllBootOption (
       //
 
       if (LastLang != NULL) {
-        FreePool (LastLang);
+        FreePool(LastLang);
       }
-      FreePool (PlatLang);
+      FreePool(PlatLang);
     }
   }
 
@@ -3270,7 +3270,7 @@ BdsLibEnumerateAllBootOption (
           //
       // skip the logical partition
           //
-      if (EFI_ERROR (Status) || BlkIo->Media->LogicalPartition) {
+      if (EFI_ERROR(Status) || BlkIo->Media->LogicalPartition) {
          continue;
       }
             //
@@ -3363,7 +3363,7 @@ BdsLibEnumerateAllBootOption (
   }
 
   if (NumberBlockIoHandles != 0) {
-    FreePool (BlockIoHandles);
+    FreePool(BlockIoHandles);
   }
 
   //
@@ -3383,7 +3383,7 @@ BdsLibEnumerateAllBootOption (
                     &gEfiBlockIoProtocolGuid,
                     (VOID **) &BlkIo
                     );
-     if (!EFI_ERROR (Status)) {
+     if (!EFI_ERROR(Status)) {
       //
       //  Skip if the file system handle supports a BlkIo protocol,
       //
@@ -3402,7 +3402,7 @@ BdsLibEnumerateAllBootOption (
                    &DosHeader,
                    Hdr
                    );
-    if (!EFI_ERROR (Status) &&
+    if (!EFI_ERROR(Status) &&
         EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
         Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION) {
       NeedDelete = FALSE;
@@ -3425,7 +3425,7 @@ BdsLibEnumerateAllBootOption (
   }
 
   if (NumberFileSystemHandles != 0) {
-    FreePool (FileSystemHandles);
+    FreePool(FileSystemHandles);
   }
 
   //
@@ -3453,7 +3453,7 @@ BdsLibEnumerateAllBootOption (
   }
 
   if (NumOfLoadFileHandles != 0) {
-    FreePool (LoadFileHandles);
+    FreePool(LoadFileHandles);
   }
 
   //
@@ -3482,7 +3482,7 @@ BdsLibEnumerateAllBootOption (
                   &Attributes,
                   &AuthenticationStatus
                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Skip if no shell file in the FV
       //
@@ -3495,7 +3495,7 @@ BdsLibEnumerateAllBootOption (
   }
 
   if (FvHandleCount != 0) {
-    FreePool (FvHandleBuffer);
+    FreePool(FvHandleBuffer);
   }
   //
   // Make sure every boot only have one time
@@ -3615,7 +3615,7 @@ BdsLibBootNext (
     //
     // Deleting variable with current variable implementation shouldn't fail.
     //
- //   ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR(Status);
 
     //
     // Start to build the boot option and try to boot
@@ -3682,12 +3682,12 @@ BdsLibGetBootableHandle (
   // Check whether the device is connected
   //
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &UpdatedDevicePath, &Handle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Skip the case that the boot option point to a simple file protocol which does not consume block Io protocol,
     //
     Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &UpdatedDevicePath, &Handle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Fail to find the proper BlockIo and simple file protocol, maybe because device not present,  we need to connect it firstly
       //
@@ -3705,8 +3705,8 @@ BdsLibGetBootableHandle (
     // Get BlockIo protocol and check removable attribute
     //
     Status = gBS->HandleProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
- //   ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+ //   ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return NULL;
     }
@@ -3796,7 +3796,7 @@ BdsLibGetBootableHandle (
                  &DosHeader,
                  Hdr
                  );
-      if (!EFI_ERROR (Status) &&
+      if (!EFI_ERROR(Status) &&
         EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
         Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION) {
         ReturnHandle = SimpleFileSystemHandles[Index];
@@ -3845,12 +3845,12 @@ BdsLibNetworkBootWithMediaPresent (
   // Locate Load File Protocol for PXE boot option first
   //
   Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &UpdatedDevicePath, &Handle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Device not present so see if we need to connect it
     //
     Status = BdsLibConnectDevicePath (DevicePath);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // This one should work after we did the connect
       //
@@ -3858,16 +3858,16 @@ BdsLibNetworkBootWithMediaPresent (
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (Handle, &gEfiSimpleNetworkProtocolGuid, (VOID **)&Snp);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Failed to open SNP from this handle, try to get SNP from parent handle
       //
       UpdatedDevicePath = DevicePathFromHandle (Handle);
       if (UpdatedDevicePath != NULL) {
         Status = gBS->LocateDevicePath (&gEfiSimpleNetworkProtocolGuid, &UpdatedDevicePath, &Handle);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           //
           // SNP handle found, get SNP from it
           //
@@ -3876,7 +3876,7 @@ BdsLibNetworkBootWithMediaPresent (
       }
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (Snp->Mode->MediaPresentSupported) {
         if (Snp->Mode->State == EfiSimpleNetworkInitialized) {
           //
@@ -3894,9 +3894,9 @@ BdsLibNetworkBootWithMediaPresent (
           // MediaPresent will be valid.
           //
           Status = Snp->Start (Snp);
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             Status = Snp->Initialize (Snp, 0, 0);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               MediaPresent = Snp->Mode->MediaPresent;
               Snp->Shutdown (Snp);
             }
@@ -4118,7 +4118,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
                   &TempDevicePath,
                   &Handle
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Device not present so see if we need to connect it
     //
@@ -4131,7 +4131,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
                     );
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (!IsDevicePathEnd (TempDevicePath)) {
       //
       // LoadFile protocol is not installed on handle with exactly the same DevPath
@@ -4191,7 +4191,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
       return TRUE;
     } else {
       if (Status == EFI_SUCCESS) {
-        FreePool (TempDevicePath);
+        FreePool(TempDevicePath);
       }
       return FALSE;
     }
@@ -4204,12 +4204,12 @@ BdsLibIsValidEFIBootOptDevicePathExt (
   //
   TempDevicePath = DevPath;
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &TempDevicePath, &Handle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Device not present so see if we need to connect it
     //
     Status = BdsLibConnectDevicePath (DevPath);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Try again to get the Block Io protocol after we did the connect
       //
@@ -4218,9 +4218,9 @@ BdsLibIsValidEFIBootOptDevicePathExt (
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (CheckMedia) {
         //
         // Test if it is ready to boot now
@@ -4237,7 +4237,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
     // if the boot option point to a simple file protocol which does not consume block Io protocol, it is also a valid EFI boot option,
     //
     Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &TempDevicePath, &Handle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (CheckMedia) {
         //
         // Test if it is ready to boot now
@@ -4342,13 +4342,13 @@ BdsLibUpdateFvFileDevicePath (
                   &TempDevicePath,
                   &FoundFvHandle
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (
                     FoundFvHandle,
                     &gEfiFirmwareVolume2ProtocolGuid,
                     (VOID **) &Fv
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Set FV ReadFile Buffer as NULL, only need to check whether input Fv file exist there
       //
@@ -4361,7 +4361,7 @@ BdsLibUpdateFvFileDevicePath (
                     &Attributes,
                     &AuthenticationStatus
                     );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         return EFI_ALREADY_STARTED;
       }
     }
@@ -4378,13 +4378,13 @@ BdsLibUpdateFvFileDevicePath (
              &gEfiLoadedImageProtocolGuid,
              (VOID **) &LoadedImage
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (
                     LoadedImage->DeviceHandle,
                     &gEfiFirmwareVolume2ProtocolGuid,
                     (VOID **) &Fv
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = Fv->ReadFile (
                     Fv,
                     FileGuid,
@@ -4394,7 +4394,7 @@ BdsLibUpdateFvFileDevicePath (
                     &Attributes,
                     &AuthenticationStatus
                     );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         FindFvFile = TRUE;
         FoundFvHandle = LoadedImage->DeviceHandle;
       }
@@ -4428,7 +4428,7 @@ BdsLibUpdateFvFileDevicePath (
                     &Attributes,
                     &AuthenticationStatus
                     );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Skip if input Fv file not in the FV
         //
@@ -4440,7 +4440,7 @@ BdsLibUpdateFvFileDevicePath (
     }
 
     if (FvHandleBuffer != NULL) {
-      FreePool (FvHandleBuffer);
+      FreePool(FvHandleBuffer);
     }
   }
 

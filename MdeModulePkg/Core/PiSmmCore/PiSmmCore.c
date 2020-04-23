@@ -381,7 +381,7 @@ SmmReadyToLockHandler (
   // Print a message on a debug build if the SMM CPU I/O 2 Protocol is not installed
   //
   DEBUG_CODE_BEGIN ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "\nSMM: SmmCpuIo Arch Protocol not present!!\n"));
     }
   DEBUG_CODE_END ();
@@ -389,7 +389,7 @@ SmmReadyToLockHandler (
   //
   // Assert if the CPU I/O 2 Protocol is not installed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Display any drivers that were not dispatched because dependency expression
@@ -461,7 +461,7 @@ SmmEndOfDxeHandler (
                NULL,
                (VOID **)&SxDispatch
                );
-    if (!EFI_ERROR (Status) && (SxDispatch != NULL)) {
+    if (!EFI_ERROR(Status) && (SxDispatch != NULL)) {
       //
       // Register a S3 entry callback function to
       // determine if it will be during S3 resume.
@@ -474,7 +474,7 @@ SmmEndOfDxeHandler (
                              &EntryRegisterContext,
                              &S3EntryHandle
                              );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 
@@ -524,7 +524,7 @@ SmmS3SmmInitDoneHandler (
              EFI_NATIVE_INTERFACE,
              NULL
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Uninstall the protocol here because the comsumer just hook the
@@ -535,7 +535,7 @@ SmmS3SmmInitDoneHandler (
            &gEdkiiS3SmmInitDoneGuid,
            NULL
            );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -583,7 +583,7 @@ SmmEndOfS3ResumeHandler (
              EFI_NATIVE_INTERFACE,
              NULL
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Uninstall the protocol here because the comsumer just hook the
@@ -594,7 +594,7 @@ SmmEndOfS3ResumeHandler (
            &gEdkiiEndOfS3ResumeGuid,
            NULL
            );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mDuringS3Resume = FALSE;
   return Status;
@@ -762,7 +762,7 @@ SmmCoreInstallLoadedImage (
   // Allocate a Loaded Image Protocol in EfiBootServicesData
   //
   Status = gBS->AllocatePool (EfiBootServicesData, sizeof(EFI_LOADED_IMAGE_PROTOCOL), (VOID **)&mSmmCoreLoadedImage);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   ZeroMem (mSmmCoreLoadedImage, sizeof (EFI_LOADED_IMAGE_PROTOCOL));
   //
@@ -787,7 +787,7 @@ SmmCoreInstallLoadedImage (
                   &gEfiLoadedImageProtocolGuid, mSmmCoreLoadedImage,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Allocate a Loaded Image Protocol in SMM
@@ -889,7 +889,7 @@ SmmMain (
                mSmmCoreSmiHandlers[Index].HandlerType,
                &mSmmCoreSmiHandlers[Index].DispatchHandle
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   mAcpiS3Enable = PcdGetBool (PcdAcpiS3Enable);
@@ -903,7 +903,7 @@ SmmMain (
                  mSmmCoreS3SmiHandlers[Index].HandlerType,
                  &mSmmCoreS3SmiHandlers[Index].DispatchHandle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 

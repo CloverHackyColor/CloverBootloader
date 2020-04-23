@@ -809,7 +809,7 @@ BootScriptInsert (
     break;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
    Status = S3BootScriptMoveLastOpcode (BeforeOrAfter, Position);
   }
   return Status;
@@ -914,7 +914,7 @@ InitializeS3SaveState (
                   &gEfiEndOfDxeEventGroupGuid,
                   &EndOfDxeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return  gBS->InstallProtocolInterface (
                   &mHandle,

@@ -1132,7 +1132,7 @@ IsPropertyFalse (
  <string>0x12abd</string>
  */
 INTN
-GetPropertyInteger (
+GetPropertyInteger(
                     TagPtr Prop,
                     INTN Default
                     )

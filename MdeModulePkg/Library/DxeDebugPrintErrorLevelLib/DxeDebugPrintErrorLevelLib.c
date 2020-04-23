@@ -233,7 +233,7 @@ GetDebugPrintErrorLevel (
         // Variable will not be read again by this module.
         //
         mGlobalErrorLevelInitialized = TRUE;
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           //
           // If the EFI Varible exists, then set this module's module's mask to
           // the global debug print error level mask value.
@@ -304,7 +304,7 @@ SetDebugPrintErrorLevel (
                                        Size,
                                        &GlobalErrorLevel
                                        );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // If the EFI Variable was updated, then update the mask value for this
         // module and return TRUE.

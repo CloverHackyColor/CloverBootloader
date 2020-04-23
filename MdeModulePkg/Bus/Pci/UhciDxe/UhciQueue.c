@@ -44,7 +44,7 @@ UhciMapUserRequest (
                          Map
                          );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *MappedAddr = (UINT8 *) (UINTN) PhyAddr;
   }
 
@@ -98,7 +98,7 @@ UhciMapUserData (
                            Map
                            );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto EXIT;
     }
 
@@ -116,7 +116,7 @@ UhciMapUserData (
                            Map
                            );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto EXIT;
     }
 

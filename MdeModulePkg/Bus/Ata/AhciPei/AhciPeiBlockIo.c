@@ -109,7 +109,7 @@ AccessAtaDevice (
                (UINT32) TransferBlockNumber,
                FALSE  // Read
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

@@ -121,8 +121,8 @@ VOID *GetNvramVariable (
       // Read variable into the allocated buffer.
       //
       Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, Data);
-      if (EFI_ERROR (Status)) {
-        FreePool (Data);
+      if (EFI_ERROR(Status)) {
+        FreePool(Data);
         IntDataSize = 0;
         Data = NULL;
       }
@@ -160,12 +160,12 @@ SetNvramVariable (
         (CompareMem (OldData, Data, DataSize) == 0)) {
       // it's the same - do nothing
       //DBG (", equal -> not writing again.\n");
-      FreePool (OldData);
+      FreePool(OldData);
       return EFI_SUCCESS;
     }
     //DBG (", not equal\n");
     
-    FreePool (OldData);
+    FreePool(OldData);
     
     // not the same - delete previous one if attributes are different
     if (OldAttributes != Attributes) {
@@ -201,7 +201,7 @@ AddNvramVariable (
     return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
 //  DBG (" -> writing new (%s)\n", strerror(Status));
 	} else {
-		FreePool (OldData);
+		FreePool(OldData);
     return EFI_ABORTED;
 	}
 }
@@ -312,15 +312,15 @@ ResetNativeNvram ()
       NameSize = NewNameSize;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (IsDeletableVariable (Name, &Guid)) {
         //DBG ("Deleting %s:%ls...", strguid(&Guid), Name);
         Status = DeleteNvramVariable(Name, &Guid);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           //DBG ("OK\n");
           Restart = TRUE;
         } else {
@@ -332,7 +332,7 @@ ResetNativeNvram ()
   }
 
   if (Name) {
-    FreePool (Name);
+    FreePool(Name);
   }
 
   if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
@@ -443,7 +443,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       NameSize = NewNameSize;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;  //no more variables
     }
 
@@ -467,7 +467,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
         }
         NumKey++;
       }
-      FreePool (Data);
+      FreePool(Data);
     }
   }
   if (WriteToSMC && gAppleSmc  && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
@@ -492,7 +492,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       Status = gAppleSmc->SmcWriteValue(gAppleSmc, FourCharKey("RMde"), 1, (SMC_DATA *)&Mode);
     }
   }
-  FreePool (Name);
+  FreePool(Name);
 }
 /*
 VOID DumpSmcKeys()
@@ -851,7 +851,7 @@ LoadNvramPlist (
 //        DBG (" parsing error\n");
 //    }
     
-    FreePool (NvramPtr);
+    FreePool(NvramPtr);
     // we will leave nvram.plist loaded and parsed for later processing
     //FreeTag(gNvramDict);
     
@@ -934,7 +934,7 @@ LoadLatestNvramPlist ()
         FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
         FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
         ModifTimeMs); */
-    FreePool (FileInfo);
+    FreePool(FileInfo);
     FileHandle->Close(FileHandle);
     
     // check if newer
@@ -1001,16 +1001,16 @@ PutNvramPlistToRtVars ()
 //    DBG("tag: %s\n", Tag->string);
     // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
     // in kernel and kext patcher when mixing UEFI and CloverEFI boot
-    if (AsciiStrCmp (Tag->string, "OsxAptioFixDrv-RelocBase") == 0) {
+    if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-RelocBase") == 0) {
       DBG (" Skipping OsxAptioFixDrv-RelocBase\n");
       continue;
-    } else if (AsciiStrCmp (Tag->string, "OsxAptioFixDrv-ErrorExitingBootServices") == 0) {
+    } else if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-ErrorExitingBootServices") == 0) {
       DBG (" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
       continue;
-    } else if (AsciiStrCmp (Tag->string, "EmuVariableUefiPresent") == 0) {
+    } else if (AsciiStrCmp(Tag->string, "EmuVariableUefiPresent") == 0) {
       DBG (" Skipping EmuVariableUefiPresent\n");
       continue;
-    } else if (AsciiStrCmp (Tag->string, "aapl,panic-info") == 0) {
+    } else if (AsciiStrCmp(Tag->string, "aapl,panic-info") == 0) {
         DBG (" Skipping aapl,panic-info\n");
         continue;
     }
@@ -1021,7 +1021,7 @@ PutNvramPlistToRtVars ()
       continue;
     }
 
-    if (AsciiStrCmp (Tag->string, "Boot0082") == 0 || AsciiStrCmp (Tag->string, "BootNext") == 0) {
+    if (AsciiStrCmp(Tag->string, "Boot0082") == 0 || AsciiStrCmp(Tag->string, "BootNext") == 0) {
       VendorGuid = &gEfiGlobalVariableGuid;
       // it may happen only in this case
       GlobalConfig.HibernationFixup = TRUE;
@@ -1382,7 +1382,7 @@ EFI_STATUS SetStartupDiskVolume (
 //    DBG ("  * efi-boot-device: %s\n", EfiBootDevice);
 //
 //    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, Size, EfiBootDevice);
-//    FreePool (EfiBootDevice);
+//    FreePool(EfiBootDevice);
 
     XString EfiBootDevice;
     EfiBootDevice.SPrintf(

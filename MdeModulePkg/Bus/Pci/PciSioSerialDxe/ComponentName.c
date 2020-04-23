@@ -187,7 +187,7 @@ SerialComponentNameGetControllerName (
              gSerialControllerDriver.DriverBindingHandle,
              IoProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     IoProtocolGuid = &gEfiPciIoProtocolGuid;
     Status = EfiTestManagedDevice (
                ControllerHandle,
@@ -196,7 +196,7 @@ SerialComponentNameGetControllerName (
                );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -207,7 +207,7 @@ SerialComponentNameGetControllerName (
                ChildHandle,
                IoProtocolGuid
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -222,7 +222,7 @@ SerialComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

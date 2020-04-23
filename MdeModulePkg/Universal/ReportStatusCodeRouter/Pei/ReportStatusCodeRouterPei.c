@@ -290,7 +290,7 @@ GenericStatusCodePeiEntry (
   // Install Report Status Code Handler PPI
   //
   Status = PeiServicesInstallPpi (mRscHandlerPpiList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install Status Code PPI. PI spec specifies that there can be only one instance
@@ -304,12 +304,12 @@ GenericStatusCodePeiEntry (
              &OldDescriptor,
              (VOID **) &OldStatusCodePpi
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = PeiServicesReInstallPpi (OldDescriptor, mStatusCodePpiList);
   } else {
     Status = PeiServicesInstallPpi (mStatusCodePpiList);
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

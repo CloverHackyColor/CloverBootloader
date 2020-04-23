@@ -214,7 +214,7 @@ AtaPassThruPassThruExecute (
       //
       Status = GetIdeRegisterIoAddr (Instance->PciIo, Instance->IdeRegisters);
 //      DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 #endif
@@ -446,7 +446,7 @@ AsyncNonBlockingTransferRoutine (
     } else {
       RemoveEntryList (&Task->Link);
       gBS->SignalEvent (Task->Event);
-      FreePool (Task);
+      FreePool(Task);
     }
   }
 }
@@ -481,7 +481,7 @@ InitializeAtaAtapiPassThru (
              &gAtaAtapiPassThruComponentName,
              &gAtaAtapiPassThruComponentName2
              );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -554,7 +554,7 @@ AtaAtapiPassThruSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // EFI_ALREADY_STARTED is also an error
     //
@@ -579,7 +579,7 @@ AtaAtapiPassThruSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // EFI_ALREADY_STARTED is also an error
     //
@@ -607,7 +607,7 @@ AtaAtapiPassThruSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -621,7 +621,7 @@ AtaAtapiPassThruSupported (
                         sizeof (PciData.Hdr.ClassCode),
                         PciData.Hdr.ClassCode
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -698,7 +698,7 @@ AtaAtapiPassThruStart (
                    EFI_OPEN_PROTOCOL_BY_DRIVER
                    );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 //    DBG (L"Open Ide_Controller_Init Error, Status=%r", Status);
     goto ErrorExit;
   }
@@ -711,7 +711,7 @@ AtaAtapiPassThruStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 //    DEBUG ((EFI_D_ERROR, "Get Pci_Io Protocol Error, Status=%r", Status));
     goto ErrorExit;
   }
@@ -723,7 +723,7 @@ AtaAtapiPassThruStart (
                     &OriginalPciAttributes
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 //    DBG(L"OriginalPciAttributes status=%r\n", Status);
     goto ErrorExit;
   }
@@ -734,7 +734,7 @@ AtaAtapiPassThruStart (
                     0,
                     &Supports
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
@@ -744,7 +744,7 @@ AtaAtapiPassThruStart (
                       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -774,7 +774,7 @@ AtaAtapiPassThruStart (
                   Instance,
                   &Instance->TimerEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -782,7 +782,7 @@ AtaAtapiPassThruStart (
   // Set 1ms timer.
   //
   Status = gBS->SetTimer (Instance->TimerEvent, TimerPeriodic, 10000);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -790,7 +790,7 @@ AtaAtapiPassThruStart (
   // Enumerate all inserted ATA devices.
   //
   Status = EnumerateAttachedDevice (Instance);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -800,7 +800,7 @@ AtaAtapiPassThruStart (
                   &gEfiExtScsiPassThruProtocolGuid, &(Instance->ExtScsiPassThru),
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 
 //  DBG(L"AtaPassThru success\n");
   return Status;
@@ -825,7 +825,7 @@ ErrorExit:
   DestroyDeviceInfoList(Instance);
 
   if (Instance != NULL) {
-    FreePool (Instance);
+    FreePool(Instance);
   }
   return EFI_UNSUPPORTED;
 }
@@ -883,7 +883,7 @@ AtaAtapiPassThruStop (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -896,7 +896,7 @@ AtaAtapiPassThruStop (
                   NULL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -969,7 +969,7 @@ AtaAtapiPassThruStop (
                     0,
                     &Supports
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     PciIo->Attributes (
              PciIo,
@@ -988,9 +988,9 @@ AtaAtapiPassThruStop (
                     Instance->OriginalPciAttributes,
                     NULL
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
-  FreePool (Instance);
+  FreePool(Instance);
 
   return Status;
 }
@@ -1078,7 +1078,7 @@ CreateNewDeviceInfo (
 //    DBG(L" IdentifyData copied\n");
     DeviceInfo->IdentifyData = AllocateCopyPool (sizeof (EFI_IDENTIFY_DATA), IdentifyData);
     if (DeviceInfo->IdentifyData == NULL) {
-      FreePool (DeviceInfo);
+      FreePool(DeviceInfo);
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -1111,9 +1111,9 @@ DestroyDeviceInfoList (
 
     RemoveEntryList (&DeviceInfo->Link);
     if (DeviceInfo->IdentifyData != NULL) {
-      FreePool (DeviceInfo->IdentifyData);
+      FreePool(DeviceInfo->IdentifyData);
     }
-    FreePool (DeviceInfo);
+    FreePool(DeviceInfo);
   }
 }
 
@@ -1154,7 +1154,7 @@ DestroyAsynTaskList (
         Task->Packet->Asb->AtaStatus = 0x01;
         gBS->SignalEvent (Task->Event);
       }
-      FreePool (Task);
+      FreePool(Task);
     }
   }
   gBS->RestoreTPL (OldTpl);
@@ -1193,8 +1193,8 @@ EnumerateAttachedDevice (
                                   sizeof (PciData.Hdr.ClassCode),
                                   PciData.Hdr.ClassCode
                                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1210,7 +1210,7 @@ EnumerateAttachedDevice (
       Status = IdeModeInitialization (Instance);
 //      DBG(L"IdeModeInitialization Status=%r\n", Status);
       //anyway goto Done
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = EFI_DEVICE_ERROR;
 //        goto Done;
       }
@@ -1229,7 +1229,7 @@ EnumerateAttachedDevice (
 
       Status = AhciModeInitialization (Instance);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = EFI_DEVICE_ERROR;
 //        goto Done;
       }
@@ -2082,7 +2082,7 @@ ExtScsiPassThruPassThru (
       //
       Status = GetIdeRegisterIoAddr (Instance->PciIo, Instance->IdeRegisters);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
 //        DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
         return Status;
       }
@@ -2104,7 +2104,7 @@ ExtScsiPassThruPassThru (
   //
   // If the cmd doesn't get executed correctly, then check sense data.
   //
-  if (EFI_ERROR (Status) && (Packet->SenseDataLength != 0) && (*((UINT8*)Packet->Cdb) != ATA_CMD_REQUEST_SENSE)) {
+  if (EFI_ERROR(Status) && (Packet->SenseDataLength != 0) && (*((UINT8*)Packet->Cdb) != ATA_CMD_REQUEST_SENSE)) {
     PtrSenseData = AllocateAlignedPages (EFI_SIZE_TO_PAGES (sizeof (EFI_SCSI_SENSE_DATA)), This->Mode->IoAlign);
     if (PtrSenseData == NULL) {
       return EFI_DEVICE_ERROR;
@@ -2119,7 +2119,7 @@ ExtScsiPassThruPassThru (
                       sizeof (EFI_SCSI_SENSE_DATA),
                       Packet->Timeout
                       );
-      if (EFI_ERROR (SenseStatus)) {
+      if (EFI_ERROR(SenseStatus)) {
         break;
       }
 

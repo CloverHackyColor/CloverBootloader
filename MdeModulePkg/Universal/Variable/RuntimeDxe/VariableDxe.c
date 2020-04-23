@@ -349,7 +349,7 @@ VariableWriteServiceInitializeDxe (
   EFI_STATUS    Status;
 
   Status = VariableWriteServiceInitialize ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Variable write service initialization failed. Status = %r\n", Status));
   }
 
@@ -368,7 +368,7 @@ VariableWriteServiceInitializeDxe (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -403,12 +403,12 @@ FtwNotificationEvent (
   // Ensure FTW protocol is installed.
   //
   Status = GetFtwProtocol ((VOID**) &FtwProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
 
   Status = FtwProtocol->GetMaxBlockSize (FtwProtocol, &FtwMaxBlockSize);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     ASSERT (PcdGet32 (PcdFlashNvStorageVariableSize) <= FtwMaxBlockSize);
   }
 
@@ -424,7 +424,7 @@ FtwNotificationEvent (
   // Find the proper FVB protocol for variable.
   //
   Status = GetFvbInfoByAddress (NvStorageVariableBase, NULL, &FvbProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
   mVariableModuleGlobal->FvbInstance = FvbProtocol;
@@ -438,7 +438,7 @@ FtwNotificationEvent (
   Length      = (Length + EFI_PAGE_SIZE - 1) & (~EFI_PAGE_MASK);
 
   Status      = gDS->GetMemorySpaceDescriptor (BaseAddress, &GcdDescriptor);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "Variable driver failed to get flash memory attribute.\n"));
   } else {
     if ((GcdDescriptor.Attributes & EFI_MEMORY_RUNTIME) == 0) {
@@ -447,7 +447,7 @@ FtwNotificationEvent (
                       Length,
                       GcdDescriptor.Attributes | EFI_MEMORY_RUNTIME
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_WARN, "Variable driver failed to add EFI_MEMORY_RUNTIME attribute to Flash.\n"));
       }
     }
@@ -490,7 +490,7 @@ VariableServiceInitialize (
   EFI_EVENT                             EndOfDxeEvent;
 
   Status = VariableCommonInitialize ();
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mHandle,
@@ -498,7 +498,7 @@ VariableServiceInitialize (
                   &mVariableLock,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &mHandle,
@@ -506,7 +506,7 @@ VariableServiceInitialize (
                   &mVarCheck,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   SystemTable->RuntimeServices->GetVariable         = VariableServiceGetVariable;
   SystemTable->RuntimeServices->GetNextVariableName = VariableServiceGetNextVariableName;
@@ -522,7 +522,7 @@ VariableServiceInitialize (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (!PcdGetBool (PcdEmuVariableNvModeEnable)) {
     //
@@ -550,7 +550,7 @@ VariableServiceInitialize (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mVirtualAddressChangeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register the event handling function to reclaim variable for OS usage.
@@ -561,7 +561,7 @@ VariableServiceInitialize (
              NULL,
              &ReadyToBootEvent
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register the event handling function to set the End Of DXE flag.
@@ -574,7 +574,7 @@ VariableServiceInitialize (
                   &gEfiEndOfDxeEventGroupGuid,
                   &EndOfDxeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

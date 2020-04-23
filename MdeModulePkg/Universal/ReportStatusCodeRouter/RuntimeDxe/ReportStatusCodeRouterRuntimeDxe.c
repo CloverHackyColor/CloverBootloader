@@ -150,7 +150,7 @@ Register (
                     CallbackEntry,
                     &CallbackEntry->Event
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   InsertTailList (&mCallbackListHead, &CallbackEntry->Node);
@@ -192,11 +192,11 @@ Unregister (
       // If the function is found in list, delete it and return.
       //
       if (CallbackEntry->Tpl != TPL_HIGH_LEVEL) {
-        FreePool ((VOID *) (UINTN) CallbackEntry->StatusCodeDataBuffer);
+        FreePool((VOID *) (UINTN) CallbackEntry->StatusCodeDataBuffer);
         gBS->CloseEvent (CallbackEntry->Event);
       }
       RemoveEntryList (&CallbackEntry->Node);
-      FreePool (CallbackEntry);
+      FreePool(CallbackEntry);
       return EFI_SUCCESS;
     }
   }
@@ -310,7 +310,7 @@ ReportDispatcher (
     }
 
     Status = gBS->SignalEvent (CallbackEntry->Event);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
@@ -344,14 +344,14 @@ VirtualAddressChangeCallBack (
   for (Link = GetFirstNode (&mCallbackListHead); !IsNull (&mCallbackListHead, Link); Link = GetNextNode (&mCallbackListHead, Link)) {
     CallbackEntry = CR (Link, RSC_HANDLER_CALLBACK_ENTRY, Node, RSC_HANDLER_CALLBACK_ENTRY_SIGNATURE);
     Status = EfiConvertFunctionPointer (0, (VOID **) &CallbackEntry->RscHandlerCallback);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   Status = EfiConvertList (
              0,
              &mCallbackListHead
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -384,7 +384,7 @@ GenericStatusCodeRuntimeDxeEntry (
                   &mStatusCodeProtocol,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->CreateEventEx (
                   EVT_NOTIFY_SIGNAL,
@@ -394,7 +394,7 @@ GenericStatusCodeRuntimeDxeEntry (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mVirtualAddressChangeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

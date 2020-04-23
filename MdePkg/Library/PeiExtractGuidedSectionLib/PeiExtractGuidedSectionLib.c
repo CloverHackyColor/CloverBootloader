@@ -142,7 +142,7 @@ ExtractGuidedSectionGetGuidList (
   // Get all registered handler information
   //
   Status = PeiGetExtractGuidedSectionHandlerInfo (&HandlerInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *ExtractHandlerGuidTable = NULL;
     return 0;
   }
@@ -204,7 +204,7 @@ ExtractGuidedSectionRegisterHandlers (
   // Get the registered handler information
   //
   Status = PeiGetExtractGuidedSectionHandlerInfo (&HandlerInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -310,7 +310,7 @@ ExtractGuidedSectionGetInfo (
   // Get all registered handler information.
   //
   Status = PeiGetExtractGuidedSectionHandlerInfo (&HandlerInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -404,7 +404,7 @@ ExtractGuidedSectionDecode (
   // Get all registered handler information.
   //
   Status = PeiGetExtractGuidedSectionHandlerInfo (&HandlerInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -486,7 +486,7 @@ ExtractGuidedSectionGetHandlers (
   // Get the registered handler information
   //
   Status = PeiGetExtractGuidedSectionHandlerInfo (&HandlerInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

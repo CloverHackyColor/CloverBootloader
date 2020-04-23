@@ -245,7 +245,7 @@ PciIoMemRead (
   // Only allow accesses to the BARs we emulate
   //
   Status = GetBarResource (Dev, BarIndex, &Desc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -332,7 +332,7 @@ PciIoMemWrite (
   // Only allow accesses to the BARs we emulate
   //
   Status = GetBarResource (Dev, BarIndex, &Desc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -636,13 +636,13 @@ CoherentPciIoMap (
     Status = gBS->AllocatePages (AllocateMaxAddress, EfiBootServicesData,
                     EFI_SIZE_TO_PAGES (MapInfo->NumberOfBytes),
                     &MapInfo->AllocAddress);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // If we fail here, it is likely because the system has no memory below
       // 4 GB to begin with. There is not much we can do about that other than
       // fail the map request.
       //
-      FreePool (MapInfo);
+      FreePool(MapInfo);
       return EFI_DEVICE_ERROR;
     }
     if (Operation == EfiPciIoOperationBusMasterRead) {
@@ -685,7 +685,7 @@ CoherentPciIoUnmap (
     }
     gBS->FreePages (MapInfo->AllocAddress,
            EFI_SIZE_TO_PAGES (MapInfo->NumberOfBytes));
-    FreePool (MapInfo);
+    FreePool(MapInfo);
   }
   return EFI_SUCCESS;
 }
@@ -750,7 +750,7 @@ CoherentPciIoAllocateBuffer (
   }
 
   Status = gBS->AllocatePages (AllocType, MemoryType, Pages, &AllocAddress);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *HostAddress = (VOID *)(UINTN)AllocAddress;
   }
   return Status;
@@ -830,7 +830,7 @@ NonCoherentPciIoFreeBuffer (
   }
 
   if (!Found) {
-    ASSERT_EFI_ERROR (EFI_NOT_FOUND);
+    ASSERT_EFI_ERROR(EFI_NOT_FOUND);
     return EFI_NOT_FOUND;
   }
 
@@ -840,7 +840,7 @@ NonCoherentPciIoFreeBuffer (
                   (EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress,
                   EFI_PAGES_TO_SIZE (Pages),
                   Alloc->Attributes);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeAlloc;
   }
 
@@ -851,7 +851,7 @@ NonCoherentPciIoFreeBuffer (
   FreePages (HostAddress, Pages);
 
 FreeAlloc:
-  FreePool (Alloc);
+  FreePool(Alloc);
   return Status;
 }
 
@@ -901,14 +901,14 @@ NonCoherentPciIoAllocateBuffer (
 
   Status = CoherentPciIoAllocateBuffer (This, Type, MemoryType, Pages,
              &AllocAddress, Attributes);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = gDS->GetMemorySpaceDescriptor (
                   (EFI_PHYSICAL_ADDRESS)(UINTN)AllocAddress,
                   &GcdDescriptor);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeBuffer;
   }
 
@@ -950,7 +950,7 @@ NonCoherentPciIoAllocateBuffer (
                   (EFI_PHYSICAL_ADDRESS)(UINTN)AllocAddress,
                   EFI_PAGES_TO_SIZE (Pages),
                   MemType);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto RemoveList;
   }
 
@@ -959,7 +959,7 @@ NonCoherentPciIoAllocateBuffer (
                    (EFI_PHYSICAL_ADDRESS)(UINTN)AllocAddress,
                    EFI_PAGES_TO_SIZE (Pages),
                    EfiCpuFlushTypeInvalidate);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto RemoveList;
   }
 
@@ -969,7 +969,7 @@ NonCoherentPciIoAllocateBuffer (
 
 RemoveList:
   RemoveEntryList (&Alloc->List);
-  FreePool (Alloc);
+  FreePool(Alloc);
 
 FreeBuffer:
   CoherentPciIoFreeBuffer (This, Pages, AllocAddress);
@@ -1067,7 +1067,7 @@ NonCoherentPciIoMap (
       Status = gDS->GetMemorySpaceDescriptor (
                       (EFI_PHYSICAL_ADDRESS)(UINTN)HostAddress,
                       &GcdDescriptor);
-      if (EFI_ERROR (Status) ||
+      if (EFI_ERROR(Status) ||
           (GcdDescriptor.Attributes & (EFI_MEMORY_WB|EFI_MEMORY_WT)) != 0) {
         Bounce = TRUE;
       }
@@ -1087,7 +1087,7 @@ NonCoherentPciIoMap (
     Status = NonCoherentPciIoAllocateBuffer (This, AllocateAnyPages,
                EfiBootServicesData, EFI_SIZE_TO_PAGES (MapInfo->NumberOfBytes),
                &AllocAddress, EFI_PCI_ATTRIBUTE_MEMORY_WRITE_COMBINE);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto FreeMapInfo;
     }
     MapInfo->AllocAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocAddress;
@@ -1117,7 +1117,7 @@ NonCoherentPciIoMap (
   return EFI_SUCCESS;
 
 FreeMapInfo:
-  FreePool (MapInfo);
+  FreePool(MapInfo);
 
   return Status;
 }
@@ -1170,7 +1170,7 @@ NonCoherentPciIoUnmap (
               MapInfo->NumberOfBytes, EfiCpuFlushTypeInvalidate);
     }
   }
-  FreePool (MapInfo);
+  FreePool(MapInfo);
   return EFI_SUCCESS;
 }
 
@@ -1361,7 +1361,7 @@ PciIoGetBarAttributes (
   Dev = NON_DISCOVERABLE_PCI_DEVICE_FROM_PCI_IO(This);
 
   Status = GetBarResource (Dev, BarIndex, &BarDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1516,7 +1516,7 @@ InitializePciIoProtocol (
     Dev->ConfigSpace.Hdr.ClassCode[2] = PCI_CLASS_MASS_STORAGE;
     Dev->BarOffset = 0;
   } else {
-    ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
+    ASSERT_EFI_ERROR(EFI_INVALID_PARAMETER);
   }
 
   //

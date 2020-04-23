@@ -396,7 +396,7 @@ EbcDebuggerHookInit (
                   NULL,
                   &mDebuggerPrivate.BreakEvent
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->SetTimer (
                     mDebuggerPrivate.BreakEvent,
                     TimerPeriodic,
@@ -437,24 +437,24 @@ EbcDebuggerHookUnload (
     //
     // Clean up Entry
     //
-    gBS->FreePool (Object[Index].Entry);
+    gBS->FreePool(Object[Index].Entry);
     Object[Index].Entry = NULL;
     Object[Index].EntryCount = 0;
     //
     // Clean up source buffer
     //
     for (SubIndex = 0; Object[Index].SourceBuffer[SubIndex] != NULL; SubIndex++) {
-      gBS->FreePool (Object[Index].SourceBuffer[SubIndex]);
+      gBS->FreePool(Object[Index].SourceBuffer[SubIndex]);
       Object[Index].SourceBuffer[SubIndex] = NULL;
     }
-    gBS->FreePool (Object[Index].SourceBuffer);
+    gBS->FreePool(Object[Index].SourceBuffer);
     Object[Index].SourceBuffer = NULL;
   }
 
   //
   // Clean up Object
   //
-  gBS->FreePool (Object);
+  gBS->FreePool(Object);
   mDebuggerPrivate.DebuggerSymbolContext.Object = NULL;
   mDebuggerPrivate.DebuggerSymbolContext.ObjectCount = 0;
 

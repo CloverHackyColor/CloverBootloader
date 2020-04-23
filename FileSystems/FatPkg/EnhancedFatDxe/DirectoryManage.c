@@ -103,7 +103,7 @@ Returns:
   // Write directory entry
   //
   Status = FatAccessEntry (OFile, WRITE_DATA, EntryPos, &DirEnt->Entry);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -117,7 +117,7 @@ Returns:
                sizeof (LfnBuffer) / sizeof (LfnBuffer[0]),
                DirEnt->FileString
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -144,7 +144,7 @@ Returns:
       }
 
       Status = FatAccessEntry (OFile, WRITE_DATA, EntryPos, &LfnEntry);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -319,7 +319,7 @@ Returns:
 
     EntryPos--;
     Status = FatAccessEntry (Parent, READ_DATA, EntryPos, &LfnEntry);
-    if (EFI_ERROR (Status) ||
+    if (EFI_ERROR(Status) ||
         LfnEntry.Attributes != FAT_ATTRIBUTE_LFN ||
         LfnEntry.MustBeZero != 0 ||
         LfnEntry.Checksum != LfnChecksum ||
@@ -439,7 +439,7 @@ Returns:
     // Read the next directory entry until we find a valid directory entry (excluding lfn entry)
     //
     Status = FatAccessEntry (OFile, READ_DATA, ODir->CurrentEndPos, &Entry);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -623,7 +623,7 @@ Returns:
     //
     while (!ODir->EndOfDir) {
       Status = FatLoadNextDirEnt (OFile, &DirEnt);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 
@@ -709,7 +709,7 @@ Returns:
       // Read directory from disk
       //
       Status = FatLoadNextDirEnt (OFile, &DirEnt);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -854,7 +854,7 @@ Returns:
   DirEnt->Invalid = TRUE;
   do {
     Status = FatAccessEntry (Root, READ_DATA, EntryPos, Entry);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -911,7 +911,7 @@ Returns:
   LabelPos = 0;
   if (OFile->Parent == NULL) {
     Status = FatSeekVolumeId (OFile, &LabelDirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -989,7 +989,7 @@ Returns:
   //
   while (!ODir->EndOfDir) {
     Status = FatLoadNextDirEnt (OFile, &TempDirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1011,7 +1011,7 @@ Returns:
     // We should allocate a new cluster for this directory
     //
     Status = FatExpandODir (OFile);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1051,7 +1051,7 @@ Returns:
 
   *Name   = 0;
   Status  = FatSeekVolumeId (Volume->Root, &LabelDirEnt);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (!LabelDirEnt.Invalid) {
       FatNameToStr (LabelDirEnt.Entry.FileName, FAT_NAME_LEN, FALSE, Name);
     }
@@ -1090,7 +1090,7 @@ Returns:
 
   Root    = Volume->Root;
   Status  = FatSeekVolumeId (Volume->Root, &LabelDirEnt);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1101,7 +1101,7 @@ Returns:
     ZeroMem (&LabelDirEnt, sizeof (FAT_DIRENT));
     LabelDirEnt.EntryCount = 1;
     Status                 = FatNewEntryPos (Root, &LabelDirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1142,7 +1142,7 @@ Returns:
   FAT_DIRENT  *DirEnt;
 
   Status = FatExpandODir (OFile);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1151,7 +1151,7 @@ Returns:
   // Create "."
   //
   Status = FatCreateDirEnt (OFile, L".", FAT_ATTRIBUTE_DIRECTORY, &DirEnt);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -1216,7 +1216,7 @@ Returns:
   // Determine the file's directory entry position
   //
   Status = FatNewEntryPos (OFile, DirEnt);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -1399,7 +1399,7 @@ Returns:
     RemoveEntryList (&OFile->ChildLink);
   }
 
-  FreePool (OFile);
+  FreePool(OFile);
   DirEnt->OFile = NULL;
   if (DirEnt->Invalid == TRUE) {
     //
@@ -1540,7 +1540,7 @@ Returns:
     // Search the compName in the directory
     //
     Status = FatSearchODir (OFile, NewFileName, &DirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1563,7 +1563,7 @@ Returns:
     }
 
     Status = FatOpenDirEnt (OFile, DirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

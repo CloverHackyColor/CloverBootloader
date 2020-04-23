@@ -121,7 +121,7 @@
 //
 //    Status = Constructor(&Element, ConstructorParameters);
 //
-//    if (EFI_ERROR (Status)) {
+//    if (EFI_ERROR(Status)) {
 //      return EFI_ABORTED;
 //    }
 //#ifdef DEBUG_LIST
@@ -285,7 +285,7 @@
 //            //
 //            Status = Entry->Destructor(&Element);
 //
-//            if (EFI_ERROR (Status)) {
+//            if (EFI_ERROR(Status)) {
 //              return EFI_ABORTED;
 //            }
 //
@@ -343,7 +343,7 @@
 //                //
 //                Status = Entry->Destructor(&Element);
 //
-//                if (EFI_ERROR (Status)) {
+//                if (EFI_ERROR(Status)) {
 //                  return EFI_ABORTED;
 //                }
 //

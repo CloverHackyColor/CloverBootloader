@@ -589,7 +589,7 @@ CoreAddMemoryDescriptor (
                  gMemoryTypeInformation[Index].NumberOfPages,
                  &mMemoryTypeStatistics[Type].BaseAddress
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // If an error occurs allocating the pages for the current memory type, then
         // free all the pages allocates for the previous memory types and return.  This
@@ -1191,7 +1191,7 @@ CoreAllocatePages (
 Done:
   CoreReleaseMemoryLock ();
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *Memory = Start;
   }
 
@@ -1264,7 +1264,7 @@ CoreFreePages (
 
   Status = CoreConvertPages (Memory, NumberOfPages, EfiConventionalMemory);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 

@@ -154,7 +154,7 @@ InternalStartMonitor(
               );
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     Status = gBS->HandleProtocol (Handles[HandleIndex], &gEfiSimpleTextInputExProtocolGuid, (VOID **) &SimpleEx);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     KeyData.KeyState.KeyToggleState = 0;
     KeyData.Key.ScanCode            = 0;
@@ -166,7 +166,7 @@ InternalStartMonitor(
       &KeyData,
       NotificationFunction,
       &NotifyHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -176,7 +176,7 @@ InternalStartMonitor(
       &KeyData,
       NotificationFunction,
       &NotifyHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -213,7 +213,7 @@ InternalStopMonitor(
                 );
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     Status = gBS->HandleProtocol (Handles[HandleIndex], &gEfiSimpleTextInputExProtocolGuid, (VOID **) &SimpleEx);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     KeyData.KeyState.KeyToggleState = 0;
     KeyData.Key.ScanCode            = 0;
@@ -225,7 +225,7 @@ InternalStopMonitor(
       &KeyData,
       NotificationFunction,
       &NotifyHandle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = SimpleEx->UnregisterKeyNotify (SimpleEx, NotifyHandle);
     }
 
@@ -235,7 +235,7 @@ InternalStopMonitor(
       &KeyData,
       NotificationFunction,
       &NotifyHandle);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = SimpleEx->UnregisterKeyNotify (SimpleEx, NotifyHandle);
     }
   }
@@ -356,7 +356,7 @@ GetValueOfNumber (
 
 Exit:
   if (Str != NULL) {
-    FreePool (Str);
+    FreePool(Str);
   }
 
   return Status;
@@ -399,7 +399,7 @@ CreateAltCfgString (
   if (Result != NULL) {
     StrCpyS (StringPtr, NewLen / sizeof (CHAR16), Result);
     StringPtr += StrLen (Result);
-    FreePool (Result);
+    FreePool(Result);
   }
 
   UnicodeSPrint (
@@ -484,7 +484,7 @@ AppendAltCfgString (
     // Get Offset
     //
     Status = GetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
     Offset = 0;
@@ -493,7 +493,7 @@ AppendAltCfgString (
      TmpBuffer,
      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
      );
-    FreePool (TmpBuffer);
+    FreePool(TmpBuffer);
 
     StringPtr += Length;
     if (StrnCmp (StringPtr, L"&WIDTH=", StrLen (L"&WIDTH=")) != 0) {
@@ -505,7 +505,7 @@ AppendAltCfgString (
     // Get Width
     //
     Status = GetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
     Width = 0;
@@ -514,7 +514,7 @@ AppendAltCfgString (
      TmpBuffer,
      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
      );
-    FreePool (TmpBuffer);
+    FreePool(TmpBuffer);
 
     StringPtr += Length;
     if (StrnCmp (StringPtr, L"&VALUE=", StrLen (L"&VALUE=")) != 0) {
@@ -526,7 +526,7 @@ AppendAltCfgString (
     // Get Value
     //
     Status = GetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return;
     }
     StringPtr += Length;
@@ -625,7 +625,7 @@ ExtractConfig (
             &BufferSize,
             &PrivateData->Configuration
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -644,7 +644,7 @@ ExtractConfig (
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
-    FreePool (ConfigRequestHdr);
+    FreePool(ConfigRequestHdr);
     ConfigRequestHdr = NULL;
   } else {
     //
@@ -701,7 +701,7 @@ ExtractConfig (
     // Update Name/Value storage Names
     //
     Status = LoadNameValueNames (PrivateData);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -799,7 +799,7 @@ ExtractConfig (
                                   Results,
                                   Progress
                                   );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       ConfigRequestHdr = HiiConstructConfigHdr (&gDriverSampleFormSetGuid, VariableName, PrivateData->DriverHandle[0]);
       AppendAltCfgString(Results, ConfigRequestHdr);
     }
@@ -809,11 +809,11 @@ ExtractConfig (
   // Free the allocated config request string.
   //
   if (AllocatedRequest) {
-    FreePool (ConfigRequest);
+    FreePool(ConfigRequest);
   }
 
   if (ConfigRequestHdr != NULL) {
-    FreePool (ConfigRequestHdr);
+    FreePool(ConfigRequestHdr);
   }
   //
   // Set Progress string to the original request string.
@@ -907,7 +907,7 @@ RouteConfig (
             &BufferSize,
             &PrivateData->Configuration
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -919,7 +919,7 @@ RouteConfig (
     // Update Name/Value storage Names
     //
     Status = LoadNameValueNames (PrivateData);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1041,7 +1041,7 @@ RouteConfig (
                                &BufferSize,
                                Progress
                                );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1172,7 +1172,7 @@ DriverCallback (
 
       if (QuestionId == 0x1247) {
         Status = InternalStartMonitor ();
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
     }
     break;
@@ -1199,7 +1199,7 @@ DriverCallback (
 
       if (QuestionId == 0x1247) {
         Status = InternalStopMonitor ();
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
     }
     break;
@@ -1287,7 +1287,7 @@ DriverCallback (
               NULL
             );
           }
-          FreePool (EfiData);
+          FreePool(EfiData);
         }
         break;
       }
@@ -1434,7 +1434,7 @@ DriverCallback (
           NULL
           );
       }
-      FreePool (Configuration);
+      FreePool(Configuration);
 
       HiiCreateOneOfOpCode (
         StartOpCodeHandle,                         // Container for dynamic created opcodes
@@ -1580,7 +1580,7 @@ DriverCallback (
                                                           &ProgressErr,
                                                           &Results
                                                          );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           do {
             CreatePopUp (
               EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
@@ -1622,7 +1622,7 @@ DriverCallback (
                                                           &Progress,
                                                           &ProgressErr
                                                          );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           do {
             CreatePopUp (
               EFI_LIGHTGRAY | EFI_BACKGROUND_BLUE,
@@ -1649,7 +1649,7 @@ DriverCallback (
           STRING_TOKEN (STR_POPUP_STRING),
           &UserSelection
           );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if (UserSelection == EfiHiiPopupSelectionYes) {
             *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
           }
@@ -1762,7 +1762,7 @@ DriverSampleInit (
   // Locate Hii Database protocol
   //
   Status = gBS->LocateProtocol (&gEfiHiiDatabaseProtocolGuid, NULL, (VOID **) &HiiDatabase);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   mPrivateData->HiiDatabase = HiiDatabase;
@@ -1771,7 +1771,7 @@ DriverSampleInit (
   // Locate HiiString protocol
   //
   Status = gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &HiiString);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   mPrivateData->HiiString = HiiString;
@@ -1780,7 +1780,7 @@ DriverSampleInit (
   // Locate Formbrowser2 protocol
   //
   Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &FormBrowser2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   mPrivateData->FormBrowser2 = FormBrowser2;
@@ -1789,7 +1789,7 @@ DriverSampleInit (
   // Locate ConfigRouting protocol
   //
   Status = gBS->LocateProtocol (&gEfiHiiConfigRoutingProtocolGuid, NULL, (VOID **) &HiiConfigRouting);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   mPrivateData->HiiConfigRouting = HiiConfigRouting;
@@ -1798,7 +1798,7 @@ DriverSampleInit (
   // Locate keyword handler protocol
   //
   Status = gBS->LocateProtocol (&gEfiConfigKeywordHandlerProtocolGuid, NULL, (VOID **) &HiiKeywordHandler);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   mPrivateData->HiiKeywordHandler = HiiKeywordHandler;
@@ -1807,7 +1807,7 @@ DriverSampleInit (
   // Locate HiiPopup protocol
   //
   Status = gBS->LocateProtocol (&gEfiHiiPopupProtocolGuid, NULL, (VOID **) &PopupHandler);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   mPrivateData->HiiPopup = PopupHandler;
@@ -1820,7 +1820,7 @@ DriverSampleInit (
                   &mPrivateData->ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mPrivateData->DriverHandle[0] = DriverHandle[0];
 
@@ -1851,7 +1851,7 @@ DriverSampleInit (
                   &mPrivateData->ConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mPrivateData->DriverHandle[1] = DriverHandle[1];
 
@@ -1878,7 +1878,7 @@ DriverSampleInit (
     return EFI_OUT_OF_RESOURCES;
   }
   if (NewString != NULL) {
-    FreePool (NewString);
+    FreePool(NewString);
   }
 
   //
@@ -1918,7 +1918,7 @@ DriverSampleInit (
 
   BufferSize = sizeof (DRIVER_SAMPLE_CONFIGURATION);
   Status = gRT->GetVariable (VariableName, &gDriverSampleFormSetGuid, NULL, &BufferSize, Configuration);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Store zero data Buffer Storage to EFI variable
     //
@@ -1929,7 +1929,7 @@ DriverSampleInit (
                     sizeof (DRIVER_SAMPLE_CONFIGURATION),
                     Configuration
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DriverSampleUnload (ImageHandle);
       return Status;
     }
@@ -1964,7 +1964,7 @@ DriverSampleInit (
       return EFI_INVALID_PARAMETER;
     }
   }
-  FreePool (ConfigRequestHdr);
+  FreePool(ConfigRequestHdr);
 
   //
   // Initialize efi varstore configuration data
@@ -1977,7 +1977,7 @@ DriverSampleInit (
 
   BufferSize = sizeof (MY_EFI_VARSTORE_DATA);
   Status = gRT->GetVariable (MyEfiVar, &gDriverSampleFormSetGuid, NULL, &BufferSize, VarStoreConfig);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Store zero data to EFI variable Storage.
     //
@@ -1988,7 +1988,7 @@ DriverSampleInit (
                     sizeof (MY_EFI_VARSTORE_DATA),
                     VarStoreConfig
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DriverSampleUnload (ImageHandle);
       return Status;
     }
@@ -2011,7 +2011,7 @@ DriverSampleInit (
       return EFI_INVALID_PARAMETER;
     }
   }
-  FreePool (ConfigRequestHdr);
+  FreePool(ConfigRequestHdr);
 
   //
   // Initialize Bits efi varstore configuration data
@@ -2024,7 +2024,7 @@ DriverSampleInit (
 
   BufferSize = sizeof (MY_EFI_BITS_VARSTORE_DATA);
   Status = gRT->GetVariable (MyEfiBitVar, &gDriverSampleFormSetGuid, NULL, &BufferSize, BitsVarStoreConfig);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Store zero data to EFI variable Storage.
     //
@@ -2035,7 +2035,7 @@ DriverSampleInit (
                     sizeof (MY_EFI_BITS_VARSTORE_DATA),
                     BitsVarStoreConfig
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DriverSampleUnload (ImageHandle);
       return Status;
     }
@@ -2058,7 +2058,7 @@ DriverSampleInit (
       return EFI_INVALID_PARAMETER;
     }
   }
-  FreePool (ConfigRequestHdr);
+  FreePool(ConfigRequestHdr);
 
    //
   // Initialize Union efi varstore configuration data
@@ -2071,7 +2071,7 @@ DriverSampleInit (
 
   BufferSize = sizeof (MY_EFI_UNION_DATA);
   Status = gRT->GetVariable (MyEfiUnionVar, &gDriverSampleFormSetGuid, NULL, &BufferSize, UnionConfig);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Store zero data to EFI variable Storage.
     //
@@ -2082,7 +2082,7 @@ DriverSampleInit (
                     sizeof (MY_EFI_UNION_DATA),
                     UnionConfig
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DriverSampleUnload (ImageHandle);
       return Status;
     }
@@ -2105,7 +2105,7 @@ DriverSampleInit (
       return EFI_INVALID_PARAMETER;
     }
   }
-  FreePool (ConfigRequestHdr);
+  FreePool(ConfigRequestHdr);
 
   Status = gBS->CreateEventEx (
         EVT_NOTIFY_SIGNAL,
@@ -2115,13 +2115,13 @@ DriverSampleInit (
         &gEfiIfrRefreshIdOpGuid,
         &mEvent
         );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Example of how to use BrowserEx protocol to register HotKey.
   //
   Status = gBS->LocateProtocol (&gEdkiiFormBrowserExProtocolGuid, NULL, (VOID **) &FormBrowserEx);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // First unregister the default hot key F9 and F10.
     //
@@ -2227,10 +2227,10 @@ DriverSampleUnload (
 
   for (Index = 0; Index < NAME_VALUE_NAME_NUMBER; Index++) {
     if (mPrivateData->NameValueName[Index] != NULL) {
-      FreePool (mPrivateData->NameValueName[Index]);
+      FreePool(mPrivateData->NameValueName[Index]);
     }
   }
-  FreePool (mPrivateData);
+  FreePool(mPrivateData);
   mPrivateData = NULL;
 
   gBS->CloseEvent (mEvent);

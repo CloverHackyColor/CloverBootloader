@@ -76,10 +76,10 @@ InstallProcessorSmbios (
 
   Token = HiiSetString (gStringHandle, 0, UString, NULL);
   if (Token == 0) {
-    gBS->FreePool (UString);
+    gBS->FreePool(UString);
     return ;
   }
-  gBS->FreePool (UString);
+  gBS->FreePool(UString);
   return ;
 }
 
@@ -144,10 +144,10 @@ InstallMiscSmbios (
 
   Token = HiiSetString (gStringHandle, 0, UString, NULL);
   if (Token == 0) {
-    gBS->FreePool (UString);
+    gBS->FreePool(UString);
     return ;
   }
-  gBS->FreePool (UString);
+  gBS->FreePool(UString);
 
   //
   // Log Smios Type 0
@@ -174,10 +174,10 @@ InstallMiscSmbios (
 
   Token = HiiSetString (gStringHandle, 0, UString, NULL);
   if (Token == 0) {
-    gBS->FreePool (UString);
+    gBS->FreePool(UString);
     return ;
   }
-  gBS->FreePool (UString);
+  gBS->FreePool(UString);
 
   //
   // Log Smbios Type 1
@@ -207,7 +207,7 @@ SmbiosGenEntrypoint (
                   NULL,
                   (VOID**)&gSmbios
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -326,5 +326,5 @@ LogSmbiosData (
                      &SmbiosHandle,
                      (EFI_SMBIOS_TABLE_HEADER*)Buffer
                      );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 }

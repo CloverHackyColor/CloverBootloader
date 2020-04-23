@@ -86,8 +86,8 @@ InternalHiiExtractGuidFromHiiHandle (
 
     Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, Handle, &BufferSize, HiiPackageList);
   }
-  if (EFI_ERROR (Status)) {
-    FreePool (HiiPackageList);
+  if (EFI_ERROR(Status)) {
+    FreePool(HiiPackageList);
     return Status;
   }
 
@@ -96,7 +96,7 @@ InternalHiiExtractGuidFromHiiHandle (
   //
   CopyGuid (Guid, &HiiPackageList->PackageListGuid);
 
-  FreePool (HiiPackageList);
+  FreePool(HiiPackageList);
 
   return EFI_SUCCESS;
 }
@@ -224,14 +224,14 @@ HiiAddPackages (
                            DeviceHandle,
                            &HiiHandle
                            );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     HiiHandle = NULL;
   }
 
   //
   // Free the allocated package list
   //
-  FreePool (PackageListHeader);
+  FreePool(PackageListHeader);
 
   //
   // Return the new HII Handle
@@ -261,7 +261,7 @@ HiiRemovePackages (
     return;
   }
 /*  Status = */gHiiDatabase->RemovePackageList (gHiiDatabase, HiiHandle);
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
 }
 
 
@@ -346,11 +346,11 @@ HiiGetHiiHandles (
                            &HandleBufferLength,
                            HiiHandleBuffer
                            );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Free the buffer and return NULL if the HII handles can not be retrieved.
     //
-    FreePool (HiiHandleBuffer);
+    FreePool(HiiHandleBuffer);
     return NULL;
   }
 
@@ -362,7 +362,7 @@ HiiGetHiiHandles (
   } else {
     for (Index1 = 0, Index2 = 0; HiiHandleBuffer[Index1] != NULL; Index1++) {
       Status = InternalHiiExtractGuidFromHiiHandle (HiiHandleBuffer[Index1], &Guid);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       if (CompareGuid (&Guid, PackageListGuid)) {
         HiiHandleBuffer[Index2++] = HiiHandleBuffer[Index1];
       }
@@ -371,7 +371,7 @@ HiiGetHiiHandles (
       HiiHandleBuffer[Index2] = NULL;
       return HiiHandleBuffer;
     } else {
-      FreePool (HiiHandleBuffer);
+      FreePool(HiiHandleBuffer);
       return NULL;
     }
   }
@@ -423,7 +423,7 @@ HiiGetFormSetFromHiiHandle(
   PackageListSize = 0;
   HiiPackageList = NULL;
   Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, Handle, &PackageListSize, HiiPackageList);
-  if (EFI_ERROR (Status) && (Status != EFI_BUFFER_TOO_SMALL)) {
+  if (EFI_ERROR(Status) && (Status != EFI_BUFFER_TOO_SMALL)) {
     return Status;
   }
 
@@ -433,7 +433,7 @@ HiiGetFormSetFromHiiHandle(
   }
 
   Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, Handle, &PackageListSize, HiiPackageList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get Form package from this HII package List
@@ -494,7 +494,7 @@ HiiGetFormSetFromHiiHandle(
     }
   }
 Done:
-  FreePool (HiiPackageList);
+  FreePool(HiiPackageList);
 
   *BufferSize = TempSize;
   *Buffer = (EFI_IFR_FORM_SET *)FormSetBuffer;
@@ -581,7 +581,7 @@ InternalHiiBlockToConfig (
                                 &ConfigResp,
                                 &Progress
                                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   return ConfigResp;
@@ -624,7 +624,7 @@ InternalHiiBrowserCallback (
   //
   if (mUefiFormBrowser2 == NULL) {
     Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &mUefiFormBrowser2);
-    if (EFI_ERROR (Status) || mUefiFormBrowser2 == NULL) {
+    if (EFI_ERROR(Status) || mUefiFormBrowser2 == NULL) {
       return NULL;
     }
   }
@@ -649,7 +649,7 @@ InternalHiiBrowserCallback (
                               VariableName
                               );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // No Resluts Data, only allocate one char for '\0'
       //
@@ -681,7 +681,7 @@ InternalHiiBrowserCallback (
                             VariableGuid,
                             VariableName
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -1104,14 +1104,14 @@ GetValueFromRequest (
   // Get Offset
   //
   Status = InternalHiiGetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   *VarValue = 0;
   CopyMem (VarValue, TmpBuffer, (((Length + 1) / 2) < sizeof (UINT64)) ? ((Length + 1) / 2) : sizeof (UINT64));
 
-  FreePool (TmpBuffer);
+  FreePool(TmpBuffer);
 
   return EFI_SUCCESS;
 }
@@ -1352,7 +1352,7 @@ ValidateQuestionFromVfr (
             }
 
             Status = GetValueFromRequest (RequestElement, QuestionName, &VarValue);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               return Status;
             }
           } else {
@@ -1444,7 +1444,7 @@ ValidateQuestionFromVfr (
             }
 
             Status = GetValueFromRequest (RequestElement, QuestionName, &VarValue);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               return Status;
             }
           } else {
@@ -1624,7 +1624,7 @@ ValidateQuestionFromVfr (
             }
 
             Status = GetValueFromRequest (RequestElement, QuestionName, &VarValue);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               return Status;
             }
           } else {
@@ -1923,7 +1923,7 @@ GetBlockDataInfo (
     // Get Offset
     //
     Status = InternalHiiGetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     Offset = 0;
@@ -1932,7 +1932,7 @@ GetBlockDataInfo (
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
       );
-    FreePool (TmpBuffer);
+    FreePool(TmpBuffer);
     TmpBuffer = NULL;
 
     StringPtr += Length;
@@ -1946,7 +1946,7 @@ GetBlockDataInfo (
     // Get Width
     //
     Status = InternalHiiGetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     Width = 0;
@@ -1955,7 +1955,7 @@ GetBlockDataInfo (
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
       );
-    FreePool (TmpBuffer);
+    FreePool(TmpBuffer);
     TmpBuffer = NULL;
 
     StringPtr += Length;
@@ -1974,7 +1974,7 @@ GetBlockDataInfo (
     // Get Value
     //
     Status = InternalHiiGetValueOfNumber (StringPtr, &TmpBuffer, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2004,7 +2004,7 @@ GetBlockDataInfo (
     // Update the Block with configuration info
     //
     CopyMem (DataBuffer + Offset, TmpBuffer, Width);
-    FreePool (TmpBuffer);
+    FreePool(TmpBuffer);
     TmpBuffer = NULL;
 
     //
@@ -2027,7 +2027,7 @@ GetBlockDataInfo (
         if (NewBlockData->Width > BlockData->Width) {
           BlockData->Width = NewBlockData->Width;
         }
-        FreePool (NewBlockData);
+        FreePool(NewBlockData);
         break;
       } else if (NewBlockData->Offset < BlockData->Offset) {
         //
@@ -2068,7 +2068,7 @@ GetBlockDataInfo (
         BlockData->Width = (UINT16) (NewBlockData->Offset + NewBlockData->Width - BlockData->Offset);
       }
       RemoveEntryList (Link->ForwardLink);
-      FreePool (NewBlockData);
+      FreePool(NewBlockData);
       continue;
     }
     Link = Link->ForwardLink;
@@ -2080,7 +2080,7 @@ GetBlockDataInfo (
 
 Done:
   if (DataBuffer != NULL) {
-    FreePool (DataBuffer);
+    FreePool(DataBuffer);
   }
 
   if (BlockArray != NULL) {
@@ -2090,9 +2090,9 @@ Done:
     while (!IsListEmpty (&BlockArray->Entry)) {
       BlockData = BASE_CR (BlockArray->Entry.ForwardLink, IFR_BLOCK_DATA, Entry);
       RemoveEntryList (&BlockData->Entry);
-      FreePool (BlockData);
+      FreePool(BlockData);
     }
-    FreePool (BlockArray);
+    FreePool(BlockArray);
   }
 
   return Status;
@@ -2140,7 +2140,7 @@ InternalHiiValidateCurrentSetting (
   //
   if (StrStr (ConfigResp, L"&OFFSET=") != NULL) {
     Status = GetBlockDataInfo(ConfigResp, &CurrentBlockArray, &VarBuffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     NameValueType = FALSE;
@@ -2174,7 +2174,7 @@ InternalHiiValidateCurrentSetting (
                           );
 
   if (VarBuffer != NULL) {
-    FreePool (VarBuffer);
+    FreePool(VarBuffer);
   }
 
   if (CurrentBlockArray != NULL) {
@@ -2184,9 +2184,9 @@ InternalHiiValidateCurrentSetting (
     while (!IsListEmpty (&CurrentBlockArray->Entry)) {
       BlockData = BASE_CR (CurrentBlockArray->Entry.ForwardLink, IFR_BLOCK_DATA, Entry);
       RemoveEntryList (&BlockData->Entry);
-      FreePool (BlockData);
+      FreePool(BlockData);
     }
-    FreePool (CurrentBlockArray);
+    FreePool(CurrentBlockArray);
   }
 
   return Status;
@@ -2309,7 +2309,7 @@ InternalHiiIfrValueAction (
                                 );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -2331,7 +2331,7 @@ InternalHiiIfrValueAction (
     }
     StringPtr += StrLen (L"GUID=");
     Status = InternalHiiGetBufferFromString (StringPtr, GUID_CONFIG_STRING_TYPE, (UINT8 **) &VarGuid);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2347,7 +2347,7 @@ InternalHiiIfrValueAction (
     }
     StringPtr += StrLen (L"&NAME=");
     Status = InternalHiiGetBufferFromString (StringPtr, NAME_CONFIG_STRING_TYPE, (UINT8 **) &VarName);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2363,7 +2363,7 @@ InternalHiiIfrValueAction (
     }
     StringPtr += StrLen (L"&PATH=");
     Status = InternalHiiGetBufferFromString (StringPtr, PATH_CONFIG_STRING_TYPE, (UINT8 **) &DevicePath);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2372,7 +2372,7 @@ InternalHiiIfrValueAction (
     //
     TempDevicePath = DevicePath;
     Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &TempDevicePath, &DriverHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2393,7 +2393,7 @@ InternalHiiIfrValueAction (
     }
 
     HiiHandle = HiiHandleBuffer[Index];
-    FreePool (HiiHandleBuffer);
+    FreePool(HiiHandleBuffer);
 
     if (HiiHandle == NULL) {
       //
@@ -2430,7 +2430,7 @@ InternalHiiIfrValueAction (
     // Get PackageList on HiiHandle
     //
     Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, HiiHandle, &PackageListLength, HiiPackageList);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2451,7 +2451,7 @@ InternalHiiIfrValueAction (
     //
     // The required setting can't be found. So, it is not required to be validated and set.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_SUCCESS;
       goto NextConfigAltResp;
     }
@@ -2478,7 +2478,7 @@ InternalHiiIfrValueAction (
       Status = InternalHiiValidateCurrentSetting (ConfigResp, HiiPackageList, PackageListLength, VarGuid, VarName, HiiHandle);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
 
@@ -2487,25 +2487,25 @@ NextConfigAltResp:
     // Free the allocated pacakge buffer and the got ConfigResp string.
     //
     if (HiiPackageList != NULL) {
-      FreePool (HiiPackageList);
+      FreePool(HiiPackageList);
       HiiPackageList = NULL;
     }
 
     if (ConfigResp != NULL) {
-      FreePool (ConfigResp);
+      FreePool(ConfigResp);
       ConfigResp = NULL;
     }
 
     //
     // Free the allocated buffer.
     //
-    FreePool (VarGuid);
+    FreePool(VarGuid);
     VarGuid = NULL;
 
-    FreePool (VarName);
+    FreePool(VarName);
     VarName = NULL;
 
-    FreePool (DevicePath);
+    FreePool(DevicePath);
     DevicePath = NULL;
 
     //
@@ -2549,7 +2549,7 @@ NextConfigAltResp:
     //
     // Free the allocated ConfigAltHdr string
     //
-    FreePool (ConfigAltHdr);
+    FreePool(ConfigAltHdr);
     if (*StringPtr == L'\0') {
       break;
     }
@@ -2570,30 +2570,30 @@ NextConfigAltResp:
 
 Done:
   if (VarGuid != NULL) {
-    FreePool (VarGuid);
+    FreePool(VarGuid);
   }
 
   if (VarName != NULL) {
-    FreePool (VarName);
+    FreePool(VarName);
   }
 
   if (DevicePath != NULL) {
-    FreePool (DevicePath);
+    FreePool(DevicePath);
   }
 
   if (ConfigResp != NULL) {
-    FreePool (ConfigResp);
+    FreePool(ConfigResp);
   }
 
   if (ConfigAltResp != NULL) {
-    FreePool (ConfigAltResp);
+    FreePool(ConfigAltResp);
   }
 
   if (HiiPackageList != NULL) {
-    FreePool (HiiPackageList);
+    FreePool(HiiPackageList);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -2777,7 +2777,7 @@ HiiIsConfigHdrMatch (
   //
   // Free the <ConfigHdr> string
   //
-  FreePool (CompareConfigHdr);
+  FreePool(CompareConfigHdr);
 
   return Result;
 }
@@ -2831,7 +2831,7 @@ HiiGetBrowserData (
   //
   // Free the allocated buffer
   //
-  FreePool (ResultsData);
+  FreePool(ResultsData);
   if (ConfigResp == NULL) {
     return FALSE;
   }
@@ -2849,9 +2849,9 @@ HiiGetBrowserData (
   //
   // Free the allocated buffer
   //
-  FreePool (ConfigResp);
+  FreePool(ConfigResp);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -2925,7 +2925,7 @@ HiiSetBrowserData (
   // Convert <ConfigRequest> to <ConfigResp>
   //
   ConfigResp = InternalHiiBlockToConfig (ConfigRequest, Buffer, BufferSize);
-  FreePool (ConfigRequest);
+  FreePool(ConfigRequest);
   if (ConfigResp == NULL) {
     return FALSE;
   }
@@ -2934,7 +2934,7 @@ HiiSetBrowserData (
   // Set data in the uncommitted browser state information
   //
   ResultsData = InternalHiiBrowserCallback (VariableGuid, VariableName, ConfigResp + StrLen(mConfigHdrTemplate) + 1);
-  FreePool (ConfigResp);
+  FreePool(ConfigResp);
 
   return (BOOLEAN)(ResultsData != NULL);
 }
@@ -2989,7 +2989,7 @@ HiiAllocateOpCodeHandle (
   }
   OpCodeBuffer->Buffer = (UINT8 *)AllocatePool (HII_LIB_OPCODE_ALLOCATION_SIZE);
   if (OpCodeBuffer->Buffer == NULL) {
-    FreePool (OpCodeBuffer);
+    FreePool(OpCodeBuffer);
     return NULL;
   }
   OpCodeBuffer->BufferSize = HII_LIB_OPCODE_ALLOCATION_SIZE;
@@ -3019,9 +3019,9 @@ HiiFreeOpCodeHandle (
 
   OpCodeBuffer = (HII_LIB_OPCODE_BUFFER *)OpCodeHandle;
   if (OpCodeBuffer->Buffer != NULL) {
-    FreePool (OpCodeBuffer->Buffer);
+    FreePool(OpCodeBuffer->Buffer);
   }
-  FreePool (OpCodeBuffer);
+  FreePool(OpCodeBuffer);
 }
 
 /**
@@ -4382,7 +4382,7 @@ HiiUpdateForm (
   }
 
   Status = gHiiDatabase->ExportPackageLists (gHiiDatabase, HiiHandle, &BufferSize, HiiPackageList);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Finish;
   }
 
@@ -4472,15 +4472,15 @@ HiiUpdateForm (
 
 Finish:
   if (HiiPackageList != NULL) {
-    FreePool (HiiPackageList);
+    FreePool(HiiPackageList);
   }
 
   if (UpdatePackageList != NULL) {
-    FreePool (UpdatePackageList);
+    FreePool(UpdatePackageList);
   }
 
   if (TempPackage != NULL) {
-    FreePool (TempPackage);
+    FreePool(TempPackage);
   }
 
   return Status;

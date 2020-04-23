@@ -136,19 +136,19 @@ VOID FillCardList(TagPtr CfgDict)
                 model_name = "VideoCard";
               }
               
-              prop2 = GetProperty (element, "IOPCIPrimaryMatch");
-              dev_id = (UINT32)GetPropertyInteger (prop2, 0);
+              prop2 = GetProperty(element, "IOPCIPrimaryMatch");
+              dev_id = (UINT32)GetPropertyInteger(prop2, 0);
               
-              prop2 = GetProperty (element, "IOPCISubDevId");
-              subdev_id = (UINT32)GetPropertyInteger (prop2, 0);
+              prop2 = GetProperty(element, "IOPCISubDevId");
+              subdev_id = (UINT32)GetPropertyInteger(prop2, 0);
               
-              prop2 = GetProperty (element, "VRAM");
+              prop2 = GetProperty(element, "VRAM");
               VramSize = LShiftU64((UINTN)GetPropertyInteger(prop2, (INTN)VramSize), 20); //Mb -> bytes
               
-              prop2 = GetProperty (element, "VideoPorts");
-              VideoPorts = (UINT16)GetPropertyInteger (prop2, VideoPorts);
+              prop2 = GetProperty(element, "VideoPorts");
+              VideoPorts = (UINT16)GetPropertyInteger(prop2, VideoPorts);
               
-              prop2 = GetProperty (element, "LoadVBios");
+              prop2 = GetProperty(element, "LoadVBios");
               if (prop2 != NULL && IsPropertyTrue (prop2)) {
                 LoadVBios = TRUE;
               }

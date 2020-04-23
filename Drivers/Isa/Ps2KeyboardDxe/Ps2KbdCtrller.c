@@ -1108,7 +1108,7 @@ UpdateStatusLights (
   // Send keyboard command
   //
   Status = KeyboardWrite (ConsoleIn, 0xed);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1132,7 +1132,7 @@ UpdateStatusLights (
 
   Status = KeyboardWrite (ConsoleIn, Command);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1208,7 +1208,7 @@ KeyGetchar (
     Extend1        = FALSE;
     ScancodeArrPos = 0;
     Status  = GetScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return ;
     }
 
@@ -1219,7 +1219,7 @@ KeyGetchar (
       Extend0 = TRUE;
       ScancodeArrPos = 1;
       Status         = GetScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return ;
       }
     } else if (ScancodeArr[ScancodeArrPos] == SCANCODE_EXTENDED1) {
@@ -1229,7 +1229,7 @@ KeyGetchar (
       Extend1 = TRUE;
       ScancodeArrPos = 2;
       Status         = GetScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return ;
       }
     }
@@ -1237,7 +1237,7 @@ KeyGetchar (
     // if we reach this position, scancodes for a key is in buffer now,pop them
     //
     Status = PopScancodeBufHead (&ConsoleIn->ScancodeQueue, ScancodeArrPos + 1, ScancodeArr);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // store the last available byte, this byte of scancode will be checked
@@ -1540,7 +1540,7 @@ InitKeyboard (
   // output buffer full bits within MAX TRY times
   //
   if ((KeyReadStatusRegister (ConsoleIn) & KEYBOARD_STATUS_REGISTER_HAS_OUTPUT_DATA) != 0) {
-    while (!EFI_ERROR (Status) && TryTime < KEYBOARD_MAX_TRY) {
+    while (!EFI_ERROR(Status) && TryTime < KEYBOARD_MAX_TRY) {
       Status = KeyboardRead (ConsoleIn, &CommandByte);
       TryTime ++;
     }
@@ -1575,13 +1575,13 @@ InitKeyboard (
       // Read the command byte of 8042 controller
       //
       Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_READ);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KeyboardError (ConsoleIn, L"\n\r");
         goto Done;
       }
       
       Status = KeyboardRead (ConsoleIn, &CommandByte);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KeyboardError (ConsoleIn, L"\n\r");
         goto Done;
       }
@@ -1607,13 +1607,13 @@ InitKeyboard (
     //
     if (!PcdGetBool (PcdFastPS2Detection)) {
       Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_DISABLE_KEYBOARD_INTERFACE);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KeyboardError (ConsoleIn, L"\n\r");
         goto Done;
       }
       
       Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_DISABLE_MOUSE_INTERFACE);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KeyboardError (ConsoleIn, L"\n\r");
         goto Done;
       }
@@ -1627,13 +1627,13 @@ InitKeyboard (
       // 8042 Controller Self Test
       //
       Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_CONTROLLER_SELF_TEST);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
         goto Done;
       }
       
       Status = KeyboardWaitForValue (ConsoleIn, 0x55);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         KeyboardError (ConsoleIn, L"8042 controller self test failed!\n\r");
         goto Done;
       }
@@ -1667,13 +1667,13 @@ InitKeyboard (
   //  0: Enable Keyboard interrupt )
   //
   Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_WRITE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
     goto Done;
   }
 
   Status = KeyboardWrite (ConsoleIn, 0x67);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     KeyboardError (ConsoleIn, L"8042 controller data write error!\n\r");
     goto Done;
   }
@@ -1720,13 +1720,13 @@ InitKeyboard (
     // Keyboard Interface Test
     //
     Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_KEYBOARD_INTERFACE_SELF_TEST);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
       goto Done;
     }
 
     Status = KeyboardWaitForValue (ConsoleIn, 0x00);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (
         ConsoleIn,
         L"Some specific value not aquired from 8042 controller!\n\r"
@@ -1737,13 +1737,13 @@ InitKeyboard (
     // Keyboard reset with a BAT(Basic Assurance Test)
     //
     Status = KeyboardWrite (ConsoleIn, KEYBOARD_8048_COMMAND_RESET);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"8042 controller data write error!\n\r");
       goto Done;
     }
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"Some specific value not aquired from 8042 controller!\n\r");
       goto Done;
     }
@@ -1753,7 +1753,7 @@ InitKeyboard (
     mWaitForValueTimeOut  = KEYBOARD_BAT_TIMEOUT;
 
     Status                = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_BAT_SUCCESS);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"Keyboard self test failed!\n\r");
       goto Done;
     }
@@ -1764,25 +1764,25 @@ InitKeyboard (
     // Set Keyboard to use Scan Code Set 2
     //
     Status = KeyboardWrite (ConsoleIn, KEYBOARD_8048_COMMAND_SELECT_SCAN_CODE_SET);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"8042 controller data write error!\n\r");
       goto Done;
     }
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"Some specific value not aquired from 8042 controller!\n\r");
       goto Done;
     }
 
     Status = KeyboardWrite (ConsoleIn, 0x02);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"8042 controller data write error!!\n\r");
       goto Done;
     }
 
     Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       KeyboardError (ConsoleIn, L"Some specific value not aquired from 8042 controller!\n\r");
       goto Done;
     }
@@ -1791,13 +1791,13 @@ InitKeyboard (
   // Clear Keyboard Scancode Buffer
   //
   Status = KeyboardWrite (ConsoleIn, KEYBOARD_8048_COMMAND_CLEAR_OUTPUT_DATA);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     KeyboardError (ConsoleIn, L"8042 controller data write error!\n\r");
     goto Done;
   }
 
   Status = KeyboardWaitForValue (ConsoleIn, KEYBOARD_8048_RETURN_8042_ACK);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     KeyboardError (ConsoleIn, L"Some specific value not aquired from 8042 controller!\n\r");
     goto Done;
   }
@@ -1819,7 +1819,7 @@ InitKeyboard (
   // Update Keyboard Lights
   //
   Status = UpdateStatusLights (ConsoleIn);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     KeyboardError (ConsoleIn, L"Update keyboard status lights error!\n\r");
     goto Done;
     }
@@ -1834,13 +1834,13 @@ Done:
     // Enable mouse interface
     //
     Status1 = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_ENABLE_MOUSE_INTERFACE);
-    if (EFI_ERROR (Status1)) {
+    if (EFI_ERROR(Status1)) {
       KeyboardError (ConsoleIn, L"8042 controller command write error!\n\r");
       return EFI_DEVICE_ERROR;
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   } else {
     return EFI_DEVICE_ERROR;
@@ -1867,7 +1867,7 @@ DisableKeyboard (
   // Disable keyboard interface
   //
   Status = KeyboardCommand (ConsoleIn, KEYBOARD_8042_COMMAND_DISABLE_KEYBOARD_INTERFACE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     KeyboardError (ConsoleIn, L"\n\r");
     return EFI_DEVICE_ERROR;
   }
@@ -1904,7 +1904,7 @@ CheckKeyboardConnect (
                KEYBOARD_KBEN
                );
     
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return FALSE;
     }
     //
@@ -1918,7 +1918,7 @@ CheckKeyboardConnect (
                );
     mWaitForValueTimeOut = WaitForValueTimeOutBcakup;
     
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return FALSE;
     }
     

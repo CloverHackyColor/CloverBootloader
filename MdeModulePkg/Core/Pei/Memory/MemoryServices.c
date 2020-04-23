@@ -591,7 +591,7 @@ PeiAllocatePages (
     // Try to find free memory by searching memory allocation HOBs.
     //
     Status = FindFreeMemoryFromMemoryAllocationHob (MemoryType, Pages, Granularity, Memory);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Status;
     }
     DEBUG ((EFI_D_ERROR, "AllocatePages failed: No 0x%lx Pages is available.\n", (UINT64) Pages));
@@ -801,9 +801,9 @@ PeiAllocatePool (
              (UINT16)(sizeof (EFI_HOB_MEMORY_POOL) + Size),
              (VOID **)&Hob
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *Buffer = NULL;
   } else {
     *Buffer = Hob + 1;

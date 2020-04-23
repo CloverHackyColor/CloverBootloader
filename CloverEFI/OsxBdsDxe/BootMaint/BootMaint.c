@@ -295,7 +295,7 @@ BootMaintExtractConfig (
     }
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
-    FreePool (ConfigRequestHdr);
+    FreePool(ConfigRequestHdr);
   }
 
   Status = gHiiConfigRouting->BlockToConfig (
@@ -310,7 +310,7 @@ BootMaintExtractConfig (
   // Free the allocated config request string.
   //
   if (AllocatedRequest) {
-    FreePool (ConfigRequest);
+    FreePool(ConfigRequest);
     ConfigRequest = NULL;
   }
   //
@@ -401,7 +401,7 @@ BootMaintRouteConfig (
                   NULL, 
                   (VOID**) &ConfigRouting
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -422,7 +422,7 @@ BootMaintRouteConfig (
                             &BufferSize,
                             Progress
                             );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   //
   // Compare new and old BMM configuration data and only do action for modified item to 
   // avoid setting unnecessary non-volatile variable
@@ -738,7 +738,7 @@ BootMaintCallback (
     // Initilize Form for legacy boot option.
     //
     Status = EfiLibLocateProtocol (&gEfiLegacyBiosProtocolGuid, (VOID **) &LegacyBios);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       InitializeLegacyBootOption ();
     }
     
@@ -1217,7 +1217,7 @@ InitializeBM (
   CopyGuid (&PackageListHeader->PackageListGuid, &gFileExploreFormSetGuid);
   Status = gHiiDatabase->UpdatePackageList (gHiiDatabase, BmmCallbackInfo->FeHiiHandle, PackageListHeader);
   
-  FreePool (PackageListHeader);
+  FreePool(PackageListHeader);
 
   //
   // Init OpCode Handle and Allocate space for creation of Buffer
@@ -1441,7 +1441,7 @@ CleanUpStringDepository (
     CurrentListNode = StringDepository->ListHead;
     for (NodeIndex = 0; NodeIndex < StringDepository->TotalNodeNumber; NodeIndex++) {
       NextListNode = CurrentListNode->Next;
-      FreePool (CurrentListNode);
+      FreePool(CurrentListNode);
       CurrentListNode = NextListNode;
     }
 
@@ -1450,7 +1450,7 @@ CleanUpStringDepository (
   //
   // Release string depository.
   //
-  FreePool (FileOptionStrDepository);
+  FreePool(FileOptionStrDepository);
 }
 
 /**
@@ -1590,7 +1590,7 @@ InitBMPackage (
   //
   Ptr = AllocateZeroPool (sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) + sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY));
   if (Ptr == NULL) {
-    FreePool (BmmCallbackInfo);
+    FreePool(BmmCallbackInfo);
     BmmCallbackInfo = NULL;
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1627,8 +1627,8 @@ InitBMPackage (
                   &BmmCallbackInfo->BmmConfigAccess,
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1643,8 +1643,8 @@ InitBMPackage (
                   &BmmCallbackInfo->FeConfigAccess,
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1718,8 +1718,8 @@ FreeBMPackage (
            );
     }
 
-  FreePool (BmmCallbackInfo->LoadContext);
-  FreePool (BmmCallbackInfo);
+  FreePool(BmmCallbackInfo->LoadContext);
+  FreePool(BmmCallbackInfo);
 
   mBmmCallbackInfo = NULL; 
 

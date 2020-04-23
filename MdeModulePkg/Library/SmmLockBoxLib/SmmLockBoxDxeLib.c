@@ -48,7 +48,7 @@ LockBoxGetSmmCommProtocol (
                   NULL,
                   (VOID **)&mLockBoxSmmCommProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mLockBoxSmmCommProtocol = NULL;
   }
   return mLockBoxSmmCommProtocol;
@@ -91,7 +91,7 @@ LockBoxGetSmmCommBuffer (
              &gEdkiiPiSmmCommunicationRegionTableGuid,
              (VOID **) &PiSmmCommunicationRegionTable
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mLockBoxSmmCommBuffer = NULL;
     return mLockBoxSmmCommBuffer;
   }
@@ -188,7 +188,7 @@ SaveLockBox (
                                &CommBuffer[0],
                                &CommSize
                                );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = (EFI_STATUS)LockBoxParameterSave->Header.ReturnStatus;
 
@@ -270,7 +270,7 @@ SetLockBoxAttributes (
                                &CommBuffer[0],
                                &CommSize
                                );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = (EFI_STATUS)LockBoxParameterSetAttributes->Header.ReturnStatus;
 
@@ -361,7 +361,7 @@ UpdateLockBox (
                                &CommBuffer[0],
                                &CommSize
                                );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = (EFI_STATUS)LockBoxParameterUpdate->Header.ReturnStatus;
 
@@ -455,7 +455,7 @@ RestoreLockBox (
                                &CommBuffer[0],
                                &CommSize
                                );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (Length != NULL) {
     *Length = (UINTN)LockBoxParameterRestore->Length;
@@ -524,7 +524,7 @@ RestoreAllLockBoxInPlace (
                                &CommBuffer[0],
                                &CommSize
                                );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = (EFI_STATUS)LockBoxParameterRestoreAllInPlace->Header.ReturnStatus;
 

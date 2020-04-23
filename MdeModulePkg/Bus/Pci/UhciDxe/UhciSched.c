@@ -52,7 +52,7 @@ UhciInitFrameList (
                          0
                          );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -65,7 +65,7 @@ UhciInitFrameList (
                          &Mapping
                          );
 
-  if (EFI_ERROR (Status) || (Bytes != 4096)) {
+  if (EFI_ERROR(Status) || (Bytes != 4096)) {
     Status = EFI_UNSUPPORTED;
     goto ON_ERROR;
   }
@@ -176,7 +176,7 @@ UhciDestoryFrameList (
                 );
 
   if (Uhc->FrameBaseHostAddr != NULL) {
-    FreePool (Uhc->FrameBaseHostAddr);
+    FreePool(Uhc->FrameBaseHostAddr);
   }
 
   if (Uhc->SyncIntQh != NULL) {
@@ -756,7 +756,7 @@ UhciFreeAsyncReq (
     UsbHcFreeMem (Uhc->MemPool, AsyncReq->Data, AsyncReq->DataLen);
   }
 
-  gBS->FreePool (AsyncReq);
+  gBS->FreePool(AsyncReq);
 }
 
 
@@ -1034,7 +1034,7 @@ UhciMonitorAsyncReqList (
     }
 
     if (Data != NULL) {
-      gBS->FreePool (Data);
+      gBS->FreePool(Data);
     }
   } while (Link != &(Uhc->AsyncIntList));
 }

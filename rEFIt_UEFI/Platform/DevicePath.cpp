@@ -72,7 +72,7 @@
 //    Str->Len = StringSize - sizeof (UINT16);
 //  }
 //
-//  FreePool (AppendStr);
+//  FreePool(AppendStr);
 //  return Str->Str;
 //}
 //
@@ -1557,7 +1557,7 @@
 //                  NULL,
 //                  (VOID **) &DevPathToText
 //                  );
-//  if (!EFI_ERROR (Status)) {
+//  if (!EFI_ERROR(Status)) {
 //    ToText = DevPathToText->ConvertDevicePathToText (
 //                              DevPath,
 //                              FALSE,

@@ -187,7 +187,7 @@ Ps2MouseComponentNameGetControllerName (
   //
   Status = EfiTestManagedDevice (ControllerHandle, gPS2MouseDriver.DriverBindingHandle, &gEfiSioProtocolGuid);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -201,7 +201,7 @@ Ps2MouseComponentNameGetControllerName (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

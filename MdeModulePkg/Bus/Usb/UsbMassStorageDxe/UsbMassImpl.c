@@ -122,7 +122,7 @@ UsbMassReadBlocks (
   //
   if (Media->RemovableMedia) {
     Status = UsbBootDetectMedia (UsbMass);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ON_EXIT;
     }
   }
@@ -171,7 +171,7 @@ UsbMassReadBlocks (
     Status = UsbBootReadWriteBlocks (UsbMass, FALSE, (UINT32) Lba, TotalBlock, Buffer);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UsbMassReadBlocks: UsbBootReadBlocks (%r) -> Reset\n", Status));
     UsbMassReset (This, TRUE);
   }
@@ -238,7 +238,7 @@ UsbMassWriteBlocks (
   //
   if (Media->RemovableMedia) {
     Status = UsbBootDetectMedia (UsbMass);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ON_EXIT;
     }
   }
@@ -291,7 +291,7 @@ UsbMassWriteBlocks (
     Status = UsbBootReadWriteBlocks (UsbMass, TRUE, (UINT32) Lba, TotalBlock, Buffer);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UsbMassWriteBlocks: UsbBootWriteBlocks (%r) -> Reset\n", Status));
     UsbMassReset (This, TRUE);
   }
@@ -406,12 +406,12 @@ UsbMassInitTransport (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &Interface);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -432,7 +432,7 @@ UsbMassInitTransport (
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -513,9 +513,9 @@ UsbMassInitMultiLun (
     // Initialize the media parameter data for EFI_BLOCK_IO_MEDIA of Block I/O Protocol.
     //
     Status = UsbMassInitMedia (UsbMass);
-    if ((EFI_ERROR (Status)) && (Status != EFI_NO_MEDIA)) {
+    if ((EFI_ERROR(Status)) && (Status != EFI_NO_MEDIA)) {
       DEBUG ((EFI_D_ERROR, "UsbMassInitMultiLun: UsbMassInitMedia (%r)\n", Status));
-      FreePool (UsbMass);
+      FreePool(UsbMass);
       continue;
     }
 
@@ -533,7 +533,7 @@ UsbMassInitMultiLun (
     if (UsbMass->DevicePath == NULL) {
       DEBUG ((EFI_D_ERROR, "UsbMassInitMultiLun: failed to create device logic unit device path\n"));
       Status = EFI_OUT_OF_RESOURCES;
-      FreePool (UsbMass);
+      FreePool(UsbMass);
       continue;
     }
 
@@ -553,10 +553,10 @@ UsbMassInitMultiLun (
                     NULL
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "UsbMassInitMultiLun: InstallMultipleProtocolInterfaces (%r)\n", Status));
-      FreePool (UsbMass->DevicePath);
-      FreePool (UsbMass);
+      FreePool(UsbMass->DevicePath);
+      FreePool(UsbMass);
       continue;
     }
 
@@ -572,7 +572,7 @@ UsbMassInitMultiLun (
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "UsbMassInitMultiLun: OpenUsbIoProtocol By Child (%r)\n", Status));
       gBS->UninstallMultipleProtocolInterfaces (
              UsbMass->Controller,
@@ -584,8 +584,8 @@ UsbMassInitMultiLun (
              &UsbMass->DiskInfo,
              NULL
              );
-      FreePool (UsbMass->DevicePath);
-      FreePool (UsbMass);
+      FreePool(UsbMass->DevicePath);
+      FreePool(UsbMass);
       continue;
     }
     ReturnStatus = EFI_SUCCESS;
@@ -632,7 +632,7 @@ UsbMassInitNonLun (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UsbMassInitNonLun: OpenUsbIoProtocol By Driver (%r)\n", Status));
     goto ON_ERROR;
   }
@@ -653,7 +653,7 @@ UsbMassInitNonLun (
   // Initialize the media parameter data for EFI_BLOCK_IO_MEDIA of Block I/O Protocol.
   //
   Status = UsbMassInitMedia (UsbMass);
-  if ((EFI_ERROR (Status)) && (Status != EFI_NO_MEDIA)) {
+  if ((EFI_ERROR(Status)) && (Status != EFI_NO_MEDIA)) {
     DEBUG ((EFI_D_ERROR, "UsbMassInitNonLun: UsbMassInitMedia (%r)\n", Status));
     goto ON_ERROR;
   }
@@ -668,7 +668,7 @@ UsbMassInitNonLun (
                   &UsbMass->DiskInfo,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_ERROR;
   }
 
@@ -676,7 +676,7 @@ UsbMassInitNonLun (
 
 ON_ERROR:
   if (UsbMass != NULL) {
-    FreePool (UsbMass);
+    FreePool(UsbMass);
   }
   if (UsbIo != NULL) {
     gBS->CloseProtocol (
@@ -723,7 +723,7 @@ USBMassDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -732,7 +732,7 @@ USBMassDriverBindingSupported (
   // protocol handler.
   //
   Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &Interface);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -809,7 +809,7 @@ USBMassDriverBindingStart (
 
   Status = UsbMassInitTransport (This, Controller, &Transport, &Context, &MaxLun);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "USBMassDriverBindingStart: UsbMassInitTransport (%r)\n", Status));
     goto Exit;
   }
@@ -818,7 +818,7 @@ USBMassDriverBindingStart (
     // Initialize data for device that does not support multiple LUNSs.
     //
     Status = UsbMassInitNonLun (This, Controller, Transport, Context);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "USBMassDriverBindingStart: UsbMassInitNonLun (%r)\n", Status));
     }
   } else {
@@ -834,7 +834,7 @@ USBMassDriverBindingStart (
                     EFI_OPEN_PROTOCOL_BY_DRIVER
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "USBMassDriverBindingStart: OpenDevicePathProtocol By Driver (%r)\n", Status));
       goto Exit;
     }
@@ -848,7 +848,7 @@ USBMassDriverBindingStart (
                     EFI_OPEN_PROTOCOL_BY_DRIVER
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "USBMassDriverBindingStart: OpenUsbIoProtocol By Driver (%r)\n", Status));
       gBS->CloseProtocol (
              Controller,
@@ -864,7 +864,7 @@ USBMassDriverBindingStart (
     // EFI_SUCCESS is returned if at least 1 LUN is initialized successfully.
     //
     Status = UsbMassInitMultiLun (This, Controller, Transport, Context, DevicePath, MaxLun);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseProtocol (
               Controller,
               &gEfiDevicePathProtocolGuid,
@@ -975,7 +975,7 @@ USBMassDriverBindingStop (
                     &UsbMass->DiskInfo,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -987,7 +987,7 @@ USBMassDriverBindingStop (
           );
 
     UsbMass->Transport->CleanUp (UsbMass->Context);
-    FreePool (UsbMass);
+    FreePool(UsbMass);
 
     DEBUG ((EFI_D_INFO, "Success to stop non-multi-lun root handle\n"));
     return EFI_SUCCESS;
@@ -1010,7 +1010,7 @@ USBMassDriverBindingStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
       DEBUG ((EFI_D_ERROR, "Fail to stop No.%d multi-lun child handle when opening blockio\n", (UINT32)Index));
       continue;
@@ -1036,7 +1036,7 @@ USBMassDriverBindingStop (
                     NULL
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Fail to uninstall Block I/O Protocol and Device Path Protocol, so re-open USB I/O Protocol by child.
       //
@@ -1058,7 +1058,7 @@ USBMassDriverBindingStop (
       if (((Index + 1) == NumberOfChildren) && AllChildrenStopped) {
         UsbMass->Transport->CleanUp (UsbMass->Context);
       }
-      FreePool (UsbMass);
+      FreePool(UsbMass);
     }
   }
 
@@ -1102,7 +1102,7 @@ USBMassStorageEntryPoint (
              &gUsbMassStorageComponentName,
              &gUsbMassStorageComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

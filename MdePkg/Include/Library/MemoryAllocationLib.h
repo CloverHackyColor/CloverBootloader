@@ -480,7 +480,7 @@ ReallocateReservedPool (
 **/
 VOID
 EFIAPI
-FreePool (
+FreePool(
   IN JCONST VOID   *Buffer
   );
 

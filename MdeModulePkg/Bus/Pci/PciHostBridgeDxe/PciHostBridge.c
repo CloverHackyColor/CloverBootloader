@@ -119,7 +119,7 @@ IntersectIoDescriptor (
     Status = gDS->AddIoSpace (EfiGcdIoTypeIo, IntersectionBase,
                     IntersectionEnd - IntersectionBase);
 
-    DEBUG ((EFI_ERROR (Status) ? EFI_D_ERROR : EFI_D_VERBOSE,
+    DEBUG ((EFI_ERROR(Status) ? EFI_D_ERROR : EFI_D_VERBOSE,
       "%a: %a: add [%Lx, %Lx): %r\n", gEfiCallerBaseName, __FUNCTION__,
       IntersectionBase, IntersectionEnd, Status));
     return Status;
@@ -154,7 +154,7 @@ AddIoSpace (
   EFI_GCD_IO_SPACE_DESCRIPTOR       *IoSpaceMap;
 
   Status = gDS->GetIoSpaceMap (&NumberOfDescriptors, &IoSpaceMap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "%a: %a: GetIoSpaceMap(): %r\n",
       gEfiCallerBaseName, __FUNCTION__, Status));
     return Status;
@@ -162,7 +162,7 @@ AddIoSpace (
 
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     Status = IntersectIoDescriptor (Base, Length, &IoSpaceMap[Index]);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto FreeIoSpaceMap;
     }
   }
@@ -181,13 +181,13 @@ AddIoSpace (
          CheckBase < Base + Length;
          CheckBase = Descriptor.BaseAddress + Descriptor.Length) {
       CheckStatus = gDS->GetIoSpaceDescriptor (CheckBase, &Descriptor);
-      ASSERT_EFI_ERROR (CheckStatus);
+      ASSERT_EFI_ERROR(CheckStatus);
       ASSERT (Descriptor.GcdIoType == EfiGcdIoTypeIo);
     }
     );
 
 FreeIoSpaceMap:
-  FreePool (IoSpaceMap);
+  FreePool(IoSpaceMap);
 
   return Status;
 }
@@ -263,7 +263,7 @@ IntersectMemoryDescriptor (
                     IntersectionBase, IntersectionEnd - IntersectionBase,
                     Capabilities);
 
-    DEBUG ((EFI_ERROR (Status) ? EFI_D_ERROR : EFI_D_VERBOSE,
+    DEBUG ((EFI_ERROR(Status) ? EFI_D_ERROR : EFI_D_VERBOSE,
       "%a: %a: add [%Lx, %Lx): %r\n", gEfiCallerBaseName, __FUNCTION__,
       IntersectionBase, IntersectionEnd, Status));
     return Status;
@@ -301,7 +301,7 @@ AddMemoryMappedIoSpace (
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR       *MemorySpaceMap;
 
   Status = gDS->GetMemorySpaceMap (&NumberOfDescriptors, &MemorySpaceMap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "%a: %a: GetMemorySpaceMap(): %r\n",
       gEfiCallerBaseName, __FUNCTION__, Status));
     return Status;
@@ -310,7 +310,7 @@ AddMemoryMappedIoSpace (
   for (Index = 0; Index < NumberOfDescriptors; Index++) {
     Status = IntersectMemoryDescriptor (Base, Length, Capabilities,
                &MemorySpaceMap[Index]);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto FreeMemorySpaceMap;
     }
   }
@@ -329,14 +329,14 @@ AddMemoryMappedIoSpace (
          CheckBase < Base + Length;
          CheckBase = Descriptor.BaseAddress + Descriptor.Length) {
       CheckStatus = gDS->GetMemorySpaceDescriptor (CheckBase, &Descriptor);
-      ASSERT_EFI_ERROR (CheckStatus);
+      ASSERT_EFI_ERROR(CheckStatus);
       ASSERT (Descriptor.GcdMemoryType == EfiGcdMemoryTypeMemoryMappedIo);
       ASSERT ((Descriptor.Capabilities & Capabilities) == Capabilities);
     }
     );
 
 FreeMemorySpaceMap:
-  FreePool (MemorySpaceMap);
+  FreePool(MemorySpaceMap);
 
   return Status;
 }
@@ -399,7 +399,7 @@ InitializePciHostBridge (
   }
 
   Status = gBS->LocateProtocol (&gEfiCpuIo2ProtocolGuid, NULL, (VOID **) &mCpuIo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Most systems in the world including complex servers have only one Host Bridge.
@@ -446,7 +446,7 @@ InitializePciHostBridge (
                  HostAddress,
                  RootBridges[Index].Io.Limit - RootBridges[Index].Io.Base + 1
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       if (ResourceAssigned) {
         Status = gDS->AllocateIoSpace (
                         EfiGcdAllocateAddress,
@@ -457,7 +457,7 @@ InitializePciHostBridge (
                         gImageHandle,
                         NULL
                         );
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
     }
 
@@ -485,13 +485,13 @@ InitializePciHostBridge (
                    MemApertures[MemApertureIndex]->Limit - MemApertures[MemApertureIndex]->Base + 1,
                    EFI_MEMORY_UC
                    );
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
         Status = gDS->SetMemorySpaceAttributes (
                         HostAddress,
                         MemApertures[MemApertureIndex]->Limit - MemApertures[MemApertureIndex]->Base + 1,
                         EFI_MEMORY_UC
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           DEBUG ((DEBUG_WARN, "PciHostBridge driver failed to set EFI_MEMORY_UC to MMIO aperture - %r.\n", Status));
         }
         if (ResourceAssigned) {
@@ -504,7 +504,7 @@ InitializePciHostBridge (
                           gImageHandle,
                           NULL
                           );
-          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR(Status);
         }
       }
     }
@@ -533,7 +533,7 @@ InitializePciHostBridge (
                     &gEfiPciHostBridgeResourceAllocationProtocolGuid, &HostBridge->ResAlloc,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   for (Link = GetFirstNode (&HostBridge->RootBridges)
@@ -549,11 +549,11 @@ InitializePciHostBridge (
                     &gEfiPciRootBridgeIoProtocolGuid, &RootBridge->RootBridgeIo,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   PciHostBridgeFreeRootBridges (RootBridges, RootBridgeCount);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     mIoMmuEvent = EfiCreateProtocolNotifyEvent (
                     &gEdkiiIoMmuProtocolGuid,
                     TPL_CALLBACK,
@@ -661,7 +661,7 @@ ResourceConflict (
 
   DEBUG ((DEBUG_ERROR, "Call PciHostBridgeResourceConflict().\n"));
   PciHostBridgeResourceConflict (HostBridge->Handle, Resources);
-  FreePool (Resources);
+  FreePool(Resources);
 }
 
 /**
@@ -722,7 +722,7 @@ AllocateResource (
                         );
       }
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         return BaseAddress;
       }
       BaseAddress += LShiftU64 (1, BitsOfAlignment);
@@ -1022,7 +1022,7 @@ NotifyPhase (
           switch (Index) {
           case TypeIo:
             Status = gDS->FreeIoSpace (RootBridge->ResAllocNode[Index].Base, RootBridge->ResAllocNode[Index].Length);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               ReturnStatus = Status;
             }
             break;
@@ -1032,7 +1032,7 @@ NotifyPhase (
           case TypeMem64:
           case TypePMem64:
             Status = gDS->FreeMemorySpace (RootBridge->ResAllocNode[Index].Base, RootBridge->ResAllocNode[Index].Length);
-            if (EFI_ERROR (Status)) {
+            if (EFI_ERROR(Status)) {
               ReturnStatus = Status;
             }
             break;

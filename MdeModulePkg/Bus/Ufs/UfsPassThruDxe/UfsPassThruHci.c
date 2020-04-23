@@ -111,7 +111,7 @@ UfsWaitMemSet (
     // Access PCI MMIO space to see if the value is the tested one.
     //
     Status = UfsMmioRead32 (Private, Offset, &Value);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -528,7 +528,7 @@ UfsCreateScsiCommandDesc (
   TotalLen   = ROUNDUP8 (sizeof (UTP_COMMAND_UPIU)) + ROUNDUP8 (sizeof (UTP_RESPONSE_UPIU)) + PrdtNumber * sizeof (UTP_TR_PRD);
 
   Status = UfsAllocateAlignCommonBuffer (Private, TotalLen, CmdDescHost, &CmdDescPhyAddr, CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -608,7 +608,7 @@ UfsCreateDMCommandDesc (
   }
 
   Status = UfsAllocateAlignCommonBuffer (Private, TotalLen, CmdDescHost, &CmdDescPhyAddr, CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -679,7 +679,7 @@ UfsCreateNopCommandDesc (
 
   TotalLen = ROUNDUP8 (sizeof (UTP_NOP_OUT_UPIU)) + ROUNDUP8 (sizeof (UTP_NOP_IN_UPIU));
   Status   = UfsAllocateAlignCommonBuffer (Private, TotalLen, CmdDescHost, &CmdDescPhyAddr, CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -727,7 +727,7 @@ UfsFindAvailableSlotInTrl (
   ASSERT ((Private != NULL) && (Slot != NULL));
 
   Status  = UfsMmioRead32 (Private, UFS_HC_UTRLDBR_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -761,19 +761,19 @@ UfsStartExecCmd (
   EFI_STATUS    Status;
 
   Status = UfsMmioRead32 (Private, UFS_HC_UTRLRSR_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   if ((Data & UFS_HC_UTRLRSR) != UFS_HC_UTRLRSR) {
     Status = UfsMmioWrite32 (Private, UFS_HC_UTRLRSR_OFFSET, UFS_HC_UTRLRSR);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
 
   Status = UfsMmioWrite32 (Private, UFS_HC_UTRLDBR_OFFSET, BIT0 << Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -797,18 +797,18 @@ UfsStopExecCmd (
   EFI_STATUS    Status;
 
   Status = UfsMmioRead32 (Private, UFS_HC_UTRLDBR_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   if ((Data & (BIT0 << Slot)) != 0) {
     Status = UfsMmioRead32 (Private, UFS_HC_UTRLCLR_OFFSET, &Data);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     Status = UfsMmioWrite32 (Private, UFS_HC_UTRLCLR_OFFSET, Data & ~(BIT0 << Slot));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -910,7 +910,7 @@ UfsSendDmRequestRetry (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -919,7 +919,7 @@ UfsSendDmRequestRetry (
   // Fill transfer request descriptor to this slot.
   //
   Status = UfsCreateDMCommandDesc (Private, Packet, Trd, &CmdDescHost, &CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to create DM command descriptor\n"));
     return Status;
   }
@@ -938,7 +938,7 @@ UfsSendDmRequestRetry (
   // Wait for the completion of the transfer request.
   //
   Status = UfsWaitMemSet (Private, UFS_HC_UTRLDBR_OFFSET, BIT0, 0, Packet->Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -957,7 +957,7 @@ UfsSendDmRequestRetry (
   }
 
   Status = UfsGetReturnDataFromQueryResponse (Packet, QueryResp);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Failed to get return data from query response\n"));
     goto Exit;
   }
@@ -1003,7 +1003,7 @@ UfsSendDmRequest (
 
   for (Retry = 0; Retry < 5; Retry ++) {
     Status = UfsSendDmRequestRetry (Private, Packet);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return EFI_SUCCESS;
     }
   }
@@ -1067,7 +1067,7 @@ UfsRwDeviceDesc (
   Packet.Timeout             = UFS_TIMEOUT;
 
   Status = UfsSendDmRequest (Private, &Packet);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *DescSize = 0;
   } else {
     *DescSize = Packet.TransferLength;
@@ -1259,13 +1259,13 @@ UfsExecNopCmds (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Trd    = ((UTP_TRD*)Private->UtpTrlBase) + Slot;
   Status = UfsCreateNopCommandDesc (Private, Trd, &CmdDescHost, &CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1286,7 +1286,7 @@ UfsExecNopCmds (
   // Wait for the completion of the transfer request.
   //
   Status = UfsWaitMemSet (Private, UFS_HC_UTRLDBR_OFFSET, BIT0 << Slot, 0, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1425,7 +1425,7 @@ UfsPrepareDataTransferBuffer (
                                               &TransReq->DataBufMapping
                                               );
 
-    if (EFI_ERROR (Status) || (DataLen != MapLength)) {
+    if (EFI_ERROR(Status) || (DataLen != MapLength)) {
       if (TransReq->AlignedDataBuf != NULL) {
         //
         // Wipe out the transfer buffer in case it contains sensitive data.
@@ -1502,7 +1502,7 @@ UfsExecScsiCmds (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &TransReq->Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1519,14 +1519,14 @@ UfsExecScsiCmds (
              &TransReq->CmdDescHost,
              &TransReq->CmdDescMapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   TransReq->CmdDescSize = TransReq->Trd->PrdtO * sizeof (UINT32) + TransReq->Trd->PrdtL * sizeof (UTP_TR_PRD);
 
   Status = UfsPrepareDataTransferBuffer (Private, TransReq);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit1;
   }
 
@@ -1556,7 +1556,7 @@ UfsExecScsiCmds (
   // Wait for the completion of the transfer request.
   //
   Status = UfsWaitMemSet (Private, UFS_HC_UTRLDBR_OFFSET, BIT0 << TransReq->Slot, 0, Packet->Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1623,7 +1623,7 @@ Exit1:
     UfsHc->FreeBuffer (UfsHc, EFI_SIZE_TO_PAGES (TransReq->CmdDescSize), TransReq->CmdDescHost);
   }
   if (TransReq != NULL) {
-    FreePool (TransReq);
+    FreePool(TransReq);
   }
   return Status;
 }
@@ -1648,7 +1648,7 @@ UfsExecUicCommands (
   UINT32      Data;
 
   Status = UfsMmioRead32 (Private, UFS_HC_IS_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1657,7 +1657,7 @@ UfsExecUicCommands (
     // Clear IS.BIT10 UIC Command Completion Status (UCCS) at first.
     //
     Status = UfsMmioWrite32 (Private, UFS_HC_IS_OFFSET, Data);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1668,17 +1668,17 @@ UfsExecUicCommands (
   // are set.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UCMD_ARG1_OFFSET, UicCommand->Arg1);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UfsMmioWrite32 (Private, UFS_HC_UCMD_ARG2_OFFSET, UicCommand->Arg2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UfsMmioWrite32 (Private, UFS_HC_UCMD_ARG3_OFFSET, UicCommand->Arg3);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1686,12 +1686,12 @@ UfsExecUicCommands (
   // Host software shall only set the UICCMD if HCS.UCRDY is set to 1.
   //
   Status = UfsWaitMemSet (Private, UFS_HC_STATUS_OFFSET, UFS_HC_HCS_UCRDY, UFS_HC_HCS_UCRDY, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UfsMmioWrite32 (Private, UFS_HC_UIC_CMD_OFFSET, UicCommand->Opcode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1700,17 +1700,17 @@ UfsExecUicCommands (
   // This bit is set to '1' by the host controller upon completion of a UIC command.
   //
   Status  = UfsWaitMemSet (Private, UFS_HC_IS_OFFSET, UFS_HC_IS_UCCS, UFS_HC_IS_UCCS, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   if (UicCommand->Opcode != UfsUicDmeReset) {
     Status = UfsMmioRead32 (Private, UFS_HC_UCMD_ARG2_OFFSET, &UicCommand->Arg2);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     Status = UfsMmioRead32 (Private, UFS_HC_UCMD_ARG3_OFFSET, &UicCommand->Arg3);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     if ((UicCommand->Arg2 & 0xFF) != 0) {
@@ -1767,7 +1767,7 @@ UfsAllocateAlignCommonBuffer (
                     CmdDescHost,
                     0
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *CmdDescMapping = NULL;
     *CmdDescHost    = NULL;
     *CmdDescPhyAddr = 0;
@@ -1784,7 +1784,7 @@ UfsAllocateAlignCommonBuffer (
                     CmdDescMapping
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (Size)))) {
+  if (EFI_ERROR(Status) || (Bytes != EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (Size)))) {
     UfsHc->FreeBuffer (
              UfsHc,
              EFI_PAGES_TO_SIZE (EFI_SIZE_TO_PAGES (Size)),
@@ -1835,7 +1835,7 @@ UfsEnableHostController (
 
   if (mUfsHcPlatform != NULL && mUfsHcPlatform->Callback != NULL) {
     Status = mUfsHcPlatform->Callback (Private->Handle, EdkiiUfsHcPreHce, &Private->UfsHcDriverInterface);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Failure from platform driver during EdkiiUfsHcPreHce, Status = %r\n", Status));
       return Status;
     }
@@ -1847,7 +1847,7 @@ UfsEnableHostController (
   // Reinitialize the UFS host controller if HCE bit of HC register is set.
   //
   Status = UfsMmioRead32 (Private, UFS_HC_ENABLE_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1856,14 +1856,14 @@ UfsEnableHostController (
     // Write a 0 to the HCE register at first to disable the host controller.
     //
     Status = UfsMmioWrite32 (Private, UFS_HC_ENABLE_OFFSET, 0);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
     // Wait until HCE is read as '0' before continuing.
     //
     Status = UfsWaitMemSet (Private, UFS_HC_ENABLE_OFFSET, UFS_HC_HCE_EN, 0, UFS_TIMEOUT);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
   }
@@ -1872,7 +1872,7 @@ UfsEnableHostController (
   // Write a 1 to the HCE register to enable the UFS host controller.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_ENABLE_OFFSET, UFS_HC_HCE_EN);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1880,13 +1880,13 @@ UfsEnableHostController (
   // Wait until HCE is read as '1' before continuing.
   //
   Status = UfsWaitMemSet (Private, UFS_HC_ENABLE_OFFSET, UFS_HC_HCE_EN, UFS_HC_HCE_EN, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
   if (mUfsHcPlatform != NULL && mUfsHcPlatform->Callback != NULL) {
     Status = mUfsHcPlatform->Callback (Private->Handle, EdkiiUfsHcPostHce, &Private->UfsHcDriverInterface);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Failure from platform driver during EdkiiUfsHcPostHce, Status = %r\n", Status));
       return Status;
     }
@@ -1917,7 +1917,7 @@ UfsDeviceDetection (
 
   if (mUfsHcPlatform != NULL && mUfsHcPlatform->Callback != NULL) {
     Status = mUfsHcPlatform->Callback (Private->Handle, EdkiiUfsHcPreLinkStartup, &Private->UfsHcDriverInterface);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Failure from platform driver during EdkiiUfsHcPreLinkStartup, Status = %r\n", Status));
       return Status;
     }
@@ -1933,24 +1933,24 @@ UfsDeviceDetection (
     LinkStartupCommand.Arg2 = 0;
     LinkStartupCommand.Arg3 = 0;
     Status = UfsExecUicCommands (Private, &LinkStartupCommand);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
     Status = UfsMmioRead32 (Private, UFS_HC_STATUS_OFFSET, &Data);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
 
     if ((Data & UFS_HC_HCS_DP) == 0) {
       Status = UfsWaitMemSet (Private, UFS_HC_IS_OFFSET, UFS_HC_IS_ULSS, UFS_HC_IS_ULSS, UFS_TIMEOUT);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_DEVICE_ERROR;
       }
     } else {
       if (mUfsHcPlatform != NULL && mUfsHcPlatform->Callback != NULL) {
         Status = mUfsHcPlatform->Callback (Private->Handle, EdkiiUfsHcPostLinkStartup, &Private->UfsHcDriverInterface);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           DEBUG ((DEBUG_ERROR, "Failure from platform driver during EdkiiUfsHcPostLinkStartup, Status = %r\n", Status));
           return Status;
         }
@@ -1994,7 +1994,7 @@ UfsInitTaskManagementRequestList (
   //
   Nutmrs = (UINT8) (RShiftU64 ((Private->UfsHcInfo.Capabilities & UFS_HC_CAP_NUTMRS), 16) + 1);
   Status = UfsAllocateAlignCommonBuffer (Private, Nutmrs * sizeof (UTP_TMRD), &CmdDescHost, &CmdDescPhyAddr, &CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2003,12 +2003,12 @@ UfsInitTaskManagementRequestList (
   // Request List Base Address with a 64-bit address allocated at step 6.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UTMRLBA_OFFSET, (UINT32)(UINTN)CmdDescPhyAddr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UfsMmioWrite32 (Private, UFS_HC_UTMRLBAU_OFFSET, (UINT32)RShiftU64 ((UINT64)CmdDescPhyAddr, 32));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Private->UtpTmrlBase = CmdDescHost;
@@ -2020,7 +2020,7 @@ UfsInitTaskManagementRequestList (
   // Request List RunStop Register (UTMRLRSR) to '1'.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UTMRLRSR_OFFSET, UFS_HC_UTMRLRSR);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2059,7 +2059,7 @@ UfsInitTransferRequestList (
   //
   Nutrs  = (UINT8)((Private->UfsHcInfo.Capabilities & UFS_HC_CAP_NUTRS) + 1);
   Status = UfsAllocateAlignCommonBuffer (Private, Nutrs * sizeof (UTP_TRD), &CmdDescHost, &CmdDescPhyAddr, &CmdDescMapping);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2068,12 +2068,12 @@ UfsInitTransferRequestList (
   // Base Address with a 64-bit address allocated at step 8.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UTRLBA_OFFSET, (UINT32)(UINTN)CmdDescPhyAddr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = UfsMmioWrite32 (Private, UFS_HC_UTRLBAU_OFFSET, (UINT32)RShiftU64 ((UINT64)CmdDescPhyAddr, 32));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2086,7 +2086,7 @@ UfsInitTransferRequestList (
   // RunStop Register (UTRLRSR) to '1'.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UTRLRSR_OFFSET, UFS_HC_UTRLRSR);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2110,25 +2110,25 @@ UfsControllerInit (
   EFI_STATUS             Status;
 
   Status = UfsEnableHostController (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "UfsControllerInit: Enable Host Controller Fails, Status = %r\n", Status));
     return Status;
   }
 
   Status = UfsDeviceDetection (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "UfsControllerInit: Device Detection Fails, Status = %r\n", Status));
     return Status;
   }
 
   Status = UfsInitTaskManagementRequestList (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "UfsControllerInit: Task management list initialization Fails, Status = %r\n", Status));
     return Status;
   }
 
   Status = UfsInitTransferRequestList (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "UfsControllerInit: Transfer list initialization Fails, Status = %r\n", Status));
     return Status;
   }
@@ -2159,7 +2159,7 @@ UfsControllerStop (
   // Request List RunStop Register (UTMRLRSR) to '1'.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UTMRLRSR_OFFSET, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2168,7 +2168,7 @@ UfsControllerStop (
   // RunStop Register (UTRLRSR) to '1'.
   //
   Status = UfsMmioWrite32 (Private, UFS_HC_UTRLRSR_OFFSET, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2176,13 +2176,13 @@ UfsControllerStop (
   // Write a 0 to the HCE register in order to disable the host controller.
   //
   Status = UfsMmioRead32 (Private, UFS_HC_ENABLE_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   ASSERT ((Data & UFS_HC_HCE_EN) == UFS_HC_HCE_EN);
 
   Status = UfsMmioWrite32 (Private, UFS_HC_ENABLE_OFFSET, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2190,7 +2190,7 @@ UfsControllerStop (
   // Wait until HCE is read as '0' before continuing.
   //
   Status = UfsWaitMemSet (Private, UFS_HC_ENABLE_OFFSET, UFS_HC_HCE_EN, 0, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -2243,7 +2243,7 @@ SignalCallerEvent (
              );
   }
 
-  FreePool (TransReq);
+  FreePool(TransReq);
 
   gBS->SignalEvent (CallerEvent);
   return;
@@ -2292,7 +2292,7 @@ ProcessAsyncTaskList (
       SlotsMap |= BIT0 << TransReq->Slot;
 
       Status = UfsMmioRead32 (Private, UFS_HC_UTRLDBR_OFFSET, &Value);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // TODO: Should find/add a proper host adapter return status for this
         // case.
@@ -2424,14 +2424,14 @@ GetUfsHcInfo (
   EFI_STATUS  Status;
 
   Status = UfsMmioRead32 (Private, UFS_HC_VER_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Private->UfsHcInfo.Version = Data;
 
   Status = UfsMmioRead32 (Private, UFS_HC_CAP_OFFSET, &Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2439,7 +2439,7 @@ GetUfsHcInfo (
 
   if (mUfsHcPlatform != NULL && mUfsHcPlatform->OverrideHcInfo != NULL) {
     Status = mUfsHcPlatform->OverrideHcInfo (Private->Handle, &Private->UfsHcInfo);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "Failure from platform on OverrideHcInfo, Status = %r\n", Status));
       return Status;
     }

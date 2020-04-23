@@ -44,7 +44,7 @@ PeiResetSystem (
              NULL,
              (VOID **)&ResetPpi
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return ResetPpi->ResetSystem (PeiServices);
   }
 
@@ -96,7 +96,7 @@ PeiResetSystem2 (
              NULL,
              (VOID **)&Reset2Ppi
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Reset2Ppi->ResetSystem (ResetType, ResetStatus, DataSize, ResetData);
     return;
   }

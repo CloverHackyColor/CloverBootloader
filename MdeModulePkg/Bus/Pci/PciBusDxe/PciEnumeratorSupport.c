@@ -57,7 +57,7 @@ PciDevicePresent (
                                   Pci
                                   );
 
-  if (!EFI_ERROR (Status) && (Pci->Hdr).VendorId != 0xffff) {
+  if (!EFI_ERROR(Status) && (Pci->Hdr).VendorId != 0xffff) {
     //
     // Read the entire config header for the device
     //
@@ -120,14 +120,14 @@ PciPciDeviceInfoCollector (
                  (UINT8) Func
                  );
 
-      if (EFI_ERROR (Status) && Func == 0) {
+      if (EFI_ERROR(Status) && Func == 0) {
         //
         // go to next device if there is no Function 0
         //
         break;
       }
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
 
         //
         // Call back to host bridge function
@@ -150,7 +150,7 @@ PciPciDeviceInfoCollector (
         // Recursively scan PCI busses on the other side of PCI-PCI bridges
         //
         //
-        if (!EFI_ERROR (Status) && (IS_PCI_BRIDGE (&Pci) || IS_CARDBUS_BRIDGE (&Pci))) {
+        if (!EFI_ERROR(Status) && (IS_PCI_BRIDGE (&Pci) || IS_CARDBUS_BRIDGE (&Pci))) {
 
           //
           // If it is PPB, we need to get the secondary bus to continue the enumeration
@@ -159,7 +159,7 @@ PciPciDeviceInfoCollector (
 
           Status  = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, PCI_BRIDGE_SECONDARY_BUS_REGISTER_OFFSET, 1, &SecBus);
 
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             return Status;
           }
 
@@ -643,7 +643,7 @@ GatherPpbInfo (
   //
   PrefetchableMemoryBase = (UINT16)(PMemBaseLimit & 0xffff);
   PrefetchableMemoryLimit = (UINT16)(PMemBaseLimit >> 16);
-  if (!EFI_ERROR (Status) &&
+  if (!EFI_ERROR(Status) &&
       (PrefetchableMemoryBase & 0x000f) == 0x0001 &&
       (PrefetchableMemoryLimit & 0x000f) == 0x0001) {
     Status = BarExisted (
@@ -653,7 +653,7 @@ GatherPpbInfo (
               NULL
               );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       PciIoDevice->Decodes |= EFI_BRIDGE_PMEM32_DECODE_SUPPORTED;
       PciIoDevice->Decodes |= EFI_BRIDGE_PMEM64_DECODE_SUPPORTED;
     } else {
@@ -1126,7 +1126,7 @@ GetFastBackToBackSupport (
   //
   PciIo   = &PciIoDevice->PciIo;
   Status  = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, StatusIndex, 1, &StatusRegister);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1208,7 +1208,7 @@ DetermineDeviceAttribute (
                                             &PciIoDevice->Supports,
                                             &PciIoDevice->Attributes
                                             );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -1272,14 +1272,14 @@ DetermineDeviceAttribute (
 
     Temp    = PCI_IO_DEVICE_FROM_LINK (CurrentLink);
     Status  = DetermineDeviceAttribute (Temp);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
     // Detect Fast Back to Back support for the device under the bridge
     //
     Status = GetFastBackToBackSupport (Temp, PCI_PRIMARY_STATUS_OFFSET);
-    if (FastB2BSupport && EFI_ERROR (Status)) {
+    if (FastB2BSupport && EFI_ERROR(Status)) {
       FastB2BSupport = FALSE;
     }
 
@@ -1294,7 +1294,7 @@ DetermineDeviceAttribute (
 
       Status = GetFastBackToBackSupport (PciIoDevice, PCI_BRIDGE_STATUS_REGISTER_OFFSET);
 
-      if (EFI_ERROR (Status) || (!FastB2BSupport)) {
+      if (EFI_ERROR(Status) || (!FastB2BSupport)) {
         FastB2BSupport = FALSE;
         PCI_DISABLE_BRIDGE_CONTROL_REGISTER (PciIoDevice, EFI_PCI_BRIDGE_CONTROL_FAST_BACK_TO_BACK);
       } else {
@@ -1372,7 +1372,7 @@ UpdatePciInfo (
 
   }
 
-  if (EFI_ERROR (Status) || Configuration == NULL ) {
+  if (EFI_ERROR(Status) || Configuration == NULL ) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1477,7 +1477,7 @@ UpdatePciInfo (
     Ptr++;
   }
 
-  FreePool (Configuration);
+  FreePool(Configuration);
 
   return EFI_SUCCESS;
 }
@@ -1594,7 +1594,7 @@ PciIovParseVfBar (
             &OriginalValue
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     PciIoDevice->VfPciBar[BarIndex].BaseAddress = 0;
     PciIoDevice->VfPciBar[BarIndex].Length      = 0;
     PciIoDevice->VfPciBar[BarIndex].Alignment   = 0;
@@ -1684,7 +1684,7 @@ PciIovParseVfBar (
                 &OriginalValue
                 );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Offset + 4;
       }
 
@@ -1778,7 +1778,7 @@ PciParseBar (
              &OriginalValue
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     PciIoDevice->PciBar[BarIndex].BaseAddress = 0;
     PciIoDevice->PciBar[BarIndex].Length      = 0;
     PciIoDevice->PciBar[BarIndex].Alignment   = 0;
@@ -1886,7 +1886,7 @@ PciParseBar (
                  &OriginalValue
                  );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // the high 32 bit does not claim any BAR, we need to re-check the low 32 bit BAR again
         //
@@ -2152,7 +2152,7 @@ CreatePciIoDevice (
              &PciIoDevice->PciExpressCapabilityOffset,
              NULL
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     PciIoDevice->IsPciExp = TRUE;
   }
 
@@ -2166,7 +2166,7 @@ CreatePciIoDevice (
                &PciIoDevice->AriCapabilityOffset,
                NULL
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // We need to enable ARI feature before calculate BusReservation,
       // because FirstVFOffset and VFStride may change after that.
@@ -2230,7 +2230,7 @@ CreatePciIoDevice (
                &PciIoDevice->SrIovCapabilityOffset,
                NULL
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       UINT32    SupportedPageSize;
       UINT16    VFStride;
       UINT16    FirstVFOffset;
@@ -2344,7 +2344,7 @@ CreatePciIoDevice (
                &PciIoDevice->MrIovCapabilityOffset,
                NULL
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       DEBUG ((EFI_D_INFO, " MR-IOV: CapOffset = 0x%x\n", PciIoDevice->MrIovCapabilityOffset));
     }
   }
@@ -2414,13 +2414,13 @@ PciEnumeratorLight (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     return Status;
   }
 
   Status = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **) &Descriptors);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2446,7 +2446,7 @@ PciEnumeratorLight (
                (UINT8) MinBus
                );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
 
       //
       // Remove those PCI devices which are rejected when full enumeration
@@ -2560,7 +2560,7 @@ StartManagingRootBridge (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     return Status;
   }
 
@@ -2608,7 +2608,7 @@ IsPciDeviceRejected (
 
       Mask    = (BarOffset < 0x2C) ? 0xFFFFF000 : 0xFFFFFFFC;
       Status  = BarExisted (PciIoDevice, BarOffset, &TestValue, &OldValue);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -2629,7 +2629,7 @@ IsPciDeviceRejected (
     // Test PCI devices
     //
     Status = BarExisted (PciIoDevice, BarOffset, &TestValue, &OldValue);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -2722,14 +2722,14 @@ ResetAllPpbBusNumber (
                  Func
                  );
 
-      if (EFI_ERROR (Status) && Func == 0) {
+      if (EFI_ERROR(Status) && Func == 0) {
         //
         // go to next device if there is no Function 0
         //
         break;
       }
 
-      if (!EFI_ERROR (Status) && (IS_PCI_BRIDGE (&Pci))) {
+      if (!EFI_ERROR(Status) && (IS_PCI_BRIDGE (&Pci))) {
 
         Register  = 0;
         Address   = EFI_PCI_ADDRESS (StartBusNumber, Device, Func, 0x18);

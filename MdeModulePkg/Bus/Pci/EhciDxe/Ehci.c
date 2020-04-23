@@ -148,7 +148,7 @@ EhcReset (
     if (!EhcIsHalt (Ehc)) {
       Status = EhcHaltHC (Ehc, EHC_GENERIC_TIMEOUT);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = EFI_DEVICE_ERROR;
         goto ON_EXIT;
       }
@@ -164,7 +164,7 @@ EhcReset (
 
     Status = EhcResetHC (Ehc, EHC_RESET_TIMEOUT);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ON_EXIT;
     }
 
@@ -256,7 +256,7 @@ EhcSetState (
 
   Status = EhcGetState (This, &CurState);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -469,7 +469,7 @@ EhcSetRootHubPortFeature (
     if (EhcIsHalt (Ehc)) {
       Status = EhcRunHC (Ehc, EHC_GENERIC_TIMEOUT);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((EFI_D_INFO, "EhcSetRootHubPortFeature :failed to start HC - %r\n", Status));
         break;
       }
@@ -793,7 +793,7 @@ ON_EXIT:
   Ehc->PciIo->Flush (Ehc->PciIo);
   gBS->RestoreTPL (OldTpl);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcControlTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
   }
 
@@ -933,7 +933,7 @@ ON_EXIT:
   Ehc->PciIo->Flush (Ehc->PciIo);
   gBS->RestoreTPL (OldTpl);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcBulkTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
   }
 
@@ -1188,7 +1188,7 @@ ON_EXIT:
   Ehc->PciIo->Flush (Ehc->PciIo);
   gBS->RestoreTPL (OldTpl);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcSyncInterruptTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
   }
 
@@ -1343,7 +1343,7 @@ EhcDriverBindingSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1355,7 +1355,7 @@ EhcDriverBindingSupported (
                         &UsbClassCReg
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_UNSUPPORTED;
     goto ON_EXIT;
   }
@@ -1415,7 +1415,7 @@ EhcGetUsbDebugPortInfo (
                         &PciStatus
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1437,7 +1437,7 @@ EhcGetUsbDebugPortInfo (
                         &CapabilityPtr
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1453,7 +1453,7 @@ EhcGetUsbDebugPortInfo (
                           &CapabilityId
                           );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1469,7 +1469,7 @@ EhcGetUsbDebugPortInfo (
                           &CapabilityPtr
                           );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1492,7 +1492,7 @@ EhcGetUsbDebugPortInfo (
                         &DebugPort
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1568,7 +1568,7 @@ EhcCreateUsb2Hc (
   // EHCI Controllers with a CapLen of 0 are ignored.
   //
   if (Ehc->CapLen == 0) {
-    gBS->FreePool (Ehc);
+    gBS->FreePool(Ehc);
     return NULL;
   }
 
@@ -1585,8 +1585,8 @@ EhcCreateUsb2Hc (
                   &Ehc->PollTimer
                   );
 
-  if (EFI_ERROR (Status)) {
-    gBS->FreePool (Ehc);
+  if (EFI_ERROR(Status)) {
+    gBS->FreePool(Ehc);
     return NULL;
   }
 
@@ -1673,7 +1673,7 @@ EhcDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1701,7 +1701,7 @@ EhcDriverBindingStart (
                     &OriginalPciAttributes
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CLOSE_PCIIO;
   }
   PciAttributesSaved = TRUE;
@@ -1712,7 +1712,7 @@ EhcDriverBindingStart (
                     0,
                     &Supports
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
@@ -1722,7 +1722,7 @@ EhcDriverBindingStart (
                       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcDriverBindingStart: failed to enable controller\n"));
     goto CLOSE_PCIIO;
   }
@@ -1738,7 +1738,7 @@ EhcDriverBindingStart (
                         &UsbClassCReg
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_UNSUPPORTED;
     goto CLOSE_PCIIO;
   }
@@ -1757,7 +1757,7 @@ EhcDriverBindingStart (
                     &CompanionDeviceNumber,
                     &CompanionFunctionNumber
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto CLOSE_PCIIO;
     }
 
@@ -1768,7 +1768,7 @@ EhcDriverBindingStart (
                     &NumberOfHandles,
                     &HandleBuffer
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto CLOSE_PCIIO;
     }
 
@@ -1781,7 +1781,7 @@ EhcDriverBindingStart (
                     &gEfiPciIoProtocolGuid,
                     (VOID **)&Instance
                     );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       Status = Instance->Pci.Read (
                     Instance,
@@ -1791,7 +1791,7 @@ EhcDriverBindingStart (
                     &UsbClassCReg
                     );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = EFI_UNSUPPORTED;
         goto CLOSE_PCIIO;
       }
@@ -1806,7 +1806,7 @@ EhcDriverBindingStart (
                     &EhciDeviceNumber,
                     &EhciFunctionNumber
                     );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto CLOSE_PCIIO;
         }
         //
@@ -1851,7 +1851,7 @@ EhcDriverBindingStart (
                       EFI_PCI_IO_ATTRIBUTE_DUAL_ADDRESS_CYCLE,
                       NULL
                       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Ehc->Support64BitDma = TRUE;
     } else {
       DEBUG ((EFI_D_WARN,
@@ -1867,7 +1867,7 @@ EhcDriverBindingStart (
                   &Ehc->Usb2Hc
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcDriverBindingStart: failed to install USB2_HC Protocol\n"));
     goto FREE_POOL;
   }
@@ -1886,7 +1886,7 @@ EhcDriverBindingStart (
 
   Status = EhcInitHC (Ehc);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcDriverBindingStart: failed to init host controller\n"));
     goto UNINSTALL_USBHC;
   }
@@ -1896,7 +1896,7 @@ EhcDriverBindingStart (
   //
   Status = gBS->SetTimer (Ehc->PollTimer, TimerPeriodic, EHC_ASYNC_POLL_INTERVAL);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcDriverBindingStart: failed to start async interrupt monitor\n"));
 
     EhcHaltHC (Ehc, EHC_GENERIC_TIMEOUT);
@@ -1914,7 +1914,7 @@ EhcDriverBindingStart (
                   &gEfiEventExitBootServicesGuid,
                   &Ehc->ExitBootServiceEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto UNINSTALL_USBHC;
   }
 
@@ -1951,7 +1951,7 @@ UNINSTALL_USBHC:
 FREE_POOL:
   EhcFreeSched (Ehc);
   gBS->CloseEvent (Ehc->PollTimer);
-  gBS->FreePool (Ehc);
+  gBS->FreePool(Ehc);
 
 CLOSE_PCIIO:
   if (PciAttributesSaved) {
@@ -2018,7 +2018,7 @@ EhcDriverBindingStop (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2031,7 +2031,7 @@ EhcDriverBindingStop (
                   Usb2Hc
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2079,7 +2079,7 @@ EhcDriverBindingStop (
          Controller
          );
 
-  FreePool (Ehc);
+  FreePool(Ehc);
 
   return EFI_SUCCESS;
 }

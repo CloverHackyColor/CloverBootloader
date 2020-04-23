@@ -49,7 +49,7 @@ BmGetVideoController (
                   &RootBridgeHandleCount,
                   &RootBridgeHandleBuffer
                   );
-  if (EFI_ERROR (Status) || (RootBridgeHandleCount == 0)) {
+  if (EFI_ERROR(Status) || (RootBridgeHandleCount == 0)) {
     return NULL;
   }
 
@@ -67,13 +67,13 @@ BmGetVideoController (
                     &HandleCount,
                     &HandleBuffer
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
     for (Index = 0; Index < HandleCount; Index++) {
       Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Check for all video controller
         //
@@ -84,20 +84,20 @@ BmGetVideoController (
                           sizeof (Pci) / sizeof (UINT32),
                           &Pci
                           );
-        if (!EFI_ERROR (Status) && IS_PCI_VGA (&Pci)) {
+        if (!EFI_ERROR(Status) && IS_PCI_VGA (&Pci)) {
           // TODO: use IS_PCI_DISPLAY??
           VideoController = HandleBuffer[Index];
           break;
         }
       }
     }
-    FreePool (HandleBuffer);
+    FreePool(HandleBuffer);
 
     if (VideoController != NULL) {
       break;
     }
   }
-  FreePool (RootBridgeHandleBuffer);
+  FreePool(RootBridgeHandleBuffer);
 
   return VideoController;
 }
@@ -136,7 +136,7 @@ EfiBootManagerGetGopDevicePath (
                   &ProtocolBuffer,
                   &ProtocolBufferCount
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -149,7 +149,7 @@ EfiBootManagerGetGopDevicePath (
                     &OpenInfoBuffer,
                     &EntryCount
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -166,7 +166,7 @@ EfiBootManagerGetGopDevicePath (
                         NULL,
                         EFI_OPEN_PROTOCOL_GET_PROTOCOL
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
 
@@ -185,13 +185,13 @@ EfiBootManagerGetGopDevicePath (
                           NULL,
                           EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                           );
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
             //
             // Append the device path to GOP pool when there is GOP protocol installed.
             //
             TempDevicePath = GopPool;
             GopPool = AppendDevicePathInstance (GopPool, DevicePath);
-            gBS->FreePool (TempDevicePath);
+            gBS->FreePool(TempDevicePath);
           }
         }
 
@@ -203,16 +203,16 @@ EfiBootManagerGetGopDevicePath (
           TempDevicePath = GopPool;
           ReturnDevicePath = EfiBootManagerGetGopDevicePath (OpenInfoBuffer[Index].ControllerHandle);
           GopPool = AppendDevicePathInstance (GopPool, ReturnDevicePath);
-          gBS->FreePool (ReturnDevicePath);
-          gBS->FreePool (TempDevicePath);
+          gBS->FreePool(ReturnDevicePath);
+          gBS->FreePool(TempDevicePath);
         }
       }
     }
 
-    FreePool (OpenInfoBuffer);
+    FreePool(OpenInfoBuffer);
   }
 
-  FreePool (ProtocolBuffer);
+  FreePool(ProtocolBuffer);
 
   return GopPool;
 }
@@ -258,7 +258,7 @@ EfiBootManagerConnectVideoController (
   }
 
   EfiBootManagerUpdateConsoleVariable (ConOut, Gop, NULL);
-  FreePool (Gop);
+  FreePool(Gop);
 
   //
   // Necessary for ConPlatform and ConSplitter driver to start up again after ConOut is updated.
@@ -342,8 +342,8 @@ BmUpdateSystemTableConsole (
     if (Instance == NULL) {
       DEBUG ((EFI_D_ERROR, "[Bds] No valid console instance is found for %s!\n", VarName));
       // We should not ASSERT when all the console devices are removed.
-      // ASSERT_EFI_ERROR (EFI_NOT_FOUND);
-      FreePool (FullDevicePath);
+      // ASSERT_EFI_ERROR(EFI_NOT_FOUND);
+      FreePool(FullDevicePath);
       return FALSE;
     }
 
@@ -356,8 +356,8 @@ BmUpdateSystemTableConsole (
                     &Instance,
                     &NewHandle
                     );
-    FreePool (FullInstance);
-    if (!EFI_ERROR (Status)) {
+    FreePool(FullInstance);
+    if (!EFI_ERROR(Status)) {
       //
       // Get the console protocol on this console device handle
       //
@@ -366,7 +366,7 @@ BmUpdateSystemTableConsole (
                       ConsoleGuid,
                       &Interface
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Update new console handle in System Table.
         //
@@ -381,7 +381,7 @@ BmUpdateSystemTableConsole (
             TextOut->SetMode (TextOut, 0);
           }
         }
-        FreePool (FullDevicePath);
+        FreePool(FullDevicePath);
         return TRUE;
       }
     }
@@ -391,7 +391,7 @@ BmUpdateSystemTableConsole (
   //
   // No any available console devcie found.
   //
-  FreePool (FullDevicePath);
+  FreePool(FullDevicePath);
   return FALSE;
 }
 
@@ -550,7 +550,7 @@ EfiBootManagerConnectConsoleVariable (
     //
     Instance  = GetNextDevicePathInstance (&CopyOfDevicePath, &Size);
     if (Instance == NULL) {
-      FreePool (StartDevicePath);
+      FreePool(StartDevicePath);
       return EFI_UNSUPPORTED;
     }
 
@@ -570,7 +570,7 @@ EfiBootManagerConnectConsoleVariable (
         ((DevicePathSubType (Instance) == MSG_USB_CLASS_DP) || (DevicePathSubType (Instance) == MSG_USB_WWID_DP))
        ) {
       Status = BmConnectUsbShortFormDevicePath (Instance);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         DeviceExist = TRUE;
       }
     } else {
@@ -591,13 +591,13 @@ EfiBootManagerConnectConsoleVariable (
         //
         SetDevicePathEndNode (Next);
         Status = EfiBootManagerConnectDevicePath (Instance, &Handle);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           gBS->ConnectController (Handle, NULL, NULL, TRUE);
         }
       } else {
         Status = EfiBootManagerConnectDevicePath (Instance, NULL);
       }
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Delete the instance from the console varialbe
         //
@@ -609,7 +609,7 @@ EfiBootManagerConnectConsoleVariable (
     FreePool(Instance);
   } while (CopyOfDevicePath != NULL);
 
-  FreePool (StartDevicePath);
+  FreePool(StartDevicePath);
 
   if (!DeviceExist) {
     return EFI_NOT_FOUND;
@@ -713,20 +713,20 @@ EfiBootManagerConnectAllDefaultConsoles (
   OneConnected = FALSE;
 
   Status = EfiBootManagerConnectConsoleVariable (ConOut);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     OneConnected = TRUE;
   }
   PERF_EVENT ("ConOutReady");
 
 
   Status = EfiBootManagerConnectConsoleVariable (ConIn);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     OneConnected = TRUE;
   }
   PERF_EVENT ("ConInReady");
 
   Status = EfiBootManagerConnectConsoleVariable (ErrOut);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     OneConnected = TRUE;
   }
   PERF_EVENT ("ErrOutReady");

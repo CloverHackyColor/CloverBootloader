@@ -1300,11 +1300,11 @@ RemoveImageRecord (
                                IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE
                                );
     RemoveEntryList (&ImageRecordCodeSection->Link);
-    FreePool (ImageRecordCodeSection);
+    FreePool(ImageRecordCodeSection);
   }
 
   RemoveEntryList (&ImageRecord->Link);
-  FreePool (ImageRecord);
+  FreePool(ImageRecord);
   mImagePropertiesPrivateData.ImageRecordCount--;
 }
 
@@ -1327,7 +1327,7 @@ InstallPropertiesTable (
     EFI_STATUS  Status;
 
     Status = gBS->InstallConfigurationTable (&gEfiPropertiesTableGuid, &mPropertiesTable);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     DEBUG ((EFI_D_INFO, "MemoryProtectionAttribute - 0x%016lx\n", mPropertiesTable.MemoryProtectionAttribute));
     if ((mPropertiesTable.MemoryProtectionAttribute & EFI_PROPERTIES_RUNTIME_MEMORY_PROTECTION_NON_EXECUTABLE_PE_DATA) == 0) {
@@ -1368,6 +1368,6 @@ CoreInitializePropertiesTable (
                   &gEfiEndOfDxeEventGroupGuid,
                   &EndOfDxeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   return ;
 }

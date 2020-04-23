@@ -154,7 +154,7 @@ BmmSetConsoleMode (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -163,7 +163,7 @@ BmmSetConsoleMode (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }
 
@@ -211,7 +211,7 @@ BmmSetConsoleMode (
                        &SizeOfInfo,
                        &Info
                        );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution)) {
         if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
@@ -220,12 +220,12 @@ BmmSetConsoleMode (
           // Current resolution is same with required resolution, check if text mode need be set
           //
           Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
-          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR(Status);
           if (CurrentColumn == NewColumns && CurrentRow == NewRows) {
             //
             // If current text mode is same with required text mode. Do nothing
             //
-            FreePool (Info);
+            FreePool(Info);
             return EFI_SUCCESS;
           } else {
             //
@@ -239,15 +239,15 @@ BmmSetConsoleMode (
                   // Required text mode is supported, set it.
                   //
                   Status = SimpleTextOut->SetMode (SimpleTextOut, Index);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   //
                   // Update text mode PCD.
                   //
                   Status = PcdSet32S (PcdConOutColumn, mBmmSetupTextModeColumn);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   Status = PcdSet32S (PcdConOutRow, mBmmSetupTextModeRow);
-                  ASSERT_EFI_ERROR (Status);
-                  FreePool (Info);
+                  ASSERT_EFI_ERROR(Status);
+                  FreePool(Info);
                   return EFI_SUCCESS;
                 }
               }
@@ -256,7 +256,7 @@ BmmSetConsoleMode (
               //
               // If required text mode is not supported, return error.
               //
-              FreePool (Info);
+              FreePool(Info);
               return EFI_UNSUPPORTED;
             }
           }
@@ -266,13 +266,13 @@ BmmSetConsoleMode (
           // In this case, the driver which produces simple text out need be restarted.
           //
           Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber);
-          if (!EFI_ERROR (Status)) {
-            FreePool (Info);
+          if (!EFI_ERROR(Status)) {
+            FreePool(Info);
             break;
           }
         }
       }
-      FreePool (Info);
+      FreePool(Info);
     }
   }
 
@@ -288,13 +288,13 @@ BmmSetConsoleMode (
   // Set PCD to Inform Consplitter to change text mode.
   //
   Status = PcdSet32S (PcdVideoHorizontalResolution, NewHorizontalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdVideoVerticalResolution, NewVerticalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutColumn, NewColumns);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutRow, NewRows);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Video mode is changed, so restart graphics console driver and higher level driver.
@@ -308,7 +308,7 @@ BmmSetConsoleMode (
                    &HandleCount,
                    &HandleBuffer
                    );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
@@ -316,7 +316,7 @@ BmmSetConsoleMode (
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
     if (HandleBuffer != NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
     }
   }
 
@@ -349,7 +349,7 @@ UiDevicePathToStr (
                   NULL,
                   (VOID **) &DevPathToText
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ToText = DevPathToText->ConvertDevicePathToText (
                             DevPath,
                             FALSE,
@@ -426,7 +426,7 @@ BmmExtractDevicePathFromHiiHandle (
   }
 
   Status = gHiiDatabase->GetPackageListHandle (gHiiDatabase, Handle, &DriverHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -517,7 +517,7 @@ UpdateProgress(
     ReturnString = StrStr (Configuration, StringPtr);
   }
 
-  FreePool (StringPtr);
+  FreePool(StringPtr);
 
   return ReturnString;
 }
@@ -695,7 +695,7 @@ BootMaintExtractConfig (
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
-    FreePool (ConfigRequestHdr);
+    FreePool(ConfigRequestHdr);
   }
 
   Status = gHiiConfigRouting->BlockToConfig (
@@ -710,7 +710,7 @@ BootMaintExtractConfig (
   // Free the allocated config request string.
   //
   if (AllocatedRequest) {
-    FreePool (ConfigRequest);
+    FreePool(ConfigRequest);
     ConfigRequest = NULL;
   }
   //
@@ -800,7 +800,7 @@ BootMaintRouteConfig (
                   NULL,
                   (VOID **)&ConfigRouting
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -822,7 +822,7 @@ BootMaintRouteConfig (
                             &BufferSize,
                             Progress
                             );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   //
   // Compare new and old BMM configuration data and only do action for modified item to
   // avoid setting unnecessary non-volatile variable
@@ -833,7 +833,7 @@ BootMaintRouteConfig (
   //
   if (CompareMem (&NewBmmData->BootNext, &OldBmmData->BootNext, sizeof (NewBmmData->BootNext)) != 0) {
     Status = Var_UpdateBootNext (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootNext);
       goto Exit;
     }
@@ -854,7 +854,7 @@ BootMaintRouteConfig (
     }
 
     Status = Var_DelBootOption ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootOptionDel);
       goto Exit;
     }
@@ -862,7 +862,7 @@ BootMaintRouteConfig (
 
   if (CompareMem (NewBmmData->BootOptionOrder, OldBmmData->BootOptionOrder, sizeof (NewBmmData->BootOptionOrder)) != 0) {
     Status = Var_UpdateBootOrder (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootOptionOrder);
       goto Exit;
     }
@@ -876,7 +876,7 @@ BootMaintRouteConfig (
                     sizeof(UINT16),
                     &(NewBmmData->BootTimeOut)
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootTimeOut);
       goto Exit;
     }
@@ -897,7 +897,7 @@ BootMaintRouteConfig (
       NewBmmData->DriverOptionDelMark[Index] = FALSE;
     }
     Status = Var_DelDriverOption ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, DriverOptionDel);
       goto Exit;
     }
@@ -905,7 +905,7 @@ BootMaintRouteConfig (
 
   if (CompareMem (NewBmmData->DriverOptionOrder, OldBmmData->DriverOptionOrder, sizeof (NewBmmData->DriverOptionOrder)) != 0) {
     Status = Var_UpdateDriverOrder (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, DriverOptionOrder);
       goto Exit;
     }
@@ -913,7 +913,7 @@ BootMaintRouteConfig (
 
   if (CompareMem (&NewBmmData->ConsoleOutMode, &OldBmmData->ConsoleOutMode, sizeof (NewBmmData->ConsoleOutMode)) != 0){
     Status = Var_UpdateConMode(Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleOutMode);
       goto Exit;
     }
@@ -951,15 +951,15 @@ BootMaintRouteConfig (
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, COMFlowControl);
     }
     Status = Var_UpdateConsoleInpOption ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
     Status = Var_UpdateConsoleOutOption ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
     Status = Var_UpdateErrorOutOption ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Exit;
     }
   }
@@ -968,7 +968,7 @@ BootMaintRouteConfig (
   //
   if (CompareMem (NewBmmData->ConsoleInCheck, OldBmmData->ConsoleInCheck, sizeof (NewBmmData->ConsoleInCheck)) != 0){
     Status = Var_UpdateConsoleInpOption();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleInCheck);
       goto Exit;
     }
@@ -976,7 +976,7 @@ BootMaintRouteConfig (
 
   if (CompareMem (NewBmmData->ConsoleOutCheck, OldBmmData->ConsoleOutCheck, sizeof (NewBmmData->ConsoleOutCheck)) != 0){
     Status = Var_UpdateConsoleOutOption();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleOutCheck);
       goto Exit;
     }
@@ -984,7 +984,7 @@ BootMaintRouteConfig (
 
   if (CompareMem (NewBmmData->ConsoleErrCheck, OldBmmData->ConsoleErrCheck, sizeof (NewBmmData->ConsoleErrCheck)) != 0){
     Status = Var_UpdateErrorOutOption();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Offset = OFFSET_OF (BMM_FAKE_NV_DATA, ConsoleErrCheck);
       goto Exit;
     }
@@ -994,7 +994,7 @@ BootMaintRouteConfig (
        CompareMem (NewBmmData->BootOptionalData, OldBmmData->BootOptionalData, sizeof (NewBmmData->BootOptionalData)) != 0) {
     Status = Var_UpdateBootOption (Private);
     NewBmmData->BootOptionChanged = FALSE;
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (CompareMem (NewBmmData->BootDescriptionData, OldBmmData->BootDescriptionData, sizeof (NewBmmData->BootDescriptionData)) != 0) {
         Offset = OFFSET_OF (BMM_FAKE_NV_DATA, BootDescriptionData);
       } else {
@@ -1016,7 +1016,7 @@ BootMaintRouteConfig (
               );
     NewBmmData->DriverOptionChanged = FALSE;
     NewBmmData->ForceReconnect      = TRUE;
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (CompareMem (NewBmmData->DriverDescriptionData, OldBmmData->DriverDescriptionData, sizeof (NewBmmData->DriverDescriptionData)) != 0) {
         Offset = OFFSET_OF (BMM_FAKE_NV_DATA, DriverDescriptionData);
       } else {
@@ -1587,7 +1587,7 @@ BmmInitialBootModeInfo (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -1596,7 +1596,7 @@ BmmInitialBootModeInfo (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }
 
@@ -1665,7 +1665,7 @@ BootMaintenanceManagerUiLibConstructor (
                   &mBmmCallbackInfo->BmmConfigAccess,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Post our Boot Maint VFR binary to the HII database.
@@ -1683,7 +1683,7 @@ BootMaintenanceManagerUiLibConstructor (
   // Locate Formbrowser2 protocol
   //
   Status = gBS->LocateProtocol (&gEfiFormBrowser2ProtocolGuid, NULL, (VOID **) &mBmmCallbackInfo->FormBrowser2);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Create LoadOption in BmmCallbackInfo for Driver Callback
@@ -1762,7 +1762,7 @@ BootMaintenanceManagerUiLibDestructor (
          NULL
          );
 
-  FreePool (mBmmCallbackInfo->LoadContext);
+  FreePool(mBmmCallbackInfo->LoadContext);
   mBmmCallbackInfo->BmmDriverHandle = NULL;
 
   return EFI_SUCCESS;

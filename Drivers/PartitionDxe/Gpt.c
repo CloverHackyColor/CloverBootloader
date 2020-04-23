@@ -252,7 +252,7 @@ PartitionInstallGptChildHandles (
                        BlockSize,
                        ProtectiveMbr
                        );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GptValidStatus = Status;
     goto Done;
   }
@@ -336,7 +336,7 @@ PartitionInstallGptChildHandles (
                      PrimaryHeader->NumberOfPartitionEntries * (PrimaryHeader->SizeOfPartitionEntry),
                      PartEntry
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GptValidStatus = Status;
 //    DEBUG ((EFI_D_ERROR, " Partition Entry ReadDisk error\n"));
     goto Done;
@@ -418,19 +418,19 @@ PartitionInstallGptChildHandles (
 
 Done:
   if (ProtectiveMbr != NULL) {
-    FreePool (ProtectiveMbr);
+    FreePool(ProtectiveMbr);
   }
   if (PrimaryHeader != NULL) {
-    FreePool (PrimaryHeader);
+    FreePool(PrimaryHeader);
   }
   if (BackupHeader != NULL) {
-    FreePool (BackupHeader);
+    FreePool(BackupHeader);
   }
   if (PartEntry != NULL) {
-    FreePool (PartEntry);
+    FreePool(PartEntry);
   }
   if (PEntryStatus != NULL) {
-    FreePool (PEntryStatus);
+    FreePool(PEntryStatus);
   }
 
   return GptValidStatus;
@@ -483,8 +483,8 @@ PartitionValidGptTable (
                      BlockSize,
                      PartHdr
                      );
-  if (EFI_ERROR (Status)) {
-    FreePool (PartHdr);
+  if (EFI_ERROR(Status)) {
+    FreePool(PartHdr);
     return FALSE;
   }
 
@@ -494,7 +494,7 @@ PartitionValidGptTable (
       (PartHdr->SizeOfPartitionEntry < sizeof (EFI_PARTITION_ENTRY))
       ) {
     DEBUG ((EFI_D_INFO, "Invalid efi partition table header\n"));
-    FreePool (PartHdr);
+    FreePool(PartHdr);
     return FALSE;
   }
 
@@ -502,18 +502,18 @@ PartitionValidGptTable (
   // Ensure the NumberOfPartitionEntries * SizeOfPartitionEntry doesn't overflow.
   //
   if (PartHdr->NumberOfPartitionEntries > DivU64x32 (MAX_UINTN, PartHdr->SizeOfPartitionEntry)) {
-    FreePool (PartHdr);
+    FreePool(PartHdr);
     return FALSE;
   }
 
   CopyMem (PartHeader, PartHdr, sizeof (EFI_PARTITION_TABLE_HEADER));
   if (!PartitionCheckGptEntryArrayCRC (BlockIo, DiskIo, PartHeader)) {
-    FreePool (PartHdr);
+    FreePool(PartHdr);
     return FALSE;
   }
 
   DEBUG ((EFI_D_INFO, " Valid efi partition table header\n"));
-  FreePool (PartHdr);
+  FreePool(PartHdr);
   return TRUE;
 }
 
@@ -557,21 +557,21 @@ PartitionCheckGptEntryArrayCRC (
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
-  if (EFI_ERROR (Status)) {
-    FreePool (Ptr);
+  if (EFI_ERROR(Status)) {
+    FreePool(Ptr);
     return FALSE;
   }
 
   Size    = PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry;
 
   Status  = gBS->CalculateCrc32 (Ptr, Size, &Crc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "CheckPEntryArrayCRC: Crc calculation failed\n"));
-    FreePool (Ptr);
+    FreePool(Ptr);
     return FALSE;
   }
 
-  FreePool (Ptr);
+  FreePool(Ptr);
 
   return (BOOLEAN) (PartHeader->PartitionEntryArrayCRC32 == Crc);
 }
@@ -634,7 +634,7 @@ PartitionRestoreGptTable (
                      BlockSize,
                      PartHdr
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -652,7 +652,7 @@ PartitionRestoreGptTable (
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -665,13 +665,13 @@ PartitionRestoreGptTable (
                     );
 
 Done:
-  FreePool (PartHdr);
+  FreePool(PartHdr);
 
   if (Ptr != NULL) {
-    FreePool (Ptr);
+    FreePool(Ptr);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -849,7 +849,7 @@ PartitionCheckCrcAltSize (
   Hdr->CRC32  = 0;
 
   Status      = gBS->CalculateCrc32 ((UINT8 *) Hdr, Size, &Crc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 //    DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc calculation failed\n"));
     return FALSE;
   }

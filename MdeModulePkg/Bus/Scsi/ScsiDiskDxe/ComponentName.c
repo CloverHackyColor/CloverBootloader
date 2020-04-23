@@ -186,7 +186,7 @@ ScsiDiskComponentNameGetControllerName (
              gScsiDiskDriverBinding.DriverBindingHandle,
              &gEfiScsiIoProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -201,7 +201,7 @@ ScsiDiskComponentNameGetControllerName (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

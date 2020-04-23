@@ -77,7 +77,7 @@ EfiLibOpenRoot (
   //
   // Open the root directory of the volume
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = Volume->OpenVolume (
                       Volume,
                       &File
@@ -86,7 +86,7 @@ EfiLibOpenRoot (
   //
   // Done
   //
-  return EFI_ERROR (Status) ? NULL : File;
+  return EFI_ERROR(Status) ? NULL : File;
 }
 
 /**
@@ -327,7 +327,7 @@ EfiReallocatePool (
       CopyMem (NewPool, OldPool, OldSize < NewSize ? OldSize : NewSize);
     }
 
-    FreePool (OldPool);
+    FreePool(OldPool);
   }
 
   return NewPool;

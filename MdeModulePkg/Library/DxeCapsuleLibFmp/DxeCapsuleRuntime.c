@@ -123,7 +123,7 @@ DxeRuntimeCapsuleLibConstructor (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mDxeRuntimeCapsuleLibVirtualAddressChangeEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register notify function to cache the FMP capsule GUIDs at ReadyToBoot.
@@ -136,7 +136,7 @@ DxeRuntimeCapsuleLibConstructor (
                   &gEfiEventReadyToBootGuid,
                   &mDxeRuntimeCapsuleLibReadyToBootEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -162,13 +162,13 @@ DxeRuntimeCapsuleLibDestructor (
   // Close the VirtualAddressChange event.
   //
   Status = gBS->CloseEvent (mDxeRuntimeCapsuleLibVirtualAddressChangeEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Close the ReadyToBoot event.
   //
   Status = gBS->CloseEvent (mDxeRuntimeCapsuleLibReadyToBootEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

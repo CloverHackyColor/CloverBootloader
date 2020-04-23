@@ -184,7 +184,7 @@ NvmExpressComponentNameGetControllerName (
              gNvmExpressDriverBinding.DriverBindingHandle,
              &gEfiPciIoProtocolGuid
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -195,7 +195,7 @@ NvmExpressComponentNameGetControllerName (
                ChildHandle,
                &gEfiNvmExpressPassThruProtocolGuid
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -209,7 +209,7 @@ NvmExpressComponentNameGetControllerName (
                     ChildHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
     Device = NVME_DEVICE_PRIVATE_DATA_FROM_BLOCK_IO (BlockIo);

@@ -169,7 +169,7 @@ CustomGuidedSectionExtract (
              &SectionAttribute
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "GetInfo from guided section Failed - %r\n", Status));
     return Status;
   }
@@ -201,7 +201,7 @@ CustomGuidedSectionExtract (
              ScratchBuffer,
              AuthenticationStatus
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Decode failed
     //
@@ -255,7 +255,7 @@ SectionExtractionPeiEntry (
       GuidPpi->Ppi   = (VOID *) &mCustomGuidedSectionExtractionPpi;
       GuidPpi->Guid  = &ExtractHandlerGuidTable[ExtractHandlerNumber];
       Status = PeiServicesInstallPpi (GuidPpi++);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   }
 

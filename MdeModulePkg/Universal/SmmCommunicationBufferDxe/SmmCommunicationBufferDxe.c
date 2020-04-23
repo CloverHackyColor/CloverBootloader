@@ -86,7 +86,7 @@ SmmCommunicationBufferEntryPoint (
   // Publish this table, so that other driver can use the buffer.
   //
   Status = gBS->InstallConfigurationTable (&gEdkiiPiSmmCommunicationRegionTableGuid, PiSmmCommunicationRegionTable);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

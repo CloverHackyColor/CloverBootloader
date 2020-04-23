@@ -49,7 +49,7 @@ InternalGetReportStatusCode (
   //
   if (gBS != NULL && gBS->LocateProtocol != NULL) {
     Status = gBS->LocateProtocol (&gEfiStatusCodeRuntimeProtocolGuid, NULL, (VOID**) &mReportStatusCodeLibStatusCodeProtocol);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       mReportStatusCodeLibStatusCodeProtocol = NULL;
     }
   }
@@ -549,7 +549,7 @@ ReportStatusCodeEx (
   // Free the allocated buffer
   //
   if (StatusCodeData != (EFI_STATUS_CODE_DATA  *)Buffer) {
-    gBS->FreePool (StatusCodeData);
+    gBS->FreePool(StatusCodeData);
   }
 
   return Status;

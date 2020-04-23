@@ -1260,7 +1260,7 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
                                   &gEfiBlockIoProtocolGuid,
                                   (VOID **) &BlockIo
                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //DBG(" BlockIo: %s - skipping\n", strerror(Status));
       continue;
     }
@@ -1300,7 +1300,7 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
                                            &OpenInfo,
                                            &OpenInfoCount
                                            );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //DBG(" OpenInfo: no - skipping\n");
       continue;
     }
@@ -1316,7 +1316,7 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
         DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %s\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, strerror(Status));
       }
     }
-    FreePool (OpenInfo);
+    FreePool(OpenInfo);
   }
   FreePool(Handles);
 
@@ -1382,7 +1382,7 @@ VOID DisconnectSomeDevices(VOID)
     ControllerHandles = NULL;
 
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &ControllerHandleCount, &ControllerHandles);
- /*   if (!EFI_ERROR (Status)) {
+ /*   if (!EFI_ERROR(Status)) {
       for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
         Status = gBS->DisconnectController(ControllerHandles[Index2],
                                            NULL, NULL);
@@ -1394,7 +1394,7 @@ VOID DisconnectSomeDevices(VOID)
     Handles = NULL;
 
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiComponentNameProtocolGuid, NULL, &HandleCount, &Handles);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       for (Index = 0; Index < HandleCount; Index++) {
         Status = gBS->OpenProtocol(
                                    Handles[Index],
@@ -1440,7 +1440,7 @@ VOID DisconnectSomeDevices(VOID)
           continue;
         }
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if(IS_PCI_VGA(&Pci) == TRUE) {
             // disconnect VGA
             Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
@@ -2017,7 +2017,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   
   Status = gBS->HandleProtocol(ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (VOID **)&SimpleTextEx);
-  if ( EFI_ERROR (Status) ) {
+  if ( EFI_ERROR(Status) ) {
     SimpleTextEx = NULL;
   }
   DBG("SimpleTextEx Status=%s\n", strerror(Status));

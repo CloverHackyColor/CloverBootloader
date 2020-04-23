@@ -111,12 +111,12 @@ VOID InstallRtShims (
       &RtShims,
       FALSE
       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gRtShims = (VOID *)(UINTN)RtShims;
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     gGetVariable          = (UINTN)gRT->GetVariable;
     gSetVariable          = (UINTN)gRT->SetVariable;
     gGetNextVariableName  = (UINTN)gRT->GetNextVariableName;
@@ -347,7 +347,7 @@ SetBootVariableRedirect (
       &Enable
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Enable = FALSE;
     }
   }

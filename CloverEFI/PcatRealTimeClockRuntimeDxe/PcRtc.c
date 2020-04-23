@@ -149,7 +149,7 @@ PcRtcInit (
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Set the variable with default value if the RTC is functioning incorrectly.
     //
@@ -196,7 +196,7 @@ PcRtcInit (
              &DataSize,
              (VOID *) &TimerVar
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Time.TimeZone = (INT16) TimerVar;
     Time.Daylight = (UINT8) (TimerVar >> 16);
   } else {
@@ -208,10 +208,10 @@ PcRtcInit (
   // Validate time fields
   //
   Status = ConvertRtcTimeToEfiTime (&Time, RegisterB);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = RtcTimeFieldsValid (&Time);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Time.Second = RTC_INIT_SECOND;
     Time.Minute = RTC_INIT_MINUTE;
     Time.Hour   = RTC_INIT_HOUR;
@@ -227,7 +227,7 @@ PcRtcInit (
   // Reset time value according to new RTC configuration
   //
   Status = PcRtcSetTime (&Time, Global);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
   
@@ -237,7 +237,7 @@ PcRtcInit (
   // so we can use them to get and set wakeup time.
   //
   Status = PcRtcGetWakeupTime (&Enabled, &Pending, &Time, Global);
-  if ((Enabled) || (!EFI_ERROR (Status))) {
+  if ((Enabled) || (!EFI_ERROR(Status))) {
     return EFI_SUCCESS;
   }
   
@@ -265,7 +265,7 @@ PcRtcInit (
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (!EfiAtRuntime ()) {
     EfiReleaseLock (&Global->RtcLock);
     }
@@ -284,7 +284,7 @@ PcRtcInit (
               sizeof (Time),
               &Time
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }
@@ -360,7 +360,7 @@ PcRtcGetTime (
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
       if (!EfiAtRuntime ()) {
         EfiReleaseLock (&Global->RtcLock);
       }
@@ -398,10 +398,10 @@ PcRtcGetTime (
   // Make sure all field values are in correct range
   //
   Status = ConvertRtcTimeToEfiTime (Time, RegisterB);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = RtcTimeFieldsValid (Time);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -452,7 +452,7 @@ PcRtcSetTime (
   // Make sure that the time fields are valid
   //
   Status = RtcTimeFieldsValid (Time);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -468,7 +468,7 @@ PcRtcSetTime (
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
      if (!EfiAtRuntime ()) {
        EfiReleaseLock (&Global->RtcLock);
      }
@@ -487,7 +487,7 @@ PcRtcSetTime (
               sizeof (TimerVar),
               &TimerVar
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }
@@ -578,7 +578,7 @@ PcRtcGetWakeupTime (
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (!EfiAtRuntime ()) {
     EfiReleaseLock (&Global->RtcLock);
     }
@@ -616,7 +616,7 @@ PcRtcGetWakeupTime (
               &DataSize,
               &RtcTime
               );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // The alarm variable exists. In this case, we read variable to get info.
     //
@@ -636,10 +636,10 @@ PcRtcGetWakeupTime (
   // Make sure all field values are in correct range
   //
   Status = ConvertRtcTimeToEfiTime (Time, RegisterB);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = RtcTimeFieldsValid (Time);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -684,7 +684,7 @@ PcRtcSetWakeupTime (
     // Make sure that the time fields are valid
     //
     Status = RtcTimeFieldsValid (Time);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
     //
@@ -692,7 +692,7 @@ PcRtcSetWakeupTime (
     //
     PcRtcGetTime (&RtcTime, &Capabilities, Global);
     Status = RtcTimeFieldsValid (&RtcTime);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
     if (!IsWithinOneDay (&RtcTime, Time)) {
@@ -714,7 +714,7 @@ PcRtcSetWakeupTime (
   // Wait for up to 0.1 seconds for the RTC to be updated
   //
   Status = RtcWaitToUpdate (PcdGet32 (PcdRealTimeClockUpdateTimeout));
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (!EfiAtRuntime ()) {
     EfiReleaseLock (&Global->RtcLock);
     }
@@ -751,7 +751,7 @@ PcRtcSetWakeupTime (
               sizeof (RtcTime),
               &RtcTime
               );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (!EfiAtRuntime ()) {
       EfiReleaseLock (&Global->RtcLock);
     }

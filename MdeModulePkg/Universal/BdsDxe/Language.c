@@ -133,7 +133,7 @@ InitializeLangVariable (
   }
 
   if (Lang != NULL) {
-    FreePool (Lang);
+    FreePool(Lang);
   }
 }
 

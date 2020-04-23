@@ -136,7 +136,7 @@ BotCommandPhase (
                       &DataSize,
                       Timeout
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Command phase fail, we need to recovery reset this device
     //
@@ -223,7 +223,7 @@ BotDataPhase (
 
     TransferredSize += Increment;
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       PeiUsbClearEndpointHalt (PeiServices, UsbIoPpi, EndpointAddr);
       return Status;
     }
@@ -287,7 +287,7 @@ BotStatusPhase (
                       &DataSize,
                       Timeout
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -348,7 +348,7 @@ PeiAtapiCommand (
             TimeOutInMilliSeconds
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
   //
@@ -381,7 +381,7 @@ PeiAtapiCommand (
             &TransferStatus,
             TimeOutInMilliSeconds
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BotRecoveryReset (PeiServices, PeiBotDev);
     return EFI_DEVICE_ERROR;
   }

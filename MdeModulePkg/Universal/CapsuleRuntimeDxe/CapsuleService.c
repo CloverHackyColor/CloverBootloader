@@ -207,7 +207,7 @@ UpdateCapsule (
              sizeof (UINTN),
              (VOID *) &ScatterGatherList
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
      //
      // Variable has been set successfully, increase variable index.
      //
@@ -391,7 +391,7 @@ CapsuleServiceInitialize (
                   NULL,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

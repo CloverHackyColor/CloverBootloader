@@ -316,7 +316,7 @@ Ps2KeyboardComponentNameGetControllerName (
   // Check Controller's handle
   //
   Status = EfiTestManagedDevice (ControllerHandle, gKeyboardControllerDriver.DriverBindingHandle, &gEfiSioProtocolGuid);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -330,7 +330,7 @@ Ps2KeyboardComponentNameGetControllerName (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

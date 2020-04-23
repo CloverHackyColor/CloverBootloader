@@ -147,7 +147,7 @@ SmmLockBoxSmmEndOfDxeNotify (
                     NULL,
                     (VOID **)&SxDispatch
                     );
-  if (!EFI_ERROR (Status) && (SxDispatch != NULL)) {
+  if (!EFI_ERROR(Status) && (SxDispatch != NULL)) {
     //
     // Register a S3 entry callback function to
     // determine if it will be during S3 resume.
@@ -160,7 +160,7 @@ SmmLockBoxSmmEndOfDxeNotify (
                            &EntryRegisterContext,
                            &S3EntryHandle
                            );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return EFI_SUCCESS;
@@ -217,7 +217,7 @@ SmmLockBoxSmmConstructor (
                     SmmLockBoxSmmReadyToLockNotify,
                     &mSmmLockBoxRegistrationSmmReadyToLock
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register SmmEndOfDxe notification.
@@ -227,7 +227,7 @@ SmmLockBoxSmmConstructor (
                     SmmLockBoxSmmEndOfDxeNotify,
                     &mSmmLockBoxRegistrationSmmEndOfDxe
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register EndOfS3Resume notification.
@@ -237,7 +237,7 @@ SmmLockBoxSmmConstructor (
                     SmmLockBoxEndOfS3ResumeNotify,
                     &mSmmLockBoxRegistrationEndOfS3Resume
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Check if gEfiSmmLockBoxCommunicationGuid is installed by someone
@@ -269,7 +269,7 @@ SmmLockBoxSmmConstructor (
                     &mSmmLockBoxContext,
                     sizeof(mSmmLockBoxContext)
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   mSmmConfigurationTableInstalled = TRUE;
 
   DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SmmLockBoxContext - %x\n", (UINTN)&mSmmLockBoxContext));
@@ -308,7 +308,7 @@ SmmLockBoxSmmDestructor (
                       NULL,
                       0
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib uninstall SmmLockBoxCommunication configuration table\n"));
   }
 
@@ -321,7 +321,7 @@ SmmLockBoxSmmDestructor (
                       NULL,
                       &mSmmLockBoxRegistrationSmmReadyToLock
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   if (mSmmLockBoxRegistrationSmmEndOfDxe != NULL) {
     //
@@ -332,7 +332,7 @@ SmmLockBoxSmmDestructor (
                       NULL,
                       &mSmmLockBoxRegistrationSmmEndOfDxe
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   if (mSmmLockBoxRegistrationEndOfS3Resume != NULL) {
     //
@@ -343,7 +343,7 @@ SmmLockBoxSmmDestructor (
                       NULL,
                       &mSmmLockBoxRegistrationEndOfS3Resume
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return EFI_SUCCESS;
@@ -459,8 +459,8 @@ SaveLockBox (
                     EFI_SIZE_TO_PAGES (Length),
                     &SmramBuffer
                     );
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_OUT_OF_RESOURCES));
     return EFI_OUT_OF_RESOURCES;
   }
@@ -473,8 +473,8 @@ SaveLockBox (
                     sizeof(*LockBox),
                     (VOID **)&LockBox
                     );
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     gSmst->SmmFreePages (SmramBuffer, EFI_SIZE_TO_PAGES (Length));
     DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib SaveLockBox - Exit (%r)\n", EFI_OUT_OF_RESOURCES));
     return EFI_OUT_OF_RESOURCES;
@@ -668,7 +668,7 @@ UpdateLockBox (
                           EFI_SIZE_TO_PAGES (Offset + Length),
                           &SmramBuffer
                           );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           DEBUG ((DEBUG_INFO, "SmmLockBoxSmmLib UpdateLockBox - Exit (%r)\n", EFI_OUT_OF_RESOURCES));
           return EFI_OUT_OF_RESOURCES;
         }

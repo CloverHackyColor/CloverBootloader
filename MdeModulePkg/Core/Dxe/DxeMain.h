@@ -1371,7 +1371,7 @@ CoreInternalAllocatePool (
 **/
 EFI_STATUS
 EFIAPI
-CoreFreePool (
+CoreFreePool(
   IN VOID        *Buffer
   );
 
@@ -1387,7 +1387,7 @@ CoreFreePool (
 **/
 EFI_STATUS
 EFIAPI
-CoreInternalFreePool (
+CoreInternalFreePool(
   IN VOID               *Buffer,
   OUT EFI_MEMORY_TYPE   *PoolType OPTIONAL
   );

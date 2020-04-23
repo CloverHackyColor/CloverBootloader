@@ -37,7 +37,7 @@ IoReadWorker (
   UINT64                            Data;
 
   Status = gSmst->SmmIo.Io.Read (&gSmst->SmmIo, Width, Port, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }
@@ -68,7 +68,7 @@ IoWriteWorker (
   EFI_STATUS                        Status;
 
   Status = gSmst->SmmIo.Io.Write (&gSmst->SmmIo, Width, Port, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }
@@ -98,7 +98,7 @@ MmioReadWorker (
   UINT64                            Data;
 
   Status = gSmst->SmmIo.Mem.Read (&gSmst->SmmIo, Width, Address, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }
@@ -129,7 +129,7 @@ MmioWriteWorker (
   EFI_STATUS                        Status;
 
   Status = gSmst->SmmIo.Mem.Write (&gSmst->SmmIo, Width, Address, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }

@@ -236,7 +236,7 @@ GraphicsOutputDriverBindingSupported (
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   gBS->CloseProtocol (
@@ -260,7 +260,7 @@ GraphicsOutputDriverBindingSupported (
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   gBS->CloseProtocol (
@@ -350,7 +350,7 @@ GraphicsOutputDriverBindingStart (
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -363,13 +363,13 @@ GraphicsOutputDriverBindingStart (
   if (Status == EFI_ALREADY_STARTED) {
     Status = EFI_SUCCESS;
   }
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Read the PCI Class Code from the PCI Device
   //
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0, sizeof (Pci), &Pci);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (!IS_PCI_DISPLAY (&Pci) || (
         ((DeviceInfo->VendorId != MAX_UINT16) && (DeviceInfo->VendorId != Pci.Hdr.VendorId)) ||
         ((DeviceInfo->DeviceId != MAX_UINT16) && (DeviceInfo->DeviceId != Pci.Hdr.DeviceId)) ||
@@ -394,7 +394,7 @@ GraphicsOutputDriverBindingStart (
           continue;
         }
         Status = PciIo->GetBarAttributes (PciIo, Index, NULL, (VOID**) &Resources);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           DEBUG ((EFI_D_INFO, "[%a]: BAR[%d]: Base = %lx, Length = %lx\n",
                   gEfiCallerBaseName, Index, Resources->AddrRangeMin, Resources->AddrLen));
           if ((Resources->Desc == ACPI_ADDRESS_SPACE_DESCRIPTOR) &&
@@ -414,7 +414,7 @@ GraphicsOutputDriverBindingStart (
     }
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CloseProtocols;
   }
 
@@ -446,7 +446,7 @@ GraphicsOutputDriverBindingStart (
                     0,
                     &Private->PciAttributes
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = PciIo->Attributes (
                       PciIo,
                       EfiPciIoAttributeOperationEnable,
@@ -455,7 +455,7 @@ GraphicsOutputDriverBindingStart (
                       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeMemory;
   }
 
@@ -497,7 +497,7 @@ GraphicsOutputDriverBindingStart (
                   NULL
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
                     Controller,
                     &gEfiPciIoProtocolGuid,
@@ -506,7 +506,7 @@ GraphicsOutputDriverBindingStart (
                     Private->GraphicsOutputHandle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       mDriverStarted = TRUE;
     } else {
       gBS->UninstallMultipleProtocolInterfaces (
@@ -519,7 +519,7 @@ GraphicsOutputDriverBindingStart (
   }
 
 RestorePciAttributes:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Restore original PCI attributes
     //
@@ -532,20 +532,20 @@ RestorePciAttributes:
   }
 
 FreeMemory:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Private != NULL) {
       if (Private->DevicePath != NULL) {
-        FreePool (Private->DevicePath);
+        FreePool(Private->DevicePath);
       }
       if (Private->FrameBufferBltLibConfigure != NULL) {
-        FreePool (Private->FrameBufferBltLibConfigure);
+        FreePool(Private->FrameBufferBltLibConfigure);
       }
-      FreePool (Private);
+      FreePool(Private);
     }
   }
 
 CloseProtocols:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Close the PCI I/O Protocol
     //
@@ -605,7 +605,7 @@ GraphicsOutputDriverBindingStop (
                     This->DriverBindingHandle,
                     Controller
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     Status = gBS->CloseProtocol (
                     Controller,
@@ -613,7 +613,7 @@ GraphicsOutputDriverBindingStop (
                     This->DriverBindingHandle,
                     Controller
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     return EFI_SUCCESS;
   }
 
@@ -626,7 +626,7 @@ GraphicsOutputDriverBindingStop (
                   ChildHandleBuffer[0],
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -638,7 +638,7 @@ GraphicsOutputDriverBindingStop (
                   This->DriverBindingHandle,
                   Private->GraphicsOutputHandle
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   //
   // Remove the GOP protocol interface from the system
   //
@@ -648,7 +648,7 @@ GraphicsOutputDriverBindingStop (
                   &gEfiDevicePathProtocolGuid, Private->DevicePath,
                   NULL
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Restore original PCI attributes
     //
@@ -658,10 +658,10 @@ GraphicsOutputDriverBindingStop (
                                Private->PciAttributes,
                                NULL
                                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
-    FreePool (Private->DevicePath);
-    FreePool (Private->FrameBufferBltLibConfigure);
+    FreePool(Private->DevicePath);
+    FreePool(Private->FrameBufferBltLibConfigure);
     mDriverStarted = FALSE;
   } else {
     Status = gBS->OpenProtocol (
@@ -672,7 +672,7 @@ GraphicsOutputDriverBindingStop (
                     Private->GraphicsOutputHandle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
   return Status;
 }
@@ -723,7 +723,7 @@ InitializeGraphicsOutput (
              &mGraphicsOutputComponentName,
              &mGraphicsOutputComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

@@ -43,7 +43,7 @@ BiosKbSetAppleKeyMapDb (
                             &BiosKeyboardDevice->KeyMapDbIndex
                             );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     BiosKeyboardDevice->KeyMapDb = AppleKeyMapDb;
   }
   return Status;
@@ -74,7 +74,7 @@ BiosKbAppleKeyMapDbInstallNotify (
                   mAppleKeyMapDbRegistration,
                   (VOID **)&mAppleKeyMapDb
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     BiosKbSetAppleKeyMapDb ((BIOS_KEYBOARD_DEV *)Context, mAppleKeyMapDb);
     gBS->CloseEvent (Event);
   }
@@ -98,7 +98,7 @@ BiosKbLocateAppleKeyMapDb (
                   NULL,
                   (VOID **)&mAppleKeyMapDb
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     BiosKbSetAppleKeyMapDb (BiosKeyboardDevice, mAppleKeyMapDb);
   } 
     else  {  

@@ -91,7 +91,7 @@ Returns:
                   &Private->DeviceIo,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -767,7 +767,7 @@ Returns:
                   Pages,
                   &HostAddress
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

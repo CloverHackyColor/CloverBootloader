@@ -178,7 +178,7 @@ SmmAllocatePool (
 **/
 EFI_STATUS
 EFIAPI
-SmmFreePool (
+SmmFreePool(
   IN      VOID                      *Buffer
   );
 

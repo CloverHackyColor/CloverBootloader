@@ -177,13 +177,13 @@ OnigurumaMatch (
         }
       }
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         for (Index = 0; Index < *CapturesCount; ++Index) {
           if ((*Captures)[Index].CapturePtr != NULL) {
-            FreePool ((CHAR16*)(*Captures)[Index].CapturePtr);
+            FreePool((CHAR16*)(*Captures)[Index].CapturePtr);
           }
         }
-        FreePool (*Captures);
+        FreePool(*Captures);
       }
     }
   }

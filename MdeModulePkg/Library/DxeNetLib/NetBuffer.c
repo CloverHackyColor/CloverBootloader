@@ -77,7 +77,7 @@ NetbufAllocStruct (
 
 FreeNbuf:
 
-  FreePool (Nbuf);
+  FreePool(Nbuf);
   return NULL;
 }
 
@@ -132,7 +132,7 @@ NetbufAlloc (
   return Nbuf;
 
 FreeNBuf:
-  FreePool (Nbuf);
+  FreePool(Nbuf);
   return NULL;
 }
 
@@ -170,7 +170,7 @@ NetbufFreeVector (
     // first block since it is allocated by us
     //
     if ((Vector->Flag & NET_VECTOR_OWN_FIRST) != 0) {
-      gBS->FreePool (Vector->Block[0].Bulk);
+      gBS->FreePool(Vector->Block[0].Bulk);
     }
 
     Vector->Free (Vector->Arg);
@@ -180,11 +180,11 @@ NetbufFreeVector (
     // Free each memory block associated with the Vector
     //
     for (Index = 0; Index < Vector->BlockNum; Index++) {
-      gBS->FreePool (Vector->Block[Index].Bulk);
+      gBS->FreePool(Vector->Block[Index].Bulk);
     }
   }
 
-  FreePool (Vector);
+  FreePool(Vector);
 }
 
 
@@ -218,7 +218,7 @@ NetbufFree (
     // all the sharing of Nbuf increse Vector's RefCnt by one
     //
     NetbufFreeVector (Nbuf->Vector);
-    FreePool (Nbuf);
+    FreePool(Nbuf);
   }
 }
 
@@ -685,7 +685,7 @@ NetbufGetFragment (
 
 FreeChild:
 
-  FreePool (Child);
+  FreePool(Child);
   return NULL;
 }
 
@@ -868,7 +868,7 @@ NetbufFromExt (
 
 FreeFirstBlock:
   if (FirstBlock != NULL) {
-    FreePool (FirstBlock);
+    FreePool(FirstBlock);
   }
   return NULL;
 }
@@ -989,7 +989,7 @@ NetbufFromBufList (
   }
 
   Nbuf = NetbufFromExt (Fragment, Current, HeadSpace, HeaderLen, ExtFree, Arg);
-  FreePool (Fragment);
+  FreePool(Fragment);
 
   return Nbuf;
 }
@@ -1394,7 +1394,7 @@ NetbufQueFree (
 
   if (NbufQue->RefCnt == 0) {
     NetbufQueFlush (NbufQue);
-    FreePool (NbufQue);
+    FreePool(NbufQue);
   }
 }
 
@@ -1887,10 +1887,10 @@ NetIpSecNetbufFree (
     // allocated by us
     //
     if ((Nbuf->Vector->Flag & NET_VECTOR_OWN_FIRST) != 0) {
-      FreePool (Nbuf->Vector->Block[0].Bulk);
+      FreePool(Nbuf->Vector->Block[0].Bulk);
     }
-    FreePool (Nbuf->Vector);
-    FreePool (Nbuf); 
+    FreePool(Nbuf->Vector);
+    FreePool(Nbuf); 
   } 
 }
 

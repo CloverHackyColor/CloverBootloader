@@ -180,7 +180,7 @@ CoreInitializeImageServices (
              EFI_NATIVE_INTERFACE,
              &Image->Info
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mCurrentImage = Image;
 
@@ -386,7 +386,7 @@ GetPeCoffImageFixLoadingAssignedAddress(
                               &Size,
                               &SectionHeader
                               );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
        return Status;
      }
      if (Size != sizeof (EFI_IMAGE_SECTION_HEADER)) {
@@ -468,7 +468,7 @@ CoreLoadPeImage (
   // Get information about the image being loaded
   //
   Status = PeCoffLoaderGetImageInfo (&Image->ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -538,7 +538,7 @@ CoreLoadPeImage (
     if (PcdGet64(PcdLoadModuleAtFixAddressEnable) != 0 ) {
       Status = GetPeCoffImageFixLoadingAssignedAddress (&(Image->ImageContext));
 
-      if (EFI_ERROR (Status))  {
+      if (EFI_ERROR(Status))  {
           //
       	  // If the code memory is not ready, invoke CoreAllocatePage with AllocateAnyPages to load the driver.
       	  //
@@ -567,7 +567,7 @@ CoreLoadPeImage (
                    &Image->ImageContext.ImageAddress
                    );
       }
-      if (EFI_ERROR (Status) && !Image->ImageContext.RelocationsStripped) {
+      if (EFI_ERROR(Status) && !Image->ImageContext.RelocationsStripped) {
         Status = CoreAllocatePages (
                    AllocateAnyPages,
                    (EFI_MEMORY_TYPE) (Image->ImageContext.ImageCodeMemoryType),
@@ -576,7 +576,7 @@ CoreLoadPeImage (
                    );
       }
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     DstBufAlocated = TRUE;
@@ -616,7 +616,7 @@ CoreLoadPeImage (
   // Load the image from the file into the allocated memory
   //
   Status = PeCoffLoaderLoadImage (&Image->ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -639,7 +639,7 @@ CoreLoadPeImage (
   // Relocate the image in memory
   //
   Status = PeCoffLoaderRelocateImage (&Image->ImageContext);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -796,7 +796,7 @@ Done:
   }
 
   if (Image->ImageContext.FixupData != NULL) {
-    CoreFreePool (Image->ImageContext.FixupData);
+    CoreFreePool(Image->ImageContext.FixupData);
   }
 
   return Status;
@@ -826,7 +826,7 @@ CoreLoadedImageInfo (
              &gEfiLoadedImageProtocolGuid,
              (VOID **)&LoadedImage
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Image = LOADED_IMAGE_PRIVATE_DATA_FROM_THIS (LoadedImage);
   } else {
     DEBUG ((DEBUG_LOAD, "CoreLoadedImageInfo: Not an ImageHandle %p\n", ImageHandle));
@@ -885,14 +885,14 @@ CoreUnloadAndCloseImage (
                &HandleCount,
                &HandleBuffer
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
         Status = CoreProtocolsPerHandle (
                    HandleBuffer[HandleIndex],
                    &ProtocolGuidArray,
                    &ArrayCount
                    );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
             Status = CoreOpenProtocolInformation (
                        HandleBuffer[HandleIndex],
@@ -900,7 +900,7 @@ CoreUnloadAndCloseImage (
                        &OpenInfo,
                        &OpenInfoCount
                        );
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               for (OpenInfoIndex = 0; OpenInfoIndex < OpenInfoCount; OpenInfoIndex++) {
                 if (OpenInfo[OpenInfoIndex].AgentHandle == Image->Handle) {
                   Status = CoreCloseProtocol (
@@ -922,7 +922,7 @@ CoreUnloadAndCloseImage (
         }
       }
       if (HandleBuffer != NULL) {
-        CoreFreePool (HandleBuffer);
+        CoreFreePool(HandleBuffer);
       }
     }
 
@@ -957,7 +957,7 @@ CoreUnloadAndCloseImage (
       //
       RemoveEntryList (&Image->RuntimeData->Link);
     }
-    CoreFreePool (Image->RuntimeData);
+    CoreFreePool(Image->RuntimeData);
   }
 
   //
@@ -971,18 +971,18 @@ CoreUnloadAndCloseImage (
   // Done with the Image structure
   //
   if (Image->Info.FilePath != NULL) {
-    CoreFreePool (Image->Info.FilePath);
+    CoreFreePool(Image->Info.FilePath);
   }
 
   if (Image->LoadedImageDevicePath != NULL) {
-    CoreFreePool (Image->LoadedImageDevicePath);
+    CoreFreePool(Image->LoadedImageDevicePath);
   }
 
   if (Image->FixupData != NULL) {
-    CoreFreePool (Image->FixupData);
+    CoreFreePool(Image->FixupData);
   }
 
-  CoreFreePool (Image);
+  CoreFreePool(Image);
 }
 
 
@@ -1090,7 +1090,7 @@ CoreLoadImageCommon (
     FHand.Source     = SourceBuffer;
     FHand.SourceSize = SourceSize;
     Status = CoreLocateDevicePath (&gEfiDevicePathProtocolGuid, &HandleFilePath, &DeviceHandle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DeviceHandle = NULL;
     }
     if (SourceSize > 0) {
@@ -1119,17 +1119,17 @@ CoreLoadImageCommon (
       //
       FHand.FreeBuffer = TRUE;
       Status = CoreLocateDevicePath (&gEfiFirmwareVolume2ProtocolGuid, &HandleFilePath, &DeviceHandle);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         ImageIsFromFv = TRUE;
       } else {
         HandleFilePath = FilePath;
         Status = CoreLocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &HandleFilePath, &DeviceHandle);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           if (!BootPolicy) {
             HandleFilePath = FilePath;
             Status = CoreLocateDevicePath (&gEfiLoadFile2ProtocolGuid, &HandleFilePath, &DeviceHandle);
           }
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             HandleFilePath = FilePath;
             Status = CoreLocateDevicePath (&gEfiLoadFileProtocolGuid, &HandleFilePath, &DeviceHandle);
           }
@@ -1141,7 +1141,7 @@ CoreLoadImageCommon (
   if (Status == EFI_ALREADY_STARTED) {
     Image = NULL;
     goto Done;
-  } else if (EFI_ERROR (Status)) {
+  } else if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1156,7 +1156,7 @@ CoreLoadImageCommon (
                                   FHand.SourceSize,
                                   BootPolicy
                                   );
-    if (!EFI_ERROR (SecurityStatus) && ImageIsFromFv) {
+    if (!EFI_ERROR(SecurityStatus) && ImageIsFromFv) {
       //
       // When Security2 is installed, Security Architectural Protocol must be published.
       //
@@ -1186,7 +1186,7 @@ CoreLoadImageCommon (
   //
   // Check Security Status.
   //
-    if (EFI_ERROR (SecurityStatus) && SecurityStatus != EFI_SECURITY_VIOLATION) {
+    if (EFI_ERROR(SecurityStatus) && SecurityStatus != EFI_SECURITY_VIOLATION) {
       if (SecurityStatus == EFI_ACCESS_DENIED) {
         //
         // Image was not loaded because the platform policy prohibits the image from being loaded.
@@ -1213,7 +1213,7 @@ CoreLoadImageCommon (
   FilePath = OriginalFilePath;
   if (DeviceHandle != NULL) {
     Status = CoreHandleProtocol (DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **)&HandleFilePath);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       FilePathSize = GetDevicePathSize (HandleFilePath) - sizeof(EFI_DEVICE_PATH_PROTOCOL);
       FilePath = (EFI_DEVICE_PATH_PROTOCOL *) (((UINT8 *)FilePath) + FilePathSize );
     }
@@ -1246,7 +1246,7 @@ CoreLoadImageCommon (
              &Image->Info,
              FALSE
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -1254,7 +1254,7 @@ CoreLoadImageCommon (
   // Load the image.  If EntryPoint is Null, it will not be set.
   //
   Status = CoreLoadPeImage (BootPolicy, &FHand, Image, DstBuffer, EntryPoint, Attribute);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if ((Status == EFI_BUFFER_TOO_SMALL) || (Status == EFI_OUT_OF_RESOURCES)) {
       if (NumberOfPages != NULL) {
         *NumberOfPages = Image->NumberOfPages;
@@ -1283,7 +1283,7 @@ CoreLoadImageCommon (
              &Image->Info,
              &Image->Info
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -1304,7 +1304,7 @@ CoreLoadImageCommon (
             EFI_NATIVE_INTERFACE,
             Image->LoadedImageDevicePath
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -1318,7 +1318,7 @@ CoreLoadImageCommon (
                EFI_NATIVE_INTERFACE,
                (VOID *) (UINTN) Image->ImageContext.HiiResourceData
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
   }
@@ -1334,18 +1334,18 @@ Done:
   // If we allocated the Source buffer, free it
   //
   if (FHand.FreeBuffer) {
-    CoreFreePool (FHand.Source);
+    CoreFreePool(FHand.Source);
   }
 
   //
   // There was an error.  If there's an Image structure, free it
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (Image != NULL) {
       CoreUnloadAndCloseImage (Image, (BOOLEAN)(DstBuffer == 0));
       Image = NULL;
     }
-  } else if (EFI_ERROR (SecurityStatus)) {
+  } else if (EFI_ERROR(SecurityStatus)) {
     Status = SecurityStatus;
   }
 
@@ -1430,7 +1430,7 @@ CoreLoadImage (
              );
 
   Handle = NULL; 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // ImageHandle will be valid only Status is success. 
     //
@@ -1520,7 +1520,7 @@ CoreLoadImageEx (
            );
 
   Handle = NULL; 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // ImageHandle will be valid only Status is success. 
     //
@@ -1576,7 +1576,7 @@ CoreStartImage (
   if (Image == NULL  ||  Image->Started) {
     return EFI_INVALID_PARAMETER;
   }
-  if (EFI_ERROR (Image->LoadImageStatus)) {
+  if (EFI_ERROR(Image->LoadImageStatus)) {
     return Image->LoadImageStatus;
   }
 
@@ -1643,7 +1643,7 @@ CoreStartImage (
     // all the resource in this situation.
     //
     DEBUG_CODE_BEGIN ();
-      if (EFI_ERROR (Image->Status)) {
+      if (EFI_ERROR(Image->Status)) {
         DEBUG ((DEBUG_ERROR, "Error: Image at %11p start failed: %r\n", Image->Info.ImageBase, Image->Status));
       }
     DEBUG_CODE_END ();
@@ -1660,7 +1660,7 @@ CoreStartImage (
   ASSERT (Image->Tpl == gEfiCurrentTpl);
   CoreRestoreTpl (Image->Tpl);
 
-  CoreFreePool (Image->JumpBuffer);
+  CoreFreePool(Image->JumpBuffer);
 
   //
   // Pop the current start image context
@@ -1696,7 +1696,7 @@ CoreStartImage (
     //
     // Caller doesn't want the exit data, free it
     //
-    CoreFreePool (Image->ExitData);
+    CoreFreePool(Image->ExitData);
     Image->ExitData = NULL;
   }
 
@@ -1709,7 +1709,7 @@ CoreStartImage (
   // If the image returned an error, or if the image is an application
   // unload it
   //
-  if (EFI_ERROR (Image->Status) || Image->Type == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION) {
+  if (EFI_ERROR(Image->Status) || Image->Type == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION) {
     CoreUnloadAndCloseImage (Image, TRUE);
     //
     // ImageHandle may be invalid after the image is unloaded, so use NULL handle to record perf log.
@@ -1874,7 +1874,7 @@ CoreUnloadImage (
   }
 
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // if the Image was not started or Unloaded O.K. then clean up
     //

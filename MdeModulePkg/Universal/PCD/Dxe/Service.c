@@ -479,7 +479,7 @@ GetWorker (
           //
           CopyMem (VaraiableDefaultBuffer, Data + VariableHead->Offset, GetSize);
         }
-        FreePool (Data);
+        FreePool(Data);
       }
       RetPtr = (VOID *) VaraiableDefaultBuffer;
       break;
@@ -611,7 +611,7 @@ DxeUnRegisterCallBackWorker (
       // the Link List and return EFI_SUCCESS.
       //
       RemoveEntryList (ListNode);
-      FreePool (FnTableEntry);
+      FreePool(FnTableEntry);
 
       return EFI_SUCCESS;
     }
@@ -743,7 +743,7 @@ LocateExPcdBinary (
              (VOID **) &mDxePcdDbBinary,
              &mDxePcdDbSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Check the first bytes (Header Signature Guid) and build version.
@@ -890,7 +890,7 @@ BuildPcdDxeDataBase (
     //
     if (mPcdDatabase.PeiDb->SystemSkuId != 0) {
       Status = UpdatePcdDatabase (mPcdDatabase.PeiDb->SystemSkuId, FALSE);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     mPcdDatabase.DxeDb->SystemSkuId = mPcdDatabase.PeiDb->SystemSkuId;
   } else {
@@ -1489,7 +1489,7 @@ SetHiiVariable (
       Buffer
       );
 
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     CopyMem ((UINT8 *)Buffer + Offset, Data, DataSize);
 
@@ -1505,7 +1505,7 @@ SetHiiVariable (
               Buffer
               );
 
-    FreePool (Buffer);
+    FreePool(Buffer);
     return Status;
   } else if (Status == EFI_NOT_FOUND) {
     //
@@ -1537,7 +1537,7 @@ SetHiiVariable (
               Buffer
               );
 
-    FreePool (Buffer);
+    FreePool(Buffer);
     return Status;
   }
 
@@ -1868,7 +1868,7 @@ VariableLockDynamicHiiPcd (
         Guid = GuidTable + VariableHead->GuidTableIndex;
         Name = (UINT16*) (StringTable + VariableHead->StringIndex);
         Status = VariableLock->RequestToLock (VariableLock, Name, Guid);
-        ASSERT_EFI_ERROR (Status);
+        ASSERT_EFI_ERROR(Status);
       }
     }
   }
@@ -1893,7 +1893,7 @@ VariableLockCallBack (
   EDKII_VARIABLE_LOCK_PROTOCOL  *VariableLock;
 
   Status = gBS->LocateProtocol (&gEdkiiVariableLockProtocolGuid, NULL, (VOID **) &VariableLock);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     VariableLockDynamicHiiPcd (TRUE, VariableLock);
     VariableLockDynamicHiiPcd (FALSE, VariableLock);
   }

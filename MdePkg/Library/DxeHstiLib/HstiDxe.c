@@ -51,7 +51,7 @@ InternalHstiFindAip (
                   &NoHandles,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -65,7 +65,7 @@ InternalHstiFindAip (
                     &gEfiAdapterInformationProtocolGuid,
                     (VOID **)&Aip
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -77,7 +77,7 @@ InternalHstiFindAip (
                     &InfoTypesBuffer,
                     &InfoTypesBufferCount
                     );
-    if (EFI_ERROR (Status) || (InfoTypesBuffer == NULL) || (InfoTypesBufferCount == 0)) {
+    if (EFI_ERROR(Status) || (InfoTypesBuffer == NULL) || (InfoTypesBufferCount == 0)) {
       continue;
     }
 
@@ -88,7 +88,7 @@ InternalHstiFindAip (
         break;
       }
     }
-    FreePool (InfoTypesBuffer);
+    FreePool(InfoTypesBuffer);
 
     if (AipCandidate == NULL) {
       continue;
@@ -104,7 +104,7 @@ InternalHstiFindAip (
                     &InformationBlock,
                     &InformationBlockSize
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -114,11 +114,11 @@ InternalHstiFindAip (
       break;
     } else {
       Hsti = NULL;
-      FreePool (InformationBlock);
+      FreePool(InformationBlock);
       continue;
     }
   }
-  FreePool (Handles);
+  FreePool(Handles);
 
   if (Hsti == NULL) {
     return NULL;
@@ -292,7 +292,7 @@ HstiLibSetTable (
   }
   HstiAip->Hsti = AllocateCopyPool (HstiSize, Hsti);
   if (HstiAip->Hsti == NULL) {
-    FreePool (HstiAip);
+    FreePool(HstiAip);
     return EFI_OUT_OF_RESOURCES;
   }
   if (Role != PLATFORM_SECURITY_ROLE_PLATFORM_REFERENCE) {
@@ -313,9 +313,9 @@ HstiLibSetTable (
                   &HstiAip->Aip,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
-    FreePool (HstiAip->Hsti);
-    FreePool (HstiAip);
+  if (EFI_ERROR(Status)) {
+    FreePool(HstiAip->Hsti);
+    FreePool(HstiAip);
   }
 
   return Status;
@@ -410,7 +410,7 @@ InternalHstiRecordFeaturesVerified (
                   Hsti,
                   HstiSize
                   );
-  FreePool (Hsti);
+  FreePool(Hsti);
   return Status;
 }
 
@@ -540,8 +540,8 @@ InternalHstiRecordErrorString (
                   NewHsti,
                   NewHstiSize
                   );
-  FreePool (Hsti);
-  FreePool (NewHsti);
+  FreePool(Hsti);
+  FreePool(NewHsti);
   return Status;
 }
 

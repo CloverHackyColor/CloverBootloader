@@ -34,7 +34,7 @@ CdExpressPeimEntry (
   EFI_STATUS                  Status;
   PEI_CD_EXPRESS_PRIVATE_DATA *PrivateData;
 
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -80,7 +80,7 @@ CdExpressPeimEntry (
   PrivateData->PpiDescriptor.Ppi   = &PrivateData->DeviceRecoveryPpi;
 
   Status = PeiServicesInstallPpi (&PrivateData->PpiDescriptor);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   //
@@ -189,7 +189,7 @@ UpdateBlocksAndVolumes (
                                 (VOID **) &BlockIoPpi
                                 );
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Done with all Block Io Ppis
       //
@@ -210,7 +210,7 @@ UpdateBlocksAndVolumes (
                             &NumberBlockDevices
                             );
     }
-    if (EFI_ERROR (Status) || (NumberBlockDevices == 0)) {
+    if (EFI_ERROR(Status) || (NumberBlockDevices == 0)) {
       continue;
     }
     //
@@ -224,7 +224,7 @@ UpdateBlocksAndVolumes (
                                 IndexBlockDevice,
                                 &Media2
                                 );
-        if (EFI_ERROR (Status) ||
+        if (EFI_ERROR(Status) ||
             !Media2.MediaPresent ||
              ((Media2.InterfaceType != MSG_ATAPI_DP) && (Media2.InterfaceType != MSG_USB_DP)) ||
             (Media2.BlockSize != PEI_CD_BLOCK_SIZE)
@@ -241,7 +241,7 @@ UpdateBlocksAndVolumes (
                               IndexBlockDevice,
                               &Media
                               );
-        if (EFI_ERROR (Status) ||
+        if (EFI_ERROR(Status) ||
             !Media.MediaPresent ||
              ((Media.DeviceType != IdeCDROM) && (Media.DeviceType != UsbMassStorage)) ||
             (Media.BlockSize != PEI_CD_BLOCK_SIZE)
@@ -265,7 +265,7 @@ UpdateBlocksAndVolumes (
       Status = FindRecoveryCapsules (PrivateData);
       DEBUG ((EFI_D_INFO, "Status is %d\n", Status));
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -343,7 +343,7 @@ FindRecoveryCapsules (
                             Buffer
                             );
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -380,7 +380,7 @@ FindRecoveryCapsules (
     RootDirLBA      = RoorDirRecord->LocationOfExtent[0];
 
     Status          = RetrieveCapsuleFileFromRoot (PrivateData, BlockIoPpi, BlockIo2Ppi, IndexBlockDevice, RootDirLBA);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Just look for the first primary descriptor
       //
@@ -447,7 +447,7 @@ RetrieveCapsuleFileFromRoot (
                           Buffer
                           );
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -583,7 +583,7 @@ GetRecoveryCapsuleInfo (
 
   Status = GetNumberRecoveryCapsules (PeiServices, This, &NumberRecoveryCapsules);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -639,7 +639,7 @@ LoadRecoveryCapsule (
 
   Status = GetNumberRecoveryCapsules (PeiServices, This, &NumberRecoveryCapsules);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

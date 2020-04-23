@@ -404,7 +404,7 @@ BuildDriverInfo (
              sizeof (*DriverInfoData) + sizeof (LIST_ENTRY) + PdbSize,
              (VOID **) &DriverInfoData
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   ASSERT (DriverInfoData != NULL);
@@ -429,7 +429,7 @@ BuildDriverInfo (
     // So patch ImageBuffer here to align the EntryPoint.
     //
     Status = InternalPeCoffGetEntryPoint ((VOID *) (UINTN) ImageBase, &EntryPointInImage);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     DriverInfo->ImageBase = ImageBase + EntryPoint - (PHYSICAL_ADDRESS) (UINTN) EntryPointInImage;
   }
   DriverInfo->FileType = FileType;
@@ -637,7 +637,7 @@ MemoryProfileInstallProtocol (
              &mProfileProtocol,
              NULL
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -852,7 +852,7 @@ UnregisterMemoryProfileImage (
     // So patch ImageAddress here to align the EntryPoint.
     //
     Status = InternalPeCoffGetEntryPoint ((VOID *) (UINTN) ImageAddress, &EntryPointInImage);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     ImageAddress = ImageAddress + (UINTN) DriverEntry->ImageContext.EntryPoint - (UINTN) EntryPointInImage;
   }
   if (FileName != NULL) {
@@ -877,7 +877,7 @@ UnregisterMemoryProfileImage (
     //
     // Use CoreInternalFreePool() that will not update profile for this FreePool action.
     //
-    CoreInternalFreePool (DriverInfoData, NULL);
+    CoreInternalFreePool(DriverInfoData, NULL);
   }
 
   return EFI_SUCCESS;
@@ -1008,7 +1008,7 @@ CoreUpdateProfileAllocate (
              sizeof (*AllocInfoData) + ActionStringSize,
              (VOID **) &AllocInfoData
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   ASSERT (AllocInfoData != NULL);
@@ -1300,7 +1300,7 @@ CoreUpdateProfileFree (
     //
     // Use CoreInternalFreePool() that will not update profile for this FreePool action.
     //
-    CoreInternalFreePool (AllocInfoData, NULL);
+    CoreInternalFreePool(AllocInfoData, NULL);
   } while (TRUE);
 }
 
@@ -1613,7 +1613,7 @@ ProfileProtocolRegisterImage (
   DriverEntry.ImageContext.ImageAddress = ImageBase;
   DriverEntry.ImageContext.ImageSize = ImageSize;
   Status = InternalPeCoffGetEntryPoint ((VOID *) (UINTN) ImageBase, &EntryPointInImage);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   DriverEntry.ImageContext.EntryPoint = (PHYSICAL_ADDRESS) (UINTN) EntryPointInImage;
   DriverEntry.ImageContext.ImageType = InternalPeCoffGetSubsystem ((VOID *) (UINTN) ImageBase);
 
@@ -1652,7 +1652,7 @@ ProfileProtocolUnregisterImage (
   DriverEntry.ImageContext.ImageAddress = ImageBase;
   DriverEntry.ImageContext.ImageSize = ImageSize;
   Status = InternalPeCoffGetEntryPoint ((VOID *) (UINTN) ImageBase, &EntryPointInImage);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   DriverEntry.ImageContext.EntryPoint = (PHYSICAL_ADDRESS) (UINTN) EntryPointInImage;
 
   return UnregisterMemoryProfileImage (&DriverEntry);

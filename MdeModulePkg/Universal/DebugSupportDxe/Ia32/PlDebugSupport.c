@@ -301,11 +301,11 @@ PlUnloadDebugSupportDriver (
     // Free space for each Interrupt Stub precedure.
     //
     if (IdtEntryTable[ExceptionType].StubEntry != NULL) {
-      FreePool ((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry);
+      FreePool((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry);
     }
   }
 
-  FreePool (IdtEntryTable);
+  FreePool(IdtEntryTable);
 
   return EFI_SUCCESS;
 }
@@ -358,10 +358,10 @@ ErrorCleanup:
 
   for (ExceptionType = 0; ExceptionType < NUM_IDT_ENTRIES; ExceptionType++) {
     if (IdtEntryTable[ExceptionType].StubEntry != NULL) {
-      FreePool ((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry);
+      FreePool((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry);
     }
   }
-  FreePool (IdtEntryTable);
+  FreePool(IdtEntryTable);
 
   return EFI_OUT_OF_RESOURCES;
 }

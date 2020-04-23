@@ -455,7 +455,7 @@ SmbiosAdd (
   // Enter into critical section
   //
   Status = EfiAcquireLockOrFail (&Private->DataLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -610,7 +610,7 @@ SmbiosUpdateString (
   // Enter into critical section
   //
   Status = EfiAcquireLockOrFail (&Private->DataLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -814,7 +814,7 @@ SmbiosRemove (
   // Enter into critical section
   //
   Status = EfiAcquireLockOrFail (&Private->DataLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1063,7 +1063,7 @@ SmbiosCreateTable (
                     EFI_SIZE_TO_PAGES (sizeof (SMBIOS_TABLE_ENTRY_POINT)),
                     &PhysicalAddress
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "SmbiosCreateTable () could not allocate EntryPointStructure < 4GB\n"));
       Status = gBS->AllocatePages (
                       AllocateAnyPages,
@@ -1071,7 +1071,7 @@ SmbiosCreateTable (
                       EFI_SIZE_TO_PAGES (sizeof (SMBIOS_TABLE_ENTRY_POINT)),
                       &PhysicalAddress
                       );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
         return EFI_OUT_OF_RESOURCES;
       }
     }
@@ -1158,7 +1158,7 @@ SmbiosCreateTable (
                     EFI_SIZE_TO_PAGES (EntryPointStructure->TableLength),
                     &PhysicalAddress
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "SmbiosCreateTable() could not allocate SMBIOS table < 4GB\n"));
       EntryPointStructure->TableAddress = 0;
       return EFI_OUT_OF_RESOURCES;
@@ -1254,7 +1254,7 @@ SmbiosCreate64BitTable (
                     EFI_SIZE_TO_PAGES (sizeof (SMBIOS_TABLE_3_0_ENTRY_POINT)),
                     &PhysicalAddress
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "SmbiosCreate64BitTable() could not allocate Smbios30EntryPointStructure\n"));
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1326,7 +1326,7 @@ SmbiosCreate64BitTable (
                     EFI_SIZE_TO_PAGES (Smbios30EntryPointStructure->TableMaximumSize),
                     &PhysicalAddress
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "SmbiosCreateTable() could not allocate SMBIOS 64-bit table\n"));
       Smbios30EntryPointStructure->TableAddress = 0;
       return EFI_OUT_OF_RESOURCES;
@@ -1395,14 +1395,14 @@ SmbiosTableConstruction (
 
   if (Smbios32BitTable) {
     Status = SmbiosCreateTable ((VOID **) &Eps);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, Eps);
     }
   }
 
   if (Smbios64BitTable) {
     Status = SmbiosCreate64BitTable ((VOID **) &Eps64Bit);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->InstallConfigurationTable (&gEfiSmbios3TableGuid, Eps64Bit);
     }
   }

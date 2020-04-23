@@ -111,7 +111,7 @@ typedef struct _pstate {
 extern
 EFI_STATUS
 EFIAPI
-_PoolPrint (
+_PoolPrint(
   IN POOL_PRINT     *Context,
   IN CHAR16         *Buffer
   );
@@ -199,7 +199,7 @@ VSPrint (
 */
 CHAR16                                *
 EFIAPI
-PoolPrint (
+PoolPrint(
   IN CONST CHAR16                     *fmt,
   ...
   );

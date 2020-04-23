@@ -78,13 +78,13 @@ UfsHcGetMmioBar (
                     NULL,
                     (VOID**) &BarDesc
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   *MmioBar = (UINTN)BarDesc->AddrRangeMin;
 
-  FreePool (BarDesc);
+  FreePool(BarDesc);
 
   return Status;
 }
@@ -431,7 +431,7 @@ UfsHcDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // EFI_ALREADY_STARTED is also an error
     //
@@ -458,7 +458,7 @@ UfsHcDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -472,7 +472,7 @@ UfsHcDriverBindingSupported (
                         sizeof (PciData),
                         &PciData
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           Controller,
           &gEfiPciIoProtocolGuid,
@@ -582,7 +582,7 @@ UfsHcDriverBindingStart (
   //           opened 'again' by this call.
   // Status != ALREADY_STARTED - Error status, terminate program execution
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // EFI_ALREADY_STARTED is also an error
     //
@@ -606,17 +606,17 @@ UfsHcDriverBindingStart (
                       );
     if (Status == EFI_UNSUPPORTED) {
       continue;
-    } else if (EFI_ERROR (Status)) {
+    } else if (EFI_ERROR(Status)) {
       goto Done;
     }
 
     if (BarDesc->ResType == ACPI_ADDRESS_SPACE_TYPE_MEM) {
       Private->BarIndex = BarIndex;
-      FreePool (BarDesc);
+      FreePool(BarDesc);
       break;
     }
 
-    FreePool (BarDesc);
+    FreePool(BarDesc);
   }
 
   Status = PciIo->Attributes (
@@ -626,7 +626,7 @@ UfsHcDriverBindingStart (
                     &Private->PciAttributes
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -637,7 +637,7 @@ UfsHcDriverBindingStart (
                     &Supports
                     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status    = PciIo->Attributes (
                          PciIo,
@@ -660,7 +660,7 @@ UfsHcDriverBindingStart (
                   );
 
 Done:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if ((Private != NULL) && (Private->PciAttributes != 0)) {
       //
       // Restore original PCI attributes
@@ -679,7 +679,7 @@ Done:
           Controller
           );
     if (Private != NULL) {
-      FreePool (Private);
+      FreePool(Private);
     }
   }
 
@@ -738,7 +738,7 @@ UfsHcDriverBindingStop (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -749,7 +749,7 @@ UfsHcDriverBindingStop (
                   &gEdkiiUfsHostControllerProtocolGuid,
                   &(Private->UfsHc)
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Restore original PCI attributes
     //
@@ -759,7 +759,7 @@ UfsHcDriverBindingStop (
                                Private->PciAttributes,
                                NULL
                                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Close protocols opened by UFS host controller driver
@@ -771,7 +771,7 @@ UfsHcDriverBindingStop (
            Controller
            );
 
-    FreePool (Private);
+    FreePool(Private);
   }
 
   return Status;
@@ -804,7 +804,7 @@ UfsHcDriverEntry (
              &gUfsHcComponentName,
              &gUfsHcComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

@@ -83,8 +83,8 @@ InitializeCpuInterruptHandlers (
   SetMem ((VOID *) mReservedVectors, sizeof (RESERVED_VECTORS_DATA) * CPU_INTERRUPT_NUM, 0xff);
   if (VectorInfo != NULL) {
     Status = ReadAndVerifyVectorInfo (VectorInfo, mReservedVectors, CPU_INTERRUPT_NUM);
-    if (EFI_ERROR (Status)) {
-      FreePool (mReservedVectors);
+    if (EFI_ERROR(Status)) {
+      FreePool(mReservedVectors);
       return EFI_INVALID_PARAMETER;
     }
   }

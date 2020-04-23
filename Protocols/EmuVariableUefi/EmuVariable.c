@@ -721,7 +721,7 @@ AutoUpdateLangVariable(
     // Therefore, in variable driver, only store the original value for other use.
     //
     if (mVariableModuleGlobal->PlatformLangCodes != NULL) {
-      FreePool (mVariableModuleGlobal->PlatformLangCodes);
+      FreePool(mVariableModuleGlobal->PlatformLangCodes);
     }
     mVariableModuleGlobal->PlatformLangCodes = AllocateRuntimeCopyPool (DataSize, Data);
 //    ASSERT (mVariableModuleGlobal->PlatformLangCodes != NULL);
@@ -731,7 +731,7 @@ AutoUpdateLangVariable(
     // so the size of PlatformLangCodes is enough for the PlatformLang.
     //
     if (mVariableModuleGlobal->PlatformLang != NULL) {
-      FreePool (mVariableModuleGlobal->PlatformLang);
+      FreePool(mVariableModuleGlobal->PlatformLang);
     }
     mVariableModuleGlobal->PlatformLang = AllocateRuntimePool (DataSize);
 //    ASSERT (mVariableModuleGlobal->PlatformLang != NULL);
@@ -751,7 +751,7 @@ AutoUpdateLangVariable(
     // Therefore, in variable driver, only store the original value for other use.
     //
     if (mVariableModuleGlobal->LangCodes != NULL) {
-      FreePool (mVariableModuleGlobal->LangCodes);
+      FreePool(mVariableModuleGlobal->LangCodes);
     }
     mVariableModuleGlobal->LangCodes = AllocateRuntimeCopyPool (DataSize, Data);
 //    ASSERT (mVariableModuleGlobal->LangCodes != NULL);
@@ -765,7 +765,7 @@ AutoUpdateLangVariable(
     // Update PlatformLang if Lang is already set
     //
     Status = FindVariable (L"PlatformLang", &gEfiGlobalVariableGuid, &Variable, (VARIABLE_GLOBAL *) mVariableModuleGlobal);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Update Lang
       //
@@ -774,7 +774,7 @@ AutoUpdateLangVariable(
       DataSize     = Variable.CurrPtr->DataSize;
     } else {
       Status = FindVariable (L"Lang", &gEfiGlobalVariableGuid, &Variable, (VARIABLE_GLOBAL *) mVariableModuleGlobal);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Update PlatformLang
         //
@@ -857,7 +857,7 @@ AutoUpdateLangVariable(
                                  AsciiStrSize (BestPlatformLang), Attributes, &Variable);
 
         DEBUG ((EFI_D_INFO, "Variable Driver Auto Update Lang, Lang:%a, PlatformLang:%a\n", BestLang, BestPlatformLang));
- //       ASSERT_EFI_ERROR (Status);
+ //       ASSERT_EFI_ERROR(Status);
       }
     }
   }
@@ -1198,7 +1198,7 @@ EmuGetVariable (
   //
   Status = FindVariable (VariableName, VendorGuid, &Variable, Global);
 
-  if (Variable.CurrPtr == NULL || EFI_ERROR (Status)) {
+  if (Variable.CurrPtr == NULL || EFI_ERROR(Status)) {
     goto Done;
   }
   //
@@ -1272,7 +1272,7 @@ EmuGetNextVariableName (
 
   Status = FindVariable (VariableName, VendorGuid, &Variable, Global);
 
-  if (Variable.CurrPtr == NULL || EFI_ERROR (Status)) {
+  if (Variable.CurrPtr == NULL || EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -1741,7 +1741,7 @@ InitializeVariableStore (
                      &mVariableModuleGlobal->VolatileLastVariableOffset,
                      &mVariableModuleGlobal->NonVolatileLastVariableOffset
                      );
-   //       ASSERT_EFI_ERROR (Status);
+   //       ASSERT_EFI_ERROR(Status);
         }
       }
     }
@@ -1788,7 +1788,7 @@ VariableCommonInitialize (
   // Intialize volatile variable store
   //
   Status = InitializeVariableStore (TRUE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool(mVariableModuleGlobal);
     return Status;
   }

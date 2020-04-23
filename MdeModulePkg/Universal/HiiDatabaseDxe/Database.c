@@ -61,7 +61,7 @@ GenerateHiiDatabaseRecord (
 
   DatabaseRecord->PackageList = AllocateZeroPool (sizeof (HII_DATABASE_PACKAGE_LIST_INSTANCE));
   if (DatabaseRecord->PackageList == NULL) {
-    FreePool (DatabaseRecord);
+    FreePool(DatabaseRecord);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -81,8 +81,8 @@ GenerateHiiDatabaseRecord (
   //
   HiiHandle = (HII_HANDLE *) AllocateZeroPool (sizeof (HII_HANDLE));
   if (HiiHandle == NULL) {
-    FreePool (DatabaseRecord->PackageList);
-    FreePool (DatabaseRecord);
+    FreePool(DatabaseRecord->PackageList);
+    FreePool(DatabaseRecord);
     return EFI_OUT_OF_RESOURCES;
   }
   HiiHandle->Signature = HII_HANDLE_SIGNATURE;
@@ -344,7 +344,7 @@ InvokeRegisteredFunction (
   }
 
   if (Buffer != NULL) {
-    FreePool (Buffer);
+    FreePool(Buffer);
   }
 
   return EFI_SUCCESS;
@@ -394,7 +394,7 @@ InsertGuidPackage (
   }
   GuidPackage->GuidPkg = (UINT8 *) AllocateZeroPool (PackageHeader.Length);
   if (GuidPackage->GuidPkg == NULL) {
-    FreePool (GuidPackage);
+    FreePool(GuidPackage);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -468,7 +468,7 @@ ExportGuidPackages (
                  EFI_HII_PACKAGE_TYPE_GUID,
                  Handle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       CopyMem (Buffer, GuidPackage->GuidPkg, PackageHeader.Length);
       Buffer = (UINT8 *) Buffer + PackageHeader.Length;
     }
@@ -521,15 +521,15 @@ RemoveGuidPackages (
                EFI_HII_PACKAGE_TYPE_GUID,
                Handle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     RemoveEntryList (&Package->GuidEntry);
     CopyMem (&PackageHeader, Package->GuidPkg, sizeof (EFI_HII_PACKAGE_HEADER));
     PackageList->PackageListHdr.PackageLength -= PackageHeader.Length;
-    FreePool (Package->GuidPkg);
-    FreePool (Package);
+    FreePool(Package->GuidPkg);
+    FreePool(Package);
   }
 
   return EFI_SUCCESS;
@@ -716,7 +716,7 @@ FindQuestionDefaultSetting (
     // Cache the found result in VarStorageList
     //
     if (!IsFound) {
-      FreePool (VariableStorage);
+      FreePool(VariableStorage);
       VariableStorage = NULL;
     }
     Entry = AllocatePool (sizeof (VARSTORAGE_DEFAULT_DATA));
@@ -725,7 +725,7 @@ FindQuestionDefaultSetting (
       Entry->VariableStorage = VariableStorage;
       InsertTailList (&gVarStorageList, &Entry->Entry);
     } else if (VariableStorage != NULL) {
-      FreePool (VariableStorage);
+      FreePool(VariableStorage);
       VariableStorage = NULL;
     }
   }
@@ -864,10 +864,10 @@ UpdateDefaultSettingInFormPackage (
       CopyMem (EfiVarStoreList [EfiVarStoreNumber], IfrEfiVarStore, IfrEfiVarStore->Header.Length);
       AsciiStrToUnicodeStrS ((CHAR8 *)IfrEfiVarStore->Name, (CHAR16 *) &(EfiVarStoreList [EfiVarStoreNumber]->Name[0]), AsciiStrSize ((CHAR8 *)IfrEfiVarStore->Name) * sizeof (CHAR16));
       Status = FindQuestionDefaultSetting (EFI_HII_DEFAULT_CLASS_STANDARD, EfiVarStoreList[EfiVarStoreNumber], &VarStoreQuestionHeader, NULL, IfrEfiVarStore->Size, FALSE);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         EfiVarStoreNumber ++;
       } else {
-        FreePool (EfiVarStoreList [EfiVarStoreNumber]);
+        FreePool(EfiVarStoreList [EfiVarStoreNumber]);
         EfiVarStoreList [EfiVarStoreNumber] = NULL;
       }
       break;
@@ -904,7 +904,7 @@ UpdateDefaultSettingInFormPackage (
         for (Index = 0; Index < DefaultIdNumber; Index ++) {
           if (DefaultIdList[Index] == EFI_HII_DEFAULT_CLASS_STANDARD) {
             Status = FindQuestionDefaultSetting (DefaultIdList[Index], EfiVarStoreList[EfiVarStoreIndex], IfrQuestionHdr, &IfrValue, sizeof (BOOLEAN), QuestionReferBitField);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               if (IfrValue.b) {
                 IfrCheckBox->Flags = IfrCheckBox->Flags | EFI_IFR_CHECKBOX_DEFAULT;
               } else {
@@ -913,7 +913,7 @@ UpdateDefaultSettingInFormPackage (
             }
           } else if (DefaultIdList[Index] == EFI_HII_DEFAULT_CLASS_MANUFACTURING) {
             Status = FindQuestionDefaultSetting (DefaultIdList[Index], EfiVarStoreList[EfiVarStoreIndex], IfrQuestionHdr, &IfrValue, sizeof (BOOLEAN), QuestionReferBitField);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               if (IfrValue.b) {
                 IfrCheckBox->Flags = IfrCheckBox->Flags | EFI_IFR_CHECKBOX_DEFAULT_MFG;
               } else {
@@ -953,12 +953,12 @@ UpdateDefaultSettingInFormPackage (
         for (Index = 0; Index < DefaultIdNumber; Index ++) {
           if (DefaultIdList[Index] == EFI_HII_DEFAULT_CLASS_STANDARD) {
             Status = FindQuestionDefaultSetting (EFI_HII_DEFAULT_CLASS_STANDARD, EfiVarStoreList[EfiVarStoreIndex], IfrQuestionHdr, &IfrValue, Width, QuestionReferBitField);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               StandardDefaultIsSet = TRUE;
             }
           } else if (DefaultIdList[Index] == EFI_HII_DEFAULT_CLASS_MANUFACTURING) {
             Status = FindQuestionDefaultSetting (EFI_HII_DEFAULT_CLASS_MANUFACTURING, EfiVarStoreList[EfiVarStoreIndex], IfrQuestionHdr, &IfrManufactValue, Width, QuestionReferBitField);
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               ManufactDefaultIsSet = TRUE;
             }
           }
@@ -1052,7 +1052,7 @@ UpdateDefaultSettingInFormPackage (
 Done:
   if (EfiVarStoreList != NULL) {
     for (Index = 0; Index < EfiVarStoreNumber; Index ++) {
-      FreePool (EfiVarStoreList [Index]);
+      FreePool(EfiVarStoreList [Index]);
     }
   }
   return;
@@ -1105,7 +1105,7 @@ InsertFormPackage (
 
   FormPackage->IfrData = (UINT8 *) AllocateZeroPool (PackageHeader.Length - sizeof (EFI_HII_PACKAGE_HEADER));
   if (FormPackage->IfrData == NULL) {
-    FreePool (FormPackage);
+    FreePool(FormPackage);
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1200,7 +1200,7 @@ ExportFormPackages (
                  EFI_HII_PACKAGE_FORMS,
                  Handle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       //
       // Copy the Form package content.
       //
@@ -1263,14 +1263,14 @@ RemoveFormPackages (
                EFI_HII_PACKAGE_FORMS,
                Handle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     RemoveEntryList (&Package->IfrEntry);
     PackageList->PackageListHdr.PackageLength -= Package->FormPkgHdr.Length;
-    FreePool (Package->IfrData);
-    FreePool (Package);
+    FreePool(Package->IfrData);
+    FreePool(Package);
     //
     // If Hii runtime support feature is enabled,
     // will export Hii info for runtime use after ReadyToBoot event triggered.
@@ -1348,11 +1348,11 @@ InsertStringPackage (
   for (Link = PackageList->StringPkgHdr.ForwardLink; Link != &PackageList->StringPkgHdr; Link = Link->ForwardLink) {
     StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
     if (HiiCompareLanguage (Language, StringPackage->StringPkgHdr->Language)) {
-      FreePool (Language);
+      FreePool(Language);
       return EFI_UNSUPPORTED;
     }
   }
-  FreePool (Language);
+  FreePool(Language);
 
   //
   // Create a String package node
@@ -1397,7 +1397,7 @@ InsertStringPackage (
   // Collect all font block info
   //
   Status = FindStringBlock (Private, StringPackage, (EFI_STRING_ID) (-1), NULL, NULL, NULL, &StringPackage->MaxStringId, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1417,12 +1417,12 @@ Error:
 
   if (StringPackage != NULL) {
     if (StringPackage->StringBlock != NULL) {
-      FreePool (StringPackage->StringBlock);
+      FreePool(StringPackage->StringBlock);
     }
     if (StringPackage->StringPkgHdr != NULL) {
-      FreePool (StringPackage->StringPkgHdr);
+      FreePool(StringPackage->StringPkgHdr);
     }
-    FreePool (StringPackage);
+    FreePool(StringPackage);
   }
   return Status;
 
@@ -1495,7 +1495,7 @@ AdjustStringPackage (
       // Append a EFI_HII_SIBT_END block to the end.
       //
       *BlockPtr = EFI_HII_SIBT_END;
-      FreePool (StringPackage->StringBlock);
+      FreePool(StringPackage->StringBlock);
       StringPackage->StringBlock = StringBlock;
       StringPackage->StringPkgHdr->Header.Length += Skip2BlockSize;
       PackageList->PackageListHdr.PackageLength += Skip2BlockSize;
@@ -1564,7 +1564,7 @@ ExportStringPackages (
                  EFI_HII_PACKAGE_STRINGS,
                  Handle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       //
       // Copy String package header
       //
@@ -1630,14 +1630,14 @@ RemoveStringPackages (
                EFI_HII_PACKAGE_STRINGS,
                Handle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     RemoveEntryList (&Package->StringEntry);
     PackageList->PackageListHdr.PackageLength -= Package->StringPkgHdr->Header.Length;
-    FreePool (Package->StringBlock);
-    FreePool (Package->StringPkgHdr);
+    FreePool(Package->StringBlock);
+    FreePool(Package->StringPkgHdr);
     //
     // Delete font information
     //
@@ -1649,10 +1649,10 @@ RemoveStringPackages (
                    HII_FONT_INFO_SIGNATURE
                    );
       RemoveEntryList (&FontInfo->Entry);
-      FreePool (FontInfo);
+      FreePool(FontInfo);
     }
 
-    FreePool (Package);
+    FreePool(Package);
   }
 
   return EFI_SUCCESS;
@@ -1758,7 +1758,7 @@ InsertFontPackage (
   // Collect all default character cell information and backup in GlyphInfoList.
   //
   Status = FindGlyphBlock (FontPackage, (CHAR16) (-1), NULL, NULL, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error;
   }
 
@@ -1792,19 +1792,19 @@ InsertFontPackage (
 Error:
 
   if (FontPkgHdr != NULL) {
-    FreePool (FontPkgHdr);
+    FreePool(FontPkgHdr);
   }
   if (FontInfo != NULL) {
-    FreePool (FontInfo);
+    FreePool(FontInfo);
   }
   if (FontPackage != NULL) {
     if (FontPackage->GlyphBlock != NULL) {
-      FreePool (FontPackage->GlyphBlock);
+      FreePool(FontPackage->GlyphBlock);
     }
-    FreePool (FontPackage);
+    FreePool(FontPackage);
   }
   if (GlobalFont != NULL) {
-    FreePool (GlobalFont);
+    FreePool(GlobalFont);
   }
 
   return Status;
@@ -1871,7 +1871,7 @@ ExportFontPackages (
                  EFI_HII_PACKAGE_FONTS,
                  Handle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       //
       // Copy Font package header
       //
@@ -1939,7 +1939,7 @@ RemoveFontPackages (
                EFI_HII_PACKAGE_FONTS,
                Handle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1947,9 +1947,9 @@ RemoveFontPackages (
     PackageList->PackageListHdr.PackageLength -= Package->FontPkgHdr->Header.Length;
 
     if (Package->GlyphBlock != NULL) {
-      FreePool (Package->GlyphBlock);
+      FreePool(Package->GlyphBlock);
     }
-    FreePool (Package->FontPkgHdr);
+    FreePool(Package->FontPkgHdr);
     //
     // Delete default character cell information
     //
@@ -1961,7 +1961,7 @@ RemoveFontPackages (
                     HII_GLYPH_INFO_SIGNATURE
                     );
       RemoveEntryList (&GlyphInfo->Entry);
-      FreePool (GlyphInfo);
+      FreePool(GlyphInfo);
     }
 
     //
@@ -1971,13 +1971,13 @@ RemoveFontPackages (
       GlobalFont = CR (Link, HII_GLOBAL_FONT_INFO, Entry, HII_GLOBAL_FONT_INFO_SIGNATURE);
       if (GlobalFont->FontPackage == Package) {
         RemoveEntryList (&GlobalFont->Entry);
-        FreePool (GlobalFont->FontInfo);
-        FreePool (GlobalFont);
+        FreePool(GlobalFont->FontInfo);
+        FreePool(GlobalFont);
         break;
       }
     }
 
-    FreePool (Package);
+    FreePool(Package);
   }
 
   return EFI_SUCCESS;
@@ -2065,7 +2065,7 @@ InsertImagePackage (
 
     ImagePackage->PaletteBlock = (UINT8 *) AllocateZeroPool (PaletteSize);
     if (ImagePackage->PaletteBlock == NULL) {
-      FreePool (ImagePackage);
+      FreePool(ImagePackage);
       return EFI_OUT_OF_RESOURCES;
     }
     CopyMem (
@@ -2085,8 +2085,8 @@ InsertImagePackage (
                 sizeof (EFI_HII_IMAGE_PACKAGE_HDR) - PaletteSize;
     ImagePackage->ImageBlock = AllocateZeroPool (ImageSize);
     if (ImagePackage->ImageBlock == NULL) {
-      FreePool (ImagePackage->PaletteBlock);
-      FreePool (ImagePackage);
+      FreePool(ImagePackage->PaletteBlock);
+      FreePool(ImagePackage);
       return EFI_OUT_OF_RESOURCES;
     }
     CopyMem (
@@ -2169,7 +2169,7 @@ ExportImagePackages (
                EFI_HII_PACKAGE_IMAGES,
                Handle
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     ASSERT (Package->ImagePkgHdr.Header.Length ==
             sizeof (EFI_HII_IMAGE_PACKAGE_HDR) + Package->ImageBlockSize + Package->PaletteInfoSize);
     //
@@ -2240,17 +2240,17 @@ RemoveImagePackages (
              EFI_HII_PACKAGE_IMAGES,
              Handle
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   PackageList->PackageListHdr.PackageLength -= Package->ImagePkgHdr.Header.Length;
 
-  FreePool (Package->ImageBlock);
+  FreePool(Package->ImageBlock);
   if (Package->PaletteBlock != NULL) {
-    FreePool (Package->PaletteBlock);
+    FreePool(Package->PaletteBlock);
   }
-  FreePool (Package);
+  FreePool(Package);
 
   PackageList->ImagePkg = NULL;
 
@@ -2330,9 +2330,9 @@ Error:
 
   if (SimpleFontPackage != NULL) {
     if (SimpleFontPackage->SimpleFontPkgHdr != NULL) {
-      FreePool (SimpleFontPackage->SimpleFontPkgHdr);
+      FreePool(SimpleFontPackage->SimpleFontPkgHdr);
     }
-    FreePool (SimpleFontPackage);
+    FreePool(SimpleFontPackage);
   }
   return Status;
 }
@@ -2396,7 +2396,7 @@ ExportSimpleFontPackages (
                  EFI_HII_PACKAGE_SIMPLE_FONTS,
                  Handle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Copy SimpleFont package
@@ -2452,14 +2452,14 @@ RemoveSimpleFontPackages (
                EFI_HII_PACKAGE_SIMPLE_FONTS,
                Handle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     RemoveEntryList (&Package->SimpleFontEntry);
     PackageList->PackageListHdr.PackageLength -= Package->SimpleFontPkgHdr->Header.Length;
-    FreePool (Package->SimpleFontPkgHdr);
-    FreePool (Package);
+    FreePool(Package->SimpleFontPkgHdr);
+    FreePool(Package);
   }
 
   return EFI_SUCCESS;
@@ -2584,7 +2584,7 @@ ExportDevicePathPackage (
                EFI_HII_PACKAGE_DEVICE_PATH,
                Handle
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     //
     // Copy Device path package
@@ -2637,14 +2637,14 @@ RemoveDevicePathPackage (
              EFI_HII_PACKAGE_DEVICE_PATH,
              Handle
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   CopyMem (&Header, Package, sizeof (EFI_HII_PACKAGE_HEADER));
   PackageList->PackageListHdr.PackageLength -= Header.Length;
 
-  FreePool (Package);
+  FreePool(Package);
 
   PackageList->DevicePathPkg = NULL;
 
@@ -2695,7 +2695,7 @@ AddDevicePathPackage (
                NotifyType,
                DatabaseRecord->PackageList
                );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2776,9 +2776,9 @@ Error:
 
   if (KeyboardLayoutPackage != NULL) {
     if (KeyboardLayoutPackage->KeyboardPkg != NULL) {
-      FreePool (KeyboardLayoutPackage->KeyboardPkg);
+      FreePool(KeyboardLayoutPackage->KeyboardPkg);
     }
-    FreePool (KeyboardLayoutPackage);
+    FreePool(KeyboardLayoutPackage);
   }
 
   return Status;
@@ -2846,7 +2846,7 @@ ExportKeyboardLayoutPackages (
                  EFI_HII_PACKAGE_KEYBOARD_LAYOUT,
                  Handle
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
 
       //
       // Copy Keyboard Layout package
@@ -2904,15 +2904,15 @@ RemoveKeyboardLayoutPackages (
                EFI_HII_PACKAGE_KEYBOARD_LAYOUT,
                Handle
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     RemoveEntryList (&Package->KeyboardEntry);
     CopyMem (&PackageHeader, Package->KeyboardPkg, sizeof (EFI_HII_PACKAGE_HEADER));
     PackageList->PackageListHdr.PackageLength -= PackageHeader.Length;
-    FreePool (Package->KeyboardPkg);
-    FreePool (Package);
+    FreePool(Package->KeyboardPkg);
+    FreePool(Package);
   }
 
   return EFI_SUCCESS;
@@ -2999,7 +2999,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &GuidPackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Status = InvokeRegisteredFunction (
@@ -3017,7 +3017,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &FormPackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Status = InvokeRegisteredFunction (
@@ -3045,7 +3045,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &KeyboardLayoutPackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Status = InvokeRegisteredFunction (
@@ -3064,7 +3064,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &StringPackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       ASSERT (StringPackage != NULL);
@@ -3085,7 +3085,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &FontPackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Status = InvokeRegisteredFunction (
@@ -3103,7 +3103,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &ImagePackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Status = InvokeRegisteredFunction (
@@ -3121,7 +3121,7 @@ AddPackages (
                  DatabaseRecord->PackageList,
                  &SimpleFontPackage
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       Status = InvokeRegisteredFunction (
@@ -3144,7 +3144,7 @@ AddPackages (
       break;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -3157,7 +3157,7 @@ AddPackages (
   //
   // Adjust String Package to make sure all string packages have the same max string ID.
   //
-  if (!EFI_ERROR (Status) && StringPkgIsAdd) {
+  if (!EFI_ERROR(Status) && StringPkgIsAdd) {
     Status = AdjustStringPackage (DatabaseRecord->PackageList);
   }
 
@@ -3226,7 +3226,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportFormPackages (
@@ -3238,7 +3238,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportKeyboardLayoutPackages (
@@ -3250,7 +3250,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportStringPackages (
@@ -3262,7 +3262,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportFontPackages (
@@ -3274,7 +3274,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportImagePackages (
@@ -3286,7 +3286,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportSimpleFontPackages (
@@ -3298,7 +3298,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   Status = ExportDevicePathPackage (
@@ -3310,7 +3310,7 @@ ExportPackageList (
              (VOID *) ((UINT8 *) Buffer + ResultSize),
              &ResultSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -3360,7 +3360,7 @@ HiiGetConfigRespInfo(
   //
   Status = HiiConfigRoutingExportConfig(&Private->ConfigRouting,&ConfigAltResp);
 
-  if (!EFI_ERROR (Status)){
+  if (!EFI_ERROR(Status)){
     ConfigSize = StrSize(ConfigAltResp);
     if (ConfigSize > gConfigRespSize){
       //
@@ -3437,7 +3437,7 @@ HiiGetDatabaseInfo(
     ZeroMem(gRTDatabaseInfoBuffer,gDatabaseInfoSize);
   }
   Status = HiiExportPackageLists(This, NULL, &DatabaseInfoSize, gRTDatabaseInfoBuffer);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   gBS->InstallConfigurationTable (&gEfiHiiDatabaseProtocolGuid, gRTDatabaseInfoBuffer);
 
   return EFI_SUCCESS;
@@ -3508,7 +3508,7 @@ HiiNewPackageList (
   // Build a PackageList node
   //
   Status = GenerateHiiDatabaseRecord (Private, &DatabaseRecord);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EfiReleaseLock (&mHiiDatabaseLock);
     return Status;
   }
@@ -3518,7 +3518,7 @@ HiiNewPackageList (
   // according to incoming package list.
   //
   Status = AddPackages (Private, EFI_HII_DATABASE_NOTIFY_NEW_PACK, PackageList, DatabaseRecord);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EfiReleaseLock (&mHiiDatabaseLock);
     return Status;
   }
@@ -3533,9 +3533,9 @@ HiiNewPackageList (
                   &gEfiDevicePathProtocolGuid,
                   (VOID **) &DevicePath
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = AddDevicePathPackage (Private, EFI_HII_DATABASE_NOTIFY_NEW_PACK, DevicePath, DatabaseRecord);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   *Handle = DatabaseRecord->Handle;
@@ -3625,42 +3625,42 @@ HiiRemovePackageList (
       // then remove them.
       //
       Status = RemoveGuidPackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveFormPackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveKeyboardLayoutPackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveStringPackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveFontPackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveImagePackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveSimpleFontPackages (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
       Status = RemoveDevicePathPackage (Private, Handle, PackageList);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         EfiReleaseLock (&mHiiDatabaseLock);
         return Status;
       }
@@ -3676,9 +3676,9 @@ HiiRemovePackageList (
       ASSERT (Private->HiiHandleCount >= 0);
 
       HiiHandle->Signature = 0;
-      FreePool (HiiHandle);
-      FreePool (Node->PackageList);
-      FreePool (Node);
+      FreePool(HiiHandle);
+      FreePool(Node->PackageList);
+      FreePool(Node);
 
       //
       // Check whether need to get the Database info.
@@ -3803,7 +3803,7 @@ HiiUpdatePackageList (
           break;
         }
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           EfiReleaseLock (&mHiiDatabaseLock);
           return Status;
         }
@@ -4082,7 +4082,7 @@ HiiExportPackageLists (
                  *BufferSize,
                  (EFI_HII_PACKAGE_LIST_HEADER *)((UINT8 *) Buffer + UsedSize)
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     } else if (Handle != NULL && Node->Handle == Handle) {
       Status = ExportPackageList (
                  Private,
@@ -4092,7 +4092,7 @@ HiiExportPackageLists (
                  *BufferSize,
                  Buffer
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       if (*BufferSize < UsedSize) {
         *BufferSize = UsedSize;
         return EFI_BUFFER_TOO_SMALL;
@@ -4191,7 +4191,7 @@ HiiRegisterPackageNotify (
                   NULL,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Fill in the information to the notification node
@@ -4251,7 +4251,7 @@ HiiUnregisterPackageNotify (
                   NULL,
                   EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -4270,8 +4270,8 @@ HiiUnregisterPackageNotify (
                       NULL,
                       NULL
                       );
-      ASSERT_EFI_ERROR (Status);
-      FreePool (Notify);
+      ASSERT_EFI_ERROR(Status);
+      FreePool(Notify);
 
       return EFI_SUCCESS;
     }
@@ -4549,7 +4549,7 @@ HiiSetKeyboardLayout (
   KeyboardLayout = (EFI_HII_KEYBOARD_LAYOUT *) AllocateZeroPool (KeyboardLayoutLength);
   ASSERT (KeyboardLayout != NULL);
   Status = HiiGetKeyboardLayout (This, KeyGuid, &KeyboardLayoutLength, KeyboardLayout);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Backup current keyboard layout.
@@ -4565,7 +4565,7 @@ HiiSetKeyboardLayout (
   // current keyboard layout is changed.
   //
   Status = gBS->SignalEvent (gHiiKeyboardLayoutChanged);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

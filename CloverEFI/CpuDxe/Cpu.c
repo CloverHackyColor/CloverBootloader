@@ -1137,8 +1137,8 @@ Returns:
   // Find the Legacy8259 protocol.
   //
   Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &gLegacy8259);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1146,8 +1146,8 @@ Returns:
   // Get the interrupt vector number corresponding to IRQ0 from the 8259 driver
   //
   Status = gLegacy8259->GetVector (gLegacy8259, Efi8259Irq0, (UINT8 *) &mTimerVector);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1187,8 +1187,8 @@ Returns:
   for (Irq = Efi8259Irq1; Irq <= Efi8259Irq15; Irq++) {
     InterruptVector = 0;
     Status = gLegacy8259->GetVector (gLegacy8259, Irq, (UINT8 *) &InterruptVector);
-//    ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+//    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     InstallInterruptHandler (InterruptVector, SystemTimerHandler);
@@ -1206,7 +1206,7 @@ Returns:
                   &mCpu,
                   NULL
                   );
-//  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR(Status);
   return Status;
 }
 
@@ -1233,8 +1233,8 @@ InitializeBiosIntCaller (
                   EFI_SIZE_TO_PAGES(LegacyRegionSize),
                   &LegacyRegionBase
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     mThunkContext.RealModeBuffer = 0;
     return;
   }
@@ -1297,8 +1297,8 @@ LegacyBiosInt86 (
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
       EnableInterrupts ();
     }
@@ -1323,8 +1323,8 @@ LegacyBiosInt86 (
   // Restore protected mode interrupt state
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-//  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+//  if (EFI_ERROR(Status)) {
 //    return FALSE;
 //  }
 

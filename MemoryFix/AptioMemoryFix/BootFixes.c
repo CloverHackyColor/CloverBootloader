@@ -228,7 +228,7 @@ ReadBooterArguments (
     &BootArgsVar[0]
     );
 
-  if (!EFI_ERROR (Status) && BootArgsVarLen > 0) {
+  if (!EFI_ERROR(Status) && BootArgsVarLen > 0) {
     //
     // Just in case we do not have 0-termination
     //
@@ -584,7 +584,7 @@ GetAppleBootLoadedImage (
 
   Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **)&LoadedImage);
 
-  if (!EFI_ERROR (Status) && LoadedImage->FilePath) {
+  if (!EFI_ERROR(Status) && LoadedImage->FilePath) {
     for (CurrNode = LoadedImage->FilePath; !IsDevicePathEnd (CurrNode); CurrNode = NextDevicePathNode (CurrNode)) {
       if (CurrNode->Type == MEDIA_DEVICE_PATH && CurrNode->SubType == MEDIA_FILEPATH_DP) {
         LastNode = (FILEPATH_DEVICE_PATH *)CurrNode;

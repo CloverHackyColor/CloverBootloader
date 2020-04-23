@@ -108,7 +108,7 @@ HstiAipSetInfo (
     if (NewHsti == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
-    FreePool (HstiAip->Hsti);
+    FreePool(HstiAip->Hsti);
     HstiAip->Hsti = NewHsti;
     HstiAip->HstiSize = 0;
     HstiAip->HstiMaxSize = InformationBlockSize;

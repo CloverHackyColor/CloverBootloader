@@ -125,7 +125,7 @@ PartitionInstallAppleChildHandles (
                        Block
                        );
       }
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
           Found = Status;
           break;
       }
@@ -169,7 +169,7 @@ PartitionInstallAppleChildHandles (
                        );
           }
 
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
               Status = EFI_NOT_FOUND;
               goto done; /* would break, but ... */
           }
@@ -223,7 +223,7 @@ PartitionInstallAppleChildHandles (
               FALSE
                                                 );
 
-          if (!EFI_ERROR (Status)) {
+          if (!EFI_ERROR(Status)) {
               Found = EFI_SUCCESS;
           }
       }
@@ -231,7 +231,7 @@ PartitionInstallAppleChildHandles (
   } while (0);
 
  done:
-  FreePool (Block);
+  FreePool(Block);
 
   return Found;
 }

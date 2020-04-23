@@ -43,7 +43,7 @@ SmmServicesTableLibConstructor (
                                         NULL,
                                         (VOID **)&InternalSmmBase2
                                         );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (InternalSmmBase2 != NULL);
 
   //

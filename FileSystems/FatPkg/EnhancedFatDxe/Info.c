@@ -378,7 +378,7 @@ Returns:
   // Open the filename and see if it refers to an existing file
   //
   Status = FatLocateOFile (&Parent, NewInfo->FileName, DirEnt->Entry.Attributes, NewFileName);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -396,14 +396,14 @@ Returns:
     }
 
     Status = FatRemoveDirEnt (OFile->Parent, DirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
     // Create new dirent
     //
     Status = FatCreateDirEnt (Parent, NewFileName, DirEnt->Entry.Attributes, &TempDirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -426,13 +426,13 @@ Returns:
       ASSERT (OFile->Parent != NULL);
       for (DotOFile = OFile; DotOFile != OFile->Parent->Parent; DotOFile = DotOFile->Parent) {
         Status = FatGetNextDirEnt (OFile, &DirEnt);
-        if (EFI_ERROR (Status) || DirEnt == NULL || !FatIsDotDirEnt (DirEnt)) {
+        if (EFI_ERROR(Status) || DirEnt == NULL || !FatIsDotDirEnt (DirEnt)) {
           return EFI_VOLUME_CORRUPTED;
         }
 
         FatCloneDirEnt (DirEnt, DotOFile->DirEnt);
         Status = FatStoreDirEnt (OFile, DirEnt);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       }
@@ -464,7 +464,7 @@ Returns:
       Status = FatTruncateOFile (OFile, (UINTN) NewInfo->FileSize);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -525,7 +525,7 @@ Returns:
   //
   // Verify the file handle isn't in an error state
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Get the proper information based on the request
     //

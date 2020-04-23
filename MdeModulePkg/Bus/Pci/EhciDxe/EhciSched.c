@@ -135,7 +135,7 @@ EhcInitSched (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -148,7 +148,7 @@ EhcInitSched (
                     &Map
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != 4096)) {
+  if (EFI_ERROR(Status) || (Bytes != 4096)) {
     PciIo->FreeBuffer (PciIo, Pages, Buf);
     return EFI_OUT_OF_RESOURCES;
   }
@@ -183,7 +183,7 @@ EhcInitSched (
 
   Status = EhcCreateHelpQ (Ehc);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ErrorExit;
   }
 
@@ -294,7 +294,7 @@ EhcFreeSched (
   }
 
   if (Ehc->PeriodFrameHost != NULL) {
-    FreePool (Ehc->PeriodFrameHost);
+    FreePool(Ehc->PeriodFrameHost);
     Ehc->PeriodFrameHost = NULL;
   }
 }
@@ -375,7 +375,7 @@ EhcUnlinkQhFromAsync (
   //
   Status = EhcSetAndWaitDoorBell (Ehc, EHC_GENERIC_TIMEOUT);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "EhcUnlinkQhFromAsync: Failed to synchronize with doorbell\n"));
   }
 }
@@ -772,7 +772,7 @@ EhciDelAsyncIntTransfer (
       EhcUnlinkQhFromPeriod (Ehc, Urb->Qh);
       RemoveEntryList (&Urb->UrbList);
 
-      gBS->FreePool (Urb->Data);
+      gBS->FreePool(Urb->Data);
       EhcFreeUrb (Ehc, Urb);
       return EFI_SUCCESS;
     }
@@ -803,7 +803,7 @@ EhciDelAllAsyncIntTransfers (
     EhcUnlinkQhFromPeriod (Ehc, Urb->Qh);
     RemoveEntryList (&Urb->UrbList);
 
-    gBS->FreePool (Urb->Data);
+    gBS->FreePool(Urb->Data);
     EhcFreeUrb (Ehc, Urb);
   }
 }
@@ -871,7 +871,7 @@ EhciInsertAsyncIntTransfer (
 
   if (Urb == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: failed to create URB\n", __FUNCTION__));
-    gBS->FreePool (Data);
+    gBS->FreePool(Data);
     return NULL;
   }
 
@@ -919,14 +919,14 @@ EhcFlushAsyncIntMap (
   }
 
   Status = PciIo->Unmap (PciIo, Urb->DataMap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_ERROR;
   }
 
   Urb->DataMap = NULL;
 
   Status = PciIo->Map (PciIo, MapOp, Urb->Data, &Len, &PhyAddr, &Map);
-  if (EFI_ERROR (Status) || (Len != Urb->DataLen)) {
+  if (EFI_ERROR(Status) || (Len != Urb->DataLen)) {
     goto ON_ERROR;
   }
 
@@ -1067,7 +1067,7 @@ EhcMonitorAsyncRequests (
     // bridge to system memory.
     //
     Status = EhcFlushAsyncIntMap (Ehc, Urb);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_ERROR, "EhcMonitorAsyncRequests: Fail to Flush AsyncInt Mapped Memeory\n"));
     }
 
@@ -1117,7 +1117,7 @@ EhcMonitorAsyncRequests (
     }
 
     if (ProcBuf != NULL) {
-      FreePool (ProcBuf);
+      FreePool(ProcBuf);
     }
   }
 

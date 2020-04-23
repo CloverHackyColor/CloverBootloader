@@ -445,10 +445,10 @@ DebuggerLoadSymbol (
   Status = EdbLoadSymbol (DebuggerPrivate, FileName, BufferSize, Buffer);
   if (EFI_ERROR(Status)) {
     EDBPrint (L"LoadSymbol error!\n");
-    gBS->FreePool (Buffer);
+    gBS->FreePool(Buffer);
     return EFI_DEBUG_CONTINUE;
   }
-  gBS->FreePool (Buffer);
+  gBS->FreePool(Buffer);
 
   //
   // Patch Symbol for RVA
@@ -500,9 +500,9 @@ DebuggerLoadSymbol (
     // Load Code
     //
     Status = EdbLoadCode (DebuggerPrivate, FileName, CodFileName, BufferSize, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       EDBPrint (L"LoadCode error!\n");
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
       CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
       continue;
     }
@@ -511,9 +511,9 @@ DebuggerLoadSymbol (
     // Record the buffer
     //
     Status = EdbAddCodeBuffer (DebuggerPrivate, FileName, CodFileName, BufferSize, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       EDBPrint (L"AddCodeBuffer error!\n");
-      gBS->FreePool (Buffer);
+      gBS->FreePool(Buffer);
       CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
       continue;
     }
@@ -594,7 +594,7 @@ DebuggerUnloadSymbol (
     // Unload Code
     //
     Status = EdbUnloadCode (DebuggerPrivate, FileName, CodFileName, &BufferPtr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       EDBPrint (L"UnloadCode error!\n");
       CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
       continue;
@@ -604,7 +604,7 @@ DebuggerUnloadSymbol (
     // Delete the code buffer
     //
     Status = EdbDeleteCodeBuffer (DebuggerPrivate, FileName, CodFileName, BufferPtr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       EDBPrint (L"DeleteCodeBuffer error!\n");
       CodFileName = GetFileNameUnderDir (DebuggerPrivate, DirName, L".cod", &Index);
       continue;
@@ -738,9 +738,9 @@ DebuggerLoadCode (
   // Load Code
   //
   Status = EdbLoadCode (DebuggerPrivate, MapFileName, FileName, BufferSize, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EDBPrint (L"LoadCode error!\n");
-    gBS->FreePool (Buffer);
+    gBS->FreePool(Buffer);
     return EFI_DEBUG_CONTINUE;
   }
 
@@ -748,9 +748,9 @@ DebuggerLoadCode (
   // Record the buffer
   //
   Status = EdbAddCodeBuffer (DebuggerPrivate, MapFileName, FileName, BufferSize, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EDBPrint (L"AddCodeBuffer error!\n");
-    gBS->FreePool (Buffer);
+    gBS->FreePool(Buffer);
     return EFI_DEBUG_CONTINUE;
   }
 
@@ -806,7 +806,7 @@ DebuggerUnloadCode (
   // Unload Code
   //
   Status = EdbUnloadCode (DebuggerPrivate, MapFileName, FileName, &BufferPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EDBPrint (L"UnloadCode error!\n");
     return EFI_DEBUG_CONTINUE;
   }
@@ -815,7 +815,7 @@ DebuggerUnloadCode (
   // Delete Code buffer
   //
   Status = EdbDeleteCodeBuffer (DebuggerPrivate, MapFileName, FileName, BufferPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     EDBPrint (L"DeleteCodeBuffer error!\n");
   }
 

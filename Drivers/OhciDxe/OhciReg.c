@@ -719,7 +719,7 @@ OhciSetMemoryPointer(
 
   Status = OhciSetOperationalReg (Ohc->PciIo, (UINT32)PointerType, &Value);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

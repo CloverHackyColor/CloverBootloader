@@ -319,7 +319,7 @@ VarCheckLibInitializeAtEndOfDxe (
     //
     mVarCheckLibEndOfDxeCallbackCount = 0;
     mVarCheckLibEndOfDxeCallbackMaxCount = 0;
-    FreePool ((VOID *) mVarCheckLibEndOfDxeCallback);
+    FreePool((VOID *) mVarCheckLibEndOfDxeCallback);
     mVarCheckLibEndOfDxeCallback = NULL;
   }
 
@@ -332,7 +332,7 @@ VarCheckLibInitializeAtEndOfDxe (
       //
       mVarCheckLibAddressPointerCount = 0;
       mVarCheckLibAddressPointerMaxCount = 0;
-      FreePool ((VOID *) mVarCheckLibAddressPointer);
+      FreePool((VOID *) mVarCheckLibAddressPointer);
       mVarCheckLibAddressPointer = NULL;
     }
     return NULL;
@@ -528,8 +528,8 @@ VarCheckLibVariablePropertySet (
                (UINTN) Entry
                );
 
-    if (EFI_ERROR (Status)) {
-      FreePool (Entry);
+    if (EFI_ERROR(Status)) {
+      FreePool(Entry);
     }
   }
 
@@ -655,7 +655,7 @@ VarCheckLibSetVariableCheck (
                DataSize,
                Data
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_INFO, "Variable Check handler fail %r - %g:%s\n", Status, VendorGuid, VariableName));
       return Status;
     }

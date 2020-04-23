@@ -130,7 +130,7 @@ IsCapsuleOnDiskMode (
              NULL,
              (VOID **) &PPIVariableServices
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Size = sizeof (BOOLEAN);
   Status = PPIVariableServices->GetVariable (
@@ -142,7 +142,7 @@ IsCapsuleOnDiskMode (
                                   &CodRelocInfo
                                   );
 
-  if (EFI_ERROR (Status) || Size != sizeof(BOOLEAN) || !CodRelocInfo) {
+  if (EFI_ERROR(Status) || Size != sizeof(BOOLEAN) || !CodRelocInfo) {
     DEBUG (( DEBUG_ERROR, "Error Get CodRelocationInfo variable %r!\n", Status));
     return FALSE;
   }
@@ -305,11 +305,11 @@ InitializeCapsuleOnDiskLoad (
   );
 
   Status = PeiServicesInstallPpi (&mCapsuleOnDiskPpiList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   FileNameSize = PcdGetSize (PcdCoDRelocationFileName);
   Status = PcdSetPtrS (PcdRecoveryFileName, &FileNameSize, (VOID *) PcdGetPtr(PcdCoDRelocationFileName));
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -352,7 +352,7 @@ LoadCapsuleOnDisk (
                (VOID **)&DeviceRecoveryPpi
                );
     DEBUG ((DEBUG_INFO, "LoadCapsuleOnDisk - LocateRecoveryPpi (%d) - %r\n", Instance, Status));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Instance == 0) {
         REPORT_STATUS_CODE (
           EFI_ERROR_CODE | EFI_ERROR_MAJOR,
@@ -368,7 +368,7 @@ LoadCapsuleOnDisk (
                                   &NumberRecoveryCapsules
                                   );
     DEBUG ((DEBUG_INFO, "LoadCapsuleOnDisk - GetNumberRecoveryCapsules (%d) - %r\n", NumberRecoveryCapsules, Status));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -382,7 +382,7 @@ LoadCapsuleOnDisk (
                                     &CapsuleType
                                     );
       DEBUG ((DEBUG_INFO, "LoadCapsuleOnDisk - GetRecoveryCapsuleInfo (%d - %x) - %r\n", CapsuleInstance, CapsuleSize, Status));
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
 
@@ -404,7 +404,7 @@ LoadCapsuleOnDisk (
                                     CapsuleBuffer
                                     );
       DEBUG ((DEBUG_INFO, "LoadCapsuleOnDisk - LoadRecoveryCapsule (%d) - %r\n", CapsuleInstance, Status));
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         FreePages (CapsuleBuffer, EFI_SIZE_TO_PAGES(CapsuleSize));
         break;
       }
@@ -417,7 +417,7 @@ LoadCapsuleOnDisk (
       break;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       REPORT_STATUS_CODE (
         EFI_ERROR_CODE | EFI_ERROR_MAJOR,
         (EFI_SOFTWARE_PEI_MODULE | EFI_SW_PEI_EC_NO_RECOVERY_CAPSULE)

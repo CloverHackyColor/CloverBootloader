@@ -132,16 +132,16 @@ IsKnownTokens (
     return FALSE;
   }
 
-  if (AsciiStrCmp (Token, SEC_TOK) == 0 ||
-      AsciiStrCmp (Token, PEI_TOK) == 0 ||
-      AsciiStrCmp (Token, DXE_TOK) == 0 ||
-      AsciiStrCmp (Token, BDS_TOK) == 0 ||
-      AsciiStrCmp (Token, DRIVERBINDING_START_TOK) == 0 ||
-      AsciiStrCmp (Token, DRIVERBINDING_SUPPORT_TOK) == 0 ||
-      AsciiStrCmp (Token, DRIVERBINDING_STOP_TOK) == 0 ||
-      AsciiStrCmp (Token, LOAD_IMAGE_TOK) == 0 ||
-      AsciiStrCmp (Token, START_IMAGE_TOK) == 0 ||
-      AsciiStrCmp (Token, PEIM_TOK) == 0) {
+  if (AsciiStrCmp(Token, SEC_TOK) == 0 ||
+      AsciiStrCmp(Token, PEI_TOK) == 0 ||
+      AsciiStrCmp(Token, DXE_TOK) == 0 ||
+      AsciiStrCmp(Token, BDS_TOK) == 0 ||
+      AsciiStrCmp(Token, DRIVERBINDING_START_TOK) == 0 ||
+      AsciiStrCmp(Token, DRIVERBINDING_SUPPORT_TOK) == 0 ||
+      AsciiStrCmp(Token, DRIVERBINDING_STOP_TOK) == 0 ||
+      AsciiStrCmp(Token, LOAD_IMAGE_TOK) == 0 ||
+      AsciiStrCmp(Token, START_IMAGE_TOK) == 0 ||
+      AsciiStrCmp(Token, PEIM_TOK) == 0) {
     return TRUE;
   } else {
     return FALSE;
@@ -204,13 +204,13 @@ GetFpdtRecordId (
   // Token to Id.
   //
   if (String != NULL) {
-    if (AsciiStrCmp (String, START_IMAGE_TOK) == 0) {              // "StartImage:"
+    if (AsciiStrCmp(String, START_IMAGE_TOK) == 0) {              // "StartImage:"
       if (Attribute == PerfStartEntry) {
         *ProgressID  = MODULE_START_ID;
       } else {
         *ProgressID  = MODULE_END_ID;
       }
-    } else if (AsciiStrCmp (String, LOAD_IMAGE_TOK) == 0) {        // "LoadImage:"
+    } else if (AsciiStrCmp(String, LOAD_IMAGE_TOK) == 0) {        // "LoadImage:"
       if (Attribute == PerfStartEntry) {
         *ProgressID  = MODULE_LOADIMAGE_START_ID;
       } else {
@@ -311,7 +311,7 @@ GetModuleInfoFromHandle (
                   (VOID**) &LoadedImage
                   );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Try Handle as Controller Handle
       //
@@ -323,7 +323,7 @@ GetModuleInfoFromHandle (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Get Image protocol from ImageHandle
         //
@@ -336,7 +336,7 @@ GetModuleInfoFromHandle (
     }
   }
 
-  if (!EFI_ERROR (Status) && LoadedImage != NULL) {
+  if (!EFI_ERROR(Status) && LoadedImage != NULL) {
     //
     // Get Module Guid from DevicePath.
     //
@@ -399,7 +399,7 @@ GetModuleInfoFromHandle (
               &StringSize
               );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Method 3. Get the name string from FFS UI section
       //
@@ -407,7 +407,7 @@ GetModuleInfoFromHandle (
         NameString[Index] = (CHAR8) StringPtr[Index];
       }
       NameString[Index] = 0;
-      FreePool (StringPtr);
+      FreePool(StringPtr);
     }
   }
 
@@ -554,7 +554,7 @@ InsertFpdtRecord (
       // Get ProgressID form the String Token.
       //
       Status = GetFpdtRecordId (Attribute, CallerIdentifier, String, &ProgressId);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
       PerfId = ProgressId;
@@ -565,7 +565,7 @@ InsertFpdtRecord (
   // 2. Get the buffer to store the FPDT record.
   //
   Status = GetFpdtRecordPtr (FPDT_MAX_PERF_RECORD_SIZE, &FpdtRecordPtr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -849,7 +849,7 @@ InitializeSmmCorePerformanceLib (
                     EFI_NATIVE_INTERFACE,
                     &mPerformanceMeasurementInterface
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gSmst->SmmRegisterProtocolNotify (
                     &gEdkiiSmmReadyToBootProtocolGuid,
@@ -857,7 +857,7 @@ InitializeSmmCorePerformanceLib (
                     &SmmReadyToBootRegistration
                     );
   Status = EfiGetSystemConfigurationTable (&gPerformanceProtocolGuid, (VOID **) &PerformanceProperty);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Install configuration table for performance property.
     //
@@ -868,7 +868,7 @@ InitializeSmmCorePerformanceLib (
                                        &mPerformanceProperty.TimerEndValue
                                        );
     Status = gBS->InstallConfigurationTable (&gPerformanceProtocolGuid, &mPerformanceProperty);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 }
 
@@ -911,7 +911,7 @@ SmmCorePerformanceLibConstructor (
                   NULL,
                   &Event
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register for protocol notifications on this event
@@ -922,7 +922,7 @@ SmmCorePerformanceLibConstructor (
                   &Registration
                   );
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

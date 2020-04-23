@@ -38,7 +38,7 @@ UsbFreeInterfaceDesc (
       Ep = Setting->Endpoints[Index];
 
       if (Ep != NULL) {
-        FreePool (Ep);
+        FreePool(Ep);
       }
     }
 
@@ -46,11 +46,11 @@ UsbFreeInterfaceDesc (
     // Only call FreePool() if NumEndpoints > 0.
     //
     if (Setting->Desc.NumEndpoints > 0) {
-      FreePool (Setting->Endpoints);
+      FreePool(Setting->Endpoints);
     }
   }
 
-  FreePool (Setting);
+  FreePool(Setting);
 }
 
 
@@ -90,13 +90,13 @@ UsbFreeConfigDesc (
         }
       }
 
-      FreePool (Interface);
+      FreePool(Interface);
     }
 
-    FreePool (Config->Interfaces);
+    FreePool(Config->Interfaces);
   }
 
-  FreePool (Config);
+  FreePool(Config);
 
 }
 
@@ -121,10 +121,10 @@ UsbFreeDevDesc (
       }
     }
 
-    FreePool (DevDesc->Configs);
+    FreePool(DevDesc->Configs);
   }
 
-  FreePool (DevDesc);
+  FreePool(DevDesc);
 }
 
 
@@ -541,7 +541,7 @@ UsbGetMaxPacketSize0 (
   for (Index = 0; Index < 3; Index++) {
     Status = UsbCtrlGetDesc (UsbDev, USB_DESC_TYPE_DEVICE, 0, 0, &DevDesc, 8);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((DevDesc.BcdUSB >= 0x0300) && (DevDesc.MaxPacketSize0 == 9)) {
         UsbDev->MaxPacket0 = 1 << 9;
         return EFI_SUCCESS;
@@ -589,8 +589,8 @@ UsbGetDevDesc (
               sizeof (EFI_USB_DEVICE_DESCRIPTOR)
               );
 
-  if (EFI_ERROR (Status)) {
-    gBS->FreePool (DevDesc);
+  if (EFI_ERROR(Status)) {
+    gBS->FreePool(DevDesc);
   } else {
     UsbDev->DevDesc = DevDesc;
   }
@@ -627,7 +627,7 @@ UsbGetOneString (
   //
   Status = UsbCtrlGetDesc (UsbDev, USB_DESC_TYPE_STRING, Index, LangId, &Desc, 2);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -646,8 +646,8 @@ UsbGetOneString (
              Desc.Length
              );
 
-  if (EFI_ERROR (Status)) {
-    FreePool (Buf);
+  if (EFI_ERROR(Status)) {
+    FreePool(Buf);
     return NULL;
   }
 
@@ -702,7 +702,7 @@ UsbBuildLangTable (
   UsbDev->TotalLangId = (UINT16)Max;
 
 ON_EXIT:
-  gBS->FreePool (Desc);
+  gBS->FreePool(Desc);
   return Status;
 }
 
@@ -735,7 +735,7 @@ UsbGetOneConfig (
   //
   Status = UsbCtrlGetDesc (UsbDev, USB_DESC_TYPE_CONFIG, Index, 0, &Desc, 8);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG (( EFI_D_ERROR, "UsbGetOneConfig: failed to get descript length(%d) %r\n",
                 Desc.TotalLength, Status));
 
@@ -752,10 +752,10 @@ UsbGetOneConfig (
 
   Status = UsbCtrlGetDesc (UsbDev, USB_DESC_TYPE_CONFIG, Index, 0, Buf, Desc.TotalLength);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG (( EFI_D_ERROR, "UsbGetOneConfig: failed to get full descript %r\n", Status));
 
-    FreePool (Buf);
+    FreePool(Buf);
     return NULL;
   }
 
@@ -792,7 +792,7 @@ UsbBuildDescTable (
   //
   Status = UsbGetDevDesc (UsbDev);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG (( EFI_D_ERROR, "UsbBuildDescTable: failed to get device descriptor - %r\n", Status));
     return Status;
   }
@@ -832,7 +832,7 @@ UsbBuildDescTable (
 
     ConfigDesc = UsbParseConfigDesc ((UINT8 *) Config, Config->TotalLength);
 
-    FreePool (Config);
+    FreePool(Config);
 
     if (ConfigDesc == NULL) {
       DEBUG (( EFI_D_ERROR, "UsbBuildDescTable: failed to parse configure (index %d)\n", Index));
@@ -857,7 +857,7 @@ UsbBuildDescTable (
   //
   Status = UsbBuildLangTable (UsbDev);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG (( EFI_D_INFO, "UsbBuildDescTable: get language ID table %r\n", Status));
   }
 

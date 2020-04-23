@@ -89,11 +89,11 @@ VideoBiosPatchInit (
   //
   Status = gBS->LocateProtocol (&gEfiLegacyRegionProtocolGuid, NULL, (VOID **) &mLegacyRegion);
   DBG ("LegacyRegion = %r", Status);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mLegacyRegion = NULL;
     Status = gBS->LocateProtocol (&gEfiLegacyRegion2ProtocolGuid, NULL, (VOID **) &mLegacyRegion2);
     DBG (", LegacyRegion2 = %r", Status);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       mLegacyRegion2 = NULL;
     }
   }
@@ -122,7 +122,7 @@ VideoBiosUnlock (
   UINT8             TstVar;
   
   Status = VideoBiosPatchInit ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -171,7 +171,7 @@ VideoBiosLock (
   UINT32            Granularity;
   
   Status = VideoBiosPatchInit ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -217,7 +217,7 @@ VideoBiosPatchBytes (
   
   DBG ("VideoBiosPatchBytes(%d patches):\n", FindAndReplaceCount);
   Status = VideoBiosUnlock ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DBG (" = not done.\n");
     return Status;
   }
@@ -261,7 +261,7 @@ UINT8* VideoBiosPatchGetEdid (VOID)
   DBG (" Edid:");
   Edid = NULL;
   Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
       Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
@@ -308,13 +308,13 @@ VideoBiosPatchNativeFromEdid (
   if (map == NULL) {
     DBG (" = unknown video bios.\n");
     if (ReleaseEdid) {
-      FreePool (Edid);
+      FreePool(Edid);
     }
     return EFI_UNSUPPORTED;
   }
   
   Status = VideoBiosUnlock ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DBG (" = not done.\n");
     return Status;
   }
@@ -323,7 +323,7 @@ VideoBiosPatchNativeFromEdid (
   set_mode (map, 0, 0, 0, 0, 0);
   mEdid = NULL;
   if (ReleaseEdid) {
-    FreePool (Edid);
+    FreePool(Edid);
   }
   
   VideoBiosLock ();

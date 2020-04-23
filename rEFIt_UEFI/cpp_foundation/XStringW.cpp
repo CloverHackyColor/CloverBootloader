@@ -424,37 +424,64 @@ bool XStringW::IsDigits(UINTN pos, UINTN count) const
 	return true;
 }
 
+void XStringW::ToLower(bool FirstCharIsCap)
+{
+  if ( size() > 0 )
+  {
+    unsigned int ui;
+    
+    if ( FirstCharIsCap ) {
+ //     data()[0] = Majuscule(data()[0]); //keep as is
+      ui = 1;
+    }else{
+      ui = 0;
+    }
+    for ( ; ui < size() ; ui++ ) {
+      m_data[ui] = to_lower(m_data[ui]);
+    }
+  }
+}
 
+
+#if __WCHAR_MIN__ < 0
 void XStringW::RemoveLastEspCtrl()
 {
   wchar_t *p;
 
 	if ( size() > 0 ) {
 		p = _data(0) + size() - 1;
-	#if __WCHAR_MIN__ < 0
 		if ( *p >= 0 && *p <= ' ' ) {
-	#else
-		if ( *p <= ' ' ) {
-	#endif
 			p -= 1;
-	#if __WCHAR_MIN__ < 0
 			while ( p>data() && *p >= 0 && *p <= ' ' ) p -= 1;
-	#else
-			while ( p>data() && *p <= ' ' ) p -= 1;
-	#endif
 			if ( p>data() ) {
 				SetLength( (UINTN)(p-data())+1);
 			}else{
-	#if __WCHAR_MIN__ < 0
 				if ( *p >= 0 && *p <= ' ' ) SetLength(0);
-	#else
-				if ( *p <= ' ' ) SetLength(0);
-	#endif
 				else SetLength(1);
 			}
 		}
 	}
 }
+#else
+  void XStringW::RemoveLastEspCtrl()
+  {
+    wchar_t *p;
+    
+    if ( size() > 0 ) {
+      p = _data(0) + size() - 1;
+        if ( *p <= ' ' ) {
+          p -= 1;
+          while ( p>data() && *p <= ' ' ) p -= 1;
+          if ( p>data() ) {
+            SetLength( (UINTN)(p-data())+1);
+          }else{
+            if ( *p <= ' ' ) SetLength(0);
+            else SetLength(1);
+          }
+        }
+      }
+    }
+#endif
 
 //-------------------------------------------------------------------------------------------------
 //
@@ -594,6 +621,5 @@ XStringW CleanCtrl(const XStringW &S)
 	}
 	return ReturnValue;
 }
-
 
 #endif

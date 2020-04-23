@@ -109,7 +109,7 @@ InstallMemoryAttributesTable (
     // memory for the new entry.
     //
     Status = gBS->InstallConfigurationTable (&gEfiMemoryAttributesTableGuid, (VOID *) (UINTN) MAX_ADDRESS);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   MemoryMapSize = 0;
@@ -134,8 +134,8 @@ InstallMemoryAttributesTable (
                &DescriptorSize,
                &DescriptorVersion
                );
-    if (EFI_ERROR (Status)) {
-      FreePool (MemoryMap);
+    if (EFI_ERROR(Status)) {
+      FreePool(MemoryMap);
     }
   } while (Status == EFI_BUFFER_TOO_SMALL);
 
@@ -184,16 +184,16 @@ InstallMemoryAttributesTable (
     MemoryMap = NEXT_MEMORY_DESCRIPTOR(MemoryMap, DescriptorSize);
   }
   MemoryMap = MemoryMapStart;
-  FreePool (MemoryMap);
+  FreePool(MemoryMap);
 
   //
   // Update configuratoin table for MemoryAttributesTable.
   //
   Status = gBS->InstallConfigurationTable (&gEfiMemoryAttributesTableGuid, MemoryAttributesTable);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (mMemoryAttributesTable != NULL) {
-    FreePool (mMemoryAttributesTable);
+    FreePool(mMemoryAttributesTable);
   }
   mMemoryAttributesTable = MemoryAttributesTable;
 }
@@ -275,7 +275,7 @@ CoreInitializeMemoryAttributesTable (
              &gEfiEventReadyToBootGuid,
              &ReadyToBootEvent
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Construct the initial table at EndOfDxe,
@@ -291,6 +291,6 @@ CoreInitializeMemoryAttributesTable (
              &gEfiEndOfDxeEventGroupGuid,
              &EndOfDxeEvent
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   return ;
 }

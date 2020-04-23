@@ -194,7 +194,7 @@ CoreReinstallProtocolInterface (
   PROTOCOL_ENTRY            *ProtEntry;
 
   Status = CoreValidateHandle (UserHandle);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -225,7 +225,7 @@ CoreReinstallProtocolInterface (
              UserHandle,
              Prot
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // One or more drivers refused to release, so return the error
     //

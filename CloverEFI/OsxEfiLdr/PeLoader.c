@@ -212,7 +212,7 @@ EfiLdrPeCoffLoadPeImage (
                sizeof (EFI_IMAGE_DEBUG_DIRECTORY_ENTRY),
                &TempDebugEntry
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (TempDebugEntry.Type == EFI_IMAGE_DEBUG_TYPE_CODEVIEW) {
         CodeViewSize = TempDebugEntry.SizeOfData;
         CodeViewFileOffset = TempDebugEntry.FileOffset;

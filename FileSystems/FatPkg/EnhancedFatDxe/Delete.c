@@ -76,7 +76,7 @@ Returns:
   // If the file has a permanant error, skip the delete
   //
   Status = OFile->Error;
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // If this is a directory, make sure it's empty before
     // allowing it to be deleted
@@ -88,7 +88,7 @@ Returns:
       FatResetODirCursor (OFile);
       for (Round = 0; Round < 3; Round++) {
         Status = FatGetNextDirEnt (OFile, &DirEnt);
-        if ((EFI_ERROR (Status)) ||
+        if ((EFI_ERROR(Status)) ||
             ((Round < 2) && (DirEnt == NULL || !FatIsDotDirEnt (DirEnt))) ||
             ((Round == 2) && (DirEnt != NULL))
             ) {
@@ -105,7 +105,7 @@ Returns:
     // Free the directory entry for this file
     //
     Status = FatRemoveDirEnt (OFile->Parent, OFile->DirEnt);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Done;
     }
     //
@@ -128,7 +128,7 @@ Done:
   Status = FatCleanupVolume (OFile->Volume, NULL, Status, NULL);
   FatReleaseLock ();
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_WARN_DELETE_FAILURE;
   }
 

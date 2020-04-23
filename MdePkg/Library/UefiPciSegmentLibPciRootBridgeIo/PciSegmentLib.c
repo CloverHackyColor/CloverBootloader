@@ -53,7 +53,7 @@ PciSegmentLibConstructor (
                   &HandleCount,
                   &HandleBuffer
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mNumberOfPciRootBridges = HandleCount;
 
@@ -70,13 +70,13 @@ PciSegmentLibConstructor (
                     &gEfiPciRootBridgeIoProtocolGuid,
                     (VOID **) &PciRootBridgeIo
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     mPciRootBridgeData[Index].PciRootBridgeIo = PciRootBridgeIo;
     mPciRootBridgeData[Index].SegmentNumber   = PciRootBridgeIo->SegmentNumber;
 
     Status = PciRootBridgeIo->Configuration (PciRootBridgeIo, (VOID **) &Descriptors);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     while (Descriptors->Desc != ACPI_END_TAG_DESCRIPTOR) {
       if (Descriptors->ResType == ACPI_ADDRESS_SPACE_TYPE_BUS) {
@@ -113,7 +113,7 @@ PciSegmentLibDestructor (
   IN EFI_SYSTEM_TABLE          *SystemTable
   )
 {
-  FreePool (mPciRootBridgeData);
+  FreePool(mPciRootBridgeData);
 
   return EFI_SUCCESS;
 }

@@ -409,7 +409,7 @@ AcpiPlatformEntryPoint (
   // Find the AcpiTable protocol
   //
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 #if DEBUG_ACPI
@@ -479,7 +479,7 @@ AcpiPlatformEntryPoint (
                                 &gEfiLoadedImageProtocolGuid,
                                 (VOID*)&LoadedImage
                                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
   Status = gBS->HandleProtocol (
@@ -487,7 +487,7 @@ AcpiPlatformEntryPoint (
                                 &gEfiSimpleFileSystemProtocolGuid,
                                 (VOID *) &Volume
                                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_ABORTED;
   }
 
@@ -495,7 +495,7 @@ AcpiPlatformEntryPoint (
   //
   // Open the root directory of the volume
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = Volume->OpenVolume (Volume, &Root);
   }
 #else //Multiple FS protocols
@@ -513,9 +513,9 @@ AcpiPlatformEntryPoint (
     // Loop through all the file system structures and cache the file system info data
     for (Index =0; Index < mFsCount; Index++) {
       Status = gBS->HandleProtocol (mFs[Index], &gEfiSimpleFileSystemProtocolGuid, (VOID **)&Volume);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = Volume->OpenVolume (Volume, &Root);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           // Get information about the volume
           /*          Size = 0;
            Status = Root->GetInfo (Root, &gEfiFileSystemInfoGuid, &Size, mFsInfo[Index]);
@@ -540,7 +540,7 @@ AcpiPlatformEntryPoint (
     StrCpyS(FileName, 32, ACPInames[Index]);
     //    DBG(L"File probe %s\n", FileName);
     Status = Root->Open (Root, &ThisFile, FileName, EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     /* Get right size we need to allocate */
@@ -556,7 +556,7 @@ AcpiPlatformEntryPoint (
     DBG(L"Buffer size %d\n", BufferSize);
     //    DBG(L"GetInfo success!\n");
     Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //      DBG(L"No pool!\n");
       continue;
     }
@@ -568,11 +568,11 @@ AcpiPlatformEntryPoint (
                                 );
     FileSize = Info->FileSize;
     //        DBG(L"FileSize = %d!\n", FileSize);
-    gBS->FreePool (Info);
+    gBS->FreePool(Info);
     //Slice - this is the problem.
     //    FileBuffer = AllocatePool(FileSize);
     Status = gBS->AllocatePool (EfiBootServicesData, FileSize, (VOID **) &FileBuffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //      DBG(L"No pool for FileBuffer size %d!\n", FileSize);
       continue;
     }
@@ -582,7 +582,7 @@ AcpiPlatformEntryPoint (
      EFI_SIZE_TO_PAGES(FileSize),
      FileBuffer
      );
-     if (EFI_ERROR (Status)) {
+     if (EFI_ERROR(Status)) {
      //      DBG(L"No pool for FileBuffer size %d!\n", FileSize);
      continue;
      }

@@ -55,7 +55,7 @@ FindAnchorVolumeDescriptorPointer (
       sizeof (UDF_ANCHOR_VOLUME_DESCRIPTOR_POINTER),
       (VOID *)AnchorPoint
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -142,7 +142,7 @@ StartMainVolumeDescriptorSequence (
       BlockSize,
       Buffer
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Out_Free;
     }
 
@@ -188,7 +188,7 @@ Out_Free:
   //
   // Free block read buffer
   //
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return Status;
 }
@@ -356,7 +356,7 @@ FindFileSetDescriptor (
 
   LogicalVolDesc = &Volume->LogicalVolDesc;
   Status = GetLongAdLsn (Volume, &LogicalVolDesc->LogicalVolumeContentsUse, &Lsn);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -375,7 +375,7 @@ FindFileSetDescriptor (
     sizeof (Volume->FileSetDesc),
     &Volume->FileSetDesc
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -421,7 +421,7 @@ ReadVolumeFileStructure (
     DiskIo,
     &AnchorPoint
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -441,7 +441,7 @@ ReadVolumeFileStructure (
     &AnchorPoint,
     Volume
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -881,7 +881,7 @@ GetAedAdsOffset (
                                               ParentIcb,
                                               Ad,
                                               &Lsn);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -902,7 +902,7 @@ GetAedAdsOffset (
     ExtentLength,
     Data
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -926,7 +926,7 @@ GetAedAdsOffset (
   *Length = AllocExtDesc->LengthOfAllocationDescriptors;
 
 Exit:
-  FreePool (Data);
+  FreePool(Data);
 
   return Status;
 }
@@ -978,7 +978,7 @@ GetAedAdsData (
     &Offset,
     Length
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1139,7 +1139,7 @@ ReadFile (
     // There are no extents for this FE/EFE. All data is inline.
     //
     Status = GetFileEntryData (FileEntryData, Volume->FileEntrySize, &Data, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1186,7 +1186,7 @@ ReadFile (
     // for start reading them out.
     //
     Status = GetAdsInformation (FileEntryData, Volume->FileEntrySize, &Data, &Length);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1228,10 +1228,10 @@ ReadFile (
         if (!DoFreeAed) {
           DoFreeAed = TRUE;
         } else {
-          FreePool (DataBak);
+          FreePool(DataBak);
         }
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto Error_Get_Aed;
         }
         ASSERT (Data != NULL);
@@ -1247,7 +1247,7 @@ ReadFile (
                                            ParentIcb,
                                            Ad,
                                            &Lsn);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Done;
       }
 
@@ -1265,7 +1265,7 @@ ReadFile (
           &ReadFileInfo->FileData,
           ReadFileInfo->ReadLength
           );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto Error_Alloc_Buffer_To_Next_Ad;
         }
 
@@ -1280,7 +1280,7 @@ ReadFile (
           (VOID *)((UINT8 *)ReadFileInfo->FileData +
                    ReadFileInfo->ReadLength)
           );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto Error_Read_Disk_Blk;
         }
 
@@ -1332,7 +1332,7 @@ ReadFile (
           (VOID *)((UINT8 *)ReadFileInfo->FileData +
                    DataOffset)
           );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           goto Error_Read_Disk_Blk;
         }
 
@@ -1379,7 +1379,7 @@ ReadFile (
 
 Done:
   if (DoFreeAed) {
-    FreePool (Data);
+    FreePool(Data);
   }
 
   return Status;
@@ -1387,11 +1387,11 @@ Done:
 Error_Read_Disk_Blk:
 Error_Alloc_Buffer_To_Next_Ad:
   if (ReadFileInfo->Flags != ReadFileSeekAndRead) {
-    FreePool (ReadFileInfo->FileData);
+    FreePool(ReadFileInfo->FileData);
   }
 
   if (DoFreeAed) {
-    FreePool (Data);
+    FreePool(Data);
   }
 
 Error_Get_Aed:
@@ -1462,7 +1462,7 @@ InternalFindFile (
 
     DuplicateFid (Parent->FileIdentifierDesc, &File->FileIdentifierDesc);
     if (File->FileIdentifierDesc == NULL) {
-      FreePool (File->FileEntry);
+      FreePool(File->FileEntry);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1487,7 +1487,7 @@ InternalFindFile (
       &ReadDirInfo,
       &FileIdentifierDesc
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Status == EFI_DEVICE_ERROR) {
         Status = EFI_NOT_FOUND;
       }
@@ -1516,7 +1516,7 @@ InternalFindFile (
       }
     } else {
       Status = GetFileNameFromFid (FileIdentifierDesc, ARRAY_SIZE (FoundFileName), FoundFileName);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         break;
       }
 
@@ -1529,14 +1529,14 @@ InternalFindFile (
       }
     }
 
-    FreePool ((VOID *)FileIdentifierDesc);
+    FreePool((VOID *)FileIdentifierDesc);
   }
 
   if (ReadDirInfo.DirectoryData != NULL) {
     //
     // Free all allocated resources for the directory listing.
     //
-    FreePool (ReadDirInfo.DirectoryData);
+    FreePool(ReadDirInfo.DirectoryData);
   }
 
   if (Found) {
@@ -1558,7 +1558,7 @@ InternalFindFile (
         &FileIdentifierDesc->Icb,
         &CompareFileEntry
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Error_Find_Fe;
       }
 
@@ -1569,8 +1569,8 @@ InternalFindFile (
                       Volume->FileEntrySize) != 0) {
         File->FileEntry = CompareFileEntry;
       } else {
-        FreePool ((VOID *)FileIdentifierDesc);
-        FreePool ((VOID *)CompareFileEntry);
+        FreePool((VOID *)FileIdentifierDesc);
+        FreePool((VOID *)CompareFileEntry);
         Status = EFI_NOT_FOUND;
       }
     }
@@ -1579,7 +1579,7 @@ InternalFindFile (
   return Status;
 
 Error_Find_Fe:
-  FreePool ((VOID *)FileIdentifierDesc);
+  FreePool((VOID *)FileIdentifierDesc);
 
   return Status;
 }
@@ -1615,7 +1615,7 @@ ReadUdfVolumeInformation (
     DiskIo,
     Volume
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1623,7 +1623,7 @@ ReadUdfVolumeInformation (
   // Find File Set Descriptor
   //
   Status = FindFileSetDescriptor (BlockIo, DiskIo, Volume);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1664,7 +1664,7 @@ FindRootDirectory (
     &Volume->FileSetDesc.RootDirectoryIcb,
     &File->FileEntry
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1681,8 +1681,8 @@ FindRootDirectory (
     &Volume->FileSetDesc.RootDirectoryIcb,
     File
     );
-  if (EFI_ERROR (Status)) {
-    FreePool (File->FileEntry);
+  if (EFI_ERROR(Status)) {
+    FreePool(File->FileEntry);
   }
 
   return Status;
@@ -1721,7 +1721,7 @@ FindFileEntry (
   VOID                *ReadBuffer;
 
   Status = GetLongAdLsn (Volume, Icb, &Lsn);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1742,7 +1742,7 @@ FindFileEntry (
     Volume->FileEntrySize,
     ReadBuffer
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Error_Read_Disk_Blk;
   }
 
@@ -1763,7 +1763,7 @@ FindFileEntry (
 
 Error_Invalid_Fe:
 Error_Read_Disk_Blk:
-  FreePool (ReadBuffer);
+  FreePool(ReadBuffer);
 
   return Status;
 }
@@ -1854,7 +1854,7 @@ FindFile (
           //
           DuplicateFid (Root->FileIdentifierDesc, &File->FileIdentifierDesc);
           if (File->FileIdentifierDesc == NULL) {
-            FreePool (File->FileEntry);
+            FreePool(File->FileEntry);
             Status = EFI_OUT_OF_RESOURCES;
           }
         }
@@ -1872,7 +1872,7 @@ FindFile (
                                  File);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -1881,7 +1881,7 @@ FindFile (
     // FID descriptors.
     //
     if (FE_ICB_FILE_TYPE (File->FileEntry) == UdfFileEntrySymlink) {
-      FreePool ((VOID *)File->FileIdentifierDesc);
+      FreePool((VOID *)File->FileIdentifierDesc);
 
       FileEntry = File->FileEntry;
 
@@ -1892,9 +1892,9 @@ FindFile (
                                FileEntry,
                                File);
 
-      FreePool (FileEntry);
+      FreePool(FileEntry);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -1964,7 +1964,7 @@ ReadDirectoryEntry (
       FileEntryData,
       &ReadFileInfo
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -2159,7 +2159,7 @@ ResolveSymlink (
     FileEntryData,
     &ReadFileInfo
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2207,7 +2207,7 @@ ResolveSymlink (
       DuplicateFid (PreviousFile.FileIdentifierDesc,
                     &File->FileIdentifierDesc);
       if (File->FileIdentifierDesc == NULL) {
-        FreePool (File->FileEntry);
+        FreePool(File->FileEntry);
         Status = EFI_OUT_OF_RESOURCES;
         goto Error_Find_File;
       }
@@ -2276,7 +2276,7 @@ ResolveSymlink (
       NULL,
       File
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error_Find_File;
     }
 
@@ -2311,7 +2311,7 @@ ResolveSymlink (
   //
   // Unmap the symlink file.
   //
-  FreePool (ReadFileInfo.FileData);
+  FreePool(ReadFileInfo.FileData);
 
   //
   // Check the content in the resolved file info.
@@ -2328,7 +2328,7 @@ Error_Find_File:
     CleanupFileInformation (&PreviousFile);
   }
 
-  FreePool (ReadFileInfo.FileData);
+  FreePool(ReadFileInfo.FileData);
 
   return Status;
 }
@@ -2345,10 +2345,10 @@ CleanupFileInformation (
   )
 {
   if (File->FileEntry != NULL) {
-    FreePool (File->FileEntry);
+    FreePool(File->FileEntry);
   }
   if (File->FileIdentifierDesc != NULL) {
-    FreePool ((VOID *)File->FileIdentifierDesc);
+    FreePool((VOID *)File->FileIdentifierDesc);
   }
 
   ZeroMem ((VOID *)File, sizeof (UDF_FILE_INFO));
@@ -2394,7 +2394,7 @@ GetFileSize (
     File->FileEntry,
     &ReadFileInfo
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2723,7 +2723,7 @@ GetVolumeSize (
     ExtentAd->ExtentLength,
     LogicalVolInt
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Out_Free;
   }
 
@@ -2783,7 +2783,7 @@ Out_Free:
   //
   // Free Logical Volume Integrity Descriptor
   //
-  FreePool (LogicalVolInt);
+  FreePool(LogicalVolInt);
 
   return Status;
 }
@@ -2838,7 +2838,7 @@ ReadFileData (
                  File->FileEntry,
                  &ReadFileInfo
                  );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -2881,7 +2881,7 @@ SupportUdfFileSystem (
     ControllerHandle,
     EFI_OPEN_PROTOCOL_GET_PROTOCOL
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 

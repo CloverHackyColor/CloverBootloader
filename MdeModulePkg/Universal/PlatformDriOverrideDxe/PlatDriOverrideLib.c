@@ -93,9 +93,9 @@ PopDevPathStack (
     if (DevicePath != NULL) {
       *DevicePath = DuplicateDevicePath (DevicePathStackItem->DevicePath);
     }
-    FreePool (DevicePathStackItem->DevicePath);
+    FreePool(DevicePathStackItem->DevicePath);
     RemoveEntryList (&DevicePathStackItem->Link);
-    FreePool (DevicePathStackItem);
+    FreePool(DevicePathStackItem);
     return EFI_SUCCESS;
   }
   return EFI_NOT_FOUND;
@@ -253,13 +253,13 @@ UpdateFvFileDevicePath (
                   &TempDevicePath,
                   &FoundFvHandle
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (
                     FoundFvHandle,
                     &gEfiFirmwareVolume2ProtocolGuid,
                     (VOID **) &Fv
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Set FV ReadFile Buffer as NULL, only need to check whether input Fv file exist there
       //
@@ -272,7 +272,7 @@ UpdateFvFileDevicePath (
                      &Attributes,
                      &AuthenticationStatus
                      );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         return EFI_ALREADY_STARTED;
       }
     }
@@ -289,13 +289,13 @@ UpdateFvFileDevicePath (
                   &gEfiLoadedImageProtocolGuid,
                   (VOID **) &LoadedImage
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (
                     LoadedImage->DeviceHandle,
                     &gEfiFirmwareVolume2ProtocolGuid,
                     (VOID **) &Fv
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = Fv->ReadFile (
                      Fv,
                      FileGuid,
@@ -305,7 +305,7 @@ UpdateFvFileDevicePath (
                      &Attributes,
                      &AuthenticationStatus
                      );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         FindFvFile = TRUE;
         FoundFvHandle = LoadedImage->DeviceHandle;
       }
@@ -338,7 +338,7 @@ UpdateFvFileDevicePath (
                      &Attributes,
                      &AuthenticationStatus
                      );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Skip if input Fv file not in the FV
         //
@@ -410,7 +410,7 @@ GetVariableAndSize (
     // Read variable into the allocated buffer.
     //
     Status = gRT->GetVariable (Name, VendorGuid, NULL, &BufferSize, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       BufferSize = 0;
     }
   }
@@ -493,7 +493,7 @@ ConnectDevicePath (
       RemainingDevicePath = Instance;
       Status              = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &Handle);
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         if (Handle == PreviousHandle) {
           //
           // If no forward progress is made try invoking the Dispatcher.
@@ -505,7 +505,7 @@ ConnectDevicePath (
           Status = gDS->Dispatch ();
         }
 
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           PreviousHandle = Handle;
           //
           // Connect all drivers that apply to Handle and RemainingDevicePath,
@@ -528,12 +528,12 @@ ConnectDevicePath (
       //
       // Loop until RemainingDevicePath is an empty device path
       //
-    } while (!EFI_ERROR (Status) && !IsDevicePathEnd (RemainingDevicePath));
+    } while (!EFI_ERROR(Status) && !IsDevicePathEnd (RemainingDevicePath));
 
   } while (DevicePath != NULL);
 
   if (CopyOfDevicePath != NULL) {
-    FreePool (CopyOfDevicePath);
+    FreePool(CopyOfDevicePath);
   }
   //
   // All handle with DevicePath exists in the handle database
@@ -572,7 +572,7 @@ FreeMappingDatabase (
     // Free PLATFORM_OVERRIDE_ITEM.ControllerDevicePath[]
     //
     if (OverrideItem->ControllerDevicePath != NULL){
-      FreePool (OverrideItem->ControllerDevicePath);
+      FreePool(OverrideItem->ControllerDevicePath);
     }
 
     ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
@@ -589,14 +589,14 @@ FreeMappingDatabase (
       //
       ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
       RemoveEntryList (&DriverImageInfo->Link);
-      FreePool (DriverImageInfo);
+      FreePool(DriverImageInfo);
     }
     //
     // Free PLATFORM_OVERRIDE_ITEM itself
     //
     OverrideItemListIndex = GetNextNode (MappingDataBase, OverrideItemListIndex);
     RemoveEntryList (&OverrideItem->Link);
-    FreePool (OverrideItem);
+    FreePool(OverrideItem);
   }
 
   InitializeListHead (MappingDataBase);
@@ -787,7 +787,7 @@ InitOverridesMapping (
       }
     }
 
-    FreePool (VariableBuffer);
+    FreePool(VariableBuffer);
     if (Corrupted) {
       FreeMappingDatabase (MappingDataBase);
       return EFI_VOLUME_CORRUPTED;
@@ -894,7 +894,7 @@ DeleteOverridesVariables (
   // Check NotEnd to get all PlatDriOverX variable(s)
   //
   while ((VariableBuffer != NULL) && ((*(UINT32*)VariableBuffer) != 0)) {
-    FreePool (VariableBuffer);
+    FreePool(VariableBuffer);
     UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver%d", VariableNum);
     VariableBuffer = GetVariableAndSize (OverrideVariableName, &gEfiCallerIdGuid, &BufferSize);
     VariableNum++;
@@ -910,7 +910,7 @@ DeleteOverridesVariables (
                   0,
                   NULL
                   );
-  ASSERT (!EFI_ERROR (Status));
+  ASSERT (!EFI_ERROR(Status));
   for (Index = 1; Index < VariableNum; Index++) {
     UnicodeSPrint (OverrideVariableName, sizeof (OverrideVariableName), L"PlatDriOver%d", Index);
     Status = gRT->SetVariable (
@@ -920,7 +920,7 @@ DeleteOverridesVariables (
                     0,
                     NULL
                     );
-    ASSERT (!EFI_ERROR (Status));
+    ASSERT (!EFI_ERROR(Status));
   }
   return EFI_SUCCESS;
 }
@@ -1083,9 +1083,9 @@ SaveOverridesMapping (
                     VariableNeededSize,
                     VariableBuffer
                     );
-    FreePool (VariableBuffer);
+    FreePool(VariableBuffer);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (NumIndex > 0) {
         //
         // Delete all PlatDriOver variables when full mapping can't be set.
@@ -1139,7 +1139,7 @@ GetBindingProtocolFromImageHandle (
                   &DriverBindingHandleCount,
                   &DriverBindingHandleBuffer
                   );
-  if (EFI_ERROR (Status) || (DriverBindingHandleCount == 0)) {
+  if (EFI_ERROR(Status) || (DriverBindingHandleCount == 0)) {
     return NULL;
   }
 
@@ -1153,13 +1153,13 @@ GetBindingProtocolFromImageHandle (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
     if (DriverBindingInterface->ImageHandle == ImageHandle) {
       *BindingHandle = DriverBindingHandleBuffer[Index];
-      FreePool (DriverBindingHandleBuffer);
+      FreePool(DriverBindingHandleBuffer);
       return DriverBindingInterface;
     }
   }
@@ -1167,7 +1167,7 @@ GetBindingProtocolFromImageHandle (
   //
   // If no Driver Binding Protocol instance is found
   //
-  FreePool (DriverBindingHandleBuffer);
+  FreePool(DriverBindingHandleBuffer);
   *BindingHandle = NULL;
   return NULL;
 }
@@ -1261,7 +1261,7 @@ GetDriverFromMapping (
                   &gEfiDevicePathProtocolGuid,
                   (VOID **) &ControllerDevicePath
                   );
-  if (EFI_ERROR (Status) || ControllerDevicePath == NULL) {
+  if (EFI_ERROR(Status) || ControllerDevicePath == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1334,8 +1334,8 @@ GetDriverFromMapping (
         // use this function could promise the FV file device path is right.
         //
         Status = UpdateFvFileDevicePath (&TempDriverImagePath, NULL, CallerImageHandle);
-        if (!EFI_ERROR (Status)) {
-          FreePool (DriverImageInfo->DriverImagePath);
+        if (!EFI_ERROR(Status)) {
+          FreePool(DriverImageInfo->DriverImagePath);
           DriverImageInfo->DriverImagePath = TempDriverImagePath;
         }
         //
@@ -1350,7 +1350,7 @@ GetDriverFromMapping (
                         &ImageHandleCount,
                         &ImageHandleBuffer
                         );
-        if (EFI_ERROR (Status) || (ImageHandleCount == 0)) {
+        if (EFI_ERROR(Status) || (ImageHandleCount == 0)) {
           return EFI_NOT_FOUND;
         }
 
@@ -1364,7 +1364,7 @@ GetDriverFromMapping (
                           &gEfiLoadedImageDevicePathProtocolGuid,
                           (VOID **) &LoadedImageDevicePath
                           );
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             //
             // Maybe not all EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL existed.
             //
@@ -1422,13 +1422,13 @@ GetDriverFromMapping (
                           &gEfiBusSpecificDriverOverrideProtocolGuid,
                           (VOID **) &BusSpecificDriverOverride
                           );
-          if (!EFI_ERROR (Status) && (BusSpecificDriverOverride != NULL)) {
+          if (!EFI_ERROR(Status) && (BusSpecificDriverOverride != NULL)) {
             ImageHandle = NULL;
             Status = BusSpecificDriverOverride->GetDriver (
                                                   BusSpecificDriverOverride,
                                                   &ImageHandle
                                                   );
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               //
               // Find its related driver binding protocol
               // Driver binding handle may be different with its driver's Image handle
@@ -1464,12 +1464,12 @@ GetDriverFromMapping (
                             0,
                             &ImageHandle
                             );
-            if (!EFI_ERROR (Status)) {
+            if (!EFI_ERROR(Status)) {
               //
               // Try to start the driver
               //
               Status = gBS->StartImage (ImageHandle, NULL, NULL);
-              if (EFI_ERROR (Status)){
+              if (EFI_ERROR(Status)){
                 DriverImageInfo->UnStartable = TRUE;
                 DriverImageInfo->ImageHandle = NULL;
               } else {
@@ -1491,7 +1491,7 @@ GetDriverFromMapping (
             }
           }
         }
-        FreePool (ImageHandleBuffer);
+        FreePool(ImageHandleBuffer);
       }
     }
     ImageInfoListIndex = GetNextNode (&OverrideItem->DriverInfoList, ImageInfoListIndex);
@@ -1839,7 +1839,7 @@ DeleteDriverImage (
              NULL,
              NULL
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -1917,7 +1917,7 @@ DeleteDriverImage (
   if (OverrideItem->DriverInfoNum == 0) {
     FreePool(OverrideItem->ControllerDevicePath);
     RemoveEntryList (&OverrideItem->Link);
-    FreePool (OverrideItem);
+    FreePool(OverrideItem);
   }
 
   if (!Found) {

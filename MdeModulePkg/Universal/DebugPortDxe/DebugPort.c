@@ -70,7 +70,7 @@ GetDebugPortVariable (
   }
 
   if (IsDevicePathEnd (DevicePath)) {
-    FreePool (DebugPortVariable);
+    FreePool(DebugPortVariable);
     return NULL;
   } else {
     CopyMem (
@@ -134,7 +134,7 @@ InitializeDebugPortDriver (
              &gDebugPortComponentName,
              &gDebugPortComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -217,8 +217,8 @@ DebugPortSupported (
       Status = EFI_UNSUPPORTED;
     }
 
-    FreePool (DebugPortVariable);
-    if (EFI_ERROR (Status)) {
+    FreePool(DebugPortVariable);
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -231,7 +231,7 @@ DebugPortSupported (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -280,7 +280,7 @@ DebugPortStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -298,7 +298,7 @@ DebugPortStart (
                                                 mDebugPortDevice.DataBits,
                                                 mDebugPortDevice.StopBits
                                                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mDebugPortDevice.BaudRate          = 0;
     mDebugPortDevice.Parity            = DefaultParity;
     mDebugPortDevice.DataBits          = 0;
@@ -313,7 +313,7 @@ DebugPortStart (
                                                   mDebugPortDevice.DataBits,
                                                   mDebugPortDevice.StopBits
                                                   );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseProtocol (
             ControllerHandle,
             &gEfiSerialIoProtocolGuid,
@@ -356,7 +356,7 @@ DebugPortStart (
                   NULL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           ControllerHandle,
           &gEfiSerialIoProtocolGuid,
@@ -377,7 +377,7 @@ DebugPortStart (
                   EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->CloseProtocol (
           ControllerHandle,
           &gEfiSerialIoProtocolGuid,
@@ -435,7 +435,7 @@ DebugPortStop (
           ControllerHandle
           );
 
-    FreePool (mDebugPortDevice.DebugPortDevicePath);
+    FreePool(mDebugPortDevice.DebugPortDevicePath);
 
     return EFI_SUCCESS;
   } else {
@@ -449,7 +449,7 @@ DebugPortStop (
                     mDebugPortDevice.DebugPortDeviceHandle
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     //
@@ -464,7 +464,7 @@ DebugPortStop (
                     NULL
                     );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->OpenProtocol (
             ControllerHandle,
             &gEfiSerialIoProtocolGuid,
@@ -555,7 +555,7 @@ DebugPortRead (
       } else {
         Timeout = 0;
       }
-    } else if (EFI_ERROR (Status)) {
+    } else if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -602,7 +602,7 @@ DebugPortWrite (
   DebugPortDevice = DEBUGPORT_DEVICE_FROM_THIS (This);
 
   WriteSize       = 8;
-  for (Position = 0; Position < *BufferSize && !EFI_ERROR (Status); Position += WriteSize) {
+  for (Position = 0; Position < *BufferSize && !EFI_ERROR(Status); Position += WriteSize) {
     DebugPortDevice->SerialIoBinding->GetControl (
                                         DebugPortDevice->SerialIoBinding,
                                         &SerialControl
@@ -652,7 +652,7 @@ DebugPortPoll (
                                               &SerialControl
                                               );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if ((SerialControl & EFI_SERIAL_INPUT_BUFFER_EMPTY) != 0) {
       Status = EFI_NOT_READY;
     } else {
@@ -692,12 +692,12 @@ ImageUnloadHandler (
   // Driver is stopped already.
   //
   Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentNameProtocolGuid, &ComponentName);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ComponentName = NULL;
   }
 
   Status = gBS->HandleProtocol (ImageHandle, &gEfiComponentName2ProtocolGuid, &ComponentName2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ComponentName2 = NULL;
   }
 

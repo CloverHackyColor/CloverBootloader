@@ -80,14 +80,14 @@ Returns:
   // Check to see if there's a file system on the volume
   //
   Status = FatOpenDevice (Volume);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
   //
   // Initialize cache
   //
   Status = FatInitializeDiskCache (Volume);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
   //
@@ -99,7 +99,7 @@ Returns:
                   &Volume->VolumeInterface,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
   //
@@ -109,7 +109,7 @@ Returns:
   Volume->Valid = TRUE;
 
 Done:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FatFreeVolume (Volume);
   }
 
@@ -150,7 +150,7 @@ Returns:
                     &Volume->VolumeInterface,
                     NULL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -164,7 +164,7 @@ Returns:
   // we can not acquire again.
   //
   Status = FatAcquireLockOrFail ();
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     LockedByMe = TRUE;
   }
   //
@@ -243,7 +243,7 @@ Returns:
   DiskIo  = Volume->DiskIo;
   Status  = DiskIo->ReadDisk (DiskIo, Volume->MediaId, 0, sizeof (FatBs), &FatBs);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INIT, "FatOpenDevice: read of part_lba failed %r\n", Status));
     return Status;
   }
@@ -374,7 +374,7 @@ Returns:
   //
   if (FatType != FAT12) {
     Status = FatAccessVolumeDirty (Volume, READ_DISK, &Volume->NotDirtyValue);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 

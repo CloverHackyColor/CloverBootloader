@@ -467,7 +467,7 @@ UfsCreateScsiCommandDesc (
     MapLength = Length;
     Status = IoMmuMap (MapOp, Buffer, &MapLength, &BufferPhyAddr, BufferMap);
 
-    if (EFI_ERROR (Status) || (MapLength != Length)) {
+    if (EFI_ERROR(Status) || (MapLength != Length)) {
       DEBUG ((DEBUG_ERROR, "UfsCreateScsiCommandDesc: Fail to map data buffer.\n"));
       return EFI_OUT_OF_RESOURCES;
     }
@@ -806,7 +806,7 @@ UfsRwDeviceDesc (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -815,7 +815,7 @@ UfsRwDeviceDesc (
   // Fill transfer request descriptor to this slot.
   //
   Status = UfsCreateDMCommandDesc (Private, &Packet, Trd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -836,7 +836,7 @@ UfsRwDeviceDesc (
   //
   Address = Private->UfsHcBase + UFS_HC_UTRLDBR_OFFSET;
   Status = UfsWaitMemSet (Address, BIT0 << Slot, 0, Packet.Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -936,7 +936,7 @@ UfsRwFlags (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -945,7 +945,7 @@ UfsRwFlags (
   //
   Trd    = ((UTP_TRD*)Private->UtpTrlBase) + Slot;
   Status = UfsCreateDMCommandDesc (Private, &Packet, Trd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -966,7 +966,7 @@ UfsRwFlags (
   //
   Address = Private->UfsHcBase + UFS_HC_UTRLDBR_OFFSET;
   Status = UfsWaitMemSet (Address, BIT0 << Slot, 0, Packet.Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1047,13 +1047,13 @@ UfsExecNopCmds (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Trd    = ((UTP_TRD*)Private->UtpTrlBase) + Slot;
   Status = UfsCreateNopCommandDesc (Private, Trd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1074,7 +1074,7 @@ UfsExecNopCmds (
   //
   Address = Private->UfsHcBase + UFS_HC_UTRLDBR_OFFSET;
   Status = UfsWaitMemSet (Address, BIT0 << Slot, 0, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1132,7 +1132,7 @@ UfsExecScsiCmds (
   // Find out which slot of transfer request list is available.
   //
   Status = UfsFindAvailableSlotInTrl (Private, &Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1143,7 +1143,7 @@ UfsExecScsiCmds (
   // Fill transfer request descriptor to this slot.
   //
   Status = UfsCreateScsiCommandDesc (Private, Lun, Packet, Trd, &PacketBufferMap);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1160,7 +1160,7 @@ UfsExecScsiCmds (
   //
   Address = Private->UfsHcBase + UFS_HC_UTRLDBR_OFFSET;
   Status = UfsWaitMemSet (Address, BIT0 << Slot, 0, Packet->Timeout);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Exit;
   }
 
@@ -1278,7 +1278,7 @@ UfsExecUicCommands (
   //
   Address = Private->UfsHcBase + UFS_HC_STATUS_OFFSET;
   Status = UfsWaitMemSet (Address, UFS_HC_HCS_UCRDY, UFS_HC_HCS_UCRDY, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1292,7 +1292,7 @@ UfsExecUicCommands (
   Address = UfsHcBase + UFS_HC_IS_OFFSET;
   Data    = MmioRead32 (Address);
   Status  = UfsWaitMemSet (Address, UFS_HC_IS_UCCS, UFS_HC_IS_UCCS, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1315,7 +1315,7 @@ UfsExecUicCommands (
   if ((Data & UFS_HC_HCS_DP) == 0) {
     Address = UfsHcBase + UFS_HC_IS_OFFSET;
     Status  = UfsWaitMemSet (Address, UFS_HC_IS_ULSS, UFS_HC_IS_ULSS, UFS_TIMEOUT);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
     return EFI_NOT_FOUND;
@@ -1360,7 +1360,7 @@ UfsEnableHostController (
     // Wait until HCE is read as '0' before continuing.
     //
     Status = UfsWaitMemSet (Address, UFS_HC_HCE_EN, 0, UFS_TIMEOUT);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_DEVICE_ERROR;
     }
   }
@@ -1373,7 +1373,7 @@ UfsEnableHostController (
   // Wait until HCE is read as '1' before continuing.
   //
   Status = UfsWaitMemSet (Address, UFS_HC_HCE_EN, UFS_HC_HCE_EN, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1404,7 +1404,7 @@ UfsDeviceDetection (
   //
   for (Retry = 0; Retry < 3; Retry++) {
     Status = UfsExecUicCommands (Private, UfsUicDmeLinkStartup, 0, 0, 0);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       break;
     }
 
@@ -1461,7 +1461,7 @@ UfsInitTaskManagementRequestList (
              &CmdDescPhyAddr,
              &CmdDescMapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1528,7 +1528,7 @@ UfsInitTransferRequestList (
              &CmdDescPhyAddr,
              &CmdDescMapping
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -1573,25 +1573,25 @@ UfsControllerInit (
   EFI_STATUS             Status;
 
   Status = UfsEnableHostController (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UfsDevicePei: Enable Host Controller Fails, Status = %r\n", Status));
     return Status;
   }
 
   Status = UfsDeviceDetection (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UfsDevicePei: Device Detection Fails, Status = %r\n", Status));
     return Status;
   }
 
   Status = UfsInitTaskManagementRequestList (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UfsDevicePei: Task management list initialization Fails, Status = %r\n", Status));
     return Status;
   }
 
   Status = UfsInitTransferRequestList (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UfsDevicePei: Transfer list initialization Fails, Status = %r\n", Status));
 
     if (Private->TmrlMapping != NULL) {
@@ -1654,7 +1654,7 @@ UfsControllerStop (
   // Wait until HCE is read as '0' before continuing.
   //
   Status = UfsWaitMemSet (Address, UFS_HC_HCE_EN, 0, UFS_TIMEOUT);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 

@@ -142,7 +142,7 @@ SmmInstallConfigurationTable (
         //
         // Free the old table after updating System Table to the new table pointer.
         //
-        FreePool (OldTable);
+        FreePool(OldTable);
       } else {
         //
         // Update System Table

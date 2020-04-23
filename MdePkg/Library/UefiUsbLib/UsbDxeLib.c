@@ -627,7 +627,7 @@ UsbClearEndpointHalt (
                     UsbIo,
                     &InterfaceDescriptor
                     );
-  if (EFI_ERROR (Result)) {
+  if (EFI_ERROR(Result)) {
     return Result;
   }
 
@@ -637,7 +637,7 @@ UsbClearEndpointHalt (
                       Index,
                       &EndpointDescriptor
                       );
-    if (EFI_ERROR (Result)) {
+    if (EFI_ERROR(Result)) {
       continue;
     }
 

@@ -164,10 +164,10 @@ HideSlideFromOS (
   //
   DTInit ((VOID *)(UINTN)(*BootArgs->deviceTreeP), BootArgs->deviceTreeLength);
   Status = DTLookupEntry (NULL, "/chosen", &Chosen);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_VERBOSE, "Found /chosen\n"));
-    Status = DTGetProperty (Chosen, "boot-args", (VOID **)&ArgsStr, &ArgsSize);
-    if (!EFI_ERROR (Status) && ArgsSize > 0) {
+    Status = DTGetProperty(Chosen, "boot-args", (VOID **)&ArgsStr, &ArgsSize);
+    if (!EFI_ERROR(Status) && ArgsSize > 0) {
       DEBUG ((DEBUG_VERBOSE, "Found boot-args in /chosen\n"));
       RemoveArgumentFromCommandLine (ArgsStr, "slide=");
     }
@@ -361,7 +361,7 @@ GetVariableCsrActiveConfig (
   // Otherwise call the original function.
   //
   Status = OrgGetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "GetVariable csr-active-config returned %r\n", Status));
 
     *Config = 0;
@@ -403,7 +403,7 @@ GetVariableBootArgs (
   if (!mStoredBootArgsVarSet) {
     Slide  = GenerateRandomSlideValue ();
     Status = OrgGetVariable (VariableName, VendorGuid, Attributes, &StoredBootArgsSize, mStoredBootArgsVar);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       mStoredBootArgsVar[0] = '\0';
     }
 

@@ -629,7 +629,7 @@ VOID CheckHardware()
                                     &HandleCount,
                                     &HandleBuffer
                                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 //    DBG("PciIo handles count=%d\n", HandleCount);
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
       Handle = HandleBuffer[HandleIndex];
@@ -638,7 +638,7 @@ VOID CheckHardware()
                                     &gEfiPciIoProtocolGuid,
                                     (VOID **)&PciIo
                                     );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         UINT32 deviceid;
         /* Read PCI BUS */
         PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
@@ -1952,7 +1952,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
                                     &HandleBuffer
                                     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
       Handle = HandleBuffer[HandleIndex];
       Status = gBS->HandleProtocol (
@@ -1960,7 +1960,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
                                     &gEfiPciIoProtocolGuid,
                                     (VOID **)&PciIo
                                     );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         Status = PciIo->Pci.Read (
                                   PciIo,

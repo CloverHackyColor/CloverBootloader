@@ -303,7 +303,7 @@ GetFvbCountAndBuffer (
   *NumberHandles = BufferSize / sizeof(EFI_HANDLE);
   if (EFI_ERROR(Status)) {
     *NumberHandles = 0;
-    FreePool (*Buffer);
+    FreePool(*Buffer);
     *Buffer = NULL;
   }
 
@@ -845,7 +845,7 @@ VariableWriteServiceInitializeSmm (
   EFI_STATUS    Status;
 
   Status = VariableWriteServiceInitialize ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "Variable write service initialization failed. Status = %r\n", Status));
   }
 
@@ -892,12 +892,12 @@ SmmFtwNotificationEvent (
   // Ensure SMM FTW protocol is installed.
   //
   Status = GetFtwProtocol ((VOID **)&FtwProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = FtwProtocol->GetMaxBlockSize (FtwProtocol, &FtwMaxBlockSize);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     ASSERT (PcdGet32 (PcdFlashNvStorageVariableSize) <= FtwMaxBlockSize);
   }
 
@@ -913,7 +913,7 @@ SmmFtwNotificationEvent (
   // Find the proper FVB protocol for variable.
   //
   Status = GetFvbInfoByAddress (NvStorageVariableBase, NULL, &FvbProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -952,7 +952,7 @@ MmVariableServiceInitialize (
   // Variable initialize.
   //
   Status = VariableCommonInitialize ();
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Install the Smm Variable Protocol on a new handle.
@@ -964,7 +964,7 @@ MmVariableServiceInitialize (
                     EFI_NATIVE_INTERFACE,
                     &gSmmVariable
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = gMmst->MmInstallProtocolInterface (
                     &VariableHandle,
@@ -972,7 +972,7 @@ MmVariableServiceInitialize (
                     EFI_NATIVE_INTERFACE,
                     &mSmmVarCheck
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   mVariableBufferPayloadSize = GetMaxVariableSize () +
                                OFFSET_OF (SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY, Name) - GetVariableHeaderSize ();
@@ -982,14 +982,14 @@ MmVariableServiceInitialize (
                     mVariableBufferPayloadSize,
                     (VOID **)&mVariableBufferPayload
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   ///
   /// Register SMM variable SMI handler
   ///
   VariableHandle = NULL;
   Status = gMmst->MmiHandlerRegister (SmmVariableHandler, &gEfiSmmVariableProtocolGuid, &VariableHandle);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Notify the variable wrapper driver the variable service is ready
@@ -1004,7 +1004,7 @@ MmVariableServiceInitialize (
                     SmmEndOfDxeCallback,
                     &SmmEndOfDxeRegistration
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (!PcdGetBool (PcdEmuVariableNvModeEnable)) {
     //
@@ -1015,7 +1015,7 @@ MmVariableServiceInitialize (
                       SmmFtwNotificationEvent,
                       &SmmFtwRegistration
                       );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     SmmFtwNotificationEvent (NULL, NULL, NULL);
   } else {

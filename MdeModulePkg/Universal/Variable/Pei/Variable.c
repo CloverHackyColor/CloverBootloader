@@ -966,7 +966,7 @@ FindVariable (
                VendorGuid,
                PtrTrack
                );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1032,7 +1032,7 @@ PeiGetVariable (
   // Find existing variable
   //
   Status = FindVariable (VariableName, VariableGuid, &Variable, &StoreInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   GetVariableHeader (&StoreInfo, Variable.CurrPtr, &VariableHeader);
@@ -1181,7 +1181,7 @@ PeiGetNextVariableName (
                    GetVendorGuidPtr (VariableHeader, StoreInfo.AuthFlag),
                    &VariablePtrTrack
                    );
-        if (!EFI_ERROR (Status) && VariablePtrTrack.CurrPtr != Variable.CurrPtr) {
+        if (!EFI_ERROR(Status) && VariablePtrTrack.CurrPtr != Variable.CurrPtr) {
           Variable.CurrPtr = GetNextVariablePtr (&StoreInfo, Variable.CurrPtr, VariableHeader);
           continue;
         }
@@ -1199,7 +1199,7 @@ PeiGetNextVariableName (
                    GetVendorGuidPtr (VariableHeader, StoreInfo.AuthFlag),
                    &VariableInHob
                    );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           Variable.CurrPtr = GetNextVariablePtr (&StoreInfo, Variable.CurrPtr, VariableHeader);
           continue;
         }

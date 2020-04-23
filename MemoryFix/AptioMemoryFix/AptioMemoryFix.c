@@ -54,7 +54,7 @@ AptioMemoryFixEntrypoint (
     &Interface
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // In case for whatever reason one tried to reload the driver.
     //
@@ -68,7 +68,7 @@ AptioMemoryFixEntrypoint (
     &mAptioMemoryFixProtocol
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Print(L"AMF: protocol install failure - %r\n", Status);
     return Status;
   }
@@ -82,7 +82,7 @@ AptioMemoryFixEntrypoint (
   // Init VMem memory pool - will be used after ExitBootServices
   //
   Status = VmAllocateMemoryPool ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

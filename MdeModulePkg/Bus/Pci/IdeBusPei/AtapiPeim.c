@@ -35,7 +35,7 @@ AtapiPeimEntry (
   ATAPI_BLK_IO_DEV        *AtapiBlkIoDev;
 
   Status = PeiServicesRegisterForShadow (FileHandle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -45,7 +45,7 @@ AtapiPeimEntry (
               NULL,
               (VOID **) &AtaControllerPpi
               );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   AtapiBlkIoDev = AllocatePages (EFI_SIZE_TO_PAGES (sizeof (*AtapiBlkIoDev)));
   if (AtapiBlkIoDev == NULL) {
@@ -79,7 +79,7 @@ AtapiPeimEntry (
   DEBUG ((EFI_D_INFO, "Atatpi Device Count is %d\n", AtapiBlkIoDev->DeviceCount));
   if (AtapiBlkIoDev->DeviceCount != 0) {
     Status = PeiServicesInstallPpi (&AtapiBlkIoDev->PpiDescriptor);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
   }
@@ -321,7 +321,7 @@ AtapiReadBlocks (
             NumberOfBlocks,
             BlockSize
             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -424,7 +424,7 @@ AtapiGetBlockDeviceMediaInfo2 (
              DeviceIndex,
              &Media
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -605,7 +605,7 @@ AtapiEnumerateDevices (
         DEBUG ((EFI_D_INFO, "Atatpi MediaPresent is %d\n", MediaInfo.MediaPresent));
         DEBUG ((EFI_D_INFO, "Atatpi BlockSize is  0x%x\n", MediaInfo.BlockSize));
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo.MediaPresent = FALSE;
           AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo.LastBlock    = 0;
           AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo2.MediaPresent = FALSE;
@@ -650,7 +650,7 @@ DiscoverAtapiDevice (
   if (ATAPIIdentify (AtapiBlkIoDev, DevicePosition) == EFI_SUCCESS) {
 
     Status = Inquiry (AtapiBlkIoDev, DevicePosition, MediaInfo, MediaInfo2);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return TRUE;
     }
   }
@@ -729,7 +729,7 @@ CheckPowerMode (
   IoWrite8 (CommandRegister, AtaCommand);
 
   Status = WaitForBSYClear (AtapiBlkIoDev, &(AtapiBlkIoDev->IdeIoPortReg[Channel]), 3000);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_TIMEOUT;
   }
 
@@ -818,7 +818,7 @@ DetectIDEController (
   //  Wait 31 seconds for BSY clear
   //
   Status = WaitForBSYClear (AtapiBlkIoDev, &(AtapiBlkIoDev->IdeIoPortReg[Channel]), 31000);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   //

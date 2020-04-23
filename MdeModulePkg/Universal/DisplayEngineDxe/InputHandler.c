@@ -161,7 +161,7 @@ ReadString (
 
   do {
     Status = WaitForKeyStroke (&Key);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
 
     gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_BLACK, EFI_LIGHTGRAY));
     switch (Key.UnicodeChar) {
@@ -180,8 +180,8 @@ ReadString (
         break;
 
       case SCAN_ESC:
-        FreePool (TempString);
-        FreePool (BufferedString);
+        FreePool(TempString);
+        FreePool(BufferedString);
         gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
         gST->ConOut->EnableCursor (gST->ConOut, CursorVisible);
         return EFI_DEVICE_ERROR;
@@ -202,8 +202,8 @@ ReadString (
     case CHAR_CARRIAGE_RETURN:
       if (GetStringWidth (StringPtr) >= ((Minimum + 1) * sizeof (CHAR16))) {
 
-        FreePool (TempString);
-        FreePool (BufferedString);
+        FreePool(TempString);
+        FreePool(BufferedString);
         gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
         gST->ConOut->EnableCursor (gST->ConOut, CursorVisible);
         return EFI_SUCCESS;
@@ -216,8 +216,8 @@ ReadString (
           CreateDialog (&Key, &NullCharacter, gMiniString, gPressEnter, &NullCharacter, NULL);
         } while (Key.UnicodeChar != CHAR_CARRIAGE_RETURN);
 
-        FreePool (TempString);
-        FreePool (BufferedString);
+        FreePool(TempString);
+        FreePool(BufferedString);
         gST->ConOut->SetAttribute (gST->ConOut, EFI_TEXT_ATTR (EFI_LIGHTGRAY, EFI_BLACK));
         gST->ConOut->EnableCursor (gST->ConOut, CursorVisible);
         return EFI_DEVICE_ERROR;
@@ -1158,7 +1158,7 @@ AdjustOptionOrder (
     InsertHeadList (&Question->OptionListHead, &OneOfOption->Link);
   }
 
-  FreePool (HiiValueArray);
+  FreePool(HiiValueArray);
 
   return EFI_SUCCESS;
 }
@@ -1339,7 +1339,7 @@ GetSelectionInputPopUp (
     if (StrLen (StringPtr) > PopUpWidth) {
       PopUpWidth = StrLen (StringPtr);
     }
-    FreePool (StringPtr);
+    FreePool(StringPtr);
     HiiValue.Type = OneOfOption->OptionOpCode->Type;
     SetValuesByType (&HiiValue.Value, &OneOfOption->OptionOpCode->Value, HiiValue.Type);
     if (!OrderedList && (CompareHiiValue (&Question->CurrentValue, &HiiValue, &Result, NULL) == EFI_SUCCESS) && (Result == 0)) {
@@ -1438,7 +1438,7 @@ GetSelectionInputPopUp (
         TempStringPtr = AllocateZeroPool (sizeof (CHAR16) * (PopUpWidth - 1));
         ASSERT ( TempStringPtr != NULL );
         CopyMem (TempStringPtr, StringPtr, (sizeof (CHAR16) * (PopUpWidth - 5)));
-        FreePool (StringPtr);
+        FreePool(StringPtr);
         StringPtr = TempStringPtr;
         StrCatS (StringPtr, PopUpWidth - 1, L"...");
       }
@@ -1458,7 +1458,7 @@ GetSelectionInputPopUp (
         }
 
       Index2++;
-      FreePool (StringPtr);
+      FreePool(StringPtr);
     }
 
     Character = BOXDRAW_UP_RIGHT;
@@ -1635,7 +1635,7 @@ TheKey:
           }
         }
         if (CompareMem (ReturnValue, ValueArray, Question->CurrentValue.BufferLen) == 0) {
-          FreePool (ReturnValue);
+          FreePool(ReturnValue);
           return EFI_DEVICE_ERROR;
         } else {
           gUserInput->InputValue.Buffer = ReturnValue;

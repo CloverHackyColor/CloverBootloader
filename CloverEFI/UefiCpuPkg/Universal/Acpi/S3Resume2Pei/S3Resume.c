@@ -284,7 +284,7 @@ WriteToOsS3PerformanceData (
              NULL,
              (VOID **) &VariableServices
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   VarSize   = sizeof (EFI_PHYSICAL_ADDRESS);
   Status = VariableServices->GetVariable (
@@ -295,7 +295,7 @@ WriteToOsS3PerformanceData (
                                &VarSize,
                                &mAcpiLowMemoryBase
                                );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "Fail to retrieve variable to log S3 performance data \n"));
     return;
   }
@@ -394,7 +394,7 @@ S3ResumeBootOs (
   // Install BootScriptDonePpi
   //
   Status = PeiServicesInstallPpi (&mPpiListPostScriptTable);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Get ACPI Table Address
@@ -417,7 +417,7 @@ S3ResumeBootOs (
   // Install EndOfPeiPpi
   //
   Status = PeiServicesInstallPpi (&mPpiListEndOfPeiTable);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   PERF_CODE (
     WriteToOsS3PerformanceData ();
@@ -681,13 +681,13 @@ S3ResumeExecuteBootScript (
 
     DEBUG ((EFI_D_ERROR, "Close all SMRAM regions before executing boot script\n"));
 
-    for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR (Status); Index++) {
+    for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR(Status); Index++) {
       Status = SmmAccess->Close ((EFI_PEI_SERVICES **)GetPeiServicesTablePointer (), SmmAccess, Index);
     }
 
     DEBUG ((EFI_D_ERROR, "Lock all SMRAM regions before executing boot script\n"));
 
-    for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR (Status); Index++) {
+    for (Index = 0, Status = EFI_SUCCESS; !EFI_ERROR(Status); Index++) {
       Status = SmmAccess->Lock ((EFI_PEI_SERVICES **)GetPeiServicesTablePointer (), SmmAccess, Index);
     }
   }
@@ -827,7 +827,7 @@ S3RestoreConfig2 (
                             NULL,
                             (VOID **) &SmmAccess
                             );
-  for (Index = 0; !EFI_ERROR (Status); Index++) {
+  for (Index = 0; !EFI_ERROR(Status); Index++) {
     Status = SmmAccess->Open ((EFI_PEI_SERVICES **)GetPeiServicesTablePointer (), SmmAccess, Index);
   }
 
@@ -837,7 +837,7 @@ S3RestoreConfig2 (
                             NULL,
                             (VOID **) &VariableServices
                             );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -847,7 +847,7 @@ S3RestoreConfig2 (
              &TempAcpiS3Context,
              &VarSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   AcpiS3Context = (ACPI_S3_CONTEXT *)(UINTN)TempAcpiS3Context;
   ASSERT (AcpiS3Context != NULL);
@@ -857,7 +857,7 @@ S3RestoreConfig2 (
              NULL,
              NULL
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   VarSize   = sizeof (TempEfiBootScriptExecutorVariable);
   Status = RestoreLockBox (
@@ -865,14 +865,14 @@ S3RestoreConfig2 (
              &TempEfiBootScriptExecutorVariable,
              &VarSize
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = RestoreLockBox (
              &gEfiBootScriptExecutorContextGuid,
              NULL,
              NULL
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   EfiBootScriptExecutorVariable = (BOOT_SCRIPT_EXECUTOR_VARIABLE *) (UINTN) TempEfiBootScriptExecutorVariable;
 
@@ -889,8 +889,8 @@ S3RestoreConfig2 (
   // We just use restore all lock box in place, no need restore one by one.
   //
   Status = RestoreAllLockBoxInPlace ();
-  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     // Something wrong
     CpuDeadLoop ();
   }
@@ -984,7 +984,7 @@ PeimS3ResumeEntryPoint (
   // Install S3 Resume Ppi
   //
   Status = (**PeiServices).InstallPpi (PeiServices, &mPpiList);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

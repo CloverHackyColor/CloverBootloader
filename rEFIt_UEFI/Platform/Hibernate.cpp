@@ -1046,13 +1046,13 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   // If legacy boot-switch-vars exists (NVRAM working), then use it.
   //
   Status = GetVariable2 (L"boot-switch-vars", &gEfiAppleBootGuid, &Value, &Size);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Leave it as is.
     //
     DBG(" boot-switch-vars present\n");
     ZeroMem (Value, Size);
-    gBS->FreePool (Value);
+    gBS->FreePool(Value);
     return TRUE;
   }
   
@@ -1075,7 +1075,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     //
     Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
 	  DBG("get IOHR variable status=%s, size=%llu, RTC info=%d\n", strerror(Status), Size, HasHibernateInfoInRTC);
-    if (!HasHibernateInfo && !EFI_ERROR (Status) && Size == sizeof (RtcVars)) {
+    if (!HasHibernateInfo && !EFI_ERROR(Status) && Size == sizeof (RtcVars)) {
       CopyMem (RtcRawVars, Value, sizeof (RtcVars));
       HasHibernateInfo = (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
       RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L');
@@ -1084,12 +1084,12 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     //
     // Erase RTC variables in NVRAM.
     //
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gRT->SetVariable (L"IOHibernateRTCVariables", &gEfiAppleBootGuid,
                                  EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                  0, NULL);
       ZeroMem (Value, Size);
-      gBS->FreePool (Value);
+      gBS->FreePool(Value);
     }
     
     //
@@ -1133,7 +1133,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   //
   Value = NULL;
   Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DBG(" IOHibernateRTCVariables found - will be used as boot-switch-vars\n");
     //
     // Delete IOHibernateRTCVariables.
@@ -1175,7 +1175,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   //
   ZeroMem (Value, Size);
   if (HasIORTCVariables) {
-    gBS->FreePool (Value);
+    gBS->FreePool(Value);
   }
   
   if (EFI_ERROR(Status)) {

@@ -195,7 +195,7 @@ LocateAcpiTableInAcpiConfigurationTable (
   // Get ACPI ConfigurationTable (RSD_PTR)
   //
   Status = EfiGetSystemConfigurationTable(AcpiGuid, (VOID **)&Rsdp);
-  if (EFI_ERROR (Status) || (Rsdp == NULL)) {
+  if (EFI_ERROR(Status) || (Rsdp == NULL)) {
     return NULL;
   }
 

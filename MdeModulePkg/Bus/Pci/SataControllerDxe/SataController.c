@@ -263,7 +263,7 @@ InitializeSataControllerDriver (
              &gSataControllerComponentName,
              &gSataControllerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -305,7 +305,7 @@ SataControllerSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -320,7 +320,7 @@ SataControllerSupported (
                         sizeof (PciData.Hdr.ClassCode),
                         PciData.Hdr.ClassCode
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -377,7 +377,7 @@ SataControllerStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "SataControllerStart error. return status = %r\n", Status));
     return Status;
   }
@@ -414,7 +414,7 @@ SataControllerStart (
                     0,
                     &Private->OriginalPciAttributes
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
       goto Done;
   }
 
@@ -430,7 +430,7 @@ SataControllerStart (
                     0,
                     &Supports
                     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -443,7 +443,7 @@ SataControllerStart (
                       Supports,
                       NULL
                       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -457,7 +457,7 @@ SataControllerStart (
                         sizeof (PciData.Hdr.ClassCode),
                         PciData.Hdr.ClassCode
                         );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ASSERT (FALSE);
     goto Done;
   }
@@ -528,7 +528,7 @@ SataControllerStart (
                   );
 
 Done:
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
 
     gBS->CloseProtocol (
           Controller,
@@ -538,13 +538,13 @@ Done:
           );
     if (Private != NULL) {
       if (Private->DisqualifiedModes != NULL) {
-        FreePool (Private->DisqualifiedModes);
+        FreePool(Private->DisqualifiedModes);
       }
       if (Private->IdentifyData != NULL) {
-        FreePool (Private->IdentifyData);
+        FreePool(Private->IdentifyData);
       }
       if (Private->IdentifyValid != NULL) {
-        FreePool (Private->IdentifyValid);
+        FreePool(Private->IdentifyValid);
       }
       if (Private->PciAttributesChanged) {
         //
@@ -557,7 +557,7 @@ Done:
                  NULL
                  );
       }
-      FreePool (Private);
+      FreePool(Private);
     }
   }
 
@@ -602,7 +602,7 @@ SataControllerStop (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -618,19 +618,19 @@ SataControllerStop (
                   &(Private->IdeInit),
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   if (Private != NULL) {
     if (Private->DisqualifiedModes != NULL) {
-      FreePool (Private->DisqualifiedModes);
+      FreePool(Private->DisqualifiedModes);
     }
     if (Private->IdentifyData != NULL) {
-      FreePool (Private->IdentifyData);
+      FreePool(Private->IdentifyData);
     }
     if (Private->IdentifyValid != NULL) {
-      FreePool (Private->IdentifyValid);
+      FreePool(Private->IdentifyValid);
     }
     if (Private->PciAttributesChanged) {
       //
@@ -643,7 +643,7 @@ SataControllerStop (
                         NULL
                         );
     }
-    FreePool (Private);
+    FreePool(Private);
   }
 
   //
@@ -1032,7 +1032,7 @@ IdeInitCalculateMode (
   // Make sure we've got the valid identify data of the device from SubmitData()
   //
   if (!IdentifyValid) {
-    FreePool (*SupportedModes);
+    FreePool(*SupportedModes);
     return EFI_NOT_READY;
   }
 
@@ -1041,7 +1041,7 @@ IdeInitCalculateMode (
             (DisqualifiedModes->PioMode.Valid ? ((UINT16 *) &(DisqualifiedModes->PioMode.Mode)) : NULL),
             &SelectedMode
             );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     (*SupportedModes)->PioMode.Valid = TRUE;
     (*SupportedModes)->PioMode.Mode = SelectedMode;
 
@@ -1056,7 +1056,7 @@ IdeInitCalculateMode (
             &SelectedMode
             );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
 

@@ -47,7 +47,7 @@ GenericMemoryTestEntryPoint (
                   EFI_NATIVE_INTERFACE,
                   &mGenericMemoryTest
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }
@@ -74,7 +74,7 @@ ConvertToTestedMemory (
                   BaseAddress,
                   Length
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gDS->AddMemorySpace (
                     ((Capabilities & EFI_MEMORY_MORE_RELIABLE) == EFI_MEMORY_MORE_RELIABLE) ?
                     EfiGcdMemoryTypeMoreReliable : EfiGcdMemoryTypeSystemMemory,
@@ -131,7 +131,7 @@ InitializeMemoryTest (
                  MemorySpaceMap[Index].Length,
                  MemorySpaceMap[Index].Capabilities
                  );
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
       mTestedSystemMemory += MemorySpaceMap[Index].Length;
       mTotalSystemMemory += MemorySpaceMap[Index].Length;
     } else if ((MemorySpaceMap[Index].GcdMemoryType == EfiGcdMemoryTypeSystemMemory) ||
@@ -140,7 +140,7 @@ InitializeMemoryTest (
     }
   }
 
-  FreePool (MemorySpaceMap);
+  FreePool(MemorySpaceMap);
 
   *RequireSoftECCInit = FALSE;
   return EFI_SUCCESS;
@@ -253,7 +253,7 @@ GenCompatibleRangeTest (
                     CurrentBase,
                     &Descriptor
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -270,7 +270,7 @@ GenCompatibleRangeTest (
                  CurrentLength,
                  Descriptor.Capabilities
                  );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }

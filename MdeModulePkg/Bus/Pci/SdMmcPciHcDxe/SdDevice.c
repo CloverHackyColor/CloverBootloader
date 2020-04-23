@@ -91,7 +91,7 @@ SdCardVoltageCheck (
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (SdMmcStatusBlk.Resp0 != SdMmcCmdBlk.CommandArgument) {
       return EFI_DEVICE_ERROR;
     }
@@ -201,7 +201,7 @@ SdCardSendOpCond (
   SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -216,7 +216,7 @@ SdCardSendOpCond (
   SdMmcCmdBlk.CommandArgument = (VoltageWindow & 0xFFFFFF) | Switch | MaxPower | HostCapacity;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
@@ -306,7 +306,7 @@ SdCardSetRca (
   SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR6;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *Rca = (UINT16)(SdMmcStatusBlk.Resp0 >> 16);
   }
 
@@ -441,7 +441,7 @@ SdCardSetBusWidth (
   SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -544,7 +544,7 @@ SdCardSwitch (
   Packet.InTransferLength = 64;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -601,7 +601,7 @@ SdCardSendStatus (
   SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
 
   Status = SdMmcPassThruPassThru (PassThru, Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *DevStatus = SdMmcStatusBlk.Resp0;
   }
 
@@ -689,7 +689,7 @@ SdCardTuningClock (
   //
   HostCtrl2 = BIT6;
   Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -698,13 +698,13 @@ SdCardTuningClock (
   Retry = 0;
   do {
     Status = SdCardSendTuningBlk (PassThru, Slot);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "SdCardSendTuningBlk: Send tuning block fails with %r\n", Status));
       return Status;
     }
 
     Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, TRUE, sizeof (HostCtrl2), &HostCtrl2);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -722,7 +722,7 @@ SdCardTuningClock (
   //
   HostCtrl2 = (UINT8)~(BIT6 | BIT7);
   Status = SdMmcHcAndMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL2, sizeof (HostCtrl2), &HostCtrl2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   return EFI_DEVICE_ERROR;
@@ -757,13 +757,13 @@ SdCardSwitchBusWidth (
   UINT32              DevStatus;
 
   Status = SdCardSetBusWidth (PassThru, Slot, Rca, BusWidth);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "SdCardSwitchBusWidth: Switch to bus width %d fails with %r\n", BusWidth, Status));
     return Status;
   }
 
   Status = SdCardSendStatus (PassThru, Slot, Rca, &DevStatus);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "SdCardSwitchBusWidth: Send status fails with %r\n", Status));
     return Status;
   }
@@ -1084,7 +1084,7 @@ SdCardSetBusMode (
   Capability = &Private->Capability[Slot];
 
   Status = SdCardSelect (PassThru, Slot, Rca);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1094,7 +1094,7 @@ SdCardSetBusMode (
     // switch here irrespective of platform preference.
     //
     Status = SdCardSwitchBusWidth (PciIo, PassThru, Slot, Rca, 4);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1103,7 +1103,7 @@ SdCardSetBusMode (
   // Get the supported bus speed from SWITCH cmd return data group #1.
   //
   Status = SdCardSwitch (PassThru, Slot, 0xFF, 0xF, SdDriverStrengthIgnore, 0xF, FALSE, SwitchResp);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1114,18 +1114,18 @@ SdCardSetBusMode (
 
   if (!S18A) {
     Status = SdCardSwitchBusWidth (PciIo, PassThru, Slot, Rca, BusMode.BusWidth);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
 
   Status = SdCardSwitch (PassThru, Slot, BusMode.BusTiming, 0xF, BusMode.DriverStrength.Sd, 0xF, TRUE, SwitchResp);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcSetDriverStrength (Private->PciIo, Slot, BusMode.DriverStrength.Sd);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1135,18 +1135,18 @@ SdCardSetBusMode (
   if (BusMode.BusTiming == SdMmcSdHs) {
     HostCtrl1 = BIT2;
     Status = SdMmcHcOrMmio (PciIo, Slot, SD_MMC_HC_HOST_CTRL1, sizeof (HostCtrl1), &HostCtrl1);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
 
   Status = SdMmcHcUhsSignaling (Private->ControllerHandle, PciIo, Slot, BusMode.BusTiming);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdMmcHcClockSupply (PciIo, Slot, BusMode.ClockFreq * 1000, Private->BaseClkFreq[Slot], Private->ControllerVersion[Slot]);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1157,7 +1157,7 @@ SdCardSetBusMode (
                           EdkiiSdMmcSwitchClockFreqPost,
                           &BusMode.BusTiming
                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_ERROR,
         "%a: SD/MMC switch clock freq post notifier callback failed - %r\n",
@@ -1170,7 +1170,7 @@ SdCardSetBusMode (
 
   if ((BusMode.BusTiming == SdMmcUhsSdr104) || ((BusMode.BusTiming == SdMmcUhsSdr50) && (Capability->TuningSDR50 != 0))) {
     Status = SdCardTuningClock (PciIo, PassThru, Slot);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -1216,7 +1216,7 @@ SdCardIdentification (
   // 1. Send Cmd0 to the device
   //
   Status = SdCardReset (PassThru, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SdCardIdentification: Executing Cmd0 fails with %r\n", Status));
     return Status;
   }
@@ -1224,7 +1224,7 @@ SdCardIdentification (
   // 2. Send Cmd8 to the device
   //
   Status = SdCardVoltageCheck (PassThru, Slot, 0x1, 0xFF);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SdCardIdentification: Executing Cmd8 fails with %r\n", Status));
     return Status;
   }
@@ -1232,7 +1232,7 @@ SdCardIdentification (
   // 3. Send SDIO Cmd5 to the device to the SDIO device OCR register.
   //
   Status = SdioSendOpCond (PassThru, Slot, 0, FALSE);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SdCardIdentification: Found SDIO device, ignore it as we don't support\n"));
     return EFI_DEVICE_ERROR;
   }
@@ -1240,7 +1240,7 @@ SdCardIdentification (
   // 4. Send Acmd41 with voltage window 0 to the device
   //
   Status = SdCardSendOpCond (PassThru, Slot, 0, 0, FALSE, FALSE, FALSE, &Ocr);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "SdCardIdentification: Executing SdCardSendOpCond fails with %r\n", Status));
     return EFI_DEVICE_ERROR;
   }
@@ -1272,7 +1272,7 @@ SdCardIdentification (
   }
 
   Status = SdMmcHcRwMmio (PciIo, Slot, SD_MMC_HC_CTRL_VER, TRUE, sizeof (ControllerVer), &ControllerVer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1294,7 +1294,7 @@ SdCardIdentification (
   Retry = 0;
   do {
     Status = SdCardSendOpCond (PassThru, Slot, 0, Ocr, S18r, Xpc, TRUE, &Ocr);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "SdCardIdentification: SdCardSendOpCond fails with %r Ocr %x, S18r %x, Xpc %x\n", Status, Ocr, S18r, Xpc));
       return EFI_DEVICE_ERROR;
     }
@@ -1316,13 +1316,13 @@ SdCardIdentification (
        Private->Capability[Slot].Ddr50 != 0) &&
        ((Ocr & BIT24) != 0)) {
     Status = SdCardVoltageSwitch (PassThru, Slot);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "SdCardIdentification: Executing SdCardVoltageSwitch fails with %r\n", Status));
       Status = EFI_DEVICE_ERROR;
       goto Error;
     } else {
       Status = SdMmcHcStopClock (PciIo, Slot);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = EFI_DEVICE_ERROR;
         goto Error;
       }
@@ -1360,13 +1360,13 @@ SdCardIdentification (
   }
 
   Status = SdCardAllSendCid (PassThru, Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "SdCardIdentification: Executing SdCardAllSendCid fails with %r\n", Status));
     return Status;
   }
 
   Status = SdCardSetRca (PassThru, Slot, &Rca);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "SdCardIdentification: Executing SdCardSetRca fails with %r\n", Status));
     return Status;
   }

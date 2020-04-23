@@ -60,7 +60,7 @@ InitializeIsaBus(
              &gIsaBusComponentName,
              &gIsaBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -135,7 +135,7 @@ IsaBusControllerDriverSupported (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -158,7 +158,7 @@ IsaBusControllerDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -173,7 +173,7 @@ IsaBusControllerDriverSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -252,7 +252,7 @@ IsaBusControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -267,7 +267,7 @@ IsaBusControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     return Status;
   }
 
@@ -282,7 +282,7 @@ IsaBusControllerDriverStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  if (EFI_ERROR(Status) && Status != EFI_ALREADY_STARTED) {
     //
     // Close opened protocol
     //
@@ -306,7 +306,7 @@ IsaBusControllerDriverStart (
                   (VOID **) &GenMemoryTest
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = GenMemoryTest->CompatibleRangeTest (
                               GenMemoryTest,
                               0x100000,
@@ -342,7 +342,7 @@ IsaBusControllerDriverStart (
   IsaDevice = NULL;
   do {
     Status = IsaAcpi->DeviceEnumerate (IsaAcpi, &IsaDevice);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
     //
@@ -350,7 +350,7 @@ IsaBusControllerDriverStart (
     //
     ResourceList  = NULL;
     Status        = IsaAcpi->GetCurResource (IsaAcpi, IsaDevice, &ResourceList);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -370,7 +370,7 @@ IsaBusControllerDriverStart (
                &DevicePathData
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     //
@@ -386,7 +386,7 @@ IsaBusControllerDriverStart (
     //
     // Report Status Code here when failed to resource conflicts
     //
-    if (EFI_ERROR (Status) && (Status != EFI_UNSUPPORTED)) {
+    if (EFI_ERROR(Status) && (Status != EFI_UNSUPPORTED)) {
       //
       // It's hard to tell which resource conflicts
       //
@@ -463,7 +463,7 @@ IsaBusControllerDriverStop (
                     This->DriverBindingHandle,
                     Controller
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -473,7 +473,7 @@ IsaBusControllerDriverStop (
                     This->DriverBindingHandle,
                     Controller
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -500,7 +500,7 @@ IsaBusControllerDriverStop (
                     Controller,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
 
       IsaIoDevice = ISA_IO_DEVICE_FROM_ISA_IO_THIS (IsaIo);
 
@@ -523,9 +523,9 @@ IsaBusControllerDriverStop (
                       NULL
                       );
 
-      if (!EFI_ERROR (Status)) {
-        FreePool (IsaIoDevice->DevicePath);
-        FreePool (IsaIoDevice);
+      if (!EFI_ERROR(Status)) {
+        FreePool(IsaIoDevice->DevicePath);
+        FreePool(IsaIoDevice);
       } else {
         //
         // Re-open PCI IO Protocol on behalf of the child device
@@ -542,7 +542,7 @@ IsaBusControllerDriverStop (
       }
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       AllChildrenStopped = FALSE;
     }
   }
@@ -635,7 +635,7 @@ IsaCreateDevice (
                   &IsaIoDevice->IsaIo,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -647,7 +647,7 @@ IsaCreateDevice (
                   IsaIoDevice->Handle,
                   EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->UninstallMultipleProtocolInterfaces (
            IsaIoDevice->Handle,
            &gEfiDevicePathProtocolGuid,
@@ -660,12 +660,12 @@ IsaCreateDevice (
 
 Done:
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (IsaIoDevice->DevicePath != NULL) {
-      FreePool (IsaIoDevice->DevicePath);
+      FreePool(IsaIoDevice->DevicePath);
     }
 
-    FreePool (IsaIoDevice);
+    FreePool(IsaIoDevice);
   }
 
   return Status;

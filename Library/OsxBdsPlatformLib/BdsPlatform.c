@@ -141,7 +141,7 @@ PrintMemoryMap (
     MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
   }
 
-  gBS->FreePool (MemMapPtr);
+  gBS->FreePool(MemMapPtr);
 }
 #endif
 
@@ -204,7 +204,7 @@ UpdateMemoryMap (
         // The memory type is assigned in EfiLdr
         //
         Status = gDS->GetMemorySpaceDescriptor (MemoryDescHob.MemDesc[Index].PhysicalStart, &Descriptor);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
         if (Descriptor.GcdMemoryType != EfiGcdMemoryTypeReserved) {
@@ -220,7 +220,7 @@ UpdateMemoryMap (
                         MemoryDescHob.MemDesc[Index].PhysicalStart,
                         LShiftU64 (MemoryDescHob.MemDesc[Index].NumberOfPages, EFI_PAGE_SHIFT)
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
 //          DEBUG ((EFI_D_ERROR, "FreeMemorySpace fail - %r!\n", Status));
           continue;
         }
@@ -228,7 +228,7 @@ UpdateMemoryMap (
                         MemoryDescHob.MemDesc[Index].PhysicalStart,
                         LShiftU64 (MemoryDescHob.MemDesc[Index].NumberOfPages, EFI_PAGE_SHIFT)
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
 //          DEBUG ((EFI_D_ERROR, "RemoveMemorySpace fail - %r!\n", Status));
           continue;
         }
@@ -255,7 +255,7 @@ UpdateMemoryMap (
                       LShiftU64 (MemoryDescHob.MemDesc[Index].NumberOfPages, EFI_PAGE_SHIFT),
                       MemoryDescHob.MemDesc[Index].Attribute
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
 //        DEBUG ((EFI_D_ERROR, "AddMemorySpace fail - %r!\n", Status));
 /*        if ((MemoryDescHob.MemDesc[Index].Type == EfiACPIReclaimMemory) ||
             (MemoryDescHob.MemDesc[Index].Type == EfiACPIMemoryNVS)) {
@@ -263,7 +263,7 @@ UpdateMemoryMap (
           // For EfiACPIReclaimMemory and EfiACPIMemoryNVS, it must success.
           // For EfiReservedMemoryType, there maybe overlap. So skip check here.
           //
-//          ASSERT_EFI_ERROR (Status);
+//          ASSERT_EFI_ERROR(Status);
         } */
         continue;
       }
@@ -275,12 +275,12 @@ UpdateMemoryMap (
                       (UINTN)MemoryDescHob.MemDesc[Index].NumberOfPages,
                       &Memory
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
 //        DEBUG ((EFI_D_ERROR, "AllocatePages fail - %r!\n", Status));
         //
         // For the page added, it must be allocated.
         //
-//        ASSERT_EFI_ERROR (Status);
+//        ASSERT_EFI_ERROR(Status);
         continue;
       }
     }
@@ -356,19 +356,19 @@ Returns:
                                     &HandleArrayCount,
                                     &HandleArray
                                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleArrayCount; Index++) {
       Status = gBS->HandleProtocol (
                                     HandleArray[Index],
                                     &gEfiPciIoProtocolGuid,
                                     (VOID **)&PciIo
                                     );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Find the USB host controller controller
         //
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x09, 3, &Class);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           if ((PCI_CLASS_SERIAL == Class[2]) &&
               (PCI_CLASS_SERIAL_USB == Class[1])) {
             if (PCI_IF_UHCI == Class[0]) {
@@ -436,7 +436,7 @@ Returns:
     return Status;
   }
   if (HandleArray) {
-    gBS->FreePool (HandleArray);
+    gBS->FreePool(HandleArray);
   }
   return EFI_SUCCESS;
 }
@@ -590,12 +590,12 @@ Returns:
                   );
 //  DEBUG ((EFI_D_INFO, "Pci Root bridge handle is 0x%X\n", RootHandle));
   
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = gBS->ConnectController (RootHandle, NULL, NULL, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -637,7 +637,7 @@ Returns:
                   &gEfiDevicePathProtocolGuid,
                   (VOID*)&DevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 #if NOSERIAL  
@@ -710,7 +710,7 @@ GetGopDevicePath (
                   &TempPciDevicePath,
                   &PciDeviceHandle
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -729,13 +729,13 @@ GetGopDevicePath (
                   &GopHandleCount,
                   &GopHandleBuffer
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Add all the child handles as possible Console Device
     //
     for (Index = 0; Index < GopHandleCount; Index++) {
       Status = gBS->HandleProtocol (GopHandleBuffer[Index], &gEfiDevicePathProtocolGuid, (VOID*)&TempDevicePath);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
       if (CompareMem (
@@ -760,7 +760,7 @@ GetGopDevicePath (
         BdsLibUpdateConsoleVariable (VarConsoleOutDev, TempDevicePath, NULL);
       }
     }
-    gBS->FreePool (GopHandleBuffer);
+    gBS->FreePool(GopHandleBuffer);
   }
 
   return EFI_SUCCESS;
@@ -798,7 +798,7 @@ Returns:
                   &gEfiDevicePathProtocolGuid,
                   (VOID*)&DevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -841,7 +841,7 @@ Returns:
                   &gEfiDevicePathProtocolGuid,
                   (VOID*)&DevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -895,13 +895,13 @@ Returns:
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   for (Index = 0; Index < HandleCount; Index++) {
     Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID*)&PciIo);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -915,7 +915,7 @@ Returns:
                       sizeof (Pci) / sizeof (UINT32),
                       &Pci
                       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -961,7 +961,7 @@ Returns:
     }
   }
   
-  gBS->FreePool (HandleBuffer);
+  gBS->FreePool(HandleBuffer);
   
   return EFI_SUCCESS;
 }
@@ -1062,7 +1062,7 @@ Returns:
   // Connect the all the default console with current console variable
   //
   Status = BdsLibConnectAllDefaultConsoles ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1184,7 +1184,7 @@ Returns:
   //
   if (QuietBoot) {
     Status = EnableQuietBoot (PcdGetPtr(PcdLogoFile));
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DisableQuietBoot ();
       return;
     }
@@ -1193,7 +1193,7 @@ Returns:
     // Perform system diagnostic
     //
     Status = BaseMemoryTest (MemoryTestLevel);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DisableQuietBoot ();
     }
 
@@ -1265,7 +1265,7 @@ Returns:
   // Connect platform console
   //
   Status = PlatformBdsConnectConsole (gPlatformConsole);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // Here OEM/IBV can customize with defined action
     //
@@ -1282,7 +1282,7 @@ Returns:
                   &UserInputDurationTime
                   );
 //  ASSERT (Status == EFI_SUCCESS);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
      /*Status = */gBS->SetTimer (UserInputDurationTime, TimerRelative, 3000000);
   }
 
@@ -1343,7 +1343,7 @@ Returns:
   gBS->CloseEvent (UserInputDurationTime);
   Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Enter Setup if user input 
     //
@@ -1388,7 +1388,7 @@ Returns:
   TmpStr = Option->StatusString;
   if (TmpStr != NULL) {
     BdsLibOutputStrings (gST->ConOut, TmpStr, Option->Description, L"\n\r", NULL);
-    gBS->FreePool (TmpStr);
+    gBS->FreePool(TmpStr);
   }
 }
 
@@ -1431,7 +1431,7 @@ Returns:
   TmpStr = Option->StatusString;
   if (TmpStr != NULL) {
     BdsLibOutputStrings (gST->ConOut, TmpStr, Option->Description, L"\n\r", NULL);
-    gBS->FreePool (TmpStr);
+    gBS->FreePool(TmpStr);
   }
 
 }
@@ -1577,8 +1577,8 @@ Returns:
 									 EFI_SIZE_TO_PAGES(TableLen),
 									 &BufferPtr
 									 );
-//		ASSERT_EFI_ERROR (Status);
-    if (EFI_ERROR (Status)) {
+//		ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 		AcpiTableNew = (VOID *)(UINTN)BufferPtr;
@@ -1655,8 +1655,8 @@ Returns:
                   EFI_SIZE_TO_PAGES(BufferLen),
                   &BufferPtr
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -1755,8 +1755,8 @@ Returns:
                   EFI_SIZE_TO_PAGES(Data32),
                   &BufferPtr
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   MpsFloatingPointerNew = (EFI_LEGACY_MP_TABLE_FLOATING_POINTER *)(UINTN)BufferPtr;

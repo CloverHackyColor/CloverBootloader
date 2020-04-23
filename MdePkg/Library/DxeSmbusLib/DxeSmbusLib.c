@@ -38,7 +38,7 @@ SmbusLibConstructor (
   EFI_STATUS  Status;
 
   Status = gBS->LocateProtocol (&gEfiSmbusHcProtocolGuid, NULL, (VOID**) &mSmbus);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   ASSERT (mSmbus != NULL);
 
   return Status;

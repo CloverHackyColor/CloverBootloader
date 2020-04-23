@@ -215,7 +215,7 @@ PageAlloc (
 
   Status = SmmInternalAllocatePages (AllocateAnyPages, EfiRuntimeServicesData,
                                      Pages, &Memory, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Memory = 0;
   }
 
@@ -519,7 +519,7 @@ SetGuardPage (
                                     EFI_PAGE_SIZE,
                                     EFI_MEMORY_RP
                                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     mOnGuarding = FALSE;
   }
 }
@@ -549,7 +549,7 @@ UnsetGuardPage (
                                     EFI_PAGE_SIZE,
                                     EFI_MEMORY_RP
                                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
     mOnGuarding = FALSE;
   }
 }
@@ -1377,7 +1377,7 @@ VerifyMemoryGuard (
                                   EFI_PAGE_SIZE,
                                   &Attribute
                                   );
-  if (EFI_ERROR (Status) || (Attribute & EFI_MEMORY_RP) == 0) {
+  if (EFI_ERROR(Status) || (Attribute & EFI_MEMORY_RP) == 0) {
     DEBUG ((DEBUG_ERROR, "Head Guard is not set at: %016lx (%016lX)!!!\r\n",
             Address, Attribute));
     DumpGuardedMemoryBitmap ();
@@ -1392,7 +1392,7 @@ VerifyMemoryGuard (
                                   EFI_PAGE_SIZE,
                                   &Attribute
                                   );
-  if (EFI_ERROR (Status) || (Attribute & EFI_MEMORY_RP) == 0) {
+  if (EFI_ERROR(Status) || (Attribute & EFI_MEMORY_RP) == 0) {
     DEBUG ((DEBUG_ERROR, "Tail Guard is not set at: %016lx (%016lX)!!!\r\n",
             Address, Attribute));
     DumpGuardedMemoryBitmap ();

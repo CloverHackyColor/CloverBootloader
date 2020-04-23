@@ -48,7 +48,7 @@ PeiReportStatusCode (
              (VOID **)&StatusCodePpi
              );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = StatusCodePpi->ReportStatusCode (
                             PeiServices,
                             CodeType,

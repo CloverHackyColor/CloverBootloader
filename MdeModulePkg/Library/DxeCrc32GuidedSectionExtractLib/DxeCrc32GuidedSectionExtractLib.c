@@ -177,7 +177,7 @@ Crc32GuidedSectionHandler (
   // Check whether there exists EFI_SECURITY_POLICY_PROTOCOL_GUID.
   //
   Status = gBS->LocateProtocol (&gEfiSecurityPolicyProtocolGuid, NULL, &DummyInterface);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // If SecurityPolicy Protocol exist, AUTH platform override bit is set.
     //

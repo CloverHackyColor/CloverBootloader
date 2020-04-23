@@ -139,7 +139,7 @@ UpdateSystemTableConsole (
     //
     Instance  = GetNextDevicePathInstance (&VarConsole, &DevicePathSize);
     if (Instance == NULL) {
-      FreePool (FullDevicePath);
+      FreePool(FullDevicePath);
 //      ASSERT (FALSE);
       return FALSE;
     }
@@ -152,7 +152,7 @@ UpdateSystemTableConsole (
                    &Instance,
                    &NewHandle
                    );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Get the console protocol on this console device handle
       //
@@ -161,7 +161,7 @@ UpdateSystemTableConsole (
                      ConsoleGuid,
                      &Interface
                      );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Update new console handle in System Table.
         //
@@ -302,8 +302,8 @@ BdsLibUpdateConsoleVariable (
   if ((DevicePathSize == 0) && (Status == EFI_NOT_FOUND)) {
     Status = EFI_SUCCESS;
   }
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -380,7 +380,7 @@ BdsLibConnectConsoleVariable (
     //
     Instance  = GetNextDevicePathInstance (&CopyOfDevicePath, &Size);
     if (Instance == NULL) {
-      FreePool (StartDevicePath);
+      FreePool(StartDevicePath);
       return EFI_UNSUPPORTED;
     }
     
@@ -401,7 +401,7 @@ BdsLibConnectConsoleVariable (
        || (DevicePathSubType (Instance) == MSG_USB_WWID_DP)
        )) {
       Status = BdsLibConnectUsbDevByShortFormDP (0xFF, Instance);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         DeviceExist = TRUE;
       }
     } else {
@@ -410,7 +410,7 @@ BdsLibConnectConsoleVariable (
       //
       Status = BdsLibConnectDevicePath (Instance);
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // Delete the instance from the console variable
         //
@@ -422,7 +422,7 @@ BdsLibConnectConsoleVariable (
     FreePool(Instance);
   } while (CopyOfDevicePath != NULL);
 
-  FreePool (StartDevicePath);
+  FreePool(StartDevicePath);
 
   if (!DeviceExist) {
     return EFI_NOT_FOUND;
@@ -532,7 +532,7 @@ BdsLibConnectAllDefaultConsoles (
   // so we check the status here.
   //
   Status = BdsLibConnectConsoleVariable (L"ConOut");
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -611,7 +611,7 @@ BdsLibConnectAllDefaultConsolesWithOutConIn (
   // so we check the status here.
   //
   Status = BdsLibConnectConsoleVariable (L"ConOut");
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -877,7 +877,7 @@ ConvertBmpToGopBlt (
         // Other bit format BMP is not supported.
         //
         if (IsAllocated) {
-          FreePool (*GopBlt);
+          FreePool(*GopBlt);
           *GopBlt = NULL;
         }
         return EFI_UNSUPPORTED;
@@ -953,14 +953,14 @@ EnableQuietBoot (
   // Try to open GOP first
   //
   Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
-  if (EFI_ERROR (Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (EFI_ERROR(Status) && FeaturePcdGet (PcdUgaConsumeSupport)) {
     GraphicsOutput = NULL;
     //
     // Open GOP failed, try to open UGA
     //
     Status = gBS->HandleProtocol (gST->ConsoleOutHandle, &gEfiUgaDrawProtocolGuid, (VOID **) &UgaDraw);
   }
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -984,7 +984,7 @@ EnableQuietBoot (
 
   } else if (UgaDraw != NULL && FeaturePcdGet (PcdUgaConsumeSupport)) {
     Status = UgaDraw->GetMode (UgaDraw, &SizeOfX, &SizeOfY, &ColorDepth, &RefreshRate);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_UNSUPPORTED;
     }
   } else {
@@ -1020,7 +1020,7 @@ EnableQuietBoot (
                           &CoordinateX,
                           &CoordinateY
                           );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         goto Done;
       }
 
@@ -1029,7 +1029,7 @@ EnableQuietBoot (
       //
       if (Format != EfiBadgingFormatBMP) {
         if (ImageData != NULL) {
-          FreePool (ImageData);
+          FreePool(ImageData);
         }
         continue;
       }
@@ -1038,7 +1038,7 @@ EnableQuietBoot (
       // Get the specified image from FV.
       //
       Status = GetSectionFromAnyFv (LogoFile, EFI_SECTION_RAW, 0, (VOID **) &ImageData, &ImageSize);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_UNSUPPORTED;
       }
 
@@ -1052,7 +1052,7 @@ EnableQuietBoot (
     }
 
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
     }
     Blt = NULL;
     Status = ConvertBmpToGopBlt (
@@ -1063,8 +1063,8 @@ EnableQuietBoot (
               &Height,
               &Width
               );
-    if (EFI_ERROR (Status)) {
-      FreePool (ImageData);
+    if (EFI_ERROR(Status)) {
+      FreePool(ImageData);
 
       if (Badging == NULL) {
         return Status;
@@ -1167,7 +1167,7 @@ EnableQuietBoot (
       //
       // Report displayed Logo information.
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         NumberOfLogos++;
 
         if (LogoWidth == 0) {
@@ -1195,7 +1195,7 @@ EnableQuietBoot (
       }
     }
 
-    FreePool (ImageData);
+    FreePool(ImageData);
 
     if (Badging == NULL) {
       break;
@@ -1208,7 +1208,7 @@ Done:
     // No logo displayed.
     //
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
     }
 
     return Status;
@@ -1228,7 +1228,7 @@ Done:
     // More than one Logo displayed, get merged BltBuffer using VideoToBuffer operation. 
     //
     if (Blt != NULL) {
-      FreePool (Blt);
+      FreePool(Blt);
     }
 
     //
@@ -1282,10 +1282,10 @@ Done:
     }
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     BootLogo->SetBootLogo (BootLogo, LogoBlt, LogoDestX, LogoDestY, LogoWidth, LogoHeight);
   }
-  FreePool (LogoBlt);
+  FreePool(LogoBlt);
 
   return Status;
 }

@@ -561,7 +561,7 @@ ReallocateReservedPool (
 **/
 VOID
 EFIAPI
-FreePool (
+FreePool(
   IN VOID   *Buffer
   )
 {

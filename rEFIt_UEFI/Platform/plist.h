@@ -71,7 +71,7 @@ ParseXML (
 //VOID RenderSVGfont(NSVGfont  *fontSVG);
 
 TagPtr
-GetProperty (
+GetProperty(
         TagPtr dict,
   CONST CHAR8* key
   );
@@ -119,7 +119,7 @@ IsPropertyFalse (
   );
 
 INTN
-GetPropertyInteger (
+GetPropertyInteger(
   TagPtr Prop,
   INTN Default
   );

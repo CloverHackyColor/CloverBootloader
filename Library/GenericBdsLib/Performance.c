@@ -107,7 +107,7 @@ GetNameFromHandle (
                   (VOID **) &Image
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
                     Handle,
                     &gEfiDriverBindingProtocolGuid,
@@ -116,7 +116,7 @@ GetNameFromHandle (
                     NULL,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return ;
     }
     //
@@ -161,7 +161,7 @@ AllocateMemoryForPerformanceData (
                     EFI_SIZE_TO_PAGES (mAcpiLowMemoryLength),
                     &mAcpiLowMemoryBase
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gRT->SetVariable (
              L"PerfDataMemAddr",
              &gPerformanceProtocolGuid,
@@ -252,7 +252,7 @@ WriteBootToOsPerformanceData (
                     &VarSize,
                     &mAcpiLowMemoryBase
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Fail to get the variable, return.
       //
@@ -271,7 +271,7 @@ WriteBootToOsPerformanceData (
                   &NoHandles,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
 
@@ -380,8 +380,8 @@ WriteBootToOsPerformanceData (
 
 Done:
 
-  FreePool (Handles);
-  FreePool (PerfEntriesAsDxeHandle);
+  FreePool(Handles);
+  FreePool(PerfEntriesAsDxeHandle);
 
   mPerfHeader.Signiture = PERFORMANCE_SIGNATURE;
 

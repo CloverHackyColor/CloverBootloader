@@ -187,7 +187,7 @@ Uhci2SetState (
   Uhc     = UHC_FROM_USB2_HC_PROTO (This);
   Status  = Uhci2GetState (This, &CurState);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_DEVICE_ERROR;
   }
 
@@ -242,7 +242,7 @@ Uhci2SetState (
   case EfiUsbHcStateSuspend:
     Status = Uhci2SetState (This, EfiUsbHcStateHalt);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_DEVICE_ERROR;
       goto ON_EXIT;
     }
@@ -697,13 +697,13 @@ Uhci2ControlTransfer (
   //
   Status = UhciMapUserRequest (Uhc, Request, &RequestPhy, &RequestMap);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
   Status = UhciMapUserData (Uhc, TransferDirection, Data, DataLength, &PktId, &DataPhy, &DataMap);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Uhc->PciIo->Unmap (Uhc->PciIo, RequestMap);
     goto ON_EXIT;
   }
@@ -855,7 +855,7 @@ Uhci2BulkTransfer (
 
   Status = UhciMapUserData (Uhc, Direction, *Data, DataLength, &PktId, &DataPhy, &DataMap);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -1065,7 +1065,7 @@ Uhci2AsyncInterruptTransfer (
              IsSlowDevice
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto DESTORY_QH;
   }
 
@@ -1189,7 +1189,7 @@ Uhci2SyncInterruptTransfer (
              &DataMap
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto ON_EXIT;
   }
 
@@ -1374,7 +1374,7 @@ UhciDriverBindingSupported (
                       EFI_OPEN_PROTOCOL_BY_DRIVER
                       );
 
-  if (EFI_ERROR (OpenStatus)) {
+  if (EFI_ERROR(OpenStatus)) {
     return OpenStatus;
   }
 
@@ -1386,7 +1386,7 @@ UhciDriverBindingSupported (
                         &UsbClassCReg
                         );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_UNSUPPORTED;
     goto ON_EXIT;
   }
@@ -1482,7 +1482,7 @@ UhciAllocateDev (
                   &Uhc->AsyncIntMonitor
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     UsbHcFreeMemPool (Uhc->MemPool);
     goto ON_ERROR;
   }
@@ -1490,7 +1490,7 @@ UhciAllocateDev (
   return Uhc;
 
 ON_ERROR:
-  FreePool (Uhc);
+  FreePool(Uhc);
   return NULL;
 }
 
@@ -1522,7 +1522,7 @@ UhciFreeDev (
     FreeUnicodeStringTable (Uhc->CtrlNameTable);
   }
 
-  FreePool (Uhc);
+  FreePool(Uhc);
 }
 
 
@@ -1553,7 +1553,7 @@ UhciCleanDevUp (
                   &gEfiUsb2HcProtocolGuid,
                   &Uhc->Usb2Hc
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return ;
   }
 
@@ -1646,7 +1646,7 @@ UhciDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1674,7 +1674,7 @@ UhciDriverBindingStart (
                     &OriginalPciAttributes
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CLOSE_PCIIO;
   }
   PciAttributesSaved = TRUE;
@@ -1693,7 +1693,7 @@ UhciDriverBindingStart (
                     0,
                     &Supports
                     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Supports &= (UINT64)EFI_PCI_DEVICE_ENABLE;
     Status = PciIo->Attributes (
                       PciIo,
@@ -1703,7 +1703,7 @@ UhciDriverBindingStart (
                       );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto CLOSE_PCIIO;
   }
 
@@ -1719,7 +1719,7 @@ UhciDriverBindingStart (
   //
   Status = UhciInitFrameList (Uhc);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_OUT_OF_RESOURCES;
     goto FREE_UHC;
   }
@@ -1730,7 +1730,7 @@ UhciDriverBindingStart (
                   UHC_ASYNC_POLL_INTERVAL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_UHC;
   }
 
@@ -1744,7 +1744,7 @@ UhciDriverBindingStart (
                   NULL
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_UHC;
   }
 
@@ -1759,7 +1759,7 @@ UhciDriverBindingStart (
                   &gEfiEventExitBootServicesGuid,
                   &Uhc->ExitBootServiceEvent
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto UNINSTALL_USBHC;
   }
 
@@ -1865,7 +1865,7 @@ UhciDriverBindingStop (
   // Usb controller handle that should be supported, if not,
   // return the error status directly
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

@@ -126,16 +126,16 @@ IsKnownTokens (
     return FALSE;
   }
 
-  if (AsciiStrCmp (Token, SEC_TOK) == 0 ||
-      AsciiStrCmp (Token, PEI_TOK) == 0 ||
-      AsciiStrCmp (Token, DXE_TOK) == 0 ||
-      AsciiStrCmp (Token, BDS_TOK) == 0 ||
-      AsciiStrCmp (Token, DRIVERBINDING_START_TOK) == 0 ||
-      AsciiStrCmp (Token, DRIVERBINDING_SUPPORT_TOK) == 0 ||
-      AsciiStrCmp (Token, DRIVERBINDING_STOP_TOK) == 0 ||
-      AsciiStrCmp (Token, LOAD_IMAGE_TOK) == 0 ||
-      AsciiStrCmp (Token, START_IMAGE_TOK) == 0 ||
-      AsciiStrCmp (Token, PEIM_TOK) == 0) {
+  if (AsciiStrCmp(Token, SEC_TOK) == 0 ||
+      AsciiStrCmp(Token, PEI_TOK) == 0 ||
+      AsciiStrCmp(Token, DXE_TOK) == 0 ||
+      AsciiStrCmp(Token, BDS_TOK) == 0 ||
+      AsciiStrCmp(Token, DRIVERBINDING_START_TOK) == 0 ||
+      AsciiStrCmp(Token, DRIVERBINDING_SUPPORT_TOK) == 0 ||
+      AsciiStrCmp(Token, DRIVERBINDING_STOP_TOK) == 0 ||
+      AsciiStrCmp(Token, LOAD_IMAGE_TOK) == 0 ||
+      AsciiStrCmp(Token, START_IMAGE_TOK) == 0 ||
+      AsciiStrCmp(Token, PEIM_TOK) == 0) {
     return TRUE;
   } else {
     return FALSE;
@@ -199,20 +199,20 @@ GetFpdtRecordId (
   // When PcdEdkiiFpdtStringRecordEnableOnly is TRUE, all records are with type of FPDT_DYNAMIC_STRING_EVENT_TYPE.
   //
   if (String != NULL) {
-    if (AsciiStrCmp (String, LOAD_IMAGE_TOK) == 0) {               // "LoadImage:"
+    if (AsciiStrCmp(String, LOAD_IMAGE_TOK) == 0) {               // "LoadImage:"
       if (Attribute == PerfStartEntry) {
         *ProgressID = MODULE_LOADIMAGE_START_ID;
       } else {
         *ProgressID = MODULE_LOADIMAGE_END_ID;
       }
-    } else if (AsciiStrCmp (String, SEC_TOK) == 0 ||               // "SEC"
-               AsciiStrCmp (String, PEI_TOK) == 0) {               // "PEI"
+    } else if (AsciiStrCmp(String, SEC_TOK) == 0 ||               // "SEC"
+               AsciiStrCmp(String, PEI_TOK) == 0) {               // "PEI"
       if (Attribute == PerfStartEntry) {
         *ProgressID = PERF_CROSSMODULE_START_ID;
       } else {
         *ProgressID = PERF_CROSSMODULE_END_ID;
       }
-    } else if (AsciiStrCmp (String, PEIM_TOK) == 0) {              // "PEIM"
+    } else if (AsciiStrCmp(String, PEIM_TOK) == 0) {              // "PEIM"
       if (Attribute == PerfStartEntry) {
         *ProgressID = MODULE_START_ID;
       } else {
@@ -344,7 +344,7 @@ InsertFpdtRecord (
       }
     } else if (PerfId == 0) {
       Status = GetFpdtRecordId (Attribute, CallerIdentifier, String, &PerfId);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -354,7 +354,7 @@ InsertFpdtRecord (
   // 2. Get the buffer to store the FPDT record.
   //
   Status = GetFpdtRecordPtr (PEI_MAX_RECORD_SIZE, &FpdtRecordPtr, &PeiPerformanceLogHeader);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

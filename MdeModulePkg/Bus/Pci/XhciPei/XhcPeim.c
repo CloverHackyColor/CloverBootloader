@@ -372,7 +372,7 @@ XhcPeiResetHC (
   if (!XhcPeiIsHalt (Xhc)) {
     Status = XhcPeiHaltHC (Xhc, Timeout);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto ON_EXIT;
     }
   }
@@ -640,7 +640,7 @@ XhcPeiControlTransfer (
       Status = EFI_SUCCESS;
     } else if ((*TransferResult == EFI_USB_ERR_STALL) || (*TransferResult == EFI_USB_ERR_BABBLE)) {
       RecoveryStatus = XhcPeiRecoverHaltedEndpoint(Xhc, Urb);
-      if (EFI_ERROR (RecoveryStatus)) {
+      if (EFI_ERROR(RecoveryStatus)) {
         DEBUG ((EFI_D_ERROR, "XhcPeiControlTransfer: XhcPeiRecoverHaltedEndpoint failed\n"));
       }
       Status = EFI_DEVICE_ERROR;
@@ -824,7 +824,7 @@ XhcPeiControlTransfer (
 
 ON_EXIT:
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcPeiControlTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
   }
 
@@ -965,7 +965,7 @@ XhcPeiBulkTransfer (
       Status = EFI_SUCCESS;
     } else if ((*TransferResult == EFI_USB_ERR_STALL) || (*TransferResult == EFI_USB_ERR_BABBLE)) {
       RecoveryStatus = XhcPeiRecoverHaltedEndpoint(Xhc, Urb);
-      if (EFI_ERROR (RecoveryStatus)) {
+      if (EFI_ERROR(RecoveryStatus)) {
         DEBUG ((EFI_D_ERROR, "XhcPeiBulkTransfer: XhcPeiRecoverHaltedEndpoint failed\n"));
       }
       Status = EFI_DEVICE_ERROR;
@@ -976,7 +976,7 @@ XhcPeiBulkTransfer (
 
 ON_EXIT:
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "XhcPeiBulkTransfer: error - %r, transfer - %x\n", Status, *TransferResult));
   }
 
@@ -1219,7 +1219,7 @@ XhcPeiSetRootHubPortFeature (
       //
       if (XhcPeiIsHalt (Xhc)) {
         Status = XhcPeiRunHC (Xhc, XHC_GENERIC_TIMEOUT);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           break;
         }
       }
@@ -1432,7 +1432,7 @@ XhcPeimEntry (
   //
   // Shadow this PEIM to run from memory.
   //
-  if (!EFI_ERROR (PeiServicesRegisterForShadow (FileHandle))) {
+  if (!EFI_ERROR(PeiServicesRegisterForShadow (FileHandle))) {
     return EFI_SUCCESS;
   }
 
@@ -1442,7 +1442,7 @@ XhcPeimEntry (
              NULL,
              (VOID **) &UsbControllerPpi
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -1460,7 +1460,7 @@ XhcPeimEntry (
     //
     // When status is error, it means no controller is found.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -1478,7 +1478,7 @@ XhcPeimEntry (
                MemPages,
                &TempPtr
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     ZeroMem ((VOID *) (UINTN) TempPtr, EFI_PAGES_TO_SIZE (MemPages));

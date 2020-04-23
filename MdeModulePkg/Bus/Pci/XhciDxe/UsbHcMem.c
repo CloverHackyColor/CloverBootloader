@@ -52,7 +52,7 @@ UsbHcAllocMemBlock (
   Block->Bits     = AllocateZeroPool (Block->BitsLen);
 
   if (Block->Bits == NULL) {
-    gBS->FreePool (Block);
+    gBS->FreePool(Block);
     return NULL;
   }
 
@@ -69,7 +69,7 @@ UsbHcAllocMemBlock (
                     0
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FREE_BITARRAY;
   }
 
@@ -83,7 +83,7 @@ UsbHcAllocMemBlock (
                     &Mapping
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
+  if (EFI_ERROR(Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
     goto FREE_BUFFER;
   }
 
@@ -97,8 +97,8 @@ FREE_BUFFER:
   PciIo->FreeBuffer (PciIo, Pages, BufHost);
 
 FREE_BITARRAY:
-  gBS->FreePool (Block->Bits);
-  gBS->FreePool (Block);
+  gBS->FreePool(Block->Bits);
+  gBS->FreePool(Block);
   return NULL;
 }
 
@@ -128,8 +128,8 @@ UsbHcFreeMemBlock (
   PciIo->Unmap (PciIo, Block->Mapping);
   PciIo->FreeBuffer (PciIo, EFI_SIZE_TO_PAGES (Block->BufLen), Block->BufHost);
 
-  gBS->FreePool (Block->Bits);
-  gBS->FreePool (Block);
+  gBS->FreePool(Block->Bits);
+  gBS->FreePool(Block);
 }
 
 
@@ -402,7 +402,7 @@ UsbHcInitMemPool (
   Pool->Head    = UsbHcAllocMemBlock (Pool, USBHC_MEM_DEFAULT_PAGES);
 
   if (Pool->Head == NULL) {
-    gBS->FreePool (Pool);
+    gBS->FreePool(Pool);
     Pool = NULL;
   }
 
@@ -439,7 +439,7 @@ UsbHcFreeMemPool (
   }
 
   UsbHcFreeMemBlock (Pool, Pool->Head);
-  gBS->FreePool (Pool);
+  gBS->FreePool(Pool);
   return EFI_SUCCESS;
 }
 
@@ -660,7 +660,7 @@ UsbHcAllocateAlignedPages (
                       &Memory,
                       0
                       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     AlignedMemory  = ((UINTN) Memory + AlignmentMask) & ~AlignmentMask;
@@ -670,7 +670,7 @@ UsbHcAllocateAlignedPages (
       // Free first unaligned page(s).
       //
       Status = PciIo->FreeBuffer (PciIo, UnalignedPages, Memory);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
     Memory         = (VOID *)(UINTN)(AlignedMemory + EFI_PAGES_TO_SIZE (Pages));
     UnalignedPages = RealPages - Pages - UnalignedPages;
@@ -679,7 +679,7 @@ UsbHcAllocateAlignedPages (
       // Free last unaligned page(s).
       //
       Status = PciIo->FreeBuffer (PciIo, UnalignedPages, Memory);
-      ASSERT_EFI_ERROR (Status);
+      ASSERT_EFI_ERROR(Status);
     }
   } else {
     //
@@ -693,7 +693,7 @@ UsbHcAllocateAlignedPages (
                       &Memory,
                       0
                       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     AlignedMemory  = (UINTN) Memory;
@@ -709,7 +709,7 @@ UsbHcAllocateAlignedPages (
                     Mapping
                     );
 
-  if (EFI_ERROR (Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
+  if (EFI_ERROR(Status) || (Bytes != EFI_PAGES_TO_SIZE (Pages))) {
     Status = PciIo->FreeBuffer (PciIo, Pages, (VOID *) AlignedMemory);
     return EFI_OUT_OF_RESOURCES;
   }
@@ -741,12 +741,12 @@ UsbHcFreeAlignedPages (
   ASSERT (Pages != 0);
 
   Status = PciIo->Unmap (PciIo, Mapping);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   Status = PciIo->FreeBuffer (
                     PciIo,
                     Pages,
                     HostAddress
                     );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }

@@ -70,7 +70,7 @@ AmlParseOptionTerm (
     break;
   case AML_NAME:
     Status = AmlGetNameStringSize (Buffer, DataSize);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
     break;
@@ -90,7 +90,7 @@ AmlParseOptionTerm (
         *DataType = AmlTypeToAcpiType (AML_NAME);
       }
       Status = AmlGetNameStringSize (Buffer, DataSize);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return EFI_INVALID_PARAMETER;
       }
       break;
@@ -175,7 +175,7 @@ AmlParseOptionCommon (
     // return NameString size
     //
     Status = AmlGetNameStringSize (Buffer, DataSize);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
     if (*DataSize > MaxBufferSize) {
@@ -243,7 +243,7 @@ AmlParseOptionCommon (
                Data,
                DataSize
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -314,7 +314,7 @@ AmlGetObjectSize (
                NULL,
                &DataSize
                );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return 0;
   } else {
     return DataSize;
@@ -370,7 +370,7 @@ AmlGetObjectName (
              &NameString,
              &NameSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 //  ASSERT (DataType == EFI_ACPI_DATA_TYPE_NAME_STRING);
@@ -405,7 +405,7 @@ AmlGetOffsetAfterLastOption (
              &Data,
              &DataSize
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_INVALID_PARAMETER;
   }
 

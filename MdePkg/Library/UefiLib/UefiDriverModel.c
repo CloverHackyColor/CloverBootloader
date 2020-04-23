@@ -60,7 +60,7 @@ EfiLibInstallDriverBinding (
   //
   // ASSERT if the call to InstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -97,7 +97,7 @@ EfiLibUninstallDriverBinding (
   //
   // ASSERT if the call to UninstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -229,7 +229,7 @@ EfiLibInstallAllDriverProtocols (
   //
   // ASSERT if the call to InstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -342,7 +342,7 @@ EfiLibUninstallAllDriverProtocols (
   //
   // ASSERT if the call to UninstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -430,7 +430,7 @@ EfiLibInstallDriverBindingComponentName2 (
   //
   // ASSERT if the call to InstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -500,7 +500,7 @@ EfiLibUninstallDriverBindingComponentName2 (
   //
   // ASSERT if the call to UninstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -1266,7 +1266,7 @@ EfiLibInstallAllDriverProtocols2 (
   //
   // ASSERT if the call to InstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -2014,7 +2014,7 @@ EfiLibUninstallAllDriverProtocols2 (
   //
   // ASSERT if the call to UninstallMultipleProtocolInterfaces() failed
   //
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

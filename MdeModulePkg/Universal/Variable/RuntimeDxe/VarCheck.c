@@ -39,7 +39,7 @@ VariableLockRequestToLock (
   AcquireLockOnlyAtBootTime (&mVariableModuleGlobal->VariableGlobal.VariableServicesLock);
 
   Status = VarCheckLibVariablePropertyGet (VariableName, VendorGuid, &Property);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Property.Property |= VAR_CHECK_VARIABLE_PROPERTY_READ_ONLY;
   } else {
     Property.Revision = VAR_CHECK_VARIABLE_PROPERTY_REVISION;

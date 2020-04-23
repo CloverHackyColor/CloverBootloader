@@ -35,7 +35,7 @@ AsyncIoCallback (
             Request->Packet.TransactionStatus));
   DEBUG_CODE_END ();
 
-  if (EFI_ERROR (Request->Packet.TransactionStatus)) {
+  if (EFI_ERROR(Request->Packet.TransactionStatus)) {
     Request->Token->TransactionStatus = Request->Packet.TransactionStatus;
   }
 
@@ -45,7 +45,7 @@ AsyncIoCallback (
     gBS->SignalEvent (Request->Token->Event);
   }
 
-  FreePool (Request);
+  FreePool(Request);
 }
 
 /**
@@ -85,7 +85,7 @@ SdSetRca (
   SdMmcCmdBlk.ResponseType = SdMmcResponseTypeR6;
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((EFI_D_INFO, "Set RCA succeeds with Resp0 = 0x%x\n", SdMmcStatusBlk.Resp0));
     *Rca = (UINT16)(SdMmcStatusBlk.Resp0 >> 16);
   }
@@ -177,7 +177,7 @@ SdSendStatus (
   SdMmcCmdBlk.CommandArgument = (UINT32)Rca << 16;
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     CopyMem (DevStatus, &SdMmcStatusBlk.Resp0, sizeof (UINT32));
   }
   return Status;
@@ -226,7 +226,7 @@ SdGetCsd (
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
@@ -279,7 +279,7 @@ SdGetCid (
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
@@ -381,7 +381,7 @@ SdRwSingleBlock (
                     RwSingleBlkReq,
                     &RwSingleBlkReq->Event
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -396,14 +396,14 @@ Error:
     // For asynchronous operation, only free request and event in error case.
     // The request and event will be freed in asynchronous callback for success case.
     //
-    if (EFI_ERROR (Status) && (RwSingleBlkReq != NULL)) {
+    if (EFI_ERROR(Status) && (RwSingleBlkReq != NULL)) {
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&RwSingleBlkReq->Link);
       gBS->RestoreTPL (OldTpl);
       if (RwSingleBlkReq->Event != NULL) {
         gBS->CloseEvent (RwSingleBlkReq->Event);
       }
-      FreePool (RwSingleBlkReq);
+      FreePool(RwSingleBlkReq);
     }
   } else {
     //
@@ -413,7 +413,7 @@ Error:
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&RwSingleBlkReq->Link);
       gBS->RestoreTPL (OldTpl);
-      FreePool (RwSingleBlkReq);
+      FreePool(RwSingleBlkReq);
     }
   }
 
@@ -513,7 +513,7 @@ SdRwMultiBlocks (
                     RwMultiBlkReq,
                     &RwMultiBlkReq->Event
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -528,14 +528,14 @@ Error:
     // For asynchronous operation, only free request and event in error case.
     // The request and event will be freed in asynchronous callback for success case.
     //
-    if (EFI_ERROR (Status) && (RwMultiBlkReq != NULL)) {
+    if (EFI_ERROR(Status) && (RwMultiBlkReq != NULL)) {
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&RwMultiBlkReq->Link);
       gBS->RestoreTPL (OldTpl);
       if (RwMultiBlkReq->Event != NULL) {
         gBS->CloseEvent (RwMultiBlkReq->Event);
       }
-      FreePool (RwMultiBlkReq);
+      FreePool(RwMultiBlkReq);
     }
   } else {
     //
@@ -545,7 +545,7 @@ Error:
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&RwMultiBlkReq->Link);
       gBS->RestoreTPL (OldTpl);
-      FreePool (RwMultiBlkReq);
+      FreePool(RwMultiBlkReq);
     }
   }
 
@@ -661,7 +661,7 @@ SdReadWrite (
     } else {
       Status = SdRwMultiBlocks (Device, Lba, Buffer, BufferSize, IsRead, Token, LastRw);
     }
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
     DEBUG ((DEBUG_BLKIO, "Sd%a(): Lba 0x%x BlkNo 0x%x Event %p with %r\n",
@@ -701,7 +701,7 @@ SdReset (
 
   PassThru = Device->Private->PassThru;
   Status   = PassThru->ResetDevice (PassThru, Device->Slot);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = EFI_DEVICE_ERROR;
   }
 
@@ -849,7 +849,7 @@ SdResetEx (
       gBS->SignalEvent (Request->Token->Event);
     }
 
-    FreePool (Request);
+    FreePool(Request);
   }
   gBS->RestoreTPL (OldTpl);
 
@@ -1038,7 +1038,7 @@ SdEraseBlockStart (
                     EraseBlockStart,
                     &EraseBlockStart->Event
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -1053,14 +1053,14 @@ Error:
     // For asynchronous operation, only free request and event in error case.
     // The request and event will be freed in asynchronous callback for success case.
     //
-    if (EFI_ERROR (Status) && (EraseBlockStart != NULL)) {
+    if (EFI_ERROR(Status) && (EraseBlockStart != NULL)) {
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&EraseBlockStart->Link);
       gBS->RestoreTPL (OldTpl);
       if (EraseBlockStart->Event != NULL) {
         gBS->CloseEvent (EraseBlockStart->Event);
       }
-      FreePool (EraseBlockStart);
+      FreePool(EraseBlockStart);
     }
   } else {
     //
@@ -1070,7 +1070,7 @@ Error:
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&EraseBlockStart->Link);
       gBS->RestoreTPL (OldTpl);
-      FreePool (EraseBlockStart);
+      FreePool(EraseBlockStart);
     }
   }
 
@@ -1142,7 +1142,7 @@ SdEraseBlockEnd (
                     EraseBlockEnd,
                     &EraseBlockEnd->Event
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -1157,14 +1157,14 @@ Error:
     // For asynchronous operation, only free request and event in error case.
     // The request and event will be freed in asynchronous callback for success case.
     //
-    if (EFI_ERROR (Status) && (EraseBlockEnd != NULL)) {
+    if (EFI_ERROR(Status) && (EraseBlockEnd != NULL)) {
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&EraseBlockEnd->Link);
       gBS->RestoreTPL (OldTpl);
       if (EraseBlockEnd->Event != NULL) {
         gBS->CloseEvent (EraseBlockEnd->Event);
       }
-      FreePool (EraseBlockEnd);
+      FreePool(EraseBlockEnd);
     }
   } else {
     //
@@ -1174,7 +1174,7 @@ Error:
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&EraseBlockEnd->Link);
       gBS->RestoreTPL (OldTpl);
-      FreePool (EraseBlockEnd);
+      FreePool(EraseBlockEnd);
     }
   }
 
@@ -1238,7 +1238,7 @@ SdEraseBlock (
                     EraseBlock,
                     &EraseBlock->Event
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Error;
     }
   } else {
@@ -1253,14 +1253,14 @@ Error:
     // For asynchronous operation, only free request and event in error case.
     // The request and event will be freed in asynchronous callback for success case.
     //
-    if (EFI_ERROR (Status) && (EraseBlock != NULL)) {
+    if (EFI_ERROR(Status) && (EraseBlock != NULL)) {
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&EraseBlock->Link);
       gBS->RestoreTPL (OldTpl);
       if (EraseBlock->Event != NULL) {
         gBS->CloseEvent (EraseBlock->Event);
       }
-      FreePool (EraseBlock);
+      FreePool(EraseBlock);
     }
   } else {
     //
@@ -1270,7 +1270,7 @@ Error:
       OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
       RemoveEntryList (&EraseBlock->Link);
       gBS->RestoreTPL (OldTpl);
-      FreePool (EraseBlock);
+      FreePool(EraseBlock);
     }
   }
 
@@ -1353,17 +1353,17 @@ SdEraseBlocks (
   LastLba = Lba + BlockNum - 1;
 
   Status = SdEraseBlockStart (Device, Lba, (EFI_BLOCK_IO2_TOKEN*)Token, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdEraseBlockEnd (Device, LastLba, (EFI_BLOCK_IO2_TOKEN*)Token, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = SdEraseBlock (Device, (EFI_BLOCK_IO2_TOKEN*)Token, TRUE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

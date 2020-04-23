@@ -208,7 +208,7 @@ DTRestartEntryIteration (
   Get the value of the specified property for the specified entry.
 **/
 EFI_STATUS
-DTGetProperty (
+DTGetProperty(
   IN CONST DTEntry      Entry,
   IN CHAR8              *PropertyName,
   IN VOID               **PropertyValue,

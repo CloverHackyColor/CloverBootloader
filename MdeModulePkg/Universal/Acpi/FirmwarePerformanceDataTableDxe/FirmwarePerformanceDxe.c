@@ -202,7 +202,7 @@ FpdtAllocateS3PerformanceTableMemory (
 
   if (!mLockBoxReady) {
     Status = gBS->LocateProtocol (&gEfiLockBoxProtocolGuid, NULL, &Interface);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // LockBox services has been ready.
       //
@@ -212,7 +212,7 @@ FpdtAllocateS3PerformanceTableMemory (
 
   if (mAcpiS3PerformanceTable == NULL) {
     Status = gBS->LocateProtocol (&gEfiVariableArchProtocolGuid, NULL, &Interface);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Try to allocate the same runtime buffer as last time boot.
       //
@@ -225,14 +225,14 @@ FpdtAllocateS3PerformanceTableMemory (
                       &Size,
                       &PerformanceVariable
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = gBS->AllocatePages (
                         AllocateAddress,
                         EfiReservedMemoryType,
                         EFI_SIZE_TO_PAGES (sizeof (S3_PERFORMANCE_TABLE)),
                         &PerformanceVariable.S3PerformanceTablePointer
                         );
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           mAcpiS3PerformanceTable = (S3_PERFORMANCE_TABLE *) (UINTN) PerformanceVariable.S3PerformanceTablePointer;
         }
       }
@@ -263,7 +263,7 @@ FpdtAllocateS3PerformanceTableMemory (
                &S3PerformanceTablePointer,
                sizeof (EFI_PHYSICAL_ADDRESS)
                );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 }
 
@@ -288,7 +288,7 @@ InstallFirmwarePerformanceDataTable (
   // Get AcpiTable Protocol.
   //
   Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID **) &AcpiTableProtocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -309,14 +309,14 @@ InstallFirmwarePerformanceDataTable (
                     &Size,
                     &PerformanceVariable
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gBS->AllocatePages (
                       AllocateAddress,
                       EfiReservedMemoryType,
                       EFI_SIZE_TO_PAGES (BootPerformanceDataSize),
                       &PerformanceVariable.BootPerformanceTablePointer
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
          mAcpiBootPerformanceTable = (BOOT_PERFORMANCE_TABLE *) (UINTN) PerformanceVariable.BootPerformanceTablePointer;
       }
     }
@@ -379,7 +379,7 @@ InstallFirmwarePerformanceDataTable (
                                 mFirmwarePerformanceTableTemplate.Header.Length,
                                 &mFirmwarePerformanceTableTemplateKey
                                 );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (mAcpiBootPerformanceTable != NULL) {
       FreePages (mAcpiBootPerformanceTable, EFI_SIZE_TO_PAGES (BootPerformanceDataSize));
     }
@@ -612,13 +612,13 @@ FirmwarePerformanceDxeEntryPoint (
   // Get Report Status Code Handler Protocol.
   //
   Status = gBS->LocateProtocol (&gEfiRscHandlerProtocolGuid, NULL, (VOID **) &mRscHandlerProtocol);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register report status code listener for OS Loader load and start.
   //
   Status = mRscHandlerProtocol->Register (FpdtStatusCodeListenerDxe, TPL_HIGH_LEVEL);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Register the notify function to update FPDT on ExitBootServices Event.
@@ -631,7 +631,7 @@ FirmwarePerformanceDxeEntryPoint (
                   &gEfiEventExitBootServicesGuid,
                   &mExitBootServicesEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Retrieve GUID HOB data that contains the ResetEnd.

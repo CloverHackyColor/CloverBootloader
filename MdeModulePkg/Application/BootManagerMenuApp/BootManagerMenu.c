@@ -132,7 +132,7 @@ GetLineWidth (
         IncrementValue = 2;
       }
     } while (String[Index] != 0);
-    FreePool (String);
+    FreePool(String);
   }
 
   return LineWidth;
@@ -230,11 +230,11 @@ IsBootManagerMenu (
   EFI_BOOT_MANAGER_LOAD_OPTION        BootManagerMenu;
 
   Status = EfiBootManagerGetBootManagerMenu (&BootManagerMenu);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     EfiBootManagerFreeLoadOption (&BootManagerMenu);
   }
 
-  return (BOOLEAN) (!EFI_ERROR (Status) && (BootOption->OptionNumber == BootManagerMenu.OptionNumber));
+  return (BOOLEAN) (!EFI_ERROR(Status) && (BootOption->OptionNumber == BootManagerMenu.OptionNumber));
 }
 
 /**
@@ -257,7 +257,7 @@ IgnoreBootOption (
   // Ignore myself.
   //
   Status = gBS->HandleProtocol (gImageHandle, &gEfiLoadedImageDevicePathProtocolGuid, (VOID **) &ImageDevicePath);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   if (CompareMem (BootOption->FilePath, ImageDevicePath, GetDevicePathSize (ImageDevicePath)) == 0) {
     return TRUE;
   }
@@ -438,14 +438,14 @@ BootMenuSelectItem (
     for (Index = 0; Index < ItemCountPerScreen; Index++) {
       PrintStringAt (PrintCol, PrintRow + Index, String);
     }
-    FreePool (String);
+    FreePool(String);
     //
     // print selectable items
     //
     for (Index = 0; Index < ItemCountPerScreen; Index++, PrintRow++) {
       String = HiiGetString (gStringPackHandle, BootMenuData->PtrTokens[Index + FirstItem], NULL);
       PrintStringAt (PrintCol, PrintRow, String);
-      FreePool (String);
+      FreePool(String);
     }
     RePaintItems = TRUE;
   }
@@ -459,7 +459,7 @@ BootMenuSelectItem (
   PrintCol = StartCol  + 1;
   PrintRow = StartRow + TITLE_TOKEN_COUNT + 2 + WantSelectItem - FirstItem;
   PrintStringAt (PrintCol, PrintRow, String);
-  FreePool (String);
+  FreePool(String);
 
   //
   // if Want Select and selected item isn't the same and doesn't re-draw selectable
@@ -471,7 +471,7 @@ BootMenuSelectItem (
     PrintCol = StartCol  + 1;
     PrintRow = StartRow + 3 + BootMenuData->SelectItem - FirstItem;
     PrintStringAt (PrintCol, PrintRow, String);
-    FreePool (String);
+    FreePool(String);
   }
 
   gST->ConOut->SetAttribute (gST->ConOut, SavedAttribute);
@@ -572,7 +572,7 @@ DrawBootPopupMenu (
     PrintStringAt (StartCol + 1, PrintRow, String);
     PrintCharAt (StartCol + Width - 1, PrintRow, BOXDRAW_VERTICAL);
   }
-  FreePool (String);
+  FreePool(String);
 
   PrintRow++;
   PrintCharAt (StartCol, PrintRow, BOXDRAW_UP_RIGHT);
@@ -591,7 +591,7 @@ DrawBootPopupMenu (
     LineWidth = GetLineWidth (BootMenuData->TitleToken[Index]);
     PrintCol = StartCol + (Width - LineWidth) / 2;
     PrintStringAt (PrintCol, PrintRow, String);
-    FreePool (String);
+    FreePool(String);
   }
 
   //
@@ -602,7 +602,7 @@ DrawBootPopupMenu (
   for (Index = 0; Index < ItemCountPerScreen; Index++, PrintRow++) {
     String = HiiGetString (gStringPackHandle, BootMenuData->PtrTokens[Index], NULL);
     PrintStringAt (PrintCol, PrintRow, String);
-    FreePool (String);
+    FreePool(String);
   }
 
   //
@@ -614,7 +614,7 @@ DrawBootPopupMenu (
     LineWidth = GetLineWidth (BootMenuData->HelpToken[Index]);
     PrintCol = StartCol + (Width - LineWidth) / 2;
     PrintStringAt (PrintCol, PrintRow, String);
-    FreePool (String);
+    FreePool(String);
   }
 
   //
@@ -714,7 +714,7 @@ BdsSetConsoleMode (
                   &gEfiGraphicsOutputProtocolGuid,
                   (VOID**)&GraphicsOutput
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
   }
 
@@ -723,7 +723,7 @@ BdsSetConsoleMode (
                   &gEfiSimpleTextOutProtocolGuid,
                   (VOID**)&SimpleTextOut
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     SimpleTextOut = NULL;
   }
 
@@ -771,7 +771,7 @@ BdsSetConsoleMode (
                        &SizeOfInfo,
                        &Info
                        );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if ((Info->HorizontalResolution == NewHorizontalResolution) &&
           (Info->VerticalResolution == NewVerticalResolution)) {
         if ((GraphicsOutput->Mode->Info->HorizontalResolution == NewHorizontalResolution) &&
@@ -780,12 +780,12 @@ BdsSetConsoleMode (
           // Current resolution is same with required resolution, check if text mode need be set
           //
           Status = SimpleTextOut->QueryMode (SimpleTextOut, SimpleTextOut->Mode->Mode, &CurrentColumn, &CurrentRow);
-          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR(Status);
           if (CurrentColumn == NewColumns && CurrentRow == NewRows) {
             //
             // If current text mode is same with required text mode. Do nothing
             //
-            FreePool (Info);
+            FreePool(Info);
             return EFI_SUCCESS;
           } else {
             //
@@ -799,15 +799,15 @@ BdsSetConsoleMode (
                   // Required text mode is supported, set it.
                   //
                   Status = SimpleTextOut->SetMode (SimpleTextOut, Index);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   //
                   // Update text mode PCD.
                   //
                   Status = PcdSet32S (PcdConOutColumn, mSetupTextModeColumn);
-                  ASSERT_EFI_ERROR (Status);
+                  ASSERT_EFI_ERROR(Status);
                   Status = PcdSet32S (PcdConOutRow, mSetupTextModeRow);
-                  ASSERT_EFI_ERROR (Status);
-                  FreePool (Info);
+                  ASSERT_EFI_ERROR(Status);
+                  FreePool(Info);
                   return EFI_SUCCESS;
                 }
               }
@@ -816,7 +816,7 @@ BdsSetConsoleMode (
               //
               // If required text mode is not supported, return error.
               //
-              FreePool (Info);
+              FreePool(Info);
               return EFI_UNSUPPORTED;
             }
           }
@@ -826,13 +826,13 @@ BdsSetConsoleMode (
           // In this case, the driver which produces simple text out need be restarted.
           //
           Status = GraphicsOutput->SetMode (GraphicsOutput, ModeNumber);
-          if (!EFI_ERROR (Status)) {
-            FreePool (Info);
+          if (!EFI_ERROR(Status)) {
+            FreePool(Info);
             break;
           }
         }
       }
-      FreePool (Info);
+      FreePool(Info);
     }
   }
 
@@ -848,13 +848,13 @@ BdsSetConsoleMode (
   // Set PCD to Inform Consplitter to change text mode.
   //
   Status = PcdSet32S (PcdVideoHorizontalResolution, NewHorizontalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdVideoVerticalResolution, NewVerticalResolution);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutColumn, NewColumns);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
   Status = PcdSet32S (PcdConOutRow, NewRows);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   //
   // Video mode is changed, so restart graphics console driver and higher level driver.
@@ -868,7 +868,7 @@ BdsSetConsoleMode (
                    &HandleCount,
                    &HandleBuffer
                    );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
@@ -876,7 +876,7 @@ BdsSetConsoleMode (
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
     if (HandleBuffer != NULL) {
-      FreePool (HandleBuffer);
+      FreePool(HandleBuffer);
     }
   }
 
@@ -919,9 +919,9 @@ BootManagerMenuEntry (
   //
   BootLogo = NULL;
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
-  if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
+  if (!EFI_ERROR(Status) && (BootLogo != NULL)) {
     Status = BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
@@ -952,7 +952,7 @@ BootManagerMenuEntry (
                     &gEfiGraphicsOutputProtocolGuid,
                     (VOID**)&GraphicsOutput
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       GraphicsOutput = NULL;
     }
 
@@ -961,7 +961,7 @@ BootManagerMenuEntry (
                     &gEfiSimpleTextOutProtocolGuid,
                     (VOID**)&SimpleTextOut
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       SimpleTextOut = NULL;
     }
 
@@ -1015,7 +1015,7 @@ BootManagerMenuEntry (
   while (!ExitApplication) {
     gBS->WaitForEvent (1, &gST->ConIn->WaitForKey, &Index);
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       switch (Key.UnicodeChar) {
 
       case CHAR_NULL:
@@ -1065,7 +1065,7 @@ BootManagerMenuEntry (
     }
   }
   EfiBootManagerFreeLoadOptions (BootOption, BootOptionCount);
-  FreePool (BootMenuData.PtrTokens);
+  FreePool(BootMenuData.PtrTokens);
 
   HiiRemovePackages (gStringPackHandle);
 

@@ -60,7 +60,7 @@ Returns:
   //
   // If the file has a permanent error, return it
   //
-  if (EFI_ERROR (OFile->Error)) {
+  if (EFI_ERROR(OFile->Error)) {
     return OFile->Error;
   }
 
@@ -99,7 +99,7 @@ Returns:
   FatReleaseLock ();
 
   if (Token != NULL) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = FatQueueTask (IFile, Task);
     } else {
       FatDestroyTask (Task);
@@ -231,7 +231,7 @@ Returns:
   //
   // Done. Free the open instance structure
   //
-  FreePool (IFile);
+  FreePool(IFile);
   return EFI_SUCCESS;
 }
 
@@ -270,7 +270,7 @@ Returns:
     // If the file has a permanant error, then don't write any
     // of its data to the device (may be from different media)
     //
-    if (EFI_ERROR (OFile->Error)) {
+    if (EFI_ERROR(OFile->Error)) {
       return OFile->Error;
     }
 
@@ -299,7 +299,7 @@ Returns:
         // Write the OFile's directory entry
         //
         Status = FatStoreDirEnt (Parent, DirEnt);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           return Status;
         }
       }
@@ -459,7 +459,7 @@ Returns:
     //
     if (Volume->FreeInfoValid && Volume->FatDirty && Volume->FreeInfoPos) {
       Status = FatDiskIo (Volume, WRITE_DISK, Volume->FreeInfoPos, sizeof (FAT_INFO_SECTOR), &Volume->FatInfoSector, Task);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -469,7 +469,7 @@ Returns:
     if (Volume->FatDirty && Volume->FatType != FAT12) {
       Volume->FatDirty  = FALSE;
       Status            = FatAccessVolumeDirty (Volume, WRITE_FAT, &Volume->NotDirtyValue);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
     }
@@ -477,7 +477,7 @@ Returns:
     // Flush all dirty cache entries to disk
     //
     Status = FatVolumeFlushCache (Volume, Task);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -523,7 +523,7 @@ Returns:
   //
   // If this OFile doesn't already have an error, set one
   //
-  if (!EFI_ERROR (OFile->Error)) {
+  if (!EFI_ERROR(OFile->Error)) {
     OFile->Error = Status;
   }
   //

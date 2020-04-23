@@ -209,7 +209,7 @@ CoreAllocatePool (
   // Acquire the memory lock and make the allocation
   //
   Status = CoreAcquireLockOrFail (&gMemoryLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
 
@@ -373,7 +373,7 @@ Done:
 **/
 EFI_STATUS
 EFIAPI
-CoreFreePool (
+CoreFreePool(
   IN VOID        *Buffer
   )
 {

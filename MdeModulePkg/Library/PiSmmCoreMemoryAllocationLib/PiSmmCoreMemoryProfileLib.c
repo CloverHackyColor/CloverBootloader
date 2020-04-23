@@ -57,7 +57,7 @@ PiSmmCoreMemoryProfileLibConstructor (
                   NULL,
                   (VOID **)&mLibProfileProtocol
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mLibProfileProtocol = NULL;
   }
 

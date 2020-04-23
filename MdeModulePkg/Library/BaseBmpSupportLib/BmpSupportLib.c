@@ -157,7 +157,7 @@ TranslateBmpToGopBlt (
              BmpHeader->BitPerPixel,
              &DataSizePerLine
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: invalid BmpImage... PixelWidth:0x%x BitPerPixel:0x%x\n",
@@ -168,7 +168,7 @@ TranslateBmpToGopBlt (
   }
 
   Status = SafeUint32Add (DataSizePerLine, 31, &DataSizePerLine);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: invalid BmpImage... DataSizePerLine:0x%x\n",
@@ -185,7 +185,7 @@ TranslateBmpToGopBlt (
              &BltBufferSize
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: invalid BmpImage... DataSizePerLine:0x%x PixelHeight:0x%x\n",
@@ -201,7 +201,7 @@ TranslateBmpToGopBlt (
              &DataSize
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: invalid BmpImage... PixelHeight:0x%x DataSizePerLine:0x%x\n",
@@ -272,7 +272,7 @@ TranslateBmpToGopBlt (
              &BltBufferSize
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: invalid BltBuffer needed size... PixelWidth:0x%x PixelHeight:0x%x\n",
@@ -289,7 +289,7 @@ TranslateBmpToGopBlt (
              &BltBufferSize
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateBmpToGopBlt: invalid BltBuffer needed size... PixelWidth x PixelHeight:0x%x struct size:0x%x\n",
@@ -404,7 +404,7 @@ TranslateBmpToGopBlt (
         // Other bit format BMP is not supported.
         //
         if (IsAllocated) {
-          FreePool (*GopBlt);
+          FreePool(*GopBlt);
           *GopBlt = NULL;
         }
         DEBUG ((DEBUG_ERROR, "Bmp Bit format not supported.  0x%X\n", BmpHeader->BitPerPixel));
@@ -485,7 +485,7 @@ TranslateGopBltToBmp (
   // First check PixelWidth * 3 + PaddingSize doesn't overflow
   //
   Status = SafeUint32Mult (PixelWidth, 3, &BmpSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
@@ -495,7 +495,7 @@ TranslateGopBltToBmp (
     return RETURN_UNSUPPORTED;
   }
   Status = SafeUint32Add (BmpSize, PaddingSize, &BmpSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
@@ -509,7 +509,7 @@ TranslateGopBltToBmp (
   // Second check (mLogoWidth * 3 + PaddingSize) * mLogoHeight + sizeof (BMP_IMAGE_HEADER) doesn't overflow
   //
   Status = SafeUint32Mult (BmpSize, PixelHeight, &BmpSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",
@@ -519,7 +519,7 @@ TranslateGopBltToBmp (
     return RETURN_UNSUPPORTED;
   }
   Status = SafeUint32Add (BmpSize, sizeof (BMP_IMAGE_HEADER), &BmpSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_ERROR,
       "TranslateGopBltToBmp: GopBlt is too large. PixelHeight:0x%x PixelWidth:0x%x\n",

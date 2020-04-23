@@ -145,7 +145,7 @@ AtaAhciPeimEntry (
   // Get the current boot mode.
   //
   Status = PeiServicesGetBootMode (&BootMode);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Fail to get the current boot mode.\n", __FUNCTION__));
     return Status;
   }
@@ -159,7 +159,7 @@ AtaAhciPeimEntry (
              NULL,
              (VOID **) &AhciHcPpi
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Failed to locate AtaAhciHostControllerPpi.\n", __FUNCTION__));
     return EFI_UNSUPPORTED;
   }
@@ -175,7 +175,7 @@ AtaAhciPeimEntry (
     //
     // When status is error, meant no controller is found.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -185,7 +185,7 @@ AtaAhciPeimEntry (
                           &DevicePathLength,
                           &DevicePath
                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_ERROR, "%a: Fail to allocate get the device path for Controller %d.\n",
         __FUNCTION__, Controller
@@ -197,7 +197,7 @@ AtaAhciPeimEntry (
     // Check validity of the device path of the ATA AHCI controller.
     //
     Status = AhciIsHcDevicePathValid (DevicePath, DevicePathLength);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_ERROR, "%a: The device path is invalid for Controller %d.\n",
         __FUNCTION__, Controller
@@ -248,7 +248,7 @@ AtaAhciPeimEntry (
     InitializeListHead (&Private->DeviceList);
 
     Status = AhciModeInitialization (Private);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_ERROR,
         "%a: Controller initialization fail for Controller %d with Status - %r.\n",

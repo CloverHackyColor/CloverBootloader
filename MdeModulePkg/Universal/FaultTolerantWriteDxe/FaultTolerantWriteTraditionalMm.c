@@ -60,7 +60,7 @@ FtwCalculateCrc32 (
   UINT32        ReturnValue;
 
   Status = gBS->CalculateCrc32 (Buffer, Length, &ReturnValue);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return ReturnValue;
 }
@@ -83,7 +83,7 @@ FtwNotifySmmReady (
                   EFI_NATIVE_INTERFACE,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**

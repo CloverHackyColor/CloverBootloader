@@ -128,7 +128,7 @@ FindAnchorVolumeDescriptorPointer (
     sizeof (*AnchorPoint),
     AnchorPoint
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -152,7 +152,7 @@ FindAnchorVolumeDescriptorPointer (
     sizeof (*AnchorPoint),
     AnchorPoint
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -183,7 +183,7 @@ FindAnchorVolumeDescriptorPointer (
     sizeof (*AnchorPoint),
     AnchorPoint
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -219,7 +219,7 @@ FindAnchorVolumeDescriptorPointer (
     Size,
     AnchorPoints
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Out_Free;
   }
 
@@ -259,7 +259,7 @@ FindAnchorVolumeDescriptorPointer (
   }
 
 Out_Free:
-  FreePool (AnchorPoints);
+  FreePool(AnchorPoints);
   return Status;
 }
 
@@ -307,7 +307,7 @@ FindUdfVolumeIdentifiers (
       sizeof (CDROM_VOLUME_DESCRIPTOR),
       (VOID *)&VolDescriptor
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
@@ -342,7 +342,7 @@ FindUdfVolumeIdentifiers (
     sizeof (CDROM_VOLUME_DESCRIPTOR),
     (VOID *)&VolDescriptor
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -370,7 +370,7 @@ FindUdfVolumeIdentifiers (
     sizeof (CDROM_VOLUME_DESCRIPTOR),
     (VOID *)&VolDescriptor
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -527,7 +527,7 @@ FindLogicalVolumeLocation (
       BlockSize,
       Buffer
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto Out_Free;
     }
 
@@ -591,7 +591,7 @@ FindLogicalVolumeLocation (
   //
   // Check if LVD was found
   //
-  if (!EFI_ERROR (Status) && LvdsCount == 1) {
+  if (!EFI_ERROR(Status) && LvdsCount == 1) {
     *MainVdsStartBlock = GuardMainVdsStartBlock;
     //
     // We do not need to read either LVD or PD descriptors to know the last
@@ -607,7 +607,7 @@ Out_Free:
   //
   // Free block read buffer
   //
-  FreePool (Buffer);
+  FreePool(Buffer);
 
   return Status;
 }
@@ -646,7 +646,7 @@ FindUdfFileSystem (
   // Find UDF volume identifiers
   //
   Status = FindUdfVolumeIdentifiers (BlockIo, DiskIo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -659,7 +659,7 @@ FindUdfFileSystem (
     &AnchorPoint,
     &LastRecordedBlock
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -742,7 +742,7 @@ PartitionInstallUdfChildHandles (
              BlockIo2,
              DevicePath
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "PartitionDxe: El Torito standard found on handle 0x%p.\n", Handle));
     ChildCreated = TRUE;
   }
@@ -751,7 +751,7 @@ PartitionInstallUdfChildHandles (
   // Search for an UDF file system on block device
   //
   Status = FindUdfFileSystem (BlockIo, DiskIo, &StartingLBA, &EndingLBA);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return (ChildCreated ? EFI_SUCCESS : EFI_NOT_FOUND);
   }
 
@@ -780,7 +780,7 @@ PartitionInstallUdfChildHandles (
     Media->BlockSize,
     NULL
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return (ChildCreated ? EFI_SUCCESS : Status);
   }
 

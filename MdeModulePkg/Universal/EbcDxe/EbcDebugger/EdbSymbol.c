@@ -199,21 +199,21 @@ EdbLoadSymbolEntryByIec (
     // Check each field
     //
     while (FieldBuffer != NULL) {
-      if (AsciiStrCmp (FieldBuffer, "") == 0) {
+      if (AsciiStrCmp(FieldBuffer, "") == 0) {
         FieldBuffer = AsciiStrGetNextTokenField (" ");
         continue;
       }
       //
       // check "Address"
       //
-      if (AsciiStrCmp (FieldBuffer, "Address") == 0) {
+      if (AsciiStrCmp(FieldBuffer, "Address") == 0) {
         MapParseState = EdbEbcMapParseStateSymbolStart;
         break;
       }
       //
       // check "Static"
       //
-      if (AsciiStrCmp (FieldBuffer, "Static") == 0) {
+      if (AsciiStrCmp(FieldBuffer, "Static") == 0) {
         MapParseState = EdbEbcMapParseStateStaticFunctionSymbol;
         break;
       }
@@ -224,7 +224,7 @@ EdbLoadSymbolEntryByIec (
         //
         break;
       }
-      if (AsciiStrCmp (FieldBuffer, "entry") == 0) {
+      if (AsciiStrCmp(FieldBuffer, "entry") == 0) {
         //
         // Skip entry point
         //
@@ -301,7 +301,7 @@ EdbLoadSymbolEntryByIec (
         //
         // Get the Type. This is optional, only for "f".
         //
-        if (AsciiStrCmp (FieldBuffer, "f") == 0) {
+        if (AsciiStrCmp(FieldBuffer, "f") == 0) {
           SymbolParseState = EdbEbcSymbolParseStateReadyForObject;
           switch (MapParseState) {
           case EdbEbcMapParseStateFunctionSymbol:
@@ -654,7 +654,7 @@ EdbUnloadSymbol (
   // Free OldSourceBuffer
   //
   for (Index = 0; OldSourceBuffer[Index] != NULL; Index++) {
-    gBS->FreePool (OldSourceBuffer[Index]);
+    gBS->FreePool(OldSourceBuffer[Index]);
     OldSourceBuffer[Index] = NULL;
   }
 
@@ -720,7 +720,7 @@ EdbLoadSymbol (
   //
   DEBUG ((DEBUG_ERROR, "Symbol File: %s\n", FileName));
   Status = EdbLoadSymbolEntry (Object, BufferSize, Buffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1002,7 +1002,7 @@ EdbPatchSymbolRVA (
                &gEfiDebugImageInfoTableGuid,
                (VOID **) &mDebuggerPrivate.DebugImageInfoTableHeader
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       EDBPrint (L"DebugImageInfoTable not found!\n");
       return Status;
     }
@@ -1199,7 +1199,7 @@ EdbLoadCodBySymbolByIec (
       //
       // check mark_begin, begin to check line after this match
       //
-      if (AsciiStrCmp (LineBuffer, "; mark_begin;") == 0) {
+      if (AsciiStrCmp(LineBuffer, "; mark_begin;") == 0) {
         CodParseState = EdbEbcCodParseStateSymbolInitialized;
       }
       LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
@@ -1210,7 +1210,7 @@ EdbLoadCodBySymbolByIec (
       //
       // check mark_end, not check line after this match
       //
-      if (AsciiStrCmp (LineBuffer, "; mark_end;") == 0) {
+      if (AsciiStrCmp(LineBuffer, "; mark_end;") == 0) {
         CodParseState = EdbEbcCodParseStateUninitialized;
         LineBuffer = AsciiStrGetNextTokenLine ("\n\r");
         PatchForAsciiStrTokenBefore (LineBuffer, '\n');
@@ -1252,7 +1252,7 @@ EdbLoadCodBySymbolByIec (
       //
       // check mark_end, if this match, means the function is found successfully.
       //
-      if (AsciiStrCmp (LineBuffer, "; mark_end;") == 0) {
+      if (AsciiStrCmp(LineBuffer, "; mark_end;") == 0) {
         CodParseState = EdbEbcCodParseStateSymbolEnd;
         //
         // prepare CodeBufferSize, FuncOffset, and FuncStart to return
@@ -1646,7 +1646,7 @@ EdbDeleteCodeBuffer (
     // free the buffer if match
     //
     if (Object->SourceBuffer[Index] == SourceBuffer) {
-      gBS->FreePool (SourceBuffer);
+      gBS->FreePool(SourceBuffer);
       break;
     }
   }

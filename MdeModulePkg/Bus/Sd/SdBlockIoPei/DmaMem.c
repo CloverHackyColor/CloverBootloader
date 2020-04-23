@@ -51,7 +51,7 @@ IoMmuMap (
                        DeviceAddress,
                        Mapping
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     switch (Operation) {
@@ -76,7 +76,7 @@ IoMmuMap (
                        *Mapping,
                        Attribute
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else {
@@ -153,7 +153,7 @@ IoMmuAllocateBuffer (
                        HostAddress,
                        0
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -166,7 +166,7 @@ IoMmuAllocateBuffer (
                        DeviceAddress,
                        Mapping
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     Status = mIoMmu->SetAttribute (
@@ -174,7 +174,7 @@ IoMmuAllocateBuffer (
                        *Mapping,
                        EDKII_IOMMU_ACCESS_READ | EDKII_IOMMU_ACCESS_WRITE
                        );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else {
@@ -183,7 +183,7 @@ IoMmuAllocateBuffer (
                Pages,
                &HostPhyAddress
                );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return EFI_OUT_OF_RESOURCES;
     }
     *HostAddress = (VOID *)(UINTN)HostPhyAddress;

@@ -83,7 +83,7 @@ BOpt_CreateMenuEntry (
 
   MenuEntry->VariableContext = AllocateZeroPool (ContextSize);
   if (MenuEntry->VariableContext == NULL) {
-    FreePool (MenuEntry);
+    FreePool(MenuEntry);
     return NULL;
   }
 
@@ -116,19 +116,19 @@ BOpt_DestroyMenuEntry (
   switch (MenuEntry->ContextSelection) {
   case BM_LOAD_CONTEXT_SELECT:
     LoadContext = (BM_LOAD_CONTEXT *) MenuEntry->VariableContext;
-    FreePool (LoadContext->FilePathList);
-    FreePool (LoadContext->LoadOption);
+    FreePool(LoadContext->FilePathList);
+    FreePool(LoadContext->LoadOption);
     if (LoadContext->OptionalData != NULL) {
-      FreePool (LoadContext->OptionalData);
+      FreePool(LoadContext->OptionalData);
     }
-    FreePool (LoadContext);
+    FreePool(LoadContext);
     break;
 
   case BM_FILE_CONTEXT_SELECT:
     FileContext = (BM_FILE_CONTEXT *) MenuEntry->VariableContext;
 
     if (!FileContext->IsRoot) {
-      FreePool (FileContext->DevicePath);
+      FreePool(FileContext->DevicePath);
     } else {
       if (FileContext->FHandle != NULL) {
         FileContext->FHandle->Close (FileContext->FHandle);
@@ -136,45 +136,45 @@ BOpt_DestroyMenuEntry (
     }
 
     if (FileContext->FileName != NULL) {
-      FreePool (FileContext->FileName);
+      FreePool(FileContext->FileName);
     }
     if (FileContext->Info != NULL) {
-      FreePool (FileContext->Info);
+      FreePool(FileContext->Info);
     }
-    FreePool (FileContext);
+    FreePool(FileContext);
     break;
 /*
   case BM_CONSOLE_CONTEXT_SELECT:
     ConsoleContext = (BM_CONSOLE_CONTEXT *) MenuEntry->VariableContext;
-    FreePool (ConsoleContext->DevicePath);
-    FreePool (ConsoleContext);
+    FreePool(ConsoleContext->DevicePath);
+    FreePool(ConsoleContext);
     break;
 
   case BM_TERMINAL_CONTEXT_SELECT:
     TerminalContext = (BM_TERMINAL_CONTEXT *) MenuEntry->VariableContext;
-    FreePool (TerminalContext->DevicePath);
-    FreePool (TerminalContext);
+    FreePool(TerminalContext->DevicePath);
+    FreePool(TerminalContext);
     break;
 */
   case BM_HANDLE_CONTEXT_SELECT:
     HandleContext = (BM_HANDLE_CONTEXT *) MenuEntry->VariableContext;
-    FreePool (HandleContext);
+    FreePool(HandleContext);
     break;
 
   case BM_LEGACY_DEV_CONTEXT_SELECT:
     LegacyDevContext = (BM_LEGACY_DEVICE_CONTEXT *) MenuEntry->VariableContext;
-    FreePool (LegacyDevContext);
+    FreePool(LegacyDevContext);
 
   default:
     break;
   }
 
-  FreePool (MenuEntry->DisplayString);
+  FreePool(MenuEntry->DisplayString);
   if (MenuEntry->HelpString != NULL) {
-    FreePool (MenuEntry->HelpString);
+    FreePool(MenuEntry->HelpString);
   }
 
-  FreePool (MenuEntry);
+  FreePool(MenuEntry);
 }
 
 /**
@@ -267,7 +267,7 @@ BOpt_FindFileSystem (
                   &NoBlkIoHandles,
                   &BlkIoHandle
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < NoBlkIoHandles; Index++) {
       Status = gBS->HandleProtocol (
                       BlkIoHandle[Index],
@@ -275,7 +275,7 @@ BOpt_FindFileSystem (
                       (VOID **) &BlkIo
                       );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -285,7 +285,7 @@ BOpt_FindFileSystem (
       if (BlkIo->Media->RemovableMedia) {
         Buffer = AllocateZeroPool (BlkIo->Media->BlockSize);
         if (NULL == Buffer) {
-          FreePool (BlkIoHandle);
+          FreePool(BlkIoHandle);
           return EFI_OUT_OF_RESOURCES;
         }
 
@@ -296,10 +296,10 @@ BOpt_FindFileSystem (
                 BlkIo->Media->BlockSize,
                 Buffer
                 );
-        FreePool (Buffer);
+        FreePool(Buffer);
       }
     }
-    FreePool (BlkIoHandle);
+    FreePool(BlkIoHandle);
   }
 
   //
@@ -312,7 +312,7 @@ BOpt_FindFileSystem (
                   &NoSimpleFsHandles,
                   &SimpleFsHandle
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Find all the instances of the File System prototocol
     //
@@ -322,7 +322,7 @@ BOpt_FindFileSystem (
                       &gEfiBlockIoProtocolGuid,
                       (VOID **) &BlkIo
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         //
         // If no block IO exists assume it's NOT a removable media
         //
@@ -339,7 +339,7 @@ BOpt_FindFileSystem (
       //
       MenuEntry = BOpt_CreateMenuEntry (BM_FILE_CONTEXT_SELECT);
       if (NULL == MenuEntry) {
-        FreePool (SimpleFsHandle);
+        FreePool(SimpleFsHandle);
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -404,7 +404,7 @@ BOpt_FindFileSystem (
   }
 
   if (NoSimpleFsHandles != 0) {
-    FreePool (SimpleFsHandle);
+    FreePool(SimpleFsHandle);
   }
   //
   // Searching for handles that support Load File protocol
@@ -417,11 +417,11 @@ BOpt_FindFileSystem (
                   &LoadFileHandle
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < NoLoadFileHandles; Index++) {
       MenuEntry = BOpt_CreateMenuEntry (BM_FILE_CONTEXT_SELECT);
       if (NULL == MenuEntry) {
-        FreePool (LoadFileHandle);
+        FreePool(LoadFileHandle);
         return EFI_OUT_OF_RESOURCES;
       }
 
@@ -453,7 +453,7 @@ BOpt_FindFileSystem (
   }
 
   if (NoLoadFileHandles != 0) {
-    FreePool (LoadFileHandle);
+    FreePool(LoadFileHandle);
   }
 
   //
@@ -464,7 +464,7 @@ BOpt_FindFileSystem (
                   NULL,
                   (VOID **) &LegacyBios
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
 
     for (Index = BBS_TYPE_FLOPPY; Index <= BBS_TYPE_EMBEDDED_NETWORK; Index++) {
       MenuEntry = BOpt_CreateMenuEntry (BM_FILE_CONTEXT_SELECT);
@@ -587,7 +587,7 @@ BOpt_FindFiles (
     Dir->Close (Dir);
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -620,7 +620,7 @@ BOpt_FindFiles (
     for (;;) {
       BufferSize  = DirBufferSize;
       Status      = NewDir->Read (NewDir, &BufferSize, DirInfo);
-      if (EFI_ERROR (Status) || BufferSize == 0) {
+      if (EFI_ERROR(Status) || BufferSize == 0) {
         break;
       }
 
@@ -692,7 +692,7 @@ BOpt_FindFiles (
   }
 
   DirectoryMenu.MenuNumber = OptionNumber;
-  FreePool (DirInfo);
+  FreePool(DirInfo);
   return EFI_SUCCESS;
 }
 
@@ -743,7 +743,7 @@ BOpt_GetLegacyOptions (
                   NULL,
                   (VOID **) &LegacyBios
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = LegacyBios->GetBbsInfo (
                           LegacyBios,
                           &HddCount,
@@ -751,7 +751,7 @@ BOpt_GetLegacyOptions (
                           &BbsCount,
                           &BbsTable
                           );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -917,7 +917,7 @@ BOpt_GetBootOptions (
 
   if (BootNext != NULL) {
     if (BootNextSize != sizeof (UINT16)) {
-      FreePool (BootNext);
+      FreePool(BootNext);
       BootNext = NULL;
     }
   }
@@ -942,7 +942,7 @@ BOpt_GetBootOptions (
     }
 
     CopyMem (LoadOption, LoadOptionFromVar, BootOptionSize);
-    FreePool (LoadOptionFromVar);
+    FreePool(LoadOptionFromVar);
 
     if (BootNext != NULL) {
       BootNextFlag = (BOOLEAN) (*BootNext == BootOrderList[Index]);
@@ -951,7 +951,7 @@ BOpt_GetBootOptions (
     }
 
     if (0 == (*((UINT32 *) LoadOption) & LOAD_OPTION_ACTIVE)) {
-      FreePool (LoadOption);
+      FreePool(LoadOption);
       continue;
     }
     //
@@ -1073,10 +1073,10 @@ BOpt_GetBootOptions (
   }
 
   if (BootNext != NULL) {
-    FreePool (BootNext);
+    FreePool(BootNext);
   }
   if (BootOrderList != NULL) {
-    FreePool (BootOrderList);
+    FreePool(BootOrderList);
   }
   BootOptionMenu.MenuNumber = MenuCount;
   return EFI_SUCCESS;
@@ -1159,7 +1159,7 @@ BOpt_AppendFileName (
     Ptr++;
   }
 
-  FreePool (TmpStr);
+  FreePool(TmpStr);
   
   return Str;
 }
@@ -1232,7 +1232,7 @@ BOpt_IsEfiApp (
 
   Status = Dir->Open (Dir, &File, FileName, EFI_FILE_MODE_READ, 0);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -1314,7 +1314,7 @@ BOpt_FindDrivers (
                   &NoDevicePathHandles,
                   &DevicePathHandle
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1342,7 +1342,7 @@ BOpt_FindDrivers (
 
     NewMenuEntry = BOpt_CreateMenuEntry (BM_HANDLE_CONTEXT_SELECT);
     if (NULL == NewMenuEntry) {
-      FreePool (DevicePathHandle);
+      FreePool(DevicePathHandle);
       return EFI_OUT_OF_RESOURCES;
     }
 
@@ -1358,7 +1358,7 @@ BOpt_FindDrivers (
   }
 
   if (DevicePathHandle != NULL) {
-    FreePool (DevicePathHandle);
+    FreePool(DevicePathHandle);
   }
 
   DriverMenu.MenuNumber = OptionNumber;
@@ -1537,7 +1537,7 @@ BOpt_GetDriverOptions (
     }
 
     CopyMem (LoadOption, LoadOptionFromVar, DriverOptionSize);
-    FreePool (LoadOptionFromVar);
+    FreePool(LoadOptionFromVar);
 
     NewMenuEntry = BOpt_CreateMenuEntry (BM_LOAD_CONTEXT_SELECT);
     if (NULL == NewMenuEntry) {
@@ -1624,7 +1624,7 @@ BOpt_GetDriverOptions (
   }
 
   if (DriverOrderList != NULL) {
-    FreePool (DriverOrderList);
+    FreePool(DriverOrderList);
   }
   DriverOptionMenu.MenuNumber = Index;
   return EFI_SUCCESS;

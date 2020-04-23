@@ -82,7 +82,7 @@ HiiResourcesSampleInit (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -95,7 +95,7 @@ HiiResourcesSampleInit (
                   EFI_NATIVE_INTERFACE,
                   &mHiiVendorDevicePath
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -108,7 +108,7 @@ HiiResourcesSampleInit (
                           mDriverHandle,
                           &mHiiHandle
                           );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

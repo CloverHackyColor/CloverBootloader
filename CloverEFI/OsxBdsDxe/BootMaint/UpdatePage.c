@@ -799,7 +799,7 @@ UpdateConModePage (
   //
   for (Mode = 0; Mode < MaxMode; Mode++) {
     Status = ConOut->QueryMode (ConOut, Mode, &Col, &Row);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     ValidMode++;
@@ -827,7 +827,7 @@ UpdateConModePage (
   //
   for (Mode = 0; Mode < MaxMode; Mode++) {
     Status = ConOut->QueryMode (ConOut, Mode, &Col, &Row);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
     
@@ -876,7 +876,7 @@ UpdateConModePage (
     );
 
   HiiFreeOpCodeHandle (OptionsOpCodeHandle);
-  FreePool (ModeToken);
+  FreePool(ModeToken);
 
   UpdatePageEnd (CallbackData);
 }
@@ -1227,14 +1227,14 @@ GetLegacyBootOptionVar (
         (BBS_BBS_DP == DevicePath->SubType)
         ) {
       *OptionIndex = OrderBuffer[Index];
-      FreePool (OrderBuffer);
+      FreePool(OrderBuffer);
       return OptionBuffer;
     } else {
-      FreePool (OptionBuffer);
+      FreePool(OptionBuffer);
     }
   }
 
-  FreePool (OrderBuffer);
+  FreePool(OrderBuffer);
   return NULL;
 }
 

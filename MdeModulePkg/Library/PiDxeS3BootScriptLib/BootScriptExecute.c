@@ -196,7 +196,7 @@ ScriptIoRead (
   }
 
   Status = BuildLoopData (Width, Address, &AddressStride, &BufferStride);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -302,7 +302,7 @@ ScriptIoWrite (
   }
 
   Status = BuildLoopData (Width, Address, &AddressStride, &BufferStride);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -432,7 +432,7 @@ ScriptMemoryRead (
   Out.Buf = Buffer;
 
   Status  = BuildLoopData (Width, Address, &AddressStride, &BufferStride);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -533,7 +533,7 @@ ScriptMemoryWrite (
   In.Buf  = Buffer;
 
   Status  = BuildLoopData (Width, Address, &AddressStride, &BufferStride);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -665,7 +665,7 @@ ScriptPciCfg2Read (
   PciAddress = PCI_ADDRESS_ENCODE (Segment, Address);
 
   Status = BuildLoopData (Width, PciAddress, &AddressStride, &BufferStride);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -755,7 +755,7 @@ ScriptPciCfg2Write (
   PciAddress = PCI_ADDRESS_ENCODE (Segment, Address);
 
   Status = BuildLoopData (Width, PciAddress, &AddressStride, &BufferStride);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   //
@@ -919,7 +919,7 @@ BootScriptExecuteIoReadWrite (
              1,
              &Data
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Data = (Data & AndMask) | OrMask;
     Status = ScriptIoWrite (
                (S3_BOOT_SCRIPT_LIB_WIDTH) IoReadWrite.Width,
@@ -963,7 +963,7 @@ BootScriptExecuteMemoryReadWrite (
              1,
              &Data
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Data = (Data & AndMask) | OrMask;
     Status = ScriptMemoryWrite (
                (S3_BOOT_SCRIPT_LIB_WIDTH) MemReadWrite.Width,
@@ -1007,7 +1007,7 @@ BootScriptExecutePciCfgReadWrite (
              1,
              &Data
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1158,7 +1158,7 @@ BootScriptExecuteMemPoll (
                1,
                &Data
                );
-  if ((!EFI_ERROR (Status)) && (Data & AndMask) == OrMask) {
+  if ((!EFI_ERROR(Status)) && (Data & AndMask) == OrMask) {
     return EFI_SUCCESS;
   }
 
@@ -1172,7 +1172,7 @@ BootScriptExecuteMemPoll (
                1,
                &Data
                );
-   if ((!EFI_ERROR (Status)) && (Data & AndMask) == OrMask) {
+   if ((!EFI_ERROR(Status)) && (Data & AndMask) == OrMask) {
     return EFI_SUCCESS;
    }
   }
@@ -1358,7 +1358,7 @@ BootScriptExecuteIoPoll (
              1,
              &Data
              );
-  if ((!EFI_ERROR (Status)) && (Data & AndMask) == OrMask) {
+  if ((!EFI_ERROR(Status)) && (Data & AndMask) == OrMask) {
     return EFI_SUCCESS;
   }
   for (LoopTimes = 0; LoopTimes < IoPoll.Delay; LoopTimes++) {
@@ -1370,7 +1370,7 @@ BootScriptExecuteIoPoll (
                1,
                &Data
                );
-    if ((!EFI_ERROR (Status)) &&(Data & AndMask) == OrMask) {
+    if ((!EFI_ERROR(Status)) &&(Data & AndMask) == OrMask) {
       return EFI_SUCCESS;
     }
   }
@@ -1448,7 +1448,7 @@ BootScriptExecutePciCfg2ReadWrite (
              1,
              &Data
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1495,7 +1495,7 @@ BootScriptPciCfgPoll (
              1,
              &Data
              );
-  if ((!EFI_ERROR (Status)) &&(Data & AndMask) == OrMask) {
+  if ((!EFI_ERROR(Status)) &&(Data & AndMask) == OrMask) {
     return EFI_SUCCESS;
   }
 
@@ -1508,7 +1508,7 @@ BootScriptPciCfgPoll (
                1,
                &Data
                );
-    if ((!EFI_ERROR (Status)) &&
+    if ((!EFI_ERROR(Status)) &&
        (Data & AndMask) == OrMask) {
       return EFI_SUCCESS;
     }
@@ -1557,7 +1557,7 @@ BootScriptPciCfg2Poll (
              1,
              &Data
              );
-  if ((!EFI_ERROR (Status)) && (Data & AndMask) == OrMask) {
+  if ((!EFI_ERROR(Status)) && (Data & AndMask) == OrMask) {
     return EFI_SUCCESS;
   }
 
@@ -1572,7 +1572,7 @@ BootScriptPciCfg2Poll (
                1,
                &Data
                );
-    if ((!EFI_ERROR (Status)) &&  (Data & AndMask) == OrMask) {
+    if ((!EFI_ERROR(Status)) &&  (Data & AndMask) == OrMask) {
       return EFI_SUCCESS;
     }
   }
@@ -1761,7 +1761,7 @@ S3BootScriptExecute (
       return EFI_UNSUPPORTED;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((EFI_D_INFO, "S3BootScriptDone - %r\n", Status));
       return Status;
     }

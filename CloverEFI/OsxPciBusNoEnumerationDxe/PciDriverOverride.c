@@ -143,7 +143,7 @@ Returns:
   PCI_DRIVER_OVERRIDE_LIST      *Node;
 
   Status = gBS->HandleProtocol (DriverImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -167,7 +167,7 @@ Returns:
   // Get information about the image 
   //
   Status = PeCoffLoaderGetImageInfo (&ImageContext);
-/*  if (EFI_ERROR (Status)) {
+/*  if (EFI_ERROR(Status)) {
     return EFI_SUCCESS;
   }
 

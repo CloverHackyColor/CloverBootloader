@@ -157,7 +157,7 @@ PrintEntryPoint (
                   &gEfiPrint2SProtocolGuid, &mPrint2SProtocol,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }

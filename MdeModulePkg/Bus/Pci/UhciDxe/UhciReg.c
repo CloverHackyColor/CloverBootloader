@@ -37,7 +37,7 @@ UhciReadReg (
                       &Data
                       );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UhciReadReg: PciIo Io.Read error: %r at offset %d\n", Status, Offset));
 
     Data = 0xFFFF;
@@ -73,7 +73,7 @@ UhciWriteReg (
                       &Data
                       );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UhciWriteReg: PciIo Io.Write error: %r at offset %d\n", Status, Offset));
   }
 }
@@ -244,7 +244,7 @@ UhciSetFrameListBaseAddr (
                        &Data
                        );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((EFI_D_ERROR, "UhciSetFrameListBaseAddr: PciIo Io.Write error: %r\n", Status));
   }
 }

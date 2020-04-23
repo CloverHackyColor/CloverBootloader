@@ -163,7 +163,7 @@ PartitionInstallMbrChildHandles (
                      BlockSize,
                      Mbr
                      );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Found = Status;
     goto Done;
   }
@@ -252,7 +252,7 @@ PartitionInstallMbrChildHandles (
                 ((Mbr->Partition[Index].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid: NULL)
                 );
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Found = EFI_SUCCESS;
       }
     }
@@ -273,7 +273,7 @@ PartitionInstallMbrChildHandles (
                          BlockSize,
                          Mbr
                          );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Found = Status;
         goto Done;
       }
@@ -323,7 +323,7 @@ PartitionInstallMbrChildHandles (
                  MBR_SIZE,
                  ((Mbr->Partition[0].OSIndicator == EFI_PARTITION) ? &gEfiPartTypeSystemPartGuid: NULL)
                  );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Found = EFI_SUCCESS;
       }
 
@@ -344,7 +344,7 @@ PartitionInstallMbrChildHandles (
   }
 
 Done:
-  FreePool (Mbr);
+  FreePool(Mbr);
 
   return Found;
 }

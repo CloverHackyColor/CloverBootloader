@@ -127,7 +127,7 @@ GenericProtocolNotify (
   // See if the expected protocol is present in the handle database
   //
   Status = CoreLocateProtocol (Entry->ProtocolGuid, Entry->Registration, &Protocol);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 

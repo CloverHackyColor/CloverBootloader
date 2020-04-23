@@ -37,7 +37,7 @@ IoLibConstructor (
   EFI_STATUS  Status;
 
   Status = gBS->LocateProtocol (&gEfiCpuIo2ProtocolGuid, NULL, (VOID **) &mCpuIo);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -69,7 +69,7 @@ IoReadWorker (
   UINT64      Data;
 
   Status = mCpuIo->Io.Read (mCpuIo, Width, Port, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }
@@ -102,7 +102,7 @@ IoWriteWorker (
   EFI_STATUS  Status;
 
   Status = mCpuIo->Io.Write (mCpuIo, Width, Port, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }
@@ -135,7 +135,7 @@ IoReadFifoWorker (
   EFI_STATUS  Status;
 
   Status = mCpuIo->Io.Read (mCpuIo, Width, Port, Count, Buffer);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -166,7 +166,7 @@ IoWriteFifoWorker (
   EFI_STATUS  Status;
 
   Status = mCpuIo->Io.Write (mCpuIo, Width, Port, Count, Buffer);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -194,7 +194,7 @@ MmioReadWorker (
   UINT64      Data;
 
   Status = mCpuIo->Mem.Read (mCpuIo, Width, Address, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }
@@ -225,7 +225,7 @@ MmioWriteWorker (
   EFI_STATUS  Status;
 
   Status = mCpuIo->Mem.Write (mCpuIo, Width, Address, 1, &Data);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Data;
 }

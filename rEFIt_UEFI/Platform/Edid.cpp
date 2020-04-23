@@ -51,7 +51,7 @@ InitializeEdidOverride ()
                                                    EdidOverride,
                                                    NULL
                                                    );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DBG("Can't install EdidOverride on ImageHandle\n");
   }
   return Status;
@@ -67,7 +67,7 @@ UINT8* getCurrentEdid (VOID)
   DBG ("EdidActive:");
   Edid = NULL;
   Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
       Edid = (__typeof__(Edid))AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
@@ -112,7 +112,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
     DebugDumpEDID("--- Custom EDID Table", N);
   } else {
     Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
-    if (!EFI_ERROR (Status)) { //discovered
+    if (!EFI_ERROR(Status)) { //discovered
       N = EdidDiscovered->SizeOfEdid;
       if (!GlobalConfig.DebugLog) {
 		  DBG("EdidDiscovered size=%llu\n", N);

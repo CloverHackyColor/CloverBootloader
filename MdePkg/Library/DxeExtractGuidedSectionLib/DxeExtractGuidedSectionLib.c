@@ -82,13 +82,13 @@ ReallocateExtractHandlerTable (
 
 Done:
   if (mExtractHandlerGuidTable != NULL) {
-    FreePool (mExtractHandlerGuidTable);
+    FreePool(mExtractHandlerGuidTable);
   }
   if (mExtractDecodeHandlerTable != NULL) {
-    FreePool (mExtractDecodeHandlerTable);
+    FreePool(mExtractDecodeHandlerTable);
   }
   if (mExtractGetInfoHandlerTable != NULL) {
-    FreePool (mExtractGetInfoHandlerTable);
+    FreePool(mExtractGetInfoHandlerTable);
   }
 
   return RETURN_OUT_OF_RESOURCES;

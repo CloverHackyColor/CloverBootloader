@@ -60,8 +60,8 @@ InitializeBiosIntCaller (
                   EFI_SIZE_TO_PAGES(LegacyRegionSize),
                   &LegacyRegionBase
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
   
@@ -118,8 +118,8 @@ InitializeInterruptRedirection (
                   EFI_SIZE_TO_PAGES(LegacyRegionLength),
                   &LegacyRegionBase
                   );
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -132,8 +132,8 @@ InitializeInterruptRedirection (
   // Get VectorBase, it should be 0x68
   //
   Status = gLegacy8259->GetVector (gLegacy8259, Efi8259Irq0, &ProtectedModeBaseVector);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -171,7 +171,7 @@ DisconnectVga ( VOID )
         continue;
       }
       Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-      if (!EFI_ERROR (Status))
+      if (!EFI_ERROR(Status))
       {
         if(IS_PCI_VGA(&Pci) == TRUE)
         {
@@ -248,8 +248,8 @@ LegacyBiosInt86 (
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   
@@ -267,8 +267,8 @@ LegacyBiosInt86 (
   // Restore protected mode interrupt state
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-  if (EFI_ERROR (Status)) {
+//  ASSERT_EFI_ERROR(Status);
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -381,7 +381,7 @@ LegacyBiosFarCall86 (
 
   // Save current rate of DXE Timer and disable DXE timer
   Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **) &Timer);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Timer->GetTimerPeriod (Timer, &TimerPeriod);
     Timer->SetTimerPeriod (Timer, 0);
   }

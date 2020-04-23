@@ -132,7 +132,7 @@ DxeRuntimePciExpressLibConstructor (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mDxeRuntimePciExpressLibVirtualNotifyEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -162,14 +162,14 @@ DxeRuntimePciExpressLibDestructor (
   // free the registration table.
   //
   if (mDxeRuntimePciExpressLibRegistrationTable != NULL) {
-    FreePool (mDxeRuntimePciExpressLibRegistrationTable);
+    FreePool(mDxeRuntimePciExpressLibRegistrationTable);
   }
 
   //
   // Close the Set Virtual Address Map event
   //
   Status = gBS->CloseEvent (mDxeRuntimePciExpressLibVirtualNotifyEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -311,7 +311,7 @@ PciExpressRegisterForRuntimeAccess (
   // Get the GCD Memory Descriptor for the PCI Express Bus/Dev/Func specified by Address
   //
   Status = gDS->GetMemorySpaceDescriptor (Address, &Descriptor);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_UNSUPPORTED;
   }
 
@@ -320,7 +320,7 @@ PciExpressRegisterForRuntimeAccess (
   // will allocate a virtual address range for the 4KB PCI Configuration Header.
   //
   Status = gDS->SetMemorySpaceAttributes (Address, 0x1000, Descriptor.Attributes | EFI_MEMORY_RUNTIME);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_UNSUPPORTED;
   }
 

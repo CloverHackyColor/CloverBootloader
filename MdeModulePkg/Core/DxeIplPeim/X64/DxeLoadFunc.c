@@ -96,7 +96,7 @@ HandOffToDxeCore (
   // End of PEI phase signal
   //
   Status = PeiServicesInstallPpi (&gEndOfPeiSignalPpi);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if (FeaturePcdGet (PcdDxeIplBuildPageTables)) {
     AsmWriteCr3 (PageTables);

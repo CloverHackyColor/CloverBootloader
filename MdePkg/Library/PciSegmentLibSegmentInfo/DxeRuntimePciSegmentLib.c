@@ -76,14 +76,14 @@ DxeRuntimePciSegmentLibVirtualNotify (
   //
   for (Index = 0; Index < mDxeRuntimePciSegmentLibNumberOfRuntimeRanges; Index++) {
     Status = EfiConvertPointer (0, (VOID **) &(mDxeRuntimePciSegmentLibRegistrationTable[Index].VirtualAddress));
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   //
   // Convert table pointer that is allocated from EfiRuntimeServicesData to a virtual address.
   //
   Status = EfiConvertPointer (0, (VOID **) &mDxeRuntimePciSegmentLibRegistrationTable);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }
 
 /**
@@ -117,7 +117,7 @@ DxeRuntimePciSegmentLibConstructor (
                   &gEfiEventVirtualAddressChangeGuid,
                   &mDxeRuntimePciSegmentLibVirtualNotifyEvent
                   );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -147,14 +147,14 @@ DxeRuntimePciSegmentLibDestructor (
   // free the registration table.
   //
   if (mDxeRuntimePciSegmentLibRegistrationTable != NULL) {
-    FreePool (mDxeRuntimePciSegmentLibRegistrationTable);
+    FreePool(mDxeRuntimePciSegmentLibRegistrationTable);
   }
 
   //
   // Close the Set Virtual Address Map event
   //
   Status = gBS->CloseEvent (mDxeRuntimePciSegmentLibVirtualNotifyEvent);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return Status;
 }
@@ -223,7 +223,7 @@ PciSegmentRegisterForRuntimeAccess (
   // Get the GCD Memory Descriptor for the ECAM Address
   //
   Status = gDS->GetMemorySpaceDescriptor (Address, &Descriptor);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_UNSUPPORTED;
   }
 
@@ -232,7 +232,7 @@ PciSegmentRegisterForRuntimeAccess (
   // will allocate a virtual address range for the 4KB PCI Configuration Header.
   //
   Status = gDS->SetMemorySpaceAttributes (Address, EFI_PAGE_SIZE, Descriptor.Attributes | EFI_MEMORY_RUNTIME);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return RETURN_UNSUPPORTED;
   }
 

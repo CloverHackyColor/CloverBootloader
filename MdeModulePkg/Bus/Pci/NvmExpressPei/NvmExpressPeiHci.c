@@ -229,7 +229,7 @@ NvmeDisableController (
   // Read Controller Configuration Register.
   //
   Status = NVME_GET_CC (Private, &Cc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NVME_GET_CC fail, Status - %r\n", __FUNCTION__, Status));
     goto ErrorExit;
   }
@@ -240,14 +240,14 @@ NvmeDisableController (
     // Disable the controller.
     //
     Status = NVME_SET_CC (Private, &Cc);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "%a: NVME_SET_CC fail, Status - %r\n", __FUNCTION__, Status));
       goto ErrorExit;
     }
   }
 
   Status = NvmeWaitController (Private, FALSE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NvmeWaitController fail, Status - %r\n", __FUNCTION__, Status));
     goto ErrorExit;
   }
@@ -286,13 +286,13 @@ NvmeEnableController (
   Cc.Iosqes = 6;
   Cc.Iocqes = 4;
   Status    = NVME_SET_CC (Private, &Cc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NVME_SET_CC fail, Status - %r\n", __FUNCTION__, Status));
     goto ErrorExit;
   }
 
   Status = NvmeWaitController (Private, TRUE);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NvmeWaitController fail, Status - %r\n", __FUNCTION__, Status));
     goto ErrorExit;
   }
@@ -595,7 +595,7 @@ NvmeControllerInit (
   // Disable the NVME controller first
   //
   Status = NvmeDisableController (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NvmeDisableController fail, Status - %r\n", __FUNCTION__, Status));
     return Status;
   }
@@ -643,7 +643,7 @@ NvmeControllerInit (
   // Enable the NVME controller
   //
   Status = NvmeEnableController (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NvmeEnableController fail, Status - %r\n", __FUNCTION__, Status));
     return Status;
   }
@@ -658,7 +658,7 @@ NvmeControllerInit (
     }
   }
   Status = NvmeIdentifyController (Private, Private->ControllerData);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NvmeIdentifyController fail, Status - %r\n", __FUNCTION__, Status));
     return Status;
   }
@@ -680,12 +680,12 @@ NvmeControllerInit (
   // Create one I/O completion queue and one I/O submission queue
   //
   Status = NvmeCreateIoCompletionQueue (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Create IO completion queue fail, Status - %r\n", __FUNCTION__, Status));
     return Status;
   }
   Status = NvmeCreateIoSubmissionQueue (Private);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: Create IO submission queue fail, Status - %r\n", __FUNCTION__, Status));
   }
 

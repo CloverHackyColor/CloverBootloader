@@ -124,7 +124,7 @@ GetImageType (
                   &TempDevicePath,
                   &DeviceHandle
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->OpenProtocol (
                     DeviceHandle,
                     &gEfiFirmwareVolume2ProtocolGuid,
@@ -133,7 +133,7 @@ GetImageType (
                     NULL,
                     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return IMAGE_FROM_FV;
     }
   }
@@ -368,13 +368,13 @@ FreeImageRecord (
                                IMAGE_PROPERTIES_RECORD_CODE_SECTION_SIGNATURE
                                );
     RemoveEntryList (&ImageRecordCodeSection->Link);
-    FreePool (ImageRecordCodeSection);
+    FreePool(ImageRecordCodeSection);
   }
 
   if (ImageRecord->Link.ForwardLink != NULL) {
     RemoveEntryList (&ImageRecord->Link);
   }
-  FreePool (ImageRecord);
+  FreePool(ImageRecord);
 }
 
 /**
@@ -807,11 +807,11 @@ InitializeDxeNxMemoryProtectionPolicy (
                     &DescriptorSize,
                     &DescriptorVersion
                     );
-    if (EFI_ERROR (Status)) {
-      FreePool (MemoryMap);
+    if (EFI_ERROR(Status)) {
+      FreePool(MemoryMap);
     }
   } while (Status == EFI_BUFFER_TOO_SMALL);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   StackBase = 0;
   if (PcdGetBool (PcdCpuStackGuard)) {
@@ -899,7 +899,7 @@ InitializeDxeNxMemoryProtectionPolicy (
     }
     MemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
   }
-  FreePool (MemoryMap);
+  FreePool(MemoryMap);
 
   //
   // Apply the policy for RAM regions that we know are present and
@@ -968,7 +968,7 @@ MemoryProtectionCpuArchProtocolNotify (
 
   DEBUG ((DEBUG_INFO, "MemoryProtectionCpuArchProtocolNotify:\n"));
   Status = CoreLocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **)&gCpu);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto Done;
   }
 
@@ -995,7 +995,7 @@ MemoryProtectionCpuArchProtocolNotify (
                   &NoHandles,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status) && (NoHandles == 0)) {
+  if (EFI_ERROR(Status) && (NoHandles == 0)) {
     goto Done;
   }
 
@@ -1019,7 +1019,7 @@ MemoryProtectionCpuArchProtocolNotify (
 
     ProtectUefiImage (LoadedImage, LoadedImageDevicePath);
   }
-  FreePool (HandleBuffer);
+  FreePool(HandleBuffer);
 
 Done:
   CoreCloseEvent (Event);
@@ -1076,7 +1076,7 @@ DisableNullDetectionAtTheEndOfDxe (
   // Disable NULL pointer detection by enabling first 4K page
   //
   Status = CoreGetMemorySpaceDescriptor (0, &Desc);
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   if ((Desc.Capabilities & EFI_MEMORY_RP) == 0) {
     Status = CoreSetMemorySpaceCapabilities (
@@ -1084,7 +1084,7 @@ DisableNullDetectionAtTheEndOfDxe (
               EFI_PAGE_SIZE,
               Desc.Capabilities | EFI_MEMORY_RP
               );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   Status = CoreSetMemorySpaceAttributes (
@@ -1092,7 +1092,7 @@ DisableNullDetectionAtTheEndOfDxe (
             EFI_PAGE_SIZE,
             Desc.Attributes & ~EFI_MEMORY_RP
             );
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   CoreCloseEvent (Event);
   DEBUG ((DEBUG_INFO, "DisableNullDetectionAtTheEndOfDxe(): end\r\n"));
@@ -1162,7 +1162,7 @@ CoreInitializeMemoryProtection (
                     &gEfiEndOfDxeEventGroupGuid,
                     &EndOfDxeEvent
                     );
-    ASSERT_EFI_ERROR (Status);
+    ASSERT_EFI_ERROR(Status);
   }
 
   return ;

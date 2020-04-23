@@ -193,16 +193,16 @@ RegisterNonDiscoverableMmioDevice (
                   &gEdkiiNonDiscoverableDeviceProtocolGuid, Device,
                   &gEfiDevicePathProtocolGuid, DevicePath,
                   NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     goto FreeDevicePath;
   }
   return EFI_SUCCESS;
 
 FreeDevicePath:
-  FreePool (DevicePath);
+  FreePool(DevicePath);
 
 FreeDevice:
-  FreePool (Device);
+  FreePool(Device);
 
   return Status;
 }
