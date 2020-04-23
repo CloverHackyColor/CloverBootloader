@@ -1000,9 +1000,9 @@ static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry
 		&LocalBbsTable
 		);
 
-	DBG ("BBS Table of size %d, patching priorities Pold->Pnew:\n", BbsCount);
-	DBG (" NO: BBS# Pold Pnew bb/dd/ff cl/sc Type Stat segm:offs\n");
-	DBG (" =====================================================\n");
+	DBG("BBS Table of size %d, patching priorities Pold->Pnew:\n", BbsCount);
+	DBG(" NO: BBS# Pold Pnew bb/dd/ff cl/sc Type Stat segm:offs\n");
+	DBG(" =====================================================\n");
 
 	for (Idx = 0; Idx < BbsCount; Idx++) {
 		if ((LocalBbsTable[Idx].BootPriority == BBS_IGNORE_ENTRY) ||
@@ -1019,7 +1019,7 @@ static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry
 			LocalBbsTable[Idx].BootPriority = Priority++;
 		}
 
-		DBG (" %02llu: 0x%02llX %04llX %04llX %02llX/%02llX/%02llX %02llX/%02llX %04llX %04llX %04llX:%04llX\n",
+		DBG(" %02llu: 0x%02llX %04llX %04llX %02llX/%02llX/%02llX %02llX/%02llX %04llX %04llX %04llX:%04llX\n",
 		    (UINTN) IdxCount,
 		    (UINTN) Idx,
 		    (UINTN) OldPriority,

@@ -1727,7 +1727,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CONST CHAR16 *Con
 	  BOOLEAN res2 = FileExists(Root, ConfigPath);
 	  if ( res2 ) {
 	  	OEMPath = path;
-	  	DBG ("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath);
+	  	DBG("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath);
 	  	return 1;
 	  }else{
 	  	DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path, ConfName);
@@ -1744,7 +1744,7 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
   {
     OEMPath = PoolPrint(L"%s", L"EFI\\CLOVER");
     if (ConfName == NULL) {
-      DBG ("set OEMPath (ConfName == NULL): %ls\n", OEMPath);
+      DBG("set OEMPath (ConfName == NULL): %ls\n", OEMPath);
     } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
     } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
     } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
@@ -1755,7 +1755,7 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
     } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard), ConfName)) {
     } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
     } else {
-      DBG ("set OEMPath by default: %ls\n", OEMPath);
+      DBG("set OEMPath by default: %ls\n", OEMPath);
     }
   }
 

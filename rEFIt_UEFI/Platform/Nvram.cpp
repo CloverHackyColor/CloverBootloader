@@ -150,31 +150,31 @@ SetNvramVariable (
   UINTN  OldDataSize = 0;
   UINT32 OldAttributes = 0;
   
-  //DBG ("SetNvramVariable (%ls, guid, 0x%X, %d):", VariableName, Attributes, DataSize);
+  //DBG("SetNvramVariable (%ls, guid, 0x%X, %d):", VariableName, Attributes, DataSize);
   OldData = (__typeof__(OldData))GetNvramVariable (VariableName, VendorGuid, &OldAttributes, &OldDataSize);
   if (OldData != NULL) {
     // var already exists - check if it equal to new value
-    //DBG (" exists(0x%X, %d)", OldAttributes, OldDataSize);
+    //DBG(" exists(0x%X, %d)", OldAttributes, OldDataSize);
     if ((OldAttributes == Attributes) &&
         (OldDataSize == DataSize) &&
         (CompareMem (OldData, Data, DataSize) == 0)) {
       // it's the same - do nothing
-      //DBG (", equal -> not writing again.\n");
+      //DBG(", equal -> not writing again.\n");
       FreePool(OldData);
       return EFI_SUCCESS;
     }
-    //DBG (", not equal\n");
+    //DBG(", not equal\n");
     
     FreePool(OldData);
     
     // not the same - delete previous one if attributes are different
     if (OldAttributes != Attributes) {
       DeleteNvramVariable (VariableName, VendorGuid);
-      //DBG (", diff. attr: deleting old (%s)", strerror(Status));
+      //DBG(", diff. attr: deleting old (%s)", strerror(Status));
     }
   }
-  //DBG ("\n"); // for debug without Status
-  //DBG (" -> writing new (%s)\n", strerror(Status));
+  //DBG("\n"); // for debug without Status
+  //DBG(" -> writing new (%s)\n", strerror(Status));
   //return Status;
  
   return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
@@ -193,13 +193,13 @@ AddNvramVariable (
 {
   VOID       *OldData;
 
-  //DBG ("SetNvramVariable (%ls, guid, 0x%X, %d):\n", VariableName, Attributes, DataSize);
+  //DBG("SetNvramVariable (%ls, guid, 0x%X, %d):\n", VariableName, Attributes, DataSize);
   OldData = (__typeof__(OldData))GetNvramVariable (VariableName, VendorGuid, NULL, NULL);
   if (OldData == NULL)
   {
     // set new value
     return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
-//  DBG (" -> writing new (%s)\n", strerror(Status));
+//  DBG(" -> writing new (%s)\n", strerror(Status));
 	} else {
 		FreePool(OldData);
     return EFI_ABORTED;
@@ -218,7 +218,7 @@ DeleteNvramVariable (
     
   // Delete: attributes and data size = 0
   Status = gRT->SetVariable (VariableName, VendorGuid, 0, 0, NULL);
-  //DBG ("DeleteNvramVariable (%ls, guid = %s):\n", VariableName, strerror(Status));
+  //DBG("DeleteNvramVariable (%ls, guid = %s):\n", VariableName, strerror(Status));
     
   return Status;
 }
@@ -318,13 +318,13 @@ ResetNativeNvram ()
 
     if (!EFI_ERROR(Status)) {
       if (IsDeletableVariable (Name, &Guid)) {
-        //DBG ("Deleting %s:%ls...", strguid(&Guid), Name);
+        //DBG("Deleting %s:%ls...", strguid(&Guid), Name);
         Status = DeleteNvramVariable(Name, &Guid);
         if (!EFI_ERROR(Status)) {
-          //DBG ("OK\n");
+          //DBG("OK\n");
           Restart = TRUE;
         } else {
-          //DBG ("FAIL (%s)\n", strerror(Status));
+          //DBG("FAIL (%s)\n", strerror(Status));
           break;
         }
       }
@@ -535,7 +535,7 @@ EFI_GUID
 
 /** detailed debug for BootVolumeDevicePathEqual */
 #define DBG_DP(...)
-//#define DBG_DP(...) DBG (__VA_ARGS__)
+//#define DBG_DP(...) DBG(__VA_ARGS__)
 
 /** Returns TRUE if dev paths are equal. Ignores some differences. */
 BOOLEAN
@@ -708,10 +708,10 @@ GetEfiBootDeviceFromNvram ()
   
   
   DbgHeader("GetEfiBootDeviceFromNvram");
-//  DBG ("GetEfiBootDeviceFromNvram:");
+//  DBG("GetEfiBootDeviceFromNvram:");
   
   if (gEfiBootDeviceData != NULL) {
-//    DBG (" - [!] already parsed\n");
+//    DBG(" - [!] already parsed\n");
     return EFI_SUCCESS;
   }
 
@@ -747,12 +747,12 @@ GetEfiBootDeviceFromNvram ()
     }
   }
   if (gEfiBootDeviceData == NULL) {
-//    DBG (" - [!] efi-boot-device-data not found\n");
+//    DBG(" - [!] efi-boot-device-data not found\n");
     return EFI_NOT_FOUND;
   }
   
-//  DBG ("\n");
-  DBG (" - efi-boot-device-data: %ls\n", FileDevicePathToStr (gEfiBootDeviceData));
+//  DBG("\n");
+  DBG(" - efi-boot-device-data: %ls\n", FileDevicePathToStr (gEfiBootDeviceData));
   
   gEfiBootVolume = gEfiBootDeviceData;
   
@@ -765,18 +765,18 @@ GetEfiBootDeviceFromNvram ()
     gEfiBootVolume = gBootCampHD;
 
     if (gBootCampHD == NULL) {
-//      DBG ("  - [!] Error: BootCampHD not found\n");
+//      DBG("  - [!] Error: BootCampHD not found\n");
       return EFI_NOT_FOUND;
     }
 
     if (!IsDevicePathValid(gBootCampHD, Size)) {
-//      DBG (" Error: BootCampHD device path is invalid\n");
+//      DBG(" Error: BootCampHD device path is invalid\n");
       FreePool(gBootCampHD);
       gEfiBootVolume = gBootCampHD = NULL;
       return EFI_NOT_FOUND;
     }
 
-    DBG ("  - BootCampHD: %ls\n", FileDevicePathToStr (gBootCampHD));
+    DBG("  - BootCampHD: %ls\n", FileDevicePathToStr (gBootCampHD));
   }
   
   //
@@ -793,8 +793,8 @@ GetEfiBootDeviceFromNvram ()
     // gEfiBootVolume now contains only Volume path
   }
 
-  DBG ("  - Volume: '%ls'\n", FileDevicePathToStr (gEfiBootVolume));
-  DBG ("  - LoaderPath: '%ls'\n", gEfiBootLoaderPath);
+  DBG("  - Volume: '%ls'\n", FileDevicePathToStr (gEfiBootVolume));
+  DBG("  - LoaderPath: '%ls'\n", gEfiBootLoaderPath);
   
   //
   // if this is GPT disk, extract GUID
@@ -805,7 +805,7 @@ GetEfiBootDeviceFromNvram ()
     gEfiBootDeviceGuid = (__typeof__(gEfiBootDeviceGuid))AllocatePool (sizeof(EFI_GUID));
     if (gEfiBootDeviceGuid != NULL) {
       CopyMem (gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
-      DBG ("  - Guid = %s\n", strguid(gEfiBootDeviceGuid));
+      DBG("  - Guid = %s\n", strguid(gEfiBootDeviceGuid));
     }
   }
   
@@ -837,18 +837,18 @@ LoadNvramPlist (
     //
     Status = egLoadFile (RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
     if(EFI_ERROR(Status)) {
-        DBG (" not present\n");
+        DBG(" not present\n");
         return Status;
     }
 
-	DBG (" loaded, size=%llu\n", Size);
+	DBG(" loaded, size=%llu\n", Size);
     
     //
     // parse it into gNvramDict 
     //
     Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict, (UINT32)Size);
 //    if(Status != EFI_SUCCESS) {
-//        DBG (" parsing error\n");
+//        DBG(" parsing error\n");
 //    }
     
     FreePool(NvramPtr);
@@ -874,16 +874,16 @@ LoadLatestNvramPlist ()
   REFIT_VOLUME    *VolumeWithLatestNvramPlist = NULL;
   
 //there are debug messages not needed for users
-  DBG ("Searching volumes for latest nvram.plist ...");
+  DBG("Searching volumes for latest nvram.plist ...");
   
   //
   // skip loading if already loaded
   //
   if (gNvramDict != NULL) {
-    DBG (" already loaded\n");
+    DBG(" already loaded\n");
     return EFI_SUCCESS;
   }
-  DBG ("\n");
+  DBG("\n");
   
   //
   // find latest nvram.plist
@@ -901,16 +901,16 @@ LoadLatestNvramPlist ()
     
 /*    Guid = FindGPTPartitionGuidInDevicePath (Volume->DevicePath);
     
-    DBG (" %2d. Volume '%ls', GUID = %s", Index, Volume->VolName, strguid(Guid));
+    DBG(" %2d. Volume '%ls', GUID = %s", Index, Volume->VolName, strguid(Guid));
     if (Guid == NULL) {
       // not a GUID partition
-      DBG (" - not GPT");
+      DBG(" - not GPT");
     } */
 //    DBG("Volume[%d]\n", Index);
     // check if nvram.plist exists
     Status = Volume->RootDir->Open (Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
-//      DBG (" - no nvram.plist - skipping!\n");
+//      DBG(" - no nvram.plist - skipping!\n");
       continue;
     }
 //    DBG(" Status=%s\n", strerror(Status));
@@ -923,14 +923,14 @@ LoadLatestNvramPlist ()
     FileInfo = EfiLibFileInfo(FileHandle);
 //    DBG("got FileInfo=0x%X\n", FileInfo);
     if (FileInfo == NULL) {
-//      DBG (" - no nvram.plist file info - skipping!\n");
+//      DBG(" - no nvram.plist file info - skipping!\n");
       FileHandle->Close(FileHandle);
       continue;
     }
     
-//    DBG (" Modified = ");
+//    DBG(" Modified = ");
     ModifTimeMs = GetEfiTimeInMs (&(FileInfo->ModificationTime));
-/*    DBG ("%d-%d-%d %d:%d:%d (%ld ms)\n",
+/*    DBG("%d-%d-%d %d:%d:%d (%ld ms)\n",
         FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
         FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
         ModifTimeMs); */
@@ -939,11 +939,11 @@ LoadLatestNvramPlist ()
     
     // check if newer
     if (LastModifTimeMs < ModifTimeMs) {
-//      DBG (" - newer - will use this one\n");
+//      DBG(" - newer - will use this one\n");
       VolumeWithLatestNvramPlist = Volume;
       LastModifTimeMs = ModifTimeMs;
     } else {
-//      DBG (" - older - skipping!\n");
+//      DBG(" - older - skipping!\n");
     }
   }
   
@@ -953,11 +953,11 @@ LoadLatestNvramPlist ()
   // if we have nvram.plist - load it
   //
   if (VolumeWithLatestNvramPlist != NULL) {
-    DBG ("Loading nvram.plist from Vol '%ls' -", VolumeWithLatestNvramPlist->VolName);
+    DBG("Loading nvram.plist from Vol '%ls' -", VolumeWithLatestNvramPlist->VolName);
     Status = LoadNvramPlist (VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
     
   } else {
- //   DBG (" nvram.plist not found!\n");
+ //   DBG(" nvram.plist not found!\n");
   }
   DBG("loaded Status=%s\n", strerror(Status));
   return Status;
@@ -980,13 +980,13 @@ PutNvramPlistToRtVars ()
   if (gNvramDict == NULL) {
     Status = LoadLatestNvramPlist ();
     if (gNvramDict == NULL) {
-      DBG ("PutNvramPlistToRtVars: nvram.plist not found\n");
+      DBG("PutNvramPlistToRtVars: nvram.plist not found\n");
       return;
     }
   }
   
   DbgHeader("PutNvramPlistToRtVars");
-//  DBG ("PutNvramPlistToRtVars ...\n");
+//  DBG("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
   for (Tag = gNvramDict->tag; Tag != NULL; Tag = Tag->tagNext) {
     EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
@@ -995,29 +995,29 @@ PutNvramPlistToRtVars ()
 
     // process only valid <key> tags
     if (Tag->type != kTagTypeKey || ValTag == NULL) {
-		DBG (" ERROR: Tag is not <key>, type = %llu\n", Tag->type);
+		DBG(" ERROR: Tag is not <key>, type = %llu\n", Tag->type);
       continue;
     }
 //    DBG("tag: %s\n", Tag->string);
     // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
     // in kernel and kext patcher when mixing UEFI and CloverEFI boot
     if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-RelocBase") == 0) {
-      DBG (" Skipping OsxAptioFixDrv-RelocBase\n");
+      DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
       continue;
     } else if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-ErrorExitingBootServices") == 0) {
-      DBG (" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
+      DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
       continue;
     } else if (AsciiStrCmp(Tag->string, "EmuVariableUefiPresent") == 0) {
-      DBG (" Skipping EmuVariableUefiPresent\n");
+      DBG(" Skipping EmuVariableUefiPresent\n");
       continue;
     } else if (AsciiStrCmp(Tag->string, "aapl,panic-info") == 0) {
-        DBG (" Skipping aapl,panic-info\n");
+        DBG(" Skipping aapl,panic-info\n");
         continue;
     }
 
     // key to unicode; check if key buffer is large enough
     if (AsciiStrLen (Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {
-      DBG (" ERROR: Skipping too large key %s\n", Tag->string);
+      DBG(" ERROR: Skipping too large key %s\n", Tag->string);
       continue;
     }
 
@@ -1029,7 +1029,7 @@ PutNvramPlistToRtVars ()
 
     AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
     if (!GlobalConfig.DebugLog) {
-      DBG (" Adding Key: %ls: ", KeyBuf);
+      DBG(" Adding Key: %ls: ", KeyBuf);
     }
     // process value tag
     
@@ -1039,7 +1039,7 @@ PutNvramPlistToRtVars ()
       Value = ValTag->string;
       Size  = AsciiStrLen((CONST CHAR8*)Value);
       if (!GlobalConfig.DebugLog) {
-		  DBG ("String: Size = %lld, Val = '%s'\n", Size, (__typeof__(ValTag->string))Value);
+		  DBG("String: Size = %lld, Val = '%s'\n", Size, (__typeof__(ValTag->string))Value);
       }
       
     } else if (ValTag->type == kTagTypeData) {
@@ -1048,16 +1048,16 @@ PutNvramPlistToRtVars ()
       Size  = ValTag->dataLen;
       Value = ValTag->data;
       if (!GlobalConfig.DebugLog) {
-		  DBG ("Size = %lld, Data: ", Size);
+		  DBG("Size = %lld, Data: ", Size);
         for (i = 0; i < Size; i++) {
           DBG("%02hhX ", *((__typeof__(ValTag->string))Value + i));
         }
       }
       if (!GlobalConfig.DebugLog) {
-       DBG ("\n");
+       DBG("\n");
       }
     } else {
-		DBG ("ERROR: Unsupported tag type: %llu\n", ValTag->type);
+		DBG("ERROR: Unsupported tag type: %llu\n", ValTag->type);
       continue;
     }
     
@@ -1104,7 +1104,7 @@ FindStartupDiskVolume (
   CHAR16       *EfiBootVolumeStr;
   
   
-//  DBG ("FindStartupDiskVolume ...\n");
+//  DBG("FindStartupDiskVolume ...\n");
   
   
   //
@@ -1113,67 +1113,67 @@ FindStartupDiskVolume (
   //
   GetEfiBootDeviceFromNvram ();
   if (gEfiBootVolume == NULL) {
-//    DBG (" - [!] EfiBootVolume not found\n");
+//    DBG(" - [!] EfiBootVolume not found\n");
     return -1;
   }
   
   DbgHeader("FindStartupDiskVolume");
-//  DBG ("FindStartupDiskVolume searching ...\n");
+//  DBG("FindStartupDiskVolume searching ...\n");
   
   //
   // Check if gEfiBootVolume is disk or partition volume
   //
   EfiBootVolumeStr  = FileDevicePathToStr (gEfiBootVolume);
   IsPartitionVolume = NULL != FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
-  DBG ("  - Volume: %ls = %ls\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
+  DBG("  - Volume: %ls = %ls\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
   
   //
   // 1. gEfiBootVolume + gEfiBootLoaderPath
   // PciRoot(0x0)/.../Sata(...)/HD(...)/\EFI\BOOT\XXX.EFI - set by Clover
   //
   if (gEfiBootLoaderPath != NULL) {
-    DBG ("   - searching for that partition and loader '%ls'\n", gEfiBootLoaderPath);
+    DBG("   - searching for that partition and loader '%ls'\n", gEfiBootLoaderPath);
     for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
         LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
         Volume = LoaderEntry.Volume;
         LoaderPath = LoaderEntry.LoaderPath;
         if (Volume != NULL && BootVolumeDevicePathEqual(gEfiBootVolume, Volume->DevicePath)) {
-          //DBG ("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
-          //DBG ("   '%ls'\n", LoaderPath);
+          //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
+          //DBG("   '%ls'\n", LoaderPath);
           // case insensitive cmp
           if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-			  DBG ("    - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
+			  DBG("    - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
             return Index;
           }
         }
       }
     }
-    DBG ("    - [!] not found\n");
+    DBG("    - [!] not found\n");
     //
     // search again, but compare only Media dev path nodes
     // (in case of some dev path differences we do not cover)
     //
-    DBG ("   - searching again, but comparing Media dev path nodes\n");
+    DBG("   - searching again, but comparing Media dev path nodes\n");
     for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
         LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
         Volume = LoaderEntry.Volume;
         LoaderPath = LoaderEntry.LoaderPath;
         if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
-          //DBG ("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
-          //DBG ("   '%ls'\n", LoaderPath);
+          //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
+          //DBG("   '%ls'\n", LoaderPath);
           // case insensitive cmp
           if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
             // that's the one
-			  DBG ("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
+			  DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
             return Index;
           }
         }
       }
     }
-    DBG ("    - [!] not found\n");
+    DBG("    - [!] not found\n");
   }
   
   //
@@ -1181,7 +1181,7 @@ FindStartupDiskVolume (
   // PciRoot(0x0)/.../Sata(...)/HD(...) - set by Clover or macOS
   //
   if (IsPartitionVolume) {
-    DBG ("   - searching for that partition\n");
+    DBG("   - searching for that partition\n");
     for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       Volume = NULL;
       if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
@@ -1190,15 +1190,15 @@ FindStartupDiskVolume (
         Volume = MainMenu->Entries[Index].getLOADER_ENTRY()->Volume;
       }
       if (Volume != NULL && BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
-		  DBG ("    - found entry %lld. '%ls', Volume '%ls'\n", Index, MainMenu->Entries[Index].Title.s(), Volume->VolName);
+		  DBG("    - found entry %lld. '%ls', Volume '%ls'\n", Index, MainMenu->Entries[Index].Title.s(), Volume->VolName);
         return Index;
       }
     }
-    DBG ("    - [!] not found\n");
+    DBG("    - [!] not found\n");
     //
     // search again, but compare only Media dev path nodes
     //
-    DBG ("   - searching again, but comparing Media dev path nodes\n");
+    DBG("   - searching again, but comparing Media dev path nodes\n");
     for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       Volume = NULL;
       if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
@@ -1207,11 +1207,11 @@ FindStartupDiskVolume (
         Volume = MainMenu->Entries[Index].getLOADER_ENTRY()->Volume;
       }
       if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
-		  DBG ("    - found entry %lld. '%ls', Volume '%ls'\n", Index, MainMenu->Entries[Index].Title.s(), Volume->VolName);
+		  DBG("    - found entry %lld. '%ls', Volume '%ls'\n", Index, MainMenu->Entries[Index].Title.s(), Volume->VolName);
         return Index;
       }
     }
-    DBG ("    - [!] not found\n");
+    DBG("    - [!] not found\n");
     return -1;
   }
   
@@ -1222,18 +1222,18 @@ FindStartupDiskVolume (
   // 3.1 First find disk volume in Volumes[]
   //
   DiskVolume = NULL;
-  DBG ("   - searching for that disk\n");
+  DBG("   - searching for that disk\n");
   for (Index = 0; Index < (INTN)Volumes.size(); ++Index) {
     Volume = &Volumes[Index];
     if (BootVolumeDevicePathEqual (gEfiBootVolume, Volume->DevicePath)) {
       // that's the one
       DiskVolume = Volume;
-		DBG ("    - found disk as volume %lld. '%ls'\n", Index, Volume->VolName);
+		DBG("    - found disk as volume %lld. '%ls'\n", Index, Volume->VolName);
       break;
     }
   }
   if (DiskVolume == NULL) {
-    DBG ("    - [!] not found\n");
+    DBG("    - [!] not found\n");
     return -1;
   }
   
@@ -1241,19 +1241,19 @@ FindStartupDiskVolume (
   // 3.2 DiskVolume
   // search for first entry with win loader or win partition on that disk
   //
-  DBG ("   - searching for first entry with win loader or win partition on that disk\n");
+  DBG("   - searching for first entry with win loader or win partition on that disk\n");
   for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
     if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
       LEGACY_ENTRY& LegacyEntry = (LEGACY_ENTRY&)MainMenu->Entries[Index];
       Volume = LegacyEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // check for Win
-        //DBG ("  checking legacy entry %d. %ls\n", Index, LegacyEntry.Title);
-        //DBG ("   %ls\n", DevicePathToStr (Volume->DevicePath));
-        //DBG ("   OSType = %d\n", Volume->OSType);
+        //DBG("  checking legacy entry %d. %ls\n", Index, LegacyEntry.Title);
+        //DBG("   %ls\n", DevicePathToStr (Volume->DevicePath));
+        //DBG("   OSType = %d\n", Volume->OSType);
         if (Volume->LegacyOS->Type == OSTYPE_WIN) {
           // that's the one - legacy win partition
-			DBG ("    - found legacy entry %lld. '%ls', Volume '%ls'\n", Index, LegacyEntry.Title.s(), Volume->VolName);
+			DBG("    - found legacy entry %lld. '%ls', Volume '%ls'\n", Index, LegacyEntry.Title.s(), Volume->VolName);
           return Index;
         }
       }
@@ -1262,33 +1262,33 @@ FindStartupDiskVolume (
       Volume = LoaderEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // check for Win
-        //DBG ("  checking loader entry %d. %ls\n", Index, LoaderEntry.Title);
-        //DBG ("   %ls\n", DevicePathToStr (Volume->DevicePath));
-        //DBG ("   LoaderPath = %ls\n", LoaderEntry.LoaderPath);
-        //DBG ("   LoaderType = %d\n", LoaderEntry.LoaderType);
+        //DBG("  checking loader entry %d. %ls\n", Index, LoaderEntry.Title);
+        //DBG("   %ls\n", DevicePathToStr (Volume->DevicePath));
+        //DBG("   LoaderPath = %ls\n", LoaderEntry.LoaderPath);
+        //DBG("   LoaderType = %d\n", LoaderEntry.LoaderType);
         if (LoaderEntry.LoaderType == OSTYPE_WINEFI) {
           // that's the one - win loader entry
-			DBG ("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
+			DBG("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
           return Index;
         }
       }
     }
   }
-  DBG ("    - [!] not found\n");
+  DBG("    - [!] not found\n");
   
   //
   // 3.3 DiskVolume, but no Win entry
   // PciRoot(0x0)/.../Sata(...)
   // just find first menu entry on that disk?
   //
-  DBG ("   - searching for any entry from disk '%ls'\n", DiskVolume->VolName);
+  DBG("   - searching for any entry from disk '%ls'\n", DiskVolume->VolName);
   for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
     if (MainMenu->Entries[Index].getLEGACY_ENTRY()) {
       LEGACY_ENTRY& LegacyEntry = (LEGACY_ENTRY&)MainMenu->Entries[Index];
       Volume = LegacyEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-		  DBG ("    - found legacy entry %lld. '%ls', Volume '%ls'\n", Index, LegacyEntry.Title.s(), Volume->VolName);
+		  DBG("    - found legacy entry %lld. '%ls', Volume '%ls'\n", Index, LegacyEntry.Title.s(), Volume->VolName);
 
         return Index;
       }
@@ -1297,14 +1297,14 @@ FindStartupDiskVolume (
       Volume = LoaderEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-		  DBG ("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
+		  DBG("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
 
         return Index;
       }
     }
   }
   
-  DBG ("    - [!] not found\n");
+  DBG("    - [!] not found\n");
   return -1;
 }
 
@@ -1325,9 +1325,9 @@ EFI_STATUS SetStartupDiskVolume (
   UINT32                   Attributes;
   
   
-  DBG ("SetStartupDiskVolume:\n");
-  DBG ("  * Volume: '%ls'\n",     Volume->VolName);
-  DBG ("  * LoaderPath: '%ls'\n", LoaderPath);
+  DBG("SetStartupDiskVolume:\n");
+  DBG("  * Volume: '%ls'\n",     Volume->VolName);
+  DBG("  * LoaderPath: '%ls'\n", LoaderPath);
   
   //
   // construct dev path for Volume/LoaderPath
@@ -1337,10 +1337,10 @@ EFI_STATUS SetStartupDiskVolume (
     FileDevPath = FileDevicePath (NULL, LoaderPath);
     DevPath     = AppendDevicePathNode (DevPath, FileDevPath);
   }
-  DBG ("  * DevPath: %ls\n", Volume->VolName/*, FileDevicePathToStr (DevPath)*/);
+  DBG("  * DevPath: %ls\n", Volume->VolName/*, FileDevicePathToStr (DevPath)*/);
   
   Guid = FindGPTPartitionGuidInDevicePath (Volume->DevicePath);
-  DBG ("  * GUID = %s\n", strguid(Guid));
+  DBG("  * GUID = %s\n", strguid(Guid));
   
   //
   // let's save it without EFI_VARIABLE_NON_VOLATILE in CloverEFI like other vars so far
@@ -1379,7 +1379,7 @@ EFI_STATUS SetStartupDiskVolume (
 //    EfiBootDevice = (__typeof__(EfiBootDevice))AllocateZeroPool(AsciiStrLen (EfiBootDeviceTmpl) + 36);
 //    AsciiSPrint (EfiBootDevice, Size, EfiBootDeviceTmpl, strguid(Guid));
 //    Size          = AsciiStrLen (EfiBootDevice);
-//    DBG ("  * efi-boot-device: %s\n", EfiBootDevice);
+//    DBG("  * efi-boot-device: %s\n", EfiBootDevice);
 //
 //    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, Size, EfiBootDevice);
 //    FreePool(EfiBootDevice);
@@ -1408,17 +1408,17 @@ RemoveStartupDiskVolume ()
 {
 //    EFI_STATUS Status;
     
-//    DBG ("RemoveStartupDiskVolume:\n");
+//    DBG("RemoveStartupDiskVolume:\n");
     
     /*Status =*/ DeleteNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid);
-//    DBG ("  * efi-boot-device = %s\n", strerror(Status));
+//    DBG("  * efi-boot-device = %s\n", strerror(Status));
     
     /*Status =*/ DeleteNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid);
-//    DBG ("  * efi-boot-device-data = %s\n", strerror(Status));
+//    DBG("  * efi-boot-device-data = %s\n", strerror(Status));
     
     /*Status =*/ DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
-//    DBG ("  * BootCampHD = %s\n", strerror(Status));
-//    DBG ("Removed efi-boot-device-data variable: %s\n", strerror(Status));
+//    DBG("  * BootCampHD = %s\n", strerror(Status));
+//    DBG("Removed efi-boot-device-data variable: %s\n", strerror(Status));
 }
 
 

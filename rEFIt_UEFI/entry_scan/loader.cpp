@@ -526,7 +526,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         if (volume_match == -1 || volume_type_match == -1 || path_match == -1 || type_match == -1 ) {
           UINTN add_comma = 0;
 
-          DBG ("%sNot match custom entry %llu: ", indent, CustomIndex);
+          DBG("%sNot match custom entry %llu: ", indent, CustomIndex);
           if (volume_match != 0) {
             DBG("Volume: %ls", volume_match == 1 ? L"match" : L"not match");
             add_comma++;

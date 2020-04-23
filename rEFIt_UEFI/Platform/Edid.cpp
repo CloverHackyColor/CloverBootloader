@@ -64,7 +64,7 @@ UINT8* getCurrentEdid (VOID)
   EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
   UINT8                           *Edid;
   
-  DBG ("EdidActive:");
+  DBG("EdidActive:");
   Edid = NULL;
   Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
   if (!EFI_ERROR(Status)) {

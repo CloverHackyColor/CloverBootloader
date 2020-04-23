@@ -458,7 +458,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     DTD_string,
                                                     -1
                                                     );
-      DBG (" patched %d time(s)\n", NumReplaces);
+      DBG(" patched %d time(s)\n", NumReplaces);
 	  return;
     }
 
@@ -647,7 +647,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                       -1
                                                       );
 //        NumReplacesTotal += NumReplaces;
-        DBG (" patch 0: patched %d time(s)\n", NumReplaces);
+        DBG(" patch 0: patched %d time(s)\n", NumReplaces);
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
                                                     VBIOS_SIZE,
@@ -656,7 +656,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     -1
                                                     );
 //      NumReplacesTotal += NumReplaces;
-      DBG (" patch 1: patched %d time(s)\n", NumReplaces);
+      DBG(" patch 1: patched %d time(s)\n", NumReplaces);
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
                                                     VBIOS_SIZE,
@@ -665,7 +665,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     -1
                                                     );
 //      NumReplacesTotal += NumReplaces;
-      DBG (" patch 2: patched %d time(s)\n", NumReplaces);
+      DBG(" patch 2: patched %d time(s)\n", NumReplaces);
       NumReplaces = VideoBiosPatchSearchAndReplace (
                                                     (UINT8*)(UINTN)VBIOS_START,
                                                     VBIOS_SIZE,
@@ -674,7 +674,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
                                                     -1
                                                     );
 //      NumReplacesTotal += NumReplaces;
-      DBG (" patch 3: patched %d time(s)\n", NumReplaces);
+      DBG(" patch 3: patched %d time(s)\n", NumReplaces);
       
       if ((*((UINT8*)(UINTN)(VBIOS_START + 0x34)) & 0x8F) == 0x80 ) {
         *((UINT8*)(UINTN)(VBIOS_START + 0x34)) |= 0x01; 

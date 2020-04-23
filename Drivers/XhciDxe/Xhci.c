@@ -1900,15 +1900,15 @@ XhcCreateUsbHc (
   Xhc->UsbLegSupOffset = XhcGetCapabilityAddr (Xhc, XHC_CAP_USB_LEGACY);
   Xhc->DebugCapSupOffset = XhcGetCapabilityAddr (Xhc, XHC_CAP_USB_DEBUG);
 
-  DBG ("XhcCreateUsb3Hc: Capability length 0x%x\n", Xhc->CapLength);
-  DBG ("XhcCreateUsb3Hc: ExtCapRegBase 0x%x\n", Xhc->ExtCapRegBase);
-  DBG ("XhcCreateUsb3Hc: HcSParams1 0x%x\n", Xhc->HcSParams1);
-  DBG ("XhcCreateUsb3Hc: HcSParams2 0x%x\n", Xhc->HcSParams2);
-  DBG ("XhcCreateUsb3Hc: HcCParams 0x%x\n", Xhc->HcCParams);
-  DBG ("XhcCreateUsb3Hc: DBOff 0x%x\n", Xhc->DBOff);
-  DBG ("XhcCreateUsb3Hc: RTSOff 0x%x\n", Xhc->RTSOff);
-  DBG ("XhcCreateUsb3Hc: UsbLegSupOffset 0x%x\n", Xhc->UsbLegSupOffset);
-  DBG ("XhcCreateUsb3Hc: DebugCapSupOffset 0x%x\n", Xhc->DebugCapSupOffset);
+  DBG("XhcCreateUsb3Hc: Capability length 0x%x\n", Xhc->CapLength);
+  DBG("XhcCreateUsb3Hc: ExtCapRegBase 0x%x\n", Xhc->ExtCapRegBase);
+  DBG("XhcCreateUsb3Hc: HcSParams1 0x%x\n", Xhc->HcSParams1);
+  DBG("XhcCreateUsb3Hc: HcSParams2 0x%x\n", Xhc->HcSParams2);
+  DBG("XhcCreateUsb3Hc: HcCParams 0x%x\n", Xhc->HcCParams);
+  DBG("XhcCreateUsb3Hc: DBOff 0x%x\n", Xhc->DBOff);
+  DBG("XhcCreateUsb3Hc: RTSOff 0x%x\n", Xhc->RTSOff);
+  DBG("XhcCreateUsb3Hc: UsbLegSupOffset 0x%x\n", Xhc->UsbLegSupOffset);
+  DBG("XhcCreateUsb3Hc: DebugCapSupOffset 0x%x\n", Xhc->DebugCapSupOffset);
 
   //
   // Create AsyncRequest Polling Timer

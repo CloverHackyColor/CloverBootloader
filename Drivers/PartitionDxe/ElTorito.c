@@ -160,7 +160,7 @@ PartitionInstallElToritoChildHandles (
                        Catalog
                        );
     if (EFI_ERROR(Status)) {
-      DBG ("EltCheckDevice: error reading catalog %r\n", Status);
+      DBG("EltCheckDevice: error reading catalog %r\n", Status);
       continue;
     }
     //
@@ -168,7 +168,7 @@ PartitionInstallElToritoChildHandles (
     // to make sure it looks like a Catalog header
     //
     if (Catalog->Catalog.Indicator != ELTORITO_ID_CATALOG || Catalog->Catalog.Id55AA != 0xAA55) {
-      DBG ("EltCheckBootCatalog: El Torito boot catalog header IDs=%x not correct\n",
+      DBG("EltCheckBootCatalog: El Torito boot catalog header IDs=%x not correct\n",
            Catalog->Catalog.Indicator);
       continue;
     }
@@ -180,7 +180,7 @@ PartitionInstallElToritoChildHandles (
     }
 
     if ((Check & 0xFFFF) != 0) {
-      DBG ( "EltCheckBootCatalog: El Torito boot catalog header checksum failed\n");
+      DBG( "EltCheckBootCatalog: El Torito boot catalog header checksum failed\n");
       continue;
     }
 

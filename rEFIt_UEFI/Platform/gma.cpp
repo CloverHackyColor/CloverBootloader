@@ -998,45 +998,45 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 120) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found quarter quarter VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found quarter quarter VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 240:
       SetUGAWidth = TRUE;
       if(UGAHeight == 160) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Half quarter VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Half quarter VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 320:
       SetUGAWidth = TRUE;
       if(UGAHeight == 240) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found quarter VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found quarter VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 400:
       SetUGAWidth = TRUE;
       if(UGAHeight == 240) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Wide quarter VGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Wide quarter VGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 480:
       SetUGAWidth = TRUE;
       if(UGAHeight == 320) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Half-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Half-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 640:
@@ -1044,14 +1044,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 360:
           SetUGAHeight = TRUE;
-			  DBG ("  Found one ninth of a Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found one ninth of a Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 480:
           SetUGAHeight = TRUE;
-			  DBG ("  Found VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1060,14 +1060,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 480:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide VGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide VGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 600:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Super VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Super VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1075,9 +1075,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 480) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Full Wide VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Full Wide VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 960:
@@ -1085,14 +1085,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 540:
           SetUGAHeight = TRUE;
-			  DBG ("  Found one quarter of Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found one quarter of Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 640:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Double-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Double-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1101,18 +1101,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 576:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Super VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Super VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 600:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Super VGA Display - 17:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Super VGA Display - 17:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 768:
           SetUGAHeight = TRUE;
-			  DBG ("  Found XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1120,9 +1120,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 864) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1280:
@@ -1130,22 +1130,22 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 720:
           SetUGAHeight = TRUE;
-			  DBG ("  Found HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 768:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide XGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide XGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 800:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1024:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1153,27 +1153,27 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 768) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Full Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Full Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1400:
       SetUGAWidth = TRUE;
       if(UGAHeight == 1050) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Super XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Super XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1440:
       SetUGAWidth = TRUE;
       if(UGAHeight == 900) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Wide XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Wide XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1600:
@@ -1181,14 +1181,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 900:
           SetUGAHeight = TRUE;
-			  DBG ("  Found HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1200:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1197,10 +1197,10 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1050:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Widescreen Super XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Widescreen Super XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1209,14 +1209,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1080:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1200:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1225,14 +1225,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1152:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Quad Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Quad Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1536:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Quad XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Quad XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1241,18 +1241,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1440:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Quad HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Quad HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1600:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2048:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Quad Wide XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Quad Wide XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1260,9 +1260,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 1800) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 3200:
@@ -1270,18 +1270,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1800:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Quad HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Quad HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2048:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Quad Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Quad Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2400:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Quad Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Quad Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1290,14 +1290,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 2160:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Ultra HD, 4K Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Ultra HD, 4K Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2400:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Quad Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Quad Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1305,9 +1305,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 3072) {
         SetUGAHeight = TRUE;
-		  DBG ("  Found Hex XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Hex XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 5120:
@@ -1315,18 +1315,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 2880:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Ultra HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Ultra HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 3200:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Hex XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Hex XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4096:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Hex Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Hex Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1335,14 +1335,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 4096:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Hex Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Hex Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4800:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Hex Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Hex Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1351,19 +1351,19 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 4320:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Full Ultra HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Full Ultra HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4800:
           SetUGAHeight = TRUE;
-			  DBG ("  Found Wide Hex Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Wide Hex Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
     default:
-		  DBG ("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       break;
   }
 

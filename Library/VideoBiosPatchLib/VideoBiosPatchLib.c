@@ -83,21 +83,21 @@ VideoBiosPatchInit (
     return EFI_SUCCESS;
   }
   
-  DBG (" VideoBiosPatchInit(");
+  DBG(" VideoBiosPatchInit(");
   //
   // Check for EfiLegacyRegionProtocol and/or EfiLegacyRegion2Protocol
   //
   Status = gBS->LocateProtocol (&gEfiLegacyRegionProtocolGuid, NULL, (VOID **) &mLegacyRegion);
-  DBG ("LegacyRegion = %r", Status);
+  DBG("LegacyRegion = %r", Status);
   if (EFI_ERROR(Status)) {
     mLegacyRegion = NULL;
     Status = gBS->LocateProtocol (&gEfiLegacyRegion2ProtocolGuid, NULL, (VOID **) &mLegacyRegion2);
-    DBG (", LegacyRegion2 = %r", Status);
+    DBG(", LegacyRegion2 = %r", Status);
     if (EFI_ERROR(Status)) {
       mLegacyRegion2 = NULL;
     }
   }
-  DBG (") = %r\n", Status);
+  DBG(") = %r\n", Status);
   
   return Status;
 }
@@ -215,10 +215,10 @@ VideoBiosPatchBytes (
     return EFI_INVALID_PARAMETER;
   }
   
-  DBG ("VideoBiosPatchBytes(%d patches):\n", FindAndReplaceCount);
+  DBG("VideoBiosPatchBytes(%d patches):\n", FindAndReplaceCount);
   Status = VideoBiosUnlock ();
   if (EFI_ERROR(Status)) {
-    DBG (" = not done.\n");
+    DBG(" = not done.\n");
     return Status;
   }
   
@@ -234,10 +234,10 @@ VideoBiosPatchBytes (
                                                   -1
                                                   );
     NumReplacesTotal += NumReplaces;
-    DBG (" patch %d: patched %d time(s)\n", Index, NumReplaces);
+    DBG(" patch %d: patched %d time(s)\n", Index, NumReplaces);
   }
   
-  DBG (" patched %d time(s)\n", NumReplacesTotal);
+  DBG(" patched %d time(s)\n", NumReplacesTotal);
   
   VideoBiosLock ();
   
@@ -258,7 +258,7 @@ UINT8* VideoBiosPatchGetEdid (VOID)
   EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
   UINT8                           *Edid;
   
-  DBG (" Edid:");
+  DBG(" Edid:");
   Edid = NULL;
   Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
   if (!EFI_ERROR(Status)) {
@@ -293,7 +293,7 @@ VideoBiosPatchNativeFromEdid (
   BOOLEAN             ReleaseEdid;
   vbios_map           *map;
   
-  DBG ("VideoBiosPatchNativeFromEdid:\n");
+  DBG("VideoBiosPatchNativeFromEdid:\n");
   
   ReleaseEdid = FALSE;
   if (Edid == NULL) {
@@ -306,7 +306,7 @@ VideoBiosPatchNativeFromEdid (
   
   map = open_vbios(CT_UNKNOWN);
   if (map == NULL) {
-    DBG (" = unknown video bios.\n");
+    DBG(" = unknown video bios.\n");
     if (ReleaseEdid) {
       FreePool(Edid);
     }
@@ -315,7 +315,7 @@ VideoBiosPatchNativeFromEdid (
   
   Status = VideoBiosUnlock ();
   if (EFI_ERROR(Status)) {
-    DBG (" = not done.\n");
+    DBG(" = not done.\n");
     return Status;
   }
   

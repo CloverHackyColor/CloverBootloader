@@ -2985,7 +2985,7 @@ DetectAndConfigIdeDevice (
     }
 
 
-//    DBG (L"start identifing device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
+//    DBG(L"start identifing device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
 
     //
     // Send IDENTIFY cmd to the device to test if it is really attached.
@@ -3044,7 +3044,7 @@ DetectAndConfigIdeDevice (
     //
     IdeInit->SubmitData (IdeInit, IdeChannel, IdeDevice, &Buffer);
 
-//    DBG (L"CalculateMode for device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
+//    DBG(L"CalculateMode for device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
     //
     // Now start to config ide device parameter and transfer mode.
     //
@@ -3070,7 +3070,7 @@ DetectAndConfigIdeDevice (
     }
 
     TransferMode.ModeNumber = (UINT8) (SupportedModes->PioMode.Mode);
-//    DBG (L"Set transfer Mode for channel [%d] device [%d] start\n", IdeChannel, IdeDevice);
+//    DBG(L"Set transfer Mode for channel [%d] device [%d] start\n", IdeChannel, IdeDevice);
     if (SupportedModes->ExtModeCount == 0){
       Status = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
 
@@ -3127,7 +3127,7 @@ DetectAndConfigIdeDevice (
 
       Status = SetDriveParameters (Instance, IdeChannel, IdeDevice, &DriveParameters, NULL);
     }
-//    DBG (L"Set Parameters for channel [%d] device [%d] end\n", IdeChannel, IdeDevice);
+//    DBG(L"Set Parameters for channel [%d] device [%d] end\n", IdeChannel, IdeDevice);
     //
     // Set IDE controller Timing Blocks in the PCI Configuration Space
     //

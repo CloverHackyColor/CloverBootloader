@@ -687,7 +687,7 @@ AtaAtapiPassThruStart (
   Instance              = NULL;
   OriginalPciAttributes = 0;
 
-//  DBG (L"==AtaAtapiPassThru Start== Controller = %x\n", Controller);
+//  DBG(L"==AtaAtapiPassThru Start== Controller = %x\n", Controller);
 
   Status  = gBS->OpenProtocol (
                    Controller,
@@ -699,7 +699,7 @@ AtaAtapiPassThruStart (
                    );
 
   if (EFI_ERROR(Status)) {
-//    DBG (L"Open Ide_Controller_Init Error, Status=%r", Status);
+//    DBG(L"Open Ide_Controller_Init Error, Status=%r", Status);
     goto ErrorExit;
   }
 
@@ -872,7 +872,7 @@ AtaAtapiPassThruStop (
   EFI_AHCI_REGISTERS                *AhciRegisters;
   UINT64                            Supports;
 
-//  DBG (L"==AtaAtapiPassThru Stop== Controller = %x\n", Controller);
+//  DBG(L"==AtaAtapiPassThru Stop== Controller = %x\n", Controller);
 
   Status = gBS->OpenProtocol (
                   Controller,
