@@ -461,14 +461,8 @@ VOID REFIT_MENU_SCREEN::InitAnime()
     FilmC->FilmPlace = ThemeX.BannerPlace;
     if (CWidth > 0 && CHeight > 0) {
       // Retained for legacy themes without new anim placement options.
-      FilmC->FilmPlace.XPos += (FilmC->FilmPlace.Width - CWidth) / 2;
-      if (FilmC->FilmPlace.XPos < 0) {
-        FilmPlace.XPos = 0;
-      }
-      FilmC->FilmPlace.YPos += (FilmC->FilmPlace.Height - CHeight) / 2;
-      if (FilmC->FilmPlace.YPos < 0) {
-        FilmPlace.YPos = 0;
-      }
+      FilmC->FilmPlace.XPos = ((INTN)FilmC->FilmPlace.XPos * 2 > CWidth  - (INTN)FilmC->FilmPlace.Width ) ? (UINTN)((INTN)FilmC->FilmPlace.XPos + ((INTN)FilmC->FilmPlace.Width  - CWidth ) / 2) : 0;
+      FilmC->FilmPlace.YPos = ((INTN)FilmC->FilmPlace.YPos * 2 > CHeight - (INTN)FilmC->FilmPlace.Height) ? (UINTN)((INTN)FilmC->FilmPlace.YPos + ((INTN)FilmC->FilmPlace.Height - CHeight) / 2) : 0;
     }
   }
   if (FilmC->NumFrames != 0) {

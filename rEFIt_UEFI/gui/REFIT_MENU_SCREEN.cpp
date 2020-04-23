@@ -1592,11 +1592,11 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         TitleImage.Draw(FilmXPos, FilmYPos);
 
         // update FilmPlace only if not set by InitAnime
-        if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
-          FilmPlace.XPos = FilmXPos;
-          FilmPlace.YPos = FilmYPos;
-          FilmPlace.Width = TitleImage.GetWidth();
-          FilmPlace.Height = TitleImage.GetHeight();
+        if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
+          FilmC->FilmPlace.XPos = FilmXPos;
+          FilmC->FilmPlace.YPos = FilmYPos;
+          FilmC->FilmPlace.Width = TitleImage.GetWidth();
+          FilmC->FilmPlace.Height = TitleImage.GetHeight();
         }
       }
 
@@ -2170,8 +2170,8 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
       }
 
       // Update FilmPlace only if not set by InitAnime
-      if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
-        FilmPlace = ThemeX.BannerPlace;
+      if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
+        FilmC->FilmPlace = ThemeX.BannerPlace;
       }
 
       ThemeX.InitBar(); //not sure
@@ -2343,9 +2343,9 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
  //     ThemeX.InitSelection(); //not needed to do here
 
       // Update FilmPlace only if not set by InitAnime
-      if (FilmPlace.Width == 0 || FilmPlace.Height == 0) {
+      if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
 //        CopyMem(&FilmPlace, &BannerPlace, sizeof(BannerPlace));
-        FilmPlace = ThemeX.BannerPlace;
+        FilmC->FilmPlace = ThemeX.BannerPlace;
       }
 
       //DBG("main menu inited\n");

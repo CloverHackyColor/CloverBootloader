@@ -92,7 +92,7 @@ public:
   INTN              CurrentFrame;
  // INTN              Frames;  //there are FilmC properties
  // UINTN             FrameTime; //ms
-  EG_RECT           FilmPlace;
+ // EG_RECT           FilmPlace;
   FILM              *FilmC;
   //XImage            FilmPlaceImage;
 
