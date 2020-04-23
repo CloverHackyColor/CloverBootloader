@@ -10,16 +10,16 @@ int XStringWArray_tests()
 #endif
 
 	XStringWArray array1;
-	
+
 	if ( !array1.IsNull() ) return 1;
-	
+
 	array1.Add(L"1"_XSW);
 	if ( array1.IsNull() ) return 2;
 	array1.Add(L"2"_XSW);
 
-	if ( array1[0] != L"1" ) return 3;
-	if ( array1[1] != L"2" ) return 4;
-	
+	if ( array1[0] != L"1"_XSW ) return 3;
+	if ( array1[1] != L"2"_XSW ) return 4;
+
 	if ( !array1.Contains(L"2"_XSW) ) return 5;
 
 	// Test == and !=
@@ -27,15 +27,15 @@ int XStringWArray_tests()
 		XStringWArray array1bis;
 		array1bis.Add(L"1"_XSW);
 		array1bis.Add(L"2"_XSW);
-		
+
 		if ( !(array1 == array1bis) ) return 10;
 		if ( array1 != array1bis ) return 11;
 	}
-	
+
 	// Test concat and Split
 	{
 		XStringW c = array1.ConcatAll(L", "_XSW, L"^"_XSW, L"$"_XSW);
-		if ( c != L"^1, 2$" ) return 1;
+		if ( c != L"^1, 2$"_XSW ) return 1;
 
 		// Split doesn't handle prefix and suffix yet.
 		c = array1.ConcatAll(L", "_XSW);
@@ -48,13 +48,13 @@ int XStringWArray_tests()
 	array2.Add(L"2"_XSW);
 	array2.Add(L"1"_XSW);
 
-	if ( array2[0] != L"2" ) return 30;
-	if ( array2[1] != L"1" ) return 31;
+	if ( array2[0] != L"2"_XSW ) return 30;
+	if ( array2[1] != L"1"_XSW ) return 31;
 
 
 	if ( array1 == array2 ) return 40; // Array != because order is different
 	if ( !array1.Same(array2) ) return 41; // Arrays are the same
-	
+
 	array1.AddNoNull(L"3"_XSW);
 	if ( array1.size() != 3 ) return 50;
 	array1.AddNoNull(L""_XSW);

@@ -861,11 +861,11 @@ CUSTOM_LOADER_ENTRY
 
 	DuplicateEntry->Options        = Entry->Options;
 
-    if (Entry->FullTitle != NULL) {
+    if (Entry->FullTitle.notEmpty()) {
       DuplicateEntry->FullTitle      = Entry->FullTitle;
     }
 
-    if (Entry->Title != NULL) {
+    if (Entry->Title.notEmpty()) {
       DuplicateEntry->Title          = Entry->Title;
     }
 

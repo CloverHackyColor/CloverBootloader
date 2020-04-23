@@ -178,28 +178,28 @@ public:
 
 	// == operator
 	friend bool operator == (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2._data(0)) == 0; }
-	friend bool operator == (const XStringW& s1,        const wchar_t* s2  )        { return s1.Compare(s2) == 0; }
-	friend bool operator == (const wchar_t* s1,            const XStringW& s2)      { return s2.Compare(s1) == 0; }
+//	friend bool operator == (const XStringW& s1,        const wchar_t* s2  )        { return s1.Compare(s2) == 0; }
+//	friend bool operator == (const wchar_t* s1,            const XStringW& s2)      { return s2.Compare(s1) == 0; }
 
 	friend bool operator != (const XStringW& s1,        const XStringW& s2)      { return s1.Compare(s2._data(0)) != 0; }
-	friend bool operator != (const XStringW& s1,        const wchar_t* s2  )        { return s1.Compare(s2) != 0; }
-	friend bool operator != (const wchar_t* s1,            const XStringW& s2)      { return s2.Compare(s1) != 0; }
+//	friend bool operator != (const XStringW& s1,        const wchar_t* s2  )        { return s1.Compare(s2) != 0; }
+//	friend bool operator != (const wchar_t* s1,            const XStringW& s2)      { return s2.Compare(s1) != 0; }
 
 	friend bool operator <  (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) < 0; }
-	friend bool operator <  (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) < 0; }
-	friend bool operator <  (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) > 0; }
+//	friend bool operator <  (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) < 0; }
+//	friend bool operator <  (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) > 0; }
 
 	friend bool operator >  (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) > 0; }
-	friend bool operator >  (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) > 0; }
-	friend bool operator >  (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) < 0; }
+//	friend bool operator >  (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) > 0; }
+//	friend bool operator >  (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) < 0; }
 
 	friend bool operator <= (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) <= 0; }
-	friend bool operator <= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) <= 0; }
-	friend bool operator <= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) >= 0; }
+//	friend bool operator <= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) <= 0; }
+//	friend bool operator <= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) >= 0; }
 
 	friend bool operator >= (const XStringW& s1, const XStringW& s2) { return s1.Compare(s2._data(0)) >= 0; }
-	friend bool operator >= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) >= 0; }
-	friend bool operator >= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) <= 0; }
+//	friend bool operator >= (const XStringW& s1, const wchar_t* s2  ) { return s1.Compare(s2) >= 0; }
+//	friend bool operator >= (const wchar_t* s1,   const XStringW& s2) { return s2.Compare(s1) <= 0; }
 
 };
 

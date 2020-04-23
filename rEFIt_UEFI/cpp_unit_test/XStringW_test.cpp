@@ -17,8 +17,8 @@ int XStringW_tests()
 //	DebugLog(2, "XStringW_tests -> Enter\n");
 #endif
 
-	if ( global_str3 != L"global_str3" ) return 1;
-	if ( global_str4 != L"global_str4" ) return 2;
+	if ( global_str3 != L"global_str3"_XSW ) return 1;
+	if ( global_str4 != L"global_str4"_XSW ) return 2;
 
 	// Check default ctor
 	{
@@ -46,9 +46,9 @@ int XStringW_tests()
 		str.takeValueFrom("");
 		if (str.size() != 0) return 110;
 		str.takeValueFrom("1");
-		if ( str != L"1" ) return 111;
+		if ( str != L"1"_XSW ) return 111;
 		str.StrCat(L"2");
-		if ( str != L"12" ) return 112;
+		if ( str != L"12"_XSW ) return 112;
 	}
 #endif
 	
@@ -86,13 +86,13 @@ int XStringW_tests()
 		XStringW str2;
 		if ( !str2.isEmpty() ) return 10;
 		str2.StrnCpy(str.data(), 2);
-		if ( str2 != L"12" ) return 11;
+		if ( str2 != L"12"_XSW ) return 11;
 		str2.StrnCat(L"345", 2);
-		if ( str2 != L"1234" ) return 12;
+		if ( str2 != L"1234"_XSW ) return 12;
 		str2.Insert(1, str);
-		if ( str2 != L"112234" ) return 13;
+		if ( str2 != L"112234"_XSW ) return 13;
 		str2 += L"6";
-		if ( str2 != L"1122346" ) return 14;
+		if ( str2 != L"1122346"_XSW ) return 14;
 	}
 
 //wchar_t c2 = L'Ň';
@@ -100,9 +100,9 @@ int XStringW_tests()
 //const char* s1 = "𐌾";
 	XStringW str2;
 	str2.SWPrintf("%c", 'a'); // signle UTF8 ascii char
-	if ( str2 != L"a" ) return 20;
+	if ( str2 != L"a"_XSW ) return 20;
 	str2.takeValueFrom(L"ab"); // UTF16(32) string containing ascii char
-	if ( str2 != L"ab" ) return 21;
+	if ( str2 != L"ab"_XSW ) return 21;
 #ifdef _MSC_VER
 	// IMPORTANT : you can't pass a litteral char in a vararg function with Visual Studio (Microsoft strikes again :-).
 	//             At least, you got a warning C4066
@@ -123,7 +123,7 @@ int XStringW_tests()
 	if (str2 != s) return 23;
 #else
 	str2.SWPrintf("%lc", L'Ň'); // signe UTF16(32) char. (2 bytes in total if UTF16)
-	if ( str2 != L"Ň" ) return 22;
+	if ( str2 != L"Ň"_XSW ) return 22;
 	str2.takeValueFrom("");
 	if (str2.size() != 0) return 221;
 #ifdef XSTRINGW_HAS_CTOR_LITTERAL
@@ -148,9 +148,9 @@ int XStringW_tests()
 	// "𐌾" in UTF16 is 2 char : 0xd800, 0xdf3e
 
 	str2.takeValueFrom(L"𐌾"); // this is a UTF8 string 4 bytes long
-	if ( str2 != L"𐌾" ) return 31;
+	if ( str2 != L"𐌾"_XSW ) return 31;
 	str2.takeValueFrom(L"𐌾"); // this is a UTF16 or UTF32 string (depending of -fshort-wchar)
-	if ( str2 != L"𐌾" ) return 32;
+	if ( str2 != L"𐌾"_XSW ) return 32;
 
 #ifdef XSTRINGW_HAS_CTOR_LITTERAL
 	{
@@ -180,7 +180,7 @@ int XStringW_tests()
 
 #ifndef _MSC_VER
 	wchar_t* s = XStringW().takeValueFrom("aa").forgetDataWithoutFreeing();
-	if ( s != L"aa"_XSW ) return 102;
+	if ( memcmp(s, L"aa", sizeof(L"aa")*sizeof(wchar_t) ) == 0 ) return 102; // sizeof(L"aa") include null terminator
 #endif	
 //  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot");
 //  for (UINTN Index = 0; Index < 20; Index++) {
