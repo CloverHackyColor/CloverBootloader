@@ -85,11 +85,11 @@ public:
   EG_RECT           OldTextBufferRect;
   XImage            OldTextBufferImage;
   BOOLEAN           isBootScreen;
-  BOOLEAN           AnimeRun;
   //BOOLEAN           Once;
   //same for xcinema
-  UINT64            LastDraw;
-  INTN              CurrentFrame;
+ // BOOLEAN           AnimeRun;
+ // UINT64            LastDraw;
+ // INTN              CurrentFrame;
  // INTN              Frames;  //there are FilmC properties
  // UINTN             FrameTime; //ms
  // EG_RECT           FilmPlace;
@@ -120,26 +120,26 @@ public:
 
 
   REFIT_MENU_SCREEN()
-						: ID(0), Title(), TitleImage(),
-						  TimeoutSeconds(0), TimeoutText(), ThemeName(),
-              OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
-              AnimeRun(0), LastDraw(0), CurrentFrame(0),
+  : ID(0), Title(), TitleImage(),
+  TimeoutSeconds(0), TimeoutText(), ThemeName(),
+  OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
+  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
   mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
-						{};
+  {};
   REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
   : ID(ID), Title(TTitle), TitleImage(),
   TimeoutSeconds(0), TimeoutText(TTimeoutText), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
-  AnimeRun(0), LastDraw(0), CurrentFrame(0),
+  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
   mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {};
   //TODO exclude CHAR16
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC)
   : ID(ID), Title(), TitleImage(),
-  TimeoutSeconds(0), TimeoutText(), ThemeName(), AnimeRun(0),
-  LastDraw(0), CurrentFrame(0),
+  TimeoutSeconds(0), TimeoutText(), ThemeName(), 
+  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
   mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {
@@ -151,7 +151,7 @@ public:
   : ID(ID), Title(TTitle), TitleImage(),
   TimeoutSeconds(0), TimeoutText(TTimeoutText), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
-  AnimeRun(0), LastDraw(0), CurrentFrame(0),
+  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
   mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
   {

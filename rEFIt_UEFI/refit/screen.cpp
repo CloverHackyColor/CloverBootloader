@@ -414,7 +414,7 @@ void REFIT_MENU_SCREEN::GetAnime()
   FilmC = ThemeX.Cinema.GetFilm(ID);
 //  DBG("ScreenID=%lld Film found=%d\n", ID, (FilmC != nullptr)?1:0);
   if (FilmC != nullptr) {
-    AnimeRun = true;
+    FilmC->AnimeRun = true;
   }
 }
 
@@ -425,7 +425,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   }
   if (FilmC == nullptr) {
     DBG("Screen %lld inited without anime\n", ID);
-    AnimeRun = FALSE;
+    FilmC->AnimeRun = FALSE;
     return;
   }
 //  DBG("=== Debug Film ===\n");
@@ -467,9 +467,9 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   }
   if (FilmC->NumFrames != 0) {
     DBG(" Anime seems OK, init it\n");
-    AnimeRun = TRUE;
+    FilmC->AnimeRun = TRUE;
     FilmC->Reset();
-    LastDraw = 0;
+    FilmC->LastDraw = 0;
   }
 }
 

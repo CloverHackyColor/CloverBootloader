@@ -2569,7 +2569,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
   while (!MenuExit) {
     GetAnime();
-    DBG("AnimeRun=%d\n", AnimeRun?1:0);
+    DBG("AnimeRun=%d\n", FilmC->AnimeRun?1:0);
     MenuExit = RunGenericMenu(MainStyle, &DefaultEntryIndex, &MainChosenEntry);
     TimeoutSeconds = 0;
 
