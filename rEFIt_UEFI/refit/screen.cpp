@@ -414,7 +414,7 @@ void REFIT_MENU_SCREEN::GetAnime()
   FilmC = ThemeX.Cinema.GetFilm(ID);
 //  DBG("ScreenID=%lld Film found=%d\n", ID, (FilmC != nullptr)?1:0);
   if (FilmC != nullptr) {
-    AnimeRun = true;
+    FilmC->AnimeRun = true;
   }
 }
 
@@ -425,7 +425,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
   }
   if (FilmC == nullptr) {
     DBG("Screen %lld inited without anime\n", ID);
-    AnimeRun = FALSE;
+    FilmC->AnimeRun = FALSE;
     return;
   }
 //  DBG("=== Debug Film ===\n");
@@ -461,21 +461,15 @@ VOID REFIT_MENU_SCREEN::InitAnime()
     FilmC->FilmPlace = ThemeX.BannerPlace;
     if (CWidth > 0 && CHeight > 0) {
       // Retained for legacy themes without new anim placement options.
-      FilmC->FilmPlace.XPos += (FilmC->FilmPlace.Width - CWidth) / 2;
-      if (FilmC->FilmPlace.XPos < 0) {
-        FilmPlace.XPos = 0;
-      }
-      FilmC->FilmPlace.YPos += (FilmC->FilmPlace.Height - CHeight) / 2;
-      if (FilmC->FilmPlace.YPos < 0) {
-        FilmPlace.YPos = 0;
-      }
+      FilmC->FilmPlace.XPos = ((INTN)FilmC->FilmPlace.XPos * 2 > CWidth  - (INTN)FilmC->FilmPlace.Width ) ? (UINTN)((INTN)FilmC->FilmPlace.XPos + ((INTN)FilmC->FilmPlace.Width  - CWidth ) / 2) : 0;
+      FilmC->FilmPlace.YPos = ((INTN)FilmC->FilmPlace.YPos * 2 > CHeight - (INTN)FilmC->FilmPlace.Height) ? (UINTN)((INTN)FilmC->FilmPlace.YPos + ((INTN)FilmC->FilmPlace.Height - CHeight) / 2) : 0;
     }
   }
   if (FilmC->NumFrames != 0) {
     DBG(" Anime seems OK, init it\n");
-    AnimeRun = TRUE;
+    FilmC->AnimeRun = TRUE;
     FilmC->Reset();
-    LastDraw = 0;
+    FilmC->LastDraw = 0;
   }
 }
 

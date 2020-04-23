@@ -2011,7 +2011,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 //          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
-            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title != NULL) ? Custom->Title.wc_str() : CustomPath, Entry->VolName);
+            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath, Entry->VolName);
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->GetAnime();

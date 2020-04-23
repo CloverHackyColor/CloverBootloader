@@ -31,14 +31,14 @@
 
 VOID REFIT_MENU_SCREEN::UpdateFilm()
 {
-  if (FilmC == nullptr || !AnimeRun) {
-//    DBG("no anime -> run=%d\n", AnimeRun?1:0);
+  if (FilmC == nullptr || !FilmC->AnimeRun) {
+//    DBG("no anime -> run=%d\n", FilmC->AnimeRun?1:0);
     return;
   }
   // here we propose each screen has own link to a Film
   INT64      Now = AsmReadTsc();
 
-  if (LastDraw == 0) {
+  if (FilmC->LastDraw == 0) {
     DBG("=== Update Film ===\n");
     DBG("FilmX=%lld\n", FilmC->FilmX);
     DBG("ID=%lld\n", FilmC->GetIndex());
@@ -50,7 +50,7 @@ VOID REFIT_MENU_SCREEN::UpdateFilm()
 
   }
 
-  if (TimeDiff(LastDraw, Now) < (UINTN)FilmC->FrameTime) return;
+  if (TimeDiff(FilmC->LastDraw, Now) < (UINTN)FilmC->FrameTime) return;
 
   XImage Frame = FilmC->GetImage(); //take current image
   if (!Frame.isEmpty()) {
@@ -58,9 +58,9 @@ VOID REFIT_MENU_SCREEN::UpdateFilm()
   }
   FilmC->Advance(); //next frame no matter if previous was not found
   if (FilmC->Finished()) { //first loop finished
-    AnimeRun = !FilmC->RunOnce; //will stop anime if it set as RunOnce
+    FilmC->AnimeRun = !FilmC->RunOnce; //will stop anime if it set as RunOnce
   }
-  LastDraw = Now;
+  FilmC->LastDraw = Now;
 }
 
 FILM* XCinema::GetFilm(INTN Id)
