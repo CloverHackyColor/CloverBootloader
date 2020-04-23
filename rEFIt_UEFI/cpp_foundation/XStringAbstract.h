@@ -325,23 +325,23 @@ public:
 
 //	template<typename IntegralType, typename XStringAbstract__enable_if<XStringAbstract__is_integral<IntegralType>::value, IntegralType>::type* = nullptr>
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	T* dataSized(IntegralType size) const
+	T* dataSized(IntegralType size)
 	{
 		if ( size<0 ) panic("T* dataSized(xisize i, size_t sizeMin, size_t nGrowBy) -> i < 0");
 		CheckSize((typename XStringAbstract__make_unsigned<IntegralType>::type)size);
-		return s();
+		return _data(0);
 	}
-
-	// Pos is counted in logical char but size is counted in physical char (char, char16_t, char32_t or wchar_t)
-	template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
-	T* dataSized(IntegralType1 pos, IntegralType2 size)
-	{
-		if ( pos<0 ) panic("T* dataSized(xisize i, size_t sizeMin, size_t nGrowBy) -> i < 0");
-		if ( size<0 ) panic("T* dataSized(xisize i, size_t sizeMin, size_t nGrowBy) -> i < 0");
- 		size_t offset = size_of_utf_string_len(m_data, (typename XStringAbstract__make_unsigned<IntegralType1>::type)pos); // If pos is too big, size_of_utf_string_len returns the end of the string
-		CheckSize(offset + (typename XStringAbstract__make_unsigned<IntegralType2>::type)size);
-		return _data(pos);
-	}
+//
+//	// Pos is counted in logical char but size is counted in physical char (char, char16_t, char32_t or wchar_t)
+//	template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
+//	T* dataSized(IntegralType1 pos, IntegralType2 size)
+//	{
+//		if ( pos<0 ) panic("T* dataSized(xisize i, size_t sizeMin, size_t nGrowBy) -> i < 0");
+//		if ( size<0 ) panic("T* dataSized(xisize i, size_t sizeMin, size_t nGrowBy) -> i < 0");
+// 		size_t offset = size_of_utf_string_len(m_data, (typename XStringAbstract__make_unsigned<IntegralType1>::type)pos); // If pos is too big, size_of_utf_string_len returns the end of the string
+//		CheckSize(offset + (typename XStringAbstract__make_unsigned<IntegralType2>::type)size);
+//		return _data(pos);
+//	}
 
 //	const T* data(unsigned int ui) const { return _data(ui); }
 //	const T* data(int i) const { return _data(i); }
