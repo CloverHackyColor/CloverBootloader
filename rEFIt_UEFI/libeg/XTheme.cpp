@@ -370,11 +370,11 @@ const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take emb
   if (IdFound >= 0 && !Icons[IdFound].Image.isEmpty()) {
     // icon not empty, return it
     if (!Daylight && !Icons[IdFound].ImageNight.isEmpty()) {
-      DBG("got night icon %lld name{%s}\n", Id, IconsNames[Id]);
+      DBG("got night icon %lld name{%s}\n", Id, IconsNames[IdFound]);
       return Icons[IdFound].ImageNight;
     }
     //if daylight or night icon absent
-    DBG("got day icon %lld name{%s}\n", Id, IconsNames[Id]);
+    DBG("got day icon %lld name{%s}\n", Id, IconsNames[IdFound]);
     return Icons[IdFound].Image;
   }
   return NullIcon; //such Id is not found in the database
