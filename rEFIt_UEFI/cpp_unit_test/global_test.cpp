@@ -1,7 +1,6 @@
 #include <Platform.h>
 #include "global_test.h"
 #include "../cpp_foundation/XString.h"
-#include "../cpp_foundation/XStringW.h"
 
 
 

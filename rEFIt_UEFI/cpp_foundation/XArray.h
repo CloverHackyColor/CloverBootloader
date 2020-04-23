@@ -172,7 +172,7 @@ XArray<TYPE>::~XArray()
 	if ( m_data ) free(m_data);
 }
 
-/* CheckSize() */
+/* CheckSize()  // nNewSize is number of TYPE, not in bytes */
 template<class TYPE>
 void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 {

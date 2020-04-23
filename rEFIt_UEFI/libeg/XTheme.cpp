@@ -396,7 +396,7 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
   XString Third;
   const XImage *ReturnImage;
   UINTN Comma = Full.IdxOf(',');
-  UINTN Size = Full.size();
+  UINTN Size = Full.length();
 //  DBG("IconName=%ls comma=%lld size=%lld\n", OSIconName, Comma, Size);
   if (Comma != MAX_XSIZE) {  //Comma
     First = "os_"_XS + Full.SubString(0, Comma);

@@ -40,8 +40,8 @@
 #include "../../refit/lib.h"
 #ifdef __cplusplus
 #include "../../cpp_foundation/XObjArray.h"
+#include "../../cpp_foundation/XString.h"
 #include "../../cpp_foundation/XStringWArray.h"
-#include "../../cpp_foundation/XStringW.h"
 #include "../../libeg/XPointer.h"
 #endif
 

@@ -53,7 +53,7 @@ size_t utf16_wcslen(const wchar_t *s)
 	// wcslen seems not to work if sizeof(wchar_t) == 2
 	const wchar_t* p;
 	for ( p = s ; *p ; p++ );
-	return (UINTN)(p-s);
+	return (size_t)(p-s);
 }
 
 int utf16_wcsncmp(const wchar_t *s1, const wchar_t * s2, size_t n)

@@ -19,3 +19,7 @@ environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.1294514338/LIBRARY_PATH/operation=remove
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.1294514338/append=true
 environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.1294514338/appendContributed=true
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.573872575/LIBRARY_PATH/delimiter=\:
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.573872575/LIBRARY_PATH/operation=remove
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.573872575/append=true
+environment/buildEnvironmentLibrary/cdt.managedbuild.config.gnu.macosx.exe.debug.1043399644.573872575/appendContributed=true

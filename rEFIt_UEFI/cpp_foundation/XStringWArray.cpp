@@ -130,13 +130,13 @@ XStringWArray Split(const XStringW &S, const XStringW &Separator)
   xsize idxB, idxE;
 
 	idxB = 0;
-	idxE = S.IdxOf(Separator, idxB);
+	idxE = S.indexOf(Separator, idxB);
 	while ( idxE != MAX_XSIZE ) {
-		Ss.AddCopy(SubString(S.wc_str(), idxB, idxE-idxB));
-		idxB = idxE + Separator.size();
-		idxE = S.IdxOf(Separator, idxB);
+		Ss.AddCopy(S.SubString(idxB, idxE-idxB));
+		idxB = idxE + Separator.length();
+		idxE = S.indexOf(Separator, idxB);
 	}
-	if ( idxB < S.size() ) Ss.AddCopy(SubString(S.wc_str(), idxB, S.size()-idxB));
+	if ( idxB < S.length() ) Ss.AddCopy(S.SubString(idxB, S.length()-idxB));
 	return Ss;
 }
 

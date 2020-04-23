@@ -1,7 +1,7 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XString.h"
 #include "../gui/menu_items/menu_items.h"
 
 //VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine);

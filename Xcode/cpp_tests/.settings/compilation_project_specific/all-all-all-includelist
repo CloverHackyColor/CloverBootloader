@@ -4,6 +4,8 @@ prefix=$1
 
 echo "
 
+../src
+
 " | awk '$0!=""{ printf " -I'"${prefix}"'%s", $0; }'
 
 

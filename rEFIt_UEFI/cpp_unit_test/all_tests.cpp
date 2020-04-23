@@ -1,5 +1,4 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-#include "../cpp_foundation/XStringW.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XObjArray.h"
 
@@ -9,7 +8,6 @@
 #include "XObjArray_tests.h"
 #include "XStringWArray_test.h"
 #include "XString_test.h"
-#include "XStringW_test.h"
 #include "strcmp_test.h"
 #include "strncmp_test.h"
 #include "strlen_test.h"
@@ -33,7 +31,13 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-#ifdef JIEF_DEBUG
+#ifdef XSTRING16_DEV
+	ret = XStringx_tests();
+	if ( ret != 0 ) {
+		DebugLog(2, "XString16_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+return ret;
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
 //		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
@@ -92,18 +96,6 @@ bool all_tests()
 		DebugLog(2, "XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-#ifndef _MSC_VER
-	ret = XString_tests();
-	if ( ret != 0 ) {
-		DebugLog(2, "XString_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = XStringW_tests();
-	if ( ret != 0 ) {
-		DebugLog(2, "XStringW_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-#endif
 	ret = XStringWArray_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XStringWArray_tests() failed at test %d\n", ret);

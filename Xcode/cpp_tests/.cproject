@@ -215,7 +215,7 @@
                         						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_foundation"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_unit_test"/>
+                        <entry excluding="printlib-test.cpp|poolprint-test.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_unit_test"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
@@ -439,9 +439,13 @@
                     					
                     <sourceEntries>
                         						
+                        <entry excluding="MemLogLib.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="MemLogLibDefault"/>
+                        						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_foundation"/>
                         						
-                        <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_unit_test"/>
+                        <entry excluding="printlib-test.cpp|poolprint-test.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_unit_test"/>
+                        						
+                        <entry excluding="operatorNewDelete.cpp|memory.cpp|globals_dtor.cpp|globals_ctor.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_util"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					

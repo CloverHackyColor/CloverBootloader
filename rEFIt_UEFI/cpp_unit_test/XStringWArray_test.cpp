@@ -1,6 +1,5 @@
 #include <Platform.h>
 #include "../cpp_foundation/XStringWArray.h"
-#include "../cpp_foundation/XStringW.h"
 
 int XStringWArray_tests()
 {

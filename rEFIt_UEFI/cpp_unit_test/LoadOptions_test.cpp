@@ -1,7 +1,6 @@
 #include <Platform.h>
 #include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringArray.h"
-#include "../cpp_foundation/XStringW.h"
 #include "global_test.h"
 
 
@@ -40,7 +39,7 @@ CHAR16 *Old1_RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *Loa
   if (Placement == NULL) return EfiStrDuplicate(LoadOptions);
 
   // Get placement of option in original options
-  Offset = (Placement - LoadOptions);
+  Offset = UINTN(Placement - LoadOptions);
   Length = StrLen(LoadOptions);
   OptionLength = StrLen(LoadOption);
 

@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 
 #ifdef __GNUC__
@@ -26,9 +27,32 @@ inline void* memcpy(void *dst, const void *src, size_t len)
 	return CopyMem(dst,src,len);
 }
 
+inline char* strcat(char* s1, const char* s2)
+{
+	AsciiStrCatS(s1, AsciiStrLen(s1)+1, s2);
+	return s1;
+}
+
+inline char* strcpy(char* dst, const char* src)
+{
+	AsciiStrCpyS(dst,AsciiStrLen(dst)+1,src);
+	return dst;
+}
+
+inline char* strncpy(char * dst, const char * src, size_t len)
+{
+	AsciiStrnCpyS(dst,(UINTN)len+1,src,(UINTN)len);
+	return dst;
+}
+
+//inline char* strncat(char *restrict s1, const char *restrict s2, size_t n)
+//{
+//	return AsciiStrCatS(s1, AsciiStrLen(strDest)+1,strSource)
+//}
+//
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif // __CLOVER_STRING_H__

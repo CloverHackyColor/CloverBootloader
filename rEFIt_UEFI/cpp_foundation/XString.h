@@ -1,329 +1,143 @@
 //*************************************************************************************************
 //*************************************************************************************************
 //
-//                                          STRING
+//                                      STRING
+//
+// Developed by jief666, from 1997.
 //
 //*************************************************************************************************
 //*************************************************************************************************
 
-#if !defined(__XSTRING_H__)
-#define __XSTRING_H__
+
+#if !defined(__XString_H__)
+#define __XString_H__
 
 #include "XToolsCommon.h"
+#include "XStringAbstract.h"
 
-#define PATH_SEPARATOR '\\'
+#include "../../Include/Library/printf_lite.h"
 
-extern UINTN XStringGrowByDefault;
+#ifndef XString16GrowByDefault
+#define XString16GrowByDefault 16
+#endif
 
+//typedef  XStringAbstract<char> XString;
 
-//class XConstString;
-class XStringW;
-
-class XString
+class XString : public XStringAbstract<char, XString>
 {
-  protected:
-  	char *m_data;
-  	xsize m_allocatedSize;
-
-	// convenience method. Did it this way to avoid #define in header. They can have an impact on other headers
-	xsize min(xsize x1, xsize x2) const { if ( x1 < x2 ) return x1; return x2; }
-	xsize max(xsize x1, xsize x2) const { if ( x1 > x2 ) return x1; return x2; }
-
-// Next 2 methods are protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
-// It's better practice, if you need a non-const pointer for low-level access, to use dataSized and ahev to specify the size
-// It's possible to access data(m_allocatedSize) because the real allocated size is m_allocatedSize+1
-	char* _data(unsigned int ui) const { if ( ui > m_allocatedSize ) panic("char* data(unsigned int ui=0) -> ui > m_allocatedSize"); return m_data+ui; }
-	char* _data(int i) const { if ( i<0 ) panic("char* data(int i) -> i < 0"); if ( (unsigned int)i > m_allocatedSize ) panic("char* data(int i) -> i > m_allocatedSize");  return m_data+i; }
-	char* _data(unsigned long ui) const { if ( ui > m_allocatedSize ) panic("char* data(unsigned long ui=0) -> ui > m_allocatedSize"); return m_data+ui; }
-	char* _data(long i) const { if ( i<0 ) panic("char* data(long i) -> i < 0"); if ( (unsigned long)i > m_allocatedSize ) panic("char* data(long i) -> i > m_allocatedSize");  return m_data+i; }
-	char* _data(xsize ui) const { if ( ui > m_allocatedSize ) panic("char* data(xsize ui=0) -> ui > m_allocatedSize"); return m_data+ui; }
-	char* _data(xisize i) const { if ( i<0 ) panic("char* data(xisize i) -> i < 0"); if ( (xsize)i > m_allocatedSize ) panic("char* data(xisize i) -> i > m_allocatedSize");  return m_data+i; }
-
   public:
+	XString() : XStringAbstract<char, XString>() {};
+	XString(const XString& S) : XStringAbstract<char, XString>(S) {}
 
-	void Init(xsize aSize=0);
-	XString();
-	XString(const XString &aString);
-    XString(XString&& aString); // Move constructor
+	template<typename O, class OtherXStringClass>
+	XString(const XStringAbstract<O, OtherXStringClass> &S) : XStringAbstract<char, XString>(S) {}
 
+	XString& operator=(const XString &S) { this->XStringAbstract<char, XString>::operator=(S); return *this; }
 
-//	XString(const XConstString &aConstString);
-//	XString(const char *S);
-//	XString(const char* S, xsize count);
-
-//	XString(const wchar_t *S);
-
-//	XString(uchar);
-//	XString(char);
-//	XString(int);
-//	XString(unsigned long long);
-
-	~XString();
-
-  public:
-	char *CheckSize(xsize nNewSize, xsize nGrowBy = XStringGrowByDefault);
-
-  public:
-	const char* c_str() const { return m_data; } // same as std::string
-	const char* data(xsize ui=0) const { return _data(ui); }
-	const char* data(xisize i) const { return _data(i); }
-
-	char* dataSized(xsize ui, xsize sizeMin, xsize nGrowBy=XStringGrowByDefault) { CheckSize(ui+sizeMin, nGrowBy); return _data(ui); }
-
-	xsize length() const { return strlen(m_data); }
-	xsize size() const { return strlen(m_data); }
-	xsize allocatedSize() const { return m_allocatedSize; }
-	void setLength(xsize len);
-
-	/* IsNull ? */
-	void setEmpty() { setLength(0); }
-	bool isEmpty() const { return length() == 0; }
-	bool notEmpty() const { return !isEmpty(); }
-
-	/* Cast */
-//	operator const char *() const { return data(); } // disabled during big refactoring
-//	operator char *() { return data(); }
-	
-//	int ToInt() const;
-//	UINTN ToUINTN() const;
-
-	/* char [] */
-	char operator [](int i) const { return *_data(i); }
-	char operator [](unsigned int ui) const { return *_data(ui); }
-	char operator [](long i) const { return *_data(i); }
-	char operator [](unsigned long ui) const { return *_data(ui); }
-	char operator [](xisize i) const { return *data(i); }
-	char operator [](xsize ui) const { return *data(ui); }
-
-	/* char& [] */
-	char& operator [](int i) { return *_data(i); }
-	char& operator [](unsigned int ui) { return *_data(ui); }
-	char& operator [](long i) { return *_data(i); }
-	char& operator [](unsigned long ui) { return *_data(ui); }
-	char& operator [](xisize i) { return *_data(i); }
-	char& operator [](xsize ui) { return *_data(ui); }
-
-	char lastChar() const { if ( length() > 0 ) return data()[length()-1]; else return 0; }
-	void removeLastEspCtrl();
-
-	void StrCpy(const char *buf);
-	void StrnCpy(const char *buf, xsize len);
-	void StrnCat(const char *buf, xsize len);
-	void StrCat(const char *buf);
-	void StrCat(const XString& S) { StrCat(S.c_str()) ; }
-	void Delete(xsize pos, xsize count=1);
-
-	void Insert(xsize pos, const XString& Str);
-
-	void Cat(const XString &uneXString);
-
-	XString& vSPrintf(const char *Format, va_list va);
-	XString& SPrintf(const char *format, ...)	__attribute__((format (printf, 2, 3))); // 2 and 3 because of hidden parameter 'this'.
-
-	const XString& takeValueFrom(const char* S) { StrCpy(S); return *this; }
-	const XString& takeValueFrom(const char* S, xsize count) { StrnCpy(S, count); return *this; }
-	const XString& takeValueFrom(const wchar_t* S) { SPrintf("%ls", S); return *this; }
-
-	const XString& operator =(const XString& aString);
-	XString& operator =(XString&& aString);
-//	const XString &operator =(const XConstString &aConstString);
-
-// Deactivate assignment during refactoring to avoid confusion
-//	const XString &operator =(const char* S);
-//	const XString &operator =(char);
-//	const XString &operator =(int);
-//	const XString &operator =(unsigned int);
-//	const XString &operator =(long);
-//	const XString &operator =(unsigned long long);
-
-	const XString &operator += (const XString &);
-	const XString &operator += (const char* S);
-//	const XString &operator += (const XConstString &aConstString);
-
-// Deactivate assignment during refactoring to avoid confusion
-//	const XString &operator += (char);
-//	const XString &operator += (int);
-//	const XString &operator += (unsigned int);
-//	const XString &operator += (long);
-//	const XString &operator += (unsigned long long);
-
-	XString SubString(xsize pos, xsize count) const;
-
-	xsize IdxOf(char c, xsize Pos = 0) const;
-
-	xsize IdxOf(const char* s, xsize s_len, xsize pos) const;
-	xsize IdxOf(const char* s, xsize pos = 0) const { return IdxOf(s, strlen(s), pos); }
-	xsize IdxOf(const XString &S, xsize pos = 0) const { return IdxOf(S.c_str(), S.length(), pos); }
-	bool ExistIn(const char* s, xsize s_len, xsize pos = 0) const { return IdxOf(s, s_len, pos) != MAX_XSIZE; }
-	bool ExistIn(const char* s, xsize pos = 0) const { return IdxOf(s, pos) != MAX_XSIZE; }
-	bool ExistIn(const XString &S, xsize pos = 0) const { return IdxOf(S, pos) != MAX_XSIZE; }
-
-	xsize IdxOfIC(const char* s, xsize s_len, xsize pos) const;
-	xsize IdxOfIC(const char* s, xsize pos = 0) const { return IdxOfIC(s, strlen(s), pos); }
-	xsize IdxOfIC(const XString &S, xsize pos = 0) const { return IdxOfIC(S.c_str(), S.length(), pos); }
-	bool ExistInIC(const char* s, xsize s_len, xsize pos = 0) const { return IdxOfIC(s, s_len, pos) != MAX_XSIZE; }
-	bool ExistInIC(const char* s, xsize pos = 0) const { return IdxOfIC(s, pos) != MAX_XSIZE; }
-	bool ExistInIC(const XString &S, xsize pos = 0) const { return IdxOfIC(S, pos) != MAX_XSIZE; }
-
-#ifdef TODO_skqdjfhksqjhfksjqdf
-	bool ExistInIAC(const XString &S) const { return IdxOfIC(S) != MAX_XSIZE; }
-#endif
+	using XStringAbstract<char, XString>::operator =;
 
 
-#ifdef TODO_skqdjfhksqjhfksjqdf
-	xsize IdxOfIAC(const XString &S, xsize Pos = 0) const;
-#endif
 
+protected:
+	static void transmitSPrintf(const char* buf, unsigned int nbchar, void* context)
+	{
+		((XString*)(context))->strncat(buf, nbchar);
+	}
+public:
+	void vSPrintf(const char* format, va_list va)
+	{
+		setEmpty();
+		vprintf_with_callback(format, va, transmitSPrintf, this);
+	}
+	void SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
+	{
+		va_list     va;
 
-	xsize RIdxOf(const char* s, xsize s_len, xsize pos) const;
-	xsize RIdxOf(const char* s, xsize pos = MAX_XSIZE) const { return IdxOf(s, strlen(s), pos); }
-	xsize RIdxOf(const XString &S, xsize pos = MAX_XSIZE) const { return IdxOf(S.c_str(), S.length(), pos); }
+		va_start (va, format);
+		vSPrintf(format, va);
+		va_end(va);
+	}
 
-	void ToLower(bool FirstCharIsCap = false);
-	bool IsLetters() const;
-	bool IsLettersNoAccent() const;
-	bool IsDigits() const;
-	bool IsDigits(xsize pos, xsize count) const;
-
-#ifdef TODO_skqdjfhksqjhfksjqdf
-	bool DeleteIC(const XString &S);
-#endif
-	void Replace(char c1, char c2);
-	XString SubStringReplace(char c1, char c2);
-
-	int Compare(const char* S) const { return strcmp(data(), (S ? S : "")); }// AsciiStrCmp return 0 or !0, not usual strcmp
-#ifdef TODO_skqdjfhksqjhfksjqdf
-	//IC
-	int CompareIC(const char* S) const { return StringCompareIC(data(), (S ? S : "")); }
-	// IA
-	int CompareIA(const char* S) const { return StringCompareIA(data(), (S ? S : "")); }
-	// IAC
-	int CompareIAC(const char* S) const { return StringCompareIAC(data(), (S ? S : "")); }
-/*
-	int CompareIACSubString(const char* S, size_t LenS) const { return SubStringCompareIAC(data(), length(), S, LenS); } //SubStringCompareIC renvoi 0 (ÈgalitÈ) si Len1 ou Len2 == 0
-	int CompareIACSubString(xsize Pos, const char* S, size_t LenS) const { return SubStringCompareIAC(data(Pos), length()-Pos, S, LenS); } //SubStringCompareIC renvoi 0 (ÈgalitÈ) si Len1 ou Len2 == 0
-	int CompareIACSubString(xsize Pos, xsize Len, const char* S, size_t LenS) const { return SubStringCompareIAC(data(Pos), Len, S, LenS); }
-*/
-#endif
-
-//	bool Equal(const char* S) const { return strcmp(data(), (S ? S : "")) == 0; };
-	bool Equal(const XString& S) const { return strcmp(c_str(), S.c_str()) == 0; };
-//	bool BeginEqual(const char* S) const { return StringBeginEqual(data(), S); }
-//	bool SubStringEqual(xsize Pos, const char* S) const { return StringBeginEqual(data(Pos), S); }
-#ifdef TODO_skqdjfhksqjhfksjqdf
-	// IC
-	bool EqualIC(const char* S) const { return StringEqualIC(data(), S); }
-	bool BeginEqualIC(const char* S) const { return StringBeginEqualIC(data(), S); }
-	bool SubStringEqualIC(xsize Pos, const char* S) const { return StringBeginEqualIC(data(Pos), S); }
-	bool EqualSubStringIC(const char* S) const { return StringBeginEqualIC(S, data()); }
-	// IA
-	bool EqualIA(const char* S) const { return CompareIA(S) == 0; };
-	// IAC
-	bool EqualIAC(const char* S) const { return CompareIAC(S) == 0; };
-	bool BeginEqualIAC(const char* S) const { return StringBeginEqualIAC(data(), S); }
-	bool SubStringEqualIAC(xsize Pos, const char* S) const { return StringBeginEqualIAC(data(Pos), S); }
-	bool EqualSubStringIAC(const char* S) const { return StringBeginEqualIAC(S, data()); }
-
-
-/*	bool EqualIACSubString(const char* S, size_t LenS) const { return CompareIACSubString(S, LenS) == 0; }
-	bool EqualIACSubString(xsize Pos, const char* S, size_t LenS) const { return CompareIACSubString(Pos, S, LenS) == 0; }
-	bool EqualIACSubString(xsize Pos, xsize Len, const char* S, size_t LenS) const { return CompareIACSubString(Pos, Len, S, LenS) == 0; }
-*/
-#endif
-
-	XString basename() const;
-	XString dirname() const;
-
-//	size_t Sizeof() const { return size_t(sizeof(xsize)+length()); } // overflow ? underflow ?
-//	bool ReadFromBuf(const char *buf, size_t *idx, size_t count);
-//	bool WriteToBuf(char *buf, size_t *idx, size_t count) const;
-//	bool ReadFromFILE(FILE *fp);
-//	bool WriteToFILE(FILE *fp) const;
-//	//
-//	bool ReadFromXBuffer(XRBuffer &unXBuffer); // Impossible de mettre le XBuffer en const car il y a une variable d'instance de XBuffer incrÈmentÈe par ReadFromXBuffer
-//	void CatToXBuffer(XBuffer *unXBuffer) const;
-////	void WriteToXBuffer(XBuffer *unXBuffer, xsize *idx) const;
-
-  public:
-	// OpÈrateur +
-	// Chaines
-	friend XString operator + (const XString& p1, const XString& p2) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XString& p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
-//	XString operator + (const char *p2 ) { XString s(*this); s+=p2; return s; }
-
-	friend XString operator + (const char *p1,   const XString& p2) { XString s; s.takeValueFrom(p1); s+=p2; return s; }
-//	friend XString operator + (const XConstString& p1,   const XString& p2) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XString& p1,   const XConstString& p2) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XConstString& p1,   const XConstString& p2) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XConstString &p1, const char *p2  ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const char *p1,   const XConstString &p2) { XString s; s=p1; s+=p2; return s; }
-
-// deactivate during refactoring
-//	// Char
-//	friend XString operator + (const XString& p1, char p2         ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (char p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
-//	// NumÈrique
-//	friend XString operator + (const XString& p1, int p2          ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (int p1,   const XString& p2        ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XString& p1, unsigned int p2         ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (unsigned int p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XString& p1, long p2         ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (long p1,   const XString& p2       ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (const XString& p1, unsigned long long p2        ) { XString s; s=p1; s+=p2; return s; }
-//	friend XString operator + (unsigned long long p1,   const XString& p2      ) { XString s; s=p1; s+=p2; return s; }
-
-	// OpÈrateur ==
-	// Chaines
-	friend bool operator == (const XString& s1,        const XString& s2)      { return s1.Equal(s2); }
-//	friend bool operator == (const XString& s1,        const char* s2  )        { return s1.Equal(s2); }  // during refactor
-//	friend bool operator == (const char* s1,            const XString& s2)      { return s2.Equal(s1); }  // during refactor
-//	friend bool operator == (const XConstString &s1,   const XString& s2)      { return s1.Compare(s2) == 0; }
-//	friend bool operator == (const XString &s1,        const XConstString& s2) { return s1.Compare(s2) == 0; }
-//	friend bool operator == (const XConstString &s1,   const XConstString& s2) { return s1.Compare(s2) == 0; }
-
-	friend bool operator != (const XString& s1,        const XString& s2)      { return !s1.Equal(s2); }
-//	friend bool operator != (const XString& s1,        const char* s2  )        { return !s1.Equal(s2); } // during refactor
-//	friend bool operator != (const char* s1,            const XString& s2)      { return !s2.Equal(s1); }  // during refactor
-//	friend bool operator != (const XConstString &s1,   const XString& s2)      { return s1.Compare(s2) != 0; }
-//	friend bool operator != (const XString &s1,        const XConstString& s2) { return s1.Compare(s2) != 0; }
-//	friend bool operator != (const XConstString &s1,   const XConstString& s2) { return s1.Compare(s2) != 0; }
-
-//	friend bool operator <  (const XString& s1, const XString& s2) { return s1.Compare(s2) < 0; }
-//	friend bool operator <  (const XString& s1, const char* s2  ) { return s1.Compare(s2) < 0; }
-//	friend bool operator <  (const char* s1,   const XString& s2) { return s2.Compare(s1) > 0; }
-//
-//	friend bool operator >  (const XString& s1, const XString& s2) { return s1.Compare(s2) > 0; }
-//	friend bool operator >  (const XString& s1, const char* s2  ) { return s1.Compare(s2) > 0; }
-//	friend bool operator >  (const char* s1,   const XString& s2) { return s2.Compare(s1) < 0; }
-//
-//	friend bool operator <= (const XString& s1, const XString& s2) { return s1.Compare(s2) <= 0; }
-//	friend bool operator <= (const XString& s1, const char* s2  ) { return s1.Compare(s2) <= 0; }
-//	friend bool operator <= (const char* s1,   const XString& s2) { return s2.Compare(s1) >= 0; }
-//
-//	friend bool operator >= (const XString& s1, const XString& s2) { return s1.Compare(s2) >= 0; }
-//	friend bool operator >= (const XString& s1, const char* s2  ) { return s1.Compare(s2) >= 0; }
-//	friend bool operator >= (const char* s1,   const XString& s2) { return s2.Compare(s1) <= 0; }
-
-	static char to_lower(char ch) { return (((ch >= 'A') && (ch <= 'Z')) ? ((ch - 'A') + 'a') : ch); }
 };
 
-extern const XString NullXString;
+class XString16 : public XStringAbstract<char16_t, XString16>
+{
+  public:
+	XString16() : XStringAbstract<char16_t, XString16>() {};
+	XString16(const XString16& S) : XStringAbstract<char16_t, XString16>(S) {}
+
+	template<typename O, class OtherXStringClass>
+	XString16(const XStringAbstract<O, OtherXStringClass> &S) : XStringAbstract<char16_t, XString16>(S) {}
+
+	XString16& operator=(const XString16 &S) { this->XStringAbstract<char16_t, XString16>::operator=(S); return *this; }
+
+	using XStringAbstract<char16_t, XString16>::operator =;
+};
+
+class XString32 : public XStringAbstract<char32_t, XString32>
+{
+  public:
+	XString32() : XStringAbstract<char32_t, XString32>() {};
+	XString32(const XString32& S) : XStringAbstract<char32_t, XString32>(S) {}
+
+	template<typename O, class OtherXStringClass>
+	XString32(const XStringAbstract<O, OtherXStringClass> &S) : XStringAbstract<char32_t, XString32>(S) {}
+
+	XString32& operator=(const XString32 &S) { this->XStringAbstract<char32_t, XString32>::operator=(S); return *this; }
+	
+	using XStringAbstract<char32_t, XString32>::operator =;
+};
+
+class XStringW : public XStringAbstract<wchar_t, XStringW>
+{
+  public:
+	XStringW() : XStringAbstract<wchar_t, XStringW>() {};
+	XStringW(const XStringW& S) : XStringAbstract<wchar_t, XStringW>(S) {}
+
+	template<class OtherXStringClass>
+	XStringW(const OtherXStringClass& S) : XStringAbstract<wchar_t, XStringW>(S) {}
+
+	XStringW& operator=(const XStringW &S) { this->XStringAbstract<wchar_t, XStringW>::operator=(S); return *this; }
+
+	using XStringAbstract<wchar_t, XStringW>::operator =;
+
+
+
+protected:
+	static void transmitSPrintf(const wchar_t* buf, unsigned int nbchar, void* context)
+	{
+		((XStringW*)(context))->strncat(buf, nbchar);
+	}
+public:
+	void vSWPrintf(const char* format, va_list va)
+	{
+		setEmpty();
+		vwprintf_with_callback(format, va, transmitSPrintf, this);
+	}
+	void SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
+	{
+		va_list     va;
+
+		va_start (va, format);
+		vSWPrintf(format, va);
+		va_end(va);
+	}
+
+};
 
 XString operator"" _XS ( const char* s, size_t len);
+XString16 operator"" _XS16 ( const char16_t* s, size_t len);
+XString32 operator"" _XS32 ( const char32_t* s, size_t len);
+XStringW operator"" _XSW ( const wchar_t* s, size_t len);
 
-XString SPrintf(const char *format, ...) __attribute__((format(printf, 1, 2)));
-XString SubString(const char *s, xsize s_len, xsize pos, xsize count);
-inline XString SubString(const char *s, xsize pos, xsize count) { return SubString(s, strlen(s), pos, count); }
-inline XString SubString(const XString& S, xsize pos, xsize count) { return SubString(S.c_str(), S.length(), pos, count); }
+extern const XString NullXString;
+extern const XStringW NullXStringW;
 
-
-#ifdef TODO_skqdjfhksqjhfksjqdf
-XString ToAlpha(const char *S);
-XString ToAlpha(const XString &S);
-XString ToLower(const char *S, bool FirstCharIsCap = false);
-XString ToUpper(const char *S);
+#ifdef _MSC_VER
+#   define __attribute__(x)
 #endif
-// Deactivate assignment during refactoring to avoid confusion
-//XString CleanCtrl(const XString &S);
+
+XString SPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
+XStringW SWPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
 
 #endif

@@ -242,12 +242,13 @@
   cpp_foundation/unicode_conversions.h
   cpp_foundation/XArray.h
   cpp_foundation/XObjArray.h
-  cpp_foundation/XString.cpp
-  cpp_foundation/XString.h
+ # cpp_foundation/XString.cpp
+#  cpp_foundation/XString.h
   cpp_foundation/XStringArray.cpp
   cpp_foundation/XStringArray.h
-  cpp_foundation/XStringW.cpp
-  cpp_foundation/XStringW.h
+#  cpp_foundation/XStringW.cpp
+#  cpp_foundation/XStringW.h
+  cpp_foundation/XStringUtf.cpp
   cpp_foundation/XStringWArray.cpp
   cpp_foundation/XStringWArray.h
   cpp_foundation/XToolsCommon.cpp
@@ -275,10 +276,11 @@
   cpp_unit_test/XArray_tests.h
   cpp_unit_test/XObjArray_tests.cpp
   cpp_unit_test/XObjArray_tests.h
-  cpp_unit_test/XString_test.cpp
-  cpp_unit_test/XString_test.h
-  cpp_unit_test/XStringW_test.cpp
-  cpp_unit_test/XStringW_test.h
+#  cpp_unit_test/XString_test.cpp
+#  cpp_unit_test/XString_test.h
+#  cpp_unit_test/XStringW_test.cpp
+#  cpp_unit_test/XStringW_test.h
+  cpp_unit_test/XStringx_test.cpp
   cpp_unit_test/XStringWArray_test.cpp
   cpp_unit_test/XStringWArray_test.h
 #  cpp_unit_test/XUINTN_test.cpp

@@ -8,7 +8,7 @@
 #ifndef LIBEG_VECTORGRAPHICS_H_
 #define LIBEG_VECTORGRAPHICS_H_
 
-#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XString.h"
 #include "../Platform/plist.h"
 #include "XImage.h"
 

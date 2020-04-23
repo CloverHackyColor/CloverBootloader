@@ -26,6 +26,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>MemLogLibDefault</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Library/MemLogLibDefault</locationURI>
+		</link>
+		<link>
 			<name>cpp_foundation</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_foundation</locationURI>
@@ -34,6 +39,11 @@
 			<name>cpp_unit_test</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_unit_test</locationURI>
+		</link>
+		<link>
+			<name>cpp_util</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_util</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

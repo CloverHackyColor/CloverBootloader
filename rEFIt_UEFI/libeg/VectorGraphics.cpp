@@ -454,7 +454,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   XImage& TextBufferXY = *TextBufferXY_ptr;
   INTN Width;
 //  UINTN i;
-  UINTN len;
+//  UINTN len;
   NSVGparser* p;
   NSVGrasterizer* rast;
   if (!textFace[textType].valid) {
@@ -492,7 +492,6 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   nsvg__xformIdentity(text->xform);
   p->text = text;
 
-  len = string.size();
   Width = TextBufferXY.GetWidth();
   if ( fontSVG->unitsPerEm < 1.f ) {
     fontSVG->unitsPerEm = 1000.f;
@@ -508,8 +507,9 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   x = (float)posX; //0.f;
   y = (float)posY + fontSVG->bbox[1] * Scale;
   p->isText = TRUE;
-  for (UINTN i=0; i < len; i++) {
-    CHAR16 letter = string.wc_str()[i];
+  size_t len = string.length();
+  for (size_t i=0; i < len; i++) {
+    CHAR16 letter = string.char16At(i);
     if (!letter) {
       break;
     }

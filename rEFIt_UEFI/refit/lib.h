@@ -60,8 +60,8 @@
 #include "../libeg/libeg.h"
 #ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
+#include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringWArray.h"
-#include "../cpp_foundation/XStringW.h"
 #include "../libeg/XTheme.h"
 extern XTheme ThemeX; //global variable defined in lib.cpp
 

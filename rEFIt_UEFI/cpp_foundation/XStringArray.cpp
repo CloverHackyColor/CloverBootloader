@@ -129,11 +129,11 @@ XStringArray Split(const XString &S, const XString &Separator)
 	idxB = 0;
 	idxE = S.IdxOf(Separator, idxB);
 	while ( idxE != MAX_XSIZE ) {
-		Ss.AddCopy(SubString(S, idxB, idxE-idxB));
+		Ss.AddCopy(S.SubString(idxB, idxE-idxB));
 		idxB = idxE + Separator.length();
 		idxE = S.IdxOf(Separator, idxB);
 	}
-	if ( idxB < S.length() ) Ss.AddCopy(SubString(S, idxB, S.length()-idxB));
+	if ( idxB < S.length() ) Ss.AddCopy(S.SubString(idxB, S.length()-idxB));
 	return Ss;
 }
 

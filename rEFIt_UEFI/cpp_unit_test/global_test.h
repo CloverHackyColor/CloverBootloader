@@ -1,12 +1,11 @@
 #include "../cpp_foundation/XString.h"
-#include "../cpp_foundation/XStringW.h"
 
 class XStringWTest : public XStringW
 {
 public:
   XStringWTest(const wchar_t *S) : XStringW()
   {
-    StrCpy(S);
+    strcpy(S);
   }
 };
 
@@ -15,7 +14,7 @@ class XStringTest : public XString
 public:
   XStringTest(const char *S) : XString()
   {
-    StrCpy(S);
+    strcpy(S);
   }
 };
 

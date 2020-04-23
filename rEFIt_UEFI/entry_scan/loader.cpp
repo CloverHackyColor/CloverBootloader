@@ -34,7 +34,7 @@
  */
 
 #include "loader.h"
-#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XString.h"
 #include "entry_scan.h"
 #include "../Platform/Settings.h"
 #include "../Platform/Hibernate.h"
@@ -251,7 +251,7 @@ UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
     //         (StriCmp(Path, L"\\bootmgr.efi") == 0) || //never worked, just extra icon in menu
              (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
     return OSTYPE_WINEFI;
-  } else if (StrniCmp(Path, LINUX_FULL_LOADER_PATH.wc_str(), LINUX_FULL_LOADER_PATH.size()) == 0) {
+  } else if (LINUX_FULL_LOADER_PATH.EqualIC(Path)) {
     return OSTYPE_LINEFI;
   } else if (StriStr(Path, L"grubx64.efi") != NULL) {
     return OSTYPE_LINEFI;
@@ -301,7 +301,7 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
   }
   
   // Try to open the linux issue
-  if ((RootDir != NULL) && (StrniCmp(Path, LINUX_FULL_LOADER_PATH.wc_str(), LINUX_FULL_LOADER_PATH.size()) == 0)) {
+  if ((RootDir != NULL) && LINUX_FULL_LOADER_PATH.EqualIC(Path)) {
     CHAR8 *Issue = NULL;
     UINTN  IssueLen = 0;
     if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH.wc_str(), (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
@@ -1259,7 +1259,7 @@ VOID ScanLoader(VOID)
         if (FileExists(SelfRootDir, File.wc_str())) {
           XStringW LoaderTitle = SWPrintf("%s OS EFI boot menu", OSName.c_str());
           XString IconXS = OSName + ",linux"_XS;
-          IconXS.ToLower(); //to avoid misconception
+          IconXS.lowerAscii(); //to avoid misconception
           DBG("  found entry %s\n", IconXS.c_str());
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
           ImageX = ThemeX.LoadOSIcon(IconXS);

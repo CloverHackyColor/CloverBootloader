@@ -11,7 +11,7 @@
 
 #include "XToolsCommon.h"
 #include "XObjArray.h"
-#include "XStringW.h"
+#include "XString.h"
 
 
 #define XStringWArraySuper XObjArray<XStringW>

@@ -13,7 +13,7 @@ extern "C" {
 }
 #include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XArray.h"
-#include "../cpp_foundation/XStringW.h"
+#include "../cpp_foundation/XString.h"
 #include "../libeg/libeg.h"
 //#include "lodepng.h"
 //

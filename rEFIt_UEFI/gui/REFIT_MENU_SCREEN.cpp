@@ -1069,7 +1069,7 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       // determine width of the menu
       TextMenuWidth = 50;  // minimum
       for (i = 0; i <= ScrollState.MaxIndex; i++) {
-        ItemWidth = Entries[i].Title.size();
+        ItemWidth = Entries[i].Title.length();
 
 		if (TextMenuWidth < ItemWidth) {
           TextMenuWidth = ItemWidth;
@@ -1636,7 +1636,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       for (INTN i = ScrollState.FirstVisible, j = 0; i <= ScrollState.LastVisible; i++, j++) {
         REFIT_ABSTRACT_MENU_ENTRY *Entry = &Entries[i];
-        TitleLen = Entry->Title.size();
+        TitleLen = Entry->Title.length();
 
         Entry->Place.XPos = EntriesPosX;
         Entry->Place.YPos = EntriesPosY + j * ThemeX.TextHeight;
@@ -1656,7 +1656,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         if ( Entry->getREFIT_INPUT_DIALOG() ) {
           REFIT_INPUT_DIALOG* inputDialogEntry = Entry->getREFIT_INPUT_DIALOG();
           if (inputDialogEntry->Item && inputDialogEntry->Item->ItemType == BoolValue) {
-            Entry->Place.Width = ResultString.size() * ScaledWidth;
+            Entry->Place.Width = ResultString.length() * ScaledWidth;
             //possible artefacts
             DrawMenuText(XStringW().takeValueFrom(" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
@@ -1667,7 +1667,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
             // text input
             ResultString += ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue;
             ResultString += L" ";
-            Entry->Place.Width = ResultString.size() * ScaledWidth;
+            Entry->Place.Width = ResultString.length() * ScaledWidth;
             // Slice - suppose to use Row as Cursor in text
             DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                          EntriesPosX,
@@ -1714,7 +1714,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       // last selection
       REFIT_ABSTRACT_MENU_ENTRY *EntryL = &Entries[ScrollState.LastSelection];
       REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Entries[ScrollState.CurrentSelection];
-      TitleLen = EntryL->Title.size();
+      TitleLen = EntryL->Title.length();
       ResultString = EntryL->Title;
       //clovy//PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
       //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
@@ -1774,7 +1774,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       // current selection
       ResultString = EntryC->Title;
-      TitleLen = EntryC->Title.size();
+      TitleLen = EntryC->Title.length();
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
         if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
           OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;;

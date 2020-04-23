@@ -1395,7 +1395,7 @@ EFI_STATUS SetStartupDiskVolume (
 	    "</dict>"
 	    "</dict></array>", strguid(Guid));
     DBG ("  * efi-boot-device: %s\n", EfiBootDevice.c_str());
-    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, EfiBootDevice.size(), EfiBootDevice.c_str());
+    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, EfiBootDevice.sizeInBytes(), EfiBootDevice.c_str());
   }
   
   return Status;

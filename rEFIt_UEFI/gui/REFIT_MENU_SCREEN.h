@@ -40,8 +40,8 @@
 #include "../refit/lib.h"
 
 #include "../cpp_foundation/XObjArray.h"
+#include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringWArray.h"
-#include "../cpp_foundation/XStringW.h"
 #include "../libeg/XPointer.h"
 #include "../libeg/XCinema.h"
 #include "menu_items/menu_items.h"
