@@ -91,11 +91,11 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
 //      if (BootCampStyle && (strstr(IconName, "selection_big") != NULL)) {
 //        shape->opacity = 0.f;
 //      }
-      if (BootCampStyle && IconNameX.ExistIn("selection_big")) {
+      if (BootCampStyle && IconNameX.contains("selection_big")) {
         shape->opacity = 0.f;
       }
 //      if (strstr(shape->id, "BoundingRect") != NULL) {
-      if (XString().takeValueFrom(shape->id).ExistIn("BoundingRect")) {
+      if (XString().takeValueFrom(shape->id).contains("BoundingRect")) {
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
         IconImage->height = shape->bounds[3] - shape->bounds[1];
@@ -103,12 +103,12 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
         if ( IconImage->height < 1.f ) {
           IconImage->height = 200.f;
         }
-        if (IconNameX.ExistIn("selection_big") && (!SelectionOnTop)) {
+        if (IconNameX.contains("selection_big") && (!SelectionOnTop)) {
           MainEntriesSize = (int)(IconImage->width * Scale); //xxx
           row0TileSize = MainEntriesSize + (int)(16.f * Scale);
           DBG("main entry size = %lld\n", MainEntriesSize);
         }
-        if (IconNameX.ExistIn("selection_small") && (!SelectionOnTop)) {
+        if (IconNameX.contains("selection_small") && (!SelectionOnTop)) {
           row1TileSize = (int)(IconImage->width * Scale);
         }
 
@@ -185,7 +185,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
   bounds[3] = -FLT_MAX;
   nsvg__imageBounds(p2, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
-  if ((Id == BUILTIN_ICON_BANNER) && IconNameX.ExistIn("Banner")) {
+  if ((Id == BUILTIN_ICON_BANNER) && IconNameX.contains("Banner")) {
     BannerPosX = (int)(bounds[0] * Scale - CentreShift);
     if (BannerPosX < 0) {
       BannerPosX = 1; //one pixel
@@ -211,7 +211,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
   float tx = 0.f, ty = 0.f;
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
       (Id != BUILTIN_ICON_ANIME) &&
-      !IconNameX.ExistIn("Banner")) {
+      !IconNameX.contains("Banner")) {
     float realWidth = (bounds[2] - bounds[0]) * Scale;
     float realHeight = (bounds[3] - bounds[1]) * Scale;
 //        DBG("icon=%s width=%f realwidth=%f\n", IconNameX.c_str(), Width, realWidth);

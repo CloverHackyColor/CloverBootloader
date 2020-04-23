@@ -4,10 +4,10 @@
 #include <posix.h>
 
 
-#define xsize UINTN
-#define xisize INTN
-#define MAX_XSIZE MAX_UINTN
-#define MAX_XISIZE MAX_INTN
+#define xsize size_t
+//#define xisize INTN
+#define MAX_XSIZE SIZE_T_MAX
+//#define MAX_XISIZE MAX_INTN
 
 extern xsize XArrayGrowByDefault;
 extern xsize XBufferGrowByDefault;

@@ -251,7 +251,7 @@ UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
     //         (StriCmp(Path, L"\\bootmgr.efi") == 0) || //never worked, just extra icon in menu
              (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
     return OSTYPE_WINEFI;
-  } else if (LINUX_FULL_LOADER_PATH.EqualIC(Path)) {
+  } else if (LINUX_FULL_LOADER_PATH.equalIC(Path)) {
     return OSTYPE_LINEFI;
   } else if (StriStr(Path, L"grubx64.efi") != NULL) {
     return OSTYPE_LINEFI;
@@ -301,7 +301,7 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
   }
   
   // Try to open the linux issue
-  if ((RootDir != NULL) && LINUX_FULL_LOADER_PATH.EqualIC(Path)) {
+  if ((RootDir != NULL) && LINUX_FULL_LOADER_PATH.equalIC(Path)) {
     CHAR8 *Issue = NULL;
     UINTN  IssueLen = 0;
     if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH.wc_str(), (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
@@ -605,7 +605,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     case OSTYPE_OSX_INSTALLER:
       OSIconName = GetOSIconName(Entry->OSVersion);// Sothor - Get OSIcon name using OSVersion
       // apianti - force custom logo even when verbose
-      if ( Entry->LoadOptions.ExistInIC("-v")  ) {
+      if ( Entry->LoadOptions.containsIC("-v")  ) {
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
@@ -891,8 +891,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
     
   } else if (Entry->LoaderType == OSTYPE_LINEFI) {
-    BOOLEAN Quiet = Entry->LoadOptions.ExistIn("quiet");
-    BOOLEAN WithSplash = Entry->LoadOptions.ExistIn("splash");
+    BOOLEAN Quiet = Entry->LoadOptions.contains("quiet");
+    BOOLEAN WithSplash = Entry->LoadOptions.contains("splash");
     
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
@@ -1233,7 +1233,7 @@ VOID ScanLoader(VOID)
           if (aFound && (aFound == aIndex)) {
             XImage ImageX;
             XStringW IconXSW = XStringW().takeValueFrom(AndroidEntryData[Index].Icon);
-            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.SubString(0, IconXSW.IdxOf(','))).wc_str());
+            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
             AddLoaderEntry(AndroidEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
                            (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
           }
@@ -1273,7 +1273,7 @@ VOID ScanLoader(VOID)
         if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
           XImage ImageX;
           XStringW IconXSW = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
-          ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.SubString(0, IconXSW.IdxOf(','))).wc_str());
+          ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
           AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
         }

@@ -414,7 +414,7 @@ checkCmdlineArguments() {
 checkToolchain() {
     case "$TOOLCHAIN" in
         XCLANG|XCODE*) checkXcode ;;
-        *) export MTOC_PREFIX="${TOOLCHAIN_DIR}/bin/" ;;
+        *) ;;
     esac
 
   if [[ "$SYSNAME" == Linux ]]; then
@@ -500,7 +500,9 @@ MainBuildScript() {
         set +u
         source ./edksetup.sh BaseTools
         set -u
-        echo "MTOC=$MTOC_PREFIX/mtoc.NEW_jief" > "$WORKSPACE"/Conf/mtoc_path.txt
+		if [ ! -z "${MTOC_PREFIX:-}" ]; then
+        	echo "MTOC=$MTOC_PREFIX/mtoc.NEW_jief" > "$WORKSPACE"/Xcode/CloverX64/mtoc_path.txt
+		fi
         cd "$CLOVERROOT"
  #   else
  #       echo "Building from: $WORKSPACE"

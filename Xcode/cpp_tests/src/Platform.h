@@ -56,6 +56,10 @@ typedef UINTN RETURN_STATUS;
 #define OPTIONAL
 #define ASSERT(x)
 
+#ifdef _MSC_VER
+#define __typeof__(x) decltype(x)
+#endif
+
 void CpuDeadLoop(void);
 void DebugLog(INTN DebugMode, const char *FormatString, ...);
 

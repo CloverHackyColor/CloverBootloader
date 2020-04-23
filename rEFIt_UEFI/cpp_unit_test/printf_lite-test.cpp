@@ -395,11 +395,18 @@ int printf_lite_tests(void)
     #if __x86_64__
     #endif
 
-    size_t size;
-    if ( SIZE_T_MAX == UINT64_MAX ) {
-        size = SIZE_T_MAX; Test1arg(F("SIZE_MAX=18446744073709551615"), F("SIZE_MAX=%zu"), size);
-    }else if ( SIZE_T_MAX == UINT32_MAX ) {
-        size = SIZE_T_MAX; Test1arg(F("SIZE_MAX=4294967295"), F("SIZE_MAX=%zu"), size);
+#ifdef SIZE_MAX
+# define MY_SIZE_T_MAX SIZE_MAX
+#elif defined(SIZE_T_MAX)
+# define MY_SIZE_T_MAX SIZE_T_MAX
+#elif
+#warning No size_t max
+#endif
+	size_t size;
+    if (MY_SIZE_T_MAX == UINT64_MAX ) {
+        size = MY_SIZE_T_MAX; Test1arg(F("SIZE_MAX=18446744073709551615"), F("SIZE_MAX=%zu"), size);
+    }else if (MY_SIZE_T_MAX == UINT32_MAX ) {
+        size = MY_SIZE_T_MAX; Test1arg(F("SIZE_MAX=4294967295"), F("SIZE_MAX=%zu"), size);
     }else{
 	    // 16 bits size_t ? Does that exist ?
     }

@@ -395,26 +395,26 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
   XString Second;
   XString Third;
   const XImage *ReturnImage;
-  UINTN Comma = Full.IdxOf(',');
+  UINTN Comma = Full.indexOf(',');
   UINTN Size = Full.length();
 //  DBG("IconName=%ls comma=%lld size=%lld\n", OSIconName, Comma, Size);
   if (Comma != MAX_XSIZE) {  //Comma
-    First = "os_"_XS + Full.SubString(0, Comma);
+    First = "os_"_XS + Full.subString(0, Comma);
     ReturnImage = &GetIcon(First);
  //   DBG("  first=%s\n", First.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
     //else search second name
-    Second = "os_"_XS + Full.SubString(Comma + 1, Size - Comma - 1);
+    Second = "os_"_XS + Full.subString(Comma + 1, Size - Comma - 1);
     //moreover names can be triple L"chrome,grub,linux"
-    UINTN SecondComma = Second.IdxOf(',');
+    UINTN SecondComma = Second.indexOf(',');
     if (Comma == MAX_XSIZE) {
       ReturnImage = &GetIcon(Second);
       if (!ReturnImage->isEmpty()) return *ReturnImage;
     } else {
-      First = Second.SubString(0, SecondComma);
+      First = Second.subString(0, SecondComma);
       ReturnImage = &GetIcon(First);
       if (!ReturnImage->isEmpty()) return *ReturnImage;
-      Third = "os_"_XS + Second.SubString(SecondComma + 1, Size - SecondComma - 1);
+      Third = "os_"_XS + Second.subString(SecondComma + 1, Size - SecondComma - 1);
       ReturnImage = &GetIcon(Third);
       if (!ReturnImage->isEmpty()) return *ReturnImage;
     }

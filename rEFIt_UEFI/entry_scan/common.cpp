@@ -131,7 +131,7 @@ XString AddLoadOption(IN CONST XString& LoadOptions, IN CONST XString& LoadOptio
   }
   // If there is no option or it is already present duplicate original
   else {
-	  if ( LoadOptions.ExistIn(LoadOption) ) return LoadOptions; //good
+	  if ( LoadOptions.contains(LoadOption) ) return LoadOptions; //good
 	  // Otherwise add option
 //	  return SPrintf("%s %s", LoadOptions.c_str(), LoadOption.c_str()); //LoadOptions + LoadOption
     return LoadOptions + " "_XS + LoadOption; //why not?
@@ -150,7 +150,7 @@ XString RemoveLoadOption(IN const XString& LoadOptions, IN const XString& LoadOp
   // If there is no option to remove then duplicate original
   if (LoadOption.isEmpty()) return LoadOptions;
   // If not present duplicate original
-  xsize Offset = LoadOptions.IdxOf(LoadOption);
+  xsize Offset = LoadOptions.indexOf(LoadOption);
   if ( Offset == MAX_XSIZE ) return LoadOptions;
 
   // Get placement of option in original options
@@ -181,15 +181,15 @@ XString RemoveLoadOption(IN const XString& LoadOptions, IN const XString& LoadOp
   XString NewLoadOptions;
   if (Offset == 0) {
     // Simple case - we just need substring after OptionLength position
-    NewLoadOptions = LoadOptions.SubString(OptionLength, MAX_XSIZE);
+    NewLoadOptions = LoadOptions.subString(OptionLength, MAX_XSIZE);
   } else {
     // Copy preceeding substring
-	NewLoadOptions = LoadOptions.SubString(0, Offset);
+	NewLoadOptions = LoadOptions.subString(0, Offset);
 //    CopyMem(NewLoadOptions, LoadOptions, Offset * sizeof(CHAR16));
     if ((Offset + OptionLength) < Length) {
       // Copy following substring, but include one space also
       OptionLength--;
-	  NewLoadOptions += LoadOptions.SubString(Offset + OptionLength, MAX_XSIZE);
+	  NewLoadOptions += LoadOptions.subString(Offset + OptionLength, MAX_XSIZE);
 //      CopyMem(NewLoadOptions + Offset, LoadOptions + Offset + OptionLength, (Length - OptionLength - Offset) * sizeof(CHAR16));
     }
   }

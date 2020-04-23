@@ -66,7 +66,7 @@ ld -arch x86_64 -u __ModuleEntryPoint  -e __ModuleEntryPoint -preload -segalign 
 
 
 
-source "$edk2prefix"/Conf/mtoc_path.txt
+source ./mtoc_path.txt
 [[ $? == 0 ]] && "$MTOC" -subsystem UEFI_APPLICATION  -align 0x20 ./"$outputname".dll ./"$outputname".pecoff
 
 [[ $? == 0 ]] && dsymutil ./"$outputname".dll

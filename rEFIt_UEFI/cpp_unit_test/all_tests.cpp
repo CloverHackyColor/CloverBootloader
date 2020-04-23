@@ -31,20 +31,19 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-#ifdef XSTRING16_DEV
-	ret = XStringx_tests();
+	ret = XString_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "XString16_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-return ret;
+//return ret;
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
 //		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
 //		all_ok = false;
 //	}
-	#if defined(CLOVER_BUILD)
-	    ret = printlib_tests();
+#if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
+		ret = printlib_tests();
 	    if ( ret != 0 ) {
 		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
 		    all_ok = false;
@@ -55,16 +54,12 @@ return ret;
 		    all_ok = false;
 	    }
 	#endif
-#endif
 #ifndef _MSC_VER
 	ret = printf_lite_tests();
 	if ( ret != 0 ) {
 		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-#endif
-#ifdef JIEF_DEBUG
-//return ret;
 #endif
 	ret = strlen_tests();
 	if ( ret != 0 ) {

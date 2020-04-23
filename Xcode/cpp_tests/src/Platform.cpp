@@ -99,7 +99,7 @@ void* AllocatePool(UINTN  AllocationSize)
 void* AllocateZeroPool(UINTN  AllocationSize)
 {
 	void* p = (void*)malloc((size_t)AllocationSize);
-	memset(p, 0, AllocationSize);
+	memset(p, 0, (size_t)AllocationSize);
 	return p;
 }
 
@@ -117,12 +117,12 @@ void FreePool(const void* Buffer)
 
 void ZeroMem(void *Destination, UINTN Length)
 {
-	memset(Destination, 0, Length);
+	memset(Destination, 0, (size_t)Length);
 }
 
 void SetMem(void *Destination, UINTN Length, char c)
 {
-	memset(Destination, c, Length);
+	memset(Destination, c, (size_t)Length);
 }
 
 void CopyMem(void *Destination, void *Source, UINTN Length)

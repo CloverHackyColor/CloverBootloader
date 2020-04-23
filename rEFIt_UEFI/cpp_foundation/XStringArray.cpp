@@ -124,16 +124,16 @@ void XStringArray::AddID(const XStringArray &aStrings)
 XStringArray Split(const XString &S, const XString &Separator)
 {
   XStringArray Ss;
-  xsize idxB, idxE;
+  size_t idxB, idxE;
 
 	idxB = 0;
-	idxE = S.IdxOf(Separator, idxB);
+	idxE = S.indexOf(Separator, idxB);
 	while ( idxE != MAX_XSIZE ) {
-		Ss.AddCopy(S.SubString(idxB, idxE-idxB));
+		Ss.AddCopy(S.subString(idxB, idxE-idxB));
 		idxB = idxE + Separator.length();
-		idxE = S.IdxOf(Separator, idxB);
+		idxE = S.indexOf(Separator, idxB);
 	}
-	if ( idxB < S.length() ) Ss.AddCopy(S.SubString(idxB, S.length()-idxB));
+	if ( idxB < S.length() ) Ss.AddCopy(S.subString(idxB, S.length()-idxB));
 	return Ss;
 }
 

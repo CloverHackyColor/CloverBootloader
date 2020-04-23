@@ -63,10 +63,14 @@ class XArray
 	const TYPE& ElementAt(int nIndex) const;
 	TYPE& ElementAt(int nIndex);
 
-	const TYPE& operator[](xsize nIndex) const { return ElementAt(nIndex); }
-	      TYPE& operator[](xsize nIndex)       { return ElementAt(nIndex); }
-	const TYPE& operator[]( int nIndex)  const { return ElementAt(nIndex); }
+//	const TYPE& operator[](xsize nIndex) const { return ElementAt(nIndex); }
+//	      TYPE& operator[](xsize nIndex)       { return ElementAt(nIndex); }
+//	const TYPE& operator[]( int nIndex)  const { return ElementAt(nIndex); }
 	      TYPE& operator[]( int nIndex)        { return ElementAt(nIndex); }
+//	const TYPE& operator[]( unsigned long long nIndex)  const { return ElementAt((size_t)nIndex); }
+//	const TYPE& operator[]( long long nIndex)  const { return ElementAt((size_t)nIndex); }
+	      TYPE& operator[]( unsigned long long nIndex)        { return ElementAt((size_t)nIndex); }
+	      TYPE& operator[]( long long nIndex)        { return ElementAt((size_t)nIndex); }
 
 	operator const void *() const { return m_data; };
 	operator       void *()       { return m_data; };
@@ -102,8 +106,8 @@ class XArray
 	void setEmpty();
 	bool isEmpty() const { return size() == 0; }
     
-  xsize IdxOf(TYPE& e) const;
-	bool ExistIn(TYPE& e) const { return IdxOf(e) != MAX_XSIZE; } //logically it should be named as Contains(e)
+  xsize indexOf(TYPE& e) const;
+	bool contains(TYPE& e) const { return indexOf(e) != MAX_XSIZE; } //logically it should be named as Contains(e)
 };
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -113,7 +117,7 @@ class XArray
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 template<class TYPE>
-xsize XArray<TYPE>::IdxOf(TYPE& e) const
+xsize XArray<TYPE>::indexOf(TYPE& e) const
 {
   xsize i;
 
@@ -181,7 +185,7 @@ void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 		nNewSize += nGrowBy;
 		m_data = (TYPE *)realloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
 		if ( !m_data ) {
-			DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%llu, %llu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
+			DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %lu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
 	  	panic();
 		}
 //		memset(&_Data[_Size], 0, (nNewSize-_Size) * sizeof(TYPE)); // Could help for debugging, but zeroing in not needed.

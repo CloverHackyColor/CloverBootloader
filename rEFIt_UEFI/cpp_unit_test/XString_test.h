@@ -1,1 +1,1 @@
-int XStringx_tests();
+int XString_tests();

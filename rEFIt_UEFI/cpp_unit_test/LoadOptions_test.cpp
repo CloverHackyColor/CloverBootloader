@@ -15,7 +15,7 @@ CHAR16 *Old1_AddLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *LoadOp
     return EfiStrDuplicate(LoadOption);
   }
   // If there is no option or it is already present duplicate original
-  // with XStringW it will be replaced by if (LoadOptions.ExistIn(LoadOption))
+  // with XStringW it will be replaced by if (LoadOptions.contains(LoadOption))
   else if ((LoadOption == NULL) || StrStr(LoadOptions, LoadOption))
     return EfiStrDuplicate(LoadOptions);
   // Otherwise add option
@@ -97,7 +97,7 @@ CHAR16 *Old1_RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *Loa
 //  }
 //  // If there is no option or it is already present duplicate original
 //  else {
-//	  if ( LoadOptions.ExistIn(LoadOption) ) return LoadOptions;
+//	  if ( LoadOptions.contains(LoadOption) ) return LoadOptions;
 //	  // Otherwise add option
 //	  return SPrintf("%s %s", LoadOptions.c_str(), LoadOption.c_str()); //LoadOptions + LoadOption
 //  }
@@ -115,7 +115,7 @@ CHAR16 *Old1_RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *Loa
 //  // If there is no option to remove then duplicate original
 //  if (LoadOption.isEmpty()) return LoadOptions;
 //  // If not present duplicate original
-//  xsize Offset = LoadOptions.IdxOf(LoadOption);
+//  xsize Offset = LoadOptions.indexOf(LoadOption);
 //  if ( Offset == MAX_XSIZE ) return LoadOptions;
 //
 //  // Get placement of option in original options

@@ -749,7 +749,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
 
     // Set boot argument for kernel if no caches, this should force kernel loading
-    if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)  &&  !Entry->LoadOptions.ExistInIC("Kernel="_XS)  ) {
+    if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)  &&  !Entry->LoadOptions.containsIC("Kernel="_XS)  ) {
       XString KernelLocation;
 
       if (Entry->OSVersion && AsciiOSVersionToUint64(Entry->OSVersion) <= AsciiOSVersionToUint64("10.9")) {
@@ -802,7 +802,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     if (  gDriversFlags.AptioFixLoaded &&
           !DoHibernateWake &&
-          !Entry->LoadOptions.ExistIn("slide=")  ) {
+          !Entry->LoadOptions.contains("slide=")  ) {
       // Add slide=0 argument for ML+ if not present
       Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "slide=0"_XS);
     }
@@ -816,7 +816,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
-       (!Entry->LoadOptions.ExistIn("-xcpm"_XS))) {
+       (!Entry->LoadOptions.contains("-xcpm"_XS))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
         Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "-xcpm"_XS);
     }
@@ -826,7 +826,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
         (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
         (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
-        (!Entry->LoadOptions.ExistIn("-xcpm"))) {
+        (!Entry->LoadOptions.contains("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
       Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "-xcpm"_XS);
     }
@@ -848,7 +848,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // which is wrong
     // apianti - only block console output if using graphics
     //           but don't block custom boot logo
-    if (  Entry->LoadOptions.ExistInIC("-v"_XS)  ) {
+    if (  Entry->LoadOptions.containsIC("-v"_XS)  ) {
           Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
 	} else if ( Entry->LoadOptions.isEmpty() ) {
 	  Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, " "_XS);
@@ -2718,7 +2718,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
             gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
           }
       */
-          if (  LoaderEntry->LoadOptions.ExistIn("BO-ADD")  ) {
+          if (  LoaderEntry->LoadOptions.contains("BO-ADD")  ) {
             CHAR16 *Description;
             CONST CHAR16 *VolName;
             CONST CHAR16 *LoaderName;
@@ -2787,13 +2787,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 
             PrintBootOptions(FALSE);
-          } else if ( LoaderEntry->LoadOptions.ExistIn("BO-REMOVE") ) {
+          } else if ( LoaderEntry->LoadOptions.contains("BO-REMOVE") ) {
             PrintBootOptions(FALSE);
             Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
                                               LoaderEntry->LoaderPath
                                               );
             PrintBootOptions(FALSE);
-          } else if ( LoaderEntry->LoadOptions.ExistIn("BO-PRINT") ) {
+          } else if ( LoaderEntry->LoadOptions.contains("BO-PRINT") ) {
             PrintBootOptions(TRUE);
           }
 

@@ -147,7 +147,6 @@
 		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
 		9A4185BF2439F73A00BEAFB8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
 		9A4FFA7C2451C8330050B38B /* XString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString.cpp; sourceTree = "<group>"; };
-		9A4FFA7D2451C8330050B38B /* XStringAbstract copy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "XStringAbstract copy.h"; sourceTree = "<group>"; };
 		9A4FFA7F2451C88C0050B38B /* XString_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString_test.h; sourceTree = "<group>"; };
 		9A4FFA802451C88D0050B38B /* XString_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString_test.cpp; sourceTree = "<group>"; };
 		9A57C20A2418A1FD0029A39F /* global_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
@@ -210,7 +209,6 @@
 			isa = PBXGroup;
 			children = (
 				9A4FFA7C2451C8330050B38B /* XString.cpp */,
-				9A4FFA7D2451C8330050B38B /* XStringAbstract copy.h */,
 				9A57C266241A799B0029A39F /* XString.h */,
 				9A6BA73C2449977300BDA52C /* XStringAbstract.h */,
 				9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */,

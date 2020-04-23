@@ -8044,7 +8044,7 @@ SetFSInjection (
   }
 
   // check if blocking of caches is needed
-  if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) || Entry->LoadOptions.ExistIn("-f")  ) {
+  if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) || Entry->LoadOptions.contains("-f")  ) {
     MsgLog ("Blocking kext caches\n");
     //  BlockCaches = TRUE;
     // add caches to blacklist

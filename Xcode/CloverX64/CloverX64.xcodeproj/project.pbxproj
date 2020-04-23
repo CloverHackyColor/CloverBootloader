@@ -92,6 +92,7 @@
 		9A28CD34241BC0DF00F3D247 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD2E241BC0DF00F3D247 /* strncmp_test.cpp */; };
 		9A28CD35241BC0DF00F3D247 /* strlen_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD2F241BC0DF00F3D247 /* strlen_test.h */; };
 		9A28CD36241BC0DF00F3D247 /* strncmp_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A28CD30241BC0DF00F3D247 /* strncmp_test.h */; };
+		9A35A6182451FE1600CAFF76 /* XStringAbstract.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A35A6172451FE1500CAFF76 /* XStringAbstract.h */; };
 		9A4185B62439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
 		9A4185B72439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
 		9A4185B82439F29D00BEAFB8 /* LoadOptions_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */; };
@@ -889,6 +890,7 @@
 		9A28CD2E241BC0DF00F3D247 /* strncmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strncmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD2F241BC0DF00F3D247 /* strlen_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strlen_test.h; sourceTree = "<group>"; };
 		9A28CD30241BC0DF00F3D247 /* strncmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strncmp_test.h; sourceTree = "<group>"; };
+		9A35A6172451FE1500CAFF76 /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
 		9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
 		9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
 		9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
@@ -1445,12 +1447,13 @@
 			children = (
 				9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */,
 				9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */,
-				9A9AEB91243F7B5600FBD7D8 /* XStringArray.cpp */,
-				9A9AEB92243F7B5600FBD7D8 /* XStringArray.h */,
 				9AC77FB624176C04005CDD5C /* XArray.h */,
 				9AC77FB724176C04005CDD5C /* XObjArray.h */,
 				9A28CC91241AB33700F3D247 /* XString.cpp */,
 				9A28CC92241AB33700F3D247 /* XString.h */,
+				9A35A6172451FE1500CAFF76 /* XStringAbstract.h */,
+				9A9AEB91243F7B5600FBD7D8 /* XStringArray.cpp */,
+				9A9AEB92243F7B5600FBD7D8 /* XStringArray.h */,
 				9AC77FAF24176C04005CDD5C /* XStringWArray.cpp */,
 				9AC77FAC24176C04005CDD5C /* XStringWArray.h */,
 				9AC77FB424176C04005CDD5C /* XToolsCommon.cpp */,
@@ -1536,6 +1539,7 @@
 				9A28CD36241BC0DF00F3D247 /* strncmp_test.h in Headers */,
 				9A105B7124483AE40006DE06 /* wchar.h in Headers */,
 				9AC7804A24176C04005CDD5C /* XPointer.h in Headers */,
+				9A35A6182451FE1600CAFF76 /* XStringAbstract.h in Headers */,
 				9AC7808E24176C04005CDD5C /* XToolsCommon.h in Headers */,
 				9AC7806D24176C04005CDD5C /* bootscreen.h in Headers */,
 				9AC7800E24176C04005CDD5C /* Settings.h in Headers */,
@@ -2582,6 +2586,7 @@
 					"-fno-unwind-tables",
 					"-Wno-incompatible-ms-struct",
 					"-Wreorder",
+					"-Wchar-subscripts",
 				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
@@ -2634,6 +2639,7 @@
 					"-fno-unwind-tables",
 					"-Wno-incompatible-ms-struct",
 					"-Wreorder",
+					"-Wchar-subscripts",
 				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;

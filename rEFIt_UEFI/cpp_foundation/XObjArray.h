@@ -183,7 +183,7 @@ void XObjArrayNC<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 		nNewSize += nGrowBy + 1;
 		_Data = (XObjArrayEntry<TYPE> *)realloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
 		if ( !_Data ) {
-			DebugLog(2, "XObjArrayNC<TYPE>::CheckSize(nNewSize=%llu, nGrowBy=%llu) : Xrealloc(%llu, %llu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
+			DebugLog(2, "XObjArrayNC<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %zu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
 			panic();
 		}
 //		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
@@ -196,7 +196,7 @@ template<class TYPE>
 TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index)
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%llu) greater than length (%llu)\n", index, _Len);
+			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
 			panic();
 		}
 		return  *((TYPE *)(_Data[index].Object));
@@ -207,7 +207,7 @@ template<class TYPE>
 const TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index) const
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%llu) greater than length (%llu)\n", index, _Len);
+			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
 			panic();
 		}
 		return  *((TYPE *)(_Data[index].Object));
@@ -427,7 +427,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 	if ( nIndex  < XObjArrayNC<TYPE>::_Len )
 	{
   	if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
-		DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%llu) is > length(). System halted\n", nIndex);
+		DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%zu) is > length(). System halted\n", nIndex);
 	  	panic();
 	  }
 	}

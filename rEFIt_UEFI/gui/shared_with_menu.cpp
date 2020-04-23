@@ -79,7 +79,7 @@ UINT32 EncodeOptions(const XString& Options)
     return 0;
   }
   for (Index = 0; Index < NUM_OPT; Index++) {
-    if ( Options.ExistIn(ArgOptional[Index]) ) {
+    if ( Options.contains(ArgOptional[Index]) ) {
       OptionsBits |= (1 << Index);
       if (Index == 1) {
         OptionsBits &= ~1;
