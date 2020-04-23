@@ -9,7 +9,7 @@
 #include "XImage.h"
 #include "XCinema.h"
 
-
+extern const INTN IconsNamesSize;
 #define INDICATOR_SIZE (52)
 
 class Icon

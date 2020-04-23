@@ -553,26 +553,26 @@ bool XString::DeleteIC(const XString &S)
 }
 #endif
 
-#ifdef NOT_USED_ANYMORE_skqdjfhksqjhfksjqdf
+
 void XString::ToLower(bool FirstCharIsCap)
 {
 
-	if ( length() > 0 )
+	if ( size() > 0 )
 	{
 	  unsigned int ui;
 
 		if ( FirstCharIsCap ) {
-			data()[0] = Majuscule(data()[0]);
+//			data()[0] = Majuscule(data()[0]);
 			ui = 1;
 		}else{
 			ui = 0;
 		}
-		for ( ; ui < length() ; ui+=1 ) {
-			data()[ui] = to_lower(data(ui));
+		for ( ; ui < size() ; ui+=1 ) {
+			m_data[ui] = to_lower(m_data[ui]);
 		}
 	}
 }
-
+#ifdef NOT_USED_ANYMORE_skqdjfhksqjhfksjqdf
 bool XString::IsLetters() const
 {
   const char *p;

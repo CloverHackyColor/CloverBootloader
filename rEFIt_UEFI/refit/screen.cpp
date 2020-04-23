@@ -424,8 +424,8 @@ VOID REFIT_MENU_SCREEN::InitAnime()
     FilmC = nullptr;
   }
   if (FilmC == nullptr) {
-    DBG("Screen %lld inited without anime\n", ID);
-    FilmC->AnimeRun = FALSE;
+//    DBG("Screen %lld inited without anime\n", ID);
+//    FilmC->AnimeRun = FALSE;
     return;
   }
 //  DBG("=== Debug Film ===\n");

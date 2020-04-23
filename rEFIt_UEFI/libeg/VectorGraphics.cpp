@@ -36,7 +36,8 @@
 
 #include "XTheme.h"
 extern XTheme ThemeX;
-extern CONST CHAR8* IconsNames[];
+extern const CHAR8* IconsNames[];
+extern const INTN IconsNamesSize;
 
 
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
@@ -286,7 +287,6 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   DBG(" parsed banner->width=%lld height=%lld\n", Banner.GetWidth(), BanHeight); //parsed banner->width=467 height=89
   
   // --- Make other icons
-
   for (INTN i = BUILTIN_ICON_FUNC_ABOUT; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
     if (i == BUILTIN_ICON_BANNER) { //exclude "logo" as it done as Banner
       continue;
@@ -298,12 +298,28 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     if (!EFI_ERROR(Status)) {
       ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
     }
+//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     Icons.AddReference(NewIcon, true);
     if (EFI_ERROR(Status) && i >= BUILTIN_ICON_VOL_INTERNAL_HFS && i <= BUILTIN_ICON_VOL_INTERNAL_REC) {
       // call to GetIconAlt will get alternate/embedded into Icon if missing
+      DBG("   get alt icon for %lld\n", i);
       GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL);
     }
   }
+  
+  // --- Make other OSes
+  for (INTN i = ICON_OTHER_OS; i < IconsNamesSize; ++i) {
+    if (AsciiStrLen(IconsNames[i]) == 0) break;
+    Icon* NewIcon = new Icon(i, false); //initialize without embedded
+    Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image);
+//     DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
+    NewIcon->Native = !EFI_ERROR(Status);
+    if (!EFI_ERROR(Status)) {
+      ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
+    }
+    Icons.AddReference(NewIcon, true);
+  }
+  
   //selection for bootcampstyle
   Icon *NewIcon = new Icon(BUILTIN_ICON_SELECTION);
   Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &NewIcon->Image);

@@ -304,7 +304,7 @@ class XString
 //	friend bool operator >= (const XString& s1, const char* s2  ) { return s1.Compare(s2) >= 0; }
 //	friend bool operator >= (const char* s1,   const XString& s2) { return s2.Compare(s1) <= 0; }
 
-	static char to_lower(char ch) { return (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch); }
+	static char to_lower(char ch) { return (((ch >= 'A') && (ch <= 'Z')) ? ((ch - 'A') + 'a') : ch); }
 };
 
 extern const XString NullXString;

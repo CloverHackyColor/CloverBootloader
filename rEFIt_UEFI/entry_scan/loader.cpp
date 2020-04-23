@@ -639,6 +639,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       Entry->LoaderType = OSType;
       OSIconName = L"linux";
       if (Image == nullptr) {
+        DBG(" image not found\n");
         OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
       }
       ShortcutLetter = 'L';
@@ -1253,14 +1254,15 @@ VOID ScanLoader(VOID)
           //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
           continue;
         }
-        XStringW OSName = SWPrintf("%ls", DirEntry->FileName); //this is folder name "ubuntu"
+        XString OSName = SPrintf("%ls", DirEntry->FileName); //this is folder name "ubuntu"
         XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
         if (FileExists(SelfRootDir, File.wc_str())) {
-          XStringW LoaderTitle = OSName + L" OS EFI boot menu"_XSW;
-          XStringW IconXSW = OSName + L",linux";
-          IconXSW.ToLower(); //to avoid misconception
+          XStringW LoaderTitle = SWPrintf("%s OS EFI boot menu", OSName.c_str());
+          XString IconXS = OSName + ",linux"_XS;
+          IconXS.ToLower(); //to avoid misconception
+          DBG("  found entry %s\n", IconXS.c_str());
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
-          ImageX.LoadXImage(ThemeX.ThemeDir, IconXSW);
+          ImageX = ThemeX.LoadOSIcon(IconXS);
           AddLoaderEntry(File.wc_str(), ""_XS, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries

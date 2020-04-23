@@ -42,7 +42,7 @@ CONST CHAR8* IconsNames[] = {
   "vol_optical",
   "vol_firewire",
   "vol_clover" ,
-  "vol_internal_hfs" , //18
+  "vol_internal_hfs" , //17
   "vol_internal_apfs",
   "vol_internal_ntfs",
   "vol_internal_ext3" ,
@@ -60,27 +60,30 @@ CONST CHAR8* IconsNames[] = {
    "os_cougar",
    "os_mav",
    "os_yos",
-   "os_cap",
+   "os_cap", //33
    "os_sierra",
    "os_hsierra",
-   "os_moja",  //11
-   "os_cata",  //12  //there is no reserve for 10.16, next oses should be added to the end of the list
-   "os_linux",
+   "os_moja",  //36
+   "os_cata",  //37  //there is no reserve for 10.16, next oses should be added to the end of the list
+   "os_linux", //13 + 25 = 38
    "os_ubuntu",
    "os_suse",
-   "os_freebsd", //16
+   "os_freebsd", //16+25 = 41
    "os_freedos",
    "os_win",
    "os_vista",
-   "radio_button", //20+25
+   "radio_button", //20+25 = 45
    "radio_button_selected",
-   "checkbox",  //22
+   "checkbox",  //22+25 = 47
    "checkbox_checked",
    "scrollbar_background", //24 - present here for SVG theme but should be done more common way
    "scrollbar_holder",
   //other oses will be added below
+  //example
+  "os_uuu", //51 == ICON_OTHER_OS
   ""
 };
+const INTN IconsNamesSize = sizeof(IconsNames) / sizeof(IconsNames[0]);
 
 //icons class
 //if ImageNight is not set then Image should be used
@@ -98,7 +101,7 @@ Icon::Icon(INTN Index, bool TakeEmbedded) : Image(), ImageNight()
   Id = Index;
   Name.setEmpty();
   Native = false;
-  if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index <= BUILTIN_CHECKBOX_CHECKED) {
+  if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index < IconsNamesSize) { //full table
     Name.takeValueFrom(IconsNames[Index]);
   }
   if (TakeEmbedded) {
@@ -759,7 +762,7 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
   EFI_STATUS Status;
   Icons.Empty();
-  for (INTN i = 0; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
+  for (INTN i = 0; i < IconsNamesSize; ++i) { //scan full table
     Status = EFI_NOT_FOUND;
     Icon* NewIcon = new Icon(i); //initialize without embedded
     switch (i) {
