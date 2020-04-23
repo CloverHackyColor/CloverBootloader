@@ -5147,7 +5147,7 @@ GetUserSettings(
                  }
               }
               Signature = SIGNATURE_32(s1, s2, s3, s4);
-              DBG(" signature=\"%c%c%c%c\" (%8.8X)\n", S1, S2, S3, S4, Signature);
+              DBG(" signature=\"%c%c%c%c\" (%8.8X)\n", s1, s2, s3, s4, Signature);
             }
             // Get the table ids to drop
             Prop2 = GetProperty(Dict2, "TableId");
