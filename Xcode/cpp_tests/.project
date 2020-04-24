@@ -31,6 +31,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Library/MemLogLibDefault</locationURI>
 		</link>
 		<link>
+			<name>Posix</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/Platform/Posix</locationURI>
+		</link>
+		<link>
 			<name>cpp_foundation</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/rEFIt_UEFI/cpp_foundation</locationURI>

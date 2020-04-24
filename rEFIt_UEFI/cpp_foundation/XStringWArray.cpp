@@ -7,6 +7,7 @@
 #if !defined(__XSTRINGWS_CPP__)
 #define __XSTRINGWS_CPP__
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "XStringWArray.h"
 
 

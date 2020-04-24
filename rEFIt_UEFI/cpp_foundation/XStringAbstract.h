@@ -152,7 +152,6 @@ int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
 template<typename O, typename P>
 size_t XStringAbstract__indexOf(const O** s, const P* other, size_t offsetRet, bool toLower)
 {
-	size_t i;
 	size_t Idx = 0;
 
 	char32_t s_char32;
@@ -160,7 +159,6 @@ size_t XStringAbstract__indexOf(const O** s, const P* other, size_t offsetRet, b
 
 	do
 	{
-		i = 0;
 		const O* s2 = *s;
 		const P* other2 = other;
 		do {
@@ -359,8 +357,7 @@ public:
 	char32_t char32At(IntegralType i) const
 	{
 		if (i < 0) {
-			DBG_XSTRING("XStringAbstract<T>::char32At(size_t i) : i < 0. System halted\n");
-			panic();
+			panic("XStringAbstract<T>::char32At(size_t i) : i < 0. System halted\n");
 		}
 		size_t nb = 0;
 		const T *p = m_data;
@@ -571,10 +568,12 @@ public:
 //	}
 //}
 
-	XStringAbstract subString(size_t pos, size_t count) const
+	ThisXStringClass subString(size_t pos, size_t count) const
 	{
+		if ( pos > length() ) return ThisXStringClass();
 		if ( count > length()-pos ) count = length()-pos;
-		XStringAbstract ret;
+		
+		ThisXStringClass ret;
 
 		const T* src = m_data;
 		char32_t char32 = 1;
@@ -690,45 +689,45 @@ public:
 	// == operator
 	template<typename O, class OtherXStringClass>
 	bool operator == (const XStringAbstract<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) == 0; }
-	template<typename O>
-	bool operator == (const O* s2) const { return (*this).strcmp(s2) == 0; }
-	template<typename O>
-	friend bool operator == (const O* s1, ThisXStringClass& s2) { return s2.strcmp(s1) == 0; }
+//	template<typename O>
+//	bool operator == (const O* s2) const { return (*this).strcmp(s2) == 0; }
+//	template<typename O>
+//	friend bool operator == (const O* s1, ThisXStringClass& s2) { return s2.strcmp(s1) == 0; }
 
 	template<typename O, class OtherXStringClass>
 	bool operator != (const XStringAbstract<O, OtherXStringClass>& s2) const { return !(*this == s2); }
-	template<typename O>
-	bool operator != (const O* s2) const { return !(*this == s2); }
-	template<typename O>
-	friend bool operator != (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) != 0; }
+//	template<typename O>
+//	bool operator != (const O* s2) const { return !(*this == s2); }
+//	template<typename O>
+//	friend bool operator != (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) != 0; }
 
 	template<typename O, class OtherXStringClass>
 	bool operator <  (const XStringAbstract<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) < 0; }
-	template<typename O>
-	bool operator <  (const O* s2) const { return (*this).strcmp(s2) < 0; }
-	template<typename O>
-	friend bool operator <  (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) > 0; }
+//	template<typename O>
+//	bool operator <  (const O* s2) const { return (*this).strcmp(s2) < 0; }
+//	template<typename O>
+//	friend bool operator <  (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) > 0; }
 
 	template<typename O, class OtherXStringClass>
 	bool operator >  (const XStringAbstract<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) > 0; }
-	template<typename O>
-	bool operator >  (const O* s2) const { return  (*this).strcmp(s2) > 0; }
-	template<typename O>
-	friend bool operator >  (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) < 0; }
+//	template<typename O>
+//	bool operator >  (const O* s2) const { return  (*this).strcmp(s2) > 0; }
+//	template<typename O>
+//	friend bool operator >  (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) < 0; }
 
 	template<typename O, class OtherXStringClass>
 	bool operator <= (const XStringAbstract<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) <= 0; }
-	template<typename O>
-	bool operator <= (const O* s2) const { return  (*this).strcmp(s2) <= 0; }
-	template<typename O>
-	friend bool operator <= (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) >= 0; }
+//	template<typename O>
+//	bool operator <= (const O* s2) const { return  (*this).strcmp(s2) <= 0; }
+//	template<typename O>
+//	friend bool operator <= (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) >= 0; }
 
 	template<typename O, class OtherXStringClass>
 	bool operator >= (const XStringAbstract<O, OtherXStringClass>& s2) const { return (*this).strcmp(s2.s()) >= 0; }
-	template<typename O>
-	bool operator >= (const O* s2) const { return  (*this).strcmp(s2) >= 0; }
-	template<typename O>
-	friend bool operator >= (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) <= 0; }
+//	template<typename O>
+//	bool operator >= (const O* s2) const { return  (*this).strcmp(s2) >= 0; }
+//	template<typename O>
+//	friend bool operator >= (const O* s1, const ThisXStringClass& s2) { return s2.strcmp(s1) <= 0; }
 
 };
 

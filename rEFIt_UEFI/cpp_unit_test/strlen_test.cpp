@@ -7,12 +7,12 @@
 
 static int len(const char* s1, size_t count, int code)
 {
-//DebugLog(2, "strlen of '%s'\n", s1);
+//printf("strlen of '%s'\n", s1);
 
 	size_t ret1 = strlen(s1);
 
 	if ( ret1 != count ) {
-		DebugLog(2, "strlen of '%s' gives %zu and should have given %zu\n", s1, ret1, count);
+		printf("strlen of '%s' gives %zu and should have given %zu\n", s1, ret1, count);
 		return code;
 	}
 	return 0;
@@ -59,7 +59,7 @@ int strlen_tests()
 {
 
 #ifdef JIEF_DEBUG
-//	DebugLog(2, "XStringW_tests -> Enter\n");
+//	printf("XStringW_tests -> Enter\n");
 #endif
 	const char* s;
 	s = "1234567890"; // use intermediary var to not be optimized out.
@@ -77,15 +77,15 @@ int strlen_tests()
 
 #ifdef CLOVER_BUILD
 //	UINTN start = AsmReadTsc();
-//	DebugLog(2, "strlen_tests -> Enter\n");
+//	printf("strlen_tests -> Enter\n");
 //
 //	for ( UINTN i=0 ; i<100000 ; i++ ) {
 //		ret = strlen_s1_all_offset(s, 50, 10);
 //	}
 //
-//	DebugLog(2, "strlen_tests -> Exit\n");
+//	printf("strlen_tests -> Exit\n");
 //	UINTN end = AsmReadTsc();
-//	DebugLog(2, "Strlen bench time = %d\n", end - start);
+//	printf("Strlen bench time = %d\n", end - start);
 #endif
 
 

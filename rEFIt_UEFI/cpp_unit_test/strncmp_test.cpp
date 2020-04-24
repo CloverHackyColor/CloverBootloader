@@ -52,12 +52,12 @@ static int nb_compare = 0;
 static int compare(const char*s1, const char*s2, size_t count)
 {
 	nb_compare ++;
-//DebugLog(2, "Comparing '%s' and '%s' with count %d\n", s1, s2, count);
+//printf("Comparing '%s' and '%s' with count %d\n", s1, s2, count);
 	int ret1 = strncmp(s1, s2, count);
 	int ret2 = strncmp_reference(s1, s2, count);
 
 	if ( sign(ret1) != sign(ret2) ) {
-		DebugLog(2, "Comparing '%s' and '%s' with count %zu gives %d and should have given %d\n", s1, s2, count, ret1, ret2);
+		printf("Comparing '%s' and '%s' with count %zu gives %d and should have given %d\n", s1, s2, count, ret1, ret2);
 		int ret3 = strncmp(s1, s2, count); // for live debugging
 		(void)ret3;
 		return 1; // whatever if not 0
@@ -141,7 +141,7 @@ static int compare_s1_with_variable_sizes(const char* s1, size_t s1count, int co
 	{
 		size_t s2count = (size_t)(rndf()*sizeof(s2)-1);
 		if ( s2count >= sizeof(s2) ) {
-			DebugLog(2, "compare_s1_with_variable_sizes, BUG : sizeof=%lu, count=%zu\n", sizeof(s2), s2count);
+			printf("compare_s1_with_variable_sizes, BUG : sizeof=%lu, count=%zu\n", sizeof(s2), s2count);
 			continue;
 		}
 		fillRandom(s2, s2count);

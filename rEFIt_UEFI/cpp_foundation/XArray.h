@@ -15,7 +15,7 @@
 
 
 #if 0
-#define XArray_DBG(...) DebugLog(2, __VA_ARGS__)
+#define XArray_DBG(...) printf(__VA_ARGS__)
 #else
 #define XArray_DBG(...)
 #endif
@@ -185,8 +185,7 @@ void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 		nNewSize += nGrowBy;
 		m_data = (TYPE *)Xrealloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
 		if ( !m_data ) {
-			DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %lu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
-	  	panic();
+			panic("XArray<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %lu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
 		}
 //		memset(&_Data[_Size], 0, (nNewSize-_Size) * sizeof(TYPE)); // Could help for debugging, but zeroing in not needed.
 		m_allocatedSize = nNewSize;
@@ -208,8 +207,7 @@ void XArray<TYPE>::setSize(xsize l)
 	m_len = l;
 	#ifdef DEBUG
 		if(m_len > m_allocatedSize) {
-			DebugLog(2, "XArray::SetLength(xsize) -> _Len > _Size");
-			panic();
+			panic("XArray::SetLength(xsize) -> _Len > _Size");
 		}
 	#endif
 }
@@ -221,8 +219,7 @@ TYPE &XArray<TYPE>::ElementAt(xsize index)
 {
 //	#ifdef _DEBUG
 		if ( index >= m_len ) {
-			DebugLog(2, "XArray::ElementAt(xsize) -> Operator [] : index > m_len");
-			panic();
+			panic("XArray::ElementAt(xsize) -> Operator [] : index > m_len");
 		}
 //	#endif
 	return  m_data[index];
@@ -234,8 +231,7 @@ const TYPE& XArray<TYPE>::ElementAt(xsize index) const
 {
 //	#ifdef _DEBUG
 		if ( index >= m_len ) {
-			DebugLog(2, "XArray::ElementAt(xsize) const -> Operator [] : index > m_len");
-			panic();
+			panic("XArray::ElementAt(xsize) const -> Operator [] : index > m_len");
 		}
 //	#endif
 	return  m_data[index];
@@ -250,8 +246,7 @@ TYPE &XArray<TYPE>::ElementAt(int index)
 			panic("XArray::ElementAt(int) -> Operator [] : index < 0");
 		}
 		if ( (unsigned int)index >= m_len ) { // cast safe, index > 0
-			DebugLog(2, "XArray::ElementAt(int) -> Operator [] : index > m_len");
-			panic();
+			panic("XArray::ElementAt(int) -> Operator [] : index > m_len");
 		}
 //	#endif
 	return  m_data[index];
@@ -266,8 +261,7 @@ const TYPE& XArray<TYPE>::ElementAt(int index) const
 			panic("XArray::ElementAt(int) const -> Operator [] : index < 0");
 		}
 		if ( (unsigned int)index >= m_len ) { // cast ok as index > 0. Ideally cast would be like '(unsigned __typeof__(index))'
-			DebugLog(2, "XArray::ElementAt(int) const -> Operator [] : index > m_len");
-			panic();
+			panic("XArray::ElementAt(int) const -> Operator [] : index > m_len");
 		}
 //	#endif
 	return  m_data[index];
@@ -350,9 +344,8 @@ void XArray<TYPE>::RemoveAtIndex(int nIndex)
 {
   #if defined(__XTOOLS_CHECK_OVERFLOW__)
   	if ( nIndex < 0 ) {
-  	  DebugLog(2, "XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
-	  	panic();
-	  }
+  	  panic("XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
+	}
 	#endif
 
 	RemoveAtIndex( (xsize)nIndex ); // Check of nIndex is made in Remove(xsize nIndex)

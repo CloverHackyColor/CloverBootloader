@@ -9,13 +9,14 @@
 
 #include <stdarg.h>
 #include <stddef.h> // for size_t
+#include <stdint.h>
 
 #ifndef __cplusplus
 	#ifdef _MSC_VER
 	  typedef UINT16 wchar_t;
 	#endif
-	typedef UINT32 char32_t;
-	typedef UINT16 char16_t;
+	typedef uint32_t char32_t;
+	typedef uint16_t char16_t;
 #endif
 
 #ifdef _MSC_VER

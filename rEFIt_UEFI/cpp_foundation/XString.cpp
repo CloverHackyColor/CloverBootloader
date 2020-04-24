@@ -10,11 +10,12 @@
 
 
 #if 0
-#define DBG(...) DebugLog(2, __VA_ARGS__)
+#define DBG(...) printf__VA_ARGS__)
 #else
 #define DBG(...)
 #endif
 
+#include <Platform.h>
 #include "XString.h"
 
 #include "../../Include/Library/printf_lite.h"
