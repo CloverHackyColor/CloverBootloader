@@ -28,7 +28,7 @@
 import Cocoa
 
 //MARK: PETextField (NSTextField)
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PETextField: NSTextField, NSTextViewDelegate {
   var outline : PEOutlineView? = nil
   var node : PENode? = nil
@@ -89,7 +89,7 @@ final class PETextField: NSTextField, NSTextViewDelegate {
   }
 }
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PETextFieldCell : NSTextFieldCell {
  
   override func drawingRect(forBounds rect: NSRect) -> NSRect {

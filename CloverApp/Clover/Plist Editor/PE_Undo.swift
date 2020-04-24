@@ -28,7 +28,7 @@
 import Cocoa
 
 // MARK: Undo and redo support
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 extension PEOutlineView {
   // MARK: Undo Manager object
   

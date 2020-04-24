@@ -218,7 +218,7 @@ final class SettingsViewController:
     self.oemBoardIdField.stringValue = getOEMBoard() ?? kNotAvailable.locale
     // tab 3
     self.plistsPopUp.removeAllItems()
-    if #available(OSX 10.11, *) {
+    if #available(OSX 10.10, *) {
       self.autoSaveButton.state = UDs.bool(forKey: kAutoSavePlistsKey) ? .on : .off
     } else {
       self.autoSaveButton.isEnabled = false

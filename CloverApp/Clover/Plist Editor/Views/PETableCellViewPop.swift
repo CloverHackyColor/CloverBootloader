@@ -28,7 +28,7 @@
 import Cocoa
 //MARK: PETableCellViewPop (NSTableCellView)
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PETableCellViewPop: NSTableCellView {
   var type : PETableCellViewType = .tags
   @IBOutlet var popup : PEPopUpButton!

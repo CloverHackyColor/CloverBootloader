@@ -1248,7 +1248,7 @@ VOID ScanLoader(VOID)
       //----- Test common linux name and path like /EFI/ubuntu/grubx64.efi
       REFIT_DIR_ITER  DirIter;
       EFI_FILE_INFO  *DirEntry = NULL;
-      DirIterOpen(SelfRootDir, L"\\EFI", &DirIter);
+      DirIterOpen(Volume->RootDir, L"\\EFI", &DirIter);
       while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
         if (DirEntry->FileName[0] == '.') {
           //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
@@ -1256,7 +1256,7 @@ VOID ScanLoader(VOID)
         }
         XString OSName = SPrintf("%ls", DirEntry->FileName); //this is folder name "ubuntu"
         XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
-        if (FileExists(SelfRootDir, File.wc_str())) {
+        if (FileExists(Volume->RootDir, File.wc_str())) {
           XStringW LoaderTitle = SWPrintf("%s OS EFI boot menu", OSName.c_str());
           XString IconXS = OSName + ",linux"_XS;
           IconXS.lowerAscii(); //to avoid misconception

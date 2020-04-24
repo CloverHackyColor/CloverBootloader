@@ -1,0 +1,24 @@
+Using QEMU under Windows
+
+1. Dowload and install QEMU
+2. Create QEMU folder in your favorite place and copy files here:
+OVMF.fd or bios.bin or other bios files
+vgabios-stdvga.bin or other VGA bios
+3. cd here
+4. Create an image in vhdx format
+"C:\Program Files\qemu\qemu-img.exe" create -f vhdx test.vhdx 200M
+5. Clean sparse flag
+fsutil sparse setflag test.vhdx 0
+6. Try to mount it. It will be registered in system. Then you can open disk management and format the drive into FAT32. For example name TESTCLOVER.
+7. Double click to open it.
+8. Copy folder 
+.. \Clover\CloverPackage\CloverV2\EFI to the volume
+9. Copy themes to EFI\CLOVER\themes\ folder
+10. Create fake files like
+EFI\Ubuntu\grubx64.efi
+EFI\RedHat\grubx64.efi
+and so on
+11. Eject volume TESTCLOVER.
+12. Run QEMU by the script
+runqemu.bat
+ 

@@ -127,7 +127,7 @@ func gPlistTag(from str: String) -> PlistTag {
  In 10.9/10.10 if mentioned programs aren't present the directory containing the desired file will be opened by the Finder.
  */
 func loadPlist(at path: String) {
-  if #available(OSX 10.11, *) {
+  if #available(OSX 10.10, *) {
     let dc = NSDocumentController.shared
     dc.openDocument(withContentsOf: URL(fileURLWithPath: path), display: true) {
       (document, documentWasAlreadyOpen, error) in

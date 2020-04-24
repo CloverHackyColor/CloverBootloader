@@ -28,7 +28,7 @@
 import Cocoa
 
 final class PESearchField: NSSearchField {
-  @IBOutlet var countLabel : NSTextField? = nil
+  @IBOutlet var countLabel : NSTextField! 
 
   override func textDidChange(_ aNotification: Notification) {
     NotificationCenter.default.post(name: PESearchFieldTextDidChange,

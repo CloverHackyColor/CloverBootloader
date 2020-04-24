@@ -28,7 +28,7 @@
 import Cocoa
 
 //MARK: PEOutlineView (NSOutlineView)
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PEOutlineView: NSOutlineView, NSMenuDelegate {
   var wrongValue : Bool = false
   var scrollTimer : Timer? = nil

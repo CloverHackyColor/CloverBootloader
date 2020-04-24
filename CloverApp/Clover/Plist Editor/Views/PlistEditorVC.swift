@@ -27,7 +27,7 @@
 
 import Cocoa
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PlistEditorVC: NSViewController,
   NSOutlineViewDelegate,
   NSOutlineViewDataSource,
@@ -37,13 +37,16 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
   @IBOutlet var  editorView: NSView!
   @IBOutlet var scrollView : NSScrollView!
   @IBOutlet var outline : PEOutlineView!
-  @IBOutlet var  doneBtn: NSButton?
-  @IBOutlet var  showFindViewBtn: FindButton?
-  @IBOutlet var  showReplaceBtn: ReplaceButton?
-  @IBOutlet var  nextOrPreviousSegment: NSSegmentedControl?
-  @IBOutlet var  replaceOneOrAllSegment: NSSegmentedControl?
-  @IBOutlet var  searchField: PESearchField?
-  @IBOutlet var  replaceField: PEReplaceField?
+  var  doneBtn: NSButton?
+  var  showFindViewBtn: FindButton?
+  var  showReplaceBtn: ReplaceButton?
+  var  nextOrPreviousSegment: NSSegmentedControl?
+  var  replaceOneOrAllSegment: NSSegmentedControl?
+  var  searchField: PESearchField?
+  var  replaceField: PEReplaceField?
+  
+  var currentSearchString : String = ""
+  var currentReplaceString : String = ""
   
   @IBOutlet var findAndReplaceViewHeightConstraint: NSLayoutConstraint!
   
@@ -80,23 +83,6 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
   override func viewDidLoad() {
     super.viewDidLoad()
     self.findAndReplaceViewHeightConstraint.constant = 0
-    
-    self.searchField?.placeholderString = localizedSearch
-    self.searchField?.countLabel?.stringValue = ""
-    
-    self.doneBtn?.target = self
-    self.doneBtn?.action = #selector(self.doneButtonPressed(_:))
-    self.nextOrPreviousSegment?.target = self
-    self.nextOrPreviousSegment?.action = #selector(self.segmentScrollerPressed(_:))
-    self.replaceOneOrAllSegment?.target = self
-    self.replaceOneOrAllSegment?.action = #selector(self.replaceOneOrAllSegmentPressed(_:))
-    if self.replaceOneOrAllSegment != nil {
-      for i in 0..<self.replaceOneOrAllSegment!.segmentCount {
-        let label = self.replaceOneOrAllSegment!.label(forSegment: i)
-        self.replaceOneOrAllSegment!.setLabel(label!.locale, forSegment: i)
-      }
-    }
-
     /*
      Interface Builder is a mess and doesn't want to constraints the scrollView:
      fu__!, who cares! ..I'll do by my self.
@@ -106,7 +92,6 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
   
   override func viewDidAppear() {
     super.viewDidAppear()
-    self.searchField?.delegate = self
     
     if !self.vcLoaded {
       self.outline.target = self
@@ -232,18 +217,29 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
   }
 
   func hideFindAndReplaceView() {
+    if (self.searchField != nil) {
+      self.searchField?.superview?.removeFromSuperview()
+    }
     self.findAndReplaceViewHeightConstraint.animator().constant = 0
     self.view.window?.makeFirstResponder(self.outline)
   }
   
-  @IBAction func showFindView(sender: Any?) {
-    self.findAndReplaceViewHeightConstraint.animator().constant = 28
-    self.view.window?.makeFirstResponder(self.searchField)
+  @objc func showFindView(sender: Any?) {
+    if let vc = PEFindVC.loadFromNib(editor: self) {
+      self.findAndReplaceViewHeightConstraint.constant = 28
+      self.findView.addSubview(vc.view)
+      gAddConstraintsToFit(superView: self.findView, subView: vc.view)
+      self.view.window?.makeFirstResponder(self.searchField)
+    }
   }
   
-  @IBAction func showReplaceView(sender: Any?) {
-    self.findAndReplaceViewHeightConstraint.animator().constant = 57
-    self.view.window?.makeFirstResponder(self.replaceField)
+  @objc func showReplaceView(sender: Any?) {
+    if let vc = PEFindAndReplaceVC.loadFromNib(editor: self) {
+      self.findAndReplaceViewHeightConstraint.constant = 61
+      self.findView.addSubview(vc.view)
+      gAddConstraintsToFit(superView: self.findView, subView: vc.view)
+      self.view.window?.makeFirstResponder(self.replaceField)
+    }
   }
   
   @objc func customDoubleClick() {
@@ -497,10 +493,14 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
   }
   
   @objc func doneButtonPressed(_ sender: NSButton) {
+    /*
     self.searchField?.stringValue = ""
-    self.replaceField?.stringValue = ""
+    self.replaceField?.stringValue = ""*/
     self.performDelayedSearch()
     self.searchField?.countLabel?.placeholderString = ""
+    /*
+    self.currentSearchString = ""
+    self.currentReplaceString = ""*/
     self.hideFindAndReplaceView()
   }
   
@@ -520,13 +520,6 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
     }
   }
   
-  // not used because no delegate is set)
-  func controlTextDidChange(_ obj: Notification) {
-    if (obj.object as AnyObject) as? NSObject == self.searchField {
-      
-    }
-  }
-  
   // called by NSSearchField subclass
   @objc func peSearchFieldTextDidChange(_ obj: Notification) {
     if (self.outline.window != nil) && (obj.object != nil) && (self.outline.window?.isKeyWindow)! {
@@ -542,7 +535,7 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
                                                 userInfo: nil,
                                                 repeats: false)
       } else if (obj.object is PEReplaceField) && (obj.object as! PEReplaceField) == self.replaceField {
-        // doing nothing
+        self.currentReplaceString = (obj.object as! PEReplaceField).stringValue
       }
     }
   }
@@ -554,10 +547,19 @@ NSSearchFieldDelegate, NSSplitViewDelegate {
       }
       self.searchTimer = nil
     }
+    
+    let pasteboard = NSPasteboard.init(name: .findPboard)
+    pasteboard.declareTypes([.string, .textFinderOptions], owner: nil)
+    let plist = [NSPasteboard.PasteboardType.TextFinderOptionKey.textFinderCaseInsensitiveKey : true,
+                 NSPasteboard.PasteboardType.TextFinderOptionKey.textFinderMatchingTypeKey : NSNumber(value: NSTextFinder.MatchingType.contains.rawValue)]
+    
+    pasteboard.setPropertyList(plist, forType: .string)
+    pasteboard.setString(self.searchField!.stringValue, forType: .string)
+    self.currentSearchString = self.searchField!.stringValue
     let pattern = self.searchField?.stringValue.lowercased()
+    
     self.searches = self.findAllSearches(with: pattern!)
     self.searchField?.countLabel?.placeholderString = "\(self.searches.count)"
-
     for node in self.searches {
       self.asyncExpand(item: node, expandParentOnly: true)
     }
