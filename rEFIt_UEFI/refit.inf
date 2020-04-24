@@ -42,6 +42,7 @@
   include/Handle.h
   include/OneLinerMacros.h
   include/Pci.h
+  include/XToolsConf.h
   refit/main.cpp
   refit/icns.cpp
   refit/lib.cpp
@@ -125,6 +126,7 @@
   Platform/Posix/strlen.cpp
   Platform/Posix/wchar.h
   Platform/Posix/wchar.cpp
+  Platform/Posix/abort.h
   Platform/Posix/abort.cpp
   Platform/AcpiPatcher.h
   Platform/AcpiPatcher.cpp
@@ -226,8 +228,6 @@
 	Platform/VersionString.cpp
 	Platform/VersionString.h
   ../Version.h
-  cpp_util/panic.h
-  cpp_util/panic.cpp
   cpp_util/memory.cpp
   cpp_util/globals_ctor.cpp
   cpp_util/globals_ctor.h
@@ -249,8 +249,6 @@
   cpp_foundation/XStringArray.h
   cpp_foundation/XStringWArray.cpp
   cpp_foundation/XStringWArray.h
-  cpp_foundation/XToolsCommon.cpp
-  cpp_foundation/XToolsCommon.h
 #  cpp_foundation/XUINTN.cpp
 #  cpp_foundation/XUINTN.h
   cpp_unit_test/all_tests.h
