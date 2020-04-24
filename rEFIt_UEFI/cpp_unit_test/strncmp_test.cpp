@@ -141,7 +141,7 @@ static int compare_s1_with_variable_sizes(const char* s1, size_t s1count, int co
 	{
 		size_t s2count = (size_t)(rndf()*sizeof(s2)-1);
 		if ( s2count >= sizeof(s2) ) {
-			printf("compare_s1_with_variable_sizes, BUG : sizeof=%lu, count=%zu\n", sizeof(s2), s2count);
+			printf("compare_s1_with_variable_sizes, BUG : sizeof=%zu, count=%zu\n", sizeof(s2), s2count);
 			continue;
 		}
 		fillRandom(s2, s2count);
