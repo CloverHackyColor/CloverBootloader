@@ -53,7 +53,7 @@ void panic(const char* format, ...)
 		VA_LIST va;
 		VA_START(va, format);
 		panic_(format, va); // panic doesn't return
-		VA_END(va);
+//		VA_END(va);
 	}else{
 		i_have_panicked = true;
 	}
