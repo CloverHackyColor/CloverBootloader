@@ -27,7 +27,7 @@
 
 import Cocoa
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 extension PlistEditorVC {
   @objc func boolPopUpPressed(sender: PEPopUpButton) {
     let originalValue : Bool = sender.node!.tagdata!.value as! Bool

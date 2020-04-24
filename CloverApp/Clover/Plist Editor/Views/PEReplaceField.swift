@@ -28,7 +28,7 @@
 import Cocoa
 
 //MARK: PETextField (NSTextField)
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PEReplaceField: NSSearchField {
   var editorVC : PlistEditorVC?
   

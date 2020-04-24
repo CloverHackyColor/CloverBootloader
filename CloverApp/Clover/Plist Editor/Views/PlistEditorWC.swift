@@ -27,7 +27,7 @@
 
 import Cocoa
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 class PlistEditorWC: NSWindowController, NSWindowDelegate {
   var subview: PlistEditorWC?
   var fixed: Bool = false

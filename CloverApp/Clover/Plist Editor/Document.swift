@@ -27,7 +27,7 @@
 
 import Cocoa
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class Document: NSDocument {
   var data : Data?
   var windowController : PlistEditorWC?

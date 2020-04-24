@@ -33,7 +33,7 @@ enum RowViewBorderType : Int {
   case verticalAndBottom  = 3
 }
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PETableRowView: NSTableRowView {
   internal var n: PENode?
   internal var o: PEOutlineView? = nil
@@ -68,41 +68,45 @@ final class PETableRowView: NSTableRowView {
   }
   
   func setBorderType() {
-    super.setNeedsDisplay(self.bounds)
+    if #available(OSX 10.11, *) {
+      super.setNeedsDisplay(self.bounds)
+    } 
   }
 
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
-    var bt : RowViewBorderType = .none
-    if self.isSelected {
-      self.highLightAllBorders(in: dirtyRect)
-    } else {
-      let row : Int = self.outline?.selectedRow ?? -1
-      if row >= 0 {
-        if let selNode = self.outline?.item(atRow: row) as? PENode {
-          // determine if self.node is a child (or sub child of selfNode)
-          let ipsc = "\(self.node!.indexPath)".trimmingCharacters(in: CharacterSet(arrayLiteral: "]"))
-          let ips = "\(selNode.indexPath)".trimmingCharacters(in: CharacterSet(arrayLiteral: "]")) + ","
-          if ipsc.hasPrefix(ips) {
-            bt = .verticalOnly
-            let childs = selNode.mutableChildren
-            if childs.count > 0 && (childs.lastObject as! PENode) == self.node {
-              bt = .verticalAndBottom
+    if #available(OSX 10.11, *) {
+      var bt : RowViewBorderType = .none
+      if self.isSelected {
+        self.highLightAllBorders(in: dirtyRect)
+      } else {
+        let row : Int = self.outline?.selectedRow ?? -1
+        if row >= 0 {
+          if let selNode = self.outline?.item(atRow: row) as? PENode {
+            // determine if self.node is a child (or sub child of selfNode)
+            let ipsc = "\(self.node!.indexPath)".trimmingCharacters(in: CharacterSet(arrayLiteral: "]"))
+            let ips = "\(selNode.indexPath)".trimmingCharacters(in: CharacterSet(arrayLiteral: "]")) + ","
+            if ipsc.hasPrefix(ips) {
+              bt = .verticalOnly
+              let childs = selNode.mutableChildren
+              if childs.count > 0 && (childs.lastObject as! PENode) == self.node {
+                bt = .verticalAndBottom
+              }
             }
           }
         }
       }
-    }
-    
-    switch bt {
-    case .none: break // taken into account previously
-    case.verticalAndBottom:
-      self.highLightLeftBorder(in: dirtyRect)
-      self.highLightRightBorder(in: dirtyRect)
-      self.highLightBottomBorder(in: dirtyRect)
-    case .verticalOnly:
-      self.highLightLeftBorder(in: dirtyRect)
-      self.highLightRightBorder(in: dirtyRect)
+      
+      switch bt {
+      case .none: break // taken into account previously
+      case.verticalAndBottom:
+        self.highLightLeftBorder(in: dirtyRect)
+        self.highLightRightBorder(in: dirtyRect)
+        self.highLightBottomBorder(in: dirtyRect)
+      case .verticalOnly:
+        self.highLightLeftBorder(in: dirtyRect)
+        self.highLightRightBorder(in: dirtyRect)
+      }
     }
   }
   

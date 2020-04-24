@@ -29,7 +29,7 @@ import Cocoa
 import CoreData
 
 //MARK: PETableCellView (NSTableCellView)
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PETableCellView: NSTableCellView {
   @IBOutlet var addButton : NSButton!
   @IBOutlet var removeButton : NSButton!

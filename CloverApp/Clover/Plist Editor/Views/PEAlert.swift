@@ -27,7 +27,7 @@
 
 import Cocoa
 
-@available(OSX 10.11, *)
+@available(OSX 10.10, *)
 final class PEAlert : NSAlert {
   var anyString : String? = nil
   var outline: PEOutlineView? = nil
