@@ -33,77 +33,77 @@ bool all_tests()
 
 	ret = XString_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "XString16_tests() failed at test %d\n", ret);
+		printf("XString16_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 //return ret;
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
-//		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
+//		printf("XUINTN_tests() failed at test %d\n", ret);
 //		all_ok = false;
 //	}
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
 		ret = printlib_tests();
 	    if ( ret != 0 ) {
-		    DebugLog(2, "printlib_tests() failed at test %d\n", ret);
+		    printf("printlib_tests() failed at test %d\n", ret);
 		    all_ok = false;
     	}
     	ret = poolprint_tests();
     	if ( ret != 0 ) {
-	    	DebugLog(2, "poolprint_tests() failed at test %d\n", ret);
+	    	printf("poolprint_tests() failed at test %d\n", ret);
 		    all_ok = false;
 	    }
-	#endif
+#endif
 #ifndef _MSC_VER
 	ret = printf_lite_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "printf_lite_tests() failed at test %d\n", ret);
+		printf("printf_lite_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 #endif
 	ret = strlen_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "strlen_tests() failed at test %d\n", ret);
+		printf("strlen_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = BootOptions_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "BootOptions_tests() failed at test %d\n", ret);
+		printf("BootOptions_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = strcmp_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "strcmp_tests() failed at test %d\n", ret);
+		printf("strcmp_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = strncmp_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "strncmp_tests() failed at test %d\n", ret);
+		printf("strncmp_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = XArray_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "XArray_tests() failed at test %d\n", ret);
+		printf("XArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = XObjArray_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "XObjArray_tests() failed at test %d\n", ret);
+		printf("XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 	ret = XStringWArray_tests();
 	if ( ret != 0 ) {
-		DebugLog(2, "XStringWArray_tests() failed at test %d\n", ret);
+		printf("XStringWArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
-//		DebugLog(2, "XUINTN_tests() failed at test %d\n", ret);
+//		printf("XUINTN_tests() failed at test %d\n", ret);
 //		all_ok = false;
 //	}
 
 	if ( !all_ok ) {
-		DebugLog(2, "A test failed\n");
+		printf("A test failed\n");
 	}
 	
 #if defined(JIEF_DEBUG)

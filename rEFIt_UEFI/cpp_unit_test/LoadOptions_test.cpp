@@ -175,7 +175,7 @@ int BootOptions_tests()
 {
 
 #ifdef JIEF_DEBUG
-//	DebugLog(2, "XStringW_tests -> Enter\n");
+//	printf("XStringW_tests -> Enter\n");
 #endif
 
 	{
@@ -188,11 +188,11 @@ int BootOptions_tests()
 		if ( XString().takeValueFrom(LoadOptions) != "opt1 opt2 opt3"_XS ) return 1;
 		
 		CHAR16* LoadOptions1 = Old1_RemoveLoadOption(LoadOptions, L"opt1");
-		if ( XString().takeValueFrom(LoadOptions1) != "opt2 opt3"_XS ) return 1;
+		if ( XString().takeValueFrom(LoadOptions1) != "opt2 opt3"_XS ) return 2;
 		CHAR16* LoadOptions2 = Old1_RemoveLoadOption(LoadOptions, L"opt2");
-		if ( XString().takeValueFrom(LoadOptions2) != "opt1 opt3"_XS ) return 1;
+		if ( XString().takeValueFrom(LoadOptions2) != "opt1 opt3"_XS ) return 3;
 		CHAR16* LoadOptions3 = Old1_RemoveLoadOption(LoadOptions, L"opt3");
-		if ( XString().takeValueFrom(LoadOptions3) != "opt1 opt2"_XS ) return 1;
+		if ( XString().takeValueFrom(LoadOptions3) != "opt1 opt2"_XS ) return 4;
 	}
 //	{
 //		XString LoadOptions;
@@ -217,17 +217,17 @@ int BootOptions_tests()
 		LoadOptions.AddID("opt2"_XS);
 		LoadOptions.AddID("opt3"_XS);
 		
-		if ( LoadOptions.ConcatAll(" "_XS) != "opt1 opt2 opt3"_XS ) return 1;
+		if ( LoadOptions.ConcatAll(" "_XS) != "opt1 opt2 opt3"_XS ) return 30;
 		
 		XStringArray LoadOptions1 = LoadOptions;
 		LoadOptions1.Remove("opt1"_XS);
-		if ( LoadOptions1.ConcatAll(" "_XS) != "opt2 opt3"_XS ) return 1;
+		if ( LoadOptions1.ConcatAll(" "_XS) != "opt2 opt3"_XS ) return 31;
 		XStringArray LoadOptions2 = LoadOptions;
 		LoadOptions2.Remove("opt2"_XS);
-		if ( LoadOptions2.ConcatAll(" "_XS) != "opt1 opt3"_XS ) return 1;
+		if ( LoadOptions2.ConcatAll(" "_XS) != "opt1 opt3"_XS ) return 32;
 		XStringArray LoadOptions3 = LoadOptions;
 		LoadOptions3.Remove("opt3"_XS);
-		if ( LoadOptions3.ConcatAll(" "_XS) != "opt1 opt2"_XS ) return 1;
+		if ( LoadOptions3.ConcatAll(" "_XS) != "opt1 opt2"_XS ) return 33;
 	}
 
 	return 0;

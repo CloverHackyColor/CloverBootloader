@@ -1,5 +1,5 @@
 //#ifdef CLOVER_BUILD
-#include "../../Platform/BootLog.h"
+//#include "../../Platform/BootLog.h"
 
 #include <Platform.h>
 
@@ -22,7 +22,7 @@
 
 void abort(void)
 {
-	DebugLog(2, "A fatal error happened. System halted\n");
+	printf("A fatal error happened. System halted\n");
 	while (1) { // tis will avoid warning : Function declared 'noreturn' should not return
 		CpuDeadLoop();
 	}
@@ -52,8 +52,8 @@ void panic(const char* format, ...)
 	if ( stop_at_panic ) {
 		VA_LIST va;
 		VA_START(va, format);
-		panic_(format, va);
-		VA_END(va);
+		panic_(format, va); // panic doesn't return
+		//VA_END(va);
 	}else{
 		i_have_panicked = true;
 	}

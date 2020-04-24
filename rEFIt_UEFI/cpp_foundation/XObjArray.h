@@ -15,7 +15,7 @@
 
 
 #if 1
-#define XObjArray_DBG(...) DebugLog(2, __VA_ARGS__)
+#define XObjArray_DBG(...) printf__VA_ARGS__)
 #else
 #define XObjArray_DBG(...)
 #endif
@@ -44,8 +44,10 @@ class XObjArrayNC
 	virtual ~XObjArrayNC();
 
   protected:
-	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) { (void)anObjArrayNC; DebugLog(2, "Intentionally not defined"); panic(); }
-	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) { (void)anObjArrayNC; DebugLog(2, "Intentionally not defined"); panic(); }
+//	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) { (void)anObjArrayNC; panic("Intentionally not defined"); }
+//	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) { (void)anObjArrayNC; panic("Intentionally not defined"); }
+	XObjArrayNC(const XObjArrayNC<TYPE> &anObjArrayNC) = delete;
+	const XObjArrayNC<TYPE> &operator =(const XObjArrayNC<TYPE> &anObjArrayNC) = delete;
 	xsize _getLen() const { return _Len; }
 
   public:
@@ -424,8 +426,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex)
 	if ( nIndex  < XObjArrayNC<TYPE>::_Len )
 	{
   	if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
-		DebugLog(2, "void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%zu) is > length(). System halted\n", nIndex);
-	  	panic();
+		panic("void XObjArrayNC<TYPE>::RemoveAtIndex(xsize nIndex) : BUG nIndex (%zu) is > length(). System halted\n", nIndex);
 	  }
 	}
 	if ( _Data[nIndex].FreeIt )
@@ -467,9 +468,8 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(int nIndex)
 {
   #if defined(__XTOOLS_CHECK_OVERFLOW__)
   	if ( nIndex < 0 ) {
-  	  DebugLog(2, "XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
-	  	panic();
-	  }
+  	  panic("XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
+	}
 	#endif
 	RemoveAtIndex( (xsize)nIndex ); // Remove(xsize) will check that index is < _Len
 }
@@ -487,7 +487,7 @@ void XObjArrayNC<TYPE>::Remove(const TYPE &Element)
 		}
 	}
 	#if defined(_DEBUG)
-		DebugLog(2, "XObjArray::Remove(TYPE &) -> Not found\n");
+		printf("XObjArray::Remove(TYPE &) -> Not found\n");
 		panic();
 	#endif
 }

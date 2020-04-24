@@ -17,10 +17,11 @@
 #include <wchar.h>
 #include "posix.h"
 
+#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
 
-#include "xcode_utf16.h"
+#include "xcode_utf_fixed.h"
 
 
 #ifndef __cplusplus
@@ -64,7 +65,7 @@ typedef UINTN RETURN_STATUS;
 #endif
 
 void CpuDeadLoop(void);
-void DebugLog(INTN DebugMode, const char *FormatString, ...);
+//void DebugLog(INTN DebugMode, const char *FormatString, ...);
 
 void PauseForKey(const wchar_t* msg);
 

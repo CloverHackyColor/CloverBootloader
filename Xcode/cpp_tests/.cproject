@@ -213,9 +213,15 @@
                     					
                     <sourceEntries>
                         						
+                        <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="MemLogLibDefault"/>
+                        						
+                        <entry excluding="wchar.cpp|strlen.cpp|strcmp.cpp|stdio.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Posix"/>
+                        						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_foundation"/>
                         						
                         <entry excluding="printlib-test.cpp|poolprint-test.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_unit_test"/>
+                        						
+                        <entry excluding="operatorNewDelete.cpp|memory.cpp|globals_dtor.cpp|globals_ctor.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_util"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
                         					
@@ -440,6 +446,8 @@
                     <sourceEntries>
                         						
                         <entry excluding="MemLogLib.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="MemLogLibDefault"/>
+                        						
+                        <entry excluding="strlen.cpp|wchar.cpp|strcmp.cpp|stdio.cpp" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Posix"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="cpp_foundation"/>
                         						

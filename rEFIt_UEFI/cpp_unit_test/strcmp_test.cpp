@@ -45,7 +45,7 @@ static int compare(const char*s1, const char*s2)
 	int ret2 = strcmp_reference(s1, s2);;
 
 	if ( sign(ret1) != sign(ret2) ) {
-		DebugLog(2, "Comparing '%s' and '%s' gives %d and should have given %d\n", s1, s2, ret1, ret2);
+		printf("Comparing '%s' and '%s' gives %d and should have given %d\n", s1, s2, ret1, ret2);
 		return 1; // whatever if not 0
 	}
 	return 0;
@@ -101,7 +101,7 @@ static int compare_s1_with_variable_sizes(const char* s1, int code)
 	{
 		size_t count = (size_t)(rndf()*sizeof(s2)-1);
 		if ( count >= sizeof(s2) ) {
-			DebugLog(2, "compare_s1_with_variable_sizes, BUG : sizeof=%lu, count=%zu\n", sizeof(s2), count);
+			printf("compare_s1_with_variable_sizes, BUG : sizeof=%lu, count=%zu\n", sizeof(s2), count);
 			continue;
 		}
 		fillRandom(s2, count);

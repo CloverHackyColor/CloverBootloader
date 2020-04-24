@@ -5,7 +5,7 @@ int XStringWArray_tests()
 {
 
 #ifdef JIEF_DEBUG
-//	DebugLog(2, "XStringWArray_tests -> Enter\n");
+//	printf("XStringWArray_tests -> Enter\n");
 #endif
 
 	XStringWArray array1;

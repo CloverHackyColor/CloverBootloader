@@ -25,51 +25,51 @@ void CpuDeadLoop(void)
 {
 	exit(1);
 }
-
-static char *dull_replace(const char *in, const char *pattern, const char *by, char* res)
-{
-//    size_t outsize = strlen(in) + 1;
-    // TODO maybe avoid reallocing by counting the non-overlapping occurences of pattern
-//    char *res = malloc(outsize);
-    // use this to iterate over the output
-    size_t resoffset = 0;
-
-    const char *needle;
-    while ( (needle = strstr(in, pattern)) ) {
-        // copy everything up to the pattern
-        memcpy(res + resoffset, in, (size_t)(needle - in));
-        resoffset += (size_t)(needle - in);
-
-        // skip the pattern in the input-string
-        in = needle + strlen(pattern);
-
-        // adjust space for replacement
-//        outsize = outsize - strlen(pattern) + strlen(by);
-//        res = realloc(res, outsize);
-
-        // copy the pattern
-        memcpy(res + resoffset, by, strlen(by));
-        resoffset += strlen(by);
-    }
-
-    // copy the remaining input
-    strcpy(res + resoffset, in);
-
-    return res;
-}
-
-void DebugLog(INTN DebugMode, const char *FormatString, ...)
-{
-	(void)DebugMode;
-
-	char* NewFormat = (char*)alloca(strlen(FormatString)+1);
-	dull_replace(FormatString, "%a", "%s", NewFormat);
-	
-	va_list va;
-	va_start(va, FormatString);
-	vprintf(NewFormat, va);
-	va_end(va);
-}
+//
+//static char *dull_replace(const char *in, const char *pattern, const char *by, char* res)
+//{
+////    size_t outsize = strlen(in) + 1;
+//    // TODO maybe avoid reallocing by counting the non-overlapping occurences of pattern
+////    char *res = malloc(outsize);
+//    // use this to iterate over the output
+//    size_t resoffset = 0;
+//
+//    const char *needle;
+//    while ( (needle = strstr(in, pattern)) ) {
+//        // copy everything up to the pattern
+//        memcpy(res + resoffset, in, (size_t)(needle - in));
+//        resoffset += (size_t)(needle - in);
+//
+//        // skip the pattern in the input-string
+//        in = needle + strlen(pattern);
+//
+//        // adjust space for replacement
+////        outsize = outsize - strlen(pattern) + strlen(by);
+////        res = realloc(res, outsize);
+//
+//        // copy the pattern
+//        memcpy(res + resoffset, by, strlen(by));
+//        resoffset += strlen(by);
+//    }
+//
+//    // copy the remaining input
+//    strcpy(res + resoffset, in);
+//
+//    return res;
+//}
+//
+//void DebugLog(INTN DebugMode, const char *FormatString, ...)
+//{
+//	(void)DebugMode;
+//
+//	char* NewFormat = (char*)alloca(strlen(FormatString)+1);
+////	dull_replace(FormatString, "%a", "%s", NewFormat);
+//	
+//	va_list va;
+//	va_start(va, FormatString);
+//	vprintf(NewFormat, va);
+//	va_end(va);
+//}
 
 void PauseForKey(const wchar_t* msg)
 {
@@ -132,14 +132,14 @@ void CopyMem(void *Destination, void *Source, UINTN Length)
 
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src)
 {
-	CHAR16* newS = (CHAR16*)malloc((wcslen(Src)+1)*sizeof(wchar_t));
-	memcpy(newS, Src, (wcslen(Src)+1)*sizeof(wchar_t));
+	CHAR16* newS = (CHAR16*)malloc((wcslen_fixed(Src)+1)*sizeof(wchar_t));
+	memcpy(newS, Src, (wcslen_fixed(Src)+1)*sizeof(wchar_t));
 	return newS;
 }
 
 CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString)
 {
-	return (CHAR16*)wcsstr(String, SearchString);
+	return (CHAR16*)wcsstr_fixed(String, SearchString);
 }
 
 
