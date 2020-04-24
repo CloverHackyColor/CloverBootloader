@@ -78,9 +78,9 @@ CONST CHAR8* IconsNames[] = {
    "checkbox_checked",
    "scrollbar_background", //24 - present here for SVG theme but should be done more common way
    "scrollbar_holder",
-  //other oses will be added below
   //example
-  "os_uuu", //51 == ICON_OTHER_OS
+  "os_unknown", //51 == ICON_OTHER_OS
+   //other oses will be added below
   ""
 };
 const INTN IconsNamesSize = sizeof(IconsNames) / sizeof(IconsNames[0]);
