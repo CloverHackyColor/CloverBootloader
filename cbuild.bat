@@ -22,7 +22,7 @@ set EDK2_BUILD_OPTIONS=-D NO_GRUB_DRIVERS
 set VBIOSPATCHCLOVEREFI=0
 set ONLY_SATA_0=0
 set USE_BIOS_BLOCKIO=0
-set USE_LOW_EBDA=1
+set USE_LOW_EBDA=0
 set DISABLE_USB_SUPPORT=0
 set GENPAGE=0
 set MSG=
@@ -386,7 +386,7 @@ rem # drop compiled files to EFI folder
     echo "ENABLE_SECURE_BOOT" doesnt work ATM ...
     echo.
   )
-  goto noboot
+ rem  goto noboot
   call:createDir %DEST_BOOTLOADERS%\%TARGETARCH%
 
   echo Compressing DUETEFIMainFv.FV ^(%TARGETARCH%^) ...

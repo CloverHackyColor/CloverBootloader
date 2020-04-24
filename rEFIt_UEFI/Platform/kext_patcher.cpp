@@ -77,11 +77,11 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Se
 BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSize)
 {
   UINT8 M;
-  UINTN Ind;
+ 
   if (!Mask) {
     return !CompareMem(Source, Search, SearchSize);
   }
-  for (Ind = 0; Ind < SearchSize; Ind++) {
+  for (UINTN Ind = 0; Ind < SearchSize; Ind++) {
     M = *Mask++;
     if ((*Source++ & M) != (*Search++ & M)) {
       return FALSE;
@@ -93,12 +93,16 @@ BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSi
 VOID CopyMemMask(UINT8 *Dest, UINT8 *Replace, UINT8 *Mask, UINTN SearchSize)
 {
   UINT8 M, D;
-  UINTN Ind;
-  if (!Mask) {
-    CopyMem(Dest, Replace, SearchSize);
+  // the procedure is called from SearchAndReplaceMask with own check but for future it is better to check twice
+  if (!Dest || !Replace) { 
     return;
   }
-  for (Ind = 0; Ind < SearchSize; Ind++) {
+
+  if (!Mask) {
+    CopyMem(Dest, Replace, SearchSize); //old behavior
+    return;
+  }
+  for (UINTN Ind = 0; Ind < SearchSize; Ind++) {
     M = *Mask++;
     D = *Dest;
     *Dest++ = ((D ^ *Replace++) & M) ^ D;
