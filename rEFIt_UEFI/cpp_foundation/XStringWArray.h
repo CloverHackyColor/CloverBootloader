@@ -9,7 +9,7 @@
 #if !defined(__XSTRINGWARRAY_H__)
 #define __XSTRINGWARRAY_H__
 
-#include "XToolsCommon.h"
+#include <XToolsConf.h>
 #include "XObjArray.h"
 #include "XString.h"
 

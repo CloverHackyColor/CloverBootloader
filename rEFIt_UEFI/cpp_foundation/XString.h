@@ -12,7 +12,7 @@
 #if !defined(__XString_H__)
 #define __XString_H__
 
-#include "XToolsCommon.h"
+#include <XToolsConf.h>
 #include "XStringAbstract.h"
 
 #include "../../Include/Library/printf_lite.h"

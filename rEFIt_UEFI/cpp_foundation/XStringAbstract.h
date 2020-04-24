@@ -9,7 +9,7 @@
 #if !defined(__XSTRINGABSTRACT_H__)
 #define __XSTRINGABSTRACT_H__
 
-#include "XToolsCommon.h"
+#include <XToolsConf.h>
 #include "unicode_conversions.h"
 
 #ifndef DEBUG_ALL
@@ -252,7 +252,7 @@ protected:
 		CheckSize(aSize, 0);
 	}
 public:
-	T *CheckSize(size_t nNewSize, size_t nGrowBy = 16) // nNewSize is in number of chars, NOT bytes
+	T *CheckSize(size_t nNewSize, size_t nGrowBy = XStringGrowByDefault) // nNewSize is in number of chars, NOT bytes
 	{
 		//DBG_XSTRING("CheckSize: m_size=%d, nNewSize=%d\n", m_size, nNewSize);
 		
@@ -260,10 +260,9 @@ public:
 		{
 			nNewSize += nGrowBy;
 			if ( m_allocatedSize == 0 ) m_data = (T*)malloc( (nNewSize+1)*sizeof(T) );
-			else m_data = (T*)realloc(m_data, (nNewSize+1)*sizeof(T), (m_allocatedSize+1)*sizeof(T));
+			else m_data = (T*)Xrealloc(m_data, (nNewSize+1)*sizeof(T), (m_allocatedSize+1)*sizeof(T));
 			if ( !m_data ) {
-				DebugLog(2, "XStringAbstract<T>::CheckSize(%zu, %zu) : realloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, nGrowBy, uintptr_t(m_data), nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
-				panic();
+				panic("XStringAbstract<T>::CheckSize(%zu, %zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, nGrowBy, uintptr_t(m_data), nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
 			}
 			m_allocatedSize = nNewSize;
 			m_data[m_allocatedSize] = 0; // we allocated one more char (nNewSize+1). This \0 is an extra precaution. It's not for the normal null terminator. All string operation must considered that only m_allocatedSize bytes were allocated.

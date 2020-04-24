@@ -9,6 +9,7 @@ extern "C" {
 #define __attribute__(x)
 #endif
 
+int vprintf(const char* format, VA_LIST ap);
 int printf(const char* format, ...) __attribute__((format(printf, 1, 2)));
 
 

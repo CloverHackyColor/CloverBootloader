@@ -12,7 +12,6 @@
 extern "C" {
 #include <Protocol/GraphicsOutput.h>
 }
-#include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XArray.h"
 #include "../cpp_foundation/XString.h"
 #include "../libeg/libeg.h"

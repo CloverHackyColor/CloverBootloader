@@ -11,7 +11,7 @@
 #if !defined(__XOBJARRAY_H__)
 #define __XOBJARRAY_H__
 
-#include "XToolsCommon.h"
+#include <XToolsConf.h>
 
 
 #if 1
@@ -181,10 +181,9 @@ void XObjArrayNC<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 {
 	if ( m_allocatedSize < nNewSize ) {
 		nNewSize += nGrowBy + 1;
-		_Data = (XObjArrayEntry<TYPE> *)realloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
+		_Data = (XObjArrayEntry<TYPE> *)Xrealloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
 		if ( !_Data ) {
-			DebugLog(2, "XObjArrayNC<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %zu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
-			panic();
+			panic("XObjArrayNC<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %zu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
 		}
 //		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
 		m_allocatedSize = nNewSize;
@@ -196,8 +195,7 @@ template<class TYPE>
 TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index)
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
-			panic();
+			panic("XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
 		}
 		return  *((TYPE *)(_Data[index].Object));
 }
@@ -207,8 +205,7 @@ template<class TYPE>
 const TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index) const
 {
 		if ( index >= _Len ) {
-			DebugLog(2, "XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
-			panic();
+			panic("XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
 		}
 		return  *((TYPE *)(_Data[index].Object));
 }
@@ -468,7 +465,7 @@ void XObjArrayNC<TYPE>::RemoveWithoutFreeing(xsize nIndex)
 template<class TYPE>
 void XObjArrayNC<TYPE>::RemoveAtIndex(int nIndex)
 {
-  #if defined(__XTOOLS_INT_CHECK__)
+  #if defined(__XTOOLS_CHECK_OVERFLOW__)
   	if ( nIndex < 0 ) {
   	  DebugLog(2, "XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
 	  	panic();

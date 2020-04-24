@@ -1,7 +1,6 @@
 #if !defined(__XTHEME_H__)
 #define __XTHEME_H__
 
-#include "../cpp_foundation/XToolsCommon.h"
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
 #include "libeg.h"

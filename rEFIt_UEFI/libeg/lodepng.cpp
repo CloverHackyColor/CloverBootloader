@@ -34,7 +34,7 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 
 #include "libegint.h"
 #include "lodepng.h"
-#include "../cpp_util/panic.h"
+//#include "../cpp_util/panic.h"
 
 #ifdef LODEPNG_COMPILE_DISK
 #include <limits.h> /* LONG_MAX */

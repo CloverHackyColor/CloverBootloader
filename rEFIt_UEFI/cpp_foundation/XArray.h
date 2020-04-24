@@ -11,7 +11,7 @@
 #if !defined(__XARRAY_H__)
 #define __XARRAY_H__
 
-#include "XToolsCommon.h"
+#include <XToolsConf.h>
 
 
 #if 0
@@ -183,7 +183,7 @@ void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 //XArray_DBG("CheckSize: m_len=%d, m_size=%d, nGrowBy=%d, nNewSize=%d\n", m_len, m_size, nGrowBy, nNewSize);
 	if ( nNewSize > m_allocatedSize ) {
 		nNewSize += nGrowBy;
-		m_data = (TYPE *)realloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
+		m_data = (TYPE *)Xrealloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
 		if ( !m_data ) {
 			DebugLog(2, "XArray<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %lu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
 	  	panic();
@@ -348,7 +348,7 @@ void XArray<TYPE>::RemoveAtIndex(xsize nIndex)
 template<class TYPE>
 void XArray<TYPE>::RemoveAtIndex(int nIndex)
 {
-  #if defined(__XTOOLS_INT_CHECK__)
+  #if defined(__XTOOLS_CHECK_OVERFLOW__)
   	if ( nIndex < 0 ) {
   	  DebugLog(2, "XArray<TYPE>::RemoveAtIndex(int nIndex) : BUG nIndex (%d) is < 0. System halted\n", nIndex);
 	  	panic();

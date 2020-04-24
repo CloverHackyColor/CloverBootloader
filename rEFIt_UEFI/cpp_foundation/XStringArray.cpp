@@ -4,7 +4,6 @@
 //
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-#include "XToolsCommon.h"
 #include "XStringArray.h"
 
 

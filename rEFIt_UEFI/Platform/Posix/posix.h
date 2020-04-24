@@ -16,6 +16,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "wchar.h"
+#include "abort.h"
 
 //
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions

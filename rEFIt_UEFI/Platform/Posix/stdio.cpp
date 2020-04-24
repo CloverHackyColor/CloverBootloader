@@ -24,14 +24,19 @@ extern "C" {
 static XString stdio_static_buf;
 static XStringW stdio_static_wbuf;
 
+int vprintf(const char* format, VA_LIST va)
+{
+  // AsciiPrint seems no to work with utf8 chars. We have to use Print instead
+	stdio_static_wbuf.vSWPrintf(format, va);
+	int ret = (int)Print(L"%s", stdio_static_wbuf.wc_str());
+	return ret;
+}
+
 int printf(const char* format, ...)
 {
   va_list     va;
-
-  // AsciiPrint seems no to work with utf8 chars. We have to use Print instead
 	va_start (va, format);
-	stdio_static_wbuf.vSWPrintf(format, va);
-	int ret = (int)Print(L"%s", stdio_static_wbuf.wc_str());
+	int ret = vprintf(format, va);
 	va_end(va);
 	return ret;
 }

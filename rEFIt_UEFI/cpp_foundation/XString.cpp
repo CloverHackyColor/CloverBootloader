@@ -15,7 +15,6 @@
 #define DBG(...)
 #endif
 
-#include "XToolsCommon.h"
 #include "XString.h"
 
 #include "../../Include/Library/printf_lite.h"

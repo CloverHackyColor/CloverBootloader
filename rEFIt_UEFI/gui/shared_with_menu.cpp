@@ -39,10 +39,10 @@
  *  THIS will most likely disappear soon !
  */
 
-#include "../Platform/Platform.h"
-#include "../refit/lib.h"
-#include "menu_items/menu_items.h"
-#include "../entry_scan/common.h"
+#include <Platform.h>
+//#include "../refit/lib.h"
+//#include "menu_items/menu_items.h"
+//#include "../entry_scan/common.h"
 
 CONST XString ArgOptional[NUM_OPT] = {
   "arch=i386"_XS,       //0

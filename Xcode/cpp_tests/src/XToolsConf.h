@@ -19,26 +19,7 @@ extern xsize XBufferGrowByDefault;
 
 #include "../cpp_util/panic.h"
 
-#ifdef CLOVER_BUILD
-
-
-extern "C" {
-#include <ProcessorBind.h>
-#include <Library/BaseLib.h> // for StrCmp
-#include <Library/MemoryAllocationLib.h>
-#include <Library/BaseMemoryLib.h> // for CopyMen
-}
-
-#endif
-
-//#define Xalloc(AllocationSize) AllocatePool(AllocationSize)
-//#define Xrealloc(OldSize, NewSize, OldBuffer) ReallocatePool(OldSize, NewSize, OldBuffer)
-//#define Xfree(Buffer) FreePool(Buffer)
-//#define Xmemmove(dest,source,count) CopyMem(dest, (void*)(source), count) // that has to handle overlapping memory (prefer memmove to memcpy).
-
-#if !defined(CLOVER_BUILD)
 #define realloc(ptr, newsize, oldsize) realloc(ptr, newsize)
-#endif
 
 
 // Declare here instead of include to avoid circular dependency.

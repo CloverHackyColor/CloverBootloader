@@ -90,7 +90,7 @@ public:
 	SimpleString& operator =(const SimpleString& simpleString)
 	{
 		size_t newSize = strlen(simpleString.data)+1;
-		data = (char*)realloc(data, newSize+1, allocatedSize);
+		data = (char*)Xrealloc(data, newSize+1, allocatedSize);
 		allocatedSize = newSize+1;
 		strncpy(data, simpleString.data, allocatedSize);
 		return *this;
@@ -103,7 +103,7 @@ public:
 		VA_LIST va2;
 		VA_COPY(va2, va);
 		size_t size = (size_t)vsnprintf(NULL, 0, format, va);
-		data = (char*)realloc(data, size+1, allocatedSize);
+		data = (char*)Xrealloc(data, size+1, allocatedSize);
 		allocatedSize = size+1;
 		data[size] = 0;
 		vsnprintf(data, allocatedSize, format, va2);
