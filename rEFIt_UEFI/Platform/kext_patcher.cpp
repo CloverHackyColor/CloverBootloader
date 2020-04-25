@@ -972,6 +972,11 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
     DBG_RT(Entry, "==> DISABLED!\n");
     return;
   }
+  
+  if (!Entry->KernelAndKextPatches->KextPatches[N].SearchLen ||
+      (Entry->KernelAndKextPatches->KextPatches[N].SearchLen > DriverSize)) {
+    Entry->KernelAndKextPatches->KextPatches[N].SearchLen = DriverSize;
+  }
 
   if (Entry->KernelAndKextPatches->KPDebug) {
     ExtractKextBundleIdentifier(InfoPlist);
@@ -982,14 +987,31 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   if (!Entry->KernelAndKextPatches->KextPatches[N].IsPlistPatch) {
     // kext binary patch
     DBG_RT(Entry, "Binary patch\n");
-    Num = SearchAndReplaceMask(Driver,
-                               DriverSize,
-                               Entry->KernelAndKextPatches->KextPatches[N].Data,
-                               Entry->KernelAndKextPatches->KextPatches[N].MaskFind,
-                               Entry->KernelAndKextPatches->KextPatches[N].DataLen,
-                               Entry->KernelAndKextPatches->KextPatches[N].Patch,
-                               Entry->KernelAndKextPatches->KextPatches[N].MaskReplace,
-                               -1);
+    UINT8 * curs = Driver;
+    UINTN j = 0;
+    while (j < DriverSize) {
+      if (!Entry->KernelAndKextPatches->KextPatches[N].StartPattern || //old behavior
+          CompareMemMask(curs,
+                         Entry->KernelAndKextPatches->KextPatches[N].StartPattern,
+                         Entry->KernelAndKextPatches->KextPatches[N].StartMask,
+                         Entry->KernelAndKextPatches->KextPatches[N].StartPatternLen)) {
+        DBG_RT(Entry, " StartPattern found\n");
+
+        Num = SearchAndReplaceMask(Driver,
+                                   Entry->KernelAndKextPatches->KextPatches[N].SearchLen,
+                                   Entry->KernelAndKextPatches->KextPatches[N].Data,
+                                   Entry->KernelAndKextPatches->KextPatches[N].MaskFind,
+                                   Entry->KernelAndKextPatches->KextPatches[N].DataLen,
+                                   Entry->KernelAndKextPatches->KextPatches[N].Patch,
+                                   Entry->KernelAndKextPatches->KextPatches[N].MaskReplace,
+                                   -1);
+        if (Num) {
+          curs += Entry->KernelAndKextPatches->KextPatches[N].SearchLen - 1;
+          j    += Entry->KernelAndKextPatches->KextPatches[N].SearchLen - 1;
+        }
+      }
+      j++; curs++;
+    }
   } else {
     // Info plist patch
     DBG_RT(Entry, "Info.plist data : '");

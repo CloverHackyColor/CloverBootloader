@@ -277,6 +277,10 @@ struct KEXT_PATCH
   UINT8       *Patch;
   UINT8       *MaskFind;
   UINT8       *MaskReplace;
+  UINT8       *StartPattern;
+  UINT8       *StartMask;
+  INTN        StartPatternLen;
+  INTN        SearchLen;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
@@ -289,6 +293,10 @@ typedef struct {
   UINT8       *Patch;
   UINT8       *MaskFind;
   UINT8       *MaskReplace;
+  UINT8       *StartPattern;
+  UINT8       *StartMask;
+  INTN        StartPatternLen;
+  INTN        SearchLen;
   INTN        Count;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;

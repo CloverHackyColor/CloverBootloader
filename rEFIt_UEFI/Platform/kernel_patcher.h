@@ -146,6 +146,8 @@ VOID KextPatcherStart(LOADER_ENTRY *Entry);
 //
 UINTN SearchAndCount(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize);
 
+BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSize);
+
 //
 // Searches Source for Search pattern of size SearchSize
 // and replaces it with Replace up to MaxReplaces times.

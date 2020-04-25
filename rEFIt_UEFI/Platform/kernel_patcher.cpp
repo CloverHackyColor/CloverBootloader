@@ -90,7 +90,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
   UINT32      cpuid_family_addr=0, cpuid_model_addr=0;
   UINT64      os_version;
 
-  DBG_RT(Entry, "Looking for _cpuid_set_info _panic ...\n");
+//  DBG_RT(Entry, "Looking for _cpuid_set_info _panic ...\n");
 
   // Determine location of _cpuid_set_info _panic call for reference
   // basically looking for info_p->cpuid_model = bitfield32(reg[eax],  7,  4);
@@ -104,7 +104,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
   }
 
   if (!patchLocation) {
-    DBG_RT(Entry, "_cpuid_set_info Unsupported CPU _panic not found \n");
+//    DBG_RT(Entry, "_cpuid_set_info Unsupported CPU _panic not found \n");
     return;
   }
 
@@ -113,7 +113,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
   // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
   if (os_version >= AsciiOSVersionToUint64("10.6") && os_version <= AsciiOSVersionToUint64("10.7.3")) {
 
-    DBG_RT(Entry, "will patch kernel for macOS 10.6.0 to 10.7.3\n");
+//    DBG_RT(Entry, "will patch kernel for macOS 10.6.0 to 10.7.3\n");
 
     // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
     if (os_version < AsciiOSVersionToUint64("10.6.2")) {
@@ -122,7 +122,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
         if (bytes[i] == 0x48 && bytes[i+1] == 0x8D && bytes[i+2] == 0x3D && bytes[i+3] == 0xF4 &&
             bytes[i+4] == 0x63 && bytes[i+5] == 0x2A && bytes[i+6] == 0x00) {
           patchLocation1 = i+9;
-          DBG_RT(Entry, "Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
+//          DBG_RT(Entry, "Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
           break;
         }
       }
@@ -143,7 +143,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
        C7051C2C5F0000000000   mov     dword [ds:0xffffff80008a22c0], 0x0 (example from 10.7)
        */
       switchaddr = patchLocation - 19;
-      DBG_RT(Entry, "switch statement patch location is 0x%08x\n", (switchaddr+6));
+//      DBG_RT(Entry, "switch statement patch location is 0x%08x\n", (switchaddr+6));
 
       if (bytes[switchaddr + 0] == 0xC7 && bytes[switchaddr + 1] == 0x05 &&
           bytes[switchaddr + 5] == 0x00 && bytes[switchaddr + 6] == 0x00 &&
@@ -173,16 +173,16 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
             cpuid_model_addr = cpuid_family_addr - 0X153;
           }
 
-          DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
-          DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
+//          DBG_RT(Entry, "cpuid_family address: 0x%08x\n", cpuid_family_addr);
+//          DBG_RT(Entry, "cpuid_model address: 0x%08x\n",  cpuid_model_addr);
 
           switchaddr += 6; // offset 6 bytes in mov operation to write a dword instead of zero
 
           // calculate mask for patching, cpuid_family mask not needed as we offset on a valid mask
           mask_model   = cpuid_model_addr - (switchaddr+14);
-          DBG_RT(Entry, "model mask 0x%08x\n", mask_model);
+//          DBG_RT(Entry, "model mask 0x%08x\n", mask_model);
 
-          DBG_RT(Entry, "overriding cpuid_family and cpuid_model as CPUID_INTEL_PENRYN\n");
+//          DBG_RT(Entry, "overriding cpuid_family and cpuid_model as CPUID_INTEL_PENRYN\n");
           bytes[switchaddr+0] = (CPUFAMILY_INTEL_PENRYN & 0x000000FF) >>  0;
           bytes[switchaddr+1] = (CPUFAMILY_INTEL_PENRYN & 0x0000FF00) >>  8;
           bytes[switchaddr+2] = (CPUFAMILY_INTEL_PENRYN & 0x00FF0000) >> 16;
@@ -207,7 +207,7 @@ VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
         }
       }
       else {
-        DBG_RT(Entry, "Unable to determine cpuid_family address, patching aborted\n");
+//        DBG_RT(Entry, "Unable to determine cpuid_family address, patching aborted\n");
         return;
       }
     }
@@ -787,7 +787,7 @@ BOOLEAN KernelLapicPatch_64(VOID *kernelData, LOADER_ENTRY *Entry)
       } else {
         DBG_RT(Entry, "Patched Lapic panic master (10.10 - recent macOS)\n");
         // E8 XX XX FF FF 83 XX XX XX XX 00 00
-        // E8 XX XX FF FF 31 C0 90 90 90 90 90
+        // E8 XX XX FF FF 31 C0 90 90 90 90 90 xor eax,eax; nop; nop;....
         bytes[patchLocation2 + 5] = 0x31;
         bytes[patchLocation2 + 6] = 0xC0;
         for (i = 7; i < 12; i++) {
@@ -1420,7 +1420,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
   UINT32 i;
   //UINT32 Length = sizeof(kernelData);
 
-  DBG("Start find SSE3 address\n");
+ // DBG("Start find SSE3 address\n");
   i=0;
   //for (i=0;i<Length;i++)
   while(TRUE) {
@@ -1429,7 +1429,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
         bytes[i-1664-32] == 0x55
         ) {
       patchLocation1 = i-1664-32;
-      DBG("Found SSE3 data address at 0x%08X\n",patchLocation1);
+//      DBG("Found SSE3 data address at 0x%08X\n",patchLocation1);
     }
 
     // hasSSE2+..... title
@@ -1438,31 +1438,31 @@ VOID Patcher_SSE3_6(VOID* kernelData)
         bytes[i+6] == 0xFF && bytes[i+7] == 0xFF && bytes[i+8] == 0x24 &&
         bytes[i+9] == 0x01) {
       patchLocation2 = i;
-      DBG("Found SSE3 Title address at 0x%08X\n",patchLocation2);
+//      DBG("Found SSE3 Title address at 0x%08X\n",patchLocation2);
       break;
     }
     i++;
   }
 
   if (!patchLocation1 || !patchLocation2) {
-    DBG("Can't found SSE3 data addres or Title address at 0x%08X 0x%08X\n", patchLocation1, patchLocation2);
+//    DBG("Can't found SSE3 data addres or Title address at 0x%08X 0x%08X\n", patchLocation1, patchLocation2);
     return;
   }
 
-  DBG("Found SSE3 last data addres Start\n");
+//  DBG("Found SSE3 last data addres Start\n");
   i = patchLocation1 + 1500;
   //for (i=(patchLocation1+1500); i<(patchLocation1+3000); i++)
   while(TRUE) {
     if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55 ) {
       patchlast = (i+1) - patchLocation1;
-      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
+//      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
       break;
     }
     i++;
   }
 
   if (!patchlast) {
-    DBG("Can't found SSE3 data last addres at 0x%08X\n", patchlast);
+ //   DBG("Can't found SSE3 data last addres at 0x%08X\n", patchlast);
     return;
   }
   // patch sse3_64 data
@@ -1492,14 +1492,14 @@ VOID Patcher_SSE3_5(VOID* kernelData)
   UINT32 Length = sizeof(kernelData);
   UINT32 i;
 
-  DBG("Start find SSE3 address\n");
+//  DBG("Start find SSE3 address\n");
 
   for (i=256; i<(Length-256); i++) {
     if (bytes[i] == 0x66 && bytes[i+1] == 0x0F && bytes[i+2] == 0x6F &&
         bytes[i+3] == 0x44 && bytes[i+4] == 0x0E && bytes[i+5] == 0xF1 &&
         bytes[i-1680-32] == 0x55) {
       patchLocation1 = i-1680-32;
-      DBG("Found SSE3 data address at 0x%08X\n",patchLocation1);
+//      DBG("Found SSE3 data address at 0x%08X\n",patchLocation1);
     }
 
     // khasSSE2+..... title
@@ -1508,28 +1508,28 @@ VOID Patcher_SSE3_5(VOID* kernelData)
         bytes[i+6] == 0xFF && bytes[i+7] == 0xFF && bytes[i+8] == 0x24 &&
         bytes[i+9] == 0x01) {
       patchLocation2 = i;
-      DBG("Found SSE3 Title address at 0x%08X\n",patchLocation2);
+//      DBG("Found SSE3 Title address at 0x%08X\n",patchLocation2);
       break;
     }
   }
 
   if (!patchLocation1 || !patchLocation2) {
-    DBG("Can't found SSE3 data addres or Title address at 0x%08X 0x%08X\n", patchLocation1, patchLocation2);
+//    DBG("Can't found SSE3 data addres or Title address at 0x%08X 0x%08X\n", patchLocation1, patchLocation2);
     return;
   }
 
-  DBG("Found SSE3 last data addres Start\n");
+//  DBG("Found SSE3 last data addres Start\n");
 
   for (i=(patchLocation1+1500);i<Length;i++) {
     if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55) {
       patchlast = (i+1) - patchLocation1;
-      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
+//      DBG("Found SSE3 last data addres at 0x%08X\n", patchlast);
       break;
     }
   }
 
   if (!patchlast) {
-    DBG("Can't found SSE3 data last addres at 0x%08X\n", patchlast);
+//    DBG("Can't found SSE3 data last addres at 0x%08X\n", patchlast);
     return;
   }
 
@@ -1784,6 +1784,9 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
 {
   INTN Num, i = 0, y = 0;
   // old confuse
+  // We are using Entry->KernelAndKextPatches as set by Custom Entries.
+  // while config patches go to gSettings.KernelAndKextPatches
+  // how to resolve it?
 
   for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
 	  DBG_RT(Entry, "Patch[%lld]: %s\n", i, Entry->KernelAndKextPatches->KernelPatches[i].Label);
@@ -1792,23 +1795,41 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
       DBG_RT(Entry, "==> disabled\n");
       continue;
     }
-
-    Num = SearchAndReplaceMask(
-                               UKernelData,
-                               KERNEL_MAX_SIZE,
-                               Entry->KernelAndKextPatches->KernelPatches[i].Data,
-                               Entry->KernelAndKextPatches->KernelPatches[i].MaskFind,
-                               Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
-                               Entry->KernelAndKextPatches->KernelPatches[i].Patch,
-                               Entry->KernelAndKextPatches->KernelPatches[i].MaskReplace,
-                               Entry->KernelAndKextPatches->KernelPatches[i].Count
-                               );
-
-    if (Num) {
-      y++;
+    if (!Entry->KernelAndKextPatches->KernelPatches[i].SearchLen) {
+      Entry->KernelAndKextPatches->KernelPatches[i].SearchLen = KERNEL_MAX_SIZE;
     }
-
-	  DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
+    UINT8 * curs = UKernelData;
+    UINTN j = 0;
+    while (j < KERNEL_MAX_SIZE) {
+      if (!Entry->KernelAndKextPatches->KernelPatches[i].StartPattern || //old behavior
+          CompareMemMask(curs,
+                         Entry->KernelAndKextPatches->KernelPatches[i].StartPattern,
+                         Entry->KernelAndKextPatches->KernelPatches[i].StartMask,
+                         Entry->KernelAndKextPatches->KernelPatches[i].StartPatternLen)) {
+        DBG_RT(Entry, " StartPattern found\n");
+        Num = SearchAndReplaceMask(curs,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].SearchLen,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].Data,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].MaskFind,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].Patch,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].MaskReplace,
+                                   Entry->KernelAndKextPatches->KernelPatches[i].Count
+                                   );
+        
+        if (Num) {
+          y++;
+          curs += Entry->KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
+          j    += Entry->KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
+        }
+        DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
+        if (!Entry->KernelAndKextPatches->KernelPatches[i].StartPattern ||
+            !Entry->KernelAndKextPatches->KernelPatches[i].StartPatternLen) {
+          break;
+        }
+      }
+      j++; curs++;
+    }
   }
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
@@ -1821,29 +1842,48 @@ BOOLEAN
 BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry)
 {
   INTN Num, i = 0, y = 0;
+  if (!Entry->KernelAndKextPatches->BootPatches[i].SearchLen) {
+    Entry->KernelAndKextPatches->BootPatches[i].SearchLen = BooterSize;
+  }
   for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {
 	  DBG_RT(Entry, "Patch[%lld]: %s\n", i, Entry->KernelAndKextPatches->BootPatches[i].Label);
     if (!Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
       DBG_RT(Entry, "==> disabled\n");
       continue;
     }
-    
-    Num = SearchAndReplaceMask(
-                               BooterData,
-                               BooterSize,
-                               Entry->KernelAndKextPatches->BootPatches[i].Data,
-                               Entry->KernelAndKextPatches->BootPatches[i].MaskFind,
-                               Entry->KernelAndKextPatches->BootPatches[i].DataLen,
-                               Entry->KernelAndKextPatches->BootPatches[i].Patch,
-                               Entry->KernelAndKextPatches->BootPatches[i].MaskReplace,
-                               Entry->KernelAndKextPatches->BootPatches[i].Count
-                               );
-    
-    if (Num) {
-      y++;
+    UINT8 * curs = BooterData;
+    UINTN j = 0;
+    while (j < BooterSize) {
+      if (!Entry->KernelAndKextPatches->BootPatches[i].StartPattern || //old behavior
+          CompareMemMask(curs,
+                         Entry->KernelAndKextPatches->BootPatches[i].StartPattern,
+                         Entry->KernelAndKextPatches->BootPatches[i].StartMask,
+                         Entry->KernelAndKextPatches->BootPatches[i].StartPatternLen)) {
+        DBG_RT(Entry, " StartPattern found\n");
+
+        Num = SearchAndReplaceMask(BooterData,
+                                   Entry->KernelAndKextPatches->BootPatches[i].SearchLen,
+                                   Entry->KernelAndKextPatches->BootPatches[i].Data,
+                                   Entry->KernelAndKextPatches->BootPatches[i].MaskFind,
+                                   Entry->KernelAndKextPatches->BootPatches[i].DataLen,
+                                   Entry->KernelAndKextPatches->BootPatches[i].Patch,
+                                   Entry->KernelAndKextPatches->BootPatches[i].MaskReplace,
+                                   Entry->KernelAndKextPatches->BootPatches[i].Count
+                                   );
+        if (Num) {
+          y++;
+          curs += Entry->KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
+          j    += Entry->KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
+        }
+
+        DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
+        if (!Entry->KernelAndKextPatches->BootPatches[i].StartPattern ||
+            !Entry->KernelAndKextPatches->BootPatches[i].StartPatternLen) {
+          break;
+        }
+      }
+      j++; curs++;
     }
-    
-	  DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
   }
   if (Entry->KernelAndKextPatches->KPDebug) {
     gBS->Stall(2000000);
@@ -2114,16 +2154,16 @@ KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
   //
   // Kext add
   //
-  if (Entry->KernelAndKextPatches->KPDebug) {
-    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
-        OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-    // disabled kext injection if FakeSMC is already present
- //   Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS); //Slice - we are already here
-    
-      DBG_RT(Entry, "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
-      gBS->Stall(500000);
-    }
-  }
+//  if (Entry->KernelAndKextPatches->KPDebug) {
+//    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
+//        OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+//    disabled kext injection if FakeSMC is already present
+//    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS); //Slice - we are already here
+//
+//      DBG_RT(Entry, "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
+//      gBS->Stall(500000);
+//    }
+//  }
 
   if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
     UINT32      deviceTreeP;

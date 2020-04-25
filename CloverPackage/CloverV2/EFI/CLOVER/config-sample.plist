@@ -451,6 +451,28 @@
 				<key>Replace</key>
 				<data>igKEwOtE</data>
 			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Lapci panic patch example</string>
+				<key>MatchOS</key>
+				<string>All</string>
+				<key>Disabled</key>
+				<true/>
+				<key>StartPattern</key>
+				<data>ACnHeAAx241H+oM=</data>
+				<key>MaskStart</key>
+				<data>/////wA=</data>
+				<key>Find</key>
+				<data>6AAA//+DAAAAAAAA</data>
+				<key>MaskFind</key>
+				<data>/wAA////AAAAAP//</data>
+				<key>Replace</key>
+				<data>6AAA//8xwJCQkJCQ</data>
+				<key>MaskReplace</key>
+				<data>/wAA////////////</data>
+				<key>RangeFind</key>
+				<integer>200</integer>
+			</dict>
 		</array>
 		<key>#ForceKextsToLoad</key>
 		<array>

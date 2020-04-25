@@ -794,6 +794,15 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KextPatches[Dst->NrKexts].Patch = (__typeof__(Dst->KextPatches[Dst->NrKexts].Patch))AllocateCopyPool (Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
       Dst->KextPatches[Dst->NrKexts].MatchOS = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchOS))AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
       Dst->KextPatches[Dst->NrKexts].MatchBuild = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchBuild))AllocateCopyPool (AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
+      if (Src->KextPatches[i].StartPattern != NULL) {
+        Dst->KextPatches[Dst->NrKexts].StartPattern = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartPattern))AllocateCopyPool (Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartPattern);
+        Dst->KextPatches[Dst->NrKexts].StartMask = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartMask))AllocateCopyPool (Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartMask);
+      } else {
+        Dst->KextPatches[Dst->NrKexts].StartPattern = NULL;
+        Dst->KextPatches[Dst->NrKexts].StartMask = NULL;
+      }
+      Dst->KextPatches[Dst->NrKexts].StartPatternLen = Src->KextPatches[i].StartPatternLen;
+      Dst->KextPatches[Dst->NrKexts].SearchLen = Src->KextPatches[i].SearchLen;
       ++(Dst->NrKexts);
     }
   }
@@ -824,13 +833,23 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       if (Src->KernelPatches[i].MaskFind != NULL) {
         Dst->KernelPatches[Dst->NrKernels].MaskFind = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MaskFind))AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].MaskFind);
       } else {
-        Dst->KernelPatches[Dst->NrKernels].MaskFind        = NULL;
+        Dst->KernelPatches[Dst->NrKernels].MaskFind = NULL;
       }
       if (Src->KernelPatches[i].MaskReplace != NULL) {
         Dst->KernelPatches[Dst->NrKernels].MaskReplace = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MaskReplace))AllocateCopyPool (Src->KernelPatches[i].DataLen, Src->KernelPatches[i].MaskReplace);
       } else {
-        Dst->KernelPatches[Dst->NrKernels].MaskReplace        = NULL;
+        Dst->KernelPatches[Dst->NrKernels].MaskReplace = NULL;
       }
+      if (Src->KernelPatches[i].StartPattern != NULL) {
+        Dst->KernelPatches[Dst->NrKernels].StartPattern = (__typeof__(Dst->KernelPatches[Dst->NrKernels].StartPattern))AllocateCopyPool (Src->KernelPatches[i].StartPatternLen, Src->KernelPatches[i].StartPattern);
+        Dst->KernelPatches[Dst->NrKernels].StartMask = (__typeof__(Dst->KernelPatches[Dst->NrKernels].StartMask))AllocateCopyPool (Src->KernelPatches[i].StartPatternLen, Src->KernelPatches[i].StartMask);
+      } else {
+        Dst->KernelPatches[Dst->NrKernels].StartPattern = NULL;
+        Dst->KernelPatches[Dst->NrKernels].StartMask    = NULL;
+      }
+      Dst->KernelPatches[Dst->NrKernels].StartPatternLen = Src->KernelPatches[Dst->NrKernels].StartPatternLen;
+      Dst->KernelPatches[Dst->NrKernels].SearchLen = Src->KernelPatches[Dst->NrKernels].SearchLen;
+
       ++(Dst->NrKernels);
     }
   }
@@ -1078,6 +1097,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (Patches->KextPatches[i].MatchBuild) {
           FreePool(Patches->KextPatches[i].MatchBuild);
         }
+        if (Patches->KextPatches[i].StartPattern) {
+          FreePool(Patches->KextPatches[i].StartPattern);
+        }
+        if (Patches->KextPatches[i].StartMask) {
+          FreePool(Patches->KextPatches[i].StartMask);
+        }
+
       }
       Patches->NrKexts = 0;
       FreePool(Patches->KextPatches);
@@ -1088,21 +1114,21 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       KEXT_PATCH *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KEXT_PATCH));
 
       Patches->KextPatches = newPatches;
-		DBG("KextsToPatch: %lld requested\n", Count);
+      DBG("KextsToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         CHAR8 *KextPatchesName, *KextPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement (Prop, i, &Prop2);
         if (EFI_ERROR(Status)) {
-			DBG(" - [%02lld]: Patches error %s getting next element\n", i, strerror(Status));
+          DBG(" - [%02lld]: Patches error %s getting next element\n", i, strerror(Status));
           continue;
         }
 
         if (Prop2 == NULL) {
           break;
         }
-		  DBG(" - [%02lld]:", i);
+        DBG(" - [%02lld]:", i);
 
         Dict = GetProperty(Prop2, "Name");
         if (Dict == NULL) {
@@ -1132,6 +1158,29 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if ((Dict != NULL) && IsPropertyTrue (Dict)) {
           Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = FALSE;
         }
+        
+        Dict = GetProperty(Prop2, "RangeFind");
+        Patches->KextPatches[Patches->NrKexts].SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
+        
+        TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
+        if (TmpData != NULL) {
+          Patches->KextPatches[Patches->NrKexts].StartPatternLen = FindLen;
+          Patches->KextPatches[Patches->NrKexts].StartPattern = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartPattern))AllocateCopyPool (FindLen, TmpData);
+          FreePool(TmpData);
+        }
+        
+        TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
+        ReplaceLen = MIN(ReplaceLen, FindLen);
+        if (FindLen != 0) {
+          Patches->KextPatches[Patches->NrKexts].StartMask = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartMask))AllocateZeroPool (FindLen);
+          SetMem(Patches->KextPatches[Patches->NrKexts].StartMask, FindLen, 0xFF);
+          if (TmpData != NULL) {
+            CopyMem(Patches->KextPatches[Patches->NrKexts].StartMask, TmpData, ReplaceLen);
+          }
+        }
+        if (TmpData != NULL) {
+          FreePool(TmpData);
+        }
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
         TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
@@ -1144,6 +1193,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Patches->KextPatches[Patches->NrKexts].Data = (__typeof__(Patches->KextPatches[Patches->NrKexts].Data))AllocateCopyPool (FindLen, TmpData);
         Patches->KextPatches[Patches->NrKexts].DataLen      = FindLen;
         FreePool(TmpData);
+        
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
 
@@ -1279,6 +1329,30 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         Dict = GetProperty(Prop2, "Disabled");
         Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue   = !IsPropertyTrue (Dict);
+        
+        Dict = GetProperty(Prop2, "RangeFind");
+        Patches->KernelPatches[Patches->NrKernels].SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
+        
+        TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
+        if (TmpData != NULL) {
+          Patches->KernelPatches[Patches->NrKernels].StartPatternLen = FindLen;
+          Patches->KernelPatches[Patches->NrKernels].StartPattern = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartPattern))AllocateCopyPool (FindLen, TmpData);
+          FreePool(TmpData);
+        }
+        
+        TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
+        ReplaceLen = MIN(ReplaceLen, FindLen);
+        if (FindLen != 0) {
+          Patches->KernelPatches[Patches->NrKernels].StartMask = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartMask))AllocateZeroPool (FindLen);
+          SetMem(Patches->KernelPatches[Patches->NrKernels].StartMask, FindLen, 0xFF);
+          if (TmpData != NULL) {
+            CopyMem(Patches->KernelPatches[Patches->NrKernels].StartMask, TmpData, ReplaceLen);
+          }
+        }
+        if (TmpData != NULL) {
+          FreePool(TmpData);
+        }
+
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
         TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
@@ -1409,6 +1483,30 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty(Prop2, "Disabled");
         Patches->BootPatches[Patches->NrBoots].MenuItem.BValue   = !IsPropertyTrue (Dict);
         Patches->BootPatches[Patches->NrBoots].MenuItem.ItemType = BoolValue;
+        
+        Dict = GetProperty(Prop2, "RangeFind");
+        Patches->BootPatches[Patches->NrBoots].SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
+        
+        TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
+        if (TmpData != NULL) {
+          Patches->BootPatches[Patches->NrBoots].StartPatternLen = FindLen;
+          Patches->BootPatches[Patches->NrBoots].StartPattern = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartPattern))AllocateCopyPool (FindLen, TmpData);
+          FreePool(TmpData);
+        }
+        
+        TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
+        ReplaceLen = MIN(ReplaceLen, FindLen);
+        if (FindLen != 0) {
+          Patches->BootPatches[Patches->NrBoots].StartMask = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartMask))AllocateZeroPool (FindLen);
+          SetMem(Patches->BootPatches[Patches->NrBoots].StartMask, FindLen, 0xFF);
+          if (TmpData != NULL) {
+            CopyMem(Patches->BootPatches[Patches->NrBoots].StartMask, TmpData, ReplaceLen);
+          }
+        }
+        if (TmpData != NULL) {
+          FreePool(TmpData);
+        }
+        
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
         TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
