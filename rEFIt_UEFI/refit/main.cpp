@@ -35,6 +35,7 @@
  */
 
 #include "../Platform/Platform.h"
+#include "../cpp_foundation/XString.h"
 #include "../cpp_util/globals_ctor.h"
 #include "../cpp_util/globals_dtor.h"
 #include "../cpp_unit_test/all_tests.h"
@@ -2136,7 +2137,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     const CHAR16 *aaa = L"12345  ";
     const CHAR8 *bbb = "12345  ";
     DBG(" string %ls, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa), iStrLen(bbb, 10));
-
+    const CHAR8* ccc = "Выход  ";
+    DBG(" string %s, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", ccc, AsciiStrSize(ccc), AsciiStrLen(ccc), sizeof(ccc), iStrLen(ccc, 10));
+    XString ddd = "Выход "_XS;
+ //   size_t sizex = ddd.allocatedSize();
+    DBG(" xstring %s, asize=%ld, sizeinbyte=%ld sizeof=%ld lastcharat=%ld\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd),
+      ddd.indexOf(ddd.LastChar()));
     CHAR8           compatible[64];
     UINT32 FakeLAN = 0x0030168c;
     UINT32 FakeID = FakeLAN >> 16;
