@@ -1380,24 +1380,22 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
     return;
   }
 
-//  INTN TextLen = StrLen(Text);
-
   // number of chars to be drawn on the screen
-  INTN MaxTextLen = 13;
-//  INTN EllipsisLen = 2;
-
+  UINTN MaxTextLen = 15;
 
   // some optimization
   if (ThemeX.TileXSpace >= 25) {
     MaxTextLen = ThemeX.TileXSpace / 5 + 9;
   }
 
-//  MaxTextLen += EllipsisLen;
   XStringW BCSTextX;
-  BCSTextX.StrnCpy(Text, MaxTextLen);
-  BCSTextX += L"..";
+  if (StrLen(Text) <= MaxTextLen) { // if the text exceeds the given limit
+    BCSTextX.StrnCpy(Text, MaxTextLen);
+  } else {
+    BCSTextX.StrnCpy(Text, MaxTextLen - 2); // EllipsisLen=2
+    BCSTextX += L"..";
+  }
   DrawTextXY(BCSTextX, XPos, YPos, XAlign);
-
 }
 
 VOID REFIT_MENU_SCREEN::DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor)

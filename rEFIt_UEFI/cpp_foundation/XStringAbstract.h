@@ -124,6 +124,7 @@ template <size_t _Np> struct XStringAbstract__is_char_st<wchar_t[_Np]>          
 
 
 #define asciiToLower(ch) (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch)
+#define asciiToUpper(ch) (((ch >= L'a') && (ch <= L'z')) ? ((ch - L'a') + L'A') : ch)
 
 template<typename S, typename O>
 int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
@@ -543,6 +544,15 @@ public:
 		T* s = m_data;
 		while ( *s ) {
 			*s = asciiToLower(*s);
+			s++;
+		}
+	}
+
+	void upperAscii()
+	{
+		T* s = m_data;
+		while ( *s ) {
+			*s = asciiToUpper(*s);
 			s++;
 		}
 	}

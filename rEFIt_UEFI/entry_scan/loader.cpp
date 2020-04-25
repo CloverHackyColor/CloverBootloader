@@ -85,6 +85,24 @@ typedef struct LINUX_PATH_DATA
    CONST CHAR8  *Issue;
 } LINUX_PATH_DATA;
 
+typedef struct LINUX_ICON_DATA
+{
+   CONST CHAR16 *DirectoryName;
+   CONST CHAR16 *IconName;
+} LINUX_ICON_MAPPING;
+
+STATIC LINUX_ICON_DATA LinuxIconMapping[] = {
+    { L"LinuxMint", L"mint" },
+    { L"arch_grub", L"arch" },
+    { L"opensuse", L"suse" },
+    { L"ORACLE", L"solaris" },
+    { L"elementary", L"eos" },
+    { L"pclinuxos", L"pclinux" },
+    { L"mx18", L"mx" },
+    { L"mx19", L"mx" }
+};
+STATIC CONST UINTN LinuxIconMappingCount = (sizeof(LinuxIconMapping) / sizeof(LINUX_ICON_DATA));
+
 STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 #if defined(MDE_CPU_X64)
   //comment out all common names
@@ -147,8 +165,6 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 #endif
   { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
 };
-
-
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
 
 #if defined(ANDX86)
@@ -1254,15 +1270,24 @@ VOID ScanLoader(VOID)
           //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
           continue;
         }
-        XString OSName = SPrintf("%ls", DirEntry->FileName); //this is folder name "ubuntu"
         XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
+        XStringW OSName = SPrintf("%ls", DirEntry->FileName); // this is folder name, for example "ubuntu"
+        OSName.lowerAscii(); // lowercase for icon name
         if (FileExists(Volume->RootDir, File.wc_str())) {
-          XStringW LoaderTitle = SWPrintf("%s OS EFI boot menu", OSName.c_str());
-          XString IconXS = OSName + ",linux"_XS;
-          IconXS.lowerAscii(); //to avoid misconception
-          DBG("  found entry %s\n", IconXS.c_str());
+          // check if nonstandard icon mapping is needed
+          for (Index = 0; Index < LinuxIconMappingCount; ++Index) {
+            if (StrCmp(OSName.wc_str(),LinuxIconMapping[Index].DirectoryName) == 0) {
+              OSName = XStringW().takeValueFrom(LinuxIconMapping[Index].IconName);
+              break;
+            }
+          }
+          DBG("  found entry %ls,linux\n", OSName.wc_str());
+          XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
+          LoaderTitle.upperAscii();
+          LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
-          ImageX = ThemeX.LoadOSIcon(IconXS);
+          // load from directory, as we don't have linux icons preloaded
+          ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
           AddLoaderEntry(File.wc_str(), ""_XS, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries
@@ -1275,7 +1300,7 @@ VOID ScanLoader(VOID)
           XStringW IconXSW = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
           ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
           AddLoaderEntry(LinuxEntryData[Index].Path, ""_XS, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
-                         (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+                         (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         }
       }
       // check for linux kernels
