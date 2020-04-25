@@ -9,6 +9,10 @@
 #ifndef Platform_h_h
 #define Platform_h_h
 
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
+
 #include <limits.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -34,9 +38,12 @@ typedef uint16_t char16_t;
 #define IN
 #define OUT
 
+#ifndef TRUE
 #define TRUE true
+#endif
+#ifndef FALSE
 #define FALSE false
-
+#endif
 #define VA_LIST va_list
 #define VA_START va_start
 #define VA_END va_end

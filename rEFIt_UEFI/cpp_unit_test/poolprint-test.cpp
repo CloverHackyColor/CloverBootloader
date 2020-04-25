@@ -93,21 +93,21 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 #define Test1arg(expectResult,format,c) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
     snprintf(label, sizeof(label), F("Test swprintf(%s, %s)"), F(#format), F(#c)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),L##format,c); \
 }
 
 #define Test2arg(expectResult,format,c,d) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
     snprintf(label, sizeof(label), F("Test swprintf(%s, %s, %s)"), F(#format), F(#c), F(#d)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),L##format,c,d); \
 }
 
 #define Test5arg(expectResult,format,c,d,e,f,g) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
     snprintf(label, sizeof(label), F("Test swprintf(%s, %s, %s, %s, %s, %s)"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),L##format,c,d,e,f,g); \
 }
@@ -115,6 +115,8 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 int poolprint_tests(void)
 {
+	char label[1024]; // to avoid __chkstk problem in Visual studio, label is declared here to be used in TestArg macros
+
 #ifdef DISPLAY_START_INFO
 	loggf(F("\n"));
 	loggf(F("Printf unit test\n"));

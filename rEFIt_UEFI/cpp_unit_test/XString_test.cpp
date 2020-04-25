@@ -172,56 +172,70 @@ struct TestStringMultiCoded
 	TestString<char16_t> utf16;
 	TestString<char32_t> utf32;
 	TestString<wchar_t> wchar;
-	
-//	template<class TestStringRet>
-//	TestStringRet& getTestString4Encoding(const char* enc) {
-//		if ( strcmp(enc, "utf8") == 0 ) return utf8;
-//		if ( strcmp(enc, "utf16") == 0 ) return utf16;
-//		if ( strcmp(enc, "utf32") == 0 ) return utf32;
-//		if ( strcmp(enc, "wchar") == 0 ) return wchar;
-//		panic();
-//	}
 };
 
 
 #define nbchar(s) (sizeof(s)/sizeof(*s)-1)
 
-#define testStringArray_LINE(utf) { \
+#define testStringArray_LINE(utf) \
     TestString<char>(nbchar(utf), utf, nbchar(PREFIX_U(utf)), PREFIX_U(utf)), \
     TestString<char16_t>(nbchar(PREFIX_u(utf)), PREFIX_u(utf), nbchar(PREFIX_U(utf)), PREFIX_U(utf)), \
     TestString<char32_t>(nbchar(PREFIX_U(utf)), PREFIX_U(utf), nbchar(PREFIX_U(utf)), PREFIX_U(utf)), \
     TestString<wchar_t>(nbchar(PREFIX_L(utf)), PREFIX_L(utf), nbchar(PREFIX_U(utf)), PREFIX_U(utf)), \
-}
+
+
+struct TestStringMultiCodedAndExpectedResult
+{
+	TestString<char> utf8;
+	TestString<char16_t> utf16;
+	TestString<char32_t> utf32;
+	TestString<wchar_t> wchar;
+	TestString<char> utf8_expectedResult;
+	TestString<char16_t> utf16_expectedResult;
+	TestString<char32_t> utf32_expectedResult;
+	TestString<wchar_t> wchar_expectedResult;
+};
+
+#define testStringExpectedArray_LINE(utf, expected) \
+    testStringArray_LINE(utf) testStringArray_LINE(expected)
 
 //TestString<char> foo("", "utf8", 1, "a", 1, U"a");
 
 const TestStringMultiCoded testStringMultiCodedArray[] = {
-	testStringArray_LINE(""),
-	testStringArray_LINE("a"),
+	{ testStringArray_LINE("") },
+	{ testStringArray_LINE("a") },
 #ifndef _MSC_VER
-	testStringArray_LINE(utf8_1),
-	testStringArray_LINE(utf8_2),
-	testStringArray_LINE(utf8_3),
-	testStringArray_LINE(utf8_4),
-	testStringArray_LINE(utf8_5),
-	testStringArray_LINE(utf8_6),
-	testStringArray_LINE(utf8_7),
-	testStringArray_LINE(utf8_8),
-//	testStringArray_LINE(utf8_9),
-//	testStringArray_LINE(utf8_10),
-//	testStringArray_LINE(utf8_11),
+	{ testStringArray_LINE(utf8_1) },
+	{ testStringArray_LINE(utf8_2) },
+	{ testStringArray_LINE(utf8_3) },
+	{ testStringArray_LINE(utf8_4) },
+	{ testStringArray_LINE(utf8_5) },
+	{ testStringArray_LINE(utf8_6) },
+	{ testStringArray_LINE(utf8_7) },
+	{ testStringArray_LINE(utf8_8) },
+//	{ testStringArray_LINE(utf8_9) },
+//	{ testStringArray_LINE(utf8_10) },
+//	{ testStringArray_LINE(utf8_11) },
 #endif
 };
 
 size_t nbTestStringMultiCoded = *(&testStringMultiCodedArray + 1) - testStringMultiCodedArray;
 
 const TestStringMultiCoded testStringMultiCoded4CaseArray[] = {
-	testStringArray_LINE("ABCDEF"),
-	testStringArray_LINE("abcdeFGHIjklmn"),
+	{ testStringArray_LINE("A൧൨BCギDEизF") },
+	{ testStringArray_LINE("abc聯輦deFGꇊHIjklmn") },
 };
-
 size_t nbTestStringMultiCoded4CaseArray = *(&testStringMultiCoded4CaseArray + 1) - testStringMultiCoded4CaseArray;
 
+
+const TestStringMultiCodedAndExpectedResult testStringMultiCoded4TrimArray[] = {
+	{ testStringExpectedArray_LINE("  A൧൨BCギDEизF", "A൧൨BCギDEизF") },
+	{ testStringExpectedArray_LINE("A൧൨BCギDEизF   ", "A൧൨BCギDEизF") },
+	{ testStringExpectedArray_LINE("  A൧൨BCギDEизF   ", "A൧൨BCギDEизF") },
+	{ testStringExpectedArray_LINE("\1 \31 abc聯輦deFGꇊHIjklmn  \1 \31 ", "abc聯輦deFGꇊHIjklmn") },
+};
+
+size_t nbTestStringMultiCoded4TrimArray = *(&testStringMultiCoded4TrimArray + 1) - testStringMultiCoded4TrimArray;
 
 
 
@@ -809,8 +823,8 @@ SimpleString teststrcat_(const InitialValue& initialValue, const ValueToCat& val
 		} \
 	} \
 
-#define min(x,y) ( (x) < (y) ? (x) : (y) )
-#define max(x,y) ( (x) > (y) ? (x) : (y) )
+#define Xmin(x,y) ( (x) < (y) ? (x) : (y) )
+#define Xmax(x,y) ( (x) > (y) ? (x) : (y) )
 
 /*****************************  strncat  *****************************/
 template<class XStringClass, class InitialValue, class ValueToCat>
@@ -1304,6 +1318,73 @@ SimpleString testindexOf_(const InitialValue& initialValue)
 
 
 
+/*****************************  lastChar  *****************************/
+template<class XStringClass, class InitialValue>
+SimpleString testlastChar_(const InitialValue& initialValue)
+{
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::lastChar(%s\"%s\"", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+
+//	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
+//	ch_t c; // dummy for call utf function
+
+	XStringClass str;
+	str.takeValueFrom(initialValue.cha);
+	
+	char32_t expectedChar = 0;
+	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
+	
+	char32_t char32 = str.lastChar();
+	
+	CHECK_RESULT(char32 == expectedChar,
+				 ssprintf("char32 == expectedChar (%d)", expectedChar),
+				 ssprintf("char32 == expectedChar (%d!=%d)", char32, expectedChar)
+				 );
+
+	return SimpleString();
+}
+
+#define testlastChar(XStringClass, classEncoding) \
+    printf("Test %s::testlastChar\n", STRINGIFY(XStringClass)); \
+	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
+		testlastChar_<XStringClass>(testStringMultiCodedArray[i].classEncoding); \
+	} \
+
+
+
+/*****************************  trim  *****************************/
+template<class XStringClass, class InitialValue, class ExpectedValue>
+SimpleString testtrim_(const InitialValue& initialValue, const ExpectedValue& expectedValue)
+{
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::trim(%s\"%s\"", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+
+//	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
+//	ch_t c; // dummy for call utf function
+
+	XStringClass str;
+	str.takeValueFrom(initialValue.cha);
+	
+	char32_t expectedChar = 0;
+	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
+	
+	str.trim();
+	
+	CHECK_RESULT(str.strcmp(expectedValue.cha) == 0,
+				 ssprintf("str.strcmp(expectedValue.cha) == 0 (\"%s\")", SimpleString(expectedValue.cha).c_str()),
+				 ssprintf("str.strcmp(expectedValue.cha) != 0 (\"%s\"!=\"%s\")", SimpleString(str.c_str()).c_str(), SimpleString(expectedValue.cha).c_str())
+				 );
+//str.takeValueFrom(initialValue.cha);
+//str.trim();
+
+	return SimpleString();
+}
+
+#define testtrim(XStringClass, classEncoding) \
+    printf("Test %s::testtrim\n", STRINGIFY(XStringClass)); \
+	for ( size_t i = 0 ; i < nbTestStringMultiCoded4TrimArray ; i++ ) { \
+		testtrim_<XStringClass>(testStringMultiCoded4TrimArray[i].classEncoding, testStringMultiCoded4TrimArray[i].classEncoding##_expectedResult); \
+	} \
+
+
 
 /*****************************    *****************************/
 #undef realloc
@@ -1335,7 +1416,7 @@ XStringW xw1("c"_XS);
 
 char c = 1;
 int ii = sizeof(size_t);
-unsigned long long ull = SIZE_T_MAX;
+unsigned long long ull = 1;
 unsigned long long ll = 3;
 xw1.dataSized(c);
 xw1.dataSized(ii);
@@ -1374,10 +1455,26 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 //XString str = "ギꇉ伽楘"_XS;
 //char* s = str.data(42);
 
+//size_t size1 = sizeof("В")-1;
+//size_t size2 = sizeof("ы")-1;
+//size_t size3 = sizeof("х")-1;
+//size_t size4 = sizeof("о")-1;
+//size_t size5 = sizeof("д")-1;
+#ifdef _MSC_VER
+//SetConsoleOutputCP(65001);
+#endif
+//
+//printf("%s", "Выход  \n");
+//XString ddd = "Выход  "_XS;
+//printf(" xstring %s, asize=%zu, sizeinbyte=%zu sizeof=%zu lastcharat=%zu\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd), ddd.indexOf(ddd.lastChar()));
+//
+//TestString<char> ts1 = TestString<char>(nbchar("Выход  "), "Выход  ", nbchar(PREFIX_U("Выход  ")), PREFIX_U("Выход  "));
+//testlastChar_<XString>(ts1);
+
 
 //teststrncpy_<XString>("utf8", testStringMultiCodedArray[1].utf8, testStringMultiCodedArray[1].wchar);
 //testindexOf(XString, utf8, utf16);
-testCompare(XString, utf8, utf16);
+//testCompare(XString, utf8, utf16);
 //testindexOf_<XString>(testStringMultiCoded4CaseArray[0].utf8);
 
 
@@ -1396,8 +1493,11 @@ testCompare(XString, utf8, utf16);
 //	TEST_ALL_CLASSES(teststrncat, TEST_ALL_UTF_ALL_UTF); // 2101632 tests
 //
 //	TEST_ALL_CLASSES(testSubString, __TEST0);
-	TEST_ALL_CLASSES(testCompare, TEST_ALL_UTF);
-	TEST_ALL_CLASSES(testindexOf, TEST_ALL_UTF);
+//	TEST_ALL_CLASSES(testCompare, TEST_ALL_UTF);
+//	TEST_ALL_CLASSES(testindexOf, TEST_ALL_UTF);
+//
+//	TEST_ALL_CLASSES(testlastChar, __TEST0);
+	TEST_ALL_CLASSES(testtrim, __TEST0);
 
 
 

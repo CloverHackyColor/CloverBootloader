@@ -49,9 +49,12 @@ struct XStringAbstract__true_type {
 template <class _Tp>
 struct XStringAbstract__make_unsigned {};
 
-template <> struct XStringAbstract__make_unsigned<         char>      {typedef unsigned char     type;};
-template <> struct XStringAbstract__make_unsigned<  signed char>      {typedef unsigned char     type;};
-template <> struct XStringAbstract__make_unsigned<unsigned char>      {typedef unsigned char     type;};
+template <> struct XStringAbstract__make_unsigned<         char>      {typedef unsigned char      type;};
+template <> struct XStringAbstract__make_unsigned<  signed char>      {typedef unsigned char      type;};
+template <> struct XStringAbstract__make_unsigned<unsigned char>      {typedef unsigned char      type;};
+template <> struct XStringAbstract__make_unsigned<     char16_t>      {typedef char16_t           type;};
+template <> struct XStringAbstract__make_unsigned<     char32_t>      {typedef char32_t           type;};
+template <> struct XStringAbstract__make_unsigned<      wchar_t>      {typedef wchar_t            type;};
 template <> struct XStringAbstract__make_unsigned<  signed short>     {typedef unsigned short     type;};
 template <> struct XStringAbstract__make_unsigned<unsigned short>     {typedef unsigned short     type;};
 template <> struct XStringAbstract__make_unsigned<  signed int>       {typedef unsigned int       type;};
@@ -222,8 +225,8 @@ protected:
 	size_t m_allocatedSize;
 	
 	// convenience method. Did it this way to avoid #define in header. They can have an impact on other headers
-	size_t min(size_t x1, size_t x2) const { if ( x1 < x2 ) return x1; return x2; }
-	size_t max(size_t x1, size_t x2) const { if ( x1 > x2 ) return x1; return x2; }
+	size_t Xmin(size_t x1, size_t x2) const { if ( x1 < x2 ) return x1; return x2; }
+	size_t Xmax(size_t x1, size_t x2) const { if ( x1 > x2 ) return x1; return x2; }
 
 // Methods _data is protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
 // If you need a non-const pointer for low-level access, to use dataSized and have to specify the size
@@ -385,7 +388,7 @@ public:
 	char32_t operator [](IntegralType i) const { return char32At(i); }
 
 
-	char32_t LastChar() const { if ( length() > 0 ) return char32At(length()-1); else return 0; }
+	char32_t lastChar() const { if ( length() > 0 ) return char32At(length()-1); else return 0; }
 	
 	//--------------------------------------------------------------------- strcat, strcpy, operator =
 	/* strncpy */
@@ -535,16 +538,28 @@ public:
 
 	//---------------------------------------------------------------------
 
-	XStringAbstract<T, ThisXStringClass> lowerAscii()
+	void lowerAscii()
 	{
 		T* s = m_data;
 		while ( *s ) {
 			*s = asciiToLower(*s);
 			s++;
 		}
-		return *this;
 	}
 	
+	void trim()
+	{
+		T* start = 0;
+		size_t count = 0;
+		T* s = m_data;
+		while ( *s && unsigned_type(T)(*s) <= 32 ) s++;
+		start = s;
+		while ( *s && unsigned_type(T)(*s) > 32 ) s++;
+		count = uintptr_t(s - start);
+		memmove(m_data, start, count*sizeof(T));
+		m_data[count] = 0;
+	}
+
 //	void deleteCountCharsAt(size_t pos, size_t count=1);
 //{
 //	if ( pos < size() ) {
