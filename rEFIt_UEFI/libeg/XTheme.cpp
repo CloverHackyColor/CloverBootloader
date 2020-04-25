@@ -78,8 +78,8 @@ CONST CHAR8* IconsNames[] = {
    "checkbox_checked",
    "scrollbar_background", //24 - present here for SVG theme but should be done more common way
    "scrollbar_holder",
-  //example
-  "os_unknown", //51 == ICON_OTHER_OS
+   "os_unknown", //51 == ICON_OTHER_OS
+   "os_clover",  //52 == ICON_CLOVER
    //other oses will be added below
   ""
 };
