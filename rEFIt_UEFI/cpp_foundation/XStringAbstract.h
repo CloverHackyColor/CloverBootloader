@@ -222,8 +222,8 @@ protected:
 	size_t m_allocatedSize;
 	
 	// convenience method. Did it this way to avoid #define in header. They can have an impact on other headers
-	size_t min(size_t x1, size_t x2) const { if ( x1 < x2 ) return x1; return x2; }
-	size_t max(size_t x1, size_t x2) const { if ( x1 > x2 ) return x1; return x2; }
+	size_t Xmin(size_t x1, size_t x2) const { if ( x1 < x2 ) return x1; return x2; }
+	size_t Xmax(size_t x1, size_t x2) const { if ( x1 > x2 ) return x1; return x2; }
 
 // Methods _data is protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
 // If you need a non-const pointer for low-level access, to use dataSized and have to specify the size
@@ -385,7 +385,7 @@ public:
 	char32_t operator [](IntegralType i) const { return char32At(i); }
 
 
-	char32_t LastChar() const { if ( length() > 0 ) return char32At(length()-1); else return 0; }
+	char32_t lastChar() const { if ( length() > 0 ) return char32At(length()-1); else return 0; }
 	
 	//--------------------------------------------------------------------- strcat, strcpy, operator =
 	/* strncpy */

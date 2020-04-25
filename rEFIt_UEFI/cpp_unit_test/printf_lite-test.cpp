@@ -106,7 +106,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 #define Test1arg(expectResult,format,c) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
 	snprintf(label, sizeof(label), F("Test sprintf(" PRIF ", " PRIF ")"), F(#format), F(#c)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c); \
     snprintf(label, sizeof(label), F("Test swprintf(" PRIF ", " PRIF ")"), F(#format), F(#c)); \
@@ -115,7 +115,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 #define Test2arg(expectResult,format,c,d) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
     snprintf(label, sizeof(label), F("Test sprintf(" PRIF ", " PRIF ", " PRIF ")"), F(#format), F(#c), F(#d)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c,d); \
     snprintf(label, sizeof(label), F("Test swprintf(" PRIF ", " PRIF ", " PRIF ")"), F(#format), F(#c), F(#d)); \
@@ -124,7 +124,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 #define Test5arg(expectResult,format,c,d,e,f,g) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
     snprintf(label, sizeof(label), F("Test sprintf(" PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ")"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c,d,e,f,g); \
     snprintf(label, sizeof(label), F("Test swprintf(" PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ")"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
@@ -133,7 +133,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 #define TestLen5arg(expectResult,expectedRet,format,c,d,e,f,g) \
 { \
-	char label[1024]; \
+	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
     snprintf(label, sizeof(label), F("Test sprintf(" PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ")"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
     testPrintf(label,expectResult,expectedRet,format,c,d,e,f,g); \
     snprintf(label, sizeof(label), F("Test swprintf(" PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ", " PRIF ")"), F(#format), F(#c), F(#d), F(#e), F(#f), F(#g)); \
@@ -143,6 +143,8 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 
 int printf_lite_tests(void)
 {
+	char label[1024]; // to avoid __chkstk problem in Visual studio, label is declared here to be used in TestArg macros
+
 #ifdef DISPLAY_START_INFO
 	loggf(F("\n"));
 	loggf(F("Printf unit test\n"));
@@ -198,7 +200,6 @@ int printf_lite_tests(void)
 //printf("%ls %r\n", "foo", 1);
 
 //testWPrintf("", F(L"Āࠀ𐀀🧊Выход'utf16'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf16");
-
 	Test1arg(F("'utf8-string'"), F("'%s'"), "utf8-string");
 	Test1arg(F("'utf16-string'"), F("'%ls'"), L"utf16-string");
 	Test1arg(F("Āࠀ𐀀🧊Выход'utf8'из"), F("Āࠀ𐀀🧊Выход'%s'из"), "utf8");
@@ -294,14 +295,13 @@ int printf_lite_tests(void)
     Test1arg(F("|  -12|"), F("|%5d|"), -12);
     Test1arg(F("|  -12|"), F("|%5ld|"), -12L);
     Test1arg(F("|  -12|"), F("|%5lld|"), -12LL);
-	
+
     Test1arg(F("|  244|"), F("|%5hhu|"), (signed char)-12);
     Test1arg(F("|4294967284|"), F("|%5u|"), (signed char)-12);
     Test1arg(F("|65524|"), F("|%5hu|"), (short)-12);
     Test1arg(F("|4294967284|"), F("|%5u|"), -12);
     Test1arg(F("|18446744073709551604|"), F("|%5lu|"), -12L);
     Test1arg(F("|18446744073709551604|"), F("|%5llu|"), -12LL);
-	
     Test1arg(F("|   f4|"), F("|%5hhx|"), (signed char)-12);
     Test1arg(F("|fffffff4|"), F("|%5x|"), (signed char)-12);
     Test1arg(F("| fff4|"), F("|%5hx|"), (short)-12);

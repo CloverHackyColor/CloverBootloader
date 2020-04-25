@@ -809,8 +809,8 @@ SimpleString teststrcat_(const InitialValue& initialValue, const ValueToCat& val
 		} \
 	} \
 
-#define min(x,y) ( (x) < (y) ? (x) : (y) )
-#define max(x,y) ( (x) > (y) ? (x) : (y) )
+#define Xmin(x,y) ( (x) < (y) ? (x) : (y) )
+#define Xmax(x,y) ( (x) > (y) ? (x) : (y) )
 
 /*****************************  strncat  *****************************/
 template<class XStringClass, class InitialValue, class ValueToCat>
@@ -1304,6 +1304,38 @@ SimpleString testindexOf_(const InitialValue& initialValue)
 
 
 
+/*****************************  lastChar  *****************************/
+template<class XStringClass, class InitialValue>
+SimpleString testlastChar_(const InitialValue& initialValue)
+{
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::lastChar(%s\"%s\"", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+
+//	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
+//	ch_t c; // dummy for call utf function
+
+	XStringClass str;
+	str.takeValueFrom(initialValue.cha);
+	
+	char32_t expectedChar = 0;
+	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
+	
+	char32_t char32 = str.lastChar();
+	
+	CHECK_RESULT(char32 == expectedChar,
+				 ssprintf("char32 == expectedChar (%d)", expectedChar),
+				 ssprintf("char32 == expectedChar (%d!=%d)", char32, expectedChar)
+				 );
+
+	return SimpleString();
+}
+
+#define testlastChar(XStringClass, classEncoding) \
+    printf("Test %s::testlastChar\n", STRINGIFY(XStringClass)); \
+	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
+		testlastChar_<XStringClass>(testStringMultiCodedArray[i].classEncoding); \
+	} \
+
+
 
 /*****************************    *****************************/
 #undef realloc
@@ -1335,7 +1367,7 @@ XStringW xw1("c"_XS);
 
 char c = 1;
 int ii = sizeof(size_t);
-unsigned long long ull = SIZE_T_MAX;
+unsigned long long ull = 1;
 unsigned long long ll = 3;
 xw1.dataSized(c);
 xw1.dataSized(ii);
@@ -1374,6 +1406,22 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 //XString str = "ギꇉ伽楘"_XS;
 //char* s = str.data(42);
 
+//size_t size1 = sizeof("В")-1;
+//size_t size2 = sizeof("ы")-1;
+//size_t size3 = sizeof("х")-1;
+//size_t size4 = sizeof("о")-1;
+//size_t size5 = sizeof("д")-1;
+#ifdef _MSC_VER
+//SetConsoleOutputCP(65001);
+#endif
+
+printf("%s", "Выход  \n");
+XString ddd = "Выход  "_XS;
+printf(" xstring %s, asize=%zu, sizeinbyte=%zu sizeof=%zu lastcharat=%zu\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd), ddd.indexOf(ddd.lastChar()));
+	
+TestString<char> ts1 = TestString<char>(nbchar("Выход  "), "Выход  ", nbchar(PREFIX_U("Выход  ")), PREFIX_U("Выход  "));
+testlastChar_<XString>(ts1);
+
 
 //teststrncpy_<XString>("utf8", testStringMultiCodedArray[1].utf8, testStringMultiCodedArray[1].wchar);
 //testindexOf(XString, utf8, utf16);
@@ -1398,6 +1446,8 @@ testCompare(XString, utf8, utf16);
 //	TEST_ALL_CLASSES(testSubString, __TEST0);
 	TEST_ALL_CLASSES(testCompare, TEST_ALL_UTF);
 	TEST_ALL_CLASSES(testindexOf, TEST_ALL_UTF);
+
+	TEST_ALL_CLASSES(testlastChar, __TEST0);
 
 
 

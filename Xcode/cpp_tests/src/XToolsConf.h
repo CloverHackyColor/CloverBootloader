@@ -6,7 +6,11 @@
 
 #define xsize size_t
 //#define xisize INTN
+#ifdef _MSC_VER
+#define MAX_XSIZE SIZE_MAX
+#else
 #define MAX_XSIZE SIZE_T_MAX
+#endif
 //#define MAX_XISIZE MAX_INTN
 
 #define XStringGrowByDefault 10

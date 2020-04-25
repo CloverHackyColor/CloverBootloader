@@ -20,6 +20,7 @@
 //
 //#endif
 
+#if defined(CLOVER_BUILD) || !defined(_MSC_VER)
 void abort(void)
 {
 	printf("A fatal error happened. System halted\n");
@@ -27,7 +28,7 @@ void abort(void)
 		CpuDeadLoop();
 	}
 }
-
+#endif
 
 bool stop_at_panic = true;
 bool i_have_panicked = false;

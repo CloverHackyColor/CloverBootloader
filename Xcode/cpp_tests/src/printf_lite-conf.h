@@ -13,7 +13,7 @@
 
 #ifndef __cplusplus
 	#ifdef _MSC_VER
-	  typedef UINT16 wchar_t;
+	  typedef uint16_t wchar_t;
 	#endif
 	typedef uint32_t char32_t;
 	typedef uint16_t char16_t;
