@@ -2142,7 +2142,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     XString ddd = "Выход "_XS;
  //   size_t sizex = ddd.allocatedSize();
     DBG(" xstring %s, asize=%ld, sizeinbyte=%ld sizeof=%ld lastcharat=%ld\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd),
-      ddd.indexOf(ddd.LastChar()));
+      ddd.indexOf(ddd.lastChar()));
     CHAR8           compatible[64];
     UINT32 FakeLAN = 0x0030168c;
     UINT32 FakeID = FakeLAN >> 16;
