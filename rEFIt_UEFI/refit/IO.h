@@ -286,8 +286,6 @@ WaitFor2EventWithTsc (
                       IN UINT64           Timeout OPTIONAL
                     );
 
-EFI_STATUS
-WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
 //VOID        LowCase (IN OUT CHAR8 *Str);
 UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);

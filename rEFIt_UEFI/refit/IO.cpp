@@ -1064,37 +1064,6 @@ WaitFor2EventWithTsc (
 #define ONE_SECOND  10000000
 #define ONE_MSECOND    10000
 
-// TimeoutDefault for a wait in seconds
-// return EFI_TIMEOUT if no inputs
-//the function must be in menu class
-//so UpdatePointer(); => mPointer.Update(&gItemID, &Screen->mAction);
-EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN* ScreenPtr, UINTN TimeoutDefault)
-{
-  REFIT_MENU_SCREEN& Screen = *ScreenPtr;
-  EFI_STATUS Status = EFI_SUCCESS;
-  UINTN TimeoutRemain = TimeoutDefault * 100;
-
-  while (TimeoutRemain != 0) {
-    Status = WaitFor2EventWithTsc (gST->ConIn->WaitForKey, NULL, 10);
-    if (Status != EFI_TIMEOUT) {
-      break;
-    }
-    Screen.UpdateFilm();
-    if (gSettings.PlayAsync) {
-      CheckSyncSound();
-    }
-    TimeoutRemain--;
-    if (Screen.mPointer.isAlive()) {
-      Screen.mPointer.UpdatePointer();
-      Status = Screen.CheckMouseEvent(); //out: gItemID, gAction
-      if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
-        break;
-      }
-    }
-  }
-  return Status;
-}
-
 
 BOOLEAN
 SetPageBreak (
