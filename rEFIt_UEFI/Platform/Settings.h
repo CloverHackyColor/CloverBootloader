@@ -99,7 +99,7 @@ struct CUSTOM_LOADER_ENTRY {
   CONST CHAR16            *DriveImagePath;
   CONST CHAR16            *Volume;
   CONST CHAR16            *Path;
-  XString                  Options;
+  XStringArray             LoadOptions;
 
   XStringW FullTitle;
   XStringW Title;
@@ -148,7 +148,7 @@ struct CUSTOM_TOOL_ENTRY {
   CHAR16            *ImagePath;
   CHAR16            *Volume;
   CHAR16            *Path;
-  XString           Options;
+  XStringArray      LoadOptions;
   XStringW          FullTitle;
   XStringW          Title;
   CHAR16            Hotkey;

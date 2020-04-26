@@ -197,7 +197,7 @@ bailout:
 
 
 static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
-                                    IN CONST XString& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                    IN CONST XStringArray& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
                                     IN CONST CHAR16 *ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
@@ -229,13 +229,13 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     if (LoadOptionsPrefix != NULL) {
       // NOTE: That last space is also added by the EFI shell and seems to be significant
       //  when passing options to Apple's boot.efi...
-      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.c_str());
+      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.ConcatAll(" "_XS).wc_str());
     }else{
-      loadOptionsW = SWPrintf("%s ", LoadOptions.c_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
+      loadOptionsW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS).wc_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
     }
     // NOTE: We also include the terminating null in the length for safety.
-    ChildLoadedImage->LoadOptions = (void*)EfiStrDuplicate(loadOptionsW.wc_str()); //will it be deleted after the procedure exit?
     ChildLoadedImage->LoadOptionsSize = (UINT32)loadOptionsW.sizeInBytes() + sizeof(wchar_t);
+    ChildLoadedImage->LoadOptions = loadOptionsW.wc_str(); //will it be deleted after the procedure exit? Yes, if we don't copy loadOptionsW, so it'll be freed at the end of method
     //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
     DBG("start image '%ls'\n", ImageTitle);
     DBG("Using load options '%ls'\n", (CHAR16*)ChildLoadedImage->LoadOptions);
@@ -309,7 +309,7 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CONST XString& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                IN CONST XStringArray& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
                                 IN CONST CHAR16 *ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
@@ -750,7 +750,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
 
     // Set boot argument for kernel if no caches, this should force kernel loading
-    if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)  &&  !Entry->LoadOptions.containsIC("Kernel="_XS)  ) {
+    if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)  &&  !Entry->LoadOptions.containsStartWithIC("Kernel=")  ) {
       XString KernelLocation;
 
       if (Entry->OSVersion && AsciiOSVersionToUint64(Entry->OSVersion) <= AsciiOSVersionToUint64("10.9")) {
@@ -759,7 +759,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         // used for 10.10, 10.11, and new version.
         KernelLocation.SPrintf("\"Kernel=/System/Library/Kernels/kernel\"");
       }
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, KernelLocation);
+      Entry->LoadOptions.AddID(KernelLocation);
     }
 
     //we are booting OSX - restore emulation if it's not installed before g boot.efi
@@ -776,7 +776,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     // If KPDebug is true boot in verbose mode to see the debug messages
     if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPDebug) {
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "-v"_XS);
+      Entry->LoadOptions.AddID("-v"_XS);
     }
 
     DbgHeader("RestSetup macOS");
@@ -803,9 +803,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     if (  gDriversFlags.AptioFixLoaded &&
           !DoHibernateWake &&
-          !Entry->LoadOptions.contains("slide=")  ) {
+          !Entry->LoadOptions.containsStartWithIC("slide=")  ) {
       // Add slide=0 argument for ML+ if not present
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "slide=0"_XS);
+      Entry->LoadOptions.AddID("slide=0"_XS);
     }
      
       
@@ -817,9 +817,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
        (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
-       (!Entry->LoadOptions.contains("-xcpm"_XS))) {
+       (!Entry->LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
-        Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "-xcpm"_XS);
+        Entry->LoadOptions.AddID("-xcpm"_XS);
     }
     
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
@@ -827,9 +827,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
         (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
         (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
-        (!Entry->LoadOptions.contains("-xcpm"))) {
+        (!Entry->LoadOptions.containsIC("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, "-xcpm"_XS);
+      Entry->LoadOptions.AddID("-xcpm"_XS);
     }
 
     if (AudioIo) {
@@ -849,10 +849,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // which is wrong
     // apianti - only block console output if using graphics
     //           but don't block custom boot logo
-    if (  Entry->LoadOptions.containsIC("-v"_XS)  ) {
+    if (  Entry->LoadOptions.containsIC("-v")  ) {
           Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
-	} else if ( Entry->LoadOptions.isEmpty() ) {
-	  Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, " "_XS);
 	}
   }
   else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
@@ -979,8 +977,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
 
 //  DBG("StartEFILoadedImage\n");
-  StartEFILoadedImage(ImageHandle, Entry->LoadOptions,
-                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
+  StartEFILoadedImage(ImageHandle, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
     DBG("Failed to unlock custom boot screen: %s!\n", strerror(Status));
@@ -1153,7 +1150,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 
 	  snwprintf(FileName, 512, "%ls\\%ls", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
-                           ""_XS, DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
+                           NullXStringArray, DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
     }
@@ -2434,7 +2431,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-      XString TmpArgs = SPrintf("%s ", gSettings.BootArgs);
+      XStringArray TmpArgs = Split<XStringArray>(gSettings.BootArgs, " ");
       DBG("after NVRAM boot-args=%s\n", gSettings.BootArgs);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", gSettings.OptionsBits);

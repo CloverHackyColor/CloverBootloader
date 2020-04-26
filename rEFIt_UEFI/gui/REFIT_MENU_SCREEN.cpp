@@ -2604,9 +2604,9 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
     TimeoutSeconds = 0;
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
-      XString TmpArgs;
+      XStringArray TmpArgs;
       if (AsciiStrLen(gSettings.BootArgs) > 0) {
-        TmpArgs.SPrintf("%s", gSettings.BootArgs);
+        TmpArgs = Split<XStringArray>(gSettings.BootArgs, " ");
       }
       SubMenuIndex = -1;
 
@@ -2647,7 +2647,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
-            snprintf(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.c_str());
+            snprintf(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS).c_str());
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

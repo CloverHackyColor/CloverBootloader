@@ -37,8 +37,14 @@ class XStringArray_/* : public XStringArraySuper*/
 	/* [] */
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const XStringClass& operator [](IntegralType i) const { return array[i]; }
+	/* ElementAt */
+	template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	const XStringClass& elementAt(IntegralType i) const { return array[i]; }
+	template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	XStringClass& elementAt(IntegralType i) { return array[i]; }
 
-	const XStringClass& dbg(size_t i) const { return array[i]; }
+
+//	const XStringClass& dbg(size_t i) const { return array[i]; }
 
 
 	XStringClass ConcatAll(const XStringClass& Separator = ", "_XS, const XStringClass& Prefix = NullXString, const XStringClass& Suffix = NullXString) const
@@ -75,36 +81,47 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<class OtherXStringArrayClass>
 	bool operator !=(const OtherXStringArrayClass& aXStrings) const { return !Equal(aXStrings); }
 	
-	template<class OtherXStringClass>
+	/* contains */
+	template<typename CharType, enable_if(is_char(CharType))>
+	bool contains(const CharType* s) const
+	{
+		for ( size_t i=0 ; i<array.size() ; i+=1 ) {
+			if ( array.ElementAt(i).equal(s) ) return true;
+		}
+		return false;
+	}
+	template<class OtherXStringClass, enable_if(!is_char(OtherXStringClass) && !is_char_ptr(OtherXStringClass))>
 	bool contains(const OtherXStringClass &S) const
 	{
-		xsize i;
-		
-		for ( i=0 ; i<array.size() ; i+=1 ) {
-			if ( array.ElementAt(i) == S ) return true;
+		return contains(S.s());
+	}
+	/* containsIC */
+	template<typename CharType, enable_if(is_char(CharType))>
+	bool containsIC(const CharType* s) const
+	{
+		for ( size_t i=0 ; i<array.size() ; i+=1 ) {
+			if ( array.ElementAt(i).equalIC(s) ) return true;
 		}
 		return false;
 	}
-	template<class OtherXStringClass>
+	template<class OtherXStringClass, enable_if(!is_char(OtherXStringClass) && !is_char_ptr(OtherXStringClass))>
 	bool containsIC(const OtherXStringClass &S) const
 	{
-		xsize i;
-		
-		for ( i=0 ; i<XStringArraySuper::size() ; i+=1 ) {
-			if ( this->ElementAt(i).EqualIC(S) ) return true;
+		return containsIC(S.s());
+	}
+	/* ContainsStartWithIC */
+	template<typename CharType, enable_if(is_char(CharType))>
+	bool containsStartWithIC(const CharType* s) const
+	{
+		for ( size_t i=0 ; i<array.size() ; i+=1 ) {
+			if ( array.ElementAt(i).startWithIC(s) ) return true;
 		}
 		return false;
 	}
-	
-	template<class OtherXStringClass>
-	bool ContainsStartWithIC(const OtherXStringClass &S) const
+	template<class OtherXStringClass, enable_if(!is_char(OtherXStringClass) && !is_char_ptr(OtherXStringClass))>
+	bool containsStartWithIC(const OtherXStringClass &S) const
 	{
-		xsize i;
-		
-		for ( i=0 ; i<XStringArraySuper::size() ; i+=1 ) {
-			if ( this->ElementAt(i).startWith(S) ) return true;
-		}
-		return false;
+		return ContainsStartWithIC(S.s());
 	}
 
 
@@ -148,15 +165,24 @@ class XStringArray_/* : public XStringArraySuper*/
 	void AddNoNull(const XStringClass &aString) { if ( !aString.isEmpty() ) array.AddCopy(aString); }
 	void AddEvenNull(const XStringClass &aString) { array.AddCopy(aString); }
 
+	template<typename CharType, enable_if(is_char(CharType))>
+	void Add(const CharType* s)
+	{
+		XStringClass* xstr = new XStringClass;
+		xstr->strcpy(s);
+		array.AddReference(xstr, true);
+	}
+
 	void Add(const XStringClass &aString) { array.AddCopy(aString); }
+	
 	void AddReference(XStringClass *newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
 	template<class OtherXStringClass>
-	void Add(const XStringArray_<OtherXStringClass> &aStrings)
+	void import(const XStringArray_<OtherXStringClass> &aStrings)
 	{
 		xsize i;
 		
 		for ( i=0 ; i<aStrings.size() ; i+=1 ) {
-			AddCopy(aStrings[i]);
+			array.AddCopy(aStrings[i]);
 		}
 	}
 
@@ -164,7 +190,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	{
 		if ( !contains(aString) ) array.AddCopy(aString);
 	}
-	void AddID(const XStringArray_ &aStrings) /* ignore Duplicate */
+	void importID(const XStringArray_ &aStrings) /* ignore Duplicate */
 	{
 		xsize i;
 		

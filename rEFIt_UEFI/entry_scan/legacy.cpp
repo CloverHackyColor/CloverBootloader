@@ -161,7 +161,9 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   }
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
-  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD"_XS : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB"_XS : "HD"_XS);
+//  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD"_XS : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB"_XS : "HD"_XS);
+  Entry->LoadOptions.setEmpty();
+  Entry->LoadOptions.Add((Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB" : "HD"));
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN();

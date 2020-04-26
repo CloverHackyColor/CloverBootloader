@@ -712,10 +712,15 @@ public:
 //	int Compare(const wchar_t* S) const { return ::Compare<T, wchar_t>(m_data, S); };
 //
 	template<typename O, class OtherXStringClass>
+	bool equal(const XStringAbstract<O, OtherXStringClass>& S) const { return XStringAbstract__compare(m_data, S.s(), false) == 0; }
+	template<typename O>
+	bool equal(const O* S) const { return XStringAbstract__compare(m_data, S, false) == 0; }
+
+	template<typename O, class OtherXStringClass>
 	bool equalIC(const XStringAbstract<O, OtherXStringClass>& S) const { return XStringAbstract__compare(m_data, S.s(), true) == 0; }
 	template<typename O>
 	bool equalIC(const O* S) const { return XStringAbstract__compare(m_data, S, true) == 0; }
-//	bool startWith(const T* S) const { return (memcmp(data(), S, wcslen(S)) == 0); }
+
 //	bool SubStringEqual(size_t Pos, const T* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
 
 public:

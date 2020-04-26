@@ -854,7 +854,7 @@ CUSTOM_LOADER_ENTRY
       DuplicateEntry->Path           = EfiStrDuplicate (Entry->Path);
     }
 
-	DuplicateEntry->Options        = Entry->Options;
+	DuplicateEntry->LoadOptions        = Entry->LoadOptions;
 
     if (Entry->FullTitle.notEmpty()) {
       DuplicateEntry->FullTitle      = Entry->FullTitle;
@@ -1878,15 +1878,17 @@ FillinCustomEntry (
 
   Prop = GetProperty(DictPointer, "AddArguments");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Options.notEmpty()) {
-      Entry->Options.SPrintf("%s %s", Entry->Options.c_str(), Prop->string);
-    } else {
-      Entry->Options.SPrintf("%s", Prop->string);
-    }
+//    if (Entry->LoadOptions.notEmpty()) {
+//      Entry->Options.SPrintf("%s %s", Entry->Options.c_str(), Prop->string);
+//    } else {
+//      Entry->Options.SPrintf("%s", Prop->string);
+//    }
+	Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
   } else {
     Prop = GetProperty(DictPointer, "Arguments");
     if (Prop != NULL && (Prop->type == kTagTypeString)) {
-      Entry->Options.SPrintf("%s", Prop->string);
+//      Entry->Options.SPrintf("%s", Prop->string);
+	  Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
@@ -2037,8 +2039,9 @@ FillinCustomEntry (
 
   Entry->VolumeType = GetVolumeType(DictPointer);
 
-  if (Entry->Options.isEmpty() && OSTYPE_IS_WINDOWS(Entry->Type)) {
-    Entry->Options.SPrintf("-s -h");
+  if (Entry->LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(Entry->Type)) {
+    Entry->LoadOptions.Add("-s");
+    Entry->LoadOptions.Add("-h");
   }
   if (Entry->Title.isEmpty()) {
     if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
@@ -2308,7 +2311,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->string);
 //    }
-      Entry->Options.SPrintf("%s", Prop->string);
+      Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
   }
 
   Prop = GetProperty(DictPointer, "FullTitle");

@@ -37,6 +37,8 @@
 #include "../refit/menu.h"
 #include "../refit/screen.h"
 #include "../libeg/XImage.h"
+#include "../refit/lib.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 //
 // Clover File location to boot from on removable media devices
@@ -73,7 +75,7 @@
 
 STATIC BOOLEAN AddToolEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XImage& Image,
-                            IN CHAR16 ShortcutLetter, IN CONST XString& Options)
+                            IN CHAR16 ShortcutLetter, IN CONST XStringArray& Options)
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
@@ -160,21 +162,24 @@ STATIC VOID AddCloverEntry(IN CONST CHAR16 *LoaderPath, IN CONST CHAR16 *LoaderT
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Add Clover boot options for all entries");
-    SubEntry->LoadOptions.SPrintf("BO-ADD");
+    SubEntry->LoadOptions.setEmpty();
+    SubEntry->LoadOptions.Add("BO-ADD");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Remove all Clover boot options");
-    SubEntry->LoadOptions.SPrintf("BO-REMOVE");
+    SubEntry->LoadOptions.setEmpty();
+    SubEntry->LoadOptions.Add("BO-REMOVE");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
   SubEntry = Entry->getPartiallyDuplicatedEntry();
   if (SubEntry) {
     SubEntry->Title.SWPrintf("Print all UEFI boot options to log");
-    SubEntry->LoadOptions.SPrintf("BO-PRINT");
+    SubEntry->LoadOptions.setEmpty();
+    SubEntry->LoadOptions.Add("BO-PRINT");
     SubScreen->AddMenuEntry(SubEntry, true);
   }
 
@@ -194,8 +199,8 @@ VOID ScanTool(VOID)
 
   //    DBG("Scanning for tools...\n");
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
-    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS)) {
-      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', ""_XS);
+    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi", NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray)) {
+      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi", NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray);
     }
   }
 
@@ -310,10 +315,10 @@ VOID AddCustomTool(VOID)
         Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
       }
       if (Image.isEmpty()) {
-        AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->Options);
+        AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->LoadOptions);
       } else {
       // Create a legacy entry for this volume
-        AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, Image, Custom->Hotkey, Custom->Options);
+        AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, Image, Custom->Hotkey, Custom->LoadOptions);
       }
       DBG("match!\n");
 //      break; // break scan volumes, continue scan entries -- why?

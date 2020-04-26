@@ -260,7 +260,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
 	  CONST CHAR16     *DevicePathString;
-	  XString          LoadOptions; //moved here for compatibility with legacy
+	  XStringArray          LoadOptions; //moved here for compatibility with legacy
 	  CONST CHAR16     *LoaderPath;
     XImage        DriveImage;
     XImage        BadgeImage;

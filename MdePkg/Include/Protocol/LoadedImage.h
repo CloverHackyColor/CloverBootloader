@@ -59,7 +59,7 @@ typedef struct {
   // Images load options
   //
   UINT32            LoadOptionsSize;///< The size in bytes of LoadOptions.
-  VOID              *LoadOptions;   ///< A pointer to the image's binary load options.
+  VOID JCONST             *LoadOptions;   ///< A pointer to the image's binary load options.
 
   //
   // Location of where image was loaded

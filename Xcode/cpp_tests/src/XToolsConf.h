@@ -1,5 +1,5 @@
-#ifndef __XTOOLSCOMMON_H__
-#define __XTOOLSCOMMON_H__
+#ifndef __XTOOLSCONF_H__
+#define __XTOOLSCONF_H__
 
 #include <posix.h>
 

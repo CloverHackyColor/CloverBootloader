@@ -71,7 +71,7 @@ CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 INPUT_ITEM *InputItems = NULL;
 INTN TextStyle; //why global? It will be class SCREEN member
 
-UINT32 EncodeOptions(const XString& Options)
+UINT32 EncodeOptions(const XStringArray& Options)
 {
   UINT32 OptionsBits = 0;
   INTN Index;
@@ -98,13 +98,13 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
   }
   for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
     if (gSettings.OptionsBits & (1 << Index)) {
-      Entry->LoadOptions = AddLoadOption(Entry->LoadOptions, ArgOptional[Index]);
+      Entry->LoadOptions.AddID(ArgOptional[Index]);
     }
   }
   //remove unchecked options
   for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
     if ((gSettings.OptionsBits & (1 << Index)) == 0) {
-      Entry->LoadOptions = RemoveLoadOption(Entry->LoadOptions, ArgOptional[Index]);
+      Entry->LoadOptions.remove(ArgOptional[Index]);
     }
   }
 
@@ -115,14 +115,16 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
       if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
         gSettings.NvidiaWeb = TRUE;
       } else {
-        Entry->LoadOptions = AddLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
+        Entry->LoadOptions = loaderEntry->LoadOptions;
+        Entry->LoadOptions.AddID(ArgOptional[INX_NVWEBON]);
       }
     }
     if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
       if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
         gSettings.NvidiaWeb = FALSE;
       } else {
-        Entry->LoadOptions = RemoveLoadOption(loaderEntry->LoadOptions, ArgOptional[INX_NVWEBON]);
+        Entry->LoadOptions = loaderEntry->LoadOptions;
+        Entry->LoadOptions.removeIC(ArgOptional[INX_NVWEBON]);
       }
     }
   }
