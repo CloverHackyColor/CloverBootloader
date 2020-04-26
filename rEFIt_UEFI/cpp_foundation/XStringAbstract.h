@@ -95,6 +95,32 @@ int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
 	return src_char32 > other_char32 ? 1 : -1;
 }
 
+template<typename S, typename O>
+int XStringAbstract__ncompare(const S* src, const O* other, size_t n, bool ignoreCase)
+{
+	if ( n == 0 ) return 0; // string of 0 length are equal.
+	const S* src2 = src;
+	const O* other2 = other;
+
+	char32_t src_char32;
+	char32_t other_char32;
+	src2 = get_char32_from_string(src2, &src_char32);
+	other2 = get_char32_from_string(other2, &other_char32);
+	size_t nb = 1;
+	while ( src_char32  &&  nb < n ) {
+		if ( ignoreCase ) {
+			src_char32 = asciiToLower(src_char32);
+			other_char32 = asciiToLower(other_char32);
+		}
+		if ( src_char32 != other_char32 ) break;
+		src2 = get_char32_from_string(src2, &src_char32);
+		other2 = get_char32_from_string(other2, &other_char32);
+		nb += 1;
+	};
+	if ( src_char32 == other_char32 ) return 0;
+	return src_char32 > other_char32 ? 1 : -1;
+}
+
 template<typename O, typename P>
 size_t XStringAbstract__indexOf(const O** s, const P* other, size_t offsetRet, bool toLower)
 {

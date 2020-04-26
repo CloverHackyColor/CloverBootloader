@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
-		9A0B08582402FF7F00E2B470 /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */; };
+		9A0B08582402FF7F00E2B470 /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
 		9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08512402FE9B00E2B470 /* all_tests.cpp */; };
 		9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
 		9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
@@ -16,10 +15,9 @@
 		9A0B08662403144C00E2B470 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
 		9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
 		9A0B08742403B08400E2B470 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
-		9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
 		9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08512402FE9B00E2B470 /* all_tests.cpp */; };
 		9A0B087B2403B08400E2B470 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
-		9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */; };
+		9A0B087D2403B08400E2B470 /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
 		9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
 		9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */; };
@@ -57,10 +55,9 @@
 		9A4FFA852451C9740050B38B /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA7C2451C8330050B38B /* XString.cpp */; };
 		9A57C21A2418B9A00029A39F /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
 		9A57C21B2418B9A00029A39F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
-		9A57C21D2418B9A00029A39F /* XStringWArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08472402FE9300E2B470 /* XStringWArray.cpp */; };
 		9A57C2222418B9A00029A39F /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08512402FE9B00E2B470 /* all_tests.cpp */; };
 		9A57C2232418B9A00029A39F /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
-		9A57C2252418B9A00029A39F /* XStringWArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */; };
+		9A57C2252418B9A00029A39F /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
 		9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
 		9A57C2282418B9A00029A39F /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
@@ -106,13 +103,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9A0B08442402FE9300E2B470 /* XStringWArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringWArray.h; sourceTree = "<group>"; };
-		9A0B08472402FE9300E2B470 /* XStringWArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWArray.cpp; sourceTree = "<group>"; };
 		9A0B084A2402FE9300E2B470 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
 		9A0B084B2402FE9300E2B470 /* XObjArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
-		9A0B084D2402FE9B00E2B470 /* XStringWArray_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringWArray_test.h; sourceTree = "<group>"; };
+		9A0B084D2402FE9B00E2B470 /* XStringArray_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringArray_test.h; sourceTree = "<group>"; };
 		9A0B084E2402FE9B00E2B470 /* XArray_tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray_tests.h; sourceTree = "<group>"; };
-		9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWArray_test.cpp; sourceTree = "<group>"; };
+		9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray_test.cpp; sourceTree = "<group>"; };
 		9A0B08502402FE9B00E2B470 /* XObjArray_tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray_tests.h; sourceTree = "<group>"; };
 		9A0B08512402FE9B00E2B470 /* all_tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = all_tests.cpp; sourceTree = "<group>"; };
 		9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XObjArray_tests.cpp; sourceTree = "<group>"; };
@@ -212,8 +207,6 @@
 				9A0B084B2402FE9300E2B470 /* XObjArray.h */,
 				9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */,
 				9A4185BF2439F73A00BEAFB8 /* XStringArray.h */,
-				9A0B08472402FE9300E2B470 /* XStringWArray.cpp */,
-				9A0B08442402FE9300E2B470 /* XStringWArray.h */,
 			);
 			name = cpp_foundation;
 			path = ../../rEFIt_UEFI/cpp_foundation;
@@ -249,8 +242,8 @@
 				9A0B084E2402FE9B00E2B470 /* XArray_tests.h */,
 				9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */,
 				9A0B08502402FE9B00E2B470 /* XObjArray_tests.h */,
-				9A0B084F2402FE9B00E2B470 /* XStringWArray_test.cpp */,
-				9A0B084D2402FE9B00E2B470 /* XStringWArray_test.h */,
+				9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */,
+				9A0B084D2402FE9B00E2B470 /* XStringArray_test.h */,
 			);
 			name = cpp_unit_test;
 			path = ../../rEFIt_UEFI/cpp_unit_test;
@@ -452,14 +445,13 @@
 				9A28CD4C241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
 				9A28CD17241BACBB00F3D247 /* strlen_test.cpp in Sources */,
-				9A0B08772403B08400E2B470 /* XStringWArray.cpp in Sources */,
 				9A28CD0D241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD0A241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */,
 				9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */,
 				9A0B087B2403B08400E2B470 /* global_test.cpp in Sources */,
 				9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */,
-				9A0B087D2403B08400E2B470 /* XStringWArray_test.cpp in Sources */,
+				9A0B087D2403B08400E2B470 /* XStringArray_test.cpp in Sources */,
 				9A28CD11241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
@@ -481,14 +473,13 @@
 				9A28CD4D241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A57C21B2418B9A00029A39F /* main.cpp in Sources */,
 				9A28CD18241BACBB00F3D247 /* strlen_test.cpp in Sources */,
-				9A57C21D2418B9A00029A39F /* XStringWArray.cpp in Sources */,
 				9A28CD0E241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD0B241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A57C2222418B9A00029A39F /* all_tests.cpp in Sources */,
 				9A9AEB8F243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */,
 				9A57C2232418B9A00029A39F /* global_test.cpp in Sources */,
 				9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */,
-				9A57C2252418B9A00029A39F /* XStringWArray_test.cpp in Sources */,
+				9A57C2252418B9A00029A39F /* XStringArray_test.cpp in Sources */,
 				9A28CD12241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */,
@@ -509,14 +500,13 @@
 				9A28CD4B241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
 				9A28CD16241BACBB00F3D247 /* strlen_test.cpp in Sources */,
-				9A0B08562402FF7700E2B470 /* XStringWArray.cpp in Sources */,
 				9A28CD0C241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
 				9A0B08662403144C00E2B470 /* global_test.cpp in Sources */,
 				9A4185B12439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9ACAB117242623EE00BDB3CF /* printf_lite.c in Sources */,
-				9A0B08582402FF7F00E2B470 /* XStringWArray_test.cpp in Sources */,
+				9A0B08582402FF7F00E2B470 /* XStringArray_test.cpp in Sources */,
 				9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */,
 				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A28CD10241B9EF800F3D247 /* strcmp.cpp in Sources */,

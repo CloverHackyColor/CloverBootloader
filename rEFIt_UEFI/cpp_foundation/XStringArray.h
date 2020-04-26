@@ -38,6 +38,8 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const XStringClass& operator [](IntegralType i) const { return array[i]; }
 
+	const XStringClass& dbg(size_t i) const { return array[i]; }
+
 
 	XStringClass ConcatAll(const XStringClass& Separator = ", "_XS, const XStringClass& Prefix = NullXString, const XStringClass& Suffix = NullXString) const
 	{
@@ -230,21 +232,79 @@ extern const XStringWArray NullXStringWArray;
 //};
 
 
+
+template<class XStringArrayClass, typename CharType1, typename CharType2, enable_if(is_char(CharType1) && is_char(CharType2))>
+XStringArrayClass Split(const CharType1* S, const CharType2* Separator)
+{
+  XStringArrayClass xsArray;
+
+	size_t separatorLength = length_of_utf_string(Separator);
+	
+	if ( separatorLength == 0 ) {
+		typename XStringArrayClass::XStringClass* xstr;
+		xstr = new typename XStringArrayClass::XStringClass;
+		xstr->takeValueFrom(S);
+		xsArray.AddReference(xstr, true);
+		return xsArray;
+	}
+
+	const CharType1* s = S;
+	char32_t char32 = 1;
+	
+	do
+	{
+		while ( XStringAbstract__ncompare(s, Separator, separatorLength, false) == 0 ) {
+			// I have to implement a move_forward_one_char in unicode_conversions, as we don't care about char32
+			for ( size_t i = 0 ; i < separatorLength ; i++ ) s = get_char32_from_string(s, &char32);
+		}
+		const CharType1* t = s;
+		size_t nb = 0;
+		while ( char32 && XStringAbstract__ncompare(t, Separator, separatorLength, false) != 0 ) {
+			nb++;
+			t = get_char32_from_string(t, &char32);
+		}
+		typename XStringArrayClass::XStringClass* xstr;
+		xstr = new typename XStringArrayClass::XStringClass;
+		xstr->strncpy(s, nb);
+		xsArray.AddReference(xstr, true);
+//		s = get_char32_from_string(t, &char32);
+		s = t;
+		// Consume the separator we found
+		for ( size_t i = 0 ; i < separatorLength ; i++ ) s = get_char32_from_string(s, &char32);
+	} while ( char32 );
+	
+	return xsArray;
+//
+//
+//	// TODO : Allocating temporary strings could be avoided by using low level function from unicode_conversions
+//	typename XStringArrayClass::XStringClass SS;
+//	SS.takeValueFrom(S);
+//	typename XStringArrayClass::XStringClass XSeparator;
+//	SS.takeValueFrom(Separator);
+//	return Split<XStringArrayClass>(SS, XSeparator);
+};
+
 template<class XStringArrayClass, class XStringClass1, class XStringClass2, enable_if(!is_char(XStringClass1) && !is_char_ptr(XStringClass1) && !is_char(XStringClass2))>
 XStringArrayClass Split(const XStringClass1& S, const XStringClass2& Separator)
 {
-  XStringArrayClass Ss;
-  size_t idxB, idxE;
-
-	idxB = 0;
-	idxE = S.indexOf(Separator, idxB);
-	while ( idxE != MAX_XSIZE ) {
-		Ss.Add(S.subString(idxB, idxE-idxB));
-		idxB = idxE + Separator.length();
-		idxE = S.indexOf(Separator, idxB);
-	}
-	if ( idxB < S.length() ) Ss.Add(S.subString(idxB, S.length()-idxB));
-	return Ss;
+	return Split<XStringArrayClass>(S.s(), Separator.s());
+//
+//  XStringArrayClass Ss;
+//  size_t idxB, idxE;
+//
+//	if ( Separator.length() == 0 ) {
+//		Ss.Add(S);
+//		return Ss;
+//	}
+//	idxB = 0;
+//	idxE = S.indexOf(Separator, idxB);
+//	while ( idxE != MAX_XSIZE ) {
+//		Ss.Add(S.subString(idxB, idxE-idxB));
+//		idxB = idxE + Separator.length();
+//		idxE = S.indexOf(Separator, idxB);
+//	}
+//	if ( idxB < S.length() ) Ss.Add(S.subString(idxB, S.length()-idxB));
+//	return Ss;
 };
 
 
@@ -252,18 +312,6 @@ template<class XStringArrayClass, class XStringClass1, enable_if(!is_char(XStrin
 XStringArrayClass Split(const XStringClass1& S)
 {
 	return Split<XStringArrayClass>(S, ", "_XS);
-};
-
-
-template<class XStringArrayClass, typename CharType1, typename CharType2, enable_if(is_char(CharType1) && is_char(CharType2))>
-XStringArrayClass Split(const CharType1* S, const CharType2* Separator)
-{
-	// TODO : Allocating temporary strings could be avoided by using low level function from unicode_conversions
-	typename XStringArrayClass::XStringClass SS;
-	SS.takeValueFrom(S);
-	typename XStringArrayClass::XStringClass XSeparator;
-	SS.takeValueFrom(Separator);
-	return Split<XStringArrayClass>(SS, XSeparator);
 };
 
 #endif

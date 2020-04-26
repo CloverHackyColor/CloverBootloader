@@ -31,11 +31,11 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-	ret = XString_tests();
-	if ( ret != 0 ) {
-		printf("XString16_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+//	ret = XString_tests();
+//	if ( ret != 0 ) {
+//		printf("XString16_tests() failed at test %d\n", ret);
+//		all_ok = false;
+//	}
 //return ret;
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
@@ -66,11 +66,6 @@ bool all_tests()
 		printf("strlen_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-	ret = BootOptions_tests();
-	if ( ret != 0 ) {
-		printf("BootOptions_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
 	ret = strcmp_tests();
 	if ( ret != 0 ) {
 		printf("strcmp_tests() failed at test %d\n", ret);
@@ -91,9 +86,19 @@ bool all_tests()
 		printf("XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+//	ret = XString_tests();
+//	if ( ret != 0 ) {
+//		printf("XString_tests() failed at test %d\n", ret);
+//		all_ok = false;
+//	}
 	ret = XStringArray_tests();
 	if ( ret != 0 ) {
-		printf("XStringWArray_tests() failed at test %d\n", ret);
+		printf("XStringArray_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
+	ret = BootOptions_tests();
+	if ( ret != 0 ) {
+		printf("BootOptions_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
 //	ret = XUINTN_tests();
