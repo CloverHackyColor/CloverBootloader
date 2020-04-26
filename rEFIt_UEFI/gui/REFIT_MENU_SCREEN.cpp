@@ -1704,7 +1704,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                          Entry->Place.YPos, TitleLen + Entry->Row);
           }
         } else if (Entry->getREFIT_MENU_CHECKBIT()) {
-          ThemeX.FillRectAreaOfScreen(ctrlTextX, Entry->Place.YPos, MenuWidth, ThemeX.TextHeight);
+          ThemeX.FillRectAreaOfScreen(ctrlTextX + (MenuWidth >> 1), Entry->Place.YPos, MenuWidth, ThemeX.TextHeight);
           DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
                        ctrlTextX,
                        Entry->Place.YPos, 0xFFFF);
