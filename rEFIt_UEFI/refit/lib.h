@@ -275,32 +275,6 @@ typedef enum {
 #define HDBADGES_INLINE (1<<2)
 
 
-typedef struct {
-  INTN        Timeout;
-  UINTN       DisableFlags; //to disable some volume types (optical, firewire etc)
-  BOOLEAN     TextOnly;
-  BOOLEAN     Quiet;
-  BOOLEAN     LegacyFirst;
-  BOOLEAN     NoLegacy;
-  BOOLEAN     DebugLog;
-  BOOLEAN     FastBoot;
-  BOOLEAN     NeverHibernate;
-  BOOLEAN     StrictHibernate;
-  BOOLEAN     RtcHibernateAware;
-  BOOLEAN     HibernationFixup;
-  BOOLEAN     SignatureFixup;
-  CHAR16      *Theme;
-  CHAR16      *ScreenResolution;
-  INTN        ConsoleMode;
-  BOOLEAN     CustomIcons;
-  INTN        IconFormat;
-  BOOLEAN     NoEarlyProgress;
-  INT32       Timezone;
-  BOOLEAN     ShowOptimus;
-  INTN        Codepage;
-  INTN        CodepageSize;
-} REFIT_CONFIG;
-
 // types
 #define ANIME_INFINITE ((UINTN)-1)
 //some unreal values
@@ -494,12 +468,6 @@ VOID DebugPause(VOID);
 extern XObjArray<REFIT_VOLUME> Volumes;
 #endif
 
-
-//
-// config module
-//
-
-extern REFIT_CONFIG GlobalConfig;
 
 //
 // BmLib

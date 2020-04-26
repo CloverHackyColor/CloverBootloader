@@ -146,31 +146,7 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 extern BOOLEAN                  NeedPMfix;
 
 //extern INTN                     OldChosenAudio;
-/*
-typedef struct {
-  INTN        Timeout;
-  UINTN       DisableFlags;
-  BOOLEAN     TextOnly;
-  BOOLEAN     Quiet;
-  BOOLEAN     LegacyFirst;
-  BOOLEAN     NoLegacy;
-  BOOLEAN     DebugLog;
-  BOOLEAN     FastBoot;
-  BOOLEAN     NeverHibernate;
-  BOOLEAN     StrictHibernate;
-  BOOLEAN     RtcHibernateAware;
-  BOOLEAN     HibernationFixup;
-  BOOLEAN     SignatureFixup;
-  CHAR16      *Theme;
-  CHAR16      *ScreenResolution;
-  INTN        ConsoleMode;
-  BOOLEAN     CustomIcons;
-  INTN        IconFormat;
-  BOOLEAN     NoEarlyProgress;
-  INT32       Timezone;
-  BOOLEAN     ShowOptimus;
-} REFIT_CONFIG;
-*/
+
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig = {
   -1,             // INTN        Timeout;
