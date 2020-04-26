@@ -1381,7 +1381,7 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
   }
 
   // number of chars to be drawn on the screen
-  UINTN MaxTextLen = 15;
+  UINTN MaxTextLen = 13;
 
   // some optimization
   if (ThemeX.TileXSpace >= 25) {
