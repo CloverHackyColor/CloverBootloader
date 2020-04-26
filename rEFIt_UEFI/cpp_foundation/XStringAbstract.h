@@ -10,12 +10,13 @@
 #define __XSTRINGABSTRACT_H__
 
 #include <XToolsConf.h>
+#include "XToolsCommon.h"
 #include "unicode_conversions.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_XStringAbstract 0
 #else
-#define DEBUG_TEXT DEBUG_ALL
+#define DEBUG_XStringAbstract DEBUG_ALL
 #endif
 
 #if DEBUG_XStringAbstract == 0
@@ -35,96 +36,37 @@
 #endif
 
 
-struct XStringAbstract__false_type {
-    static constexpr bool value = false;
-    bool v() const { return false; }
-};
-
-struct XStringAbstract__true_type {
-    static constexpr bool value = true;
-    bool v() const { return true; }
-};
-
-/* make unsigned */
-template <class _Tp>
-struct XStringAbstract__make_unsigned {};
-
-template <> struct XStringAbstract__make_unsigned<         char>      {typedef unsigned char      type;};
-template <> struct XStringAbstract__make_unsigned<  signed char>      {typedef unsigned char      type;};
-template <> struct XStringAbstract__make_unsigned<unsigned char>      {typedef unsigned char      type;};
-template <> struct XStringAbstract__make_unsigned<     char16_t>      {typedef char16_t           type;};
-template <> struct XStringAbstract__make_unsigned<     char32_t>      {typedef char32_t           type;};
-template <> struct XStringAbstract__make_unsigned<      wchar_t>      {typedef wchar_t            type;};
-template <> struct XStringAbstract__make_unsigned<  signed short>     {typedef unsigned short     type;};
-template <> struct XStringAbstract__make_unsigned<unsigned short>     {typedef unsigned short     type;};
-template <> struct XStringAbstract__make_unsigned<  signed int>       {typedef unsigned int       type;};
-template <> struct XStringAbstract__make_unsigned<unsigned int>       {typedef unsigned int       type;};
-template <> struct XStringAbstract__make_unsigned<  signed long>      {typedef unsigned long      type;};
-template <> struct XStringAbstract__make_unsigned<unsigned long>      {typedef unsigned long      type;};
-template <> struct XStringAbstract__make_unsigned<  signed long long> {typedef unsigned long long type;};
-template <> struct XStringAbstract__make_unsigned<unsigned long long> {typedef unsigned long long type;};
-#define unsigned_type(x) typename XStringAbstract__make_unsigned<x>::type
-
-/* enable_if */
-template <bool, typename T = void>
-struct XStringAbstract__enable_if_t
-{};
-
-template <typename T>
-struct XStringAbstract__enable_if_t<true, T> {
-  typedef T type;
-};
-//#define enable_if(x) XStringAbstract__enable_if_t(x, void)::type
-#define enable_if(x) typename enable_if_type = typename XStringAbstract__enable_if_t<x>::type
-//
-//template< bool B, class T = void >
-//using XStringAbstract__enable_if_t = typename XStringAbstract__enable_if<B,T>::type;
-
-
-// is_integral
-template <class _Tp> struct XStringAbstract__is_integral_st                     : public XStringAbstract__false_type {};
-template <>          struct XStringAbstract__is_integral_st<bool>               : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<char>               : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<signed char>        : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned char>      : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<wchar_t>            : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<short>              : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned short>     : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<int>                : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned int>       : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<long>               : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned long>      : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<long long>          : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned long long> : public XStringAbstract__true_type {};
-#define is_integral(x) XStringAbstract__is_integral_st<x>::value
-
-
-// is_char
-template <class _Tp>  struct XStringAbstract__is_char_st                        : public XStringAbstract__false_type {};
-template <>           struct XStringAbstract__is_char_st<char>                  : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char[]>                : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_st<char[_Np]>             : public XStringAbstract__true_type {};
-//template <>           struct XStringAbstract__is_char_st<signed char>           : public XStringAbstract__true_type {};
-//template <>           struct XStringAbstract__is_char_st<unsigned char>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char16_t>              : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char16_t[]>            : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_st<char16_t[_Np]>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char32_t>              : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char32_t[]>            : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_st<char32_t[_Np]>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<wchar_t>               : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<wchar_t[]>             : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_st<wchar_t[_Np]>          : public XStringAbstract__true_type {};
-#define is_char(x) XStringAbstract__is_char_st<x>::value
-
-
-
 
 
 
 
 #define asciiToLower(ch) (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch)
 #define asciiToUpper(ch) (((ch >= L'a') && (ch <= L'z')) ? ((ch - L'a') + L'A') : ch)
+
+template<typename S, typename O>
+int XStringAbstract__startWith(const S* src, const O* other, bool ignoreCase)
+{
+	size_t nb = 0;
+	const S* src2 = src;
+	const O* other2 = other;
+
+	char32_t src_char32;
+	char32_t other_char32;
+	other2 = get_char32_from_string(other2, &other_char32);
+	if ( !other_char32 ) return true; // startWith with empty string is considered true
+	src2 = get_char32_from_string(src2, &src_char32);
+	while ( other_char32 ) {
+		if ( ignoreCase ) {
+			src_char32 = asciiToLower(src_char32);
+			other_char32 = asciiToLower(other_char32);
+		}
+		if ( src_char32 != other_char32 ) return false;
+		src2 = get_char32_from_string(src2, &src_char32);
+		other2 = get_char32_from_string(other2, &other_char32);
+		nb += 1;
+	};
+	return src_char32 != 0;
+}
 
 template<typename S, typename O>
 int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
@@ -335,6 +277,7 @@ public:
 	size_t length() const { return length_of_utf_string(m_data); }
 //	size_t sizeZZ() const { return size_of_utf_string(m_data); }
 	size_t sizeInBytes() const { return size_of_utf_string(m_data)*sizeof(T); }
+	size_t sizeInBytesIncludingTerminator() const { return (size_of_utf_string(m_data)+1)*sizeof(T); } // usefull for unit tests
 	size_t allocatedSize() const { return m_allocatedSize; }
 
 
@@ -369,6 +312,7 @@ public:
 		do {
 			p = get_char32_from_string(p, &char32);
 			if (!char32) {
+				if ( (unsigned_type(IntegralType))i == nb ) return 0; // no panic if we want to access the null terminator
 				panic("XStringAbstract::char32At(size_t i) : i >= length(). System halted\n");
 			}
 			nb += 1;
@@ -392,23 +336,20 @@ public:
 	char32_t lastChar() const { if ( length() > 0 ) return char32At(length()-1); else return 0; }
 	
 	//--------------------------------------------------------------------- strcat, strcpy, operator =
-	/* strncpy */
-	template<typename O>
-	void strncpy(const O* other, size_t other_len)
+
+	/* strcpy char */
+	template<typename O, enable_if(is_char(O))>
+	void strcpy(O otherChar)
 	{
-		if ( other && *other && other_len > 0 ) {
-			size_t newSize = utf_size_of_utf_string_len(m_data, other, other_len);
+		if ( otherChar != 0) {
+			size_t newSize = utf_size_of_utf_string_len(m_data, &otherChar, 1);
 			CheckSize(newSize+1, 0);
-			utf_string_from_utf_string_len(m_data, m_allocatedSize, other, other_len);
+			utf_string_from_utf_string_len(m_data, m_allocatedSize, &otherChar, 1);
 			m_data[newSize] = 0;
 		}else{
 			setEmpty();
 		}
 	}
-	// Old name. TODO remove
-	template<typename O>
-	void StrnCpy(const O* other, size_t other_len) { strncpy(other, other_len); }
-
 	/* strcpy */
 	template<typename O>
 	void strcpy(const O* other)
@@ -422,15 +363,29 @@ public:
 			setEmpty();
 		}
 	}
-	/* strncat */
+	/* strncpy */
 	template<typename O>
-	void strncat(const O* other, size_t other_len)
+	void strncpy(const O* other, size_t other_len)
 	{
 		if ( other && *other && other_len > 0 ) {
-			size_t currentSize = size_of_utf_string(m_data);
-			size_t newSize = currentSize + utf_size_of_utf_string_len(m_data, other, other_len);
+			size_t newSize = utf_size_of_utf_string_len(m_data, other, other_len);
 			CheckSize(newSize+1, 0);
-			utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, other, other_len);
+			utf_string_from_utf_string_len(m_data, m_allocatedSize, other, other_len);
+			m_data[newSize] = 0;
+		}else{
+			setEmpty();
+		}
+	}
+
+	/* strcat char */
+	template<typename O, enable_if(is_char(O))>
+	void strcat(O otherChar)
+	{
+		if ( otherChar ) {
+			size_t currentSize = size_of_utf_string(m_data);
+			size_t newSize = currentSize + utf_size_of_utf_string_len(m_data, &otherChar, 1);
+			CheckSize(newSize+1, 0);
+			utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, &otherChar, 1);
 			m_data[newSize] = 0;
 		}else{
 			// nothing to do
@@ -445,6 +400,20 @@ public:
 			size_t newSize = currentSize + utf_size_of_utf_string(m_data, other); // size is number of T, not in bytes
 			CheckSize(newSize+1, 0);
 			utf_string_from_utf_string(m_data+currentSize, m_allocatedSize-currentSize, other);
+			m_data[newSize] = 0;
+		}else{
+			// nothing to do
+		}
+	}
+	/* strncat */
+	template<typename O>
+	void strncat(const O* other, size_t other_len)
+	{
+		if ( other && *other && other_len > 0 ) {
+			size_t currentSize = size_of_utf_string(m_data);
+			size_t newSize = currentSize + utf_size_of_utf_string_len(m_data, other, other_len);
+			CheckSize(newSize+1, 0);
+			utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, other, other_len);
 			m_data[newSize] = 0;
 		}else{
 			// nothing to do
@@ -479,19 +448,25 @@ public:
 	/* += */
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& operator += (const XStringAbstract<O, OtherXStringClass>& S) { strcat(S.s()); return *((ThisXStringClass*)this); }
+	template<typename O, enable_if(is_char(O))>
+	ThisXStringClass& operator += (O S) { strcat(S); return *((ThisXStringClass*)this); }
 	template<typename O>
 	ThisXStringClass& operator += (const O* S) { strcat(S); return *((ThisXStringClass*)this); }
 
 
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass operator + (const XStringAbstract<O, OtherXStringClass>& p2) const { XStringAbstract s; s=*this; s+=p2; return s; }
+	template<typename O, enable_if(is_char(O))>
+	ThisXStringClass operator + (O p1) const { XStringAbstract s; s=*this; s.strcat(p1); return s; }
 	template<typename O>
 	ThisXStringClass operator + (const O* p2) const { XStringAbstract s; s=*this; s+=p2; return s; }
+	template<typename O, enable_if(is_char(O))>
+	friend ThisXStringClass operator + (O p1,   const ThisXStringClass& p2) { XStringAbstract s; s.strcat(p1); s.strcat(p2.s()); return s; }
 	template<typename O>
 	friend ThisXStringClass operator + (const O *p1,   const ThisXStringClass& p2) { XStringAbstract s; s.strcat(p1); s.strcat(p2.s()); return s; }
 
 
-	//--------------------------------------------------------------------- indexOf, rindexOf
+	//--------------------------------------------------------------------- indexOf, rindexOf, contains, subString
 	
 	/* indexOf */
 	size_t indexOf(char32_t char32Searched, size_t Pos = 0) const
@@ -536,8 +511,43 @@ public:
 	template<typename O, class OtherXStringClass>
 	size_t rindexOfIC(const XStringAbstract<O, OtherXStringClass>& S, size_t Pos = MAX_XSIZE-1) const { return rindexOf(S.s(), Pos); }
 
+	template<typename O, class OtherXStringClass>
+	bool contains(const XStringAbstract<O, OtherXStringClass>& S) const { return indexOf(S) != MAX_XSIZE; }
+	template<typename O>
+	bool contains(const O* S) const { return indexOf(S) != MAX_XSIZE; }
+	template<typename O, class OtherXStringClass>
+	size_t containsIC(const XStringAbstract<O, OtherXStringClass>& S) const { return indexOfIC(S) != MAX_XSIZE; }
+	template<typename O>
+	size_t containsIC(const O* S) const { return indexOfIC(S) != MAX_XSIZE; }
 
-	//---------------------------------------------------------------------
+
+	ThisXStringClass subString(size_t pos, size_t count) const
+	{
+		if ( pos > length() ) return ThisXStringClass();
+		if ( count > length()-pos ) count = length()-pos;
+		
+		ThisXStringClass ret;
+
+		const T* src = m_data;
+		char32_t char32 = 1;
+		while ( char32  && pos > 0 ) {
+			src = get_char32_from_string(src, &char32);
+			pos -= 1;
+		};
+		ret.strncat(src, count);
+		return ret;
+	}
+
+	template<typename O, class OtherXStringClass>
+	bool startWith(const XStringAbstract<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWith(m_data, otherS.m_data, false); }
+	template<typename O>
+	bool startWith(const O* other) const { return XStringAbstract__startWith(m_data, other, false); }
+	template<typename O, class OtherXStringClass>
+	bool startWithIC(const XStringAbstract<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWith(m_data, otherS.m_data, true); }
+	template<typename O>
+	bool startWithIC(const O* other) const { return XStringAbstract__startWith(m_data, other, true); }
+
+	//---------------------------------------------------------------------  String modification
 
 	void lowerAscii()
 	{
@@ -592,34 +602,6 @@ public:
 //		StrCat(Str);
 //	}
 //}
-
-	ThisXStringClass subString(size_t pos, size_t count) const
-	{
-		if ( pos > length() ) return ThisXStringClass();
-		if ( count > length()-pos ) count = length()-pos;
-		
-		ThisXStringClass ret;
-
-		const T* src = m_data;
-		char32_t char32 = 1;
-		while ( char32  && pos > 0 ) {
-			src = get_char32_from_string(src, &char32);
-			pos -= 1;
-		};
-		ret.strncat(src, count);
-		return ret;
-	}
-
-	// todo rename to contains
-	template<typename O, class OtherXStringClass>
-	bool contains(const XStringAbstract<O, OtherXStringClass>& S) const { return indexOf(S) != MAX_XSIZE; }
-	template<typename O>
-	bool contains(const O* S) const { return indexOf(S) != MAX_XSIZE; }
-	template<typename O, class OtherXStringClass>
-	size_t containsIC(const XStringAbstract<O, OtherXStringClass>& S) const { return indexOfIC(S) != MAX_XSIZE; }
-	template<typename O>
-	size_t containsIC(const O* S) const { return indexOfIC(S) != MAX_XSIZE; }
-
 
 //	void ToLower(bool FirstCharIsCap = false);
 //	bool IsLetters() const;
@@ -765,46 +747,6 @@ T XStringAbstract<T, ThisXStringClass>::nullChar = 0;
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
-//
-//template<class T, class SubType, size_t growBy>
-//void XStringAbstract<T>::RemoveLastEspCtrl()
-//{
-//  T *p;
-//
-//	if ( size() > 0 ) {
-//		p = s() + size() - 1;
-//	#if __WCHAR_MIN__ < 0
-//		if ( *p >= 0 && *p <= ' ' ) {
-//	#else
-//		if ( *p <= ' ' ) {
-//	#endif
-//			p -= 1;
-//	#if __WCHAR_MIN__ < 0
-//			while ( p>data() && *p >= 0 && *p <= ' ' ) p -= 1;
-//	#else
-//			while ( p>data() && *p <= ' ' ) p -= 1;
-//	#endif
-//			if ( p>data() ) {
-//				setSize( (size_t)(p-data())+1);
-//			}else{
-//	#if __WCHAR_MIN__ < 0
-//				if ( *p >= 0 && *p <= ' ' ) setSize(0);
-//	#else
-//				if ( *p <= ' ' ) setSize(0);
-//	#endif
-//				else setSize(1);
-//			}
-//		}
-//	}
-//}
-
-
-
-
-
-
-
-
 
 
 
@@ -814,10 +756,6 @@ T XStringAbstract<T, ThisXStringClass>::nullChar = 0;
 
 #undef DBG_XSTRING
 #undef asciiToLower
-#undef unsigned_type
-#undef is_integral
-#undef is_char
-#undef enable_if
 
 
 

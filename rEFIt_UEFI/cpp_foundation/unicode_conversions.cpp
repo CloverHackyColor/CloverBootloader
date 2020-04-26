@@ -269,22 +269,6 @@ const char* get_char32_from_utf8_string(const char* s, char32_t* char32)
 	return s;
 }
 
-/*
- * get nth char32 of an utf8 string
- * Return value : pointer to the end of string or at the error
- */
-char32_t get_char32_from_utf8_string_at_pos(const char* s, size_t pos)
-{
-	if ( !s ) return 0;
-	char32_t char32;
-	s = get_char32_from_utf8_string(s, &char32);
-	while ( char32 && pos > 0 ) {
-		s = get_char32_from_utf8_string(s, &char32);
-		pos--;
-	}
-	return char32;
-}
-
 
 /*************************************************************   utf8 - char32   *********************************************************/
 
@@ -410,6 +394,22 @@ size_t utf8_string_from_utf32_string_len(char* dst, size_t dst_max_size, const c
 	}
 	*p = 0;
 	return (size_t)(p-dst);
+}
+
+/*
+ * get nth char32 of an utf8 string
+ * Return value : pointer to the end of string or at the error
+ */
+char32_t get_char32_from_utf8_string_at_pos(const char* s, size_t pos)
+{
+	if ( !s ) return 0;
+	char32_t char32;
+	s = get_char32_from_utf8_string(s, &char32);
+	while ( char32 && pos > 0 ) {
+		s = get_char32_from_utf8_string(s, &char32);
+		pos--;
+	}
+	return char32;
 }
 
 
@@ -761,6 +761,22 @@ size_t utf32_string_from_utf16_string_len(char32_t* dst, size_t dst_max_size, co
 }
 
 
+/*
+ * get nth char32 of an utf16 string
+ * Return value : pointer to the end of string or at the error
+ */
+char32_t get_char32_from_utf16_string_at_pos(const char16_t* s, size_t pos)
+{
+	if ( !s ) return 0;
+	char32_t char32;
+	s = get_char32_from_utf16_string(s, &char32);
+	while ( char32 && pos > 0 ) {
+		s = get_char32_from_utf16_string(s, &char32);
+		pos--;
+	}
+	return char32;
+}
+
 
 
 /*************************************************************   utf8 - wchar_t   *********************************************************/
@@ -971,6 +987,19 @@ size_t wchar_string_from_utf32_string(wchar_t* dst, size_t dst_max_size, const c
 }
 
 
+
+/*
+ * get nth char32 of an utf16 string
+ * Return value : pointer to the end of string or at the error
+ */
+char32_t get_char32_from_wchar_string_at_pos(const char16_t* s, size_t pos)
+{
+#if __WCHAR_MAX__ <= 0xFFFFu
+	return get_char32_from_utf16_string_at_pos((char16_t*)s, pos);
+#else
+	return get_char32_from_utf32_string_at_pos((char32_t*)s, pos);
+#endif
+}
 
 
 
@@ -1193,6 +1222,20 @@ size_t wchar_string_from_wchar_string_len(wchar_t* dst, size_t dst_max_size, con
 #endif
 }
 
+
+/*
+ * get nth char32 of an utf32 string
+ * Return value : pointer to the end of string or at the error
+ */
+char32_t get_char32_from_utf32_string_at_pos(const char32_t* s, size_t pos)
+{
+	if ( !s ) return 0;
+	while ( *s && pos > 0 ) {
+		s++;
+		pos--;
+	}
+	return *s;
+}
 
 /******   convenience   *****/
 

@@ -474,7 +474,7 @@ VOID REFIT_MENU_SCREEN::FreeMenu()
     }
     Entries.Empty();
   }
-  InfoLines.Empty();
+  InfoLines.setEmpty();
 }
 
 INTN REFIT_MENU_SCREEN::FindMenuShortcutEntry(IN CHAR16 Shortcut)
@@ -1422,15 +1422,15 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
 
   XStringW BCSTextX;
   if (StrLen(Text) <= MaxTextLen) { // if the text exceeds the given limit
-    BCSTextX.StrnCpy(Text, MaxTextLen);
+    BCSTextX.strncpy(Text, MaxTextLen);
   } else {
-    BCSTextX.StrnCpy(Text, MaxTextLen - 2); // EllipsisLen=2
+    BCSTextX.strncpy(Text, MaxTextLen - 2); // EllipsisLen=2
     BCSTextX += L"..";
   }
   DrawTextXY(BCSTextX, XPos, YPos, XAlign);
 }
 
-VOID REFIT_MENU_SCREEN::DrawMenuText(IN XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor)
+VOID REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor)
 {
   XImage TextBufferX(UGAWidth-XPos, ThemeX.TextHeight);
   XImage SelectionBar(UGAWidth-XPos, ThemeX.TextHeight);

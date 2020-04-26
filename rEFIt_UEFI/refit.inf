@@ -247,8 +247,7 @@
   cpp_foundation/XString.h
   cpp_foundation/XStringArray.cpp
   cpp_foundation/XStringArray.h
-  cpp_foundation/XStringWArray.cpp
-  cpp_foundation/XStringWArray.h
+  cpp_foundation/XStringArray.cpp
 #  cpp_foundation/XUINTN.cpp
 #  cpp_foundation/XUINTN.h
   cpp_unit_test/all_tests.h
@@ -274,8 +273,8 @@
   cpp_unit_test/XObjArray_tests.h
   cpp_unit_test/XString_test.cpp
   cpp_unit_test/XString_test.h
-  cpp_unit_test/XStringWArray_test.cpp
-  cpp_unit_test/XStringWArray_test.h
+  cpp_unit_test/XStringArray_test.cpp
+  cpp_unit_test/XStringArray_test.h
 #  cpp_unit_test/XUINTN_test.cpp
 #  cpp_unit_test/XUINTN_test.h
 

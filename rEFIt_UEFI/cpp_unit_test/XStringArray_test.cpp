@@ -1,7 +1,7 @@
 #include <Platform.h>
-#include "../cpp_foundation/XStringWArray.h"
+#include "../cpp_foundation/XStringArray.h"
 
-int XStringWArray_tests()
+int XStringArray_tests()
 {
 
 #ifdef JIEF_DEBUG
@@ -10,16 +10,16 @@ int XStringWArray_tests()
 
 	XStringWArray array1;
 
-	if ( !array1.IsNull() ) return 1;
+	if ( !array1.isEmpty() ) return 1;
 
 	array1.Add(L"1"_XSW);
-	if ( array1.IsNull() ) return 2;
+	if ( array1.isEmpty() ) return 2;
 	array1.Add(L"2"_XSW);
 
 	if ( array1[0] != L"1"_XSW ) return 3;
 	if ( array1[1] != L"2"_XSW ) return 4;
 
-	if ( !array1.Contains(L"2"_XSW) ) return 5;
+	if ( !array1.contains(L"2"_XSW) ) return 5;
 
 	// Test == and !=
 	{
@@ -39,8 +39,16 @@ int XStringWArray_tests()
 		// Split doesn't handle prefix and suffix yet.
 		c = array1.ConcatAll(L", "_XSW);
 
-		XStringWArray array1bis = Split(c);
+		XStringWArray array1bis = Split<XStringWArray>(c);
 		if ( array1 != array1bis ) return 20;
+		XStringWArray array2bis = Split<XStringWArray>(c);
+		if ( array1 != array2bis ) return 20;
+		XStringArray array3bis = Split<XStringArray>(c);
+		if ( array1 != array3bis ) return 20;
+		
+		char* c2;// = "a, b, c";
+		XStringArray array4 = Split<XStringArray>(c2, " ");
+
 	}
 
 	XStringWArray array2;

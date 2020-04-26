@@ -163,6 +163,8 @@ struct TestString : public AbstractTestString
 	const CharType* cha;
 	TestString(size_t _size, const CharType* _cha, size_t _utf32_length, const char32_t* _utf32) : AbstractTestString(_size, _utf32_length, _utf32), cha(_cha) {
 	}
+	size_t getSizeInBytes() const { return size*sizeof(CharType); }
+	size_t getSizeInBytesIncludingTerminator() const { return (size+1)*sizeof(CharType); }
 };
 
 
@@ -484,95 +486,103 @@ SimpleString testDefaultCtor_()
     testDefaultCtor_<XStringClass>();
 
 
-/*****************************  takeValueFrom(char type)  *****************************/
+/*****************************  Assignement : ctor, strcpy, takeValueFrom  *****************************/
+
+#define CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult) \
+		/* We don't use XString::operator == to check xstr == xstr because operator == is not tested yet. */ \
+		CHECK_RESULT(xstr.sizeInBytes() == expectedResult.getSizeInBytes(), \
+					 ssprintf("xstr.sizeInBytes() == expectedResult.getSizeInBytes() (%zu)", expectedResult.getSizeInBytes()), \
+					 ssprintf("xstr.sizeInBytes() != expectedResult.getSizeInBytes() (%zu!=%zu)", xstr.sizeInBytes(), expectedResult.getSizeInBytes()) \
+					 ); \
+		CHECK_RESULT(memcmp(xstr.s(), expectedResult.cha, expectedResult.getSizeInBytesIncludingTerminator()) == 0, \
+					 ssprintf("memcmp(xstr.s(), expectedResult.cha, expectedResult.getSizeInBytesIncludingTerminator()) == 0"), \
+					 ssprintf("memcmp(xstr.s(), expectedResult.cha, expectedResult.getSizeInBytesIncludingTerminator()) != 0") \
+					 ); \
+
+
 template<class XStringClass, class TestStringSrc, class TestStringExpectedResult>
 SimpleString testTakeValueFrom_(const TestStringSrc& src, const TestStringExpectedResult& expectedResult)
 {
-
 	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::testTakeValueFrom(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<TestStringSrc>::prefix, SimpleString(src.cha).c_str()));
+	
+	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
+	ch_t c; (void)c; // dummy for call utf function
 
-	XStringClass xstr;
-	xstr.takeValueFrom(src.cha);
+	// takeValueFrom(native char type)
+	{
+		XStringClass xstr;
+		xstr.takeValueFrom(src.cha);
+		
+		CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult);
+	}
+	// strcpy(native char type)
+	{
+		XStringClass xstr;
+		xstr.takeValueFrom("blabla");
+		xstr.strcpy(src.cha);
+		CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult);
+	}
+	// strcpy one native char
+	{
+		if ( src.utf32_length > 0 )
+		{
+			XStringClass xstr;
+			for ( size_t pos = 0 ; pos < src.utf32_length - 1 ; pos++ )
+			{
+				char32_t char32 = get_char32_from_utf_string_at_pos(src.cha, pos);
+				xstr.takeValueFrom("foobar");
+				xstr.strcpy(char32);
+				//printf("%s\n", SimpleString(xstr.s()).c_str());
+				size_t expectedSize = utf_size_of_utf_string_len(&c, &char32, 1) * sizeof(c);
+				CHECK_RESULT(xstr.sizeInBytes() == expectedSize,
+							 ssprintf("xstr.sizeInBytes() == expectedSize (%zu)", expectedSize),
+							 ssprintf("xstr.sizeInBytes() != expectedSize (%zu!=%zu)", xstr.sizeInBytes(), expectedSize)
+							 );
+				ch_t buf[8];
+				utf_string_from_utf_string_len(buf, sizeof(buf)/sizeof(buf[0]), &char32, 1);
+				size_t expectedSizeIncludingTerminator = expectedSize+sizeof(buf[0]);
+				CHECK_RESULT(memcmp(xstr.s(), buf, expectedSizeIncludingTerminator) == 0, // +1 char
+							 ssprintf("memcmp(xstr.s(), buf, expectedSizeIncludingTerminator) == 0"),
+							 ssprintf("memcmp(xstr.s(), buf, expectedSizeIncludingTerminator) != 0")
+							 );
+//xstr.takeValueFrom("foobar");
+//xstr.strcpy(src.cha[0]);
+			}
+		}
+	}
 	
-	size_t expectedSize = expectedResult.size*sizeof(expectedResult.cha[0]);
-	CHECK_RESULT(xstr.sizeInBytes() == expectedSize,
-	    ssprintf("xstr.sizeInBytes() == expectedSize (%zu)", expectedSize),
-	    ssprintf("xstr.sizeInBytes() != expectedSize (%zu!=%zu)", xstr.sizeInBytes(), expectedSize)
-	);
-	CHECK_RESULT(memcmp(xstr.s(), expectedResult.cha, expectedSize) == 0,
-	    ssprintf("memcmp(xstr.s(), expectedResult.cha, expectedSize) == 0"),
-	    ssprintf("memcmp(xstr.s(), expectedResult.cha, expectedSize) != 0")
-	);
+	typename XStringClassInfo<TestStringSrc>::xs_t srcXString;
+	srcXString.takeValueFrom(src.cha);
 	
+	// takeValueFrom(XString)
+	{
+		XStringClass xstr;
+		xstr.takeValueFrom(srcXString);
+		CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult);
+	}
+	// ctor XString
+	{
+		XStringClass xstr(srcXString);
+		CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult);
+	}
+	// = XString
+	{
+		XStringClass xstr;
+		xstr = srcXString;
+		CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult);
+	}
+
 // TODO test ctor with litteral
-//	XStringClass xstr2;
-//	xstr2 = src.cha;
+//	XStringClass xstr;
+//	xstr = src.cha;
 
 	return SimpleString();
 }
 
 #define testTakeValueFrom(XStringClass, classEncoding, encoding1) \
-    printf("Test %s::testTakeValueFrom(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
+    printf("Test %s::testTakeValueFrom, strcpy(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
 	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
     	testTakeValueFrom_<XStringClass>(testStringMultiCodedArray[i].encoding1, testStringMultiCodedArray[i].classEncoding); \
-	} \
-
-
-/*****************************  takeValueFrom(XString), ctor(XString), operator =(XString)  *****************************/
-template<class XStringClass, class TestStringSrc, class TestStringExpectedResult>
-SimpleString testTakeValueFromXString_(const TestStringSrc& src, const TestStringExpectedResult& expectedResult)
-{
-// TODO test ctor with litteral
-
-	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::testTakeValueFrom(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<TestStringSrc>::prefix, SimpleString(src.cha).c_str()));
-
-	typename XStringClassInfo<TestStringSrc>::xs_t srcXString;
-	srcXString.takeValueFrom(src.cha);
-	
-	XStringClass xstr;
-	xstr.takeValueFrom(srcXString);
-	
-	size_t expectedSize = expectedResult.size*sizeof(expectedResult.cha[0]);
-	CHECK_RESULT(xstr.sizeInBytes() == expectedSize,
-	    ssprintf("xstr.sizeInBytes() == expectedSize (%zu)", expectedSize),
-	    ssprintf("xstr.sizeInBytes() != expectedSize (%zu!=%zu)", xstr.sizeInBytes(), expectedSize)
-	);
-	CHECK_RESULT(memcmp(xstr.s(), expectedResult.cha, expectedSize+sizeof(expectedResult.cha[0])) == 0,
-	    ssprintf("memcmp(xstr.s(), expectedResult.cha, expectedResult.size) == 0"),
-	    ssprintf("memcmp(xstr.s(), expectedResult.cha, expectedResult.size) != 0")
-	);
-	{
-		XStringClass xstr2(srcXString);
-		// We don't use operator == to check xstr == xstr2 because operator == is not tested yet.
-		CHECK_RESULT(xstr2.sizeInBytes() == xstr.sizeInBytes(),
-					 ssprintf("xstr2.sizeInBytes() == xstr.sizeInBytes() (%zu)", xstr.sizeInBytes()),
-					 ssprintf("xstr2.sizeInBytes() != xstr.sizeInBytes() (%zu!=%zu)", xstr2.sizeInBytes(), xstr.sizeInBytes())
-					 );
-		CHECK_RESULT(memcmp(xstr2.s(), xstr.s(), xstr.sizeInBytes()+sizeof(xstr.s()[0])) == 0,
-					 ssprintf("memcmp(xstr2.s(), xstr.s(), xstr.sizeInBytes()) == 0"),
-					 ssprintf("memcmp(xstr2.s(), xstr.s(), xstr.sizeInBytes()) != 0")
-					 );
-	}
-	{
-		XStringClass xstr2;
-		xstr2 = srcXString;
-		// We don't use operator == to check xstr == xstr2 because operator == is not tested yet.
-		CHECK_RESULT(xstr2.sizeInBytes() == xstr.sizeInBytes(),
-					 ssprintf("xstr2.sizeInBytes() == xstr.sizeInBytes() (%zu)", xstr.sizeInBytes()),
-					 ssprintf("xstr2.sizeInBytes() != xstr.sizeInBytes() (%zu!=%zu)", xstr2.sizeInBytes(), xstr.sizeInBytes())
-					 );
-		CHECK_RESULT(memcmp(xstr2.s(), xstr.s(), xstr.sizeInBytes()+sizeof(xstr.s()[0])) == 0,
-					 ssprintf("memcmp(xstr2.s(), xstr.s(), xstr.sizeInBytes()) == 0"),
-					 ssprintf("memcmp(xstr2.s(), xstr.s(), xstr.sizeInBytes()) != 0")
-					 );
-	}
-	return SimpleString();
-}
-
-#define testTakeValueFromXString(XStringClass, classEncoding, encoding1) \
-    printf("Test %s::testTakeValueFromXString(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-    	testTakeValueFromXString_<XStringClass>(testStringMultiCodedArray[i].encoding1, testStringMultiCodedArray[i].classEncoding); \
 	} \
 
 
@@ -663,36 +673,6 @@ SimpleString testdataSized_()
 
 
 
-/*****************************  strcpy  *****************************/
-template<class XStringClass, class TestStringSameAsClass, class TestStringSrc>
-SimpleString teststrcpy_(const TestStringSameAsClass& encodedSameAsClass, const TestStringSrc& src)
-{
-	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::strcpy(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<TestStringSrc>::prefix, SimpleString(src.cha).c_str()));
-
-	XStringClass xstr;
-	xstr.takeValueFrom("foobar");
-	xstr.strcpy(src.cha);
-	
-	size_t expectedSize = encodedSameAsClass.size*sizeof(encodedSameAsClass.cha[0]);
-	CHECK_RESULT(xstr.sizeInBytes() == expectedSize,
-	    ssprintf("xstr.sizeInBytes() == dst.size (%zu)", expectedSize),
-	    ssprintf("xstr.sizeInBytes() != dst.size (%zu!=%zu)", xstr.sizeInBytes(), expectedSize)
-	);
-	CHECK_RESULT(memcmp(xstr.s(), encodedSameAsClass.cha, expectedSize+sizeof(encodedSameAsClass.cha[0])) == 0,
-	    ssprintf("memcmp(xstr.s(), dst.cha, dst.size) == 0"),
-	    ssprintf("memcmp(xstr.s(), dst.cha, dst.size) != 0")
-	);
-	return SimpleString();
-}
-
-#define teststrcpy(XStringClass, classEncoding, encoding1) \
-    printf("Test %s::teststrcpy(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-    	teststrcpy_<XStringClass>(testStringMultiCodedArray[i].classEncoding, testStringMultiCodedArray[i].encoding1); \
-	} \
-
-
-
 /*****************************  strncpy  *****************************/
 template<class XStringClass, class TestStringSameAsClass, class TestStringSrc>
 SimpleString teststrncpy_(const TestStringSameAsClass& encodedSameAsClass, const TestStringSrc& src)
@@ -705,13 +685,15 @@ SimpleString teststrncpy_(const TestStringSameAsClass& encodedSameAsClass, const
 		xstr.takeValueFrom("foobar");
 		xstr.strncpy(src.cha, i);
 		
-		CHECK_RESULT((length_of_utf_string(encodedSameAsClass.cha) >= i && xstr.length() == i) || (xstr.length() == length_of_utf_string(encodedSameAsClass.cha)),
-					 ssprintf("xstr.sizeInBytes() == dst.size (%zu)", xstr.sizeInBytes()),
-					 ssprintf("xstr.sizeInBytes() != dst.size (%zu!=%zu)", xstr.sizeInBytes(), encodedSameAsClass.size)
+		size_t expectedLength = length_of_utf_string(encodedSameAsClass.cha);
+		if ( expectedLength > i ) expectedLength = i;
+		CHECK_RESULT(xstr.length() == expectedLength,
+					 ssprintf("xstr.length() == expectedLength (%zu)", expectedLength),
+					 ssprintf("xstr.length() != expectedLength (%zu!=%zu)", xstr.length(), expectedLength)
 					 );
-		CHECK_RESULT(memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) == 0,
-					 ssprintf("memcmp(xstr.s(), dst.cha, dst.size) == 0"),
-					 ssprintf("memcmp(xstr.s(), dst.cha, dst.size) != 0")
+		CHECK_RESULT(memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) == 0, // cannot include terminator as xstr is a substring of encodedSameAsClass. But length() test shows that xstr is really a substring.
+					 ssprintf("memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) == 0"),
+					 ssprintf("memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) != 0")
 					 );
 	}
 	return SimpleString();
@@ -747,10 +729,10 @@ static void teststrcatCheckResult(size_t expectedLength, size_t expectedSize, ch
 				 );
 }
 
-template<class XStringClass, class InitialValue, class ValueToCat>
-SimpleString teststrcat_(const InitialValue& initialValue, const ValueToCat& valueToCat)
+template<class XStringClass, class InitialValue, typename TestStringCharType>
+SimpleString teststrcat_(const InitialValue& initialValue, const TestString<TestStringCharType>& valueToCat)
 {
-	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::strcpy(%s\"%s\") strcat(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str(), XStringClassInfo<ValueToCat>::prefix, SimpleString(valueToCat.cha).c_str()));
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::strcpy(%s\"%s\") strcat(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str(), XStringClassInfo<TestStringCharType>::prefix, SimpleString(valueToCat.cha).c_str()));
 
 	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
 	ch_t c; // dummy for call utf function
@@ -761,14 +743,31 @@ SimpleString teststrcat_(const InitialValue& initialValue, const ValueToCat& val
 	utf_string_from_utf_string(expectedString, expectedSize*sizeof(ch_t) + 1, initialValue.cha);
 	utf_string_from_utf_string(expectedString + size_of_utf_string(expectedString), expectedSize*sizeof(ch_t) + 1 - size_of_utf_string(expectedString), valueToCat.cha);
 
-	// strcat native type
+	// strcat(native char)
+	{
+		XStringClass xstr;
+		xstr.takeValueFrom(initialValue.cha);
+
+		for ( size_t i = 0 ; i < valueToCat.utf32_length ; i++) xstr.strcat(valueToCat.utf32[i]);
+		teststrcatCheckResult(expectedLength, expectedSize, expectedString, xstr);
+	}
+	// += native char
+	{
+		XStringClass xstr;
+		xstr.takeValueFrom(initialValue.cha);
+
+		for ( size_t i = 0 ; i < valueToCat.utf32_length ; i++) xstr += valueToCat.utf32[i];
+		teststrcatCheckResult(expectedLength, expectedSize, expectedString, xstr);
+	}
+
+	// strcat(native char*)
 	{
 		XStringClass xstr;
 		xstr.takeValueFrom(initialValue.cha);
 		xstr.strcat(valueToCat.cha);
 		teststrcatCheckResult(expectedLength, expectedSize, expectedString, xstr);
 	}
-	// += native type
+	// += native char*
 	{
 		XStringClass xstr;
 		xstr.takeValueFrom(initialValue.cha);
@@ -777,14 +776,14 @@ SimpleString teststrcat_(const InitialValue& initialValue, const ValueToCat& val
 	}
 	// strcat XString
 	{
-		typename XStringClassInfo<ValueToCat>::xs_t valueToCatXString;
+		typename XStringClassInfo<TestStringCharType>::xs_t valueToCatXString;
 		valueToCatXString.takeValueFrom(valueToCat.cha);
 		XStringClass xstr;
 		xstr.takeValueFrom(initialValue.cha);
 		xstr += valueToCatXString;
 		teststrcatCheckResult(expectedLength, expectedSize, expectedString, xstr);
 	}
-	// XString + native type
+	// XString + native char*
 	{
 		XStringClass xinitialValue;
 		xinitialValue.takeValueFrom(initialValue.cha);
@@ -796,15 +795,15 @@ SimpleString teststrcat_(const InitialValue& initialValue, const ValueToCat& val
 	{
 		XStringClass xinitialValue;
 		xinitialValue.takeValueFrom(initialValue.cha);
-		typename XStringClassInfo<ValueToCat>::xs_t valueToCatXString;
+		typename XStringClassInfo<TestStringCharType>::xs_t valueToCatXString;
 		valueToCatXString.takeValueFrom(valueToCat.cha);
 		XStringClass xstr;
 		xstr = xinitialValue + valueToCatXString;
 		teststrcatCheckResult(expectedLength, expectedSize, expectedString, xstr);
 	}
-	// native type + XString
+	// native char* + XString
 	{
-		typename XStringClassInfo<ValueToCat>::xs_t valueToCatXString;
+		typename XStringClassInfo<TestStringCharType>::xs_t valueToCatXString;
 		valueToCatXString.takeValueFrom(valueToCat.cha);
 		XStringClass xstr;
 		xstr = initialValue.cha + valueToCatXString;
@@ -888,7 +887,7 @@ SimpleString teststrncat_(const InitialValue& initialValue, const ValueToCat& va
 template<class XStringClass, class InitialValue>
 SimpleString testSubString_(const InitialValue& initialValue)
 {
-	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::subString(%s\"%s\"", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::subString(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
 
 	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
 	ch_t c; // dummy for call utf function
@@ -1322,7 +1321,7 @@ SimpleString testindexOf_(const InitialValue& initialValue)
 template<class XStringClass, class InitialValue>
 SimpleString testlastChar_(const InitialValue& initialValue)
 {
-	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::lastChar(%s\"%s\"", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::lastChar(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
 
 //	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
 //	ch_t c; // dummy for call utf function
@@ -1355,7 +1354,7 @@ SimpleString testlastChar_(const InitialValue& initialValue)
 template<class XStringClass, class InitialValue, class ExpectedValue>
 SimpleString testtrim_(const InitialValue& initialValue, const ExpectedValue& expectedValue)
 {
-	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::trim(%s\"%s\"", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::trim(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
 
 //	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
 //	ch_t c; // dummy for call utf function
@@ -1382,6 +1381,58 @@ SimpleString testtrim_(const InitialValue& initialValue, const ExpectedValue& ex
     printf("Test %s::testtrim\n", STRINGIFY(XStringClass)); \
 	for ( size_t i = 0 ; i < nbTestStringMultiCoded4TrimArray ; i++ ) { \
 		testtrim_<XStringClass>(testStringMultiCoded4TrimArray[i].classEncoding, testStringMultiCoded4TrimArray[i].classEncoding##_expectedResult); \
+	} \
+
+
+/*****************************  startWith  *****************************/
+template<class XStringClass, class InitialValue>
+SimpleString teststartWith_(const InitialValue& initialValue)
+{
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::startWith(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+
+//	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
+//	ch_t c; // dummy for call utf function
+
+	XStringClass initialString;
+	initialString.takeValueFrom(initialValue.cha);
+	
+	char32_t expectedChar = 0;
+	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
+
+	for ( size_t count = 0 ; count < initialValue.utf32_length+3 ; count+=1 )
+	{
+		XStringClass subStr = initialString.subString(0, count);
+		
+		bool expectedResult = true;
+		if ( subStr.length() > 0  &&  count >= initialValue.utf32_length ) expectedResult = false;
+		
+		CHECK_RESULT(initialString.startWith(subStr) == expectedResult,
+					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
+					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
+					 );
+//initialString.startWith(subStr);
+
+		subStr = initialString.subString(0, count-1) + ((char32_t)(initialValue.utf32[count-1]+1));
+		expectedResult = false;
+		CHECK_RESULT(initialString.startWith(subStr) == expectedResult,
+					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
+					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
+					 );
+//subStr = initialString.subString(0, count-1);
+//subStr = subStr + ((char32_t)(initialValue.utf32[count-1]+1));
+//initialString.startWith(subStr);
+
+	}
+//str.takeValueFrom(initialValue.cha);
+//str.startWith();
+
+	return SimpleString();
+}
+
+#define teststartWith(XStringClass, classEncoding) \
+    printf("Test %s::teststartWith\n", STRINGIFY(XStringClass)); \
+	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
+		teststartWith_<XStringClass>(testStringMultiCodedArray[i].classEncoding); \
 	} \
 
 
@@ -1482,14 +1533,12 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 
 //	TEST_ALL_CLASSES(testDefaultCtor, __TEST0);
 //	TEST_ALL_CLASSES(testEmpty, __TEST0);
-//	TEST_ALL_CLASSES(testTakeValueFrom, TEST_ALL_UTF);
-//	TEST_ALL_CLASSES(testTakeValueFromXString, TEST_ALL_UTF);
+	TEST_ALL_CLASSES(testTakeValueFrom, TEST_ALL_UTF);
 //	TEST_ALL_CLASSES(testchar32At, TEST_ALL_INTEGRAL);
 //	TEST_ALL_CLASSES(testdataSized, TEST_ALL_INTEGRAL);
 //
-//	TEST_ALL_CLASSES(teststrcpy, TEST_ALL_UTF);
-//	TEST_ALL_CLASSES(teststrncpy, TEST_ALL_UTF); // 26944 tests
-//	TEST_ALL_CLASSES(teststrcat, TEST_ALL_UTF_ALL_UTF);
+	TEST_ALL_CLASSES(teststrncpy, TEST_ALL_UTF); // 26944 tests
+	TEST_ALL_CLASSES(teststrcat, TEST_ALL_UTF_ALL_UTF);
 //	TEST_ALL_CLASSES(teststrncat, TEST_ALL_UTF_ALL_UTF); // 2101632 tests
 //
 //	TEST_ALL_CLASSES(testSubString, __TEST0);
@@ -1498,6 +1547,7 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 //
 //	TEST_ALL_CLASSES(testlastChar, __TEST0);
 	TEST_ALL_CLASSES(testtrim, __TEST0);
+	TEST_ALL_CLASSES(teststartWith, __TEST0);
 
 
 

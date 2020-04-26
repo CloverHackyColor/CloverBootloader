@@ -6,7 +6,7 @@
 
 #include "XArray_tests.h"
 #include "XObjArray_tests.h"
-#include "XStringWArray_test.h"
+#include "XStringArray_test.h"
 #include "XString_test.h"
 #include "strcmp_test.h"
 #include "strncmp_test.h"
@@ -91,7 +91,7 @@ bool all_tests()
 		printf("XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-	ret = XStringWArray_tests();
+	ret = XStringArray_tests();
 	if ( ret != 0 ) {
 		printf("XStringWArray_tests() failed at test %d\n", ret);
 		all_ok = false;

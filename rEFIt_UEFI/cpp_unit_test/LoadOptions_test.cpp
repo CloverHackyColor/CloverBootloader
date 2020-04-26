@@ -85,21 +85,22 @@ CHAR16 *Old1_RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *Loa
 
 
 
-
 //
 //static XString AddLoadOption(IN CONST XString& LoadOptions, IN CONST XString& LoadOption)
 //{
+//  // LoadOptions assumed out
 //  // If either option strings are null nothing to do
-//  if (LoadOptions.isEmpty())
+//  if (LoadOptions.isEmpty()) //initially empty so return new option even if empty
 //  {
-//    // return LoadOption as nothing to add
+//    // return LoadOption
 //    return LoadOption;
 //  }
 //  // If there is no option or it is already present duplicate original
 //  else {
-//	  if ( LoadOptions.contains(LoadOption) ) return LoadOptions;
+//	  if ( LoadOptions.contains(LoadOption) ) return LoadOptions; //good
 //	  // Otherwise add option
-//	  return SPrintf("%s %s", LoadOptions.c_str(), LoadOption.c_str()); //LoadOptions + LoadOption
+////	  return SPrintf("%s %s", LoadOptions.c_str(), LoadOption.c_str()); //LoadOptions + LoadOption
+//    return LoadOptions + " "_XS + LoadOption; //why not?
 //  }
 //}
 //
@@ -146,25 +147,22 @@ CHAR16 *Old1_RemoveLoadOption(IN CONST CHAR16 *LoadOptions, IN CONST CHAR16 *Loa
 //  XString NewLoadOptions;
 //  if (Offset == 0) {
 //    // Simple case - we just need substring after OptionLength position
-//    NewLoadOptions = LoadOptions.SubString(OptionLength, MAX_XSIZE);
+//    NewLoadOptions = LoadOptions.subString(OptionLength, MAX_XSIZE);
 //  } else {
 //    // Copy preceeding substring
-//	NewLoadOptions = LoadOptions.SubString(0, Offset);
+//	NewLoadOptions = LoadOptions.subString(0, Offset);
 ////    CopyMem(NewLoadOptions, LoadOptions, Offset * sizeof(CHAR16));
 //    if ((Offset + OptionLength) < Length) {
 //      // Copy following substring, but include one space also
 //      OptionLength--;
-//	  NewLoadOptions += LoadOptions.SubString(Offset + OptionLength, MAX_XSIZE);
+//	  NewLoadOptions += LoadOptions.subString(Offset + OptionLength, MAX_XSIZE);
 ////      CopyMem(NewLoadOptions + Offset, LoadOptions + Offset + OptionLength, (Length - OptionLength - Offset) * sizeof(CHAR16));
 //    }
 //  }
 //  return NewLoadOptions;
 //}
 //
-
-
-
-
+//
 
 
 
@@ -201,14 +199,14 @@ int BootOptions_tests()
 //		LoadOptions = AddLoadOption(LoadOptions, "opt2"_XS);
 //		LoadOptions = AddLoadOption(LoadOptions, "opt3"_XS);
 //		
-//		if ( LoadOptions != "opt1 opt2 opt3"_XS ) return 1;
+//		if ( LoadOptions != "opt1 opt2 opt3"_XS ) return 10;
 //		
 //		XString LoadOptions1 = RemoveLoadOption(LoadOptions, "opt1"_XS);
-//		if ( LoadOptions1 != "opt2 opt3"_XS ) return 1;
+//		if ( LoadOptions1 != "opt2 opt3"_XS ) return 11;
 //		XString LoadOptions2 = RemoveLoadOption(LoadOptions, "opt2"_XS);
-//		if ( LoadOptions2 != "opt1 opt3"_XS ) return 1;
+//		if ( LoadOptions2 != "opt1 opt3"_XS ) return 12;
 //		XString LoadOptions3 = RemoveLoadOption(LoadOptions, "opt3"_XS);
-//		if ( LoadOptions3 != "opt1 opt2"_XS ) return 1;
+//		if ( LoadOptions3 != "opt1 opt2"_XS ) return 13;
 //	}
 	{
 		XStringArray LoadOptions;
@@ -220,13 +218,13 @@ int BootOptions_tests()
 		if ( LoadOptions.ConcatAll(" "_XS) != "opt1 opt2 opt3"_XS ) return 30;
 		
 		XStringArray LoadOptions1 = LoadOptions;
-		LoadOptions1.Remove("opt1"_XS);
+		LoadOptions1.remove("opt1"_XS);
 		if ( LoadOptions1.ConcatAll(" "_XS) != "opt2 opt3"_XS ) return 31;
 		XStringArray LoadOptions2 = LoadOptions;
-		LoadOptions2.Remove("opt2"_XS);
+		LoadOptions2.remove("opt2"_XS);
 		if ( LoadOptions2.ConcatAll(" "_XS) != "opt1 opt3"_XS ) return 32;
 		XStringArray LoadOptions3 = LoadOptions;
-		LoadOptions3.Remove("opt3"_XS);
+		LoadOptions3.remove("opt3"_XS);
 		if ( LoadOptions3.ConcatAll(" "_XS) != "opt1 opt2"_XS ) return 33;
 	}
 

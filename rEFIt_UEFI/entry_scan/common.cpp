@@ -271,7 +271,7 @@ STATIC void CreateInfoLines(IN CONST XStringW& Message, OUT XStringWArray* Infor
   if (Message.isEmpty()) {
     return;
   }
-  Information->Empty();
+  Information->setEmpty();
   //TODO will fill later
 }
 
@@ -328,7 +328,7 @@ VOID AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
   CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
   AlertMessageMenu.Title = Title;
   AlertMessageMenu.RunMenu(NULL);
-  AlertMessageMenu.InfoLines.Empty();
+  AlertMessageMenu.InfoLines.setEmpty();
 }
 
 #define TAG_YES 1
@@ -357,7 +357,7 @@ BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
       MenuExit = MENU_EXIT_ENTER;
     }
   } while (MenuExit != MENU_EXIT_ENTER);
-  YesNoMessageMenu.InfoLines.Empty();
+  YesNoMessageMenu.InfoLines.setEmpty();
   return Result;
 }
 // Ask user for file path from directory menu

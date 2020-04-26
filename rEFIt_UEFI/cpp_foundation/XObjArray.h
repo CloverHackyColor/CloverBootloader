@@ -12,6 +12,7 @@
 #define __XOBJARRAY_H__
 
 #include <XToolsConf.h>
+#include "XToolsCommon.h"
 
 
 #if 1
@@ -35,8 +36,8 @@ class XObjArrayNC
 {
   public:
 	XObjArrayEntry<TYPE> *_Data;
-	xsize _Len;
-	xsize m_allocatedSize;
+	size_t _Len;
+	size_t m_allocatedSize;
 
   public:
 	void Init();
@@ -58,16 +59,40 @@ class XObjArrayNC
 	bool NotNull() const { return size() > 0; }
 	bool IsNull() const { return size() == 0; }
 
-	const TYPE &ElementAt(xsize nIndex) const;
-	TYPE &ElementAt(xsize nIndex);
-	
+	template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	const TYPE &ElementAt(IntegralType nIndex) const
+	{
+		if (nIndex < 0) {
+			panic("XObjArrayNC::ElementAt() : i < 0. System halted\n");
+		}
+		if ( (unsigned_type(IntegralType))nIndex >= _Len ) {
+			panic("XObjArrayNC::ElementAt() -> operator []  -  index (%zu) greater than length (%zu)\n", (size_t)nIndex, _Len);
+		}
+		return  *((TYPE *)(_Data[nIndex].Object));
+	}
+
+	template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	TYPE &ElementAt(IntegralType nIndex)
+	{
+		if (nIndex < 0) {
+			panic("XObjArrayNC::ElementAt() : i < 0. System halted\n");
+		}
+		if ( (unsigned_type(IntegralType))nIndex >= _Len ) {
+			panic("XObjArrayNC::ElementAt() const -> operator []  -  index (%zu) greater than length (%zu)\n", (size_t)nIndex, _Len);
+		}
+		return  *((TYPE *)(_Data[nIndex].Object));
+	}
+
 	// This was useful for realtime debugging with a debugger that do not recognise references. That was years and years ago. Probably not needed anymore.
 	#ifdef _DEBUG_iufasdfsfk
 		const TYPE *DbgAt(int i) const { if ( i >= 0 && (xsize)i < _Len ) return &ElementAt ((xsize) i); else return NULL; }
 	#endif
 
-	const TYPE &operator[](xsize nIndex) const { return ElementAt(nIndex); }
-	TYPE &operator[](xsize nIndex) { return ElementAt(nIndex); }
+	template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	const TYPE &operator[](IntegralType nIndex) const { return ElementAt(nIndex); }
+	
+	template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	TYPE &operator[](IntegralType nIndex) { return ElementAt(nIndex); }
 
 	xsize AddReference(TYPE *newElement, bool FreeIt);
 
@@ -163,7 +188,7 @@ const XObjArray<TYPE> &XObjArray<TYPE>::operator =(const XObjArray<TYPE> &anObjA
   xsize ui;
 
   	XObjArrayNC<TYPE>::Empty();
-	CheckSize(anObjArray.length(), 0);
+	this->CheckSize(anObjArray.length(), 0);
 	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
 	return *this;
 }
@@ -190,26 +215,6 @@ void XObjArrayNC<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 //		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
 		m_allocatedSize = nNewSize;
 	}
-}
-
-/* ElementAt() */
-template<class TYPE>
-TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index)
-{
-		if ( index >= _Len ) {
-			panic("XObjArray<TYPE>::ElementAt(xsize) -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
-		}
-		return  *((TYPE *)(_Data[index].Object));
-}
-
-/* ElementAt() */
-template<class TYPE>
-const TYPE &XObjArrayNC<TYPE>::ElementAt(xsize index) const
-{
-		if ( index >= _Len ) {
-			panic("XObjArray<TYPE>::ElementAt(xsize) const -> operator []  -  index (%zu) greater than length (%zu)\n", index, _Len);
-		}
-		return  *((TYPE *)(_Data[index].Object));
 }
 
 ///* Add() */
