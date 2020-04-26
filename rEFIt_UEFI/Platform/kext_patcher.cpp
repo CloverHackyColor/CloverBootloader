@@ -1010,6 +1010,10 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
           j    += Entry->KernelAndKextPatches->KextPatches[N].SearchLen - 1;
         }
       }
+      if (!Entry->KernelAndKextPatches->KextPatches[i].StartPattern ||
+          !Entry->KernelAndKextPatches->KextPatches[i].StartPatternLen) {
+        break;
+      }
       j++; curs++;
     }
   } else {
