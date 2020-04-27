@@ -10,7 +10,7 @@
 
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
-
+#include "../cpp_foundation/XString.h"
 
 extern EFI_GUID                       *gEfiBootDeviceGuid;
 extern EFI_DEVICE_PATH_PROTOCOL       *gEfiBootDeviceData;
@@ -86,7 +86,7 @@ GetSmcKeys(BOOLEAN WriteToSMC);
 EFI_STATUS
 SetStartupDiskVolume (
   IN  REFIT_VOLUME *Volume,
-  IN  CONST CHAR16       *LoaderPath
+  IN  CONST XStringW& LoaderPath
   );
 
 VOID

@@ -31,11 +31,11 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-//	ret = XString_tests();
-//	if ( ret != 0 ) {
-//		printf("XString16_tests() failed at test %d\n", ret);
-//		all_ok = false;
-//	}
+	ret = XString_tests();
+	if ( ret != 0 ) {
+		printf("XString16_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
 //return ret;
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {

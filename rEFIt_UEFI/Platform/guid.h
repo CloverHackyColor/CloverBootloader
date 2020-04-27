@@ -22,7 +22,7 @@ StrToGuidLE (
      OUT  EFI_GUID *Guid);
 
 CHAR16 * GuidBeToStr(EFI_GUID *Guid);
-CHAR16 * GuidLEToStr(EFI_GUID *Guid);
+XStringW GuidLEToStr(EFI_GUID *Guid);
 
 
 

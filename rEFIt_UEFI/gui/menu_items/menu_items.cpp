@@ -53,7 +53,7 @@ REFIT_MENU_ENTRY_CLOVER* REFIT_MENU_ENTRY_CLOVER::getPartiallyDuplicatedEntry() 
     DuplicateEntry->Volume          = Volume;
     DuplicateEntry->DevicePathString= EfiStrDuplicate(DevicePathString);
     DuplicateEntry->LoadOptions     = LoadOptions;
-    DuplicateEntry->LoaderPath      = EfiStrDuplicate(LoaderPath);
+    DuplicateEntry->LoaderPath      = LoaderPath;
 	DuplicateEntry->VolName         = EfiStrDuplicate(VolName);
 	DuplicateEntry->DevicePath      = DevicePath;
 	DuplicateEntry->Flags           = Flags;
@@ -68,7 +68,7 @@ LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
     DuplicateEntry->Volume          = Volume;
     DuplicateEntry->DevicePathString= EfiStrDuplicate(DevicePathString);
     DuplicateEntry->LoadOptions     = LoadOptions;
-    DuplicateEntry->LoaderPath      = EfiStrDuplicate(LoaderPath);
+    DuplicateEntry->LoaderPath      = LoaderPath;
 	DuplicateEntry->VolName         = EfiStrDuplicate(VolName);
 	DuplicateEntry->DevicePath      = DevicePath;
 	DuplicateEntry->Flags           = Flags;

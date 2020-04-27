@@ -456,7 +456,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 
   if (VarSize > NameSize + 6) {
     Data += NameSize;
-    if (StriCmp((CHAR16*)Data, Basename(Entry->LoaderPath)) != 0) {
+    if (StriCmp((CHAR16*)Data, Basename(Entry->LoaderPath.wc_str())) != 0) {
 		DBG("Boot option %llu has other loader name %ls\n", Entry->BootNum, (CHAR16*)Data);
       FreePool(BootVariable);
       return;
@@ -850,9 +850,7 @@ CUSTOM_LOADER_ENTRY
       DuplicateEntry->Volume         = EfiStrDuplicate (Entry->Volume);
     }
 
-    if (Entry->Path != NULL) {
-      DuplicateEntry->Path           = EfiStrDuplicate (Entry->Path);
-    }
+	DuplicateEntry->Path           = Entry->Path;
 
 	DuplicateEntry->LoadOptions        = Entry->LoadOptions;
 
@@ -1856,11 +1854,7 @@ FillinCustomEntry (
 
   Prop = GetProperty(DictPointer, "Path");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Path) {
-      FreePool(Entry->Path);
-    }
-
-    Entry->Path = PoolPrint(L"%a", Prop->string);
+    Entry->Path.SWPrintf("%s", Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "Settings");
@@ -2031,7 +2025,7 @@ FillinCustomEntry (
       Entry->Type = OSTYPE_OTHER;
     }
   } else {
-    if (Entry->Type == 0 && Entry->Path) {
+    if (Entry->Type == 0 && Entry->Path.notEmpty()) {
       // Try to set Entry->type from Entry->Path
       Entry->Type = GetOSTypeFromPath(Entry->Path);
     }
@@ -2298,10 +2292,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 
   Prop = GetProperty(DictPointer, "Path");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Path != NULL) {
-      FreePool(Entry->Path);
-    }
-    Entry->Path = PoolPrint(L"%a", Prop->string);
+    Entry->Path.SWPrintf("%s", Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "Arguments");
@@ -6527,52 +6518,53 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   return OSVersion;
 }
 
-CONST CHAR16
-*GetOSIconName (
+//constexpr XStringW iconMac = L"mac"_XSW;
+CONST XStringW
+GetOSIconName (
                 IN  CONST CHAR8 *OSVersion
                 )
 {
-  CONST CHAR16 *OSIconName;
+  XStringW OSIconName;
   if (OSVersion == NULL) {
-    OSIconName = L"mac";
+    OSIconName = L"mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.15") != 0) {
     // Catalina
-    OSIconName = L"cata,mac";
+    OSIconName = L"cata,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.14") != 0) {
     // Mojave
-    OSIconName = L"moja,mac";
+    OSIconName = L"moja,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.13") != 0) {
     // High Sierra
-    OSIconName = L"hsierra,mac";
+    OSIconName = L"hsierra,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.12") != 0) {
     // Sierra
-    OSIconName = L"sierra,mac";
+    OSIconName = L"sierra,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.11") != 0) {
     // El Capitan
-    OSIconName = L"cap,mac";
+    OSIconName = L"cap,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.10") != 0) {
     // Yosemite
-    OSIconName = L"yos,mac";
+    OSIconName = L"yos,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.9") != 0) {
     // Mavericks
-    OSIconName = L"mav,mac";
+    OSIconName = L"mav,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.8") != 0) {
     // Mountain Lion
-    OSIconName = L"cougar,mac";
+    OSIconName = L"cougar,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.7") != 0) {
     // Lion
-    OSIconName = L"lion,mac";
+    OSIconName = L"lion,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.6") != 0) {
     // Snow Leopard
-    OSIconName = L"snow,mac";
+    OSIconName = L"snow,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.5") != 0) {
     // Leopard
-    OSIconName = L"leo,mac";
+    OSIconName = L"leo,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.4") != 0) {
     // Tiger
-    OSIconName = L"tiger,mac";
+    OSIconName = L"tiger,mac"_XSW;
   } else {
-    OSIconName = L"mac";
+    OSIconName = L"mac"_XSW;
   }
 
   return OSIconName;

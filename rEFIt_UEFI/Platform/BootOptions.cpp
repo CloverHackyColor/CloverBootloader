@@ -169,7 +169,7 @@ FindDevicePathNodeWithType (
 EFI_STATUS
 CreateBootOptionDevicePath (
     IN  EFI_HANDLE      FileDeviceHandle,
-    IN  CONST CHAR16          *FileName,
+    IN  CONST XStringW&  FileName,
     IN  BOOLEAN         UseShortForm,
     OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath
     )
@@ -190,7 +190,7 @@ CreateBootOptionDevicePath (
     //
     // Create file path node with FileName
     //
-    *DevicePath = FileDevicePath(FileDeviceHandle, FileName);
+    *DevicePath = FileDevicePath(FileDeviceHandle, FileName.wc_str());
     if (*DevicePath == NULL) {
         return EFI_OUT_OF_RESOURCES;
     }
@@ -746,7 +746,7 @@ FindFreeBootNum (
 EFI_STATUS
 FindBootOptionForFile (
     IN  EFI_HANDLE      FileDeviceHandle,
-    IN  CONST CHAR16          *FileName,
+    IN  CONST XStringW&  FileName,
     OUT UINT16          *BootNum,
     OUT UINTN           *BootIndex
     )
@@ -760,7 +760,7 @@ FindBootOptionForFile (
   UINTN               SearchedDevicePathSize[2];
 
 
-  DBG("FindBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName);
+  DBG("FindBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName.wc_str());
 
   //
   // Get BootOrder - we will search only options listed in BootOrder.
@@ -1002,7 +1002,7 @@ AddBootOption (
 EFI_STATUS
 AddBootOptionForFile (
     IN  EFI_HANDLE      FileDeviceHandle,
-    IN  CONST CHAR16          *FileName,
+    IN  CONST XStringW&  FileName,
     IN  BOOLEAN         UseShortForm,
     IN  CONST CHAR16          *Description,
     IN  UINT8           *OptionalData,
@@ -1016,7 +1016,7 @@ AddBootOptionForFile (
 
 
 	DBG("\nAddBootOptionForFile: %p, %ls, %ls\n %ls, %llu\n",
-      FileDeviceHandle, FileName,
+      FileDeviceHandle, FileName.wc_str(),
       UseShortForm ? L"ShortDevPath" : L"FullDevPath",
       Description, BootIndex);
 
@@ -1108,14 +1108,14 @@ DeleteBootOption (
 EFI_STATUS
 DeleteBootOptionForFile (
     IN  EFI_HANDLE      FileDeviceHandle,
-    IN  CONST CHAR16          *FileName
+    IN  CONST XStringW&  FileName
     )
 {
   EFI_STATUS          Status;
   IN  UINT16          BootNum;
 
 
-  DBG("\nDeleteBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName);
+  DBG("\nDeleteBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName.wc_str());
   do {
     Status = FindBootOptionForFile (FileDeviceHandle, FileName, &BootNum, NULL);
     if (!EFI_ERROR(Status)) {

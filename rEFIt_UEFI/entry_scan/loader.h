@@ -8,6 +8,8 @@
 #ifndef LOADER_H_
 #define LOADER_H_
 
+#include "../cpp_foundation/XString.h"
+
 //#define DUMP_KERNEL_KEXT_PATCHES 1
 
 // Kernel scan states
@@ -21,7 +23,8 @@
 #define KERNEL_SCAN_NONE       (100)
 
 
-UINT8       GetOSTypeFromPath (IN CONST CHAR16 *Path);
+//UINT8       GetOSTypeFromPath (IN CONST CHAR16 *Path);
+UINT8       GetOSTypeFromPath(IN CONST XStringW& Path);
 
 #ifdef DUMP_KERNEL_KEXT_PATCHES
 // Utils functions

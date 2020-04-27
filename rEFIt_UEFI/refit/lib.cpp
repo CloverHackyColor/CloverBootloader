@@ -1354,6 +1354,11 @@ BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
   return FALSE;
 }
 
+BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST XStringW& RelativePath)
+{
+	return FileExists(Root, RelativePath.wc_str());
+}
+
 BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
 {
   EFI_STATUS  Status;

@@ -330,6 +330,7 @@ VOID ScanVolumes(VOID);
 REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName);
 
 BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath);
+BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST XStringW& RelativePath);
 
 BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath);
 

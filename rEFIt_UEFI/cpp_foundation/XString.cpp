@@ -46,6 +46,13 @@ XString32 operator"" _XS32 ( const char32_t* s, size_t len)
     return returnValue; // don't do "return returnValue.takeValueFrom(s, len)" because it break the return value optimization.
 }
 
+XStringW operator"" _XSW ( const char* s, size_t len)
+{
+  XStringW returnValue;
+	returnValue.takeValueFrom(s, len);
+    return returnValue; // don't do "return returnValue.takeValueFrom(s, len)" because it break the return value optimization.
+}
+
 XStringW operator"" _XSW ( const wchar_t* s, size_t len)
 {
   XStringW returnValue;

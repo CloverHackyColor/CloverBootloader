@@ -119,7 +119,7 @@ FindBootOptionForFile (
 EFI_STATUS
 AddBootOptionForFile (
                       IN  EFI_HANDLE FileDeviceHandle,
-                      IN  CONST CHAR16     *FileName,
+                      IN  CONST XStringW &FileName,
                       IN  BOOLEAN    UseShortForm,
                       IN  CONST CHAR16     *Description,
                       IN  UINT8      *OptionalData,
@@ -138,8 +138,8 @@ DeleteBootOption (
 /** Deletes boot option for file specified with FileDeviceHandle and FileName. */
 EFI_STATUS
 DeleteBootOptionForFile (
-  IN  EFI_HANDLE FileDeviceHandle,
-  IN  CONST CHAR16     *FileName
+  IN  EFI_HANDLE     FileDeviceHandle,
+  IN  CONST XStringW& FileName
   );
 
 /** Deletes all boot option that points to a file which contains FileName in it's path. */

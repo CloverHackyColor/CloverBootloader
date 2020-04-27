@@ -1100,7 +1100,7 @@ FindStartupDiskVolume (
   REFIT_VOLUME *Volume;
   REFIT_VOLUME *DiskVolume;
   BOOLEAN      IsPartitionVolume;
-  CONST CHAR16       *LoaderPath;
+  XStringW     LoaderPath;
   CHAR16       *EfiBootVolumeStr;
   
   
@@ -1142,9 +1142,9 @@ FindStartupDiskVolume (
           //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
           //DBG("   '%ls'\n", LoaderPath);
           // case insensitive cmp
-          if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
+          if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
             // that's the one
-			  DBG("    - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
+			  DBG("    - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
             return Index;
           }
         }
@@ -1165,9 +1165,9 @@ FindStartupDiskVolume (
           //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
           //DBG("   '%ls'\n", LoaderPath);
           // case insensitive cmp
-          if (LoaderPath != NULL && StriCmp(gEfiBootLoaderPath, LoaderPath) == 0) {
+          if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
             // that's the one
-			  DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath);
+			  DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
             return Index;
           }
         }
@@ -1268,7 +1268,7 @@ FindStartupDiskVolume (
         //DBG("   LoaderType = %d\n", LoaderEntry.LoaderType);
         if (LoaderEntry.LoaderType == OSTYPE_WINEFI) {
           // that's the one - win loader entry
-			DBG("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
+			DBG("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath.wc_str());
           return Index;
         }
       }
@@ -1297,7 +1297,7 @@ FindStartupDiskVolume (
       Volume = LoaderEntry.Volume;
       if (Volume != NULL && Volume->WholeDiskBlockIO == DiskVolume->BlockIO) {
         // that's the one
-		  DBG("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath);
+		  DBG("    - found loader entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderEntry.LoaderPath.wc_str());
 
         return Index;
       }
@@ -1312,7 +1312,7 @@ FindStartupDiskVolume (
 /** Sets efi-boot-device-data RT var to currently selected Volume and LoadePath. */
 EFI_STATUS SetStartupDiskVolume (
   IN  REFIT_VOLUME *Volume,
-  IN  CONST CHAR16       *LoaderPath
+  IN  CONST XStringW&  LoaderPath
   )
 {
   EFI_STATUS               Status;
@@ -1327,14 +1327,14 @@ EFI_STATUS SetStartupDiskVolume (
   
   DBG("SetStartupDiskVolume:\n");
   DBG("  * Volume: '%ls'\n",     Volume->VolName);
-  DBG("  * LoaderPath: '%ls'\n", LoaderPath);
+  DBG("  * LoaderPath: '%ls'\n", LoaderPath.wc_str());
   
   //
   // construct dev path for Volume/LoaderPath
   //
   DevPath = Volume->DevicePath;
-  if (LoaderPath != NULL) {
-    FileDevPath = FileDevicePath (NULL, LoaderPath);
+  if (LoaderPath.notEmpty()) {
+    FileDevPath = FileDevicePath (NULL, LoaderPath.wc_str());
     DevPath     = AppendDevicePathNode (DevPath, FileDevPath);
   }
   DBG("  * DevPath: %ls\n", Volume->VolName/*, FileDevicePathToStr (DevPath)*/);

@@ -50,7 +50,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	XStringClass ConcatAll(const XStringClass& Separator = ", "_XS, const XStringClass& Prefix = NullXString, const XStringClass& Suffix = NullXString) const
 	{
 		xsize i;
-		XString s;
+		XStringClass s;
 		
 		if ( array.size() > 0 ) {
 			s = Prefix;

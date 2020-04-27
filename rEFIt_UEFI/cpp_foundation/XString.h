@@ -128,6 +128,7 @@ public:
 XString operator"" _XS ( const char* s, size_t len);
 XString16 operator"" _XS16 ( const char16_t* s, size_t len);
 XString32 operator"" _XS32 ( const char32_t* s, size_t len);
+XStringW operator"" _XSW ( const char* s, size_t len);
 XStringW operator"" _XSW ( const wchar_t* s, size_t len);
 
 extern const XString NullXString;

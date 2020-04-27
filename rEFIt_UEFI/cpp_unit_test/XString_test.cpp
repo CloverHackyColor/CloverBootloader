@@ -240,6 +240,24 @@ const TestStringMultiCodedAndExpectedResult testStringMultiCoded4TrimArray[] = {
 size_t nbTestStringMultiCoded4TrimArray = *(&testStringMultiCoded4TrimArray + 1) - testStringMultiCoded4TrimArray;
 
 
+const TestStringMultiCodedAndExpectedResult testStringMultiCoded4BasenameArray[] = {
+	{ testStringExpectedArray_LINE("  A൧൨BC/ギDEизF", "ギDEизF") },
+	{ testStringExpectedArray_LINE("  A൧൨BC//ギDEизF", "ギDEизF") },
+	{ testStringExpectedArray_LINE("  A൧൨BC\\\\ギDEизF", "ギDEизF") },
+	{ testStringExpectedArray_LINE("  A൧൨BC///ギDEизF", "ギDEизF") },
+	{ testStringExpectedArray_LINE("  A൧൨BC\\\\\\ギDEизF", "ギDEизF") },
+	{ testStringExpectedArray_LINE("  A൧൨BC/ギDEизF  ", "ギDEизF  ") },
+	{ testStringExpectedArray_LINE("  /ギDEизF  ", "ギDEизF  ") },
+	{ testStringExpectedArray_LINE("   ギDEизF  ", "   ギDEизF  ") },
+	{ testStringExpectedArray_LINE("", ".") },
+	{ testStringExpectedArray_LINE(" ", " ") },
+	{ testStringExpectedArray_LINE("abc聯/輦deFG\\ꇊHIjklmn", "ꇊHIjklmn") },
+	{ testStringExpectedArray_LINE("abc聯\\輦deFG/ꇊHIjklmn", "ꇊHIjklmn") },
+};
+
+size_t nbTestStringMultiCoded4BasenameArray = *(&testStringMultiCoded4BasenameArray + 1) - testStringMultiCoded4BasenameArray;
+
+
 
 template<class XStringType>
 struct XStringClassInfo
@@ -899,7 +917,7 @@ SimpleString testSubString_(const InitialValue& initialValue)
 		for ( size_t count = 0 ; count < initialValue.utf32_length-pos+3 ; count+=1 )
 		{
 			size_t expectedLength = 0;
-			if ( pos < initialValue.utf32_length ) expectedLength = min( count, initialValue.utf32_length - pos);
+			if ( pos < initialValue.utf32_length ) expectedLength = Xmin( count, initialValue.utf32_length - pos);
 			
 			size_t expectedSize = 0;
 			if ( pos < initialValue.utf32_length ) expectedSize = utf_size_of_utf_string_len(&c, initialValue.cha, pos+count) - utf_size_of_utf_string_len(&c, initialValue.cha, pos);
@@ -1436,6 +1454,36 @@ SimpleString teststartWith_(const InitialValue& initialValue)
 	} \
 
 
+/*****************************  basename  *****************************/
+template<class XStringClass, class InitialValue, typename ExpectedResult>
+SimpleString testbasename_(const InitialValue& initialValue, const TestString<ExpectedResult>& expectedResult)
+{
+	TEST_TITLE(displayOnlyFailed, ssprintf("Test %s::basename(%s\"%s\")", XStringClassInfo<XStringClass>::xStringClassName, XStringClassInfo<InitialValue>::prefix, SimpleString(initialValue.cha).c_str()));
+
+//	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
+//	ch_t c; // dummy for call utf function
+
+	XStringClass initialString;
+	initialString.takeValueFrom(initialValue.cha);
+	
+	XStringClass xstr = initialString.basename();
+	
+	CHECK_RESULT(xstr.strcmp(expectedResult.cha) == 0,
+				 ssprintf("\"%s\".basename() == \"%s\"", SimpleString(initialString.s()).c_str(), SimpleString(expectedResult.cha).c_str()),
+				 ssprintf("\"%s\".basename() != (\"%s\"!=\"%s\")", SimpleString(initialString.s()).c_str(), SimpleString(xstr.s()).c_str(), SimpleString(expectedResult.cha).c_str())
+				 );
+XStringClass xstr2 = initialString.basename();
+
+	return SimpleString();
+}
+
+#define testbasename(XStringClass, classEncoding) \
+    printf("Test %s::testbasename\n", STRINGIFY(XStringClass)); \
+	for ( size_t i = 0 ; i < nbTestStringMultiCoded4BasenameArray ; i++ ) { \
+		testbasename_<XStringClass>(testStringMultiCoded4BasenameArray[i].classEncoding, testStringMultiCoded4BasenameArray[i].classEncoding##_expectedResult); \
+	} \
+
+
 
 /*****************************    *****************************/
 #undef realloc
@@ -1443,6 +1491,7 @@ SimpleString teststartWith_(const InitialValue& initialValue)
 //#include <type_traits>
 //#include <typeinfo>
 //#include <iostream>
+//#include <libgen.h>
 
 //std::is_class
 
@@ -1451,11 +1500,26 @@ void func_test(XStringW& xsw)
 	(void)xsw;
 }
 
+template<typename T>
+class CE
+{
+  public:
+	const T* data;
+	constexpr CE() : data(0) { }
+};
+
+class CE2 : public XStringAbstractNoDtor<char, CE2>
+{
+};
+
 int XString_tests()
 {
 #ifdef JIEF_DEBUG
 //	printf("XString16_tests -> Enter\n");
 #endif
+
+//constexpr CE<char> ce;
+//constexpr CE2 xsw;
 
 //const char c = ' ';
 //const char* cc = "  ";
@@ -1528,26 +1592,35 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 //testCompare(XString, utf8, utf16);
 //testindexOf_<XString>(testStringMultiCoded4CaseArray[0].utf8);
 
-
+//const char* p1 = "foo/bar"; // basename returns bar
+//const char* p1 = "foo/"; // basename returns foo
+//const char* p1 = "foo//"; // basename returns foo
+//const char* p1 = "foo///"; // basename returns foo
+//const char* p1 = ""; // basename returns "."
+//const char* p1 = "  foo/bar  "; // basename returns "bar  "
+//const char* p1 = "  foo  "; // basename returns "  foo  "
+//const char* p1 = " "; // basename returns " "
+//const char* p2 = basename((char*)p1);
 
 
 //	TEST_ALL_CLASSES(testDefaultCtor, __TEST0);
 //	TEST_ALL_CLASSES(testEmpty, __TEST0);
-	TEST_ALL_CLASSES(testTakeValueFrom, TEST_ALL_UTF);
+//	TEST_ALL_CLASSES(testTakeValueFrom, TEST_ALL_UTF);
 //	TEST_ALL_CLASSES(testchar32At, TEST_ALL_INTEGRAL);
 //	TEST_ALL_CLASSES(testdataSized, TEST_ALL_INTEGRAL);
 //
-	TEST_ALL_CLASSES(teststrncpy, TEST_ALL_UTF); // 26944 tests
-	TEST_ALL_CLASSES(teststrcat, TEST_ALL_UTF_ALL_UTF);
+//	TEST_ALL_CLASSES(teststrncpy, TEST_ALL_UTF); // 26944 tests
+//	TEST_ALL_CLASSES(teststrcat, TEST_ALL_UTF_ALL_UTF);
 //	TEST_ALL_CLASSES(teststrncat, TEST_ALL_UTF_ALL_UTF); // 2101632 tests
 //
-//	TEST_ALL_CLASSES(testSubString, __TEST0);
+	TEST_ALL_CLASSES(testSubString, __TEST0);
 //	TEST_ALL_CLASSES(testCompare, TEST_ALL_UTF);
 //	TEST_ALL_CLASSES(testindexOf, TEST_ALL_UTF);
 //
 //	TEST_ALL_CLASSES(testlastChar, __TEST0);
 	TEST_ALL_CLASSES(testtrim, __TEST0);
 	TEST_ALL_CLASSES(teststartWith, __TEST0);
+	TEST_ALL_CLASSES(testbasename, __TEST0);
 
 
 

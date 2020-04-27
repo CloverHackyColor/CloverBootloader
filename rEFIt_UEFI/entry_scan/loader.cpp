@@ -59,9 +59,9 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_LOADER, __VA_ARGS__)
 #endif
 
-#define MACOSX_LOADER_PATH L"\\System\\Library\\CoreServices\\boot.efi"
+const XStringW MACOSX_LOADER_PATH = "\\System\\Library\\CoreServices\\boot.efi"_XSW;
 
-const XStringW LINUX_ISSUE_PATH = L"\\etc\\issue"_XSW;
+const XStringW LINUX_ISSUE_PATH = "\\etc\\issue"_XSW;
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"\\boot"
 const XString LINUX_LOADER_PATH = "vmlinuz"_XS;
@@ -70,9 +70,9 @@ const XStringW LINUX_FULL_LOADER_PATH = SWPrintf("%ls\\%s", LINUX_BOOT_PATH, LIN
 const XStringArray LINUX_DEFAULT_OPTIONS = Split<XStringArray>("ro add_efi_memmap quiet splash vt.handoff=7", " ");
 
 #if defined(MDE_CPU_X64)
-#define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTX64.efi"
+#define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTX64.efi"_XSW
 #else
-#define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTIA32.efi"
+#define BOOT_LOADER_PATH L"\\EFI\\BOOT\\BOOTIA32.efi"_XSW
 #endif
 
 
@@ -81,10 +81,10 @@ extern LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry);
 // Linux loader path data
 typedef struct LINUX_PATH_DATA
 {
-   CONST CHAR16 *Path;
-   CONST CHAR16 *Title;
-   CONST CHAR16 *Icon;
-   CONST CHAR8  *Issue;
+   CONST XStringW Path;
+   CONST XStringW Title;
+   CONST XStringW Icon;
+   CONST XString  Issue;
 } LINUX_PATH_DATA;
 
 typedef struct LINUX_ICON_DATA
@@ -103,14 +103,14 @@ STATIC LINUX_ICON_DATA LinuxIconMapping[] = {
     { L"mx18", L"mx" },
     { L"mx19", L"mx" }
 };
-STATIC CONST UINTN LinuxIconMappingCount = (sizeof(LinuxIconMapping) / sizeof(LINUX_ICON_DATA));
+STATIC CONST UINTN LinuxIconMappingCount = (sizeof(LinuxIconMapping) / sizeof(LinuxIconMapping[0]));
 
 STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 #if defined(MDE_CPU_X64)
   //comment out all common names
 //  { L"\\EFI\\grub\\grubx64.efi", L"Grub EFI boot menu", L"grub,linux" },
 //  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
-  { L"\\EFI\\Gentoo\\kernelx64.efi", L"Gentoo EFI kernel", L"gentoo,linux" },
+  { L"\\EFI\\Gentoo\\kernelx64.efi"_XSW, L"Gentoo EFI kernel"_XSW, L"gentoo,linux"_XSW },
 //  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"redhat,linux", "Redhat" },
 //  { L"\\EFI\\debian\\grubx64.efi", L"Debian EFI boot menu", L"debian,linux", "Debian" },
 //  { L"\\EFI\\kali\\grubx64.efi", L"Kali EFI boot menu", L"kali,linux", "Kali" },
@@ -129,7 +129,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 //  { L"\\EFI\\Manjaro\\grubx64.efi", L"Manjaro EFI boot menu", L"manjaro,linux", "Manjaro" },
 //  { L"\\EFI\\xubuntu\\grubx64.efi", L"Xubuntu EFI boot menu", L"xubuntu,linux", "Xubuntu" },
 //  { L"\\EFI\\zorin\\grubx64.efi", L"Zorin EFI boot menu", L"zorin,linux", "Zorin" },
-  { L"\\EFI\\goofiboot\\goofibootx64.efi", L"Solus EFI boot menu", L"solus,linux", "Solus" },
+  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XSW },
 //  { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
 //  { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
 //  { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
@@ -165,9 +165,9 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\MX19\\grub.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
   { L"\\EFI\\parrot\\grub.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
 #endif
-  { L"\\EFI\\SuSe\\elilo.efi", L"OpenSuse EFI boot menu", L"suse,linux" },
+  { L"\\EFI\\SuSe\\elilo.efi"_XSW, L"OpenSuse EFI boot menu"_XSW, L"suse,linux"_XSW },
 };
-STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_PATH_DATA));
+STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LinuxEntryData[0]));
 
 #if defined(ANDX86)
 #if !defined(MDE_CPU_X64)
@@ -177,39 +177,39 @@ STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LINUX_
 #define ANDX86_FINDLEN 3
 typedef struct ANDX86_PATH_DATA
 {
-   CONST CHAR16   *Path;
-   CONST CHAR16   *Title;
-   CONST CHAR16   *Icon;
-   CONST CHAR16   *Find[ANDX86_FINDLEN];
+   CONST XStringW Path;
+   CONST XStringW Title;
+   CONST XStringW Icon;
+   CONST XStringW Find[ANDX86_FINDLEN];
 } ANDX86_PATH_DATA;
 
 STATIC ANDX86_PATH_DATA AndroidEntryData[] = {
   //{ L"\\EFI\\boot\\grubx64.efi", L"Grub", L"grub,linux" },
   //{ L"\\EFI\\boot\\bootx64.efi", L"Grub", L"grub,linux" },
-  { L"\\EFI\\remixos\\grubx64.efi",         L"Remix",     L"remix,grub,linux",   { L"\\isolinux\\isolinux.bin", L"\\initrd.img", L"\\kernel" } },
-  { L"\\EFI\\PhoenixOS\\boot\\grubx64.efi", L"PhoenixOS", L"phoenix,grub,linux", { L"\\EFI\\PhoenixOS\\boot\\efi.img", L"\\EFI\\PhoenixOS\\initrd.img", L"\\EFI\\PhoenixOS\\kernel" } },
-  { L"\\EFI\\boot\\grubx64.efi",            L"Phoenix",   L"phoenix,grub,linux", { L"\\phoenix\\kernel", L"\\phoenix\\initrd.img", L"\\phoenix\\ramdisk.img" } },
-  { L"\\EFI\\boot\\bootx64.efi",            L"Chrome",    L"chrome,grub,linux",  { L"\\syslinux\\vmlinuz.A", L"\\syslinux\\vmlinuz.B", L"\\syslinux\\ldlinux.sys"} },
+  { L"\\EFI\\remixos\\grubx64.efi"_XSW,         L"Remix"_XSW,     L"remix,grub,linux"_XSW,   { L"\\isolinux\\isolinux.bin"_XSW, L"\\initrd.img"_XSW, L"\\kernel"_XSW } },
+  { L"\\EFI\\PhoenixOS\\boot\\grubx64.efi"_XSW, L"PhoenixOS"_XSW, L"phoenix,grub,linux"_XSW, { L"\\EFI\\PhoenixOS\\boot\\efi.img"_XSW, L"\\EFI\\PhoenixOS\\initrd.img"_XSW, L"\\EFI\\PhoenixOS\\kernel"_XSW } },
+  { L"\\EFI\\boot\\grubx64.efi"_XSW,            L"Phoenix"_XSW,   L"phoenix,grub,linux"_XSW, { L"\\phoenix\\kernel"_XSW, L"\\phoenix\\initrd.img"_XSW, L"\\phoenix\\ramdisk.img"_XSW } },
+  { L"\\EFI\\boot\\bootx64.efi"_XSW,            L"Chrome"_XSW,    L"chrome,grub,linux"_XSW,  { L"\\syslinux\\vmlinuz.A"_XSW, L"\\syslinux\\vmlinuz.B"_XSW, L"\\syslinux\\ldlinux.sys"_XSW} },
 
 };
 STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(ANDX86_PATH_DATA));
 #endif
 #endif
 
-CONST CHAR16  *PaperBoot   = L"\\com.apple.boot.P\\boot.efi";
-CONST CHAR16  *RockBoot    = L"\\com.apple.boot.R\\boot.efi";
-CONST CHAR16  *ScissorBoot = L"\\com.apple.boot.S\\boot.efi";
+CONST XStringW PaperBoot   = "\\com.apple.boot.P\\boot.efi"_XSW;
+CONST XStringW RockBoot    = "\\com.apple.boot.R\\boot.efi"_XSW;
+CONST XStringW ScissorBoot = "\\com.apple.boot.S\\boot.efi"_XSW;
 
 // OS X installer paths
-CONST CHAR16 *OSXInstallerPaths[] = {
-  L"\\.IABootFiles\\boot.efi", // 10.9 - 10.13.3
-  L"\\Mac OS X Install Data\\boot.efi", // 10.7
-  L"\\OS X Install Data\\boot.efi", // 10.8 - 10.11
-  L"\\macOS Install Data\\boot.efi", // 10.12 - 10.12.3
-  L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi" // 10.12.4+
+CONST XStringW OSXInstallerPaths[] = {
+  L"\\.IABootFiles\\boot.efi"_XSW, // 10.9 - 10.13.3
+  L"\\Mac OS X Install Data\\boot.efi"_XSW, // 10.7
+  L"\\OS X Install Data\\boot.efi"_XSW, // 10.8 - 10.11
+  L"\\macOS Install Data\\boot.efi"_XSW, // 10.12 - 10.12.3
+  L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi"_XSW // 10.12.4+
 };
 
-STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(CHAR16 *));
+STATIC CONST UINTN OSXInstallerPathsCount = (sizeof(OSXInstallerPaths) / sizeof(OSXInstallerPaths[0]));
 
 STATIC INTN TimeCmp(IN EFI_TIME *Time1,
                     IN EFI_TIME *Time2)
@@ -246,39 +246,39 @@ STATIC INTN TimeCmp(IN EFI_TIME *Time1,
    return Comparison;
 }
 
-UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
+UINT8 GetOSTypeFromPath(IN CONST XStringW& Path)
 {
-  if (Path == NULL) {
+  if (Path.isEmpty()) {
     return OSTYPE_OTHER;
   }
-  if (StriCmp(Path, MACOSX_LOADER_PATH) == 0) {
+  if ( Path.equalIC(MACOSX_LOADER_PATH)) {
     return OSTYPE_OSX;
-  } else if ((StriCmp(Path, OSXInstallerPaths[0]) == 0) ||
-             (StriCmp(Path, OSXInstallerPaths[1]) == 0) ||
-             (StriCmp(Path, OSXInstallerPaths[2]) == 0) ||
-             (StriCmp(Path, OSXInstallerPaths[3]) == 0) ||
-             (StriCmp(Path, OSXInstallerPaths[4]) == 0) ||
-             (StriCmp(Path, RockBoot) == 0) || (StriCmp(Path, PaperBoot) == 0) || (StriCmp(Path, ScissorBoot) == 0) ||
-             (!StriCmp(Path, L"\\.IABootFiles\\boot.efi") && StriCmp(Path, L"\\.IAPhysicalMedia") && StriCmp(Path, MACOSX_LOADER_PATH))
+  } else if ( Path.equalIC(OSXInstallerPaths[0]) ||
+             ( Path.equalIC(OSXInstallerPaths[1])) ||
+             ( Path.equalIC(OSXInstallerPaths[2])) ||
+             ( Path.equalIC(OSXInstallerPaths[3])) ||
+             ( Path.equalIC(OSXInstallerPaths[4])) ||
+             ( Path.equalIC(RockBoot)) || ( Path.equalIC(PaperBoot)) || ( Path.equalIC(ScissorBoot)) ||
+             (! Path.equalIC(L"\\.IABootFiles\\boot.efi") &&  Path.equalIC(L"\\.IAPhysicalMedia") &&  Path.equalIC(MACOSX_LOADER_PATH))
              ) {
     return OSTYPE_OSX_INSTALLER;
-  } else if (StriCmp(Path, L"\\com.apple.recovery.boot\\boot.efi") == 0) {
+  } else if ( Path.equalIC(L"\\com.apple.recovery.boot\\boot.efi")) {
     return OSTYPE_RECOVERY;
-  } else if ((StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi") == 0) || //test first as orig
-             (StriCmp(Path, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") == 0) ||      //it can be Clover
-    //         (StriCmp(Path, L"\\bootmgr.efi") == 0) || //never worked, just extra icon in menu
-             (StriCmp(Path, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi") == 0)) {
+  } else if (( Path.equalIC(L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi")) || //test first as orig
+             ( Path.equalIC(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi")) ||      //it can be Clover
+    //         ( Path.equalIC(L"\\bootmgr.efi")) || //never worked, just extra icon in menu
+             ( Path.equalIC(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi"))) {
     return OSTYPE_WINEFI;
   } else if (LINUX_FULL_LOADER_PATH.equalIC(Path)) {
     return OSTYPE_LINEFI;
-  } else if (StriStr(Path, L"grubx64.efi") != NULL) {
+  } else if ( Path.containsIC("grubx64.efi") ) {
     return OSTYPE_LINEFI;
   } else {
     UINTN Index;
 #if defined(ANDX86)
     Index = 0;
     while (Index < AndroidEntryDataCount) {
-      if (StriCmp(Path, AndroidEntryData[Index].Path) == 0) {
+      if ( Path.equalIC(AndroidEntryData[Index].Path) ) {
         return OSTYPE_LIN;
       }
       ++Index;
@@ -286,7 +286,7 @@ UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
 #endif
     Index = 0;
     while (Index < LinuxEntryDataCount) {
-      if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
+      if ( Path.equalIC(LinuxEntryData[Index].Path) ) {
         return OSTYPE_LIN;
       }
       ++Index;
@@ -295,14 +295,16 @@ UINT8 GetOSTypeFromPath(IN CONST CHAR16 *Path)
   return OSTYPE_OTHER;
 }
 
-STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
-                                     IN EFI_FILE_PROTOCOL *RootDir)
+static const XStringW linux = L"linux"_XSW;
+
+STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
+										   IN EFI_FILE_PROTOCOL *RootDir)
 {
   UINTN Index;
 #if defined(ANDX86)
   Index = 0;
   while (Index < AndroidEntryDataCount) {
-    if (StriCmp(Path, AndroidEntryData[Index].Path) == 0) {
+    if ( Path.equalIC(AndroidEntryData[Index].Path) ) {
       return AndroidEntryData[Index].Icon;
     }
     ++Index;
@@ -312,7 +314,7 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
   //check not common names
   Index = 0;
   while (Index < LinuxEntryDataCount) {
-    if (StriCmp(Path, LinuxEntryData[Index].Path) == 0) {
+    if ( Path.equalIC(LinuxEntryData[Index].Path) ) {
       return LinuxEntryData[Index].Icon;
     }
     ++Index;
@@ -325,8 +327,7 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
     if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH.wc_str(), (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
       if (IssueLen > 0) {
         for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
-          if ((LinuxEntryData[Index].Issue != NULL) &&
-              (AsciiStrStr(Issue, LinuxEntryData[Index].Issue) != NULL)) {
+          if ( LinuxEntryData[Index].Issue.notEmpty()  &&  AsciiStrStr(Issue, LinuxEntryData[Index].Issue.c_str()) != NULL ) {
             FreePool(Issue);
             return LinuxEntryData[Index].Icon;
           }
@@ -335,7 +336,7 @@ STATIC CONST CHAR16 *LinuxIconNameFromPath(IN CONST CHAR16            *Path,
       FreePool(Issue);
     }
   }
-  return L"linux";
+  return linux;
 }
 
 STATIC CONST XString LinuxInitImagePath[] = {
@@ -346,7 +347,7 @@ STATIC CONST XString LinuxInitImagePath[] = {
    "initramfs.img%s"_XS,
    "initramfs%s.img"_XS,
 };
-STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(CHAR16 *));
+STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(LinuxInitImagePath[0]));
 
 STATIC XStringArray LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
                                   IN CONST CHAR16            *Version,
@@ -439,7 +440,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
   }
   return Status;
 }
-STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
+STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        IN CONST XStringArray& LoaderOptions,
                                        IN CONST XStringW& FullTitle,
                                        IN CONST XStringW& LoaderTitle,
@@ -458,19 +459,19 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   EFI_DEVICE_PATH *LoaderDevicePath;
   CONST CHAR16          *LoaderDevicePathString;
   CONST CHAR16          *FilePathAsString;
-  CONST CHAR16          *OSIconName = NULL;
+//  CONST CHAR16          *OSIconName = NULL;
   CHAR16                ShortcutLetter;
   LOADER_ENTRY          *Entry;
   CONST CHAR8           *indent = "    ";
 
   // Check parameters are valid
-  if ((LoaderPath == NULL) || (*LoaderPath == 0) || (Volume == NULL)) {
+  if ((LoaderPath.isEmpty()) || (Volume == NULL)) {
     return NULL;
   }
 
   // Get the loader device path
 //  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == L'\\') ? (LoaderPath + 1) : LoaderPath);
-  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath);
+  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath.wc_str());
   if (LoaderDevicePath == NULL) {
     return NULL;
   }
@@ -539,9 +540,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         }
 
         // Check if the path match
-        if (Custom->Path != NULL) {
+        if (Custom->Path.notEmpty()) {
           // Check if the loader path match
-          path_match = (StriCmp(Custom->Path, LoaderPath) == 0) ? 1 : -1;
+          path_match = (Custom->Path.equalIC(LoaderPath)) ? 1 : -1;
         }
 
         // Check if the type match
@@ -594,7 +595,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->Row = 0;
   Entry->Volume = Volume;
 
-  Entry->LoaderPath       = EfiStrDuplicate(LoaderPath);
+  Entry->LoaderPath       = LoaderPath;
   Entry->VolName          = Volume->VolName;
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
@@ -628,7 +629,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->OSVersion = GetOSVersion(Entry);
 //DBG("OSVersion=%s \n", Entry->OSVersion);
   // detect specific loaders
-  OSIconName = NULL;
+  XStringW OSIconName;
   ShortcutLetter = 0;
 
   switch (OSType) {
@@ -657,11 +658,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       }
       break;
     case OSTYPE_WIN:
-      OSIconName = L"win";
+      OSIconName = L"win"_XSW;
       ShortcutLetter = 'W';
       break;
     case OSTYPE_WINEFI:
-      OSIconName = L"vista,win";
+      OSIconName = L"vista,win"_XSW;
       //ShortcutLetter = 'V';
       ShortcutLetter = 'W';
       break;
@@ -669,7 +670,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
     case OSTYPE_LINEFI:
     // we already detected linux and have Path and Image
       Entry->LoaderType = OSType;
-      OSIconName = L"linux";
+      OSIconName = L"linux"_XSW;
       if (Image == nullptr) {
         DBG(" image not found\n");
         OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
@@ -678,12 +679,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
       break;
     //case OSTYPE_OTHER: 
     case OSTYPE_EFI:
-      OSIconName = L"clover";
+      OSIconName = L"clover"_XSW;
       ShortcutLetter = 'E';
       Entry->LoaderType = OSTYPE_OTHER;
       break;
     default:
-      OSIconName = L"unknown";
+      OSIconName = L"unknown"_XSW;
       Entry->LoaderType = OSTYPE_OTHER;
       break;
   }
@@ -691,9 +692,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
   Entry->Title = FullTitle;
   if (Entry->Title.isEmpty()  &&  Volume->VolLabel != NULL) {
     if (Volume->VolLabel[0] == L'#') {
-    	Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : Basename(LoaderPath), Volume->VolLabel+1);
+    	Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : LoaderPath.basename().wc_str(), Volume->VolLabel+1);
     }else{
-    	Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : Basename(LoaderPath), Volume->VolLabel);
+    	Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : LoaderPath.basename().wc_str(), Volume->VolLabel);
     }
   }
 
@@ -708,7 +709,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         Entry->Title.takeValueFrom(Basename(Volume->DevicePathString));
       }
     } else {
-      Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : Basename(LoaderPath),
+      Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : LoaderPath.basename().wc_str(),
                             Basename(Volume->DevicePathString));
     }
   }
@@ -722,11 +723,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
         if (!LoaderTitle.isEmpty()) {
           Entry->Title = LoaderTitle;
         } else {
-          Entry->Title.takeValueFrom(Basename(LoaderPath));
+          Entry->Title = LoaderPath.basename();
         }
       }
     } else {
-      Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : Basename(LoaderPath),
+      Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : LoaderPath.basename().wc_str(),
                             Entry->VolName);
     }
   }
@@ -780,7 +781,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST CHAR16 *LoaderPath,
 
 STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 {
-  CONST CHAR16            *FileName;
+  XStringW     FileName;
 //  CHAR16* TempOptions;
 //  CHAR16            DiagsFileName[256];
   LOADER_ENTRY      *SubEntry;
@@ -803,7 +804,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   KernelIs64BitOnly = (Entry->OSVersion == NULL ||
                        AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8"));
 
-  FileName = Basename(Entry->LoaderPath);
+  FileName = Entry->LoaderPath.basename();
 
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -929,7 +930,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      SubEntry->Title.SWPrintf("Run %ls", FileName);
+      SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -988,7 +989,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      SubEntry->Title.SWPrintf("Run %ls", FileName);
+      SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -1009,7 +1010,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      SubEntry->Title.SWPrintf("Run %ls in text mode", FileName);
+      SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       Entry->LoadOptions.setEmpty();
       Entry->LoadOptions.Add("-v"_XS);
@@ -1023,7 +1024,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   Entry->SubScreen = SubScreen;
   // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
-BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XStringArray& LoaderOptions,
+BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& LoaderOptions,
                        IN CONST XStringW& LoaderTitle,
                        IN REFIT_VOLUME *Volume, IN XImage *Image,
                        IN UINT8 OSType, IN UINT8 Flags)
@@ -1031,7 +1032,7 @@ BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XStringArray& Loade
   LOADER_ENTRY *Entry;
   INTN          HVi;
 
-  if ((LoaderPath == NULL) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
+  if ((LoaderPath.isEmpty()) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath.wc_str())) {
     return FALSE;
   }
 
@@ -1047,8 +1048,8 @@ BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XStringArray& Loade
   //don't add hided entries
   if (!gSettings.ShowHiddenEntries) {
     for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-      if (StriStr(LoaderPath, gSettings.HVHideStrings[HVi])) {
-        DBG("        hiding entry: %ls\n", LoaderPath);
+      if ( LoaderPath.containsIC(gSettings.HVHideStrings[HVi]) ) {
+        DBG("        hiding entry: %ls\n", LoaderPath.s());
         return FALSE;
       }
     }
@@ -1078,9 +1079,9 @@ BOOLEAN AddLoaderEntry(IN CONST CHAR16 *LoaderPath, IN CONST XStringArray& Loade
   return FALSE;
 }
 //constants
-CHAR16  APFSFVBootPath[75]      = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\boot.efi"; 
-CHAR16  APFSRecBootPath[47]     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi";
-CHAR16  APFSInstallBootPath[67] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi";
+//const XStringW APFSFVBootPath      = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\boot.efi"_XSW;
+//const XStringW APFSRecBootPath     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi"_XSW;
+//const XStringW APFSInstallBootPath = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi"_XSW;
 
 #define Paper 1
 #define Rock  2
@@ -1093,9 +1094,9 @@ VOID AddPRSEntry(REFIT_VOLUME *Volume)
   //CONST INTN Rock = 2;
   //CONST INTN Scissor = 4;
 
-  WhatBoot |= FileExists(Volume->RootDir, RockBoot)?Rock:0;
-  WhatBoot |= FileExists(Volume->RootDir, PaperBoot)?Paper:0;
-  WhatBoot |= FileExists(Volume->RootDir, ScissorBoot)?Scissor:0;
+  WhatBoot |= FileExists(Volume->RootDir, RockBoot.wc_str())?Rock:0;
+  WhatBoot |= FileExists(Volume->RootDir, PaperBoot.wc_str())?Paper:0;
+  WhatBoot |= FileExists(Volume->RootDir, ScissorBoot.wc_str())?Scissor:0;
   switch (WhatBoot) {
     case Paper:
     case (Paper | Rock):
@@ -1162,25 +1163,25 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) {
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
+        AddLoaderEntry("\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
       } else {
-        AddLoaderEntry(L"\\.IABootFiles\\boot.efi", NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
-    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
+    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH.wc_str())) {
       AddLoaderEntry(MACOSX_LOADER_PATH, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
     }
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
-    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi", NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
-    AddLoaderEntry(L"\\OS X Install Data\\boot.efi", NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
-    AddLoaderEntry(L"\\macOS Install Data\\boot.efi", NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
-    AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi", NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
+    AddLoaderEntry("\\Mac OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
+    AddLoaderEntry(L"\\OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
+    AddLoaderEntry(L"\\macOS Install Data\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
+    AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
     AddPRSEntry(Volume); // 10.12+
 
     // Netinstall
-    AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter", NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
+    AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // Use standard location for boot.efi, according to the install files is present
     // That file indentifies a DVD/ESD/BaseSystem/Fusion Drive Install Media, so when present, check standard path to avoid entry duplication
-    if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
+    if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH.wc_str())) {
       if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app")) {
         // InstallDVD/BaseSystem
         AddLoaderEntry(MACOSX_LOADER_PATH, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.6/10.7
@@ -1227,48 +1228,47 @@ VOID ScanLoader(VOID)
     if ((StriCmp(Volume->VolName, L"Recovery") == 0 || StriCmp(Volume->VolName, L"Preboot") == 0) && APFSSupport == TRUE) {
       for (UINTN i = 0; i < APFSUUIDBankCounter + 1; i++) {
         //Store current UUID
-        CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
+        XStringW CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank + i * 0x10));
         //Fill with current UUID
-        StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
-        StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
-        StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
+//        StrnCpy(APFSFVBootPath + 1, CurrentUUID, 36);
+//        StrnCpy(APFSRecBootPath + 1, CurrentUUID, 36);
+//        StrnCpy(APFSInstallBootPath + 1, CurrentUUID, 36);
         //Try to add FileVault entry
-        AddLoaderEntry(APFSFVBootPath, NullXStringArray, L"FileVault Prebooter"_XSW, Volume, NULL, OSTYPE_OSX, 0);
+        AddLoaderEntry(SWPrintf("\\%ls\\System\\Library\\CoreServices\\boot.efi", CurrentUUID.c_str()), NullXStringArray, L"FileVault Prebooter"_XSW, Volume, NULL, OSTYPE_OSX, 0);
         //Try to add Recovery APFS entry
-        AddLoaderEntry(APFSRecBootPath, NullXStringArray, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
+        AddLoaderEntry(SWPrintf("\\%ls\\boot.efi", CurrentUUID.c_str()), NullXStringArray, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
         //Try to add macOS install entry
-        AddLoaderEntry(APFSInstallBootPath, NullXStringArray, L"macOS Install Prebooter"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
-        FreePool(CurrentUUID);
+        AddLoaderEntry(SWPrintf("\\%ls\\com.apple.installer\\boot.efi", CurrentUUID.c_str()), NullXStringArray, L"macOS Install Prebooter"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
       }
     }
     // check for Mac OS X Recovery Boot
-    AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi", NullXStringArray, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
+    AddLoaderEntry(L"\\com.apple.recovery.boot\\boot.efi"_XSW, NullXStringArray, L"Recovery"_XSW, Volume, NULL, OSTYPE_RECOVERY, 0);
 
     // Sometimes, on some systems (HP UEFI, if Win is installed first)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
     // bootmgfw.efi to bootmgfw-orig.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi", NullXStringArray, L"Microsoft EFI"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw-orig.efi"_XSW, NullXStringArray, L"Microsoft EFI"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu
     // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
     // since on some systems this will actually be CloverX64.efi
     // renamed to bootmgfw.efi
-    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi", NullXStringArray, L"Microsoft EFI Boot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
+    AddLoaderEntry(L"\\EFI\\microsoft\\Boot\\bootmgfw.efi"_XSW, NullXStringArray, L"Microsoft EFI Boot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu. This entry is redundant so excluded
     // AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
-    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi", NullXStringArray, L"Microsoft EFI cdboot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0)) {
-      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI", NullXStringArray, L"Microsoft EFI CDBOOT"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
+    if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi"_XSW, NullXStringArray, L"Microsoft EFI cdboot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0)) {
+      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI"_XSW, NullXStringArray, L"Microsoft EFI CDBOOT"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     }
 #if defined(ANDX86)
     if (TRUE) { //gSettings.AndroidScan
       // check for Android loaders
       for (Index = 0; Index < AndroidEntryDataCount; ++Index) {
         UINTN aIndex, aFound;
-        if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path)) {
+		  if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path.wc_str())) {
           aFound = 0;
           for (aIndex = 0; aIndex < ANDX86_FINDLEN; ++aIndex) {
-            if ((AndroidEntryData[Index].Find[aIndex] == NULL) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
+            if ((AndroidEntryData[Index].Find[aIndex].isEmpty()) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
           }
           if (aFound && (aFound == aIndex)) {
             XImage ImageX;
@@ -1312,7 +1312,7 @@ VOID ScanLoader(VOID)
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
           // load from directory, as we don't have linux icons preloaded
           ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
-          AddLoaderEntry(File.wc_str(), NullXStringArray, LoaderTitle, Volume,
+          AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries
       }
@@ -1333,7 +1333,7 @@ VOID ScanLoader(VOID)
         REFIT_DIR_ITER  Iter;
         EFI_FILE_INFO  *FileInfo = NULL;
         EFI_TIME        PreviousTime;
-        CHAR16         *Path = NULL;
+        XStringW        Path;
 //        CHAR16         *Options;
         // Get the partition UUID and make sure it's lower case
         CHAR16          PartUUID[40];
@@ -1354,14 +1354,11 @@ VOID ScanLoader(VOID)
                   continue;
                 }
                 // get the kernel file path
-                Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                if (Path != NULL) {
-                  XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-                  // Add the entry
-                  AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-
-                  FreePool(Path);
-                }
+				Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+                // Add the entry
+                AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                Path.setEmpty();
                 // free the file info
                 FreePool(FileInfo);
                 FileInfo = NULL;
@@ -1376,21 +1373,18 @@ VOID ScanLoader(VOID)
               if (FileInfo != NULL) {
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
-                  if (Path != NULL) {
-                    FreePool(Path);
-                  }
-                  Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
                 }
                 // free the file info
                 FreePool(FileInfo);
                 FileInfo = NULL;
               }
             }
-            if (Path != NULL) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+            if (Path.notEmpty()) {
+              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
               // Add the entry
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              FreePool(Path);
+              Path.setEmpty();
             }
             break;
 
@@ -1401,10 +1395,7 @@ VOID ScanLoader(VOID)
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
                   if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
-                    if (Path != NULL) {
-                      FreePool(Path);
-                    }
-                    Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                    Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
                     PreviousTime = FileInfo->ModificationTime;
                   }
                 }
@@ -1413,11 +1404,11 @@ VOID ScanLoader(VOID)
                 FileInfo = NULL;
               }
             }
-            if (Path != NULL) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+            if (Path.notEmpty()) {
+              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
               // Add the entry
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              FreePool(Path);
+              Path.setEmpty();
             }
             break;
 
@@ -1428,10 +1419,7 @@ VOID ScanLoader(VOID)
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
                   if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
-                    if (Path != NULL) {
-                      FreePool(Path);
-                    }
-                    Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                    Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
                     PreviousTime = FileInfo->ModificationTime;
                   }
                 }
@@ -1440,11 +1428,11 @@ VOID ScanLoader(VOID)
                 FileInfo = NULL;
               }
             }
-            if (Path != NULL) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, XStringW().takeValueFrom(Basename(Path) + LINUX_LOADER_PATH.length()).wc_str(), PartUUID, NullXStringArray);
+            if (Path.notEmpty()) {
+              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
               // Add the entry
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              FreePool(Path);
+              Path.setEmpty();
             }
             break;
 
@@ -1454,29 +1442,23 @@ VOID ScanLoader(VOID)
               if (FileInfo != NULL) {
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
-                  CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                  if (NewPath != NULL) {
-                    if ((Path == NULL) || (StrCmp(Path, NewPath) < 0)) {
-                      if (Path != NULL) {
-                        FreePool(Path);
-                      }
+                  XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                  if ( Path > NewPath ) {
                       Path = NewPath;
-                    } else {
-                      FreePool(NewPath);
-                    }
-                  }
+                  }else{
+                      Path.setEmpty();
+	              }
                 }
                 // free the file info
                 FreePool(FileInfo);
                 FileInfo = NULL;
               }
             }
-            if (Path != NULL) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, XStringW().takeValueFrom(Basename(Path) + LINUX_LOADER_PATH.length()).wc_str(), PartUUID, NullXStringArray);
+            if (Path.notEmpty()) {
+              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
               // Add the entry
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-
-              FreePool(Path);
+              Path.setEmpty();
             }
             break;
 
@@ -1486,27 +1468,22 @@ VOID ScanLoader(VOID)
               if (FileInfo != NULL) {
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
-                  CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                  if (NewPath != NULL) {
-                    if ((Path == NULL) || (StrCmp(Path, NewPath) > 0)) {
-                      if (Path != NULL) {
-                        FreePool(Path);
-                      }
+                  XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                    if ( Path < NewPath ) {
                       Path = NewPath;
-                    } else {
-                      FreePool(NewPath);
-                    }
-                  }
+                  }else{
+                      Path.setEmpty();
+	              }
                 }
                 // free the file info
                 FreePool(FileInfo);
                 FileInfo = NULL;
               }
             }
-            if (Path != NULL) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+            if (Path.notEmpty()) {
+              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              FreePool(Path);
+              Path.setEmpty();
             }
             break;
 
@@ -1516,13 +1493,11 @@ VOID ScanLoader(VOID)
               if (FileInfo != NULL) {
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
-                  Path = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                  if (Path != NULL) {
-                    XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-                    // Add the entry
-                    AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-                    FreePool(Path);
-                  }
+                  Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+				  XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+                  // Add the entry
+                  AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+                  Path.setEmpty();
                 }
                 // free the file info
                 FreePool(FileInfo);
@@ -1557,7 +1532,7 @@ VOID ScanLoader(VOID)
 }
 
 STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
-                           IN CONST CHAR16         *CustomPath,
+                           IN XStringW             CustomPath,
                            IN CUSTOM_LOADER_ENTRY *Custom,
                            IN REFIT_MENU_SCREEN   *SubMenu)
 {
@@ -1567,7 +1542,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   REFIT_DIR_ITER *Iter = &SIter;
   CHAR16          PartUUID[40];
   BOOLEAN         IsSubEntry = (SubMenu != NULL);
-  BOOLEAN         FindCustomPath = (CustomPath == NULL);
+  BOOLEAN         FindCustomPath = (CustomPath.isEmpty());
 
   if (Custom == NULL) {
     return;
@@ -1721,7 +1696,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                 continue;
               }
               // get the kernel file path
-              CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+              CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
               // free the file info
               FreePool(FileInfo);
               FileInfo = NULL;
@@ -1736,10 +1711,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             if (FileInfo != NULL) {
               if (FileInfo->FileSize > 0) {
                 // get the kernel file path
-                if (CustomPath != NULL) {
-                  FreePool(CustomPath);
-                }
-                CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
               }
               // free the file info
               FreePool(FileInfo);
@@ -1755,10 +1727,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               if (FileInfo->FileSize > 0) {
                 // get the kernel file path
                 if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
-                  if (CustomPath != NULL) {
-                    FreePool(CustomPath);
-                  }
-                  CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
                   PreviousTime = FileInfo->ModificationTime;
                 }
               }
@@ -1776,10 +1745,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               if (FileInfo->FileSize > 0) {
                 // get the kernel file path
                 if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
-                  if (CustomPath != NULL) {
-                    FreePool(CustomPath);
-                  }
-                  CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+                  CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
                   PreviousTime = FileInfo->ModificationTime;
                 }
               }
@@ -1796,14 +1762,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             if (FileInfo != NULL) {
               if (FileInfo->FileSize > 0) {
                 // get the kernel file path
-                CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath) < 0)) {
-                  if (CustomPath != NULL) {
-                    FreePool(CustomPath);
-                  }
+                XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                if ( CustomPath > NewPath ) {
                   CustomPath = NewPath;
-                } else {
-                  FreePool(NewPath);
+                }else{
+                  CustomPath.setEmpty();
                 }
               }
               // free the file info
@@ -1820,15 +1783,12 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               if (FileInfo->FileSize > 0) {
                 // get the kernel file path
           //      CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                XStringW NewPath = LINUX_BOOT_PATH"\\"_XSW + FileInfo->FileName;
-                if ((CustomPath == NULL) || (StrCmp(CustomPath, NewPath.wc_str()) > 0)) {
-                  if (CustomPath != NULL) {
-                    FreePool(CustomPath);
-                  }
-                  CustomPath = EfiStrDuplicate(NewPath.wc_str());
-                } /*else {
-                  FreePool(NewPath);
-                } */
+                XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH"\\", FileInfo->FileName);
+                if ( CustomPath < NewPath ) {
+                  CustomPath = NewPath;
+                }else{
+                  CustomPath.setEmpty();
+                }
               }
               // free the file info
               FreePool(FileInfo);
@@ -1842,7 +1802,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           Custom->KernelScan = KERNEL_SCAN_ALL;
           break;
       }
-    } else if (!FileExists(Volume->RootDir, CustomPath)) {
+    } else if (!FileExists(Volume->RootDir, CustomPath.wc_str())) {
       DBG("skipped because path does not exist\n");
       continue;
     }
@@ -1897,18 +1857,18 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           continue;
         }
         // get the kernel file path
-        CustomPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
+        CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
         // free the file info
         FreePool(FileInfo);
       }
-      if (CustomPath == NULL) {
+      if (CustomPath.isEmpty()) {
         DBG("skipped\n");
         break;
       }
       // Check to make sure we should update custom options or not
       if (FindCustomPath && OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTARGS)) {
         // Find the init ram image and select root
-        CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath) + LINUX_LOADER_PATH.length(), PartUUID, Custom->LoadOptions);
+        CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, Custom->LoadOptions);
       }
       // Check to make sure that this entry is not hidden or disabled by another custom entry
       if (!IsSubEntry) {
@@ -1930,7 +1890,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               // Less precise volume match
               if (Custom->Path != Ptr->Path) {
                 // Better path match
-                BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
+                BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
                                ((Custom->VolumeType == Ptr->VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
                          /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
@@ -1944,7 +1904,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                 // More precise volume match
                 if (Custom->Path != Ptr->Path) {
                   // Better path match
-                  BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
+                  BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
                                  ((Custom->VolumeType == Ptr->VolumeType) ||
                                   ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
                   /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
@@ -1966,7 +1926,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               // Duplicate volume match
               } else if (Custom->Path != Ptr->Path) {
                 // Better path match
-                BetterMatch = ((Ptr->Path != NULL) && (StrCmp(CustomPath, Ptr->Path) == 0) &&
+                BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
                                ((Custom->VolumeType == Ptr->VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
                 /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
@@ -1989,7 +1949,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             }
           // Duplicate volume match
           } else if (Custom->Path != Ptr->Path) {
-            if (Ptr->Path == NULL) {
+            if (Ptr->Path.isEmpty()) {
               // Less precise path match
               BetterMatch = ((Custom->VolumeType != Ptr->VolumeType) &&
                              ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
@@ -1997,8 +1957,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
-            } else if (StrCmp(CustomPath, Ptr->Path) == 0) {
-              if (Custom->Path == NULL) {
+            } else if (CustomPath.equal(Ptr->Path)) {
+              if (Custom->Path.isEmpty()) {
                 // More precise path and volume type match
                 BetterMatch = ((Custom->VolumeType == Ptr->VolumeType) ||
                                ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
@@ -2062,7 +2022,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 //          REFIT_MENU_SCREEN *SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
-            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath, Entry->VolName);
+            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath.wc_str(), Entry->VolName);
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->GetAnime();
@@ -2078,7 +2038,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               if (!CustomSubEntry->Settings) {
                 CustomSubEntry->Settings = Custom->Settings;
               }
-              AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path != NULL) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
+              AddCustomEntry(CustomSubIndex++, (CustomSubEntry->Path.notEmpty()) ? CustomSubEntry->Path : CustomPath, CustomSubEntry, SubScreen);
             }
             SubScreen->AddMenuEntry(&MenuEntryReturn, true);
             Entry->SubScreen = SubScreen;
@@ -2088,10 +2048,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           SubMenu->AddMenuEntry(Entry, true);
         else
           MainMenu.AddMenuEntry(Entry, true);
-      }
-      // cleanup custom
-      if (FindCustomPath) {
-        FreePool(CustomPath);
       }
     } while (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL));
     // Close the kernel boot directory
@@ -2117,18 +2073,18 @@ VOID AddCustomEntries(VOID)
   DbgHeader("AddCustomEntries");
   // Traverse the custom entries
   for (Custom = gSettings.CustomEntries; Custom; ++i, Custom = Custom->Next) {
-    if ((Custom->Path == NULL) && (Custom->Type != 0)) {
+    if ((Custom->Path.isEmpty()) && (Custom->Type != 0)) {
       if (OSTYPE_IS_OSX(Custom->Type)) {
         AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, NULL);
       } else if (OSTYPE_IS_OSX_RECOVERY(Custom->Type)) {
-        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi", Custom, NULL);
+        AddCustomEntry(i, L"\\com.apple.recovery.boot\\boot.efi"_XSW, Custom, NULL);
       } else if (OSTYPE_IS_OSX_INSTALLER(Custom->Type)) {
         UINTN Index = 0;
         while (Index < OSXInstallerPathsCount) {
           AddCustomEntry(i, OSXInstallerPaths[Index++], Custom, NULL);
         }
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
-        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi", Custom, NULL);
+        AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi"_XSW, Custom, NULL);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
         UINTN Index;
 #if defined(ANDX86)
@@ -2142,7 +2098,7 @@ VOID AddCustomEntries(VOID)
           AddCustomEntry(i, LinuxEntryData[Index++].Path, Custom, NULL);
         }
       } else if (Custom->Type == OSTYPE_LINEFI) {
-        AddCustomEntry(i, NULL, Custom, NULL);
+        AddCustomEntry(i, NullXStringW, Custom, NULL);
       } else {
         AddCustomEntry(i, BOOT_LOADER_PATH, Custom, NULL);
       }

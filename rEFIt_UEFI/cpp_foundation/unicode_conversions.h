@@ -230,7 +230,7 @@ size_t length_of_wchar_string(const wchar_t* s);
 
 inline const char* get_char32_from_string(const char* s, char32_t* char32) { return get_char32_from_utf8_string(s, char32); }
 inline const char16_t* get_char32_from_string(const char16_t* s, char32_t* char32) { return get_char32_from_utf16_string(s, char32); }
-inline const char32_t* get_char32_from_string(const char32_t* s, char32_t* char32) { *char32 = *s; return s+1; }
+inline const char32_t* get_char32_from_string(const char32_t* s, char32_t* char32) { *char32 = *s; if ( !*s ) return s; return s+1; }
 inline const wchar_t* get_char32_from_string(const wchar_t* s, char32_t* char32) { return (wchar_t*)get_char32_from_string((wchar_cast*)s, char32); }
 
 inline char32_t get_char32_from_utf_string_at_pos(const char* s, size_t pos) { return get_char32_from_utf8_string_at_pos(s, pos); }

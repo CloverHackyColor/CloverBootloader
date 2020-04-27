@@ -140,7 +140,7 @@ extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 //#endif
 
 static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
-                                    IN CONST CHAR16 *ImageTitle,
+                                    IN CONST XStringW& ImageTitle,
                                     OUT UINTN *ErrorInStep,
                                     OUT EFI_HANDLE *NewImageHandle)
 {
@@ -149,7 +149,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   UINTN                   DevicePathIndex;
   CHAR16                  ErrorInfo[256];
 
-  DBG("Loading %ls", ImageTitle);
+  DBG("Loading %ls", ImageTitle.wc_str());
   if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
   }
@@ -165,7 +165,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
-	snwprintf(ErrorInfo, 512, "while loading %ls", ImageTitle);
+	snwprintf(ErrorInfo, 512, "while loading %ls", ImageTitle.wc_str());
   if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
@@ -180,7 +180,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 #ifdef JIEF_DEBUG
     EFI_LOADED_IMAGE_PROTOCOL* loadedBootImage = NULL;
     if (!EFI_ERROR(Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (void**)(&loadedBootImage)))) {
-		DBG("%S : Image base = 0x%llx", ImageTitle, (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
+		DBG("%S : Image base = 0x%llx", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
     }else{
       DBG("Can't get loaded image protocol");
     }
@@ -198,7 +198,7 @@ bailout:
 
 static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
                                     IN CONST XStringArray& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
-                                    IN CONST CHAR16 *ImageTitle,
+                                    IN CONST XStringW& ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
   EFI_STATUS                  Status, ReturnStatus;
@@ -237,7 +237,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     ChildLoadedImage->LoadOptionsSize = (UINT32)loadOptionsW.sizeInBytes() + sizeof(wchar_t);
     ChildLoadedImage->LoadOptions = loadOptionsW.wc_str(); //will it be deleted after the procedure exit? Yes, if we don't copy loadOptionsW, so it'll be freed at the end of method
     //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
-    DBG("start image '%ls'\n", ImageTitle);
+    DBG("start image '%ls'\n", ImageTitle.s());
     DBG("Using load options '%ls'\n", (CHAR16*)ChildLoadedImage->LoadOptions);
 
   }
@@ -263,8 +263,8 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   //PauseForKey(L"Returned from StartImage\n");
 
   // control returns here when the child image calls Exit()
-  if (ImageTitle) {
-	  snwprintf(ErrorInfo, 512, "returned from %ls", ImageTitle);
+  if (ImageTitle.notEmpty()) {
+	  snwprintf(ErrorInfo, 512, "returned from %ls", ImageTitle.s());
   }
 
   if (CheckError(Status, ErrorInfo)) {
@@ -284,7 +284,7 @@ bailout:
 
 
 static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CONST CHAR16 *ImageTitle,
+                                IN CONST XStringW& ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
@@ -310,7 +310,7 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 IN CONST XStringArray& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
-                                IN CONST CHAR16 *ImageTitle,
+                                IN CONST XStringW& ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
 {
@@ -654,7 +654,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
   DBG("start loader\n");
   // Load image into memory (will be started later)
-  Status = LoadEFIImage(Entry->DevicePath, Basename(Entry->LoaderPath), NULL, &ImageHandle);
+  Status = LoadEFIImage(Entry->DevicePath, Entry->LoaderPath.basename(), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
     DBG("Image is not loaded, status=%s\n", strerror(Status));
     return; // no reason to continue if loading image failed
@@ -889,7 +889,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   }
 
   if (gSettings.LastBootedVolume) {
-    SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
+    SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NullXStringW : Entry->LoaderPath);
   } else if (gSettings.DefaultVolume != NULL) {
     // DefaultVolume specified in Config.plist or in Boot Option
     // we'll remove macOS Startup Disk vars which may be present if it is used
@@ -977,7 +977,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
 
 //  DBG("StartEFILoadedImage\n");
-  StartEFILoadedImage(ImageHandle, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
+  StartEFILoadedImage(ImageHandle, Entry->LoadOptions, Basename(Entry->LoaderPath.wc_str()), Entry->LoaderPath.basename(), NULL);
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
     DBG("Failed to unlock custom boot screen: %s!\n", strerror(Status));
@@ -1007,7 +1007,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     }
 
     if (gSettings.LastBootedVolume) {
-      SetStartupDiskVolume(Entry->Volume, NULL);
+      SetStartupDiskVolume(Entry->Volume, NullXStringW);
     } else if (gSettings.DefaultVolume != NULL) {
       // DefaultVolume specified in Config.plist:
       // we'll remove macOS Startup Disk vars which may be present if it is used
@@ -1057,11 +1057,11 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
 static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
 {
-  DBG("Start Tool: %ls\n", Entry->LoaderPath);
+  DBG("Start Tool: %ls\n", Entry->LoaderPath.wc_str());
   egClearScreen(&MenuBackgroundPixel);
 	// assumes "Start <title>" as assigned below
 	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
-    StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
+    StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath.wc_str()), Entry->LoaderPath.basename(), NULL, NULL);
     FinishExternalScreen();
 	//ReinitSelfLib();
 }
@@ -1150,7 +1150,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 
 	  snwprintf(FileName, 512, "%ls\\%ls", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
-                           NullXStringArray, DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
+                           NullXStringArray, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
     }
@@ -1607,7 +1607,7 @@ INTN FindDefaultEntry(VOID)
       }
 
       //                       we alreday know that Entry.isLoader
-      if (SearchForLoader && (/*Entry.Tag != TAG_LOADER ||*/ !StriStr(Entry.LoaderPath, gSettings.DefaultLoader))) {
+      if (SearchForLoader && (/*Entry.Tag != TAG_LOADER ||*/ !Entry.LoaderPath.containsIC(gSettings.DefaultLoader))) {
         continue;
       }
 
@@ -1841,7 +1841,7 @@ VOID SystemVersionInit(VOID)
   //Fill Plists 
   for (i = 0; i < APFSUUIDBankCounter; i++) {
     //Store UUID from bank
-    CHAR16 *CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
+    XStringW CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
     //Init temp string with system/install/recovery APFS path
     CHAR16 *TmpSysPlistPath = (__typeof__(TmpSysPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
     CHAR16 *TmpServerPlistPath = (__typeof__(TmpServerPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
@@ -1851,10 +1851,10 @@ VOID SystemVersionInit(VOID)
     StrnCpy(TmpServerPlistPath, APFSServerPlistPath, 85);
     StrnCpy(TmpInsPlistPath, APFSInstallPlistPath, 78);
     StrnCpy(TmpRecPlistPath, APFSRecPlistPath, 57);
-    StrnCpy(TmpSysPlistPath+1, CurrentUUID, 36);
-    StrnCpy(TmpServerPlistPath+1, CurrentUUID, 36);
-    StrnCpy(TmpInsPlistPath+1, CurrentUUID, 36);
-    StrnCpy(TmpRecPlistPath+1, CurrentUUID, 36);
+    StrnCpy(TmpSysPlistPath+1, CurrentUUID.wc_str(), 36);
+    StrnCpy(TmpServerPlistPath+1, CurrentUUID.wc_str(), 36);
+    StrnCpy(TmpInsPlistPath+1, CurrentUUID.wc_str(), 36);
+    StrnCpy(TmpRecPlistPath+1, CurrentUUID.wc_str(), 36);
     //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
     SystemPlists[SysIter] = TmpSysPlistPath;
     SystemPlists[SysIter+1] = TmpServerPlistPath;
@@ -2748,8 +2748,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
               }
               NameSize = StrSize(VolName); //can't use StrSize with NULL! Stupid UEFI!!!
               Name2Size = 0;
-              if (Entry->LoaderPath != NULL) {
-                LoaderName = Basename(Entry->LoaderPath);
+              if (Entry->LoaderPath.notEmpty()) {
+                LoaderName = Basename(Entry->LoaderPath.wc_str());
               } else {
                 LoaderName = NULL;  //legacy boot
               }

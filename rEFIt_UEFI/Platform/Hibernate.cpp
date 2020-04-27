@@ -917,7 +917,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               //Convert BeUUID to LeUUID
               //Ptr points to begin L"A82E84C6-9DD6-49D6-960A-0F4C2FE4851C"
               EFI_GUID TmpGuid;
-              CHAR16 *TmpStr = NULL;
+//              CHAR16 *TmpStr = NULL;
               
               ResumeFromCoreStorage = TRUE;
               //         DBG("got str=%ls\n", Ptr);
@@ -926,10 +926,9 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                 DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {
                 //TmpStr = PoolPrint(L"%s", strguid(&TmpGuid));
-                TmpStr =  GuidLEToStr(&TmpGuid);
+                XStringW TmpStr =  GuidLEToStr(&TmpGuid);
                 //           DBG("got the guid %ls\n", TmpStr);
-                CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
-                FreePool(TmpStr);
+                CopyMem((VOID*)Ptr, TmpStr.wc_str(), TmpStr.sizeInNativeChars());
               }
             }
             if (StrCmp(gST->FirmwareVendor, L"INSYDE Corp.") != 0) {

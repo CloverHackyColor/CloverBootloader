@@ -98,8 +98,8 @@ struct CUSTOM_LOADER_ENTRY {
   CONST CHAR16            *ImagePath;
   CONST CHAR16            *DriveImagePath;
   CONST CHAR16            *Volume;
-  CONST CHAR16            *Path;
-  XStringArray             LoadOptions;
+  XStringW                Path;
+  XStringArray            LoadOptions;
 
   XStringW FullTitle;
   XStringW Title;
@@ -115,7 +115,7 @@ struct CUSTOM_LOADER_ENTRY {
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 
-  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(0), DriveImagePath(0), Volume(0), Path(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
+  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(0), DriveImagePath(0), Volume(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
                           KernelScan(0), CustomBoot(0), BootBgColor({0,0,0,0})
 						{ memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
 
@@ -147,7 +147,7 @@ struct CUSTOM_TOOL_ENTRY {
   XImage            Image;
   CHAR16            *ImagePath;
   CHAR16            *Volume;
-  CHAR16            *Path;
+  XStringW          Path;
   XStringArray      LoadOptions;
   XStringW          FullTitle;
   XStringW          Title;
@@ -754,8 +754,8 @@ VOID
 GetDevices(VOID);
 
 
-CONST CHAR16
-*GetOSIconName (
+CONST XStringW
+GetOSIconName (
   IN  CONST CHAR8 *OSVersion
   );
 

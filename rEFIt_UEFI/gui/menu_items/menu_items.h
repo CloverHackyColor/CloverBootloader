@@ -261,12 +261,12 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	public:
 	  CONST CHAR16     *DevicePathString;
 	  XStringArray          LoadOptions; //moved here for compatibility with legacy
-	  CONST CHAR16     *LoaderPath;
+	  XStringW    LoaderPath;
     XImage        DriveImage;
     XImage        BadgeImage;
 
     REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoaderPath(0), DriveImage(), BadgeImage()
+    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), DriveImage(), BadgeImage()
     {}
     virtual  XImage* getDriveImage()  { return &DriveImage; };
     virtual  XImage* getBadgeImage()  { return &BadgeImage; };

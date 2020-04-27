@@ -327,13 +327,13 @@ CHAR16 * GuidBeToStr(EFI_GUID *Guid)
 }
 
 
-//the caller is responsible to free the buffer
-CHAR16 * GuidLEToStr(EFI_GUID *Guid)
+XStringW GuidLEToStr(EFI_GUID *Guid)
 {
-  CHAR16 *Str = PoolPrint(L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+  XStringW returnValue;
+  returnValue.SWPrintf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
   Guid->Data1, Guid->Data2, Guid->Data3, Guid->Data4[0], Guid->Data4[1], 
   Guid->Data4[2], Guid->Data4[3], Guid->Data4[4], Guid->Data4[5], Guid->Data4[6], Guid->Data4[7]);
-  return Str;
+  return returnValue;
 }
 
 #if 0
