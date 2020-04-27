@@ -813,14 +813,14 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20; //wow
-    DBG("get anime for os=%lld\n", SubScreen->ID);
+//    DBG("get anime for os=%lld\n", SubScreen->ID);
   SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
 	SubScreen->AddMenuInfoLine_f("Volume size: %lluMb", VolumeSize);
   SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Entry->DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
-	SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
+    SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
 	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS).c_str());
   // loader-specific submenu entries
