@@ -671,7 +671,7 @@ SmramProfileInit (
     mSmramProfileRecordingEnable = MEMORY_PROFILE_RECORDING_ENABLE;
   }
   mSmramProfileDriverPathSize = PcdGetSize (PcdMemoryProfileDriverPath);
-  mSmramProfileDriverPath = AllocateCopyPool (mSmramProfileDriverPathSize, PcdGetPtr (PcdMemoryProfileDriverPath));
+  mSmramProfileDriverPath = AllocateCopyPool(mSmramProfileDriverPathSize, PcdGetPtr (PcdMemoryProfileDriverPath));
   mSmramProfileContextPtr = &mSmramProfileContext;
 
   RegisterSmmCore (&mSmramProfileContext);

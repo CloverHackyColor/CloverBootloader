@@ -503,7 +503,7 @@ ProduceFVBProtocolOnBuffer (
   //
   // Allocate EFI_FW_VOL_BLOCK_DEVICE
   //
-  FvbDev = AllocateCopyPool (sizeof (EFI_FW_VOL_BLOCK_DEVICE), &mFwVolBlock);
+  FvbDev = AllocateCopyPool(sizeof (EFI_FW_VOL_BLOCK_DEVICE), &mFwVolBlock);
   if (FvbDev == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -559,7 +559,7 @@ ProduceFVBProtocolOnBuffer (
     //
     // FV does not contains extension header, then produce MEMMAP_DEVICE_PATH
     //
-    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) AllocateCopyPool (sizeof (FV_MEMMAP_DEVICE_PATH), &mFvMemmapDevicePathTemplate);
+    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) AllocateCopyPool(sizeof (FV_MEMMAP_DEVICE_PATH), &mFvMemmapDevicePathTemplate);
     if (FvbDev->DevicePath == NULL) {
       FreePool(FvbDev);
       return EFI_OUT_OF_RESOURCES;
@@ -570,7 +570,7 @@ ProduceFVBProtocolOnBuffer (
     //
     // FV contains extension header, then produce MEDIA_FW_VOL_DEVICE_PATH
     //
-    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) AllocateCopyPool (sizeof (FV_PIWG_DEVICE_PATH), &mFvPIWGDevicePathTemplate);
+    FvbDev->DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) AllocateCopyPool(sizeof (FV_PIWG_DEVICE_PATH), &mFvPIWGDevicePathTemplate);
     if (FvbDev->DevicePath == NULL) {
       FreePool(FvbDev);
       return EFI_OUT_OF_RESOURCES;

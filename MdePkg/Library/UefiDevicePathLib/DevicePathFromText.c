@@ -22,7 +22,7 @@ UefiDevicePathLibStrDuplicate (
   IN CONST CHAR16  *Src
   )
 {
-  return AllocateCopyPool (StrSize (Src), Src);
+  return AllocateCopyPool(StrSize (Src), Src);
 }
 
 /**
@@ -80,7 +80,7 @@ GetParamByNodeName (
     return NULL;
   }
 
-  ParamStr = AllocateCopyPool ((ParameterLength + 1) * sizeof (CHAR16), ParamStr);
+  ParamStr = AllocateCopyPool((ParameterLength + 1) * sizeof (CHAR16), ParamStr);
   if (ParamStr == NULL) {
     return NULL;
   }

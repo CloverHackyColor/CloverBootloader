@@ -39,6 +39,9 @@
 #define kPrelinkInfoSegment                "__PRELINK_INFO"
 #define kPrelinkInfoSection                "__info"
 
+#define kTextSegment                       "__TEXT"
+#define kLinkEditSegment                   "__LINKEDIT"
+
 #define kPrelinkBundlePathKey              "_PrelinkBundlePath"
 #define kPrelinkExecutableRelativePathKey  "_PrelinkExecutableRelativePath"
 #define kPrelinkExecutableLoadKey          "_PrelinkExecutableLoadAddr"
@@ -71,6 +74,20 @@ typedef struct _DeviceTreeBuffer {
     uint32_t length;
 } _DeviceTreeBuffer;
 
+typedef struct VTABLE {
+  UINT32 NameOffset;
+  UINT32 Attr;
+  UINT64 ProcAddr;
+} VTABLE;
+
+typedef struct SEGMENT {
+  CHAR8  Name[16];    //0
+  UINT64 SegAddress;  //16
+  UINT32 Cmd[12];     //24
+  UINT32 AddrVtable;  //72
+  UINT32 SizeVtable;  //76
+  UINT32 AddrNames;   //80
+} SEGMENT;
 
 
 extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
@@ -158,5 +175,7 @@ BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSi
 UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces);
 
 UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT8 *MaskSearch, UINTN SearchSize, UINT8 *Replace, UINT8 *MaskReplace, INTN MaxReplaces);
+
+UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure, UINTN *procLen);
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */

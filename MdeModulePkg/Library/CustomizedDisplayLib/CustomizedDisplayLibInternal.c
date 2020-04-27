@@ -461,7 +461,7 @@ LibGetToken (
 
   String = HiiGetString (HiiHandle, Token, NULL);
   if (String == NULL) {
-    String = AllocateCopyPool (StrSize (mLibUnknownString), mLibUnknownString);
+    String = AllocateCopyPool(StrSize (mLibUnknownString), mLibUnknownString);
     ASSERT (String != NULL);
   }
 

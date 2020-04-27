@@ -642,7 +642,7 @@ NotifyFwVolBlock (
       //
       // No FwVol protocol on the handle so create a new one
       //
-      FvDevice = AllocateCopyPool (sizeof (FV_DEVICE), &mFvDevice);
+      FvDevice = AllocateCopyPool(sizeof (FV_DEVICE), &mFvDevice);
       if (FvDevice == NULL) {
         return;
       }

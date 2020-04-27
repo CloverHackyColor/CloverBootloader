@@ -79,6 +79,54 @@ VOID SetKernelRelocBase()
   return;
 }
 
+//search a procedure by Name and return its offset in the kernel
+UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure, UINTN *procLen)
+{
+  if (!procedure) {
+    return 0;
+  }
+  INT32 TextAdr = FindBin(kernel, 0x60, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+  if (TextAdr == -1) {
+    TextAdr = 0x28; //ugly hack, not really needed
+  }
+  SEGMENT *TextSeg = (SEGMENT*)&kernel[TextAdr];
+  UINT64 Absolut = TextSeg->SegAddress;
+  
+  INT32 LinkAdr = FindBin(kernel, 0x1000, (const UINT8 *)kLinkEditSegment, (UINT32)strlen(kLinkEditSegment));
+  if (LinkAdr == -1) {
+    return 0;
+  }
+  SEGMENT *LinkSeg = (SEGMENT*)&kernel[LinkAdr];
+  UINT32 AddrVtable = LinkSeg->AddrVtable;
+  UINT32 SizeVtable = LinkSeg->SizeVtable;
+  const char* Names = (const char*)(&kernel[LinkSeg->AddrNames]);
+  VTABLE * vArray = (VTABLE*)(&kernel[AddrVtable]);
+  //search for the name
+  UINTN nameLen = strlen(procedure);
+  size_t i;
+  bool found = false;
+  for (i=0; i<SizeVtable; ++i) {
+    size_t Offset = vArray[i].NameOffset;
+    if (CompareMem(&Names[Offset], procedure, nameLen) == 0) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    return 0;
+  }
+  UINT64 procAddr = vArray[i].ProcAddr - Absolut;
+  UINT64 prevAddr;
+  if (i == 0) {
+    prevAddr = Absolut;
+  } else {
+    prevAddr = vArray[i-1].ProcAddr;
+  }
+  *procLen = vArray[i].ProcAddr - prevAddr;
+  return procAddr;
+}
+
+
 //TimeWalker - extended and corrected for systems up to Yosemite
 VOID KernelPatcher_64(VOID* kernelData, LOADER_ENTRY *Entry)
 {
@@ -512,18 +560,18 @@ BOOLEAN PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
   UINT8 FakeModel = (Entry->KernelAndKextPatches->FakeCPUID >> 4) & 0x0f;
   UINT8 FakeExt = (Entry->KernelAndKextPatches->FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
-    Adr = FindBin(&bytes[Adr], 0x800000 - Adr, Location, LenLoc);
+    Adr = FindBin(&bytes[Adr], 0x800000 - Adr, (const UINT8*)Location, (UINT32)LenLoc);
     if (Adr < 0) {
       break;
     }
     DBG_RT(Entry, "found location at %x\n", Adr);
-    patchLocation = FindBin(&bytes[Adr], 0x100, Search4, Len);
+    patchLocation = FindBin(&bytes[Adr], 0x100, (const UINT8*)Search4, (UINT32)Len);
     if (patchLocation > 0 && patchLocation < 70) {
       //found
       DBG_RT(Entry, "found Model location at %x\n", Adr + patchLocation);
       CopyMem(&bytes[Adr + patchLocation], ReplaceModel, Len);
       bytes[Adr + patchLocation + 1] = FakeModel;
-      patchLocation1 = FindBin(&bytes[Adr], 0x100, Search10, Len);
+      patchLocation1 = FindBin(&bytes[Adr], 0x100, (const UINT8*)Search10, (UINT32)Len);
       if (patchLocation1 > 0 && patchLocation1 < 100) {
         DBG_RT(Entry, "found ExtModel location at %x\n", Adr + patchLocation1);
         CopyMem(&bytes[Adr + patchLocation1], ReplaceExt, Len);
@@ -655,7 +703,7 @@ BOOLEAN KernelPatchPm(VOID *kernelData, LOADER_ENTRY *Entry)
   return TRUE;
 }
 
-STATIC UINT8 PanicNoKextDumpFind[6]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
+const UINT8 PanicNoKextDumpFind[]    = {0x00, 0x25, 0x2E, 0x2A, 0x73, 0x00};
 //STATIC UINT8 PanicNoKextDumpReplace[6] = {0x00, 0x00, 0x2E, 0x2A, 0x73, 0x00};
 
 BOOLEAN KernelPanicNoKextDump(VOID *kernelData)
@@ -1795,10 +1843,21 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
       DBG_RT(Entry, "==> disabled\n");
       continue;
     }
-    if (!Entry->KernelAndKextPatches->KernelPatches[i].SearchLen) {
+    bool once = false;
+    UINTN procLen = 0;
+    UINTN procAddr = searchProc(UKernelData, KERNEL_MAX_SIZE,
+                                Entry->KernelAndKextPatches->KernelPatches[i].ProcedureName, &procLen);
+
+    if (Entry->KernelAndKextPatches->KernelPatches[i].SearchLen == 0) {
       Entry->KernelAndKextPatches->KernelPatches[i].SearchLen = KERNEL_MAX_SIZE;
+      if (procLen > KERNEL_MAX_SIZE) {
+        procLen = KERNEL_MAX_SIZE - procAddr;
+        once = true;
+      }
+    } else {
+      procLen = Entry->KernelAndKextPatches->KernelPatches[i].SearchLen;
     }
-    UINT8 * curs = UKernelData;
+    UINT8 * curs = &UKernelData[procAddr];
     UINTN j = 0;
     while (j < KERNEL_MAX_SIZE) {
       if (!Entry->KernelAndKextPatches->KernelPatches[i].StartPattern || //old behavior
@@ -1808,7 +1867,7 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
                          Entry->KernelAndKextPatches->KernelPatches[i].StartPatternLen)) {
         DBG_RT(Entry, " StartPattern found\n");
         Num = SearchAndReplaceMask(curs,
-                                   Entry->KernelAndKextPatches->KernelPatches[i].SearchLen,
+                                   procLen,
                                    Entry->KernelAndKextPatches->KernelPatches[i].Data,
                                    Entry->KernelAndKextPatches->KernelPatches[i].MaskFind,
                                    Entry->KernelAndKextPatches->KernelPatches[i].DataLen,
@@ -1823,7 +1882,8 @@ KernelUserPatch(IN UINT8 *UKernelData, LOADER_ENTRY *Entry)
           j    += Entry->KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
         }
         DBG_RT(Entry, "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
-        if (!Entry->KernelAndKextPatches->KernelPatches[i].StartPattern ||
+        if (once ||
+            !Entry->KernelAndKextPatches->KernelPatches[i].StartPattern ||
             !Entry->KernelAndKextPatches->KernelPatches[i].StartPatternLen) {
           break;
         }

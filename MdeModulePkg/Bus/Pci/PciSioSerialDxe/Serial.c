@@ -445,7 +445,7 @@ CreateSerialDevice (
   //
   // Initialize the serial device instance
   //
-  SerialDevice = AllocateCopyPool (sizeof (SERIAL_DEV), &gSerialDevTemplate);
+  SerialDevice = AllocateCopyPool(sizeof (SERIAL_DEV), &gSerialDevTemplate);
   ASSERT (SerialDevice != NULL);
 
   SerialDevice->SerialIo.Mode    = &(SerialDevice->SerialMode);

@@ -751,7 +751,7 @@ AtaAtapiPassThruStart (
   //
   // Allocate a buffer to store the ATA_ATAPI_PASS_THRU_INSTANCE data structure
   //
-  Instance = AllocateCopyPool (sizeof (ATA_ATAPI_PASS_THRU_INSTANCE), &gAtaAtapiPassThruInstanceTemplate);
+  Instance = AllocateCopyPool(sizeof (ATA_ATAPI_PASS_THRU_INSTANCE), &gAtaAtapiPassThruInstanceTemplate);
   if (Instance == NULL) {
     goto ErrorExit;
   }
@@ -1076,7 +1076,7 @@ CreateNewDeviceInfo (
 //  DBG(L"Creating DeviceInfo for Chan=%d dev=%d type=%a\n", Port, PortMultiplier, DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
   if (IdentifyData != NULL) {
 //    DBG(L" IdentifyData copied\n");
-    DeviceInfo->IdentifyData = AllocateCopyPool (sizeof (EFI_IDENTIFY_DATA), IdentifyData);
+    DeviceInfo->IdentifyData = AllocateCopyPool(sizeof (EFI_IDENTIFY_DATA), IdentifyData);
     if (DeviceInfo->IdentifyData == NULL) {
       FreePool(DeviceInfo);
       return EFI_OUT_OF_RESOURCES;
@@ -1672,7 +1672,7 @@ AtaPassThruBuildDevicePath (
   }
 
   if (Instance->Mode == EfiAtaIdeMode) {
-    DevicePathNode = AllocateCopyPool (sizeof (ATAPI_DEVICE_PATH), &mAtapiDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool(sizeof (ATAPI_DEVICE_PATH), &mAtapiDevicePathTemplate);
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1680,7 +1680,7 @@ AtaPassThruBuildDevicePath (
     DevicePathNode->Atapi.SlaveMaster      = (UINT8) PortMultiplierPort;
     DevicePathNode->Atapi.Lun              = 0;
   } else {
-    DevicePathNode = AllocateCopyPool (sizeof (SATA_DEVICE_PATH), &mSataDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool(sizeof (SATA_DEVICE_PATH), &mSataDevicePathTemplate);
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -2338,7 +2338,7 @@ ExtScsiPassThruBuildDevicePath (
   }
 
   if (Instance->Mode == EfiAtaIdeMode) {
-    DevicePathNode = AllocateCopyPool (sizeof (ATAPI_DEVICE_PATH), &mAtapiDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool(sizeof (ATAPI_DEVICE_PATH), &mAtapiDevicePathTemplate);
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -2347,7 +2347,7 @@ ExtScsiPassThruBuildDevicePath (
     DevicePathNode->Atapi.SlaveMaster      = PortMultiplier;
     DevicePathNode->Atapi.Lun              = (UINT16) Lun;
   } else {
-    DevicePathNode = AllocateCopyPool (sizeof (SATA_DEVICE_PATH), &mSataDevicePathTemplate);
+    DevicePathNode = AllocateCopyPool(sizeof (SATA_DEVICE_PATH), &mSataDevicePathTemplate);
     if (DevicePathNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

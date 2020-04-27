@@ -117,7 +117,7 @@ DevicePathToStr (
            TRUE
            );
   if (Text == NULL) {
-    Text = AllocateCopyPool (sizeof (L"?"), L"?");
+    Text = AllocateCopyPool(sizeof (L"?"), L"?");
     ASSERT (Text != NULL);
   }
 
@@ -259,7 +259,7 @@ GetImageName (
     //
     // Make sure device path node is aligned when accessing it's FV Name Guid field.
     //
-    AlignedDevPathNode = AllocateCopyPool (DevicePathNodeLength(DevPathNode), DevPathNode);
+    AlignedDevPathNode = AllocateCopyPool(DevicePathNodeLength(DevPathNode), DevPathNode);
 
     //
     // Find the Fv File path

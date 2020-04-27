@@ -49,7 +49,7 @@ HstiAipGetInfo (
 
   HstiAip = HSTI_AIP_PRIVATE_DATA_FROM_THIS(This);
 
-  *InformationBlock = AllocateCopyPool (HstiAip->HstiSize, HstiAip->Hsti);
+  *InformationBlock = AllocateCopyPool(HstiAip->HstiSize, HstiAip->Hsti);
   if (*InformationBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -153,7 +153,7 @@ HstiAipGetSupportedTypes (
     return EFI_INVALID_PARAMETER;
   }
 
-  *InfoTypesBuffer = AllocateCopyPool (sizeof(gAdapterInfoPlatformSecurityGuid), &gAdapterInfoPlatformSecurityGuid);
+  *InfoTypesBuffer = AllocateCopyPool(sizeof(gAdapterInfoPlatformSecurityGuid), &gAdapterInfoPlatformSecurityGuid);
   if (*InfoTypesBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

@@ -606,7 +606,7 @@ MemoryProfileInit (
     mMemoryProfileRecordingEnable = MEMORY_PROFILE_RECORDING_ENABLE;
   }
   mMemoryProfileDriverPathSize = PcdGetSize (PcdMemoryProfileDriverPath);
-  mMemoryProfileDriverPath = AllocateCopyPool (mMemoryProfileDriverPathSize, PcdGetPtr (PcdMemoryProfileDriverPath));
+  mMemoryProfileDriverPath = AllocateCopyPool(mMemoryProfileDriverPathSize, PcdGetPtr (PcdMemoryProfileDriverPath));
   mMemoryProfileContextPtr = &mMemoryProfileContext;
 
   RegisterDxeCore (HobStart, &mMemoryProfileContext);

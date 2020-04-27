@@ -320,7 +320,7 @@ SetBootLogo2 (
   //
   // Allocate new logo buffer
   //
-  mLogoBltBuffer = AllocateCopyPool (BufferSize, BltBuffer);
+  mLogoBltBuffer = AllocateCopyPool(BufferSize, BltBuffer);
   if (mLogoBltBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

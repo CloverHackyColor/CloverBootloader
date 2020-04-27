@@ -1162,7 +1162,7 @@ InitInterruptDescriptorTable (
     //
     // Save original IDT entry and IDT entry count.
     //
-    mOrigIdtEntry = AllocateCopyPool (OldIdtPtr.Limit + 1, (VOID *) OldIdtPtr.Base);
+    mOrigIdtEntry = AllocateCopyPool(OldIdtPtr.Limit + 1, (VOID *) OldIdtPtr.Base);
 //    ASSERT (mOrigIdtEntry != NULL);
     mOrigIdtEntryCount = (UINT16) OldIdtSize;
   } else {

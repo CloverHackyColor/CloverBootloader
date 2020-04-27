@@ -1073,7 +1073,7 @@ InitializeUfsBlockIoPeim (
       break;
     }
 
-    Private = AllocateCopyPool (sizeof (UFS_PEIM_HC_PRIVATE_DATA), &gUfsHcPeimTemplate);
+    Private = AllocateCopyPool(sizeof (UFS_PEIM_HC_PRIVATE_DATA), &gUfsHcPeimTemplate);
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       break;

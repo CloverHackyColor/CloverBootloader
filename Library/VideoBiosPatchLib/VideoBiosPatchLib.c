@@ -264,7 +264,7 @@ UINT8* VideoBiosPatchGetEdid (VOID)
   if (!EFI_ERROR(Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
-      Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
+      Edid = AllocateCopyPool(EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
     }
   }
   DBG(" %a\n", Edid != NULL ? "found" : "not found");

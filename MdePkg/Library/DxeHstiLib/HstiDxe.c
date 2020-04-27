@@ -290,7 +290,7 @@ HstiLibSetTable (
   if (HstiAip == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  HstiAip->Hsti = AllocateCopyPool (HstiSize, Hsti);
+  HstiAip->Hsti = AllocateCopyPool(HstiSize, Hsti);
   if (HstiAip->Hsti == NULL) {
     FreePool(HstiAip);
     return EFI_OUT_OF_RESOURCES;

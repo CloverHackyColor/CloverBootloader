@@ -69,15 +69,20 @@ struct mach_header {
  * The 64-bit mach header appears at the very beginning of object files for
  * 64-bit architectures.
  */
+//CFFAEDFE 07000001 03000000 02000000 12000000 D00F0000 01002000 00000000
+//19000000 88010000
+//5F5F5445 58540000 00000000 00000000
+//00002000 80FFFFFF
+
 struct mach_header_64 {
-	uint32_t	magic;		/* mach magic number identifier */
-	cpu_type_t	cputype;	/* cpu specifier */
-	cpu_subtype_t	cpusubtype;	/* machine specifier */
-	uint32_t	filetype;	/* type of file */
-	uint32_t	ncmds;		/* number of load commands */
-	uint32_t	sizeofcmds;	/* the size of all the load commands */
-	uint32_t	flags;		/* flags */
-	uint32_t	reserved;	/* reserved */
+	uint32_t	magic;		      // mach magic number identifier   = 0xFEEDFACF
+	cpu_type_t	cputype;	    // cpu specifier          UINT32  = 0x01000007
+	cpu_subtype_t	cpusubtype;	// machine specifier              = 0x03
+	uint32_t	filetype;	      // type of file                   = 0x02  MH_EXECUTE
+	uint32_t	ncmds;		      // number of load commands        = 0x12
+	uint32_t	sizeofcmds;	    // the size of all the load commands = 0x0FD0
+	uint32_t	flags;		      // flags                          = 0x 0020 0001 (MH_NOUNDEFS | MH_PIE)
+	uint32_t	reserved;	      // reserved
 };
 
 /* Constant for the magic field of the mach_header_64 (64-bit architectures) */

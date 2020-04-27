@@ -440,7 +440,7 @@ DxeMain (
       VectorInfo ++;
       Index ++;
     }
-    VectorInfo = AllocateCopyPool (sizeof (EFI_VECTOR_HANDOFF_INFO) * Index, (VOID *) VectorInfoList);
+    VectorInfo = AllocateCopyPool(sizeof (EFI_VECTOR_HANDOFF_INFO) * Index, (VOID *) VectorInfoList);
     ASSERT (VectorInfo != NULL);
     Status = CoreInstallConfigurationTable (&gEfiVectorHandoffTableGuid, (VOID *) VectorInfo);
     ASSERT_EFI_ERROR(Status);

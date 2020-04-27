@@ -214,7 +214,7 @@ ExtractGuidedSectionRegisterHandlers (
   // Install the Guided Section GUID configuration table to record the GUID itself.
   // Then the content of the configuration table buffer will be the same as the GUID value itself.
   //
-  GuidData = AllocateCopyPool (sizeof (GUID), (VOID *) SectionGuid);
+  GuidData = AllocateCopyPool(sizeof (GUID), (VOID *) SectionGuid);
   if (GuidData != NULL) {
     gBS->InstallConfigurationTable ((EFI_GUID *) SectionGuid, GuidData);
   }

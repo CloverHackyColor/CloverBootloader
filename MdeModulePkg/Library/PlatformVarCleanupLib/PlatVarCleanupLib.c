@@ -247,7 +247,7 @@ CreateUserVariableNode (
           UserVariableNameNode = AllocateZeroPool (sizeof (*UserVariableNameNode));
           ASSERT (UserVariableNameNode != NULL);
           UserVariableNameNode->Signature = USER_VARIABLE_NAME_NODE_SIGNATURE;
-          UserVariableNameNode->Name = AllocateCopyPool (VarNameSize, VarName);
+          UserVariableNameNode->Name = AllocateCopyPool(VarNameSize, VarName);
           UserVariableNameNode->Attributes = Attributes;
           UserVariableNameNode->DataSize = DataSize;
           UserVariableNameNode->Index = Index;

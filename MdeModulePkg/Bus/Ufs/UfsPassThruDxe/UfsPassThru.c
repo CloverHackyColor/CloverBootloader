@@ -420,7 +420,7 @@ UfsPassThruBuildDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  DevicePathNode = AllocateCopyPool (sizeof (UFS_DEVICE_PATH), &mUfsDevicePathTemplate);
+  DevicePathNode = AllocateCopyPool(sizeof (UFS_DEVICE_PATH), &mUfsDevicePathTemplate);
   if (DevicePathNode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -857,7 +857,7 @@ UfsPassThruDriverBindingStart (
   //
   // Initialize Ufs Pass Thru private data for managed UFS Host Controller.
   //
-  Private = AllocateCopyPool (sizeof (UFS_PASS_THRU_PRIVATE_DATA), &gUfsPassThruTemplate);
+  Private = AllocateCopyPool(sizeof (UFS_PASS_THRU_PRIVATE_DATA), &gUfsPassThruTemplate);
   if (Private == NULL) {
     DEBUG ((DEBUG_ERROR, "Unable to allocate Ufs Pass Thru private data\n"));
     Status = EFI_OUT_OF_RESOURCES;

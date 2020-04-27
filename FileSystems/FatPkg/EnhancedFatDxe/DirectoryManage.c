@@ -360,7 +360,7 @@ Returns:
       );
   }
 
-  DirEnt->FileString = AllocateCopyPool (StrSize (LfnBuffer), LfnBuffer);
+  DirEnt->FileString = AllocateCopyPool(StrSize (LfnBuffer), LfnBuffer);
 }
 
 STATIC
@@ -1203,7 +1203,7 @@ Returns:
   }
 
   DirEnt->Signature   = FAT_DIRENT_SIGNATURE;
-  DirEnt->FileString  = AllocateCopyPool (StrSize (FileName), FileName);
+  DirEnt->FileString  = AllocateCopyPool(StrSize (FileName), FileName);
   if (DirEnt->FileString == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

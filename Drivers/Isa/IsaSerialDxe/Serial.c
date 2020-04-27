@@ -537,7 +537,7 @@ SerialControllerDriverStart (
   //
   // Initialize the serial device instance
   //
-  SerialDevice = AllocateCopyPool (sizeof (SERIAL_DEV), &gSerialDevTempate);
+  SerialDevice = AllocateCopyPool(sizeof (SERIAL_DEV), &gSerialDevTempate);
   if (SerialDevice == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;

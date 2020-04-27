@@ -399,7 +399,7 @@ GraphicsConsoleControllerDriverStart (
   //
   // Initialize the Graphics Console device instance
   //
-  Private = AllocateCopyPool (
+  Private = AllocateCopyPool(
               sizeof (GRAPHICS_CONSOLE_DEV),
               &mGraphicsConsoleDevTemplate
               );
@@ -1791,7 +1791,7 @@ DrawUnicodeWeightAtCursorN (
   Blt->Width        = (UINT16) (Private->ModeData[This->Mode->Mode].GopWidth);
   Blt->Height       = (UINT16) (Private->ModeData[This->Mode->Mode].GopHeight);
 
-  String = AllocateCopyPool ((Count + 1) * sizeof (CHAR16), UnicodeWeight);
+  String = AllocateCopyPool((Count + 1) * sizeof (CHAR16), UnicodeWeight);
   if (String == NULL) {
     FreePool(Blt);
     return EFI_OUT_OF_RESOURCES;

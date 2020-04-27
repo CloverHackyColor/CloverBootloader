@@ -990,7 +990,7 @@ AddUnicodeString (
       //
       // Allocate space for a copy of the Language specifier
       //
-      NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (3, Language);
+      NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool(3, Language);
       if (NewUnicodeStringTable[NumberOfEntries].Language == NULL) {
         FreePool(NewUnicodeStringTable);
         return EFI_OUT_OF_RESOURCES;
@@ -1005,7 +1005,7 @@ AddUnicodeString (
       //
       // Allocate space for a copy of the Unicode String
       //
-      NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (
+      NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool(
                                                               (UnicodeStringLength + 1) * sizeof (CHAR16),
                                                               UnicodeString
                                                               );
@@ -1201,7 +1201,7 @@ AddUnicodeString2 (
   //
   // Allocate space for a copy of the Language specifier
   //
-  NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool (AsciiStrSize(Language), Language);
+  NewUnicodeStringTable[NumberOfEntries].Language = AllocateCopyPool(AsciiStrSize(Language), Language);
   if (NewUnicodeStringTable[NumberOfEntries].Language == NULL) {
     FreePool(NewUnicodeStringTable);
     return EFI_OUT_OF_RESOURCES;
@@ -1215,7 +1215,7 @@ AddUnicodeString2 (
   //
   // Allocate space for a copy of the Unicode String
   //
-  NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool (StrSize (UnicodeString), UnicodeString);
+  NewUnicodeStringTable[NumberOfEntries].UnicodeString = AllocateCopyPool(StrSize (UnicodeString), UnicodeString);
   if (NewUnicodeStringTable[NumberOfEntries].UnicodeString == NULL) {
     FreePool(NewUnicodeStringTable[NumberOfEntries].Language);
     FreePool(NewUnicodeStringTable);
@@ -1979,7 +1979,7 @@ EfiOpenFileByDevicePath (
       AlignedPathName = NULL;
       PathName = FilePathNode->PathName;
     } else {
-      AlignedPathName = AllocateCopyPool (
+      AlignedPathName = AllocateCopyPool(
                           (DevicePathNodeLength (FilePathNode) -
                            SIZE_OF_FILEPATH_DEVICE_PATH),
                           FilePathNode->PathName

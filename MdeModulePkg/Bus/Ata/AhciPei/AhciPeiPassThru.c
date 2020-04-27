@@ -504,7 +504,7 @@ AhciAtaPassThruGetDevicePath (
   Private = GET_AHCI_PEIM_HC_PRIVATE_DATA_FROM_THIS_PASS_THRU (This);
 
   *DevicePathLength = Private->DevicePathLength;
-  *DevicePath       = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
+  *DevicePath       = AllocateCopyPool(Private->DevicePathLength, Private->DevicePath);
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;

@@ -577,7 +577,7 @@ AllocateReservedZeroPool (
 
 **/
 VOID *
-InternalAllocateCopyPool (
+InternalAllocateCopyPool(
   IN EFI_MEMORY_TYPE  PoolType,
   IN UINTN            AllocationSize,
   IN CONST VOID       *Buffer
@@ -620,12 +620,12 @@ InternalAllocateCopyPool (
 **/
 VOID *
 EFIAPI
-AllocateCopyPool (
+AllocateCopyPool(
   IN UINTN       AllocationSize,
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiBootServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool(EfiBootServicesData, AllocationSize, Buffer);
 }
 
 /**
@@ -652,7 +652,7 @@ AllocateRuntimeCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  return InternalAllocateCopyPool(EfiRuntimeServicesData, AllocationSize, Buffer);
 }
 
 /**
@@ -679,7 +679,7 @@ AllocateReservedCopyPool (
   IN CONST VOID  *Buffer
   )
 {
-  return InternalAllocateCopyPool (EfiReservedMemoryType, AllocationSize, Buffer);
+  return InternalAllocateCopyPool(EfiReservedMemoryType, AllocationSize, Buffer);
 }
 
 /**

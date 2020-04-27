@@ -970,7 +970,7 @@ DevPathToTextUsbWWID (
     //
     // In case no NULL terminator in SerialNumber, create a new one with NULL terminator
     //
-    NewStr = AllocateCopyPool ((Length + 1) * sizeof (CHAR16), SerialNumberStr);
+    NewStr = AllocateCopyPool((Length + 1) * sizeof (CHAR16), SerialNumberStr);
     ASSERT (NewStr != NULL);
     NewStr [Length] = 0;
     SerialNumberStr = NewStr;
@@ -2434,7 +2434,7 @@ UefiDevicePathLibConvertDevicePathToText (
       }
     }
 
-    AlignedNode = AllocateCopyPool (DevicePathNodeLength (Node), Node);
+    AlignedNode = AllocateCopyPool(DevicePathNodeLength (Node), Node);
     //
     // Print this node of the device path
     //

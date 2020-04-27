@@ -279,7 +279,7 @@ UiCreateLanguageMenu (
   //
   GetEfiGlobalVariable2 (L"PlatformLangCodes", (VOID**)&gLanguageString, NULL);
   if (gLanguageString == NULL) {
-    gLanguageString = AllocateCopyPool (
+    gLanguageString = AllocateCopyPool(
                                AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)),
                                (CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)
                                );

@@ -804,7 +804,7 @@ AllocateReservedZeroPool (
 
 **/
 VOID *
-InternalAllocateCopyPool (
+InternalAllocateCopyPool(
   IN EFI_MEMORY_TYPE  PoolType,
   IN UINTN            AllocationSize,
   IN CONST VOID       *Buffer
@@ -842,14 +842,14 @@ InternalAllocateCopyPool (
 **/
 VOID *
 EFIAPI
-AllocateCopyPool (
+AllocateCopyPool(
   IN UINTN       AllocationSize,
   IN CONST VOID  *Buffer
   )
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool(EfiRuntimeServicesData, AllocationSize, Buffer);
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS(0),
@@ -890,7 +890,7 @@ AllocateRuntimeCopyPool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalAllocateCopyPool (EfiRuntimeServicesData, AllocationSize, Buffer);
+  NewBuffer = InternalAllocateCopyPool(EfiRuntimeServicesData, AllocationSize, Buffer);
   if (NewBuffer != NULL) {
     MemoryProfileLibRecord (
       (PHYSICAL_ADDRESS) (UINTN) RETURN_ADDRESS(0),

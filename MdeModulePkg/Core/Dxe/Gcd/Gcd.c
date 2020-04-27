@@ -2426,7 +2426,7 @@ CoreInitializeGcdServices (
   //
   // Initialize the GCD Memory Space Map
   //
-  Entry = AllocateCopyPool (sizeof (EFI_GCD_MAP_ENTRY), &mGcdMemorySpaceMapEntryTemplate);
+  Entry = AllocateCopyPool(sizeof (EFI_GCD_MAP_ENTRY), &mGcdMemorySpaceMapEntryTemplate);
   ASSERT (Entry != NULL);
 
   Entry->EndAddress = LShiftU64 (1, SizeOfMemorySpace) - 1;
@@ -2438,7 +2438,7 @@ CoreInitializeGcdServices (
   //
   // Initialize the GCD I/O Space Map
   //
-  Entry = AllocateCopyPool (sizeof (EFI_GCD_MAP_ENTRY), &mGcdIoSpaceMapEntryTemplate);
+  Entry = AllocateCopyPool(sizeof (EFI_GCD_MAP_ENTRY), &mGcdIoSpaceMapEntryTemplate);
   ASSERT (Entry != NULL);
 
   Entry->EndAddress = LShiftU64 (1, SizeOfIoSpace) - 1;
@@ -2643,7 +2643,7 @@ CoreInitializeGcdServices (
   // because the memory resource found in CoreInitializeMemoryServices()
   // may have not enough remaining resource for HOB List.
   //
-  NewHobList = AllocateCopyPool (
+  NewHobList = AllocateCopyPool(
                  (UINTN) PhitHob->EfiFreeMemoryBottom - (UINTN) (*HobStart),
                  *HobStart
                  );

@@ -419,7 +419,7 @@ UefiDevicePathLibDuplicateDevicePath (
   // Allocate space for duplicate device path
   //
 
-  return AllocateCopyPool (Size, DevicePath);
+  return AllocateCopyPool(Size, DevicePath);
 }
 
 /**

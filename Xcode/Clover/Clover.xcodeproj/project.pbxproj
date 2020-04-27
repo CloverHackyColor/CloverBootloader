@@ -2521,12 +2521,7 @@
 		A5717012235A187C000CEC60 /* DataHubStdErrDxe.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataHubStdErrDxe.uni; sourceTree = "<group>"; };
 		A5717014235A188B000CEC60 /* DriverOverride.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DriverOverride.c; sourceTree = "<group>"; };
 		A5717015235A188B000CEC60 /* DriverOverride.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DriverOverride.inf; sourceTree = "<group>"; };
-		A571C26F2405749900B6A2C5 /* XStringWArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringWArray.h; sourceTree = "<group>"; };
 		A571C2702405749900B6A2C5 /* XToolsCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XToolsCommon.h; sourceTree = "<group>"; };
-		A571C2712405749900B6A2C5 /* XStringW.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringW.h; sourceTree = "<group>"; };
-		A571C2722405749900B6A2C5 /* XStringWArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringWArray.cpp; sourceTree = "<group>"; };
-		A571C2732405749900B6A2C5 /* XStringW.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XStringW.cpp; sourceTree = "<group>"; };
-		A571C2772405749900B6A2C5 /* XToolsCommon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon.cpp; sourceTree = "<group>"; };
 		A571C2792405749900B6A2C5 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
 		A571C27A2405749900B6A2C5 /* XObjArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
 		A571C27D240574A100B6A2C5 /* XStringWArray_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringWArray_test.h; sourceTree = "<group>"; };
@@ -8355,11 +8350,6 @@
 				A57CF7CA241BE0D6006DE51E /* XString.h */,
 				A5D12C33243A0BD900DFA98A /* XStringArray.cpp */,
 				A5D12C32243A0BD900DFA98A /* XStringArray.h */,
-				A571C2732405749900B6A2C5 /* XStringW.cpp */,
-				A571C2712405749900B6A2C5 /* XStringW.h */,
-				A571C2722405749900B6A2C5 /* XStringWArray.cpp */,
-				A571C26F2405749900B6A2C5 /* XStringWArray.h */,
-				A571C2772405749900B6A2C5 /* XToolsCommon.cpp */,
 				A571C2702405749900B6A2C5 /* XToolsCommon.h */,
 			);
 			path = cpp_foundation;

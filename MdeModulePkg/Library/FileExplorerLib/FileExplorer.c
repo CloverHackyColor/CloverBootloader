@@ -648,7 +648,7 @@ LibIsSupportedFileType (
     return TRUE;
   }
 
-  TmpStr = AllocateCopyPool (StrSize (InputFileType), InputFileType);
+  TmpStr = AllocateCopyPool(StrSize (InputFileType), InputFileType);
   ASSERT(TmpStr != NULL);
   LibToLowerString(TmpStr);
 
@@ -964,7 +964,7 @@ LibGetFileHandleFromDevicePath (
   *DeviceHandle = Handle;
 
   if (IsDevicePathEnd(DevicePathNode)) {
-    *ParentFileName = AllocateCopyPool (StrSize (L"\\"), L"\\");
+    *ParentFileName = AllocateCopyPool(StrSize (L"\\"), L"\\");
     *RetFileHandle = FileHandle;
     return EFI_SUCCESS;
   }
@@ -1009,7 +1009,7 @@ LibGetFileHandleFromDevicePath (
                           0
                           );
     if (*ParentFileName == NULL) {
-      *ParentFileName = AllocateCopyPool (StrSize (((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName), ((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName);
+      *ParentFileName = AllocateCopyPool(StrSize (((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName), ((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName);
     } else {
       TempPath = LibAppendFileName (*ParentFileName, ((FILEPATH_DEVICE_PATH *) DevicePathNode)->PathName);
       if (TempPath == NULL) {
@@ -1495,7 +1495,7 @@ ChooseFile (
   gFileExplorerPrivate.RetDevicePath = NULL;
   gFileExplorerPrivate.ChooseHandler = ChooseHandler;
   if (FileType != NULL) {
-    gFileExplorerPrivate.FileType = AllocateCopyPool (StrSize (FileType), FileType);
+    gFileExplorerPrivate.FileType = AllocateCopyPool(StrSize (FileType), FileType);
     ASSERT(gFileExplorerPrivate.FileType != NULL);
     LibToLowerString(gFileExplorerPrivate.FileType);
   } else {

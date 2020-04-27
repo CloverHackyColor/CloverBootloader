@@ -372,7 +372,7 @@ DriverHealthManagerGetDriverName (
   }
 
   if (!EFI_ERROR(Status)) {
-    return AllocateCopyPool (StrSize (DriverName), DriverName);
+    return AllocateCopyPool(StrSize (DriverName), DriverName);
   } else {
     return ConvertDevicePathToText (DevicePathFromHandle (DriverBindingHandle), FALSE, TRUE);
   }
@@ -499,7 +499,7 @@ DriverHealthManagerGetControllerName (
   }
 
   if (!EFI_ERROR(Status)) {
-    return AllocateCopyPool (StrSize (ControllerName), ControllerName);
+    return AllocateCopyPool(StrSize (ControllerName), ControllerName);
   } else {
     return ConvertDevicePathToText (DevicePathFromHandle (ChildHandle != NULL ? ChildHandle : ControllerHandle), FALSE, TRUE);
   }

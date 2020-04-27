@@ -617,7 +617,7 @@ RamDiskRegister (
   //
   // Create a new RAM disk instance and initialize its private data
   //
-  PrivateData = AllocateCopyPool (
+  PrivateData = AllocateCopyPool(
                   sizeof (RAM_DISK_PRIVATE_DATA),
                   &mRamDiskPrivateDataTemplate
                   );
@@ -633,7 +633,7 @@ RamDiskRegister (
   //
   // Generate device path information for the registered RAM disk
   //
-  RamDiskDevNode = AllocateCopyPool (
+  RamDiskDevNode = AllocateCopyPool(
                      sizeof (MEDIA_RAM_DISK_DEVICE_PATH),
                      &mRamDiskDeviceNodeTemplate
                      );

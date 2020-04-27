@@ -657,7 +657,7 @@ NvmePassThruGetDevicePath (
   Private = GET_NVME_PEIM_HC_PRIVATE_DATA_FROM_THIS_NVME_PASSTHRU (This);
 
   *DevicePathLength = Private->DevicePathLength;
-  *DevicePath       = AllocateCopyPool (Private->DevicePathLength, Private->DevicePath);
+  *DevicePath       = AllocateCopyPool(Private->DevicePathLength, Private->DevicePath);
   if (*DevicePath == NULL) {
     *DevicePathLength = 0;
     return EFI_OUT_OF_RESOURCES;

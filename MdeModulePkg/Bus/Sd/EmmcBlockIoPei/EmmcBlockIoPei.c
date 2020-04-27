@@ -719,7 +719,7 @@ InitializeEmmcBlockIoPeim (
       continue;
     }
 
-    Private = AllocateCopyPool (sizeof (EMMC_PEIM_HC_PRIVATE_DATA), &gEmmcHcPrivateTemplate);
+    Private = AllocateCopyPool(sizeof (EMMC_PEIM_HC_PRIVATE_DATA), &gEmmcHcPrivateTemplate);
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       break;

@@ -700,7 +700,7 @@ BdsLibVariableToOption (
   }
 
   Option->Signature   = BDS_LOAD_OPTION_SIGNATURE;
-  Option->DevicePath  = AllocateCopyPool (GetDevicePathSize (DevicePath), DevicePath);
+  Option->DevicePath  = AllocateCopyPool(GetDevicePathSize (DevicePath), DevicePath);
 //  ASSERT(Option->DevicePath != NULL);
   if (!Option->DevicePath) {
     FreePool(Option);
@@ -709,7 +709,7 @@ BdsLibVariableToOption (
 //  CopyMem (Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
 
   Option->Attribute   = Attribute;
-  Option->Description = AllocateCopyPool (StrSize (Description), Description);
+  Option->Description = AllocateCopyPool(StrSize (Description), Description);
 //  ASSERT(Option->Description != NULL);
   if (!Option->Description) {
     FreePool(Option);
@@ -717,7 +717,7 @@ BdsLibVariableToOption (
   }
 //  CopyMem (Option->Description, Description, StrSize (Description));
 
-  Option->LoadOptions = AllocateCopyPool (LoadOptionsSize, LoadOptions);
+  Option->LoadOptions = AllocateCopyPool(LoadOptionsSize, LoadOptions);
 //  ASSERT(Option->LoadOptions != NULL);
   if (!Option->LoadOptions) {
     FreePool(Option);

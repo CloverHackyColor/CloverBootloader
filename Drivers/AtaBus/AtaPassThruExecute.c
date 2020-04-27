@@ -152,7 +152,7 @@ AtaDevicePassThru (
     }
 
     CopyMem (Packet->Asb, AtaDevice->Asb, sizeof (EFI_ATA_STATUS_BLOCK));
-    Packet->Acb = AllocateCopyPool (sizeof (EFI_ATA_COMMAND_BLOCK), &AtaDevice->Acb);
+    Packet->Acb = AllocateCopyPool(sizeof (EFI_ATA_COMMAND_BLOCK), &AtaDevice->Acb);
   } else {
     Packet = &AtaDevice->Packet;
     Packet->Asb = AtaDevice->Asb;

@@ -200,7 +200,7 @@ BmSetMemoryTypeInformationVariable (
     return;
   }
   VariableSize                  = GET_GUID_HOB_DATA_SIZE (GuidHob);
-  PreviousMemoryTypeInformation = AllocateCopyPool (VariableSize, GET_GUID_HOB_DATA (GuidHob));
+  PreviousMemoryTypeInformation = AllocateCopyPool(VariableSize, GET_GUID_HOB_DATA (GuidHob));
   if (PreviousMemoryTypeInformation == NULL) {
     return;
   }

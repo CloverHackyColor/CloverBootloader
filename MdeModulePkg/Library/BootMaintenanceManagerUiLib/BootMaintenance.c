@@ -392,7 +392,7 @@ ExtractFileNameFromDevicePath (
   }
 
   Length = StrLen(LastMatch);
-  FileName = AllocateCopyPool ((Length + 1) * sizeof(CHAR16), LastMatch);
+  FileName = AllocateCopyPool((Length + 1) * sizeof(CHAR16), LastMatch);
   if (FileName != NULL) {
     *(FileName + Length) = 0;
   }

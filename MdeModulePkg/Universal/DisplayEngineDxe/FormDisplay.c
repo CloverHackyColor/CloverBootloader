@@ -198,7 +198,7 @@ GetToken (
 
   String = HiiGetString (HiiHandle, Token, NULL);
   if (String == NULL) {
-    String = AllocateCopyPool (StrSize (mUnknownString), mUnknownString);
+    String = AllocateCopyPool(StrSize (mUnknownString), mUnknownString);
     ASSERT (String != NULL);
   }
 
@@ -2028,7 +2028,7 @@ UpdateHighlightMenuInfo (
       if (gHighligthMenuInfo.HLTOpCode != NULL) {
         FreePool(gHighligthMenuInfo.HLTOpCode);
       }
-      gHighligthMenuInfo.HLTOpCode = AllocateCopyPool (Statement->OpCode->Length, Statement->OpCode);
+      gHighligthMenuInfo.HLTOpCode = AllocateCopyPool(Statement->OpCode->Length, Statement->OpCode);
       ASSERT (gHighligthMenuInfo.HLTOpCode != NULL);
 
       gHighligthMenuInfo.HLTIndex = GetIndexInfoForOpcode(Statement->OpCode);
@@ -2045,7 +2045,7 @@ UpdateHighlightMenuInfo (
       if (gHighligthMenuInfo.TOSOpCode != NULL) {
         FreePool(gHighligthMenuInfo.TOSOpCode);
       }
-      gHighligthMenuInfo.TOSOpCode = AllocateCopyPool (Statement->OpCode->Length, Statement->OpCode);
+      gHighligthMenuInfo.TOSOpCode = AllocateCopyPool(Statement->OpCode->Length, Statement->OpCode);
       ASSERT (gHighligthMenuInfo.TOSOpCode != NULL);
 
       gHighligthMenuInfo.TOSIndex = GetIndexInfoForOpcode(Statement->OpCode);

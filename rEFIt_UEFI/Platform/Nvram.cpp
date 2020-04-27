@@ -785,7 +785,7 @@ GetEfiBootDeviceFromNvram ()
   gEfiBootLoaderPath = NULL;
   FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
   if (FileDevPath != NULL) {
-    gEfiBootLoaderPath = (__typeof__(gEfiBootLoaderPath))AllocateCopyPool (StrSize(FileDevPath->PathName), FileDevPath->PathName);
+    gEfiBootLoaderPath = (__typeof__(gEfiBootLoaderPath))AllocateCopyPool(StrSize(FileDevPath->PathName), FileDevPath->PathName);
     // copy DevPath and write end of path node after in place of file path node
     gEfiBootVolume = DuplicateDevicePath (gEfiBootVolume);
     FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);

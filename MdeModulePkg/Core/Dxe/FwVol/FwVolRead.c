@@ -329,7 +329,7 @@ FvReadFile (
       // Cache FFS file to memory buffer.
       //
       WholeFileSize = IS_FFS_FILE2 (FfsHeader) ? FFS_FILE2_SIZE (FfsHeader): FFS_FILE_SIZE (FfsHeader);
-      FfsHeader = AllocateCopyPool (WholeFileSize, FfsHeader);
+      FfsHeader = AllocateCopyPool(WholeFileSize, FfsHeader);
       if (FfsHeader == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }

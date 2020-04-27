@@ -255,7 +255,7 @@ RegisterAtaDevice (
   //
   // Allocate ATA device from the template.
   //
-  AtaDevice = AllocateCopyPool (sizeof (ATA_DEVICE), &gAtaDeviceTemplate);
+  AtaDevice = AllocateCopyPool(sizeof (ATA_DEVICE), &gAtaDeviceTemplate);
   if (AtaDevice == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

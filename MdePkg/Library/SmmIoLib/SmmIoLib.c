@@ -231,7 +231,7 @@ SmmIoLibInternalEndOfDxeNotify (
 
     MergeGcdMmioEntry (MemSpaceMap, &NumberOfDescriptors);
 
-    mSmmIoLibGcdMemSpace = AllocateCopyPool (NumberOfDescriptors * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR), MemSpaceMap);
+    mSmmIoLibGcdMemSpace = AllocateCopyPool(NumberOfDescriptors * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR), MemSpaceMap);
     ASSERT (mSmmIoLibGcdMemSpace != NULL);
     if (mSmmIoLibGcdMemSpace == NULL) {
       gBS->FreePool(MemSpaceMap);

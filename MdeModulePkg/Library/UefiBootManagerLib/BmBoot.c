@@ -2290,7 +2290,7 @@ EfiBootManagerRefreshAllBootOption (
   // Mark the boot option as added by BDS by setting OptionalData to a special GUID
   //
   for (Index = 0; Index < BootOptionCount; Index++) {
-    BootOptions[Index].OptionalData     = AllocateCopyPool (sizeof (EFI_GUID), &mBmAutoCreateBootOptionGuid);
+    BootOptions[Index].OptionalData     = AllocateCopyPool(sizeof (EFI_GUID), &mBmAutoCreateBootOptionGuid);
     BootOptions[Index].OptionalDataSize = sizeof (EFI_GUID);
   }
 

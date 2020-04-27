@@ -457,8 +457,8 @@ VOID PatchAllTables()
             continue;
           }
           Len = FixAny((UINT8*)NewTable, Len,
-                       gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                       gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+                       (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                       (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
           //DBG(" OK\n");
         }
       }

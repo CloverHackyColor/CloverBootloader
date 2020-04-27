@@ -167,7 +167,7 @@ OnigurumaMatch (
         // Region beg/end values represent bytes, not characters
         //
         (*Captures)[Index].Length = (Region->end[Index] - Region->beg[Index]) / sizeof(CHAR16);
-        (*Captures)[Index].CapturePtr = AllocateCopyPool (
+        (*Captures)[Index].CapturePtr = AllocateCopyPool(
                                           ((*Captures)[Index].Length) * sizeof (CHAR16),
                                           (CHAR16*)((UINTN)String + Region->beg[Index])
                                           );

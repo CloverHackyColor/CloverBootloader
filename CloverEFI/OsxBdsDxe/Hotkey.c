@@ -630,7 +630,7 @@ HotkeyInsertList (
     //
     // Need an extra hotkey for shift key on right
     //
-    HotkeyRight = AllocateCopyPool (sizeof (BDS_HOTKEY_OPTION), HotkeyLeft);
+    HotkeyRight = AllocateCopyPool(sizeof (BDS_HOTKEY_OPTION), HotkeyLeft);
     if (HotkeyRight == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

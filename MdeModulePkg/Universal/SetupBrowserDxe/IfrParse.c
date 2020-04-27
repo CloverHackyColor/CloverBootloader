@@ -177,7 +177,7 @@ CreateQuestion (
         NameValueNode = AllocateZeroPool (sizeof (NAME_VALUE_NODE));
         ASSERT (NameValueNode != NULL);
         NameValueNode->Signature = NAME_VALUE_NODE_SIGNATURE;
-        NameValueNode->Name = AllocateCopyPool (StrSize (Statement->VariableName), Statement->VariableName);
+        NameValueNode->Name = AllocateCopyPool(StrSize (Statement->VariableName), Statement->VariableName);
         ASSERT (NameValueNode->Name != NULL);
         NameValueNode->Value = AllocateZeroPool (0x10);
         ASSERT (NameValueNode->Value != NULL);
@@ -443,7 +443,7 @@ CreateStorage (
 
   Storage->BrowserStorage = BrowserStorage;
   InitializeConfigHdr (FormSet, Storage);
-  Storage->ConfigRequest = AllocateCopyPool (StrSize (Storage->ConfigHdr), Storage->ConfigHdr);
+  Storage->ConfigRequest = AllocateCopyPool(StrSize (Storage->ConfigHdr), Storage->ConfigHdr);
   Storage->SpareStrLen = 0;
 
   return Storage;
@@ -594,7 +594,7 @@ InitializeRequestElement (
                Question->StorageWidth
                );
     HiiToLower(RequestElement);
-    Question->BlockName = AllocateCopyPool ((StrLen + 1) * sizeof (CHAR16), RequestElement);
+    Question->BlockName = AllocateCopyPool((StrLen + 1) * sizeof (CHAR16), RequestElement);
   } else {
     StrLen = UnicodeSPrint (RequestElement, 30 * sizeof (CHAR16), L"&%s", Question->VariableName);
   }
@@ -658,7 +658,7 @@ InitializeRequestElement (
     ConfigInfo = AllocateZeroPool(sizeof (FORM_BROWSER_CONFIG_REQUEST));
     ASSERT (ConfigInfo != NULL);
     ConfigInfo->Signature     = FORM_BROWSER_CONFIG_REQUEST_SIGNATURE;
-    ConfigInfo->ConfigRequest = AllocateCopyPool (StrSize (FormsetStorage->ConfigHdr), FormsetStorage->ConfigHdr);
+    ConfigInfo->ConfigRequest = AllocateCopyPool(StrSize (FormsetStorage->ConfigHdr), FormsetStorage->ConfigHdr);
     ASSERT (ConfigInfo->ConfigRequest != NULL);
     ConfigInfo->SpareStrLen   = 0;
     ConfigInfo->Storage       = FormsetStorage->BrowserStorage;
@@ -1340,7 +1340,7 @@ ParseOpCodes (
       case EFI_IFR_EQ_ID_VAL_LIST_OP:
         CopyMem (&ExpressionOpCode->QuestionId, &((EFI_IFR_EQ_ID_VAL_LIST *) OpCodeData)->QuestionId, sizeof (EFI_QUESTION_ID));
         CopyMem (&ExpressionOpCode->ListLength, &((EFI_IFR_EQ_ID_VAL_LIST *) OpCodeData)->ListLength, sizeof (UINT16));
-        ExpressionOpCode->ValueList = AllocateCopyPool (ExpressionOpCode->ListLength * sizeof (UINT16), &((EFI_IFR_EQ_ID_VAL_LIST *) OpCodeData)->ValueList);
+        ExpressionOpCode->ValueList = AllocateCopyPool(ExpressionOpCode->ListLength * sizeof (UINT16), &((EFI_IFR_EQ_ID_VAL_LIST *) OpCodeData)->ValueList);
         break;
 
       case EFI_IFR_TO_STRING_OP:
@@ -2091,7 +2091,7 @@ ParseOpCodes (
       CopyMem (&CurrentDefault->DefaultId, &((EFI_IFR_DEFAULT *) OpCodeData)->DefaultId, sizeof (UINT16));
       if (CurrentDefault->Value.Type == EFI_IFR_TYPE_BUFFER) {
         CurrentDefault->Value.BufferLen = (UINT16) (OpCodeLength - OFFSET_OF (EFI_IFR_DEFAULT, Value));
-        CurrentDefault->Value.Buffer = AllocateCopyPool (CurrentDefault->Value.BufferLen, &((EFI_IFR_DEFAULT *) OpCodeData)->Value);
+        CurrentDefault->Value.Buffer = AllocateCopyPool(CurrentDefault->Value.BufferLen, &((EFI_IFR_DEFAULT *) OpCodeData)->Value);
         ASSERT (CurrentDefault->Value.Buffer != NULL);
       } else {
         CopyMem (&CurrentDefault->Value.Value, &((EFI_IFR_DEFAULT *) OpCodeData)->Value, OpCodeLength - OFFSET_OF (EFI_IFR_DEFAULT, Value));
@@ -2129,7 +2129,7 @@ ParseOpCodes (
         }
 
         CurrentDefault->Value.BufferLen = (UINT16) (OpCodeLength - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
-        CurrentDefault->Value.Buffer = AllocateCopyPool (CurrentDefault->Value.BufferLen, &((EFI_IFR_ONE_OF_OPTION *) OpCodeData)->Value);
+        CurrentDefault->Value.Buffer = AllocateCopyPool(CurrentDefault->Value.BufferLen, &((EFI_IFR_ONE_OF_OPTION *) OpCodeData)->Value);
         ASSERT (CurrentDefault->Value.Buffer != NULL);
 
         //

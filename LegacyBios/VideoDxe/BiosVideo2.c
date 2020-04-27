@@ -1635,7 +1635,7 @@ BiosVideoCheckForVbe (
       // Set EDID Discovered Data
       //
       BiosVideoPrivate->EdidDiscovered.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
-      BiosVideoPrivate->EdidDiscovered.Edid = (UINT8 *) AllocateCopyPool (
+      BiosVideoPrivate->EdidDiscovered.Edid = (UINT8 *) AllocateCopyPool(
           VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
           BiosVideoPrivate->VbeEdidDataBlock
           );
@@ -1667,7 +1667,7 @@ BiosVideoCheckForVbe (
       // Copy EDID Override Data to EDID Active Data
       //
       BiosVideoPrivate->EdidActive.SizeOfEdid = (UINT32) EdidActiveDataSize;
-      BiosVideoPrivate->EdidActive.Edid = (UINT8 *) AllocateCopyPool (
+      BiosVideoPrivate->EdidActive.Edid = (UINT8 *) AllocateCopyPool(
                                                       EdidActiveDataSize,
                                                       EdidActiveDataBlock
                                                       );

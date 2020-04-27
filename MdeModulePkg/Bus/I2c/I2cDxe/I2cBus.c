@@ -967,7 +967,7 @@ RegisterI2cDevice (
     // Build the device context for current I2C device.
     //
     I2cDeviceContext = NULL;
-    I2cDeviceContext = AllocateCopyPool (sizeof (I2C_DEVICE_CONTEXT), &gI2cDeviceContextTemplate);
+    I2cDeviceContext = AllocateCopyPool(sizeof (I2C_DEVICE_CONTEXT), &gI2cDeviceContextTemplate);
     ASSERT (I2cDeviceContext != NULL);
     if (I2cDeviceContext == NULL) {
       continue;

@@ -338,7 +338,7 @@ DiscoverSdDevice (
   //
   // Allocate buffer to store SD_DEVICE private data.
   //
-  Device = AllocateCopyPool (sizeof (SD_DEVICE), &mSdDeviceTemplate);
+  Device = AllocateCopyPool(sizeof (SD_DEVICE), &mSdDeviceTemplate);
   if (Device == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;

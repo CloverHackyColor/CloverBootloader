@@ -880,7 +880,7 @@ PasswordProcess (
   // Compare two typed-in new passwords
   //
   if (StrCmp (StringPtr, TempString) == 0) {
-    gUserInput->InputValue.Buffer = AllocateCopyPool (Question->CurrentValue.BufferLen, StringPtr);
+    gUserInput->InputValue.Buffer = AllocateCopyPool(Question->CurrentValue.BufferLen, StringPtr);
     gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
     gUserInput->InputValue.Type = Question->CurrentValue.Type;
     gUserInput->InputValue.Value.string = HiiSetString(gFormData->HiiHandle, gUserInput->InputValue.Value.string, StringPtr, NULL);
@@ -1113,7 +1113,7 @@ ProcessOptions (
           //
           gUserInput->SelectedStatement = Question;
           gMisMatch = TRUE;
-          ValueArray = AllocateCopyPool (Question->CurrentValue.BufferLen, Question->CurrentValue.Buffer);
+          ValueArray = AllocateCopyPool(Question->CurrentValue.BufferLen, Question->CurrentValue.Buffer);
           ASSERT (ValueArray != NULL);
           gUserInput->InputValue.Buffer    = ValueArray;
           gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
@@ -1359,7 +1359,7 @@ ProcessOptions (
         return Status;
       }
 
-      gUserInput->InputValue.Buffer = AllocateCopyPool (Question->CurrentValue.BufferLen, StringPtr);
+      gUserInput->InputValue.Buffer = AllocateCopyPool(Question->CurrentValue.BufferLen, StringPtr);
       gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
       gUserInput->InputValue.Type = Question->CurrentValue.Type;
       gUserInput->InputValue.Value.string = HiiSetString(gFormData->HiiHandle, gUserInput->InputValue.Value.string, StringPtr, NULL);

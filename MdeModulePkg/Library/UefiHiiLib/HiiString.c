@@ -73,7 +73,7 @@ HiiSetString (
     //
     // Allocate a copy of the SupportLanguages string that passed in
     //
-    AllocatedLanguages = AllocateCopyPool (AsciiStrSize (SupportedLanguages), SupportedLanguages);
+    AllocatedLanguages = AllocateCopyPool(AsciiStrSize (SupportedLanguages), SupportedLanguages);
   }
 
   //

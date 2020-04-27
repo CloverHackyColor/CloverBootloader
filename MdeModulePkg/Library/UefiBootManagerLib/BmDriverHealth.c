@@ -94,7 +94,7 @@ BmGetControllerName (
   }
 
   if (!EFI_ERROR(Status)) {
-    return AllocateCopyPool (StrSize (ControllerName), ControllerName);
+    return AllocateCopyPool(StrSize (ControllerName), ControllerName);
   } else {
     return ConvertDevicePathToText (
              DevicePathFromHandle (ChildHandle != NULL ? ChildHandle : ControllerHandle),

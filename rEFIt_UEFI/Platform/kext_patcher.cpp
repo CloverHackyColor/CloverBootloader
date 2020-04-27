@@ -987,7 +987,21 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   if (!Entry->KernelAndKextPatches->KextPatches[N].IsPlistPatch) {
     // kext binary patch
     DBG_RT(Entry, "Binary patch\n");
-    UINT8 * curs = Driver;
+    bool once = false;
+    UINTN procLen = 0;
+    UINTN procAddr = searchProc(Driver, DriverSize,
+                                 Entry->KernelAndKextPatches->KextPatches[N].ProcedureName, &procLen);
+    
+    if (Entry->KernelAndKextPatches->KextPatches[N].SearchLen == 0) {
+      Entry->KernelAndKextPatches->KextPatches[N].SearchLen = DriverSize;
+      if (procLen > DriverSize) {
+        procLen = DriverSize - procAddr;
+        once = true;
+      }
+    } else {
+      procLen = Entry->KernelAndKextPatches->KextPatches[N].SearchLen;
+    }
+    UINT8 * curs = &Driver[procAddr];
     UINTN j = 0;
     while (j < DriverSize) {
       if (!Entry->KernelAndKextPatches->KextPatches[N].StartPattern || //old behavior
@@ -998,7 +1012,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
         DBG_RT(Entry, " StartPattern found\n");
 
         Num = SearchAndReplaceMask(Driver,
-                                   Entry->KernelAndKextPatches->KextPatches[N].SearchLen,
+                                   procLen,
                                    Entry->KernelAndKextPatches->KextPatches[N].Data,
                                    Entry->KernelAndKextPatches->KextPatches[N].MaskFind,
                                    Entry->KernelAndKextPatches->KextPatches[N].DataLen,
@@ -1010,7 +1024,8 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
           j    += Entry->KernelAndKextPatches->KextPatches[N].SearchLen - 1;
         }
       }
-      if (!Entry->KernelAndKextPatches->KextPatches[N].StartPattern ||
+      if (once ||
+          !Entry->KernelAndKextPatches->KextPatches[N].StartPattern ||
           !Entry->KernelAndKextPatches->KextPatches[N].StartPatternLen) {
         break;
       }

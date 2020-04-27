@@ -281,7 +281,7 @@ ExtractKeyword (
   }
   *NextString = String + StrLen (String);
 
-  *Keyword = AllocateCopyPool (StrSize (String), String);
+  *Keyword = AllocateCopyPool(StrSize (String), String);
   if (*Keyword == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -336,7 +336,7 @@ ExtractValue (
   }
   *NextString = String + StrLen (String);
 
-  *Value = AllocateCopyPool (StrSize (String), String);
+  *Value = AllocateCopyPool(StrSize (String), String);
   if (*Value == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1345,7 +1345,7 @@ GetStringIdFromRecord (
         return KEYWORD_HANDLER_KEYWORD_NOT_FOUND;
       } else {
         if (*NameSpace == NULL) {
-          *NameSpace = AllocateCopyPool (AsciiStrSize (StringPackage->StringPkgHdr->Language), StringPackage->StringPkgHdr->Language);
+          *NameSpace = AllocateCopyPool(AsciiStrSize (StringPackage->StringPkgHdr->Language), StringPackage->StringPkgHdr->Language);
           if (*NameSpace == NULL) {
             return KEYWORD_HANDLER_UNDEFINED_PROCESSING_ERROR;
           }
@@ -1933,7 +1933,7 @@ GetNameFromId (
                    NULL
                    );
   if (BestLanguage == NULL) {
-    BestLanguage = AllocateCopyPool (AsciiStrLen ("en-US"), "en-US");
+    BestLanguage = AllocateCopyPool(AsciiStrLen ("en-US"), "en-US");
     ASSERT (BestLanguage != NULL);
   }
 
@@ -2244,7 +2244,7 @@ ExtractValueFromDriver (
     *StringEnd = L'\0';
   }
 
-  *ValueElement = AllocateCopyPool (StrSize (StringPtr), StringPtr);
+  *ValueElement = AllocateCopyPool(StrSize (StringPtr), StringPtr);
   if (*ValueElement == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -2339,7 +2339,7 @@ GetStringIdFromDatabase (
         if ((DevicePathPkg = Record->PackageList->DevicePathPkg) != NULL) {
           DestDevicePath = (EFI_DEVICE_PATH_PROTOCOL *) (DevicePathPkg + sizeof (EFI_HII_PACKAGE_HEADER));
           DevicePathSize = GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *) DestDevicePath);
-          *DevicePath = AllocateCopyPool (DevicePathSize, DestDevicePath);
+          *DevicePath = AllocateCopyPool(DevicePathSize, DestDevicePath);
           if (*DevicePath == NULL) {
             return EFI_OUT_OF_RESOURCES;
           }
@@ -2632,7 +2632,7 @@ EnumerateAllKeywords (
         //
         // Keep the NameSpace string.
         //
-        LocalNameSpace = AllocateCopyPool (AsciiStrSize (StringPackage->StringPkgHdr->Language), StringPackage->StringPkgHdr->Language);
+        LocalNameSpace = AllocateCopyPool(AsciiStrSize (StringPackage->StringPkgHdr->Language), StringPackage->StringPkgHdr->Language);
         if (LocalNameSpace == NULL) {
           return EFI_OUT_OF_RESOURCES;
         }
@@ -2860,7 +2860,7 @@ EfiConfigKeywordHandlerSetData (
   //
   // Use temp string to avoid changing input string buffer.
   //
-  TempString = AllocateCopyPool (StrSize (KeywordString), KeywordString);
+  TempString = AllocateCopyPool(StrSize (KeywordString), KeywordString);
   ASSERT (TempString != NULL);
   StringPtr = TempString;
 
@@ -3158,7 +3158,7 @@ EfiConfigKeywordHandlerGetData (
   // Use temp string to avoid changing input string buffer.
   //
   if (NameSpaceId != NULL) {
-    TempString = AllocateCopyPool (StrSize (NameSpaceId), NameSpaceId);
+    TempString = AllocateCopyPool(StrSize (NameSpaceId), NameSpaceId);
     ASSERT (TempString != NULL);
   }
   //
@@ -3187,7 +3187,7 @@ EfiConfigKeywordHandlerGetData (
     //
     // Use temp string to avoid changing input string buffer.
     //
-    TempString = AllocateCopyPool (StrSize (KeywordString), KeywordString);
+    TempString = AllocateCopyPool(StrSize (KeywordString), KeywordString);
     ASSERT (TempString != NULL);
     StringPtr = TempString;
 

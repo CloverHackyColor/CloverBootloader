@@ -55,7 +55,7 @@ GraphicsOutputQueryMode (
   }
 
   *SizeOfInfo = This->Mode->SizeOfInfo;
-  *Info       = AllocateCopyPool (*SizeOfInfo, This->Mode->Info);
+  *Info       = AllocateCopyPool(*SizeOfInfo, This->Mode->Info);
   return EFI_SUCCESS;
 }
 
@@ -422,7 +422,7 @@ GraphicsOutputDriverBindingStart (
     return EFI_SUCCESS;
   }
 
-  Private = AllocateCopyPool (sizeof (mGraphicsOutputInstanceTemplate), &mGraphicsOutputInstanceTemplate);
+  Private = AllocateCopyPool(sizeof (mGraphicsOutputInstanceTemplate), &mGraphicsOutputInstanceTemplate);
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto CloseProtocols;

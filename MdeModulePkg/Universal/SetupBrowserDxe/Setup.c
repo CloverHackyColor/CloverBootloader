@@ -1033,7 +1033,7 @@ GetToken (
 
   String = HiiGetString (HiiHandle, Token, NULL);
   if (String == NULL) {
-    String = AllocateCopyPool (StrSize (mUnknownString), mUnknownString);
+    String = AllocateCopyPool(StrSize (mUnknownString), mUnknownString);
     ASSERT (String != NULL);
   }
   return (CHAR16 *) String;
@@ -1056,7 +1056,7 @@ NewStringCpy (
   if (*Dest != NULL) {
     FreePool(*Dest);
   }
-  *Dest = AllocateCopyPool (StrSize (Src), Src);
+  *Dest = AllocateCopyPool(StrSize (Src), Src);
   ASSERT (*Dest != NULL);
 }
 
@@ -1185,7 +1185,7 @@ SetValueByName (
       if (Buffer != NULL) {
         FreePool(Buffer);
       }
-      Buffer = AllocateCopyPool (StrSize (Value), Value);
+      Buffer = AllocateCopyPool(StrSize (Value), Value);
       ASSERT (Buffer != NULL);
       if (SetValueTo == GetSetValueWithEditBuffer) {
         Node->EditValue = Buffer;
@@ -3009,7 +3009,7 @@ GetSyncRestoreConfigRequest(
   // Need to restore all the fields in the ConfigRequest.
   //
   if (*Progress == L'G') {
-    *RestoreConfigRequest = AllocateCopyPool (StrSize (ConfigRequest), ConfigRequest);
+    *RestoreConfigRequest = AllocateCopyPool(StrSize (ConfigRequest), ConfigRequest);
     ASSERT (*RestoreConfigRequest != NULL);
     return;
   }
@@ -3935,7 +3935,7 @@ GetOffsetFromConfigResp (
   //
   // 2. Change all hex digits in Question->BlockName to lower and compare again.
   //
-  BlockData = AllocateCopyPool (StrSize(Question->BlockName), Question->BlockName);
+  BlockData = AllocateCopyPool(StrSize(Question->BlockName), Question->BlockName);
   ASSERT (BlockData != NULL);
   HiiToLower (BlockData);
   RequestElement = StrStr (ConfigResp, BlockData);
@@ -4985,14 +4985,14 @@ IsQuestionValueChanged (
   switch (Question->Operand) {
     case EFI_IFR_ORDERED_LIST_OP:
       BufferWidth  = Question->StorageWidth;
-      BackUpBuffer = AllocateCopyPool (BufferWidth, Question->BufferValue);
+      BackUpBuffer = AllocateCopyPool(BufferWidth, Question->BufferValue);
       ASSERT (BackUpBuffer != NULL);
       break;
 
     case EFI_IFR_STRING_OP:
     case EFI_IFR_PASSWORD_OP:
       BufferWidth  = (UINTN) Question->Maximum * sizeof (CHAR16);
-      BackUpBuffer = AllocateCopyPool (BufferWidth, Question->BufferValue);
+      BackUpBuffer = AllocateCopyPool(BufferWidth, Question->BufferValue);
       ASSERT (BackUpBuffer != NULL);
       break;
 
@@ -5009,14 +5009,14 @@ IsQuestionValueChanged (
     switch (Question->Operand) {
       case EFI_IFR_ORDERED_LIST_OP:
         BufferWidth  = Question->StorageWidth;
-        BackUpBuffer2 = AllocateCopyPool (BufferWidth, Question->BufferValue);
+        BackUpBuffer2 = AllocateCopyPool(BufferWidth, Question->BufferValue);
         ASSERT (BackUpBuffer2 != NULL);
         break;
 
       case EFI_IFR_STRING_OP:
       case EFI_IFR_PASSWORD_OP:
         BufferWidth  = (UINTN) Question->Maximum * sizeof (CHAR16);
-        BackUpBuffer2 = AllocateCopyPool (BufferWidth, Question->BufferValue);
+        BackUpBuffer2 = AllocateCopyPool(BufferWidth, Question->BufferValue);
         ASSERT (BackUpBuffer2 != NULL);
         break;
 
@@ -5411,7 +5411,7 @@ ConfigRequestAdjust (
   }
 
   if (Storage->ConfigRequest == NULL) {
-    Storage->ConfigRequest = AllocateCopyPool (StrSize (ConfigRequest), ConfigRequest);
+    Storage->ConfigRequest = AllocateCopyPool(StrSize (ConfigRequest), ConfigRequest);
     return TRUE;
   }
 
@@ -5600,7 +5600,7 @@ LoadStorage (
     FreePool(Result);
   }
 
-  Storage->BrowserStorage->ConfigRequest = AllocateCopyPool (StrSize (Storage->ConfigRequest), Storage->ConfigRequest);
+  Storage->BrowserStorage->ConfigRequest = AllocateCopyPool(StrSize (Storage->ConfigRequest), Storage->ConfigRequest);
 
   //
   // Input NULL for ConfigRequest field means sync all fields from editbuffer to buffer.
@@ -5905,7 +5905,7 @@ GetIfrBinaryData (
   // of the Form Package.
   //
   *BinaryLength = PackageHeader.Length - Offset2;
-  *BinaryData = AllocateCopyPool (*BinaryLength, OpCodeData);
+  *BinaryData = AllocateCopyPool(*BinaryLength, OpCodeData);
 
   FreePool(HiiPackageList);
 
@@ -6411,7 +6411,7 @@ RegisterHotKey (
   HotKey = AllocateZeroPool (sizeof (BROWSER_HOT_KEY));
   ASSERT (HotKey != NULL);
   HotKey->Signature = BROWSER_HOT_KEY_SIGNATURE;
-  HotKey->KeyData   = AllocateCopyPool (sizeof (EFI_INPUT_KEY), KeyData);
+  HotKey->KeyData   = AllocateCopyPool(sizeof (EFI_INPUT_KEY), KeyData);
   InsertTailList (&gBrowserHotKeyList, &HotKey->Link);
 
   //
@@ -6422,7 +6422,7 @@ RegisterHotKey (
   if (HotKey->HelpString != NULL) {
     FreePool(HotKey->HelpString);
   }
-  HotKey->HelpString = AllocateCopyPool (StrSize (HelpString), HelpString);
+  HotKey->HelpString = AllocateCopyPool(StrSize (HelpString), HelpString);
 
   return EFI_SUCCESS;
 }
