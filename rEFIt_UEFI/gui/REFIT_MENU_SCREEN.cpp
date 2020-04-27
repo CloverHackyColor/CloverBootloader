@@ -156,6 +156,7 @@ static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
 static INTN OldTimeoutTextWidth = 0;
 static INTN MenuWidth , TimeoutPosY;
+static INTN MenuMaxPosX = 0;
 static UINTN MenuMaxTextLen = 0;
 static INTN EntriesPosX, EntriesPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
@@ -1433,8 +1434,15 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
 
 VOID REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor)
 {
-  XImage TextBufferX(UGAWidth-XPos, ThemeX.TextHeight);
-  XImage SelectionBar(UGAWidth-XPos, ThemeX.TextHeight);
+  INTN MaxWidth;
+  if (MenuMaxPosX > XPos && MenuMaxPosX < UGAWidth) {
+    MaxWidth = MenuMaxPosX - XPos;
+  } else {
+    MaxWidth = UGAWidth - XPos;
+  }
+  XImage TextBufferX(MaxWidth, ThemeX.TextHeight);
+  XImage SelectionBar(MaxWidth, ThemeX.TextHeight);
+
 /*
   if (Cursor == 0xFFFF) { //InfoLine = 0xFFFF
     TextBufferX.Fill(MenuBackgroundPixel);
@@ -1610,6 +1618,9 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       }
       TimeoutPosY = EntriesPosY + (Entries.size() + 1) * ThemeX.TextHeight;
 
+      // set maximum allowed X-Position for menu content (this is ctrlTextX + MenuWidth)
+      MenuMaxPosX = EntriesPosX + (ThemeX.TypeSVG ? 0 : (INTN)(TEXT_XMARGIN * ThemeX.Scale)) + ThemeX.Buttons[0].GetWidth() + (INTN)(TEXT_XMARGIN * ThemeX.Scale / 2) + MenuWidth;
+      // set maximum allowed text length for menu content (this is applicable only for non-svg)
       MenuMaxTextLen = (UINTN)(MenuWidth / ScaledWidth);
 
       // initial painting
@@ -1671,7 +1682,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         REFIT_ABSTRACT_MENU_ENTRY *Entry = &Entries[i];
         ResultString = Entry->Title; //create a copy to modify later
         if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
-          ResultString = ResultString.subString(0,MenuMaxTextLen-1);
+          ResultString = ResultString.subString(0,MenuMaxTextLen-3) + L".."_XSW;
         }
         TitleLen = ResultString.length();
         Entry->Place.XPos = EntriesPosX;
@@ -1754,7 +1765,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       ResultString = EntryL->Title;
       if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
-        ResultString = ResultString.subString(0,MenuMaxTextLen-1);
+        ResultString = ResultString.subString(0,MenuMaxTextLen-3) + L".."_XSW;
       }
       TitleLen = ResultString.length();
       //clovy//PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
@@ -1816,7 +1827,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       // current selection
       ResultString = EntryC->Title;
       if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
-        ResultString = ResultString.subString(0,MenuMaxTextLen-1);
+        ResultString = ResultString.subString(0,MenuMaxTextLen-3) + L".."_XSW;
       }
       TitleLen = ResultString.length();
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
