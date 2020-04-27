@@ -156,6 +156,7 @@ static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
 static INTN OldTimeoutTextWidth = 0;
 static INTN MenuWidth , TimeoutPosY;
+static UINTN MaxMenuTextLen = 0;
 static INTN EntriesPosX, EntriesPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
 
@@ -1559,7 +1560,6 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
   UINTN OldChosenItem = ~(UINTN)0;
   INTN TitleLen = 0;
   INTN ScaledWidth = (INTN)(ThemeX.CharWidth * ThemeX.Scale);
-  UINTN MaxTextLen;
 
   // clovy
   INTN ctrlX, ctrlY, ctrlTextX;
@@ -1610,7 +1610,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       }
       TimeoutPosY = EntriesPosY + (Entries.size() + 1) * ThemeX.TextHeight;
 
-      MaxTextLen = (UINTN)(MenuWidth / ScaledWidth);
+      MaxMenuTextLen = (UINTN)(MenuWidth / ScaledWidth);
 
       // initial painting
       ThemeX.MeasureText(Title, &ItemWidth, NULL);
@@ -1676,8 +1676,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)ThemeX.TextHeight;
         ResultString = Entry->Title; //create a copy to modify later
-        if (ResultString.length() > MaxTextLen) {
-          ResultString = ResultString.subString(0,MaxTextLen-1);
+        if (ResultString.length() > MaxMenuTextLen) {
+          ResultString = ResultString.subString(0,MaxMenuTextLen-1);
         }
         PlaceCentre = (INTN)((ThemeX.TextHeight - (INTN)(ThemeX.Buttons[2].GetHeight())) * ThemeX.Scale / 2);
         PlaceCentre1 = (INTN)((ThemeX.TextHeight - (INTN)(ThemeX.Buttons[0].GetHeight())) * ThemeX.Scale / 2);
@@ -1756,8 +1756,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Entries[ScrollState.CurrentSelection];
       TitleLen = EntryL->Title.length();
       ResultString = EntryL->Title;
-      if (ResultString.length() > MaxTextLen) {
-        ResultString = ResultString.subString(0,MaxTextLen-1);
+      if (ResultString.length() > MaxMenuTextLen) {
+        ResultString = ResultString.subString(0,MaxMenuTextLen-1);
       }
       //clovy//PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
       //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
@@ -1817,8 +1817,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       // current selection
       ResultString = EntryC->Title;
-      if (ResultString.length() > MaxTextLen) {
-        ResultString = ResultString.subString(0,MaxTextLen-1);
+      if (ResultString.length() > MaxMenuTextLen) {
+        ResultString = ResultString.subString(0,MaxMenuTextLen-1);
       }
       TitleLen = EntryC->Title.length();
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
