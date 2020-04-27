@@ -129,7 +129,7 @@ void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path alread
     } else {
       XStringW Name = SWPrintf("%ls\\%ls_%03lld.png", Path.wc_str(), Path.wc_str(), Index);
  //     DBG("try to load %ls\n", Name.wc_str()); //fine
-      if (FileExists(ThemeDir, Name.wc_str())) {
+      if (FileExists(ThemeDir, Name)) {
         Status = NewImage.LoadXImage(ThemeDir, Name);
       }
 //      DBG("  read status=%s\n", strerror(Status));

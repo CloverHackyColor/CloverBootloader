@@ -80,7 +80,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
   if ((LoaderPath.isEmpty()) || (Volume == NULL) || (Volume->RootDir == NULL) ||
-      !FileExists(Volume->RootDir, LoaderPath.wc_str())) {
+      !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
   // Allocate the entry
@@ -101,7 +101,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
   Entry->Image = Image;
 //  Entry->ImageHover = ImageHover;
   Entry->LoaderPath = LoaderPath;
-  Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath.wc_str());
+  Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->LoadOptions = Options;
   //actions
@@ -132,7 +132,7 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   Entry->Volume = Volume;
   Entry->LoaderPath      = LoaderPath;
   Entry->VolName         = Volume->VolName;
-  Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath.wc_str());
+  Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
   Entry->Flags           = 0;
   Entry->LoadOptions.setEmpty();
@@ -222,7 +222,7 @@ VOID ScanTool(VOID)
           DBG(" Deleted /EFI label\n");
         }
 
-        if (FileExists(Volume->RootDir, CLOVER_MEDIA_FILE_NAME.wc_str())) {
+        if (FileExists(Volume->RootDir, CLOVER_MEDIA_FILE_NAME)) {
           DBG(" Found Clover\n");
           // Volume->BootType = BOOTING_BY_EFI;
           AddCloverEntry(CLOVER_MEDIA_FILE_NAME, L"Clover Boot Options", Volume);
@@ -305,7 +305,7 @@ VOID AddCustomTool(VOID)
         }
       }
       // Check the tool exists on the volume
-      if (!FileExists(Volume->RootDir, Custom->Path.wc_str())) {
+      if (!FileExists(Volume->RootDir, Custom->Path)) {
         DBG("skipped because path does not exist\n");
         continue;
       }

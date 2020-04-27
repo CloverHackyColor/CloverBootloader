@@ -1974,6 +1974,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   construct_globals_objects(); // do this after SelfLoadedImage is initialized
 #ifdef JIEF_DEBUG
   all_tests();
+
+  printf("StrCmp(L\"aab\", L\"aac\")=%d\n", StrCmp(L"aac", L"aab") > 0);
+  printf("StrCmp(L\"aab\"_XSW, L\"aac\"_XSW)=%d\n", L"aac"_XSW > L"aab"_XSW);
+
+  PauseForKey(L"press\n");
 #endif
 
   //dumping SETTING structure

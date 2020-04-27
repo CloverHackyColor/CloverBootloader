@@ -361,7 +361,7 @@ STATIC XStringArray LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
   while (Index < LinuxInitImagePathCount) {
     XStringW InitRd = SWPrintf(LinuxInitImagePath[Index++].c_str(), (Version == NULL) ? L"" : Version);
     if (InitRd.notEmpty()) {
-      if (FileExists(Dir, InitRd.wc_str())) {
+      if (FileExists(Dir, InitRd)) {
 		  XStringArray CustomOptions;
 		  CustomOptions.Add(SPrintf("root=/dev/disk/by-partuuid/%ls", PartUUID));
 		  CustomOptions.Add(SPrintf("initrd=%ls\\%ls", LINUX_BOOT_ALT_PATH, InitRd.wc_str()));
@@ -471,7 +471,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 
   // Get the loader device path
 //  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == L'\\') ? (LoaderPath + 1) : LoaderPath);
-  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath.wc_str());
+  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath);
   if (LoaderDevicePath == NULL) {
     return NULL;
   }
@@ -1032,7 +1032,7 @@ BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& Loa
   LOADER_ENTRY *Entry;
   INTN          HVi;
 
-  if ((LoaderPath.isEmpty()) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath.wc_str())) {
+  if ((LoaderPath.isEmpty()) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return FALSE;
   }
 
@@ -1094,9 +1094,9 @@ VOID AddPRSEntry(REFIT_VOLUME *Volume)
   //CONST INTN Rock = 2;
   //CONST INTN Scissor = 4;
 
-  WhatBoot |= FileExists(Volume->RootDir, RockBoot.wc_str())?Rock:0;
-  WhatBoot |= FileExists(Volume->RootDir, PaperBoot.wc_str())?Paper:0;
-  WhatBoot |= FileExists(Volume->RootDir, ScissorBoot.wc_str())?Scissor:0;
+  WhatBoot |= FileExists(Volume->RootDir, RockBoot)?Rock:0;
+  WhatBoot |= FileExists(Volume->RootDir, PaperBoot)?Paper:0;
+  WhatBoot |= FileExists(Volume->RootDir, ScissorBoot)?Scissor:0;
   switch (WhatBoot) {
     case Paper:
     case (Paper | Rock):
@@ -1167,7 +1167,7 @@ VOID ScanLoader(VOID)
       } else {
         AddLoaderEntry(L"\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
-    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH.wc_str())) {
+    } else if (FileExists(Volume->RootDir, L"\\.IAPhysicalMedia") && FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
       AddLoaderEntry(MACOSX_LOADER_PATH, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
     }
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
@@ -1181,7 +1181,7 @@ VOID ScanLoader(VOID)
     AddLoaderEntry(L"\\NetInstall macOS High Sierra.nbi\\i386\\booter"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
     // Use standard location for boot.efi, according to the install files is present
     // That file indentifies a DVD/ESD/BaseSystem/Fusion Drive Install Media, so when present, check standard path to avoid entry duplication
-    if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH.wc_str())) {
+    if (FileExists(Volume->RootDir, MACOSX_LOADER_PATH)) {
       if (FileExists(Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app")) {
         // InstallDVD/BaseSystem
         AddLoaderEntry(MACOSX_LOADER_PATH, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.6/10.7
@@ -1265,7 +1265,7 @@ VOID ScanLoader(VOID)
       // check for Android loaders
       for (Index = 0; Index < AndroidEntryDataCount; ++Index) {
         UINTN aIndex, aFound;
-		  if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path.wc_str())) {
+		  if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path)) {
           aFound = 0;
           for (aIndex = 0; aIndex < ANDX86_FINDLEN; ++aIndex) {
             if ((AndroidEntryData[Index].Find[aIndex].isEmpty()) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
@@ -1297,7 +1297,7 @@ VOID ScanLoader(VOID)
         XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
         XStringW OSName = SPrintf("%ls", DirEntry->FileName); // this is folder name, for example "ubuntu"
         OSName.lowerAscii(); // lowercase for icon name
-        if (FileExists(Volume->RootDir, File.wc_str())) {
+        if (FileExists(Volume->RootDir, File)) {
           // check if nonstandard icon mapping is needed
           for (Index = 0; Index < LinuxIconMappingCount; ++Index) {
             if (StrCmp(OSName.wc_str(),LinuxIconMapping[Index].DirectoryName) == 0) {
@@ -1443,7 +1443,7 @@ VOID ScanLoader(VOID)
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
                   XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                  if ( Path > NewPath ) {
+                  if ( Path < NewPath ) {
                       Path = NewPath;
                   }else{
                       Path.setEmpty();
@@ -1469,7 +1469,7 @@ VOID ScanLoader(VOID)
                 if (FileInfo->FileSize > 0) {
                   // get the kernel file path
                   XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                    if ( Path < NewPath ) {
+                    if ( Path > NewPath ) {
                       Path = NewPath;
                   }else{
                       Path.setEmpty();
@@ -1802,7 +1802,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           Custom->KernelScan = KERNEL_SCAN_ALL;
           break;
       }
-    } else if (!FileExists(Volume->RootDir, CustomPath.wc_str())) {
+    } else if (!FileExists(Volume->RootDir, CustomPath)) {
       DBG("skipped because path does not exist\n");
       continue;
     }

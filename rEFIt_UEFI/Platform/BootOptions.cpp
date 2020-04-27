@@ -190,7 +190,7 @@ CreateBootOptionDevicePath (
     //
     // Create file path node with FileName
     //
-    *DevicePath = FileDevicePath(FileDeviceHandle, FileName.wc_str());
+    *DevicePath = FileDevicePath(FileDeviceHandle, FileName);
     if (*DevicePath == NULL) {
         return EFI_OUT_OF_RESOURCES;
     }

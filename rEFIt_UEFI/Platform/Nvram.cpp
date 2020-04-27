@@ -1334,7 +1334,7 @@ EFI_STATUS SetStartupDiskVolume (
   //
   DevPath = Volume->DevicePath;
   if (LoaderPath.notEmpty()) {
-    FileDevPath = FileDevicePath (NULL, LoaderPath.wc_str());
+    FileDevPath = FileDevicePath (NULL, LoaderPath);
     DevPath     = AppendDevicePathNode (DevPath, FileDevPath);
   }
   DBG("  * DevPath: %ls\n", Volume->VolName/*, FileDevicePathToStr (DevPath)*/);

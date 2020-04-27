@@ -560,7 +560,7 @@ EFI_STATUS egScreenShot(VOID)
   for (UINTN Index = 0; Index < 60; Index++) {
 //    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
     XStringW Name = SWPrintf("EFI\\CLOVER\\misc\\screenshot%lld.png", Index);
-    if (!FileExists(SelfRootDir, Name.wc_str())) {
+    if (!FileExists(SelfRootDir, Name)) {
       Status = egSaveFile(SelfRootDir, Name.wc_str(), FileData, FileDataLength);
       if (!EFI_ERROR(Status)) {
         break;
