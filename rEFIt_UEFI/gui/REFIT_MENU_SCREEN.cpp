@@ -1559,7 +1559,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
   UINTN OldChosenItem = ~(UINTN)0;
   INTN TitleLen = 0;
   INTN ScaledWidth = (INTN)(ThemeX.CharWidth * ThemeX.Scale);
-  UINTN MaxTextLen = (UINTN)(MenuWidth / ScaledWidth);
+  UINTN MaxTextLen;
 
   // clovy
   INTN ctrlX, ctrlY, ctrlTextX;
@@ -1597,7 +1597,6 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       //MenuWidth = 80;  // minimum
       MenuWidth = (int)(LAYOUT_TEXT_WIDTH * ThemeX.Scale); //500
 
-
       if (!TitleImage.isEmpty()) {
         if (MenuWidth > (INTN)(UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.GetWidth())) {
           MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.GetWidth() - 2;
@@ -1610,6 +1609,8 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       }
       TimeoutPosY = EntriesPosY + (Entries.size() + 1) * ThemeX.TextHeight;
+
+      MaxTextLen = (UINTN)(MenuWidth / ScaledWidth);
 
       // initial painting
       ThemeX.MeasureText(Title, &ItemWidth, NULL);
