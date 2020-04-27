@@ -1670,7 +1670,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       for (INTN i = ScrollState.FirstVisible, j = 0; i <= ScrollState.LastVisible; i++, j++) {
         REFIT_ABSTRACT_MENU_ENTRY *Entry = &Entries[i];
         ResultString = Entry->Title; //create a copy to modify later
-        if (ResultString.length() > MenuMaxTextLen) {
+        if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
           ResultString = ResultString.subString(0,MenuMaxTextLen-1);
         }
         TitleLen = ResultString.length();
@@ -1753,7 +1753,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Entries[ScrollState.CurrentSelection];
 
       ResultString = EntryL->Title;
-      if (ResultString.length() > MenuMaxTextLen) {
+      if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
         ResultString = ResultString.subString(0,MenuMaxTextLen-1);
       }
       TitleLen = ResultString.length();
@@ -1809,13 +1809,13 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                      EntryL->Place.YPos, 0xFFFF);
         ThemeX.Buttons[(EntryL->getREFIT_MENU_CHECKBIT()->Item->IValue & EntryL->Row) ?3:2].DrawOnBack(ctrlX, EntryL->Place.YPos + PlaceCentre, ThemeX.Background);
       } else {
-        DrawMenuText(EntryL->Title, 0, EntriesPosX,
+        DrawMenuText(ResultString, 0, EntriesPosX,
                      EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * ThemeX.TextHeight, 0xFFFF);
       }
 
       // current selection
       ResultString = EntryC->Title;
-      if (ResultString.length() > MenuMaxTextLen) {
+      if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
         ResultString = ResultString.subString(0,MenuMaxTextLen-1);
       }
       TitleLen = ResultString.length();
@@ -1847,7 +1847,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                        TitleLen + inputDialogEntry->Row);
         }
       } else if (EntryC->getREFIT_MENU_SWITCH()) { //radio
-        DrawMenuText(EntryC->Title, MenuWidth,
+        DrawMenuText(ResultString, MenuWidth,
                      ctrlTextX,
                      EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * ThemeX.TextHeight,
                      0xFFFF);
@@ -1858,7 +1858,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                      EntryC->Place.YPos, 0xFFFF);
         ThemeX.Buttons[(EntryC->getREFIT_MENU_CHECKBIT()->Item->IValue & EntryC->Row)?3:2].DrawOnBack(ctrlX, EntryC->Place.YPos + PlaceCentre, ThemeX.Background);
       }else{
-        DrawMenuText(EntryC->Title, MenuWidth, EntriesPosX,
+        DrawMenuText(ResultString, MenuWidth, EntriesPosX,
                      EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * ThemeX.TextHeight,
                      0xFFFF);
       }

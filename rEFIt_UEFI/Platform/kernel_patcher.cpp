@@ -1038,8 +1038,9 @@ BOOLEAN HaswellEXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_idl
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-    STATIC UINT8 find[] = { 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
-    STATIC UINT8 repl[] = { 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
+    // vector sigma 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
+    STATIC UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
+    STATIC UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
 
@@ -1202,8 +1203,9 @@ BOOLEAN HaswellLowEndXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcp
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-    STATIC UINT8 find[] = { 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
-    STATIC UINT8 repl[] = { 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
+    // vector sigma 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
+    STATIC UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
+    STATIC UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
 
@@ -1298,8 +1300,9 @@ BOOLEAN KernelIvyBridgeXCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_x
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-    STATIC UINT8 find[] = { 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
-    STATIC UINT8 repl[] = { 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
+    // vector sigma 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
+    STATIC UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
+    STATIC UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
 
@@ -1450,8 +1453,9 @@ BOOLEAN KernelIvyE5XCPM(VOID *kernelData, LOADER_ENTRY *Entry, BOOLEAN use_xcpm_
     STATIC UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   } else if (os_version < AsciiOSVersionToUint64("10.16")) {
-    STATIC UINT8 find[] = { 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
-    STATIC UINT8 repl[] = { 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
+    // vector sigma 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
+    STATIC UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
+    STATIC UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
   
