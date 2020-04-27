@@ -519,7 +519,7 @@ FvSimpleFileSystemDriverStart (
   // If we didn't decide on a volume label, set a fallback one
   //
   if (Instance->VolumeLabel == NULL) {
-    Instance->VolumeLabel = AllocateCopyPool (
+    Instance->VolumeLabel = AllocateCopyPool(
                               sizeof (FVFS_FALLBACK_VOLUME_LABEL),
                               FVFS_FALLBACK_VOLUME_LABEL
                               );

@@ -660,7 +660,7 @@ SetKeyboardLayoutEvent (
 
       UsbNsKey->Signature = USB_NS_KEY_SIGNATURE;
       UsbNsKey->KeyCount = KeyCount;
-      UsbNsKey->NsKey = AllocateCopyPool (
+      UsbNsKey->NsKey = AllocateCopyPool(
                           (KeyCount + 1) * sizeof (EFI_KEY_DESCRIPTOR),
                           KeyDescriptor
                           );

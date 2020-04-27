@@ -234,7 +234,7 @@ GenerateSubStr (
   ASSERT (String != NULL && SubStr != NULL);
 
   if (Buffer == NULL) {
-    *SubStr = AllocateCopyPool (StrSize (String), String);
+    *SubStr = AllocateCopyPool(StrSize (String), String);
     ASSERT (*SubStr != NULL);
     return;
   }
@@ -359,7 +359,7 @@ OutputConfigBody (
     //
     // It is the last <ConfigResp> of the incoming configuration string.
     //
-    Result = AllocateCopyPool (StrSize (String), String);
+    Result = AllocateCopyPool(StrSize (String), String);
     if (Result == NULL) {
       return EFI_OUT_OF_RESOURCES;
     } else {
@@ -372,7 +372,7 @@ OutputConfigBody (
   if (Length == 0) {
     return EFI_NOT_FOUND;
   }
-  Result = AllocateCopyPool (Length * sizeof (CHAR16), String);
+  Result = AllocateCopyPool(Length * sizeof (CHAR16), String);
   if (Result == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -917,7 +917,7 @@ CompareAndMergeDefaultString (
   //
   // Copy the content of <ConfigAltResp> which contain current AltConfigHdr in AltCfgResp.
   //
-  ConfigAltResp = AllocateCopyPool (StrSize (*AltCfgResp), *AltCfgResp);
+  ConfigAltResp = AllocateCopyPool(StrSize (*AltCfgResp), *AltCfgResp);
   if (ConfigAltResp == NULL) {
     goto Exit;
   }
@@ -4744,7 +4744,7 @@ HiiConfigRoutingExtractConfig (
     // Process each <ConfigRequest> of <MultiConfigRequest>
     //
     Length = CalculateConfigStringLen (StringPtr);
-    ConfigRequest = AllocateCopyPool ((Length + 1) * sizeof (CHAR16), StringPtr);
+    ConfigRequest = AllocateCopyPool((Length + 1) * sizeof (CHAR16), StringPtr);
     if (ConfigRequest == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -4835,7 +4835,7 @@ HiiConfigRoutingExtractConfig (
       // Not any request block is found.
       //
       if (!GetElementsFromRequest(ConfigRequest)) {
-        AccessResults = AllocateCopyPool (StrSize (ConfigRequest), ConfigRequest);
+        AccessResults = AllocateCopyPool(StrSize (ConfigRequest), ConfigRequest);
         goto NextConfigString;
       }
     }
@@ -5307,7 +5307,7 @@ HiiConfigRoutingRouteConfig (
     // Process each <ConfigResp> of <MultiConfigResp>
     //
     Length = CalculateConfigStringLen (StringPtr);
-    ConfigResp = AllocateCopyPool ((Length + 1) * sizeof (CHAR16), StringPtr);
+    ConfigResp = AllocateCopyPool((Length + 1) * sizeof (CHAR16), StringPtr);
     if (ConfigResp == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

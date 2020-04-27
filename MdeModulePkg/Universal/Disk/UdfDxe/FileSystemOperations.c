@@ -482,7 +482,7 @@ DuplicateFid (
   )
 {
   *NewFileIdentifierDesc =
-    (UDF_FILE_IDENTIFIER_DESCRIPTOR *)AllocateCopyPool (
+    (UDF_FILE_IDENTIFIER_DESCRIPTOR *)AllocateCopyPool(
       (UINTN) GetFidDescriptorLength (FileIdentifierDesc), FileIdentifierDesc);
 }
 
@@ -503,7 +503,7 @@ DuplicateFe (
   OUT  VOID                   **NewFileEntry
   )
 {
-  *NewFileEntry = AllocateCopyPool (Volume->FileEntrySize, FileEntry);
+  *NewFileEntry = AllocateCopyPool(Volume->FileEntrySize, FileEntry);
 }
 
 /**

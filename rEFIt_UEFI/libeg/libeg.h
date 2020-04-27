@@ -281,6 +281,7 @@ struct KEXT_PATCH
   UINT8       *StartMask;
   INTN        StartPatternLen;
   INTN        SearchLen;
+  CHAR8       *ProcedureName; //procedure len will be StartPatternLen
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
@@ -297,6 +298,7 @@ typedef struct {
   UINT8       *StartMask;
   INTN        StartPatternLen;
   INTN        SearchLen;
+  CHAR8       *ProcedureName;
   INTN        Count;
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;

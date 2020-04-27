@@ -497,10 +497,10 @@ EfiBootManagerInitializeLoadOption (
   Option->OptionNumber       = OptionNumber;
   Option->OptionType         = OptionType;
   Option->Attributes         = Attributes;
-  Option->Description        = AllocateCopyPool (StrSize (Description), Description);
+  Option->Description        = AllocateCopyPool(StrSize (Description), Description);
   Option->FilePath           = DuplicateDevicePath (FilePath);
   if (OptionalData != NULL) {
-    Option->OptionalData     = AllocateCopyPool (OptionalDataSize, OptionalData);
+    Option->OptionalData     = AllocateCopyPool(OptionalDataSize, OptionalData);
     Option->OptionalDataSize = OptionalDataSize;
   }
 

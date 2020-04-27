@@ -589,7 +589,7 @@ UfsHcDriverBindingStart (
     return Status;
   }
 
-  Private = AllocateCopyPool (sizeof (UFS_HOST_CONTROLLER_PRIVATE_DATA), &gUfsHcTemplate);
+  Private = AllocateCopyPool(sizeof (UFS_HOST_CONTROLLER_PRIVATE_DATA), &gUfsHcTemplate);
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

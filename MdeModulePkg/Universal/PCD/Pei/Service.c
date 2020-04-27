@@ -121,7 +121,7 @@ GetPcdName (
     //
     // Only need to get the TokenSpaceCName.
     //
-    Name = AllocateCopyPool (AsciiStrSize (TokenSpaceName), TokenSpaceName);
+    Name = AllocateCopyPool(AsciiStrSize (TokenSpaceName), TokenSpaceName);
   } else {
     //
     // Need to get the full PCD name.

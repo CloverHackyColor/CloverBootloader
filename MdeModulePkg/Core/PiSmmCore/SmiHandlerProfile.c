@@ -179,7 +179,7 @@ AddImageStruct(
   mImageStruct[mImageStructCount].EntryPoint = EntryPoint;
   if (PdbString != NULL) {
     PdbStringSize = AsciiStrSize(PdbString);
-    mImageStruct[mImageStructCount].PdbString = AllocateCopyPool (PdbStringSize, PdbString);
+    mImageStruct[mImageStructCount].PdbString = AllocateCopyPool(PdbStringSize, PdbString);
     if (mImageStruct[mImageStructCount].PdbString != NULL) {
       mImageStruct[mImageStructCount].PdbStringSize = (UINT16) PdbStringSize;
     }
@@ -1215,7 +1215,7 @@ SmiHandlerProfileRegisterHandler (
     } else if (CompareGuid (HandlerGuid, &gEfiSmmSwDispatch2ProtocolGuid)) {
       SmiHandler->Context = ConvertSmiHandlerSwContext (Context, ContextSize, &SmiHandler->ContextSize);
     } else {
-      SmiHandler->Context = AllocateCopyPool (ContextSize, Context);
+      SmiHandler->Context = AllocateCopyPool(ContextSize, Context);
     }
   }
   if (SmiHandler->Context == NULL) {

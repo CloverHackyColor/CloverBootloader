@@ -453,7 +453,7 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>Lapci panic patch example</string>
+				<string>Lapic panic patch example</string>
 				<key>MatchOS</key>
 				<string>All</string>
 				<key>Disabled</key>
@@ -462,6 +462,26 @@
 				<data>ACnHeAAx241H+oM=</data>
 				<key>MaskStart</key>
 				<data>/////wA=</data>
+				<key>Find</key>
+				<data>6AAA//+DAAAAAAAA</data>
+				<key>MaskFind</key>
+				<data>/wAA////AAAAAP//</data>
+				<key>Replace</key>
+				<data>6AAA//8xwJCQkJCQ</data>
+				<key>MaskReplace</key>
+				<data>/wAA////////////</data>
+				<key>RangeFind</key>
+				<integer>200</integer>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Symbolic patch example got lapic panic</string>
+				<key>MatchOS</key>
+				<string>All</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Procedure</key>
+				<string>_lapic_interrupt</string>
 				<key>Find</key>
 				<data>6AAA//+DAAAAAAAA</data>
 				<key>MaskFind</key>

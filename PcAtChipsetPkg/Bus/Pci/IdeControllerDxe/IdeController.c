@@ -569,7 +569,7 @@ IdeInitCalculateMode (
     return EFI_INVALID_PARAMETER;
   }
 
-  *SupportedModes = AllocateCopyPool (sizeof (EFI_ATA_COLLECTIVE_MODE), &gEfiAtaCollectiveModeTemplate);
+  *SupportedModes = AllocateCopyPool(sizeof (EFI_ATA_COLLECTIVE_MODE), &gEfiAtaCollectiveModeTemplate);
   if (*SupportedModes == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

@@ -2468,7 +2468,7 @@ NetLibDetectMedia (
     ResetMCastFilters = TRUE;
     MCastFilterCount  = Snp->Mode->MCastFilterCount;
     if (MCastFilterCount != 0) {
-      MCastFilter = AllocateCopyPool (
+      MCastFilter = AllocateCopyPool(
                       MCastFilterCount * sizeof (EFI_MAC_ADDRESS),
                       Snp->Mode->MCastFilter
                       );

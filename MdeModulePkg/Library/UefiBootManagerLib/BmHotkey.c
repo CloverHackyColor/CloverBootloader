@@ -451,7 +451,7 @@ BmGetActiveConsoleIn (
                     EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                     );
     if (!EFI_ERROR(Status)) {
-      Handles = AllocateCopyPool (sizeof (EFI_HANDLE), &gST->ConsoleInHandle);
+      Handles = AllocateCopyPool(sizeof (EFI_HANDLE), &gST->ConsoleInHandle);
       if (Handles != NULL) {
         *Count = 1;
       }
@@ -805,7 +805,7 @@ EfiBootManagerRegisterContinueKeyOption (
   VA_END (Args);
 
   if (!EFI_ERROR(Status)) {
-    mBmContinueKeyOption = AllocateCopyPool (sizeof (EFI_BOOT_MANAGER_KEY_OPTION), &KeyOption);
+    mBmContinueKeyOption = AllocateCopyPool(sizeof (EFI_BOOT_MANAGER_KEY_OPTION), &KeyOption);
     ASSERT (mBmContinueKeyOption != NULL);
     if (mBmHotkeyServiceStarted) {
       BmProcessKeyOption (mBmContinueKeyOption);

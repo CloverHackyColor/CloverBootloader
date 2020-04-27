@@ -593,7 +593,7 @@ SdMmcPciHcDriverBindingStart (
     goto Done;
   }
 
-  Private = AllocateCopyPool (sizeof (SD_MMC_HC_PRIVATE_DATA), &gSdMmcPciHcTemplate);
+  Private = AllocateCopyPool(sizeof (SD_MMC_HC_PRIVATE_DATA), &gSdMmcPciHcTemplate);
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -1224,7 +1224,7 @@ SdMmcPassThruBuildDevicePath (
   }
 
   if (Private->Slot[Slot].CardType == SdCardType) {
-    SdNode = AllocateCopyPool (sizeof (SD_DEVICE_PATH), &mSdDpTemplate);
+    SdNode = AllocateCopyPool(sizeof (SD_DEVICE_PATH), &mSdDpTemplate);
     if (SdNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1232,7 +1232,7 @@ SdMmcPassThruBuildDevicePath (
 
     *DevicePath = (EFI_DEVICE_PATH_PROTOCOL *) SdNode;
   } else if (Private->Slot[Slot].CardType == EmmcCardType) {
-    EmmcNode = AllocateCopyPool (sizeof (EMMC_DEVICE_PATH), &mEmmcDpTemplate);
+    EmmcNode = AllocateCopyPool(sizeof (EMMC_DEVICE_PATH), &mEmmcDpTemplate);
     if (EmmcNode == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

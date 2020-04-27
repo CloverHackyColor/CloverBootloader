@@ -566,7 +566,7 @@ InitializeSdBlockIoPeim (
       continue;
     }
 
-    Private = AllocateCopyPool (sizeof (SD_PEIM_HC_PRIVATE_DATA), &gSdHcPrivateTemplate);
+    Private = AllocateCopyPool(sizeof (SD_PEIM_HC_PRIVATE_DATA), &gSdHcPrivateTemplate);
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       break;

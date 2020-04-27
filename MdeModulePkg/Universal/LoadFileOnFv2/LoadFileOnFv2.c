@@ -287,7 +287,7 @@ InstallFileLoadProtocol (
       continue;
     }
     if (!IsInPrivateList (&NameGuid)) {
-      Private = (LOAD_FILE_ON_FV2_PRIVATE_DATA *)AllocateCopyPool (sizeof (mLoadFileOnFv2PrivateDataTemplate), &mLoadFileOnFv2PrivateDataTemplate);
+      Private = (LOAD_FILE_ON_FV2_PRIVATE_DATA *)AllocateCopyPool(sizeof (mLoadFileOnFv2PrivateDataTemplate), &mLoadFileOnFv2PrivateDataTemplate);
       ASSERT (Private != NULL);
       Private->Fv = Fv;
       Private->DevicePath = CreateFileDevicePath (Handle, &NameGuid, UiName);

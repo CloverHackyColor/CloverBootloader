@@ -351,7 +351,7 @@ InstallAcpiTable (
   //
   // Install the ACPI table
   //
-  AcpiTableBufferConst = AllocateCopyPool (AcpiTableBufferSize,AcpiTableBuffer);
+  AcpiTableBufferConst = AllocateCopyPool(AcpiTableBufferSize,AcpiTableBuffer);
   *TableKey = 0;
   Status = SetAcpiTable (
              AcpiTableInstance,

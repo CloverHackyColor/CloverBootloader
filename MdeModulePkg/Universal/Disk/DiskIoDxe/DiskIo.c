@@ -160,7 +160,7 @@ DiskIoDriverBindingStart (
   //
   // Initialize the Disk IO device instance.
   //
-  Instance = AllocateCopyPool (sizeof (DISK_IO_PRIVATE_DATA), &gDiskIoPrivateDataTemplate);
+  Instance = AllocateCopyPool(sizeof (DISK_IO_PRIVATE_DATA), &gDiskIoPrivateDataTemplate);
   if (Instance == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;

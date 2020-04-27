@@ -312,7 +312,7 @@ InitializeTerminalConsoleTextMode (
 
   ASSERT (TextModeCount != NULL);
 
-  TextModeData = AllocateCopyPool (sizeof (mTerminalConsoleModeData), mTerminalConsoleModeData);
+  TextModeData = AllocateCopyPool(sizeof (mTerminalConsoleModeData), mTerminalConsoleModeData);
   if (TextModeData == NULL) {
     return NULL;
   }
@@ -597,7 +597,7 @@ TerminalDriverBindingStart (
   //
   // Initialize the Terminal Dev
   //
-  TerminalDevice = AllocateCopyPool (sizeof (TERMINAL_DEV), &mTerminalDevTemplate);
+  TerminalDevice = AllocateCopyPool(sizeof (TERMINAL_DEV), &mTerminalDevTemplate);
   if (TerminalDevice == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto CloseProtocols;

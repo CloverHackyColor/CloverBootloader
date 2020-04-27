@@ -762,7 +762,7 @@ DumpCapsuleFromDisk (
     }
 
     if ((FileInfo->Attribute & (EFI_FILE_SYSTEM | EFI_FILE_ARCHIVE)) != 0) {
-      FileInfoBuffer[Index++] = AllocateCopyPool ((UINTN)FileInfo->Size, FileInfo);
+      FileInfoBuffer[Index++] = AllocateCopyPool((UINTN)FileInfo->Size, FileInfo);
     }
 
     Status = FileHandleFindNextFile (DirHandle, FileInfo, &NoFile);

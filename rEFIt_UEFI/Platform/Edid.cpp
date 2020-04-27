@@ -70,7 +70,7 @@ UINT8* getCurrentEdid (VOID)
   if (!EFI_ERROR(Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
-      Edid = (__typeof__(Edid))AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
+      Edid = (__typeof__(Edid))AllocateCopyPool(EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
     }
   }
   DBG(" %s\n", Edid != NULL ? "found" : "not found");

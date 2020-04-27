@@ -67,7 +67,7 @@ ValidateCapsuleNameCapsuleIntegrity (
   // If strings are not aligned on a 16-bit boundary, reallocate memory for it.
   //
   if (((UINTN) CapsuleNameBufStart & BIT0) != 0) {
-    CapsuleNameBufStart = AllocateCopyPool (CapsuleHeader->CapsuleImageSize - CapsuleHeader->HeaderSize, CapsuleNameBufStart);
+    CapsuleNameBufStart = AllocateCopyPool(CapsuleHeader->CapsuleImageSize - CapsuleHeader->HeaderSize, CapsuleNameBufStart);
     if (CapsuleNameBufStart == NULL) {
       return NULL;
     }
@@ -574,7 +574,7 @@ GetEfiSysPartitionFromActiveBootOption(
   // Return the OptionNumber of the boot option where EFI system partition is got from
   //
   if (*LoadOptionNumber == NULL) {
-    *LoadOptionNumber = AllocateCopyPool (sizeof(UINT16), (UINT16 *) &BootOptionBuf[Index].OptionNumber);
+    *LoadOptionNumber = AllocateCopyPool(sizeof(UINT16), (UINT16 *) &BootOptionBuf[Index].OptionNumber);
     if (*LoadOptionNumber == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
     }

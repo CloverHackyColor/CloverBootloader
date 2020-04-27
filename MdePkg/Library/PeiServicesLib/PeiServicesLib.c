@@ -674,12 +674,12 @@ InternalPeiServicesInstallFvInfoPpi (
   FvInfoPpi->FvInfo = (VOID *) FvInfo;
   FvInfoPpi->FvInfoSize = FvInfoSize;
   if (ParentFvName != NULL) {
-    ParentFvNameValue = AllocateCopyPool (sizeof (EFI_GUID), ParentFvName);
+    ParentFvNameValue = AllocateCopyPool(sizeof (EFI_GUID), ParentFvName);
     ASSERT (ParentFvNameValue != NULL);
     FvInfoPpi->ParentFvName = ParentFvNameValue;
   }
   if (ParentFileName != NULL) {
-    ParentFileNameValue = AllocateCopyPool (sizeof (EFI_GUID), ParentFileName);
+    ParentFileNameValue = AllocateCopyPool(sizeof (EFI_GUID), ParentFileName);
     ASSERT (ParentFileNameValue != NULL);
     FvInfoPpi->ParentFileName = ParentFileNameValue;
   }

@@ -2777,7 +2777,7 @@ HiiGetFontInfo (
     //
     if (LocalFontHandle == NULL) {
       if (StringInfoOut != NULL) {
-        *StringInfoOut = AllocateCopyPool (StringInfoOutLen, SystemDefault);
+        *StringInfoOut = AllocateCopyPool(StringInfoOutLen, SystemDefault);
         if (*StringInfoOut == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           LocalFontHandle = NULL;

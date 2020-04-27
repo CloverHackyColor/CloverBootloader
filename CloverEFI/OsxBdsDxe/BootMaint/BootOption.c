@@ -784,7 +784,7 @@ BOpt_GetLegacyOptions (
       sizeof (DescString),
       DescString
       );
-    NewLegacyDevContext->Description = AllocateCopyPool (StrSize (DescString), DescString);
+    NewLegacyDevContext->Description = AllocateCopyPool(StrSize (DescString), DescString);
     if (NULL == NewLegacyDevContext->Description) {
       break;
     }

@@ -76,7 +76,7 @@ INT32
 FindBin (
   UINT8  *Array,
   UINT32 ArrayLen,
-  UINT8  *Pattern,
+  const UINT8  *Pattern,
   UINT32 PatternLen
   );
 
@@ -85,9 +85,9 @@ UINT32
 FixAny (
   UINT8* dsdt,
   UINT32 len,
-  UINT8* ToFind,
+  const UINT8* ToFind,
   UINT32 LenTF,
-  UINT8* ToReplace,
+  const UINT8* ToReplace,
   UINT32 LenTR
   );
 

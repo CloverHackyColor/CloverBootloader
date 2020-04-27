@@ -245,7 +245,7 @@ BmGetDescriptionFromDiskInfo (
       return NULL;
     }
 
-    Description = AllocateCopyPool (StrSize (Description), Description);
+    Description = AllocateCopyPool(StrSize (Description), Description);
   }
 
   return Description;
@@ -538,7 +538,7 @@ BmGetLoadFileDescription (
   }
 
   if (Description != NULL) {
-    return AllocateCopyPool (StrSize (Description), Description);
+    return AllocateCopyPool(StrSize (Description), Description);
   }
 
   return NULL;
@@ -704,7 +704,7 @@ BmGetMiscDescription (
     break;
   }
 
-  return AllocateCopyPool (StrSize (Description), Description);
+  return AllocateCopyPool(StrSize (Description), Description);
 }
 
 /**

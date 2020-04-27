@@ -318,7 +318,7 @@ ExtractDisplayedHiiFormFromHiiHandle (
               if (CompareGuid (SetupClassGuid, ClassGuid)) {
                 CopyMem (FormSetTitle, &((EFI_IFR_FORM_SET *) OpCodeData)->FormSetTitle, sizeof (EFI_STRING_ID));
                 CopyMem (FormSetHelp, &((EFI_IFR_FORM_SET *) OpCodeData)->Help, sizeof (EFI_STRING_ID));
-                *FormSetGuid = AllocateCopyPool (sizeof (EFI_GUID), &((EFI_IFR_FORM_SET *) OpCodeData)->Guid);
+                *FormSetGuid = AllocateCopyPool(sizeof (EFI_GUID), &((EFI_IFR_FORM_SET *) OpCodeData)->Guid);
                 ASSERT (*FormSetGuid != NULL);
                 FreePool(HiiPackageList);
                 return TRUE;
@@ -328,7 +328,7 @@ ExtractDisplayedHiiFormFromHiiHandle (
            } else {
              CopyMem (FormSetTitle, &((EFI_IFR_FORM_SET *) OpCodeData)->FormSetTitle, sizeof (EFI_STRING_ID));
              CopyMem (FormSetHelp, &((EFI_IFR_FORM_SET *) OpCodeData)->Help, sizeof (EFI_STRING_ID));
-             *FormSetGuid = AllocateCopyPool (sizeof (EFI_GUID), &((EFI_IFR_FORM_SET *) OpCodeData)->Guid);
+             *FormSetGuid = AllocateCopyPool(sizeof (EFI_GUID), &((EFI_IFR_FORM_SET *) OpCodeData)->Guid);
              ASSERT (*FormSetGuid != NULL);
              FreePool(HiiPackageList);
              return TRUE;
@@ -479,7 +479,7 @@ AddIdToMacDeviceList (
   } else {
     mMacDeviceList.MaxListLen += MAX_MAC_ADDRESS_NODE_LIST_LEN;
     if (mMacDeviceList.CurListLen != 0) {
-      TempDeviceList = (MENU_INFO_ITEM *)AllocateCopyPool (sizeof (MENU_INFO_ITEM) * mMacDeviceList.MaxListLen, (VOID *)mMacDeviceList.NodeList);
+      TempDeviceList = (MENU_INFO_ITEM *)AllocateCopyPool(sizeof (MENU_INFO_ITEM) * mMacDeviceList.MaxListLen, (VOID *)mMacDeviceList.NodeList);
     } else {
       TempDeviceList = (MENU_INFO_ITEM *)AllocatePool (sizeof (MENU_INFO_ITEM) * mMacDeviceList.MaxListLen);
     }

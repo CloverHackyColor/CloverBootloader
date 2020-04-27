@@ -414,7 +414,7 @@ InitializeFrontPage (
   if (mLanguageString == NULL){
     mLanguageString = GetEfiGlobalVariable (L"PlatformLangCodes");
     if (mLanguageString == NULL) {
-      mLanguageString = AllocateCopyPool (
+      mLanguageString = AllocateCopyPool(
                                  AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)),
                                  (CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)
                                  );

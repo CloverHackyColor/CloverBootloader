@@ -550,7 +550,7 @@ MeasureSmbiosTable (
     DEBUG ((DEBUG_INFO, "The Smbios Table size: 0x%x\n", TableLength));
     DEBUG_CODE (InternalDumpHex ((UINT8 *)(UINTN)SmbiosTableAddress, TableLength););
 
-    TableAddress = AllocateCopyPool ((UINTN)TableLength, (VOID *)(UINTN)SmbiosTableAddress);
+    TableAddress = AllocateCopyPool((UINTN)TableLength, (VOID *)(UINTN)SmbiosTableAddress);
     if (TableAddress == NULL) {
       return ;
     }
