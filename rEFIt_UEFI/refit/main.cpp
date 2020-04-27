@@ -205,6 +205,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   EFI_LOADED_IMAGE_PROTOCOL   *ChildLoadedImage;
   CHAR16                      ErrorInfo[256];
 //  CHAR16                  *FullLoadOptions = NULL;
+  XStringW loadOptionsW; // This has to be declared here, so it's not be freed before calling StartImage
 
 //  DBG("Starting %ls\n", ImageTitle);
   if (ErrorInStep != NULL) {
@@ -225,7 +226,6 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
       goto bailout_unload;
     }
 
-    XStringW loadOptionsW;
     if (LoadOptionsPrefix != NULL) {
       // NOTE: That last space is also added by the EFI shell and seems to be significant
       //  when passing options to Apple's boot.efi...
@@ -1974,11 +1974,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   construct_globals_objects(); // do this after SelfLoadedImage is initialized
 #ifdef JIEF_DEBUG
   all_tests();
-
-  printf("StrCmp(L\"aab\", L\"aac\")=%d\n", StrCmp(L"aac", L"aab") > 0);
-  printf("StrCmp(L\"aab\"_XSW, L\"aac\"_XSW)=%d\n", L"aac"_XSW > L"aab"_XSW);
-
-  PauseForKey(L"press\n");
+//  PauseForKey(L"press\n");
 #endif
 
   //dumping SETTING structure
