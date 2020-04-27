@@ -156,7 +156,7 @@ static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
 static INTN OldTimeoutTextWidth = 0;
 static INTN MenuWidth , TimeoutPosY;
-static UINTN MaxMenuTextLen = 0;
+static UINTN MenuMaxTextLen = 0;
 static INTN EntriesPosX, EntriesPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
 
@@ -1610,7 +1610,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       }
       TimeoutPosY = EntriesPosY + (Entries.size() + 1) * ThemeX.TextHeight;
 
-      MaxMenuTextLen = (UINTN)(MenuWidth / ScaledWidth);
+      MenuMaxTextLen = (UINTN)(MenuWidth / ScaledWidth);
 
       // initial painting
       ThemeX.MeasureText(Title, &ItemWidth, NULL);
@@ -1669,16 +1669,15 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       for (INTN i = ScrollState.FirstVisible, j = 0; i <= ScrollState.LastVisible; i++, j++) {
         REFIT_ABSTRACT_MENU_ENTRY *Entry = &Entries[i];
-        TitleLen = Entry->Title.length();
-
+        ResultString = Entry->Title; //create a copy to modify later
+        if (ResultString.length() > MenuMaxTextLen) {
+          ResultString = ResultString.subString(0,MenuMaxTextLen-1);
+        }
+        TitleLen = ResultString.length();
         Entry->Place.XPos = EntriesPosX;
         Entry->Place.YPos = EntriesPosY + j * ThemeX.TextHeight;
         Entry->Place.Width = TitleLen * ScaledWidth;
         Entry->Place.Height = (UINTN)ThemeX.TextHeight;
-        ResultString = Entry->Title; //create a copy to modify later
-        if (ResultString.length() > MaxMenuTextLen) {
-          ResultString = ResultString.subString(0,MaxMenuTextLen-1);
-        }
         PlaceCentre = (INTN)((ThemeX.TextHeight - (INTN)(ThemeX.Buttons[2].GetHeight())) * ThemeX.Scale / 2);
         PlaceCentre1 = (INTN)((ThemeX.TextHeight - (INTN)(ThemeX.Buttons[0].GetHeight())) * ThemeX.Scale / 2);
         // clovy
@@ -1694,9 +1693,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         if ( Entry->getREFIT_INPUT_DIALOG() ) {
           REFIT_INPUT_DIALOG* inputDialogEntry = Entry->getREFIT_INPUT_DIALOG();
           if (inputDialogEntry->Item && inputDialogEntry->Item->ItemType == BoolValue) {
-            Entry->Place.Width = ResultString.length() * ScaledWidth;
             //possible artefacts
-            //DrawMenuText(XStringW().takeValueFrom(" "), 0, EntriesPosX, Entry->Place.YPos, 0xFFFF);
             DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? (MenuWidth) : 0,
                          ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
@@ -1754,11 +1751,12 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       // last selection
       REFIT_ABSTRACT_MENU_ENTRY *EntryL = &Entries[ScrollState.LastSelection];
       REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Entries[ScrollState.CurrentSelection];
-      TitleLen = EntryL->Title.length();
+
       ResultString = EntryL->Title;
-      if (ResultString.length() > MaxMenuTextLen) {
-        ResultString = ResultString.subString(0,MaxMenuTextLen-1);
+      if (ResultString.length() > MenuMaxTextLen) {
+        ResultString = ResultString.subString(0,MenuMaxTextLen-1);
       }
+      TitleLen = ResultString.length();
       //clovy//PlaceCentre = (TextHeight - (INTN)(Buttons[2]->Height * GlobalConfig.Scale)) / 2;
       //clovy//PlaceCentre = (PlaceCentre>0)?PlaceCentre:0;
       //clovy//PlaceCentre1 = (TextHeight - (INTN)(Buttons[0]->Height * GlobalConfig.Scale)) / 2;
@@ -1817,10 +1815,10 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       // current selection
       ResultString = EntryC->Title;
-      if (ResultString.length() > MaxMenuTextLen) {
-        ResultString = ResultString.subString(0,MaxMenuTextLen-1);
+      if (ResultString.length() > MenuMaxTextLen) {
+        ResultString = ResultString.subString(0,MenuMaxTextLen-1);
       }
-      TitleLen = EntryC->Title.length();
+      TitleLen = ResultString.length();
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
         if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
           OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;;
