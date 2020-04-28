@@ -808,7 +808,7 @@ AccessAtaDevice(
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
 
     if (!IsListEmpty (&AtaDevice->AtaSubTaskList)) {
-      AtaTask = AllocateZeroPool (sizeof (ATA_BUS_ASYN_TASK));
+      AtaTask = AllocateZeroPool(sizeof (ATA_BUS_ASYN_TASK));
       if (AtaTask == NULL) {
         gBS->RestoreTPL (OldTpl);
         return EFI_OUT_OF_RESOURCES;
@@ -828,12 +828,12 @@ AccessAtaDevice(
     gBS->RestoreTPL (OldTpl);
 
     Token->TransactionStatus = EFI_SUCCESS;
-    EventCount = AllocateZeroPool (sizeof (UINTN));
+    EventCount = AllocateZeroPool(sizeof (UINTN));
     if (EventCount == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    IsError = AllocateZeroPool (sizeof (BOOLEAN));
+    IsError = AllocateZeroPool(sizeof (BOOLEAN));
     if (IsError == NULL) {
       FreePool(EventCount);
       return EFI_OUT_OF_RESOURCES;
@@ -870,7 +870,7 @@ AccessAtaDevice(
       SubTask  = NULL;
       SubEvent = NULL;
 
-      SubTask = AllocateZeroPool (sizeof (ATA_BUS_ASYN_SUB_TASK));
+      SubTask = AllocateZeroPool(sizeof (ATA_BUS_ASYN_SUB_TASK));
       if (SubTask == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto EXIT;

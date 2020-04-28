@@ -87,7 +87,7 @@ StriCmp (
 
 // If Null-terminated strings are case insensitive equal or its sSize symbols are equal then TRUE
 BOOLEAN
-AsciiStriNCmp (
+AsciiStriNCmp(
               IN      CONST CHAR8              *FirstS,
               IN      CONST CHAR8              *SecondS,
               IN      CONST UINTN               sSize

@@ -1202,7 +1202,7 @@ CoreLoadImageCommon (
   //
   // Allocate a new image structure
   //
-  Image = AllocateZeroPool (sizeof(LOADED_IMAGE_PRIVATE_DATA));
+  Image = AllocateZeroPool(sizeof(LOADED_IMAGE_PRIVATE_DATA));
   if (Image == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

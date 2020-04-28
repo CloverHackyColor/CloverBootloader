@@ -354,7 +354,7 @@ Var_UpdateDriverOption (
   NewLoadContext->Attributes = LoadOption.Attributes;
   NewLoadContext->FilePathListLength = (UINT16)GetDevicePathSize (LoadOption.FilePath);
 
-  NewLoadContext->Description = AllocateZeroPool (StrSize (DescriptionData));
+  NewLoadContext->Description = AllocateZeroPool(StrSize (DescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
   NewMenuEntry->DisplayString = NewLoadContext->Description;
   CopyMem (
@@ -363,7 +363,7 @@ Var_UpdateDriverOption (
     StrSize (DescriptionData)
     );
 
-  NewLoadContext->FilePathList = AllocateZeroPool (GetDevicePathSize (CallbackData->LoadContext->FilePathList));
+  NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
   CopyMem (
     NewLoadContext->FilePathList,
@@ -377,7 +377,7 @@ Var_UpdateDriverOption (
   NewMenuEntry->HelpStringToken = HiiSetString (HiiHandle, 0, NewMenuEntry->HelpString, NULL);
 
   if (OptionalDataExist) {
-    NewLoadContext->OptionalData = AllocateZeroPool (LoadOption.OptionalDataSize);
+    NewLoadContext->OptionalData = AllocateZeroPool(LoadOption.OptionalDataSize);
     ASSERT (NewLoadContext->OptionalData != NULL);
     CopyMem (
       NewLoadContext->OptionalData,
@@ -472,7 +472,7 @@ Var_UpdateBootOption (
   NewLoadContext->Attributes = LoadOption.Attributes;
   NewLoadContext->FilePathListLength = (UINT16) GetDevicePathSize (LoadOption.FilePath);
 
-  NewLoadContext->Description = AllocateZeroPool (StrSize (NvRamMap->BootDescriptionData));
+  NewLoadContext->Description = AllocateZeroPool(StrSize (NvRamMap->BootDescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
 
   NewMenuEntry->DisplayString = NewLoadContext->Description;
@@ -483,7 +483,7 @@ Var_UpdateBootOption (
     StrSize (NvRamMap->BootDescriptionData)
     );
 
-  NewLoadContext->FilePathList = AllocateZeroPool (GetDevicePathSize (CallbackData->LoadContext->FilePathList));
+  NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
   CopyMem (
     NewLoadContext->FilePathList,
@@ -497,7 +497,7 @@ Var_UpdateBootOption (
   NewMenuEntry->HelpStringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, NewMenuEntry->HelpString, NULL);
 
   if (OptionalDataExist) {
-    NewLoadContext->OptionalData = AllocateZeroPool (LoadOption.OptionalDataSize);
+    NewLoadContext->OptionalData = AllocateZeroPool(LoadOption.OptionalDataSize);
     ASSERT (NewLoadContext->OptionalData != NULL);
     CopyMem (
       NewLoadContext->OptionalData,
@@ -665,7 +665,7 @@ Var_UpdateDriverOrder (
   // First check whether DriverOrder is present in current configuration
   //
   GetEfiGlobalVariable2 (L"DriverOrder", (VOID **) &DriverOrderList, &DriverOrderListSize);
-  NewDriverOrderList = AllocateZeroPool (DriverOrderListSize);
+  NewDriverOrderList = AllocateZeroPool(DriverOrderListSize);
 
   if (NewDriverOrderList == NULL) {
     return EFI_OUT_OF_RESOURCES;

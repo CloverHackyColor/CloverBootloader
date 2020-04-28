@@ -1761,7 +1761,7 @@ S3BootScriptSaveInformationAsciiString (
   )
 {
   return S3BootScriptSaveInformation (
-           (UINT32) AsciiStrLen (String) + 1,
+           (UINT32) AsciiStrLen(String) + 1,
            (VOID*) String
            );
 }

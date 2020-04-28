@@ -509,7 +509,7 @@ FvSimpleFileSystemOpen (
   // Check for opening root
   //
   if (StrCmp (FileName, L".") == 0 || StrCmp (FileName, L"") == 0) {
-    NewFile = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE));
+    NewFile = AllocateZeroPool(sizeof (FV_FILESYSTEM_FILE));
     if (NewFile == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -573,7 +573,7 @@ FvSimpleFileSystemOpen (
   }
 
   if (!EFI_ERROR(Status)) {
-    NewFile = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE));
+    NewFile = AllocateZeroPool(sizeof (FV_FILESYSTEM_FILE));
     if (NewFile == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -691,7 +691,7 @@ FvSimpleFileSystemRead (
   } else {
     FileSize = (UINTN)File->FvFileInfo->FileInfo.FileSize;
 
-    FileBuffer = AllocateZeroPool (FileSize);
+    FileBuffer = AllocateZeroPool(FileSize);
     if (FileBuffer == NULL) {
       return EFI_DEVICE_ERROR;
     }

@@ -324,7 +324,7 @@ GetValueOfNumber (
   *Len   = StringPtr - TmpPtr;
   Length = *Len + 1;
 
-  Str = (EFI_STRING) AllocateZeroPool (Length * sizeof (CHAR16));
+  Str = (EFI_STRING) AllocateZeroPool(Length * sizeof (CHAR16));
   if (Str == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
@@ -333,7 +333,7 @@ GetValueOfNumber (
   *(Str + *Len) = L'\0';
 
   Length = (Length + 1) / 2;
-  Buf = (UINT8 *) AllocateZeroPool (Length);
+  Buf = (UINT8 *) AllocateZeroPool(Length);
   if (Buf == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
@@ -390,7 +390,7 @@ CreateAltCfgString (
   // String Len = ConfigResp + AltConfig + AltConfig + 1("\0")
   //
   NewLen = (NewLen + ((1 + StrLen (ConfigHdr) + 8 + 4) + (8 + 4 + 7 + 4 + 7 + 4)) * 2 + 1) * sizeof (CHAR16);
-  StringPtr = AllocateZeroPool (NewLen);
+  StringPtr = AllocateZeroPool(NewLen);
   if (StringPtr == NULL) {
     return NULL;
   }
@@ -640,7 +640,7 @@ ExtractConfig (
     //
     ConfigRequestHdr = HiiConstructConfigHdr (&gDriverSampleFormSetGuid, VariableName, PrivateData->DriverHandle[0]);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
@@ -685,7 +685,7 @@ ExtractConfig (
       }
       if (StrStr (StrPointer, L"&") == NULL) {
         Size = (StrLen (Request) + 32 + 1) * sizeof (CHAR16);
-        ConfigRequest    = AllocateZeroPool (Size);
+        ConfigRequest    = AllocateZeroPool(Size);
         ASSERT (ConfigRequest != NULL);
         AllocatedRequest = TRUE;
         UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", Request, (UINT64)BufferSize);
@@ -714,7 +714,7 @@ ExtractConfig (
       1 + sizeof (PrivateData->Configuration.NameValueVar0) * 2 +
       1 + sizeof (PrivateData->Configuration.NameValueVar1) * 2 +
       1 + sizeof (PrivateData->Configuration.NameValueVar2) * 2 + 1) * sizeof (CHAR16);
-    *Results = AllocateZeroPool (BufferSize);
+    *Results = AllocateZeroPool(BufferSize);
     ASSERT (*Results != NULL);
     StrCpyS (*Results, BufferSize / sizeof (CHAR16), ConfigRequest);
     Value = *Results;
@@ -1275,7 +1275,7 @@ DriverCallback (
           //
           // Update uncommitted data of Browser
           //
-          EfiData = AllocateZeroPool (sizeof (MY_EFI_VARSTORE_DATA));
+          EfiData = AllocateZeroPool(sizeof (MY_EFI_VARSTORE_DATA));
           ASSERT (EfiData != NULL);
           if (HiiGetBrowserData (&gDriverSampleFormSetGuid, MyEfiVar, sizeof (MY_EFI_VARSTORE_DATA), (UINT8 *) EfiData)) {
             EfiData->Field8 = 111;
@@ -1418,7 +1418,7 @@ DriverCallback (
       //
       // Set initial vlaue of dynamic created oneof Question in Form Browser
       //
-      Configuration = AllocateZeroPool (sizeof (DRIVER_SAMPLE_CONFIGURATION));
+      Configuration = AllocateZeroPool(sizeof (DRIVER_SAMPLE_CONFIGURATION));
       ASSERT (Configuration != NULL);
       if (HiiGetBrowserData (&gDriverSampleFormSetGuid, VariableName, sizeof (DRIVER_SAMPLE_CONFIGURATION), (UINT8 *) Configuration)) {
         Configuration->DynamicOneof = 2;
@@ -1747,7 +1747,7 @@ DriverSampleInit (
   //
   // Initialize driver private data
   //
-  mPrivateData = AllocateZeroPool (sizeof (DRIVER_SAMPLE_PRIVATE_DATA));
+  mPrivateData = AllocateZeroPool(sizeof (DRIVER_SAMPLE_PRIVATE_DATA));
   if (mPrivateData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

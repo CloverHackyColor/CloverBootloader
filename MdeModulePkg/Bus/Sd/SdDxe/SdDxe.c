@@ -598,7 +598,7 @@ SdDxeDriverBindingStart (
   // Check EFI_ALREADY_STARTED to reuse the original SD_DRIVER_PRIVATE_DATA.
   //
   if (Status != EFI_ALREADY_STARTED) {
-    Private = AllocateZeroPool (sizeof (SD_DRIVER_PRIVATE_DATA));
+    Private = AllocateZeroPool(sizeof (SD_DRIVER_PRIVATE_DATA));
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Error;

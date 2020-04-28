@@ -666,7 +666,7 @@ BmProcessKeyOption (
   Handles = BmGetActiveConsoleIn (&HandleCount);
 
   for (Index = 0; Index < KeyShiftStateCount; Index++) {
-    Hotkey = AllocateZeroPool (sizeof (BM_HOTKEY));
+    Hotkey = AllocateZeroPool(sizeof (BM_HOTKEY));
     ASSERT (Hotkey != NULL);
 
     Hotkey->Signature  = BM_HOTKEY_SIGNATURE;

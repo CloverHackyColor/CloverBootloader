@@ -123,12 +123,12 @@ MemLogInit (
   //
   // Set up and publish new MEM_LOG
   //
-  mMemLog = AllocateZeroPool ( sizeof (MEM_LOG) );
+  mMemLog = AllocateZeroPool( sizeof (MEM_LOG) );
   if (mMemLog == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
   mMemLog->BufferSize = MEM_LOG_INITIAL_SIZE;
-  mMemLog->Buffer = AllocateZeroPool (MEM_LOG_INITIAL_SIZE);
+  mMemLog->Buffer = AllocateZeroPool(MEM_LOG_INITIAL_SIZE);
   mMemLog->Cursor = mMemLog->Buffer;
   mMemLog->Callback = NULL;
   

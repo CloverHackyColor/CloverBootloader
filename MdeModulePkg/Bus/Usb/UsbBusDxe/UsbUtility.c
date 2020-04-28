@@ -641,7 +641,7 @@ GetUsbDPFromFullDP (
   //
   // Create a new device path which only contain the above Usb part
   //
-  UsbDevicePathPtr = AllocateZeroPool (Size + sizeof (EFI_DEVICE_PATH_PROTOCOL));
+  UsbDevicePathPtr = AllocateZeroPool(Size + sizeof (EFI_DEVICE_PATH_PROTOCOL));
   ASSERT (UsbDevicePathPtr != NULL);
   CopyMem (UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
   //
@@ -736,7 +736,7 @@ AddUsbDPToList (
   //
   // Prepare the usbio device path DEVICE_PATH_LIST_ITEM structure.
   //
-  ListItem = AllocateZeroPool (sizeof (DEVICE_PATH_LIST_ITEM));
+  ListItem = AllocateZeroPool(sizeof (DEVICE_PATH_LIST_ITEM));
   ASSERT (ListItem != NULL);
   ListItem->Signature = DEVICE_PATH_LIST_ITEM_SIGNATURE;
   ListItem->DevicePath = DuplicateDevicePath (UsbDP);

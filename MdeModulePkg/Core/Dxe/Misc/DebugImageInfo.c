@@ -194,7 +194,7 @@ CoreNewDebugImageInfoEntry (
     //  Table is full, so re-allocate another page for a larger table...
     //
     TableSize = mMaxTableEntries * EFI_DEBUG_TABLE_ENTRY_SIZE;
-    NewTable = AllocateZeroPool (TableSize + EFI_PAGE_SIZE);
+    NewTable = AllocateZeroPool(TableSize + EFI_PAGE_SIZE);
     if (NewTable == NULL) {
       mDebugInfoTableHeader.UpdateStatus &= ~EFI_DEBUG_IMAGE_INFO_UPDATE_IN_PROGRESS;
       return;
@@ -223,7 +223,7 @@ CoreNewDebugImageInfoEntry (
   //
   // Allocate data for new entry
   //
-  Table[Index].NormalImage = AllocateZeroPool (sizeof (EFI_DEBUG_IMAGE_INFO_NORMAL));
+  Table[Index].NormalImage = AllocateZeroPool(sizeof (EFI_DEBUG_IMAGE_INFO_NORMAL));
   if (Table[Index].NormalImage != NULL) {
     //
     // Update the entry

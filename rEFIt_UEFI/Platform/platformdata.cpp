@@ -612,7 +612,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case Xserve21:
     case Xserve31:
       i = ApplePlatformData[Model].firmwareVersion;
-      i += AsciiStrLen (i);
+      i += AsciiStrLen(i);
 
       while (*i != '.') {
         i--;
@@ -623,7 +623,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 
     default:
       i = ApplePlatformData[Model].firmwareVersion;
-      i += AsciiStrLen (i);
+      i += AsciiStrLen(i);
 
       while (*i != '.') {
         i--;
@@ -1369,7 +1369,7 @@ VOID GetDefaultSettings()
   gSettings.BooterConfig         = 0;
 //  MemSet(gSettings.BooterCfgStr, 64, 0);
 //  AsciiStrCpyS(gSettings.BooterCfgStr, 64, "log=0");
-  CHAR8 *OldCfgStr = (__typeof__(OldCfgStr))GetNvramVariable (L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
+  CHAR8 *OldCfgStr = (__typeof__(OldCfgStr))GetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, NULL, NULL);
   if (OldCfgStr) {
     AsciiStrCpyS(gSettings.BooterCfgStr, 64, OldCfgStr);
     FreePool(OldCfgStr);

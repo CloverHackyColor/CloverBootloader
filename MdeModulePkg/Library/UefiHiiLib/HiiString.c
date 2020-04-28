@@ -101,7 +101,7 @@ HiiSetString (
       *(Supported++) = '\0';
     }
 
-    if ((SupportedLanguages == NULL) && AsciiStrnCmp (Language, UEFI_CONFIG_LANG, AsciiStrLen (UEFI_CONFIG_LANG)) == 0) {
+    if ((SupportedLanguages == NULL) && AsciiStrnCmp (Language, UEFI_CONFIG_LANG, AsciiStrLen(UEFI_CONFIG_LANG)) == 0) {
       //
       // Skip string package used for keyword protocol.
       //
@@ -302,7 +302,7 @@ HiiGetString (
   //
   // Allocate a buffer for the return string
   //
-  String = AllocateZeroPool (StringSize);
+  String = AllocateZeroPool(StringSize);
   if (String == NULL) {
     goto Error;
   }

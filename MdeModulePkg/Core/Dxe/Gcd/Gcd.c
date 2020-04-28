@@ -390,14 +390,14 @@ CoreAllocateGcdMapEntry (
   // cause problem when it's freed (if HeapGuard is enabled).
   //
   mOnGuarding = TRUE;
-  *TopEntry = AllocateZeroPool (sizeof (EFI_GCD_MAP_ENTRY));
+  *TopEntry = AllocateZeroPool(sizeof (EFI_GCD_MAP_ENTRY));
   mOnGuarding = FALSE;
   if (*TopEntry == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   mOnGuarding = TRUE;
-  *BottomEntry = AllocateZeroPool (sizeof (EFI_GCD_MAP_ENTRY));
+  *BottomEntry = AllocateZeroPool(sizeof (EFI_GCD_MAP_ENTRY));
   mOnGuarding = FALSE;
   if (*BottomEntry == NULL) {
     CoreFreePool(*TopEntry);

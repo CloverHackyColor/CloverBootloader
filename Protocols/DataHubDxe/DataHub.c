@@ -431,7 +431,7 @@ DataHubRegisterFilterDriver (
 
   Private       = DATA_HUB_INSTANCE_FROM_THIS (This);
 
-  FilterDriver  = (DATA_HUB_FILTER_DRIVER *) AllocateZeroPool (sizeof (DATA_HUB_FILTER_DRIVER));
+  FilterDriver  = (DATA_HUB_FILTER_DRIVER *) AllocateZeroPool(sizeof (DATA_HUB_FILTER_DRIVER));
   if (FilterDriver == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

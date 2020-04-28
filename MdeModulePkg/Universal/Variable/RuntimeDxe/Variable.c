@@ -137,11 +137,11 @@ UpdateVariableInfo (
       // On the first call allocate a entry and place a pointer to it in
       // the EFI System Table.
       //
-      gVariableInfo = AllocateZeroPool (sizeof (VARIABLE_INFO_ENTRY));
+      gVariableInfo = AllocateZeroPool(sizeof (VARIABLE_INFO_ENTRY));
       ASSERT (gVariableInfo != NULL);
 
       CopyGuid (&gVariableInfo->VendorGuid, VendorGuid);
-      gVariableInfo->Name = AllocateZeroPool (StrSize (VariableName));
+      gVariableInfo->Name = AllocateZeroPool(StrSize (VariableName));
       ASSERT (gVariableInfo->Name != NULL);
       StrCpyS (gVariableInfo->Name, StrSize(VariableName)/sizeof(CHAR16), VariableName);
       gVariableInfo->Volatile = Volatile;
@@ -173,11 +173,11 @@ UpdateVariableInfo (
         // If the entry is not in the table add it.
         // Next iteration of the loop will fill in the data.
         //
-        Entry->Next = AllocateZeroPool (sizeof (VARIABLE_INFO_ENTRY));
+        Entry->Next = AllocateZeroPool(sizeof (VARIABLE_INFO_ENTRY));
         ASSERT (Entry->Next != NULL);
 
         CopyGuid (&Entry->Next->VendorGuid, VendorGuid);
-        Entry->Next->Name = AllocateZeroPool (StrSize (VariableName));
+        Entry->Next->Name = AllocateZeroPool(StrSize (VariableName));
         ASSERT (Entry->Next->Name != NULL);
         StrCpyS (Entry->Next->Name, StrSize(VariableName)/sizeof(CHAR16), VariableName);
         Entry->Next->Volatile = Volatile;
@@ -1408,7 +1408,7 @@ GetIndexFromSupportedLangCodes(
 
   if (Iso639Language) {
     CompareLength = ISO_639_2_ENTRY_SIZE;
-    for (Index = 0; Index < AsciiStrLen (SupportedLang); Index += CompareLength) {
+    for (Index = 0; Index < AsciiStrLen(SupportedLang); Index += CompareLength) {
       if (AsciiStrnCmp (Lang, SupportedLang + Index, CompareLength) == 0) {
         //
         // Successfully find the index of Lang string in SupportedLang string.
@@ -1597,7 +1597,7 @@ VariableGetBestLanguage (
     // Default to ISO 639-2 mode
     //
     CompareLength  = 3;
-    LanguageLength = MIN (3, AsciiStrLen (Language));
+    LanguageLength = MIN (3, AsciiStrLen(Language));
 
     //
     // If in RFC 4646 mode, then determine the length of the first RFC 4646 language code in Language

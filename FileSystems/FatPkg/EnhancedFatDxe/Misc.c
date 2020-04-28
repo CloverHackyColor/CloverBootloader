@@ -42,7 +42,7 @@ Return:
 {
   FAT_TASK            *Task;
 
-  Task = AllocateZeroPool (sizeof (*Task));
+  Task = AllocateZeroPool(sizeof (*Task));
   if (Task != NULL) {
     Task->Signature   = FAT_TASK_SIGNATURE;
     Task->IFile       = IFile;
@@ -398,7 +398,7 @@ Returns:
         //
         // Non-blocking access
         //
-        Subtask = AllocateZeroPool (sizeof (*Subtask));
+        Subtask = AllocateZeroPool(sizeof (*Subtask));
         if (Subtask == NULL) {
           Status        = EFI_OUT_OF_RESOURCES;
         } else {

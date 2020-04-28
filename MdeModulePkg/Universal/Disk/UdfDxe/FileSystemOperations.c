@@ -114,7 +114,7 @@ StartMainVolumeDescriptorSequence (
   //
   // Allocate buffer for reading disk blocks
   //
-  Buffer = AllocateZeroPool ((UINTN)BlockSize);
+  Buffer = AllocateZeroPool((UINTN)BlockSize);
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1727,7 +1727,7 @@ FindFileEntry (
 
   LogicalBlockSize  = Volume->LogicalVolDesc.LogicalBlockSize;
 
-  ReadBuffer = AllocateZeroPool (Volume->FileEntrySize);
+  ReadBuffer = AllocateZeroPool(Volume->FileEntrySize);
   if (ReadBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

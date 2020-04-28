@@ -1192,7 +1192,7 @@ IfrToString (
       SrcLen = GetLengthForValue(&Value);
     }
 
-    TmpBuf = AllocateZeroPool (SrcLen + 3);
+    TmpBuf = AllocateZeroPool(SrcLen + 3);
     ASSERT (TmpBuf != NULL);
     if (Format == EFI_IFR_STRING_ASCII) {
       CopyMem (TmpBuf, SrcBuf, SrcLen);
@@ -1373,7 +1373,7 @@ IfrCatenate (
     Length1 = GetLengthForValue(&Value[1]);
     Result->BufferLen = (UINT16) (Length0 + Length1);
 
-    Result->Buffer = AllocateZeroPool (Result->BufferLen);
+    Result->Buffer = AllocateZeroPool(Result->BufferLen);
     ASSERT (Result->Buffer != NULL);
 
     TmpBuf = GetBufferForValue(&Value[0]);
@@ -1833,7 +1833,7 @@ IfrMid (
       Result->Buffer = NULL;
     } else {
       Result->BufferLen = (UINT16)((BufferLen - Base) < Length ? (BufferLen - Base) : Length);
-      Result->Buffer = AllocateZeroPool (Result->BufferLen);
+      Result->Buffer = AllocateZeroPool(Result->BufferLen);
       ASSERT (Result->Buffer != NULL);
       CopyMem (Result->Buffer, &Buffer[Base], Result->BufferLen);
     }
@@ -2441,7 +2441,7 @@ GetQuestionValueFromForm (
   //
   // Get the formset data include this question.
   //
-  FormSet = AllocateZeroPool (sizeof (FORM_BROWSER_FORMSET));
+  FormSet = AllocateZeroPool(sizeof (FORM_BROWSER_FORMSET));
   ASSERT (FormSet != NULL);
   Status = InitializeFormSet(HiiHandle, FormSetGuid, FormSet);
   if (EFI_ERROR(Status)) {
@@ -3130,7 +3130,7 @@ EvaluateExpression (
           break;
         case EFI_HII_VARSTORE_NAME_VALUE:
           if (OpCode->ValueType != EFI_IFR_TYPE_STRING) {
-            NameValue = AllocateZeroPool ((OpCode->ValueWidth * 2 + 1) * sizeof (CHAR16));
+            NameValue = AllocateZeroPool((OpCode->ValueWidth * 2 + 1) * sizeof (CHAR16));
             ASSERT (NameValue != NULL);
             //
             // Convert Buffer to Hex String

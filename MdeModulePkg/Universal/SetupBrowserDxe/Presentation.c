@@ -246,7 +246,7 @@ CreateRefreshEventForStatement (
                     &RefreshEvent);
   ASSERT_EFI_ERROR(Status);
 
-  EventNode = AllocateZeroPool (sizeof (FORM_BROWSER_REFRESH_EVENT_NODE));
+  EventNode = AllocateZeroPool(sizeof (FORM_BROWSER_REFRESH_EVENT_NODE));
   ASSERT (EventNode != NULL);
   EventNode->RefreshEvent = RefreshEvent;
   InsertTailList(&mRefreshEventList, &EventNode->Link);
@@ -279,7 +279,7 @@ CreateRefreshEventForForm (
                     &RefreshEvent);
   ASSERT_EFI_ERROR(Status);
 
-  EventNode = AllocateZeroPool (sizeof (FORM_BROWSER_REFRESH_EVENT_NODE));
+  EventNode = AllocateZeroPool(sizeof (FORM_BROWSER_REFRESH_EVENT_NODE));
   ASSERT (EventNode != NULL);
   EventNode->RefreshEvent = RefreshEvent;
   InsertTailList(&mRefreshEventList, &EventNode->Link);
@@ -328,7 +328,7 @@ InitializeDisplayStatement (
       continue;
     }
 
-    DisplayOption = AllocateZeroPool (sizeof (DISPLAY_QUESTION_OPTION));
+    DisplayOption = AllocateZeroPool(sizeof (DISPLAY_QUESTION_OPTION));
     ASSERT (DisplayOption != NULL);
 
     DisplayOption->ImageId      = Option->ImageId;
@@ -544,7 +544,7 @@ AddStatementToDisplayForm (
     Statement = FORM_BROWSER_STATEMENT_FROM_LINK (Link);
     Link = GetNextNode (&gCurrentSelection->FormSet->StatementListOSF, Link);
 
-    DisplayStatement = AllocateZeroPool (sizeof (FORM_DISPLAY_ENGINE_STATEMENT));
+    DisplayStatement = AllocateZeroPool(sizeof (FORM_DISPLAY_ENGINE_STATEMENT));
     ASSERT (DisplayStatement != NULL);
     DisplayStatement->Signature = FORM_DISPLAY_ENGINE_STATEMENT_SIGNATURE;
     DisplayStatement->Version   = FORM_DISPLAY_ENGINE_STATEMENT_VERSION_1;
@@ -559,7 +559,7 @@ AddStatementToDisplayForm (
   //
   // treat formset as statement outside the form,get its opcode.
   //
-  DisplayStatement = AllocateZeroPool (sizeof (FORM_DISPLAY_ENGINE_STATEMENT));
+  DisplayStatement = AllocateZeroPool(sizeof (FORM_DISPLAY_ENGINE_STATEMENT));
   ASSERT (DisplayStatement != NULL);
 
   DisplayStatement->Signature = FORM_DISPLAY_ENGINE_STATEMENT_SIGNATURE;
@@ -594,7 +594,7 @@ AddStatementToDisplayForm (
       continue;
     }
 
-    DisplayStatement = AllocateZeroPool (sizeof (FORM_DISPLAY_ENGINE_STATEMENT));
+    DisplayStatement = AllocateZeroPool(sizeof (FORM_DISPLAY_ENGINE_STATEMENT));
     ASSERT (DisplayStatement != NULL);
 
     //
@@ -629,7 +629,7 @@ AddStatementToDisplayForm (
     Status = gBS->SetTimer (RefreshIntervalEvent, TimerPeriodic, MinRefreshInterval * ONE_SECOND);
     ASSERT_EFI_ERROR(Status);
 
-    EventNode = AllocateZeroPool (sizeof (FORM_BROWSER_REFRESH_EVENT_NODE));
+    EventNode = AllocateZeroPool(sizeof (FORM_BROWSER_REFRESH_EVENT_NODE));
     ASSERT (EventNode != NULL);
     EventNode->RefreshEvent = RefreshIntervalEvent;
     InsertTailList(&mRefreshEventList, &EventNode->Link);

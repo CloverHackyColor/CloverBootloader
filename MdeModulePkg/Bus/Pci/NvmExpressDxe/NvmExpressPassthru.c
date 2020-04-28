@@ -724,7 +724,7 @@ NvmExpressPassThru (
   // in the submission queue.
   //
   if ((Event != NULL) && (QueueId != 0)) {
-    AsyncRequest = AllocateZeroPool (sizeof (NVME_PASS_THRU_ASYNC_REQ));
+    AsyncRequest = AllocateZeroPool(sizeof (NVME_PASS_THRU_ASYNC_REQ));
     if (AsyncRequest == NULL) {
       Status = EFI_DEVICE_ERROR;
       goto EXIT;
@@ -957,7 +957,7 @@ NvmExpressGetNextNamespace (
     //
     // Allocate buffer for Identify Namespace data.
     //
-    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_NAMESPACE_DATA));
+    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool(sizeof (NVME_ADMIN_NAMESPACE_DATA));
 
     if (NamespaceData == NULL) {
       return EFI_NOT_FOUND;
@@ -982,7 +982,7 @@ NvmExpressGetNextNamespace (
     //
     // Allocate buffer for Identify Namespace data.
     //
-    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool (sizeof (NVME_ADMIN_NAMESPACE_DATA));
+    NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *)AllocateZeroPool(sizeof (NVME_ADMIN_NAMESPACE_DATA));
     if (NamespaceData == NULL) {
       return EFI_NOT_FOUND;
     }
@@ -1132,7 +1132,7 @@ NvmExpressBuildDevicePath (
     return EFI_NOT_FOUND;
   }
 
-  Node = (NVME_NAMESPACE_DEVICE_PATH *)AllocateZeroPool (sizeof (NVME_NAMESPACE_DEVICE_PATH));
+  Node = (NVME_NAMESPACE_DEVICE_PATH *)AllocateZeroPool(sizeof (NVME_NAMESPACE_DEVICE_PATH));
   if (Node == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

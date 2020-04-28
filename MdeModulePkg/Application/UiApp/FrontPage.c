@@ -402,7 +402,7 @@ ConvertProcessorToString (
     FreqMhz = 0;
   }
   DestMax = 0x20 / sizeof (CHAR16);
-  StringBuffer = AllocateZeroPool (0x20);
+  StringBuffer = AllocateZeroPool(0x20);
   ASSERT (StringBuffer != NULL);
   UnicodeValueToStringS (StringBuffer, sizeof (CHAR16) * DestMax, LEFT_JUSTIFY, FreqMhz / 1000, 3);
   Index = StrnLenS (StringBuffer, DestMax);
@@ -435,7 +435,7 @@ ConvertMemorySizeToString (
 {
   CHAR16  *StringBuffer;
 
-  StringBuffer = AllocateZeroPool (0x24);
+  StringBuffer = AllocateZeroPool(0x24);
   ASSERT (StringBuffer != NULL);
   UnicodeValueToStringS (StringBuffer, 0x24, LEFT_JUSTIFY, MemorySize, 10);
   StrCatS (StringBuffer, 0x24 / sizeof (CHAR16), L" MB RAM");
@@ -467,7 +467,7 @@ GetOptionalStringByIndex (
   UINTN          StrSize;
 
   if (Index == 0) {
-    *String = AllocateZeroPool (sizeof (CHAR16));
+    *String = AllocateZeroPool(sizeof (CHAR16));
     return EFI_SUCCESS;
   }
 
@@ -1091,9 +1091,9 @@ SetupResetReminder (
   //
   if (IsResetRequired ()) {
 
-    StringBuffer1 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
+    StringBuffer1 = AllocateZeroPool(MAX_STRING_LEN * sizeof (CHAR16));
     ASSERT (StringBuffer1 != NULL);
-    StringBuffer2 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
+    StringBuffer2 = AllocateZeroPool(MAX_STRING_LEN * sizeof (CHAR16));
     ASSERT (StringBuffer2 != NULL);
     StrCpyS (StringBuffer1, MAX_STRING_LEN, L"Configuration changed. Reset to apply it Now.");
     StrCpyS (StringBuffer2, MAX_STRING_LEN, L"Press ENTER to reset");

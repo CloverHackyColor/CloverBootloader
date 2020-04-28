@@ -162,7 +162,7 @@ UdfDriverBindingStart (
   //
   PrivFsData =
     (PRIVATE_UDF_SIMPLE_FS_DATA *)
-    AllocateZeroPool (sizeof (PRIVATE_UDF_SIMPLE_FS_DATA));
+    AllocateZeroPool(sizeof (PRIVATE_UDF_SIMPLE_FS_DATA));
   if (PrivFsData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;

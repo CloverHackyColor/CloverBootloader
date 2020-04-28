@@ -678,7 +678,7 @@ UsbOnHubInterrupt (
   // practise since UsbOnHubInterrupt is called in the context
   // of host contrller's AsyncInterrupt monitor.
   //
-  HubIf->ChangeMap = AllocateZeroPool (DataLength);
+  HubIf->ChangeMap = AllocateZeroPool(DataLength);
 
   if (HubIf->ChangeMap == NULL) {
     return EFI_OUT_OF_RESOURCES;

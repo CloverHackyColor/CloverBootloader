@@ -327,7 +327,7 @@ SdRwSingleBlock (
   RwSingleBlkReq = NULL;
   PassThru       = Device->Private->PassThru;
 
-  RwSingleBlkReq = AllocateZeroPool (sizeof (SD_REQUEST));
+  RwSingleBlkReq = AllocateZeroPool(sizeof (SD_REQUEST));
   if (RwSingleBlkReq == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -459,7 +459,7 @@ SdRwMultiBlocks (
 
   PassThru = Device->Private->PassThru;
 
-  RwMultiBlkReq = AllocateZeroPool (sizeof (SD_REQUEST));
+  RwMultiBlkReq = AllocateZeroPool(sizeof (SD_REQUEST));
   if (RwMultiBlkReq == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1003,7 +1003,7 @@ SdEraseBlockStart (
   EraseBlockStart = NULL;
   PassThru        = Device->Private->PassThru;
 
-  EraseBlockStart = AllocateZeroPool (sizeof (SD_REQUEST));
+  EraseBlockStart = AllocateZeroPool(sizeof (SD_REQUEST));
   if (EraseBlockStart == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1107,7 +1107,7 @@ SdEraseBlockEnd (
   EraseBlockEnd = NULL;
   PassThru      = Device->Private->PassThru;
 
-  EraseBlockEnd = AllocateZeroPool (sizeof (SD_REQUEST));
+  EraseBlockEnd = AllocateZeroPool(sizeof (SD_REQUEST));
   if (EraseBlockEnd == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1209,7 +1209,7 @@ SdEraseBlock (
   EraseBlock = NULL;
   PassThru   = Device->Private->PassThru;
 
-  EraseBlock = AllocateZeroPool (sizeof (SD_REQUEST));
+  EraseBlock = AllocateZeroPool(sizeof (SD_REQUEST));
   if (EraseBlock == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;

@@ -119,7 +119,7 @@ UhciInitFrameList (
 
   Uhc->BulkQh->NextQh               = NULL;
 
-  Uhc->FrameBaseHostAddr = AllocateZeroPool (4096);
+  Uhc->FrameBaseHostAddr = AllocateZeroPool(4096);
   if (Uhc->FrameBaseHostAddr == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ON_ERROR;

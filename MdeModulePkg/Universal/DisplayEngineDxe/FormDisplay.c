@@ -565,7 +565,7 @@ GetLineByWidth (
   //
   // Need extra glyph info and '\0' info, so +2.
   //
-  *OutputString = AllocateZeroPool ((StrOffset + 2) * sizeof(CHAR16));
+  *OutputString = AllocateZeroPool((StrOffset + 2) * sizeof(CHAR16));
   if (*OutputString == NULL) {
     return 0;
   }
@@ -653,7 +653,7 @@ UiAddMenuOption (
   }
 
   for (Index = 0; Index < Count; Index++) {
-    MenuOption = AllocateZeroPool (sizeof (UI_MENU_OPTION));
+    MenuOption = AllocateZeroPool(sizeof (UI_MENU_OPTION));
     ASSERT (MenuOption);
 
     MenuOption->Signature   = UI_MENU_OPTION_SIGNATURE;
@@ -2282,7 +2282,7 @@ FxConfirmPopup (
   // String + "?" + "\0"
   //
   MaxLen = CfmStrLen + 1 + 1;
-  CfmStr = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+  CfmStr = AllocateZeroPool(MaxLen * sizeof (CHAR16));
   ASSERT (CfmStr != NULL);
 
   if ((Action & BROWSER_ACTION_DISCARD) == BROWSER_ACTION_DISCARD) {
@@ -2975,7 +2975,7 @@ UiDisplayMenu (
             if ((Statement->OpCode->OpCode == EFI_IFR_DATE_OP && StatementValue->Value.date.Month== 0xff)||(Statement->OpCode->OpCode == EFI_IFR_TIME_OP && StatementValue->Value.time.Hour == 0xff)){
               StringRightPtr = GetToken (HelpInfo, gFormData->HiiHandle);
               StringErrorPtr = GetToken (STRING_TOKEN (GET_TIME_FAIL), gHiiHandle);
-              StringPtr = AllocateZeroPool ((StrLen (StringRightPtr) + StrLen (StringErrorPtr)+ 1 ) * sizeof (CHAR16));
+              StringPtr = AllocateZeroPool((StrLen (StringRightPtr) + StrLen (StringErrorPtr)+ 1 ) * sizeof (CHAR16));
               StrCpyS (StringPtr, StrLen (StringRightPtr) + StrLen (StringErrorPtr) + 1, StringRightPtr);
               StrCatS (StringPtr, StrLen (StringRightPtr) + StrLen (StringErrorPtr) + 1, StringErrorPtr);
               FreePool(StringRightPtr);

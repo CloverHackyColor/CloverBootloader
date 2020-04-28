@@ -31,7 +31,7 @@ final class Installer: NSObject {
     } else {
       t.launchPath = "/bin/bash"
     }
-    t.arguments = ["-c", "rm -f /tmp/Clover* && rm -f /tmp/boot0* && rm -f /tmp/boot1*"]
+    t.arguments = ["-c", "rm -rf /tmp/Clover* && rm -f /tmp/boot0* && rm -f /tmp/boot1*"]
     t.launch()
   }
   
@@ -286,7 +286,7 @@ final class Installer: NSObject {
       self.log("sleeping 6 seconds..")
       sleep(6)
       if !fm.isWritableFile(atPath: targetVol) {
-        exit("Error: target volume \"\(targetVol)\" is not writable.")
+        exit("Error: target volume \"\(targetVol)\" is not writable (may be running from a Virtual Machine??).")
       } else {
         self.log("'\(targetVol)' is now read/write.")
       }

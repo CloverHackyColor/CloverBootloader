@@ -1234,7 +1234,7 @@ GetDistinctTokenSpace (
   UINTN     Idx;
   BOOLEAN   Match;
 
-  DistinctTokenSpace = AllocateZeroPool (*ExMapTableSize * sizeof (EFI_GUID *));
+  DistinctTokenSpace = AllocateZeroPool(*ExMapTableSize * sizeof (EFI_GUID *));
   ASSERT (DistinctTokenSpace != NULL);
 
   TsIdx = 0;

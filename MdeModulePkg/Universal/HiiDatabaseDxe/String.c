@@ -76,7 +76,7 @@ ReferFontInfoLocally (
   // GlobalEntry points to a HII_GLOBAL_FONT_INFO which identifies
   // EFI_FONT_INFO uniquely in whole hii database.
   //
-  LocalFont = (HII_FONT_INFO *) AllocateZeroPool (sizeof (HII_FONT_INFO));
+  LocalFont = (HII_FONT_INFO *) AllocateZeroPool(sizeof (HII_FONT_INFO));
   ASSERT (LocalFont != NULL);
 
   LocalFont->Signature   = HII_FONT_INFO_SIGNATURE;
@@ -124,7 +124,7 @@ ConvertToUnicodeText (
     return EFI_BUFFER_TOO_SMALL;
   }
 
-  for (Index = 0; Index < AsciiStrLen (StringSrc); Index++) {
+  for (Index = 0; Index < AsciiStrLen(StringSrc); Index++) {
     StringDest[Index] = (CHAR16) StringSrc[Index];
   }
 
@@ -214,7 +214,7 @@ GetStringFontInfo (
     FontInfo = CR (Link, HII_FONT_INFO, Entry, HII_FONT_INFO_SIGNATURE);
     if (FontInfo->FontId == FontId) {
       GlobalFont = CR (FontInfo->GlobalEntry, HII_GLOBAL_FONT_INFO, Entry, HII_GLOBAL_FONT_INFO_SIGNATURE);
-      *StringFontInfo = (EFI_FONT_INFO *) AllocateZeroPool (GlobalFont->FontInfoSize);
+      *StringFontInfo = (EFI_FONT_INFO *) AllocateZeroPool(GlobalFont->FontInfoSize);
       if (*StringFontInfo == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -498,7 +498,7 @@ FindStringBlock (
         GetUnicodeStringTextOrSize (NULL, BlockHdr, &StringSize);
 
         FontInfoSize = sizeof (EFI_FONT_INFO) - sizeof (CHAR16) + StringSize;
-        FontInfo = (EFI_FONT_INFO *) AllocateZeroPool (FontInfoSize);
+        FontInfo = (EFI_FONT_INFO *) AllocateZeroPool(FontInfoSize);
         if (FontInfo == NULL) {
           return EFI_OUT_OF_RESOURCES;
         }
@@ -787,7 +787,7 @@ InsertLackStringBlock (
     FrontSkipNum = StringId - StartStringId;
   }
 
-  StringBlock = (UINT8 *) AllocateZeroPool (NewBlockSize);
+  StringBlock = (UINT8 *) AllocateZeroPool(NewBlockSize);
   if (StringBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -985,7 +985,7 @@ SetStringWorker (
   case EFI_HII_SIBT_STRINGS_SCSU_FONT:
     BlockSize = OldBlockSize + StrLen (String);
     BlockSize -= AsciiStrSize ((CHAR8 *) StringTextPtr);
-    Block = AllocateZeroPool (BlockSize);
+    Block = AllocateZeroPool(BlockSize);
     if (Block == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1022,7 +1022,7 @@ SetStringWorker (
     GetUnicodeStringTextOrSize (NULL, StringTextPtr, &StringSize);
 
     BlockSize = OldBlockSize + StrSize (String) - StringSize;
-    Block = AllocateZeroPool (BlockSize);
+    Block = AllocateZeroPool(BlockSize);
     if (Block == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1063,7 +1063,7 @@ SetStringWorker (
   BlockSize = OldBlockSize + sizeof (EFI_HII_SIBT_FONT_BLOCK) - sizeof (CHAR16) +
               StrSize (GlobalFont->FontInfo->FontName);
 
-  Block = AllocateZeroPool (BlockSize);
+  Block = AllocateZeroPool(BlockSize);
   if (Block == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1255,7 +1255,7 @@ HiiNewString (
       //
       Ucs2BlockSize = (UINT32) sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK);
 
-      StringBlock = (UINT8 *) AllocateZeroPool (OldBlockSize + Ucs2BlockSize);
+      StringBlock = (UINT8 *) AllocateZeroPool(OldBlockSize + Ucs2BlockSize);
       if (StringBlock == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
@@ -1305,7 +1305,7 @@ HiiNewString (
       goto Done;
     }
 
-    StringPackage = AllocateZeroPool (sizeof (HII_STRING_PACKAGE_INSTANCE));
+    StringPackage = AllocateZeroPool(sizeof (HII_STRING_PACKAGE_INSTANCE));
     if (StringPackage == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -1320,7 +1320,7 @@ HiiNewString (
     // Fill in the string package header
     //
     HeaderSize = (UINT32) (AsciiStrSize ((CHAR8 *) Language) - 1 + sizeof (EFI_HII_STRING_PACKAGE_HDR));
-    StringPackage->StringPkgHdr = AllocateZeroPool (HeaderSize);
+    StringPackage->StringPkgHdr = AllocateZeroPool(HeaderSize);
     if (StringPackage->StringPkgHdr == NULL) {
       FreePool(StringPackage);
       Status = EFI_OUT_OF_RESOURCES;
@@ -1341,7 +1341,7 @@ HiiNewString (
                               (*StringId - 1) * sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK) - sizeof (CHAR16));
 
     BlockSize     = Ucs2BlockSize + sizeof (EFI_HII_SIBT_END_BLOCK);
-    StringPackage->StringBlock = (UINT8 *) AllocateZeroPool (BlockSize);
+    StringPackage->StringBlock = (UINT8 *) AllocateZeroPool(BlockSize);
     if (StringPackage->StringBlock == NULL) {
       FreePool(StringPackage->StringPkgHdr);
       FreePool(StringPackage);
@@ -1384,7 +1384,7 @@ HiiNewString (
     Ucs2BlockSize = (UINT32) (StrSize (String) + sizeof (EFI_HII_SIBT_STRING_UCS2_BLOCK)
                               - sizeof (CHAR16));
 
-    StringBlock = (UINT8 *) AllocateZeroPool (OldBlockSize + Ucs2BlockSize);
+    StringBlock = (UINT8 *) AllocateZeroPool(OldBlockSize + Ucs2BlockSize);
     if (StringBlock == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -1424,7 +1424,7 @@ HiiNewString (
       //
       // Create a EFI_HII_SIBT_STRING_UCS2_FONT block only.
       //
-      StringBlock = (UINT8 *) AllocateZeroPool (OldBlockSize + Ucs2FontBlockSize);
+      StringBlock = (UINT8 *) AllocateZeroPool(OldBlockSize + Ucs2FontBlockSize);
       if (StringBlock == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
@@ -1461,7 +1461,7 @@ HiiNewString (
       //
       FontBlockSize = (UINT32) (StrSize (((EFI_FONT_INFO *) StringFontInfo)->FontName) +
                                 sizeof (EFI_HII_SIBT_FONT_BLOCK) - sizeof (CHAR16));
-      StringBlock = (UINT8 *) AllocateZeroPool (OldBlockSize + FontBlockSize + Ucs2FontBlockSize);
+      StringBlock = (UINT8 *) AllocateZeroPool(OldBlockSize + FontBlockSize + Ucs2FontBlockSize);
       if (StringBlock == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
@@ -2040,13 +2040,13 @@ HiiCompareLanguage (
   // Convert to lower to compare.
   //
   StrLen = AsciiStrSize (Language1);
-  Lan1   = AllocateZeroPool (StrLen);
+  Lan1   = AllocateZeroPool(StrLen);
   ASSERT (Lan1 != NULL);
   AsciiStrCpyS(Lan1, StrLen / sizeof (CHAR8), Language1);
   AsciiHiiToLower (Lan1);
 
   StrLen = AsciiStrSize (Language2);
-  Lan2   = AllocateZeroPool (StrLen);
+  Lan2   = AllocateZeroPool(StrLen);
   ASSERT (Lan2 != NULL);
   AsciiStrCpyS(Lan2, StrLen / sizeof (CHAR8), Language2);
   AsciiHiiToLower (Lan2);

@@ -91,11 +91,11 @@ BdsProcessCapsules (
   //
   // Init temp Capsule Data table.
   //
-  CapsulePtr       = (VOID **) AllocateZeroPool (sizeof (VOID *) * CapsuleTotalNumber);
+  CapsulePtr       = (VOID **) AllocateZeroPool(sizeof (VOID *) * CapsuleTotalNumber);
 //  ASSERT (CapsulePtr != NULL);
-  CapsulePtrCache  = (VOID **) AllocateZeroPool (sizeof (VOID *) * CapsuleTotalNumber);
+  CapsulePtrCache  = (VOID **) AllocateZeroPool(sizeof (VOID *) * CapsuleTotalNumber);
 //  ASSERT (CapsulePtrCache != NULL);
-  CapsuleGuidCache = (EFI_GUID *) AllocateZeroPool (sizeof (EFI_GUID) * CapsuleTotalNumber);
+  CapsuleGuidCache = (EFI_GUID *) AllocateZeroPool(sizeof (EFI_GUID) * CapsuleTotalNumber);
 //  ASSERT (CapsuleGuidCache != NULL);
   
   //

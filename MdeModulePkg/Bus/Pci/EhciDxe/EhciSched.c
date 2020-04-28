@@ -190,7 +190,7 @@ EhcInitSched (
   //
   // Initialize the frame list entries then set the registers
   //
-  Ehc->PeriodFrameHost      = AllocateZeroPool (EHC_FRAME_LEN * sizeof (UINTN));
+  Ehc->PeriodFrameHost      = AllocateZeroPool(EHC_FRAME_LEN * sizeof (UINTN));
   if (Ehc->PeriodFrameHost == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;

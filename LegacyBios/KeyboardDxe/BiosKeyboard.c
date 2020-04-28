@@ -250,7 +250,7 @@ BiosKeyboardDriverBindingStart (
   //
   // Allocate the private device structure
   //
-    BiosKeyboardPrivate = (BIOS_KEYBOARD_DEV *) AllocateZeroPool (sizeof (BIOS_KEYBOARD_DEV));
+    BiosKeyboardPrivate = (BIOS_KEYBOARD_DEV *) AllocateZeroPool(sizeof (BIOS_KEYBOARD_DEV));
   if (NULL == BiosKeyboardPrivate) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -2341,7 +2341,7 @@ BiosKeyboardRegisterKeyNotify (
   // Allocate resource to save the notification function
   //
   
-  NewNotify = (BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool (sizeof (BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool(sizeof (BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY));
   if (NewNotify == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;

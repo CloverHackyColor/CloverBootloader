@@ -117,7 +117,7 @@ InitializeHotPlugSupport (
 
     gPciRootHpcPool   = HpcList;
     gPciRootHpcCount  = HpcCount;
-    gPciRootHpcData   = AllocateZeroPool (sizeof (ROOT_HPC_DATA) * gPciRootHpcCount);
+    gPciRootHpcData   = AllocateZeroPool(sizeof (ROOT_HPC_DATA) * gPciRootHpcCount);
     if (gPciRootHpcData == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

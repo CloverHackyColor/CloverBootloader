@@ -1225,7 +1225,7 @@ BuildGatherList (
     //
     // Allocate memory for the descriptors.
     //
-    BlockDescriptors1  = AllocateZeroPool (2 * sizeof (EFI_CAPSULE_BLOCK_DESCRIPTOR));
+    BlockDescriptors1  = AllocateZeroPool(2 * sizeof (EFI_CAPSULE_BLOCK_DESCRIPTOR));
     if (BlockDescriptors1 == NULL) {
       DEBUG ((DEBUG_ERROR, "BuildGatherList: failed to allocate memory for descriptors\n"));
       Status = EFI_OUT_OF_RESOURCES;
@@ -1759,13 +1759,13 @@ RelocateCapsuleToRam (
   //
   // 2. Add a capsule for Capsule file name strings
   //
-  CapsuleBuffer = AllocateZeroPool ((CapsuleOnDiskNum + 1) * sizeof (VOID *));
+  CapsuleBuffer = AllocateZeroPool((CapsuleOnDiskNum + 1) * sizeof (VOID *));
   if (CapsuleBuffer == NULL) {
     DEBUG ((DEBUG_ERROR, "Fail to allocate memory for capsules.\n"));
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CapsuleSize = AllocateZeroPool ((CapsuleOnDiskNum + 1) * sizeof (UINTN));
+  CapsuleSize = AllocateZeroPool((CapsuleOnDiskNum + 1) * sizeof (UINTN));
   if (CapsuleSize == NULL) {
     DEBUG ((DEBUG_ERROR, "Fail to allocate memory for capsules.\n"));
     FreePool(CapsuleBuffer);
@@ -1778,7 +1778,7 @@ RelocateCapsuleToRam (
     TotalStringSize += StrSize (CapsuleOnDiskBuf[Index].FileInfo->FileName);
   }
 
-  FileNameCapsule = AllocateZeroPool (sizeof (EFI_CAPSULE_HEADER) + TotalStringSize);
+  FileNameCapsule = AllocateZeroPool(sizeof (EFI_CAPSULE_HEADER) + TotalStringSize);
   if (FileNameCapsule == NULL) {
     DEBUG ((DEBUG_ERROR, "Fail to allocate memory for name capsule.\n"));
     FreePool(CapsuleBuffer);

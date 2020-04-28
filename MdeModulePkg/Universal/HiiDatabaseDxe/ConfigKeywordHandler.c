@@ -109,7 +109,7 @@ ExtractDevicePath (
   // as the device path resides in RAM memory.
   // Translate the data into binary.
   //
-  DevicePathBuffer = (UINT8 *) AllocateZeroPool ((Length + 1) / 2);
+  DevicePathBuffer = (UINT8 *) AllocateZeroPool((Length + 1) / 2);
   if (DevicePathBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1339,7 +1339,7 @@ GetStringIdFromRecord (
   for (Link = PackageListNode->StringPkgHdr.ForwardLink; Link != &PackageListNode->StringPkgHdr; Link = Link->ForwardLink) {
     StringPackage = CR (Link, HII_STRING_PACKAGE_INSTANCE, StringEntry, HII_STRING_PACKAGE_SIGNATURE);
 
-    if (AsciiStrnCmp(Name, StringPackage->StringPkgHdr->Language, AsciiStrLen (Name)) == 0) {
+    if (AsciiStrnCmp(Name, StringPackage->StringPkgHdr->Language, AsciiStrLen(Name)) == 0) {
       Status = GetStringIdFromString (StringPackage, KeywordValue, StringId);
       if (EFI_ERROR(Status)) {
         return KEYWORD_HANDLER_KEYWORD_NOT_FOUND;
@@ -1703,7 +1703,7 @@ ConstructConfigHdr (
 
   if (AsciiName != NULL) {
     NameSize = AsciiStrSize (AsciiName);
-    Name = AllocateZeroPool (NameSize * sizeof (CHAR16));
+    Name = AllocateZeroPool(NameSize * sizeof (CHAR16));
     ASSERT (Name != NULL);
     AsciiStrToUnicodeStrS (AsciiName, Name, NameSize);
   } else {
@@ -1740,7 +1740,7 @@ ConstructConfigHdr (
   // | 5 | sizeof (EFI_GUID) * 2 | 6 | NameStrLen*4 | 6 | DevicePathSize * 2 | 1 |
   //
   MaxLen = 5 + sizeof (EFI_GUID) * 2 + 6 + NameLength * 4 + 6 + DevicePathSize * 2 + 1;
-  String = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+  String = AllocateZeroPool(MaxLen * sizeof (CHAR16));
   if (String == NULL) {
     return NULL;
   }
@@ -1862,7 +1862,7 @@ ConstructRequestElement (
   //
   // Allocate buffer for the entire <ConfigRequest>
   //
-  StringPtr = AllocateZeroPool (Length * sizeof (CHAR16));
+  StringPtr = AllocateZeroPool(Length * sizeof (CHAR16));
   ASSERT (StringPtr != NULL);
 
   if (Name != NULL) {
@@ -1933,7 +1933,7 @@ GetNameFromId (
                    NULL
                    );
   if (BestLanguage == NULL) {
-    BestLanguage = AllocateCopyPool(AsciiStrLen ("en-US"), "en-US");
+    BestLanguage = AllocateCopyPool(AsciiStrLen("en-US"), "en-US");
     ASSERT (BestLanguage != NULL);
   }
 
@@ -1951,7 +1951,7 @@ GetNameFromId (
     goto Done;
   }
 
-  Name = AllocateZeroPool (StringSize);
+  Name = AllocateZeroPool(StringSize);
   if (Name == NULL) {
     goto Done;
   }
@@ -2411,7 +2411,7 @@ GenerateKeywordResp (
   // 1.1 NameSpaceId size.
   // 'NAMESPACE='<String>
   //
-  NameSpaceLength = AsciiStrLen (NameSpace);
+  NameSpaceLength = AsciiStrLen(NameSpace);
   RespStrLen = 10 + NameSpaceLength;
   UnicodeNameSpace = AllocatePool ((NameSpaceLength + 1) * sizeof (CHAR16));
   if (UnicodeNameSpace == NULL) {
@@ -2627,7 +2627,7 @@ EnumerateAllKeywords (
       //
       // Check whether has keyword string package.
       //
-      if (AsciiStrnCmp(NameSpace, StringPackage->StringPkgHdr->Language, AsciiStrLen (NameSpace)) == 0) {
+      if (AsciiStrnCmp(NameSpace, StringPackage->StringPkgHdr->Language, AsciiStrLen(NameSpace)) == 0) {
         FindKeywordPackages = TRUE;
         //
         // Keep the NameSpace string.
@@ -2877,7 +2877,7 @@ EfiConfigKeywordHandlerSetData (
     //
     // 1.1 Check whether the input namespace is valid.
     //
-    if (AsciiStrnCmp(NameSpace, UEFI_CONFIG_LANG, AsciiStrLen (UEFI_CONFIG_LANG)) != 0) {
+    if (AsciiStrnCmp(NameSpace, UEFI_CONFIG_LANG, AsciiStrLen(UEFI_CONFIG_LANG)) != 0) {
       *ProgressErr = KEYWORD_HANDLER_MALFORMED_STRING;
       Status = EFI_INVALID_PARAMETER;
       goto Done;
@@ -3177,7 +3177,7 @@ EfiConfigKeywordHandlerGetData (
   // 1.1 Check whether the input namespace is valid.
   //
   if (NameSpace != NULL){
-    if (AsciiStrnCmp(NameSpace, UEFI_CONFIG_LANG, AsciiStrLen (UEFI_CONFIG_LANG)) != 0) {
+    if (AsciiStrnCmp(NameSpace, UEFI_CONFIG_LANG, AsciiStrLen(UEFI_CONFIG_LANG)) != 0) {
       *ProgressErr = KEYWORD_HANDLER_MALFORMED_STRING;
       return EFI_INVALID_PARAMETER;
     }

@@ -404,7 +404,7 @@ InternalVarCheckAllocatePool (
 
 **/
 VOID *
-InternalVarCheckAllocateZeroPool (
+InternalVarCheckAllocateZeroPool(
   IN UINTN            AllocationSize
   )
 {
@@ -473,7 +473,7 @@ InternalVarCheckReallocatePool (
 {
   VOID  *NewBuffer;
 
-  NewBuffer = InternalVarCheckAllocateZeroPool (NewSize);
+  NewBuffer = InternalVarCheckAllocateZeroPool(NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
     CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     InternalVarCheckFreePool(OldBuffer);
@@ -572,7 +572,7 @@ MergeHiiQuestion (
         //
         // Merge the one of options of Hii Question 2 and Hii Question 1.
         //
-        NewHiiQuestion = InternalVarCheckAllocateZeroPool (NewLength);
+        NewHiiQuestion = InternalVarCheckAllocateZeroPool(NewLength);
         ASSERT (NewHiiQuestion != NULL);
         CopyMem (NewHiiQuestion, HiiQuestion1, HiiQuestion1->Length);
         //
@@ -697,7 +697,7 @@ MergeHiiQuestion (
         //
         // Merge the one of options of Hii Question 2 and Hii Question 1.
         //
-        NewHiiQuestion = InternalVarCheckAllocateZeroPool (NewLength);
+        NewHiiQuestion = InternalVarCheckAllocateZeroPool(NewLength);
         ASSERT (NewHiiQuestion != NULL);
         CopyMem (NewHiiQuestion, HiiQuestion1, HiiQuestion1->Length);
         //
@@ -897,7 +897,7 @@ ParseHiiQuestionOneOf (
 
   Length = sizeof (*OneOf) + OptionCount * Width;
 
-  OneOf = InternalVarCheckAllocateZeroPool (Length);
+  OneOf = InternalVarCheckAllocateZeroPool(Length);
   ASSERT (OneOf != NULL);
   OneOf->OpCode         = EFI_IFR_ONE_OF_OP;
   OneOf->Length         = (UINT8) Length;
@@ -934,7 +934,7 @@ ParseHiiQuestionCheckBox (
 
   IfrCheckBox = (EFI_IFR_CHECKBOX *) IfrOpCodeHeader;
 
-  CheckBox = InternalVarCheckAllocateZeroPool (sizeof (*CheckBox));
+  CheckBox = InternalVarCheckAllocateZeroPool(sizeof (*CheckBox));
   ASSERT (CheckBox != NULL);
   CheckBox->OpCode         = EFI_IFR_CHECKBOX_OP;
   CheckBox->Length         = (UINT8) sizeof (*CheckBox);;
@@ -972,7 +972,7 @@ ParseHiiQuestionNumeric (
   IfrNumeric = (EFI_IFR_NUMERIC *) IfrOpCodeHeader;
   BitWidth = 0;
 
-  Numeric = InternalVarCheckAllocateZeroPool (sizeof (VAR_CHECK_HII_QUESTION_NUMERIC) + 2 * sizeof (UINT64));
+  Numeric = InternalVarCheckAllocateZeroPool(sizeof (VAR_CHECK_HII_QUESTION_NUMERIC) + 2 * sizeof (UINT64));
   ASSERT (Numeric != NULL);
 
   if (StoredInBitField) {
@@ -1026,7 +1026,7 @@ ParseHiiQuestionOrderedList (
 
   Length = sizeof (*OrderedList) + OptionCount * OptionWidth;
 
-  OrderedList = InternalVarCheckAllocateZeroPool (Length);
+  OrderedList = InternalVarCheckAllocateZeroPool(Length);
   ASSERT (OrderedList != NULL);
   OrderedList->OpCode        = EFI_IFR_ORDERED_LIST_OP;
   OrderedList->Length        = (UINT8) Length;
@@ -1231,7 +1231,7 @@ CreateHiiVariableNode (
     // Not found, then create new.
     //
     HeaderLength = sizeof (*HiiVariable) + VarNameSize;
-    HiiVariable = InternalVarCheckAllocateZeroPool (HeaderLength);
+    HiiVariable = InternalVarCheckAllocateZeroPool(HeaderLength);
     ASSERT (HiiVariable != NULL);
     HiiVariable->Revision = VAR_CHECK_HII_REVISION;
     HiiVariable->OpCode = EFI_IFR_VARSTORE_EFI_OP;
@@ -1241,7 +1241,7 @@ CreateHiiVariableNode (
     CopyGuid (&HiiVariable->Guid, &IfrEfiVarStore->Guid);
     StrCpyS ((CHAR16 *) (HiiVariable + 1), VarNameSize / sizeof (CHAR16), VarName);
 
-    HiiVariableNode = InternalVarCheckAllocateZeroPool (sizeof (*HiiVariableNode));
+    HiiVariableNode = InternalVarCheckAllocateZeroPool(sizeof (*HiiVariableNode));
     ASSERT (HiiVariableNode != NULL);
     HiiVariableNode->Signature = VAR_CHECK_HII_VARIABLE_NODE_SIGNATURE;
     HiiVariableNode->HiiVariable = HiiVariable;
@@ -1249,7 +1249,7 @@ CreateHiiVariableNode (
     // The variable store identifier, which is unique within the current form set.
     //
     HiiVariableNode->VarStoreId = IfrEfiVarStore->VarStoreId;
-    HiiVariableNode->HiiQuestionArray = InternalVarCheckAllocateZeroPool (IfrEfiVarStore->Size * 8 * sizeof (VAR_CHECK_HII_QUESTION_HEADER *));
+    HiiVariableNode->HiiQuestionArray = InternalVarCheckAllocateZeroPool(IfrEfiVarStore->Size * 8 * sizeof (VAR_CHECK_HII_QUESTION_HEADER *));
 
     InsertTailList (&mVarCheckHiiList, &HiiVariableNode->Link);
   } else {

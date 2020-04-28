@@ -336,7 +336,7 @@ PlInitializeDebugSupportDriver (
     return EFI_UNSUPPORTED;
   }
 
-  IdtEntryTable = AllocateZeroPool (sizeof (IDT_ENTRY) * NUM_IDT_ENTRIES);
+  IdtEntryTable = AllocateZeroPool(sizeof (IDT_ENTRY) * NUM_IDT_ENTRIES);
   if (IdtEntryTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

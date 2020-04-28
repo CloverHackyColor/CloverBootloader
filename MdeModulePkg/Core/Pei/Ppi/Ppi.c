@@ -261,7 +261,7 @@ InternalPeiInstallPpi (
       //
       // Run out of room, grow the buffer.
       //
-      TempPtr = AllocateZeroPool (
+      TempPtr = AllocateZeroPool(
                   sizeof (PEI_PPI_LIST_POINTERS) * (PpiListPointer->MaxCount + PPI_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
@@ -549,7 +549,7 @@ InternalPeiNotifyPpi (
         //
         // Run out of room, grow the buffer.
         //
-        TempPtr = AllocateZeroPool (
+        TempPtr = AllocateZeroPool(
                     sizeof (PEI_PPI_LIST_POINTERS) * (CallbackNotifyListPointer->MaxCount + CALLBACK_NOTIFY_GROWTH_STEP)
                     );
         ASSERT (TempPtr != NULL);
@@ -569,7 +569,7 @@ InternalPeiNotifyPpi (
         //
         // Run out of room, grow the buffer.
         //
-        TempPtr = AllocateZeroPool (
+        TempPtr = AllocateZeroPool(
                     sizeof (PEI_PPI_LIST_POINTERS) * (DispatchNotifyListPointer->MaxCount + DISPATCH_NOTIFY_GROWTH_STEP)
                     );
         ASSERT (TempPtr != NULL);

@@ -1008,7 +1008,7 @@ XhcControlTransfer (
         } else {
           MaxPacket0 = Xhc->UsbDevContext[SlotId].DevDesc.MaxPacketSize0;
         }
-        Xhc->UsbDevContext[SlotId].ConfDesc = AllocateZeroPool (Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations * sizeof (EFI_USB_CONFIG_DESCRIPTOR *));
+        Xhc->UsbDevContext[SlotId].ConfDesc = AllocateZeroPool(Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations * sizeof (EFI_USB_CONFIG_DESCRIPTOR *));
         if (Xhc->HcCParams.Data.Csz == 0) {
           Status = XhcEvaluateContext (Xhc, SlotId, MaxPacket0);
         } else {
@@ -1027,7 +1027,7 @@ XhcControlTransfer (
         //
         // Default to use AlternateSetting 0 for all interfaces.
         //
-        Xhc->UsbDevContext[SlotId].ActiveAlternateSetting = AllocateZeroPool (Xhc->UsbDevContext[SlotId].ConfDesc[Index]->NumInterfaces * sizeof (UINT8));
+        Xhc->UsbDevContext[SlotId].ActiveAlternateSetting = AllocateZeroPool(Xhc->UsbDevContext[SlotId].ConfDesc[Index]->NumInterfaces * sizeof (UINT8));
       }
     } else if (((DescriptorType == USB_DESC_TYPE_HUB) ||
                (DescriptorType == USB_DESC_TYPE_HUB_SUPER_SPEED)) && (*DataLength > 2)) {
@@ -1752,7 +1752,7 @@ XhcCreateUsbHc (
   UINT16                  ExtCapReg;
   UINT8                   ReleaseNumber;
 
-  Xhc = AllocateZeroPool (sizeof (USB_XHCI_INSTANCE));
+  Xhc = AllocateZeroPool(sizeof (USB_XHCI_INSTANCE));
 
   if (Xhc == NULL) {
     return NULL;

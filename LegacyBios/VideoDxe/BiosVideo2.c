@@ -637,7 +637,7 @@ BiosVideoChildHandleInstall (
   //
   // Allocate the private device structure for video device
   //
-  BiosVideoPrivate = (BIOS_VIDEO_DEV *) AllocateZeroPool (sizeof (BIOS_VIDEO_DEV));
+  BiosVideoPrivate = (BIOS_VIDEO_DEV *) AllocateZeroPool(sizeof (BIOS_VIDEO_DEV));
   if (NULL == BiosVideoPrivate) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

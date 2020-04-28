@@ -228,7 +228,7 @@ AtaAhciPeimEntry (
     //
     // Memory allocation for controller private data.
     //
-    Private = AllocateZeroPool (sizeof (PEI_AHCI_CONTROLLER_PRIVATE_DATA));
+    Private = AllocateZeroPool(sizeof (PEI_AHCI_CONTROLLER_PRIVATE_DATA));
     if (Private == NULL) {
       DEBUG ((
         DEBUG_ERROR, "%a: Fail to allocate private data for Controller %d.\n",

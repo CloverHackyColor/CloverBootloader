@@ -26,7 +26,7 @@ XhcCreateCmdTrb (
 {
   URB    *Urb;
 
-  Urb = AllocateZeroPool (sizeof (URB));
+  Urb = AllocateZeroPool(sizeof (URB));
   if (Urb == NULL) {
     return NULL;
   }
@@ -146,7 +146,7 @@ XhcCreateUrb (
   EFI_STATUS                    Status;
   URB                           *Urb;
 
-  Urb = AllocateZeroPool (sizeof (URB));
+  Urb = AllocateZeroPool(sizeof (URB));
   if (Urb == NULL) {
     return NULL;
   }
@@ -511,14 +511,14 @@ XhcInitSched (
     //
     // Allocate the buffer to record the Mapping for each scratch buffer in order to Unmap them
     //
-    ScratchEntryMap = AllocateZeroPool (sizeof (UINTN) * MaxScratchpadBufs);
+    ScratchEntryMap = AllocateZeroPool(sizeof (UINTN) * MaxScratchpadBufs);
     ASSERT (ScratchEntryMap != NULL);
     Xhc->ScratchEntryMap = ScratchEntryMap;
 
     //
     // Allocate the buffer to record the host address for each entry
     //
-    ScratchEntry = AllocateZeroPool (sizeof (UINT64) * MaxScratchpadBufs);
+    ScratchEntry = AllocateZeroPool(sizeof (UINT64) * MaxScratchpadBufs);
     ASSERT (ScratchEntry != NULL);
     Xhc->ScratchEntry = ScratchEntry;
 
@@ -1435,7 +1435,7 @@ XhciInsertAsyncIntTransfer (
   VOID      *Data;
   URB       *Urb;
 
-  Data = AllocateZeroPool (DataLen);
+  Data = AllocateZeroPool(DataLen);
   if (Data == NULL) {
     DEBUG ((DEBUG_ERROR, "%a: failed to allocate buffer\n", __FUNCTION__));
     return NULL;
@@ -1619,7 +1619,7 @@ XhcMonitorAsyncRequests (
       // Make sure the data received from HW is no more than expected.
       //
       if (Urb->Completed <= Urb->DataLen) {
-        ProcBuf = AllocateZeroPool (Urb->Completed);
+        ProcBuf = AllocateZeroPool(Urb->Completed);
       }
 
       if (ProcBuf == NULL) {
@@ -2164,7 +2164,7 @@ XhcInitializeDeviceSlot (
   //
   // 4) Allocate and initialize the Transfer Ring for the Default Control Endpoint.
   //
-  EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+  EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
   Xhc->UsbDevContext[SlotId].EndpointTransferRing[0] = EndpointTransferRing;
   CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
   //
@@ -2374,7 +2374,7 @@ XhcInitializeDeviceSlot64 (
   //
   // 4) Allocate and initialize the Transfer Ring for the Default Control Endpoint.
   //
-  EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+  EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
   Xhc->UsbDevContext[SlotId].EndpointTransferRing[0] = EndpointTransferRing;
   CreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *)Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
   //

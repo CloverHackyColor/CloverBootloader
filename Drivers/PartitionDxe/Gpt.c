@@ -275,12 +275,12 @@ PartitionInstallGptChildHandles (
   //
   // Allocate the GPT structures
   //
-  PrimaryHeader = AllocateZeroPool (sizeof (EFI_PARTITION_TABLE_HEADER));
+  PrimaryHeader = AllocateZeroPool(sizeof (EFI_PARTITION_TABLE_HEADER));
   if (PrimaryHeader == NULL) {
     goto Done;
   }
 
-  BackupHeader = AllocateZeroPool (sizeof (EFI_PARTITION_TABLE_HEADER));
+  BackupHeader = AllocateZeroPool(sizeof (EFI_PARTITION_TABLE_HEADER));
   if (BackupHeader == NULL) {
     goto Done;
   }
@@ -346,7 +346,7 @@ PartitionInstallGptChildHandles (
 
 //  DEBUG ((EFI_D_INFO, " Number of partition entries: %d\n", PrimaryHeader->NumberOfPartitionEntries));
 
-  PEntryStatus = AllocateZeroPool (PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY_STATUS));
+  PEntryStatus = AllocateZeroPool(PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY_STATUS));
   if (PEntryStatus == NULL) {
 //    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     goto Done;
@@ -467,7 +467,7 @@ PartitionValidGptTable (
 
     BlockSize = BlockIo->Media->BlockSize;
     MediaId   = BlockIo->Media->MediaId;
-  PartHdr   = AllocateZeroPool (BlockSize);
+  PartHdr   = AllocateZeroPool(BlockSize);
 
   if (PartHdr == NULL) {
     DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
@@ -609,7 +609,7 @@ PartitionRestoreGptTable (
     BlockSize = BlockIo->Media->BlockSize;
     MediaId   = BlockIo->Media->MediaId;
 
-  PartHdr   = AllocateZeroPool (BlockSize);
+  PartHdr   = AllocateZeroPool(BlockSize);
 
   if (PartHdr == NULL) {
     DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));

@@ -1488,7 +1488,7 @@ UfsExecScsiCmds (
   UFS_PASS_THRU_TRANS_REQ              *TransReq;
   EDKII_UFS_HOST_CONTROLLER_PROTOCOL   *UfsHc;
 
-  TransReq = AllocateZeroPool (sizeof (UFS_PASS_THRU_TRANS_REQ));
+  TransReq = AllocateZeroPool(sizeof (UFS_PASS_THRU_TRANS_REQ));
   if (TransReq == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

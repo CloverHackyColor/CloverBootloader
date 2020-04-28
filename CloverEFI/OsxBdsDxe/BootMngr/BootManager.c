@@ -330,7 +330,7 @@ CallBootManager (
     TempStr = FileDevicePathToStr (Option->DevicePath);
     TempSize = StrSize (TempStr);
     HelpSize = TempSize + StrSize (L"Device Path : ");
-    HelpString = AllocateZeroPool (HelpSize);
+    HelpString = AllocateZeroPool(HelpSize);
  //   ASSERT (HelpString != NULL);
    if (!HelpString) {
      return;

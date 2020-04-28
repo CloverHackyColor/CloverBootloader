@@ -57,7 +57,7 @@ PushDevPathStack (
 {
   DEVICE_PATH_STACK_ITEM  *DevicePathStackItem;
 
-  DevicePathStackItem = AllocateZeroPool (sizeof (DEVICE_PATH_STACK_ITEM));
+  DevicePathStackItem = AllocateZeroPool(sizeof (DEVICE_PATH_STACK_ITEM));
   ASSERT (DevicePathStackItem != NULL);
   DevicePathStackItem->Signature = DEVICE_PATH_STACK_ITEM_SIGNATURE;
   DevicePathStackItem->DevicePath = DuplicateDevicePath (DevicePath);
@@ -402,7 +402,7 @@ GetVariableAndSize (
     //
     // Allocate the buffer to return
     //
-    Buffer = AllocateZeroPool (BufferSize);
+    Buffer = AllocateZeroPool(BufferSize);
     if (Buffer == NULL) {
       return NULL;
     }
@@ -717,7 +717,7 @@ InitOverridesMapping (
       //
       // Create PLATFORM_OVERRIDE_ITEM for this mapping
       //
-      OverrideItem = AllocateZeroPool (sizeof (PLATFORM_OVERRIDE_ITEM));
+      OverrideItem = AllocateZeroPool(sizeof (PLATFORM_OVERRIDE_ITEM));
       ASSERT (OverrideItem != NULL);
       OverrideItem->Signature = PLATFORM_OVERRIDE_ITEM_SIGNATURE;
       InitializeListHead (&OverrideItem->DriverInfoList);
@@ -758,7 +758,7 @@ InitOverridesMapping (
         //
         // Create DRIVER_IMAGE_INFO for this DriverDevicePath[]
         //
-        DriverImageInfo = AllocateZeroPool (sizeof (DRIVER_IMAGE_INFO));
+        DriverImageInfo = AllocateZeroPool(sizeof (DRIVER_IMAGE_INFO));
         ASSERT (DriverImageInfo != NULL);
         DriverImageInfo->Signature = DRIVER_IMAGE_INFO_SIGNATURE;
 
@@ -1022,7 +1022,7 @@ SaveOverridesMapping (
     // VariableNeededSize is the most proper variable size, allocate variable buffer
     // ItemIndex now points to the next PLATFORM_OVERRIDE_ITEM which is not covered by VariableNeededSize
     //
-    VariableBuffer = AllocateZeroPool (VariableNeededSize);
+    VariableBuffer = AllocateZeroPool(VariableNeededSize);
     ASSERT (VariableBuffer != NULL);
     ASSERT ((UINTN) VariableBuffer % sizeof(UINTN) == 0);
 
@@ -1743,7 +1743,7 @@ InsertDriverImage (
   // Add the Controller related PLATFORM_OVERRIDE_ITEM structrue in mapping data base
   //
   if (!Found) {
-    OverrideItem = AllocateZeroPool (sizeof (PLATFORM_OVERRIDE_ITEM));
+    OverrideItem = AllocateZeroPool(sizeof (PLATFORM_OVERRIDE_ITEM));
     ASSERT (OverrideItem != NULL);
     OverrideItem->Signature = PLATFORM_OVERRIDE_ITEM_SIGNATURE;
     OverrideItem->ControllerDevicePath = DuplicateDevicePath (ControllerDevicePath);
@@ -1754,7 +1754,7 @@ InsertDriverImage (
   //
   // Prepare the driver image related DRIVER_IMAGE_INFO structure.
   //
-  DriverImageInfo = AllocateZeroPool (sizeof (DRIVER_IMAGE_INFO));
+  DriverImageInfo = AllocateZeroPool(sizeof (DRIVER_IMAGE_INFO));
   ASSERT (DriverImageInfo != NULL);
   DriverImageInfo->Signature = DRIVER_IMAGE_INFO_SIGNATURE;
   DriverImageInfo->DriverImagePath = DuplicateDevicePath (DriverImageDevicePath);

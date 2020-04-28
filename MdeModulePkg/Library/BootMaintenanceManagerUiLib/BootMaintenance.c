@@ -494,7 +494,7 @@ UpdateProgress(
   //
   Length    = StrLen (L"&OFFSET=") + 4 + 1;
 
-  StringPtr = AllocateZeroPool (Length * sizeof (CHAR16));
+  StringPtr = AllocateZeroPool(Length * sizeof (CHAR16));
 
   if (StringPtr == NULL) {
     return  NULL;
@@ -691,7 +691,7 @@ BootMaintExtractConfig (
     //
     ConfigRequestHdr = HiiConstructConfigHdr (&mBootMaintGuid, mBootMaintStorageName, Private->BmmDriverHandle);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
@@ -1688,7 +1688,7 @@ BootMaintenanceManagerUiLibConstructor (
   //
   // Create LoadOption in BmmCallbackInfo for Driver Callback
   //
-  Ptr = AllocateZeroPool (sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) + sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY));
+  Ptr = AllocateZeroPool(sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) + sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY));
   ASSERT (Ptr != NULL);
 
   //

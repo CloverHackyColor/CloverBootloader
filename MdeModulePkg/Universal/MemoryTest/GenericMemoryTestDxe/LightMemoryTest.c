@@ -404,7 +404,7 @@ VerifyMemory (
       //
       // Report uncorrectable errors
       //
-      ExtendedErrorData = AllocateZeroPool (sizeof (EFI_MEMORY_EXTENDED_ERROR_DATA));
+      ExtendedErrorData = AllocateZeroPool(sizeof (EFI_MEMORY_EXTENDED_ERROR_DATA));
       if (ExtendedErrorData == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -585,7 +585,7 @@ GenPerformMemoryTest (
       //
       // Report status code of every memory range
       //
-      RangeData                         = AllocateZeroPool (sizeof (EFI_MEMORY_RANGE_EXTENDED_DATA));
+      RangeData                         = AllocateZeroPool(sizeof (EFI_MEMORY_RANGE_EXTENDED_DATA));
       if (RangeData == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }

@@ -834,7 +834,7 @@ CreateRootBridge (
   EFI_DEVICE_PATH_PROTOCOL        *ParentDevicePath;
   EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL *PciRootBridgeIo;
 
-  Dev = AllocateZeroPool (sizeof (PCI_IO_DEVICE));
+  Dev = AllocateZeroPool(sizeof (PCI_IO_DEVICE));
   if (Dev == NULL) {
     return NULL;
   }

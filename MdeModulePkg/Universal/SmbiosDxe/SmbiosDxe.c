@@ -465,12 +465,12 @@ SmbiosAdd (
   //
   // Allocate internal buffer
   //
-  SmbiosEntry = AllocateZeroPool (TotalSize);
+  SmbiosEntry = AllocateZeroPool(TotalSize);
   if (SmbiosEntry == NULL) {
     EfiReleaseLock (&Private->DataLock);
     return EFI_OUT_OF_RESOURCES;
   }
-  HandleEntry = AllocateZeroPool (sizeof(SMBIOS_HANDLE_ENTRY));
+  HandleEntry = AllocateZeroPool(sizeof(SMBIOS_HANDLE_ENTRY));
   if (HandleEntry == NULL) {
     EfiReleaseLock (&Private->DataLock);
     return EFI_OUT_OF_RESOURCES;
@@ -715,7 +715,7 @@ SmbiosUpdateString (
       // Re-allocate buffer is needed.
       //
       NewEntrySize = SmbiosEntry->RecordSize + InputStrLen - TargetStrLen;
-      ResizedSmbiosEntry = AllocateZeroPool (NewEntrySize);
+      ResizedSmbiosEntry = AllocateZeroPool(NewEntrySize);
 
       if (ResizedSmbiosEntry == NULL) {
         EfiReleaseLock (&Private->DataLock);

@@ -335,10 +335,10 @@ ParseLoadOptions (
   }
 
   for (i = 0; PlistStrings[i][0] != '\0'; i++) {
-    PlistStringsLen = AsciiStrLen (PlistStrings[i]);
+    PlistStringsLen = AsciiStrLen(PlistStrings[i]);
     //DBG("PlistStrings[%d] = %s\n", i, PlistStrings[i]);
     if (PlistStringsLen < TailSize) {
-      if (AsciiStriNCmp (PlistStrings[i], Start, PlistStringsLen)) {
+      if (AsciiStriNCmp(PlistStrings[i], Start, PlistStringsLen)) {
         DBG(" - found plist string = %s, parse XML in LoadOptions\n", PlistStrings[i]);
         if (ParseXML (Start, Dict, (UINT32)TailSize) != EFI_SUCCESS) {
           *Dict = NULL;
@@ -358,7 +358,7 @@ ParseLoadOptions (
   //  DBG("TailSize2 = %d\n", TailSize);
 
   if (TailSize > 6) {
-    if (AsciiStriNCmp (".plist", End - 6, 6)) {
+    if (AsciiStriNCmp(".plist", End - 6, 6)) {
       End      -= 6;
       TailSize -= 6;
       //      DBG("TailSize3 = %d\n", TailSize);
@@ -370,7 +370,7 @@ ParseLoadOptions (
   AsciiConf = (__typeof__(AsciiConf))AllocateCopyPool(TailSize + 1, Start);
   if (AsciiConf != NULL) {
     *(AsciiConf + TailSize) = '\0';
-    *Conf = (__typeof_am__(*Conf))AllocateZeroPool ((TailSize + 1) * sizeof(**Conf));
+    *Conf = (__typeof_am__(*Conf))AllocateZeroPool((TailSize + 1) * sizeof(**Conf));
     AsciiStrToUnicodeStrS (AsciiConf, *Conf, TailSize);
     FreePool(AsciiConf);
   }
@@ -425,7 +425,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 
 
   VarName = PoolPrint(L"Boot%04x", Entry->BootNum);
-  BootVariable = (UINT8*)GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
+  BootVariable = (UINT8*)GetNvramVariable(VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
   if ((BootVariable == NULL) || (VarSize == 0)) {
     DBG("Boot option %ls not found\n", VarName);
     FreePool(VarName);
@@ -475,7 +475,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
     DBG("Can't save BootCurrent, status=%s\n", strerror(Status));
   }
   //Next step is rotate BootOrder to set BootNum to first place
-  BootOrder = (__typeof__(BootOrder))GetNvramVariable (L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  BootOrder = (__typeof__(BootOrder))GetNvramVariable(L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
   if (BootOrder == NULL) {
     return;
   }
@@ -535,7 +535,7 @@ UINT8
   if (Prop != NULL) {
     if (Prop->data != NULL /*&& Prop->dataLen > 0*/) { //rehabman: allow zero length data
       // data property
-      Data = (__typeof__(Data))AllocateZeroPool (Prop->dataLen);
+      Data = (__typeof__(Data))AllocateZeroPool(Prop->dataLen);
       CopyMem (Data, Prop->data, Prop->dataLen);
 
       if (DataLen != NULL) {
@@ -550,7 +550,7 @@ UINT8
        */
     } else {
       // assume data in hex encoded string property
-      Len = (UINT32)AsciiStrLen (Prop->string) >> 1; // number of hex digits
+      Len = (UINT32)AsciiStrLen(Prop->string) >> 1; // number of hex digits
       Data = (__typeof__(Data))AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
       Len  = hex2bin (Prop->string, Data, Len);
 
@@ -857,7 +857,7 @@ CUSTOM_LOADER_ENTRY
     return NULL;
   }
 
-//  DuplicateEntry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
+//  DuplicateEntry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
   CUSTOM_LOADER_ENTRY* DuplicateEntry = new CUSTOM_LOADER_ENTRY;
   if (DuplicateEntry != NULL) {
     if (Entry->Volume != NULL) {
@@ -1018,7 +1018,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     INTN   i, Count = GetTagCount (Prop);
     if (Count > 0) {
       TagPtr Prop2 = NULL;
-      CHAR16 **newForceKexts = (__typeof__(newForceKexts))AllocateZeroPool ((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
+      CHAR16 **newForceKexts = (__typeof__(newForceKexts))AllocateZeroPool((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
 
       if (Patches->ForceKexts != NULL) {
         CopyMem (newForceKexts, Patches->ForceKexts, (Patches->NrForceKexts * sizeof(CHAR16 *)));
@@ -1045,7 +1045,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           }
 
           if (AsciiStrSize(Prop2->string) > 1) {
-            Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))AllocateZeroPool (AsciiStrSize(Prop2->string) * sizeof(CHAR16));
+            Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))AllocateZeroPool(AsciiStrSize(Prop2->string) * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
             DBG(" - [%d]: %ls\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
@@ -1099,7 +1099,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
     if (Count > 0) {
       TagPtr     Prop2 = NULL, Dict = NULL;
-      KEXT_PATCH *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KEXT_PATCH));
+      KEXT_PATCH *newPatches = (__typeof__(newPatches))AllocateZeroPool(Count * sizeof(KEXT_PATCH));
 
       Patches->KextPatches = newPatches;
       DBG("KextsToPatch: %lld requested\n", Count);
@@ -1160,7 +1160,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->KextPatches[Patches->NrKexts].StartMask = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartMask))AllocateZeroPool (FindLen);
+          Patches->KextPatches[Patches->NrKexts].StartMask = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartMask))AllocateZeroPool(FindLen);
           SetMem(Patches->KextPatches[Patches->NrKexts].StartMask, FindLen, 0xFF);
           if (TmpData != NULL) {
             CopyMem(Patches->KextPatches[Patches->NrKexts].StartMask, TmpData, ReplaceLen);
@@ -1201,7 +1201,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
         FreePool(TmpData);
         // take into account a possibility to set ReplaceLen < FindLen. In this case assumes MaskReplace = 0 for the rest of bytes 
-        Patches->KextPatches[Patches->NrKexts].Patch = (__typeof__(Patches->KextPatches[Patches->NrKexts].Patch))AllocateZeroPool (FindLen);
+        Patches->KextPatches[Patches->NrKexts].Patch = (__typeof__(Patches->KextPatches[Patches->NrKexts].Patch))AllocateZeroPool(FindLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         CopyMem(Patches->KextPatches[Patches->NrKexts].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
@@ -1212,7 +1212,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KextPatches[Patches->NrKexts].MaskReplace = NULL;
         } else {
-          Patches->KextPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->KextPatches[Patches->NrKexts].MaskReplace))AllocateZeroPool (FindLen);
+          Patches->KextPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->KextPatches[Patches->NrKexts].MaskReplace))AllocateZeroPool(FindLen);
           CopyMem(Patches->KextPatches[Patches->NrKexts].MaskReplace, TmpData, MaskLen); //other bytes are zeros, means no replace
         }
         FreePool(TmpData);
@@ -1295,7 +1295,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
-      KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
+      KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool(Count * sizeof(KERNEL_PATCH));
 
       Patches->KernelPatches = newPatches;
       DBG("KernelToPatch: %lld requested\n", Count);
@@ -1338,7 +1338,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->KernelPatches[Patches->NrKernels].StartMask = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartMask))AllocateZeroPool (FindLen);
+          Patches->KernelPatches[Patches->NrKernels].StartMask = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartMask))AllocateZeroPool(FindLen);
           SetMem(Patches->KernelPatches[Patches->NrKernels].StartMask, FindLen, 0xFF);
           if (TmpData != NULL) {
             CopyMem(Patches->KernelPatches[Patches->NrKernels].StartMask, TmpData, ReplaceLen);
@@ -1388,7 +1388,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KernelPatches[Patches->NrKernels].MaskReplace = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKernels].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskReplace))AllocateZeroPool (FindLen);
+          Patches->KernelPatches[Patches->NrKernels].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskReplace))AllocateZeroPool(FindLen);
           CopyMem(Patches->KernelPatches[Patches->NrKernels].MaskReplace, TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -1455,7 +1455,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
-      KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool (Count * sizeof(KERNEL_PATCH));
+      KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool(Count * sizeof(KERNEL_PATCH));
 
       Patches->BootPatches = newPatches;
       DBG("BootPatches: %lld requested\n", Count);
@@ -1499,7 +1499,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->BootPatches[Patches->NrBoots].StartMask = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartMask))AllocateZeroPool (FindLen);
+          Patches->BootPatches[Patches->NrBoots].StartMask = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartMask))AllocateZeroPool(FindLen);
           SetMem(Patches->BootPatches[Patches->NrBoots].StartMask, FindLen, 0xFF);
           if (TmpData != NULL) {
             CopyMem(Patches->BootPatches[Patches->NrBoots].StartMask, TmpData, ReplaceLen);
@@ -1531,7 +1531,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           CopyMem(Patches->BootPatches[Patches->NrBoots].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
-        Patches->BootPatches[Patches->NrBoots].Patch = (__typeof__(Patches->BootPatches[Patches->NrBoots].Patch))AllocateZeroPool (FindLen);
+        Patches->BootPatches[Patches->NrBoots].Patch = (__typeof__(Patches->BootPatches[Patches->NrBoots].Patch))AllocateZeroPool(FindLen);
         CopyMem(Patches->BootPatches[Patches->NrBoots].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
@@ -1540,7 +1540,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->BootPatches[Patches->NrBoots].MaskReplace = NULL; //this is old behavior
         } else {
-          Patches->BootPatches[Patches->NrBoots].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskReplace))AllocateZeroPool (FindLen);
+          Patches->BootPatches[Patches->NrBoots].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskReplace))AllocateZeroPool(FindLen);
           CopyMem(Patches->BootPatches[Patches->NrBoots].MaskReplace, TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -2513,7 +2513,7 @@ GetEarlyUserSettings (
           if (AsciiStriCmp (Prop->string, "LastBootedVolume") == 0) {
             gSettings.LastBootedVolume = TRUE;
           } else {
-            gSettings.DefaultVolume = (__typeof__(gSettings.DefaultVolume))AllocateZeroPool (Size * sizeof(CHAR16));
+            gSettings.DefaultVolume = (__typeof__(gSettings.DefaultVolume))AllocateZeroPool(Size * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop->string, gSettings.DefaultVolume, Size);
           }
         }
@@ -2521,7 +2521,7 @@ GetEarlyUserSettings (
 
       Prop = GetProperty(DictPointer, "DefaultLoader");
       if (Prop != NULL) {
-        gSettings.DefaultLoader = (__typeof__(gSettings.DefaultLoader))AllocateZeroPool (AsciiStrSize (Prop->string) * sizeof(CHAR16));
+        gSettings.DefaultLoader = (__typeof__(gSettings.DefaultLoader))AllocateZeroPool(AsciiStrSize (Prop->string) * sizeof(CHAR16));
         AsciiStrToUnicodeStrS (Prop->string, gSettings.DefaultLoader, AsciiStrSize (Prop->string));
       }
 
@@ -2603,7 +2603,7 @@ GetEarlyUserSettings (
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.SecureBootWhiteListCount = 0;
-          gSettings.SecureBootWhiteList = (__typeof__(gSettings.SecureBootWhiteList))AllocateZeroPool (Count * sizeof(CHAR16 *));
+          gSettings.SecureBootWhiteList = (__typeof__(gSettings.SecureBootWhiteList))AllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootWhiteList) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement (Prop, i, &Dict2))) {
@@ -2627,7 +2627,7 @@ GetEarlyUserSettings (
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.SecureBootBlackListCount = 0;
-          gSettings.SecureBootBlackList = (__typeof__(gSettings.SecureBootBlackList))AllocateZeroPool (Count * sizeof(CHAR16 *));
+          gSettings.SecureBootBlackList = (__typeof__(gSettings.SecureBootBlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootBlackList) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement (Prop, i, &Dict2))) {
@@ -2934,7 +2934,7 @@ GetEarlyUserSettings (
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.HVCount = 0;
-          gSettings.HVHideStrings = (__typeof__(gSettings.HVHideStrings))AllocateZeroPool (Count * sizeof(CHAR16 *));
+          gSettings.HVHideStrings = (__typeof__(gSettings.HVHideStrings))AllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.HVHideStrings) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement (Prop, i, &Dict2))) {
@@ -3032,7 +3032,7 @@ GetEarlyUserSettings (
                 break;
               }
               // Allocate an entry
-//              Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool (sizeof(CUSTOM_LOADER_ENTRY));
+//              Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
 
               // Fill it in
@@ -3184,7 +3184,7 @@ GetEarlyUserSettings (
       INTN   i, Count = GetTagCount (DictPointer);
       if (Count > 0) {
         gSettings.BlackListCount = 0;
-        gSettings.BlackList = (__typeof__(gSettings.BlackList))AllocateZeroPool (Count * sizeof(CHAR16 *));
+        gSettings.BlackList = (__typeof__(gSettings.BlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
 
         for (i = 0; i < Count; i++) {
           if (!EFI_ERROR(GetElement (DictPointer, i, &Prop)) &&
@@ -3312,7 +3312,7 @@ GetListOfACPI ()
 	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
-      ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool (sizeof(ACPI_PATCHED_AML));
+      ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool(sizeof(ACPI_PATCHED_AML));
       ACPIPatchedAMLTmp->FileName = PoolPrint(L"%s", DirEntry->FileName);
 
       for (i = 0; i < Count; i++) {
@@ -3395,7 +3395,7 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      */
     FullName = PoolPrint(L"%s\\%s", FullPath, DirEntry->FileName);
 
-    mKext = (__typeof__(mKext))AllocateZeroPool (sizeof(SIDELOAD_KEXT));
+    mKext = (__typeof__(mKext))AllocateZeroPool(sizeof(SIDELOAD_KEXT));
     mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
     mKext->KextDirNameUnderOEMPath = PoolPrint(L"%s", KextDirNameUnderOEMPath);
@@ -4211,12 +4211,12 @@ ParseSMBIOSSettings(
     i = gSettings.RomVersion;
     j = Prop->string;
 
-    i += AsciiStrLen (i);
+    i += AsciiStrLen(i);
     while (*i != '.') {
       i--;
     }
 
-    j += AsciiStrLen (j);
+    j += AsciiStrLen(j);
     while (*j != '.') {
       j--;
     }
@@ -4375,7 +4375,7 @@ ParseSMBIOSSettings(
           i = gSettings.ReleaseDate;
           j = gSettings.RomVersion;
 
-          j += AsciiStrLen (j);
+          j += AsciiStrLen(j);
           while (*j != '.') {
             j--;
           }
@@ -4402,7 +4402,7 @@ ParseSMBIOSSettings(
       i = gSettings.ReleaseDate;
       j = gSettings.RomVersion;
 
-      j += AsciiStrLen (j);
+      j += AsciiStrLen(j);
       while (*j != '.') {
         j--;
       }
@@ -4506,7 +4506,7 @@ ParseSMBIOSSettings(
   }
 
   Prop = GetProperty(DictPointer, "BoardSerialNumber");
-  if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
+  if (Prop != NULL && AsciiStrLen(Prop->string) > 0) {
     AsciiStrCpyS (gSettings.BoardSerialNumber, 64, Prop->string);
   }
 
@@ -4988,7 +4988,7 @@ GetUserSettings(
 
         if (Count > 0) {
 			DBG("Add %lld properties:\n", Count);
-          gSettings.AddProperties = (__typeof__(gSettings.AddProperties))AllocateZeroPool (Count * sizeof(DEV_PROPERTY));
+          gSettings.AddProperties = (__typeof__(gSettings.AddProperties))AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
 
           for (i = 0; i < Count; i++) {
             UINTN Size = 0;
@@ -5053,7 +5053,7 @@ GetUserSettings(
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string) {
               //first suppose it is Ascii string
               gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocateCopyPool(AsciiStrSize (Prop2->string), Prop2->string);
-              gSettings.AddProperties[Index].ValueLen = AsciiStrLen (Prop2->string) + 1;
+              gSettings.AddProperties[Index].ValueLen = AsciiStrLen(Prop2->string) + 1;
             } else if (Prop2 && (Prop2->type == kTagTypeInteger)) {
               gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocatePool (4);
               CopyMem (gSettings.AddProperties[Index].Value, &(Prop2->string), 4);
@@ -5350,13 +5350,13 @@ GetUserSettings(
           INTN   i, Count = GetTagCount (Prop);
           if (Count > 0) {
             gSettings.PatchDsdtNum      = (UINT32)Count;
-            gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool (Count * sizeof(UINT8*));
-            gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool (Count * sizeof(UINT8*));
-            gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool (Count * sizeof(UINT8*));
-            gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool (Count * sizeof(UINT32));
-            gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool (Count * sizeof(UINT32));
-            gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool (Count * sizeof(UINT8*));
-            gSettings.PatchDsdtMenuItem = (__typeof__(gSettings.PatchDsdtMenuItem))AllocateZeroPool (Count * sizeof(INPUT_ITEM));
+            gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool(Count * sizeof(UINT32));
+            gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
+            gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.PatchDsdtMenuItem = (__typeof__(gSettings.PatchDsdtMenuItem))AllocateZeroPool(Count * sizeof(INPUT_ITEM));
 			  DBG("PatchesDSDT: %lld requested\n", Count);
 
             for (i = 0; i < Count; i++) {
@@ -5660,7 +5660,7 @@ GetUserSettings(
         Prop2 = NULL;
         if (Count > 0) {
           gSettings.SortedACPICount = 0;
-          gSettings.SortedACPI = (__typeof__(gSettings.SortedACPI))AllocateZeroPool (Count * sizeof(CHAR16 *));
+          gSettings.SortedACPI = (__typeof__(gSettings.SortedACPI))AllocateZeroPool(Count * sizeof(CHAR16 *));
 
           for (i = 0; i < Count; i++) {
             if (!EFI_ERROR(GetElement (Prop, i, &Prop2)) &&
@@ -5680,7 +5680,7 @@ GetUserSettings(
         Prop2 = NULL;
         if (Count > 0) {
           gSettings.DisabledAMLCount = 0;
-          gSettings.DisabledAML = (__typeof__(gSettings.DisabledAML))AllocateZeroPool (Count * sizeof(CHAR16 *));
+          gSettings.DisabledAML = (__typeof__(gSettings.DisabledAML))AllocateZeroPool(Count * sizeof(CHAR16 *));
 
           if (gSettings.DisabledAML) {
             for (i = 0; i < Count; i++) {
@@ -6053,7 +6053,7 @@ GetUserSettings(
 
       // MLB: <string>some value</string>
       Prop = GetProperty(DictPointer, "MLB");
-      if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
+      if (Prop != NULL && AsciiStrLen(Prop->string) > 0) {
         gSettings.RtMLB = (__typeof__(gSettings.RtMLB))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
       }
       // CsrActiveConfig
@@ -6065,7 +6065,7 @@ GetUserSettings(
       gSettings.BooterConfig = (UINT16)GetPropertyInteger(Prop, 0); //the value 0 means not set
       //let it be string like "log=0"
       Prop = GetProperty(DictPointer, "BooterCfg");
-      if (Prop != NULL && AsciiStrLen (Prop->string) > 0) {
+      if (Prop != NULL && AsciiStrLen(Prop->string) > 0) {
         AsciiStrCpyS (gSettings.BooterCfgStr, 64, Prop->string);
       }
       //Block external variables
@@ -7910,7 +7910,7 @@ SetDevices (LOADER_ENTRY *Entry)
       //     DBG("\n");
       //     StringDirty = FALSE;
       //-------
-      mPropSize = (UINT32)AsciiStrLen (gDeviceProperties) / 2;
+      mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
       //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
       mPropSize = hex2bin (gDeviceProperties, mProperties, mPropSize);
       //     DBG("Final size of mProperties=%d\n", mPropSize);

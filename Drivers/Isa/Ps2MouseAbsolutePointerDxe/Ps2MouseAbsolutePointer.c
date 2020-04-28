@@ -195,7 +195,7 @@ PS2MouseAbsolutePointerDriverStart (
   //
   // Allocate private data
   //
-  MouseAbsolutePointerDev = AllocateZeroPool (sizeof (PS2_MOUSE_ABSOLUTE_POINTER_DEV));
+  MouseAbsolutePointerDev = AllocateZeroPool(sizeof (PS2_MOUSE_ABSOLUTE_POINTER_DEV));
   if (MouseAbsolutePointerDev == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;

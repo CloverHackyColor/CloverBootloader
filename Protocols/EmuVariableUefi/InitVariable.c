@@ -284,13 +284,13 @@ CopyRTVariables (
   // First call to GetNextVariableName is with L"\0"
   //
   NameSize    = 512;
-  Name        = AllocateZeroPool (NameSize);
+  Name        = AllocateZeroPool(NameSize);
   
   //
   // Initial Data buffer
   //
   DataSize    = 512;
-  Data        = AllocateZeroPool (DataSize);
+  Data        = AllocateZeroPool(DataSize);
   
   while (TRUE) {
     //

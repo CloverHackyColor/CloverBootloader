@@ -129,7 +129,7 @@ DebugPrintMarker (
   //
   // Send the print string to a Serial Port
   //
-  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen(Buffer));
 }
 
 
@@ -228,7 +228,7 @@ DebugAssert (
   //
   // Send the print string to the Console Output device
   //
-  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen(Buffer));
 
   //
   // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings

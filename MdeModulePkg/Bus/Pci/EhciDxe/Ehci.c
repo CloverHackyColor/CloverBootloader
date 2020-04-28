@@ -1525,7 +1525,7 @@ EhcCreateUsb2Hc (
   USB2_HC_DEV             *Ehc;
   EFI_STATUS              Status;
 
-  Ehc = AllocateZeroPool (sizeof (USB2_HC_DEV));
+  Ehc = AllocateZeroPool(sizeof (USB2_HC_DEV));
 
   if (Ehc == NULL) {
     return NULL;

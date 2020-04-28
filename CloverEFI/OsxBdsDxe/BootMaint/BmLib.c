@@ -99,7 +99,7 @@ EfiGrowBuffer (
       FreePool(*Buffer);
     }
 
-    *Buffer = AllocateZeroPool (BufferSize);
+    *Buffer = AllocateZeroPool(BufferSize);
 
     if (*Buffer != NULL) {
       TryAgain = TRUE;
@@ -234,7 +234,7 @@ EfiLibFileSystemVolumeLabelInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    VolumeInfo = AllocateZeroPool (Size);
+    VolumeInfo = AllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
     // Check to make sure this isn't actually EFI_FILE_SYSTEM_INFO
     if (!EFI_ERROR(Status))
@@ -334,7 +334,7 @@ EfiLibFileInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    FileInfo = AllocateZeroPool (Size);
+    FileInfo = AllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   }
   
@@ -358,7 +358,7 @@ EfiLibFileSystemInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    FileSystemInfo = AllocateZeroPool (Size);
+    FileSystemInfo = AllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   }
   
@@ -415,7 +415,7 @@ EfiReallocatePool (
 
   NewPool = NULL;
   if (NewSize != 0) {
-    NewPool = AllocateZeroPool (NewSize);
+    NewPool = AllocateZeroPool(NewSize);
   }
 
   if (OldPool != NULL) {

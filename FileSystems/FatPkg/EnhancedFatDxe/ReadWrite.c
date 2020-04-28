@@ -652,7 +652,7 @@ Returns:
     BufferSize = FAT_MAX_ALLOCATE_SIZE;
   }
 
-  ZeroBuffer = AllocateZeroPool (BufferSize);
+  ZeroBuffer = AllocateZeroPool(BufferSize);
   if (ZeroBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

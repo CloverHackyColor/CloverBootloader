@@ -93,7 +93,7 @@ GetEfiTimeInMs (
 }
 
 /** Reads and returns value of NVRAM variable. */
-VOID *GetNvramVariable (
+VOID *GetNvramVariable(
 	IN      CONST CHAR16   *VariableName,
 	IN      EFI_GUID *VendorGuid,
 	   OUT  UINT32   *Attributes    OPTIONAL,
@@ -115,7 +115,7 @@ VOID *GetNvramVariable (
     //
     // Allocate the buffer to return
     //
-    Data = (__typeof__(Data))AllocateZeroPool (IntDataSize + 1);
+    Data = (__typeof__(Data))AllocateZeroPool(IntDataSize + 1);
     if (Data != NULL) {
       //
       // Read variable into the allocated buffer.
@@ -151,7 +151,7 @@ SetNvramVariable (
   UINT32 OldAttributes = 0;
   
   //DBG("SetNvramVariable (%ls, guid, 0x%X, %d):", VariableName, Attributes, DataSize);
-  OldData = (__typeof__(OldData))GetNvramVariable (VariableName, VendorGuid, &OldAttributes, &OldDataSize);
+  OldData = (__typeof__(OldData))GetNvramVariable(VariableName, VendorGuid, &OldAttributes, &OldDataSize);
   if (OldData != NULL) {
     // var already exists - check if it equal to new value
     //DBG(" exists(0x%X, %d)", OldAttributes, OldDataSize);
@@ -194,7 +194,7 @@ AddNvramVariable (
   VOID       *OldData;
 
   //DBG("SetNvramVariable (%ls, guid, 0x%X, %d):\n", VariableName, Attributes, DataSize);
-  OldData = (__typeof__(OldData))GetNvramVariable (VariableName, VendorGuid, NULL, NULL);
+  OldData = (__typeof__(OldData))GetNvramVariable(VariableName, VendorGuid, NULL, NULL);
   if (OldData == NULL)
   {
     // set new value
@@ -288,7 +288,7 @@ ResetNativeNvram ()
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
   NameSize = sizeof (CHAR16);
-  Name = (__typeof__(Name))AllocateZeroPool (NameSize);
+  Name = (__typeof__(Name))AllocateZeroPool(NameSize);
   if (Name == NULL) {
     return Status;
   }
@@ -417,7 +417,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   
 
   NameSize = sizeof (CHAR16);
-  Name = (__typeof__(Name))AllocateZeroPool (NameSize);
+  Name = (__typeof__(Name))AllocateZeroPool(NameSize);
   if (Name == NULL) {
     return;
   }
@@ -451,7 +451,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
       continue; //the variable is not interesting for us
     }
 
-    Data = (__typeof__(Data))GetNvramVariable (Name, &Guid, NULL, &DataSize);
+    Data = (__typeof__(Data))GetNvramVariable(Name, &Guid, NULL, &DataSize);
     if (Data) {
  /*     UINTN                       Index;
       DBG("   %ls:", Name);
@@ -715,7 +715,7 @@ GetEfiBootDeviceFromNvram ()
     return EFI_SUCCESS;
   }
 
-  gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable (L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
+  gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable(L"efi-boot-next-data", &gEfiAppleBootGuid, NULL, &Size);
   if (gEfiBootDeviceData != NULL) {
 //    DBG("Got efi-boot-next-data size=%d\n", Size);
     if (IsDevicePathValid(gEfiBootDeviceData, Size)) {
@@ -732,9 +732,9 @@ GetEfiBootDeviceFromNvram ()
     EFI_STATUS Status;
     Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
     if (EFI_ERROR(Status)) {
-      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
+      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable(L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
     } else {
-      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable (L"specialbootdevice", &gEfiAppleBootGuid, NULL, &Size);
+      gEfiBootDeviceData = (__typeof__(gEfiBootDeviceData))GetNvramVariable(L"specialbootdevice", &gEfiAppleBootGuid, NULL, &Size);
     }
     
     if (gEfiBootDeviceData != NULL) {
@@ -761,7 +761,7 @@ GetEfiBootDeviceFromNvram ()
   // then Startup Disk sets BootCampHD to Win disk dev path.
   //
   if (DevicePathType(gEfiBootDeviceData) == HARDWARE_DEVICE_PATH && DevicePathSubType (gEfiBootDeviceData) == HW_MEMMAP_DP) {
-    gBootCampHD = (__typeof__(gBootCampHD))GetNvramVariable (L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
+    gBootCampHD = (__typeof__(gBootCampHD))GetNvramVariable(L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
     gEfiBootVolume = gBootCampHD;
 
     if (gBootCampHD == NULL) {
@@ -1016,7 +1016,7 @@ PutNvramPlistToRtVars ()
     }
 
     // key to unicode; check if key buffer is large enough
-    if (AsciiStrLen (Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {
+    if (AsciiStrLen(Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {
       DBG(" ERROR: Skipping too large key %s\n", Tag->string);
       continue;
     }
@@ -1375,10 +1375,10 @@ EFI_STATUS SetStartupDiskVolume (
 //	    "</dict>"
 //	    "</dict></array>";
 //
-//    Size          = AsciiStrLen (EfiBootDeviceTmpl) + 36;
-//    EfiBootDevice = (__typeof__(EfiBootDevice))AllocateZeroPool(AsciiStrLen (EfiBootDeviceTmpl) + 36);
+//    Size          = AsciiStrLen(EfiBootDeviceTmpl) + 36;
+//    EfiBootDevice = (__typeof__(EfiBootDevice))AllocateZeroPool(AsciiStrLen(EfiBootDeviceTmpl) + 36);
 //    AsciiSPrint (EfiBootDevice, Size, EfiBootDeviceTmpl, strguid(Guid));
-//    Size          = AsciiStrLen (EfiBootDevice);
+//    Size          = AsciiStrLen(EfiBootDevice);
 //    DBG("  * efi-boot-device: %s\n", EfiBootDevice);
 //
 //    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, Size, EfiBootDevice);

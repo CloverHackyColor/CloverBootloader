@@ -46,7 +46,7 @@ InitCommunicateBuffer (
   //
   // The whole buffer size: SMM_COMMUNICATE_HEADER_SIZE + SMM_FTW_COMMUNICATE_HEADER_SIZE + DataSize.
   //
-  SmmCommunicateHeader = AllocateZeroPool (DataSize + SMM_COMMUNICATE_HEADER_SIZE + SMM_FTW_COMMUNICATE_HEADER_SIZE);
+  SmmCommunicateHeader = AllocateZeroPool(DataSize + SMM_COMMUNICATE_HEADER_SIZE + SMM_FTW_COMMUNICATE_HEADER_SIZE);
   ASSERT (SmmCommunicateHeader != NULL);
 
   //

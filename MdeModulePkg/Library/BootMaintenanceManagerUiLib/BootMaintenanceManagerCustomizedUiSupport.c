@@ -383,7 +383,7 @@ BmmListThirdPartyDrivers (
   HiiHandles = HiiGetHiiHandles (NULL);
   ASSERT (HiiHandles != NULL);
 
-  gHiiDriverList = AllocateZeroPool (UI_HII_DRIVER_LIST_SIZE * sizeof (UI_HII_DRIVER_INSTANCE));
+  gHiiDriverList = AllocateZeroPool(UI_HII_DRIVER_LIST_SIZE * sizeof (UI_HII_DRIVER_INSTANCE));
   ASSERT (gHiiDriverList != NULL);
   DriverListPtr = gHiiDriverList;
   CurrentSize = UI_HII_DRIVER_LIST_SIZE;

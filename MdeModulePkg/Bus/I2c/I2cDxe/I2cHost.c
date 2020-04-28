@@ -366,7 +366,7 @@ I2cHostDriverStart (
   //
   // Allocate the I2C Host Context structure
   //
-  I2cHostContext = AllocateZeroPool (sizeof (I2C_HOST_CONTEXT));
+  I2cHostContext = AllocateZeroPool(sizeof (I2C_HOST_CONTEXT));
   if (I2cHostContext == NULL) {
     DEBUG ((EFI_D_ERROR, "I2cHost: there is no enough memory to allocate.\n"));
     Status = EFI_OUT_OF_RESOURCES;
@@ -989,7 +989,7 @@ I2cHostQueueRequest (
   //
   // Allocate the request structure
   //
-  I2cRequest = AllocateZeroPool (sizeof (I2C_REQUEST));
+  I2cRequest = AllocateZeroPool(sizeof (I2C_REQUEST));
   if (I2cRequest == NULL) {
     DEBUG ((EFI_D_ERROR, "WARNING - Failed to allocate I2C_REQUEST!\n"));
     return EFI_OUT_OF_RESOURCES;
@@ -1008,7 +1008,7 @@ I2cHostQueueRequest (
   // Copy request packet into private buffer, as RequestPacket may be freed during asynchronous transaction
   //
   RequestPacketSize = sizeof (UINTN) + RequestPacket->OperationCount * sizeof (EFI_I2C_OPERATION);
-  I2cRequest->RequestPacket = AllocateZeroPool (RequestPacketSize);
+  I2cRequest->RequestPacket = AllocateZeroPool(RequestPacketSize);
   ASSERT (I2cRequest->RequestPacket != NULL);
   CopyMem (I2cRequest->RequestPacket, RequestPacket, RequestPacketSize);
 

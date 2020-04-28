@@ -281,7 +281,7 @@ InitializeGraphicsConsoleTextMode (
   // and does not include the invalid modes which exceed the max column and row.
   // Reserve 2 modes for 80x25, 80x50 of graphics console.
   //
-  NewModeBuffer = AllocateZeroPool (sizeof (GRAPHICS_CONSOLE_MODE_DATA) * (Count + 2));
+  NewModeBuffer = AllocateZeroPool(sizeof (GRAPHICS_CONSOLE_MODE_DATA) * (Count + 2));
   if (!NewModeBuffer) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1783,7 +1783,7 @@ DrawUnicodeWeightAtCursorN (
   UINTN                             RowInfoArraySize;
 
   Private = GRAPHICS_CONSOLE_CON_OUT_DEV_FROM_THIS (This);
-  Blt = (EFI_IMAGE_OUTPUT *) AllocateZeroPool (sizeof (EFI_IMAGE_OUTPUT));
+  Blt = (EFI_IMAGE_OUTPUT *) AllocateZeroPool(sizeof (EFI_IMAGE_OUTPUT));
   if (Blt == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1801,7 +1801,7 @@ DrawUnicodeWeightAtCursorN (
   //
   *(String + Count) = L'\0';
 
-  FontInfo = (EFI_FONT_DISPLAY_INFO *) AllocateZeroPool (sizeof (EFI_FONT_DISPLAY_INFO));
+  FontInfo = (EFI_FONT_DISPLAY_INFO *) AllocateZeroPool(sizeof (EFI_FONT_DISPLAY_INFO));
   if (FontInfo == NULL) {
     FreePool(Blt);
     FreePool(String);
@@ -1840,7 +1840,7 @@ DrawUnicodeWeightAtCursorN (
 
     UgaDraw = Private->UgaDraw;
 
-    Blt->Image.Bitmap = AllocateZeroPool (Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    Blt->Image.Bitmap = AllocateZeroPool(Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     if (Blt->Image.Bitmap == NULL) {
       FreePool(Blt);
       FreePool(String);
@@ -2074,7 +2074,7 @@ RegisterFontPackage (
   //    +--------------------------------+
 
   PackageLength   = sizeof (EFI_HII_SIMPLE_FONT_PACKAGE_HDR) + mNarrowFontSize + 4;
-  Package = AllocateZeroPool (PackageLength);
+  Package = AllocateZeroPool(PackageLength);
 //  ASSERT (Package != NULL);
   if (!Package) {
     return;

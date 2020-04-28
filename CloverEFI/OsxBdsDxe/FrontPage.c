@@ -438,7 +438,7 @@ InitializeFrontPage (
     //
     // Allocate extra 1 as the end tag.
     //
-    gFrontPagePrivate.LanguageToken = AllocateZeroPool ((OptionCount + 1) * sizeof (EFI_STRING_ID));
+    gFrontPagePrivate.LanguageToken = AllocateZeroPool((OptionCount + 1) * sizeof (EFI_STRING_ID));
     ASSERT (gFrontPagePrivate.LanguageToken != NULL);
 
     Status = gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &HiiString);
@@ -452,7 +452,7 @@ InitializeFrontPage (
       StringSize = 0;
       Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
       if (Status == EFI_BUFFER_TOO_SMALL) {
-        StringBuffer = AllocateZeroPool (StringSize);
+        StringBuffer = AllocateZeroPool(StringSize);
         ASSERT (StringBuffer != NULL);
         Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
         ASSERT_EFI_ERROR(Status);
@@ -636,7 +636,7 @@ ConvertProcessorToString (
     FreqMhz = 0;
   }
 
-  StringBuffer = AllocateZeroPool (0x20);
+  StringBuffer = AllocateZeroPool(0x20);
 //  ASSERT (StringBuffer != NULL);
   if (!StringBuffer) {
     StringBuffer = L"   ";
@@ -665,7 +665,7 @@ ConvertMemorySizeToString (
 {
   CHAR16  *StringBuffer;
 
-  StringBuffer = AllocateZeroPool (0x20);
+  StringBuffer = AllocateZeroPool(0x20);
 //  ASSERT (StringBuffer != NULL);
   if (!StringBuffer) {
     StringBuffer = L"        ";
@@ -701,7 +701,7 @@ GetOptionalStringByIndex (
   UINTN          StrSize;
 
   if (Index == 0) {
-    *String = AllocateZeroPool (sizeof (CHAR16));
+    *String = AllocateZeroPool(sizeof (CHAR16));
     return EFI_SUCCESS;
   }
 

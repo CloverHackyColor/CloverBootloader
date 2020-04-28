@@ -8,7 +8,7 @@
 
 import Foundation
 
-let daemonVersion = "1.1.2"
+let daemonVersion = "1.1.3"
 
 let fm = FileManager.default
 

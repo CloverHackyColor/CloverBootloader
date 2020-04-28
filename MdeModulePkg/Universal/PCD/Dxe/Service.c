@@ -168,7 +168,7 @@ GetPcdName (
     // Need to get the full PCD name.
     //
     NameSize = AsciiStrSize (TokenSpaceName) + AsciiStrSize (PcdName);
-    Name = AllocateZeroPool (NameSize);
+    Name = AllocateZeroPool(NameSize);
     ASSERT (Name != NULL);
     //
     // Catenate TokenSpaceCName and PcdCName with a '.' to form the full PCD name.
@@ -856,7 +856,7 @@ BuildPcdDxeDataBase (
   mPcdDatabase.DxeDb = LocateExPcdBinary ();
   ASSERT(mPcdDatabase.DxeDb != NULL);
   PcdDxeDbLen = mPcdDatabase.DxeDb->Length + mPcdDatabase.DxeDb->UninitDataBaseSize;
-  PcdDxeDb = AllocateZeroPool (PcdDxeDbLen);
+  PcdDxeDb = AllocateZeroPool(PcdDxeDbLen);
   ASSERT (PcdDxeDb != NULL);
   CopyMem (PcdDxeDb, mPcdDatabase.DxeDb, mPcdDatabase.DxeDb->Length);
   mPcdDatabase.DxeDb = PcdDxeDb;
@@ -894,7 +894,7 @@ BuildPcdDxeDataBase (
     }
     mPcdDatabase.DxeDb->SystemSkuId = mPcdDatabase.PeiDb->SystemSkuId;
   } else {
-    mPcdDatabase.PeiDb = AllocateZeroPool (sizeof (PEI_PCD_DATABASE));
+    mPcdDatabase.PeiDb = AllocateZeroPool(sizeof (PEI_PCD_DATABASE));
     ASSERT(mPcdDatabase.PeiDb != NULL);
   }
 
@@ -923,7 +923,7 @@ BuildPcdDxeDataBase (
   //
   // Initialized the Callback Function Table
   //
-  mCallbackFnTable = AllocateZeroPool (mPcdTotalTokenCount * sizeof (LIST_ENTRY));
+  mCallbackFnTable = AllocateZeroPool(mPcdTotalTokenCount * sizeof (LIST_ENTRY));
   ASSERT(mCallbackFnTable != NULL);
 
   //
@@ -1516,7 +1516,7 @@ SetHiiVariable (
     // Get size, allocate buffer and get data.
     //
     GetVariableSizeAndDataFromHiiPcd (VariableGuid, VariableName, &Size, NULL);
-    Buffer = AllocateZeroPool (Size);
+    Buffer = AllocateZeroPool(Size);
     ASSERT (Buffer != NULL);
     GetVariableSizeAndDataFromHiiPcd (VariableGuid, VariableName, &Size, Buffer);
 

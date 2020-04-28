@@ -344,17 +344,17 @@ EbcDebuggerHookInit (
   //
   // Init Symbol
   //
-  Object = AllocateZeroPool (sizeof(EFI_DEBUGGER_SYMBOL_OBJECT) * EFI_DEBUGGER_SYMBOL_OBJECT_MAX);
+  Object = AllocateZeroPool(sizeof(EFI_DEBUGGER_SYMBOL_OBJECT) * EFI_DEBUGGER_SYMBOL_OBJECT_MAX);
   ASSERT (Object != NULL);
   mDebuggerPrivate.DebuggerSymbolContext.Object = Object;
   mDebuggerPrivate.DebuggerSymbolContext.ObjectCount = 0;
   mDebuggerPrivate.DebuggerSymbolContext.MaxObjectCount = EFI_DEBUGGER_SYMBOL_OBJECT_MAX;
   for (Index = 0; Index < EFI_DEBUGGER_SYMBOL_OBJECT_MAX; Index++) {
-    Entry = AllocateZeroPool (sizeof(EFI_DEBUGGER_SYMBOL_ENTRY) * EFI_DEBUGGER_SYMBOL_ENTRY_MAX);
+    Entry = AllocateZeroPool(sizeof(EFI_DEBUGGER_SYMBOL_ENTRY) * EFI_DEBUGGER_SYMBOL_ENTRY_MAX);
     ASSERT (Entry != NULL);
     Object[Index].Entry = Entry;
     Object[Index].MaxEntryCount = EFI_DEBUGGER_SYMBOL_ENTRY_MAX;
-    Object[Index].SourceBuffer = AllocateZeroPool (sizeof(VOID *) * (EFI_DEBUGGER_SYMBOL_ENTRY_MAX + 1));
+    Object[Index].SourceBuffer = AllocateZeroPool(sizeof(VOID *) * (EFI_DEBUGGER_SYMBOL_ENTRY_MAX + 1));
     ASSERT (Object[Index].SourceBuffer != NULL);
   }
 

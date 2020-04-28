@@ -446,7 +446,7 @@ SataControllerStart (
   //
   // Allocate Sata Private Data structure
   //
-  SataPrivateData = AllocateZeroPool (sizeof (EFI_SATA_CONTROLLER_PRIVATE_DATA));
+  SataPrivateData = AllocateZeroPool(sizeof (EFI_SATA_CONTROLLER_PRIVATE_DATA));
   if (SataPrivateData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -519,19 +519,19 @@ SataControllerStart (
   }
 
   ChannelDeviceCount = (UINTN) (SataPrivateData->IdeInit.ChannelCount) * (UINTN) (SataPrivateData->DeviceCount);
-  SataPrivateData->DisqulifiedModes = AllocateZeroPool ((sizeof (EFI_ATA_COLLECTIVE_MODE)) * ChannelDeviceCount);
+  SataPrivateData->DisqulifiedModes = AllocateZeroPool((sizeof (EFI_ATA_COLLECTIVE_MODE)) * ChannelDeviceCount);
   if (SataPrivateData->DisqulifiedModes == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  SataPrivateData->IdentifyData = AllocateZeroPool ((sizeof (EFI_IDENTIFY_DATA)) * ChannelDeviceCount);
+  SataPrivateData->IdentifyData = AllocateZeroPool((sizeof (EFI_IDENTIFY_DATA)) * ChannelDeviceCount);
   if (SataPrivateData->IdentifyData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  SataPrivateData->IdentifyValid = AllocateZeroPool ((sizeof (BOOLEAN)) * ChannelDeviceCount);
+  SataPrivateData->IdentifyValid = AllocateZeroPool((sizeof (BOOLEAN)) * ChannelDeviceCount);
   if (SataPrivateData->IdentifyValid == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -826,19 +826,19 @@ IdeInitNotifyPhase (
       }
 
       ChannelDeviceCount = (UINTN) (SataPrivateData->IdeInit.ChannelCount) * (UINTN) (SataPrivateData->DeviceCount);
-      SataPrivateData->DisqulifiedModes = AllocateZeroPool ((sizeof (EFI_ATA_COLLECTIVE_MODE)) * ChannelDeviceCount);
+      SataPrivateData->DisqulifiedModes = AllocateZeroPool((sizeof (EFI_ATA_COLLECTIVE_MODE)) * ChannelDeviceCount);
       if (SataPrivateData->DisqulifiedModes == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
       }
 
-      SataPrivateData->IdentifyData = AllocateZeroPool ((sizeof (EFI_IDENTIFY_DATA)) * ChannelDeviceCount);
+      SataPrivateData->IdentifyData = AllocateZeroPool((sizeof (EFI_IDENTIFY_DATA)) * ChannelDeviceCount);
       if (SataPrivateData->IdentifyData == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
       }
 
-      SataPrivateData->IdentifyValid = AllocateZeroPool ((sizeof (BOOLEAN)) * ChannelDeviceCount);
+      SataPrivateData->IdentifyValid = AllocateZeroPool((sizeof (BOOLEAN)) * ChannelDeviceCount);
       if (SataPrivateData->IdentifyValid == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto Done;
@@ -1095,7 +1095,7 @@ IdeInitCalculateMode (
     return EFI_INVALID_PARAMETER;
   }
 
-  *SupportedModes = AllocateZeroPool (sizeof (EFI_ATA_COLLECTIVE_MODE));
+  *SupportedModes = AllocateZeroPool(sizeof (EFI_ATA_COLLECTIVE_MODE));
   if (*SupportedModes == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

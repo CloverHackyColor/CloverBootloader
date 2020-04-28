@@ -100,7 +100,7 @@ UdfOpenVolume (
   }
 
   PrivFileData =
-    (PRIVATE_UDF_FILE_DATA *) AllocateZeroPool (sizeof (PRIVATE_UDF_FILE_DATA));
+    (PRIVATE_UDF_FILE_DATA *) AllocateZeroPool(sizeof (PRIVATE_UDF_FILE_DATA));
   if (PrivFileData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error_Alloc_Priv_File_Data;
@@ -224,7 +224,7 @@ UdfOpen (
   }
 
   NewPrivFileData =
-    (PRIVATE_UDF_FILE_DATA *)AllocateZeroPool (sizeof (PRIVATE_UDF_FILE_DATA));
+    (PRIVATE_UDF_FILE_DATA *)AllocateZeroPool(sizeof (PRIVATE_UDF_FILE_DATA));
   if (NewPrivFileData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error_Alloc_New_Priv_File_Data;

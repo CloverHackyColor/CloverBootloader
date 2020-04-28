@@ -204,7 +204,7 @@ FindAnchorVolumeDescriptorPointer (
   //
   Size = MAX_CORRECTION_BLOCKS_NUM * BlockSize;
 
-  AnchorPoints = AllocateZeroPool (Size);
+  AnchorPoints = AllocateZeroPool(Size);
   if (AnchorPoints == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -504,7 +504,7 @@ FindLogicalVolumeLocation (
   //
   // Allocate buffer for reading disk blocks
   //
-  Buffer = AllocateZeroPool ((UINTN)BlockSize);
+  Buffer = AllocateZeroPool((UINTN)BlockSize);
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

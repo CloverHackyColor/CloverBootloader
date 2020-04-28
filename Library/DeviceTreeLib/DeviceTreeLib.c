@@ -687,7 +687,7 @@ DTInsertProperty (
       //
       // Insert Property Name.
       //
-      CopyMem (Property->Name, AddPropertyName, AsciiStrLen (AddPropertyName));
+      CopyMem (Property->Name, AddPropertyName, AsciiStrLen(AddPropertyName));
 
       //
       // Insert Property Value Length.

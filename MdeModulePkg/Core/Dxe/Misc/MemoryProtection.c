@@ -421,7 +421,7 @@ ProtectUefiImage (
     return ;
   }
 
-  ImageRecord = AllocateZeroPool (sizeof(*ImageRecord));
+  ImageRecord = AllocateZeroPool(sizeof(*ImageRecord));
   if (ImageRecord == NULL) {
     return ;
   }

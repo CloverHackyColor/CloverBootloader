@@ -466,7 +466,7 @@ DiskIoCreateSubtask (
   DISK_IO_SUBTASK       *Subtask;
   EFI_STATUS            Status;
 
-  Subtask = AllocateZeroPool (sizeof (DISK_IO_SUBTASK));
+  Subtask = AllocateZeroPool(sizeof (DISK_IO_SUBTASK));
   if (Subtask == NULL) {
     return NULL;
   }

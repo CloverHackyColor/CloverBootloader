@@ -160,7 +160,7 @@ OnigurumaMatch (
   //
   if (*Result && Captures != NULL) {
     *CapturesCount = Region->num_regs;
-    *Captures = AllocateZeroPool (*CapturesCount * sizeof(**Captures));
+    *Captures = AllocateZeroPool(*CapturesCount * sizeof(**Captures));
     if (*Captures != NULL) {
       for (Index = 0; Index < *CapturesCount; ++Index) {
         //

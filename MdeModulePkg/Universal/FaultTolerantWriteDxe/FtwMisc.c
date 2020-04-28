@@ -973,7 +973,7 @@ InitFtwDevice (
   // Allocate private data of this driver,
   // Including the FtwWorkSpace[FTW_WORK_SPACE_SIZE].
   //
-  FtwDevice = AllocateZeroPool (sizeof (EFI_FTW_DEVICE) + PcdGet32 (PcdFlashNvStorageFtwWorkingSize));
+  FtwDevice = AllocateZeroPool(sizeof (EFI_FTW_DEVICE) + PcdGet32 (PcdFlashNvStorageFtwWorkingSize));
   if (FtwDevice == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

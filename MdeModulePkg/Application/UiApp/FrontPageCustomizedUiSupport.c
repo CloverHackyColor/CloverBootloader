@@ -303,7 +303,7 @@ UiCreateLanguageMenu (
     //
     // Allocate extra 1 as the end tag.
     //
-    gLanguageToken = AllocateZeroPool ((OptionCount + 1) * sizeof (EFI_STRING_ID));
+    gLanguageToken = AllocateZeroPool((OptionCount + 1) * sizeof (EFI_STRING_ID));
     ASSERT (gLanguageToken != NULL);
 
     Status = gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &HiiString);
@@ -317,7 +317,7 @@ UiCreateLanguageMenu (
       StringSize = 0;
       Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
       if (Status == EFI_BUFFER_TOO_SMALL) {
-        StringBuffer = AllocateZeroPool (StringSize);
+        StringBuffer = AllocateZeroPool(StringSize);
         ASSERT (StringBuffer != NULL);
         Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
         ASSERT_EFI_ERROR(Status);
@@ -587,7 +587,7 @@ UiListThirdPartyDrivers (
   HiiHandles = HiiGetHiiHandles (NULL);
   ASSERT (HiiHandles != NULL);
 
-  gHiiDriverList = AllocateZeroPool (UI_HII_DRIVER_LIST_SIZE * sizeof (UI_HII_DRIVER_INSTANCE));
+  gHiiDriverList = AllocateZeroPool(UI_HII_DRIVER_LIST_SIZE * sizeof (UI_HII_DRIVER_INSTANCE));
   ASSERT (gHiiDriverList != NULL);
   DriverListPtr = gHiiDriverList;
   CurrentSize = UI_HII_DRIVER_LIST_SIZE;

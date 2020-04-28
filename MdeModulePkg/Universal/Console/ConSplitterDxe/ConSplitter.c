@@ -811,17 +811,17 @@ ConSplitterTextOutConstructor (
     //
     // Setup resource for mode information in Graphics Output Protocol interface
     //
-    if ((ConOutPrivate->GraphicsOutput.Mode = AllocateZeroPool (sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE))) == NULL) {
+    if ((ConOutPrivate->GraphicsOutput.Mode = AllocateZeroPool(sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE))) == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
-    if ((ConOutPrivate->GraphicsOutput.Mode->Info = AllocateZeroPool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION))) == NULL) {
+    if ((ConOutPrivate->GraphicsOutput.Mode->Info = AllocateZeroPool(sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION))) == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
     //
     // Setup the DevNullGraphicsOutput to 800 x 600 x 32 bits per pixel
     // DevNull will be updated to user-defined mode after driver has started.
     //
-    if ((ConOutPrivate->GraphicsOutputModeBuffer = AllocateZeroPool (sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION))) == NULL) {
+    if ((ConOutPrivate->GraphicsOutputModeBuffer = AllocateZeroPool(sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION))) == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
     Info = &ConOutPrivate->GraphicsOutputModeBuffer[0];
@@ -2644,7 +2644,7 @@ ConSplitterGetIntersectionBetweenConOutAndStrErr (
   // Allocate the map table and set the map table's index to -1.
   //
   ConOutMapTableSize  = ConOutMaxMode * sizeof (INT32);
-  ConOutMapTable      = AllocateZeroPool (ConOutMapTableSize);
+  ConOutMapTable      = AllocateZeroPool(ConOutMapTableSize);
   if (ConOutMapTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -2652,7 +2652,7 @@ ConSplitterGetIntersectionBetweenConOutAndStrErr (
   SetMem (ConOutMapTable, ConOutMapTableSize, 0xFF);
 
   StdErrMapTableSize  = StdErrMaxMode * sizeof (INT32);
-  StdErrMapTable      = AllocateZeroPool (StdErrMapTableSize);
+  StdErrMapTable      = AllocateZeroPool(StdErrMapTableSize);
   if (StdErrMapTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -4022,11 +4022,11 @@ ConSplitterTextInRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (TEXT_IN_EX_SPLITTER_NOTIFY *) AllocateZeroPool (sizeof (TEXT_IN_EX_SPLITTER_NOTIFY));
+  NewNotify = (TEXT_IN_EX_SPLITTER_NOTIFY *) AllocateZeroPool(sizeof (TEXT_IN_EX_SPLITTER_NOTIFY));
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  NewNotify->NotifyHandleList = (EFI_HANDLE *) AllocateZeroPool (sizeof (EFI_HANDLE) *  Private->TextInExListCount);
+  NewNotify->NotifyHandleList = (EFI_HANDLE *) AllocateZeroPool(sizeof (EFI_HANDLE) *  Private->TextInExListCount);
   if (NewNotify->NotifyHandleList == NULL) {
     gBS->FreePool(NewNotify);
     return EFI_OUT_OF_RESOURCES;

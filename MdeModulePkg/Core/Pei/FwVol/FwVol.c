@@ -497,7 +497,7 @@ PeiInitializeFv (
                     );
   ASSERT_EFI_ERROR(Status);
 
-  PrivateData->Fv = AllocateZeroPool (sizeof (PEI_CORE_FV_HANDLE) * FV_GROWTH_STEP);
+  PrivateData->Fv = AllocateZeroPool(sizeof (PEI_CORE_FV_HANDLE) * FV_GROWTH_STEP);
   ASSERT (PrivateData->Fv != NULL);
   PrivateData->MaxFvCount = FV_GROWTH_STEP;
 
@@ -629,7 +629,7 @@ FirmwareVolmeInfoPpiNotifyCallback (
       //
       // Run out of room, grow the buffer.
       //
-      TempPtr = AllocateZeroPool (
+      TempPtr = AllocateZeroPool(
                   sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount + FV_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
@@ -2213,7 +2213,7 @@ AddUnknownFormatFvInfo (
     //
     // Run out of room, grow the buffer.
     //
-    TempPtr = AllocateZeroPool (
+    TempPtr = AllocateZeroPool(
                 sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) * (PrivateData->MaxUnknownFvInfoCount + FV_GROWTH_STEP)
                 );
     ASSERT (TempPtr != NULL);
@@ -2366,7 +2366,7 @@ ThirdPartyFvPpiNotifyCallback (
       //
       // Run out of room, grow the buffer.
       //
-      TempPtr = AllocateZeroPool (
+      TempPtr = AllocateZeroPool(
                   sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount + FV_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);

@@ -266,7 +266,7 @@ GetSmmLoadedImage(
   if (Status != EFI_BUFFER_TOO_SMALL) {
     return;
   }
-  HandleBuffer = AllocateZeroPool (HandleBufferSize);
+  HandleBuffer = AllocateZeroPool(HandleBufferSize);
   if (HandleBuffer == NULL) {
     return;
   }
@@ -1198,7 +1198,7 @@ SmiHandlerProfileRegisterHandler (
     return EFI_INVALID_PARAMETER;
   }
 
-  SmiHandler = AllocateZeroPool (sizeof (SMI_HANDLER));
+  SmiHandler = AllocateZeroPool(sizeof (SMI_HANDLER));
   if (SmiHandler == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

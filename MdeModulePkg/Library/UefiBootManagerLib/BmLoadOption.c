@@ -44,7 +44,7 @@ BmForEachVariable (
   UINTN                       NewNameSize;
 
   NameSize = sizeof (CHAR16);
-  Name = AllocateZeroPool (NameSize);
+  Name = AllocateZeroPool(NameSize);
   ASSERT (Name != NULL);
   while (TRUE) {
     NewNameSize = NameSize;

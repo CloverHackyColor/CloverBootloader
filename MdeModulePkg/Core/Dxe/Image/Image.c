@@ -159,7 +159,7 @@ PeCoffEmuProtocolNotify (
       continue;
     }
 
-    Entry = AllocateZeroPool (sizeof (*Entry));
+    Entry = AllocateZeroPool(sizeof (*Entry));
     ASSERT (Entry != NULL);
 
     Entry->Emulator    = Emulator;
@@ -1304,7 +1304,7 @@ CoreLoadImageCommon (
   //
   // Allocate a new image structure
   //
-  Image = AllocateZeroPool (sizeof(LOADED_IMAGE_PRIVATE_DATA));
+  Image = AllocateZeroPool(sizeof(LOADED_IMAGE_PRIVATE_DATA));
   if (Image == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

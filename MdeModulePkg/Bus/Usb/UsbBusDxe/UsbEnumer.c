@@ -98,7 +98,7 @@ UsbCreateInterface (
   USB_INTERFACE           *HubIf;
   EFI_STATUS              Status;
 
-  UsbIf = AllocateZeroPool (sizeof (USB_INTERFACE));
+  UsbIf = AllocateZeroPool(sizeof (USB_INTERFACE));
 
   if (UsbIf == NULL) {
     return NULL;
@@ -221,7 +221,7 @@ UsbCreateDevice (
 
   ASSERT (ParentIf != NULL);
 
-  Device = AllocateZeroPool (sizeof (USB_DEVICE));
+  Device = AllocateZeroPool(sizeof (USB_DEVICE));
 
   if (Device == NULL) {
     return NULL;

@@ -1881,7 +1881,7 @@ PciIoGetBarAttributes (
   }
 
   if (Resources != NULL) {
-    Descriptor = AllocateZeroPool (sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+    Descriptor = AllocateZeroPool(sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
     if (Descriptor == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

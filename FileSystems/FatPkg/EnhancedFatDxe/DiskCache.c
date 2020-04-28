@@ -528,7 +528,7 @@ Returns:
   //
   // Allocate the Fat Cache buffer
   //
-  CacheBuffer = AllocateZeroPool (FatCacheSize + DataCacheSize);
+  CacheBuffer = AllocateZeroPool(FatCacheSize + DataCacheSize);
   if (CacheBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

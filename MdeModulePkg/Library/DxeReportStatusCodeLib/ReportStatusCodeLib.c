@@ -211,7 +211,7 @@ ReportStatusCodeExtractAssertInfo (
       ((Value    & EFI_STATUS_CODE_OPERATION_MASK) == EFI_SW_EC_ILLEGAL_SOFTWARE_STATE)) {
     AssertData   = (EFI_DEBUG_ASSERT_DATA *)(Data + 1);
     *Filename    = (CHAR8 *)(AssertData + 1);
-    *Description = *Filename + AsciiStrLen (*Filename) + 1;
+    *Description = *Filename + AsciiStrLen(*Filename) + 1;
     *LineNumber  = AssertData->LineNumber;
     return TRUE;
   }

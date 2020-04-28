@@ -419,7 +419,7 @@ GetVariableBootArgs (
       AsciiStrnCpyS (mStoredBootArgsVar, SlideArgumentLength + 1, SlideArgument, SlideArgumentLength + 1);;
     }
 
-    mStoredBootArgsVarSize = AsciiStrLen (mStoredBootArgsVar) + 1;
+    mStoredBootArgsVarSize = AsciiStrLen(mStoredBootArgsVar) + 1;
     mStoredBootArgsVarSet = TRUE;
   }
 

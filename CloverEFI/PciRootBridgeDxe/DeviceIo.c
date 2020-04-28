@@ -57,7 +57,7 @@ Returns:
   //
   // Initialize the Device IO device instance.
   //
-  Private = AllocateZeroPool (sizeof (DEVICE_IO_PRIVATE_DATA));
+  Private = AllocateZeroPool(sizeof (DEVICE_IO_PRIVATE_DATA));
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

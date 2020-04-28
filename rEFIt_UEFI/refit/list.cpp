@@ -146,7 +146,7 @@
 //  //
 //  // Create a new list entry
 //  //
-//  CurrentList = (__typeof__(CurrentList))AllocateZeroPool (sizeof (REFIT_LIST));
+//  CurrentList = (__typeof__(CurrentList))AllocateZeroPool(sizeof (REFIT_LIST));
 //
 //  if (!CurrentList) {
 //    return EFI_OUT_OF_RESOURCES;

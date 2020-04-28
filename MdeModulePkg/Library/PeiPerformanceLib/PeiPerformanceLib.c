@@ -267,7 +267,7 @@ CopyStringIntoPerfRecordAndUpdateLength (
       DestMax = STRING_SIZE;
     }
   }
-  StringLen = AsciiStrLen (Source);
+  StringLen = AsciiStrLen(Source);
   if (StringLen >= DestMax) {
     StringLen = DestMax -1;
   }
@@ -421,7 +421,7 @@ InsertFpdtRecord (
       return EFI_INVALID_PARAMETER;
     }
     StringPtr = String;
-    if (AsciiStrLen (String) == 0) {
+    if (AsciiStrLen(String) == 0) {
       StringPtr = "unknown name";
     }
     if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
@@ -443,7 +443,7 @@ InsertFpdtRecord (
   case PERF_INMODULE_END_ID:
   case PERF_CROSSMODULE_START_ID:
   case PERF_CROSSMODULE_END_ID:
-    if (String != NULL && AsciiStrLen (String) != 0) {
+    if (String != NULL && AsciiStrLen(String) != 0) {
       StringPtr = String;
     } else {
       StringPtr = "unknown name";
@@ -461,7 +461,7 @@ InsertFpdtRecord (
 
   default:
     if (Attribute != PerfEntry) {
-     if (String != NULL && AsciiStrLen (String) != 0) {
+     if (String != NULL && AsciiStrLen(String) != 0) {
        StringPtr = String;
      } else {
        StringPtr = "unknown name";

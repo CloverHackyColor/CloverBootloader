@@ -210,7 +210,7 @@ USBKeyboardDriverBindingStart (
     goto ErrorExit1;
   }
 
-  UsbKeyboardDevice = AllocateZeroPool (sizeof (USB_KB_DEV));
+  UsbKeyboardDevice = AllocateZeroPool(sizeof (USB_KB_DEV));
 //  ASSERT (UsbKeyboardDevice != NULL);
   if (!UsbKeyboardDevice) {
     goto ErrorExit1;
@@ -1287,7 +1287,7 @@ USBKeyboardRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (KEYBOARD_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool(sizeof (KEYBOARD_CONSOLE_IN_EX_NOTIFY));
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

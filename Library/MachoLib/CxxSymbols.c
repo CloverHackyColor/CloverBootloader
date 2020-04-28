@@ -173,7 +173,7 @@ MachoGetClassNameFromSuperMetaClassPointer (
   PrefixSize = L_STR_LEN (OSOBJ_PREFIX);
   SuffixSize = L_STR_LEN (SMCP_TOKEN);
 
-  OutputSize = (AsciiStrLen (SmcpName) - PrefixSize - SuffixSize);
+  OutputSize = (AsciiStrLen(SmcpName) - PrefixSize - SuffixSize);
 
   if ((OutputSize + 1) > ClassNameSize) {
     return FALSE;
@@ -288,7 +288,7 @@ MachoGetClassNameFromMetaClassPointer (
   PrefixSize = L_STR_LEN (OSOBJ_PREFIX);
   SuffixSize = L_STR_LEN (METACLASS_TOKEN);
 
-  ClassNameLength = (AsciiStrLen (MetaClassName) - PrefixSize - SuffixSize);
+  ClassNameLength = (AsciiStrLen(MetaClassName) - PrefixSize - SuffixSize);
   if ((ClassNameLength + 1) > ClassNameSize) {
     return FALSE;
   }
@@ -375,7 +375,7 @@ MachoGetMetaVtableNameFromClassName (
   ASSERT (VtableNameSize > 0);
   ASSERT (VtableName != NULL);
 
-  BodyLength = AsciiStrLen (ClassName);
+  BodyLength = AsciiStrLen(ClassName);
 
   Result = OcOverflowTriAddUN (
              L_STR_LEN (METACLASS_VTABLE_PREFIX),
@@ -433,7 +433,7 @@ MachoGetFinalSymbolNameFromClassName (
   ASSERT (FinalSymbolNameSize > 0);
   ASSERT (FinalSymbolName != NULL);
 
-  BodyLength = AsciiStrLen (ClassName);
+  BodyLength = AsciiStrLen(ClassName);
 
   Result = OcOverflowTriAddUN (
              L_STR_LEN (OSOBJ_PREFIX),

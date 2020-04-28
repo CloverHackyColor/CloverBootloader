@@ -667,7 +667,7 @@ CreateResourceNode (
 
   Node    = NULL;
 
-  Node    = AllocateZeroPool (sizeof (PCI_RESOURCE_NODE));
+  Node    = AllocateZeroPool(sizeof (PCI_RESOURCE_NODE));
   ASSERT (Node != NULL);
   if (Node == NULL) {
     return NULL;

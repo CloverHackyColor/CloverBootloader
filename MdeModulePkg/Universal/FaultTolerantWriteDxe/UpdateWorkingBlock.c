@@ -378,7 +378,7 @@ FtwReclaimWorkSpace (
   // Read all original data from working block to a memory buffer
   //
   TempBufferSize = FtwDevice->NumberOfWorkBlock * FtwDevice->WorkBlockSize;
-  TempBuffer     = AllocateZeroPool (TempBufferSize);
+  TempBuffer     = AllocateZeroPool(TempBufferSize);
   if (TempBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

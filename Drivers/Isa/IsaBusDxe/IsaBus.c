@@ -589,7 +589,7 @@ IsaCreateDevice (
   //
   // Initialize the PCI_IO_DEVICE structure
   //
-  IsaIoDevice = AllocateZeroPool (sizeof (ISA_IO_DEVICE));
+  IsaIoDevice = AllocateZeroPool(sizeof (ISA_IO_DEVICE));
   if (IsaIoDevice == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

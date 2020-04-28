@@ -49,7 +49,7 @@ InitializeAcpiTableDxe (
   //
   // Initialize our protocol
   //
-  PrivateData = AllocateZeroPool (sizeof (EFI_ACPI_TABLE_INSTANCE));
+  PrivateData = AllocateZeroPool(sizeof (EFI_ACPI_TABLE_INSTANCE));
  // ASSERT (PrivateData);
   if (!PrivateData) {
     return EFI_OUT_OF_RESOURCES;

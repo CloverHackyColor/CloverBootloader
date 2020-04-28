@@ -1092,7 +1092,7 @@ SmmPeriodicSmiLibConstructor (
   //
   // Allocate a buffer for the table of supported periodic SMI tick periods.
   //
-  gSmiTickPeriodTable = AllocateZeroPool (Count * sizeof (UINT64));
+  gSmiTickPeriodTable = AllocateZeroPool(Count * sizeof (UINT64));
   ASSERT (gSmiTickPeriodTable != NULL);
 
   //

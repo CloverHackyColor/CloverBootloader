@@ -90,7 +90,7 @@ UiAddMenuList (
 {
   FORM_ENTRY_INFO  *MenuList;
 
-  MenuList = AllocateZeroPool (sizeof (FORM_ENTRY_INFO));
+  MenuList = AllocateZeroPool(sizeof (FORM_ENTRY_INFO));
   if (MenuList == NULL) {
     return NULL;
   }
@@ -304,7 +304,7 @@ UiCopyMenuList (
     MenuList = FORM_ENTRY_INFO_FROM_LINK (Link);
     Link = GetNextNode (CurrentMenuListHead, Link);
 
-    NewMenuEntry = AllocateZeroPool (sizeof (FORM_ENTRY_INFO));
+    NewMenuEntry = AllocateZeroPool(sizeof (FORM_ENTRY_INFO));
     ASSERT (NewMenuEntry != NULL);
     NewMenuEntry->Signature  = FORM_ENTRY_INFO_SIGNATURE;
     NewMenuEntry->HiiHandle  = MenuList->HiiHandle;
@@ -354,7 +354,7 @@ LoadAllHiiFormset (
     //
     // Initilize FormSet Setting
     //
-    LocalFormSet = AllocateZeroPool (sizeof (FORM_BROWSER_FORMSET));
+    LocalFormSet = AllocateZeroPool(sizeof (FORM_BROWSER_FORMSET));
     ASSERT (LocalFormSet != NULL);
     mSystemLevelFormSet = LocalFormSet;
 
@@ -407,7 +407,7 @@ PopupErrorMessage (
   Statement = NULL;
 
   if (OpCode != NULL) {
-    Statement = AllocateZeroPool (sizeof(FORM_DISPLAY_ENGINE_STATEMENT));
+    Statement = AllocateZeroPool(sizeof(FORM_DISPLAY_ENGINE_STATEMENT));
     ASSERT (Statement != NULL);
     Statement->OpCode = OpCode;
     gDisplayFormData.HighLightedStatement = Statement;
@@ -502,7 +502,7 @@ SendForm (
   gDisplayFormData.ScreenDimensions = (EFI_SCREEN_DESCRIPTOR *) ScreenDimensions;
 
   for (Index = 0; Index < HandleCount; Index++) {
-    Selection = AllocateZeroPool (sizeof (UI_MENU_SELECTION));
+    Selection = AllocateZeroPool(sizeof (UI_MENU_SELECTION));
     ASSERT (Selection != NULL);
 
     Selection->Handle = Handles[Index];
@@ -514,7 +514,7 @@ SendForm (
     }
 
     do {
-      FormSet = AllocateZeroPool (sizeof (FORM_BROWSER_FORMSET));
+      FormSet = AllocateZeroPool(sizeof (FORM_BROWSER_FORMSET));
       ASSERT (FormSet != NULL);
 
       //
@@ -669,7 +669,7 @@ ProcessStorage (
     TmpSize = StrLen (*ResultsData);
     BufferSize = (TmpSize + StrLen (BrowserStorage->ConfigHdr) + 2) * sizeof (CHAR16);
     MaxLen = BufferSize / sizeof (CHAR16);
-    ConfigResp = AllocateZeroPool (BufferSize);
+    ConfigResp = AllocateZeroPool(BufferSize);
     ASSERT (ConfigResp != NULL);
 
     StrCpyS (ConfigResp, MaxLen, BrowserStorage->ConfigHdr);
@@ -1083,7 +1083,7 @@ NewStringCat (
   }
 
   MaxLen = ( StrSize (*Dest) + StrSize (Src) - 1) / sizeof (CHAR16);
-  NewString = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+  NewString = AllocateZeroPool(MaxLen * sizeof (CHAR16));
   ASSERT (NewString != NULL);
 
   StrCpyS (NewString, MaxLen, *Dest);
@@ -1479,7 +1479,7 @@ BufferToValue (
     // Other type of Questions
     //
     if (Question->QuestionReferToBitField) {
-      Buffer = (UINT8 *)AllocateZeroPool (Question->StorageWidth);
+      Buffer = (UINT8 *)AllocateZeroPool(Question->StorageWidth);
       if (Buffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -1798,7 +1798,7 @@ GetQuestionValue (
     }
     // Allocate buffer include '\0'
     MaxLen = Length + 1;
-    ConfigRequest = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+    ConfigRequest = AllocateZeroPool(MaxLen * sizeof (CHAR16));
     ASSERT (ConfigRequest != NULL);
 
     StrCpyS (ConfigRequest, MaxLen, FormsetStorage->ConfigHdr);
@@ -2060,7 +2060,7 @@ SetQuestionValue (
         //
         Value = NULL;
         BufferLen = ((StrLen ((CHAR16 *) Src) * 4) + 1) * sizeof (CHAR16);
-        Value = AllocateZeroPool (BufferLen);
+        Value = AllocateZeroPool(BufferLen);
         ASSERT (Value != NULL);
         //
         // Convert Unicode String to Config String, e.g. "ABCD" => "0041004200430044"
@@ -2079,7 +2079,7 @@ SetQuestionValue (
         }
       } else {
         BufferLen = StorageWidth * 2 + 1;
-        Value = AllocateZeroPool (BufferLen * sizeof (CHAR16));
+        Value = AllocateZeroPool(BufferLen * sizeof (CHAR16));
         ASSERT (Value != NULL);
         //
         // Convert Buffer to Hex String
@@ -2122,7 +2122,7 @@ SetQuestionValue (
     FormsetStorage = GetFstStgFromVarId(FormSet, Question->VarStoreId);
     ASSERT (FormsetStorage != NULL);
     MaxLen = StrLen (FormsetStorage->ConfigHdr) + Length + 1;
-    ConfigResp = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+    ConfigResp = AllocateZeroPool(MaxLen * sizeof (CHAR16));
     ASSERT (ConfigResp != NULL);
 
     StrCpyS (ConfigResp, MaxLen, FormsetStorage->ConfigHdr);
@@ -3056,7 +3056,7 @@ GetSyncRestoreConfigRequest(
   //
   RestoreEleSize = StrSize (ElementStr);
   TotalSize = (ConfigHdrEndStr - ConfigRequest) * sizeof (CHAR16) + RestoreEleSize + sizeof (CHAR16);
-  *RestoreConfigRequest = AllocateZeroPool (TotalSize);
+  *RestoreConfigRequest = AllocateZeroPool(TotalSize);
   ASSERT (*RestoreConfigRequest != NULL);
   StrnCpyS (*RestoreConfigRequest, TotalSize / sizeof (CHAR16), ConfigRequest, ConfigHdrEndStr - ConfigRequest);
   StrCatS (*RestoreConfigRequest, TotalSize / sizeof (CHAR16), ElementStr);
@@ -3064,7 +3064,7 @@ GetSyncRestoreConfigRequest(
   // To get the SyncConfigRequest.
   //
   SyncSize = StrSize (ConfigRequest) - RestoreEleSize + sizeof (CHAR16);
-  *SyncConfigRequest = AllocateZeroPool (SyncSize);
+  *SyncConfigRequest = AllocateZeroPool(SyncSize);
   ASSERT (*SyncConfigRequest != NULL);
   StrnCpyS (*SyncConfigRequest, SyncSize / sizeof (CHAR16), ConfigRequest, SyncSize / sizeof (CHAR16) - 1);
 
@@ -3099,7 +3099,7 @@ ConfirmSaveFail (
 
   FormTitle = GetToken (TitleId, HiiHandle);
 
-  StringBuffer = AllocateZeroPool (256 * sizeof (CHAR16));
+  StringBuffer = AllocateZeroPool(256 * sizeof (CHAR16));
   ASSERT (StringBuffer != NULL);
 
   UnicodeSPrint (
@@ -3138,7 +3138,7 @@ ConfirmNoSubmitFail (
 
   FormTitle = GetToken (TitleId, HiiHandle);
 
-  StringBuffer = AllocateZeroPool (256 * sizeof (CHAR16));
+  StringBuffer = AllocateZeroPool(256 * sizeof (CHAR16));
   ASSERT (StringBuffer != NULL);
 
   UnicodeSPrint (
@@ -5359,7 +5359,7 @@ AppendConfigRequest (
     // Old String buffer is not sufficient for RequestElement, allocate a new one
     //
     MaxLen = StringSize / sizeof (CHAR16) + CONFIG_REQUEST_STRING_INCREMENTAL;
-    NewStr = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+    NewStr = AllocateZeroPool(MaxLen * sizeof (CHAR16));
     ASSERT (NewStr != NULL);
 
     if (*ConfigRequest != NULL) {
@@ -5560,7 +5560,7 @@ LoadStorage (
     // followed by "&OFFSET=0&WIDTH=WWWW"followed by a Null-terminator
     //
     StrLen = StrSize (Storage->ConfigHdr) + 20 * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (StrLen);
+    ConfigRequest = AllocateZeroPool(StrLen);
     ASSERT (ConfigRequest != NULL);
     UnicodeSPrint (
                ConfigRequest,
@@ -6408,7 +6408,7 @@ RegisterHotKey (
   //
   // Create new Key, and add it into List.
   //
-  HotKey = AllocateZeroPool (sizeof (BROWSER_HOT_KEY));
+  HotKey = AllocateZeroPool(sizeof (BROWSER_HOT_KEY));
   ASSERT (HotKey != NULL);
   HotKey->Signature = BROWSER_HOT_KEY_SIGNATURE;
   HotKey->KeyData   = AllocateCopyPool(sizeof (EFI_INPUT_KEY), KeyData);

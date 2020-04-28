@@ -697,7 +697,7 @@ CreateChildNode (
   //
   // Allocate a new node
   //
-  *ChildNode = AllocateZeroPool (sizeof (CORE_SECTION_CHILD_NODE));
+  *ChildNode = AllocateZeroPool(sizeof (CORE_SECTION_CHILD_NODE));
   Node = *ChildNode;
   if (Node == NULL) {
     return EFI_OUT_OF_RESOURCES;

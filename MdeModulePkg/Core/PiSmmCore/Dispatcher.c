@@ -1196,7 +1196,7 @@ SmmAddToDriverList (
   // Create the Driver Entry for the list. ZeroPool initializes lots of variables to
   // NULL or FALSE.
   //
-  DriverEntry = AllocateZeroPool (sizeof (EFI_SMM_DRIVER_ENTRY));
+  DriverEntry = AllocateZeroPool(sizeof (EFI_SMM_DRIVER_ENTRY));
   ASSERT (DriverEntry != NULL);
 
   DriverEntry->Signature        = EFI_SMM_DRIVER_ENTRY_SIGNATURE;

@@ -138,7 +138,7 @@ Var_ChangeBootOrder (
   BootOrderListSize = BootOptionMenu.MenuNumber;
 
   if (BootOrderListSize > 0) {
-    BootOrderList = AllocateZeroPool (BootOrderListSize * sizeof (UINT16));
+    BootOrderList = AllocateZeroPool(BootOrderListSize * sizeof (UINT16));
 //    ASSERT (BootOrderList != NULL);
     BootOrderListPtr = BootOrderList;
 
@@ -276,7 +276,7 @@ Var_ChangeDriverOrder (
   DriverOrderListSize = DriverOptionMenu.MenuNumber;
 
   if (DriverOrderListSize > 0) {
-    DriverOrderList = AllocateZeroPool (DriverOrderListSize * sizeof (UINT16));
+    DriverOrderList = AllocateZeroPool(DriverOrderListSize * sizeof (UINT16));
     ASSERT (DriverOrderList != NULL);
     DriverOrderListPtr = DriverOrderList;
 
@@ -583,7 +583,7 @@ Var_UpdateDriverOption (
     BufferSize += StrSize (OptionalData);
   }
 
-  Buffer = AllocateZeroPool (BufferSize);
+  Buffer = AllocateZeroPool(BufferSize);
   if (NULL == Buffer) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -615,7 +615,7 @@ Var_UpdateDriverOption (
     StrSize (DescriptionData)
     );
 
-  NewLoadContext->Description = AllocateZeroPool (StrSize (DescriptionData));
+  NewLoadContext->Description = AllocateZeroPool(StrSize (DescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
   NewMenuEntry->DisplayString = NewLoadContext->Description;
   CopyMem (
@@ -631,7 +631,7 @@ Var_UpdateDriverOption (
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
     );
 
-  NewLoadContext->FilePathList = AllocateZeroPool (GetDevicePathSize (CallbackData->LoadContext->FilePathList));
+  NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
 
   CopyMem (
@@ -677,7 +677,7 @@ Var_UpdateDriverOption (
                       &gEfiGlobalVariableGuid,
                       &DriverOrderListSize
                       );
-  NewDriverOrderList = AllocateZeroPool (DriverOrderListSize + sizeof (UINT16));
+  NewDriverOrderList = AllocateZeroPool(DriverOrderListSize + sizeof (UINT16));
   ASSERT (NewDriverOrderList != NULL);
   if (DriverOrderList != NULL) {
     CopyMem (NewDriverOrderList, DriverOrderList, DriverOrderListSize);
@@ -767,7 +767,7 @@ Var_UpdateBootOption (
     BufferSize += StrSize (NvRamMap->BootOptionalData);
   }
 
-  Buffer = AllocateZeroPool (BufferSize);
+  Buffer = AllocateZeroPool(BufferSize);
   if (NULL == Buffer) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -799,7 +799,7 @@ Var_UpdateBootOption (
     StrSize (NvRamMap->BootDescriptionData)
     );
 
-  NewLoadContext->Description = AllocateZeroPool (StrSize (NvRamMap->BootDescriptionData));
+  NewLoadContext->Description = AllocateZeroPool(StrSize (NvRamMap->BootDescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
 
   NewMenuEntry->DisplayString = NewLoadContext->Description;
@@ -816,7 +816,7 @@ Var_UpdateBootOption (
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
     );
 
-  NewLoadContext->FilePathList = AllocateZeroPool (GetDevicePathSize (CallbackData->LoadContext->FilePathList));
+  NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
 
   CopyMem (
@@ -861,7 +861,7 @@ Var_UpdateBootOption (
                     );
 //  ASSERT (BootOrderList != NULL);
 if (BootOrderList != NULL) {
-  NewBootOrderList = AllocateZeroPool (BootOrderListSize + sizeof (UINT16));
+  NewBootOrderList = AllocateZeroPool(BootOrderListSize + sizeof (UINT16));
 //  ASSERT (NewBootOrderList != NULL);
   if (NewBootOrderList != NULL) {
   CopyMem (NewBootOrderList, BootOrderList, BootOrderListSize);
@@ -1064,7 +1064,7 @@ Var_UpdateDriverOrder (
                       &DriverOrderListSize
                       );
 
-  NewDriverOrderList = AllocateZeroPool (DriverOrderListSize);
+  NewDriverOrderList = AllocateZeroPool(DriverOrderListSize);
 
   if (NewDriverOrderList == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1209,7 +1209,7 @@ Var_UpdateBBSOption (
     return EFI_NOT_FOUND;
   }
 
-  NewOrder = AllocateZeroPool (DevOrder->Length - sizeof (DevOrder->Length));
+  NewOrder = AllocateZeroPool(DevOrder->Length - sizeof (DevOrder->Length));
   if (NewOrder == NULL) {
     FreePool(OriginalPtr);
     return EFI_OUT_OF_RESOURCES;

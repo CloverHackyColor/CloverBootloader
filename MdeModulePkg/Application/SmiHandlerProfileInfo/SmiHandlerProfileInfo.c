@@ -136,7 +136,7 @@ GetSmiHandlerProfileDatabase(
   mSmiHandlerProfileDatabase = AllocateZeroPool(mSmiHandlerProfileDatabaseSize);
   if (mSmiHandlerProfileDatabase == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
-    Print(L"SmiHandlerProfile: AllocateZeroPool (0x%x) for dump buffer - %r\n", mSmiHandlerProfileDatabaseSize, Status);
+    Print(L"SmiHandlerProfile: AllocateZeroPool(0x%x) for dump buffer - %r\n", mSmiHandlerProfileDatabaseSize, Status);
     return ;
   }
 

@@ -104,7 +104,7 @@ HstiAipSetInfo (
   HstiAip = HSTI_AIP_PRIVATE_DATA_FROM_THIS(This);
 
   if (InformationBlockSize > HstiAip->HstiMaxSize) {
-    NewHsti = AllocateZeroPool (InformationBlockSize);
+    NewHsti = AllocateZeroPool(InformationBlockSize);
     if (NewHsti == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

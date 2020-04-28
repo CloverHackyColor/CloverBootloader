@@ -1435,7 +1435,7 @@ UhciAllocateDev (
   USB_HC_DEV  *Uhc;
   EFI_STATUS  Status;
 
-  Uhc = AllocateZeroPool (sizeof (USB_HC_DEV));
+  Uhc = AllocateZeroPool(sizeof (USB_HC_DEV));
 
   if (Uhc == NULL) {
     return NULL;

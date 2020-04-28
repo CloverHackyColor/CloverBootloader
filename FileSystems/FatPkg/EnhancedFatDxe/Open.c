@@ -51,7 +51,7 @@ Returns:
   //
   // Allocate a new open instance
   //
-  IFile = AllocateZeroPool (sizeof (FAT_IFILE));
+  IFile = AllocateZeroPool(sizeof (FAT_IFILE));
   if (IFile == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

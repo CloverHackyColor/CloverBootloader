@@ -102,12 +102,12 @@ UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure
   const char* Names = (const char*)(&kernel[LinkSeg->AddrNames]);
   VTABLE * vArray = (VTABLE*)(&kernel[AddrVtable]);
   //search for the name
-  UINTN nameLen = strlen(procedure);
+//  UINTN nameLen = strlen(procedure);
   size_t i;
   bool found = false;
   for (i=0; i<SizeVtable; ++i) {
     size_t Offset = vArray[i].NameOffset;
-    if (CompareMem(&Names[Offset], procedure, nameLen) == 0) {
+    if (AsciiStrStr(&Names[Offset], procedure) != NULL) {  //if (CompareMem(&Names[Offset], procedure, nameLen) == 0) {
       found = true;
       break;
     }
@@ -116,6 +116,9 @@ UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure
     return 0;
   }
   UINT64 procAddr = vArray[i].ProcAddr - Absolut;
+  if (vArray[i].Attr == 0x1a0f) {
+    procAddr += 0x9e000;
+  }
   UINT64 prevAddr;
   if (i == 0) {
     prevAddr = Absolut;

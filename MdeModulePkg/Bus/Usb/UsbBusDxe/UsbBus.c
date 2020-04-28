@@ -780,7 +780,7 @@ UsbIoGetStringDescriptor (
     goto FREE_STR;
   }
 
-  Buf = AllocateZeroPool (StrDesc->Length);
+  Buf = AllocateZeroPool(StrDesc->Length);
 
   if (Buf == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
@@ -914,7 +914,7 @@ UsbBusBuildProtocol (
   EFI_STATUS              Status;
   EFI_STATUS              Status2;
 
-  UsbBus = AllocateZeroPool (sizeof (USB_BUS));
+  UsbBus = AllocateZeroPool(sizeof (USB_BUS));
 
   if (UsbBus == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1008,14 +1008,14 @@ UsbBusBuildProtocol (
   //
   // Create a fake usb device for root hub
   //
-  RootHub = AllocateZeroPool (sizeof (USB_DEVICE));
+  RootHub = AllocateZeroPool(sizeof (USB_DEVICE));
 
   if (RootHub == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto UNINSTALL_USBBUS;
   }
 
-  RootIf = AllocateZeroPool (sizeof (USB_INTERFACE));
+  RootIf = AllocateZeroPool(sizeof (USB_INTERFACE));
 
   if (RootIf == NULL) {
     FreePool(RootHub);

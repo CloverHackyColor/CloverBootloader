@@ -118,7 +118,7 @@ ReadFileToBuffer (
   }
 
   TempBufferSize = (UINTN) FileSize;
-  TempBuffer = AllocateZeroPool (TempBufferSize);
+  TempBuffer = AllocateZeroPool(TempBufferSize);
   if (TempBuffer == NULL) {
     ShellProtocol->CloseFile (Handle);
     return EFI_OUT_OF_RESOURCES;

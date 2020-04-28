@@ -1147,7 +1147,7 @@ ScsiScanCreateDevice (
     goto ErrorExit;
   }
 
-  ScsiIoDevice = AllocateZeroPool (sizeof (SCSI_IO_DEV));
+  ScsiIoDevice = AllocateZeroPool(sizeof (SCSI_IO_DEV));
   if (ScsiIoDevice == NULL) {
 	  DBG(L"AllocateZeroPool Status=%r\n", Status);
     Status = EFI_OUT_OF_RESOURCES;

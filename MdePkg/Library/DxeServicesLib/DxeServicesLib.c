@@ -1065,7 +1065,7 @@ Done:
     if (EFI_ERROR(Status)) {
       *FvFileDevicePath = NULL;
     } else {
-      TempFvFileDevicePath = AllocateZeroPool (sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH) + END_DEVICE_PATH_LENGTH);
+      TempFvFileDevicePath = AllocateZeroPool(sizeof (MEDIA_FW_VOL_FILEPATH_DEVICE_PATH) + END_DEVICE_PATH_LENGTH);
       if (TempFvFileDevicePath == NULL) {
         *FvFileDevicePath = NULL;
         return EFI_OUT_OF_RESOURCES;

@@ -465,7 +465,7 @@ Returns:
     //
     // This is a valid directory entry
     //
-    DirEnt = AllocateZeroPool (sizeof (FAT_DIRENT));
+    DirEnt = AllocateZeroPool(sizeof (FAT_DIRENT));
     if (DirEnt == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1197,7 +1197,7 @@ Returns:
     return EFI_NOT_FOUND;
   }
   ODir = OFile->ODir;
-  DirEnt = AllocateZeroPool (sizeof (FAT_DIRENT));
+  DirEnt = AllocateZeroPool(sizeof (FAT_DIRENT));
   if (DirEnt == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1307,7 +1307,7 @@ Returns:
     //
     // Open the directory entry
     //
-    OFile = AllocateZeroPool (sizeof (FAT_OFILE));
+    OFile = AllocateZeroPool(sizeof (FAT_OFILE));
     if (OFile == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

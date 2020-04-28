@@ -129,7 +129,7 @@ AppendArgumentToCommandLine (
   IN     CONST UINTN  ArgumentLength
   )
 {
-  UINTN Len = AsciiStrLen (CommandLine);
+  UINTN Len = AsciiStrLen(CommandLine);
 
   //
   // Account for extra space.

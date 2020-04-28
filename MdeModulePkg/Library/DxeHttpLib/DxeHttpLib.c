@@ -380,7 +380,7 @@ HttpParseUrl (
     return EFI_INVALID_PARAMETER;
   }
 
-  Parser = AllocateZeroPool (sizeof (HTTP_URL_PARSER));
+  Parser = AllocateZeroPool(sizeof (HTTP_URL_PARSER));
   if (Parser == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1081,7 +1081,7 @@ HttpInitMsgParser (
     return EFI_INVALID_PARAMETER;
   }
 
-  Parser = AllocateZeroPool (sizeof (HTTP_BODY_PARSER));
+  Parser = AllocateZeroPool(sizeof (HTTP_BODY_PARSER));
   if (Parser == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1532,7 +1532,7 @@ HttpSetFieldNameAndValue (
   }
 
   FieldNameSize = AsciiStrSize (FieldName);
-  HttpHeader->FieldName = AllocateZeroPool (FieldNameSize);
+  HttpHeader->FieldName = AllocateZeroPool(FieldNameSize);
   if (HttpHeader->FieldName == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1540,7 +1540,7 @@ HttpSetFieldNameAndValue (
   HttpHeader->FieldName[FieldNameSize - 1] = 0;
 
   FieldValueSize = AsciiStrSize (FieldValue);
-  HttpHeader->FieldValue = AllocateZeroPool (FieldValueSize);
+  HttpHeader->FieldValue = AllocateZeroPool(FieldValueSize);
   if (HttpHeader->FieldValue == NULL) {
     FreePool(HttpHeader->FieldName);
     return EFI_OUT_OF_RESOURCES;
@@ -1781,7 +1781,7 @@ HttpGenRequestMessage (
     //
     // Build AppendList to send into HttpUtilitiesBuild
     //
-    AppendList = AllocateZeroPool (sizeof (EFI_HTTP_HEADER *) * (Message->HeaderCount));
+    AppendList = AllocateZeroPool(sizeof (EFI_HTTP_HEADER *) * (Message->HeaderCount));
     if (AppendList == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1823,7 +1823,7 @@ HttpGenRequestMessage (
   // If we have a request line, account for the fields.
   //
   if (Message->Data.Request != NULL) {
-    MsgSize += HTTP_METHOD_MAXIMUM_LEN + AsciiStrLen (HTTP_VERSION_CRLF_STR) + AsciiStrLen (Url);
+    MsgSize += HTTP_METHOD_MAXIMUM_LEN + AsciiStrLen(HTTP_VERSION_CRLF_STR) + AsciiStrLen(Url);
   }
 
 
@@ -1836,7 +1836,7 @@ HttpGenRequestMessage (
   // memory for the string that needs to be sent to TCP
   //
   *RequestMsg = NULL;
-  *RequestMsg = AllocateZeroPool (MsgSize);
+  *RequestMsg = AllocateZeroPool(MsgSize);
   if (*RequestMsg == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
@@ -1888,7 +1888,7 @@ HttpGenRequestMessage (
     CopyMem (RequestPtr, EMPTY_SPACE, StrLength);
     RequestPtr += StrLength;
 
-    StrLength = AsciiStrLen (Url);
+    StrLength = AsciiStrLen(Url);
     CopyMem (RequestPtr, Url, StrLength);
     RequestPtr += StrLength;
 

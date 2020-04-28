@@ -505,7 +505,7 @@ AcpiPlatformEntryPoint (
   EFI_FILE_SYSTEM_INFO  **mFsInfo = NULL;
 
   gBS->LocateHandleBuffer (ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &mFsCount, &mFs);
-  mFsInfo = AllocateZeroPool (mFsCount * sizeof (EFI_FILE_SYSTEM_INFO *));
+  mFsInfo = AllocateZeroPool(mFsCount * sizeof (EFI_FILE_SYSTEM_INFO *));
   if (mFsInfo == NULL) {
     // If we can't do this then we can't support file system entries
     mFsCount = 0;

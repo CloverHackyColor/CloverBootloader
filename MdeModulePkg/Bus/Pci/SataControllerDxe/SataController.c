@@ -385,7 +385,7 @@ SataControllerStart (
   //
   // Allocate Sata Private Data structure
   //
-  Private = AllocateZeroPool (sizeof (EFI_SATA_CONTROLLER_PRIVATE_DATA));
+  Private = AllocateZeroPool(sizeof (EFI_SATA_CONTROLLER_PRIVATE_DATA));
   if (Private == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -499,19 +499,19 @@ SataControllerStart (
   }
 
   TotalCount = (UINTN) (Private->IdeInit.ChannelCount) * (UINTN) (Private->DeviceCount);
-  Private->DisqualifiedModes = AllocateZeroPool ((sizeof (EFI_ATA_COLLECTIVE_MODE)) * TotalCount);
+  Private->DisqualifiedModes = AllocateZeroPool((sizeof (EFI_ATA_COLLECTIVE_MODE)) * TotalCount);
   if (Private->DisqualifiedModes == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  Private->IdentifyData = AllocateZeroPool ((sizeof (EFI_IDENTIFY_DATA)) * TotalCount);
+  Private->IdentifyData = AllocateZeroPool((sizeof (EFI_IDENTIFY_DATA)) * TotalCount);
   if (Private->IdentifyData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
 
-  Private->IdentifyValid = AllocateZeroPool ((sizeof (BOOLEAN)) * TotalCount);
+  Private->IdentifyValid = AllocateZeroPool((sizeof (BOOLEAN)) * TotalCount);
   if (Private->IdentifyValid == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -1016,7 +1016,7 @@ IdeInitCalculateMode (
     return EFI_INVALID_PARAMETER;
   }
 
-  *SupportedModes = AllocateZeroPool (sizeof (EFI_ATA_COLLECTIVE_MODE));
+  *SupportedModes = AllocateZeroPool(sizeof (EFI_ATA_COLLECTIVE_MODE));
   if (*SupportedModes == NULL) {
     ASSERT (*SupportedModes != NULL);
     return EFI_OUT_OF_RESOURCES;

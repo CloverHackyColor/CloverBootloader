@@ -205,7 +205,7 @@ UsbCreateDesc (
     return NULL;
   }
 
-  Desc = AllocateZeroPool ((UINTN) CtrlLen);
+  Desc = AllocateZeroPool((UINTN) CtrlLen);
   if (Desc == NULL) {
     return NULL;
   }
@@ -264,7 +264,7 @@ UsbParseInterfaceDesc (
     goto ON_EXIT;
   }
 
-  Setting->Endpoints  = AllocateZeroPool (sizeof (USB_ENDPOINT_DESC *) * NumEp);
+  Setting->Endpoints  = AllocateZeroPool(sizeof (USB_ENDPOINT_DESC *) * NumEp);
 
   if (Setting->Endpoints == NULL) {
     goto ON_ERROR;
@@ -330,7 +330,7 @@ UsbParseConfigDesc (
   // Initialize an array of setting for the configuration's interfaces.
   //
   NumIf               = Config->Desc.NumInterfaces;
-  Config->Interfaces  = AllocateZeroPool (sizeof (USB_INTERFACE_DESC *) * NumIf);
+  Config->Interfaces  = AllocateZeroPool(sizeof (USB_INTERFACE_DESC *) * NumIf);
 
   if (Config->Interfaces == NULL) {
     goto ON_ERROR;
@@ -340,7 +340,7 @@ UsbParseConfigDesc (
                 Config->Desc.ConfigurationValue, (UINT32)NumIf));
 
   for (Index = 0; Index < NumIf; Index++) {
-    Interface = AllocateZeroPool (sizeof (USB_INTERFACE_DESC));
+    Interface = AllocateZeroPool(sizeof (USB_INTERFACE_DESC));
 
     if (Interface == NULL) {
       goto ON_ERROR;
@@ -574,7 +574,7 @@ UsbGetDevDesc (
   USB_DEVICE_DESC         *DevDesc;
   EFI_STATUS              Status;
 
-  DevDesc = AllocateZeroPool (sizeof (USB_DEVICE_DESC));
+  DevDesc = AllocateZeroPool(sizeof (USB_DEVICE_DESC));
 
   if (DevDesc == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -631,7 +631,7 @@ UsbGetOneString (
     return NULL;
   }
 
-  Buf = AllocateZeroPool (Desc.Length);
+  Buf = AllocateZeroPool(Desc.Length);
 
   if (Buf == NULL) {
     return NULL;
@@ -744,7 +744,7 @@ UsbGetOneConfig (
 
   DEBUG (( EFI_D_INFO, "UsbGetOneConfig: total length is %d\n", Desc.TotalLength));
 
-  Buf = AllocateZeroPool (Desc.TotalLength);
+  Buf = AllocateZeroPool(Desc.TotalLength);
 
   if (Buf == NULL) {
     return NULL;
@@ -803,7 +803,7 @@ UsbBuildDescTable (
     return EFI_DEVICE_ERROR;
   }
 
-  DevDesc->Configs = AllocateZeroPool (NumConfig * sizeof (USB_CONFIG_DESC *));
+  DevDesc->Configs = AllocateZeroPool(NumConfig * sizeof (USB_CONFIG_DESC *));
   if (DevDesc->Configs == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
