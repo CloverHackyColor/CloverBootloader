@@ -1311,8 +1311,8 @@ VOID ScanLoader(VOID)
           LoaderTitle.upperAscii();
           LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
-          // load from directory, as we don't have linux icons preloaded
-          ImageX = ThemeX.LoadOSIcon(OSIconName);
+          // Very few linux icons exist in IconNames, but these few may be preloaded
+          ImageX = ThemeX.LoadOSIcon(OSIconName); // this tries preloaded first, and if it doesn't exist loads from directory
           AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries
