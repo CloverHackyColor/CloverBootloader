@@ -1334,6 +1334,13 @@ final class SettingsViewController:
     self.downloadTask?.resume()
   }
   
+  func cleanUpdateDirectory() {
+    let tempDir = "/tmp/CloverXXXXX\(NSUserName())Update"
+    if fm.fileExists(atPath: tempDir) {
+      try? fm.removeItem(atPath: tempDir)
+    }
+  }
+  
   func urlSession(_ session: URLSession,
                   downloadTask: URLSessionDownloadTask,
                   didFinishDownloadingTo location: URL) {
@@ -1385,6 +1392,8 @@ final class SettingsViewController:
             task.terminationHandler = { t in
               if t.terminationStatus == 0 {
                 self.replaceCloverV2(with: tempDir.addPath("CloverV2"))
+              } else {
+                self.cleanUpdateDirectory()
               }
             }
             
@@ -1408,6 +1417,7 @@ final class SettingsViewController:
     }
     if (error != nil) {
       print(error!.localizedDescription)
+      self.cleanUpdateDirectory()
     }
   }
   
@@ -1459,6 +1469,8 @@ final class SettingsViewController:
             try fm.removeItem(atPath: Cloverv2Path)
           }
           try fm.copyItem(atPath: newOne, toPath: Cloverv2Path)
+          self.cleanUpdateDirectory()
+          
           DispatchQueue.main.async {
             self.lastReleaseRev = nil
             self.lastReleaseLink = nil
@@ -1486,6 +1498,7 @@ final class SettingsViewController:
       }
       try fm.createDirectory(atPath: new, withIntermediateDirectories: false, attributes: nil)
       try fm.copyItem(atPath: path, toPath: new.addPath(path.lastPath))
+      self.cleanUpdateDirectory()
       DispatchQueue.main.async {
         self.lastReleaseRev = nil
         self.lastReleaseLink = nil
