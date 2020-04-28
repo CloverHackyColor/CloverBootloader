@@ -1305,14 +1305,17 @@ VOID ScanLoader(VOID)
               break;
             }
           }
-          XStringW OSIconName = OSName + L",linux"_XSW;
-          DBG("  found entry %ls\n", OSIconName.wc_str());
+          DBG("  found entry %ls,linux\n", OSName.wc_str());
           XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
           LoaderTitle.upperAscii();
           LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
-          // Very few linux icons exist in IconNames, but these few may be preloaded
-          ImageX = ThemeX.LoadOSIcon(OSIconName); // this tries preloaded first, and if it doesn't exist loads from directory
+          // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
+          ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName);
+          if (ImageX.isEmpty()) {
+            // no preloaded icon, try to load from dir
+            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
+          }
           AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries
