@@ -171,7 +171,7 @@ DebugPrintMarker (
     //
     // Send the print string to EFI_DEBUGPORT_PROTOCOL.Write.
     //
-    UefiDebugLibDebugPortProtocolWrite (Buffer, AsciiStrLen (Buffer));
+    UefiDebugLibDebugPortProtocolWrite (Buffer, AsciiStrLen(Buffer));
   }
 }
 
@@ -282,7 +282,7 @@ DebugAssert (
     //
     // Send the print string to EFI_DEBUGPORT_PROTOCOL.Write.
     //
-    UefiDebugLibDebugPortProtocolWrite (Buffer, AsciiStrLen (Buffer));
+    UefiDebugLibDebugPortProtocolWrite (Buffer, AsciiStrLen(Buffer));
 
     //
     // Generate a Breakpoint, DeadLoop, or NOP based on PCD settings

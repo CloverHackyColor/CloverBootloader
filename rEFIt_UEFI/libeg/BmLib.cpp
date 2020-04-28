@@ -114,7 +114,7 @@ EfiLibFileSystemVolumeLabelInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    VolumeInfo = (__typeof__(VolumeInfo))AllocateZeroPool (Size);
+    VolumeInfo = (__typeof__(VolumeInfo))AllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
     // Check to make sure this isn't actually EFI_FILE_SYSTEM_INFO
     if (!EFI_ERROR(Status))
@@ -183,7 +183,7 @@ StriCmp (
 
 // If Null-terminated strings are case insensitive equal or its sSize symbols are equal then TRUE
 BOOLEAN
-AsciiStriNCmp (
+AsciiStriNCmp(
               IN      CONST CHAR8              *FirstS,
               IN      CONST CHAR8              *SecondS,
               IN      CONST UINTN               sSize
@@ -242,7 +242,7 @@ EfiLibFileInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    FileInfo = (__typeof__(FileInfo))AllocateZeroPool (Size);
+    FileInfo = (__typeof__(FileInfo))AllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   }
   
@@ -262,7 +262,7 @@ EfiLibFileSystemInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    FileSystemInfo = (__typeof__(FileSystemInfo))AllocateZeroPool (Size);
+    FileSystemInfo = (__typeof__(FileSystemInfo))AllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   }
   
@@ -319,7 +319,7 @@ EfiReallocatePool (
 
   NewPool = NULL;
   if (NewSize != 0) {
-    NewPool = (__typeof__(NewPool))AllocateZeroPool (NewSize);
+    NewPool = (__typeof__(NewPool))AllocateZeroPool(NewSize);
   }
 
   if (OldPool != NULL) {

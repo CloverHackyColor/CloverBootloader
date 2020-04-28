@@ -1649,7 +1649,7 @@ GetBestLanguage (
     // Default to ISO 639-2 mode
     //
     CompareLength  = 3;
-    LanguageLength = MIN (3, AsciiStrLen (Language));
+    LanguageLength = MIN (3, AsciiStrLen(Language));
 
     //
     // If in RFC 4646 mode, then determine the length of the first RFC 4646 language code in Language
@@ -1693,7 +1693,7 @@ GetBestLanguage (
           //
           // Allocate, copy, and return the best matching language code from SupportedLanguages
           //
-          BestLanguage = AllocateZeroPool (CompareLength + 1);
+          BestLanguage = AllocateZeroPool(CompareLength + 1);
           if (BestLanguage == NULL) {
             return NULL;
           }

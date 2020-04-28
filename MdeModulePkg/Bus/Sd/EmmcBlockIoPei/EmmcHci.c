@@ -1003,7 +1003,7 @@ EmmcPeimCreateTrb (
     return NULL;
   }
 
-  Trb = AllocateZeroPool (sizeof (EMMC_TRB));
+  Trb = AllocateZeroPool(sizeof (EMMC_TRB));
   if (Trb == NULL) {
     return NULL;
   }

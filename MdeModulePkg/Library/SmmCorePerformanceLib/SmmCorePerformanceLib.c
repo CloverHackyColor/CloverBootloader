@@ -465,7 +465,7 @@ CopyStringIntoPerfRecordAndUpdateLength (
       DestMax = STRING_SIZE;
     }
   }
-  StringLen = AsciiStrLen (Source);
+  StringLen = AsciiStrLen(Source);
   if (StringLen >= DestMax) {
     StringLen = DestMax -1;
   }
@@ -647,7 +647,7 @@ InsertFpdtRecord (
       return EFI_INVALID_PARAMETER;
     }
     StringPtr = String;
-    if (AsciiStrLen (String) == 0) {
+    if (AsciiStrLen(String) == 0) {
       StringPtr = "unknown name";
     }
     if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
@@ -675,7 +675,7 @@ InsertFpdtRecord (
     } else {
       StringPtr = ModuleName;
     }
-    if (AsciiStrLen (StringPtr) == 0) {
+    if (AsciiStrLen(StringPtr) == 0) {
       StringPtr = "unknown name";
     }
     if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
@@ -697,7 +697,7 @@ InsertFpdtRecord (
       } else {
         StringPtr = ModuleName;
       }
-      if (AsciiStrLen (StringPtr) == 0) {
+      if (AsciiStrLen(StringPtr) == 0) {
         StringPtr = "unknown name";
       }
       if (!PcdGetBool (PcdEdkiiFpdtStringRecordEnableOnly)) {
@@ -735,7 +735,7 @@ InsertFpdtRecord (
     } else {
       CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
     }
-    if (AsciiStrLen (StringPtr) == 0) {
+    if (AsciiStrLen(StringPtr) == 0) {
       StringPtr = "unknown name";
     }
     CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
@@ -747,7 +747,7 @@ InsertFpdtRecord (
       CachedFpdtRecordPtr.RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8*)mSmmBootPerformanceTable + mCachedLength);
       if (PerfId == MODULE_LOADIMAGE_END_ID) {
         DestMax = CachedFpdtRecordPtr.DynamicStringEvent->Header.Length - sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
-        StringLen = AsciiStrLen (StringPtr);
+        StringLen = AsciiStrLen(StringPtr);
         if (StringLen >= DestMax) {
           StringLen = DestMax -1;
         }
@@ -755,7 +755,7 @@ InsertFpdtRecord (
         AsciiStrnCpyS (CachedFpdtRecordPtr.DynamicStringEvent->String, DestMax, StringPtr, StringLen);
       } else if (PerfId == MODULE_END_ID) {
         DestMax = FpdtRecordPtr.DynamicStringEvent->Header.Length - sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
-        StringLen = AsciiStrLen (CachedFpdtRecordPtr.DynamicStringEvent->String);
+        StringLen = AsciiStrLen(CachedFpdtRecordPtr.DynamicStringEvent->String);
         if (StringLen >= DestMax) {
           StringLen = DestMax -1;
         }

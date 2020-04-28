@@ -206,7 +206,7 @@ ScsiDiskDriverBindingStart (
 
   MustReadCapacity = TRUE;
 
-  ScsiDiskDevice = (SCSI_DISK_DEV *) AllocateZeroPool (sizeof (SCSI_DISK_DEV));
+  ScsiDiskDevice = (SCSI_DISK_DEV *) AllocateZeroPool(sizeof (SCSI_DISK_DEV));
   if (ScsiDiskDevice == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -263,7 +263,7 @@ ScsiDiskDriverBindingStart (
   // The Sense Data Array's initial size is 6
   //
   ScsiDiskDevice->SenseDataNumber = 6;
-  ScsiDiskDevice->SenseData = (EFI_SCSI_SENSE_DATA *) AllocateZeroPool (
+  ScsiDiskDevice->SenseData = (EFI_SCSI_SENSE_DATA *) AllocateZeroPool(
                                  sizeof (EFI_SCSI_SENSE_DATA) * ScsiDiskDevice->SenseDataNumber
                                  );
   if (ScsiDiskDevice->SenseData == NULL) {
@@ -1420,13 +1420,13 @@ ScsiDiskUnmap (
     goto Done;
   }
 
-  EraseBlkReq = AllocateZeroPool (sizeof (SCSI_ERASEBLK_REQUEST));
+  EraseBlkReq = AllocateZeroPool(sizeof (SCSI_ERASEBLK_REQUEST));
   if (EraseBlkReq == NULL) {
     ReturnStatus = EFI_DEVICE_ERROR;
     goto Done;
   }
 
-  EraseBlkReq->CommandPacket.Cdb = AllocateZeroPool (0xA);
+  EraseBlkReq->CommandPacket.Cdb = AllocateZeroPool(0xA);
   if (EraseBlkReq->CommandPacket.Cdb == NULL) {
     ReturnStatus = EFI_DEVICE_ERROR;
     goto Done;
@@ -1435,7 +1435,7 @@ ScsiDiskUnmap (
   BlkDespCnt        = (UINT32) ((Blocks - 1) / MaxLbaCnt + 1);
   UnmapParamListLen = (UINT16) (sizeof (EFI_SCSI_DISK_UNMAP_PARAM_LIST_HEADER)
                       + BlkDespCnt * sizeof (EFI_SCSI_DISK_UNMAP_BLOCK_DESP));
-  UnmapParamList    = AllocateZeroPool (UnmapParamListLen);
+  UnmapParamList    = AllocateZeroPool(UnmapParamListLen);
   if (UnmapParamList == NULL) {
     ReturnStatus = EFI_DEVICE_ERROR;
     goto Done;
@@ -3194,7 +3194,7 @@ ScsiDiskAsyncReadSectors (
     return EFI_INVALID_PARAMETER;
   }
 
-  BlkIo2Req = AllocateZeroPool (sizeof (SCSI_BLKIO2_REQUEST));
+  BlkIo2Req = AllocateZeroPool(sizeof (SCSI_BLKIO2_REQUEST));
   if (BlkIo2Req == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -3411,7 +3411,7 @@ ScsiDiskAsyncWriteSectors (
     return EFI_INVALID_PARAMETER;
   }
 
-  BlkIo2Req = AllocateZeroPool (sizeof (SCSI_BLKIO2_REQUEST));
+  BlkIo2Req = AllocateZeroPool(sizeof (SCSI_BLKIO2_REQUEST));
   if (BlkIo2Req == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -4405,7 +4405,7 @@ ScsiDiskAsyncRead10 (
 
   AsyncIoEvent = NULL;
 
-  Request = AllocateZeroPool (sizeof (SCSI_ASYNC_RW_REQUEST));
+  Request = AllocateZeroPool(sizeof (SCSI_ASYNC_RW_REQUEST));
   if (Request == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -4415,7 +4415,7 @@ ScsiDiskAsyncRead10 (
   gBS->RestoreTPL (OldTpl);
 
   Request->SenseDataLength = (UINT8) (6 * sizeof (EFI_SCSI_SENSE_DATA));
-  Request->SenseData       = AllocateZeroPool (Request->SenseDataLength);
+  Request->SenseData       = AllocateZeroPool(Request->SenseDataLength);
   if (Request->SenseData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -4524,7 +4524,7 @@ ScsiDiskAsyncWrite10 (
 
   AsyncIoEvent = NULL;
 
-  Request = AllocateZeroPool (sizeof (SCSI_ASYNC_RW_REQUEST));
+  Request = AllocateZeroPool(sizeof (SCSI_ASYNC_RW_REQUEST));
   if (Request == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -4534,7 +4534,7 @@ ScsiDiskAsyncWrite10 (
   gBS->RestoreTPL (OldTpl);
 
   Request->SenseDataLength = (UINT8) (6 * sizeof (EFI_SCSI_SENSE_DATA));
-  Request->SenseData       = AllocateZeroPool (Request->SenseDataLength);
+  Request->SenseData       = AllocateZeroPool(Request->SenseDataLength);
   if (Request->SenseData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -4643,7 +4643,7 @@ ScsiDiskAsyncRead16 (
 
   AsyncIoEvent = NULL;
 
-  Request = AllocateZeroPool (sizeof (SCSI_ASYNC_RW_REQUEST));
+  Request = AllocateZeroPool(sizeof (SCSI_ASYNC_RW_REQUEST));
   if (Request == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -4653,7 +4653,7 @@ ScsiDiskAsyncRead16 (
   gBS->RestoreTPL (OldTpl);
 
   Request->SenseDataLength = (UINT8) (6 * sizeof (EFI_SCSI_SENSE_DATA));
-  Request->SenseData       = AllocateZeroPool (Request->SenseDataLength);
+  Request->SenseData       = AllocateZeroPool(Request->SenseDataLength);
   if (Request->SenseData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
@@ -4762,7 +4762,7 @@ ScsiDiskAsyncWrite16 (
 
   AsyncIoEvent = NULL;
 
-  Request = AllocateZeroPool (sizeof (SCSI_ASYNC_RW_REQUEST));
+  Request = AllocateZeroPool(sizeof (SCSI_ASYNC_RW_REQUEST));
   if (Request == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -4772,7 +4772,7 @@ ScsiDiskAsyncWrite16 (
   gBS->RestoreTPL (OldTpl);
 
   Request->SenseDataLength = (UINT8) (6 * sizeof (EFI_SCSI_SENSE_DATA));
-  Request->SenseData       = AllocateZeroPool (Request->SenseDataLength);
+  Request->SenseData       = AllocateZeroPool(Request->SenseDataLength);
   if (Request->SenseData == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;

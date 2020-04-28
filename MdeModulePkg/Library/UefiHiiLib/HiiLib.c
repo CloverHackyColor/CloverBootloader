@@ -180,7 +180,7 @@ HiiAddPackages (
   //
   // Allocate the storage for the entire Package List
   //
-  PackageListHeader = AllocateZeroPool (Length);
+  PackageListHeader = AllocateZeroPool(Length);
 
   //
   // If the Package List can not be allocated, then return a NULL HII Handle
@@ -328,7 +328,7 @@ HiiGetHiiHandles (
   //
   // Allocate the array of HII handles to hold all the HII Handles and a NULL terminator
   //
-  HiiHandleBuffer = AllocateZeroPool (HandleBufferLength + sizeof (EFI_HII_HANDLE));
+  HiiHandleBuffer = AllocateZeroPool(HandleBufferLength + sizeof (EFI_HII_HANDLE));
   if (HiiHandleBuffer == NULL) {
     //
     // Return NULL if allocation fails.
@@ -653,7 +653,7 @@ InternalHiiBrowserCallback (
       //
       // No Resluts Data, only allocate one char for '\0'
       //
-      ResultsData = AllocateZeroPool (sizeof (CHAR16));
+      ResultsData = AllocateZeroPool(sizeof (CHAR16));
       return ResultsData;
     }
 
@@ -664,7 +664,7 @@ InternalHiiBrowserCallback (
     //
     // Allocate the ResultsData buffer
     //
-    ResultsData = AllocateZeroPool (ResultsDataSize);
+    ResultsData = AllocateZeroPool(ResultsDataSize);
     if (ResultsData == NULL) {
       return NULL;
     }
@@ -763,7 +763,7 @@ HiiConstructConfigHdr (
   // | 5 | sizeof (EFI_GUID) * 2 | 6 | NameStrLen*4 | 6 | DevicePathSize * 2 | 1 |
   //
   MaxLen = 5 + sizeof (EFI_GUID) * 2 + 6 + NameLength * 4 + 6 + DevicePathSize * 2 + 1;
-  String = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+  String = AllocateZeroPool(MaxLen * sizeof (CHAR16));
   if (String == NULL) {
     return NULL;
   }
@@ -896,7 +896,7 @@ InternalHiiGetBufferFromString (
     // as the device path and Guid resides in RAM memory.
     // Translate the data into binary.
     //
-    DataBuffer = (UINT8 *) AllocateZeroPool ((Length + 1) / 2);
+    DataBuffer = (UINT8 *) AllocateZeroPool((Length + 1) / 2);
     if (DataBuffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -925,7 +925,7 @@ InternalHiiGetBufferFromString (
     //
     // Add the tailling char L'\0'
     //
-    DataBuffer = (UINT8 *) AllocateZeroPool ((Length/4 + 1) * sizeof (CHAR16));
+    DataBuffer = (UINT8 *) AllocateZeroPool((Length/4 + 1) * sizeof (CHAR16));
     if (DataBuffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1040,7 +1040,7 @@ InternalHiiGetValueOfNumber (
   //
   // Allocate buffer to store the value
   //
-  Buf = (UINT8 *) AllocateZeroPool ((Length + 1) / 2);
+  Buf = (UINT8 *) AllocateZeroPool((Length + 1) / 2);
   if (Buf == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1890,7 +1890,7 @@ GetBlockDataInfo (
   TmpBuffer     = NULL;
   BlockArray    = NULL;
   MaxBufferSize = HII_LIB_DEFAULT_VARSTORE_SIZE;
-  DataBuffer     = AllocateZeroPool (MaxBufferSize);
+  DataBuffer     = AllocateZeroPool(MaxBufferSize);
   if (DataBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1898,7 +1898,7 @@ GetBlockDataInfo (
   //
   // Init BlockArray
   //
-  BlockArray = (IFR_BLOCK_DATA *) AllocateZeroPool (sizeof (IFR_BLOCK_DATA));
+  BlockArray = (IFR_BLOCK_DATA *) AllocateZeroPool(sizeof (IFR_BLOCK_DATA));
   if (BlockArray == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -2010,7 +2010,7 @@ GetBlockDataInfo (
     //
     // Set new Block Data
     //
-    NewBlockData = (IFR_BLOCK_DATA *) AllocateZeroPool (sizeof (IFR_BLOCK_DATA));
+    NewBlockData = (IFR_BLOCK_DATA *) AllocateZeroPool(sizeof (IFR_BLOCK_DATA));
     if (NewBlockData == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -2527,7 +2527,7 @@ NextConfigAltResp:
     //                               | 1 | StrLen (ConfigHdr) | 8 | 1 |
     //
     MaxLen = 1 + StringPtr - StringHdr + 8 + 1;
-    ConfigAltHdr = AllocateZeroPool ( MaxLen * sizeof (CHAR16));
+    ConfigAltHdr = AllocateZeroPool( MaxLen * sizeof (CHAR16));
     if (ConfigAltHdr == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -2825,7 +2825,7 @@ HiiGetBrowserData (
   //
   Size = (StrLen (mConfigHdrTemplate) + 1) * sizeof (CHAR16);
   Size = Size + (StrLen (ResultsData) + 1) * sizeof (CHAR16);
-  ConfigResp = AllocateZeroPool (Size);
+  ConfigResp = AllocateZeroPool(Size);
   UnicodeSPrint (ConfigResp, Size, L"%s&%s", mConfigHdrTemplate, ResultsData);
 
   //
@@ -2905,7 +2905,7 @@ HiiSetBrowserData (
     // followed by "&OFFSET=0&WIDTH=WWWWWWWWWWWWWWWW" followed by a Null-terminator
     //
     Size = (StrLen (mConfigHdrTemplate) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", mConfigHdrTemplate, (UINT64)BufferSize);
   } else {
     //
@@ -2914,7 +2914,7 @@ HiiSetBrowserData (
     //
     Size = StrLen (mConfigHdrTemplate) * sizeof (CHAR16);
     Size = Size + (StrLen (RequestElement) + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
     UnicodeSPrint (ConfigRequest, Size, L"%s%s", mConfigHdrTemplate, RequestElement);
   }
   if (ConfigRequest == NULL) {
@@ -4390,7 +4390,7 @@ HiiUpdateForm (
   // Calculate and allocate space for retrieval of IFR data
   //
   BufferSize += OpCodeBufferStart->Position;
-  UpdatePackageList = AllocateZeroPool (BufferSize);
+  UpdatePackageList = AllocateZeroPool(BufferSize);
   if (UpdatePackageList == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Finish;
@@ -4399,7 +4399,7 @@ HiiUpdateForm (
   //
   // Allocate temp buffer to store the temp updated package buffer
   //
-  TempPackage = AllocateZeroPool (BufferSize);
+  TempPackage = AllocateZeroPool(BufferSize);
   if (TempPackage == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Finish;

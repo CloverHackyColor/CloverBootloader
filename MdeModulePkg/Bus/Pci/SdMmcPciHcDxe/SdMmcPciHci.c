@@ -1659,7 +1659,7 @@ SdMmcCreateTrb (
   EFI_PCI_IO_PROTOCOL           *PciIo;
   UINTN                         MapLength;
 
-  Trb = AllocateZeroPool (sizeof (SD_MMC_HC_TRB));
+  Trb = AllocateZeroPool(sizeof (SD_MMC_HC_TRB));
   if (Trb == NULL) {
     return NULL;
   }

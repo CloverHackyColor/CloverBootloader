@@ -1052,10 +1052,10 @@ GetUefiMemoryProfileData (
     goto Done;
   }
 
-  Data = AllocateZeroPool ((UINTN) Size);
+  Data = AllocateZeroPool((UINTN) Size);
   if (Data == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
-    Print (L"UefiMemoryProfile: AllocateZeroPool (0x%x) - %r\n", Size, Status);
+    Print (L"UefiMemoryProfile: AllocateZeroPool(0x%x) - %r\n", Size, Status);
     return Status;
   }
 
@@ -1245,10 +1245,10 @@ GetSmramProfileData (
   //
   // Get Data
   //
-  ProfileBuffer = AllocateZeroPool (ProfileSize);
+  ProfileBuffer = AllocateZeroPool(ProfileSize);
   if (ProfileBuffer == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
-    Print (L"SmramProfile: AllocateZeroPool (0x%x) for profile buffer - %r\n", ProfileSize, Status);
+    Print (L"SmramProfile: AllocateZeroPool(0x%x) for profile buffer - %r\n", ProfileSize, Status);
     goto Done;
   }
 

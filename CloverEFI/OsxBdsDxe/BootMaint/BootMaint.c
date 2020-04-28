@@ -288,7 +288,7 @@ BootMaintExtractConfig (
     //
     EFI_STRING ConfigRequestHdr = HiiConstructConfigHdr (&gBootMaintFormSetGuid, mBootMaintStorageName, Private->BmmDriverHandle);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
   //  ASSERT (ConfigRequest != NULL);
     if (!ConfigRequest) {
       return EFI_OUT_OF_RESOURCES;
@@ -1177,7 +1177,7 @@ InitializeBM (
   //
   // Allocate the storage for the entire Package List
   //
-  PackageListHeader = AllocateZeroPool (Length);
+  PackageListHeader = AllocateZeroPool(Length);
 
   //
   // If the Package List can not be allocated, then return a NULL HII Handle
@@ -1341,7 +1341,7 @@ InitializeStringDepository (
   )
 {
   STRING_DEPOSITORY *StringDepository;
-  StringDepository              = AllocateZeroPool (sizeof (STRING_DEPOSITORY) * STRING_DEPOSITORY_NUMBER);
+  StringDepository              = AllocateZeroPool(sizeof (STRING_DEPOSITORY) * STRING_DEPOSITORY_NUMBER);
   FileOptionStrDepository       = StringDepository++;
 //  ConsoleOptionStrDepository    = StringDepository++;
   BootOptionStrDepository       = StringDepository++;
@@ -1380,7 +1380,7 @@ GetStringTokenFromDepository (
     //
     // If there is no usable node in the list, update the list.
     //
-    NextListNode = AllocateZeroPool (sizeof (STRING_LIST_NODE));
+    NextListNode = AllocateZeroPool(sizeof (STRING_LIST_NODE));
     ASSERT (NextListNode != NULL);
     NextListNode->StringToken = HiiSetString (CallbackData->BmmHiiHandle, 0, L" ", NULL);
     ASSERT (NextListNode->StringToken != 0);
@@ -1580,7 +1580,7 @@ InitBMPackage (
   //
   // Create CallbackData structures for Driver Callback
   //
-  BmmCallbackInfo = AllocateZeroPool (sizeof (BMM_CALLBACK_DATA));
+  BmmCallbackInfo = AllocateZeroPool(sizeof (BMM_CALLBACK_DATA));
   if (BmmCallbackInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1588,7 +1588,7 @@ InitBMPackage (
   //
   // Create LoadOption in BmmCallbackInfo for Driver Callback
   //
-  Ptr = AllocateZeroPool (sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) + sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY));
+  Ptr = AllocateZeroPool(sizeof (BM_LOAD_CONTEXT) + sizeof (BM_FILE_CONTEXT) + sizeof (BM_HANDLE_CONTEXT) + sizeof (BM_MENU_ENTRY));
   if (Ptr == NULL) {
     FreePool(BmmCallbackInfo);
     BmmCallbackInfo = NULL;

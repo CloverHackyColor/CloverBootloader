@@ -174,14 +174,14 @@ CreateQuestion (
         //
         // Insert to Name/Value varstore list
         //
-        NameValueNode = AllocateZeroPool (sizeof (NAME_VALUE_NODE));
+        NameValueNode = AllocateZeroPool(sizeof (NAME_VALUE_NODE));
         ASSERT (NameValueNode != NULL);
         NameValueNode->Signature = NAME_VALUE_NODE_SIGNATURE;
         NameValueNode->Name = AllocateCopyPool(StrSize (Statement->VariableName), Statement->VariableName);
         ASSERT (NameValueNode->Name != NULL);
-        NameValueNode->Value = AllocateZeroPool (0x10);
+        NameValueNode->Value = AllocateZeroPool(0x10);
         ASSERT (NameValueNode->Value != NULL);
-        NameValueNode->EditValue = AllocateZeroPool (0x10);
+        NameValueNode->EditValue = AllocateZeroPool(0x10);
         ASSERT (NameValueNode->EditValue != NULL);
 
         InsertTailList (&Statement->Storage->NameValueListHead, &NameValueNode->Link);
@@ -210,7 +210,7 @@ CreateExpression (
 {
   FORM_EXPRESSION  *Expression;
 
-  Expression = AllocateZeroPool (sizeof (FORM_EXPRESSION));
+  Expression = AllocateZeroPool(sizeof (FORM_EXPRESSION));
   ASSERT (Expression != NULL);
   Expression->Signature = FORM_EXPRESSION_SIGNATURE;
   InitializeListHead (&Expression->OpCodeListHead);
@@ -335,8 +335,8 @@ IntializeBrowserStorage (
       CopyMem (&BrowserStorage->Guid, &((EFI_IFR_VARSTORE *) OpCodeData)->Guid, sizeof (EFI_GUID));
       CopyMem (&BrowserStorage->Size, &((EFI_IFR_VARSTORE *) OpCodeData)->Size, sizeof (UINT16));
 
-      BrowserStorage->Buffer     = AllocateZeroPool (BrowserStorage->Size);
-      BrowserStorage->EditBuffer = AllocateZeroPool (BrowserStorage->Size);
+      BrowserStorage->Buffer     = AllocateZeroPool(BrowserStorage->Size);
+      BrowserStorage->EditBuffer = AllocateZeroPool(BrowserStorage->Size);
       break;
 
     case EFI_HII_VARSTORE_EFI_VARIABLE:
@@ -346,8 +346,8 @@ IntializeBrowserStorage (
       CopyMem (&BrowserStorage->Size,       &((EFI_IFR_VARSTORE_EFI *) OpCodeData)->Size,       sizeof (UINT16));
 
       if (StorageType ==  EFI_HII_VARSTORE_EFI_VARIABLE_BUFFER) {
-        BrowserStorage->Buffer     = AllocateZeroPool (BrowserStorage->Size);
-        BrowserStorage->EditBuffer = AllocateZeroPool (BrowserStorage->Size);
+        BrowserStorage->Buffer     = AllocateZeroPool(BrowserStorage->Size);
+        BrowserStorage->EditBuffer = AllocateZeroPool(BrowserStorage->Size);
       }
       break;
 
@@ -410,21 +410,21 @@ CreateStorage (
   if (StorageType != EFI_HII_VARSTORE_NAME_VALUE) {
     ASSERT (StorageName != NULL);
 
-    UnicodeString = AllocateZeroPool (AsciiStrSize (StorageName) * 2);
+    UnicodeString = AllocateZeroPool(AsciiStrSize (StorageName) * 2);
     ASSERT (UnicodeString != NULL);
     for (Index = 0; StorageName[Index] != 0; Index++) {
       UnicodeString[Index] = (CHAR16) StorageName[Index];
     }
   }
 
-  Storage = AllocateZeroPool (sizeof (FORMSET_STORAGE));
+  Storage = AllocateZeroPool(sizeof (FORMSET_STORAGE));
   ASSERT (Storage != NULL);
   Storage->Signature = FORMSET_STORAGE_SIGNATURE;
   InsertTailList (&FormSet->StorageListHead, &Storage->Link);
 
   BrowserStorage = FindStorageInList(StorageType, StorageGuid, UnicodeString, FormSet->HiiHandle);
   if (BrowserStorage == NULL) {
-    BrowserStorage = AllocateZeroPool (sizeof (BROWSER_STORAGE));
+    BrowserStorage = AllocateZeroPool(sizeof (BROWSER_STORAGE));
     ASSERT (BrowserStorage != NULL);
 
     BrowserStorage->Signature = BROWSER_STORAGE_SIGNATURE;
@@ -623,7 +623,7 @@ InitializeRequestElement (
     // Old String buffer is not sufficient for RequestElement, allocate a new one
     //
     MaxLen = StringSize / sizeof (CHAR16) + CONFIG_REQUEST_STRING_INCREMENTAL;
-    NewStr = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+    NewStr = AllocateZeroPool(MaxLen * sizeof (CHAR16));
     ASSERT (NewStr != NULL);
     if (FormsetStorage->ConfigRequest != NULL) {
       CopyMem (NewStr, FormsetStorage->ConfigRequest, StringSize);
@@ -675,7 +675,7 @@ InitializeRequestElement (
     // Old String buffer is not sufficient for RequestElement, allocate a new one
     //
     MaxLen = StringSize / sizeof (CHAR16) + CONFIG_REQUEST_STRING_INCREMENTAL;
-    NewStr = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+    NewStr = AllocateZeroPool(MaxLen * sizeof (CHAR16));
     ASSERT (NewStr != NULL);
     if (ConfigInfo->ConfigRequest != NULL) {
       CopyMem (NewStr, ConfigInfo->ConfigRequest, StringSize);
@@ -1224,13 +1224,13 @@ ParseOpCodes (
 
   mStatementIndex = 0;
   mUsedQuestionId = 1;
-  FormSet->StatementBuffer = AllocateZeroPool (NumberOfStatement * sizeof (FORM_BROWSER_STATEMENT));
+  FormSet->StatementBuffer = AllocateZeroPool(NumberOfStatement * sizeof (FORM_BROWSER_STATEMENT));
   if (FormSet->StatementBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
   mExpressionOpCodeIndex = 0;
-  FormSet->ExpressionBuffer = AllocateZeroPool (NumberOfExpression * sizeof (EXPRESSION_OPCODE));
+  FormSet->ExpressionBuffer = AllocateZeroPool(NumberOfExpression * sizeof (EXPRESSION_OPCODE));
   if (FormSet->ExpressionBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1614,7 +1614,7 @@ ParseOpCodes (
       //
       // Create a new Form for this FormSet
       //
-      CurrentForm = AllocateZeroPool (sizeof (FORM_BROWSER_FORM));
+      CurrentForm = AllocateZeroPool(sizeof (FORM_BROWSER_FORM));
       ASSERT (CurrentForm != NULL);
       CurrentForm->Signature = FORM_BROWSER_FORM_SIGNATURE;
       InitializeListHead (&CurrentForm->ExpressionListHead);
@@ -1656,7 +1656,7 @@ ParseOpCodes (
       //
       // Create a new Form for this FormSet
       //
-      CurrentForm = AllocateZeroPool (sizeof (FORM_BROWSER_FORM));
+      CurrentForm = AllocateZeroPool(sizeof (FORM_BROWSER_FORM));
       ASSERT (CurrentForm != NULL);
       CurrentForm->Signature = FORM_BROWSER_FORM_SIGNATURE;
       InitializeListHead (&CurrentForm->ExpressionListHead);
@@ -1760,7 +1760,7 @@ ParseOpCodes (
     //
     case EFI_IFR_DEFAULTSTORE_OP:
       HaveInserted = FALSE;
-      DefaultStore = AllocateZeroPool (sizeof (FORMSET_DEFAULTSTORE));
+      DefaultStore = AllocateZeroPool(sizeof (FORMSET_DEFAULTSTORE));
       ASSERT (DefaultStore != NULL);
       DefaultStore->Signature = FORMSET_DEFAULTSTORE_SIGNATURE;
 
@@ -2009,7 +2009,7 @@ ParseOpCodes (
       CurrentStatement->Flags = ((EFI_IFR_STRING *) OpCodeData)->Flags;
 
       CurrentStatement->HiiValue.Type = EFI_IFR_TYPE_STRING;
-      CurrentStatement->BufferValue = AllocateZeroPool (CurrentStatement->StorageWidth + sizeof (CHAR16));
+      CurrentStatement->BufferValue = AllocateZeroPool(CurrentStatement->StorageWidth + sizeof (CHAR16));
       CurrentStatement->HiiValue.Value.string = NewString ((CHAR16*) CurrentStatement->BufferValue, FormSet->HiiHandle);
 
       InitializeRequestElement (FormSet, CurrentStatement, CurrentForm);
@@ -2028,7 +2028,7 @@ ParseOpCodes (
       CurrentStatement->StorageWidth = (UINT16)((UINTN) CurrentStatement->Maximum * sizeof (CHAR16));
 
       CurrentStatement->HiiValue.Type = EFI_IFR_TYPE_STRING;
-      CurrentStatement->BufferValue = AllocateZeroPool ((CurrentStatement->StorageWidth + sizeof (CHAR16)));
+      CurrentStatement->BufferValue = AllocateZeroPool((CurrentStatement->StorageWidth + sizeof (CHAR16)));
       CurrentStatement->HiiValue.Value.string = NewString ((CHAR16*) CurrentStatement->BufferValue, FormSet->HiiHandle);
 
       InitializeRequestElement (FormSet, CurrentStatement, CurrentForm);
@@ -2083,7 +2083,7 @@ ParseOpCodes (
       // It creates a default value for the current question.
       // A Question may have more than one Default value which have different default types.
       //
-      CurrentDefault = AllocateZeroPool (sizeof (QUESTION_DEFAULT));
+      CurrentDefault = AllocateZeroPool(sizeof (QUESTION_DEFAULT));
       ASSERT (CurrentDefault != NULL);
       CurrentDefault->Signature = QUESTION_DEFAULT_SIGNATURE;
 
@@ -2117,7 +2117,7 @@ ParseOpCodes (
         //
         // It's keep the default value for ordered list opcode.
         //
-        CurrentDefault = AllocateZeroPool (sizeof (QUESTION_DEFAULT));
+        CurrentDefault = AllocateZeroPool(sizeof (QUESTION_DEFAULT));
         ASSERT (CurrentDefault != NULL);
         CurrentDefault->Signature = QUESTION_DEFAULT_SIGNATURE;
 
@@ -2143,7 +2143,7 @@ ParseOpCodes (
       // EFI_IFR_ONE_OF_OPTION appear in scope of a Question.
       // It create a selection for use in current Question.
       //
-      CurrentOption = AllocateZeroPool (sizeof (QUESTION_OPTION));
+      CurrentOption = AllocateZeroPool(sizeof (QUESTION_OPTION));
       ASSERT (CurrentOption != NULL);
       CurrentOption->Signature = QUESTION_OPTION_SIGNATURE;
       CurrentOption->OpCode    = (EFI_IFR_ONE_OF_OPTION *) OpCodeData;
@@ -2201,7 +2201,7 @@ ParseOpCodes (
         }
 
         ParentStatement->StorageWidth = (UINT16) (ParentStatement->MaxContainers * Width);
-        ParentStatement->BufferValue = AllocateZeroPool (ParentStatement->StorageWidth);
+        ParentStatement->BufferValue = AllocateZeroPool(ParentStatement->StorageWidth);
         ParentStatement->ValueType = CurrentOption->Value.Type;
         if (ParentStatement->HiiValue.Type == EFI_IFR_TYPE_BUFFER) {
           ParentStatement->HiiValue.Buffer = ParentStatement->BufferValue;
@@ -2312,7 +2312,7 @@ ParseOpCodes (
       // The DisableIf expression should only rely on constant, so it could be
       // evaluated at initialization and it will not be queued
       //
-      CurrentExpression = AllocateZeroPool (sizeof (FORM_EXPRESSION));
+      CurrentExpression = AllocateZeroPool(sizeof (FORM_EXPRESSION));
       ASSERT (CurrentExpression != NULL);
       CurrentExpression->Signature = FORM_EXPRESSION_SIGNATURE;
       CurrentExpression->Type = EFI_HII_EXPRESSION_DISABLE_IF;

@@ -62,7 +62,7 @@ HiiGetSupportedLanguages (
   //
   // Allocate the supported languages buffer.
   //
-  SupportedLanguages = AllocateZeroPool (LanguageSize);
+  SupportedLanguages = AllocateZeroPool(LanguageSize);
   if (SupportedLanguages == NULL) {
     //
     // Return NULL if allocation fails.

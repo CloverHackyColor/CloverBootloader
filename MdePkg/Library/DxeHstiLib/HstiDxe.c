@@ -286,7 +286,7 @@ HstiLibSetTable (
     return EFI_ALREADY_STARTED;
   }
 
-  HstiAip = AllocateZeroPool (sizeof(HSTI_AIP_PRIVATE_DATA));
+  HstiAip = AllocateZeroPool(sizeof(HSTI_AIP_PRIVATE_DATA));
   if (HstiAip == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

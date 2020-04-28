@@ -708,7 +708,7 @@ UpdateConModePage (
   OptionsOpCodeHandle = HiiAllocateOpCodeHandle ();
   ASSERT (OptionsOpCodeHandle != NULL);
 
-  ModeToken           = AllocateZeroPool (sizeof (EFI_STRING_ID) * ValidMode);
+  ModeToken           = AllocateZeroPool(sizeof (EFI_STRING_ID) * ValidMode);
   ASSERT(ModeToken != NULL);
 
   //

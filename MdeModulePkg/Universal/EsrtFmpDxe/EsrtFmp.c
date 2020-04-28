@@ -321,7 +321,7 @@ FmpGetFirmwareImageDescriptor (
     return NULL;
   }
 
-  FmpImageInfoBuf = AllocateZeroPool (ImageInfoSize);
+  FmpImageInfoBuf = AllocateZeroPool(ImageInfoSize);
   if (FmpImageInfoBuf == NULL) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to get memory for FMP descriptor.\n"));
     return NULL;
@@ -412,7 +412,7 @@ CreateFmpBasedEsrt (
   //
   // Allocate ESRT Table and GUID/HardwareInstance table
   //
-  Table = AllocateZeroPool (
+  Table = AllocateZeroPool(
              (NumberOfDescriptors * sizeof (EFI_SYSTEM_RESOURCE_ENTRY)) + sizeof (EFI_SYSTEM_RESOURCE_TABLE)
              );
   if (Table == NULL) {
@@ -421,7 +421,7 @@ CreateFmpBasedEsrt (
     return NULL;
   }
 
-  HardwareInstances = AllocateZeroPool (NumberOfDescriptors * sizeof (GUID_HARDWAREINSTANCE_PAIR));
+  HardwareInstances = AllocateZeroPool(NumberOfDescriptors * sizeof (GUID_HARDWAREINSTANCE_PAIR));
   if (HardwareInstances == NULL) {
     DEBUG ((DEBUG_ERROR, "EsrtFmpDxe: Failed to allocate memory for HW Instance Table.\n"));
     FreePool(Table);

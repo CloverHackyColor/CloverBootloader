@@ -171,7 +171,7 @@ AddDriver (
   //
   ASSERT ((DriverImageHandle == NULL) || (DriverImagePath == NULL));
 
-  Node = AllocateZeroPool (sizeof (PCI_DRIVER_OVERRIDE_LIST));
+  Node = AllocateZeroPool(sizeof (PCI_DRIVER_OVERRIDE_LIST));
   if (Node == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

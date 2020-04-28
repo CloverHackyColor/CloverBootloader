@@ -394,7 +394,7 @@ CoreInstallProtocolInterfaceNotify (
   //
   // Allocate a new protocol interface structure
   //
-  Prot = AllocateZeroPool (sizeof(PROTOCOL_INTERFACE));
+  Prot = AllocateZeroPool(sizeof(PROTOCOL_INTERFACE));
   if (Prot == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
@@ -405,7 +405,7 @@ CoreInstallProtocolInterfaceNotify (
   //
   Handle = (IHANDLE *)*UserHandle;
   if (Handle == NULL) {
-    Handle = AllocateZeroPool (sizeof(IHANDLE));
+    Handle = AllocateZeroPool(sizeof(IHANDLE));
     if (Handle == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;

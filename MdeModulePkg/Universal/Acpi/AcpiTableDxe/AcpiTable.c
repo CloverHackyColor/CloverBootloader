@@ -43,7 +43,7 @@ InitializeAcpiTableDxe (
   //
   // Initialize our protocol
   //
-  PrivateData = AllocateZeroPool (sizeof (EFI_ACPI_TABLE_INSTANCE));
+  PrivateData = AllocateZeroPool(sizeof (EFI_ACPI_TABLE_INSTANCE));
   ASSERT (PrivateData);
   PrivateData->Signature = EFI_ACPI_TABLE_SIGNATURE;
 

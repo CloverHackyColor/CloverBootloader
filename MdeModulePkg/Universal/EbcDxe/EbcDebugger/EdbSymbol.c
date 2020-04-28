@@ -245,13 +245,13 @@ EdbLoadSymbolEntryByIec (
         //
         // Get the Name
         //
-        if (AsciiStrnCmp (FieldBuffer, "___safe_se_handler", AsciiStrLen ("___safe_se_handler")) == 0) {
+        if (AsciiStrnCmp (FieldBuffer, "___safe_se_handler", AsciiStrLen("___safe_se_handler")) == 0) {
           //
           // skip SeHandler
           //
           MapParseState = EdbEbcMapParseStateSeHandlerSymbol;
           goto ExitFieldParse;
-        } else if (AsciiStrnCmp (FieldBuffer, "varbss_init", AsciiStrLen ("varbss_init")) == 0) {
+        } else if (AsciiStrnCmp (FieldBuffer, "varbss_init", AsciiStrLen("varbss_init")) == 0) {
           //
           // check VarbssInit
           //
@@ -259,7 +259,7 @@ EdbLoadSymbolEntryByIec (
 //          goto ExitFieldParse;
           Name = FieldBuffer;
           SymbolParseState = EdbEbcSymbolParseStateReadyForRVA;
-        } else if (AsciiStrnCmp (FieldBuffer, "Crt", AsciiStrLen ("Crt")) == 0) {
+        } else if (AsciiStrnCmp (FieldBuffer, "Crt", AsciiStrLen("Crt")) == 0) {
           //
           // check Crt
           //
@@ -872,7 +872,7 @@ MatchPdbAndMap (
   //
   // get size
   //
-  PdbNameSize = AsciiStrLen (PdbFileName);
+  PdbNameSize = AsciiStrLen(PdbFileName);
   MapNameSize = StrLen (MapFileName);
 
   if (PdbNameSize != MapNameSize) {
@@ -1116,7 +1116,7 @@ MatchObjAndCod (
   //
   // get size
   //
-  ObjNameSize = AsciiStrLen (ObjFileName);
+  ObjNameSize = AsciiStrLen(ObjFileName);
   CodNameSize = StrLen (CodFileName);
 
   if (ObjNameSize != CodNameSize) {

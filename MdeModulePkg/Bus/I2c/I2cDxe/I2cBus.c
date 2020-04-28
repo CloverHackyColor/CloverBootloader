@@ -635,7 +635,7 @@ I2cBusDriverStart (
     //
     //  Allocate the I2C context structure for the current I2C controller
     //
-    I2cBusContext = AllocateZeroPool (sizeof (I2C_BUS_CONTEXT));
+    I2cBusContext = AllocateZeroPool(sizeof (I2C_BUS_CONTEXT));
     if (I2cBusContext == NULL) {
       DEBUG ((EFI_D_ERROR, "I2cBus: there is no enough memory to allocate.\n"));
       Status = EFI_OUT_OF_RESOURCES;

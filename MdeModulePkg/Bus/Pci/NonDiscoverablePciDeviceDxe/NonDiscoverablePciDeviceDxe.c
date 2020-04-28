@@ -143,7 +143,7 @@ NonDiscoverablePciDeviceStart (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Dev = AllocateZeroPool (sizeof *Dev);
+  Dev = AllocateZeroPool(sizeof *Dev);
   if (Dev == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

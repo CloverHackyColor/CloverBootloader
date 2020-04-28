@@ -847,7 +847,7 @@ EmmcDxeDriverBindingStart (
   // Check EFI_ALREADY_STARTED to reuse the original EMMC_DRIVER_PRIVATE_DATA.
   //
   if (Status != EFI_ALREADY_STARTED) {
-    Private = AllocateZeroPool (sizeof (EMMC_DRIVER_PRIVATE_DATA));
+    Private = AllocateZeroPool(sizeof (EMMC_DRIVER_PRIVATE_DATA));
     if (Private == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto Error;

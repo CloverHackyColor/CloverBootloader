@@ -1952,7 +1952,7 @@ AsciiStrnCpy (
 **/
 UINTN
 EFIAPI
-AsciiStrLen (
+AsciiStrLen(
   IN      CONST CHAR8               *String
   );
 
@@ -2590,7 +2590,7 @@ AsciiStrHexToBytes (
   string Destination, and returns Destination.  The function terminates the
   Unicode string Destination by appending a Null-terminator character at the end.
   The caller is responsible to make sure Destination points to a buffer with size
-  equal or greater than ((AsciiStrLen (Source) + 1) * sizeof (CHAR16)) in bytes.
+  equal or greater than ((AsciiStrLen(Source) + 1) * sizeof (CHAR16)) in bytes.
 
   If Destination is NULL, then ASSERT().
   If Destination is not aligned on a 16-bit boundary, then ASSERT().
@@ -2629,7 +2629,7 @@ AsciiStrToUnicodeStr (
   appending a Null-terminator character at the end.
 
   The caller is responsible to make sure Destination points to a buffer with size
-  equal or greater than ((AsciiStrLen (Source) + 1) * sizeof (CHAR16)) in bytes.
+  equal or greater than ((AsciiStrLen(Source) + 1) * sizeof (CHAR16)) in bytes.
 
   If Destination is not aligned on a 16-bit boundary, then ASSERT().
   If an error would be returned, then the function will also ASSERT().

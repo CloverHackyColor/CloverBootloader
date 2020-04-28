@@ -116,6 +116,9 @@ UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure
     return 0;
   }
   UINT64 procAddr = vArray[i].ProcAddr - Absolut;
+  if (vArray[i].Attr == 0x1a0f) {
+    procAddr += 0x9e000;
+  }
   UINT64 prevAddr;
   if (i == 0) {
     prevAddr = Absolut;

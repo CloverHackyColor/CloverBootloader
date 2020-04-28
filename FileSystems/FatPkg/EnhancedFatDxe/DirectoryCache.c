@@ -82,7 +82,7 @@ Returns:
 {
   FAT_ODIR  *ODir;
 
-  ODir = AllocateZeroPool (sizeof (FAT_ODIR));
+  ODir = AllocateZeroPool(sizeof (FAT_ODIR));
   if (ODir != NULL) {
     //
     // Initialize the directory entry list

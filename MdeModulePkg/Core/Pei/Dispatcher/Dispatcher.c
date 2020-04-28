@@ -116,9 +116,9 @@ DiscoverPeimsAndOrderWithApriori (
   // Record PeimCount, allocate buffer for PeimState and FvFileHandles.
   //
   CoreFileHandle->PeimCount = PeimCount;
-  CoreFileHandle->PeimState = AllocateZeroPool (sizeof (UINT8) * PeimCount);
+  CoreFileHandle->PeimState = AllocateZeroPool(sizeof (UINT8) * PeimCount);
   ASSERT (CoreFileHandle->PeimState != NULL);
-  CoreFileHandle->FvFileHandles = AllocateZeroPool (sizeof (EFI_PEI_FILE_HANDLE) * PeimCount);
+  CoreFileHandle->FvFileHandles = AllocateZeroPool(sizeof (EFI_PEI_FILE_HANDLE) * PeimCount);
   ASSERT (CoreFileHandle->FvFileHandles != NULL);
 
   //

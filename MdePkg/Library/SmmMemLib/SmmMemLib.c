@@ -394,7 +394,7 @@ SmmMemLibInternalGetGcdMemoryMap (
     }
   }
 
-  mSmmMemLibGcdMemSpace = AllocateZeroPool (mSmmMemLibGcdMemNumberOfDesc * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
+  mSmmMemLibGcdMemSpace = AllocateZeroPool(mSmmMemLibGcdMemNumberOfDesc * sizeof (EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
   ASSERT (mSmmMemLibGcdMemSpace != NULL);
   if (mSmmMemLibGcdMemSpace == NULL) {
     mSmmMemLibGcdMemNumberOfDesc = 0;

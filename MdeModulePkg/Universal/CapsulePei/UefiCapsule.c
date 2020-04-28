@@ -907,7 +907,7 @@ GetScatterGatherHeadEntries (
   // Allocate memory for sg list head
   //
   TempListLength = DEFAULT_SG_LIST_HEADS * sizeof (EFI_PHYSICAL_ADDRESS);
-  TempList = AllocateZeroPool (TempListLength);
+  TempList = AllocateZeroPool(TempListLength);
   if (TempList == NULL) {
     DEBUG((DEBUG_ERROR, "Failed to allocate memory\n"));
     return EFI_OUT_OF_RESOURCES;
@@ -964,7 +964,7 @@ GetScatterGatherHeadEntries (
     // The TempList is full, enlarge it
     //
     if ((ValidIndex + 1) >= TempListLength) {
-      EnlargedTempList = AllocateZeroPool (TempListLength * 2);
+      EnlargedTempList = AllocateZeroPool(TempListLength * 2);
       if (EnlargedTempList == NULL) {
         DEBUG ((DEBUG_ERROR, "Fail to allocate memory!\n"));
         return EFI_OUT_OF_RESOURCES;
@@ -987,7 +987,7 @@ GetScatterGatherHeadEntries (
     return EFI_NOT_FOUND;
   }
 
-  *HeadList = AllocateZeroPool ((ValidIndex + 1) * sizeof (EFI_PHYSICAL_ADDRESS));
+  *HeadList = AllocateZeroPool((ValidIndex + 1) * sizeof (EFI_PHYSICAL_ADDRESS));
   if (*HeadList == NULL) {
     DEBUG ((DEBUG_ERROR, "Failed to allocate memory\n"));
     return EFI_OUT_OF_RESOURCES;

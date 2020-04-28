@@ -721,7 +721,7 @@ ClearLines (
   //
   // For now, allocate an arbitrarily long buffer
   //
-  Buffer = AllocateZeroPool (0x10000);
+  Buffer = AllocateZeroPool(0x10000);
   ASSERT (Buffer != NULL);
   if (!Buffer) {
     return;

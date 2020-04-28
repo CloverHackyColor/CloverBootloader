@@ -49,7 +49,7 @@ DumpHiiDatabase (
 
 **/
 VOID *
-InternalVarCheckAllocateZeroPool (
+InternalVarCheckAllocateZeroPool(
   IN UINTN            AllocationSize
   );
 

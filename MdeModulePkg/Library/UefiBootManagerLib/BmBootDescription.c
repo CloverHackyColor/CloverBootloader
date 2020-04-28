@@ -171,7 +171,7 @@ BmGetDescriptionFromDiskInfo (
                          &BufferSize
                          );
     if (!EFI_ERROR(Status)) {
-      Description = AllocateZeroPool ((ModelNameLength + SerialNumberLength + 2) * sizeof (CHAR16));
+      Description = AllocateZeroPool((ModelNameLength + SerialNumberLength + 2) * sizeof (CHAR16));
       ASSERT (Description != NULL);
       for (Index = 0; Index + 1 < ModelNameLength; Index += 2) {
         Description[Index]     = (CHAR16) IdentifyData.ModelName[Index + 1];
@@ -199,7 +199,7 @@ BmGetDescriptionFromDiskInfo (
                          &BufferSize
                          );
     if (!EFI_ERROR(Status)) {
-      Description = AllocateZeroPool ((VENDOR_IDENTIFICATION_LENGTH + PRODUCT_IDENTIFICATION_LENGTH + 2) * sizeof (CHAR16));
+      Description = AllocateZeroPool((VENDOR_IDENTIFICATION_LENGTH + PRODUCT_IDENTIFICATION_LENGTH + 2) * sizeof (CHAR16));
       ASSERT (Description != NULL);
 
       //
@@ -327,7 +327,7 @@ BmGetUsbDescription (
   }
 
   DescMaxSize = StrSize (Manufacturer) + StrSize (Product) + StrSize (SerialNumber);
-  Description = AllocateZeroPool (DescMaxSize);
+  Description = AllocateZeroPool(DescMaxSize);
   ASSERT (Description != NULL);
   StrCatS (Description, DescMaxSize/sizeof(CHAR16), Manufacturer);
   StrCatS (Description, DescMaxSize/sizeof(CHAR16), L" ");
@@ -620,7 +620,7 @@ BmGetNvmeDescription (
     return NULL;
   }
 
-  Description = AllocateZeroPool (
+  Description = AllocateZeroPool(
                   (ARRAY_SIZE (ControllerData.Mn) + 1
                    + ARRAY_SIZE (ControllerData.Sn) + 1
                    + MAXIMUM_VALUE_CHARACTERS + 1
@@ -847,7 +847,7 @@ BmMakeBootOptionDescriptionUnique (
     MaxSuffixSize += sizeof (CHAR16);
   }
 
-  Visited = AllocateZeroPool (sizeof (BOOLEAN) * BootOptionCount);
+  Visited = AllocateZeroPool(sizeof (BOOLEAN) * BootOptionCount);
   ASSERT (Visited != NULL);
 
   for (Base = 0; Base < BootOptionCount; Base++) {

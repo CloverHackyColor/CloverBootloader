@@ -47,7 +47,7 @@ GrowBuffer (
       FreePool(*Buffer);
     }
 
-    *Buffer = AllocateZeroPool (BufferSize);
+    *Buffer = AllocateZeroPool(BufferSize);
 
     if (*Buffer != NULL) {
       TryAgain = TRUE;

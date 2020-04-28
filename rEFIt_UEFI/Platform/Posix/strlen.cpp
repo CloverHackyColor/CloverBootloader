@@ -6,7 +6,7 @@
 #include <limits.h> // for SIZE_T_MAX
 
 #ifdef MAP_TO_EDK_STRLEN
-extern "C" UINTN EFIAPI AsciiStrLen (IN CONST CHAR8 *String);
+extern "C" UINTN EFIAPI AsciiStrLen(IN CONST CHAR8 *String);
 #endif
 
 // Hope that unsigned long long is as big in bits sa a pointer difference.

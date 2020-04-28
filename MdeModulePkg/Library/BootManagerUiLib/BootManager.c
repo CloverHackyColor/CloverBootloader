@@ -311,9 +311,9 @@ BmSetupResetReminder (
   //check any reset required change is applied? if yes, reset system
   //
   if (!EFI_ERROR(Status) && FormBrowserEx2->IsResetRequired ()) {
-    StringBuffer1 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
+    StringBuffer1 = AllocateZeroPool(MAX_STRING_LEN * sizeof (CHAR16));
     ASSERT (StringBuffer1 != NULL);
-    StringBuffer2 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
+    StringBuffer2 = AllocateZeroPool(MAX_STRING_LEN * sizeof (CHAR16));
     ASSERT (StringBuffer2 != NULL);
     StrCpyS (StringBuffer1, MAX_STRING_LEN, L"Configuration changed. Reset to apply it Now.");
     StrCpyS (StringBuffer2, MAX_STRING_LEN, L"Press ENTER to reset");
@@ -578,7 +578,7 @@ UpdateBootManager (
 
     TempStr = BmDevicePathToStr (BootOption[Index].FilePath);
     TempSize = StrSize (TempStr);
-    HelpString = AllocateZeroPool (TempSize + StrSize (L"Device Path : "));
+    HelpString = AllocateZeroPool(TempSize + StrSize (L"Device Path : "));
     MaxLen = (TempSize + StrSize (L"Device Path : "))/sizeof(CHAR16);
     ASSERT (HelpString != NULL);
     StrCatS (HelpString, MaxLen, L"Device Path : ");

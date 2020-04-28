@@ -204,7 +204,7 @@ PS2MouseDriverStart (
   //
   // Allocate private data
   //
-  MouseDev = AllocateZeroPool (sizeof (PS2_MOUSE_DEV));
+  MouseDev = AllocateZeroPool(sizeof (PS2_MOUSE_DEV));
   if (MouseDev == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;

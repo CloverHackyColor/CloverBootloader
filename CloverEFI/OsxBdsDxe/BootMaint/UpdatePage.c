@@ -813,7 +813,7 @@ UpdateConModePage (
 //  ASSERT (OptionsOpCodeHandle != NULL);
   if (!OptionsOpCodeHandle) return;
 
-  ModeToken           = AllocateZeroPool (sizeof (EFI_STRING_ID) * ValidMode);
+  ModeToken           = AllocateZeroPool(sizeof (EFI_STRING_ID) * ValidMode);
 //  ASSERT(ModeToken != NULL);
   if (!ModeToken) return;
 

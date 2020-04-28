@@ -133,7 +133,7 @@ RegisterNonDiscoverableMmioDevice (
   AllocSize = sizeof *Device +
               NumMmioResources * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) +
               sizeof (EFI_ACPI_END_TAG_DESCRIPTOR);
-  Device = (NON_DISCOVERABLE_DEVICE *)AllocateZeroPool (AllocSize);
+  Device = (NON_DISCOVERABLE_DEVICE *)AllocateZeroPool(AllocSize);
   if (Device == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

@@ -311,7 +311,7 @@ PeiCore (
         // if Loading Module at Fixed Address is enabled, allocate the PEI code memory range usage bit map array.
         // Every bit in the array indicate the status of the corresponding memory page available or not
         //
-        OldCoreData->PeiCodeMemoryRangeUsageBitMap = AllocateZeroPool (((PcdGet32(PcdLoadFixAddressPeiCodePageNumber)>>6) + 1)*sizeof(UINT64));
+        OldCoreData->PeiCodeMemoryRangeUsageBitMap = AllocateZeroPool(((PcdGet32(PcdLoadFixAddressPeiCodePageNumber)>>6) + 1)*sizeof(UINT64));
       }
 
       //

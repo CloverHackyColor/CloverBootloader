@@ -79,7 +79,7 @@ GetAddressByGuid (
       //
       if ((NumOfMatchingGuid != NULL) && (Offset != NULL)) {
         if (*NumOfMatchingGuid == 0) {
-          *Offset = InternalVarCheckAllocateZeroPool (sizeof (UINTN) * MAX_MATCH_GUID_NUM);
+          *Offset = InternalVarCheckAllocateZeroPool(sizeof (UINTN) * MAX_MATCH_GUID_NUM);
           ASSERT (*Offset != NULL);
         }
         *(*Offset + *NumOfMatchingGuid) = LoopControl + sizeof (EFI_GUID);
@@ -309,7 +309,7 @@ ParseFv (
       //
       // Need to parse all modules in all FVs.
       //
-      Key = InternalVarCheckAllocateZeroPool (Fv2->KeySize);
+      Key = InternalVarCheckAllocateZeroPool(Fv2->KeySize);
       ASSERT (Key != NULL);
 
       for (FfsIndex = 0; ; FfsIndex++) {
@@ -368,7 +368,7 @@ CreateVfrDriverList (
 
   for (Index = 0; !IsZeroGuid (&DriverGuidArray[Index]); Index++) {
      DEBUG ((DEBUG_INFO , "CreateVfrDriverList: %g\n", &DriverGuidArray[Index]));
-     VfrDriverInfo = InternalVarCheckAllocateZeroPool (sizeof (*VfrDriverInfo));
+     VfrDriverInfo = InternalVarCheckAllocateZeroPool(sizeof (*VfrDriverInfo));
      ASSERT (VfrDriverInfo != NULL);
      VfrDriverInfo->Signature = VAR_CHECK_VFR_DRIVER_INFO_SIGNATURE;
      VfrDriverInfo->DriverGuid = &DriverGuidArray[Index];

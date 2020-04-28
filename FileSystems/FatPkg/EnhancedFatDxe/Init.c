@@ -52,7 +52,7 @@ Returns:
   //
   // Allocate a volume structure
   //
-  Volume = AllocateZeroPool (sizeof (FAT_VOLUME));
+  Volume = AllocateZeroPool(sizeof (FAT_VOLUME));
   if (Volume == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

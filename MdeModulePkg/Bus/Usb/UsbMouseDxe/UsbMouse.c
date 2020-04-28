@@ -161,7 +161,7 @@ USBMouseDriverBindingStart (
     goto ErrorExit1;
   }
 
-  UsbMouseDevice = AllocateZeroPool (sizeof (USB_MOUSE_DEV));
+  UsbMouseDevice = AllocateZeroPool(sizeof (USB_MOUSE_DEV));
   ASSERT (UsbMouseDevice != NULL);
 
   UsbMouseDevice->UsbIo     = UsbIo;
@@ -570,7 +570,7 @@ InitializeUsbMouseDevice (
   // By issuing Get_Descriptor(Configuration) request with total length, we get the Configuration descriptor,
   // all Interface descriptors, all Endpoint descriptors, and the HID descriptor for each interface.
   //
-  Buf = AllocateZeroPool (ConfigDesc.TotalLength);
+  Buf = AllocateZeroPool(ConfigDesc.TotalLength);
   if (Buf == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -629,7 +629,7 @@ InitializeUsbMouseDevice (
     return EFI_UNSUPPORTED;
   }
 
-  ReportDesc = AllocateZeroPool (MouseHidDesc->HidClassDesc[0].DescriptorLength);
+  ReportDesc = AllocateZeroPool(MouseHidDesc->HidClassDesc[0].DescriptorLength);
   ASSERT (ReportDesc != NULL);
 
   Status = UsbGetReportDescriptor (

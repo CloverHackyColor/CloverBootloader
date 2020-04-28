@@ -289,7 +289,7 @@ WriteBootToOsPerformanceData (
                           &EndTicker)) != 0) {
     NumPerfEntries++;
   }
-  PerfEntriesAsDxeHandle = AllocateZeroPool (NumPerfEntries * sizeof (BOOLEAN));
+  PerfEntriesAsDxeHandle = AllocateZeroPool(NumPerfEntries * sizeof (BOOLEAN));
 //  ASSERT (PerfEntriesAsDxeHandle != NULL);
   
   //

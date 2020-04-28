@@ -1083,8 +1083,8 @@ AsciiStrCpy (
   //
   // Destination and source cannot overlap
   //
-  ASSERT ((UINTN)(Destination - Source) > AsciiStrLen (Source));
-  ASSERT ((UINTN)(Source - Destination) > AsciiStrLen (Source));
+  ASSERT ((UINTN)(Destination - Source) > AsciiStrLen(Source));
+  ASSERT ((UINTN)(Source - Destination) > AsciiStrLen(Source));
 
   ReturnValue = Destination;
   while (*Source != 0) {
@@ -1149,7 +1149,7 @@ AsciiStrnCpy (
   //
   // Destination and source cannot overlap
   //
-  ASSERT ((UINTN)(Destination - Source) > AsciiStrLen (Source));
+  ASSERT ((UINTN)(Destination - Source) > AsciiStrLen(Source));
   ASSERT ((UINTN)(Source - Destination) >= Length);
 
 //  if (PcdGet32 (PcdMaximumAsciiStringLength) != 0) {
@@ -1189,7 +1189,7 @@ AsciiStrnCpy (
 **/
 UINTN
 EFIAPI
-AsciiStrLen (
+AsciiStrLen(
   IN      CONST CHAR8               *String
   )
 {
@@ -1242,7 +1242,7 @@ AsciiStrSize (
     return 0;
   }
 
-  return (AsciiStrLen (String) + 1) * sizeof (*String);
+  return (AsciiStrLen(String) + 1) * sizeof (*String);
 }
 
 /**
@@ -1528,7 +1528,7 @@ AsciiStrCat (
   IN CONST CHAR8  *Source
   )
 {
-  AsciiStrCpy (Destination + AsciiStrLen (Destination), Source);
+  AsciiStrCpy (Destination + AsciiStrLen(Destination), Source);
 
   //
   // Size of the resulting string should never be zero.
@@ -1586,7 +1586,7 @@ AsciiStrnCat (
 {
   UINTN   DestinationLen;
 
-  DestinationLen = AsciiStrLen (Destination);
+  DestinationLen = AsciiStrLen(Destination);
   AsciiStrnCpy (Destination + DestinationLen, Source, Length);
   Destination[DestinationLen + Length] = '\0';
 
@@ -1877,7 +1877,7 @@ AsciiStrHexToUint64 (
   string Destination, and returns Destination.  The function terminates the
   Unicode string Destination by appending a Null-terminator character at the end.
   The caller is responsible to make sure Destination points to a buffer with size
-  equal or greater than ((AsciiStrLen (Source) + 1) * sizeof (CHAR16)) in bytes.
+  equal or greater than ((AsciiStrLen(Source) + 1) * sizeof (CHAR16)) in bytes.
 
   If Destination is NULL, then ASSERT().
   If Destination is not aligned on a 16-bit boundary, then ASSERT().
@@ -1921,7 +1921,7 @@ AsciiStrToUnicodeStr (
   //
   // Source and Destination should not overlap
   //
-  ASSERT ((UINTN) ((CHAR8 *) Destination - Source) > AsciiStrLen (Source));
+  ASSERT ((UINTN) ((CHAR8 *) Destination - Source) > AsciiStrLen(Source));
   ASSERT ((UINTN) (Source - (CHAR8 *) Destination) >= (AsciiStrSize (Source) * sizeof (CHAR16)));
 
 

@@ -266,7 +266,7 @@ Output1bitPixel (
   PaletteSize = 0;
   CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
   PaletteSize += sizeof (UINT16);
-  Palette = AllocateZeroPool (PaletteSize);
+  Palette = AllocateZeroPool(PaletteSize);
   ASSERT (Palette != NULL);
   if (Palette == NULL) {
     return;
@@ -355,7 +355,7 @@ Output4bitPixel (
   PaletteSize = 0;
   CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
   PaletteSize += sizeof (UINT16);
-  Palette = AllocateZeroPool (PaletteSize);
+  Palette = AllocateZeroPool(PaletteSize);
   ASSERT (Palette != NULL);
   if (Palette == NULL) {
     return;
@@ -433,7 +433,7 @@ Output8bitPixel (
   PaletteSize = 0;
   CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
   PaletteSize += sizeof (UINT16);
-  Palette = AllocateZeroPool (PaletteSize);
+  Palette = AllocateZeroPool(PaletteSize);
   ASSERT (Palette != NULL);
   if (Palette == NULL) {
     return;
@@ -730,7 +730,7 @@ HiiNewImage (
     // The specified package list does not contain image package.
     // Create one to add this image block.
     //
-    ImagePackage = (HII_IMAGE_PACKAGE_INSTANCE *) AllocateZeroPool (sizeof (HII_IMAGE_PACKAGE_INSTANCE));
+    ImagePackage = (HII_IMAGE_PACKAGE_INSTANCE *) AllocateZeroPool(sizeof (HII_IMAGE_PACKAGE_INSTANCE));
     if (ImagePackage == NULL) {
       EfiReleaseLock (&mHiiDatabaseLock);
       return EFI_OUT_OF_RESOURCES;
@@ -758,7 +758,7 @@ HiiNewImage (
     // Fill in image blocks.
     //
     ImagePackage->ImageBlockSize = NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK);
-    ImagePackage->ImageBlock = AllocateZeroPool (NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK));
+    ImagePackage->ImageBlock = AllocateZeroPool(NewBlockSize + sizeof (EFI_HII_IIBT_END_BLOCK));
     if (ImagePackage->ImageBlock == NULL) {
       FreePool(ImagePackage);
       EfiReleaseLock (&mHiiDatabaseLock);
@@ -932,7 +932,7 @@ IGetImage (
       return EFI_OUT_OF_RESOURCES;
     }
     ImageLength  *= sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-    Image->Bitmap = AllocateZeroPool (ImageLength);
+    Image->Bitmap = AllocateZeroPool(ImageLength);
     if (Image->Bitmap == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -987,7 +987,7 @@ IGetImage (
       return EFI_OUT_OF_RESOURCES;
     }
     ImageLength  *= sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-    Image->Bitmap = AllocateZeroPool (ImageLength);
+    Image->Bitmap = AllocateZeroPool(ImageLength);
     if (Image->Bitmap == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1178,7 +1178,7 @@ HiiSetImage (
   //
   // Adjust the image package to remove the original block firstly then add the new block.
   //
-  ImageBlocks = AllocateZeroPool (ImagePackage->ImageBlockSize + NewBlockSize - OldBlockSize);
+  ImageBlocks = AllocateZeroPool(ImagePackage->ImageBlockSize + NewBlockSize - OldBlockSize);
   if (ImageBlocks == NULL) {
     EfiReleaseLock (&mHiiDatabaseLock);
     return EFI_OUT_OF_RESOURCES;
@@ -1359,7 +1359,7 @@ HiiDrawImage (
       return EFI_OUT_OF_RESOURCES;
     }
     BufferLen *= sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-    BltBuffer  = AllocateZeroPool (BufferLen);
+    BltBuffer  = AllocateZeroPool(BufferLen);
     if (BltBuffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -1441,12 +1441,12 @@ HiiDrawImage (
       return EFI_OUT_OF_RESOURCES;
     }
     BufferLen *= sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL);
-    BltBuffer  = AllocateZeroPool (BufferLen);
+    BltBuffer  = AllocateZeroPool(BufferLen);
     if (BltBuffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
 
-    ImageOut = (EFI_IMAGE_OUTPUT *) AllocateZeroPool (sizeof (EFI_IMAGE_OUTPUT));
+    ImageOut = (EFI_IMAGE_OUTPUT *) AllocateZeroPool(sizeof (EFI_IMAGE_OUTPUT));
     if (ImageOut == NULL) {
       FreePool(BltBuffer);
       return EFI_OUT_OF_RESOURCES;

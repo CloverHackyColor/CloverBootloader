@@ -231,7 +231,7 @@ RecordFmpCapsuleStatusVariable (
   //
   CapsuleResultVariableSize = sizeof(EFI_CAPSULE_RESULT_VARIABLE_HEADER) + sizeof(EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize + DevicePathStrSize;
 
-  CapsuleResultVariable     = AllocateZeroPool (CapsuleResultVariableSize);
+  CapsuleResultVariable     = AllocateZeroPool(CapsuleResultVariableSize);
   if (CapsuleResultVariable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

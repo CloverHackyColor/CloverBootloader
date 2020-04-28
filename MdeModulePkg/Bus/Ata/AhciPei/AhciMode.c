@@ -1594,7 +1594,7 @@ CreateNewDevice (
   PEI_AHCI_ATA_DEVICE_DATA    *DeviceData;
   EFI_STATUS                  Status;
 
-  DeviceData = AllocateZeroPool (sizeof (PEI_AHCI_ATA_DEVICE_DATA));
+  DeviceData = AllocateZeroPool(sizeof (PEI_AHCI_ATA_DEVICE_DATA));
   if (DeviceData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

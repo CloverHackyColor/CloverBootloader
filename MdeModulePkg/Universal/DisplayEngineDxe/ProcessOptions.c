@@ -796,7 +796,7 @@ PasswordProcess (
   Maximum      = PasswordInfo->MaxSize;
   Status       = EFI_SUCCESS;
 
-  StringPtr = AllocateZeroPool ((Maximum + 1) * sizeof (CHAR16));
+  StringPtr = AllocateZeroPool((Maximum + 1) * sizeof (CHAR16));
   ASSERT (StringPtr);
 
   //
@@ -863,7 +863,7 @@ PasswordProcess (
   //
   // Confirm new password
   //
-  TempString = AllocateZeroPool ((Maximum + 1) * sizeof (CHAR16));
+  TempString = AllocateZeroPool((Maximum + 1) * sizeof (CHAR16));
   ASSERT (TempString);
   Status = ReadString (MenuOption, gConfirmPassword, TempString);
   if (EFI_ERROR(Status)) {
@@ -992,7 +992,7 @@ ProcessOptions (
       // space required for the array or strings.
       //
       MaxLen = OrderList->MaxContainers * BufferSize / sizeof (CHAR16);
-      *OptionString = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+      *OptionString = AllocateZeroPool(MaxLen * sizeof (CHAR16));
       ASSERT (*OptionString);
 
       HiiValue.Type = ValueType;
@@ -1028,7 +1028,7 @@ ProcessOptions (
           //
           gUserInput->SelectedStatement = Question;
           gMisMatch = TRUE;
-          ValueArray = AllocateZeroPool (Question->CurrentValue.BufferLen);
+          ValueArray = AllocateZeroPool(Question->CurrentValue.BufferLen);
           ASSERT (ValueArray != NULL);
           gUserInput->InputValue.Buffer    = ValueArray;
           gUserInput->InputValue.BufferLen = Question->CurrentValue.BufferLen;
@@ -1145,7 +1145,7 @@ ProcessOptions (
       Status = GetSelectionInputPopUp (MenuOption);
     } else {
       MaxLen = BufferSize / sizeof(CHAR16);
-      *OptionString = AllocateZeroPool (BufferSize);
+      *OptionString = AllocateZeroPool(BufferSize);
       ASSERT (*OptionString);
 
       OneOfOption = ValueToOption (Question, QuestionValue);
@@ -1222,7 +1222,7 @@ ProcessOptions (
       //
       return EFI_SUCCESS;
     } else {
-      *OptionString = AllocateZeroPool (BufferSize);
+      *OptionString = AllocateZeroPool(BufferSize);
       ASSERT (*OptionString);
 
       *OptionString[0] = LEFT_CHECKBOX_DELIMITER;
@@ -1243,7 +1243,7 @@ ProcessOptions (
       //
       Status = GetNumericInput (MenuOption);
     } else {
-      *OptionString = AllocateZeroPool (BufferSize);
+      *OptionString = AllocateZeroPool(BufferSize);
       ASSERT (*OptionString);
 
       *OptionString[0] = LEFT_NUMERIC_DELIMITER;
@@ -1266,7 +1266,7 @@ ProcessOptions (
       //
       Status = GetNumericInput (MenuOption);
     } else {
-      *OptionString = AllocateZeroPool (BufferSize);
+      *OptionString = AllocateZeroPool(BufferSize);
       ASSERT (*OptionString);
 
       switch (MenuOption->Sequence) {
@@ -1310,7 +1310,7 @@ ProcessOptions (
       //
       Status = GetNumericInput (MenuOption);
     } else {
-      *OptionString = AllocateZeroPool (BufferSize);
+      *OptionString = AllocateZeroPool(BufferSize);
       ASSERT (*OptionString);
 
       switch (MenuOption->Sequence) {
@@ -1349,7 +1349,7 @@ ProcessOptions (
 
   case EFI_IFR_STRING_OP:
     if (Selected) {
-      StringPtr = AllocateZeroPool (Question->CurrentValue.BufferLen + sizeof (CHAR16));
+      StringPtr = AllocateZeroPool(Question->CurrentValue.BufferLen + sizeof (CHAR16));
       ASSERT (StringPtr);
       CopyMem(StringPtr, Question->CurrentValue.Buffer, Question->CurrentValue.BufferLen);
 
@@ -1366,7 +1366,7 @@ ProcessOptions (
       FreePool(StringPtr);
       return EFI_SUCCESS;
     } else {
-      *OptionString = AllocateZeroPool (BufferSize);
+      *OptionString = AllocateZeroPool(BufferSize);
       ASSERT (*OptionString);
 
       if (((CHAR16 *) Question->CurrentValue.Buffer)[0] == 0x0000) {
@@ -1446,7 +1446,7 @@ ProcessHelpString (
   }
   *EachLineWidth = MaxStringLen;
 
-  *FormattedString = AllocateZeroPool (TotalRowNum * MaxStringLen * sizeof (CHAR16));
+  *FormattedString = AllocateZeroPool(TotalRowNum * MaxStringLen * sizeof (CHAR16));
   ASSERT (*FormattedString != NULL);
 
   //

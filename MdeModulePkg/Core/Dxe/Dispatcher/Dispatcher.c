@@ -775,7 +775,7 @@ FvIsBeingProcesssed (
     }
   }
 
-  KnownHandle = AllocateZeroPool (sizeof (KNOWN_HANDLE));
+  KnownHandle = AllocateZeroPool(sizeof (KNOWN_HANDLE));
   ASSERT (KnownHandle != NULL);
 
   KnownHandle->Signature = KNOWN_HANDLE_SIGNATURE;
@@ -874,7 +874,7 @@ CoreAddToDriverList (
   // Create the Driver Entry for the list. ZeroPool initializes lots of variables to
   // NULL or FALSE.
   //
-  DriverEntry = AllocateZeroPool (sizeof (EFI_CORE_DRIVER_ENTRY));
+  DriverEntry = AllocateZeroPool(sizeof (EFI_CORE_DRIVER_ENTRY));
   ASSERT (DriverEntry != NULL);
   if (Type == EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE) {
     DriverEntry->IsFvImage = TRUE;

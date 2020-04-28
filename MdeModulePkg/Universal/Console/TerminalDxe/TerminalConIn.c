@@ -364,7 +364,7 @@ TerminalConInRegisterKeyNotify (
   //
   // Allocate resource to save the notification function
   //
-  NewNotify = (TERMINAL_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool (sizeof (TERMINAL_CONSOLE_IN_EX_NOTIFY));
+  NewNotify = (TERMINAL_CONSOLE_IN_EX_NOTIFY *) AllocateZeroPool(sizeof (TERMINAL_CONSOLE_IN_EX_NOTIFY));
   if (NewNotify == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

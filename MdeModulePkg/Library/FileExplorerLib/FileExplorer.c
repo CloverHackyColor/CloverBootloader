@@ -301,12 +301,12 @@ LibCreateMenuEntry (
   //
   // Create new menu entry
   //
-  MenuEntry = AllocateZeroPool (sizeof (MENU_ENTRY));
+  MenuEntry = AllocateZeroPool(sizeof (MENU_ENTRY));
   if (MenuEntry == NULL) {
     return NULL;
   }
 
-  MenuEntry->VariableContext = AllocateZeroPool (sizeof (FILE_CONTEXT));
+  MenuEntry->VariableContext = AllocateZeroPool(sizeof (FILE_CONTEXT));
   if (MenuEntry->VariableContext == NULL) {
     FreePool(MenuEntry);
     return NULL;
@@ -516,7 +516,7 @@ LibStrDuplicate (
   UINTN   Size;
 
   Size  = StrSize (Src);
-  Dest  = AllocateZeroPool (Size);
+  Dest  = AllocateZeroPool(Size);
   ASSERT (Dest != NULL);
   if (Dest != NULL) {
     CopyMem (Dest, Src, Size);
@@ -694,10 +694,10 @@ LibAppendFileName (
   }
 
   MaxLen = (Size1 + Size2 + sizeof (CHAR16))/ sizeof (CHAR16);
-  Str   = AllocateZeroPool (Size1 + Size2 + sizeof (CHAR16));
+  Str   = AllocateZeroPool(Size1 + Size2 + sizeof (CHAR16));
   ASSERT (Str != NULL);
 
-  TmpStr = AllocateZeroPool (Size1 + Size2 + sizeof (CHAR16));
+  TmpStr = AllocateZeroPool(Size1 + Size2 + sizeof (CHAR16));
   ASSERT (TmpStr != NULL);
 
   StrCpyS (Str, MaxLen, Str1);
@@ -830,7 +830,7 @@ LibFindFileSystem (
           }
         }
       }
-      MenuEntry->DisplayString  = AllocateZeroPool (MAX_CHAR);
+      MenuEntry->DisplayString  = AllocateZeroPool(MAX_CHAR);
       ASSERT (MenuEntry->DisplayString != NULL);
       UnicodeSPrint (
         MenuEntry->DisplayString,
@@ -1148,7 +1148,7 @@ LibFindFiles (
   OptionNumber = 0;
 
   DirBufferSize = sizeof (EFI_FILE_INFO) + 1024;
-  DirInfo       = AllocateZeroPool (DirBufferSize);
+  DirInfo       = AllocateZeroPool(DirBufferSize);
   if (DirInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1207,7 +1207,7 @@ LibFindFiles (
 
       if (NewFileContext->IsDir) {
         BufferSize = StrLen (DirInfo->FileName) * 2 + 6;
-        NewMenuEntry->DisplayString = AllocateZeroPool (BufferSize);
+        NewMenuEntry->DisplayString = AllocateZeroPool(BufferSize);
         UnicodeSPrint (
           NewMenuEntry->DisplayString,
           BufferSize,

@@ -534,7 +534,7 @@ TranslateGopBltToBmp (
   // reclaim the memory
   //
   if (*BmpImage == NULL) {
-    *BmpImage = AllocateZeroPool (BmpSize);
+    *BmpImage = AllocateZeroPool(BmpSize);
     if (*BmpImage == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

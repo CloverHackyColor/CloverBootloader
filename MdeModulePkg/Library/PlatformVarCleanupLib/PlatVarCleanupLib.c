@@ -161,7 +161,7 @@ FindUserVariableNodeByGuid (
   //
   // Create new one if not found.
   //
-  UserVariableNode = AllocateZeroPool (sizeof (*UserVariableNode));
+  UserVariableNode = AllocateZeroPool(sizeof (*UserVariableNode));
   ASSERT (UserVariableNode != NULL);
   UserVariableNode->Signature = USER_VARIABLE_NODE_SIGNATURE;
   CopyGuid (&UserVariableNode->Guid, Guid);
@@ -204,14 +204,14 @@ CreateUserVariableNode (
   // Initialize 128 * sizeof (CHAR16) variable name size.
   //
   MaxVarNameSize = 128 * sizeof (CHAR16);
-  VarName = AllocateZeroPool (MaxVarNameSize);
+  VarName = AllocateZeroPool(MaxVarNameSize);
   ASSERT (VarName != NULL);
 
   //
   // Initialize 0x1000 variable data size.
   //
   MaxDataSize = 0x1000;
-  Data = AllocateZeroPool (MaxDataSize);
+  Data = AllocateZeroPool(MaxDataSize);
   ASSERT (Data != NULL);
 
   Index = 0;
@@ -244,7 +244,7 @@ CreateUserVariableNode (
           //
           // Different variables that have same variable GUID share same user variable node.
           //
-          UserVariableNameNode = AllocateZeroPool (sizeof (*UserVariableNameNode));
+          UserVariableNameNode = AllocateZeroPool(sizeof (*UserVariableNameNode));
           ASSERT (UserVariableNameNode != NULL);
           UserVariableNameNode->Signature = USER_VARIABLE_NAME_NODE_SIGNATURE;
           UserVariableNameNode->Name = AllocateCopyPool(VarNameSize, VarName);
@@ -365,7 +365,7 @@ CreateTimeBasedPayload (
   PayloadSize = *DataSize;
 
   DescriptorSize = OFFSET_OF (EFI_VARIABLE_AUTHENTICATION_2, AuthInfo) + OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
-  NewData = (UINT8 *) AllocateZeroPool (DescriptorSize + PayloadSize);
+  NewData = (UINT8 *) AllocateZeroPool(DescriptorSize + PayloadSize);
   if (NewData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -451,7 +451,7 @@ CreateCounterBasedPayload (
   DescriptorSize = (OFFSET_OF (EFI_VARIABLE_AUTHENTICATION, AuthInfo)) + \
                    (OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData)) + \
                    sizeof (EFI_CERT_BLOCK_RSA_2048_SHA256);
-  NewData = (UINT8 *) AllocateZeroPool (DescriptorSize + PayloadSize);
+  NewData = (UINT8 *) AllocateZeroPool(DescriptorSize + PayloadSize);
   if (NewData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -611,7 +611,7 @@ VariableCleanupHiiExtractConfig (
     //
     ConfigRequestHdr = HiiConstructConfigHdr (&mVariableCleanupHiiGuid, mVarStoreName, Private->HiiHandle);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
@@ -1081,7 +1081,7 @@ PlatformVarCleanup (
         return Status;
       }
 
-      Private = AllocateZeroPool (sizeof (VARIABLE_CLEANUP_HII_PRIVATE_DATA));
+      Private = AllocateZeroPool(sizeof (VARIABLE_CLEANUP_HII_PRIVATE_DATA));
       if (Private == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }

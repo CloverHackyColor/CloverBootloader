@@ -1062,7 +1062,7 @@ CreateNewDeviceInfo (
 {
   EFI_ATA_DEVICE_INFO  *DeviceInfo;
 
-  DeviceInfo = AllocateZeroPool (sizeof (EFI_ATA_DEVICE_INFO));
+  DeviceInfo = AllocateZeroPool(sizeof (EFI_ATA_DEVICE_INFO));
 
   if (DeviceInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -1364,7 +1364,7 @@ AtaPassThruPassThru (
   // For non-blocking mode, queue the Task into the list.
   //
   if (Event != NULL) {
-    Task = AllocateZeroPool (sizeof (ATA_NONBLOCK_TASK));
+    Task = AllocateZeroPool(sizeof (ATA_NONBLOCK_TASK));
     if (Task == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

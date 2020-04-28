@@ -67,7 +67,7 @@ ReadFileFromVol (
   //
   FileInfoSize = sizeof(EFI_FILE_INFO) + 1024;
 
-  FileInfo = AllocateZeroPool (FileInfoSize);
+  FileInfo = AllocateZeroPool(FileInfoSize);
   if (FileInfo == NULL) {
     Handle->Close (Handle);
     return Status;
@@ -89,7 +89,7 @@ ReadFileFromVol (
   // Allocate buffer for the file data. The last CHAR16 is for L'\0'
   //
   TempBufferSize = (UINTN) FileInfo->FileSize + sizeof(CHAR16);
-  TempBuffer = AllocateZeroPool (TempBufferSize);
+  TempBuffer = AllocateZeroPool(TempBufferSize);
   if (TempBuffer == NULL) {
     Handle->Close (Handle);
     gBS->FreePool(FileInfo);
@@ -327,7 +327,7 @@ GetFileNameUnderDir (
   //
   FileInfoSize = sizeof(EFI_FILE_INFO) + 1024;
 
-  FileInfo = AllocateZeroPool (FileInfoSize);
+  FileInfo = AllocateZeroPool(FileInfoSize);
   if (FileInfo == NULL) {
     Handle->Close (Handle);
     return NULL;

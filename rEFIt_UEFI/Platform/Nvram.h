@@ -24,7 +24,7 @@ FindStartupDiskVolume (
   );
 
 VOID
-*GetNvramVariable (
+*GetNvramVariable(
   IN      CONST CHAR16   *VariableName,
   IN      EFI_GUID *VendorGuid,
      OUT  UINT32   *Attributes    OPTIONAL,

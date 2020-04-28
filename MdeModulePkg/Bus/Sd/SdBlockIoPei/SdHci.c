@@ -1003,7 +1003,7 @@ SdPeimCreateTrb (
     return NULL;
   }
 
-  Trb = AllocateZeroPool (sizeof (SD_TRB));
+  Trb = AllocateZeroPool(sizeof (SD_TRB));
   if (Trb == NULL) {
     return NULL;
   }

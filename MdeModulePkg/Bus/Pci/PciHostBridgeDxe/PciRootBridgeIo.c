@@ -171,7 +171,7 @@ CreateRootBridge (
     }
   }
 
-  RootBridge = AllocateZeroPool (sizeof (PCI_ROOT_BRIDGE_INSTANCE));
+  RootBridge = AllocateZeroPool(sizeof (PCI_ROOT_BRIDGE_INSTANCE));
   ASSERT (RootBridge != NULL);
 
   RootBridge->Signature = PCI_ROOT_BRIDGE_SIGNATURE;

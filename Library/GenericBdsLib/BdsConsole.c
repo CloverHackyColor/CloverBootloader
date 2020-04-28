@@ -1246,7 +1246,7 @@ Done:
       return EFI_UNSUPPORTED;
     }
 
-    LogoBlt = AllocateZeroPool ((UINTN)BufferSize * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    LogoBlt = AllocateZeroPool((UINTN)BufferSize * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     if (LogoBlt == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

@@ -931,7 +931,7 @@ GetVariablePayloadSize (
   // SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
   //
   CommSize = SMM_COMMUNICATE_HEADER_SIZE + SMM_VARIABLE_COMMUNICATE_HEADER_SIZE + sizeof (SMM_VARIABLE_COMMUNICATE_GET_PAYLOAD_SIZE);
-  CommBuffer = AllocateZeroPool (CommSize);
+  CommBuffer = AllocateZeroPool(CommSize);
   if (CommBuffer == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;

@@ -2042,7 +2042,7 @@ OhciAllocateDev (
   UINTN                   Pages;
   UINTN                   Bytes;
 
-  Ohc = AllocateZeroPool (sizeof (USB_OHCI_HC_DEV));
+  Ohc = AllocateZeroPool(sizeof (USB_OHCI_HC_DEV));
   if (Ohc == NULL) {
     return NULL;
   }  

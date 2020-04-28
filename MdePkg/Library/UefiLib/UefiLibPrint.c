@@ -432,7 +432,7 @@ InternalPrintGraphic (
     goto Error;
   }
 
-  Blt = (EFI_IMAGE_OUTPUT *) AllocateZeroPool (sizeof (EFI_IMAGE_OUTPUT));
+  Blt = (EFI_IMAGE_OUTPUT *) AllocateZeroPool(sizeof (EFI_IMAGE_OUTPUT));
   ASSERT (Blt != NULL);
   if (!Blt) {
     return 0;
@@ -493,7 +493,7 @@ InternalPrintGraphic (
       goto Error;
     }
 
-    Blt->Image.Bitmap = AllocateZeroPool ((UINT32) Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    Blt->Image.Bitmap = AllocateZeroPool((UINT32) Blt->Width * Blt->Height * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     ASSERT (Blt->Image.Bitmap != NULL);
     if (!Blt->Image.Bitmap) {
       return 0;

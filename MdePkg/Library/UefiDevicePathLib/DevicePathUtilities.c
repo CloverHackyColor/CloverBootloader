@@ -752,7 +752,7 @@ UefiDevicePathLibCreateDeviceNode (
     return NULL;
   }
 
-  DevicePath = AllocateZeroPool (NodeLength);
+  DevicePath = AllocateZeroPool(NodeLength);
   if (DevicePath != NULL) {
      DevicePath->Type    = NodeType;
      DevicePath->SubType = NodeSubType;

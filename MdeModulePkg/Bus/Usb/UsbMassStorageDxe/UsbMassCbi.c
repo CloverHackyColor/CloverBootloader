@@ -65,7 +65,7 @@ UsbCbiInit (
   //
   // Allocate the CBI context for USB_CBI_PROTOCOL and 3 endpoint descriptors.
   //
-  UsbCbi = AllocateZeroPool (
+  UsbCbi = AllocateZeroPool(
              sizeof (USB_CBI_PROTOCOL) + 3 * sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
              );
   ASSERT (UsbCbi != NULL);

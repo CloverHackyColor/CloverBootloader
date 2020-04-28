@@ -102,7 +102,7 @@ FvSimpleFileSystemOpenVolume (
     //
     // Allocate file structure for root file
     //
-    Root = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE));
+    Root = AllocateZeroPool(sizeof (FV_FILESYSTEM_FILE));
     if (Root == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -111,7 +111,7 @@ FvSimpleFileSystemOpenVolume (
     Root->Instance  = Instance;
     Root->Signature = FVFS_FILE_SIGNATURE;
     CopyMem (&Root->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
-    Root->FvFileInfo = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE_INFO));
+    Root->FvFileInfo = AllocateZeroPool(sizeof (FV_FILESYSTEM_FILE_INFO));
     if (Root->FvFileInfo == NULL) {
         return EFI_OUT_OF_RESOURCES;
     }
@@ -161,7 +161,7 @@ FvSimpleFileSystemOpenVolume (
       if (!EFI_ERROR(Status)) {
         Name = UiSection;
       } else {
-        Name = AllocateZeroPool (GUID_STRING_SIZE);
+        Name = AllocateZeroPool(GUID_STRING_SIZE);
         if (Name == NULL) {
           return EFI_OUT_OF_RESOURCES;
         }
@@ -178,7 +178,7 @@ FvSimpleFileSystemOpenVolume (
         NameLen += StrSize (L".efi") - sizeof (CHAR16);
       }
 
-      FvFileInfo = AllocateZeroPool (sizeof (FV_FILESYSTEM_FILE_INFO) + NameLen - sizeof (CHAR16));
+      FvFileInfo = AllocateZeroPool(sizeof (FV_FILESYSTEM_FILE_INFO) + NameLen - sizeof (CHAR16));
       if (FvFileInfo == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }
@@ -449,7 +449,7 @@ FvSimpleFileSystemDriverStart (
   //
   // Create an instance
   //
-  Instance = AllocateZeroPool (sizeof (FV_FILESYSTEM_INSTANCE));
+  Instance = AllocateZeroPool(sizeof (FV_FILESYSTEM_INSTANCE));
   ASSERT (Instance != NULL);
 
   Instance->Root = NULL;
@@ -490,7 +490,7 @@ FvSimpleFileSystemDriverStart (
         //
         // Allocate the volume label
         //
-        Instance->VolumeLabel = AllocateZeroPool (FVFS_VOLUME_LABEL_SIZE);
+        Instance->VolumeLabel = AllocateZeroPool(FVFS_VOLUME_LABEL_SIZE);
         //
         // Check the allocation was successful
         //

@@ -559,7 +559,7 @@ EhcCreateUrb (
   URB                           *Urb;
   VOID                          *Map;
 
-  Urb = AllocateZeroPool (sizeof (URB));
+  Urb = AllocateZeroPool(sizeof (URB));
 
   if (Urb == NULL) {
     return NULL;

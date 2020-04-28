@@ -90,7 +90,7 @@ CatPrint (
   VA_LIST Args;
   UINTN   StringSize;
 
-  AppendStr = AllocateZeroPool (0x1000);
+  AppendStr = AllocateZeroPool(0x1000);
   if (AppendStr == NULL) {
     return Str->Str;
   }
@@ -100,7 +100,7 @@ CatPrint (
   VA_END (Args);
   if (NULL == Str->Str) {
     StringSize   = StrSize (AppendStr);
-    Str->Str  = AllocateZeroPool (StringSize);
+    Str->Str  = AllocateZeroPool(StringSize);
 //    ASSERT (Str->Str != NULL);
   } else {
     StringSize = StrSize (AppendStr);

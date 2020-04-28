@@ -2872,7 +2872,7 @@ UnicodeStrnToAsciiStrS (
   appending a Null-terminator character at the end.
 
   The caller is responsible to make sure Destination points to a buffer with size
-  equal or greater than ((AsciiStrLen (Source) + 1) * sizeof (CHAR16)) in bytes.
+  equal or greater than ((AsciiStrLen(Source) + 1) * sizeof (CHAR16)) in bytes.
 
   If Destination is not aligned on a 16-bit boundary, then ASSERT().
   If an error would be returned, then the function will also ASSERT().

@@ -127,7 +127,7 @@ GetPcdName (
     // Need to get the full PCD name.
     //
     NameSize = AsciiStrSize (TokenSpaceName) + AsciiStrSize (PcdName);
-    Name = AllocateZeroPool (NameSize);
+    Name = AllocateZeroPool(NameSize);
     ASSERT (Name != NULL);
     //
     // Catenate TokenSpaceCName and PcdCName with a '.' to form the full PCD name.

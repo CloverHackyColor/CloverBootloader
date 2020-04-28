@@ -65,7 +65,7 @@ EnumerateNvmeDevNamespace (
   UINT32                       Flbas;
   UINT32                       LbaFmtIdx;
 
-  NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *) AllocateZeroPool (sizeof (NVME_ADMIN_NAMESPACE_DATA));
+  NamespaceData = (NVME_ADMIN_NAMESPACE_DATA *) AllocateZeroPool(sizeof (NVME_ADMIN_NAMESPACE_DATA));
   if (NamespaceData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -146,7 +146,7 @@ NvmeDiscoverNamespaces (
   UINT32    NamespaceId;
 
   Private->ActiveNamespaceNum = 0;
-  Private->NamespaceInfo      = AllocateZeroPool (Private->ControllerData->Nn * sizeof (PEI_NVME_NAMESPACE_INFO));
+  Private->NamespaceInfo      = AllocateZeroPool(Private->ControllerData->Nn * sizeof (PEI_NVME_NAMESPACE_INFO));
 
   //
   // According to Nvm Express 1.1 spec Figure 82, the field 'Nn' of the identify
@@ -307,7 +307,7 @@ NvmExpressPeimEntry (
     //
     // Memory allocation for controller private data
     //
-    Private = AllocateZeroPool (sizeof (PEI_NVME_CONTROLLER_PRIVATE_DATA));
+    Private = AllocateZeroPool(sizeof (PEI_NVME_CONTROLLER_PRIVATE_DATA));
     if (Private == NULL) {
       DEBUG ((
         DEBUG_ERROR, "%a: Fail to allocate private data for Controller %d.\n",

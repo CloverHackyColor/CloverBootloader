@@ -679,7 +679,7 @@ XhcPeiControlTransfer (
       } else {
         MaxPacket0 = Xhc->UsbDevContext[SlotId].DevDesc.MaxPacketSize0;
       }
-      Xhc->UsbDevContext[SlotId].ConfDesc = AllocateZeroPool (Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations * sizeof (EFI_USB_CONFIG_DESCRIPTOR *));
+      Xhc->UsbDevContext[SlotId].ConfDesc = AllocateZeroPool(Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations * sizeof (EFI_USB_CONFIG_DESCRIPTOR *));
       if (Xhc->UsbDevContext[SlotId].ConfDesc == NULL) {
         Status = EFI_OUT_OF_RESOURCES;
         goto ON_EXIT;
@@ -697,7 +697,7 @@ XhcPeiControlTransfer (
         //
         Index = (UINT8) Request->Value;
         ASSERT (Index < Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations);
-        Xhc->UsbDevContext[SlotId].ConfDesc[Index] = AllocateZeroPool (*DataLength);
+        Xhc->UsbDevContext[SlotId].ConfDesc[Index] = AllocateZeroPool(*DataLength);
         if (Xhc->UsbDevContext[SlotId].ConfDesc[Index] == NULL) {
           Status = EFI_OUT_OF_RESOURCES;
           goto ON_EXIT;

@@ -1121,7 +1121,7 @@ PartitionInstallChildHandle (
   PARTITION_PRIVATE_DATA  *Private;
 
   Status  = EFI_SUCCESS;
-  Private = AllocateZeroPool (sizeof (PARTITION_PRIVATE_DATA));
+  Private = AllocateZeroPool(sizeof (PARTITION_PRIVATE_DATA));
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

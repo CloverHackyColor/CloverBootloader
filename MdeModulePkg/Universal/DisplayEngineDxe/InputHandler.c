@@ -98,7 +98,7 @@ ReadString (
   }
 
   MaxLen = Maximum + 1;
-  TempString = AllocateZeroPool (MaxLen * sizeof (CHAR16));
+  TempString = AllocateZeroPool(MaxLen * sizeof (CHAR16));
   ASSERT (TempString);
 
   if (ScreenSize < (Maximum + 1)) {
@@ -109,7 +109,7 @@ ReadString (
     ScreenSize = DimensionsWidth - 2;
   }
 
-  BufferedString = AllocateZeroPool (ScreenSize * 2);
+  BufferedString = AllocateZeroPool(ScreenSize * 2);
   ASSERT (BufferedString);
 
   Start = (DimensionsWidth - ScreenSize - 2) / 2 + gStatementDimensions.LeftColumn + 1;
@@ -1136,7 +1136,7 @@ AdjustOptionOrder (
   //
   // Prepare HiiValue array
   //
-  HiiValueArray = AllocateZeroPool (*PopUpMenuLines * sizeof (EFI_HII_VALUE));
+  HiiValueArray = AllocateZeroPool(*PopUpMenuLines * sizeof (EFI_HII_VALUE));
   ASSERT (HiiValueArray != NULL);
 
   for (Index = 0; Index < *PopUpMenuLines; Index++) {
@@ -1435,7 +1435,7 @@ GetSelectionInputPopUp (
       // and append a "..." for indication.
       //
       if (StrLen (StringPtr) > (PopUpWidth - 1)) {
-        TempStringPtr = AllocateZeroPool (sizeof (CHAR16) * (PopUpWidth - 1));
+        TempStringPtr = AllocateZeroPool(sizeof (CHAR16) * (PopUpWidth - 1));
         ASSERT ( TempStringPtr != NULL );
         CopyMem (TempStringPtr, StringPtr, (sizeof (CHAR16) * (PopUpWidth - 5)));
         FreePool(StringPtr);
@@ -1619,7 +1619,7 @@ TheKey:
       // return the current selection
       //
       if (OrderedList) {
-        ReturnValue = AllocateZeroPool (Question->CurrentValue.BufferLen);
+        ReturnValue = AllocateZeroPool(Question->CurrentValue.BufferLen);
         ASSERT (ReturnValue != NULL);
         Index = 0;
         Link = GetFirstNode (&Question->OptionListHead);

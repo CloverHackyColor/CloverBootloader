@@ -424,8 +424,8 @@ DevPathToTextAcpiEx (
 
   AcpiEx = DevPath;
   HIDStr = (CHAR8 *) (((UINT8 *) AcpiEx) + sizeof (ACPI_EXTENDED_HID_DEVICE_PATH));
-  UIDStr = HIDStr + AsciiStrLen (HIDStr) + 1;
-  CIDStr = UIDStr + AsciiStrLen (UIDStr) + 1;
+  UIDStr = HIDStr + AsciiStrLen(HIDStr) + 1;
+  CIDStr = UIDStr + AsciiStrLen(UIDStr) + 1;
 
   if (DisplayOnly) {
     if ((EISA_ID_TO_NUM (AcpiEx->HID) == 0x0A03) ||
@@ -2448,7 +2448,7 @@ UefiDevicePathLibConvertDevicePathToText (
   }
 
   if (Str.Str == NULL) {
-    return AllocateZeroPool (sizeof (CHAR16));
+    return AllocateZeroPool(sizeof (CHAR16));
   } else {
     return Str.Str;
   }

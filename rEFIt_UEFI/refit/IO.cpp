@@ -721,12 +721,12 @@ Returns:
     return 0;
   }
 
-  Item.Scratch = (__typeof__(Item.Scratch))AllocateZeroPool (sizeof (CHAR16) * PRINT_ITEM_BUFFER_LEN);
+  Item.Scratch = (__typeof__(Item.Scratch))AllocateZeroPool(sizeof (CHAR16) * PRINT_ITEM_BUFFER_LEN);
   if (NULL == Item.Scratch) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  Buffer = (__typeof__(Buffer))AllocateZeroPool (sizeof (CHAR16) * PRINT_STRING_LEN);
+  Buffer = (__typeof__(Buffer))AllocateZeroPool(sizeof (CHAR16) * PRINT_STRING_LEN);
   if (NULL == Buffer) {
     FreePool(Item.Scratch);
     return EFI_OUT_OF_RESOURCES;

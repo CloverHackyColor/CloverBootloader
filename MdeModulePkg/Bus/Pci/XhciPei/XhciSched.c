@@ -27,7 +27,7 @@ XhcPeiCreateCmdTrb (
 {
   URB   *Urb;
 
-  Urb = AllocateZeroPool (sizeof (URB));
+  Urb = AllocateZeroPool(sizeof (URB));
   if (Urb == NULL) {
     return NULL;
   }
@@ -145,7 +145,7 @@ XhcPeiCreateUrb (
   EFI_STATUS        Status;
   URB               *Urb;
 
-  Urb = AllocateZeroPool (sizeof (URB));
+  Urb = AllocateZeroPool(sizeof (URB));
   if (Urb == NULL) {
     return NULL;
   }
@@ -1154,7 +1154,7 @@ XhcPeiInitializeDeviceSlot (
   //
   // 4) Allocate and initialize the Transfer Ring for the Default Control Endpoint.
   //
-  EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+  EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
   Xhc->UsbDevContext[SlotId].EndpointTransferRing[0] = EndpointTransferRing;
   XhcPeiCreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *) Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
   //
@@ -1365,7 +1365,7 @@ XhcPeiInitializeDeviceSlot64 (
   //
   // 4) Allocate and initialize the Transfer Ring for the Default Control Endpoint.
   //
-  EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+  EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
   Xhc->UsbDevContext[SlotId].EndpointTransferRing[0] = EndpointTransferRing;
   XhcPeiCreateTransferRing(Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *) Xhc->UsbDevContext[SlotId].EndpointTransferRing[0]);
   //
@@ -1754,7 +1754,7 @@ XhcPeiSetConfigCmd (
 
           InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
           if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-            EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+            EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
             Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
             XhcPeiCreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *) Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
           }
@@ -1818,7 +1818,7 @@ XhcPeiSetConfigCmd (
           }
 
           if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-            EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+            EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
             Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
             XhcPeiCreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *) Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
           }
@@ -1971,7 +1971,7 @@ XhcPeiSetConfigCmd64 (
 
           InputContext->EP[Dci-1].AverageTRBLength = 0x1000;
           if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-            EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+            EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
             Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
             XhcPeiCreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *) Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
           }
@@ -2035,7 +2035,7 @@ XhcPeiSetConfigCmd64 (
           }
 
           if (Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] == NULL) {
-            EndpointTransferRing = AllocateZeroPool (sizeof (TRANSFER_RING));
+            EndpointTransferRing = AllocateZeroPool(sizeof (TRANSFER_RING));
             Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1] = (VOID *) EndpointTransferRing;
             XhcPeiCreateTransferRing (Xhc, TR_RING_TRB_NUMBER, (TRANSFER_RING *) Xhc->UsbDevContext[SlotId].EndpointTransferRing[Dci-1]);
           }
@@ -2870,14 +2870,14 @@ XhcPeiInitSched (
     //
     // Allocate the buffer to record the Mapping for each scratch buffer in order to Unmap them
     //
-    ScratchEntryMap = AllocateZeroPool (sizeof (UINTN) * MaxScratchpadBufs);
+    ScratchEntryMap = AllocateZeroPool(sizeof (UINTN) * MaxScratchpadBufs);
     ASSERT (ScratchEntryMap != NULL);
     Xhc->ScratchEntryMap = ScratchEntryMap;
 
     //
     // Allocate the buffer to record the host address for each entry
     //
-    ScratchEntry = AllocateZeroPool (sizeof (UINT64) * MaxScratchpadBufs);
+    ScratchEntry = AllocateZeroPool(sizeof (UINT64) * MaxScratchpadBufs);
     ASSERT (ScratchEntry != NULL);
     Xhc->ScratchEntry = ScratchEntry;
 

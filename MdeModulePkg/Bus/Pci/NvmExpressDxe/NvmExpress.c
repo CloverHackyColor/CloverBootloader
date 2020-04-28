@@ -941,7 +941,7 @@ NvmExpressDriverBindingStart (
   // Check EFI_ALREADY_STARTED to reuse the original NVME_CONTROLLER_PRIVATE_DATA.
   //
   if (Status != EFI_ALREADY_STARTED) {
-    Private = AllocateZeroPool (sizeof (NVME_CONTROLLER_PRIVATE_DATA));
+    Private = AllocateZeroPool(sizeof (NVME_CONTROLLER_PRIVATE_DATA));
 
     if (Private == NULL) {
       DEBUG ((EFI_D_ERROR, "NvmExpressDriverBindingStart: allocating pool for Nvme Private Data failed!\n"));

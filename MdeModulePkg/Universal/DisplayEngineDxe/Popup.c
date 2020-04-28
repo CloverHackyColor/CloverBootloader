@@ -80,7 +80,7 @@ AddOneSelectableOption (
 {
   USER_SELECTABLE_OPTION  *UserSelectableOption;
 
-  UserSelectableOption = AllocateZeroPool (sizeof (USER_SELECTABLE_OPTION));
+  UserSelectableOption = AllocateZeroPool(sizeof (USER_SELECTABLE_OPTION));
   if (UserSelectableOption == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -387,7 +387,7 @@ ParseMessageString (
   //
   // Copy the string to OutputString buffer and calculate the width of OutputString.
   //
-  *OutputString = AllocateZeroPool ((StrOffset + 1) * sizeof(CHAR16));
+  *OutputString = AllocateZeroPool((StrOffset + 1) * sizeof(CHAR16));
   if (*OutputString == NULL) {
     return 0;
   }
@@ -586,7 +586,7 @@ DrawMessageBox (
       //OutputStrWidth > MaxMesStrWidth, cut off the string and print print ... instead.
       //
       GetStringOffsetWithWidth (OutputString, gMaxRowWidth, &Length);
-      TempString = AllocateZeroPool ((Length + 1) * sizeof (CHAR16));
+      TempString = AllocateZeroPool((Length + 1) * sizeof (CHAR16));
       if (TempString == NULL) {
         FreePool(OutputString);
         return EFI_OUT_OF_RESOURCES;

@@ -154,7 +154,7 @@ PrintFramework (
     return;
   }
 
-  Buffer = AllocateZeroPool (0x10000);
+  Buffer = AllocateZeroPool(0x10000);
   ASSERT (Buffer != NULL);
   Character = BOXDRAW_HORIZONTAL;
   for (Index = 0; Index + 2 < (gScreenDimensions.RightColumn - gScreenDimensions.LeftColumn); Index++) {
@@ -297,7 +297,7 @@ ProcessUserOpcode(
             // Initialize Driver private data
             //
             if (gBannerData == NULL) {
-              gBannerData = AllocateZeroPool (sizeof (BANNER_DATA));
+              gBannerData = AllocateZeroPool(sizeof (BANNER_DATA));
               ASSERT (gBannerData != NULL);
             }
 
@@ -859,8 +859,8 @@ PrintInternal (
   //
   // For now, allocate an arbitrarily long buffer
   //
-  Buffer        = AllocateZeroPool (0x10000);
-  BackupBuffer  = AllocateZeroPool (0x10000);
+  Buffer        = AllocateZeroPool(0x10000);
+  BackupBuffer  = AllocateZeroPool(0x10000);
   ASSERT (Buffer);
   ASSERT (BackupBuffer);
 

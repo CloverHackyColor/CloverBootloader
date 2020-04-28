@@ -381,12 +381,12 @@ CoreAllocateGcdMapEntry (
   IN OUT EFI_GCD_MAP_ENTRY  **BottomEntry
   )
 {
-  *TopEntry = AllocateZeroPool (sizeof (EFI_GCD_MAP_ENTRY));
+  *TopEntry = AllocateZeroPool(sizeof (EFI_GCD_MAP_ENTRY));
   if (*TopEntry == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  *BottomEntry = AllocateZeroPool (sizeof (EFI_GCD_MAP_ENTRY));
+  *BottomEntry = AllocateZeroPool(sizeof (EFI_GCD_MAP_ENTRY));
   if (*BottomEntry == NULL) {
     CoreFreePool(*TopEntry);
     return EFI_OUT_OF_RESOURCES;

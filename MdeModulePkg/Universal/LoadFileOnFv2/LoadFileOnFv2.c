@@ -338,7 +338,7 @@ FvNotificationEvent (
   Handle     = NULL;
   Index      = 0;
   BufferSize = sizeof (EFI_HANDLE);
-  Handle     = AllocateZeroPool (BufferSize);
+  Handle     = AllocateZeroPool(BufferSize);
   if (Handle == NULL) {
     return;
   }
@@ -351,7 +351,7 @@ FvNotificationEvent (
                     );
   if (EFI_BUFFER_TOO_SMALL == Status) {
     FreePool(Handle);
-    Handle = AllocateZeroPool (BufferSize);
+    Handle = AllocateZeroPool(BufferSize);
     if (Handle == NULL) {
       return;
     }

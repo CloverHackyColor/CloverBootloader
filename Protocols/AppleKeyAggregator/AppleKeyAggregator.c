@@ -129,12 +129,12 @@ KeyMapCreateKeyStrokesBuffer (
   
   BufferSize                 = (Aggregator->KeyBuffersSize + KeyBufferSize);
   Aggregator->KeyBuffersSize = BufferSize;
-  Memory                     = AllocateZeroPool (BufferSize);
+  Memory                     = AllocateZeroPool(BufferSize);
   Aggregator->KeyBuffer      = Memory;
   Status                     = EFI_OUT_OF_RESOURCES;
   
   if (Memory != NULL) {
-    KeyStrokesInfo = AllocateZeroPool (sizeof (APPLE_KEY_STROKES_INFO)
+    KeyStrokesInfo = AllocateZeroPool(sizeof (APPLE_KEY_STROKES_INFO)
                                        + (KeyBufferSize * sizeof (APPLE_KEY)));
     Status         = EFI_OUT_OF_RESOURCES;
     

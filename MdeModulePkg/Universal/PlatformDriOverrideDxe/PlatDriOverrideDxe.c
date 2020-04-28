@@ -421,9 +421,9 @@ UpdateDeviceSelectPage (
   }
 
   mMaxDeviceCount = DevicePathHandleCount;
-  mControllerDevicePathProtocol = AllocateZeroPool (DevicePathHandleCount * sizeof (EFI_DEVICE_PATH_PROTOCOL *));
+  mControllerDevicePathProtocol = AllocateZeroPool(DevicePathHandleCount * sizeof (EFI_DEVICE_PATH_PROTOCOL *));
   ASSERT (mControllerDevicePathProtocol != NULL);
-  mControllerToken = AllocateZeroPool (DevicePathHandleCount * sizeof (EFI_STRING_ID));
+  mControllerToken = AllocateZeroPool(DevicePathHandleCount * sizeof (EFI_STRING_ID));
   ASSERT (mControllerToken != NULL);
 
   for (Index = 0; Index < DevicePathHandleCount; Index++) {
@@ -485,7 +485,7 @@ UpdateDeviceSelectPage (
     //
     Len = StrSize (ControllerName);
     NewStrSize = Len + StrSize (L"--");
-    NewString = AllocateZeroPool (NewStrSize);
+    NewString = AllocateZeroPool(NewStrSize);
     ASSERT (NewString != NULL);
     if (EFI_ERROR(CheckMapping (ControllerDevicePath,NULL, &mMappingDataBase, NULL, NULL))) {
       StrCatS (NewString, NewStrSize/sizeof(CHAR16), L"--");
@@ -704,14 +704,14 @@ UpdateBindingDriverSelectPage (
     return EFI_NOT_FOUND;
   }
 
-  mDriverImageToken = AllocateZeroPool (DriverImageHandleCount * sizeof (EFI_STRING_ID));
+  mDriverImageToken = AllocateZeroPool(DriverImageHandleCount * sizeof (EFI_STRING_ID));
   ASSERT (mDriverImageToken != NULL);
-  mDriSelection = AllocateZeroPool (DriverImageHandleCount * sizeof (BOOLEAN));
+  mDriSelection = AllocateZeroPool(DriverImageHandleCount * sizeof (BOOLEAN));
   ASSERT (mDriSelection != NULL);
 
-  DriverImageProtocol = AllocateZeroPool (DriverImageHandleCount * sizeof (EFI_LOADED_IMAGE_PROTOCOL *));
+  DriverImageProtocol = AllocateZeroPool(DriverImageHandleCount * sizeof (EFI_LOADED_IMAGE_PROTOCOL *));
   ASSERT (DriverImageProtocol != NULL);
-  DriverImageFilePathToken = AllocateZeroPool (DriverImageHandleCount * sizeof (EFI_STRING_ID));
+  DriverImageFilePathToken = AllocateZeroPool(DriverImageHandleCount * sizeof (EFI_STRING_ID));
   ASSERT (DriverImageFilePathToken != NULL);
 
   mDriverImageHandleCount = DriverImageHandleCount;
@@ -812,7 +812,7 @@ UpdateBindingDriverSelectPage (
     // First create the driver image name
     //
     NewStrSize = StrSize (DriverName);
-    NewString = AllocateZeroPool (NewStrSize);
+    NewString = AllocateZeroPool(NewStrSize);
     ASSERT (NewString != NULL);
     if (EFI_ERROR(CheckMapping (mControllerDevicePathProtocol[mSelectedCtrIndex], LoadedImageDevicePath, &mMappingDataBase, NULL, NULL))) {
       mDriSelection[Index] = FALSE;
@@ -835,7 +835,7 @@ UpdateBindingDriverSelectPage (
     DriverName = DevicePathToStr (LoadedImageDevicePath);
 
     NewStrSize = StrSize (DriverName);
-    NewString = AllocateZeroPool (NewStrSize);
+    NewString = AllocateZeroPool(NewStrSize);
     ASSERT (NewString != NULL);
     StrCatS (NewString, NewStrSize/sizeof(CHAR16), DriverName);
     NewStringHelpToken = HiiSetString (Private->RegisteredHandle, DriverImageFilePathToken[Index], NewString, NULL);
@@ -1208,7 +1208,7 @@ PlatOverMngrExtractConfig (
     //
     ConfigRequestHdr = HiiConstructConfigHdr (&gPlatformOverridesManagerGuid, mVariableName, Private->DriverHandle);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
-    ConfigRequest = AllocateZeroPool (Size);
+    ConfigRequest = AllocateZeroPool(Size);
     ASSERT (ConfigRequest != NULL);
     AllocatedRequest = TRUE;
     BufferSize = sizeof (PLAT_OVER_MNGR_DATA);
@@ -1622,7 +1622,7 @@ PlatDriOverrideDxeInit (
   }
 
   mCallerImageHandle = ImageHandle;
-  mCallbackInfo = AllocateZeroPool (sizeof (EFI_CALLBACK_INFO));
+  mCallbackInfo = AllocateZeroPool(sizeof (EFI_CALLBACK_INFO));
   if (mCallbackInfo == NULL) {
     return EFI_BAD_BUFFER_SIZE;
   }

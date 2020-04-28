@@ -240,7 +240,7 @@ KbdControllerDriverStart (
   //
   // Allocate private data
   //
-  ConsoleIn = AllocateZeroPool (sizeof (KEYBOARD_CONSOLE_IN_DEV));
+  ConsoleIn = AllocateZeroPool(sizeof (KEYBOARD_CONSOLE_IN_DEV));
   if (ConsoleIn == NULL) {
     Status      = EFI_OUT_OF_RESOURCES;
     StatusCode  = EFI_PERIPHERAL_KEYBOARD | EFI_P_EC_CONTROLLER_ERROR;

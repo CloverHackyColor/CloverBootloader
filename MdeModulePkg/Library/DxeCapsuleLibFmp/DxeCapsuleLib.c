@@ -582,7 +582,7 @@ DumpAllFmpInfo (
       continue;
     }
 
-    FmpImageInfoBuf = AllocateZeroPool (ImageInfoSize);
+    FmpImageInfoBuf = AllocateZeroPool(ImageInfoSize);
     if (FmpImageInfoBuf == NULL) {
       continue;
     }
@@ -694,7 +694,7 @@ GetFmpHandleBufferByType (
 
   MatchedHandleBuffer = NULL;
   if (HandleBuf != NULL) {
-    MatchedHandleBuffer = AllocateZeroPool (sizeof(EFI_HANDLE) * NumberOfHandles);
+    MatchedHandleBuffer = AllocateZeroPool(sizeof(EFI_HANDLE) * NumberOfHandles);
     if (MatchedHandleBuffer == NULL) {
       FreePool(HandleBuffer);
       return EFI_OUT_OF_RESOURCES;
@@ -703,7 +703,7 @@ GetFmpHandleBufferByType (
 
   MatchedResetRequiredBuffer = NULL;
   if (ResetRequiredBuf != NULL) {
-    MatchedResetRequiredBuffer = AllocateZeroPool (sizeof(BOOLEAN) * NumberOfHandles);
+    MatchedResetRequiredBuffer = AllocateZeroPool(sizeof(BOOLEAN) * NumberOfHandles);
     if (MatchedResetRequiredBuffer == NULL) {
       if (MatchedHandleBuffer != NULL) {
         FreePool(MatchedHandleBuffer);
@@ -738,7 +738,7 @@ GetFmpHandleBufferByType (
       continue;
     }
 
-    FmpImageInfoBuf = AllocateZeroPool (ImageInfoSize);
+    FmpImageInfoBuf = AllocateZeroPool(ImageInfoSize);
     if (FmpImageInfoBuf == NULL) {
       continue;
     }
@@ -855,7 +855,7 @@ GetFmpImageInfoDescriptorVer (
     return 0;
   }
 
-  FmpImageInfoBuf = AllocateZeroPool (ImageInfoSize);
+  FmpImageInfoBuf = AllocateZeroPool(ImageInfoSize);
   if (FmpImageInfoBuf == NULL) {
     return 0;
   }

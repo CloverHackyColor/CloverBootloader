@@ -760,7 +760,7 @@ AtaBusDriverBindingStart (
   // Check EFI_ALREADY_STARTED to reuse the original ATA_BUS_DRIVER_DATA.
   //
   if (Status != EFI_ALREADY_STARTED) {
-    AtaBusDriverData = AllocateZeroPool (sizeof (ATA_BUS_DRIVER_DATA));
+    AtaBusDriverData = AllocateZeroPool(sizeof (ATA_BUS_DRIVER_DATA));
     if (AtaBusDriverData == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
       goto ErrorExit;

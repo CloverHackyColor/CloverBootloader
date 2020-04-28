@@ -494,7 +494,7 @@ UsbMassInitMultiLun (
     DEBUG ((EFI_D_INFO, "UsbMassInitMultiLun: Start to initialize No.%d logic unit\n", Index));
 
     UsbIo   = NULL;
-    UsbMass = AllocateZeroPool (sizeof (USB_MASS_DEVICE));
+    UsbMass = AllocateZeroPool(sizeof (USB_MASS_DEVICE));
     ASSERT (UsbMass != NULL);
 
     UsbMass->Signature            = USB_MASS_SIGNATURE;
@@ -620,7 +620,7 @@ UsbMassInitNonLun (
   EFI_STATUS                  Status;
 
   UsbIo   = NULL;
-  UsbMass = AllocateZeroPool (sizeof (USB_MASS_DEVICE));
+  UsbMass = AllocateZeroPool(sizeof (USB_MASS_DEVICE));
   ASSERT (UsbMass != NULL);
 
   Status = gBS->OpenProtocol (

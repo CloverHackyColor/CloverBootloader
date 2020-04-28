@@ -404,7 +404,7 @@ InitializePciHostBridge (
   //
   // Most systems in the world including complex servers have only one Host Bridge.
   //
-  HostBridge = AllocateZeroPool (sizeof (PCI_HOST_BRIDGE_INSTANCE));
+  HostBridge = AllocateZeroPool(sizeof (PCI_HOST_BRIDGE_INSTANCE));
   ASSERT (HostBridge != NULL);
 
   HostBridge->Signature        = PCI_HOST_BRIDGE_SIGNATURE;
@@ -1489,7 +1489,7 @@ GetProposedResources (
         }
       }
 
-      Buffer = AllocateZeroPool (Number * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
+      Buffer = AllocateZeroPool(Number * sizeof (EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR) + sizeof (EFI_ACPI_END_TAG_DESCRIPTOR));
       if (Buffer == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }

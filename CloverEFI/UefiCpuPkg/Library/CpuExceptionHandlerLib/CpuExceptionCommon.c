@@ -56,7 +56,7 @@ InternalPrintMessage (
   //
   // Send the print string to a Serial Port 
   //
-  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen (Buffer));
+  SerialPortWrite ((UINT8 *)Buffer, AsciiStrLen(Buffer));
 }
 
 /**

@@ -89,7 +89,7 @@ InitializeCpuInterruptHandlers (
     }
   }
   InitializeSpinLock (&mDisplayMessageSpinLock);
-  mExternalInterruptHandler = AllocateZeroPool (sizeof (EFI_CPU_INTERRUPT_HANDLER) * CPU_INTERRUPT_NUM);
+  mExternalInterruptHandler = AllocateZeroPool(sizeof (EFI_CPU_INTERRUPT_HANDLER) * CPU_INTERRUPT_NUM);
   ASSERT (mExternalInterruptHandler != NULL);
 
   //
@@ -103,7 +103,7 @@ InitializeCpuInterruptHandlers (
   //
   // Create Interrupt Descriptor Table and Copy the old IDT table in
   //
-  IdtTable = AllocateZeroPool (sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM);
+  IdtTable = AllocateZeroPool(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM);
   ASSERT (IdtTable != NULL);
   CopyMem (IdtTable, (VOID *)IdtDescriptor.Base, sizeof (IA32_IDT_GATE_DESCRIPTOR) * IdtEntryCount);
 

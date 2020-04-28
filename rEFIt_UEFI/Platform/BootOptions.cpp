@@ -355,7 +355,7 @@ GetBootOrder (
   //
   // Get gEfiGlobalVariableGuid:BootOrder and it's length
   //
-  *BootOrder = (__typeof_am__(*BootOrder))GetNvramVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
+  *BootOrder = (__typeof_am__(*BootOrder))GetNvramVariable(BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
   if (*BootOrder == NULL) {
     DBG(" EFI_NOT_FOUND\n");
     return EFI_NOT_FOUND;
@@ -397,7 +397,7 @@ AddToBootOrder (
   //
   // Make new order buffer with space for our option
   //
-  BootOrderNew = (__typeof__(BootOrderNew))AllocateZeroPool ((BootOrderLen + 1) * sizeof(UINT16));
+  BootOrderNew = (__typeof__(BootOrderNew))AllocateZeroPool((BootOrderLen + 1) * sizeof(UINT16));
   if (BootOrderNew == NULL) {
     DBG("AddToBootOrder: EFI_OUT_OF_RESOURCES\n");
 	if (BootOrder) {
@@ -651,7 +651,7 @@ CompileBootOption (
                                 + BootOption->DescriptionSize 
                                 + BootOption->FilePathListLength
                                 + BootOption->OptionalDataSize;
-    BootOption->Variable = (__typeof__(BootOption->Variable))AllocateZeroPool (BootOption->VariableSize);
+    BootOption->Variable = (__typeof__(BootOption->Variable))AllocateZeroPool(BootOption->VariableSize);
     if (BootOption->Variable == NULL) {
         DBG("CompileBootOption: EFI_OUT_OF_RESOURCES\n");
         return EFI_OUT_OF_RESOURCES;
@@ -701,7 +701,7 @@ GetBootOption (
   BootOption->BootNum = BootNum;
 	snwprintf(VarName, sizeof(VarName), "Boot%04hX", BootNum);
 
-  BootOption->Variable = (__typeof__(BootOption->Variable))GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
+  BootOption->Variable = (__typeof__(BootOption->Variable))GetNvramVariable(VarName, &gEfiGlobalVariableGuid, NULL, (UINTN *)(UINTN)(OFFSET_OF(BO_BOOT_OPTION, VariableSize) + (UINTN)BootOption));
   if (BootOption->Variable == NULL) {
     return EFI_NOT_FOUND;
   }

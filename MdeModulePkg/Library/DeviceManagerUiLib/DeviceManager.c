@@ -128,7 +128,7 @@ GetMacAddressString(
   // The size is the Number size + ":" size + Vlan size(\XXXX) + End
   //
   BufferLen = (4 + 2 * HwAddressSize + (HwAddressSize - 1) + 5 + 1) * sizeof (CHAR16);
-  String = AllocateZeroPool (BufferLen);
+  String = AllocateZeroPool(BufferLen);
   if (String == NULL) {
     return FALSE;
   }

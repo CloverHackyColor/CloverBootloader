@@ -220,7 +220,7 @@ SmiHandlerRegister (
     return EFI_INVALID_PARAMETER;
   }
 
-  SmiHandler = AllocateZeroPool (sizeof (SMI_HANDLER));
+  SmiHandler = AllocateZeroPool(sizeof (SMI_HANDLER));
   if (SmiHandler == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

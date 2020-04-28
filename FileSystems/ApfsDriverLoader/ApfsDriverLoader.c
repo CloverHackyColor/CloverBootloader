@@ -162,7 +162,7 @@ StartApfsDriver (
   //
   // Patch verbose
   //
-  NewSystemTable = (EFI_SYSTEM_TABLE *) AllocateZeroPool (gST->Hdr.HeaderSize);
+  NewSystemTable = (EFI_SYSTEM_TABLE *) AllocateZeroPool(gST->Hdr.HeaderSize);
 
   if (NewSystemTable == NULL) {
     gBS->UnloadImage (ImageHandle);
@@ -340,7 +340,7 @@ LegacyApfsContainerScan (
     }
 
 
-  Block = AllocateZeroPool ((UINTN)BlockSize);
+  Block = AllocateZeroPool((UINTN)BlockSize);
   if (Block == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -381,7 +381,7 @@ LegacyApfsContainerScan (
     // Reallocate Block size to contain all of partition entries.
     //
     FreePool(Block);
-    Block = AllocateZeroPool ((UINTN)PartitionNumber * PartitionEntrySize);
+    Block = AllocateZeroPool((UINTN)PartitionNumber * PartitionEntrySize);
     if (Block == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -725,7 +725,7 @@ ApfsDriverLoaderStart (
     MediaId       = BlockIo->Media->MediaId;
   }
 
-  ApfsBlock = AllocateZeroPool (2048);
+  ApfsBlock = AllocateZeroPool(2048);
   if (ApfsBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -803,7 +803,7 @@ ApfsDriverLoaderStart (
   // ContainerSuperBlock (& EfiBootRecordBlockPtr ?) will not valid now
   //
   FreePool(ApfsBlock);
-  ApfsBlock = AllocateZeroPool (ApfsBlockSize);
+  ApfsBlock = AllocateZeroPool(ApfsBlockSize);
   if (ApfsBlock == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

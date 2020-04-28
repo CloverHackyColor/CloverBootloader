@@ -2096,7 +2096,7 @@ CreatePciIoDevice (
   EFI_PCI_IO_PROTOCOL  *PciIo;
   EFI_STATUS           Status;
 
-  PciIoDevice = AllocateZeroPool (sizeof (PCI_IO_DEVICE));
+  PciIoDevice = AllocateZeroPool(sizeof (PCI_IO_DEVICE));
   if (PciIoDevice == NULL) {
     return NULL;
   }

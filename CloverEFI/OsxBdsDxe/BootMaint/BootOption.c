@@ -76,12 +76,12 @@ BOpt_CreateMenuEntry (
   //
   // Create new menu entry
   //
-  MenuEntry = AllocateZeroPool (sizeof (BM_MENU_ENTRY));
+  MenuEntry = AllocateZeroPool(sizeof (BM_MENU_ENTRY));
   if (MenuEntry == NULL) {
     return NULL;
   }
 
-  MenuEntry->VariableContext = AllocateZeroPool (ContextSize);
+  MenuEntry->VariableContext = AllocateZeroPool(ContextSize);
   if (MenuEntry->VariableContext == NULL) {
     FreePool(MenuEntry);
     return NULL;
@@ -283,7 +283,7 @@ BOpt_FindFileSystem (
       // Issue a dummy read to trigger reinstall of BlockIo protocol for removable media
       //
       if (BlkIo->Media->RemovableMedia) {
-        Buffer = AllocateZeroPool (BlkIo->Media->BlockSize);
+        Buffer = AllocateZeroPool(BlkIo->Media->BlockSize);
         if (NULL == Buffer) {
           FreePool(BlkIoHandle);
           return EFI_OUT_OF_RESOURCES;
@@ -389,7 +389,7 @@ BOpt_FindFileSystem (
       }
 
       TempStr                   = MenuEntry->HelpString;
-      MenuEntry->DisplayString  = AllocateZeroPool (MAX_CHAR);
+      MenuEntry->DisplayString  = AllocateZeroPool(MAX_CHAR);
       ASSERT (MenuEntry->DisplayString != NULL);
       UnicodeSPrint (
         MenuEntry->DisplayString,
@@ -437,7 +437,7 @@ BOpt_FindFileSystem (
       MenuEntry->HelpString     = FileDevicePathToStr (FileContext->DevicePath);
 
       TempStr                   = MenuEntry->HelpString;
-      MenuEntry->DisplayString  = AllocateZeroPool (MAX_CHAR);
+      MenuEntry->DisplayString  = AllocateZeroPool(MAX_CHAR);
       ASSERT (MenuEntry->DisplayString != NULL);
       UnicodeSPrint (
         MenuEntry->DisplayString,
@@ -496,7 +496,7 @@ BOpt_FindFileSystem (
       MenuEntry->HelpString     = FileDevicePathToStr (FileContext->DevicePath);
 
       TempStr                   = MenuEntry->HelpString;
-      MenuEntry->DisplayString  = AllocateZeroPool (MAX_CHAR);
+      MenuEntry->DisplayString  = AllocateZeroPool(MAX_CHAR);
       ASSERT (MenuEntry->DisplayString != NULL);
       UnicodeSPrint (
         MenuEntry->DisplayString,
@@ -606,7 +606,7 @@ BOpt_FindFiles (
                               );
 
   DirBufferSize = sizeof (EFI_FILE_INFO) + 1024;
-  DirInfo       = AllocateZeroPool (DirBufferSize);
+  DirInfo       = AllocateZeroPool(DirBufferSize);
   if (DirInfo == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -668,7 +668,7 @@ BOpt_FindFiles (
 
       if (NewFileContext->IsDir) {
         BufferSize                  = StrLen (DirInfo->FileName) * 2 + 6;
-        NewMenuEntry->DisplayString = AllocateZeroPool (BufferSize);
+        NewMenuEntry->DisplayString = AllocateZeroPool(BufferSize);
 
         UnicodeSPrint (
           NewMenuEntry->DisplayString,
@@ -936,7 +936,7 @@ BOpt_GetBootOptions (
       continue;
     }
 
-    LoadOption = AllocateZeroPool (BootOptionSize);
+    LoadOption = AllocateZeroPool(BootOptionSize);
     if (LoadOption == NULL) {
       continue;
     }
@@ -1022,7 +1022,7 @@ BOpt_GetBootOptions (
     
     StringSize = StrSize((UINT16*)LoadOptionPtr);
 
-    NewLoadContext->Description = AllocateZeroPool (StringSize);
+    NewLoadContext->Description = AllocateZeroPool(StringSize);
  //   ASSERT (NewLoadContext->Description != NULL);
     StrCpyS (NewLoadContext->Description, StringSize / sizeof(CHAR16), (UINT16*)LoadOptionPtr);
     
@@ -1031,7 +1031,7 @@ BOpt_GetBootOptions (
 
     LoadOptionPtr += StringSize;
 
-    NewLoadContext->FilePathList = AllocateZeroPool (NewLoadContext->FilePathListLength);
+    NewLoadContext->FilePathList = AllocateZeroPool(NewLoadContext->FilePathListLength);
     ASSERT (NewLoadContext->FilePathList != NULL);
     CopyMem (
       NewLoadContext->FilePathList,
@@ -1057,7 +1057,7 @@ BOpt_GetBootOptions (
         StringSize -
         NewLoadContext->FilePathListLength;
 
-      NewLoadContext->OptionalData = AllocateZeroPool (OptionalDataSize);
+      NewLoadContext->OptionalData = AllocateZeroPool(OptionalDataSize);
       ASSERT (NewLoadContext->OptionalData != NULL);
       CopyMem (
         NewLoadContext->OptionalData,
@@ -1110,10 +1110,10 @@ BOpt_AppendFileName (
   Size2 = StrSize (Str2);
   Size = Size1 + Size2 + sizeof (CHAR16);
   Len = Size / 2;  //including zero terminating
-  Str   = AllocateZeroPool (Size);
+  Str   = AllocateZeroPool(Size);
 //  ASSERT (Str != NULL);
 
-  TmpStr = AllocateZeroPool (Size); 
+  TmpStr = AllocateZeroPool(Size); 
 //  ASSERT (TmpStr != NULL);
 
   StrCatS (Str, Len, Str1);
@@ -1531,7 +1531,7 @@ BOpt_GetDriverOptions (
       continue;
     }
 
-    LoadOption = AllocateZeroPool (DriverOptionSize);
+    LoadOption = AllocateZeroPool(DriverOptionSize);
     if (LoadOption == NULL) {
       continue;
     }
@@ -1571,7 +1571,7 @@ BOpt_GetDriverOptions (
     LoadOptionPtr += sizeof (UINT16);
 
     StringSize                  = StrSize ((UINT16 *) LoadOptionPtr);
-    NewLoadContext->Description = AllocateZeroPool (StringSize);
+    NewLoadContext->Description = AllocateZeroPool(StringSize);
     ASSERT (NewLoadContext->Description != NULL);
     CopyMem (
       NewLoadContext->Description,
@@ -1582,7 +1582,7 @@ BOpt_GetDriverOptions (
 
     LoadOptionPtr += StringSize;
 
-    NewLoadContext->FilePathList = AllocateZeroPool (NewLoadContext->FilePathListLength);
+    NewLoadContext->FilePathList = AllocateZeroPool(NewLoadContext->FilePathListLength);
     ASSERT (NewLoadContext->FilePathList != NULL);
     CopyMem (
       NewLoadContext->FilePathList,
@@ -1608,7 +1608,7 @@ BOpt_GetDriverOptions (
         StringSize -
         NewLoadContext->FilePathListLength;
 
-      NewLoadContext->OptionalData = AllocateZeroPool (OptionalDataSize);
+      NewLoadContext->OptionalData = AllocateZeroPool(OptionalDataSize);
       ASSERT (NewLoadContext->OptionalData != NULL);
       CopyMem (
         NewLoadContext->OptionalData,

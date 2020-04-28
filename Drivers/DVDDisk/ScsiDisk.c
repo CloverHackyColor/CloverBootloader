@@ -212,7 +212,7 @@ ScsiDiskDriverBindingStart (
 
   MustReadCapacity = TRUE;
 
-  ScsiDiskDevice = (SCSI_DISK_DEV *) AllocateZeroPool (sizeof (SCSI_DISK_DEV));
+  ScsiDiskDevice = (SCSI_DISK_DEV *) AllocateZeroPool(sizeof (SCSI_DISK_DEV));
   if (ScsiDiskDevice == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -256,7 +256,7 @@ ScsiDiskDriverBindingStart (
   // The Sense Data Array's initial size is 6
   //
   ScsiDiskDevice->SenseDataNumber = 6;
-  ScsiDiskDevice->SenseData = (EFI_SCSI_SENSE_DATA *) AllocateZeroPool (
+  ScsiDiskDevice->SenseData = (EFI_SCSI_SENSE_DATA *) AllocateZeroPool(
                                  sizeof (EFI_SCSI_SENSE_DATA) * ScsiDiskDevice->SenseDataNumber
                                  );
   if (ScsiDiskDevice->SenseData == NULL) {

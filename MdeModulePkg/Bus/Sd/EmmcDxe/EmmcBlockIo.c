@@ -326,7 +326,7 @@ EmmcSetExtCsd (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  SetExtCsdReq = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  SetExtCsdReq = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (SetExtCsdReq == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -432,7 +432,7 @@ EmmcSetBlkCount (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  SetBlkCntReq = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  SetBlkCntReq = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (SetBlkCntReq == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -549,7 +549,7 @@ EmmcProtocolInOut (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  ProtocolReq = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  ProtocolReq = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (ProtocolReq == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -675,7 +675,7 @@ EmmcRwMultiBlocks (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  RwMultiBlkReq = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  RwMultiBlkReq = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (RwMultiBlkReq == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1619,7 +1619,7 @@ EmmcEraseBlockStart (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  EraseBlockStart = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  EraseBlockStart = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (EraseBlockStart == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1726,7 +1726,7 @@ EmmcEraseBlockEnd (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  EraseBlockEnd = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  EraseBlockEnd = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (EraseBlockEnd == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1831,7 +1831,7 @@ EmmcEraseBlock (
   Device   = Partition->Device;
   PassThru = Device->Private->PassThru;
 
-  EraseBlock = AllocateZeroPool (sizeof (EMMC_REQUEST));
+  EraseBlock = AllocateZeroPool(sizeof (EMMC_REQUEST));
   if (EraseBlock == NULL) {
     Status = EFI_OUT_OF_RESOURCES;
     goto Error;
@@ -1931,7 +1931,7 @@ EmmcWriteZeros (
   UINT8                                *Buffer;
   UINT32                               MediaId;
 
-  Buffer = AllocateZeroPool (Size);
+  Buffer = AllocateZeroPool(Size);
   if (Buffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

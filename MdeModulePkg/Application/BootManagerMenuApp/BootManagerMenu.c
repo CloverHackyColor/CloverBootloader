@@ -305,7 +305,7 @@ InitializeBootMenuData (
   }
 
   BootMenuData->TitleToken[0] = STRING_TOKEN (STR_BOOT_POPUP_MENU_TITLE_STRING);
-  BootMenuData->PtrTokens     = AllocateZeroPool (BootOptionCount * sizeof (EFI_STRING_ID));
+  BootMenuData->PtrTokens     = AllocateZeroPool(BootOptionCount * sizeof (EFI_STRING_ID));
   ASSERT (BootMenuData->PtrTokens != NULL);
 
   //
@@ -430,7 +430,7 @@ BootMenuSelectItem (
     //
     PrintCol = StartCol  + 1;
     PrintRow = StartRow + TITLE_TOKEN_COUNT + 2;
-    String = AllocateZeroPool ((BootMenuData->MenuScreen.Width - 2) * sizeof (CHAR16));
+    String = AllocateZeroPool((BootMenuData->MenuScreen.Width - 2) * sizeof (CHAR16));
     ASSERT (String != NULL);
     for (Index = 0; Index < BootMenuData->MenuScreen.Width - 3; Index++) {
       String[Index] = 0x20;
@@ -526,7 +526,7 @@ DrawBootPopupMenu (
   //
   // Draw the screen for title
   //
-  String = AllocateZeroPool ((Width - 1) * sizeof (CHAR16));
+  String = AllocateZeroPool((Width - 1) * sizeof (CHAR16));
   ASSERT (String != NULL);
   for (Index = 0; Index < Width - 2; Index++) {
     String[Index] = 0x20;

@@ -49,7 +49,7 @@ NetbufAllocStruct (
   //
   // Allocate three memory blocks.
   //
-  Nbuf = AllocateZeroPool (NET_BUF_SIZE (BlockOpNum));
+  Nbuf = AllocateZeroPool(NET_BUF_SIZE (BlockOpNum));
 
   if (Nbuf == NULL) {
     return NULL;
@@ -61,7 +61,7 @@ NetbufAllocStruct (
   InitializeListHead (&Nbuf->List);
 
   if (BlockNum != 0) {
-    Vector = AllocateZeroPool (NET_VECTOR_SIZE (BlockNum));
+    Vector = AllocateZeroPool(NET_VECTOR_SIZE (BlockNum));
 
     if (Vector == NULL) {
       goto FreeNbuf;

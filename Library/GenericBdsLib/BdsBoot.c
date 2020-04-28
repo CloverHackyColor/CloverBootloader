@@ -351,8 +351,8 @@ BdsCreateLegacyBootOption (
   //
   UnicodeStrToAsciiStrS (BootDesc, HelpString, 100);
 
-  StringLen = AsciiStrLen (HelpString);
-  NewBbsDevPathNode = AllocateZeroPool (sizeof (BBS_BBS_DEVICE_PATH) + StringLen);
+  StringLen = AsciiStrLen(HelpString);
+  NewBbsDevPathNode = AllocateZeroPool(sizeof (BBS_BBS_DEVICE_PATH) + StringLen);
   if (NewBbsDevPathNode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -381,7 +381,7 @@ BdsCreateLegacyBootOption (
     sizeof (BBS_TABLE) +
     sizeof (UINT16);
 
-  Buffer = AllocateZeroPool (BufferSize);
+  Buffer = AllocateZeroPool(BufferSize);
   if (Buffer == NULL) {
     FreePool(NewBbsDevPathNode);
     FreePool(CurrentBbsDevPath);
@@ -431,7 +431,7 @@ BdsCreateLegacyBootOption (
   
   Buffer = NULL;
 
-  NewBootOrderList = AllocateZeroPool (*BootOrderListSize + sizeof (UINT16));
+  NewBootOrderList = AllocateZeroPool(*BootOrderListSize + sizeof (UINT16));
   if (NULL == NewBootOrderList) {
     FreePool(NewBbsDevPathNode);
     FreePool(CurrentBbsDevPath);
@@ -1025,7 +1025,7 @@ BdsCreateDevOrder (
   //
   // Create buffer to hold all boot device order
   //
-  DevOrder = AllocateZeroPool (TotalSize);
+  DevOrder = AllocateZeroPool(TotalSize);
   if (NULL == DevOrder) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -1198,7 +1198,7 @@ BdsUpdateLegacyDevOrder (
   TotalSize += (HeaderSize + NETCount * sizeof (UINT16));
   TotalSize += (HeaderSize + BEVCount * sizeof (UINT16));
 
-  NewDevOrder = AllocateZeroPool (TotalSize);
+  NewDevOrder = AllocateZeroPool(TotalSize);
   if (NULL == NewDevOrder) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -2355,7 +2355,7 @@ BdsLibBootViaBootOption (
       if (Option->DevicePath != NULL) {
         FreePool(Option->DevicePath);
       }
-      Option->DevicePath  = AllocateZeroPool (GetDevicePathSize (DevicePath));
+      Option->DevicePath  = AllocateZeroPool(GetDevicePathSize (DevicePath));
 //      ASSERT(Option->DevicePath != NULL);
       if (!Option->DevicePath) {
         return EFI_OUT_OF_RESOURCES;

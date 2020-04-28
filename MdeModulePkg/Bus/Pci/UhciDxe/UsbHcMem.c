@@ -41,7 +41,7 @@ UsbHcAllocMemBlock (
 
   PciIo = Pool->PciIo;
 
-  Block = AllocateZeroPool (sizeof (USBHC_MEM_BLOCK));
+  Block = AllocateZeroPool(sizeof (USBHC_MEM_BLOCK));
   if (Block == NULL) {
     return NULL;
   }
@@ -54,7 +54,7 @@ UsbHcAllocMemBlock (
 
   Block->BufLen   = EFI_PAGES_TO_SIZE (Pages);
   Block->BitsLen  = Block->BufLen / (USBHC_MEM_UNIT * 8);
-  Block->Bits     = AllocateZeroPool (Block->BitsLen);
+  Block->Bits     = AllocateZeroPool(Block->BitsLen);
 
   if (Block->Bits == NULL) {
     gBS->FreePool(Block);

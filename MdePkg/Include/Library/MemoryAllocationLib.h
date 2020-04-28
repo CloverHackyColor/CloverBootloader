@@ -263,7 +263,7 @@ AllocateReservedPool (
 **/
 VOID *
 EFIAPI
-AllocateZeroPool (
+AllocateZeroPool(
   IN UINTN  AllocationSize
   );
 

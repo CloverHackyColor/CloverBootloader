@@ -100,7 +100,7 @@ MeasureVariable (
   VarLogSize = (UINT32)(sizeof (*VarLog) + VarNameLength * sizeof (*VarName) + VarSize
                         - sizeof (VarLog->UnicodeName) - sizeof (VarLog->VariableData));
 
-  VarLog = (UEFI_VARIABLE_DATA *) AllocateZeroPool (VarLogSize);
+  VarLog = (UEFI_VARIABLE_DATA *) AllocateZeroPool(VarLogSize);
   if (VarLog == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
