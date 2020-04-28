@@ -102,12 +102,12 @@ UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure
   const char* Names = (const char*)(&kernel[LinkSeg->AddrNames]);
   VTABLE * vArray = (VTABLE*)(&kernel[AddrVtable]);
   //search for the name
-  UINTN nameLen = strlen(procedure);
+//  UINTN nameLen = strlen(procedure);
   size_t i;
   bool found = false;
   for (i=0; i<SizeVtable; ++i) {
     size_t Offset = vArray[i].NameOffset;
-    if (CompareMem(&Names[Offset], procedure, nameLen) == 0) {
+    if (AsciiStrStr(&Names[Offset], procedure) != NULL) {  //if (CompareMem(&Names[Offset], procedure, nameLen) == 0) {
       found = true;
       break;
     }

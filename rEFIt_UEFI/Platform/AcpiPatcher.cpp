@@ -296,8 +296,8 @@ void DropTableFromRSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
   CHAR8 sign[5], OTID[9];
   sign[4] = 0;
   OTID[8] = 0;
-  CopyMem(sign, &Signature, 4);
-  CopyMem(OTID, &TableId, 8);
+  CopyMem(&sign[0], &Signature, 4);
+  CopyMem(&OTID[0], &TableId, 8);
   DBG("Drop tables from RSDT, SIGN=%s TableID=%s Length=%d\n", sign, OTID, (INT32)Length);
 
   UINT32 Count = RsdtTableCount();
@@ -310,8 +310,8 @@ void DropTableFromRSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
       // skip NULL entry
       continue;
     }
-    CopyMem(&sign, &Table->Signature, 4);
-    CopyMem(&OTID, &Table->OemTableId, 8);
+    CopyMem(&sign[0], &Table->Signature, 4);
+    CopyMem(&OTID[0], &Table->OemTableId, 8);
     //DBG(" Found table: %s  %s\n", sign, OTID);
     if (!((Signature && Table->Signature == Signature) &&
           (!TableId || Table->OemTableId == TableId) &&
@@ -337,8 +337,8 @@ void DropTableFromXSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
   CHAR8 sign[5], OTID[9];
   sign[4] = 0;
   OTID[8] = 0;
-  CopyMem(sign, &Signature, 4);
-  CopyMem(OTID, &TableId, 8);
+  CopyMem(&sign[0], &Signature, 4);
+  CopyMem(&OTID[0], &TableId, 8);
   DBG("Drop tables from XSDT, SIGN=%s TableID=%s Length=%d\n", sign, OTID, (INT32)Length);
 
   UINT32 Count = XsdtTableCount();
@@ -351,8 +351,8 @@ void DropTableFromXSDT(UINT32 Signature, UINT64 TableId, UINT32 Length)
       // skip NULL entry
       continue;
     }
-    CopyMem(&sign, &Table->Signature, 4);
-    CopyMem(&OTID, &Table->OemTableId, 8);
+    CopyMem(&sign[0], &Table->Signature, 4);
+    CopyMem(&OTID[0], &Table->OemTableId, 8);
     //DBG(" Found table: %s  %s\n", sign, OTID);
     if (!((Signature && Table->Signature == Signature) &&
           (!TableId || Table->OemTableId == TableId) &&
@@ -925,9 +925,9 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
           }
 
           // Take Signature and OemId for printing
-          CopyMem(&Signature, &((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
+          CopyMem(&Signature[0], &((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
           Signature[4] = 0;
-          CopyMem(&OemTableId, &((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
+          CopyMem(&OemTableId[0], &((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
           OemTableId[8] = 0;
           stripTrailingSpaces(OemTableId);
 			DBG("      * %llu: '%s', '%s', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
@@ -1013,9 +1013,9 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR8 *Check
   BOOLEAN       ReleaseFileName = FALSE;
 
   // Take Signature and OemId for printing
-  CopyMem(&Signature, &TableEntry->Signature, 4);
+  CopyMem(&Signature[0], &TableEntry->Signature, 4);
   Signature[4] = 0;
-  CopyMem(&OemTableId, &TableEntry->OemTableId, 8);
+  CopyMem(&OemTableId[0], &TableEntry->OemTableId, 8);
   OemTableId[8] = 0;
   stripTrailingSpaces(OemTableId);
 
@@ -1158,7 +1158,7 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CONST
     // Taking it as structure from Acpi 2.0 just to get Version (it's reserved field in Acpi 1.0 and == 0)
     Facs = (EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)FacsAdr;
     // Take Signature for printing
-    CopyMem(&Signature, &Facs->Signature, 4);
+    CopyMem(&Signature[0], &Facs->Signature, 4);
     Signature[4] = 0;
     DBG("      %p: '%s', Ver: %d, Len: %d", Facs, Signature, Facs->Version, Facs->Length);
 
@@ -1274,7 +1274,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 
   // Take Signature for printing
   CHAR8 Signature[9];
-  CopyMem(&Signature, &RsdPtr->Signature, 8);
+  CopyMem(&Signature[0], &RsdPtr->Signature, 8);
   Signature[8] = 0;
 
   // Take Rsdt and Xsdt
