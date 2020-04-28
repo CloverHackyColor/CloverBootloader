@@ -2459,7 +2459,7 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   if (Rsdt != NULL && Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
     Rsdt = NULL;
   }
-  DBG("RSDT at %p\n", Rsdt);
+  DBG("RSDT at 0x%llX\n", (UINTN)Rsdt);
 
   // check for XSDT
   Xsdt = NULL;
@@ -2469,7 +2469,7 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
       Xsdt = NULL;
     }
   }
-  DBG("XSDT at %p\n", Xsdt);
+  DBG("XSDT at 0x%llX\n", (UINTN)Xsdt);
 
   // if RSDT and XSDT not found - quit
   if (Rsdt == NULL && Xsdt == NULL) {
@@ -2485,7 +2485,7 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   } else if (Rsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
   }
-  DBG("FADT pointer = %p\n", FadtPointer);
+  DBG("FADT pointer = 0x%llX\n", (UINTN)FadtPointer);
 
   // if not found - quit
   if(FadtPointer == NULL) {

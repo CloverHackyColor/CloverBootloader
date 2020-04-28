@@ -397,11 +397,11 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
   const XImage *ReturnImage;
   UINTN Comma = Full.indexOf(',');
   UINTN Size = Full.length();
-//  DBG("IconName=%ls comma=%lld size=%lld\n", OSIconName, Comma, Size);
+  DBG("IconName=%s comma=%lld size=%lld\n", Full.c_str(), Comma, Size);
   if (Comma != MAX_XSIZE) {  //Comma
     First = "os_"_XS + Full.subString(0, Comma);
     ReturnImage = &GetIcon(First);
- //   DBG("  first=%s\n", First.c_str());
+    DBG("  first=%s\n", First.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
     //else search second name
     Second = "os_"_XS + Full.subString(Comma + 1, Size - Comma - 1);
@@ -418,11 +418,11 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
       ReturnImage = &GetIcon(Third);
       if (!ReturnImage->isEmpty()) return *ReturnImage;
     }
-//    DBG("  Second=%s\n", Second.c_str());
+    DBG("  Second=%s\n", Second.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   } else {
     ReturnImage = &GetIcon("os_"_XS + Full);
-//    DBG("  Full=%s\n", Full.c_str());
+    DBG("  Full=%s\n", Full.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   }
   // else something

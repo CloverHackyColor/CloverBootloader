@@ -456,7 +456,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        IN KERNEL_AND_KEXT_PATCHES *Patches,
                                        IN BOOLEAN CustomEntry)
 {
-  EFI_DEVICE_PATH *LoaderDevicePath;
+  EFI_DEVICE_PATH       *LoaderDevicePath;
   CONST CHAR16          *LoaderDevicePathString;
   CONST CHAR16          *FilePathAsString;
 //  CONST CHAR16          *OSIconName = NULL;
@@ -1310,8 +1310,12 @@ VOID ScanLoader(VOID)
           LoaderTitle.upperAscii();
           LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
-          // load from directory, as we don't have linux icons preloaded
-          ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
+          // load from directory, as we don't have linux icons preloaded. -- why not?
+          if (ThemeX.TypeSVG) {
+            ImageX = ThemeX.LoadOSIcon(OSName + ",linux"_XS);
+          } else {
+            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
+          }
           AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries
