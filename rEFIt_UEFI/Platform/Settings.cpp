@@ -435,6 +435,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 
   //decode the variable
   BootOption.Variable = BootVariable;
+  BootOption.VariableSize = VarSize;
   ParseBootOption (&BootOption);
 
   if ((BootOption.OptionalDataSize == 0) ||
