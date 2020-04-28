@@ -47,10 +47,10 @@
 CONST XString ArgOptional[NUM_OPT] = {
   "arch=i386"_XS,       //0
   "arch=x86_64"_XS,     //1
-  "-v "_XS,             //2
-  "-f "_XS,             //3
-  "-s "_XS,             //4
-  "-x "_XS,             //5
+  "-v"_XS,             //2
+  "-f"_XS,             //3
+  "-s"_XS,             //4
+  "-x"_XS,             //5
   "nv_disable=1"_XS,    //6
   "slide=0"_XS,         //7
   "darkwake=0"_XS,      //8

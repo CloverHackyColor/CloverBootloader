@@ -2544,7 +2544,6 @@ VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 {
   REFIT_MENU_CHECKBIT *InputBootArgs;
 
-//  InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs = new REFIT_MENU_CHECKBIT;
   InputBootArgs->Title.takeValueFrom(Text);
 //  InputBootArgs->Tag = TAG_CHECKBIT_OLD;
@@ -2571,17 +2570,9 @@ VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootAr
 
   AddMenuEntry(InputBootArgs, true);
 }
-//
-//VOID AddMenuItem(REFIT_MENU_SCREEN  *SubScreen, INTN Inx, CONST CHAR8 *Title, UINTN Tag, BOOLEAN Cursor)
-//{
-////  REFIT_INPUT_DIALOG *InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
-//  AddMenuItem_(SubScreen, InputBootArgs, Inx, Title, Tag, Cursor);
-//}
 
 VOID REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
-//  REFIT_INPUT_DIALOG *InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
   AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
