@@ -1296,7 +1296,7 @@ VOID ScanLoader(VOID)
         }
         XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
         XStringW OSName = SPrintf("%ls", DirEntry->FileName); // this is folder name, for example "ubuntu"
-        OSName.lowerAscii(); // lowercase for icon name
+        OSName.lowerAscii(); // lowercase for icon name and title (first letter in title will be capitalized later)
         if (FileExists(Volume->RootDir, File)) {
           // check if nonstandard icon mapping is needed
           for (Index = 0; Index < LinuxIconMappingCount; ++Index) {
@@ -1305,17 +1305,14 @@ VOID ScanLoader(VOID)
               break;
             }
           }
-          DBG("  found entry %ls,linux\n", OSName.wc_str());
+          XStringW OSIconName = OSName + L",linux"_XSW;
+          DBG("  found entry %ls\n", OSIconName.wc_str());
           XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
           LoaderTitle.upperAscii();
           LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
           XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
-          // load from directory, as we don't have linux icons preloaded. -- why not?
-          if (ThemeX.TypeSVG) {
-            ImageX = ThemeX.LoadOSIcon(OSName + ",linux"_XS);
-          } else {
-            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
-          }
+          // load from directory, as we don't have linux icons preloaded
+          ImageX = ThemeX.LoadOSIcon(OSIconName);
           AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         } //anyway continue search other entries
