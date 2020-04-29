@@ -993,7 +993,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       UINTN procLocation = searchProc(Kernel, "readStartupExtensions", &procLen);
       UINT8 findJmp[] = {0xEB, 0x05};
       UINT8 patchJmp[] = {0x90, 0x90};
-      if (!SearchAndReplace(Kernel + procLocation, KERNEL_MAX_SIZE, findJmp, 2, patchJmp, 1)) {
+      if (!SearchAndReplace(Kernel + procLocation, 0x100, findJmp, 2, patchJmp, 1)) {
         DBG_RT(Entry, "load kexts not patched\n");
       }
 #endif
