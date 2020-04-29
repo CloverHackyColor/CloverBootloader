@@ -53,39 +53,7 @@ class ThemeView: NSView, WebFrameLoadDelegate, WebUIDelegate {
   
   private func setup() {
     self.addSubview(self.webView)
-    
-    self.webView.translatesAutoresizingMaskIntoConstraints = false
-    let left = NSLayoutConstraint(item: self.webView,
-                                  attribute: .left,
-                                  relatedBy: .equal,
-                                  toItem: self,
-                                  attribute: .left,
-                                  multiplier: 1.0,
-                                  constant: 0.0)
-    let bottom = NSLayoutConstraint(item: self.webView,
-                                    attribute: .bottom,
-                                    relatedBy: .equal,
-                                    toItem: self,
-                                    attribute: .bottom,
-                                    multiplier: 1.0,
-                                    constant: 0.0)
-    let width = NSLayoutConstraint(item: self.webView,
-                                   attribute: .width,
-                                   relatedBy: .equal,
-                                   toItem: self,
-                                   attribute: .width,
-                                   multiplier: 1.0,
-                                   constant: 0.0)
-    let height = NSLayoutConstraint(item: self.webView,
-                                    attribute: .height,
-                                    relatedBy: .equal,
-                                    toItem: self,
-                                    attribute: .height,
-                                    multiplier: 1.0,
-                                    constant: 0.0)
-    self.addConstraints([left, bottom, height, width])
-    
-    
+    gAddConstraintsToFit(superView: self, subView: self.webView)
     self.webView.uiDelegate = self
     self.webView.frameLoadDelegate = self
   }
