@@ -39,8 +39,16 @@
 #define kPrelinkInfoSegment                "__PRELINK_INFO"
 #define kPrelinkInfoSection                "__info"
 
-#define kTextSegment                       "__TEXT"
 #define kLinkEditSegment                   "__LINKEDIT"
+#define kTextSegment                       "__TEXT"
+#define SEG_TEXT                            0x010f
+#define kDataSegment                       "__DATA"
+#define SEG_DATA                            0x0f0f
+#define kDataConstSegment                   "__DATA_CONST"
+#define SEG_DATA_CONST                      0x110f
+#define kKldSegment                         "__KLD"
+#define SEG_KLD                             0x180f
+#define SEG_KLD2                            0x1a0f
 
 #define kPrelinkBundlePathKey              "_PrelinkBundlePath"
 #define kPrelinkExecutableRelativePathKey  "_PrelinkExecutableRelativePath"
@@ -76,7 +84,7 @@ typedef struct _DeviceTreeBuffer {
 
 typedef struct VTABLE {
   UINT32 NameOffset;
-  UINT32 Attr;
+  UINT32 Seg;
   UINT64 ProcAddr;
 } VTABLE;
 

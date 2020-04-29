@@ -9,5 +9,5 @@
 
 extern EFI_PHYSICAL_ADDRESS gRelocBase;
 
-EFI_STATUS EFIAPI CheckDecodedKernel (VOID);
+//EFI_STATUS EFIAPI CheckDecodedKernel (VOID);
 VOID EFIAPI DumpStack (UINT64 RSP);

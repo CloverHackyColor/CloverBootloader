@@ -954,6 +954,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 		DBG_RT(Entry, "==> kernel Lion X64: %llu replaces done.\n", Num);
     } else {
       // EXT - load extra kexts besides kernelcache.
+#if OLD_EXTRA_KEXT_PATCH
       for (i = 0; i < 0x1000000; i++) {
         // 01 00 31 FF BE 14 00 05
         if (Kernel[i+0] == 0x01 && Kernel[i+1] == 0x00 && Kernel[i+2] == 0x31 &&
@@ -987,7 +988,12 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
           Kernel[patchLocation1 + i] = 0x90;
         }
       }
-            
+#else
+      UNITN procLocation = searchProc(Kernel, 0x1000000, "readStartupExtensions", 0x100);
+      const UINT8 * findJmp = {0xEB, 0x05};
+      const UINT8 * patchJmp = {0x90, 0x90};
+      applyKernPatch(Kernel+procLocation, findJmp, 2, patchJmp, "load kexts");
+#endif
       // SIP - bypass kext check by System Integrity Protection.
       for (i = 0; i < 0x1000000; i++) {
         // 45 31 FF 41 XX 01 00 00 DC 48

@@ -17,6 +17,7 @@
 // monitoring AlocatePages
 extern UINT32 gKernelEntry;
 
+#if NOT_USED
 typedef struct {
 	char			*segname;
 	unsigned long	vmaddr;
@@ -80,7 +81,9 @@ mySegData_t mySegData[] = { // segment, vmaddr, vmsize, filesize, adler32
             {0x72, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x00}
         },
 };
-int mySegDataNum = 12;
+//int mySegDataNum = 12;
+#endif
+
 //unsigned long rentry = 0x2c3db0;
 unsigned long rentryx64 = 0x2b8000;
 unsigned long rentry = 0x2b8000;
@@ -144,7 +147,7 @@ void PrintSample(unsigned char *sample, int size) {
 	}
 }
 
-
+/* never used
 EFI_STATUS
 EFIAPI
 CheckDecodedSegment (
@@ -203,7 +206,7 @@ CheckDecodedKernel (
 	Print(L"CheckDecodedKernel Status=%r\n");
 	return Status;
 }
-
+*/
 
 
 VOID
