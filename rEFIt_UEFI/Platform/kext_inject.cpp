@@ -20,6 +20,7 @@
 // runtime debug
 #define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
 
+#define OLD_EXTRA_KEXT_PATCH 1
 
 ////////////////////
 // globals
@@ -916,6 +917,7 @@ UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0
 // Fully reworked by Sherlocks. 2019.06.23
 //
 
+
 VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
 {
   UINTN   Num = 0;
@@ -923,7 +925,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumSnow_X64_EXT    = 0;
   UINTN   NumLion_i386_EXT   = 0;
   UINTN   NumLion_X64_EXT    = 0;
-  UINT32 /* patchLocation1 = 0,*/ patchLocation2 = 0, patchLocation3 = 0;
+  UINT32  patchLocation2 = 0, patchLocation3 = 0;
   UINT32  i, y;
 
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
@@ -955,6 +957,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     } else {
       // EXT - load extra kexts besides kernelcache.
 #if OLD_EXTRA_KEXT_PATCH
+      UINT32  patchLocation1 = 0;
       for (i = 0; i < 0x1000000; i++) {
         // 01 00 31 FF BE 14 00 05
         if (Kernel[i+0] == 0x01 && Kernel[i+1] == 0x00 && Kernel[i+2] == 0x31 &&
