@@ -715,6 +715,7 @@ NSComboBoxDataSource {
     let disks : NSDictionary = getAlldisks()
     let bootPartition = findBootPartitionDevice()
     let diskSorted : [String] = (disks.allKeys as! [String]).sorted()
+
     for d in diskSorted {
       let disk : String = d
       if isWritable(diskOrMtp: disk) && !kBannedMedia.contains(getVolumeName(from: disk) ?? "") {
@@ -724,7 +725,7 @@ NSComboBoxDataSource {
         let mp : String = getMountPoint(from: disk) ?? kNotAvailable.locale
         let parentDiskName : String = getMediaName(from: getBSDParent(of: disk) ?? "") ?? kNotAvailable.locale
         
-        let supportedFS = ["msdos", "fat32", "exfat", "hfs"]
+        let supportedFS = ["msdos", "fat16", "fat32", "exfat", "hfs"]
         
         if supportedFS.contains(fs) {
           self.targetPop.addItem(withTitle: "\(disk)\t\(name), \("mount point".locale): \(mp), \(fs.uppercased()), \(psm): (\(parentDiskName))")
