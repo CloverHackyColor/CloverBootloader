@@ -1295,7 +1295,7 @@ VOID ScanLoader(VOID)
           continue;
         }
         XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
-        XStringW OSName = SPrintf("%ls", DirEntry->FileName); // this is folder name, for example "ubuntu"
+        XStringW OSName = XStringW().takeValueFrom(DirEntry->FileName); // this is folder name, for example "ubuntu"
         OSName.lowerAscii(); // lowercase for icon name and title (first letter in title will be capitalized later)
         if (FileExists(Volume->RootDir, File)) {
           // check if nonstandard icon mapping is needed
@@ -1309,12 +1309,11 @@ VOID ScanLoader(VOID)
           XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
           LoaderTitle.upperAscii();
           LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
-          XImage ImageX; //will the image be destroyed or rewritten by next image after the cycle end?
           // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
-          ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName);
+          XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
           if (ImageX.isEmpty()) {
             // no preloaded icon, try to load from dir
-            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + OSName).wc_str());
+            ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSName);
           }
           AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
@@ -1322,11 +1321,15 @@ VOID ScanLoader(VOID)
       }
       DirIterClose(&DirIter);
 
+      // check for non-standard grub path
       for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
         if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
-          XImage ImageX;
-          XStringW IconXSW = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
-          ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
+          XStringW OSIconName = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
+          OSIconName = OSIconName.subString(0, OSIconName.indexOf(','));
+          XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
+          if (ImageX.isEmpty()) {
+            ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSIconName);
+          }
           AddLoaderEntry(LinuxEntryData[Index].Path, NullXStringArray, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
                          (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
         }
