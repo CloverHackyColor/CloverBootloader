@@ -43,10 +43,10 @@
 //
 // Clover File location to boot from on removable media devices
 //
-#define CLOVER_MEDIA_FILE_NAME_IA32    "\\EFI\\CLOVER\\CLOVERIA32.EFI"_XSW
-#define CLOVER_MEDIA_FILE_NAME_IA64    "\\EFI\\CLOVER\\CLOVERIA64.EFI"_XSW
-#define CLOVER_MEDIA_FILE_NAME_X64     "\\EFI\\CLOVER\\CLOVERX64.EFI"_XSW
-#define CLOVER_MEDIA_FILE_NAME_ARM     "\\EFI\\CLOVER\\CLOVERARM.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_IA32    L"\\EFI\\CLOVER\\CLOVERIA32.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_IA64    L"\\EFI\\CLOVER\\CLOVERIA64.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_X64     L"\\EFI\\CLOVER\\CLOVERX64.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_ARM     L"\\EFI\\CLOVER\\CLOVERARM.EFI"_XSW
 
 #if   defined (MDE_CPU_IA32)
 #define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_IA32
@@ -200,7 +200,7 @@ VOID ScanTool(VOID)
   //    DBG("Scanning for tools...\n");
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
     if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi"_XSW, NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray)) {
-      AddToolEntry("\\EFI\\CLOVER\\tools\\Shell64.efi"_XSW, NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray);
+      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi"_XSW, NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray);
     }
   }
 
