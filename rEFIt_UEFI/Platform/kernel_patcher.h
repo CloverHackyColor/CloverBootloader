@@ -41,14 +41,14 @@
 
 #define kLinkEditSegment                   "__LINKEDIT"
 #define kTextSegment                       "__TEXT"
-#define SEG_TEXT                            0x010f
+#define ID_SEG_TEXT                            0x010f
 #define kDataSegment                       "__DATA"
-#define SEG_DATA                            0x0f0f
+#define ID_SEG_DATA                            0x0f0f
 #define kDataConstSegment                   "__DATA_CONST"
-#define SEG_DATA_CONST                      0x110f
+#define ID_SEG_DATA_CONST                      0x110f
 #define kKldSegment                         "__KLD"
-#define SEG_KLD                             0x180f
-#define SEG_KLD2                            0x1a0f
+#define ID_SEG_KLD                             0x180f
+#define ID_SEG_KLD2                            0x1a0f
 
 #define kPrelinkBundlePathKey              "_PrelinkBundlePath"
 #define kPrelinkExecutableRelativePathKey  "_PrelinkExecutableRelativePath"
@@ -191,6 +191,6 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Se
 
 UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT8 *MaskSearch, UINTN SearchSize, UINT8 *Replace, UINT8 *MaskReplace, INTN MaxReplaces);
 
-UINTN searchProc(unsigned char * kernel, UINTN kernelSize, const char *procedure, UINTN *procLen);
+UINTN searchProc(unsigned char * kernel, const char *procedure, UINTN *procLen);
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */

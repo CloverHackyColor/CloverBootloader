@@ -989,8 +989,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
     DBG_RT(Entry, "Binary patch\n");
     bool once = false;
     UINTN procLen = 0;
-    UINTN procAddr = searchProc(Driver, DriverSize,
-                                 Entry->KernelAndKextPatches->KextPatches[N].ProcedureName, &procLen);
+    UINTN procAddr = searchProc(Driver, Entry->KernelAndKextPatches->KextPatches[N].ProcedureName, &procLen);
     
     if (Entry->KernelAndKextPatches->KextPatches[N].SearchLen == 0) {
       Entry->KernelAndKextPatches->KextPatches[N].SearchLen = DriverSize;

@@ -923,7 +923,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINTN   NumSnow_X64_EXT    = 0;
   UINTN   NumLion_i386_EXT   = 0;
   UINTN   NumLion_X64_EXT    = 0;
-  UINT32  patchLocation1 = 0, patchLocation2 = 0, patchLocation3 = 0;
+  UINT32 /* patchLocation1 = 0,*/ patchLocation2 = 0, patchLocation3 = 0;
   UINT32  i, y;
 
   DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
@@ -989,10 +989,13 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
         }
       }
 #else
-      UNITN procLocation = searchProc(Kernel, 0x1000000, "readStartupExtensions", 0x100);
-      const UINT8 * findJmp = {0xEB, 0x05};
-      const UINT8 * patchJmp = {0x90, 0x90};
-      applyKernPatch(Kernel+procLocation, findJmp, 2, patchJmp, "load kexts");
+      UINTN procLen = 0x100;
+      UINTN procLocation = searchProc(Kernel, "readStartupExtensions", &procLen);
+      UINT8 findJmp[] = {0xEB, 0x05};
+      UINT8 patchJmp[] = {0x90, 0x90};
+      if (!SearchAndReplace(Kernel + procLocation, KERNEL_MAX_SIZE, findJmp, 2, patchJmp, 1)) {
+        DBG_RT(Entry, "load kexts not patched\n");
+      }
 #endif
       // SIP - bypass kext check by System Integrity Protection.
       for (i = 0; i < 0x1000000; i++) {
