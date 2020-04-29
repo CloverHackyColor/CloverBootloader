@@ -20,7 +20,7 @@
 #define CPUID_MODEL_6_13	 	    13
 #define CPUID_MODEL_YONAH			14
 #define CPUID_MODEL_MEROM			15
-#define CPUID_MODEL_PENRYN			35
+#define CPUID_MODEL_PENRYN			23
 
 #define MACH_GET_MAGIC(hdr)        (((struct mach_header_64*)(hdr))->magic)
 #define MACH_GET_NCMDS(hdr)        (((struct mach_header_64*)(hdr))->ncmds)
@@ -82,11 +82,18 @@ typedef struct VTABLE {
 
 typedef struct SEGMENT {
   CHAR8  Name[16];    //0
-  UINT64 SegAddress;  //16
-  UINT32 Cmd[12];     //24
-  UINT32 AddrVtable;  //72
-  UINT32 SizeVtable;  //76
-  UINT32 AddrNames;   //80
+  UINT64 SegAddress;  //16 0x10
+  UINT64 vmsize;      //0x18 0x16FB60
+  UINT64 fileoff;     //0x20 0xDDA000
+  UINT64 filesize;    //0x28 0x16FB60
+  UINT32 maxprot;     //0x30 01-Cat 07-Moj
+  UINT32 initprot;    //0x34 01
+  UINT32 NumSects;    //0x38 00
+  UINT32 Flags;       //0x3C 00
+  UINT32 Cmd[2];      //0x40 02, 18
+  UINT32 AddrVtable;  //0x48
+  UINT32 SizeVtable;  //0x4C
+  UINT32 AddrNames;   //0x50
 } SEGMENT;
 
 
