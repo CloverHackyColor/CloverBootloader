@@ -859,7 +859,7 @@ SimpleString teststrncat_(const InitialValue& initialValue, const ValueToCat& va
 		xstr.takeValueFrom(initialValue.cha);
 		xstr.strncat(valueToCat.cha, i);
 	
-		size_t expectedLength = length_of_utf_string(initialValue.cha) + min(i, valueToCat.utf32_length);
+		size_t expectedLength = length_of_utf_string(initialValue.cha) + Xmin(i, valueToCat.utf32_length);
 		CHECK_RESULT(xstr.length() == expectedLength,
 					 ssprintf("xstr.length() == expectedLength (%zu)", expectedLength),
 					 ssprintf("xstr.length() != expectedLength (%zu!=%zu)", xstr.length(), expectedLength)
@@ -1411,34 +1411,34 @@ SimpleString teststartWith_(const InitialValue& initialValue)
 //	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
 //	ch_t c; // dummy for call utf function
 
-	XStringClass initialString;
-	initialString.takeValueFrom(initialValue.cha);
+	XStringClass initia__String;
+	initia__String.takeValueFrom(initialValue.cha);
 	
 	char32_t expectedChar = 0;
 	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
 
 	for ( size_t count = 0 ; count < initialValue.utf32_length+3 ; count+=1 )
 	{
-		XStringClass subStr = initialString.subString(0, count);
+		XStringClass subStr = initia__String.subString(0, count);
 		
 		bool expectedResult = true;
 		if ( subStr.length() > 0  &&  count >= initialValue.utf32_length ) expectedResult = false;
 		
-		CHECK_RESULT(initialString.startWith(subStr) == expectedResult,
-					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
-					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
+		CHECK_RESULT(initia__String.startWith(subStr) == expectedResult,
+					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
+					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
 					 );
-//initialString.startWith(subStr);
+//initia__String.startWith(subStr);
 
-		subStr = initialString.subString(0, count-1) + ((char32_t)(initialValue.utf32[count-1]+1));
+		subStr = initia__String.subString(0, count-1) + ((char32_t)(initialValue.utf32[count-1]+1));
 		expectedResult = false;
-		CHECK_RESULT(initialString.startWith(subStr) == expectedResult,
-					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
-					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initialString.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
+		CHECK_RESULT(initia__String.startWith(subStr) == expectedResult,
+					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
+					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
 					 );
-//subStr = initialString.subString(0, count-1);
+//subStr = initia__String.subString(0, count-1);
 //subStr = subStr + ((char32_t)(initialValue.utf32[count-1]+1));
-//initialString.startWith(subStr);
+//initia__String.startWith(subStr);
 
 	}
 //str.takeValueFrom(initialValue.cha);
@@ -1463,16 +1463,16 @@ SimpleString testbasename_(const InitialValue& initialValue, const TestString<Ex
 //	typedef typename XStringClassInfo<XStringClass>::ch_t ch_t;
 //	ch_t c; // dummy for call utf function
 
-	XStringClass initialString;
-	initialString.takeValueFrom(initialValue.cha);
+	XStringClass initia__String;
+	initia__String.takeValueFrom(initialValue.cha);
 	
-	XStringClass xstr = initialString.basename();
+	XStringClass xstr = initia__String.basename();
 	
 	CHECK_RESULT(xstr.strcmp(expectedResult.cha) == 0,
-				 ssprintf("\"%s\".basename() == \"%s\"", SimpleString(initialString.s()).c_str(), SimpleString(expectedResult.cha).c_str()),
-				 ssprintf("\"%s\".basename() != (\"%s\"!=\"%s\")", SimpleString(initialString.s()).c_str(), SimpleString(xstr.s()).c_str(), SimpleString(expectedResult.cha).c_str())
+				 ssprintf("\"%s\".basename() == \"%s\"", SimpleString(initia__String.s()).c_str(), SimpleString(expectedResult.cha).c_str()),
+				 ssprintf("\"%s\".basename() != (\"%s\"!=\"%s\")", SimpleString(initia__String.s()).c_str(), SimpleString(xstr.s()).c_str(), SimpleString(expectedResult.cha).c_str())
 				 );
-XStringClass xstr2 = initialString.basename();
+XStringClass xstr2 = initia__String.basename();
 
 	return SimpleString();
 }
@@ -1494,23 +1494,23 @@ XStringClass xstr2 = initialString.basename();
 //#include <libgen.h>
 
 //std::is_class
+//
+//void func_test(XStringW& xsw)
+//{
+//	(void)xsw;
+//}
 
-void func_test(XStringW& xsw)
-{
-	(void)xsw;
-}
-
-template<typename T>
-class CE
+class C
 {
   public:
-	const T* data;
-	constexpr CE() : data(0) { }
+	typedef char char_t;
+	const char* data;
+	constexpr C() : data(0) { }
 };
 
-class CE2 : public XStringAbstractNoDtor<char, CE2>
-{
-};
+//constexpr LString8 g_xs1 = "foobar";
+//constexpr LStringW g_xsw1 = L"foobar";
+//XString g_xs2 = "foobar"_XS;
 
 int XString_tests()
 {
@@ -1518,52 +1518,27 @@ int XString_tests()
 //	printf("XString16_tests -> Enter\n");
 #endif
 
-//constexpr CE<char> ce;
-//constexpr CE2 xsw;
+//LString8 a = "dfsf"_XS;
+//XStringW b = "ssdfsdf"_XS;
+//XString c = a + b;
 
-//const char c = ' ';
-//const char* cc = "  ";
-//char buf[64];
-//char16_t* buf16 = (char16_t*)u"foo16";
-XString x1("a"_XS);
-XString x2("b"_XS);
-XStringW xw1("c"_XS);
+//char c = 1;
+//int ii = sizeof(size_t);
+//unsigned long long ull = 1;
+//unsigned long long ll = 3;
+//xw1.dataSized(c);
+//xw1.dataSized(ii);
+//xw1.dataSized(ull);
+//xw1.dataSized(ll);
 
-char c = 1;
-int ii = sizeof(size_t);
-unsigned long long ull = 1;
-unsigned long long ll = 3;
-xw1.dataSized(c);
-xw1.dataSized(ii);
-xw1.dataSized(ull);
-xw1.dataSized(ll);
-
-//auto x3 = xw1 = x1;
-//func_test(x3);
-//
-//XStringAbstract__is_char_st<decltype(buf16)> a;
-//printf("a.v()=%d\n", a.v());
-
-//XStringW sw1 = buf16;
-
-//std::is_array<decltype(buf)> b;
-
-//XStringAbstract__enable_if_t<is_char(decltype(c))>::type a;
-
-//printf("%ls", XStringW().takeValueFrom(" ").s());
-//func_test(XStringW().takeValueFrom(" "));
-
-//	testDefaultCtor<XString>("XString");
-//	XString16 a = u"toto"_XS16;
-
-const char* utf8 = "ギ"; (void)utf8;
-size_t utf8_size = sizeof("ギ") - 1; (void)utf8_size; // this char is 6 bytes long !
-const wchar_t* utfw = L"ギ"; (void)utfw;
-size_t utfw_size = sizeof(L"ギ") - 1; (void)utfw_size; // this char is 6 bytes long !
-const char16_t* utf16 = u"ギ"; (void)utf16;
-size_t utf16_size = sizeof(u"ギ") - 1; (void)utf16_size; // this char is 6 bytes long !
-const char32_t* utf32 = U"ギ"; (void)utf32;
-size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 bytes long !
+//const char* utf8 = "ギ"; (void)utf8;
+//size_t utf8_size = sizeof("ギ") - 1; (void)utf8_size; // this char is 6 bytes long !
+//const wchar_t* utfw = L"ギ"; (void)utfw;
+//size_t utfw_size = sizeof(L"ギ") - 1; (void)utfw_size; // this char is 6 bytes long !
+//const char16_t* utf16 = u"ギ"; (void)utf16;
+//size_t utf16_size = sizeof(u"ギ") - 1; (void)utf16_size; // this char is 6 bytes long !
+//const char32_t* utf32 = U"ギ"; (void)utf32;
+//size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 bytes long !
 //size_t size = sizeof("ꇉ")-1; // this char is 3 bytes long
 //size_t size = sizeof("伽")-1; // this char is 3 bytes long
 //size_t size = sizeof("楘")-1; // this char is 3 bytes long
@@ -1578,46 +1553,28 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 #ifdef _MSC_VER
 //SetConsoleOutputCP(65001);
 #endif
-//
-//printf("%s", "Выход  \n");
-//XString ddd = "Выход  "_XS;
-//printf(" xstring %s, asize=%zu, sizeinbyte=%zu sizeof=%zu lastcharat=%zu\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd), ddd.indexOf(ddd.lastChar()));
-//
-//TestString<char> ts1 = TestString<char>(nbchar("Выход  "), "Выход  ", nbchar(PREFIX_U("Выход  ")), PREFIX_U("Выход  "));
-//testlastChar_<XString>(ts1);
-
 
 //teststrncpy_<XString>("utf8", testStringMultiCodedArray[1].utf8, testStringMultiCodedArray[1].wchar);
 //testindexOf(XString, utf8, utf16);
 //testCompare(XString, utf8, utf16);
 //testindexOf_<XString>(testStringMultiCoded4CaseArray[0].utf8);
+//testTakeValueFrom_<XString16>(testStringMultiCodedArray[0].utf16, testStringMultiCodedArray[0].utf16);
 
-//const char* p1 = "foo/bar"; // basename returns bar
-//const char* p1 = "foo/"; // basename returns foo
-//const char* p1 = "foo//"; // basename returns foo
-//const char* p1 = "foo///"; // basename returns foo
-//const char* p1 = ""; // basename returns "."
-//const char* p1 = "  foo/bar  "; // basename returns "bar  "
-//const char* p1 = "  foo  "; // basename returns "  foo  "
-//const char* p1 = " "; // basename returns " "
-//const char* p2 = basename((char*)p1);
+	TEST_ALL_CLASSES(testDefaultCtor, __TEST0);
+	TEST_ALL_CLASSES(testEmpty, __TEST0);
+	TEST_ALL_CLASSES(testTakeValueFrom, TEST_ALL_UTF);
+	TEST_ALL_CLASSES(testchar32At, TEST_ALL_INTEGRAL);
+	TEST_ALL_CLASSES(testdataSized, TEST_ALL_INTEGRAL);
 
+	TEST_ALL_CLASSES(teststrncpy, TEST_ALL_UTF); // 26944 tests
+	TEST_ALL_CLASSES(teststrcat, TEST_ALL_UTF_ALL_UTF);
+	TEST_ALL_CLASSES(teststrncat, TEST_ALL_UTF_ALL_UTF); // 2101632 tests
 
-//	TEST_ALL_CLASSES(testDefaultCtor, __TEST0);
-//	TEST_ALL_CLASSES(testEmpty, __TEST0);
-//	TEST_ALL_CLASSES(testTakeValueFrom, TEST_ALL_UTF);
-//	TEST_ALL_CLASSES(testchar32At, TEST_ALL_INTEGRAL);
-//	TEST_ALL_CLASSES(testdataSized, TEST_ALL_INTEGRAL);
-//
-//	TEST_ALL_CLASSES(teststrncpy, TEST_ALL_UTF); // 26944 tests
-//	TEST_ALL_CLASSES(teststrcat, TEST_ALL_UTF_ALL_UTF);
-//	TEST_ALL_CLASSES(teststrncat, TEST_ALL_UTF_ALL_UTF); // 2101632 tests
-//
 	TEST_ALL_CLASSES(testSubString, __TEST0);
-//	TEST_ALL_CLASSES(testCompare, TEST_ALL_UTF);
-//	TEST_ALL_CLASSES(testindexOf, TEST_ALL_UTF);
-//
-//	TEST_ALL_CLASSES(testlastChar, __TEST0);
+	TEST_ALL_CLASSES(testCompare, TEST_ALL_UTF);
+	TEST_ALL_CLASSES(testindexOf, TEST_ALL_UTF);
+
+	TEST_ALL_CLASSES(testlastChar, __TEST0);
 	TEST_ALL_CLASSES(testtrim, __TEST0);
 	TEST_ALL_CLASSES(teststartWith, __TEST0);
 	TEST_ALL_CLASSES(testbasename, __TEST0);
@@ -1643,3 +1600,18 @@ size_t utf32_size = sizeof(U"ギ") - 1; (void)utf32_size; // this char is 6 b
 #endif
 	return nbTestFailed > 0;
 }
+
+
+
+
+
+//const char* p1 = "foo/bar"; // basename returns bar
+//const char* p1 = "foo/"; // basename returns foo
+//const char* p1 = "foo//"; // basename returns foo
+//const char* p1 = "foo///"; // basename returns foo
+//const char* p1 = ""; // basename returns "."
+//const char* p1 = "  foo/bar  "; // basename returns "bar  "
+//const char* p1 = "  foo  "; // basename returns "  foo  "
+//const char* p1 = " "; // basename returns " "
+//const char* p2 = basename((char*)p1);
+

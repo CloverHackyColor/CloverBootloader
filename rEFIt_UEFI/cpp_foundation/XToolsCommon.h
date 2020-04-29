@@ -10,80 +10,61 @@
 #define XToolsCommon_h
 
 
-struct XStringAbstract__false_type {
+struct _xtools__false_type {
     static constexpr bool value = false;
     bool v() const { return false; }
 };
 
-struct XStringAbstract__true_type {
+struct _xtools__true_type {
     static constexpr bool value = true;
     bool v() const { return true; }
 };
 
 /* make unsigned */
 template <class _Tp>
-struct XStringAbstract__make_unsigned {};
+struct _xtools__make_unsigned {};
 
-template <> struct XStringAbstract__make_unsigned<         char>      {typedef unsigned char      type;};
-template <> struct XStringAbstract__make_unsigned<  signed char>      {typedef unsigned char      type;};
-template <> struct XStringAbstract__make_unsigned<unsigned char>      {typedef unsigned char      type;};
-template <> struct XStringAbstract__make_unsigned<     char16_t>      {typedef char16_t           type;};
-template <> struct XStringAbstract__make_unsigned<     char32_t>      {typedef char32_t           type;};
-template <> struct XStringAbstract__make_unsigned<      wchar_t>      {typedef wchar_t            type;};
-template <> struct XStringAbstract__make_unsigned<  signed short>     {typedef unsigned short     type;};
-template <> struct XStringAbstract__make_unsigned<unsigned short>     {typedef unsigned short     type;};
-template <> struct XStringAbstract__make_unsigned<  signed int>       {typedef unsigned int       type;};
-template <> struct XStringAbstract__make_unsigned<unsigned int>       {typedef unsigned int       type;};
-template <> struct XStringAbstract__make_unsigned<  signed long>      {typedef unsigned long      type;};
-template <> struct XStringAbstract__make_unsigned<unsigned long>      {typedef unsigned long      type;};
-template <> struct XStringAbstract__make_unsigned<  signed long long> {typedef unsigned long long type;};
-template <> struct XStringAbstract__make_unsigned<unsigned long long> {typedef unsigned long long type;};
-#define unsigned_type(x) typename XStringAbstract__make_unsigned<x>::type
-
-/* enable_if */
-template <bool, typename T = void>
-struct XStringAbstract__enable_if_t
-{};
-
-template <typename T>
-struct XStringAbstract__enable_if_t<true, T> {
-  typedef T type;
-};
-//#define enable_if(x) XStringAbstract__enable_if_t(x, void)::type
-#define enable_if(x) typename enable_if_type = typename XStringAbstract__enable_if_t<x>::type
-
-//
-//template< bool B, class T = void >
-//using XStringAbstract__enable_if_t = typename XStringAbstract__enable_if<B,T>::type;
+template <> struct _xtools__make_unsigned<         char>      {typedef unsigned char      type;};
+template <> struct _xtools__make_unsigned<  signed char>      {typedef unsigned char      type;};
+template <> struct _xtools__make_unsigned<unsigned char>      {typedef unsigned char      type;};
+template <> struct _xtools__make_unsigned<     char16_t>      {typedef char16_t           type;};
+template <> struct _xtools__make_unsigned<     char32_t>      {typedef char32_t           type;};
+template <> struct _xtools__make_unsigned<      wchar_t>      {typedef wchar_t            type;};
+template <> struct _xtools__make_unsigned<  signed short>     {typedef unsigned short     type;};
+template <> struct _xtools__make_unsigned<unsigned short>     {typedef unsigned short     type;};
+template <> struct _xtools__make_unsigned<  signed int>       {typedef unsigned int       type;};
+template <> struct _xtools__make_unsigned<unsigned int>       {typedef unsigned int       type;};
+template <> struct _xtools__make_unsigned<  signed long>      {typedef unsigned long      type;};
+template <> struct _xtools__make_unsigned<unsigned long>      {typedef unsigned long      type;};
+template <> struct _xtools__make_unsigned<  signed long long> {typedef unsigned long long type;};
+template <> struct _xtools__make_unsigned<unsigned long long> {typedef unsigned long long type;};
 
 
 // is_integral
-template <class _Tp> struct XStringAbstract__is_integral_st                     : public XStringAbstract__false_type {};
-template <>          struct XStringAbstract__is_integral_st<bool>               : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<char>               : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<signed char>        : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned char>      : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<wchar_t>            : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<short>              : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned short>     : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<int>                : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned int>       : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<long>               : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned long>      : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<long long>          : public XStringAbstract__true_type {};
-template <>          struct XStringAbstract__is_integral_st<unsigned long long> : public XStringAbstract__true_type {};
-#define is_integral(x) XStringAbstract__is_integral_st<x>::value
+template <class _Tp> struct _xtools__is_integral_st                     : public _xtools__false_type {};
+//template <>          struct _xtools__is_integral_st<bool>               : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<char>               : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<signed char>        : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<unsigned char>      : public _xtools__true_type {};
+//template <>          struct _xtools__is_integral_st<wchar_t>            : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<short>              : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<unsigned short>     : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<int>                : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<unsigned int>       : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<long>               : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<unsigned long>      : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<long long>          : public _xtools__true_type {};
+template <>          struct _xtools__is_integral_st<unsigned long long> : public _xtools__true_type {};
 
 
 // is_char
-template <class _Tp>  struct XStringAbstract__is_char_st                        : public XStringAbstract__false_type {};
-template <>           struct XStringAbstract__is_char_st<char>                  : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<signed char>           : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<unsigned char>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char16_t>              : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<char32_t>              : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_st<wchar_t>               : public XStringAbstract__true_type {};
-#define is_char(x) XStringAbstract__is_char_st<x>::value
+template <class _Tp>  struct _xtools__is_char_st                        : public _xtools__false_type {};
+template <>           struct _xtools__is_char_st<char>                  : public _xtools__true_type {};
+template <>           struct _xtools__is_char_st<signed char>           : public _xtools__true_type {};
+template <>           struct _xtools__is_char_st<unsigned char>         : public _xtools__true_type {};
+template <>           struct _xtools__is_char_st<char16_t>              : public _xtools__true_type {};
+template <>           struct _xtools__is_char_st<char32_t>              : public _xtools__true_type {};
+template <>           struct _xtools__is_char_st<wchar_t>               : public _xtools__true_type {};
 
 //
 //// STRUCT TEMPLATE remove_reference
@@ -100,38 +81,81 @@ template <>           struct XStringAbstract__is_char_st<wchar_t>               
 //	};
 
 // STRUCT TEMPLATE remove_const
-template<class _Ty>
-	struct remove_const
-	{	// remove const
-	using type = _Ty;
-	};
+//template<class _Ty>
+//	struct remove_const
+//	{	// remove const
+//		typedef _Ty type;
+//	};
+//
+//template<class _Ty>
+//	struct remove_const<const _Ty>
+//	{	// remove const
+//		typedef _Ty type;
+//	};
 
-template<class _Ty>
-	struct remove_const<const _Ty>
-	{	// remove const
-	using type = _Ty;
-	};
-
+template< class T > struct _xtools__remove_const_ptr                { typedef T type; };
+template< class T > struct _xtools__remove_const_ptr<const T>       { typedef T type; };
+template< class T > struct _xtools__remove_const_ptr<T*>       { typedef T type; };
+template< class T > struct _xtools__remove_const_ptr<const T*>       { typedef T type; };
+template< class T, int n > struct _xtools__remove_const_ptr<T[n]>       { typedef T type; };
+template< class T, int n > struct _xtools__remove_const_ptr<const T[n]>       { typedef T type; };
 
 
 // is_char_ptr
-template <class _Tp>  struct XStringAbstract__is_char_ptr_st                        : public XStringAbstract__false_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<char*>                  : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<char[]>                : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_ptr_st<char[_Np]>             : public XStringAbstract__true_type {};
-//template <>           struct XStringAbstract__is_char_ptr_st<signed char>           : public XStringAbstract__true_type {};
-//template <>           struct XStringAbstract__is_char_ptr_st<unsigned char>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<char16_t*>              : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<char16_t[]>            : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_ptr_st<char16_t[_Np]>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<char32_t*>              : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<char32_t[]>            : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_ptr_st<char32_t[_Np]>         : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<wchar_t*>               : public XStringAbstract__true_type {};
-template <>           struct XStringAbstract__is_char_ptr_st<wchar_t[]>             : public XStringAbstract__true_type {};
-template <size_t _Np> struct XStringAbstract__is_char_ptr_st<wchar_t[_Np]>          : public XStringAbstract__true_type {};
-#define is_char_ptr(x) XStringAbstract__is_char_ptr_st<typename remove_const<x>::type>::value
+template <class _Tp>  struct _xtools__is_char_ptr_st                        : public _xtools__false_type {};
+template <>           struct _xtools__is_char_ptr_st<char*>                  : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<char[]>                : public _xtools__true_type {};
+template <size_t _Np> struct _xtools__is_char_ptr_st<char[_Np]>             : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<signed char*>           : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<signed char[]>                : public _xtools__true_type {};
+template <size_t _Np> struct _xtools__is_char_ptr_st<signed char[_Np]>             : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<unsigned char*>         : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<unsigned char[]>                : public _xtools__true_type {};
+template <size_t _Np> struct _xtools__is_char_ptr_st<unsigned char[_Np]>             : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<char16_t*>              : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<char16_t[]>            : public _xtools__true_type {};
+template <size_t _Np> struct _xtools__is_char_ptr_st<char16_t[_Np]>         : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<char32_t*>              : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<char32_t[]>            : public _xtools__true_type {};
+template <size_t _Np> struct _xtools__is_char_ptr_st<char32_t[_Np]>         : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<wchar_t*>               : public _xtools__true_type {};
+template <>           struct _xtools__is_char_ptr_st<wchar_t[]>             : public _xtools__true_type {};
+template <size_t _Np> struct _xtools__is_char_ptr_st<wchar_t[_Np]>          : public _xtools__true_type {};
 
 
+/* enable_if */
+template <bool, typename T = void>
+struct _xtools_enable_if_t
+{};
+
+template <typename T>
+struct _xtools_enable_if_t<true, T> {
+  typedef T type;
+};
+
+
+
+template< class... >
+using _xtools__void_t = void;
+
+/* has type member */
+// primary template handles types that have no nested ::type member:
+template< class, class = _xtools__void_t<> >
+struct _xtools__has_type_member : _xtools__false_type { };
+
+// specialization recognizes types that do have a nested ::type member:
+template< class T >
+struct _xtools__has_type_member<T, _xtools__void_t<typename T::char_t>> : _xtools__true_type { };
+
+
+
+
+
+#define unsigned_type(x) typename _xtools__make_unsigned<x>::type
+#define is_integral(x) _xtools__is_integral_st<x>::value
+#define is_char(x) _xtools__is_char_st<x>::value
+#define is_char_ptr(x) _xtools__is_char_ptr_st<typename _xtools__remove_const_ptr<x>::type>::value
+#define enable_if_t(x) typename _xtools_enable_if_t<x>::type
+#define enable_if(x) typename enable_if_type = typename _xtools_enable_if_t<x>::type
 
 #endif /* XToolsCommon_h */

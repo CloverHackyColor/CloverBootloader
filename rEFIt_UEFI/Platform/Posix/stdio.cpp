@@ -44,24 +44,28 @@ int printf(const char* format, ...)
 
 const char* strerror(EFI_STATUS Status)
 {
+	size_t size = stdio_static_buf.allocatedSize();
 	UINTN n = 0;
-	do {
-		stdio_static_buf.CheckSize(stdio_static_buf.length()+10);
-		n = AsciiSPrint(stdio_static_buf.dataSized(stdio_static_buf.allocatedSize()), stdio_static_buf.allocatedSize(), "%r", Status);
-	} while ( n > stdio_static_buf.allocatedSize() - 2 );
-	
+	n = AsciiSPrint(stdio_static_buf.dataSized(stdio_static_buf.allocatedSize()), stdio_static_buf.allocatedSize(), "%r", Status);
+	while ( n > size - 2 )
+	{
+		size += 10;
+		n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%r", Status);
+	}
 	return stdio_static_buf.s();
 }
 
 //this function print guid in LittleEndian format while we need BigEndian as Apple do
 const char* strguid(EFI_GUID* guid)
 {
+	size_t size = stdio_static_buf.allocatedSize();
 	UINTN n = 0;
-	do {
-		stdio_static_buf.CheckSize(stdio_static_buf.length()+10);
-		n = AsciiSPrint(stdio_static_buf.dataSized(stdio_static_buf.allocatedSize()), stdio_static_buf.allocatedSize(), "%g", guid);
-	} while ( n > stdio_static_buf.allocatedSize() - 2 );
-
+	n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%g", guid);
+	while ( n > size - 2 )
+	{
+		size += 10;
+		n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%g", guid);
+	}
 	return stdio_static_buf.s();
 }
 

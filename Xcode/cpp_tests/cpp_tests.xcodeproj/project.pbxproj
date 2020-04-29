@@ -41,6 +41,27 @@
 		9A28CD4B241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */; };
 		9A28CD4C241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */; };
 		9A28CD4D241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */; };
+		9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
+		9A2A7C6D24576CCE00422263 /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */; };
+		9A2A7C6E24576CCE00422263 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1D241BB61B00F3D247 /* abort.cpp */; };
+		9A2A7C6F24576CCE00422263 /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA7C2451C8330050B38B /* XString.cpp */; };
+		9A2A7C7024576CCE00422263 /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA802451C88D0050B38B /* XString_test.cpp */; };
+		9A2A7C7124576CCE00422263 /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1E241BB61B00F3D247 /* strlen.cpp */; };
+		9A2A7C7224576CCE00422263 /* xcode_utf_fixed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */; };
+		9A2A7C7324576CCE00422263 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
+		9A2A7C7424576CCE00422263 /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD15241BACBB00F3D247 /* strlen_test.cpp */; };
+		9A2A7C7524576CCE00422263 /* strcmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */; };
+		9A2A7C7624576CCE00422263 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */; };
+		9A2A7C7724576CCE00422263 /* all_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08512402FE9B00E2B470 /* all_tests.cpp */; };
+		9A2A7C7824576CCE00422263 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
+		9A2A7C7924576CCE00422263 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
+		9A2A7C7A24576CCE00422263 /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
+		9A2A7C7B24576CCE00422263 /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
+		9A2A7C7C24576CCE00422263 /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD0F241B9EF800F3D247 /* strcmp.cpp */; };
+		9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
+		9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
+		9A2A7C7F24576CCE00422263 /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA045892425F94D000D6970 /* printf_lite-test.cpp */; };
+		9A2A7C8024576CCE00422263 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A4185B12439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
 		9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
 		9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */; };
@@ -74,6 +95,15 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9A0B08822403B08400E2B470 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		9A2A7C8224576CCE00422263 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -129,6 +159,7 @@
 		9A28CD1E241BB61B00F3D247 /* strlen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strlen.cpp; sourceTree = "<group>"; };
 		9A28CD49241F437C00F3D247 /* xcode_utf_fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xcode_utf_fixed.h; sourceTree = "<group>"; };
 		9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xcode_utf_fixed.cpp; sourceTree = "<group>"; };
+		9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32 c++17"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
 		9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
 		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
@@ -140,6 +171,7 @@
 		9A57C22F2418B9A00029A39F /* cpp_tests UTF16 unsigned char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 unsigned char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A57C266241A799B0029A39F /* XString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString.h; sourceTree = "<group>"; };
 		9A6BA73C2449977300BDA52C /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
+		9A7AEDE82459696C003AAD04 /* XToolsCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon.h; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
@@ -178,6 +210,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9A2A7C8124576CCE00422263 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9A57C22A2418B9A00029A39F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -198,6 +237,7 @@
 		9A0B08432402FE9300E2B470 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				9A7AEDE82459696C003AAD04 /* XToolsCommon.h */,
 				9A4FFA7C2451C8330050B38B /* XString.cpp */,
 				9A57C266241A799B0029A39F /* XString.h */,
 				9A6BA73C2449977300BDA52C /* XStringAbstract.h */,
@@ -300,6 +340,7 @@
 				9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */,
 				9A0B08862403B08400E2B470 /* cpp_tests UTF32 */,
 				9A57C22F2418B9A00029A39F /* cpp_tests UTF16 unsigned char */,
+				9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -362,6 +403,23 @@
 			name = "cpp_tests UTF32";
 			productName = cpp_tests;
 			productReference = 9A0B08862403B08400E2B470 /* cpp_tests UTF32 */;
+			productType = "com.apple.product-type.tool";
+		};
+		9A2A7C6A24576CCE00422263 /* cpp_tests UTF32 c++17 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9A2A7C8324576CCE00422263 /* Build configuration list for PBXNativeTarget "cpp_tests UTF32 c++17" */;
+			buildPhases = (
+				9A2A7C6B24576CCE00422263 /* Sources */,
+				9A2A7C8124576CCE00422263 /* Frameworks */,
+				9A2A7C8224576CCE00422263 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cpp_tests UTF32 c++17";
+			productName = cpp_tests;
+			productReference = 9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */;
 			productType = "com.apple.product-type.tool";
 		};
 		9A57C2172418B9A00029A39F /* cpp_tests UTF16 unsigned char */ = {
@@ -427,6 +485,7 @@
 				9A92232C2402FD1000483CBA /* cpp_tests UTF16 signed char */,
 				9A0B08712403B08400E2B470 /* cpp_tests UTF32 */,
 				9A57C2172418B9A00029A39F /* cpp_tests UTF16 unsigned char */,
+				9A2A7C6A24576CCE00422263 /* cpp_tests UTF32 c++17 */,
 			);
 		};
 /* End PBXProject section */
@@ -457,6 +516,34 @@
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
 				9AA0458B2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A2A7C6B24576CCE00422263 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */,
+				9A2A7C6D24576CCE00422263 /* XObjArray_tests.cpp in Sources */,
+				9A2A7C6E24576CCE00422263 /* abort.cpp in Sources */,
+				9A2A7C6F24576CCE00422263 /* XString.cpp in Sources */,
+				9A2A7C7024576CCE00422263 /* XString_test.cpp in Sources */,
+				9A2A7C7124576CCE00422263 /* strlen.cpp in Sources */,
+				9A2A7C7224576CCE00422263 /* xcode_utf_fixed.cpp in Sources */,
+				9A2A7C7324576CCE00422263 /* main.cpp in Sources */,
+				9A2A7C7424576CCE00422263 /* strlen_test.cpp in Sources */,
+				9A2A7C7524576CCE00422263 /* strcmp_test.cpp in Sources */,
+				9A2A7C7624576CCE00422263 /* strncmp_test.cpp in Sources */,
+				9A2A7C7724576CCE00422263 /* all_tests.cpp in Sources */,
+				9A2A7C7824576CCE00422263 /* unicode_conversions.cpp in Sources */,
+				9A2A7C7924576CCE00422263 /* global_test.cpp in Sources */,
+				9A2A7C7A24576CCE00422263 /* printf_lite.c in Sources */,
+				9A2A7C7B24576CCE00422263 /* XStringArray_test.cpp in Sources */,
+				9A2A7C7C24576CCE00422263 /* strcmp.cpp in Sources */,
+				9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */,
+				9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */,
+				9A2A7C7F24576CCE00422263 /* printf_lite-test.cpp in Sources */,
+				9A2A7C8024576CCE00422263 /* Platform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,6 +618,25 @@
 		9A0B08852403B08400E2B470 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9A2A7C8424576CCE00422263 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9A2A7C8524576CCE00422263 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -769,6 +875,15 @@
 			buildConfigurations = (
 				9A0B08842403B08400E2B470 /* Debug */,
 				9A0B08852403B08400E2B470 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9A2A7C8324576CCE00422263 /* Build configuration list for PBXNativeTarget "cpp_tests UTF32 c++17" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A2A7C8424576CCE00422263 /* Debug */,
+				9A2A7C8524576CCE00422263 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

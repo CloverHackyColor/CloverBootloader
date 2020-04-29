@@ -33,7 +33,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	bool isEmpty() const { return this->size() == 0 ; }
 	bool notEmpty() const { return this->size() > 0 ; }
 	
-//	#define enable_if XStringAbstract__enable_if_t
+//	#define enable_if _xtools_enable_if_t
 	/* [] */
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const XStringClass& operator [](IntegralType i) const { return array[i]; }
@@ -46,8 +46,8 @@ class XStringArray_/* : public XStringArraySuper*/
 
 //	const XStringClass& dbg(size_t i) const { return array[i]; }
 
-
-	XStringClass ConcatAll(const XStringClass& Separator = ", "_XS, const XStringClass& Prefix = NullXString, const XStringClass& Suffix = NullXString) const
+	template<class XStringClass1, class XStringClass2, class XStringClass3, enable_if(is___String(XStringClass1) && is___String(XStringClass2) && is___String(XStringClass3))>
+	XStringClass ConcatAll(const XStringClass1& Separator, const XStringClass2& Prefix, const XStringClass3& Suffix) const
 	{
 		xsize i;
 		XStringClass s;
@@ -62,6 +62,17 @@ class XStringArray_/* : public XStringArraySuper*/
 			s += Suffix;
 		}
 		return s;
+	}
+
+	XStringClass ConcatAll() const
+	{
+		return ConcatAll(", "_XS, NullXString, NullXString);
+	}
+
+	template<class XStringClass1, enable_if(is___String(XStringClass1))>
+	XStringClass ConcatAll(const XStringClass1& Separator) const
+	{
+		return ConcatAll(Separator, NullXString, NullXString);
 	}
 
 
@@ -310,7 +321,7 @@ XStringArrayClass Split(const CharType1* S, const CharType2* Separator)
 //	return Split<XStringArrayClass>(SS, XSeparator);
 };
 
-template<class XStringArrayClass, class XStringClass1, class XStringClass2, enable_if(!is_char(XStringClass1) && !is_char_ptr(XStringClass1) && !is_char(XStringClass2))>
+template<class XStringArrayClass, class XStringClass1, class XStringClass2, enable_if(is___String(XStringClass1) && is___String(XStringClass2))>
 XStringArrayClass Split(const XStringClass1& S, const XStringClass2& Separator)
 {
 	return Split<XStringArrayClass>(S.s(), Separator.s());

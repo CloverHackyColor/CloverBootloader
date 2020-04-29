@@ -122,6 +122,7 @@
 		9A637AE82430D927000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9A637AE92430D928000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
 		9A637AEA2430D928000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
+		9A7AEDE7245963BF003AAD04 /* XToolsCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A7AEDE6245963BF003AAD04 /* XToolsCommon.h */; };
 		9A9AEB94243F7B5600FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB97243F7B5600FBD7D8 /* unicode_conversions.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */; };
 		9A9AEB99243F7B7A00FBD7D8 /* printf_lite-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9AEB98243F7B7900FBD7D8 /* printf_lite-test.h */; };
@@ -884,6 +885,7 @@
 		9A35A6172451FE1500CAFF76 /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
 		9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
 		9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
+		9A7AEDE6245963BF003AAD04 /* XToolsCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon.h; sourceTree = "<group>"; };
 		9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
 		9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		9A9AEB98243F7B7900FBD7D8 /* printf_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test.h"; sourceTree = "<group>"; };
@@ -1442,6 +1444,7 @@
 		9AC77FAB24176C04005CDD5C /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				9A7AEDE6245963BF003AAD04 /* XToolsCommon.h */,
 				9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */,
 				9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */,
 				9AC77FB624176C04005CDD5C /* XArray.h */,
@@ -1490,6 +1493,7 @@
 				9A105B7824483AE40006DE06 /* usbfix.h in Headers */,
 				9A28CD33241BC0DF00F3D247 /* strcmp_test.h in Headers */,
 				9AC7802124176C04005CDD5C /* boot.h in Headers */,
+				9A7AEDE7245963BF003AAD04 /* XToolsCommon.h in Headers */,
 				9AC7802F24176C04005CDD5C /* ati.h in Headers */,
 				9A105B6D24483AE40006DE06 /* stddef.h in Headers */,
 				9AC780B52417EE53005CDD5C /* global_test.h in Headers */,
