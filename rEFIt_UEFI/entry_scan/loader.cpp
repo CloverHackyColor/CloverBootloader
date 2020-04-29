@@ -59,9 +59,9 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_LOADER, __VA_ARGS__)
 #endif
 
-const XStringW MACOSX_LOADER_PATH = "\\System\\Library\\CoreServices\\boot.efi"_XSW;
+const XStringW MACOSX_LOADER_PATH = L"\\System\\Library\\CoreServices\\boot.efi"_XSW;
 
-const XStringW LINUX_ISSUE_PATH = "\\etc\\issue"_XSW;
+const XStringW LINUX_ISSUE_PATH = L"\\etc\\issue"_XSW;
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"\\boot"
 const XString LINUX_LOADER_PATH = "vmlinuz"_XS;
@@ -129,7 +129,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 //  { L"\\EFI\\Manjaro\\grubx64.efi", L"Manjaro EFI boot menu", L"manjaro,linux", "Manjaro" },
 //  { L"\\EFI\\xubuntu\\grubx64.efi", L"Xubuntu EFI boot menu", L"xubuntu,linux", "Xubuntu" },
 //  { L"\\EFI\\zorin\\grubx64.efi", L"Zorin EFI boot menu", L"zorin,linux", "Zorin" },
-  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XSW },
+  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XS },
 //  { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
 //  { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
 //  { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
@@ -196,9 +196,9 @@ STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(AN
 #endif
 #endif
 
-CONST XStringW PaperBoot   = "\\com.apple.boot.P\\boot.efi"_XSW;
-CONST XStringW RockBoot    = "\\com.apple.boot.R\\boot.efi"_XSW;
-CONST XStringW ScissorBoot = "\\com.apple.boot.S\\boot.efi"_XSW;
+CONST XStringW PaperBoot   = L"\\com.apple.boot.P\\boot.efi"_XSW;
+CONST XStringW RockBoot    = L"\\com.apple.boot.R\\boot.efi"_XSW;
+CONST XStringW ScissorBoot = L"\\com.apple.boot.S\\boot.efi"_XSW;
 
 // OS X installer paths
 CONST XStringW OSXInstallerPaths[] = {
@@ -1163,7 +1163,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) {
-        AddLoaderEntry("\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
       } else {
         AddLoaderEntry(L"\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
@@ -1171,7 +1171,7 @@ VOID ScanLoader(VOID)
       AddLoaderEntry(MACOSX_LOADER_PATH, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
     }
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
-    AddLoaderEntry("\\Mac OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
+    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
