@@ -130,6 +130,14 @@
 		9A9AEB9B243F7B8400FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB9C243F7B8400FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */; };
 		9A9D3B2324221563006D8CD9 /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */; };
+		9A9EA7FE245AD97F0076EC02 /* XToolsCommon_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */; };
+		9A9EA7FF245AD97F0076EC02 /* XToolsCommon_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */; };
+		9A9EA800245AD97F0076EC02 /* XToolsCommon_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */; };
+		9A9EA801245AD97F0076EC02 /* XToolsCommon_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */; };
+		9A9EA806245AD9B30076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
+		9A9EA807245AD9B30076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
+		9A9EA808245AD9B40076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
+		9A9EA80A245AD9E50076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
 		9AC77FB924176C04005CDD5C /* XStringArray_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECC24176C04005CDD5C /* XStringArray_test.h */; };
 		9AC77FBA24176C04005CDD5C /* XArray_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECD24176C04005CDD5C /* XArray_tests.h */; };
 		9AC77FBB24176C04005CDD5C /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ECE24176C04005CDD5C /* XStringArray_test.cpp */; };
@@ -890,6 +898,8 @@
 		9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		9A9AEB98243F7B7900FBD7D8 /* printf_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test.h"; sourceTree = "<group>"; };
 		9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printf_lite-test.cpp"; sourceTree = "<group>"; };
+		9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon_test.h; sourceTree = "<group>"; };
+		9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon_test.cpp; sourceTree = "<group>"; };
 		9AC77EC424176BF2005CDD5C /* libCloverX64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCloverX64.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AC77ECC24176C04005CDD5C /* XStringArray_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray_test.h; sourceTree = "<group>"; };
 		9AC77ECD24176C04005CDD5C /* XArray_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XArray_tests.h; sourceTree = "<group>"; };
@@ -1170,6 +1180,8 @@
 		9AC77ECA24176C04005CDD5C /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */,
+				9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */,
 				9A9AEB98243F7B7900FBD7D8 /* printf_lite-test.h */,
 				9AC77ED424176C04005CDD5C /* all_tests.cpp */,
 				9AC77ED724176C04005CDD5C /* all_tests.h */,
@@ -1491,6 +1503,7 @@
 				9AF41562242BABC700D2644C /* printlib-test-cpp_conf.h in Headers */,
 				9AC7808D24176C04005CDD5C /* XStringArray.h in Headers */,
 				9A105B7824483AE40006DE06 /* usbfix.h in Headers */,
+				9A9EA7FE245AD97F0076EC02 /* XToolsCommon_test.h in Headers */,
 				9A28CD33241BC0DF00F3D247 /* strcmp_test.h in Headers */,
 				9AC7802124176C04005CDD5C /* boot.h in Headers */,
 				9A7AEDE7245963BF003AAD04 /* XToolsCommon.h in Headers */,
@@ -1600,6 +1613,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9ACFE64E24309AF80071CC93 /* abort.h in Headers */,
+				9A9EA801245AD97F0076EC02 /* XToolsCommon_test.h in Headers */,
 				9ACFE64F24309AF80071CC93 /* MSKEK.h in Headers */,
 				9ACFE65024309AF80071CC93 /* menu_items.h in Headers */,
 				9ACFE65124309AF80071CC93 /* XTheme.h in Headers */,
@@ -1762,6 +1776,7 @@
 				9AF415D0242CD75C00D2644C /* Hibernate.h in Headers */,
 				9AF415D1242CD75C00D2644C /* strlen_test.h in Headers */,
 				9AF415D2242CD75C00D2644C /* XArray_tests.h in Headers */,
+				9A9EA7FF245AD97F0076EC02 /* XToolsCommon_test.h in Headers */,
 				9AF415D3242CD75C00D2644C /* Handle.h in Headers */,
 				9AF415D4242CD75C00D2644C /* XArray.h in Headers */,
 				9AF415D5242CD75C00D2644C /* MSPCADB.h in Headers */,
@@ -1857,6 +1872,7 @@
 				9AF416AD242CDA5800D2644C /* Hibernate.h in Headers */,
 				9AF416AE242CDA5800D2644C /* strlen_test.h in Headers */,
 				9AF416AF242CDA5800D2644C /* XArray_tests.h in Headers */,
+				9A9EA800245AD97F0076EC02 /* XToolsCommon_test.h in Headers */,
 				9AF416B0242CDA5800D2644C /* Handle.h in Headers */,
 				9AF416B1242CDA5800D2644C /* XArray.h in Headers */,
 				9AF416B2242CDA5800D2644C /* MSPCADB.h in Headers */,
@@ -2171,6 +2187,7 @@
 				9AC7805E24176C04005CDD5C /* common.cpp in Sources */,
 				9AC7804924176C04005CDD5C /* egemb_icons.cpp in Sources */,
 				9AC7801124176C04005CDD5C /* Edid.cpp in Sources */,
+				9A9EA80A245AD9E50076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9AC7803A24176C04005CDD5C /* smbios.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2284,6 +2301,7 @@
 				9ACFE71F24309AF80071CC93 /* common.cpp in Sources */,
 				9ACFE72024309AF80071CC93 /* egemb_icons.cpp in Sources */,
 				9ACFE72124309AF80071CC93 /* Edid.cpp in Sources */,
+				9A9EA806245AD9B30076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9ACFE72224309AF80071CC93 /* smbios.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2397,6 +2415,7 @@
 				9AF41655242CD75C00D2644C /* common.cpp in Sources */,
 				9AF41656242CD75C00D2644C /* egemb_icons.cpp in Sources */,
 				9AF41657242CD75C00D2644C /* Edid.cpp in Sources */,
+				9A9EA808245AD9B40076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9AF41658242CD75C00D2644C /* smbios.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2510,6 +2529,7 @@
 				9AF41732242CDA5800D2644C /* common.cpp in Sources */,
 				9AF41733242CDA5800D2644C /* egemb_icons.cpp in Sources */,
 				9AF41734242CDA5800D2644C /* Edid.cpp in Sources */,
+				9A9EA807245AD9B30076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9AF41735242CDA5800D2644C /* smbios.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -4,9 +4,9 @@
 
 
 
-int nbTest = 0;
-int nbTestFailed = 0;
-bool displayOnlyFailed = true;
+static int nbTest = 0;
+static int nbTestFailed = 0;
+static bool displayOnlyFailed = true;
 
 
 #define STRINGIFY_(s) #s
@@ -1486,7 +1486,6 @@ XStringClass xstr2 = initia__String.basename();
 
 
 /*****************************    *****************************/
-#undef realloc
 //
 //#include <type_traits>
 //#include <typeinfo>
@@ -1515,24 +1514,12 @@ class C
 int XString_tests()
 {
 #ifdef JIEF_DEBUG
-//	printf("XString16_tests -> Enter\n");
+//	printf("XString_tests -> Enter\n");
 #endif
 
 
-XString8 xs1 = "Test:"_XS8;
-constexpr const LString8 ls1 = "foo"_XS8;
-xs1 = ls1;
-xs1 = ls1 + "bar";
 
-XStringW xsw1 = L"world"_XSW;
-XString8 xs2 = xs1 + "hel" + 'l' + L'o' + L" the " + xsw1;
-XString8 xs3 = xs1;
-
-LString8 a = "Hello"_XS8;
-XStringW b = L"world"_XSW;
-XString8 c = a + "foo"; // + 'o' + L'o' + b + L"bar";
-
-//char c = 1;
+//char c = 'a';
 //int ii = sizeof(size_t);
 //unsigned long long ull = 1;
 //unsigned long long ll = 3;

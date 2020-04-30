@@ -13,6 +13,7 @@
 #include "strlen_test.h"
 #include "printf_lite-test.h"
 #include "LoadOptions_test.h"
+#include "XToolsCommon_test.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "poolprint-test.h"
@@ -31,11 +32,18 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-	ret = XString_tests();
+//	ret = XString_tests();
+//	if ( ret != 0 ) {
+//		printf("XString16_tests() failed at test %d\n", ret);
+//		all_ok = false;
+//	}
+#if defined(JIEF_DEBUG)
+	ret = XToolsCommon_tests();
 	if ( ret != 0 ) {
-		printf("XString16_tests() failed at test %d\n", ret);
+		printf("printlib_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+#endif
 //return ret;
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
@@ -86,11 +94,11 @@ bool all_tests()
 		printf("XObjArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-//	ret = XString_tests();
-//	if ( ret != 0 ) {
-//		printf("XString_tests() failed at test %d\n", ret);
-//		all_ok = false;
-//	}
+	ret = XString_tests();
+	if ( ret != 0 ) {
+		printf("XString_tests() failed at test %d\n", ret);
+		all_ok = false;
+	}
 	ret = XStringArray_tests();
 	if ( ret != 0 ) {
 		printf("XStringArray_tests() failed at test %d\n", ret);
