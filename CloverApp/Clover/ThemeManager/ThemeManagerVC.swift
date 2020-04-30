@@ -759,37 +759,51 @@ NSComboBoxDataSource {
   @IBAction func targetPopPressed(_ sender: FWPopUpButton!) {
     if let disk = sender?.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
-        //DispatchQueue.global(qos: .background).async {
-        let cmd = "diskutil mount \(disk)"
-        let msg = String(format: "Clover wants to mount %@", disk)
-        let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
-        
-        let task = Process()
-        
-        if #available(OSX 10.12, *) {
-          task.launchPath = "/usr/bin/osascript"
-          task.arguments = ["-e", script]
-        } else {
-          task.launchPath = "/usr/sbin/diskutil"
-          task.arguments = ["mount", disk]
-        }
-        
-        task.terminationHandler = { t in
-          if t.terminationStatus == 0 {
-            if isMountPoint(path: disk) {
-              self.targetVolume = getMountPoint(from: disk)
+        self.installButton.isEnabled = false
+        self.view.window?.level = .floating
+        DispatchQueue.global(priority: .background).async(execute: { () -> Void in
+          let cmd = "diskutil mount \(disk)"
+          let msg = String(format: "Clover wants to mount %@", disk)
+          let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
+          
+          let task = Process()
+          
+          if #available(OSX 10.12, *) {
+            task.launchPath = "/usr/bin/osascript"
+            task.arguments = ["-e", script]
+          } else {
+            task.launchPath = "/usr/sbin/diskutil"
+            task.arguments = ["mount", disk]
+          }
+          
+          task.terminationHandler = { t in
+            if t.terminationStatus == 0 {
+              if isMountPoint(path: disk) {
+                DispatchQueue.main.async {
+                  self.targetVolume = getMountPoint(from: disk)
+                  self.populateTargets()
+                  self.showInstalledThemes(self.installedThemesCheckBox)
+                }
+              }
               DispatchQueue.main.async {
-                self.populateTargets()
+                self.installButton.isEnabled = true
+                self.view.window?.makeKeyAndOrderFront(nil)
+                self.view.window?.level = .floating
+                self.view.window?.level = .normal
+              }
+            } else {
+              DispatchQueue.main.async {
+                NSSound.beep()
+                self.installButton.isEnabled = true
+                self.view.window?.makeKeyAndOrderFront(nil)
+                self.view.window?.level = .floating
+                self.view.window?.level = .normal
                 self.showInstalledThemes(self.installedThemesCheckBox)
               }
             }
-            DispatchQueue.main.async { self.view.window?.makeKeyAndOrderFront(nil) }
-          } else {
-            NSSound.beep()
-            self.showInstalledThemes(self.installedThemesCheckBox)
           }
-        }
-        task.launch()
+          task.launch()
+        })
         //}
       } else {
         self.targetVolume = getMountPoint(from: disk)

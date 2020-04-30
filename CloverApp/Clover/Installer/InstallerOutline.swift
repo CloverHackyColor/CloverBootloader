@@ -499,13 +499,13 @@ final class InstallerOutViewController: NSViewController {
     self.altBootCheck.state = .off
     if let disk = sender?.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
-        //DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(priority: .background).async(execute: { () -> Void in
           let cmd = "diskutil mount \(disk)"
           let msg = String(format: "Clover wants to mount %@", disk)
           let script = "do shell script \"\(cmd)\" with prompt \"\(msg)\" with administrator privileges"
           
           let task = Process()
-        
+          
           if #available(OSX 10.12, *) {
             task.launchPath = "/usr/bin/osascript"
             task.arguments = ["-e", script]
@@ -517,23 +517,30 @@ final class InstallerOutViewController: NSViewController {
           task.terminationHandler = { t in
             if t.terminationStatus == 0 {
               if isMountPoint(path: disk) {
-                self.targetVol = getMountPoint(from: disk) ?? ""
                 DispatchQueue.main.async {
+                  self.targetVol = getMountPoint(from: disk) ?? ""
                   self.populateTargets()
                   self.setPreferences(for: self.targetVol)
                 }
               }
-              DispatchQueue.main.async { self.view.window?.makeKeyAndOrderFront(nil) }
+              DispatchQueue.main.async {
+                self.view.window?.makeKeyAndOrderFront(nil)
+                self.view.window?.level = .floating
+                self.view.window?.level = .normal
+              }
             } else {
               NSSound.beep()
               DispatchQueue.main.async {
                 self.driversOutline.reloadData()
                 self.expandAllSections()
+                self.view.window?.makeKeyAndOrderFront(nil)
+                self.view.window?.level = .floating
+                self.view.window?.level = .normal
               }
             }
           }
           task.launch()
-        //}
+        })
       } else {
         self.targetVol = getMountPoint(from: disk) ?? ""
         self.populateTargets()

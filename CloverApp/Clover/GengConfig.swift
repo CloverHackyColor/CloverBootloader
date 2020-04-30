@@ -783,8 +783,8 @@ final class CloverConfig: NSObject {
       // SMBIOS TYPE1
       SMBIOS["Manufacturer"] =        s.value(for: "ManufactureName", type: .CHAR8String)
       SMBIOS["ProductName"] =         s.value(for: "ProductName", type: .CHAR8String)
-      SMBIOS["Version"] =             s.value(for: "SerialNr", type: .CHAR8String)
-      SMBIOS["SerialNumber"] =        s.value(for: "ReleaseDate", type: .CHAR8String)
+      SMBIOS["Version"] =             s.value(for: "VersionNr", type: .CHAR8String)
+      SMBIOS["SerialNumber"] =        s.value(for: "SerialNr", type: .CHAR8String)
       SMBIOS["SmUUID"] =              s.value(for: "SmUUID", type: .UUIDString)
       SMBIOS["Family"] =              s.value(for: "FamilyName", type: .CHAR8String)
       // SMBIOS TYPE2
