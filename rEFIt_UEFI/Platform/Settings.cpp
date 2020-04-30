@@ -1905,12 +1905,12 @@ FillinCustomEntry (
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->string);
 //    }
-	Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
+	Entry->LoadOptions.import(Split<XStringArray>(Prop->string, " "));
   } else {
     Prop = GetProperty(DictPointer, "Arguments");
     if (Prop != NULL && (Prop->type == kTagTypeString)) {
 //      Entry->Options.SPrintf("%s", Prop->string);
-	  Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
+      Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
@@ -2046,6 +2046,7 @@ FillinCustomEntry (
       Entry->Type = OSTYPE_WINEFI;
     } else if (AsciiStriCmp(Prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     } else if (AsciiStriCmp(Prop->string, "LinuxKernel") == 0) {
       Entry->Type = OSTYPE_LINEFI;
     } else {

@@ -921,7 +921,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("BeginExternalScreen\n");
   BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, L"Booting OS"*/);
 
-  if (!OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
+  if (!OSTYPE_IS_WINDOWS(Entry->LoaderType) && !OSTYPE_IS_LINUX(Entry->LoaderType)) {
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
       // save orig OutputString and replace it with
       // null implementation
