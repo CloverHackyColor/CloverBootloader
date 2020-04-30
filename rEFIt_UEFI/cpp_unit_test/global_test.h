@@ -9,10 +9,10 @@ public:
   }
 };
 
-class XStringTest : public XString
+class XStringTest : public XString8
 {
 public:
-  XStringTest(const char *S) : XString()
+  XStringTest(const char *S) : XString8()
   {
     strcpy(S);
   }

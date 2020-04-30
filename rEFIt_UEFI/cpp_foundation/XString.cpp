@@ -57,7 +57,7 @@
 //    return returnValue; // don't do "return returnValue.takeValueFrom(s, len)" because it break the return value optimization.
 //}
 
-const XString NullXString;
+const XString8 NullXString;
 const XString16 NullXString16;
 const XString32 NullXString32;
 const XStringW NullXStringW;
@@ -70,10 +70,10 @@ const XStringW NullXStringW;
 //XStringW LStringW::operator + (const wchar_t* p2) { XStringW s; s.strcat(this->s()); s.strcat(p2); return s; }
 
 
-XString SPrintf(const char* format, ...)
+XString8 SPrintf(const char* format, ...)
 {
   va_list     va;
-  XString str;
+  XString8 str;
 
   va_start (va, format);
   str.vSPrintf(format, va);

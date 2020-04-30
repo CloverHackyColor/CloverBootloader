@@ -751,7 +751,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)  &&  !Entry->LoadOptions.containsStartWithIC("Kernel=")  ) {
-      XString KernelLocation;
+      XString8 KernelLocation;
 
       if (Entry->OSVersion && AsciiOSVersionToUint64(Entry->OSVersion) <= AsciiOSVersionToUint64("10.9")) {
         KernelLocation.SPrintf("\"Kernel=/mach_kernel\"");
@@ -2137,7 +2137,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG(" string %ls, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa), iStrLen(bbb, 10));
     const CHAR8* ccc = "Выход  ";
     DBG(" string %s, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", ccc, AsciiStrSize(ccc), AsciiStrLen(ccc), sizeof(ccc), iStrLen(ccc, 10));
-    XString ddd = "Выход "_XS;
+    XString8 ddd = "Выход "_XS;
  //   size_t sizex = ddd.allocatedSize();
     DBG(" xstring %s, asize=%ld, sizeinbyte=%ld sizeof=%ld lastcharat=%ld\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd),
       ddd.indexOf(ddd.lastChar()));

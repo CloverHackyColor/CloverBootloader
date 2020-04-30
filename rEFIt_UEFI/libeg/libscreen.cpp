@@ -439,7 +439,7 @@ VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
         *ScreenHeight = egScreenHeight;
 }
 
-XString egScreenDescription(VOID)
+XString8 egScreenDescription(VOID)
 {
     if (egHasGraphics) {
         if (GraphicsOutput != NULL) {

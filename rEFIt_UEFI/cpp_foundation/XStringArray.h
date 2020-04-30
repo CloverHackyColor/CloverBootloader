@@ -240,7 +240,7 @@ class XStringArray_/* : public XStringArraySuper*/
 
 };
 
-class XStringArray : public XStringArray_<XString>
+class XStringArray : public XStringArray_<XString8>
 {
 };
 extern const XStringArray NullXStringArray;

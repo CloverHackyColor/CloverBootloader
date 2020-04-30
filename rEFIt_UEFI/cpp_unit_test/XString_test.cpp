@@ -267,10 +267,10 @@ struct XStringClassInfo
 };
 
 template<>
-struct XStringClassInfo<XString>
+struct XStringClassInfo<XString8>
 {
 	typedef char ch_t;
-	typedef XString xs_t;
+	typedef XString8 xs_t;
 	static constexpr const char* prefix = "";
 	static constexpr const char* xStringClassName = "XString";
 };
@@ -306,7 +306,7 @@ template<>
 struct XStringClassInfo<char>
 {
 	typedef char ch_t;
-	typedef XString xs_t;
+	typedef XString8 xs_t;
 	static constexpr const char* prefix = "";
 	static constexpr const char* xStringClassName = "XString";
 };
@@ -342,7 +342,7 @@ template<>
 struct XStringClassInfo<TestString<char>>
 {
 	typedef char ch_t;
-	typedef XString xs_t;
+	typedef XString8 xs_t;
 	static constexpr const char* prefix = "";
 	static constexpr const char* xStringClassName = "XString";
 };
@@ -470,7 +470,7 @@ bool displayOnlyIfFailed_tmp;
 	__TEST_ALL_UTF2(test, XStringClass, classEncoding, wchar); \
 
 #define TEST_ALL_CLASSES(test, macro) \
-	macro(test, XString, utf8); \
+	macro(test, XString8, utf8); \
 	macro(test, XString16, utf16); \
 	macro(test, XString32, utf32); \
 	macro(test, XStringW, wchar); \
@@ -1518,9 +1518,14 @@ int XString_tests()
 //	printf("XString16_tests -> Enter\n");
 #endif
 
-//LString8 a = "dfsf"_XS;
-//XStringW b = "ssdfsdf"_XS;
-//XString c = a + b;
+XString8 xs1 = "Test:"_XS;
+XStringW xsw1 = L"world"_XSW;
+XString8 xs2 = xs1 + "hel" + 'l' + L'o' + U" the " + xsw1;
+XString8 xs3 = xs1;
+
+LString8 a = "Hello"_XS;
+XStringW b = L"world"_XSW;
+XString8 c = a + "foo"; // + 'o' + L'o' + b + L"bar";
 
 //char c = 1;
 //int ii = sizeof(size_t);

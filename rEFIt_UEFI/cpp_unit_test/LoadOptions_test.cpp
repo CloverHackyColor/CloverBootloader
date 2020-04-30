@@ -183,14 +183,14 @@ int BootOptions_tests()
 		LoadOptions = Old1_AddLoadOption(LoadOptions, L"opt2");
 		LoadOptions = Old1_AddLoadOption(LoadOptions, L"opt3");
 		
-		if ( XString().takeValueFrom(LoadOptions) != "opt1 opt2 opt3"_XS ) return 1;
+		if ( XString8().takeValueFrom(LoadOptions) != "opt1 opt2 opt3"_XS ) return 1;
 		
 		CHAR16* LoadOptions1 = Old1_RemoveLoadOption(LoadOptions, L"opt1");
-		if ( XString().takeValueFrom(LoadOptions1) != "opt2 opt3"_XS ) return 2;
+		if ( XString8().takeValueFrom(LoadOptions1) != "opt2 opt3"_XS ) return 2;
 		CHAR16* LoadOptions2 = Old1_RemoveLoadOption(LoadOptions, L"opt2");
-		if ( XString().takeValueFrom(LoadOptions2) != "opt1 opt3"_XS ) return 3;
+		if ( XString8().takeValueFrom(LoadOptions2) != "opt1 opt3"_XS ) return 3;
 		CHAR16* LoadOptions3 = Old1_RemoveLoadOption(LoadOptions, L"opt3");
-		if ( XString().takeValueFrom(LoadOptions3) != "opt1 opt2"_XS ) return 4;
+		if ( XString8().takeValueFrom(LoadOptions3) != "opt1 opt2"_XS ) return 4;
 	}
 //	{
 //		XString LoadOptions;

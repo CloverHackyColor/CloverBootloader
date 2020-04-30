@@ -15,7 +15,7 @@ class Icon
 {
 public:
   INTN Id;  //for example BUILTIN_ICON_POINTER
-  XString Name; //for example "os_moja", "vol_internal"
+  XString8 Name; //for example "os_moja", "vol_internal"
   XImage Image;
   XImage ImageNight;
   bool Native;
@@ -126,11 +126,11 @@ public:
   //fill the theme
 //  const XImage& GetIcon(const char* Name);
 //  const XImage& GetIcon(const CHAR16* Name);
-  const XImage& GetIcon(const XString& Name);  //get by name
+  const XImage& GetIcon(const XString8& Name);  //get by name
   const XImage& GetIcon(INTN Id); //get by id
   const XImage& GetIconAlt(INTN Id, INTN Alt); //if id not found
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
-  const XImage& LoadOSIcon(const XString& Full);
+  const XImage& LoadOSIcon(const XString8& Full);
   bool CheckNative(INTN Id);
 
   //fonts
@@ -140,7 +140,7 @@ public:
   INTN RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
                     IN INTN PosX, IN INTN PosY, IN UINTN Cursor, INTN textType, float textScale = 0.f);
   //overload for UTF8 text
-  INTN RenderText(IN const XString& Text, OUT XImage* CompImage_ptr,
+  INTN RenderText(IN const XString8& Text, OUT XImage* CompImage_ptr,
                           IN INTN PosX, IN INTN PosY, IN UINTN Cursor, INTN textType, float textScale = 0.f);
   VOID MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height);
 
@@ -151,7 +151,7 @@ public:
   EFI_STATUS GetThemeTagSettings(void* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
-  EFI_STATUS ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Image);
+  EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image);
   void* LoadTheme(const CHAR16 *TestTheme); //return TagPtr why?
   EFI_STATUS LoadSvgFrame(INTN i, OUT XImage* XFrame); // for animation
 

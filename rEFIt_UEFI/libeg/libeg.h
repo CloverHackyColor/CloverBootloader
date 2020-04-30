@@ -438,7 +438,7 @@ VOID    egDumpGOPVideoModes(VOID);
 EFI_STATUS egSetMode(INT32 Next);
 
 VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
-XString egScreenDescription(VOID);
+XString8 egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);
 BOOLEAN egIsGraphicsModeEnabled(VOID);
 VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);

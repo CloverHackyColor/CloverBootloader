@@ -53,7 +53,7 @@ extern UINTN FrameTime;
 
 textFaces       textFace[4]; //0-help 1-message 2-menu 3-test, far future it will be infinite list with id
 
-EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Image)
+EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   NSVGimage       *SVGimage;
@@ -95,7 +95,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
         shape->opacity = 0.f;
       }
 //      if (strstr(shape->id, "BoundingRect") != NULL) {
-      if (XString().takeValueFrom(shape->id).contains("BoundingRect")) {
+      if (XString8().takeValueFrom(shape->id).contains("BoundingRect")) {
         //there is bounds after nsvgParse()
         IconImage->width = shape->bounds[2] - shape->bounds[0];
         IconImage->height = shape->bounds[3] - shape->bounds[1];
@@ -161,7 +161,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString& IconNameX, XImage* Imag
  //     if (strcmp(group->id, IconNameX.c_str()) == 0) {
  //       break;
  //     }
-      if (IconNameX == XString().takeValueFrom(group->id)) {
+      if (IconNameX == XString8().takeValueFrom(group->id)) {
         break;
       }
       group = group->parent;
@@ -434,7 +434,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 EFI_STATUS XTheme::LoadSvgFrame(INTN i, OUT XImage* XFrame)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
-  XString XFrameName = SPrintf("frame_%04lld", i+1);
+  XString8 XFrameName = SPrintf("frame_%04lld", i+1);
   Status = ParseSVGXIcon(BUILTIN_ICON_ANIME, XFrameName, XFrame);
   if (EFI_ERROR(Status)) {
     DBG("frame '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));

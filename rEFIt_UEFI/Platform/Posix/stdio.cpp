@@ -21,7 +21,7 @@ extern "C" {
 
 #include "../../cpp_foundation/XString.h"
 
-static XString stdio_static_buf;
+static XString8 stdio_static_buf;
 static XStringW stdio_static_wbuf;
 
 int vprintf(const char* format, VA_LIST va)

@@ -64,7 +64,7 @@ const XStringW MACOSX_LOADER_PATH = L"\\System\\Library\\CoreServices\\boot.efi"
 const XStringW LINUX_ISSUE_PATH = L"\\etc\\issue"_XSW;
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"\\boot"
-const XString LINUX_LOADER_PATH = "vmlinuz"_XS;
+const XString8 LINUX_LOADER_PATH = "vmlinuz"_XS;
 const XStringW LINUX_FULL_LOADER_PATH = SWPrintf("%ls\\%s", LINUX_BOOT_PATH, LINUX_LOADER_PATH.c_str());
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
 const XStringArray LINUX_DEFAULT_OPTIONS = Split<XStringArray>("ro add_efi_memmap quiet splash vt.handoff=7", " ");
@@ -84,7 +84,7 @@ typedef struct LINUX_PATH_DATA
    CONST XStringW Path;
    CONST XStringW Title;
    CONST XStringW Icon;
-   CONST XString  Issue;
+   CONST XString8  Issue;
 } LINUX_PATH_DATA;
 
 typedef struct LINUX_ICON_DATA
@@ -339,7 +339,7 @@ STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
   return linux;
 }
 
-STATIC CONST XString LinuxInitImagePath[] = {
+STATIC CONST XString8 LinuxInitImagePath[] = {
    "initrd%s"_XS,
    "initrd.img%s"_XS,
    "initrd%s.img"_XS,

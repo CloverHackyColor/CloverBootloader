@@ -22,36 +22,36 @@
 #endif
 
 //------------------------------------------------------------------------------------------------------------------
-class XString;
-class LString8 : public LString<char, XString>
+class XString8;
+class LString8 : public LString<char, XString8>
 {
   public:
 	constexpr LString8() = delete;
-	constexpr LString8(const char* s) : LString<char, XString>(s) {};
+	constexpr LString8(const char* s) : LString<char, XString8>(s) {};
 
 	// no assignement, no destructor
 
 	friend constexpr LString8 operator "" _XS ( const char* s, size_t) { return LString8(s); }
 };
 
-class XString : public XStringAbstract<char, XString>
+class XString8 : public XStringAbstract<char, XString8>
 {
   public:
-	XString() : XStringAbstract<char, XString>() {};
-	XString(const XString& S) : XStringAbstract<char, XString>(S) {}
-	XString(const LString8& S) : XStringAbstract<char, XString>(S) { }
+	XString8() : XStringAbstract<char, XString8>() {};
+	XString8(const XString8& S) : XStringAbstract<char, XString8>(S) {}
+	XString8(const LString8& S) : XStringAbstract<char, XString8>(S) { }
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
-	XString(const OtherXStringClass& S) : XStringAbstract<char, XString>(S) {}
+	XString8(const OtherXStringClass& S) : XStringAbstract<char, XString8>(S) {}
 
-	XString& operator=(const XString &S) { this->XStringAbstract<char, XString>::operator=(S); return *this; }
+	XString8& operator=(const XString8 &S) { this->XStringAbstract<char, XString8>::operator=(S); return *this; }
 
-	using XStringAbstract<char, XString>::operator =;
+	using XStringAbstract<char, XString8>::operator =;
 	
 protected:
 	static void transmitSPrintf(const char* buf, unsigned int nbchar, void* context)
 	{
-		((XString*)(context))->strncat(buf, nbchar);
+		((XString8*)(context))->strncat(buf, nbchar);
 	}
 public:
 	void vSPrintf(const char* format, va_list va)
@@ -176,14 +176,14 @@ constexpr LString16 operator"" _XS16 ( const char16_t* s, size_t len);
 constexpr LString32 operator"" _XS32 ( const char32_t* s, size_t len);
 constexpr LStringW operator"" _XSW ( const wchar_t* s, size_t len);
 
-extern const XString NullXString;
+extern const XString8 NullXString;
 extern const XStringW NullXStringW;
 
 #ifdef _MSC_VER
 #   define __attribute__(x)
 #endif
 
-XString SPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
+XString8 SPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
 XStringW SWPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
 
 

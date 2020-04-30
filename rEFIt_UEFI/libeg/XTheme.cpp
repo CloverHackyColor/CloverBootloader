@@ -299,7 +299,7 @@ void XTheme::Init()
 static XImage NullIcon;
 static XImage DummyIcon;
 
-const XImage& XTheme::GetIcon(const XString& Name)
+const XImage& XTheme::GetIcon(const XString8& Name)
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -385,15 +385,15 @@ const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take emb
 
 const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
 {
-  return LoadOSIcon(XString().takeValueFrom(OSIconName));
+  return LoadOSIcon(XString8().takeValueFrom(OSIconName));
 }
 
-const XImage& XTheme::LoadOSIcon(const XString& Full)
+const XImage& XTheme::LoadOSIcon(const XString8& Full)
 {
   // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
-  XString First;
-  XString Second;
-  XString Third;
+  XString8 First;
+  XString8 Second;
+  XString8 Third;
   const XImage *ReturnImage;
   UINTN Comma = Full.indexOf(',');
   UINTN Size = Full.length();
