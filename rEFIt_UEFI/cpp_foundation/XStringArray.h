@@ -66,7 +66,7 @@ class XStringArray_/* : public XStringArraySuper*/
 
 	XStringClass ConcatAll() const
 	{
-		return ConcatAll(", "_XS, NullXString, NullXString);
+		return ConcatAll(", "_XS8, NullXString, NullXString);
 	}
 
 	template<class XStringClass1, enable_if(is___String(XStringClass1))>
@@ -265,7 +265,7 @@ extern const XStringWArray NullXStringWArray;
 //template<class XStringArrayClass, class XStringClass1, enable_if(!is_char(XStringClass1) && !is_char_ptr(XStringClass1))>
 //XStringArrayClass Split(const XStringClass1& S)
 //{
-//	return Split<XStringArrayClass>(S, ", "_XS);
+//	return Split<XStringArrayClass>(S, ", "_XS8);
 //};
 
 
@@ -348,7 +348,7 @@ XStringArrayClass Split(const XStringClass1& S, const XStringClass2& Separator)
 template<class XStringArrayClass, class XStringClass1, enable_if(!is_char(XStringClass1) && !is_char_ptr(XStringClass1))>
 XStringArrayClass Split(const XStringClass1& S)
 {
-	return Split<XStringArrayClass>(S, ", "_XS);
+	return Split<XStringArrayClass>(S, ", "_XS8);
 };
 
 #endif

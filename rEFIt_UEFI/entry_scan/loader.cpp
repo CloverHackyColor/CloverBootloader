@@ -64,7 +64,7 @@ const XStringW MACOSX_LOADER_PATH = L"\\System\\Library\\CoreServices\\boot.efi"
 const XStringW LINUX_ISSUE_PATH = L"\\etc\\issue"_XSW;
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"\\boot"
-const XString8 LINUX_LOADER_PATH = "vmlinuz"_XS;
+const XString8 LINUX_LOADER_PATH = "vmlinuz"_XS8;
 const XStringW LINUX_FULL_LOADER_PATH = SWPrintf("%ls\\%s", LINUX_BOOT_PATH, LINUX_LOADER_PATH.c_str());
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
 const XStringArray LINUX_DEFAULT_OPTIONS = Split<XStringArray>("ro add_efi_memmap quiet splash vt.handoff=7", " ");
@@ -129,7 +129,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 //  { L"\\EFI\\Manjaro\\grubx64.efi", L"Manjaro EFI boot menu", L"manjaro,linux", "Manjaro" },
 //  { L"\\EFI\\xubuntu\\grubx64.efi", L"Xubuntu EFI boot menu", L"xubuntu,linux", "Xubuntu" },
 //  { L"\\EFI\\zorin\\grubx64.efi", L"Zorin EFI boot menu", L"zorin,linux", "Zorin" },
-  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XS },
+  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XS8 },
 //  { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
 //  { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
 //  { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
@@ -340,12 +340,12 @@ STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
 }
 
 STATIC CONST XString8 LinuxInitImagePath[] = {
-   "initrd%s"_XS,
-   "initrd.img%s"_XS,
-   "initrd%s.img"_XS,
-   "initramfs%s"_XS,
-   "initramfs.img%s"_XS,
-   "initramfs%s.img"_XS,
+   "initrd%s"_XS8,
+   "initrd.img%s"_XS8,
+   "initrd%s.img"_XS8,
+   "initramfs%s"_XS8,
+   "initramfs.img%s"_XS8,
+   "initramfs%s.img"_XS8,
 };
 STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(LinuxInitImagePath[0]));
 
@@ -822,7 +822,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   if (Guid) {
     SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
-	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS).c_str());
+	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX ||
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
@@ -938,10 +938,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       if (Quiet) {
         SubEntry->Title.SWPrintf("%ls verbose", Entry->Title.s());
-        SubEntry->LoadOptions.removeIC("quiet"_XS);
+        SubEntry->LoadOptions.removeIC("quiet"_XS8);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("quiet"_XS);
+        SubEntry->LoadOptions.AddID("quiet"_XS8);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -949,10 +949,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       if (WithSplash) {
         SubEntry->Title.SWPrintf("%ls without splash", Entry->Title.s());
-        SubEntry->LoadOptions.removeIC("splash"_XS);
+        SubEntry->LoadOptions.removeIC("splash"_XS8);
       } else {
         SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("splash"_XS);
+        SubEntry->LoadOptions.AddID("splash"_XS8);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -961,30 +961,30 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (WithSplash) {
         if (Quiet) {
           SubEntry->Title.SWPrintf("%ls verbose without splash", Entry->Title.s());
-          SubEntry->LoadOptions.removeIC("splash"_XS);
-          SubEntry->LoadOptions.removeIC("quiet"_XS);
+          SubEntry->LoadOptions.removeIC("splash"_XS8);
+          SubEntry->LoadOptions.removeIC("quiet"_XS8);
         } else {
           SubEntry->Title.SWPrintf("%ls quiet without splash", Entry->Title.s());
-          SubEntry->LoadOptions.removeIC("splash"_XS);
-          SubEntry->LoadOptions.Add("quiet"_XS);
+          SubEntry->LoadOptions.removeIC("splash"_XS8);
+          SubEntry->LoadOptions.Add("quiet"_XS8);
         }
       } else if (Quiet) {
-//        TempOptions.RemoveIC("quiet"_XS);
+//        TempOptions.RemoveIC("quiet"_XS8);
         SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("splash"_XS);
+        SubEntry->LoadOptions.AddID("splash"_XS8);
 //        FreePool(TempOptions);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("quiet"_XS);
-        SubEntry->LoadOptions.AddID("splash"_XS);
+        SubEntry->LoadOptions.AddID("quiet"_XS8);
+        SubEntry->LoadOptions.AddID("splash"_XS8);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions.setEmpty();
-    Entry->LoadOptions.Add("-s"_XS);
-    Entry->LoadOptions.Add("-h"_XS);
+    Entry->LoadOptions.Add("-s"_XS8);
+    Entry->LoadOptions.Add("-h"_XS8);
     
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
@@ -1003,8 +1003,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
       Entry->LoadOptions.setEmpty();
-      Entry->LoadOptions.Add("-s"_XS);
-      Entry->LoadOptions.Add("-c"_XS);
+      Entry->LoadOptions.Add("-s"_XS8);
+      Entry->LoadOptions.Add("-c"_XS8);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -1013,7 +1013,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       Entry->LoadOptions.setEmpty();
-      Entry->LoadOptions.Add("-v"_XS);
+      Entry->LoadOptions.Add("-v"_XS8);
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       SubScreen->AddMenuEntry(SubEntry, true);
     }
@@ -2039,7 +2039,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             if (Guid) {
               SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
             }
-            SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS).c_str());
+            SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
             DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
               if (!CustomSubEntry->Settings) {

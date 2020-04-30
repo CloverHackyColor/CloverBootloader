@@ -45,26 +45,26 @@
 //#include "../entry_scan/common.h"
 
 CONST XString8 ArgOptional[NUM_OPT] = {
-  "arch=i386"_XS,       //0
-  "arch=x86_64"_XS,     //1
-  "-v"_XS,             //2
-  "-f"_XS,             //3
-  "-s"_XS,             //4
-  "-x"_XS,             //5
-  "nv_disable=1"_XS,    //6
-  "slide=0"_XS,         //7
-  "darkwake=0"_XS,      //8
-  "-xcpm"_XS,           //9
-  "-gux_no_idle"_XS,    //10
-  "-gux_nosleep"_XS,    //11
-  "-gux_nomsi"_XS,      //12
-  "-gux_defer_usb2"_XS, //13
-  "keepsyms=1"_XS,      //14
-  "debug=0x100"_XS,     //15
-  "kextlog=0xffff"_XS,  //16
-  "-alcoff"_XS,         //17
-  "-shikioff"_XS,       //18
-  "nvda_drv=1"_XS       //19
+  "arch=i386"_XS8,       //0
+  "arch=x86_64"_XS8,     //1
+  "-v"_XS8,             //2
+  "-f"_XS8,             //3
+  "-s"_XS8,             //4
+  "-x"_XS8,             //5
+  "nv_disable=1"_XS8,    //6
+  "slide=0"_XS8,         //7
+  "darkwake=0"_XS8,      //8
+  "-xcpm"_XS8,           //9
+  "-gux_no_idle"_XS8,    //10
+  "-gux_nosleep"_XS8,    //11
+  "-gux_nomsi"_XS8,      //12
+  "-gux_defer_usb2"_XS8, //13
+  "keepsyms=1"_XS8,      //14
+  "debug=0x100"_XS8,     //15
+  "kextlog=0xffff"_XS8,  //16
+  "-alcoff"_XS8,         //17
+  "-shikioff"_XS8,       //18
+  "nvda_drv=1"_XS8       //19
 };
 CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 

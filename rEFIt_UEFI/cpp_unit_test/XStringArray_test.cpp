@@ -14,9 +14,9 @@ int XStringArray_tests()
 
 	array1.Add(L"1"_XSW);
 	if ( array1.isEmpty() ) return 2;
-	if ( array1[0] != "1"_XS ) return 21;
+	if ( array1[0] != "1"_XS8 ) return 21;
 	array1.Add(L"2"_XSW);
-	if ( array1[1] != "2"_XS ) return 21;
+	if ( array1[1] != "2"_XS8 ) return 21;
 
 	if ( !array1.contains(L"2"_XSW) ) return 5;
 
@@ -33,21 +33,21 @@ int XStringArray_tests()
 	// Split
 	{
 		XStringArray array = Split<XStringArray>("   word1   word2    word3   ", " ");
-		if ( array[0] != "word1"_XS ) return 31;
-		if ( array[1] != "word2"_XS ) return 32;
-		if ( array[2] != "word3"_XS ) return 33;
+		if ( array[0] != "word1"_XS8 ) return 31;
+		if ( array[1] != "word2"_XS8 ) return 32;
+		if ( array[2] != "word3"_XS8 ) return 33;
 	}
 	{
 		XStringArray array = Split<XStringArray>("word1, word2, word3", ", ");
-		if ( array[0] != "word1"_XS ) return 31;
-		if ( array[1] != "word2"_XS ) return 32;
-		if ( array[2] != "word3"_XS ) return 33;
+		if ( array[0] != "word1"_XS8 ) return 31;
+		if ( array[1] != "word2"_XS8 ) return 32;
+		if ( array[2] != "word3"_XS8 ) return 33;
 	}
 	{
-		XStringArray array = Split<XStringArray>("   word1   word2    word3   "_XS, " "_XS);
-		if ( array[0] != "word1"_XS ) return 31;
-		if ( array[1] != "word2"_XS ) return 32;
-		if ( array[2] != "word3"_XS ) return 33;
+		XStringArray array = Split<XStringArray>("   word1   word2    word3   "_XS8, " "_XS8);
+		if ( array[0] != "word1"_XS8 ) return 31;
+		if ( array[1] != "word2"_XS8 ) return 32;
+		if ( array[2] != "word3"_XS8 ) return 33;
 	}
 
 	// Test concat and Split

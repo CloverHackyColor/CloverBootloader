@@ -267,20 +267,20 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
   Status = EFI_NOT_FOUND;
   if (!ThemeX.Daylight) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background_night"_XS, &BigBack);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background_night"_XS8, &BigBack);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background"_XS, &BigBack);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BACKGROUND, "Background"_XS8, &BigBack);
   }
   DBG(" Background parsed [%lld, %lld]\n", BigBack.GetWidth(), BigBack.GetHeight()); //Background parsed [1067, 133]
   // --- Make Banner
   Banner.setEmpty(); //for the case of theme switch
   Status = EFI_NOT_FOUND;
   if (!ThemeX.Daylight) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner_night"_XS, &Banner);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner_night"_XS8, &Banner);
   }
   if (EFI_ERROR(Status)) {
-    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner"_XS, &Banner);
+    Status = ParseSVGXIcon(BUILTIN_ICON_BANNER, "Banner"_XS8, &Banner);
   }
 //  DBG("Banner parsed\n");
   BanHeight = (int)(Banner.GetHeight() * Scale + 1.f);
@@ -296,7 +296,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     // DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
-      ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
+      ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight);
     }
 //    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     Icons.AddReference(NewIcon, true);
@@ -315,16 +315,16 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 //     DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
-      ParseSVGXIcon(i, NewIcon->Name + "_night"_XS, &NewIcon->ImageNight);
+      ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight);
     }
     Icons.AddReference(NewIcon, true);
   }
   
   //selection for bootcampstyle
   Icon *NewIcon = new Icon(BUILTIN_ICON_SELECTION);
-  Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS, &NewIcon->Image);
+  Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS8, &NewIcon->Image);
   if (!EFI_ERROR(Status)) {
-    ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS, &NewIcon->ImageNight);
+    ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS8, &NewIcon->ImageNight);
   }
   Icons.AddReference(NewIcon, true);
 

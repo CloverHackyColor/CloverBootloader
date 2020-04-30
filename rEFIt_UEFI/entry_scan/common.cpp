@@ -134,7 +134,7 @@ const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EF
 //	  if ( LoadOptions.contains(LoadOption) ) return LoadOptions; //good
 //	  // Otherwise add option
 ////	  return SPrintf("%s %s", LoadOptions.c_str(), LoadOption.c_str()); //LoadOptions + LoadOption
-//    return LoadOptions + " "_XS + LoadOption; //why not?
+//    return LoadOptions + " "_XS8 + LoadOption; //why not?
 //  }
 //}
 //
@@ -146,7 +146,7 @@ const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EF
 //
 //  //DBG("LoadOptions: '%ls', remove LoadOption: '%ls'\n", LoadOptions, LoadOption);
 //  // If there are no options then nothing to do
-//  if (LoadOptions.isEmpty()) return ""_XS;
+//  if (LoadOptions.isEmpty()) return ""_XS8;
 //  // If there is no option to remove then duplicate original
 //  if (LoadOption.isEmpty()) return LoadOptions;
 //  // If not present duplicate original
@@ -176,7 +176,7 @@ const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EF
 //  }
 //
 //  // If it's the whole string return NULL
-//  if (OptionLength == Length) return ""_XS;
+//  if (OptionLength == Length) return ""_XS8;
 //
 //  XString NewLoadOptions;
 //  if (Offset == 0) {

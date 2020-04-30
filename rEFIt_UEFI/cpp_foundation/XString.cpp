@@ -24,7 +24,7 @@
 //                                 Functions
 //-----------------------------------------------------------------------------
 //
-//constexpr LString8 operator"" _XS ( const char* s, size_t len)
+//constexpr LString8 operator"" _XS8 ( const char* s, size_t len)
 //{
 ////  LString8 returnValue;
 ////	returnValue.takeValueFromLiteral(s);

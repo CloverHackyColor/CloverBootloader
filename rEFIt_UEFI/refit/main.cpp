@@ -229,9 +229,9 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     if (LoadOptionsPrefix != NULL) {
       // NOTE: That last space is also added by the EFI shell and seems to be significant
       //  when passing options to Apple's boot.efi...
-      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.ConcatAll(" "_XS).wc_str());
+      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.ConcatAll(" "_XS8).wc_str());
     }else{
-      loadOptionsW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS).wc_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
+      loadOptionsW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS8).wc_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
     }
     // NOTE: We also include the terminating null in the length for safety.
     ChildLoadedImage->LoadOptionsSize = (UINT32)loadOptionsW.sizeInBytes() + sizeof(wchar_t);
@@ -776,7 +776,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     // If KPDebug is true boot in verbose mode to see the debug messages
     if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPDebug) {
-      Entry->LoadOptions.AddID("-v"_XS);
+      Entry->LoadOptions.AddID("-v"_XS8);
     }
 
     DbgHeader("RestSetup macOS");
@@ -805,7 +805,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
           !DoHibernateWake &&
           !Entry->LoadOptions.containsStartWithIC("slide=")  ) {
       // Add slide=0 argument for ML+ if not present
-      Entry->LoadOptions.AddID("slide=0"_XS);
+      Entry->LoadOptions.AddID("slide=0"_XS8);
     }
      
       
@@ -819,7 +819,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
        (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
        (!Entry->LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
-        Entry->LoadOptions.AddID("-xcpm"_XS);
+        Entry->LoadOptions.AddID("-xcpm"_XS8);
     }
     
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
@@ -829,7 +829,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
         (!Entry->LoadOptions.containsIC("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
-      Entry->LoadOptions.AddID("-xcpm"_XS);
+      Entry->LoadOptions.AddID("-xcpm"_XS8);
     }
 
     if (AudioIo) {
@@ -2137,7 +2137,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG(" string %ls, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa), iStrLen(bbb, 10));
     const CHAR8* ccc = "Выход  ";
     DBG(" string %s, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", ccc, AsciiStrSize(ccc), AsciiStrLen(ccc), sizeof(ccc), iStrLen(ccc, 10));
-    XString8 ddd = "Выход "_XS;
+    XString8 ddd = "Выход "_XS8;
  //   size_t sizex = ddd.allocatedSize();
     DBG(" xstring %s, asize=%ld, sizeinbyte=%ld sizeof=%ld lastcharat=%ld\n", ddd.c_str(), ddd.allocatedSize(), ddd.sizeInBytes(), sizeof(ddd),
       ddd.indexOf(ddd.lastChar()));

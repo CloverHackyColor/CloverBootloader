@@ -1510,7 +1510,7 @@ class C
 
 //constexpr LString8 g_xs1 = "foobar";
 //constexpr LStringW g_xsw1 = L"foobar";
-//XString g_xs2 = "foobar"_XS;
+//XString g_xs2 = "foobar"_XS8;
 
 int XString_tests()
 {
@@ -1518,12 +1518,17 @@ int XString_tests()
 //	printf("XString16_tests -> Enter\n");
 #endif
 
-XString8 xs1 = "Test:"_XS;
+
+XString8 xs1 = "Test:"_XS8;
+constexpr const LString8 ls1 = "foo"_XS8;
+xs1 = ls1;
+xs1 = ls1 + "bar";
+
 XStringW xsw1 = L"world"_XSW;
-XString8 xs2 = xs1 + "hel" + 'l' + L'o' + U" the " + xsw1;
+XString8 xs2 = xs1 + "hel" + 'l' + L'o' + L" the " + xsw1;
 XString8 xs3 = xs1;
 
-LString8 a = "Hello"_XS;
+LString8 a = "Hello"_XS8;
 XStringW b = L"world"_XSW;
 XString8 c = a + "foo"; // + 'o' + L'o' + b + L"bar";
 
@@ -1547,7 +1552,7 @@ XString8 c = a + "foo"; // + 'o' + L'o' + b + L"bar";
 //size_t size = sizeof("ꇉ")-1; // this char is 3 bytes long
 //size_t size = sizeof("伽")-1; // this char is 3 bytes long
 //size_t size = sizeof("楘")-1; // this char is 3 bytes long
-//XString str = "ギꇉ伽楘"_XS;
+//XString str = "ギꇉ伽楘"_XS8;
 //char* s = str.data(42);
 
 //size_t size1 = sizeof("В")-1;
