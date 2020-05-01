@@ -2364,12 +2364,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
 
-  GetListOfDsdts(); //only after GetUserSettings
-  GetListOfACPI(); //ssdt and other tables
-
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
+  gBootChanged = TRUE;
+  gThemeChanged = TRUE;
   do {
+    if (gBootChanged && gThemeChanged) { // config changed
+      GetListOfDsdts(); //only after GetUserSettings
+      GetListOfACPI(); //ssdt and other tables
+    }
+    gBootChanged = FALSE;
+
     MainMenu.Entries.Empty();
     OptionMenu.Entries.Empty();
     InitKextList();
@@ -2415,7 +2420,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (gThemeNeedInit) {
         InitTheme(TRUE, &Now);
         gThemeNeedInit = FALSE;
-        gThemeChanged = TRUE;
       } else if (gThemeChanged) {
         DBG("change theme\n");
         InitTheme(FALSE, NULL);
