@@ -1020,12 +1020,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     Status = LoadUserSettings(SelfRootDir, ConfigsList[OldChosenConfig], &dict);
     if (!EFI_ERROR(Status)) {
+      gBootChanged = TRUE;
+      gThemeChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (gConfigDict[2]) FreeTag(gConfigDict[2]);
       gConfigDict[2] = dict;
-		snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);
-      gBootChanged = TRUE;
-      gThemeChanged = TRUE;
+      snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);
     }
     FillInputs(FALSE);
     NeedSave = FALSE;

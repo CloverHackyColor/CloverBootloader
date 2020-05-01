@@ -2034,7 +2034,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   if (MainImage.isEmpty()) {
  //   DBG(" why MainImage is empty? Report to devs\n");
     if (!IsEmbeddedTheme()) {
-      MainImage = ThemeX.GetIcon("os_mac"_XS);
+      MainImage = ThemeX.GetIcon("os_mac"_XS8);
     }
     if (MainImage.isEmpty()) {
       MainImage.DummyImage(MainSize);
@@ -2663,7 +2663,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
         }
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ MainChosenEntry->getLOADER_ENTRY()) {
           if (MainChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
-            snprintf(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS).c_str());
+            snprintf(gSettings.BootArgs, 255, "%s", MainChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8).c_str());
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }

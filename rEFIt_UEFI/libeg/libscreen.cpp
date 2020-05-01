@@ -439,7 +439,7 @@ VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
         *ScreenHeight = egScreenHeight;
 }
 
-XString egScreenDescription(VOID)
+XString8 egScreenDescription(VOID)
 {
     if (egHasGraphics) {
         if (GraphicsOutput != NULL) {
@@ -447,10 +447,10 @@ XString egScreenDescription(VOID)
         } else if (UgaDraw != NULL) {
             return SPrintf("UGA Draw (EFI 1.10), %lldx%lld", egScreenWidth, egScreenHeight);
         } else {
-            return "Internal Error"_XS;
+            return "Internal Error"_XS8;
         }
     } else {
-        return "Text Console"_XS;
+        return "Text Console"_XS8;
     }
 }
 

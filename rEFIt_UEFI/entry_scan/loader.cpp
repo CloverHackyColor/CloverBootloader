@@ -59,12 +59,12 @@
 #define DBG(...) DebugLog(DEBUG_SCAN_LOADER, __VA_ARGS__)
 #endif
 
-const XStringW MACOSX_LOADER_PATH = "\\System\\Library\\CoreServices\\boot.efi"_XSW;
+const XStringW MACOSX_LOADER_PATH = L"\\System\\Library\\CoreServices\\boot.efi"_XSW;
 
-const XStringW LINUX_ISSUE_PATH = "\\etc\\issue"_XSW;
+const XStringW LINUX_ISSUE_PATH = L"\\etc\\issue"_XSW;
 #define LINUX_BOOT_PATH L"\\boot"
 #define LINUX_BOOT_ALT_PATH L"\\boot"
-const XString LINUX_LOADER_PATH = "vmlinuz"_XS;
+const XString8 LINUX_LOADER_PATH = "vmlinuz"_XS8;
 const XStringW LINUX_FULL_LOADER_PATH = SWPrintf("%ls\\%s", LINUX_BOOT_PATH, LINUX_LOADER_PATH.c_str());
 #define LINUX_LOADER_SEARCH_PATH L"vmlinuz*"
 const XStringArray LINUX_DEFAULT_OPTIONS = Split<XStringArray>("ro add_efi_memmap quiet splash vt.handoff=7", " ");
@@ -84,7 +84,7 @@ typedef struct LINUX_PATH_DATA
    CONST XStringW Path;
    CONST XStringW Title;
    CONST XStringW Icon;
-   CONST XString  Issue;
+   CONST XString8  Issue;
 } LINUX_PATH_DATA;
 
 typedef struct LINUX_ICON_DATA
@@ -129,7 +129,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
 //  { L"\\EFI\\Manjaro\\grubx64.efi", L"Manjaro EFI boot menu", L"manjaro,linux", "Manjaro" },
 //  { L"\\EFI\\xubuntu\\grubx64.efi", L"Xubuntu EFI boot menu", L"xubuntu,linux", "Xubuntu" },
 //  { L"\\EFI\\zorin\\grubx64.efi", L"Zorin EFI boot menu", L"zorin,linux", "Zorin" },
-  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XSW },
+  { L"\\EFI\\goofiboot\\goofibootx64.efi"_XSW, L"Solus EFI boot menu"_XSW, L"solus,linux"_XSW, "Solus"_XS8 },
 //  { L"\\EFI\\centos\\grubx64.efi", L"CentOS EFI boot menu", L"centos,linux", "CentOS" },
 //  { L"\\EFI\\pclinuxos\\grubx64.efi", L"PCLinuxOS EFI boot menu", L"pclinux,linux", "PCLinux" },
 //  { L"\\EFI\\neon\\grubx64.efi", L"KDE Neon EFI boot menu", L"neon,linux", "KDE Neon" },
@@ -196,9 +196,9 @@ STATIC CONST UINTN AndroidEntryDataCount = (sizeof(AndroidEntryData) / sizeof(AN
 #endif
 #endif
 
-CONST XStringW PaperBoot   = "\\com.apple.boot.P\\boot.efi"_XSW;
-CONST XStringW RockBoot    = "\\com.apple.boot.R\\boot.efi"_XSW;
-CONST XStringW ScissorBoot = "\\com.apple.boot.S\\boot.efi"_XSW;
+CONST XStringW PaperBoot   = L"\\com.apple.boot.P\\boot.efi"_XSW;
+CONST XStringW RockBoot    = L"\\com.apple.boot.R\\boot.efi"_XSW;
+CONST XStringW ScissorBoot = L"\\com.apple.boot.S\\boot.efi"_XSW;
 
 // OS X installer paths
 CONST XStringW OSXInstallerPaths[] = {
@@ -339,13 +339,13 @@ STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
   return linux;
 }
 
-STATIC CONST XString LinuxInitImagePath[] = {
-   "initrd%s"_XS,
-   "initrd.img%s"_XS,
-   "initrd%s.img"_XS,
-   "initramfs%s"_XS,
-   "initramfs.img%s"_XS,
-   "initramfs%s.img"_XS,
+STATIC CONST XString8 LinuxInitImagePath[] = {
+   "initrd%s"_XS8,
+   "initrd.img%s"_XS8,
+   "initrd%s.img"_XS8,
+   "initramfs%s"_XS8,
+   "initramfs.img%s"_XS8,
+   "initramfs%s.img"_XS8,
 };
 STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(LinuxInitImagePath[0]));
 
@@ -822,7 +822,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   if (Guid) {
     SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
-	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS).c_str());
+	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
   // loader-specific submenu entries
   if (Entry->LoaderType == OSTYPE_OSX ||
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
@@ -938,10 +938,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       if (Quiet) {
         SubEntry->Title.SWPrintf("%ls verbose", Entry->Title.s());
-        SubEntry->LoadOptions.removeIC("quiet"_XS);
+        SubEntry->LoadOptions.removeIC("quiet"_XS8);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("quiet"_XS);
+        SubEntry->LoadOptions.AddID("quiet"_XS8);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -949,10 +949,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       if (WithSplash) {
         SubEntry->Title.SWPrintf("%ls without splash", Entry->Title.s());
-        SubEntry->LoadOptions.removeIC("splash"_XS);
+        SubEntry->LoadOptions.removeIC("splash"_XS8);
       } else {
         SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("splash"_XS);
+        SubEntry->LoadOptions.AddID("splash"_XS8);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -961,30 +961,30 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (WithSplash) {
         if (Quiet) {
           SubEntry->Title.SWPrintf("%ls verbose without splash", Entry->Title.s());
-          SubEntry->LoadOptions.removeIC("splash"_XS);
-          SubEntry->LoadOptions.removeIC("quiet"_XS);
+          SubEntry->LoadOptions.removeIC("splash"_XS8);
+          SubEntry->LoadOptions.removeIC("quiet"_XS8);
         } else {
           SubEntry->Title.SWPrintf("%ls quiet without splash", Entry->Title.s());
-          SubEntry->LoadOptions.removeIC("splash"_XS);
-          SubEntry->LoadOptions.Add("quiet"_XS);
+          SubEntry->LoadOptions.removeIC("splash"_XS8);
+          SubEntry->LoadOptions.Add("quiet"_XS8);
         }
       } else if (Quiet) {
-//        TempOptions.RemoveIC("quiet"_XS);
+//        TempOptions.RemoveIC("quiet"_XS8);
         SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("splash"_XS);
+        SubEntry->LoadOptions.AddID("splash"_XS8);
 //        FreePool(TempOptions);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("quiet"_XS);
-        SubEntry->LoadOptions.AddID("splash"_XS);
+        SubEntry->LoadOptions.AddID("quiet"_XS8);
+        SubEntry->LoadOptions.AddID("splash"_XS8);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions.setEmpty();
-    Entry->LoadOptions.Add("-s"_XS);
-    Entry->LoadOptions.Add("-h"_XS);
+    Entry->LoadOptions.Add("-s"_XS8);
+    Entry->LoadOptions.Add("-h"_XS8);
     
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
@@ -1003,8 +1003,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
       Entry->LoadOptions.setEmpty();
-      Entry->LoadOptions.Add("-s"_XS);
-      Entry->LoadOptions.Add("-c"_XS);
+      Entry->LoadOptions.Add("-s"_XS8);
+      Entry->LoadOptions.Add("-c"_XS8);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
@@ -1013,7 +1013,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
       Entry->LoadOptions.setEmpty();
-      Entry->LoadOptions.Add("-v"_XS);
+      Entry->LoadOptions.Add("-v"_XS8);
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       SubScreen->AddMenuEntry(SubEntry, true);
     }
@@ -1163,7 +1163,7 @@ VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, L"\\Install OS X Mavericks.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X Yosemite.app") ||
           FileExists(Volume->RootDir, L"\\Install OS X El Capitan.app")) {
-        AddLoaderEntry("\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
+        AddLoaderEntry(L"\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.9 - 10.11
       } else {
         AddLoaderEntry(L"\\.IABootFiles\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.13.3
       }
@@ -1171,7 +1171,7 @@ VOID ScanLoader(VOID)
       AddLoaderEntry(MACOSX_LOADER_PATH, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.13.4+
     }
     // 2nd stage - InstallESD/AppStore/startosinstall/Fusion Drive
-    AddLoaderEntry("\\Mac OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
+    AddLoaderEntry(L"\\Mac OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"Mac OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.7
     AddLoaderEntry(L"\\OS X Install Data\\boot.efi"_XSW, NullXStringArray, L"OS X Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.8 - 10.11
     AddLoaderEntry(L"\\macOS Install Data\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12 - 10.12.3
     AddLoaderEntry(L"\\macOS Install Data\\Locked Files\\Boot Files\\boot.efi"_XSW, NullXStringArray, L"macOS Install"_XSW, Volume, NULL, OSTYPE_OSX_INSTALLER, 0); // 10.12.4+
@@ -2039,7 +2039,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             if (Guid) {
               SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
             }
-            SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS).c_str());
+            SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
             DBG("Create sub entries\n");
             for (CustomSubEntry = Custom->SubEntries; CustomSubEntry; CustomSubEntry = CustomSubEntry->Next) {
               if (!CustomSubEntry->Settings) {

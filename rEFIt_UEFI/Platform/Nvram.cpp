@@ -1384,7 +1384,7 @@ EFI_STATUS SetStartupDiskVolume (
 //    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, Size, EfiBootDevice);
 //    FreePool(EfiBootDevice);
 
-    XString EfiBootDevice;
+    XString8 EfiBootDevice;
     EfiBootDevice.SPrintf(
 			"<array><dict>"
 	    "<key>IOMatch</key>"

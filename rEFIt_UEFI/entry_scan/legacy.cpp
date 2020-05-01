@@ -138,7 +138,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   } else {
     Entry->Image = ThemeX.LoadOSIcon(Volume->LegacyOS->IconName);
     if (Entry->Image.isEmpty()) {
-      Entry->Image = ThemeX.GetIcon("os_win"_XS); //we have no legacy.png
+      Entry->Image = ThemeX.GetIcon("os_win"_XS8); //we have no legacy.png
     }
   }
 
@@ -161,7 +161,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   }
   Entry->Volume           = Volume;
   Entry->DevicePathString = Volume->DevicePathString;
-//  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD"_XS : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB"_XS : "HD"_XS);
+//  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD"_XS8 : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB"_XS8 : "HD"_XS8);
   Entry->LoadOptions.setEmpty();
   Entry->LoadOptions.Add((Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB" : "HD"));
   // create the submenu

@@ -12,7 +12,7 @@ fi
 # Ctools source version
 # here we can change source versions of tools
 #
-export CCTOOLS_VERSION=${CCTOOLS_VERSION:-921}
+export CCTOOLS_VERSION=${CCTOOLS_VERSION:-949.0.1}
 
 # Change PREFIX if you want mtoc installed on different place
 #

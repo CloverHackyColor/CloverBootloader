@@ -299,7 +299,7 @@ void XTheme::Init()
 static XImage NullIcon;
 static XImage DummyIcon;
 
-const XImage& XTheme::GetIcon(const XString& Name)
+const XImage& XTheme::GetIcon(const XString8& Name)
 {
   for (size_t i = 0; i < Icons.size(); i++)
   {
@@ -385,26 +385,26 @@ const XImage& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take emb
 
 const XImage& XTheme::LoadOSIcon(const CHAR16* OSIconName)
 {
-  return LoadOSIcon(XString().takeValueFrom(OSIconName));
+  return LoadOSIcon(XString8().takeValueFrom(OSIconName));
 }
 
-const XImage& XTheme::LoadOSIcon(const XString& Full)
+const XImage& XTheme::LoadOSIcon(const XString8& Full)
 {
   // input value can be L"win", L"ubuntu,linux", L"moja,mac" set by GetOSIconName (OSVersion)
-  XString First;
-  XString Second;
-  XString Third;
+  XString8 First;
+  XString8 Second;
+  XString8 Third;
   const XImage *ReturnImage;
   UINTN Comma = Full.indexOf(',');
   UINTN Size = Full.length();
   DBG("IconName=%s comma=%lld size=%lld\n", Full.c_str(), Comma, Size);
   if (Comma != MAX_XSIZE) {  //Comma
-    First = "os_"_XS + Full.subString(0, Comma);
+    First = "os_"_XS8 + Full.subString(0, Comma);
     ReturnImage = &GetIcon(First);
     DBG("  first=%s\n", First.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
     //else search second name
-    Second = "os_"_XS + Full.subString(Comma + 1, Size - Comma - 1);
+    Second = "os_"_XS8 + Full.subString(Comma + 1, Size - Comma - 1);
     //moreover names can be triple L"chrome,grub,linux"
     UINTN SecondComma = Second.indexOf(',');
     if (Comma == MAX_XSIZE) {
@@ -414,14 +414,14 @@ const XImage& XTheme::LoadOSIcon(const XString& Full)
       First = Second.subString(0, SecondComma);
       ReturnImage = &GetIcon(First);
       if (!ReturnImage->isEmpty()) return *ReturnImage;
-      Third = "os_"_XS + Second.subString(SecondComma + 1, Size - SecondComma - 1);
+      Third = "os_"_XS8 + Second.subString(SecondComma + 1, Size - SecondComma - 1);
       ReturnImage = &GetIcon(Third);
       if (!ReturnImage->isEmpty()) return *ReturnImage;
     }
     DBG("  Second=%s\n", Second.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   } else {
-    ReturnImage = &GetIcon("os_"_XS + Full);
+    ReturnImage = &GetIcon("os_"_XS8 + Full);
     DBG("  Full=%s\n", Full.c_str());
     if (!ReturnImage->isEmpty()) return *ReturnImage;
   }
@@ -733,10 +733,10 @@ void XTheme::InitSelection() //for PNG theme
     }
   } else {
     //SVG theme already parsed all icons
-    Buttons[0] = GetIcon("radio_button"_XS);
-    Buttons[1] = GetIcon("radio_button_selected"_XS);
-    Buttons[2] = GetIcon("checkbox"_XS);
-    Buttons[3] = GetIcon("checkbox_checked"_XS);
+    Buttons[0] = GetIcon("radio_button"_XS8);
+    Buttons[1] = GetIcon("radio_button_selected"_XS8);
+    Buttons[2] = GetIcon("checkbox"_XS8);
+    Buttons[3] = GetIcon("checkbox_checked"_XS8);
   }
 
   // non-selected background images
@@ -852,7 +852,7 @@ void XTheme::InitBar()
   if (ScrollbarBackgroundImage.isEmpty()) {
     if (TypeSVG) {
       //return OSIconsTable[i].image;
-      ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS);
+      ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS8);
     }
     if (ScrollbarBackgroundImage.isEmpty()) {
       ScrollbarBackgroundImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill));
@@ -860,7 +860,7 @@ void XTheme::InitBar()
   }
   if (ScrollbarImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollbarImage = GetIcon("scrollbar_holder"_XS); //"_night" is already accounting
+      ScrollbarImage = GetIcon("scrollbar_holder"_XS8); //"_night" is already accounting
     }
     if (ScrollbarImage.isEmpty()) {
       ScrollbarImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill));
@@ -868,7 +868,7 @@ void XTheme::InitBar()
   }
   if (ScrollStartImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollStartImage = GetIcon("scrollbar_start"_XS);
+      ScrollStartImage = GetIcon("scrollbar_start"_XS8);
     }
     if (ScrollStartImage.isEmpty()) {
       ScrollStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start));
@@ -876,7 +876,7 @@ void XTheme::InitBar()
   }
   if (ScrollEndImage.isEmpty()) {
     if (TypeSVG) {
-      ScrollEndImage = GetIcon("scrollbar_end"_XS);
+      ScrollEndImage = GetIcon("scrollbar_end"_XS8);
     }
     if (ScrollEndImage.isEmpty()) {
       ScrollEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end));
@@ -884,13 +884,13 @@ void XTheme::InitBar()
   }
   if (UpButtonImage.isEmpty()) {
     if (TypeSVG) {
-      UpButtonImage = GetIcon("scrollbar_up_button"_XS);
+      UpButtonImage = GetIcon("scrollbar_up_button"_XS8);
     }
     UpButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button));
   }
   if (DownButtonImage.isEmpty()) {
     if (TypeSVG) {
-      DownButtonImage = GetIcon("scrollbar_down_button"_XS);
+      DownButtonImage = GetIcon("scrollbar_down_button"_XS8);
     }
     if (DownButtonImage.isEmpty()) {
       DownButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button));

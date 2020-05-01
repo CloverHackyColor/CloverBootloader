@@ -248,6 +248,7 @@
   cpp_foundation/XStringArray.cpp
   cpp_foundation/XStringArray.h
   cpp_foundation/XStringArray.cpp
+  cpp_foundation/XToolsCommon.h
 #  cpp_foundation/XUINTN.cpp
 #  cpp_foundation/XUINTN.h
   cpp_unit_test/all_tests.h

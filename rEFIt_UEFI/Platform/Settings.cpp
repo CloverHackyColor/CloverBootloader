@@ -65,7 +65,7 @@ INTN LayoutBannerOffset = 64;
 INTN LayoutTextOffset = 0;
 INTN LayoutButtonOffset = 0;
 
-ACPI_PATCHED_AML                *ACPIPatchedAML;
+ACPI_PATCHED_AML                *ACPIPatchedAML = NULL;
 SIDELOAD_KEXT                   *InjectKextList = NULL;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
@@ -96,7 +96,7 @@ UINTN                           ThemesNum                   = 0;
 CONST CHAR16                          *ThemesList[100]; //no more then 100 themes?
 UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
-UINTN                           DsdtsNum;
+UINTN                           DsdtsNum = 0;
 CHAR16                          *DsdtsList[20];
 UINTN                           AudioNum;
 HDA_OUTPUTS                     AudioList[20];
@@ -1905,12 +1905,12 @@ FillinCustomEntry (
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->string);
 //    }
-	Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
+	Entry->LoadOptions.import(Split<XStringArray>(Prop->string, " "));
   } else {
     Prop = GetProperty(DictPointer, "Arguments");
     if (Prop != NULL && (Prop->type == kTagTypeString)) {
 //      Entry->Options.SPrintf("%s", Prop->string);
-	  Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
+      Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
@@ -2046,6 +2046,7 @@ FillinCustomEntry (
       Entry->Type = OSTYPE_WINEFI;
     } else if (AsciiStriCmp(Prop->string, "Linux") == 0) {
       Entry->Type = OSTYPE_LIN;
+      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     } else if (AsciiStriCmp(Prop->string, "LinuxKernel") == 0) {
       Entry->Type = OSTYPE_LINEFI;
     } else {
@@ -3261,6 +3262,13 @@ GetListOfDsdts ()
   INTN              NameLen;
   CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
 
+  if (DsdtsNum > 0) {
+    for (UINTN i = 0; i < DsdtsNum; i++) {
+      if (DsdtsList[DsdtsNum] != NULL) {
+        FreePool(DsdtsList[DsdtsNum]);
+      }
+    }
+  }   
   DsdtsNum = 0;
   OldChosenDsdt = 0xFFFF;
 
@@ -3272,13 +3280,13 @@ GetListOfDsdts ()
       continue;
     }
 
-	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
+    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, gSettings.DsdtName) == 0) {
         OldChosenDsdt = DsdtsNum;
       }
       NameLen = StrLen(DirEntry->FileName); //with ".aml"
-      DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
+      DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName); // if changing, notice freepool above
       DsdtsList[DsdtsNum++][NameLen] = L'\0';
       DBG("- %ls\n", DirEntry->FileName);
     }
@@ -3296,6 +3304,14 @@ GetListOfACPI ()
   INTN i, Count = gSettings.DisabledAMLCount;
   CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
 
+  while (ACPIPatchedAML != NULL) {
+    if (ACPIPatchedAML->FileName) {
+      FreePool(ACPIPatchedAML->FileName);
+    }
+    ACPIPatchedAMLTmp = ACPIPatchedAML;
+    ACPIPatchedAML = ACPIPatchedAML->Next;
+    FreePool(ACPIPatchedAMLTmp);
+  }
   ACPIPatchedAML = NULL;
 
   DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
@@ -3309,11 +3325,11 @@ GetListOfACPI ()
       continue;
     }
 
-	  snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
+    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
-      ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool(sizeof(ACPI_PATCHED_AML));
-      ACPIPatchedAMLTmp->FileName = PoolPrint(L"%s", DirEntry->FileName);
+      ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool(sizeof(ACPI_PATCHED_AML)); // if changing, notice freepool above
+      ACPIPatchedAMLTmp->FileName = PoolPrint(L"%s", DirEntry->FileName); // if changing, notice freepool above
 
       for (i = 0; i < Count; i++) {
         if ((gSettings.DisabledAML[i] != NULL) &&
