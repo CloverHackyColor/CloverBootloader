@@ -392,7 +392,7 @@ InsertFpdtRecord (
       FpdtRecordPtr.GuidEvent->Header.Revision   = FPDT_RECORD_REVISION_1;
       FpdtRecordPtr.GuidEvent->ProgressID        = PerfId;
       FpdtRecordPtr.GuidEvent->Timestamp         = TimeStamp;
-      CopyMem (&FpdtRecordPtr.GuidEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
+      CopyMem(&FpdtRecordPtr.GuidEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
     }
     break;
 
@@ -409,7 +409,7 @@ InsertFpdtRecord (
         PeiPerformanceLogHeader->LoadImageCount++;
       }
       FpdtRecordPtr.GuidQwordEvent->Qword           = PeiPerformanceLogHeader->LoadImageCount;
-      CopyMem (&FpdtRecordPtr.GuidQwordEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
+      CopyMem(&FpdtRecordPtr.GuidQwordEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
     }
     break;
 
@@ -430,8 +430,8 @@ InsertFpdtRecord (
       FpdtRecordPtr.DualGuidStringEvent->Header.Revision  = FPDT_RECORD_REVISION_1;
       FpdtRecordPtr.DualGuidStringEvent->ProgressID       = PerfId;
       FpdtRecordPtr.DualGuidStringEvent->Timestamp        = TimeStamp;
-      CopyMem (&FpdtRecordPtr.DualGuidStringEvent->Guid1, ModuleGuid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid1));
-      CopyMem (&FpdtRecordPtr.DualGuidStringEvent->Guid2, Guid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid2));
+      CopyMem(&FpdtRecordPtr.DualGuidStringEvent->Guid1, ModuleGuid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid1));
+      CopyMem(&FpdtRecordPtr.DualGuidStringEvent->Guid2, Guid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid2));
       CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DualGuidStringEvent->String, StringPtr, &FpdtRecordPtr.DualGuidStringEvent->Header.Length);
     }
     break;
@@ -454,7 +454,7 @@ InsertFpdtRecord (
       FpdtRecordPtr.DynamicStringEvent->Header.Revision   = FPDT_RECORD_REVISION_1;
       FpdtRecordPtr.DynamicStringEvent->ProgressID        = PerfId;
       FpdtRecordPtr.DynamicStringEvent->Timestamp         = TimeStamp;
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
+      CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
       CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
     }
     break;
@@ -472,7 +472,7 @@ InsertFpdtRecord (
        FpdtRecordPtr.DynamicStringEvent->Header.Revision   = FPDT_RECORD_REVISION_1;
        FpdtRecordPtr.DynamicStringEvent->ProgressID        = PerfId;
        FpdtRecordPtr.DynamicStringEvent->Timestamp         = TimeStamp;
-       CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+       CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
        CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
      }
   } else {
@@ -494,9 +494,9 @@ InsertFpdtRecord (
       //
       // Cache the event guid in string event record.
       //
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, Guid, sizeof (EFI_GUID));
+      CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, Guid, sizeof (EFI_GUID));
     } else {
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
+      CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, ModuleGuid, sizeof (EFI_GUID));
     }
     CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
   }

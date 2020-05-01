@@ -80,7 +80,7 @@ ClearFirst4KPage (
 
   if (DoClear) {
     DEBUG ((DEBUG_INFO, "Clearing first 4K-page!\r\n"));
-    SetMem (NULL, EFI_PAGE_SIZE, 0);
+    SetMem(NULL, EFI_PAGE_SIZE, 0);
   }
 
   return;

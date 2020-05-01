@@ -1111,8 +1111,8 @@ TerminalUpdateConsoleDevVariable (
       SetVariableStatus->DataSize   = VariableSize;
       SetVariableStatus->SetStatus  = Status;
       SetVariableStatus->Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
-      CopyMem (SetVariableStatus + 1,                          VariableName, NameSize);
-      CopyMem (((UINT8 *) (SetVariableStatus + 1)) + NameSize, Variable,     VariableSize);
+      CopyMem(SetVariableStatus + 1,                          VariableName, NameSize);
+      CopyMem(((UINT8 *) (SetVariableStatus + 1)) + NameSize, Variable,     VariableSize);
 
       REPORT_STATUS_CODE_EX (
         EFI_ERROR_CODE,

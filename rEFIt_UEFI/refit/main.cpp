@@ -120,7 +120,7 @@ CONST CHAR8* AudioOutputNames[] = {
 
 extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
-extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
+//extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
 extern UINTN                ThemesNum;
 extern CONST CHAR16               *ThemesList[];
@@ -410,93 +410,91 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   }
 }
 #endif
-VOID FilterKextPatches(IN LOADER_ENTRY *Entry) //zzzz
+VOID LOADER_ENTRY::FilterKextPatches()
 {
-  if (gSettings.KextPatchesAllowed && (Entry->KernelAndKextPatches->KextPatches != NULL) && Entry->KernelAndKextPatches->NrKexts) {
-    INTN i;
+  if (gSettings.KextPatchesAllowed && (KernelAndKextPatches->KextPatches != NULL) && (KernelAndKextPatches->NrKexts != 0)) {
     DBG("Filtering KextPatches:\n");
-    for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
+    for (INTN i = 0; i < KernelAndKextPatches->NrKexts; i++) {
 		DBG(" - [%02lld]: %s :: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
-        Entry->KernelAndKextPatches->KextPatches[i].Label,
-        Entry->KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
-        Entry->OSVersion,
-        Entry->KernelAndKextPatches->KextPatches[i].MatchOS ? Entry->KernelAndKextPatches->KextPatches[i].MatchOS : "All",
-        Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KextPatches[i].MatchBuild : "All"
+        KernelAndKextPatches->KextPatches[i].Label,
+        KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
+        OSVersion,
+        KernelAndKextPatches->KextPatches[i].MatchOS ? KernelAndKextPatches->KextPatches[i].MatchOS : "All",
+        KernelAndKextPatches->KextPatches[i].MatchBuild != NULL ? KernelAndKextPatches->KextPatches[i].MatchBuild : "All"
       );
-      if (!Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue) {
+      if (!KernelAndKextPatches->KextPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
       
-      if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
-        Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %s\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      if ((BuildVersion != NULL) && (KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
+        KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KextPatches[i].MatchBuild, BuildVersion);
+        DBG(" ==> %s\n", KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
-      Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KextPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %s\n", Entry->KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KextPatches[i].MatchOS, OSVersion);
+      DBG(" ==> %s\n", KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
 
-VOID FilterKernelPatches(IN LOADER_ENTRY *Entry)
+VOID LOADER_ENTRY::FilterKernelPatches()
 {
-  if (gSettings.KernelPatchesAllowed && (Entry->KernelAndKextPatches->KernelPatches != NULL) && Entry->KernelAndKextPatches->NrKernels) {
+  if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches->KernelPatches != NULL) && KernelAndKextPatches->NrKernels) {
     INTN i = 0;
     DBG("Filtering KernelPatches:\n");
-    for (; i < Entry->KernelAndKextPatches->NrKernels; ++i) {
+    for (; i < KernelAndKextPatches->NrKernels; ++i) {
 		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
-        Entry->KernelAndKextPatches->KernelPatches[i].Label,
-        Entry->OSVersion,
-        Entry->KernelAndKextPatches->KernelPatches[i].MatchOS ? Entry->KernelAndKextPatches->KernelPatches[i].MatchOS : "All",
-        Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild : "no"
+        KernelAndKextPatches->KernelPatches[i].Label,
+        OSVersion,
+        KernelAndKextPatches->KernelPatches[i].MatchOS ? KernelAndKextPatches->KernelPatches[i].MatchOS : "All",
+        KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? KernelAndKextPatches->KernelPatches[i].MatchBuild : "no"
       );
-      if (!Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
+      if (!KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
 
-      if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
-        Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %s by build\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      if ((BuildVersion != NULL) && (KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
+        KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KernelPatches[i].MatchBuild, BuildVersion);
+        DBG(" ==> %s by build\n", KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
-      Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->KernelPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %s by OS\n", Entry->KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KernelPatches[i].MatchOS, OSVersion);
+      DBG(" ==> %s by OS\n", KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
 
-VOID FilterBootPatches(IN LOADER_ENTRY *Entry)
+VOID LOADER_ENTRY::FilterBootPatches()
 {
-  if ((Entry->KernelAndKextPatches->BootPatches != NULL) && Entry->KernelAndKextPatches->NrBoots) {
-    INTN i = 0;
+  if ((KernelAndKextPatches->BootPatches != NULL) && KernelAndKextPatches->NrBoots) {
     DBG("Filtering BootPatches:\n");
-    for (; i < Entry->KernelAndKextPatches->NrBoots; ++i) {
+    for (INTN i = 0; i < KernelAndKextPatches->NrBoots; ++i) {
 		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
           i,
-          Entry->KernelAndKextPatches->BootPatches[i].Label,
-          Entry->OSVersion,
-          Entry->KernelAndKextPatches->BootPatches[i].MatchOS ? Entry->KernelAndKextPatches->BootPatches[i].MatchOS : "All",
-          Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL ? Entry->KernelAndKextPatches->BootPatches[i].MatchBuild : "no"
+          KernelAndKextPatches->BootPatches[i].Label,
+          OSVersion,
+          KernelAndKextPatches->BootPatches[i].MatchOS ? KernelAndKextPatches->BootPatches[i].MatchOS : "All",
+          KernelAndKextPatches->BootPatches[i].MatchBuild != NULL ? KernelAndKextPatches->BootPatches[i].MatchBuild : "no"
           );
-      if (!Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
+      if (!KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
 
-      if ((Entry->BuildVersion != NULL) && (Entry->KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
-        Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchBuild, Entry->BuildVersion);
-        DBG(" ==> %s by build\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      if ((BuildVersion != NULL) && (KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
+        KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->BootPatches[i].MatchBuild, BuildVersion);
+        DBG(" ==> %s by build\n", KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
  
-      Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(Entry->KernelAndKextPatches->BootPatches[i].MatchOS, Entry->OSVersion);
-      DBG(" ==> %s by OS\n", Entry->KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->BootPatches[i].MatchOS, OSVersion);
+      DBG(" ==> %s by OS\n", KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
   
     }
   }
@@ -564,7 +562,7 @@ VOID CheckEmptyFB()
   }
 }
 
-static VOID StartLoader(IN LOADER_ENTRY *Entry)
+VOID LOADER_ENTRY::StartLoader()
 {
   EFI_STATUS              Status;
   EFI_TEXT_STRING         ConOutOutputString = 0;
@@ -577,11 +575,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");
-  if (Entry->Settings) {
-    DBG("Entry->Settings: %ls\n", Entry->Settings);
-    Status = LoadUserSettings(SelfRootDir, Entry->Settings, &dict);
+  if (Settings) {
+    DBG("  Settings: %ls\n", Settings);
+    Status = LoadUserSettings(SelfRootDir, Settings, &dict);
     if (!EFI_ERROR(Status)) {
-      DBG(" - found custom settings for this entry: %ls\n", Entry->Settings);
+      DBG(" - found custom settings for this entry: %ls\n", Settings);
       gBootChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (EFI_ERROR(Status)) {
@@ -590,7 +588,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
         }
-        //CopyMem (Entry->KernelAndKextPatches,
+        //CopyMem(KernelAndKextPatches,
         //         &gSettings.KernelAndKextPatches,
         //         sizeof(KERNEL_AND_KEXT_PATCHES));
         //DBG("Custom KernelAndKextPatches copyed to started entry\n");
@@ -651,22 +649,22 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  nsvg__deleteParser(mainParser); //temporary disabled
   //destruct_globals_objects(NULL); //we can't destruct our globals here. We need, for example, Volumes.
   
-  //DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
+  //DumpKernelAndKextPatches(KernelAndKextPatches);
   DBG("start loader\n");
   // Load image into memory (will be started later)
-  Status = LoadEFIImage(Entry->DevicePath, Entry->LoaderPath.basename(), NULL, &ImageHandle);
+  Status = LoadEFIImage(DevicePath, LoaderPath.basename(), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
     DBG("Image is not loaded, status=%s\n", strerror(Status));
     return; // no reason to continue if loading image failed
   }
-  egClearScreen(&Entry->BootBgColor); //if not set then it is already MenuBackgroundPixel
+  egClearScreen(&BootBgColor); //if not set then it is already MenuBackgroundPixel
 
 //  KillMouse();
 
-//  if (Entry->LoaderType == OSTYPE_OSX) {
-  if (OSTYPE_IS_OSX(Entry->LoaderType) ||
-      OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
-      OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+//  if (LoaderType == OSTYPE_OSX) {
+  if (OSTYPE_IS_OSX(LoaderType) ||
+      OSTYPE_IS_OSX_RECOVERY(LoaderType) ||
+      OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
 
     // To display progress bar properly (especially in FV2 mode) boot.efi needs to be in graphics mode.
     // Unfortunately many UEFI implementations change the resolution when SetMode happens.
@@ -688,7 +686,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
     // For these cases, take OSVersion from loaded boot.efi image in memory
-    if (/*Entry->LoaderType == OSTYPE_OSX_INSTALLER ||*/ !Entry->OSVersion) {
+    if (/*LoaderType == OSTYPE_OSX_INSTALLER ||*/ !OSVersion) {
 
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
@@ -712,54 +710,54 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
-            if (Entry->OSVersion != NULL) {
-              FreePool(Entry->OSVersion);
+            if (OSVersion != NULL) {
+              FreePool(OSVersion);
             }
-            Entry->OSVersion = (__typeof__(Entry->OSVersion))AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
-            Entry->OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
-//            DBG("Corrected OSVersion: %s\n", Entry->OSVersion);
+            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
+            OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
+//            DBG("Corrected OSVersion: %s\n", OSVersion);
           }
         }
       }
 
-      if (Entry->BuildVersion != NULL) {
-        FreePool(Entry->BuildVersion);
-        Entry->BuildVersion = NULL;
+      if (BuildVersion != NULL) {
+        FreePool(BuildVersion);
+        BuildVersion = NULL;
       }
     }
 
-    if (Entry->BuildVersion != NULL) {
-      DBG(" %s (%s)\n", Entry->OSVersion, Entry->BuildVersion);
+    if (BuildVersion != NULL) {
+      DBG(" %s (%s)\n", OSVersion, BuildVersion);
     } else {
-      DBG(" %s\n", Entry->OSVersion);
+      DBG(" %s\n", OSVersion);
     }
 
-    if (Entry->OSVersion && (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
-      if (OSFLAG_ISSET(Entry->Flags, OSFLAG_NOSIP)) {
+    if (OSVersion && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
+      if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
         gSettings.CsrActiveConfig = (UINT32)0x37F;
         gSettings.BooterConfig = 0x28;
       }
       ReadSIPCfg();
     }
 
-    FilterKextPatches(Entry);
-    FilterKernelPatches(Entry);
-    FilterBootPatches(Entry);
-    if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize, Entry)) {
+    FilterKextPatches();
+    FilterKernelPatches();
+    FilterBootPatches();
+    if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
       DBG("Will not patch boot.efi\n");
     }
 
     // Set boot argument for kernel if no caches, this should force kernel loading
-    if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES)  &&  !Entry->LoadOptions.containsStartWithIC("Kernel=")  ) {
+    if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
       XString KernelLocation;
 
-      if (Entry->OSVersion && AsciiOSVersionToUint64(Entry->OSVersion) <= AsciiOSVersionToUint64("10.9")) {
+      if (OSVersion && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9")) {
         KernelLocation.SPrintf("\"Kernel=/mach_kernel\"");
       } else {
         // used for 10.10, 10.11, and new version.
         KernelLocation.SPrintf("\"Kernel=/System/Library/Kernels/kernel\"");
       }
-      Entry->LoadOptions.AddID(KernelLocation);
+      LoadOptions.AddID(KernelLocation);
     }
 
     //we are booting OSX - restore emulation if it's not installed before g boot.efi
@@ -772,64 +770,64 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 	  CheckEmptyFB();
     PatchSmbios();
 //    DBG("PatchACPI\n");
-    PatchACPI(Entry->Volume, Entry->OSVersion);
+    PatchACPI(Volume, OSVersion);
 
     // If KPDebug is true boot in verbose mode to see the debug messages
-    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPDebug) {
-      Entry->LoadOptions.AddID("-v"_XS);
+    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) {
+      LoadOptions.AddID("-v"_XS);
     }
 
     DbgHeader("RestSetup macOS");
 
 //    DBG("SetDevices\n");
-    SetDevices(Entry);
+    SetDevices(this);
 //    DBG("SetFSInjection\n");
-    SetFSInjection(Entry);
+    SetFSInjection();
     //PauseForKey(L"SetFSInjection");
 //    DBG("SetVariablesForOSX\n");
-    SetVariablesForOSX(Entry);
+    SetVariablesForOSX(this);
 //    DBG("SetVariablesForOSX\n");
-    EventsInitialize(Entry);
+    EventsInitialize(this);
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
 
     SetCPUProperties();
 
-    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-      DoHibernateWake = PrepareHibernation(Entry->Volume);
+    if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+      DoHibernateWake = PrepareHibernation(Volume);
     }
     SetupDataForOSX(DoHibernateWake);
     
 
     if (  gDriversFlags.AptioFixLoaded &&
           !DoHibernateWake &&
-          !Entry->LoadOptions.containsStartWithIC("slide=")  ) {
+          !LoadOptions.containsStartWithIC("slide=")  ) {
       // Add slide=0 argument for ML+ if not present
-      Entry->LoadOptions.AddID("slide=0"_XS);
+      LoadOptions.AddID("slide=0"_XS);
     }
      
       
     /**
      * syscl - append "-xcpm" argument conditionally if set KernelXCPM on Intel Haswell+ low-end CPUs
      */
-    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPKernelXCPM &&
+    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
-       (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
-       (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
-       (!Entry->LoadOptions.containsIC("-xcpm"))) {
+       (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
+       (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12")) &&
+       (!LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
-        Entry->LoadOptions.AddID("-xcpm"_XS);
+        LoadOptions.AddID("-xcpm"_XS);
     }
     
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
-    if ((Entry->KernelAndKextPatches != NULL) && Entry->KernelAndKextPatches->KPKernelXCPM &&
+    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPKernelXCPM &&
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
-        (AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
-        (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.12")) &&
-        (!Entry->LoadOptions.containsIC("-xcpm"))) {
+        (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
+        (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12")) &&
+        (!LoadOptions.containsIC("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
-      Entry->LoadOptions.AddID("-xcpm"_XS);
+      LoadOptions.AddID("-xcpm"_XS);
     }
 
     if (AudioIo) {
@@ -840,7 +838,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("LoadKexts\n");
     // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
     if (!DoHibernateWake) {
-      LoadKexts(Entry);
+      LoadKexts();
     }
 
     // blocking boot.efi output if -v is not specified
@@ -849,11 +847,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // which is wrong
     // apianti - only block console output if using graphics
     //           but don't block custom boot logo
-    if (  Entry->LoadOptions.containsIC("-v")  ) {
-          Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
+    if (  LoadOptions.containsIC("-v")  ) {
+          Flags = OSFLAG_UNSET(Flags, OSFLAG_USEGRAPHICS);
 	}
   }
-  else if (OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
+  else if (OSTYPE_IS_WINDOWS(LoaderType)) {
 
     if (AudioIo) {
         AudioIo->StopPlayback(AudioIo);
@@ -873,7 +871,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"continue");
 
   }
-  else if (OSTYPE_IS_LINUX(Entry->LoaderType) || (Entry->LoaderType == OSTYPE_LINEFI)) {
+  else if (OSTYPE_IS_LINUX(LoaderType) || (LoaderType == OSTYPE_LINEFI)) {
 
     DBG("Closing events for Linux\n");
     gBS->CloseEvent (OnReadyToBootEvent);
@@ -889,7 +887,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   }
 
   if (gSettings.LastBootedVolume) {
-    SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NullXStringW : Entry->LoaderPath);
+    SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
   } else if (gSettings.DefaultVolume != NULL) {
     // DefaultVolume specified in Config.plist or in Boot Option
     // we'll remove macOS Startup Disk vars which may be present if it is used
@@ -919,10 +917,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 */
 
 //    DBG("BeginExternalScreen\n");
-  BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, L"Booting OS"*/);
+  BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, L"Booting OS"*/);
 
-  if (!OSTYPE_IS_WINDOWS(Entry->LoaderType)) {
-    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
+  if (!OSTYPE_IS_WINDOWS(LoaderType)) {
+    if (OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)) {
       // save orig OutputString and replace it with
       // null implementation
       ConOutOutputString = gST->ConOut->OutputString;
@@ -930,7 +928,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
     
     // Initialize the boot screen
-    if (EFI_ERROR(Status = InitBootScreen(Entry))) {
+    if (EFI_ERROR(Status = InitBootScreen(this))) {
       if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %s!\n", strerror(Status));
     }
     else if (EFI_ERROR(Status = LockBootScreen())) {
@@ -938,9 +936,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     }
   } // !OSTYPE_IS_WINDOWS
 
-  if (OSTYPE_IS_OSX(Entry->LoaderType) ||
-      OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType) ||
-      OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+  if (OSTYPE_IS_OSX(LoaderType) ||
+      OSTYPE_IS_OSX_RECOVERY(LoaderType) ||
+      OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
 
     if (DoHibernateWake) {
       DBG("Closing events for wake\n");
@@ -973,16 +971,16 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   }
 
 //  DBG("StartEFIImage\n");
-//  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
-//                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
+//  StartEFIImage(DevicePath, LoadOptions,
+//                Basename(LoaderPath), Basename(LoaderPath), NULL, NULL);
 
 //  DBG("StartEFILoadedImage\n");
-  StartEFILoadedImage(ImageHandle, Entry->LoadOptions, Basename(Entry->LoaderPath.wc_str()), Entry->LoaderPath.basename(), NULL);
+  StartEFILoadedImage(ImageHandle, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL);
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
     DBG("Failed to unlock custom boot screen: %s!\n", strerror(Status));
   }
-  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)) {
+  if (OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)) {
     // return back orig OutputString
     gST->ConOut->OutputString = ConOutOutputString;
   }
@@ -995,7 +993,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 #define MAX_DISCOVERED_PATHS (16)
 //#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 
-static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
+VOID LEGACY_ENTRY::StartLegacy()
 {
     EFI_STATUS          Status = EFI_UNSUPPORTED;
 
@@ -1007,7 +1005,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     }
 
     if (gSettings.LastBootedVolume) {
-      SetStartupDiskVolume(Entry->Volume, NullXStringW);
+      SetStartupDiskVolume(Volume, NullXStringW);
     } else if (gSettings.DefaultVolume != NULL) {
       // DefaultVolume specified in Config.plist:
       // we'll remove macOS Startup Disk vars which may be present if it is used
@@ -1019,28 +1017,28 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
   egClearScreen(&MenuBackgroundPixel);
   BeginExternalScreen(TRUE/*, L"Booting Legacy OS"*/);
   XImage BootLogoX;
-  BootLogoX.LoadXImage(ThemeX.ThemeDir, Entry->Volume->LegacyOS->IconName);
+  BootLogoX.LoadXImage(ThemeX.ThemeDir, Volume->LegacyOS->IconName);
   BootLogoX.Draw((UGAWidth  - BootLogoX.GetWidth()) >> 1,
                  (UGAHeight - BootLogoX.GetHeight()) >> 1);
 
       //try my LegacyBoot
-      switch (Entry->Volume->BootType) {
+      switch (Volume->BootType) {
         case BOOTING_BY_CD:
-          Status = bootElTorito(Entry->Volume);
+          Status = bootElTorito(Volume);
           break;
         case BOOTING_BY_MBR:
-          Status = bootMBR(Entry->Volume);
+          Status = bootMBR(Volume);
           break;
         case BOOTING_BY_PBR:
           if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosDefault") == 0) {
             Status = bootLegacyBiosDefault(gSettings.LegacyBiosDefaultEntry);
           } else if (StrCmp(gSettings.LegacyBoot, L"PBRtest") == 0) {
-            Status = bootPBRtest(Entry->Volume);
+            Status = bootPBRtest(Volume);
           } else if (StrCmp(gSettings.LegacyBoot, L"PBRsata") == 0) {
-            Status = bootPBR(Entry->Volume, TRUE);
+            Status = bootPBR(Volume, TRUE);
           } else {
             // default
-            Status = bootPBR(Entry->Volume, FALSE);
+            Status = bootPBR(Volume, FALSE);
           }
           break;
         default:
@@ -1055,13 +1053,13 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 // pre-boot tool functions
 //
 
-static VOID StartTool(IN REFIT_MENU_ENTRY_LOADER_TOOL *Entry)
+VOID REFIT_MENU_ENTRY_LOADER_TOOL::StartTool()
 {
-  DBG("Start Tool: %ls\n", Entry->LoaderPath.wc_str());
+  DBG("Start Tool: %ls\n", LoaderPath.wc_str());
   egClearScreen(&MenuBackgroundPixel);
 	// assumes "Start <title>" as assigned below
-	BeginExternalScreen(OSFLAG_ISSET(Entry->Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
-    StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath.wc_str()), Entry->LoaderPath.basename(), NULL, NULL);
+	BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
+    StartEFIImage(DevicePath, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL, NULL);
     FinishExternalScreen();
 	//ReinitSelfLib();
 }
@@ -2531,9 +2529,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         )
     {
       if (DefaultEntry->getLOADER_ENTRY()) {
-        StartLoader(DefaultEntry->getLOADER_ENTRY());
+        DefaultEntry->StartLoader();
       } else if (DefaultEntry->getLEGACY_ENTRY()){
-        StartLegacy(DefaultEntry->getLEGACY_ENTRY());
+        DefaultEntry->StartLegacy();
       }
       GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
@@ -2559,9 +2557,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       GlobalConfig.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
         if (DefaultEntry->getLOADER_ENTRY()) {
-          StartLoader(DefaultEntry->getLOADER_ENTRY());
+          DefaultEntry->StartLoader();
         } else if (DefaultEntry->getLEGACY_ENTRY()){
-          StartLegacy(DefaultEntry->getLEGACY_ENTRY());
+          DefaultEntry->StartLegacy();
         }
         // if something goes wrong - break main loop to reinit volumes
         break;
@@ -2666,7 +2664,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   */
       if ( ChosenEntry->getLOADER_ENTRY() ) {   // Boot OS via .EFI loader
         SetBootCurrent(ChosenEntry->getLOADER_ENTRY());
-        StartLoader(ChosenEntry->getLOADER_ENTRY());
+        ChosenEntry->StartLoader();
         //if boot.efi failed we should somehow exit from the loop
         TerminateScreen();
         MainLoopRunning = FALSE;
@@ -2685,12 +2683,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           AfterTool = TRUE;
         } else {
           SetBootCurrent(ChosenEntry->getLEGACY_ENTRY());
-          StartLegacy(ChosenEntry->getLEGACY_ENTRY());
+          ChosenEntry->StartLegacy();
         }
       }
 
       if ( ChosenEntry->getREFIT_MENU_ENTRY_LOADER_TOOL() ) {     // Start a EFI tool
-        StartTool(ChosenEntry->getREFIT_MENU_ENTRY_LOADER_TOOL());
+        ChosenEntry->StartTool();
         TerminateScreen(); //does not happen
         //   return EFI_SUCCESS;
         //  BdsLibConnectAllDriversToAllControllers();

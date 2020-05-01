@@ -63,7 +63,7 @@ GrowDepexStack (
     //
     // Copy to Old Stack to the New Stack
     //
-    CopyMem (
+    CopyMem(
       NewStack,
       mDepexEvaluationStack,
       (mDepexEvaluationStackEnd - mDepexEvaluationStack) * sizeof (BOOLEAN)
@@ -238,7 +238,7 @@ SmmIsSchedulable (
       // Push operator is followed by a GUID. Test to see if the GUID protocol
       // is installed and push the boolean result on the stack.
       //
-      CopyMem (&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
+      CopyMem(&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
 
       Status = SmmLocateProtocol (&DriverGuid, NULL, &Interface);
       if (EFI_ERROR(Status)) {
@@ -350,7 +350,7 @@ SmmIsSchedulable (
       return Operator;
 
     case EFI_DEP_REPLACE_TRUE:
-      CopyMem (&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
+      CopyMem(&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
       DEBUG ((DEBUG_DISPATCH, "  PUSH GUID(%g) = TRUE\n", &DriverGuid));
       Status = PushBool (TRUE);
       if (EFI_ERROR(Status)) {

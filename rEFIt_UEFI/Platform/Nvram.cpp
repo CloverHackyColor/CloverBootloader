@@ -804,7 +804,7 @@ GetEfiBootDeviceFromNvram ()
   if (Guid != NULL) {
     gEfiBootDeviceGuid = (__typeof__(gEfiBootDeviceGuid))AllocatePool (sizeof(EFI_GUID));
     if (gEfiBootDeviceGuid != NULL) {
-      CopyMem (gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
+      CopyMem(gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
       DBG("  - Guid = %s\n", strguid(gEfiBootDeviceGuid));
     }
   }

@@ -250,7 +250,7 @@ SetVariableCheckHandlerMorLock (
         // Lock success, provision the key
         //
         mMorLockKeyEmpty = FALSE;
-        CopyMem (mMorLockKey, Data, MOR_LOCK_V2_KEY_SIZE);
+        CopyMem(mMorLockKey, Data, MOR_LOCK_V2_KEY_SIZE);
         mMorLockState = MorLockStateLocked;
         //
         // return EFI_ALREADY_STARTED to skip variable set.

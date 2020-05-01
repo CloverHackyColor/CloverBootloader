@@ -1421,7 +1421,7 @@ GetFullSmramRanges (
   SmramReservedRanges = (EFI_SMM_RESERVED_SMRAM_REGION *) AllocatePool (Size);
   ASSERT (SmramReservedRanges != NULL);
   for (Index = 0; Index < SmramReservedCount; Index++) {
-    CopyMem (&SmramReservedRanges[Index], &SmmConfiguration->SmramReservedRegions[Index], sizeof (EFI_SMM_RESERVED_SMRAM_REGION));
+    CopyMem(&SmramReservedRanges[Index], &SmmConfiguration->SmramReservedRegions[Index], sizeof (EFI_SMM_RESERVED_SMRAM_REGION));
   }
 
   Size = MaxCount * sizeof (EFI_SMRAM_DESCRIPTOR);
@@ -1472,7 +1472,7 @@ GetFullSmramRanges (
           // No any overlap, copy the entry to the temp SMRAM ranges.
           // Zero SmramRanges[Index].PhysicalSize = 0;
           //
-          CopyMem (&TempSmramRanges[TempSmramRangeCount++], &SmramRanges[Index], sizeof (EFI_SMRAM_DESCRIPTOR));
+          CopyMem(&TempSmramRanges[TempSmramRangeCount++], &SmramRanges[Index], sizeof (EFI_SMRAM_DESCRIPTOR));
           SmramRanges[Index].PhysicalSize = 0;
         }
       }
@@ -1498,7 +1498,7 @@ GetFullSmramRanges (
         Index = Index2;
       }
     }
-    CopyMem (&FullSmramRanges[*FullSmramRangeCount], &TempSmramRanges[Index], sizeof (EFI_SMRAM_DESCRIPTOR));
+    CopyMem(&FullSmramRanges[*FullSmramRangeCount], &TempSmramRanges[Index], sizeof (EFI_SMRAM_DESCRIPTOR));
     *FullSmramRangeCount += 1;
     TempSmramRanges[Index].PhysicalSize = 0;
   } while (*FullSmramRangeCount < TempSmramRangeCount);

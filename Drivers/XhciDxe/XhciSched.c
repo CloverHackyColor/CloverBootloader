@@ -43,7 +43,7 @@ XhcCreateCmdTrb (
   XhcSyncTrsRing (Xhc, Urb->Ring);
   Urb->TrbNum     = 1;
   Urb->TrbStart   = Urb->Ring->RingEnqueue;
-  CopyMem (Urb->TrbStart, CmdTrb, sizeof (TRB_TEMPLATE));
+  CopyMem(Urb->TrbStart, CmdTrb, sizeof (TRB_TEMPLATE));
   Urb->TrbStart->CycleBit = Urb->Ring->RingPCS & BIT0;
   Urb->TrbEnd             = Urb->TrbStart;
 
@@ -1629,7 +1629,7 @@ XhcMonitorAsyncRequests (
         continue;
       }
 
-      CopyMem (ProcBuf, Urb->Data, Urb->Completed);
+      CopyMem(ProcBuf, Urb->Data, Urb->Completed);
     }
 
     //
@@ -3146,7 +3146,7 @@ XhcSetConfigCmd (
   InputContext  = Xhc->UsbDevContext[SlotId].InputContext;
   OutputContext = Xhc->UsbDevContext[SlotId].OutputContext;
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT));
-  CopyMem (&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT));
+  CopyMem(&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT));
 
 //  ASSERT (ConfigDesc != NULL);
   if (!ConfigDesc) {
@@ -3239,7 +3239,7 @@ XhcSetConfigCmd64 (
   InputContext  = Xhc->UsbDevContext[SlotId].InputContext;
   OutputContext = Xhc->UsbDevContext[SlotId].OutputContext;
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT_64));
-  CopyMem (&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT_64));
+  CopyMem(&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT_64));
 
 //  ASSERT (ConfigDesc != NULL);
   if (!ConfigDesc) {
@@ -3523,7 +3523,7 @@ XhcSetInterface (
   // So the default Drop Context and Add Context flags can be '0' to cover 1).
   //
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT));
-  CopyMem (&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT));
+  CopyMem(&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT));
 
 //ASSERT (ConfigDesc != NULL);
 
@@ -3725,7 +3725,7 @@ XhcSetInterface64 (
   // So the default Drop Context and Add Context flags can be '0' to cover 1).
   //
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT_64));
-  CopyMem (&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT_64));
+  CopyMem(&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT_64));
 
 //ASSERT (ConfigDesc != NULL);
 

@@ -115,7 +115,7 @@ MigratePeiServicesTablePointer (
   //
   // Idt table needs to be migrated into memory.
   //
-  CopyMem ((VOID *) (UINTN) IdtBase, (VOID *) (Idtr.Base - sizeof (UINTN)), Idtr.Limit + 1 + sizeof (UINTN));
+  CopyMem((VOID *) (UINTN) IdtBase, (VOID *) (Idtr.Base - sizeof (UINTN)), Idtr.Limit + 1 + sizeof (UINTN));
   Idtr.Base = (UINTN) IdtBase + sizeof (UINTN);
   AsmWriteIdtr (&Idtr);
 

@@ -1181,7 +1181,7 @@ GetSmramProfileData (
   RecordingState = MEMORY_PROFILE_RECORDING_DISABLE;
 
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
+  CopyMem(&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
   CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE);
 
   CommRecordingState = (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
@@ -1204,7 +1204,7 @@ GetSmramProfileData (
   RecordingState = CommRecordingState->RecordingState;
   if (RecordingState == MEMORY_PROFILE_RECORDING_ENABLE) {
     CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
-    CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
+    CopyMem(&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
     CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE);
 
     CommRecordingState = (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
@@ -1221,7 +1221,7 @@ GetSmramProfileData (
   // Get Size
   //
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
+  CopyMem(&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
   CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO);
 
   CommGetProfileInfo = (SMRAM_PROFILE_PARAMETER_GET_PROFILE_INFO *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
@@ -1253,7 +1253,7 @@ GetSmramProfileData (
   }
 
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof(gEdkiiMemoryProfileGuid));
+  CopyMem(&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof(gEdkiiMemoryProfileGuid));
   CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET);
 
   CommGetProfileData = (SMRAM_PROFILE_PARAMETER_GET_PROFILE_DATA_BY_OFFSET *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];
@@ -1282,7 +1282,7 @@ GetSmramProfileData (
       Print (L"GetProfileData - 0x%x\n", CommGetProfileData->Header.ReturnStatus);
       goto Done;
     }
-    CopyMem ((UINT8 *) ProfileBuffer + Offset, (VOID *) (UINTN) CommGetProfileData->ProfileBuffer, (UINTN) CommGetProfileData->ProfileSize);
+    CopyMem((UINT8 *) ProfileBuffer + Offset, (VOID *) (UINTN) CommGetProfileData->ProfileBuffer, (UINTN) CommGetProfileData->ProfileSize);
   }
 
 
@@ -1311,7 +1311,7 @@ Done:
   //
   if (RecordingState == MEMORY_PROFILE_RECORDING_ENABLE) {
     CommHeader = (EFI_SMM_COMMUNICATE_HEADER *) &CommBuffer[0];
-    CopyMem (&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
+    CopyMem(&CommHeader->HeaderGuid, &gEdkiiMemoryProfileGuid, sizeof (gEdkiiMemoryProfileGuid));
     CommHeader->MessageLength = sizeof (SMRAM_PROFILE_PARAMETER_RECORDING_STATE);
 
     CommRecordingState = (SMRAM_PROFILE_PARAMETER_RECORDING_STATE *) &CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, Data)];

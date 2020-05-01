@@ -1075,7 +1075,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
 	  DBG("get IOHR variable status=%s, size=%llu, RTC info=%d\n", strerror(Status), Size, HasHibernateInfoInRTC);
     if (!HasHibernateInfo && !EFI_ERROR(Status) && Size == sizeof (RtcVars)) {
-      CopyMem (RtcRawVars, Value, sizeof (RtcVars));
+      CopyMem(RtcRawVars, Value, sizeof (RtcVars));
       HasHibernateInfo = (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
       RtcVars.signature[2] == 'P' && RtcVars.signature[3] == 'L');
     }

@@ -90,7 +90,7 @@ CoreInstallConfigurationTable (
     // Copy over deleted entry
     //
  //   Print(L"Copy over deleted entry\n");
-    CopyMem (
+    CopyMem(
       &(EfiConfigurationTable[Index]),
       &(gDxeCoreST->ConfigurationTable[Index + 1]),
       (gDxeCoreST->NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
@@ -132,7 +132,7 @@ CoreInstallConfigurationTable (
         // Copy the old table to the new table.
         //
  //       Print(L"Copy the old table to the new table\n");
-        CopyMem (
+        CopyMem(
           EfiConfigurationTable,
           gDxeCoreST->ConfigurationTable,
           Index * sizeof (EFI_CONFIGURATION_TABLE)

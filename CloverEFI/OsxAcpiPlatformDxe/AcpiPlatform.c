@@ -159,7 +159,7 @@ InstallLegacyTables (
 
     BasePtr = (UINTN)(&(Xsdt->Entry));
     for (Index = 0; Index < EntryCount; Index ++) {
-      CopyMem (&Entry64, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
+      CopyMem(&Entry64, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
       Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
       TableSize = Table->Length;
       if (Index == 0) {

@@ -155,9 +155,9 @@ FrameBufferBltConfigure (
     return RETURN_INVALID_PARAMETER;
   }
 
-  CopyMem (&Configure->PixelMasks, BitMask,  sizeof (*BitMask));
-  CopyMem (Configure->PixelShl,    PixelShl, sizeof (PixelShl));
-  CopyMem (Configure->PixelShr,    PixelShr, sizeof (PixelShr));
+  CopyMem(&Configure->PixelMasks, BitMask,  sizeof (*BitMask));
+  CopyMem(Configure->PixelShl,    PixelShl, sizeof (PixelShl));
+  CopyMem(Configure->PixelShr,    PixelShr, sizeof (PixelShr));
   Configure->BytesPerPixel     = BytesPerPixel;
   Configure->PixelFormat       = FrameBufferInfo->PixelFormat;
   Configure->FrameBuffer       = (UINT8*) FrameBuffer;
@@ -262,7 +262,7 @@ FrameBufferBltLibVideoFill (
       }
     }
     if (UseWideFill) {
-      SetMem (&WideFill, sizeof (WideFill), Uint8);
+      SetMem(&WideFill, sizeof (WideFill), Uint8);
     }
   }
 
@@ -278,7 +278,7 @@ FrameBufferBltLibVideoFill (
       SizeInBytes &= 3;
     }
     if (SizeInBytes > 0) {
-      SetMem (Destination, SizeInBytes, (UINT8) (UINTN) WideFill);
+      SetMem(Destination, SizeInBytes, (UINT8) (UINTN) WideFill);
     }
   } else {
     LineBufferReady = FALSE;
@@ -296,14 +296,14 @@ FrameBufferBltLibVideoFill (
           SizeInBytes &= 7;
         }
         if (SizeInBytes > 0) {
-          CopyMem (Destination, &WideFill, SizeInBytes);
+          CopyMem(Destination, &WideFill, SizeInBytes);
         }
       } else {
         DEBUG ((EFI_D_VERBOSE, "VideoFill (not wide)\n"));
         if (!LineBufferReady) {
-          CopyMem (Configure->LineBuffer, &WideFill, Configure->BytesPerPixel);
+          CopyMem(Configure->LineBuffer, &WideFill, Configure->BytesPerPixel);
           for (IndexX = 1; IndexX < Width; ) {
-            CopyMem (
+            CopyMem(
               (Configure->LineBuffer + (IndexX * Configure->BytesPerPixel)),
               Configure->LineBuffer,
               MIN (IndexX, Width - IndexX) * Configure->BytesPerPixel
@@ -312,7 +312,7 @@ FrameBufferBltLibVideoFill (
           }
           LineBufferReady = TRUE;
         }
-        CopyMem (Destination, Configure->LineBuffer, WidthInBytes);
+        CopyMem(Destination, Configure->LineBuffer, WidthInBytes);
       }
     }
   }
@@ -404,7 +404,7 @@ FrameBufferBltLibVideoToBltBuffer (
       Destination = Configure->LineBuffer;
     }
 
-    CopyMem (Destination, Source, WidthInBytes);
+    CopyMem(Destination, Source, WidthInBytes);
 
     if (Configure->PixelFormat != PixelBlueGreenRedReserved8BitPerColor) {
       for (IndexX = 0; IndexX < Width; IndexX++) {
@@ -527,7 +527,7 @@ FrameBufferBltLibBufferToVideo (
       Source = Configure->LineBuffer;
     }
 
-    CopyMem (Destination, Source, WidthInBytes);
+    CopyMem(Destination, Source, WidthInBytes);
   }
 
   return RETURN_SUCCESS;
@@ -609,7 +609,7 @@ FrameBufferBltLibVideoToVideo (
   }
 
   while (Height-- > 0) {
-    CopyMem (Destination, Source, WidthInBytes);
+    CopyMem(Destination, Source, WidthInBytes);
 
     Source += LineStride;
     Destination += LineStride;

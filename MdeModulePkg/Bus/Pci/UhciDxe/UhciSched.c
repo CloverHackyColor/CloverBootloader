@@ -1007,7 +1007,7 @@ UhciMonitorAsyncReqList (
         return ;
       }
 
-      CopyMem (Data, AsyncReq->FirstTd->Data, QhResult.Complete);
+      CopyMem(Data, AsyncReq->FirstTd->Data, QhResult.Complete);
     }
 
     UhciUpdateAsyncReq (Uhc, AsyncReq, QhResult.Result, QhResult.NextToggle);

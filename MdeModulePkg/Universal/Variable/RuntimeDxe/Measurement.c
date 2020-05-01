@@ -105,16 +105,16 @@ MeasureVariable (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (&VarLog->VariableName, VendorGuid, sizeof(VarLog->VariableName));
+  CopyMem(&VarLog->VariableName, VendorGuid, sizeof(VarLog->VariableName));
   VarLog->UnicodeNameLength  = VarNameLength;
   VarLog->VariableDataLength = VarSize;
-  CopyMem (
+  CopyMem(
      VarLog->UnicodeName,
      VarName,
      VarNameLength * sizeof (*VarName)
      );
   if (VarSize != 0) {
-    CopyMem (
+    CopyMem(
        (CHAR16 *)VarLog->UnicodeName + VarNameLength,
        VarData,
        VarSize

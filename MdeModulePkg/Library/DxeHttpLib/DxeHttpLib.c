@@ -1536,7 +1536,7 @@ HttpSetFieldNameAndValue (
   if (HttpHeader->FieldName == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  CopyMem (HttpHeader->FieldName, FieldName, FieldNameSize);
+  CopyMem(HttpHeader->FieldName, FieldName, FieldNameSize);
   HttpHeader->FieldName[FieldNameSize - 1] = 0;
 
   FieldValueSize = AsciiStrSize (FieldValue);
@@ -1545,7 +1545,7 @@ HttpSetFieldNameAndValue (
     FreePool(HttpHeader->FieldName);
     return EFI_OUT_OF_RESOURCES;
   }
-  CopyMem (HttpHeader->FieldValue, FieldValue, FieldValueSize);
+  CopyMem(HttpHeader->FieldValue, FieldValue, FieldValueSize);
   HttpHeader->FieldValue[FieldValueSize - 1] = 0;
 
   return EFI_SUCCESS;
@@ -1850,32 +1850,32 @@ HttpGenRequestMessage (
     switch (Message->Data.Request->Method) {
     case HttpMethodGet:
       StrLength = sizeof (HTTP_METHOD_GET) - 1;
-      CopyMem (RequestPtr, HTTP_METHOD_GET, StrLength);
+      CopyMem(RequestPtr, HTTP_METHOD_GET, StrLength);
       RequestPtr += StrLength;
       break;
     case HttpMethodPut:
       StrLength = sizeof (HTTP_METHOD_PUT) - 1;
-      CopyMem (RequestPtr, HTTP_METHOD_PUT, StrLength);
+      CopyMem(RequestPtr, HTTP_METHOD_PUT, StrLength);
       RequestPtr += StrLength;
       break;
     case HttpMethodPatch:
       StrLength = sizeof (HTTP_METHOD_PATCH) - 1;
-      CopyMem (RequestPtr, HTTP_METHOD_PATCH, StrLength);
+      CopyMem(RequestPtr, HTTP_METHOD_PATCH, StrLength);
       RequestPtr += StrLength;
       break;
     case HttpMethodPost:
       StrLength = sizeof (HTTP_METHOD_POST) - 1;
-      CopyMem (RequestPtr, HTTP_METHOD_POST, StrLength);
+      CopyMem(RequestPtr, HTTP_METHOD_POST, StrLength);
       RequestPtr += StrLength;
       break;
     case HttpMethodHead:
       StrLength = sizeof (HTTP_METHOD_HEAD) - 1;
-      CopyMem (RequestPtr, HTTP_METHOD_HEAD, StrLength);
+      CopyMem(RequestPtr, HTTP_METHOD_HEAD, StrLength);
       RequestPtr += StrLength;
       break;
     case HttpMethodDelete:
       StrLength = sizeof (HTTP_METHOD_DELETE) - 1;
-      CopyMem (RequestPtr, HTTP_METHOD_DELETE, StrLength);
+      CopyMem(RequestPtr, HTTP_METHOD_DELETE, StrLength);
       RequestPtr += StrLength;
       break;
     default:
@@ -1885,22 +1885,22 @@ HttpGenRequestMessage (
     }
 
     StrLength = AsciiStrLen(EMPTY_SPACE);
-    CopyMem (RequestPtr, EMPTY_SPACE, StrLength);
+    CopyMem(RequestPtr, EMPTY_SPACE, StrLength);
     RequestPtr += StrLength;
 
     StrLength = AsciiStrLen(Url);
-    CopyMem (RequestPtr, Url, StrLength);
+    CopyMem(RequestPtr, Url, StrLength);
     RequestPtr += StrLength;
 
     StrLength = sizeof (HTTP_VERSION_CRLF_STR) - 1;
-    CopyMem (RequestPtr, HTTP_VERSION_CRLF_STR, StrLength);
+    CopyMem(RequestPtr, HTTP_VERSION_CRLF_STR, StrLength);
     RequestPtr += StrLength;
 
     if (HttpHdr != NULL) {
       //
       // Construct header
       //
-      CopyMem (RequestPtr, HttpHdr, HttpHdrSize);
+      CopyMem(RequestPtr, HttpHdr, HttpHdrSize);
       RequestPtr += HttpHdrSize;
     }
   }
@@ -1909,7 +1909,7 @@ HttpGenRequestMessage (
   // Construct body
   //
   if (Message->Body != NULL) {
-    CopyMem (RequestPtr, Message->Body, Message->BodyLength);
+    CopyMem(RequestPtr, Message->Body, Message->BodyLength);
     RequestPtr += Message->BodyLength;
   }
 

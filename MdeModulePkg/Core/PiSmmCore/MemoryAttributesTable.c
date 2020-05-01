@@ -136,9 +136,9 @@ SortMemoryMap (
   while (MemoryMapEntry < MemoryMapEnd) {
     while (NextMemoryMapEntry < MemoryMapEnd) {
       if (MemoryMapEntry->PhysicalStart > NextMemoryMapEntry->PhysicalStart) {
-        CopyMem (&TempMemoryMap, MemoryMapEntry, sizeof(EFI_MEMORY_DESCRIPTOR));
-        CopyMem (MemoryMapEntry, NextMemoryMapEntry, sizeof(EFI_MEMORY_DESCRIPTOR));
-        CopyMem (NextMemoryMapEntry, &TempMemoryMap, sizeof(EFI_MEMORY_DESCRIPTOR));
+        CopyMem(&TempMemoryMap, MemoryMapEntry, sizeof(EFI_MEMORY_DESCRIPTOR));
+        CopyMem(MemoryMapEntry, NextMemoryMapEntry, sizeof(EFI_MEMORY_DESCRIPTOR));
+        CopyMem(NextMemoryMapEntry, &TempMemoryMap, sizeof(EFI_MEMORY_DESCRIPTOR));
       }
 
       NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (NextMemoryMapEntry, DescriptorSize);
@@ -180,7 +180,7 @@ MergeMemoryMap (
   NewMemoryMapEntry = MemoryMap;
   MemoryMapEnd = (EFI_MEMORY_DESCRIPTOR *) ((UINT8 *) MemoryMap + *MemoryMapSize);
   while ((UINTN)MemoryMapEntry < (UINTN)MemoryMapEnd) {
-    CopyMem (NewMemoryMapEntry, MemoryMapEntry, sizeof(EFI_MEMORY_DESCRIPTOR));
+    CopyMem(NewMemoryMapEntry, MemoryMapEntry, sizeof(EFI_MEMORY_DESCRIPTOR));
     NextMemoryMapEntry = NEXT_MEMORY_DESCRIPTOR (MemoryMapEntry, DescriptorSize);
 
     do {
@@ -324,7 +324,7 @@ SetNewRecord (
   UINT64                                    PhysicalEnd;
   UINT64                                    ImageEnd;
 
-  CopyMem (&TempRecord, OldRecord, sizeof(EFI_MEMORY_DESCRIPTOR));
+  CopyMem(&TempRecord, OldRecord, sizeof(EFI_MEMORY_DESCRIPTOR));
   PhysicalEnd = TempRecord.PhysicalStart + EfiPagesToSize(TempRecord.NumberOfPages);
   NewRecordCount = 0;
 
@@ -477,7 +477,7 @@ SplitRecord (
   UINTN                   TotalNewRecordCount;
 
   if (MaxSplitRecordCount == 0) {
-    CopyMem (NewRecord, OldRecord, DescriptorSize);
+    CopyMem(NewRecord, OldRecord, DescriptorSize);
     return 0;
   }
 
@@ -486,7 +486,7 @@ SplitRecord (
   //
   // Override previous record
   //
-  CopyMem (&TempRecord, OldRecord, sizeof(EFI_MEMORY_DESCRIPTOR));
+  CopyMem(&TempRecord, OldRecord, sizeof(EFI_MEMORY_DESCRIPTOR));
   PhysicalStart = TempRecord.PhysicalStart;
   PhysicalEnd = TempRecord.PhysicalStart + EfiPagesToSize(TempRecord.NumberOfPages);
 
@@ -624,7 +624,7 @@ SplitTable (
     // Adjust IndexNew according to real split.
     //
     if (MaxSplitRecordCount != RealSplitRecordCount) {
-      CopyMem (
+      CopyMem(
         ((UINT8 *)MemoryMap + (IndexNew + MaxSplitRecordCount - RealSplitRecordCount) * DescriptorSize),
         ((UINT8 *)MemoryMap + IndexNew * DescriptorSize),
         (RealSplitRecordCount + 1) * DescriptorSize
@@ -637,7 +637,7 @@ SplitTable (
   //
   // Move all records to the beginning.
   //
-  CopyMem (
+  CopyMem(
     MemoryMap,
     (UINT8 *)MemoryMap + (AdditionalRecordCount - TotalSplitRecordCount) * DescriptorSize,
     (*MemoryMapSize) + TotalSplitRecordCount * DescriptorSize
@@ -1242,7 +1242,7 @@ PublishMemoryAttributesTable (
   DEBUG ((DEBUG_INFO, "  DescriptorSize       - 0x%08x\n", MemoryAttributesTable->DescriptorSize));
   MemoryAttributesEntry = (EFI_MEMORY_DESCRIPTOR *)(MemoryAttributesTable + 1);
   for (Index = 0; Index < MemoryMapSize/DescriptorSize; Index++) {
-    CopyMem (MemoryAttributesEntry, MemoryMap, DescriptorSize);
+    CopyMem(MemoryAttributesEntry, MemoryMap, DescriptorSize);
     DEBUG ((DEBUG_INFO, "Entry (0x%x)\n", MemoryAttributesEntry));
     DEBUG ((DEBUG_INFO, "  Type              - 0x%x\n", MemoryAttributesEntry->Type));
     DEBUG ((DEBUG_INFO, "  PhysicalStart     - 0x%016lx\n", MemoryAttributesEntry->PhysicalStart));

@@ -124,7 +124,7 @@ BotCommandPhase (
   Cbw.Lun                 = 0;
   Cbw.CmdLen              = CommandSize;
 
-  CopyMem (Cbw.CmdBlock, Command, CommandSize);
+  CopyMem(Cbw.CmdBlock, Command, CommandSize);
 
   DataSize = sizeof (CBW);
 

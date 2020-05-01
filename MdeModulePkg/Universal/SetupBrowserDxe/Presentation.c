@@ -337,7 +337,7 @@ InitializeDisplayStatement (
     InsertTailList(&DisplayStatement->OptionListHead, &DisplayOption->Link);
   }
 
-  CopyMem (&DisplayStatement->CurrentValue, &Statement->HiiValue, sizeof (EFI_HII_VALUE));
+  CopyMem(&DisplayStatement->CurrentValue, &Statement->HiiValue, sizeof (EFI_HII_VALUE));
 
   //
   // Some special op code need an extra buffer to save the data.
@@ -1094,11 +1094,11 @@ GetFormsetGuidFromHiiHandle (
   //
   Offset = sizeof (EFI_HII_PACKAGE_LIST_HEADER);
   Offset2 = 0;
-  CopyMem (&PackageListLength, &HiiPackageList->PackageLength, sizeof (UINT32));
+  CopyMem(&PackageListLength, &HiiPackageList->PackageLength, sizeof (UINT32));
 
   while (Offset < PackageListLength) {
     Package = ((UINT8 *) HiiPackageList) + Offset;
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
     Offset += PackageHeader.Length;
 
     if (PackageHeader.Type == EFI_HII_PACKAGE_FORMS) {
@@ -1325,7 +1325,7 @@ FindParentFormSet (
   ParentMenu  = UiFindParentMenu(CurrentMenu, FormSetLevel);
 
   if (ParentMenu != NULL) {
-    CopyMem (&Selection->FormSetGuid, &ParentMenu->FormSetGuid, sizeof (EFI_GUID));
+    CopyMem(&Selection->FormSetGuid, &ParentMenu->FormSetGuid, sizeof (EFI_GUID));
     Selection->Handle = ParentMenu->HiiHandle;
     Selection->FormId     = ParentMenu->FormId;
     Selection->QuestionId = ParentMenu->QuestionId;
@@ -1418,7 +1418,7 @@ ProcessGotoOpCode (
       return EFI_SUCCESS;
     }
 
-    CopyMem (&Selection->FormSetGuid,&Statement->HiiValue.Value.ref.FormSetGuid, sizeof (EFI_GUID));
+    CopyMem(&Selection->FormSetGuid,&Statement->HiiValue.Value.ref.FormSetGuid, sizeof (EFI_GUID));
     Selection->FormId = Statement->HiiValue.Value.ref.FormId;
     Selection->QuestionId = Statement->HiiValue.Value.ref.QuestionId;
   } else if (!IsZeroGuid (&Statement->HiiValue.Value.ref.FormSetGuid)) {
@@ -1447,7 +1447,7 @@ ProcessGotoOpCode (
       return EFI_SUCCESS;
     }
 
-    CopyMem (&Selection->FormSetGuid, &Statement->HiiValue.Value.ref.FormSetGuid, sizeof (EFI_GUID));
+    CopyMem(&Selection->FormSetGuid, &Statement->HiiValue.Value.ref.FormSetGuid, sizeof (EFI_GUID));
     Selection->FormId = Statement->HiiValue.Value.ref.FormId;
     Selection->QuestionId = Statement->HiiValue.Value.ref.QuestionId;
   } else if (Statement->HiiValue.Value.ref.FormId != 0) {
@@ -1612,7 +1612,7 @@ ProcessUserInput (
       case EFI_IFR_STRING_OP:
         DeleteString(Statement->HiiValue.Value.string, gCurrentSelection->FormSet->HiiHandle);
         Statement->HiiValue.Value.string = UserInput->InputValue.Value.string;
-        CopyMem (Statement->BufferValue, UserInput->InputValue.Buffer, (UINTN) UserInput->InputValue.BufferLen);
+        CopyMem(Statement->BufferValue, UserInput->InputValue.Buffer, (UINTN) UserInput->InputValue.BufferLen);
         FreePool(UserInput->InputValue.Buffer);
         break;
 
@@ -1626,7 +1626,7 @@ ProcessUserInput (
 
         DeleteString(Statement->HiiValue.Value.string, gCurrentSelection->FormSet->HiiHandle);
         Statement->HiiValue.Value.string = UserInput->InputValue.Value.string;
-        CopyMem (Statement->BufferValue, UserInput->InputValue.Buffer, (UINTN) UserInput->InputValue.BufferLen);
+        CopyMem(Statement->BufferValue, UserInput->InputValue.Buffer, (UINTN) UserInput->InputValue.BufferLen);
         ZeroMem (UserInput->InputValue.Buffer, (UINTN) UserInput->InputValue.BufferLen);
         FreePool(UserInput->InputValue.Buffer);
         //
@@ -1645,11 +1645,11 @@ ProcessUserInput (
         break;
 
       case EFI_IFR_ORDERED_LIST_OP:
-        CopyMem (Statement->BufferValue, UserInput->InputValue.Buffer, UserInput->InputValue.BufferLen);
+        CopyMem(Statement->BufferValue, UserInput->InputValue.Buffer, UserInput->InputValue.BufferLen);
         break;
 
       default:
-        CopyMem (&Statement->HiiValue, &UserInput->InputValue, sizeof (EFI_HII_VALUE));
+        CopyMem(&Statement->HiiValue, &UserInput->InputValue, sizeof (EFI_HII_VALUE));
         break;
       }
       break;
@@ -1890,7 +1890,7 @@ FindNextMenu (
       Selection->Action = UI_ACTION_REFRESH_FORM;
     } else {
       Selection->Action = UI_ACTION_REFRESH_FORMSET;
-      CopyMem (&Selection->FormSetGuid, &ParentMenu->FormSetGuid, sizeof (EFI_GUID));
+      CopyMem(&Selection->FormSetGuid, &ParentMenu->FormSetGuid, sizeof (EFI_GUID));
       Selection->Handle = ParentMenu->HiiHandle;
     }
 
@@ -2035,7 +2035,7 @@ ProcessCallBackFunction (
         BackUpBuffer = AllocateCopyPool(Statement->StorageWidth, Statement->BufferValue);
         ASSERT (BackUpBuffer != NULL);
       } else {
-        CopyMem (&BackUpValue, &HiiValue->Value, sizeof (EFI_IFR_TYPE_VALUE));
+        CopyMem(&BackUpValue, &HiiValue->Value, sizeof (EFI_IFR_TYPE_VALUE));
       }
     }
 
@@ -2059,9 +2059,9 @@ ProcessCallBackFunction (
         ASSERT (StrLen (NewString) * sizeof (CHAR16) <= Statement->StorageWidth);
         if (StrLen (NewString) * sizeof (CHAR16) <= Statement->StorageWidth) {
           ZeroMem (Statement->BufferValue, Statement->StorageWidth);
-          CopyMem (Statement->BufferValue, NewString, StrSize (NewString));
+          CopyMem(Statement->BufferValue, NewString, StrSize (NewString));
         } else {
-          CopyMem (Statement->BufferValue, NewString, Statement->StorageWidth);
+          CopyMem(Statement->BufferValue, NewString, Statement->StorageWidth);
         }
         FreePool(NewString);
       }
@@ -2158,9 +2158,9 @@ ProcessCallBackFunction (
       //
       if (Action  == EFI_BROWSER_ACTION_CHANGING && Status == EFI_UNSUPPORTED) {
         if (HiiValue->Type == EFI_IFR_TYPE_BUFFER) {
-          CopyMem (Statement->BufferValue, BackUpBuffer, Statement->StorageWidth);
+          CopyMem(Statement->BufferValue, BackUpBuffer, Statement->StorageWidth);
         } else {
-          CopyMem (&HiiValue->Value, &BackUpValue, sizeof (EFI_IFR_TYPE_VALUE));
+          CopyMem(&HiiValue->Value, &BackUpValue, sizeof (EFI_IFR_TYPE_VALUE));
         }
 
         //
@@ -2310,9 +2310,9 @@ ProcessRetrieveForQuestion (
     ASSERT (StrLen (NewString) * sizeof (CHAR16) <= Statement->StorageWidth);
     if (StrLen (NewString) * sizeof (CHAR16) <= Statement->StorageWidth) {
       ZeroMem (Statement->BufferValue, Statement->StorageWidth);
-      CopyMem (Statement->BufferValue, NewString, StrSize (NewString));
+      CopyMem(Statement->BufferValue, NewString, StrSize (NewString));
     } else {
-      CopyMem (Statement->BufferValue, NewString, Statement->StorageWidth);
+      CopyMem(Statement->BufferValue, NewString, Statement->StorageWidth);
     }
     FreePool(NewString);
   }
@@ -2532,7 +2532,7 @@ SetupBrowser (
             // Cross reference will not be taken, restore all essential field
             //
             Selection->Handle = mCurrentHiiHandle;
-            CopyMem (&Selection->FormSetGuid, &mCurrentFormSetGuid, sizeof (EFI_GUID));
+            CopyMem(&Selection->FormSetGuid, &mCurrentFormSetGuid, sizeof (EFI_GUID));
             Selection->FormId = mCurrentFormId;
             Selection->QuestionId = 0;
             Selection->Action = UI_ACTION_REFRESH_FORM;

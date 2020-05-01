@@ -30,7 +30,7 @@ InitializeDiskInfo (
   IN  USB_MASS_DEVICE   *UsbMass
   )
 {
-  CopyMem (&UsbMass->DiskInfo, &gUsbDiskInfoProtocolTemplate, sizeof (gUsbDiskInfoProtocolTemplate));
+  CopyMem(&UsbMass->DiskInfo, &gUsbDiskInfoProtocolTemplate, sizeof (gUsbDiskInfoProtocolTemplate));
 }
 
 
@@ -66,7 +66,7 @@ UsbDiskInfoInquiry (
   Status = EFI_BUFFER_TOO_SMALL;
   if (*InquiryDataSize >= sizeof (UsbMass->InquiryData)) {
     Status = EFI_SUCCESS;
-    CopyMem (InquiryData, &UsbMass->InquiryData, sizeof (UsbMass->InquiryData));
+    CopyMem(InquiryData, &UsbMass->InquiryData, sizeof (UsbMass->InquiryData));
   }
   *InquiryDataSize = sizeof (UsbMass->InquiryData);
   return Status;

@@ -390,7 +390,7 @@ EbcCreateThunks (
   //
   // Copy whole thunk instruction buffer template
   //
-  CopyMem (InstructionBuffer, &mEbcInstructionBufferTemplate,
+  CopyMem(InstructionBuffer, &mEbcInstructionBufferTemplate,
     sizeof (EBC_INSTRUCTION_BUFFER));
 
   //

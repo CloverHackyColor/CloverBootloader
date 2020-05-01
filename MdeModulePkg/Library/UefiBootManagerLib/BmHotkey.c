@@ -176,8 +176,8 @@ BmCollectKeyOptions (
           break;
         }
       }
-      CopyMem (&Param->KeyOptions[Index + 1], &Param->KeyOptions[Index], (Param->KeyOptionCount - Index) * sizeof (EFI_BOOT_MANAGER_KEY_OPTION));
-      CopyMem (&Param->KeyOptions[Index], KeyOption, KeyOptionSize);
+      CopyMem(&Param->KeyOptions[Index + 1], &Param->KeyOptions[Index], (Param->KeyOptionCount - Index) * sizeof (EFI_BOOT_MANAGER_KEY_OPTION));
+      CopyMem(&Param->KeyOptions[Index], KeyOption, KeyOptionSize);
       Param->KeyOptions[Index].OptionNumber = OptionNumber;
       Param->KeyOptionCount++;
     }
@@ -261,7 +261,7 @@ BmInitializeKeyFields (
     if (Key == NULL) {
       break;
     }
-    CopyMem (
+    CopyMem(
       &KeyOption->Keys[KeyOption->KeyData.Options.InputKeyCount],
       Key,
       sizeof (EFI_INPUT_KEY)
@@ -675,7 +675,7 @@ BmProcessKeyOption (
     Hotkey->CodeCount  = (UINT8) KeyOption->KeyData.Options.InputKeyCount;
 
     for (KeyIndex = 0; KeyIndex < Hotkey->CodeCount; KeyIndex++) {
-      CopyMem (&Hotkey->KeyData[KeyIndex].Key, &KeyOption->Keys[KeyIndex], sizeof (EFI_INPUT_KEY));
+      CopyMem(&Hotkey->KeyData[KeyIndex].Key, &KeyOption->Keys[KeyIndex], sizeof (EFI_INPUT_KEY));
       Hotkey->KeyData[KeyIndex].KeyState.KeyShiftState = KeyShiftStates[Index];
     }
     InsertTailList (&mBmHotkeyList, &Hotkey->Link);
@@ -1025,7 +1025,7 @@ EfiBootManagerAddKeyOptionVariable (
     // Return the Key Option in case needed by caller
     //
     if (AddedOption != NULL) {
-      CopyMem (AddedOption, &KeyOption, sizeof (EFI_BOOT_MANAGER_KEY_OPTION));
+      CopyMem(AddedOption, &KeyOption, sizeof (EFI_BOOT_MANAGER_KEY_OPTION));
     }
 
     //
@@ -1139,7 +1139,7 @@ EfiBootManagerDeleteKeyOptionVariable (
       // Return the deleted key option in case needed by caller
       //
       if (DeletedOption != NULL) {
-        CopyMem (DeletedOption, &KeyOptions[Index], sizeof (EFI_BOOT_MANAGER_KEY_OPTION));
+        CopyMem(DeletedOption, &KeyOptions[Index], sizeof (EFI_BOOT_MANAGER_KEY_OPTION));
       }
       break;
     }

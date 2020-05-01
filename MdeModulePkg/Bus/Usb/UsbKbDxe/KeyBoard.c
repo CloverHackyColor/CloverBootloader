@@ -622,7 +622,7 @@ SetKeyboardLayoutEvent (
     //
     // Copy from HII keyboard layout package binary for alignment
     //
-    CopyMem (&TempKey, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
+    CopyMem(&TempKey, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
 
     //
     // Fill the key into KeyConvertionTable, whose index is calculated from USB keycode.
@@ -634,7 +634,7 @@ SetKeyboardLayoutEvent (
       FreePool(KeyboardLayout);
       return;
     }
-    CopyMem (TableEntry, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
+    CopyMem(TableEntry, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
 
     //
     // For non-spacing key, create the list with a non-spacing key followed by physical keys.
@@ -649,7 +649,7 @@ SetKeyboardLayoutEvent (
       KeyCount = 0;
       NsKey = KeyDescriptor + 1;
       for (Index2 = (UINT8) Index + 1; Index2 < KeyboardLayout->DescriptorCount; Index2++) {
-        CopyMem (&TempKey, NsKey, sizeof (EFI_KEY_DESCRIPTOR));
+        CopyMem(&TempKey, NsKey, sizeof (EFI_KEY_DESCRIPTOR));
         if (TempKey.Modifier == EFI_NS_KEY_DEPENDENCY_MODIFIER) {
           KeyCount++;
         } else {
@@ -681,7 +681,7 @@ SetKeyboardLayoutEvent (
   //
   TableEntry = GetKeyDescriptor (UsbKeyboardDevice, 0x58);
   KeyDescriptor = GetKeyDescriptor (UsbKeyboardDevice, 0x28);
-  CopyMem (TableEntry, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
+  CopyMem(TableEntry, KeyDescriptor, sizeof (EFI_KEY_DESCRIPTOR));
 
   FreePool(KeyboardLayout);
 }
@@ -1807,7 +1807,7 @@ Enqueue (
     Queue->Head = (Queue->Head + 1) % (MAX_KEY_ALLOWED + 1);
   }
 
-  CopyMem (Queue->Buffer[Queue->Tail], Item, ItemSize);
+  CopyMem(Queue->Buffer[Queue->Tail], Item, ItemSize);
 
   //
   // Adjust the tail pointer of the FIFO keyboard buffer.
@@ -1840,7 +1840,7 @@ Dequeue (
     return EFI_DEVICE_ERROR;
   }
 
-  CopyMem (Item, Queue->Buffer[Queue->Head], ItemSize);
+  CopyMem(Item, Queue->Buffer[Queue->Head], ItemSize);
 
   //
   // Adjust the head pointer of the FIFO keyboard buffer.

@@ -21,7 +21,7 @@
 ;------------------------------------------------------------------------------
 ;  VOID *
 ;  EFIAPI
-;  InternalMemCopyMem (
+;  InternalMemCopyMem(
 ;    IN VOID   *Destination,
 ;    IN VOID   *Source,
 ;    IN UINTN  Count

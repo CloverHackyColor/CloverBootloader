@@ -54,7 +54,7 @@ Returns:
 
   PossibleShortName = TRUE;
   SeparateDot       = NULL;
-  SetMem (File8Dot3Name, FAT_NAME_LEN, ' ');
+  SetMem(File8Dot3Name, FAT_NAME_LEN, ' ');
   for (TempName = FileName; *TempName; TempName++) {
     if (*TempName == L'.') {
       SeparateDot = TempName;

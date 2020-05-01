@@ -1061,7 +1061,7 @@ CoreProcessFvImageFile (
       //
       // Move FvImage into the aligned buffer and release the original buffer.
       //
-      CopyMem (AlignedBuffer, Buffer, BufferSize);
+      CopyMem(AlignedBuffer, Buffer, BufferSize);
         FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) AlignedBuffer;
       CoreFreePool(Buffer);
       Buffer = NULL;

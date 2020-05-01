@@ -148,9 +148,9 @@ MigrateMemoryPages (
     } else {
       MemPagesBase -= Private->HeapOffset;
     }
-    CopyMem ((VOID *)(UINTN)NewMemPagesBase, (VOID *)(UINTN)MemPagesBase, Private->MemoryPages.Size);
+    CopyMem((VOID *)(UINTN)NewMemPagesBase, (VOID *)(UINTN)MemPagesBase, Private->MemoryPages.Size);
   } else {
-    CopyMem ((VOID *)(UINTN)NewMemPagesBase, (VOID *)(UINTN)Private->MemoryPages.Base, Private->MemoryPages.Size);
+    CopyMem((VOID *)(UINTN)NewMemPagesBase, (VOID *)(UINTN)Private->MemoryPages.Base, Private->MemoryPages.Size);
   }
 
   if (NewMemPagesBase >= Private->MemoryPages.Base) {

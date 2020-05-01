@@ -138,7 +138,7 @@ Returns:
   }
   if (Width >= MMIO_COPY_UINT8) {
     Width = (EFI_IO_WIDTH) (Width - MMIO_COPY_UINT8);
-    Status = Private->PciRootBridgeIo->CopyMem (
+    Status = Private->PciRootBridgeIo->CopyMem(
                                          Private->PciRootBridgeIo,
                                          (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) Width,
                                          (UINT64)(UINTN) Buffer,
@@ -202,7 +202,7 @@ Returns:
   }
   if (Width >= MMIO_COPY_UINT8) {
     Width = (EFI_IO_WIDTH) (Width - MMIO_COPY_UINT8);
-    Status = Private->PciRootBridgeIo->CopyMem (
+    Status = Private->PciRootBridgeIo->CopyMem(
                                          Private->PciRootBridgeIo,
                                          (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) Width,
                                          Address,

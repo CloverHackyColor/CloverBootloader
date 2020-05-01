@@ -296,7 +296,7 @@ UfsInitCommandUpiu (
   SwapLittleEndianToBigEndian ((UINT8*)&ExpDataTranLen, sizeof (ExpDataTranLen));
   Command->ExpDataTranLen = ExpDataTranLen;
 
-  CopyMem (Command->Cdb, Cdb, CdbLength);
+  CopyMem(Command->Cdb, Cdb, CdbLength);
 
   return EFI_SUCCESS;
 }
@@ -400,7 +400,7 @@ UfsInitQueryRequestUpiu (
   }
 
   if (Opcode == UtpQueryFuncOpcodeWrDesc) {
-    CopyMem (QueryReq + 1, Data, DataSize);
+    CopyMem(QueryReq + 1, Data, DataSize);
 
     SwapLittleEndianToBigEndian ((UINT8*)&DataSize, sizeof (UINT16));
     QueryReq->DataSegLen = (UINT16)DataSize;
@@ -859,7 +859,7 @@ UfsRwDeviceDesc (
         goto Exit;
       }
 
-      CopyMem (Packet.InDataBuffer, (QueryResp + 1), ReturnDataSize);
+      CopyMem(Packet.InDataBuffer, (QueryResp + 1), ReturnDataSize);
       Packet.InTransferLength = ReturnDataSize;
     } else {
       Packet.OutTransferLength = ReturnDataSize;
@@ -1176,7 +1176,7 @@ UfsExecScsiCmds (
     // Make sure the hardware device does not return more data than expected.
     //
     if (SenseDataLen <= Packet->SenseDataLength) {
-      CopyMem (Packet->SenseData, Response->SenseData, SenseDataLen);
+      CopyMem(Packet->SenseData, Response->SenseData, SenseDataLen);
       Packet->SenseDataLength = (UINT8)SenseDataLen;
     } else {
       Packet->SenseDataLength = 0;

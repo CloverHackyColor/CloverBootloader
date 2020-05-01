@@ -74,7 +74,7 @@ Enqueue (
     return EFI_NOT_READY;
   }
 
-  CopyMem (&Queue->Buffer[Queue->Rear], KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&Queue->Buffer[Queue->Rear], KeyData, sizeof (EFI_KEY_DATA));
   Queue->Rear = (Queue->Rear + 1) % QUEUE_MAX_COUNT;
 
   return EFI_SUCCESS;
@@ -101,7 +101,7 @@ Dequeue (
     return EFI_NOT_READY;
   }
 
-  CopyMem (KeyData, &Queue->Buffer[Queue->Front], sizeof (EFI_KEY_DATA));
+  CopyMem(KeyData, &Queue->Buffer[Queue->Front], sizeof (EFI_KEY_DATA));
   Queue->Front  = (Queue->Front + 1) % QUEUE_MAX_COUNT;
 
   return EFI_SUCCESS;
@@ -1521,7 +1521,7 @@ BiosKeyboardReadKeyStroke (
     }
   }
 
-  CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
+  CopyMem(Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
 
   return EFI_SUCCESS;
 }
@@ -2708,7 +2708,7 @@ BiosKeyboardRegisterKeyNotify (
   NewNotify->Signature         = BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
   NewNotify->NotifyHandle      = (EFI_HANDLE) NewNotify;
-  CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
   InsertTailList (&BiosKeyboardPrivate->NotifyList, &NewNotify->NotifyEntry);
 
   *NotifyHandle                = NewNotify->NotifyHandle;

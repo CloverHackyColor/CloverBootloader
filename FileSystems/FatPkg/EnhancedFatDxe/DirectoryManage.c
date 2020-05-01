@@ -111,7 +111,7 @@ Returns:
     //
     // Write LFN directory entry
     //
-    SetMem (LfnBuffer, sizeof (CHAR16) * LFN_CHAR_TOTAL * EntryCount, 0xff);
+    SetMem(LfnBuffer, sizeof (CHAR16) * LFN_CHAR_TOTAL * EntryCount, 0xff);
     Status = StrCpyS (
                LfnBuffer,
                sizeof (LfnBuffer) / sizeof (LfnBuffer[0]),
@@ -132,11 +132,11 @@ Returns:
         LfnEntry.Ordinal |= FAT_LFN_LAST;
       }
 
-      CopyMem (LfnEntry.Name1, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR1_LEN);
+      CopyMem(LfnEntry.Name1, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR1_LEN);
       LfnBufferPointer += LFN_CHAR1_LEN;
-      CopyMem (LfnEntry.Name2, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR2_LEN);
+      CopyMem(LfnEntry.Name2, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR2_LEN);
       LfnBufferPointer += LFN_CHAR2_LEN;
-      CopyMem (LfnEntry.Name3, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR3_LEN);
+      CopyMem(LfnEntry.Name3, LfnBufferPointer, sizeof (CHAR16) * LFN_CHAR3_LEN);
       LfnBufferPointer += LFN_CHAR3_LEN;
       EntryPos--;
       if (DirEnt->Invalid) {
@@ -264,7 +264,7 @@ Returns:
   UINT8 *Entry2;
   Entry1  = (UINT8 *) &DirEnt1->Entry;
   Entry2  = (UINT8 *) &DirEnt2->Entry;
-  CopyMem (
+  CopyMem(
     Entry1 + FAT_ENTRY_INFO_OFFSET,
     Entry2 + FAT_ENTRY_INFO_OFFSET,
     sizeof (FAT_DIRECTORY_ENTRY) - FAT_ENTRY_INFO_OFFSET
@@ -335,11 +335,11 @@ Returns:
       break;
     }
 
-    CopyMem (LfnBufferPointer, LfnEntry.Name1, sizeof (CHAR16) * LFN_CHAR1_LEN);
+    CopyMem(LfnBufferPointer, LfnEntry.Name1, sizeof (CHAR16) * LFN_CHAR1_LEN);
     LfnBufferPointer += LFN_CHAR1_LEN;
-    CopyMem (LfnBufferPointer, LfnEntry.Name2, sizeof (CHAR16) * LFN_CHAR2_LEN);
+    CopyMem(LfnBufferPointer, LfnEntry.Name2, sizeof (CHAR16) * LFN_CHAR2_LEN);
     LfnBufferPointer += LFN_CHAR2_LEN;
-    CopyMem (LfnBufferPointer, LfnEntry.Name3, sizeof (CHAR16) * LFN_CHAR3_LEN);
+    CopyMem(LfnBufferPointer, LfnEntry.Name3, sizeof (CHAR16) * LFN_CHAR3_LEN);
     LfnBufferPointer += LFN_CHAR3_LEN;
     LfnOrdinal++;
   } while ((LfnEntry.Ordinal & FAT_LFN_LAST) == 0);
@@ -475,7 +475,7 @@ Returns:
     // Remember the directory's entry position on disk
     //
     DirEnt->EntryPos = (UINT16) ODir->CurrentEndPos;
-    CopyMem (&DirEnt->Entry, &Entry, sizeof (FAT_DIRECTORY_ENTRY));
+    CopyMem(&DirEnt->Entry, &Entry, sizeof (FAT_DIRECTORY_ENTRY));
     FatLoadLongNameEntry (OFile, DirEnt);
     if (DirEnt->FileString == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
@@ -559,12 +559,12 @@ Returns:
     }
 
     ZeroMem (&FatLastAccess.Time, sizeof (FatLastAccess.Time));
-    CopyMem (&FatLastAccess.Date, &Entry->FileLastAccess, sizeof (FatLastAccess.Date));
+    CopyMem(&FatLastAccess.Date, &Entry->FileLastAccess, sizeof (FatLastAccess.Date));
     FatFatTimeToEfiTime (&FatLastAccess, &Info->LastAccessTime);
     FatFatTimeToEfiTime (&Entry->FileCreateTime, &Info->CreateTime);
     FatFatTimeToEfiTime (&Entry->FileModificationTime, &Info->ModificationTime);
     Info->Attribute = Entry->Attributes & EFI_FILE_VALID_ATTR;
-    CopyMem ((CHAR8 *) Buffer + Size, DirEnt->FileString, NameSize);
+    CopyMem((CHAR8 *) Buffer + Size, DirEnt->FileString, NameSize);
   }
 
   *BufferSize = ResultSize;
@@ -763,7 +763,7 @@ Returns:
   DirEnt->EntryCount  = 1;
   FileString          = DirEnt->FileString;
   File8Dot3Name       = DirEnt->Entry.FileName;
-  SetMem (File8Dot3Name, FAT_NAME_LEN, ' ');
+  SetMem(File8Dot3Name, FAT_NAME_LEN, ' ');
   if (StrCmp (FileString, L".") == 0) {
     //
     // "." entry
@@ -997,8 +997,8 @@ Returns:
   // We will append this entry to the end of directory
   //
   FatGetCurrentFatTime (&DirEnt->Entry.FileCreateTime);
-  CopyMem (&DirEnt->Entry.FileModificationTime, &DirEnt->Entry.FileCreateTime, sizeof (FAT_DATE_TIME));
-  CopyMem (&DirEnt->Entry.FileLastAccess, &DirEnt->Entry.FileCreateTime.Date, sizeof (FAT_DATE));
+  CopyMem(&DirEnt->Entry.FileModificationTime, &DirEnt->Entry.FileCreateTime, sizeof (FAT_DATE_TIME));
+  CopyMem(&DirEnt->Entry.FileLastAccess, &DirEnt->Entry.FileCreateTime.Date, sizeof (FAT_DATE));
   NewEndPos = ODir->CurrentEndPos + DirEnt->EntryCount;
   if (NewEndPos * sizeof (FAT_DIRECTORY_ENTRY) > OFile->FileSize) {
     if (NewEndPos >= (OFile->IsFixedRootDir ? OFile->Volume->RootEntries : FAT_MAX_DIRENTRY_COUNT)) {
@@ -1108,7 +1108,7 @@ Returns:
     LabelDirEnt.Entry.Attributes = FAT_ATTRIBUTE_VOLUME_ID;
   }
 
-  SetMem (LabelDirEnt.Entry.FileName, FAT_NAME_LEN, ' ');
+  SetMem(LabelDirEnt.Entry.FileName, FAT_NAME_LEN, ' ');
   if (FatStrToFat (Name, FAT_NAME_LEN, LabelDirEnt.Entry.FileName)) {
     return EFI_UNSUPPORTED;
   }

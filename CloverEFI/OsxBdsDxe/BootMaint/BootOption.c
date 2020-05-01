@@ -941,7 +941,7 @@ BOpt_GetBootOptions (
       continue;
     }
 
-    CopyMem (LoadOption, LoadOptionFromVar, BootOptionSize);
+    CopyMem(LoadOption, LoadOptionFromVar, BootOptionSize);
     FreePool(LoadOptionFromVar);
 
     if (BootNext != NULL) {
@@ -1033,7 +1033,7 @@ BOpt_GetBootOptions (
 
     NewLoadContext->FilePathList = AllocateZeroPool(NewLoadContext->FilePathListLength);
     ASSERT (NewLoadContext->FilePathList != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->FilePathList,
       (EFI_DEVICE_PATH_PROTOCOL *) LoadOptionPtr,
       NewLoadContext->FilePathListLength
@@ -1059,7 +1059,7 @@ BOpt_GetBootOptions (
 
       NewLoadContext->OptionalData = AllocateZeroPool(OptionalDataSize);
       ASSERT (NewLoadContext->OptionalData != NULL);
-      CopyMem (
+      CopyMem(
         NewLoadContext->OptionalData,
         LoadOptionPtr,
         OptionalDataSize
@@ -1536,7 +1536,7 @@ BOpt_GetDriverOptions (
       continue;
     }
 
-    CopyMem (LoadOption, LoadOptionFromVar, DriverOptionSize);
+    CopyMem(LoadOption, LoadOptionFromVar, DriverOptionSize);
     FreePool(LoadOptionFromVar);
 
     NewMenuEntry = BOpt_CreateMenuEntry (BM_LOAD_CONTEXT_SELECT);
@@ -1573,7 +1573,7 @@ BOpt_GetDriverOptions (
     StringSize                  = StrSize ((UINT16 *) LoadOptionPtr);
     NewLoadContext->Description = AllocateZeroPool(StringSize);
     ASSERT (NewLoadContext->Description != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->Description,
       (UINT16 *) LoadOptionPtr,
       StringSize
@@ -1584,7 +1584,7 @@ BOpt_GetDriverOptions (
 
     NewLoadContext->FilePathList = AllocateZeroPool(NewLoadContext->FilePathListLength);
     ASSERT (NewLoadContext->FilePathList != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->FilePathList,
       (EFI_DEVICE_PATH_PROTOCOL *) LoadOptionPtr,
       NewLoadContext->FilePathListLength
@@ -1610,7 +1610,7 @@ BOpt_GetDriverOptions (
 
       NewLoadContext->OptionalData = AllocateZeroPool(OptionalDataSize);
       ASSERT (NewLoadContext->OptionalData != NULL);
-      CopyMem (
+      CopyMem(
         NewLoadContext->OptionalData,
         LoadOptionPtr,
         OptionalDataSize
@@ -1793,7 +1793,7 @@ GetLegacyDeviceOrder (
           LegacyOrder[OptionIndex] = (UINT8) (VarDevOrder & 0xFF);
         }
       } 
-      CopyMem (OldData, LegacyOrder, 100);
+      CopyMem(OldData, LegacyOrder, 100);
     }
   }  
 }

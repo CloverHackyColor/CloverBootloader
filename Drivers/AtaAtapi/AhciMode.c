@@ -560,13 +560,13 @@ AhciBuildCommand (
 
   CommandFis->AhciCFisPmNum = PortMultiplier;
 
-  CopyMem (&AhciRegisters->AhciCommandTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
+  CopyMem(&AhciRegisters->AhciCommandTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
 
   ZeroMem (&AhciRegisters->AhciCommandTable->AtapiCmd, 0x40U + (PrdtNumber << 4));
 
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
   if (AtapiCommand != NULL) {
-    CopyMem (
+    CopyMem(
       &AhciRegisters->AhciCommandTable->AtapiCmd,
       AtapiCommand,
       AtapiCommandLength
@@ -612,7 +612,7 @@ AhciBuildCommand (
   }
 #endif
 
-  CopyMem (
+  CopyMem(
     &AhciRegisters->AhciCmdList[CommandSlotNumber],
     CommandList,
     sizeof (EFI_AHCI_COMMAND_LIST)

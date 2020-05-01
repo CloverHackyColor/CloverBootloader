@@ -38,7 +38,7 @@ XhcPeiCreateCmdTrb (
   XhcPeiSyncTrsRing (Xhc, Urb->Ring);
   Urb->TrbNum     = 1;
   Urb->TrbStart   = Urb->Ring->RingEnqueue;
-  CopyMem (Urb->TrbStart, CmdTrb, sizeof (TRB_TEMPLATE));
+  CopyMem(Urb->TrbStart, CmdTrb, sizeof (TRB_TEMPLATE));
   Urb->TrbStart->CycleBit = Urb->Ring->RingPCS & BIT0;
   Urb->TrbEnd             = Urb->TrbStart;
 
@@ -1702,7 +1702,7 @@ XhcPeiSetConfigCmd (
   InputContext  = Xhc->UsbDevContext[SlotId].InputContext;
   OutputContext = Xhc->UsbDevContext[SlotId].OutputContext;
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT));
-  CopyMem (&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT));
+  CopyMem(&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT));
 
   ASSERT (ConfigDesc != NULL);
 
@@ -1918,7 +1918,7 @@ XhcPeiSetConfigCmd64 (
   InputContext  = Xhc->UsbDevContext[SlotId].InputContext;
   OutputContext = Xhc->UsbDevContext[SlotId].OutputContext;
   ZeroMem (InputContext, sizeof (INPUT_CONTEXT_64));
-  CopyMem (&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT_64));
+  CopyMem(&InputContext->Slot, &OutputContext->Slot, sizeof (SLOT_CONTEXT_64));
 
   ASSERT (ConfigDesc != NULL);
 

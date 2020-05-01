@@ -316,7 +316,7 @@ UpdateVariableStore (
     //
     // If Volatile/Emulated Non-volatile Variable just do a simple mem copy.
     //
-    CopyMem ((UINT8 *)(UINTN)DataPtr, Buffer, DataSize);
+    CopyMem((UINT8 *)(UINTN)DataPtr, Buffer, DataSize);
     return EFI_SUCCESS;
   }
 
@@ -1040,12 +1040,12 @@ Reclaim (
     ValidBuffer = (UINT8 *) mNvVariableCache;
   }
 
-  SetMem (ValidBuffer, MaximumBufferSize, 0xff);
+  SetMem(ValidBuffer, MaximumBufferSize, 0xff);
 
   //
   // Copy variable store header.
   //
-  CopyMem (ValidBuffer, VariableStoreHeader, sizeof (VARIABLE_STORE_HEADER));
+  CopyMem(ValidBuffer, VariableStoreHeader, sizeof (VARIABLE_STORE_HEADER));
   CurrPtr = (UINT8 *) GetStartPointer ((VARIABLE_STORE_HEADER *) ValidBuffer);
 
   //
@@ -1056,7 +1056,7 @@ Reclaim (
     NextVariable = GetNextVariablePtr (Variable);
     if (Variable != UpdatingVariable && Variable->State == VAR_ADDED) {
       VariableSize = (UINTN) NextVariable - (UINTN) Variable;
-      CopyMem (CurrPtr, (UINT8 *) Variable, VariableSize);
+      CopyMem(CurrPtr, (UINT8 *) Variable, VariableSize);
       CurrPtr += VariableSize;
       if ((!IsVolatile) && ((Variable->Attributes & EFI_VARIABLE_HARDWARE_ERROR_RECORD) == EFI_VARIABLE_HARDWARE_ERROR_RECORD)) {
         HwErrVariableTotalSize += VariableSize;
@@ -1106,7 +1106,7 @@ Reclaim (
         // Promote VAR_IN_DELETED_TRANSITION to VAR_ADDED.
         //
         VariableSize = (UINTN) NextVariable - (UINTN) Variable;
-        CopyMem (CurrPtr, (UINT8 *) Variable, VariableSize);
+        CopyMem(CurrPtr, (UINT8 *) Variable, VariableSize);
         ((VARIABLE_HEADER *) CurrPtr)->State = VAR_ADDED;
         CurrPtr += VariableSize;
         if ((!IsVolatile) && ((Variable->Attributes & EFI_VARIABLE_HARDWARE_ERROR_RECORD) == EFI_VARIABLE_HARDWARE_ERROR_RECORD)) {
@@ -1154,7 +1154,7 @@ Reclaim (
       }
     }
 
-    CopyMem (CurrPtr, (UINT8 *) NewVariable, NewVariableSize);
+    CopyMem(CurrPtr, (UINT8 *) NewVariable, NewVariableSize);
     ((VARIABLE_HEADER *) CurrPtr)->State = VAR_ADDED;
     if (UpdatingVariable != NULL) {
       UpdatingPtrTrack->CurrPtr = (VARIABLE_HEADER *)((UINTN)UpdatingPtrTrack->StartPtr + ((UINTN)CurrPtr - (UINTN)GetStartPointer ((VARIABLE_STORE_HEADER *) ValidBuffer)));
@@ -1167,8 +1167,8 @@ Reclaim (
     //
     // If volatile/emulated non-volatile variable store, just copy valid buffer.
     //
-    SetMem ((UINT8 *) (UINTN) VariableBase, VariableStoreHeader->Size, 0xff);
-    CopyMem ((UINT8 *) (UINTN) VariableBase, ValidBuffer, (UINTN) CurrPtr - (UINTN) ValidBuffer);
+    SetMem((UINT8 *) (UINTN) VariableBase, VariableStoreHeader->Size, 0xff);
+    CopyMem((UINT8 *) (UINTN) VariableBase, ValidBuffer, (UINTN) CurrPtr - (UINTN) ValidBuffer);
     *LastVariableOffset = (UINTN) CurrPtr - (UINTN) ValidBuffer;
     if (!IsVolatile) {
       //
@@ -1222,7 +1222,7 @@ Done:
     //
     // For NV variable reclaim, we use mNvVariableCache as the buffer, so copy the data back.
     //
-    CopyMem (mNvVariableCache, (UINT8 *)(UINTN)VariableBase, VariableStoreHeader->Size);
+    CopyMem(mNvVariableCache, (UINT8 *)(UINTN)VariableBase, VariableStoreHeader->Size);
   }
 
   return Status;
@@ -1496,7 +1496,7 @@ GetLangFromSupportedLangCodes (
     //
     CompareLength = ISO_639_2_ENTRY_SIZE;
     mVariableModuleGlobal->Lang[CompareLength] = '\0';
-    return CopyMem (mVariableModuleGlobal->Lang, SupportedLang + Index * CompareLength, CompareLength);
+    return CopyMem(mVariableModuleGlobal->Lang, SupportedLang + Index * CompareLength, CompareLength);
 
   } else {
     while (TRUE) {
@@ -1521,7 +1521,7 @@ GetLangFromSupportedLangCodes (
         // In driver entry, it pre-allocates a runtime attribute memory to accommodate this string.
         //
         mVariableModuleGlobal->PlatformLang[CompareLength] = '\0';
-        return CopyMem (mVariableModuleGlobal->PlatformLang, Supported - CompareLength, CompareLength);
+        return CopyMem(mVariableModuleGlobal->PlatformLang, Supported - CompareLength, CompareLength);
       }
       SubIndex++;
 
@@ -1641,7 +1641,7 @@ VariableGetBestLanguage (
 
           Buffer = (Iso639Language != 0) ? mVariableModuleGlobal->Lang : mVariableModuleGlobal->PlatformLang;
           Buffer[CompareLength] = '\0';
-          return CopyMem (Buffer, Supported, CompareLength);
+          return CopyMem(Buffer, Supported, CompareLength);
         }
       }
 
@@ -2242,7 +2242,7 @@ UpdateVariable (
   //
   NextVariable = GetEndPointer ((VARIABLE_STORE_HEADER *) ((UINTN) mVariableModuleGlobal->VariableGlobal.VolatileVariableBase));
   ScratchSize = mVariableModuleGlobal->ScratchBufferSize;
-  SetMem (NextVariable, ScratchSize, 0xff);
+  SetMem(NextVariable, ScratchSize, 0xff);
   DataReady = FALSE;
 
   if (Variable->CurrPtr != NULL) {
@@ -2357,7 +2357,7 @@ UpdateVariable (
         //
         DataOffset = GetVariableDataOffset (CacheVariable->CurrPtr);
         BufferForMerge = (UINT8 *) ((UINTN) NextVariable + DataOffset);
-        CopyMem (BufferForMerge, (UINT8 *) ((UINTN) CacheVariable->CurrPtr + DataOffset), DataSizeOfVariable (CacheVariable->CurrPtr));
+        CopyMem(BufferForMerge, (UINT8 *) ((UINTN) CacheVariable->CurrPtr + DataOffset), DataSizeOfVariable (CacheVariable->CurrPtr));
 
         //
         // Set Max Auth/Non-Volatile/Volatile Variable Data Size as default MaxDataSize.
@@ -2385,7 +2385,7 @@ UpdateVariable (
           Status = EFI_INVALID_PARAMETER;
           goto Done;
         }
-        CopyMem ((UINT8*) ((UINTN) BufferForMerge + DataSizeOfVariable (CacheVariable->CurrPtr)), Data, DataSize);
+        CopyMem((UINT8*) ((UINTN) BufferForMerge + DataSizeOfVariable (CacheVariable->CurrPtr)), Data, DataSize);
         MergedBufSize = DataSizeOfVariable (CacheVariable->CurrPtr) + DataSize;
 
         //
@@ -2465,7 +2465,7 @@ UpdateVariable (
     if (((Attributes & EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS) != 0) &&
         (TimeStamp != NULL)) {
       if ((Attributes & EFI_VARIABLE_APPEND_WRITE) == 0) {
-        CopyMem (&AuthVariable->TimeStamp, TimeStamp, sizeof (EFI_TIME));
+        CopyMem(&AuthVariable->TimeStamp, TimeStamp, sizeof (EFI_TIME));
       } else {
         //
         // In the case when the EFI_VARIABLE_APPEND_WRITE attribute is set, only
@@ -2474,9 +2474,9 @@ UpdateVariable (
         //
         if (Variable->CurrPtr != NULL) {
           if (VariableCompareTimeStampInternal (&(((AUTHENTICATED_VARIABLE_HEADER *) CacheVariable->CurrPtr)->TimeStamp), TimeStamp)) {
-            CopyMem (&AuthVariable->TimeStamp, TimeStamp, sizeof (EFI_TIME));
+            CopyMem(&AuthVariable->TimeStamp, TimeStamp, sizeof (EFI_TIME));
           } else {
-            CopyMem (&AuthVariable->TimeStamp, &(((AUTHENTICATED_VARIABLE_HEADER *) CacheVariable->CurrPtr)->TimeStamp), sizeof (EFI_TIME));
+            CopyMem(&AuthVariable->TimeStamp, &(((AUTHENTICATED_VARIABLE_HEADER *) CacheVariable->CurrPtr)->TimeStamp), sizeof (EFI_TIME));
           }
         }
       }
@@ -2491,7 +2491,7 @@ UpdateVariable (
 
   VarNameOffset                 = GetVariableHeaderSize ();
   VarNameSize                   = StrSize (VariableName);
-  CopyMem (
+  CopyMem(
     (UINT8 *) ((UINTN) NextVariable + VarNameOffset),
     VariableName,
     VarNameSize
@@ -2503,14 +2503,14 @@ UpdateVariable (
   // NextVariable during EFI_VARIABLE_APPEND_WRITE operation preparation.
   //
   if (!DataReady) {
-    CopyMem (
+    CopyMem(
       (UINT8 *) ((UINTN) NextVariable + VarDataOffset),
       Data,
       DataSize
       );
   }
 
-  CopyMem (GetVendorGuidPtr (NextVariable), VendorGuid, sizeof (EFI_GUID));
+  CopyMem(GetVendorGuidPtr (NextVariable), VendorGuid, sizeof (EFI_GUID));
   //
   // There will be pad bytes after Data, the NextVariable->NameSize and
   // NextVariable->DataSize should not include pad size so that variable
@@ -2662,7 +2662,7 @@ UpdateVariable (
       //
       // Update the memory copy of Flash region.
       //
-      CopyMem ((UINT8 *)mNvVariableCache + mVariableModuleGlobal->NonVolatileLastVariableOffset, (UINT8 *)NextVariable, VarSize);
+      CopyMem((UINT8 *)mNvVariableCache + mVariableModuleGlobal->NonVolatileLastVariableOffset, (UINT8 *)NextVariable, VarSize);
     } else {
       //
       // Emulated non-volatile variable mode.
@@ -2864,7 +2864,7 @@ VariableServiceGetVariable (
       goto Done;
     }
 
-    CopyMem (Data, GetVariableDataPtr (Variable.CurrPtr), VarDataSize);
+    CopyMem(Data, GetVariableDataPtr (Variable.CurrPtr), VarDataSize);
 //    if (Attributes != NULL) {
 //      *Attributes = Variable.CurrPtr->Attributes;
 //    }
@@ -3111,8 +3111,8 @@ VariableServiceGetNextVariableName (
     VarNameSize = NameSizeOfVariable (VariablePtr);
     ASSERT (VarNameSize != 0);
     if (VarNameSize <= *VariableNameSize) {
-      CopyMem (VariableName, GetVariableNamePtr (VariablePtr), VarNameSize);
-      CopyMem (VendorGuid, GetVendorGuidPtr (VariablePtr), sizeof (EFI_GUID));
+      CopyMem(VariableName, GetVariableNamePtr (VariablePtr), VarNameSize);
+      CopyMem(VendorGuid, GetVendorGuidPtr (VariablePtr), sizeof (EFI_GUID));
       Status = EFI_SUCCESS;
     } else {
       Status = EFI_BUFFER_TOO_SMALL;
@@ -3817,7 +3817,7 @@ InitRealNonVolatileVariableStore (
   //
   // Copy NV storage data to the memory buffer.
   //
-  CopyMem (NvStorageData, (UINT8 *) (UINTN) NvStorageBase, NvStorageSize);
+  CopyMem(NvStorageData, (UINT8 *) (UINTN) NvStorageBase, NvStorageSize);
 
   Status = GetFtwProtocol ((VOID **)&FtwProtocol);
   //
@@ -3835,7 +3835,7 @@ InitRealNonVolatileVariableStore (
         //
         // Copy the backed up NV storage data to the memory buffer from spare block.
         //
-        CopyMem (NvStorageData, (UINT8 *) (UINTN) (FtwLastWriteData->SpareAddress), NvStorageSize);
+        CopyMem(NvStorageData, (UINT8 *) (UINTN) (FtwLastWriteData->SpareAddress), NvStorageSize);
       } else if ((FtwLastWriteData->TargetAddress > NvStorageBase) &&
                  (FtwLastWriteData->TargetAddress < (NvStorageBase + NvStorageSize))) {
         //
@@ -3847,7 +3847,7 @@ InitRealNonVolatileVariableStore (
         //
         // Copy the partial backed up NV storage data to the memory buffer from spare block.
         //
-        CopyMem (NvStorageData + BackUpOffset, (UINT8 *) (UINTN) FtwLastWriteData->SpareAddress, BackUpSize);
+        CopyMem(NvStorageData + BackUpOffset, (UINT8 *) (UINTN) FtwLastWriteData->SpareAddress, BackUpSize);
       }
     }
   }
@@ -3973,7 +3973,7 @@ InitEmuNonVolatileVariableStore (
   }
 
   if (FullyInitializeStore) {
-    SetMem (VariableStore, VariableStoreLength, 0xff);
+    SetMem(VariableStore, VariableStoreLength, 0xff);
     //
     // Use gEfiAuthenticatedVariableGuid for potential auth variable support.
     //
@@ -4327,12 +4327,12 @@ ConvertNormalVarStorageToAuthVarStorage (
       // Copy Variable Name
       //
       NextPtr = (UINT8 *) (AuthStartPtr + 1);
-      CopyMem (NextPtr, GetVariableNamePtr (StartPtr), AuthStartPtr->NameSize);
+      CopyMem(NextPtr, GetVariableNamePtr (StartPtr), AuthStartPtr->NameSize);
       //
       // Copy Variable Data
       //
       NextPtr = NextPtr + AuthStartPtr->NameSize + GET_PAD_SIZE (AuthStartPtr->NameSize);
-      CopyMem (NextPtr, GetVariableDataPtr (StartPtr), AuthStartPtr->DataSize);
+      CopyMem(NextPtr, GetVariableDataPtr (StartPtr), AuthStartPtr->DataSize);
       //
       // Go to next variable
       //
@@ -4523,7 +4523,7 @@ VariableCommonInitialize (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  SetMem (VolatileVariableStore, PcdGet32 (PcdVariableStoreSize) + ScratchSize, 0xff);
+  SetMem(VolatileVariableStore, PcdGet32 (PcdVariableStoreSize) + ScratchSize, 0xff);
 
   //
   // Initialize Variable Specific Data.

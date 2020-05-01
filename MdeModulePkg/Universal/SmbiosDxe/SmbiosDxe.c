@@ -504,7 +504,7 @@ SmbiosAdd (
   SmbiosEntry->Smbios64BitTable = Smbios64BitTable;
   InsertTailList (&Private->DataListHead, &SmbiosEntry->Link);
 
-  CopyMem (Raw, Record, StructureSize);
+  CopyMem(Raw, Record, StructureSize);
   ((EFI_SMBIOS_TABLE_HEADER*)Raw)->Handle = *SmbiosHandle;
 
   //
@@ -737,9 +737,9 @@ SmbiosUpdateString (
       //
       // Copy SMBIOS structure and optional strings.
       //
-      CopyMem (Raw, SmbiosEntry->RecordHeader + 1, Record->Length + TargetStrOffset);
-      CopyMem ((VOID*)((UINTN)Raw + Record->Length + TargetStrOffset), String, InputStrLen + 1);
-      CopyMem ((CHAR8*)((UINTN)Raw + Record->Length + TargetStrOffset + InputStrLen + 1),
+      CopyMem(Raw, SmbiosEntry->RecordHeader + 1, Record->Length + TargetStrOffset);
+      CopyMem((VOID*)((UINTN)Raw + Record->Length + TargetStrOffset), String, InputStrLen + 1);
+      CopyMem((CHAR8*)((UINTN)Raw + Record->Length + TargetStrOffset + InputStrLen + 1),
                (CHAR8*)Record + Record->Length + TargetStrOffset + TargetStrLen + 1,
                SmbiosEntry->RecordHeader->RecordSize - sizeof (EFI_SMBIOS_RECORD_HEADER) - Record->Length - TargetStrOffset - TargetStrLen - 1);
 
@@ -1078,7 +1078,7 @@ SmbiosCreateTable (
 
     EntryPointStructure = (SMBIOS_TABLE_ENTRY_POINT *) (UINTN) PhysicalAddress;
 
-    CopyMem (
+    CopyMem(
       EntryPointStructure,
       &EntryPointStructureData,
       sizeof (SMBIOS_TABLE_ENTRY_POINT)
@@ -1179,7 +1179,7 @@ SmbiosCreateTable (
 
     if ((Status == EFI_SUCCESS) && (CurrentSmbiosEntry->Smbios32BitTable)) {
       GetSmbiosStructureSize(SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
-      CopyMem (BufferPointer, SmbiosRecord, RecordSize);
+      CopyMem(BufferPointer, SmbiosRecord, RecordSize);
       BufferPointer = BufferPointer + RecordSize;
     }
   } while (!EFI_ERROR(Status));
@@ -1187,7 +1187,7 @@ SmbiosCreateTable (
   //
   // Assemble End-Of-Table structure
   //
-  CopyMem (BufferPointer, &EndStructure, sizeof (EndStructure));
+  CopyMem(BufferPointer, &EndStructure, sizeof (EndStructure));
 
   //
   // Fixup checksums in the Entry Point Structure
@@ -1261,7 +1261,7 @@ SmbiosCreate64BitTable (
 
     Smbios30EntryPointStructure = (SMBIOS_TABLE_3_0_ENTRY_POINT *) (UINTN) PhysicalAddress;
 
-    CopyMem (
+    CopyMem(
       Smbios30EntryPointStructure,
       &Smbios30EntryPointStructureData,
       sizeof (SMBIOS_TABLE_3_0_ENTRY_POINT)
@@ -1350,7 +1350,7 @@ SmbiosCreate64BitTable (
       // This record can be added to 64-bit table
       //
       GetSmbiosStructureSize(SmbiosProtocol, SmbiosRecord, &RecordSize, &NumOfStr);
-      CopyMem (BufferPointer, SmbiosRecord, RecordSize);
+      CopyMem(BufferPointer, SmbiosRecord, RecordSize);
       BufferPointer = BufferPointer + RecordSize;
     }
   } while (!EFI_ERROR(Status));
@@ -1358,7 +1358,7 @@ SmbiosCreate64BitTable (
   //
   // Assemble End-Of-Table structure
   //
-  CopyMem (BufferPointer, &EndStructure, sizeof (EndStructure));
+  CopyMem(BufferPointer, &EndStructure, sizeof (EndStructure));
 
   //
   // Fixup checksums in the Entry Point Structure

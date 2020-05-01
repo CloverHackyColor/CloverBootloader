@@ -129,7 +129,7 @@ VOID InstallRtShims (
 
     gGetVariableOverride  = (UINTN)GetVariableOverride;
 
-    CopyMem (
+    CopyMem(
       gRtShims,
       (VOID *)&gRtShimsDataStart,
       ((UINTN)&gRtShimsDataEnd - (UINTN)&gRtShimsDataStart)

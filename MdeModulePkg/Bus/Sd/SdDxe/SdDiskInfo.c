@@ -39,7 +39,7 @@ SdDiskInfoInquiry (
 
   if (*InquiryDataSize >= sizeof (Device->Cid)) {
     Status = EFI_SUCCESS;
-    CopyMem (InquiryData, &Device->Cid, sizeof (Device->Cid));
+    CopyMem(InquiryData, &Device->Cid, sizeof (Device->Cid));
   } else {
     Status = EFI_BUFFER_TOO_SMALL;
   }

@@ -169,7 +169,7 @@ StartApfsDriver (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem ((VOID *) NewSystemTable, gST, gST->Hdr.HeaderSize);
+  CopyMem((VOID *) NewSystemTable, gST, gST->Hdr.HeaderSize);
   NewSystemTable->ConOut = &mNullTextOutputProtocol;
   NewSystemTable->Hdr.CRC32 = 0;
 
@@ -837,7 +837,7 @@ ApfsDriverLoaderStart (
   // Extract Container UUID
   //
   ContainerSuperBlock = (APFS_CSB *)ApfsBlock;
-  CopyMem (&ContainerUuid, &ContainerSuperBlock->Uuid, sizeof (EFI_GUID));
+  CopyMem(&ContainerUuid, &ContainerSuperBlock->Uuid, sizeof (EFI_GUID));
   EfiBootRecordBlockPtr = ContainerSuperBlock->EfiBootRecordBlock;
 
   //
@@ -999,7 +999,7 @@ ApfsDriverLoaderStart (
   Private->ControllerHandle  = ControllerHandle;
   EfiBootRecordLocationInfo = &Private->EfiBootRecordLocationInfo;
   EfiBootRecordLocationInfo->ControllerHandle = ControllerHandle;
-  CopyMem (&EfiBootRecordLocationInfo->ContainerUuid, &ContainerUuid, 16);
+  CopyMem(&EfiBootRecordLocationInfo->ContainerUuid, &ContainerUuid, 16);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
     &Private->ControllerHandle,

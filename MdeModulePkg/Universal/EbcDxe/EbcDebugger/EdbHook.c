@@ -86,7 +86,7 @@ EbcDebuggerPushCallstackParameter (
   // Record the new callstack parameter
   //
   mDebuggerPrivate.CallStackEntry[mDebuggerPrivate.CallStackEntryCount].ParameterAddr = (UINTN)ParameterAddress;
-  CopyMem (
+  CopyMem(
     mDebuggerPrivate.CallStackEntry[mDebuggerPrivate.CallStackEntryCount].Parameter,
     (VOID *)(UINTN)ParameterAddress,
     sizeof(mDebuggerPrivate.CallStackEntry[mDebuggerPrivate.CallStackEntryCount].Parameter)
@@ -128,7 +128,7 @@ EbcDebuggerPushCallstackDest (
     //
     ASSERT (mDebuggerPrivate.CallStackEntry[EFI_DEBUGGER_TRACE_MAX].Type == Type);
     for (Index = 0; Index < EFI_DEBUGGER_CALLSTACK_MAX; Index++) {
-      CopyMem (&mDebuggerPrivate.CallStackEntry[Index],
+      CopyMem(&mDebuggerPrivate.CallStackEntry[Index],
                &mDebuggerPrivate.CallStackEntry[Index + 1],
                sizeof (mDebuggerPrivate.CallStackEntry[Index])
                );
@@ -620,7 +620,7 @@ EbcDebuggerHookExecuteEnd (
   //
   // Use FramePtr as checkpoint for StepOut
   //
-  CopyMem (&Address, (VOID *)((UINTN)VmPtr->FramePtr), sizeof(Address));
+  CopyMem(&Address, (VOID *)((UINTN)VmPtr->FramePtr), sizeof(Address));
   EbcDebuggerPushStepEntry (Address, (UINT64)(UINTN)VmPtr->FramePtr, EFI_DEBUG_FLAG_EBC_STEPOUT);
 
   return ;
@@ -670,19 +670,19 @@ EbcDebuggerHookCALLEnd (
   //
   // Get Old FramePtr
   //
-  CopyMem (&FramePtr, (VOID *)((UINTN)VmPtr->FramePtr), sizeof(FramePtr));
+  CopyMem(&FramePtr, (VOID *)((UINTN)VmPtr->FramePtr), sizeof(FramePtr));
 
   //
   // Use ReturnAddress as checkpoint for StepOver
   //
-  CopyMem (&Address, (VOID *)(UINTN)VmPtr->Gpr[0], sizeof(Address));
+  CopyMem(&Address, (VOID *)(UINTN)VmPtr->Gpr[0], sizeof(Address));
   EbcDebuggerPushStepEntry (Address, FramePtr, EFI_DEBUG_FLAG_EBC_STEPOVER);
 
   //
   // Use FramePtr as checkpoint for StepOut
   //
   Address = 0;
-  CopyMem (&Address, (VOID *)(FramePtr), sizeof(UINTN));
+  CopyMem(&Address, (VOID *)(FramePtr), sizeof(UINTN));
   EbcDebuggerPushStepEntry (Address, FramePtr, EFI_DEBUG_FLAG_EBC_STEPOUT);
 
   return ;

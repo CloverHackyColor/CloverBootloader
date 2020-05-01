@@ -579,7 +579,7 @@ GetLineByWidth (
     *(*OutputString) = WIDE_CHAR;
   }
 
-  CopyMem ((*OutputString) + 1, &InputString[*Index], StrOffset * sizeof(CHAR16));
+  CopyMem((*OutputString) + 1, &InputString[*Index], StrOffset * sizeof(CHAR16));
 
   if (InputString[*Index + StrOffset] == CHAR_SPACE) {
     //

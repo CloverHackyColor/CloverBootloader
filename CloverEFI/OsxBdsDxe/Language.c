@@ -302,7 +302,7 @@ GetNextLanguage (
     Index++;
   }
 
-  CopyMem (Lang, StringPtr, Index);
+  CopyMem(Lang, StringPtr, Index);
   Lang[Index] = 0;
 
   if (StringPtr[Index] == ';') {

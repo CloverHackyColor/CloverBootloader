@@ -350,7 +350,7 @@ DebugClearMemory (
 {
   ASSERT (Buffer != NULL);
 
-  return SetMem (Buffer, Length, PcdGet8 (PcdDebugClearMemoryValue));
+  return SetMem(Buffer, Length, PcdGet8 (PcdDebugClearMemoryValue));
 }
 
 

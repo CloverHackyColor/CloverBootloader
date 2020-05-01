@@ -248,7 +248,7 @@ FindGuardedMemoryMap (
       ASSERT_EFI_ERROR(Status);
       ASSERT (MapMemory != 0);
 
-      SetMem ((VOID *)(UINTN)MapMemory, Size, 0);
+      SetMem((VOID *)(UINTN)MapMemory, Size, 0);
 
       *(UINT64 *)(UINTN)MapMemory = mGuardedMemoryMap;
       mGuardedMemoryMap = MapMemory;
@@ -280,7 +280,7 @@ FindGuardedMemoryMap (
       ASSERT_EFI_ERROR(Status);
       ASSERT (MapMemory != 0);
 
-      SetMem ((VOID *)(UINTN)MapMemory, Size, 0);
+      SetMem((VOID *)(UINTN)MapMemory, Size, 0);
       *GuardMap = MapMemory;
     }
 
@@ -1119,12 +1119,12 @@ SetAllGuardPages (
     return;
   }
 
-  CopyMem (Entries, mLevelMask, sizeof (Entries));
-  CopyMem (Shifts, mLevelShift, sizeof (Shifts));
+  CopyMem(Entries, mLevelMask, sizeof (Entries));
+  CopyMem(Shifts, mLevelShift, sizeof (Shifts));
 
-  SetMem (Tables, sizeof(Tables), 0);
-  SetMem (Addresses, sizeof(Addresses), 0);
-  SetMem (Indices, sizeof(Indices), 0);
+  SetMem(Tables, sizeof(Tables), 0);
+  SetMem(Addresses, sizeof(Addresses), 0);
+  SetMem(Indices, sizeof(Indices), 0);
 
   Level         = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
   Tables[Level] = mGuardedMemoryMap;
@@ -1371,12 +1371,12 @@ GuardAllFreedPages (
     return;
   }
 
-  CopyMem (Entries, mLevelMask, sizeof (Entries));
-  CopyMem (Shifts, mLevelShift, sizeof (Shifts));
+  CopyMem(Entries, mLevelMask, sizeof (Entries));
+  CopyMem(Shifts, mLevelShift, sizeof (Shifts));
 
-  SetMem (Tables, sizeof(Tables), 0);
-  SetMem (Addresses, sizeof(Addresses), 0);
-  SetMem (Indices, sizeof(Indices), 0);
+  SetMem(Tables, sizeof(Tables), 0);
+  SetMem(Addresses, sizeof(Addresses), 0);
+  SetMem(Indices, sizeof(Indices), 0);
 
   Level           = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
   Tables[Level]   = mGuardedMemoryMap;
@@ -1670,12 +1670,12 @@ DumpGuardedMemoryBitmap (
   DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "                  %a\r\n", Ruler1));
   DEBUG ((HEAP_GUARD_DEBUG_LEVEL, "                  %a\r\n", Ruler2));
 
-  CopyMem (Entries, mLevelMask, sizeof (Entries));
-  CopyMem (Shifts, mLevelShift, sizeof (Shifts));
+  CopyMem(Entries, mLevelMask, sizeof (Entries));
+  CopyMem(Shifts, mLevelShift, sizeof (Shifts));
 
-  SetMem (Indices, sizeof(Indices), 0);
-  SetMem (Tables, sizeof(Tables), 0);
-  SetMem (Addresses, sizeof(Addresses), 0);
+  SetMem(Indices, sizeof(Indices), 0);
+  SetMem(Tables, sizeof(Tables), 0);
+  SetMem(Addresses, sizeof(Addresses), 0);
 
   Level         = GUARDED_HEAP_MAP_TABLE_DEPTH - mMapLevel;
   Tables[Level] = mGuardedMemoryMap;

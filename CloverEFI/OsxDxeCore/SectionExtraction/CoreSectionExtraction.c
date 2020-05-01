@@ -369,7 +369,7 @@ OpenSectionStreamEx (
       //
       // Copy in stream data
       //
-      CopyMem (NewStream->StreamBuffer, SectionStream, SectionStreamLength);
+      CopyMem(NewStream->StreamBuffer, SectionStream, SectionStreamLength);
     } else {
       //
       // It's possible to have a zero length section stream.
@@ -759,7 +759,7 @@ CreateChildNode (
           //
           // stream is not actually compressed, just encapsulated.  So just copy it.
           //
-          CopyMem (NewStreamBuffer, CompressionSource, NewStreamBufferSize);
+          CopyMem(NewStreamBuffer, CompressionSource, NewStreamBufferSize);
         } else if (CompressionType == EFI_STANDARD_COMPRESSION) {
           //
           // Only support the EFI_SATNDARD_COMPRESSION algorithm.
@@ -1311,7 +1311,7 @@ GetSection (
       goto GetSection_Done;
     }
   }
-  CopyMem (*Buffer, CopyBuffer, CopySize);
+  CopyMem(*Buffer, CopyBuffer, CopySize);
   *BufferSize = SectionSize;
 
 GetSection_Done:
@@ -1579,7 +1579,7 @@ CustomGuidedSectionExtract (
     // OutputBuffer was returned as a different value,
     // so copy section contents to the allocated memory buffer.
     //
-    CopyMem (AllocatedOutputBuffer, *OutputBuffer, OutputBufferSize);
+    CopyMem(AllocatedOutputBuffer, *OutputBuffer, OutputBufferSize);
     *OutputBuffer = AllocatedOutputBuffer;
   }
 

@@ -339,7 +339,7 @@ WriteMemory (
   }
 
   while (Address < (Start + Size)) {
-    CopyMem ((VOID *) (UINTN) Address, Private->MonoPattern, Private->MonoTestSize);
+    CopyMem((VOID *) (UINTN) Address, Private->MonoPattern, Private->MonoTestSize);
     Address += Private->CoverageSpan;
   }
   //

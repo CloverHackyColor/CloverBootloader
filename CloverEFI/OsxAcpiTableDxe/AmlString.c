@@ -355,7 +355,7 @@ AmlGetAslNameStringSize (
   @param[in]    Length      Buffer length.
 **/
 VOID
-AmlUpperCaseCopyMem (
+AmlUpperCaseCopyMem(
   IN UINT8 *DstBuffer,
   IN UINT8 *SrcBuffer,
   IN UINTN Length
@@ -413,7 +413,7 @@ AmlNameFromAslName (
     AmlBuffer ++;
     Buffer ++;
   } else if (Parent > 0) {
-    SetMem (AmlBuffer, Parent, AML_PARENT_PREFIX_CHAR);
+    SetMem(AmlBuffer, Parent, AML_PARENT_PREFIX_CHAR);
     AmlBuffer += Parent;
     Buffer += Parent;
   }
@@ -437,8 +437,8 @@ AmlNameFromAslName (
   while (*Buffer != 0) {
     NameLength = AmlGetAslNameSegLength (Buffer);
     ASSERT ((NameLength != 0) && (NameLength <= AML_NAME_SEG_SIZE));
-    AmlUpperCaseCopyMem (AmlBuffer, Buffer, NameLength);
-    SetMem (AmlBuffer + NameLength, AML_NAME_SEG_SIZE - NameLength, AML_NAME_CHAR__);
+    AmlUpperCaseCopyMem(AmlBuffer, Buffer, NameLength);
+    SetMem(AmlBuffer + NameLength, AML_NAME_SEG_SIZE - NameLength, AML_NAME_CHAR__);
     Buffer += NameLength;
     AmlBuffer += AML_NAME_SEG_SIZE;
     if (*Buffer == 0) {

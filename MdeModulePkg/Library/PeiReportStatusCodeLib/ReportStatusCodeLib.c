@@ -479,7 +479,7 @@ ReportStatusCodeEx (
   }
   CopyGuid (&StatusCodeData->Type, ExtendedDataGuid);
   if (ExtendedData != NULL) {
-    CopyMem (StatusCodeData + 1, ExtendedData, ExtendedDataSize);
+    CopyMem(StatusCodeData + 1, ExtendedData, ExtendedDataSize);
   }
   if (CallerId == NULL) {
     CallerId = &gEfiCallerIdGuid;

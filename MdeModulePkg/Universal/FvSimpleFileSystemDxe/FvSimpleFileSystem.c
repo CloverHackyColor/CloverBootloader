@@ -306,7 +306,7 @@ FvFsGetFileInfo (
   //
   // Initialize FileInfo
   //
-  CopyMem (FileInfo, &FvFileInfo->FileInfo, InfoSize);
+  CopyMem(FileInfo, &FvFileInfo->FileInfo, InfoSize);
 
   *BufferSize = InfoSize;
   return EFI_SUCCESS;
@@ -396,7 +396,7 @@ TrimFilePathToAbsolutePath (
     TempString  += 4;
     RemoveLastItemFromPath (Path);
     TempSize     = StrSize (TempString);
-    CopyMem (Path + StrLen (Path), TempString, TempSize);
+    CopyMem(Path + StrLen (Path), TempString, TempSize);
   }
 
   if (((TempString = StrStr (Path, L"\\..")) != NULL) && (*(TempString + 3) == CHAR_NULL)) {
@@ -516,7 +516,7 @@ FvSimpleFileSystemOpen (
     NewFile->Signature = FVFS_FILE_SIGNATURE;
     NewFile->Instance  = Instance;
     NewFile->FvFileInfo = File->FvFileInfo;
-    CopyMem (&NewFile->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
+    CopyMem(&NewFile->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
     InitializeListHead (&NewFile->Link);
     InsertHeadList (&Instance->FileHead, &NewFile->Link);
 
@@ -581,7 +581,7 @@ FvSimpleFileSystemOpen (
     NewFile->Signature = FVFS_FILE_SIGNATURE;
     NewFile->Instance  = Instance;
     NewFile->FvFileInfo = FvFileInfo;
-    CopyMem (&NewFile->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
+    CopyMem(&NewFile->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
     InitializeListHead (&NewFile->Link);
     InsertHeadList (&Instance->FileHead, &NewFile->Link);
 
@@ -706,7 +706,7 @@ FvSimpleFileSystemRead (
       *BufferSize = (UINTN)(FileSize - File->Position);
     }
 
-    CopyMem (Buffer, (UINT8*)FileBuffer + File->Position, *BufferSize);
+    CopyMem(Buffer, (UINT8*)FileBuffer + File->Position, *BufferSize);
     File->Position += *BufferSize;
 
     FreePool(FileBuffer);
@@ -938,7 +938,7 @@ FvSimpleFileSystemGetInfo (
     //
     FsInfoOut = (EFI_FILE_SYSTEM_INFO *) Buffer;
 
-    CopyMem (FsInfoOut, &mFsInfoTemplate, sizeof (EFI_FILE_SYSTEM_INFO));
+    CopyMem(FsInfoOut, &mFsInfoTemplate, sizeof (EFI_FILE_SYSTEM_INFO));
     Status = StrnCpyS ( FsInfoOut->VolumeLabel,
                         (*BufferSize - OFFSET_OF (EFI_FILE_SYSTEM_INFO, VolumeLabel)) / sizeof (CHAR16),
                         Instance->VolumeLabel,

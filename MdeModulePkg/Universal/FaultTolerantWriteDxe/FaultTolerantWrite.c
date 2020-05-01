@@ -122,7 +122,7 @@ FtwAllocate (
   //
   FtwHeader->WritesAllocated  = FTW_INVALID_STATE;
   FtwHeader->Complete         = FTW_INVALID_STATE;
-  CopyMem (&FtwHeader->CallerId, CallerId, sizeof (EFI_GUID));
+  CopyMem(&FtwHeader->CallerId, CallerId, sizeof (EFI_GUID));
   FtwHeader->NumberOfWrites   = NumberOfWrites;
   FtwHeader->PrivateDataSize  = PrivateDataSize;
   FtwHeader->HeaderAllocated  = FTW_VALID_STATE;
@@ -438,7 +438,7 @@ FtwWrite (
   Record->Length  = Length;
   Record->RelativeOffset = (INT64) (FvbPhysicalAddress + (UINTN) Lba * BlockSize) - (INT64) FtwDevice->SpareAreaAddress;
   if (PrivateData != NULL) {
-    CopyMem ((Record + 1), PrivateData, (UINTN) Header->PrivateDataSize);
+    CopyMem((Record + 1), PrivateData, (UINTN) Header->PrivateDataSize);
   }
 
   MyOffset  = (UINT8 *) Record - FtwDevice->FtwWorkSpace;
@@ -484,7 +484,7 @@ FtwWrite (
   // Overwrite the updating range data with
   // the input buffer content
   //
-  CopyMem (MyBuffer + Offset, Buffer, Length);
+  CopyMem(MyBuffer + Offset, Buffer, Length);
 
   //
   // Try to keep the content of spare block
@@ -864,7 +864,7 @@ FtwGetLastWrite (
   //
   // Fill all the requested values
   //
-  CopyMem (CallerId, &Header->CallerId, sizeof (EFI_GUID));
+  CopyMem(CallerId, &Header->CallerId, sizeof (EFI_GUID));
   *Lba      = Record->Lba;
   *Offset   = (UINTN) Record->Offset;
   *Length   = (UINTN) Record->Length;
@@ -876,7 +876,7 @@ FtwGetLastWrite (
     Status            = EFI_BUFFER_TOO_SMALL;
   } else {
     *PrivateDataSize = (UINTN) Header->PrivateDataSize;
-    CopyMem (PrivateData, Record + 1, *PrivateDataSize);
+    CopyMem(PrivateData, Record + 1, *PrivateDataSize);
     Status = EFI_SUCCESS;
   }
 

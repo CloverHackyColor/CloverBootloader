@@ -133,7 +133,7 @@ UsbCreateInterface (
   }
   UsbIf->IfSetting  = IfDesc->Settings[IfDesc->ActiveIndex];
 
-  CopyMem (
+  CopyMem(
     &(UsbIf->UsbIo),
     &mUsbIoProtocol,
     sizeof (EFI_USB_IO_PROTOCOL)

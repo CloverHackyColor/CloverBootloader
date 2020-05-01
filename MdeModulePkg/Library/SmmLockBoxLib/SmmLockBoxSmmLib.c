@@ -483,13 +483,13 @@ SaveLockBox (
   //
   // Save data
   //
-  CopyMem ((VOID *)(UINTN)SmramBuffer, (VOID *)(UINTN)Buffer, Length);
+  CopyMem((VOID *)(UINTN)SmramBuffer, (VOID *)(UINTN)Buffer, Length);
 
   //
   // Insert LockBox to queue
   //
   LockBox->Signature   = SMM_LOCK_BOX_DATA_SIGNATURE;
-  CopyMem (&LockBox->Guid, Guid, sizeof(EFI_GUID));
+  CopyMem(&LockBox->Guid, Guid, sizeof(EFI_GUID));
   LockBox->Buffer      = (EFI_PHYSICAL_ADDRESS)(UINTN)Buffer;
   LockBox->Length      = (UINT64)Length;
   LockBox->Attributes  = 0;
@@ -677,7 +677,7 @@ UpdateLockBox (
         // Copy origin data to the new SMRAM buffer and wipe the content in the
         // origin SMRAM buffer.
         //
-        CopyMem ((VOID *)(UINTN)SmramBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+        CopyMem((VOID *)(UINTN)SmramBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
         ZeroMem ((VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
         gSmst->SmmFreePages (LockBox->SmramBuffer, EFI_SIZE_TO_PAGES ((UINTN)LockBox->Length));
 
@@ -704,7 +704,7 @@ UpdateLockBox (
     }
   }
   ASSERT ((UINTN)LockBox->SmramBuffer <= (MAX_ADDRESS - Offset));
-  CopyMem ((VOID *)((UINTN)LockBox->SmramBuffer + Offset), Buffer, Length);
+  CopyMem((VOID *)((UINTN)LockBox->SmramBuffer + Offset), Buffer, Length);
 
   //
   // Done
@@ -813,7 +813,7 @@ RestoreLockBox (
   //
   // Restore data
   //
-  CopyMem (RestoreBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+  CopyMem(RestoreBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
 
   //
   // Done
@@ -859,7 +859,7 @@ RestoreAllLockBoxInPlace (
       //
       // Restore data
       //
-      CopyMem ((VOID *)(UINTN)LockBox->Buffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+      CopyMem((VOID *)(UINTN)LockBox->Buffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
     }
   }
   //

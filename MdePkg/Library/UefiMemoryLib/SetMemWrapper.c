@@ -35,7 +35,7 @@
 **/
 VOID *
 EFIAPI
-SetMem (
+SetMem(
   OUT VOID  *Buffer,
   IN UINTN  Length,
   IN UINT8  Value
@@ -47,7 +47,7 @@ SetMem (
 
   ASSERT ((Length - 1) <= (MAX_ADDRESS - (UINTN)Buffer));
 
-  return InternalMemSetMem (Buffer, Length, Value);
+  return InternalMemSetMem(Buffer, Length, Value);
 }
 
 /**

@@ -114,7 +114,7 @@ HstiAipSetInfo (
     HstiAip->HstiMaxSize = InformationBlockSize;
   }
 
-  CopyMem (HstiAip->Hsti, InformationBlock, InformationBlockSize);
+  CopyMem(HstiAip->Hsti, InformationBlock, InformationBlockSize);
   HstiAip->HstiSize = InformationBlockSize;
   return EFI_SUCCESS;
 }

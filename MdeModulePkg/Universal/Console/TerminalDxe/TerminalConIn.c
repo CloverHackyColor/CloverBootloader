@@ -134,7 +134,7 @@ TerminalConInReadKeyStroke (
     return Status;
   }
 
-  CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
+  CopyMem(Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
 
   return EFI_SUCCESS;
 
@@ -371,7 +371,7 @@ TerminalConInRegisterKeyNotify (
 
   NewNotify->Signature         = TERMINAL_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
-  CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
   InsertTailList (&TerminalDevice->NotifyList, &NewNotify->NotifyEntry);
 
   *NotifyHandle                = NewNotify;
@@ -629,7 +629,7 @@ KeyNotifyProcessHandler (
     //
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
     HasKey = EfiKeyFiFoForNotifyRemoveOneKey (TerminalDevice->EfiKeyFiFoForNotify, &Key);
-    CopyMem (&KeyData.Key, &Key, sizeof (EFI_INPUT_KEY));
+    CopyMem(&KeyData.Key, &Key, sizeof (EFI_INPUT_KEY));
     KeyData.KeyState.KeyShiftState  = 0;
     KeyData.KeyState.KeyToggleState = 0;
     //
@@ -841,7 +841,7 @@ EfiKeyFiFoForNotifyInsertOneKey (
     return FALSE;
   }
 
-  CopyMem (&EfiKeyFiFo->Data[Tail], Input, sizeof (EFI_INPUT_KEY));
+  CopyMem(&EfiKeyFiFo->Data[Tail], Input, sizeof (EFI_INPUT_KEY));
 
   EfiKeyFiFo->Tail = (UINT8) ((Tail + 1) % (FIFO_MAX_NUMBER + 1));
 
@@ -878,7 +878,7 @@ EfiKeyFiFoForNotifyRemoveOneKey (
     return FALSE;
   }
 
-  CopyMem (Output, &EfiKeyFiFo->Data[Head], sizeof (EFI_INPUT_KEY));
+  CopyMem(Output, &EfiKeyFiFo->Data[Head], sizeof (EFI_INPUT_KEY));
 
   EfiKeyFiFo->Head = (UINT8) ((Head + 1) % (FIFO_MAX_NUMBER + 1));
 
@@ -958,7 +958,7 @@ EfiKeyFiFoInsertOneKey (
 
   Tail = TerminalDevice->EfiKeyFiFo->Tail;
 
-  CopyMem (&KeyData.Key, Key, sizeof (EFI_INPUT_KEY));
+  CopyMem(&KeyData.Key, Key, sizeof (EFI_INPUT_KEY));
   KeyData.KeyState.KeyShiftState  = 0;
   KeyData.KeyState.KeyToggleState = 0;
 
@@ -991,7 +991,7 @@ EfiKeyFiFoInsertOneKey (
     return FALSE;
   }
 
-  CopyMem (&TerminalDevice->EfiKeyFiFo->Data[Tail], Key, sizeof (EFI_INPUT_KEY));
+  CopyMem(&TerminalDevice->EfiKeyFiFo->Data[Tail], Key, sizeof (EFI_INPUT_KEY));
 
   TerminalDevice->EfiKeyFiFo->Tail = (UINT8) ((Tail + 1) % (FIFO_MAX_NUMBER + 1));
 
@@ -1028,7 +1028,7 @@ EfiKeyFiFoRemoveOneKey (
     return FALSE;
   }
 
-  CopyMem (Output, &TerminalDevice->EfiKeyFiFo->Data[Head], sizeof (EFI_INPUT_KEY));
+  CopyMem(Output, &TerminalDevice->EfiKeyFiFo->Data[Head], sizeof (EFI_INPUT_KEY));
 
   TerminalDevice->EfiKeyFiFo->Head = (UINT8) ((Head + 1) % (FIFO_MAX_NUMBER + 1));
 

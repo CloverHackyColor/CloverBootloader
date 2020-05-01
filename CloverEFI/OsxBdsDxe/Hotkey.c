@@ -206,7 +206,7 @@ RegisterHotkey (
   }
 
   if (KeyOrder != NULL) {
-    CopyMem (NewKeyOrder, KeyOrder, KeyOrderSize);
+    CopyMem(NewKeyOrder, KeyOrder, KeyOrderSize);
   }
 
   NewKeyOrder[Index] = RegisterOptionNumber;
@@ -765,7 +765,7 @@ HotkeyGetOptionNumbers (
           break;
         }
       }
-      CopyMem (&OptionNumbers[Index + 1], &OptionNumbers[Index], (*Count - Index) * sizeof (UINT16));
+      CopyMem(&OptionNumbers[Index + 1], &OptionNumbers[Index], (*Count - Index) * sizeof (UINT16));
       OptionNumbers[Index] = OptionNumber;
       (*Count)++;
     }

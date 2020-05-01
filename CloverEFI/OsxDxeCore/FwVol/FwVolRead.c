@@ -365,7 +365,7 @@ FvReadFile (
   //
   // Copy data into callers buffer
   //
-  CopyMem (*Buffer, SrcPtr, FileSize);
+  CopyMem(*Buffer, SrcPtr, FileSize);
 
   return Status;
 }

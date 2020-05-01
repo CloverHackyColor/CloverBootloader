@@ -189,7 +189,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	Dap->lba = Lba;
 	
 	// set registers
-	SetMem (&Regs, sizeof (Regs), 0);
+	SetMem(&Regs, sizeof (Regs), 0);
   
 	// first reset disk controller as the controller seems to be in an undefined state sometimes
 	DBG("Reset disk controller: %hhX\n", DriveNum);
@@ -470,7 +470,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
     UINT8                       BiosDriveNum;
     //UINTN         LogSize;
     
-	SetMem (&Regs, sizeof (Regs), 0);
+	SetMem(&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	
 	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
@@ -616,7 +616,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
 	
 	IA32_REGISTER_SET   Regs;
-	SetMem (&Regs, sizeof (Regs), 0);
+	SetMem(&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	//
 	// find the partition device path node
@@ -940,7 +940,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // prepare 16bit regs:
   // DX = BIOS drive num
   //
-  SetMem (&Regs, sizeof (Regs), 0);
+  SetMem(&Regs, sizeof (Regs), 0);
   Regs.X.DX = BiosDriveNum;
 
   // set up SI to partition table entry, some boot1 boot code (such a boot1f32 and boot1h) depend on it
@@ -1103,7 +1103,7 @@ VOID DumpBiosMemoryMap()
   IA32_REGISTER_SET           Regs;
   UINT8*                      BiosMap = (UINT8*)(UINTN)0x7C00;
   
-	SetMem (&Regs, sizeof (Regs), 0);
+	SetMem(&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
   
   Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);

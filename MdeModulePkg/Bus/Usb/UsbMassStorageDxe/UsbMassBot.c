@@ -94,7 +94,7 @@ UsbBotInit (
        (UsbBot->BulkOutEndpoint == NULL)) {
 
       UsbBot->BulkOutEndpoint   = (EFI_USB_ENDPOINT_DESCRIPTOR *) (UsbBot + 1) + 1;
-      CopyMem (UsbBot->BulkOutEndpoint, &EndPoint, sizeof(EndPoint));
+      CopyMem(UsbBot->BulkOutEndpoint, &EndPoint, sizeof(EndPoint));
     }
   }
 
@@ -172,7 +172,7 @@ UsbBotSendCommand (
   Cbw.CmdLen    = CmdLen;
 
   ZeroMem (Cbw.CmdBlock, USB_BOT_MAX_CMDLEN);
-  CopyMem (Cbw.CmdBlock, Cmd, CmdLen);
+  CopyMem(Cbw.CmdBlock, Cmd, CmdLen);
 
   Result  = 0;
   DataLen = sizeof (USB_BOT_CBW);

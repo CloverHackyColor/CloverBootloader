@@ -325,7 +325,7 @@ InternalRestoreLockBoxFromSmram (
   //
   // Restore data
   //
-  CopyMem (RestoreBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+  CopyMem(RestoreBuffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
 
   //
   // Done
@@ -391,7 +391,7 @@ InternalRestoreAllLockBoxInPlaceFromSmram (
       //
       // Restore data
       //
-      CopyMem ((VOID *)(UINTN)LockBox->Buffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
+      CopyMem((VOID *)(UINTN)LockBox->Buffer, (VOID *)(UINTN)LockBox->SmramBuffer, (UINTN)LockBox->Length);
     }
   }
   //
@@ -569,10 +569,10 @@ RestoreLockBox (
   // Prepare parameter
   //
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
+  CopyMem(&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
   if ((sizeof(UINTN) == sizeof(UINT32)) && (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) ) {
     MessageLength = sizeof(*LockBoxParameterRestore);
-    CopyMem (&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, MessageLength)], &MessageLength, sizeof(MessageLength));
+    CopyMem(&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, MessageLength)], &MessageLength, sizeof(MessageLength));
   } else {
     CommHeader->MessageLength = sizeof(*LockBoxParameterRestore);
   }
@@ -588,7 +588,7 @@ RestoreLockBox (
   LockBoxParameterRestore->Header.DataLength = sizeof(*LockBoxParameterRestore);
   LockBoxParameterRestore->Header.ReturnStatus = (UINT64)-1;
   if (Guid != 0) {
-    CopyMem (&LockBoxParameterRestore->Guid, Guid, sizeof(*Guid));
+    CopyMem(&LockBoxParameterRestore->Guid, Guid, sizeof(*Guid));
   } else {
     ZeroMem (&LockBoxParameterRestore->Guid, sizeof(*Guid));
   }
@@ -690,10 +690,10 @@ RestoreAllLockBoxInPlace (
   // Prepare parameter
   //
   CommHeader = (EFI_SMM_COMMUNICATE_HEADER *)&CommBuffer[0];
-  CopyMem (&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
+  CopyMem(&CommHeader->HeaderGuid, &gEfiSmmLockBoxCommunicationGuid, sizeof(gEfiSmmLockBoxCommunicationGuid));
   if ((sizeof(UINTN) == sizeof(UINT32)) && (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) ) {
     MessageLength = sizeof(*LockBoxParameterRestoreAllInPlace);
-    CopyMem (&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, MessageLength)], &MessageLength, sizeof(MessageLength));
+    CopyMem(&CommBuffer[OFFSET_OF (EFI_SMM_COMMUNICATE_HEADER, MessageLength)], &MessageLength, sizeof(MessageLength));
   } else {
     CommHeader->MessageLength = sizeof(*LockBoxParameterRestoreAllInPlace);
   }

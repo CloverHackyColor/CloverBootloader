@@ -444,7 +444,7 @@ AhciBlockIoGetMediaInfo2 (
     return EFI_NOT_FOUND;
   }
 
-  CopyMem (
+  CopyMem(
     MediaInfo,
     &DeviceData->Media,
     sizeof (EFI_PEI_BLOCK_IO2_MEDIA)

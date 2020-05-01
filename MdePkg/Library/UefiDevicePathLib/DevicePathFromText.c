@@ -2505,7 +2505,7 @@ DevPathFromTextUsbWwid (
   // There is no memory allocated in UsbWwid for the '\0' in SerialNumberStr.
   // Therefore, the '\0' will not be copied.
   //
-  CopyMem (
+  CopyMem(
     (UINT8 *) UsbWwid + sizeof (USB_WWID_DEVICE_PATH),
     SerialNumberStr,
     SerialNumberStrLen * sizeof (CHAR16)
@@ -2710,7 +2710,7 @@ DevPathFromTextWiFi (
     }
 
     UnicodeStrToAsciiStrS (SSIdStr, AsciiStr, sizeof (AsciiStr));
-    CopyMem (WiFiDp->SSId, AsciiStr, DataLen);
+    CopyMem(WiFiDp->SSId, AsciiStr, DataLen);
   }
 
   return (EFI_DEVICE_PATH_PROTOCOL *) WiFiDp;
@@ -2931,7 +2931,7 @@ DevPathFromTextHD (
     Hd->MBRType       = 0x01;
 
     Signature32       = (UINT32) Strtoi (SignatureStr);
-    CopyMem (Hd->Signature, &Signature32, sizeof (UINT32));
+    CopyMem(Hd->Signature, &Signature32, sizeof (UINT32));
   } else if (StrCmp (TypeStr, L"GPT") == 0) {
     Hd->SignatureType = SIGNATURE_TYPE_GUID;
     Hd->MBRType       = 0x02;

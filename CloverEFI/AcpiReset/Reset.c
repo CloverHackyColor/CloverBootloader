@@ -193,7 +193,7 @@ InitializeReset (
   // Copy it to Runtime Memory
   //
 //  ASSERT (sizeof (EFI_ACPI_DESCRIPTION) == GET_GUID_HOB_DATA_SIZE (HobAcpiDescription));
-  CopyMem (&mAcpiDescription, GET_GUID_HOB_DATA (HobAcpiDescription), sizeof (EFI_ACPI_DESCRIPTION));
+  CopyMem(&mAcpiDescription, GET_GUID_HOB_DATA (HobAcpiDescription), sizeof (EFI_ACPI_DESCRIPTION));
 
 //  DEBUG ((DEBUG_INFO, "ACPI Reset Base  - %lx\n", mAcpiDescription.RESET_REG.Address));
 //  DEBUG ((DEBUG_INFO, "ACPI Reset Value - %02x\n", (UINTN)mAcpiDescription.RESET_VALUE));

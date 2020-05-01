@@ -927,7 +927,7 @@ IdeInitSubmitData (
   // Make a local copy of device's IdentifyData and mark the valid flag
   //
   if (IdentifyData != NULL) {
-    CopyMem (
+    CopyMem(
       &(SataPrivateData->IdentifyData[Index]),
       IdentifyData,
       sizeof (EFI_IDENTIFY_DATA)
@@ -1005,7 +1005,7 @@ IdeInitDisqualifyMode (
   // Record the disqualified modes per channel per device. From ATA/ATAPI spec,
   // if a mode is not supported, the modes higher than it is also not supported.
   //
-  CopyMem (
+  CopyMem(
     &(SataPrivateData->DisqulifiedModes[(UINTN) Channel * (UINTN) SataPrivateData->DeviceCount + (UINTN) Device]),
     BadModes,
     sizeof (EFI_ATA_COLLECTIVE_MODE)

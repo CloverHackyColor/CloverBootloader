@@ -191,7 +191,7 @@ CopyGopToRgbPixel (
   ASSERT (BitMapOut != NULL && BitMapIn != NULL);
 
   for (Index = 0; Index < PixelNum; Index++) {
-    CopyMem (BitMapOut + Index, BitMapIn + Index, sizeof (EFI_HII_RGB_PIXEL));
+    CopyMem(BitMapOut + Index, BitMapIn + Index, sizeof (EFI_HII_RGB_PIXEL));
   }
 }
 
@@ -220,7 +220,7 @@ CopyRgbToGopPixel (
   ASSERT (BitMapOut != NULL && BitMapIn != NULL);
 
   for (Index = 0; Index < PixelNum; Index++) {
-    CopyMem (BitMapOut + Index, BitMapIn + Index, sizeof (EFI_HII_RGB_PIXEL));
+    CopyMem(BitMapOut + Index, BitMapIn + Index, sizeof (EFI_HII_RGB_PIXEL));
   }
 }
 
@@ -264,14 +264,14 @@ Output1bitPixel (
   // First entry corresponds to color 0 and second entry corresponds to color 1.
   //
   PaletteSize = 0;
-  CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
+  CopyMem(&PaletteSize, PaletteInfo, sizeof (UINT16));
   PaletteSize += sizeof (UINT16);
   Palette = AllocateZeroPool(PaletteSize);
   ASSERT (Palette != NULL);
   if (Palette == NULL) {
     return;
   }
-  CopyMem (Palette, PaletteInfo, PaletteSize);
+  CopyMem(Palette, PaletteInfo, PaletteSize);
 
   ZeroMem (PaletteValue, sizeof (PaletteValue));
   CopyRgbToGopPixel (&PaletteValue[0], &Palette->PaletteValue[0], 1);
@@ -353,14 +353,14 @@ Output4bitPixel (
   // The bitmap should allocate each color index starting from 0.
   //
   PaletteSize = 0;
-  CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
+  CopyMem(&PaletteSize, PaletteInfo, sizeof (UINT16));
   PaletteSize += sizeof (UINT16);
   Palette = AllocateZeroPool(PaletteSize);
   ASSERT (Palette != NULL);
   if (Palette == NULL) {
     return;
   }
-  CopyMem (Palette, PaletteInfo, PaletteSize);
+  CopyMem(Palette, PaletteInfo, PaletteSize);
   PaletteNum = (UINT16)(Palette->PaletteSize / sizeof (EFI_HII_RGB_PIXEL));
 
   ZeroMem (PaletteValue, sizeof (PaletteValue));
@@ -431,14 +431,14 @@ Output8bitPixel (
   // The bitmap should allocate each color index starting from 0.
   //
   PaletteSize = 0;
-  CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
+  CopyMem(&PaletteSize, PaletteInfo, sizeof (UINT16));
   PaletteSize += sizeof (UINT16);
   Palette = AllocateZeroPool(PaletteSize);
   ASSERT (Palette != NULL);
   if (Palette == NULL) {
     return;
   }
-  CopyMem (Palette, PaletteInfo, PaletteSize);
+  CopyMem(Palette, PaletteInfo, PaletteSize);
   PaletteNum = (UINT16)(Palette->PaletteSize / sizeof (EFI_HII_RGB_PIXEL));
   ZeroMem (PaletteValue, sizeof (PaletteValue));
   CopyRgbToGopPixel (PaletteValue, Palette->PaletteValue, MIN (PaletteNum, ARRAY_SIZE (PaletteValue)));
@@ -696,7 +696,7 @@ HiiNewImage (
     //
     // Copy the original content.
     //
-    CopyMem (
+    CopyMem(
       ImageBlocks,
       ImagePackage->ImageBlock,
       ImagePackage->ImageBlockSize - sizeof (EFI_HII_IIBT_END_BLOCK)
@@ -926,7 +926,7 @@ IGetImage (
     //
     // Use the common block code since the definition of these structures is the same.
     //
-    CopyMem (&Iibt1bit, CurrentImageBlock, sizeof (EFI_HII_IIBT_IMAGE_1BIT_BLOCK));
+    CopyMem(&Iibt1bit, CurrentImageBlock, sizeof (EFI_HII_IIBT_IMAGE_1BIT_BLOCK));
     ImageLength = (UINTN) Iibt1bit.Bitmap.Width * Iibt1bit.Bitmap.Height;
     if (ImageLength > MAX_UINTN / sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)) {
       return EFI_OUT_OF_RESOURCES;
@@ -942,7 +942,7 @@ IGetImage (
 
     PaletteInfo = ImagePackage->PaletteBlock + sizeof (EFI_HII_IMAGE_PALETTE_INFO_HEADER);
     for (PaletteIndex = 1; PaletteIndex < Iibt1bit.PaletteIndex; PaletteIndex++) {
-      CopyMem (&PaletteSize, PaletteInfo, sizeof (UINT16));
+      CopyMem(&PaletteSize, PaletteInfo, sizeof (UINT16));
       PaletteInfo += PaletteSize + sizeof (UINT16);
     }
     ASSERT (PaletteIndex == Iibt1bit.PaletteIndex);
@@ -1186,7 +1186,7 @@ HiiSetImage (
 
   Part1Size = (UINT32) ((UINTN) CurrentImageBlock - (UINTN) ImagePackage->ImageBlock);
   Part2Size = ImagePackage->ImageBlockSize - Part1Size - OldBlockSize;
-  CopyMem (ImageBlocks, ImagePackage->ImageBlock, Part1Size);
+  CopyMem(ImageBlocks, ImagePackage->ImageBlock, Part1Size);
 
   //
   // Set the new image block
@@ -1202,7 +1202,7 @@ HiiSetImage (
   CopyGopToRgbPixel (((EFI_HII_IIBT_IMAGE_24BIT_BLOCK *) NewImageBlock)->Bitmap.Bitmap,
                        Image->Bitmap, (UINT32) Image->Width * Image->Height);
 
-  CopyMem ((UINT8 *) NewImageBlock + NewBlockSize, (UINT8 *) CurrentImageBlock + OldBlockSize, Part2Size);
+  CopyMem((UINT8 *) NewImageBlock + NewBlockSize, (UINT8 *) CurrentImageBlock + OldBlockSize, Part2Size);
 
   FreePool(ImagePackage->ImageBlock);
   ImagePackage->ImageBlock                       = ImageBlocks;
@@ -1365,7 +1365,7 @@ HiiDrawImage (
     }
 
     if (Width == Image->Width && Height == Image->Height) {
-      CopyMem (BltBuffer, Image->Bitmap, BufferLen);
+      CopyMem(BltBuffer, Image->Bitmap, BufferLen);
     } else {
       for (Ypos = 0; Ypos < Height; Ypos++) {
         OffsetY1 = Image->Width * Ypos;

@@ -2035,7 +2035,7 @@ EFI_STATUS PrepatchSmbios()
   NumberOfRecords = 0;
   MaxStructureSize = 0;
   //preliminary fill EntryPoint with some data
-  CopyMem ((VOID *)SmbiosEpsNew, (VOID *)EntryPoint, sizeof(SMBIOS_TABLE_ENTRY_POINT));
+  CopyMem((VOID *)SmbiosEpsNew, (VOID *)EntryPoint, sizeof(SMBIOS_TABLE_ENTRY_POINT));
 
 
   Smbios = (VOID*)(SmbiosEpsNew + 1); //this is a C-language trick. I hate it but use. +1 means +sizeof(SMBIOS_TABLE_ENTRY_POINT)

@@ -475,7 +475,7 @@ InternalVarCheckReallocatePool (
 
   NewBuffer = InternalVarCheckAllocateZeroPool(NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
-    CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
+    CopyMem(NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     InternalVarCheckFreePool(OldBuffer);
   }
   return NewBuffer;
@@ -545,12 +545,12 @@ MergeHiiQuestion (
       Ptr2 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ONEOF *) HiiQuestion2 + 1);
       while ((UINTN) Ptr2 < (UINTN) HiiQuestion2 + HiiQuestion2->Length) {
         OneValue2 = 0;
-        CopyMem (&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
+        CopyMem(&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
 
         Ptr1 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ONEOF *) HiiQuestion1 + 1);
         while ((UINTN) Ptr1 < (UINTN) HiiQuestion1 + HiiQuestion1->Length) {
           OneValue1 = 0;
-          CopyMem (&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
+          CopyMem(&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
           if (OneValue2 == OneValue1) {
             //
             // Match
@@ -574,7 +574,7 @@ MergeHiiQuestion (
         //
         NewHiiQuestion = InternalVarCheckAllocateZeroPool(NewLength);
         ASSERT (NewHiiQuestion != NULL);
-        CopyMem (NewHiiQuestion, HiiQuestion1, HiiQuestion1->Length);
+        CopyMem(NewHiiQuestion, HiiQuestion1, HiiQuestion1->Length);
         //
         // Use the new length.
         //
@@ -584,12 +584,12 @@ MergeHiiQuestion (
         Ptr2 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ONEOF *) HiiQuestion2 + 1);
         while ((UINTN) Ptr2 < (UINTN) HiiQuestion2 + HiiQuestion2->Length) {
           OneValue2 = 0;
-          CopyMem (&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
+          CopyMem(&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
 
           Ptr1 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ONEOF *) HiiQuestion1 + 1);
           while ((UINTN) Ptr1 < (UINTN) HiiQuestion1 + HiiQuestion1->Length) {
             OneValue1 = 0;
-            CopyMem (&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
+            CopyMem(&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
             if (OneValue2 == OneValue1) {
               //
               // Match
@@ -602,7 +602,7 @@ MergeHiiQuestion (
             //
             // No match
             //
-            CopyMem (Ptr, &OneValue2, HiiQuestion1->StorageWidth);
+            CopyMem(Ptr, &OneValue2, HiiQuestion1->StorageWidth);
             Ptr += HiiQuestion1->StorageWidth;
           }
           Ptr2 += HiiQuestion2->StorageWidth;
@@ -625,9 +625,9 @@ MergeHiiQuestion (
       Minimum1 = 0;
       Maximum1 = 0;
       Ptr = (UINT8 *) ((VAR_CHECK_HII_QUESTION_NUMERIC *) HiiQuestion1 + 1);
-      CopyMem (&Minimum1, Ptr, HiiQuestion1->StorageWidth);
+      CopyMem(&Minimum1, Ptr, HiiQuestion1->StorageWidth);
       Ptr += HiiQuestion1->StorageWidth;
-      CopyMem (&Maximum1, Ptr, HiiQuestion1->StorageWidth);
+      CopyMem(&Maximum1, Ptr, HiiQuestion1->StorageWidth);
 
       //
       // Get minimum and maximum of Hii Question 2.
@@ -635,9 +635,9 @@ MergeHiiQuestion (
       Minimum2 = 0;
       Maximum2 = 0;
       Ptr = (UINT8 *) ((VAR_CHECK_HII_QUESTION_NUMERIC *) HiiQuestion2 + 1);
-      CopyMem (&Minimum2, Ptr, HiiQuestion2->StorageWidth);
+      CopyMem(&Minimum2, Ptr, HiiQuestion2->StorageWidth);
       Ptr += HiiQuestion2->StorageWidth;
-      CopyMem (&Maximum2, Ptr, HiiQuestion2->StorageWidth);
+      CopyMem(&Maximum2, Ptr, HiiQuestion2->StorageWidth);
 
       //
       // Update minimum.
@@ -645,7 +645,7 @@ MergeHiiQuestion (
       Ptr = (UINT8 *) ((VAR_CHECK_HII_QUESTION_NUMERIC *) HiiQuestion1 + 1);
       if (Minimum2 < Minimum1) {
         Minimum1 = Minimum2;
-        CopyMem (Ptr, &Minimum1, HiiQuestion1->StorageWidth);
+        CopyMem(Ptr, &Minimum1, HiiQuestion1->StorageWidth);
       }
       //
       // Update maximum.
@@ -653,7 +653,7 @@ MergeHiiQuestion (
       Ptr += HiiQuestion1->StorageWidth;
       if (Maximum2 > Maximum1) {
         Maximum1 = Maximum2;
-        CopyMem (Ptr, &Maximum1, HiiQuestion1->StorageWidth);
+        CopyMem(Ptr, &Maximum1, HiiQuestion1->StorageWidth);
       }
       break;
 
@@ -670,12 +670,12 @@ MergeHiiQuestion (
       Ptr2 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ORDEREDLIST *) HiiQuestion2 + 1);
       while ((UINTN) Ptr2 < (UINTN) HiiQuestion2 + HiiQuestion2->Length) {
         OneValue2 = 0;
-        CopyMem (&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
+        CopyMem(&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
 
         Ptr1 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ORDEREDLIST *) HiiQuestion1 + 1);
         while ((UINTN) Ptr1 < (UINTN) HiiQuestion1 + HiiQuestion1->Length) {
           OneValue1 = 0;
-          CopyMem (&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
+          CopyMem(&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
           if (OneValue2 == OneValue1) {
             //
             // Match
@@ -699,7 +699,7 @@ MergeHiiQuestion (
         //
         NewHiiQuestion = InternalVarCheckAllocateZeroPool(NewLength);
         ASSERT (NewHiiQuestion != NULL);
-        CopyMem (NewHiiQuestion, HiiQuestion1, HiiQuestion1->Length);
+        CopyMem(NewHiiQuestion, HiiQuestion1, HiiQuestion1->Length);
         //
         // Use the new length.
         //
@@ -709,12 +709,12 @@ MergeHiiQuestion (
         Ptr2 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ORDEREDLIST *) HiiQuestion2 + 1);
         while ((UINTN) Ptr2 < (UINTN) HiiQuestion2 + HiiQuestion2->Length) {
           OneValue2 = 0;
-          CopyMem (&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
+          CopyMem(&OneValue2, Ptr2, HiiQuestion2->StorageWidth);
 
           Ptr1 = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ORDEREDLIST *) HiiQuestion1 + 1);
           while ((UINTN) Ptr1 < (UINTN) HiiQuestion1 + HiiQuestion1->Length) {
             OneValue1 = 0;
-            CopyMem (&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
+            CopyMem(&OneValue1, Ptr1, HiiQuestion1->StorageWidth);
             if (OneValue2 == OneValue1) {
               //
               // Match
@@ -727,7 +727,7 @@ MergeHiiQuestion (
             //
             // No match
             //
-            CopyMem (Ptr, &OneValue2, HiiQuestion1->StorageWidth);
+            CopyMem(Ptr, &OneValue2, HiiQuestion1->StorageWidth);
             Ptr += HiiQuestion1->StorageWidth;
           }
           Ptr2 += HiiQuestion2->StorageWidth;
@@ -791,7 +791,7 @@ GetOneOfOption (
               *Count = *Count + 1;
               *Width = sizeof (UINT8);
               if (OptionBuffer != NULL) {
-                CopyMem (OptionBuffer, &IfrOneOfOption->Value.u8, sizeof (UINT8));
+                CopyMem(OptionBuffer, &IfrOneOfOption->Value.u8, sizeof (UINT8));
                 OptionBuffer = (UINT8 *) OptionBuffer + 1;
               }
               break;
@@ -799,7 +799,7 @@ GetOneOfOption (
               *Count = *Count + 1;
               *Width = sizeof (UINT16);
               if (OptionBuffer != NULL) {
-                CopyMem (OptionBuffer, &IfrOneOfOption->Value.u16, sizeof (UINT16));
+                CopyMem(OptionBuffer, &IfrOneOfOption->Value.u16, sizeof (UINT16));
                 OptionBuffer = (UINT16 *) OptionBuffer + 1;
               }
               break;
@@ -807,7 +807,7 @@ GetOneOfOption (
               *Count = *Count + 1;
               *Width = sizeof (UINT32);
               if (OptionBuffer != NULL) {
-                CopyMem (OptionBuffer, &IfrOneOfOption->Value.u32, sizeof (UINT32));
+                CopyMem(OptionBuffer, &IfrOneOfOption->Value.u32, sizeof (UINT32));
                 OptionBuffer = (UINT32 *) OptionBuffer + 1;
               }
               break;
@@ -815,7 +815,7 @@ GetOneOfOption (
               *Count = *Count + 1;
               *Width = sizeof (UINT64);
               if (OptionBuffer != NULL) {
-                CopyMem (OptionBuffer, &IfrOneOfOption->Value.u64, sizeof (UINT64));
+                CopyMem(OptionBuffer, &IfrOneOfOption->Value.u64, sizeof (UINT64));
                 OptionBuffer = (UINT64 *) OptionBuffer + 1;
               }
               break;
@@ -823,7 +823,7 @@ GetOneOfOption (
               *Count = *Count + 1;
               *Width = sizeof (BOOLEAN);
               if (OptionBuffer != NULL) {
-                CopyMem (OptionBuffer, &IfrOneOfOption->Value.b, sizeof (BOOLEAN));
+                CopyMem(OptionBuffer, &IfrOneOfOption->Value.b, sizeof (BOOLEAN));
                 OptionBuffer = (BOOLEAN *) OptionBuffer + 1;
               }
               break;
@@ -996,7 +996,7 @@ ParseHiiQuestionNumeric (
     Numeric->StorageWidth = Width;
   }
 
-  CopyMem (Numeric + 1, &IfrNumeric->data, Width * 2);
+  CopyMem(Numeric + 1, &IfrNumeric->data, Width * 2);
 
   return (VAR_CHECK_HII_QUESTION_HEADER *) Numeric;
 }
@@ -1531,7 +1531,7 @@ BuildVarCheckHiiBin (
     Ptr = (UINT8 *) HEADER_ALIGN (Ptr);
 
     HiiVariableNode = VAR_CHECK_HII_VARIABLE_FROM_LINK (HiiVariableLink);
-    CopyMem (Ptr, HiiVariableNode->HiiVariable, HiiVariableNode->HiiVariable->HeaderLength);
+    CopyMem(Ptr, HiiVariableNode->HiiVariable, HiiVariableNode->HiiVariable->HeaderLength);
     Ptr += HiiVariableNode->HiiVariable->HeaderLength;
 
     for (Index = 0; Index < HiiVariableNode->HiiVariable->Size * (UINTN) 8; Index++) {
@@ -1540,7 +1540,7 @@ BuildVarCheckHiiBin (
         // For Hii Question header align.
         //
         Ptr = (UINT8 *) HEADER_ALIGN (Ptr);
-        CopyMem (Ptr, HiiVariableNode->HiiQuestionArray[Index], HiiVariableNode->HiiQuestionArray[Index]->Length);
+        CopyMem(Ptr, HiiVariableNode->HiiQuestionArray[Index], HiiVariableNode->HiiQuestionArray[Index]->Length);
         Ptr += HiiVariableNode->HiiQuestionArray[Index]->Length;
       }
     }

@@ -1877,7 +1877,7 @@ BiosVideoCheckForVbe (
     }
 
     if (ModeNumber > 1) {
-      CopyMem (
+      CopyMem(
         ModeBuffer,
         BiosVideoPrivate->ModeData,
         (ModeNumber - 1) * sizeof (BIOS_VIDEO_MODE_DATA)
@@ -2149,7 +2149,7 @@ BiosVideoGraphicsOutputQueryMode (
   (*Info)->HorizontalResolution = ModeData->HorizontalResolution;
   (*Info)->VerticalResolution   = ModeData->VerticalResolution;
   (*Info)->PixelFormat = ModeData->PixelFormat;
-  CopyMem (&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
+  CopyMem(&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
 
   (*Info)->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
 
@@ -2347,7 +2347,7 @@ BiosVideoGraphicsOutputSetMode (
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
   This->Mode->Info->VerticalResolution = ModeData->VerticalResolution;
   This->Mode->Info->PixelFormat = ModeData->PixelFormat;
-  CopyMem (&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
+  CopyMem(&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
   This->Mode->Info->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
   This->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
@@ -2629,7 +2629,7 @@ BiosVideoVbeBltWorker (
       VbeBuffer   = ((UINT8 *) VbeFrameBuffer + DstY * BytesPerScanLine + DestinationX * VbePixelWidth);
       VbeBuffer1  = ((UINT8 *) VbeFrameBuffer + SrcY * BytesPerScanLine + SourceX * VbePixelWidth);
 
-      CopyMem (
+      CopyMem(
             VbeBuffer,
             VbeBuffer1,
             TotalBytes
@@ -2665,7 +2665,7 @@ BiosVideoVbeBltWorker (
           ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
 
     for (Index = 0; Index < Width; Index++) {
- /*     gBS->CopyMem (
+ /*     gBS->CopyMem(
             VbeBuffer,
             &Pixel,
             VbePixelWidth
@@ -2676,7 +2676,7 @@ BiosVideoVbeBltWorker (
 
     VbeBuffer = (UINT8 *) ((UINTN) VbeFrameBuffer + (DestinationY * BytesPerScanLine) + DestinationX * VbePixelWidth);
     for (DstY = DestinationY + 1; DstY < (Height + DestinationY); DstY++) {
-      CopyMem (
+      CopyMem(
             (VOID *) ((UINTN) VbeFrameBuffer + (DstY * BytesPerScanLine) + DestinationX * VbePixelWidth),
             VbeBuffer,
             TotalBytes
@@ -2711,7 +2711,7 @@ BiosVideoVbeBltWorker (
         Pixel = ((Blt->Red & Mode->Red.Mask) << Mode->Red.Position) |
           ((Blt->Green & Mode->Green.Mask) << Mode->Green.Position) |
             ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
-   /*     gBS->CopyMem (
+   /*     gBS->CopyMem(
               VbeBuffer,
               &Pixel,
               VbePixelWidth
@@ -3167,7 +3167,7 @@ BiosVideoGraphicsOutputVgaBlt (
       DestinationAddress  = (UINT8 *) (MemAddress + (DestinationY << 6) + (DestinationY << 4) + (DestinationX >> 3));
       Bytes               = Width >> 3;
       for (Index = 0, Offset = 0; Index < Height; Index++, Offset += BytesPerScanLine) {
-        PciIo->CopyMem (
+        PciIo->CopyMem(
                 PciIo,
                 EfiPciIoWidthUint8,
                 EFI_PCI_IO_PASS_THROUGH_BAR,

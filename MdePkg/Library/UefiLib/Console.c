@@ -441,7 +441,7 @@ CreatePopUp (
   //
   // Save the current console cursor position and attributes
   //
-  CopyMem (&SavedConsoleMode, ConOut->Mode, sizeof (SavedConsoleMode));
+  CopyMem(&SavedConsoleMode, ConOut->Mode, sizeof (SavedConsoleMode));
 
   //
   // Retrieve the number of columns and rows in the current console mode

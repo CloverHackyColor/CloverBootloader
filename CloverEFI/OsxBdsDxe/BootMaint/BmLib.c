@@ -281,7 +281,7 @@ EfiStrDuplicate (
   Dest  = AllocatePool (Size); //don't need to zero because of CopyMem. SpeedUp
 //  ASSERT (Dest != NULL);
   if (Dest != NULL) {
-    CopyMem (Dest, Src, Size);
+    CopyMem(Dest, Src, Size);
   }
 
   return Dest;
@@ -420,7 +420,7 @@ EfiReallocatePool (
 
   if (OldPool != NULL) {
     if (NewPool != NULL) {
-      CopyMem (NewPool, OldPool, OldSize < NewSize ? OldSize : NewSize);
+      CopyMem(NewPool, OldPool, OldSize < NewSize ? OldSize : NewSize);
     }
 
     FreePool(OldPool);

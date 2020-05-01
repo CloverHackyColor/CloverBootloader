@@ -1143,7 +1143,7 @@ PartitionInstallChildHandle (
   Private->BlockIo.Revision = ParentBlockIo->Revision;
 
   Private->BlockIo.Media    = &Private->Media;
-  CopyMem (Private->BlockIo.Media, ParentBlockIo->Media, sizeof (EFI_BLOCK_IO_MEDIA));
+  CopyMem(Private->BlockIo.Media, ParentBlockIo->Media, sizeof (EFI_BLOCK_IO_MEDIA));
 
   Private->BlockIo.Reset        = PartitionReset;
   Private->BlockIo.ReadBlocks   = PartitionReadBlocks;
@@ -1156,7 +1156,7 @@ PartitionInstallChildHandle (
   if (Private->DiskIo2 != NULL) {
     ASSERT (Private->ParentBlockIo2 != NULL);
     Private->BlockIo2.Media    = &Private->Media2;
-    CopyMem (Private->BlockIo2.Media, ParentBlockIo2->Media, sizeof (EFI_BLOCK_IO_MEDIA));
+    CopyMem(Private->BlockIo2.Media, ParentBlockIo2->Media, sizeof (EFI_BLOCK_IO_MEDIA));
 
     Private->BlockIo2.Reset          = PartitionResetEx;
     Private->BlockIo2.ReadBlocksEx   = PartitionReadBlocksEx;

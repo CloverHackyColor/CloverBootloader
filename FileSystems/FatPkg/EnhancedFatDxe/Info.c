@@ -133,7 +133,7 @@ Returns:
                           Volume->FatInfoSector.FreeInfo.ClusterCount,
                           ClusterAlignment
                           );
-    CopyMem ((CHAR8 *) Buffer + Size, Name, NameSize);
+    CopyMem((CHAR8 *) Buffer + Size, Name, NameSize);
   }
 
   *BufferSize = ResultSize;
@@ -183,7 +183,7 @@ Returns:
   Status      = EFI_BUFFER_TOO_SMALL;
   if (*BufferSize >= ResultSize) {
     Status  = EFI_SUCCESS;
-    CopyMem ((CHAR8 *) Buffer + Size, Name, NameSize);
+    CopyMem((CHAR8 *) Buffer + Size, Name, NameSize);
   }
 
   *BufferSize = ResultSize;

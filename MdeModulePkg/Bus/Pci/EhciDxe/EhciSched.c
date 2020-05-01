@@ -1091,7 +1091,7 @@ EhcMonitorAsyncRequests (
         continue;
       }
 
-      CopyMem (ProcBuf, Urb->Data, Urb->Completed);
+      CopyMem(ProcBuf, Urb->Data, Urb->Completed);
     }
 
     EhcUpdateAsyncRequest (Ehc, Urb);

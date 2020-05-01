@@ -255,13 +255,12 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	//
 	// Patch kernel and kexts if needed
 	//
-	if ( !((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY() ) {
-		DebugLog(2, "Bug : Context must be a LOADER_ENTRY\n");
-		// what to do ?
-	}
-	KernelAndKextsPatcherStart(((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY());
+  LOADER_ENTRY *Entry = ((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY();
+	if (Entry) {
+    Entry->KernelAndKextsPatcherStart();
+  }
 	
-#if 0
+#if 0  //it will be as a sample of possible patches in future
 //    gBS->Stall(2000000);
 	//PauseForKey(L"press any key to MemoryFix");
 	if (gSettings.MemoryFix) {
@@ -331,20 +330,10 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
     }
 	}
 #endif
+  
 	if (gSettings.USBFixOwnership) {
-		// Note: blocks on Aptio
-//		DisableUsbLegacySupport();
     FixOwnership();
 	}
-  // Unlock boot screen
-  // apianti - This may cause issues since it frees memory, there's
-  //  no need to free it at this point since it was all allocated as
-  //  boot memory so it will be gone anyway after exit boot services
-  /*
-  if (EFI_ERROR(Status = UnlockBootScreen())) {
-    DBG("Failed to unlock boot screen!\n");
-  }
-  // */
 }
 
 VOID

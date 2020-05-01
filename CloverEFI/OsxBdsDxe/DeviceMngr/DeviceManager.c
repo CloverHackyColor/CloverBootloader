@@ -291,7 +291,7 @@ ExtractDisplayedHiiFormFromHiiHandle (
 
   while (Offset < PackageListLength) {
     Package = ((UINT8 *) HiiPackageList) + Offset;
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
 
     if (PackageHeader.Type == EFI_HII_PACKAGE_FORMS) {
       //
@@ -316,8 +316,8 @@ ExtractDisplayedHiiFormFromHiiHandle (
             ClassGuid = (EFI_GUID *) (VOID *)(OpCodeData + sizeof (EFI_IFR_FORM_SET));
             while (ClassGuidNum-- > 0) {
               if (CompareGuid (SetupClassGuid, ClassGuid)) {
-                CopyMem (FormSetTitle, &((EFI_IFR_FORM_SET *) OpCodeData)->FormSetTitle, sizeof (EFI_STRING_ID));
-                CopyMem (FormSetHelp, &((EFI_IFR_FORM_SET *) OpCodeData)->Help, sizeof (EFI_STRING_ID));
+                CopyMem(FormSetTitle, &((EFI_IFR_FORM_SET *) OpCodeData)->FormSetTitle, sizeof (EFI_STRING_ID));
+                CopyMem(FormSetHelp, &((EFI_IFR_FORM_SET *) OpCodeData)->Help, sizeof (EFI_STRING_ID));
                 *FormSetGuid = AllocateCopyPool(sizeof (EFI_GUID), &((EFI_IFR_FORM_SET *) OpCodeData)->Guid);
                 ASSERT (*FormSetGuid != NULL);
                 FreePool(HiiPackageList);
@@ -326,8 +326,8 @@ ExtractDisplayedHiiFormFromHiiHandle (
               ClassGuid ++;
             }
            } else {
-             CopyMem (FormSetTitle, &((EFI_IFR_FORM_SET *) OpCodeData)->FormSetTitle, sizeof (EFI_STRING_ID));
-             CopyMem (FormSetHelp, &((EFI_IFR_FORM_SET *) OpCodeData)->Help, sizeof (EFI_STRING_ID));
+             CopyMem(FormSetTitle, &((EFI_IFR_FORM_SET *) OpCodeData)->FormSetTitle, sizeof (EFI_STRING_ID));
+             CopyMem(FormSetHelp, &((EFI_IFR_FORM_SET *) OpCodeData)->Help, sizeof (EFI_STRING_ID));
              *FormSetGuid = AllocateCopyPool(sizeof (EFI_GUID), &((EFI_IFR_FORM_SET *) OpCodeData)->Guid);
              ASSERT (*FormSetGuid != NULL);
              FreePool(HiiPackageList);
@@ -773,14 +773,14 @@ AdjustArrayData (
   NewHiiHandles = AllocateZeroPool((ArrayCount + 2) * sizeof (EFI_HII_HANDLE));
   ASSERT (NewHiiHandles != NULL);
 
-  CopyMem (NewHiiHandles, *HiiHandles, Offset * sizeof (EFI_HII_HANDLE));
+  CopyMem(NewHiiHandles, *HiiHandles, Offset * sizeof (EFI_HII_HANDLE));
   NewHiiHandles[Offset] = NewHiiHandles[Offset - 1];
-  CopyMem (NewHiiHandles + Offset + 1, *HiiHandles + Offset, (ArrayCount - Offset) * sizeof (EFI_HII_HANDLE));
+  CopyMem(NewHiiHandles + Offset + 1, *HiiHandles + Offset, (ArrayCount - Offset) * sizeof (EFI_HII_HANDLE));
 
   NewGuidLists = AllocateZeroPool((ArrayCount + 2) * sizeof (EFI_GUID *));
   ASSERT (NewGuidLists != NULL);
 
-  CopyMem (NewGuidLists, *GuidLists, Offset * sizeof (EFI_GUID *));
+  CopyMem(NewGuidLists, *GuidLists, Offset * sizeof (EFI_GUID *));
   NewGuidLists[Offset] = FormSetGuid;
 
   FreePool(*HiiHandles);

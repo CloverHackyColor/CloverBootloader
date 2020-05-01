@@ -682,7 +682,7 @@ MouseGetState (
   }
 
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-  CopyMem (State, &(MouseDev->State), sizeof (EFI_SIMPLE_POINTER_STATE));
+  CopyMem(State, &(MouseDev->State), sizeof (EFI_SIMPLE_POINTER_STATE));
 
   //
   // clear mouse state

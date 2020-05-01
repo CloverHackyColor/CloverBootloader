@@ -444,18 +444,18 @@ InternalPrintGraphic (
   ZeroMem (&FontInfo, sizeof (EFI_FONT_DISPLAY_INFO));
 
   if (Foreground != NULL) {
-    CopyMem (&FontInfo.ForegroundColor, Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    CopyMem(&FontInfo.ForegroundColor, Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   } else {
-    CopyMem (
+    CopyMem(
       &FontInfo.ForegroundColor,
       &mEfiColors[Sto->Mode->Attribute & 0x0f],
       sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)
       );
   }
   if (Background != NULL) {
-    CopyMem (&FontInfo.BackgroundColor, Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    CopyMem(&FontInfo.BackgroundColor, Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
   } else {
-    CopyMem (
+    CopyMem(
       &FontInfo.BackgroundColor,
       &mEfiColors[Sto->Mode->Attribute >> 4],
       sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL)

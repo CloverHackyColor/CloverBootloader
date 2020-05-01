@@ -371,7 +371,7 @@ CreateTimeBasedPayload (
   }
 
   if ((Payload != NULL) && (PayloadSize != 0)) {
-    CopyMem (NewData + DescriptorSize, Payload, PayloadSize);
+    CopyMem(NewData + DescriptorSize, Payload, PayloadSize);
   }
 
   DescriptorData = (EFI_VARIABLE_AUTHENTICATION_2 *) (NewData);
@@ -387,7 +387,7 @@ CreateTimeBasedPayload (
   Time.TimeZone   = 0;
   Time.Daylight   = 0;
   Time.Pad2       = 0;
-  CopyMem (&DescriptorData->TimeStamp, &Time, sizeof (EFI_TIME));
+  CopyMem(&DescriptorData->TimeStamp, &Time, sizeof (EFI_TIME));
 
   DescriptorData->AuthInfo.Hdr.dwLength         = OFFSET_OF (WIN_CERTIFICATE_UEFI_GUID, CertData);
   DescriptorData->AuthInfo.Hdr.wRevision        = 0x0200;
@@ -457,7 +457,7 @@ CreateCounterBasedPayload (
   }
 
   if ((Payload != NULL) && (PayloadSize != 0)) {
-    CopyMem (NewData + DescriptorSize, Payload, PayloadSize);
+    CopyMem(NewData + DescriptorSize, Payload, PayloadSize);
   }
 
   DescriptorData = (EFI_VARIABLE_AUTHENTICATION *) (NewData);
@@ -964,13 +964,13 @@ VariableCleanupHiiCallback (
             //
             // Means the SelectAll checkbox is marked to delete all user variables but not press F10 or "Commit Changes and Exit" menu.
             //
-            SetMem (VariableCleanupData->UserVariable, sizeof (VariableCleanupData->UserVariable), TRUE);
+            SetMem(VariableCleanupData->UserVariable, sizeof (VariableCleanupData->UserVariable), TRUE);
             mMarkedUserVariableCount = mUserVariableCount;
           } else {
             //
             // Means the SelectAll checkbox is unmarked.
             //
-            SetMem (VariableCleanupData->UserVariable, sizeof (VariableCleanupData->UserVariable), FALSE);
+            SetMem(VariableCleanupData->UserVariable, sizeof (VariableCleanupData->UserVariable), FALSE);
             mMarkedUserVariableCount = 0;
           }
           break;

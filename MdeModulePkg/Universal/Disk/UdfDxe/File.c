@@ -111,7 +111,7 @@ UdfOpenVolume (
   PrivFileData->Root             = &PrivFsData->Root;
   PrivFileData->IsRootDirectory  = TRUE;
 
-  CopyMem ((VOID *)&PrivFileData->FileIo, (VOID *)&gUdfFileIoOps,
+  CopyMem((VOID *)&PrivFileData->FileIo, (VOID *)&gUdfFileIoOps,
            sizeof (EFI_FILE_PROTOCOL));
 
   *Root = &PrivFileData->FileIo;
@@ -230,9 +230,9 @@ UdfOpen (
     goto Error_Alloc_New_Priv_File_Data;
   }
 
-  CopyMem ((VOID *)NewPrivFileData, (VOID *)PrivFileData,
+  CopyMem((VOID *)NewPrivFileData, (VOID *)PrivFileData,
            sizeof (PRIVATE_UDF_FILE_DATA));
-  CopyMem ((VOID *)&NewPrivFileData->File, &File, sizeof (UDF_FILE_INFO));
+  CopyMem((VOID *)&NewPrivFileData->File, &File, sizeof (UDF_FILE_INFO));
 
   NewPrivFileData->IsRootDirectory = FALSE;
 

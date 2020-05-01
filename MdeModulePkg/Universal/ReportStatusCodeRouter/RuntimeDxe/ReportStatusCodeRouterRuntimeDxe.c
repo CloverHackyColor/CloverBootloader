@@ -306,7 +306,7 @@ ReportDispatcher (
       CopyGuid (&RscData->CallerId, CallerId);
     }
     if (Data != NULL) {
-      CopyMem (&RscData->Data, Data, Data->HeaderSize + Data->Size);
+      CopyMem(&RscData->Data, Data, Data->HeaderSize + Data->Size);
     }
 
     Status = gBS->SignalEvent (CallbackEntry->Event);

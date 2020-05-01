@@ -733,7 +733,7 @@ GetUnicodeStringTextAndSize (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (*StringDest, StringSrc, StringSize);
+  CopyMem(*StringDest, StringSrc, StringSize);
 
   *BufferSize = StringSize;
   return EFI_SUCCESS;
@@ -823,7 +823,7 @@ GetStringIdFromString (
       break;
 
     case EFI_HII_SIBT_STRINGS_SCSU:
-      CopyMem (&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+      CopyMem(&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
       StringTextPtr = (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) - sizeof (UINT8));
       BlockSize += StringTextPtr - BlockHdr;
 
@@ -839,7 +839,7 @@ GetStringIdFromString (
       break;
 
     case EFI_HII_SIBT_STRINGS_SCSU_FONT:
-      CopyMem (
+      CopyMem(
         &StringCount,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT16)
@@ -902,7 +902,7 @@ GetStringIdFromString (
       Offset = sizeof (EFI_HII_SIBT_STRINGS_UCS2_BLOCK) - sizeof (CHAR16);
       StringTextPtr = BlockHdr + Offset;
       BlockSize += Offset;
-      CopyMem (&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+      CopyMem(&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
       for (Index = 0; Index < StringCount; Index++) {
         Status = GetUnicodeStringTextAndSize (StringTextPtr, &StringSize, &String);
         if (EFI_ERROR(Status)) {
@@ -923,7 +923,7 @@ GetStringIdFromString (
       Offset = sizeof (EFI_HII_SIBT_STRINGS_UCS2_FONT_BLOCK) - sizeof (CHAR16);
       StringTextPtr = BlockHdr + Offset;
       BlockSize += Offset;
-      CopyMem (
+      CopyMem(
         &StringCount,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT16)
@@ -956,13 +956,13 @@ GetStringIdFromString (
       break;
 
     case EFI_HII_SIBT_SKIP2:
-      CopyMem (&SkipCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+      CopyMem(&SkipCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
       CurrentStringId = (UINT16) (CurrentStringId + SkipCount);
       BlockSize       +=  sizeof (EFI_HII_SIBT_SKIP2_BLOCK);
       break;
 
     case EFI_HII_SIBT_EXT1:
-      CopyMem (
+      CopyMem(
         &Length8,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT8)
@@ -971,12 +971,12 @@ GetStringIdFromString (
       break;
 
     case EFI_HII_SIBT_EXT2:
-      CopyMem (&Ext2, BlockHdr, sizeof (EFI_HII_SIBT_EXT2_BLOCK));
+      CopyMem(&Ext2, BlockHdr, sizeof (EFI_HII_SIBT_EXT2_BLOCK));
       BlockSize += Ext2.Length;
       break;
 
     case EFI_HII_SIBT_EXT4:
-      CopyMem (
+      CopyMem(
         &Length32,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT32)
@@ -1099,7 +1099,7 @@ GetNextStringId (
       break;
 
     case EFI_HII_SIBT_STRINGS_SCSU:
-      CopyMem (&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+      CopyMem(&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
       StringTextPtr = (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_SIBT_STRINGS_SCSU_BLOCK) - sizeof (UINT8));
       BlockSize += StringTextPtr - BlockHdr;
 
@@ -1123,7 +1123,7 @@ GetNextStringId (
       break;
 
     case EFI_HII_SIBT_STRINGS_SCSU_FONT:
-      CopyMem (
+      CopyMem(
         &StringCount,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT16)
@@ -1197,7 +1197,7 @@ GetNextStringId (
       Offset = sizeof (EFI_HII_SIBT_STRINGS_UCS2_BLOCK) - sizeof (CHAR16);
       StringTextPtr = BlockHdr + Offset;
       BlockSize += Offset;
-      CopyMem (&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+      CopyMem(&StringCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
       for (Index = 0; Index < StringCount; Index++) {
         GetUnicodeStringTextAndSize (StringTextPtr, &StringSize, &String);
 
@@ -1218,7 +1218,7 @@ GetNextStringId (
       Offset = sizeof (EFI_HII_SIBT_STRINGS_UCS2_FONT_BLOCK) - sizeof (CHAR16);
       StringTextPtr = BlockHdr + Offset;
       BlockSize += Offset;
-      CopyMem (
+      CopyMem(
         &StringCount,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT16)
@@ -1250,13 +1250,13 @@ GetNextStringId (
       break;
 
     case EFI_HII_SIBT_SKIP2:
-      CopyMem (&SkipCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
+      CopyMem(&SkipCount, BlockHdr + sizeof (EFI_HII_STRING_BLOCK), sizeof (UINT16));
       CurrentStringId = (UINT16) (CurrentStringId + SkipCount);
       BlockSize       +=  sizeof (EFI_HII_SIBT_SKIP2_BLOCK);
       break;
 
     case EFI_HII_SIBT_EXT1:
-      CopyMem (
+      CopyMem(
         &Length8,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT8)
@@ -1265,12 +1265,12 @@ GetNextStringId (
       break;
 
     case EFI_HII_SIBT_EXT2:
-      CopyMem (&Ext2, BlockHdr, sizeof (EFI_HII_SIBT_EXT2_BLOCK));
+      CopyMem(&Ext2, BlockHdr, sizeof (EFI_HII_SIBT_EXT2_BLOCK));
       BlockSize += Ext2.Length;
       break;
 
     case EFI_HII_SIBT_EXT4:
-      CopyMem (
+      CopyMem(
         &Length32,
         (UINT8*)((UINTN)BlockHdr + sizeof (EFI_HII_STRING_BLOCK) + sizeof (UINT8)),
         sizeof (UINT32)

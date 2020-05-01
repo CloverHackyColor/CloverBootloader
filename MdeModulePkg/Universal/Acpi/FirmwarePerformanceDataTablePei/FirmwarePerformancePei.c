@@ -169,7 +169,7 @@ FpdtStatusCodeListenerPei (
     FirmwarePerformanceData = GET_GUID_HOB_DATA (GuidHob);
     PeiPerformanceLogHeader = (FPDT_PEI_EXT_PERF_HEADER *) FirmwarePerformanceData;
 
-    CopyMem (FirmwarePerformanceTablePtr, FirmwarePerformanceData + sizeof (FPDT_PEI_EXT_PERF_HEADER), (UINTN)(PeiPerformanceLogHeader->SizeOfAllEntries));
+    CopyMem(FirmwarePerformanceTablePtr, FirmwarePerformanceData + sizeof (FPDT_PEI_EXT_PERF_HEADER), (UINTN)(PeiPerformanceLogHeader->SizeOfAllEntries));
 
     GuidHob = GetNextGuidHob (&gEdkiiFpdtExtendedFirmwarePerformanceGuid, GET_NEXT_HOB (GuidHob));
 

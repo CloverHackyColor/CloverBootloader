@@ -664,7 +664,7 @@ LegacyBiosInstall (
   // Initialize interrupt redirection code and entries;
   // IDT Vectors 0x68-0x6f must be redirected to IDT Vectors 0x08-0x0f.
   //
-  CopyMem (
+  CopyMem(
          Private->IntThunk->InterruptRedirectionCode,
          (VOID *) (UINTN) InterruptRedirectionTemplate,
          sizeof (Private->IntThunk->InterruptRedirectionCode)

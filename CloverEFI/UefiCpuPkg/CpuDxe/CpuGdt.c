@@ -182,7 +182,7 @@ InitGlobalDescriptorTable (
   //
   // Initialize all GDT entries
   //
-  CopyMem (gdt, &GdtTemplate, sizeof (GdtTemplate));
+  CopyMem(gdt, &GdtTemplate, sizeof (GdtTemplate));
 
   //
   // Write GDT register

@@ -85,7 +85,7 @@ GetNextLanguage (
     Index++;
   }
 
-  CopyMem (Lang, StringPtr, Index);
+  CopyMem(Lang, StringPtr, Index);
   Lang[Index] = 0;
 
   if (StringPtr[Index] == ';') {
@@ -538,7 +538,7 @@ RequiredDriver (
 
       *PromptId = ((EFI_IFR_FORM_SET *)Ptr)->FormSetTitle;
       *HelpId = ((EFI_IFR_FORM_SET *)Ptr)->Help;
-      CopyMem (FormsetGuid, &((EFI_IFR_FORM_SET *) Ptr)->Guid, sizeof (EFI_GUID));
+      CopyMem(FormsetGuid, &((EFI_IFR_FORM_SET *) Ptr)->Guid, sizeof (EFI_GUID));
       RetVal = TRUE;
     }
   }

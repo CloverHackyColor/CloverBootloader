@@ -734,7 +734,7 @@ InternalAllocateCopyPool(
 
   Memory = InternalAllocatePool (PoolType, AllocationSize);
   if (Memory != NULL) {
-     Memory = CopyMem (Memory, Buffer, AllocationSize);
+     Memory = CopyMem(Memory, Buffer, AllocationSize);
   }
   return Memory;
 }
@@ -880,7 +880,7 @@ InternalReallocatePool (
 
   NewBuffer = InternalAllocateZeroPool(PoolType, NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
-    CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
+    CopyMem(NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     FreePool(OldBuffer);
   }
   return NewBuffer;
@@ -1081,7 +1081,7 @@ PiSmmCoreMemoryAllocationLibConstructor (
   Status = gBS->AllocatePool (EfiBootServicesData, Size, (VOID **) &mSmmCoreMemoryAllocLibSmramRanges);
   ASSERT_EFI_ERROR(Status);
   ASSERT (mSmmCoreMemoryAllocLibSmramRanges != NULL);
-  CopyMem (mSmmCoreMemoryAllocLibSmramRanges, SmmCorePrivate->SmramRanges, Size);
+  CopyMem(mSmmCoreMemoryAllocLibSmramRanges, SmmCorePrivate->SmramRanges, Size);
 
   //
   // Initialize memory service using free SMRAM

@@ -362,7 +362,7 @@ AhciDumpPortStatus (
       //
       // If D2H FIS is received, update StatusBlock with its content.
       //
-      CopyMem (AtaStatusBlock, (UINT8 *)Offset, sizeof (EFI_ATA_STATUS_BLOCK));
+      CopyMem(AtaStatusBlock, (UINT8 *)Offset, sizeof (EFI_ATA_STATUS_BLOCK));
     } else {
       //
       // If D2H FIS is not received, only update Status & Error field through PxTFD
@@ -524,11 +524,11 @@ AhciBuildCommand (
 
   CommandFis->AhciCFisPmNum = PortMultiplier;
 
-  CopyMem (&AhciRegisters->AhciCommandTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
+  CopyMem(&AhciRegisters->AhciCommandTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
 
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
   if (AtapiCommand != NULL) {
-    CopyMem (
+    CopyMem(
       &AhciRegisters->AhciCommandTable->AtapiCmd,
       AtapiCommand,
       AtapiCommandLength
@@ -567,7 +567,7 @@ AhciBuildCommand (
     AhciRegisters->AhciCommandTable->PrdtTable[PrdtNumber - 1].AhciPrdtIoc = 1;
   }
 
-  CopyMem (
+  CopyMem(
     (VOID *) ((UINTN) AhciRegisters->AhciCmdList + (UINTN) CommandSlotNumber * sizeof (EFI_AHCI_COMMAND_LIST)),
     CommandList,
     sizeof (EFI_AHCI_COMMAND_LIST)
@@ -2273,7 +2273,7 @@ AhciEnableDevSlp (
     //
     ZeroMem (&DevSlpTiming, sizeof (DevSlpTiming));
   } else {
-    CopyMem (&DevSlpTiming, &LogData[48], sizeof (DevSlpTiming));
+    CopyMem(&DevSlpTiming, &LogData[48], sizeof (DevSlpTiming));
     DEBUG ((DEBUG_INFO, "DevSlpTiming: Supported(%d), Deto(%d), Madt(%d)\n",
             DevSlpTiming.Supported, DevSlpTiming.Deto, DevSlpTiming.Madt));
   }

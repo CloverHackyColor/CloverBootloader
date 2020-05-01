@@ -54,8 +54,8 @@ RamDiskInitBlockIo (
   BlockIo2 = &PrivateData->BlockIo2;
   Media    = &PrivateData->Media;
 
-  CopyMem (BlockIo, &mRamDiskBlockIoTemplate, sizeof (EFI_BLOCK_IO_PROTOCOL));
-  CopyMem (BlockIo2, &mRamDiskBlockIo2Template, sizeof (EFI_BLOCK_IO2_PROTOCOL));
+  CopyMem(BlockIo, &mRamDiskBlockIoTemplate, sizeof (EFI_BLOCK_IO_PROTOCOL));
+  CopyMem(BlockIo2, &mRamDiskBlockIo2Template, sizeof (EFI_BLOCK_IO2_PROTOCOL));
 
   BlockIo->Media          = Media;
   BlockIo2->Media         = Media;
@@ -166,7 +166,7 @@ RamDiskBlkIoReadBlocks (
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (
+  CopyMem(
     Buffer,
     (VOID *)(UINTN)(PrivateData->StartingAddr + MultU64x32 (Lba, PrivateData->Media.BlockSize)),
     BufferSize
@@ -245,7 +245,7 @@ RamDiskBlkIoWriteBlocks (
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (
+  CopyMem(
     (VOID *)(UINTN)(PrivateData->StartingAddr + MultU64x32 (Lba, PrivateData->Media.BlockSize)),
     Buffer,
     BufferSize

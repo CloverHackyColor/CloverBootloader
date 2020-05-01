@@ -156,7 +156,7 @@ PeCoffLoaderRelocateImageEx (
     if (*FixupData != NULL) {
       *FixupData = ALIGN_POINTER(*FixupData, sizeof(UINT64));
       // Fixup16 is not aligned so we must copy it. Thumb instructions are streams of 16 bytes.
-      CopyMem (*FixupData, Fixup16, sizeof (UINT64));
+      CopyMem(*FixupData, Fixup16, sizeof (UINT64));
       *FixupData = *FixupData + sizeof(UINT64);
     }
     break;

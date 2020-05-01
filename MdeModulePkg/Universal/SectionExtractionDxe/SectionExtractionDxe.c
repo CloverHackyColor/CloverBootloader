@@ -290,7 +290,7 @@ CustomGuidedSectionExtract (
     // OutputBuffer was returned as a different value,
     // so copy section contents to the allocated memory buffer.
     //
-    CopyMem (AllocatedOutputBuffer, *OutputBuffer, OutputBufferSize);
+    CopyMem(AllocatedOutputBuffer, *OutputBuffer, OutputBufferSize);
     *OutputBuffer = AllocatedOutputBuffer;
   }
 

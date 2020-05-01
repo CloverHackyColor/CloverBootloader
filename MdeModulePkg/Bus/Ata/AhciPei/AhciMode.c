@@ -477,7 +477,7 @@ AhciBuildCommand (
 
   CommandFis->AhciCFisPmNum = PortMultiplier;
 
-  CopyMem (&AhciRegisters->AhciCmdTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
+  CopyMem(&AhciRegisters->AhciCmdTable->CommandFis, CommandFis, sizeof (EFI_AHCI_COMMAND_FIS));
 
   Offset = AHCI_PORT_START + Port * AHCI_PORT_REG_WIDTH + AHCI_PORT_CMD;
   AhciAndReg (AhciBar, Offset, (UINT32)~(AHCI_PORT_CMD_DLAE | AHCI_PORT_CMD_ATAPI));
@@ -507,7 +507,7 @@ AhciBuildCommand (
     AhciRegisters->AhciCmdTable->PrdtTable[PrdtNumber - 1].AhciPrdtIoc = 1;
   }
 
-  CopyMem (
+  CopyMem(
     (VOID *) ((UINTN) AhciRegisters->AhciCmdList + (UINTN) CommandSlotNumber * sizeof (EFI_AHCI_COMMAND_LIST)),
     CommandList,
     sizeof (EFI_AHCI_COMMAND_LIST)
@@ -2108,7 +2108,7 @@ TrustTransferAtaDevice (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem (NewBuffer, Buffer, TransferLength);
+      CopyMem(NewBuffer, Buffer, TransferLength);
       Buffer = NewBuffer;
     }
     Packet.OutDataBuffer = Buffer;

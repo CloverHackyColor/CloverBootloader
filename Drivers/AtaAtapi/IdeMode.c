@@ -200,7 +200,7 @@ IdeWritePortWMultiple (
   //
   // Copy data from user buffer to working buffer
   //
-  CopyMem (AlignedBuffer, Buffer, Size);
+  CopyMem(AlignedBuffer, Buffer, Size);
   } else {
     AlignedBuffer = (UINT16 *) Buffer;
   }
@@ -282,7 +282,7 @@ IdeReadPortWMultiple (
   //
   // Copy data to user buffer
   //
-  CopyMem (Buffer, AlignedBuffer, Size);
+  CopyMem(Buffer, AlignedBuffer, Size);
   gBS->FreePool(WorkingBuffer);
   }
 }
@@ -328,7 +328,7 @@ DumpAllIdeRegisters (
     //
     // Dump the content of all ATA registers.
     //
-    CopyMem (AtaStatusBlock, &StatusBlock, sizeof (EFI_ATA_STATUS_BLOCK));
+    CopyMem(AtaStatusBlock, &StatusBlock, sizeof (EFI_ATA_STATUS_BLOCK));
   }
 
 //  DEBUG_CODE_BEGIN ();
@@ -2312,7 +2312,7 @@ AtaPacketCommandExecute (
   }
 
   ZeroMem (PacketCommand, 12);
-  CopyMem (PacketCommand, Packet->Cdb, Packet->CdbLength);
+  CopyMem(PacketCommand, Packet->Cdb, Packet->CdbLength);
 
   //
   // No OVL; No DMA
@@ -2900,7 +2900,7 @@ DetectAndConfigIdeDevice (
   gBS->Stall (100);
   
   for (IdeDevice = 0; IdeDevice < EfiIdeMaxDevice; IdeDevice++) {
-    SetMem (&Buffer, sizeof(EFI_IDENTIFY_DATA), 0x00);
+    SetMem(&Buffer, sizeof(EFI_IDENTIFY_DATA), 0x00);
 
     // Select Master or Slave device to get the return signature for ATA DEVICE DIAGNOSTIC cmd.
     //

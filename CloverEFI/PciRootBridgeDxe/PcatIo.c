@@ -124,7 +124,7 @@ PcatRootBridgeIoPciRW (
 
   UsePciExpressAccess = FALSE;
 
-  CopyMem (&PciAddress, &UserAddress, sizeof(UINT64));
+  CopyMem(&PciAddress, &UserAddress, sizeof(UINT64));
 
   if (PciAddress.ExtendedRegister > 0xFF) {
     //

@@ -84,14 +84,14 @@ PathCleanUpDirectories(
   // Replace the "\\" with "\"
   //
   while ((TempString = StrStr (Path, L"\\\\")) != NULL) {
-    CopyMem (TempString, TempString + 1, StrSize (TempString + 1));
+    CopyMem(TempString, TempString + 1, StrSize (TempString + 1));
   }
 
   //
   // Remove all the "\.". E.g.: fs0:\abc\.\def\.
   //
   while ((TempString = StrStr (Path, L"\\.\\")) != NULL) {
-    CopyMem (TempString, TempString + 2, StrSize (TempString + 2));
+    CopyMem(TempString, TempString + 2, StrSize (TempString + 2));
   }
   if ((StrLen (Path) >= 2) && (StrCmp (Path + StrLen (Path) - 2, L"\\.") == 0)) {
     Path[StrLen (Path) - 1] = CHAR_NULL;
@@ -106,7 +106,7 @@ PathCleanUpDirectories(
     *(TempString + 1) = CHAR_NULL;
     PathRemoveLastItem(Path);
     if (*(TempString + 3) != CHAR_NULL) {
-      CopyMem (Path + StrLen (Path), TempString + 4, StrSize (TempString + 4));
+      CopyMem(Path + StrLen (Path), TempString + 4, StrSize (TempString + 4));
     }
   }
 

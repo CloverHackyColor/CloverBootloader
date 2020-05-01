@@ -19,7 +19,7 @@
 
 ;------------------------------------------------------------------------------
 ;  VOID *
-;  InternalMemSetMem (
+;  InternalMemSetMem(
 ;    IN VOID   *Buffer,
 ;    IN UINTN  Count,
 ;    IN UINT8  Value

@@ -551,7 +551,7 @@ EmmcBlockIoPeimGetMediaInfo2 (
     }
   }
 
-  CopyMem (MediaInfo, &(Private->Slot[SlotNum].Media[MediaNum]), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
+  CopyMem(MediaInfo, &(Private->Slot[SlotNum].Media[MediaNum]), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
   return EFI_SUCCESS;
 }
 
@@ -761,10 +761,10 @@ InitializeEmmcBlockIoPeim (
 
       SlotNum = Private->SlotNum;
       Slot    = &Private->Slot[SlotNum];
-      CopyMem (Slot, &gEmmcHcSlotTemplate, sizeof (EMMC_PEIM_HC_SLOT));
+      CopyMem(Slot, &gEmmcHcSlotTemplate, sizeof (EMMC_PEIM_HC_SLOT));
       Slot->Private    = Private;
       Slot->EmmcHcBase = MmioBase[Index];
-      CopyMem (&Slot->Capability, &Capability, sizeof (Capability));
+      CopyMem(&Slot->Capability, &Capability, sizeof (Capability));
 
       Status = EmmcPeimIdentification (Slot);
       if (EFI_ERROR(Status)) {

@@ -110,7 +110,7 @@ FvSimpleFileSystemOpenVolume (
     Instance->Root  = Root;
     Root->Instance  = Instance;
     Root->Signature = FVFS_FILE_SIGNATURE;
-    CopyMem (&Root->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
+    CopyMem(&Root->FileProtocol, &mFileSystemTemplate, sizeof (mFileSystemTemplate));
     Root->FvFileInfo = AllocateZeroPool(sizeof (FV_FILESYSTEM_FILE_INFO));
     if (Root->FvFileInfo == NULL) {
         return EFI_OUT_OF_RESOURCES;
@@ -185,7 +185,7 @@ FvSimpleFileSystemOpenVolume (
 
       FvFileInfo->Signature = FVFS_FILE_INFO_SIGNATURE;
       InitializeListHead (&FvFileInfo->Link);
-      CopyMem (&FvFileInfo->NameGuid, &NameGuid, sizeof (EFI_GUID));
+      CopyMem(&FvFileInfo->NameGuid, &NameGuid, sizeof (EFI_GUID));
       FvFileInfo->Type = FileType;
 
       //
@@ -457,7 +457,7 @@ FvSimpleFileSystemDriverStart (
   Instance->Signature = FVFS_INSTANCE_SIGNATURE;
   InitializeListHead (&Instance->FileInfoHead);
   InitializeListHead (&Instance->FileHead);
-  CopyMem (&Instance->SimpleFs, &mSimpleFsTemplate, sizeof (mSimpleFsTemplate));
+  CopyMem(&Instance->SimpleFs, &mSimpleFsTemplate, sizeof (mSimpleFsTemplate));
 
   Status = gBS->InstallProtocolInterface(
                   &ControllerHandle,

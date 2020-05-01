@@ -30,7 +30,7 @@
 **/
 VOID *
 EFIAPI
-InternalMemCopyMem (
+InternalMemCopyMem(
   OUT     VOID                      *Destination,
   IN      CONST VOID                *Source,
   IN      UINTN                     Length
@@ -50,7 +50,7 @@ InternalMemCopyMem (
 **/
 VOID *
 EFIAPI
-InternalMemSetMem (
+InternalMemSetMem(
   OUT     VOID                      *Buffer,
   IN      UINTN                     Size,
   IN      UINT8                     Value

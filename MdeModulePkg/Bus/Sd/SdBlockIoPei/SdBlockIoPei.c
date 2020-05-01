@@ -398,7 +398,7 @@ SdBlockIoPeimGetMediaInfo2 (
     return Status;
   }
 
-  CopyMem (MediaInfo, &(Private->Slot[DeviceIndex - 1].Media), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
+  CopyMem(MediaInfo, &(Private->Slot[DeviceIndex - 1].Media), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
   return EFI_SUCCESS;
 }
 
@@ -608,10 +608,10 @@ InitializeSdBlockIoPeim (
 
       SlotNum = Private->SlotNum;
       Slot    = &Private->Slot[SlotNum];
-      CopyMem (Slot, &gSdHcSlotTemplate, sizeof (SD_PEIM_HC_SLOT));
+      CopyMem(Slot, &gSdHcSlotTemplate, sizeof (SD_PEIM_HC_SLOT));
       Slot->Private  = Private;
       Slot->SdHcBase = MmioBase[Index];
-      CopyMem (&Slot->Capability, &Capability, sizeof (Capability));
+      CopyMem(&Slot->Capability, &Capability, sizeof (Capability));
 
       Status = SdPeimIdentification (Slot);
       if (EFI_ERROR(Status)) {

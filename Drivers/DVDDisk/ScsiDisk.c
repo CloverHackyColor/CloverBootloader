@@ -763,7 +763,7 @@ ScsiDiskDetectMedia (
   *MediaChange        = FALSE;
   TimeoutEvt          = NULL;
 
-    CopyMem (&OldMedia, ScsiDiskDevice->BlkIo.Media, sizeof (OldMedia));
+    CopyMem(&OldMedia, ScsiDiskDevice->BlkIo.Media, sizeof (OldMedia));
 
   Status = gBS->CreateEvent (
                   EVT_TIMER,
@@ -1666,7 +1666,7 @@ ScsiDiskRequestSenseKeys (
       }
     }
 
-    CopyMem (ScsiDiskDevice->SenseData + *NumberOfSenseKeys, PtrSenseData, SenseDataLength);
+    CopyMem(ScsiDiskDevice->SenseData + *NumberOfSenseKeys, PtrSenseData, SenseDataLength);
     (*NumberOfSenseKeys) += 1;
 
     //
@@ -3062,7 +3062,7 @@ ScsiDiskInfoInquiry (
   Status = EFI_BUFFER_TOO_SMALL;
   if (*InquiryDataSize >= sizeof (ScsiDiskDevice->InquiryData)) {
     Status = EFI_SUCCESS;
-    CopyMem (InquiryData, &ScsiDiskDevice->InquiryData, sizeof (ScsiDiskDevice->InquiryData));
+    CopyMem(InquiryData, &ScsiDiskDevice->InquiryData, sizeof (ScsiDiskDevice->InquiryData));
   }
   *InquiryDataSize = sizeof (ScsiDiskDevice->InquiryData);
   return Status;
@@ -3110,7 +3110,7 @@ ScsiDiskInfoIdentify (
   Status = EFI_BUFFER_TOO_SMALL;
   if (*IdentifyDataSize >= sizeof (ScsiDiskDevice->IdentifyData)) {
     Status = EFI_SUCCESS;
-    CopyMem (IdentifyData, &ScsiDiskDevice->IdentifyData, sizeof (ScsiDiskDevice->IdentifyData));
+    CopyMem(IdentifyData, &ScsiDiskDevice->IdentifyData, sizeof (ScsiDiskDevice->IdentifyData));
   }
   *IdentifyDataSize = sizeof (ScsiDiskDevice->IdentifyData);
   return Status;
@@ -3253,7 +3253,7 @@ InitializeInstallDiskInfo (
   //
   // Copy the DiskInfo protocol template.
   //
-  CopyMem (&ScsiDiskDevice->DiskInfo, &gScsiDiskInfoProtocolTemplate, sizeof (gScsiDiskInfoProtocolTemplate));
+  CopyMem(&ScsiDiskDevice->DiskInfo, &gScsiDiskInfoProtocolTemplate, sizeof (gScsiDiskInfoProtocolTemplate));
 
   while (!IsDevicePathEnd (DevicePathNode)) {
     ChildDevicePathNode = NextDevicePathNode (DevicePathNode);

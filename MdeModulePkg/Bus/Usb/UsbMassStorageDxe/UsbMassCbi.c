@@ -557,7 +557,7 @@ UsbCbiResetDevice (
   //
   // Fill in the reset command.
   //
-  SetMem (ResetCmd, USB_CBI_RESET_CMD_LEN, 0xFF);
+  SetMem(ResetCmd, USB_CBI_RESET_CMD_LEN, 0xFF);
 
   ResetCmd[0] = 0x1D;
   ResetCmd[1] = 0x04;

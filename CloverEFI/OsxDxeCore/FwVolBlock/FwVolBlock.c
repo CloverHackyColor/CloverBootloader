@@ -255,7 +255,7 @@ FwVolBlockReadBlock (
   //
   // Perform read operation
   //
-  CopyMem (Buffer, LbaOffset, NumOfBytesRead);
+  CopyMem(Buffer, LbaOffset, NumOfBytesRead);
 
   if (NumOfBytesRead == *NumBytes) {
     return EFI_SUCCESS;

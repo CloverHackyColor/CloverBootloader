@@ -80,14 +80,14 @@ NvmeCreatePrpList (
         //
         // Fill all PRP entries except of last one.
         //
-        CopyMem (PrpEntry, (VOID *)(UINTN) (&PhysicalAddr), sizeof (UINT64));
+        CopyMem(PrpEntry, (VOID *)(UINTN) (&PhysicalAddr), sizeof (UINT64));
         PhysicalAddr += EFI_PAGE_SIZE;
       } else {
         //
         // Fill last PRP entries with next PRP List pointer.
         //
         NewPhyAddr = (PrpListPhyAddr + (PrpListIndex + 1) * EFI_PAGE_SIZE);
-        CopyMem (PrpEntry, (VOID *)(UINTN) (&NewPhyAddr), sizeof (UINT64));
+        CopyMem(PrpEntry, (VOID *)(UINTN) (&NewPhyAddr), sizeof (UINT64));
       }
     }
   }
@@ -98,7 +98,7 @@ NvmeCreatePrpList (
   PrpListBase = (UINTN)PrpListHost + PrpListIndex * EFI_PAGE_SIZE;
   for (PrpEntryIndex = 0; PrpEntryIndex < ((Remainder != 0) ? Remainder : PrpEntryNo); ++PrpEntryIndex) {
     PrpEntry = (UINT8 *)(UINTN) (PrpListBase + PrpEntryIndex * sizeof(UINT64));
-    CopyMem (PrpEntry, (VOID *)(UINTN) (&PhysicalAddr), sizeof (UINT64));
+    CopyMem(PrpEntry, (VOID *)(UINTN) (&PhysicalAddr), sizeof (UINT64));
 
     PhysicalAddr += EFI_PAGE_SIZE;
   }
@@ -603,7 +603,7 @@ NvmePassThruExecute (
   //
   // Copy the Respose Queue entry for this command to the callers response buffer
   //
-  CopyMem (Packet->NvmeCompletion, Cq, sizeof (EFI_NVM_EXPRESS_COMPLETION));
+  CopyMem(Packet->NvmeCompletion, Cq, sizeof (EFI_NVM_EXPRESS_COMPLETION));
 
   //
   // Check the NVMe cmd execution result

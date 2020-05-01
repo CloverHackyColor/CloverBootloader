@@ -179,7 +179,7 @@ SCSIBusDriverBindingSupported (
   SCSI_TARGET_ID                  ScsiTargetId;
 
   TargetId = &ScsiTargetId.ScsiId.ExtScsi[0];
-  SetMem (TargetId, TARGET_MAX_BYTES, 0xFF);
+  SetMem(TargetId, TARGET_MAX_BYTES, 0xFF);
 
   //
   // To keep backward compatibility, UEFI ExtPassThru Protocol is supported as well as
@@ -321,7 +321,7 @@ SCSIBusDriverBindingStart (
   PassThruStatus  = EFI_SUCCESS;
 
   TargetId = &ScsiTargetId.ScsiId.ExtScsi[0];
-  SetMem (TargetId, TARGET_MAX_BYTES, 0xFF);
+  SetMem(TargetId, TARGET_MAX_BYTES, 0xFF);
 
   DevicePathStatus = gBS->OpenProtocol (
                             Controller,
@@ -811,7 +811,7 @@ ScsiGetDeviceLocation (
 
   ScsiIoDevice = SCSI_IO_DEV_FROM_THIS (This);
 
-  CopyMem (*Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
+  CopyMem(*Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
 
   *Lun         = ScsiIoDevice->Lun;
 
@@ -888,7 +888,7 @@ ScsiResetDevice (
     ScsiIoDevice->ScsiBusDeviceData->DevicePath
     );
 
-  CopyMem (Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
+  CopyMem(Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
 
 
   if (ScsiIoDevice->ExtScsiSupport) {
@@ -976,7 +976,7 @@ ScsiExecuteSCSICommand (
   }
 
   ScsiIoDevice  = SCSI_IO_DEV_FROM_THIS (This);
-  CopyMem (Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
+  CopyMem(Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
 
   if (ScsiIoDevice->ExtScsiSupport) {
     ExtRequestPacket = (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *) Packet;

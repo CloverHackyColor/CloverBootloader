@@ -437,7 +437,7 @@ CoreInsertGcdMapEntry (
   if (BaseAddress > Entry->BaseAddress) {
     ASSERT (BottomEntry->Signature == 0);
 
-    CopyMem (BottomEntry, Entry, sizeof (EFI_GCD_MAP_ENTRY));
+    CopyMem(BottomEntry, Entry, sizeof (EFI_GCD_MAP_ENTRY));
     Entry->BaseAddress      = BaseAddress;
     BottomEntry->EndAddress = BaseAddress - 1;
     InsertTailList (Link, &BottomEntry->Link);
@@ -446,7 +446,7 @@ CoreInsertGcdMapEntry (
   if ((BaseAddress + Length - 1) < Entry->EndAddress) {
     ASSERT (TopEntry->Signature == 0);
 
-    CopyMem (TopEntry, Entry, sizeof (EFI_GCD_MAP_ENTRY));
+    CopyMem(TopEntry, Entry, sizeof (EFI_GCD_MAP_ENTRY));
     TopEntry->BaseAddress = BaseAddress + Length;
     Entry->EndAddress     = BaseAddress + Length - 1;
     InsertHeadList (Link, &TopEntry->Link);
@@ -2188,7 +2188,7 @@ CoreInitializeMemoryServices (
     EfiMemoryTypeInformation = GET_GUID_HOB_DATA (GuidHob);
     DataSize                 = GET_GUID_HOB_DATA_SIZE (GuidHob);
     if (EfiMemoryTypeInformation != NULL && DataSize > 0 && DataSize <= (EfiMaxMemoryType + 1) * sizeof (EFI_MEMORY_TYPE_INFORMATION)) {
-      CopyMem (&gMemoryTypeInformation, EfiMemoryTypeInformation, DataSize);
+      CopyMem(&gMemoryTypeInformation, EfiMemoryTypeInformation, DataSize);
     }
   }
 

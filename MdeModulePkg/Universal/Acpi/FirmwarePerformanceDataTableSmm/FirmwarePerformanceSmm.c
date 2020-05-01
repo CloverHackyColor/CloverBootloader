@@ -93,7 +93,7 @@ FpdtStatusCodeListenerSmm (
     //
     // Get the boot performance data.
     //
-    CopyMem (&mSmmBootPerformanceTable, Data + 1, Data->Size);
+    CopyMem(&mSmmBootPerformanceTable, Data + 1, Data->Size);
     mBootRecordBuffer = ((UINT8 *) (mSmmBootPerformanceTable)) + sizeof (SMM_BOOT_PERFORMANCE_TABLE);
 
     ReleaseSpinLock (&mSmmFpdtLock);
@@ -250,7 +250,7 @@ FpdtSmiHandler (
         break;
       }
 
-      CopyMem (
+      CopyMem(
        (UINT8*)BootRecordData,
        mBootRecordBuffer + BootRecordOffset,
        BootRecordSize

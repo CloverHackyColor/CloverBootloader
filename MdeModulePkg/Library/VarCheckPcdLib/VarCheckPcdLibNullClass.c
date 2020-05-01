@@ -96,14 +96,14 @@ VarCheckPcdValidData (
   UINT8    *Ptr;
 
   OneData = 0;
-  CopyMem (&OneData, (UINT8 *) Data + PcdValidData->VarOffset, PcdValidData->StorageWidth);
+  CopyMem(&OneData, (UINT8 *) Data + PcdValidData->VarOffset, PcdValidData->StorageWidth);
 
   switch (PcdValidData->Type) {
     case VarCheckPcdValidList:
       Ptr = (UINT8 *) ((VAR_CHECK_PCD_VALID_LIST *) PcdValidData + 1);
       while ((UINTN) Ptr < (UINTN) PcdValidData + PcdValidData->Length) {
         OneValue = 0;
-        CopyMem (&OneValue, Ptr, PcdValidData->StorageWidth);
+        CopyMem(&OneValue, Ptr, PcdValidData->StorageWidth);
         if (OneData == OneValue) {
           //
           // Match
@@ -127,9 +127,9 @@ VarCheckPcdValidData (
       Maximum = 0;
       Ptr = (UINT8 *) ((VAR_CHECK_PCD_VALID_RANGE *) PcdValidData + 1);
       while ((UINTN) Ptr < (UINTN) PcdValidData + PcdValidData->Length) {
-        CopyMem (&Minimum, Ptr, PcdValidData->StorageWidth);
+        CopyMem(&Minimum, Ptr, PcdValidData->StorageWidth);
         Ptr += PcdValidData->StorageWidth;
-        CopyMem (&Maximum, Ptr, PcdValidData->StorageWidth);
+        CopyMem(&Maximum, Ptr, PcdValidData->StorageWidth);
         Ptr += PcdValidData->StorageWidth;
 
         if ((OneData >= Minimum) && (OneData <= Maximum)) {
@@ -268,7 +268,7 @@ DumpPcdValidData (
       Ptr = (UINT8 *) ((VAR_CHECK_PCD_VALID_LIST *) PcdValidData + 1);
       while ((UINTN) Ptr < ((UINTN) PcdValidData + PcdValidData->Length)) {
         OneValue = 0;
-        CopyMem (&OneValue, Ptr, PcdValidData->StorageWidth);
+        CopyMem(&OneValue, Ptr, PcdValidData->StorageWidth);
         switch (PcdValidData->StorageWidth) {
           case sizeof (UINT8):
             DEBUG ((EFI_D_INFO, "    ValidList   - 0x%02x\n", OneValue));
@@ -295,9 +295,9 @@ DumpPcdValidData (
       Maximum = 0;
       Ptr = (UINT8 *) ((VAR_CHECK_PCD_VALID_RANGE *) PcdValidData + 1);
       while ((UINTN) Ptr < (UINTN) PcdValidData + PcdValidData->Length) {
-        CopyMem (&Minimum, Ptr, PcdValidData->StorageWidth);
+        CopyMem(&Minimum, Ptr, PcdValidData->StorageWidth);
         Ptr += PcdValidData->StorageWidth;
-        CopyMem (&Maximum, Ptr, PcdValidData->StorageWidth);
+        CopyMem(&Maximum, Ptr, PcdValidData->StorageWidth);
         Ptr += PcdValidData->StorageWidth;
 
         switch (PcdValidData->StorageWidth) {

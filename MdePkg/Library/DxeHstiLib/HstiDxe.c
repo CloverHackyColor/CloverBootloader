@@ -222,10 +222,10 @@ InternalHstiIsValidTable (
   //
   // ErrorString might not be CHAR16 aligned.
   //
-  CopyMem (&ErrorChar, ErrorString, sizeof(ErrorChar));
+  CopyMem(&ErrorChar, ErrorString, sizeof(ErrorChar));
   for (ErrorStringLength = 0; (ErrorChar != 0) && (ErrorStringLength < (ErrorStringSize/2)); ErrorStringLength++) {
     ErrorString++;
-    CopyMem (&ErrorChar, ErrorString, sizeof(ErrorChar));
+    CopyMem(&ErrorChar, ErrorString, sizeof(ErrorChar));
   }
 
   //
@@ -302,7 +302,7 @@ HstiLibSetTable (
   }
 
   HstiAip->Signature = HSTI_AIP_PRIVATE_SIGNATURE;
-  CopyMem (&HstiAip->Aip, &mAdapterInformationProtocol, sizeof(EFI_ADAPTER_INFORMATION_PROTOCOL));
+  CopyMem(&HstiAip->Aip, &mAdapterInformationProtocol, sizeof(EFI_ADAPTER_INFORMATION_PROTOCOL));
   HstiAip->HstiSize = HstiSize;
   HstiAip->HstiMaxSize = HstiSize;
 
@@ -531,8 +531,8 @@ InternalHstiRecordErrorString (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (NewHsti, Hsti, Offset);
-  CopyMem ((UINT8 *)NewHsti + Offset, ErrorString, StringSize);
+  CopyMem(NewHsti, Hsti, Offset);
+  CopyMem((UINT8 *)NewHsti + Offset, ErrorString, StringSize);
 
   Status = Aip->SetInformation (
                   Aip,

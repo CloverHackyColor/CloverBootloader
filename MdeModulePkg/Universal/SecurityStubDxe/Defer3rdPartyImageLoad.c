@@ -216,7 +216,7 @@ GetDefferedImageInfo (
     NewCount = 0;
     for (Index = 0; Index < mDeferred3rdPartyImage.Count; Index++) {
       if (!mDeferred3rdPartyImage.ImageInfo[Index].Loaded) {
-        CopyMem (
+        CopyMem(
           &mDeferred3rdPartyImage.ImageInfo[NewCount],
           &mDeferred3rdPartyImage.ImageInfo[Index],
           sizeof (DEFERRED_3RD_PARTY_IMAGE_INFO)

@@ -373,8 +373,8 @@ SmmVariableGetStatistics (
       *InfoSize = StatisticsInfoSize;
       return EFI_BUFFER_TOO_SMALL;
     }
-    CopyMem (InfoEntry, VariableInfo, sizeof (VARIABLE_INFO_ENTRY));
-    CopyMem (InfoName, VariableInfo->Name, NameSize);
+    CopyMem(InfoEntry, VariableInfo, sizeof (VARIABLE_INFO_ENTRY));
+    CopyMem(InfoName, VariableInfo->Name, NameSize);
     *InfoSize = StatisticsInfoSize;
     return EFI_SUCCESS;
   }
@@ -413,8 +413,8 @@ SmmVariableGetStatistics (
     return EFI_BUFFER_TOO_SMALL;
   }
 
-  CopyMem (InfoEntry, VariableInfo, sizeof (VARIABLE_INFO_ENTRY));
-  CopyMem (InfoName, VariableInfo->Name, NameSize);
+  CopyMem(InfoEntry, VariableInfo, sizeof (VARIABLE_INFO_ENTRY));
+  CopyMem(InfoName, VariableInfo->Name, NameSize);
   *InfoSize = StatisticsInfoSize;
 
   return EFI_SUCCESS;
@@ -504,7 +504,7 @@ SmmVariableHandler (
       //
       // Copy the input communicate buffer payload to pre-allocated SMM variable buffer payload.
       //
-      CopyMem (mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
+      CopyMem(mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
       SmmVariableHeader = (SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE *) mVariableBufferPayload;
       if (((UINTN)(~0) - SmmVariableHeader->DataSize < OFFSET_OF(SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name)) ||
          ((UINTN)(~0) - SmmVariableHeader->NameSize < OFFSET_OF(SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name) + SmmVariableHeader->DataSize)) {
@@ -547,7 +547,7 @@ SmmVariableHandler (
                  &SmmVariableHeader->DataSize,
                  (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize
                  );
-      CopyMem (SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
+      CopyMem(SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
       break;
 
     case SMM_VARIABLE_FUNCTION_GET_NEXT_VARIABLE_NAME:
@@ -558,7 +558,7 @@ SmmVariableHandler (
       //
       // Copy the input communicate buffer payload to pre-allocated SMM variable buffer payload.
       //
-      CopyMem (mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
+      CopyMem(mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
       GetNextVariableName = (SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME *) mVariableBufferPayload;
       if ((UINTN)(~0) - GetNextVariableName->NameSize < OFFSET_OF(SMM_VARIABLE_COMMUNICATE_GET_NEXT_VARIABLE_NAME, Name)) {
         //
@@ -592,7 +592,7 @@ SmmVariableHandler (
                  GetNextVariableName->Name,
                  &GetNextVariableName->Guid
                  );
-      CopyMem (SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
+      CopyMem(SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
       break;
 
     case SMM_VARIABLE_FUNCTION_SET_VARIABLE:
@@ -603,7 +603,7 @@ SmmVariableHandler (
       //
       // Copy the input communicate buffer payload to pre-allocated SMM variable buffer payload.
       //
-      CopyMem (mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
+      CopyMem(mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
       SmmVariableHeader = (SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE *) mVariableBufferPayload;
       if (((UINTN)(~0) - SmmVariableHeader->DataSize < OFFSET_OF(SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name)) ||
          ((UINTN)(~0) - SmmVariableHeader->NameSize < OFFSET_OF(SMM_VARIABLE_COMMUNICATE_ACCESS_VARIABLE, Name) + SmmVariableHeader->DataSize)) {
@@ -747,7 +747,7 @@ SmmVariableHandler (
       //
       // Copy the input communicate buffer payload to pre-allocated SMM variable buffer payload.
       //
-      CopyMem (mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
+      CopyMem(mVariableBufferPayload, SmmVariableFunctionHeader->Data, CommBufferPayloadSize);
       CommVariableProperty = (SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY *) mVariableBufferPayload;
       if ((UINTN) (~0) - CommVariableProperty->NameSize < OFFSET_OF (SMM_VARIABLE_COMMUNICATE_VAR_CHECK_VARIABLE_PROPERTY, Name)) {
         //
@@ -786,7 +786,7 @@ SmmVariableHandler (
                  &CommVariableProperty->Guid,
                  &CommVariableProperty->VariableProperty
                  );
-      CopyMem (SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
+      CopyMem(SmmVariableFunctionHeader->Data, mVariableBufferPayload, CommBufferPayloadSize);
       break;
 
     default:

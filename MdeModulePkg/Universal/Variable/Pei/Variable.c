@@ -717,11 +717,11 @@ GetVariableHeader (
         //
         // Partial content is in NV storage.
         //
-        CopyMem ((UINT8 *) *VariableHeader, (UINT8 *) Variable, PartialHeaderSize);
+        CopyMem((UINT8 *) *VariableHeader, (UINT8 *) Variable, PartialHeaderSize);
         //
         // Another partial content is in spare block.
         //
-        CopyMem ((UINT8 *) *VariableHeader + PartialHeaderSize, (UINT8 *) (UINTN) SpareAddress, GetVariableHeaderSize (StoreInfo->AuthFlag) - PartialHeaderSize);
+        CopyMem((UINT8 *) *VariableHeader + PartialHeaderSize, (UINT8 *) (UINTN) SpareAddress, GetVariableHeaderSize (StoreInfo->AuthFlag) - PartialHeaderSize);
       }
     }
   } else {
@@ -768,11 +768,11 @@ GetVariableNameOrData (
       //
       // Partial content is in NV storage.
       //
-      CopyMem (Buffer, NameOrData, PartialSize);
+      CopyMem(Buffer, NameOrData, PartialSize);
       //
       // Another partial content is in spare block.
       //
-      CopyMem (Buffer + PartialSize, (UINT8 *) (UINTN) SpareAddress, Size - PartialSize);
+      CopyMem(Buffer + PartialSize, (UINT8 *) (UINTN) SpareAddress, Size - PartialSize);
       return;
     }
   }
@@ -780,7 +780,7 @@ GetVariableNameOrData (
   //
   // Variable name/data is consecutive.
   //
-  CopyMem (Buffer, NameOrData, Size);
+  CopyMem(Buffer, NameOrData, Size);
 }
 
 /**
@@ -1211,7 +1211,7 @@ PeiGetNextVariableName (
       if (VarNameSize <= *VariableNameSize) {
         GetVariableNameOrData (&StoreInfo, (UINT8 *) GetVariableNamePtr (Variable.CurrPtr, StoreInfo.AuthFlag), VarNameSize, (UINT8 *) VariableName);
 
-        CopyMem (VariableGuid, GetVendorGuidPtr (VariableHeader, StoreInfo.AuthFlag), sizeof (EFI_GUID));
+        CopyMem(VariableGuid, GetVendorGuidPtr (VariableHeader, StoreInfo.AuthFlag), sizeof (EFI_GUID));
 
         Status = EFI_SUCCESS;
       } else {

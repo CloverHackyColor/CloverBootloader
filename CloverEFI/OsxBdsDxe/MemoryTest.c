@@ -113,7 +113,7 @@ PlatformBdsShowProgress (
     //
     // Clear progress area
     //
-    SetMem (&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
+    SetMem(&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
 
     if (GraphicsOutput != NULL) {
       /*Status = */GraphicsOutput->Blt (
@@ -250,9 +250,9 @@ BdsMemoryTest (
   ErrorOut          = FALSE;
   TestAbort         = FALSE;
 
-  SetMem (&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
-  SetMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
-  SetMem (&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
+  SetMem(&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
+  SetMem(&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
+  SetMem(&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
 
   RequireSoftECCInit = FALSE;
 

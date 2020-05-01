@@ -194,7 +194,7 @@ Returns:
   //
   // Append the new text
   //
-  CopyMem (spc->Str + spc->Len, Buffer, len * sizeof (CHAR16));
+  CopyMem(spc->Str + spc->Len, Buffer, len * sizeof (CHAR16));
   spc->Len += len;
 
   //
@@ -241,7 +241,7 @@ Returns:
 {
   PRINT_STATE ps;
 
-  SetMem (&ps, sizeof (ps), 0);
+  SetMem(&ps, sizeof (ps), 0);
   ps.Output   = (IN EFI_STATUS (EFIAPI *)(VOID *context, CONST CHAR16 *str)) Output; // C++ doesn't cast automatically to void* for param 1
   ps.Context  = spc;
   ps.fmt.u.pw = fmt;
@@ -358,7 +358,7 @@ Returns:
     return 0;
   }
 
-  SetMem (&ps, sizeof (ps), 0);
+  SetMem(&ps, sizeof (ps), 0);
   ps.Context  = Out;
   ps.Output   = (EFI_STATUS (EFIAPI *) (VOID *, CONST CHAR16 *)) Out->OutputString;  // C++ doesn't cast automatically to void* for param 1
   ps.SetAttr  = (EFI_STATUS (EFIAPI *) (VOID *, UINTN)) Out->SetAttribute;
@@ -495,7 +495,7 @@ PFLUSH (
     ps->Output (ps->Context, ps->Buffer);
   }
 
-  CopyMem (
+  CopyMem(
     ((CHAR8 *) (ps->Buffer)) - PRINT_JOINT_BUFFER_LEN,
     ((CHAR8 *) (ps->Pos)) - PRINT_JOINT_BUFFER_LEN,
     PRINT_JOINT_BUFFER_LEN
@@ -1493,7 +1493,7 @@ Returns:
     return ;
   }
 
- // SetMem (InStr, StrLength * sizeof (CHAR16), 0);
+ // SetMem(InStr, StrLength * sizeof (CHAR16), 0);
   //prepare default string
   Len = StrLen(InStr);
   StrPos = 0;
@@ -1527,7 +1527,7 @@ Returns:
         StrPos -= 1;
         Update  = StrPos;
         Delete  = 1;
-        CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
+        CopyMem(InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
 
         //
         // Adjust the current column and row
@@ -1572,7 +1572,7 @@ Returns:
         if (Len) {
           Update  = StrPos;
           Delete  = 1;
-          CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
+          CopyMem(InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
         }
         break;
 
@@ -1648,7 +1648,7 @@ Returns:
       Len = StrLen (InStr);
 
       if (Delete) {
-        SetMem (InStr + Len, Delete * sizeof (CHAR16), 0x00);
+        SetMem(InStr + Len, Delete * sizeof (CHAR16), 0x00);
       }
 
       if (StrPos > Len) {

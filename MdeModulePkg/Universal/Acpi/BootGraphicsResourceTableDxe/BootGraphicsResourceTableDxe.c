@@ -562,7 +562,7 @@ BootGraphicsDxeEntryPoint (
   //
   Header = &mBootGraphicsResourceTableTemplate.Header;
   ZeroMem (Header->OemId, sizeof (Header->OemId));
-  CopyMem (
+  CopyMem(
     Header->OemId,
     PcdGetPtr (PcdAcpiDefaultOemId),
     MIN (PcdGetSize (PcdAcpiDefaultOemId), sizeof (Header->OemId))

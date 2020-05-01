@@ -184,7 +184,7 @@ UfsPassThruPassThru (
   //
   // For UFS 2.0 compatible device, 0 is always used to represent the location of the UFS device.
   //
-  SetMem (mUfsTargetId, TARGET_MAX_BYTES, 0x00);
+  SetMem(mUfsTargetId, TARGET_MAX_BYTES, 0x00);
   if ((Target == NULL) || (CompareMem(Target, mUfsTargetId, TARGET_MAX_BYTES) != 0)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -271,12 +271,12 @@ UfsPassThruGetNextTargetLun (
   }
 
   UfsLun = 0;
-  SetMem (mUfsTargetId, TARGET_MAX_BYTES, 0xFF);
+  SetMem(mUfsTargetId, TARGET_MAX_BYTES, 0xFF);
   if (CompareMem (*Target, mUfsTargetId, TARGET_MAX_BYTES) == 0) {
     //
     // If the array is all 0xFF's, return the first exposed Lun to caller.
     //
-    SetMem (*Target, TARGET_MAX_BYTES, 0x00);
+    SetMem(*Target, TARGET_MAX_BYTES, 0x00);
     for (Index = 0; Index < UFS_MAX_LUNS; Index++) {
       if ((Private->Luns.BitMask & (BIT0 << Index)) != 0) {
         UfsLun = Private->Luns.Lun[Index];
@@ -297,7 +297,7 @@ UfsPassThruGetNextTargetLun (
     }
   }
 
-  SetMem (mUfsTargetId, TARGET_MAX_BYTES, 0x00);
+  SetMem(mUfsTargetId, TARGET_MAX_BYTES, 0x00);
   if (CompareMem (*Target, mUfsTargetId, TARGET_MAX_BYTES) == 0) {
     if (((UINT8*)Lun)[0] == UFS_WLUN_PREFIX) {
       UfsLun = BIT7 | (((UINT8*)Lun)[1] & 0xFF);
@@ -393,7 +393,7 @@ UfsPassThruBuildDevicePath (
   //
   // Validate parameters passed in.
   //
-  SetMem (mUfsTargetId, TARGET_MAX_BYTES, 0x00);
+  SetMem(mUfsTargetId, TARGET_MAX_BYTES, 0x00);
   if (CompareMem (Target, mUfsTargetId, TARGET_MAX_BYTES) != 0) {
     return EFI_INVALID_PARAMETER;
   }
@@ -511,7 +511,7 @@ UfsPassThruGetTargetLun (
     return EFI_NOT_FOUND;
   }
 
-  SetMem (*Target, TARGET_MAX_BYTES, 0x00);
+  SetMem(*Target, TARGET_MAX_BYTES, 0x00);
   *Lun = 0;
   if ((UfsLun & BIT7) == BIT7) {
     ((UINT8*)Lun)[0] = UFS_WLUN_PREFIX;
@@ -611,9 +611,9 @@ UfsPassThruGetNextTarget (
     return EFI_INVALID_PARAMETER;
   }
 
-  SetMem (mUfsTargetId, TARGET_MAX_BYTES, 0xFF);
+  SetMem(mUfsTargetId, TARGET_MAX_BYTES, 0xFF);
   if (CompareMem(*Target, mUfsTargetId, TARGET_MAX_BYTES) == 0) {
-    SetMem (*Target, TARGET_MAX_BYTES, 0x00);
+    SetMem(*Target, TARGET_MAX_BYTES, 0x00);
     return EFI_SUCCESS;
   }
 

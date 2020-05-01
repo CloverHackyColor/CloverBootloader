@@ -316,9 +316,9 @@ BdsLibRegisterNewOption (
   TempPtr             += sizeof (UINT32);
   *(UINT16 *) TempPtr = (UINT16) GetDevicePathSize (DevicePath);
   TempPtr             += sizeof (UINT16);
-  CopyMem (TempPtr, String, StrSize (String));
+  CopyMem(TempPtr, String, StrSize (String));
   TempPtr             += StrSize (String);
-  CopyMem (TempPtr, DevicePath, GetDevicePathSize (DevicePath));
+  CopyMem(TempPtr, DevicePath, GetDevicePathSize (DevicePath));
 
   if (UpdateDescription) {
     //
@@ -401,7 +401,7 @@ BdsLibRegisterNewOption (
   if (!OptionOrderPtr) {
     return EFI_NOT_FOUND;
   }
-  CopyMem (OptionOrderPtr, TempOptionPtr, (OrderItemNum - 1) * sizeof (UINT16));
+  CopyMem(OptionOrderPtr, TempOptionPtr, (OrderItemNum - 1) * sizeof (UINT16));
 
   OptionOrderPtr[Index] = RegisterOptionNumber;
 
@@ -706,7 +706,7 @@ BdsLibVariableToOption (
     FreePool(Option);
     return NULL;
   }
-//  CopyMem (Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
+//  CopyMem(Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
 
   Option->Attribute   = Attribute;
   Option->Description = AllocateCopyPool(StrSize (Description), Description);
@@ -715,7 +715,7 @@ BdsLibVariableToOption (
     FreePool(Option);
     return NULL;
   }
-//  CopyMem (Option->Description, Description, StrSize (Description));
+//  CopyMem(Option->Description, Description, StrSize (Description));
 
   Option->LoadOptions = AllocateCopyPool(LoadOptionsSize, LoadOptions);
 //  ASSERT(Option->LoadOptions != NULL);
@@ -723,7 +723,7 @@ BdsLibVariableToOption (
     FreePool(Option);
     return NULL;
   }
-//  CopyMem (Option->LoadOptions, LoadOptions, LoadOptionsSize);
+//  CopyMem(Option->LoadOptions, LoadOptions, LoadOptionsSize);
   Option->LoadOptionsSize = LoadOptionsSize;
 
   //
@@ -1596,9 +1596,9 @@ SetVariableAndReportStatusCodeOnError (
       SetVariableStatus->DataSize   = DataSize;
       SetVariableStatus->SetStatus  = Status;
       SetVariableStatus->Attributes = Attributes;
-      CopyMem (SetVariableStatus + 1,                          VariableName, NameSize);
+      CopyMem(SetVariableStatus + 1,                          VariableName, NameSize);
       if ((Data != NULL) && (DataSize != 0)) {
-        CopyMem (((UINT8 *) (SetVariableStatus + 1)) + NameSize, Data,         DataSize);
+        CopyMem(((UINT8 *) (SetVariableStatus + 1)) + NameSize, Data,         DataSize);
       }
 
       REPORT_STATUS_CODE_EX (

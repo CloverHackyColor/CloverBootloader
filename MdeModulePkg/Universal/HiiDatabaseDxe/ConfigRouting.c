@@ -491,7 +491,7 @@ GetValueOfNumber (
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
-  CopyMem (Str, TmpPtr, *Len * sizeof (CHAR16));
+  CopyMem(Str, TmpPtr, *Len * sizeof (CHAR16));
   *(Str + *Len) = L'\0';
 
   Length = (Length + 1) / 2;
@@ -1172,7 +1172,7 @@ InsertDefaultValue (
         //
         // Update the default value array in BlockData.
         //
-        CopyMem (&DefaultValueArray->Value, &DefaultValueData->Value, sizeof (EFI_IFR_TYPE_VALUE));
+        CopyMem(&DefaultValueArray->Value, &DefaultValueData->Value, sizeof (EFI_IFR_TYPE_VALUE));
         DefaultValueArray->Type  = DefaultValueData->Type;
         DefaultValueArray->Cleaned = DefaultValueData->Cleaned;
       }
@@ -1185,7 +1185,7 @@ InsertDefaultValue (
   //
   DefaultValueArray = AllocateZeroPool(sizeof (IFR_DEFAULT_DATA));
   ASSERT (DefaultValueArray != NULL);
-  CopyMem (DefaultValueArray, DefaultValueData, sizeof (IFR_DEFAULT_DATA));
+  CopyMem(DefaultValueArray, DefaultValueData, sizeof (IFR_DEFAULT_DATA));
   InsertTailList (Link, &DefaultValueArray->Entry);
 }
 
@@ -1708,7 +1708,7 @@ GetVarStoreType (
           goto Done;
         }
         *IsEfiVarstore = TRUE;
-        CopyMem (*EfiVarStore, IfrEfiVarStore, IfrOpHdr->Length);
+        CopyMem(*EfiVarStore, IfrEfiVarStore, IfrOpHdr->Length);
       }
 
       //
@@ -2409,7 +2409,7 @@ ParseIfrData (
           //
           // Since default value in bit field was stored as UINT32 type.
           //
-          CopyMem (&DefaultData.Value.u32, &IfrOneOf->data.u32.MinValue, sizeof (UINT32));
+          CopyMem(&DefaultData.Value.u32, &IfrOneOf->data.u32.MinValue, sizeof (UINT32));
         } else {
           switch (IfrOneOf->Flags & EFI_IFR_NUMERIC_SIZE) {
           case EFI_IFR_NUMERIC_SIZE_1:
@@ -2417,15 +2417,15 @@ ParseIfrData (
             break;
 
           case EFI_IFR_NUMERIC_SIZE_2:
-           CopyMem (&DefaultData.Value.u16, &IfrOneOf->data.u16.MinValue, sizeof (UINT16));
+           CopyMem(&DefaultData.Value.u16, &IfrOneOf->data.u16.MinValue, sizeof (UINT16));
            break;
 
           case EFI_IFR_NUMERIC_SIZE_4:
-            CopyMem (&DefaultData.Value.u32, &IfrOneOf->data.u32.MinValue, sizeof (UINT32));
+            CopyMem(&DefaultData.Value.u32, &IfrOneOf->data.u32.MinValue, sizeof (UINT32));
             break;
 
           case EFI_IFR_NUMERIC_SIZE_8:
-            CopyMem (&DefaultData.Value.u64, &IfrOneOf->data.u64.MinValue, sizeof (UINT64));
+            CopyMem(&DefaultData.Value.u64, &IfrOneOf->data.u64.MinValue, sizeof (UINT64));
             break;
 
           default:
@@ -2903,7 +2903,7 @@ ParseIfrData (
         // Prepare new DefaultValue
         //
         DefaultData.Type     = DefaultValueFromFlag;
-        CopyMem (&DefaultData.Value, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
+        CopyMem(&DefaultData.Value, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
         if ((IfrOneOfOption->Flags & EFI_IFR_OPTION_DEFAULT) == EFI_IFR_OPTION_DEFAULT) {
           DefaultData.DefaultId = EFI_HII_DEFAULT_CLASS_STANDARD;
           InsertDefaultValue (BlockData, &DefaultData);
@@ -2955,7 +2955,7 @@ ParseIfrData (
         // Prepare new DefaultValue
         //
         DefaultData.Type     = DefaultValueFromDefault;
-        CopyMem (&DefaultData.Value, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
+        CopyMem(&DefaultData.Value, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
         for (LinkData = DefaultIdArray->Entry.ForwardLink; LinkData != &DefaultIdArray->Entry; LinkData = LinkData->ForwardLink) {
           DefaultDataPtr = BASE_CR (LinkData, IFR_DEFAULT_DATA, Entry);
           DefaultData.DefaultId   = DefaultDataPtr->DefaultId;
@@ -2986,9 +2986,9 @@ ParseIfrData (
       DefaultData.Type        = DefaultValueFromOpcode;
       DefaultData.DefaultId   = VarDefaultId;
       if (QuestionReferBitField) {
-        CopyMem (&DefaultData.Value.u32, &IfrDefault->Value.u32, sizeof (UINT32));
+        CopyMem(&DefaultData.Value.u32, &IfrDefault->Value.u32, sizeof (UINT32));
       } else {
-        CopyMem (&DefaultData.Value, &IfrDefault->Value, IfrDefault->Header.Length - OFFSET_OF (EFI_IFR_DEFAULT, Value));
+        CopyMem(&DefaultData.Value, &IfrDefault->Value, IfrDefault->Header.Length - OFFSET_OF (EFI_IFR_DEFAULT, Value));
       }
 
       // If the value field is expression, set the cleaned flag.
@@ -3156,7 +3156,7 @@ GetBlockElement (
       goto Done;
     }
     Offset = 0;
-    CopyMem (
+    CopyMem(
       &Offset,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
@@ -3177,7 +3177,7 @@ GetBlockElement (
       goto Done;
     }
     Width = 0;
-    CopyMem (
+    CopyMem(
       &Width,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
@@ -3952,7 +3952,7 @@ GenerateAltConfigResp (
             if (StrSize > Width) {
               StrSize = Width;
             }
-            CopyMem (TmpBuffer, (UINT8 *) DefaultString, StrSize);
+            CopyMem(TmpBuffer, (UINT8 *) DefaultString, StrSize);
           }
         } else {
           TmpBuffer = (UINT8 *) &(DefaultValueData->Value);
@@ -5589,7 +5589,7 @@ HiiBlockToConfig (
       goto Exit;
     }
     Offset = 0;
-    CopyMem (
+    CopyMem(
       &Offset,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
@@ -5613,7 +5613,7 @@ HiiBlockToConfig (
       goto Exit;
     }
     Width = 0;
-    CopyMem (
+    CopyMem(
       &Width,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
@@ -5643,7 +5643,7 @@ HiiBlockToConfig (
       goto Exit;
     }
 
-    CopyMem (Value, (UINT8 *) Block + Offset, Width);
+    CopyMem(Value, (UINT8 *) Block + Offset, Width);
 
     Length = Width * 2 + 1;
     ValueStr = (EFI_STRING) AllocateZeroPool(Length  * sizeof (CHAR16));
@@ -5678,7 +5678,7 @@ HiiBlockToConfig (
       Status = EFI_OUT_OF_RESOURCES;
       goto Exit;
     }
-    CopyMem (ConfigElement, TmpPtr, (StringPtr - TmpPtr + 1) * sizeof (CHAR16));
+    CopyMem(ConfigElement, TmpPtr, (StringPtr - TmpPtr + 1) * sizeof (CHAR16));
     if (*StringPtr == 0) {
       *(ConfigElement + (StringPtr - TmpPtr)) = L'&';
     }
@@ -5865,7 +5865,7 @@ HiiConfigToBlock (
       goto Exit;
     }
     Offset = 0;
-    CopyMem (
+    CopyMem(
       &Offset,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
@@ -5889,7 +5889,7 @@ HiiConfigToBlock (
       goto Exit;
     }
     Width = 0;
-    CopyMem (
+    CopyMem(
       &Width,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
@@ -5924,7 +5924,7 @@ HiiConfigToBlock (
     // Update the Block with configuration info
     //
     if ((Block != NULL) && (Offset + Width <= BufferSize)) {
-      CopyMem (Block + Offset, Value, Width);
+      CopyMem(Block + Offset, Value, Width);
     }
     if (Offset + Width > MaxBlockSize) {
       MaxBlockSize = Offset + Width;

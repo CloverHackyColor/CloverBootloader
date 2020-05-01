@@ -1680,7 +1680,7 @@ DevPathToTextWiFi (
   WiFi = DevPath;
 
   SSId[32] = '\0';
-  CopyMem (SSId, WiFi->SSId, 32);
+  CopyMem(SSId, WiFi->SSId, 32);
 
   UefiDevicePathLibCatPrint (Str, L"Wi-Fi(%a)", SSId);
 }
@@ -1800,7 +1800,7 @@ DevPathToTextUri (
   UriStr = AllocatePool (UriLength + 1);
   ASSERT (UriStr != NULL);
 
-  CopyMem (UriStr, Uri->Uri, UriLength);
+  CopyMem(UriStr, Uri->Uri, UriLength);
   UriStr[UriLength] = '\0';
   UefiDevicePathLibCatPrint (Str, L"Uri(%a)", UriStr);
   FreePool(UriStr);

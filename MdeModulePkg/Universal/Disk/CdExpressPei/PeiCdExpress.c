@@ -323,7 +323,7 @@ FindRecoveryCapsules (
   OriginalLBA     = 16;
 
   while (TRUE) {
-    SetMem (Buffer, BufferSize, 0);
+    SetMem(Buffer, BufferSize, 0);
     if (BlockIo2Ppi != NULL) {
       Status = BlockIo2Ppi->ReadBlocks (
                             (EFI_PEI_SERVICES **) GetPeiServicesTablePointer (),
@@ -426,7 +426,7 @@ RetrieveCapsuleFileFromRoot (
   Buffer      = PrivateData->BlockBuffer;
   BufferSize  = PEI_CD_BLOCK_SIZE;
 
-  SetMem (Buffer, BufferSize, 0);
+  SetMem(Buffer, BufferSize, 0);
 
   if (BlockIo2Ppi != NULL) {
     Status = BlockIo2Ppi->ReadBlocks (
@@ -594,7 +594,7 @@ GetRecoveryCapsuleInfo (
   PrivateData = PEI_CD_EXPRESS_PRIVATE_DATA_FROM_THIS (This);
 
   *Size = PrivateData->CapsuleData[CapsuleInstance - 1].CapsuleSize;
-  CopyMem (
+  CopyMem(
     CapsuleType,
     &gRecoveryOnDataCdGuid,
     sizeof (EFI_GUID)

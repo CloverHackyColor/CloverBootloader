@@ -269,7 +269,7 @@ AtaAhciPeimEntry (
     Private->AtaPassThruPpi.GetNextPort   = AhciAtaPassThruGetNextPort;
     Private->AtaPassThruPpi.GetNextDevice = AhciAtaPassThruGetNextDevice;
     Private->AtaPassThruPpi.GetDevicePath = AhciAtaPassThruGetDevicePath;
-    CopyMem (
+    CopyMem(
       &Private->AtaPassThruPpiList,
       &mAhciAtaPassThruPpiListTemplate,
       sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -280,7 +280,7 @@ AtaAhciPeimEntry (
     Private->BlkIoPpi.GetNumberOfBlockDevices  = AhciBlockIoGetDeviceNo;
     Private->BlkIoPpi.GetBlockDeviceMediaInfo  = AhciBlockIoGetMediaInfo;
     Private->BlkIoPpi.ReadBlocks               = AhciBlockIoReadBlocks;
-    CopyMem (
+    CopyMem(
       &Private->BlkIoPpiList,
       &mAhciBlkIoPpiListTemplate,
       sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -292,7 +292,7 @@ AtaAhciPeimEntry (
     Private->BlkIo2Ppi.GetNumberOfBlockDevices = AhciBlockIoGetDeviceNo2;
     Private->BlkIo2Ppi.GetBlockDeviceMediaInfo = AhciBlockIoGetMediaInfo2;
     Private->BlkIo2Ppi.ReadBlocks              = AhciBlockIoReadBlocks2;
-    CopyMem (
+    CopyMem(
       &Private->BlkIo2PpiList,
       &mAhciBlkIo2PpiListTemplate,
       sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -311,7 +311,7 @@ AtaAhciPeimEntry (
       Private->StorageSecurityPpi.GetDevicePath      = AhciStorageSecurityGetDevicePath;
       Private->StorageSecurityPpi.ReceiveData        = AhciStorageSecurityReceiveData;
       Private->StorageSecurityPpi.SendData           = AhciStorageSecuritySendData;
-      CopyMem (
+      CopyMem(
         &Private->StorageSecurityPpiList,
         &mAhciStorageSecurityPpiListTemplate,
         sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -320,7 +320,7 @@ AtaAhciPeimEntry (
       PeiServicesInstallPpi (&Private->StorageSecurityPpiList);
     }
 
-    CopyMem (
+    CopyMem(
       &Private->EndOfPeiNotifyList,
       &mAhciEndOfPeiNotifyListTemplate,
       sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)

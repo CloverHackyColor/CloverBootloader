@@ -111,7 +111,7 @@ BdsDeleteBootOption (
   //
   for (Index = 0; Index < *BootOrderSize / sizeof (UINT16); Index++) {
     if (BootOrder[Index] == OptionNumber) {
-      CopyMem (&BootOrder[Index], &BootOrder[Index+1], *BootOrderSize - (Index+1) * sizeof (UINT16));
+      CopyMem(&BootOrder[Index], &BootOrder[Index+1], *BootOrderSize - (Index+1) * sizeof (UINT16));
       *BootOrderSize -= sizeof (UINT16);
       break;
     }
@@ -356,8 +356,8 @@ BdsCreateLegacyBootOption (
   if (NewBbsDevPathNode == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  CopyMem (NewBbsDevPathNode, CurrentBbsDevPath, sizeof (BBS_BBS_DEVICE_PATH));
-  CopyMem (NewBbsDevPathNode->String, HelpString, StringLen + 1);
+  CopyMem(NewBbsDevPathNode, CurrentBbsDevPath, sizeof (BBS_BBS_DEVICE_PATH));
+  CopyMem(NewBbsDevPathNode->String, HelpString, StringLen + 1);
   SetDevicePathNodeLength (&(NewBbsDevPathNode->Header), sizeof (BBS_BBS_DEVICE_PATH) + StringLen);
 
   //
@@ -396,21 +396,21 @@ BdsCreateLegacyBootOption (
   *((UINT16 *) Ptr) = CurrentBbsDevPathSize;
   Ptr += sizeof (UINT16);
 
-  CopyMem (
+  CopyMem(
     Ptr,
     BootDesc,
     StrSize (BootDesc)
     );
   Ptr += StrSize (BootDesc);
 
-  CopyMem (
+  CopyMem(
     Ptr,
     CurrentBbsDevPath,
     CurrentBbsDevPathSize
     );
   Ptr += CurrentBbsDevPathSize;
 
-  CopyMem (
+  CopyMem(
     Ptr,
     CurrentBbsEntry,
     sizeof (BBS_TABLE)
@@ -439,7 +439,7 @@ BdsCreateLegacyBootOption (
   }
 
   if (*BootOrderList != NULL) {
-    CopyMem (NewBootOrderList, *BootOrderList, *BootOrderListSize);
+    CopyMem(NewBootOrderList, *BootOrderList, *BootOrderListSize);
     FreePool(*BootOrderList);
   }
 
@@ -770,7 +770,7 @@ BdsCreateOneLegacyBootOption (
   BbsDevPathNode.Header.SubType = BBS_BBS_DP;
   SetDevicePathNodeLength (&BbsDevPathNode.Header, sizeof (BBS_BBS_DEVICE_PATH));
   BbsDevPathNode.DeviceType = BbsItem->DeviceType;
-  CopyMem (&BbsDevPathNode.StatusFlag, &BbsItem->StatusFlags, sizeof (UINT16));
+  CopyMem(&BbsDevPathNode.StatusFlag, &BbsItem->StatusFlags, sizeof (UINT16));
 
   DevPath = AppendDevicePathNode (
               NULL,
@@ -1368,7 +1368,7 @@ BdsUpdateLegacyDevOrder (
             break;
           }
         }
-        CopyMem (&NewDevPtr[Index2 + 1], &NewDevPtr[Index2], (*Idx - Index2) * sizeof (UINT16));
+        CopyMem(&NewDevPtr[Index2 + 1], &NewDevPtr[Index2], (*Idx - Index2) * sizeof (UINT16));
         NewDevPtr[Index2] = (UINT16) (Index & 0xFF);
         (*Idx)++;
       }
@@ -2361,7 +2361,7 @@ BdsLibBootViaBootOption (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem (Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
+      CopyMem(Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
       //
       // Update the shell boot option
       //

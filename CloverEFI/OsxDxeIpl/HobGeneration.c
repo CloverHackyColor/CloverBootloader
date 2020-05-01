@@ -724,7 +724,7 @@ PrepareHobMemoryDescriptor (
   //
   gHob->MemoryDescriptor.MemDesc      = (EFI_MEMORY_DESCRIPTOR *)((UINTN) gHob->MemoryDescriptor.MemDesc & ~EFI_PAGE_MASK);
 
-  CopyMem (gHob->MemoryDescriptor.MemDesc, MemDesc, MemDescCount * sizeof(EFI_MEMORY_DESCRIPTOR));
+  CopyMem(gHob->MemoryDescriptor.MemDesc, MemDesc, MemDescCount * sizeof(EFI_MEMORY_DESCRIPTOR));
 
   return gHob->MemoryDescriptor.MemDesc;
 }
@@ -868,7 +868,7 @@ PrepareHobNvStorage (
     // Efivar.bin doesn't exist
     //  1. Init variable storage header to valid header
     //
-    CopyMem (
+    CopyMem(
       (VOID *) (UINTN) NV_STORAGE_START,
       &VarStoreHeader,
       sizeof (VARIABLE_STORE_HEADER)
@@ -876,7 +876,7 @@ PrepareHobNvStorage (
     //
     //  2. set all bits in variable storage body to 1
     //
-    SetMem (
+    SetMem(
       (VOID *) (UINTN) (NV_STORAGE_START + sizeof (VARIABLE_STORE_HEADER)),
       NV_STORAGE_SIZE - sizeof (VARIABLE_STORE_HEADER),
       0xff
@@ -900,8 +900,8 @@ PrepareHobNvStorage (
   }
   NvStorageFvbHeader.Checksum = (UINT16) (0x10000 - Checksum);
   StorageFvbBase = (EFI_PHYSICAL_ADDRESS)(((UINTN)NvStorageTop - NV_STORAGE_FVB_SIZE - NV_FTW_FVB_SIZE) & ~EFI_PAGE_MASK);
-  CopyMem ((VOID *) (UINTN) StorageFvbBase, &NvStorageFvbHeader, sizeof (EFI_FIRMWARE_VOLUME_HEADER));
-  CopyMem (
+  CopyMem((VOID *) (UINTN) StorageFvbBase, &NvStorageFvbHeader, sizeof (EFI_FIRMWARE_VOLUME_HEADER));
+  CopyMem(
     (VOID *) (UINTN) (StorageFvbBase + sizeof (EFI_FIRMWARE_VOLUME_HEADER)),
     &BlockMapEntryEnd,
     sizeof (EFI_FV_BLOCK_MAP_ENTRY)
@@ -910,7 +910,7 @@ PrepareHobNvStorage (
   //
   //  2. Relocate variable data
   //
-  CopyMem (
+  CopyMem(
     (VOID *) (UINTN) (StorageFvbBase + EFI_RUNTIME_UPDATABLE_FV_HEADER_LENGTH),
     (VOID *) (UINTN) NV_STORAGE_START,
     NV_STORAGE_SIZE
@@ -919,7 +919,7 @@ PrepareHobNvStorage (
   //
   //  3. Set the remaining memory to 0xff
   //
-  SetMem (
+  SetMem(
     (VOID *) (UINTN) (StorageFvbBase + EFI_RUNTIME_UPDATABLE_FV_HEADER_LENGTH + NV_STORAGE_SIZE),
     NV_STORAGE_FVB_SIZE - NV_STORAGE_SIZE - EFI_RUNTIME_UPDATABLE_FV_HEADER_LENGTH,
     0xff
@@ -966,7 +966,7 @@ PrepareHobPhit (
   gHob->Phit.EfiFreeMemoryTop    = (EFI_PHYSICAL_ADDRESS)(UINTN)FreeMemoryTop;
   gHob->Phit.EfiFreeMemoryBottom = gHob->Phit.EfiMemoryBottom + sizeof(HOB_TEMPLATE);
 
-  CopyMem ((VOID *)(UINTN)gHob->Phit.EfiMemoryBottom, gHob, sizeof(HOB_TEMPLATE));
+  CopyMem((VOID *)(UINTN)gHob->Phit.EfiMemoryBottom, gHob, sizeof(HOB_TEMPLATE));
   gHob = (HOB_TEMPLATE *)(UINTN)gHob->Phit.EfiMemoryBottom;
 
   gHob->Phit.EfiEndOfHobList = (EFI_PHYSICAL_ADDRESS)(UINTN)&gHob->EndOfHobList;

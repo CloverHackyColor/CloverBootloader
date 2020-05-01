@@ -536,7 +536,7 @@ UINT8
     if (Prop->data != NULL /*&& Prop->dataLen > 0*/) { //rehabman: allow zero length data
       // data property
       Data = (__typeof__(Data))AllocateZeroPool(Prop->dataLen);
-      CopyMem (Data, Prop->data, Prop->dataLen);
+      CopyMem(Data, Prop->data, Prop->dataLen);
 
       if (DataLen != NULL) {
         *DataLen = Prop->dataLen;
@@ -1021,7 +1021,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       CHAR16 **newForceKexts = (__typeof__(newForceKexts))AllocateZeroPool((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
 
       if (Patches->ForceKexts != NULL) {
-        CopyMem (newForceKexts, Patches->ForceKexts, (Patches->NrForceKexts * sizeof(CHAR16 *)));
+        CopyMem(newForceKexts, Patches->ForceKexts, (Patches->NrForceKexts * sizeof(CHAR16 *)));
         FreePool(Patches->ForceKexts);
       }
 
@@ -4948,7 +4948,7 @@ GetUserSettings(
                     gSettings.ArbProperties->ValueType = kTagTypeString;
                   } else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
                     gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocatePool(4);
-                    CopyMem (gSettings.ArbProperties->Value, &(Prop3->string), 4);
+                    CopyMem(gSettings.ArbProperties->Value, &(Prop3->string), 4);
                     gSettings.ArbProperties->ValueLen = 4;
                     gSettings.ArbProperties->ValueType = kTagTypeInteger;
                   } else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
@@ -4970,7 +4970,7 @@ GetUserSettings(
 
                   //Special case. In future there must be more such cases
                   if ((AsciiStrStr(gSettings.ArbProperties->Key, "-platform-id") != NULL)) {
-                    CopyMem ((CHAR8*)&gSettings.IgPlatform, gSettings.ArbProperties->Value, 4);
+                    CopyMem((CHAR8*)&gSettings.IgPlatform, gSettings.ArbProperties->Value, 4);
                   }
                 }
               }   //for() device properties
@@ -5056,7 +5056,7 @@ GetUserSettings(
               gSettings.AddProperties[Index].ValueLen = AsciiStrLen(Prop2->string) + 1;
             } else if (Prop2 && (Prop2->type == kTagTypeInteger)) {
               gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocatePool (4);
-              CopyMem (gSettings.AddProperties[Index].Value, &(Prop2->string), 4);
+              CopyMem(gSettings.AddProperties[Index].Value, &(Prop2->string), 4);
               gSettings.AddProperties[Index].ValueLen = 4;
             } else {
               //else  data
@@ -5266,7 +5266,7 @@ GetUserSettings(
                 }
               }
 
-              CopyMem (&TableId, (CHAR8*)&Id[0], 8);
+              CopyMem(&TableId, (CHAR8*)&Id[0], 8);
               DBG(" table-id=\"%s\" (%16.16llX)\n", Id, TableId);
             }
             // Get the table len to drop
@@ -6124,7 +6124,7 @@ GetUserSettings(
     // if CustomUUID and InjectSystemID are not specified
     // then use InjectSystemID=TRUE and SMBIOS UUID
     // to get Chameleon's default behaviour (to make user's life easier)
-    CopyMem ((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
+    CopyMem((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
     gSettings.InjectSystemID = TRUE;
 
     // SystemParameters again - values that can depend on previous params
@@ -6210,7 +6210,7 @@ GetUserSettings(
      {
      EFI_GUID AppleGuid;
 
-     CopyMem ((VOID*)&AppleGuid, (VOID*)&gUuid, sizeof(EFI_GUID));
+     CopyMem((VOID*)&AppleGuid, (VOID*)&gUuid, sizeof(EFI_GUID));
      AppleGuid.Data1 = SwapBytes32 (AppleGuid.Data1);
      AppleGuid.Data2 = SwapBytes16 (AppleGuid.Data2);
      AppleGuid.Data3 = SwapBytes16 (AppleGuid.Data3);
@@ -6781,7 +6781,7 @@ GetDevices ()
             if (NGFX != 0) {
                // we found GOP on a GPU scanned later, make space for this GPU at first position
                for (i=NGFX; i>0; i--) {
-                 CopyMem (&gGraphics[i], &gGraphics[i-1], sizeof(GFX_PROPERTIES));
+                 CopyMem(&gGraphics[i], &gGraphics[i-1], sizeof(GFX_PROPERTIES));
                }
                ZeroMem(&gGraphics[0], sizeof(GFX_PROPERTIES));
                gfx = &gGraphics[0]; // GPU with active GOP will be added at the first position
@@ -8111,13 +8111,9 @@ InjectKextsFromDir (
   return Status;
 }
 
-EFI_STATUS
-SetFSInjection (
-                IN LOADER_ENTRY *Entry
-                )
+EFI_STATUS LOADER_ENTRY::SetFSInjection ()
 {
   EFI_STATUS           Status;
-  REFIT_VOLUME         *Volume;
   FSINJECTION_PROTOCOL *FSInject;
   CHAR16               *SrcDir         = NULL;
   //BOOLEAN              InjectionNeeded = FALSE;
@@ -8126,19 +8122,6 @@ SetFSInjection (
   FSI_STRING_LIST      *ForceLoadKexts = NULL;
 
   MsgLog ("Beginning FSInjection\n");
-
-  Volume = Entry->Volume;
-
-  // some checks?
-  /*
-   // apianti - this seems to not work sometimes or ever, so just always start
-   if ((Volume->BootType == BOOTING_BY_PBR) ||
-   (Volume->BootType == BOOTING_BY_MBR) ||
-   (Volume->BootType == BOOTING_BY_CD)) {
-   MsgLog ("not started - not an EFI boot\n");
-   return EFI_UNSUPPORTED;
-   }
-   */
 
   // get FSINJECTION_PROTOCOL
   Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
@@ -8149,11 +8132,11 @@ SetFSInjection (
   }
 
   // check if blocking of caches is needed
-  if (  OSFLAG_ISSET(Entry->Flags, OSFLAG_NOCACHES) || Entry->LoadOptions.contains("-f")  ) {
+  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES) || LoadOptions.contains("-f")  ) {
     MsgLog ("Blocking kext caches\n");
     //  BlockCaches = TRUE;
     // add caches to blacklist
-    Blacklist = FSInject->CreateStringList ();
+    Blacklist = FSInject->CreateStringList();
     if (Blacklist == NULL) {
       MsgLog (" - ERROR: Not enough memory!\n");
       return EFI_NOT_STARTED;
@@ -8216,9 +8199,9 @@ SetFSInjection (
   // check if kext injection is needed
   // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
   //SrcDir = NULL;
-  if (OSFLAG_ISSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
     SrcDir = GetOtherKextsDir(TRUE);
-    Status = FSInject->Install (
+    Status = FSInject->Install(
                                 Volume->DeviceHandle,
                                 L"\\System\\Library\\Extensions",
                                 SelfVolume->DeviceHandle,
@@ -8231,31 +8214,31 @@ SetFSInjection (
     InjectKextsFromDir(Status, SrcDir);
     FreePool(SrcDir);
 
-    SrcDir = GetOSVersionKextsDir (Entry->OSVersion);
-    Status = FSInject->Install (
+    SrcDir = GetOSVersionKextsDir(OSVersion);
+    Status = FSInject->Install(
                                 Volume->DeviceHandle,
                                 L"\\System\\Library\\Extensions",
                                 SelfVolume->DeviceHandle,
-                                //GetOSVersionKextsDir (Entry->OSVersion),
+                                //GetOSVersionKextsDir(OSVersion),
                                 SrcDir,
                                 Blacklist,
                                 ForceLoadKexts
                                 );
-    //InjectKextsFromDir(Status, GetOSVersionKextsDir(Entry->OSVersion));
+    //InjectKextsFromDir(Status, GetOSVersionKextsDir(OSVersion));
     InjectKextsFromDir(Status, SrcDir);
     FreePool(SrcDir);
   } else {
-    MsgLog ("skipping kext injection (not requested)\n");
+    MsgLog("skipping kext injection (not requested)\n");
   }
 
   // prepare list of kext that will be forced to load
-  ForceLoadKexts = FSInject->CreateStringList ();
+  ForceLoadKexts = FSInject->CreateStringList();
   if (ForceLoadKexts == NULL) {
-    MsgLog (" - Error: not enough memory!\n");
+    MsgLog(" - Error: not enough memory!\n");
     return EFI_NOT_STARTED;
   }
 
-  KextPatcherRegisterKexts (FSInject, ForceLoadKexts, Entry);
+  KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
 
   // reinit Volume->RootDir? it seems it's not needed.
 

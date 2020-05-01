@@ -285,7 +285,7 @@ RootBridgeIoIoWrite (
 **/
 EFI_STATUS
 EFIAPI
-RootBridgeIoCopyMem (
+RootBridgeIoCopyMem(
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL          *This,
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH    Width,
   IN UINT64                                   DestAddress,

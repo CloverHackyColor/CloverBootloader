@@ -110,27 +110,27 @@ InitializePcatIsaAcpiDeviceList (
 
   Index = 0;
   if (PcdGetBool (PcdIsaAcpiCom1Enable)) {
-    CopyMem (&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiCom1Device, sizeof(mPcatIsaAcpiCom1Device));
+    CopyMem(&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiCom1Device, sizeof(mPcatIsaAcpiCom1Device));
     Index++;
   }
   if (PcdGetBool (PcdIsaAcpiCom2Enable)) {
-    CopyMem (&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiCom2Device, sizeof(mPcatIsaAcpiCom2Device));
+    CopyMem(&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiCom2Device, sizeof(mPcatIsaAcpiCom2Device));
     Index++;
   }
   if (PcdGetBool (PcdIsaAcpiPs2KeyboardEnable)) {
-    CopyMem (&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiPs2KeyboardDevice, sizeof(mPcatIsaAcpiPs2KeyboardDevice));
+    CopyMem(&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiPs2KeyboardDevice, sizeof(mPcatIsaAcpiPs2KeyboardDevice));
     Index++;
   }
   if (PcdGetBool (PcdIsaAcpiPs2MouseEnable)) {
-    CopyMem (&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiPs2MouseDevice, sizeof(mPcatIsaAcpiPs2MouseDevice));
+    CopyMem(&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiPs2MouseDevice, sizeof(mPcatIsaAcpiPs2MouseDevice));
     Index++;
   }
   if (PcdGetBool (PcdIsaAcpiFloppyAEnable)) {
-    CopyMem (&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiFloppyADevice, sizeof(mPcatIsaAcpiFloppyADevice));
+    CopyMem(&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiFloppyADevice, sizeof(mPcatIsaAcpiFloppyADevice));
     Index++;
   }
   if (PcdGetBool (PcdIsaAcpiFloppyBEnable)) {
-    CopyMem (&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiFloppyBDevice, sizeof(mPcatIsaAcpiFloppyBDevice));
+    CopyMem(&gPcatIsaAcpiDeviceList[Index], &mPcatIsaAcpiFloppyBDevice, sizeof(mPcatIsaAcpiFloppyBDevice));
     Index++;
   }
 }

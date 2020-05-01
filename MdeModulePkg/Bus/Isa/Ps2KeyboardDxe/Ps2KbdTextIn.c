@@ -48,7 +48,7 @@ PopEfikeyBufHead (
   // Retrieve and remove the values
   //
   if (KeyData != NULL) {
-    CopyMem (KeyData, &Queue->Buffer[Queue->Head], sizeof (EFI_KEY_DATA));
+    CopyMem(KeyData, &Queue->Buffer[Queue->Head], sizeof (EFI_KEY_DATA));
   }
   Queue->Head = (Queue->Head + 1) % KEYBOARD_EFI_KEY_MAX_COUNT;
   return EFI_SUCCESS;
@@ -72,7 +72,7 @@ PushEfikeyBufTail (
     //
     PopEfikeyBufHead (Queue, NULL);
   }
-  CopyMem (&Queue->Buffer[Queue->Tail], KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&Queue->Buffer[Queue->Tail], KeyData, sizeof (EFI_KEY_DATA));
   Queue->Tail = (Queue->Tail + 1) % KEYBOARD_EFI_KEY_MAX_COUNT;
 }
 
@@ -298,7 +298,7 @@ KeyboardReadKeyStroke (
       }
     }
 
-    CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
+    CopyMem(Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
     return EFI_SUCCESS;
   }
 }
@@ -339,7 +339,7 @@ KeyboardWaitForKey (
     // next key from the queue
     //
     while (!IsEfikeyBufEmpty (&ConsoleIn->EfiKeyQueue)) {
-      CopyMem (
+      CopyMem(
         &KeyData,
         &(ConsoleIn->EfiKeyQueue.Buffer[ConsoleIn->EfiKeyQueue.Head]),
         sizeof (EFI_KEY_DATA)
@@ -601,7 +601,7 @@ KeyboardRegisterKeyNotify (
 
   NewNotify->Signature         = KEYBOARD_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
-  CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
   InsertTailList (&ConsoleInDev->NotifyList, &NewNotify->NotifyEntry);
 
   *NotifyHandle                = NewNotify;

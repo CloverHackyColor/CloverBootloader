@@ -166,7 +166,7 @@ ScanTableInXSDT (
   
   BasePtr = (UINTN)(&(Xsdt->Entry));
   for (Index = 0; Index < EntryCount; Index ++) {
-    CopyMem (&EntryPtr, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
+    CopyMem(&EntryPtr, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
     Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(EntryPtr));
     if (Table->Signature == Signature) {
       *FoundTable = Table;
@@ -298,14 +298,14 @@ PrepareFadtTable (
   // For fields not included in ACPI 1.0 spec, we get the value based on table length
   //
   if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPmTmrBlk) + sizeof (Fadt->XPmTmrBlk)) {
-    CopyMem (
+    CopyMem(
       &AcpiDescription->PM_TMR_BLK,
       &Fadt->XPmTmrBlk,
       sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
       );
   }
   if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, ResetValue) + sizeof (Fadt->ResetValue)) {
-    CopyMem (
+    CopyMem(
       &AcpiDescription->RESET_REG,
       &Fadt->ResetReg,
       sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
@@ -321,7 +321,7 @@ PrepareFadtTable (
   }
 
 	if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPm1aEvtBlk) + sizeof (Fadt->XPm1aEvtBlk)) {
-		CopyMem (
+		CopyMem(
 				 &AcpiDescription->PM1a_EVT_BLK,
 				 &Fadt->XPm1aEvtBlk,
 				 sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
@@ -336,7 +336,7 @@ PrepareFadtTable (
 	AcpiDescription->PM1_EVT_LEN = Fadt->Pm1EvtLen;
 	
 	if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPm1aCntBlk) + sizeof (Fadt->XPm1aCntBlk)) {
-		CopyMem (
+		CopyMem(
 				 &AcpiDescription->PM1a_CNT_BLK,
 				 &Fadt->XPm1aCntBlk,
 				 sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
@@ -351,7 +351,7 @@ PrepareFadtTable (
 	AcpiDescription->PM1_CNT_LEN = Fadt->Pm1CntLen;
 
 	if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPm2CntBlk) + sizeof (Fadt->XPm2CntBlk)) {
-		CopyMem (
+		CopyMem(
 				 &AcpiDescription->PM2_CNT_BLK,
 				 &Fadt->XPm2CntBlk,
 				 sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)

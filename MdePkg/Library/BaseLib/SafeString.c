@@ -1295,10 +1295,10 @@ StrToIpv6Address (
     //
     return RETURN_UNSUPPORTED;
   }
-  CopyMem (&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
+  CopyMem(&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
   ZeroMem (&Address->Addr[CompressStart], ARRAY_SIZE (Address->Addr) - AddressIndex);
   if (AddressIndex > CompressStart) {
-    CopyMem (
+    CopyMem(
       &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
       &LocalAddress.Addr[CompressStart],
       AddressIndex - CompressStart
@@ -1456,7 +1456,7 @@ StrToIpv4Address (
     return RETURN_UNSUPPORTED;
   }
 
-  CopyMem (Address, &LocalAddress, sizeof (*Address));
+  CopyMem(Address, &LocalAddress, sizeof (*Address));
   if (PrefixLength != NULL) {
     *PrefixLength = LocalPrefixLength;
   }
@@ -3272,10 +3272,10 @@ AsciiStrToIpv6Address (
     //
     return RETURN_UNSUPPORTED;
   }
-  CopyMem (&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
+  CopyMem(&Address->Addr[0], &LocalAddress.Addr[0], CompressStart);
   ZeroMem (&Address->Addr[CompressStart], ARRAY_SIZE (Address->Addr) - AddressIndex);
   if (AddressIndex > CompressStart) {
-    CopyMem (
+    CopyMem(
       &Address->Addr[CompressStart + ARRAY_SIZE (Address->Addr) - AddressIndex],
       &LocalAddress.Addr[CompressStart],
       AddressIndex - CompressStart
@@ -3426,7 +3426,7 @@ AsciiStrToIpv4Address (
     return RETURN_UNSUPPORTED;
   }
 
-  CopyMem (Address, &LocalAddress, sizeof (*Address));
+  CopyMem(Address, &LocalAddress, sizeof (*Address));
   if (PrefixLength != NULL) {
     *PrefixLength = LocalPrefixLength;
   }

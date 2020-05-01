@@ -1288,7 +1288,7 @@ InitFtwProtocol (
       //
       // If both are invalid, then initialize work space.
       //
-      SetMem (
+      SetMem(
         FtwDevice->FtwWorkSpace,
         FtwDevice->FtwWorkSpaceSize,
         FTW_ERASED_BYTE

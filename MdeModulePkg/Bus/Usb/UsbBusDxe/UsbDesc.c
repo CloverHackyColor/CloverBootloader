@@ -236,7 +236,7 @@ UsbCreateDesc (
     return NULL;
   }
 
-  CopyMem (Desc, Head, (UINTN) DescLen);
+  CopyMem(Desc, Head, (UINTN) DescLen);
 
   *Consumed = Offset;
 

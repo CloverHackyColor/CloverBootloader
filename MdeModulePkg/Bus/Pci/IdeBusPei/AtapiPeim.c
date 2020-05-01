@@ -214,7 +214,7 @@ AtapiGetBlockDeviceMediaInfo (
   //
   // Get media info from AtapiBlkIoDev
   //
-  CopyMem (MediaInfo, &AtapiBlkIoDev->DeviceInfo[Index].MediaInfo, sizeof(EFI_PEI_BLOCK_IO_MEDIA));
+  CopyMem(MediaInfo, &AtapiBlkIoDev->DeviceInfo[Index].MediaInfo, sizeof(EFI_PEI_BLOCK_IO_MEDIA));
 
   return EFI_SUCCESS;
 }
@@ -430,7 +430,7 @@ AtapiGetBlockDeviceMediaInfo2 (
   //
   // Get media info from AtapiBlkIoDev
   //
-  CopyMem (MediaInfo, &AtapiBlkIoDev->DeviceInfo[DeviceIndex - 1].MediaInfo2, sizeof(EFI_PEI_BLOCK_IO2_MEDIA));
+  CopyMem(MediaInfo, &AtapiBlkIoDev->DeviceInfo[DeviceIndex - 1].MediaInfo2, sizeof(EFI_PEI_BLOCK_IO2_MEDIA));
 
   return EFI_SUCCESS;
 }
@@ -597,8 +597,8 @@ AtapiEnumerateDevices (
         // Retrieve Media Info
         //
         Status  = DetectMedia (AtapiBlkIoDev, DevicePosition, &MediaInfo, &MediaInfo2);
-        CopyMem (&(AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo), &MediaInfo, sizeof (MediaInfo));
-        CopyMem (&(AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo2), &MediaInfo2, sizeof (MediaInfo2));
+        CopyMem(&(AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo), &MediaInfo, sizeof (MediaInfo));
+        CopyMem(&(AtapiBlkIoDev->DeviceInfo[DeviceCount].MediaInfo2), &MediaInfo2, sizeof (MediaInfo2));
 
         DEBUG ((EFI_D_INFO, "Atatpi Device Position is %d\n", DevicePosition));
         DEBUG ((EFI_D_INFO, "Atatpi DeviceType is   %d\n", MediaInfo.DeviceType));

@@ -542,7 +542,7 @@ UsbIoGetDeviceDescriptor (
   UsbIf  = USB_INTERFACE_FROM_USBIO (This);
   Dev    = UsbIf->Device;
 
-  CopyMem (Descriptor, &Dev->DevDesc->Desc, sizeof (EFI_USB_DEVICE_DESCRIPTOR));
+  CopyMem(Descriptor, &Dev->DevDesc->Desc, sizeof (EFI_USB_DEVICE_DESCRIPTOR));
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
@@ -587,7 +587,7 @@ UsbIoGetActiveConfigDescriptor (
     goto ON_EXIT;
   }
 
-  CopyMem (Descriptor, &(Dev->ActiveConfig->Desc), sizeof (EFI_USB_CONFIG_DESCRIPTOR));
+  CopyMem(Descriptor, &(Dev->ActiveConfig->Desc), sizeof (EFI_USB_CONFIG_DESCRIPTOR));
 
 ON_EXIT:
   gBS->RestoreTPL (OldTpl);
@@ -622,7 +622,7 @@ UsbIoGetInterfaceDescriptor (
   OldTpl = gBS->RaiseTPL (USB_BUS_TPL);
 
   UsbIf  = USB_INTERFACE_FROM_USBIO (This);
-  CopyMem (Descriptor, &(UsbIf->IfSetting->Desc), sizeof (EFI_USB_INTERFACE_DESCRIPTOR));
+  CopyMem(Descriptor, &(UsbIf->IfSetting->Desc), sizeof (EFI_USB_INTERFACE_DESCRIPTOR));
 
   gBS->RestoreTPL (OldTpl);
   return EFI_SUCCESS;
@@ -666,7 +666,7 @@ UsbIoGetEndpointDescriptor (
     return EFI_NOT_FOUND;
   }
 
-  CopyMem (
+  CopyMem(
     Descriptor,
     &(UsbIf->IfSetting->Endpoints[Index]->Desc),
     sizeof (EFI_USB_ENDPOINT_DESCRIPTOR)
@@ -787,7 +787,7 @@ UsbIoGetStringDescriptor (
     goto FREE_STR;
   }
 
-  CopyMem (Buf, StrDesc->String, StrDesc->Length - 2);
+  CopyMem(Buf, StrDesc->String, StrDesc->Length - 2);
   *String = (CHAR16 *) Buf;
   Status  = EFI_SUCCESS;
 

@@ -192,7 +192,7 @@ PeiCore (
     //
     ZeroMem (&PrivateData, sizeof (PEI_CORE_INSTANCE));
     PrivateData.Signature = PEI_CORE_HANDLE_SIGNATURE;
-    CopyMem (&PrivateData.ServiceTableShadow, &gPs, sizeof (gPs));
+    CopyMem(&PrivateData.ServiceTableShadow, &gPs, sizeof (gPs));
   } else {
     //
     // Memory is available to the PEI Core.  See if the PEI Core has been shadowed to memory yet.
@@ -341,15 +341,15 @@ PeiCore (
     //
     // Memory is available to the PEI Core and the PEI Core has been shadowed to memory.
     //
-    CopyMem (&NewSecCoreData, SecCoreDataPtr, sizeof (NewSecCoreData));
+    CopyMem(&NewSecCoreData, SecCoreDataPtr, sizeof (NewSecCoreData));
     SecCoreData = &NewSecCoreData;
 
-    CopyMem (&PrivateData, OldCoreData, sizeof (PrivateData));
+    CopyMem(&PrivateData, OldCoreData, sizeof (PrivateData));
 
     CpuIo = (VOID*)PrivateData.ServiceTableShadow.CpuIo;
     PciCfg = (VOID*)PrivateData.ServiceTableShadow.PciCfg;
 
-    CopyMem (&PrivateData.ServiceTableShadow, &gPs, sizeof (gPs));
+    CopyMem(&PrivateData.ServiceTableShadow, &gPs, sizeof (gPs));
 
     PrivateData.ServiceTableShadow.CpuIo  = CpuIo;
     PrivateData.ServiceTableShadow.PciCfg = PciCfg;

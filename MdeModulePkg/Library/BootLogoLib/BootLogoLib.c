@@ -471,7 +471,7 @@ BootLogoUpdateProgress (
     //
     // Clear progress area
     //
-    SetMem (&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
+    SetMem(&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
 
     if (GraphicsOutput != NULL) {
       Status = GraphicsOutput->Blt (

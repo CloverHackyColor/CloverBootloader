@@ -1283,7 +1283,7 @@ LegacyBiosInt86 (
   ThunkRegSet.E.DS   = Regs->E.DS;
   ThunkRegSet.E.ES   = Regs->E.ES;
 
-  CopyMem (&(ThunkRegSet.E.EFLAGS), &(Regs->E.EFlags), sizeof (UINT32));
+  CopyMem(&(ThunkRegSet.E.EFLAGS), &(Regs->E.EFlags), sizeof (UINT32));
  
   //
   // The call to Legacy16 is a critical section to EFI
@@ -1307,7 +1307,7 @@ LegacyBiosInt86 (
 
   Stack16 = (UINT16 *)((UINT8 *) mThunkContext.RealModeBuffer + mThunkContext.RealModeBufferSize - sizeof (UINT16));
   Stack16 -= sizeof (ThunkRegSet.E.EFLAGS) / sizeof (UINT16);
-  CopyMem (Stack16, &ThunkRegSet.E.EFLAGS, sizeof (ThunkRegSet.E.EFLAGS));
+  CopyMem(Stack16, &ThunkRegSet.E.EFLAGS, sizeof (ThunkRegSet.E.EFLAGS));
 
   ThunkRegSet.E.SS   = (UINT16) (((UINTN) Stack16 >> 16) << 12);
   ThunkRegSet.E.ESP  = (UINT16) (UINTN) Stack16;
@@ -1347,7 +1347,7 @@ LegacyBiosInt86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-  CopyMem (&(Regs->E.EFlags), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+  CopyMem(&(Regs->E.EFlags), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
   Ret = (BOOLEAN) (Regs->E.EFlags.CF == 1);
 

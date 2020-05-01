@@ -754,10 +754,10 @@ ConSplitterTextOutConstructor (
   // Copy protocols template
   //
   if (FeaturePcdGet (PcdConOutUgaSupport)) {
-    CopyMem (&ConOutPrivate->UgaDraw, &mUgaDrawProtocolTemplate, sizeof (EFI_UGA_DRAW_PROTOCOL));
+    CopyMem(&ConOutPrivate->UgaDraw, &mUgaDrawProtocolTemplate, sizeof (EFI_UGA_DRAW_PROTOCOL));
   }
   if (FeaturePcdGet (PcdConOutGopSupport)) {
-    CopyMem (&ConOutPrivate->GraphicsOutput, &mGraphicsOutputProtocolTemplate, sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL));
+    CopyMem(&ConOutPrivate->GraphicsOutput, &mGraphicsOutputProtocolTemplate, sizeof (EFI_GRAPHICS_OUTPUT_PROTOCOL));
   }
 
   //
@@ -830,7 +830,7 @@ ConSplitterTextOutConstructor (
     Info->VerticalResolution = 600;
     Info->PixelFormat = PixelBltOnly;
     Info->PixelsPerScanLine = 800;
-    CopyMem (ConOutPrivate->GraphicsOutput.Mode->Info, Info, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+    CopyMem(ConOutPrivate->GraphicsOutput.Mode->Info, Info, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
     ConOutPrivate->GraphicsOutput.Mode->SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
     //
@@ -2270,7 +2270,7 @@ ConSplitterGrowMapTable (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  SetMem (TextOutModeMap, TotalSize, 0xFF);
+  SetMem(TextOutModeMap, TotalSize, 0xFF);
   Private->TextOutModeMap = TextOutModeMap;
 
   //
@@ -2305,7 +2305,7 @@ ConSplitterGrowMapTable (
     // Copy the old data to the new one
     //
     while (Index < Private->TextOutMode.MaxMode) {
-      CopyMem (TextOutModeMap, SrcAddress, Size);
+      CopyMem(TextOutModeMap, SrcAddress, Size);
       //
       // Go to next row of new TextOutModeMap.
       //
@@ -2460,7 +2460,7 @@ ConSplitterGetIntersection (
       (*MaxMode)--;
     } else {
       if (CurrentMapEntry != NextMapEntry) {
-        CopyMem (NextMapEntry, CurrentMapEntry, MapStepSize * sizeof (INT32));
+        CopyMem(NextMapEntry, CurrentMapEntry, MapStepSize * sizeof (INT32));
       }
 
       NextMapEntry += MapStepSize;
@@ -2649,7 +2649,7 @@ ConSplitterGetIntersectionBetweenConOutAndStrErr (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  SetMem (ConOutMapTable, ConOutMapTableSize, 0xFF);
+  SetMem(ConOutMapTable, ConOutMapTableSize, 0xFF);
 
   StdErrMapTableSize  = StdErrMaxMode * sizeof (INT32);
   StdErrMapTable      = AllocateZeroPool(StdErrMapTableSize);
@@ -2657,7 +2657,7 @@ ConSplitterGetIntersectionBetweenConOutAndStrErr (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  SetMem (StdErrMapTable, StdErrMapTableSize, 0xFF);
+  SetMem(StdErrMapTable, StdErrMapTableSize, 0xFF);
 
   //
   // Find the intersection of the two set of modes. If they actually intersect, the
@@ -2783,7 +2783,7 @@ ConSplitterAddGraphicsOutputMode (
         //
         CurrentGraphicsOutputMode->MaxMode = GraphicsOutput->Mode->MaxMode;
         CurrentGraphicsOutputMode->Mode = GraphicsOutput->Mode->Mode;
-        CopyMem (CurrentGraphicsOutputMode->Info, GraphicsOutput->Mode->Info, GraphicsOutput->Mode->SizeOfInfo);
+        CopyMem(CurrentGraphicsOutputMode->Info, GraphicsOutput->Mode->Info, GraphicsOutput->Mode->SizeOfInfo);
         CurrentGraphicsOutputMode->SizeOfInfo = GraphicsOutput->Mode->SizeOfInfo;
         CurrentGraphicsOutputMode->FrameBufferBase = GraphicsOutput->Mode->FrameBufferBase;
         CurrentGraphicsOutputMode->FrameBufferSize = GraphicsOutput->Mode->FrameBufferSize;
@@ -2811,7 +2811,7 @@ ConSplitterAddGraphicsOutputMode (
             return Status;
           }
           ASSERT ( SizeOfInfo <= sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
-          CopyMem (Mode, Info, SizeOfInfo);
+          CopyMem(Mode, Info, SizeOfInfo);
           Mode++;
           FreePool(Info);
         }
@@ -2865,7 +2865,7 @@ ConSplitterAddGraphicsOutputMode (
           }
 
           if (!AlreadyExist) {
-            CopyMem (MatchedMode, Mode, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+            CopyMem(MatchedMode, Mode, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
 
             //
             // Physical frame buffer is no longer available, change PixelFormat to PixelBltOnly
@@ -2948,7 +2948,7 @@ ConSplitterAddGraphicsOutputMode (
     //
     // Update the private mode buffer
     //
-    CopyMem (&Private->GraphicsOutputModeBuffer[0], Info, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
+    CopyMem(&Private->GraphicsOutputModeBuffer[0], Info, sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
 
     //
     // Only mode 0 is available to be set
@@ -3335,7 +3335,7 @@ ConSplitterTextOutDeleteDevice (
       if (TextOutList->GraphicsOutput != NULL) {
         Private->CurrentNumberOfGraphicsOutput--;
       }
-      CopyMem (TextOutList, TextOutList + 1, sizeof (TEXT_OUT_AND_GOP_DATA) * Index);
+      CopyMem(TextOutList, TextOutList + 1, sizeof (TEXT_OUT_AND_GOP_DATA) * Index);
       CurrentNumOfConsoles--;
       break;
     }
@@ -3502,9 +3502,9 @@ ConSplitterTextInExDequeueKey (
   //
   // Return the first saved key.
   //
-  CopyMem (KeyData, &Private->KeyQueue[0], sizeof (EFI_KEY_DATA));
+  CopyMem(KeyData, &Private->KeyQueue[0], sizeof (EFI_KEY_DATA));
   Private->CurrentNumberOfKeys--;
-  CopyMem (
+  CopyMem(
     &Private->KeyQueue[0],
     &Private->KeyQueue[1],
     Private->CurrentNumberOfKeys * sizeof (EFI_KEY_DATA)
@@ -3545,7 +3545,7 @@ ConSplitterTextInPrivateReadKeyStroke (
       break;
     }
     if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar != SCAN_NULL)) {
-      CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
+      CopyMem(Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
       return Status;
     }
   }
@@ -3569,7 +3569,7 @@ ConSplitterTextInPrivateReadKeyStroke (
       // to read key from THIS physical console input device.
       //
       if ((KeyData.Key.ScanCode != CHAR_NULL) || (KeyData.Key.UnicodeChar != SCAN_NULL)) {
-        CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
+        CopyMem(Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
         return Status;
       }
     } else {
@@ -3860,7 +3860,7 @@ ConSplitterTextInReadKeyStrokeEx (
       if ((Private->VirtualKeyStateExported) ||
           (CurrentKeyData.Key.ScanCode != CHAR_NULL) ||
           (CurrentKeyData.Key.UnicodeChar != SCAN_NULL)) {
-        CopyMem (
+        CopyMem(
           &Private->KeyQueue[Private->CurrentNumberOfKeys],
           &CurrentKeyData,
           sizeof (EFI_KEY_DATA)
@@ -3874,7 +3874,7 @@ ConSplitterTextInReadKeyStrokeEx (
   // Consolidate the key state for all keys in Private->KeyQueue[]
   //
   for (Index = 0; Index < Private->CurrentNumberOfKeys; Index++) {
-    CopyMem (&Private->KeyQueue[Index].KeyState, &KeyState, sizeof (EFI_KEY_STATE));
+    CopyMem(&Private->KeyQueue[Index].KeyState, &KeyState, sizeof (EFI_KEY_STATE));
   }
 
   //
@@ -3889,7 +3889,7 @@ ConSplitterTextInReadKeyStrokeEx (
   // Always return the key state even there is no key pressed.
   //
   ZeroMem (&KeyData->Key, sizeof (KeyData->Key));
-  CopyMem (&KeyData->KeyState, &KeyState, sizeof (KeyData->KeyState));
+  CopyMem(&KeyData->KeyState, &KeyState, sizeof (KeyData->KeyState));
   return EFI_NOT_READY;
 }
 
@@ -4033,7 +4033,7 @@ ConSplitterTextInRegisterKeyNotify (
   }
   NewNotify->Signature         = TEXT_IN_EX_SPLITTER_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
-  CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
 
   //
   // Return the wrong status of registering key notify of

@@ -115,7 +115,7 @@ AIKShimTextInputReadKeyStroke (
         && (AmiKeyData.KeyState.KeyToggleState & KEY_STATE_EXPOSED)) {
         Status = EFI_NOT_READY;
       } else {
-        CopyMem (Key, &AmiKeyData.Key, sizeof (AmiKeyData.Key));
+        CopyMem(Key, &AmiKeyData.Key, sizeof (AmiKeyData.Key));
       }
     }
 
@@ -169,8 +169,8 @@ AIKShimTextInputReadKeyStrokeEx (
     //
     Status = AIKDataReadEntry (&gAikSelf.Data, &AmiKeyData);
     if (!EFI_ERROR(Status)) {
-      CopyMem (&KeyData->Key, &AmiKeyData.Key, sizeof (AmiKeyData.Key));
-      CopyMem (&KeyData->KeyState, &AmiKeyData.KeyState, sizeof (AmiKeyData.KeyState));
+      CopyMem(&KeyData->Key, &AmiKeyData.Key, sizeof (AmiKeyData.Key));
+      CopyMem(&KeyData->KeyState, &AmiKeyData.KeyState, sizeof (AmiKeyData.KeyState));
     }
 
     return Status;

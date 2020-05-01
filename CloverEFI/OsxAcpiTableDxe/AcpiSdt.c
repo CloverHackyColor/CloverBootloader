@@ -759,7 +759,7 @@ SetOption (
   //
   // Update
   //
-  CopyMem (OrgData, Data, DataSize);
+  CopyMem(OrgData, Data, DataSize);
   AmlHandle->Modified = TRUE;
 
   return EFI_SUCCESS;
@@ -884,7 +884,7 @@ SdtDuplicateHandle (
 
   DstAmlHandle = AllocatePool (sizeof(*DstAmlHandle));
   ASSERT (DstAmlHandle != NULL);
-  CopyMem (DstAmlHandle, (VOID *)AmlHandle, sizeof(*DstAmlHandle));
+  CopyMem(DstAmlHandle, (VOID *)AmlHandle, sizeof(*DstAmlHandle));
 
   return DstAmlHandle;
 }
@@ -1100,7 +1100,7 @@ SdtAcpiTableAcpiSdtConstructor (
   VOID *Registration;
 
   InitializeListHead (&AcpiTableInstance->NotifyList);
-  CopyMem (&AcpiTableInstance->AcpiSdtProtocol, &mAcpiSdtProtocolTemplate, sizeof(mAcpiSdtProtocolTemplate));
+  CopyMem(&AcpiTableInstance->AcpiSdtProtocol, &mAcpiSdtProtocolTemplate, sizeof(mAcpiSdtProtocolTemplate));
 
   //
   // Register event for ExitPmAuth, so that we can uninstall ACPI SDT protocol after ExitPmAuth.

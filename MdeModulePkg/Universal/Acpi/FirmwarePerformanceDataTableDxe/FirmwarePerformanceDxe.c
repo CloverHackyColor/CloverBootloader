@@ -247,7 +247,7 @@ FpdtAllocateS3PerformanceTableMemory (
       }
       DEBUG ((EFI_D_INFO, "FPDT: ACPI S3 Performance Table address = 0x%x\n", mAcpiS3PerformanceTable));
       if (mAcpiS3PerformanceTable != NULL) {
-        CopyMem (mAcpiS3PerformanceTable, &mS3PerformanceTableTemplate, sizeof (mS3PerformanceTableTemplate));
+        CopyMem(mAcpiS3PerformanceTable, &mS3PerformanceTableTemplate, sizeof (mS3PerformanceTableTemplate));
       }
     }
   }
@@ -336,7 +336,7 @@ InstallFirmwarePerformanceDataTable (
     //
     // Fill Basic Boot record to Boot Performance Table.
     //
-    CopyMem (mAcpiBootPerformanceTable, &mBootPerformanceTableTemplate, sizeof (mBootPerformanceTableTemplate));
+    CopyMem(mAcpiBootPerformanceTable, &mBootPerformanceTableTemplate, sizeof (mBootPerformanceTableTemplate));
   }
   BootPerformanceDataSize   = mAcpiBootPerformanceTable->Header.Length;
 
@@ -512,7 +512,7 @@ FpdtStatusCodeListenerDxe (
     //
     // Get the Boot performance table and then install it to ACPI table.
     //
-    CopyMem (&mReceivedAcpiBootPerformanceTable, Data + 1, Data->Size);
+    CopyMem(&mReceivedAcpiBootPerformanceTable, Data + 1, Data->Size);
   } else if (Data != NULL && CompareGuid (&Data->Type, &gEfiFirmwarePerformanceGuid)) {
     DEBUG ((DEBUG_ERROR, "FpdtStatusCodeListenerDxe: Performance data reported through gEfiFirmwarePerformanceGuid will not be collected by FirmwarePerformanceDataTableDxe\n"));
     Status = EFI_UNSUPPORTED;
@@ -597,13 +597,13 @@ FirmwarePerformanceDxeEntryPoint (
   VOID                     *Registration;
   UINT64                   OemTableId;
 
-  CopyMem (
+  CopyMem(
     mFirmwarePerformanceTableTemplate.Header.OemId,
     PcdGetPtr (PcdAcpiDefaultOemId),
     sizeof (mFirmwarePerformanceTableTemplate.Header.OemId)
     );
   OemTableId = PcdGet64 (PcdAcpiDefaultOemTableId);
-  CopyMem (&mFirmwarePerformanceTableTemplate.Header.OemTableId, &OemTableId, sizeof (UINT64));
+  CopyMem(&mFirmwarePerformanceTableTemplate.Header.OemTableId, &OemTableId, sizeof (UINT64));
   mFirmwarePerformanceTableTemplate.Header.OemRevision      = PcdGet32 (PcdAcpiDefaultOemRevision);
   mFirmwarePerformanceTableTemplate.Header.CreatorId        = PcdGet32 (PcdAcpiDefaultCreatorId);
   mFirmwarePerformanceTableTemplate.Header.CreatorRevision  = PcdGet32 (PcdAcpiDefaultCreatorRevision);

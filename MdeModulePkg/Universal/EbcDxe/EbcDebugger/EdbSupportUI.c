@@ -251,7 +251,7 @@ Input (
     return ;
   }
 
-  SetMem (InStr, StrLength * sizeof (CHAR16), 0);
+  SetMem(InStr, StrLength * sizeof (CHAR16), 0);
   Done = FALSE;
   do {
     //
@@ -279,7 +279,7 @@ Input (
         StrPos -= 1;
         Update  = StrPos;
         Delete  = 1;
-        CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
+        CopyMem(InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
 
         //
         // Adjust the current column and row
@@ -326,7 +326,7 @@ Input (
         if (Len != 0) {
           Update  = StrPos;
           Delete  = 1;
-          CopyMem (InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
+          CopyMem(InStr + StrPos, InStr + StrPos + 1, sizeof (CHAR16) * (Len - StrPos));
 
           NeedAdjust = TRUE;
         }
@@ -398,7 +398,7 @@ Input (
         //
         // show history
         //
-        CopyMem (InStr, mInputBufferHistory, StrLength * sizeof(CHAR16));
+        CopyMem(InStr, mInputBufferHistory, StrLength * sizeof(CHAR16));
         StrPos       = StrLen (mInputBufferHistory);
         Update       = 0;
         Delete       = 0;
@@ -415,7 +415,7 @@ Input (
           mBackupSpace[SubIndex] = L' ';
         }
         EDBPrint (mBackupSpace);
-        SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN)) * sizeof(CHAR16), 0);
+        SetMem(mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (StartColumn - EFI_DEBUG_PROMPT_COLUMN)) * sizeof(CHAR16), 0);
 
         ConOut->SetCursorPosition (ConOut, StartColumn, Row);
         Len = StrPos;
@@ -456,7 +456,7 @@ Input (
           mBackupSpace[SubIndex] = L' ';
         }
         EDBPrint (mBackupSpace);
-        SetMem (mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN)) * sizeof(CHAR16), 0);
+        SetMem(mBackupSpace, (EFI_DEBUG_INPUS_BUFFER_SIZE - (Column - EFI_DEBUG_PROMPT_COLUMN)) * sizeof(CHAR16), 0);
         ConOut->SetCursorPosition (ConOut, Column, Row);
         NeedAdjust = FALSE;
       }
@@ -464,7 +464,7 @@ Input (
       Len = StrLen (InStr);
 
       if (Delete != 0) {
-        SetMem (InStr + Len, Delete * sizeof (CHAR16), 0x00);
+        SetMem(InStr + Len, Delete * sizeof (CHAR16), 0x00);
       }
 
       if (StrPos > Len) {
@@ -522,7 +522,7 @@ Input (
     SetCursorPosition (ConOut, Column, Row, LineLength, TotalRow, InStr, StrPos, Len);
   } while (!Done);
 
-  CopyMem (mInputBufferHistory, InStr, StrLength * sizeof(CHAR16));
+  CopyMem(mInputBufferHistory, InStr, StrLength * sizeof(CHAR16));
 
   //
   // Return the data to the caller

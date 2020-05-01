@@ -87,8 +87,8 @@ CoreConnectController (
         RemainingDevicePathSize = GetDevicePathSize (RemainingDevicePath);
         TempFilePath = AllocateZeroPool(HandleFilePathSize + RemainingDevicePathSize);
         ASSERT (TempFilePath != NULL);
-        CopyMem (TempFilePath, HandleFilePath, HandleFilePathSize);
-        CopyMem ((UINT8 *) TempFilePath + HandleFilePathSize, RemainingDevicePath, RemainingDevicePathSize);
+        CopyMem(TempFilePath, HandleFilePath, HandleFilePathSize);
+        CopyMem((UINT8 *) TempFilePath + HandleFilePathSize, RemainingDevicePath, RemainingDevicePathSize);
         FilePath = TempFilePath;
       }
       Status = gSecurity2->FileAuthentication (

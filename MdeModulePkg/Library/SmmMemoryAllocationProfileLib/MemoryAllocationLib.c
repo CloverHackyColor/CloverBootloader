@@ -817,7 +817,7 @@ InternalAllocateCopyPool(
 
   Memory = InternalAllocatePool (PoolType, AllocationSize);
   if (Memory != NULL) {
-     Memory = CopyMem (Memory, Buffer, AllocationSize);
+     Memory = CopyMem(Memory, Buffer, AllocationSize);
   }
   return Memory;
 }
@@ -966,7 +966,7 @@ InternalReallocatePool (
 
   NewBuffer = InternalAllocateZeroPool(PoolType, NewSize);
   if (NewBuffer != NULL && OldBuffer != NULL) {
-    CopyMem (NewBuffer, OldBuffer, MIN (OldSize, NewSize));
+    CopyMem(NewBuffer, OldBuffer, MIN (OldSize, NewSize));
     FreePool(OldBuffer);
   }
   return NewBuffer;

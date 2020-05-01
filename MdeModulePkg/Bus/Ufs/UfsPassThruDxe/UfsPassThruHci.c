@@ -367,7 +367,7 @@ UfsInitCommandUpiu (
   SwapLittleEndianToBigEndian ((UINT8*)&ExpDataTranLen, sizeof (ExpDataTranLen));
   Command->ExpDataTranLen = ExpDataTranLen;
 
-  CopyMem (Command->Cdb, Cdb, CdbLength);
+  CopyMem(Command->Cdb, Cdb, CdbLength);
 
   return EFI_SUCCESS;
 }
@@ -467,7 +467,7 @@ UfsInitQueryRequestUpiu (
   }
 
   if (Opcode == UtpQueryFuncOpcodeWrDesc) {
-    CopyMem (QueryReq + 1, Data, DataSize);
+    CopyMem(QueryReq + 1, Data, DataSize);
 
     SwapLittleEndianToBigEndian ((UINT8*)&DataSize, sizeof (UINT16));
     QueryReq->DataSegLen = (UINT16)DataSize;
@@ -851,7 +851,7 @@ UfsGetReturnDataFromQueryResponse (
         return EFI_DEVICE_ERROR;
       }
 
-      CopyMem (Packet->DataBuffer, (QueryResp + 1), ReturnDataSize);
+      CopyMem(Packet->DataBuffer, (QueryResp + 1), ReturnDataSize);
       Packet->TransferLength = ReturnDataSize;
       break;
     case UtpQueryFuncOpcodeWrDesc:
@@ -863,13 +863,13 @@ UfsGetReturnDataFromQueryResponse (
     case UtpQueryFuncOpcodeSetFlag:
     case UtpQueryFuncOpcodeClrFlag:
     case UtpQueryFuncOpcodeTogFlag:
-      CopyMem (Packet->DataBuffer, &QueryResp->Tsf.Value, sizeof (UINT8));
+      CopyMem(Packet->DataBuffer, &QueryResp->Tsf.Value, sizeof (UINT8));
       break;
     case UtpQueryFuncOpcodeRdAttr:
     case UtpQueryFuncOpcodeWrAttr:
       ReturnData = QueryResp->Tsf.Value;
       SwapLittleEndianToBigEndian ((UINT8*) &ReturnData, sizeof (UINT32));
-      CopyMem (Packet->DataBuffer, &ReturnData, sizeof (UINT32));
+      CopyMem(Packet->DataBuffer, &ReturnData, sizeof (UINT32));
       break;
     default:
       return EFI_INVALID_PARAMETER;
@@ -1340,7 +1340,7 @@ UfsReconcileDataTransferBuffer (
   //
   if (TransReq->AlignedDataBuf != NULL) {
     if (TransReq->Packet->DataDirection == EFI_EXT_SCSI_DATA_DIRECTION_READ) {
-      CopyMem (TransReq->Packet->InDataBuffer, TransReq->AlignedDataBuf, TransReq->Packet->InTransferLength);
+      CopyMem(TransReq->Packet->InDataBuffer, TransReq->AlignedDataBuf, TransReq->Packet->InTransferLength);
     }
     //
     // Wipe out the transfer buffer in case it contains sensitive data.
@@ -1404,7 +1404,7 @@ UfsPrepareDataTransferBuffer (
       if (DataBuf == NULL) {
         return EFI_DEVICE_ERROR;
       }
-      CopyMem (DataBuf, TransReq->Packet->OutDataBuffer, TransReq->Packet->OutTransferLength);
+      CopyMem(DataBuf, TransReq->Packet->OutDataBuffer, TransReq->Packet->OutTransferLength);
       TransReq->AlignedDataBuf = DataBuf;
       TransReq->AlignedDataBufSize = DataLen;
     } else {
@@ -1573,7 +1573,7 @@ UfsExecScsiCmds (
     // Make sure the hardware device does not return more data than expected.
     //
     if (SenseDataLen <= Packet->SenseDataLength) {
-      CopyMem (Packet->SenseData, Response->SenseData, SenseDataLen);
+      CopyMem(Packet->SenseData, Response->SenseData, SenseDataLen);
       Packet->SenseDataLength = (UINT8)SenseDataLen;
     } else {
       Packet->SenseDataLength = 0;
@@ -2335,7 +2335,7 @@ ProcessAsyncTaskList (
           // Make sure the hardware device does not return more data than expected.
           //
           if (SenseDataLen <= Packet->SenseDataLength) {
-            CopyMem (Packet->SenseData, Response->SenseData, SenseDataLen);
+            CopyMem(Packet->SenseData, Response->SenseData, SenseDataLen);
             Packet->SenseDataLength = (UINT8)SenseDataLen;
           } else {
             Packet->SenseDataLength = 0;

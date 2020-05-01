@@ -176,7 +176,7 @@ PeiInstallSecHobData (
   }
 
   Hob.Raw = (UINT8 *) (UINTN) HandOffHob->EfiEndOfHobList;
-  CopyMem (Hob.Raw, HobStart.Raw, SecHobListLength);
+  CopyMem(Hob.Raw, HobStart.Raw, SecHobListLength);
 
   HobEnd = (EFI_HOB_GENERIC_HEADER *) ((UINTN) Hob.Raw + SecHobListLength);
   HandOffHob->EfiEndOfHobList = (EFI_PHYSICAL_ADDRESS) (UINTN) HobEnd;

@@ -48,7 +48,7 @@ PeiImageRead (
   Destination8  = Buffer;
   Source8       = (CHAR8 *) ((UINTN) FileHandle + FileOffset);
   if (Destination8 != Source8) {
-    CopyMem (Destination8, Source8, *ReadSize);
+    CopyMem(Destination8, Source8, *ReadSize);
   }
 
   return EFI_SUCCESS;

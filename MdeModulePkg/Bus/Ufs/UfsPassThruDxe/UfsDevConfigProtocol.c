@@ -165,7 +165,7 @@ UfsRwUfsAttribute (
   }
 
   if (!Read) {
-    CopyMem (&Attribute32, Attribute, *AttrSize);
+    CopyMem(&Attribute32, Attribute, *AttrSize);
   }
 
   Status = UfsRwAttributes (
@@ -178,7 +178,7 @@ UfsRwUfsAttribute (
              );
   if (!EFI_ERROR(Status)) {
     if (Read) {
-      CopyMem (Attribute, &Attribute32, *AttrSize);
+      CopyMem(Attribute, &Attribute32, *AttrSize);
     }
   } else {
     *AttrSize = 0;

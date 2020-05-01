@@ -85,7 +85,7 @@ GrowStack (
     //
     // Copy from Old Stack to the New Stack
     //
-    CopyMem (
+    CopyMem(
       NewStack,
       *Stack,
       (*StackEnd - *Stack) * sizeof (EFI_HII_VALUE)
@@ -146,7 +146,7 @@ PushStack (
   //
   // Push the item onto the stack
   //
-  CopyMem (*StackPtr, Data, sizeof (EFI_HII_VALUE));
+  CopyMem(*StackPtr, Data, sizeof (EFI_HII_VALUE));
   if (Data->Type == EFI_IFR_TYPE_BUFFER) {
     (*StackPtr)->Buffer = AllocateCopyPool(Data->BufferLen, Data->Buffer);
     ASSERT ((*StackPtr)->Buffer != NULL);
@@ -187,7 +187,7 @@ PopStack (
   // Pop the item off the stack
   //
   *StackPtr = *StackPtr - 1;
-  CopyMem (Data, *StackPtr, sizeof (EFI_HII_VALUE));
+  CopyMem(Data, *StackPtr, sizeof (EFI_HII_VALUE));
   return EFI_SUCCESS;
 }
 
@@ -317,7 +317,7 @@ GrowConditionalStack (
     //
     // Copy from Old Stack to the New Stack
     //
-    CopyMem (
+    CopyMem(
       NewStack,
       *Stack,
       (*StackEnd - *Stack) * MemberSize
@@ -377,7 +377,7 @@ PushConditionalStack (
   //
   // Push the item onto the stack
   //
-  CopyMem (*StackPtr, Data, sizeof (FORM_EXPRESSION *));
+  CopyMem(*StackPtr, Data, sizeof (FORM_EXPRESSION *));
   *StackPtr = *StackPtr + 1;
 
   return EFI_SUCCESS;
@@ -413,7 +413,7 @@ PopConditionalStack (
   // Pop the item off the stack
   //
   *StackPtr = *StackPtr - 1;
-  CopyMem (Data, *StackPtr, sizeof (FORM_EXPRESSION  *));
+  CopyMem(Data, *StackPtr, sizeof (FORM_EXPRESSION  *));
   return EFI_SUCCESS;
 
 }
@@ -1169,7 +1169,7 @@ IfrToString (
     break;
 
   case EFI_IFR_TYPE_STRING:
-    CopyMem (Result, &Value, sizeof (EFI_HII_VALUE));
+    CopyMem(Result, &Value, sizeof (EFI_HII_VALUE));
     return EFI_SUCCESS;
 
   case EFI_IFR_TYPE_BOOLEAN:
@@ -1195,11 +1195,11 @@ IfrToString (
     TmpBuf = AllocateZeroPool(SrcLen + 3);
     ASSERT (TmpBuf != NULL);
     if (Format == EFI_IFR_STRING_ASCII) {
-      CopyMem (TmpBuf, SrcBuf, SrcLen);
+      CopyMem(TmpBuf, SrcBuf, SrcLen);
       PrintFormat = L"%a";
     } else {
       // Format == EFI_IFR_STRING_UNICODE
-      CopyMem (TmpBuf, SrcBuf, SrcLen * sizeof (CHAR16));
+      CopyMem(TmpBuf, SrcBuf, SrcLen * sizeof (CHAR16));
       PrintFormat = L"%s";
     }
     UnicodeSPrint (Buffer, sizeof (Buffer), PrintFormat, TmpBuf);
@@ -1286,7 +1286,7 @@ IfrToUint (
       FreePool(Value.Buffer);
     }
   } else {
-    CopyMem (Result, &Value, sizeof (EFI_HII_VALUE));
+    CopyMem(Result, &Value, sizeof (EFI_HII_VALUE));
   }
 
   Result->Type = EFI_IFR_TYPE_NUM_SIZE_64;
@@ -1378,10 +1378,10 @@ IfrCatenate (
 
     TmpBuf = GetBufferForValue(&Value[0]);
     ASSERT (TmpBuf != NULL);
-    CopyMem (Result->Buffer, TmpBuf, Length0);
+    CopyMem(Result->Buffer, TmpBuf, Length0);
     TmpBuf = GetBufferForValue(&Value[1]);
     ASSERT (TmpBuf != NULL);
-    CopyMem (&Result->Buffer[Length0], TmpBuf, Length1);
+    CopyMem(&Result->Buffer[Length0], TmpBuf, Length1);
   }
 Done:
   if (Value[0].Buffer != NULL) {
@@ -1835,7 +1835,7 @@ IfrMid (
       Result->BufferLen = (UINT16)((BufferLen - Base) < Length ? (BufferLen - Base) : Length);
       Result->Buffer = AllocateZeroPool(Result->BufferLen);
       ASSERT (Result->Buffer != NULL);
-      CopyMem (Result->Buffer, &Buffer[Base], Result->BufferLen);
+      CopyMem(Result->Buffer, &Buffer[Base], Result->BufferLen);
     }
 
     if (Value[2].Type == EFI_IFR_TYPE_BUFFER) {
@@ -2484,7 +2484,7 @@ GetQuestionValueFromForm (
     goto Done;
   }
 
-  CopyMem (Value, &Question->HiiValue, sizeof (EFI_HII_VALUE));
+  CopyMem(Value, &Question->HiiValue, sizeof (EFI_HII_VALUE));
 
 Done:
   //
@@ -2675,7 +2675,7 @@ EvaluateExpression (
           // Get value from Edit Buffer
           //
           Value->Type = OpCode->ValueType;
-          CopyMem (&Value->Value, OpCode->VarStorage->EditBuffer + OpCode->VarStoreInfo.VarOffset, OpCode->ValueWidth);
+          CopyMem(&Value->Value, OpCode->VarStorage->EditBuffer + OpCode->VarStoreInfo.VarOffset, OpCode->ValueWidth);
           break;
         case EFI_HII_VARSTORE_NAME_VALUE:
           if (OpCode->ValueType != EFI_IFR_TYPE_STRING) {
@@ -3125,7 +3125,7 @@ EvaluateExpression (
         switch (OpCode->VarStorage->Type) {
         case EFI_HII_VARSTORE_BUFFER:
         case EFI_HII_VARSTORE_EFI_VARIABLE_BUFFER:
-          CopyMem (OpCode->VarStorage->EditBuffer + OpCode->VarStoreInfo.VarOffset, &Value->Value, OpCode->ValueWidth);
+          CopyMem(OpCode->VarStorage->EditBuffer + OpCode->VarStoreInfo.VarOffset, &Value->Value, OpCode->ValueWidth);
           Data1.Value.b = TRUE;
           break;
         case EFI_HII_VARSTORE_NAME_VALUE:
@@ -3610,7 +3610,7 @@ EvaluateExpression (
 Done:
   RestoreExpressionEvaluationStackOffset (StackOffset);
   if (!EFI_ERROR(Status)) {
-    CopyMem (&Expression->Result, Value, sizeof (EFI_HII_VALUE));
+    CopyMem(&Expression->Result, Value, sizeof (EFI_HII_VALUE));
   }
 
   return Status;

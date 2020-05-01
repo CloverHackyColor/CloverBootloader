@@ -519,7 +519,7 @@ LibStrDuplicate (
   Dest  = AllocateZeroPool(Size);
   ASSERT (Dest != NULL);
   if (Dest != NULL) {
-    CopyMem (Dest, Src, Size);
+    CopyMem(Dest, Src, Size);
   }
 
   return Dest;

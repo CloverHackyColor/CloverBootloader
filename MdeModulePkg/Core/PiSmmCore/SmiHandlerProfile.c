@@ -649,7 +649,7 @@ GetSmmImageDatabaseData (
     ImageStruct->ImageSize = mImageStruct[Index].ImageSize;
     if (mImageStruct[Index].PdbStringSize != 0) {
       ImageStruct->PdbStringOffset = sizeof(SMM_CORE_IMAGE_DATABASE_STRUCTURE);
-      CopyMem ((VOID *)((UINTN)ImageStruct + ImageStruct->PdbStringOffset), mImageStruct[Index].PdbString, mImageStruct[Index].PdbStringSize);
+      CopyMem((VOID *)((UINTN)ImageStruct + ImageStruct->PdbStringOffset), mImageStruct[Index].PdbString, mImageStruct[Index].PdbStringSize);
     } else {
       ImageStruct->PdbStringOffset = 0;
     }
@@ -709,7 +709,7 @@ GetSmmSmiHandlerDataOnSmiEntry(
     SmiHandlerStruct->ContextBufferSize = (UINT32)SmiHandler->ContextSize;
     if (SmiHandler->ContextSize != 0) {
       SmiHandlerStruct->ContextBufferOffset = sizeof(SMM_CORE_SMI_HANDLER_STRUCTURE);
-      CopyMem ((UINT8 *)SmiHandlerStruct + SmiHandlerStruct->ContextBufferOffset, SmiHandler->Context, SmiHandler->ContextSize);
+      CopyMem((UINT8 *)SmiHandlerStruct + SmiHandlerStruct->ContextBufferOffset, SmiHandler->Context, SmiHandler->ContextSize);
     } else {
       SmiHandlerStruct->ContextBufferOffset = 0;
     }
@@ -1123,7 +1123,7 @@ ConvertSmiHandlerUsbContext (
   }
   SmiHandlerUsbContext->Type = UsbContext->Type;
   SmiHandlerUsbContext->DevicePathSize = (UINT32)DevicePathSize;
-  CopyMem (SmiHandlerUsbContext + 1, UsbContext->Device, DevicePathSize);
+  CopyMem(SmiHandlerUsbContext + 1, UsbContext->Device, DevicePathSize);
   *SmiHandlerUsbContextSize = sizeof (SMI_HANDLER_PROFILE_USB_REGISTER_CONTEXT) + DevicePathSize;
   return SmiHandlerUsbContext;
 }

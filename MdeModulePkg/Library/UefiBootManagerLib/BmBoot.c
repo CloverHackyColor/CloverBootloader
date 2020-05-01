@@ -536,7 +536,7 @@ BmFindUsbDevice (
 
     if (!Matched) {
       (*UsbIoHandleCount) --;
-      CopyMem (&UsbIoHandles[Index], &UsbIoHandles[Index + 1], (*UsbIoHandleCount - Index) * sizeof (EFI_HANDLE));
+      CopyMem(&UsbIoHandles[Index], &UsbIoHandles[Index + 1], (*UsbIoHandleCount - Index) * sizeof (EFI_HANDLE));
     } else {
       Index++;
     }

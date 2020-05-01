@@ -417,7 +417,7 @@ BuildDriverInfo (
   DriverInfo->Header.Length = (UINT16) (sizeof (MEMORY_PROFILE_DRIVER_INFO) + PdbOccupiedSize);
   DriverInfo->Header.Revision = MEMORY_PROFILE_DRIVER_INFO_REVISION;
   if (FileName != NULL) {
-    CopyMem (&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
+    CopyMem(&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
   }
   DriverInfo->ImageBase = ImageBase;
   DriverInfo->ImageSize = ImageSize;
@@ -441,7 +441,7 @@ BuildDriverInfo (
   if (PdbSize != 0) {
     DriverInfo->PdbStringOffset = (UINT16) sizeof (MEMORY_PROFILE_DRIVER_INFO);
     DriverInfoData->PdbString = (CHAR8 *) (DriverInfoData->AllocInfoList + 1);
-    CopyMem (DriverInfoData->PdbString, PdbString, PdbSize);
+    CopyMem(DriverInfoData->PdbString, PdbString, PdbSize);
   } else {
     DriverInfo->PdbStringOffset = 0;
     DriverInfoData->PdbString = NULL;
@@ -1034,7 +1034,7 @@ CoreUpdateProfileAllocate (
   if (ActionString != NULL) {
     AllocInfo->ActionStringOffset = (UINT16) sizeof (MEMORY_PROFILE_ALLOC_INFO);
     AllocInfoData->ActionString = (CHAR8 *) (AllocInfoData + 1);
-    CopyMem (AllocInfoData->ActionString, ActionString, ActionStringSize);
+    CopyMem(AllocInfoData->ActionString, ActionString, ActionStringSize);
   } else {
     AllocInfo->ActionStringOffset = 0;
     AllocInfoData->ActionString = NULL;
@@ -1488,7 +1488,7 @@ MemoryProfileCopyData (
   }
 
   Context = ProfileBuffer;
-  CopyMem (Context, &ContextData->Context, sizeof (MEMORY_PROFILE_CONTEXT));
+  CopyMem(Context, &ContextData->Context, sizeof (MEMORY_PROFILE_CONTEXT));
   DriverInfo = (MEMORY_PROFILE_DRIVER_INFO *) (Context + 1);
 
   DriverInfoList = ContextData->DriverInfoList;
@@ -1501,10 +1501,10 @@ MemoryProfileCopyData (
                        Link,
                        MEMORY_PROFILE_DRIVER_INFO_SIGNATURE
                        );
-    CopyMem (DriverInfo, &DriverInfoData->DriverInfo, sizeof (MEMORY_PROFILE_DRIVER_INFO));
+    CopyMem(DriverInfo, &DriverInfoData->DriverInfo, sizeof (MEMORY_PROFILE_DRIVER_INFO));
     if (DriverInfo->PdbStringOffset != 0) {
       PdbSize = AsciiStrSize (DriverInfoData->PdbString);
-      CopyMem ((VOID *) ((UINTN) DriverInfo + DriverInfo->PdbStringOffset), DriverInfoData->PdbString, PdbSize);
+      CopyMem((VOID *) ((UINTN) DriverInfo + DriverInfo->PdbStringOffset), DriverInfoData->PdbString, PdbSize);
     }
     AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *) ((UINTN) DriverInfo + DriverInfo->Header.Length);
 
@@ -1518,10 +1518,10 @@ MemoryProfileCopyData (
                         Link,
                         MEMORY_PROFILE_ALLOC_INFO_SIGNATURE
                         );
-      CopyMem (AllocInfo, &AllocInfoData->AllocInfo, sizeof (MEMORY_PROFILE_ALLOC_INFO));
+      CopyMem(AllocInfo, &AllocInfoData->AllocInfo, sizeof (MEMORY_PROFILE_ALLOC_INFO));
       if (AllocInfo->ActionStringOffset != 0) {
         ActionStringSize = AsciiStrSize (AllocInfoData->ActionString);
-        CopyMem ((VOID *) ((UINTN) AllocInfo + AllocInfo->ActionStringOffset), AllocInfoData->ActionString, ActionStringSize);
+        CopyMem((VOID *) ((UINTN) AllocInfo + AllocInfo->ActionStringOffset), AllocInfoData->ActionString, ActionStringSize);
       }
       AllocInfo = (MEMORY_PROFILE_ALLOC_INFO *) ((UINTN) AllocInfo + AllocInfo->Header.Length);
     }

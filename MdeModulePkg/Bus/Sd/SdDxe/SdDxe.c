@@ -156,11 +156,11 @@ GetSdModelName (
   CHAR8  String[SD_MODEL_NAME_MAX_LEN];
 
   ZeroMem (String, sizeof (String));
-  CopyMem (String, Cid->OemId, sizeof (Cid->OemId));
+  CopyMem(String, Cid->OemId, sizeof (Cid->OemId));
   String[sizeof (Cid->OemId)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + 1, Cid->ProductName, sizeof (Cid->ProductName));
+  CopyMem(String + sizeof (Cid->OemId) + 1, Cid->ProductName, sizeof (Cid->ProductName));
   String[sizeof (Cid->OemId) + sizeof (Cid->ProductName)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1, Cid->ProductSerialNumber, sizeof (Cid->ProductSerialNumber));
+  CopyMem(String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1, Cid->ProductSerialNumber, sizeof (Cid->ProductSerialNumber));
 
   AsciiStrToUnicodeStrS (String, Device->ModelName, sizeof (Device->ModelName) / sizeof (Device->ModelName[0]));
 

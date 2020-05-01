@@ -1043,7 +1043,7 @@ SaveOverridesMapping (
       *(UINT32 *) VariableIndex = OverrideItem->DriverInfoNum;
       VariableIndex += sizeof (UINT32); // pass DriverNum
 
-      CopyMem (VariableIndex, OverrideItem->ControllerDevicePath, GetDevicePathSize (OverrideItem->ControllerDevicePath));
+      CopyMem(VariableIndex, OverrideItem->ControllerDevicePath, GetDevicePathSize (OverrideItem->ControllerDevicePath));
       VariableIndex += GetDevicePathSize (OverrideItem->ControllerDevicePath); // pass ControllerDevicePath
 
       //
@@ -1056,7 +1056,7 @@ SaveOverridesMapping (
       ImageInfoListIndex = GetFirstNode (&OverrideItem->DriverInfoList);
       while (!IsNull (&OverrideItem->DriverInfoList, ImageInfoListIndex)) {
         DriverImageInfo = CR(ImageInfoListIndex, DRIVER_IMAGE_INFO, Link, DRIVER_IMAGE_INFO_SIGNATURE);
-        CopyMem (VariableIndex, DriverImageInfo->DriverImagePath, GetDevicePathSize (DriverImageInfo->DriverImagePath));
+        CopyMem(VariableIndex, DriverImageInfo->DriverImagePath, GetDevicePathSize (DriverImageInfo->DriverImagePath));
         VariableIndex += GetDevicePathSize (DriverImageInfo->DriverImagePath); // pass DriverImageDevicePath
         //
         // Align the VariableIndex since the driver image device path may not be aligned

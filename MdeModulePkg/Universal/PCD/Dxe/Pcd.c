@@ -1318,7 +1318,7 @@ DxePcdGetNextTokenSpace (
                             (DYNAMICEX_MAPPING *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->ExMapTableOffset),
                             (EFI_GUID *)((UINT8 *)mPcdDatabase.PeiDb + mPcdDatabase.PeiDb->GuidTableOffset)
                             );
-      CopyMem (TmpTokenSpaceBuffer, PeiTokenSpaceTable, sizeof (EFI_GUID*) * PeiTokenSpaceTableSize);
+      CopyMem(TmpTokenSpaceBuffer, PeiTokenSpaceTable, sizeof (EFI_GUID*) * PeiTokenSpaceTableSize);
       TmpTokenSpaceBufferCount = PeiTokenSpaceTableSize;
       FreePool(PeiTokenSpaceTable);
     }

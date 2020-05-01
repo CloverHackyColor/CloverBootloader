@@ -328,7 +328,7 @@ HandOffToDxeCore (
       IdtTable[Index].Offset32To63                  = (UINT32) (RShiftU64 (VectorAddress, 32));
       IdtTable[Index].Reserved                      = 0;
 
-      CopyMem ((VOID *) (UINTN) VectorAddress, TemplateBase, SizeOfTemplate);
+      CopyMem((VOID *) (UINTN) VectorAddress, TemplateBase, SizeOfTemplate);
       AsmVectorFixup ((VOID *) (UINTN) VectorAddress, (UINT8) Index);
 
       VectorAddress += SizeOfTemplate;

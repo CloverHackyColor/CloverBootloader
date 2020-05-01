@@ -576,7 +576,7 @@ DriverHealthManagerGetFormsetId (
   //
   for (Offset = sizeof (EFI_HII_PACKAGE_LIST_HEADER); Offset < ReadUnaligned32 (&HiiPackageList->PackageLength); Offset += PackageHeader.Length) {
     Package = ((UINT8 *) HiiPackageList) + Offset;
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
 
     if (PackageHeader.Type == EFI_HII_PACKAGE_FORMS) {
       //
@@ -595,7 +595,7 @@ DriverHealthManagerGetFormsetId (
           ClassGuid         = (EFI_GUID *) (OpCodeData + sizeof (EFI_IFR_FORM_SET));
           for (Index = 0; Index < NumberOfClassGuid; Index++) {
             if (CompareGuid (&gEfiHiiDriverHealthFormsetGuid, &ClassGuid[Index])) {
-              CopyMem (FormsetGuid, &((EFI_IFR_FORM_SET *) OpCodeData)->Guid, sizeof (EFI_GUID));
+              CopyMem(FormsetGuid, &((EFI_IFR_FORM_SET *) OpCodeData)->Guid, sizeof (EFI_GUID));
               FreePool(HiiPackageList);
               return EFI_SUCCESS;
             }
@@ -887,10 +887,10 @@ DriverHealthManagerCleanDynamicString (
   ASSERT (HiiPackageList != NULL);
 
   HiiPackageList->PackageLength = (UINT32) BufferSize;
-  CopyMem (&HiiPackageList->PackageListGuid, &gEfiCallerIdGuid, sizeof (EFI_GUID));
+  CopyMem(&HiiPackageList->PackageListGuid, &gEfiCallerIdGuid, sizeof (EFI_GUID));
 
   PackageHeader = (EFI_HII_PACKAGE_HEADER *) (HiiPackageList + 1);
-  CopyMem (PackageHeader, STRING_ARRAY_NAME + sizeof (UINT32), FixedStringSize);
+  CopyMem(PackageHeader, STRING_ARRAY_NAME + sizeof (UINT32), FixedStringSize);
 
   PackageHeader = (EFI_HII_PACKAGE_HEADER *) ((UINT8 *) PackageHeader + PackageHeader->Length);
   PackageHeader->Type   = EFI_HII_PACKAGE_END;

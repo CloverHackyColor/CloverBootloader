@@ -53,7 +53,7 @@ GrowDepexStack (
     //
     // Copy to Old Stack to the New Stack
     //
-    CopyMem (
+    CopyMem(
       NewStack,
       mDepexEvaluationStack,
       (mDepexEvaluationStackEnd - mDepexEvaluationStack) * sizeof (BOOLEAN)
@@ -181,7 +181,7 @@ CorePreProcessDepex (
   }
 
   if (DriverEntry->Before || DriverEntry->After) {
-    CopyMem (&DriverEntry->BeforeAfterGuid, Iterator + 1, sizeof (EFI_GUID));
+    CopyMem(&DriverEntry->BeforeAfterGuid, Iterator + 1, sizeof (EFI_GUID));
   }
 
   return EFI_SUCCESS;
@@ -295,7 +295,7 @@ CoreIsSchedulable (
       // Push operator is followed by a GUID. Test to see if the GUID protocol
       // is installed and push the boolean result on the stack.
       //
-      CopyMem (&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
+      CopyMem(&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
 
       Status = CoreLocateProtocol (&DriverGuid, NULL, &Interface);
 
@@ -401,7 +401,7 @@ CoreIsSchedulable (
       return Operator;
 
     case EFI_DEP_REPLACE_TRUE:
-      CopyMem (&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
+      CopyMem(&DriverGuid, Iterator + 1, sizeof (EFI_GUID));
       DEBUG ((DEBUG_DISPATCH, "  PUSH GUID(%g) = TRUE\n", &DriverGuid));
 
       Status = PushBool (TRUE);

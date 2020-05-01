@@ -108,8 +108,8 @@ DataHubLogData (
   Record->Version     = EFI_DATA_RECORD_HEADER_VERSION;
   Record->HeaderSize  = (UINT16) sizeof (EFI_DATA_RECORD_HEADER);
   Record->RecordSize  = RecordSize;
-  CopyMem (&Record->DataRecordGuid, DataRecordGuid, sizeof (EFI_GUID));
-  CopyMem (&Record->ProducerName, ProducerName, sizeof (EFI_GUID));
+  CopyMem(&Record->DataRecordGuid, DataRecordGuid, sizeof (EFI_GUID));
+  CopyMem(&Record->ProducerName, ProducerName, sizeof (EFI_GUID));
   Record->DataRecordClass   = DataRecordClass;
 
   //
@@ -117,7 +117,7 @@ DataHubLogData (
   //
   Record->LogMonotonicCount = ++Private->GlobalMonotonicCount;
 
-  CopyMem (&Record->LogTime, &LogTime, sizeof (LogTime));
+  CopyMem(&Record->LogTime, &LogTime, sizeof (LogTime));
 
   //
   // Insert log into the internal linked list.
@@ -127,7 +127,7 @@ DataHubLogData (
   LogEntry->RecordSize  = sizeof (EFI_DATA_ENTRY) + RawDataSize;
   InsertTailList (&Private->DataListHead, &LogEntry->Link);
 
-  CopyMem (Raw, RawData, RawDataSize);
+  CopyMem(Raw, RawData, RawDataSize);
 
   EfiReleaseLock (&Private->DataLock);
 
@@ -452,7 +452,7 @@ DataHubRegisterFilterDriver (
   }
 
   if (FilterDataRecordGuid != NULL) {
-    CopyMem (&FilterDriver->FilterDataRecordGuid, FilterDataRecordGuid, sizeof (EFI_GUID));
+    CopyMem(&FilterDriver->FilterDataRecordGuid, FilterDataRecordGuid, sizeof (EFI_GUID));
   }
   //
   // Search for duplicate entries

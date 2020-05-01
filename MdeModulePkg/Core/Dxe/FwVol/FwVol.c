@@ -222,7 +222,7 @@ GetFwVolHeader (
   //
   // Copy the standard header into the buffer
   //
-  CopyMem (*FwVolHeader, &TempFvh, sizeof (EFI_FIRMWARE_VOLUME_HEADER));
+  CopyMem(*FwVolHeader, &TempFvh, sizeof (EFI_FIRMWARE_VOLUME_HEADER));
 
   //
   // Read the rest of the header

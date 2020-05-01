@@ -615,7 +615,7 @@ SdMmcHcGetCapability (
     return Status;
   }
 
-  CopyMem (Capability, &Cap, sizeof (Cap));
+  CopyMem(Capability, &Cap, sizeof (Cap));
 
   return EFI_SUCCESS;
 }
@@ -2354,7 +2354,7 @@ Done:
           return Status;
         }
       }
-      CopyMem (Packet->SdMmcStatusBlk, Response, sizeof (Response));
+      CopyMem(Packet->SdMmcStatusBlk, Response, sizeof (Response));
     }
   }
 

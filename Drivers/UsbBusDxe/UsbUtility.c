@@ -815,7 +815,7 @@ GetUsbDPFromFullDP (
   if (!UsbDevicePathPtr) {
     return NULL;
   }
-  CopyMem (UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
+  CopyMem(UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
   //
   // Append end device path node
   //

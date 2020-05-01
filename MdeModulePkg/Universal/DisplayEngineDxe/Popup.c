@@ -391,7 +391,7 @@ ParseMessageString (
   if (*OutputString == NULL) {
     return 0;
   }
-  CopyMem ((*OutputString), &InputString[*Index], StrOffset * sizeof(CHAR16));
+  CopyMem((*OutputString), &InputString[*Index], StrOffset * sizeof(CHAR16));
   *OutputStrWidth = (GetStringWidth (*OutputString) -2) / 2;
 
   //
@@ -688,7 +688,7 @@ CreatePopup (
   gMaxRowWidth = 0;
   gMesStrLineNum = 0;
 
-  CopyMem (&SavedConsoleMode, ConOut->Mode, sizeof (SavedConsoleMode));
+  CopyMem(&SavedConsoleMode, ConOut->Mode, sizeof (SavedConsoleMode));
   ConOut->EnableCursor (ConOut, FALSE);
   ConOut->SetAttribute (ConOut, GetPopupColor ());
 

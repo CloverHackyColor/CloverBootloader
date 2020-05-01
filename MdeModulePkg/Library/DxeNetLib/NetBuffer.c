@@ -258,14 +258,14 @@ NetbufClone (
   Clone->Ip   = Nbuf->Ip;
   Clone->Tcp  = Nbuf->Tcp;
 
-  CopyMem (Clone->ProtoData, Nbuf->ProtoData, NET_PROTO_DATA);
+  CopyMem(Clone->ProtoData, Nbuf->ProtoData, NET_PROTO_DATA);
 
   NET_GET_REF (Nbuf->Vector);
 
   Clone->Vector     = Nbuf->Vector;
   Clone->BlockOpNum = Nbuf->BlockOpNum;
   Clone->TotalSize  = Nbuf->TotalSize;
-  CopyMem (Clone->BlockOp, Nbuf->BlockOp, sizeof (NET_BLOCK_OP) * Nbuf->BlockOpNum);
+  CopyMem(Clone->BlockOp, Nbuf->BlockOp, sizeof (NET_BLOCK_OP) * Nbuf->BlockOpNum);
 
   return Clone;
 }
@@ -311,7 +311,7 @@ NetbufDuplicate (
   // Don't set the IP and TCP head point, since it is most
   // like that they are pointing to the memory of Nbuf.
   //
-  CopyMem (Duplicate->ProtoData, Nbuf->ProtoData, NET_PROTO_DATA);
+  CopyMem(Duplicate->ProtoData, Nbuf->ProtoData, NET_PROTO_DATA);
   NetbufReserve (Duplicate, HeadSpace);
 
   Dst = NetbufAllocSpace (Duplicate, Nbuf->TotalSize, NET_BUF_TAIL);
@@ -680,7 +680,7 @@ NetbufGetFragment (
       );
   }
 
-  CopyMem (Child->ProtoData, Nbuf->ProtoData, NET_PROTO_DATA);
+  CopyMem(Child->ProtoData, Nbuf->ProtoData, NET_PROTO_DATA);
   return Child;
 
 FreeChild:
@@ -787,7 +787,7 @@ NetbufFromExt (
 
     for (Index = 0; Index < ExtNum; Index++) {
       if (Len >= ExtFragment[Index].Len) {
-        CopyMem (Header, ExtFragment[Index].Bulk, ExtFragment[Index].Len);
+        CopyMem(Header, ExtFragment[Index].Bulk, ExtFragment[Index].Len);
 
         Copied    += ExtFragment[Index].Len;
         Len       -= ExtFragment[Index].Len;
@@ -805,7 +805,7 @@ NetbufFromExt (
         }
 
       } else {
-        CopyMem (Header, ExtFragment[Index].Bulk, Len);
+        CopyMem(Header, ExtFragment[Index].Bulk, Len);
 
         Copied    += Len;
         TotalLen  += Len;
@@ -1293,11 +1293,11 @@ NetbufCopy (
   Left  = BlockOp[Index].Size - Skip;
 
   if (Len <= Left) {
-    CopyMem (Dest, BlockOp[Index].Head + Skip, Len);
+    CopyMem(Dest, BlockOp[Index].Head + Skip, Len);
     return Len;
   }
 
-  CopyMem (Dest, BlockOp[Index].Head + Skip, Left);
+  CopyMem(Dest, BlockOp[Index].Head + Skip, Left);
 
   Dest  += Left;
   Len   -= Left;
@@ -1310,11 +1310,11 @@ NetbufCopy (
       Len    -= BlockOp[Index].Size;
       Copied += BlockOp[Index].Size;
 
-      CopyMem (Dest, BlockOp[Index].Head, BlockOp[Index].Size);
+      CopyMem(Dest, BlockOp[Index].Head, BlockOp[Index].Size);
       Dest   += BlockOp[Index].Size;
     } else {
       Copied += Len;
-      CopyMem (Dest, BlockOp[Index].Head, Len);
+      CopyMem(Dest, BlockOp[Index].Head, Len);
       break;
     }
   }

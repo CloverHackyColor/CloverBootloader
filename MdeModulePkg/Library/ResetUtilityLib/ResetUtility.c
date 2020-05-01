@@ -235,14 +235,14 @@ BuildResetData (
   // Fill in ResetData with ResetString, the ResetSubtype GUID, and extra data
   //
   Data = (UINT8 *)ResetData;
-  CopyMem (Data, ResetString, ResetStringSize);
+  CopyMem(Data, ResetString, ResetStringSize);
   Data += ResetStringSize;
   if (ResetSubtype != NULL) {
-    CopyMem (Data, ResetSubtype, sizeof (GUID));
+    CopyMem(Data, ResetSubtype, sizeof (GUID));
     Data += sizeof (GUID);
   }
   if (ExtraDataSize > 0) {
-    CopyMem (Data, ExtraData, ExtraDataSize);
+    CopyMem(Data, ExtraData, ExtraDataSize);
   }
 
   return RETURN_SUCCESS;

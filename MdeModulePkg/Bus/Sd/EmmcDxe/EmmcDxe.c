@@ -226,11 +226,11 @@ GetEmmcModelName (
   CHAR8  String[EMMC_MODEL_NAME_MAX_LEN];
 
   ZeroMem (String, sizeof (String));
-  CopyMem (String, &Cid->OemId, sizeof (Cid->OemId));
+  CopyMem(String, &Cid->OemId, sizeof (Cid->OemId));
   String[sizeof (Cid->OemId)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + 1, Cid->ProductName, sizeof (Cid->ProductName));
+  CopyMem(String + sizeof (Cid->OemId) + 1, Cid->ProductName, sizeof (Cid->ProductName));
   String[sizeof (Cid->OemId) + sizeof (Cid->ProductName)] = ' ';
-  CopyMem (String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1, Cid->ProductSerialNumber, sizeof (Cid->ProductSerialNumber));
+  CopyMem(String + sizeof (Cid->OemId) + sizeof (Cid->ProductName) + 1, Cid->ProductSerialNumber, sizeof (Cid->ProductSerialNumber));
 
   AsciiStrToUnicodeStrS (String, Device->ModelName, sizeof (Device->ModelName) / sizeof (Device->ModelName[0]));
 
@@ -325,7 +325,7 @@ DiscoverAllPartitions (
 
   for (Index = 0; Index < EMMC_MAX_PARTITIONS; Index++) {
     Partition = &Device->Partition[Index];
-    CopyMem (Partition, &mEmmcPartitionTemplate, sizeof (EMMC_PARTITION));
+    CopyMem(Partition, &mEmmcPartitionTemplate, sizeof (EMMC_PARTITION));
     Partition->Device             = Device;
     InitializeListHead (&Partition->Queue);
     Partition->BlockIo.Media      = &Partition->BlockMedia;

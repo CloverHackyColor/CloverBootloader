@@ -182,7 +182,7 @@ PartitionInstallMbrChildHandles (
     if (DevicePathType (LastDevicePathNode) == MEDIA_DEVICE_PATH &&
         DevicePathSubType (LastDevicePathNode) == MEDIA_HARDDRIVE_DP
         ) {
-      CopyMem (&ParentHdDev, LastDevicePathNode, sizeof (ParentHdDev));
+      CopyMem(&ParentHdDev, LastDevicePathNode, sizeof (ParentHdDev));
     } else {
       LastDevicePathNode = NULL;
     }
@@ -225,7 +225,7 @@ PartitionInstallMbrChildHandles (
       HdDev.PartitionNumber = PartitionNumber ++;
       HdDev.PartitionStart  = UNPACK_UINT32 (Mbr->Partition[Index].StartingLBA);
       HdDev.PartitionSize   = UNPACK_UINT32 (Mbr->Partition[Index].SizeInLBA);
-      CopyMem (HdDev.Signature, &(Mbr->UniqueMbrSignature[0]), sizeof (Mbr->UniqueMbrSignature));
+      CopyMem(HdDev.Signature, &(Mbr->UniqueMbrSignature[0]), sizeof (Mbr->UniqueMbrSignature));
 
       Status = PartitionInstallChildHandle (
                 This,

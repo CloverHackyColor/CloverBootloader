@@ -454,7 +454,7 @@ CreateSerialDevice (
   SerialDevice->Instance         = Instance;
 
   if (Uart != NULL) {
-    CopyMem (&SerialDevice->UartDevicePath, Uart, sizeof (UART_DEVICE_PATH));
+    CopyMem(&SerialDevice->UartDevicePath, Uart, sizeof (UART_DEVICE_PATH));
     FlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *) NextDevicePathNode (Uart);
     if (IsUartFlowControlDevicePathNode (FlowControl)) {
       FlowControlMap = ReadUnaligned32 (&FlowControl->FlowControlMap);

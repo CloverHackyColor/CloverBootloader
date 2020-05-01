@@ -424,7 +424,7 @@ BOpt_GetBootOptions (
 
     NewLoadContext->FilePathList = AllocateZeroPool(NewLoadContext->FilePathListLength);
     ASSERT (NewLoadContext->FilePathList != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->FilePathList,
       (EFI_DEVICE_PATH_PROTOCOL *) LoadOptionPtr,
       NewLoadContext->FilePathListLength
@@ -444,7 +444,7 @@ BOpt_GetBootOptions (
 
       NewLoadContext->OptionalData = AllocateZeroPool(OptionalDataSize);
       ASSERT (NewLoadContext->OptionalData != NULL);
-      CopyMem (
+      CopyMem(
         NewLoadContext->OptionalData,
         LoadOptionPtr,
         OptionalDataSize
@@ -742,7 +742,7 @@ BOpt_GetDriverOptions (
     StringSize                  = StrSize ((UINT16 *) LoadOptionPtr);
     NewLoadContext->Description = AllocateZeroPool(StringSize);
     ASSERT (NewLoadContext->Description != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->Description,
       (UINT16 *) LoadOptionPtr,
       StringSize
@@ -754,7 +754,7 @@ BOpt_GetDriverOptions (
 
     NewLoadContext->FilePathList = AllocateZeroPool(NewLoadContext->FilePathListLength);
     ASSERT (NewLoadContext->FilePathList != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->FilePathList,
       (EFI_DEVICE_PATH_PROTOCOL *) LoadOptionPtr,
       NewLoadContext->FilePathListLength
@@ -774,7 +774,7 @@ BOpt_GetDriverOptions (
 
       NewLoadContext->OptionalData = AllocateZeroPool(OptionalDataSize);
       ASSERT (NewLoadContext->OptionalData != NULL);
-      CopyMem (
+      CopyMem(
         NewLoadContext->OptionalData,
         LoadOptionPtr,
         OptionalDataSize

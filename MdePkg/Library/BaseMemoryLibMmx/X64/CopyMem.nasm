@@ -21,7 +21,7 @@
 ;------------------------------------------------------------------------------
 ; VOID *
 ; EFIAPI
-; InternalMemCopyMem (
+; InternalMemCopyMem(
 ;   OUT     VOID                      *DestinationBuffer,
 ;   IN      CONST VOID                *SourceBuffer,
 ;   IN      UINTN                     Length

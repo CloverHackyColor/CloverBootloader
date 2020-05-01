@@ -292,13 +292,13 @@ FilterSmbiosEntry (
             // The field is present in the SMBIOS entry.
             //
             if ((Filter[Index].Flags & SMBIOS_FILTER_TABLE_FLAG_IS_STRING) != 0) {
-              CopyMem (&StringId, (UINT8 *)TableEntry + Filter[Index].Offset, sizeof(StringId));
+              CopyMem(&StringId, (UINT8 *)TableEntry + Filter[Index].Offset, sizeof(StringId));
               if (StringId != 0) {
                 // set ' ' for string field
                 String = GetSmbiosStringById (TableEntry, StringId, &StringLen);
                 ASSERT (String != NULL);
                 //DEBUG ((EFI_D_INFO,"StrId(0x%x)-%a(%d)\n", StringId, String, StringLen));
-                SetMem (String, StringLen, ' ');
+                SetMem(String, StringLen, ' ');
               }
             }
             // zero non-string field

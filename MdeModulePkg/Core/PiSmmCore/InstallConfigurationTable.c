@@ -81,7 +81,7 @@ SmmInstallConfigurationTable (
     //
     // Copy over deleted entry
     //
-    CopyMem (
+    CopyMem(
       &(ConfigurationTable[Index]),
       &(ConfigurationTable[Index + 1]),
       (gSmmCoreSmst.NumberOfTableEntries - Index) * sizeof (EFI_CONFIGURATION_TABLE)
@@ -118,7 +118,7 @@ SmmInstallConfigurationTable (
         //
         // Copy the old table to the new table.
         //
-        CopyMem (
+        CopyMem(
           ConfigurationTable,
           gSmmCoreSmst.SmmConfigurationTable,
           Index * sizeof (EFI_CONFIGURATION_TABLE)

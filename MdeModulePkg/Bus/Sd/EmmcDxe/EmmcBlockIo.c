@@ -135,7 +135,7 @@ EmmcSendStatus (
 
   Status = PassThru->PassThru (PassThru, Device->Slot, &Packet, NULL);
   if (!EFI_ERROR(Status)) {
-    CopyMem (DevStatus, &SdMmcStatusBlk.Resp0, sizeof (UINT32));
+    CopyMem(DevStatus, &SdMmcStatusBlk.Resp0, sizeof (UINT32));
   }
 
   return Status;
@@ -187,7 +187,7 @@ EmmcGetCsd (
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
-    CopyMem (((UINT8*)Csd) + 1, &SdMmcStatusBlk.Resp0, sizeof (EMMC_CSD) - 1);
+    CopyMem(((UINT8*)Csd) + 1, &SdMmcStatusBlk.Resp0, sizeof (EMMC_CSD) - 1);
   }
 
   return Status;
@@ -239,7 +239,7 @@ EmmcGetCid (
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
-    CopyMem (((UINT8*)Cid) + 1, &SdMmcStatusBlk.Resp0, sizeof (EMMC_CID) - 1);
+    CopyMem(((UINT8*)Cid) + 1, &SdMmcStatusBlk.Resp0, sizeof (EMMC_CID) - 1);
   }
 
   return Status;

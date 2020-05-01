@@ -17,7 +17,7 @@
 #pragma function(memcpy)
 void * memcpy (void *dest, const void *src, unsigned int count)
 {
-  return CopyMem (dest, src, (UINTN)count);
+  return CopyMem(dest, src, (UINTN)count);
 }
 
 /* Sets buffers to a specified character */

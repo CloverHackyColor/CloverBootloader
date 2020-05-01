@@ -1189,7 +1189,7 @@ InternalStripLoadCommands64 (
           // If the current Load Command is not the last one, relocate the
           // subsequent ones.
           //
-          CopyMem (
+          CopyMem(
             LoadCommand,
             NEXT_MACH_LOAD_COMMAND (LoadCommand),
             SizeOfLeftCommands
@@ -1245,7 +1245,7 @@ MachoExpandImage64 (
   if (HeaderSize > DestinationSize) {
     return 0;
   }
-  CopyMem (Destination, Header, HeaderSize);
+  CopyMem(Destination, Header, HeaderSize);
 
   CurrentDelta = 0;
   FirstSegment = NULL;
@@ -1298,7 +1298,7 @@ MachoExpandImage64 (
     // Copy and zero fill file data. We can do this because only last sections can have 0 file size.
     //
     ZeroMem (&Destination[CopyFileOffset + OriginalDelta], CurrentDelta - OriginalDelta);
-    CopyMem (&Destination[CopyFileOffset + CurrentDelta], &Source[CopyFileOffset], CopyFileSize);
+    CopyMem(&Destination[CopyFileOffset + CurrentDelta], &Source[CopyFileOffset], CopyFileSize);
     ZeroMem (&Destination[CopyFileOffset + CurrentDelta + CopyFileSize], CopyVmSize - CopyFileSize);
     //
     // Refresh destination segment size and offsets.

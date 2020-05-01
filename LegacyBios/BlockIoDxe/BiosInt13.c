@@ -288,13 +288,13 @@ GetDriveParameters (
   DBG( "GetDriveParameters: INT 13 48 DL=%02x : CF=%d AH=%02x\n", Drive->Number, CarryFlag, Regs.H.AH);
   if (CarryFlag != 0 || Regs.H.AH != 0x00) {
     Drive->ErrorCode = Regs.H.AH;
-    SetMem (&Drive->Parameters, sizeof (Drive->Parameters), 0xaf);
+    SetMem(&Drive->Parameters, sizeof (Drive->Parameters), 0xaf);
     return FALSE;
   }
   //
   // We only have one buffer < 1MB, so copy into our instance data
   //
-  CopyMem (
+  CopyMem(
     &Drive->Parameters,
     &mLegacyDriverUnder1Mb->Parameters,
     sizeof (Drive->Parameters)
@@ -1288,7 +1288,7 @@ Edd11BiosReadBlocks (
     }
 
     TransferByteSize = NumberOfBlocks * BlockSize;
-    CopyMem (Buffer, (VOID *) (UINTN) TransferBuffer, TransferByteSize);
+    CopyMem(Buffer, (VOID *) (UINTN) TransferBuffer, TransferByteSize);
     BufferSize  = BufferSize - TransferByteSize;
     Buffer      = (VOID *) ((UINT8 *) Buffer + TransferByteSize);
     Lba += NumberOfBlocks;
@@ -1428,7 +1428,7 @@ Edd11BiosReadBlocksEx (
     }
 
     TransferByteSize = NumberOfBlocks * BlockSize;
-    CopyMem (Buffer, (VOID *) (UINTN) TransferBuffer, TransferByteSize);
+    CopyMem(Buffer, (VOID *) (UINTN) TransferBuffer, TransferByteSize);
     BufferSize  = BufferSize - TransferByteSize;
     Buffer      = (VOID *) ((UINT8 *) Buffer + TransferByteSize);
     Lba += NumberOfBlocks;
@@ -1555,7 +1555,7 @@ Edd11BiosWriteBlocks (
     Regs.E.DS         = EFI_SEGMENT (AddressPacket);
 
     TransferByteSize  = NumberOfBlocks * BlockSize;
-    CopyMem ((VOID *) (UINTN) TransferBuffer, Buffer, TransferByteSize);
+    CopyMem((VOID *) (UINTN) TransferBuffer, Buffer, TransferByteSize);
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
     CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
@@ -1704,7 +1704,7 @@ Edd11BiosWriteBlocksEx (
     Regs.E.DS         = EFI_SEGMENT (AddressPacket);
 
     TransferByteSize  = NumberOfBlocks * BlockSize;
-    CopyMem ((VOID *) (UINTN) TransferBuffer, Buffer, TransferByteSize);
+    CopyMem((VOID *) (UINTN) TransferBuffer, Buffer, TransferByteSize);
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
     CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
@@ -1950,7 +1950,7 @@ BiosReadLegacyDrive (
     }
 
     TransferByteSize = NumberOfBlocks * BlockSize;
-    CopyMem (Buffer, mEdd11Buffer, TransferByteSize);
+    CopyMem(Buffer, mEdd11Buffer, TransferByteSize);
 
     ShortLba    = ShortLba + NumberOfBlocks;
     BufferSize  = BufferSize - TransferByteSize;
@@ -2138,7 +2138,7 @@ BiosReadLegacyDriveEx (
     }
 
     TransferByteSize = NumberOfBlocks * BlockSize;
-    CopyMem (Buffer, mEdd11Buffer, TransferByteSize);
+    CopyMem(Buffer, mEdd11Buffer, TransferByteSize);
 
     ShortLba    = ShortLba + NumberOfBlocks;
     BufferSize  = BufferSize - TransferByteSize;
@@ -2291,7 +2291,7 @@ BiosWriteLegacyDrive (
       Regs.E.ES         = EFI_SEGMENT (mEdd11Buffer);
 
       TransferByteSize  = NumberOfBlocks * BlockSize;
-      CopyMem (mEdd11Buffer, Buffer, TransferByteSize);
+      CopyMem(mEdd11Buffer, Buffer, TransferByteSize);
 
 /*      DBG("INT 13h: AX:(03%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
         Regs.H.AL,
@@ -2483,7 +2483,7 @@ BiosWriteLegacyDriveEx (
       Regs.E.ES         = EFI_SEGMENT (mEdd11Buffer);
 
       TransferByteSize  = NumberOfBlocks * BlockSize;
-      CopyMem (mEdd11Buffer, Buffer, TransferByteSize);
+      CopyMem(mEdd11Buffer, Buffer, TransferByteSize);
 
 /*      DBG("INT 13h: AX:(03%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
         Regs.H.AL,

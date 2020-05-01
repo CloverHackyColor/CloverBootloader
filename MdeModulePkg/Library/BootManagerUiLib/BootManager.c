@@ -363,7 +363,7 @@ GroupMultipleLegacyBootOption4SameType (
   CHAR16                       OptionName[sizeof ("Boot####")];
   EFI_BOOT_MANAGER_LOAD_OPTION BootOption;
 
-  SetMem (DeviceTypeIndex, sizeof (DeviceTypeIndex), 0xff);
+  SetMem(DeviceTypeIndex, sizeof (DeviceTypeIndex), 0xff);
 
   GetEfiGlobalVariable2 (L"BootOrder", (VOID **) &BootOrder, &BootOrderSize);
   if (BootOrder == NULL) {
@@ -394,7 +394,7 @@ GroupMultipleLegacyBootOption4SameType (
         // insert the current boot option before *NextIndex, causing [*Next .. Index] shift right one position
         //
         OptionNumber = BootOrder[Index];
-        CopyMem (&BootOrder[*NextIndex + 1], &BootOrder[*NextIndex], (Index - *NextIndex) * sizeof (UINT16));
+        CopyMem(&BootOrder[*NextIndex + 1], &BootOrder[*NextIndex], (Index - *NextIndex) * sizeof (UINT16));
         BootOrder[*NextIndex] = OptionNumber;
 
         //

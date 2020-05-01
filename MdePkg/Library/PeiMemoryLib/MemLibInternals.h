@@ -19,7 +19,7 @@
 /**
   Copies a source buffer to a destination buffer, and returns the destination buffer.
 
-  This function wraps the (*PeiServices)->CopyMem ().
+  This function wraps the (*PeiServices)->CopyMem().
 
   @param  DestinationBuffer   The pointer to the destination buffer of the memory copy.
   @param  SourceBuffer        The pointer to the source buffer of the memory copy.
@@ -30,7 +30,7 @@
 **/
 VOID *
 EFIAPI
-InternalMemCopyMem (
+InternalMemCopyMem(
   OUT     VOID                      *Destination,
   IN      CONST VOID                *Source,
   IN      UINTN                     Length
@@ -39,7 +39,7 @@ InternalMemCopyMem (
 /**
   Fills a target buffer with a byte value, and returns the target buffer.
 
-  This function wraps the (*PeiServices)->SetMem ().
+  This function wraps the (*PeiServices)->SetMem().
 
   @param  Buffer    The memory to set.
   @param  Size      The number of bytes to set.
@@ -50,7 +50,7 @@ InternalMemCopyMem (
 **/
 VOID *
 EFIAPI
-InternalMemSetMem (
+InternalMemSetMem(
   OUT     VOID                      *Buffer,
   IN      UINTN                     Size,
   IN      UINT8                     Value

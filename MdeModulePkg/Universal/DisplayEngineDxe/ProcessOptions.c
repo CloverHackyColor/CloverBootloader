@@ -326,7 +326,7 @@ ValueToOption (
 
     ZeroMem (&Value, sizeof (EFI_HII_VALUE));
     Value.Type = Option->OptionOpCode->Type;
-    CopyMem (&Value.Value, &Option->OptionOpCode->Value, Option->OptionOpCode->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
+    CopyMem(&Value.Value, &Option->OptionOpCode->Value, Option->OptionOpCode->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
 
     if ((CompareHiiValue (&Value, OptionValue, &Result, NULL) == EFI_SUCCESS) && (Result == 0)) {
       return Option;
@@ -1177,13 +1177,13 @@ ProcessOptions (
             gUserInput->InputValue.Value.u8 = Option->OptionOpCode->Value.u8;
             break;
           case EFI_IFR_TYPE_NUM_SIZE_16:
-            CopyMem (&gUserInput->InputValue.Value.u16, &Option->OptionOpCode->Value.u16, sizeof (UINT16));
+            CopyMem(&gUserInput->InputValue.Value.u16, &Option->OptionOpCode->Value.u16, sizeof (UINT16));
             break;
           case EFI_IFR_TYPE_NUM_SIZE_32:
-            CopyMem (&gUserInput->InputValue.Value.u32, &Option->OptionOpCode->Value.u32, sizeof (UINT32));
+            CopyMem(&gUserInput->InputValue.Value.u32, &Option->OptionOpCode->Value.u32, sizeof (UINT32));
             break;
           case EFI_IFR_TYPE_NUM_SIZE_64:
-            CopyMem (&gUserInput->InputValue.Value.u64, &Option->OptionOpCode->Value.u64, sizeof (UINT64));
+            CopyMem(&gUserInput->InputValue.Value.u64, &Option->OptionOpCode->Value.u64, sizeof (UINT64));
             break;
           default:
             ASSERT (FALSE);
@@ -1253,7 +1253,7 @@ ProcessOptions (
       //
       PrintFormattedNumber (Question, FormattedNumber, 21 * sizeof (CHAR16));
       Number = (UINT16) GetStringWidth (FormattedNumber);
-      CopyMem (OptionString[0] + 1, FormattedNumber, Number);
+      CopyMem(OptionString[0] + 1, FormattedNumber, Number);
 
       *(OptionString[0] + Number / 2) = RIGHT_NUMERIC_DELIMITER;
     }
@@ -1375,7 +1375,7 @@ ProcessOptions (
         if (Question->CurrentValue.BufferLen < BufferSize) {
           BufferSize = Question->CurrentValue.BufferLen;
         }
-        CopyMem (OptionString[0], (CHAR16 *) Question->CurrentValue.Buffer, BufferSize);
+        CopyMem(OptionString[0], (CHAR16 *) Question->CurrentValue.Buffer, BufferSize);
       }
     }
     break;
@@ -1455,7 +1455,7 @@ ProcessHelpString (
   GlyphWidth  = 1;
   Index       = 0;
   while((StringLen = GetLineByWidth (StringPtr, LineWidth, &GlyphWidth, &Index, &OutputString)) != 0) {
-    CopyMem (*FormattedString + CheckedNum * MaxStringLen, OutputString, StringLen * sizeof (CHAR16));
+    CopyMem(*FormattedString + CheckedNum * MaxStringLen, OutputString, StringLen * sizeof (CHAR16));
     CheckedNum ++;
     FreePool(OutputString);
   }

@@ -643,7 +643,7 @@ GetUsbDPFromFullDP (
   //
   UsbDevicePathPtr = AllocateZeroPool(Size + sizeof (EFI_DEVICE_PATH_PROTOCOL));
   ASSERT (UsbDevicePathPtr != NULL);
-  CopyMem (UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
+  CopyMem(UsbDevicePathPtr, UsbDevicePathBeginPtr, Size);
   //
   // Append end device path node
   //

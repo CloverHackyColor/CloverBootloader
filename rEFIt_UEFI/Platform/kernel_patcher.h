@@ -8,19 +8,17 @@
 
 #include "boot.h"
 
-#define CPUFAMILY_INTEL_6_13		0xaa33392b
-#define CPUFAMILY_INTEL_YONAH		0x73d67300
-#define CPUFAMILY_INTEL_MEROM		0x426f69ef
+#define DBG_RT( ...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
+
+
+#define CPUFAMILY_INTEL_6_13		  0xaa33392b
+#define CPUFAMILY_INTEL_YONAH		  0x73d67300
+#define CPUFAMILY_INTEL_MEROM		  0x426f69ef
 #define CPUFAMILY_INTEL_PENRYN		0x78ea4fbc
 #define CPUFAMILY_INTEL_NEHALEM		0x6b5a4cd2
 #define CPUFAMILY_INTEL_WESTMERE	0x573b5eec
 
 #define CPUIDFAMILY_DEFAULT 6
-
-#define CPUID_MODEL_6_13	 	    13
-#define CPUID_MODEL_YONAH			14
-#define CPUID_MODEL_MEROM			15
-#define CPUID_MODEL_PENRYN			23
 
 #define MACH_GET_MAGIC(hdr)        (((struct mach_header_64*)(hdr))->magic)
 #define MACH_GET_NCMDS(hdr)        (((struct mach_header_64*)(hdr))->ncmds)
@@ -29,37 +27,36 @@
 #define SC_GET_CMD(hdr)            (((struct segment_command_64*)(hdr))->cmd)
 
 
-#define kPrelinkTextSegment                "__PRELINK_TEXT"
-#define kPrelinkTextSection                "__text"
+const char   kPrelinkTextSegment[] =                 "__PRELINK_TEXT";
+const char   kPrelinkTextSection[] =                 "__text";
+const char   kPrelinkLinkStateSegment[] =            "__PRELINK_STATE";
+const char   kPrelinkKernelLinkStateSection[] =      "__kernel";
+const char   kPrelinkKextsLinkStateSection[] =       "__kexts";
+const char   kPrelinkInfoSegment[] =                 "__PRELINK_INFO";
+const char   kPrelinkInfoSection[] =                 "__info";
+const char   kLinkEditSegment[] =                    "__LINKEDIT";
+const char   kTextSegment[] =                        "__TEXT";
+const char   kDataSegment[] =                        "__DATA";
+const char   kDataConstSegment[] =                    "__DATA_CONST";
+const char   kKldSegment[] =                          "__KLD";
 
-#define kPrelinkLinkStateSegment           "__PRELINK_STATE"
-#define kPrelinkKernelLinkStateSection     "__kernel"
-#define kPrelinkKextsLinkStateSection      "__kexts"
-
-#define kPrelinkInfoSegment                "__PRELINK_INFO"
-#define kPrelinkInfoSection                "__info"
-
-#define kLinkEditSegment                   "__LINKEDIT"
-#define kTextSegment                       "__TEXT"
 #define ID_SEG_TEXT                            0x010f
-#define kDataSegment                       "__DATA"
 #define ID_SEG_DATA                            0x0f0f
-#define kDataConstSegment                   "__DATA_CONST"
 #define ID_SEG_DATA_CONST                      0x110f
-#define kKldSegment                         "__KLD"
 #define ID_SEG_KLD                             0x180f
 #define ID_SEG_KLD2                            0x1a0f
 
-#define kPrelinkBundlePathKey              "_PrelinkBundlePath"
-#define kPrelinkExecutableRelativePathKey  "_PrelinkExecutableRelativePath"
-#define kPrelinkExecutableLoadKey          "_PrelinkExecutableLoadAddr"
-#define kPrelinkExecutableSourceKey        "_PrelinkExecutableSourceAddr"
-#define kPrelinkExecutableSizeKey          "_PrelinkExecutableSize"
-#define kPrelinkInfoDictionaryKey          "_PrelinkInfoDictionary"
-#define kPrelinkInterfaceUUIDKey           "_PrelinkInterfaceUUID"
-#define kPrelinkKmodInfoKey                "_PrelinkKmodInfo"
-#define kPrelinkLinkStateKey               "_PrelinkLinkState"
-#define kPrelinkLinkStateSizeKey           "_PrelinkLinkStateSize"
+const char  ctor_used[] =                           ".constructors_used";
+const char  kPrelinkBundlePathKey[] =               "_PrelinkBundlePath";
+const char  kPrelinkExecutableRelativePathKey[] =   "_PrelinkExecutableRelativePath";
+const char  kPrelinkExecutableLoadKey[] =           "_PrelinkExecutableLoadAddr";
+const char  kPrelinkExecutableSourceKey[] =         "_PrelinkExecutableSourceAddr";
+const char  kPrelinkExecutableSizeKey[] =           "_PrelinkExecutableSize";
+const char  kPrelinkInfoDictionaryKey[] =           "_PrelinkInfoDictionary";
+const char  kPrelinkInterfaceUUIDKey[] =            "_PrelinkInterfaceUUID";
+const char  kPrelinkKmodInfoKey[] =                 "_PrelinkKmodInfo";
+const char  kPrelinkLinkStateKey[] =                "_PrelinkLinkState";
+const char  kPrelinkLinkStateSizeKey[] =            "_PrelinkLinkStateSize";
 
 #define kPropCFBundleIdentifier ("CFBundleIdentifier")
 #define kPropCFBundleExecutable ("CFBundleExecutable")
@@ -133,7 +130,7 @@ extern UINT32       PrelinkInfoLoadCmdAddr;
 extern UINT32       PrelinkInfoAddr;
 extern UINT32       PrelinkInfoSize;
 
-extern UINT32 DisplayVendor[];
+extern UINT32       DisplayVendor[];
 //VOID findCPUfamily();
 
 extern BOOLEAN                         SSSE3;
@@ -147,7 +144,7 @@ VOID Patcher_SSE3_7(VOID* kernelData);
 
 #include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
 class LOADER_ENTRY;
-VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
+//VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 
 //VOID register_kernel_symbol(CONST CHAR8* name);
 //UINT64 symbol_handler(CHAR8* symbolName, UINT64 addr);
@@ -163,14 +160,14 @@ VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 // Called from SetFSInjection(), before boot.efi is started,
 // to allow patchers to prepare FSInject to force load needed kexts.
 //
-VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts, LOADER_ENTRY *Entry);
+//VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts, LOADER_ENTRY *Entry);
 
 //
 // Entry for all kext patches.
 // Will iterate through kext in prelinked kernel (kernelcache)
 // or DevTree (drivers boot) and do patches.
 //
-VOID KextPatcherStart(LOADER_ENTRY *Entry);
+//VOID KextPatcherStart(LOADER_ENTRY *Entry);
 
 //
 // Searches Source for Search pattern of size SearchSize
@@ -191,6 +188,6 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Se
 
 UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT8 *MaskSearch, UINTN SearchSize, UINT8 *Replace, UINT8 *MaskReplace, INTN MaxReplaces);
 
-UINTN searchProc(unsigned char * kernel, const char *procedure, UINTN *procLen);
+//UINTN searchProc(LOADER_ENTRY *Entry, unsigned char * kernel, const char *procedure, UINTN *procLen);
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */

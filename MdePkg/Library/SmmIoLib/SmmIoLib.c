@@ -175,7 +175,7 @@ MergeGcdMmioEntry (
   NewGcdMemoryMapEntry = GcdMemoryMap;
   GcdMemoryMapEnd = (EFI_GCD_MEMORY_SPACE_DESCRIPTOR *) ((UINT8 *) GcdMemoryMap + (*NumberOfDescriptors) * sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
   while ((UINTN)GcdMemoryMapEntry < (UINTN)GcdMemoryMapEnd) {
-    CopyMem (NewGcdMemoryMapEntry, GcdMemoryMapEntry, sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
+    CopyMem(NewGcdMemoryMapEntry, GcdMemoryMapEntry, sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR));
     NextGcdMemoryMapEntry = GcdMemoryMapEntry + 1;
 
     do {

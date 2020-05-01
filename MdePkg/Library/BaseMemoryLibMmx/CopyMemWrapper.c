@@ -38,7 +38,7 @@
 **/
 VOID *
 EFIAPI
-CopyMem (
+CopyMem(
   OUT VOID       *DestinationBuffer,
   IN CONST VOID  *SourceBuffer,
   IN UINTN       Length
@@ -53,5 +53,5 @@ CopyMem (
   if (DestinationBuffer == SourceBuffer) {
     return DestinationBuffer;
   }
-  return InternalMemCopyMem (DestinationBuffer, SourceBuffer, Length);
+  return InternalMemCopyMem(DestinationBuffer, SourceBuffer, Length);
 }

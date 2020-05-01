@@ -534,7 +534,7 @@ ReportStatusCodeEx (
   // Fill in the extended data buffer
   //
   if (ExtendedData != NULL) {
-    CopyMem (StatusCodeData + 1, ExtendedData, ExtendedDataSize);
+    CopyMem(StatusCodeData + 1, ExtendedData, ExtendedDataSize);
   }
 
   //

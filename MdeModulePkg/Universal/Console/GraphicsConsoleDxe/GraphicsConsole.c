@@ -2072,7 +2072,7 @@ RegisterFontPackage (
   SimplifiedFont->NumberOfNarrowGlyphs = (UINT16) (mNarrowFontSize / sizeof (EFI_NARROW_GLYPH));
 
   Location = (UINT8 *) (&SimplifiedFont->NumberOfWideGlyphs + 1);
-  CopyMem (Location, gUsStdNarrowGlyphData, mNarrowFontSize);
+  CopyMem(Location, gUsStdNarrowGlyphData, mNarrowFontSize);
 
   //
   // Add this simplified font package to a package list then install it.

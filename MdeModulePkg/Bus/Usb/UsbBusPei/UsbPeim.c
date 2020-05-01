@@ -264,12 +264,12 @@ PeiHubEnumeration (
         NewPeiUsbDevice->DeviceAddress    = 0;
         NewPeiUsbDevice->MaxPacketSize0   = 8;
         NewPeiUsbDevice->DataToggle       = 0;
-        CopyMem (
+        CopyMem(
           &(NewPeiUsbDevice->UsbIoPpi),
           &mUsbIoPpi,
           sizeof (PEI_USB_IO_PPI)
           );
-        CopyMem (
+        CopyMem(
           &(NewPeiUsbDevice->UsbIoPpiList),
           &mUsbIoPpiList,
           sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -367,7 +367,7 @@ PeiHubEnumeration (
           if (EFI_ERROR(Status)) {
             return EFI_OUT_OF_RESOURCES;
           }
-          CopyMem ((VOID *)(UINTN)AllocateAddress, NewPeiUsbDevice, sizeof (PEI_USB_DEVICE));
+          CopyMem((VOID *)(UINTN)AllocateAddress, NewPeiUsbDevice, sizeof (PEI_USB_DEVICE));
           NewPeiUsbDevice = (PEI_USB_DEVICE *) ((UINTN) AllocateAddress);
           NewPeiUsbDevice->AllocateAddress  = (UINTN) AllocateAddress;
           NewPeiUsbDevice->UsbIoPpiList.Ppi = &NewPeiUsbDevice->UsbIoPpi;
@@ -491,12 +491,12 @@ PeiUsbEnumeration (
         PeiUsbDevice->DeviceAddress     = 0;
         PeiUsbDevice->MaxPacketSize0    = 8;
         PeiUsbDevice->DataToggle        = 0;
-        CopyMem (
+        CopyMem(
           &(PeiUsbDevice->UsbIoPpi),
           &mUsbIoPpi,
           sizeof (PEI_USB_IO_PPI)
           );
-        CopyMem (
+        CopyMem(
           &(PeiUsbDevice->UsbIoPpiList),
           &mUsbIoPpiList,
           sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -608,7 +608,7 @@ PeiUsbEnumeration (
           if (EFI_ERROR(Status)) {
             return EFI_OUT_OF_RESOURCES;
           }
-          CopyMem ((VOID *)(UINTN)AllocateAddress, PeiUsbDevice, sizeof (PEI_USB_DEVICE));
+          CopyMem((VOID *)(UINTN)AllocateAddress, PeiUsbDevice, sizeof (PEI_USB_DEVICE));
           PeiUsbDevice = (PEI_USB_DEVICE *) ((UINTN) AllocateAddress);
           PeiUsbDevice->AllocateAddress  = (UINTN) AllocateAddress;
           PeiUsbDevice->UsbIoPpiList.Ppi = &PeiUsbDevice->UsbIoPpi;

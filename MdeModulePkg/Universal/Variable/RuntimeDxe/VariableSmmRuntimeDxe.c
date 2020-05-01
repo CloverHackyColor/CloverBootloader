@@ -238,7 +238,7 @@ VariableLockRequestToLock (
 
   CopyGuid (&VariableToLock->Guid, VendorGuid);
   VariableToLock->NameSize = VariableNameSize;
-  CopyMem (VariableToLock->Name, VariableName, VariableToLock->NameSize);
+  CopyMem(VariableToLock->Name, VariableName, VariableToLock->NameSize);
 
   //
   // Send data to SMM.
@@ -337,9 +337,9 @@ VarCheckVariablePropertySet (
   ASSERT (CommVariableProperty != NULL);
 
   CopyGuid (&CommVariableProperty->Guid, Guid);
-  CopyMem (&CommVariableProperty->VariableProperty, VariableProperty, sizeof (*VariableProperty));
+  CopyMem(&CommVariableProperty->VariableProperty, VariableProperty, sizeof (*VariableProperty));
   CommVariableProperty->NameSize = VariableNameSize;
-  CopyMem (CommVariableProperty->Name, Name, CommVariableProperty->NameSize);
+  CopyMem(CommVariableProperty->Name, Name, CommVariableProperty->NameSize);
 
   //
   // Send data to SMM.
@@ -409,14 +409,14 @@ VarCheckVariablePropertyGet (
 
   CopyGuid (&CommVariableProperty->Guid, Guid);
   CommVariableProperty->NameSize = VariableNameSize;
-  CopyMem (CommVariableProperty->Name, Name, CommVariableProperty->NameSize);
+  CopyMem(CommVariableProperty->Name, Name, CommVariableProperty->NameSize);
 
   //
   // Send data to SMM.
   //
   Status = SendCommunicateBuffer (PayloadSize);
   if (Status == EFI_SUCCESS) {
-    CopyMem (VariableProperty, &CommVariableProperty->VariableProperty, sizeof (*VariableProperty));
+    CopyMem(VariableProperty, &CommVariableProperty->VariableProperty, sizeof (*VariableProperty));
   }
 
 Done:
@@ -502,7 +502,7 @@ RuntimeServiceGetVariable (
   } else {
     SmmVariableHeader->Attributes = *Attributes;
   }
-  CopyMem (SmmVariableHeader->Name, VariableName, SmmVariableHeader->NameSize);
+  CopyMem(SmmVariableHeader->Name, VariableName, SmmVariableHeader->NameSize);
 
   //
   // Send data to SMM.
@@ -528,7 +528,7 @@ RuntimeServiceGetVariable (
   }
 
   if (Data != NULL) {
-    CopyMem (Data, (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize, SmmVariableHeader->DataSize);
+    CopyMem(Data, (UINT8 *)SmmVariableHeader->Name + SmmVariableHeader->NameSize, SmmVariableHeader->DataSize);
   } else {
     Status = EFI_INVALID_PARAMETER;
   }
@@ -613,7 +613,7 @@ RuntimeServiceGetNextVariableName (
   //
   // Copy whole string
   //
-  CopyMem (SmmGetNextVariableName->Name, VariableName, InVariableNameSize);
+  CopyMem(SmmGetNextVariableName->Name, VariableName, InVariableNameSize);
   if (OutVariableNameSize > InVariableNameSize) {
     ZeroMem ((UINT8 *) SmmGetNextVariableName->Name + InVariableNameSize, OutVariableNameSize - InVariableNameSize);
   }
@@ -638,7 +638,7 @@ RuntimeServiceGetNextVariableName (
   }
 
   CopyGuid (VendorGuid, &SmmGetNextVariableName->Guid);
-  CopyMem (VariableName, SmmGetNextVariableName->Name, SmmGetNextVariableName->NameSize);
+  CopyMem(VariableName, SmmGetNextVariableName->Name, SmmGetNextVariableName->NameSize);
 
 Done:
   ReleaseLockOnlyAtBootTime (&mVariableServicesLock);
@@ -719,8 +719,8 @@ RuntimeServiceSetVariable (
   SmmVariableHeader->DataSize   = DataSize;
   SmmVariableHeader->NameSize   = VariableNameSize;
   SmmVariableHeader->Attributes = Attributes;
-  CopyMem (SmmVariableHeader->Name, VariableName, SmmVariableHeader->NameSize);
-  CopyMem ((UINT8 *) SmmVariableHeader->Name + SmmVariableHeader->NameSize, Data, DataSize);
+  CopyMem(SmmVariableHeader->Name, VariableName, SmmVariableHeader->NameSize);
+  CopyMem((UINT8 *) SmmVariableHeader->Name + SmmVariableHeader->NameSize, Data, DataSize);
 
   //
   // Send data to SMM.

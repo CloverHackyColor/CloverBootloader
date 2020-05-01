@@ -38,12 +38,13 @@
 
 #include "../../libeg/libeg.h"
 #include "../../refit/lib.h"
-#ifdef __cplusplus
+#include "../../Platform/LoaderUefi.h"
+
 #include "../../cpp_foundation/XObjArray.h"
 #include "../../cpp_foundation/XStringArray.h"
 #include "../../cpp_foundation/XString.h"
 #include "../../libeg/XPointer.h"
-#endif
+
 
 //
 //#define REFIT_DEBUG (2)
@@ -129,6 +130,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual REFIT_MENU_ENTRY_OTHER* getREFIT_MENU_ENTRY_OTHER() { return nullptr; };
   virtual REFIT_MENU_ENTRY_ITEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return nullptr; };
   virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return nullptr; };
+  virtual void StartLoader() {};
+  virtual void StartLegacy() {};
+  virtual void StartTool() {};
 
   REFIT_ABSTRACT_MENU_ENTRY() : Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
   {};
@@ -282,6 +286,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			UINT8 NoMemset;
 			UINT16            Flags;
 			EFI_DEVICE_PATH  *DevicePath;
+      
+      VOID              StartTool();
 
 			REFIT_MENU_ENTRY_LOADER_TOOL() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), NoMemset(1), Flags(0), DevicePath(0) {};
 
@@ -325,6 +331,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			{
 			  public:
 				LEGACY_ENTRY() : REFIT_MENU_ITEM_BOOTNUM() {};
+        
+        VOID StartLegacy();
 
 				virtual LEGACY_ENTRY* getLEGACY_ENTRY() { return this; };
 			};
@@ -349,12 +357,73 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				XImage            CustomLogo;
 				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
 				CONST CHAR16            *Settings;
+        UINT32            AddrVtable;
+        UINT32            SizeVtable;
+        UINT32            NamesTable;
 
 				LOADER_ENTRY()
 						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
               BootBgColor({0,0,0,0}),
-        CustomBoot(0), KernelAndKextPatches(0), Settings(0)
+              CustomBoot(0), KernelAndKextPatches(0), Settings(0),
+              AddrVtable(0), SizeVtable(0), NamesTable(0)
 						{};
+        
+        VOID          FindBootArgs();
+        EFI_STATUS    getVTable(UINT8* kernel);
+        UINTN         searchProc(UINT8 * kernel, const char *procedure, UINTN *procLen);
+        VOID          KernelAndKextsPatcherStart();
+        VOID          KernelAndKextPatcherInit();
+        BOOLEAN       KernelUserPatch(UINT8 * kernel);
+        BOOLEAN       KernelPatchPm(VOID *kernelData);
+        BOOLEAN       KernelLapicPatch_32(VOID *kernelData);
+        BOOLEAN       KernelLapicPatch_64(VOID *kernelData);
+        BOOLEAN       BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize);
+        VOID EFIAPI   KernelBooterExtensionsPatch(IN UINT8 *Kernel);
+        BOOLEAN       KernelPanicNoKextDump(VOID *kernelData);
+        VOID          KernelCPUIDPatch(UINT8* kernelData);
+        BOOLEAN       PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
+                                 UINT8* Search4, UINT8* Search10, UINT8* ReplaceModel,
+                                 UINT8* ReplaceExt, INT32 Len);
+        VOID          KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion);
+        VOID          KernelPatcher_64(VOID* kernelData);
+        VOID          FilterKernelPatches();
+        VOID          FilterKextPatches();
+        VOID          FilterBootPatches();
+        
+        EFI_STATUS    SetFSInjection();
+        EFI_STATUS    InjectKexts(IN UINT32 deviceTreeP, IN UINT32 *deviceTreeLength);
+        EFI_STATUS    LoadKexts();
+        int           is_mkext_v1(UINT8* drvPtr);
+        void          patch_mkext_v1(UINT8 *drvPtr);
+        // why EFIAPI?
+        EFI_STATUS EFIAPI LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext);
+        EFI_STATUS EFIAPI AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType);
+        VOID      LoadPlugInKexts(IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
+        VOID      AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t archCpuType);
+        VOID      KextPatcherRegisterKexts(void *FSInject, void *ForceLoadKexts);
+        VOID      KextPatcherStart();
+        VOID      PatchPrelinkedKexts();
+        VOID      PatchLoadedKexts();
+        VOID      PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        VOID      AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N);
+        VOID      ATIConnectorsPatchInit();
+        VOID      ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        VOID      ATIConnectorsPatchRegisterKexts(void *FSInject_v, void *ForceLoadKexts_v);
+        VOID      AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        VOID      AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        VOID      CheckForFakeSMC(CHAR8 *InfoPlist);
+        VOID      DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        VOID      SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        VOID      BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
+        BOOLEAN   SandyBridgeEPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        BOOLEAN   HaswellEXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        BOOLEAN   HaswellLowEndXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        BOOLEAN   BroadwellEPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        BOOLEAN   KernelIvyBridgeXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        BOOLEAN   KernelIvyE5XCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        
+        VOID Stall(int Pause) { if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { gBS->Stall(Pause); } };
+        VOID StartLoader();
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
 			} ;

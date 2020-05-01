@@ -737,8 +737,8 @@ BdsDxeSetVariableAndReportStatusCodeOnError (
       SetVariableStatus->DataSize   = DataSize;
       SetVariableStatus->SetStatus  = Status;
       SetVariableStatus->Attributes = Attributes;
-      CopyMem (SetVariableStatus + 1,                          VariableName, NameSize);
-      CopyMem (((UINT8 *) (SetVariableStatus + 1)) + NameSize, Data,         DataSize);
+      CopyMem(SetVariableStatus + 1,                          VariableName, NameSize);
+      CopyMem(((UINT8 *) (SetVariableStatus + 1)) + NameSize, Data,         DataSize);
 
       REPORT_STATUS_CODE_EX (
         EFI_ERROR_CODE,

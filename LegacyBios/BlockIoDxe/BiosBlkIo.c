@@ -714,7 +714,7 @@ SetBiosInitBlockIoDevicePath (
     VendorNode.DevicePath.Header.Type     = HARDWARE_DEVICE_PATH;
     VendorNode.DevicePath.Header.SubType  = HW_VENDOR_DP;
     SetDevicePathNodeLength (&VendorNode.DevicePath.Header, sizeof (VendorNode));
-    CopyMem (&VendorNode.DevicePath.Guid, &gBlockIoVendorGuid, sizeof (EFI_GUID));
+    CopyMem(&VendorNode.DevicePath.Guid, &gBlockIoVendorGuid, sizeof (EFI_GUID));
     VendorNode.LegacyDriveLetter  = Drive->Number;
     *DevicePath                   = AppendDevicePathNode (BaseDevicePath, &VendorNode.DevicePath.Header);
   }
@@ -789,7 +789,7 @@ BuildEdd30DevicePath (
       // Lun is miss aligned in both EDD and Device Path data structures.
       //  thus we do a byte copy, to prevent alignment traps on IA-64.
       //
-      CopyMem (&Node.Scsi.Lun, &Drive->Parameters.DevicePath.Scsi.Lun, sizeof (UINT16));
+      CopyMem(&Node.Scsi.Lun, &Drive->Parameters.DevicePath.Scsi.Lun, sizeof (UINT16));
       Node.Scsi.Pun = Drive->Parameters.DevicePath.Scsi.Pun;
 
     } else if (AsciiStrnCmp ("USB", Drive->Parameters.InterfaceType, 3) == 0) {

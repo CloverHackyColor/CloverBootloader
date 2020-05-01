@@ -639,9 +639,9 @@ SortMemoryResourceDescriptor (
   while (MemoryResourceEntry->ResourceLength != 0) {
     while (NextMemoryResourceEntry->ResourceLength != 0) {
       if (MemoryResourceEntry->PhysicalStart > NextMemoryResourceEntry->PhysicalStart) {
-        CopyMem (&TempMemoryResource, MemoryResourceEntry, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
-        CopyMem (MemoryResourceEntry, NextMemoryResourceEntry, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
-        CopyMem (NextMemoryResourceEntry, &TempMemoryResource, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
+        CopyMem(&TempMemoryResource, MemoryResourceEntry, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
+        CopyMem(MemoryResourceEntry, NextMemoryResourceEntry, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
+        CopyMem(NextMemoryResourceEntry, &TempMemoryResource, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
       }
 
       NextMemoryResourceEntry = NextMemoryResourceEntry + 1;
@@ -671,7 +671,7 @@ MergeMemoryResourceDescriptor (
   MemoryResourceEntry = MemoryResource;
   NewMemoryResourceEntry = MemoryResource;
   while (MemoryResourceEntry->ResourceLength != 0) {
-    CopyMem (NewMemoryResourceEntry, MemoryResourceEntry, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
+    CopyMem(NewMemoryResourceEntry, MemoryResourceEntry, sizeof (MEMORY_RESOURCE_DESCRIPTOR));
     NextMemoryResourceEntry = MemoryResourceEntry + 1;
 
     while ((NextMemoryResourceEntry->ResourceLength != 0) &&
@@ -969,7 +969,7 @@ GetScatterGatherHeadEntries (
         DEBUG ((DEBUG_ERROR, "Fail to allocate memory!\n"));
         return EFI_OUT_OF_RESOURCES;
       }
-      CopyMem (EnlargedTempList, TempList, TempListLength);
+      CopyMem(EnlargedTempList, TempList, TempListLength);
       FreePool(TempList);
       TempList = EnlargedTempList;
       TempListLength *= 2;
@@ -993,7 +993,7 @@ GetScatterGatherHeadEntries (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (*HeadList, TempList, (ValidIndex) * sizeof (EFI_PHYSICAL_ADDRESS));
+  CopyMem(*HeadList, TempList, (ValidIndex) * sizeof (EFI_PHYSICAL_ADDRESS));
   *ListLength = ValidIndex;
 
   return EFI_SUCCESS;
@@ -1272,7 +1272,7 @@ CreateState (
   // Copy to our new buffer for DXE
   //
   DEBUG ((DEBUG_INFO, "Capsule copy from 0x%8X to 0x%8X with size 0x%8X\n", (UINTN)((UINT8 *)PrivateData + sizeof(EFI_CAPSULE_PEIM_PRIVATE_DATA) + (CapsuleNumber - 1) * sizeof(UINT64)), (UINTN) NewBuffer, Size));
-  CopyMem ((VOID *) (UINTN) NewBuffer, (VOID *) (UINTN) ((UINT8 *)PrivateData + sizeof(EFI_CAPSULE_PEIM_PRIVATE_DATA) + (CapsuleNumber - 1) * sizeof(UINT64)), Size);
+  CopyMem((VOID *) (UINTN) NewBuffer, (VOID *) (UINTN) ((UINT8 *)PrivateData + sizeof(EFI_CAPSULE_PEIM_PRIVATE_DATA) + (CapsuleNumber - 1) * sizeof(UINT64)), Size);
   //
   // Check for test data pattern. If it is the test pattern, then we'll
   // test it and still create the HOB so that it can be used to verify

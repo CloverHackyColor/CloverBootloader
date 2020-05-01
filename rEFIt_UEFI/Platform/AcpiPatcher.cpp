@@ -1824,7 +1824,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
         //        DBG("RSDT entry = 0x%X\n", *pEntryR);
         if (*pEntryR != 0) {
           *pEntryX = 0;
-          CopyMem (pEntryX, pEntryR, sizeof(UINT32));
+          CopyMem(pEntryX, pEntryR, sizeof(UINT32));
           pEntryR++;
           pEntry += sizeof(UINT64);
         } else {

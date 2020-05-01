@@ -631,7 +631,7 @@ EdbUnloadSymbol (
   // Remove the matched Object
   //
   for (Index = ObjectIndex; Index < DebuggerPrivate->DebuggerSymbolContext.ObjectCount - 1; Index++) {
-    CopyMem (&Object[Index], &Object[Index + 1], sizeof(EFI_DEBUGGER_SYMBOL_OBJECT));
+    CopyMem(&Object[Index], &Object[Index + 1], sizeof(EFI_DEBUGGER_SYMBOL_OBJECT));
   }
   ZeroMem (&Object[Index], sizeof(Object[Index]));
 
@@ -2097,7 +2097,7 @@ EdbPrintSource (
         BufferSize = EFI_DEBUG_MAX_PRINT_BUFFER - 3;
       }
       if (BufferSize != 0) {
-        CopyMem (Buffer, FuncStart, BufferSize);
+        CopyMem(Buffer, FuncStart, BufferSize);
       }
       Buffer[BufferSize] = 0;
       EDBPrint (L"%a\n", Buffer);

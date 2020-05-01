@@ -351,7 +351,7 @@ GetBootOptionByNumber(
   if (!EFI_ERROR(Status)) {
     *OptionBuf = AllocatePool (sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
     if (*OptionBuf != NULL) {
-      CopyMem (*OptionBuf, &BootOption, sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
+      CopyMem(*OptionBuf, &BootOption, sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
       Status = EFI_SUCCESS;
     } else {
       Status = EFI_OUT_OF_RESOURCES;
@@ -1794,7 +1794,7 @@ RelocateCapsuleToRam (
   StringBuf = (UINT8 *)FileNameCapsule + FileNameCapsule->HeaderSize;
   for (Index = 0; Index < CapsuleOnDiskNum; Index ++) {
     StringSize = StrSize (CapsuleOnDiskBuf[Index].FileInfo->FileName);
-    CopyMem (StringBuf, CapsuleOnDiskBuf[Index].FileInfo->FileName, StringSize);
+    CopyMem(StringBuf, CapsuleOnDiskBuf[Index].FileInfo->FileName, StringSize);
     StringBuf += StringSize;
   }
 

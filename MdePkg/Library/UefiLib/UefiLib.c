@@ -980,7 +980,7 @@ AddUnicodeString (
       // newly allocated Unicode String Table.
       //
       if (*UnicodeStringTable != NULL) {
-        CopyMem (
+        CopyMem(
            NewUnicodeStringTable,
            *UnicodeStringTable,
            NumberOfEntries * sizeof (EFI_UNICODE_STRING_TABLE)
@@ -1191,7 +1191,7 @@ AddUnicodeString2 (
   // newly allocated Unicode String Table.
   //
   if (*UnicodeStringTable != NULL) {
-    CopyMem (
+    CopyMem(
       NewUnicodeStringTable,
       *UnicodeStringTable,
       NumberOfEntries * sizeof (EFI_UNICODE_STRING_TABLE)
@@ -1697,7 +1697,7 @@ GetBestLanguage (
           if (BestLanguage == NULL) {
             return NULL;
           }
-          return CopyMem (BestLanguage, Supported, CompareLength);
+          return CopyMem(BestLanguage, Supported, CompareLength);
         }
       }
 

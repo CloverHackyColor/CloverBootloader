@@ -999,7 +999,7 @@ XhcControlTransfer (
         //
         // Store a copy of device scriptor as hub device need this info to configure endpoint.
         //
-        CopyMem (&Xhc->UsbDevContext[SlotId].DevDesc, Data, *DataLength);
+        CopyMem(&Xhc->UsbDevContext[SlotId].DevDesc, Data, *DataLength);
         if (Xhc->UsbDevContext[SlotId].DevDesc.BcdUSB >= 0x0300) {
           //
           // If it's a usb3.0 device, then its max packet size is a 2^n.
@@ -1023,7 +1023,7 @@ XhcControlTransfer (
         Index = (UINT8)Request->Value;
         ASSERT (Index < Xhc->UsbDevContext[SlotId].DevDesc.NumConfigurations);
         Xhc->UsbDevContext[SlotId].ConfDesc[Index] = AllocateZeroPool(*DataLength);
-        CopyMem (Xhc->UsbDevContext[SlotId].ConfDesc[Index], Data, *DataLength);
+        CopyMem(Xhc->UsbDevContext[SlotId].ConfDesc[Index], Data, *DataLength);
         //
         // Default to use AlternateSetting 0 for all interfaces.
         //
@@ -1765,7 +1765,7 @@ XhcCreateUsbHc (
   Xhc->PciIo                 = PciIo;
   Xhc->DevicePath            = DevicePath;
   Xhc->OriginalPciAttributes = OriginalPciAttributes;
-  CopyMem (&Xhc->Usb2Hc, &gXhciUsb2HcTemplate, sizeof (EFI_USB2_HC_PROTOCOL));
+  CopyMem(&Xhc->Usb2Hc, &gXhciUsb2HcTemplate, sizeof (EFI_USB2_HC_PROTOCOL));
 
   Status = PciIo->Pci.Read (
                         PciIo,

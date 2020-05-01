@@ -546,7 +546,7 @@ PciIoPciWrite (
 STATIC
 EFI_STATUS
 EFIAPI
-PciIoCopyMem (
+PciIoCopyMem(
   IN EFI_PCI_IO_PROTOCOL              *This,
   IN     EFI_PCI_IO_PROTOCOL_WIDTH    Width,
   IN     UINT8                        DestBarIndex,
@@ -646,7 +646,7 @@ CoherentPciIoMap (
       return EFI_DEVICE_ERROR;
     }
     if (Operation == EfiPciIoOperationBusMasterRead) {
-      gBS->CopyMem ((VOID *)(UINTN)MapInfo->AllocAddress, HostAddress,
+      gBS->CopyMem((VOID *)(UINTN)MapInfo->AllocAddress, HostAddress,
              *NumberOfBytes);
     }
     *DeviceAddress = MapInfo->AllocAddress;
@@ -680,7 +680,7 @@ CoherentPciIoUnmap (
   MapInfo = Mapping;
   if (MapInfo != NULL) {
     if (MapInfo->Operation == EfiPciIoOperationBusMasterWrite) {
-      gBS->CopyMem (MapInfo->HostAddress, (VOID *)(UINTN)MapInfo->AllocAddress,
+      gBS->CopyMem(MapInfo->HostAddress, (VOID *)(UINTN)MapInfo->AllocAddress,
              MapInfo->NumberOfBytes);
     }
     gBS->FreePages (MapInfo->AllocAddress,
@@ -1092,7 +1092,7 @@ NonCoherentPciIoMap (
     }
     MapInfo->AllocAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocAddress;
     if (Operation == EfiPciIoOperationBusMasterRead) {
-      gBS->CopyMem (AllocAddress, HostAddress, *NumberOfBytes);
+      gBS->CopyMem(AllocAddress, HostAddress, *NumberOfBytes);
     }
     *DeviceAddress = MapInfo->AllocAddress;
   } else {
@@ -1152,7 +1152,7 @@ NonCoherentPciIoUnmap (
     // and free the buffer.
     //
     if (MapInfo->Operation == EfiPciIoOperationBusMasterWrite) {
-      gBS->CopyMem (MapInfo->HostAddress, (VOID *)(UINTN)MapInfo->AllocAddress,
+      gBS->CopyMem(MapInfo->HostAddress, (VOID *)(UINTN)MapInfo->AllocAddress,
              MapInfo->NumberOfBytes);
     }
     NonCoherentPciIoFreeBuffer (This,
@@ -1379,7 +1379,7 @@ PciIoGetBarAttributes (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    CopyMem (Descriptor, BarDesc, sizeof *Descriptor);
+    CopyMem(Descriptor, BarDesc, sizeof *Descriptor);
 
     End           = (EFI_ACPI_END_TAG_DESCRIPTOR *) (Descriptor + 1);
     End->Desc     = ACPI_END_TAG_DESCRIPTOR;

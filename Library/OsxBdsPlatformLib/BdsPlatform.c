@@ -1582,7 +1582,7 @@ Returns:
       return EFI_OUT_OF_RESOURCES;
     }
 		AcpiTableNew = (VOID *)(UINTN)BufferPtr;
-		CopyMem (AcpiTableNew, AcpiTableOri, TableLen);
+		CopyMem(AcpiTableNew, AcpiTableOri, TableLen);
 	} else {
 		AcpiTableNew = AcpiTableOri;
 	}
@@ -1661,7 +1661,7 @@ Returns:
   }
 
   SmbiosTableNew = (SMBIOS_TABLE_ENTRY_POINT *)(UINTN)BufferPtr;
-  CopyMem (
+  CopyMem(
     SmbiosTableNew, 
     SmbiosTableOri,
     SmbiosEntryLen
@@ -1670,7 +1670,7 @@ Returns:
   // Get Smbios Structure table address, and make sure the start address is 32-bit align
   //
   BufferPtr += SmbiosEntryLen + SYS_TABLE_PAD(SmbiosEntryLen);
-  CopyMem (
+  CopyMem(
     (VOID *)(UINTN)BufferPtr, 
     (VOID *)(UINTN)(SmbiosTableOri->TableAddress),
     SmbiosTableOri->TableLength
@@ -1760,7 +1760,7 @@ Returns:
     return EFI_OUT_OF_RESOURCES;
   }
   MpsFloatingPointerNew = (EFI_LEGACY_MP_TABLE_FLOATING_POINTER *)(UINTN)BufferPtr;
-  CopyMem (MpsFloatingPointerNew, MpsFloatingPointerOri, FPLength);
+  CopyMem(MpsFloatingPointerNew, MpsFloatingPointerOri, FPLength);
   //
   // If Mp Table exists
   //
@@ -1770,14 +1770,14 @@ Returns:
     //
     BufferPtr = BufferPtr + FPLength + SYS_TABLE_PAD (FPLength);
     MpsTableNew = (EFI_LEGACY_MP_TABLE_HEADER *)(UINTN)BufferPtr;
-    CopyMem (MpsTableNew, MpsTableOri, MpsTableOri->BaseTableLength + MpsTableOri->ExtendedTableLength);
+    CopyMem(MpsTableNew, MpsTableOri, MpsTableOri->BaseTableLength + MpsTableOri->ExtendedTableLength);
     
     if ((MpsTableOri->OemTableSize != 0x0000) && (MpsTableOri->OemTablePointer != 0x0000)){
         BufferPtr += MpsTableOri->BaseTableLength + MpsTableOri->ExtendedTableLength;
         BufferPtr += SYS_TABLE_PAD (BufferPtr);
         OemTableNew = (VOID *)(UINTN)BufferPtr;
         OemTableOri = (VOID *)(UINTN)MpsTableOri->OemTablePointer;
-        CopyMem (OemTableNew, OemTableOri, MpsTableOri->OemTableSize);
+        CopyMem(OemTableNew, OemTableOri, MpsTableOri->OemTableSize);
         MpsTableNew->OemTablePointer = (UINT32)(UINTN)OemTableNew;
     }
     MpsTableNew->Checksum = 0;

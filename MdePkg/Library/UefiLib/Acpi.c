@@ -59,7 +59,7 @@ ScanTableInSDT (
   BasePtr = (UINTN)(Sdt + 1);
   for (Index = 0; Index < EntryCount; Index ++) {
     EntryPtr = 0;
-    CopyMem (&EntryPtr, (VOID *)(BasePtr + Index * TablePointerSize), TablePointerSize);
+    CopyMem(&EntryPtr, (VOID *)(BasePtr + Index * TablePointerSize), TablePointerSize);
     Table = (EFI_ACPI_COMMON_HEADER *)((UINTN)(EntryPtr));
     if ((Table != NULL) && (Table->Signature == Signature)) {
       if (PreviousTable != NULL) {
@@ -107,7 +107,7 @@ LocateAcpiFacsFromFadt (
   if (Fadt->Header.Revision < EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
     Facs = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->FirmwareCtrl;
   } else {
-    CopyMem (&Data64, &Fadt->XFirmwareCtrl, sizeof(UINT64));
+    CopyMem(&Data64, &Fadt->XFirmwareCtrl, sizeof(UINT64));
     if (Data64 != 0) {
       Facs = (EFI_ACPI_COMMON_HEADER *)(UINTN)Data64;
     } else {
@@ -140,7 +140,7 @@ LocateAcpiDsdtFromFadt (
   if (Fadt->Header.Revision < EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
     Dsdt = (EFI_ACPI_COMMON_HEADER *)(UINTN)Fadt->Dsdt;
   } else {
-    CopyMem (&Data64, &Fadt->XDsdt, sizeof(UINT64));
+    CopyMem(&Data64, &Fadt->XDsdt, sizeof(UINT64));
     if (Data64 != 0) {
       Dsdt = (EFI_ACPI_COMMON_HEADER *)(UINTN)Data64;
     } else {

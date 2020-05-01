@@ -215,7 +215,7 @@ CreateFileDevicePath (
     FilePath = (FILEPATH_DEVICE_PATH *) FileDevicePath;
     FilePath->Header.Type    = MEDIA_DEVICE_PATH;
     FilePath->Header.SubType = MEDIA_FILEPATH_DP;
-    CopyMem (&FilePath->PathName, FileName, Size);
+    CopyMem(&FilePath->PathName, FileName, Size);
     SetDevicePathNodeLength (&FilePath->Header, Size + SIZE_OF_FILEPATH_DEVICE_PATH);
     SetDevicePathEndNode (NextDevicePathNode (&FilePath->Header));
 

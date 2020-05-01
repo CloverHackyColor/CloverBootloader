@@ -47,7 +47,7 @@ AmlCreateNode (
   ASSERT (AmlNodeList != NULL);
 
   AmlNodeList->Signature = EFI_AML_NODE_LIST_SIGNATURE;
-  CopyMem (AmlNodeList->Name, NameSeg, AML_NAME_SEG_SIZE);
+  CopyMem(AmlNodeList->Name, NameSeg, AML_NAME_SEG_SIZE);
   AmlNodeList->Buffer    = NULL;
   AmlNodeList->Size      = 0;
   InitializeListHead (&AmlNodeList->Link);

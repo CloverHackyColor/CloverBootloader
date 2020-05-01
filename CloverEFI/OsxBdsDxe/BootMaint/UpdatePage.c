@@ -1438,7 +1438,7 @@ UpdateSetLegacyDeviceOrderPage (
     }
   }
 
-  CopyMem (OldData, LegacyOrder, 100);
+  CopyMem(OldData, LegacyOrder, 100);
 
   HiiFreeOpCodeHandle (OptionsOpCodeHandle);
 

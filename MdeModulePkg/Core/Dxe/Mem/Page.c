@@ -184,7 +184,7 @@ CoreAddRange (
   //
   if (Type == EfiConventionalMemory && Start == 0 && (End >= EFI_PAGE_SIZE - 1)) {
     if ((PcdGet8 (PcdNullPointerDetectionPropertyMask) & BIT0) == 0) {
-      SetMem ((VOID *)(UINTN)Start, EFI_PAGE_SIZE, 0);
+      SetMem((VOID *)(UINTN)Start, EFI_PAGE_SIZE, 0);
     }
   }
 
@@ -359,7 +359,7 @@ CoreFreeMemoryMapStack (
       RemoveEntryList (&mMapStack[mMapDepth].Link);
       mMapStack[mMapDepth].Link.ForwardLink = NULL;
 
-      CopyMem (Entry , &mMapStack[mMapDepth], sizeof (MEMORY_MAP));
+      CopyMem(Entry , &mMapStack[mMapDepth], sizeof (MEMORY_MAP));
       Entry->FromPages = TRUE;
 
       //
@@ -1912,7 +1912,7 @@ CoreGetMemoryMap (
       //
       // Copy new GCD map entry for the following GCD range merge
       //
-      CopyMem (&MergeGcdMapEntry, GcdMapEntry, sizeof (MergeGcdMapEntry));
+      CopyMem(&MergeGcdMapEntry, GcdMapEntry, sizeof (MergeGcdMapEntry));
     }
   }
 

@@ -755,7 +755,7 @@ SetOption (
   //
   // Update
   //
-  CopyMem (OrgData, Data, DataSize);
+  CopyMem(OrgData, Data, DataSize);
   AmlHandle->Modified = TRUE;
 
   return EFI_SUCCESS;
@@ -881,7 +881,7 @@ SdtDuplicateHandle (
 
   DstAmlHandle = AllocatePool (sizeof(*DstAmlHandle));
   ASSERT (DstAmlHandle != NULL);
-  CopyMem (DstAmlHandle, (VOID *)AmlHandle, sizeof(*DstAmlHandle));
+  CopyMem(DstAmlHandle, (VOID *)AmlHandle, sizeof(*DstAmlHandle));
 
   return DstAmlHandle;
 }
@@ -1046,7 +1046,7 @@ SdtAcpiTableAcpiSdtConstructor (
 {
 
   InitializeListHead (&AcpiTableInstance->NotifyList);
-  CopyMem (&AcpiTableInstance->AcpiSdtProtocol, &mAcpiSdtProtocolTemplate, sizeof(mAcpiSdtProtocolTemplate));
+  CopyMem(&AcpiTableInstance->AcpiSdtProtocol, &mAcpiSdtProtocolTemplate, sizeof(mAcpiSdtProtocolTemplate));
   AcpiTableInstance->AcpiSdtProtocol.AcpiVersion = (EFI_ACPI_TABLE_VERSION)PcdGet32 (PcdAcpiExposedTableVersions);
 
   return ;

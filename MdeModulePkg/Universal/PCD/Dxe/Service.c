@@ -477,7 +477,7 @@ GetWorker (
           // to the default value buffer in the PCD Database.
           // So that we can free the Data allocated in GetHiiVariable.
           //
-          CopyMem (VaraiableDefaultBuffer, Data + VariableHead->Offset, GetSize);
+          CopyMem(VaraiableDefaultBuffer, Data + VariableHead->Offset, GetSize);
         }
         FreePool(Data);
       }
@@ -858,7 +858,7 @@ BuildPcdDxeDataBase (
   PcdDxeDbLen = mPcdDatabase.DxeDb->Length + mPcdDatabase.DxeDb->UninitDataBaseSize;
   PcdDxeDb = AllocateZeroPool(PcdDxeDbLen);
   ASSERT (PcdDxeDb != NULL);
-  CopyMem (PcdDxeDb, mPcdDatabase.DxeDb, mPcdDatabase.DxeDb->Length);
+  CopyMem(PcdDxeDb, mPcdDatabase.DxeDb, mPcdDatabase.DxeDb->Length);
   mPcdDatabase.DxeDb = PcdDxeDb;
 
   GuidHob = GetFirstGuidHob (&gPcdDataBaseHobGuid);
@@ -1188,7 +1188,7 @@ SetWorker (
 
     case PCD_TYPE_STRING:
       if (SetPtrTypeSize (TmpTokenNumber, Size)) {
-        CopyMem (StringTable + *((STRING_HEAD *)InternalData), Data, *Size);
+        CopyMem(StringTable + *((STRING_HEAD *)InternalData), Data, *Size);
         Status = EFI_SUCCESS;
       } else {
         Status = EFI_INVALID_PARAMETER;
@@ -1222,7 +1222,7 @@ SetWorker (
     case PCD_TYPE_DATA:
       if (PtrType) {
         if (SetPtrTypeSize (TmpTokenNumber, Size)) {
-          CopyMem (InternalData, Data, *Size);
+          CopyMem(InternalData, Data, *Size);
           Status = EFI_SUCCESS;
         } else {
           Status = EFI_INVALID_PARAMETER;
@@ -1416,7 +1416,7 @@ GetVariableSizeAndDataFromHiiPcd (
           } else {
             VaraiableDefaultBuffer = (UINT8 *) Database + VariableHead->DefaultValueOffset;
           }
-          CopyMem ((UINT8 *) VariableData + VariableHead->Offset, VaraiableDefaultBuffer, PcdDataSize);
+          CopyMem((UINT8 *) VariableData + VariableHead->Offset, VaraiableDefaultBuffer, PcdDataSize);
         }
       }
     }
@@ -1491,7 +1491,7 @@ SetHiiVariable (
 
     ASSERT_EFI_ERROR(Status);
 
-    CopyMem ((UINT8 *)Buffer + Offset, Data, DataSize);
+    CopyMem((UINT8 *)Buffer + Offset, Data, DataSize);
 
     if (SetAttributes == 0) {
       SetAttributes = Attribute;
@@ -1523,7 +1523,7 @@ SetHiiVariable (
     //
     // Update buffer.
     //
-    CopyMem ((UINT8 *)Buffer + Offset, Data, DataSize);
+    CopyMem((UINT8 *)Buffer + Offset, Data, DataSize);
 
     if (SetAttributes == 0) {
       SetAttributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE;

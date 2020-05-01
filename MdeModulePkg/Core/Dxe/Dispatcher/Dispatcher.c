@@ -1124,14 +1124,14 @@ CoreProcessFvImageFile (
               //
               // Copy the used bytes and fill the rest with the erase value.
               //
-              CopyMem (AlignedBuffer, FvHeader, (UINTN) FvUsedSize);
-              SetMem (
+              CopyMem(AlignedBuffer, FvHeader, (UINTN) FvUsedSize);
+              SetMem(
                 (UINT8 *) AlignedBuffer + FvUsedSize,
                 (UINTN) (BufferSize - FvUsedSize),
                 EraseByte
                 );
             } else {
-              CopyMem (AlignedBuffer, Buffer, BufferSize);
+              CopyMem(AlignedBuffer, Buffer, BufferSize);
             }
             FvHeader = (EFI_FIRMWARE_VOLUME_HEADER *) AlignedBuffer;
             FreePool(Buffer);

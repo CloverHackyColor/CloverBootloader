@@ -95,7 +95,7 @@ GetNextHidItem (
       // 2-byte data
       //
       if ((EndPos - StartPos) >= 2) {
-        CopyMem (&HidItem->Data.Uint16, StartPos, sizeof (UINT16));
+        CopyMem(&HidItem->Data.Uint16, StartPos, sizeof (UINT16));
         StartPos += 2;
         return StartPos;
       }
@@ -106,7 +106,7 @@ GetNextHidItem (
       //
       HidItem->Size = 4;
       if ((EndPos - StartPos) >= 4) {
-        CopyMem (&HidItem->Data.Uint32, StartPos, sizeof (UINT32));
+        CopyMem(&HidItem->Data.Uint32, StartPos, sizeof (UINT32));
         StartPos += 4;
         return StartPos;
       }

@@ -161,7 +161,7 @@ UpdateIdtTable (
       continue;
     case EFI_VECTOR_HANDOFF_HOOK_AFTER:
       InitializeSpinLock (&mReservedVectors[Index].SpinLock);
-      CopyMem (
+      CopyMem(
         (VOID *) mReservedVectors[Index].HookAfterStubHeaderCode,
         (VOID *) TemplateMap->HookAfterStubHeaderStart,
         TemplateMap->ExceptionStubHeaderSize
@@ -217,7 +217,7 @@ InitializeCpuExceptionHandlersWorker (
   IA32_IDT_GATE_DESCRIPTOR         *IdtTable;
 
   mReservedVectors = mReservedVectorsData;
-  SetMem ((VOID *) mReservedVectors, sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM, 0xff);
+  SetMem((VOID *) mReservedVectors, sizeof (RESERVED_VECTORS_DATA) * CPU_EXCEPTION_NUM, 0xff);
   if (VectorInfo != NULL) {
     Status = ReadAndVerifyVectorInfo (VectorInfo, mReservedVectors, CPU_EXCEPTION_NUM);
     if (EFI_ERROR(Status)) {

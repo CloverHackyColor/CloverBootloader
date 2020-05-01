@@ -126,7 +126,7 @@ InitializeInterruptRedirection (
   //
   // Copy code to legacy region
   //
-  CopyMem ((VOID *)(UINTN)LegacyRegionBase, (VOID *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
+  CopyMem((VOID *)(UINTN)LegacyRegionBase, (VOID *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
 
   //
   // Get VectorBase, it should be 0x68
@@ -291,7 +291,7 @@ LegacyBiosInt86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-  CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+  CopyMem(&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
   Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
 
@@ -346,7 +346,7 @@ LegacyBiosFarCall86 (
   ThunkRegSet.E.DS   = Regs->E.DS;
   ThunkRegSet.E.ES   = Regs->E.ES;
 
-/*  CopyMem (&(ThunkRegSet.E.EFLAGS), &(Regs->E.EFlags), sizeof (UINT32));
+/*  CopyMem(&(ThunkRegSet.E.EFLAGS), &(Regs->E.EFlags), sizeof (UINT32));
 
   if ((Stack != NULL) && (StackSize != 0)) {
     AsmThunk16SetUserStack (&mThunkContext, Stack, StackSize);
@@ -445,7 +445,7 @@ LegacyBiosFarCall86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-	CopyMem (&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+	CopyMem(&(Regs->E.EFLAGS), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 	
 	Ret = (BOOLEAN) (Regs->E.EFLAGS.Bits.CF == 1);
 

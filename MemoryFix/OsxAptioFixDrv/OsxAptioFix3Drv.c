@@ -458,7 +458,7 @@ RunImageWithOverrides(
     gGetNextVariableName = (UINTN)gRT->GetNextVariableName;
     gSetVariable         = (UINTN)gRT->SetVariable;
 
-    CopyMem (
+    CopyMem(
       RTShims,
       (VOID *)&gRTShimsDataStart,
       ((UINTN)&gRTShimsDataEnd - (UINTN)&gRTShimsDataStart)

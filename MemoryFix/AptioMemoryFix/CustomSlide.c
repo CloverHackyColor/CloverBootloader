@@ -509,7 +509,7 @@ UnlockSlideSupportForSafeMode (
       // Here we just patch the comparison code and the check by straight nopping.
       //
       DEBUG ((DEBUG_VERBOSE, "Patching new safe mode aslr check...\n"));
-      SetMem (StartOff + FirstOff, sizeof (SearchSeqNew) + 1, 0x90);
+      SetMem(StartOff + FirstOff, sizeof (SearchSeqNew) + 1, 0x90);
       return;
     }
 
@@ -537,8 +537,8 @@ UnlockSlideSupportForSafeMode (
     // We are allowed to use this instead of to simulate if (false).
     //
     DEBUG ((DEBUG_VERBOSE, "Patching safe mode aslr check...\n"));
-    SetMem (StartOff + FirstOff, sizeof (SearchSeq), 0xFF);
-    SetMem (StartOff + SecondOff, sizeof (SearchSeq), 0xFF);
+    SetMem(StartOff + FirstOff, sizeof (SearchSeq), 0xFF);
+    SetMem(StartOff + SecondOff, sizeof (SearchSeq), 0xFF);
   }
 }
 

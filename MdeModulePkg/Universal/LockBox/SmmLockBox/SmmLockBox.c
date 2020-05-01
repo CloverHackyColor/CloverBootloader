@@ -59,7 +59,7 @@ SmmLockBoxSave (
     return ;
   }
 
-  CopyMem (&TempLockBoxParameterSave, LockBoxParameterSave, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SAVE));
+  CopyMem(&TempLockBoxParameterSave, LockBoxParameterSave, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SAVE));
 
   //
   // Sanity check
@@ -109,7 +109,7 @@ SmmLockBoxSetAttributes (
     return ;
   }
 
-  CopyMem (&TempLockBoxParameterSetAttributes, LockBoxParameterSetAttributes, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES));
+  CopyMem(&TempLockBoxParameterSetAttributes, LockBoxParameterSetAttributes, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_SET_ATTRIBUTES));
 
   //
   // Update data
@@ -148,7 +148,7 @@ SmmLockBoxUpdate (
     return ;
   }
 
-  CopyMem (&TempLockBoxParameterUpdate, LockBoxParameterUpdate, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE));
+  CopyMem(&TempLockBoxParameterUpdate, LockBoxParameterUpdate, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_UPDATE));
 
   //
   // Sanity check
@@ -194,7 +194,7 @@ SmmLockBoxRestore (
   EFI_STATUS                     Status;
   EFI_SMM_LOCK_BOX_PARAMETER_RESTORE TempLockBoxParameterRestore;
 
-  CopyMem (&TempLockBoxParameterRestore, LockBoxParameterRestore, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE));
+  CopyMem(&TempLockBoxParameterRestore, LockBoxParameterRestore, sizeof (EFI_SMM_LOCK_BOX_PARAMETER_RESTORE));
 
   //
   // Sanity check

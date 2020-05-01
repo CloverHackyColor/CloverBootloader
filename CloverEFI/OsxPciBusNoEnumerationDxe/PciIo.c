@@ -181,7 +181,7 @@ PciIoConfigWrite (
 
 EFI_STATUS
 EFIAPI
-PciIoCopyMem (
+PciIoCopyMem(
   IN     EFI_PCI_IO_PROTOCOL  *This,
   IN     EFI_PCI_IO_PROTOCOL_WIDTH    Width,
   IN     UINT8                        DestBarIndex,
@@ -326,7 +326,7 @@ Returns:
 --*/
 
 {
-  CopyMem (&PciIoDevice->PciIo, &PciIoInterface, sizeof (EFI_PCI_IO_PROTOCOL));
+  CopyMem(&PciIoDevice->PciIo, &PciIoInterface, sizeof (EFI_PCI_IO_PROTOCOL));
 //  return EFI_SUCCESS;
 }
 
@@ -859,7 +859,7 @@ Returns:
 
 EFI_STATUS
 EFIAPI
-PciIoCopyMem (
+PciIoCopyMem(
   IN EFI_PCI_IO_PROTOCOL              *This,
   IN     EFI_PCI_IO_PROTOCOL_WIDTH    Width,
   IN     UINT8                        DestBarIndex,
@@ -912,7 +912,7 @@ Returns:
     return EFI_UNSUPPORTED;
   }
 
-  Status = PciIoDevice->PciRootBridgeIo->CopyMem (
+  Status = PciIoDevice->PciRootBridgeIo->CopyMem(
                                           PciIoDevice->PciRootBridgeIo,
                                           (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) Width,
                                           DestOffset,

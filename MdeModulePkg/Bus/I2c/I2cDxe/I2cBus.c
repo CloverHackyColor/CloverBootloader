@@ -1310,7 +1310,7 @@ I2cBusDevicePathAppend (
   //
   // Build vendor device path
   //
-  CopyMem (&gVendorDevicePathTemplate.Guid, I2cDeviceContext->I2cDevice->DeviceGuid, sizeof (EFI_GUID));
+  CopyMem(&gVendorDevicePathTemplate.Guid, I2cDeviceContext->I2cDevice->DeviceGuid, sizeof (EFI_GUID));
   I2cDeviceContext->DevicePath                    = AppendDevicePathNode (
                                                       I2cDeviceContext->I2cBusContext->ParentDevicePath,
                                                       (EFI_DEVICE_PATH_PROTOCOL *) &gVendorDevicePathTemplate

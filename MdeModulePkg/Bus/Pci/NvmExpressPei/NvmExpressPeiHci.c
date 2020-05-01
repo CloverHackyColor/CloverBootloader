@@ -420,9 +420,9 @@ NvmeDumpControllerData (
   UINT8    Sn[21];
   UINT8    Mn[41];
 
-  CopyMem (Sn, ControllerData->Sn, sizeof (ControllerData->Sn));
+  CopyMem(Sn, ControllerData->Sn, sizeof (ControllerData->Sn));
   Sn[20] = 0;
-  CopyMem (Mn, ControllerData->Mn, sizeof (ControllerData->Mn));
+  CopyMem(Mn, ControllerData->Mn, sizeof (ControllerData->Mn));
   Mn[40] = 0;
 
   DEBUG ((DEBUG_INFO, " == NVME IDENTIFY CONTROLLER DATA ==\n"));
@@ -477,7 +477,7 @@ NvmeCreateIoCompletionQueue (
   CrIoCq.Qid   = NVME_IO_QUEUE;
   CrIoCq.Qsize = NVME_CCQ_SIZE;
   CrIoCq.Pc    = 1;
-  CopyMem (&CommandPacket.NvmeCmd->Cdw10, &CrIoCq, sizeof (NVME_ADMIN_CRIOCQ));
+  CopyMem(&CommandPacket.NvmeCmd->Cdw10, &CrIoCq, sizeof (NVME_ADMIN_CRIOCQ));
   CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
   Status = NvmePassThruExecute (
@@ -527,7 +527,7 @@ NvmeCreateIoSubmissionQueue (
   CrIoSq.Pc    = 1;
   CrIoSq.Cqid  = NVME_IO_QUEUE;
   CrIoSq.Qprio = 0;
-  CopyMem (&CommandPacket.NvmeCmd->Cdw10, &CrIoSq, sizeof (NVME_ADMIN_CRIOSQ));
+  CopyMem(&CommandPacket.NvmeCmd->Cdw10, &CrIoSq, sizeof (NVME_ADMIN_CRIOSQ));
   CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
   Status = NvmePassThruExecute (

@@ -116,7 +116,7 @@ DebuggerBreakpointAdd (
   DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].BreakpointAddress = Address;
   DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].State = TRUE;
   DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].OldInstruction = 0;
-  CopyMem (
+  CopyMem(
     &DebuggerPrivate->DebuggerBreakpointContext[DebuggerPrivate->DebuggerBreakpointCount].OldInstruction,
     (VOID *)Address,
     sizeof(UINT16)

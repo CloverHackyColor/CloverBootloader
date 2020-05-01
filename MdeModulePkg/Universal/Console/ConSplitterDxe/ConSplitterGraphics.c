@@ -81,7 +81,7 @@ ConSplitterGraphicsOutputQueryMode (
       return EFI_OUT_OF_RESOURCES;
     }
     *SizeOfInfo = sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
-    CopyMem (*Info, &Private->GraphicsOutputModeBuffer[ModeNumber], *SizeOfInfo);
+    CopyMem(*Info, &Private->GraphicsOutputModeBuffer[ModeNumber], *SizeOfInfo);
   }
 
   return EFI_SUCCESS;
@@ -179,7 +179,7 @@ ConSplitterGraphicsOutputSetMode (
     //
     // If only one physical GOP device exist, copy physical information to consplitter.
     //
-    CopyMem (This->Mode->Info, PhysicalGraphicsOutput->Mode->Info, PhysicalGraphicsOutput->Mode->SizeOfInfo);
+    CopyMem(This->Mode->Info, PhysicalGraphicsOutput->Mode->Info, PhysicalGraphicsOutput->Mode->SizeOfInfo);
     This->Mode->SizeOfInfo = PhysicalGraphicsOutput->Mode->SizeOfInfo;
     This->Mode->FrameBufferBase = PhysicalGraphicsOutput->Mode->FrameBufferBase;
     This->Mode->FrameBufferSize = PhysicalGraphicsOutput->Mode->FrameBufferSize;
@@ -188,7 +188,7 @@ ConSplitterGraphicsOutputSetMode (
     // If 2 more phyiscal GOP device exist or GOP protocol does not exist,
     // return GOP information (PixelFormat is PixelBltOnly) created in ConSplitterAddGraphicsOutputMode ().
     //
-    CopyMem (This->Mode->Info, &Private->GraphicsOutputModeBuffer[ModeNumber], This->Mode->SizeOfInfo);
+    CopyMem(This->Mode->Info, &Private->GraphicsOutputModeBuffer[ModeNumber], This->Mode->SizeOfInfo);
   }
 
   return ReturnStatus;

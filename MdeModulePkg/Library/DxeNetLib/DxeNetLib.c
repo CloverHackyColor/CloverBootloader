@@ -229,7 +229,7 @@ SyslogSendPacket (
   }
 
   Ether = (ETHER_HEAD *) Packet;
-  CopyMem (Ether->SrcMac, Snp->Mode->CurrentAddress.Addr, NET_ETHER_ADDR_LEN);
+  CopyMem(Ether->SrcMac, Snp->Mode->CurrentAddress.Addr, NET_ETHER_ADDR_LEN);
 
   //
   // Start the timeout event.
@@ -340,7 +340,7 @@ SyslogBuildPacket (
   // SyslogSendPacket will fill in the address for us.
   //
   Ether = (ETHER_HEAD *) Buf;
-  CopyMem (Ether->DstMac, mSyslogDstMac, NET_ETHER_ADDR_LEN);
+  CopyMem(Ether->DstMac, mSyslogDstMac, NET_ETHER_ADDR_LEN);
   ZeroMem (Ether->SrcMac, NET_ETHER_ADDR_LEN);
 
   Ether->EtherType = HTONS (0x0800);    // IPv4 protocol
@@ -880,14 +880,14 @@ Ip6Swap128 (
 
   ASSERT (Ip6 != NULL);
 
-  CopyMem (&High, Ip6, sizeof (UINT64));
-  CopyMem (&Low, &Ip6->Addr[8], sizeof (UINT64));
+  CopyMem(&High, Ip6, sizeof (UINT64));
+  CopyMem(&Low, &Ip6->Addr[8], sizeof (UINT64));
 
   High = SwapBytes64 (High);
   Low  = SwapBytes64 (Low);
 
-  CopyMem (Ip6, &Low, sizeof (UINT64));
-  CopyMem (&Ip6->Addr[8], &High, sizeof (UINT64));
+  CopyMem(Ip6, &Low, sizeof (UINT64));
+  CopyMem(&Ip6->Addr[8], &High, sizeof (UINT64));
 
   return Ip6;
 }
@@ -947,7 +947,7 @@ NetGetUint32 (
 
   ASSERT (Buf != NULL);
 
-  CopyMem (&Value, Buf, sizeof (UINT32));
+  CopyMem(&Value, Buf, sizeof (UINT32));
   return NTOHL (Value);
 }
 
@@ -974,7 +974,7 @@ NetPutUint32 (
   ASSERT (Buf != NULL);
 
   Data = HTONL (Data);
-  CopyMem (Buf, &Data, sizeof (UINT32));
+  CopyMem(Buf, &Data, sizeof (UINT32));
 }
 
 
@@ -2121,7 +2121,7 @@ NetLibGetVlanHandle (
   //
   // Construct VLAN device path
   //
-  CopyMem (&VlanNode, &mNetVlanDevicePathTemplate, sizeof (VLAN_DEVICE_PATH));
+  CopyMem(&VlanNode, &mNetVlanDevicePathTemplate, sizeof (VLAN_DEVICE_PATH));
   VlanNode.VlanId = VlanId;
   VlanDevicePath = AppendDevicePathNode (
                      ParentDevicePath,
@@ -2253,7 +2253,7 @@ NetLibGetMacAddress (
   }
 
   *AddressSize = SnpMode->HwAddressSize;
-  CopyMem (MacAddress->Addr, SnpMode->CurrentAddress.Addr, SnpMode->HwAddressSize);
+  CopyMem(MacAddress->Addr, SnpMode->CurrentAddress.Addr, SnpMode->HwAddressSize);
 
   return EFI_SUCCESS;
 }
@@ -2843,8 +2843,8 @@ NetLibCreateIPv4DPathNode (
   Node->Header.SubType = MSG_IPv4_DP;
   SetDevicePathNodeLength (&Node->Header, sizeof (IPv4_DEVICE_PATH));
 
-  CopyMem (&Node->LocalIpAddress, &LocalIp, sizeof (EFI_IPv4_ADDRESS));
-  CopyMem (&Node->RemoteIpAddress, &RemoteIp, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem(&Node->LocalIpAddress, &LocalIp, sizeof (EFI_IPv4_ADDRESS));
+  CopyMem(&Node->RemoteIpAddress, &RemoteIp, sizeof (EFI_IPv4_ADDRESS));
 
   Node->LocalPort  = LocalPort;
   Node->RemotePort = RemotePort;
@@ -2862,7 +2862,7 @@ NetLibCreateIPv4DPathNode (
   // Set the Subnet mask to default value 255:255:255:0.
   //
   ZeroMem (&Node->GatewayIpAddress, sizeof (EFI_IPv4_ADDRESS));
-  SetMem (&Node->SubnetMask, sizeof (EFI_IPv4_ADDRESS), 0xff);
+  SetMem(&Node->SubnetMask, sizeof (EFI_IPv4_ADDRESS), 0xff);
   Node->SubnetMask.Addr[3] = 0;
 }
 
@@ -2904,8 +2904,8 @@ NetLibCreateIPv6DPathNode (
   Node->Header.SubType = MSG_IPv6_DP;
   SetDevicePathNodeLength (&Node->Header, sizeof (IPv6_DEVICE_PATH));
 
-  CopyMem (&Node->LocalIpAddress, LocalIp, sizeof (EFI_IPv6_ADDRESS));
-  CopyMem (&Node->RemoteIpAddress, RemoteIp, sizeof (EFI_IPv6_ADDRESS));
+  CopyMem(&Node->LocalIpAddress, LocalIp, sizeof (EFI_IPv6_ADDRESS));
+  CopyMem(&Node->RemoteIpAddress, RemoteIp, sizeof (EFI_IPv6_ADDRESS));
 
   Node->LocalPort  = LocalPort;
   Node->RemotePort = RemotePort;
@@ -3286,7 +3286,7 @@ NetLibGetSystemGuid (
       // SMBIOS tables are byte packed so we need to do a byte copy to
       // prevend alignment faults on Itanium-based platform.
       //
-      CopyMem (SystemGuid, &Smbios.Type1->Uuid, sizeof (EFI_GUID));
+      CopyMem(SystemGuid, &Smbios.Type1->Uuid, sizeof (EFI_GUID));
       return EFI_SUCCESS;
     }
 

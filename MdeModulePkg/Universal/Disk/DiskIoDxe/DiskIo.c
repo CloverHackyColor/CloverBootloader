@@ -417,7 +417,7 @@ DiskIo2OnReadWriteComplete (
   if ((Subtask->WorkingBuffer != NULL) && !EFI_ERROR(TransactionStatus) &&
       (Task->Token != NULL) && !Subtask->Write
      ) {
-    CopyMem (Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
+    CopyMem(Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
   }
 
   DiskIoDestroySubtask (Instance, Subtask);
@@ -881,7 +881,7 @@ DiskIo2ReadWriteDisk (
         //
         // A sub task before this one should be a block read operation, causing the WorkingBuffer filled with the entire one block data.
         //
-        CopyMem (Subtask->WorkingBuffer + Subtask->Offset, Subtask->Buffer, Subtask->Length);
+        CopyMem(Subtask->WorkingBuffer + Subtask->Offset, Subtask->Buffer, Subtask->Length);
       }
 
       if (SubtaskBlocking) {
@@ -916,7 +916,7 @@ DiskIo2ReadWriteDisk (
                             (Subtask->WorkingBuffer != NULL) ? Subtask->WorkingBuffer : Subtask->Buffer
                             );
         if (!EFI_ERROR(Status) && (Subtask->WorkingBuffer != NULL)) {
-          CopyMem (Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
+          CopyMem(Subtask->Buffer, Subtask->WorkingBuffer + Subtask->Offset, Subtask->Length);
         }
       } else {
         Status = BlockIo2->ReadBlocksEx (

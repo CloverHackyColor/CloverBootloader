@@ -248,7 +248,7 @@ FindAnchorVolumeDescriptorPointer (
       //
       // Save read AVDP from last block
       //
-      CopyMem (AnchorPoint, AnchorPointPtr, sizeof (*AnchorPointPtr));
+      CopyMem(AnchorPoint, AnchorPointPtr, sizeof (*AnchorPointPtr));
       //
       // Set last recorded block number
       //

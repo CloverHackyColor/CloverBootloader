@@ -176,7 +176,7 @@ CoreFreeMemoryMapStack (
 
     if (mMapStack[mMapDepth].Link.ForwardLink != NULL) {
 
-      CopyMem (Entry , &mMapStack[mMapDepth], sizeof (MEMORY_MAP));
+      CopyMem(Entry , &mMapStack[mMapDepth], sizeof (MEMORY_MAP));
       Entry->FromStack = FALSE;
 
       //

@@ -98,7 +98,7 @@ UiAddMenuList (
   MenuList->Signature = FORM_ENTRY_INFO_SIGNATURE;
 
   MenuList->HiiHandle  = HiiHandle;
-  CopyMem (&MenuList->FormSetGuid, FormSetGuid, sizeof (EFI_GUID));
+  CopyMem(&MenuList->FormSetGuid, FormSetGuid, sizeof (EFI_GUID));
   MenuList->FormId     = FormId;
   MenuList->QuestionId = QuestionId;
 
@@ -308,7 +308,7 @@ UiCopyMenuList (
     ASSERT (NewMenuEntry != NULL);
     NewMenuEntry->Signature  = FORM_ENTRY_INFO_SIGNATURE;
     NewMenuEntry->HiiHandle  = MenuList->HiiHandle;
-    CopyMem (&NewMenuEntry->FormSetGuid, &MenuList->FormSetGuid, sizeof (EFI_GUID));
+    CopyMem(&NewMenuEntry->FormSetGuid, &MenuList->FormSetGuid, sizeof (EFI_GUID));
     NewMenuEntry->FormId     = MenuList->FormId;
     NewMenuEntry->QuestionId = MenuList->QuestionId;
 
@@ -507,10 +507,10 @@ SendForm (
 
     Selection->Handle = Handles[Index];
     if (FormSetGuid != NULL) {
-      CopyMem (&Selection->FormSetGuid, FormSetGuid, sizeof (EFI_GUID));
+      CopyMem(&Selection->FormSetGuid, FormSetGuid, sizeof (EFI_GUID));
       Selection->FormId = FormId;
     } else {
-      CopyMem (&Selection->FormSetGuid, &gEfiHiiPlatformSetupFormsetGuid, sizeof (EFI_GUID));
+      CopyMem(&Selection->FormSetGuid, &gEfiHiiPlatformSetupFormsetGuid, sizeof (EFI_GUID));
     }
 
     do {
@@ -1384,7 +1384,7 @@ GetBitsQuestionValue (
   StartBit = Question->BitVarOffset % 8;
   EndBit = StartBit + Question->BitStorageWidth - 1;
 
-  CopyMem ((UINT8 *) &BufferValue, Buffer, Question->StorageWidth);
+  CopyMem((UINT8 *) &BufferValue, Buffer, Question->StorageWidth);
 
   RetVal = BitFieldRead32 (BufferValue, StartBit, EndBit);
 
@@ -1393,7 +1393,7 @@ GetBitsQuestionValue (
   // Note: Since Question with BufferValue (orderedlist, password, string)are not supported to refer bit field.
   // Only oneof/checkbox/oneof can support bit field.So we can copy the value to the Hiivalue of Question directly.
   //
-  CopyMem ((UINT8 *) &Question->HiiValue.Value, (UINT8 *) &RetVal, Question->StorageWidth);
+  CopyMem((UINT8 *) &Question->HiiValue.Value, (UINT8 *) &RetVal, Question->StorageWidth);
 }
 
 /**
@@ -1420,11 +1420,11 @@ SetBitsQuestionValue (
   StartBit = Question->BitVarOffset % 8;
   EndBit = StartBit + Question->BitStorageWidth - 1;
 
-  CopyMem ((UINT8*) &Operand, Buffer, Question->StorageWidth);
+  CopyMem((UINT8*) &Operand, Buffer, Question->StorageWidth);
 
   RetVal = BitFieldWrite32 (Operand, StartBit, EndBit, Value);
 
-  CopyMem (Buffer, (UINT8*) &RetVal, Question->StorageWidth);
+  CopyMem(Buffer, (UINT8*) &RetVal, Question->StorageWidth);
 }
 
 /**
@@ -1605,16 +1605,16 @@ GetQuestionValue (
       if (Question->ValueExpression->Result.Type == EFI_IFR_TYPE_BUFFER) {
         ASSERT (Question->HiiValue.Type == EFI_IFR_TYPE_BUFFER && Question->HiiValue.Buffer != NULL);
         if (Question->StorageWidth > Question->ValueExpression->Result.BufferLen) {
-          CopyMem (Question->HiiValue.Buffer, Question->ValueExpression->Result.Buffer, Question->ValueExpression->Result.BufferLen);
+          CopyMem(Question->HiiValue.Buffer, Question->ValueExpression->Result.Buffer, Question->ValueExpression->Result.BufferLen);
           Question->HiiValue.BufferLen = Question->ValueExpression->Result.BufferLen;
         } else {
-          CopyMem (Question->HiiValue.Buffer, Question->ValueExpression->Result.Buffer, Question->StorageWidth);
+          CopyMem(Question->HiiValue.Buffer, Question->ValueExpression->Result.Buffer, Question->StorageWidth);
           Question->HiiValue.BufferLen = Question->StorageWidth;
         }
         FreePool(Question->ValueExpression->Result.Buffer);
       }
       Question->HiiValue.Type = Question->ValueExpression->Result.Type;
-      CopyMem (&Question->HiiValue.Value, &Question->ValueExpression->Result.Value, sizeof (EFI_IFR_TYPE_VALUE));
+      CopyMem(&Question->HiiValue.Value, &Question->ValueExpression->Result.Value, sizeof (EFI_IFR_TYPE_VALUE));
     }
     return Status;
   }
@@ -1632,16 +1632,16 @@ GetQuestionValue (
       if (Question->ReadExpression->Result.Type == EFI_IFR_TYPE_BUFFER) {
         ASSERT (Question->HiiValue.Type == EFI_IFR_TYPE_BUFFER && Question->HiiValue.Buffer != NULL);
         if (Question->StorageWidth > Question->ReadExpression->Result.BufferLen) {
-          CopyMem (Question->HiiValue.Buffer, Question->ReadExpression->Result.Buffer, Question->ReadExpression->Result.BufferLen);
+          CopyMem(Question->HiiValue.Buffer, Question->ReadExpression->Result.Buffer, Question->ReadExpression->Result.BufferLen);
           Question->HiiValue.BufferLen = Question->ReadExpression->Result.BufferLen;
         } else {
-          CopyMem (Question->HiiValue.Buffer, Question->ReadExpression->Result.Buffer, Question->StorageWidth);
+          CopyMem(Question->HiiValue.Buffer, Question->ReadExpression->Result.Buffer, Question->StorageWidth);
           Question->HiiValue.BufferLen = Question->StorageWidth;
         }
         FreePool(Question->ReadExpression->Result.Buffer);
       }
       Question->HiiValue.Type = Question->ReadExpression->Result.Type;
-      CopyMem (&Question->HiiValue.Value, &Question->ReadExpression->Result.Value, sizeof (EFI_IFR_TYPE_VALUE));
+      CopyMem(&Question->HiiValue.Value, &Question->ReadExpression->Result.Value, sizeof (EFI_IFR_TYPE_VALUE));
       return EFI_SUCCESS;
     }
   }
@@ -1758,7 +1758,7 @@ GetQuestionValue (
         if (Question->QuestionReferToBitField) {
           GetBitsQuestionValue (Question, Storage->EditBuffer + Question->VarStoreInfo.VarOffset);
         } else {
-          CopyMem (Dst, Storage->EditBuffer + Question->VarStoreInfo.VarOffset, StorageWidth);
+          CopyMem(Dst, Storage->EditBuffer + Question->VarStoreInfo.VarOffset, StorageWidth);
         }
       } else {
         //
@@ -1768,7 +1768,7 @@ GetQuestionValue (
         if (Question->QuestionReferToBitField) {
           GetBitsQuestionValue (Question, Storage->Buffer + Question->VarStoreInfo.VarOffset);
         } else {
-          CopyMem (Dst, Storage->Buffer + Question->VarStoreInfo.VarOffset, StorageWidth);
+          CopyMem(Dst, Storage->Buffer + Question->VarStoreInfo.VarOffset, StorageWidth);
         }
       }
     } else {
@@ -1858,7 +1858,7 @@ GetQuestionValue (
     // Synchronize Edit Buffer
     //
     if (IsBufferStorage) {
-      CopyMem (Storage->EditBuffer + Question->VarStoreInfo.VarOffset, Dst, StorageWidth);
+      CopyMem(Storage->EditBuffer + Question->VarStoreInfo.VarOffset, Dst, StorageWidth);
     } else {
       SetValueByName (Storage, Question->VariableName, Value, GetSetValueWithEditBuffer, NULL);
     }
@@ -2040,7 +2040,7 @@ SetQuestionValue (
         if (Question->QuestionReferToBitField) {
           SetBitsQuestionValue (Question, Storage->EditBuffer + Question->VarStoreInfo.VarOffset, (UINT32)(*Src));
         } else {
-          CopyMem (Storage->EditBuffer + Question->VarStoreInfo.VarOffset, Src, StorageWidth);
+          CopyMem(Storage->EditBuffer + Question->VarStoreInfo.VarOffset, Src, StorageWidth);
         }
       } else if (SetValueTo == GetSetValueWithBuffer) {
         //
@@ -2050,7 +2050,7 @@ SetQuestionValue (
         if (Question->QuestionReferToBitField) {
           SetBitsQuestionValue (Question, Storage->Buffer + Question->VarStoreInfo.VarOffset, (UINT32)(*Src));
         } else {
-          CopyMem (Storage->Buffer + Question->VarStoreInfo.VarOffset, Src, StorageWidth);
+          CopyMem(Storage->Buffer + Question->VarStoreInfo.VarOffset, Src, StorageWidth);
         }
       }
     } else {
@@ -2197,7 +2197,7 @@ SetQuestionValue (
     //
     // Sync storage, from editbuffer to buffer.
     //
-    CopyMem (Storage->Buffer + Question->VarStoreInfo.VarOffset, Src, StorageWidth);
+    CopyMem(Storage->Buffer + Question->VarStoreInfo.VarOffset, Src, StorageWidth);
   }
 
   return Status;
@@ -2482,7 +2482,7 @@ SynchronizeStorage (
         FreePool(Result);
       }
     } else {
-      CopyMem (Dst, Src, BufferSize);
+      CopyMem(Dst, Src, BufferSize);
     }
   } else if (Storage->Type == EFI_HII_VARSTORE_NAME_VALUE) {
     Link = GetFirstNode (&Storage->NameValueListHead);
@@ -4271,9 +4271,9 @@ ReGetDefault:
         ASSERT (StrLen (NewString) * sizeof (CHAR16) <= Question->StorageWidth);
         if (StrLen (NewString) * sizeof (CHAR16) <= Question->StorageWidth) {
           ZeroMem (Question->BufferValue, Question->StorageWidth);
-          CopyMem (Question->BufferValue, NewString, StrSize (NewString));
+          CopyMem(Question->BufferValue, NewString, StrSize (NewString));
         } else {
-          CopyMem (Question->BufferValue, NewString, Question->StorageWidth);
+          CopyMem(Question->BufferValue, NewString, Question->StorageWidth);
         }
 
         FreePool(NewString);
@@ -4313,25 +4313,25 @@ ReGetDefault:
           if (Default->ValueExpression->Result.Type == EFI_IFR_TYPE_BUFFER) {
             ASSERT (HiiValue->Type == EFI_IFR_TYPE_BUFFER && Question->BufferValue != NULL);
             if (Question->StorageWidth > Default->ValueExpression->Result.BufferLen) {
-              CopyMem (Question->HiiValue.Buffer, Default->ValueExpression->Result.Buffer, Default->ValueExpression->Result.BufferLen);
+              CopyMem(Question->HiiValue.Buffer, Default->ValueExpression->Result.Buffer, Default->ValueExpression->Result.BufferLen);
               Question->HiiValue.BufferLen = Default->ValueExpression->Result.BufferLen;
             } else {
-              CopyMem (Question->HiiValue.Buffer, Default->ValueExpression->Result.Buffer, Question->StorageWidth);
+              CopyMem(Question->HiiValue.Buffer, Default->ValueExpression->Result.Buffer, Question->StorageWidth);
               Question->HiiValue.BufferLen = Question->StorageWidth;
             }
             FreePool(Default->ValueExpression->Result.Buffer);
           }
           HiiValue->Type = Default->ValueExpression->Result.Type;
-          CopyMem (&HiiValue->Value, &Default->ValueExpression->Result.Value, sizeof (EFI_IFR_TYPE_VALUE));
+          CopyMem(&HiiValue->Value, &Default->ValueExpression->Result.Value, sizeof (EFI_IFR_TYPE_VALUE));
         } else {
           //
           // Default value is embedded in EFI_IFR_DEFAULT
           //
           if (Default->Value.Type == EFI_IFR_TYPE_BUFFER) {
             ASSERT (HiiValue->Buffer != NULL);
-            CopyMem (HiiValue->Buffer, Default->Value.Buffer, Default->Value.BufferLen);
+            CopyMem(HiiValue->Buffer, Default->Value.Buffer, Default->Value.BufferLen);
           } else {
-            CopyMem (HiiValue, &Default->Value, sizeof (EFI_HII_VALUE));
+            CopyMem(HiiValue, &Default->Value, sizeof (EFI_HII_VALUE));
           }
         }
 
@@ -4342,9 +4342,9 @@ ReGetDefault:
           }
           if (Question->StorageWidth > StrSize (StrValue)) {
             ZeroMem (Question->BufferValue, Question->StorageWidth);
-            CopyMem (Question->BufferValue, StrValue, StrSize (StrValue));
+            CopyMem(Question->BufferValue, StrValue, StrSize (StrValue));
           } else {
-            CopyMem (Question->BufferValue, StrValue, Question->StorageWidth);
+            CopyMem(Question->BufferValue, StrValue, Question->StorageWidth);
           }
         }
 
@@ -4376,7 +4376,7 @@ ReGetDefault:
         if (((DefaultId == EFI_HII_DEFAULT_CLASS_STANDARD) && ((Option->Flags & EFI_IFR_OPTION_DEFAULT) != 0)) ||
             ((DefaultId == EFI_HII_DEFAULT_CLASS_MANUFACTURING) && ((Option->Flags & EFI_IFR_OPTION_DEFAULT_MFG) != 0))
            ) {
-          CopyMem (HiiValue, &Option->Value, sizeof (EFI_HII_VALUE));
+          CopyMem(HiiValue, &Option->Value, sizeof (EFI_HII_VALUE));
 
           return EFI_SUCCESS;
         }
@@ -4486,7 +4486,7 @@ ReGetDefault:
           continue;
         }
 
-        CopyMem (HiiValue, &Option->Value, sizeof (EFI_HII_VALUE));
+        CopyMem(HiiValue, &Option->Value, sizeof (EFI_HII_VALUE));
         Status = EFI_SUCCESS;
         break;
       }
@@ -5000,7 +5000,7 @@ IsQuestionValueChanged (
       BufferWidth = 0;
       break;
   }
-  CopyMem (&BackUpValue, &Question->HiiValue, sizeof (EFI_HII_VALUE));
+  CopyMem(&BackUpValue, &Question->HiiValue, sizeof (EFI_HII_VALUE));
 
   if (GetValueFrom == GetSetValueWithBothBuffer) {
     Status = GetQuestionValue (FormSet, Form, Question, GetSetValueWithEditBuffer);
@@ -5024,7 +5024,7 @@ IsQuestionValueChanged (
         BufferWidth = 0;
         break;
     }
-    CopyMem (&BackUpValue2, &Question->HiiValue, sizeof (EFI_HII_VALUE));
+    CopyMem(&BackUpValue2, &Question->HiiValue, sizeof (EFI_HII_VALUE));
 
     Status = GetQuestionValue (FormSet, Form, Question, GetSetValueWithBuffer);
     ASSERT_EFI_ERROR(Status);
@@ -5043,9 +5043,9 @@ IsQuestionValueChanged (
     }
   }
 
-  CopyMem (&Question->HiiValue, &BackUpValue, sizeof (EFI_HII_VALUE));
+  CopyMem(&Question->HiiValue, &BackUpValue, sizeof (EFI_HII_VALUE));
   if (BackUpBuffer != NULL) {
-    CopyMem (Question->BufferValue, BackUpBuffer, BufferWidth);
+    CopyMem(Question->BufferValue, BackUpBuffer, BufferWidth);
     FreePool(BackUpBuffer);
   }
 
@@ -5182,7 +5182,7 @@ RemoveElement (
   //
   DestStr = NewStr;
   NewStr += StrLen (RequestElement);
-  CopyMem (DestStr, NewStr, StrSize (NewStr));
+  CopyMem(DestStr, NewStr, StrSize (NewStr));
 
   Storage->SpareStrLen += StrLen (RequestElement);
 }
@@ -5363,7 +5363,7 @@ AppendConfigRequest (
     ASSERT (NewStr != NULL);
 
     if (*ConfigRequest != NULL) {
-      CopyMem (NewStr, *ConfigRequest, StringSize);
+      CopyMem(NewStr, *ConfigRequest, StringSize);
       FreePool(*ConfigRequest);
     }
     *ConfigRequest = NewStr;
@@ -5825,12 +5825,12 @@ GetIfrBinaryData (
   //
   Offset = sizeof (EFI_HII_PACKAGE_LIST_HEADER);
   Offset2 = 0;
-  CopyMem (&PackageListLength, &HiiPackageList->PackageLength, sizeof (UINT32));
+  CopyMem(&PackageListLength, &HiiPackageList->PackageLength, sizeof (UINT32));
 
   ClassGuidMatch = FALSE;
   while (Offset < PackageListLength) {
     Package = ((UINT8 *) HiiPackageList) + Offset;
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
 
     if (PackageHeader.Type == EFI_HII_PACKAGE_FORMS) {
       //
@@ -5896,7 +5896,7 @@ GetIfrBinaryData (
     //
     // Return the FormSet GUID
     //
-    CopyMem (FormSetGuid, &((EFI_IFR_FORM_SET *) OpCodeData)->Guid, sizeof (EFI_GUID));
+    CopyMem(FormSetGuid, &((EFI_IFR_FORM_SET *) OpCodeData)->Guid, sizeof (EFI_GUID));
   }
 
   //
@@ -5949,7 +5949,7 @@ InitializeFormSet (
 
   FormSet->Signature = FORM_BROWSER_FORMSET_SIGNATURE;
   FormSet->HiiHandle = Handle;
-  CopyMem (&FormSet->Guid, FormSetGuid, sizeof (EFI_GUID));
+  CopyMem(&FormSet->Guid, FormSetGuid, sizeof (EFI_GUID));
   FormSet->QuestionInited = FALSE;
 
   //

@@ -443,14 +443,14 @@ DebugAssert (
   //
   // Copy Ascii FileName including NULL terminator.
   //
-  Temp = CopyMem (Temp + ModuleNameSize, FileName, FileNameSize);
+  Temp = CopyMem(Temp + ModuleNameSize, FileName, FileNameSize);
   Temp[FileNameSize - 1] = 0;
   TotalSize += (ModuleNameSize + FileNameSize);
 
   //
   // Copy Ascii Description include NULL terminator.
   //
-  Temp = CopyMem (Temp + FileNameSize, Description, DescriptionSize);
+  Temp = CopyMem(Temp + FileNameSize, Description, DescriptionSize);
   Temp[DescriptionSize - 1] = 0;
   TotalSize += DescriptionSize;
 
@@ -499,7 +499,7 @@ DebugClearMemory (
 {
   ASSERT (Buffer != NULL);
 
-  return SetMem (Buffer, Length, PcdGet8 (PcdDebugClearMemoryValue));
+  return SetMem(Buffer, Length, PcdGet8 (PcdDebugClearMemoryValue));
 }
 
 

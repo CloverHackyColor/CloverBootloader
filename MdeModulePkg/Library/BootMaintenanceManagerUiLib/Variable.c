@@ -184,7 +184,7 @@ Var_UpdateConsoleOption (
       Vendor.Header.SubType = MSG_VENDOR_DP;
 
       ASSERT (NewTerminalContext->TerminalType < (ARRAY_SIZE (TerminalTypeGuid)));
-      CopyMem (
+      CopyMem(
         &Vendor.Guid,
         &TerminalTypeGuid[NewTerminalContext->TerminalType],
         sizeof (EFI_GUID)
@@ -357,7 +357,7 @@ Var_UpdateDriverOption (
   NewLoadContext->Description = AllocateZeroPool(StrSize (DescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
   NewMenuEntry->DisplayString = NewLoadContext->Description;
-  CopyMem (
+  CopyMem(
     NewLoadContext->Description,
     LoadOption.Description,
     StrSize (DescriptionData)
@@ -365,7 +365,7 @@ Var_UpdateDriverOption (
 
   NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
-  CopyMem (
+  CopyMem(
     NewLoadContext->FilePathList,
     LoadOption.FilePath,
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
@@ -379,7 +379,7 @@ Var_UpdateDriverOption (
   if (OptionalDataExist) {
     NewLoadContext->OptionalData = AllocateZeroPool(LoadOption.OptionalDataSize);
     ASSERT (NewLoadContext->OptionalData != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->OptionalData,
       LoadOption.OptionalData,
       LoadOption.OptionalDataSize
@@ -477,7 +477,7 @@ Var_UpdateBootOption (
 
   NewMenuEntry->DisplayString = NewLoadContext->Description;
 
-  CopyMem (
+  CopyMem(
     NewLoadContext->Description,
     LoadOption.Description,
     StrSize (NvRamMap->BootDescriptionData)
@@ -485,7 +485,7 @@ Var_UpdateBootOption (
 
   NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
-  CopyMem (
+  CopyMem(
     NewLoadContext->FilePathList,
     LoadOption.FilePath,
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
@@ -499,7 +499,7 @@ Var_UpdateBootOption (
   if (OptionalDataExist) {
     NewLoadContext->OptionalData = AllocateZeroPool(LoadOption.OptionalDataSize);
     ASSERT (NewLoadContext->OptionalData != NULL);
-    CopyMem (
+    CopyMem(
       NewLoadContext->OptionalData,
       LoadOption.OptionalData,
       LoadOption.OptionalDataSize
@@ -613,7 +613,7 @@ Var_UpdateBootOrder (
     for (Index = OrderIndex; Index < BootOrderSize / sizeof (UINT16); Index++) {
       if ((BootOrder[Index] == (UINT16) (CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] - 1)) && (OrderIndex != Index)) {
         OptionNumber = BootOrder[Index];
-        CopyMem (&BootOrder[OrderIndex + 1], &BootOrder[OrderIndex], (Index - OrderIndex) * sizeof (UINT16));
+        CopyMem(&BootOrder[OrderIndex + 1], &BootOrder[OrderIndex], (Index - OrderIndex) * sizeof (UINT16));
         BootOrder[OrderIndex] = OptionNumber;
       }
     }

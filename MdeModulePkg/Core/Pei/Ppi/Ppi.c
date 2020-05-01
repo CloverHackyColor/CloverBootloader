@@ -265,7 +265,7 @@ InternalPeiInstallPpi (
                   sizeof (PEI_PPI_LIST_POINTERS) * (PpiListPointer->MaxCount + PPI_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
-      CopyMem (
+      CopyMem(
         TempPtr,
         PpiListPointer->PpiPtrs,
         sizeof (PEI_PPI_LIST_POINTERS) * PpiListPointer->MaxCount
@@ -553,7 +553,7 @@ InternalPeiNotifyPpi (
                     sizeof (PEI_PPI_LIST_POINTERS) * (CallbackNotifyListPointer->MaxCount + CALLBACK_NOTIFY_GROWTH_STEP)
                     );
         ASSERT (TempPtr != NULL);
-        CopyMem (
+        CopyMem(
           TempPtr,
           CallbackNotifyListPointer->NotifyPtrs,
           sizeof (PEI_PPI_LIST_POINTERS) * CallbackNotifyListPointer->MaxCount
@@ -573,7 +573,7 @@ InternalPeiNotifyPpi (
                     sizeof (PEI_PPI_LIST_POINTERS) * (DispatchNotifyListPointer->MaxCount + DISPATCH_NOTIFY_GROWTH_STEP)
                     );
         ASSERT (TempPtr != NULL);
-        CopyMem (
+        CopyMem(
           TempPtr,
           DispatchNotifyListPointer->NotifyPtrs,
           sizeof (PEI_PPI_LIST_POINTERS) * DispatchNotifyListPointer->MaxCount

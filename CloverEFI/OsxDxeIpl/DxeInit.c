@@ -140,7 +140,7 @@ Returns:
 //  CHAR8                 PrintBuffer[256];
   EFILDRHANDOFF         HandoffCopy;
 
-  CopyMem ((VOID*) &HandoffCopy, (VOID*) Handoff, sizeof (EFILDRHANDOFF));
+  CopyMem((VOID*) &HandoffCopy, (VOID*) Handoff, sizeof (EFILDRHANDOFF));
   Handoff = &HandoffCopy;
 
 //  ClearScreen();

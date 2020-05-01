@@ -911,7 +911,7 @@ PeCoffLoaderLoadImage (
   // can from the original image, and then use that to make sure everything
   // is legit.
   //
-  CopyMem (&CheckContext, ImageContext, sizeof (PE_COFF_LOADER_IMAGE_CONTEXT));
+  CopyMem(&CheckContext, ImageContext, sizeof (PE_COFF_LOADER_IMAGE_CONTEXT));
 
   Status = PeCoffLoaderGetImageInfo (&CheckContext);
   if (RETURN_ERROR (Status)) {
@@ -1599,7 +1599,7 @@ PeCoffLoaderImageReadFromMemory (
     return RETURN_INVALID_PARAMETER;
   }
 
-  CopyMem (Buffer, ((UINT8 *)FileHandle) + FileOffset, *ReadSize);
+  CopyMem(Buffer, ((UINT8 *)FileHandle) + FileOffset, *ReadSize);
   return RETURN_SUCCESS;
 }
 

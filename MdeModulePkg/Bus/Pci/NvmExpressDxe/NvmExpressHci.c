@@ -616,7 +616,7 @@ NvmeCreateIoCompletionQueue (
     CrIoCq.Qid   = Index;
     CrIoCq.Qsize = QueueSize;
     CrIoCq.Pc    = 1;
-    CopyMem (&CommandPacket.NvmeCmd->Cdw10, &CrIoCq, sizeof (NVME_ADMIN_CRIOCQ));
+    CopyMem(&CommandPacket.NvmeCmd->Cdw10, &CrIoCq, sizeof (NVME_ADMIN_CRIOCQ));
     CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
     Status = Private->Passthru.PassThru (
@@ -690,7 +690,7 @@ NvmeCreateIoSubmissionQueue (
     CrIoSq.Pc    = 1;
     CrIoSq.Cqid  = Index;
     CrIoSq.Qprio = 0;
-    CopyMem (&CommandPacket.NvmeCmd->Cdw10, &CrIoSq, sizeof (NVME_ADMIN_CRIOSQ));
+    CopyMem(&CommandPacket.NvmeCmd->Cdw10, &CrIoSq, sizeof (NVME_ADMIN_CRIOSQ));
     CommandPacket.NvmeCmd->Flags = CDW10_VALID | CDW11_VALID;
 
     Status = Private->Passthru.PassThru (
@@ -921,9 +921,9 @@ NvmeControllerInit (
   //
   // Dump NvmExpress Identify Controller Data
   //
-  CopyMem (Sn, Private->ControllerData->Sn, sizeof (Private->ControllerData->Sn));
+  CopyMem(Sn, Private->ControllerData->Sn, sizeof (Private->ControllerData->Sn));
   Sn[20] = 0;
-  CopyMem (Mn, Private->ControllerData->Mn, sizeof (Private->ControllerData->Mn));
+  CopyMem(Mn, Private->ControllerData->Mn, sizeof (Private->ControllerData->Mn));
   Mn[40] = 0;
   DEBUG ((EFI_D_INFO, " == NVME IDENTIFY CONTROLLER DATA ==\n"));
   DEBUG ((EFI_D_INFO, "    PCI VID   : 0x%x\n", Private->ControllerData->Vid));

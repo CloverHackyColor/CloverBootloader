@@ -258,7 +258,7 @@ SmmCopyMemToSmram (
     DEBUG ((EFI_D_ERROR, "SmmCopyMemToSmram: Security Violation: Source (0x%x), Length (0x%x)\n", SourceBuffer, Length));
     return EFI_SECURITY_VIOLATION;
   }
-  CopyMem (DestinationBuffer, SourceBuffer, Length);
+  CopyMem(DestinationBuffer, SourceBuffer, Length);
   return EFI_SUCCESS;
 }
 
@@ -291,7 +291,7 @@ SmmCopyMemFromSmram (
     DEBUG ((EFI_D_ERROR, "SmmCopyMemFromSmram: Security Violation: Destination (0x%x), Length (0x%x)\n", DestinationBuffer, Length));
     return EFI_SECURITY_VIOLATION;
   }
-  CopyMem (DestinationBuffer, SourceBuffer, Length);
+  CopyMem(DestinationBuffer, SourceBuffer, Length);
   return EFI_SUCCESS;
 }
 
@@ -315,7 +315,7 @@ SmmCopyMemFromSmram (
 **/
 EFI_STATUS
 EFIAPI
-SmmCopyMem (
+SmmCopyMem(
   OUT VOID       *DestinationBuffer,
   IN CONST VOID  *SourceBuffer,
   IN UINTN       Length
@@ -329,7 +329,7 @@ SmmCopyMem (
     DEBUG ((EFI_D_ERROR, "SmmCopyMem: Security Violation: Source (0x%x), Length (0x%x)\n", SourceBuffer, Length));
     return EFI_SECURITY_VIOLATION;
   }
-  CopyMem (DestinationBuffer, SourceBuffer, Length);
+  CopyMem(DestinationBuffer, SourceBuffer, Length);
   return EFI_SUCCESS;
 }
 
@@ -351,7 +351,7 @@ SmmCopyMem (
 **/
 EFI_STATUS
 EFIAPI
-SmmSetMem (
+SmmSetMem(
   OUT VOID  *Buffer,
   IN UINTN  Length,
   IN UINT8  Value
@@ -361,7 +361,7 @@ SmmSetMem (
     DEBUG ((EFI_D_ERROR, "SmmSetMem: Security Violation: Source (0x%x), Length (0x%x)\n", Buffer, Length));
     return EFI_SECURITY_VIOLATION;
   }
-  SetMem (Buffer, Length, Value);
+  SetMem(Buffer, Length, Value);
   return EFI_SUCCESS;
 }
 
@@ -408,7 +408,7 @@ SmmMemLibInternalGetGcdMemoryMap (
         (MemSpaceMap[Index].Capabilities & (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED | EFI_MEMORY_TESTED)) ==
           (EFI_MEMORY_PRESENT | EFI_MEMORY_INITIALIZED)
           ) {
-      CopyMem (
+      CopyMem(
         &mSmmMemLibGcdMemSpace[mSmmMemLibGcdMemNumberOfDesc],
         &MemSpaceMap[Index],
         sizeof(EFI_GCD_MEMORY_SPACE_DESCRIPTOR)
@@ -527,7 +527,7 @@ SmmLibInternalEndOfDxeNotify (
     case EfiRuntimeServicesCode:
     case EfiRuntimeServicesData:
     case EfiACPIMemoryNVS:
-      CopyMem (mMemoryMap, MemoryMap, DescriptorSize);
+      CopyMem(mMemoryMap, MemoryMap, DescriptorSize);
       mMemoryMap = NEXT_MEMORY_DESCRIPTOR(mMemoryMap, DescriptorSize);
       break;
     }

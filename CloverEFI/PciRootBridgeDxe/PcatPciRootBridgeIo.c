@@ -71,7 +71,7 @@ PcatRootBridgeIoMemWrite (
 
 EFI_STATUS
 EFIAPI
-PcatRootBridgeIoCopyMem (
+PcatRootBridgeIoCopyMem(
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
   IN UINT64                                 DestAddress,
@@ -474,7 +474,7 @@ PcatRootBridgeIoMemWrite (
 
 EFI_STATUS
 EFIAPI
-PcatRootBridgeIoCopyMem (
+PcatRootBridgeIoCopyMem(
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL        *This,
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH  Width,
   IN UINT64                                 DestAddress,
@@ -679,7 +679,7 @@ PcatRootBridgeIoMap (
     // so the Bus Master can read the contents of the real buffer.
     //
     if (Operation == EfiPciOperationBusMasterRead || Operation == EfiPciOperationBusMasterRead64) {
-      CopyMem (
+      CopyMem(
         (VOID *)(UINTN)MapInfo->MappedHostAddress, 
         (VOID *)(UINTN)MapInfo->HostAddress,
         MapInfo->NumberOfBytes
@@ -769,7 +769,7 @@ PcatRootBridgeIoUnmap (
     // so the processor can read the contents of the real buffer.
     //
     if (MapInfo->Operation == EfiPciOperationBusMasterWrite || MapInfo->Operation == EfiPciOperationBusMasterWrite64) {
-      CopyMem (
+      CopyMem(
         (VOID *)(UINTN)MapInfo->HostAddress, 
         (VOID *)(UINTN)MapInfo->MappedHostAddress,
         MapInfo->NumberOfBytes

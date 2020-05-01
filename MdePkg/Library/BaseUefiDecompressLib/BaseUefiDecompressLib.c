@@ -343,7 +343,7 @@ ReadPTLen (
 
     SetMem16 (&Sd->mPTTable[0] , sizeof (Sd->mPTTable), CharC);
 
-    SetMem (Sd->mPTLen, nn, 0);
+    SetMem(Sd->mPTLen, nn, 0);
 
     return 0;
   }
@@ -419,7 +419,7 @@ ReadCLen (
     //
     CharC = (UINT16) GetBits (Sd, CBIT);
 
-    SetMem (Sd->mCLen, NC, 0);
+    SetMem(Sd->mCLen, NC, 0);
     SetMem16 (&Sd->mCTable[0], sizeof (Sd->mCTable), CharC);
 
     return ;
@@ -469,7 +469,7 @@ ReadCLen (
     }
   }
 
-  SetMem (Sd->mCLen + Index, NC - Index, 0);
+  SetMem(Sd->mCLen + Index, NC - Index, 0);
 
   MakeTable (Sd, NC, Sd->mCLen, 12, Sd->mCTable);
 
@@ -777,7 +777,7 @@ UefiTianoDecompress (
   }
 
   Src = Src + 8;
-  SetMem (Sd, sizeof (SCRATCH_DATA), 0);
+  SetMem(Sd, sizeof (SCRATCH_DATA), 0);
 
   //
   // The length of the field 'Position Set Code Length Array Size' in Block Header.

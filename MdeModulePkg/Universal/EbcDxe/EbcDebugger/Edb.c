@@ -75,7 +75,7 @@ EdbClearAllBreakpoint (
   //
   for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++) {
     if (DebuggerPrivate->DebuggerBreakpointContext[Index].State) {
-      CopyMem (
+      CopyMem(
         (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress,
         &DebuggerPrivate->DebuggerBreakpointContext[Index].OldInstruction,
         sizeof(UINT16)
@@ -118,7 +118,7 @@ EdbSetAllBreakpoint (
   Data16 = 0x0300;
   for (Index = 0; (Index < DebuggerPrivate->DebuggerBreakpointCount) && (Index < EFI_DEBUGGER_BREAKPOINT_MAX); Index++) {
     if (DebuggerPrivate->DebuggerBreakpointContext[Index].State) {
-      CopyMem (
+      CopyMem(
         (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[Index].BreakpointAddress,
         &Data16,
         sizeof(UINT16)
@@ -131,7 +131,7 @@ EdbSetAllBreakpoint (
   // If so, we need to patch memory back to let user see the real memory.
   //
   if (DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].BreakpointAddress != 0) {
-    CopyMem (
+    CopyMem(
       (VOID *)(UINTN)DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].BreakpointAddress,
       &DebuggerPrivate->DebuggerBreakpointContext[EFI_DEBUGGER_BREAKPOINT_MAX].OldInstruction,
       sizeof(UINT16)

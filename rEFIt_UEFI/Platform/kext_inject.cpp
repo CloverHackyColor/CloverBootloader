@@ -18,8 +18,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(entry, ...)    if ((entry != NULL) && (entry->KernelAndKextPatches != NULL) && entry->KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
-
+//
 #define OLD_EXTRA_KEXT_PATCH 1
 
 ////////////////////
@@ -126,10 +125,10 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
     return inject;
 }
 
-extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
-extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
+//extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
+//extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
-EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
+EFI_STATUS EFIAPI LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext_v)
 {
   EFI_STATUS  Status;
   UINT8*      infoDictBuffer = NULL;
@@ -146,6 +145,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
   BOOLEAN     NoContents = FALSE;
   BOOLEAN     inject = FALSE;
   _BooterKextFileInfo *infoAddr = NULL;
+  _DeviceTreeBuffer *kext = (_DeviceTreeBuffer *)kext_v;
 
   TempName = PoolPrint(L"%s\\%s", FileName, L"Contents\\Info.plist");
   // snwprintf(TempName, 512, L"%s\\%s", FileName, "Contents\\Info.plist");
@@ -169,7 +169,7 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
     return EFI_NOT_FOUND;
   }
     
-  inject = checkOSBundleRequired(Entry->LoaderType, dict);
+  inject = checkOSBundleRequired(LoaderType, dict);
   if(!inject) {
       MsgLog("Skipping kext injection by OSBundleRequired : %ls\n", FileName);
       return EFI_UNSUPPORTED;
@@ -225,14 +225,14 @@ EFI_STATUS EFIAPI LoadKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI AddKext(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
+EFI_STATUS EFIAPI LOADER_ENTRY::AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
 {
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
 
   KextEntry = (__typeof__(KextEntry))AllocatePool (sizeof(KEXT_ENTRY));
   KextEntry->Signature = KEXT_SIGNATURE;
-  Status = LoadKext(Entry, RootDir, FileName, archCpuType, &KextEntry->kext);
+  Status = LoadKext(RootDir, FileName, archCpuType, &KextEntry->kext);
   if(EFI_ERROR(Status)) {
     FreePool(KextEntry);
   } else {
@@ -275,12 +275,12 @@ UINT32 GetKextsSize()
   return kextsSize;
 }
 
-VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
+VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
 {
    REFIT_DIR_ITER          PlugInIter;
    EFI_FILE_INFO           *PlugInFile;
    CHAR16                  *FileName;
-   if ((Entry == NULL) || (RootDir == NULL) || (DirName == NULL)) {
+   if ((RootDir == NULL) || (DirName == NULL)) {
       return;
    }
    DirIterOpen(RootDir, DirName, &PlugInIter);
@@ -290,13 +290,13 @@ VOID LoadPlugInKexts(IN LOADER_ENTRY *Entry, IN EFI_FILE *RootDir, IN CHAR16 *Di
      FileName = PoolPrint(L"%s\\%s", DirName, PlugInFile->FileName);
      //     snwprintf(FileName, 512, "%s\\%s", DirName, PlugInFile->FileName);
      MsgLog("    %ls PlugIn kext: %ls\n", Force ? L"Force" : L"Extra", FileName);
-     AddKext(Entry, RootDir, FileName, archCpuType);
+     AddKext( RootDir, FileName, archCpuType);
      FreePool(FileName);
    }
    DirIterClose(&PlugInIter);
 }
 
-VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*, CHAR16 *UniSysVers*/, cpu_type_t archCpuType)
+VOID LOADER_ENTRY::AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t archCpuType)
 {
   CHAR16                  *FileName;
   CHAR16                  *PlugInName;
@@ -314,7 +314,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
         MsgLog("->Extra kext: %ls (v.%ls)\n", FileName, CurrentKext->Version);
-        Status = AddKext(Entry, SelfVolume->RootDir, FileName, archCpuType);
+        Status = AddKext(SelfVolume->RootDir, FileName, archCpuType);
         if(!EFI_ERROR(Status)) {
           // decide which plugins to inject
           CurrentPlugInKext = CurrentKext->PlugInList;
@@ -324,7 +324,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
             if (!(CurrentPlugInKext->MenuItem.BValue)) {
               // inject PlugIn require
               MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
-              AddKext(Entry, SelfVolume->RootDir, PlugInName, archCpuType);
+              AddKext(SelfVolume->RootDir, PlugInName, archCpuType);
             } else {
               MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
             }
@@ -345,7 +345,7 @@ VOID AddKexts(IN LOADER_ENTRY *Entry, CONST CHAR16 *SrcDir, CONST CHAR16 *Path/*
 
 }
 
-EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
+EFI_STATUS LOADER_ENTRY::LoadKexts()
 {
   CHAR16                  *SrcDir = NULL;
   REFIT_DIR_ITER          PlugInIter;
@@ -368,21 +368,17 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   SIDELOAD_KEXT           *CurrentPlugInKext = NULL;
   SIDELOAD_KEXT           *Next = NULL;
 
-  if (Entry == 0)/* || OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS) */ {
-    return EFI_NOT_STARTED;
-  }
-
   // Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
-  if (Entry->LoadOptions.notEmpty()) {
-//    for (Ptr = StrStr(Entry->LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
+  if (LoadOptions.notEmpty()) {
+//    for (Ptr = StrStr(LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
   }
 
   if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
     archCpuType = CPU_TYPE_X86_64;
   } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
     archCpuType = CPU_TYPE_I386;
-  } else if (Entry->OSVersion != NULL) {
-    UINT64 os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  } else if (OSVersion != NULL) {
+    UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
     if (os_version >= AsciiOSVersionToUint64("10.8")) {
       archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
     } else if (os_version < AsciiOSVersionToUint64("10.7")) {
@@ -391,35 +387,35 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   }
 
   // Force kexts to load
-  if ((Entry->KernelAndKextPatches != NULL) &&
-      (Entry->KernelAndKextPatches->NrForceKexts > 0) &&
-      (Entry->KernelAndKextPatches->ForceKexts != NULL)) {
+  if ((KernelAndKextPatches != NULL) &&
+      (KernelAndKextPatches->NrForceKexts > 0) &&
+      (KernelAndKextPatches->ForceKexts != NULL)) {
     INT32 i = 0;
-    for (; i < Entry->KernelAndKextPatches->NrForceKexts; ++i) {
-      MsgLog("  Force kext: %ls\n", Entry->KernelAndKextPatches->ForceKexts[i]);
-      if (Entry->Volume && Entry->Volume->RootDir) {
+    for (; i < KernelAndKextPatches->NrForceKexts; ++i) {
+      MsgLog("  Force kext: %ls\n", KernelAndKextPatches->ForceKexts[i]);
+      if (Volume && Volume->RootDir) {
         // Check if the entry is a directory
-        if (StrStr(Entry->KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
-          DirIterOpen(Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], &PlugInIter);
+        if (StrStr(KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
+          DirIterOpen(Volume->RootDir, KernelAndKextPatches->ForceKexts[i], &PlugInIter);
           while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
             if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
               continue;   // skip this
-            FileName = PoolPrint(L"%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
-            //    snwprintf(FileName, 512, "%s\\%s", Entry->KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+            FileName = PoolPrint(L"%s\\%s", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+            //    snwprintf(FileName, 512, "%s\\%s", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
             MsgLog("  Force kext: %ls\n", FileName);
-            AddKext(Entry, Entry->Volume->RootDir, FileName, archCpuType);
+            AddKext( Volume->RootDir, FileName, archCpuType);
             PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", FileName);
             //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", FileName);
-            LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
+            LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
             FreePool(FileName);
             FreePool(PlugIns);
           }
           DirIterClose(&PlugInIter);
         } else {
-          AddKext(Entry, Entry->Volume->RootDir, Entry->KernelAndKextPatches->ForceKexts[i], archCpuType);
-          PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", Entry->KernelAndKextPatches->ForceKexts[i]);
-          //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", Entry->KernelAndKextPatches->ForceKexts[i]);
-          LoadPlugInKexts(Entry, Entry->Volume->RootDir, PlugIns, archCpuType, TRUE);
+          AddKext( Volume->RootDir, KernelAndKextPatches->ForceKexts[i], archCpuType);
+          PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
+          //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
+          LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
           FreePool(PlugIns);
         }
       }
@@ -427,18 +423,18 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   }
 
   CHAR16 UniOSVersion[16];
-  AsciiStrToUnicodeStrS(Entry->OSVersion, UniOSVersion, 16);
+  AsciiStrToUnicodeStrS(OSVersion, UniOSVersion, 16);
   DBG("UniOSVersion == %ls\n", UniOSVersion);
 
   CHAR16 UniShortOSVersion[6];
   CHAR8  ShortOSVersion[6];
-  if (AsciiOSVersionToUint64(Entry->OSVersion) < AsciiOSVersionToUint64("10.10")) {
+  if (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.10")) {
     // OSVersion that are earlier than 10.10(form: 10.x.y)
-    AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 4);
-    AsciiStrToUnicodeStrS(Entry->OSVersion, UniShortOSVersion, 5);
+    AsciiStrnCpyS(ShortOSVersion, 6, OSVersion, 4);
+    AsciiStrToUnicodeStrS(OSVersion, UniShortOSVersion, 5);
   } else {
-    AsciiStrnCpyS(ShortOSVersion, 6, Entry->OSVersion, 5);
-    AsciiStrToUnicodeStrS(Entry->OSVersion, UniShortOSVersion, 6);
+    AsciiStrnCpyS(ShortOSVersion, 6, OSVersion, 5);
+    AsciiStrToUnicodeStrS(OSVersion, UniShortOSVersion, 6);
   }
   DBG("ShortOSVersion == %s\n", ShortOSVersion);
   DBG("UniShortOSVersion == %ls\n", UniShortOSVersion);
@@ -446,14 +442,14 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
   if ((SrcDir = GetOtherKextsDir(TRUE)) != NULL) {
-    AddKexts(Entry, SrcDir, L"Other", archCpuType);
+    AddKexts(SrcDir, L"Other", archCpuType);
     FreePool(SrcDir);
   } else {
     DBG("GetOtherKextsDir(TRUE) return NULL\n");
   }
     // slice: CLOVER/kexts/Off keep disabled kext which can be allowed
   if ((SrcDir = GetOtherKextsDir(FALSE)) != NULL) {
-    AddKexts(Entry, SrcDir, L"Off", archCpuType);
+    AddKexts(SrcDir, L"Off", archCpuType);
     FreePool(SrcDir);
   } else {
     DBG("GetOtherKextsDir(FALSE) return NULL\n");
@@ -468,13 +464,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     CHAR16 *DirPath;
     OSAllVersionKextsDir = PoolPrint(L"%s\\kexts\\10", OEMPath);
     // snwprintf(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), "%s\\kexts\\10", OEMPath);
-    AddKexts(Entry, OSAllVersionKextsDir, L"10", archCpuType);
+    AddKexts(OSAllVersionKextsDir, L"10", archCpuType);
     FreePool(OSAllVersionKextsDir);
 
-    if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
       DirName = PoolPrint(L"10_install");
       // snwprintf(DirName, sizeof(DirName), "10_install");
-    } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
       DirName = PoolPrint(L"10_recovery");
       // snwprintf(DirName, sizeof(DirName), "10_recovery");
     } else {
@@ -483,7 +479,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
-    AddKexts(Entry, DirPath, DirName, archCpuType);
+    AddKexts( DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
 
@@ -492,13 +488,13 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 
     OSShortVersionKextsDir = PoolPrint(L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
     // snwprintf(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), "%s\\kexts\\%s", OEMPath, UniShortOSVersion);
-    AddKexts(Entry, OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
+    AddKexts( OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
     FreePool(OSShortVersionKextsDir);
 
-    if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
       DirName = PoolPrint(L"%s_install", UniShortOSVersion);
       // snwprintf(DirName, sizeof(DirName), "%s_install", UniShortOSVersion);
-    } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
       DirName = PoolPrint(L"%s_recovery", UniShortOSVersion);
       // snwprintf(DirName, sizeof(DirName), "%s_recovery", UniShortOSVersion);
     } else {
@@ -507,7 +503,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
-    AddKexts(Entry, DirPath, DirName, archCpuType);
+    AddKexts( DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
 
@@ -516,23 +512,23 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     // 10.{version}.0 if NO minor version
     // 10.{version}.{minor version} if minor version is > 0
 
-    if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
-      OSVersionKextsDirName = PoolPrint(L"%a.0", Entry->OSVersion);
-      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a.0", Entry->OSVersion);
+    if ( AsciiStrCmp(ShortOSVersion, OSVersion) == 0 ) {
+      OSVersionKextsDirName = PoolPrint(L"%a.0", OSVersion);
+      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a.0", OSVersion);
     } else {
-      OSVersionKextsDirName = PoolPrint(L"%a", Entry->OSVersion);
-      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a", Entry->OSVersion);
+      OSVersionKextsDirName = PoolPrint(L"%a", OSVersion);
+      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a", OSVersion);
     }
 
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
-    AddKexts(Entry, DirPath, OSVersionKextsDirName, archCpuType);
+    AddKexts( DirPath, OSVersionKextsDirName, archCpuType);
     FreePool(DirPath);
 
-    if ( OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+    if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
       DirName = PoolPrint(L"%s_install", OSVersionKextsDirName);
       // snwprintf(DirName, sizeof(DirName), "%s_install", OSVersionKextsDirName);
-    } else if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
       DirName = PoolPrint(L"%s_recovery", OSVersionKextsDirName);
       // snwprintf(DirName, sizeof(DirName), "%s_recovery", OSVersionKextsDirName);
     } else {
@@ -541,7 +537,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
     }
     DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
-    AddKexts(Entry, DirPath, DirName, archCpuType);
+    AddKexts( DirPath, DirName, archCpuType);
     FreePool(DirPath);
     FreePool(DirName);
     FreePool(OSVersionKextsDirName);
@@ -654,7 +650,7 @@ typedef struct {
 #define MKEXT_SIGNATURE 0x58534f4d
 #define MKEXT_VERSION_1 0x00800001
 
-int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr)
+int LOADER_ENTRY::is_mkext_v1(UINT8* drvPtr)
 {
   _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
   MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)(dtb->paddr);
@@ -662,13 +658,13 @@ int is_mkext_v1(LOADER_ENTRY *Entry, UINT8* drvPtr)
   if (mkext_ptr->Magic == MKEXT_MAGIC
    && mkext_ptr->Signature == MKEXT_SIGNATURE
    && mkext_ptr->Version == MKEXT_VERSION_1) {
-    DBG_RT(Entry, "MKext_v1 found at paddr=0x%08x, length=0x%08x\n", dtb->paddr, dtb->length);
+    DBG_RT("MKext_v1 found at paddr=0x%08x, length=0x%08x\n", dtb->paddr, dtb->length);
     return 1;
   }
   return 0;
 }
 
-void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr)
+void LOADER_ENTRY::patch_mkext_v1(UINT8 *drvPtr)
 {
   _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
   MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)dtb->paddr;
@@ -734,7 +730,7 @@ void patch_mkext_v1(LOADER_ENTRY *Entry, UINT8 *drvPtr)
 ////////////////////
 // OnExitBootServices
 ////////////////////
-EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength, LOADER_ENTRY *Entry)
+EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength)
 {
   UINT8                             *dtEntry = (UINT8*)(UINTN) deviceTreeP;
   UINTN                             dtLen = (UINTN) *deviceTreeLength;
@@ -761,16 +757,16 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
   UINTN                             Index;
 
 
-  DBG_RT(Entry, "\nInjectKexts: ");
+  DBG_RT("\nInjectKexts: ");
   KextCount = GetKextCount();
   if (KextCount == 0) {
-    DBG_RT(Entry, "no kexts to inject.\nPausing 5 secs ...\n");
-    if (Entry->KernelAndKextPatches->KPDebug) {
+    DBG_RT("no kexts to inject.\nPausing 5 secs ...\n");
+    if (KernelAndKextPatches->KPDebug) {
       gBS->Stall(5000000);
     }
     return EFI_NOT_FOUND;
   }
-  DBG_RT(Entry, "%d kexts ...\n", KextCount);
+  DBG_RT("%d kexts ...\n", KextCount);
 
   // kextsBase = Desc->PhysicalStart + (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
   // kextsPages = EFI_SIZE_TO_PAGES(kext.length);
@@ -849,24 +845,23 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 
       drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
       KextBase = RoundPage(KextBase + KextEntry->kext.length);
-		DBG_RT(Entry, " %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+		DBG_RT(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
       if (gSettings.KextPatchesAllowed) {
         INT32  i;
         CHAR8  SavedValue;
         CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
         SavedValue = InfoPlist[drvinfo->infoDictLength];
         InfoPlist[drvinfo->infoDictLength] = '\0';
-        KernelAndKextPatcherInit(Entry);
-        for (i = 0; i < Entry->KernelAndKextPatches->NrKexts; i++) {
-          if ((Entry->KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
-              (AsciiStrStr(InfoPlist, Entry->KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
+        KernelAndKextPatcherInit();
+        for (i = 0; i < KernelAndKextPatches->NrKexts; i++) {
+          if ((KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
+              (AsciiStrStr(InfoPlist, KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
             AnyKextPatch(
                          (UINT8*)(UINTN)drvinfo->executablePhysAddr,
                          drvinfo->executableLength,
                          InfoPlist,
                          drvinfo->infoDictLength,
-                         i,
-                         Entry
+                         i
                          );
           }
         }
@@ -876,10 +871,8 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
     }
   }
 
-  if (Entry->KernelAndKextPatches->KPDebug) {
-    DBG_RT(Entry, "Done.\n");
-    gBS->Stall(5000000);
-  }
+  DBG_RT("Done.\n");
+  Stall(5000000);
   return EFI_SUCCESS;
 }
 
@@ -918,7 +911,7 @@ UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0
 //
 
 
-VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
+VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 {
   UINTN   Num = 0;
   UINTN   NumSnow_i386_EXT   = 0;
@@ -928,7 +921,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   UINT32  patchLocation2 = 0, patchLocation3 = 0;
   UINT32  i, y;
 
-  DBG_RT(Entry, "\nPatching kernel for injected kexts...\n");
+  DBG_RT("\nPatching kernel for injected kexts...\n");
 
   if (is64BitKernel) {
     NumSnow_X64_EXT  = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64));
@@ -950,10 +943,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
   if (is64BitKernel) {
     if (NumSnow_X64_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
-		DBG_RT(Entry, "==> kernel Snow Leopard X64: %llu replaces done.\n", Num);
+		DBG_RT("==> kernel Snow Leopard X64: %llu replaces done.\n", Num);
     } else if (NumLion_X64_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
-		DBG_RT(Entry, "==> kernel Lion X64: %llu replaces done.\n", Num);
+		DBG_RT("==> kernel Lion X64: %llu replaces done.\n", Num);
     } else {
       // EXT - load extra kexts besides kernelcache.
 #if OLD_EXTRA_KEXT_PATCH
@@ -963,14 +956,14 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
         if (Kernel[i+0] == 0x01 && Kernel[i+1] == 0x00 && Kernel[i+2] == 0x31 &&
             Kernel[i+3] == 0xFF && Kernel[i+4] == 0xBE && Kernel[i+5] == 0x14 &&
             Kernel[i+6] == 0x00 && Kernel[i+7] == 0x05) {
-          DBG_RT(Entry, "==> found EXT Base (10.8 - recent macOS)\n");
+          DBG_RT("==> found EXT Base (10.8 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // E8 XX 00 00 00 EB XX XX
             if (Kernel[y+0] == 0xE8 && Kernel[y+2] == 0x00 && Kernel[y+3] == 0x00 &&
                 Kernel[y+4] == 0x00 && Kernel[y+5] == 0xEB) {
                 //(Kernel[y+7] == 0x48 || Kernel[y+7] == 0xE8)) { // 48:10.8-10.9/E8:10.10+
               patchLocation1 = y;
-              DBG_RT(Entry, "==> found EXT (10.8 - recent macOS) at 0x%08x\n", patchLocation1);
+              DBG_RT("==> found EXT (10.8 - recent macOS) at 0x%08x\n", patchLocation1);
               break;
             }
           }
@@ -979,12 +972,12 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       }
             
       if (!patchLocation1) {
-        DBG_RT(Entry, "==> can't find EXT (10.8 - recent macOS), kernel patch aborted.\n");
+        DBG_RT("==> can't find EXT (10.8 - recent macOS), kernel patch aborted.\n");
         gBS->Stall(3000000);
       }
             
       if (patchLocation1) {
-        DBG_RT(Entry, "==> patched EXT (10.8 - recent macOS)\n");
+        DBG_RT("==> patched EXT (10.8 - recent macOS) location=%x\n", patchLocation1);
         for (i = 5; i < 7; i++) {
           // E8 XX 00 00 00 EB XX XX
           // E8 XX 00 00 00 90 90 XX
@@ -996,46 +989,61 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       UINTN procLocation = searchProc(Kernel, "readStartupExtensions", &procLen);
       UINT8 findJmp[] = {0xEB, 0x05};
       UINT8 patchJmp[] = {0x90, 0x90};
-      if (!SearchAndReplace(Kernel + procLocation, 0x100, findJmp, 2, patchJmp, 1)) {
-        DBG_RT(Entry, "load kexts not patched\n");
+      DBG_RT("==> procLocation=%llx\n", procLocation);
+      if (!SearchAndReplace(&Kernel[procLocation], 0x100, findJmp, 2, patchJmp, 1)) {
+        DBG_RT("load kexts not patched\n");
+      } else {
+        DBG_RT("load kexts patched\n");
       }
+      Stall(9000000);
 #endif
       // SIP - bypass kext check by System Integrity Protection.
+      //TODO - what is this???
+      //the pattern found in  __ZN6OSKext14loadExecutableEv:        // OSKext::loadExecutable()
+//    iMac2017:Catalina sergey$ ./FindMask kernel -p loadExecutable -e 1000 -f 488500740048000048,FFFF00FF00FF0000FF
+//      descending
+//      procedure at 7a1ed0, len = ffffffffffff4b50
+//      proclen=4096, end=4096 startLen=0
+//      found start at 0x7a1ed0
+//      found pattern: 1
+//    address: 007a29b7
+//    bytes:4885c074224889c348
+
       for (i = 0; i < 0x1000000; i++) {
         // 45 31 FF 41 XX 01 00 00 DC 48
         if (Kernel[i+0] == 0x45 && Kernel[i+1] == 0x31 && Kernel[i+3] == 0x41 &&
             //(Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) && // BF:10.11/BE:10.12+
             Kernel[i+5] == 0x01 && Kernel[i+6] == 0x00 && Kernel[i+7] == 0x00 &&
             Kernel[i+8] == 0xDC && Kernel[i+9] == 0x48) {
-          DBG_RT(Entry, "==> found SIP Base (10.11 - recent macOS)\n");
-          for (y = i; y < 0x1000000; y++) {
+          DBG_RT("==> found SIP Base (10.11 - recent macOS)\n");
+          for (y = i; y < 0x2000; y++) {
             // 48 85 XX 74 XX 48 XX XX 48
             if (Kernel[y+0] == 0x48 && Kernel[y+1] == 0x85 && Kernel[y+3] == 0x74 &&
                 Kernel[y+5] == 0x48 && Kernel[y+8] == 0x48) {
               patchLocation2 = y;
-              DBG_RT(Entry, "==> found SIP (10.11 - 10.14) at 0x%08x\n", patchLocation2);
+              DBG_RT("==> found SIP (10.11 - 10.14) at 0x%08x\n", patchLocation2);
               break;
-            // 00 85 C0 0F 84 XX 00 00 00 49
+            // 00 85 C0 0F 84 XX 00 00 00 49  //???? - not found in Catalina
             } else if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x85 && Kernel[y+2] == 0xC0 &&
                        Kernel[y+3] == 0x0F && Kernel[y+4] == 0x84 && Kernel[y+9] == 0x49) {
               patchLocation2 = y;
-              DBG_RT(Entry, "==> found SIP (10.15 - recent macOS) at 0x%08x\n", patchLocation2);
+              DBG_RT("==> found SIP (10.15 - recent macOS) at 0x%08x\n", patchLocation2);
               break;
             }
           }
           break;
         }
       }
-            
+      Stall(9000000);
       if (!patchLocation2) {
-        DBG_RT(Entry, "==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
-        gBS->Stall(3000000);
+        DBG_RT("==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
+        Stall(3000000);
       }
-                
+        //Slice - looks like this patch is wrong for Catalina which kernel I have
       if (patchLocation2) {
         if (Kernel[patchLocation2 + 0] == 0x48 && Kernel[patchLocation2 + 1] == 0x85) {
             Kernel[patchLocation2 + 3] = 0xEB;
-          DBG_RT(Entry, "==> patched SIP (10.11 - 10.14)\n");
+          DBG_RT("==> patched SIP (10.11 - 10.14)\n");
           if (Kernel[patchLocation2 + 4] == 0x6C) {
             // 48 85 XX 74 6C 48 XX XX 48
             // 48 85 XX EB 15 48 XX XX 48
@@ -1047,7 +1055,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
           }
         // PMheart
         } else if (Kernel[patchLocation2 + 0] == 0x00 && Kernel[patchLocation2 + 1] == 0x85) {
-          DBG_RT(Entry, "==> patched SIP (10.15 - recent macOS)\n");
+          DBG_RT("==> patched SIP (10.15 - recent macOS)\n");
           for (i = 3; i < 9; i++) {
             // 00 85 C0 0F 84 XX 00 00 00 49
             // 00 85 C0 90 90 90 90 90 90 49
@@ -1055,7 +1063,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
           }
         }
       }
-            
+      Stall(9000000);
       // KxldUnmap by vit9696
       // Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
       for (i = 0; i < 0x1000000; i++) {
@@ -1072,13 +1080,13 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
             Kernel[i+12] == 0x83 && Kernel[i+13] == 0xEC && Kernel[i+14] == 0x30 &&
             Kernel[i+15] == 0x48 && Kernel[i+16] == 0xC7 && Kernel[i+17] == 0x45 &&
             Kernel[i+18] == 0xB8 && Kernel[i+53] == 0xFF && Kernel[i+64] == 0xFF && Kernel[i+65] == 0xFF) {
-          DBG_RT(Entry, "==> found KxldUnmap Base (10.14 - recent macOS)\n");
+          DBG_RT("==> found KxldUnmap Base (10.14 - recent macOS)\n");
           for (y = i; y < 0x1000000; y++) {
             // 00 0F 85 XX XX 00 00 48
             if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x0F && Kernel[y+2] == 0x85 &&
                 Kernel[y+5] == 0x00 && Kernel[y+6] == 0x00 && Kernel[y+7] == 0x48) {
               patchLocation3 = y;
-              DBG_RT(Entry, "==> found KxldUnmap (10.14 - recent macOS) at 0x%08x\n", patchLocation3);
+              DBG_RT("==> found KxldUnmap (10.14 - recent macOS) at 0x%08x\n", patchLocation3);
               break;
             }
           }
@@ -1087,12 +1095,12 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
       }
             
       if (!patchLocation3) {
-        DBG_RT(Entry, "==> can't find KxldUnmap (10.14 - recent macOS), kernel patch aborted.\n");
-        gBS->Stall(3000000);
+        DBG_RT("==> can't find KxldUnmap (10.14 - recent macOS), kernel patch aborted.\n");
+        Stall(3000000);
       }
 
       if (patchLocation3) {
-        DBG_RT(Entry, "==> patched KxldUnmap (10.14 - recent macOS)\n");
+        DBG_RT("==> patched KxldUnmap (10.14 - recent macOS)\n");
         // 00 0F 85 XX XX 00 00 48
         // 00 90 E9 XX XX 00 00 48
         Kernel[patchLocation3 + 1] = 0x90;
@@ -1103,17 +1111,17 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel, LOADER_ENTRY *Entry)
     // i386
     if (NumSnow_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
-		DBG_RT(Entry, "==> kernel Snow Leopard i386: %llu replaces done.\n", Num);
+		DBG_RT("==> kernel Snow Leopard i386: %llu replaces done.\n", Num);
     } else if (NumLion_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-		DBG_RT(Entry, "==> kernel Lion i386: %llu replaces done.\n", Num);
+		DBG_RT("==> kernel Lion i386: %llu replaces done.\n", Num);
     } else {
-      DBG_RT(Entry, "==> ERROR: NOT patched - unknown kernel.\n");
+      DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
     }
   }
 
-  if (Entry->KernelAndKextPatches->KPDebug) {
-    DBG_RT(Entry, "Pausing 5 secs ...\n");
-    gBS->Stall(5000000);
+  if (KernelAndKextPatches->KPDebug) {
+    DBG_RT("Pausing 5 secs ...\n");
+    Stall(5000000);
   }
 }

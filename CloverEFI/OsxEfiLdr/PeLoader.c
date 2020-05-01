@@ -541,7 +541,7 @@ EfiLdrPeCoffImageRead (
   OUT VOID                *Buffer
   )
 {
-  CopyMem (Buffer, (VOID *)((UINTN)FHand + Offset), ReadSize);
+  CopyMem(Buffer, (VOID *)((UINTN)FHand + Offset), ReadSize);
 
   return EFI_SUCCESS;
 }

@@ -83,11 +83,11 @@ AIKTargetRefresh (
     if (Target->KeyCounters[Index] + AIK_TARGET_FORGET_THRESHOLD <= Target->Counter) {
       Left = Target->NumberOfKeys - (Index + 1);
       if (Left > 0) {
-        CopyMem (
+        CopyMem(
           &Target->KeyCounters[Index],
           &Target->KeyCounters[Index+1],
           sizeof (Target->KeyCounters[0]) * Left);
-        CopyMem (
+        CopyMem(
           &Target->Keys[Index],
           &Target->Keys[Index+1],
           sizeof (Target->Keys[0]) * Left);

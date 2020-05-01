@@ -689,7 +689,7 @@ UsbBootDetectMedia (
 
   Media    = &UsbMass->BlockIoMedia;
 
-  CopyMem (&OldMedia, &(UsbMass->BlockIoMedia), sizeof (EFI_BLOCK_IO_MEDIA));
+  CopyMem(&OldMedia, &(UsbMass->BlockIoMedia), sizeof (EFI_BLOCK_IO_MEDIA));
 
   CmdSet = ((EFI_USB_INTERFACE_DESCRIPTOR *) (UsbMass->Context))->InterfaceSubClass;
 

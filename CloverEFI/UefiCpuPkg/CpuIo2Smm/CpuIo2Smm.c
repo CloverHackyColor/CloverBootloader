@@ -396,7 +396,7 @@ SmmCpuIo2Initialize (
   //
   // Copy the SMM CPU I/O Protocol instance into the System Management System Table
   //
-  CopyMem (&gSmst->SmmIo, &mSmmCpuIo2, sizeof (mSmmCpuIo2));
+  CopyMem(&gSmst->SmmIo, &mSmmCpuIo2, sizeof (mSmmCpuIo2));
 
   //
   // Install the SMM CPU I/O Protocol into the SMM protocol database

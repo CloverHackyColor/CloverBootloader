@@ -920,7 +920,7 @@ EnterCarriageReturn:
       }
 
       UpdateStatusBar (INPUT_ERROR, FALSE);
-      CopyMem (&gUserInput->InputValue, &Question->CurrentValue, sizeof (EFI_HII_VALUE));
+      CopyMem(&gUserInput->InputValue, &Question->CurrentValue, sizeof (EFI_HII_VALUE));
       QuestionValue = &gUserInput->InputValue;
       //
       // Store Edit value back to Question
@@ -1437,7 +1437,7 @@ GetSelectionInputPopUp (
       if (StrLen (StringPtr) > (PopUpWidth - 1)) {
         TempStringPtr = AllocateZeroPool(sizeof (CHAR16) * (PopUpWidth - 1));
         ASSERT ( TempStringPtr != NULL );
-        CopyMem (TempStringPtr, StringPtr, (sizeof (CHAR16) * (PopUpWidth - 5)));
+        CopyMem(TempStringPtr, StringPtr, (sizeof (CHAR16) * (PopUpWidth - 5)));
         FreePool(StringPtr);
         StringPtr = TempStringPtr;
         StrCatS (StringPtr, PopUpWidth - 1, L"...");

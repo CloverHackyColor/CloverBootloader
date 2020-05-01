@@ -330,7 +330,7 @@ WriteBootToOsPerformanceData (
       AsciiStrCpyS (mPerfData.Token, PERF_TOKEN_LENGTH+1, GaugeString);
       mPerfData.Duration = Duration;
 
-      CopyMem (Ptr, &mPerfData, sizeof (PERF_DATA));
+      CopyMem(Ptr, &mPerfData, sizeof (PERF_DATA));
       Ptr += sizeof (PERF_DATA);
 
       mPerfHeader.Count++;
@@ -367,7 +367,7 @@ WriteBootToOsPerformanceData (
 
       mPerfData.Duration = (UINT32) DivU64x32 (Ticker, (UINT32) Freq);
 
-      CopyMem (Ptr, &mPerfData, sizeof (PERF_DATA));
+      CopyMem(Ptr, &mPerfData, sizeof (PERF_DATA));
       Ptr += sizeof (PERF_DATA);
 
       mPerfHeader.Count++;
@@ -388,7 +388,7 @@ Done:
   //
   // Put performance data to Reserved memory
   //
-  CopyMem (
+  CopyMem(
     (UINTN *) (UINTN) mAcpiLowMemoryBase,
     &mPerfHeader,
     sizeof (PERF_HEADER)

@@ -926,7 +926,7 @@ GetMouseState (
   //
   // Retrieve mouse state from USB_MOUSE_DEV, which was filled by OnMouseInterruptComplete()
   //
-  CopyMem (
+  CopyMem(
     MouseState,
     &MouseDev->State,
     sizeof (EFI_SIMPLE_POINTER_STATE)

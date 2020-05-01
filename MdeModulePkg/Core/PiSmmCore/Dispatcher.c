@@ -584,7 +584,7 @@ SmmLoadImage (
     SmmFreePages (DstBuffer, PageCount);
     return Status;
   }
-  CopyMem (DriverEntry->LoadedImage->FilePath, FilePath, GetDevicePathSize (FilePath));
+  CopyMem(DriverEntry->LoadedImage->FilePath, FilePath, GetDevicePathSize (FilePath));
 
   DriverEntry->LoadedImage->ImageBase     = (VOID *)(UINTN) ImageContext.ImageAddress;
   DriverEntry->LoadedImage->ImageSize     = ImageContext.ImageSize;
@@ -603,7 +603,7 @@ SmmLoadImage (
     SmmFreePages (DstBuffer, PageCount);
     return Status;
   }
-  CopyMem (DriverEntry->SmmLoadedImage.FilePath, FilePath, GetDevicePathSize(FilePath));
+  CopyMem(DriverEntry->SmmLoadedImage.FilePath, FilePath, GetDevicePathSize(FilePath));
 
   DriverEntry->SmmLoadedImage.ImageBase = (VOID *)(UINTN) ImageContext.ImageAddress;
   DriverEntry->SmmLoadedImage.ImageSize = ImageContext.ImageSize;
@@ -729,7 +729,7 @@ SmmPreProcessDepex (
   }
 
   if (DriverEntry->Before || DriverEntry->After) {
-    CopyMem (&DriverEntry->BeforeAfterGuid, Iterator + 1, sizeof (EFI_GUID));
+    CopyMem(&DriverEntry->BeforeAfterGuid, Iterator + 1, sizeof (EFI_GUID));
   }
 
   return EFI_SUCCESS;
@@ -1355,7 +1355,7 @@ SmmDriverDispatchHandler (
                               (VOID **)&mSmmCoreLoadedImage->FilePath
                               );
               ASSERT_EFI_ERROR(Status);
-              CopyMem (mSmmCoreLoadedImage->FilePath, &mFvDevicePath, GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
+              CopyMem(mSmmCoreLoadedImage->FilePath, &mFvDevicePath, GetDevicePathSize ((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
 
               mSmmCoreLoadedImage->DeviceHandle = FvHandle;
             }
@@ -1376,7 +1376,7 @@ SmmDriverDispatchHandler (
                          (VOID **)&mSmmCoreDriverEntry->SmmLoadedImage.FilePath
                          );
               ASSERT_EFI_ERROR(Status);
-              CopyMem (mSmmCoreDriverEntry->SmmLoadedImage.FilePath, &mFvDevicePath, GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
+              CopyMem(mSmmCoreDriverEntry->SmmLoadedImage.FilePath, &mFvDevicePath, GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)&mFvDevicePath));
 
               mSmmCoreDriverEntry->SmmLoadedImage.DeviceHandle = FvHandle;
             }

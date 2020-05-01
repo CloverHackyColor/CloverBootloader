@@ -510,7 +510,7 @@ VarCheckLibVariablePropertySet (
   //
   Property = VariablePropertyGetFunction (Name, Guid, FALSE);
   if (Property != NULL) {
-    CopyMem (Property, VariableProperty, sizeof (*VariableProperty));
+    CopyMem(Property, VariableProperty, sizeof (*VariableProperty));
   } else {
     Entry = AllocateRuntimeZeroPool (sizeof (*Entry) + StrSize (Name));
     if (Entry == NULL) {
@@ -519,7 +519,7 @@ VarCheckLibVariablePropertySet (
     VariableName = (CHAR16 *) ((UINTN) Entry + sizeof (*Entry));
     StrCpyS (VariableName, StrSize (Name)/sizeof (CHAR16), Name);
     CopyGuid (&Entry->Guid, Guid);
-    CopyMem (&Entry->VariableProperty, VariableProperty, sizeof (*VariableProperty));
+    CopyMem(&Entry->VariableProperty, VariableProperty, sizeof (*VariableProperty));
 
     Status = VarCheckAddTableEntry(
                (UINTN **) &mVarCheckVariableTable,
@@ -573,7 +573,7 @@ VarCheckLibVariablePropertyGet (
   // if the revision is not VAR_CHECK_VARIABLE_PROPERTY_REVISION.
   //
   if ((Property != NULL) && (Property->Revision == VAR_CHECK_VARIABLE_PROPERTY_REVISION)) {
-    CopyMem (VariableProperty, Property, sizeof (*VariableProperty));
+    CopyMem(VariableProperty, Property, sizeof (*VariableProperty));
     return EFI_SUCCESS;
   }
 

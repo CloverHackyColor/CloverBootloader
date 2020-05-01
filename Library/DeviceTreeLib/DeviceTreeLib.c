@@ -610,7 +610,7 @@ DTDeleteProperty (
           //
           // Delete Property.
           //
-          CopyMem (DeletePosition, DeletePosition + DeleteLength, DeviceTreeEnd - DeletePosition);
+          CopyMem(DeletePosition, DeletePosition + DeleteLength, DeviceTreeEnd - DeletePosition);
           ZeroMem (DeviceTreeEnd - DeleteLength, DeleteLength);
 
           //
@@ -681,13 +681,13 @@ DTInsertProperty (
       //
       // Make space.
       //
-      CopyMem (InsertPosition + sizeof (DTProperty) + EntryLength, InsertPosition, DeviceTreeEnd - InsertPosition);
+      CopyMem(InsertPosition + sizeof (DTProperty) + EntryLength, InsertPosition, DeviceTreeEnd - InsertPosition);
       ZeroMem (InsertPosition, sizeof (DTProperty) + EntryLength);
 
       //
       // Insert Property Name.
       //
-      CopyMem (Property->Name, AddPropertyName, AsciiStrLen(AddPropertyName));
+      CopyMem(Property->Name, AddPropertyName, AsciiStrLen(AddPropertyName));
 
       //
       // Insert Property Value Length.
@@ -697,7 +697,7 @@ DTInsertProperty (
       //
       // Insert Property Value.
       //
-      CopyMem (InsertPosition + sizeof (DTProperty), AddPropertyValue, ValueLength);
+      CopyMem(InsertPosition + sizeof (DTProperty), AddPropertyValue, ValueLength);
 
       //
       // Increment Nodes Properties Count.

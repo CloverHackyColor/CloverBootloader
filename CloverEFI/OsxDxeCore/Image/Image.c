@@ -254,7 +254,7 @@ CoreReadImageFile (
       *ReadSize = 0;
   }
 
-  CopyMem (Buffer, (CHAR8 *)FHand->Source + Offset, *ReadSize);
+  CopyMem(Buffer, (CHAR8 *)FHand->Source + Offset, *ReadSize);
   return EFI_SUCCESS;
 }
 /**
@@ -1805,7 +1805,7 @@ CoreExit (
       Status = EFI_OUT_OF_RESOURCES;
       goto Done;
     }
-    CopyMem (Image->ExitData, ExitData, Image->ExitDataSize);
+    CopyMem(Image->ExitData, ExitData, Image->ExitDataSize);
   }
 
   CoreRestoreTpl (OldTpl);

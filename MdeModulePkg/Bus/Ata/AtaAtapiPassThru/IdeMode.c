@@ -247,7 +247,7 @@ DumpAllIdeRegisters (
     //
     // Dump the content of all ATA registers.
     //
-    CopyMem (AtaStatusBlock, &StatusBlock, sizeof (EFI_ATA_STATUS_BLOCK));
+    CopyMem(AtaStatusBlock, &StatusBlock, sizeof (EFI_ATA_STATUS_BLOCK));
   }
 
   DEBUG_CODE_BEGIN ();
@@ -1826,7 +1826,7 @@ AtaPacketCommandExecute (
   }
 
   ZeroMem (PacketCommand, 12);
-  CopyMem (PacketCommand, Packet->Cdb, Packet->CdbLength);
+  CopyMem(PacketCommand, Packet->Cdb, Packet->CdbLength);
 
   //
   // No OVL; No DMA

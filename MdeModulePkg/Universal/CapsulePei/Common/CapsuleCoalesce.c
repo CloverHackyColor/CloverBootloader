@@ -508,7 +508,7 @@ RelocateBlockDescriptors (
           return NULL;
         }
 
-        CopyMem ((VOID *) RelocBuffer, (VOID *) (UINTN) TempBlockDesc->Union.DataBlock, (UINTN) TempBlockDesc->Length);
+        CopyMem((VOID *) RelocBuffer, (VOID *) (UINTN) TempBlockDesc->Union.DataBlock, (UINTN) TempBlockDesc->Length);
         DEBUG ((DEBUG_INFO, "Capsule relocate descriptors from/to/size  0x%lX 0x%lX 0x%lX\n", TempBlockDesc->Union.DataBlock, (UINT64)(UINTN)RelocBuffer, TempBlockDesc->Length));
         TempBlockDesc->Union.DataBlock = (EFI_PHYSICAL_ADDRESS) (UINTN) RelocBuffer;
       }
@@ -545,7 +545,7 @@ RelocateBlockDescriptors (
       if (RelocBuffer == NULL) {
         return NULL;
       }
-      CopyMem ((VOID *) RelocBuffer, (VOID *) CurrBlockDescHead, BlockListSize);
+      CopyMem((VOID *) RelocBuffer, (VOID *) CurrBlockDescHead, BlockListSize);
       DEBUG ((DEBUG_INFO, "Capsule reloc descriptor block #2\n"));
       //
       // Point the previous block's next point to this copied version. If
@@ -1198,7 +1198,7 @@ CapsuleDataCoalesce (
           return EFI_BUFFER_TOO_SMALL;
         }
 
-        CopyMem ((VOID *) RelocPtr, (VOID *) (UINTN) TempBlockDesc->Union.DataBlock, (UINTN) TempBlockDesc->Length);
+        CopyMem((VOID *) RelocPtr, (VOID *) (UINTN) TempBlockDesc->Union.DataBlock, (UINTN) TempBlockDesc->Length);
         DEBUG ((DEBUG_INFO, "Capsule reloc data block from 0x%8X to 0x%8X with size 0x%8X\n",
                 (UINTN) TempBlockDesc->Union.DataBlock, (UINTN) RelocPtr, (UINTN) TempBlockDesc->Length));
 
@@ -1249,7 +1249,7 @@ CapsuleDataCoalesce (
       //
       ASSERT (CurrentBlockDesc->Length <= SizeLeft);
 
-      CopyMem ((VOID *) DestPtr, (VOID *) (UINTN) (CurrentBlockDesc->Union.DataBlock), (UINTN)CurrentBlockDesc->Length);
+      CopyMem((VOID *) DestPtr, (VOID *) (UINTN) (CurrentBlockDesc->Union.DataBlock), (UINTN)CurrentBlockDesc->Length);
       DEBUG ((DEBUG_INFO, "Capsule coalesce block no.0x%lX from 0x%lX to 0x%lX with size 0x%lX\n",(UINT64)CapsuleTimes,
              CurrentBlockDesc->Union.DataBlock, (UINT64)(UINTN)DestPtr, CurrentBlockDesc->Length));
       DestPtr += CurrentBlockDesc->Length;
@@ -1268,7 +1268,7 @@ CapsuleDataCoalesce (
       //
       ASSERT (CurrentBlockDesc->Length == sizeof (EFI_CAPSULE_PEIM_PRIVATE_DATA));
       ASSERT ((UINTN)DestPtr == (UINTN)NewCapsuleBase);
-      CopyMem ((VOID *) DestPtr, (VOID *) (UINTN) CurrentBlockDesc->Union.DataBlock, (UINTN) CurrentBlockDesc->Length);
+      CopyMem((VOID *) DestPtr, (VOID *) (UINTN) CurrentBlockDesc->Union.DataBlock, (UINTN) CurrentBlockDesc->Length);
       DestPtr += sizeof (EFI_CAPSULE_PEIM_PRIVATE_DATA) + (CapsuleNumber - 1) * sizeof(UINT64);
     }
     //

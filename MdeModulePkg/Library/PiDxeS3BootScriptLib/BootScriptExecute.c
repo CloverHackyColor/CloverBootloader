@@ -391,7 +391,7 @@ BootScriptExecuteIoWrite (
   VOID                      *Buffer;
   EFI_BOOT_SCRIPT_IO_WRITE   IoWrite;
 
-  CopyMem ((VOID*)&IoWrite, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_IO_WRITE));
+  CopyMem((VOID*)&IoWrite, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_IO_WRITE));
   Width = (S3_BOOT_SCRIPT_LIB_WIDTH) IoWrite.Width;
   Address = IoWrite.Address;
   Count = IoWrite.Count;
@@ -876,7 +876,7 @@ BootScriptExecutePciCfgWrite (
   UINTN                             Count;
   EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE  PciCfgWrite;
 
-  CopyMem ((VOID*)&PciCfgWrite, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE));
+  CopyMem((VOID*)&PciCfgWrite, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG_WRITE));
 
   Width   = (S3_BOOT_SCRIPT_LIB_WIDTH)PciCfgWrite.Width;
   Address = PciCfgWrite.Address;
@@ -1040,7 +1040,7 @@ BootScriptExecuteSmbusExecute (
   UINTN                    DataSize;
   EFI_BOOT_SCRIPT_SMBUS_EXECUTE SmbusExecuteEntry;
 
-  CopyMem ((VOID*)&SmbusExecuteEntry, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_SMBUS_EXECUTE ));
+  CopyMem((VOID*)&SmbusExecuteEntry, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_SMBUS_EXECUTE ));
 
   DEBUG ((EFI_D_INFO, "BootScriptExecuteSmbusExecute - 0x%08x, 0x%08x\n", (UINTN)SmbusExecuteEntry.SmBusAddress, (UINTN)SmbusExecuteEntry.Operation));
 
@@ -1067,7 +1067,7 @@ BootScriptExecuteStall (
 {
   EFI_BOOT_SCRIPT_STALL    Stall;
 
-  CopyMem ((VOID*)&Stall, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_STALL));
+  CopyMem((VOID*)&Stall, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_STALL));
 
   DEBUG ((EFI_D_INFO, "BootScriptExecuteStall - 0x%08x\n", (UINTN)Stall.Duration));
 
@@ -1089,7 +1089,7 @@ BootScriptExecuteDispatch (
   DISPATCH_ENTRYPOINT_FUNC  EntryFunc;
   EFI_BOOT_SCRIPT_DISPATCH  ScriptDispatch;
 
-  CopyMem ((VOID*)&ScriptDispatch, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_DISPATCH));
+  CopyMem((VOID*)&ScriptDispatch, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_DISPATCH));
   EntryFunc = (DISPATCH_ENTRYPOINT_FUNC) (UINTN) (ScriptDispatch.EntryPoint);
 
   DEBUG ((EFI_D_INFO, "BootScriptExecuteDispatch - 0x%08x\n", (UINTN)ScriptDispatch.EntryPoint));
@@ -1113,7 +1113,7 @@ BootScriptExecuteDispatch2 (
   DISPATCH_ENTRYPOINT_FUNC  EntryFunc;
   EFI_BOOT_SCRIPT_DISPATCH_2  ScriptDispatch2;
 
-  CopyMem ((VOID*)&ScriptDispatch2, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_DISPATCH_2));
+  CopyMem((VOID*)&ScriptDispatch2, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_DISPATCH_2));
 
   DEBUG ((EFI_D_INFO, "BootScriptExecuteDispatch2 - 0x%08x(0x%08x)\n", (UINTN)ScriptDispatch2.EntryPoint, (UINTN)ScriptDispatch2.Context));
 
@@ -1147,7 +1147,7 @@ BootScriptExecuteMemPoll (
   EFI_STATUS    Status;
   EFI_BOOT_SCRIPT_MEM_POLL       MemPoll;
 
-  CopyMem ((VOID*)&MemPoll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_MEM_POLL));
+  CopyMem((VOID*)&MemPoll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_MEM_POLL));
 
   DEBUG ((EFI_D_INFO, "BootScriptExecuteMemPoll - 0x%08x, 0x%016lx, 0x%016lx\n", (UINTN)MemPoll.Address, AndMask, OrMask));
 
@@ -1200,7 +1200,7 @@ BootScriptExecuteInformation (
   EFI_BOOT_SCRIPT_INFORMATION   Information;
   UINT8                         *InformationData;
 
-  CopyMem ((VOID*)&Information, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_INFORMATION));
+  CopyMem((VOID*)&Information, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_INFORMATION));
 
   InformationData = Script + sizeof (EFI_BOOT_SCRIPT_INFORMATION);
   DEBUG ((EFI_D_INFO, "BootScriptExecuteInformation - 0x%08x\n", (UINTN) InformationData));
@@ -1228,7 +1228,7 @@ BootScriptExecuteLabel (
   EFI_BOOT_SCRIPT_INFORMATION   Information;
   UINT8                         *InformationData;
 
-  CopyMem ((VOID*)&Information, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_INFORMATION));
+  CopyMem((VOID*)&Information, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_INFORMATION));
 
   InformationData = Script + sizeof (EFI_BOOT_SCRIPT_INFORMATION);
   DEBUG ((EFI_D_INFO, "BootScriptExecuteLabel - 0x%08x\n", (UINTN) InformationData));
@@ -1347,7 +1347,7 @@ BootScriptExecuteIoPoll (
   UINT64        LoopTimes;
   EFI_BOOT_SCRIPT_IO_POLL       IoPoll;
 
-  CopyMem ((VOID*)&IoPoll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_IO_POLL));
+  CopyMem((VOID*)&IoPoll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_IO_POLL));
 
   DEBUG ((EFI_D_INFO, "BootScriptExecuteIoPoll - 0x%08x, 0x%016lx, 0x%016lx\n", (UINTN)IoPoll.Address, AndMask, OrMask));
 
@@ -1401,7 +1401,7 @@ BootScriptExecutePciCfg2Write (
   UINTN                             Count;
   EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE PciCfg2Write;
 
-  CopyMem ((VOID*)&PciCfg2Write, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE));
+  CopyMem((VOID*)&PciCfg2Write, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG2_WRITE));
 
   Width   = (S3_BOOT_SCRIPT_LIB_WIDTH)PciCfg2Write.Width;
   Segment = PciCfg2Write.Segment;
@@ -1437,7 +1437,7 @@ BootScriptExecutePciCfg2ReadWrite (
 
   Data = 0;
 
-  CopyMem ((VOID*)&PciCfg2ReadWrite, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE));
+  CopyMem((VOID*)&PciCfg2ReadWrite, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG2_READ_WRITE));
 
   DEBUG ((EFI_D_INFO, "BootScriptExecutePciCfg2ReadWrite - 0x%016lx, 0x%016lx, 0x%016lx\n", PCI_ADDRESS_ENCODE (PciCfg2ReadWrite.Segment, PciCfg2ReadWrite.Address), AndMask, OrMask));
 
@@ -1484,7 +1484,7 @@ BootScriptPciCfgPoll (
   UINT64        LoopTimes;
   EFI_STATUS    Status;
   EFI_BOOT_SCRIPT_PCI_CONFIG_POLL PciCfgPoll;
-  CopyMem ((VOID*)&PciCfgPoll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG_POLL));
+  CopyMem((VOID*)&PciCfgPoll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG_POLL));
 
   DEBUG ((EFI_D_INFO, "BootScriptPciCfgPoll - 0x%016lx, 0x%016lx, 0x%016lx\n", PCI_ADDRESS_ENCODE (0, PciCfgPoll.Address), AndMask, OrMask));
 
@@ -1546,7 +1546,7 @@ BootScriptPciCfg2Poll (
   EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL PciCfg2Poll;
 
   Data = 0;
-  CopyMem ((VOID*)&PciCfg2Poll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL));
+  CopyMem((VOID*)&PciCfg2Poll, (VOID*)Script, sizeof(EFI_BOOT_SCRIPT_PCI_CONFIG2_POLL));
 
   DEBUG ((EFI_D_INFO, "BootScriptPciCfg2Poll - 0x%016lx, 0x%016lx, 0x%016lx\n", PCI_ADDRESS_ENCODE (PciCfg2Poll.Segment, PciCfg2Poll.Address), AndMask, OrMask));
 
@@ -1608,7 +1608,7 @@ S3BootScriptExecute (
   EFI_BOOT_SCRIPT_TABLE_HEADER   TableHeader;
   Script = mS3BootScriptTablePtr->TableBase;
   if (Script != 0) {
-    CopyMem ((VOID*)&TableHeader, Script, sizeof(EFI_BOOT_SCRIPT_TABLE_HEADER));
+    CopyMem((VOID*)&TableHeader, Script, sizeof(EFI_BOOT_SCRIPT_TABLE_HEADER));
   } else {
     return EFI_INVALID_PARAMETER;
   }
@@ -1633,7 +1633,7 @@ S3BootScriptExecute (
   while ((UINTN) Script < (UINTN) (StartAddress + TableLength)) {
     DEBUG ((EFI_D_INFO, "ExecuteBootScript - %08x\n", (UINTN)Script));
 
-    CopyMem ((VOID*)&ScriptHeader, Script, sizeof(EFI_BOOT_SCRIPT_COMMON_HEADER));
+    CopyMem((VOID*)&ScriptHeader, Script, sizeof(EFI_BOOT_SCRIPT_COMMON_HEADER));
     switch (ScriptHeader.OpCode) {
 
     case EFI_BOOT_SCRIPT_MEM_WRITE_OPCODE:

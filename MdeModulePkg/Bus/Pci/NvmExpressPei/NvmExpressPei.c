@@ -379,7 +379,7 @@ NvmExpressPeimEntry (
     Private->BlkIoPpi.GetNumberOfBlockDevices  = NvmeBlockIoPeimGetDeviceNo;
     Private->BlkIoPpi.GetBlockDeviceMediaInfo  = NvmeBlockIoPeimGetMediaInfo;
     Private->BlkIoPpi.ReadBlocks               = NvmeBlockIoPeimReadBlocks;
-    CopyMem (
+    CopyMem(
       &Private->BlkIoPpiList,
       &mNvmeBlkIoPpiListTemplate,
       sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -390,7 +390,7 @@ NvmExpressPeimEntry (
     Private->BlkIo2Ppi.GetNumberOfBlockDevices = NvmeBlockIoPeimGetDeviceNo2;
     Private->BlkIo2Ppi.GetBlockDeviceMediaInfo = NvmeBlockIoPeimGetMediaInfo2;
     Private->BlkIo2Ppi.ReadBlocks              = NvmeBlockIoPeimReadBlocks2;
-    CopyMem (
+    CopyMem(
       &Private->BlkIo2PpiList,
       &mNvmeBlkIo2PpiListTemplate,
       sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -410,7 +410,7 @@ NvmExpressPeimEntry (
     Private->NvmePassThruPpi.GetDevicePath      = NvmePassThruGetDevicePath;
     Private->NvmePassThruPpi.GetNextNameSpace   = NvmePassThruGetNextNameSpace;
     Private->NvmePassThruPpi.PassThru           = NvmePassThru;
-    CopyMem (
+    CopyMem(
       &Private->NvmePassThruPpiList,
       &mNvmePassThruPpiListTemplate,
       sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -432,7 +432,7 @@ NvmExpressPeimEntry (
       Private->StorageSecurityPpi.GetDevicePath      = NvmeStorageSecurityGetDevicePath;
       Private->StorageSecurityPpi.ReceiveData        = NvmeStorageSecurityReceiveData;
       Private->StorageSecurityPpi.SendData           = NvmeStorageSecuritySendData;
-      CopyMem (
+      CopyMem(
         &Private->StorageSecurityPpiList,
         &mNvmeStorageSecurityPpiListTemplate,
         sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -441,7 +441,7 @@ NvmExpressPeimEntry (
       PeiServicesInstallPpi (&Private->StorageSecurityPpiList);
     }
 
-    CopyMem (
+    CopyMem(
       &Private->EndOfPeiNotifyList,
       &mNvmeEndOfPeiNotifyListTemplate,
       sizeof (EFI_PEI_NOTIFY_DESCRIPTOR)

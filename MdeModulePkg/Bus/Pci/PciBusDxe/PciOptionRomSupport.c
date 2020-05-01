@@ -99,7 +99,7 @@ LocalLoadFile2 (
       }
 
       *BufferSize = ImageLength;
-      CopyMem (Buffer, ImageBuffer, ImageLength);
+      CopyMem(Buffer, ImageBuffer, ImageLength);
       return EFI_SUCCESS;
 
     } else {

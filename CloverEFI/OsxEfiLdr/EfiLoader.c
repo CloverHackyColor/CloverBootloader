@@ -134,7 +134,7 @@ EfiLoader (
     SystemHang ("Failed to find free space to hold decompressed BFV\n");
   }
   ZeroMem ((VOID *)(UINTN)BfvBase, BfvPageNumber * EFI_PAGE_SIZE);
-  CopyMem ((VOID *)(UINTN)BfvBase, (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS, DestinationSize);
+  CopyMem((VOID *)(UINTN)BfvBase, (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS, DestinationSize);
 
 //  PrintHeader ('B');
 

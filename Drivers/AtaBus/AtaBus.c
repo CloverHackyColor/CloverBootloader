@@ -1474,7 +1474,7 @@ AtaDiskInfoIdentify (
   Status = EFI_BUFFER_TOO_SMALL;
   if (*IdentifyDataSize >= sizeof (ATA_IDENTIFY_DATA)) {
     Status = EFI_SUCCESS;
-    CopyMem (IdentifyData, AtaDevice->IdentifyData, sizeof (ATA_IDENTIFY_DATA));
+    CopyMem(IdentifyData, AtaDevice->IdentifyData, sizeof (ATA_IDENTIFY_DATA));
   }
   *IdentifyDataSize = sizeof (ATA_IDENTIFY_DATA);
 

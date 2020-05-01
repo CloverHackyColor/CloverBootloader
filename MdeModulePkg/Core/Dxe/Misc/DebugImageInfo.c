@@ -202,7 +202,7 @@ CoreNewDebugImageInfoEntry (
     //
     // Copy the old table into the new one
     //
-    CopyMem (NewTable, Table, TableSize);
+    CopyMem(NewTable, Table, TableSize);
     //
     // Free the old table
     //

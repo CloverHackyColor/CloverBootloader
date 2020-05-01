@@ -32,7 +32,7 @@ ReadIdtGateDescriptor (
  AsmReadIdtr (&IdtrValue);
  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *) IdtrValue.Base;
 
- CopyMem ((VOID *) IdtGateDescriptor, (VOID *) &(IdtTable)[Vector], sizeof (IA32_IDT_GATE_DESCRIPTOR));
+ CopyMem((VOID *) IdtGateDescriptor, (VOID *) &(IdtTable)[Vector], sizeof (IA32_IDT_GATE_DESCRIPTOR));
 }
 
 /**
@@ -54,7 +54,7 @@ WriteIdtGateDescriptor (
  AsmReadIdtr (&IdtrValue);
  IdtTable = (IA32_IDT_GATE_DESCRIPTOR *) IdtrValue.Base;
 
- CopyMem ((VOID *) &(IdtTable)[Vector], (VOID *) IdtGateDescriptor, sizeof (IA32_IDT_GATE_DESCRIPTOR));
+ CopyMem((VOID *) &(IdtTable)[Vector], (VOID *) IdtGateDescriptor, sizeof (IA32_IDT_GATE_DESCRIPTOR));
 }
 
 /**
@@ -350,7 +350,7 @@ PlInitializeDebugSupportDriver (
     //
     // Copy Interrupt stub code.
     //
-    CopyMem ((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry, InterruptEntryStub, StubSize);
+    CopyMem((VOID *)(UINTN)IdtEntryTable[ExceptionType].StubEntry, InterruptEntryStub, StubSize);
   }
   return EFI_SUCCESS;
 

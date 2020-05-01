@@ -455,7 +455,7 @@ EbcCreateThunks (
   //
   // Copy whole thunk instruction buffer template
   //
-  CopyMem (Ptr, mInstructionBufferTemplate, sizeof(mInstructionBufferTemplate));
+  CopyMem(Ptr, mInstructionBufferTemplate, sizeof(mInstructionBufferTemplate));
 
   //
   // Patch EbcEntryPoint and EbcLLEbcInterpret
@@ -520,7 +520,7 @@ EbcLLCALLEX (
   //
   // Processor specific code to check whether the callee is a thunk to EBC.
   //
-  CopyMem (InstructionBuffer, (VOID *)FuncAddr, sizeof(InstructionBuffer));
+  CopyMem(InstructionBuffer, (VOID *)FuncAddr, sizeof(InstructionBuffer));
   //
   // Fill the signature according to mInstructionBufferTemplate
   //
@@ -552,7 +552,7 @@ EbcLLCALLEX (
     VmPtr->Gpr[0] -= 8;
     VmWriteMem64 (VmPtr, (UINTN) VmPtr->Gpr[0], (UINT64) (UINTN) (VmPtr->Ip + Size));
 
-    CopyMem (&TargetEbcAddr, (UINT8 *)FuncAddr + IndexOfEbcEntrypoint, sizeof(UINTN));
+    CopyMem(&TargetEbcAddr, (UINT8 *)FuncAddr + IndexOfEbcEntrypoint, sizeof(UINTN));
     VmPtr->Ip = (VMIP) (UINTN) TargetEbcAddr;
   } else {
     //

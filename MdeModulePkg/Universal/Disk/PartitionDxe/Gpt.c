@@ -392,7 +392,7 @@ PartitionInstallGptChildHandles (
     HdDev.SignatureType    = SIGNATURE_TYPE_GUID;
     HdDev.PartitionStart   = Entry->StartingLBA;
     HdDev.PartitionSize    = Entry->EndingLBA - Entry->StartingLBA + 1;
-    CopyMem (HdDev.Signature, &Entry->UniquePartitionGUID, sizeof (EFI_GUID));
+    CopyMem(HdDev.Signature, &Entry->UniquePartitionGUID, sizeof (EFI_GUID));
 
     ZeroMem (&PartitionInfo, sizeof (EFI_PARTITION_INFO_PROTOCOL));
     PartitionInfo.Revision = EFI_PARTITION_INFO_PROTOCOL_REVISION;
@@ -400,7 +400,7 @@ PartitionInstallGptChildHandles (
     if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid)) {
       PartitionInfo.System = 1;
     }
-    CopyMem (&PartitionInfo.Info.Gpt, Entry, sizeof (EFI_PARTITION_ENTRY));
+    CopyMem(&PartitionInfo.Info.Gpt, Entry, sizeof (EFI_PARTITION_ENTRY));
 
     DEBUG ((EFI_D_INFO, " Index : %d\n", (UINT32) Index));
     DEBUG ((EFI_D_INFO, " Start LBA : %lx\n", (UINT64) HdDev.PartitionStart));
@@ -518,7 +518,7 @@ PartitionValidGptTable (
     return FALSE;
   }
 
-  CopyMem (PartHeader, PartHdr, sizeof (EFI_PARTITION_TABLE_HEADER));
+  CopyMem(PartHeader, PartHdr, sizeof (EFI_PARTITION_TABLE_HEADER));
   if (!PartitionCheckGptEntryArrayCRC (BlockIo, DiskIo, PartHeader)) {
     FreePool(PartHdr);
     return FALSE;
@@ -632,7 +632,7 @@ PartitionRestoreGptTable (
                              (PartHeader->LastUsableLBA + 1) : \
                              (PRIMARY_PART_HEADER_LBA + 1);
 
-  CopyMem (PartHdr, PartHeader, sizeof (EFI_PARTITION_TABLE_HEADER));
+  CopyMem(PartHdr, PartHeader, sizeof (EFI_PARTITION_TABLE_HEADER));
 
   PartHdr->MyLBA              = PartHeader->AlternateLBA;
   PartHdr->AlternateLBA       = PartHeader->MyLBA;

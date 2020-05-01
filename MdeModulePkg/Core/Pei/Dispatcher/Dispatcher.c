@@ -74,7 +74,7 @@ DiscoverPeimsAndOrderWithApriori (
         TempFileHandles = AllocatePool (
                             sizeof (EFI_PEI_FILE_HANDLE) * (Private->TempPeimCount + TEMP_FILE_GROWTH_STEP));
         ASSERT (TempFileHandles != NULL);
-        CopyMem (
+        CopyMem(
           TempFileHandles,
           Private->TempFileHandles,
           sizeof (EFI_PEI_FILE_HANDLE) * Private->TempPeimCount
@@ -83,7 +83,7 @@ DiscoverPeimsAndOrderWithApriori (
         TempFileGuid = AllocatePool (
                          sizeof (EFI_GUID) * (Private->TempPeimCount + TEMP_FILE_GROWTH_STEP));
         ASSERT (TempFileGuid != NULL);
-        CopyMem (
+        CopyMem(
           TempFileGuid,
           Private->TempFileGuid,
           sizeof (EFI_GUID) * Private->TempPeimCount
@@ -152,7 +152,7 @@ DiscoverPeimsAndOrderWithApriori (
         //
         Status = FvPpi->GetFileInfo (FvPpi, TempFileHandles[Index], &FileInfo);
         ASSERT_EFI_ERROR(Status);
-        CopyMem (&TempFileGuid[Index], &FileInfo.FileName, sizeof(EFI_GUID));
+        CopyMem(&TempFileGuid[Index], &FileInfo.FileName, sizeof(EFI_GUID));
       }
 
       //
@@ -190,7 +190,7 @@ DiscoverPeimsAndOrderWithApriori (
       ASSERT (Index == PeimCount);
     }
   } else {
-    CopyMem (CoreFileHandle->FvFileHandles, TempFileHandles, sizeof (EFI_PEI_FILE_HANDLE) * PeimCount);
+    CopyMem(CoreFileHandle->FvFileHandles, TempFileHandles, sizeof (EFI_PEI_FILE_HANDLE) * PeimCount);
   }
 
   //
@@ -878,12 +878,12 @@ PeiCheckAndSwitchStack (
       //
       HeapTemporaryRamSize = (UINTN) (Private->HobList.HandoffInformationTable->EfiFreeMemoryBottom - Private->HobList.HandoffInformationTable->EfiMemoryBottom);
       ASSERT (BaseOfNewHeap + HeapTemporaryRamSize <= Private->FreePhysicalMemoryTop);
-      CopyMem ((UINT8 *) (UINTN) BaseOfNewHeap, PeiTemporaryRamBase, HeapTemporaryRamSize);
+      CopyMem((UINT8 *) (UINTN) BaseOfNewHeap, PeiTemporaryRamBase, HeapTemporaryRamSize);
 
       //
       // Migrate Stack
       //
-      CopyMem ((UINT8 *) (UINTN) (TopOfNewStack - TemporaryStackSize), TemporaryStackBase, TemporaryStackSize);
+      CopyMem((UINT8 *) (UINTN) (TopOfNewStack - TemporaryStackSize), TemporaryStackBase, TemporaryStackSize);
 
       //
       // Copy Hole Range Data
@@ -928,7 +928,7 @@ PeiCheckAndSwitchStack (
               Private->HoleData[Index].OffsetPositive = FALSE;
               Private->HoleData[Index].Offset = (UINTN) (Private->HoleData[Index].Base - HoleMemBase);
             }
-            CopyMem ((VOID *) (UINTN) HoleMemBase, (VOID *) (UINTN) Private->HoleData[Index].Base, Private->HoleData[Index].Size);
+            CopyMem((VOID *) (UINTN) HoleMemBase, (VOID *) (UINTN) Private->HoleData[Index].Base, Private->HoleData[Index].Size);
             HoleMemBase = HoleMemBase + Private->HoleData[Index].Size;
           }
         }

@@ -53,7 +53,7 @@ InitializePciIoInstance (
   IN PCI_IO_DEVICE               *PciIoDevice
   )
 {
-  CopyMem (&PciIoDevice->PciIo, &mPciIoInterface, sizeof (EFI_PCI_IO_PROTOCOL));
+  CopyMem(&PciIoDevice->PciIo, &mPciIoInterface, sizeof (EFI_PCI_IO_PROTOCOL));
 }
 
 /**
@@ -862,7 +862,7 @@ PciIoConfigWrite (
 **/
 EFI_STATUS
 EFIAPI
-PciIoCopyMem (
+PciIoCopyMem(
   IN EFI_PCI_IO_PROTOCOL              *This,
   IN     EFI_PCI_IO_PROTOCOL_WIDTH    Width,
   IN     UINT8                        DestBarIndex,
@@ -912,7 +912,7 @@ PciIoCopyMem (
     }
   }
 
-  Status = PciIoDevice->PciRootBridgeIo->CopyMem (
+  Status = PciIoDevice->PciRootBridgeIo->CopyMem(
                                           PciIoDevice->PciRootBridgeIo,
                                           (EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH) Width,
                                           DestOffset,

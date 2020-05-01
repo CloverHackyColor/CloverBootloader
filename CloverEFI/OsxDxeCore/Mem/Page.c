@@ -191,7 +191,7 @@ CoreAddRange (
   // used for other purposes.
   //  
   if (Type == EfiConventionalMemory && Start == 0 && (End >= EFI_PAGE_SIZE - 1)) {
-    SetMem ((VOID *)(UINTN)Start, EFI_PAGE_SIZE, 0);
+    SetMem((VOID *)(UINTN)Start, EFI_PAGE_SIZE, 0);
   }
   
   //
@@ -363,7 +363,7 @@ CoreFreeMemoryMapStack (
       RemoveEntryList (&mMapStack[mMapDepth].Link);
       mMapStack[mMapDepth].Link.ForwardLink = NULL;
 
-      CopyMem (Entry , &mMapStack[mMapDepth], sizeof (MEMORY_MAP));
+      CopyMem(Entry , &mMapStack[mMapDepth], sizeof (MEMORY_MAP));
       Entry->FromPages = TRUE;
 
       //

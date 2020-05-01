@@ -19,5 +19,5 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 /* Copies bytes between buffers */
 void * memcpy (void *dest, const void *src, unsigned int count)
 {
-  return CopyMem (dest, src, (UINTN)count);
+  return CopyMem(dest, src, (UINTN)count);
 }

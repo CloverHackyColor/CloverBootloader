@@ -103,7 +103,7 @@ AsmPrepareThunk16 (
   ASSERT (ThunkContext->RealModeBufferSize >= m16Size);
   ASSERT ((UINTN)ThunkContext->RealModeBuffer + m16Size <= 0x100000);
 
-  CopyMem (ThunkContext->RealModeBuffer, &m16Start, m16Size);
+  CopyMem(ThunkContext->RealModeBuffer, &m16Start, m16Size);
 
   //
   // Point RealModeGdt to the GDT to be used in transition
@@ -228,7 +228,7 @@ AsmThunk16 (
                   ThunkContext->RealModeBuffer
                   );
 
-  CopyMem (ThunkContext->RealModeState, UpdatedRegs, sizeof (*UpdatedRegs));
+  CopyMem(ThunkContext->RealModeState, UpdatedRegs, sizeof (*UpdatedRegs));
 }
 
 /**

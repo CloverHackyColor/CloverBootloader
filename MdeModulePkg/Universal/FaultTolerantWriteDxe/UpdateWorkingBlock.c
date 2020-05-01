@@ -33,7 +33,7 @@ InitializeLocalWorkSpaceHeader (
     return;
   }
 
-  SetMem (
+  SetMem(
     &mWorkingBlockHeader,
     sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER),
     FTW_ERASED_BYTE
@@ -42,7 +42,7 @@ InitializeLocalWorkSpaceHeader (
   //
   // Here using gEdkiiWorkingBlockSignatureGuid as the signature.
   //
-  CopyMem (
+  CopyMem(
     &mWorkingBlockHeader.Signature,
     &gEdkiiWorkingBlockSignatureGuid,
     sizeof (EFI_GUID)
@@ -108,7 +108,7 @@ InitWorkSpaceHeader (
     return EFI_INVALID_PARAMETER;
   }
 
-  CopyMem (WorkingHeader, &mWorkingBlockHeader, sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER));
+  CopyMem(WorkingHeader, &mWorkingBlockHeader, sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER));
 
   return EFI_SUCCESS;
 }
@@ -258,7 +258,7 @@ WorkSpaceRefresh (
   //
   // Initialize WorkSpace as FTW_ERASED_BYTE
   //
-  SetMem (
+  SetMem(
     FtwDevice->FtwWorkSpace,
     FtwDevice->FtwWorkSpaceSize,
     FTW_ERASED_BYTE
@@ -410,12 +410,12 @@ FtwReclaimWorkSpace (
   //
   // Clear the content of buffer that will save the new work space data
   //
-  SetMem (Ptr, FtwDevice->FtwWorkSpaceSize, FTW_ERASED_BYTE);
+  SetMem(Ptr, FtwDevice->FtwWorkSpaceSize, FTW_ERASED_BYTE);
 
   //
   // Copy EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER to buffer
   //
-  CopyMem (
+  CopyMem(
     Ptr,
     FtwDevice->FtwWorkSpaceHeader,
     sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER)
@@ -431,7 +431,7 @@ FtwReclaimWorkSpace (
                );
     Header = FtwDevice->FtwLastWriteHeader;
     if (!EFI_ERROR(Status) && (Header != NULL) && (Header->Complete != FTW_VALID_STATE) && (Header->HeaderAllocated == FTW_VALID_STATE)) {
-      CopyMem (
+      CopyMem(
         Ptr + sizeof (EFI_FAULT_TOLERANT_WORKING_BLOCK_HEADER),
         FtwDevice->FtwLastWriteHeader,
         FTW_WRITE_TOTAL_SIZE (Header->NumberOfWrites, Header->PrivateDataSize)
@@ -439,7 +439,7 @@ FtwReclaimWorkSpace (
     }
   }
 
-  CopyMem (
+  CopyMem(
     FtwDevice->FtwWorkSpace,
     Ptr,
     FtwDevice->FtwWorkSpaceSize

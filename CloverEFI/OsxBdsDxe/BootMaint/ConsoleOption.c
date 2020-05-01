@@ -118,7 +118,7 @@ ChangeTerminalDevicePath (
   while (!IsDevicePathEnd (Node)) {
     Acpi = (ACPI_HID_DEVICE_PATH *) Node;
     if (IsIsaSerialNode (Acpi)) {
-      CopyMem (&Com, &Acpi->UID, sizeof (UINT32));
+      CopyMem(&Com, &Acpi->UID, sizeof (UINT32));
     }
 
     NewMenuEntry = BOpt_GetMenuEntry (&TerminalMenu, Com);
@@ -126,25 +126,25 @@ ChangeTerminalDevicePath (
     NewTerminalContext = (BM_TERMINAL_CONTEXT *) NewMenuEntry->VariableContext;
     if ((DevicePathType (Node) == MESSAGING_DEVICE_PATH) && (DevicePathSubType (Node) == MSG_UART_DP)) {
       Uart = (UART_DEVICE_PATH *) Node;
-      CopyMem (
+      CopyMem(
         &Uart->BaudRate,
         &NewTerminalContext->BaudRate,
         sizeof (UINT64)
         );
 
-      CopyMem (
+      CopyMem(
         &Uart->DataBits,
         &NewTerminalContext->DataBits,
         sizeof (UINT8)
         );
 
-      CopyMem (
+      CopyMem(
         &Uart->Parity,
         &NewTerminalContext->Parity,
         sizeof (UINT8)
         );
 
-      CopyMem (
+      CopyMem(
         &Uart->StopBits,
         &NewTerminalContext->StopBits,
         sizeof (UINT8)
@@ -175,25 +175,25 @@ ChangeTerminalDevicePath (
         while (!IsDevicePathEnd (Node1)) {
           if ((DevicePathType (Node1) == MESSAGING_DEVICE_PATH) && (DevicePathSubType (Node1) == MSG_UART_DP)) {
             Uart1 = (UART_DEVICE_PATH *) Node1;
-            CopyMem (
+            CopyMem(
               &Uart1->BaudRate,
               &NewTerminalContext->BaudRate,
               sizeof (UINT64)
               );
 
-            CopyMem (
+            CopyMem(
               &Uart1->DataBits,
               &NewTerminalContext->DataBits,
               sizeof (UINT8)
               );
 
-            CopyMem (
+            CopyMem(
               &Uart1->Parity,
               &NewTerminalContext->Parity,
               sizeof (UINT8)
               );
 
-            CopyMem (
+            CopyMem(
               &Uart1->StopBits,
               &NewTerminalContext->StopBits,
               sizeof (UINT8)
@@ -245,7 +245,7 @@ ChangeVariableDevicePath (
   while (!IsDevicePathEnd (Node)) {
     Acpi = (ACPI_HID_DEVICE_PATH *) Node;
     if (IsIsaSerialNode (Acpi)) {
-      CopyMem (&Com, &Acpi->UID, sizeof (UINT32));
+      CopyMem(&Com, &Acpi->UID, sizeof (UINT32));
     }
 
     if ((DevicePathType (Node) == MESSAGING_DEVICE_PATH) && (DevicePathSubType (Node) == MSG_UART_DP)) {
@@ -259,25 +259,25 @@ ChangeVariableDevicePath (
 //      ASSERT (NewMenuEntry != NULL);
       NewTerminalContext  = (BM_TERMINAL_CONTEXT *) NewMenuEntry->VariableContext;
       Uart                = (UART_DEVICE_PATH *) Node;
-      CopyMem (
+      CopyMem(
         &Uart->BaudRate,
         &NewTerminalContext->BaudRate,
         sizeof (UINT64)
         );
 
-      CopyMem (
+      CopyMem(
         &Uart->DataBits,
         &NewTerminalContext->DataBits,
         sizeof (UINT8)
         );
 
-      CopyMem (
+      CopyMem(
         &Uart->Parity,
         &NewTerminalContext->Parity,
         sizeof (UINT8)
         );
 
-      CopyMem (
+      CopyMem(
         &Uart->StopBits,
         &NewTerminalContext->StopBits,
         sizeof (UINT8)
@@ -330,7 +330,7 @@ RetrieveUartUid (
 
   if ((Acpi != NULL) && IsIsaSerialNode (Acpi)) {
     if (AcpiUid != NULL) {
-      CopyMem (AcpiUid, &Acpi->UID, sizeof (UINT32));
+      CopyMem(AcpiUid, &Acpi->UID, sizeof (UINT32));
     }
     return TRUE;
   } else {
@@ -484,7 +484,7 @@ LocateSerialIo (
       }
 
       NewTerminalContext = (BM_TERMINAL_CONTEXT *) NewMenuEntry->VariableContext;
-      CopyMem (&NewMenuEntry->OptionNumber, &Acpi->UID, sizeof (UINT32));
+      CopyMem(&NewMenuEntry->OptionNumber, &Acpi->UID, sizeof (UINT32));
       NewTerminalContext->DevicePath = DuplicateDevicePath (DevicePath);
       //
       // BugBug: I have no choice, calling EfiLibStrFromDatahub will hang the system!
@@ -505,25 +505,25 @@ LocateSerialIo (
             (VOID **) &SerialIo
             );
 
-      CopyMem (
+      CopyMem(
         &NewTerminalContext->BaudRate,
         &SerialIo->Mode->BaudRate,
         sizeof (UINT64)
         );
 
-      CopyMem (
+      CopyMem(
         &NewTerminalContext->DataBits,
         &SerialIo->Mode->DataBits,
         sizeof (UINT8)
         );
 
-      CopyMem (
+      CopyMem(
         &NewTerminalContext->Parity,
         &SerialIo->Mode->Parity,
         sizeof (UINT8)
         );
 
-      CopyMem (
+      CopyMem(
         &NewTerminalContext->StopBits,
         &SerialIo->Mode->StopBits,
         sizeof (UINT8)
@@ -578,7 +578,7 @@ LocateSerialIo (
     Vendor.Header.SubType             = MSG_VENDOR_DP;
 
     for (Index2 = 0; Index2 < 4; Index2++) {
-      CopyMem (&Vendor.Guid, &TerminalTypeGuid[Index2], sizeof (EFI_GUID));
+      CopyMem(&Vendor.Guid, &TerminalTypeGuid[Index2], sizeof (EFI_GUID));
       SetDevicePathNodeLength (&Vendor.Header, sizeof (VENDOR_DEVICE_PATH));
       NewDevicePath = AppendDevicePathNode (
                         NewTerminalContext->DevicePath,
@@ -646,7 +646,7 @@ UpdateComAttributeFromVariable (
     while (!IsDevicePathEnd (Node)) {
       Acpi = (ACPI_HID_DEVICE_PATH *) Node;
       if (IsIsaSerialNode (Acpi)) {
-        CopyMem (&TerminalNumber, &Acpi->UID, sizeof (UINT32));
+        CopyMem(&TerminalNumber, &Acpi->UID, sizeof (UINT32));
       }
 
       if ((DevicePathType (Node) == MESSAGING_DEVICE_PATH) && (DevicePathSubType (Node) == MSG_UART_DP)) {
@@ -657,25 +657,25 @@ UpdateComAttributeFromVariable (
         }
 
         NewTerminalContext = (BM_TERMINAL_CONTEXT *) NewMenuEntry->VariableContext;
-        CopyMem (
+        CopyMem(
           &NewTerminalContext->BaudRate,
           &Uart->BaudRate,
           sizeof (UINT64)
           );
 
-        CopyMem (
+        CopyMem(
           &NewTerminalContext->DataBits,
           &Uart->DataBits,
           sizeof (UINT8)
           );
 
-        CopyMem (
+        CopyMem(
           &NewTerminalContext->Parity,
           &Uart->Parity,
           sizeof (UINT8)
           );
 
-        CopyMem (
+        CopyMem(
           &NewTerminalContext->StopBits,
           &Uart->StopBits,
           sizeof (UINT8)
@@ -701,23 +701,23 @@ UpdateComAttributeFromVariable (
             // previous acquired uart attributes
             //
             Uart1 = (UART_DEVICE_PATH *) SerialNode;
-            CopyMem (
+            CopyMem(
               &Uart1->BaudRate,
               &NewTerminalContext->BaudRate,
               sizeof (UINT64)
               );
 
-            CopyMem (
+            CopyMem(
               &Uart1->DataBits,
               &NewTerminalContext->DataBits,
               sizeof (UINT8)
               );
-            CopyMem (
+            CopyMem(
               &Uart1->Parity,
               &NewTerminalContext->Parity,
               sizeof (UINT8)
               );
-            CopyMem (
+            CopyMem(
               &Uart1->StopBits,
               &NewTerminalContext->StopBits,
               sizeof (UINT8)
@@ -1014,7 +1014,7 @@ IsTerminalDevicePath (
   }
 
   if ((Acpi != NULL) && IsIsaSerialNode (Acpi)) {
-    CopyMem (Com, &Acpi->UID, sizeof (UINT32));
+    CopyMem(Com, &Acpi->UID, sizeof (UINT32));
   } else {
     return FALSE;
   }

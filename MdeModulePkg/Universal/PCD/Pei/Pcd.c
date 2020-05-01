@@ -172,7 +172,7 @@ PcdSetNvStoreDefaultIdCallBack (
     NvStoreBuffer   = (VARIABLE_STORE_HEADER *) ((UINT8 *) DataHeader + sizeof (DataHeader->DataSize) + DataHeader->HeaderSize);
     VarStoreHobData = (UINT8 *) BuildGuidHob (&NvStoreBuffer->Signature, NvStoreBuffer->Size);
     ASSERT (VarStoreHobData != NULL);
-    CopyMem (VarStoreHobData, NvStoreBuffer, NvStoreBuffer->Size);
+    CopyMem(VarStoreHobData, NvStoreBuffer, NvStoreBuffer->Size);
     //
     // Find the matched SkuId and DefaultId in the first section
     //
@@ -306,7 +306,7 @@ EndOfPeiSignalPpiNotifyCallback (
   ASSERT_EFI_ERROR(Status);
   Length = PeiPcdDb->LengthForAllSkus;
   Database = BuildGuidHob (&gPcdDataBaseHobGuid, Length);
-  CopyMem (Database, PcdDb, Length);
+  CopyMem(Database, PcdDb, Length);
 
   return EFI_SUCCESS;
 }

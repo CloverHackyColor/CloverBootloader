@@ -29,7 +29,7 @@
 **/
 VOID *
 EFIAPI
-InternalMemSetMem (
+InternalMemSetMem(
   OUT     VOID                      *Buffer,
   IN      UINTN                     Length,
   IN      UINT8                     Value

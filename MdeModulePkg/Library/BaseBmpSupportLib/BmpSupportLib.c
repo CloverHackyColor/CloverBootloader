@@ -545,7 +545,7 @@ TranslateGopBltToBmp (
   }
 
   BmpImageHeader = (BMP_IMAGE_HEADER *)*BmpImage;
-  CopyMem (BmpImageHeader, &mBmpImageHeaderTemplate, sizeof (BMP_IMAGE_HEADER));
+  CopyMem(BmpImageHeader, &mBmpImageHeaderTemplate, sizeof (BMP_IMAGE_HEADER));
   BmpImageHeader->Size        = *BmpImageSize;
   BmpImageHeader->ImageSize   = *BmpImageSize - sizeof (BMP_IMAGE_HEADER);
   BmpImageHeader->PixelWidth  = PixelWidth;

@@ -696,13 +696,13 @@ FSI_FP_Read(
 					//Print(L"\nGot: %s\n", FSIThis->FName);
 					String = AsciiStrStr((CHAR8*)Buffer, "<string>Safe Boot</string>");
 					if (String != NULL) {
-						CopyMem (String, "<string>Root</string>     ", 26);
+						CopyMem(String, "<string>Root</string>     ", 26);
 						Print(L"\nForced load: %s\n", FSIThis->FName);
 						//gBS->Stall(5000000);
 					} else {
 						String = AsciiStrStr((CHAR8*)Buffer, "<string>Network-Root</string>");
 						if (String != NULL) {
-							CopyMem (String, "<string>Root</string>        ", 29);
+							CopyMem(String, "<string>Root</string>        ", 29);
 							Print(L"\nForced load: %s\n", FSIThis->FName);
 							//gBS->Stall(5000000);
 						}

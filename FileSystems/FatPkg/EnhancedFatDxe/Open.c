@@ -58,7 +58,7 @@ Returns:
 
   IFile->Signature = FAT_IFILE_SIGNATURE;
 
-  CopyMem (&(IFile->Handle), &FatFileInterface, sizeof (EFI_FILE_PROTOCOL));
+  CopyMem(&(IFile->Handle), &FatFileInterface, sizeof (EFI_FILE_PROTOCOL));
 
   //
   // Report the correct revision number based on the DiskIo2 availability

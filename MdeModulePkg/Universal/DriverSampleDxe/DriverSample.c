@@ -329,7 +329,7 @@ GetValueOfNumber (
     Status = EFI_OUT_OF_RESOURCES;
     goto Exit;
   }
-  CopyMem (Str, TmpPtr, *Len * sizeof (CHAR16));
+  CopyMem(Str, TmpPtr, *Len * sizeof (CHAR16));
   *(Str + *Len) = L'\0';
 
   Length = (Length + 1) / 2;
@@ -488,7 +488,7 @@ AppendAltCfgString (
       return;
     }
     Offset = 0;
-    CopyMem (
+    CopyMem(
      &Offset,
      TmpBuffer,
      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
@@ -509,7 +509,7 @@ AppendAltCfgString (
       return;
     }
     Width = 0;
-    CopyMem (
+    CopyMem(
      &Width,
      TmpBuffer,
      (((Length + 1) / 2) < sizeof (UINTN)) ? ((Length + 1) / 2) : sizeof (UINTN)
@@ -725,7 +725,7 @@ ExtractConfig (
     if ((Value = StrStr (*Results, PrivateData->NameValueName[0])) != NULL) {
       Value += StrLen (PrivateData->NameValueName[0]);
       ValueStrLen = ((sizeof (PrivateData->Configuration.NameValueVar0) * 2) + 1);
-      CopyMem (Value + ValueStrLen, Value, StrSize (Value));
+      CopyMem(Value + ValueStrLen, Value, StrSize (Value));
 
       BackupChar = Value[ValueStrLen];
       *Value++   = L'=';
@@ -746,7 +746,7 @@ ExtractConfig (
     if ((Value = StrStr (*Results, PrivateData->NameValueName[1])) != NULL) {
       Value += StrLen (PrivateData->NameValueName[1]);
       ValueStrLen = ((sizeof (PrivateData->Configuration.NameValueVar1) * 2) + 1);
-      CopyMem (Value + ValueStrLen, Value, StrSize (Value));
+      CopyMem(Value + ValueStrLen, Value, StrSize (Value));
 
       BackupChar = Value[ValueStrLen];
       *Value++   = L'=';
@@ -767,7 +767,7 @@ ExtractConfig (
     if ((Value = StrStr (*Results, PrivateData->NameValueName[2])) != NULL) {
       Value += StrLen (PrivateData->NameValueName[2]);
       ValueStrLen = StrLen (PrivateData->Configuration.NameValueVar2) * 4 + 1;
-      CopyMem (Value + ValueStrLen, Value, StrSize (Value));
+      CopyMem(Value + ValueStrLen, Value, StrSize (Value));
 
       *Value++ = L'=';
       //

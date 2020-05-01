@@ -301,7 +301,7 @@ ProcessUserOpcode(
               ASSERT (gBannerData != NULL);
             }
 
-            CopyMem (
+            CopyMem(
               &gBannerData->Banner[((EFI_IFR_GUID_BANNER *) OpCodeData)->LineNumber][
               ((EFI_IFR_GUID_BANNER *) OpCodeData)->Alignment],
               &((EFI_IFR_GUID_BANNER *) OpCodeData)->Title,
@@ -431,7 +431,7 @@ ScreenDiemensionInfoValidate (
           ((FormData->ScreenDimensions->RightColumn - FormData->ScreenDimensions->LeftColumn) > 2) &&
           ((FormData->ScreenDimensions->BottomRow - FormData->ScreenDimensions->TopRow) > STATUS_BAR_HEIGHT +
             FRONT_PAGE_HEADER_HEIGHT + gFooterHeight + 3)) {
-        CopyMem (&gScreenDimensions, (VOID *) FormData->ScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
+        CopyMem(&gScreenDimensions, (VOID *) FormData->ScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
       } else {
         return EFI_INVALID_PARAMETER;
       }
@@ -572,7 +572,7 @@ PrintHotKeyHelpString (
   CHAR16                 BakChar;
   CHAR16                 *ColumnStr;
 
-  CopyMem (&LocalScreen, &gScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
+  CopyMem(&LocalScreen, &gScreenDimensions, sizeof (EFI_SCREEN_DESCRIPTOR));
   ColumnWidth            = (LocalScreen.RightColumn - LocalScreen.LeftColumn) / 3;
   BottomRowOfHotKeyHelp  = LocalScreen.BottomRow - STATUS_BAR_HEIGHT - 3;
   ColumnStr              = gLibEmptyString;

@@ -234,22 +234,22 @@ InitUsbBot (
     }
   }
 
-  CopyMem (
+  CopyMem(
     &(PeiBotDevice->BlkIoPpi),
     &mRecoveryBlkIoPpi,
     sizeof (EFI_PEI_RECOVERY_BLOCK_IO_PPI)
     );
-  CopyMem (
+  CopyMem(
     &(PeiBotDevice->BlkIo2Ppi),
     &mRecoveryBlkIo2Ppi,
     sizeof (EFI_PEI_RECOVERY_BLOCK_IO2_PPI)
     );
-  CopyMem (
+  CopyMem(
     &(PeiBotDevice->BlkIoPpiList),
     &mPpiList[0],
     sizeof (EFI_PEI_PPI_DESCRIPTOR)
     );
-  CopyMem (
+  CopyMem(
     &(PeiBotDevice->BlkIo2PpiList),
     &mPpiList[1],
     sizeof (EFI_PEI_PPI_DESCRIPTOR)
@@ -374,7 +374,7 @@ BotGetMediaInfo (
     return EFI_DEVICE_ERROR;
   }
 
-  CopyMem (
+  CopyMem(
     MediaInfo,
     &(PeiBotDev->Media),
     sizeof (EFI_PEI_BLOCK_IO_MEDIA)
@@ -649,7 +649,7 @@ BotGetMediaInfo2 (
     return Status;
   }
 
-  CopyMem (
+  CopyMem(
     MediaInfo,
     &(PeiBotDev->Media2),
     sizeof (EFI_PEI_BLOCK_IO2_MEDIA)

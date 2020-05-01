@@ -918,9 +918,9 @@ ShowProgress (
 
 //  DEBUG ((EFI_D_INFO, "\n\nStart showing progress bar... Press any key to stop it! ...Zzz....\n"));
 
-  SetMem (&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
-  SetMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
-  SetMem (&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
+  SetMem(&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
+  SetMem(&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
+  SetMem(&Color, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
 
   TmpStr = GetStringById (STRING_TOKEN (STR_START_BOOT_OPTION));
 

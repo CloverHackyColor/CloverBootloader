@@ -73,24 +73,24 @@ GetDebugPortVariable (
     FreePool(DebugPortVariable);
     return NULL;
   } else {
-    CopyMem (
+    CopyMem(
       &mDebugPortDevice.BaudRate,
       &((UART_DEVICE_PATH *) DevicePath)->BaudRate,
       sizeof (((UART_DEVICE_PATH *) DevicePath)->BaudRate)
       );
     mDebugPortDevice.ReceiveFifoDepth = DEBUGPORT_UART_DEFAULT_FIFO_DEPTH;
     mDebugPortDevice.Timeout          = DEBUGPORT_UART_DEFAULT_TIMEOUT;
-    CopyMem (
+    CopyMem(
       &mDebugPortDevice.Parity,
       &((UART_DEVICE_PATH *) DevicePath)->Parity,
       sizeof (((UART_DEVICE_PATH *) DevicePath)->Parity)
       );
-    CopyMem (
+    CopyMem(
       &mDebugPortDevice.DataBits,
       &((UART_DEVICE_PATH *) DevicePath)->DataBits,
       sizeof (((UART_DEVICE_PATH *) DevicePath)->DataBits)
       );
-    CopyMem (
+    CopyMem(
       &mDebugPortDevice.StopBits,
       &((UART_DEVICE_PATH *) DevicePath)->StopBits,
       sizeof (((UART_DEVICE_PATH *) DevicePath)->StopBits)

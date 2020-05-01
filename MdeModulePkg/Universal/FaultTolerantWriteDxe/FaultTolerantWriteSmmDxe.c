@@ -298,12 +298,12 @@ FtwWrite (
   SmmFtwWriteHeader->Lba    = Lba;
   SmmFtwWriteHeader->Offset = Offset;
   SmmFtwWriteHeader->Length = Length;
-  CopyMem (SmmFtwWriteHeader->Data, Buffer, Length);
+  CopyMem(SmmFtwWriteHeader->Data, Buffer, Length);
   if (PrivateData == NULL) {
     SmmFtwWriteHeader->PrivateDataSize = 0;
   } else {
     SmmFtwWriteHeader->PrivateDataSize = mPrivateDataSize;
-    CopyMem (&SmmFtwWriteHeader->Data[Length], PrivateData, mPrivateDataSize);
+    CopyMem(&SmmFtwWriteHeader->Data[Length], PrivateData, mPrivateDataSize);
   }
 
   //
@@ -464,7 +464,7 @@ FtwGetLastWrite (
     *Complete = SmmFtwGetLastWriteHeader->Complete;
     CopyGuid (CallerId, &SmmFtwGetLastWriteHeader->CallerId);
     if (Status == EFI_SUCCESS) {
-      CopyMem (PrivateData, SmmFtwGetLastWriteHeader->Data, *PrivateDataSize);
+      CopyMem(PrivateData, SmmFtwGetLastWriteHeader->Data, *PrivateDataSize);
     }
   } else if (Status == EFI_NOT_FOUND) {
     *Complete = SmmFtwGetLastWriteHeader->Complete;

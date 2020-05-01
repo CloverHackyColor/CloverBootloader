@@ -80,7 +80,7 @@ InitializeCpuInterruptHandlers (
 
   mReservedVectors = AllocatePool (sizeof (RESERVED_VECTORS_DATA) * CPU_INTERRUPT_NUM);
   ASSERT (mReservedVectors != NULL);
-  SetMem ((VOID *) mReservedVectors, sizeof (RESERVED_VECTORS_DATA) * CPU_INTERRUPT_NUM, 0xff);
+  SetMem((VOID *) mReservedVectors, sizeof (RESERVED_VECTORS_DATA) * CPU_INTERRUPT_NUM, 0xff);
   if (VectorInfo != NULL) {
     Status = ReadAndVerifyVectorInfo (VectorInfo, mReservedVectors, CPU_INTERRUPT_NUM);
     if (EFI_ERROR(Status)) {
@@ -105,7 +105,7 @@ InitializeCpuInterruptHandlers (
   //
   IdtTable = AllocateZeroPool(sizeof (IA32_IDT_GATE_DESCRIPTOR) * CPU_INTERRUPT_NUM);
   ASSERT (IdtTable != NULL);
-  CopyMem (IdtTable, (VOID *)IdtDescriptor.Base, sizeof (IA32_IDT_GATE_DESCRIPTOR) * IdtEntryCount);
+  CopyMem(IdtTable, (VOID *)IdtDescriptor.Base, sizeof (IA32_IDT_GATE_DESCRIPTOR) * IdtEntryCount);
 
   AsmGetTemplateAddressMap (&TemplateMap);
   ASSERT (TemplateMap.ExceptionStubHeaderSize <= HOOKAFTER_STUB_SIZE);
@@ -114,7 +114,7 @@ InitializeCpuInterruptHandlers (
   
   InterruptEntry = (UINTN) InterruptEntryCode;
   for (Index = 0; Index < CPU_INTERRUPT_NUM; Index ++) {
-    CopyMem (
+    CopyMem(
       (VOID *) InterruptEntry,
       (VOID *) TemplateMap.ExceptionStart,
       TemplateMap.ExceptionStubHeaderSize

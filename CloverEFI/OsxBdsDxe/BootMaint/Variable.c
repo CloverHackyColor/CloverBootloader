@@ -439,7 +439,7 @@ Var_UpdateConsoleOption (
       Vendor.Header.SubType = MSG_VENDOR_DP;
       
       ASSERT (NewTerminalContext->TerminalType < (sizeof (TerminalTypeGuid) / sizeof (TerminalTypeGuid[0])));
-      CopyMem (
+      CopyMem(
         &Vendor.Guid,
         &TerminalTypeGuid[NewTerminalContext->TerminalType],
         sizeof (EFI_GUID)
@@ -609,7 +609,7 @@ Var_UpdateDriverOption (
   NewLoadContext->FilePathListLength = *((UINT16 *) Ptr);
 
   Ptr += sizeof (UINT16);
-  CopyMem (
+  CopyMem(
     Ptr,
     DescriptionData,
     StrSize (DescriptionData)
@@ -618,14 +618,14 @@ Var_UpdateDriverOption (
   NewLoadContext->Description = AllocateZeroPool(StrSize (DescriptionData));
   ASSERT (NewLoadContext->Description != NULL);
   NewMenuEntry->DisplayString = NewLoadContext->Description;
-  CopyMem (
+  CopyMem(
     NewLoadContext->Description,
     (VOID *) Ptr,
     StrSize (DescriptionData)
     );
 
   Ptr += StrSize (DescriptionData);
-  CopyMem (
+  CopyMem(
     Ptr,
     CallbackData->LoadContext->FilePathList,
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
@@ -634,7 +634,7 @@ Var_UpdateDriverOption (
   NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
 
-  CopyMem (
+  CopyMem(
     NewLoadContext->FilePathList,
     (VOID *) Ptr,
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
@@ -657,7 +657,7 @@ Var_UpdateDriverOption (
   if (OptionalDataExist) {
     Ptr += (UINT8) GetDevicePathSize (CallbackData->LoadContext->FilePathList);
 
-    CopyMem (
+    CopyMem(
       Ptr,
       OptionalData,
       StrSize (OptionalData)
@@ -680,7 +680,7 @@ Var_UpdateDriverOption (
   NewDriverOrderList = AllocateZeroPool(DriverOrderListSize + sizeof (UINT16));
   ASSERT (NewDriverOrderList != NULL);
   if (DriverOrderList != NULL) {
-    CopyMem (NewDriverOrderList, DriverOrderList, DriverOrderListSize);
+    CopyMem(NewDriverOrderList, DriverOrderList, DriverOrderListSize);
     EfiLibDeleteVariable (L"DriverOrder", &gEfiGlobalVariableGuid);
   }
   NewDriverOrderList[DriverOrderListSize / sizeof (UINT16)] = Index;
@@ -793,7 +793,7 @@ Var_UpdateBootOption (
   NewLoadContext->FilePathListLength = *((UINT16 *) Ptr);
   Ptr += sizeof (UINT16);
 
-  CopyMem (
+  CopyMem(
     Ptr,
     NvRamMap->BootDescriptionData,
     StrSize (NvRamMap->BootDescriptionData)
@@ -803,14 +803,14 @@ Var_UpdateBootOption (
   ASSERT (NewLoadContext->Description != NULL);
 
   NewMenuEntry->DisplayString = NewLoadContext->Description;
-  CopyMem (
+  CopyMem(
     NewLoadContext->Description,
     (VOID *) Ptr,
     StrSize (NvRamMap->BootDescriptionData)
     );
 
   Ptr += StrSize (NvRamMap->BootDescriptionData);
-  CopyMem (
+  CopyMem(
     Ptr,
     CallbackData->LoadContext->FilePathList,
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
@@ -819,7 +819,7 @@ Var_UpdateBootOption (
   NewLoadContext->FilePathList = AllocateZeroPool(GetDevicePathSize (CallbackData->LoadContext->FilePathList));
   ASSERT (NewLoadContext->FilePathList != NULL);
 
-  CopyMem (
+  CopyMem(
     NewLoadContext->FilePathList,
     (VOID *) Ptr,
     GetDevicePathSize (CallbackData->LoadContext->FilePathList)
@@ -842,7 +842,7 @@ Var_UpdateBootOption (
   if (OptionalDataExist) {
     Ptr += (UINT8) GetDevicePathSize (CallbackData->LoadContext->FilePathList);
 
-    CopyMem (Ptr, NvRamMap->BootOptionalData, StrSize (NvRamMap->BootOptionalData));
+    CopyMem(Ptr, NvRamMap->BootOptionalData, StrSize (NvRamMap->BootOptionalData));
   }
 
   Status = gRT->SetVariable (
@@ -864,7 +864,7 @@ if (BootOrderList != NULL) {
   NewBootOrderList = AllocateZeroPool(BootOrderListSize + sizeof (UINT16));
 //  ASSERT (NewBootOrderList != NULL);
   if (NewBootOrderList != NULL) {
-  CopyMem (NewBootOrderList, BootOrderList, BootOrderListSize);
+  CopyMem(NewBootOrderList, BootOrderList, BootOrderListSize);
   NewBootOrderList[BootOrderListSize / sizeof (UINT16)] = Index;
 }
   
@@ -1005,7 +1005,7 @@ Var_UpdateBootOrder (
     for (Index = OrderIndex; Index < BootOrderListSize / sizeof (UINT16); Index++) {
       if ((BootOrderList[Index] == (UINT16) (CallbackData->BmmFakeNvData.BootOptionOrder[OrderIndex] - 1)) && (OrderIndex != Index)) {
         OptionNumber = BootOrderList[Index];
-        CopyMem (&BootOrderList[OrderIndex + 1], &BootOrderList[OrderIndex], (Index - OrderIndex) * sizeof (UINT16));
+        CopyMem(&BootOrderList[OrderIndex + 1], &BootOrderList[OrderIndex], (Index - OrderIndex) * sizeof (UINT16));
         BootOrderList[OrderIndex] = OptionNumber;
       }
     }
@@ -1238,7 +1238,7 @@ Var_UpdateBBSOption (
     }
   }
 
-  CopyMem (
+  CopyMem(
     DevOrder->Data,
     NewOrder,
     DevOrder->Length - sizeof (DevOrder->Length)

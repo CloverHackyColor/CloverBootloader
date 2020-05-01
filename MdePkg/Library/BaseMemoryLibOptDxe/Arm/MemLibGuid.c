@@ -54,7 +54,7 @@ CopyGuid (
   ASSERT (DestinationGuid != NULL);
   ASSERT (SourceGuid != NULL);
 
-  return InternalMemCopyMem (DestinationGuid, SourceGuid, sizeof (GUID));
+  return InternalMemCopyMem(DestinationGuid, SourceGuid, sizeof (GUID));
 }
 
 /**

@@ -561,7 +561,7 @@ SerialControllerDriverStart (
     // already checked to make sure the RemainingDevicePath contains settings
     // that we can support.
     //
-    CopyMem (&SerialDevice->UartDevicePath, RemainingDevicePath, sizeof (UART_DEVICE_PATH));
+    CopyMem(&SerialDevice->UartDevicePath, RemainingDevicePath, sizeof (UART_DEVICE_PATH));
     FlowControl = (UART_FLOW_CONTROL_DEVICE_PATH *) NextDevicePathNode (RemainingDevicePath);
     if (IsUartFlowControlNode (FlowControl)) {
       FlowControlMap = ReadUnaligned32 (&FlowControl->FlowControlMap);
@@ -1520,7 +1520,7 @@ IsaSerialSetAttributes (
              + GetDevicePathSize (SerialDevice->ParentDevicePath)
              - END_DEVICE_PATH_LENGTH
              );
-    CopyMem (Uart, &SerialDevice->UartDevicePath, sizeof (UART_DEVICE_PATH));
+    CopyMem(Uart, &SerialDevice->UartDevicePath, sizeof (UART_DEVICE_PATH));
     Status = gBS->ReinstallProtocolInterface (
                     SerialDevice->Handle,
                     &gEfiDevicePathProtocolGuid,

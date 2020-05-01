@@ -179,7 +179,7 @@ UdfDriverBindingStart (
   //
   // Set up SimpleFs protocol
   //
-  CopyMem ((VOID *)&PrivFsData->SimpleFs, (VOID *)&gUdfSimpleFsTemplate,
+  CopyMem((VOID *)&PrivFsData->SimpleFs, (VOID *)&gUdfSimpleFsTemplate,
            sizeof (EFI_SIMPLE_FILE_SYSTEM_PROTOCOL));
 
   //

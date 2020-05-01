@@ -1149,7 +1149,7 @@ InitInterruptDescriptorTable (
   UINT16                    CurrentCs;
   VOID                      *IntHandler;
 
-  SetMem (ExternalVectorTable, sizeof(ExternalVectorTable), 0);
+  SetMem(ExternalVectorTable, sizeof(ExternalVectorTable), 0);
 
   //
   // Get original IDT address and size.

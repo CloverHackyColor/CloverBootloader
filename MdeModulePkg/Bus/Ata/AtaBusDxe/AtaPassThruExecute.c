@@ -132,7 +132,7 @@ AtaDevicePassThru (
       return EFI_OUT_OF_RESOURCES;
     }
 
-    CopyMem (Packet->Asb, AtaDevice->Asb, sizeof (EFI_ATA_STATUS_BLOCK));
+    CopyMem(Packet->Asb, AtaDevice->Asb, sizeof (EFI_ATA_STATUS_BLOCK));
     Packet->Acb = AllocateCopyPool(sizeof (EFI_ATA_COMMAND_BLOCK), &AtaDevice->Acb);
   } else {
     Packet = &AtaDevice->Packet;
@@ -1042,7 +1042,7 @@ TrustTransferAtaDevice (
         return EFI_OUT_OF_RESOURCES;
       }
 
-      CopyMem (NewBuffer, Buffer, TransferLength);
+      CopyMem(NewBuffer, Buffer, TransferLength);
       FreePool(Buffer);
       Buffer = NewBuffer;
     }

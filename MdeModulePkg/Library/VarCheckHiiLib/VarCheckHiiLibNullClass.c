@@ -108,7 +108,7 @@ VarCheckHiiQuestion (
   }
 
   OneData = 0;
-  CopyMem (&OneData, (UINT8 *) Data + VarOffsetByteLevel, StorageWidthByteLevel);
+  CopyMem(&OneData, (UINT8 *) Data + VarOffsetByteLevel, StorageWidthByteLevel);
   if (HiiQuestion->BitFieldStore) {
     //
     // Get the value from the bit field.
@@ -127,9 +127,9 @@ VarCheckHiiQuestion (
           //
           // For OneOf stored in bit field, the value of options are saved as UINT32 type.
           //
-          CopyMem (&OneValue, Ptr, sizeof (UINT32));
+          CopyMem(&OneValue, Ptr, sizeof (UINT32));
         } else {
-          CopyMem (&OneValue, Ptr, HiiQuestion->StorageWidth);
+          CopyMem(&OneValue, Ptr, HiiQuestion->StorageWidth);
         }
         if (OneData == OneValue) {
           //
@@ -169,14 +169,14 @@ VarCheckHiiQuestion (
         //
         // For Numeric stored in bit field, the value of Maximum/Minimum are saved as UINT32 type.
         //
-        CopyMem (&Minimum, Ptr, sizeof (UINT32));
+        CopyMem(&Minimum, Ptr, sizeof (UINT32));
         Ptr += sizeof (UINT32);
-        CopyMem (&Maximum, Ptr, sizeof (UINT32));
+        CopyMem(&Maximum, Ptr, sizeof (UINT32));
         Ptr += sizeof (UINT32);
       } else {
-        CopyMem (&Minimum, Ptr, HiiQuestion->StorageWidth);
+        CopyMem(&Minimum, Ptr, HiiQuestion->StorageWidth);
         Ptr += HiiQuestion->StorageWidth;
-        CopyMem (&Maximum, Ptr, HiiQuestion->StorageWidth);
+        CopyMem(&Maximum, Ptr, HiiQuestion->StorageWidth);
         Ptr += HiiQuestion->StorageWidth;
       }
 
@@ -198,7 +198,7 @@ VarCheckHiiQuestion (
       }
       for (Index = 0; Index < MaxContainers; Index++) {
         OneData = 0;
-        CopyMem (&OneData, (UINT8 *) Data + HiiQuestion->VarOffset + HiiQuestion->StorageWidth * Index, HiiQuestion->StorageWidth);
+        CopyMem(&OneData, (UINT8 *) Data + HiiQuestion->VarOffset + HiiQuestion->StorageWidth * Index, HiiQuestion->StorageWidth);
         if (OneData == 0) {
           //
           // The value of 0 is used to determine if a particular "slot" in the array is empty.
@@ -209,7 +209,7 @@ VarCheckHiiQuestion (
         Ptr = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ORDEREDLIST *) HiiQuestion + 1);
         while ((UINTN) Ptr < ((UINTN) HiiQuestion + HiiQuestion->Length)) {
           OneValue = 0;
-          CopyMem (&OneValue, Ptr, HiiQuestion->StorageWidth);
+          CopyMem(&OneValue, Ptr, HiiQuestion->StorageWidth);
           if (OneData == OneValue) {
             //
             // Match
@@ -395,10 +395,10 @@ DumpHiiQuestion (
           //
           // For OneOf stored in bit field, the value of options are saved as UINT32 type.
           //
-          CopyMem (&OneValue, Ptr, sizeof (UINT32));
+          CopyMem(&OneValue, Ptr, sizeof (UINT32));
           DEBUG ((DEBUG_INFO, "    OneOfOption   - 0x%08x\n", OneValue));
         } else {
-          CopyMem (&OneValue, Ptr, HiiQuestion->StorageWidth);
+          CopyMem(&OneValue, Ptr, HiiQuestion->StorageWidth);
           switch (HiiQuestion->StorageWidth) {
             case sizeof (UINT8):
               DEBUG ((DEBUG_INFO, "    OneOfOption   - 0x%02x\n", OneValue));
@@ -436,17 +436,17 @@ DumpHiiQuestion (
         //
         // For Numeric stored in bit field, the value of Maximum/Minimum are saved as UINT32 type.
         //
-        CopyMem (&Minimum, Ptr, sizeof (UINT32));
+        CopyMem(&Minimum, Ptr, sizeof (UINT32));
         Ptr += sizeof (UINT32);
-        CopyMem (&Maximum, Ptr, sizeof (UINT32));
+        CopyMem(&Maximum, Ptr, sizeof (UINT32));
         Ptr += sizeof (UINT32);
 
         DEBUG ((DEBUG_INFO, "    Minimum       - 0x%08x\n", Minimum));
         DEBUG ((DEBUG_INFO, "    Maximum       - 0x%08x\n", Maximum));
       } else {
-        CopyMem (&Minimum, Ptr, HiiQuestion->StorageWidth);
+        CopyMem(&Minimum, Ptr, HiiQuestion->StorageWidth);
         Ptr += HiiQuestion->StorageWidth;
-        CopyMem (&Maximum, Ptr, HiiQuestion->StorageWidth);
+        CopyMem(&Maximum, Ptr, HiiQuestion->StorageWidth);
         Ptr += HiiQuestion->StorageWidth;
 
         switch (HiiQuestion->StorageWidth) {
@@ -478,7 +478,7 @@ DumpHiiQuestion (
       Ptr = (UINT8 *) ((VAR_CHECK_HII_QUESTION_ORDEREDLIST *) HiiQuestion + 1);
       while ((UINTN) Ptr < ((UINTN) HiiQuestion + HiiQuestion->Length)) {
         OneValue = 0;
-        CopyMem (&OneValue, Ptr, HiiQuestion->StorageWidth);
+        CopyMem(&OneValue, Ptr, HiiQuestion->StorageWidth);
         switch (HiiQuestion->StorageWidth) {
           case sizeof (UINT8):
             DEBUG ((DEBUG_INFO, "    OneOfOption   - 0x%02x\n", OneValue));

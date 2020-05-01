@@ -176,7 +176,7 @@ CalculateHeaderChecksum (
   EFI_FFS_FILE_HEADER2 TestFileHeader;
 
   if (IS_FFS_FILE2 (FileHeader)) {
-    CopyMem (&TestFileHeader, FileHeader, sizeof (EFI_FFS_FILE_HEADER2));
+    CopyMem(&TestFileHeader, FileHeader, sizeof (EFI_FFS_FILE_HEADER2));
     //
     // Ingore State and File field in FFS header.
     //
@@ -185,7 +185,7 @@ CalculateHeaderChecksum (
 
     return CalculateSum8 ((CONST UINT8 *) &TestFileHeader, sizeof (EFI_FFS_FILE_HEADER2));
   } else {
-    CopyMem (&TestFileHeader, FileHeader, sizeof (EFI_FFS_FILE_HEADER));
+    CopyMem(&TestFileHeader, FileHeader, sizeof (EFI_FFS_FILE_HEADER));
     //
     // Ingore State and File field in FFS header.
     //
@@ -567,13 +567,13 @@ FirmwareVolmeInfoPpiNotifyCallback (
     //
     // It is FvInfo2PPI.
     //
-    CopyMem (&FvInfo2Ppi, Ppi, sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI));
+    CopyMem(&FvInfo2Ppi, Ppi, sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO2_PPI));
     IsFvInfo2 = TRUE;
   } else {
     //
     // It is FvInfoPPI.
     //
-    CopyMem (&FvInfo2Ppi, Ppi, sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO_PPI));
+    CopyMem(&FvInfo2Ppi, Ppi, sizeof (EFI_PEI_FIRMWARE_VOLUME_INFO_PPI));
     FvInfo2Ppi.AuthenticationStatus = 0;
     IsFvInfo2 = FALSE;
   }
@@ -633,7 +633,7 @@ FirmwareVolmeInfoPpiNotifyCallback (
                   sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount + FV_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
-      CopyMem (
+      CopyMem(
         TempPtr,
         PrivateData->Fv,
         sizeof (PEI_CORE_FV_HANDLE) * PrivateData->MaxFvCount
@@ -1491,14 +1491,14 @@ ProcessFvFile (
           //
           // Copy the used bytes and fill the rest with the erase value.
           //
-          CopyMem (NewFvBuffer, FvHeader, (UINTN) FvUsedSize);
-          SetMem (
+          CopyMem(NewFvBuffer, FvHeader, (UINTN) FvUsedSize);
+          SetMem(
             (UINT8 *) NewFvBuffer + FvUsedSize,
             (UINTN) (FvLength - FvUsedSize),
             EraseByte
             );
         } else {
-          CopyMem (NewFvBuffer, FvHeader, (UINTN) FvLength);
+          CopyMem(NewFvBuffer, FvHeader, (UINTN) FvLength);
         }
         FvHeader = (EFI_FIRMWARE_VOLUME_HEADER*) NewFvBuffer;
       }
@@ -1819,7 +1819,7 @@ PeiFfsFvPpiGetFileInfo (
     FileInfo->BufferSize = FFS_FILE_SIZE (FileHeader) - sizeof (EFI_FFS_FILE_HEADER);
     FileInfo->Buffer = (UINT8 *) FileHeader + sizeof (EFI_FFS_FILE_HEADER);
   }
-  CopyMem (&FileInfo->FileName, &FileHeader->Name, sizeof(EFI_GUID));
+  CopyMem(&FileInfo->FileName, &FileHeader->Name, sizeof(EFI_GUID));
   FileInfo->FileType = FileHeader->Type;
   FileInfo->FileAttributes = FfsAttributes2FvFileAttributes (FileHeader->Attributes);
   if ((CoreFvHandle->FvHeader->Attributes & EFI_FVB2_MEMORY_MAPPED) == EFI_FVB2_MEMORY_MAPPED) {
@@ -1912,7 +1912,7 @@ PeiFfsFvPpiGetVolumeInfo (
   // but FvLength is UINT64 type, which requires FvHeader align at least 8 byte.
   // So, Copy FvHeader into the local FvHeader structure.
   //
-  CopyMem (&FwVolHeader, FvHandle, sizeof (EFI_FIRMWARE_VOLUME_HEADER));
+  CopyMem(&FwVolHeader, FvHandle, sizeof (EFI_FIRMWARE_VOLUME_HEADER));
 
   //
   // Check Fv Image Signature
@@ -1925,11 +1925,11 @@ PeiFfsFvPpiGetVolumeInfo (
   VolumeInfo->FvAttributes  = FwVolHeader.Attributes;
   VolumeInfo->FvStart       = (VOID *) FvHandle;
   VolumeInfo->FvSize        = FwVolHeader.FvLength;
-  CopyMem (&VolumeInfo->FvFormat, &FwVolHeader.FileSystemGuid, sizeof(EFI_GUID));
+  CopyMem(&VolumeInfo->FvFormat, &FwVolHeader.FileSystemGuid, sizeof(EFI_GUID));
 
   if (FwVolHeader.ExtHeaderOffset != 0) {
     FwVolExHeaderInfo = (EFI_FIRMWARE_VOLUME_EXT_HEADER*)(((UINT8 *)FvHandle) + FwVolHeader.ExtHeaderOffset);
-    CopyMem (&VolumeInfo->FvName, &FwVolExHeaderInfo->FvName, sizeof(EFI_GUID));
+    CopyMem(&VolumeInfo->FvName, &FwVolExHeaderInfo->FvName, sizeof(EFI_GUID));
   }
 
   return EFI_SUCCESS;
@@ -2217,7 +2217,7 @@ AddUnknownFormatFvInfo (
                 sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) * (PrivateData->MaxUnknownFvInfoCount + FV_GROWTH_STEP)
                 );
     ASSERT (TempPtr != NULL);
-    CopyMem (
+    CopyMem(
       TempPtr,
       PrivateData->UnknownFvInfo,
       sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO) * PrivateData->MaxUnknownFvInfoCount
@@ -2288,7 +2288,7 @@ FindUnknownFormatFvInfo (
   //
   Index2 = Index + 1;
   for (;Index2 < PrivateData->UnknownFvInfoCount; Index2 ++, Index ++) {
-    CopyMem (&PrivateData->UnknownFvInfo[Index], &PrivateData->UnknownFvInfo[Index2], sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO));
+    CopyMem(&PrivateData->UnknownFvInfo[Index], &PrivateData->UnknownFvInfo[Index2], sizeof (PEI_CORE_UNKNOW_FORMAT_FV_INFO));
   }
   PrivateData->UnknownFvInfoCount --;
   return EFI_SUCCESS;
@@ -2370,7 +2370,7 @@ ThirdPartyFvPpiNotifyCallback (
                   sizeof (PEI_CORE_FV_HANDLE) * (PrivateData->MaxFvCount + FV_GROWTH_STEP)
                   );
       ASSERT (TempPtr != NULL);
-      CopyMem (
+      CopyMem(
         TempPtr,
         PrivateData->Fv,
         sizeof (PEI_CORE_FV_HANDLE) * PrivateData->MaxFvCount

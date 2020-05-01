@@ -73,7 +73,7 @@ NewCell (
   if (Cell->AdvanceX == 0) {
     Cell->AdvanceX = Cell->Width;
   }
-  CopyMem (&GlyphInfo->Cell, Cell, sizeof (EFI_HII_GLYPH_INFO));
+  CopyMem(&GlyphInfo->Cell, Cell, sizeof (EFI_HII_GLYPH_INFO));
   InsertTailList (GlyphInfoList, &GlyphInfo->Entry);
 
   return EFI_SUCCESS;
@@ -121,7 +121,7 @@ GetCell (
   for (Link = GlyphInfoList->BackLink; Link != GlyphInfoList; Link = Link->BackLink) {
     GlyphInfo = CR (Link, HII_GLYPH_INFO, Entry, HII_GLYPH_INFO_SIGNATURE);
     if (GlyphInfo->CharId <= CharValue) {
-      CopyMem (Cell, &GlyphInfo->Cell, sizeof (EFI_HII_GLYPH_INFO));
+      CopyMem(Cell, &GlyphInfo->Cell, sizeof (EFI_HII_GLYPH_INFO));
       return EFI_SUCCESS;
     }
   }
@@ -210,7 +210,7 @@ GetGlyphBuffer (
         //
         NarrowPtr = (EFI_NARROW_GLYPH *) ((UINT8 *) (SimpleFont->SimpleFontPkgHdr) + HeaderSize);
         for (Index = 0; Index < SimpleFont->SimpleFontPkgHdr->NumberOfNarrowGlyphs; Index++) {
-          CopyMem (&Narrow, NarrowPtr + Index,sizeof (EFI_NARROW_GLYPH));
+          CopyMem(&Narrow, NarrowPtr + Index,sizeof (EFI_NARROW_GLYPH));
           if (Narrow.UnicodeWeight == Char) {
             *GlyphBuffer = (UINT8 *) AllocateZeroPool(EFI_GLYPH_HEIGHT);
             if (*GlyphBuffer == NULL) {
@@ -219,7 +219,7 @@ GetGlyphBuffer (
             Cell->Width    = EFI_GLYPH_WIDTH;
             Cell->Height   = EFI_GLYPH_HEIGHT;
             Cell->AdvanceX = Cell->Width;
-            CopyMem (*GlyphBuffer, Narrow.GlyphCol1, Cell->Height);
+            CopyMem(*GlyphBuffer, Narrow.GlyphCol1, Cell->Height);
             if (Attributes != NULL) {
               *Attributes = (UINT8) (Narrow.Attributes | NARROW_GLYPH);
             }
@@ -231,7 +231,7 @@ GetGlyphBuffer (
         //
         WidePtr = (EFI_WIDE_GLYPH *) (NarrowPtr + SimpleFont->SimpleFontPkgHdr->NumberOfNarrowGlyphs);
         for (Index = 0; Index < SimpleFont->SimpleFontPkgHdr->NumberOfWideGlyphs; Index++) {
-          CopyMem (&Wide, WidePtr + Index, sizeof (EFI_WIDE_GLYPH));
+          CopyMem(&Wide, WidePtr + Index, sizeof (EFI_WIDE_GLYPH));
           if (Wide.UnicodeWeight == Char) {
             *GlyphBuffer    = (UINT8 *) AllocateZeroPool(EFI_GLYPH_HEIGHT * 2);
             if (*GlyphBuffer == NULL) {
@@ -240,8 +240,8 @@ GetGlyphBuffer (
             Cell->Width    = EFI_GLYPH_WIDTH * 2;
             Cell->Height   = EFI_GLYPH_HEIGHT;
             Cell->AdvanceX = Cell->Width;
-            CopyMem (*GlyphBuffer, Wide.GlyphCol1, EFI_GLYPH_HEIGHT);
-            CopyMem (*GlyphBuffer + EFI_GLYPH_HEIGHT, Wide.GlyphCol2, EFI_GLYPH_HEIGHT);
+            CopyMem(*GlyphBuffer, Wide.GlyphCol1, EFI_GLYPH_HEIGHT);
+            CopyMem(*GlyphBuffer + EFI_GLYPH_HEIGHT, Wide.GlyphCol2, EFI_GLYPH_HEIGHT);
             if (Attributes != NULL) {
               *Attributes = (UINT8) (Wide.Attributes | EFI_GLYPH_WIDE);
             }
@@ -613,7 +613,7 @@ WriteOutputParam (
   }
 
   if (Cell != NULL) {
-    CopyMem (Cell, InputCell, sizeof (EFI_HII_GLYPH_INFO));
+    CopyMem(Cell, InputCell, sizeof (EFI_HII_GLYPH_INFO));
   }
 
   if (GlyphBuffer != NULL && BufferLen > 0) {
@@ -621,7 +621,7 @@ WriteOutputParam (
     if (*GlyphBuffer == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
-    CopyMem (*GlyphBuffer, BufferIn, BufferLen);
+    CopyMem(*GlyphBuffer, BufferIn, BufferLen);
   }
 
   if (GlyphBufferLen != NULL) {
@@ -693,7 +693,7 @@ FindGlyphBlock (
     if (EFI_ERROR(Status)) {
       return Status;
     }
-    CopyMem (
+    CopyMem(
       &LocalCell,
       (UINT8 *) FontPackage->FontPkgHdr + 3 * sizeof (UINT32),
       sizeof (EFI_HII_GLYPH_INFO)
@@ -720,7 +720,7 @@ FindGlyphBlock (
         if (EFI_ERROR(Status)) {
           return Status;
         }
-        CopyMem (
+        CopyMem(
           &LocalCell,
           BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK),
           sizeof (EFI_HII_GLYPH_INFO)
@@ -737,7 +737,7 @@ FindGlyphBlock (
 
     case EFI_HII_GIBT_DUPLICATE:
       if (CharCurrent == CharValue) {
-        CopyMem (&CharValue, BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK), sizeof (CHAR16));
+        CopyMem(&CharValue, BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK), sizeof (CHAR16));
         CharCurrent = 1;
         BlockPtr    = FontPackage->GlyphBlock;
         continue;
@@ -750,7 +750,7 @@ FindGlyphBlock (
       BlockPtr += *(UINT8*)((UINTN)BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK) + sizeof (UINT8));
       break;
     case EFI_HII_GIBT_EXT2:
-      CopyMem (
+      CopyMem(
         &Length16,
         (UINT8*)((UINTN)BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK) + sizeof (UINT8)),
         sizeof (UINT16)
@@ -758,7 +758,7 @@ FindGlyphBlock (
       BlockPtr += Length16;
       break;
     case EFI_HII_GIBT_EXT4:
-      CopyMem (
+      CopyMem(
         &Length32,
         (UINT8*)((UINTN)BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK) + sizeof (UINT8)),
         sizeof (UINT32)
@@ -767,7 +767,7 @@ FindGlyphBlock (
       break;
 
     case EFI_HII_GIBT_GLYPH:
-      CopyMem (
+      CopyMem(
         &LocalCell,
         BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK),
         sizeof (EFI_HII_GLYPH_INFO)
@@ -797,9 +797,9 @@ FindGlyphBlock (
 
     case EFI_HII_GIBT_GLYPHS:
       BlockPtr += sizeof (EFI_HII_GLYPH_BLOCK);
-      CopyMem (&Glyphs.Cell, BlockPtr, sizeof (EFI_HII_GLYPH_INFO));
+      CopyMem(&Glyphs.Cell, BlockPtr, sizeof (EFI_HII_GLYPH_INFO));
       BlockPtr += sizeof (EFI_HII_GLYPH_INFO);
-      CopyMem (&Glyphs.Count, BlockPtr, sizeof (UINT16));
+      CopyMem(&Glyphs.Count, BlockPtr, sizeof (UINT16));
       BlockPtr += sizeof (UINT16);
 
       if (CharValue == (CHAR16) (-1)) {
@@ -858,7 +858,7 @@ FindGlyphBlock (
       break;
 
     case EFI_HII_GIBT_GLYPHS_DEFAULT:
-      CopyMem (&Length16, BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK), sizeof (UINT16));
+      CopyMem(&Length16, BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK), sizeof (UINT16));
       Status = GetCell (CharCurrent, &FontPackage->GlyphInfoList, &DefaultCell);
       if (EFI_ERROR(Status)) {
         return Status;
@@ -894,7 +894,7 @@ FindGlyphBlock (
       BlockPtr    += sizeof (EFI_HII_GIBT_SKIP1_BLOCK);
       break;
     case EFI_HII_GIBT_SKIP2:
-      CopyMem (&Length16, BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK), sizeof (UINT16));
+      CopyMem(&Length16, BlockPtr + sizeof (EFI_HII_GLYPH_BLOCK), sizeof (UINT16));
       CharCurrent = (UINT16) (CharCurrent + Length16);
       BlockPtr    += sizeof (EFI_HII_GIBT_SKIP2_BLOCK);
       break;
@@ -2194,7 +2194,7 @@ NextLine:
         Status = EFI_OUT_OF_RESOURCES;
         goto Exit;
       }
-      CopyMem (*RowInfoArray, RowInfo, RowInfoSize);
+      CopyMem(*RowInfoArray, RowInfo, RowInfoSize);
     } else {
       *RowInfoArray = NULL;
     }
@@ -2819,7 +2819,7 @@ HiiGetFontInfo (
   // Parse the font information mask to find a matching font.
   //
 
-  CopyMem (&InfoOut, (EFI_FONT_DISPLAY_INFO *) StringInfoIn, sizeof (EFI_FONT_DISPLAY_INFO));
+  CopyMem(&InfoOut, (EFI_FONT_DISPLAY_INFO *) StringInfoIn, sizeof (EFI_FONT_DISPLAY_INFO));
 
   if ((StringInfoIn->FontInfoMask & EFI_FONT_INFO_SYS_FONT) == EFI_FONT_INFO_SYS_FONT) {
     Status = SaveFontName (SystemDefault->FontInfo.FontName, &FontInfo);
@@ -2874,8 +2874,8 @@ HiiGetFontInfo (
         goto Exit;
       }
 
-      CopyMem (*StringInfoOut, &InfoOut, sizeof (EFI_FONT_DISPLAY_INFO));
-      CopyMem (&(*StringInfoOut)->FontInfo, GlobalFont->FontInfo, GlobalFont->FontInfoSize);
+      CopyMem(*StringInfoOut, &InfoOut, sizeof (EFI_FONT_DISPLAY_INFO));
+      CopyMem(&(*StringInfoOut)->FontInfo, GlobalFont->FontInfo, GlobalFont->FontInfoSize);
     }
 
     LocalFontHandle = GlobalFont->Entry.ForwardLink;

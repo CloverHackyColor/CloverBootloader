@@ -99,7 +99,7 @@ SmmCopyMemFromSmram (
 **/
 EFI_STATUS
 EFIAPI
-SmmCopyMem (
+SmmCopyMem(
   OUT VOID       *DestinationBuffer,
   IN CONST VOID  *SourceBuffer,
   IN UINTN       Length
@@ -123,7 +123,7 @@ SmmCopyMem (
 **/
 EFI_STATUS
 EFIAPI
-SmmSetMem (
+SmmSetMem(
   OUT VOID  *Buffer,
   IN UINTN  Length,
   IN UINT8  Value

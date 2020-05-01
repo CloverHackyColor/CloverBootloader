@@ -498,7 +498,7 @@ GetLangFromSupportedLangCodes (
     //
     CompareLength = ISO_639_2_ENTRY_SIZE;
     mVariableModuleGlobal->Lang[CompareLength] = '\0';
-    return CopyMem (mVariableModuleGlobal->Lang, SupportedLang + Index * CompareLength, CompareLength);
+    return CopyMem(mVariableModuleGlobal->Lang, SupportedLang + Index * CompareLength, CompareLength);
 
   } else {
     while (TRUE) {
@@ -523,7 +523,7 @@ GetLangFromSupportedLangCodes (
         // In driver entry, it pre-allocates a runtime attribute memory to accommodate this string.
         //
         mVariableModuleGlobal->PlatformLang[CompareLength] = '\0';
-        return CopyMem (mVariableModuleGlobal->PlatformLang, Supported - CompareLength, CompareLength);
+        return CopyMem(mVariableModuleGlobal->PlatformLang, Supported - CompareLength, CompareLength);
       }
       SubIndex++;
       
@@ -642,7 +642,7 @@ VariableGetBestLanguage (
 
           Buffer = Iso639Language ? mVariableModuleGlobal->Lang : mVariableModuleGlobal->PlatformLang;
           Buffer[CompareLength] = '\0';
-          return CopyMem (Buffer, Supported, CompareLength);
+          return CopyMem(Buffer, Supported, CompareLength);
         }
       }
 
@@ -1036,13 +1036,13 @@ UpdateVariable (
   NextVariable->NameSize  = (UINT32)VarNameSize;
   NextVariable->DataSize  = (UINT32)DataSize;
 
-  CopyMem (&NextVariable->VendorGuid, VendorGuid, sizeof (EFI_GUID));
-  CopyMem (
+  CopyMem(&NextVariable->VendorGuid, VendorGuid, sizeof (EFI_GUID));
+  CopyMem(
     (UINT8 *) ((UINTN) NextVariable + VarNameOffset),
     VariableName,
     VarNameSize
     );
-  CopyMem (
+  CopyMem(
     (UINT8 *) ((UINTN) NextVariable + VarDataOffset),
     Data,
     DataSize
@@ -1213,7 +1213,7 @@ EmuGetVariable (
     VariableDataPtr = GetVariableDataPtr (Variable.CurrPtr);
 //   ASSERT (VariableDataPtr != NULL);
     
-    CopyMem (Data, VariableDataPtr, VarDataSize);
+    CopyMem(Data, VariableDataPtr, VarDataSize);
     if (Attributes != NULL) {
       *Attributes = Variable.CurrPtr->Attributes;
     }
@@ -1309,12 +1309,12 @@ EmuGetNextVariableName (
       if (!(VariableClassAtRuntime () && ((Variable.CurrPtr->Attributes & EFI_VARIABLE_RUNTIME_ACCESS) == 0))) {
         VarNameSize = Variable.CurrPtr->NameSize;
         if (VarNameSize <= *VariableNameSize) {
-          CopyMem (
+          CopyMem(
             VariableName,
             GET_VARIABLE_NAME_PTR (Variable.CurrPtr),
             VarNameSize
             );
-          CopyMem (
+          CopyMem(
             VendorGuid,
             &Variable.CurrPtr->VendorGuid,
             sizeof (EFI_GUID)
@@ -1688,7 +1688,7 @@ InitializeVariableStore (
   }
 
   if (FullyInitializeStore) {
-    SetMem (VariableStore, PcdGet32 (PcdVariableStoreSize), 0xff);
+    SetMem(VariableStore, PcdGet32 (PcdVariableStoreSize), 0xff);
   }
 
   //

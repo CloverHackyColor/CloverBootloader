@@ -253,7 +253,7 @@ RegularExpressionGetInfo (
   }
 
   for (Index = 0; Index < ARRAY_SIZE (mSupportedSyntaxes); ++Index) {
-    CopyMem (&RegExSyntaxTypeList[Index], mSupportedSyntaxes[Index], sizeof(**mSupportedSyntaxes));
+    CopyMem(&RegExSyntaxTypeList[Index], mSupportedSyntaxes[Index], sizeof(**mSupportedSyntaxes));
   }
   *RegExSyntaxTypeListSize = SyntaxSize;
 

@@ -711,7 +711,7 @@ S3ResumeExecuteBootScript (
     // 
     IdtBuffer = AllocatePages (EFI_SIZE_TO_PAGES((IdtDescriptor->Limit + 1) + 16));
     ASSERT (IdtBuffer != NULL);
-    CopyMem ((VOID*)((UINT8*)IdtBuffer + 16),(VOID*)(IdtDescriptor->Base), (IdtDescriptor->Limit + 1));
+    CopyMem((VOID*)((UINT8*)IdtBuffer + 16),(VOID*)(IdtDescriptor->Base), (IdtDescriptor->Limit + 1));
     IdtDescriptor->Base = (UINTN)((UINT8*)IdtBuffer + 16);
     *(UINTN*)(IdtDescriptor->Base - sizeof(UINTN)) = (UINTN)GetPeiServicesTablePointer ();
   }

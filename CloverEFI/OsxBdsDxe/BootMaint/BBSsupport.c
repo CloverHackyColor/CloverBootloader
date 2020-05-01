@@ -141,7 +141,7 @@ OrderLegacyBootOption4SameType (
     //
   // Overwrite the old BootOption
     //
-  CopyMem (&BootOrder[StartPosition], NewBootOption, (*DisBootOptionCount + *EnBootOptionCount) * sizeof (UINT16));
+  CopyMem(&BootOrder[StartPosition], NewBootOption, (*DisBootOptionCount + *EnBootOptionCount) * sizeof (UINT16));
   Status = gRT->SetVariable (
                   L"BootOrder",
                   &gEfiGlobalVariableGuid,
@@ -192,7 +192,7 @@ GroupMultipleLegacyBootOption4SameType (
   BDS_COMMON_OPTION            *BootOption;
   LIST_ENTRY                   List;
 
-  SetMem (DeviceTypeIndex, sizeof (DeviceTypeIndex), 0xff);
+  SetMem(DeviceTypeIndex, sizeof (DeviceTypeIndex), 0xff);
 
   BootOrder = BdsLibGetVariableAndSize (
                 L"BootOrder",
@@ -224,7 +224,7 @@ GroupMultipleLegacyBootOption4SameType (
       // insert the current boot option before *NextIndex, causing [*Next .. Index] shift right one position
       //
         OptionNumber = BootOrder[Index];
-        CopyMem (&BootOrder[*NextIndex + 1], &BootOrder[*NextIndex], (Index - *NextIndex) * sizeof (UINT16));
+        CopyMem(&BootOrder[*NextIndex + 1], &BootOrder[*NextIndex], (Index - *NextIndex) * sizeof (UINT16));
         BootOrder[*NextIndex] = OptionNumber;
 
       //

@@ -44,7 +44,7 @@ AIKDataReadEntry (
     return EFI_NOT_READY;
   }
 
-  CopyMem (KeyData, Data->KeyBufferTail, sizeof (*KeyData));
+  CopyMem(KeyData, Data->KeyBufferTail, sizeof (*KeyData));
 
   Data->KeyBufferSize--;
   Data->KeyBufferTail++;
@@ -73,7 +73,7 @@ AIKDataWriteEntry (
   }
   
   Data->KeyBufferSize++;
-  CopyMem (Data->KeyBufferHead, KeyData, sizeof (*KeyData));
+  CopyMem(Data->KeyBufferHead, KeyData, sizeof (*KeyData));
   Data->KeyBufferHead++;
   if (Data->KeyBufferHead == &Data->KeyBuffer[AIK_DATA_BUFFER_SIZE]) {
     Data->KeyBufferHead = Data->KeyBuffer;

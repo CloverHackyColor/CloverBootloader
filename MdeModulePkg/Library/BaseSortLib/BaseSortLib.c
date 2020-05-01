@@ -81,9 +81,9 @@ QuickSortWorker (
       //
       // swap
       //
-      CopyMem (Buffer, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
-      CopyMem ((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), (UINT8*)BufferToSort+((LoopCount)*ElementSize), ElementSize);
-      CopyMem ((UINT8*)BufferToSort+((LoopCount)*ElementSize), Buffer, ElementSize);
+      CopyMem(Buffer, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
+      CopyMem((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), (UINT8*)BufferToSort+((LoopCount)*ElementSize), ElementSize);
+      CopyMem((UINT8*)BufferToSort+((LoopCount)*ElementSize), Buffer, ElementSize);
 
       //
       // increment NextSwapLocation
@@ -94,9 +94,9 @@ QuickSortWorker (
   //
   // swap pivot to it's final position (NextSwapLocaiton)
   //
-  CopyMem (Buffer, Pivot, ElementSize);
-  CopyMem (Pivot, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
-  CopyMem ((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), Buffer, ElementSize);
+  CopyMem(Buffer, Pivot, ElementSize);
+  CopyMem(Pivot, (UINT8*)BufferToSort+(NextSwapLocation*ElementSize), ElementSize);
+  CopyMem((UINT8*)BufferToSort+(NextSwapLocation*ElementSize), Buffer, ElementSize);
 
   //
   // Now recurse on 2 paritial lists.  neither of these will have the 'pivot' element

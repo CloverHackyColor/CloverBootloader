@@ -281,7 +281,7 @@ Returns:
       // Update the last modification time
       //
       FatGetCurrentFatTime (&FatNow);
-      CopyMem (&DirEnt->Entry.FileLastAccess, &FatNow.Date, sizeof (FAT_DATE));
+      CopyMem(&DirEnt->Entry.FileLastAccess, &FatNow.Date, sizeof (FAT_DATE));
       if (!OFile->PreserveLastModification) {
         FatGetCurrentFatTime (&DirEnt->Entry.FileModificationTime);
       }

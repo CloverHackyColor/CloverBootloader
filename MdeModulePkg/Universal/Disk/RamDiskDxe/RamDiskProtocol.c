@@ -246,7 +246,7 @@ RamDiskPublishNfit (
     if (Nfit == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
-    CopyMem (Nfit, TableHeader, NfitHeader->Length);
+    CopyMem(Nfit, TableHeader, NfitHeader->Length);
 
     //
     // Update the NFIT head pointer.
@@ -322,8 +322,8 @@ RamDiskPublishNfit (
     NfitHeader->CreatorId       = PcdGet32 (PcdAcpiDefaultCreatorId);
     NfitHeader->CreatorRevision = PcdGet32 (PcdAcpiDefaultCreatorRevision);
     CurrentData                 = PcdGet64 (PcdAcpiDefaultOemTableId);
-    CopyMem (NfitHeader->OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (NfitHeader->OemId));
-    CopyMem (&NfitHeader->OemTableId, &CurrentData, sizeof (UINT64));
+    CopyMem(NfitHeader->OemId, PcdGetPtr (PcdAcpiDefaultOemId), sizeof (NfitHeader->OemId));
+    CopyMem(&NfitHeader->OemTableId, &CurrentData, sizeof (UINT64));
   }
 
   //
@@ -473,7 +473,7 @@ RamDiskUnpublishNfit (
   //
   // Get a copy of the old NFIT header content.
   //
-  CopyMem (NewNfit, TableHeader, sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
+  CopyMem(NewNfit, TableHeader, sizeof (EFI_ACPI_6_1_NVDIMM_FIRMWARE_INTERFACE_TABLE));
   NewNfitHeader           = (EFI_ACPI_DESCRIPTION_HEADER *)NewNfit;
   NewNfitHeader->Length   = NewNfitLen;
   NewNfitHeader->Checksum = 0;
@@ -506,7 +506,7 @@ RamDiskUnpublishNfit (
     //
     // Copy the content of origin NFIT.
     //
-    CopyMem (NewNfitPtr, NfitStructHeader, NfitStructHeader->Length);
+    CopyMem(NewNfitPtr, NfitStructHeader, NfitStructHeader->Length);
     NewNfitPtr = (UINT8 *)NewNfitPtr + NfitStructHeader->Length;
 
     //

@@ -1031,7 +1031,7 @@ BootMaintRouteConfig (
   //
   // After user do the save action, need to update OldBmmData.
   //
-  CopyMem (OldBmmData, NewBmmData, sizeof (BMM_FAKE_NV_DATA));
+  CopyMem(OldBmmData, NewBmmData, sizeof (BMM_FAKE_NV_DATA));
 
   return EFI_SUCCESS;
 
@@ -1327,11 +1327,11 @@ DiscardChangeHandler (
 
   switch (Private->BmmPreviousPageId) {
   case FORM_BOOT_CHG_ID:
-    CopyMem (CurrentFakeNVMap->BootOptionOrder, Private->BmmOldFakeNVData.BootOptionOrder, sizeof (CurrentFakeNVMap->BootOptionOrder));
+    CopyMem(CurrentFakeNVMap->BootOptionOrder, Private->BmmOldFakeNVData.BootOptionOrder, sizeof (CurrentFakeNVMap->BootOptionOrder));
     break;
 
   case FORM_DRV_CHG_ID:
-    CopyMem (CurrentFakeNVMap->DriverOptionOrder, Private->BmmOldFakeNVData.DriverOptionOrder, sizeof (CurrentFakeNVMap->DriverOptionOrder));
+    CopyMem(CurrentFakeNVMap->DriverOptionOrder, Private->BmmOldFakeNVData.DriverOptionOrder, sizeof (CurrentFakeNVMap->DriverOptionOrder));
     break;
 
   case FORM_BOOT_DEL_ID:
@@ -1512,7 +1512,7 @@ InitializeBmmConfig (
   //
   // Backup Initialize BMM configuartion data to BmmOldFakeNVData
   //
-  CopyMem (&CallbackData->BmmOldFakeNVData, &CallbackData->BmmFakeNvData, sizeof (BMM_FAKE_NV_DATA));
+  CopyMem(&CallbackData->BmmOldFakeNVData, &CallbackData->BmmFakeNvData, sizeof (BMM_FAKE_NV_DATA));
 }
 
 /**

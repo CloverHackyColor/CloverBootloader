@@ -488,7 +488,7 @@ DeleteFromBootOrder (
     // BootNum found at Index - copy the rest over it
     //
     if (Index < BootOrderLen - 1) {
-        CopyMem (&BootOrder[Index],
+        CopyMem(&BootOrder[Index],
                  &BootOrder[Index + 1],
                  (BootOrderLen - (Index + 1)) * sizeof(UINT16)
                  );
@@ -667,16 +667,16 @@ CompileBootOption (
     Ptr8 += sizeof(BootOption->FilePathListLength);
     
     // Description
-    CopyMem ((CHAR16*)Ptr8, BootOption->Description, BootOption->DescriptionSize);
+    CopyMem((CHAR16*)Ptr8, BootOption->Description, BootOption->DescriptionSize);
     Ptr8 += BootOption->DescriptionSize;
     
     // FilePathList
-    CopyMem (Ptr8, BootOption->FilePathList, BootOption->FilePathListLength);
+    CopyMem(Ptr8, BootOption->FilePathList, BootOption->FilePathListLength);
     Ptr8 += BootOption->FilePathListLength;
     
     // OptionalData
     if (BootOption->OptionalDataSize > 0) {
-        CopyMem (Ptr8, BootOption->OptionalData, BootOption->OptionalDataSize);
+        CopyMem(Ptr8, BootOption->OptionalData, BootOption->OptionalDataSize);
 //        Ptr8 += BootOption->OptionalDataSize;
     }
     

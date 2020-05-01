@@ -1408,7 +1408,7 @@ LibPatchPcdSetPtr (
     return NULL;
   }
 
-  CopyMem (PatchVariable, Buffer, *SizeOfBuffer);
+  CopyMem(PatchVariable, Buffer, *SizeOfBuffer);
 
   return (VOID *) Buffer;
 }
@@ -1458,7 +1458,7 @@ LibPatchPcdSetPtrS (
     return RETURN_INVALID_PARAMETER;
   }
 
-  CopyMem (PatchVariable, Buffer, *SizeOfBuffer);
+  CopyMem(PatchVariable, Buffer, *SizeOfBuffer);
 
   return RETURN_SUCCESS;
 }
@@ -1513,7 +1513,7 @@ LibPatchPcdSetPtrAndSize (
     return NULL;
   }
 
-  CopyMem (PatchVariable, Buffer, *SizeOfBuffer);
+  CopyMem(PatchVariable, Buffer, *SizeOfBuffer);
   *SizeOfPatchVariable = *SizeOfBuffer;
 
   return (VOID *) Buffer;
@@ -1568,7 +1568,7 @@ LibPatchPcdSetPtrAndSizeS (
     return RETURN_INVALID_PARAMETER;
   }
 
-  CopyMem (PatchVariable, Buffer, *SizeOfBuffer);
+  CopyMem(PatchVariable, Buffer, *SizeOfBuffer);
   *SizeOfPatchVariable = *SizeOfBuffer;
 
   return RETURN_SUCCESS;

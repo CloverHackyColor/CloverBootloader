@@ -170,7 +170,7 @@ InstallMemoryAttributesTable (
     switch (MemoryMap->Type) {
     case EfiRuntimeServicesCode:
     case EfiRuntimeServicesData:
-      CopyMem (MemoryAttributesEntry, MemoryMap, DescriptorSize);
+      CopyMem(MemoryAttributesEntry, MemoryMap, DescriptorSize);
       MemoryAttributesEntry->Attribute &= (EFI_MEMORY_RO|EFI_MEMORY_XP|EFI_MEMORY_RUNTIME);
       DEBUG ((EFI_D_VERBOSE, "Entry (0x%x)\n", MemoryAttributesEntry));
       DEBUG ((EFI_D_VERBOSE, "  Type              - 0x%x\n", MemoryAttributesEntry->Type));

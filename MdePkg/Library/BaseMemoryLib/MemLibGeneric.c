@@ -101,7 +101,7 @@ InternalMemZeroMem (
   IN      UINTN                     Length
   )
 {
-  return InternalMemSetMem (Buffer, Length, 0);
+  return InternalMemSetMem(Buffer, Length, 0);
 }
 
 /**

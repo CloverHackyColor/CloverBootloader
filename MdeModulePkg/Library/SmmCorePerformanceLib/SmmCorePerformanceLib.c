@@ -601,10 +601,10 @@ InsertFpdtRecord (
       FpdtRecordPtr.GuidEvent->Header.Revision            = FPDT_RECORD_REVISION_1;
       FpdtRecordPtr.GuidEvent->ProgressID                 = PerfId;
       FpdtRecordPtr.GuidEvent->Timestamp                  = TimeStamp;
-      CopyMem (&FpdtRecordPtr.GuidEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.GuidEvent->Guid));
+      CopyMem(&FpdtRecordPtr.GuidEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.GuidEvent->Guid));
       if (CallerIdentifier == NULL && PerfId == MODULE_END_ID && mCachedLength != 0) {
         CachedFpdtRecordPtr.RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8*)mSmmBootPerformanceTable + mCachedLength);
-        CopyMem (&FpdtRecordPtr.GuidEvent->Guid, &CachedFpdtRecordPtr.GuidEvent->Guid, sizeof (FpdtRecordPtr.GuidEvent->Guid));
+        CopyMem(&FpdtRecordPtr.GuidEvent->Guid, &CachedFpdtRecordPtr.GuidEvent->Guid, sizeof (FpdtRecordPtr.GuidEvent->Guid));
         mCachedLength = 0;
       }
     }
@@ -630,10 +630,10 @@ InsertFpdtRecord (
       FpdtRecordPtr.GuidQwordEvent->ProgressID            = PerfId;
       FpdtRecordPtr.GuidQwordEvent->Timestamp             = TimeStamp;
       FpdtRecordPtr.GuidQwordEvent->Qword                 = mLoadImageCount;
-      CopyMem (&FpdtRecordPtr.GuidQwordEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.GuidQwordEvent->Guid));
+      CopyMem(&FpdtRecordPtr.GuidQwordEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.GuidQwordEvent->Guid));
       if (PerfId == MODULE_LOADIMAGE_END_ID && mCachedLength != 0) {
         CachedFpdtRecordPtr.RecordHeader = (EFI_ACPI_5_0_FPDT_PERFORMANCE_RECORD_HEADER *)((UINT8*)mSmmBootPerformanceTable + mCachedLength);
-        CopyMem (&CachedFpdtRecordPtr.GuidQwordEvent->Guid, &ModuleGuid, sizeof (CachedFpdtRecordPtr.GuidQwordEvent->Guid));
+        CopyMem(&CachedFpdtRecordPtr.GuidQwordEvent->Guid, &ModuleGuid, sizeof (CachedFpdtRecordPtr.GuidQwordEvent->Guid));
         mCachedLength = 0;
       }
     }
@@ -656,8 +656,8 @@ InsertFpdtRecord (
       FpdtRecordPtr.DualGuidStringEvent->Header.Revision  = FPDT_RECORD_REVISION_1;
       FpdtRecordPtr.DualGuidStringEvent->ProgressID       = PerfId;
       FpdtRecordPtr.DualGuidStringEvent->Timestamp        = TimeStamp;
-      CopyMem (&FpdtRecordPtr.DualGuidStringEvent->Guid1, CallerIdentifier, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid1));
-      CopyMem (&FpdtRecordPtr.DualGuidStringEvent->Guid2, Guid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid2));
+      CopyMem(&FpdtRecordPtr.DualGuidStringEvent->Guid1, CallerIdentifier, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid1));
+      CopyMem(&FpdtRecordPtr.DualGuidStringEvent->Guid2, Guid, sizeof (FpdtRecordPtr.DualGuidStringEvent->Guid2));
       CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DualGuidStringEvent->String, StringPtr, &FpdtRecordPtr.DualGuidStringEvent->Header.Length);
     }
     break;
@@ -684,7 +684,7 @@ InsertFpdtRecord (
       FpdtRecordPtr.DynamicStringEvent->Header.Revision   = FPDT_RECORD_REVISION_1;
       FpdtRecordPtr.DynamicStringEvent->ProgressID        = PerfId;
       FpdtRecordPtr.DynamicStringEvent->Timestamp         = TimeStamp;
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+      CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
       CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
     }
     break;
@@ -706,7 +706,7 @@ InsertFpdtRecord (
         FpdtRecordPtr.DynamicStringEvent->Header.Revision   = FPDT_RECORD_REVISION_1;
         FpdtRecordPtr.DynamicStringEvent->ProgressID        = PerfId;
         FpdtRecordPtr.DynamicStringEvent->Timestamp         = TimeStamp;
-        CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+        CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
         CopyStringIntoPerfRecordAndUpdateLength (FpdtRecordPtr.DynamicStringEvent->String, StringPtr, &FpdtRecordPtr.DynamicStringEvent->Header.Length);
       }
     } else {
@@ -731,9 +731,9 @@ InsertFpdtRecord (
       //
       // Cache the event guid in string event record.
       //
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, Guid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+      CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, Guid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
     } else {
-      CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
+      CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (FpdtRecordPtr.DynamicStringEvent->Guid));
     }
     if (AsciiStrLen(StringPtr) == 0) {
       StringPtr = "unknown name";
@@ -751,7 +751,7 @@ InsertFpdtRecord (
         if (StringLen >= DestMax) {
           StringLen = DestMax -1;
         }
-        CopyMem (&CachedFpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid));
+        CopyMem(&CachedFpdtRecordPtr.DynamicStringEvent->Guid, &ModuleGuid, sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid));
         AsciiStrnCpyS (CachedFpdtRecordPtr.DynamicStringEvent->String, DestMax, StringPtr, StringLen);
       } else if (PerfId == MODULE_END_ID) {
         DestMax = FpdtRecordPtr.DynamicStringEvent->Header.Length - sizeof (FPDT_DYNAMIC_STRING_EVENT_RECORD);
@@ -759,7 +759,7 @@ InsertFpdtRecord (
         if (StringLen >= DestMax) {
           StringLen = DestMax -1;
         }
-        CopyMem (&FpdtRecordPtr.DynamicStringEvent->Guid, &CachedFpdtRecordPtr.DynamicStringEvent->Guid, sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid));
+        CopyMem(&FpdtRecordPtr.DynamicStringEvent->Guid, &CachedFpdtRecordPtr.DynamicStringEvent->Guid, sizeof (CachedFpdtRecordPtr.DynamicStringEvent->Guid));
         AsciiStrnCpyS (FpdtRecordPtr.DynamicStringEvent->String, DestMax, CachedFpdtRecordPtr.DynamicStringEvent->String, StringLen);
       }
       mCachedLength = 0;

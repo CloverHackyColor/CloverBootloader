@@ -464,7 +464,7 @@ BuildGuidDataHob (
     return HobData;
   }
 
-  return CopyMem (HobData, Data, DataLength);
+  return CopyMem(HobData, Data, DataLength);
 }
 
 /**

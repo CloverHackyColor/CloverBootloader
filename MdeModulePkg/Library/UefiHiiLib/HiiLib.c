@@ -205,7 +205,7 @@ HiiAddPackages (
   //
   for (VA_START (Args, DeviceHandle); (Package = VA_ARG (Args, UINT32 *)) != NULL; ) {
     Length = ReadUnaligned32 (Package) - sizeof (UINT32);
-    CopyMem (Data, Package + 1, Length);
+    CopyMem(Data, Package + 1, Length);
     Data += Length;
   }
   VA_END (Args);
@@ -213,7 +213,7 @@ HiiAddPackages (
   //
   // Append a package of type EFI_HII_PACKAGE_END to mark the end of the package list
   //
-  CopyMem (Data, &mEndOfPakageList, sizeof (mEndOfPakageList));
+  CopyMem(Data, &mEndOfPakageList, sizeof (mEndOfPakageList));
 
   //
   // Register the package list with the HII Database
@@ -444,7 +444,7 @@ HiiGetFormSetFromHiiHandle(
 
   while (Offset < PackageListLength) {
     Package = ((UINT8 *) HiiPackageList) + Offset;
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
     Offset += PackageHeader.Length;
 
     if (PackageHeader.Type != EFI_HII_PACKAGE_FORMS) {
@@ -473,7 +473,7 @@ HiiGetFormSetFromHiiHandle(
           Status = EFI_OUT_OF_RESOURCES;
           goto Done;
         }
-        CopyMem (TempBuffer + TempSize,  OpCodeData, ((EFI_IFR_OP_HEADER *) OpCodeData)->Length);
+        CopyMem(TempBuffer + TempSize,  OpCodeData, ((EFI_IFR_OP_HEADER *) OpCodeData)->Length);
         FormSetBuffer = NULL;
       } else {
         TempBuffer = AllocatePool (TempSize + ((EFI_IFR_OP_HEADER *) OpCodeData)->Length);
@@ -481,7 +481,7 @@ HiiGetFormSetFromHiiHandle(
           Status = EFI_OUT_OF_RESOURCES;
           goto Done;
         }
-        CopyMem (TempBuffer, OpCodeData, ((EFI_IFR_OP_HEADER *) OpCodeData)->Length);
+        CopyMem(TempBuffer, OpCodeData, ((EFI_IFR_OP_HEADER *) OpCodeData)->Length);
       }
       TempSize += ((EFI_IFR_OP_HEADER *) OpCodeData)->Length;
       FormSetBuffer = TempBuffer;
@@ -1109,7 +1109,7 @@ GetValueFromRequest (
   }
 
   *VarValue = 0;
-  CopyMem (VarValue, TmpBuffer, (((Length + 1) / 2) < sizeof (UINT64)) ? ((Length + 1) / 2) : sizeof (UINT64));
+  CopyMem(VarValue, TmpBuffer, (((Length + 1) / 2) < sizeof (UINT64)) ? ((Length + 1) / 2) : sizeof (UINT64));
 
   FreePool(TmpBuffer);
 
@@ -1202,7 +1202,7 @@ ValidateQuestionFromVfr (
   //
   PackageOffset = sizeof (EFI_HII_PACKAGE_LIST_HEADER);
   while (PackageOffset < PackageListLength) {
-    CopyMem (&PackageHeader, (UINT8 *) HiiPackageList + PackageOffset, sizeof (PackageHeader));
+    CopyMem(&PackageHeader, (UINT8 *) HiiPackageList + PackageOffset, sizeof (PackageHeader));
 
     //
     // Parse IFR opcode from the form package.
@@ -1401,10 +1401,10 @@ ValidateQuestionFromVfr (
               //
               StartBit = BitOffset % 8;
               EndBit = StartBit + BitWidth - 1;
-              CopyMem ((UINT8 *) &BufferValue, VarBuffer + Offset, Width);
+              CopyMem((UINT8 *) &BufferValue, VarBuffer + Offset, Width);
               VarValue = BitFieldRead32 (BufferValue, StartBit, EndBit);
             } else {
-              CopyMem (&VarValue, VarBuffer +  Offset, Width);
+              CopyMem(&VarValue, VarBuffer +  Offset, Width);
             }
           }
           //
@@ -1493,10 +1493,10 @@ ValidateQuestionFromVfr (
               //
               StartBit = BitOffset % 8;
               EndBit = StartBit + BitWidth - 1;
-              CopyMem ((UINT8 *) &BufferValue, VarBuffer + Offset, Width);
+              CopyMem((UINT8 *) &BufferValue, VarBuffer + Offset, Width);
               VarValue = BitFieldRead32 (BufferValue, StartBit, EndBit);
             } else {
-              CopyMem (&VarValue, VarBuffer +  Offset, Width);
+              CopyMem(&VarValue, VarBuffer +  Offset, Width);
             }
           }
           if ( QuestionReferBitField) {
@@ -1672,10 +1672,10 @@ ValidateQuestionFromVfr (
               //
               StartBit = BitOffset % 8;
               EndBit = StartBit + BitWidth - 1;
-              CopyMem ((UINT8 *) &BufferValue, VarBuffer + Offset, Width);
+              CopyMem((UINT8 *) &BufferValue, VarBuffer + Offset, Width);
               VarValue = BitFieldRead32 (BufferValue, StartBit, EndBit);
             } else {
-              CopyMem (&VarValue, VarBuffer +  Offset, Width);
+              CopyMem(&VarValue, VarBuffer +  Offset, Width);
             }
           }
           //
@@ -1790,7 +1790,7 @@ ValidateQuestionFromVfr (
             //
             ASSERT (IfrOneOfOption->Type <= EFI_IFR_TYPE_NUM_SIZE_64);
             ZeroMem (&TmpValue, sizeof (EFI_IFR_TYPE_VALUE));
-            CopyMem (&TmpValue, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
+            CopyMem(&TmpValue, &IfrOneOfOption->Value, IfrOneOfOption->Header.Length - OFFSET_OF (EFI_IFR_ONE_OF_OPTION, Value));
             if (VarValue == TmpValue.u64) {
               //
               // The value is one of option value.
@@ -1927,7 +1927,7 @@ GetBlockDataInfo (
       goto Done;
     }
     Offset = 0;
-    CopyMem (
+    CopyMem(
       &Offset,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
@@ -1950,7 +1950,7 @@ GetBlockDataInfo (
       goto Done;
     }
     Width = 0;
-    CopyMem (
+    CopyMem(
       &Width,
       TmpBuffer,
       (((Length + 1) / 2) < sizeof (UINT16)) ? ((Length + 1) / 2) : sizeof (UINT16)
@@ -2003,7 +2003,7 @@ GetBlockDataInfo (
     //
     // Update the Block with configuration info
     //
-    CopyMem (DataBuffer + Offset, TmpBuffer, Width);
+    CopyMem(DataBuffer + Offset, TmpBuffer, Width);
     FreePool(TmpBuffer);
     TmpBuffer = NULL;
 
@@ -3127,7 +3127,7 @@ InternalHiiCreateOpCodeExtended (
   Header->Scope  = Scope;
   Header->Length = (UINT8)(OpCodeSize + ExtensionSize);
   Buffer = InternalHiiGrowOpCodeHandle (OpCodeHandle, Header->Length);
-  return (UINT8 *)CopyMem (Buffer, Header, OpCodeSize);
+  return (UINT8 *)CopyMem(Buffer, Header, OpCodeSize);
 }
 
 /**
@@ -3179,7 +3179,7 @@ HiiCreateRawOpCodes (
   ASSERT (RawBuffer != NULL);
 
   Buffer = InternalHiiGrowOpCodeHandle (OpCodeHandle, RawBufferSize);
-  return (UINT8 *)CopyMem (Buffer, RawBuffer, RawBufferSize);
+  return (UINT8 *)CopyMem(Buffer, RawBuffer, RawBufferSize);
 }
 
 /**
@@ -3267,7 +3267,7 @@ HiiCreateOneOfOptionOpCode (
   OpCode.Option = StringId;
   OpCode.Flags  = (UINT8) (Flags & (EFI_IFR_OPTION_DEFAULT | EFI_IFR_OPTION_DEFAULT_MFG));
   OpCode.Type   = Type;
-  CopyMem (&OpCode.Value, &Value, mHiiDefaultTypeToWidth[Type]);
+  CopyMem(&OpCode.Value, &Value, mHiiDefaultTypeToWidth[Type]);
 
   return InternalHiiCreateOpCode (OpCodeHandle, &OpCode, EFI_IFR_ONE_OF_OPTION_OP, OFFSET_OF(EFI_IFR_ONE_OF_OPTION, Value) + mHiiDefaultTypeToWidth[Type]);
 }
@@ -3303,7 +3303,7 @@ HiiCreateDefaultOpCode (
   ZeroMem (&OpCode, sizeof (OpCode));
   OpCode.Type      = Type;
   OpCode.DefaultId = DefaultId;
-  CopyMem (&OpCode.Value, &Value, mHiiDefaultTypeToWidth[Type]);
+  CopyMem(&OpCode.Value, &Value, mHiiDefaultTypeToWidth[Type]);
 
   return InternalHiiCreateOpCode (OpCodeHandle, &OpCode, EFI_IFR_DEFAULT_OP, OFFSET_OF(EFI_IFR_DEFAULT, Value) + mHiiDefaultTypeToWidth[Type]);
 }
@@ -3358,7 +3358,7 @@ HiiCreateGuidOpCode (
                                     0
                                     );
   if (OpCodePointer != NULL && GuidOpCode != NULL) {
-    CopyMem (OpCodePointer + 1, (EFI_IFR_GUID *)GuidOpCode + 1, OpCodeSize - sizeof (OpCode));
+    CopyMem(OpCodePointer + 1, (EFI_IFR_GUID *)GuidOpCode + 1, OpCodeSize - sizeof (OpCode));
   }
   return (UINT8 *)OpCodePointer;
 }
@@ -3552,7 +3552,7 @@ HiiCreateGotoExOpCode (
   OpCode.QuestionId             = RefQuestionId;
   OpCode.DevicePath             = RefDevicePath;
   if (RefFormSetId != NULL) {
-    CopyMem (&OpCode.FormSetId, RefFormSetId, sizeof (OpCode.FormSetId));
+    CopyMem(&OpCode.FormSetId, RefFormSetId, sizeof (OpCode.FormSetId));
   }
 
   //
@@ -4142,11 +4142,11 @@ InternalHiiUpdateFormPackageData (
   BOOLEAN                   Updated;
   UINTN                     UpdatePackageLength;
 
-  CopyMem (TempPackage, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+  CopyMem(TempPackage, Package, sizeof (EFI_HII_PACKAGE_HEADER));
   UpdatePackageLength = sizeof (EFI_HII_PACKAGE_HEADER);
   BufferPos           = (UINT8 *) (TempPackage + 1);
 
-  CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+  CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
   IfrOpHdr   = (EFI_IFR_OP_HEADER *)((UINT8 *) Package + sizeof (EFI_HII_PACKAGE_HEADER));
   Offset     = sizeof (EFI_HII_PACKAGE_HEADER);
   GetFormSet = (BOOLEAN) ((FormSetGuid == NULL) ? TRUE : FALSE);
@@ -4154,7 +4154,7 @@ InternalHiiUpdateFormPackageData (
   Updated    = FALSE;
 
   while (Offset < PackageHeader.Length) {
-    CopyMem (BufferPos, IfrOpHdr, IfrOpHdr->Length);
+    CopyMem(BufferPos, IfrOpHdr, IfrOpHdr->Length);
     BufferPos           += IfrOpHdr->Length;
     UpdatePackageLength += IfrOpHdr->Length;
 
@@ -4216,7 +4216,7 @@ InternalHiiUpdateFormPackageData (
         // Insert the updated data
         //
         AddSize = ((EFI_IFR_OP_HEADER *) OpCodeBufferStart->Buffer)->Length;
-        CopyMem (BufferPos, OpCodeBufferStart->Buffer + AddSize, OpCodeBufferStart->Position - AddSize);
+        CopyMem(BufferPos, OpCodeBufferStart->Buffer + AddSize, OpCodeBufferStart->Position - AddSize);
         BufferPos           += OpCodeBufferStart->Position - AddSize;
         UpdatePackageLength += OpCodeBufferStart->Position - AddSize;
 
@@ -4224,7 +4224,7 @@ InternalHiiUpdateFormPackageData (
           //
           // Add the end opcode
           //
-          CopyMem (BufferPos, IfrOpHdr, IfrOpHdr->Length);
+          CopyMem(BufferPos, IfrOpHdr, IfrOpHdr->Length);
           BufferPos           += IfrOpHdr->Length;
           UpdatePackageLength += IfrOpHdr->Length;
         }
@@ -4233,7 +4233,7 @@ InternalHiiUpdateFormPackageData (
         // Copy the left package data.
         //
         Offset += IfrOpHdr->Length;
-        CopyMem (BufferPos, (UINT8 *) Package + Offset, PackageHeader.Length - Offset);
+        CopyMem(BufferPos, (UINT8 *) Package + Offset, PackageHeader.Length - Offset);
         UpdatePackageLength += PackageHeader.Length - Offset;
 
         //
@@ -4261,7 +4261,7 @@ InternalHiiUpdateFormPackageData (
   // Update the package length.
   //
   PackageHeader.Length = (UINT32) UpdatePackageLength;
-  CopyMem (TempPackage, &PackageHeader, sizeof (EFI_HII_PACKAGE_HEADER));
+  CopyMem(TempPackage, &PackageHeader, sizeof (EFI_HII_PACKAGE_HEADER));
 
   return EFI_SUCCESS;
 }
@@ -4410,7 +4410,7 @@ HiiUpdateForm (
   //
   // Copy the package list header
   //
-  CopyMem (UpdateBufferPos, HiiPackageList, sizeof (EFI_HII_PACKAGE_LIST_HEADER));
+  CopyMem(UpdateBufferPos, HiiPackageList, sizeof (EFI_HII_PACKAGE_LIST_HEADER));
   UpdateBufferPos += sizeof (EFI_HII_PACKAGE_LIST_HEADER);
 
   //
@@ -4421,7 +4421,7 @@ HiiUpdateForm (
   PackageListLength = ReadUnaligned32 (&HiiPackageList->PackageLength);
   while (Offset < PackageListLength) {
     Package = (EFI_HII_PACKAGE_HEADER *) (((UINT8 *) HiiPackageList) + Offset);
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
     Offset += Package->Length;
 
     if (Package->Type == EFI_HII_PACKAGE_FORMS) {
@@ -4447,8 +4447,8 @@ HiiUpdateForm (
     //
     // Add pacakge buffer
     //
-    CopyMem (&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
-    CopyMem (UpdateBufferPos, Package, PackageHeader.Length);
+    CopyMem(&PackageHeader, Package, sizeof (EFI_HII_PACKAGE_HEADER));
+    CopyMem(UpdateBufferPos, Package, PackageHeader.Length);
     UpdateBufferPos += PackageHeader.Length;
   }
 

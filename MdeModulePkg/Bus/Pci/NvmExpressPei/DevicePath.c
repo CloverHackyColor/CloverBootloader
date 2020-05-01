@@ -242,7 +242,7 @@ NvmeBuildDevicePath (
   // Construct the host controller part device nodes
   //
   DevicePathWalker = *DevicePath;
-  CopyMem (
+  CopyMem(
     DevicePathWalker,
     Private->DevicePath,
     Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
@@ -253,7 +253,7 @@ NvmeBuildDevicePath (
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *)DevicePathWalker +
                      (Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)));
-  CopyMem (
+  CopyMem(
     DevicePathWalker,
     &mNvmeDevicePathNodeTemplate,
     sizeof (mNvmeDevicePathNodeTemplate)
@@ -267,7 +267,7 @@ NvmeBuildDevicePath (
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *)DevicePathWalker +
                      sizeof (NVME_NAMESPACE_DEVICE_PATH));
-  CopyMem (
+  CopyMem(
     DevicePathWalker,
     &mNvmeEndDevicePathNodeTemplate,
     sizeof (mNvmeEndDevicePathNodeTemplate)

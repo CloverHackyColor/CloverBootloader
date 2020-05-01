@@ -418,7 +418,7 @@ BuildDriverInfo (
   DriverInfo->Header.Length = (UINT16) (sizeof (MEMORY_PROFILE_DRIVER_INFO) + PdbOccupiedSize);
   DriverInfo->Header.Revision = MEMORY_PROFILE_DRIVER_INFO_REVISION;
   if (FileName != NULL) {
-    CopyMem (&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
+    CopyMem(&DriverInfo->FileName, FileName, sizeof (EFI_GUID));
   }
   DriverInfo->ImageBase = ImageBase;
   DriverInfo->ImageSize = ImageSize;
@@ -442,7 +442,7 @@ BuildDriverInfo (
   if (PdbSize != 0) {
     DriverInfo->PdbStringOffset = (UINT16) sizeof (MEMORY_PROFILE_DRIVER_INFO);
     DriverInfoData->PdbString = (CHAR8 *) (DriverInfoData->AllocInfoList + 1);
-    CopyMem (DriverInfoData->PdbString, PdbString, PdbSize);
+    CopyMem(DriverInfoData->PdbString, PdbString, PdbSize);
   } else {
     DriverInfo->PdbStringOffset = 0;
     DriverInfoData->PdbString = NULL;
@@ -1153,7 +1153,7 @@ SmmCoreUpdateProfileAllocate (
   if (ActionString != NULL) {
     AllocInfo->ActionStringOffset = (UINT16) sizeof (MEMORY_PROFILE_ALLOC_INFO);
     AllocInfoData->ActionString = (CHAR8 *) (AllocInfoData + 1);
-    CopyMem (AllocInfoData->ActionString, ActionString, ActionStringSize);
+    CopyMem(AllocInfoData->ActionString, ActionString, ActionStringSize);
   } else {
     AllocInfo->ActionStringOffset = 0;
     AllocInfoData->ActionString = NULL;
@@ -1678,7 +1678,7 @@ SmramProfileCopyData (
   if (*ProfileOffset < sizeof (MEMORY_PROFILE_CONTEXT)) {
     if (RemainingSize >= sizeof (MEMORY_PROFILE_CONTEXT)) {
       Context = ProfileBuffer;
-      CopyMem (Context, &ContextData->Context, sizeof (MEMORY_PROFILE_CONTEXT));
+      CopyMem(Context, &ContextData->Context, sizeof (MEMORY_PROFILE_CONTEXT));
       RemainingSize -= sizeof (MEMORY_PROFILE_CONTEXT);
       ProfileBuffer = (UINT8 *) ProfileBuffer + sizeof (MEMORY_PROFILE_CONTEXT);
     } else {
@@ -1700,10 +1700,10 @@ SmramProfileCopyData (
     if (*ProfileOffset < (Offset + DriverInfoData->DriverInfo.Header.Length)) {
       if (RemainingSize >= DriverInfoData->DriverInfo.Header.Length) {
         DriverInfo = ProfileBuffer;
-        CopyMem (DriverInfo, &DriverInfoData->DriverInfo, sizeof (MEMORY_PROFILE_DRIVER_INFO));
+        CopyMem(DriverInfo, &DriverInfoData->DriverInfo, sizeof (MEMORY_PROFILE_DRIVER_INFO));
         if (DriverInfo->PdbStringOffset != 0) {
           PdbSize = AsciiStrSize (DriverInfoData->PdbString);
-          CopyMem ((VOID *) ((UINTN) DriverInfo + DriverInfo->PdbStringOffset), DriverInfoData->PdbString, PdbSize);
+          CopyMem((VOID *) ((UINTN) DriverInfo + DriverInfo->PdbStringOffset), DriverInfoData->PdbString, PdbSize);
         }
         RemainingSize -= DriverInfo->Header.Length;
         ProfileBuffer = (UINT8 *) ProfileBuffer + DriverInfo->Header.Length;
@@ -1726,10 +1726,10 @@ SmramProfileCopyData (
       if (*ProfileOffset < (Offset + AllocInfoData->AllocInfo.Header.Length)) {
         if (RemainingSize >= AllocInfoData->AllocInfo.Header.Length) {
           AllocInfo = ProfileBuffer;
-          CopyMem (AllocInfo, &AllocInfoData->AllocInfo, sizeof (MEMORY_PROFILE_ALLOC_INFO));
+          CopyMem(AllocInfo, &AllocInfoData->AllocInfo, sizeof (MEMORY_PROFILE_ALLOC_INFO));
           if (AllocInfo->ActionStringOffset) {
             ActionStringSize = AsciiStrSize (AllocInfoData->ActionString);
-            CopyMem ((VOID *) ((UINTN) AllocInfo + AllocInfo->ActionStringOffset), AllocInfoData->ActionString, ActionStringSize);
+            CopyMem((VOID *) ((UINTN) AllocInfo + AllocInfo->ActionStringOffset), AllocInfoData->ActionString, ActionStringSize);
           }
           RemainingSize -= AllocInfo->Header.Length;
           ProfileBuffer = (UINT8 *) ProfileBuffer + AllocInfo->Header.Length;
@@ -1745,7 +1745,7 @@ SmramProfileCopyData (
   if (*ProfileOffset < (Offset + sizeof (MEMORY_PROFILE_FREE_MEMORY))) {
     if (RemainingSize >= sizeof (MEMORY_PROFILE_FREE_MEMORY)) {
       FreeMemory = ProfileBuffer;
-      CopyMem (FreeMemory, &mSmramFreeMemory, sizeof (MEMORY_PROFILE_FREE_MEMORY));
+      CopyMem(FreeMemory, &mSmramFreeMemory, sizeof (MEMORY_PROFILE_FREE_MEMORY));
       Index = 0;
       FreePageList = &mSmmMemoryMap;
       for (Node = FreePageList->BackLink;
@@ -1955,7 +1955,7 @@ SmramProfileProtocolRegisterImage (
   ZeroMem (&DriverEntry, sizeof (DriverEntry));
   Name = GetFileNameFromFilePath (FilePath);
   if (Name != NULL) {
-    CopyMem (&DriverEntry.FileName, Name, sizeof (EFI_GUID));
+    CopyMem(&DriverEntry.FileName, Name, sizeof (EFI_GUID));
   }
   DriverEntry.ImageBuffer = ImageBase;
   DriverEntry.NumberOfPage = EFI_SIZE_TO_PAGES ((UINTN) ImageSize);
@@ -1997,7 +1997,7 @@ SmramProfileProtocolUnregisterImage (
   ZeroMem (&DriverEntry, sizeof (DriverEntry));
   Name = GetFileNameFromFilePath (FilePath);
   if (Name != NULL) {
-    CopyMem (&DriverEntry.FileName, Name, sizeof (EFI_GUID));
+    CopyMem(&DriverEntry.FileName, Name, sizeof (EFI_GUID));
   }
   DriverEntry.ImageBuffer = ImageBase;
   DriverEntry.NumberOfPage = EFI_SIZE_TO_PAGES ((UINTN) ImageSize);
@@ -2160,7 +2160,7 @@ SmramProfileHandlerGetData (
   mSmramProfileGettingStatus = TRUE;
 
 
-  CopyMem (&SmramProfileGetData, SmramProfileParameterGetData, sizeof (SmramProfileGetData));
+  CopyMem(&SmramProfileGetData, SmramProfileParameterGetData, sizeof (SmramProfileGetData));
 
   ProfileSize = SmramProfileGetDataSize();
 
@@ -2213,7 +2213,7 @@ SmramProfileHandlerGetDataByOffset (
   mSmramProfileGettingStatus = TRUE;
 
 
-  CopyMem (&SmramProfileGetDataByOffset, SmramProfileParameterGetDataByOffset, sizeof (SmramProfileGetDataByOffset));
+  CopyMem(&SmramProfileGetDataByOffset, SmramProfileParameterGetDataByOffset, sizeof (SmramProfileGetDataByOffset));
 
   //
   // Sanity check
@@ -2225,7 +2225,7 @@ SmramProfileHandlerGetDataByOffset (
   }
 
   SmramProfileCopyData ((VOID *) (UINTN) SmramProfileGetDataByOffset.ProfileBuffer, &SmramProfileGetDataByOffset.ProfileSize, &SmramProfileGetDataByOffset.ProfileOffset);
-  CopyMem (SmramProfileParameterGetDataByOffset, &SmramProfileGetDataByOffset, sizeof (SmramProfileGetDataByOffset));
+  CopyMem(SmramProfileParameterGetDataByOffset, &SmramProfileGetDataByOffset, sizeof (SmramProfileGetDataByOffset));
   SmramProfileParameterGetDataByOffset->Header.ReturnStatus = 0;
 
 Done:
@@ -2248,7 +2248,7 @@ SmramProfileHandlerRegisterImage (
   VOID                              *EntryPointInImage;
 
   ZeroMem (&DriverEntry, sizeof (DriverEntry));
-  CopyMem (&DriverEntry.FileName, &SmramProfileParameterRegisterImage->FileName, sizeof(EFI_GUID));
+  CopyMem(&DriverEntry.FileName, &SmramProfileParameterRegisterImage->FileName, sizeof(EFI_GUID));
   DriverEntry.ImageBuffer = SmramProfileParameterRegisterImage->ImageBuffer;
   DriverEntry.NumberOfPage = (UINTN) SmramProfileParameterRegisterImage->NumberOfPage;
   Status = InternalPeCoffGetEntryPoint ((VOID *) (UINTN) DriverEntry.ImageBuffer, &EntryPointInImage);
@@ -2277,7 +2277,7 @@ SmramProfileHandlerUnregisterImage (
   VOID                              *EntryPointInImage;
 
   ZeroMem (&DriverEntry, sizeof (DriverEntry));
-  CopyMem (&DriverEntry.FileName, &SmramProfileParameterUnregisterImage->FileName, sizeof (EFI_GUID));
+  CopyMem(&DriverEntry.FileName, &SmramProfileParameterUnregisterImage->FileName, sizeof (EFI_GUID));
   DriverEntry.ImageBuffer = SmramProfileParameterUnregisterImage->ImageBuffer;
   DriverEntry.NumberOfPage = (UINTN) SmramProfileParameterUnregisterImage->NumberOfPage;
   Status = InternalPeCoffGetEntryPoint ((VOID *) (UINTN) DriverEntry.ImageBuffer, &EntryPointInImage);

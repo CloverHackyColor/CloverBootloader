@@ -901,7 +901,7 @@ UfsBlockIoPeimGetMediaInfo2 (
   }
 
   Lun = DeviceIndex - 1;
-  CopyMem (MediaInfo, &(Private->Media[Lun]), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
+  CopyMem(MediaInfo, &(Private->Media[Lun]), sizeof (EFI_PEI_BLOCK_IO2_MEDIA));
   return EFI_SUCCESS;
 }
 

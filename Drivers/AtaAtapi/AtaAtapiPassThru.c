@@ -2062,7 +2062,7 @@ ExtScsiPassThruPassThru (
   // But to response EFI_DISK_INFO.Identify() request from ScsiDisk, we should handle this command.
   //
   if (*((UINT8*)Packet->Cdb) == ATA_CMD_IDENTIFY_DEVICE) {
-    CopyMem (Packet->InDataBuffer, DeviceInfo->IdentifyData, sizeof (EFI_IDENTIFY_DATA));
+    CopyMem(Packet->InDataBuffer, DeviceInfo->IdentifyData, sizeof (EFI_IDENTIFY_DATA));
     if (Instance->Mode == EfiAtaAhciMode) {
       ((EFI_IDENTIFY_DATA*) Packet->InDataBuffer)->AtapiData.reserved_224_254[0] = 0U; // hide stashed value
     }
@@ -2123,7 +2123,7 @@ ExtScsiPassThruPassThru (
         break;
       }
 
-      CopyMem ((UINT8*)Packet->SenseData + SenseDataLen, PtrSenseData, sizeof (EFI_SCSI_SENSE_DATA));
+      CopyMem((UINT8*)Packet->SenseData + SenseDataLen, PtrSenseData, sizeof (EFI_SCSI_SENSE_DATA));
       SenseDataLen += sizeof (EFI_SCSI_SENSE_DATA);
 
       //
@@ -2417,7 +2417,7 @@ ExtScsiPassThruGetTargetLun (
     return EFI_UNSUPPORTED;
   }
 
-  SetMem (*Target, TARGET_MAX_BYTES, 0xFF);
+  SetMem(*Target, TARGET_MAX_BYTES, 0xFF);
 
   DevicePathNode = (EFI_DEV_PATH *) DevicePath;
 

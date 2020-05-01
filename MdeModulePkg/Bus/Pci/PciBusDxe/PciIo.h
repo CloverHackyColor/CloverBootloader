@@ -346,7 +346,7 @@ PciIoConfigWrite (
 **/
 EFI_STATUS
 EFIAPI
-PciIoCopyMem (
+PciIoCopyMem(
   IN EFI_PCI_IO_PROTOCOL              *This,
   IN     EFI_PCI_IO_PROTOCOL_WIDTH    Width,
   IN     UINT8                        DestBarIndex,

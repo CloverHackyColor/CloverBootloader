@@ -553,7 +553,7 @@ UsbOnHubInterrupt (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  CopyMem (HubIf->ChangeMap, Data, DataLength);
+  CopyMem(HubIf->ChangeMap, Data, DataLength);
   gBS->SignalEvent (HubIf->HubNotify);
 
   return EFI_SUCCESS;

@@ -294,7 +294,7 @@ PrepareJumpFromKernel (
     return EFI_BUFFER_TOO_SMALL;
   }
 
-  CopyMem ((VOID *)(UINTN)HigherMem, (VOID *)&JumpToKernel, Size);
+  CopyMem((VOID *)(UINTN)HigherMem, (VOID *)&JumpToKernel, Size);
 
   DEBUG ((DEBUG_VERBOSE, "PrepareJumpFromKernel(): JumpToKernel relocated from %p, to %x, size = %x\n",
     &JumpToKernel, HigherMem, Size));
@@ -320,7 +320,7 @@ PrepareJumpFromKernel (
   //
   // Copy sys table to the new location.
   //
-  CopyMem ((VOID *)(UINTN)gSysTableRtArea, gST, gST->Hdr.HeaderSize);
+  CopyMem((VOID *)(UINTN)gSysTableRtArea, gST, gST->Hdr.HeaderSize);
 
   return Status;
 }
@@ -342,12 +342,12 @@ KernelEntryPatchJump (
   //
   // Save original kernel entry code
   //
-  CopyMem ((VOID *)mOrigKernelCode, (VOID *)(UINTN)KernelEntry, mOrigKernelCodeSize);
+  CopyMem((VOID *)mOrigKernelCode, (VOID *)(UINTN)KernelEntry, mOrigKernelCodeSize);
 
   //
   // Copy EntryPatchCode code to kernel entry address
   //
-  CopyMem ((VOID *)(UINTN)KernelEntry, (VOID *)&EntryPatchCode, mOrigKernelCodeSize);
+  CopyMem((VOID *)(UINTN)KernelEntry, (VOID *)&EntryPatchCode, mOrigKernelCodeSize);
 
   //
   // Pass KernelEntry to assembler funcs.
@@ -396,7 +396,7 @@ KernelEntryPatchJumpBack (
   //
   // Restore original kernel entry code.
   //
-  CopyMem ((VOID *)(UINTN)AsmKernelEntry, (VOID *)mOrigKernelCode, mOrigKernelCodeSize);
+  CopyMem((VOID *)(UINTN)AsmKernelEntry, (VOID *)mOrigKernelCode, mOrigKernelCodeSize);
 
   return Args;
 }
@@ -480,7 +480,7 @@ ExecSetVirtualAddressesToMemMap (
       //
       // Copy region with EFI_MEMORY_RUNTIME flag to mVirtualMemoryMap.
       //
-      CopyMem ((VOID*)VirtualDesc, (VOID*)Desc, DescriptorSize);
+      CopyMem((VOID*)VirtualDesc, (VOID*)Desc, DescriptorSize);
 
       //
       // Define virtual to phisical mapping.
@@ -530,7 +530,7 @@ CopyEfiSysTableToRtArea (
   Src  = (EFI_SYSTEM_TABLE*)(UINTN)*EfiSystemTable;
   Dest = (EFI_SYSTEM_TABLE*)(UINTN)gSysTableRtArea;
 
-  CopyMem (Dest, Src, Src->Hdr.HeaderSize);
+  CopyMem(Dest, Src, Src->Hdr.HeaderSize);
 
   *EfiSystemTable = (UINT32)(UINTN)Dest;
 }

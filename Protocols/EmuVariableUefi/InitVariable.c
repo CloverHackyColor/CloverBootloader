@@ -544,7 +544,7 @@ VariableServiceInitialize (
   // Store orig RS var services
   //
   gRT = SystemTable->RuntimeServices;
-  CopyMem (&gOrgRT, gRT, sizeof(EFI_RUNTIME_SERVICES));
+  CopyMem(&gOrgRT, gRT, sizeof(EFI_RUNTIME_SERVICES));
   DBG(", orig services stored");
 
   

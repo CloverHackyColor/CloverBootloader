@@ -188,12 +188,12 @@ CreateRootBridge (
   ASSERT (RootBridge->ConfigBuffer != NULL);
   InitializeListHead (&RootBridge->Maps);
 
-  CopyMem (&RootBridge->Bus, &Bridge->Bus, sizeof (PCI_ROOT_BRIDGE_APERTURE));
-  CopyMem (&RootBridge->Io, &Bridge->Io, sizeof (PCI_ROOT_BRIDGE_APERTURE));
-  CopyMem (&RootBridge->Mem, &Bridge->Mem, sizeof (PCI_ROOT_BRIDGE_APERTURE));
-  CopyMem (&RootBridge->MemAbove4G, &Bridge->MemAbove4G, sizeof (PCI_ROOT_BRIDGE_APERTURE));
-  CopyMem (&RootBridge->PMem, &Bridge->PMem, sizeof (PCI_ROOT_BRIDGE_APERTURE));
-  CopyMem (&RootBridge->PMemAbove4G, &Bridge->PMemAbove4G, sizeof (PCI_ROOT_BRIDGE_APERTURE));
+  CopyMem(&RootBridge->Bus, &Bridge->Bus, sizeof (PCI_ROOT_BRIDGE_APERTURE));
+  CopyMem(&RootBridge->Io, &Bridge->Io, sizeof (PCI_ROOT_BRIDGE_APERTURE));
+  CopyMem(&RootBridge->Mem, &Bridge->Mem, sizeof (PCI_ROOT_BRIDGE_APERTURE));
+  CopyMem(&RootBridge->MemAbove4G, &Bridge->MemAbove4G, sizeof (PCI_ROOT_BRIDGE_APERTURE));
+  CopyMem(&RootBridge->PMem, &Bridge->PMem, sizeof (PCI_ROOT_BRIDGE_APERTURE));
+  CopyMem(&RootBridge->PMemAbove4G, &Bridge->PMemAbove4G, sizeof (PCI_ROOT_BRIDGE_APERTURE));
 
   for (Index = TypeIo; Index < TypeMax; Index++) {
     switch (Index) {
@@ -1018,7 +1018,7 @@ RootBridgeIoIoWrite (
 **/
 EFI_STATUS
 EFIAPI
-RootBridgeIoCopyMem (
+RootBridgeIoCopyMem(
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL              *This,
   IN EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_WIDTH        Width,
   IN UINT64                                       DestAddress,
@@ -1126,7 +1126,7 @@ RootBridgeIoPciAccess (
   // Read Pci configuration space
   //
   RootBridge = ROOT_BRIDGE_FROM_THIS (This);
-  CopyMem (&PciAddress, &Address, sizeof (PciAddress));
+  CopyMem(&PciAddress, &Address, sizeof (PciAddress));
 
   if (PciAddress.ExtendedRegister == 0) {
     PciAddress.ExtendedRegister = PciAddress.Register;
@@ -1346,7 +1346,7 @@ RootBridgeIoMap (
     //
     if (Operation == EfiPciOperationBusMasterRead ||
         Operation == EfiPciOperationBusMasterRead64) {
-      CopyMem (
+      CopyMem(
         (VOID *) (UINTN) MapInfo->MappedHostAddress,
         (VOID *) (UINTN) MapInfo->HostAddress,
         MapInfo->NumberOfBytes
@@ -1449,7 +1449,7 @@ RootBridgeIoUnmap (
   //
   if (MapInfo->Operation == EfiPciOperationBusMasterWrite ||
       MapInfo->Operation == EfiPciOperationBusMasterWrite64) {
-    CopyMem (
+    CopyMem(
       (VOID *) (UINTN) MapInfo->HostAddress,
       (VOID *) (UINTN) MapInfo->MappedHostAddress,
       MapInfo->NumberOfBytes

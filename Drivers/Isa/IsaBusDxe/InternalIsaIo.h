@@ -274,7 +274,7 @@ IsaIoMemWrite (
 **/
 EFI_STATUS
 EFIAPI
-IsaIoCopyMem (
+IsaIoCopyMem(
   IN EFI_ISA_IO_PROTOCOL        *This,
   IN EFI_ISA_IO_PROTOCOL_WIDTH  Width,
   IN UINT32                     DestOffset,

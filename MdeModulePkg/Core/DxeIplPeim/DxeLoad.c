@@ -773,7 +773,7 @@ Decompress (
     //
     // stream is not actually compressed, just encapsulated.  So just copy it.
     //
-    CopyMem (DstBuffer, CompressionSource, DstBufferSize);
+    CopyMem(DstBuffer, CompressionSource, DstBufferSize);
     break;
 
   default:

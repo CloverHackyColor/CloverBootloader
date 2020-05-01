@@ -254,7 +254,7 @@ RecordFmpCapsuleStatusVariable (
   }
 
   if (DevicePathStr != NULL) {
-    CopyMem ((UINT8 *)CapsuleResultVariableFmp + sizeof(EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize, DevicePathStr, DevicePathStrSize);
+    CopyMem((UINT8 *)CapsuleResultVariableFmp + sizeof(EFI_CAPSULE_RESULT_VARIABLE_FMP) + CapFileNameSize, DevicePathStr, DevicePathStrSize);
     FreePool(DevicePathStr);
     DevicePathStr = NULL;
   }

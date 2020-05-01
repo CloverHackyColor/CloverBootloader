@@ -1306,8 +1306,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
         break;
     }
   }
-  CopyMem (gSettings.REV,  ApplePlatformData[Model].smcRevision, 6);
-  CopyMem (gSettings.EPCI, &ApplePlatformData[Model].smcConfig,  4);
+  CopyMem(gSettings.REV,  ApplePlatformData[Model].smcRevision, 6);
+  CopyMem(gSettings.EPCI, &ApplePlatformData[Model].smcConfig,  4);
 }
 
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
@@ -1348,9 +1348,9 @@ VOID GetDefaultSettings()
                                     ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
 
   gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
-  CopyMem (gSettings.NVCAP, default_NVCAP, 20); 
-  CopyMem (gSettings.Dcfg, default_dcfg_0, 4);
-  CopyMem (&gSettings.Dcfg[4], default_dcfg_1, 4);
+  CopyMem(gSettings.NVCAP, default_NVCAP, 20); 
+  CopyMem(gSettings.Dcfg, default_dcfg_0, 4);
+  CopyMem(&gSettings.Dcfg[4], default_dcfg_1, 4);
   //gSettings.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.DualLink             = 0xA; // A(auto): DualLink auto-detection
   gSettings.HDAInjection         = FALSE;

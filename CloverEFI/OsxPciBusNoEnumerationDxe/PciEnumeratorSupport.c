@@ -1191,7 +1191,7 @@ Returns:
   PciIoDevice->BusOverride        = FALSE;
   PciIoDevice->IsPciExp           = FALSE;
 
-  CopyMem (&(PciIoDevice->Pci), Pci, sizeof (PCI_TYPE01));
+  CopyMem(&(PciIoDevice->Pci), Pci, sizeof (PCI_TYPE01));
 
   //
   // Initialize the PCI I/O instance structure

@@ -386,7 +386,7 @@ SdPeimHcGetCapability (
     return Status;
   }
 
-  CopyMem (Capability, &Cap, sizeof (Cap));
+  CopyMem(Capability, &Cap, sizeof (Cap));
 
   return EFI_SUCCESS;
 }
@@ -1565,7 +1565,7 @@ Done:
           return Status;
         }
       }
-      CopyMem (Packet->SdStatusBlk, Response, sizeof (Response));
+      CopyMem(Packet->SdStatusBlk, Response, sizeof (Response));
     }
   }
 
@@ -2049,7 +2049,7 @@ SdPeimGetCsd (
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
-    CopyMem (((UINT8*)Csd) + 1, &SdStatusBlk.Resp0, sizeof (SD_CSD) - 1);
+    CopyMem(((UINT8*)Csd) + 1, &SdStatusBlk.Resp0, sizeof (SD_CSD) - 1);
   }
 
   return Status;

@@ -440,7 +440,7 @@ InitializeIsaIoInstance (
   //
   // Use the ISA IO Protocol structure template to initialize the ISA IO instance
   //
-  CopyMem (
+  CopyMem(
     &IsaIoDevice->IsaIo,
     &mIsaIoInterface,
     sizeof (EFI_ISA_IO_PROTOCOL)
@@ -770,7 +770,7 @@ IsaIoUnmap (
     // so the processor can read the contents of the real buffer.
     //
     if (IsaMapInfo->Operation == EfiIsaIoOperationBusMasterWrite) {
-      CopyMem (
+      CopyMem(
         (VOID *) (UINTN) IsaMapInfo->HostAddress,
         (VOID *) (UINTN) IsaMapInfo->MappedHostAddress,
         IsaMapInfo->NumberOfBytes
@@ -971,7 +971,7 @@ IsaIoMemWrite (
 **/
 EFI_STATUS
 EFIAPI
-IsaIoCopyMem (
+IsaIoCopyMem(
   IN EFI_ISA_IO_PROTOCOL        *This,
   IN EFI_ISA_IO_PROTOCOL_WIDTH  Width,
   IN UINT32                     DestOffset,
@@ -1016,7 +1016,7 @@ IsaIoCopyMem (
     return Status;
   }
 
-  Status = IsaIoDevice->PciIo->CopyMem (
+  Status = IsaIoDevice->PciIo->CopyMem(
                                  IsaIoDevice->PciIo,
                                  (EFI_PCI_IO_PROTOCOL_WIDTH) Width,
                                  EFI_PCI_IO_PASS_THROUGH_BAR,
@@ -1171,7 +1171,7 @@ IsaIoMapOnlySupportSlaveReadWrite (
     // so the DMA agent can read the contents of the real buffer.
     //
     if (Operation == EfiIsaIoOperationSlaveRead) {
-      CopyMem (
+      CopyMem(
         (VOID *) (UINTN) IsaMapInfo->MappedHostAddress,
         (VOID *) (UINTN) IsaMapInfo->HostAddress,
         IsaMapInfo->NumberOfBytes
@@ -1474,7 +1474,7 @@ IsaIoMapFullSupport (
     // so the DMA agent can read the contents of the real buffer.
     //
     if (Operation == EfiIsaIoOperationBusMasterRead) {
-      CopyMem (
+      CopyMem(
         (VOID *) (UINTN) IsaMapInfo->MappedHostAddress,
         (VOID *) (UINTN) IsaMapInfo->HostAddress,
         IsaMapInfo->NumberOfBytes

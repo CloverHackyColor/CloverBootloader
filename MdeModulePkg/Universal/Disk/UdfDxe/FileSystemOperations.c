@@ -153,14 +153,14 @@ StartMainVolumeDescriptorSequence (
       //
       // Save Partition Descriptor
       //
-      CopyMem (&Volume->PartitionDesc, Buffer, sizeof (Volume->PartitionDesc));
+      CopyMem(&Volume->PartitionDesc, Buffer, sizeof (Volume->PartitionDesc));
       break;
 
     case UdfLogicalVolumeDescriptor:
       //
       // Save Logical Volume Descriptor
       //
-      CopyMem (&Volume->LogicalVolDesc, Buffer, sizeof (Volume->LogicalVolDesc));
+      CopyMem(&Volume->LogicalVolDesc, Buffer, sizeof (Volume->LogicalVolDesc));
       break;
 
     case UdfTerminatingDescriptor:
@@ -1157,14 +1157,14 @@ ReadFile (
       //
       // Read all inline data into ReadFileInfo->FileData
       //
-      CopyMem (ReadFileInfo->FileData, Data, (UINTN) Length);
+      CopyMem(ReadFileInfo->FileData, Data, (UINTN) Length);
       ReadFileInfo->ReadLength = Length;
     } else if (ReadFileInfo->Flags == ReadFileSeekAndRead) {
       //
       // If FilePosition is non-zero, seek file to FilePosition, read
       // FileDataSize bytes and then updates FilePosition.
       //
-      CopyMem (
+      CopyMem(
         ReadFileInfo->FileData,
         (VOID *)((UINT8 *)Data + ReadFileInfo->FilePosition),
         (UINTN) ReadFileInfo->FileDataSize
@@ -1808,7 +1808,7 @@ FindFile (
 
   Status = EFI_NOT_FOUND;
 
-  CopyMem ((VOID *)&PreviousFile, (VOID *)Parent, sizeof (UDF_FILE_INFO));
+  CopyMem((VOID *)&PreviousFile, (VOID *)Parent, sizeof (UDF_FILE_INFO));
   while (*FilePath != L'\0') {
     FileNamePointer = FileName;
     while (*FilePath != L'\0' && *FilePath != L'\\') {
@@ -1904,7 +1904,7 @@ FindFile (
       CleanupFileInformation (&PreviousFile);
     }
 
-    CopyMem ((VOID *)&PreviousFile, (VOID *)File, sizeof (UDF_FILE_INFO));
+    CopyMem((VOID *)&PreviousFile, (VOID *)File, sizeof (UDF_FILE_INFO));
     if (*FilePath != L'\0' && *FilePath == L'\\') {
       FilePath++;
     }
@@ -2168,7 +2168,7 @@ ResolveSymlink (
   Data = (UINT8 *)ReadFileInfo.FileData;
   EndData = Data + Length;
 
-  CopyMem ((VOID *)&PreviousFile, (VOID *)Parent, sizeof (UDF_FILE_INFO));
+  CopyMem((VOID *)&PreviousFile, (VOID *)Parent, sizeof (UDF_FILE_INFO));
 
   for (;;) {
     PathComp = (UDF_PATH_COMPONENT *)Data;
@@ -2192,7 +2192,7 @@ ResolveSymlink (
       //
       // ".." (parent directory). Go to it.
       //
-      CopyMem ((VOID *)FileName, L"..", 6);
+      CopyMem((VOID *)FileName, L"..", 6);
       break;
     case 4:
       //
@@ -2304,7 +2304,7 @@ ResolveSymlink (
     }
 
     if (NotFile) {
-      CopyMem ((VOID *)&PreviousFile, (VOID *)File, sizeof (UDF_FILE_INFO));
+      CopyMem((VOID *)&PreviousFile, (VOID *)File, sizeof (UDF_FILE_INFO));
     }
   }
 
@@ -2549,7 +2549,7 @@ SetFileInfo (
   FileInfo->LastAccessTime.TimeZone  = EFI_UNSPECIFIED_TIMEZONE;
   FileInfo->LastAccessTime.Daylight  = EFI_TIME_ADJUST_DAYLIGHT;
 
-  CopyMem ((VOID *)&FileInfo->ModificationTime,
+  CopyMem((VOID *)&FileInfo->ModificationTime,
            (VOID *)&FileInfo->LastAccessTime,
            sizeof (EFI_TIME));
 

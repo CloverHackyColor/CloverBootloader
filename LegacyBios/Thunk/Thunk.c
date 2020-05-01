@@ -201,7 +201,7 @@ InternalLegacyBiosFarCall (
   ThunkRegSet.E.DS   = Regs->X.DS;
   ThunkRegSet.E.ES   = Regs->X.ES;
 
-  CopyMem (&(ThunkRegSet.E.EFLAGS.UintN), &(Regs->X.Flags), sizeof (Regs->X.Flags));
+  CopyMem(&(ThunkRegSet.E.EFLAGS.UintN), &(Regs->X.Flags), sizeof (Regs->X.Flags));
 
   //
   // Clear the error flag; thunk code may set it. Stack16 should be the high address
@@ -268,7 +268,7 @@ InternalLegacyBiosFarCall (
     // Copy Stack to low memory stack
     //
     Stack16 -= StackSize / sizeof (UINT16);
-    CopyMem (Stack16, Stack, StackSize);
+    CopyMem(Stack16, Stack, StackSize);
   }
 
   ThunkRegSet.E.SS   = (UINT16) (((UINTN) Stack16 >> 16) << 12);
@@ -307,7 +307,7 @@ InternalLegacyBiosFarCall (
     //
     // Copy low memory stack to Stack
     //
-    CopyMem (Stack, Stack16, StackSize);
+    CopyMem(Stack, Stack16, StackSize);
   }
 
   //
@@ -345,7 +345,7 @@ InternalLegacyBiosFarCall (
   Regs->X.DS       = ThunkRegSet.E.DS;
   Regs->X.ES       = ThunkRegSet.E.ES;
 
-  CopyMem (&(Regs->X.Flags), &(ThunkRegSet.E.EFLAGS.UintN), sizeof (Regs->X.Flags));
+  CopyMem(&(Regs->X.Flags), &(ThunkRegSet.E.EFLAGS.UintN), sizeof (Regs->X.Flags));
 
   return (BOOLEAN) (Regs->X.Flags.CF == 1);
 }

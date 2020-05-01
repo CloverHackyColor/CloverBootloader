@@ -730,7 +730,7 @@ USBKeyboardReadKeyStroke (
       }
     }
 
-    CopyMem (Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
+    CopyMem(Key, &KeyData.Key, sizeof (EFI_INPUT_KEY));
     return EFI_SUCCESS;
   }
 }
@@ -772,7 +772,7 @@ USBKeyboardWaitForKey (
     //
     // If there is pending key, signal the event.
     //
-    CopyMem (
+    CopyMem(
       &KeyData,
       UsbKeyboardDevice->EfiKeyQueue.Buffer[UsbKeyboardDevice->EfiKeyQueue.Head],
       sizeof (EFI_KEY_DATA)
@@ -1119,7 +1119,7 @@ USBKeyboardRegisterKeyNotify (
 
   NewNotify->Signature         = USB_KB_CONSOLE_IN_EX_NOTIFY_SIGNATURE;
   NewNotify->KeyNotificationFn = KeyNotificationFunction;
-  CopyMem (&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
+  CopyMem(&NewNotify->KeyData, KeyData, sizeof (EFI_KEY_DATA));
   InsertTailList (&UsbKeyboardDevice->NotifyList, &NewNotify->NotifyEntry);
 
 

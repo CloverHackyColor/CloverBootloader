@@ -768,7 +768,7 @@ SerialSetAttributes (
              NULL,
              NULL
              );
-    CopyMem (Uart, &SerialDevice->UartDevicePath, sizeof (UART_DEVICE_PATH));
+    CopyMem(Uart, &SerialDevice->UartDevicePath, sizeof (UART_DEVICE_PATH));
     Status = gBS->ReinstallProtocolInterface (
                     SerialDevice->Handle,
                     &gEfiDevicePathProtocolGuid,

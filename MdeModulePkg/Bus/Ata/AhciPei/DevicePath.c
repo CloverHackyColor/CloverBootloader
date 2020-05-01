@@ -242,7 +242,7 @@ AhciBuildDevicePath (
   // Construct the host controller part device nodes
   //
   DevicePathWalker = *DevicePath;
-  CopyMem (
+  CopyMem(
     DevicePathWalker,
     Private->DevicePath,
     Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)
@@ -253,7 +253,7 @@ AhciBuildDevicePath (
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *)DevicePathWalker +
                      (Private->DevicePathLength - sizeof (EFI_DEVICE_PATH_PROTOCOL)));
-  CopyMem (
+  CopyMem(
     DevicePathWalker,
     &mAhciSataDevicePathNodeTemplate,
     sizeof (mAhciSataDevicePathNodeTemplate)
@@ -267,7 +267,7 @@ AhciBuildDevicePath (
   //
   DevicePathWalker = (EFI_DEVICE_PATH_PROTOCOL *) ((UINT8 *)DevicePathWalker +
                      sizeof (SATA_DEVICE_PATH));
-  CopyMem (
+  CopyMem(
     DevicePathWalker,
     &mAhciEndDevicePathNodeTemplate,
     sizeof (mAhciEndDevicePathNodeTemplate)

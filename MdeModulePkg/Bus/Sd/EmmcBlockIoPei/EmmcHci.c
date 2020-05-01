@@ -386,7 +386,7 @@ EmmcPeimHcGetCapability (
     return Status;
   }
 
-  CopyMem (Capability, &Cap, sizeof (Cap));
+  CopyMem(Capability, &Cap, sizeof (Cap));
 
   return EFI_SUCCESS;
 }
@@ -1560,7 +1560,7 @@ Done:
           return Status;
         }
       }
-      CopyMem (Packet->EmmcStatusBlk, Response, sizeof (Response));
+      CopyMem(Packet->EmmcStatusBlk, Response, sizeof (Response));
     }
   }
 
@@ -1920,7 +1920,7 @@ EmmcPeimGetCsd (
     //
     // For details, refer to SD Host Controller Simplified Spec 3.0 Table 2-12.
     //
-    CopyMem (((UINT8*)Csd) + 1, &EmmcStatusBlk.Resp0, sizeof (EMMC_CSD) - 1);
+    CopyMem(((UINT8*)Csd) + 1, &EmmcStatusBlk.Resp0, sizeof (EMMC_CSD) - 1);
   }
 
   return Status;

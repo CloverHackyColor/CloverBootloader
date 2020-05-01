@@ -221,13 +221,13 @@ structure.
   WriteUnaligned16 ((UINT16 *) Ptr, (UINT16) GetDevicePathSize (Option->FilePath));
   Ptr            += sizeof (UINT16);
 
-  CopyMem (Ptr, Description, StrSize (Description));
+  CopyMem(Ptr, Description, StrSize (Description));
   Ptr            += StrSize (Description);
 
-  CopyMem (Ptr, Option->FilePath, GetDevicePathSize (Option->FilePath));
+  CopyMem(Ptr, Option->FilePath, GetDevicePathSize (Option->FilePath));
   Ptr            += GetDevicePathSize (Option->FilePath);
 
-  CopyMem (Ptr, Option->OptionalData, Option->OptionalDataSize);
+  CopyMem(Ptr, Option->OptionalData, Option->OptionalDataSize);
 
   UnicodeSPrint (OptionName, sizeof (OptionName), L"%s%04x", mBmLoadOptionName[Option->OptionType], Option->OptionNumber);
 
@@ -300,8 +300,8 @@ BmAddOptionNumberToOrderVariable (
     NewOptionOrder = AllocatePool (OptionOrderSize + sizeof (UINT16));
     ASSERT (NewOptionOrder != NULL);
     if (OptionOrderSize != 0) {
-      CopyMem (NewOptionOrder, OptionOrder, Position * sizeof (UINT16));
-      CopyMem (&NewOptionOrder[Position + 1], &OptionOrder[Position], OptionOrderSize - Position * sizeof (UINT16));
+      CopyMem(NewOptionOrder, OptionOrder, Position * sizeof (UINT16));
+      CopyMem(&NewOptionOrder[Position + 1], &OptionOrder[Position], OptionOrderSize - Position * sizeof (UINT16));
     }
     NewOptionOrder[Position] = OptionNumber;
 
@@ -583,7 +583,7 @@ EfiBootManagerDeleteLoadOptionVariable (
     for (Index = 0; Index < OptionOrderSize / sizeof (UINT16); Index++) {
       if (OptionOrder[Index] == OptionNumber) {
         OptionOrderSize -= sizeof (UINT16);
-        CopyMem (&OptionOrder[Index], &OptionOrder[Index + 1], OptionOrderSize - Index * sizeof (UINT16));
+        CopyMem(&OptionOrder[Index], &OptionOrder[Index + 1], OptionOrderSize - Index * sizeof (UINT16));
         gRT->SetVariable (
                mBmLoadOptionOrderName[OptionType],
                &gEfiGlobalVariableGuid,
@@ -1021,8 +1021,8 @@ BmCollectLoadOptions (
                          Param->Options
                          );
       ASSERT (Param->Options != NULL);
-      CopyMem (&Param->Options[Index + 1], &Param->Options[Index], (Param->OptionCount - Index) * sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
-      CopyMem (&Param->Options[Index], &Option, sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
+      CopyMem(&Param->Options[Index + 1], &Param->Options[Index], (Param->OptionCount - Index) * sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
+      CopyMem(&Param->Options[Index], &Option, sizeof (EFI_BOOT_MANAGER_LOAD_OPTION));
       Param->OptionCount++;
     }
   }

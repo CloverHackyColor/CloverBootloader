@@ -217,7 +217,7 @@ USBMouseAbsolutePointerDriverBindingStart (
       //
       // We only care interrupt endpoint here
       //
-      CopyMem (&UsbMouseAbsolutePointerDevice->IntEndpointDescriptor, &EndpointDescriptor, sizeof(EndpointDescriptor));
+      CopyMem(&UsbMouseAbsolutePointerDevice->IntEndpointDescriptor, &EndpointDescriptor, sizeof(EndpointDescriptor));
       Found = TRUE;
       break;
     }
@@ -888,7 +888,7 @@ GetMouseAbsolutePointerState (
   // Retrieve mouse state from USB_MOUSE_ABSOLUTE_POINTER_DEV,
   // which was filled by OnMouseInterruptComplete()
   //
-  CopyMem (
+  CopyMem(
     State,
     &MouseAbsolutePointerDev->State,
     sizeof (EFI_ABSOLUTE_POINTER_STATE)

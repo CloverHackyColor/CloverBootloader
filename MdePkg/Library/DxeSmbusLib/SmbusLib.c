@@ -581,6 +581,6 @@ SmBusBlockProcessCall (
   //
   // Assuming that ReadBuffer is large enough to save another memory copy.
   //
-  ReadBuffer = CopyMem (ReadBuffer, WriteBuffer, Length);
+  ReadBuffer = CopyMem(ReadBuffer, WriteBuffer, Length);
   return InternalSmBusExec (EfiSmbusBWBRProcessCall, SmBusAddress, Length, ReadBuffer, Status);
 }

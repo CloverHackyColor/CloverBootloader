@@ -670,7 +670,7 @@ XhcPeiControlTransfer (
       //
       // Store a copy of device scriptor as hub device need this info to configure endpoint.
       //
-      CopyMem (&Xhc->UsbDevContext[SlotId].DevDesc, Data, *DataLength);
+      CopyMem(&Xhc->UsbDevContext[SlotId].DevDesc, Data, *DataLength);
       if (Xhc->UsbDevContext[SlotId].DevDesc.BcdUSB >= 0x0300) {
         //
         // If it's a usb3.0 device, then its max packet size is a 2^n.
@@ -702,7 +702,7 @@ XhcPeiControlTransfer (
           Status = EFI_OUT_OF_RESOURCES;
           goto ON_EXIT;
         }
-        CopyMem (Xhc->UsbDevContext[SlotId].ConfDesc[Index], Data, *DataLength);
+        CopyMem(Xhc->UsbDevContext[SlotId].ConfDesc[Index], Data, *DataLength);
       }
     } else if (((DescriptorType == USB_DESC_TYPE_HUB) ||
                (DescriptorType == USB_DESC_TYPE_HUB_SUPER_SPEED)) && (*DataLength > 2)) {

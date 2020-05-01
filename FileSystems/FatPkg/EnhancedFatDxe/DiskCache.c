@@ -83,7 +83,7 @@ Returns:
       //
       if (IoMode == READ_DISK) {
         if (CacheTag->Dirty) {
-          CopyMem (
+          CopyMem(
             Buffer + ((PageNo - StartPageNo) << PageAlignment),
             BaseAddress + (GroupNo << PageAlignment),
             PageSize
@@ -289,7 +289,7 @@ Returns:
       Source            = Buffer;
     }
 
-    CopyMem (Destination, Source, Length);
+    CopyMem(Destination, Source, Length);
   }
 
   return Status;

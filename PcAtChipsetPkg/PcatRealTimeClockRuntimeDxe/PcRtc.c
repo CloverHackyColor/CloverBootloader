@@ -462,7 +462,7 @@ PcRtcSetTime (
     return Status;
   }
 
-  CopyMem (&RtcTime, Time, sizeof (EFI_TIME));
+  CopyMem(&RtcTime, Time, sizeof (EFI_TIME));
 
   //
   // Acquire RTC Lock to make access to RTC atomic
@@ -728,7 +728,7 @@ PcRtcSetWakeupTime (
     //
     // Make a local copy of the time and date
     //
-    CopyMem (&RtcTime, Time, sizeof (EFI_TIME));
+    CopyMem(&RtcTime, Time, sizeof (EFI_TIME));
 
   }
   //

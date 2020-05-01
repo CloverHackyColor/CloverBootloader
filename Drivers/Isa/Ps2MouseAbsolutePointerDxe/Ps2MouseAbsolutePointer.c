@@ -669,7 +669,7 @@ MouseAbsolutePointerGetState (
   }
 
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-  CopyMem (State, &(MouseAbsolutePointerDev->State), sizeof (EFI_ABSOLUTE_POINTER_STATE));
+  CopyMem(State, &(MouseAbsolutePointerDev->State), sizeof (EFI_ABSOLUTE_POINTER_STATE));
 
   //
   // clear mouse state

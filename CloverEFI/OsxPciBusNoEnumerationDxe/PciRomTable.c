@@ -61,7 +61,7 @@ PciRomAddImageMapping (
       return ;
     }
 
-    CopyMem (TempMapping, mRomImageTable, mNumberOfPciRomImages * sizeof (EFI_PCI_ROM_IMAGE_MAPPING));
+    CopyMem(TempMapping, mRomImageTable, mNumberOfPciRomImages * sizeof (EFI_PCI_ROM_IMAGE_MAPPING));
 
     if (mRomImageTable != NULL) {
       gBS->FreePool(mRomImageTable);
