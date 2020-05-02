@@ -919,7 +919,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   UINTN   NumLion_i386_EXT   = 0;
   UINTN   NumLion_X64_EXT    = 0;
   UINT32  patchLocation2 = 0, patchLocation3 = 0;
-  UINT32  i, y;
+
 
   DBG_RT("\nPatching kernel for injected kexts...\n");
 
@@ -934,8 +934,8 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   if (NumSnow_i386_EXT + NumSnow_X64_EXT + NumLion_i386_EXT + NumLion_X64_EXT > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-	  printf("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %llu, SnowX64: %llu, Lioni386: %llu, LionX64: %llu) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT);
-    gBS->Stall(10000000);
+//	  DBG_RT("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %llu, SnowX64: %llu, Lioni386: %llu, LionX64: %llu) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT);
+    Stall(10000000);
     return;
   }
 
@@ -943,21 +943,21 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   if (is64BitKernel) {
     if (NumSnow_X64_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
-		DBG_RT("==> kernel Snow Leopard X64: %llu replaces done.\n", Num);
+//		DBG_RT("==> kernel Snow Leopard X64: %llu replaces done.\n", Num);
     } else if (NumLion_X64_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
-		DBG_RT("==> kernel Lion X64: %llu replaces done.\n", Num);
+//		DBG_RT("==> kernel Lion X64: %llu replaces done.\n", Num);
     } else {
       // EXT - load extra kexts besides kernelcache.
 #if OLD_EXTRA_KEXT_PATCH
       UINT32  patchLocation1 = 0;
-      for (i = 0; i < 0x1000000; i++) {
+      for (UINT32 i = 0; i < 0x1000000; i++) {
         // 01 00 31 FF BE 14 00 05
         if (Kernel[i+0] == 0x01 && Kernel[i+1] == 0x00 && Kernel[i+2] == 0x31 &&
             Kernel[i+3] == 0xFF && Kernel[i+4] == 0xBE && Kernel[i+5] == 0x14 &&
             Kernel[i+6] == 0x00 && Kernel[i+7] == 0x05) {
           DBG_RT("==> found EXT Base (10.8 - recent macOS)\n");
-          for (y = i; y < 0x1000000; y++) {
+          for (UINT32 y = i; y < 0x1000000; y++) {
             // E8 XX 00 00 00 EB XX XX
             if (Kernel[y+0] == 0xE8 && Kernel[y+2] == 0x00 && Kernel[y+3] == 0x00 &&
                 Kernel[y+4] == 0x00 && Kernel[y+5] == 0xEB) {
@@ -997,18 +997,21 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
       UINTN procLocation = searchProc(Kernel, "readStartupExtensions", &procLen);
       const UINT8 findJmp[] = {0xEB, 0x05};
       const UINT8 patchJmp[] = {0x90, 0x90};
-      DBG_RT("==> readStartupExtensions at %llx\n", procLocation);
+//      DBG_RT("==> readStartupExtensions at %llx\n", procLocation);
       if (!SearchAndReplace(&Kernel[procLocation], 0x100, findJmp, 2, patchJmp, 1)) {
         DBG_RT("load kexts not patched\n");
-        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
-          DBG_RT("%02x", Kernel[j]);
-        }
-        DBG_RT("\n");
+//        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
+//          DBG_RT("%02x", Kernel[j]);
+//        }
+//        DBG_RT("\n");
         Stall(10000000);
       } else {
         DBG_RT("load kexts patched\n");
+//        for (UINTN j=procLocation+0x3b; j<procLocation+0x5b; ++j) {
+//          DBG_RT("%02x", Kernel[j]);
+//        }
       }
-      Stall(9000000);
+//      Stall(12000000);
 #endif
       // SIP - bypass kext check by System Integrity Protection.
       //the pattern found in  __ZN6OSKext14loadExecutableEv:        // OSKext::loadExecutable()
@@ -1041,7 +1044,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //    bytes:4885db7470
 
 #if OLD_EXTRA_KEXT_PATCH
-      for (i = 0; i < 0x1000000; i++) {
+      for (UINT32 i = 0; i < 0x1000000; i++) {
         // 45 31 FF 41 XX 01 00 00 DC 48
         if (Kernel[i+0] == 0x45 && Kernel[i+1] == 0x31 && Kernel[i+3] == 0x41 &&
             //(Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) && // BF:10.11/BE:10.12+
@@ -1049,7 +1052,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
             Kernel[i+8] == 0xDC && Kernel[i+9] == 0x48) {
           
           DBG_RT("==> found loadExecutable (10.11 - recent macOS) at %x\n", i);
-          for (y = i; y < 0x100000; y++) {
+          for (UINT32 y = i; y < 0x100000; y++) {
             // 48 85 XX 74 XX 48 XX XX 48
             if (Kernel[y+0] == 0x48 && Kernel[y+1] == 0x85 && Kernel[y+3] == 0x74 &&
                 Kernel[y+5] == 0x48 && Kernel[y+8] == 0x48) {
@@ -1068,6 +1071,27 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
         }
       }
 #else
+      bool otherSys = false;
+      bool oldSystem = false;
+      procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
+      //Catalina
+      const UINT8 find2[] = {0x45, 0x31, 0xF6, 0x48, 0x85, 0xC0 };
+      const UINT8 mask2[] = {0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF };
+      //older systems
+      const UINT8 find3[] = {0x48, 0x85, 00, 0x74, 00, 0x48, 00, 00, 0x48 };
+      const UINT8 mask3[] = {0xFF, 0xFF, 00, 0xFF, 00, 0xFF, 00, 00, 0xFF };
+      patchLocation2 = FindMemMask(&Kernel[procLocation], 0x30, find2, sizeof(find2), mask2, sizeof(mask2));
+      if (patchLocation2 == KERNEL_MAX_SIZE) {
+        //other systems
+        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x30, find3, sizeof(find3), mask3, sizeof(mask3));
+        otherSys = true;
+      }
+      if (patchLocation2 != KERNEL_MAX_SIZE) {
+        patchLocation2 += procLocation;
+      }
+
+      
+/*
       procLocation = searchProc(Kernel, "loadExecutable", &procLen);
 //check
       DBG_RT("==> loadExecutable (10.11 - recent macOS) at %llx\n", procLocation);
@@ -1076,22 +1100,34 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //      }
 //      DBG_RT("\n");
 //      Stall(10000000);
+      
+      
 
       const UINT8 find2[] = {0x48, 0x85, 00, 0x74, 00, 0x48, 00, 00, 0x48 };
       const UINT8 mask2[] = {0xFF, 0xFF, 00, 0xFF, 00, 0xFF, 00, 00, 0xFF };
       patchLocation2 = FindMemMask(&Kernel[procLocation], 0x1000, find2, sizeof(find2), mask2, sizeof(mask2));
       if (patchLocation2 == KERNEL_MAX_SIZE) {
-        //Catalina
-        //ffffff80009a2273 85C0                            test       eax, eax
-        //ffffff80009a2275 0F843C010000                    je         0xffffff80009a23b7
-        //ffffff80009a227b 498B4500                        mov        rax, qword [ds:r13+0x0]
-        const UINT8 find3[] = {0x00, 0x85, 0xC0, 0x0F, 0x84, 00, 00, 0x00, 0x00, 0x49 };
-        const UINT8 mask3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 00, 0xFC };
-        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x1000, find3, sizeof(find3), mask3, sizeof(mask3));
+        //Mojave
+        procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
+        const UINT8 find4[] = {0x48, 0x85, 0xC0, 0x74, 0x00, 00, 00};
+        const UINT8 mask4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xC0, 00, 00};
+        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x100, find3, sizeof(find3), mask3, sizeof(mask3));
+        if (patchLocation2 != KERNEL_MAX_SIZE) {
+          taskFound = true;
+        } else {
+          //Catalina
+          //ffffff80009a2273 85C0                            test       eax, eax
+          //ffffff80009a2275 0F843C010000                    je         0xffffff80009a23b7
+          //ffffff80009a227b 498B4500                        mov        rax, qword [ds:r13+0x0]
+          const UINT8 find3[] = {0x00, 0x85, 0xC0, 0x0F, 0x84, 00, 0x00, 0x00, 0x00, 0x49 };
+          const UINT8 mask3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 00, 0xFC };
+          patchLocation2 = FindMemMask(&Kernel[procLocation], 0x1000, find3, sizeof(find3), mask3, sizeof(mask3));
+        }
       }
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         patchLocation2 += procLocation;
       }
+ */
 #endif
  //     Stall(9000000);
       if (!patchLocation2 || patchLocation2 == KERNEL_MAX_SIZE) {
@@ -1101,10 +1137,57 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //        }
 //        DBG_RT("\n");
         Stall(3000000);
+      } else {
+        UINT8 jmp;
+        if (!otherSys) {
+          patchLocation2 += 3;
+          jmp = Kernel[patchLocation2 + 4] + 1;
+  //        DBG_RT("Catalina\n");
+        } else {
+          if (Kernel[patchLocation2 + 2] == 0xC0) {
+            jmp = Kernel[patchLocation2 + 4];
+  //          DBG_RT("Mojave\n");
+          } else {
+            jmp = Kernel[patchLocation2 + 4] - 2;
+  //          DBG_RT("Capitan\n");
+            oldSystem = true;
+          }
+        }
+        const UINT8 repl4[] = {0xB8, 0x01, 0x00, 0x00, 0x00, 0xEB};
+        CopyMem(&Kernel[patchLocation2], repl4, sizeof(repl4));
+        Kernel[patchLocation2 + 6] = jmp;
+        DBG_RT("=> patch SIP applied\n");
+       //         for (UINTN j=procLocation; j<procLocation+0x80; ++j) {
+       //           DBG_RT("%02x ", Kernel[j]);
+       //         }
+       //         DBG_RT("\n");
+       // Stall(10000000);
+      }
+      
+      //But older systems like Capitan has no call to IOTaskHasEntitlement
+      // having same codes in loadExecutable.
+      //check them
+      if (oldSystem) {
+        procLocation = searchProc(Kernel, "loadExecutable", &procLen);
+        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find3, sizeof(find3), mask3, sizeof(mask3));
+        if (patchLocation2 != KERNEL_MAX_SIZE) {
+          patchLocation2 += procLocation;
+          Kernel[patchLocation2 + 3] = 0xEB;
+          Kernel[patchLocation2 + 4] = 0x12;
+        }
       }
 
+      
+/*
       //Capitan: 48 85 db 74 70 48 8b 03 48
       if (patchLocation2) {
+        if (taskFound) {
+          UINT8 jmp = Kernel[patchLocation2 + 4];
+          const UINT8 repl4[] = {0xB8, 0x01, 0x00, 0x00, 0x00, 0xEB};
+          CopyMem(&Kernel[patchLocation2], repl4, sizeof(repl4));
+          Kernel[patchLocation2 + 6] = jmp;
+          DBG_RT("=> mojave SIP applyed\n");
+        } else
         if (Kernel[patchLocation2 + 0] == 0x48 && Kernel[patchLocation2 + 1] == 0x85) {
           
           Kernel[patchLocation2 + 3] = 0xEB;
@@ -1129,9 +1212,18 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
         }
       }
       Stall(9000000);
+ */
+ //Slice - hope this patch useful for some system that I have no.
       // KxldUnmap by vit9696
       // Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
-      for (i = 0; i < 0x1000000; i++) {
+      procLocation = searchProc(Kernel, "removeKextBootstrap", &procLen);
+      const UINT8 find5[] = {0x00, 0x0F, 0x85, 00, 00, 0x00, 0x00, 0x48 };
+      const UINT8 mask5[] = {0xFF, 0xFF, 0xFF, 00, 00, 0xFF, 0xFF, 0xFF };
+      patchLocation3 = FindMemMask(&Kernel[procLocation], 0x1000, find5, sizeof(find5), mask5, sizeof(mask5));
+      
+
+ /*
+      for (UINT32 i = 0; i < 0x1000000; i++) {
         // 55 48 89 E5 41 57 41 56 41 54 53 //10
         // 48 83 EC 30 48 C7 45 B8 XX XX XX //21
         // XX XX XX XX XX XX XX XX XX XX XX //32
@@ -1146,7 +1238,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
             Kernel[i+15] == 0x48 && Kernel[i+16] == 0xC7 && Kernel[i+17] == 0x45 &&
             Kernel[i+18] == 0xB8 && Kernel[i+53] == 0xFF && Kernel[i+64] == 0xFF && Kernel[i+65] == 0xFF) {
           DBG_RT("==> found KxldUnmap Base (10.14 - recent macOS)\n");
-          for (y = i; y < 0x1000000; y++) {
+          for (UINT32 y = i; y < 0x1000000; y++) {
             // 00 0F 85 XX XX 00 00 48
             if (Kernel[y+0] == 0x00 && Kernel[y+1] == 0x0F && Kernel[y+2] == 0x85 &&
                 Kernel[y+5] == 0x00 && Kernel[y+6] == 0x00 && Kernel[y+7] == 0x48) {
@@ -1158,28 +1250,26 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
           break;
         }
       }
-            
-      if (!patchLocation3) {
+ */
+      if (patchLocation3  == KERNEL_MAX_SIZE) {
         DBG_RT("==> can't find KxldUnmap (10.14 - recent macOS), kernel patch aborted.\n");
         Stall(3000000);
-      }
-
-      if (patchLocation3) {
+      } else {
         DBG_RT("==> patched KxldUnmap (10.14 - recent macOS)\n");
         // 00 0F 85 XX XX 00 00 48
         // 00 90 E9 XX XX 00 00 48
-        Kernel[patchLocation3 + 1] = 0x90;
-        Kernel[patchLocation3 + 2] = 0xE9;
+        Kernel[procLocation + patchLocation3 + 1] = 0x90;
+        Kernel[procLocation + patchLocation3 + 2] = 0xE9;
       }
     }
   } else {
     // i386
     if (NumSnow_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
-		DBG_RT("==> kernel Snow Leopard i386: %llu replaces done.\n", Num);
+//		DBG_RT("==> kernel Snow Leopard i386: %llu replaces done.\n", Num);
     } else if (NumLion_i386_EXT == 1) {
       Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
-		DBG_RT("==> kernel Lion i386: %llu replaces done.\n", Num);
+//		DBG_RT("==> kernel Lion i386: %llu replaces done.\n", Num);
     } else {
       DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
     }
