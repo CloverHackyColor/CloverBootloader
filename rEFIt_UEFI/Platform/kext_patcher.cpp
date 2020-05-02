@@ -9,6 +9,8 @@
 
 #include "kernel_patcher.h"
 
+#define OLD_METHOD 0
+
 
 #ifndef DEBUG_ALL
 #define KEXT_DEBUG 0
@@ -29,10 +31,10 @@
 // Searches Source for Search pattern of size SearchSize
 // and returns the number of occurences.
 //
-UINTN SearchAndCount(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize)
+UINTN SearchAndCount(const UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UINTN SearchSize)
 {
-  UINTN     NumFounds = 0;
-  UINT8     *End = Source + SourceSize;
+  UINTN        NumFounds = 0;
+  const UINT8  *End = Source + SourceSize;
   
   while (Source < End) {
     if (CompareMem(Source, Search, SearchSize) == 0) {
@@ -477,24 +479,24 @@ VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 
 // http://www.insanelymac.com/forum/index.php?showtopic=253992
 // http://www.insanelymac.com/forum/index.php?showtopic=276066
 //
+#if OLD_METHOD
+const UINT8   LionSearch_X64[]  = { 0x75, 0x30, 0x44, 0x89, 0xf8 };
+const UINT8   LionReplace_X64[] = { 0xeb, 0x30, 0x44, 0x89, 0xf8 };
 
-STATIC UINT8   LionSearch_X64[]  = { 0x75, 0x30, 0x44, 0x89, 0xf8 };
-STATIC UINT8   LionReplace_X64[] = { 0xeb, 0x30, 0x44, 0x89, 0xf8 };
+const UINT8   LionSearch_i386[]  = { 0x75, 0x3d, 0x8b, 0x75, 0x08 };
+const UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
 
-STATIC UINT8   LionSearch_i386[]  = { 0x75, 0x3d, 0x8b, 0x75, 0x08 };
-STATIC UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
-
-STATIC UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
-STATIC UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
+const UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
+const UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
 
 // SunKi: 10.9 - 10.14.3
-STATIC UINT8   MavMoj3Search[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
-STATIC UINT8   MavMoj3Replace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
+const UINT8   MavMoj3Search[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
+const UINT8   MavMoj3Replace[] = { 0xeb, 0x2e, 0x0f, 0xb6 };
 
 // RodionS: 10.14.4+ / 10.15 DB1
-STATIC UINT8   Moj4CataSearch[]  = { 0x75, 0x33, 0x0f, 0xb7 };
-STATIC UINT8   Moj4CataReplace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
-
+const UINT8   Moj4CataSearch[]  = { 0x75, 0x33, 0x0f, 0xb7 };
+const UINT8   Moj4CataReplace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
+#endif
 //
 // We can not rely on OSVersion global variable for OS version detection,
 // since in some cases it is not correct (install of ML from Lion, for example).
@@ -505,7 +507,7 @@ STATIC UINT8   Moj4CataReplace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
 
 VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
-  
+#if OLD_METHOD
   UINTN   Num = 0;
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
@@ -555,6 +557,19 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
   } else {
     DBG_RT("==> Patterns not found - patching NOT done.\n");
   }
+#else
+  //RodionS
+  UINTN procLen = DriverSize;
+  UINTN procLocation = searchProc(Driver, "updateChecksum", &procLen);
+  DBG_RT("AppleRTC:");
+  if (procLocation != 0) {
+    Driver[procLocation] = 0xC3;
+    DBG_RT(" patched\n");
+  } else {
+    DBG_RT(" failed\n");
+  }
+
+#endif
   Stall(5000000);
 }
 
