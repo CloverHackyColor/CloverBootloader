@@ -360,12 +360,14 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINT32            AddrVtable;
         UINT32            SizeVtable;
         UINT32            NamesTable;
+        INT32             SegVAddr;
+        INT32             shift;
 
 				LOADER_ENTRY()
 						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
               BootBgColor({0,0,0,0}),
               CustomBoot(0), KernelAndKextPatches(0), Settings(0),
-              AddrVtable(0), SizeVtable(0), NamesTable(0)
+              AddrVtable(0), SizeVtable(0), NamesTable(0), shift(0)
 						{};
         
         VOID          FindBootArgs();

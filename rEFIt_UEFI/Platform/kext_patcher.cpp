@@ -52,7 +52,7 @@ UINTN SearchAndCount(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Sear
 // Replace should have the same size as Search.
 // Returns number of replaces done.
 //
-UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
+UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *Replace, INTN MaxReplaces)
 {
   UINTN     NumReplaces = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
@@ -76,15 +76,17 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN Se
   return NumReplaces;
 }
 
-BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSize)
+BOOLEAN CompareMemMask(const UINT8 *Source, const UINT8 *Search, UINTN SearchSize, const UINT8 *Mask, UINTN MaskSize)
 {
   UINT8 M;
  
-  if (!Mask) {
+  if (!Mask || MaskSize == 0) {
     return !CompareMem(Source, Search, SearchSize);
   }
   for (UINTN Ind = 0; Ind < SearchSize; Ind++) {
-    M = *Mask++;
+    if (Ind < MaskSize)
+      M = *Mask++;
+    else M = 0xFF;
     if ((*Source++ & M) != (*Search++ & M)) {
       return FALSE;
     }
@@ -92,7 +94,7 @@ BOOLEAN CompareMemMask(UINT8 *Source, UINT8 *Search, UINT8 *Mask, UINTN SearchSi
   return TRUE;
 }
 
-VOID CopyMemMask(UINT8 *Dest, UINT8 *Replace, UINT8 *Mask, UINTN SearchSize)
+VOID CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize)
 {
   UINT8 M, D;
   // the procedure is called from SearchAndReplaceMask with own check but for future it is better to check twice
@@ -111,8 +113,22 @@ VOID CopyMemMask(UINT8 *Dest, UINT8 *Replace, UINT8 *Mask, UINTN SearchSize)
   }
 }
 
-UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT8 *MaskSearch, UINTN SearchSize,
-                       UINT8 *Replace, UINT8 *MaskReplace, INTN MaxReplaces)
+UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize)
+{
+  if (!Source || !Search || !SearchSize) {
+    return KERNEL_MAX_SIZE;
+  }
+
+  for (UINTN i = 0; i < SourceSize - SearchSize; ++i) {
+    if (CompareMemMask(&Source[i], Search, SearchSize, MaskSearch, MaskSize)) {
+      return i;
+    }
+  }
+  return KERNEL_MAX_SIZE;
+}
+
+UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, const UINT8 *MaskSearch, UINTN SearchSize,
+                       const UINT8 *Replace, const UINT8 *MaskReplace, INTN MaxReplaces)
 {
   UINTN     NumReplaces = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
@@ -121,7 +137,7 @@ UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINT
     return 0;
   }
   while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) {
-    if (CompareMemMask(Source, Search, MaskSearch, SearchSize)) {
+    if (CompareMemMask((const UINT8 *)Source, Search, SearchSize, MaskSearch, SearchSize)) {
       CopyMemMask(Source, Replace, MaskReplace, SearchSize);
       NumReplaces++;
       MaxReplaces--;
@@ -988,23 +1004,24 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     } else {
       procLen = KernelAndKextPatches->KextPatches[N].SearchLen;
     }
-    UINT8 * curs = &Driver[procAddr];
+    const UINT8 * curs = &Driver[procAddr];
     UINTN j = 0;
     while (j < DriverSize) {
       if (!KernelAndKextPatches->KextPatches[N].StartPattern || //old behavior
-          CompareMemMask(curs,
-                         KernelAndKextPatches->KextPatches[N].StartPattern,
-                         KernelAndKextPatches->KextPatches[N].StartMask,
+          CompareMemMask((const UINT8*)curs,
+                         (const UINT8 *)KernelAndKextPatches->KextPatches[N].StartPattern,
+                         KernelAndKextPatches->KextPatches[N].StartPatternLen,
+                         (const UINT8 *)KernelAndKextPatches->KextPatches[N].StartMask,
                          KernelAndKextPatches->KextPatches[N].StartPatternLen)) {
         DBG_RT(" StartPattern found\n");
 
         Num = SearchAndReplaceMask(Driver,
                                    procLen,
-                                   KernelAndKextPatches->KextPatches[N].Data,
-                                   KernelAndKextPatches->KextPatches[N].MaskFind,
+                                   (const UINT8*)KernelAndKextPatches->KextPatches[N].Data,
+                                   (const UINT8*)KernelAndKextPatches->KextPatches[N].MaskFind,
                                    KernelAndKextPatches->KextPatches[N].DataLen,
-                                   KernelAndKextPatches->KextPatches[N].Patch,
-                                   KernelAndKextPatches->KextPatches[N].MaskReplace,
+                                   (const UINT8*)KernelAndKextPatches->KextPatches[N].Patch,
+                                   (const UINT8*)KernelAndKextPatches->KextPatches[N].MaskReplace,
                                    -1);
         if (Num) {
           curs += KernelAndKextPatches->KextPatches[N].SearchLen - 1;

@@ -19,7 +19,7 @@
 
 // runtime debug
 //
-#define OLD_EXTRA_KEXT_PATCH 1
+#define OLD_EXTRA_KEXT_PATCH 0
 
 ////////////////////
 // globals
@@ -985,20 +985,32 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
         }
       }
 #else
+      //Capitan
+//      procedure at 950950, len = fffffffffffff3f0
+//      proclen=256, end=256 startLen=0
+//      found start at 0x950950
+//      found pattern: 1
+//    address: 0095098b
+//    bytes:eb05
+
       UINTN procLen = 0x100;
       UINTN procLocation = searchProc(Kernel, "readStartupExtensions", &procLen);
-      UINT8 findJmp[] = {0xEB, 0x05};
-      UINT8 patchJmp[] = {0x90, 0x90};
-      DBG_RT("==> procLocation=%llx\n", procLocation);
+      const UINT8 findJmp[] = {0xEB, 0x05};
+      const UINT8 patchJmp[] = {0x90, 0x90};
+      DBG_RT("==> readStartupExtensions at %llx\n", procLocation);
       if (!SearchAndReplace(&Kernel[procLocation], 0x100, findJmp, 2, patchJmp, 1)) {
         DBG_RT("load kexts not patched\n");
+        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
+          DBG_RT("%02x", Kernel[j]);
+        }
+        DBG_RT("\n");
+        Stall(10000000);
       } else {
         DBG_RT("load kexts patched\n");
       }
       Stall(9000000);
 #endif
       // SIP - bypass kext check by System Integrity Protection.
-      //TODO - what is this???
       //the pattern found in  __ZN6OSKext14loadExecutableEv:        // OSKext::loadExecutable()
 //    iMac2017:Catalina sergey$ ./FindMask kernel -p loadExecutable -e 1000 -f 488500740048000048,FFFF00FF00FF0000FF
 //      descending
@@ -1009,14 +1021,35 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //    address: 007a29b7
 //    bytes:4885c074224889c348
 
+//Capitan
+//      ffffff800084897b 4885DB                          test       rbx, rbx
+//      ffffff800084897e 7470                            je         0xffffff80008489f0 -> patch to not jump
+//                       7412                                    jmp ffffff8000848992
+//      ; Basic Block Input Regs: rbx -  Killed Regs: rax rdi
+//      ffffff8000848980 488B03                          mov        rax, qword [ds:rbx]
+//      ffffff8000848983 4889DF                          mov        rdi, rbx
+//      ffffff8000848986 FF5028                          call       qword [ds:rax+0x28]
+//      ffffff8000848989 483B1DE04F2B00                  cmp        rbx, qword [ds:0xffffff8000afd970]
+//      ffffff8000848990 745E                            je         0xffffff80008489f0 -> patch to not jump
+//      ; Basic Block Input Regs: r13 -  Killed Regs: rax rbx rdi
+//      ffffff8000848992 498B4500                        mov        rax, qword [ds:r13+0x0]
+//      procedure at 6487f0, len = 7250
+//      proclen=512, end=512 startLen=0
+//      found start at 0x6487f0
+//      found pattern: 1
+//    address: 0064897b
+//    bytes:4885db7470
+
+#if OLD_EXTRA_KEXT_PATCH
       for (i = 0; i < 0x1000000; i++) {
         // 45 31 FF 41 XX 01 00 00 DC 48
         if (Kernel[i+0] == 0x45 && Kernel[i+1] == 0x31 && Kernel[i+3] == 0x41 &&
             //(Kernel[i+4] == 0xBF || Kernel[i+4] == 0xBE) && // BF:10.11/BE:10.12+
             Kernel[i+5] == 0x01 && Kernel[i+6] == 0x00 && Kernel[i+7] == 0x00 &&
             Kernel[i+8] == 0xDC && Kernel[i+9] == 0x48) {
-          DBG_RT("==> found SIP Base (10.11 - recent macOS)\n");
-          for (y = i; y < 0x2000; y++) {
+          
+          DBG_RT("==> found loadExecutable (10.11 - recent macOS) at %x\n", i);
+          for (y = i; y < 0x100000; y++) {
             // 48 85 XX 74 XX 48 XX XX 48
             if (Kernel[y+0] == 0x48 && Kernel[y+1] == 0x85 && Kernel[y+3] == 0x74 &&
                 Kernel[y+5] == 0x48 && Kernel[y+8] == 0x48) {
@@ -1034,15 +1067,43 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
           break;
         }
       }
-      Stall(9000000);
-      if (!patchLocation2) {
-        DBG_RT("==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
-        Stall(3000000);
+#else
+      procLocation = searchProc(Kernel, "loadExecutable", &procLen);
+//check
+      DBG_RT("==> loadExecutable (10.11 - recent macOS) at %llx\n", procLocation);
+      for (UINTN j=procLocation+0x39; j<procLocation+0x50; ++j) {
+        DBG_RT("%02x ", Kernel[j]);
       }
-        //Slice - looks like this patch is wrong for Catalina which kernel I have
+      DBG_RT("\n");
+      Stall(10000000);
+
+      const UINT8 find2[] = {0x48, 0x85, 00, 0x74, 00, 0x48, 00, 00, 0x48 };
+      const UINT8 mask2[] = {0xFF, 0xFF, 00, 0xFF, 00, 0xFF, 00, 00, 0xFF };
+      patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find2, sizeof(find2), mask2, sizeof(mask2));
+      if (patchLocation2 == KERNEL_MAX_SIZE) {
+        const UINT8 find3[] = {0x00, 0x85, 0xC0, 0x0F, 0x84, 00, 0x00, 0x00, 0x00, 0x49 };
+        const UINT8 mask3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 00 };
+        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find3, sizeof(find3), mask3, sizeof(mask3));
+      }
+      if (patchLocation2 != KERNEL_MAX_SIZE) {
+        patchLocation2 += procLocation;
+      }
+#endif
+ //     Stall(9000000);
+      if (!patchLocation2 || patchLocation2 == KERNEL_MAX_SIZE) {
+        DBG_RT("==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
+        for (UINTN j=procLocation; j<procLocation+0x20; ++j) {
+          DBG_RT("%02x ", Kernel[j]);
+        }
+        DBG_RT("\n");
+        Stall(10000000);
+      }
+
+      //Capitan: 48 85 db 74 70 48 8b 03 48
       if (patchLocation2) {
         if (Kernel[patchLocation2 + 0] == 0x48 && Kernel[patchLocation2 + 1] == 0x85) {
-            Kernel[patchLocation2 + 3] = 0xEB;
+          
+          Kernel[patchLocation2 + 3] = 0xEB;
           DBG_RT("==> patched SIP (10.11 - 10.14)\n");
           if (Kernel[patchLocation2 + 4] == 0x6C) {
             // 48 85 XX 74 6C 48 XX XX 48
