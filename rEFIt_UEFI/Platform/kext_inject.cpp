@@ -1079,15 +1079,15 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 
       const UINT8 find2[] = {0x48, 0x85, 00, 0x74, 00, 0x48, 00, 00, 0x48 };
       const UINT8 mask2[] = {0xFF, 0xFF, 00, 0xFF, 00, 0xFF, 00, 00, 0xFF };
-      patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find2, sizeof(find2), mask2, sizeof(mask2));
+      patchLocation2 = FindMemMask(&Kernel[procLocation], 0x1000, find2, sizeof(find2), mask2, sizeof(mask2));
       if (patchLocation2 == KERNEL_MAX_SIZE) {
         //Catalina
         //ffffff80009a2273 85C0                            test       eax, eax
         //ffffff80009a2275 0F843C010000                    je         0xffffff80009a23b7
         //ffffff80009a227b 498B4500                        mov        rax, qword [ds:r13+0x0]
         const UINT8 find3[] = {0x00, 0x85, 0xC0, 0x0F, 0x84, 00, 00, 0x00, 0x00, 0x49 };
-        const UINT8 mask3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 00, 0x03 };
-        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find3, sizeof(find3), mask3, sizeof(mask3));
+        const UINT8 mask3[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 00, 0xFC };
+        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x1000, find3, sizeof(find3), mask3, sizeof(mask3));
       }
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         patchLocation2 += procLocation;
