@@ -352,7 +352,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
   EFI_FILE_INFO           *PlugInFile;
   CHAR16                  *FileName;
   CHAR16                  *PlugIns;
-  CONST CHAR16                  *Arch = NULL;
+//  CONST CHAR16                  *Arch = NULL;
 //  CONST CHAR16                  *Ptr = NULL;
 #if defined(MDE_CPU_X64)
   cpu_type_t              archCpuType=CPU_TYPE_X86_64;
@@ -369,13 +369,15 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
   SIDELOAD_KEXT           *Next = NULL;
 
   // Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
-  if (LoadOptions.notEmpty()) {
+//  if (LoadOptions.notEmpty()) {
 //    for (Ptr = StrStr(LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
-  }
+//  }
 
-  if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
+//  if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
+    if (LoadOptions.contains("arch=x86_64")) {
     archCpuType = CPU_TYPE_X86_64;
-  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
+//  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
+    } else if (LoadOptions.contains("arch=i386")) {
     archCpuType = CPU_TYPE_I386;
   } else if (OSVersion != NULL) {
     UINT64 os_version = AsciiOSVersionToUint64(OSVersion);

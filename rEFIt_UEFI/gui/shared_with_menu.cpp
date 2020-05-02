@@ -115,7 +115,8 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
       if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
         gSettings.NvidiaWeb = TRUE;
       } else {
-        Entry->LoadOptions = loaderEntry->LoadOptions;
+        //Entry->LoadOptions = loaderEntry->LoadOptions;
+        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
         Entry->LoadOptions.AddID(ArgOptional[INX_NVWEBON]);
       }
     }
@@ -123,7 +124,8 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
       if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
         gSettings.NvidiaWeb = FALSE;
       } else {
-        Entry->LoadOptions = loaderEntry->LoadOptions;
+        //Entry->LoadOptions = loaderEntry->LoadOptions;
+        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
         Entry->LoadOptions.removeIC(ArgOptional[INX_NVWEBON]);
       }
     }
