@@ -1000,18 +1000,19 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //      DBG_RT("==> readStartupExtensions at %llx\n", procLocation);
       if (!SearchAndReplace(&Kernel[procLocation], 0x100, findJmp, 2, patchJmp, 1)) {
         DBG_RT("load kexts not patched\n");
-//        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
-//          DBG_RT("%02x", Kernel[j]);
-//        }
-//        DBG_RT("\n");
-        Stall(10000000);
+        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
+          DBG_RT("%02x", Kernel[j]);
+        }
+        DBG_RT("\n");
+//        Stall(10000000);
       } else {
         DBG_RT("load kexts patched\n");
 //        for (UINTN j=procLocation+0x3b; j<procLocation+0x5b; ++j) {
 //          DBG_RT("%02x", Kernel[j]);
 //        }
+//        DBG_RT("\n");
       }
-//      Stall(12000000);
+      Stall(12000000);
 #endif
       // SIP - bypass kext check by System Integrity Protection.
       //the pattern found in  __ZN6OSKext14loadExecutableEv:        // OSKext::loadExecutable()
@@ -1072,7 +1073,6 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
       }
 #else
       bool otherSys = false;
-      bool oldSystem = false;
       procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
       //Catalina
       const UINT8 find2[] = {0x45, 0x31, 0xF6, 0x48, 0x85, 0xC0 };
@@ -1132,48 +1132,51 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
  //     Stall(9000000);
       if (!patchLocation2 || patchLocation2 == KERNEL_MAX_SIZE) {
         DBG_RT("==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
-//        for (UINTN j=procLocation; j<procLocation+0x20; ++j) {
-//          DBG_RT("%02x ", Kernel[j]);
-//        }
-//        DBG_RT("\n");
+        for (UINTN j=procLocation; j<procLocation+0x20; ++j) {
+          DBG_RT("%02x ", Kernel[j]);
+        }
+        DBG_RT("\n");
         Stall(3000000);
       } else {
         UINT8 jmp;
         if (!otherSys) {
           patchLocation2 += 3;
           jmp = Kernel[patchLocation2 + 4] + 1;
-  //        DBG_RT("Catalina\n");
+          DBG_RT("Catalina\n");
         } else {
           if (Kernel[patchLocation2 + 2] == 0xC0) {
             jmp = Kernel[patchLocation2 + 4];
-  //          DBG_RT("Mojave\n");
+            DBG_RT("Mojave\n");
           } else {
             jmp = Kernel[patchLocation2 + 4] - 2;
-  //          DBG_RT("Capitan\n");
-            oldSystem = true;
+            DBG_RT("Capitan\n");
           }
         }
         const UINT8 repl4[] = {0xB8, 0x01, 0x00, 0x00, 0x00, 0xEB};
         CopyMem(&Kernel[patchLocation2], repl4, sizeof(repl4));
         Kernel[patchLocation2 + 6] = jmp;
         DBG_RT("=> patch SIP applied\n");
-       //         for (UINTN j=procLocation; j<procLocation+0x80; ++j) {
-       //           DBG_RT("%02x ", Kernel[j]);
-       //         }
-       //         DBG_RT("\n");
-       // Stall(10000000);
+                for (UINTN j=procLocation; j<procLocation+0x80; ++j) {
+                  DBG_RT("%02x ", Kernel[j]);
+                }
+                DBG_RT("\n");
+        Stall(10000000);
       }
       
       //But older systems like Capitan has no call to IOTaskHasEntitlement
       // having same codes in loadExecutable.
       //check them
-      if (oldSystem) {
+      if (otherSys) {
         procLocation = searchProc(Kernel, "loadExecutable", &procLen);
         patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find3, sizeof(find3), mask3, sizeof(mask3));
         if (patchLocation2 != KERNEL_MAX_SIZE) {
           patchLocation2 += procLocation;
           Kernel[patchLocation2 + 3] = 0xEB;
-          Kernel[patchLocation2 + 4] = 0x12;
+          if (Kernel[patchLocation2 + 4] == 0x6C) {
+            Kernel[patchLocation2 + 4] = 0x15;
+          } else {
+            Kernel[patchLocation2 + 4] = 0x12;
+          }
         }
       }
 
