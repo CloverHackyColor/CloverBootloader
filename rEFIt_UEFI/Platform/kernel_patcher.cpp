@@ -110,6 +110,64 @@ EFI_STATUS LOADER_ENTRY::getVTable(UINT8 * kernel)
   return EFI_SUCCESS;
 }
 
+UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure)
+{
+  if (!procedure) {
+    return 0;
+  }
+  INT32 LinkAdr = FindBin(driver, driverLen, (const UINT8 *)kLinkEditSegment, (UINT32)strlen(kLinkEditSegment));
+  if (LinkAdr == -1) {
+    return 0;
+  }
+  SEGMENT *LinkSeg = (SEGMENT*)&driver[LinkAdr];
+//  INT32 lAddrVtable = LinkSeg->AddrVtable;
+  INT32 lSizeVtable = LinkSeg->SizeVtable;
+//  INT32 lNamesTable = LinkSeg->AddrNames;
+  const char* Names = (const char*)(&driver[LinkSeg->AddrNames]);
+  VTABLE * vArray = (VTABLE*)(&driver[LinkSeg->AddrVtable]);
+
+  INT32 i;
+  bool found = false;
+  for (i = 0; i < lSizeVtable; ++i) {
+    size_t Offset = vArray[i].NameOffset;
+    if (strstr(&Names[Offset], procedure)) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    DBG_RT("%s not found\n", procedure);
+    return 0;
+  }
+  
+  size_t SegVAddr;
+  switch (vArray[i].Seg) {
+  case ID_SEG_DATA:
+    SegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataSegment, (UINT32)strlen(kDataSegment));
+    break;
+  case ID_SEG_DATA_CONST:
+    SegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataConstSegment, (UINT32)strlen(kDataConstSegment));
+    break;
+  case ID_SEG_KLD:
+  case ID_SEG_KLD2:
+    SegVAddr = FindBin(driver, 0x2000, (const UINT8 *)kKldSegment, (UINT32)strlen(kKldSegment));
+    break;
+  case ID_SEG_TEXT:
+  default:
+    SegVAddr = FindBin(driver, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+    break;
+  }
+  if (SegVAddr == 0) {
+    SegVAddr = 0x38;
+  }
+  SEGMENT *TextSeg = (SEGMENT*)&driver[SegVAddr];
+  UINT64 Absolut = TextSeg->SegAddress;
+  UINT64 FileOff = TextSeg->fileoff;
+  UINTN procAddr = vArray[i].ProcAddr - Absolut + FileOff;
+
+  return procAddr;
+}
+
 //search a procedure by Name and return its offset in the kernel
 UINTN LOADER_ENTRY::searchProc(UINT8 * kernel, const char *procedure, UINTN *procLen)
 {
@@ -1974,7 +2032,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
                          KernelAndKextPatches->BootPatches[i].StartPatternLen)) {
         DBG_RT( " StartPattern found\n");
 
-        Num = SearchAndReplaceMask(BooterData,
+        Num = SearchAndReplaceMask(curs,
                                    KernelAndKextPatches->BootPatches[i].SearchLen,
                                    (const UINT8*)KernelAndKextPatches->BootPatches[i].Data,
                                    (const UINT8*)KernelAndKextPatches->BootPatches[i].MaskFind,

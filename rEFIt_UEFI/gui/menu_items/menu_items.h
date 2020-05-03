@@ -373,6 +373,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         VOID          FindBootArgs();
         EFI_STATUS    getVTable(UINT8* kernel);
         UINTN         searchProc(UINT8 * kernel, const char *procedure, UINTN *procLen);
+        UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure);
         VOID          KernelAndKextsPatcherStart();
         VOID          KernelAndKextPatcherInit();
         BOOLEAN       KernelUserPatch(UINT8 * kernel);

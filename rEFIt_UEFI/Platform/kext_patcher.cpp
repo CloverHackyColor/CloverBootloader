@@ -121,9 +121,9 @@ VOID CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN Sea
 // 0 if not found
 UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN taskLocation)
 {
-  UINTN Offset;
+  INT32 Offset; //can be negative, so 0xFFFFFFFF == -1
   for (UINTN i = Start; i < Start + SourceSize - 4; ++i) {
-    Offset = Source[i] + (Source[i+1]<<8) + (Source[i+2]<<16) + (Source[i+3]<<24); //should not use *(UINT32*) because of alignment
+    Offset = (INT32)((UINT32)Source[i] + ((UINT32)Source[i+1]<<8) + ((UINT32)Source[i+2]<<16) + ((UINT32)Source[i+3]<<24)); //should not use *(UINT32*) because of alignment
     if (taskLocation == i + Offset + 4) {
       return (i+4);
     }
@@ -575,15 +575,33 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
   }
 #else
   //RodionS
-  UINTN procLen = DriverSize;
-  UINTN procLocation = searchProc(Driver, "updateChecksum", &procLen);
-  DBG_RT("AppleRTC:");
+
+  UINTN procLocation = searchProcInDriver(Driver, DriverSize, "updateChecksum");
   if (procLocation != 0) {
     Driver[procLocation] = 0xC3;
-    DBG_RT(" patched\n");
+    DBG_RT("AppleRTC: patched\n");
   } else {
-    DBG_RT(" failed\n");
+    DBG_RT("AppleRTC: not patched\n");
   }
+  
+  /*
+  UINTN writeCmos = searchProc(Driver, "rtcWrite", &procLen);
+  UINTN patchLocation2 = FindRelative32(Driver, procLocation, 0x100, writeCmos);
+  DBG_RT("AppleRTC:");
+  if (patchLocation2 != 0) {
+    Driver[patchLocation2 - 5] = 0xEB;
+    Driver[patchLocation2 - 4] = 0x03;
+    DBG_RT(" patched 1\n");
+    UINTN patchLocation3 = FindRelative32(Driver, patchLocation2, 0x20, writeCmos);
+    if (patchLocation3 != 0) {
+      Driver[patchLocation3 - 5] = 0xEB;
+      Driver[patchLocation3 - 4] = 0x03;
+      DBG_RT(" patched 2\n");
+    }
+  } else {
+    DBG_RT(" not patched\n");
+  }
+   */
 
 #endif
   Stall(5000000);
@@ -999,14 +1017,13 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
 {
   UINTN   Num = 0;
   INTN    Ind;
-  
-	DBG_RT("\nAnyKextPatch %d: driverAddr = %s, driverSize = %x\nAnyKext = %s\n",
-         N, Driver, DriverSize, KernelAndKextPatches->KextPatches[N].Label);
 
   if (!KernelAndKextPatches->KextPatches[N].MenuItem.BValue) {
-    DBG_RT("==> DISABLED!\n");
     return;
   }
+
+	DBG_RT("\nAnyKextPatch %d: driverAddr = %llx, driverSize = %x\nAnyKext = %s\n",
+         N, (UINTN)Driver, DriverSize, KernelAndKextPatches->KextPatches[N].Label);
   
   if (!KernelAndKextPatches->KextPatches[N].SearchLen ||
       (KernelAndKextPatches->KextPatches[N].SearchLen > DriverSize)) {
@@ -1024,18 +1041,16 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     DBG_RT("Binary patch\n");
     bool once = false;
     UINTN procLen = 0;
-    UINTN procAddr = searchProc(Driver, KernelAndKextPatches->KextPatches[N].ProcedureName, &procLen);
+    UINTN procAddr = searchProcInDriver(Driver, DriverSize, KernelAndKextPatches->KextPatches[N].ProcedureName);
     
     if (KernelAndKextPatches->KextPatches[N].SearchLen == 0) {
       KernelAndKextPatches->KextPatches[N].SearchLen = DriverSize;
-      if (procLen > DriverSize) {
-        procLen = DriverSize - procAddr;
-        once = true;
-      }
+      procLen = DriverSize - procAddr;
+      once = true;
     } else {
       procLen = KernelAndKextPatches->KextPatches[N].SearchLen;
     }
-    const UINT8 * curs = &Driver[procAddr];
+    UINT8 * curs = &Driver[procAddr];
     UINTN j = 0;
     while (j < DriverSize) {
       if (!KernelAndKextPatches->KextPatches[N].StartPattern || //old behavior
@@ -1046,7 +1061,7 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
                          KernelAndKextPatches->KextPatches[N].StartPatternLen)) {
         DBG_RT(" StartPattern found\n");
 
-        Num = SearchAndReplaceMask(Driver,
+        Num = SearchAndReplaceMask(curs,
                                    procLen,
                                    (const UINT8*)KernelAndKextPatches->KextPatches[N].Data,
                                    (const UINT8*)KernelAndKextPatches->KextPatches[N].MaskFind,
