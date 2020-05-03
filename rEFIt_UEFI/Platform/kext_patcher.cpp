@@ -9,7 +9,7 @@
 
 #include "kernel_patcher.h"
 
-#define OLD_METHOD 0
+#define OLD_METHOD 1
 
 
 #ifndef DEBUG_ALL
