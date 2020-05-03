@@ -1941,6 +1941,10 @@ BOOLEAN
 LOADER_ENTRY::KernelUserPatch(IN UINT8 *UKernelData)
 {
   INTN Num, i = 0, y = 0;
+
+  // if we modify directly KernelAndKextPatches->KernelPatches[i].SearchLen, it will wrong for next driver
+  UINTN SearchLen = KernelAndKextPatches->KernelPatches[i].SearchLen;
+
   // old confuse
   // We are using KernelAndKextPatches as set by Custom Entries.
   // while config patches go to gSettings.KernelAndKextPatches
@@ -1957,14 +1961,14 @@ LOADER_ENTRY::KernelUserPatch(IN UINT8 *UKernelData)
     UINTN procLen = 0;
     UINTN procAddr = searchProc(UKernelData, KernelAndKextPatches->KernelPatches[i].ProcedureName, &procLen);
     DBG_RT("procedure %s found at 0x%llx\n", KernelAndKextPatches->KernelPatches[i].ProcedureName, procAddr);
-    if (KernelAndKextPatches->KernelPatches[i].SearchLen == 0) {
-      KernelAndKextPatches->KernelPatches[i].SearchLen = KERNEL_MAX_SIZE;
+    if (SearchLen == 0) {
+      SearchLen = KERNEL_MAX_SIZE;
       if (procLen > KERNEL_MAX_SIZE) {
         procLen = KERNEL_MAX_SIZE - procAddr;
         once = true;
       }
     } else {
-      procLen = KernelAndKextPatches->KernelPatches[i].SearchLen;
+      procLen = SearchLen;
     }
     UINT8 * curs = &UKernelData[procAddr];
     UINTN j = 0;
@@ -1988,8 +1992,8 @@ LOADER_ENTRY::KernelUserPatch(IN UINT8 *UKernelData)
         
         if (Num) {
           y++;
-          curs += KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
-          j    += KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
+          curs += SearchLen - 1;
+          j    += SearchLen - 1;
         }
         DBG_RT( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
         if (once ||
@@ -2012,8 +2016,12 @@ BOOLEAN
 LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 {
   INTN Num, i = 0, y = 0;
-  if (!KernelAndKextPatches->BootPatches[i].SearchLen) {
-    KernelAndKextPatches->BootPatches[i].SearchLen = BooterSize;
+
+  // if we modify directly KernelAndKextPatches->BootPatches[i].SearchLen, it will wrong for next driver
+  UINTN SearchLen = KernelAndKextPatches->BootPatches[i].SearchLen;
+
+  if (!SearchLen) {
+    SearchLen = BooterSize;
   }
   for (; i < KernelAndKextPatches->NrBoots; ++i) {
 	  DBG_RT( "Patch[%lld]: %s\n", i, KernelAndKextPatches->BootPatches[i].Label);
@@ -2033,7 +2041,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
         DBG_RT( " StartPattern found\n");
 
         Num = SearchAndReplaceMask(curs,
-                                   KernelAndKextPatches->BootPatches[i].SearchLen,
+                                   SearchLen,
                                    (const UINT8*)KernelAndKextPatches->BootPatches[i].Data,
                                    (const UINT8*)KernelAndKextPatches->BootPatches[i].MaskFind,
                                    KernelAndKextPatches->BootPatches[i].DataLen,
@@ -2043,8 +2051,8 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
                                    );
         if (Num) {
           y++;
-          curs += KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
-          j    += KernelAndKextPatches->KernelPatches[i].SearchLen - 1;
+          curs += SearchLen - 1;
+          j    += SearchLen - 1;
         }
 
         DBG_RT( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);

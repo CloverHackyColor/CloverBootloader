@@ -877,8 +877,10 @@ public:
 	/* takeValueFrom */
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S) { strcpy(S.s()); return *((ThisXStringClass*)this); }
-	template<typename O>
-	ThisXStringClass& takeValueFrom(const O* S) { strcpy(S); return *((ThisXStringClass*)this); }
+    template<typename O>
+    ThisXStringClass& takeValueFrom(const O* S) { strcpy(S); return *((ThisXStringClass*)this); }
+    template<typename O, enable_if(is_char(O))>
+    ThisXStringClass& takeValueFrom(const O C) { strcpy(C); return *((ThisXStringClass*)this); }
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S, size_t len) { strncpy(S.data(0), len); return *((ThisXStringClass*)this);	}
 	template<typename O>
@@ -943,7 +945,8 @@ struct __lstring_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<type
 #define is___LString(x) is___LString_t(x)::value
 
 /* __string_class_or<T1, T2>::type is T1 is T1 is a subclass of __String. If T1 is not a subclass of __String, returns T2 if it's a subclass of __String */
-template <typename T1, typename T2, typename Tdummy=void> struct __string_class_or;
+template <typename T1, typename T2, typename Tdummy=void>
+struct __string_class_or;
 template <typename T1, typename T2>
 struct __string_class_or<T1, T2, enable_if_t(!is___String(T1) && !is___String(T2))> { /*typedef double type;*/ };
 template <typename T1, typename T2>

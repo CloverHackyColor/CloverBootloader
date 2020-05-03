@@ -831,8 +831,8 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
         Dst->KernelPatches[Dst->NrKernels].StartPattern = NULL;
         Dst->KernelPatches[Dst->NrKernels].StartMask    = NULL;
       }
-      Dst->KernelPatches[Dst->NrKernels].StartPatternLen = Src->KernelPatches[Dst->NrKernels].StartPatternLen;
-      Dst->KernelPatches[Dst->NrKernels].SearchLen = Src->KernelPatches[Dst->NrKernels].SearchLen;
+      Dst->KernelPatches[Dst->NrKernels].StartPatternLen = Src->KernelPatches[i].StartPatternLen;
+      Dst->KernelPatches[Dst->NrKernels].SearchLen = Src->KernelPatches[i].SearchLen;
       if (Src->KernelPatches[i].ProcedureName != NULL) {
         INTN len = strlen(Src->KernelPatches[i].ProcedureName);
         Dst->KernelPatches[Dst->NrKernels].ProcedureName = (__typeof__(Dst->KernelPatches[Dst->NrKernels].ProcedureName))AllocateCopyPool(len, Src->KernelPatches[i].ProcedureName);

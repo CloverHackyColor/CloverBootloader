@@ -15,6 +15,47 @@
 #include "XString.h"
 
 
+
+template<typename T, typename Tdummy=void>
+struct _xstringarray__char_type;
+
+template<typename T>
+struct _xstringarray__char_type<T*, enable_if_t(is_char(T))>
+{
+    typedef const T* type;
+    static const T* getCharPtr(T* t) { return t; }
+};
+//
+//template<typename T>
+//struct _xstringarray__char_type<const T*, enable_if_t(is_char(T))>
+//{
+//    typedef const T* type;
+//    static const T* getCharPtr(const T* t) { return t; }
+//};
+//
+//template<typename T>
+//struct _xstringarray__char_type<const T[]>
+//{
+//    typedef const T* type;
+//    static const T* getCharPtr(const T* t) { return t; }
+//};
+//
+//template<typename T, size_t _Np>
+//struct _xstringarray__char_type<const T[_Np]>
+//{
+//    typedef const T* type;
+//    static const T* getCharPtr(const T* t) { return t; }
+//};
+
+template<typename T>
+struct _xstringarray__char_type<T, enable_if_t(is___String(T))>
+{
+    typedef const char* type;
+    static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
+};
+
+
+
 #define XStringArraySuper XObjArray<XStringClass>
 
 template<class XStringClass_>
@@ -44,36 +85,67 @@ class XStringArray_/* : public XStringArraySuper*/
 	XStringClass& elementAt(IntegralType i) { return array[i]; }
 
 
-//	const XStringClass& dbg(size_t i) const { return array[i]; }
+//	template<class XStringClass1, class XStringClass2, class XStringClass3, enable_if(is___String(XStringClass1) && is___String(XStringClass2) && is___String(XStringClass3))>
+//	XStringClass ConcatAll(const XStringClass1& Separator, const XStringClass2& Prefix, const XStringClass3& Suffix) const
+//	{
+//		xsize i;
+//		XStringClass s;
+//
+//		if ( array.size() > 0 ) {
+//			s = Prefix;
+//			s += array.ElementAt(0);
+//			for ( i=1 ; i<array.size() ; i+=1 ) {
+//				s += Separator;
+//				s += array.ElementAt(i);
+//			}
+//			s += Suffix;
+//		}
+//		return s;
+//	}
+    
+    template<class Type1, class Type2, class Type3,
+        enable_if(
+                  (  is_char(Type1) || is_char_ptr(Type1) || is___String(Type1)  ) &&
+                  (  is_char(Type2) || is_char_ptr(Type2) || is___String(Type2)  ) &&
+                  (  is_char(Type3) || is_char_ptr(Type3) || is___String(Type3)  )
+                 )
+            >
+    XStringClass ConcatAll(const Type1& Separator, const Type2& Prefix, const Type3& Suffix) const
+    {
+//        auto separator = _xstringarray__char_type<Type1>::getCharPtr(Separator);
+//        auto prefix = _xstringarray__char_type<Type2>::getCharPtr(Prefix);
+//        auto suffix = _xstringarray__char_type<Type3>::getCharPtr(Suffix);
 
-	template<class XStringClass1, class XStringClass2, class XStringClass3, enable_if(is___String(XStringClass1) && is___String(XStringClass2) && is___String(XStringClass3))>
-	XStringClass ConcatAll(const XStringClass1& Separator, const XStringClass2& Prefix, const XStringClass3& Suffix) const
-	{
-		xsize i;
-		XStringClass s;
-		
-		if ( array.size() > 0 ) {
-			s = Prefix;
-			s += array.ElementAt(0);
-			for ( i=1 ; i<array.size() ; i+=1 ) {
-				s += Separator;
-				s += array.ElementAt(i);
-			}
-			s += Suffix;
-		}
-		return s;
-	}
+        xsize i;
+        XStringClass s;
+        
+        if ( array.size() > 0 ) {
+            s.takeValueFrom(Prefix);
+            s += array.ElementAt(0);
+            for ( i=1 ; i<array.size() ; i+=1 ) {
+                s += Separator;
+                s += array.ElementAt(i);
+            }
+            s += Suffix;
+        }
+        return s;
+    }
 
 	XStringClass ConcatAll() const
 	{
-		return ConcatAll(", "_XS8, NullXString, NullXString);
+		return ConcatAll(", ", "", "");
 	}
 
-	template<class XStringClass1, enable_if(is___String(XStringClass1))>
-	XStringClass ConcatAll(const XStringClass1& Separator) const
-	{
-		return ConcatAll(Separator, NullXString, NullXString);
-	}
+//    template<class XStringClass1, enable_if(is___String(XStringClass1))>
+//    XStringClass ConcatAll(const XStringClass1& Separator) const
+//    {
+//        return ConcatAll(Separator, NullXString, NullXString);
+//    }
+    template<class Type1, enable_if(is_char(Type1) || is_char_ptr(Type1) || is___String(Type1))>
+    XStringClass ConcatAll(const Type1& Separator) const
+    {
+        return ConcatAll(Separator, "", "");
+    }
 
 
 	template<class OtherXStringArrayClass>
@@ -184,8 +256,10 @@ class XStringArray_/* : public XStringArraySuper*/
 		array.AddReference(xstr, true);
 	}
 
-	void Add(const XStringClass &aString) { array.AddCopy(aString); }
-	
+//    void Add(const XStringClass &aString) { array.AddCopy(aString); }
+    template<typename XStringClass1, enable_if(is___String(XStringClass1))>
+    void Add(const XStringClass1 &aString) { Add(aString.s()); }
+
 	void AddReference(XStringClass *newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
 	template<class OtherXStringClass>
 	void import(const XStringArray_<OtherXStringClass> &aStrings)
@@ -270,12 +344,23 @@ extern const XStringWArray NullXStringWArray;
 
 
 
-template<class XStringArrayClass, typename CharType1, typename CharType2, enable_if(is_char(CharType1) && is_char(CharType2))>
-XStringArrayClass Split(const CharType1* S, const CharType2* Separator)
+
+//template<class XStringArrayClass, typename CharType1, typename CharType2, enable_if(is_char(CharType1) && is_char(CharType2))>
+template<class XStringArrayClass, typename Type1, typename Type2,
+    enable_if(
+              (  is_char_ptr(Type1) || is___String(Type1)  ) &&
+              (  is_char_ptr(Type2) || is___String(Type2)  )
+             )
+        >
+XStringArrayClass Split(Type1 S, const Type2 Separator)
 {
   XStringArrayClass xsArray;
 
-	size_t separatorLength = length_of_utf_string(Separator);
+    auto s = _xstringarray__char_type<Type1>::getCharPtr(S);
+    auto separator = _xstringarray__char_type<Type2>::getCharPtr(Separator);
+//    typename _xstringarray__char_type<Type2>::type separator = Separator;
+
+	size_t separatorLength = length_of_utf_string(separator);
 	
 	if ( separatorLength == 0 ) {
 		typename XStringArrayClass::XStringClass* xstr;
@@ -285,18 +370,22 @@ XStringArrayClass Split(const CharType1* S, const CharType2* Separator)
 		return xsArray;
 	}
 
-	const CharType1* s = S;
+//    typename _xstringarray__char_type<Type1>::type s = S;
+//	const CharType1* s = S;
 	char32_t char32 = 1;
 	
 	do
 	{
-		while ( XStringAbstract__ncompare(s, Separator, separatorLength, false) == 0 ) {
+		while ( XStringAbstract__ncompare(s, separator, separatorLength, false) == 0 ) {
 			// I have to implement a move_forward_one_char in unicode_conversions, as we don't care about char32
 			for ( size_t i = 0 ; i < separatorLength ; i++ ) s = get_char32_from_string(s, &char32);
 		}
-		const CharType1* t = s;
+        if ( !*s ) return xsArray;
+        auto t = s;
+//        typename _xstringarray__char_type<Type1>::type t = s;
+//		const CharType1* t = s;
 		size_t nb = 0;
-		while ( char32 && XStringAbstract__ncompare(t, Separator, separatorLength, false) != 0 ) {
+		while ( char32 && XStringAbstract__ncompare(t, separator, separatorLength, false) != 0 ) {
 			nb++;
 			t = get_char32_from_string(t, &char32);
 		}
@@ -321,34 +410,46 @@ XStringArrayClass Split(const CharType1* S, const CharType2* Separator)
 //	return Split<XStringArrayClass>(SS, XSeparator);
 };
 
-template<class XStringArrayClass, class XStringClass1, class XStringClass2, enable_if(is___String(XStringClass1) && is___String(XStringClass2))>
-XStringArrayClass Split(const XStringClass1& S, const XStringClass2& Separator)
+
+template<class XStringArrayClass, class Type1, enable_if( is_char_ptr(Type1)  ||  is___String(Type1) ) >
+XStringArrayClass Split(Type1 S)
 {
-	return Split<XStringArrayClass>(S.s(), Separator.s());
-//
-//  XStringArrayClass Ss;
-//  size_t idxB, idxE;
-//
-//	if ( Separator.length() == 0 ) {
-//		Ss.Add(S);
-//		return Ss;
-//	}
-//	idxB = 0;
-//	idxE = S.indexOf(Separator, idxB);
-//	while ( idxE != MAX_XSIZE ) {
-//		Ss.Add(S.subString(idxB, idxE-idxB));
-//		idxB = idxE + Separator.length();
-//		idxE = S.indexOf(Separator, idxB);
-//	}
-//	if ( idxB < S.length() ) Ss.Add(S.subString(idxB, S.length()-idxB));
-//	return Ss;
+    return Split<XStringArrayClass>(S, ", ");
 };
 
 
-template<class XStringArrayClass, class XStringClass1, enable_if(!is_char(XStringClass1) && !is_char_ptr(XStringClass1))>
-XStringArrayClass Split(const XStringClass1& S)
-{
-	return Split<XStringArrayClass>(S, ", "_XS8);
-};
+
+
+
+//
+//template<class XStringArrayClass, class XStringClass1, class XStringClass2, enable_if(is___String(XStringClass1) && is___String(XStringClass2))>
+//XStringArrayClass Split(const XStringClass1& S, const XStringClass2& Separator)
+//{
+//	return Split<XStringArrayClass>(S.s(), Separator.s());
+////
+////  XStringArrayClass Ss;
+////  size_t idxB, idxE;
+////
+////	if ( Separator.length() == 0 ) {
+////		Ss.Add(S);
+////		return Ss;
+////	}
+////	idxB = 0;
+////	idxE = S.indexOf(Separator, idxB);
+////	while ( idxE != MAX_XSIZE ) {
+////		Ss.Add(S.subString(idxB, idxE-idxB));
+////		idxB = idxE + Separator.length();
+////		idxE = S.indexOf(Separator, idxB);
+////	}
+////	if ( idxB < S.length() ) Ss.Add(S.subString(idxB, S.length()-idxB));
+////	return Ss;
+//};
+//
+//
+//template<class XStringArrayClass, class XStringClass1, enable_if(!is_char(XStringClass1) && !is_char_ptr(XStringClass1))>
+//XStringArrayClass Split(const XStringClass1& S)
+//{
+//	return Split<XStringArrayClass>(S, ", "_XS8);
+//};
 
 #endif

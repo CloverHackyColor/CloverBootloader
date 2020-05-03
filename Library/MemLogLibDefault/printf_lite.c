@@ -528,7 +528,7 @@ uint32_t getUptimeInMilliseconds()
 #endif
 #endif //PRINTF_LITE_TIMESTAMP_SUPPORT
 
-#ifdef __GNUC__
+#ifdef __clang__
 static void print_longlong(INT_BIGGEST_TYPE v, unsigned int base, PrintfParams* printfParams) __attribute__((no_sanitize("undefined"))); // disable sanitize because we'll do -v
 #endif
 
