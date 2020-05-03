@@ -999,6 +999,9 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
 {
   UINTN   Num = 0;
   INTN    Ind;
+
+  // if we modify value directly at KernelAndKextPatches->KextPatches[N].SearchLen, it will be wrong for next driver
+  UINTN   SearchLen = KernelAndKextPatches->KextPatches[N].SearchLen;
   
 	DBG_RT("\nAnyKextPatch %d: driverAddr = %s, driverSize = %x\nAnyKext = %s\n",
          N, Driver, DriverSize, KernelAndKextPatches->KextPatches[N].Label);
@@ -1008,9 +1011,9 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     return;
   }
   
-  if (!KernelAndKextPatches->KextPatches[N].SearchLen ||
-      (KernelAndKextPatches->KextPatches[N].SearchLen > DriverSize)) {
-    KernelAndKextPatches->KextPatches[N].SearchLen = DriverSize;
+  if (!SearchLen ||
+      (SearchLen > DriverSize)) {
+    SearchLen = DriverSize;
   }
 
   if (KernelAndKextPatches->KPDebug) {
@@ -1026,14 +1029,14 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     UINTN procLen = 0;
     UINTN procAddr = searchProc(Driver, KernelAndKextPatches->KextPatches[N].ProcedureName, &procLen);
     
-    if (KernelAndKextPatches->KextPatches[N].SearchLen == 0) {
-      KernelAndKextPatches->KextPatches[N].SearchLen = DriverSize;
+    if (SearchLen == 0) {
+      SearchLen = DriverSize;
       if (procLen > DriverSize) {
         procLen = DriverSize - procAddr;
         once = true;
       }
     } else {
-      procLen = KernelAndKextPatches->KextPatches[N].SearchLen;
+      procLen = SearchLen;
     }
     const UINT8 * curs = &Driver[procAddr];
     UINTN j = 0;
@@ -1055,8 +1058,8 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
                                    (const UINT8*)KernelAndKextPatches->KextPatches[N].MaskReplace,
                                    -1);
         if (Num) {
-          curs += KernelAndKextPatches->KextPatches[N].SearchLen - 1;
-          j    += KernelAndKextPatches->KextPatches[N].SearchLen - 1;
+          curs += SearchLen - 1;
+          j    += SearchLen - 1;
         }
       }
       if (once ||
