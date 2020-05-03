@@ -202,7 +202,7 @@ final class SettingsViewController:
     
     self.progressBar.isHidden = true
     
-    self.runAtLoginButton.state = UDs.bool(forKey: kRunAtLogin) ? .on : .off
+    self.runAtLoginButton.state = AppSD.amILoginItem() ? .on : .off
     self.unmountButton.isEnabled = false
     self.autoMountButton.isEnabled = false
     self.autoMountButton.isHidden = true
@@ -963,13 +963,15 @@ final class SettingsViewController:
   // MARK: Run At Login
   @IBAction func runAtLogin(_ sender: NSButton!) {
     if sender.state == .on {
-      AppSD.setLaunchAtStartup()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        sender.state = AppSD.addAsLoginItem() ? .on : .off
+      }
     } else {
-      AppSD.removeLaunchAtStartup()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        //sender.state = AppSD.removeAsLoginItem() ? .on : .off
+        _ = AppSD.removeAsLoginItem()
+      }
     }
-    
-    // check the result
-    sender.state = UDs.bool(forKey: kRunAtLogin) ? .on : .off
   }
   
   // MARK: NVRAM editing

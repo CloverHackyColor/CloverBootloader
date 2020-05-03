@@ -8,7 +8,7 @@
 
 import Foundation
 
-let daemonVersion = "1.1.3"
+let daemonVersion = "1.1.4"
 
 let fm = FileManager.default
 
@@ -277,13 +277,12 @@ func main() {
   }
   
   if fm.fileExists(atPath: logPath) {
-    if let log : String? = try? String(contentsOfFile: logPath) {
-      if let lines = log?.components(separatedBy: CharacterSet.newlines) {
-        if lines.count > logLinesMax {
-          // take only latests
-          run(cmd: "tail -n \(logLinesMax) \(logPath) 2>/dev/null > \(logPath).tmp")
-          run(cmd: "mv -f \(logPath).tmp \(logPath)")
-        }
+    if let log = try? String(contentsOfFile: logPath) {
+      let lines = log.components(separatedBy: CharacterSet.newlines)
+      if lines.count > logLinesMax {
+        // take only latests
+        run(cmd: "tail -n \(logLinesMax) \(logPath) 2>/dev/null > \(logPath).tmp")
+        run(cmd: "mv -f \(logPath).tmp \(logPath)")
       }
     }
   }
