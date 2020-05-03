@@ -35,7 +35,7 @@ inline char* strcat(char* s1, const char* s2)
 
 inline char* strcpy(char* dst, const char* src)
 {
-	AsciiStrCpyS(dst,AsciiStrLen(dst)+1,src);
+	AsciiStrCpyS(dst,AsciiStrLen(src)+1,src);
 	return dst;
 }
 

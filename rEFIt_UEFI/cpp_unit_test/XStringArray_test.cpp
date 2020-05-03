@@ -47,15 +47,15 @@ int XStringArray_tests()
 	}
 	{
 		XStringArray array = Split<XStringArray>("word1, word2, word3", ", ");
-		if ( array[0] != "word1"_XS8 ) return 31;
-		if ( array[1] != "word2"_XS8 ) return 32;
-		if ( array[2] != "word3"_XS8 ) return 33;
+		if ( array[0] != "word1"_XS8 ) return 41;
+		if ( array[1] != "word2"_XS8 ) return 42;
+		if ( array[2] != "word3"_XS8 ) return 43;
 	}
 	{
 		XStringArray array = Split<XStringArray>("   word1   word2    word3   "_XS8, " "_XS8);
-		if ( array[0] != "word1"_XS8 ) return 31;
-		if ( array[1] != "word2"_XS8 ) return 32;
-		if ( array[2] != "word3"_XS8 ) return 33;
+		if ( array[0] != "word1"_XS8 ) return 51;
+		if ( array[1] != "word2"_XS8 ) return 52;
+		if ( array[2] != "word3"_XS8 ) return 53;
 	}
     {
         XStringArray array = Split<XStringArray>("   word1   word2    word3   "_XS8, " "_XS8);

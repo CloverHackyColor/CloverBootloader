@@ -116,7 +116,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
         gSettings.NvidiaWeb = TRUE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;
-        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
+//        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
         Entry->LoadOptions.AddID(ArgOptional[INX_NVWEBON]);
       }
     }
@@ -125,7 +125,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
         gSettings.NvidiaWeb = FALSE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;
-        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
+//        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
         Entry->LoadOptions.removeIC(ArgOptional[INX_NVWEBON]);
       }
     }
