@@ -38,18 +38,23 @@ bool all_tests()
 //		all_ok = false;
 //	}
 #if defined(JIEF_DEBUG)
+    ret = XStringArray_tests();
+    if ( ret != 0 ) {
+        printf("XStringArray_tests() failed at test %d\n", ret);
+        all_ok = false;
+    }
 	ret = XToolsCommon_tests();
 	if ( ret != 0 ) {
 		printf("printlib_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-#endif
 //return ret;
-//	ret = XUINTN_tests();
-//	if ( ret != 0 ) {
-//		printf("XUINTN_tests() failed at test %d\n", ret);
-//		all_ok = false;
-//	}
+//    ret = XUINTN_tests();
+//    if ( ret != 0 ) {
+//        printf("XUINTN_tests() failed at test %d\n", ret);
+//        all_ok = false;
+//    }
+#endif
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
 		ret = printlib_tests();
 	    if ( ret != 0 ) {
@@ -121,7 +126,7 @@ bool all_tests()
 	
 #if defined(JIEF_DEBUG)
 	if ( all_ok ) {
-		printf("All tests are ok\n");
+		printf("All tests succeeded\n");
 	}
 #endif
 	

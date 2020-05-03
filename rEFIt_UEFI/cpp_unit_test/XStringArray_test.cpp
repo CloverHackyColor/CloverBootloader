@@ -8,23 +8,31 @@ int XStringArray_tests()
 //	printf("XStringWArray_tests -> Enter\n");
 #endif
 
-	XStringWArray array1;
+    {
+        XStringWArray array1;
 
-	if ( !array1.isEmpty() ) return 1;
+        if ( !array1.isEmpty() ) return 1;
 
-	array1.Add(L"1"_XSW);
-	if ( array1.isEmpty() ) return 2;
-	if ( array1[0] != "1"_XS8 ) return 21;
-	array1.Add(L"2"_XSW);
-	if ( array1[1] != "2"_XS8 ) return 21;
+        array1.Add(L"word1"_XSW);
+        if ( array1.isEmpty() ) return 2;
+        if ( array1[0] != "word1"_XS8 ) return 21;
+        array1.Add(L"other2"_XSW);
+        if ( array1[1] != "other2"_XS8 ) return 21;
 
-	if ( !array1.contains(L"2"_XSW) ) return 5;
-
+        if ( !array1.contains(L"other2"_XSW) ) return 5;
+        if ( !array1.containsIC(L"oTHer2"_XSW) ) return 6;
+    }
+    
 	// Test == and !=
 	{
+        
+        XStringWArray array1;
+        array1.Add(L"word1"_XSW);
+        array1.Add(L"other2"_XSW);
+
 		XStringWArray array1bis;
-		array1bis.Add(L"1"_XSW);
-		array1bis.Add(L"2"_XSW);
+		array1bis.Add(L"word1"_XSW);
+		array1bis.Add(L"other2"_XSW);
 
 		if ( !(array1 == array1bis) ) return 10;
 		if ( array1 != array1bis ) return 11;
@@ -49,42 +57,105 @@ int XStringArray_tests()
 		if ( array[1] != "word2"_XS8 ) return 32;
 		if ( array[2] != "word3"_XS8 ) return 33;
 	}
+    {
+        XStringArray array = Split<XStringArray>("   word1   word2    word3   "_XS8, " "_XS8);
+        XString8 xs = array.ConcatAll(' ', '^', '$');
+        if ( xs  != "^word1 word2 word3$"_XS8 ) return 31;
+    }
+    
+    // Test concat and Split
+    {
+        XStringWArray array;
+        array.Add(L"word1"_XSW);
+        array.Add("other2"_XS8);
+        array.Add("3333");
+        array.Add(L"4th_item");
+        {
+            XStringW c = array.ConcatAll(L", "_XSW, L"^"_XSW, L"$"_XSW);
+            if ( c != L"^word1, other2, 3333, 4th_item$"_XSW ) return 1;
+        }
+        {
+            XStringW c = array.ConcatAll(L", ", L"^", L"$");
+            if ( c != L"^word1, other2, 3333, 4th_item$"_XSW ) return 1;
+        }
 
-	// Test concat and Split
-	{
-		XStringW c = array1.ConcatAll(L", "_XSW, L"^"_XSW, L"$"_XSW);
-		if ( c != L"^1, 2$"_XSW ) return 1;
+        // Split doesn't handle prefix and suffix yet.
+        XStringW c = array.ConcatAll(L", ");
 
-		// Split doesn't handle prefix and suffix yet.
-		c = array1.ConcatAll(L", "_XSW);
+        XStringWArray arraybis = Split<XStringWArray>(c);
+        if ( array != arraybis ) return 20;
+        XStringArray array3bis = Split<XStringArray>(c);
+        if ( array != array3bis ) return 20;
+    }
+    // Test Split char[64]
+    {
+        char buf[64];
+        strcpy(buf, "word1 other2 3333 4th_item");
+        XStringArray array = Split<XStringArray>(buf, " ");
 
-		XStringWArray array1bis = Split<XStringWArray>(c);
-		if ( array1 != array1bis ) return 20;
-		XStringWArray array2bis = Split<XStringWArray>(c);
-		if ( array1 != array2bis ) return 20;
-		XStringArray array3bis = Split<XStringArray>(c);
-		if ( array1 != array3bis ) return 20;
-	}
+        if ( array[0] != "word1"_XS8 ) return 31;
+        if ( array[1] != "other2"_XS8 ) return 32;
+        if ( array[2] != "3333"_XS8 ) return 33;
+        if ( array[3] != "4th_item"_XS8 ) return 34;
+    }
+    // Test concat and Split @Pene
+    {
+        XStringArray array;
+        array.Add(L"word1");
+        array.Add(L"other2");
+        array.Add(L"3333");
+        array.Add(L"4th_item");
+        
+        XStringArray LoadOptions2;
+        
+        LoadOptions2 = Split<XStringArray>(array.ConcatAll(" "_XS8).wc_str(), " ");
+        if ( LoadOptions2 != array ) return 22;
+        
+        LoadOptions2 = Split<XStringArray>(array.ConcatAll(" "_XS8), " ");
+        if ( LoadOptions2 != array ) return 22;
+        
+        LoadOptions2 = Split<XStringArray>(array.ConcatAll(" "_XS8), " "_XS8);
+        if ( LoadOptions2 != array ) return 22;
+        
+        LoadOptions2 = Split<XStringArray>(array.ConcatAll(" "), " ");
+        if ( LoadOptions2 != array ) return 22;
+        
+        LoadOptions2 = array;
+        if ( LoadOptions2 != array ) return 22;
+    }
+    //
+    {
+        XStringWArray array;
+        array.Add(L"word1"_XSW);
+        array.Add(L"other2"_XSW);
+        array.Add(L"3333"_XSW);
+        array.Add(L"4th_item"_XSW);
 
-	XStringWArray array2;
-	array2.Add(L"2"_XSW);
-	array2.Add(L"1"_XSW);
+        XStringWArray array2;
+        array2.Add(L"word1"_XSW);
+        array2.Add(L"3333"_XSW);
+        array2.Add(L"other2"_XSW);
+        array2.Add(L"4th_item"_XSW);
 
-	if ( array2[0] != L"2"_XSW ) return 30;
-	if ( array2[1] != L"1"_XSW ) return 31;
+        if ( array == array2 ) return 40; // Array != because order is different
+        if ( !array.Same(array2) ) return 41; // Arrays are the same
 
+    }
+    {
+        XStringWArray array1;
+        array1.Add(L"word1"_XSW);
+        array1.Add(L"other2"_XSW);
 
-	if ( array1 == array2 ) return 40; // Array != because order is different
-	if ( !array1.Same(array2) ) return 41; // Arrays are the same
+        array1.AddNoNull(L"3333"_XSW);
+        if ( array1.size() != 3 ) return 50;
+        array1.AddNoNull(L""_XSW);
+        if ( array1.size() != 3 ) return 51;
+        array1.AddEvenNull(XStringW());
+        if ( array1.size() != 4 ) return 52;
+        array1.AddID(L"other2"_XSW);
+        if ( array1.size() != 4 ) return 53;
+    }
 
-	array1.AddNoNull(L"3"_XSW);
-	if ( array1.size() != 3 ) return 50;
-	array1.AddNoNull(L""_XSW);
-	if ( array1.size() != 3 ) return 51;
-	array1.AddEvenNull(XStringW());
-	if ( array1.size() != 4 ) return 52;
-	array1.AddID(L"2"_XSW);
-	if ( array1.size() != 4 ) return 53;
 
 
   return 0;

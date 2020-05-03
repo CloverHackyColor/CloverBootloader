@@ -96,28 +96,32 @@ struct _xtools__is_unsigned : public _xtools__is_unsigned_true_false< ( _Tp(0) <
 
 int XToolsCommon_tests()
 {
+    (void)nbTest;
+    (void)nbTestFailed;
+
 #ifdef JIEF_DEBUG
 //	printf("XToolsCommon_tests -> Enter\n");
 #endif
 
-ASSERT_ALL_INTEGRAL_CHAR(ASSERT_UNSIGNED_TYPE, true)
-ASSERT_ALL_INTEGRAL_CHAR(ASSERT_SIZEOF_UNSIGNED_TYPE, true) // expectedResult unused by ASSERT_SIZEOF_UNSIGNED_TYPE
-ASSERT_ALL_INTEGRAL(ASSERT_IS_INTEGRAL, true)
-ASSERT_ALL_CHAR(ASSERT_IS_INTEGRAL, false)
+    /* These are static. Means that it's ok if they compile */
+    ASSERT_ALL_INTEGRAL_CHAR(ASSERT_UNSIGNED_TYPE, true)
+    ASSERT_ALL_INTEGRAL_CHAR(ASSERT_SIZEOF_UNSIGNED_TYPE, true) // expectedResult unused by ASSERT_SIZEOF_UNSIGNED_TYPE
+    ASSERT_ALL_INTEGRAL(ASSERT_IS_INTEGRAL, true)
+    ASSERT_ALL_CHAR(ASSERT_IS_INTEGRAL, false)
 
-ASSERT_ALL_INTEGRAL(ASSERT_IS_CHAR, false)
-ASSERT_ALL_CHAR(ASSERT_IS_CHAR, true)
-ASSERT_ALL_CHAR_PTR(ASSERT_IS_CHAR_PTR, true)
-
-
-
+    ASSERT_ALL_INTEGRAL(ASSERT_IS_CHAR, false)
+    ASSERT_ALL_CHAR(ASSERT_IS_CHAR, true)
+    ASSERT_ALL_CHAR_PTR(ASSERT_IS_CHAR_PTR, true)
 
 
-#ifdef JIEF_DEBUG
-	if ( nbTestFailed == 0 ) printf("All %d tests succeeded.\n", nbTest);
-	else printf("%d tests succeeded out of %d.\n", nbTest-nbTestFailed, nbTest);
-#endif
-	return nbTestFailed > 0;
+
+    return 0; // If a test fail, it doesn't compile.
+//
+//#ifdef JIEF_DEBUG
+//	if ( nbTestFailed == 0 ) printf("All %d tests succeeded.\n", nbTest);
+//	else printf("%d tests succeeded out of %d.\n", nbTest-nbTestFailed, nbTest);
+//#endif
+//	return nbTestFailed > 0;
 }
 
 

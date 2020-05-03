@@ -84,9 +84,9 @@ class XObjArrayNC
 	}
 
 	// This was useful for realtime debugging with a debugger that do not recognise references. That was years and years ago. Probably not needed anymore.
-	#ifdef _DEBUG_iufasdfsfk
+//	#ifdef _DEBUG_iufasdfsfk
 		const TYPE *DbgAt(int i) const { if ( i >= 0 && (xsize)i < _Len ) return &ElementAt ((xsize) i); else return NULL; }
-	#endif
+//	#endif
 
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const TYPE &operator[](IntegralType nIndex) const { return ElementAt(nIndex); }
@@ -162,12 +162,12 @@ void XObjArrayNC<TYPE>::Init()
 	m_allocatedSize = 0;
 	_Len = 0;
 	// THis was useful for realtime debugging with a debugger that do not recognise references.
-	#ifdef _DEBUG_iufasdfsfk
+//	#ifdef _DEBUG_iufasdfsfk
 	{
 		const TYPE *tmp;
 		tmp = DbgAt(0);
 	}
-	#endif
+//	#endif
 }
 
 /* Constructeur */
