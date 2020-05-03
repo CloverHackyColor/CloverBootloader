@@ -82,7 +82,6 @@ extension AppDelegate {
   func removeAsLoginItem() -> Bool {
     // remove any Clover.app logged in
     self.removeLaunchAtStartup() // call new method too (just in case store login item somewhere..)
-    print("removeAsLoginItem()")
     let sharedFileList = LSSharedFileListCreate(nil,
                                                 kLSSharedFileListSessionLoginItems.takeRetainedValue(),
                                                 nil).takeRetainedValue()
@@ -93,7 +92,7 @@ extension AppDelegate {
           let bi = info[kCFBundleIdentifierKey as String] as? String
           if bi == Bundle.main.bundleIdentifier {
             let status = LSSharedFileListItemRemove(sharedFileList, item)
-            print(status)
+            return status == 0
           }
         }
       }
