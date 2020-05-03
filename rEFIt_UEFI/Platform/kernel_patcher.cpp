@@ -1959,8 +1959,8 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 {
   INTN Num, i = 0, y = 0;
 
-  // if we modify directly KernelAndKextPatches-BootPatches[i].SearchLen, it will wrong for next driver
-  UINTN SearchLen = KernelAndKextPatches->KernelPatches[i].SearchLen;
+  // if we modify directly KernelAndKextPatches->BootPatches[i].SearchLen, it will wrong for next driver
+  UINTN SearchLen = KernelAndKextPatches->BootPatches[i].SearchLen;
 
   if (!SearchLen) {
     SearchLen = BooterSize;
