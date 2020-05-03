@@ -115,6 +115,22 @@ VOID CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN Sea
   }
 }
 
+// search a pattern like
+// call task or jmp address
+//return the address next to the command
+// 0 if not found
+UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN taskLocation)
+{
+  UINTN Offset;
+  for (UINTN i = Start; i < Start + SourceSize - 4; ++i) {
+    Offset = Source[i] + (Source[i+1]<<8) + (Source[i+2]<<16) + (Source[i+3]<<24); //should not use *(UINT32*) because of alignment
+    if (taskLocation == i + Offset + 4) {
+      return (i+4);
+    }
+  }
+  return 0;
+}
+
 UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize)
 {
   if (!Source || !Search || !SearchSize) {

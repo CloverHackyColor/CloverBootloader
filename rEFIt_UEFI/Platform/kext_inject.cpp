@@ -1074,14 +1074,15 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
         }
       }
 #else
-      bool otherSys = false;
-      procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
+ //     bool otherSys = false;
+ //     UINTN procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
       //Catalina
-      const UINT8 find2[] = {0x45, 0x31, 0xF6, 0x48, 0x85, 0xC0 };
-      const UINT8 mask2[] = {0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF };
+ //     const UINT8 find2[] = {0x45, 0x31, 0xF6, 0x48, 0x85, 0xC0 };
+ //     const UINT8 mask2[] = {0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF };
       //older systems
       const UINT8 find3[] = {0x48, 0x85, 00, 0x74, 00, 0x48, 00, 00, 0x48 };
       const UINT8 mask3[] = {0xFF, 0xFF, 00, 0xFF, 00, 0xFF, 00, 00, 0xFF };
+      /*
       patchLocation2 = FindMemMask(&Kernel[procLocation], 0x30, find2, sizeof(find2), mask2, sizeof(mask2));
       if (patchLocation2 == KERNEL_MAX_SIZE) {
         //other systems
@@ -1091,7 +1092,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         patchLocation2 += procLocation;
       }
-
+*/
       
 /*
       procLocation = searchProc(Kernel, "loadExecutable", &procLen);
@@ -1132,6 +1133,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
  */
 #endif
  //     Stall(9000000);
+      /*
       if (!patchLocation2 || patchLocation2 == KERNEL_MAX_SIZE) {
         DBG_RT("==> can't find SIP (10.11 - recent macOS), kernel patch aborted.\n");
         for (UINTN j=procLocation; j<procLocation+0x20; ++j) {
@@ -1164,24 +1166,34 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
                 DBG_RT("\n");
         Stall(10000000);
       }
+       */
       
-      //But older systems like Capitan has no call to IOTaskHasEntitlement
-      // having same codes in loadExecutable.
-      //check them
-      if (otherSys) {
-        procLocation = searchProc(Kernel, "loadExecutable", &procLen);
-        patchLocation2 = FindMemMask(&Kernel[procLocation], 0x200, find3, sizeof(find3), mask3, sizeof(mask3));
-        if (patchLocation2 != KERNEL_MAX_SIZE) {
-          patchLocation2 += procLocation;
-          Kernel[patchLocation2 + 3] = 0xEB;
-          if (Kernel[patchLocation2 + 4] == 0x6C) {
-            Kernel[patchLocation2 + 4] = 0x15;
-          } else {
-            Kernel[patchLocation2 + 4] = 0x12;
-          }
+//ffffff80009a2267 488D35970D2400                  lea        rsi, qword [ds:0xffffff8000be3005] ; "com.apple.private.security.kext-management"
+//ffffff80009a226e E89D780D00                      call       _IOTaskHasEntitlement
+//ffffff80009a2273 85C0                            test       eax, eax =>change to eb06 -> jmp .+6
+//ffffff80009a2275 0F843C010000                    je         0xffffff80009a23b7
+//ffffff80009a227b
+      UINTN taskLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
+      procLocation = searchProc(Kernel, "loadExecutable", &procLen);
+      patchLocation2 = FindMemMask(&Kernel[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
+      if (patchLocation2 != KERNEL_MAX_SIZE) {
+        DBG_RT("=> patch SIP applied\n");
+        patchLocation2 += procLocation;
+        Kernel[patchLocation2 + 3] = 0xEB;
+        if (Kernel[patchLocation2 + 4] == 0x6C) {
+          Kernel[patchLocation2 + 4] = 0x15;
+        } else {
+          Kernel[patchLocation2 + 4] = 0x12;
+        }
+      } else {
+        patchLocation2 = FindRelative32(Kernel, procLocation, 0x500, taskLocation);
+        if (patchLocation2 != 0) {
+          DBG_RT("=> patch2 SIP applied\n");
+          Kernel[patchLocation2] = 0xEB;
+          Kernel[patchLocation2 + 1] = 0x06;
         }
       }
-
+      Stall(10000000);
       
 /*
       //Capitan: 48 85 db 74 70 48 8b 03 48
