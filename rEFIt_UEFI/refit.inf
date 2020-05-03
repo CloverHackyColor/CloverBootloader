@@ -276,6 +276,7 @@
   cpp_unit_test/XString_test.h
   cpp_unit_test/XStringArray_test.cpp
   cpp_unit_test/XStringArray_test.h
+  cpp_unit_test/XToolsCommon_test.h
 #  cpp_unit_test/XUINTN_test.cpp
 #  cpp_unit_test/XUINTN_test.h
 
