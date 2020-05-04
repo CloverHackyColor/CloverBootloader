@@ -70,9 +70,6 @@
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)
 #endif
 
-
-REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
-
 extern CONST CHAR8      *AudioOutputNames[];
 
 INTN LayoutMainMenuHeight = 376;
@@ -117,11 +114,10 @@ REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer"_XSW, 1, 0, 'R', A
 REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover"_XSW,      1, 0, 'U', ActionSelect);
 REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return"_XSW,           0, 0,  0,  ActionEnter);
 
-
 REFIT_MENU_SCREEN MainMenu(1, L"Main Menu"_XSW, L"Automatic boot"_XSW);
 REFIT_MENU_SCREEN AboutMenu(2, L"About"_XSW, L""_XSW);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
-
+REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 
 
 VOID FillInputs(BOOLEAN New)
@@ -1209,15 +1205,14 @@ VOID ApplyInputs(VOID)
 
 VOID AboutRefit(VOID)
 {
-  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    AboutMenu.TitleImage = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
-  } else {
-    AboutMenu.TitleImage.setEmpty();
-  }
-
   if (AboutMenu.Entries.size() == 0) {
+    if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+      AboutMenu.TitleImage = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
+    } else {
+      AboutMenu.TitleImage.setEmpty();
+    }
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
-	AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
+    AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
     AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
     AboutMenu.AddMenuInfo_f(" ");
     AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
@@ -1263,12 +1258,12 @@ VOID AboutRefit(VOID)
 
 VOID HelpRefit(VOID)
 {
-  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
-  } else {
-    HelpMenu.TitleImage.setEmpty();
-  }
   if (HelpMenu.Entries.size() == 0) {
+    if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+      HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
+    } else {
+      HelpMenu.TitleImage.setEmpty();
+    }
     switch (gLanguage)
     {
       case russian:
@@ -1921,8 +1916,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
   while (Kext) {
     if (StrCmp(Kext->KextDirNameUnderOEMPath, UniSysVer) == 0) {
     	if ( SubScreen == NULL ) {
-    		Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
-    		SubScreen->AddMenuInfoLine_f("Choose/check kext to disable:");
+          Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
+          SubScreen->AddMenuInfoLine_f("Choose/check kext to disable:");
     	}
 //      InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
       InputBootArgs = new REFIT_INPUT_DIALOG;
@@ -2137,9 +2132,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
 
-	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
-	SubScreen->AddMenuInfoLine_f("Real CPUID: 0x%06X", gCPUStructure.Signature);
-
+  SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
+  SubScreen->AddMenuInfoLine_f("Real CPUID: 0x%06X", gCPUStructure.Signature);
 
   SubScreen->AddMenuItemInput(64,  "Debug", FALSE);
   SubScreen->AddMenuInfo_f("----------------------");
@@ -2160,7 +2154,6 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuEntry(SubMenuBootPatches(), true);
-
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
@@ -2740,15 +2733,14 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
-  if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-    OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
-  } else {
-    OptionMenu.TitleImage.setEmpty();
-  }
-
   gThemeOptionsChanged = FALSE;
 
   if (OptionMenu.Entries.size() == 0) {
+    if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
+      OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
+    } else {
+      OptionMenu.TitleImage.setEmpty();
+    }
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.GetAnime(); //FALSE;
