@@ -840,6 +840,15 @@ void XTheme::InitBar()
     ScrollEndImage.LoadXImage(ThemeDir, "scrollbar\\scroll_end");
     UpButtonImage.LoadXImage(ThemeDir, "scrollbar\\up_button");
     DownButtonImage.LoadXImage(ThemeDir, "scrollbar\\down_button");
+  } else {
+    ScrollbarBackgroundImage.setEmpty();
+    BarStartImage.setEmpty();
+    BarEndImage.setEmpty();
+    ScrollbarImage.setEmpty();
+    ScrollStartImage.setEmpty();
+    ScrollEndImage.setEmpty();
+    UpButtonImage.setEmpty();
+    DownButtonImage.setEmpty();
   }
 
   //some help with embedded scroll

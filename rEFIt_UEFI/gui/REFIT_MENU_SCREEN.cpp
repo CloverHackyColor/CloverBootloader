@@ -1681,7 +1681,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       for (INTN i = ScrollState.FirstVisible, j = 0; i <= ScrollState.LastVisible; i++, j++) {
         REFIT_ABSTRACT_MENU_ENTRY *Entry = &Entries[i];
         ResultString = Entry->Title; //create a copy to modify later
-        if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
+        if (!ThemeX.TypeSVG && !ThemeX.Proportional && ResultString.length() > MenuMaxTextLen) {
           ResultString = ResultString.subString(0,MenuMaxTextLen-3) + L".."_XSW;
         }
         TitleLen = ResultString.length();
@@ -1764,7 +1764,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       REFIT_ABSTRACT_MENU_ENTRY *EntryC = &Entries[ScrollState.CurrentSelection];
 
       ResultString = EntryL->Title;
-      if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
+      if (!ThemeX.TypeSVG && !ThemeX.Proportional && ResultString.length() > MenuMaxTextLen) {
         ResultString = ResultString.subString(0,MenuMaxTextLen-3) + L".."_XSW;
       }
       TitleLen = ResultString.length();
@@ -1826,7 +1826,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 
       // current selection
       ResultString = EntryC->Title;
-      if (!ThemeX.TypeSVG && ResultString.length() > MenuMaxTextLen) {
+      if (!ThemeX.TypeSVG && !ThemeX.Proportional && ResultString.length() > MenuMaxTextLen) {
         ResultString = ResultString.subString(0,MenuMaxTextLen-3) + L".."_XSW;
       }
       TitleLen = ResultString.length();
