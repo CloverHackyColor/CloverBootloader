@@ -2421,7 +2421,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else if (gThemeChanged) {
         DBG("change theme\n");
         InitTheme(FALSE, NULL);
-        OptionMenu.FreeMenu();
+        //OptionMenu.FreeMenu(); // it is already freed at loop beginning
+        AboutMenu.Entries.Empty();
+        HelpMenu.Entries.Empty();
       }
       DBG("theme inited\n");
       if (ThemeX.embedded) {
