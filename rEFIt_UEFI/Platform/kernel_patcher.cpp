@@ -751,20 +751,80 @@ VOID LOADER_ENTRY::KernelCPUIDPatch(UINT8* kernelData)
   }
 }
 
-// Credits to RehabMan for the kernel patch information
-// new way by RehabMan 2017-08-13
-// cleanup by Sherlocks 2020-03-23
-#define CompareWithMask(x,m,c) (((x) & (m)) == (c))
-//TODO - remake using CompareMemMask
 BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
 {
+  DBG_RT("Patching kernel power management...\n");
+  UINT8 *Kernel = (UINT8 *)kernelData;
+  
+#if NEW_PM
+  //Slice
+  //1. procedure xcpm_idle
+  // wrmsr 0xe2 twice
+  // B9E2000000 0F30 replace to eb05
+  UINTN procLen = 0;
+  UINTN procLocation = searchProc(Kernel, "xcpm_idle", &procLen);
+  const UINT8 findJmp[]  = {0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30};
+  const UINT8 patchJmp[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+  DBG_RT("==> xcpm_idle at %llx\n", procLocation);
+  INTN Num = SearchAndReplace(&Kernel[procLocation], 0x400, findJmp, sizeof(findJmp), patchJmp, 0);
+  
+  //2. procedure xcpm_init
+  // indirect call to _xcpm_core_scope_msrs and _xcpm_SMT_scope_msrs
+  //  488D3DDA317600                  lea        rdi, qword [ds:_xcpm_SMT_scope_msrs]
+  //  BE0B000000                      mov        esi, 0xb => replace to eb0a
+  //  31D2                            xor        edx, edx
+  //  E87EFCFFFF                      call       sub_ffffff80004fa610 => check e8?
+  // there are other occurence of _xcpm_SMT_scope_msrs so check 488D3D or E8 at .+7
+  // or restrict len = 0x200
+  procLocation = searchProc(Kernel, "xcpm_init", &procLen);
+  UINTN symbol1 = searchProc(Kernel, "xcpm_core_scope_msrs", &procLen);
+  UINTN patchLocation1 = FindRelative32(Kernel, procLocation, 0x200, symbol1);
+  if (patchLocation1 != 0) {
+    DBG_RT("=> xcpm_core_scope_msrs found at %llx\n", patchLocation1);
+    if (Kernel[patchLocation1 + 7] == 0xE8) {
+      DBG_RT("=> patch applied\n");
+      Kernel[patchLocation1] = 0xEB;
+      Kernel[patchLocation1 + 1] = 0x0A;
+    } else {
+      DBG_RT("=> patttern not good\n");
+      for (int i=0; 0x10; ++i) {
+        DBG_RT("%02x", Kernel[patchLocation1 + i]);
+      }
+      DBG_RT("\n");
+    }
+  }
+  UINTN symbol2 = searchProc(Kernel, "_xcpm_SMT_scope_msrs", &procLen);
+  patchLocation1 = FindRelative32(Kernel, procLocation, 0x200, symbol2);
+  if (patchLocation1 != 0) {
+    DBG_RT("=> _xcpm_SMT_scope_msrs found at %llx\n", patchLocation2);
+    if (Kernel[patchLocation1 + 7] == 0xE8) {
+      DBG_RT("=> patch applied\n");
+      Kernel[patchLocation1] = 0xEB;
+      Kernel[patchLocation1 + 1] = 0x0A;
+    } else {
+      DBG_RT("=> patttern not good\n");
+      for (int i=0; 0x10; ++i) {
+        DBG_RT("%02x", Kernel[patchLocation1 + i]);
+      }
+      DBG_RT("\n");
+    }
+  }
+  
+
+#else
+  // Credits to RehabMan for the kernel patch information
+  // new way by RehabMan 2017-08-13
+  // cleanup by Sherlocks 2020-03-23
+#define CompareWithMask(x,m,c) (((x) & (m)) == (c))
+  //TODO - remake using CompareMemMask
+
   UINT64* Ptr = (UINT64*)kernelData;
   UINT64* End = Ptr + 0x1000000/sizeof(UINT64);
   if (Ptr == NULL) {
     return FALSE;
   }
 
-  DBG_RT("Patching kernel power management...\n");
+  
 
   for (; Ptr < End; Ptr += 2) {
     // check for xcpm_scope_msr common 0xE2 prologue
@@ -805,7 +865,7 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
   if (KernelAndKextPatches->KPDebug) {
     gBS->Stall(3000000);
   }
-
+#endif
   return TRUE;
 }
 

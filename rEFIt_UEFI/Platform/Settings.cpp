@@ -911,11 +911,6 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     return FALSE;
   }
 
-  if (NeedPMfix) {
-    Patches->KPKernelPm = TRUE;
-    Patches->KPAppleIntelCPUPM = TRUE;
-  }
-
   Prop = GetProperty(DictPointer, "Debug");
   if (Prop != NULL || gBootChanged) {
     Patches->KPDebug = IsPropertyTrue (Prop);
@@ -952,6 +947,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty(DictPointer, "AppleIntelCPUPM");
   if (Prop != NULL || gBootChanged) {
     Patches->KPAppleIntelCPUPM = IsPropertyTrue (Prop);
+  }
+ //anyway
+  if (NeedPMfix) {
+    Patches->KPKernelPm = TRUE;
+    Patches->KPAppleIntelCPUPM = TRUE;
   }
 
   Prop = GetProperty(DictPointer, "AppleRTC");

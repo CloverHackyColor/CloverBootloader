@@ -1047,10 +1047,9 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     UINTN procLen = 0;
     UINTN procAddr = searchProcInDriver(Driver, DriverSize, KernelAndKextPatches->KextPatches[N].ProcedureName);
     
-    if (SearchLen == 0) {
-      SearchLen = DriverSize;
-        procLen = DriverSize - procAddr;
-        once = true;
+    if (SearchLen == DriverSize) {
+      procLen = DriverSize - procAddr;
+      once = true;
     } else {
       procLen = SearchLen;
     }
