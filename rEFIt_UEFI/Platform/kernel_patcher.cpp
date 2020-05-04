@@ -754,9 +754,9 @@ VOID LOADER_ENTRY::KernelCPUIDPatch(UINT8* kernelData)
 BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
 {
   DBG_RT("Patching kernel power management...\n");
+#if NEW_PM
   UINT8 *Kernel = (UINT8 *)kernelData;
   
-#if NEW_PM
   //Slice
   //1. procedure xcpm_idle
   // wrmsr 0xe2 twice

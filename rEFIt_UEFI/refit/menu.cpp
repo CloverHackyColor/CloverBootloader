@@ -138,17 +138,18 @@ VOID FillInputs(BOOLEAN New)
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(SVALUE_MAX_SIZE);
   }
-	snwprintf(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, "%s ", gSettings.BootArgs);
+  // no need for extra space here, it is added by ApplyInputs()
+  snwprintf(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, "%s", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(32);
   }
-	snwprintf(InputItems[InputItemsCount++].SValue, 32, "%ls", gSettings.DsdtName); // 1-> 2
+  snwprintf(InputItems[InputItemsCount++].SValue, 32, "%ls", gSettings.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
   if (New) {
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(63);
   }
-	snwprintf(InputItems[InputItemsCount++].SValue, 63, "%ls", gSettings.BlockKexts);
+  snwprintf(InputItems[InputItemsCount++].SValue, 63, "%ls", gSettings.BlockKexts);
 
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //3 - Themes chooser
   InputItems[InputItemsCount++].IValue = 3;
@@ -380,7 +381,7 @@ VOID FillInputs(BOOLEAN New)
 
   InputItems[InputItemsCount].ItemType = Decimal;  //70
   if (New) {
-    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(8);
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(12);
   }
 	snwprintf(InputItems[InputItemsCount++].SValue, 8, "%02lld", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71

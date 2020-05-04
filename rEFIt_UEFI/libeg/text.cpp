@@ -274,7 +274,6 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
     textScale = 1.f;
   }
   INTN CharScaledWidth = (INTN)(CharWidth * textScale);
-  INTN FontScaledWidth = (INTN)(FontWidth * textScale); //FontWidth should be scaled as well?
   // clip the text
 //  TextLength = StrLenInWChar(Text.wc_str()); //it must be UTF16 length
   TextLength = StrLen(Text.wc_str());
@@ -283,16 +282,16 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
     PrepareFont(); //at the boot screen there is embedded font
   }
 
-    DBG("TextLength =%lld PosX=%lld PosY=%lld\n", TextLength, PosX, PosY);
+  DBG("TextLength =%lld PosX=%lld PosY=%lld\n", TextLength, PosX, PosY);
   FirstPixel = CompImage.GetPixel(0,0);
   FontPixel  = FontImage.GetPixel(0,0);
   UINT16 c0 = 0x20;
   INTN RealWidth = CharScaledWidth;
-  INTN Shift = (FontScaledWidth - CharScaledWidth) / 2;
+  INTN Shift = (FontWidth - CharWidth) * textScale / 2;
   if (Shift < 0) {
     Shift = 0;
   }
-    DBG("FontWidth=%lld, CharWidth=%lld\n", FontWidth, RealWidth);
+  DBG("FontWidth=%lld, CharWidth=%lld\n", FontWidth, RealWidth);
 
   EG_RECT Area; //area is scaled
   Area.YPos = PosY; // not sure
@@ -304,7 +303,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
   for (UINTN i = 0; i < TextLength && c0 != 0; i++) {
     UINT16 c = Text.wc_str()[i]; //including UTF8 -> UTF16 conversion
-	  DBG("initial char to render 0x%hx\n", c); //good
+    DBG("initial char to render 0x%hx\n", c); //good
     if (gLanguage != korean) { //russian Codepage = 0x410
       if (c >= 0x410 && c < 0x450) {
         //we have russian raster fonts with chars at 0xC0
@@ -329,7 +328,8 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
           if (RightSpace >= FontWidth) {
             RightSpace = 0; //empty place for invisible characters
           }
-          RealWidth = CharScaledWidth - (int)(RightSpace * textScale); //a part of char
+          //RealWidth = CharScaledWidth - (int)(RightSpace * textScale); //a part of char
+          RealWidth = (FontWidth - RightSpace) * textScale; //a part of char
         }
       } else {
         LeftSpace = 2;
@@ -338,7 +338,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
       LeftSpace = (int)(LeftSpace * textScale); //was not scaled yet
       //RightSpace will not be scaled
       // RealWidth are scaled now
-     DBG(" RealWidth =  %lld LeftSpace = %lld RightSpace = %lld\n", RealWidth, LeftSpace, RightSpace);
+      DBG(" RealWidth =  %lld LeftSpace = %lld RightSpace = %lld\n", RealWidth, LeftSpace, RightSpace);
       c0 = c; //remember old value
       if (PosX + RealWidth  > CompImage.GetWidth()) {
         DBG("no more place for character\n");

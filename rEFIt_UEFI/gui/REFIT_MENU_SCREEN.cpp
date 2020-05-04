@@ -156,7 +156,6 @@ static INTN OldTextWidth = 0;
 static UINTN OldRow = 0;
 static INTN OldTimeoutTextWidth = 0;
 static INTN MenuWidth , TimeoutPosY;
-static INTN MenuMaxPosX = 0;
 static UINTN MenuMaxTextLen = 0;
 static INTN EntriesPosX, EntriesPosY;
 static INTN EntriesWidth, EntriesHeight, EntriesGap;
@@ -534,6 +533,12 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
     because it works.
   */
   UINTN         LineSize = 38;
+  // make sure that LineSize is not too big
+  UINTN MaxPossibleLineSize = (MenuWidth - selectedEntry.Place.Width) / (INTN)(ThemeX.CharWidth * ThemeX.Scale) - 1;
+  if (!ThemeX.TypeSVG && !ThemeX.Proportional && LineSize > MaxPossibleLineSize) {
+    LineSize = MaxPossibleLineSize;
+  }
+
 #define DBG_INPUTDIALOG 0
 #if DBG_INPUTDIALOG
   UINTN         Iteration = 0;
@@ -1435,11 +1440,12 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
 VOID REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor)
 {
   INTN MaxWidth;
-  if (MenuMaxPosX > XPos && MenuMaxPosX < UGAWidth) {
-    MaxWidth = MenuMaxPosX - XPos;
+  if (MenuWidth + XPos <= UGAWidth) {
+    MaxWidth = MenuWidth;
   } else {
     MaxWidth = UGAWidth - XPos;
   }
+
   XImage TextBufferX(MaxWidth, ThemeX.TextHeight);
   XImage SelectionBar(MaxWidth, ThemeX.TextHeight);
 
@@ -1618,9 +1624,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       }
       TimeoutPosY = EntriesPosY + (Entries.size() + 1) * ThemeX.TextHeight;
 
-      // set maximum allowed X-Position for menu content (this is ctrlTextX + MenuWidth)
-      MenuMaxPosX = EntriesPosX + (ThemeX.TypeSVG ? 0 : (INTN)(TEXT_XMARGIN * ThemeX.Scale)) + ThemeX.Buttons[0].GetWidth() + (INTN)(TEXT_XMARGIN * ThemeX.Scale / 2) + MenuWidth;
-      // set maximum allowed text length for menu content (this is applicable only for non-svg)
+      // set maximum allowed text length for menu content (this is applicable only for non-svg and non-proportional)
       MenuMaxTextLen = (UINTN)(MenuWidth / ScaledWidth);
 
       // initial painting
@@ -1709,12 +1713,15 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                          ctrlTextX,
                          Entry->Place.YPos, 0xFFFF);
             ThemeX.FillRectAreaOfScreen((ctrlTextX + ctrlX) >> 1, Entry->Place.YPos, ctrlTextX - ctrlX, ThemeX.TextHeight);
-            ThemeX.Buttons[(((REFIT_INPUT_DIALOG*)(Entry))->Item->BValue)?3:2].DrawOnBack(ctrlX, ctrlY, ThemeX.Background);
+            ThemeX.Buttons[(inputDialogEntry->Item->BValue)?3:2].DrawOnBack(ctrlX, ctrlY, ThemeX.Background);
           } else {
             // text input
-            ResultString += ((REFIT_INPUT_DIALOG*)(Entry))->Item->SValue;
+            ResultString += inputDialogEntry->Item->SValue;
             ResultString += L" ";
-            Entry->Place.Width = ResultString.length() * ScaledWidth;
+            // set cursor to beginning if it is outside of screen
+            if (!ThemeX.TypeSVG && !ThemeX.Proportional && (TitleLen + (INTN)Entry->Row) * ScaledWidth > MenuWidth) {
+              Entry->Row = 0;
+            }
             // Slice - suppose to use Row as Cursor in text
             DrawMenuText(ResultString, (i == ScrollState.CurrentSelection) ? MenuWidth : 0,
                          EntriesPosX,
@@ -1792,7 +1799,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                        EntryL->Place.YPos, 0xFFFF);
           ThemeX.Buttons[(inputDialogEntry->Item->BValue)?3:2].DrawOnBack(ctrlX, EntryL->Place.YPos + PlaceCentre, ThemeX.Background);
         } else {
-          ResultString += (((REFIT_INPUT_DIALOG*)(EntryL))->Item->SValue + ((REFIT_INPUT_DIALOG*)(EntryL))->Item->LineShift);
+          ResultString += (inputDialogEntry->Item->SValue + inputDialogEntry->Item->LineShift);
           ResultString += L" ";
           DrawMenuText(ResultString, 0, EntriesPosX,
                        EntriesPosY + (ScrollState.LastSelection - ScrollState.FirstVisible) * ThemeX.TextHeight,
@@ -1855,7 +1862,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
           ResultString += L" ";
           DrawMenuText(ResultString, MenuWidth, EntriesPosX,
                        EntriesPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible) * ThemeX.TextHeight,
-                       TitleLen + inputDialogEntry->Row);
+                       TitleLen + EntryC->Row);
         }
       } else if (EntryC->getREFIT_MENU_SWITCH()) { //radio
         DrawMenuText(ResultString, MenuWidth,
