@@ -1024,6 +1024,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   Entry->SubScreen = SubScreen;
   // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
 }
+
 BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& LoaderOptions,
                        IN CONST XStringW& LoaderTitle,
                        IN REFIT_VOLUME *Volume, IN XImage *Image,
@@ -1078,6 +1079,256 @@ BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& Loa
   }
   return FALSE;
 }
+
+STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStringW *CustomPath, XImage *CustomImage) 
+{
+  // When used for Regular Entries, all found entries will be added by AddLoaderEntry()
+  // When used for Custom Entries (detected by CustomPath!=NULL), CustomPath+CustomImage will be set to the first entry found and execution will stop
+  // Scanning is adjusted according to Type: OSTYPE_LIN will scan for linux loaders, OSTYPE_LINEFI will scan for linux kernels, unspecified will scan for both
+  UINTN        Index;
+  EFI_GUID     *PartGUID;
+
+  // check for linux loaders
+  if (Type != OSTYPE_LINEFI) { // OSTYPE_LIN or unspecified
+    //
+    //----- Test common linux name and path like /EFI/ubuntu/grubx64.efi
+    REFIT_DIR_ITER  DirIter;
+    EFI_FILE_INFO  *DirEntry = NULL;
+    DirIterOpen(Volume->RootDir, L"\\EFI", &DirIter);
+    while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+      if (DirEntry->FileName[0] == '.') {
+        //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
+        continue;
+      }
+      XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
+      XStringW OSName = XStringW().takeValueFrom(DirEntry->FileName); // this is folder name, for example "ubuntu"
+      OSName.lowerAscii(); // lowercase for icon name and title (first letter in title will be capitalized later)
+      if (FileExists(Volume->RootDir, File)) {
+        // check if nonstandard icon mapping is needed
+        for (Index = 0; Index < LinuxIconMappingCount; ++Index) {
+          if (StrCmp(OSName.wc_str(),LinuxIconMapping[Index].DirectoryName) == 0) {
+            OSName = XStringW().takeValueFrom(LinuxIconMapping[Index].IconName);
+            break;
+          }
+        }
+        if (!CustomPath) {
+          DBG("  found entry %ls,linux\n", OSName.wc_str());
+        }
+        XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
+        LoaderTitle.upperAscii();
+        LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
+        // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
+        XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
+        if (ImageX.isEmpty()) {
+          // no preloaded icon, try to load from dir
+          ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSName);
+        }
+        if (CustomPath) { 
+          *CustomPath = File;
+          if (CustomImage) {
+            *CustomImage = ImageX;
+          }
+          DirIterClose(&DirIter);
+          return;
+        } 
+        AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
+                      (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+      } //anyway continue search other entries
+    }
+    DirIterClose(&DirIter);
+
+    // check for non-standard grub path
+    for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
+      if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
+        XStringW OSIconName = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
+        OSIconName = OSIconName.subString(0, OSIconName.indexOf(','));
+        XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
+        if (ImageX.isEmpty()) {
+          ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSIconName);
+        }
+        if (CustomPath) {
+          *CustomPath = LinuxEntryData[Index].Path;
+          if (CustomImage) {
+            *CustomImage = ImageX;
+          }
+          return;
+        }
+        AddLoaderEntry(LinuxEntryData[Index].Path, NullXStringArray, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
+                       (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
+      }
+    }
+
+  } else if (Type != OSTYPE_LIN) { //OSTYPE_LINEFI or unspecified
+    // check for linux kernels
+    PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+    if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
+      REFIT_DIR_ITER  Iter;
+      EFI_FILE_INFO  *FileInfo = NULL;
+      EFI_TIME        PreviousTime;
+      XStringW        Path;
+      // CHAR16         *Options;
+      // Get the partition UUID and make sure it's lower case
+      CHAR16          PartUUID[40];
+      ZeroMem(&PreviousTime, sizeof(EFI_TIME));
+      snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(PartGUID));
+      StrToLower(PartUUID);
+      // open the /boot directory (or whatever directory path)
+      DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
+  
+      // Check which kernel scan to use
+  
+      // the following options can produce only a single option
+      switch (KernelScan) {
+        case KERNEL_SCAN_FIRST:
+          // First kernel found only
+          while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize == 0) {
+                FreePool(FileInfo);
+                FileInfo = NULL;
+                continue;
+              }
+              // get the kernel file path
+              Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+              break;
+            }
+          }
+          break;
+        case KERNEL_SCAN_LAST:
+          // Last kernel found only
+          while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+              }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+            }
+          }
+          break;
+        case KERNEL_SCAN_NEWEST:
+          // Newest dated kernel only
+          while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
+                  Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                  PreviousTime = FileInfo->ModificationTime;
+                }
+              }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+            }
+          }
+          break;
+        case KERNEL_SCAN_OLDEST:
+          // Oldest dated kernel only
+          while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
+                  Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                  PreviousTime = FileInfo->ModificationTime;
+                }
+              }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+            }
+          }
+          break;
+        case KERNEL_SCAN_MOSTRECENT:
+          // most recent kernel version only
+          while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                if ( Path < NewPath ) {
+                   Path = NewPath;
+                } else {
+                    Path.setEmpty();
+                }
+              }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+            }
+          }
+          break;
+        case KERNEL_SCAN_EARLIEST:
+          // earliest kernel version only
+          while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+            if (FileInfo != NULL) {
+              if (FileInfo->FileSize > 0) {
+                // get the kernel file path
+                XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+                if ( Path > NewPath ) {
+                  Path = NewPath;
+                } else {
+                  Path.setEmpty();
+                }
+              }
+              // free the file info
+              FreePool(FileInfo);
+              FileInfo = NULL;
+            }
+          }
+          break;
+        case KERNEL_SCAN_NONE:
+        default:
+          // No kernel scan
+          break;
+      }
+
+      // add the produced entry
+      if (Path.notEmpty()) {
+        if (CustomPath) {
+          *CustomPath = Path;
+          DirIterClose(&Iter);
+          return;
+        }
+        XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+        // Add the entry
+        AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+        Path.setEmpty();
+      }
+
+      // the following produces multiple entries
+      // custom entries has a different implementation, and does not use this code
+      if (!CustomPath && KernelScan == KERNEL_SCAN_ALL) {
+        // get all the filename matches
+        while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
+          if (FileInfo != NULL) {
+            if (FileInfo->FileSize > 0) {
+              // get the kernel file path
+              Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
+               XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+              // Add the entry
+              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
+              Path.setEmpty();
+            }
+             // free the file info
+            FreePool(FileInfo);
+            FileInfo = NULL;
+          }
+        }
+      }
+      //close the directory
+      DirIterClose(&Iter);
+    }  
+  }
+
+}
+
 //constants
 //const XStringW APFSFVBootPath      = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\boot.efi"_XSW;
 //const XStringW APFSRecBootPath     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi"_XSW;
@@ -1122,9 +1373,8 @@ VOID AddPRSEntry(REFIT_VOLUME *Volume)
 
 VOID ScanLoader(VOID)
 {
-  UINTN         VolumeIndex, Index;
+  UINTN         VolumeIndex;
   REFIT_VOLUME *Volume;
-  EFI_GUID     *PartGUID;
 
   //DBG("Scanning loaders...\n");
   DbgHeader("ScanLoader");
@@ -1260,10 +1510,11 @@ VOID ScanLoader(VOID)
     if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi"_XSW, NullXStringArray, L"Microsoft EFI cdboot"_XSW, Volume, NULL, OSTYPE_WINEFI, 0)) {
       AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI"_XSW, NullXStringArray, L"Microsoft EFI CDBOOT"_XSW, Volume, NULL, OSTYPE_WINEFI, 0);
     }
+
 #if defined(ANDX86)
     if (TRUE) { //gSettings.AndroidScan
       // check for Android loaders
-      for (Index = 0; Index < AndroidEntryDataCount; ++Index) {
+      for (UINTN Index = 0; Index < AndroidEntryDataCount; ++Index) {
         UINTN aIndex, aFound;
 		  if (FileExists(Volume->RootDir, AndroidEntryData[Index].Path)) {
           aFound = 0;
@@ -1283,245 +1534,9 @@ VOID ScanLoader(VOID)
 #endif
 
     if (gSettings.LinuxScan) {
-      // check for linux loaders
-      //
-      //----- Test common linux name and path like /EFI/ubuntu/grubx64.efi
-      REFIT_DIR_ITER  DirIter;
-      EFI_FILE_INFO  *DirEntry = NULL;
-      DirIterOpen(Volume->RootDir, L"\\EFI", &DirIter);
-      while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
-        if (DirEntry->FileName[0] == '.') {
-          //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
-          continue;
-        }
-        XStringW File = SWPrintf("EFI\\%ls\\grubx64.efi", DirEntry->FileName);
-        XStringW OSName = XStringW().takeValueFrom(DirEntry->FileName); // this is folder name, for example "ubuntu"
-        OSName.lowerAscii(); // lowercase for icon name and title (first letter in title will be capitalized later)
-        if (FileExists(Volume->RootDir, File)) {
-          // check if nonstandard icon mapping is needed
-          for (Index = 0; Index < LinuxIconMappingCount; ++Index) {
-            if (StrCmp(OSName.wc_str(),LinuxIconMapping[Index].DirectoryName) == 0) {
-              OSName = XStringW().takeValueFrom(LinuxIconMapping[Index].IconName);
-              break;
-            }
-          }
-          DBG("  found entry %ls,linux\n", OSName.wc_str());
-          XStringW LoaderTitle = OSName.subString(0,1); // capitalize first letter for title
-          LoaderTitle.upperAscii();
-          LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
-          // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
-          XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
-          if (ImageX.isEmpty()) {
-            // no preloaded icon, try to load from dir
-            ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSName);
-          }
-          AddLoaderEntry(File, NullXStringArray, LoaderTitle, Volume,
-                         (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-        } //anyway continue search other entries
-      }
-      DirIterClose(&DirIter);
+      LinuxScan(Volume, gSettings.KernelScan, 0, NULL, NULL);
+    }
 
-      // check for non-standard grub path
-      for (Index = 0; Index < LinuxEntryDataCount; ++Index) {
-        if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
-          XStringW OSIconName = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
-          OSIconName = OSIconName.subString(0, OSIconName.indexOf(','));
-          XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
-          if (ImageX.isEmpty()) {
-            ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSIconName);
-          }
-          AddLoaderEntry(LinuxEntryData[Index].Path, NullXStringArray, XStringW().takeValueFrom(LinuxEntryData[Index].Title), Volume,
-                         (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-        }
-      }
-      // check for linux kernels
-      PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-      if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
-        REFIT_DIR_ITER  Iter;
-        EFI_FILE_INFO  *FileInfo = NULL;
-        EFI_TIME        PreviousTime;
-        XStringW        Path;
-//        CHAR16         *Options;
-        // Get the partition UUID and make sure it's lower case
-        CHAR16          PartUUID[40];
-        ZeroMem(&PreviousTime, sizeof(EFI_TIME));
-        snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(PartGUID));
-        StrToLower(PartUUID);
-        // open the /boot directory (or whatever directory path)
-        DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, &Iter);
-        // Check which kernel scan to use
-        switch (gSettings.KernelScan) {
-          case KERNEL_SCAN_FIRST:
-            // First kernel found only
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize == 0) {
-                  FreePool(FileInfo);
-                  FileInfo = NULL;
-                  continue;
-                }
-                // get the kernel file path
-				Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-                // Add the entry
-                AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-                Path.setEmpty();
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-                break;
-              }
-            }
-            break;
-
-          case KERNEL_SCAN_LAST:
-            // Last kernel found only
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize > 0) {
-                  // get the kernel file path
-                  Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                }
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-              }
-            }
-            if (Path.notEmpty()) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-              // Add the entry
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              Path.setEmpty();
-            }
-            break;
-
-          case KERNEL_SCAN_NEWEST:
-            // Newest dated kernel only
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize > 0) {
-                  // get the kernel file path
-                  if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
-                    Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                    PreviousTime = FileInfo->ModificationTime;
-                  }
-                }
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-              }
-            }
-            if (Path.notEmpty()) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-              // Add the entry
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              Path.setEmpty();
-            }
-            break;
-
-          case KERNEL_SCAN_OLDEST:
-            // Oldest dated kernel only
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize > 0) {
-                  // get the kernel file path
-                  if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
-                    Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                    PreviousTime = FileInfo->ModificationTime;
-                  }
-                }
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-              }
-            }
-            if (Path.notEmpty()) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-              // Add the entry
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              Path.setEmpty();
-            }
-            break;
-
-          case KERNEL_SCAN_MOSTRECENT:
-            // most recent kernel version only
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize > 0) {
-                  // get the kernel file path
-                  XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                  if ( Path < NewPath ) {
-                      Path = NewPath;
-                  }else{
-                      Path.setEmpty();
-	              }
-                }
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-              }
-            }
-            if (Path.notEmpty()) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-              // Add the entry
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              Path.setEmpty();
-            }
-            break;
-
-          case KERNEL_SCAN_EARLIEST:
-            // earliest kernel version only
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize > 0) {
-                  // get the kernel file path
-                  XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                    if ( Path > NewPath ) {
-                      Path = NewPath;
-                  }else{
-                      Path.setEmpty();
-	              }
-                }
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-              }
-            }
-            if (Path.notEmpty()) {
-              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-              AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-              Path.setEmpty();
-            }
-            break;
-
-          case KERNEL_SCAN_ALL:
-            // get all the filename matches
-            while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-              if (FileInfo != NULL) {
-                if (FileInfo->FileSize > 0) {
-                  // get the kernel file path
-                  Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-				  XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
-                  // Add the entry
-                  AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
-                  Path.setEmpty();
-                }
-                // free the file info
-                FreePool(FileInfo);
-                FileInfo = NULL;
-              }
-            }
-            break;
-
-          case KERNEL_SCAN_NONE:
-          default:
-            // No kernel scan
-            break;
-        }
-        //close the directory
-        DirIterClose(&Iter);
-      }
-    } //if linux scan
     //     DBG("search for  optical UEFI\n");
     if (Volume->DiskKind == DISK_KIND_OPTICAL) {
       AddLoaderEntry(BOOT_LOADER_PATH, NullXStringArray, L"UEFI optical"_XSW, Volume, NULL, OSTYPE_OTHER, 0);
@@ -1555,8 +1570,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     return;
   }
 
-  if (FindCustomPath && (Custom->Type != OSTYPE_LINEFI)) {
-//	  DBG("Custom %lsentry %llu skipped because it didn't have a ", IsSubEntry ? L"sub " : L"", CustomIndex);
+  if (FindCustomPath && (Custom->Type != OSTYPE_LINEFI) && (Custom->Type != OSTYPE_LIN)) {
+//    DBG("Custom %lsentry %llu skipped because it didn't have a ", IsSubEntry ? L"sub " : L"", CustomIndex);
 //    if (Custom->Type == 0) {
 //      DBG("Type.\n");
 //    } else {
@@ -1566,13 +1581,15 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   }
 
   if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-//	  DBG("Custom %lsentry %llu skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
+//    DBG("Custom %lsentry %llu skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
+
   if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-//	  DBG("Custom %lsentry %llu skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
+//    DBG("Custom %lsentry %llu skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
+
 #if 0  //if someone want to debug this
   DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);
   //  if (Custom->Title) {
@@ -1598,8 +1615,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
-    XImage Image; // = new XImage;
-    XImage DriveImage;
+    XImage Image = Custom->Image;
+    XImage DriveImage = Custom->DriveImage;
 
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
@@ -1616,29 +1633,21 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 
     // skip volume if its kind is configured as disabled
 /*    if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||
-        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE)))
-    {
-      DBG("skipped because media is disabled\n");
-      continue;
-    }
- */
+          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
+          (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE))) {
+*/
     if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0) {
       DBG("skipped because media is disabled\n");
       continue;
     }
 
-/*    if (Custom->VolumeType != 0) {
-      if ((Volume->DiskKind == DISK_KIND_OPTICAL  && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0))  ||
-          (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
-          (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
-          (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & VOLTYPE_FIREWIRE) == 0))) {
-        DBG("skipped because media is ignored\n");
-        continue;
-      }
-    }
- */
+/*    if ((Custom->VolumeType != 0) &&
+          ((Volume->DiskKind == DISK_KIND_OPTICAL  && ((Custom->VolumeType & VOLTYPE_OPTICAL ) == 0)) ||
+           (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
+           (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
+           (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & VOLTYPE_FIREWIRE) == 0)))) {
+*/
     if (Custom->VolumeType != 0 && ((1<<Volume->DiskKind) & Custom->VolumeType) == 0) {
       DBG("skipped because media is ignored\n");
       continue;
@@ -1649,12 +1658,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       continue;
     }
 
-    // Check for exact volume matches
+    // Check for exact volume matches (devicepath / volumelabel)
     if (Custom->Volume) {
-
       if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
           ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
-        DBG("skipped\n");
+        DBG("skipped because volume does not match\n");
         continue;
       }
       // NOTE: Sothor - We dont care about legacy OS type // Check if the volume should be of certain os type
@@ -1666,22 +1674,22 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       //DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
       //continue;
     }
+
     // Check the volume is readable and the entry exists on the volume
     if (Volume->RootDir == NULL) {
       DBG("skipped because filesystem is not readable\n");
       continue;
     }
-    /*
+
+/*
     if (StriCmp(CustomPath, MACOSX_LOADER_PATH) == 0 && FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
       DBG("skipped standard macOS path because volume is 2nd stage Install Media\n");
       continue;
-    } */
+    }
+*/
+
     Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-    // Open the boot directory to search for kernels
     if (FindCustomPath) {
-      EFI_FILE_INFO *FileInfo = NULL;
-      EFI_TIME       PreviousTime;
-      ZeroMem(&PreviousTime, sizeof(EFI_TIME));
       // Get the partition UUID and make sure it's lower case
       if (Guid == NULL) {
         DBG("skipped because volume does not have partition uuid\n");
@@ -1689,125 +1697,14 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
       snwprintf(PartUUID, sizeof(PartUUID), "%s", strguid(Guid));
       StrToLower(PartUUID);
-      // open the /boot directory (or whatever directory path)
-      DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
-      // Check if user wants to find newest kernel only
-      switch (Custom->KernelScan) {
-        case KERNEL_SCAN_FIRST:
-          // First kernel found only
-          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-            if (FileInfo != NULL) {
-              if (FileInfo->FileSize == 0) {
-                FreePool(FileInfo);
-                FileInfo = NULL;
-                continue;
-              }
-              // get the kernel file path
-              CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
-              break;
-            }
-          }
-          break;
 
-        case KERNEL_SCAN_LAST:
-          // Last kernel found only
-          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-            if (FileInfo != NULL) {
-              if (FileInfo->FileSize > 0) {
-                // get the kernel file path
-                CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-              }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
-            }
-          }
-          break;
-
-        case KERNEL_SCAN_NEWEST:
-          // Newest dated kernel only
-          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-            if (FileInfo != NULL) {
-              if (FileInfo->FileSize > 0) {
-                // get the kernel file path
-                if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) < 0)) {
-                  CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                  PreviousTime = FileInfo->ModificationTime;
-                }
-              }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
-            }
-          }
-          break;
-
-        case KERNEL_SCAN_OLDEST:
-          // Oldest dated kernel only
-          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-            if (FileInfo != NULL) {
-              if (FileInfo->FileSize > 0) {
-                // get the kernel file path
-                if ((PreviousTime.Year == 0) || (TimeCmp(&PreviousTime, &(FileInfo->ModificationTime)) > 0)) {
-                  CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                  PreviousTime = FileInfo->ModificationTime;
-                }
-              }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
-            }
-          }
-          break;
-
-        case KERNEL_SCAN_MOSTRECENT:
-          // most recent kernel version only
-          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-            if (FileInfo != NULL) {
-              if (FileInfo->FileSize > 0) {
-                // get the kernel file path
-                XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-                if ( CustomPath > NewPath ) {
-                  CustomPath = NewPath;
-                }else{
-                  CustomPath.setEmpty();
-                }
-              }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
-            }
-          }
-          break;
-
-        case KERNEL_SCAN_EARLIEST:
-          // earliest kernel version only
-          while (DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
-            if (FileInfo != NULL) {
-              if (FileInfo->FileSize > 0) {
-                // get the kernel file path
-          //      CHAR16 *NewPath = PoolPrint(L"%s\\%s", LINUX_BOOT_PATH, FileInfo->FileName);
-                XStringW NewPath = SWPrintf("%ls\\%ls", LINUX_BOOT_PATH"\\", FileInfo->FileName);
-                if ( CustomPath < NewPath ) {
-                  CustomPath = NewPath;
-                }else{
-                  CustomPath.setEmpty();
-                }
-              }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
-            }
-          }
-          break;
-
-        default:
-          // Set scan to all just in case
-          Custom->KernelScan = KERNEL_SCAN_ALL;
-          break;
+      // search for standard/nonstandard linux uefi paths, and all kernel scan options that != KERNEL_SCAN_ALL
+      if (Custom->Type == OSTYPE_LIN || Custom->KernelScan != KERNEL_SCAN_ALL) {
+        LinuxScan(Volume, Custom->KernelScan, Custom->Type, &CustomPath, &Image);
+      }
+      if (Custom->Type == OSTYPE_LINEFI) {
+        // Open the boot directory to determine linux loadoptions when found item, or kernels when KERNEL_SCAN_ALL
+        DirIterOpen(Volume->RootDir, LINUX_BOOT_PATH, Iter);
       }
     } else if (!FileExists(Volume->RootDir, CustomPath)) {
       DBG("skipped because path does not exist\n");
@@ -1815,7 +1712,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
 
     // Change to custom image if needed
-    Image = Custom->Image;
     if (Image.isEmpty() && Custom->ImagePath) {
       Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
       if (Image.isEmpty()) {
@@ -1833,7 +1729,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     }
 
     // Change to custom drive image if needed
-    DriveImage = Custom->DriveImage;
     if (DriveImage.isEmpty() && Custom->DriveImagePath) {
       DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
       if (DriveImage.isEmpty()) {
@@ -1847,11 +1742,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       }
     }
 
-    do
-    {
-      // Search for linux kernels
+    do { // when not scanning for kernels, this loop will execute only once
       XStringArray CustomOptions = Custom->LoadOptions;
-      if (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL)) {
+
+      // for LINEFI with option KERNEL_SCAN_ALL, use this loop to search for kernels
+      if (FindCustomPath && Custom->Type == OSTYPE_LINEFI && Custom->KernelScan == KERNEL_SCAN_ALL) {
         EFI_FILE_INFO *FileInfo = NULL;
         // Get the next kernel path or stop looking
         if (!DirIterNext(Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo) || (FileInfo == NULL)) {
@@ -1872,11 +1767,13 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         DBG("skipped\n");
         break;
       }
-      // Check to make sure we should update custom options or not
-      if (FindCustomPath && OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTARGS)) {
+
+      // Check to make sure if we should update linux custom options or not
+      if (FindCustomPath && Custom->Type == OSTYPE_LINEFI && OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTARGS)) {
         // Find the init ram image and select root
         CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, Custom->LoadOptions);
       }
+
       // Check to make sure that this entry is not hidden or disabled by another custom entry
       if (!IsSubEntry) {
         CUSTOM_LOADER_ENTRY *Ptr;
@@ -2004,20 +1901,19 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           }
         }
         if (BetterMatch) {
-			DBG("skipped because custom entry %llu is a better match and will produce a duplicate entry\n", i);
+          DBG("skipped because custom entry %llu is a better match and will produce a duplicate entry\n", i);
           continue;
         }
       }
+
       DBG("match!\n");
       // Create an entry for this volume
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom->FullTitle, Custom->Title, Volume,
                                 (Image.isEmpty() ? NULL : &Image), (DriveImage.isEmpty() ? NULL : &DriveImage),            
                                 Custom->Type, Custom->Flags, Custom->Hotkey, Custom->BootBgColor, Custom->CustomBoot, &Custom->CustomLogo, 
                                 /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
-
       if (Entry != NULL) {
-        DBG("Custom settings: %ls.plist will %s be applied\n",
-            Custom->Settings, Custom->CommonSettings?"not":"");
+        DBG("Custom settings: %ls.plist will %s be applied\n", Custom->Settings, Custom->CommonSettings?"not":"");
         if (!Custom->CommonSettings) {
           Entry->Settings = Custom->Settings;
         }
@@ -2056,14 +1952,14 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         else
           MainMenu.AddMenuEntry(Entry, true);
       }
-    } while (FindCustomPath && (Custom->KernelScan == KERNEL_SCAN_ALL));
+    } while (FindCustomPath && Custom->Type == OSTYPE_LINEFI && Custom->KernelScan == KERNEL_SCAN_ALL); // repeat loop only for kernel scanning
+
     // Close the kernel boot directory
-    if (FindCustomPath) {
+    if (FindCustomPath && Custom->Type == OSTYPE_LINEFI) {
       DirIterClose(Iter);
     }
-
   }
-      
+
 }
 
 // Add custom entries
@@ -2093,17 +1989,12 @@ VOID AddCustomEntries(VOID)
       } else if (OSTYPE_IS_WINDOWS(Custom->Type)) {
         AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi"_XSW, Custom, NULL);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
-        UINTN Index;
 #if defined(ANDX86)
-        Index = 0;
-        while (Index < AndroidEntryDataCount) {
+        for (UINTN Index = 0; Index < AndroidEntryDataCount; Index++) {
           AddCustomEntry(i, AndroidEntryData[Index++].Path, Custom, NULL);
         }
 #endif
-        Index = 0;
-        while (Index < LinuxEntryDataCount) {
-          AddCustomEntry(i, LinuxEntryData[Index++].Path, Custom, NULL);
-        }
+        AddCustomEntry(i, NullXStringW, Custom, NULL);
       } else if (Custom->Type == OSTYPE_LINEFI) {
         AddCustomEntry(i, NullXStringW, Custom, NULL);
       } else {
