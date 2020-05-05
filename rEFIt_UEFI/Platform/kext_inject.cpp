@@ -995,17 +995,16 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //    address: 0095098b
 //    bytes:eb05
 
-      UINTN procLen = 0x100;
-      UINTN procLocation = searchProc(Kernel, "readStartupExtensions", &procLen);
+      UINTN procLocation = searchProc(Kernel, "readStartupExtensions");
       const UINT8 findJmp[] = {0xEB, 0x05};
       const UINT8 patchJmp[] = {0x90, 0x90};
 //      DBG_RT("==> readStartupExtensions at %llx\n", procLocation);
       if (!SearchAndReplace(&Kernel[procLocation], 0x100, findJmp, 2, patchJmp, 1)) {
         DBG_RT("load kexts not patched\n");
-        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
-          DBG_RT("%02x", Kernel[j]);
-        }
-        DBG_RT("\n");
+//        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
+//          DBG_RT("%02x", Kernel[j]);
+//        }
+//        DBG_RT("\n");
 //        Stall(10000000);
       } else {
         DBG_RT("load kexts patched\n");
@@ -1075,7 +1074,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
       }
 #else
  //     bool otherSys = false;
- //     UINTN procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
+ //     UINTN procLocation = searchProc(Kernel, "IOTaskHasEntitlement");
       //Catalina
  //     const UINT8 find2[] = {0x45, 0x31, 0xF6, 0x48, 0x85, 0xC0 };
  //     const UINT8 mask2[] = {0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF };
@@ -1095,7 +1094,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 */
       
 /*
-      procLocation = searchProc(Kernel, "loadExecutable", &procLen);
+      procLocation = searchProc(Kernel, "loadExecutable");
 //check
       DBG_RT("==> loadExecutable (10.11 - recent macOS) at %llx\n", procLocation);
 //      for (UINTN j=procLocation+0x39; j<procLocation+0x50; ++j) {
@@ -1111,7 +1110,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
       patchLocation2 = FindMemMask(&Kernel[procLocation], 0x1000, find2, sizeof(find2), mask2, sizeof(mask2));
       if (patchLocation2 == KERNEL_MAX_SIZE) {
         //Mojave
-        procLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
+        procLocation = searchProc(Kernel, "IOTaskHasEntitlement");
         const UINT8 find4[] = {0x48, 0x85, 0xC0, 0x74, 0x00, 00, 00};
         const UINT8 mask4[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xC0, 00, 00};
         patchLocation2 = FindMemMask(&Kernel[procLocation], 0x100, find3, sizeof(find3), mask3, sizeof(mask3));
@@ -1173,8 +1172,8 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 //ffffff80009a2273 85C0                            test       eax, eax =>change to eb06 -> jmp .+6
 //ffffff80009a2275 0F843C010000                    je         0xffffff80009a23b7
 //ffffff80009a227b
-      UINTN taskLocation = searchProc(Kernel, "IOTaskHasEntitlement", &procLen);
-      procLocation = searchProc(Kernel, "loadExecutable", &procLen);
+      UINTN taskLocation = searchProc(Kernel, "IOTaskHasEntitlement");
+      procLocation = searchProc(Kernel, "loadExecutable");
       patchLocation2 = FindMemMask(&Kernel[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         DBG_RT("=> patch SIP applied\n");
@@ -1233,7 +1232,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch(IN UINT8 *Kernel)
  //Slice - hope this patch useful for some system that I have no.
       // KxldUnmap by vit9696
       // Avoid race condition in OSKext::removeKextBootstrap when using booter kexts without keepsyms=1.
-      procLocation = searchProc(Kernel, "removeKextBootstrap", &procLen);
+      procLocation = searchProc(Kernel, "removeKextBootstrap");
       const UINT8 find5[] = {0x00, 0x0F, 0x85, 00, 00, 0x00, 0x00, 0x48 };
       const UINT8 mask5[] = {0xFF, 0xFF, 0xFF, 00, 00, 0xFF, 0xFF, 0xFF };
       patchLocation3 = FindMemMask(&Kernel[procLocation], 0x1000, find5, sizeof(find5), mask5, sizeof(mask5));

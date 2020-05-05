@@ -439,8 +439,13 @@ VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 
   }
 	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
 
-  //TODO: we should scan only __text __TEXT
-  for (Index1 = 0; Index1 < DriverSize; Index1++) {
+  // we should scan only __text __TEXT | Slice -> do this
+  UINTN textName = FindMem(Driver, DriverSize, kPrelinkTextSection, sizeof(kPrelinkTextSection));
+  SEGMENT *textSeg = (SEGMENT *)&Driver[textName];
+  UINTN Start = textSeg->fileoff;
+  UINTN Size = textSeg->filesize;
+  
+  for (Index1 = Start; Index1 < Start + Size; Index1++) {
     // search for MovlE2ToEcx
     if (CompareMem(Driver + Index1, MovlE2ToEcx, sizeof(MovlE2ToEcx)) == 0) {
       // search for wrmsr in next few bytes
@@ -469,7 +474,7 @@ VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 
           Count++;
           Driver[Index2] = 0x90;
           Driver[Index2 + 1] = 0x90;
-          DBG_RT(" %llu. patched at 0x%llx\n", Count, Index2);
+          DBG_RT(" %llu. patched CX at 0x%llx\n", Count, Index2);
           break;
         } else if ((Driver[Index2] == 0xC9 && Driver[Index2 + 1] == 0xC3) ||
                    (Driver[Index2] == 0x5D && Driver[Index2 + 1] == 0xC3) ||
@@ -585,7 +590,7 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
   }
   
   /*
-  UINTN writeCmos = searchProc(Driver, "rtcWrite", &procLen);
+  UINTN writeCmos = searchProc(Driver, "rtcWrite");
   UINTN patchLocation2 = FindRelative32(Driver, procLocation, 0x100, writeCmos);
   DBG_RT("AppleRTC:");
   if (patchLocation2 != 0) {

@@ -169,7 +169,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
 }
 
 //search a procedure by Name and return its offset in the kernel
-UINTN LOADER_ENTRY::searchProc(UINT8 * kernel, const char *procedure, UINTN *procLen)
+UINTN LOADER_ENTRY::searchProc(UINT8 * kernel, const char *procedure)
 {
   if (!procedure) {
     return 0;
@@ -220,7 +220,7 @@ UINTN LOADER_ENTRY::searchProc(UINT8 * kernel, const char *procedure, UINTN *pro
   UINT64 Absolut = TextSeg->SegAddress;  //KLD=C70000
   UINT64 FileOff = TextSeg->fileoff;     //950000
   UINT64 procAddr = vArray[i].ProcAddr - Absolut + FileOff;
-  
+/*
   UINT64 prevAddr;
   if (i == 0) {
     prevAddr = Absolut;
@@ -228,6 +228,7 @@ UINTN LOADER_ENTRY::searchProc(UINT8 * kernel, const char *procedure, UINTN *pro
     prevAddr = vArray[i-1].ProcAddr;
   }
   *procLen = vArray[i].ProcAddr - prevAddr; //never worked
+ */
   return procAddr;
 }
 
@@ -763,8 +764,8 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
   //1. procedure xcpm_idle
   // wrmsr 0xe2 twice
   // B9E2000000 0F30 replace to eb05
-  UINTN procLen = 0;
-  UINTN procLocation = searchProc(Kernel, "xcpm_idle", &procLen);
+//  UINTN procLen = 0;
+  UINTN procLocation = searchProc(Kernel, "xcpm_idle");
   const UINT8 findJmp[]  = {0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30};
   const UINT8 patchJmp[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
   DBG_RT("==> xcpm_idle at %llx\n", procLocation);
@@ -772,14 +773,14 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
   DBG_RT("==> found %lld patterns\n", Num);
   //2. procedure xcpm_init
   // indirect call to _xcpm_core_scope_msrs
-  //  488D3DDA317600                  lea        rdi, qword [ds:_xcpm_SMT_scope_msrs]
+  //  488D3DDA317600                  lea        rdi, qword [ds:_xcpm_core_scope_msrs]
   //  BE0B000000                      mov        esi, 0xb => replace to eb0a
   //  31D2                            xor        edx, edx
   //  E87EFCFFFF                      call       sub_ffffff80004fa610 => check e8?
-  // there are other occurence of _xcpm_SMT_scope_msrs so check 488D3D or E8 at .+7
+  // there are other occurence of _xcpm_core_scope_msrs so check 488D3D or E8 at .+7
   // or restrict len = 0x200
-  procLocation = searchProc(Kernel, "xcpm_init", &procLen);
-  UINTN symbol1 = searchProc(Kernel, "xcpm_core_scope_msrs", &procLen);
+  procLocation = searchProc(Kernel, "xcpm_init");
+  UINTN symbol1 = searchProc(Kernel, "xcpm_core_scope_msrs");
   UINTN patchLocation1 = FindRelative32(Kernel, procLocation, 0x200, symbol1);
   if (patchLocation1 != 0) {
     DBG_RT("=> xcpm_core_scope_msrs found at %llx\n", patchLocation1);
@@ -884,6 +885,24 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64(VOID *kernelData)
   UINT32      i, y;
 
   DBG_RT( "Looking for Lapic panic call (64-bit) Start\n");
+  //Slice - symbolic method
+  //start at lapic_interrupt ffffff80004e4950 => @2e4950
+  //    found pattern: 1
+  // address: 002e4a2f
+  // bytes:658b04251c0000003b058bb97b00
+  // call _panic -> change to nop {90,90,90,90,90}
+  if (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.10")) {
+    UINTN procAddr = searchProc(bytes, "lapic_interrupt");
+    patchLocation1 = searchProc(bytes, "_panic");
+    patchLocation2 = FindRelative32(bytes, procAddr, 0x140, patchLocation1);
+    if (patchLocation2 != 0) {
+      bytes[patchLocation2 - 5] = 0xEB;
+      bytes[patchLocation2 - 4] = 0x03;
+      DBG_RT( "Lapic panic patched\n");
+      return true;
+    }
+  }
+  //else old method
 
   for (i = 0; i < 0x1000000; i++) {
     if (bytes[i+0] == 0x65 && bytes[i+1] == 0x8B && bytes[i+2] == 0x04 && bytes[i+3] == 0x25 &&
@@ -935,7 +954,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64(VOID *kernelData)
     DBG_RT( "Can't find Lapic panic, kernel patch aborted.\n");
     return FALSE;
   }
-
+  
   // Already patched?  May be running a non-vanilla kernel already?
   if (bytes[patchLocation1 + 0] == 0x90 && bytes[patchLocation1 + 1] == 0x90 &&
       bytes[patchLocation1 + 2] == 0x90 && bytes[patchLocation1 + 3] == 0x90 &&
@@ -2010,14 +2029,12 @@ LOADER_ENTRY::KernelUserPatch(IN UINT8 *UKernelData)
     }
     bool once = false;
     UINTN procLen = 0;
-    UINTN procAddr = searchProc(UKernelData, KernelAndKextPatches->KernelPatches[i].ProcedureName, &procLen);
+    UINTN procAddr = searchProc(UKernelData, KernelAndKextPatches->KernelPatches[i].ProcedureName);
     DBG_RT("procedure %s found at 0x%llx\n", KernelAndKextPatches->KernelPatches[i].ProcedureName, procAddr);
     if (SearchLen == 0) {
       SearchLen = KERNEL_MAX_SIZE;
-      if (procLen > KERNEL_MAX_SIZE) {
-        procLen = KERNEL_MAX_SIZE - procAddr;
-        once = true;
-      }
+      procLen = KERNEL_MAX_SIZE - procAddr;
+      once = true;
     } else {
       procLen = SearchLen;
     }
