@@ -751,7 +751,7 @@ VOID LOADER_ENTRY::KernelCPUIDPatch(UINT8* kernelData)
   }
 }
 
-#define NEW_PM 0
+#define NEW_PM 1
 
 BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
 {
@@ -771,7 +771,7 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
   INTN Num = SearchAndReplace(&Kernel[procLocation], 0x400, findJmp, sizeof(findJmp), patchJmp, 0);
   DBG_RT("==> found %lld patterns\n", Num);
   //2. procedure xcpm_init
-  // indirect call to _xcpm_core_scope_msrs and _xcpm_SMT_scope_msrs
+  // indirect call to _xcpm_core_scope_msrs
   //  488D3DDA317600                  lea        rdi, qword [ds:_xcpm_SMT_scope_msrs]
   //  BE0B000000                      mov        esi, 0xb => replace to eb0a
   //  31D2                            xor        edx, edx
@@ -785,33 +785,22 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
     DBG_RT("=> xcpm_core_scope_msrs found at %llx\n", patchLocation1);
     if (Kernel[patchLocation1 + 7] == 0xE8) {
       DBG_RT("=> patch applied\n");
+      for (int i=0; i < 0x10; ++i) {
+        DBG_RT("%02x", Kernel[patchLocation1 + i]);
+      }
+      DBG_RT("\n");
       Kernel[patchLocation1] = 0xEB;
       Kernel[patchLocation1 + 1] = 0x0A;
     } else {
-      DBG_RT("=> patttern not good\n");
-      for (int i=0; 0x10; ++i) {
+      DBG_RT("=> pattern not good\n");
+      for (int i=0; i < 0x10; ++i) {
         DBG_RT("%02x", Kernel[patchLocation1 + i]);
       }
       DBG_RT("\n");
     }
   }
-  UINTN symbol2 = searchProc(Kernel, "_xcpm_SMT_scope_msrs", &procLen);
-  patchLocation1 = FindRelative32(Kernel, procLocation, 0x200, symbol2);
-  if (patchLocation1 != 0) {
-    DBG_RT("=> _xcpm_SMT_scope_msrs found at %llx\n", patchLocation1);
-    if (Kernel[patchLocation1 + 7] == 0xE8) {
-      DBG_RT("=> patch applied\n");
-      Kernel[patchLocation1] = 0xEB;
-      Kernel[patchLocation1 + 1] = 0x0A;
-    } else {
-      DBG_RT("=> patttern not good\n");
-      for (int i=0; 0x10; ++i) {
-        DBG_RT("%02x", Kernel[patchLocation1 + i]);
-      }
-      DBG_RT("\n");
-    }
-  }
-  
+
+  Stall(10000000);
 
 #else
   // Credits to RehabMan for the kernel patch information
