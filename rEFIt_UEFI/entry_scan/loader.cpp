@@ -1990,8 +1990,8 @@ VOID AddCustomEntries(VOID)
         AddCustomEntry(i, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi"_XSW, Custom, NULL);
       } else if (OSTYPE_IS_LINUX(Custom->Type)) {
 #if defined(ANDX86)
-        for (UINTN Index = 0; Index < AndroidEntryDataCount; Index++) {
-          AddCustomEntry(i, AndroidEntryData[Index++].Path, Custom, NULL);
+        for (UINTN Index = 0; Index < AndroidEntryDataCount; ++Index) {
+          AddCustomEntry(i, AndroidEntryData[Index].Path, Custom, NULL);
         }
 #endif
         AddCustomEntry(i, NullXStringW, Custom, NULL);
