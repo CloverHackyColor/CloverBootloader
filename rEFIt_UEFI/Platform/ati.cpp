@@ -1982,7 +1982,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   card->io    = (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   Reg5 = (UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_5) & ~0x0f);
   ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
-	DBG("Framebuffer @0x%8s  MMIO @0x%8s I/O Port @0x%8s ROM Addr @0x%08llX\n",
+	DBG("Framebuffer @0x%8llx  MMIO @0x%8llx I/O Port @0x%8llx ROM Addr @0x%08llX\n",
       card->fb, card->mmio, card->io, ExpansionRom);
 	DBG("PCI region 1 = 0x%8llX, region3 = 0x%8llX, region5 = 0x%8llX\n", Reg1, Reg3, Reg5);
   if (card->info->chip_family >= CHIP_FAMILY_HAINAN && Reg5 != 0) {
