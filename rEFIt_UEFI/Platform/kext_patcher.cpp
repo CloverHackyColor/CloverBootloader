@@ -432,18 +432,27 @@ VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 
   UINTN   Index1;
   UINTN   Index2;
   UINTN   Count = 0;
+  UINTN   Start = 0;
+  UINTN   Size = DriverSize;
 
 	DBG_RT("\nAppleIntelCPUPMPatch: driverAddr = %llx, driverSize = %x\n", (UINTN)Driver, DriverSize);
-  if (KernelAndKextPatches->KPDebug) {
-    ExtractKextBundleIdentifier(InfoPlist);
-  }
-	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
+//  if (KernelAndKextPatches->KPDebug) {
+//    ExtractKextBundleIdentifier(InfoPlist);
+//  }
+//	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
 
   // we should scan only __text __TEXT | Slice -> do this
-  UINTN textName = FindMem(Driver, DriverSize, kPrelinkTextSection, sizeof(kPrelinkTextSection));
-  SEGMENT *textSeg = (SEGMENT *)&Driver[textName];
-  UINTN Start = textSeg->fileoff;
-  UINTN Size = textSeg->filesize;
+  INTN textName = FindMem(Driver, DriverSize, kPrelinkTextSection, sizeof(kPrelinkTextSection));
+  if (textName > 0) {
+    SEGMENT *textSeg = (SEGMENT *)&Driver[textName];
+    Start = textSeg->fileoff;
+    Size = textSeg->filesize;
+    DBG("found __text [%d,%d]\n",Start, Size);
+    if (Start > DriverSize) Start = 0;
+    if (Size > DriverSize) {
+      Size = DriverSize;
+    }
+  }
   
   for (Index1 = Start; Index1 < Start + Size; Index1++) {
     // search for MovlE2ToEcx
