@@ -384,10 +384,10 @@ class REFIT_ABSTRACT_MENU_ENTRY
         VOID EFIAPI   KernelBooterExtensionsPatch(IN UINT8 *Kernel);
         BOOLEAN       KernelPanicNoKextDump(VOID *kernelData);
         VOID          KernelCPUIDPatch(UINT8* kernelData);
-        BOOLEAN       PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
-                                 UINT8* Search4, UINT8* Search10, UINT8* ReplaceModel,
-                                 UINT8* ReplaceExt, INT32 Len);
-        VOID          KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion);
+        BOOLEAN       PatchCPUID(UINT8* bytes, const UINT8* Location, INT32 LenLoc,
+                                 const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
+                                 const UINT8* ReplaceExt, INT32 Len);
+        VOID          KernelPatcher_32(VOID* kernelData);
         VOID          KernelPatcher_64(VOID* kernelData);
         VOID          FilterKernelPatches();
         VOID          FilterKextPatches();

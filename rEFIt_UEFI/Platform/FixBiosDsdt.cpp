@@ -5370,7 +5370,7 @@ VOID RenameDevices(UINT8* table)
 	MsgLog("  %lld replacements\n", Num);
 }
 
-VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
+VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
 {
   UINT32 DsdtLen;
 
@@ -5386,7 +5386,7 @@ VOID FixBiosDsdt (UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, 
   USBIDFIX = TRUE;
 
   DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
-  if ((DsdtLen < 20) || (DsdtLen > 400000)) { //fool proof (some ASUS dsdt > 300kb?)
+  if ((DsdtLen < 20) || (DsdtLen > 1000000)) { //fool proof (some ASUS dsdt > 300kb?). Up to 1Mb
     MsgLog("DSDT length out of range\n");
     return;
   }

@@ -468,7 +468,7 @@ VOID LOADER_ENTRY::KernelPatcher_64(VOID* kernelData)
   }
 }
 
-VOID LOADER_ENTRY::KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
+VOID LOADER_ENTRY::KernelPatcher_32(VOID* kernelData)
 {
   UINT8* bytes = (UINT8*)kernelData;
   UINT32 patchLocation=0, patchLocation1=0;
@@ -578,11 +578,12 @@ VOID LOADER_ENTRY::KernelPatcher_32(VOID* kernelData, CHAR8 *OSVersion)
 }
 
 //Slice - FakeCPUID substitution, (c)2014
+// _cpuid_set_info
 //TODO remake to patterns
 //procedure location
-STATIC UINT8 StrCpuid1_tigLeo[]  = {0xb9, 0x01, 0x00, 0x00, 0x00, 0x89, 0xc8, 0x0f, 0xa2};
-STATIC UINT8 StrCpuid1_snowLeo[] = {0xb8, 0x01, 0x00, 0x00, 0x00, 0x31, 0xdb, 0x89, 0xd9, 0x89, 0xda, 0x0f, 0xa2};
-STATIC UINT8 StrMsr8b[]          = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
+const UINT8 StrCpuid1_tigLeo[]  = {0xb9, 0x01, 0x00, 0x00, 0x00, 0x89, 0xc8, 0x0f, 0xa2};
+const UINT8 StrCpuid1_snowLeo[] = {0xb8, 0x01, 0x00, 0x00, 0x00, 0x31, 0xdb, 0x89, 0xd9, 0x89, 0xda, 0x0f, 0xa2};
+const UINT8 StrMsr8b[]          = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
 
 // Tiger/Leopard/Snow Leopard
 /*
@@ -592,9 +593,9 @@ STATIC UINT8 StrMsr8b[]          = {0xb9, 0x8b, 0x00, 0x00, 0x00, 0x0f, 0x32};
  and replaces to
   mov eax, FakeModel  | mov eax, FakeExt
  */
-STATIC UINT8 TigLeoSLSearchModel[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
-STATIC UINT8 TigLeoSLSearchExt[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
-STATIC UINT8 TigLeoSLReplaceModel[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
+const UINT8 TigLeoSLSearchModel[]  = {0x25, 0xf0, 0x00, 0x00, 0x00, 0xc1, 0xe8, 0x04};
+const UINT8 TigLeoSLSearchExt[]    = {0x25, 0x00, 0x00, 0x0f, 0x00, 0xc1, 0xe8, 0x10};
+const UINT8 TigLeoSLReplaceModel[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x90};
 
 // Lion
 /*
@@ -604,9 +605,9 @@ STATIC UINT8 TigLeoSLReplaceModel[] = {0xb8, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90,
  and replaces to
   mov ecx, FakeModel  || mov ecx, FakeExt
  */
-STATIC UINT8 LionSearchModel[]  = {0x89, 0xc1, 0xc1, 0xe9, 0x04};
-STATIC UINT8 LionSearchExt[]    = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
-STATIC UINT8 LionReplaceModel[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
+const UINT8 LionSearchModel[]  = {0x89, 0xc1, 0xc1, 0xe9, 0x04};
+const UINT8 LionSearchExt[]    = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+const UINT8 LionReplaceModel[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
 
 // Mountain Lion/Mavericks
 /*
@@ -616,10 +617,10 @@ STATIC UINT8 LionReplaceModel[] = {0xb9, 0x07, 0x00, 0x00, 0x00};
  and replaces to
   mov ebx, FakeModel || mov eax, FakeExt
  */
-STATIC UINT8 MLMavSearchModel[]   = {0x88, 0xc3, 0xc0, 0xeb, 0x04};
-STATIC UINT8 MLMavSearchExt[]     = {0xc1, 0xe8, 0x10, 0x24, 0x0f};
-STATIC UINT8 MLMavReplaceModel[]  = {0xbb, 0x0a, 0x00, 0x00, 0x00};
-STATIC UINT8 MLMavReplaceExt[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
+const UINT8 MLMavSearchModel[]   = {0x88, 0xc3, 0xc0, 0xeb, 0x04};
+const UINT8 MLMavSearchExt[]     = {0xc1, 0xe8, 0x10, 0x24, 0x0f};
+const UINT8 MLMavReplaceModel[]  = {0xbb, 0x0a, 0x00, 0x00, 0x00};
+const UINT8 MLMavReplaceExt[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
 
 // Yosemite/El Capitan/Sierra
 /*
@@ -629,11 +630,11 @@ STATIC UINT8 MLMavReplaceExt[]    = {0xb8, 0x02, 0x00, 0x00, 0x00};
  and replaces to
   mov ecx, FakeModel || mov ecx, FakeExt
  */
-STATIC UINT8 YosECSieSearchModel[]   = {0x88, 0xc1, 0xc0, 0xe9, 0x04};
-STATIC UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
+const UINT8 YosECSieSearchModel[]   = {0x88, 0xc1, 0xc0, 0xe9, 0x04};
+const UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
 // Need to use LionReplaceModel
 
-// High Sierra/Mojave
+// High Sierra/Mojave @2c4baa {89 c1 c0 e9 04}
 /*
  This patch searches
   mov ecx, ecx   ||   mov ecx, eax
@@ -641,7 +642,7 @@ STATIC UINT8 YosECSieSearchExt[]     = {0x89, 0xc1, 0xc1, 0xe9, 0x10};
  and replaces to
   mov ecx, FakeModel || mov ecx, FakeExt
  */
-STATIC UINT8 HSieMojSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
+const UINT8 HSieMojSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
 // Need to use YosECSieSearchExt, LionReplaceModel
 
 // Catalina
@@ -653,13 +654,13 @@ STATIC UINT8 HSieMojSearchModel[]   = {0x89, 0xc1, 0xc0, 0xe9, 0x04};
   mov eax, FakeModel || mov eax, FakeExt
   nop                || nop
 */
-STATIC UINT8 CataSearchModel[]      = {0x44, 0x89, 0xE0, 0xC0, 0xE8, 0x04};
-STATIC UINT8 CataSearchExt[]        = {0x44, 0x89, 0xE0, 0xC1, 0xE8, 0x10};
-STATIC UINT8 CataReplaceMovEax[]    = {0xB8, 0x00, 0x00, 0x00, 0x00, 0x90}; // mov eax, val || nop
+const UINT8 CataSearchModel[]      = {0x44, 0x89, 0xE0, 0xC0, 0xE8, 0x04};
+const UINT8 CataSearchExt[]        = {0x44, 0x89, 0xE0, 0xC1, 0xE8, 0x10};
+const UINT8 CataReplaceMovEax[]    = {0xB8, 0x00, 0x00, 0x00, 0x00, 0x90}; // mov eax, val || nop
 
-BOOLEAN LOADER_ENTRY::PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
-                   UINT8* Search4, UINT8* Search10, UINT8* ReplaceModel,
-                   UINT8* ReplaceExt, INT32 Len)
+BOOLEAN LOADER_ENTRY::PatchCPUID(UINT8* bytes, const UINT8* Location, INT32 LenLoc,
+                   const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
+                   const UINT8* ReplaceExt, INT32 Len)
 {
   INT32 patchLocation=0, patchLocation1=0;
   INT32 Adr = 0, Num;
@@ -667,18 +668,18 @@ BOOLEAN LOADER_ENTRY::PatchCPUID(UINT8* bytes, UINT8* Location, INT32 LenLoc,
   UINT8 FakeModel = (KernelAndKextPatches->FakeCPUID >> 4) & 0x0f;
   UINT8 FakeExt = (KernelAndKextPatches->FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
-    Adr = FindBin(&bytes[Adr], 0x800000 - Adr, (const UINT8*)Location, (UINT32)LenLoc);
+    Adr = FindBin(&bytes[Adr], 0x800000 - Adr, Location, (UINT32)LenLoc);
     if (Adr < 0) {
       break;
     }
     DBG_RT( "found location at %x\n", Adr);
-    patchLocation = FindBin(&bytes[Adr], 0x100, (const UINT8*)Search4, (UINT32)Len);
+    patchLocation = FindBin(&bytes[Adr], 0x100, Search4, (UINT32)Len);
     if (patchLocation > 0 && patchLocation < 70) {
       //found
       DBG_RT( "found Model location at %x\n", Adr + patchLocation);
       CopyMem(&bytes[Adr + patchLocation], ReplaceModel, Len);
       bytes[Adr + patchLocation + 1] = FakeModel;
-      patchLocation1 = FindBin(&bytes[Adr], 0x100, (const UINT8*)Search10, (UINT32)Len);
+      patchLocation1 = FindBin(&bytes[Adr], 0x100, Search10, (UINT32)Len);
       if (patchLocation1 > 0 && patchLocation1 < 100) {
         DBG_RT( "found ExtModel location at %x\n", Adr + patchLocation1);
         CopyMem(&bytes[Adr + patchLocation1], ReplaceExt, Len);
@@ -1095,7 +1096,7 @@ static inline VOID applyKernPatch(UINT8 *kern, const UINT8 *find, UINTN size, co
 {
     DBG("Searching %s...\n", comment);
     if (SearchAndReplace(kern, KERNEL_MAX_SIZE, find, size, repl, 0)) {
-        DBG("Found %s\nApplied %s patch\n", comment, comment);
+        DBG("Found %s\nApplied patch\n", comment);
     } else {
         DBG("%s no found, patched already?\n", comment);
     }
@@ -2246,7 +2247,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
       KernelPatcher_64(KernelData);
     } else {
       DBG_RT( "32 bit patch ...\n");
-      KernelPatcher_32(KernelData, OSVersion);
+      KernelPatcher_32(KernelData);
     }
     DBG_RT( " OK\n");
   } else {
