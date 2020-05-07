@@ -9,7 +9,7 @@
 
 #include "kernel_patcher.h"
 
-#define OLD_METHOD 1
+#define OLD_METHOD 0
 
 
 #ifndef DEBUG_ALL
@@ -423,9 +423,9 @@ VOID LOADER_ENTRY::ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *I
 // Rehabman corrections 2014
 //
 
-STATIC UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
-STATIC UINT8   MovE2ToCx[]   = { 0x66, 0xB9, 0xE2, 0x00 };
-STATIC UINT8   Wrmsr[]       = { 0x0F, 0x30 };
+const UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
+const UINT8   MovE2ToCx[]   = { 0x66, 0xB9, 0xE2, 0x00 };
+const UINT8   Wrmsr[]       = { 0x0F, 0x30 };
 
 VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
@@ -529,7 +529,7 @@ const UINT8   Moj4CataReplace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
 #endif
 //
 // We can not rely on OSVersion global variable for OS version detection,
-// since in some cases it is not correct (install of ML from Lion, for example).
+// since in some cases it is not correct (install of ML from Lion, for example). -- AppleRTC patch is not needed for installation
 // So, we'll use "brute-force" method - just try to patch.
 // Actually, we'll at least check that if we can find only one instance of code that
 // we are planning to patch.
