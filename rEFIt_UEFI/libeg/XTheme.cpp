@@ -841,70 +841,49 @@ void XTheme::InitBar()
     UpButtonImage.LoadXImage(ThemeDir, "scrollbar\\up_button");
     DownButtonImage.LoadXImage(ThemeDir, "scrollbar\\down_button");
   } else {
-    ScrollbarBackgroundImage.setEmpty();
+    ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS8);
     BarStartImage.setEmpty();
     BarEndImage.setEmpty();
-    ScrollbarImage.setEmpty();
-    ScrollStartImage.setEmpty();
-    ScrollEndImage.setEmpty();
-    UpButtonImage.setEmpty();
-    DownButtonImage.setEmpty();
+    ScrollbarImage = GetIcon("scrollbar_holder"_XS8); //"_night" is already accounting
+    ScrollStartImage = GetIcon("scrollbar_start"_XS8);
+    ScrollEndImage = GetIcon("scrollbar_end"_XS8);
+    UpButtonImage = GetIcon("scrollbar_up_button"_XS8);
+    DownButtonImage = GetIcon("scrollbar_down_button"_XS8);
   }
 
   //some help with embedded scroll
-  if (BarStartImage.isEmpty()  && !TypeSVG) {
-    BarStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start));
-  }
-  if (BarEndImage.isEmpty() && !TypeSVG) {
-    BarEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end));
-  }
-  if (ScrollbarBackgroundImage.isEmpty()) {
-    if (TypeSVG) {
-      //return OSIconsTable[i].image;
-      ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS8);
+
+  if (!TypeSVG) {
+    // fill these from embedded only for non-svg
+    // Question: why we don't want these for svg? (upbutton, downbutton, scrollstart, scrollend - also have hardcoded 0 height in REFIT_MENU_SCREEN.cpp)
+    if (BarStartImage.isEmpty()) {
+      BarStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_start), ACCESS_EMB_SIZE(emb_scroll_bar_start));
     }
-    if (ScrollbarBackgroundImage.isEmpty()) {
-      ScrollbarBackgroundImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill));
-    }
-  }
-  if (ScrollbarImage.isEmpty()) {
-    if (TypeSVG) {
-      ScrollbarImage = GetIcon("scrollbar_holder"_XS8); //"_night" is already accounting
-    }
-    if (ScrollbarImage.isEmpty()) {
-      ScrollbarImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill));
-    }
-  }
-  if (ScrollStartImage.isEmpty()) {
-    if (TypeSVG) {
-      ScrollStartImage = GetIcon("scrollbar_start"_XS8);
+    if (BarEndImage.isEmpty()) {
+      BarEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_end), ACCESS_EMB_SIZE(emb_scroll_bar_end));
     }
     if (ScrollStartImage.isEmpty()) {
       ScrollStartImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_start), ACCESS_EMB_SIZE(emb_scroll_scroll_start));
     }
-  }
-  if (ScrollEndImage.isEmpty()) {
-    if (TypeSVG) {
-      ScrollEndImage = GetIcon("scrollbar_end"_XS8);
-    }
     if (ScrollEndImage.isEmpty()) {
       ScrollEndImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_end), ACCESS_EMB_SIZE(emb_scroll_scroll_end));
     }
-  }
-  if (UpButtonImage.isEmpty()) {
-    if (TypeSVG) {
-      UpButtonImage = GetIcon("scrollbar_up_button"_XS8);
+    if (UpButtonImage.isEmpty()) {
+      UpButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button));
     }
-    UpButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_up_button), ACCESS_EMB_SIZE(emb_scroll_up_button));
-  }
-  if (DownButtonImage.isEmpty()) {
-    if (TypeSVG) {
-      DownButtonImage = GetIcon("scrollbar_down_button"_XS8);
-    }
-    if (DownButtonImage.isEmpty()) {
+   if (DownButtonImage.isEmpty()) {
       DownButtonImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_down_button), ACCESS_EMB_SIZE(emb_scroll_down_button));
     }
   }
+
+  // fill these from embedded for both svg and non-svg
+  if (ScrollbarBackgroundImage.isEmpty()) {
+    ScrollbarBackgroundImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_bar_fill), ACCESS_EMB_SIZE(emb_scroll_bar_fill));
+  }
+  if (ScrollbarImage.isEmpty()) {
+    ScrollbarImage.FromPNG(ACCESS_EMB_DATA(emb_scroll_scroll_fill), ACCESS_EMB_SIZE(emb_scroll_scroll_fill));
+  }
+
 }
 
 //the purpose of the procedure is restore Background in rect
