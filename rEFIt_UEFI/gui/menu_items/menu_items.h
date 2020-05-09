@@ -357,6 +357,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				XImage            CustomLogo;
 				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
 				CONST CHAR16            *Settings;
+        UINT8             *KernelData;
         UINT32            AddrVtable;
         UINT32            SizeVtable;
         UINT32            NamesTable;
@@ -366,32 +367,34 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				LOADER_ENTRY()
 						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
               BootBgColor({0,0,0,0}),
-              CustomBoot(0), KernelAndKextPatches(0), Settings(0),
+              CustomBoot(0), KernelAndKextPatches(0), Settings(0), KernelData(0),
               AddrVtable(0), SizeVtable(0), NamesTable(0), shift(0)
 						{};
         
         VOID          FindBootArgs();
-        EFI_STATUS    getVTable(UINT8* kernel);
-        UINTN         searchProc(UINT8 * kernel, const char *procedure);
+        EFI_STATUS    getVTable();
+        VOID          Get_PreLink();
+        UINTN         searchProc(const char *procedure);
         UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure);
         VOID          KernelAndKextsPatcherStart();
         VOID          KernelAndKextPatcherInit();
-        BOOLEAN       KernelUserPatch(UINT8 * kernel);
-        BOOLEAN       KernelPatchPm(VOID *kernelData);
-        BOOLEAN       KernelLapicPatch_32(VOID *kernelData);
-        BOOLEAN       KernelLapicPatch_64(VOID *kernelData);
+        BOOLEAN       KernelUserPatch();
+        BOOLEAN       KernelPatchPm();
+        BOOLEAN       KernelLapicPatch_32();
+        BOOLEAN       KernelLapicPatch_64();
         BOOLEAN       BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize);
-        VOID EFIAPI   KernelBooterExtensionsPatch(IN UINT8 *Kernel);
-        BOOLEAN       KernelPanicNoKextDump(VOID *kernelData);
-        VOID          KernelCPUIDPatch(UINT8* kernelData);
-        BOOLEAN       PatchCPUID(UINT8* bytes, const UINT8* Location, INT32 LenLoc,
+        VOID EFIAPI   KernelBooterExtensionsPatch();
+        BOOLEAN       KernelPanicNoKextDump();
+        VOID          KernelCPUIDPatch();
+        BOOLEAN       PatchCPUID(const UINT8* Location, INT32 LenLoc,
                                  const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
                                  const UINT8* ReplaceExt, INT32 Len);
-        VOID          KernelPatcher_32(VOID* kernelData);
-        VOID          KernelPatcher_64(VOID* kernelData);
+        VOID          KernelPatcher_32();
+        VOID          KernelPatcher_64();
         VOID          FilterKernelPatches();
         VOID          FilterKextPatches();
         VOID          FilterBootPatches();
+        VOID          applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *repl, const CHAR8 *comment);
         
         EFI_STATUS    SetFSInjection();
         EFI_STATUS    InjectKexts(IN UINT32 deviceTreeP, IN UINT32 *deviceTreeLength);
@@ -418,12 +421,12 @@ class REFIT_ABSTRACT_MENU_ENTRY
         VOID      DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         VOID      SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         VOID      BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
-        BOOLEAN   SandyBridgeEPM(VOID *kernelData);
-        BOOLEAN   HaswellEXCPM(VOID *kernelData);
-        BOOLEAN   HaswellLowEndXCPM(VOID *kernelData);
-        BOOLEAN   BroadwellEPM(VOID *kernelData);
-        BOOLEAN   KernelIvyBridgeXCPM(VOID *kernelData);
-        BOOLEAN   KernelIvyE5XCPM(VOID *kernelData);
+        BOOLEAN   SandyBridgeEPM();
+        BOOLEAN   HaswellEXCPM();
+        BOOLEAN   HaswellLowEndXCPM();
+        BOOLEAN   BroadwellEPM();
+        BOOLEAN   KernelIvyBridgeXCPM();
+        BOOLEAN   KernelIvyE5XCPM();
         
         VOID Stall(int Pause) { if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { gBS->Stall(Pause); } };
         VOID StartLoader();

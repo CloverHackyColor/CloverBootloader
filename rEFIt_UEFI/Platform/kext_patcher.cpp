@@ -598,24 +598,6 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
     DBG_RT("AppleRTC: not patched\n");
   }
   
-  /*
-  UINTN writeCmos = searchProc(Driver, "rtcWrite");
-  UINTN patchLocation2 = FindRelative32(Driver, procLocation, 0x100, writeCmos);
-  DBG_RT("AppleRTC:");
-  if (patchLocation2 != 0) {
-    Driver[patchLocation2 - 5] = 0xEB;
-    Driver[patchLocation2 - 4] = 0x03;
-    DBG_RT(" patched 1\n");
-    UINTN patchLocation3 = FindRelative32(Driver, patchLocation2, 0x20, writeCmos);
-    if (patchLocation3 != 0) {
-      Driver[patchLocation3 - 5] = 0xEB;
-      Driver[patchLocation3 - 4] = 0x03;
-      DBG_RT(" patched 2\n");
-    }
-  } else {
-    DBG_RT(" not patched\n");
-  }
-   */
 
 #endif
   Stall(5000000);

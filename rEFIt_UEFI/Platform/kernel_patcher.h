@@ -141,7 +141,7 @@ extern BOOLEAN                         SSSE3;
 
 VOID Patcher_SSE3_5(VOID* kernelData);
 VOID Patcher_SSE3_6(VOID* kernelData);
-VOID Patcher_SSE3_7(VOID* kernelData);
+VOID Patcher_SSE3_7();
 
 #include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
 class LOADER_ENTRY;
@@ -192,6 +192,5 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UI
 UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, const UINT8 *MaskSearch, UINTN SearchSize,
                            const UINT8 *Replace, const UINT8 *MaskReplace, INTN MaxReplaces);
 
-//UINTN searchProc(LOADER_ENTRY *Entry, unsigned char * kernel, const char *procedure);
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */
