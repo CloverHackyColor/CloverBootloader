@@ -1100,7 +1100,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32(VOID *kernelData)
 // SandyBridge-E, Ivy Bridge, Ivy Bridge-E, Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
 // credit Pike R.Alpha, stinga11, syscl
 //
-BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData, BOOLEAN use_xcpm_idle);
+BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData);
 
 //
 // syscl - applyKernPatch a wrapper for SearchAndReplace() to make the CpuPM patch tidy and clean
@@ -1129,7 +1129,7 @@ static inline BOOLEAN IsXCPMOSVersionCompat(UINT64 os_version)
 //
 // syscl - SandyBridgeEPM(): enable PowerManagement on SandyBridge-E
 //
-BOOLEAN LOADER_ENTRY::SandyBridgeEPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
+BOOLEAN LOADER_ENTRY::SandyBridgeEPM(VOID *kernelData)
 {
     // note: a dummy function that made patches consistency
     return TRUE;
@@ -1139,7 +1139,7 @@ BOOLEAN LOADER_ENTRY::SandyBridgeEPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
 // syscl - Enable Haswell-E XCPM
 // Hex data provided and polished (c) PMheart, idea (c) Pike R.Alpha
 //
-BOOLEAN LOADER_ENTRY::HaswellEXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
+BOOLEAN LOADER_ENTRY::HaswellEXCPM(VOID *kernelData)
 {
   DBG("HaswellEXCPM() ===>\n");
   UINT8       *kern = (UINT8*)kernelData;
@@ -1287,7 +1287,7 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
 //
 // Enable Broadwell-E/EP PowerManagement on 10.12+ by syscl
 //
-BOOLEAN LOADER_ENTRY::BroadwellEPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
+BOOLEAN LOADER_ENTRY::BroadwellEPM(VOID *kernelData)
 {
   DBG("BroadwellEPM() ===>\n");
   UINT8       *kern = (UINT8*)kernelData;
@@ -1343,7 +1343,7 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
 // implemented by syscl
 // credit also Pike R.Alpha, stinga11, Sherlocks, vit9696
 //
-BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
+BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM(VOID *kernelData)
 {
   DBG("HaswellLowEndXCPM() ===>\n");
   UINT8       *kern = (UINT8*)kernelData;
@@ -1361,8 +1361,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
   KernelCPUIDPatch(kern);
 
   // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
-  if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12") &&
-      (!use_xcpm_idle)) {
+  if (os_version >= AsciiOSVersionToUint64("10.8.5") && os_version < AsciiOSVersionToUint64("10.12")) {
     DBG("HaswellLowEndXCPM() <===\n");
     return TRUE;
   }
@@ -1420,7 +1419,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
 //
 // this patch provides XCPM support for Ivy Bridge. by PMheart
 //
-BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
+BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM(VOID *kernelData)
 {
   UINT8       *kern = (UINT8*)kernelData;
   CONST CHAR8       *comment;
@@ -1509,7 +1508,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM(VOID *kernelData, BOOLEAN use_xcpm_idl
 // this patch provides XCPM support for Ivy Bridge-E. by PMheart
 // attempt to enable XCPM for Ivy-E, still need to test further
 //
-BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
+BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM(VOID *kernelData)
 {
   UINT8       *kern = (UINT8*)kernelData;
   CONST CHAR8       *comment;
@@ -2278,14 +2277,14 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     DBG_RT( "Enabled: 0x%06x\n", KernelAndKextPatches->FakeCPUID);
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
-    KernelCPUIDPatch((UINT8*)KernelData);
+    KernelCPUIDPatch(KernelData);
   } else {
     DBG_RT( "Disabled\n");
   }
 
   // CPU power management patch for haswell with locked msr
   DBG_RT( "\nKernelPm patch: ");
-  if (KernelAndKextPatches->KPKernelPm) {
+  if (KernelAndKextPatches->KPKernelPm || KernelAndKextPatches->KPKernelXCPM) {
     DBG_RT( "Enabled: \n");
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
@@ -2335,7 +2334,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     //
 //    EnableExtCpuXCPM = NULL;
     patchedOk = FALSE;
-    BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
+//    BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
     
@@ -2343,34 +2342,34 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     // only Intel support this feature till now
     // move below code outside the if condition if AMD supports
     // XCPM later on
-
+ 
     if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
       switch (gCPUStructure.Model) {
           case CPU_MODEL_JAKETOWN:
             // SandyBridge-E LGA2011
-            patchedOk = SandyBridgeEPM(KernelData, apply_idle_patch);
+            patchedOk = SandyBridgeEPM(KernelData);
             gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
             break;
               
           case CPU_MODEL_IVY_BRIDGE:
             // IvyBridge
-            patchedOk = KernelIvyBridgeXCPM(KernelData, apply_idle_patch);
+            patchedOk = KernelIvyBridgeXCPM(KernelData);
             break;
               
           case CPU_MODEL_IVY_BRIDGE_E5:
             // IvyBridge-E
-            patchedOk = KernelIvyE5XCPM(KernelData, apply_idle_patch);
+            patchedOk = KernelIvyE5XCPM(KernelData);
             break;
 
           case CPU_MODEL_HASWELL_E:
             // Haswell-E
-            patchedOk = HaswellEXCPM(KernelData, apply_idle_patch);
+            patchedOk = HaswellEXCPM(KernelData);
             break;
               
           case CPU_MODEL_BROADWELL_E5:
           case CPU_MODEL_BROADWELL_DE:
             // Broadwell-E/EP
-            patchedOk = BroadwellEPM(KernelData, apply_idle_patch);
+            patchedOk = BroadwellEPM(KernelData);
             gBDWEIOPCIFixRequire = TRUE;
             break;
 
@@ -2379,7 +2378,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
                (AsciiStrStr(gCPUStructure.BrandString, "Celeron") ||
                 AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
               // Haswell+ low-end CPU
-              patchedOk = HaswellLowEndXCPM(KernelData, apply_idle_patch);
+              patchedOk = HaswellLowEndXCPM(KernelData);
             }
             break;
       }

@@ -418,12 +418,12 @@ class REFIT_ABSTRACT_MENU_ENTRY
         VOID      DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         VOID      SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         VOID      BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
-        BOOLEAN   SandyBridgeEPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
-        BOOLEAN   HaswellEXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
-        BOOLEAN   HaswellLowEndXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
-        BOOLEAN   BroadwellEPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
-        BOOLEAN   KernelIvyBridgeXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
-        BOOLEAN   KernelIvyE5XCPM(VOID *kernelData, BOOLEAN use_xcpm_idle);
+        BOOLEAN   SandyBridgeEPM(VOID *kernelData);
+        BOOLEAN   HaswellEXCPM(VOID *kernelData);
+        BOOLEAN   HaswellLowEndXCPM(VOID *kernelData);
+        BOOLEAN   BroadwellEPM(VOID *kernelData);
+        BOOLEAN   KernelIvyBridgeXCPM(VOID *kernelData);
+        BOOLEAN   KernelIvyE5XCPM(VOID *kernelData);
         
         VOID Stall(int Pause) { if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { gBS->Stall(Pause); } };
         VOID StartLoader();
