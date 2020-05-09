@@ -517,7 +517,7 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = CheckBit;  //101
+  InputItems[InputItemsCount].ItemType = CheckBit;  //101 - vacant
   InputItems[InputItemsCount++].IValue = dropDSM;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //102
@@ -1071,11 +1071,11 @@ VOID ApplyInputs(VOID)
     gSettings.FakeXHCI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
 
-  i++; //101
+  i++; //101  - vacant
   if (InputItems[i].Valid) {
 //    gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
-    gSettings.DropOEM_DSM = (UINT16)InputItems[i].IValue;
-    dropDSM = gSettings.DropOEM_DSM; //?
+//    gSettings.DropOEM_DSM = (UINT16)InputItems[i].IValue;
+//    dropDSM = gSettings.DropOEM_DSM; //?
 //    defDSM = TRUE;
   }
   i++; //102
@@ -1697,9 +1697,10 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
 	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.BooterConfig);
-  } else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-	  ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04hx]->", dropDSM);
   }
+  /*else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
+	  ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04hx]->", dropDSM);
+  } */
 }
 
 REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
@@ -2250,7 +2251,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
-
+/*
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
 {
   // init
@@ -2284,7 +2285,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
 
   return Entry;
 }
-
+*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 {
   REFIT_MENU_ITEM_OPTIONS   *Entry; //, *SubEntry;
@@ -2405,7 +2406,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuACPI()
 
   SubScreen->AddMenuEntry(SubMenuDsdts(), true);
   SubScreen->AddMenuEntry(SubMenuDropTables(), true);
-  SubScreen->AddMenuEntry(SubMenuDropDSM(), true);
+//  SubScreen->AddMenuEntry(SubMenuDropDSM(), true);
   SubScreen->AddMenuEntry(SubMenuDsdtFix(), true);
   SubScreen->AddMenuEntry(SubMenuDSDTPatches(), true);
   SubScreen->AddMenuItemInput(49, "Fix MCFG", FALSE);

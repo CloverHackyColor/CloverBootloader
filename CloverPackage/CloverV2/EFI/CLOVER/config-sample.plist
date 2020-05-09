@@ -151,35 +151,6 @@
 					<data>SU1FSQ==</data>
 				</dict>
 			</array>
-			<key>#DropOEM_DSM</key>
-			<dict>
-				<key>USB</key>
-				<true/>
-				<key>SmBUS</key>
-				<false/>
-				<key>ATI</key>
-				<true/>
-				<key>HDMI</key>
-				<true/>
-				<key>LAN</key>
-				<true/>
-				<key>IntelGFX</key>
-				<true/>
-				<key>WIFI</key>
-				<true/>
-				<key>LPC</key>
-				<false/>
-				<key>Firewire</key>
-				<true/>
-				<key>IDE</key>
-				<true/>
-				<key>NVidia</key>
-				<true/>
-				<key>HDA</key>
-				<true/>
-				<key>SATA</key>
-				<true/>
-			</dict>
 			<key>Debug</key>
 			<false/>
 			<key>#Rtc8Allowed</key>

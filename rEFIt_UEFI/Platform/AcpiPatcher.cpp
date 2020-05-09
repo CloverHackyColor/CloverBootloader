@@ -2051,9 +2051,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
     }
   }
   dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
-  if (defDSM) {
-    dropDSM = gSettings.DropOEM_DSM;   //if set by user
-  }
+//  if (defDSM) {
+//    dropDSM = gSettings.DropOEM_DSM;   //if set by user
+//  }
 
   if (gSettings.DebugDSDT) {
     DBG("Output DSDT before patch to /EFI/CLOVER/ACPI/origin/DSDT-or.aml\n");
@@ -2063,7 +2063,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
   DBG("Apply DsdtFixMask=0x%08X\n", gSettings.FixDsdt);
-  DBG("   drop _DSM mask=0x%04hX\n", dropDSM);
+//  DBG("   drop _DSM mask=0x%04hX\n", dropDSM);
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer, OSVersion);
   if (gSettings.DebugDSDT) {
     for (Index=0; Index < 60; Index++) {

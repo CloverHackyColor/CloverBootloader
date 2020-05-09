@@ -5431,7 +5431,7 @@ GetUserSettings(
         if (IsPropertyTrue (Prop)) {
           gSettings.SuspendOverride = TRUE;
         }
-
+/*
         Prop   = GetProperty(Dict2, "DropOEM_DSM");
         defDSM = FALSE;
 
@@ -5510,6 +5510,7 @@ GetUserSettings(
             }
           }
         }
+ */
       }
 
       Dict2 = GetProperty(DictPointer, "SSDT");

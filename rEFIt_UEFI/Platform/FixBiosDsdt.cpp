@@ -2423,7 +2423,6 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_LPC) != 0) {
         Size = get_size(dsdt, k);
         if(!Size) {
           return len;
@@ -2433,10 +2432,6 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
         //to correct outers we have to calculate offset
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         MsgLog("_DSM in LPC already exists, dropped\n");
-      } else {
-        MsgLog("_DSM already exists, patch LPC will not be applied\n");
-        return len;
-      }
     }
   }
 
@@ -2580,20 +2575,11 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
       k = FindMethod(dsdt + i, Size, "_DSM");
       if (k != 0) {
         k += i;
-        if ((((dropDSM & DEV_ATI)   != 0) && (DisplayVendor[VCard] == 0x1002)) ||
-            (((dropDSM & DEV_NVIDIA)!= 0) && (DisplayVendor[VCard] == 0x10DE)) ||
-            (((dropDSM & DEV_INTEL) != 0) && (DisplayVendor[VCard] == 0x8086))) {
           Size = get_size(dsdt, k);
           sizeoffset = - 1 - Size;
           len = move_data(k - 1, dsdt, len, sizeoffset); //kill _DSM
           len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
           MsgLog("_DSM in display already exists, dropped\n");
-        } else {
-          MsgLog("_DSM already exists, patch display will not be applied\n");
-          //        return len;
-          DisplayADR1[VCard] = 0;  //xxx
-          DsmFound = TRUE;
-        }
       }
     }
   }
@@ -2852,16 +2838,11 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
       k = FindMethod(dsdt + i, Size, "_DSM");
       if (k != 0) {
         k += i;
-        if ((dropDSM & DEV_HDMI) != 0) {
-          Size = get_size(dsdt, k);
+           Size = get_size(dsdt, k);
           sizeoffset = - 1 - Size;
           len = move_data(k - 1, dsdt, len, sizeoffset);
           len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
           DBG("_DSM in HDAU already exists, dropped\n");
-        } else {
-          DBG("_DSM already exists, patch HDAU will not be applied\n");
-          return len;
-        }
       }
     }
     root = aml_create_node(NULL);
@@ -3027,16 +3008,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_LAN) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in LAN already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch LAN will not be applied\n");
-        return len;
-      }
     }
     root = aml_create_node(NULL);
   } else {
@@ -3221,16 +3197,11 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_WIFI) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in ARPT already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch ARPT will not be applied\n");
-        return len;
-      }
     }
     root = aml_create_node(NULL);
   }
@@ -3375,16 +3346,11 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_SMBUS) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in SBUS already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch SBUS will not be applied\n");
-        return len;
-      }
     }
     Size = get_size(dsdt, SBUSADR);
     if (ReplaceName(dsdt + SBUSADR, Size, NULL, "BUS0") < 0) {
@@ -3672,16 +3638,11 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   k = FindMethod(dsdt + i, Size, "_DSM");
   if (k != 0) {
     k += i;
-    if ((dropDSM & DEV_FIREWIRE) != 0) {
       Size = get_size(dsdt, k);
       sizeoffset = - 1 - Size;
       len = move_data(k - 1, dsdt, len, sizeoffset);
       len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
       DBG("_DSM in FRWR already exists, dropped\n");
-    } else {
-      DBG("_DSM already exists, patch FRWR will not be applied\n");
-      return len;
-    }
   }
 
   root = aml_create_node(NULL);
@@ -3803,16 +3764,11 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_HDA) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in HDA already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch HDA will not be applied\n");
-        return len;
-      }
     }
   }
 
@@ -4119,7 +4075,6 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             //here we want to check who is the master of the _DSM
             adr1 = devFind(dsdt, k);
             if (adr1 == adr) {
-              if ((dropDSM & DEV_USB) != 0) {
                 Size = get_size(dsdt, k);
                 if (!Size) {
                   continue;
@@ -4128,10 +4083,6 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 len = move_data(k - 1, dsdt, len, sizeoffset);
                 len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
                 DBG("_DSM in USB already exists, dropped by 0x%X\n", sizeoffset);
-              } else {
-                DBG("_DSM already exists, patch USB will not be applied\n");
-                continue;
-              }
             } else {
               DBG(" found slave _DSM, skip\n");
               continue;
@@ -4325,16 +4276,11 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_IDE) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in IDE already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch IDE will not be applied\n");
-        return len;
-      }
     }
   }
 
@@ -4477,16 +4423,11 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_SATA) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in SATA already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch SATA will not be applied\n");
-        return len;
-      }
     }
   }
 
@@ -4574,16 +4515,11 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     k = FindMethod(dsdt + i, Size, "_DSM");
     if (k != 0) {
       k += i;
-      if ((dropDSM & DEV_SATA) != 0) {
         Size = get_size(dsdt, k);
         sizeoffset = - 1 - Size;
         len = move_data(k - 1, dsdt, len, sizeoffset);
         len = CorrectOuters(dsdt, len, k - 2, sizeoffset);
         DBG("_DSM in SATA already exists, dropped\n");
-      } else {
-        DBG("_DSM already exists, patch SATA will not be applied\n");
-        return len;
-      }
     }
   }
 

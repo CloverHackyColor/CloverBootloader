@@ -2322,10 +2322,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo);
   }
 
-  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
-  if (defDSM) {
-    dropDSM = gSettings.DropOEM_DSM;   //if set by user
-  }
+//  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
+//  if (defDSM) {
+//    dropDSM = gSettings.DropOEM_DSM;   //if set by user
+//  }
   // Load any extra SMBIOS information
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
     TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
