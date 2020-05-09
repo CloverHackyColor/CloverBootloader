@@ -37,6 +37,7 @@ extension AppDelegate {
     return url
   }
 
+  /// Add Clover.app as login item. It also remove all other instances if any.
   func addAsLoginItem() -> Bool {
     var found : Bool = false
     let currentUrl = Bundle.main.bundleURL
@@ -46,14 +47,11 @@ extension AppDelegate {
       if let snapshot = LSSharedFileListCopySnapshot(sharedFileList,
                                                      nil).takeRetainedValue() as?  [LSSharedFileListItem] {
         for item in snapshot {
-          
-          
           if let itemUrl = self.getLoginItemURL(for: item) {
             guard let info = NSDictionary(contentsOfFile: itemUrl.path.addPath("Contents/Info.plist")) as? [String: Any] else { continue }
             let bi = info[kCFBundleIdentifierKey as String] as? String
             if bi == Bundle.main.bundleIdentifier {
               // is Clover.app, but is the current one?
-            
               if itemUrl == currentUrl {
                 found = true
               } else {
@@ -79,8 +77,8 @@ extension AppDelegate {
     return found
   }
   
+  /// Remove any logged Clover.app
   func removeAsLoginItem() -> Bool {
-    // remove any Clover.app logged in
     self.removeLaunchAtStartup() // call new method too (just in case store login item somewhere..)
     let sharedFileList = LSSharedFileListCreate(nil,
                                                 kLSSharedFileListSessionLoginItems.takeRetainedValue(),
@@ -100,6 +98,7 @@ extension AppDelegate {
     return true
   }
   
+  /// Determine if the current Clover.app auto start at login
   func amILoginItem() -> Bool {
     let sharedFileList = LSSharedFileListCreate(nil,
                                                 kLSSharedFileListSessionLoginItems.takeRetainedValue(),

@@ -460,7 +460,7 @@ typedef struct {
   UINTN                   PatchVBiosBytesCount;
   BOOLEAN                 InjectEDID;
   BOOLEAN                 LpcTune;
-  UINT16                  DropOEM_DSM;
+  UINT16                  DropOEM_DSM; // vacant (unused in 0b7eed38f14400c8501228a30dcc023e1132cec3 r5017+)
   UINT8                   *CustomEDID;
   UINT16                  CustomEDIDsize;
   UINT16                  EdidFixHorizontalSyncPulseWidth;
