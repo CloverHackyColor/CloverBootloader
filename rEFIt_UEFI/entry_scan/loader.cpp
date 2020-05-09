@@ -1158,7 +1158,9 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
       }
     }
 
-  } else if (Type != OSTYPE_LIN) { //OSTYPE_LINEFI or unspecified
+  }
+
+  if (Type != OSTYPE_LIN) { //OSTYPE_LINEFI or unspecified
     // check for linux kernels
     PartGUID = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
     if ((PartGUID != NULL) && (Volume->RootDir != NULL)) {
@@ -1311,7 +1313,7 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
             if (FileInfo->FileSize > 0) {
               // get the kernel file path
               Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-               XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
+              XStringArray Options = LinuxKernelOptions(Iter.DirHandle, Basename(Path.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, NullXStringArray);
               // Add the entry
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
               Path.setEmpty();
