@@ -139,9 +139,9 @@ extern BOOLEAN                         SSSE3;
 
 //UINT64 kernelsize;
 
-VOID Patcher_SSE3_5(VOID* kernelData);
-VOID Patcher_SSE3_6(VOID* kernelData);
-VOID Patcher_SSE3_7();
+//VOID Patcher_SSE3_5(VOID* kernelData);
+//VOID Patcher_SSE3_6(VOID* kernelData);
+//VOID Patcher_SSE3_7();
 
 #include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
 class LOADER_ENTRY;

@@ -713,7 +713,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   if (Dst == NULL || Src == NULL) return FALSE;
 
   Dst->KPDebug           = Src->KPDebug;
-  Dst->KPKernelCpu       = Src->KPKernelCpu;
+//  Dst->KPKernelCpu       = Src->KPKernelCpu;
   Dst->KPKernelLapic     = Src->KPKernelLapic;
   Dst->KPKernelXCPM      = Src->KPKernelXCPM;
   Dst->KPKernelPm        = Src->KPKernelPm;
@@ -915,12 +915,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   if (Prop != NULL || gBootChanged) {
     Patches->KPDebug = IsPropertyTrue (Prop);
   }
-
+/*
   Prop = GetProperty(DictPointer, "KernelCpu");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelCpu = IsPropertyTrue (Prop);
   }
-
+*/
   Prop = GetProperty(DictPointer, "KernelLapic");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelLapic = IsPropertyTrue (Prop);

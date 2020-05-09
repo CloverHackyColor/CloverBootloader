@@ -232,7 +232,7 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
   return procAddr;
 }
 
-
+#if 0
 //TimeWalker - extended and corrected for systems up to Yosemite
 //TODO - Slice: no more needed
 VOID LOADER_ENTRY::KernelPatcher_64()
@@ -576,7 +576,7 @@ VOID LOADER_ENTRY::KernelPatcher_32()
     }
   }
 }
-
+#endif
 //Slice - FakeCPUID substitution, (c)2014
 // _cpuid_set_info
 //TODO remake to patterns
@@ -1717,7 +1717,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   DBG("KernelIvyE5XCPM() <===\n");
   return TRUE;
 }
-
+#if 0
 VOID Patcher_SSE3_6(VOID* kernelData)
 {
   UINT8* bytes = (UINT8*)kernelData;
@@ -1863,6 +1863,7 @@ VOID Patcher_SSE3_7()
      // not support yet
      return;
 }
+#endif
 
 VOID LOADER_ENTRY::Get_PreLink()
 {
@@ -2311,7 +2312,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   } else {
     DBG_RT("Disabled\n");
   }
-
+/*
   DBG_RT( "\nKernelCpu patch: ");
   if (KernelAndKextPatches->KPKernelCpu) {
     //
@@ -2331,7 +2332,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   } else {
     DBG_RT( "Disabled\n");
   }
-
+*/
   //other method for KernelCPU patch is FakeCPUID
   DBG_RT( "\nFakeCPUID patch: ");
   if (KernelAndKextPatches->FakeCPUID) {

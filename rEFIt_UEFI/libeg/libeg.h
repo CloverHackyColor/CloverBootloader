@@ -308,7 +308,7 @@ typedef struct {
 typedef struct KERNEL_AND_KEXT_PATCHES
 {
   BOOLEAN KPDebug;
-  BOOLEAN KPKernelCpu;
+//  BOOLEAN KPKernelCpu;
   BOOLEAN KPKernelLapic;
   BOOLEAN KPKernelXCPM;
   BOOLEAN KPKernelPm;

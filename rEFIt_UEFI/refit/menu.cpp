@@ -288,8 +288,9 @@ VOID FillInputs(BOOLEAN New)
   InputItemsCount = 44;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount++].BValue = gSettings.KextPatchesAllowed;
-  InputItems[InputItemsCount].ItemType = BoolValue; //45
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
+//  InputItems[InputItemsCount].ItemType = BoolValue; //45
+//  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
+  InputItemsCount++; //vacant place for id = 45
   InputItems[InputItemsCount].ItemType = BoolValue; //46
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
   InputItems[InputItemsCount].ItemType = BoolValue; //47
@@ -796,10 +797,10 @@ VOID ApplyInputs(VOID)
     gSettings.KextPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-  i++; //45
+  i++; //45 - vacant
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPKernelCpu = InputItems[i].BValue;
-    gBootChanged = TRUE;
+//    gSettings.KernelAndKextPatches.KPKernelCpu = InputItems[i].BValue;
+//    gBootChanged = TRUE;
   }
   i++; //46
   if (InputItems[i].Valid) {
@@ -2140,7 +2141,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(104, "Fake CPUID:", TRUE);
 //  SubScreen->AddMenuItemInput(108, "Kernel patching allowed", FALSE);
-  SubScreen->AddMenuItemInput(45,  "Kernel Support CPU", FALSE);
+//  SubScreen->AddMenuItemInput(45,  "Kernel Support CPU", FALSE);
   SubScreen->AddMenuItemInput(91,  "Kernel Lapic", FALSE);
   SubScreen->AddMenuItemInput(105, "Kernel XCPM", FALSE);
   SubScreen->AddMenuItemInput(48,  "Kernel PM", FALSE);

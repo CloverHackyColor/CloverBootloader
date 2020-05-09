@@ -379,7 +379,7 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("Kernel and Kext Patches at %p:\n", Patches);
   DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
-  DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
+//  DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
   DBG("\tKernelLapic: %c\n", Patches->KPKernelLapic ? 'y' : 'n');
   DBG("\tKernelXCPM: %c\n", Patches->KPKernelXCPM ? 'y' : 'n');
   DBG("\tKernelPm: %c\n", Patches->KPKernelPm ? 'y' : 'n');

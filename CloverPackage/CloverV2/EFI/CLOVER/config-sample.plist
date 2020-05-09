@@ -619,8 +619,6 @@
 		<string>0x010676</string>
 		<key>#ATIConnectorsController</key>
 		<string>6000</string>
-		<key>KernelCpu</key>
-		<false/>
 		<key>#ATIConnectorsData</key>
 		<string>000400000403000000010000210302040400000014020000000100000000040310000000100000000001000000000001</string>
 		<key>Debug</key>

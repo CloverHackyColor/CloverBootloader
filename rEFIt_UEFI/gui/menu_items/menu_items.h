@@ -390,7 +390,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
                                  const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
                                  const UINT8* ReplaceExt, INT32 Len);
         VOID          KernelPatcher_32();
-        VOID          KernelPatcher_64();
+ //       VOID          KernelPatcher_64();
         VOID          FilterKernelPatches();
         VOID          FilterKextPatches();
         VOID          FilterBootPatches();
