@@ -658,6 +658,7 @@ const UINT8 CataSearchModel[]      = {0x44, 0x89, 0xE0, 0xC0, 0xE8, 0x04};
 const UINT8 CataSearchExt[]        = {0x44, 0x89, 0xE0, 0xC1, 0xE8, 0x10};
 const UINT8 CataReplaceMovEax[]    = {0xB8, 0x00, 0x00, 0x00, 0x00, 0x90}; // mov eax, val || nop
 
+
 BOOLEAN LOADER_ENTRY::PatchCPUID(UINT8* bytes, const UINT8* Location, INT32 LenLoc,
                    const UINT8* Search4, const UINT8* Search10, const UINT8* ReplaceModel,
                    const UINT8* ReplaceExt, INT32 Len)
@@ -773,7 +774,7 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
   INTN Num = SearchAndReplace(&Kernel[procLocation], 0x400, findJmp, sizeof(findJmp), patchJmp, 0);
   DBG_RT("==> found %lld patterns\n", Num);
   //2. procedure xcpm_init
-  // indirect call to _xcpm_core_scope_msrs
+  // indirect call to _xcpm_core_scope_msrs and to _xcpm_SMT_scope_msrs
   //  488D3DDA317600                  lea        rdi, qword [ds:_xcpm_core_scope_msrs]
   //  BE0B000000                      mov        esi, 0xb => replace to eb0a
   //  31D2                            xor        edx, edx
@@ -787,18 +788,30 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm(VOID *kernelData)
     DBG_RT("=> xcpm_core_scope_msrs found at %llx\n", patchLocation1);
     if (Kernel[patchLocation1 + 7] == 0xE8) {
       DBG_RT("=> patch applied\n");
-      for (int i=0; i < 0x10; ++i) {
-        DBG_RT("%02x", Kernel[patchLocation1 + i]);
-      }
-      DBG_RT("\n");
+//      for (int i=0; i < 0x10; ++i) {
+//        DBG_RT("%02x", Kernel[patchLocation1 + i]);
+//      }
+//      DBG_RT("\n");
       Kernel[patchLocation1] = 0xEB;
       Kernel[patchLocation1 + 1] = 0x0A;
     } else {
       DBG_RT("=> pattern not good\n");
-      for (int i=0; i < 0x10; ++i) {
-        DBG_RT("%02x", Kernel[patchLocation1 + i]);
-      }
-      DBG_RT("\n");
+//      for (int i=0; i < 0x10; ++i) {
+//        DBG_RT("%02x", Kernel[patchLocation1 + i]);
+//     }
+//      DBG_RT("\n");
+    }
+  }
+  UINTN symbol2 = searchProc(Kernel, "xcpm_SMT_scope_msrs");
+  patchLocation1 = FindRelative32(Kernel, procLocation, 0x200, symbol2);
+  if (patchLocation1 != 0) {
+    DBG_RT("=> xcpm_SMT_scope_msrs found at %llx\n", patchLocation1);
+    if (Kernel[patchLocation1 + 7] == 0xE8) {
+      DBG_RT("=> SMT patch applied\n");
+      Kernel[patchLocation1] = 0xEB;
+      Kernel[patchLocation1 + 1] = 0x0A;
+    } else {
+      DBG_RT("=> pattern not good\n");
     }
   }
 
@@ -1293,6 +1306,11 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
   KernelCPUIDPatch(kern);
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
+  // proc: _xcpm_init
+  // ffffff8000468825 488D3D54527F00                  lea        rdi, qword [ds:_xcpm_pkg_scope_msrs]
+  // ffffff800046882c BE07000000                      mov        esi, 0x7
+  // ffffff8000468831 31D2                            xor        edx, edx
+  // ffffff8000468833 E838FDFFFF                      call       sub_ffffff8000468570
   if (os_version >= AsciiOSVersionToUint64("10.12")) {
     // 10.12+
     patchLocation = 0; // clean out the value just in case
@@ -1349,15 +1367,15 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM(VOID *kernelData, BOOLEAN use_xcpm_idle)
     return TRUE;
   }
 
-  // _xcpm_idle
-  if (use_xcpm_idle) {
+  // _xcpm_idle //this is a part of KernelPM
+/*  if (use_xcpm_idle) {
     DBG("HWPEnable - ON.\n");
     comment = "_xcpm_idle";
     const UINT8 find[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x0F, 0x30 };
     const UINT8 repl[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00, 0x90, 0x90 };
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   }
-
+*/
   comment = "_xcpm_bootstrap";
   if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
