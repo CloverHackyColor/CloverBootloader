@@ -1040,9 +1040,9 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64(VOID *kernelData)
     }
   }
     
-  if (KernelAndKextPatches->KPDebug) {
-    gBS->Stall(3000000);
-  }
+//  if (KernelAndKextPatches->KPDebug) {
+    Stall(3000000);
+//  }
     
   return TRUE;
 }
@@ -1087,9 +1087,9 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32(VOID *kernelData)
     }
   }
 
-  if (KernelAndKextPatches->KPDebug) {
-    gBS->Stall(3000000);
-  }
+//  if (KernelAndKextPatches->KPDebug) {
+    Stall(3000000);
+//  }
 
   return TRUE;
 }
@@ -1306,25 +1306,28 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM(VOID *kernelData)
   KernelCPUIDPatch(kern);
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
-  // proc: _xcpm_init
+  // proc: _xcpm_init @4687b0
   // ffffff8000468825 488D3D54527F00                  lea        rdi, qword [ds:_xcpm_pkg_scope_msrs]
   // ffffff800046882c BE07000000                      mov        esi, 0x7
   // ffffff8000468831 31D2                            xor        edx, edx
   // ffffff8000468833 E838FDFFFF                      call       sub_ffffff8000468570
   if (os_version >= AsciiOSVersionToUint64("10.12")) {
     // 10.12+
-    patchLocation = 0; // clean out the value just in case
-    for (i = 0; i < 0x1000000; i++) {
-      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
-          kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
-        patchLocation = i+7;
-        DBG("Found _xcpm_pkg_scope_msr\n");
-        break;
-      }
-    }
+//    patchLocation = 0; // clean out the value just in case
+//    for (i = 0; i < 0x1000000; i++) {
+//      if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
+//          kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
+//        patchLocation = i+7;
+//       DBG("Found _xcpm_pkg_scope_msr\n");
+//        break;
+//      }
+    UINTN procLocation = searchProc(Kernel, "xcpm_init");
+    UINTN symbol1 = searchProc(Kernel, "_xcpm_pkg_scope_msrs");
+    patchLocation = FindRelative32(Kernel, procLocation, 0x100, symbol1);
 
+ 
     if (patchLocation) {
-      for (i = 0; i < 5; i++) {
+      for (i = 7; i < 12; i++) {
         kern[patchLocation+i] = 0x90;
       }
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
@@ -1571,18 +1574,22 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM(VOID *kernelData)
     applyKernPatch(kern, find, sizeof(find), repl, comment);
   } else {
     // 10.10+
-    patchLocation = 0; // clean out the value just in case
-    for (i = 0; i < 0x1000000; i++) {
+//    patchLocation = 0; // clean out the value just in case
+    UINTN procLocation = searchProc(kern, "xcpm_init");
+    UINTN symbol1 = searchProc(kern, comment);
+    patchLocation = FindRelative32(kern, procLocation, 0x100, symbol1);
+
+/*    for (i = 0; i < 0x1000000; i++) {
       if (kern[i+0] == 0xBE && kern[i+1] == 0x07 && kern[i+2] == 0x00 && kern[i+3] == 0x00 &&
           kern[i+4] == 0x00 && kern[i+5] == 0x31 && kern[i+6] == 0xD2 && kern[i+7] == 0xE8) {
         patchLocation = i+7;
         DBG("Found _xcpm_pkg_scope_msr\n");
         break;
       }
-    }
+    } */
     
     if (patchLocation) {
-      for (i = 0; i < 5; i++) {
+      for (i = 7; i < 12; i++) {
         kern[patchLocation+i] = 0x90;
       }
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
