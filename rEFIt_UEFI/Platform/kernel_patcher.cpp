@@ -1204,7 +1204,18 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
     const UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xB8, 0x83, 0xFB, 0x09 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+  } else {
+    UINTN procLocation = searchProc(comment);
+    UINTN featureCall = searchProc("_cpuid_features");
+    UINTN place = FindRelative32(KernelData, procLocation, 0x100, featureCall);
+    for (UINTN i = 10; i < 20; ++i) {
+      if (KernelData[place + i] == 0xC4) {
+        KernelData[place + i] = 0xC1;
+        break;
+      }
+    }
+
+    /*if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC1, 0x83, 0xFB, 0x22 };
@@ -1230,6 +1241,7 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
     const UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
     applyKernPatch(find, sizeof(find), repl, comment);
+     */
   }
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
@@ -1380,6 +1392,16 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
   }
 */
   comment = "_xcpm_bootstrap";
+  UINTN procLocation = searchProc(comment);
+  UINTN featureCall = searchProc("_cpuid_features");
+  UINTN place = FindRelative32(KernelData, procLocation, 0x100, featureCall);
+  for (UINTN i = 10; i < 20; ++i) {
+    if (KernelData[place + i] == 0xC4) {
+      KernelData[place + i] = 0xC6;
+      break;
+    }
+  }
+  /*
   if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
@@ -1392,6 +1414,11 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
     applyKernPatch(find, sizeof(find), repl, comment);
   } else if (os_version < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
+    //    ; Basic Block Input Regs: rbx -  Killed Regs: rax
+    //    ffffff80004fa0f7 89D8                            mov        eax, ebx
+    //    ffffff80004fa0f9 04C4                            add        al, 0xc4
+    //    ffffff80004fa0fb 3C22                            cmp        al, 0x22
+    //    ffffff80004fa0fd 7722                            jnbe       0xffffff80004fa121
     const UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
@@ -1406,7 +1433,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
     applyKernPatch(find, sizeof(find), repl, comment);
   }
-
+*/
   comment = "_cpuid_set_info_rdmsr";
   // PMheart: bytes seem stable as of 10.12
   if (os_version >= AsciiOSVersionToUint64("10.12")) {
@@ -1479,6 +1506,16 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
   }
 
   comment = "_xcpm_bootstrap";
+  UINTN procLocation = searchProc(comment);
+  UINTN featureCall = searchProc("_cpuid_features");
+  UINTN place = FindRelative32(KernelData, procLocation, 0x100, featureCall);
+  for (UINTN i = 10; i < 20; ++i) {
+    if (KernelData[place + i] == 0xC4) {
+      KernelData[place + i] = 0xC6;
+      break;
+    }
+  }
+/*
   if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
@@ -1506,7 +1543,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
     applyKernPatch(find, sizeof(find), repl, comment);
   }
-
+*/
   DBG("KernelIvyBridgeXCPM() <===\n");
   return TRUE;
 }
@@ -1636,7 +1673,19 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
     const UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xB9, 0x83, 0xFB, 0x09 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
+  } else {
+
+    UINTN procLocation = searchProc(comment);
+    UINTN featureCall = searchProc("_cpuid_features");
+    UINTN place = FindRelative32(KernelData, procLocation, 0x100, featureCall);
+    for (UINTN i = 10; i < 20; ++i) {
+      if (KernelData[place + i] == 0xC4) {
+        KernelData[place + i] = 0xC1;
+        break;
+      }
+    }
+
+/*    if (os_version <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC2, 0x83, 0xFB, 0x22 };
@@ -1662,6 +1711,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
     const UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
     applyKernPatch(find, sizeof(find), repl, comment);
+ */
   }
   
   DBG("KernelIvyE5XCPM() <===\n");
