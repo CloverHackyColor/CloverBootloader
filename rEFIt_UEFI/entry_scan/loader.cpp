@@ -791,6 +791,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   EFI_GUID          *Guid = NULL;
   BOOLEAN           KernelIs64BitOnly;
   UINT64            os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+	
+  constexpr LString8 quietLitteral = "quiet";
+  constexpr LString8 splashLitteral = "splash";
 
   if (Entry == NULL) {
     return;
@@ -924,8 +927,8 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     }
     
   } else if (Entry->LoaderType == OSTYPE_LINEFI) {
-    BOOLEAN Quiet = Entry->LoadOptions.contains("quiet");
-    BOOLEAN WithSplash = Entry->LoadOptions.contains("splash");
+    BOOLEAN Quiet = Entry->LoadOptions.contains(quietLitteral);
+    BOOLEAN WithSplash = Entry->LoadOptions.contains(splashLitteral);
     
     // default entry
     SubEntry = Entry->getPartiallyDuplicatedEntry();
@@ -938,10 +941,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       if (Quiet) {
         SubEntry->Title.SWPrintf("%ls verbose", Entry->Title.s());
-        SubEntry->LoadOptions.removeIC("quiet"_XS8);
+        SubEntry->LoadOptions.removeIC(quietLitteral);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("quiet"_XS8);
+        SubEntry->LoadOptions.AddID(quietLitteral);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -949,10 +952,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
     if (SubEntry) {
       if (WithSplash) {
         SubEntry->Title.SWPrintf("%ls without splash", Entry->Title.s());
-        SubEntry->LoadOptions.removeIC("splash"_XS8);
+        SubEntry->LoadOptions.removeIC(splashLitteral);
       } else {
         SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("splash"_XS8);
+        SubEntry->LoadOptions.AddID(splashLitteral);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -961,22 +964,22 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       if (WithSplash) {
         if (Quiet) {
           SubEntry->Title.SWPrintf("%ls verbose without splash", Entry->Title.s());
-          SubEntry->LoadOptions.removeIC("splash"_XS8);
-          SubEntry->LoadOptions.removeIC("quiet"_XS8);
+          SubEntry->LoadOptions.removeIC(splashLitteral);
+          SubEntry->LoadOptions.removeIC(quietLitteral);
         } else {
           SubEntry->Title.SWPrintf("%ls quiet without splash", Entry->Title.s());
-          SubEntry->LoadOptions.removeIC("splash"_XS8);
-          SubEntry->LoadOptions.Add("quiet"_XS8);
+          SubEntry->LoadOptions.removeIC(splashLitteral);
+          SubEntry->LoadOptions.Add(quietLitteral);
         }
       } else if (Quiet) {
-//        TempOptions.RemoveIC("quiet"_XS8);
+//        TempOptions.RemoveIC(quietLitteral);
         SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("splash"_XS8);
+        SubEntry->LoadOptions.AddID(splashLitteral);
 //        FreePool(TempOptions);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
-        SubEntry->LoadOptions.AddID("quiet"_XS8);
-        SubEntry->LoadOptions.AddID("splash"_XS8);
+        SubEntry->LoadOptions.AddID(quietLitteral);
+        SubEntry->LoadOptions.AddID(splashLitteral);
       }
     }
     SubScreen->AddMenuEntry(SubEntry, true);

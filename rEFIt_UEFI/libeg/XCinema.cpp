@@ -84,7 +84,7 @@ void XCinema::AddFilm(FILM* NewFilm)
 static XImage NullImage;
 const XImage& FILM::GetImage(INTN Index) const
 {
-  DBG("ask for frame #%lld from total of %lld\n", Index, Frames.size());
+  DBG("ask for frame #%lld from total of %zu\n", Index, Frames.size());
   for (size_t i = 0; i < Frames.size(); ++i) {
     if (Frames[i].getIndex() == Index) {
       DBG("...found\n");

@@ -447,7 +447,7 @@ VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 
     SEGMENT *textSeg = (SEGMENT *)&Driver[textName];
     Start = textSeg->fileoff;
     Size = textSeg->filesize;
-    DBG("found __text [%d,%d]\n",Start, Size);
+	DBG("found __text [%llu,%llu]\n",Start, Size);
     if (Start > DriverSize) Start = 0;
     if (Size > DriverSize) {
       Size = DriverSize;

@@ -155,6 +155,37 @@ int XStringArray_tests()
         array1.AddID(L"other2"_XSW);
         if ( array1.size() != 4 ) return 53;
     }
+    {
+        XStringArray array;
+        array.Add(L"word1");
+        array.Add(L"other2");
+        array.Add(L"3333");
+        array.Add(L"4th_item");
+		
+		array.remove("WOrd1"_XS8);
+        if ( !array.contains("word1"_XS8) ) return 22;
+		array.remove("word1"_XS8);
+        if ( array.contains("word1"_XS8) ) return 22;
+		array.removeIC("oTHEr2"_XS8);
+        if ( array.contains("other2"_XS8) ) return 22;
+		array.removeIC("4th_ITEM"_XS8);
+        if ( array.contains("4th_item"_XS8) ) return 22;
+		XString8 c = array.ConcatAll();
+//		printf("c=%s\n", c.c_str());
+	}
+    {
+        XStringArray array;
+        array.Add(L"splash");
+        array.Add(L"quiet");
+
+		array.remove("splash"_XS8);
+        if ( array.contains("splash﻿"_XS8) ) return 22;
+		array.removeIC("quiet"_XS8);
+        if ( array.contains("quiet"_XS8) ) return 22;
+        if ( array.size() != 0 ) return 22;
+		XString8 c = array.ConcatAll();
+//		printf("c=%s\n", c.c_str());
+	}
 
 
 
