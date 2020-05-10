@@ -1211,6 +1211,9 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
     for (UINTN i = 10; i < 20; ++i) {
       if (KernelData[place + i] == 0xC4) {
         KernelData[place + i] = 0xC1;
+        if (KernelData[(place + i) - 5] == 0x3B) {
+          KernelData[(place + i) - 5] = 0x00;
+        }
         break;
       }
     }
@@ -1398,6 +1401,9 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
   for (UINTN i = 10; i < 20; ++i) {
     if (KernelData[place + i] == 0xC4) {
       KernelData[place + i] = 0xC6;
+      if (KernelData[(place + i) - 5] == 0x3B) {
+        KernelData[(place + i) - 5] = 0x00;
+      }
       break;
     }
   }
@@ -1512,6 +1518,9 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
   for (UINTN i = 10; i < 20; ++i) {
     if (KernelData[place + i] == 0xC4) {
       KernelData[place + i] = 0xC6;
+      if (KernelData[(place + i) - 5] == 0x3B) {
+        KernelData[(place + i) - 5] = 0x00;
+      }
       break;
     }
   }
@@ -1681,6 +1690,9 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
     for (UINTN i = 10; i < 20; ++i) {
       if (KernelData[place + i] == 0xC4) {
         KernelData[place + i] = 0xC1;
+        if (KernelData[(place + i) - 5] == 0x3B) {
+          KernelData[(place + i) - 5] = 0x00;
+        }
         break;
       }
     }
