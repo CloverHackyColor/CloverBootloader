@@ -873,6 +873,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
+
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
@@ -947,8 +948,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
         SubEntry->LoadOptions.AddID(quietLitteral);
       }
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
-    SubScreen->AddMenuEntry(SubEntry, true);
+
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (WithSplash) {
@@ -958,8 +960,9 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
         SubEntry->LoadOptions.AddID(splashLitteral);
       }
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
-    SubScreen->AddMenuEntry(SubEntry, true);
+
     SubEntry = Entry->getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (WithSplash) {
@@ -973,17 +976,17 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
           SubEntry->LoadOptions.Add(quietLitteral);
         }
       } else if (Quiet) {
-//        TempOptions.RemoveIC(quietLitteral);
         SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
+        SubEntry->LoadOptions.removeIC(quietLitteral); //
         SubEntry->LoadOptions.AddID(splashLitteral);
-//        FreePool(TempOptions);
       } else {
         SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
         SubEntry->LoadOptions.AddID(quietLitteral);
         SubEntry->LoadOptions.AddID(splashLitteral);
       }
+      SubScreen->AddMenuEntry(SubEntry, true);
     }
-    SubScreen->AddMenuEntry(SubEntry, true);
+
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
     Entry->LoadOptions.setEmpty();
