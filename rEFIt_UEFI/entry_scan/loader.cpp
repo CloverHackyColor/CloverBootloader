@@ -701,16 +701,17 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   BOOLEAN BootCampStyle = ThemeX.BootCampStyle;
 
   if ( Entry->Title.isEmpty()  &&  ((Entry->VolName == NULL) || (StrLen(Entry->VolName) == 0)) ) {
+    XStringW BasenameXW = XStringW(Basename(Volume->DevicePathString));
  //   DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%llu\n",Entry->VolName, StrLen(Entry->VolName));
     if (BootCampStyle) {
       if (!LoaderTitle.isEmpty()) {
         Entry->Title = LoaderTitle;
       } else {
-        Entry->Title.takeValueFrom(Basename(Volume->DevicePathString));
+        Entry->Title = (BasenameXW.contains(L"-")) ? BasenameXW.subString(0,BasenameXW.indexOf(L"-") + 1) + L"..)" : BasenameXW;
       }
     } else {
       Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : LoaderPath.basename().wc_str(),
-                            Basename(Volume->DevicePathString));
+                            (BasenameXW.contains(L"-")) ? (BasenameXW.subString(0,BasenameXW.indexOf(L"-") + 1) + L"..)").wc_str() : BasenameXW.wc_str());
     }
   }
 //  DBG("check Entry->Title \n");
