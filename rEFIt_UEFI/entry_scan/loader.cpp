@@ -1756,6 +1756,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
       if (FindCustomPath && Custom->Type == OSTYPE_LINEFI && OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTARGS)) {
         // Find the init ram image and select root
         CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, Custom->LoadOptions);
+        Custom->Flags = OSFLAG_SET(Custom->Flags, OSFLAG_NODEFAULTARGS);
       }
 
       // Check to make sure that this entry is not hidden or disabled by another custom entry
