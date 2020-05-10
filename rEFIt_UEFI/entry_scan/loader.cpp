@@ -1190,15 +1190,11 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
           while (DirIterNext(&Iter, 2, LINUX_LOADER_SEARCH_PATH, &FileInfo)) {
             if (FileInfo != NULL) {
               if (FileInfo->FileSize == 0) {
-                FreePool(FileInfo);
-                FileInfo = NULL;
                 continue;
               }
               // get the kernel file path
               Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
               // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
               break;
             }
           }
@@ -1211,9 +1207,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
                 // get the kernel file path
                 Path.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
               }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
             }
           }
           break;
@@ -1228,9 +1221,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
                   PreviousTime = FileInfo->ModificationTime;
                 }
               }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
             }
           }
           break;
@@ -1245,9 +1235,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
                   PreviousTime = FileInfo->ModificationTime;
                 }
               }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
             }
           }
           break;
@@ -1264,9 +1251,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
                     Path.setEmpty();
                 }
               }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
             }
           }
           break;
@@ -1283,9 +1267,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
                   Path.setEmpty();
                 }
               }
-              // free the file info
-              FreePool(FileInfo);
-              FileInfo = NULL;
             }
           }
           break;
@@ -1322,9 +1303,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
               AddLoaderEntry(Path, (Options.isEmpty()) ? LINUX_DEFAULT_OPTIONS : Options, L""_XSW, Volume, NULL, OSTYPE_LINEFI, OSFLAG_NODEFAULTARGS);
               Path.setEmpty();
             }
-             // free the file info
-            FreePool(FileInfo);
-            FileInfo = NULL;
           }
         }
       }
@@ -1761,13 +1739,10 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
         }
         // who knows....
         if (FileInfo->FileSize == 0) {
-          FreePool(FileInfo);
           continue;
         }
         // get the kernel file path
         CustomPath.SWPrintf("%ls\\%ls", LINUX_BOOT_PATH, FileInfo->FileName);
-        // free the file info
-        FreePool(FileInfo);
       }
       if (CustomPath.isEmpty()) {
         DBG("skipped\n");
