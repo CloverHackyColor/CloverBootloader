@@ -21,8 +21,8 @@ extern "C" {
 
 #include "../../cpp_foundation/XString.h"
 
-static XString8 stdio_static_buf;
-static XStringW stdio_static_wbuf;
+static XString8 stdio_static_buf = XString8().takeValueFrom("  ");
+static XStringW stdio_static_wbuf = XString8().takeValueFrom("  ");
 
 int vprintf(const char* format, VA_LIST va)
 {
@@ -46,7 +46,7 @@ const char* strerror(EFI_STATUS Status)
 {
 	size_t size = stdio_static_buf.allocatedSize();
 	UINTN n = 0;
-	n = AsciiSPrint(stdio_static_buf.dataSized(stdio_static_buf.allocatedSize()), stdio_static_buf.allocatedSize(), "%r", Status);
+	n = AsciiSPrint(stdio_static_buf.dataSized(size), size, "%r", Status);
 	while ( n > size - 2 )
 	{
 		size += 10;
