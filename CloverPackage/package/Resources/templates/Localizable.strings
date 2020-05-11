@@ -204,10 +204,10 @@ Install to /EFI/CLOVER/themes/random choose a theme from others";
 "steampunkblack_description" = "steampunkblack theme from medik,
 Install to /EFI/CLOVER/themes/steampunkblack";
 
-"CloverThemeManager_title" = "CloverThemeManager.app";
-"CloverThemeManager_description" = "CloverThemeManager.app by blackosx,
-keeps your Themes up to date, remove or install them by choosing from a wide selection.
-Install to /Applications";
+//"CloverThemeManager_title" = "CloverThemeManager.app";
+//"CloverThemeManager_description" = "CloverThemeManager.app by blackosx,
+//keeps your Themes up to date, remove or install them by choosing from a wide selection.
+//Install to /Applications";
 // ============================================================================
 // RC Scripts
 // ----------------------------------------------------------------------------

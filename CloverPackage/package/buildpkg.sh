@@ -1384,29 +1384,29 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
 fi
 
 # build CloverThemeManager package
-if [[ -d "${SRCROOT}"/CloverThemeManager && ${NOEXTRAS} != *"Clover Themes"* ]]; then
-    local CTM_Dir="${SRCROOT}"/CloverThemeManager
-    local CTM_Dest='/Applications'
+#if [[ -d "${SRCROOT}"/CloverThemeManager && ${NOEXTRAS} != *"Clover Themes"* ]]; then
+#    local CTM_Dir="${SRCROOT}"/CloverThemeManager
+#    local CTM_Dest='/Applications'
 
-    packagesidentity="${clover_package_identity}".CTM.themes
-    choiceId="CloverThemeManager"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+#    packagesidentity="${clover_package_identity}".CTM.themes
+#    choiceId="CloverThemeManager"
+#    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
 
-    ditto --noextattr --noqtn "$CTM_Dir"  \
-     "${PKG_BUILD_DIR}/${choiceId}/Root/${CTM_Dest}"/
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       CloverThemeManager
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+#    ditto --noextattr --noqtn "$CTM_Dir"  \
+#     "${PKG_BUILD_DIR}/${choiceId}/Root/${CTM_Dest}"/
+#    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+#                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+#                       CloverThemeManager
+#    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     # CloverThemeManager.app can update it-self,
     # so there's no need to record the choice as 'previously selected'.
-    addChoice --group="Themes" --start-selected="false" \
-              --start-enabled="checkFileExists('/Users')" \
-              --start-visible="checkFileExists('/Users')" \
-              --pkg-refs="$packageRefId" "${choiceId}"
+#    addChoice --group="Themes" --start-selected="false" \
+#              --start-enabled="checkFileExists('/Users')" \
+#              --start-visible="checkFileExists('/Users')" \
+#              --pkg-refs="$packageRefId" "${choiceId}"
     # end CloverThemeManager package
 # End build theme packages
-fi
+#fi
 
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
 local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane

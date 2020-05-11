@@ -1,9 +1,0 @@
-# ---------------------------------------------
-# Clover Theme Manager - Theme Repo URL list
-# ---------------------------------------------
-# Note: There must be a carriage return at end of last line
-# ---------------------------------------------
-#https://bitbucket.org/blackosx/black_green
-#https://bitbucket.org/blackosx/bgm256
-#https://bitbucket.org/blackosx/shield
-#https://bitbucket.org/blackosx/bgm
