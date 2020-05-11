@@ -39,6 +39,7 @@
 #include "../../libeg/libeg.h"
 #include "../../refit/lib.h"
 #include "../../Platform/LoaderUefi.h"
+#include "../../Platform/boot.h"
 
 #include "../../cpp_foundation/XObjArray.h"
 #include "../../cpp_foundation/XStringArray.h"
@@ -363,14 +364,46 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINT32            NamesTable;
         INT32             SegVAddr;
         INT32             shift;
+        BOOLEAN           PatcherInited;
+        BOOLEAN           gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+        BOOLEAN           gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
+        BOOLEAN           isKernelcache;
+        BOOLEAN           is64BitKernel;
+        UINT32            KernelSlide;
+        // notes:
+        // - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
+        //   only lower 32bit part into PrelinkTextAddr
+        // - PrelinkTextAddr is segCmd64->vmaddr + KernelRelocBase
+        UINT32            PrelinkTextLoadCmdAddr;
+        UINT32            PrelinkTextAddr;
+        UINT32            PrelinkTextSize;
+        
+        // notes:
+        // - 64bit sect->addr is 0xffffff80xxxxxxxx and we are taking
+        //   only lower 32bit part into PrelinkInfoAddr
+        // - PrelinkInfoAddr is sect->addr + KernelRelocBase
+        UINT32            PrelinkInfoLoadCmdAddr;
+        UINT32            PrelinkInfoAddr;
+        UINT32            PrelinkInfoSize;
+        EFI_PHYSICAL_ADDRESS    KernelRelocBase;
+        BootArgs1         *bootArgs1;
+        BootArgs2         *bootArgs2;
+        CHAR8             *dtRoot;
+        UINT32            *dtLength;
+        
 
 				LOADER_ENTRY()
 						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
               BootBgColor({0,0,0,0}),
               CustomBoot(0), KernelAndKextPatches(0), Settings(0), KernelData(0),
-              AddrVtable(0), SizeVtable(0), NamesTable(0), shift(0)
+              AddrVtable(0), SizeVtable(0), NamesTable(0), shift(0),
+              PatcherInited(false), gSNBEAICPUFixRequire(false), gBDWEIOPCIFixRequire(false), isKernelcache(false), is64BitKernel(false),
+              KernelSlide(0), PrelinkTextLoadCmdAddr(0), PrelinkTextAddr(0), PrelinkTextSize(0),
+              PrelinkInfoLoadCmdAddr(0), PrelinkInfoAddr(0), PrelinkInfoSize(0),
+              KernelRelocBase(0), bootArgs1(0), bootArgs2(0), dtRoot(0), dtLength(0)
 						{};
         
+        VOID          SetKernelRelocBase();
         VOID          FindBootArgs();
         EFI_STATUS    getVTable();
         VOID          Get_PreLink();

@@ -35,39 +35,26 @@
 //#define DBG_RT( ...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
 
 
-EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
-BootArgs1   *bootArgs1 = NULL;
-BootArgs2   *bootArgs2 = NULL;
-CHAR8       *dtRoot = NULL;
-UINT32      *dtLength;
+//EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
+//BootArgs1   *bootArgs1 = NULL;
+//BootArgs2   *bootArgs2 = NULL;
+//CHAR8       *dtRoot = NULL;
+//UINT32      *dtLength;
 //UINT8       *KernelData = NULL;
-UINT32      KernelSlide = 0;
-BOOLEAN     isKernelcache = FALSE;
-BOOLEAN     is64BitKernel = FALSE;
-BOOLEAN     SSSE3;
+//UINT32      KernelSlide = 0;
+//BOOLEAN     isKernelcache = FALSE;
+//BOOLEAN     is64BitKernel = FALSE;
+//BOOLEAN     SSSE3;
 
-BOOLEAN     PatcherInited = FALSE;
-BOOLEAN     gSNBEAICPUFixRequire = FALSE; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-BOOLEAN     gBDWEIOPCIFixRequire = FALSE; // Broadwell-E IOPCIFamily fix require or not
+//BOOLEAN     PatcherInited = FALSE;
+//BOOLEAN     gSNBEAICPUFixRequire = FALSE; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+//BOOLEAN     gBDWEIOPCIFixRequire = FALSE; // Broadwell-E IOPCIFamily fix require or not
 
-// notes:
-// - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
-//   only lower 32bit part into PrelinkTextAddr
-// - PrelinkTextAddr is segCmd64->vmaddr + KernelRelocBase
-UINT32     PrelinkTextLoadCmdAddr = 0;
-UINT32     PrelinkTextAddr = 0;
-UINT32     PrelinkTextSize = 0;
-
-// notes:
-// - 64bit sect->addr is 0xffffff80xxxxxxxx and we are taking
-//   only lower 32bit part into PrelinkInfoAddr
-// - PrelinkInfoAddr is sect->addr + KernelRelocBase
-UINT32     PrelinkInfoLoadCmdAddr = 0;
-UINT32     PrelinkInfoAddr = 0;
-UINT32     PrelinkInfoSize = 0;
-
-
-VOID SetKernelRelocBase()
+/*
+ * the driver OsxAptioFixDrv is old and mostly not used in favour of its successors.
+ * anyway we will keep it for new investigations.
+ */
+VOID LOADER_ENTRY::SetKernelRelocBase()
 {
 //  EFI_STATUS      Status;
   UINTN           DataSize = sizeof(KernelRelocBase);
@@ -1915,7 +1902,7 @@ VOID LOADER_ENTRY::Get_PreLink()
             PrelinkTextSize = (UINT32)segCmd64->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
           }
-			DBG("at %p: vmaddr = 0x%llx, vmsize = 0x%llx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
+          DBG("at %p: vmaddr = 0x%llx, vmsize = 0x%llx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //DBG("cmd = 0x%08X\n",segCmd64->cmd);
@@ -1936,8 +1923,8 @@ VOID LOADER_ENTRY::Get_PreLink()
           DBG("Found PRELINK_INFO, 64bit\n");
           //DBG("cmd = 0x%08X\n",segCmd64->cmd);
           //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
-			DBG("vmaddr = 0x%08llX\n",segCmd64->vmaddr);
-			DBG("vmsize = 0x%08llX\n",segCmd64->vmsize);
+          DBG("vmaddr = 0x%08llX\n",segCmd64->vmaddr);
+          DBG("vmsize = 0x%08llX\n",segCmd64->vmsize);
           //DBG("fileoff = 0x%08X\n",segCmd64->fileoff);
           //DBG("filesize = 0x%08X\n",segCmd64->filesize);
           //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
@@ -1958,7 +1945,7 @@ VOID LOADER_ENTRY::Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-				DBG("__info found at %p: addr = 0x%llx, size = 0x%llx\n", sect, sect->addr, sect->size);
+              DBG("__info found at %p: addr = 0x%llx, size = 0x%llx\n", sect, sect->addr, sect->size);
               DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
             }
@@ -1979,7 +1966,7 @@ VOID LOADER_ENTRY::Get_PreLink()
             PrelinkTextSize = (UINT32)segCmd->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd;
           }
-			DBG("at %p: vmaddr = 0x%x, vmsize = 0x%x\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
+          DBG("at %p: vmaddr = 0x%x, vmsize = 0x%x\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //gBS->Stall(30*1000000);
@@ -2012,7 +1999,7 @@ VOID LOADER_ENTRY::Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-				DBG("__info found at %p: addr = 0x%x, size = 0x%x\n", sect, sect->addr, sect->size);
+              DBG("__info found at %p: addr = 0x%x, size = 0x%x\n", sect, sect->addr, sect->size);
               DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
               //gBS->Stall(30*1000000);
@@ -2057,13 +2044,13 @@ LOADER_ENTRY::FindBootArgs()
       dtLength = &bootArgs2->deviceTreeLength;
       KernelSlide = bootArgs2->kslide;
 
-		DBG_RT( "Found bootArgs2 at 0x%llX, DevTree at 0x%llX\n", (UINTN)ptr, (UINTN)bootArgs2->deviceTreeP);
+      DBG_RT( "Found bootArgs2 at 0x%llX, DevTree at 0x%llX\n", (UINTN)ptr, (UINTN)bootArgs2->deviceTreeP);
       //DBG("bootArgs2->kaddr = 0x%08X and bootArgs2->ksize =  0x%08X\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG("bootArgs2->efiMode = 0x%02X\n", bootArgs2->efiMode);
-		DBG_RT( "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
+      DBG_RT( "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
       DBG_RT( "bootArgs2->flags = 0x%hx\n", bootArgs2->flags);
       DBG_RT( "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
-		DBG_RT( "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
+      DBG_RT( "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
       if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
       gBS->Stall(2000000);
 
@@ -2086,7 +2073,7 @@ LOADER_ENTRY::FindBootArgs()
       dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
       dtLength = &bootArgs1->deviceTreeLength;
 
-		DBG_RT( "Found bootArgs1 at 0x%8s, DevTree at %p\n", ptr, dtRoot);
+      DBG_RT( "Found bootArgs1 at 0x%8s, DevTree at %p\n", ptr, dtRoot);
       //DBG("bootArgs1->kaddr = 0x%08X and bootArgs1->ksize =  0x%08X\n", bootArgs1->kaddr, bootArgs1->ksize);
       //DBG("bootArgs1->efiMode = 0x%02X\n", bootArgs1->efiMode);
 
@@ -2294,9 +2281,12 @@ VOID
 LOADER_ENTRY::KernelAndKextsPatcherStart()
 {
   BOOLEAN KextPatchesNeeded, patchedOk;
-  // it was intended for custom entries but not work if no suctom entries used
-  // so set common until better solution invented
+  /*
+   * it was intended for custom entries but not work if no custom entries used
+   * so set common until better solution invented
+   */
   KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
+  
   // we will call KernelAndKextPatcherInit() only if needed
   if (KernelAndKextPatches == NULL) return; //entry is not null as double check
 

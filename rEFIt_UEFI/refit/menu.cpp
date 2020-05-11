@@ -518,7 +518,7 @@ VOID FillInputs(BOOLEAN New)
   }
   snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = CheckBit;  //101 - vacant
-  InputItems[InputItemsCount++].IValue = dropDSM;
+  InputItems[InputItemsCount++].IValue = 0; //dropDSM;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;

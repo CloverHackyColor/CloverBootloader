@@ -2050,7 +2050,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
       FixChecksum(&FadtPointer->Header);
     }
   }
-  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
+//  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
 //  if (defDSM) {
 //    dropDSM = gSettings.DropOEM_DSM;   //if set by user
 //  }

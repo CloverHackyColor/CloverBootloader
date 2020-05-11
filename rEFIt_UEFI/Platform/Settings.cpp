@@ -107,8 +107,8 @@ RT_VARIABLES                    *RtVariables;
 BOOLEAN                         gFirmwareClover             = FALSE;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
-BOOLEAN                         defDSM;
-UINT16                          dropDSM;
+//BOOLEAN                         defDSM;
+//UINT16                          dropDSM;
 
 BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;

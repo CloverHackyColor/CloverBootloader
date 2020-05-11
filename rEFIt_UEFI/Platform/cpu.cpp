@@ -278,9 +278,9 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.CPUID[CPUID_87][EDX] & (UINT32)CPUID_EXTFEATURE_TSCI;
   }
   
-  if ((bit(9) & gCPUStructure.CPUID[CPUID_1][ECX]) != 0) {
-    SSSE3 = TRUE;
-  }
+//  if ((bit(9) & gCPUStructure.CPUID[CPUID_1][ECX]) != 0) {
+//    SSSE3 = TRUE;
+//  }
   gCPUStructure.Turbo = FALSE;
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     // Determine turbo boost support

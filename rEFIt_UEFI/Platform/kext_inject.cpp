@@ -920,7 +920,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
   UINTN   NumSnow_X64_EXT    = 0;
   UINTN   NumLion_i386_EXT   = 0;
   UINTN   NumLion_X64_EXT    = 0;
-  UINT32  patchLocation2 = 0, patchLocation3 = 0;
+  UINTN   patchLocation2 = 0, patchLocation3 = 0;
 
 
   DBG_RT("\nPatching kernel for injected kexts...\n");

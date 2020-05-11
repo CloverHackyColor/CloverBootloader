@@ -103,38 +103,23 @@ typedef struct SEGMENT {
 } SEGMENT;
 
 
-extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
-extern BootArgs1    *bootArgs1;
-extern BootArgs2    *bootArgs2;
-extern CHAR8        *dtRoot;
-extern UINT32       *dtLength;
-extern UINT8        *KernelData;
-extern UINT32       KernelSlide;
-extern BOOLEAN      isKernelcache;
-extern BOOLEAN      is64BitKernel;
-extern BOOLEAN      gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
-extern BOOLEAN      gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
+//extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
+//extern BootArgs1    *bootArgs1;
+//extern BootArgs2    *bootArgs2;
+//extern CHAR8        *dtRoot;
+//extern UINT32       *dtLength;
+//extern UINT8        *KernelData;
+//extern UINT32       KernelSlide;
+//extern BOOLEAN      isKernelcache;
+//extern BOOLEAN      is64BitKernel;
+//extern BOOLEAN      gSNBEAICPUFixRequire; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
+//extern BOOLEAN      gBDWEIOPCIFixRequire; // Broadwell-E IOPCIFamily fix require or not
 
-// notes:
-// - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
-//   only lower 32bit part into PrelinkTextAddr
-// - PrelinkTextAddr is segCmd64->vmaddr + KernelRelocBase
-extern UINT32       PrelinkTextLoadCmdAddr;
-extern UINT32       PrelinkTextAddr;
-extern UINT32       PrelinkTextSize;
 
-// notes:
-// - 64bit sect->addr is 0xffffff80xxxxxxxx and we are taking
-//   only lower 32bit part into PrelinkInfoAddr
-// - PrelinkInfoAddr is sect->addr + KernelRelocBase
-extern UINT32       PrelinkInfoLoadCmdAddr;
-extern UINT32       PrelinkInfoAddr;
-extern UINT32       PrelinkInfoSize;
-
-extern UINT32       DisplayVendor[];
+//extern UINT32       DisplayVendor[];
 //VOID findCPUfamily();
 
-extern BOOLEAN                         SSSE3;
+//extern BOOLEAN                         SSSE3;
 
 
 //UINT64 kernelsize;
