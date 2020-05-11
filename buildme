@@ -203,6 +203,7 @@ local withClover=${1-"none"}
 if [[ "$SYSNAME" == Darwin ]]; then
   if [[ -f "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi ]]; then
     rm -f "${CLOVERROOT}"/CloverPackage/sym/.withV2
+    mkdir -p "${CLOVERROOT}"/CloverPackage/sym
     if [[ $withClover == withV2 ]]; then
       touch "${CLOVERROOT}"/CloverPackage/sym/.withV2
     fi
