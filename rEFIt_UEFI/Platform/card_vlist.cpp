@@ -149,7 +149,7 @@ VOID FillCardList(TagPtr CfgDict)
               VideoPorts = (UINT16)GetPropertyInteger(prop2, VideoPorts);
               
               prop2 = GetProperty(element, "LoadVBios");
-              if (prop2 != NULL && IsPropertyTrue (prop2)) {
+              if (prop2 != NULL && IsPropertyTrue(prop2)) {
                 LoadVBios = TRUE;
               }
               

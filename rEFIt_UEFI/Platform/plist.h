@@ -102,19 +102,19 @@ GetTagCount (
   );
 
 EFI_STATUS
-GetElement (
+GetElement(
   TagPtr dict,
   INTN   id,
   TagPtr *dict1
 );
 
 BOOLEAN
-IsPropertyTrue (
+IsPropertyTrue(
   TagPtr Prop
   );
 
 BOOLEAN
-IsPropertyFalse (
+IsPropertyFalse(
   TagPtr Prop
   );
 

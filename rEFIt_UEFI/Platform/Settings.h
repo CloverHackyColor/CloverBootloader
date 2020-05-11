@@ -650,8 +650,8 @@ extern UINTN                           gEvent;
 
 extern UINT16                          gBacklightLevel;
 
-extern BOOLEAN                         defDSM;
-extern UINT16                          dropDSM;
+//extern BOOLEAN                         defDSM;
+//extern UINT16                          dropDSM;
 
 extern TagPtr                          gConfigDict[];
 

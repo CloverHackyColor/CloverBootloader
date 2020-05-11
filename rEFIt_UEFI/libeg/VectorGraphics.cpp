@@ -353,7 +353,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     INTN  Count = GetTagCount (Dict);
     for (INTN i = 0; i < Count; i++) {
       FILM *NewFilm = new FILM();
-      if (EFI_ERROR(GetElement (Dict, i, &Dict3))) {
+      if (EFI_ERROR(GetElement(Dict, i, &Dict3))) {
         continue;
       }
       if (Dict3 == NULL) {
@@ -406,7 +406,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->NudgeY = GetPropertyInteger(Dict2, INITVALUE);
 
       Dict2 = GetProperty(Dict3, "Once");
-      NewFilm->RunOnce = IsPropertyTrue (Dict2);
+      NewFilm->RunOnce = IsPropertyTrue(Dict2);
 
       NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
       ThemeX.Cinema.AddFilm(NewFilm);

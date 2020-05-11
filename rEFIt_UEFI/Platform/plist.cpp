@@ -1099,7 +1099,7 @@ SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
  else return FALSE
  */
 BOOLEAN
-IsPropertyTrue (
+IsPropertyTrue(
                 TagPtr Prop
                 )
 {
@@ -1114,7 +1114,7 @@ IsPropertyTrue (
  else return FALSE
  */
 BOOLEAN
-IsPropertyFalse (
+IsPropertyFalse(
                  TagPtr Prop
                  )
 {
