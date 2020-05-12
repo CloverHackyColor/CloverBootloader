@@ -362,11 +362,11 @@ STATIC XStringArray LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
     XStringW InitRd = SWPrintf(LinuxInitImagePath[Index++].c_str(), (Version == NULL) ? L"" : Version);
     if (InitRd.notEmpty()) {
       if (FileExists(Dir, InitRd)) {
-		  XStringArray CustomOptions;
-		  CustomOptions.Add(SPrintf("root=/dev/disk/by-partuuid/%ls", PartUUID));
-		  CustomOptions.Add(SPrintf("initrd=%ls\\%ls", LINUX_BOOT_ALT_PATH, InitRd.wc_str()));
-		  CustomOptions.import(LINUX_DEFAULT_OPTIONS);
-		  CustomOptions.import(Options);
+        XStringArray CustomOptions;
+        CustomOptions.Add(SPrintf("root=/dev/disk/by-partuuid/%ls", PartUUID));
+        CustomOptions.Add(SPrintf("initrd=%ls\\%ls", LINUX_BOOT_ALT_PATH, InitRd.wc_str()));
+        CustomOptions.import(LINUX_DEFAULT_OPTIONS);
+        CustomOptions.import(Options);
         return CustomOptions;
       }
     }

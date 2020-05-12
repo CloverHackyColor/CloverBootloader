@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover r5106\n"
-"POT-Creation-Date: 2020-03-21 16:55+0100\n"
+"Project-Id-Version: Clover r5117\n"
+"POT-Creation-Date: 2020-05-12 07:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -914,9 +914,9 @@ msgstr ""
 #, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
-"keeps your Themes up to date, remove or install them by choosing from a wide "
-"selection.\n"
-"Install to /Applications"
+"//keeps your Themes up to date, remove or install them by choosing from a "
+"wide selection.\n"
+"//Install to /Applications"
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"

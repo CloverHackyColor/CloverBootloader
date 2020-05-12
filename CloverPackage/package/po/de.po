@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 22:38+0100\n"
+"POT-Creation-Date: 2020-05-12 07:30+0300\n"
 "PO-Revision-Date: 2020-03-08 18:53+0100\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ge <ge@li.org>\n"
@@ -77,8 +77,11 @@ msgstr "Clover"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:19
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "Ist Open Source basierend auf mehreren Projekten: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"Ist Open Source basierend auf mehreren Projekten: Clover, rEFIt, XNU, "
+"VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:20
@@ -102,18 +105,29 @@ msgstr "macOS, Windows EFI und Linux EFI native booten"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:28
-msgid "It's EFI bootloader provides RuntimeServices for OS that impossible for Legacy Bootloaders"
-msgstr "Der EFI Bootloader stellt RuntimeServices für das OS bereit, was mit Legacy Bootloadern nicht möglich ist"
+msgid ""
+"It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+"Der EFI Bootloader stellt RuntimeServices für das OS bereit, was mit Legacy "
+"Bootloadern nicht möglich ist"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:29
-msgid "mostly Clover do automatic detection of hardware and set all properties by default. But user can change them by config.plist"
-msgstr "Clover ist größtenteils in der Lage, die nötigen Einstellungen passend zur Hardware selbst vorzunehmen. Der Benutzer kann aber mit der config.plist ebenfalls diverse Einstellungen vornehmen"
+msgid ""
+"mostly Clover do automatic detection of hardware and set all properties by "
+"default. But user can change them by config.plist"
+msgstr ""
+"Clover ist größtenteils in der Lage, die nötigen Einstellungen passend zur "
+"Hardware selbst vorzunehmen. Der Benutzer kann aber mit der config.plist "
+"ebenfalls diverse Einstellungen vornehmen"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:30
 msgid "with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "Mit Clover kann man im Kontrollfeld Startvolume innerhalb der Systemeinstellungen in ein anderes OS booten"
+msgstr ""
+"Mit Clover kann man im Kontrollfeld Startvolume innerhalb der "
+"Systemeinstellungen in ein anderes OS booten"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:31
@@ -133,7 +147,9 @@ msgstr "ACPI wird auf Standard 4.0 korrigiert."
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:34
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Die eigene DSDT wird von der gebooteten Partition oder aus dem EFI Ordner geladen"
+msgstr ""
+"Die eigene DSDT wird von der gebooteten Partition oder aus dem EFI Ordner "
+"geladen"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:35
@@ -143,12 +159,18 @@ msgstr "DSDT Anpassung on the fly durch Anpassungen/Muster"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:36
 msgid "customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "Anpassbare Korrekturen für den Neustart/Energiesparmodus, sowie den PCIRootUID Wert"
+msgstr ""
+"Anpassbare Korrekturen für den Neustart/Energiesparmodus, sowie den "
+"PCIRootUID Wert"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:37
-msgid "Graphics Properties Injector for ATI, NVidia and Intel for wide range of supported cards. Also customizable."
-msgstr "Injektor zum anpassen der Videoeigenschaften einer grossen Anzahl unterstützter ATI, NVidia und Intel Grafikkarten."
+msgid ""
+"Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards. Also customizable."
+msgstr ""
+"Injektor zum anpassen der Videoeigenschaften einer grossen Anzahl "
+"unterstützter ATI, NVidia und Intel Grafikkarten."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:38
@@ -168,7 +190,8 @@ msgstr "CPU Turbo und P- und C-states Generator"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:41
 msgid "ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "Laden von ACPI Tabellen (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)."
+msgstr ""
+"Laden von ACPI Tabellen (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)."
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:42
@@ -183,12 +206,17 @@ msgstr "Kernel und kext Anpassungen on the fly"
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:44
 msgid "set NVRAM variables for different purpose"
-msgstr "NVRAM Variablen für können für unterschiedliche Anforderungen gesetzt werden"
+msgstr ""
+"NVRAM Variablen für können für unterschiedliche Anforderungen gesetzt werden"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:45
-msgid "default boot after timeout, customizable GUI , and saving screenshots from GUI typing F10"
-msgstr "Automatisches Booten nach Zeitvorgabe, anpassbare Oberfläche, sichern von Bildschirmfotos der Einstellungen mit F10"
+msgid ""
+"default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+"Automatisches Booten nach Zeitvorgabe, anpassbare Oberfläche, sichern von "
+"Bildschirmfotos der Einstellungen mit F10"
 
 #. type: Content of: <html><body><ul><li>
 #: Resources/templates/Description.html:46
@@ -954,11 +982,15 @@ msgstr "CloverThemeManager.app"
 
 #. type: "CloverThemeManager_description"
 #: Resources/templates/Localizable.strings:208
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "CloverThemeManager.app by blackosx,\n"
+#| "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+#| "Install to /Applications"
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
-"keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
-"Install to /Applications"
+"//keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
+"//Install to /Applications"
 msgstr ""
 "CloverThemeManager.app by blackosx\n"
 "Diese App hält Deine Clover Themen aktuell, entfernt oder installiert diese aus einer umfangreichen Sammlung.\n"
@@ -1406,4 +1438,6 @@ msgstr "Unbekannt"
 #~ msgstr "Treiber für USB 3.0, 32bit"
 
 #~ msgid "Alternate driver (v2) to fix Memory problems on UEFI firmware."
-#~ msgstr "Alternativer Treiber (v2) um Speicherfehler in der UEFI-Firmware zu beheben. NICHT mit anderen AptioFix Treibern zusammen benutzen."
+#~ msgstr ""
+#~ "Alternativer Treiber (v2) um Speicherfehler in der UEFI-Firmware zu "
+#~ "beheben. NICHT mit anderen AptioFix Treibern zusammen benutzen."

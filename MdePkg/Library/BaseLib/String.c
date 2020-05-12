@@ -99,7 +99,7 @@ StrCpy (
   @param  Source      A pointer to a Null-terminated Unicode string.
   @param  Length      The maximum number of Unicode characters to copy.
 
-  @return Destination.
+  @return Destination.  //Slice - no sense to return same pointer as argument
 
 **/
 CHAR16 *
@@ -117,13 +117,16 @@ StrnCpy (
   }
 
   //
-  // Destination cannot be NULL if Length is not zero
+  // Destination cannot be NULL if Length is not zero //Slice - Source as null pointer deref
   //
-  ASSERT (Destination != NULL);
+  if (!Destination || !Source) {
+    return Destination;
+  }
+  //ASSERT (Destination != NULL);
   ASSERT (((UINTN) Destination & BIT0) == 0);
 
   //
-  // Destination and source cannot overlap
+  // Destination and source cannot overlap - //Slice - and what if this happen?
   //
   ASSERT ((UINTN)(Destination - Source) > StrLen (Source));
   ASSERT ((UINTN)(Source - Destination) >= Length);
@@ -141,8 +144,12 @@ StrnCpy (
     *(Destination++) = *(Source++);
     Length--;
   }
-
-  ZeroMem (Destination, Length * sizeof (*Destination));
+  //Slice - if Length == strlen(Source) then null will not be copied
+  //but this is not CopyMem, this is StrnCpy which MUST create NULL-terminating string
+  *Destination = L'\0';
+  
+  //no sense to zero other bytes
+  //ZeroMem (Destination, Length * sizeof (*Destination));
   return ReturnValue;
 }
 #endif

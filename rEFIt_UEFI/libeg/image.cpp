@@ -178,7 +178,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     Status = FileHandle->Delete(FileHandle);
     if (Status == EFI_WARN_DELETE_FAILURE) {
       //This is READ_ONLY file system
-      CreateNew = FALSE; // will write into existing file
+      CreateNew = FALSE; // will write into existing file (Slice - ???)
 //      DBG("RO FS %s\n", strerror(Status));
     }
   }
