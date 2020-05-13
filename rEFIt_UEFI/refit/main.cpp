@@ -1756,14 +1756,14 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
   }
 
 //System / Install / Recovery version filler
-CONST CHAR16 *SystemVersionPlist       = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
-CONST CHAR16 *ServerVersionPlist       = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
-CONST CHAR16 *InstallVersionPlist      = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
-CONST CHAR16 *RecoveryVersionPlist     = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-CONST CHAR16  APFSSysPlistPath[86]     = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
-CONST CHAR16  APFSServerPlistPath[86]  = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
-CONST CHAR16  APFSInstallPlistPath[79] = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\SystemVersion.plist";
-CONST CHAR16  APFSRecPlistPath[58]     = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
+const CHAR16 SystemVersionPlist[]     = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+const CHAR16 ServerVersionPlist[]     = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
+const CHAR16 InstallVersionPlist[]    = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
+const CHAR16 RecoveryVersionPlist[]   = L"\\com.apple.recovery.boot\\SystemVersion.plist";
+const CHAR16 APFSSysPlistPath[]       = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
+const CHAR16 APFSServerPlistPath[]    = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
+const CHAR16 APFSInstallPlistPath[]   = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\SystemVersion.plist";
+const CHAR16 APFSRecPlistPath[]       = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
   
 
 VOID SystemVersionInit(VOID)
@@ -1841,18 +1841,21 @@ VOID SystemVersionInit(VOID)
     //Store UUID from bank
     XStringW CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
     //Init temp string with system/install/recovery APFS path
-    CHAR16 *TmpSysPlistPath = (__typeof__(TmpSysPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
-    CHAR16 *TmpServerPlistPath = (__typeof__(TmpServerPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
-    CHAR16 *TmpInsPlistPath = (__typeof__(TmpInsPlistPath))AllocateZeroPool(79*sizeof(CHAR16));
-    CHAR16 *TmpRecPlistPath = (__typeof__(TmpRecPlistPath))AllocateZeroPool(58*sizeof(CHAR16));
-    StrnCpyS(TmpSysPlistPath, 86, APFSSysPlistPath, 85);
-    StrnCpyS(TmpServerPlistPath, 86, APFSServerPlistPath, 85);
-    StrnCpyS(TmpInsPlistPath, 79, APFSInstallPlistPath, 78);
-    StrnCpyS(TmpRecPlistPath, 58, APFSRecPlistPath, 57);
-    StrnCpyS(TmpSysPlistPath+1, 57, CurrentUUID.wc_str(), 36);
-    StrnCpyS(TmpServerPlistPath+1, 85, CurrentUUID.wc_str(), 36);
-    StrnCpyS(TmpInsPlistPath+1, 78, CurrentUUID.wc_str(), 36);
-    StrnCpyS(TmpRecPlistPath+1, 57, CurrentUUID.wc_str(), 36);
+    CHAR16 *TmpSysPlistPath    = (__typeof__(TmpSysPlistPath))AllocateZeroPool(sizeof(APFSSysPlistPath));
+    CHAR16 *TmpServerPlistPath = (__typeof__(TmpServerPlistPath))AllocateZeroPool(sizeof(APFSServerPlistPath));
+    CHAR16 *TmpInsPlistPath    = (__typeof__(TmpInsPlistPath))AllocateZeroPool(sizeof(APFSInstallPlistPath));
+    CHAR16 *TmpRecPlistPath    = (__typeof__(TmpRecPlistPath))AllocateZeroPool(sizeof(APFSRecPlistPath));
+    CopyMem(TmpSysPlistPath, APFSSysPlistPath, sizeof(APFSSysPlistPath));
+    CopyMem(TmpServerPlistPath, APFSServerPlistPath, sizeof(APFSServerPlistPath));
+    CopyMem(TmpInsPlistPath, APFSInstallPlistPath, sizeof(APFSInstallPlistPath));
+    CopyMem(TmpRecPlistPath, APFSRecPlistPath, sizeof(APFSRecPlistPath));
+    INTN size = CurrentUUID.length() * sizeof(CHAR16); //not including null termination 36 * 2 = 72
+//    DBG("check CurrentUUID bank=%lld size = %lld\n", i, size);
+//    DBG("check CurrentUUID string = %ls\n", CurrentUUID.wc_str()); //check passed
+    CopyMem(TmpSysPlistPath+1, CurrentUUID.wc_str(), size);
+    CopyMem(TmpServerPlistPath+1, CurrentUUID.wc_str(), size);
+    CopyMem(TmpInsPlistPath+1, CurrentUUID.wc_str(), size);
+    CopyMem(TmpRecPlistPath+1, CurrentUUID.wc_str(), size);
     //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
     SystemPlists[SysIter] = TmpSysPlistPath;
     SystemPlists[SysIter+1] = TmpServerPlistPath;
@@ -2130,7 +2133,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #if 0
   //testing place
   {
-    const CHAR16 *aaa = L"12345  ";
+    const CHAR16 aaa[] = L"12345  ";
     const CHAR8 *bbb = "12345  ";
     DBG(" string %ls, size=%lld, len=%lld sizeof=%ld iStrLen=%lld\n", aaa, StrSize(aaa), StrLen(aaa), sizeof(aaa), iStrLen(bbb, 10));
     const CHAR8* ccc = "Выход  ";
@@ -2153,6 +2156,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     DBG("void*=%ld int=%ld long=%ld longlong=%ld enum=%ld\n",
         sizeof(void*), sizeof(int), sizeof(long int), sizeof(long long), sizeof(EFI_ALLOCATE_TYPE));
+    /*
+     Results
+     41:381  0:000   string 12345  , size=16, len=7 sizeof=16 iStrLen=5
+     41:381  0:000   string Выход  , size=13, len=12 sizeof=8 iStrLen=10
+     41:381  0:000   xstring Выход , asize=0, sizeinbyte=11 sizeof=16 lastcharat=5
+     41:381  0:000   FakeLAN = 0x30168c
+     41:381  0:000   Compatible=pci168c,30 strlen=10 sizeof=64 iStrLen=10
+
+     */
   }
 #endif
   if (!GlobalConfig.FastBoot) {
