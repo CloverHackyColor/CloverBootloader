@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -153,17 +153,17 @@
                         </connections>
                     </button>
                     <scrollView focusRingType="none" borderType="line" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="29d-rx-wyR">
-                        <rect key="frame" x="191" y="46" width="469" height="100"/>
+                        <rect key="frame" x="191" y="46" width="469" height="116"/>
                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="sgJ-el-Xcb">
-                            <rect key="frame" x="1" y="1" width="467" height="98"/>
+                            <rect key="frame" x="1" y="1" width="467" height="114"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textView editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="YES" allowsDocumentBackgroundColorChange="YES" smartInsertDelete="YES" id="jRs-Un-piV">
-                                    <rect key="frame" x="0.0" y="0.0" width="467" height="98"/>
+                                <textView editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="YES" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" id="jRs-Un-piV">
+                                    <rect key="frame" x="0.0" y="0.0" width="467" height="114"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <size key="minSize" width="467" height="98"/>
+                                    <size key="minSize" width="467" height="114"/>
                                     <size key="maxSize" width="469" height="10000000"/>
                                     <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                 </textView>
@@ -182,13 +182,13 @@
                         <rect key="frame" x="572" y="21" width="16" height="16"/>
                     </progressIndicator>
                     <scrollView wantsLayer="YES" focusRingType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2IB-nz-hvO">
-                        <rect key="frame" x="191" y="154" width="469" height="247"/>
+                        <rect key="frame" x="191" y="170" width="469" height="231"/>
                         <clipView key="contentView" id="nIe-kl-Tbc">
-                            <rect key="frame" x="1" y="1" width="467" height="245"/>
+                            <rect key="frame" x="1" y="1" width="467" height="229"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <collectionView selectable="YES" id="wuN-Fc-foZ">
-                                    <rect key="frame" x="0.0" y="0.0" width="467" height="241"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="467" height="229"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
                                     <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="3QJ-S2-HNO">
                                         <size key="itemSize" width="50" height="50"/>
@@ -229,7 +229,7 @@
                     <constraint firstItem="UUc-TY-xzg" firstAttribute="top" secondItem="29d-rx-wyR" secondAttribute="bottom" constant="7" id="QQC-gX-VdQ"/>
                     <constraint firstItem="PmA-i6-75b" firstAttribute="top" secondItem="YIQ-b2-eUp" secondAttribute="bottom" constant="10" id="Qxd-h7-jMv"/>
                     <constraint firstItem="Hwp-8t-DOD" firstAttribute="top" secondItem="X04-eM-Ork" secondAttribute="bottom" constant="10" id="SV7-JX-NMo"/>
-                    <constraint firstItem="29d-rx-wyR" firstAttribute="top" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="UTw-RK-jlw"/>
+                    <constraint firstItem="29d-rx-wyR" firstAttribute="top" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="236" id="UTw-RK-jlw"/>
                     <constraint firstItem="ovO-Bp-yLs" firstAttribute="leading" secondItem="nlq-eW-Xo1" secondAttribute="trailing" constant="8" symbolic="YES" id="WE7-q8-lRv"/>
                     <constraint firstItem="2IB-nz-hvO" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="4" id="WWi-rs-SvD"/>
                     <constraint firstItem="UUc-TY-xzg" firstAttribute="centerY" secondItem="vhj-ej-Juw" secondAttribute="centerY" id="XNR-oi-Z1V"/>
@@ -245,7 +245,7 @@
                     <constraint firstItem="PmA-i6-75b" firstAttribute="firstBaseline" secondItem="UUc-TY-xzg" secondAttribute="firstBaseline" id="fkB-OV-oxL"/>
                     <constraint firstAttribute="trailing" secondItem="2IB-nz-hvO" secondAttribute="trailing" constant="20" symbolic="YES" id="fwq-Eg-Fy0"/>
                     <constraint firstItem="Hwp-8t-DOD" firstAttribute="leading" secondItem="k5V-Bw-sHC" secondAttribute="leading" id="gXd-2b-FML"/>
-                    <constraint firstItem="29d-rx-wyR" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="259" id="gXm-jZ-Wgg"/>
+                    <constraint firstItem="29d-rx-wyR" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="359" id="gXm-jZ-Wgg"/>
                     <constraint firstItem="vhj-ej-Juw" firstAttribute="leading" secondItem="UUc-TY-xzg" secondAttribute="trailing" constant="12" id="giO-nc-Axb"/>
                     <constraint firstItem="ovO-Bp-yLs" firstAttribute="leading" secondItem="dxu-Os-Jgh" secondAttribute="trailing" constant="8" symbolic="YES" id="h6v-zb-fD4"/>
                     <constraint firstItem="X04-eM-Ork" firstAttribute="top" relation="greaterThanOrEqual" secondItem="nlq-eW-Xo1" secondAttribute="bottom" constant="45" id="jTV-ea-zrh"/>
@@ -256,7 +256,7 @@
                     <constraint firstItem="2IB-nz-hvO" firstAttribute="leading" secondItem="29d-rx-wyR" secondAttribute="leading" id="rCg-kP-7Rv"/>
                     <constraint firstItem="2IB-nz-hvO" firstAttribute="leading" secondItem="ovO-Bp-yLs" secondAttribute="trailing" constant="13" id="rkb-NN-pbA"/>
                     <constraint firstItem="bcF-vq-OaV" firstAttribute="top" secondItem="dxu-Os-Jgh" secondAttribute="bottom" constant="9" id="sDd-AL-EE4"/>
-                    <constraint firstAttribute="bottom" secondItem="2IB-nz-hvO" secondAttribute="bottom" constant="154" id="sgt-2U-mwk"/>
+                    <constraint firstAttribute="bottom" secondItem="2IB-nz-hvO" secondAttribute="bottom" constant="170" id="sgt-2U-mwk"/>
                     <constraint firstItem="29d-rx-wyR" firstAttribute="leading" secondItem="UUc-TY-xzg" secondAttribute="leading" id="swH-Iv-tVp"/>
                     <constraint firstItem="jL3-FD-wKF" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="57" id="tyI-5R-0di"/>
                     <constraint firstItem="ovO-Bp-yLs" firstAttribute="leading" secondItem="YIQ-b2-eUp" secondAttribute="trailing" constant="8" symbolic="YES" id="vVj-b9-Seh"/>

@@ -66,8 +66,6 @@ NSComboBoxDataSource {
       super.viewDidLoad()
     }
     self.loaded = true
-    
-
     self.view.window?.title = self.view.window!.title.locale
     let settingVC = AppSD.settingsWC?.contentViewController as? SettingsViewController
     settingVC?.themeUserCBox.isEnabled = false
@@ -760,7 +758,6 @@ NSComboBoxDataSource {
     if let disk = sender?.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
         self.installButton.isEnabled = false
-        self.view.window?.level = .floating
         DispatchQueue.global(priority: .background).async(execute: { () -> Void in
           let cmd = "diskutil mount \(disk)"
           let msg = String(format: "Clover wants to mount %@", disk)
@@ -777,6 +774,11 @@ NSComboBoxDataSource {
           }
           
           task.terminationHandler = { t in
+            DispatchQueue.main.async {
+              self.view.window?.level = .floating
+              self.view.window?.makeKeyAndOrderFront(nil)
+              self.view.window?.level = .normal
+            }
             if t.terminationStatus == 0 {
               if isMountPoint(path: disk) {
                 DispatchQueue.main.async {
@@ -787,17 +789,11 @@ NSComboBoxDataSource {
               }
               DispatchQueue.main.async {
                 self.installButton.isEnabled = true
-                self.view.window?.makeKeyAndOrderFront(nil)
-                self.view.window?.level = .floating
-                self.view.window?.level = .normal
               }
             } else {
               DispatchQueue.main.async {
                 NSSound.beep()
                 self.installButton.isEnabled = true
-                self.view.window?.makeKeyAndOrderFront(nil)
-                self.view.window?.level = .floating
-                self.view.window?.level = .normal
                 self.showInstalledThemes(self.installedThemesCheckBox)
               }
             }
@@ -866,6 +862,7 @@ final class ThemeManagerWC: NSWindowController, NSWindowDelegate {
     self.window = nil
     self.close()
     AppSD.themeManagerWC = nil // remove a strong reference
+    AppSD.setActivationPolicy()
     return true
   }
 }

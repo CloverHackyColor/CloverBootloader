@@ -11,6 +11,7 @@ import Foundation
 
 final class Installer: NSObject {
   let ktempLogPath = "/tmp/cltmplog"
+  let kDiskUtilListPath = "/tmp/diskutil.List"
   private var realTime : Bool = true
   private var gTargetVolume : String? = nil
   
@@ -33,6 +34,7 @@ final class Installer: NSObject {
     }
     t.arguments = ["-c", "rm -rf /tmp/Clover* && rm -f /tmp/boot0* && rm -f /tmp/boot1*"]
     t.launch()
+    t.waitUntilExit()
   }
   
   private func saveLog() {
@@ -185,7 +187,6 @@ final class Installer: NSObject {
   
   // MARK: Install
   func install() {
-    
     let df = DateFormatter()
     df.locale = Locale(identifier: "en_US")
     df.dateFormat = "yyyy-MM-dd hh:mm:ss"
@@ -219,7 +220,7 @@ final class Installer: NSObject {
     
     let alt : Bool            = (CloverappDict["alt"] as? NSNumber)?.boolValue ?? false
 
-    log("\(version) (v\(daemonVersion)), \(now)")
+    log("\(version) (installer library v\(daemonVersion)), \(now)")
     log("macOS \(ProcessInfo().operatingSystemVersionString)")
     log("SELF = \(CommandLine.arguments[0])")
     if geteuid() != 0 {
@@ -318,14 +319,25 @@ final class Installer: NSObject {
     }
     
     if (boot2 != nil) {
+      log("Installation type: BIOS")
       log("boot2: \(boot2!)")
       preferences.setValue(boot2!, forKey: "boot2")
       boot2Path = CloverV2.addPath("Bootloaders/x64").addPath(boot2!)
       if !fm.fileExists(atPath: boot2Path!) {
         exit("Error: cannot found \"\(boot2!)\".")
       }
+    } else {
+      log("Installation type: UEFI")
     }
     
+    if let dlist = try? String(contentsOfFile: kDiskUtilListPath) {
+      log("\n\n\(dlist)\n")
+    }
+    
+    if fm.fileExists(atPath: kDiskUtilListPath) {
+      try? fm.removeItem(atPath: kDiskUtilListPath)
+    }
+   
     // MARK: Create Directories
     createDirectory(at: targetVol.addPath("EFI/CLOVER"), attr: attributes, exitOnError: true)
     createDirectory(at: targetVol.addPath("EFI/BOOT"), attr: attributes, exitOnError: true)
@@ -452,7 +464,7 @@ final class Installer: NSObject {
       } catch { }
       
       for d in docs {
-        if d.fileExtension == "efi" {
+        if !d.hasPrefix(".") {
           var a : [FileAttributeKey: Any]? = nil
           do {
             a = try fm.attributesOfItem(atPath: cv2docs.addPath(d))
@@ -605,8 +617,6 @@ final class Installer: NSObject {
                                                         let output = String(decoding: data, as: UTF8.self)
                                                         self.log(output)
                                                         fh.waitForDataInBackgroundAndNotify()
-                                                      } else {
-                                                        NotificationCenter.default.removeObserver(op1 as Any)
                                                       }
         }
         
@@ -618,7 +628,7 @@ final class Installer: NSObject {
                                                       if task.terminationStatus != 0 {
                                                         self.exit("Error: failed installing boot sectors.")
                                                       }
-                                                      
+                                                      NotificationCenter.default.removeObserver(op1 as Any)
         }
         
         task.launch()
@@ -654,9 +664,11 @@ final class Installer: NSObject {
         }
         task.arguments = [ "umount", "force", disk ]
         task.launch()
+        task.waitUntilExit()
       }
       cleanUp()
     }
+ 
     Darwin.exit(EXIT_SUCCESS)
     // ------------- end
   }

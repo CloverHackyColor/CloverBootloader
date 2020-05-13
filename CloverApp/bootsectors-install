@@ -40,7 +40,7 @@ fi
 }
 
 echo
-echo "Installing boot sectors (version of Wed 30 Dec 2019, 20:01)"
+echo "Installing boot sectors (version of Wed 13 May 2020, 15:49)"
 echo
 echo "disk:       ${disk}"
 echo "bootdev:    ${bootdev}"
@@ -94,8 +94,6 @@ if [[ "${rootdisk}" == "${disk}" ]]; then
   keepmounted=1
 fi
 
-echo
-LC_ALL=C /usr/sbin/diskutil list
 echo
 
 # hfs can cause a panic writing boot sectors if journaled

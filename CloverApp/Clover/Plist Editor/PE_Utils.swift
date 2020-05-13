@@ -132,6 +132,7 @@ func loadPlist(at path: String) {
     dc.openDocument(withContentsOf: URL(fileURLWithPath: path), display: true) {
       (document, documentWasAlreadyOpen, error) in
       if error != nil {
+        AppSD.setActivationPolicy()
         print(error!.localizedDescription)
         NSSound.beep()
       } else {
@@ -141,10 +142,6 @@ func loadPlist(at path: String) {
       }
     }
   } else {
-    // check if a document is opened some where
-    if NSDocumentController.shared.documents.count == 0 {
-      NSApp.setActivationPolicy(.accessory)
-    }
     // Use reccomended programs (hope) to avoid Text Edit
     var success = NSWorkspace.shared.openFile(path, withApplication: "PlistEdit Pro")
     if !success {
@@ -158,5 +155,6 @@ func loadPlist(at path: String) {
     if !success { // open the directory path
       success = NSWorkspace.shared.openFile(path.deletingLastPath)
     }
+    AppSD.setActivationPolicy()
   }
 }

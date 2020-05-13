@@ -56,10 +56,7 @@ final class Document: NSDocument {
   
   override func removeWindowController(_ windowController: NSWindowController) {
     super.removeWindowController(windowController)
-    let documents = NSDocumentController.shared.documents
-    if documents.count == 1 {
-      NSApp.setActivationPolicy(.accessory)
-    }
+    AppSD.setActivationPolicy()
   }
   
   override func makeWindowControllers() {

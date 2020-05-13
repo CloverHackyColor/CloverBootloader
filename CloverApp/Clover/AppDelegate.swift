@@ -37,6 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
   var daSession : DASession? = nil
   var daContext : UnsafeMutablePointer<Int> = UnsafeMutablePointer<Int>.allocate(capacity: 1)
   
+  //MARK: deinit
   deinit {
     if (self.daSession != nil) {
       DASessionUnscheduleFromRunLoop(self.daSession!,
@@ -47,6 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     self.daContext.deallocate()
   }
   
+  //MARK: Applicatin Delegate
   func applicationDidBecomeActive(_ notification: Notification) {
     // print("applicationDidBecomeActive")
   }
@@ -143,7 +145,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
     CFRunLoopRun()
   }
+  
+  //MARK: Disks obeservation call back
+  @objc func reFreshDisksList() {
+    (self.settingsWC?.contentViewController as? SettingsViewController)?.searchDisks()
+    (self.settingsWC?.contentViewController as? SettingsViewController)?.searchESPDisks()
+    (self.installerWC?.contentViewController as? InstallerViewController)?.populateTargets()
+    (self.installerOutWC?.contentViewController as? InstallerOutViewController)?.populateTargets()
+  }
 
+  //MARK: Documents
   func applicationShouldOpenUntitledFile(_ sender: NSApplication) -> Bool {
     if !self.havefinishLaunching {
       if let files : NSArray = UDs.value(forKey: "Docs") as? NSArray {
@@ -155,6 +166,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     return false
   }
   
+  //MARK: Activation Policy
+  func setActivationPolicy() {
+    let documents = NSDocumentController.shared.documents
+    var showDock : Bool = documents.count > 1
+
+    if !showDock {
+      showDock = AppSD.installerWC != nil || AppSD.installerOutWC != nil || AppSD.themeManagerWC != nil
+    }
+   
+    NSApp.setActivationPolicy(showDock ? .regular : .accessory)
+    if showDock {
+      NSApp.activate(ignoringOtherApps: true)
+    }
+  }
+  
+  //MARK: Popover
   @objc func showPopover(_ sender: Any?) {
     if (self.popover == nil) {
       self.popover = NSPopover()
@@ -178,7 +205,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
           self.popover?.show(relativeTo: v.bounds, of: v, preferredEdge: NSRectEdge.maxY)
         }
       }
-      //NSApp.activate(ignoringOtherApps: true)
     }
   }
   
@@ -186,14 +212,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     return true
   }
   
-  @objc func reFreshDisksList() {
-    (self.settingsWC?.contentViewController as? SettingsViewController)?.searchDisks()
-    (self.settingsWC?.contentViewController as? SettingsViewController)?.searchESPDisks()
-    (self.installerWC?.contentViewController as? InstallerViewController)?.populateTargets()
-    (self.installerOutWC?.contentViewController as? InstallerOutViewController)?.populateTargets()
-  }
-  
-  
+  //MARK: App termination
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
     return self.isInstalling ? .terminateLater : .terminateNow
   }

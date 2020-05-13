@@ -634,11 +634,8 @@ final class SettingsViewController:
         AppSD.themeManagerWC = ThemeManagerWC.loadFromNib()
       }
       AppSD.themeManagerWC?.showWindow(self)
-
-      AppSD.themeManagerWC?.window?.level = .floating
       AppSD.themeManagerWC?.window?.makeKeyAndOrderFront(nil)
-      NSApp.activate(ignoringOtherApps: true)
-      AppSD.themeManagerWC?.window?.level = .normal
+      AppSD.setActivationPolicy()
     }
   }
   
@@ -757,17 +754,14 @@ final class SettingsViewController:
       
       // make the app regular
       NSApp.setActivationPolicy(.regular)
-      
+      NSApp.activate(ignoringOtherApps: true)
       op.begin { (result) in
         if result == .OK {
           if let path = op.url?.path {
             loadPlist(at: path) // this will make the app regular again in 10.11+
           }
         } else {
-          // check if a document is opened some where
-          if NSDocumentController.shared.documents.count == 0 {
-            NSApp.setActivationPolicy(.accessory)
-          }
+          AppSD.setActivationPolicy()
         }
       }
     }
@@ -855,20 +849,16 @@ final class SettingsViewController:
         }
         
         AppSD.installerWC?.showWindow(self)
-        AppSD.installerWC?.window?.level = .floating
         AppSD.installerWC?.window?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-        AppSD.installerWC?.window?.level = .normal
+        AppSD.setActivationPolicy()
       } else {
         if (AppSD.installerOutWC == nil) {
           AppSD.installerOutWC = InstallerOutWindowController.loadFromNib()
         }
         
         AppSD.installerOutWC?.showWindow(self)
-        AppSD.installerOutWC?.window?.level = .floating
         AppSD.installerOutWC?.window?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-        AppSD.installerOutWC?.window?.level = .normal
+        AppSD.setActivationPolicy()
       }
     }
   }
