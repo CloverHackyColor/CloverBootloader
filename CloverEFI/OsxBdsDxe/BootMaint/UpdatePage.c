@@ -834,11 +834,11 @@ UpdateConModePage (
     //
     // Build mode string Column x Row
     //
-    UnicodeValueToString (ModeString, 0, Col, 0);
+    UnicodeValueToStringS(ModeString, 50, 0, Col, 0);
     PStr = &ModeString[0];
     StrnCatS (PStr, 50, L" x ", StrLen(L" x ") + 1);
     PStr = PStr + StrLen (PStr);
-    UnicodeValueToString (PStr , 0, Row, 0);
+    UnicodeValueToStringS(PStr, 50, 0, Row, 0);
 
     ModeToken[Index] = HiiSetString (CallbackData->BmmHiiHandle, 0, ModeString, NULL);
 

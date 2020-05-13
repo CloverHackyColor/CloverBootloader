@@ -1563,9 +1563,10 @@ VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
         if (devprop_list[i].all_ports) {
           for (pnum = 1; pnum < card->ports; pnum++) {
             if (devprop_list[i].get_value(val, pnum, Sier)) {
-              char* newname = (char*)AllocatePool(AsciiStrLen(devprop_list[i].name)+1);
-              AsciiStrCpy(newname, devprop_list[i].name);
-              newname[1] = (CHAR8)(0x30 + pnum); // convert to ascii
+              INTN size = AsciiStrLen(devprop_list[i].name) + 1;
+              char* newname = (char*)AllocatePool(size);
+              AsciiStrCpyS(newname, size, devprop_list[i].name);
+              newname[1] = (CHAR8)(0x30 + pnum); // convert to ascii for number 0..9
               devprop_add_value(card->device, newname, val->data, val->size);
               free_val(val);
               FreePool((VOID*)newname);

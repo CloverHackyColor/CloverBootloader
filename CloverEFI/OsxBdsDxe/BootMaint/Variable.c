@@ -1344,14 +1344,17 @@ Var_UpdateConMode (
   EFI_STATUS        Status;
   UINTN             Mode;
   CONSOLE_OUT_MODE  ModeInfo;
-
+  
   Mode = CallbackData->BmmFakeNvData.ConsoleOutMode;
-
+  
   Status = gST->ConOut->QueryMode (gST->ConOut, Mode, &(ModeInfo.Column), &(ModeInfo.Row));
   if (!EFI_ERROR(Status)) {
-    PcdSet32 (PcdSetupConOutColumn, (UINT32) ModeInfo.Column);
-    PcdSet32 (PcdSetupConOutRow, (UINT32) ModeInfo.Row);
+    Status = PcdSet32S(PcdSetupConOutColumn, (UINT32)ModeInfo.Column);
+    if (!EFI_ERROR(Status)) {
+      Status = PcdSet32S(PcdSetupConOutRow, (UINT32)ModeInfo.Row);
+    }
   }
+  
+  return Status;
 
-  return EFI_SUCCESS;
 }

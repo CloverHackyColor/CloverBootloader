@@ -158,7 +158,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     p -= 1;
   }
   dirNameLen = p - FileName;
-  StrnCpy(DirName, FileName, dirNameLen);
+  StrnCpyS(DirName, 256, FileName, dirNameLen);
   DirName[dirNameLen] = L'\0';
   Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, EFI_FILE_DIRECTORY);

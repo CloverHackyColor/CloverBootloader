@@ -93,9 +93,9 @@ PrintDxeAsciiValueToString (
   // implementation of the AsciiValueToString service in EFI_PRINT2_PROTOCOL
   // to indicate that the service is no longer supported.
   //
-  DEBUG ((DEBUG_ERROR, "PrintDxe: The AsciiValueToString service in EFI_PRINT2_PROTOCOL is no longer supported for security reason.\n"));
-  DEBUG ((DEBUG_ERROR, "PrintDxe: Please consider using the AsciiValueToStringS service in EFI_PRINT2S_PROTOCOL.\n"));
-  ASSERT (FALSE);
+//  DEBUG ((DEBUG_ERROR, "PrintDxe: The AsciiValueToString service in EFI_PRINT2_PROTOCOL is no longer supported for security reason.\n"));
+//  DEBUG ((DEBUG_ERROR, "PrintDxe: Please consider using the AsciiValueToStringS service in EFI_PRINT2S_PROTOCOL.\n"));
+//  ASSERT (FALSE);
   return 0;
 #else
   return AsciiValueToString (Buffer, Flags, Value, Width);

@@ -236,7 +236,7 @@ BdsMemoryTest (
   ZeroMem (&Key, sizeof (EFI_INPUT_KEY));
 
   StrTotalMemorySize = 128;
-  Pos = AllocatePool (StrTotalMemorySize);
+  Pos = AllocatePool(StrTotalMemorySize);
 
   if (Pos == NULL) {
     return ReturnStatus;
@@ -319,7 +319,7 @@ BdsMemoryTest (
                             TempData
                             );
     if (TestPercent != PreviousValue) {
-      UnicodeValueToString (StrPercent, 0, TestPercent, 0);
+      UnicodeValueToStringS(StrPercent, 80, 0, TestPercent, 0);
       TmpStr = GetStringById (STRING_TOKEN (STR_MEMORY_TEST_PERCENT));
       if (TmpStr != NULL) {
         //
@@ -382,15 +382,15 @@ BdsMemoryTest (
 
 Done:
   if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
-  UnicodeValueToString (StrTotalMemory, COMMA_TYPE, TotalMemorySize, 0);
+  UnicodeValueToStringS(StrTotalMemory, StrTotalMemorySize, COMMA_TYPE, TotalMemorySize, 0);
   if (StrTotalMemory[0] == L',') {
     StrTotalMemory++;
-      StrTotalMemorySize -= sizeof (CHAR16);
+      StrTotalMemorySize -= sizeof(CHAR16);
   }
 
-  TmpStr = GetStringById (STRING_TOKEN (STR_MEM_TEST_COMPLETED));
+  TmpStr = GetStringById(STRING_TOKEN (STR_MEM_TEST_COMPLETED));
   if (TmpStr != NULL) {
-      StrnCatS (StrTotalMemory, 80, TmpStr, StrTotalMemorySize / sizeof (CHAR16) - StrLen (StrTotalMemory) - 1);
+      StrnCatS(StrTotalMemory, 80, TmpStr, StrTotalMemorySize / sizeof (CHAR16) - StrLen (StrTotalMemory) - 1);
     FreePool(TmpStr);
   }
 
@@ -417,7 +417,7 @@ Done:
   //
   IsFirstBoot = PcdGetBool(PcdBootState);
   if (IsFirstBoot) {
-    PcdSetBool(PcdBootState, FALSE);
+    PcdSetBoolS(PcdBootState, FALSE);
   }
 
   return ReturnStatus;

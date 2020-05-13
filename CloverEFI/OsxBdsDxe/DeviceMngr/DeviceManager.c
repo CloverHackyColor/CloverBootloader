@@ -401,7 +401,7 @@ GetMacAddressString(
   //
   HwAddress = &MacAddressNode->MacAddress.Addr[0];
   for (Index = 0; Index < HwAddressSize; Index++) {
-    String += UnicodeValueToString (String, PREFIX_ZERO | RADIX_HEX, *(HwAddress++), 2);
+    String += UnicodeValueToStringS(String, BufferLen, PREFIX_ZERO | RADIX_HEX, *(HwAddress++), 2);
     if (Index < HwAddressSize - 1) {
       *String++ = L':';
     }
@@ -411,17 +411,17 @@ GetMacAddressString(
   // If VLAN is configured, it will need extra 5 characters like "\0005".
   // Plus one unicode character for the null-terminator.
   //
-  Node = (EFI_DEVICE_PATH_PROTOCOL  *)MacAddressNode;
+  Node = (EFI_DEVICE_PATH_PROTOCOL*)MacAddressNode;
   while (!IsDevicePathEnd (Node)) {
     if (Node->Type == MESSAGING_DEVICE_PATH && Node->SubType == MSG_VLAN_DP) {
-      VlanId = ((VLAN_DEVICE_PATH *) Node)->VlanId;
+      VlanId = ((VLAN_DEVICE_PATH*) Node)->VlanId;
     }
     Node = NextDevicePathNode (Node);
   }
 
   if (VlanId != 0) {
     *String++ = L'\\';
-    String += UnicodeValueToString (String, PREFIX_ZERO | RADIX_HEX, VlanId, 4);
+    String += UnicodeValueToStringS(String, BufferLen, PREFIX_ZERO | RADIX_HEX, VlanId, 4);
   }
 
   //

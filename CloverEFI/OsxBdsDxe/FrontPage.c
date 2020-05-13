@@ -406,13 +406,13 @@ InitializeFrontPage (
   //
   HiiHandle = gFrontPagePrivate.HiiHandle;
 
-  CurrentLang = GetEfiGlobalVariable (L"PlatformLang");
+  GetEfiGlobalVariable2 (L"PlatformLang", (VOID**)&CurrentLang, NULL);
 
   //
   // Get Support language list from variable.
   //
   if (mLanguageString == NULL){
-    mLanguageString = GetEfiGlobalVariable (L"PlatformLangCodes");
+    GetEfiGlobalVariable2 (L"PlatformLangCodes", (VOID**)&mLanguageString, NULL);
     if (mLanguageString == NULL) {
       mLanguageString = AllocateCopyPool(
                                  AsciiStrSize ((CHAR8 *) PcdGetPtr (PcdUefiVariableDefaultPlatformLangCodes)),
@@ -428,8 +428,11 @@ InitializeFrontPage (
   //
     LangCode      = mLanguageString;
     Lang          = AllocatePool (AsciiStrSize (mLanguageString));
-    ASSERT (Lang != NULL);
-  OptionCount = 0;
+//    ASSERT (Lang != NULL);
+    if (!Lang) {
+      return EFI_OUT_OF_RESOURCES;
+    }
+    OptionCount = 0;
     while (*LangCode != 0) {
       GetNextLanguage (&LangCode, Lang);
       OptionCount ++;
@@ -439,10 +442,15 @@ InitializeFrontPage (
     // Allocate extra 1 as the end tag.
     //
     gFrontPagePrivate.LanguageToken = AllocateZeroPool((OptionCount + 1) * sizeof (EFI_STRING_ID));
-    ASSERT (gFrontPagePrivate.LanguageToken != NULL);
+    if (gFrontPagePrivate.LanguageToken == NULL) {
+      return EFI_OUT_OF_RESOURCES;
+    }
 
     Status = gBS->LocateProtocol (&gEfiHiiStringProtocolGuid, NULL, (VOID **) &HiiString);
-    ASSERT_EFI_ERROR(Status);
+//    ASSERT_EFI_ERROR(Status);
+    if (EFI_ERROR(Status)) {
+      return EFI_NOT_FOUND;
+    }
 
     LangCode     = mLanguageString;
   OptionCount = 0;
@@ -453,18 +461,29 @@ InitializeFrontPage (
       Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
       if (Status == EFI_BUFFER_TOO_SMALL) {
         StringBuffer = AllocateZeroPool(StringSize);
-        ASSERT (StringBuffer != NULL);
+ //       ASSERT (StringBuffer != NULL);
+        if (!StringBuffer) {
+          return EFI_OUT_OF_RESOURCES;
+        }
         Status = HiiString->GetString (HiiString, Lang, HiiHandle, PRINTABLE_LANGUAGE_NAME_STRING_ID, StringBuffer, &StringSize, NULL);
-        ASSERT_EFI_ERROR(Status);
+  //      ASSERT_EFI_ERROR(Status);
+        if (EFI_ERROR(Status)) {
+          return EFI_NOT_FOUND;
+        }
+
       }
 
       if (EFI_ERROR(Status)) {
         StringBuffer = AllocatePool (AsciiStrSize (Lang) * sizeof (CHAR16));
-        ASSERT (StringBuffer != NULL);
+        if (!StringBuffer) {
+          return EFI_OUT_OF_RESOURCES;
+        }
         AsciiStrToUnicodeStrS (Lang, StringBuffer, AsciiStrSize(Lang));
       }
 
-      ASSERT (StringBuffer != NULL);
+    if (!StringBuffer) {
+      return EFI_OUT_OF_RESOURCES;
+    }
       gFrontPagePrivate.LanguageToken[OptionCount] = HiiSetString (HiiHandle, 0, StringBuffer, NULL);
       FreePool(StringBuffer);
 
@@ -472,13 +491,17 @@ InitializeFrontPage (
     }
   }
 
-  ASSERT (gFrontPagePrivate.LanguageToken != NULL);
+//  ASSERT (gFrontPagePrivate.LanguageToken != NULL); //already tested
   LangCode     = mLanguageString;
   OptionCount  = 0;
   if (Lang == NULL) {
     Lang = AllocatePool (AsciiStrSize (mLanguageString));
-    ASSERT (Lang != NULL);
+//    ASSERT (Lang != NULL);
+    if (!Lang) {
+      return EFI_OUT_OF_RESOURCES;
     }
+
+  }
   while (*LangCode != 0) {
     GetNextLanguage (&LangCode, Lang);
 
@@ -636,14 +659,14 @@ ConvertProcessorToString (
     FreqMhz = 0;
   }
 
-  StringBuffer = AllocateZeroPool(0x20);
+  StringBuffer = AllocateZeroPool(32);
 //  ASSERT (StringBuffer != NULL);
   if (!StringBuffer) {
     StringBuffer = L"   ";
   }
-  Index = UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, FreqMhz / 1000, 3);
+  Index = UnicodeValueToStringS(StringBuffer, 32, LEFT_JUSTIFY, FreqMhz / 1000, 3);
   StrCatS (StringBuffer, 32, L".");
-  UnicodeValueToString (StringBuffer + Index + 1, PREFIX_ZERO, (FreqMhz % 1000) / 10, 2);
+  UnicodeValueToStringS(StringBuffer + Index + 1, 31 - Index, PREFIX_ZERO, (FreqMhz % 1000) / 10, 2);
   StrCatS (StringBuffer, 32, L" GHz");
   *String = (CHAR16 *) StringBuffer;
   return ;
@@ -665,16 +688,16 @@ ConvertMemorySizeToString (
 {
   CHAR16  *StringBuffer;
 
-  StringBuffer = AllocateZeroPool(0x20);
+  StringBuffer = AllocateZeroPool(32);
 //  ASSERT (StringBuffer != NULL);
   if (!StringBuffer) {
     StringBuffer = L"        ";
   }
 
-  UnicodeValueToString (StringBuffer, LEFT_JUSTIFY, MemorySize, 6);
-  StrCatS (StringBuffer, 32, L" MB RAM");
+  UnicodeValueToStringS(StringBuffer, 32, LEFT_JUSTIFY, MemorySize, 6);
+  StrCatS(StringBuffer, 32, L" MB RAM");
 
-  *String = (CHAR16 *) StringBuffer;
+  *String = (CHAR16 *)StringBuffer;
 
   return ;
 }

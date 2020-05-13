@@ -1845,14 +1845,14 @@ VOID SystemVersionInit(VOID)
     CHAR16 *TmpServerPlistPath = (__typeof__(TmpServerPlistPath))AllocateZeroPool(86*sizeof(CHAR16));
     CHAR16 *TmpInsPlistPath = (__typeof__(TmpInsPlistPath))AllocateZeroPool(79*sizeof(CHAR16));
     CHAR16 *TmpRecPlistPath = (__typeof__(TmpRecPlistPath))AllocateZeroPool(58*sizeof(CHAR16));
-    StrnCpy(TmpSysPlistPath, APFSSysPlistPath, 85);
-    StrnCpy(TmpServerPlistPath, APFSServerPlistPath, 85);
-    StrnCpy(TmpInsPlistPath, APFSInstallPlistPath, 78);
-    StrnCpy(TmpRecPlistPath, APFSRecPlistPath, 57);
-    StrnCpy(TmpSysPlistPath+1, CurrentUUID.wc_str(), 36);
-    StrnCpy(TmpServerPlistPath+1, CurrentUUID.wc_str(), 36);
-    StrnCpy(TmpInsPlistPath+1, CurrentUUID.wc_str(), 36);
-    StrnCpy(TmpRecPlistPath+1, CurrentUUID.wc_str(), 36);
+    StrnCpyS(TmpSysPlistPath, 86, APFSSysPlistPath, 85);
+    StrnCpyS(TmpServerPlistPath, 86, APFSServerPlistPath, 85);
+    StrnCpyS(TmpInsPlistPath, 79, APFSInstallPlistPath, 78);
+    StrnCpyS(TmpRecPlistPath, 58, APFSRecPlistPath, 57);
+    StrnCpyS(TmpSysPlistPath+1, 57, CurrentUUID.wc_str(), 36);
+    StrnCpyS(TmpServerPlistPath+1, 85, CurrentUUID.wc_str(), 36);
+    StrnCpyS(TmpInsPlistPath+1, 78, CurrentUUID.wc_str(), 36);
+    StrnCpyS(TmpRecPlistPath+1, 57, CurrentUUID.wc_str(), 36);
     //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
     SystemPlists[SysIter] = TmpSysPlistPath;
     SystemPlists[SysIter+1] = TmpServerPlistPath;

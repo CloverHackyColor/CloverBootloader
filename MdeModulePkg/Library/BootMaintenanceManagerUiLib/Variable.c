@@ -708,6 +708,8 @@ Var_UpdateDriverOrder (
   @return Other value if the Text Mode of Console is not updated.
 
 **/
+
+
 EFI_STATUS
 Var_UpdateConMode (
   IN BMM_CALLBACK_DATA            *CallbackData
@@ -721,9 +723,9 @@ Var_UpdateConMode (
 
   Status = gST->ConOut->QueryMode (gST->ConOut, Mode, &(ModeInfo.Column), &(ModeInfo.Row));
   if (!EFI_ERROR(Status)) {
-    Status = PcdSet32S (PcdSetupConOutColumn, (UINT32) ModeInfo.Column);
+    Status = PcdSet32S(PcdSetupConOutColumn, ((UINT32)ModeInfo.Column) );
     if (!EFI_ERROR(Status)) {
-      Status = PcdSet32S (PcdSetupConOutRow, (UINT32) ModeInfo.Row);
+      Status = PcdSet32S(PcdSetupConOutRow, ((UINT32)ModeInfo.Row) );
     }
   }
 
