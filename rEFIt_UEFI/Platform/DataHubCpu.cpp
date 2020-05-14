@@ -139,6 +139,8 @@ LogDataHub(IN  EFI_GUID *TypeGuid,
   return Status;
 }
 
+
+
 // SetVariablesForOSX
 /** Installs our runtime services overrides. */
 /** Original runtime services. */

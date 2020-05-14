@@ -19,7 +19,9 @@ public:
   XImage Image;
   XImage ImageNight;
   bool Native;
-
+  void *ImageSVG;  //NSVGimage*
+  void *ImageSVGnight;
+  
   Icon(INTN Id, bool Embedded = false);
   ~Icon();
 
@@ -151,7 +153,7 @@ public:
   EFI_STATUS GetThemeTagSettings(void* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
-  EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image);
+  EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image, void **SVGIcon);
   void* LoadTheme(const CHAR16 *TestTheme); //return TagPtr why?
   EFI_STATUS LoadSvgFrame(INTN i, OUT XImage* XFrame); // for animation
 

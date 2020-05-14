@@ -101,6 +101,8 @@ Icon::Icon(INTN Index, bool TakeEmbedded) : Image(), ImageNight()
   Id = Index;
   Name.setEmpty();
   Native = false;
+  ImageSVG = nullptr;
+  ImageSVGnight = nullptr;
   if (Index >= BUILTIN_ICON_FUNC_ABOUT && Index < IconsNamesSize) { //full table
     Name.takeValueFrom(IconsNames[Index]);
   }

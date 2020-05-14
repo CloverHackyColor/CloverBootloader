@@ -87,7 +87,7 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
 {
   int i = Low, j = High;
   NSVGedge Temp;
-  UINTN Size = sizeof(NSVGedge);
+//  UINTN Size = sizeof(NSVGedge);
   int Imed;
   Imed = (Low + High) / 2; // Central element, just pointer
   float med = Array[Imed].y0;
@@ -98,9 +98,9 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
     while (Array[j].y0 > med) j--;
     // Change
     if (i <= j) {
-      memcpy(&Temp, &Array[i], Size);
-      memcpy(&Array[i++], &Array[j], Size);
-      memcpy(&Array[j--], &Temp, Size);
+      memcpy(&Temp, &Array[i], sizeof(NSVGedge));
+      memcpy(&Array[i++], &Array[j], sizeof(NSVGedge));
+      memcpy(&Array[j--], &Temp, sizeof(NSVGedge));
     }
   }
   //  FreePool(Temp);

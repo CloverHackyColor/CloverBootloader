@@ -52,6 +52,8 @@ extern "C" {
 #define NANOSVG_ALL_COLOR_KEYWORDS 1
 #define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
 
+#define kMaxIDLength 64
+#define kMaxTextLength 256
 
 enum NSVGpaintType {
   NSVG_PAINT_NONE = 0,
@@ -91,7 +93,7 @@ enum NSVGflags {
 };
 */
 typedef struct NSVGgradientLink {
-  char id[64];
+  char id[kMaxIDLength];
   float xform[6];
 } NSVGgradientLink;
 
@@ -139,8 +141,6 @@ typedef struct NSVGclip
   char pad[7];
 } NSVGclip;
 
-#define kMaxIDLength 64
-#define kMaxTextLength 256
 
 typedef struct NSVGshape NSVGshape;
 
@@ -194,7 +194,7 @@ typedef struct NSVGshape
 
 typedef struct NSVGclipPath
 {
-  char id[64];        // Unique id of this clip path (from SVG).
+  char id[kMaxIDLength];        // Unique id of this clip path (from SVG).
   NSVGclipPathIndex index;  // Unique internal index of this clip path.
   NSVGshape* shapes;      // Linked list of shapes in this clip path.
   NSVGgroup* group;      // Pointer to parent group or NULL
