@@ -127,27 +127,27 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     return 0;
   }
   
-  size_t SegVAddr;
+  INT32 lSegVAddr;
   switch (vArray[i].Seg) {
   case ID_SEG_DATA:
-    SegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataSegment, (UINT32)strlen(kDataSegment));
+    lSegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataSegment, (UINT32)strlen(kDataSegment));
     break;
   case ID_SEG_DATA_CONST:
-    SegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataConstSegment, (UINT32)strlen(kDataConstSegment));
+    lSegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataConstSegment, (UINT32)strlen(kDataConstSegment));
     break;
   case ID_SEG_KLD:
   case ID_SEG_KLD2:
-    SegVAddr = FindBin(driver, 0x2000, (const UINT8 *)kKldSegment, (UINT32)strlen(kKldSegment));
+    lSegVAddr = FindBin(driver, 0x2000, (const UINT8 *)kKldSegment, (UINT32)strlen(kKldSegment));
     break;
   case ID_SEG_TEXT:
   default:
-    SegVAddr = FindBin(driver, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+    lSegVAddr = FindBin(driver, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
     break;
   }
-  if (SegVAddr == 0) {
-    SegVAddr = 0x38;
+  if (lSegVAddr == 0) {
+    lSegVAddr = 0x38;
   }
-  SEGMENT *TextSeg = (SEGMENT*)&driver[SegVAddr];
+  SEGMENT *TextSeg = (SEGMENT*)&driver[lSegVAddr];
   UINT64 Absolut = TextSeg->SegAddress;
   UINT64 FileOff = TextSeg->fileoff;
   UINTN procAddr = vArray[i].ProcAddr - Absolut + FileOff;
@@ -880,7 +880,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
   // Credits to donovan6000 and Sherlocks for providing the lapic kernel patch source used to build this function
 
   UINT8 *bytes = KernelData;
-  UINT32      patchLocation1 = 0, patchLocation2 = 0;
+  UINTN      patchLocation1 = 0, patchLocation2 = 0;
   UINT32      i, y;
 
   DBG_RT( "Looking for Lapic panic call (64-bit) Start\n");
@@ -909,21 +909,21 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
         KernelData[i+45] == 0x65 && KernelData[i+46] == 0x8B && KernelData[i+47] == 0x04 && KernelData[i+48] == 0x25 &&
         KernelData[i+49] == 0x3C && KernelData[i+50] == 0x00 && KernelData[i+51] == 0x00 && KernelData[i+52] == 0x00) {
       patchLocation1 = i+40;
-      DBG_RT( "Found Lapic panic (10.6) at 0x%08x\n", patchLocation1);
+      DBG_RT( "Found Lapic panic (10.6) at 0x%08llx\n", patchLocation1);
       break;
     } else if (KernelData[i+0]  == 0x65 && KernelData[i+1]  == 0x8B && KernelData[i+2]  == 0x04 && KernelData[i+3]  == 0x25 &&
                KernelData[i+4]  == 0x14 && KernelData[i+5]  == 0x00 && KernelData[i+6]  == 0x00 && KernelData[i+7]  == 0x00 &&
                KernelData[i+35] == 0x65 && KernelData[i+36] == 0x8B && KernelData[i+37] == 0x04 && KernelData[i+38] == 0x25 &&
                KernelData[i+39] == 0x14 && KernelData[i+40] == 0x00 && KernelData[i+41] == 0x00 && KernelData[i+42] == 0x00) {
       patchLocation1 = i+30;
-      DBG_RT( "Found Lapic panic (10.7 - 10.8) at 0x%08x\n", patchLocation1);
+      DBG_RT( "Found Lapic panic (10.7 - 10.8) at 0x%08llx\n", patchLocation1);
       break;
     } else if (KernelData[i+0] == 0x65 && KernelData[i+1] == 0x8B && KernelData[i+2] == 0x04 && KernelData[i+3] == 0x25 &&
                KernelData[i+4] == 0x1C && KernelData[i+5] == 0x00 && KernelData[i+6] == 0x00 && KernelData[i+7] == 0x00 &&
                KernelData[i+36] == 0x65 && KernelData[i+37] == 0x8B && KernelData[i+38] == 0x04 && KernelData[i+39] == 0x25 &&
                KernelData[i+40] == 0x1C && KernelData[i+41] == 0x00 && KernelData[i+42] == 0x00 && KernelData[i+43] == 0x00) {
       patchLocation1 = i+31;
-      DBG_RT( "Found Lapic panic (10.9) at 0x%08x\n", patchLocation1);
+      DBG_RT( "Found Lapic panic (10.9) at 0x%08llx\n", patchLocation1);
       break;
     // 00 29 C7 78 XX 31 DB 8D 47 FA 83
     } else if (KernelData[i+0] == 0x00 && KernelData[i+1] == 0x29 && KernelData[i+2] == 0xC7 && KernelData[i+3] == 0x78 &&
@@ -941,7 +941,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
             bytes[y+5] == 0x00 && bytes[y+6] == 0x00 && bytes[y+7] == 0x00 &&
             bytes[y+8] == 0x3B && bytes[y+9] == 0x05 && bytes[y+13] == 0x00) {
           patchLocation1 = y;
-          DBG_RT( "Found Lapic panic (10.10 - recent macOS) at 0x%08x\n", patchLocation1);
+          DBG_RT( "Found Lapic panic (10.10 - recent macOS) at 0x%08llx\n", patchLocation1);
           break;
         }
       }
@@ -990,7 +990,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
             if (bytes[y+0] == 0xE8 && bytes[y+3] == 0xFF && bytes[y+4] == 0xFF &&
                 bytes[y+5] == 0x83 && bytes[y+10] == 0x00 && bytes[y+11] == 0x00) {
               patchLocation2 = y;
-              DBG_RT( "Found Lapic panic master (10.10 - recent macOS) at 0x%08x\n", patchLocation2);
+              DBG_RT( "Found Lapic panic master (10.10 - recent macOS) at 0x%08llx\n", patchLocation2);
               break;
             }
           }
@@ -1129,7 +1129,7 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
   DBG("HaswellEXCPM() ===>\n");
   UINT8       *kern = KernelData;
   CONST CHAR8       *comment;
-  UINT32      i;
+ // UINT32      i;
   UINTN      patchLocation;
   UINT64     os_version = AsciiOSVersionToUint64(OSVersion);
 
@@ -1273,7 +1273,7 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
 
 
     if (patchLocation) {
-      for (i = 7; i < 12; i++) {
+      for (UINTN i = 7; i < 12; i++) {
         kern[patchLocation+i] = 0x90;
       }
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
@@ -1446,7 +1446,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
 BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
 {
   CONST CHAR8       *comment;
-  UINT32      i;
+//  UINT32      i;
   UINTN       patchLocation;
   UINT64      os_version = AsciiOSVersionToUint64(OSVersion);
 
@@ -1487,7 +1487,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
 
 
     if (patchLocation) {
-      for (i = 7; i < 12; i++) {
+      for (int i = 7; i < 12; i++) {
         KernelData[patchLocation+i] = 0x90;
       }
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
@@ -1552,7 +1552,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
 {
   UINT8       *kern = (UINT8*)KernelData;
   CONST CHAR8       *comment;
-  UINT32      i;
+ // UINT32      i;
   UINTN       patchLocation;
   UINT64      os_version = AsciiOSVersionToUint64(OSVersion);
   
@@ -1626,7 +1626,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
     } */
     
     if (patchLocation) {
-      for (i = 7; i < 12; i++) {
+      for (int i = 7; i < 12; i++) {
         kern[patchLocation+i] = 0x90;
       }
       DBG("Applied _xcpm_pkg_scope_msr patch\n");
