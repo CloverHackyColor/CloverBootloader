@@ -5,7 +5,7 @@
 
 # Linux users should be able to use this wrapper, although the following are needed:
 # (Ubuntu alike)
-# sudo apt-get install build-essential uuid-dev iasl git gcc-9 nasm python3-distutils
+# sudo apt-get install build-essential uuid-dev iasl git gcc-10 nasm python3-distutils
 
 # $1 argument override MYTOOLCHAIN variable, in case you want GCC53 for example
 
@@ -83,7 +83,7 @@ if [[ "$SYSNAME" == Darwin ]]; then
   if [[ $MYTOOLCHAIN == GCC* ]] && [[ ! -x "${GCC53_BIN}" ]]; then
     if [[ $MYTOOLCHAIN == GCC53 ]]; then
       cd "${CLOVERROOT}"
-      ./build_gcc9.sh
+      ./build_gcc10.sh
     else
       MYTOOLCHAIN=XCODE8
     fi
