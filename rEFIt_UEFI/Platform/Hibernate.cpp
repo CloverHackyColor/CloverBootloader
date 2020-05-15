@@ -433,7 +433,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
                 }
               }
               if (VolName) {
-				  snwprintf(VolName, VolNameSize, "%s", VolNameStart);
+                snwprintf(VolName, VolNameSize, "%s", VolNameStart);
                 ImageVolume = FindVolumeByName(VolName);
                 if (ImageVolume) {
                   ImageName = PoolPrint(L"%a", VolNameEnd);

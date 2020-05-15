@@ -542,12 +542,12 @@ CHAR8* getDDRSerial(UINT8* spd)
   CHAR8* asciiSerial; //[16];
   asciiSerial = (__typeof__(asciiSerial))AllocatePool(17);
   if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR4) { // DDR4
-    snprintf(asciiSerial, 17, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
+    snprintf(asciiSerial, 17, "%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX", SMST(325) /*& 0x7*/, SLST(325), SMST(326), SLST(326), SMST(327), SLST(327), SMST(328), SLST(328));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { // DDR3
-    snprintf(asciiSerial, 17, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
+    snprintf(asciiSerial, 17, "%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
   } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 ||
              spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {  // DDR2 or DDR
-    snprintf(asciiSerial, 17, "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
+    snprintf(asciiSerial, 17, "%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX%01hhX", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
   } else {
     AsciiStrCpyS(asciiSerial, 17, "0000000000000000");
   }
@@ -898,7 +898,7 @@ VOID ScanSPD()
         //SmBus controller has class = 0x0c0500
         if ((gPci.Hdr.ClassCode[2] == 0x0c) && (gPci.Hdr.ClassCode[1] == 5)
             && (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086 || gPci.Hdr.VendorId == 0x10DE)) {
-			DBG("SMBus device : %04hX %04hX class=%02hhX%02hhX%02hhX status=%s\n",
+          DBG("SMBus device : %04hX %04hX class=%02hhX%02hhX%02hhX status=%s\n",
                gPci.Hdr.VendorId,
                gPci.Hdr.DeviceId,
                gPci.Hdr.ClassCode[2],
