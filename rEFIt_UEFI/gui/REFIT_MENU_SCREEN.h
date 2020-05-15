@@ -74,7 +74,7 @@ public:
 //  XPointer mPointer;
   UINTN             ID;
   XStringW          Title;
-  XImage            TitleImage;
+  Icon              TitleImage;
   XStringWArray     InfoLines;
 
   XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
@@ -85,23 +85,13 @@ public:
   EG_RECT           OldTextBufferRect;
   XImage            OldTextBufferImage;
   BOOLEAN           isBootScreen;
-  //BOOLEAN           Once;
-  //same for xcinema
- // BOOLEAN           AnimeRun;
- // UINT64            LastDraw;
- // INTN              CurrentFrame;
- // INTN              Frames;  //there are FilmC properties
- // UINTN             FrameTime; //ms
- // EG_RECT           FilmPlace;
   FILM              *FilmC;
-  //XImage            FilmPlaceImage;
 
   ACTION          mAction;
   UINTN           mItemID;
   SCROLL_STATE    ScrollState;
   BOOLEAN         ScrollEnabled;
   INTN            TextStyle;
-//  MENU_STYLE_FUNC StyleFunc;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?

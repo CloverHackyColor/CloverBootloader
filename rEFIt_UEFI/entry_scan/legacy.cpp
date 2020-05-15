@@ -170,7 +170,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 //  SubScreen->Title = L"Boot Options for "_XSW + LoaderTitle + L" on "_XSW + VolDesc;
 	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle.wc_str(), VolDesc);
 
-  SubScreen->TitleImage = Entry->Image;
+  SubScreen->TitleImage.Image = Entry->Image;  //TODO - ImageNight
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->GetAnime();
   // default entry

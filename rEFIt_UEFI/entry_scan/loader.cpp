@@ -815,7 +815,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen = new REFIT_MENU_SCREEN;
   SubScreen->Title.SWPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
 
-  SubScreen->TitleImage = Entry->Image;
+  SubScreen->TitleImage.Image = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20; //wow
 //    DBG("get anime for os=%lld\n", SubScreen->ID);
   SubScreen->GetAnime();
@@ -1911,7 +1911,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
             SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath.wc_str(), Entry->VolName);
-            SubScreen->TitleImage = Entry->Image;
+            SubScreen->TitleImage.Image = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);

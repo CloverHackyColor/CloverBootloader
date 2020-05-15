@@ -22,12 +22,14 @@ public:
   void *ImageSVG;  //NSVGimage*
   void *ImageSVGnight;
   
+  Icon(): Id(0), Name(), Image(), ImageNight(), Native(false), ImageSVG(nullptr), ImageSVGnight(nullptr)
+  {};
   Icon(INTN Id, bool Embedded = false);
   ~Icon();
 
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
-  Icon(const Icon&) = delete;
-  Icon& operator=(const Icon&) = delete;
+//  Icon(const Icon&) = delete;
+  Icon& operator=(const Icon&); // = delete;
   void GetEmbedded();
 };
 
@@ -134,6 +136,7 @@ public:
   const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XImage& LoadOSIcon(const XString8& Full);
   bool CheckNative(INTN Id);
+  const Icon&   TakeIcon(INTN Id);
 
   //fonts
   void LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols);

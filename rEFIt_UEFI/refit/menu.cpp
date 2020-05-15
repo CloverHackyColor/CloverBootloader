@@ -1209,10 +1209,11 @@ VOID AboutRefit(VOID)
 {
   if (AboutMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      AboutMenu.TitleImage = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
-    } else {
-      AboutMenu.TitleImage.setEmpty();
+      AboutMenu.TitleImage = ThemeX.TakeIcon(BUILTIN_ICON_FUNC_ABOUT);
     }
+//    else {
+//      AboutMenu.TitleImage.setEmpty(); //done in the constructor
+//    }
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
     AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
     AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
@@ -1262,10 +1263,11 @@ VOID HelpRefit(VOID)
 {
   if (HelpMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
-    } else {
-      HelpMenu.TitleImage.setEmpty();
+      HelpMenu.TitleImage = ThemeX.TakeIcon(BUILTIN_ICON_FUNC_HELP);
     }
+    //else {
+    //  HelpMenu.TitleImage.setEmpty();
+    //}
     switch (gLanguage)
     {
       case russian:
@@ -1657,17 +1659,17 @@ VOID HelpRefit(VOID)
 
 REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *CTitle)
 {
-    if ( CTitle ) Entry->Title.takeValueFrom(CTitle);
+    if (CTitle) Entry->Title.takeValueFrom(CTitle);
     else Entry->Title.setEmpty();
 
-  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Image =  OptionMenu.TitleImage.Image;
   Entry->AtClick = AtClick;
   // create the submenu
 //  *SubScreen = (__typeof_am__(*SubScreen))AllocateZeroPool(sizeof(**SubScreen));
   *SubScreen = new REFIT_MENU_SCREEN();
 //  (*SubScreen)->Title = EfiStrDuplicate(Entry->Title);
   (*SubScreen)->Title = Entry->Title;
-  (*SubScreen)->TitleImage = Entry->Image;
+  (*SubScreen)->TitleImage.Image = Entry->Image;
   (*SubScreen)->ID = ID;
   (*SubScreen)->GetAnime();
   Entry->SubScreen = *SubScreen;
@@ -1678,7 +1680,6 @@ REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScree
 {
 	REFIT_MENU_ITEM_OPTIONS* Entry = new REFIT_MENU_ITEM_OPTIONS();
 	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
-//  (*Entry)->Tag = TAG_OPTIONS;
 }
 
 VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
@@ -1694,13 +1695,9 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
       gSettings.BooterConfig = 0x28;
     }
-
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
 	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.BooterConfig);
   }
-  /*else if (ChosenEntry->SubScreen->ID == SCREEN_DSM) {
-	  ChosenEntry->Title.SWPrintf("Drop OEM _DSM [0x%04hx]->", dropDSM);
-  } */
 }
 
 REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
@@ -1711,7 +1708,6 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
 	SubScreen->AddMenuInfoLine_f("Number of VideoCard%s=%llu",((NGFX!=1)?"s":""), NGFX);
-
   SubScreen->AddMenuItemInput(52, "InjectEDID", FALSE);
   SubScreen->AddMenuItemInput(53, "Fake Vendor EDID:", TRUE);
   SubScreen->AddMenuItemInput(54, "Fake Product EDID:", TRUE);
@@ -2740,10 +2736,11 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
   if (OptionMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    } else {
-      OptionMenu.TitleImage.setEmpty();
+      OptionMenu.TitleImage = ThemeX.TakeIcon(BUILTIN_ICON_FUNC_OPTIONS);
     }
+    //else {
+    //  OptionMenu.TitleImage.setEmpty();
+    //}
     gThemeOptionsChanged = TRUE;
     OptionMenu.ID = SCREEN_OPTIONS;
     OptionMenu.GetAnime(); //FALSE;
@@ -2772,15 +2769,13 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
   while (!MenuExit) {
     MenuExit = OptionMenu.RunGenericMenu(Style, &EntryIndex, ChosenEntry);
-    //    MenuExit = RunMenu(&OptionMenu, ChosenEntry);
-    if (  MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->getREFIT_MENU_ITEM_RETURN()  )
+    if (MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->getREFIT_MENU_ITEM_RETURN())
       break;
     if (MenuExit == MENU_EXIT_ENTER || MenuExit == MENU_EXIT_DETAILS) {
       //enter input dialog or subscreen
       if ((*ChosenEntry)->SubScreen != NULL) {
         SubMenuExit = 0;
         while (!SubMenuExit) {
-
           SubMenuExit = (*ChosenEntry)->SubScreen->RunGenericMenu(Style, &SubEntryIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
             ApplyInputs();
@@ -2791,7 +2786,6 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
             if (TmpChosenEntry->SubScreen != NULL) {
               NextMenuExit = 0;
               while (!NextMenuExit) {
-
                 NextMenuExit = TmpChosenEntry->SubScreen->RunGenericMenu(Style, &NextEntryIndex, &NextChosenEntry);
                 if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
                   ApplyInputs();

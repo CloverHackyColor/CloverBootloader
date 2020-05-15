@@ -1606,14 +1606,14 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       //MenuWidth = 80;  // minimum
       MenuWidth = (int)(LAYOUT_TEXT_WIDTH * ThemeX.Scale); //500
 
-      if (!TitleImage.isEmpty()) {
-        if (MenuWidth > (INTN)(UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.GetWidth())) {
-          MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.GetWidth() - 2;
+      if (!TitleImage.Image.isEmpty()) {
+        if (MenuWidth > (INTN)(UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.Image.GetWidth())) {
+          MenuWidth = UGAWidth - (int)(TITLEICON_SPACING * ThemeX.Scale) - TitleImage.Image.GetWidth() - 2;
         }
-        EntriesPosX = (UGAWidth - (TitleImage.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale) + MenuWidth)) >> 1;
-        //       DBG("UGAWIdth=%lld TitleImage=%lld MenuWidth=%lld\n", UGAWidth,
-        //           TitleImage.GetWidth(), MenuWidth);
-        MenuWidth += TitleImage.GetWidth();
+        EntriesPosX = (UGAWidth - (TitleImage.Image.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale) + MenuWidth)) >> 1;
+        //       DBG("UGAWIdth=%lld TitleImage.Image=%lld MenuWidth=%lld\n", UGAWidth,
+        //           TitleImage.Image.GetWidth(), MenuWidth);
+        MenuWidth += TitleImage.Image.GetWidth();
       } else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       }
@@ -1628,24 +1628,21 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
         DrawTextXY(Title, (UGAWidth >> 1), EntriesPosY - ThemeX.TextHeight * 2, X_IS_CENTER);
       }
 
-      if (!TitleImage.isEmpty()) {
-        INTN FilmXPos = (INTN)(EntriesPosX - (TitleImage.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale)));
+      if (!TitleImage.Image.isEmpty()) {
+        INTN FilmXPos = (INTN)(EntriesPosX - (TitleImage.Image.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale)));
         INTN FilmYPos = (INTN)EntriesPosY;
-        //    BltImageAlpha(TitleImage, FilmXPos, FilmYPos, &MenuBackgroundPixel, 16);
-        TitleImage.Draw(FilmXPos, FilmYPos);
+        TitleImage.Image.Draw(FilmXPos, FilmYPos);
 
         // update FilmPlace only if not set by InitAnime
         if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
           FilmC->FilmPlace.XPos = FilmXPos;
           FilmC->FilmPlace.YPos = FilmYPos;
-          FilmC->FilmPlace.Width = TitleImage.GetWidth();
-          FilmC->FilmPlace.Height = TitleImage.GetHeight();
+          FilmC->FilmPlace.Width = TitleImage.Image.GetWidth();
+          FilmC->FilmPlace.Height = TitleImage.Image.GetHeight();
         }
       }
 
       if (InfoLines.size() > 0) {
-        //       DrawMenuText(NULL, 0, 0, 0, 0, 0);
-        //EraseTextXY(); //but we should make it complementare to DrawMenuText
         for (UINTN i = 0; i < InfoLines.size(); i++) {
           DrawMenuText(InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF, 0);
           EntriesPosY += ThemeX.TextHeight;

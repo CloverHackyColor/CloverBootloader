@@ -149,7 +149,7 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
 
   SubScreen->Title.takeValueFrom(LoaderTitle);
 
-  SubScreen->TitleImage = Entry->Image;
+  SubScreen->TitleImage.Image = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->GetAnime();
   SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Volume->DevicePath));
