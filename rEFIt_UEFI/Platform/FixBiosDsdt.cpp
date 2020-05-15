@@ -617,7 +617,7 @@ VOID CheckHardware()
   UINTN               display=0;
 
 
-  pci_dt_t            PCIdevice;
+//  pci_dt_t            PCIdevice;
   EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
 
    usb=0;
@@ -653,7 +653,7 @@ VOID CheckHardware()
         deviceid = Pci.Hdr.DeviceId | (Pci.Hdr.VendorId << 16);
 
         // add for auto patch dsdt get DSDT Device _ADR
-        PCIdevice.DeviceHandle = Handle;
+   //     PCIdevice.DeviceHandle = Handle;
         DevicePath = DevicePathFromHandle (Handle);
         if (DevicePath) {
   //        DBG("Device patch = %ls \n", DevicePathToStr(DevicePath));

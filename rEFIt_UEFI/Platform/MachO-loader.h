@@ -607,8 +607,8 @@ relocation entries */
  * minor version number.  The address of where the headers are loaded is in
  * header_addr. (THIS IS OBSOLETE and no longer supported).
  */
-struct fvmlib {
-	union lc_str	name;		/* library's target pathname */
+struct fvmshlib {
+	/*union*/ lc_str	name;		/* library's target pathname */
 	uint32_t	minor_version;	/* library's minor version number */
 	uint32_t	header_addr;	/* library's header address */
 };
@@ -623,7 +623,7 @@ struct fvmlib {
 struct fvmlib_command {
 	uint32_t	cmd;		/* LC_IDFVMLIB or LC_LOADFVMLIB */
 	uint32_t	cmdsize;	/* includes pathname string */
-	struct fvmlib	fvmlib;		/* the library identification */
+	/*struct*/ fvmshlib	fvmlib;		/* the library identification */
 };
 
 /*

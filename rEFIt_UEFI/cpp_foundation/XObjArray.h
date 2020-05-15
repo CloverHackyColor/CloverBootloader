@@ -163,10 +163,10 @@ void XObjArrayNC<TYPE>::Init()
 	_Len = 0;
 	// THis was useful for realtime debugging with a debugger that do not recognise references.
 //	#ifdef _DEBUG_iufasdfsfk
-	{
-		const TYPE *tmp;
-		tmp = DbgAt(0);
-	}
+//	{
+//		const TYPE *tmp;
+//		tmp = DbgAt(0);
+//	}
 //	#endif
 }
 

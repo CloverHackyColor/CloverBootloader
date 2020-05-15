@@ -915,7 +915,7 @@ const UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0
 
 VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 {
-  UINTN   Num = 0;
+//  UINTN   Num = 0;
   UINTN   NumSnow_i386_EXT   = 0;
   UINTN   NumSnow_X64_EXT    = 0;
   UINTN   NumLion_i386_EXT   = 0;
@@ -937,17 +937,17 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
 //	  DBG_RT("\nERROR patching kernel for injected kexts:\nmultiple patterns found (Snowi386: %llu, SnowX64: %llu, Lioni386: %llu, LionX64: %llu) - skipping patching!\n", NumSnow_i386_EXT, NumSnow_X64_EXT, NumLion_i386_EXT, NumLion_X64_EXT);
-    Stall(10000000);
+//    Stall(10000000);
     return;
   }
 
   // X64
   if (is64BitKernel) {
     if (NumSnow_X64_EXT == 1) {
-      Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
+      /*Num=*/ SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBESnowSearchEXT_X64, sizeof(KBESnowSearchEXT_X64), KBESnowReplaceEXT_X64, 1);
 //		DBG_RT("==> kernel Snow Leopard X64: %llu replaces done.\n", Num);
     } else if (NumLion_X64_EXT == 1) {
-      Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
+      /*Num=*/ SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearchEXT_X64, sizeof(KBELionSearchEXT_X64), KBELionReplaceEXT_X64, 1);
 //		DBG_RT("==> kernel Lion X64: %llu replaces done.\n", Num);
     } else {
       // EXT - load extra kexts besides kernelcache.
@@ -1192,10 +1192,10 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
   } else {
     // i386
     if (NumSnow_i386_EXT == 1) {
-      Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
+/*Num=*/ SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBESnowSearchEXT_i386, sizeof(KBESnowSearchEXT_i386), KBESnowReplaceEXT_i386, 1);
 //		DBG_RT("==> kernel Snow Leopard i386: %llu replaces done.\n", Num);
     } else if (NumLion_i386_EXT == 1) {
-      Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
+/*Num=*/ SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearchEXT_i386, sizeof(KBELionSearchEXT_i386), KBELionReplaceEXT_i386, 1);
 //		DBG_RT("==> kernel Lion i386: %llu replaces done.\n", Num);
     } else {
       DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");

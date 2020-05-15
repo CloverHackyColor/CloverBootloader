@@ -1451,7 +1451,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
  */
 VOID SaveOemTables()
 {
-  EFI_STATUS              Status;
+//  EFI_STATUS              Status;
   VOID                    *RsdPtr;
   CHAR16                  *AcpiOriginPath = PoolPrint(L"%s\\ACPI\\origin", OEMPath);
   BOOLEAN                 Saved = FALSE;
@@ -1482,8 +1482,8 @@ VOID SaveOemTables()
   // Search Acpi 2.0 or newer in UEFI Sys.Tables
   //
   RsdPtr = NULL;
-  Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &RsdPtr);
-  if (RsdPtr != NULL) {
+  /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &RsdPtr);
+  if (RsdPtr != NULL) { //it may be EFI_SUCCESS but null pointer
     DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
     // if tables already saved, then just print to log
     DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath);
@@ -2449,7 +2449,7 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   }
   // if RSDP not found - quit
   if (!RsdPointer) {
-    return EFI_UNSUPPORTED;
+    return Status;
   }
 
   //

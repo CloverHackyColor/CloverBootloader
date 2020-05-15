@@ -395,8 +395,8 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
 {
   UINT16 frequency = 0; // default freq for unknown types //shit! DDR1 = 533
   UINT16 xmpFrequency1 = 0, xmpFrequency2 = 0;
-  UINT8 xmpVersion = 0;
-  UINT8 xmpProfiles = 0;
+  UINT8  xmpVersion = 0;
+  UINT8  xmpProfiles = 0;
 
   if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR4) {
     UINT16 mincycle = spd[18];
@@ -475,7 +475,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
   }
 
   if (xmpProfiles) {
-    DBG("Found module with XMP version %d.%d\n", (xmpVersion >> 4) & 0xF, xmpVersion & 0xF);
+    MsgLog("Found module with XMP version %d.%d\n", (xmpVersion >> 4) & 0xF, xmpVersion & 0xF);
 
     switch (gSettings.XMPDetection) {
       case 0:

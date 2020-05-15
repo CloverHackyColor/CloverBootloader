@@ -815,7 +815,7 @@ GetEfiBootDeviceFromNvram ()
 
 /** Loads and parses nvram.plist into gNvramDict. */
 EFI_STATUS
-LoadNvramPlist (
+LoadNvramPlist(
   IN  EFI_FILE *RootDir,
   IN  CONST CHAR16* NVRAMPlistPath
   )
@@ -835,7 +835,7 @@ LoadNvramPlist (
     //
     // load nvram.plist
     //
-    Status = egLoadFile (RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
+    Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
     if(EFI_ERROR(Status)) {
         DBG(" not present\n");
         return Status;
@@ -846,7 +846,7 @@ LoadNvramPlist (
     //
     // parse it into gNvramDict 
     //
-    Status = ParseXML ((const CHAR8*)NvramPtr, &gNvramDict, (UINT32)Size);
+    Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict, (UINT32)Size);
 //    if(Status != EFI_SUCCESS) {
 //        DBG(" parsing error\n");
 //    }
@@ -861,7 +861,7 @@ LoadNvramPlist (
 
 /** Searches all volumes for the most recent nvram.plist and loads it into gNvramDict. */
 EFI_STATUS
-LoadLatestNvramPlist ()
+LoadLatestNvramPlist()
 {
   EFI_STATUS      Status;
 //  UINTN           Index;
@@ -942,9 +942,10 @@ LoadLatestNvramPlist ()
 //      DBG(" - newer - will use this one\n");
       VolumeWithLatestNvramPlist = Volume;
       LastModifTimeMs = ModifTimeMs;
-    } else {
-//      DBG(" - older - skipping!\n");
     }
+//    else {
+//      DBG(" - older - skipping!\n");
+//    }
   }
   
   Status = EFI_NOT_FOUND;
@@ -954,11 +955,11 @@ LoadLatestNvramPlist ()
   //
   if (VolumeWithLatestNvramPlist != NULL) {
     DBG("Loading nvram.plist from Vol '%ls' -", VolumeWithLatestNvramPlist->VolName);
-    Status = LoadNvramPlist (VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
-    
-  } else {
- //   DBG(" nvram.plist not found!\n");
+    Status = LoadNvramPlist(VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
   }
+ // else {
+ //   DBG(" nvram.plist not found!\n");
+ // }
   DBG("loaded Status=%s\n", strerror(Status));
   return Status;
 }
@@ -970,7 +971,7 @@ LoadLatestNvramPlist ()
 VOID
 PutNvramPlistToRtVars ()
 {
-  EFI_STATUS Status;
+//  EFI_STATUS Status;
   TagPtr     Tag;
   TagPtr     ValTag;
   INTN       Size, i;
@@ -978,7 +979,7 @@ PutNvramPlistToRtVars ()
   VOID       *Value;
   
   if (gNvramDict == NULL) {
-    Status = LoadLatestNvramPlist ();
+    /*Status = */LoadLatestNvramPlist();
     if (gNvramDict == NULL) {
       DBG("PutNvramPlistToRtVars: nvram.plist not found\n");
       return;

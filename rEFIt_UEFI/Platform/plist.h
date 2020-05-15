@@ -61,7 +61,7 @@ XMLDecode (
   );
 
 EFI_STATUS
-ParseXML (
+ParseXML(
   CONST CHAR8  *buffer,
         TagPtr *dict,
         UINT32 bufSize

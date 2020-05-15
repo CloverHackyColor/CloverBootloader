@@ -266,11 +266,12 @@ HdaCodecDumpPrintWidgets(
     }
 }
 
-EFI_STATUS SaveHdaDumpTxt() {
+EFI_STATUS SaveHdaDumpTxt()
+{
     EFI_STATUS Status = EFI_NOT_FOUND;
 	AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
    	HDA_CODEC_DEV *HdaCodecDev;
-    EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
+//    EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
    	HDA_FUNC_GROUP *AudioFuncGroup;
    	EFI_HDA_IO_PROTOCOL *HdaIo;
 	CHAR16 *MiscPath = PoolPrint(L"%s\\misc", OEMPath);
@@ -296,7 +297,7 @@ EFI_STATUS SaveHdaDumpTxt() {
 			continue;
 		
 		HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
-		HdaCodecInfo = &HdaCodecDev->HdaCodecInfoData->HdaCodecInfo;
+//		HdaCodecInfo = &HdaCodecDev->HdaCodecInfoData->HdaCodecInfo;
 		AudioFuncGroup = HdaCodecDev->AudioFuncGroup;
 		HdaIo = HdaCodecDev->HdaIo;
 	
@@ -349,11 +350,12 @@ EFI_STATUS SaveHdaDumpTxt() {
     return Status;
 }
 
-EFI_STATUS SaveHdaDumpBin() {
+EFI_STATUS SaveHdaDumpBin()
+{
 	EFI_STATUS Status = EFI_NOT_FOUND;
 	AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
    	HDA_CODEC_DEV *HdaCodecDev;
-    EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
+//    EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
    	HDA_FUNC_GROUP *AudioFuncGroup;
    	EFI_HDA_IO_PROTOCOL *HdaIo;
     CHAR16 *MiscPath = PoolPrint(L"%s\\misc", OEMPath);
@@ -385,7 +387,7 @@ EFI_STATUS SaveHdaDumpBin() {
 		if(!HdaCodecDev || !HdaCodecDev->AudioFuncGroup)
 			continue;
 		
-		HdaCodecInfo = &HdaCodecDev->HdaCodecInfoData->HdaCodecInfo;
+//		HdaCodecInfo = &HdaCodecDev->HdaCodecInfoData->HdaCodecInfo;
 		AudioFuncGroup = HdaCodecDev->AudioFuncGroup;
 		HdaIo = HdaCodecDev->HdaIo;
 		

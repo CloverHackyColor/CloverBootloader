@@ -1114,15 +1114,13 @@ VOID PatchTableType11()
   return;
 }
 
+//some unused but interesting tables. Just log as is
+#define NUM_OTHER_TYPES 14
+const UINT8 tableTypes[] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 41, 129, 217, 219};
+
 VOID PatchTableTypeSome()
 {
-  //some unused but interesting tables. Just log as is
-#define NUM_OTHER_TYPES 14
-  UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 41, 129, 217, 219};
-  UINTN  IndexType;
-  //
-  // Different types
-  for (IndexType = 0; IndexType < NUM_OTHER_TYPES; IndexType++) {
+  for (UINTN IndexType = 0; IndexType < sizeof(tableTypes); IndexType++) {
     for (Index = 0; Index < 32; Index++) {
       SmbiosTable = GetSmbiosTableFromType(EntryPoint, tableTypes[IndexType], Index);
       if (SmbiosTable.Raw == NULL) {
@@ -1188,7 +1186,6 @@ VOID GetTableType17()
 {
   // Memory Device
   //
-  INTN Index2;
   BOOLEAN Found;
 
   // Get Table Type17 and count Size
@@ -1209,7 +1206,7 @@ VOID GetTableType17()
       //  to just skip all entries that have an error - apianti
       // will try
       Found = FALSE;
-      for (Index2 = 0; Index2 < 24; Index2++) {
+      for (INTN Index2 = 0; Index2 < 24; Index2++) {
         newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
         if (newSmbiosTable.Raw == NULL) {
           continue;
@@ -2115,7 +2112,7 @@ VOID FinalizeSmbios() //continue
   EFI_PEI_HOB_POINTERS  HobStart;
   EFI_PHYSICAL_ADDRESS    *Table = NULL;
   //UINTN          TableLength = 0;
-  BOOLEAN FoundTable3 = FALSE;
+//  BOOLEAN FoundTable3 = FALSE;
 
   // Get Hob List
   HobStart.Raw = (__typeof_am__(HobStart.Raw))GetHobList();
@@ -2129,7 +2126,7 @@ VOID FinalizeSmbios() //continue
         //TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
         if (Table != NULL) {
           if (Index != 0) {
-            FoundTable3 = TRUE;
+//            FoundTable3 = TRUE;  //don't know how to use it. Real Mac have table3 in the format of table2
             DBG("Found SMBIOS3 Table\n");
           }
           break;

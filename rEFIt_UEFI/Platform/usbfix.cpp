@@ -205,7 +205,7 @@ FixOwnership(VOID)
                 usbcmd = *((UINT32*)(UINTN)(opaddr));      // Command Register
                 usbsts = *((UINT32*)(UINTN)(opaddr + 4));    // Status Register
                 usbintr = *((UINT32*)(UINTN)(opaddr + 8));    // Interrupt Enable Register
-                DBG("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
+                MsgLog("usbcmd=%08X usbsts=%08X usbintr=%08X\n", usbcmd, usbsts, usbintr);
                 
                 // read 32bit USBLEGSUP (eecp+0) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap, 1, &usblegsup);

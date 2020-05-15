@@ -683,5 +683,7 @@ DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG -DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG
   XCODE:*_*_*_CC_FLAGS = -fno-unwind-tables -Wno-msvc-include -Os $(BUILD_OPTIONS) $(DISABLE_LTO_FLAG) -D DISABLE_NEW_DEPRECATED_INTERFACES
   GCC:*_*_*_CC_FLAGS   = $(BUILD_OPTIONS) $(DISABLE_LTO_FLAG) -D DISABLE_NEW_DEPRECATED_INTERFACES
   GCC:*_*_*_CXX_FLAGS  = $(BUILD_OPTIONS) $(DISABLE_LTO_FLAG) -D DISABLE_NEW_DEPRECATED_INTERFACES
+  #-fanalyzer -Wmismatched-tags 
+  #-Weffc++
   #-Wunused-but-set-variable
   # -Os -fno-omit-frame-pointer -maccumulate-outgoing-args
