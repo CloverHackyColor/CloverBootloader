@@ -767,14 +767,14 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   return Entry;
 }
 
-STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
+void LOADER_ENTRY::AddDefaultMenu()
 {
   XStringW     FileName;
 //  CHAR16* TempOptions;
 //  CHAR16            DiagsFileName[256];
   LOADER_ENTRY      *SubEntry;
-  REFIT_MENU_SCREEN *SubScreen;
-  REFIT_VOLUME      *Volume;
+//  REFIT_MENU_SCREEN *SubScreen;
+//  REFIT_VOLUME      *Volume;
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
   BOOLEAN           KernelIs64BitOnly;
@@ -783,51 +783,43 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   constexpr LString8 quietLitteral = "quiet";
   constexpr LString8 splashLitteral = "splash";
 
-  if (Entry == NULL) {
-    return;
-  }
-  Volume = Entry->Volume;
-  if (Volume == NULL) {
-    return;
-  }
-
   // Only kernels up to 10.7 have 32-bit mode
-  KernelIs64BitOnly = (Entry->OSVersion == NULL ||
-                       AsciiOSVersionToUint64(Entry->OSVersion) >= AsciiOSVersionToUint64("10.8"));
+  KernelIs64BitOnly = (OSVersion == NULL ||
+                       AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8"));
 
-  FileName = Entry->LoaderPath.basename();
+  FileName = LoaderPath.basename();
 
   // create the submenu
 //  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
-  SubScreen->Title.SWPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
+  SubScreen->Title.SWPrintf("Options for %ls on %ls", Title.wc_str(), VolName);
 
-  SubScreen->TitleImage = Entry->Image;
-  SubScreen->ID = Entry->LoaderType + 20; //wow
+  SubScreen->TitleImage = Image;
+  SubScreen->ID = LoaderType + 20; //wow
 //    DBG("get anime for os=%lld\n", SubScreen->ID);
   SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
 	SubScreen->AddMenuInfoLine_f("Volume size: %lluMb", VolumeSize);
-  SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Entry->DevicePath));
+  SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(DevicePath));
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid) {
     SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
-	SubScreen->AddMenuInfoLine_f("Options: %s", Entry->LoadOptions.ConcatAll(" "_XS8).c_str());
+	SubScreen->AddMenuInfoLine_f("Options: %s", LoadOptions.ConcatAll(" "_XS8).c_str());
   // loader-specific submenu entries
-  if (Entry->LoaderType == OSTYPE_OSX ||
-      Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
-      Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
+  if (LoaderType == OSTYPE_OSX ||
+      LoaderType == OSTYPE_OSX_INSTALLER ||
+      LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     if (os_version < AsciiOSVersionToUint64("10.8")) {
-      SubScreen->AddMenuInfoLine_f("Mac OS X: %s", Entry->OSVersion);
+      SubScreen->AddMenuInfoLine_f("Mac OS X: %s", OSVersion);
     } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-      SubScreen->AddMenuInfoLine_f("OS X: %s", Entry->OSVersion);
+      SubScreen->AddMenuInfoLine_f("OS X: %s", OSVersion);
     } else {
-      SubScreen->AddMenuInfoLine_f("macOS: %s", Entry->OSVersion);
+      SubScreen->AddMenuInfoLine_f("macOS: %s", OSVersion);
     }
 
-    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
-      SubEntry = Entry->getPartiallyDuplicatedEntry();
+    if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+      SubEntry = getPartiallyDuplicatedEntry();
       if (SubEntry) {
         SubEntry->Title.takeValueFrom("Cancel hibernate wake");
         SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
@@ -835,7 +827,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       }
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubEntry->Title.takeValueFrom("Boot Mac OS X with selected options");
@@ -847,7 +839,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubScreen->AddMenuEntry(SubEntry, true);
     }
     
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubEntry->Title.takeValueFrom("Boot Mac OS X with injected kexts");
@@ -861,7 +853,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubEntry->Title.takeValueFrom("Boot Mac OS X without injected kexts");
@@ -915,59 +907,59 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       SubScreen->AddMenuCheck("No SIP", OSFLAG_NOSIP, 69);
     }
     
-  } else if (Entry->LoaderType == OSTYPE_LINEFI) {
-    BOOLEAN Quiet = Entry->LoadOptions.contains(quietLitteral);
-    BOOLEAN WithSplash = Entry->LoadOptions.contains(splashLitteral);
+  } else if (LoaderType == OSTYPE_LINEFI) {
+    BOOLEAN Quiet = LoadOptions.contains(quietLitteral);
+    BOOLEAN WithSplash = LoadOptions.contains(splashLitteral);
     
     // default entry
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (Quiet) {
-        SubEntry->Title.SWPrintf("%ls verbose", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls verbose", Title.s());
         SubEntry->LoadOptions.removeIC(quietLitteral);
       } else {
-        SubEntry->Title.SWPrintf("%ls quiet", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls quiet", Title.s());
         SubEntry->LoadOptions.AddID(quietLitteral);
       }
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (WithSplash) {
-        SubEntry->Title.SWPrintf("%ls without splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls without splash", Title.s());
         SubEntry->LoadOptions.removeIC(splashLitteral);
       } else {
-        SubEntry->Title.SWPrintf("%ls with splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls with splash", Title.s());
         SubEntry->LoadOptions.AddID(splashLitteral);
       }
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       if (WithSplash) {
         if (Quiet) {
-          SubEntry->Title.SWPrintf("%ls verbose without splash", Entry->Title.s());
+          SubEntry->Title.SWPrintf("%ls verbose without splash", Title.s());
           SubEntry->LoadOptions.removeIC(splashLitteral);
           SubEntry->LoadOptions.removeIC(quietLitteral);
         } else {
-          SubEntry->Title.SWPrintf("%ls quiet without splash", Entry->Title.s());
+          SubEntry->Title.SWPrintf("%ls quiet without splash",Title.s());
           SubEntry->LoadOptions.removeIC(splashLitteral);
           SubEntry->LoadOptions.Add(quietLitteral);
         }
       } else if (Quiet) {
-        SubEntry->Title.SWPrintf("%ls verbose with splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls verbose with splash",Title.s());
         SubEntry->LoadOptions.removeIC(quietLitteral); //
         SubEntry->LoadOptions.AddID(splashLitteral);
       } else {
-        SubEntry->Title.SWPrintf("%ls quiet with splash", Entry->Title.s());
+        SubEntry->Title.SWPrintf("%ls quiet with splash",Title.s());
         SubEntry->LoadOptions.AddID(quietLitteral);
         SubEntry->LoadOptions.AddID(splashLitteral);
       }
@@ -976,38 +968,38 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
   } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
-    Entry->LoadOptions.setEmpty();
-    Entry->LoadOptions.Add("-s"_XS8);
-    Entry->LoadOptions.Add("-h"_XS8);
+   LoadOptions.setEmpty();
+   LoadOptions.Add("-s"_XS8);
+   LoadOptions.Add("-h"_XS8);
     
     // default entry
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry =getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry =getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from Hard Disk");
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry =getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
-      Entry->LoadOptions.setEmpty();
-      Entry->LoadOptions.Add("-s"_XS8);
-      Entry->LoadOptions.Add("-c"_XS8);
+     LoadOptions.setEmpty();
+     LoadOptions.Add("-s"_XS8);
+     LoadOptions.Add("-c"_XS8);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry = Entry->getPartiallyDuplicatedEntry();
+    SubEntry =getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      Entry->LoadOptions.setEmpty();
-      Entry->LoadOptions.Add("-v"_XS8);
+     LoadOptions.setEmpty();
+     LoadOptions.Add("-v"_XS8);
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       SubScreen->AddMenuEntry(SubEntry, true);
     }
@@ -1015,8 +1007,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   }
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
-  Entry->SubScreen = SubScreen;
-  // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n", Entry->Title, Entry->LoaderType, Entry->OSVersion);
+  // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n",Title,LoaderType,OSVersion);
 }
 
 BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& LoaderOptions,
@@ -1067,7 +1058,7 @@ BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& Loa
     }
     //TODO there is a problem that Entry->Flags is unique while InputItems are global ;(
 //    InputItems[69].IValue = Entry->Flags;
-    AddDefaultMenu(Entry);
+    Entry->AddDefaultMenu();
     MainMenu.AddMenuEntry(Entry, true);
     return TRUE;
   }
@@ -1839,7 +1830,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           Entry->Settings = Custom->Settings;
         }
         if (OSFLAG_ISUNSET(Custom->Flags, OSFLAG_NODEFAULTMENU)) {
-          AddDefaultMenu(Entry);
+          Entry->AddDefaultMenu();
         } else if (Custom->SubEntries != NULL) {
           UINTN CustomSubIndex = 0;
           // Add subscreen

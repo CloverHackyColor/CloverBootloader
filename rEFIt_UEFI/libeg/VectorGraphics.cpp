@@ -64,7 +64,6 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   NSVGgroup   *group;
   NSVGimage   *IconImage;
   NSVGshape   *shapeNext, *shapesTail = NULL, *shapePrev;
-//  CONST CHAR8 *IconName = IconNameX.c_str();
 
   NSVGparser* p2 = nsvg__createParser();
   IconImage = p2->image;
@@ -106,7 +105,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
         if (IconNameX.contains("selection_big") && (!SelectionOnTop)) {
           MainEntriesSize = (int)(IconImage->width * Scale); //xxx
           row0TileSize = MainEntriesSize + (int)(16.f * Scale);
-          DBG("main entry size = %lld\n", MainEntriesSize);
+  //        DBG("main entry size = %lld\n", MainEntriesSize);
         }
         if (IconNameX.contains("selection_small") && (!SelectionOnTop)) {
           row1TileSize = (int)(IconImage->width * Scale);
@@ -245,7 +244,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   SVGParser = (void *)mainParser; //store the pointer for future use
   NSVGimage    *SVGimage = mainParser->image;
   if (!SVGimage) {
-    DBG("Theme not parsed!\n");
+ //   DBG("Theme not parsed!\n");
     return EFI_NOT_STARTED;
   }
 
@@ -297,7 +296,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     }
     XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image, &NewIcon->ImageSVG);
-    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
+//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
       NewIcon->setFilled();
@@ -320,14 +319,13 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     if (AsciiStrLen(IconsNames[i]) == 0) break;
     XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image, &NewIcon->ImageSVG);
-    DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
+//    DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
       ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
     }
     Icons.AddReference(NewIcon, true);
   }
-  DBG("parse icon_selection\n");
   //selection for bootcampstyle
   XIcon *NewIcon = new XIcon(BUILTIN_ICON_SELECTION);
   Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS8, &NewIcon->Image, &NewIcon->ImageSVG);
@@ -342,17 +340,14 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
 //TODO make SelectionImages to be XIcon
-  DBG("assign selections\n");
   SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG).GetBest(!Daylight);
   SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL).GetBest(!Daylight);
   SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION).GetBest(!Daylight);
 
-  DBG("assign buttons\n");
   //buttons
   for (INTN i = BUILTIN_RADIO_BUTTON; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
     Buttons[i - BUILTIN_RADIO_BUTTON] = GetIcon(i).GetBest(!Daylight);
   }
-  DBG("done!\n");
   //for (int i=0 ; i<6 ; i+=2 ) {
   //SelectionImages[i].Draw(i*100, 0);
   //}
@@ -545,6 +540,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   nsvgDelete(p->image);
   return (INTN)RealWidth; //x;
 }
+
 VOID testSVG()
 {
   do {
