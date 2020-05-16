@@ -748,8 +748,8 @@ BuildEdd30DevicePath (
   Controller = (UINT32) Drive->Parameters.InterfacePath.Pci.Controller;
 
   ZeroMem (&Node, sizeof (Node));
-  if ((AsciiStrnCmp ("ATAPI", Drive->Parameters.InterfaceType, 5) == 0) ||
-      (AsciiStrnCmp ("ATA", Drive->Parameters.InterfaceType, 3) == 0)
+  if ((strncmp("ATAPI", Drive->Parameters.InterfaceType, 5) == 0) ||
+      (strncmp("ATA", Drive->Parameters.InterfaceType, 3) == 0)
       ) {
     //
     // ATA or ATAPI drive found
@@ -777,7 +777,7 @@ BuildEdd30DevicePath (
     ZeroMem (&Node, sizeof (Node));
 #endif
 
-    if (AsciiStrnCmp ("SCSI", Drive->Parameters.InterfaceType, 4) == 0) {
+    if (strncmp("SCSI", Drive->Parameters.InterfaceType, 4) == 0) {
       //
       // SCSI drive
       //
@@ -792,7 +792,7 @@ BuildEdd30DevicePath (
       CopyMem(&Node.Scsi.Lun, &Drive->Parameters.DevicePath.Scsi.Lun, sizeof (UINT16));
       Node.Scsi.Pun = Drive->Parameters.DevicePath.Scsi.Pun;
 
-    } else if (AsciiStrnCmp ("USB", Drive->Parameters.InterfaceType, 3) == 0) {
+    } else if (strncmp("USB", Drive->Parameters.InterfaceType, 3) == 0) {
       //
       // USB drive
       //
@@ -802,7 +802,7 @@ BuildEdd30DevicePath (
       Node.Usb.ParentPortNumber = Drive->Number; //(UINT8) Drive->Parameters.DevicePath.Usb.Reserved;
       Node.Usb.InterfaceNumber = (UINT8) Drive->Parameters.DevicePath.Usb.SerialNumber;
 
-    } else if (AsciiStrnCmp ("1394", Drive->Parameters.InterfaceType, 4) == 0) {
+    } else if (strncmp("1394", Drive->Parameters.InterfaceType, 4) == 0) {
       //
       // 1394 drive
       //
@@ -811,7 +811,7 @@ BuildEdd30DevicePath (
       SetDevicePathNodeLength (&Node.F1394.Header, sizeof (F1394_DEVICE_PATH));
       Node.F1394.Guid = Drive->Parameters.DevicePath.FireWire.Guid;
 
-    } else if (AsciiStrnCmp ("FIBRE", Drive->Parameters.InterfaceType, 5) == 0) {
+    } else if (strncmp("FIBRE", Drive->Parameters.InterfaceType, 5) == 0) {
       //
       // Fibre drive
       //

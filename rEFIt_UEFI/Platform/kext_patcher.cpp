@@ -253,17 +253,17 @@ VOID ExtractKextBundleIdentifier(CHAR8 *Plist)
   
   while (*Tag != '\0') {
     
-    if (AsciiStrnCmp(Tag, "<dict>", 6) == 0) {
+    if (strncmp(Tag, "<dict>", 6) == 0) {
       // opening dict
       DictLevel++;
       Tag += 6;
       
-    } else if (AsciiStrnCmp(Tag, "</dict>", 7) == 0) {
+    } else if (strncmp(Tag, "</dict>", 7) == 0) {
       // closing dict
       DictLevel--;
       Tag += 7;
       
-    } else if (DictLevel == 1 && AsciiStrnCmp(Tag, "<key>CFBundleIdentifier</key>", 29) == 0) {
+    } else if (DictLevel == 1 && strncmp(Tag, "<key>CFBundleIdentifier</key>", 29) == 0) {
       // BundleIdentifier is next <string>...</string>
       BIStart = AsciiStrStr(Tag + 29, "<string>");
       if (BIStart != NULL) {

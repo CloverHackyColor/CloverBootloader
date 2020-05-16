@@ -88,7 +88,7 @@ EFI_STATUS XPointer::MouseBirth()
     PointerImage = nullptr;
   }
 //  Now update image because of other theme has other image
-  PointerImage = new XImage(ThemeX.GetIcon(BUILTIN_ICON_POINTER));
+  PointerImage = new XImage(ThemeX.GetIcon(BUILTIN_ICON_POINTER).GetBest(!ThemeX.Daylight));
 
   oldImage.setSizeInPixels(PointerImage->GetWidth(), PointerImage->GetHeight());
   LastClickTime = 0;
@@ -107,8 +107,8 @@ EFI_STATUS XPointer::MouseBirth()
 VOID XPointer::Draw()
 {
   oldPlace = newPlace;
-//  CopyMem(&oldPlace, &newPlace, sizeof(EG_RECT));  //can we use oldPlace = newPlace; ?
-// take background image for later to restore background
+
+  // take background image for later to restore background
   newPlace.Width = PointerImage->GetWidth();
   newPlace.Height = PointerImage->GetHeight();
   oldImage.GetArea(newPlace); //GetArea will resize oldImage, so correct newPlace

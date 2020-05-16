@@ -46,7 +46,7 @@ extern REFIT_MENU_SCREEN MainMenu;
 
 extern XObjArray<REFIT_VOLUME> Volumes;
 // common
-const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 
 
 // Ask user for file path from directory menu

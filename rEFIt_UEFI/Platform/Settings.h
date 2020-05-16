@@ -93,8 +93,8 @@ typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
 struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY     *Next;
   CUSTOM_LOADER_ENTRY     *SubEntries;
-  XImage                  Image;
-  XImage                  DriveImage;
+  XIcon                  Image;
+  XIcon                  DriveImage;
   CONST CHAR16            *ImagePath;
   CONST CHAR16            *DriveImagePath;
   CONST CHAR16            *Volume;
@@ -128,8 +128,8 @@ struct CUSTOM_LOADER_ENTRY {
 typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
 struct CUSTOM_LEGACY_ENTRY {
   CUSTOM_LEGACY_ENTRY   *Next;
-  XImage                Image;
-  XImage                DriveImage;
+  XIcon                Image;
+  XIcon                DriveImage;
   CONST CHAR16          *ImagePath;
   CONST CHAR16          *DriveImagePath;
   CONST CHAR16          *Volume;
@@ -144,7 +144,7 @@ struct CUSTOM_LEGACY_ENTRY {
 typedef struct CUSTOM_TOOL_ENTRY CUSTOM_TOOL_ENTRY;
 struct CUSTOM_TOOL_ENTRY {
   CUSTOM_TOOL_ENTRY *Next;
-  XImage            Image;
+  XIcon            Image;
   CHAR16            *ImagePath;
   CHAR16            *Volume;
   XStringW          Path;

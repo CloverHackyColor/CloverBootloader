@@ -619,7 +619,7 @@ LoadUserSettings (
   return Status;
 }
 
-STATIC BOOLEAN AddCustomEntry (IN CUSTOM_LOADER_ENTRY *Entry)
+STATIC BOOLEAN AddCustomLoaderEntry(IN CUSTOM_LOADER_ENTRY *Entry)
 {
   if (Entry == NULL) {
     return FALSE;
@@ -638,6 +638,7 @@ STATIC BOOLEAN AddCustomEntry (IN CUSTOM_LOADER_ENTRY *Entry)
 
   return TRUE;
 }
+
 STATIC BOOLEAN AddCustomLegacyEntry (IN CUSTOM_LEGACY_ENTRY *Entry)
 {
   if (Entry == NULL) {
@@ -1938,7 +1939,9 @@ FillinCustomEntry (
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
-      Entry->Image.FromPNG(TmpData, DataLen);
+      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+        Entry->Image.setFilled();
+      }
       FreePool(TmpData);
     }
   }
@@ -1958,7 +1961,9 @@ FillinCustomEntry (
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
-      Entry->DriveImage.FromPNG(TmpData, DataLen);
+      if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
+        Entry->DriveImage.setFilled();
+      }
       FreePool(TmpData);
     }
   }
@@ -2243,7 +2248,9 @@ FillingCustomLegacy (
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
-      Entry->Image.FromPNG(TmpData, DataLen);
+      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+        Entry->Image.setFilled();
+      }
       FreePool(TmpData);
     }
   }
@@ -2257,7 +2264,9 @@ FillingCustomLegacy (
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
     if (TmpData) {
-      Entry->DriveImage.FromPNG(TmpData, DataLen);
+      if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
+        Entry->DriveImage.setFilled();
+      }
       FreePool(TmpData);
     }
   }
@@ -2358,7 +2367,9 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
-      Entry->Image.FromPNG(TmpData, DataLen);
+      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+        Entry->Image.setFilled();
+      }
       FreePool(TmpData);
     }
   }
@@ -3037,7 +3048,7 @@ GetEarlyUserSettings (
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
 
               // Fill it in
-              if (Entry != NULL && (!FillinCustomEntry(Entry, Dict3, FALSE) || !AddCustomEntry(Entry))) {
+              if (Entry != NULL && (!FillinCustomEntry(Entry, Dict3, FALSE) || !AddCustomLoaderEntry(Entry))) {
                 delete Entry;
               }
             }

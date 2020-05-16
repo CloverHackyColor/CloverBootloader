@@ -2373,7 +2373,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
               version_start++;
 
               // strip "Version "
-              if (AsciiStrnCmp((const CHAR8*)rom + version_start, "Version ", 8) == 0) {
+              if (strncmp((const CHAR8*)rom + version_start, "Version ", 8) == 0) {
                 version_start += 8;
               }
               s = (CHAR8*)(rom + version_start);

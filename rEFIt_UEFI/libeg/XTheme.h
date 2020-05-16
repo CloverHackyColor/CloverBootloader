@@ -11,7 +11,7 @@
 extern const INTN IconsNamesSize;
 #define INDICATOR_SIZE (52)
 
-class Icon
+class XIcon
 {
 public:
   INTN Id;  //for example BUILTIN_ICON_POINTER
@@ -21,22 +21,33 @@ public:
   bool Native;
   void *ImageSVG;  //NSVGimage*
   void *ImageSVGnight;
-  
-  Icon(): Id(0), Name(), Image(), ImageNight(), Native(false), ImageSVG(nullptr), ImageSVGnight(nullptr)
+protected:
+  bool Empty;
+public:
+  XIcon(): Id(0), Name(), Image(), ImageNight(), Native(false), ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(true)
   {};
-  Icon(INTN Id, bool Embedded = false);
-  ~Icon();
+  XIcon(INTN Id, bool Embedded = false);
+  ~XIcon();
+  
+  bool isEmpty() const  { return Empty; }
+  void setFilled() { Empty = false; }
+  void setEmpty()  { Empty = true; }
+  
+  EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+  EFI_STATUS LoadXImage(EFI_FILE *Dir, const wchar_t* LIconName);
+  EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
 
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
 //  Icon(const Icon&) = delete;
-  Icon& operator=(const Icon&); // = delete;
+  XIcon& operator=(const XIcon&); // = delete;
   void GetEmbedded();
+  const XImage& GetBest(bool night) const;
 };
 
 class XTheme
 {
 public:
-  XObjArray<Icon> Icons;
+  XObjArray<XIcon> Icons;
   EFI_FILE    *ThemeDir;
 
 //  UINTN       DisableFlags;
@@ -130,14 +141,13 @@ public:
   //fill the theme
 //  const XImage& GetIcon(const char* Name);
 //  const XImage& GetIcon(const CHAR16* Name);
-  const XImage& GetIcon(const XString8& Name);  //get by name
-  const XImage& GetIcon(INTN Id); //get by id
-  const XImage& GetIconAlt(INTN Id, INTN Alt); //if id not found
-  const XImage& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
-  const XImage& LoadOSIcon(const XString8& Full);
+  const XIcon& GetIcon(const XString8& Name);  //get by name
+  const XIcon& GetIcon(INTN Id); //get by id
+  const XIcon& GetIconAlt(INTN Id, INTN Alt); //if id not found
+  const XIcon& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
+  const XIcon& LoadOSIcon(const XString8& Full);
   bool CheckNative(INTN Id);
-  const Icon&   TakeIcon(INTN Id);
-
+ 
   //fonts
   void LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols);
   void PrepareFont();
@@ -150,7 +160,7 @@ public:
   VOID MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height);
 
 
-//  void AddIcon(Icon& NewIcon);  //return EFI_STATUS?
+//  void AddIcon(XIcon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
   void FillByDir();
   EFI_STATUS GetThemeTagSettings(void* DictPointer);

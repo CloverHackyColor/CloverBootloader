@@ -62,7 +62,7 @@
 #endif
 
 #ifndef DEBUG_ALL
-#define DEBUG_SCAN_TOOL 1
+#define DEBUG_SCAN_TOOL 0
 #else
 #define DEBUG_SCAN_TOOL DEBUG_ALL
 #endif
@@ -74,7 +74,7 @@
 #endif
 
 STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
-                            IN REFIT_VOLUME *Volume, const XImage& Image,
+                            IN REFIT_VOLUME *Volume, const XIcon& Image,
                             IN CHAR16 ShortcutLetter, IN CONST XStringArray& Options)
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
@@ -149,7 +149,7 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
 
   SubScreen->Title.takeValueFrom(LoaderTitle);
 
-  SubScreen->TitleImage.Image = Entry->Image;
+  SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->GetAnime();
   SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Volume->DevicePath));
@@ -239,7 +239,7 @@ VOID AddCustomTool(VOID)
   UINTN             VolumeIndex;
   REFIT_VOLUME      *Volume;
   CUSTOM_TOOL_ENTRY *Custom;
-  XImage          Image;
+  XIcon             Image;
   UINTN              i = 0;
 
 //  DBG("Custom tool start\n");

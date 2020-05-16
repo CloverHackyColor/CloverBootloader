@@ -445,8 +445,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        IN CONST XStringW& FullTitle,
                                        IN CONST XStringW& LoaderTitle,
                                        IN REFIT_VOLUME *Volume,
-                                       IN XImage *Image,
-                                       IN XImage *DriveImage,
+                                       IN XIcon *Image,
+                                       IN XIcon *DriveImage,
                                        IN UINT8 OSType,
                                        IN UINT8 Flags,
                                        IN CHAR16 Hotkey,
@@ -470,7 +470,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   }
 
   // Get the loader device path
-//  LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, (*LoaderPath == L'\\') ? (LoaderPath + 1) : LoaderPath);
   LoaderDevicePath = FileDevicePath(Volume->DeviceHandle, LoaderPath);
   if (LoaderDevicePath == NULL) {
     return NULL;
@@ -497,7 +496,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
     UINTN                CustomIndex = 0;
 
     // Ignore this loader if it's device path is already present in another loader
-//    if (MainMenu.Entries) {
       for (UINTN i = 0; i < MainMenu.Entries.size(); ++i) {
         REFIT_ABSTRACT_MENU_ENTRY& MainEntry = MainMenu.Entries[i];
         // Only want loaders
@@ -509,7 +507,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
           }
         }
       }
-//    }
     // If this isn't a custom entry make sure it's not hidden by a custom entry
     Custom = gSettings.CustomEntries;
     while (Custom) {
@@ -533,10 +530,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
         // Check if the volume_type match
         if (Custom->VolumeType != 0) {
           volume_type_match = (((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0) ? 1 : -1;
-      /*      (((Volume->DiskKind == DISK_KIND_INTERNAL) && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-             ((Volume->DiskKind == DISK_KIND_EXTERNAL) && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-             ((Volume->DiskKind == DISK_KIND_OPTICAL)  && (Custom->VolumeType & VOLTYPE_OPTICAL))  ||
-             ((Volume->DiskKind == DISK_KIND_FIREWIRE) && (Custom->VolumeType & VOLTYPE_FIREWIRE))) ? 1 : -1; */
         }
 
         // Check if the path match
@@ -589,9 +582,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   }
 // DBG("prepare the menu entry\n");
   // prepare the menu entry
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   Entry = new LOADER_ENTRY();
-//  Entry->Tag = TAG_LOADER;
   Entry->Row = 0;
   Entry->Volume = Volume;
 
@@ -600,15 +591,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
   Entry->Flags            = OSFLAG_SET(Flags, OSFLAG_USEGRAPHICS);
-//  if (LoaderOptions.notEmpty()) {
-//    if (OSFLAG_ISSET(Flags, OSFLAG_NODEFAULTARGS)) {
-//      Entry->LoadOptions  = LoaderOptions;
-//    } else {
-//      Entry->LoadOptions  = SPrintf("%s %s", gSettings.BootArgs, LoaderOptions.c_str());
-//    }
-//  } else if ((AsciiStrLen(gSettings.BootArgs) > 0) && OSFLAG_ISUNSET(Flags, OSFLAG_NODEFAULTARGS)) {
-//    Entry->LoadOptions    = SPrintf("%s", gSettings.BootArgs);
-//  }
+
   if (OSFLAG_ISSET(Flags, OSFLAG_NODEFAULTARGS)) {
 	  Entry->LoadOptions  = LoaderOptions;
   }else{
@@ -672,7 +655,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
       Entry->LoaderType = OSType;
       OSIconName = L"linux"_XSW;
       if (Image == nullptr) {
-        DBG(" image not found\n");
+        DBG(" linux image not found\n");
         OSIconName = LinuxIconNameFromPath(LoaderPath, Volume->RootDir); //something named "issue"
       }
       ShortcutLetter = 'L';
@@ -743,8 +726,11 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 
   // get custom volume icon if present
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
-    Entry->Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
-    DBG("using VolumeIcon.icns image from Volume\n");
+    Entry->Image.Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
+    if (!Entry->Image.Image.isEmpty()) {
+      Entry->Image.setFilled();
+      DBG("using VolumeIcon.icns image from Volume\n");
+    }    
   } else if (Image) {
     Entry->Image = *Image; //copy image from temporary storage
   } else {
@@ -761,13 +747,14 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 //   DBG("HideBadges=%llu Volume=%ls ", ThemeX.HideBadges, Volume->VolName);
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
-//      Entry->BadgeImage = egCopyScaledImage(Entry->DriveImage, ThemeX.BadgeScale);
-      Entry->BadgeImage = XImage(Entry->DriveImage, 0); //ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0);
        DBG(" Show badge as Drive.");
     } else {
-      Entry->BadgeImage = XImage(Entry->Image, 0); //ThemeX.BadgeScale/16.f);
- //     Entry->BadgeImage = egCopyScaledImage((Entry->Image).ToEGImage(), ThemeX.BadgeScale);
+      Entry->BadgeImage.Image = XImage(Entry->Image.Image, 0);
        DBG(" Show badge as OSImage.");
+    }
+    if (!Entry->BadgeImage.Image.isEmpty()) {
+      Entry->BadgeImage.setFilled();
     }
   }
   Entry->BootBgColor = BootBgColor;
@@ -815,7 +802,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
   SubScreen = new REFIT_MENU_SCREEN;
   SubScreen->Title.SWPrintf("Options for %ls on %ls", Entry->Title.wc_str(), Entry->VolName);
 
-  SubScreen->TitleImage.Image = Entry->Image;
+  SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = Entry->LoaderType + 20; //wow
 //    DBG("get anime for os=%lld\n", SubScreen->ID);
   SubScreen->GetAnime();
@@ -832,11 +819,11 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
       Entry->LoaderType == OSTYPE_OSX_INSTALLER ||
       Entry->LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
     if (os_version < AsciiOSVersionToUint64("10.8")) {
-		SubScreen->AddMenuInfoLine_f("Mac OS X: %s", Entry->OSVersion);
+      SubScreen->AddMenuInfoLine_f("Mac OS X: %s", Entry->OSVersion);
     } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-		SubScreen->AddMenuInfoLine_f("OS X: %s", Entry->OSVersion);
+      SubScreen->AddMenuInfoLine_f("OS X: %s", Entry->OSVersion);
     } else {
-		SubScreen->AddMenuInfoLine_f("macOS: %s", Entry->OSVersion);
+      SubScreen->AddMenuInfoLine_f("macOS: %s", Entry->OSVersion);
     }
 
     if (OSFLAG_ISSET(Entry->Flags, OSFLAG_HIBERNATED)) {
@@ -895,10 +882,10 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
         SubScreen->AddMenuCheck("Mac OS X 32bit",   OPT_I386, 68);
         SubScreen->AddMenuCheck("Mac OS X 64bit",   OPT_X64,  68);
       } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubScreen->AddMenuCheck("OS X 32bit",       OPT_I386, 68);
+  //      SubScreen->AddMenuCheck("OS X 32bit",       OPT_I386, 68); //it cant be 32 bit
         SubScreen->AddMenuCheck("OS X 64bit",       OPT_X64,  68);
       } else {
-        SubScreen->AddMenuCheck("macOS 32bit",      OPT_I386, 68);
+  //      SubScreen->AddMenuCheck("macOS 32bit",      OPT_I386, 68);
         SubScreen->AddMenuCheck("macOS 64bit",      OPT_X64,  68);
       }
     }
@@ -1034,7 +1021,7 @@ STATIC VOID AddDefaultMenu(IN LOADER_ENTRY *Entry)
 
 BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& LoaderOptions,
                        IN CONST XStringW& LoaderTitle,
-                       IN REFIT_VOLUME *Volume, IN XImage *Image,
+                       IN REFIT_VOLUME *Volume, IN XIcon *Image,
                        IN UINT8 OSType, IN UINT8 Flags)
 {
   LOADER_ENTRY *Entry;
@@ -1087,7 +1074,7 @@ BOOLEAN AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XStringArray& Loa
   return FALSE;
 }
 
-STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStringW *CustomPath, XImage *CustomImage) 
+STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStringW *CustomPath, XIcon *CustomImage)
 {
   // When used for Regular Entries, all found entries will be added by AddLoaderEntry()
   // When used for Custom Entries (detected by CustomPath!=NULL), CustomPath+CustomImage will be set to the first entry found and execution will stop
@@ -1125,7 +1112,7 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
         LoaderTitle.upperAscii();
         LoaderTitle += OSName.subString(1, OSName.length()) + L" Linux"_XSW;
         // Very few linux icons exist in IconNames, but these few may be preloaded, so check that first
-        XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
+        XIcon ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
         if (ImageX.isEmpty()) {
           // no preloaded icon, try to load from dir
           ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSName);
@@ -1149,7 +1136,7 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
       if (FileExists(Volume->RootDir, LinuxEntryData[Index].Path)) {
         XStringW OSIconName = XStringW().takeValueFrom(LinuxEntryData[Index].Icon);
         OSIconName = OSIconName.subString(0, OSIconName.indexOf(','));
-        XImage ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
+        XIcon ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
         if (ImageX.isEmpty()) {
           ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSIconName);
         }
@@ -1378,10 +1365,6 @@ VOID ScanLoader(VOID)
     }
 
     // skip volume if its kind is configured as disabled
- /*   if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
-        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
-        (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE))) */
     if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0)
     {
       DBG(", flagged disable\n");
@@ -1509,7 +1492,7 @@ VOID ScanLoader(VOID)
             if ((AndroidEntryData[Index].Find[aIndex].isEmpty()) || FileExists(Volume->RootDir, AndroidEntryData[Index].Find[aIndex])) ++aFound;
           }
           if (aFound && (aFound == aIndex)) {
-            XImage ImageX;
+            XIcon ImageX;
             XStringW IconXSW = XStringW().takeValueFrom(AndroidEntryData[Index].Icon);
             ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
             AddLoaderEntry(AndroidEntryData[Index].Path, NullXStringArray, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume,
@@ -1602,8 +1585,8 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
     CUSTOM_LOADER_ENTRY *CustomSubEntry;
     LOADER_ENTRY        *Entry = NULL;
-    XImage Image = Custom->Image;
-    XImage DriveImage = Custom->DriveImage;
+    XIcon Image = Custom->Image;
+    XIcon DriveImage = Custom->DriveImage;
 
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
@@ -1619,22 +1602,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     DBG("    Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
 
     // skip volume if its kind is configured as disabled
-/*    if ((Volume->DiskKind == DISK_KIND_OPTICAL  && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL))  ||
-          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
-          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
-          (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE))) {
-*/
     if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0) {
       DBG("skipped because media is disabled\n");
       continue;
     }
 
-/*    if ((Custom->VolumeType != 0) &&
-          ((Volume->DiskKind == DISK_KIND_OPTICAL  && ((Custom->VolumeType & VOLTYPE_OPTICAL ) == 0)) ||
-           (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
-           (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
-           (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & VOLTYPE_FIREWIRE) == 0)))) {
-*/
     if (Custom->VolumeType != 0 && ((1<<Volume->DiskKind) & Custom->VolumeType) == 0) {
       DBG("skipped because media is ignored\n");
       continue;
@@ -1782,10 +1754,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                 BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
                                ((Custom->VolumeType == Ptr->VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
-                         /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                                (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                                (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               }
             } else if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
                        ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
@@ -1796,18 +1764,10 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                   BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
                                  ((Custom->VolumeType == Ptr->VolumeType) ||
                                   ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
-                  /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                   (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                   (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                   (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
                 } else if (Custom->VolumeType != Ptr->VolumeType) {
                   // More precise volume type match
                   BetterMatch = ((Custom->VolumeType == 0) &&
                                  ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
-                  /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                   (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                   (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                   (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
                 } else {
                   // Better match
                   BetterMatch = TRUE;
@@ -1818,19 +1778,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
                 BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
                                ((Custom->VolumeType == Ptr->VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0));
-                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               // Duplicate path match
               } else if (Custom->VolumeType != Ptr->VolumeType) {
                 // More precise volume type match
                 BetterMatch = ((Custom->VolumeType == 0) &&
                                ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
-                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               } else {
                 // Duplicate entry
                 BetterMatch = (i <= CustomIndex);
@@ -1842,27 +1794,15 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
               // Less precise path match
               BetterMatch = ((Custom->VolumeType != Ptr->VolumeType) &&
                              ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
-              /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-               (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-               (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-               (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
             } else if (CustomPath.equal(Ptr->Path)) {
               if (Custom->Path.isEmpty()) {
                 // More precise path and volume type match
                 BetterMatch = ((Custom->VolumeType == Ptr->VolumeType) ||
                                ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
-                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               } else if (Custom->VolumeType != Ptr->VolumeType) {
                 // More precise volume type match
                 BetterMatch = ((Custom->VolumeType == 0) &&
                                ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
-                /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-                 (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-                 (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
               } else {
                 // Duplicate entry
                 BetterMatch = (i <= CustomIndex);
@@ -1873,10 +1813,6 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
             // More precise volume type match
             BetterMatch = ((Custom->VolumeType == 0) &&
                            ((1ull<<Volume->DiskKind) & Custom->VolumeType) != 0);
-            /*       (Volume->DiskKind == DISK_KIND_OPTICAL && (Custom->VolumeType & VOLTYPE_OPTICAL)) ||
-             (Volume->DiskKind == DISK_KIND_EXTERNAL && (Custom->VolumeType & VOLTYPE_EXTERNAL)) ||
-             (Volume->DiskKind == DISK_KIND_INTERNAL && (Custom->VolumeType & VOLTYPE_INTERNAL)) ||
-             (Volume->DiskKind == DISK_KIND_FIREWIRE && (Custom->VolumeType & VOLTYPE_FIREWIRE)))); */
           } else {
             // Duplicate entry
             BetterMatch = (i <= CustomIndex);
@@ -1911,7 +1847,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
             SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath.wc_str(), Entry->VolName);
-            SubScreen->TitleImage.Image = Entry->Image;
+            SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->GetAnime();
             VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);

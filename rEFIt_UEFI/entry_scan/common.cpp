@@ -54,11 +54,11 @@
 
 extern CONST CHAR8* IconsNames[];
 
-const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
+const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 
 {
   UINTN IconNum = 0;
-  const XImage* IconX;
+  const XIcon* IconX;
   // default volume icon based on disk kind
   switch (Volume->DiskKind) {
     case DISK_KIND_INTERNAL:
@@ -111,7 +111,7 @@ const XImage& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EF
   }
 //  DBG("asked IconNum = %llu Volume->DiskKind=%d OSType=%d\n", IconNum, Volume->DiskKind, OSType);
   IconX = &ThemeX.GetIcon(IconNum); //asked IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS, got day icon
-  if (IconX->isEmpty()) {
+  if (IconX->Image.isEmpty()) {
     DBG("asked Icon %s not found, took internal\n", IconsNames[IconNum]);
     IconX = &ThemeX.GetIcon(BUILTIN_ICON_VOL_INTERNAL); //including embedded which is really present
   }

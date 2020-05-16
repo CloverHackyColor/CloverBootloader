@@ -1678,7 +1678,7 @@ VOID PatchTableType17()
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
         (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) &&
-        (AsciiStrnCmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
+        (strncmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
       DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
     }

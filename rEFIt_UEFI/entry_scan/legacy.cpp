@@ -51,7 +51,7 @@
 
 //the function is not in the class and deals always with MainMenu
 //I made args as pointers to have an ability to call with NULL
-BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTitle, IN REFIT_VOLUME *Volume, IN const XImage* Image, IN const XImage* DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
+BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTitle, IN REFIT_VOLUME *Volume, IN const XIcon* Image, IN const XIcon* DriveImage, IN CHAR16 Hotkey, IN BOOLEAN CustomEntry)
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
@@ -137,7 +137,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
     Entry->Image = *Image;
   } else {
     Entry->Image = ThemeX.LoadOSIcon(Volume->LegacyOS->IconName);
-    if (Entry->Image.isEmpty()) {
+    if (Entry->Image.Image.isEmpty()) {
       Entry->Image = ThemeX.GetIcon("os_win"_XS8); //we have no legacy.png
     }
   }
@@ -154,9 +154,9 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   Entry->AtRightClick = ActionDetails;
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) { //will be scaled later
-      Entry->BadgeImage = XImage(Entry->DriveImage, 0); //ThemeX.BadgeScale/16.f); //0 accepted
+      Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0); //ThemeX.BadgeScale/16.f); //0 accepted
     } else {
-      Entry->BadgeImage = XImage(Entry->Image, 0); //ThemeX.BadgeScale/16.f);
+      Entry->BadgeImage.Image = XImage(Entry->Image.Image, 0); //ThemeX.BadgeScale/16.f);
     }
   }
   Entry->Volume           = Volume;
@@ -170,7 +170,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 //  SubScreen->Title = L"Boot Options for "_XSW + LoaderTitle + L" on "_XSW + VolDesc;
 	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle.wc_str(), VolDesc);
 
-  SubScreen->TitleImage.Image = Entry->Image;  //TODO - ImageNight
+  SubScreen->TitleImage = Entry->Image;  //it is XIcon
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->GetAnime();
   // default entry
@@ -277,8 +277,8 @@ VOID AddCustomLegacy(VOID)
   BOOLEAN              ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
   CUSTOM_LEGACY_ENTRY *Custom;
-  XImage Image;
-  XImage DriveImage;
+  XIcon MainIcon;
+  XIcon DriveIcon;
   UINTN                i = 0;
   
 //  DBG("Custom legacy start\n");
@@ -305,10 +305,6 @@ VOID AddCustomLegacy(VOID)
       DBG("   Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
       
       // skip volume if its kind is configured as disabled
-  /*    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & VOLTYPE_OPTICAL)) ||
-          (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_EXTERNAL)) ||
-          (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & VOLTYPE_INTERNAL)) ||
-          (Volume->DiskKind == DISK_KIND_FIREWIRE && (GlobalConfig.DisableFlags & VOLTYPE_FIREWIRE))) */
       if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0)
       {
         DBG("skipped because media is disabled\n");
@@ -316,10 +312,6 @@ VOID AddCustomLegacy(VOID)
       }
       
       if (Custom->VolumeType != 0) {
-    /*    if ((Volume->DiskKind == DISK_KIND_OPTICAL && ((Custom->VolumeType & VOLTYPE_OPTICAL) == 0)) ||
-            (Volume->DiskKind == DISK_KIND_EXTERNAL && ((Custom->VolumeType & VOLTYPE_EXTERNAL) == 0)) ||
-            (Volume->DiskKind == DISK_KIND_INTERNAL && ((Custom->VolumeType & VOLTYPE_INTERNAL) == 0)) ||
-            (Volume->DiskKind == DISK_KIND_FIREWIRE && ((Custom->VolumeType & VOLTYPE_FIREWIRE) == 0))) */
         if (((1ull<<Volume->DiskKind) & Custom->VolumeType) == 0) {
           DBG("skipped because media is ignored\n");
           continue;
@@ -380,18 +372,18 @@ VOID AddCustomLegacy(VOID)
         continue;
       }
       // Change to custom image if needed
-      Image = Custom->Image;
-      if (Image.isEmpty()) {
-        Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
+      MainIcon = Custom->Image;
+      if (MainIcon.Image.isEmpty()) {
+        MainIcon.Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
       }
 
       // Change to custom drive image if needed
-      DriveImage = Custom->DriveImage;
-      if (DriveImage.isEmpty()) {
-        DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
+      DriveIcon = Custom->DriveImage;
+      if (DriveIcon.Image.isEmpty()) {
+        DriveIcon.Image.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
       }
       // Create a legacy entry for this volume
-      if (AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, &Image, &DriveImage, Custom->Hotkey, TRUE))
+      if (AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, &MainIcon, &DriveIcon, Custom->Hotkey, TRUE))
       {
         DBG("match!\n");
       }

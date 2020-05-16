@@ -1631,7 +1631,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       if (!TitleImage.Image.isEmpty()) {
         INTN FilmXPos = (INTN)(EntriesPosX - (TitleImage.Image.GetWidth() + (int)(TITLEICON_SPACING * ThemeX.Scale)));
         INTN FilmYPos = (INTN)EntriesPosY;
-        TitleImage.Image.Draw(FilmXPos, FilmYPos);
+        TitleImage.Image.Draw(FilmXPos, FilmYPos); //TODO - account night and svg
 
         // update FilmPlace only if not set by InitAnime
         if (FilmC->FilmPlace.Width == 0 || FilmC->FilmPlace.Height == 0) {
@@ -1879,9 +1879,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
   ThemeX.MeasureText(Text, &TextWidth, NULL);
 
   //Clear old text
-//  if (OldTextWidth > TextWidth) {
-    ThemeX.FillRectAreaOfScreen(OldX, OldY, OldTextWidth, OldTextHeight);
-//  }
+  ThemeX.FillRectAreaOfScreen(OldX, OldY, OldTextWidth, OldTextHeight);
 
   if (!(ThemeX.BootCampStyle)
       && (ThemeX.HideBadges & HDBADGES_INLINE) && (!OldRow)
@@ -1891,8 +1889,6 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
     ThemeX.FillRectAreaOfScreen((OldX - (OldTextWidth >> 1) - (BadgeDim + 16)),
                                 (OldY - ((BadgeDim - ThemeX.TextHeight) >> 1)), 128, 128);
   }
-//  XStringW TextX;
-//  TextX.takeValueFrom(Text);
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
   //show inline badge
@@ -1904,9 +1900,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
     INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
     INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
     Back.CopyRect(ThemeX.Background, X, Y);
-    Back.Compose(0, 0, Entries[ScrollState.CurrentSelection].Image, false, BadgeDim/128.f);
-//    Entries[ScrollState.CurrentSelection].Image.Draw((XPos - (TextWidth >> 1) - (BadgeDim + 16)),
-//                                                     (YPos - ((BadgeDim - ThemeX.TextHeight) >> 1)));
+    Back.Compose(0, 0, Entries[ScrollState.CurrentSelection].Image.GetBest(!ThemeX.Daylight), false, BadgeDim/128.f);
     Back.DrawOnBack(X, Y, Back);
   }
 
@@ -1997,27 +1991,35 @@ VOID REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
 VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
   INTN MainSize = ThemeX.MainEntriesSize;
-  XImage MainImage(MainSize, MainSize);
-  XImage* BadgeImage = NULL;
+//  XImage MainImage(MainSize, MainSize);
+//  XImage* BadgeImage;
+  XIcon MainIcon;  //it can be changed here
+  XIcon* BadgeIcon = NULL;
 
   if (Entry->Row == 0 && Entry->getDriveImage()  &&  !(ThemeX.HideBadges & HDBADGES_SWAP)) {
-    MainImage = *Entry->getDriveImage();
+    MainIcon = *Entry->getDriveImage();
   } else {
-    MainImage = Entry->Image; //XImage
+    MainIcon = Entry->Image; // XIcon*
   }
   //this should be inited by the Theme
-  if (MainImage.isEmpty()) {
+  if (MainIcon.isEmpty()) {
  //   DBG(" why MainImage is empty? Report to devs\n");
     if (!IsEmbeddedTheme()) {
-      MainImage = ThemeX.GetIcon("os_mac"_XS8);
+      MainIcon = ThemeX.GetIcon("os_mac"_XS8);
     }
-    if (MainImage.isEmpty()) {
-      MainImage.DummyImage(MainSize);
+    if (MainIcon.Image.isEmpty()) {
+      MainIcon.Image.DummyImage(MainSize);
+      MainIcon.setFilled();
     }
   }
+
+//  const XImage& MainImage = (!ThemeX.Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
+  
+  const XImage& MainImage = MainIcon.GetBest(!ThemeX.Daylight);
+
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
   INTN CompHeight = CompWidth;
-//    DBG("Entry title=%ls; MainWidth=%lld\n", Entry->Title.wc_str(), MainImage.GetWidth());
+
   float fScale;
   if (ThemeX.TypeSVG) {
     fScale = (selected ? 1.f : -1.f);
@@ -2026,18 +2028,16 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
 
   if (Entry->Row == 0) {
-    BadgeImage = Entry->getBadgeImage();
-//    DBG("   BadgeWidth=%lld\n", BadgeImage->GetWidth());
-  } //else null
+    BadgeIcon = Entry->getBadgeImage();
+  }
 
-  XImage TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
+  const XImage& TopImage = ThemeX.SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)];
 //    DBG("   SelectionWidth=%lld\n", TopImage.GetWidth());
   if (TopImage.GetWidth() > CompWidth) {
     CompWidth = TopImage.GetWidth();
     CompHeight = CompWidth;
   }
   XImage Back(CompWidth, CompHeight);
-//  Back.GetArea(XPos, YPos, 0, 0); // this is background at this place
   Back.CopyRect(ThemeX.Background, XPos, YPos);
 
   INTN OffsetX = (CompWidth - MainImage.GetWidth()) / 2;
@@ -2060,26 +2060,18 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
     Back.Compose(OffsetTX, OffsetTY, TopImage, false); //selection first
     Back.Compose(OffsetX, OffsetY, MainImage, false, composeScale);
   }
-//  DBG("compose size=%lld\n", CompWidth);
-  //the badge is already scaled?
-//  DBG("check Badge size=%lld offset=%lld\n", BadgeImage->GetWidth(), ThemeX.BadgeOffsetX);
   // place the badge image
   float fBadgeScale = ThemeX.BadgeScale/16.f;
-  if (BadgeImage && !BadgeImage->isEmpty()) {
-    INTN BadgeWidth = (INTN)(BadgeImage->GetWidth() * fBadgeScale);
-    INTN BadgeHeight = (INTN)(BadgeImage->GetHeight() * fBadgeScale);
+  if ((Entry->Row == 0) && BadgeIcon && !BadgeIcon->isEmpty()) {
+//    const XImage& BadgeImage = (!ThemeX.Daylight && !BadgeIcon->ImageNight.isEmpty()) ? &BadgeIcon->ImageNight : BadgeImage = &BadgeIcon->Image;
+    const XImage& BadgeImage = BadgeIcon->GetBest(!ThemeX.Daylight);
+    INTN BadgeWidth = (INTN)(BadgeImage.GetWidth() * fBadgeScale);
+    INTN BadgeHeight = (INTN)(BadgeImage.GetHeight() * fBadgeScale);
     
     if ((BadgeWidth + 8) < CompWidth && (BadgeHeight + 8) < CompHeight) {
       
       // Check for user badge x offset from theme.plist
       if (ThemeX.BadgeOffsetX != 0xFFFF) {
-        // Check if value is between 0 and ( width of the main icon - width of badge )
-        //no, we have crop at Compose so there is safe for extra offset
- //       if (ThemeX.BadgeOffsetX < 0 || ThemeX.BadgeOffsetX > (CompWidth - BadgeWidth)) {
- //         DBG("User offset X %lld is out of range\n", ThemeX.BadgeOffsetX);
- //         ThemeX.BadgeOffsetX = CompWidth  - 8 - BadgeWidth;
- //         DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetX);
- //       }
         OffsetX += ThemeX.BadgeOffsetX;
       } else {
         // Set default position
@@ -2087,19 +2079,13 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
       }
       // Check for user badge y offset from theme.plist
       if (ThemeX.BadgeOffsetY != 0xFFFF) {
-        // Check if value is between 0 and ( height of the main icon - height of badge )
-//        if (ThemeX.BadgeOffsetY < 0 || ThemeX.BadgeOffsetY > (CompHeight - BadgeHeight)) {
-//          DBG("User offset Y %lld is out of range\n",ThemeX.BadgeOffsetY);
- //         ThemeX.BadgeOffsetY = CompHeight - 8 - BadgeHeight;
- //         DBG("   corrected to default %lld\n", ThemeX.BadgeOffsetY);
- //       }
         OffsetY += ThemeX.BadgeOffsetY;
       } else {
         // Set default position
         OffsetY += CompHeight - 8 - BadgeHeight;
       }
  //     DBG("  badge offset=[%lld,%lld]\n", OffsetX, OffsetY);
-      Back.Compose(OffsetX, OffsetY, *BadgeImage, false, fBadgeScale);
+      Back.Compose(OffsetX, OffsetY, BadgeImage, false, fBadgeScale);
     }
   }
 
@@ -2116,24 +2102,16 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator
   if (ThemeX.BootCampStyle && !(ThemeX.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-//    ThemeX.SelectionImages[4]->HasAlpha = TRUE;
-
     // indicator is for row 0, main entries, only
     if (Entry->Row == 0) {
-//      BltImageAlpha(SelectionImages[4 + (selected ? 0 : 1)],
-//                    XPos + (row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * GlobalConfig.Scale),
-//                    row0PosY + row0TileSize + TextHeight + (INTN)((BCSMargin * 2) * GlobalConfig.Scale),
-//                    &MenuBackgroundPixel, Scale);
-      TopImage = ThemeX.SelectionImages[4 + (selected ? 0 : 1)];
-      //TopImage.Draw(XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale),
-      //              row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale), fScale, false);
+      const XImage& SelImage = ThemeX.SelectionImages[4 + (selected ? 0 : 1)];
       XPos = XPos + (ThemeX.row0TileSize / 2) - (INTN)(INDICATOR_SIZE * 0.5f * ThemeX.Scale);
       YPos = row0PosY + ThemeX.row0TileSize + ThemeX.TextHeight + (INTN)((BCSMargin * 2) * ThemeX.Scale);
       CompWidth = (INTN)(INDICATOR_SIZE * ThemeX.Scale);
       CompHeight = (INTN)(INDICATOR_SIZE * ThemeX.Scale);
       Back = XImage(CompWidth, CompHeight);
       Back.CopyRect(ThemeX.Background, XPos, YPos);
-      Back.Compose(0, 0, TopImage, false);
+      Back.Compose(0, 0, SelImage, false);
       Back.DrawWithoutCompose(XPos, YPos);
     }
   }

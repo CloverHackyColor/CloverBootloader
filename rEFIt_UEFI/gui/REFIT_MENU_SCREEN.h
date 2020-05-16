@@ -74,7 +74,7 @@ public:
 //  XPointer mPointer;
   UINTN             ID;
   XStringW          Title;
-  Icon              TitleImage;
+  XIcon             TitleImage;
   XStringWArray     InfoLines;
 
   XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;

@@ -106,18 +106,12 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
     else
         osbundlerequired[0] = '\0';
 
-    if (OSTYPE_IS_OSX_RECOVERY(loaderType)) {
-        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
-            AsciiStrnCmp(osbundlerequired, "local", 5) &&
-            AsciiStrnCmp(osbundlerequired, "console", 7) &&
-            AsciiStrnCmp(osbundlerequired, "network-root", 12)) {
-            inject = FALSE;
-        }
-    } else if (OSTYPE_IS_OSX_INSTALLER(loaderType)) {
-        if (AsciiStrnCmp(osbundlerequired, "root", 4) &&
-            AsciiStrnCmp(osbundlerequired, "local", 5) &&
-            AsciiStrnCmp(osbundlerequired, "console", 7) &&
-            AsciiStrnCmp(osbundlerequired, "network-root", 12)) {
+    if (OSTYPE_IS_OSX_RECOVERY(loaderType) ||
+        OSTYPE_IS_OSX_INSTALLER(loaderType)) {
+        if (strncmp(osbundlerequired, "root", 4) &&
+            strncmp(osbundlerequired, "local", 5) &&
+            strncmp(osbundlerequired, "console", 7) &&
+            strncmp(osbundlerequired, "network-root", 12)) {
             inject = FALSE;
         }
     }
@@ -128,7 +122,7 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
 //extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
 //extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
-EFI_STATUS EFIAPI LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext_v)
+EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext_v)
 {
   EFI_STATUS  Status;
   UINT8*      infoDictBuffer = NULL;
@@ -225,7 +219,7 @@ EFI_STATUS EFIAPI LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileNa
   return EFI_SUCCESS;
 }
 
-EFI_STATUS EFIAPI LOADER_ENTRY::AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
+EFI_STATUS LOADER_ENTRY::AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
 {
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
@@ -787,7 +781,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
       while(!EFI_ERROR(DTIterateProperties(iter, &ptr))) {
         prop = iter->CurrentProperty;
         drvPtr = (UINT8*) prop;
-        if(AsciiStrnCmp(prop->Name, "Driver-", 7)==0 || AsciiStrnCmp(prop->Name, "DriversPackage-", 15)==0) {
+        if(strncmp(prop->Name, "Driver-", 7)==0 || strncmp(prop->Name, "DriversPackage-", 15)==0) {
           break;
         }
       }
@@ -798,10 +792,10 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
     if(!EFI_ERROR(DTCreatePropertyIterator(platformEntry, iter))) {
       while(!EFI_ERROR(DTIterateProperties(iter, &ptr))) {
         prop = iter->CurrentProperty;
-        if(AsciiStrnCmp(prop->Name, "mm_extra", 8)==0) {
+        if(strncmp(prop->Name, "mm_extra", 8)==0) {
           infoPtr = (UINT8*)prop;
         }
-        if(AsciiStrnCmp(prop->Name, "extra", 5)==0) {
+        if(strncmp(prop->Name, "extra", 5)==0) {
           extraPtr = (UINT8*)prop;
         }
       }

@@ -1209,7 +1209,7 @@ VOID AboutRefit(VOID)
 {
   if (AboutMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      AboutMenu.TitleImage = ThemeX.TakeIcon(BUILTIN_ICON_FUNC_ABOUT);
+      AboutMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_ABOUT);
     }
 //    else {
 //      AboutMenu.TitleImage.setEmpty(); //done in the constructor
@@ -1263,7 +1263,7 @@ VOID HelpRefit(VOID)
 {
   if (HelpMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      HelpMenu.TitleImage = ThemeX.TakeIcon(BUILTIN_ICON_FUNC_HELP);
+      HelpMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_HELP);
     }
     //else {
     //  HelpMenu.TitleImage.setEmpty();
@@ -1662,14 +1662,14 @@ REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MEN
     if (CTitle) Entry->Title.takeValueFrom(CTitle);
     else Entry->Title.setEmpty();
 
-  Entry->Image =  OptionMenu.TitleImage.Image;
+  Entry->Image =  OptionMenu.TitleImage;
   Entry->AtClick = AtClick;
   // create the submenu
 //  *SubScreen = (__typeof_am__(*SubScreen))AllocateZeroPool(sizeof(**SubScreen));
   *SubScreen = new REFIT_MENU_SCREEN();
 //  (*SubScreen)->Title = EfiStrDuplicate(Entry->Title);
   (*SubScreen)->Title = Entry->Title;
-  (*SubScreen)->TitleImage.Image = Entry->Image;
+  (*SubScreen)->TitleImage = Entry->Image;
   (*SubScreen)->ID = ID;
   (*SubScreen)->GetAnime();
   Entry->SubScreen = *SubScreen;
@@ -1702,7 +1702,6 @@ VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 
 REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
 {
-  UINTN  i, N, Ven = 97;
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
@@ -1715,10 +1714,10 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
   SubScreen->AddMenuItemInput(112, "Intel Max Backlight:", TRUE); //gSettings.IntelMaxValue
 
 
-  for (i = 0; i < NGFX; i++) {
+  for (UINTN i = 0; i < NGFX; i++) {
     SubScreen->AddMenuInfo_f("----------------------");
 	  SubScreen->AddMenuInfo_f("Card DeviceID=%04hx", gGraphics[i].DeviceID);
-    N = 20 + i * 6;
+    UINTN N = 20 + i * 6;
     SubScreen->AddMenuItemInput(N, "Model:", TRUE);
 
     if (gGraphics[i].Vendor == Nvidia) {
@@ -1731,11 +1730,12 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
       SubScreen->AddMenuItemInput(N+1, "InjectX3", FALSE);
     }
 
+    UINTN  Ven = 97; //it can be used for non Ati, Nvidia, Intel in QEMU for example
     if (gGraphics[i].Vendor == Nvidia) {
       Ven = 95;
     } else if (gGraphics[i].Vendor == Ati) {
       Ven = 94;
-    } else /*if (gGraphics[i].Vendor == Intel)*/ {
+    } else if (gGraphics[i].Vendor == Intel) {
       Ven = 96;
     }
 
@@ -2736,7 +2736,7 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 
   if (OptionMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
-      OptionMenu.TitleImage = ThemeX.TakeIcon(BUILTIN_ICON_FUNC_OPTIONS);
+      OptionMenu.TitleImage = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
     }
     //else {
     //  OptionMenu.TitleImage.setEmpty();

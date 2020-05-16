@@ -117,7 +117,7 @@ XMLDecode(CHAR8* src)
       UINTN i;
       s++;
       for (i = 0; i < sizeof(ents)/sizeof(ents[0]); i++) {
-        if ( AsciiStrnCmp(s, ents[i].name, ents[i].nameLen) == 0 ) {
+        if ( strncmp(s, ents[i].name, ents[i].nameLen) == 0 ) {
           entFound = TRUE;
           break;
         }
@@ -339,7 +339,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
   }
 
   pos = length;
-  if (!AsciiStrnCmp(tagName, kXMLTagPList, 6)) {
+  if (!strncmp(tagName, kXMLTagPList, 6)) {
     length=0;
     Status=EFI_SUCCESS;
   }
@@ -354,7 +354,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
     DBG("end dict len=%d\n", length);
     Status = ParseTagList(buffer + pos, tag, kTagTypeDict, 1, &length);
   }
-  else if (!AsciiStrnCmp(tagName, kXMLTagDict " ", 5))
+  else if (!strncmp(tagName, kXMLTagDict " ", 5))
   {
     DBG("space dict len=%d\n", length);
     Status = ParseTagList(buffer + pos, tag, kTagTypeDict, 0, &length);
@@ -372,7 +372,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
     Status = ParseTagString(buffer + pos, tag, &length);
   }
    /***** string ****/
-  else if (!AsciiStrnCmp(tagName, kXMLTagString " ", 7))
+  else if (!strncmp(tagName, kXMLTagString " ", 7))
   {
     DBG("parse String len=%d\n", length);
     Status = ParseTagString(buffer + pos, tag, &length);
@@ -382,7 +382,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
   {
     Status = ParseTagInteger(buffer + pos, tag, &length);
   }
-  else if (!AsciiStrnCmp(tagName, kXMLTagInteger " ", 8))
+  else if (!strncmp(tagName, kXMLTagInteger " ", 8))
   {
     Status = ParseTagInteger(buffer + pos, tag, &length);
   }
@@ -391,7 +391,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
   {
     Status = ParseTagFloat(buffer + pos, tag, &length);
   }
-  else if (!AsciiStrnCmp(tagName, kXMLTagFloat " ", 8))
+  else if (!strncmp(tagName, kXMLTagFloat " ", 8))
   {
     Status = ParseTagFloat(buffer + pos, tag, &length);
   }
@@ -400,7 +400,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
   {
     Status = ParseTagData(buffer + pos, tag, &length);
   }
-  else if (!AsciiStrnCmp(tagName, kXMLTagData " ", 5))
+  else if (!strncmp(tagName, kXMLTagData " ", 5))
   {
     Status = ParseTagData(buffer + pos, tag, &length);
   }
@@ -424,7 +424,7 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
   {
     Status = ParseTagList(buffer + pos, tag, kTagTypeArray, 0, &length);
   }
-  else if (!AsciiStrnCmp(tagName, kXMLTagArray " ", 6))
+  else if (!strncmp(tagName, kXMLTagArray " ", 6))
   {
     DBG("begin array len=%d\n", length);
     Status = ParseTagList(buffer + pos, tag, kTagTypeArray, 0, &length);

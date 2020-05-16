@@ -474,20 +474,20 @@ DumpDeviceTreeNodeRecusively (
         break;
       }
 
-      if (AsciiStrnCmp (PropertyName, "name", 4) == 0) {
+      if (AsciiStrnCmp(PropertyName, "name", 4) == 0) {
         DEBUG ((DEBUG_INFO, "+%*ao %a\n", mDTNodeDepth * Spacer, "-", PropertyValue, mDTNodeDepth));
         DEBUG ((DEBUG_INFO, "|%*a\n", mDTNodeDepth * Spacer, " {" , mDTNodeDepth));
         PropertyParent = PropertyValue;
         mDTNodeDepth++;
-      } else if (AsciiStrnCmp (PropertyName, "guid", 4) == 0) {
+      } else if (AsciiStrnCmp(PropertyName, "guid", 4) == 0) {
         //
         // Show Guid.
         //
         DEBUG ((DEBUG_INFO, "|%*a \"%a\" = < %g >\n", mDTNodeDepth * Spacer, " ", PropertyName, PropertyValue, PropertySize));
-      } else if (AsciiStrnCmp (PropertyParent, "memory-map", 10) == 0) {
+      } else if (AsciiStrnCmp(PropertyParent, "memory-map", 10) == 0) {
         MemMap = (DTMemMapEntry *)PropertyValue;
 
-        if (AsciiStrnCmp (PropertyName, "Driver-", 7) == 0) {
+        if (AsciiStrnCmp(PropertyName, "Driver-", 7) == 0) {
           Kext = (DTBooterKextFileInfo *)(UINTN)MemMap->Address;
 
           if (Kext != NULL && Kext->ExecutablePhysAddr != 0) {

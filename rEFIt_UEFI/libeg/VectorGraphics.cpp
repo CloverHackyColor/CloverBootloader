@@ -295,40 +295,44 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     if (i == BUILTIN_ICON_BANNER) { //exclude "logo" as it done as Banner
       continue;
     }
-    Icon* NewIcon = new Icon(i, false); //initialize without embedded
+    XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image, &NewIcon->ImageSVG);
-    // DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
+    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
+      NewIcon->setFilled();
       ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
     }
-//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
+ //   DBG("parse night %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
     Icons.AddReference(NewIcon, true);
-    if (EFI_ERROR(Status) && i >= BUILTIN_ICON_VOL_INTERNAL_HFS && i <= BUILTIN_ICON_VOL_INTERNAL_REC) {
-      // call to GetIconAlt will get alternate/embedded into Icon if missing
-      DBG("   get alt icon for %lld\n", i);
-      GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL);
+    if (EFI_ERROR(Status)) {
+      if (i >= BUILTIN_ICON_VOL_INTERNAL_HFS && i <= BUILTIN_ICON_VOL_INTERNAL_REC) {
+        // call to GetIconAlt will get alternate/embedded into Icon if missing
+        GetIconAlt(i, BUILTIN_ICON_VOL_INTERNAL);
+      } else if (i == BUILTIN_SELECTION_BIG) {
+        GetIconAlt(i, BUILTIN_SELECTION_SMALL);
+      }
     }
   }
   
   // --- Make other OSes
   for (INTN i = ICON_OTHER_OS; i < IconsNamesSize; ++i) {
     if (AsciiStrLen(IconsNames[i]) == 0) break;
-    Icon* NewIcon = new Icon(i, false); //initialize without embedded
+    XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image, &NewIcon->ImageSVG);
-//     DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
+    DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
       ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
     }
     Icons.AddReference(NewIcon, true);
   }
-  
+  DBG("parse icon_selection\n");
   //selection for bootcampstyle
-  Icon *NewIcon = new Icon(BUILTIN_ICON_SELECTION);
+  XIcon *NewIcon = new XIcon(BUILTIN_ICON_SELECTION);
   Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator"_XS8, &NewIcon->Image, &NewIcon->ImageSVG);
   if (!EFI_ERROR(Status)) {
-    ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
+    Status = ParseSVGXIcon(BUILTIN_ICON_SELECTION, "selection_indicator_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
   }
   Icons.AddReference(NewIcon, true);
 
@@ -337,15 +341,18 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   SelectionBackgroundPixel.Green    = (SelectionColor >> 16) & 0xFF;
   SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
+//TODO make SelectionImages to be XIcon
+  DBG("assign selections\n");
+  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG).GetBest(!Daylight);
+  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL).GetBest(!Daylight);
+  SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION).GetBest(!Daylight);
 
-  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG);
-  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL);
-  SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION);
-
+  DBG("assign buttons\n");
   //buttons
   for (INTN i = BUILTIN_RADIO_BUTTON; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
-    Buttons[i - BUILTIN_RADIO_BUTTON] = GetIcon(i);
+    Buttons[i - BUILTIN_RADIO_BUTTON] = GetIcon(i).GetBest(!Daylight);
   }
+  DBG("done!\n");
   //for (int i=0 ; i<6 ; i+=2 ) {
   //SelectionImages[i].Draw(i*100, 0);
   //}

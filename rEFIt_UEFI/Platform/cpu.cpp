@@ -213,7 +213,7 @@ VOID GetCPUProperties (VOID)
     }
     AsciiStrnCpyS(gCPUStructure.BrandString, 48, s, 48);
     
-    if (!AsciiStrnCmp((const CHAR8*)gCPUStructure.BrandString, (const CHAR8*)CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48)))
+    if (!strncmp((const CHAR8*)gCPUStructure.BrandString, (const CHAR8*)CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48)))
     {
       gCPUStructure.BrandString[0] = '\0';
     }
