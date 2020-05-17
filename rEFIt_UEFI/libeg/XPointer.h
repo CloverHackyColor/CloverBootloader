@@ -26,13 +26,14 @@ protected:
   EFI_SIMPLE_POINTER_STATE    State;
   MOUSE_EVENT MouseEvent;
   bool Alive;
+  bool night;
 
 public:
   void Hide();
   bool isAlive();
   EFI_STATUS MouseBirth();
   VOID KillMouse();
-  VOID UpdatePointer();
+  VOID UpdatePointer(bool daylight);
   bool MouseInRect(EG_RECT *Place);
 
   bool isEmpty() const { return PointerImage->isEmpty(); }

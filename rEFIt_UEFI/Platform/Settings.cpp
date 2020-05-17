@@ -3985,6 +3985,9 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
   UINTN      Rnd;
   EFI_TIME   Now;
 	
+  DbgHeader("InitXTheme");
+  ThemeX.Init();
+  
   //initialize Daylight when we know timezone
   if (GlobalConfig.Timezone != 0xFF) { // 0xFF:default=timezone not set
     gRT->GetTime(&Now, NULL);
@@ -4000,9 +4003,6 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
   } else {
     DBG("use night theme\n");
   }
-
-  DbgHeader("InitXTheme");
-  ThemeX.Init();
 
   for (i = 0; i < 3; i++) {
     //    DBG("validate %d face\n", i);

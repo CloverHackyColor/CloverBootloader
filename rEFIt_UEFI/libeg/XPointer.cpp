@@ -28,7 +28,7 @@
 XPointer::XPointer()
             : SimplePointerProtocol(NULL), PointerImage(NULL),
 //              newImage(POINTER_WIDTH, POINTER_HEIGHT),
-              oldImage(0, 0), Alive(false)
+              oldImage(0, 0), Alive(false), night(false)
 {
 
 }
@@ -88,7 +88,7 @@ EFI_STATUS XPointer::MouseBirth()
     PointerImage = nullptr;
   }
 //  Now update image because of other theme has other image
-  PointerImage = new XImage(ThemeX.GetIcon(BUILTIN_ICON_POINTER).GetBest(!ThemeX.Daylight));
+  PointerImage = new XImage(ThemeX.GetIcon(BUILTIN_ICON_POINTER).GetBest(night));
 
   oldImage.setSizeInPixels(PointerImage->GetWidth(), PointerImage->GetHeight());
   LastClickTime = 0;
@@ -135,7 +135,7 @@ VOID XPointer::KillMouse()
   SimplePointerProtocol = NULL;
 }
 
-VOID XPointer::UpdatePointer()
+VOID XPointer::UpdatePointer(bool daylight)
 {
   UINT64                    Now;
   EFI_STATUS                Status;
@@ -143,6 +143,8 @@ VOID XPointer::UpdatePointer()
   EFI_SIMPLE_POINTER_MODE   *CurrentMode;
   INTN                      ScreenRelX;
   INTN                      ScreenRelY;
+  
+  night = !daylight;
 
   //  Now = gRT->GetTime(&Now, NULL);
   Now = AsmReadTsc();

@@ -712,11 +712,10 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 
 // TimeoutDefault for a wait in seconds
 // return EFI_TIMEOUT if no inputs
-//the function must be in menu class
+//the function must be in menu_screen class
 //so UpdatePointer(); => mPointer.Update(&gItemID, &Screen->mAction);
-EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN* ScreenPtr, UINTN TimeoutDefault)
+EFI_STATUS REFIT_MENU_SCREEN::WaitForInputEventPoll(UINTN TimeoutDefault)
 {
-  REFIT_MENU_SCREEN& Screen = *ScreenPtr;
   EFI_STATUS Status = EFI_SUCCESS;
   UINTN TimeoutRemain = TimeoutDefault * 100;
 
@@ -725,14 +724,14 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN* ScreenPtr, UINTN TimeoutDefa
     if (Status != EFI_TIMEOUT) {
       break;
     }
-    Screen.UpdateFilm();
+    UpdateFilm();
     if (gSettings.PlayAsync) {
       CheckSyncSound();
     }
     TimeoutRemain--;
-    if (Screen.mPointer.isAlive()) {
-      Screen.mPointer.UpdatePointer();
-      Status = Screen.CheckMouseEvent(); //out: gItemID, gAction
+    if (mPointer.isAlive()) {
+      mPointer.UpdatePointer(!Daylight);
+      Status = CheckMouseEvent(); //out: gItemID, gAction
       if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
         break;
       }
@@ -826,7 +825,19 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       mGuiReady = TRUE;
       DBG("GUI ready\n");
     }
-    Status = WaitForInputEventPoll(this, 1); //wait for 1 seconds.
+    
+    EFI_TIME          Now;
+    gRT->GetTime(&Now, NULL);
+    if (GlobalConfig.Timezone != 0xFF) {
+      INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+      if (NowHour <  0 ) NowHour += 24;
+      if (NowHour >= 24 ) NowHour -= 24;
+      Daylight = (NowHour > 8) && (NowHour < 20);  //this is the screen member
+    } else {
+      Daylight = true;
+    }
+
+    Status = WaitForInputEventPoll(1); //wait for 1 seconds.
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
         if (TimeoutCountdown <= 0) {
@@ -1900,7 +1911,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
     INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
     INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
     Back.CopyRect(ThemeX.Background, X, Y);
-    Back.Compose(0, 0, Entries[ScrollState.CurrentSelection].Image.GetBest(!ThemeX.Daylight), false, BadgeDim/128.f);
+    Back.Compose(0, 0, Entries[ScrollState.CurrentSelection].Image.GetBest(!Daylight), false, BadgeDim/128.f);
     Back.DrawOnBack(X, Y, Back);
   }
 
@@ -2015,7 +2026,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
 
 //  const XImage& MainImage = (!ThemeX.Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
   
-  const XImage& MainImage = MainIcon.GetBest(!ThemeX.Daylight);
+  const XImage& MainImage = MainIcon.GetBest(!Daylight);
 
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
   INTN CompHeight = CompWidth;
@@ -2064,7 +2075,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   float fBadgeScale = ThemeX.BadgeScale/16.f;
   if ((Entry->Row == 0) && BadgeIcon && !BadgeIcon->isEmpty()) {
 //    const XImage& BadgeImage = (!ThemeX.Daylight && !BadgeIcon->ImageNight.isEmpty()) ? &BadgeIcon->ImageNight : BadgeImage = &BadgeIcon->Image;
-    const XImage& BadgeImage = BadgeIcon->GetBest(!ThemeX.Daylight);
+    const XImage& BadgeImage = BadgeIcon->GetBest(!Daylight);
     INTN BadgeWidth = (INTN)(BadgeImage.GetWidth() * fBadgeScale);
     INTN BadgeHeight = (INTN)(BadgeImage.GetHeight() * fBadgeScale);
     

@@ -466,6 +466,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void AddDefaultMenu();
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
+        LOADER_ENTRY* SubMenuKextInjectMgmt();
 			} ;
 
 

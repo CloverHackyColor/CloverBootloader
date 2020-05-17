@@ -1949,7 +1949,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
   return Entry;
 }
 
-LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
+LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 {
 	LOADER_ENTRY       *SubEntry;
 	REFIT_MENU_SCREEN  *SubScreen;
@@ -1957,11 +1957,11 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 //	UINTN               i;
 	CHAR8               ShortOSVersion[8];
 //	CHAR16             *UniSysVer = NULL;
-	CHAR8              *ChosenOS = Entry->OSVersion;
+	CHAR8              *ChosenOS = OSVersion;
 
 	SubEntry = new LOADER_ENTRY();
 	NewEntry_(SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
-	SubEntry->Flags = Entry->Flags;
+	SubEntry->Flags = Flags;
 	if (ChosenOS) {
 //    DBG("chosen os %s\n", ChosenOS);
 		//shorten os version 10.11.6 -> 10.11
@@ -1976,7 +1976,6 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			}
 		}
 
-
 		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s",
 		                ShortOSVersion);
 
@@ -1985,11 +1984,11 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"10"), true);
 
 			CHAR16 DirName[256];
-			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
 				snwprintf(DirName, sizeof(DirName), "10_install");
 			}
 			else {
-				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
 					snwprintf(DirName, sizeof(DirName), "10_recovery");
 				}
 				else {
@@ -2005,11 +2004,11 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 			snwprintf(DirName, sizeof(DirName), "%s", ShortOSVersion);
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 
-			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
 				snwprintf(DirName, sizeof(DirName), "%s_install", ShortOSVersion);
 			}
 			else {
-				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
 					snwprintf(DirName, sizeof(DirName), "%s_recovery", ShortOSVersion);
 				}
 				else {
@@ -2025,27 +2024,27 @@ LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry)
 		{
 			{
 				CHAR16 OSVersionKextsDirName[256];
-				if ( AsciiStrCmp(ShortOSVersion, Entry->OSVersion) == 0 ) {
-					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s.0", Entry->OSVersion);
+				if ( AsciiStrCmp(ShortOSVersion, OSVersion) == 0 ) {
+					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s.0", OSVersion);
 				}else{
-					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s", Entry->OSVersion);
+					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s", OSVersion);
 				}
 				SubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
 			}
 
 			CHAR16 DirName[256];
-			if (OSTYPE_IS_OSX_INSTALLER(Entry->LoaderType)) {
+			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
 				snwprintf(DirName, sizeof(DirName), "%s_install",
-				        Entry->OSVersion);
+				        OSVersion);
 			}
 			else {
-				if (OSTYPE_IS_OSX_RECOVERY(Entry->LoaderType)) {
+				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
 					snwprintf(DirName, sizeof(DirName), "%s_recovery",
-					        Entry->OSVersion);
+					        OSVersion);
 				}
 				else {
 					snwprintf(DirName, sizeof(DirName), "%s_normal",
-					        Entry->OSVersion);
+					        OSVersion);
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);

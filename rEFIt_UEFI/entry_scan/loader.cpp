@@ -76,7 +76,7 @@ const XStringArray LINUX_DEFAULT_OPTIONS = Split<XStringArray>("ro add_efi_memma
 #endif
 
 
-extern LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry);
+//extern LOADER_ENTRY *SubMenuKextInjectMgmt(LOADER_ENTRY *Entry);
 
 // Linux loader path data
 typedef struct LINUX_PATH_DATA
@@ -778,14 +778,17 @@ void LOADER_ENTRY::AddDefaultMenu()
   UINT64            VolumeSize;
   EFI_GUID          *Guid = NULL;
   BOOLEAN           KernelIs64BitOnly;
-  UINT64            os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+  UINT64            os_version = AsciiOSVersionToUint64(OSVersion);
 	
   constexpr LString8 quietLitteral = "quiet";
   constexpr LString8 splashLitteral = "splash";
 
   // Only kernels up to 10.7 have 32-bit mode
   KernelIs64BitOnly = (OSVersion == NULL ||
-                       AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8"));
+                       os_version >= AsciiOSVersionToUint64("10.8"));
+  
+  const char* macOS = (os_version < AsciiOSVersionToUint64("10.8"))? "Mac OS X" :
+                      (os_version < AsciiOSVersionToUint64("10.12"))? "OS X" : "macOS";
 
   FileName = LoaderPath.basename();
 
@@ -810,13 +813,7 @@ void LOADER_ENTRY::AddDefaultMenu()
   if (LoaderType == OSTYPE_OSX ||
       LoaderType == OSTYPE_OSX_INSTALLER ||
       LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
-    if (os_version < AsciiOSVersionToUint64("10.8")) {
-      SubScreen->AddMenuInfoLine_f("Mac OS X: %s", OSVersion);
-    } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-      SubScreen->AddMenuInfoLine_f("OS X: %s", OSVersion);
-    } else {
-      SubScreen->AddMenuInfoLine_f("macOS: %s", OSVersion);
-    }
+    SubScreen->AddMenuInfoLine_f("%s: %s", macOS, OSVersion);
 
     if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
       SubEntry = getPartiallyDuplicatedEntry();
@@ -829,25 +826,13 @@ void LOADER_ENTRY::AddDefaultMenu()
 
     SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      if (os_version < AsciiOSVersionToUint64("10.8")) {
-        SubEntry->Title.takeValueFrom("Boot Mac OS X with selected options");
-      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubEntry->Title.takeValueFrom("Boot OS X with selected options");
-      } else {
-        SubEntry->Title.takeValueFrom("Boot macOS with selected options");
-      }
+      SubEntry->Title.SWPrintf("Boot %s with selected options", macOS);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
     
     SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      if (os_version < AsciiOSVersionToUint64("10.8")) {
-        SubEntry->Title.takeValueFrom("Boot Mac OS X with injected kexts");
-      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubEntry->Title.takeValueFrom("Boot OS X with injected kexts");
-      } else {
-        SubEntry->Title.takeValueFrom("Boot macOS with injected kexts");
-      }
+      SubEntry->Title.SWPrintf("Boot %s with injected kexts", macOS);
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       SubScreen->AddMenuEntry(SubEntry, true);
@@ -855,31 +840,20 @@ void LOADER_ENTRY::AddDefaultMenu()
 
     SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
-      if (os_version < AsciiOSVersionToUint64("10.8")) {
-        SubEntry->Title.takeValueFrom("Boot Mac OS X without injected kexts");
-      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-        SubEntry->Title.takeValueFrom("Boot OS X without injected kexts");
-      } else {
-        SubEntry->Title.takeValueFrom("Boot macOS without injected kexts");
-      }
+      SubEntry->Title.SWPrintf("Boot %s without injected kexts", macOS);
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(Entry), true);
+    SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(), true);
     SubScreen->AddMenuInfo_f("=== boot-args ===");
     if (!KernelIs64BitOnly) {
       if (os_version < AsciiOSVersionToUint64("10.8")) {
         SubScreen->AddMenuCheck("Mac OS X 32bit",   OPT_I386, 68);
-        SubScreen->AddMenuCheck("Mac OS X 64bit",   OPT_X64,  68);
-      } else if (os_version < AsciiOSVersionToUint64("10.12")) {
-  //      SubScreen->AddMenuCheck("OS X 32bit",       OPT_I386, 68); //it cant be 32 bit
-        SubScreen->AddMenuCheck("OS X 64bit",       OPT_X64,  68);
-      } else {
-  //      SubScreen->AddMenuCheck("macOS 32bit",      OPT_I386, 68);
-        SubScreen->AddMenuCheck("macOS 64bit",      OPT_X64,  68);
       }
+//      SubScreen->AddMenuCheck(XString8().SPrintf("%s 64bit", macOS).c_str(), OPT_X64,  68);
+      SubScreen->AddMenuCheck((macOS + " 64bit"_XS8).c_str(), OPT_X64,  68);
     }
     SubScreen->AddMenuCheck("Verbose (-v)",                               OPT_VERBOSE, 68);
     // No Caches option works on 10.6 - 10.9
@@ -966,40 +940,40 @@ void LOADER_ENTRY::AddDefaultMenu()
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-  } else if ((Entry->LoaderType == OSTYPE_WIN) || (Entry->LoaderType == OSTYPE_WINEFI)) {
+  } else if ((LoaderType == OSTYPE_WIN) || (LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
-   LoadOptions.setEmpty();
-   LoadOptions.Add("-s"_XS8);
-   LoadOptions.Add("-h"_XS8);
+    LoadOptions.setEmpty();
+    LoadOptions.Add("-s"_XS8);
+    LoadOptions.Add("-h"_XS8);
     
     // default entry
-    SubEntry =getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry =getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from Hard Disk");
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry =getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
-     LoadOptions.setEmpty();
-     LoadOptions.Add("-s"_XS8);
-     LoadOptions.Add("-c"_XS8);
+      LoadOptions.setEmpty();
+      LoadOptions.Add("-s"_XS8);
+      LoadOptions.Add("-c"_XS8);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
-    SubEntry =getPartiallyDuplicatedEntry();
+    SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
       SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-     LoadOptions.setEmpty();
-     LoadOptions.Add("-v"_XS8);
+      LoadOptions.setEmpty();
+      LoadOptions.Add("-v"_XS8);
       SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
       SubScreen->AddMenuEntry(SubEntry, true);
     }
