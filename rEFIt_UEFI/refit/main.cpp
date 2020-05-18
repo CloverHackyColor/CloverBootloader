@@ -2373,7 +2373,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
   }
 
-
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
   gBootChanged = TRUE;
@@ -2421,18 +2420,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     for (i = 0; i < AudioNum; i++) {
       if (AudioList[i].Name) {
         // Never change this log, otherwise clients will stop interprete the output.
-		  MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name, AudioOutputNames[AudioList[i].Device], i);
+	  	  MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name, AudioOutputNames[AudioList[i].Device], i);
       }
     }
     
     if (!GlobalConfig.FastBoot) {
 //      CHAR16 *TmpArgs;
       if (gThemeNeedInit) {
-        InitTheme(TRUE, &Now);
+        InitTheme(TRUE);
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
         DBG("change theme\n");
-        InitTheme(FALSE, NULL);
+        InitTheme(FALSE);
         //OptionMenu.FreeMenu(); // it is already freed at loop beginning
         AboutMenu.Entries.Empty();
         HelpMenu.Entries.Empty();
@@ -2473,7 +2472,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     if (!GlobalConfig.FastBoot) {
-
       if (!GlobalConfig.LegacyFirst) {
         AddCustomLegacy();
         if (!GlobalConfig.NoLegacy) {
@@ -2494,15 +2492,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       MenuEntryOptions.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
-      DBG("Options: IconID=%lld name=%s empty=%s\n", MenuEntryOptions.Image.Id, MenuEntryOptions.Image.Name.c_str(),
-          MenuEntryOptions.Image.isEmpty()?"пусто":"нет");
+//      DBG("Options: IconID=%lld name=%s empty=%s\n", MenuEntryOptions.Image.Id, MenuEntryOptions.Image.Name.c_str(),
+//          MenuEntryOptions.Image.isEmpty()?"пусто":"нет");
       if (gSettings.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);
       
       MenuEntryAbout.Image = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
-      DBG("About: IconID=%lld name=%s empty=%s\n", MenuEntryAbout.Image.Id, MenuEntryAbout.Image.Name.c_str(),
-          MenuEntryAbout.Image.isEmpty()?"пусто":"нет");
+//      DBG("About: IconID=%lld name=%s empty=%s\n", MenuEntryAbout.Image.Id, MenuEntryAbout.Image.Name.c_str(),
+//          MenuEntryAbout.Image.isEmpty()?"пусто":"нет");
       if (gSettings.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);

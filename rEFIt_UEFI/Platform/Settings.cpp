@@ -3974,7 +3974,7 @@ void* XTheme::LoadTheme (const CHAR16 *TestTheme)
 }
 
 EFI_STATUS
-InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
+InitTheme(BOOLEAN UseThemeDefinedInNVRam)
 {
   EFI_STATUS Status       = EFI_NOT_FOUND;
   UINTN      Size         = 0;
@@ -3985,12 +3985,12 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
   UINTN      Rnd;
   EFI_TIME   Now;
 	
+  gRT->GetTime(&Now, NULL);
   DbgHeader("InitXTheme");
   ThemeX.Init();
   
   //initialize Daylight when we know timezone
   if (GlobalConfig.Timezone != 0xFF) { // 0xFF:default=timezone not set
-    gRT->GetTime(&Now, NULL);
     INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
     if (NowHour <  0 ) NowHour += 24;
     if (NowHour >= 24 ) NowHour -= 24;
@@ -4033,7 +4033,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
    */
   ThemeX.FontImage.setEmpty();
 
-  Rnd = ((Time != NULL) && (ThemesNum != 0)) ? Time->Second % ThemesNum : 0;
+  Rnd = (ThemesNum != 0) ? Now.Second % ThemesNum : 0;
 
   //  DBG("...done\n");
   ThemeX.GetThemeTagSettings(NULL);
@@ -4041,10 +4041,10 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
   if (ThemesNum > 0  &&
       (!GlobalConfig.Theme || StriCmp(GlobalConfig.Theme, L"embedded") != 0)) {
     // Try special theme first
-    if (Time != NULL) {
-      if ((Time->Month == 12) && ((Time->Day >= 25) && (Time->Day <= 31))) {
+ //   if (Time != NULL) {
+      if ((Now.Month == 12) && ((Now.Day >= 25) && (Now.Day <= 31))) {
         TestTheme = PoolPrint(L"christmas");
-      } else if ((Time->Month == 1) && ((Time->Day >= 1) && (Time->Day <= 3))) {
+      } else if ((Now.Month == 1) && ((Now.Day >= 1) && (Now.Day <= 3))) {
         TestTheme = PoolPrint(L"newyear");
       }
 
@@ -4064,7 +4064,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
         }
         TestTheme = NULL;
       }
-    }
+//    }
     // Try theme from nvram
     if (ThemeDict == NULL && UseThemeDefinedInNVRam) {
       ChosenTheme = (__typeof__(ChosenTheme))GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
@@ -4104,13 +4104,8 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam, EFI_TIME *Time)
     // Try to get theme from settings
     if (ThemeDict == NULL) {
       if (!GlobalConfig.Theme) {
-        if (Time != NULL) {
-          DBG("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-          ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);
-        } else {
-          DBG("no default theme, get first theme %ls\n", ThemesList[0]);
-          ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[0]);
-        }
+        DBG("no default theme, get random theme %ls\n", ThemesList[Rnd]);
+        ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);
       } else {
         if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
           ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);

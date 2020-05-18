@@ -114,7 +114,7 @@ public:
 
   REFIT_MENU_SCREEN()
   : ID(0), Title(), TitleImage(),
-  TimeoutSeconds(0), Daylight(false), TimeoutText(), ThemeName(),
+  TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
@@ -133,7 +133,7 @@ public:
   };
   REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
   : ID(ID), Title(TTitle), TitleImage(),
-  TimeoutSeconds(0), Daylight(false), TimeoutText(TTimeoutText), ThemeName(),
+  TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
@@ -142,7 +142,7 @@ public:
   //TODO exclude CHAR16
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC)
   : ID(ID), Title(), TitleImage(),
-  TimeoutSeconds(0), Daylight(false), TimeoutText(), ThemeName(),
+  TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
   /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),
   mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
@@ -153,7 +153,7 @@ public:
 
   REFIT_MENU_SCREEN(UINTN ID, XStringW  TTitle, XStringW  TTimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
   : ID(ID), Title(TTitle), TitleImage(),
-  TimeoutSeconds(0), Daylight(false), TimeoutText(TTimeoutText), ThemeName(),
+  TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
   OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
   /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
   FilmC(),

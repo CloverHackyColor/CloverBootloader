@@ -778,8 +778,8 @@ GetUserSettings (
 
 EFI_STATUS
 InitTheme (
-  BOOLEAN  UseThemeDefinedInNVRam,
-  EFI_TIME *Time
+  BOOLEAN  UseThemeDefinedInNVRam //,
+//  EFI_TIME *Time
   );
 
 CHAR16*
