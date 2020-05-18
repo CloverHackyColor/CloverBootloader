@@ -94,6 +94,7 @@ public:
   SCROLL_STATE    ScrollState;
   BOOLEAN         ScrollEnabled;
   INTN            TextStyle;
+  BOOLEAN         IsDragging;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?

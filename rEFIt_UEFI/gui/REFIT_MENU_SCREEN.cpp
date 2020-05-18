@@ -75,23 +75,6 @@ static INTN MaxItemOnScreen = -1;
 #include "../Platform/Settings.h"
 #include "../Platform/StartupSound.h" // for audioIo
 
-//extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
-//extern UINTN            ThemesNum;
-//extern CONST CHAR16           *ThemesList[];
-//extern UINTN            ConfigsNum;
-//extern CHAR16           *ConfigsList[];
-//extern UINTN            DsdtsNum;
-//extern CHAR16           *DsdtsList[];
-//extern UINTN            AudioNum;
-//extern HDA_OUTPUTS      AudioList[20];
-//extern CONST CHAR8      *AudioOutputNames[];
-//extern CHAR8            NonDetected[];
-//extern BOOLEAN          GetLegacyLanAddress;
-//extern UINT8            gLanMac[4][6]; // their MAC addresses
-//extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
-//
-//
-//BOOLEAN SavePreBootLog = FALSE;
 
 #define SCROLL_LINE_UP        (0)
 #define SCROLL_LINE_DOWN      (1)
@@ -121,14 +104,14 @@ static INTN MaxItemOnScreen = -1;
 
 
 //
-static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
-static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
+const CHAR16 ArrowUp[2]   = { ARROW_UP, 0 }; //defined in  Simple Text Out protocol
+const CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 //
 //BOOLEAN MainAnime = FALSE;
 //
 ////TODO Scroll variables must be a part of REFIT_SCREEN
 ////BOOLEAN ScrollEnabled = FALSE;
-BOOLEAN IsDragging = FALSE;
+//
 INTN ScrollbarYMovement;
 //
 //
@@ -791,6 +774,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
      ScrollState.CurrentSelection = *DefaultEntryIndex;
      UpdateScroll(SCROLL_NONE);
   }
+  IsDragging = false;
   //  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
   //      State.CurrentSelection, MenuExit);
 

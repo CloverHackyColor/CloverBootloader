@@ -11,6 +11,7 @@ extern "C" {
 #include "../refit/lib.h"
 
 #include "XTheme.h"
+#include "nanosvg.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_XTHEME 1
@@ -246,6 +247,35 @@ EFI_STATUS XIcon::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 
 const XImage& XIcon::GetBest(bool night) const
 {
+  if (ImageSVG) {
+    NSVGimage* sImage = (NSVGimage*)ImageSVGnight;
+    if (!night || !ImageSVGnight) sImage = (NSVGimage*)ImageSVG;
+    float Scale = sImage->scale;
+    NSVGrasterizer* rast = nsvgCreateRasterizer();
+    float Height = sImage->height * Scale;
+    float Width = sImage->width * Scale;
+    int iWidth = (int)(Width + 0.5f);
+    int iHeight = (int)(Height + 0.5f);
+    XImage* NewImage = new XImage(iWidth, iHeight); //TODO doing new ximage we have to delete it after use
+    if (sImage->shapes == NULL) {
+      return *NewImage;
+    }
+    float bounds[4];
+    nsvg__imageBounds(sImage, bounds);
+
+    float tx = 0.f, ty = 0.f;
+    float realWidth = (bounds[2] - bounds[0]) * Scale;
+    float realHeight = (bounds[3] - bounds[1]) * Scale;
+    tx = (Width - realWidth) * 0.5f;
+    ty = (Height - realHeight) * 0.5f;
+    
+    nsvgRasterize(rast, sImage, tx, ty, Scale, Scale, (UINT8*)NewImage->GetPixelPtr(0,0), iWidth, iHeight, iWidth*4);
+    nsvgDeleteRasterizer(rast);
+//    if (night) ImageNight = *NewImage;
+//    else Image = *NewImage;
+//    delete NewImage;
+    return *NewImage;
+  }
   const XImage& RetImage = (night && !ImageNight.isEmpty())? ImageNight : Image;
   return RetImage;
 }
@@ -301,7 +331,7 @@ void XTheme::Init()
   MainEntriesSize = 128;
   TileXSpace = 8;
   TileYSpace = 24;
-//  IconFormat = ICON_FORMAT_DEF;
+
   Proportional = FALSE;
 //  ShowOptimus = FALSE;
 //  DarkEmbedded = FALSE;  //looks like redundant, we always check Night or Daylight
@@ -310,7 +340,7 @@ void XTheme::Init()
 //  CodepageSize = 0xC0;           // INTN        CodepageSize; //extended latin
   Scale = 1.0f;
   CentreShift = 0.0f;
-//  Daylight = true;
+  Daylight = true;
   LayoutHeight = 376;
   LayoutBannerOffset                    = 64; //default value if not set
   LayoutButtonOffset                    = 0; //default value if not set

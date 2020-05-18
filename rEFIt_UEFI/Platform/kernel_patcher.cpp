@@ -14,8 +14,8 @@
 #include "kext_inject.h"
 
 #include "kernel_patcher.h"
-#include "sse3_patcher.h"
-#include "sse3_5_patcher.h"
+//#include "sse3_patcher.h"
+//#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
 #define KERNEL_DEBUG 0

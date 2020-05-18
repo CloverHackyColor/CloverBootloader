@@ -23,7 +23,8 @@ CHAR8 NonDetected[] = "10.10.10";  //longer string
 
 **/
 
-UINT64 AsciiStrVersionToUint64(const CHAR8 *Version, UINT8 MaxDigitByPart, UINT8 MaxParts) {
+UINT64 AsciiStrVersionToUint64(const CHAR8 *Version, UINT8 MaxDigitByPart, UINT8 MaxParts)
+{
   UINT64 result = 0;
   UINT16 part_value = 0;
   UINT16 part_mult  = 1;

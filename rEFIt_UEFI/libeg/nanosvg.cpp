@@ -4282,10 +4282,18 @@ int nsvg__shapesBound(/*NSVGimage* image,*/ NSVGshape *shapes, float* bounds)
   return count;
 }
 
-void nsvg__imageBounds(NSVGparser* p, float* bounds)
+void nsvg__imageBounds(NSVGimage* image, float* bounds)
 {
-  NSVGimage* image = p->image;
+//  NSVGimage* image = p->image;
   NSVGclipPath* clipPath;
+  if (!bounds || !image) {
+    return;
+  }
+  bounds[0] = FLT_MAX;
+  bounds[1] = FLT_MAX;
+  bounds[2] = -FLT_MAX;
+  bounds[3] = -FLT_MAX;
+
   int count = 0;
   clipPath = image->clipPaths;
   while (clipPath != NULL) {
@@ -4309,10 +4317,6 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
   NSVGclipPath* clipPath;
   NSVGsymbol* symbol;
   float bounds[4];
-  bounds[0] = FLT_MAX;
-  bounds[1] = FLT_MAX;
-  bounds[2] = -FLT_MAX;
-  bounds[3] = -FLT_MAX;
 
   p = nsvg__createParser();
   if (p == NULL) {
@@ -4338,7 +4342,7 @@ NSVGparser* nsvgParse(char* input, /* const char* units,*/ float dpi, float opac
     symbol = symbol->next;
   }
   nsvg__assignGradients(p, p->image->shapes);
-  nsvg__imageBounds(p, bounds);
+  nsvg__imageBounds(p->image, bounds);
 #if 1
   memcpy(p->image->realBounds, bounds, 4*sizeof(float));
 

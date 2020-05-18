@@ -178,11 +178,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   //  }
 
   float bounds[4];
-  bounds[0] = FLT_MAX;
-  bounds[1] = FLT_MAX;
-  bounds[2] = -FLT_MAX;
-  bounds[3] = -FLT_MAX;
-  nsvg__imageBounds(p2, bounds);
+  nsvg__imageBounds(IconImage, bounds);
   CopyMem(IconImage->realBounds, bounds, 4 * sizeof(float));
   if ((Id == BUILTIN_ICON_BANNER) && IconNameX.contains("Banner")) {
     BannerPosX = (int)(bounds[0] * Scale - CentreShift);
@@ -205,7 +201,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
  //   DBG("return empty with status=%s\n", strerror(Status));
     return Status;
   }
-
+  IconImage->scale = Scale;
 //    DBG("begin rasterize %s\n", IconNameX.c_str());
   float tx = 0.f, ty = 0.f;
   if ((Id != BUILTIN_ICON_BACKGROUND) &&
@@ -225,9 +221,9 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   //  nsvg__deleteParser(p2);
   //  nsvgDelete(p2->image); //somehow we can't delete them producing memory leaks
   // well, we will use them later
-  *Image = NewImage;
+  *Image = NewImage; //copy array
   if (SVGIcon) {
-    *SVGIcon = (void*)IconImage;
+    *SVGIcon = (void*)IconImage; //copy pointer into parser
   }
   
   return EFI_SUCCESS;
