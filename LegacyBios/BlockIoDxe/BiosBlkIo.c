@@ -34,7 +34,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
 #endif
 
-
+#define strncmp AsciiStrnCmp
 //
 // Global data declaration
 //
