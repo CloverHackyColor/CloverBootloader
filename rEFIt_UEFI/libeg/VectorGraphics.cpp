@@ -430,7 +430,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   }
  // DBG("parsing svg theme finished\n");
 
-  return Status;
+  return EFI_SUCCESS;
 }
 
 EFI_STATUS XTheme::LoadSvgFrame(INTN i, OUT XImage* XFrame)
