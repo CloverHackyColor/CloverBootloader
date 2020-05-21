@@ -3615,7 +3615,7 @@ d="M503 939l-34 -741q0 -1 -3 -1h-88q-3 0 -3 1l-37 741l-6 664q0 1 3 1h170q3 0 3 -
         <path style="fill: url(#ubuntu-grad-6);" d="M 625.272 208.811 L 625.272 208.811 C 617.555 208.811 612.734 216.646 616.59 222.915 C 620.448 229.183 630.095 229.183 633.954 222.915 C 634.833 221.485 635.297 219.864 635.297 218.213 C 635.288 213.024 630.805 208.819 625.272 208.811 Z"/>
       </g>
     </g>
-  <g id="os_win" transform="translate(556, -70)">
+  <g id="os_vista" transform="translate(556, -70)">
     <rect visibility="hidden" id="BoundingRect_ow" y="0" width="128" height="128"/>
     <g transform="scale(0.8)">
 
@@ -3625,7 +3625,7 @@ d="M503 939l-34 -741q0 -1 -3 -1h-88q-3 0 -3 1l-37 741l-6 664q0 1 3 1h170q3 0 3 -
 
 	</g>
   </g>
-  <g id="os_vista" transform="translate(1170, 600)">
+  <g id="os_win" transform="translate(1170, 600)">
 	<rect id="BoundingRect_ov" x="0" y="0" visibility="hidden" width="128" height="128"/>
 	<g transform="scale(0.8)">
 	<use xlink:href="#OsPlace"  width="145" height="145" x="-72.5" y="-72.5" transform="matrix(1.03 0 0 -1.03 72.1785 73.5)" />
