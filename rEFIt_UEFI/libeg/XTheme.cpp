@@ -247,6 +247,7 @@ EFI_STATUS XIcon::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
 
 const XImage& XIcon::GetBest(bool night) const
 {
+#if 0
   if (ImageSVG) {
     NSVGimage* sImage = (NSVGimage*)ImageSVGnight;
     if (!night || !ImageSVGnight) sImage = (NSVGimage*)ImageSVG;
@@ -276,6 +277,7 @@ const XImage& XIcon::GetBest(bool night) const
 //    delete NewImage;
     return *NewImage;
   }
+#endif
   const XImage& RetImage = (night && !ImageNight.isEmpty())? ImageNight : Image;
   return RetImage;
 }
