@@ -73,7 +73,7 @@
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
 /* Unknown CPU */
-#define CPU_STRING_UNKNOWN      "Unknown CPU Type"
+const char CPU_STRING_UNKNOWN[] = "Unknown CPU Type";
 
 
 /* CPU defines */

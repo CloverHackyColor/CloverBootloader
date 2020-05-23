@@ -41,7 +41,7 @@ public:
 //  Icon(const Icon&) = delete;
   XIcon& operator=(const XIcon&); // = delete;
   void GetEmbedded();
-  const XImage& GetBest(bool night) const;
+  XImage* GetBest(bool night, bool *free = nullptr);
 };
 
 class XTheme
@@ -142,8 +142,10 @@ public:
 //  const XImage& GetIcon(const char* Name);
 //  const XImage& GetIcon(const CHAR16* Name);
   const XIcon& GetIcon(const XString8& Name);  //get by name
+        XIcon* GetIconP(const XString8& Name);
   const XIcon& GetIcon(INTN Id); //get by id
-  const XIcon& GetIconAlt(INTN Id, INTN Alt); //if id not found
+        XIcon* GetIconP(INTN Id); //not const
+        XIcon& GetIconAlt(INTN Id, INTN Alt); //if id not found
   const XIcon& LoadOSIcon(const CHAR16* OSIconName); //TODO make XString provider
   const XIcon& LoadOSIcon(const XString8& Full);
   bool CheckNative(INTN Id);

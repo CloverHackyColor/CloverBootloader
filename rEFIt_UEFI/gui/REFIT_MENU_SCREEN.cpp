@@ -1895,8 +1895,13 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
     INTN X = XPos - (TextWidth >> 1) - (BadgeDim + 16);
     INTN Y = YPos - ((BadgeDim - ThemeX.TextHeight) >> 1);
     Back.CopyRect(ThemeX.Background, X, Y);
-    Back.Compose(0, 0, Entries[ScrollState.CurrentSelection].Image.GetBest(!Daylight), false, BadgeDim/128.f);
+    bool free = false;
+    XImage *CurrSel = Entries[ScrollState.CurrentSelection].Image.GetBest(!Daylight, &free);
+    Back.Compose(0, 0, *CurrSel, false, BadgeDim/128.f);
     Back.DrawOnBack(X, Y, Back);
+    if (free) {
+      delete CurrSel;
+    }
   }
 
   OldX = XPos;
@@ -2009,8 +2014,8 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
 
 //  const XImage& MainImage = (!ThemeX.Daylight && !MainIcon.ImageNight.isEmpty())? MainIcon.ImageNight : MainIcon.Image;
-  
-  const XImage& MainImage = MainIcon.GetBest(!Daylight);
+  bool free = false;
+  XImage *MainImage = MainIcon.GetBest(!Daylight, &free);
 
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
   INTN CompHeight = CompWidth;
@@ -2035,9 +2040,9 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   XImage Back(CompWidth, CompHeight);
   Back.CopyRect(ThemeX.Background, XPos, YPos);
 
-  INTN OffsetX = (CompWidth - MainImage.GetWidth()) / 2;
+  INTN OffsetX = (CompWidth - MainImage->GetWidth()) / 2;
   OffsetX = (OffsetX > 0) ? OffsetX: 0;
-  INTN OffsetY = (CompHeight - MainImage.GetHeight()) / 2;
+  INTN OffsetY = (CompHeight - MainImage->GetHeight()) / 2;
   OffsetY = (OffsetY > 0) ? OffsetY: 0;
 
   INTN OffsetTX = (CompWidth - TopImage.GetWidth()) / 2;
@@ -2050,18 +2055,28 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   float composeScale = (ThemeX.NonSelectedGrey && !selected)? -1.f: 1.f;
   if(ThemeX.SelectionOnTop) {
     //place main image in centre. It may be OS or Drive
-    Back.Compose(OffsetX, OffsetY, MainImage, false, composeScale);
+    Back.Compose(OffsetX, OffsetY, *MainImage, false, composeScale);
   } else {
     Back.Compose(OffsetTX, OffsetTY, TopImage, false); //selection first
-    Back.Compose(OffsetX, OffsetY, MainImage, false, composeScale);
+    Back.Compose(OffsetX, OffsetY, *MainImage, false, composeScale);
+  }
+  
+  Entry->Place.XPos = XPos;
+  Entry->Place.YPos = YPos;
+  Entry->Place.Width = MainImage->GetWidth();
+  Entry->Place.Height = MainImage->GetHeight();
+
+  if (free) {
+    delete MainImage;
   }
   // place the badge image
   float fBadgeScale = ThemeX.BadgeScale/16.f;
   if ((Entry->Row == 0) && BadgeIcon && !BadgeIcon->isEmpty()) {
 //    const XImage& BadgeImage = (!ThemeX.Daylight && !BadgeIcon->ImageNight.isEmpty()) ? &BadgeIcon->ImageNight : BadgeImage = &BadgeIcon->Image;
-    const XImage& BadgeImage = BadgeIcon->GetBest(!Daylight);
-    INTN BadgeWidth = (INTN)(BadgeImage.GetWidth() * fBadgeScale);
-    INTN BadgeHeight = (INTN)(BadgeImage.GetHeight() * fBadgeScale);
+    free = false;
+    XImage* BadgeImage = BadgeIcon->GetBest(!Daylight, &free);
+    INTN BadgeWidth = (INTN)(BadgeImage->GetWidth() * fBadgeScale);
+    INTN BadgeHeight = (INTN)(BadgeImage->GetHeight() * fBadgeScale);
     
     if ((BadgeWidth + 8) < CompWidth && (BadgeHeight + 8) < CompHeight) {
       
@@ -2080,7 +2095,8 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
         OffsetY += CompHeight - 8 - BadgeHeight;
       }
  //     DBG("  badge offset=[%lld,%lld]\n", OffsetX, OffsetY);
-      Back.Compose(OffsetX, OffsetY, BadgeImage, false, fBadgeScale);
+      Back.Compose(OffsetX, OffsetY, *BadgeImage, false, fBadgeScale);
+      if (free) delete BadgeImage;
     }
   }
 
@@ -2089,10 +2105,6 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   }
   Back.DrawWithoutCompose(XPos, YPos);
 
-  Entry->Place.XPos = XPos;
-  Entry->Place.YPos = YPos;
-  Entry->Place.Width = MainImage.GetWidth();
-  Entry->Place.Height = MainImage.GetHeight();
 
   // draw BCS indicator
   // Needy: if Labels (Titles) are hidden there is no point to draw the indicator

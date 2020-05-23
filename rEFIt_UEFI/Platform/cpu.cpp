@@ -213,8 +213,7 @@ VOID GetCPUProperties (VOID)
     }
     AsciiStrnCpyS(gCPUStructure.BrandString, 48, s, 48);
     
-    if (!strncmp((const CHAR8*)gCPUStructure.BrandString, (const CHAR8*)CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48)))
-    {
+    if (!strncmp((const CHAR8*)gCPUStructure.BrandString, CPU_STRING_UNKNOWN, iStrLen((gCPUStructure.BrandString) + 1, 48))) {
       gCPUStructure.BrandString[0] = '\0';
     }
     gCPUStructure.BrandString[47] = '\0';
@@ -264,7 +263,6 @@ VOID GetCPUProperties (VOID)
     if (gCPUStructure.Cores == 0) {
       gCPUStructure.Cores = 1;
     }
-
   }
   
   if (gCPUStructure.CoresPerPackage == 0) {
@@ -440,12 +438,12 @@ VOID GetCPUProperties (VOID)
              msr = AsmReadMsr64(MSR_FLEX_RATIO);
              if ((RShiftU64(msr, 16) & 0x01) != 0) {
                UINT8 flex_ratio = RShiftU64(msr, 8) & 0xff;
-				 MsgLog("non-usable FLEX_RATIO = %llX\n", msr);
+               MsgLog("non-usable FLEX_RATIO = %llX\n", msr);
                if (flex_ratio == 0) {
                  AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL));
                  gBS->Stall(10);
                  msr = AsmReadMsr64(MSR_FLEX_RATIO);
-				   MsgLog("corrected FLEX_RATIO = %llX\n", msr);
+                 MsgLog("corrected FLEX_RATIO = %llX\n", msr);
                }
              }
              //
@@ -607,7 +605,7 @@ VOID GetCPUProperties (VOID)
              gCPUStructure.MaxRatio = (UINT32)(RShiftU64(msr, 8)) & 0x1f;
              TurboMsr = (UINT32)(RShiftU64(msr, 40)) & 0x1f;
              if ((TurboMsr > gCPUStructure.MaxRatio) && (gCPUStructure.Model == CPU_MODEL_MEROM)) {
-				 DBG(" CPU works at low speed, MaxRatio=%llu CurrRatio=%d\n", TurboMsr,
+               DBG(" CPU works at low speed, MaxRatio=%llu CurrRatio=%d\n", TurboMsr,
                    gCPUStructure.MaxRatio);
                gCPUStructure.MaxRatio = (UINT32)TurboMsr;
              }
@@ -634,8 +632,8 @@ VOID GetCPUProperties (VOID)
                gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
              }
              DBG("MSR dumps:\n");
-				 DBG("\t@0x00CD=%llx\n", msr);
-				 DBG("\t@0x0198=%llx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
+           DBG("\t@0x00CD=%llx\n", msr);
+           DBG("\t@0x0198=%llx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
              break;
            default:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz

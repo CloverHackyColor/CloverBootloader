@@ -276,12 +276,12 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
             }
 
             realMax = maximum.Control.Control;
-			  DBG("Maximum control=0x%hX\n", realMax);
+            DBG("Maximum control=0x%hX\n", realMax);
             if (gSettings.Turbo) {
               realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
               (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               maximum.Control.Control = realTurbo;
-				MsgLog("Turbo control=0x%hX\n", realTurbo);
+              MsgLog("Turbo control=0x%hX\n", realTurbo);
             }
             Apsn = (realTurbo > realMax)?(realTurbo - realMax):0;
             realMin =  RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
@@ -292,7 +292,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
               minimum.Control.Control = realMin;
             }
 
-			  MsgLog("P-States: min 0x%hX, max 0x%hX\n", minimum.Control.Control, maximum.Control.Control);
+            MsgLog("P-States: min 0x%hX, max 0x%hX\n", minimum.Control.Control, maximum.Control.Control);
 
             // Sanity check
             if (maximum.Control.Control < minimum.Control.Control) {

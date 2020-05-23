@@ -336,13 +336,13 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
   SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
 //TODO make SelectionImages to be XIcon
-  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG).GetBest(!Daylight);
-  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL).GetBest(!Daylight);
-  SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION).GetBest(!Daylight);
+  SelectionImages[0] = *GetIconP(BUILTIN_SELECTION_BIG)->GetBest(!Daylight);
+  SelectionImages[2] = *GetIconP(BUILTIN_SELECTION_SMALL)->GetBest(!Daylight);
+  SelectionImages[4] = *GetIconP(BUILTIN_ICON_SELECTION)->GetBest(!Daylight);
 
   //buttons
   for (INTN i = BUILTIN_RADIO_BUTTON; i <= BUILTIN_CHECKBOX_CHECKED; ++i) {
-    Buttons[i - BUILTIN_RADIO_BUTTON] = GetIcon(i).GetBest(!Daylight);
+    Buttons[i - BUILTIN_RADIO_BUTTON] = *GetIconP(i)->GetBest(!Daylight);
   }
   //for (int i=0 ; i<6 ; i+=2 ) {
   //SelectionImages[i].Draw(i*100, 0);

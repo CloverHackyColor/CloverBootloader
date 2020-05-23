@@ -245,9 +245,9 @@ EFI_STATUS XIcon::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
   return Status;
 }
 
-const XImage& XIcon::GetBest(bool night) const
+XImage* XIcon::GetBest(bool night, bool *free)
 {
-#if 0
+#if 1
   if (ImageSVG) {
     NSVGimage* sImage = (NSVGimage*)ImageSVGnight;
     if (!night || !ImageSVGnight) sImage = (NSVGimage*)ImageSVG;
@@ -259,7 +259,8 @@ const XImage& XIcon::GetBest(bool night) const
     int iHeight = (int)(Height + 0.5f);
     XImage* NewImage = new XImage(iWidth, iHeight); //TODO doing new ximage we have to delete it after use
     if (sImage->shapes == NULL) {
-      return *NewImage;
+      if (free) *free = true;
+      return NewImage;
     }
     float bounds[4];
     nsvg__imageBounds(sImage, bounds);
@@ -275,10 +276,12 @@ const XImage& XIcon::GetBest(bool night) const
 //    if (night) ImageNight = *NewImage;
 //    else Image = *NewImage;
 //    delete NewImage;
-    return *NewImage;
+    if (free) *free = true;
+    return NewImage;
   }
 #endif
-  const XImage& RetImage = (night && !ImageNight.isEmpty())? ImageNight : Image;
+  XImage* RetImage = (night && !ImageNight.isEmpty())? &ImageNight : &Image;
+  if (free) *free = false;
   return RetImage;
 }
 
@@ -390,6 +393,18 @@ const XIcon& XTheme::GetIcon(const XString8& Name)
   return NullIcon; //if name is not found
 }
 
+XIcon* XTheme::GetIconP(const XString8& Name)
+{
+  for (size_t i = 0; i < Icons.size(); i++)
+  {
+    if (Icons[i].Name == Name) //night icon has same name as daylight icon
+    {
+      return GetIconP(Icons[i].Id);
+    }
+  }
+  return &NullIcon; //if name is not found
+}
+
 bool XTheme::CheckNative(INTN Id)
 {
   for (size_t i = 0; i < Icons.size(); i++)
@@ -407,13 +422,18 @@ const XIcon& XTheme::GetIcon(INTN Id)
   return GetIconAlt(Id, -1);
 }
 
+XIcon* XTheme::GetIconP(INTN Id)
+{
+  return &GetIconAlt(Id, -1);
+}
+
 /*
  * Get Icon with this ID=id, for example VOL_INTERNAL_HFS
  * if not found then search for ID=Alt with Native attribute set, for example VOL_INTERNAL
  * if not found then check embedded with ID=Id
  * if not found then check embedded with ID=Alt
  */
-const XIcon& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
+XIcon& XTheme::GetIconAlt(INTN Id, INTN Alt) //if not found then take embedded
 {
   INTN IdFound = -1;
   INTN AltFound = -1;
@@ -727,17 +747,17 @@ void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
   SelectionBackgroundPixel.Blue     = (SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.Reserved = (SelectionColor >> 0) & 0xFF;
 //TODO - make them XIcon
-  SelectionImages[2] = GetIcon(BUILTIN_SELECTION_SMALL).GetBest(!Daylight);
-  SelectionImages[0] = GetIcon(BUILTIN_SELECTION_BIG).GetBest(!Daylight);
+  SelectionImages[2] = *GetIconP(BUILTIN_SELECTION_SMALL)->GetBest(!Daylight);
+  SelectionImages[0] = *GetIconP(BUILTIN_SELECTION_BIG)->GetBest(!Daylight);
   if (BootCampStyle) {
-    SelectionImages[4] = GetIcon(BUILTIN_ICON_SELECTION).GetBest(!Daylight);
+    SelectionImages[4] = *GetIconP(BUILTIN_ICON_SELECTION)->GetBest(!Daylight);
   }
 
   //and buttons
-  Buttons[0] = GetIcon(BUILTIN_RADIO_BUTTON).GetBest(!Daylight);
-  Buttons[1] = GetIcon(BUILTIN_RADIO_BUTTON_SELECTED).GetBest(!Daylight);
-  Buttons[2] = GetIcon(BUILTIN_CHECKBOX).GetBest(!Daylight);
-  Buttons[3] = GetIcon(BUILTIN_CHECKBOX_CHECKED).GetBest(!Daylight);
+  Buttons[0] = *GetIconP(BUILTIN_RADIO_BUTTON)->GetBest(!Daylight);
+  Buttons[1] = *GetIconP(BUILTIN_RADIO_BUTTON_SELECTED)->GetBest(!Daylight);
+  Buttons[2] = *GetIconP(BUILTIN_CHECKBOX)->GetBest(!Daylight);
+  Buttons[3] = *GetIconP(BUILTIN_CHECKBOX_CHECKED)->GetBest(!Daylight);
 
   //load banner and background
   Banner.LoadXImage(ThemeDir, BannerFileName); 
@@ -763,14 +783,14 @@ void XTheme::InitBar()
     UpButtonImage.LoadXImage(ThemeDir, "scrollbar\\up_button");
     DownButtonImage.LoadXImage(ThemeDir, "scrollbar\\down_button");
   } else {
-    ScrollbarBackgroundImage = GetIcon("scrollbar_background"_XS8).GetBest(!Daylight);
+    ScrollbarBackgroundImage = *GetIconP("scrollbar_background"_XS8)->GetBest(!Daylight);
     BarStartImage.setEmpty();
     BarEndImage.setEmpty();
-    ScrollbarImage = GetIcon("scrollbar_holder"_XS8).GetBest(!Daylight); //"_night" is already accounting
-    ScrollStartImage = GetIcon("scrollbar_start"_XS8).GetBest(!Daylight);
-    ScrollEndImage = GetIcon("scrollbar_end"_XS8).GetBest(!Daylight);
-    UpButtonImage = GetIcon("scrollbar_up_button"_XS8).GetBest(!Daylight);
-    DownButtonImage = GetIcon("scrollbar_down_button"_XS8).GetBest(!Daylight);
+    ScrollbarImage = *GetIconP("scrollbar_holder"_XS8)->GetBest(!Daylight); //"_night" is already accounting
+    ScrollStartImage = *GetIconP("scrollbar_start"_XS8)->GetBest(!Daylight);
+    ScrollEndImage = *GetIconP("scrollbar_end"_XS8)->GetBest(!Daylight);
+    UpButtonImage = *GetIconP("scrollbar_up_button"_XS8)->GetBest(!Daylight);
+    DownButtonImage = *GetIconP("scrollbar_down_button"_XS8)->GetBest(!Daylight);
   }
 
   //some help with embedded scroll
