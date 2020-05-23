@@ -187,6 +187,7 @@ const XObjArray<TYPE> &XObjArray<TYPE>::operator =(const XObjArray<TYPE> &anObjA
 {
   xsize ui;
 
+	if ( this == &anObjArray ) return *this; // self assignement
   	XObjArrayNC<TYPE>::Empty();
 	this->CheckSize(anObjArray.length(), 0);
 	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));

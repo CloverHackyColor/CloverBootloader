@@ -162,6 +162,19 @@ int XStringArray_tests()
         array.Add(L"3333");
         array.Add(L"4th_item");
 		
+        XStringArray array2 = array;
+        if ( array2 != array ) return 22;
+        XStringArray* array2Ptr = &array2;
+        *array2Ptr = array2;
+        if ( array2 != array ) return 22;
+	}
+    {
+        XStringArray array;
+        array.Add(L"word1");
+        array.Add(L"other2");
+        array.Add(L"3333");
+        array.Add(L"4th_item");
+		
 		array.remove("WOrd1"_XS8);
         if ( !array.contains("word1"_XS8) ) return 22;
 		array.remove("word1"_XS8);
