@@ -257,7 +257,7 @@ XImage* XIcon::GetBest(bool night, bool *free)
     float Width = sImage->width * Scale;
     int iWidth = (int)(Width + 0.5f);
     int iHeight = (int)(Height + 0.5f);
-    XImage* NewImage = new XImage(iWidth, iHeight); //TODO doing new ximage we have to delete it after use
+    XImage* NewImage = new XImage(iWidth, iHeight); //TODO creating new XImage we have to delete it after use
     if (sImage->shapes == NULL) {
       if (free) *free = true;
       return NewImage;

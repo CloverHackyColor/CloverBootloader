@@ -47,7 +47,6 @@ VOID REFIT_MENU_SCREEN::UpdateFilm()
     DBG("FrameTime=%lld\n", FilmC->FrameTime);
     DBG("Path=%ls\n", FilmC->Path.wc_str());
     DBG("LastFrame=%lld\n\n", FilmC->LastFrameID());
-
   }
 
   if (TimeDiff(FilmC->LastDraw, Now) < (UINTN)FilmC->FrameTime) return;
@@ -95,13 +94,24 @@ const XImage& FILM::GetImage(INTN Index) const
   return NullImage;
 }
 
-const XImage& FILM::GetImage() const
+const XImage& FILM::GetImage(bool *free) const
 {
+  /*
+   * for SVG anime we have to generate new XImage using CurrentFrame as an argument
+    product(IconToAnime.ImageSVG, CurrentFrame, method); -- ImageSVG will be changed?
+   or
+    XImage *frame = IconToAnime.GetBest(!Daylight, free, CurrentFrame, method);
+    
+   return frame;
+   *
+   */
   for (size_t i = 0; i < Frames.size(); ++i) {
     if (Frames[i].getIndex() == CurrentFrame) {
+      if (free) *free = false;
       return Frames[i].getImage();
     }
   }
+  if (free) *free = false;
   return NullImage;
 }
 

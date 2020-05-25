@@ -56,7 +56,7 @@ public:
   void SetIndex(INTN Index) { Id = Index; }
 
   const XImage& GetImage(INTN Index) const;
-  const XImage& GetImage() const;
+  const XImage& GetImage(bool *free = nullptr) const;
   void AddFrame(XImage* Frame, INTN Index); //IndexedImage will be created
   size_t Size() { return Frames.size(); }
   INTN LastFrameID() { return LastIndex; }
