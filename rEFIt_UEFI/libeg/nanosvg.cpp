@@ -3484,6 +3484,11 @@ void XTheme::parseTheme(void* parser, const char** dict)
       BadgeOffsetX = getIntegerDict(dict[i + 1]);
     } else if (strcmp(dict[i], "BadgeOffsetY") == 0) {
       BadgeOffsetY = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "LayoutBannerOffset") == 0) {
+      LayoutBannerOffset = getIntegerDict(dict[i + 1]);
+    } else if (strcmp(dict[i], "LayoutButtonOffset") == 0) {
+      LayoutButtonOffset = getIntegerDict(dict[i + 1]);
+      
     } else if (strcmp(dict[i], "NonSelectedGrey") == 0) {
       NonSelectedGrey = getIntegerDict(dict[i + 1]) > 0;
     } else if (strcmp(dict[i], "CharWidth") == 0) {

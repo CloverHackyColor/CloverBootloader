@@ -614,12 +614,12 @@ extern CHAR16*       DsdtsList[20];
 extern UINTN DsdtsNum;
 extern UINTN ThemesNum;
 extern UINTN ConfigsNum;
-extern INTN                     ScrollButtonsHeight;
-extern INTN    ScrollBarDecorationsHeight;
-extern INTN    ScrollScrollDecorationsHeight;
-extern INTN LayoutBannerOffset;
-extern INTN LayoutButtonOffset;
-extern INTN LayoutTextOffset;
+//extern INTN    ScrollButtonsHeight;
+//extern INTN    ScrollBarDecorationsHeight;
+//extern INTN    ScrollScrollDecorationsHeight;
+//extern INTN LayoutBannerOffset;
+//extern INTN LayoutButtonOffset;
+//extern INTN LayoutTextOffset;
 // this should go in a globals, not in settings
 
 extern INTN                            OldChosenTheme;
@@ -635,7 +635,7 @@ extern HDA_PROPERTIES                 gAudios[];
 extern UINTN                          NGFX;
 extern UINTN                          NHDA;
 extern CONST CHAR16						 **SystemPlists;
-extern CONST CHAR16                        **InstallPlists;
+extern CONST CHAR16            **InstallPlists;
 extern CONST CHAR16						 **RecoveryPlists;
 //extern UINT16                         gCPUtype;
 extern SETTINGS_DATA                  gSettings;
