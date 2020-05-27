@@ -123,26 +123,46 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     }
   }
   if (!found) {
-    DBG_RT("%s not found\n", procedure);
+//    DBG_RT("%s not found\n", procedure);
     return 0;
   }
-  
-  INT32 lSegVAddr;
+//  DBG_RT("found section 0x%x at pos=%d\n", vArray[i].Seg, i);
+  INTN lSegVAddr;
   switch (vArray[i].Seg) {
   case ID_SEG_DATA:
     lSegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataSegment, (UINT32)strlen(kDataSegment));
     break;
   case ID_SEG_DATA_CONST:
-    lSegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataConstSegment, (UINT32)strlen(kDataConstSegment));
+  case ID_SEС_CONST:
+    lSegVAddr = FindSection(driver, 0x1600, (const UINT8 *)kDataSegment, (const UINT8 *)kConstSection);
+    break;
+  case ID_SEG_TEXT_CONST:
+    lSegVAddr = FindSection(driver, 0x1600, (const UINT8 *)kTextSegment, (const UINT8 *)kConstSection);
+    break;
+  case ID_SEG_DATA_COMMON:
+    lSegVAddr = FindSection(driver, 0x1600, (const UINT8 *)kDataSegment, (const UINT8 *)kCommonSection);
+    break;
+  case ID_SEG_DATA_DATA2:
+  case ID_SEG_DATA_DATA:
+    lSegVAddr = FindSection(driver, 0x1600, (const UINT8 *)kDataSegment, (const UINT8 *)kDataSection);
     break;
   case ID_SEG_KLD:
   case ID_SEG_KLD2:
     lSegVAddr = FindBin(driver, 0x2000, (const UINT8 *)kKldSegment, (UINT32)strlen(kKldSegment));
     break;
+//  case ID_SEC_BSS:
+//    lSegVAddr = FindSection(driver, 0x1600, (const UINT8 *)kDataSegment, (const UINT8 *)kBssSection);
+//    break;
+  case ID_SEC_BSS:  //it works this way
   case ID_SEG_TEXT:
-  default:
-    lSegVAddr = FindBin(driver, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+    lSegVAddr = FindSection(driver, 0x600, (const UINT8 *)kTextSegment, (const UINT8 *)kPrelinkTextSection);
     break;
+
+//    lSegVAddr = FindBin(driver, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+//    break;
+  default:
+    return vArray[i].ProcAddr;
+
   }
   if (lSegVAddr == 0) {
     lSegVAddr = 0x38;
@@ -173,7 +193,7 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
 //    DBG_RT("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
 //    DBG_RT("Name to compare %s\n", &Names[Offset]);
 //    Stall(3000000);
-    if (AsciiStrStr(&Names[Offset], procedure) != NULL) {  //if (CompareMem(&Names[Offset], procedure, nameLen) == 0) {
+    if (AsciiStrStr(&Names[Offset], procedure) != NULL) {
       found = true;
       break;
     }
@@ -2293,6 +2313,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   KextPatchesNeeded = (
     KernelAndKextPatches->KPAppleIntelCPUPM ||
     KernelAndKextPatches->KPAppleRTC ||
+    KernelAndKextPatches->EightApple ||
     KernelAndKextPatches->KPDELLSMBIOS ||
     (KernelAndKextPatches->KPATIConnectorsPatch != NULL) ||
     ((KernelAndKextPatches->NrKexts > 0) && (KernelAndKextPatches->KextPatches != NULL))
@@ -2305,7 +2326,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
     if (EFI_ERROR(getVTable())) {
-      DBG_RT("error getting vtable: \n");
+//      DBG_RT("error getting vtable: \n");
       goto NoKernelData;
     }
     patchedOk = KernelUserPatch();

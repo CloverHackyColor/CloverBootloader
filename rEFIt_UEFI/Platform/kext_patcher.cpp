@@ -131,6 +131,32 @@ UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN t
   return 0;
 }
 
+UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec)
+{
+  BOOLEAN eq;
+  
+  for (UINTN i = 0x20; i < len; i++) {
+    eq = TRUE;
+    for (UINTN j = 0; j < 16 && (sec[j] != 0); j++) {
+      if (Source[i + j] != sec[j]) {
+        eq = FALSE;
+        break;
+      }
+    }
+    if (eq) {
+      for (UINTN j = 0; j < 16 && (seg[j] != 0); j++) {
+        if (Source[i + 0x10 + j] != seg[j]) {
+          eq = FALSE;
+          break;
+        }
+      }
+      if (eq)
+        return i + 16;
+    }
+  }
+  return 0;
+}
+
 UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize)
 {
   if (!Source || !Search || !SearchSize) {
@@ -993,7 +1019,35 @@ VOID LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
   Stall(5000000);
 }
 
+VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
+{
+//  UINTN procLen = 0;
+  UINTN procAddr = searchProcInDriver(Driver, DriverSize, "initFB");
+  UINTN verbose  = searchProcInDriver(Driver, DriverSize, "gIOFBVerboseBoot");
+  UINTN patchLoc = FindRelative32(Driver, procAddr, 0x300, verbose-1);
+  if (patchLoc != 0 && Driver[patchLoc + 1] == 0x75) {
+    Driver[patchLoc + 1] = 0xEB;
+//    DBG_RT("8 apples patch success\n");
+  } else {
+    DBG_RT("8 apples patch not found, loc=0x%llx\n", patchLoc);
+//    if (patchLoc != 0) {
+//      for (int i=0; i<10; ++i) {
+//        DBG_RT("%02x", Driver[patchLoc+i]);
+//      }
+//      DBG_RT("\n");
+//    } else if (procAddr != 0) {
+//      for (int i=0; i<10; ++i) {
+//        DBG_RT("%02x", Driver[procAddr+i]);
+//      }
+//      DBG_RT("\n");
+//    }
+//    DBG_RT("  procAddr=0x%llx\n", procAddr);
+//    DBG_RT("  verbose=0x%llx\n", verbose);
 
+//    Stall(20000000);
+  }
+  Stall(5000000);
+}
 
 ////////////////////////////////////
 //
@@ -1192,7 +1246,18 @@ VOID LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist,
     // SandyBridge-E AppleIntelCPUPowerManagement Patch implemented by syscl
     //
     SNBE_AICPUPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
+  } else if (KernelAndKextPatches->EightApple &&
+          /*   (AsciiStrStr(InfoPlist, "com.apple.iokit.IOGraphicsFamily") != NULL) && */
+             (AsciiStrStr(InfoPlist, "I/O Kit Graphics Family") != NULL)) {
+    //
+    // Patch against 8 apple glitch
+    //
+    DBG_RT("Patch 8 apple required, IOGraphicsFamily...\n");
+    EightApplePatch(Driver, DriverSize);
+    Stall(10000000);
   }
+  //com.apple.iokit.IOGraphicsFamily
+  
     for (INT32 i = 0; i < KernelAndKextPatches->NrKexts; i++) {
       CHAR8 *Name = KernelAndKextPatches->KextPatches[i].Name;
       BOOLEAN   isBundle = (AsciiStrStr(Name, ".") != NULL);

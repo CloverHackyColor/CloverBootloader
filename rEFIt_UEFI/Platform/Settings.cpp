@@ -720,6 +720,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   Dst->KPKernelPm        = Src->KPKernelPm;
   Dst->KPAppleIntelCPUPM = Src->KPAppleIntelCPUPM;
   Dst->KPAppleRTC        = Src->KPAppleRTC;
+  Dst->EightApple        = Src->EightApple;
   Dst->KPDELLSMBIOS      = Src->KPDELLSMBIOS;
   Dst->FakeCPUID         = Src->FakeCPUID;
   Dst->KPPanicNoKextDump = Src->KPPanicNoKextDump;
@@ -960,6 +961,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPAppleRTC = !IsPropertyFalse(Prop);  //default = TRUE
   }
 
+  Prop = GetProperty(DictPointer, "EightApple");
+  if (Prop != NULL || gBootChanged) {
+    Patches->EightApple = IsPropertyTrue(Prop);
+  }
+
   //
   // Dell SMBIOS Patch
   //
@@ -1027,12 +1033,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       }
 
       Patches->ForceKexts = newForceKexts;
-		DBG("ForceKextsToLoad: %lld requested\n", Count);
+      DBG("ForceKextsToLoad: %lld requested\n", Count);
 
       for (i = 0; i < Count; i++) {
         EFI_STATUS Status = GetElement(Prop, i, &Prop2);
         if (EFI_ERROR(Status)) {
-			DBG(" - [%02lld]: ForceKexts error %s getting next element\n", i, strerror(Status));
+          DBG(" - [%02lld]: ForceKexts error %s getting next element\n", i, strerror(Status));
           continue;
         }
 

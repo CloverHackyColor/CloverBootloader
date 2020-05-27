@@ -476,6 +476,8 @@
 		<false/>
 		<key>AppleRTC</key>
 		<false/>
+		<key>EightApple</key>
+		<true/>
 		<key>#KextsToPatch</key>
 		<array>
 			<dict>

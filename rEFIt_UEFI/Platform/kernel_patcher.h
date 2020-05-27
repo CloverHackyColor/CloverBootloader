@@ -27,25 +27,37 @@
 #define SC_GET_CMD(hdr)            (((struct segment_command_64*)(hdr))->cmd)
 
 
-const char   kPrelinkTextSegment[] =                 "__PRELINK_TEXT";
-const char   kPrelinkTextSection[] =                 "__text";
-const char   kPrelinkLinkStateSegment[] =            "__PRELINK_STATE";
-const char   kPrelinkKernelLinkStateSection[] =      "__kernel";
-const char   kPrelinkKextsLinkStateSection[] =       "__kexts";
-const char   kPrelinkInfoSegment[] =                 "__PRELINK_INFO";
-const char   kPrelinkInfoSection[] =                 "__info";
-const char   kLinkEditSegment[] =                    "__LINKEDIT";
-const char   kTextSegment[] =                        "__TEXT";
-const char   kDataSegment[] =                        "__DATA";
-const char   kDataConstSegment[] =                    "__DATA_CONST";
-const char   kKldSegment[] =                          "__KLD";
+const char   kPrelinkTextSegment[] =                "__PRELINK_TEXT";
+const char   kPrelinkTextSection[] =                "__text";
+const char   kPrelinkLinkStateSegment[] =           "__PRELINK_STATE";
+const char   kPrelinkKernelLinkStateSection[] =     "__kernel";
+const char   kPrelinkKextsLinkStateSection[] =      "__kexts";
+const char   kPrelinkInfoSegment[] =                "__PRELINK_INFO";
+const char   kPrelinkInfoSection[] =                "__info";
+const char   kLinkEditSegment[] =                   "__LINKEDIT";
+const char   kTextSegment[] =                       "__TEXT";
+const char   kDataSegment[] =                       "__DATA";
+const char   kDataConstSegment[] =                  "__DATA_CONST";
+const char   kKldSegment[] =                        "__KLD";
+const char   kConstSection[] =                      "__const";
+const char   kBssSection[] =                        "__bss";
+const char   kCommonSection[] =                     "__common";
+const char   kDataSection[] =                       "__data";
 
 #define ID_SEG_STEXT                           0x010e
 #define ID_SEG_TEXT                            0x010f
+
+#define ID_SEG_TEXT_CONST                      0x030e
+#define ID_SEG_DATA_DATA                       0x080e
+#define ID_SEG_DATA_DATA2                      0x081e
+#define ID_SEC_BSS                             0x0a0e
+#define ID_SEС_CONST                           0x070f
+#define ID_SEG_DATA_COMMON                     0x090f
 #define ID_SEG_DATA                            0x0f0f
 #define ID_SEG_DATA_CONST                      0x110f
 #define ID_SEG_KLD                             0x180f
 #define ID_SEG_KLD2                            0x1a0f
+
 
 const char  ctor_used[] =                           ".constructors_used";
 const char  kPrelinkBundlePathKey[] =               "_PrelinkBundlePath";
@@ -88,10 +100,12 @@ typedef struct VTABLE {
 
 typedef struct SEGMENT {
   CHAR8  Name[16];    //0
-  UINT64 SegAddress;  //16 0x10
+  UINT64 SegAddress;  //0x10
   UINT64 vmsize;      //0x18 0x16FB60
-  UINT64 fileoff;     //0x20 0xDDA000
-  UINT64 filesize;    //0x28 0x16FB60
+  UINT32 fileoff;     //0x20 0xDDA000 //Slice - it is not UINT64. MachoLib is wrong
+  UINT32 fileoff64;   //0x24
+  UINT32 filesize;    //0x28 0x16FB60
+  UINT32 filesize64;  //0x2c
   UINT32 maxprot;     //0x30 01-Cat 07-Moj
   UINT32 initprot;    //0x34 01
   UINT32 NumSects;    //0x38 00
@@ -128,8 +142,8 @@ typedef struct SEGMENT {
 //VOID Patcher_SSE3_6(VOID* kernelData);
 //VOID Patcher_SSE3_7();
 
-#include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
-class LOADER_ENTRY;
+//#include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
+//class LOADER_ENTRY;
 //VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 
 //VOID register_kernel_symbol(CONST CHAR8* name);
@@ -162,9 +176,10 @@ class LOADER_ENTRY;
 UINTN SearchAndCount(const UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UINTN SearchSize);
 
 BOOLEAN CompareMemMask(const UINT8 *Source, const UINT8 *Search, UINTN SearchSize, const UINT8 *Mask, UINTN MaskSize);
-VOID CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize);
+VOID  CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize);
 UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize);
 UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN taskLocation);
+UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec);
 //
 // Searches Source for Search pattern of size SearchSize
 // and replaces it with Replace up to MaxReplaces times.

@@ -460,6 +460,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         BOOLEAN   BroadwellEPM();
         BOOLEAN   KernelIvyBridgeXCPM();
         BOOLEAN   KernelIvyE5XCPM();
+        void      EightApplePatch(UINT8 *Driver, UINT32 DriverSize);
         
         void Stall(int Pause) { if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { gBS->Stall(Pause); } };
         void StartLoader();

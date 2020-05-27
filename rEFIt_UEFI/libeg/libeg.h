@@ -316,7 +316,8 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   BOOLEAN KPAppleRTC;
   BOOLEAN KPDELLSMBIOS;  // Dell SMBIOS patch
   BOOLEAN KPPanicNoKextDump;
-  UINT8   pad[3];
+  BOOLEAN EightApple;
+  UINT8   pad[7];
   UINT32  FakeCPUID;
   //  UINT32  align0;
   CHAR8   *KPATIConnectorsController;

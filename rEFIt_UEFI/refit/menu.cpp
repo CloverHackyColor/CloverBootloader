@@ -288,9 +288,8 @@ VOID FillInputs(BOOLEAN New)
   InputItemsCount = 44;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount++].BValue = gSettings.KextPatchesAllowed;
-//  InputItems[InputItemsCount].ItemType = BoolValue; //45
-//  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelCpu;
-  InputItemsCount++; //vacant place for id = 45
+  InputItems[InputItemsCount].ItemType = BoolValue; //45
+  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.EightApple;
   InputItems[InputItemsCount].ItemType = BoolValue; //46
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
   InputItems[InputItemsCount].ItemType = BoolValue; //47
@@ -797,10 +796,10 @@ VOID ApplyInputs(VOID)
     gSettings.KextPatchesAllowed = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
-  i++; //45 - vacant
+  i++; //45
   if (InputItems[i].Valid) {
-//    gSettings.KernelAndKextPatches.KPKernelCpu = InputItems[i].BValue;
-//    gBootChanged = TRUE;
+    gSettings.KernelAndKextPatches.EightApple = InputItems[i].BValue;
+    gBootChanged = TRUE;
   }
   i++; //46
   if (InputItems[i].Valid) {
@@ -2136,16 +2135,15 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuItemInput(64,  "Debug", FALSE);
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(104, "Fake CPUID:", TRUE);
-//  SubScreen->AddMenuItemInput(108, "Kernel patching allowed", FALSE);
-//  SubScreen->AddMenuItemInput(45,  "Kernel Support CPU", FALSE);
   SubScreen->AddMenuItemInput(91,  "Kernel Lapic", FALSE);
   SubScreen->AddMenuItemInput(105, "Kernel XCPM", FALSE);
   SubScreen->AddMenuItemInput(48,  "Kernel PM", FALSE);
-  SubScreen->AddMenuItemInput(121,  "Panic No Kext Dump", FALSE);
+  SubScreen->AddMenuItemInput(121, "Panic No Kext Dump", FALSE);
   SubScreen->AddMenuEntry(SubMenuKernelPatches(), true);
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(46,  "AppleIntelCPUPM Patch", FALSE);
   SubScreen->AddMenuItemInput(47,  "AppleRTC Patch", FALSE);
+  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", FALSE);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", FALSE);
 //  SubScreen->AddMenuItemInput(115, "No Caches", FALSE);
 //  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", FALSE);
@@ -2179,8 +2177,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
       //       sign, DropTable->Signature,
       //       OTID, DropTable->TableId,
       //       DropTable->Length, DropTable->Length);
-//    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs = new REFIT_INPUT_DIALOG;
+      InputBootArgs = new REFIT_INPUT_DIALOG;
       InputBootArgs->Title.SWPrintf("Drop \"%4.4s\" \"%8.8s\" %d", sign, OTID, DropTable->Length);
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
@@ -2196,12 +2193,10 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
   SubScreen->AddMenuItemInput(4, "Drop all OEM SSDT", FALSE);
   SubScreen->AddMenuItemInput(113, "Automatic smart merge", FALSE);
 
-  //SubScreen->AddMenuInfoLine_f("PATCHED AML:");
   if (ACPIPatchedAML) {
     ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
     while (ACPIPatchedAMLTmp) {
-//    InputBootArgs = (__typeof__(InputBootArgs))AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs = new REFIT_INPUT_DIALOG;
+      InputBootArgs = new REFIT_INPUT_DIALOG;
       InputBootArgs->Title.SWPrintf("Drop \"%ls\"", ACPIPatchedAMLTmp->FileName);
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
