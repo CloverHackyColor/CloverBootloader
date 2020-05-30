@@ -455,7 +455,6 @@ NSComboBoxDataSource {
 
     let sr = self.sidebar.selectedRow
     if sr >= 0 && sr < self.dataSource().count {
-      // ---------
       self.isBusy = true
       self.spinner.startAnimation(nil)
       self.optimizeButton.isEnabled = false
@@ -464,7 +463,7 @@ NSComboBoxDataSource {
       self.targetPop.isEnabled = false
       self.nameBox.isEnabled = false
       self.installedThemesCheckBox.isEnabled = false
-      // ---------
+    
       self.manager?.download(theme: theme,
                              down: .complete,
                              completion: { (path) in
@@ -476,7 +475,9 @@ NSComboBoxDataSource {
                                   alert.messageText = "Installation failed".locale
                                   alert.informativeText = self.manager!.statusError!.localizedDescription
                                   alert.addButton(withTitle: "OK")
-                                  alert.runModal()
+                                  
+                                  alert.beginSheetModal(for: self.view.window!, completionHandler: { (modalResponse) -> Void in
+                                  })
                                 }
                               } else {
                                 if let themePath = path {
@@ -498,17 +499,20 @@ NSComboBoxDataSource {
                                       alert.messageText = "Installation failed".locale
                                       alert.informativeText = "\(error.localizedDescription)"
                                       alert.addButton(withTitle: "OK")
-                                      alert.runModal()
+                                      alert.beginSheetModal(for: self.view.window!, completionHandler: { (modalResponse) -> Void in
+                                      })
                                     }
                                   }
                                 } else {
                                   NSSound(named: "Basso")?.play()
                                   DispatchQueue.main.async {
                                     let alert = NSAlert()
+                                    let advice = "Try to refresh the list by pressing the Refresh button below."
                                     alert.messageText = "Installation failed".locale
-                                    alert.informativeText = "Theme \"\(theme)\" not found."
+                                    alert.informativeText = "Theme \"\(theme)\" cannot be downloaded.\n\n\(advice)"
                                     alert.addButton(withTitle: "OK")
-                                    alert.runModal()
+                                    alert.beginSheetModal(for: self.view.window!, completionHandler: { (modalResponse) -> Void in
+                                    })
                                   }
                                 }
                               }

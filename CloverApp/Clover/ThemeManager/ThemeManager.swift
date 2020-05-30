@@ -557,8 +557,10 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     }
     return false
   }
+  
   /// Return the path for a given theme, if the download succeded
   public func download(theme: String, down: ThemeDownload, completion: @escaping (String?) -> ()) {
+    let advice = "Try to refresh the list by pressing the Refresh button below."
     self.statusError = nil
     if let sha = self.getSha() {
       let shaPath : String = self.basePath.addPath(sha)
@@ -573,13 +575,21 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
             try fm.createDirectory(atPath: themeDest,
                                    withIntermediateDirectories: true,
                                    attributes: nil)
-          } catch {}
+          } catch {
+            let desc = "Unexpected error: '\(error)'"
+            let e = NSError(domain: "org.slice.Clover.Download.Error",
+                            code: 3000,
+                            userInfo :[NSLocalizedDescriptionKey : desc])
+            
+            self.statusError = e
+            completion(nil)
+            return
+          }
         }
- 
+        
         let plistPath : String = "\(themeManagerIndexDir)/Themes/\(theme).plist"
         let themePlist = NSDictionary(contentsOfFile: plistPath)
         if let files : [String] = themePlist?.allKeys as? [String] {
-          // ---------------------------------------
           let fc : Int = files.count
           if fc > 0 {
             var succeded : Bool = true
@@ -617,17 +627,43 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
               if succeded {
                 completion(themeDest)
               } else {
-               completion(nil)
+                if self.statusError == nil { // downloadFile() generate a specific error
+                  let desc = "Unknown error downloading '\(theme)' theme."
+                  let e = NSError(domain: "org.slice.Clover.Download.Error",
+                                  code: 3001,
+                                  userInfo :[NSLocalizedDescriptionKey : desc])
+                  
+                  self.statusError = e
+                }
+                completion(nil)
               }
             })
           } else {
+            let desc = "'\(theme)' index file contains no file to download.\n\n\(advice)"
+            let e = NSError(domain: "org.slice.Clover.Download.Error",
+                            code: 3002,
+                            userInfo :[NSLocalizedDescriptionKey : desc])
+            
+            self.statusError = e
             completion(nil)
           }
         } else {
+          let desc = "Unable to load '\(theme)' index file (not found or unreadable).\n\n\(advice)"
+          let e = NSError(domain: "org.slice.Clover.Download.Error",
+                          code: 3003,
+                          userInfo :[NSLocalizedDescriptionKey : desc])
+          
+          self.statusError = e
           completion(nil)
         }
       }
     } else {
+      let desc = "sha1 directory not found.\n\n\(advice)"
+      let e = NSError(domain: "org.slice.Clover.Download.Error",
+                      code: 3004,
+                      userInfo :[NSLocalizedDescriptionKey : desc])
+      
+      self.statusError = e
       completion(nil)
     }
   }
