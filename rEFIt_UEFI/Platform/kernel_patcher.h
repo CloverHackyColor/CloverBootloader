@@ -51,7 +51,7 @@ const char   kDataSection[] =                       "__data";
 #define ID_SEG_DATA_DATA                       0x080e
 #define ID_SEG_DATA_DATA2                      0x081e
 #define ID_SEC_BSS                             0x0a0e
-#define ID_SEС_CONST                           0x070f
+#define ID_SEC_CONST                           0x070f
 #define ID_SEG_DATA_COMMON                     0x090f
 #define ID_SEG_DATA                            0x0f0f
 #define ID_SEG_DATA_CONST                      0x110f
