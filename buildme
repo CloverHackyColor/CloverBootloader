@@ -277,7 +277,7 @@ options=( 'build Clover'
           'status'
           'update Clover'
           'show diff'
-          'open drivers directory'
+          'open CloverV2/EFI/CLOVER directory'
           'update Clover (reset changes)'
           'clean BaseTools'
           'quit')
@@ -340,9 +340,9 @@ do
       showdiff
       break
     ;;
-    "open drivers directory")
-      if [[ -d "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/drivers ]]; then
-        open "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER/drivers
+    "open CloverV2/EFI/CLOVER directory")
+      if [[ -d "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER ]]; then
+        open "${CLOVERROOT}"/CloverPackage/CloverV2/EFI/CLOVER
       else
         echo && echo "Directory not found. Compile Clover first!!"
         sleep 2
