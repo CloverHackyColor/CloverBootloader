@@ -621,10 +621,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
     case OSTYPE_OSX_INSTALLER:
       OSIconName = GetOSIconName(Entry->OSVersion);// Sothor - Get OSIcon name using OSVersion
       // apianti - force custom logo even when verbose
+/* this is not needed, as this flag is also being unset when booting if -v is present (LoadOptions may change until then)
       if ( Entry->LoadOptions.containsIC("-v")  ) {
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
+*/
       if (OSType == OSTYPE_OSX && IsOsxHibernated(Entry)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIBERNATED);
         DBG("  =>set entry as hibernated\n");
