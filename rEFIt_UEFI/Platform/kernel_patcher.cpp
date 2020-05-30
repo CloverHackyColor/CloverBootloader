@@ -133,7 +133,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     lSegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataSegment, (UINT32)strlen(kDataSegment));
     break;
   case ID_SEG_DATA_CONST:
-  case ID_SEС_CONST:
+  case ID_SEC_CONST:
     lSegVAddr = FindSection(driver, 0x1600, (const UINT8 *)kDataSegment, (const UINT8 *)kConstSection);
     break;
   case ID_SEG_TEXT_CONST:
