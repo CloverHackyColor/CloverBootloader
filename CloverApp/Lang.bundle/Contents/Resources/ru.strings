@@ -220,13 +220,13 @@ boot0ss (boot0 Signature Scanning) ищет первый раздел типа E
 
 // Plist Editor Menu
 // Clover.app Menu
-"About Clover" = "Об Утилите VoiceOver";
+"About Clover" = "Об Утилите Clover";
 "Preferences…" = "Настройки…";
 "Services" = "Службы";
-"Hide Clover" = "Скрыть Утилиту VoiceOver";
+"Hide Clover" = "Скрыть Утилиту Clover";
 "Hide Others" = "Скрыть остальные";
 "Show All" = "Показать все";
-"Quit Clover" = "Завершить Утилиту VoiceOver";
+"Quit Clover" = "Завершить Утилиту Clover";
 // File
 "New" = "New";
 "Open…" = "Открыть…";

@@ -225,10 +225,10 @@ Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is neede
 "About Clover" = "O aplikácii Clover";
 "Preferences…" = "Nastavenia…";
 "Services" = "Služby";
-"Hide Clover" = "Skryť VoiceOver utilitu";
+"Hide Clover" = "Skryť Clover utilitu";
 "Hide Others" = "Skryť ostatné";
 "Show All" = "Zobraziť všetky";
-"Quit Clover" = "Ukončiť VoiceOver utilitu";
+"Quit Clover" = "Ukončiť Clover utilitu";
 // File
 "New" = "New";
 "Open…" = "Otvoriť…";
