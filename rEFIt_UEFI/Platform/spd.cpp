@@ -811,7 +811,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
     gRAM.SPD[i].PartNo = getDDRPartNum(spdbuf, base, i);
     gRAM.SPD[i].Vendor = getVendorName(&(gRAM.SPD[i]), spdbuf, base, i);
     gRAM.SPD[i].SerialNo = getDDRSerial(spdbuf);
-    //XXX - when we can FreePool allocated for these buffers?
+    //XXX - when we can FreePool allocated for these buffers? No this is pointer copy
     // determine spd speed
     speed = getDDRspeedMhz(spdbuf);
     DBG("DDR speed %dMHz\n", speed);
