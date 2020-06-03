@@ -311,6 +311,7 @@
 		<string>Keep editing</string>
 		<string>Duplicate key in the Dictionary!</string>
 		<string>&apos;%@&apos; is already present in the Dictionary. Do you want to undo the editing or replace the existing key?</string>
+		<string>Replace existing key</string>
 		<string>Invalid value detected!</string>
 		<string>Your edit is not valid. Do you want to restore last valid value or keep editing?</string>
 		<string>kEmptyLine**#</string>
@@ -460,6 +461,8 @@ Can also be use if you don&apos;t want to upgrade MBR or PBR sectors.</string>
 		<string>Download</string>
 		<key>Duplicate key in the Dictionary!</key>
 		<string>Duplicate key in the Dictionary!</string>
+		<key>Replace existing key</key>
+		<string>Replace existing key</string>
 		<key>Edit</key>
 		<string>Edit</string>
 		<key>EmuVariableUefi.efi</key>

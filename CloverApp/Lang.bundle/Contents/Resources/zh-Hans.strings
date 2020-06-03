@@ -321,6 +321,7 @@ boot0ss (boot0 签名扫描) 引导器 优先引导第一个含 有效 PBR 签�
 "Keep editing" = "Keep editing";
 "Duplicate key in the Dictionary!" = "Duplicate key in the Dictionary!";
 "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?";
+"Replace existing key" = "Replace existing key";
 "Invalid value detected!" = "Invalid value detected!";
 "Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Your edit is not valid. Do you want to restore last valid value or keep editing?";
 

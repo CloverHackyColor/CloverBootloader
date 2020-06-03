@@ -319,6 +319,7 @@ boot0ss (boot0 Signature Scanning) ищет первый раздел типа E
 "Keep editing" = "Продолжить";
 "Duplicate key in the Dictionary!" = "Дубликат ключа в словаре!";
 "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' уже присутствует в словаре. Отменить редактирование или заменить существующий ключ?";
+"Replace existing key" = "Replace existing key";
 "Invalid value detected!" = "Неверное значение!";
 "Your edit is not valid. Do you want to restore last valid value or keep editing?" = "Ваша правка неверна. Восстановить предыдущее значение или продолжить правку?";
 
