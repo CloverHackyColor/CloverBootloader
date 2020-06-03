@@ -314,8 +314,8 @@ boot0ss (boot0 Signature Scanning) ищет первый раздел типа E
 "No data" = "Нет данных";
 "missing '<' at the beginning" = "отсутствует '<' в начале";
 "missing '>' at the end" = "отсутствует '>' в конце";
-"Your data contains illegal characters" = "Данные содержат недопустиый символ";
-"bytes count is odd, must be even" = "нечтное число байтове";
+"Your data contains illegal characters" = "Данные содержат недопустимый символ";
+"bytes count is odd, must be even" = "нечетное число байтов";
 "Keep editing" = "Продолжить";
 "Duplicate key in the Dictionary!" = "Дубликат ключа в словаре!";
 "'%@' is already present in the Dictionary. Do you want to undo the editing or replace the existing key?" = "'%@' уже присутствует в словаре. Отменить редактирование или заменить существующий ключ?";
