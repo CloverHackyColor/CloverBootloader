@@ -174,9 +174,9 @@ extension String {
     return UnsafePointer<UInt8>(buffer)
   }
   
-  /// Escape XML special characthers such:
+  /// Encode XML special characthers such:
   /// & as &amp, \ as &quot, ' as &apos,  < as &lt, and > as &gt
-  var escapingXMLCharacters: String {
+  var encodingXMLCharacters: String {
     get {
       /*
        "   &quot;
@@ -192,13 +192,14 @@ extension String {
       s = s.replacingOccurrences(of: "'",  with: "&apos;")
       s = s.replacingOccurrences(of: "<",  with: "&lt;")
       s = s.replacingOccurrences(of: ">",  with: "&gt;")
+      print(s)
       return s
     }
   }
   
-  /// Convert XML  characters  such:
+  /// Decode XML  characters  such:
   /// &amp to &, &quot to \ , ' to &apos,  &lt to <, and &gt to >
-  var convertingXMLCharacters: String {
+  var decodingXMLCharacters: String {
     get {
       /*
        "   &quot;

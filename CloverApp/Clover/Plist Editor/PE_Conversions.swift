@@ -50,7 +50,7 @@ func gConvertPENodeToPlist(node: PENode?) -> String {
       plist = xml1Header + "\n" + gSerializeNodeToPlist(node: node!, file: "", indentation: 0) + xml1Footer
     }
   } else if type == .String {
-    plist = xml1Header + "\n" + "<string>" + (ro.value as! String) + "</string>" + "\n" + xml1Footer
+    plist = xml1Header + "\n" + "<string>" + (ro.value as! String).encodingXMLCharacters + "</string>" + "\n" + xml1Footer
   } else if type == .Data {
     let data = ro.value as! NSData
     let strBase64 : String = (data as Data).base64EncodedString(options: .endLineWithLineFeed)
@@ -89,7 +89,7 @@ func gSerializeNodeToPlist(node: PENode, file: String, indentation: Int) -> Stri
   if type == .Dictionary {
     if !isRoot {
       if node.peparent != nil && node.peparent!.tagdata!.type != .Array {
-        str += indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+        str += indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
       }
     } else {
       str = "<dict>\n"
@@ -120,7 +120,7 @@ func gSerializeNodeToPlist(node: PENode, file: String, indentation: Int) -> Stri
     }
   } else if type == .Array {
     if !isRoot {
-      str += indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+      str += indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
     } else {
       str = "<array>\n"
     }
@@ -153,14 +153,14 @@ func gSerializeNodeToPlist(node: PENode, file: String, indentation: Int) -> Stri
      <string>hi</string>
      */
     if node.peparent!.tagdata!.type != .Array {
-      str = str + indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+      str = str + indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
     } else if isRoot {
       str = str + indent + "<key>" + localizedNewItem + "</key>" + "\n"
     }
-    str = str + indent + "<string>" + (node.tagdata!.value as! String) + "</string>" + "\n"
+    str = str + indent + "<string>" + (node.tagdata!.value as! String).encodingXMLCharacters + "</string>" + "\n"
   } else if type == .Data {
     if node.peparent!.tagdata!.type != .Array {
-      str = str + indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+      str = str + indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
     } else if isRoot {
       str = str + indent + "<key>" + localizedNewItem + "</key>" + "\n"
     }
@@ -169,14 +169,14 @@ func gSerializeNodeToPlist(node: PENode, file: String, indentation: Int) -> Stri
     str = str + indent + "<data>" + strBase64 + "</data>" + "\n"
   } else if type == .Date {
     if node.peparent!.tagdata!.type != .Array {
-      str = str + indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+      str = str + indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
     } else if isRoot {
       str = str + indent + "<key>" + localizedNewItem + "</key>" + "\n"
     }
     str = str + indent + "<date>" + utcDateToString(node.tagdata!.value as! Date) + "</date>" + "\n"
   } else if type == .Number {
     if node.peparent!.tagdata!.type != .Array {
-      str = str + indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+      str = str + indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
     } else if isRoot {
       str = str + indent + "<key>" + localizedNewItem + "</key>" + "\n"
     }
@@ -190,7 +190,7 @@ func gSerializeNodeToPlist(node: PENode, file: String, indentation: Int) -> Stri
     }
   } else if type == .Bool {
     if node.peparent!.tagdata!.type != .Array {
-      str = str + indent + "<key>" + node.tagdata!.key + "</key>" + "\n"
+      str = str + indent + "<key>" + node.tagdata!.key.encodingXMLCharacters + "</key>" + "\n"
     } else if isRoot {
       str = str + indent + "<key>" + localizedNewItem + "</key>" + "\n"
     }
