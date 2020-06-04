@@ -1129,11 +1129,6 @@ FindStartupDiskVolume (
   IsPartitionVolume = NULL != FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
   DBG("  - Volume: %ls = %ls\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
 
-  //--1 '\D2D841D8-95ED-4E1E-A069-41ED29F8E9E1\com.apple.installer\boot.efi' == gEfiBootLoaderPath
-  //--2 '\441BEBFF-88C7-4050-BC72-045AA3833DEC\System\Library\CoreServices\boot.efi'
-  //--1 \VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,D841D8D2ED951E4EA06941ED29F8E9E1)\macOS Install Data\Locked Files\Boot
-  //--2 \VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,FFEB1B44C7885040BC72045AA3833DEC) == Entry->DevicePathString
-
   //
   // 1. gEfiBootVolume + gEfiBootLoaderPath
   // PciRoot(0x0)/.../Sata(...)/HD(...)/\EFI\BOOT\XXX.EFI - set by Clover
@@ -1166,26 +1161,17 @@ FindStartupDiskVolume (
     for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
         LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
-   //     Volume = LoaderEntry.Volume;
         EFI_DEVICE_PATH *DevicePath = LoaderEntry.DevicePath;
-        EFI_DEVICE_PATH *MediaPath = FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, 0);
-        EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
-        XStringW MediaPathGuidStr = GuidLEToStr(MediaPathGuid);
-        DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
-        if (StrStr(gEfiBootLoaderPath, MediaPathGuidStr.wc_str())) {
-          DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
-          return Index;
+        EFI_DEVICE_PATH *MediaPath = FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
+        if (MediaPath) {
+          EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
+          XStringW MediaPathGuidStr = GuidLEToStr(MediaPathGuid);
+   //       DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
+          if (StrStr(gEfiBootLoaderPath, MediaPathGuidStr.wc_str())) {
+            DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
+            return Index;
+          }
         }
- //       if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual(gEfiBootVolume, Volume->DevicePath)) {
-          //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
-          //DBG("   '%ls'\n", LoaderPath);
-          // case insensitive cmp
-//          if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
-            // that's the one
-//			  DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
-//            return Index;
-//          }
-//        }
       }
     }
     DBG("    - [!] not found\n");
