@@ -331,10 +331,10 @@ final class PlistParser: NSObject, XMLParserDelegate {
         self.goback()
         break
       case "key":
-        self.currentNode?.tagdata?.key = value?.escapingXMLCharacters ?? ""
+        self.currentNode?.tagdata?.key = value?.decodingXMLCharacters ?? ""
         break
       case "string":
-        self.currentNode?.tagdata?.value =  value!.escapingXMLCharacters
+        self.currentNode?.tagdata?.value =  value!.decodingXMLCharacters
         self.currentNode?.tagdata?.type = .String
         self.goback()
         break
