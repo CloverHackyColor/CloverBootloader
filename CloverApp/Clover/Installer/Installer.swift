@@ -157,7 +157,7 @@ final class InstallerViewController: NSViewController {
     self.spinner.stopAnimation(nil)
     
     var path : String = Cloverv2Path.addPath("Bootloaders/x64")
-    var files = getFiles(at: path).sorted()
+    var files = gGetFiles(at: path).sorted()
     var isDir : ObjCBool = false
     for f in files {
       
@@ -170,7 +170,7 @@ final class InstallerViewController: NSViewController {
     }
     
     path = Cloverv2Path.addPath("BootSectors")
-    files = getFiles(at: path).sorted()
+    files = gGetFiles(at: path).sorted()
     
     for f in files {
       let fp = path.addPath(f)
@@ -224,46 +224,6 @@ final class InstallerViewController: NSViewController {
     }
   }
   
-  // MARK: file scanner
-  func getFiles(at path: String) -> [String] {
-    var isDir : ObjCBool = false
-    var files : [String] = [String]()
-    
-    if fm.fileExists(atPath: path, isDirectory: &isDir) {
-      if isDir.boolValue {
-        do { files = try fm.contentsOfDirectory(atPath: path) } catch { }
-      }
-      for i in  0..<files.count {
-        if fm.fileExists(atPath: path.addPath(files[i]), isDirectory: &isDir) {
-          if isDir.boolValue {
-            files.remove(at: i)
-          }
-        }
-      }
-    }
-    return files.sorted()
-  }
-  
-  // MARK: directories scanner
-  func getDirs(at path: String) -> [String] {
-    var isDir : ObjCBool = false
-    var dirs : [String] = [String]()
-    
-    if fm.fileExists(atPath: path, isDirectory: &isDir) {
-      if isDir.boolValue {
-        do { dirs = try fm.contentsOfDirectory(atPath: path) } catch { }
-      }
-      for i in  0..<dirs.count {
-        if fm.fileExists(atPath: path.addPath(dirs[i]), isDirectory: &isDir) {
-          if !isDir.boolValue {
-            dirs.remove(at: i)
-          }
-        }
-      }
-    }
-    return dirs.sorted()
-  }
-  
   // MARK: populate drivers
   func populateDrivers() {
     self.driversUEFI = [[EFIDriver]]()
@@ -272,7 +232,7 @@ final class InstallerViewController: NSViewController {
     // MARK: get UEFI default drivers
     var path = Cloverv2Path.addPath(kUEFIRelativeDir)
     var drivers : [EFIDriver] = [EFIDriver]()
-    var files : [String] = self.getFiles(at: path)
+    var files : [String] = gGetFiles(at: path)
     var destDir : String = self.targetVol.addPath(kUEFIRelativeDir)
     let isFresh : Bool = !fm.fileExists(atPath: self.targetVol.addPath("EFI/CLOVER"))
     let isLegacy = self.cloverEFICheck.state == .on
@@ -303,8 +263,8 @@ final class InstallerViewController: NSViewController {
     var ApfsDriverLoader : Bool = false
     
     path = Cloverv2Path.addPath(kUEFIRelativeOptionDir)
-    for dir in self.getDirs(at: path) {
-      files = self.getFiles(at: path.addPath(dir))
+    for dir in gGetDirs(at: path) {
+      files = gGetFiles(at: path.addPath(dir))
       sectionName = "UEFI/\(dir)"
       drivers = [EFIDriver]()
       for file in files {
@@ -357,7 +317,7 @@ final class InstallerViewController: NSViewController {
     // MARK: check users UEFI drivers
     sectionName = "UEFI, but not from this installer"
     path = self.targetVol.addPath(kUEFIRelativeDir)
-    files = self.getFiles(at: path)
+    files = gGetFiles(at: path)
     drivers = [EFIDriver]()
     for file in files {
       if file.fileExtension == "efi" && !driversList.contains(file) {
@@ -381,7 +341,7 @@ final class InstallerViewController: NSViewController {
     path = Cloverv2Path.addPath(kBIOSRelativeDir)
     destDir = self.targetVol.addPath(kBIOSRelativeDir)
     drivers = [EFIDriver]()
-    files = self.getFiles(at: path)
+    files = gGetFiles(at: path)
     sectionName = "BIOS mandatory"
     
     for file in files {
@@ -408,9 +368,9 @@ final class InstallerViewController: NSViewController {
     path = Cloverv2Path.addPath(kBIOSRelativeOptionDir)
     HFSPlus = false
     ApfsDriverLoader = false
-    for dir in self.getDirs(at: path) {
+    for dir in gGetDirs(at: path) {
       sectionName = "BIOS/\(dir)"
-      files = self.getFiles(at: path.addPath(dir))
+      files = gGetFiles(at: path.addPath(dir))
       drivers = [EFIDriver]()
       for file in files {
         if file.fileExtension == "efi" {
@@ -457,7 +417,7 @@ final class InstallerViewController: NSViewController {
     
     // MARK: check users BIOS drivers
     path = self.targetVol.addPath(kBIOSRelativeDir)
-    files = self.getFiles(at: path)
+    files = gGetFiles(at: path)
     drivers = [EFIDriver]()
     sectionName = "BIOS, but not from this installer"
     
@@ -536,7 +496,7 @@ final class InstallerViewController: NSViewController {
   }
   
   // MARK: actions
-  @IBAction func targetSelected(_ sender: FWPopUpButton?) {
+  @IBAction func targetSelected(_ sender: FWPopUpButton) {
     self.targetVol = ""
     self.installButton.isEnabled = false
     self.driversUEFI = [[EFIDriver]]()
@@ -553,7 +513,8 @@ final class InstallerViewController: NSViewController {
     self.boot2Pop.isEnabled = false
     self.altBootCheck.isEnabled = false
     self.altBootCheck.state = .off
-    if let disk = sender?.selectedItem?.representedObject as? String {
+
+    if let disk = sender.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
         DispatchQueue.global(priority: .background).async(execute: { () -> Void in
           let cmd = "diskutil mount \(disk)"

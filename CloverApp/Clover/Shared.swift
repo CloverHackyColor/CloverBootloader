@@ -115,3 +115,50 @@ func getCoreTypeImage(named: String, isTemplate: Bool) -> NSImage? {
   return image
 }
 
+// MARK: file scanner
+func gGetFiles(at path: String) -> [String] {
+  var isDir : ObjCBool = false
+  var files : [String] = [String]()
+  
+  if fm.fileExists(atPath: path, isDirectory: &isDir) {
+    if isDir.boolValue {
+      do {
+        let temp = try fm.contentsOfDirectory(atPath: path)
+        for i in  0..<temp.count {
+          let file = temp[i]
+          isDir = false
+          if fm.fileExists(atPath: path.addPath(file), isDirectory: &isDir) {
+            if !isDir.boolValue {
+              files.append(file)
+            }
+          }
+        }
+      } catch { }
+    }
+  }
+  return files.sorted()
+}
+
+// MARK: directories scanner
+func gGetDirs(at path: String) -> [String] {
+  var isDir : ObjCBool = false
+  var dirs : [String] = [String]()
+  
+  if fm.fileExists(atPath: path, isDirectory: &isDir) {
+    if isDir.boolValue {
+      do {
+        let temp = try fm.contentsOfDirectory(atPath: path)
+        for i in  0..<temp.count {
+          let dir = temp[i]
+          isDir = false
+          if fm.fileExists(atPath: path.addPath(dir), isDirectory: &isDir) {
+            if isDir.boolValue {
+              dirs.append(dir)
+            }
+          }
+        }
+      } catch { }
+    }
+  }
+  return dirs.sorted()
+}

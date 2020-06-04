@@ -192,7 +192,6 @@ extension String {
       s = s.replacingOccurrences(of: "'",  with: "&apos;")
       s = s.replacingOccurrences(of: "<",  with: "&lt;")
       s = s.replacingOccurrences(of: ">",  with: "&gt;")
-      print(s)
       return s
     }
   }
