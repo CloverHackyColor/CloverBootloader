@@ -8,6 +8,7 @@
 #include "Platform.h"
 #include "Nvram.h"
 #include "BootOptions.h"
+#include "guid.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -31,19 +32,19 @@ TagPtr                   gNvramDict;
 //
 
 // always contains original efi-boot-device-data
-EFI_DEVICE_PATH_PROTOCOL *gEfiBootDeviceData;
+EFI_DEVICE_PATH *gEfiBootDeviceData;
 
 // if gEfiBootDeviceData starts with MemoryMapped node, then gBootCampHD = "BootCampHD" var, otherwise == NULL
-EFI_DEVICE_PATH_PROTOCOL *gBootCampHD;
+EFI_DEVICE_PATH *gBootCampHD;
 
 // contains only volume dev path from gEfiBootDeviceData or gBootCampHD
-EFI_DEVICE_PATH_PROTOCOL *gEfiBootVolume;
+EFI_DEVICE_PATH *gEfiBootVolume;
 
 // contains file path from gEfiBootDeviceData or gBootCampHD (if exists)
-CHAR16                   *gEfiBootLoaderPath;
+CHAR16          *gEfiBootLoaderPath;
 
 // contains GPT GUID from gEfiBootDeviceData or gBootCampHD (if exists)
-EFI_GUID                 *gEfiBootDeviceGuid;
+EFI_GUID        *gEfiBootDeviceGuid;
 
 // Lilu / OpenCore
 EFI_GUID    gOcVendorVariableGuid     = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
@@ -1127,7 +1128,12 @@ FindStartupDiskVolume (
   EfiBootVolumeStr  = FileDevicePathToStr (gEfiBootVolume);
   IsPartitionVolume = NULL != FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
   DBG("  - Volume: %ls = %ls\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr);
-  
+
+  //--1 '\D2D841D8-95ED-4E1E-A069-41ED29F8E9E1\com.apple.installer\boot.efi' == gEfiBootLoaderPath
+  //--2 '\441BEBFF-88C7-4050-BC72-045AA3833DEC\System\Library\CoreServices\boot.efi'
+  //--1 \VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,D841D8D2ED951E4EA06941ED29F8E9E1)\macOS Install Data\Locked Files\Boot
+  //--2 \VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,FFEB1B44C7885040BC72045AA3833DEC) == Entry->DevicePathString
+
   //
   // 1. gEfiBootVolume + gEfiBootLoaderPath
   // PciRoot(0x0)/.../Sata(...)/HD(...)/\EFI\BOOT\XXX.EFI - set by Clover
@@ -1140,8 +1146,8 @@ FindStartupDiskVolume (
         Volume = LoaderEntry.Volume;
         LoaderPath = LoaderEntry.LoaderPath;
         if (Volume != NULL && BootVolumeDevicePathEqual(gEfiBootVolume, Volume->DevicePath)) {
-          //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
-          //DBG("   '%ls'\n", LoaderPath);
+          DBG("  checking '%ls'\n", DevicePathToStr(Volume->DevicePath));
+          DBG("   '%ls'\n", LoaderPath.wc_str());
           // case insensitive cmp
           if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
             // that's the one
@@ -1160,18 +1166,26 @@ FindStartupDiskVolume (
     for (Index = 0; ((Index < (INTN)MainMenu->Entries.size()) && (MainMenu->Entries[Index].Row == 0)); ++Index) {
       if (MainMenu->Entries[Index].getLOADER_ENTRY()) {
         LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
-        Volume = LoaderEntry.Volume;
-        LoaderPath = LoaderEntry.LoaderPath;
-        if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual (gEfiBootVolume, Volume->DevicePath)) {
+   //     Volume = LoaderEntry.Volume;
+        EFI_DEVICE_PATH *DevicePath = LoaderEntry.DevicePath;
+        EFI_DEVICE_PATH *MediaPath = FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, 0);
+        EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
+        XStringW MediaPathGuidStr = GuidLEToStr(MediaPathGuid);
+        DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
+        if (StrStr(gEfiBootLoaderPath, MediaPathGuidStr.wc_str())) {
+          DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
+          return Index;
+        }
+ //       if (Volume != NULL && BootVolumeMediaDevicePathNodesEqual(gEfiBootVolume, Volume->DevicePath)) {
           //DBG("  checking '%ls'\n", DevicePathToStr (Volume->DevicePath));
           //DBG("   '%ls'\n", LoaderPath);
           // case insensitive cmp
-          if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
+//          if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
             // that's the one
-			  DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
-            return Index;
-          }
-        }
+//			  DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());
+//            return Index;
+//          }
+//        }
       }
     }
     DBG("    - [!] not found\n");
