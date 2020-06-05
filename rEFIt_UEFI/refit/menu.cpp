@@ -1168,15 +1168,15 @@ VOID ApplyInputs(VOID)
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
     UINT8 TmpIndex;
     if (OldChosenAudio > AudioNum) {
-      DBG("crasy OldChosenAudio = %lld\n", OldChosenAudio);
+//      DBG("crasy OldChosenAudio = %lld\n", OldChosenAudio);
       OldChosenAudio = 0;
     }
     TmpIndex = OldChosenAudio & 0x2F;
-	  DBG("Chosen output %u:%ls_%s\n", TmpIndex, AudioList[TmpIndex].Name,
-        AudioOutputNames[AudioList[TmpIndex].Device]);
+//	  DBG("Chosen output %u:%ls_%s\n", TmpIndex, AudioList[TmpIndex].Name,
+//        AudioOutputNames[AudioList[TmpIndex].Device]);
 
     DevicePath = DevicePathFromHandle(AudioList[TmpIndex].Handle);
-    DBG("choosen sound devicepath=%ls\n", DevicePathToStr(DevicePath));
+//    DBG("choosen sound devicepath=%ls\n", DevicePathToStr(DevicePath));
     if (DevicePath != NULL) {
       SetNvramVariable(L"Clover.SoundDevice", &gEfiAppleBootGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -1184,13 +1184,13 @@ VOID ApplyInputs(VOID)
       SetNvramVariable(L"Clover.SoundIndex", &gEfiAppleBootGuid,
                        EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                        1, (UINT8 *)&TmpIndex);
-      DBG(" sound written to nvram variables\n");
+//      DBG(" sound written to nvram variables\n");
     }
   }
   i++; //120
   if (InputItems[i].Valid) {
     DefaultAudioVolume = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
-    DBG(" set output volume to %d\n", DefaultAudioVolume);
+//    DBG(" set output volume to %d\n", DefaultAudioVolume);
     if (DefaultAudioVolume > 100) {
         // correct wrong input
         DefaultAudioVolume = 90;

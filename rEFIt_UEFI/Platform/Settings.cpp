@@ -7068,6 +7068,7 @@ GetDevices ()
           }
           if (gSettings.ResetHDA) {
             //Slice method from VoodooHDA
+            //PCI_HDA_TCSEL_OFFSET = 0x44
             UINT8 Value = 0;
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
 
@@ -7816,14 +7817,28 @@ SetDevices (LOADER_ENTRY *Entry)
         }
 
         // HDA
-        else if (gSettings.HDAInjection &&
-                 (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
+        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                  ((Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA) ||
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_AUDIO))) {
                    // HDMI injection inside
-                   TmpDirty    = setup_hda_devprop (PciIo, &PCIdevice, Entry->OSVersion);
-                   StringDirty |= TmpDirty;
-                 }
+          if (gSettings.HDAInjection ) {
+            TmpDirty    = setup_hda_devprop (PciIo, &PCIdevice, Entry->OSVersion);
+            StringDirty |= TmpDirty;
+          }
+          if (gSettings.ResetHDA) {
+            
+            //PCI_HDA_TCSEL_OFFSET = 0x44
+            UINT8 Value = 0;
+            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
+            
+            if (EFI_ERROR(Status)) {
+              continue;
+            }
+            
+            Value &= 0xf8;
+            PciIo->Pci.Write (PciIo, EfiPciIoWidthUint8, 0x44, 1, &Value);
+          }
+        }
 
         //LPC
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
@@ -7831,7 +7846,7 @@ SetDevices (LOADER_ENTRY *Entry)
         {
           if (gSettings.LpcTune) {
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
-			  MsgLog ("Initial PmCon value=%hX\n", PmCon);
+            MsgLog ("Initial PmCon value=%hX\n", PmCon);
 
             if (gSettings.EnableC6) {
               PmCon |= 1 << 11;
@@ -7868,7 +7883,7 @@ SetDevices (LOADER_ENTRY *Entry)
             PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
 
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16,GEN_PMCON_1, 1, &PmCon);
-			  MsgLog ("Set PmCon value=%hX\n", PmCon);
+            MsgLog ("Set PmCon value=%hX\n", PmCon);
 
           }
           Rcba   = 0;
