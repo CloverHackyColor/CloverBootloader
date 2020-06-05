@@ -709,7 +709,7 @@ EFI_STATUS REFIT_MENU_SCREEN::WaitForInputEventPoll(UINTN TimeoutDefault)
     }
     UpdateFilm();
     if (gSettings.PlayAsync) {
-      CheckSyncSound();
+      CheckSyncSound(false);
     }
     TimeoutRemain--;
     if (mPointer.isAlive()) {

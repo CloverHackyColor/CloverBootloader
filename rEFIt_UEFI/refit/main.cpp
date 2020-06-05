@@ -831,7 +831,8 @@ VOID LOADER_ENTRY::StartLoader()
     }
 
     if (AudioIo) {
-      AudioIo->StopPlayback(AudioIo);
+//      AudioIo->StopPlayback(AudioIo);
+      CheckSyncSound(true);
     }
 
 //    DBG("Set FakeCPUID: 0x%X\n", gSettings.FakeCPUID);
@@ -2415,7 +2416,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
     
-    // log Audio devices in boot-log. Thisis for clients like Clover.app
+    // log Audio devices in boot-log. This is for clients like Clover.app
     GetOutputs();
     for (i = 0; i < AudioNum; i++) {
       if (AudioList[i].Name) {

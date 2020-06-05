@@ -61,16 +61,16 @@ AudioDxeInit(
     // Register HdaController Driver Binding.
     Status = EfiLibInstallDriverBindingComponentName2(ImageHandle, SystemTable, &gHdaControllerDriverBinding,
         ImageHandle, &gHdaControllerComponentName, &gHdaControllerComponentName2);
-    ASSERT_EFI_ERROR(Status);
+//    ASSERT_EFI_ERROR(Status);
     if (EFI_ERROR(Status))
         return Status;
 
     // Register HdaCodec Driver Binding.
     Status = EfiLibInstallDriverBindingComponentName2(ImageHandle, SystemTable, &gHdaCodecDriverBinding,
         NULL, &gHdaCodecComponentName, &gHdaCodecComponentName2);
-    ASSERT_EFI_ERROR(Status);
-    if (EFI_ERROR(Status))
-        return Status;
+//    ASSERT_EFI_ERROR(Status);
+//    if (EFI_ERROR(Status))
+//        return Status;
 
     return Status;
 }

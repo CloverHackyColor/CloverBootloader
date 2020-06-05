@@ -63,15 +63,22 @@ EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
 EFI_STATUS
 StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
 {
-  EFI_STATUS Status  = EFI_NOT_FOUND;
+  EFI_STATUS Status;
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
   WAVE_FILE_DATA  WaveData;
-  UINT8           OutputIndex = (OldChosenAudio & 0xFF);
+  UINT8           OutputIndex;
   UINT8           OutputVolume = DefaultAudioVolume;
   UINT16          *TempData = NULL;
-  BOOLEAN       AllocAsPage = FALSE;
+  UINTN           Len;
+  
+  if (OldChosenAudio > AudioNum) {
+    OldChosenAudio = 0; //security correction
+  }
+  OutputIndex = (OldChosenAudio & 0xFF);
 
+  WaveData.Samples = NULL;
+  WaveData.SamplesLength = 0;
   if (!AudioIo) {
     Status = EFI_DEVICE_ERROR;
     //    DBG("not found AudioIo to play\n");
@@ -82,7 +89,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
     Status = egLoadFile(Dir, SoundFile, &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
 //      DBG("file sound read: %ls %s\n", SoundFile, strerror(Status));
-      return Status;
+      goto DONE_ERROR;
     }
   } else {
     FileData = EmbeddedSound;
@@ -90,14 +97,14 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
 //    DBG("got embedded sound\n");
   }
 
-  WaveData.Samples = NULL;
+  
   Status = WaveGetFileData(FileData, (UINT32)FileDataLength, &WaveData); //
   if (EFI_ERROR(Status)) {
     MsgLog(" wrong sound file, wave status=%s\n", strerror(Status));
     //if error then data not allocated
-    return Status;
+    goto DONE_ERROR;
   }
-  AllocAsPage = TRUE;
+  Len = WaveData.SamplesLength; //byte length
 	MsgLog("  Channels: %hu  Sample rate: %u Hz  Bits: %hu\n", WaveData.Format->Channels, WaveData.Format->SamplesPerSec, WaveData.Format->BitsPerSample);
 
   EFI_AUDIO_IO_PROTOCOL_BITS bits;
@@ -168,7 +175,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
 
   if ((freq == EfiAudioIoFreq8kHz) && (bits == EfiAudioIoBits16)) {
     //making conversion
-    UINTN Len = WaveData.SamplesLength * 6; //8000<->48000
+    Len *= 6; //8000<->48000
     UINTN Ind, Out=0, Tact;
     INT16 Tmp, Next;
     float Delta;
@@ -178,7 +185,8 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
  //     DBG("not found wave data\n");
       goto DONE_ERROR;
     }
-    TempData = (__typeof__(TempData))AllocateZeroPool(Len * sizeof(INT16));
+//    TempData = (__typeof__(TempData))AllocateZeroPool(Len * sizeof(INT16));
+    TempData = (__typeof__(TempData))AllocateAlignedPages(EFI_SIZE_TO_PAGES(Len + 4095), 128);
     Tmp = *(Ptr++);
     for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
       Next = *(Ptr++);
@@ -191,13 +199,10 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
     }
     freq = EfiAudioIoFreq48kHz;
     // Samples was allocated via AllocateAlignedPages, so it must not be freed with FreePool, but according to the number of pages allocated
-    FreePages(WaveData.Samples,EFI_SIZE_TO_PAGES(WaveData.SamplesLength+4095));
+    FreeAlignedPages(WaveData.Samples,EFI_SIZE_TO_PAGES(WaveData.SamplesLength + 4095));
     WaveData.SamplesLength *= 6;
     DBG("sound converted to 48kHz\n");
     WaveData.Samples = (UINT8*)TempData;
-    AllocAsPage = FALSE;
-  } else {
-    TempData = (UINT16*)WaveData.Samples;
   }
 
   // Setup playback.
@@ -214,10 +219,10 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
 //  DBG("playback set\n");
   // Start playback.
   if (gSettings.PlayAsync) {
-    Status = AudioIo->StartPlaybackAsync(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0,                                       NULL, NULL);
+    Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0, NULL, NULL);
 //    DBG("async started, status=%s\n", strerror(Status));
   } else {
-    Status = AudioIo->StartPlayback(AudioIo, (UINT8*)TempData, WaveData.SamplesLength, 0);
+    Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
 //    DBG("sync started, status=%s\n", strerror(Status));
 //    if (!EFI_ERROR(Status)) {
 //      FreePool(TempData);
@@ -229,19 +234,15 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   }
 
 DONE_ERROR:
-  // here we have memory leak with TempData == WaveData.Samples
-  // TempData allocated as AllocatePool while Samples allocated as AllocatePages
-  // and we can't keep the info up to stop AsyncPlay
   if (FileData && SoundFile) {  //dont free embedded sound
 //    DBG("free sound\n");
     FreePool(FileData);
   }
-  if (!gSettings.PlayAsync) { //dont free sound when async play
-    if (AllocAsPage) {
-      FreePages(WaveData.Samples,EFI_SIZE_TO_PAGES(WaveData.SamplesLength+4095));
-    } else {
-      FreePool(TempData);
-    }
+  if (!gSettings.PlayAsync && WaveData.Samples) {
+    //dont free sound when async play
+    // here we have memory leak with WaveData.Samples
+    // and we can't free memory up to stop AsyncPlay
+    FreeAlignedPages(WaveData.Samples, EFI_SIZE_TO_PAGES(WaveData.SamplesLength + 4095));
   }
   DBG("sound play end with status=%s\n", strerror(Status));
   return Status;
@@ -373,7 +374,7 @@ DONE:
   return Status;
 }
 
-EFI_STATUS CheckSyncSound()
+EFI_STATUS CheckSyncSound(BOOLEAN Stop)
 {
   EFI_STATUS Status;
   AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
@@ -391,7 +392,7 @@ EFI_STATUS CheckSyncSound()
   HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
 
   Status = HdaIo->GetStream(HdaIo, EfiHdaIoTypeOutput, &StreamRunning);
-  if (EFI_ERROR(Status) && StreamRunning) {
+  if ((EFI_ERROR(Status) || Stop) && StreamRunning) {
     DBG("stream stopping\n");
     HdaIo->StopStream(HdaIo, EfiHdaIoTypeOutput);
   }

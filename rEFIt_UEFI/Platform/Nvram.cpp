@@ -1176,7 +1176,8 @@ FindStartupDiskVolume (
     }
     DBG("    - [!] not found\n");
   }
-  
+ 
+  //Slice - why all further? For legacy boot which is not working???
   //
   // 2. gEfiBootVolume - partition volume
   // PciRoot(0x0)/.../Sata(...)/HD(...) - set by Clover or macOS
