@@ -28,7 +28,7 @@
 
 // object XCinema Cinema is a part of Theme
 // object FILM* FilmC is a part or current Screen. Must be initialized from Cinema somewhere on Screen init
-
+// assumed one Film per screen
 VOID REFIT_MENU_SCREEN::UpdateFilm()
 {
   if (FilmC == nullptr || !FilmC->AnimeRun) {

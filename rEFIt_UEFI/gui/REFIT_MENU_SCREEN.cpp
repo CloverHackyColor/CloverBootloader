@@ -340,27 +340,36 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
       break;
 
     case SCROLL_PAGE_DOWN:
+//    DBG("cur=%lld, maxInd=%lld, maxVis=%lld, First=%lld, maxFirst=%lld, lastVis=%lld, maxscr=%lld\n",
+//        ScrollState.CurrentSelection, ScrollState.MaxIndex, ScrollState.MaxVisible, ScrollState.FirstVisible,
+//        ScrollState.MaxFirstVisible, ScrollState.CurrentSelection, ScrollState.LastVisible);
+
       if (ScrollState.CurrentSelection < ScrollState.MaxIndex) {
         if (ScrollState.CurrentSelection == 0) {   // currently at first entry, special treatment
           if (ScrollState.IsScrolling)
-            ScrollState.CurrentSelection += ScrollState.MaxVisible - 1;  // move to second-to-last line without scrolling
+            ScrollState.CurrentSelection = ScrollState.MaxVisible - 1;  // move to second-to-last line without scrolling
           else
             ScrollState.CurrentSelection = ScrollState.MaxIndex;         // move to last entry
         } else {
-          if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible)
-            ScrollState.PaintAll = TRUE;
+//          if (ScrollState.FirstVisible < ScrollState.MaxFirstVisible)
+//            ScrollState.PaintAll = TRUE;
           ScrollState.CurrentSelection += ScrollState.MaxVisible;          // move one page and scroll synchronously
           ScrollState.FirstVisible += ScrollState.MaxVisible;
         }
-        CONSTRAIN_MAX(ScrollState.CurrentSelection, ScrollState.MaxIndex);
+        CONSTRAIN_MAX(ScrollState.CurrentSelection, ScrollState.MaxIndex); // if (v>m) v=m;
         CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         if ((ScrollState.CurrentSelection > ScrollState.LastVisible) &&
             (ScrollState.CurrentSelection <= ScrollState.MaxScroll)){
-          ScrollState.PaintAll = TRUE;
+ //         ScrollState.PaintAll = TRUE;
           ScrollState.FirstVisible+= ScrollState.MaxVisible;
           CONSTRAIN_MAX(ScrollState.FirstVisible, ScrollState.MaxFirstVisible);
         }
+        ScrollState.PaintAll = TRUE;
       }
+//    DBG("after cur=%lld, maxInd=%lld, maxVis=%lld, First=%lld, maxFirst=%lld, lastVis=%lld, maxscr=%lld\n",
+//        ScrollState.CurrentSelection, ScrollState.MaxIndex, ScrollState.MaxVisible, ScrollState.FirstVisible,
+//        ScrollState.MaxFirstVisible, ScrollState.CurrentSelection, ScrollState.LastVisible);
+
       break;
 
     case SCROLL_FIRST:
@@ -714,7 +723,7 @@ EFI_STATUS REFIT_MENU_SCREEN::WaitForInputEventPoll(UINTN TimeoutDefault)
     TimeoutRemain--;
     if (mPointer.isAlive()) {
       mPointer.UpdatePointer(!Daylight);
-      Status = CheckMouseEvent(); //out: gItemID, gAction
+      Status = CheckMouseEvent(); //out: mItemID, mAction
       if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
         break;
       }
@@ -935,12 +944,12 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case SCAN_PAGE_UP:
         UpdateScroll(SCROLL_PAGE_UP);
     //    SetNextScreenMode(1);
-        ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
+    //    ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
         UpdateScroll(SCROLL_PAGE_DOWN);
      //   SetNextScreenMode(-1);
-        ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
+     //   ((*this).*(StyleFunc))(MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:
         MenuExit = MENU_EXIT_ESCAPE;
