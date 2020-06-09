@@ -6955,7 +6955,7 @@ GetDevices ()
           snprintf (SlotDevice->SlotName, 31, "AirPort");
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
-          DBG(" - WIFI: Vendor=%d = ", Pci.Hdr.VendorId);
+          DBG(" - WIFI: Vendor= ");
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
               DBG("Marvell\n");
@@ -6978,7 +6978,7 @@ GetDevices ()
               break;
 
             default:
-              DBG("Unknown\n");
+              DBG(" 0x%04X\n", Pci.Hdr.VendorId);
               break;
           }
         }
@@ -7000,7 +7000,7 @@ GetDevices ()
             DBG(" - [!] too many LAN card in the system (upto 4 limit exceeded), overriding the last one\n");
             nLanCards = 3; // last one will be rewritten
           }
-			DBG(" - LAN: %llu Vendor=", nLanCards-1);
+          DBG(" - LAN: %llu Vendor=", nLanCards-1);
           switch (Pci.Hdr.VendorId) {
             case 0x11ab:
               DBG("Marvell\n");

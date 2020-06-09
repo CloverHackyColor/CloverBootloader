@@ -1378,7 +1378,7 @@ VOID GetDefaultSettings()
   gSettings.HDAInjection         = FALSE;
   //gSettings.HDALayoutId          = 0;
   gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before
-  StrCpyS (gSettings.DsdtName, 28, L"DSDT.aml");
+  StrCpyS(gSettings.DsdtName, 28, L"DSDT.aml");
   gSettings.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
