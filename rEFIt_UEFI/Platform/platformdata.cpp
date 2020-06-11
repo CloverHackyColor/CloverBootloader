@@ -964,7 +964,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
     case iMac191:
     case iMac192:
-      gPlatformFeature        = 0x22;
+      gPlatformFeature        = 0x20; //0x22
       break;
     case MacBookPro162:
     case MacBookPro163:
