@@ -1326,7 +1326,7 @@ int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUF
 {
 	SPrintfContext_t SPrintfContext;
 	SPrintfContext.printf_callback_vsnprintf_buffer = buf;
-	SPrintfContext.printf_callback_vsnprintf_buffer_len = len-1;
+	SPrintfContext.printf_callback_vsnprintf_buffer_len = len > 0 ? len-1 : 0;
 	SPrintfContext.printf_callback_vsnprintf_count = 0;
 	vprintf_with_callback(format, valist, transmitSPrintf, (void*)&SPrintfContext
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
