@@ -393,8 +393,12 @@ EFI_STATUS CheckSyncSound(BOOLEAN Stop)
 
   Status = HdaIo->GetStream(HdaIo, EfiHdaIoTypeOutput, &StreamRunning);
   if ((EFI_ERROR(Status) || Stop) && StreamRunning) {
-    DBG("stream stopping\n");
+    DBG("stream stopping & controller reset\n");
     HdaIo->StopStream(HdaIo, EfiHdaIoTypeOutput);
+//    HDA_IO_PRIVATE_DATA *HdaIoPrivateData = HDA_IO_PRIVATE_DATA_FROM_THIS(HdaIo);
+//    HDA_CONTROLLER_DEV *HdaControllerDev = HdaIoPrivateData->HdaControllerDev;
+//    EFI_PCI_IO_PROTOCOL *PciIo = HdaControllerDev->PciIo;
+//    HdaControllerCleanup(HdaControllerDev);
   }
 
   if (!StreamRunning) {

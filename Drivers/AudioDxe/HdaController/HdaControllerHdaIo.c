@@ -134,7 +134,7 @@ HdaControllerHdaIoSetupStream(
     UINT16 HdaStreamFormat = 0;
     UINT8 HdaStreamId = 0;
     EFI_TPL OldTpl = 0;
-  UINT8 i;
+    UINT8 i;
 
     // If a parameter is invalid, return error.
     if ((This == NULL) || (Type >= EfiHdaIoTypeMaximum) || (StreamId == NULL))

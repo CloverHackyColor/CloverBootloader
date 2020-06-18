@@ -325,11 +325,12 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     UINT16 DensityThreshold = 0x96;
     UINT64 ConfigStatus = 0;
     Color = gSettings.DefaultBackgroundColor;
-    AddNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
+    DBG("set DefaultBackgroundColor=0x%x\n", Color);
+    SetNvramVariable(L"DefaultBackgroundColor", &gEfiAppleNvramGuid, Attributes, 4, &Color);
     // add some UI variables
-    AddNvramVariable(L"ActualDensity", &gEfiAppleBootGuid, Attributes, 2, &ActualDensity);
-    AddNvramVariable(L"DensityThreshold", &gEfiAppleBootGuid, Attributes, 2, &DensityThreshold);
-    AddNvramVariable(L"gfx-saved-config-restore-status", &gEfiAppleNvramGuid, Attributes, 8, &ConfigStatus);
+    SetNvramVariable(L"ActualDensity", &gEfiAppleBootGuid, Attributes, 2, &ActualDensity);
+    SetNvramVariable(L"DensityThreshold", &gEfiAppleBootGuid, Attributes, 2, &DensityThreshold);
+    SetNvramVariable(L"gfx-saved-config-restore-status", &gEfiAppleNvramGuid, Attributes, 8, &ConfigStatus);
   }
 
   if (gSettings.UIScale == 0x80000000) {

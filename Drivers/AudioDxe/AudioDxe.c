@@ -52,7 +52,8 @@ EFI_STATUS
 EFIAPI
 AudioDxeInit(
     IN EFI_HANDLE ImageHandle,
-    IN EFI_SYSTEM_TABLE *SystemTable) {
+    IN EFI_SYSTEM_TABLE *SystemTable)
+{
     DEBUG((DEBUG_INFO, "Starting AudioDxe...\n"));
 
     // Create variables.

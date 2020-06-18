@@ -589,24 +589,25 @@ HdaCodecAudioIoStartPlaybackAsync(
 EFI_STATUS
 EFIAPI
 HdaCodecAudioIoStopPlayback(
-    IN EFI_AUDIO_IO_PROTOCOL *This) {
-    DEBUG((DEBUG_INFO, "HdaCodecAudioIoStopPlayback(): start\n"));
-
-    // Create variables.
-    AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
-    EFI_HDA_IO_PROTOCOL *HdaIo;
-
-    // If a parameter is invalid, return error.
-    if (This == NULL)
-        return EFI_INVALID_PARAMETER;
-
-    // Get private data.
-    AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
+    IN EFI_AUDIO_IO_PROTOCOL *This)
+{
+  DEBUG((DEBUG_INFO, "HdaCodecAudioIoStopPlayback(): start\n"));
+  
+  // Create variables.
+  AUDIO_IO_PRIVATE_DATA *AudioIoPrivateData;
+  EFI_HDA_IO_PROTOCOL *HdaIo;
+  
+  // If a parameter is invalid, return error.
+  if (This == NULL)
+    return EFI_INVALID_PARAMETER;
+  
+  // Get private data.
+  AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(This);
   if (!AudioIoPrivateData || !AudioIoPrivateData->HdaCodecDev || !AudioIoPrivateData->HdaCodecDev->HdaIo) {
     return EFI_NOT_FOUND;
   }
-    HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
-
-    // Stop stream.
-    return HdaIo->StopStream(HdaIo, EfiHdaIoTypeOutput);
+  HdaIo = AudioIoPrivateData->HdaCodecDev->HdaIo;
+  
+  // Stop stream.
+  return HdaIo->StopStream(HdaIo, EfiHdaIoTypeOutput);
 }

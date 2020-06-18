@@ -37,7 +37,7 @@ HdaControllerInitCorb(
     EFI_PCI_IO_PROTOCOL *PciIo = HdaDev->PciIo;
 
     // HDA register values.
-    UINT8 HdaCorbSize;
+    UINT8 HdaCorbSize = 0;
     UINT32 HdaLowerCorbBaseAddr;
     UINT32 HdaUpperCorbBaseAddr;
     UINT16 HdaCorbWp;
@@ -197,7 +197,7 @@ HdaControllerSetCorb(
     // Create variables.
     EFI_STATUS Status;
     EFI_PCI_IO_PROTOCOL *PciIo = HdaDev->PciIo;
-    UINT8 HdaCorbCtl;
+    UINT8 HdaCorbCtl = 0;
     UINT64 Tmp;
 
     // Get current value of CORBCTL.

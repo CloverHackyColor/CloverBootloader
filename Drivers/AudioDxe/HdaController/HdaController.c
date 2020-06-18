@@ -216,45 +216,45 @@ EFIAPI
 HdaControllerReset(
     IN HDA_CONTROLLER_DEV *HdaControllerDev)
 {
-//    DEBUG((DEBUG_INFO, "HdaControllerReset(): start\n"));
-
-    // Create variables.
-    EFI_STATUS Status;
-    EFI_PCI_IO_PROTOCOL *PciIo = HdaControllerDev->PciIo;
-    UINT32 HdaGCtl = 0;
-    UINT64 Tmp = 0;
-
-    // Get value of CRST bit.
-    Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL, 1, &HdaGCtl);
-    if (EFI_ERROR(Status))
-        return Status;
-
-    // Check if the controller is already in reset. If not, clear bit.
-    if (!(HdaGCtl & HDA_REG_GCTL_CRST)) {
-        HdaGCtl &= ~HDA_REG_GCTL_CRST;
-        Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL, 1, &HdaGCtl);
-        if (EFI_ERROR(Status))
-            return Status;
-    }
-
-    // Set CRST bit to begin the process of coming out of reset.
-    HdaGCtl |= HDA_REG_GCTL_CRST;
+  //    DEBUG((DEBUG_INFO, "HdaControllerReset(): start\n"));
+  
+  // Create variables.
+  EFI_STATUS Status;
+  EFI_PCI_IO_PROTOCOL *PciIo = HdaControllerDev->PciIo;
+  UINT32 HdaGCtl = 0;
+  UINT64 Tmp = 0;
+  
+  // Get value of CRST bit.
+  Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL, 1, &HdaGCtl);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // Check if the controller is already in reset. If not, clear bit.
+  if (!(HdaGCtl & HDA_REG_GCTL_CRST)) {
+    HdaGCtl &= ~HDA_REG_GCTL_CRST;
     Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL, 1, &HdaGCtl);
     if (EFI_ERROR(Status))
-        return Status;
-
-    // Wait for bit to be set. Once bit is set, the controller is ready.
-    Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL,
-        HDA_REG_GCTL_CRST, HDA_REG_GCTL_CRST, MS_TO_NANOSECOND(100), &Tmp);
-    if (EFI_ERROR(Status))
-        return Status;
-
-    // Wait 100ms to ensure all codecs have also reset.
-    gBS->Stall(MS_TO_MICROSECOND(100));
-
-    // Controller is reset.
-//    DEBUG((DEBUG_INFO, "HdaControllerReset(): done\n"));
-    return EFI_SUCCESS;
+      return Status;
+  }
+  
+  // Set CRST bit to begin the process of coming out of reset.
+  HdaGCtl |= HDA_REG_GCTL_CRST;
+  Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL, 1, &HdaGCtl);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // Wait for bit to be set. Once bit is set, the controller is ready.
+  Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint32, PCI_HDA_BAR, HDA_REG_GCTL,
+                          HDA_REG_GCTL_CRST, HDA_REG_GCTL_CRST, MS_TO_NANOSECOND(100), &Tmp);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // Wait 100ms to ensure all codecs have also reset.
+  gBS->Stall(MS_TO_MICROSECOND(100));
+  
+  // Controller is reset.
+  //    DEBUG((DEBUG_INFO, "HdaControllerReset(): done\n"));
+  return EFI_SUCCESS;
 }
 
 EFI_STATUS
@@ -262,141 +262,142 @@ EFIAPI
 HdaControllerScanCodecs(
     IN HDA_CONTROLLER_DEV *HdaControllerDev)
 {
-//    DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): start\n"));
-
-    // Create variables.
-    EFI_STATUS Status;
-    EFI_PCI_IO_PROTOCOL *PciIo;
-    UINT16 HdaStatests = 0;
-    EFI_HDA_IO_VERB_LIST HdaCodecVerbList;
-    UINT32 VendorVerb;
-    UINT32 VendorResponse;
-    UINT8 i;
-
-    // Streams.
-    UINTN CurrentOutputStreamIndex = 0;
-    UINTN CurrentInputStreamIndex = 0;
-
-    // Protocols.
-    HDA_IO_PRIVATE_DATA *HdaIoPrivateData;
-    VOID *TmpProtocol;
-
-    if (!HdaControllerDev) {
-        return EFI_INVALID_PARAMETER;
-    }
-
-    PciIo = HdaControllerDev->PciIo;
-
-    // Get STATESTS register.
-    Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_STATESTS, 1, &HdaStatests);
-    if (EFI_ERROR(Status))
-        return Status;
-
-    // Create verb list with single item.
-    VendorVerb = HDA_CODEC_VERB(HDA_VERB_GET_PARAMETER, HDA_PARAMETER_VENDOR_ID);
-    SetMem(&HdaCodecVerbList, sizeof(EFI_HDA_IO_VERB_LIST), 0);
-    HdaCodecVerbList.Count = 1;
-    HdaCodecVerbList.Verbs = &VendorVerb;
-    HdaCodecVerbList.Responses = &VendorResponse;
-
-    // Iterate through register looking for active codecs.
-    for (i = 0; i < HDA_MAX_CODECS; i++) {
-        // Do we have a codec at this address?
-        if ((HdaStatests & (1 << i))) {
-//            DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): found codec @ 0x%X\n", i));
-
-            // Try to get the vendor ID. If this fails, ignore the codec.
-            VendorResponse = 0;
-            Status = HdaControllerSendCommands(HdaControllerDev, i, HDA_NID_ROOT, &HdaCodecVerbList);
-            if ((EFI_ERROR(Status)) || (VendorResponse == 0))
-                continue;
-
-            // Create HDA I/O protocol private data structure.
-            HdaIoPrivateData = AllocateZeroPool(sizeof(HDA_IO_PRIVATE_DATA));
-            if (HdaIoPrivateData == NULL) {
-                Status = EFI_OUT_OF_RESOURCES;
-                goto FREE_CODECS;
-            }
-
-            // Fill HDA I/O protocol private data structure.
-            HdaIoPrivateData->Signature = HDA_CONTROLLER_PRIVATE_DATA_SIGNATURE;
-            HdaIoPrivateData->HdaCodecAddress = i;
-            HdaIoPrivateData->HdaControllerDev = HdaControllerDev;
-            HdaIoPrivateData->HdaIo.GetAddress = HdaControllerHdaIoGetAddress;
-            HdaIoPrivateData->HdaIo.SendCommand = HdaControllerHdaIoSendCommand;
-            HdaIoPrivateData->HdaIo.SetupStream = HdaControllerHdaIoSetupStream;
-            HdaIoPrivateData->HdaIo.CloseStream = HdaControllerHdaIoCloseStream;
-            HdaIoPrivateData->HdaIo.GetStream = HdaControllerHdaIoGetStream;
-            HdaIoPrivateData->HdaIo.StartStream = HdaControllerHdaIoStartStream;
-            HdaIoPrivateData->HdaIo.StopStream = HdaControllerHdaIoStopStream;
-
-            // Assign output stream.
-            if (CurrentOutputStreamIndex < HdaControllerDev->OutputStreamsCount) {
- //               DEBUG((DEBUG_INFO, "Assigning output stream %u to codec\n", CurrentOutputStreamIndex));
-                HdaIoPrivateData->HdaOutputStream = HdaControllerDev->OutputStreams + CurrentOutputStreamIndex;
-                CurrentOutputStreamIndex++;
-            }
-
-            // Assign input stream.
-            if (CurrentInputStreamIndex < HdaControllerDev->InputStreamsCount) {
-//                DEBUG((DEBUG_INFO, "Assigning input stream %u to codec\n", CurrentInputStreamIndex));
-                HdaIoPrivateData->HdaInputStream = HdaControllerDev->InputStreams + CurrentInputStreamIndex;
-                CurrentInputStreamIndex++;
-            }
-
-            // Add to array.
-            HdaControllerDev->HdaIoChildren[i].PrivateData = HdaIoPrivateData;
-        }
-    }
-
-    // Clear STATESTS register.
-    HdaStatests = HDA_REG_STATESTS_CLEAR;
-    Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_STATESTS, 1, &HdaStatests);
-    if (EFI_ERROR(Status))
-        return Status;
-
-    // Install protocols on each codec.
+  //    DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): start\n"));
   
-    for (i = 0; i < HDA_MAX_CODECS; i++) {
-        // Do we have a codec at this address?
-        if (HdaControllerDev->HdaIoChildren[i].PrivateData != NULL) {
-            // Create Device Path for codec.
-            EFI_HDA_IO_DEVICE_PATH HdaIoDevicePathNode; //EFI_HDA_IO_DEVICE_PATH_TEMPLATE;
-            HdaIoDevicePathNode.Header.Type = MESSAGING_DEVICE_PATH;
-            HdaIoDevicePathNode.Header.SubType = MSG_VENDOR_DP;
-            HdaIoDevicePathNode.Header.Length[0] = (UINT8)(sizeof(EFI_HDA_IO_DEVICE_PATH));
-            HdaIoDevicePathNode.Header.Length[1] = (UINT8)((sizeof(EFI_HDA_IO_DEVICE_PATH)) >> 8);
-          HdaIoDevicePathNode.Guid = gEfiHdaIoDevicePathGuid;
-//            CopyMem((VOID*)&HdaIoDevicePathNode.Guid, (VOID*)&gEfiHdaIoDevicePathGuid, sizeof(EFI_GUID));
-            HdaIoDevicePathNode.Address = i;
-            HdaControllerDev->HdaIoChildren[i].DevicePath = AppendDevicePathNode(HdaControllerDev->DevicePath, (EFI_DEVICE_PATH_PROTOCOL*)&HdaIoDevicePathNode);
-            if (HdaControllerDev->HdaIoChildren[i].DevicePath == NULL) {
-                Status = EFI_INVALID_PARAMETER;
-                goto FREE_CODECS;
-            }
-
-            // Install protocols for the codec. The codec driver will later bind to this.
-            HdaControllerDev->HdaIoChildren[i].Handle = NULL;
-            Status = gBS->InstallMultipleProtocolInterfaces(&HdaControllerDev->HdaIoChildren[i].Handle,
-                &gEfiDevicePathProtocolGuid, HdaControllerDev->HdaIoChildren[i].DevicePath,
-                &gEfiHdaIoProtocolGuid, &HdaControllerDev->HdaIoChildren[i].PrivateData->HdaIo, NULL);
-            if (EFI_ERROR(Status))
-                goto FREE_CODECS;
-
-            // Connect child to parent.
-            Status = gBS->OpenProtocol(HdaControllerDev->ControllerHandle, &gEfiPciIoProtocolGuid, &TmpProtocol,
-                HdaControllerDev->DriverBinding->DriverBindingHandle, HdaControllerDev->HdaIoChildren[i].Handle, EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER);
-            if (EFI_ERROR(Status))
-                goto FREE_CODECS;
-        }
-    }
-
-    return EFI_SUCCESS;
-
-FREE_CODECS:
-    //DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): failed to load driver for codec @ 0x%X\n", i));
-
+  // Create variables.
+  EFI_STATUS Status;
+  EFI_PCI_IO_PROTOCOL *PciIo;
+  UINT16 HdaStatests = 0;
+  EFI_HDA_IO_VERB_LIST HdaCodecVerbList;
+  UINT32 VendorVerb;
+  UINT32 VendorResponse;
+  UINT8 i;
+  
+  // Streams.
+  UINTN CurrentOutputStreamIndex = 0;
+  UINTN CurrentInputStreamIndex = 0;
+  
+  // Protocols.
+  HDA_IO_PRIVATE_DATA *HdaIoPrivateData;
+  VOID *TmpProtocol;
+  
+  if (!HdaControllerDev) {
+    return EFI_INVALID_PARAMETER;
+  }
+  
+  PciIo = HdaControllerDev->PciIo;
+  
+  // Get STATESTS register.
+  Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_STATESTS, 1, &HdaStatests);
+  if (EFI_ERROR(Status))
     return Status;
+  
+  // Create verb list with single item.
+  VendorVerb = HDA_CODEC_VERB(HDA_VERB_GET_PARAMETER, HDA_PARAMETER_VENDOR_ID);
+  SetMem(&HdaCodecVerbList, sizeof(EFI_HDA_IO_VERB_LIST), 0);
+  HdaCodecVerbList.Count = 1;
+  HdaCodecVerbList.Verbs = &VendorVerb;
+  HdaCodecVerbList.Responses = &VendorResponse;
+  
+  // Iterate through register looking for active codecs.
+  for (i = 0; i < HDA_MAX_CODECS; i++) {
+    // Do we have a codec at this address?
+    if ((HdaStatests & (1 << i))) {
+      //            DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): found codec @ 0x%X\n", i));
+      
+      // Try to get the vendor ID. If this fails, ignore the codec.
+      VendorResponse = 0;
+      Status = HdaControllerSendCommands(HdaControllerDev, i, HDA_NID_ROOT, &HdaCodecVerbList);
+      if ((EFI_ERROR(Status)) || (VendorResponse == 0))
+        continue;
+      
+      // Create HDA I/O protocol private data structure.
+      HdaIoPrivateData = AllocateZeroPool(sizeof(HDA_IO_PRIVATE_DATA));
+      if (HdaIoPrivateData == NULL) {
+        Status = EFI_OUT_OF_RESOURCES;
+        goto FREE_CODECS;
+      }
+      
+      // Fill HDA I/O protocol private data structure.
+      HdaIoPrivateData->Signature = HDA_CONTROLLER_PRIVATE_DATA_SIGNATURE;
+      HdaIoPrivateData->HdaCodecAddress = i;
+      HdaIoPrivateData->HdaControllerDev = HdaControllerDev;
+      HdaIoPrivateData->HdaIo.GetAddress = HdaControllerHdaIoGetAddress;
+      HdaIoPrivateData->HdaIo.SendCommand = HdaControllerHdaIoSendCommand;
+      HdaIoPrivateData->HdaIo.SetupStream = HdaControllerHdaIoSetupStream;
+      HdaIoPrivateData->HdaIo.CloseStream = HdaControllerHdaIoCloseStream;
+      HdaIoPrivateData->HdaIo.GetStream = HdaControllerHdaIoGetStream;
+      HdaIoPrivateData->HdaIo.StartStream = HdaControllerHdaIoStartStream;
+      HdaIoPrivateData->HdaIo.StopStream = HdaControllerHdaIoStopStream;
+      
+      // Assign output stream.
+      if (CurrentOutputStreamIndex < HdaControllerDev->OutputStreamsCount) {
+        //               DEBUG((DEBUG_INFO, "Assigning output stream %u to codec\n", CurrentOutputStreamIndex));
+        HdaIoPrivateData->HdaOutputStream = HdaControllerDev->OutputStreams + CurrentOutputStreamIndex;
+        CurrentOutputStreamIndex++;
+      }
+      
+      // Assign input stream.
+      if (CurrentInputStreamIndex < HdaControllerDev->InputStreamsCount) {
+        //                DEBUG((DEBUG_INFO, "Assigning input stream %u to codec\n", CurrentInputStreamIndex));
+        HdaIoPrivateData->HdaInputStream = HdaControllerDev->InputStreams + CurrentInputStreamIndex;
+        CurrentInputStreamIndex++;
+      }
+      
+      // Add to array.
+      HdaControllerDev->HdaIoChildren[i].PrivateData = HdaIoPrivateData;
+    }
+  }
+  
+  // Clear STATESTS register.
+  HdaStatests = HDA_REG_STATESTS_CLEAR;
+  Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, PCI_HDA_BAR, HDA_REG_STATESTS, 1, &HdaStatests);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
+  
+  // Install protocols on each codec.
+  
+  for (i = 0; i < HDA_MAX_CODECS; i++) {
+    // Do we have a codec at this address?
+    if (HdaControllerDev->HdaIoChildren[i].PrivateData != NULL) {
+      // Create Device Path for codec.
+      EFI_HDA_IO_DEVICE_PATH HdaIoDevicePathNode; //EFI_HDA_IO_DEVICE_PATH_TEMPLATE;
+      HdaIoDevicePathNode.Header.Type = MESSAGING_DEVICE_PATH;
+      HdaIoDevicePathNode.Header.SubType = MSG_VENDOR_DP;
+      HdaIoDevicePathNode.Header.Length[0] = (UINT8)(sizeof(EFI_HDA_IO_DEVICE_PATH));
+      HdaIoDevicePathNode.Header.Length[1] = (UINT8)((sizeof(EFI_HDA_IO_DEVICE_PATH)) >> 8);
+      HdaIoDevicePathNode.Guid = gEfiHdaIoDevicePathGuid;
+      //            CopyMem((VOID*)&HdaIoDevicePathNode.Guid, (VOID*)&gEfiHdaIoDevicePathGuid, sizeof(EFI_GUID));
+      HdaIoDevicePathNode.Address = i;
+      HdaControllerDev->HdaIoChildren[i].DevicePath = AppendDevicePathNode(HdaControllerDev->DevicePath, (EFI_DEVICE_PATH_PROTOCOL*)&HdaIoDevicePathNode);
+      if (HdaControllerDev->HdaIoChildren[i].DevicePath == NULL) {
+        Status = EFI_INVALID_PARAMETER;
+        goto FREE_CODECS;
+      }
+      
+      // Install protocols for the codec. The codec driver will later bind to this.
+      HdaControllerDev->HdaIoChildren[i].Handle = NULL;
+      Status = gBS->InstallMultipleProtocolInterfaces(&HdaControllerDev->HdaIoChildren[i].Handle,
+                                                      &gEfiDevicePathProtocolGuid, HdaControllerDev->HdaIoChildren[i].DevicePath,
+                                                      &gEfiHdaIoProtocolGuid, &HdaControllerDev->HdaIoChildren[i].PrivateData->HdaIo, NULL);
+      if (EFI_ERROR(Status))
+        goto FREE_CODECS;
+      
+      // Connect child to parent.
+      Status = gBS->OpenProtocol(HdaControllerDev->ControllerHandle, &gEfiPciIoProtocolGuid, &TmpProtocol,
+                                 HdaControllerDev->DriverBinding->DriverBindingHandle, HdaControllerDev->HdaIoChildren[i].Handle, EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER);
+      if (EFI_ERROR(Status))
+        goto FREE_CODECS;
+    }
+  }
+  
+  return EFI_SUCCESS;
+  
+FREE_CODECS:
+  //DEBUG((DEBUG_INFO, "HdaControllerScanCodecs(): failed to load driver for codec @ 0x%X\n", i));
+  
+  return Status;
 }
 
 EFI_STATUS
