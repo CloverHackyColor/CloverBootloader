@@ -708,7 +708,8 @@ VOID LOADER_ENTRY::StartLoader()
               strncmp(InstallerVersion, "10.12", 5) &&
               strncmp(InstallerVersion, "10.13", 5) &&
               strncmp(InstallerVersion, "10.14", 5) &&
-              strncmp(InstallerVersion, "10.15", 5)) {   
+              strncmp(InstallerVersion, "10.15", 5) &&
+              strncmp(InstallerVersion, "10.16", 5)) {   
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image

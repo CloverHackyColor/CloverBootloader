@@ -1126,7 +1126,7 @@ VOID LOADER_ENTRY::applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *re
 //
 static inline BOOLEAN IsXCPMOSVersionCompat(UINT64 os_version)
 {
-  return (os_version >= AsciiOSVersionToUint64("10.8.5")) && (os_version < AsciiOSVersionToUint64("10.16")); 
+  return (os_version >= AsciiOSVersionToUint64("10.8.5")) && (os_version < AsciiOSVersionToUint64("10.17")); 
 }
 
 //
