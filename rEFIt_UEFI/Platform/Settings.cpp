@@ -6376,6 +6376,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.9");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Catalina") || AsciiStrStr (Prop->string, "Install%20macOS%2010.15")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.15");
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%20BigSur" || || AsciiStrStr (Prop->string, "Install%20macOS%2011.0")) {
+                OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "11.0");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Mojave") || AsciiStrStr (Prop->string, "Install%20macOS%2010.14")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.14");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20High%20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
@@ -6584,7 +6586,7 @@ GetOSIconName (
   XStringW OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.16") != 0) {
+  } else if (AsciiStrStr (OSVersion, "11.0") != 0) {
     // Big Sur
     OSIconName = L"bigsur,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.15") != 0) {
