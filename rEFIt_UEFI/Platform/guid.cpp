@@ -75,14 +75,19 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 // 26baccba-6f42-11d4-bce7-008081883cc7
 // 63FAECF2-E7EE-4CB9-8A0C-11CE5E89E33C protocol at FinalizeBootStruct or DrawBootGraphics
 // 03B99B90-ECCF-451D-809E-8341FCB830AC RestartData protocol
-// 24B73556-2197-4702-82A8-3E1337DAFBF2 before Firmware password
+// 24B73556-2197-4702-82A8-3E1337DAFBF2 before Firmware password APPLE_SECURE_BOOT_PROTOCOL_GUID
 // 24B73556-2197-4702-82A8-3E1337DAFBF3
 // 1BAD711C-D451-4241-B1F3-8537812E0C70 GUID for MeBiosExtensionSetup variable
 // 36C28AB5-6566-4C50-9EBD-CBB920F83843:preferred-networks gAppleWirelessNetworkVariableGuid
 // ->SetVariable(boot-feature-usage, 62BF9B1C-8568-48EE-85DC-DD3057660863, 7, 8, 4C4ABBE8) = Success
 // 00 00 08 00 00 00 00 00                         | ........
+// gAppleFpfConfigurationHobGuid  = { 0xE3CC8EC6, 0x81C1, 0x4271, { 0xAC, 0xBC, 0xDB, 0x65, 0x08, 0x6E, 0x8D, 0xC8 }}
 
 /*
+#define APPLE_SECURE_BOOT_VARIABLE_GUID  \
+{ 0x94B73556, 0x2197, 0x4702,          \
+  { 0x82, 0xA8, 0x3E, 0x13, 0x37, 0xDA, 0xFB, 0xFB } }
+
 ->SetVariable(ApECID, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 8, 4C4ABC90) = Success
 1C 02 1B 03 0D 04 66 05                         | ......f.
 ->SetVariable(ApChipID, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 4, 4C4ABCB4) = Success

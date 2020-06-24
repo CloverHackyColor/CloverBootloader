@@ -565,6 +565,18 @@ typedef struct {
 /// build for platform min OS version
 ///
 #define MACH_LOAD_COMMAND_BUILD_VERSION            50U
+///
+/// used with linkedit_data_command, payload is trie
+///
+#define MACH_LOAD_COMMAND_DYLD_EXPORTS_TRIE        (51U | MACH_LC_REQUIRE_DYLD)
+///
+/// used with linkedit_data_command
+///
+#define MACH_LOAD_COMMAND_DYLD_CHAINED_FIXUPS      (52U | MACH_LC_REQUIRE_DYLD)
+///
+/// used with fileset_entry_command
+///
+#define MACH_LOAD_COMMAND_FILESET_ENTRY            (53U  | MACH_LC_REQUIRE_DYLD)
 
 typedef UINT32 MACH_LOAD_COMMAND_TYPE;
 
@@ -1599,6 +1611,7 @@ typedef struct {
 #define MACH_PLATFORM_IOSSIMULATOR       7U
 #define MACH_PLATFORM_TVOSSIMULATOR      8U
 #define MACH_PLATFORM_WATCHOSSIMULATOR   9U
+#define MACH_PLATFORM_DRIVERKIT          10U
 
 ///
 /// Known values for the tool field above.
@@ -1867,7 +1880,8 @@ enum {
   MachHeaderFileTypeBundle            = 8,
   MachHeaderFileTypeDynamicLinkerStub = 9,
   MachHeaderFileTypeDsym              = 10,
-  MachHeaderFileTypeKextBundle        = 11
+  MachHeaderFileTypeKextBundle        = 11,
+  MachHeaderFileTypeFileSet           = 12,
 };
 
 typedef UINT32 MACH_HEADER_FILE_TYPE;
