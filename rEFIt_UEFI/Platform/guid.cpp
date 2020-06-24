@@ -79,6 +79,37 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 // 24B73556-2197-4702-82A8-3E1337DAFBF3
 // 1BAD711C-D451-4241-B1F3-8537812E0C70 GUID for MeBiosExtensionSetup variable
 // 36C28AB5-6566-4C50-9EBD-CBB920F83843:preferred-networks gAppleWirelessNetworkVariableGuid
+// ->SetVariable(boot-feature-usage, 62BF9B1C-8568-48EE-85DC-DD3057660863, 7, 8, 4C4ABBE8) = Success
+// 00 00 08 00 00 00 00 00                         | ........
+
+/*
+->SetVariable(ApECID, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 8, 4C4ABC90) = Success
+1C 02 1B 03 0D 04 66 05                         | ......f.
+->SetVariable(ApChipID, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 4, 4C4ABCB4) = Success
+12 80 00 00                                     | ....
+->SetVariable(ApBoardID, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 4, 4C4ABCB0) = Success
+F0 00 00 00                                     | ....
+->SetVariable(ApSecurityDomain, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 4, 4C4ABCB8) = Success
+01 00 00 00                                     | ....
+->SetVariable(ApProductionStatus, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBD) = Success
+01                                              | .
+->SetVariable(ApSecurityMode, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBD) = Success
+01                                              | .
+->SetVariable(EffectiveProductionStatus, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBD) = Success
+01                                              | .
+->SetVariable(EffectiveSecurityMode, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBD) = Success
+01                                              | .
+->SetVariable(CertificateEpoch, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBF) = Success
+02                                              | .
+->SetVariable(MixNMatchPreventionStatus, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBE) = Success
+00                                              | .
+->SetVariable(CryptoDigestMethod, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 10, 4C4ABC70) = Success
+73 68 61 32 2D 33 38 34 00 00 00 00 00 00 00 00 | sha2-384........
+->SetVariable(HardwareModel, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 10, 4C4ABC60) = Success
+78 38 36 6C 65 67 61 63 79 61 70 00 00 00 00 00 | x86legacyap.....
+->SetVariable(InternalUseOnlyUnit, 94B73556-2197-4702-82A8-3E1337DAFBFB, 6, 1, 4C4ABCBD) = Success
+01                                              | .
+*/
 
 /*
  * Copyright (c) 2007 Apple Inc. All rights reserved.

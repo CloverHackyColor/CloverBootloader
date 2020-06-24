@@ -738,9 +738,10 @@ OvrSetKeyStrokeBufferKeys (
 {
   EFI_STATUS               Status;
   Status = gOrgAppleKeyMapDb.SetKeyStrokeBufferKeys(This, Index, Modifiers, NumberOfKeys, Keys);
+#if SET_KEY_STROKE
   PRINT("->SetKeyStrokeBufferKeys => Index=%d, Modifiers=%x, NoKeys=%d, Keys={%x, %x}, Status=%r\n",
         Index, Modifiers, NumberOfKeys, Keys?*Keys:0, (Keys && NumberOfKeys>1)?Keys[1]:0, Status);
-  
+#endif
   return Status;
 }
 

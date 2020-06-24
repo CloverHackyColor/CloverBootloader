@@ -718,7 +718,7 @@ VOID LOADER_ENTRY::StartLoader()
             }
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
             OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
-//            DBG("Corrected OSVersion: %s\n", OSVersion);
+            DBG("Corrected OSVersion: %s\n", OSVersion);
           }
         }
       }

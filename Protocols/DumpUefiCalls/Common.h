@@ -144,6 +144,10 @@
 //  
 #define BOOT_LOADERS { L"boot.efi", L"bootmgfw.efi", L"grub.efi", L"grubx64.efi", L"bootx64.efi", NULL }
 
+#define HANDLE_PROTOCOL 0
+#define LOCATE_PROTOCOL 0
+#define OPEN_PROTOCOL 0
+#define SET_KEY_STROKE 0
 
 #include "Lib.h"
 #include "Log.h"

@@ -190,6 +190,8 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
   bool found = false;
   for (i=0; i<SizeVtable; ++i) {
     size_t Offset = vArray[i].NameOffset;
+    if (Offset == 0) break;
+      
 //    DBG_RT("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
 //    DBG_RT("Name to compare %s\n", &Names[Offset]);
 //    Stall(3000000);
@@ -2053,7 +2055,7 @@ LOADER_ENTRY::FindBootArgs()
     // check bootargs for 10.7 and up
     bootArgs2 = (BootArgs2*)ptr;
 
-    if (bootArgs2->Version==2 && bootArgs2->Revision==0
+    if (bootArgs2->Version==2 && (bootArgs2->Revision==0 || bootArgs2->Revision==1)
         // plus additional checks - some values are not inited by boot.efi yet
         && bootArgs2->efiMode == archMode
         && bootArgs2->kaddr == 0 && bootArgs2->ksize == 0
@@ -2072,7 +2074,7 @@ LOADER_ENTRY::FindBootArgs()
       DBG_RT( "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
       DBG_RT( "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
       if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
-      gBS->Stall(2000000);
+        gBS->Stall(5000000);
 
       // disable other pointer
       bootArgs1 = NULL;
@@ -2080,6 +2082,7 @@ LOADER_ENTRY::FindBootArgs()
     }
 
     // check bootargs for 10.4 - 10.6.x
+    /*
     bootArgs1 = (BootArgs1*)ptr;
 
     if (bootArgs1->Version==1
@@ -2101,8 +2104,43 @@ LOADER_ENTRY::FindBootArgs()
       bootArgs2 = NULL;
       break;
     }
-
+*/
     ptr += 0x1000;
+    if ((UINTN)ptr > 0x10000000ull) {
+      DBG_RT("bootArgs not found\n");
+      bootArgs2 = 0;
+      break;
+    }
+  }
+  if (bootArgs2 == 0) {
+    ptr = (UINT8*)0x200000ull;
+    while(TRUE) {
+      
+      // check bootargs for 10.16
+      bootArgs2 = (BootArgs2*)ptr;
+      if (strstr(&bootArgs2->CommandLine[0], "big=sur")
+          && bootArgs2->efiMode == archMode) {
+        dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
+        dtLength = &bootArgs2->deviceTreeLength;
+        KernelSlide = bootArgs2->kslide;
+        
+        DBG_RT( "Found bootArgs at 0x%llX, DevTree at 0x%llX\n", (UINTN)ptr, (UINTN)bootArgs2->deviceTreeP);
+        DBG_RT( "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
+        DBG_RT( "bootArgs2->Version = 0x%x\n", bootArgs2->Version);
+        DBG_RT( "bootArgs2->Revision = 0x%x\n", bootArgs2->Revision);
+        DBG_RT( "bootArgs2->flags = 0x%hx\n", bootArgs2->flags);
+        if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
+          gBS->Stall(20000000);
+        break;
+      }
+      
+      ptr += 0x1000;
+      if ((UINTN)ptr > 0x10000000ull) {
+        DBG_RT("bootArgs 2 not found\n");
+        bootArgs2 = 0;
+        break;
+      }
+    }
   }
 }
 
@@ -2250,13 +2288,13 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // KernelRelocBase will normally be 0
   // but if OsxAptioFixDrv is used, then it will be > 0
   SetKernelRelocBase();
-	DBG("KernelRelocBase = %llx\n", KernelRelocBase);
+	DBG_RT("KernelRelocBase = %llx\n", KernelRelocBase);
 
   // Find bootArgs - we need then for proper detection
   // of kernel Mach-O header
   FindBootArgs();
   if (bootArgs1 == NULL && bootArgs2 == NULL) {
-    DBG("BootArgs not found - skipping patches!\n");
+    DBG_RT("BootArgs not found - skipping patches!\n");
     return;
   }
 
@@ -2267,6 +2305,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
 
   UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
+  DBG_RT("os_version=%s\n", OSVersion);
   if (os_version < AsciiOSVersionToUint64("10.6")) {
     KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
   } else {
@@ -2275,7 +2314,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
 
   // check that it is Mach-O header and detect architecture
   if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {
-    DBG("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
+    DBG_RT("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
     is64BitKernel = FALSE;
   } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
     DBG_RT( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
@@ -2490,6 +2529,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
          );
 
   if (KextPatchesNeeded && gSettings.KextPatchesAllowed) {
+    DBG_RT( "\nKext patching INIT\n");
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
     DBG_RT( "\nKext patching STARTED\n");

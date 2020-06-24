@@ -180,7 +180,7 @@ OvrSetTimer(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.SetTimer(Event, Type, TriggerTime);
-	PRINT("->SetTimer(%p, %d, 0x%x) = %r\n", Event, Type, TriggerTime, Status);
+//	PRINT("->SetTimer(%p, %d, 0x%x) = %r\n", Event, Type, TriggerTime, Status);
 	return Status;
 }
 
@@ -288,7 +288,9 @@ OvrHandleProtocol(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.HandleProtocol(Handle, Protocol, Interface);
+#if HANDLE_PROTOCOL
 	PRINT("->HandleProtocol(%p, %s, %p) = %r\n", Handle, GuidStr(Protocol), *Interface, Status);
+#endif
 	return Status;
 }
 
@@ -563,10 +565,13 @@ OvrOpenProtocol(
 )
 {
 	EFI_STATUS			Status;
+#if OPEN_PROTOCOL
 	VOID				*InterfaceIn = *Interface;
-	
+#endif
 	Status = gOrgBS.OpenProtocol(Handle, Protocol, Interface, AgentHandle, ControllerHandle, Attributes);
+#if OPEN_PROTOCOL
 	PRINT("->OpenProtocol(%p, %s, %p/%p, %p, %p, %x) = %r\n", Handle, GuidStr(Protocol), InterfaceIn, *Interface, AgentHandle, ControllerHandle, Attributes, Status);
+#endif
 	return Status;
 }
 
@@ -581,7 +586,9 @@ OvrCloseProtocol(
 	EFI_STATUS			Status;
 	
 	Status = gOrgBS.CloseProtocol(Handle, Protocol, AgentHandle, ControllerHandle);
+#if OPEN_PROTOCOL
 	PRINT("->CloseProtocol(%p, %s, %p, %p) = %r\n", Handle, GuidStr(Protocol), AgentHandle, ControllerHandle, Status);
+#endif
 	return Status;
 }
 

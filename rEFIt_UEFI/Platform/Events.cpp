@@ -354,6 +354,7 @@ OnReadyToBoot (
   }
 //  printf("MSR 0xE2 on ReadyToBoot %08x\n", msr);
 */
+  gST->ConOut->OutputString (gST->ConOut, L"-- ReadyToBoot --\n");
 }
 
 VOID

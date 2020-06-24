@@ -1000,6 +1000,14 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 //        }
 //        DBG_RT("\n");
 //        Stall(10000000);
+        //second attempt brute force for 10.16
+        const UINT8 findJmp2[] = {0xEB, 0x05, 0xE8, 0x7D, 0x03};
+        const UINT8 patchJmp2[] = {0x90, 0x90, 0xE8, 0x7D, 0x03};
+        if (!SearchAndReplace(&KernelData[0], KERNEL_MAX_SIZE, findJmp2, 5, patchJmp2, 1)) {
+          DBG_RT("load kexts 2 not patched\n");
+        } else {
+          DBG_RT("load kexts 2 patched !!!\n");
+        }
       } else {
         DBG_RT("load kexts patched\n");
 //        for (UINTN j=procLocation+0x3b; j<procLocation+0x5b; ++j) {
@@ -1079,7 +1087,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 //ffffff80009a227b
       UINTN taskLocation = searchProc("IOTaskHasEntitlement");
       procLocation = searchProc("loadExecutable");
-      patchLocation2 = FindMemMask(&KernelData[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
+      patchLocation2 = FindMemMask(&KernelData[procLocation], 0x1000, find3, sizeof(find3), mask3, sizeof(mask3));
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         DBG_RT("=> patch SIP applied\n");
         patchLocation2 += procLocation;
@@ -1090,11 +1098,13 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
           KernelData[patchLocation2 + 4] = 0x12;
         }
       } else {
-        patchLocation2 = FindRelative32(KernelData, procLocation, 0x500, taskLocation);
+        patchLocation2 = FindRelative32(KernelData, procLocation, 0x1000, taskLocation);
         if (patchLocation2 != 0) {
           DBG_RT("=> patch2 SIP applied\n");
           KernelData[patchLocation2] = 0xEB;
           KernelData[patchLocation2 + 1] = 0x06;
+        } else {
+          DBG_RT("=> patch2 SIP not applied\n");
         }
       }
       Stall(10000000);
@@ -1173,7 +1183,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       }
  */
       if (patchLocation3  == KERNEL_MAX_SIZE) {
-        DBG_RT("==> can't find KxldUnmap (10.14 - recent macOS), kernel patch aborted.\n");
+        DBG_RT("==> can't find KxldUnmap (10.14 - recent macOS)\n");
         Stall(3000000);
       } else {
         DBG_RT("==> patched KxldUnmap (10.14 - recent macOS)\n");
