@@ -301,7 +301,7 @@ VOID LOADER_ENTRY::AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t
   MsgLog("Preparing kexts injection for arch=%ls from %ls\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
   CurrentKext = InjectKextList;
   while (CurrentKext) {
-    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
+//    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
     if (StrCmp(CurrentKext->KextDirNameUnderOEMPath, Path) == 0) {
       FileName = PoolPrint(L"%s\\%s", SrcDir, CurrentKext->FileName);
       //   snwprintf(FileName, 512, "%s\\%s", SrcDir, CurrentKext->FileName);
@@ -1088,6 +1088,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       UINTN taskLocation = searchProc("IOTaskHasEntitlement");
       procLocation = searchProc("loadExecutable");
       patchLocation2 = FindMemMask(&KernelData[procLocation], 0x1000, find3, sizeof(find3), mask3, sizeof(mask3));
+      DBG("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         DBG_RT("=> patch SIP applied\n");
         patchLocation2 += procLocation;
