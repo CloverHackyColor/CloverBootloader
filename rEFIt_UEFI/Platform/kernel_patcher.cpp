@@ -1996,13 +1996,12 @@ VOID LOADER_ENTRY::Get_PreLink()
             }
           }
         }
-      if (AsciiStrCmp(segCmd64->segname, kLinkEditSegment) == 0) {
-        SEGMENT *LinkSeg = (SEGMENT *)segCmd64->segname;
-        DBG("segCmd64->AddrVtable = 0x%08X\n",LinkSeg->AddrVtable); //0x48 f291d0
-        DBG("segCmd64->SizeVtable = 0x%08X\n", LinkSeg->SizeVtable); //0x4C 6031
-        DBG("segCmd64->AddrNames = 0x%08X\n", LinkSeg->AddrNames);  //0x50 f894e0
-
-      }
+//      if (AsciiStrCmp(segCmd64->segname, kLinkEditSegment) == 0) {
+//        SEGMENT *LinkSeg = (SEGMENT *)segCmd64->segname;
+//        DBG("segCmd64->AddrVtable = 0x%08X\n",LinkSeg->AddrVtable); //0x48 f291d0
+//        DBG("segCmd64->SizeVtable = 0x%08X\n", LinkSeg->SizeVtable); //0x4C 6031
+//        DBG("segCmd64->AddrNames = 0x%08X\n", LinkSeg->AddrNames);  //0x50 f894e0
+//      }
         break;
 
       case LC_SEGMENT:
