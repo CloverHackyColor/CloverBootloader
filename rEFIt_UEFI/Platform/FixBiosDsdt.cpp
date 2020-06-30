@@ -1796,7 +1796,6 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UIN
   BOOLEAN found = FALSE;
   UINT32 i, k;
   UINT32 BrdADR = 0, BridgeSize;
-  UINT32 PCIADR, PCISIZE = 0;
 
   if (!ToFind || !LenTF || !LenTR) {
     DBG(" invalid patches!\n");
@@ -1813,12 +1812,6 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UIN
     DBG(" the patch is too large!\n");
     return len;
   }
-
-  PCIADR = GetPciDevice(dsdt, len);
-  if (PCIADR) {
-    PCISIZE = get_size(dsdt, PCIADR);
-  }
-  if (!PCISIZE) return len; //what is the bad DSDT ?!
 
   DBG("Start ByBridge Rename Fix\n");
   for (i=0x20; len >= 10 && i < len - 10; i++) {
