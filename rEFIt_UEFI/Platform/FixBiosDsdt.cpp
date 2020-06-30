@@ -1790,7 +1790,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const UINT8* ToFind, UINT32 LenTF, const
 }
 
 //new method. by goodwin_c
-UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR)
+UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UINT8* ToFind, UINT32 LenTF, const UINT8* ToReplace, UINT32 LenTR)
 {
   INT32 adr;
   BOOLEAN found = FALSE;
@@ -5352,10 +5352,8 @@ VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, C
     //      DBG("Patching: renaming in bridge\n");
           DsdtLen = FixRenameByBridge2(temp, DsdtLen,
                            gSettings.PatchDsdtTgt[i],
-                           (const UINT8*)gSettings.PatchDsdtFind[i],
-                           gSettings.LenToFind[i],
-                           gSettings.PatchDsdtReplace[i],
-                           gSettings.LenToReplace[i]);
+                           (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                           (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
 
         }
       } else {
