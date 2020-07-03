@@ -456,10 +456,18 @@ VOID PatchAllTables()
             DBG(" disabled\n");
             continue;
           }
-          Len = FixAny((UINT8*)NewTable, Len,
-                       (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                       (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
-          //DBG(" OK\n");
+          if (!gSettings.PatchDsdtTgt[i]) {
+            Len = FixAny((UINT8*)NewTable, Len,
+                         (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                         (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+            //DBG(" OK\n");
+          }else{
+            //DBG("Patching: renaming in bridge\n");
+            Len = FixRenameByBridge2((UINT8*)NewTable, Len,
+				     gSettings.PatchDsdtTgt[i],
+                                     (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                                     (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+          }
         }
       }
       // fixup length and checksum

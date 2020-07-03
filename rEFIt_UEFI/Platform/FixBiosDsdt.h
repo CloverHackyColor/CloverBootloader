@@ -92,5 +92,17 @@ FixAny (
   );
 
 
+UINT32
+FixRenameByBridge2 (
+  UINT8* dsdt,
+  UINT32 len,
+  CHAR8* TgtBrgName,
+  const UINT8* ToFind,
+  UINT32 LenTF,
+  const UINT8* ToReplace,
+  UINT32 LenTR
+  );
+
+
 
 #endif /* PLATFORM_FIXBIOSDSDT_H_ */
