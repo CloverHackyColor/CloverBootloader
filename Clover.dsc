@@ -589,6 +589,7 @@
   MemoryFix/OsxAptioFixDrv/OsxAptioFix3Drv.inf
   MemoryFix/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
   MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
+  MemoryFix/OpenRuntime/OpenRuntime.inf
 !ifdef DEBUG_ON_SERIAL_PORT
   MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #
