@@ -85,7 +85,7 @@ EFI_STATUS LOADER_ENTRY::getVTable()
   //00FFFFFF FF0FFFFF 00000000 FFFFFFFF
 
  // INT32 Tabble  = FindBin(KernelData, 0x5000000, vtableSur, 8);
-  INT32 NTabble = FindBin(KernelData, 0x5000000, (const UINT8 *)ctor_used, (UINT32)strlen(ctor_used));
+  INT32 NTabble = FindBin(KernelData, 0x2000000, (const UINT8 *)ctor_used, (UINT32)strlen(ctor_used));
   if (NTabble < 0) {
     return EFI_NOT_FOUND;
   }

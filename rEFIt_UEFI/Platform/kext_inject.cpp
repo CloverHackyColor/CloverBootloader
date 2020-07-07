@@ -1087,7 +1087,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 //ffffff80009a227b
       UINTN taskLocation = searchProc("IOTaskHasEntitlement");
       procLocation = searchProc("loadExecutable");
-      patchLocation2 = FindMemMask(&KernelData[procLocation], 0x1000, find3, sizeof(find3), mask3, sizeof(mask3));
+      patchLocation2 = FindMemMask(&KernelData[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
       DBG("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         DBG_RT("=> patch SIP applied\n");
@@ -1099,7 +1099,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
           KernelData[patchLocation2 + 4] = 0x12;
         }
       } else {
-        patchLocation2 = FindRelative32(KernelData, procLocation, 0x1000, taskLocation);
+        patchLocation2 = FindRelative32(KernelData, procLocation, 0x500, taskLocation);
         if (patchLocation2 != 0) {
           DBG_RT("=> patch2 SIP applied\n");
           KernelData[patchLocation2] = 0xEB;
