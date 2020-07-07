@@ -34,6 +34,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 typedef struct {
   MACH_HEADER_64        *MachHeader;
   UINT32                FileSize;
+  UINT32                ContainerOffset;
   MACH_SYMTAB_COMMAND   *Symtab;
   MACH_NLIST_64         *SymbolTable;
   CHAR8                 *StringTable;
@@ -46,9 +47,11 @@ typedef struct {
 /**
   Initializes a Mach-O Context.
 
-  @param[out] Context   Mach-O Context to initialize.
-  @param[in]  FileData  Pointer to the file's data.
-  @param[in]  FileSize  File size of FileData.
+  @param[out] Context          Mach-O Context to initialize.
+  @param[in]  FileData         Pointer to the file's expected Mach-O header.
+  @param[in]  FileSize         File size of FileData.
+  @param[in]  ContainerOffset  The amount of Bytes the Mach-O header is offset
+                               from the base (container, e.g. KC) of the file.
 
   @return  Whether Context has been initialized successfully.
 
@@ -57,7 +60,8 @@ BOOLEAN
 MachoInitializeContext (
   OUT OC_MACHO_CONTEXT  *Context,
   IN  VOID              *FileData,
-  IN  UINT32            FileSize
+  IN  UINT32            FileSize,
+  IN  UINT32            ContainerOffset
   );
 
 /**
@@ -229,6 +233,21 @@ MACH_SECTION_64 *
 MachoGetSectionByAddress64 (
   IN OUT OC_MACHO_CONTEXT  *Context,
   IN     UINT64            Address
+  );
+
+/**
+  Merge Mach-O segments into one with lowest protection.
+
+  @param[in,out] Context  Context of the Mach-O.
+  @param[in]     Prefix   Segment prefix to merge.
+
+  @retval TRUE on success
+
+**/
+BOOLEAN
+MachoMergeSegments64 (
+  IN OUT OC_MACHO_CONTEXT     *Context,
+  IN     CONST CHAR8          *Prefix
   );
 
 /**
@@ -668,6 +687,20 @@ MachoPreserveRelocationIntel64 (
   IN UINT8  Type
   );
 
+/*
+  Initialises Context with the symbol tables of SymsContext.
+
+  @param[in,out] Context      The context to initialise the symbol info of.
+  @param[in]     SymsContext  The context to retrieve the symbol tables from.
+
+  @returns  Whether the operation was successful.
+*/
+BOOLEAN
+MachoInitialiseSymtabsExternal64 (
+  IN OUT OC_MACHO_CONTEXT  *Context,
+  IN     OC_MACHO_CONTEXT  *SymsContext
+  );
+
 /**
   Obtain symbol tables.
 
@@ -753,9 +786,26 @@ MachoExpandImage64 (
 
   @returns  Entry point or 0.
 **/
-UINTN
+UINT64
 MachoRuntimeGetEntryAddress (
   IN VOID  *Image
   );
 
-#endif // OC_MACHO_LIB_H_
+/**
+  Retrieves the next Load Command of type LoadCommandType.
+
+  @param[in,out] Context          Context of the Mach-O.
+  @param[in]     LoadCommandType  Type of the Load Command to retrieve.
+  @param[in]     LoadCommand      Previous Load Command.
+                                  If NULL, the first match is returned.
+
+  @retval NULL  NULL is returned on failure.
+**/
+MACH_LOAD_COMMAND *
+MachoGetNextCommand64 (
+  IN OUT OC_MACHO_CONTEXT         *Context,
+  IN     MACH_LOAD_COMMAND_TYPE   LoadCommandType,
+  IN     CONST MACH_LOAD_COMMAND  *LoadCommand  OPTIONAL
+  );
+
+#endif // OC_MACHO_LIB_H

@@ -342,6 +342,26 @@ InternalGetSymbolByValue (
   return NULL;
 }
 
+BOOLEAN
+InternalGetSymbolByExternRelocationOffset64 (
+  IN OUT OC_MACHO_CONTEXT  *Context,
+  IN     UINT64            Address,
+  OUT    MACH_NLIST_64     **Symbol
+  )
+{
+  CONST MACH_RELOCATION_INFO *Relocation;
+
+  ASSERT (Context != NULL);
+
+  Relocation = InternalGetExternRelocationByOffset (Context, Address);
+  if (Relocation != NULL) {
+    *Symbol = MachoGetSymbolByIndex64 (Context, Relocation->SymbolNumber);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
 /**
   Retrieves the symbol referenced by the extern Relocation targeting Address.
 
@@ -361,17 +381,15 @@ MachoGetSymbolByExternRelocationOffset64 (
   OUT    MACH_NLIST_64     **Symbol
   )
 {
-  CONST MACH_RELOCATION_INFO *Relocation;
-
-  ASSERT (Context != NULL);
-
-  Relocation = InternalGetExternRelocationByOffset (Context, Address);
-  if (Relocation != NULL) {
-    *Symbol = MachoGetSymbolByIndex64 (Context, Relocation->SymbolNumber);
-    return TRUE;
+  if (Address >= MachoGetFileSize (Context)) {
+    return FALSE;
   }
 
-  return FALSE;
+  return InternalGetSymbolByExternRelocationOffset64 (
+           Context,
+           Address,
+           Symbol
+           );
 }
 
 /**
@@ -397,10 +415,22 @@ MachoGetSymbolByRelocationOffset64 (
   CONST MACH_RELOCATION_INFO *Relocation;
   CONST UINT64               *Data;
   MACH_NLIST_64              *Sym;
+  UINT64                     AddressTop;
+
+  VOID                       *Tmp;
 
   ASSERT (Context != NULL);
 
-  Result = MachoGetSymbolByExternRelocationOffset64 (Context, Address, Symbol);
+  Result = OcOverflowAddU64 (Address, sizeof (UINT64), &AddressTop);
+  if (Result || AddressTop > MachoGetFileSize (Context)) {
+    return FALSE;
+  }
+
+  Result = InternalGetSymbolByExternRelocationOffset64 (
+             Context,
+             Address,
+             Symbol
+             );
   if (Result) {
     return TRUE;
   }
@@ -409,9 +439,11 @@ MachoGetSymbolByRelocationOffset64 (
   if (Relocation != NULL) {
     Sym = NULL;
 
-    Data = ((UINT64 *)((UINTN)Context->MachHeader + Address));
-    if (((Address + sizeof (UINT64)) <= Context->FileSize)
-     && OC_ALIGNED (Data)) {
+    Tmp = (VOID *)((UINTN)Context->MachHeader + (UINTN)Address);
+
+    if (OC_TYPE_ALIGNED (UINT64, Tmp)) {
+      Data = (UINT64 *)Tmp;
+
       // FIXME: Only C++ symbols.
       Sym = InternalGetSymbolByValue (Context, *Data);
       if ((Sym != NULL) && !InternalSymbolIsSane (Context, Sym)) {
@@ -606,8 +638,11 @@ MachoSymbolGetFileOffset64 (
   OUT    UINT32                *MaxSize OPTIONAL
   )
 {
-  UINT64          Offset;
-  MACH_SECTION_64 *Section;
+  UINT64                   Offset;
+  UINT64                   Base;
+  UINT64                   Size;
+  MACH_SEGMENT_COMMAND_64  *Segment;
+  MACH_SECTION_64          *Section;
 
   ASSERT (Context != NULL);
   ASSERT (Symbol != NULL);
@@ -621,19 +656,42 @@ MachoSymbolGetFileOffset64 (
               Context,
               (Symbol->Section - 1)
               );
-  if ((Section == NULL) || (Symbol->Value < Section->Address)) {
-    return FALSE;
+  if (Section == NULL || Section->Size == 0) {
+    for (
+      Segment = MachoGetNextSegment64 (Context, NULL);
+      Segment != NULL;
+      Segment = MachoGetNextSegment64 (Context, Segment)
+      ) {
+      if ((Symbol->Value >= Segment->VirtualAddress)
+       && (Symbol->Value < (Segment->VirtualAddress + Segment->Size))) {
+        break;
+      }
+    }
+
+    if (Segment == NULL) {
+      return FALSE;
+    }
+
+    Offset = Symbol->Value - Segment->VirtualAddress;
+    Base   = Segment->FileOffset;
+    Size   = Segment->Size;
+  } else {
+    if (Symbol->Value < Section->Address) {
+      return FALSE;
+    }
+
+    Offset = Symbol->Value - Section->Address;
+    Base   = Section->Offset;
+    Size   = Section->Size;
+    if (Offset > Section->Size) {
+      return FALSE;
+    }
   }
 
-  Offset = (Symbol->Value - Section->Address);
-  if (Offset > Section->Size) {
-    return FALSE;
-  }
-
-  *FileOffset = (Section->Offset + (UINT32)Offset);
+  *FileOffset = (UINT32) (Base - Context->ContainerOffset + Offset);
 
   if (MaxSize != NULL) {
-    *MaxSize = (UINT32)(Section->Size - Offset);
+    *MaxSize = (UINT32) (Size - Offset);
   }
 
   return TRUE;

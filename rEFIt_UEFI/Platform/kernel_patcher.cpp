@@ -18,7 +18,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 0
+#define KERNEL_DEBUG 1
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif

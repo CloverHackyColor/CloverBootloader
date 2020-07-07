@@ -3,7 +3,7 @@
 #include "DataHubCpu.h"
 
 #ifndef DEBUG_ALL
-#define KEXT_INJECT_DEBUG 0
+#define KEXT_INJECT_DEBUG 2
 #else
 #define KEXT_INJECT_DEBUG DEBUG_ALL
 #endif
@@ -1152,7 +1152,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       const UINT8 find5[] = {0x00, 0x0F, 0x85, 00, 00, 0x00, 0x00, 0x48 };
       const UINT8 mask5[] = {0xFF, 0xFF, 0xFF, 00, 00, 0xFF, 0xFF, 0xFF };
       patchLocation3 = FindMemMask(&KernelData[procLocation], 0x1000, find5, sizeof(find5), mask5, sizeof(mask5));
-      
+      DBG("removeKextBootstrap at 0x%llx\n", patchLocation3);
 
  /*
       for (UINT32 i = 0; i < 0x1000000; i++) {
