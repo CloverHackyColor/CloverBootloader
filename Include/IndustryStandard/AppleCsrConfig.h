@@ -31,7 +31,7 @@
 #define CSR_ALLOW_DESTRUCTIVE_DTRACE          (1U << 5U) /// < Name deprecated
 #define CSR_ALLOW_UNRESTRICTED_DTRACE         (1U << 5U)
 #define CSR_ALLOW_UNRESTRICTED_NVRAM          (1U << 6U)
-#define CSR_ALLOW_DEVICE_CONFIGURATIO         (1U << 7U)
+#define CSR_ALLOW_DEVICE_CONFIGURATION        (1U << 7U)
 #define CSR_ALLOW_ANY_RECOVERY_OS             (1U << 8U)
 #define CSR_ALLOW_UNAPPROVED_KEXTS            (1U << 9U)
 #define CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE  (1U << 10U)

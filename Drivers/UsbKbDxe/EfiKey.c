@@ -20,7 +20,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 STATIC BOOLEAN mExitingBootServices = FALSE;
 
-extern EFI_GUID gAppleOsLoadedNamedEventGuid;
+extern EFI_GUID gAppleOSLoadedNamedEventGuid;
 //
 // USB Keyboard Driver Global Variables
 //
@@ -71,7 +71,7 @@ USBKeyboardDriverBindingEntryPoint (
   }
 
   Status = EfiNamedEventListen(
-            &gAppleOsLoadedNamedEventGuid,
+            &gAppleOSLoadedNamedEventGuid,
             TPL_NOTIFY,
             WaitForOs,
             NULL,

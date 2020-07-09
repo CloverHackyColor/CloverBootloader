@@ -1,0 +1,35 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = OcQuirks
+  FILE_GUID                      = 43C8CFCA-03C0-4AA8-8BEB-5AF6AB3570A2
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = QuirksEntryPoint
+
+[Packages]
+  CloverPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  MdePkg/MdePkg.dec
+#  OpenCorePkg/OpenCorePkg.dec
+
+[LibraryClasses]
+  MemoryAllocationLib
+  DebugLib
+  OcAfterBootCompatLib
+  OcBootManagementLib
+  MachoLib
+  OcOSInfoLib
+  OcStorageLib
+  OcConsoleLib
+  OcSerializeLib
+  OcTemplateLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+
+[Protocols]
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiLoadedImageProtocolGuid
+
+[Sources]
+  OcQuirks.c
+  

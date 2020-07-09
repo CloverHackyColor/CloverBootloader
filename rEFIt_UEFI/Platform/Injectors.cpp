@@ -239,7 +239,7 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 // OS_INFO_VENDOR_NAME
 #define OS_INFO_VENDOR_NAME  "Apple Inc."
 
-extern EFI_GUID gAppleOsLoadedNamedEventGuid;
+extern EFI_GUID gAppleOSLoadedNamedEventGuid;
 // OSInfoOSNameImpl
 VOID
 EFIAPI
@@ -252,7 +252,7 @@ OSInfoOSNameImpl (
   // as it will be set by boot.efi
   BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
 
-  EfiNamedEventSignal (&gAppleOsLoadedNamedEventGuid);
+  EfiNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
 }
 
 // OSInfoOSVendorImpl
@@ -270,7 +270,7 @@ OSInfoOSVendorImpl (
   Result = AsciiStrCmp(OSVendor, OS_INFO_VENDOR_NAME);
   
   if (Result == 0) {
-    //   EfiLibNamedEventSignal (&gAppleOsLoadedNamedEventGuid);
+    //   EfiLibNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
   }
 }
 

@@ -353,7 +353,7 @@
   gEfiCertRsa2048Sha256Guid
   gEfiCertTypeRsa2048Sha256Guid
 
-  gAppleOsLoadedNamedEventGuid
+  gAppleOSLoadedNamedEventGuid
   gBootChimeVendorVariableGuid
 
 

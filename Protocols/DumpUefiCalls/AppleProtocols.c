@@ -491,12 +491,22 @@ OvrOSVendor (
 
 VOID
 EFIAPI
-OvrOSEmpty (
-           IN CHAR8 *Name)
+OvrOSGetVtd (
+           OUT UINTN  *BootVTdEnabled)
 {
   //  EFI_STATUS				Status;
-  gOrgOSInfo.OSName(Name);
-  PRINT("->OSInfo.OSEmpty=%a\n", Name);
+  gOrgOSInfo.GetBootVTdEnabled(BootVTdEnabled);
+  PRINT("->OSInfo.GetVtd=0x%x\n", *BootVTdEnabled);
+}
+
+VOID
+EFIAPI
+OvrOSSetVtd (
+            IN UINTN  *BootVTdEnabled)
+{
+  //  EFI_STATUS        Status;
+  gOrgOSInfo.SetBootVTdEnabled(BootVTdEnabled);
+  PRINT("->OSInfo.SetVtd=0x%x\n", *BootVTdEnabled);
 }
 
 
@@ -520,7 +530,9 @@ OvrOSInfo(VOID)
   // Override with our implementation
   gOSInfo->OSVendor = OvrOSVendor;
   gOSInfo->OSName = OvrOSName;
-  gOSInfo->OSEmpty = OvrOSEmpty;
+//  gOSInfo->OSEmpty = OvrOSEmpty;
+  gOSInfo->SetBootVTdEnabled = OvrOSSetVtd;
+  gOSInfo->GetBootVTdEnabled = OvrOSGetVtd;
   
   PRINT("EfiOSInfo overriden!\n");
   return EFI_SUCCESS;

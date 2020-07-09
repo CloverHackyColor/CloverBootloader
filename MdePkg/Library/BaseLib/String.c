@@ -2158,7 +2158,7 @@ Base64Encode (
   @retval RETURN_INVALID_PARAMETER  Invalid CHAR8 element encountered in
                                     Source.
 **/
-#if 0
+#if 1
 RETURN_STATUS
 EFIAPI
 Base64Decode (
@@ -2374,7 +2374,7 @@ Base64Decode (
       Accumulator &= 0x3;
       break;
     default:
-      ASSERT (SixBitGroupsConsumed == 4);
+ //     ASSERT (SixBitGroupsConsumed == 4);
       //
       // 8 bits accumulated (2 pending + 6 new); prepare for spilling an octet.
       // The quantum is complete, 0 bits remain pending.
@@ -2390,7 +2390,7 @@ Base64Decode (
     // (*DestinationSize) unconditionally.
     //
     if (*DestinationSize < OriginalDestinationSize) {
-      ASSERT (Destination != NULL);
+//      ASSERT (Destination != NULL);
       Destination[*DestinationSize] = DestinationOctet;
     }
     (*DestinationSize)++;

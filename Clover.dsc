@@ -108,6 +108,7 @@
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   NetLib|NetworkPkg/Library/DxeNetLib/DxeNetLib.inf
+  FrameBufferBltLib|MdeModulePkg/Library/FrameBufferBltLib/FrameBufferBltLib.inf
   #
   # Platform
   #
@@ -159,7 +160,36 @@
   WaveLib|Library/WaveLib/WaveLib.inf
   HdaDevicesLib|Library/HdaDevicesLib/HdaDevicesLib.inf
 
+  #
+  # OC libs
+  #
   OcGuardLib|Library/OcGuardLib/OcGuardLib.inf
+  OcAfterBootCompatLib|Library/OcAfterBootCompatLib/OcAfterBootCompatLib.inf
+  OcAppleBootPolicyLib|Library/OcAppleBootPolicyLib/OcAppleBootPolicyLib.inf
+  OcAppleChunklistLib|Library/OcAppleChunklistLib/OcAppleChunklistLib.inf
+  OcAppleDiskImageLib|Library/OcAppleDiskImageLib/OcAppleDiskImageLib.inf
+  OcAppleKeyMapLib|Library/OcAppleKeyMapLib/OcAppleKeyMapLib.inf
+  OcAppleKeysLib|Library/OcAppleKeysLib/OcAppleKeysLib.inf
+  OcAppleRamDiskLib|Library/OcAppleRamDiskLib/OcAppleRamDiskLib.inf
+  OcBootManagementLib|Library/OcBootManagementLib/OcBootManagementLib.inf
+  OcCompressionLib|Library/OcCompressionLib/OcCompressionLib.inf
+  OcConsoleLib|Library/OcConsoleLib/OcConsoleLib.inf
+  OcCpuLib|Library/OcCpuLib/OcCpuLib.inf
+  OcCryptoLib|Library/OcCryptoLib/OcCryptoLib.inf
+  OcDebugLogLib|Library/OcDebugLogLib/OcDebugLogLib.inf
+  OcDevicePathLib|Library/OcDevicePathLib/OcDevicePathLib.inf
+  OcFileLib|Library/OcFileLib/OcFileLib.inf
+  OcMemoryLib|Library/OcMemoryLib/OcMemoryLib.inf
+  OcMiscLib|Library/OcMiscLib/OcMiscLib.inf
+  OcOSInfoLib|Library/OcOSInfoLib/OcOSInfoLib.inf
+  OcRngLib|Library/OcRngLib/OcRngLib.inf
+  OcRtcLib|Library/OcRtcLib/OcRtcLib.inf
+  OcSerializeLib|Library/OcSerializeLib/OcSerializeLib.inf
+  OcStringLib|Library/OcStringLib/OcStringLib.inf
+  OcStorageLib|Library/OcStorageLib/OcStorageLib.inf
+  OcTemplateLib|Library/OcTemplateLib/OcTemplateLib.inf
+  OcXmlLib|Library/OcXmlLib/OcXmlLib.inf
+
   MachoLib|Library/MachoLib/MachoLib.inf
   DeviceTreeLib|Library/DeviceTreeLib/DeviceTreeLib.inf
 
@@ -590,6 +620,7 @@
   MemoryFix/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
   MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
   MemoryFix/OpenRuntime/OpenRuntime.inf
+  MemoryFix/OcQuirks/OcQuirks.inf
 !ifdef DEBUG_ON_SERIAL_PORT
   MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf {
     #

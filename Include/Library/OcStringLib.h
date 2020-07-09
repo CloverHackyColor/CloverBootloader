@@ -12,8 +12,10 @@
   WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
-#ifndef OC_STRING_LIB_H_
-#define OC_STRING_LIB_H_
+#ifndef OC_STRING_LIB_H
+#define OC_STRING_LIB_H
+
+#include <Uefi.h>
 
 /**
   Returns the length of a Null-terminated string literal.
@@ -65,7 +67,7 @@ IsAsciiSpace (
 
 /** Convert null terminated ascii string to unicode.
 
-  @param[in]  String1  A pointer to the ascii string to convert to unicode.
+  @param[in]  String  A pointer to the ascii string to convert to unicode.
   @param[in]  Length   Length or 0 to calculate the length of the ascii string to convert.
 
   @retval  A pointer to the converted unicode string allocated from pool.
@@ -88,6 +90,28 @@ AsciiUint64ToLowerHex (
   OUT CHAR8   *Buffer,
   IN  UINT32  BufferSize,
   IN  UINT64  Value
+  );
+
+/**
+  Alternative to AsciiSPrint, which checks that the buffer can contain all the characters.
+
+  @param  StartOfBuffer   A pointer to the output buffer for the produced Null-terminated
+                          ASCII string.
+  @param  BufferSize      The size, in bytes, of the output buffer specified by StartOfBuffer.
+  @param  FormatString    A Null-terminated ASCII format string.
+  @param  ...             Variable argument list whose contents are accessed based on the
+                          format string specified by FormatString.
+
+  @retval EFI_SUCCESS           When data was printed to supplied buffer.
+  @retval EFI_OUT_OF_RESOURCES  When supplied buffer cannot contain all the characters.
+**/
+EFI_STATUS
+EFIAPI
+OcAsciiSafeSPrint (
+  OUT CHAR8         *StartOfBuffer,
+  IN  UINTN         BufferSize,
+  IN  CONST CHAR8   *FormatString,
+  ...
   );
 
 /**
@@ -121,7 +145,7 @@ AsciiUint64ToLowerHex (
 **/
 INTN
 EFIAPI
-StriCmp (
+OcStriCmp (
   IN CHAR16  *FirstString,
   IN CHAR16  *SecondString
   );
@@ -166,10 +190,83 @@ StriCmp (
 **/
 INTN
 EFIAPI
-StrniCmp (
+OcStrniCmp (
   IN CONST CHAR16  *FirstString,
   IN CONST CHAR16  *SecondString,
   IN UINTN         Length
+  );
+
+/**
+  Returns the first occurrence of a Null-terminated Unicode sub-string
+  in a Null-terminated Unicode string through a case insensitive comparison.
+
+  This function scans the contents of the Null-terminated Unicode string
+  specified by String and returns the first occurrence of SearchString.
+  If SearchString is not found in String, then NULL is returned.  If
+  the length of SearchString is zero, then String is returned.
+
+  If String is NULL, then ASSERT().
+  If String is not aligned on a 16-bit boundary, then ASSERT().
+  If SearchString is NULL, then ASSERT().
+  If SearchString is not aligned on a 16-bit boundary, then ASSERT().
+
+  If PcdMaximumUnicodeStringLength is not zero, and SearchString
+  or String contains more than PcdMaximumUnicodeStringLength Unicode
+  characters, not including the Null-terminator, then ASSERT().
+
+  @param  String          The pointer to a Null-terminated Unicode string.
+  @param  SearchString    The pointer to a Null-terminated Unicode string to search for.
+
+  @retval NULL            If the SearchString does not appear in String.
+  @return others          If there is a match.
+
+**/
+CHAR16 *
+EFIAPI
+OcStriStr (
+  IN      CONST CHAR16              *String,
+  IN      CONST CHAR16              *SearchString
+  );
+
+/**
+  Search substring in string.
+
+  @param[in]  String               Search string.
+  @param[in]  StringLength         Search string length.
+  @param[in]  SearchString         String to search.
+  @param[in]  SearchStringLength   String to search length.
+
+  @retval NULL    If the SearchString does not appear in String.
+  @retval others  If there is a match.
+**/
+CONST CHAR16 *
+OcStrStrLength (
+  IN CONST CHAR16  *String,
+  IN UINTN         StringLength,
+  IN CONST CHAR16  *SearchString,
+  IN UINTN         SearchStringLength
+  );
+
+/**
+  Alternative to UnicodeSPrint, which checks that the buffer can contain all the characters.
+
+  @param  StartOfBuffer   A pointer to the output buffer for the produced Null-terminated
+                          Unicode string.
+  @param  BufferSize      The size, in bytes, of the output buffer specified by StartOfBuffer.
+  @param  FormatString    A Null-terminated Unicode format string.
+  @param  ...             Variable argument list whose contents are accessed based on the
+                          format string specified by FormatString.
+
+  @retval EFI_SUCCESS           When data was printed to supplied buffer.
+  @retval EFI_OUT_OF_RESOURCES  When supplied buffer cannot contain all the characters.
+**/
+EFI_STATUS
+EFIAPI
+OcUnicodeSafeSPrint (
+  OUT CHAR16        *StartOfBuffer,
+  IN  UINTN         BufferSize,
+  IN  CONST CHAR16  *FormatString,
+  ...
   );
 
 /**
@@ -194,4 +291,4 @@ UnicodeFilterString (
   IN     BOOLEAN  SingleLine
   );
 
-#endif // OC_STRING_LIB_H_
+#endif // OC_STRING_LIB_H

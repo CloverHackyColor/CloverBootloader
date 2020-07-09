@@ -88,7 +88,7 @@ struct APPLE_KEY_MAP_AGGREGATOR_PROTOCOL {
   KEY_MAP_CONTAINS_KEY_STROKES ContainsKeyStrokes;
 };
 
-// gAppleKeyMapAggregatorProtocolGuid
-extern EFI_GUID gAppleKeyMapAggregatorProtocolGuid;
+// gAppleKeyStateProtocolGuid
+extern EFI_GUID gAppleKeyStateProtocolGuid;
 
 #endif // APPLE_KEY_MAP_AGGREGATOR_H

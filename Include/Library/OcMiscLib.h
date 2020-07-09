@@ -19,160 +19,14 @@
 #include <Library/OcStringLib.h>
 
 /**
+  The size, in Bits, of one Byte.
+**/
+#define OC_CHAR_BIT  8
+
+/**
   Convert seconds to microseconds for use in e.g. gBS->Stall.
 **/
 #define SECONDS_TO_MICROSECONDS(x) ((x)*1000000)
-
-/**
-  TODO: EDK II has its implementation in BaseLib, but it is broken,
-  as it fails to update DecodedLength:
-  https://github.com/acidanthera/bugtracker/issues/372
-
-  @param[in] EncodedData        A pointer to the data to convert.
-  @param[in] EncodedLength      The length of data to convert.
-  @param[in] DecodedData        A pointer to location to store the decoded data.
-  @param[in] DecodedSize        A pointer to location to store the decoded size.
-
-  @retval  TRUE on success.
-**/
-RETURN_STATUS
-EFIAPI
-OcBase64Decode (
-  IN     CONST CHAR8  *EncodedData,
-  IN     UINTN        EncodedLength,
-     OUT UINT8        *DecodedData,
-  IN OUT UINTN        *DecodedLength
-  );
-
-// LegacyRegionlock
-/** Lock the legacy region specified to enable modification.
-
-  @param[in] LegacyAddress  The address of the region to lock.
-  @param[in] LegacyLength   The size of the region to lock.
-
-  @retval EFI_SUCCESS  The region was locked successfully.
-**/
-EFI_STATUS
-LegacyRegionLock (
-  IN UINT32  LegacyAddress,
-  IN UINT32  LegacyLength
-  );
-
-// LegacyRegionUnlock
-/** Unlock the legacy region specified to enable modification.
-
-  @param[in] LegacyAddress  The address of the region to unlock.
-  @param[in] LegacyLength   The size of the region to unlock.
-
-  @retval EFI_SUCCESS  The region was unlocked successfully.
-**/
-EFI_STATUS
-LegacyRegionUnlock (
-  IN UINT32  LegacyAddress,
-  IN UINT32  LegacyLength
-  );
-
-/** Log the boot options passed
-
-  @param[in] BootOrder        A pointer to the boot order list.
-  @param[in] BootOrderLength  Size of the boot order list.
-
-  @retval EFI_SUCCESS  The entry point is executed successfully.
-**/
-EFI_STATUS
-LogBootOrder (
-  IN  INT16   *BootOrder,
-  IN  UINTN   BootOrderSize
-  );
-
-// LogHexDump
-/** Convert memory locations into hex strings and output to the boot log
-
-  @param[in] Address       The address of the region to dump hex from.
-  @param[in] Address2      The address to show when dumping hex.
-  @param[in] Length        The length of the string to show.
-  @param[in] LineSize      How many bytes to show per line.
-  @param[in] DisplayAscii  Flag to show ascii charater also.
-
-  @retval EFI_SUCCESS  The region was unlocked successfully.
-**/
-EFI_STATUS
-LogHexDump (
-  IN VOID     *Address,
-  IN VOID     *Address2,
-  IN UINTN    Length,
-  IN UINTN    LineSize,
-  IN BOOLEAN  DisplayAscii
-  );
-
-// SetPlatformData
-/**
-
-  @param[in] DataRecordGuid  The guid of the record to use.
-  @param[in] Key             A pointer to the ascii key string.
-  @param[in] Data            A pointer to the data to store.
-  @param[in] DataSize        The length of the data to store.
-
-  @retval EFI_SUCCESS  The datahub  was updated successfully.
-**/
-EFI_STATUS
-SetPlatformData (
-  IN EFI_GUID  *DataRecordGuid,
-  IN CHAR8     *Key,
-  IN VOID      *Data,
-  IN UINT32    DataSize
-  );
-
-/**
-  Allocate new System Table with disabled text output.
-
-  @param[in] SystemTable     Base System Table.
-
-  @retval non NULL  The System Table table was allocated successfully.
-**/
-EFI_SYSTEM_TABLE *
-AllocateNullTextOutSystemTable (
-  EFI_SYSTEM_TABLE  *SystemTable
-  );
-
-/**
-  Dummy function that debuggers may break on.
-**/
-VOID
-DebugBreak (
-  VOID
-  );
-
-/**
-  Wait for user input after printing message.
-
-  @param[in] Message   Message to print.
-**/
-VOID
-WaitForKeyPress (
-  CONST CHAR16 *Message
-  );
-
-/**
-  Default index mapping macros.
-**/
-#define OC_INPUT_STR      "123456789ABCDEFGHIJKLMNOPQRSTUVXWZ"
-#define OC_INPUT_MAX      L_STR_LEN (OC_INPUT_STR)
-#define OC_INPUT_ABORTED  -1 ///< Esc or 0
-#define OC_INPUT_INVALID  -2 ///< Some other key
-#define OC_INPUT_TIMEOUT  -3 ///< Timeout
-
-/**
-  Obtains key index from user input.
-
-  @param TimeOutSeconds  Timeout to wait for.
-
-  @returns key index [0, OC_INPUT_MAX), OC_INPUT_ABORTED, or OC_INPUT_INVALID.
-**/
-INTN
-WaitForKeyIndex (
-  UINTN  TimeOutSeconds
-  );
 
 INT32
 FindPattern (
@@ -198,14 +52,46 @@ ApplyPatch (
   );
 
 /**
-  @param[in] Protocol    The published unique identifier of the protocol. It is the caller’s responsibility to pass in
+  Obtain application arguments.
+
+  @param[out]  Argc   Argument count.
+  @param[out]  Argv   Argument list.
+
+  @retval EFI_SUCCESS on success.
+**/
+EFI_STATUS
+GetArguments (
+  OUT UINTN   *Argc,
+  OUT CHAR16  ***Argv
+  );
+
+/**
+  Uninstall all protocols with the specified GUID.
+
+  @param[in] Protocol    The published unique identifier of the protocol. It is the caller's responsibility to pass in
                          a valid GUID.
 
   @retval EFI_SUCCESS on success.
 **/
 EFI_STATUS
-UninstallAllProtocolInstances (
+OcUninstallAllProtocolInstances (
   EFI_GUID  *Protocol
+  );
+
+/**
+  Handle protocol on handle and fallback to any protocol when missing.
+
+  @param[in]  Handle        Handle to search for protocol.
+  @param[in]  Protocol      Protocol to search for.
+  @param[out] Interface     Protocol interface if found.
+
+  @retval EFI_SUCCESS on success.
+**/
+EFI_STATUS
+OcHandleProtocolFallback (
+  IN  EFI_HANDLE  Handle,
+  IN  EFI_GUID    *Protocol,
+  OUT VOID        **Interface
   );
 
 /**
@@ -217,21 +103,81 @@ ReleaseUsbOwnership (
   );
 
 /**
-  Get current memory map allocated on pool.
-
-  @param[out]  MemoryMapSize      Resulting memory map size in bytes.
-  @param[out]  DescriptorSize     Resulting memory map descriptor size in bytes.
-  @param[out]  MapKey             Memory map key, optional.
-  @param[out]  DescriptorVersion  Memory map version, optional.
-
-  @retval current memory map or NULL.
+  Perform cold reboot directly bypassing UEFI services. Does not return.
+  Supposed to work in any modern physical or virtual environment.
 **/
-EFI_MEMORY_DESCRIPTOR *
-GetCurrentMemoryMap (
-  OUT UINTN   *MemoryMapSize,
-  OUT UINTN   *DescriptorSize,
-  OUT UINTN   *MapKey             OPTIONAL,
-  OUT UINT32  *DescriptorVersion  OPTIONAL
+VOID
+DirectRestCold (
+  VOID
   );
+
+/**
+ Return the result of (Multiplicand * Multiplier / Divisor).
+
+ @param Multiplicand A 64-bit unsigned value.
+ @param Multiplier   A 64-bit unsigned value.
+ @param Divisor      A 32-bit unsigned value.
+ @param Remainder    A pointer to a 32-bit unsigned value. This parameter is
+ optional and may be NULL.
+
+ @return Multiplicand * Multiplier / Divisor.
+ **/
+UINT64
+MultThenDivU64x64x32 (
+  IN  UINT64  Multiplicand,
+  IN  UINT64  Multiplier,
+  IN  UINT32  Divisor,
+  OUT UINT32  *Remainder  OPTIONAL
+  );
+
+/**
+  Internal worker macro that calls DebugPrint().
+
+  This macro calls DebugPrint(), passing in the filename, line number, an
+  expression that failed the comparison with expected value,
+  the expected value and the actual value.
+
+  @param  Expression  Integer expression that evaluated to value different from Value (should be convertible to INTN)
+  @param  ExpectedValue  Expected value of the expression (should be convertible to INTN)
+
+**/
+#define _ASSERT_EQUALS(Expression, ExpectedValue)              \
+  DebugPrint(                                          \
+    DEBUG_ERROR,                                       \
+    "ASSERT %a(%d): %a (expected: %d, actual: %d)\n",  \
+    __FILE__,                                          \
+    __LINE__,                                          \
+    #Expression,                                       \
+    (INTN)(ExpectedValue),                                     \
+    (INTN)(Expression))
+
+/**
+  Macro that calls DebugAssert() if the value of an expression differs from the expected value.
+
+  If MDEPKG_NDEBUG is not defined and the DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED
+  bit of PcdDebugProperyMask is set, then this macro evaluates the integer
+  expression specified by Expression.  If the value of Expression differs from ExpectedValue, then
+  DebugPrint() is called passing in the source filename, source line number,
+  Expression, it's value and ExpectedValue; then ASSERT(FALSE) is called to
+  cause a breakpoint, deadloop or no-op depending on PcdDebugProperyMask.
+
+  @param  Expression  Integer expression (should be convertible to INTN).
+  @param  ExpectedValue  Expected value (should be convertible to INTN).
+
+**/
+#if !defined(MDEPKG_NDEBUG)
+  #define ASSERT_EQUALS(Expression, ExpectedValue)    \
+    do {                                      \
+      if (DebugAssertEnabled ()) {            \
+        if ((Expression) != (ExpectedValue)) {        \
+          _ASSERT_EQUALS (Expression, ExpectedValue); \
+          ASSERT(FALSE);                      \
+          ANALYZER_UNREACHABLE ();            \
+        }                                     \
+      }                                       \
+    } while (FALSE)
+#else
+  #define ASSERT_EQUALS(Expression, ExpectedValue)
+#endif
 
 #endif // OC_MISC_LIB_H
