@@ -1171,7 +1171,7 @@ msgstr "Letzte Überprüfung:"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr "Jezt überprüfen"
+msgstr "Jetzt überprüfen"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
