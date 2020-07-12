@@ -1412,6 +1412,7 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
     if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && !CmpNum(dsdt, i, TRUE)) { //device candidate
       k = i + 2;
     } else if ((dsdt[i] == 0x10) && //looks like Scope
+               (dsdt[i-1] != 0x14) && //this is Method()
                (dsdt[i-1] != 0xA0) && //this is If()
                (dsdt[i-1] != 0xA1) && //this is Else()
                (dsdt[i-1] != 0xA2) && //this is While()
