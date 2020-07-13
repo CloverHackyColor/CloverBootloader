@@ -26,19 +26,19 @@
 EFI_MEMORY_DESCRIPTOR *
 OcGetCurrentMemoryMap (
   OUT UINTN   *MemoryMapSize,
-  OUT UINTN   *DescriptorSize,
+  IN  UINTN   *DescriptorSize,
   OUT UINTN   *MapKey                 OPTIONAL,
   OUT UINT32  *DescriptorVersion      OPTIONAL,
   OUT UINTN   *OriginalMemoryMapSize  OPTIONAL,
   IN  BOOLEAN IncludeSplitSpace
   )
 {
-  EFI_MEMORY_DESCRIPTOR   *MemoryMap;
+  EFI_MEMORY_DESCRIPTOR   *MemoryMap = NULL;
   EFI_STATUS              Status;
-  UINTN                   MapKeyValue;
+  UINTN                   MapKeyValue = 0;
   UINTN                   OriginalSize;
   UINTN                   ExtraSize;
-  UINT32                  DescriptorVersionValue;
+  UINT32                  DescriptorVersionValue = 0;
   BOOLEAN                 Result;
 
   *MemoryMapSize = 0;
@@ -55,7 +55,7 @@ OcGetCurrentMemoryMap (
   }
 
   if (IncludeSplitSpace) {
-    ExtraSize = OcCountSplitDescritptors () * *DescriptorSize;
+    ExtraSize = OcCountSplitDescriptors() * *DescriptorSize;
   } else {
     ExtraSize = 0;
   }
@@ -66,7 +66,7 @@ OcGetCurrentMemoryMap (
   //
   Result = OcOverflowAddUN (
     *MemoryMapSize,
-    MAX (*DescriptorSize + ExtraSize, 1024 + ExtraSize),
+    MAX(*DescriptorSize + ExtraSize, 1024 + ExtraSize),
     MemoryMapSize
     );
 

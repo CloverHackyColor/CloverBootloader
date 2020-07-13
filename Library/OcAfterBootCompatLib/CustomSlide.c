@@ -233,13 +233,13 @@ ShouldUseCustomSlideOffset (
   )
 {
   EFI_PHYSICAL_ADDRESS   AllocatedMapPages;
-  UINTN                  MemoryMapSize;
-  EFI_MEMORY_DESCRIPTOR  *MemoryMap;
+  UINTN                  MemoryMapSize = NULL;
+  EFI_MEMORY_DESCRIPTOR  *MemoryMap = NULL;
   EFI_MEMORY_DESCRIPTOR  *Desc;
-  UINTN                  MapKey;
+  UINTN                  MapKey = 0;
   EFI_STATUS             Status;
-  UINTN                  DescriptorSize;
-  UINT32                 DescriptorVersion;
+  UINTN                  DescriptorSize = 0;
+  UINT32                 DescriptorVersion = 0;
   OC_CPU_GENERATION      CpuGeneration;
   UINTN                  Index;
   UINTN                  Slide;
@@ -578,9 +578,9 @@ HideSlideFromOs (
   )
 {
   EFI_STATUS  Status;
-  DTEntry     Chosen;
-  CHAR8       *ArgsStr;
-  UINT32      ArgsSize;
+  DTEntry     Chosen = 0;
+  CHAR8       *ArgsStr = NULL;
+  UINT32      ArgsSize = 0;
 
   //
   // First, there is a BootArgs entry for XNU.
