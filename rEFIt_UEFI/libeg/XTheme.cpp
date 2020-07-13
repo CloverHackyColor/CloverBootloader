@@ -82,6 +82,7 @@ CONST CHAR8* IconsNames[] = {
    "os_unknown", //51 == ICON_OTHER_OS
    "os_clover",  //52 == ICON_CLOVER
    //other oses will be added below
+   "os_bigsur",  //53 == ICON_BIGSUR
   ""
 };
 const INTN IconsNamesSize = sizeof(IconsNames) / sizeof(IconsNames[0]);

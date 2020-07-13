@@ -2141,38 +2141,6 @@ LOADER_ENTRY::FindBootArgs()
       break;
     }
   }
-  /*
-  if (bootArgs2 == 0) {
-    ptr = (UINT8*)0x200000ull;
-    while(TRUE) {
-      
-      // check bootargs for 10.16
-      bootArgs2 = (BootArgs2*)ptr;
-      if (strstr(&bootArgs2->CommandLine[0], "big=sur")
-          && bootArgs2->efiMode == archMode) {
-        dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-        dtLength = &bootArgs2->deviceTreeLength;
-        KernelSlide = bootArgs2->kslide;
-        
-        DBG_RT( "Found bootArgs at 0x%llX, DevTree at 0x%llX\n", (UINTN)ptr, (UINTN)bootArgs2->deviceTreeP);
-        DBG_RT( "bootArgs2->CommandLine = %s\n", bootArgs2->CommandLine);
-        DBG_RT( "bootArgs2->Version = 0x%x\n", bootArgs2->Version);
-        DBG_RT( "bootArgs2->Revision = 0x%x\n", bootArgs2->Revision);
-        DBG_RT( "bootArgs2->flags = 0x%hx\n", bootArgs2->flags);
-        if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
-          gBS->Stall(20000000);
-        break;
-      }
-      
-      ptr += 0x1000;
-      if ((UINTN)ptr > 0x10000000ull) {
-        DBG_RT("bootArgs 2 not found\n");
-        bootArgs2 = 0;
-        break;
-      }
-    }
-  }
-   */
 }
 
 BOOLEAN

@@ -437,6 +437,7 @@ VOID DebugPause(VOID);
 #define BUILTIN_CHECKBOX_CHECKED               (48)
 #define ICON_OTHER_OS                          (51)
 #define ICON_CLOVER                            (52)
+#define ICON_BIGSUR                            (53)
 #define BUILTIN_ICON_BACKGROUND                (100)
 #define BUILTIN_ICON_SELECTION                 (101)
 #define BUILTIN_ICON_ANIME                     (102)

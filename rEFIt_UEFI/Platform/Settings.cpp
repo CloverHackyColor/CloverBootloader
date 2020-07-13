@@ -6584,7 +6584,8 @@ GetOSIconName (
   XStringW OSIconName;
   if (OSVersion == NULL) {
     OSIconName = L"mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.16") != 0) {
+  } else if ((AsciiStrStr (OSVersion, "10.16") != 0) ||
+             (AsciiStrStr (OSVersion, "11.0")  != 0)) {
     // Big Sur
     OSIconName = L"bigsur,mac"_XSW;
   } else if (AsciiStrStr (OSVersion, "10.15") != 0) {
