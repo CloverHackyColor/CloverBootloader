@@ -848,12 +848,14 @@ MainPostBuildScript() {
     done
 
     # drivers64UEFI/MemoryFix
-    binArray=( OsxAptioFixDrv OsxLowMemFixDrv OsxAptioFix3Drv AptioMemoryFix )
+    binArray=( OsxAptioFixDrv OsxLowMemFixDrv OsxAptioFix3Drv AptioMemoryFix OcQuirks OpenRuntime )
 
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/$efi.efi
     done
+    
+    copyBin "${CLOVERROOT}"/MemoryFix/OcQuirks/OcQuirks.plist "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/
 
     # Applications
     echo "Copy Applications:"
