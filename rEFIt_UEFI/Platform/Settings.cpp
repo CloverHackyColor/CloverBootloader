@@ -6366,14 +6366,16 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // 1st stage - 2
     // Check for plist - createinstallmedia/NetInstall
     if (OSVersion == NULL) {
-      InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - 10.13.3
+      InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - ...
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "Kernel Flags");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mavericks.app")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.9");
+            if (AsciiStrStr (Prop->string, "Install%20macOS%20BigSur") || AsciiStrStr (Prop->string, "Install%20macOS%2011.0")) {
+              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "11.0");
+            } else if (AsciiStrStr (Prop->string, "Install%20macOS%2010.16")) {
+              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.16");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Catalina") || AsciiStrStr (Prop->string, "Install%20macOS%2010.15")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.15");
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Mojave") || AsciiStrStr (Prop->string, "Install%20macOS%2010.14")) {
@@ -6386,6 +6388,8 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.11");
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.10")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.10");
+            } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mavericks.app")) {
+              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.9");
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mountain%20Lion")) {
               OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.8");
             } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20hhX%20Lion")) {
