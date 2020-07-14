@@ -501,7 +501,7 @@ VOID LOADER_ENTRY::FilterBootPatches()
     }
   }
 }
-
+/*
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
@@ -534,7 +534,7 @@ VOID ReadSIPCfg()
 
   FreePool(csrLog);
 }
-
+*/
 //
 // Null ConOut OutputString() implementation - for blocking
 // text output from boot.efi when booting in graphics mode
@@ -738,10 +738,10 @@ VOID LOADER_ENTRY::StartLoader()
 
     if (OSVersion && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
-        gSettings.CsrActiveConfig = (UINT32)0x37F;
+        gSettings.CsrActiveConfig = (UINT32)0xB7F;
         gSettings.BooterConfig = 0x28;
       }
-      ReadSIPCfg();
+//      ReadSIPCfg();
     }
 
     FilterKextPatches();
