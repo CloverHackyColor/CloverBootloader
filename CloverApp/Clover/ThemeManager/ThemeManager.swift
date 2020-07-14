@@ -73,8 +73,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
   var basePath : String
   private var urlBaseStr : String
   var themeManagerIndexDir : String
-  
-  private var gitInitCount : Int32 = 0
+  private var indexing : Bool = false
 
   let userAgent = "Clover"
   
@@ -731,7 +730,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
     }
   }
   
-  /// Check if a theme exist (in the current repository
+  /// Check if a theme exist (in the current repository)
   public func exist(theme: String) -> Bool {
     return fm.fileExists(atPath: "\(self.themeManagerIndexDir)/Themes/\(theme).plist")
   }
@@ -779,7 +778,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
          */
         
         if !isDir.boolValue {
-          // ..it is if a file doesn't exist
+          // ..it is,  if a file doesn't exist
           let key = theme.addPath(file)
           
           if let githubSha = plist[key] {
@@ -898,7 +897,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       while let file = enumerator?.nextObject() as? String {
         if file.fileExtension == "png" || file.fileExtension == "icns" {
           images.append(file)
-          // load icons to see if they have the same
+          // load icons to see if they have the same size
           if file.hasPrefix("icons/os_") || file.hasPrefix("icons/vol_") {
             if let image = NSImage(byReferencingFile: path.addPath(file)) {
               // ensure width and height are equal
@@ -906,7 +905,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
                 iconsNeedsResize = true
               }
               if minIconSizeWidth != nil {
-                // size is same as previous in previous icon?
+                // size is same as in previous icon?
                 if minIconSizeWidth != image.size.width {
                   iconsNeedsResize = true
                 }
@@ -924,7 +923,7 @@ final class ThemeManager: NSObject, URLSessionDataDelegate {
       }
       
       if iconsNeedsResize {
-        // is minIconSizeWidth resonable fro suggestedSize?
+        // is minIconSizeWidth resonable from suggestedSize?
         if minIconSizeWidth != nil && minIconSizeWidth! <= CGFloat(suggestedSize)  {
           minIconSizeWidth = CGFloat(suggestedSize)
         }

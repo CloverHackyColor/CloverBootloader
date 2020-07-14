@@ -148,6 +148,13 @@
     *errorPtr  = [NSError errorWithDomain:domain
                                      code:6
                                  userInfo:userInfo];
+    
+    liq_result_destroy(quantization_result); // Must be freed only after you're done using the palette
+    liq_image_destroy(input_image);
+    liq_attr_destroy(handle);
+    
+    free(raw_8bit_pixels);
+    lodepng_state_cleanup(&state);
     return nil;
   }
   

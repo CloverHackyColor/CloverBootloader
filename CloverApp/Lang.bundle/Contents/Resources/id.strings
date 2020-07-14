@@ -158,6 +158,10 @@ Opsi ini tidak membuat partisi di MBR menjadi aktif.";
 
 "AptioMemoryFix.efi" = "Driver pilihan untuk membenahi masalah Memori pada firmware UEFI, misalnya AMI Aptio. Firmware lainnya mungkin juga kompatibel.";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "Driver HDA untuk memainkan Startup Sound ketika Boot. Atur terlebih dahulu perangkat dan Volume Audio melalui Startup sound output yang ada di menu Options. Tidak semua perangkat IOAudio didukung, butuh NVRAM aktif.";
 
 "FirmwareVolume.efi" = "Membuat FirmwareVolume dengan gambar cursor untuk FileVault2.";

@@ -305,12 +305,21 @@ final class CollectionViewItem: NSCollectionViewItem {
       let unknownSection = kind == .uefi ? kUnknownUEFISection : kUnknownBIOSSection
       if driver.state == .on && vc.sectionsUEFI.contains(unknownSection) {
         if sectionName == "UEFI/MemoryFix" {
-          uncheck(list: ["aptiomemory", "osxlowmem", "osxaptiofix"],
+          uncheck(list: ["aptiomemory", "osxlowmem", "osxaptiofix", "ocquirks", "openruntime"],
                   current: driverName,
                   kind: kind,
                   sectionName: unknownSection,
                   installer: installer)
         }
+      }
+      
+      // OcQuirks exception
+      if sectionName == "UEFI/MemoryFix" &&
+        kind == .uefi &&
+        (driverName.lowercased() == "ocquirks.efi" || driverName.lowercased() == "openruntime.efi") &&
+        driver.state == .on {
+        check(driver: "OcQuirks.efi", kind: kind, sectionName: sectionName, installer: vc)
+        check(driver: "OpenRuntime.efi", kind: kind, sectionName: sectionName, installer: vc)
       }
     } else if let vc = installer as? InstallerOutViewController {
       let sections = vc.sectionsUEFI
@@ -330,11 +339,51 @@ final class CollectionViewItem: NSCollectionViewItem {
       let unknownSection = kind == .uefi ? kUnknownUEFISection : kUnknownBIOSSection
       if driver.state == .on && vc.sectionsUEFI.contains(unknownSection) {
         if sectionName == "UEFI/MemoryFix" {
-          uncheck(list: ["aptiomemory", "osxlowmem", "osxaptiofix"],
+          uncheck(list: ["aptiomemory", "osxlowmem", "osxaptiofix", "ocquirks", "openruntime"],
                   current: driverName,
                   kind: kind,
                   sectionName: unknownSection,
                   installer: installer)
+        }
+      }
+      
+      // OcQuirks exception
+      if sectionName == "UEFI/MemoryFix" &&
+        kind == .uefi &&
+        (driverName.lowercased() == "ocquirks.efi" || driverName.lowercased() == "openruntime.efi") &&
+        driver.state == .on {
+        check(driver: "OcQuirks.efi", kind: kind, sectionName: sectionName, installer: vc)
+        check(driver: "OpenRuntime.efi", kind: kind, sectionName: sectionName, installer: vc)
+      }
+    }
+  }
+  
+  private func check(driver name: String,
+                     kind: EFIkind,
+                     sectionName: String,
+                     installer: NSViewController) {
+    if let vc = installer as? InstallerViewController {
+      let sections = vc.sectionsUEFI
+      let sectIndex : Int = sections.firstIndex(of: sectionName)!
+      let drivers = vc.driversUEFI[sectIndex]
+      
+      for (index, drv) in drivers.enumerated() {
+        if drv.src.lastPath == name {
+          if vc.driversUEFI[sectIndex][index].state == .off {
+            vc.driversUEFI[sectIndex][index].state = .on
+          }
+        }
+      }
+    } else if let vc = installer as? InstallerOutViewController {
+      let sections = vc.sectionsUEFI
+      let sectIndex : Int = sections.firstIndex(of: sectionName)!
+      let drivers = vc.driversUEFI[sectIndex]
+      
+      for (index, drv) in drivers.enumerated() {
+        if drv.src.lastPath == name {
+          if vc.driversUEFI[sectIndex][index].state == .off {
+            vc.driversUEFI[sectIndex][index].state = .on
+          }
         }
       }
     }

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-12 07:30+0300\n"
+"POT-Creation-Date: 2020-07-15 01:28+0200\n"
 "PO-Revision-Date: 2018-10-02 11:48+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
@@ -582,14 +582,14 @@ msgstr ""
 
 #. type: "FirmwareVolume.UEFI_description"
 #: Resources/templates/Localizable.strings:103
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Create FirmwareVolume with cursor images for FileVault2."
 
 #. type: "FSInject.UEFI_description"
 #: Resources/templates/Localizable.strings:104
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr "Provide injection of kernel extensions from Clover folder."
@@ -620,7 +620,7 @@ msgstr "UDF filesystem driver."
 
 #. type: "SMCHelper.UEFI_description"
 #: Resources/templates/Localizable.strings:109
-#: Resources/templates/Localizable.strings:165
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "Restore SMC keys left in NVRAM by FakeSMC."
@@ -703,14 +703,20 @@ msgstr "Create AppleEvent protocol for FileVault2."
 msgid "Create optional AppleGraphicsConfig protocol"
 msgstr "Create optional AppleGraphicsConfig protocol."
 
-#. type: "AudioDxe.UEFI_description"
+#. type: "OcQuirks.UEFI_description"
 #: Resources/templates/Localizable.strings:144
+#, no-wrap
+msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency"
+msgstr ""
+
+#. type: "AudioDxe.UEFI_description"
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid "HDA driver to play Startup Sound at boot time"
 msgstr ""
 
 #. type: "CsmVideoDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:145
+#: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -723,7 +729,7 @@ msgstr ""
 "Clover 可能無法啓動，可能會發生 系統喚醒 的問題。使用時，請注意相關問題。"
 
 #. type: "DataHubDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:149
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -733,7 +739,7 @@ msgstr ""
 "通常已啓用，但有時可能遺漏，可在螢幕 warning 中查看。"
 
 #. type: "EmuVariableUefi.UEFI_description"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
@@ -742,55 +748,55 @@ msgstr ""
 "建議只在 有問題時，才啓用 EmuVariableUefi。"
 
 #. type: "EnglishDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 msgstr "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 
 #. type: "Fat.UEFI_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "FAT filesystem driver."
 msgstr "FAT filesystem driver."
 
 #. type: "HashServiceFix.UEFI_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "Fix Hash support if absent in native UEFI BIOS"
 msgstr "Fix Hash support if absent in native UEFI BIOS."
 
 #. type: "HFSPlus.UEFI_description"
-#: Resources/templates/Localizable.strings:157
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid "Alternate HFS+ filesystem driver."
 msgstr "Alternate HFS+ filesystem driver."
 
 #. type: "NvmExpressDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "Driver for support NVM Express devices."
 msgstr "Driver for support NVM Express devices."
 
 #. type: "OsxAptioFix3Drv.UEFI_description"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:160
 #, no-wrap
 msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
 msgstr "Alternate driver (v3) to fix Memory problems on UEFI firmware. Do not use with other AptioFix together."
 
 #. type: "OsxAptioFixDrv.UEFI_description"
-#: Resources/templates/Localizable.strings:160
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Old 64-bits Driver to fix Memory problems on UEFI firmware such as AMI Aptio. Do not use with other AptioFix together."
 
 #. type: "OsxFatBinaryDrv.UEFI_description"
-#: Resources/templates/Localizable.strings:161
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
 msgstr "Driver for support FAT Binary executables for OS X 10.9 and older."
 
 #. type: "OsxLowMemFixDrv.UEFI_description"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
@@ -798,73 +804,73 @@ msgstr ""
 "為 OsxAptioFixDrv 的簡化版本，請勿與 OsxAptioFixDrv 同時使用。"
 
 #. type: "PartitionDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:164
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "64位，支持非常態的分割區配置，如 hybrid GPT/MBR 或 Apple Partition Map。"
 
 #. type: "Ps2MouseDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr "64位，PS/2 滑鼠 驅動。"
 
 #. type: "UsbKbDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:166
+#: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
 msgstr "Keyboard driver for boot UI support."
 
 #. type: "UsbMouseDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr "64位，USB 滑鼠 驅動。"
 
 #. type: "VBoxExt2.UEFI_description"
-#: Resources/templates/Localizable.strings:168
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "64位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
 
 #. type: "VBoxExt4.UEFI_description"
-#: Resources/templates/Localizable.strings:169
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr "64位，來自 Virtualbox 的 ext4 檔案系統驅動。"
 
 #. type: "VBoxHfs.UEFI_description"
-#: Resources/templates/Localizable.strings:170
+#: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "HFS+ filesystem driver."
 msgstr "HFS+ filesystem driver."
 
 #. type: "VBoxIso9600.UEFI_description"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ISO 9600 filesystem driver."
 msgstr "ISO 9600 filesystem driver."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:176
+#: Resources/templates/Localizable.strings:177
 #, no-wrap
 msgid "Themes"
 msgstr "開機主題"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:177
+#: Resources/templates/Localizable.strings:178
 #, no-wrap
 msgid "Select to install themes."
 msgstr "選擇安裝，開機時，顯示的背景主題。"
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:179
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "BlackGreenMoody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:180
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -874,13 +880,13 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/BGM。"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:183
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "embedded"
 msgstr "Embedded"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:184
+#: Resources/templates/Localizable.strings:185
 #, fuzzy, no-wrap
 #| msgid ""
 #| "embedded theme from Blackosx,\n"
@@ -893,13 +899,13 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/black_green。"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:187
+#: Resources/templates/Localizable.strings:188
 #, no-wrap
 msgid "metal"
 msgstr "Metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -909,13 +915,13 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "cesium_title"
-#: Resources/templates/Localizable.strings:191
+#: Resources/templates/Localizable.strings:192
 #, no-wrap
 msgid "cesium"
 msgstr ""
 
 #. type: "cesium_description"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:193
 #, fuzzy, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
@@ -928,14 +934,14 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "clovy_title"
-#: Resources/templates/Localizable.strings:195
+#: Resources/templates/Localizable.strings:196
 #, fuzzy, no-wrap
 #| msgid "Clover"
 msgid "Clovy"
 msgstr "Clover"
 
 #. type: "clovy_description"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:197
 #, fuzzy, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
@@ -948,13 +954,13 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:199
+#: Resources/templates/Localizable.strings:200
 #, no-wrap
 msgid "random"
 msgstr "Random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:201
 #, fuzzy, no-wrap
 #| msgid ""
 #| "random theme from Slice,\n"
@@ -967,13 +973,13 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/orange。"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:203
+#: Resources/templates/Localizable.strings:204
 #, no-wrap
 msgid "steampunkblack"
 msgstr "SteamPunk Black"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:205
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -983,13 +989,13 @@ msgstr ""
 "安裝位置 /EFI/CLOVER/themes/bootcamp。"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:207
+#: Resources/templates/Localizable.strings:208
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr "Clover 主題"
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:208
+#: Resources/templates/Localizable.strings:209
 #, fuzzy, no-wrap
 #| msgid ""
 #| "CloverThemeManager.app by blackosx,\n"
@@ -1004,13 +1010,13 @@ msgstr ""
 "Install to /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:214
+#: Resources/templates/Localizable.strings:215
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "安裝 RC scripts 到目標磁區"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:216
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1020,43 +1026,43 @@ msgstr ""
 "目標磁區必須是 可開機的 OSX 磁區。"
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:217
+#: Resources/templates/Localizable.strings:218
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "安裝全部 RC scripts 到全部可開機的 OSX 磁區"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:218
+#: Resources/templates/Localizable.strings:219
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "安裝全部 RC scripts 到全部內置可開機的 OSX 磁區。"
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:219
+#: Resources/templates/Localizable.strings:220
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "選擇安裝 RC Scripts"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:220
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disable sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:221
+#: Resources/templates/Localizable.strings:222
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "停用 mDNSResponder 休眠 proxy client 服務，可以避免系統休眠時，每小時自動喚醒。"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:226
+#: Resources/templates/Localizable.strings:227
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "安裝 Clover 系統偏好設定 面板"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:227
+#: Resources/templates/Localizable.strings:228
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

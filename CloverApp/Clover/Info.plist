@@ -101,7 +101,7 @@
 		</dict>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2019 CloverHackyColor. All rights reserved.</string>
+	<string>Copyright © 2019-2020 CloverHackyColor. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

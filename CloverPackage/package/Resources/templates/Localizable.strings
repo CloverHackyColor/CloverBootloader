@@ -141,6 +141,7 @@ off directory isn't loaded by Clover any how and this is only helpfull if you ha
 "AppleUITheme.UEFI_description" = "Create boot UI Themes support";
 "AptioInputFix.UEFI_description" = "Driver to fix input problems on UEFI firmware such as AMI Aptio.";
 "AptioMemoryFix.UEFI_description" = "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
+"OcQuirks.UEFI_description" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency.";
 "AudioDxe.UEFI_description" = "HDA driver to play Startup Sound at boot time";
 "CsmVideoDxe.UEFI_description" = "64bit video driver for Clover GUI allowing to choose more resolutions.
 It is based on CSM module in UEFI BIOS and required CSM will be enabled.

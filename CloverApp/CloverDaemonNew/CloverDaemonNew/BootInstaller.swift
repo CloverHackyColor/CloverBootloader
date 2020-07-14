@@ -411,6 +411,7 @@ final class Installer: NSObject {
     
     let UEFIdest = targetVol.addPath("EFI/CLOVER/drivers/UEFI")
     let BIOSdest = targetVol.addPath("EFI/CLOVER/drivers/BIOS")
+  
     if let UEFI = CloverappDict["UEFI"] as? [String] {
       for dpath in UEFI {
         if !copyReplace(src: dpath,
@@ -418,6 +419,18 @@ final class Installer: NSObject {
                         attr: attributes,
                         log: true) {
           exit("Error: cannot copy '\(dpath)' to destination.")
+        }
+        if dpath.lastPath == "OcQuirks.efi" {
+          let quirkPlistSrc = dpath.deletingLastPath.addPath("OcQuirks.plist")
+          let quirkPlistDest = UEFIdest.addPath("OcQuirks.plist")
+          if !fm.fileExists(atPath: quirkPlistDest) && fm.fileExists(atPath: quirkPlistSrc) {
+            if !copyReplace(src: quirkPlistSrc,
+                            dst: quirkPlistDest,
+                            attr: attributes,
+                            log: true) {
+              exit("Error: cannot copy '\(quirkPlistSrc)' to destination.")
+            }
+          }
         }
       }
     }

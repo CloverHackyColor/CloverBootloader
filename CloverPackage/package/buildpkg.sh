@@ -1149,26 +1149,37 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Memo
     do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}.UEFI"
-        ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
-        find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
-        fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
+   
+        if [[ "$driver" != OpenRuntime.efi ]]; then
+          if [[ "$driver" == OcQuirks.efi ]]; then
+            ditto --noextattr --noqtn --arch i386 \
+            "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OpenRuntime.efi" \
+            "${PKG_BUILD_DIR}/${driverName}/Root/"
+          fi
+          ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
+          find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
+          fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
-        packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+          packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
 
-        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
-                           --subst="DRIVER_DIR=$DRIVERS_UEFI" \
-                           --subst="DRIVER_NAME=$driver" \
-                           MemoryFix
+          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
+                             --subst="DRIVER_DIR=$DRIVERS_UEFI" \
+                             --subst="DRIVER_NAME=$driver" \
+                             MemoryFix
 
-        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
-                           --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
+          addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
+                             --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
 
-
-        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
-        addChoice --group="MemoryFix64UEFI"  --title="$driverName"                \
-                  --start-selected="choicePreviouslySelected('$packageRefId')"  \
-                  --pkg-refs="$packageRefId"  "${driverName}"
-        rm -R -f "${PKG_BUILD_DIR}/${driverName}"
+          if [[ "$driver" == OcQuirks.efi ]]; then
+            cp -R "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OcQuirks.plist" \
+            "${PKG_BUILD_DIR}/${driverName}"/Scripts/
+          fi
+          buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+          addChoice --group="MemoryFix64UEFI"  --title="$driverName"                \
+                    --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                    --pkg-refs="$packageRefId"  "${driverName}"
+          rm -R -f "${PKG_BUILD_DIR}/${driverName}"
+        fi
     done
 fi
 # End build FileVault drivers-x64UEFI packages

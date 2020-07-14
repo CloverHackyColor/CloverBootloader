@@ -153,6 +153,10 @@ This choice will not activate any partition in MBR.";
 
 "AptioMemoryFix.efi" = "Trenutno se preporučuje 64-bitni upravljački program za rešavanje problema s memorijom u UEFI firmware-u AMI Aptio. Ovaj upravljački program NE sme da se koristiti s drugim upravljačkim programima AptioFix.";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "HDA Dajver koji podržava zvuki pri pokretanju.
 Konfigurisanje zvuka pokretanja putem izbornika Option, uključujući:
 Glasnoća i audio uređaj (samo za podržane audio uređaje).";

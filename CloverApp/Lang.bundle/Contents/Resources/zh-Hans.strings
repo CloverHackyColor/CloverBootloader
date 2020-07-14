@@ -153,6 +153,10 @@ boot0ss (boot0 签名扫描) 引导器 优先引导第一个含 有效 PBR 签�
 
 "AptioMemoryFix.efi" = "提供 UEFI 固件的 内存问题修正, 例如 AMI Aptio。不要与其他 内存修正驱动 共同使用。";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "HDA 驱动, 在使用 Clover 引导时播放 启动音。
 在 Option 菜单中 Startup sound output 进行配置, 包括:
 音量 和 输出设备 (仅限 受支持的 IOAudio 设备)。";

@@ -154,6 +154,10 @@ Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron,
 
 "AptioMemoryFix.efi" = "Driver preferito che risolve i problemi di memoria sul firmware UEFI come AMI Aptio bios.";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "Driver HDA per il suono al boot.";
 
 "FirmwareVolume.efi" = "Crea il FirmwareVolume con ‘cursor images’ per FileVault2.";

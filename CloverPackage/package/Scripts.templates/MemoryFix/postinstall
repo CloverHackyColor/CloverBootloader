@@ -19,14 +19,36 @@ driver_dir="@DRIVER_DIR@"
 driver_name="@DRIVER_NAME@"
 
 if [[ -d "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir" ]]; then
-  cd "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir"
-  for driver in *.efi
-  do
-    low=$(echo "${driver}" | tr '[:upper:]' '[:lower:]')
-    if [[ "$driver" != $driver_name ]] && \
-       [[ "$low" == *aptiofix* || "$low" == *memfix*  || "$low" == *memoryfix* ]]; then
-      echo "Removing ${driver_dir}/${driver} because $driver_name is installed" >> "$install_log"
-      rm -f "${driver}"
+  if [[ "$driver" == OcQuirks.efi ]]; then
+    # copy OcQuirks.plist if doesn't exist
+    if [[ ! -f "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir/OcQuirks.plist" ]]; then
+      if [[ -f ./OcQuirks.plist ]]; then
+        cp -R ./OcQuirks.plist "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir"/
+      fi
     fi
-  done
+  fi
+  
+  cd "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir"
+  if [[ "$driver" == OcQuirks.efi ]]; then
+    for driver in *.efi
+    do
+      low=$(echo "${driver}" | tr '[:upper:]' '[:lower:]')
+      if [[ "$driver" != $driver_name ]] && \
+      [[ "$low" == *aptiofix* || "$low" == *memfix*  || "$low" == *memoryfix* ]]; then
+        echo "Removing ${driver_dir}/${driver} because $driver_name is installed" >> "$install_log"
+        rm -f "${driver}"
+      fi
+    done
+  else
+    for driver in *.efi
+    do
+      low=$(echo "${driver}" | tr '[:upper:]' '[:lower:]')
+      if [[ "$driver" != $driver_name ]] && \
+      [[ "$low" == *aptiofix* || "$low" == *memfix*  || "$low" == *memoryfix* \
+      || "$low" == *ocquirks* || "$low" == *openruntime* ]]; then
+        echo "Removing ${driver_dir}/${driver} because $driver_name is installed" >> "$install_log"
+        rm -f "${driver}"
+      fi
+    done
+  fi
 fi

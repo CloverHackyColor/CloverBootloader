@@ -43,6 +43,7 @@ NSComboBoxDataSource {
   @IBOutlet var installButton : NSButton!
   @IBOutlet var unistallButton : NSButton!
   @IBOutlet var optimizeButton : NSButton!
+  @IBOutlet var refreshButton : NSButton!
   
   var isPngTheme : Bool = false
   var loaded : Bool = false
@@ -96,6 +97,10 @@ NSComboBoxDataSource {
       self.sidebar.usesStaticContents = true
     }
     
+    self.installedThemesCheckBox.isEnabled = false
+    self.installedThemesCheckBox.isHidden = true
+    self.installButton.isEnabled = false
+    self.installButton.isHidden = true
     self.targetPop.removeAllItems()
     self.populateTargets()
     
@@ -105,6 +110,7 @@ NSComboBoxDataSource {
           if let target = i.representedObject as? String {
             if bootDevice == target {
               self.targetPop.select(i)
+              self.targetPopPressed(self.targetPop)
               self.targetVolume = mountPoint
               break
             }
@@ -198,6 +204,18 @@ NSComboBoxDataSource {
       self.sidebar.noteNumberOfRowsChanged()
       AppSD.installedThemes.removeAll()
       self.themes.removeAll()
+      
+      if (self.targetVolume != nil && fm.fileExists(atPath: self.targetVolume!.addPath("EFI/CLOVER/themes"))) {
+        self.installedThemesCheckBox.isEnabled = true
+        self.installedThemesCheckBox.isHidden = false
+        self.installButton.isHidden = false
+        self.installButton.isEnabled = true
+      } else {
+        self.installButton.isHidden = true
+        self.installButton.isEnabled = false
+        self.installedThemesCheckBox.isEnabled = false
+        self.installedThemesCheckBox.isHidden = true
+      }
      
       if sender.state == .on {
         if (self.targetVolume != nil && fm.fileExists(atPath: self.targetVolume!)) {
@@ -416,6 +434,7 @@ NSComboBoxDataSource {
         do {
           if fm.fileExists(atPath: themePath) {
             try fm.removeItem(atPath: themePath)
+            self.installedThemesCheckBox.isEnabled = false
             self.unistallButton.isEnabled = false
             self.unistallButton.animator().isHidden = true
             NSSound(contentsOfFile: "/System/Library/Components/CoreAudio.component/Contents/SharedSupport/SystemSounds/finder/empty trash.aif", byReference: false)?.play()
@@ -463,7 +482,7 @@ NSComboBoxDataSource {
       self.targetPop.isEnabled = false
       self.nameBox.isEnabled = false
       self.installedThemesCheckBox.isEnabled = false
-    
+      
       self.manager?.download(theme: theme,
                              down: .complete,
                              completion: { (path) in
@@ -759,9 +778,13 @@ NSComboBoxDataSource {
   }
   
   @IBAction func targetPopPressed(_ sender: FWPopUpButton!) {
+    self.installedThemesCheckBox.isEnabled = false
+    self.installedThemesCheckBox.isHidden = true
+    self.installButton.isEnabled = false
+    self.installButton.isHidden = true
+    
     if let disk = sender?.selectedItem?.representedObject as? String {
       if !isMountPoint(path: disk) {
-        self.installButton.isEnabled = false
         DispatchQueue.global(priority: .background).async(execute: { () -> Void in
           let cmd = "diskutil mount \(disk)"
           let msg = String(format: "Clover wants to mount %@", disk)
@@ -791,13 +814,10 @@ NSComboBoxDataSource {
                   self.showInstalledThemes(self.installedThemesCheckBox)
                 }
               }
-              DispatchQueue.main.async {
-                self.installButton.isEnabled = true
-              }
             } else {
               DispatchQueue.main.async {
                 NSSound.beep()
-                self.installButton.isEnabled = true
+                //self.installButton.isEnabled = true
                 self.showInstalledThemes(self.installedThemesCheckBox)
               }
             }
@@ -812,8 +832,6 @@ NSComboBoxDataSource {
       }
     } else {
       self.targetVolume = nil
-      self.unistallButton.isEnabled = false
-      self.unistallButton.isHidden = true
       self.showInstalledThemes(self.installedThemesCheckBox)
     }
   }

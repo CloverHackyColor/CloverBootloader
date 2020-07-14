@@ -8,7 +8,7 @@
 
 import Foundation
 
-let cmdVersion = "1.0.5"
+let cmdVersion = "1.0.6"
 let savedNVRAMPath = "/tmp/NVRAM_saved"
 let NVRAMSavedToRoot = "/tmp/NVRAM_savedToRoot"
 
@@ -74,7 +74,7 @@ func saveNVRAM(nvram: NSMutableDictionary, volume: String) {
   }
 }
 
-func disableInsexing(for volume: String) {
+func disableIndexing(for volume: String) {
   if fm.fileExists(atPath: volume) {
     var file = volume.addPath(".metadata_never_index")
     if !fm.fileExists(atPath: file) {
@@ -124,7 +124,7 @@ func main() {
     var disk : String? = nil
     var espList = [String]()
     
-    /* find all internal ESP in the System as we don't want
+    /* find all internal ESPs in the System as we don't want
      to save the nvram in a USB pen drive (user will lost the nvram if not plugged in)
      */
     for esp in getAllESPs() {
@@ -133,10 +133,10 @@ func main() {
       }
     }
     
-    // find the boot partition device and check if it is a ESP
+    // find the boot partition device and check if it is an ESP
     if let bd = findBootPartitionDevice() {
       if espList.contains(bd) {
-        // boot device is a ESP :-)
+        // boot device is an ESP :-)
         disk = bd
         log("Detected ESP \(bd) as boot device.")
       }
@@ -162,9 +162,9 @@ func main() {
         log("\(disk!) was already mounted.")
         saveNVRAM(nvram: nvram, volume: mp)
         if espList.contains(disk!) {
-          disableInsexing(for: mp)
+          disableIndexing(for: mp)
         }
-        return
+        return // as the disk was found already mounted
       }
       
       if !mounted {
@@ -179,7 +179,7 @@ func main() {
                 mounted = true
                 saveNVRAM(nvram: nvram, volume: mp)
                 if espList.contains(disk!) {
-                  disableInsexing(for: mp)
+                  disableIndexing(for: mp)
                 }
                 sleep(1)
                 umount(disk: disk!, force: true)
@@ -189,7 +189,7 @@ func main() {
           }
         }
       }
-      
+
       if !mounted {
         log("mount failed for \(disk!).")
         saveNVRAM(nvram: nvram, volume: "/")

@@ -148,6 +148,10 @@ boot2 (Na raiz da partição) para carregar /EFI/CLOVER/CLOVERIA32.efi ou CLOVER
 
 "AptioMemoryFix.efi" = "Driver preferido para corrigir problemas de memória no firmware UEFI, como o AMI Aptio. Não use com outro AptioFix.";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "Driver HDA para reproduzir o som durante a inicialização do Clover.
 Configure-o através da saída de som de inicialização no menu Opções, incluindo: Dispositivo de volume e áudio (apenas para dispositivos IOAudio suportados).";
 

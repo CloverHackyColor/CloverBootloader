@@ -153,6 +153,10 @@ Diese Auswahl wird keine Partition im MBR aktivieren.";
 
 "AptioMemoryFix.efi" = "Aktuell empfohlener 64Bit-Treiber um Speicherprobleme in der UEFI-Firmware von AMI Aptio zu beheben. Dieser Treiber sollte NICHT mit anderen AptioFix Treibern verwendet werden.";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "HDA Treiber zur Unterstützung eines Startup Ton.
 Startup Ton über das Option Menü konfigurieren, inklusiv:
 Lautstärke und Audio Gerät (nur für unterstützte Audio-Geräte).";

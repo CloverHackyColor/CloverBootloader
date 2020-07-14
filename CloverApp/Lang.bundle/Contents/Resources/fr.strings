@@ -153,6 +153,10 @@ Ce choix n'activera aucune partition dans le MBR.";
 
 "AptioMemoryFix.efi" = "Pilote recommandé pour corriger les problemes memoires sur firmware UEFI comme AMI Aptio. Ne pas utiliser en assocication avec d'autres AptioFix.";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "Pilote HDA pour le son de depart durant le demarrage de Clover.
 A configurer via son de Démarrage de sortie dans le menu des options, y compris:
 Volume et périphériques Audio (seulement pour les appareils compatible IOAudio).";

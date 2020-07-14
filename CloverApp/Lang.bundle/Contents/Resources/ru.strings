@@ -151,6 +151,10 @@ boot0ss (boot0 Signature Scanning) ищет первый раздел типа E
 "AptioMemoryFix.efi" = "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторых других UEFI.
 Можно ставить совместно с другими AptioFix, работает более приоритетный";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "Звуковой драйвер для исполнения гимна при запуске Кловера";
 
 "FirmwareVolume.efi" = "Поддержка протокола FirmwareVolume для FileVault 2.";

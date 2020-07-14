@@ -148,6 +148,10 @@
 		<string>kEmptyLine**#</string>
 		<string>AptioMemoryFix.efi</string>
 		<string>kEmptyLine**#</string>
+		<string>OcQuirks.efi</string>
+		<string>kEmptyLine**#</string>
+		<string>OpenRuntime.efi</string>
+		<string>kEmptyLine**#</string>
 		<string>AudioDxe.efi</string>
 		<string>kEmptyLine**#</string>
 		<string>FirmwareVolume.efi</string>
@@ -334,6 +338,10 @@
 	</array>
 	<key>Translations</key>
 	<dict>
+		<key>OcQuirks.efi</key>
+		<string>A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.</string>
+		<key>OpenRuntime.efi</key>
+		<string>Runtime dependency for OcQuirks.efi. </string>
 		<key>&apos;%@&apos; is already present in the Dictionary. Do you want to undo the editing or replace the existing key?</key>
 		<string>&apos;%@&apos; is already present in the Dictionary. Do you want to undo the editing or replace the existing key?</string>
 		<key>*Disable Sleep Proxy Client</key>

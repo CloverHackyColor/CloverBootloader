@@ -153,6 +153,10 @@ boot0ss (boot0 시그내쳐 스캐닝) 부트로더는 EFI/FAT32/HFS의 첫번�
 
 "AptioMemoryFix.efi" = "AMI Aptio와 같은 UEFI 펌웨어에서 메모리 문제를 해결하기 위해 선호되는 64비트 드라이버";
 
+"OcQuirks.efi" = "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants.";
+
+"OpenRuntime.efi" = "Runtime dependency for OcQuirks.efi.";
+
 "AudioDxe.efi" = "시동시 시동 음을 재생하는 HDA 드라이버.
 옵션 메뉴에서 시동 음의 출력 설정:
 볼륨 및 오디오 장치 (IOAudio를 지원하는 장치만 해당).";

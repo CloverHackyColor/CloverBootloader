@@ -161,24 +161,7 @@ final class SettingsViewController:
     self.themeUserCBox.numberOfVisibleItems = authors.count
     self.themeUserCBox.completes = true
     
-    let themeManagerIndexDir = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex/\(AppSD.themeUser)_\(AppSD.themeRepo)")
-    
-    let tm = ThemeManager(user: AppSD.themeUser,
-                          repo: AppSD.themeRepo,
-                          basePath: themeManagerIndexDir,
-                          indexDir: themeManagerIndexDir,
-                          delegate: nil)
-
-    let indexedThemes = tm.getIndexedThemesForAllRepositories()
-    AppSD.themes = indexedThemes.sorted()
-    
-    if !AppSD.themes.contains("embedded") {
-      AppSD.themes.append("embedded")
-    }
-    
-    if !AppSD.themes.contains("random") {
-      AppSD.themes.append("random")
-    }
+    self.getThemeList()
 
     self.themeBox.delegate = self
     self.themeBox.dataSource = self
@@ -232,6 +215,43 @@ final class SettingsViewController:
     
     if !fm.fileExists(atPath: Bundle.main.sharedSupportPath!.addPath("CloverV2/EFI")) {
       self.searchUpdate()
+    }
+  }
+  
+  func getThemeList() {
+    var t : [String] = [String]()
+    let bootDeviceMountPoint = getMountPoint(from: self.bootDevice ?? "")
+    if bootDeviceMountPoint != nil && fm.fileExists(atPath: bootDeviceMountPoint!.addPath("EFI/CLOVER/themes")){
+      let sdirs = gGetDirs(at: bootDeviceMountPoint!.addPath("EFI/CLOVER/themes"))
+      for dir in sdirs {
+        let tp = bootDeviceMountPoint!.addPath("EFI/CLOVER/themes").addPath(dir)
+        if fm.fileExists(atPath: tp.addPath("theme.plist")) ||
+          fm.fileExists(atPath: tp.addPath("theme.svg")) {
+          t.append(dir)
+        }
+      }
+    }
+
+    if t.count == 0 {
+      let themeManagerIndexDir = NSHomeDirectory().addPath("Library/Application Support/CloverApp/Themeindex/\(AppSD.themeUser)_\(AppSD.themeRepo)")
+      
+      let tm = ThemeManager(user: AppSD.themeUser,
+                            repo: AppSD.themeRepo,
+                            basePath: themeManagerIndexDir,
+                            indexDir: themeManagerIndexDir,
+                            delegate: nil)
+      
+      t = tm.getIndexedThemesForAllRepositories()
+    }
+    
+    AppSD.themes = t.sorted()
+    
+    if !AppSD.themes.contains("embedded") {
+      AppSD.themes.append("embedded")
+    }
+    
+    if !AppSD.themes.contains("random") {
+      AppSD.themes.append("random")
     }
   }
   
@@ -461,6 +481,7 @@ final class SettingsViewController:
         }
       }
     }
+    self.getThemeList()
   }
   
   func searchESPDisks() {
@@ -829,7 +850,7 @@ final class SettingsViewController:
       if isXcode {
         alert.informativeText = "The Installer should not run from \(path) because it can reuse old resources like old built dependencies (in the DerivedData directory) instead ones from the app bundle in which you may had made changes.\nThis appear to be a bug in the Xcode build system, so please move Clover.app somewhere else for real installations, unless you are a Developer and you're just testing."
       } else {
-        alert.informativeText = "The Installer cannot run from the \(path) and surely it will fail the installation.\nPlease move Clover.app somewhere else or use\n\nsudo spctl --master-disable\n\nThanks.\n\nP.S. Clover.app is not code signed because this require a paid Apple Developer certificate We cannot effort. If you have doubs, officiale releases are here:\n\n https://github.com/CloverHackyColor/CloverBootloader/releases\n\n..and you can build the app by your self if you prefear as this project is completely open source!"
+        alert.informativeText = "The Installer cannot run from the \(path) and surely it will fail the installation.\nPlease move Clover.app somewhere else or use\n\nsudo spctl --master-disable\n\nThanks.\n\nP.S. Clover.app is not code signed because this require a paid Apple Developer certificate We cannot effort. If you have doubts, official releases are here:\n\n https://github.com/CloverHackyColor/CloverBootloader/releases\n\n..and you can build the app by your self if you prefear as this project is completely open source!"
       }
       
       if isXcode {
@@ -1154,7 +1175,7 @@ final class SettingsViewController:
     }
     
     
-    // Time interval is what user defines less time elapsed
+    // Time interval is what user defines - time elapsed
     if ti > 0 {
       let lastCheckDate : Date = (UDs.object(forKey: kLastSearchUpdateDateKey) as? Date) ?? Date()
       let secElapsed = Date().timeIntervalSinceReferenceDate - lastCheckDate.timeIntervalSinceReferenceDate

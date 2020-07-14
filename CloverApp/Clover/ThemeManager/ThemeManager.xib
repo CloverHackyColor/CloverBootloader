@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15702" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15702"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="15702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,11 +24,11 @@
                     <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="76" horizontalPageScroll="10" verticalLineScroll="76" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r0K-Ss-e4a">
                         <rect key="frame" x="5" y="20" width="151" height="461"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <clipView key="contentView" ambiguous="YES" drawsBackground="NO" copiesOnScroll="NO" id="YEz-5q-kQJ">
+                        <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="YEz-5q-kQJ">
                             <rect key="frame" x="1" y="1" width="149" height="459"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" ambiguous="YES" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="73" viewBased="YES" id="ydq-wg-aj2">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="73" viewBased="YES" id="ydq-wg-aj2">
                                     <rect key="frame" x="0.0" y="0.0" width="149" height="459"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="2" height="3"/>
@@ -37,7 +37,6 @@
                                     <tableColumns>
                                         <tableColumn identifier="column1" width="147" minWidth="40" maxWidth="1000" id="SqG-sb-peF">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
-                                                <font key="font" metaFont="controlContent" size="11"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                             </tableHeaderCell>
@@ -86,7 +85,7 @@
                         <rect key="frame" x="162" y="74" width="579" height="14"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" title="Description:" id="VVK-qM-R76">
-                            <font key="font" metaFont="controlContent" size="11"/>
+                            <font key="font" metaFont="label" size="11"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -98,7 +97,7 @@
                         <rect key="frame" x="162" y="51" width="579" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingTail" title="Author:" id="nVY-gj-ELR">
-                            <font key="font" metaFont="controlContent" size="11"/>
+                            <font key="font" metaFont="label" size="11"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -223,6 +222,7 @@
                 <outlet property="installedThemesCheckBox" destination="qNn-1b-hdX" id="7cy-kq-gen"/>
                 <outlet property="nameBox" destination="1Be-Yl-lqT" id="STE-Aj-xum"/>
                 <outlet property="optimizeButton" destination="PtQ-Pf-Nip" id="4pd-Tf-UDz"/>
+                <outlet property="refreshButton" destination="x6y-uP-1AE" id="PNp-rr-cbb"/>
                 <outlet property="sidebar" destination="ydq-wg-aj2" id="dMd-2Y-AFt"/>
                 <outlet property="spinner" destination="tiZ-sK-mNx" id="jY2-rJ-ECs"/>
                 <outlet property="targetPop" destination="bLz-we-3A0" id="EcP-hC-Wbm"/>
