@@ -81,7 +81,9 @@ PutNvramPlistToRtVars (VOID);
 
 VOID
 GetSmcKeys(BOOLEAN WriteToSMC);
-
+#if CHECK_SMC
+VOID DumpSmcKeys();
+#endif
 
 EFI_STATUS
 SetStartupDiskVolume (

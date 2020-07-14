@@ -495,7 +495,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   }
   FreePool(Name);
 }
-/*
+#if CHECK_SMC
 VOID DumpSmcKeys()
 {
   if (!gAppleSmc || !gAppleSmc->DumpData) {
@@ -503,7 +503,7 @@ VOID DumpSmcKeys()
   }
   gAppleSmc->DumpData(gAppleSmc);
 }
-*/
+#endif
 
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID
