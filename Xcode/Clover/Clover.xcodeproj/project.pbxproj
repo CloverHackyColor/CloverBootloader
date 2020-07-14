@@ -2181,6 +2181,7 @@
 		A51C784621E0981C001385A7 /* HdaControllerInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerInfo.c; sourceTree = "<group>"; };
 		A51C784721E0981C001385A7 /* HdaControllerMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerMem.c; sourceTree = "<group>"; };
 		A51C784821E0981C001385A7 /* HdaModels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaModels.c; sourceTree = "<group>"; };
+		A52212DA24BD80EF00DAB7D6 /* OcMemoryLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcMemoryLib.h; sourceTree = "<group>"; };
 		A523130F2448792B00421FB2 /* image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = image.h; sourceTree = "<group>"; };
 		A52313102448B12A00421FB2 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		A52313112448B12A00421FB2 /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
@@ -16890,6 +16891,7 @@
 				A5C3246524B5022F004E20CC /* OcDevicePathLib.h */,
 				A5C3246624B5022F004E20CC /* OcFileLib.h */,
 				A5C3247524B5022F004E20CC /* OcGuardLib.h */,
+				A52212DA24BD80EF00DAB7D6 /* OcMemoryLib.h */,
 				A5C3246324B5022F004E20CC /* OcMiscLib.h */,
 				A5C330D824B72CAD004E20CC /* OcOSInfoLib.h */,
 				A5C3247124B5022F004E20CC /* OcSerializeLib.h */,

@@ -233,7 +233,7 @@ ShouldUseCustomSlideOffset (
   )
 {
   EFI_PHYSICAL_ADDRESS   AllocatedMapPages;
-  UINTN                  MemoryMapSize = NULL;
+  UINTN                  MemoryMapSize = 0;
   EFI_MEMORY_DESCRIPTOR  *MemoryMap = NULL;
   EFI_MEMORY_DESCRIPTOR  *Desc;
   UINTN                  MapKey = 0;
