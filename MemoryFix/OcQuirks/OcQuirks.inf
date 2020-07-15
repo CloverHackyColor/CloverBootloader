@@ -19,16 +19,17 @@
   OcBootManagementLib
   MachoLib
   OcOSInfoLib
-  OcStorageLib
+#  OcStorageLib
   OcConsoleLib
-  OcSerializeLib
-  OcTemplateLib
+#  OcSerializeLib
+#  OcTemplateLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
 
 [Protocols]
   gEfiSimpleFileSystemProtocolGuid
   gEfiLoadedImageProtocolGuid
+  gOcQuirksProtocolGuid
 
 [Sources]
   OcQuirks.c

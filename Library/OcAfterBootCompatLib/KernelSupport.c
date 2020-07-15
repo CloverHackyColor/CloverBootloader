@@ -225,7 +225,7 @@ PerformRtMemoryVirtualMapping (
         Desc->NumberOfPages,
         Desc->PhysicalStart
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         RUNTIME_DEBUG ((DEBUG_ERROR, "OCABC: RT mapping failure - %r\n", Status));
         return EFI_OUT_OF_RESOURCES;
       }
@@ -358,9 +358,9 @@ AppleMapPrepareForBooting (
     //
     DTInit ((VOID *)(UINTN) *BA.DeviceTreeP, BA.DeviceTreeLength);
     Status = DTLookupEntry (NULL, "/chosen", &Chosen);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = DTGetProperty (Chosen, "boot-args", (VOID **) &ArgsStr, &ArgsSize);
-      if (!EFI_ERROR (Status) && ArgsSize > 0) {
+      if (!EFI_ERROR(Status) && ArgsSize > 0) {
         OcRemoveArgumentFromCmd (ArgsStr, "-s");
       }
     }
@@ -500,7 +500,7 @@ AppleMapPrepareMemoryPool (
     BootCompat->ServicePtrs.GetMemoryMap
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "OCABC: Memory pool allocation failure - %r\n", Status));
   }
 }
@@ -546,7 +546,7 @@ AppleMapPrepareBooterState (
         GetMemoryMap,
         NULL
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((
           DEBUG_ERROR,
           "OCABC: Failed to allocate system table memory - %r\n",

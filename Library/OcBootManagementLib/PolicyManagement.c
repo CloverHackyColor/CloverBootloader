@@ -58,7 +58,7 @@ OcGetDevicePolicyType (
   }
 
   Status = gBS->HandleProtocol (Handle, &gEfiDevicePathProtocolGuid, (VOID **) &DevicePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return 0;
   }
 
@@ -389,7 +389,7 @@ OcGetAppleBootLoadedImage (
     (VOID **)&LoadedImage
     );
 
-  if (!EFI_ERROR (Status)
+  if (!EFI_ERROR(Status)
     && LoadedImage->FilePath != NULL
     && (OcGetBootDevicePathType (LoadedImage->FilePath, NULL, NULL) & OC_BOOT_APPLE_ANY) != 0) {
     return LoadedImage;

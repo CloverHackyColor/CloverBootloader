@@ -513,7 +513,7 @@ typedef struct {
   // ACPI/PATCHED/AML
   UINT32                  DisabledAMLCount;
   CHAR16                  **DisabledAML;
-  CHAR8                   **PatchDsdtLabel; //yyyy
+  CHAR8                   **PatchDsdtLabel;
   CHAR8                   **PatchDsdtTgt;
   INPUT_ITEM              *PatchDsdtMenuItem;
 
@@ -529,6 +529,9 @@ typedef struct {
   UINT8  flagstate[32];
 
   DEV_PROPERTY            *ArbProperties;
+  
+  UINTN QuirksMask;
+  UINTN MaxSlide;
 
 } SETTINGS_DATA;
 

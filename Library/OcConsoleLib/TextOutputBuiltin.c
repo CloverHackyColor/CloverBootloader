@@ -298,7 +298,7 @@ FlushCursor (
     0
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return;
   }
 
@@ -422,7 +422,7 @@ AsciiTextReset (
     (VOID **) &mGraphicsOutput
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->RestoreTPL (OldTpl);
     return EFI_DEVICE_ERROR;
   }
@@ -433,7 +433,7 @@ AsciiTextReset (
   mForegroundColor.Raw     = mGraphicsEfiColors[ARRAY_SIZE (mGraphicsEfiColors) / 2 - 1];
 
   Status = RenderResync (This);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     gBS->RestoreTPL (OldTpl);
     return Status;
   }
@@ -468,7 +468,7 @@ AsciiTextOutputString (
   //
   if (mConsoleGopMode != mGraphicsOutput->Mode->Mode) {
     Status = RenderResync (This);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return Status;
     }
@@ -589,7 +589,7 @@ AsciiTextQueryMode (
 
   if (mConsoleGopMode != mGraphicsOutput->Mode->Mode) {
     Status = RenderResync (This);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return Status;
     }
@@ -627,7 +627,7 @@ AsciiTextSetMode (
     OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
     Status = RenderResync (This);
     gBS->RestoreTPL (OldTpl);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }
@@ -656,7 +656,7 @@ AsciiTextSetAttribute (
 
   if (mConsoleGopMode != mGraphicsOutput->Mode->Mode) {
     Status = RenderResync (This);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return Status;
     }
@@ -703,7 +703,7 @@ AsciiTextClearScreen (
 
   if (mConsoleGopMode != mGraphicsOutput->Mode->Mode) {
     Status = RenderResync (This);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return Status;
     }
@@ -761,7 +761,7 @@ AsciiTextSetCursorPosition (
 
   if (mConsoleGopMode != mGraphicsOutput->Mode->Mode) {
     Status = RenderResync (This);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return Status;
     }
@@ -800,7 +800,7 @@ AsciiTextEnableCursor (
 
   if (mConsoleGopMode != mGraphicsOutput->Mode->Mode) {
     Status = RenderResync (This);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->RestoreTPL (OldTpl);
       return Status;
     }
@@ -900,7 +900,7 @@ ConsoleControlInstall (
     (VOID *) &ConsoleControl
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     ConsoleControl->SetMode (ConsoleControl, EfiConsoleControlScreenGraphics);
 
     CopyMem (
@@ -936,7 +936,7 @@ OcUseBuiltinTextOutput (
     (VOID *) &mFontScale
     );
 
-  if (EFI_ERROR (Status) || mFontScale != 2) {
+  if (EFI_ERROR(Status) || mFontScale != 2) {
     mFontScale = 1;
   }
 
@@ -944,7 +944,7 @@ OcUseBuiltinTextOutput (
 
   Status = AsciiTextReset (&mAsciiTextOutputProtocol, TRUE);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCC: Cannot setup ASCII output - %r\n", Status));
     return;
   }

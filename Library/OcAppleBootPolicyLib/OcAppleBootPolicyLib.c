@@ -170,7 +170,7 @@ InternalFileExists (
     0
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FileHandle->Close (FileHandle);
     return EFI_SUCCESS;
   }
@@ -350,13 +350,13 @@ InternalGetBooterFromBlessedSystemFolderPath (
 
   FreePool (DevicePath);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: Blessed folder append failed - %r\n", Status));
     return Status;
   }
 
   Status = InternalFileExists (Root, BooterPath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: Blessed folder %s is missing - %r\n", BooterPath, Status));
     return EFI_NOT_FOUND;
   }
@@ -395,7 +395,7 @@ OcGetBooterFromPredefinedPathList (
       Root,
       Prefix != NULL ? &PathName[1] : &PathName[0]
       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_BULK_INFO,
         "OCBP: Predefined %s %s was found\n",
@@ -460,12 +460,12 @@ InternalGetApfsVolumeInfo (
                   &gEfiSimpleFileSystemProtocolGuid,
                   (VOID **) &FileSystem
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = FileSystem->OpenVolume (FileSystem, &Root);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -473,7 +473,7 @@ InternalGetApfsVolumeInfo (
 
   Root->Close (Root);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
 
@@ -518,7 +518,7 @@ InternalGetBooterFromApfsVolumePredefinedPathList (
     0
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: Missing partition %s on preboot - %r\n", VolumeDirectoryName, Status));
     return Status;
   } else {
@@ -611,7 +611,7 @@ InternalGetBooterFromApfsPredefinedPathList (
 
   DEBUG ((DEBUG_BULK_INFO, "OCBP: %u filesystems for APFS - %r\n", (UINT32) NumberOfHandles, Status));
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -870,17 +870,17 @@ InternalGetApfsVolumeHandle (
                   (VOID **) &FileSystem
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = FileSystem->OpenVolume (FileSystem, &Root);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = InternalGetApfsSpecialFileInfo (Root, NULL, &ContainerInfo);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // FIXME: ApfsVolumeHandle is only returned when a predefined path exists
     //
@@ -928,20 +928,20 @@ OcBootPolicyGetBootFile (
                   (VOID **) &FileSystem
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = FileSystem->OpenVolume (FileSystem, &Root);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = InternalGetBooterFromBlessedSystemFilePath (Root, FilePath);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = InternalGetBooterFromBlessedSystemFolderPath (Device, Root, FilePath);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = OcGetBooterFromPredefinedPathList (
                  Device,
                  Root,
@@ -1004,19 +1004,19 @@ OcBootPolicyGetBootFileEx (
                   &gEfiSimpleFileSystemProtocolGuid,
                   (VOID **) &FileSystem
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: Missing filesystem - %r\n", Status));
     return Status;
   }
 
   Status = FileSystem->OpenVolume (FileSystem, &Root);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: Invalid root volume - %r\n", Status));
     return Status;
   }
 
   Status = InternalGetApfsSpecialFileInfo (Root, &VolumeInfo, &ContainerInfo);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = EFI_NOT_FOUND;
     if ((VolumeInfo->Role & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0) {
       TmpStatus = InternalGetBooterFromBlessedSystemFilePath (Root, FilePath);
@@ -1046,9 +1046,9 @@ OcBootPolicyGetBootFileEx (
     FreePool (ContainerInfo);
   } else {
     Status = InternalGetBooterFromBlessedSystemFilePath (Root, FilePath);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = InternalGetBooterFromBlessedSystemFolderPath (Device, Root, FilePath);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         Status = OcGetBooterFromPredefinedPathList (
                    Device,
                    Root,
@@ -1107,12 +1107,12 @@ OcBootPolicyDevicePathToDirPath (
                   &DevicePath,
                   Device
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = InternalGetBootPathName (DevicePath, BootPathName);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1142,7 +1142,7 @@ OcBootPolicyDevicePathToDirPathAndApfsHandle (
     BootPathName,
     Device
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1188,7 +1188,7 @@ BootPolicyDevicePathToDirPath (
     Device,
     ApfsVolumeHandle
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *BootPathName     = NULL;
     *Device           = NULL;
     *ApfsVolumeHandle = NULL;
@@ -1257,7 +1257,7 @@ OcBootPolicyGetApfsRecoveryFilePath (
              &VolumeHandle
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: APFS recovery boot info failed - %r\n", Status));
     return EFI_NOT_FOUND;
   }
@@ -1277,7 +1277,7 @@ OcBootPolicyGetApfsRecoveryFilePath (
              &VolumeRole
              );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: APFS recovery volume info missing\n"));
     return EFI_NOT_FOUND;
   }
@@ -1290,7 +1290,7 @@ OcBootPolicyGetApfsRecoveryFilePath (
             &HandleBuffer
             );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_BULK_INFO, "OCBP: APFS recovery simple fs missing - %r\n", Status));
     return Status;
   }
@@ -1320,7 +1320,7 @@ OcBootPolicyGetApfsRecoveryFilePath (
       Status
       ));
 
-    if (EFI_ERROR (Status)
+    if (EFI_ERROR(Status)
       || VolumeRole2 != APPLE_APFS_VOLUME_ROLE_RECOVERY
       || !CompareGuid (&ContainerGuid2, &ContainerGuid)) {
       continue;
@@ -1331,12 +1331,12 @@ OcBootPolicyGetApfsRecoveryFilePath (
               &gEfiSimpleFileSystemProtocolGuid,
               (VOID **) &FileSystem
               );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
     Status = FileSystem->OpenVolume (FileSystem, Root);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1369,7 +1369,7 @@ OcBootPolicyGetApfsRecoveryFilePath (
       0
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       (*Root)->Close (*Root);
       FreePool (FullPathBuffer);
       continue;
@@ -1478,7 +1478,7 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
                   &HandleBuffer
                   );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1489,7 +1489,7 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
     Status = EFI_OUT_OF_RESOURCES;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (HandleBuffer);
 
     if (VolumeInfo != NULL) {
@@ -1514,7 +1514,7 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
                &VolumeInfo[NumberOfVolumeInfos].VolumeRole
                );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -1565,7 +1565,7 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
     Status = EFI_NOT_FOUND;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (HandleBuffer);
     FreePool (VolumeInfo);
     FreePool (ContainerGuids);
@@ -1587,12 +1587,12 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
                       &gEfiSimpleFileSystemProtocolGuid,
                       (VOID **) &FileSystem
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
       Status = FileSystem->OpenVolume (FileSystem, &Root);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -1621,7 +1621,7 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
           0
           );
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           continue;
         }
 
@@ -1656,7 +1656,7 @@ OcBootPolicyGetAllApfsRecoveryFilePath (
   FreePool (ContainerGuids);
   FreePool (HandleBuffer);
 
-  if (!EFI_ERROR (Status) && *NumberOfEntries == 0) {
+  if (!EFI_ERROR(Status) && *NumberOfEntries == 0) {
     Status = EFI_NOT_FOUND;
   }
 
@@ -1694,7 +1694,7 @@ OcAppleBootPolicyInstallProtocol (
 
   if (Reinstall) {
     Status = OcUninstallAllProtocolInstances (&gAppleBootPolicyProtocolGuid);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
  //     DEBUG ((DEBUG_ERROR, "OCBP: Uninstall failed: %r\n", Status));
       return NULL;
     }
@@ -1705,7 +1705,7 @@ OcAppleBootPolicyInstallProtocol (
       (VOID *) &Protocol
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Protocol;
     }
   }
@@ -1718,7 +1718,7 @@ OcAppleBootPolicyInstallProtocol (
     NULL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 

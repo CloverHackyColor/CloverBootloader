@@ -57,7 +57,7 @@ OcLoadPickerHotKeys (
     (VOID **) &KeyMap
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "OCB: Missing AppleKeyMapAggregator - %r\n", Status));
     return;
   }
@@ -70,7 +70,7 @@ OcLoadPickerHotKeys (
                      Keys
                      );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "OCB: GetKeyStrokes - %r\n", Status));
     return;
   }
@@ -156,7 +156,7 @@ OcGetAppleKeyIndex (
     Keys
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "OCB: GetKeyStrokes - %r\n", Status));
     return OC_INPUT_INVALID;
   }
@@ -249,7 +249,7 @@ OcGetAppleKeyIndex (
         //        by the SIP configuration. This might be an oversight, but is
         //        consistent with the boot.efi implementation.
         //
-        WantsZeroSlide = !EFI_ERROR (Status) && (CsrActiveConfig & CSR_ALLOW_UNRESTRICTED_NVRAM) != 0;
+        WantsZeroSlide = !EFI_ERROR(Status) && (CsrActiveConfig & CSR_ALLOW_UNRESTRICTED_NVRAM) != 0;
       }
 
       if (WantsZeroSlide) {

@@ -88,7 +88,7 @@ OcGetCurrentMemoryMap (
     &DescriptorVersionValue
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (MemoryMap);
     return NULL;
   }
@@ -164,7 +164,7 @@ OcGetCurrentMemoryMapAlloc (
         NULL
         );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO, "OCMM: Temp memory map allocation from top failure - %r\n", Status));
         *MemoryMap = NULL;
         return Status;
@@ -187,7 +187,7 @@ OcGetCurrentMemoryMapAlloc (
       DescriptorVersion
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (TopMemory != NULL) {
         gBS->FreePages (
           (EFI_PHYSICAL_ADDRESS) ((UINTN) *MemoryMap),

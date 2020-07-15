@@ -193,10 +193,10 @@ DeleteVariables (
     RequestedSize = BufferSize;
     Status = gRT->GetNextVariableName (&RequestedSize, Buffer, &CurrentGuid);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (IsDeletableVariable (Buffer, &CurrentGuid)) {
         Status = gRT->SetVariable (Buffer, &CurrentGuid, 0, 0, NULL);
-        if (!EFI_ERROR (Status)) {
+        if (!EFI_ERROR(Status)) {
           DEBUG ((
             DEBUG_INFO,
             "Deleting %g:%s... OK\n",
@@ -273,7 +273,7 @@ OcDeleteVariables (
     &BootProtectSize,
     &BootProtect
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BootProtect = 0;
   }
 
@@ -283,7 +283,7 @@ OcDeleteVariables (
     (VOID **) &FwRuntime
     );
 
-  if (!EFI_ERROR (Status) && FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
+  if (!EFI_ERROR(Status) && FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
     ZeroMem (&Config, sizeof (Config));
     FwRuntime->SetOverride (&Config);
     DEBUG ((DEBUG_INFO, "OCB: Found FW NVRAM, full access %d\n", Config.BootVariableRedirect));
@@ -300,7 +300,7 @@ OcDeleteVariables (
       &BootOption,
       &BootOptionSize
       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_INFO,
         "OCB: Found %g:%s for preservation of %u bytes\n",
@@ -324,7 +324,7 @@ OcDeleteVariables (
       BootOption
       );
     BootOrder = OC_BOOT_OPTION;
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gRT->SetVariable (
         EFI_BOOT_ORDER_VARIABLE_NAME,
         BootProtectGuid,

@@ -59,7 +59,7 @@ InternalGetFirstDeviceBootFilePath (
                   &NumHandles,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -69,7 +69,7 @@ InternalGetFirstDeviceBootFilePath (
                     &gEfiDevicePathProtocolGuid,
                     (VOID **)&FsDevicePath
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -94,7 +94,7 @@ InternalGetFirstDeviceBootFilePath (
                            gAppleBootPolicyNumPredefinedPaths,
                            &BootDevicePath
                            );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       break;
     }
 
@@ -233,7 +233,7 @@ InternalFindFirstDmgFileName (
 
   for (
     Status = FileHandleFindFirstFile (Directory, &FileInfo), NoFile = FALSE;
-    (!EFI_ERROR (Status) && !NoFile);
+    (!EFI_ERROR(Status) && !NoFile);
     Status = FileHandleFindNextFile (Directory, FileInfo, &NoFile)
     ) {
     if ((FileInfo->Attribute & EFI_FILE_DIRECTORY) != 0) {
@@ -281,7 +281,7 @@ InternalFindDmgChunklist (
 
   for (
     Status = FileHandleFindFirstFile (Directory, &FileInfo), NoFile = FALSE;
-    (!EFI_ERROR (Status) && !NoFile);
+    (!EFI_ERROR(Status) && !NoFile);
     Status = FileHandleFindNextFile (Directory, FileInfo, &NoFile)
     ) {
     if ((FileInfo->Attribute & EFI_FILE_DIRECTORY) != 0) {
@@ -355,7 +355,7 @@ InternalLoadDmg (
              EFI_FILE_MODE_READ,
              EFI_FILE_DIRECTORY
              );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DevPathText = ConvertDevicePathToText (Context->DevicePath, FALSE, FALSE);
     DEBUG ((DEBUG_INFO, "OCB: Failed to open DMG directory %s\n", DevPathText));
     if (DevPathText != NULL) {
@@ -384,7 +384,7 @@ InternalLoadDmg (
     EFI_FILE_MODE_READ,
     0
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_INFO,
       "OCB: Failed to open DMG file %s - %r\n",
@@ -398,7 +398,7 @@ InternalLoadDmg (
   }
 
   Status = GetFileSize (DmgFile, &DmgFileSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_INFO,
       "OCB: Failed to retrieve DMG file size - %r\n",
@@ -446,7 +446,7 @@ InternalLoadDmg (
       EFI_FILE_MODE_READ,
       0
       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = GetFileSize (ChunklistFile, &ChunklistFileSize);
       if (Status == EFI_SUCCESS) {
         ChunklistBuffer = AllocatePool (ChunklistFileSize);
@@ -455,7 +455,7 @@ InternalLoadDmg (
           ChunklistFileSize = 0;
         } else {
           Status = GetFileData (ChunklistFile, 0, ChunklistFileSize, ChunklistBuffer);
-          if (EFI_ERROR (Status)) {
+          if (EFI_ERROR(Status)) {
             FreePool (ChunklistBuffer);
             ChunklistBuffer   = NULL;
             ChunklistFileSize = 0;

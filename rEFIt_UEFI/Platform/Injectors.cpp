@@ -21,6 +21,20 @@
 #include <Protocol/OSInfo.h>
 #include <Protocol/AppleGraphConfig.h>
 #include <Protocol/KeyboardInfo.h>
+#include <Protocol/OcQuirksProtocol.h>
+#include "Injectors.h"
+
+#ifndef DEBUG_ALL
+#define DEBUG_PRO 1
+#else
+#define DEBUG_PRO DEBUG_ALL
+#endif
+
+#if DEBUG_PRO == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_PRO, __VA_ARGS__)
+#endif
 
 EFI_GUID gDevicePropertiesGuid = {
   0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
@@ -36,6 +50,7 @@ EFI_GUID gAppleFramebufferInfoProtocolGuid = {
 // 03622D6D-362A-4E47-9710-C238B23755C1 - GraphConfig
 
 extern EFI_GUID gAppleFramebufferInfoProtocolGuid;
+extern BOOLEAN  gProvideConsoleGopEnable;
 
 UINT32 mPropSize = 0;
 UINT8* mProperties = NULL;
@@ -215,6 +230,7 @@ EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBu
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
   //this print never occured so this procedure is redundant
+  DBG("GetScreenInfo called\n");
 //	printf("GetScreenInfo called with args: %lx %lx %lx %lx %lx %lx\n",
 //        baseAddress, frameBufferSize, bpr, w, h, colorDepth);
 	*frameBufferSize = (UINT64)mGraphicsOutput->Mode->FrameBufferSize;
@@ -251,7 +267,7 @@ OSInfoOSNameImpl (
   // this variable can be used at OnExitBoootServices,
   // as it will be set by boot.efi
   BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
-
+  DBG("OSInfo:OSName called\n");
   EfiNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
 }
 
@@ -264,6 +280,7 @@ OSInfoOSVendorImpl (
 {
   // never used as never called
   INTN Result;
+  DBG("OSInfo:OSVendor called\n");
   if (!OSVendor) {
     return;
   }
@@ -296,6 +313,7 @@ RestoreConfig (APPLE_GRAPH_CONFIG_PROTOCOL* This,
                UINT32 Param1, UINT32 Param2, VOID* Param3, VOID* Param4, VOID* Param5
                )
 {
+  DBG("RestoreConfig called Param1=%x\n", Param1);
   return EFI_SUCCESS;
 }
 
@@ -322,12 +340,33 @@ UsbKbGetKeyboardDeviceInfo (
   if (CountryCode) {
     *CountryCode = 0;
   }
-
+  DBG("KeyboardDeviceInfo called\n");
   return EFI_SUCCESS;
 }
 
 EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
   UsbKbGetKeyboardDeviceInfo
+};
+
+#define OCQUIRKS_PROTOCOL_REVISION  23
+
+EFI_STATUS
+EFIAPI
+GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
+                 OUT OC_ABC_SETTINGS    *Buffer,
+                 OUT BOOLEAN            *GopEnable
+                 )
+{
+  DBG("GetQuirksConfig called\n");
+  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS));
+  *GopEnable = gProvideConsoleGopEnable;
+  return EFI_SUCCESS;
+}
+
+OCQUIRKS_PROTOCOL mQuirksConfig = {
+  OCQUIRKS_PROTOCOL_REVISION,
+  0,  //reserved
+  GetQuirksConfig
 };
 
 EFI_STATUS
@@ -345,6 +384,8 @@ SetPrivateVarProto(VOID)
                                                        &mGraphConfig,
                                                        &gEfiKeyboardInfoProtocolGuid,
                                                        &mKeyboardInfo,
+                                                       &gOcQuirksProtocolGuid,
+                                                       &mQuirksConfig,
                                                        NULL
                                                        );
 	//obligatory protocol

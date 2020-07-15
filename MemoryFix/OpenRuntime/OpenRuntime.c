@@ -102,7 +102,7 @@ UefiEntrypoint (
     &Interface
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // In case for whatever reason one tried to reload the driver.
     //
@@ -124,7 +124,7 @@ UefiEntrypoint (
     NULL
     );
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 
   return EFI_SUCCESS;
 }

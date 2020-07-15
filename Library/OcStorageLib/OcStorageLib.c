@@ -231,7 +231,7 @@ OcStorageInitFromFs (
   Context->FileSystem = FileSystem;
 
   Status = FileSystem->OpenVolume (FileSystem, &RootVolume);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCST: FileSystem volume cannot be opened - %r\n", Status));
     return Status;
   }
@@ -246,7 +246,7 @@ OcStorageInitFromFs (
 
   RootVolume->Close (RootVolume);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCST: Directory %s cannot be opened - %r\n", Path, Status));
     return Status;
   }
@@ -278,7 +278,7 @@ OcStorageInitFromFs (
 
   Status = OcStorageInitializeVault (Context, Vault, DataSize, StorageKey, Signature, SignatureSize);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCST: Vault init failure %p (%u) - %r\n", Vault, DataSize, Status));
   }
 
@@ -353,7 +353,7 @@ OcStorageExistsFileUnicode (
     0
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     File->Close (File);
     return TRUE;
   }
@@ -404,12 +404,12 @@ OcStorageReadFileUnicode (
     0
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
   Status = GetFileSize (File, &Size);
-  if (EFI_ERROR (Status) || Size >= MAX_UINT32 - 1) {
+  if (EFI_ERROR(Status) || Size >= MAX_UINT32 - 1) {
     File->Close (File);
     return NULL;
   }
@@ -422,7 +422,7 @@ OcStorageReadFileUnicode (
 
   Status = GetFileData (File, 0, Size, FileBuffer);
   File->Close (File);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (FileBuffer);
     return NULL;
   }

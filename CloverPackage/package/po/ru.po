@@ -94,7 +94,7 @@ msgstr "В основе лежит EDK2 с учетом последних об�
 #. type: Content of: <html><body><p><a>
 #: Resources/templates/Description.html:23
 msgid "https://github.com/CloverHackyColor/CloverBootloader"
-msgstr ""
+msgstr "https://github.com/CloverHackyColor/CloverBootloader"
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:25
@@ -716,7 +716,7 @@ msgstr "Поддержка протокола AppleGraphicsConfig."
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency"
-msgstr ""
+msgstr "Драйвер, заменяющий AptioMemoryFix с выбором набора фиксов. Также необходим OpenRuntime.efi для работы в паре."
 
 #. type: "AudioDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:145
@@ -828,7 +828,7 @@ msgstr "Драйвер 64bit для мыши PS/2."
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
-msgstr "Драйвер клавиатуры USB поддержкой протокла шифрования, нужен для FileVault2, если у вас USB клавиатура."
+msgstr "Драйвер клавиатуры USB поддержкой протокола шифрования, нужен для FileVault2, если у вас USB клавиатура."
 
 #. type: "UsbMouseDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:168

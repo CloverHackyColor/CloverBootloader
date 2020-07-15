@@ -50,7 +50,7 @@ GetVolumeLabel (
                          &Volume
                          );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 

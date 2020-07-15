@@ -61,7 +61,7 @@ OcDiskInitializeContext (
     Status = EFI_ABORTED;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->HandleProtocol (
       DiskHandle,
       &gEfiBlockIoProtocolGuid,
@@ -71,7 +71,7 @@ OcDiskInitializeContext (
     Context->BlockIo = NULL;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_INFO,
       "OCPI: Block I/O (%d/%d) protocols (%d) are not present on %p - %r\n",
@@ -206,9 +206,9 @@ InternalPartitionGetDiskHandle (
                   &TempPath,
                   &DiskHandle
                   );
-  *HasBlockIo2 = !EFI_ERROR (Status);
+  *HasBlockIo2 = !EFI_ERROR(Status);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     TempPath = PrefixPath;
     Status = gBS->LocateDevicePath (
                     &gEfiBlockIoProtocolGuid,
@@ -217,7 +217,7 @@ InternalPartitionGetDiskHandle (
                     );
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DebugPrintDevicePath (
       DEBUG_INFO,
       "OCPI: Failed to locate disk",
@@ -308,7 +308,7 @@ OcDiskFindSystemPartitionPath (
                   &NumHandles,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCPI: Failed to locate FS handles\n"));
     return NULL;
   }
@@ -408,13 +408,13 @@ OcGetDiskPartitions (
     &mInternalDiskPartitionEntriesProtocolGuid,
     (VOID **) &PartEntries
     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCPI: Located cached partition entries\n"));
     return PartEntries;
   }
 
   Status = OcDiskInitializeContext (&DiskContext, DiskHandle, UseBlockIo2);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -434,7 +434,7 @@ OcGetDiskPartitions (
     BufferSize,
     GptHeader
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (GptHeader);
     DEBUG ((
       DEBUG_INFO,
@@ -498,7 +498,7 @@ OcGetDiskPartitions (
     PartEntriesSize,
     PartEntries->FirstEntry
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (PartEntries);
     DEBUG ((
       DEBUG_INFO,
@@ -523,7 +523,7 @@ OcGetDiskPartitions (
     PartEntries,
     NULL
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCPI: Failed to cache partition entries\n"));
     FreePool (PartEntries);
     return NULL;
@@ -560,7 +560,7 @@ OcGetGptPartitionEntry (
                   &mInternalPartitionEntryProtocolGuid,
                   (VOID **)&PartEntry
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCPI: Located cached partition entry\n"));
     return PartEntry;
   }
@@ -624,7 +624,7 @@ OcGetGptPartitionEntry (
                   PartEntry,
                   NULL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCPI: Failed to cache partition entry\n"));
     return NULL;
   }

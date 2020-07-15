@@ -271,7 +271,7 @@ ShouldUseCustomSlideOffset (
     &AllocatedMapPages
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "OCABC: Failed to obtain memory map for KASLR - %r\n", Status));
     return FALSE;
   }
@@ -443,7 +443,7 @@ GetVariableCsrActiveConfig (
   // Otherwise call the original function.
   //
   Status = GetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCABC: GetVariable csr-active-config - %r\n", Status));
 
     *Config = 0;
@@ -514,7 +514,7 @@ GetVariableBootArgs (
       &StoredBootArgsSize,
       SlideSupport->BootArgs
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       SlideSupport->BootArgs[0] = '\0';
     }
 
@@ -592,9 +592,9 @@ HideSlideFromOs (
   //
   DTInit ((VOID *)(UINTN) (*BootArgs->DeviceTreeP), BootArgs->DeviceTreeLength);
   Status = DTLookupEntry (NULL, "/chosen", &Chosen);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = DTGetProperty (Chosen, "boot-args", (VOID **)&ArgsStr, &ArgsSize);
-    if (!EFI_ERROR (Status) && ArgsSize > 0) {
+    if (!EFI_ERROR(Status) && ArgsSize > 0) {
       OcRemoveArgumentFromCmd (ArgsStr, "slide=");
     }
   }

@@ -208,7 +208,7 @@ OcAppleDiskImageInitializeFromFile (
   ASSERT (File != NULL);
 
   Status = GetFileSize (File, &FileSize);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCDI: Failed to retrieve DMG file size\n"));
     return FALSE;
   }

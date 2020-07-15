@@ -393,7 +393,7 @@ OcRebuildAttributes (
     MemoryAttributesEntry,
     MemoryAttributesTable->DescriptorSize
     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Statically allocate memory for the memory map to avoid allocations.
     //
@@ -417,7 +417,7 @@ OcRebuildAttributes (
       &DescriptorVersion
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       OcSortMemoryMap (
         MemoryMapSize,
         MemoryMap,
@@ -600,7 +600,7 @@ OcSplitMemoryMapByAttributes (
           MemoryAttributesEntry,
           DescriptorSize
           );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           *MemoryMapSize = CurrentEntryCount * DescriptorSize;
           return Status;
         }

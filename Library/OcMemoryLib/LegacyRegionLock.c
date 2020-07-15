@@ -56,7 +56,7 @@ LegacyRegionLock (
                                 (VOID **) &LegacyRegionProtocol
                                 );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Lock Region Using LegacyRegionProtocol
     //

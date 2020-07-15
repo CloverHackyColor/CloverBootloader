@@ -259,7 +259,7 @@ OcReadApplePanicLog (
       Index
       );
     Status = GetVariable2 (VariableName, &gEfiAppleBootGuid, &Value, &ValueSize);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 

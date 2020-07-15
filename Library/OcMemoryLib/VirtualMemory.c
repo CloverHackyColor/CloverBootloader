@@ -160,7 +160,7 @@ VmAllocateMemoryPool (
     NULL
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Context->MemoryPool = (UINT8 *)(UINTN)Addr;
     Context->FreePages  = NumPages;
   }
@@ -389,7 +389,7 @@ VmMapVirtualPages (
 
   Status = EFI_SUCCESS;
 
-  while (NumPages > 0 && !EFI_ERROR (Status)) {
+  while (NumPages > 0 && !EFI_ERROR(Status)) {
     Status = VmMapVirtualPage (
       Context,
       PageTable,

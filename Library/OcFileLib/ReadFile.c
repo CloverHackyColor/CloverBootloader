@@ -51,7 +51,7 @@ ReadFile (
     FileSystem,
     &Volume
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -65,7 +65,7 @@ ReadFile (
 
   Volume->Close (Volume);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -73,7 +73,7 @@ ReadFile (
     FileHandle,
     &FileReadSize
     );
-  if (EFI_ERROR (Status)
+  if (EFI_ERROR(Status)
     || OcOverflowAddU32 (FileReadSize, sizeof (CHAR16), &FileBufferSize)
     || (MaxFileSize > 0 && FileReadSize > MaxFileSize)) {
     FileHandle->Close (FileHandle);
@@ -89,7 +89,7 @@ ReadFile (
       FileBuffer
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       FileBuffer[FileReadSize] = 0;
       FileBuffer[FileReadSize + 1] = 0;
       if (FileSize != NULL) {
@@ -124,7 +124,7 @@ ReadFileSize (
     FileSystem,
     &Volume
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -138,7 +138,7 @@ ReadFileSize (
 
   Volume->Close (Volume);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

@@ -62,7 +62,7 @@ FixRuntimeAttributes (
 
     Status = BootCompat->ServiceState.FwRuntime->GetExecArea (&Address, &Pages);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       OcRebuildAttributes (Address, BootCompat->ServicePtrs.GetMemoryMap);
     }
 
@@ -111,7 +111,7 @@ ForceExitBootServices (
   //
   Status = ExitBootServices (ImageHandle, MapKey);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     //
     // It is too late to free memory map here, but it does not matter, because boot.efi has an old one
     // and will freely use the memory.
@@ -132,7 +132,7 @@ ForceExitBootServices (
       // We have the latest memory map and its key, try again!
       //
       Status = ExitBootServices (ImageHandle, MapKey);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_WARN, "OCABC: ExitBootServices failed twice - %r\n", Status));
       }
     } else {
@@ -140,7 +140,7 @@ ForceExitBootServices (
       Status = EFI_INVALID_PARAMETER;
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN, "OCABC: Waiting 10 secs...\n"));
       gBS->Stall (SECONDS_TO_MICROSECONDS (10));
     }
@@ -355,7 +355,7 @@ OcAllocatePages (
     Memory
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FixRuntimeAttributes (BootCompat, MemoryType);
 
     if (BootCompat->ServiceState.AppleBootNestedCount > 0) {
@@ -411,7 +411,7 @@ OcFreePages (
     Pages
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FixRuntimeAttributes (BootCompat, EfiRuntimeServicesData);
   }
 
@@ -460,7 +460,7 @@ OcGetMemoryMap (
     return EFI_BUFFER_TOO_SMALL;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -556,7 +556,7 @@ OcAllocatePool (
     Buffer
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FixRuntimeAttributes (BootCompat, PoolType);
   }
 
@@ -583,7 +583,7 @@ OcFreePool (
     Buffer
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     FixRuntimeAttributes (BootCompat, EfiRuntimeServicesData);
   }
 
@@ -664,7 +664,7 @@ OcStartImage (
       (VOID *) &OSInfo
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       OSInfo->OSVendor (EFI_OS_INFO_APPLE_VENDOR_NAME);
       OSInfo->OSName ("Mac OS X 10.15");
     }
@@ -793,7 +793,7 @@ OcExitBootServices (
   //
   // Abort on error.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -949,7 +949,7 @@ SetGetVariableHookHandler (
       (VOID **) &FwRuntime
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
         DEBUG ((DEBUG_INFO, "OCABC: Got rendezvous with OpenRuntime r%u\n", OC_FIRMWARE_RUNTIME_REVISION));
         DEBUG ((DEBUG_INFO, "OCABC: MAT support is %d\n", OcGetMemoryAttributes (NULL) != NULL));
@@ -971,7 +971,7 @@ SetGetVariableHookHandler (
     //
     // Mark protocol as useable.
     //
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       BootCompat->ServiceState.FwRuntime = FwRuntime;
     }
   }
@@ -1034,14 +1034,14 @@ InstallServiceOverrides (
     &BootCompat->ServiceState.GetVariableEvent
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->RegisterProtocolNotify (
       &gOcFirmwareRuntimeProtocolGuid,
       BootCompat->ServiceState.GetVariableEvent,
       &Registration
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       gBS->CloseEvent (BootCompat->ServiceState.GetVariableEvent);
     }
   }

@@ -63,7 +63,7 @@ InternalConnectAll (
                   &HandleCount,
                   &HandleBuffer
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
     }
@@ -106,7 +106,7 @@ BmMatchUsbClass (
   // Check Vendor Id and Product Id.
   //
   Status = UsbIo->UsbGetDeviceDescriptor (UsbIo, &DevDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -129,7 +129,7 @@ BmMatchUsbClass (
     // Protocol in Interface Descriptor instead.
     //
     Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &IfDesc);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return FALSE;
     }
 
@@ -197,7 +197,7 @@ BmMatchUsbWwid (
   // Check Vendor Id and Product Id.
   //
   Status = UsbIo->UsbGetDeviceDescriptor (UsbIo, &DevDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if ((DevDesc.IdVendor != UsbWwid->VendorId) ||
@@ -209,7 +209,7 @@ BmMatchUsbWwid (
   // Check Interface Number.
   //
   Status = UsbIo->UsbGetInterfaceDescriptor (UsbIo, &IfDesc);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   if (IfDesc.InterfaceNumber != UsbWwid->InterfaceNumber) {
@@ -229,7 +229,7 @@ BmMatchUsbWwid (
   TableSize = 0;
   LangIdTable = NULL;
   Status = UsbIo->UsbGetSupportedLanguages (UsbIo, &LangIdTable, &TableSize);
-  if (EFI_ERROR (Status) || (TableSize == 0) || (LangIdTable == NULL)) {
+  if (EFI_ERROR(Status) || (TableSize == 0) || (LangIdTable == NULL)) {
     return FALSE;
   }
 
@@ -253,7 +253,7 @@ BmMatchUsbWwid (
                       DevDesc.StrSerialNumber,
                       &SerialNumberStr
                       );
-    if (EFI_ERROR (Status) || (SerialNumberStr == NULL)) {
+    if (EFI_ERROR(Status) || (SerialNumberStr == NULL)) {
       continue;
     }
 
@@ -312,7 +312,7 @@ BmFindUsbDevice (
                   UsbIoHandleCount,
                   &UsbIoHandles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     *UsbIoHandleCount = 0;
     UsbIoHandles      = NULL;
   }
@@ -328,7 +328,7 @@ BmFindUsbDevice (
                     );
     UsbIoDevicePath = DevicePathFromHandle (UsbIoHandles[Index]);
     Matched         = FALSE;
-    if (!EFI_ERROR (Status) && (UsbIoDevicePath != NULL)) {
+    if (!EFI_ERROR(Status) && (UsbIoDevicePath != NULL)) {
 
       //
       // Compare starting part of UsbIoHandle's device path with ParentDevicePath.
@@ -486,7 +486,7 @@ BmExpandMediaDevicePath (
   //
   Status = gBS->HandleProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
   // CHANGE: Do not ASSERT.
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
   Buffer = AllocatePool (BlockIo->Media->BlockSize);
@@ -657,7 +657,7 @@ BmExpandPartitionDevicePath (
   // CHANGE: Only connect all on failure.
   //
   Status = gBS->LocateHandleBuffer (ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BlockIoHandleCount, &BlockIoBuffer);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     BlockIoHandleCount = 0;
     BlockIoBuffer      = NULL;
   }
@@ -763,19 +763,19 @@ BmConnectUsbShortFormDevicePath (
                   &HandleCount,
                   &Handles
                   );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; Index++) {
       Status = gBS->HandleProtocol (
                       Handles[Index],
                       &gEfiPciIoProtocolGuid,
                       (VOID **) &PciIo
                       );
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // Check whether the Pci device is the wanted usb host controller
         //
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint8, 0x09, 3, &Class);
-        if (!EFI_ERROR (Status) &&
+        if (!EFI_ERROR(Status) &&
             ((PCI_CLASS_SERIAL == Class[2]) && (PCI_CLASS_SERIAL_USB == Class[1]))
            ) {
           Status = gBS->ConnectController (
@@ -816,7 +816,7 @@ OcGetNextLoadOptionDevicePath (
   //
   Node = FilePath;
   Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &Node, &Handle);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (FullPath != NULL) {
       return NULL;
     }
@@ -825,7 +825,7 @@ OcGetNextLoadOptionDevicePath (
   }
 
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &Node, &Handle);
-  if (!EFI_ERROR (Status) && IsDevicePathEnd (Node)) {
+  if (!EFI_ERROR(Status) && IsDevicePathEnd (Node)) {
     return BmExpandMediaDevicePath (FilePath, FullPath, Handle);
   }
 
@@ -853,7 +853,7 @@ OcGetNextLoadOptionDevicePath (
   } else {
     Node = FilePath;
     Status = gBS->LocateDevicePath (&gEfiUsbIoProtocolGuid, &Node, &Handle);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       //
       // Only expand the USB WWID/Class device path
       // when FilePath doesn't point to a physical UsbIo controller.

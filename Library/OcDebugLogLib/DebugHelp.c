@@ -52,13 +52,13 @@ WaitForKeyPress (
   //
   do {
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-  } while (!EFI_ERROR (Status));
+  } while (!EFI_ERROR(Status));
 
   //
   // Wait for debugger signal or key press.
   //
   Proceed = FALSE;
-  while (EFI_ERROR (Status) && !Proceed) {
+  while (EFI_ERROR(Status) && !Proceed) {
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     DebugBreak ();
   }

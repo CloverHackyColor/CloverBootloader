@@ -61,7 +61,7 @@ LocateFileSystem (
       &DeviceHandle
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN, "OCFS: Failed to locate device handle over path - %r\n", Status));
       return NULL;
     }
@@ -73,7 +73,7 @@ LocateFileSystem (
     (VOID **) &FileSystem
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCFS: No filesystem on device handle %p\n", DeviceHandle));
     return NULL;
   }
@@ -97,7 +97,7 @@ LocateRootVolume (
   }
 
   Status = FileSystem->OpenVolume (FileSystem, &RootVolume);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -129,7 +129,7 @@ LocateFileSystemByGuid (
                   &NumHandles,
                   &HandleBuffer
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -141,7 +141,7 @@ LocateFileSystemByGuid (
                     &gEfiDevicePathProtocolGuid,
                     (VOID **)&DevicePath
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -162,7 +162,7 @@ LocateFileSystemByGuid (
                       &gEfiSimpleFileSystemProtocolGuid,
                       (VOID **)&SimpleFs
                       );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         SimpleFs = NULL;
       }
 

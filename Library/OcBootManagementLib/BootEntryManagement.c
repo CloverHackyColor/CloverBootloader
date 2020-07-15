@@ -120,7 +120,7 @@ ExpandShortFormBootPath (
       &RemainingDevicePath,
       &FileSystemHandle
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -148,7 +148,7 @@ ExpandShortFormBootPath (
       EFI_FILE_MODE_READ,
       0
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -226,7 +226,7 @@ IsOpenCoreBootloader (
     EFI_FILE_MODE_READ,
     0
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -236,7 +236,7 @@ IsOpenCoreBootloader (
     sizeof (FileReadMagic),
     FileReadMagic
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
 
@@ -460,7 +460,7 @@ AddBootEntryOnFileSystem (
   BootEntry->IsExternal = RecoveryPart ? FileSystem->RecoveryFs->External : FileSystem->External;
 
   Status = InternalDescribeBootEntry (BootEntry);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (BootEntry);
     return Status;
   }
@@ -691,7 +691,7 @@ AddBootEntryFromBless (
     &gEfiDevicePathProtocolGuid,
     (VOID **) &HdDevicePath
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -709,9 +709,9 @@ AddBootEntryFromBless (
       (VOID **) &SimpleFs
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = SimpleFs->OpenVolume (SimpleFs, &Root);
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Status = OcGetBooterFromPredefinedPathList (
           FileSystem->Handle,
           Root,
@@ -731,7 +731,7 @@ AddBootEntryFromBless (
   //
   // On failure obtain normal bless paths.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = OcBootPolicyGetBootFileEx (
       FileSystem->Handle,
       PredefinedPaths,
@@ -743,7 +743,7 @@ AddBootEntryFromBless (
   //
   // If both custom and normal found nothing, then nothing is blessed.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -847,7 +847,7 @@ AddBootEntryFromBless (
       FreePool (NewDevicePath);
     }
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCB: APFS recovery is not present - %r\n", Status));
       continue;
     }
@@ -886,7 +886,7 @@ AddBootEntryFromBless (
       TRUE,
       Deduplicate
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       FreePool (NewDevicePath);
     }
   }
@@ -927,7 +927,7 @@ AddBootEntryFromSelfRecovery (
     &DevicePath,
     FALSE
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -942,7 +942,7 @@ AddBootEntryFromSelfRecovery (
     FALSE
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (DevicePath);
   }
 
@@ -1008,9 +1008,9 @@ AddBootEntryFromBootOption (
       &DevicePathSize
       );
 
-    if (EFI_ERROR (Status) || !IsDevicePathValid (DevicePath, DevicePathSize)) {
+    if (EFI_ERROR(Status) || !IsDevicePathValid (DevicePath, DevicePathSize)) {
       DEBUG ((DEBUG_INFO, "OCB: Legacy DP invalid - %r\n", Status));
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         FreePool (DevicePath);
       }
       return EFI_NOT_FOUND;
@@ -1179,7 +1179,7 @@ AddBootEntryFromBootOption (
     Status = EFI_UNSUPPORTED;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (DevicePath);
   }
 
@@ -1311,7 +1311,7 @@ AddFileSystemEntry (
 
   DEBUG_CODE_END ();
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -1451,7 +1451,7 @@ InternalFileSystemForHandle (
   }
 
   Status = AddFileSystemEntry (BootContext, FileSystemHandle, &FileSystem);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     return FileSystem;
   }
 
@@ -1498,7 +1498,7 @@ BuildFileSystemList (
     &NoHandles,
     &Handles
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return BootContext;
   }
 
@@ -1674,7 +1674,7 @@ OcScanForDefaultBootEntry (
 
   DEBUG ((DEBUG_INFO, "OCB: Processing %u blessed list - %r\n", (UINT32) NoHandles, Status));
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < NoHandles; ++Index) {
       //
       // Do not add filesystems twice.
@@ -1688,7 +1688,7 @@ OcScanForDefaultBootEntry (
         Handles[Index],
         &FileSystem
         );
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         continue;
       }
 
@@ -1794,9 +1794,9 @@ OcLoadBootEntry (
     &EntryHandle,
     &DmgLoadContext
     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = Context->StartImage (BootEntry, EntryHandle, NULL, NULL);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "OCB: StartImage failed - %r\n", Status));
       //
       // Unload dmg if any.

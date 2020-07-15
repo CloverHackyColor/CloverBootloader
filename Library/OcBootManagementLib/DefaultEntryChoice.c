@@ -69,7 +69,7 @@ InternalGetBootOptionData (
              (VOID **)&LoadOption,
              &LoadOptionSize
              );
-  if (EFI_ERROR (Status) || (LoadOptionSize < sizeof (*LoadOption))) {
+  if (EFI_ERROR(Status) || (LoadOptionSize < sizeof (*LoadOption))) {
     return NULL;
   }
 
@@ -178,7 +178,7 @@ InternalDebugBootEnvironment (
                (VOID **)&UefiDevicePath,
                &UefiDevicePathSize
                );
-    if (!EFI_ERROR (Status) && IsDevicePathValid (UefiDevicePath, UefiDevicePathSize)) {
+    if (!EFI_ERROR(Status) && IsDevicePathValid (UefiDevicePath, UefiDevicePathSize)) {
       DevicePathText = ConvertDevicePathToText (UefiDevicePath, FALSE, FALSE);
       if (DevicePathText != NULL) {
         DEBUG ((DEBUG_INFO, "OCB: %s = %s\n", AppleDebugVariables[Index], DevicePathText));
@@ -381,7 +381,7 @@ OcGetBootOrder (
       &VariableSize,
       &BootNext
       );
-    if (!EFI_ERROR (Status) && VariableSize == sizeof (BootNext)) {
+    if (!EFI_ERROR(Status) && VariableSize == sizeof (BootNext)) {
       if (HasBootNext != NULL) {
         *HasBootNext = TRUE;
       }
@@ -412,17 +412,17 @@ OcGetBootOrder (
       &VariableSize,
       BootOrder + (UINTN) WithBootNext
       );
-    if (EFI_ERROR (Status)
+    if (EFI_ERROR(Status)
       || VariableSize < sizeof (*BootOrder)
       || VariableSize % sizeof (*BootOrder) != 0) {
       FreePool (BootOrder);
       Status = EFI_UNSUPPORTED;
     }
-  } else if (!EFI_ERROR (Status)) {
+  } else if (!EFI_ERROR(Status)) {
     Status = EFI_NOT_FOUND;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     if (WithBootNext) {
       BootOrder = AllocateCopyPool (sizeof (BootNext), &BootNext);
       if (BootOrder != NULL) {
@@ -596,7 +596,7 @@ OcSetDefaultBootEntry (
       &DeviceHandle
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       MatchedEntry = InternalGetBootEntryByDevicePath (
         Entry,
         1,
@@ -641,7 +641,7 @@ OcSetDefaultBootEntry (
 
     FreePool (LoadOption);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_INFO,
         "OCB: Failed to set default entry Boot0080 - %r\n",
@@ -708,7 +708,7 @@ OcSetDefaultBootEntry (
 
   FreePool (NewBootOrder);
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_INFO,
       "OCB: Failed to set default BootOrder - %r\n",
@@ -746,7 +746,7 @@ InternalRegisterBootOption (
     &gEfiDevicePathProtocolGuid,
     (VOID **) &DevicePath
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCB: Failed to obtain device path for boot option - %r\n", Status));
     return Status;
   }
@@ -804,7 +804,7 @@ InternalRegisterBootOption (
     FreePool (Option);
     FreePool (DevicePath);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCB: Failed to store boot option - %r\n", Status));
       return Status;
     }
@@ -841,9 +841,9 @@ InternalRegisterBootOption (
       (VOID *) (BootOrder + 1)
       );
 
-    if (EFI_ERROR (Status) || BootOrderSize == 0 || BootOrderSize % sizeof (UINT16) != 0) {
+    if (EFI_ERROR(Status) || BootOrderSize == 0 || BootOrderSize % sizeof (UINT16) != 0) {
       DEBUG ((DEBUG_INFO, "OCB: Failed to obtain boot order %u - %r\n", (UINT32) BootOrderSize, Status));
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         FreePool (BootOrder);
       }
       return EFI_OUT_OF_RESOURCES;
@@ -917,7 +917,7 @@ OcRegisterBootOption (
     (VOID **) &FwRuntime
     );
 
-  if (!EFI_ERROR (Status) && FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
+  if (!EFI_ERROR(Status) && FwRuntime->Revision == OC_FIRMWARE_RUNTIME_REVISION) {
     ZeroMem (&Config, sizeof (Config));
     FwRuntime->SetOverride (&Config);
     DEBUG ((DEBUG_INFO, "OCB: Found FW NVRAM, full access %d\n", Config.BootVariableRedirect));
@@ -1002,7 +1002,7 @@ InternalLoadBootEntry (
       &ParentFilePath
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   } else {
@@ -1038,7 +1038,7 @@ InternalLoadBootEntry (
     FreePool (EntryData);
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     OptionalStatus = gBS->HandleProtocol (
       *EntryHandle,
       &gEfiLoadedImageProtocolGuid,

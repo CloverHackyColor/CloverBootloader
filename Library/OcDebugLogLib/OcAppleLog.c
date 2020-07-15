@@ -123,7 +123,7 @@ AppleDebugLogPrint (
     sizeof (mCurrentBuffer) - 1,
     Message
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Length = AsciiStrLen (mCurrentBuffer);
 
     if (Length > 0) {
@@ -157,7 +157,7 @@ AppleDebugLogPrint (
     //
     // New message does not fit, send it directly.
     //
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return AppleDebugLogPrintToOcLog (
         OcLog,
         "AAPL: %a",
@@ -257,7 +257,7 @@ OcAppleDebugLogInstallProtocol (
 
   if (Reinstall) {
     Status = OcUninstallAllProtocolInstances (&gAppleDebugLogProtocolGuid);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "OCL: Uninstall failed: %r\n", Status));
       return NULL;
     }
@@ -268,7 +268,7 @@ OcAppleDebugLogInstallProtocol (
       (VOID *) &Protocol
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Protocol;
     }
   }
@@ -281,7 +281,7 @@ OcAppleDebugLogInstallProtocol (
     NULL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 

@@ -102,7 +102,7 @@ OcUgaDrawSetMode (
 
   DEBUG ((DEBUG_INFO, "OCC: UGA SetConsoleResolutionOnHandle attempt - %r\n", Status));
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = OcSetConsoleResolutionForProtocol (
       OcUgaDraw->GraphicsOutput,
       0,
@@ -178,7 +178,7 @@ OcProvideUgaPassThrough (
     &HandleBuffer
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCC: Found %u handles with UGA draw\n", (UINT32) HandleCount));
     FreePool (HandleBuffer);
   } else {
@@ -193,7 +193,7 @@ OcProvideUgaPassThrough (
     &HandleBuffer
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCC: Found %u handles with GOP for UGA check\n", (UINT32) HandleCount));
 
     for (Index = 0; Index < HandleCount; ++Index) {
@@ -205,7 +205,7 @@ OcProvideUgaPassThrough (
         (VOID **) &GraphicsOutput
         );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO, "OCC: No GOP protocol - %r\n", Status));
         continue;
       }
@@ -216,7 +216,7 @@ OcProvideUgaPassThrough (
         (VOID **) &UgaDraw
         );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_INFO, "OCC: No UGA protocol - %r\n", Status));
 
         OcUgaDraw = AllocateZeroPool (sizeof (*OcUgaDraw));

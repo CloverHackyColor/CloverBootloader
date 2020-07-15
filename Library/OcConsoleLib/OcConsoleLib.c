@@ -71,7 +71,7 @@ OcSetConsoleResolutionForProtocol (
       &Info
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCC: Mode %u failure - %r\n", ModeIndex, Status));
       continue;
     }
@@ -137,7 +137,7 @@ OcSetConsoleResolutionForProtocol (
     ));
 
   Status = GraphicsOutput->SetMode (GraphicsOutput, (UINT32) ModeNumber);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_WARN,
       "OCC: Failed to set mode %u (prev %u) with %ux%u resolution\n",
@@ -194,7 +194,7 @@ OcSetConsoleModeForProtocol (
       &Rows
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -253,7 +253,7 @@ OcSetConsoleModeForProtocol (
     ));
 
   Status = TextOut->SetMode (TextOut, (UINTN) ModeNumber);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_WARN,
       "OCC: Failed to set mode %u with %ux%u console mode\n",
@@ -307,7 +307,7 @@ OcSetConsoleResolution (
         (VOID **) &GraphicsOutput
         );
 
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         DEBUG ((DEBUG_WARN, "OCC: Missing GOP on console - %r\n", Status));
         continue;
       }

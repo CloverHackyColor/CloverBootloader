@@ -126,6 +126,11 @@ typedef struct OC_ABC_SETTINGS_ {
   /// List of handler contexts for ExitBootServicesHandlers.
   ///
   VOID                 **ExitBootServicesHandlerContexts; //null
+  //
+  // labels for GUI for future
+  //
+  CHAR8                **MmioWhitelistLabels; //null
+  BOOLEAN              *MmioWhitelistEnabled; //null
 } OC_ABC_SETTINGS;
 
 /**

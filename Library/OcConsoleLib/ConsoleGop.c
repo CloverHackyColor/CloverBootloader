@@ -81,7 +81,7 @@ ConsoleHandleProtocol (
       NULL,
       Interface
       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return EFI_SUCCESS;
     }
   }
@@ -90,12 +90,12 @@ ConsoleHandleProtocol (
 }
 
 VOID
-OcProvideConsoleGop (
+OcProvideConsoleGop(
   IN BOOLEAN  Route
   )
 {
   EFI_STATUS                    Status;
-  EFI_GRAPHICS_OUTPUT_PROTOCOL  *OriginalGop;
+  EFI_GRAPHICS_OUTPUT_PROTOCOL  *OriginalGop = NULL;
   EFI_GRAPHICS_OUTPUT_PROTOCOL  *Gop;
   UINTN                         HandleCount;
   EFI_HANDLE                    *HandleBuffer;
@@ -116,10 +116,10 @@ OcProvideConsoleGop (
   Status = gBS->HandleProtocol (
     gST->ConsoleOutHandle,
     &gEfiGraphicsOutputProtocolGuid,
-    (VOID **) &OriginalGop
+    (VOID **)&OriginalGop
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     DEBUG ((
       DEBUG_INFO,
       "OCC: GOP exists on ConsoleOutHandle and has %u modes\n",
@@ -148,7 +148,7 @@ OcProvideConsoleGop (
       &HandleBuffer
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCC: No handles with GOP protocol - %r\n", Status));
       return;
     }
@@ -168,7 +168,7 @@ OcProvideConsoleGop (
     DEBUG ((DEBUG_INFO, "OCC: Alternative GOP status is - %r\n", Status));
     FreePool (HandleBuffer);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->UninstallProtocolInterface (
         gST->ConsoleOutHandle,
         &gEfiGraphicsOutputProtocolGuid,
@@ -180,14 +180,14 @@ OcProvideConsoleGop (
     Status = gBS->LocateProtocol (&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &Gop);
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = gBS->InstallMultipleProtocolInterfaces (
       &gST->ConsoleOutHandle,
       &gEfiGraphicsOutputProtocolGuid,
       Gop,
       NULL
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_WARN, "OCC: Failed to install GOP on ConsoleOutHandle - %r\n", Status));
     }
 
@@ -231,7 +231,7 @@ DirectGopFromTarget (
     Context,
     &ConfigureSize
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (Context);
     return NULL;
   }
@@ -264,7 +264,7 @@ DirectGopSetMode (
   mFramebufferContext = NULL;
 
   Status = mOriginalGopSetMode (This, ModeNumber);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     mFramebufferContext = Original;
     gBS->RestoreTPL (OldTpl);
     return Status;
@@ -359,7 +359,7 @@ OcReconnectConsole (
     &HandleCount,
     &HandleBuffer
     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; ++Index) {
       gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
     }
@@ -396,7 +396,7 @@ OcUseDirectGop (
     (VOID **) &Gop
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCC: Cannot find console GOP for direct GOP - %r\n", Status));
     return Status;
   }
@@ -428,7 +428,7 @@ OcUseDirectGop (
       CacheType,
       Status
       ));
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       mCachePolicy = CacheType;
     }
   }

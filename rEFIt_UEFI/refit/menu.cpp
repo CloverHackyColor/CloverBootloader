@@ -57,6 +57,7 @@
 #include "../Platform/FixBiosDsdt.h"
 #include "../include/Devices.h"
 #include "../Platform/boot.h"
+#include "../Platform/Injectors.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -71,6 +72,7 @@
 #endif
 
 extern CONST CHAR8      *AudioOutputNames[];
+extern BOOLEAN          gProvideConsoleGopEnable;
 
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
@@ -516,8 +518,8 @@ VOID FillInputs(BOOLEAN New)
     InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(26);
   }
   snwprintf(InputItems[InputItemsCount++].SValue, 26, "0x%08X", gSettings.FakeXHCI);
-  InputItems[InputItemsCount].ItemType = CheckBit;  //101 - vacant
-  InputItems[InputItemsCount++].IValue = 0; //dropDSM;
+  InputItems[InputItemsCount].ItemType = CheckBit;  //101 - Quirks
+  InputItems[InputItemsCount++].IValue = gSettings.QuirksMask; //
 
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;
@@ -590,7 +592,13 @@ VOID FillInputs(BOOLEAN New)
   
   InputItems[InputItemsCount].ItemType = BoolValue; //121
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
-
+  InputItems[InputItemsCount].ItemType = Decimal;  //122
+  if (New) {
+    InputItems[InputItemsCount].SValue = (__typeof__(InputItems[InputItemsCount].SValue))AllocateZeroPool(16);
+  }
+  snwprintf(InputItems[InputItemsCount++].SValue, 16, "%04lld", gSettings.MaxSlide);
+  InputItems[InputItemsCount].ItemType = BoolValue; //123
+  InputItems[InputItemsCount++].BValue = gProvideConsoleGopEnable;
 
 
 
@@ -1070,12 +1078,26 @@ VOID ApplyInputs(VOID)
     gSettings.FakeXHCI = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
 
-  i++; //101  - vacant
+  i++; //101  - Quirks
   if (InputItems[i].Valid) {
-//    gSettings.DropOEM_DSM = (UINT16)StrHexToUint64(InputItems[i].SValue);
-//    gSettings.DropOEM_DSM = (UINT16)InputItems[i].IValue;
-//    dropDSM = gSettings.DropOEM_DSM; //?
-//    defDSM = TRUE;
+    gSettings.QuirksMask = InputItems[i].IValue;
+    gQuirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
+    gQuirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
+    gQuirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
+    gQuirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
+    gQuirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
+    gQuirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
+    gQuirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
+    gQuirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
+    gQuirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
+    gQuirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
+    gQuirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
+    gQuirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
+    gQuirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
+    gQuirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
+    gQuirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
+    gQuirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
+    DBG("applied Quirks mask:%llx\n", gSettings.QuirksMask); //default is 0xA861
   }
   i++; //102
   if (InputItems[i].Valid) {
@@ -1205,6 +1227,17 @@ VOID ApplyInputs(VOID)
     gSettings.KernelAndKextPatches.KPPanicNoKextDump = InputItems[i].BValue;
     gBootChanged = TRUE;
   }
+  i++; //122
+  if (InputItems[i].Valid) {
+    gSettings.MaxSlide = (UINTN)StrDecimalToUintn(InputItems[i].SValue);
+    DBG(" set MaxSlide = %lld\n", gSettings.MaxSlide);
+  }
+  i++; //123
+  if (InputItems[i].Valid) {
+    gProvideConsoleGopEnable = InputItems[i].BValue;
+    DBG("applied ConsoleGopEnable=%s\n", gProvideConsoleGopEnable?"Y":"N");
+  }
+
 
   if (NeedSave) {
     SaveSettings();
@@ -2249,41 +2282,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   return Entry;
 }
-/*
-REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropDSM()
-{
-  // init
-  REFIT_MENU_ITEM_OPTIONS   *Entry;
-  REFIT_MENU_SCREEN  *SubScreen;
 
-  // create the entry in the main menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSM, NULL);
-  //  Entry->Title.SPrintf("Drop OEM _DSM [0x%04hhx]->", gSettings.DropOEM_DSM);
-
-  // submenu description
-  SubScreen->AddMenuInfoLine_f("Choose devices to drop OEM _DSM methods from DSDT");
-
-  SubScreen->AddMenuCheck("ATI/AMD Graphics",     DEV_ATI, 101);
-  SubScreen->AddMenuCheck("Nvidia Graphics",      DEV_NVIDIA, 101);
-  SubScreen->AddMenuCheck("Intel Graphics",       DEV_INTEL, 101);
-  SubScreen->AddMenuCheck("PCI HDA audio",        DEV_HDA, 101);
-  SubScreen->AddMenuCheck("HDMI audio",           DEV_HDMI, 101);
-  SubScreen->AddMenuCheck("PCI LAN Adapter",      DEV_LAN, 101);
-  SubScreen->AddMenuCheck("PCI WiFi Adapter",     DEV_WIFI, 101);
-  SubScreen->AddMenuCheck("IDE HDD",              DEV_IDE, 101);
-  SubScreen->AddMenuCheck("SATA HDD",             DEV_SATA, 101);
-  SubScreen->AddMenuCheck("USB Controllers",      DEV_USB, 101);
-  SubScreen->AddMenuCheck("LPC Controller",       DEV_LPC, 101);
-  SubScreen->AddMenuCheck("SMBUS Controller",     DEV_SMBUS, 101);
-  SubScreen->AddMenuCheck("IMEI Device",          DEV_IMEI, 101);
-  SubScreen->AddMenuCheck("Firewire",             DEV_FIREWIRE, 101);
-
-  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
-  ModifyTitles(Entry);
-
-  return Entry;
-}
-*/
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 {
   REFIT_MENU_ITEM_OPTIONS   *Entry; //, *SubEntry;
@@ -2332,7 +2331,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
   return Entry;
 }
 
-REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()  //yyyy
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()
 {
   REFIT_MENU_ITEM_OPTIONS     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
@@ -2710,6 +2709,46 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
   return Entry;
 }
 
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
+{
+  // init
+  REFIT_MENU_ITEM_OPTIONS   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  
+  // create the entry in the main menu
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_QUIRKS, NULL);
+  Entry->Title.SWPrintf("Quirks mask [0x%04llx]->", gSettings.QuirksMask);
+  
+  // submenu description
+  SubScreen->AddMenuInfoLine_f("Choose options to fix memory");
+  
+  SubScreen->AddMenuCheck("AvoidRuntimeDefrag",     QUIRK_DEFRAG, 101);
+  SubScreen->AddMenuCheck("DevirtualiseMmio",       QUIRK_MMIO, 101);
+  SubScreen->AddMenuCheck("DisableSingleUser",      QUIRK_SU, 101);
+  SubScreen->AddMenuCheck("DisableVariableWrite",   QUIRK_VAR, 101);
+  SubScreen->AddMenuCheck("DiscardHibernateMap",    QUIRK_HIBER, 101);
+  SubScreen->AddMenuCheck("EnableSafeModeSlide",    QUIRK_SAFE, 101);
+  SubScreen->AddMenuCheck("EnableWriteUnprotector", QUIRK_UNPROT, 101);
+  SubScreen->AddMenuCheck("ForceExitBootServices",  QUIRK_EXIT, 101);
+  SubScreen->AddMenuCheck("ProtectMemoryRegions",   QUIRK_REGION, 101);
+  SubScreen->AddMenuCheck("ProtectSecureBoot",      QUIRK_SECURE, 101);
+  SubScreen->AddMenuCheck("ProtectUefiServices",    QUIRK_UEFI, 101);
+  SubScreen->AddMenuItemInput(123, "ProvideConsoleGopEnable", FALSE);
+  SubScreen->AddMenuCheck("ProvideCustomSlide",     QUIRK_CUSTOM, 101);
+//decimal
+  SubScreen->AddMenuItemInput(122, "ProvideMaxSlide:", TRUE);
+  SubScreen->AddMenuCheck("RebuildAppleMemoryMap",  QUIRK_MAP, 101);
+  SubScreen->AddMenuCheck("SetupVirtualMap",        QUIRK_VIRT, 101);
+  SubScreen->AddMenuCheck("SignalAppleOS",          QUIRK_OS, 101);
+  SubScreen->AddMenuCheck("SyncRuntimePermissions", QUIRK_PERM, 101);
+  
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+  ModifyTitles(Entry);
+  
+  return Entry;
+}
+
+
 VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_ABSTRACT_MENU_ENTRY    *TmpChosenEntry = NULL;
@@ -2758,12 +2797,13 @@ VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     }
     OptionMenu.AddMenuEntry( SubMenuACPI(), true);
     OptionMenu.AddMenuEntry( SubMenuSmbios(), true);
+    OptionMenu.AddMenuEntry( SubMenuBinaries(), true);
+    OptionMenu.AddMenuEntry( SubMenuQuirks(), true);
+    OptionMenu.AddMenuEntry( SubMenuGraphics(), true);
     OptionMenu.AddMenuEntry( SubMenuPCI(), true);
     OptionMenu.AddMenuEntry( SubMenuSpeedStep(), true);
-    OptionMenu.AddMenuEntry( SubMenuGraphics(), true);
     OptionMenu.AddMenuEntry( SubMenuAudio(), true);
     OptionMenu.AddMenuEntry( SubMenuAudioPort(), true);
-    OptionMenu.AddMenuEntry( SubMenuBinaries(), true);
     OptionMenu.AddMenuEntry( SubMenuSystem(), true);
     OptionMenu.AddMenuEntry( &MenuEntryReturn, false);
     //DBG("option menu created entries=%d\n", OptionMenu.Entries.size());

@@ -55,7 +55,7 @@ LegacyRegionUnlock (
                   (VOID **) &LegacyRegionProtocol
                   );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Unlock Region Using LegacyRegionProtocol
     //

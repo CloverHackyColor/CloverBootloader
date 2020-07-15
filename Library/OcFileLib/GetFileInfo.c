@@ -62,7 +62,7 @@ GetFileInfo (
                        FileInfoBuffer
                        );
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         if (RealFileInfoSize != NULL) {
           *RealFileInfoSize = FileInfoSize;
         }

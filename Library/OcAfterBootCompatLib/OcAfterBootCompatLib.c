@@ -61,7 +61,7 @@ InstallAbcProtocol (
     &Interface
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Ensure we do not run with AptioMemoryFix.
     // It also checks for attempts to install this protocol twice.
@@ -78,7 +78,7 @@ InstallAbcProtocol (
     NULL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_WARN, "OCABC: protocol install failure - %r\n", Status));
     return Status;
   }
@@ -105,7 +105,7 @@ OcAbcInitialize (
   UINTN                TotalMemory;
 
   Status = InstallAbcProtocol ();
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

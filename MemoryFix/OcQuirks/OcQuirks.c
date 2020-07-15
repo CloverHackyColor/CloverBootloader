@@ -1,4 +1,5 @@
 #include <Library/MemoryAllocationLib.h>
+#include <Library/DebugLib.h>
 #include <Library/OcStorageLib.h>
 #include <Library/OcSerializeLib.h>
 #include <Library/OcTemplateLib.h>
@@ -8,49 +9,13 @@
 
 #include <Protocol/LoadedImage.h>
 #include <Protocol/SimpleFileSystem.h>
+#include <Protocol/OcQuirksProtocol.h>
 
 #define ROOT_PATH   L"EFI\\CLOVER"
-#define CONFIG_PATH L"drivers\\UEFI\\OcQuirks.plist"
+//#define CONFIG_PATH L"drivers\\UEFI\\OcQuirks.plist"
 
 #define MAX_DATA_SIZE 10000
-
-#define OC_MMIO_WL_STRUCT_FIELDS(_, __) \
-  _(BOOLEAN   , Enabled , , FALSE , ()) \
-  _(UINT64    , Address , , 0     , ()) \
-  _(OC_STRING , Comment , , OC_STRING_CONSTR ("", _, __), OC_DESTR (OC_STRING))
-  OC_DECLARE (OC_MMIO_WL_STRUCT)
-
-#define OC_MMIO_WL_ARRAY_FIELDS(_, __) \
-  OC_ARRAY (OC_MMIO_WL_STRUCT, _, __)
-  OC_DECLARE (OC_MMIO_WL_ARRAY)
-
-#define OC_QUIRKS_FIELDS(_, __) \
-  _(BOOLEAN , AvoidRuntimeDefrag      ,   , TRUE  ,()) \
-  _(BOOLEAN , DevirtualiseMmio        ,   , FALSE ,()) \
-  _(BOOLEAN , DisableSingleUser       ,   , FALSE ,()) \
-  _(BOOLEAN , DisableVariableWrite    ,   , FALSE ,()) \
-  _(BOOLEAN , DiscardHibernateMap     ,   , FALSE ,()) \
-  _(BOOLEAN , EnableSafeModeSlide     ,   , TRUE  ,()) \
-  _(BOOLEAN , EnableWriteUnprotector  ,   , FALSE  ,()) \
-  _(BOOLEAN , ForceExitBootServices   ,   , TRUE  ,()) \
-  _(OC_MMIO_WL_ARRAY , MmioWhitelist  ,   , OC_CONSTR2 (OC_MMIO_WL_ARRAY, _, __) , OC_DESTR (OC_MMIO_WL_ARRAY)) \
-  _(BOOLEAN , ProtectMemoryRegions    ,   , FALSE ,()) \
-  _(BOOLEAN , ProtectSecureBoot       ,   , FALSE ,()) \
-  _(BOOLEAN , ProtectUefiServices     ,   , FALSE ,()) \
-  _(BOOLEAN , ProvideConsoleGopEnable ,   , TRUE  ,()) \
-  _(UINT8   , ProvideMaxSlide         ,   , 0     ,()) \
-  _(BOOLEAN , ProvideCustomSlide      ,   , TRUE  ,()) \
-  _(BOOLEAN , RebuildAppleMemoryMap   ,   , TRUE  ,()) \
-  _(BOOLEAN , SetupVirtualMap         ,   , TRUE  ,()) \
-  _(BOOLEAN , SignalAppleOS           ,   , FALSE ,()) \
-  _(BOOLEAN , SyncRuntimePermissions  ,   , TRUE  ,())
-
-  OC_DECLARE (OC_QUIRKS)
-
-OC_STRUCTORS        (OC_MMIO_WL_STRUCT, ())
-OC_ARRAY_STRUCTORS  (OC_MMIO_WL_ARRAY)
-OC_STRUCTORS        (OC_QUIRKS, ())
-
+/*
 STATIC
 OC_SCHEMA
 mMmioWhitelistEntry[] = {
@@ -114,7 +79,7 @@ QuirksProvideConfig (
     (VOID **) &LoadedImage
     );
   
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   
@@ -136,7 +101,7 @@ QuirksProvideConfig (
     NULL
     );
   
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return FALSE;
   }
   
@@ -154,13 +119,15 @@ QuirksProvideConfig (
 
     return FALSE;
   }
-  
+  //ConfigData is still XML file content. Now parsing
   BOOLEAN Success = ParseSerialized (Config, &mConfigInfo, ConfigData, ConfigDataSize);
   
   FreePool(ConfigData);
   
   return Success;
 }
+*/
+OCQUIRKS_PROTOCOL *mQuirks = NULL;
 
 EFI_STATUS
 EFIAPI
@@ -169,11 +136,31 @@ QuirksEntryPoint (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  OC_QUIRKS Config;
+  EFI_STATUS              Status;
+  OC_ABC_SETTINGS         AbcSettings = { TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE,
+                                          FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, NULL, 0, NULL, NULL, NULL, NULL };
+  BOOLEAN                 ProvideConsoleGopEnable = TRUE;
   
-  OC_QUIRKS_CONSTRUCT (&Config, sizeof (Config));
-  QuirksProvideConfig(&Config, Handle);
-    
+  Status = gBS->LocateProtocol(&gOcQuirksProtocolGuid, NULL, (VOID **)&mQuirks);
+  
+// if not found then use default values
+//  if (EFI_ERROR(Status)) {
+//    return Status;
+//  }
+//  OC_QUIRKS Config;
+  
+//  OC_QUIRKS_CONSTRUCT (&Config, sizeof (Config));
+//  QuirksProvideConfig(&Config, Handle);
+  
+  if (mQuirks) {
+    Status = mQuirks->GetConfig(mQuirks, &AbcSettings, &ProvideConsoleGopEnable);
+  }
+  if (EFI_ERROR(Status)) {
+//    OC_QUIRKS_DESTRUCT (&Config, sizeof(Config));
+//    return Status;
+    DEBUG ((DEBUG_INFO, L"config not found, use default"));
+  }
+/*
   OC_ABC_SETTINGS AbcSettings = {
   
     .AvoidRuntimeDefrag	    = Config.AvoidRuntimeDefrag,
@@ -214,12 +201,12 @@ QuirksEntryPoint (
       AbcSettings.MmioWhitelistSize = abcIndex;
     } // Else couldn't allocate slots for mmio addresses
   }
-  
-  if (Config.ProvideConsoleGopEnable) {
-  	OcProvideConsoleGop (TRUE);
+*/
+  if (ProvideConsoleGopEnable) {
+  	OcProvideConsoleGop(TRUE);
   }
   
-  OC_QUIRKS_DESTRUCT (&Config, sizeof (Config));
+//  OC_QUIRKS_DESTRUCT (&Config, sizeof (Config));
   
-  return OcAbcInitialize (&AbcSettings);
+  return OcAbcInitialize(&AbcSettings);
 }

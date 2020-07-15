@@ -154,14 +154,14 @@ ControlledClearScreen (
     (VOID **) &GraphicsOutput
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     Status = GraphicsOutput->QueryMode (
       GraphicsOutput,
       GraphicsOutput->Mode->Mode,
       &SizeOfInfo,
       &Info
       );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Width  = Info->HorizontalResolution;
       Height = Info->VerticalResolution;
       FreePool (Info);
@@ -221,7 +221,7 @@ ConsoleControlGetMode (
       StdInLocked
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       mConsoleMode = *Mode;
     }
 
@@ -263,7 +263,7 @@ ConsoleControlSetMode (
       (VOID **) &GraphicsOutput
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = GraphicsOutput->Blt (
         GraphicsOutput,
         &mEfiBackgroundColors[BitFieldRead32 ((UINT32) gST->ConOut->Mode->Attribute, 4, 6)],

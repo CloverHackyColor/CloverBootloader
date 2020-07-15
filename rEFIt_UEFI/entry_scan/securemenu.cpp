@@ -67,13 +67,13 @@ VOID AddSecureBootTool(VOID)
 //  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (gSettings.SecureBoot) {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
-    Entry->Title.SPrintf("Clover Secure Boot Configuration");
+    Entry->Title.SWPrintf("Clover Secure Boot Configuration");
 //    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
     Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT_CONFIG);
 
   } else {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT_CONFIG();
-    Entry->Title.SPrintf("Enable Clover Secure Boot");
+    Entry->Title.SWPrintf("Enable Clover Secure Boot");
 //    Entry->Tag = TAG_SECURE_BOOT;
     Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
   }

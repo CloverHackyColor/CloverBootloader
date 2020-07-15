@@ -67,7 +67,7 @@ OcPlayAudioFile (
       NULL,
       (VOID **) &Context->OcAudio
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Context->OcAudio = NULL;
     }
   }
@@ -76,7 +76,7 @@ OcPlayAudioFile (
     Status = Context->OcAudio->PlayFile (Context->OcAudio, File, TRUE);
   }
 
-  if (Fallback && EFI_ERROR (Status)) {
+  if (Fallback && EFI_ERROR(Status)) {
     switch (File) {
       case AppleVoiceOverAudioFileBeep:
         Status = OcPlayAudioBeep (
@@ -157,7 +157,7 @@ OcPlayAudioBeep (
       NULL,
       (VOID **) &Context->BeepGen
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
   }

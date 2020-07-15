@@ -224,12 +224,12 @@ InternalGetRecoveryOsBooter (
     &gEfiSimpleFileSystemProtocolGuid,
     (VOID **) &FileSystem
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = FileSystem->OpenVolume (FileSystem, &Root);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -275,7 +275,7 @@ InternalGetRecoveryOsBooter (
         FreePool (TmpPath);
       }
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         //
         // This entry should point to a folder with recovery.
         // Apple never adds trailing slashes to blessed folder paths.
@@ -301,7 +301,7 @@ InternalGetRecoveryOsBooter (
     // and we have to copy.
     //
     Status = SafeFileOpen (Root, &Recovery, L"\\com.apple.recovery.boot", EFI_FILE_MODE_READ, 0);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       //
       // Do not do any extra checks for simplicity, as they will be done later either way.
       //
@@ -374,7 +374,7 @@ OcGetBootEntryLabelImage (
     &Device
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -384,7 +384,7 @@ OcGetBootEntryLabelImage (
     (VOID **) &FileSystem
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (BootDirectoryName);
     return Status;
   }
@@ -444,7 +444,7 @@ OcGetBootEntryIcon (
     &Device
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -454,7 +454,7 @@ OcGetBootEntryIcon (
     (VOID **) &FileSystem
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (BootDirectoryName);
     return Status;
   }
@@ -499,7 +499,7 @@ InternalDescribeBootEntry (
     &Device
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -509,7 +509,7 @@ InternalDescribeBootEntry (
     (VOID **) &FileSystem
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (BootDirectoryName);
     return Status;
   }
@@ -543,7 +543,7 @@ InternalDescribeBootEntry (
   if (BootEntry->Type == OC_BOOT_UNKNOWN && BootEntry->IsGeneric) {
     DEBUG ((DEBUG_INFO, "OCB: Trying to detect Microsoft BCD\n"));
     Status = ReadFileSize (FileSystem, L"\\EFI\\Microsoft\\Boot\\BCD", &BcdSize);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       BootEntry->Type = OC_BOOT_WINDOWS;
     }
   }

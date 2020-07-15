@@ -112,7 +112,7 @@ GetLogPath (
   }
 
   Status = gRT->GetTime (&Date, NULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     ZeroMem (&Date, sizeof (Date));
   }
 
@@ -281,7 +281,7 @@ OcLogAddEntry  (
     //
 
     Status = AsciiStrCatS (Private->AsciiBuffer, Private->AsciiBufferSize, Private->TimingTxt);
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = AsciiStrCatS (Private->AsciiBuffer, Private->AsciiBufferSize, Private->LineBuffer);
     }
 
@@ -314,7 +314,7 @@ OcLogAddEntry  (
       } else {
         Status = EFI_BUFFER_TOO_SMALL;
       }
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
         if ((OcLog->Options & OC_LOG_NONVOLATILE) != 0) {
           Attributes |= EFI_VARIABLE_NON_VOLATILE;
@@ -328,7 +328,7 @@ OcLogAddEntry  (
           Private->NvramBuffer
           );
 
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           //
           // On APTIO V this may not even get printed. Regardless of volatile or not
           // it will firstly start discarding NVRAM data silently, and then will borks
@@ -416,7 +416,7 @@ InternalGetOcLog (
       (VOID **) &mInternalOcLog
       );
 
-    if (EFI_ERROR (Status) || mInternalOcLog->Revision != OC_LOG_REVISION) {
+    if (EFI_ERROR(Status) || mInternalOcLog->Revision != OC_LOG_REVISION) {
       mInternalOcLog = NULL;
     }
   }
@@ -449,14 +449,14 @@ OcConfigureLogProtocol (
     if (LogPath != NULL) {
       if (LogFileSystem != NULL) {
         Status = LogFileSystem->OpenVolume (LogFileSystem, &LogRoot);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           LogRoot = NULL;
         }
       }
 
       if (LogRoot == NULL) {
         Status = FindWritableFileSystem (&LogRoot);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           DEBUG ((DEBUG_ERROR, "OCL: There is no place to write log file to - %r\n", Status));
           LogRoot = NULL;
         }
@@ -526,7 +526,7 @@ OcConfigureLogProtocol (
         &Private->OcLog
         );
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         OcLog = &Private->OcLog;
       } else {
         FreePool (Private);
@@ -534,13 +534,13 @@ OcConfigureLogProtocol (
     }
   }
 
-  if (!EFI_ERROR (Status)
+  if (!EFI_ERROR(Status)
     && (Options & (OC_LOG_SERIAL | OC_LOG_ENABLE)) == (OC_LOG_SERIAL | OC_LOG_ENABLE)) {
     SerialPortInitialize ();
   }
 
   if (LogRoot != NULL) {
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (OC_LOG_PRIVATE_DATA_FROM_OC_LOG_THIS (OcLog)->AsciiBufferSize > 0) {
         SetFileData (
           LogRoot,

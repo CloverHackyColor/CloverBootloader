@@ -159,7 +159,7 @@ WrapGetTime (
     Capabilities
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // On old AMI firmwares (like the one found in GA-Z87X-UD4H) there is a chance
     // of getting 2047 (EFI_UNSPECIFIED_TIMEZONE) from GetTime. This is valid,
@@ -382,7 +382,7 @@ WrapGetNextVariableName (
       Size   = sizeof (TempName);
       Status = mStoredGetNextVariableName (&Size, TempName, &TempGuid);
 
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         if (!IsEfiBootVar (TempName, &TempGuid)) {
           Size = StrSize (TempName); ///< Not guaranteed to be updated with EFI_SUCCESS.
 
@@ -467,7 +467,7 @@ WrapGetNextVariableName (
     Size   = sizeof (TempName);
     Status = mStoredGetNextVariableName (&Size, TempName, &TempGuid);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       if (IsOcBootVar (TempName, &TempGuid)) {
         Size = StrSize (TempName); ///< Not guaranteed to be updated with EFI_SUCCESS.
 
@@ -720,5 +720,5 @@ RedirectRuntimeServices (
     &mTranslateEvent
     );
 
-  ASSERT_EFI_ERROR (Status);
+  ASSERT_EFI_ERROR(Status);
 }

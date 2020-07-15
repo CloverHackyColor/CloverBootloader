@@ -87,7 +87,7 @@ OcOpenFileByRemainingDevicePath (
                   NULL,
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -96,7 +96,7 @@ OcOpenFileByRemainingDevicePath (
   // we have to release LastFile on error.
   //
   Status = FileSystem->OpenVolume (FileSystem, &LastFile);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -152,7 +152,7 @@ OcOpenFileByRemainingDevicePath (
 
     FreePool (AlignedPathName);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       goto CloseLastFile;
     }
 
@@ -174,7 +174,7 @@ CloseLastFile:
   // We are on the error path; we must have set an error Status for returning
   // to the caller.
   //
-  ASSERT (EFI_ERROR (Status));
+  ASSERT (EFI_ERROR(Status));
   return Status;
 }
 
@@ -201,7 +201,7 @@ OcOpenFileByDevicePath (
                   FilePath,
                   &FileSystemHandle
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 

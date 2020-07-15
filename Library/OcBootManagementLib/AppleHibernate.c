@@ -56,7 +56,7 @@ OcActivateHibernateWake (
   // If legacy boot-switch-vars exists (NVRAM working), then use it.
   //
   Status = GetVariable2 (L"boot-switch-vars", &gEfiAppleBootGuid, &Value, &Size);
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Leave it as is.
     //
@@ -73,7 +73,7 @@ OcActivateHibernateWake (
              &Size,
              &Attributes
              );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     if (IsDevicePathValid (BootImagePath, Size)) {
       DebugPrintDevicePath (
         DEBUG_INFO,
@@ -140,7 +140,7 @@ OcActivateHibernateWake (
     // Prior to 10.13.6.
     //
     Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
-    if (!HasHibernateInfo && !EFI_ERROR (Status) && Size == sizeof (RtcVars)) {
+    if (!HasHibernateInfo && !EFI_ERROR(Status) && Size == sizeof (RtcVars)) {
       CopyMem (RtcRawVars, Value, sizeof (RtcVars));
       HasHibernateInfo = RtcVars.signature[0] == 'A'
                       && RtcVars.signature[1] == 'A'
@@ -159,7 +159,7 @@ OcActivateHibernateWake (
     //
     // Erase RTC variables in NVRAM.
     //
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       Status = gRT->SetVariable (
         L"IOHibernateRTCVariables",
         &gEfiAppleBootGuid,

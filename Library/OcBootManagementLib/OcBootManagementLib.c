@@ -365,7 +365,7 @@ OcShowSimplePasswordRequest (
     //
     do {
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-    } while (!EFI_ERROR (Status));
+    } while (!EFI_ERROR(Status));
 
     gST->ConOut->OutputString (gST->ConOut, OC_MENU_PASSWORD_REQUEST);
     OcPlayAudioFile (Context, OcVoiceOverAudioFileEnterPassword, TRUE);
@@ -374,7 +374,7 @@ OcShowSimplePasswordRequest (
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
       if (Status == EFI_NOT_READY) {
         continue;
-      } else if (EFI_ERROR (Status)) {
+      } else if (EFI_ERROR(Status)) {
         gST->ConOut->ClearScreen (gST->ConOut);
         SecureZeroMem (Password, PwIndex);
         SecureZeroMem (&Key.UnicodeChar, sizeof (Key.UnicodeChar));
@@ -530,7 +530,7 @@ OcRunBootPicker (
       Context,
       OcPrivilegeAuthorized
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Status != EFI_ABORTED) {
         ASSERT (FALSE);
         return Status;
@@ -599,7 +599,7 @@ OcRunBootPicker (
 
       Status = RunShowMenu (BootContext, &Chosen);
 
-      if (EFI_ERROR (Status) && Status != EFI_ABORTED) {
+      if (EFI_ERROR(Status) && Status != EFI_ABORTED) {
         DEBUG ((DEBUG_ERROR, "OCB: ShowMenu failed - %r\n", Status));
         OcFreeBootContext (BootContext);
         return Status;
@@ -619,11 +619,11 @@ OcRunBootPicker (
       continue;
     }
 
-    ASSERT (!EFI_ERROR (Status) || Status == EFI_ABORTED);
+    ASSERT (!EFI_ERROR(Status) || Status == EFI_ABORTED);
 
     Context->TimeoutSeconds = 0;
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_INFO,
         "OCB: Should boot from %u. %s (T:%d|F:%d|G:%d|E:%d|DEF:%d)\n",
@@ -666,7 +666,7 @@ OcRunBootPicker (
         //
         OcPlayAudioFile (Context, OcVoiceOverAudioFileLoading, FALSE);
         Status = OcPlayAudioEntry (Context, Chosen);
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           OcPlayAudioBeep (
             Context,
             OC_VOICE_OVER_SIGNALS_PASSWORD_OK,
@@ -685,7 +685,7 @@ OcRunBootPicker (
       //
       // Do not wait on successful return code.
       //
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         OcPlayAudioFile (Context, OcVoiceOverAudioFileExecutionFailure, TRUE);
         gBS->Stall (SECONDS_TO_MICROSECONDS (3));
         //
@@ -731,14 +731,14 @@ OcRunAppleBootPicker (
       0,
       &NewHandle
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_INVALID_PARAMETER;
     }
   } else {
     Status = EFI_NOT_FOUND;
   }
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     PickerEntryReason = ApplePickerEntryReasonUnknown;
     Status = gRT->SetVariable (
       APPLE_PICKER_ENTRY_REASON_VARIABLE_NAME,
@@ -755,7 +755,7 @@ OcRunAppleBootPicker (
       NULL
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       Status = EFI_UNSUPPORTED;
     }
   }

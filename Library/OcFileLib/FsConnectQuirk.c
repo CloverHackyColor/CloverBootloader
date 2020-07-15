@@ -53,7 +53,7 @@ OcUnblockUnmountedPartitions (
                   &NumHandles,
                   &Handles
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_INFO, "OCFSQ: Could not locate DiskIo handles\n"));
     return;
   }
@@ -67,7 +67,7 @@ OcUnblockUnmountedPartitions (
                     &gEfiSimpleFileSystemProtocolGuid,
                     (VOID **) &FileSystem
                     );
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       continue;
     }
     //
@@ -78,7 +78,7 @@ OcUnblockUnmountedPartitions (
                     &gEfiBlockIoProtocolGuid,
                     (VOID **) &BlockIo
                     );
-    if (EFI_ERROR (Status) || !BlockIo->Media->LogicalPartition) {
+    if (EFI_ERROR(Status) || !BlockIo->Media->LogicalPartition) {
       continue;
     }
     //
@@ -90,7 +90,7 @@ OcUnblockUnmountedPartitions (
                     &BlockIoInfos,
                     &NumBlockIoInfo
                     );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCFSQ: Attached drivers could not been retrieved\n"));
       continue;
     }
@@ -102,7 +102,7 @@ OcUnblockUnmountedPartitions (
                         BlockIoInfos[BlockIoInfoIndex].AgentHandle,
                         NULL
                         );
-        if (EFI_ERROR (Status)) {
+        if (EFI_ERROR(Status)) {
           DEBUG ((
             DEBUG_INFO,
             "OCFSQ: Failed to unblock handle %p - %r\n",

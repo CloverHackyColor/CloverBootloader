@@ -70,7 +70,7 @@ XhciReleaseOwnership (
     &HcCapParams
     );
 
-  ExtendCap = EFI_ERROR (Status) ? 0 : ((HcCapParams >> 14U) & 0x3FFFCU);
+  ExtendCap = EFI_ERROR(Status) ? 0 : ((HcCapParams >> 14U) & 0x3FFFCU);
 
   while (ExtendCap) {
     Status = PciIo->Mem.Read (
@@ -82,7 +82,7 @@ XhciReleaseOwnership (
       &Value
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -560,7 +560,7 @@ ReleaseUsbOwnership (
                     &HandleArray
                     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -573,7 +573,7 @@ ReleaseUsbOwnership (
       (VOID **) &PciIo
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -585,7 +585,7 @@ ReleaseUsbOwnership (
       &Pci
       );
 
-    if (EFI_ERROR (Status)
+    if (EFI_ERROR(Status)
       || Pci.Hdr.ClassCode[1] != PCI_CLASS_SERIAL_USB
       || Pci.Hdr.ClassCode[2] != PCI_CLASS_SERIAL) {
       continue;

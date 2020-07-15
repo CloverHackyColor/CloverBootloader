@@ -281,7 +281,7 @@ OcKeyMapFlush (
       Keys
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "OCKM: GetKeyStrokes failure - %r\n", Status));
       break;
     }
@@ -300,7 +300,7 @@ OcKeyMapFlush (
   if (FlushConsole) {
     do {
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &EfiKey);
-    } while (!EFI_ERROR (Status));
+    } while (!EFI_ERROR(Status));
 
     //
     // This one is required on APTIO IV after holding OPT key.
@@ -353,7 +353,7 @@ InternalContainsKeyStrokes (
                                DbKeyCodes
                                );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -598,7 +598,7 @@ OcAppleKeyMapInstallProtocols (
   if (Reinstall) {
     Status = OcUninstallAllProtocolInstances (&gAppleKeyMapDatabaseProtocolGuid);
     Status2 = OcUninstallAllProtocolInstances (&gAppleKeyStateProtocolGuid);
-    if (EFI_ERROR (Status) || EFI_ERROR (Status2)) {
+    if (EFI_ERROR(Status) || EFI_ERROR (Status2)) {
       DEBUG ((DEBUG_ERROR, "OCKM: Uninstall failed: %r/%r\n", Status, Status2));
       return NULL;
     }
@@ -618,11 +618,11 @@ OcAppleKeyMapInstallProtocols (
       //
       // VMware Fusion has no KeyMapDatabase, and it is intended.
       //
-      if (!EFI_ERROR (Status)) {
+      if (!EFI_ERROR(Status)) {
         mKeyMapDatabase = Database;
       }
       return Aggregator;
-    } else if (!EFI_ERROR (Status)) {
+    } else if (!EFI_ERROR(Status)) {
       //
       // Installed KeyMapDatabase makes no sense, however.
       //
@@ -658,7 +658,7 @@ OcAppleKeyMapInstallProtocols (
     (VOID *)&KeyMapAggregatorData->Aggregator,
     NULL
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (KeyMapAggregatorData);
     return NULL;
   }

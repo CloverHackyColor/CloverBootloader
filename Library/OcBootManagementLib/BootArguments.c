@@ -147,7 +147,7 @@ OcAppendArgumentToCmd (
       Context,
       OcPrivilegeAuthorized
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       if (Status != EFI_ABORTED) {
         ASSERT (FALSE);
         return FALSE;
@@ -232,7 +232,7 @@ OcCheckArgumentFromEnv (
       BootArgsVar
       );
 
-    if (!EFI_ERROR (Status) && BootArgsVarLen > 0) {
+    if (!EFI_ERROR(Status) && BootArgsVarLen > 0) {
       //
       // Just in case we do not have 0-termination
       //

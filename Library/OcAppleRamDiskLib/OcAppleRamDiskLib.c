@@ -194,7 +194,7 @@ InternalAllocateRemainingSize (
       &AllocatedArea
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_INFO,
         "OCRAM: Broken allocator for 0x%Lx in 0x%Lx bytes, rem 0x%Lx - %r\n",
@@ -514,7 +514,7 @@ OcAppleRamDiskLoadFile (
 
     while (FileSize > 0 && ExtentSize > 0) {
       Status = File->SetPosition (File, FilePosition);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         FreePool (TmpBuffer);
         return FALSE;
       }
@@ -526,7 +526,7 @@ OcAppleRamDiskLoadFile (
         &ReadSize,
         TmpBuffer
         );
-      if (EFI_ERROR (Status) || RequestedSize != ReadSize) {
+      if (EFI_ERROR(Status) || RequestedSize != ReadSize) {
         FreePool (TmpBuffer);
         return FALSE;
       }

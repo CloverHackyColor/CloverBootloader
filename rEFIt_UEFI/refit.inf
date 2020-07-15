@@ -419,6 +419,7 @@
   gEfiPlatformDriverOverrideProtocolGuid
   gEmuVariableControlProtocolGuid
   gEfiAudioIoProtocolGuid # CONSUMES
+  gOcQuirksProtocolGuid
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport

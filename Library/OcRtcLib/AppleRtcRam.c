@@ -46,7 +46,7 @@ SyncRtcRead (
   }
 
   Status = EfiAcquireLockOrFail (&mAppleRtcRamLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -70,7 +70,7 @@ SyncRtcWrite (
   }
 
   Status = EfiAcquireLockOrFail (&mAppleRtcRamLock);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -92,7 +92,7 @@ SyncRtcWaitForReady (
   for (Count = 0; Count < 100; ++Count) {
     Status = EfiAcquireLockOrFail (&mAppleRtcRamLock);
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       RegisterA = OcRtcRead (RTC_ADDRESS_REGISTER_A);
       EfiReleaseLock (&mAppleRtcRamLock);
 
@@ -144,23 +144,23 @@ AppleRtcRamReadData (
 
   for (Index = 0; Index < BufferSize; ++Index) {
     Status = SyncRtcWaitForReady ();
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     Status = SyncRtcRead ((UINT8) Address, Buffer);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       return Status;
     }
 
     if (Address == APPLE_RTC_BG_COLOR_ADDR) {
       Status = SyncRtcWaitForReady ();
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 
       Status = SyncRtcRead (APPLE_RTC_BG_COMPLEMENT_ADDR, &Temp);
-      if (EFI_ERROR (Status)) {
+      if (EFI_ERROR(Status)) {
         return Status;
       }
 
@@ -201,7 +201,7 @@ AppleRtcRamWriteData (
   }
 
   Status = AppleRtcRamReadData (This, TempBuffer, APPLE_RTC_TOTAL_SIZE, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status; ///< This is not checked in the original.
   }
 
@@ -250,19 +250,19 @@ AppleRtcRamReset (
 
   for (Index = APPLE_RTC_CHECKSUM_START; Index < APPLE_RTC_CORE_SIZE; ++Index) {
     Status = SyncRtcWaitForReady ();
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       SyncRtcRead ((UINT8) Index, &Buffer[Index]);
     }
   }
 
   Status = SyncRtcWaitForReady ();
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     SyncRtcRead ((UINT8) APPLE_RTC_FIRMWARE_57_ADDR, &Buffer[APPLE_RTC_FIRMWARE_57_ADDR]);
   }
 
   for (Index = APPLE_RTC_RESERVED_ADDR; Index < APPLE_RTC_RESERVED_ADDR + APPLE_RTC_RESERVED_LENGTH; ++Index) {
     Status = SyncRtcWaitForReady ();
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       SyncRtcRead ((UINT8) Index, &Buffer[Index]);
     }
   }
@@ -299,7 +299,7 @@ OcAppleRtcRamInstallProtocol (
 
   if (Reinstall) {
     Status = OcUninstallAllProtocolInstances (&gAppleRtcRamProtocolGuid);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "OCRTC: Uninstall failed: %r\n", Status));
       return NULL;
     }
@@ -310,7 +310,7 @@ OcAppleRtcRamInstallProtocol (
       (VOID *) &Protocol
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Protocol;
     }
   }
@@ -331,7 +331,7 @@ OcAppleRtcRamInstallProtocol (
     &RtcBlacklistSize
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < RtcBlacklistSize; ++Index) {
       mEmulatedRtcStatus[RtcBlacklist[Index]] = TRUE;
       DEBUG ((DEBUG_INFO, "OCRTC: Blacklisted %02x address\n", RtcBlacklist[Index]));
@@ -359,7 +359,7 @@ OcAppleRtcRamInstallProtocol (
      NULL
      );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 

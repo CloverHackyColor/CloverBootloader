@@ -58,7 +58,7 @@ AppleFramebufferGetInfo (
     (VOID **) &GraphicsOutput
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return EFI_UNSUPPORTED;
   }
 
@@ -100,7 +100,7 @@ OcAppleFbInfoInstallProtocol (
 
   if (Reinstall) {
     Status = OcUninstallAllProtocolInstances (&gAppleFramebufferInfoProtocolGuid);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_ERROR, "OCOS: Uninstall failed: %r\n", Status));
       return NULL;
     }
@@ -111,7 +111,7 @@ OcAppleFbInfoInstallProtocol (
       (VOID *) &Protocol
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       return Protocol;
     }
   }
@@ -123,7 +123,7 @@ OcAppleFbInfoInstallProtocol (
      NULL
      );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 

@@ -35,14 +35,14 @@ GetFileData (
   UINTN       ReadSize;
 
   Status = File->SetPosition (File, Position);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   ReadSize = Size;
   Status = File->Read (File, &ReadSize, Buffer);
   File->SetPosition (File, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -63,13 +63,13 @@ GetFileSize (
   UINT64      Position;
 
   Status = File->SetPosition (File, 0xFFFFFFFFFFFFFFFFULL);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
   Status = File->GetPosition (File, &Position);
   File->SetPosition (File, 0);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -109,7 +109,7 @@ GetFileModifcationTime (
   }
 
   Status = File->GetInfo (File, &gEfiFileInfoGuid, &BufferSize, FileInfo);
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     FreePool (FileInfo);
     return Status;
   }
@@ -142,7 +142,7 @@ FindWritableFileSystem (
     &HandleCount,
     &HandleBuffer
     );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -153,7 +153,7 @@ FindWritableFileSystem (
       (VOID **) &SimpleFs
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_VERBOSE,
         "OCFS: FindWritableFileSystem gBS->HandleProtocol[%u] returned %r\n",
@@ -164,7 +164,7 @@ FindWritableFileSystem (
     }
     
     Status = SimpleFs->OpenVolume (SimpleFs, &Fs);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_VERBOSE,
         "OCFS: FindWritableFileSystem SimpleFs->OpenVolume[%u] returned %r\n",
@@ -184,7 +184,7 @@ FindWritableFileSystem (
       EFI_FILE_MODE_CREATE | EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE,
       0
       );
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_VERBOSE,
         "OCFS: FindWritableFileSystem Fs->Open[%u] returned %r\n",
@@ -222,7 +222,7 @@ SetFileData (
 
   if (WritableFs == NULL) {
     Status = FindWritableFileSystem (&Fs);
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_VERBOSE, "OCFS: WriteFileData can't find writable FS\n"));
       return Status;
     }
@@ -238,12 +238,12 @@ SetFileData (
     0
     );
 
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     WrittenSize = Size;
     Status = File->Write (File, &WrittenSize, (VOID *) Buffer);
     Fs->Close (File);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_VERBOSE, "OCFS: WriteFileData file->Write returned %r\n", Status));
     } else if (WrittenSize != Size) {
       DEBUG ((

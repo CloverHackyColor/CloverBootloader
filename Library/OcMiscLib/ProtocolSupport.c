@@ -36,7 +36,7 @@ GetArguments (
     &gEfiShellParametersProtocolGuid,
     (VOID**) &ShellParameters
     );
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     *Argc = ShellParameters->Argc;
     *Argv = ShellParameters->Argv;
     return EFI_SUCCESS;
@@ -47,7 +47,7 @@ GetArguments (
     &gEfiLoadedImageProtocolGuid,
     (VOID**) &LoadedImage
     );
-  if (EFI_ERROR (Status) || LoadedImage->LoadOptions == NULL) {
+  if (EFI_ERROR(Status) || LoadedImage->LoadOptions == NULL) {
     return EFI_NOT_FOUND;
   }
 
@@ -81,7 +81,7 @@ OcUninstallAllProtocolInstances (
     return EFI_SUCCESS;
   }
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -92,7 +92,7 @@ OcUninstallAllProtocolInstances (
       &OriginalProto
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
 
@@ -102,7 +102,7 @@ OcUninstallAllProtocolInstances (
       OriginalProto
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       break;
     }
   }
@@ -126,7 +126,7 @@ OcHandleProtocolFallback (
                   Protocol,
                   Interface
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->LocateProtocol (
                     Protocol,
                     NULL,

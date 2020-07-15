@@ -54,7 +54,7 @@ ScanMpServices (
     NumberOfEnabledProcessors
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -68,7 +68,7 @@ ScanMpServices (
   for (Index = 0; Index < *NumberOfProcessors; ++Index) {
     Status = MpServices->GetProcessorInfo (MpServices, Index, &Info);
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_INFO,
         "OCCPU: Failed to get info for processor %Lu - %r\n",
@@ -123,7 +123,7 @@ ScanFrameworkMpServices (
     NULL
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -144,7 +144,7 @@ ScanFrameworkMpServices (
       &Context
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((
         DEBUG_INFO,
         "OCCPU: Failed to get context for processor %Lu - %r\n",
@@ -212,14 +212,14 @@ ScanThreadCount (
     (VOID **) &MpServices
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     Status = gBS->LocateProtocol (
       &gFrameworkEfiMpServiceProtocolGuid,
       NULL,
       (VOID **) &FrameworkMpServices
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCCPU: No MP services - %r\n", Status));
       return Status;
     }
@@ -247,7 +247,7 @@ ScanThreadCount (
     Status
     ));
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Status;
   }
 
@@ -909,7 +909,7 @@ OcCpuCorrectTscSync (
     (VOID **) &MpServices
     );
 
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     MpServices = NULL;
     Status = gBS->LocateProtocol (
       &gFrameworkEfiMpServiceProtocolGuid,
@@ -917,7 +917,7 @@ OcCpuCorrectTscSync (
       (VOID **) &FrameworkMpServices
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       DEBUG ((DEBUG_INFO, "OCCPU: Failed to find mp services - %r\n", Status));
       return Status;
     }

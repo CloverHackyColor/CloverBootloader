@@ -43,7 +43,7 @@ OcConsoleControlSetMode (
   //
   // No console control, assume already set.
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return Mode;
   }
 
@@ -58,7 +58,7 @@ OcConsoleControlSetMode (
   // Cannot get mode, assume already set.
   // Same mode, do not waste time.
   //
-  if (EFI_ERROR (Status) || OldMode == Mode) {
+  if (EFI_ERROR(Status) || OldMode == Mode) {
     return Mode;
   }
 
@@ -98,7 +98,7 @@ OcConsoleControlInstallProtocol (
   //
   // Native implementation exists, overwrite.
   //
-  if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR(Status)) {
     //
     // Provide original mode if requested.
     //

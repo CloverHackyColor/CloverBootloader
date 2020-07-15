@@ -52,7 +52,7 @@ GetFvFileVolume (
   //
   // TODO: Support FirmwareVolume2?
   //
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR(Status)) {
     return NULL;
   }
 
@@ -65,7 +65,7 @@ GetFvFileVolume (
       (VOID **) &FirmwareVolumeInterface
       );
 
-    if (EFI_ERROR (Status)) {
+    if (EFI_ERROR(Status)) {
       continue;
     }
 
@@ -79,7 +79,7 @@ GetFvFileVolume (
       &AuthenticationStatus
       );
 
-    if (!EFI_ERROR (Status)) {
+    if (!EFI_ERROR(Status)) {
       gBS->FreePool (HandleBuffer);
       return CurrentVolume;
     }

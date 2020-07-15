@@ -31,6 +31,8 @@
 #include "ati_reg.h"
 #include "../../Version.h"
 
+#include <Protocol/OcQuirksProtocol.h>
+
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
 #else
@@ -142,8 +144,9 @@ EFI_GUID            gUuid;
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
-
-extern BOOLEAN                  NeedPMfix;
+extern BOOLEAN                NeedPMfix;
+OC_ABC_SETTINGS               gQuirks;
+BOOLEAN                       gProvideConsoleGopEnable;
 
 //extern INTN                     OldChosenAudio;
 
@@ -210,40 +213,6 @@ static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bi
   { NULL, "FixMutex", FIX_MUTEX }
 };
 
-
-/*
- VOID __inline WaitForSts(VOID) {
- UINT32 inline_timeout = 100000;
- while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }
- }
- */
-#if 0
-UINT32
-GetCrc32 (
-          UINT8 *Buffer,
-          UINTN Size
-          )
-{
-  UINTN  i;
-  UINTN  Len;
-  UINT32 x;
-  UINT32 *Fake;
-
-  Fake = (UINT32*)Buffer;
-  if (Fake == NULL) {
-    DBG("Buffer=NULL\n");
-    return 0;
-  }
-
-  x = 0;
-  Len = Size >> 2;
-  for (i = 0; i < Len; i++) {
-    x += Fake[i];
-  }
-
-  return x;
-}
-#else //nice programming
 UINT32
 GetCrc32 (
           UINT8 *Buffer,
@@ -257,7 +226,6 @@ GetCrc32 (
   while (Size--) x+= *Fake++;
   return x;
 }
-#endif
 
 ACPI_NAME_LIST *
 ParseACPIName(CHAR8 *String)
@@ -2482,8 +2450,6 @@ GetEarlyUserSettings (
     FreePool(Value);
   }
 
-
-
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
   gSettings.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
@@ -3234,6 +3200,102 @@ GetEarlyUserSettings (
       }
     }
 
+    DictPointer = GetProperty(Dict, "Quirks");
+    if (DictPointer != NULL) {
+      Prop               = GetProperty(DictPointer,  "AvoidRuntimeDefrag");
+      gQuirks.AvoidRuntimeDefrag = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
+      Prop               = GetProperty(DictPointer,  "DevirtualiseMmio");
+      gQuirks.DevirtualiseMmio   = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
+      Prop               = GetProperty(DictPointer,  "DisableSingleUser");
+      gQuirks.DisableSingleUser  = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.DisableSingleUser? QUIRK_SU:0;
+      Prop               = GetProperty(DictPointer,  "DisableVariableWrite");
+      gQuirks.DisableVariableWrite = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.DisableVariableWrite? QUIRK_VAR:0;
+      Prop               = GetProperty(DictPointer,  "DiscardHibernateMap");
+      gQuirks.DiscardHibernateMap = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
+      Prop               = GetProperty(DictPointer,  "EnableSafeModeSlide");
+      gQuirks.EnableSafeModeSlide = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
+      Prop               = GetProperty(DictPointer,  "EnableWriteUnprotector");
+      gQuirks.EnableWriteUnprotector = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
+      Prop               = GetProperty(DictPointer,  "ForceExitBootServices");
+      gQuirks.ForceExitBootServices = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.ForceExitBootServices? QUIRK_EXIT:0;
+      Prop               = GetProperty(DictPointer,  "ProtectMemoryRegions");
+      gQuirks.ProtectMemoryRegions = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
+      Prop               = GetProperty(DictPointer,  "ProtectSecureBoot");
+      gQuirks.ProtectSecureBoot = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.ProtectMemoryRegions? QUIRK_SECURE:0;
+      Prop               = GetProperty(DictPointer,  "ProtectUefiServices");
+      gQuirks.ProtectUefiServices = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.ProtectUefiServices? QUIRK_UEFI:0;
+      Prop               = GetProperty(DictPointer,  "ProvideConsoleGopEnable");
+      gProvideConsoleGopEnable = IsPropertyTrue(Prop);
+      Prop               = GetProperty(DictPointer,  "ProvideCustomSlide");
+      gQuirks.ProvideCustomSlide = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
+      Prop               = GetProperty(DictPointer,  "ProvideMaxSlide");
+      gQuirks.ProvideMaxSlide = GetPropertyInteger(Prop, 0);
+      Prop               = GetProperty(DictPointer,  "RebuildAppleMemoryMap");
+      gQuirks.RebuildAppleMemoryMap = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
+      Prop               = GetProperty(DictPointer,  "SetupVirtualMap");
+      gQuirks.SetupVirtualMap = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.SetupVirtualMap? QUIRK_VIRT:0;
+      Prop               = GetProperty(DictPointer,  "SignalAppleOS");
+      gQuirks.SignalAppleOS = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.SignalAppleOS? QUIRK_OS:0;
+      Prop               = GetProperty(DictPointer,  "SyncRuntimePermissions");
+      gQuirks.SyncRuntimePermissions = IsPropertyTrue(Prop);
+      gSettings.QuirksMask  |= gQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
+      Dict2 = GetProperty(DictPointer, "MmioWhitelist");
+      if (Dict2 != NULL) {
+        INTN   Count = GetTagCount(Dict2);
+        TagPtr Dict3;
+        //OC_SCHEMA_INTEGER_IN  ("Address", OC_MMIO_WL_STRUCT, Address),
+        //OC_SCHEMA_STRING_IN   ("Comment", OC_MMIO_WL_STRUCT, Comment),
+        //OC_SCHEMA_BOOLEAN_IN  ("Enabled", OC_MMIO_WL_STRUCT, Enabled),
+        if (Count > 0) {
+          gQuirks.MmioWhitelistLabels = (__typeof__(gQuirks.MmioWhitelistLabels))AllocatePool(sizeof(char*) * Count);
+          gQuirks.MmioWhitelist = (__typeof__(gQuirks.MmioWhitelist))AllocatePool(sizeof(*gQuirks.MmioWhitelist) * Count);
+          gQuirks.MmioWhitelistEnabled = (__typeof__(gQuirks.MmioWhitelistEnabled))AllocatePool(sizeof(BOOLEAN) * Count);
+          gQuirks.MmioWhitelistSize = 0;
+          for (INTN i = 0; i < Count; i++) {
+            Status     = GetElement(Dict2, i, &Dict3);
+            if (EFI_ERROR(Status)) {
+              DBG("error %s getting next element of MmioWhitelist at index %lld\n", strerror(Status), i);
+              continue;
+            }
+            if (Dict3 == NULL) {
+              break;
+            }
+
+            gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize] = (__typeof__(char *))AllocateZeroPool(256);
+            
+            Prop = GetProperty(Dict3, "Comment");
+            if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
+              snprintf(gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize], 255, "%s", Prop->string);
+            } else {
+              snprintf(gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize], 255, " (NoLabel)");
+            }
+            
+            Prop = GetProperty(Dict2, "Address");
+            if (Prop != 0) {
+              gQuirks.MmioWhitelist[gQuirks.MmioWhitelistSize] = GetPropertyInteger(Prop, 0);
+              Prop = GetProperty(Dict2, "Enabled");
+              gQuirks.MmioWhitelistEnabled[gQuirks.MmioWhitelistSize] = IsPropertyTrue(Prop);
+            }
+            gQuirks.MmioWhitelistSize++;
+          }
+        }
+      }
+    }
   }
 
   return Status;
@@ -4908,11 +4970,11 @@ GetUserSettings(
         DEV_PROPERTY *DevProp;
 
         if (Count > 0) {
-			DBG("Add %lld devices (Arbitrary):\n", Count);
+          DBG("Add %lld devices (Arbitrary):\n", Count);
           for (Index = 0; Index < Count; Index++) {
             UINTN DeviceAddr = 0U;
             CHAR8 *Label;
-			  DBG(" - [%02lld]:", Index);
+            DBG(" - [%02lld]:", Index);
             if (EFI_ERROR(GetElement(Prop, Index, &Prop2))) {
               DBG(" continue\n"/*, Index*/);
               continue;
@@ -5385,14 +5447,14 @@ GetUserSettings(
             gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
             gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
             gSettings.PatchDsdtMenuItem = (__typeof__(gSettings.PatchDsdtMenuItem))AllocateZeroPool(Count * sizeof(INPUT_ITEM));
-			  DBG("PatchesDSDT: %lld requested\n", Count);
+            DBG("PatchesDSDT: %lld requested\n", Count);
 
             for (i = 0; i < Count; i++) {
               UINTN Size = 0;
               CHAR8 *DSDTPatchesLabel;
               Status     = GetElement(Prop, i, &Prop2);
               if (EFI_ERROR(Status)) {
-				  DBG("error %s getting next element of PatchesDSDT at index %lld\n", strerror(Status), i);
+                DBG("error %s getting next element of PatchesDSDT at index %lld\n", strerror(Status), i);
                 continue;
               }
 
@@ -5400,17 +5462,17 @@ GetUserSettings(
                 break;
               }
 
-				DBG(" - [%02lld]:", i);
+              DBG(" - [%02lld]:", i);
               DSDTPatchesLabel = (__typeof__(DSDTPatchesLabel))AllocateZeroPool(256);
 
               Prop3 = GetProperty(Prop2, "Comment");
               if (Prop3 != NULL && (Prop3->type == kTagTypeString) && Prop3->string) {
-				  snprintf(DSDTPatchesLabel, 255, "%s", Prop3->string);
+                snprintf(DSDTPatchesLabel, 255, "%s", Prop3->string);
               } else {
                 snprintf(DSDTPatchesLabel, 255, " (NoLabel)");
               }
               gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
-				snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel);
+              snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel);
               DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
 
               FreePool(DSDTPatchesLabel);
@@ -5420,10 +5482,10 @@ GetUserSettings(
 
               //DBG(" DSDT bin patch #%d ", i);
               gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",     &Size);
-				DBG(" lenToFind: %llu", Size);
+              DBG(" lenToFind: %llu", Size);
               gSettings.LenToFind[i]        = (UINT32)Size;
               gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
-				DBG(", lenToReplace: %llu", Size);
+              DBG(", lenToReplace: %llu", Size);
               gSettings.LenToReplace[i]     = (UINT32)Size;
               gSettings.PatchDsdtTgt[i]     = (CHAR8*)GetDataSetting (Prop2, "TgtBridge", &Size);
               DBG(", Target Bridge: %s\n", gSettings.PatchDsdtTgt[i]);
