@@ -1170,10 +1170,6 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Memo
           addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
                              --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
 
-          if [[ "$driver" == OcQuirks.efi ]]; then
-            cp -R "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OcQuirks.plist" \
-            "${PKG_BUILD_DIR}/${driverName}"/Scripts/
-          fi
           buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
           addChoice --group="MemoryFix64UEFI"  --title="$driverName"                \
                     --start-selected="choicePreviouslySelected('$packageRefId')"  \
