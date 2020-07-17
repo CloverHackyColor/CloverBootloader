@@ -20,7 +20,7 @@ driver_name="@DRIVER_NAME@"
 
 if [[ -d "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir" ]]; then
   cd "$EFI_ROOT_DIR/EFI/CLOVER/drivers/$driver_dir"
-  if [[ "$driver" == OcQuirks.efi ]]; then
+  if [[ "$driver_name" == OcQuirks.efi ]]; then
     for driver in *.efi
     do
       low=$(echo "${driver}" | tr '[:upper:]' '[:lower:]')

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-15 01:28+0200\n"
+"POT-Creation-Date: 2020-07-17 15:12+0200\n"
 "PO-Revision-Date: 2019-07-19 10:48+0100\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -700,7 +700,7 @@ msgstr "Criar AppleGraphicsConfig protocolo opcional."
 #. type: "OcQuirks.UEFI_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency"
+msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency."
 msgstr ""
 
 #. type: "AudioDxe.UEFI_description"
