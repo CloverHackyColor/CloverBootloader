@@ -988,28 +988,32 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 //      found pattern: 1
 //    address: 0095098b
 //    bytes:eb05
+      
+// BS
+//      E8 ?? 00 00 00 EB 05 E8 -->
+//      E8 ?? 00 00 00 90 90 E8.
 
       UINTN procLocation = searchProc("readStartupExtensions");
       const UINT8 findJmp[] = {0xEB, 0x05};
       const UINT8 patchJmp[] = {0x90, 0x90};
-//      DBG_RT("==> readStartupExtensions at %llx\n", procLocation);
+      DBG("==> readStartupExtensions at %llx\n", procLocation);
       if (!SearchAndReplace(&KernelData[procLocation], 0x100, findJmp, 2, patchJmp, 1)) {
-        DBG_RT("load kexts not patched\n");
-//        for (UINTN j=procLocation+0x3b; j<procLocation+0x4b; ++j) {
-//          DBG_RT("%02x", Kernel[j]);
-//        }
-//        DBG_RT("\n");
+        DBG("load kexts not patched\n");
+        for (UINTN j=procLocation+0x2b; j<procLocation+0x4b; ++j) {
+          DBG("%02x ", KernelData[j]);
+        }
+        DBG("\n");
 //        Stall(10000000);
         //second attempt brute force for 10.16
         const UINT8 findJmp2[] = {0xEB, 0x05, 0xE8, 0x7D, 0x03};
         const UINT8 patchJmp2[] = {0x90, 0x90, 0xE8, 0x7D, 0x03};
         if (!SearchAndReplace(&KernelData[0], KERNEL_MAX_SIZE, findJmp2, 5, patchJmp2, 1)) {
-          DBG_RT("load kexts 2 not patched\n");
+          DBG("load kexts 2 not patched\n");
         } else {
-          DBG_RT("load kexts 2 patched !!!\n");
+          DBG("load kexts 2 patched !!!\n");
         }
       } else {
-        DBG_RT("load kexts patched\n");
+        DBG("load kexts patched\n");
 //        for (UINTN j=procLocation+0x3b; j<procLocation+0x5b; ++j) {
 //          DBG_RT("%02x", Kernel[j]);
 //        }
@@ -1027,6 +1031,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 //      found pattern: 1
 //    address: 007a29b7
 //    bytes:4885c074224889c348
+      
 
 //Capitan
 //      ffffff800084897b 4885DB                          test       rbx, rbx
@@ -1075,9 +1080,12 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
         }
       }
 #else
+      // BS
+      //      E8 ?? ?? ?? 00 85 C0 0F 84 ?? 00 00 00 49 8B 45 -->
+      //      E8 ?? ?? ?? 00 85 C0 90 90 90 90 90 90 49 8B 45.
+
       const UINT8 find3[] = {0x48, 0x85, 00, 0x74, 00, 0x48, 00, 00, 0x48 };
       const UINT8 mask3[] = {0xFF, 0xFF, 00, 0xFF, 00, 0xFF, 00, 00, 0xFF };
- 
 #endif
       
 //ffffff80009a2267 488D35970D2400                  lea        rsi, qword [ds:0xffffff8000be3005] ; "com.apple.private.security.kext-management"
@@ -1088,7 +1096,8 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       UINTN taskLocation = searchProc("IOTaskHasEntitlement");
       procLocation = searchProc("loadExecutable");
       patchLocation2 = FindMemMask(&KernelData[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
-      DBG("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
+      DBG_RT("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
+      DBG_RT("find3 at 0x%llx\n", patchLocation2);
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         DBG_RT("=> patch SIP applied\n");
         patchLocation2 += procLocation;
@@ -1099,13 +1108,21 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
           KernelData[patchLocation2 + 4] = 0x12;
         }
       } else {
-        patchLocation2 = FindRelative32(KernelData, procLocation, 0x500, taskLocation);
+        patchLocation2 = FindRelative32(KernelData, procLocation, 0x700, taskLocation);
+        DBG_RT("else search relative at 0x%llx\n", patchLocation2);
         if (patchLocation2 != 0) {
           DBG_RT("=> patch2 SIP applied\n");
           KernelData[patchLocation2] = 0xEB;
           KernelData[patchLocation2 + 1] = 0x06;
         } else {
           DBG_RT("=> patch2 SIP not applied\n");
+          const UINT8 find7[] = {0xE8, 0x00, 0x00, 0x00, 0x00, 0x85, 0xC0, 0x0F, 0x84, 0xFF, 0x00, 0x00, 0x00, 0x49, 0x8B, 0x45 };
+          const UINT8 mask7[] = {0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+          patchLocation2 = FindMemMask(&KernelData[0], KERNEL_MAX_SIZE, find7, sizeof(find7), mask7, sizeof(mask7));
+          DBG_RT("found call to TE at 0x%llx\n", patchLocation2);
+          KernelData[0 + patchLocation2 + 7] = 0xEB;
+          KernelData[0 + patchLocation2 + 8] = 0x04;
+
         }
       }
       Stall(10000000);
@@ -1183,9 +1200,21 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
         }
       }
  */
+      //BS
+      //FF 80 3D ?? ?? ?? 00 00 0F 85 ?? 01 00 00 41 -->
+      //FF 80 3D ?? ?? ?? 00 00 90 E9 ?? 01 00 00 41.
+
       if (patchLocation3  == KERNEL_MAX_SIZE) {
-        DBG_RT("==> can't find KxldUnmap (10.14 - recent macOS)\n");
+        DBG_RT("==> can't find KxldUnmap (10.14 - 10.15)\n");
         Stall(3000000);
+        const UINT8 find6[] = {0xFF, 0x80, 0x3D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x85, 0x00, 0x01, 0x00, 0x00, 0x41 };
+        const UINT8 mask6[] = {0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF };
+        patchLocation3 = FindMemMask(&KernelData[0], KERNEL_MAX_SIZE, find6, sizeof(find6), mask6, sizeof(mask6));
+        DBG_RT("find mask 6 at 0x%llx\n", patchLocation3);
+        if (patchLocation3  != KERNEL_MAX_SIZE) {
+          KernelData[0 + patchLocation3 + 8] = 0x90;
+          KernelData[0 + patchLocation3 + 9] = 0xE9;
+        }
       } else {
         DBG_RT("==> patched KxldUnmap (10.14 - recent macOS)\n");
         // 00 0F 85 XX XX 00 00 48
