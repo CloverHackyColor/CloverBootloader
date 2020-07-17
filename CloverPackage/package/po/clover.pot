@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover r5119\n"
-"POT-Creation-Date: 2020-07-15 01:28+0200\n"
+"Project-Id-Version: Clover r5120\n"
+"POT-Creation-Date: 2020-07-17 15:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -661,7 +661,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and "
-"all OsxAptioFix variants. Installs OpenRuntime.efi as dependency"
+"all OsxAptioFix variants. Installs OpenRuntime.efi as dependency."
 msgstr ""
 
 #. type: "AudioDxe.UEFI_description"
