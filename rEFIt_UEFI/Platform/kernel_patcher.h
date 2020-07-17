@@ -57,6 +57,7 @@ const char   kDataSection[] =                       "__data";
 #define ID_SEG_DATA_CONST                      0x110f
 #define ID_SEG_KLD                             0x180f
 #define ID_SEG_KLD2                            0x1a0f
+#define ID_SEG_KLD3                            0x210f
 
 
 const char  ctor_used[] =                           ".constructors_used";

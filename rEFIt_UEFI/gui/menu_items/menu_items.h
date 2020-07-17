@@ -370,6 +370,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         BOOLEAN           isKernelcache;
         BOOLEAN           is64BitKernel;
         UINT32            KernelSlide;
+        UINT32            KernelOffset;
         // notes:
         // - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
         //   only lower 32bit part into PrelinkTextAddr
@@ -398,7 +399,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
               CustomBoot(0), KernelAndKextPatches(0), Settings(0), KernelData(0),
               AddrVtable(0), SizeVtable(0), NamesTable(0), shift(0),
               PatcherInited(false), gSNBEAICPUFixRequire(false), gBDWEIOPCIFixRequire(false), isKernelcache(false), is64BitKernel(false),
-              KernelSlide(0), PrelinkTextLoadCmdAddr(0), PrelinkTextAddr(0), PrelinkTextSize(0),
+              KernelSlide(0), KernelOffset(0), PrelinkTextLoadCmdAddr(0), PrelinkTextAddr(0), PrelinkTextSize(0),
               PrelinkInfoLoadCmdAddr(0), PrelinkInfoAddr(0), PrelinkInfoSize(0),
               KernelRelocBase(0), bootArgs1(0), bootArgs2(0), dtRoot(0), dtLength(0)
 						{};

@@ -18,7 +18,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 0
+#define KERNEL_DEBUG 1
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
@@ -85,7 +85,7 @@ EFI_STATUS LOADER_ENTRY::getVTable()
   //00FFFFFF FF0FFFFF 00000000 FFFFFFFF
 
  // INT32 Tabble  = FindBin(KernelData, 0x5000000, vtableSur, 8);
-  INT32 NTabble = FindBin(KernelData, 0x2000000, (const UINT8 *)ctor_used, (UINT32)strlen(ctor_used));
+  INT32 NTabble = FindBin(KernelData, KERNEL_MAX_SIZE, (const UINT8 *)ctor_used, (UINT32)strlen(ctor_used));
   if (NTabble < 0) {
     return EFI_NOT_FOUND;
   }
@@ -94,10 +94,10 @@ EFI_STATUS LOADER_ENTRY::getVTable()
 //  NTabble -=4;
   DBG_RT("LinkAdr=%x Tabble=%x\n",LinkAdr, NTabble);
 //	DBG("LinkAdr=%x NTabble=%x Tabble=%x\n",LinkAdr, NTabble, Tabble);
-  SEGMENT *LinkSeg = (SEGMENT*)&KernelData[LinkAdr];
-  AddrVtable = LinkSeg->AddrVtable;
-  SizeVtable = LinkSeg->SizeVtable;
-  NamesTable = LinkSeg->AddrNames;
+//  SEGMENT *LinkSeg = (SEGMENT*)&KernelData[LinkAdr];
+//  AddrVtable = LinkSeg->AddrVtable;
+//  SizeVtable = LinkSeg->SizeVtable;
+//  NamesTable = LinkSeg->AddrNames;
   //TODO find an origin of the shift
   shift = NTabble - NamesTable;
 //  DBG_RT("AddrVtable=%x Size=%x AddrNames=%x shift=%x\n", AddrVtable, SizeVtable, NamesTable, shift);
@@ -105,7 +105,8 @@ EFI_STATUS LOADER_ENTRY::getVTable()
   AddrVtable += shift;
 //  AddrVtable = Tabble;
   DBG("AddrVtable=%x Size=%x AddrNames=%x shift=%x\n", AddrVtable, SizeVtable, NamesTable, shift);
-  SegVAddr = FindBin(KernelData, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+  SegVAddr = FindBin(KernelData+KernelOffset, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
+  SegVAddr += KernelOffset;
   DBG("SegVAddr=0x%x\n", SegVAddr);
   return EFI_SUCCESS;
 }
@@ -161,6 +162,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     break;
   case ID_SEG_KLD:
   case ID_SEG_KLD2:
+  case ID_SEG_KLD3:
     lSegVAddr = FindBin(driver, 0x2000, (const UINT8 *)kKldSegment, (UINT32)strlen(kKldSegment));
     break;
 //  case ID_SEC_BSS:
@@ -1909,10 +1911,11 @@ VOID LOADER_ENTRY::Get_PreLink()
   UINT32  ncmds, cmdsize;
   UINT32  binaryIndex;
   UINTN   cnt;
-  UINT8*  binary = (UINT8*)KernelData;
+  UINT8*  binary = &KernelData[KernelOffset];
   struct  load_command        *loadCommand;
   struct  segment_command     *segCmd;
   struct  segment_command_64  *segCmd64;
+  struct  symtab_command      *symCmd;
 
 
   if (is64BitKernel) {
@@ -1928,7 +1931,7 @@ VOID LOADER_ENTRY::Get_PreLink()
     cmdsize = loadCommand->cmdsize;
 
     switch (loadCommand->cmd) {
-      case LC_SEGMENT_64:
+      case LC_SEGMENT_64: //19
         segCmd64 = (struct segment_command_64 *)loadCommand;
       //segn = (UINT32)(UINTN)segCmd64->segname;
       if ((segCmd64->segname[2] != 'R') || (segCmd64->segname[3] != 'E')) {
@@ -2058,6 +2061,21 @@ VOID LOADER_ENTRY::Get_PreLink()
           }
         }
         break;
+      
+      case LC_SYMTAB:
+        symCmd = (struct symtab_command *)loadCommand;
+//      struct symtab_command {
+//        uint32_t  cmd;    /* LC_SYMTAB == 2 */
+//        uint32_t  cmdsize;  /* sizeof(struct symtab_command) */
+//        uint32_t  symoff;    /* symbol table offset */
+//        uint32_t  nsyms;    /* number of symbol table entries */
+//        uint32_t  stroff;    /* string table offset */
+//        uint32_t  strsize;  /* string table size in bytes */
+//      };
+        AddrVtable = symCmd->symoff;
+        SizeVtable = symCmd->nsyms;
+        NamesTable = symCmd->stroff;
+      break;
 
       default:
         break;
@@ -2317,7 +2335,14 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
     is64BitKernel = FALSE;
   } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
     DBG_RT( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
-    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
+//    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
+    KernelOffset = 0;
+    while (KernelOffset < KERNEL_MAX_SIZE) {
+      KernelOffset += 4;
+      if ((KernelData[KernelOffset + 0x0C] == MH_EXECUTE) && (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 )) {
+        break;
+      }
+    }
     is64BitKernel = TRUE;
   } else {
     // not valid Mach-O header - exiting
@@ -2328,7 +2353,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
  
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
-
+/*
   for (UINTN i=0x00200000; i<0x30000000; i+=4) {
     UINT32 *KD = (UINT32 *)i;
     if ((KD[0] == MH_MAGIC_64) && (KD[0x0a] == 0x45545F5F)){
@@ -2339,7 +2364,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
       break;
     }
   }
-
+*/
   if (EFI_ERROR(getVTable())) {
     DBG_RT("error getting vtable: \n");
   }

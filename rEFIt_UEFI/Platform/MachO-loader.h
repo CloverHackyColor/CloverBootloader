@@ -125,6 +125,7 @@ struct mach_header_64 {
 #define	MH_DSYM		0xa		/* companion file with only debug */
 /*  sections */
 #define	MH_KEXT_BUNDLE	0xb		/* x86_64 kexts */
+#define MH_KEXT_CACHE   0xc  //???
 
 /* Constants for the flags field of the mach_header */
 #define	MH_NOUNDEFS	0x1		/* the object file has no undefined
