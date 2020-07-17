@@ -110,10 +110,12 @@ typedef struct SEGMENT {
   UINT32 initprot;    //0x34 01
   UINT32 NumSects;    //0x38 00
   UINT32 Flags;       //0x3C 00
-  UINT32 Cmd[2];      //0x40 02, 18
+  UINT32 Cmd;         //0x40 02  //LC_SYMTAB link-edit stab symbol table info
+  UINT32 Cmdsize      //0x44 18
   UINT32 AddrVtable;  //0x48
   UINT32 SizeVtable;  //0x4C
   UINT32 AddrNames;   //0x50
+  UINT32 SizeNamesTable;
 } SEGMENT;
 
 

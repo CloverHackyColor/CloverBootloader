@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2011-2012 Frank Peng. All rights reserved.
  *
- * Correction and improvements by Clover team
+ * 2012 - 2020 Correction and improvements by Clover team
  */
 
 #include "Platform.h"
@@ -18,7 +18,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 0
+#define KERNEL_DEBUG 1
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
