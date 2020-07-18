@@ -18,7 +18,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 1
+#define KERNEL_DEBUG 0
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
@@ -92,7 +92,7 @@ EFI_STATUS LOADER_ENTRY::getVTable()
   while (KernelData[NTabble] || KernelData[NTabble-1]) --NTabble;
   NTabble &= ~0x03; //align, may be 0x07?
 //  NTabble -=4;
-  DBG_RT(" NTabble=%x\n", NTabble);
+  DBG(" NTabble=%x\n", NTabble);
 //	DBG("LinkAdr=%x NTabble=%x Tabble=%x\n",LinkAdr, NTabble, Tabble);
 //  SEGMENT *LinkSeg = (SEGMENT*)&KernelData[LinkAdr];
 //  AddrVtable = LinkSeg->AddrVtable;
@@ -140,7 +140,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
 //    DBG_RT("%s not found\n", procedure);
     return 0;
   }
-//  DBG_RT("found section 0x%x at pos=%d\n", vArray[i].Seg, i);
+  DBG("found section 0x%x at pos=%d\n", vArray[i].Seg, i);
   INTN lSegVAddr;
   switch (vArray[i].Seg) {
   case ID_SEG_DATA:
@@ -190,7 +190,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   return procAddr;
 }
 
-//static int N = 0;
+static int N = 0;
 //search a procedure by Name and return its offset in the kernel
 UINTN LOADER_ENTRY::searchProc(const char *procedure)
 {
@@ -207,11 +207,11 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
   for (i=0; i<SizeVtable; ++i) {
     size_t Offset = vArray[i].NameOffset;
     if (Offset == 0) break;
-//    if (N < 10) {
-//      DBG("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
-//      DBG("Name to compare %s\n", &Names[Offset]);
-//      N++;
-//    }
+    if (N < 10) {
+      DBG("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
+      DBG("Name to compare %s\n", &Names[Offset]);
+      N++;
+    }
 //    DBG_RT("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
 //    DBG_RT("Name to compare %s\n", &Names[Offset]);
 //    Stall(3000000);
@@ -2075,6 +2075,7 @@ VOID LOADER_ENTRY::Get_PreLink()
         AddrVtable = symCmd->symoff;
         SizeVtable = symCmd->nsyms;
         NamesTable = symCmd->stroff;
+        DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
       break;
 
       default:
@@ -2297,6 +2298,7 @@ VOID
 LOADER_ENTRY::KernelAndKextPatcherInit()
 {
   if (PatcherInited) {
+    DBG("patcher inited\n");
     return;
   }
 
@@ -2305,7 +2307,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // KernelRelocBase will normally be 0
   // but if OsxAptioFixDrv is used, then it will be > 0
   SetKernelRelocBase();
-	DBG_RT("KernelRelocBase = %llx\n", KernelRelocBase);
+	DBG("KernelRelocBase = %llx\n", KernelRelocBase);
 
   // Find bootArgs - we need then for proper detection
   // of kernel Mach-O header
@@ -2322,7 +2324,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
 
 //  UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-  DBG_RT("os_version=%s\n", OSVersion);
+  DBG("os_version=%s\n", OSVersion);
 //  if (os_version < AsciiOSVersionToUint64("10.6")) {
 //    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
 //  } else {
@@ -2334,19 +2336,19 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
     DBG_RT("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
     is64BitKernel = FALSE;
   } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
-    DBG_RT( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
+    DBG( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
 //    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
     KernelOffset = 0;
     while (KernelOffset < KERNEL_MAX_SIZE) {
-      KernelOffset += 4;
       if ((KernelData[KernelOffset + 0x0C] == MH_EXECUTE) && (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 )) {
         break;
       }
+      KernelOffset += 4;
     }
     is64BitKernel = TRUE;
   } else {
     // not valid Mach-O header - exiting
-    DBG_RT( "Kernel not found at 0x%llx - skipping patches!\n", (UINTN)KernelData);
+    DBG( "Kernel not found at 0x%llx - skipping patches!\n", (UINTN)KernelData);
     KernelData = NULL;
     return;
   }
@@ -2399,6 +2401,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   DBG_RT("Kernels patches: %d\n", KernelAndKextPatches->NrKernels);
   if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches->KernelPatches != NULL) && KernelAndKextPatches->NrKernels) {
     DBG_RT("Enabled: \n");
+    DBG("Kernels patches: enabled \n");
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
     if (EFI_ERROR(getVTable())) {
@@ -2447,6 +2450,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   DBG_RT( "\nKernelPm patch: ");
   if (KernelAndKextPatches->KPKernelPm || KernelAndKextPatches->KPKernelXCPM) {
     DBG_RT( "Enabled: \n");
+    DBG( "KernelPm patch: Enabled\n");
     KernelAndKextPatcherInit();
     if (KernelData == NULL) goto NoKernelData;
     patchedOk = FALSE;

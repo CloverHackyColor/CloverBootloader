@@ -3,7 +3,7 @@
 #include "DataHubCpu.h"
 
 #ifndef DEBUG_ALL
-#define KEXT_INJECT_DEBUG 2
+#define KEXT_INJECT_DEBUG 0
 #else
 #define KEXT_INJECT_DEBUG DEBUG_ALL
 #endif
@@ -1096,8 +1096,8 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       UINTN taskLocation = searchProc("IOTaskHasEntitlement");
       procLocation = searchProc("loadExecutable");
       patchLocation2 = FindMemMask(&KernelData[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
-      DBG_RT("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
-      DBG_RT("find3 at 0x%llx\n", patchLocation2);
+      DBG("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
+      DBG("find3 at 0x%llx\n", patchLocation2);
       if (patchLocation2 != KERNEL_MAX_SIZE) {
         DBG_RT("=> patch SIP applied\n");
         patchLocation2 += procLocation;
@@ -1109,7 +1109,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
         }
       } else {
         patchLocation2 = FindRelative32(KernelData, procLocation, 0x700, taskLocation);
-        DBG_RT("else search relative at 0x%llx\n", patchLocation2);
+        DBG("else search relative at 0x%llx\n", patchLocation2);
         if (patchLocation2 != 0) {
           DBG_RT("=> patch2 SIP applied\n");
           KernelData[patchLocation2] = 0xEB;
@@ -1119,7 +1119,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
           const UINT8 find7[] = {0xE8, 0x00, 0x00, 0x00, 0x00, 0x85, 0xC0, 0x0F, 0x84, 0xFF, 0x00, 0x00, 0x00, 0x49, 0x8B, 0x45 };
           const UINT8 mask7[] = {0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
           patchLocation2 = FindMemMask(&KernelData[0], KERNEL_MAX_SIZE, find7, sizeof(find7), mask7, sizeof(mask7));
-          DBG_RT("found call to TE at 0x%llx\n", patchLocation2);
+          DBG("found call to TE at 0x%llx\n", patchLocation2);
           KernelData[0 + patchLocation2 + 7] = 0xEB;
           KernelData[0 + patchLocation2 + 8] = 0x04;
 
@@ -1210,13 +1210,13 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
         const UINT8 find6[] = {0xFF, 0x80, 0x3D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x85, 0x00, 0x01, 0x00, 0x00, 0x41 };
         const UINT8 mask6[] = {0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF };
         patchLocation3 = FindMemMask(&KernelData[0], KERNEL_MAX_SIZE, find6, sizeof(find6), mask6, sizeof(mask6));
-        DBG_RT("find mask 6 at 0x%llx\n", patchLocation3);
+        DBG("find mask 6 at 0x%llx\n", patchLocation3);
         if (patchLocation3  != KERNEL_MAX_SIZE) {
           KernelData[0 + patchLocation3 + 8] = 0x90;
           KernelData[0 + patchLocation3 + 9] = 0xE9;
         }
       } else {
-        DBG_RT("==> patched KxldUnmap (10.14 - recent macOS)\n");
+        DBG("==> patched KxldUnmap (10.14 - recent macOS)\n");
         // 00 0F 85 XX XX 00 00 48
         // 00 90 E9 XX XX 00 00 48
         KernelData[procLocation + patchLocation3 + 1] = 0x90;
