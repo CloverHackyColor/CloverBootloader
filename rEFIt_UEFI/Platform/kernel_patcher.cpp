@@ -74,11 +74,11 @@ VOID LOADER_ENTRY::SetKernelRelocBase()
 EFI_STATUS LOADER_ENTRY::getVTable()
 {
 	DBG("kernel at 0x%llx\n", (UINTN)KernelData);
-  INT32 LinkAdr = FindBin(KernelData, 0x3000, (const UINT8 *)kLinkEditSegment, (UINT32)strlen(kLinkEditSegment));
-  if (LinkAdr == -1) {
-    DBG("no LinkEdit\n");
-    return EFI_NOT_FOUND;
-  }
+//  INT32 LinkAdr = FindBin(KernelData, 0x3000, (const UINT8 *)kLinkEditSegment, (UINT32)strlen(kLinkEditSegment));
+//  if (LinkAdr == -1) {
+//    DBG("no LinkEdit\n");
+//    return EFI_NOT_FOUND;
+//  }
 //  const UINT8 vtable[] = {0x04, 00,00,00, 0x0F, 0x08, 00, 00};
 //  const UINT8 vtableSur[] = {0x25, 00,00,00, 0x0F, 0x06, 00, 00};
   //25000000 0F060000 940BFF00 80FFFFFF
@@ -92,7 +92,7 @@ EFI_STATUS LOADER_ENTRY::getVTable()
   while (KernelData[NTabble] || KernelData[NTabble-1]) --NTabble;
   NTabble &= ~0x03; //align, may be 0x07?
 //  NTabble -=4;
-  DBG_RT("LinkAdr=%x Tabble=%x\n",LinkAdr, NTabble);
+  DBG_RT(" NTabble=%x\n", NTabble);
 //	DBG("LinkAdr=%x NTabble=%x Tabble=%x\n",LinkAdr, NTabble, Tabble);
 //  SEGMENT *LinkSeg = (SEGMENT*)&KernelData[LinkAdr];
 //  AddrVtable = LinkSeg->AddrVtable;
