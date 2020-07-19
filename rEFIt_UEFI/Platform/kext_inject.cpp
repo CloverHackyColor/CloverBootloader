@@ -3,7 +3,7 @@
 #include "DataHubCpu.h"
 
 #ifndef DEBUG_ALL
-#define KEXT_INJECT_DEBUG 0
+#define KEXT_INJECT_DEBUG 00
 #else
 #define KEXT_INJECT_DEBUG DEBUG_ALL
 #endif

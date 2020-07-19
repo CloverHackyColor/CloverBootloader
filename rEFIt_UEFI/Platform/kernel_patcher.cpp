@@ -2384,7 +2384,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
    * so set common until better solution invented
    */
   KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
-  
+
+  PatcherInited = false;
   // we will call KernelAndKextPatcherInit() only if needed
   if (KernelAndKextPatches == NULL) return; //entry is not null as double check
 
