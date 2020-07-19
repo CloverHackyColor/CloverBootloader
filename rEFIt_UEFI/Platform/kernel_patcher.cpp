@@ -2154,7 +2154,7 @@ LOADER_ENTRY::FindBootArgs()
     }
 */
     ptr += 0x1000;
-    if ((UINTN)ptr > 0x10000000ull) {
+    if ((UINTN)ptr > 0x70000000ull) {
       DBG_RT("bootArgs not found\n");
       bootArgs2 = 0;
       break;
