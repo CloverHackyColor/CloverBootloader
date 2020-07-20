@@ -1030,7 +1030,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
   }
 
-  Prop = GetProperty(DictPointer, "KextsToPatch"); //zzzz
+  Prop = GetProperty(DictPointer, "KextsToPatch");
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new

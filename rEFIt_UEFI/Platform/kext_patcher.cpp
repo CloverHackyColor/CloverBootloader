@@ -1582,14 +1582,14 @@ VOID LOADER_ENTRY::PatchLoadedKexts()
 //
 VOID LOADER_ENTRY::KextPatcherStart()
 {
-  if (isKernelcache) {
+//  if (isKernelcache) {
     DBG_RT("Patching kernelcache ...\n");
       Stall(2000000);
     PatchPrelinkedKexts();
-  } else {
+//  } else {
     DBG_RT("Patching loaded kexts ...\n");
       Stall(2000000);
     PatchLoadedKexts();
-  }
+//  }
 }
 

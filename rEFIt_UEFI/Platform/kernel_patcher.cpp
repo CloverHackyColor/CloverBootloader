@@ -1910,16 +1910,58 @@ VOID Patcher_SSE3_7()
 }
 #endif
 
-VOID LOADER_ENTRY::Get_PreLink()
+void LOADER_ENTRY::Get_Symtab()
 {
   UINT32  ncmds, cmdsize;
   UINT32  binaryIndex;
   UINTN   cnt;
   UINT8*  binary = &KernelData[KernelOffset];
   struct  load_command        *loadCommand;
+  struct  symtab_command      *symCmd;
+  
+  ncmds = MACH_GET_NCMDS(binary);
+  binaryIndex = sizeof(struct mach_header_64);
+  
+  for (cnt = 0; cnt < ncmds; cnt++) {
+    loadCommand = (struct load_command *)(binary + binaryIndex);
+    cmdsize = loadCommand->cmdsize;
+    
+    switch (loadCommand->cmd) {
+    case LC_SYMTAB:
+      symCmd = (struct symtab_command *)loadCommand;
+      //      struct symtab_command {
+      //        uint32_t  cmd;    /* LC_SYMTAB == 2 */
+      //        uint32_t  cmdsize;  /* sizeof(struct symtab_command) */
+      //        uint32_t  symoff;    /* symbol table offset */
+      //        uint32_t  nsyms;    /* number of symbol table entries */
+      //        uint32_t  stroff;    /* string table offset */
+      //        uint32_t  strsize;  /* string table size in bytes */
+      //      };
+      AddrVtable = symCmd->symoff;
+      SizeVtable = symCmd->nsyms;
+      NamesTable = symCmd->stroff;
+      DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
+      break;
+      
+    default:
+      break;
+
+    }
+    binaryIndex += cmdsize;
+  }
+  
+}
+
+VOID LOADER_ENTRY::Get_PreLink()
+{
+  UINT32  ncmds, cmdsize;
+  UINT32  binaryIndex;
+  UINTN   cnt;
+  UINT8*  binary = &KernelData[0];
+  struct  load_command        *loadCommand;
   struct  segment_command     *segCmd;
   struct  segment_command_64  *segCmd64;
-  struct  symtab_command      *symCmd;
+//  struct  symtab_command      *symCmd;
 
 
   if (is64BitKernel) {
@@ -1957,16 +1999,21 @@ VOID LOADER_ENTRY::Get_PreLink()
           DBG("at 0x%llx: vmaddr = 0x%llx, vmsize = 0x%llx\n", (UINTN)segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
+          DBG("dump of PrelinkText\n");
+          for (int j=0; j<20; ++j) {
+            DBG("%02x", KernelData[PrelinkTextAddr+j]);
+          }
+          DBG("\n");
           //DBG("cmd = 0x%08X\n",segCmd64->cmd);
           //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
           //DBG("vmaddr = 0x%08X\n",segCmd64->vmaddr);
           //DBG("vmsize = 0x%08X\n",segCmd64->vmsize);
-          //DBG("fileoff = 0x%08X\n",segCmd64->fileoff);
-          //DBG("filesize = 0x%08X\n",segCmd64->filesize);
+          DBG("fileoff = 0x%08llX\n",segCmd64->fileoff);
+          DBG("filesize = 0x%08llX\n",segCmd64->filesize);
           //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
           //DBG("initprot = 0x%08X\n",segCmd64->initprot);
           //DBG("nsects = 0x%08X\n",segCmd64->nsects);
-          //DBG("flags = 0x%08X\n",segCmd64->flags);
+          DBG("flags = 0x%08X\n",segCmd64->flags);
         }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
@@ -2065,7 +2112,7 @@ VOID LOADER_ENTRY::Get_PreLink()
           }
         }
         break;
-      
+#if 0
       case LC_SYMTAB:
         symCmd = (struct symtab_command *)loadCommand;
 //      struct symtab_command {
@@ -2081,7 +2128,7 @@ VOID LOADER_ENTRY::Get_PreLink()
         NamesTable = symCmd->stroff;
         DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
       break;
-
+#endif
       default:
         break;
     }
@@ -2367,6 +2414,9 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   DBG( " kernel offset at 0x%x\n", KernelOffset);
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
+  //find symbol tables
+  Get_Symtab();
+  
 /*
   for (UINTN i=0x00200000; i<0x30000000; i+=4) {
     UINT32 *KD = (UINT32 *)i;

@@ -408,6 +408,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void          FindBootArgs();
         EFI_STATUS    getVTable();
         void          Get_PreLink();
+        void          Get_Symtab();
         UINTN         searchProc(const char *procedure);
         UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure);
         void          KernelAndKextsPatcherStart();
