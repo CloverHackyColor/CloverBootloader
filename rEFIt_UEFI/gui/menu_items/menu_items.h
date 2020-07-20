@@ -433,8 +433,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
         EFI_STATUS    SetFSInjection();
         EFI_STATUS    InjectKexts(IN UINT32 deviceTreeP, IN UINT32 *deviceTreeLength);
         EFI_STATUS    LoadKexts();
-        int           is_mkext_v1(UINT8* drvPtr);
-        void          patch_mkext_v1(UINT8 *drvPtr);
+ //       int           is_mkext_v1(UINT8* drvPtr);
+ //       void          patch_mkext_v1(UINT8 *drvPtr); //not used
  
         EFI_STATUS LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
         EFI_STATUS AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType);

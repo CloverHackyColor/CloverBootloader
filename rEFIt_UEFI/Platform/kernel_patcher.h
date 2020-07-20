@@ -39,6 +39,7 @@ const char   kTextSegment[] =                       "__TEXT";
 const char   kDataSegment[] =                       "__DATA";
 const char   kDataConstSegment[] =                  "__DATA_CONST";
 const char   kKldSegment[] =                        "__KLD";
+const char   kHibSegment[] =                        "__HIB";
 const char   kConstSection[] =                      "__const";
 const char   kBssSection[] =                        "__bss";
 const char   kCommonSection[] =                     "__common";
@@ -55,6 +56,7 @@ const char   kDataSection[] =                       "__data";
 #define ID_SEG_DATA_COMMON                     0x090f
 #define ID_SEG_DATA                            0x0f0f
 #define ID_SEG_DATA_CONST                      0x110f
+#define ID_SEG_HIB                             0x170f
 #define ID_SEG_KLD                             0x180f
 #define ID_SEG_KLD2                            0x1a0f
 #define ID_SEG_KLD3                            0x210f

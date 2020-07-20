@@ -108,7 +108,7 @@ unsigned long OSSwapHostToBigInt32(unsigned long int32) {
 #define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
 #define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
 #define DO16(buf)   DO8(buf,0); DO8(buf,8);
-
+#if 0
 unsigned long Adler32(unsigned char *buf, long len)
 {
 	unsigned long s1 = 1; // adler & 0xffff;
@@ -135,7 +135,7 @@ unsigned long Adler32(unsigned char *buf, long len)
 	// result is in big endian
 	return OSSwapHostToBigInt32(result);
 }
-
+#endif
 
 
 

@@ -3,16 +3,15 @@
 #include "DataHubCpu.h"
 
 #ifndef DEBUG_ALL
-#define KEXT_INJECT_DEBUG 00
+#define KEXT_INJECT_DEBUG 1
 #else
 #define KEXT_INJECT_DEBUG DEBUG_ALL
 #endif
 
-
 #if KEXT_INJECT_DEBUG == 2
-#define DBG(...) MsgLog(__VA_ARGS__)
+#define DBG(...)    printf(__VA_ARGS__);
 #elif KEXT_INJECT_DEBUG == 1
-#define DBG(...)  printf(__VA_ARGS__);
+#define DBG(...)    DebugLog(KEXT_INJECT_DEBUG, __VA_ARGS__)
 #else
 #define DBG(...)
 #endif
@@ -581,7 +580,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
 
 
 /*
- * Adler32 from Chameleon
+ * Adler32 from Chameleon, not used
  */
 #define BASE 65521L /* largest prime smaller than 65536 */
 #define NMAX 5000
@@ -592,7 +591,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
 #define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
 #define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
 #define DO16(buf)   DO8(buf,0); DO8(buf,8);
-
+#if 0
 static UINT32 Adler32(unsigned char *buf, long len)
 {
   unsigned long s1 = 1; // adler & 0xffff;
@@ -721,7 +720,7 @@ void LOADER_ENTRY::patch_mkext_v1(UINT8 *drvPtr)
     }
   }
 }
-
+#endif
 
 ////////////////////
 // OnExitBootServices
@@ -754,6 +753,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
 
 
   DBG_RT("\nInjectKexts: ");
+  DBG("\nInjectKexts: ");
   KextCount = GetKextCount();
   if (KextCount == 0) {
     DBG_RT("no kexts to inject.\nPausing 5 secs ...\n");
@@ -841,14 +841,15 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
 
       drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
       KextBase = RoundPage(KextBase + KextEntry->kext.length);
-		DBG_RT(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+      DBG_RT(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+      DBG(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
       if (gSettings.KextPatchesAllowed) {
         INT32  i;
         CHAR8  SavedValue;
         CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
         SavedValue = InfoPlist[drvinfo->infoDictLength];
         InfoPlist[drvinfo->infoDictLength] = '\0';
-        KernelAndKextPatcherInit();
+ //       KernelAndKextPatcherInit();
         for (i = 0; i < KernelAndKextPatches->NrKexts; i++) {
           if ((KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
               (AsciiStrStr(InfoPlist, KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
@@ -1005,15 +1006,15 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
         DBG("\n");
 //        Stall(10000000);
         //second attempt brute force for 10.16
-        const UINT8 findJmp2[] = {0xEB, 0x05, 0xE8, 0x7D, 0x03};
-        const UINT8 patchJmp2[] = {0x90, 0x90, 0xE8, 0x7D, 0x03};
-        if (!SearchAndReplace(&KernelData[0], KERNEL_MAX_SIZE, findJmp2, 5, patchJmp2, 1)) {
-          DBG("load kexts 2 not patched\n");
-        } else {
-          DBG("load kexts 2 patched !!!\n");
-        }
+//        const UINT8 findJmp2[] = {0xEB, 0x05, 0xE8, 0x7D, 0x03};
+//        const UINT8 patchJmp2[] = {0x90, 0x90, 0xE8, 0x7D, 0x03};
+//        if (!SearchAndReplace(&KernelData[0], KERNEL_MAX_SIZE, findJmp2, 5, patchJmp2, 1)) {
+//          DBG("load kexts 2 not patched\n");
+//        } else {
+//          DBG("load kexts 2 patched !!!\n");
+//        }
       } else {
-        DBG("load kexts patched\n");
+        DBG("load kexts patched \n");
 //        for (UINTN j=procLocation+0x3b; j<procLocation+0x5b; ++j) {
 //          DBG_RT("%02x", Kernel[j]);
 //        }
@@ -1168,7 +1169,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       procLocation = searchProc("removeKextBootstrap");
       const UINT8 find5[] = {0x00, 0x0F, 0x85, 00, 00, 0x00, 0x00, 0x48 };
       const UINT8 mask5[] = {0xFF, 0xFF, 0xFF, 00, 00, 0xFF, 0xFF, 0xFF };
-      patchLocation3 = FindMemMask(&KernelData[procLocation], 0x1000, find5, sizeof(find5), mask5, sizeof(mask5));
+      patchLocation3 = FindMemMask(&KernelData[procLocation], 0x300, find5, sizeof(find5), mask5, sizeof(mask5));
       DBG("removeKextBootstrap at 0x%llx\n", patchLocation3);
 
  /*
@@ -1203,7 +1204,7 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       //BS
       //FF 80 3D ?? ?? ?? 00 00 0F 85 ?? 01 00 00 41 -->
       //FF 80 3D ?? ?? ?? 00 00 90 E9 ?? 01 00 00 41.
-
+/*
       if (patchLocation3  == KERNEL_MAX_SIZE) {
         DBG_RT("==> can't find KxldUnmap (10.14 - 10.15)\n");
         Stall(3000000);
@@ -1216,7 +1217,10 @@ VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
           KernelData[0 + patchLocation3 + 9] = 0xE9;
         }
       } else {
-        DBG("==> patched KxldUnmap (10.14 - recent macOS)\n");
+ */
+      //The patch is not needed for bigsur
+      if (patchLocation3 != KERNEL_MAX_SIZE) {
+        DBG("==> patched KxldUnmap (10.14 - 10.15)\n");
         // 00 0F 85 XX XX 00 00 48
         // 00 90 E9 XX XX 00 00 48
         KernelData[procLocation + patchLocation3 + 1] = 0x90;

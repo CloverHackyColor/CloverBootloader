@@ -18,7 +18,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 0
+#define KERNEL_DEBUG 1
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
@@ -86,6 +86,7 @@ EFI_STATUS LOADER_ENTRY::getVTable()
 
  // INT32 Tabble  = FindBin(KernelData, 0x5000000, vtableSur, 8);
   INT32 NTabble = FindBin(KernelData, KERNEL_MAX_SIZE, (const UINT8 *)ctor_used, (UINT32)strlen(ctor_used));
+  DBG("ctor_used found at 0x%x\n", NTabble);
   if (NTabble < 0) {
     return EFI_NOT_FOUND;
   }
@@ -99,10 +100,10 @@ EFI_STATUS LOADER_ENTRY::getVTable()
 //  SizeVtable = LinkSeg->SizeVtable;
 //  NamesTable = LinkSeg->AddrNames;
   //TODO find an origin of the shift
-  shift = NTabble - NamesTable;
+  shift = NamesTable - NTabble;
 //  DBG_RT("AddrVtable=%x Size=%x AddrNames=%x shift=%x\n", AddrVtable, SizeVtable, NamesTable, shift);
   NamesTable = NTabble;
-  AddrVtable += shift;
+  AddrVtable -= shift;
 //  AddrVtable = Tabble;
   DBG("AddrVtable=%x Size=%x AddrNames=%x shift=%x\n", AddrVtable, SizeVtable, NamesTable, shift);
   SegVAddr = FindBin(KernelData+KernelOffset, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
@@ -172,6 +173,9 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   case ID_SEG_TEXT:
     lSegVAddr = FindSection(driver, 0x600, (const UINT8 *)kTextSegment, (const UINT8 *)kPrelinkTextSection);
     break;
+  case ID_SEG_HIB:
+    lSegVAddr = FindBin(driver, 0x2000, (const UINT8 *)kHibSegment, (UINT32)strlen(kHibSegment));
+    break;
 
 //    lSegVAddr = FindBin(driver, 0x600, (const UINT8 *)kTextSegment, (UINT32)strlen(kTextSegment));
 //    break;
@@ -190,7 +194,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   return procAddr;
 }
 
-static int N = 0;
+//static int N = 0;
 //search a procedure by Name and return its offset in the kernel
 UINTN LOADER_ENTRY::searchProc(const char *procedure)
 {
@@ -207,11 +211,11 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
   for (i=0; i<SizeVtable; ++i) {
     size_t Offset = vArray[i].NameOffset;
     if (Offset == 0) break;
-    if (N < 10) {
-      DBG("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
-      DBG("Name to compare %s\n", &Names[Offset]);
-      N++;
-    }
+//    if (N < 10) {
+//      DBG("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
+//      DBG("Name to compare %s\n", &Names[Offset]);
+//      N++;
+//    }
 //    DBG_RT("Offset %lx Seg=%x\n", Offset, vArray[i].Seg);
 //    DBG_RT("Name to compare %s\n", &Names[Offset]);
 //    Stall(3000000);
@@ -2340,8 +2344,16 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
 //    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
     KernelOffset = 0;
     while (KernelOffset < KERNEL_MAX_SIZE) {
-      if ((KernelData[KernelOffset + 0x0C] == MH_EXECUTE) && (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 )) {
-        break;
+      if ((MACH_GET_MAGIC(KernelData+KernelOffset) == MH_MAGIC_64 ) || (MACH_GET_MAGIC(KernelData+KernelOffset) == MH_CIGAM_64)) {
+        DBG("dump at offset 0x%x\n", KernelOffset);
+        for (int j = 0; j<20; ++j) {
+          DBG("%02x ", KernelData[KernelOffset+j]);
+        }
+        DBG("\n");
+        if ((((struct mach_header_64*)(KernelData+KernelOffset))->filetype) == MH_EXECUTE) {
+          DBG("execute found\n");
+          break;
+        }
       }
       KernelOffset += 4;
     }
@@ -2352,7 +2364,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
     KernelData = NULL;
     return;
   }
- 
+  DBG( " kernel offset at 0x%x\n", KernelOffset);
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
 /*
@@ -2386,8 +2398,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
 
   PatcherInited = false;
-  // we will call KernelAndKextPatcherInit() only if needed
   if (KernelAndKextPatches == NULL) return; //entry is not null as double check
+  KernelAndKextPatcherInit();
 
   KextPatchesNeeded = (
     KernelAndKextPatches->KPAppleIntelCPUPM ||
@@ -2403,8 +2415,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches->KernelPatches != NULL) && KernelAndKextPatches->NrKernels) {
     DBG_RT("Enabled: \n");
     DBG("Kernels patches: enabled \n");
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     if (EFI_ERROR(getVTable())) {
 //      DBG_RT("error getting vtable: \n");
       goto NoKernelData;
@@ -2440,8 +2452,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   DBG_RT( "\nFakeCPUID patch: ");
   if (KernelAndKextPatches->FakeCPUID) {
     DBG_RT( "Enabled: 0x%06x\n", KernelAndKextPatches->FakeCPUID);
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     KernelCPUIDPatch();
   } else {
     DBG_RT( "Disabled\n");
@@ -2452,8 +2464,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   if (KernelAndKextPatches->KPKernelPm || KernelAndKextPatches->KPKernelXCPM) {
     DBG_RT( "Enabled: \n");
     DBG( "KernelPm patch: Enabled\n");
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     patchedOk = FALSE;
     if (is64BitKernel) {
       patchedOk = KernelPatchPm();
@@ -2467,8 +2479,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   DBG_RT( "\nPanicNoKextDump patch: ");
   if (KernelAndKextPatches->KPPanicNoKextDump) {
     DBG_RT( "Enabled: \n");
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     patchedOk = KernelPanicNoKextDump();
     DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
   } else {
@@ -2480,8 +2492,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   DBG_RT( "\nKernelLapic patch: ");
   if (KernelAndKextPatches->KPKernelLapic) {
     DBG_RT( "Enabled: \n");
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     if(is64BitKernel) {
       DBG_RT( "64-bit patch ...\n");
       patchedOk = KernelLapicPatch_64();
@@ -2501,8 +2513,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
 //    EnableExtCpuXCPM = NULL;
     patchedOk = FALSE;
 //    BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     
     // syscl - now enable extra Cpu's PowerManagement
     // only Intel support this feature till now
@@ -2571,9 +2583,9 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
          );
 
   if (KextPatchesNeeded && gSettings.KextPatchesAllowed) {
-    DBG_RT( "\nKext patching INIT\n");
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    DBG_RT( "\nKext patching INIT\n");
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     DBG_RT( "\nKext patching STARTED\n");
     KextPatcherStart();  //is FakeSMC found in cache then inject will be disabled
     DBG_RT( "\nKext patching ENDED\n");
@@ -2614,8 +2626,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
       return;
     }
 
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
+//    KernelAndKextPatcherInit();
+//    if (KernelData == NULL) goto NoKernelData;
     if (bootArgs1 != NULL) {
       deviceTreeP = bootArgs1->deviceTreeP;
       deviceTreeLength = &bootArgs1->deviceTreeLength;
