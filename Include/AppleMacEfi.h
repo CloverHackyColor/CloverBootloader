@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef APPLE_MAC_EFI_H
 #define APPLE_MAC_EFI_H
 
-#include <AppleCpuType.h>
+//#include <AppleCpuType.h>
 
 #include <Uefi.h>
 #include <AppleMacEfi/AppleMacEfiSpec.h>
