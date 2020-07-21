@@ -148,10 +148,11 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN 
     //try to find a planar kext, without Contents
     TempName = PoolPrint(L"%s\\%s", FileName, L"Info.plist");
     //  snwprintf(TempName, 512, L"%s\\%s", FileName, "Info.plist");
+    infoDictBufferLength = 0;
     Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
     FreePool(TempName);
     if (EFI_ERROR(Status)) {
-      MsgLog("Failed to load extra kext (Info.plist not found): %ls\n", FileName);
+      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName, strerror(Status));
       return EFI_NOT_FOUND;
     }
     NoContents = TRUE;

@@ -2298,7 +2298,6 @@
 		A5456D2A23FC5AFC000BF18C /* spd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = spd.cpp; sourceTree = "<group>"; };
 		A5456D2B23FC5AFC000BF18C /* nvidia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nvidia.cpp; sourceTree = "<group>"; };
 		A5456D2C23FC5AFC000BF18C /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
-		A5456D2D23FC5AFD000BF18C /* LoaderUefi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoaderUefi.h; sourceTree = "<group>"; };
 		A5456D2E23FC5AFD000BF18C /* Net.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Net.cpp; sourceTree = "<group>"; };
 		A5456D2F23FC5AFE000BF18C /* gma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gma.h; sourceTree = "<group>"; };
 		A5456D3023FC5AFE000BF18C /* BdsConnect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BdsConnect.cpp; sourceTree = "<group>"; };
@@ -7809,7 +7808,6 @@
 				A5456D0E23FC5AF0000BF18C /* LegacyBiosThunk.h */,
 				A5456D1E23FC5AF7000BF18C /* LegacyBoot.cpp */,
 				A523132E2448B34000421FB2 /* LegacyBoot.h */,
-				A5456D2D23FC5AFD000BF18C /* LoaderUefi.h */,
 				A5456D4123FC5B05000BF18C /* memvendors.h */,
 				A5456D2E23FC5AFD000BF18C /* Net.cpp */,
 				A52313302448B35F00421FB2 /* Net.h */,

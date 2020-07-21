@@ -3,28 +3,38 @@
  *
  */
 
-//#include <IndustryStardard/MachO-loader.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DebugLib.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include <UefiLoader.h>
 #include "Platform.h"
-//#include "LoaderUefi.h"
-//#include "device_tree.h"
-
 #include "kernel_patcher.h"
 
 #define OLD_METHOD 0
 
 
 #ifndef DEBUG_ALL
-#define KEXT_DEBUG 0
+#define KEXT_DEBUG 1
 #else
 #define KEXT_DEBUG DEBUG_ALL
 #endif
 
-#if KEXT_DEBUG
-#define DBG(...)	printf(__VA_ARGS__);
+#if KEXT_DEBUG == 2
+#define DBG(...)    printf(__VA_ARGS__);
+#elif KEXT_DEBUG == 1
+#define DBG(...)    DebugLog(KEXT_DEBUG, __VA_ARGS__)
 #else
 #define DBG(...)
 #endif
+
 
 // runtime debug
 #define DBG_RT(...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
@@ -619,6 +629,7 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
   //RodionS
 
   UINTN procLocation = searchProcInDriver(Driver, DriverSize, "updateChecksum");
+  DBG("updateChecksum at 0x%llx", procLocation);
   if (procLocation != 0) {
     Driver[procLocation] = 0xC3;
     DBG_RT("AppleRTC: patched\n");
@@ -639,6 +650,7 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
 // disable kext injection InjectKexts()
 //
 // not used since 4242
+#if 0
 VOID LOADER_ENTRY::CheckForFakeSMC(CHAR8 *InfoPlist)
 {
   if (OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC) &&
@@ -653,7 +665,7 @@ VOID LOADER_ENTRY::CheckForFakeSMC(CHAR8 *InfoPlist)
     }
   }
 }
-
+#endif
 
 
 ////////////////////////////////////
@@ -1456,7 +1468,7 @@ VOID LOADER_ENTRY::PatchPrelinkedKexts()
   //Slice
   // I see no reason to disable kext injection if FakeSMC found in cache
   //since rev4240 we have manual kext inject disable
-  CheckForFakeSMC(WholePlist);
+ // CheckForFakeSMC(WholePlist);
   
   DictPtr = WholePlist;
   while ((DictPtr = AsciiStrStr(DictPtr, "dict>")) != NULL) {

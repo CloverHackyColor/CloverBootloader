@@ -2230,16 +2230,16 @@ LOADER_ENTRY::KernelUserPatch()
   // how to resolve it?
   
   for (; i < KernelAndKextPatches->NrKernels; ++i) {
-	  DBG_RT( "Patch[%lld]: %s\n", i, KernelAndKextPatches->KernelPatches[i].Label);
+	  DBG( "Patch[%lld]: %s\n", i, KernelAndKextPatches->KernelPatches[i].Label);
     if (!KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
       //DBG_RT( "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, KernelAndKextPatches->KernelPatches[i].Label, OSVersion);
-      DBG_RT( "==> disabled\n");
+      DBG( "==> disabled\n");
       continue;
     }
     bool once = false;
     UINTN procLen = 0;
     UINTN procAddr = searchProc(KernelAndKextPatches->KernelPatches[i].ProcedureName);
-    DBG_RT("procedure %s found at 0x%llx\n", KernelAndKextPatches->KernelPatches[i].ProcedureName, procAddr);
+    DBG("procedure %s found at 0x%llx\n", KernelAndKextPatches->KernelPatches[i].ProcedureName, procAddr);
     if (SearchLen == 0) {
       SearchLen = KERNEL_MAX_SIZE;
       procLen = KERNEL_MAX_SIZE - procAddr;
@@ -2256,7 +2256,7 @@ LOADER_ENTRY::KernelUserPatch()
                          KernelAndKextPatches->KernelPatches[i].StartPatternLen,
                          (const UINT8*)KernelAndKextPatches->KernelPatches[i].StartMask,
                          KernelAndKextPatches->KernelPatches[i].StartPatternLen)) {
-        DBG_RT( " StartPattern found\n");
+        DBG( " StartPattern found\n");
         Num = SearchAndReplaceMask(curs,
                                    procLen,
                                    (const UINT8*)KernelAndKextPatches->KernelPatches[i].Data,
@@ -2272,7 +2272,7 @@ LOADER_ENTRY::KernelUserPatch()
           curs += SearchLen - 1;
           j    += SearchLen - 1;
         }
-        DBG_RT( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
+        DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
         if (once ||
             !KernelAndKextPatches->KernelPatches[i].StartPattern ||
             !KernelAndKextPatches->KernelPatches[i].StartPatternLen) {
@@ -2301,9 +2301,9 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
     SearchLen = BooterSize;
   }
   for (; i < KernelAndKextPatches->NrBoots; ++i) {
-	  DBG_RT( "Patch[%lld]: %s\n", i, KernelAndKextPatches->BootPatches[i].Label);
+	  DBG( "Patch[%lld]: %s\n", i, KernelAndKextPatches->BootPatches[i].Label);
     if (!KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
-      DBG_RT( "==> disabled\n");
+      DBG( "==> disabled\n");
       continue;
     }
     UINT8 * curs = BooterData;
@@ -2315,7 +2315,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
                          KernelAndKextPatches->BootPatches[i].StartPatternLen,
                          (const UINT8*)KernelAndKextPatches->BootPatches[i].StartMask,
                          KernelAndKextPatches->BootPatches[i].StartPatternLen)) {
-        DBG_RT( " StartPattern found\n");
+        DBG( " StartPattern found\n");
 
         Num = SearchAndReplaceMask(curs,
                                    SearchLen,
@@ -2332,7 +2332,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
           j    += SearchLen - 1;
         }
 
-        DBG_RT( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
+        DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
         if (!KernelAndKextPatches->BootPatches[i].StartPattern ||
             !KernelAndKextPatches->BootPatches[i].StartPatternLen) {
           break;
@@ -2341,10 +2341,10 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
       j++; curs++;
     }
   }
-  if (KernelAndKextPatches->KPDebug) {
-    gBS->Stall(2000000);
-  }
-  
+//  if (KernelAndKextPatches->KPDebug) {
+//    gBS->Stall(2000000);
+//  }
+  Stall(2000000);
   return (y != 0);
 }
 
@@ -2379,15 +2379,16 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
 
 //  UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
   DBG("os_version=%s\n", OSVersion);
+  
 //  if (os_version < AsciiOSVersionToUint64("10.6")) {
 //    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
 //  } else {
-    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+  KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
 //  }
 
   // check that it is Mach-O header and detect architecture
   if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {
-    DBG_RT("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
+    DBG("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
     is64BitKernel = FALSE;
   } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
     DBG( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
@@ -2433,11 +2434,11 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   }
 */
   if (EFI_ERROR(getVTable())) {
-    DBG_RT("error getting vtable: \n");
+    DBG("error getting vtable: \n");
   }
 
   isKernelcache = (PrelinkTextSize > 0) && (PrelinkInfoSize > 0);
-	DBG_RT( "isKernelcache: %ls\n", isKernelcache ? L"Yes" : L"No");
+	DBG( "isKernelcache: %ls\n", isKernelcache ? L"Yes" : L"No");
 }
 
 VOID
@@ -2463,10 +2464,10 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     ((KernelAndKextPatches->NrKexts > 0) && (KernelAndKextPatches->KextPatches != NULL))
   );
 
-  DBG_RT("\nKernelToPatch: ");
-  DBG_RT("Kernels patches: %d\n", KernelAndKextPatches->NrKernels);
+//  DBG_RT("\nKernelToPatch: ");
+//  DBG_RT("Kernels patches: %d\n", KernelAndKextPatches->NrKernels);
   if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches->KernelPatches != NULL) && KernelAndKextPatches->NrKernels) {
-    DBG_RT("Enabled: \n");
+//    DBG_RT("Enabled: \n");
     DBG("Kernels patches: enabled \n");
 //    KernelAndKextPatcherInit();
 //    if (KernelData == NULL) goto NoKernelData;
@@ -2475,10 +2476,10 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
       goto NoKernelData;
     }
     patchedOk = KernelUserPatch();
-    DBG_RT(patchedOk ? " OK\n" : " FAILED!\n");
+//    DBG_RT(patchedOk ? " OK\n" : " FAILED!\n");
 //    gBS->Stall(5000000);
   } else {
-    DBG_RT("Disabled\n");
+//    DBG_RT("Disabled\n");
   }
 /*
   DBG_RT( "\nKernelCpu patch: ");
