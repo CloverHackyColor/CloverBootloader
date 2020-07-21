@@ -49,8 +49,8 @@
 #  FlatDevTree/device_tree.c
   NVRAMDebug.h
   NVRAMDebug.c
-  Mach-O/UefiLoader.h
-  Mach-O/loader.h
+#  Mach-O/UefiLoader.h
+#  Mach-O/loader.h
   Mach-O/Mach-O.h
   Mach-O/Mach-O.c
   Hibernate.h

@@ -6,8 +6,11 @@
  * 2012 - 2020 Correction and improvements by Clover team
  */
 
+//#include <IndustryStardard/MachO-loader.h>
+#include <UefiLoader.h>
+
 #include "Platform.h"
-#include "LoaderUefi.h"
+//#include "LoaderUefi.h"
 #include "Nvram.h"
 #include "FixBiosDsdt.h"
 #include "cpu.h"

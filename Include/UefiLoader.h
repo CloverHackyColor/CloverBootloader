@@ -44,8 +44,8 @@ typedef INT32		vm_prot_t;
 //
 // And finally the xnu/EXTERNAL_HEADERS/mach-o/loader.h
 //
-#include "loader.h"
-
+//#include "loader.h"
+#include <IndustryStandard/MachO-loader.h>
 
 //
 // Additionally, only needed thread state definitions for LC_UNIXTHREAD
@@ -66,7 +66,7 @@ typedef UINT64	__uint64_t;
 _STRUCT_X86_THREAD_STATE32
 {
     // all fields are unsigned int in xnu rources
-	UINT32	eax;
+	  UINT32	eax;
     UINT32	ebx;
     UINT32	ecx;
     UINT32	edx;

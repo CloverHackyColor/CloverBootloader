@@ -2211,7 +2211,6 @@
 		A523132C2448B31A00421FB2 /* Hibernate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hibernate.h; sourceTree = "<group>"; };
 		A523132D2448B32300421FB2 /* Injectors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Injectors.h; sourceTree = "<group>"; };
 		A523132E2448B34000421FB2 /* LegacyBoot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyBoot.h; sourceTree = "<group>"; };
-		A523132F2448B35600421FB2 /* MachO-loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MachO-loader.h"; sourceTree = "<group>"; };
 		A52313302448B35F00421FB2 /* Net.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Net.h; sourceTree = "<group>"; };
 		A52313312448B36E00421FB2 /* Nvram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nvram.h; sourceTree = "<group>"; };
 		A52313322448B37A00421FB2 /* platformdata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = platformdata.h; sourceTree = "<group>"; };
@@ -2422,6 +2421,8 @@
 		A571C28A240574BB00B6A2C5 /* remove_ref.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remove_ref.h; sourceTree = "<group>"; };
 		A571C28B240574D900B6A2C5 /* XImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XImage.cpp; sourceTree = "<group>"; };
 		A571C28C240574D900B6A2C5 /* XImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XImage.h; sourceTree = "<group>"; };
+		A5779C9224C6B2EB006D1DC0 /* MachO-loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MachO-loader.h"; sourceTree = "<group>"; };
+		A5779C9324C6C1EB006D1DC0 /* UefiLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLoader.h; sourceTree = "<group>"; };
 		A57CF7B9241A8A12006DE51E /* XTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XTheme.cpp; sourceTree = "<group>"; };
 		A57CF7BA241A8A13006DE51E /* XTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTheme.h; sourceTree = "<group>"; };
 		A57CF7BD241BE0A4006DE51E /* stdlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdlib.h; sourceTree = "<group>"; };
@@ -7445,7 +7446,6 @@
 		A5C3309924B6F088004E20CC /* OcConsoleLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcConsoleLib.h; sourceTree = "<group>"; };
 		A5C3309A24B6F110004E20CC /* AppleMacEfi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleMacEfi.h; sourceTree = "<group>"; };
 		A5C3309C24B6FAF6004E20CC /* AppleMacEfiSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleMacEfiSpec.h; sourceTree = "<group>"; };
-		A5C3309D24B6FB6C004E20CC /* AppleCpuType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCpuType.h; sourceTree = "<group>"; };
 		A5C3309E24B6FC35004E20CC /* MicrosoftWindows.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MicrosoftWindows.h; sourceTree = "<group>"; };
 		A5C3309F24B6FDA1004E20CC /* VirtualMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualMemory.h; sourceTree = "<group>"; };
 		A5C330A024B6FE08004E20CC /* AppleBless.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleBless.h; sourceTree = "<group>"; };
@@ -7587,9 +7587,7 @@
 		A5E284022347AE550068ED34 /* RTShims.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTShims.h; sourceTree = "<group>"; };
 		A5E284032347AE550068ED34 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
 		A5E284052347AE550068ED34 /* Mach-O.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "Mach-O.c"; sourceTree = "<group>"; };
-		A5E284062347AE550068ED34 /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		A5E284072347AE550068ED34 /* Mach-O.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Mach-O.h"; sourceTree = "<group>"; };
-		A5E284082347AE550068ED34 /* UefiLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLoader.h; sourceTree = "<group>"; };
 		A5E284092347AE550068ED34 /* DecodedKernelCheck.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DecodedKernelCheck.c; sourceTree = "<group>"; };
 		A5E2840B2347AE550068ED34 /* device_tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
 		A5E2840C2347AE550068ED34 /* device_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
@@ -7812,7 +7810,6 @@
 				A5456D1E23FC5AF7000BF18C /* LegacyBoot.cpp */,
 				A523132E2448B34000421FB2 /* LegacyBoot.h */,
 				A5456D2D23FC5AFD000BF18C /* LoaderUefi.h */,
-				A523132F2448B35600421FB2 /* MachO-loader.h */,
 				A5456D4123FC5B05000BF18C /* memvendors.h */,
 				A5456D2E23FC5AFD000BF18C /* Net.cpp */,
 				A52313302448B35F00421FB2 /* Net.h */,
@@ -16820,7 +16817,6 @@
 				A5C324A624B5022F004E20CC /* Guid */,
 				A5C3244F24B5022F004E20CC /* IndustryStandard */,
 				A5C3309A24B6F110004E20CC /* AppleMacEfi.h */,
-				A5C3309D24B6FB6C004E20CC /* AppleCpuType.h */,
 				A5C3246124B5022F004E20CC /* EfiLdrHandoff.h */,
 				A5C3246224B5022F004E20CC /* Library */,
 				A5C3247F24B5022F004E20CC /* Protocol */,
@@ -16828,6 +16824,7 @@
 				A5C324A524B5022F004E20CC /* EfiFlashMap.h */,
 				A5C324B324B5022F004E20CC /* EfiImageFormat.h */,
 				A5C3309E24B6FC35004E20CC /* MicrosoftWindows.h */,
+				A5779C9324C6C1EB006D1DC0 /* UefiLoader.h */,
 			);
 			name = Include;
 			path = ../../Include;
@@ -16853,6 +16850,7 @@
 				A5C330A424B702AC004E20CC /* CpuId.h */,
 				A5C330DE24B78048004E20CC /* GenericIch.h */,
 				A5C3245724B5022F004E20CC /* HdaCodec.h */,
+				A5779C9224C6B2EB006D1DC0 /* MachO-loader.h */,
 				A5C3246024B5022F004E20CC /* PciBus.h */,
 				A5C3245B24B5022F004E20CC /* PciCommand.h */,
 				A5C3245424B5022F004E20CC /* PeImage.h */,
@@ -19781,9 +19779,7 @@
 			isa = PBXGroup;
 			children = (
 				A5E284052347AE550068ED34 /* Mach-O.c */,
-				A5E284062347AE550068ED34 /* loader.h */,
 				A5E284072347AE550068ED34 /* Mach-O.h */,
-				A5E284082347AE550068ED34 /* UefiLoader.h */,
 			);
 			path = "Mach-O";
 			sourceTree = "<group>";

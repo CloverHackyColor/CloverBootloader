@@ -38,7 +38,7 @@
 
 #include "../../libeg/libeg.h"
 #include "../../refit/lib.h"
-#include "../../Platform/LoaderUefi.h"
+//#include "../../Platform/LoaderUefi.h"
 #include "../../Platform/boot.h"
 
 #include "../../cpp_foundation/XObjArray.h"

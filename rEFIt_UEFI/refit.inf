@@ -211,8 +211,8 @@
 #	Platform/VesaBiosExtensions.h
 	Platform/b64cdecode.h
 	Platform/b64cdecode.cpp
-	Platform/MachO-loader.h
-	Platform/LoaderUefi.h
+#	Platform/MachO-loader.h
+#	Platform/LoaderUefi.h
 	Platform/kernel_patcher.h
 	Platform/kernel_patcher.cpp
 	Platform/kext_patcher.cpp

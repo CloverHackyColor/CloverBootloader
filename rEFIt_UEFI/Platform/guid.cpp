@@ -83,6 +83,7 @@ EFI_PART_TYPE_LEGACY_MBR_GUID {0x024DEE41, 0x33E7, 0x11D3, {0x9D, 0x69, 0x00, 0x
 // ->SetVariable(boot-feature-usage, 62BF9B1C-8568-48EE-85DC-DD3057660863, 7, 8, 4C4ABBE8) = Success
 // 00 00 08 00 00 00 00 00                         | ........
 // gAppleFpfConfigurationHobGuid  = { 0xE3CC8EC6, 0x81C1, 0x4271, { 0xAC, 0xBC, 0xDB, 0x65, 0x08, 0x6E, 0x8D, 0xC8 }}
+// 59D76AE4-37E3-55A7-B460-EF13D46E6020 AppleEncryptedPartitionProtocolGuid
 
 /*
 #define APPLE_SECURE_BOOT_VARIABLE_GUID  \

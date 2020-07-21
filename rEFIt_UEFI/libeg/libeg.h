@@ -135,6 +135,7 @@ extern "C" {
 #include <IndustryStandard/Scsi.h>
 #include <IndustryStandard/Atapi.h>
 #include <IndustryStandard/AppleSmBios.h>
+#include <IndustryStandard/AppleIntelCpuInfo.h>
 
 #ifdef __cplusplus
 } // extern "C"

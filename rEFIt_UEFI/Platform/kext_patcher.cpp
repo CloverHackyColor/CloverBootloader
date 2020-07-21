@@ -3,8 +3,10 @@
  *
  */
 
+//#include <IndustryStardard/MachO-loader.h>
+#include <UefiLoader.h>
 #include "Platform.h"
-#include "LoaderUefi.h"
+//#include "LoaderUefi.h"
 //#include "device_tree.h"
 
 #include "kernel_patcher.h"

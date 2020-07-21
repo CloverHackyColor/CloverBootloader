@@ -5,8 +5,10 @@ kext injection
 #ifndef __KEXT_INJECT_H__
 #define __KEXT_INJECT_H__
 
-#include "LoaderUefi.h"
+//#include <IndustryStardard/MachO-loader.h>
+//#include "LoaderUefi.h"
 //#include "device_tree.h"
+#include <UefiLoader.h>
 #include "kernel_patcher.h"
 
 ////////////////////
