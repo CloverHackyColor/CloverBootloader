@@ -120,6 +120,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   if (!procedure) {
     return 0;
   }
+  /*
   INT32 LinkAdr = FindBin(driver, driverLen, (const UINT8 *)kLinkEditSegment, (UINT32)strlen(kLinkEditSegment));
   if (LinkAdr == -1) {
     return 0;
@@ -130,7 +131,22 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
 //  INT32 lNamesTable = LinkSeg->AddrNames;
   const char* Names = (const char*)(&driver[LinkSeg->AddrNames]);
   VTABLE * vArray = (VTABLE*)(&driver[LinkSeg->AddrVtable]);
+*/
+  VTABLE * vArray = NULL;
+  INT32 lSizeVtable = 0;
+  const char* Names = NULL;
+  struct  symtab_command *symCmd = NULL;
+  Get_Symtab(driver, (void**)&symCmd);
+  if (symCmd != NULL) {
+    vArray = (VTABLE*)(&driver[symCmd->symoff]);
+    lSizeVtable = symCmd->nsyms;
+    Names = (const char*)(&driver[symCmd->stroff]);
+    DBG("driver: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", symCmd->symoff, lSizeVtable, symCmd->stroff);
+  }
 
+  if (!vArray || !lSizeVtable || !Names) {
+    return 0;
+  }
   INT32 i;
   bool found = false;
   for (i = 0; i < lSizeVtable; ++i) {
@@ -141,7 +157,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     }
   }
   if (!found) {
-//    DBG_RT("%s not found\n", procedure);
+    DBG("%s not found\n", procedure);
     return 0;
   }
   DBG("found section 0x%x at pos=%d\n", vArray[i].Seg, i);
@@ -174,6 +190,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
 //    break;
   case ID_SEC_BSS:  //it works this way
   case ID_SEG_TEXT:
+  case ID_SEG_TEXT2:
     lSegVAddr = FindSection(driver, 0x600, (const UINT8 *)kTextSegment, (const UINT8 *)kPrelinkTextSection);
     break;
   case ID_SEG_HIB:
@@ -192,6 +209,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   SEGMENT *TextSeg = (SEGMENT*)&driver[lSegVAddr];
   UINT64 Absolut = TextSeg->SegAddress;
   UINT64 FileOff = TextSeg->fileoff;
+  DBG("Absolut=0x%llx Fileoff=0x%llx\n", Absolut, FileOff);
   UINTN procAddr = vArray[i].ProcAddr - Absolut + FileOff;
 
   return procAddr;
@@ -1913,14 +1931,14 @@ VOID Patcher_SSE3_7()
 }
 #endif
 
-void LOADER_ENTRY::Get_Symtab()
+void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT void **symCmd)
 {
   UINT32  ncmds, cmdsize;
   UINT32  binaryIndex;
   UINTN   cnt;
-  UINT8*  binary = &KernelData[KernelOffset];
+//  UINT8*  binary = &KernelData[KernelOffset];
   struct  load_command        *loadCommand;
-  struct  symtab_command      *symCmd;
+//  struct  symtab_command      *symCmd;
   
   ncmds = MACH_GET_NCMDS(binary);
   binaryIndex = sizeof(struct mach_header_64);
@@ -1931,7 +1949,7 @@ void LOADER_ENTRY::Get_Symtab()
     
     switch (loadCommand->cmd) {
     case LC_SYMTAB:
-      symCmd = (struct symtab_command *)loadCommand;
+      *symCmd = (void *)loadCommand;
       //      struct symtab_command {
       //        uint32_t  cmd;    /* LC_SYMTAB == 2 */
       //        uint32_t  cmdsize;  /* sizeof(struct symtab_command) */
@@ -1940,11 +1958,11 @@ void LOADER_ENTRY::Get_Symtab()
       //        uint32_t  stroff;    /* string table offset */
       //        uint32_t  strsize;  /* string table size in bytes */
       //      };
-      AddrVtable = symCmd->symoff;
-      SizeVtable = symCmd->nsyms;
-      NamesTable = symCmd->stroff;
-      DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
-      break;
+      //AddrVtable = symCmd->symoff;
+      //SizeVtable = symCmd->nsyms;
+      //NamesTable = symCmd->stroff;
+      //DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
+      break; //continue search for last command? or return here?
       
     default:
       break;
@@ -1953,6 +1971,21 @@ void LOADER_ENTRY::Get_Symtab()
     binaryIndex += cmdsize;
   }
   
+}
+
+void DumpSeg(UINT8*  binary, struct  segment_command_64  *segCmd64)
+{
+  DBG("segCmd64->segname = %s\n",segCmd64->segname);
+  DBG("segCmd64->vmaddr = 0x%08llX\n",segCmd64->vmaddr);
+  DBG("segCmd64->vmsize = 0x%08llX\n",segCmd64->vmsize);
+  
+  DBG("fileoff = 0x%08llX\n",segCmd64->fileoff);
+  DBG("filesize = 0x%08llX\n",segCmd64->filesize);
+  //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
+  //DBG("initprot = 0x%08X\n",segCmd64->initprot);
+  //DBG("nsects = 0x%08X\n",segCmd64->nsects);
+  DBG("flags = 0x%08X\n",segCmd64->flags);
+
 }
 
 VOID LOADER_ENTRY::Get_PreLink()
@@ -1965,6 +1998,7 @@ VOID LOADER_ENTRY::Get_PreLink()
   struct  segment_command     *segCmd;
   struct  segment_command_64  *segCmd64;
 //  struct  symtab_command      *symCmd;
+  UINTN kernelvmAddr = 0;
 
 
   if (is64BitKernel) {
@@ -1982,57 +2016,34 @@ VOID LOADER_ENTRY::Get_PreLink()
     switch (loadCommand->cmd) {
       case LC_SEGMENT_64: //19
         segCmd64 = (struct segment_command_64 *)loadCommand;
-      //segn = (UINT32)(UINTN)segCmd64->segname;
-      if ((segCmd64->segname[2] != 'R') || (segCmd64->segname[3] != 'E')) {
-        DBG("found segment at 0x%x\n", binaryIndex);
-        DBG("segCmd64->segname = %s\n",segCmd64->segname);
-        DBG("segCmd64->vmaddr = 0x%08llX\n",segCmd64->vmaddr);
-        DBG("segCmd64->vmsize = 0x%08llX\n",segCmd64->vmsize);
-   //     Stall(5000000);
+      if (AsciiStrCmp(segCmd64->segname, kTextSegment) == 0) {
+        kernelvmAddr = segCmd64->vmaddr;
       }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0) {
-          DBG("Found PRELINK_TEXT, 64bit\n");
+ //         DBG("Found PRELINK_TEXT, 64bit\n");
           if (segCmd64->vmsize > 0) {
             // 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx
             // PrelinkTextAddr = xxxxxxxx + KernelRelocBase
+       //?     PrelinkTextAddr = (UINT32)(segCmd64->vmaddr ? (segCmd64->vmaddr - kernelvmAddr) + KernelRelocBase : 0);
             PrelinkTextAddr = (UINT32)(segCmd64->vmaddr ? segCmd64->vmaddr + KernelRelocBase : 0);
             PrelinkTextSize = (UINT32)segCmd64->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
           }
-          DBG("at 0x%llx: vmaddr = 0x%llx, vmsize = 0x%llx\n", (UINTN)segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
+          DumpSeg(binary, segCmd64);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
-          DBG("dump of PrelinkText\n");
+          UINT32 PrelinkTextAddr32 = segCmd64->vmaddr - kernelvmAddr;
           for (int j=0; j<20; ++j) {
-            DBG("%02x", KernelData[PrelinkTextAddr+j]);
+            DBG("%02x", binary[PrelinkTextAddr32+j]);
           }
           DBG("\n");
-          //DBG("cmd = 0x%08X\n",segCmd64->cmd);
-          //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
-          //DBG("vmaddr = 0x%08X\n",segCmd64->vmaddr);
-          //DBG("vmsize = 0x%08X\n",segCmd64->vmsize);
-          DBG("fileoff = 0x%08llX\n",segCmd64->fileoff);
-          DBG("filesize = 0x%08llX\n",segCmd64->filesize);
-          //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
-          //DBG("initprot = 0x%08X\n",segCmd64->initprot);
-          //DBG("nsects = 0x%08X\n",segCmd64->nsects);
-          DBG("flags = 0x%08X\n",segCmd64->flags);
+
         }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section_64 *sect;
 
-          DBG("Found PRELINK_INFO, 64bit\n");
-          //DBG("cmd = 0x%08X\n",segCmd64->cmd);
-          //DBG("cmdsize = 0x%08X\n",segCmd64->cmdsize);
-          DBG("vmaddr = 0x%08llX\n",segCmd64->vmaddr);
-          DBG("vmsize = 0x%08llX\n",segCmd64->vmsize);
-          //DBG("fileoff = 0x%08X\n",segCmd64->fileoff);
-          //DBG("filesize = 0x%08X\n",segCmd64->filesize);
-          //DBG("maxprot = 0x%08X\n",segCmd64->maxprot);
-          //DBG("initprot = 0x%08X\n",segCmd64->initprot);
-          //DBG("nsects = 0x%08X\n",segCmd64->nsects);
-          //DBG("flags = 0x%08X\n",segCmd64->flags);
+          DumpSeg(binary, segCmd64);
           sectionIndex = sizeof(struct segment_command_64);
 
           while(sectionIndex < segCmd64->cmdsize) {
@@ -2053,12 +2064,6 @@ VOID LOADER_ENTRY::Get_PreLink()
             }
           }
         }
-//      if (AsciiStrCmp(segCmd64->segname, kLinkEditSegment) == 0) {
-//        SEGMENT *LinkSeg = (SEGMENT *)segCmd64->segname;
-//        DBG("segCmd64->AddrVtable = 0x%08X\n",LinkSeg->AddrVtable); //0x48 f291d0
-//        DBG("segCmd64->SizeVtable = 0x%08X\n", LinkSeg->SizeVtable); //0x4C 6031
-//        DBG("segCmd64->AddrNames = 0x%08X\n", LinkSeg->AddrNames);  //0x50 f894e0
-//      }
         break;
 
       case LC_SEGMENT:
@@ -2067,27 +2072,27 @@ VOID LOADER_ENTRY::Get_PreLink()
         //DBG("segCmd->vmaddr = 0x%08X\n",segCmd->vmaddr)
         //DBG("segCmd->vmsize = 0x%08X\n",segCmd->vmsize);
         if (AsciiStrCmp(segCmd->segname, kPrelinkTextSegment) == 0) {
-          DBG("Found PRELINK_TEXT, 32bit\n");
+          //DBG("Found PRELINK_TEXT, 32bit\n");
           if (segCmd->vmsize > 0) {
             // PrelinkTextAddr = vmaddr + KernelRelocBase
             PrelinkTextAddr = (UINT32)(segCmd->vmaddr ? segCmd->vmaddr + KernelRelocBase : 0);
             PrelinkTextSize = (UINT32)segCmd->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd;
           }
-          DBG("at 0x%llx: vmaddr = 0x%x, vmsize = 0x%x\n", (UINTN)segCmd, segCmd->vmaddr, segCmd->vmsize);
-          DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
-              PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
+          //DBG("at 0x%llx: vmaddr = 0x%x, vmsize = 0x%x\n", (UINTN)segCmd, segCmd->vmaddr, segCmd->vmsize);
+          //DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
+          //    PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //gBS->Stall(30*1000000);
         }
         if (AsciiStrCmp(segCmd->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section *sect;
 
-          DBG("Found PRELINK_INFO, 32bit\n");
+          //DBG("Found PRELINK_INFO, 32bit\n");
           //DBG("cmd = 0x%08X\n",segCmd->cmd);
           //DBG("cmdsize = 0x%08X\n",segCmd->cmdsize);
-          DBG("vmaddr = 0x%08X\n",segCmd->vmaddr);
-          DBG("vmsize = 0x%08X\n",segCmd->vmsize);
+          //DBG("vmaddr = 0x%08X\n",segCmd->vmaddr);
+          //DBG("vmsize = 0x%08X\n",segCmd->vmsize);
           //DBG("fileoff = 0x%08X\n",segCmd->fileoff);
           //DBG("filesize = 0x%08X\n",segCmd->filesize);
           //DBG("maxprot = 0x%08X\n",segCmd->maxprot);
@@ -2107,9 +2112,9 @@ VOID LOADER_ENTRY::Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-              DBG("__info found at 0x%llx: addr = 0x%x, size = 0x%x\n", (UINTN)sect, sect->addr, sect->size);
-              DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
-                  PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
+              //DBG("__info found at 0x%llx: addr = 0x%x, size = 0x%x\n", (UINTN)sect, sect->addr, sect->size);
+              //DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
+              //    PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
               //gBS->Stall(30*1000000);
             }
           }
@@ -2419,8 +2424,14 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
   //find symbol tables
-  Get_Symtab();
-  
+  struct  symtab_command      *symCmd = NULL;
+  Get_Symtab(&KernelData[KernelOffset], (void**)&symCmd);
+  if (symCmd != NULL) {
+    AddrVtable = symCmd->symoff;
+    SizeVtable = symCmd->nsyms;
+    NamesTable = symCmd->stroff;
+    DBG("Kernel: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
+  }
 /*
   for (UINTN i=0x00200000; i<0x30000000; i+=4) {
     UINT32 *KD = (UINT32 *)i;

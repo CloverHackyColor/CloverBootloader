@@ -805,7 +805,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KernelPatches[Dst->NrKernels].SearchLen = Src->KernelPatches[i].SearchLen;
       if (Src->KernelPatches[i].ProcedureName != NULL) {
         INTN len = strlen(Src->KernelPatches[i].ProcedureName);
-        Dst->KernelPatches[Dst->NrKernels].ProcedureName = (__typeof__(Dst->KernelPatches[Dst->NrKernels].ProcedureName))AllocateCopyPool(len, Src->KernelPatches[i].ProcedureName);
+        Dst->KernelPatches[Dst->NrKernels].ProcedureName = (__typeof__(Dst->KernelPatches[Dst->NrKernels].ProcedureName))AllocateCopyPool(len+1, Src->KernelPatches[i].ProcedureName);
       } else {
         Dst->KernelPatches[Dst->NrKernels].ProcedureName = NULL;
       }
@@ -1156,7 +1156,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty(Prop2, "Procedure");
         if (Dict != NULL) {
           INTN len = strlen(Dict->string);
-          Patches->KextPatches[Patches->NrKexts].ProcedureName = (__typeof__(Patches->KextPatches[Patches->NrKexts].ProcedureName))AllocateCopyPool(len, Dict->string);
+          Patches->KextPatches[Patches->NrKexts].ProcedureName = (__typeof__(Patches->KextPatches[Patches->NrKexts].ProcedureName))AllocateCopyPool(len+1, Dict->string);
         }
 
 
@@ -1335,7 +1335,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty(Prop2, "Procedure");
         if (Dict != NULL) {
           INTN len = strlen(Dict->string);
-          Patches->KernelPatches[Patches->NrKernels].ProcedureName = (__typeof__(Patches->KernelPatches[Patches->NrKernels].ProcedureName))AllocateCopyPool(len, Dict->string);
+          Patches->KernelPatches[Patches->NrKernels].ProcedureName = (__typeof__(Patches->KernelPatches[Patches->NrKernels].ProcedureName))AllocateCopyPool(len+1, Dict->string);
         }
 
 

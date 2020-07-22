@@ -1041,9 +1041,9 @@ VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
   UINTN patchLoc = FindRelative32(Driver, procAddr, 0x300, verbose-1);
   if (patchLoc != 0 && Driver[patchLoc + 1] == 0x75) {
     Driver[patchLoc + 1] = 0xEB;
-//    DBG_RT("8 apples patch success\n");
+    DBG("8 apples patch success\n");
   } else {
-    DBG_RT("8 apples patch not found, loc=0x%llx\n", patchLoc);
+    DBG("8 apples patch not found, loc=0x%llx\n", patchLoc);
 //    if (patchLoc != 0) {
 //      for (int i=0; i<10; ++i) {
 //        DBG_RT("%02x", Driver[patchLoc+i]);
@@ -1086,6 +1086,8 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   UINTN   SearchLen = KernelAndKextPatches->KextPatches[N].SearchLen;
   
   DBG_RT("\nAnyKextPatch %d: driverAddr = %llx, driverSize = %x\nAnyKext = %s\n",
+         N, (UINTN)Driver, DriverSize, KernelAndKextPatches->KextPatches[N].Label);
+  DBG("\nAnyKextPatch %d: driverAddr = %llx, driverSize = %x\nLabel = %s\n",
          N, (UINTN)Driver, DriverSize, KernelAndKextPatches->KextPatches[N].Label);
 
   if (!KernelAndKextPatches->KextPatches[N].MenuItem.BValue) {
