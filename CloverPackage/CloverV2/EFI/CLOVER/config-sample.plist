@@ -558,17 +558,21 @@
 			</dict>
 			<dict>
 				<key>Comment</key>
-				<string>Patch 8 apples</string>
+				<string>Violet strips</string>
 				<key>Disabled</key>
-				<true/>
-				<key>Find</key>
-				<data>AQAAdSI=</data>
-				<key>MatchOS</key>
-				<string>10.13</string>
+				<false/>
 				<key>Name</key>
-				<string>IOGraphicsFamily</string>
+				<string>com.apple.kext.AMDSupport</string>
+				<key>Procedure</key>
+				<string>TestVRAM</string>
+				<key>Find</key>
+				<data>VUiJ</data>
 				<key>Replace</key>
-				<data>AQAA6yI=</data>
+				<data>sAHD</data>
+				<key>FindMask</key>
+				<data>AAAA</data>
+				<key>RangeFind</key>
+				<integer>10</integer>
 			</dict>
 		</array>
 		<key>KernelXCPM</key>

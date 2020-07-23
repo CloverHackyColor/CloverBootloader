@@ -1036,6 +1036,7 @@ VOID LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
 VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
 {
 //  UINTN procLen = 0;
+  DBG("8 apple patch\n");
   UINTN procAddr = searchProcInDriver(Driver, DriverSize, "initFB");
   UINTN verbose  = searchProcInDriver(Driver, DriverSize, "gIOFBVerboseBoot");
   UINTN patchLoc = FindRelative32(Driver, procAddr, 0x300, verbose-1);

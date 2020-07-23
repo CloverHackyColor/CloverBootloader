@@ -408,9 +408,10 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void          FindBootArgs();
         EFI_STATUS    getVTable();
         void          Get_PreLink();
-        void          Get_Symtab(UINT8*  binary, OUT void **symCmd);
+        void          Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd);
         UINTN         searchProc(const char *procedure);
         UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure);
+        UINT32        searchSectionByNum(UINT8 * Binary, UINT32 Num);
         void          KernelAndKextsPatcherStart();
         void          KernelAndKextPatcherInit();
         BOOLEAN       KernelUserPatch();

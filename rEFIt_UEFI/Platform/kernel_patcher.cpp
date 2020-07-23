@@ -73,7 +73,7 @@ VOID LOADER_ENTRY::SetKernelRelocBase()
 }
 
 //Slice
-// the purpose of the procedure is to find a table of symbols in the kernel
+// the purpose of the procedure is to find a table of symbols in the shifted kernel
 EFI_STATUS LOADER_ENTRY::getVTable()
 {
 	DBG("kernel at 0x%llx\n", (UINTN)KernelData);
@@ -115,6 +115,50 @@ EFI_STATUS LOADER_ENTRY::getVTable()
   return EFI_SUCCESS;
 }
 
+UINT32 LOADER_ENTRY::searchSectionByNum(UINT8 * binary, UINT32 Num)
+{
+  UINT32  ncmds, cmdsize;
+  UINT32  binaryIndex;
+  UINT32  currsect = 0;
+  UINT32  nsect;
+  UINT32  textAddr;
+  struct segment_command_64 *loadCommand;
+  //  struct  symtab_command      *symCmd;
+  if (!Num) {
+    return 0;
+  }
+  
+  ncmds = MACH_GET_NCMDS(binary);
+  binaryIndex = sizeof(struct mach_header_64);
+  
+  for (UINTN cnt = 0; cnt < ncmds; cnt++) {
+    loadCommand = (struct segment_command_64 *)(binary + binaryIndex);
+    cmdsize = loadCommand->cmdsize;
+    
+    switch (loadCommand->cmd) {
+    case LC_SEGMENT_64:
+      nsect = loadCommand->nsects;
+      if (currsect == 0) {
+        textAddr = binaryIndex + sizeof(struct segment_command_64);
+      }
+      if (currsect + nsect >= Num - 1) {
+        UINT32 sectAddr = binaryIndex + sizeof(struct segment_command_64) + sizeof(struct section_64) * (currsect - Num + 1);
+        if (*(UINT32*)(binary + sectAddr) == 0x73625F5F) { //special case for __bss
+          DBG("__bss will be used as __text\n");
+          return textAddr;
+        }
+        return sectAddr;
+      }
+      currsect += nsect;
+      break;
+    default:
+      break;
+    }
+    binaryIndex += cmdsize;
+  }
+  return 0;
+}
+
 UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure)
 {
   if (!procedure) {
@@ -131,14 +175,27 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
 //  INT32 lNamesTable = LinkSeg->AddrNames;
   const char* Names = (const char*)(&driver[LinkSeg->AddrNames]);
   VTABLE * vArray = (VTABLE*)(&driver[LinkSeg->AddrVtable]);
+   struct nlist_64 {
+    union {
+      uint32_t  n_strx; // index into the string table  //str_adr=stroff+n_strx
+    } n_un;
+    uint8_t n_type;        // type flag, see below
+    uint8_t n_sect;        // section number or NO_SECT
+    uint16_t n_desc;       // see <mach-o/stab.h>
+    uint64_t n_value;      // value of this symbol (or stab offset)
+   };
+
 */
-  VTABLE * vArray = NULL;
+  DBG("search procedure %s\n", procedure);
+  struct nlist_64 * vArray = NULL;
   INT32 lSizeVtable = 0;
   const char* Names = NULL;
   struct  symtab_command *symCmd = NULL;
-  Get_Symtab(driver, (void**)&symCmd);
-  if (symCmd != NULL) {
-    vArray = (VTABLE*)(&driver[symCmd->symoff]);
+  UINT32 symCmdOffset = 0;
+  Get_Symtab(driver, &symCmdOffset);
+  if (symCmdOffset != 0) {
+    symCmd = (struct symtab_command *)&driver[symCmdOffset];
+    vArray = (struct nlist_64*)(&driver[symCmd->symoff]);
     lSizeVtable = symCmd->nsyms;
     Names = (const char*)(&driver[symCmd->stroff]);
     DBG("driver: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", symCmd->symoff, lSizeVtable, symCmd->stroff);
@@ -148,9 +205,10 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     return 0;
   }
   INT32 i;
+  size_t Offset;
   bool found = false;
   for (i = 0; i < lSizeVtable; ++i) {
-    size_t Offset = vArray[i].NameOffset;
+    Offset = vArray[i].n_un.n_strx;
     if (strstr(&Names[Offset], procedure)) {
       found = true;
       break;
@@ -160,8 +218,10 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     DBG("%s not found\n", procedure);
     return 0;
   }
-  DBG("found section 0x%x at pos=%d\n", vArray[i].Seg, i);
-  INTN lSegVAddr;
+  DBG("found section %d at pos=%d\n", vArray[i].n_sect, i);
+  DBG("name offset=0x%lx vtable_off=0x%lx\n", symCmd->stroff + Offset, symCmd->symoff + i * sizeof(struct nlist_64));
+  INT32 lSegVAddr = searchSectionByNum(driver, vArray[i].n_sect);
+  /*
   switch (vArray[i].Seg) {
   case ID_SEG_DATA:
     lSegVAddr = FindBin(driver, 0x1600, (const UINT8 *)kDataSegment, (UINT32)strlen(kDataSegment));
@@ -207,11 +267,13 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     lSegVAddr = 0x38;
   }
   SEGMENT *TextSeg = (SEGMENT*)&driver[lSegVAddr];
-  UINT64 Absolut = TextSeg->SegAddress;
-  UINT64 FileOff = TextSeg->fileoff;
+   */
+  struct section_64 *TextSeg = (struct section_64*)&driver[lSegVAddr];
+  UINT64 Absolut = TextSeg->addr;
+  UINT64 FileOff = TextSeg->offset;
   DBG("Absolut=0x%llx Fileoff=0x%llx\n", Absolut, FileOff);
-  UINTN procAddr = vArray[i].ProcAddr - Absolut + FileOff;
-
+  UINTN procAddr = vArray[i].n_value - Absolut + FileOff;
+  DBG("procAddr=0x%llx\n", procAddr);
   return procAddr;
 }
 
@@ -222,7 +284,7 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
   if (!procedure) {
     return 0;
   }
-  
+  DBG("search name in kernel: %s\n", procedure);
   const char* Names = (const char*)(&KernelData[NamesTable]);
   VTABLE * vArray = (VTABLE*)(&KernelData[AddrVtable]);
   //search for the name
@@ -283,6 +345,7 @@ UINTN LOADER_ENTRY::searchProc(const char *procedure)
   }
   *procLen = vArray[i].ProcAddr - prevAddr; //never worked
  */
+  DBG("kernel: procAddr=0x%llx\n", procAddr);
   return procAddr;
 }
 
@@ -1931,7 +1994,7 @@ VOID Patcher_SSE3_7()
 }
 #endif
 
-void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT void **symCmd)
+void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd)
 {
   UINT32  ncmds, cmdsize;
   UINT32  binaryIndex;
@@ -1949,7 +2012,7 @@ void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT void **symCmd)
     
     switch (loadCommand->cmd) {
     case LC_SYMTAB:
-      *symCmd = (void *)loadCommand;
+      *symCmd = binaryIndex;
       //      struct symtab_command {
       //        uint32_t  cmd;    /* LC_SYMTAB == 2 */
       //        uint32_t  cmdsize;  /* sizeof(struct symtab_command) */
@@ -2424,9 +2487,11 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
   //find symbol tables
-  struct  symtab_command      *symCmd = NULL;
-  Get_Symtab(&KernelData[KernelOffset], (void**)&symCmd);
-  if (symCmd != NULL) {
+  struct  symtab_command  *symCmd = NULL;
+  UINT32 symCmdOffset = 0;
+  Get_Symtab(&KernelData[KernelOffset], &symCmdOffset);
+  if (symCmdOffset != 0) {
+    symCmd = (struct symtab_command *)&KernelData[symCmdOffset];
     AddrVtable = symCmd->symoff;
     SizeVtable = symCmd->nsyms;
     NamesTable = symCmd->stroff;
