@@ -2446,12 +2446,12 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
 
 //  UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-  DBG("os_version=%s\n", OSVersion);
+    DBG("os_version=%s\n", OSVersion);
   
 //  if (os_version < AsciiOSVersionToUint64("10.6")) {
 //    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
 //  } else {
-  KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
 //  }
 
   // check that it is Mach-O header and detect architecture
@@ -2483,7 +2483,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
     KernelData = NULL;
     return;
   }
-  DBG( " kernel offset at 0x%x\n", KernelOffset);
+ // DBG( " kernel offset at 0x%x\n", KernelOffset);
   // find __PRELINK_TEXT and __PRELINK_INFO
   Get_PreLink();
   //find symbol tables
@@ -2491,8 +2491,8 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   UINT32 symCmdOffset = 0;
   Get_Symtab(&KernelData[KernelOffset], &symCmdOffset);
   if (symCmdOffset != 0) {
-    symCmd = (struct symtab_command *)&KernelData[symCmdOffset];
-    AddrVtable = symCmd->symoff;
+    symCmd = (struct symtab_command *)&KernelData[KernelOffset + symCmdOffset];
+    AddrVtable = symCmd->symoff; //this offset relative to KernelData+0
     SizeVtable = symCmd->nsyms;
     NamesTable = symCmd->stroff;
     DBG("Kernel: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
