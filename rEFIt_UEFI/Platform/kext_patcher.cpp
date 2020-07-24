@@ -1324,6 +1324,19 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
     return 0;
   }
   
+  // search for <integer>
+  IntTag = AsciiStrStr(Value, "<integer>"); //this is decimal value
+  if (IntTag != NULL) {
+    IntTag += 9; //next after ">"
+    if ((IntTag[1] == 'x') || (IntTag[1] == 'X')) {
+      return AsciiStrHexToUintn(IntTag);
+    }
+    if (IntTag[0] == '-') {
+      return (UINTN)(-(INTN)AsciiStrDecimalToUintn(IntTag + 1));
+    }
+    return AsciiStrDecimalToUintn((IntTag[0] == '+') ? (IntTag + 1) : IntTag);
+  }
+  
   // search for <integer
   IntTag = AsciiStrStr(Value, "<integer");
   if (IntTag == NULL) {
@@ -1334,7 +1347,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
   // find <integer end
   Value = AsciiStrStr(IntTag, ">");
   if (Value == NULL) {
-    DBG("\nNo <integer end\n");
+//    DBG("\nNo <integer end\n");
     return 0;
   }
   
@@ -1343,7 +1356,6 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
     // normal case: value is here
     NumValue = AsciiStrHexToUint64(Value + 1);
     return NumValue;
-    
   }
   
   // it might be a reference: IDREF="173"/>
@@ -1425,17 +1437,22 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
 //   <array>
 //     <!-- start of kext Info.plist -->
 //     <dict>
-//       <key>CFBundleName</key>
+//       <key>CFBundleName</key> //No! we have CFBundleIdentifier
 //       <string>MAC Framework Pseudoextension</string>
 //       <key>_PrelinkExecutableLoadAddr</key>
-//       <integer size="64">0xffffff7f8072f000</integer>
+//       <integer size="64">0xffffff7f8072f000</integer> || <integer>-549736448000</integer>
 //       <!-- Kext size -->
 //       <key>_PrelinkExecutableSize</key>
-//       <integer size="64">0x3d0</integer>
+//       <integer size="64">0x3d0</integer>  || <integer>49152</integer>
 //       <!-- Kext address -->
 //       <key>_PrelinkExecutableSourceAddr</key>
 //       <integer size="64">0xffffff80009a3000</integer>
 //       ...
+//      <key>OSBundleUUID</key>
+//      <data>
+//        rVVMo9l6M9K/lZm/X2BzEA==
+//      </data>
+
 //     </dict>
 //     <!-- start of next kext Info.plist -->
 //     <dict>
@@ -1451,7 +1468,7 @@ VOID LOADER_ENTRY::PatchPrelinkedKexts()
   INTN      DictLevel = 0;
   CHAR8     SavedValue;
   //INTN      DbgCount = 0;
-  UINT32    KextAddr;
+  UINT64    KextAddr = 0;
   UINT32    KextSize;
   
   
@@ -1473,8 +1490,14 @@ VOID LOADER_ENTRY::PatchPrelinkedKexts()
   //since rev4240 we have manual kext inject disable
  // CheckForFakeSMC(WholePlist);
   
+  DBG("dump begin of WholePlist: ");
+  for (int j=0; j<20; ++j) {
+    DBG("%c", WholePlist[j]);
+  }
+  DBG("\n");
+
   DictPtr = WholePlist;
-  while ((DictPtr = AsciiStrStr(DictPtr, "dict>")) != NULL) {
+  while ((DictPtr = strstr(DictPtr, "dict>")) != NULL) {
     if (DictPtr[-1] == '<') {
       // opening dict
       DictLevel++;
@@ -1494,16 +1517,16 @@ VOID LOADER_ENTRY::PatchPrelinkedKexts()
         *InfoPlistEnd = '\0';
         
         // get kext address from _PrelinkExecutableSourceAddr
-        // truncate to 32 bit to get physical addr
+        // truncate to 32 bit to get physical addr? Yes!
         KextAddr = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSourceKey, WholePlist);
         // KextAddr is always relative to 0x200000
         // and if KernelSlide is != 0 then KextAddr must be adjusted
         KextAddr += KernelSlide;
         // and adjust for AptioFixDrv's KernelRelocBase
-        KextAddr += (UINT32)KernelRelocBase;
+        KextAddr += KernelRelocBase;
         
         KextSize = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSizeKey, WholePlist);
-        
+//        DBG("found kext addr=0x%llX size=0x%X\n", KextAddr, KextSize);
         /*if (DbgCount < 3
          || DbgCount == 100 || DbgCount == 101 || DbgCount == 102
          ) {

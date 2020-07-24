@@ -158,7 +158,7 @@ typedef struct Boot_Video       Boot_Video;
 #define CSR_ALLOW_ANY_RECOVERY_OS            (1 << 8)
 #define CSR_ALLOW_UNAPPROVED_KEXTS           (1 << 9)
 #define CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE (1 << 10)
-
+#define CSR_ALLOW_NON_AUTHENTICATED_ROOT     (1 << 11)
 
 #define CSR_VALID_FLAGS (CSR_ALLOW_UNTRUSTED_KEXTS | \
         CSR_ALLOW_UNRESTRICTED_FS | \
@@ -170,7 +170,8 @@ typedef struct Boot_Video       Boot_Video;
         CSR_ALLOW_DEVICE_CONFIGURATION | \
         CSR_ALLOW_ANY_RECOVERY_OS | \
         CSR_ALLOW_UNAPPROVED_KEXTS | \
-        CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE)
+        CSR_ALLOW_EXECUTABLE_POLICY_OVERRIDE | \
+        CSR_ALLOW_NON_AUTHENTICATED_ROOT )
 
 #define CSR_ALWAYS_ENFORCED_FLAGS (CSR_ALLOW_DEVICE_CONFIGURATION | CSR_ALLOW_ANY_RECOVERY_OS)
 
@@ -181,7 +182,7 @@ typedef struct Boot_Video       Boot_Video;
 
 #define CSR_VALID_CAPABILITIES (CSR_CAPABILITY_UNLIMITED | CSR_CAPABILITY_CONFIG | CSR_CAPABILITY_APPLE_INTERNAL)
 
-
+//BootArgs1 used for 32bit systems up to 10.6.8
 typedef struct {
     UINT16    Revision; /* Revision of boot_args structure */
     UINT16    Version;  /* Version of boot_args structure */
@@ -214,7 +215,7 @@ typedef struct {
     UINT32    __reserved3[2];
 
 } BootArgs1;
-//version2 as used in Lion up to Mojave
+//version2 as used in Lion and up
 typedef struct {
 
   UINT16      Revision; /* Revision of boot_args structure */
@@ -231,7 +232,7 @@ typedef struct {
   UINT32      MemoryMapDescriptorSize;
   UINT32      MemoryMapDescriptorVersion;
 
-  Boot_VideoV1 VideoV1;    /* Video Information */
+  Boot_VideoV1 VideoV1;    /* Old Video Information */
 
   UINT32      deviceTreeP;    /* Physical address of flattened device tree */
   UINT32      deviceTreeLength; /* Length of flattened tree */
@@ -259,14 +260,14 @@ typedef struct {
   UINT32      pciConfigSpaceStartBusNumber;
   UINT32      pciConfigSpaceEndBusNumber;
   UINT32      csrActiveConfig;
-  uint32_t    csrCapabilities;
-  uint32_t    boot_SMC_plimit;
-  uint16_t    bootProgressMeterStart;
-  uint16_t    bootProgressMeterEnd;
+  UINT32      csrCapabilities;
+  UINT32      boot_SMC_plimit;
+  UINT16      bootProgressMeterStart;
+  UINT16      bootProgressMeterEnd;
   Boot_Video  Video;      /* Video Information */
   
-  uint32_t    apfsDataStart;/* Physical address of apfs volume key structure */
-  uint32_t    apfsDataSize;
+  UINT32      apfsDataStart;/* Physical address of apfs volume key structure */
+  UINT32      apfsDataSize;
   
   /* Version 2, Revision 1 */
   UINT64      KC_hdrs_vaddr; /* First kernel virtual address pointing to Mach-O headers */

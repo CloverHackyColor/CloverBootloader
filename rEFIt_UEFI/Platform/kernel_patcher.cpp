@@ -7,6 +7,8 @@
  */
 
 //#include <IndustryStardard/MachO-loader.h>
+
+
 #include <UefiLoader.h>
 
 #include "Platform.h"
@@ -54,6 +56,8 @@
 //BOOLEAN     PatcherInited = FALSE;
 //BOOLEAN     gSNBEAICPUFixRequire = FALSE; // SandyBridge-E AppleIntelCpuPowerManagement patch require or not
 //BOOLEAN     gBDWEIOPCIFixRequire = FALSE; // Broadwell-E IOPCIFamily fix require or not
+
+extern EFI_GUID gEfiAppleBootGuid;
 
 /*
  * the driver OsxAptioFixDrv is old and mostly not used in favour of its successors.
@@ -191,8 +195,8 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   INT32 lSizeVtable = 0;
   const char* Names = NULL;
   struct  symtab_command *symCmd = NULL;
-  UINT32 symCmdOffset = 0;
-  Get_Symtab(driver, &symCmdOffset);
+  UINT32 symCmdOffset = Get_Symtab(driver);
+  DBG("symCmdOffset=0x%X\n", symCmdOffset);
   if (symCmdOffset != 0) {
     symCmd = (struct symtab_command *)&driver[symCmdOffset];
     vArray = (struct nlist_64*)(&driver[symCmd->symoff]);
@@ -1994,7 +1998,7 @@ VOID Patcher_SSE3_7()
 }
 #endif
 
-void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd)
+UINT32 LOADER_ENTRY::Get_Symtab(UINT8*  binary)
 {
   UINT32  ncmds, cmdsize;
   UINT32  binaryIndex;
@@ -2003,8 +2007,19 @@ void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd)
   struct  load_command        *loadCommand;
 //  struct  symtab_command      *symCmd;
   
+  if (MACH_GET_MAGIC(binary) != MH_MAGIC_64 ) {
+    DBG("wrong binary at 0x%llX\n", (UINTN)binary);
+    return 0;
+  }
+  
   ncmds = MACH_GET_NCMDS(binary);
   binaryIndex = sizeof(struct mach_header_64);
+  DBG("ncmd = %d\n", ncmds);
+  for (int j=0; j<20; ++j) {
+    DBG("%02x", binary[j]);
+  }
+  DBG("\n");
+  if (ncmds > 1000) ncmds = 0;
   
   for (cnt = 0; cnt < ncmds; cnt++) {
     loadCommand = (struct load_command *)(binary + binaryIndex);
@@ -2012,7 +2027,7 @@ void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd)
     
     switch (loadCommand->cmd) {
     case LC_SYMTAB:
-      *symCmd = binaryIndex;
+ //     *symCmd = binaryIndex;
       //      struct symtab_command {
       //        uint32_t  cmd;    /* LC_SYMTAB == 2 */
       //        uint32_t  cmdsize;  /* sizeof(struct symtab_command) */
@@ -2025,7 +2040,7 @@ void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd)
       //SizeVtable = symCmd->nsyms;
       //NamesTable = symCmd->stroff;
       //DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
-      break; //continue search for last command? or return here?
+      return binaryIndex; //continue search for last command? or return here?
       
     default:
       break;
@@ -2033,10 +2048,10 @@ void LOADER_ENTRY::Get_Symtab(UINT8*  binary, OUT UINT32 *symCmd)
     }
     binaryIndex += cmdsize;
   }
-  
+  return 0;
 }
 
-void DumpSeg(UINT8*  binary, struct  segment_command_64  *segCmd64)
+void DumpSeg(struct  segment_command_64  *segCmd64)
 {
   DBG("segCmd64->segname = %s\n",segCmd64->segname);
   DBG("segCmd64->vmaddr = 0x%08llX\n",segCmd64->vmaddr);
@@ -2051,14 +2066,41 @@ void DumpSeg(UINT8*  binary, struct  segment_command_64  *segCmd64)
 
 }
 
-VOID LOADER_ENTRY::Get_PreLink()
+UINT32 LOADER_ENTRY::GetTextExec()
 {
   UINT32  ncmds, cmdsize;
   UINT32  binaryIndex;
-  UINTN   cnt;
+  struct  segment_command_64  *segCmd64;
+  
+  ncmds = MACH_GET_NCMDS(KernelData);
+  binaryIndex = sizeof(struct mach_header_64);
+  
+  for (UINTN cnt = 0; cnt < ncmds; cnt++) {
+    segCmd64 = (struct segment_command_64 *)(KernelData + binaryIndex);
+    cmdsize = segCmd64->cmdsize;
+    
+    switch (segCmd64->cmd) {
+    case LC_SEGMENT_64: //19
+      if (strcmp(segCmd64->segname, kTextExecSegment) == 0) {
+        return (UINT32)(segCmd64->fileoff);
+      }
+      break;
+    default:
+      break;
+    }
+    binaryIndex += cmdsize;
+  }
+  
+  return 0;
+}
+
+void LOADER_ENTRY::Get_PreLink()
+{
+  UINT32  ncmds, cmdsize;
+  UINT32  binaryIndex;
   UINT8*  binary = &KernelData[0];
   struct  load_command        *loadCommand;
-  struct  segment_command     *segCmd;
+//  struct  segment_command     *segCmd;
   struct  segment_command_64  *segCmd64;
 //  struct  symtab_command      *symCmd;
   UINTN kernelvmAddr = 0;
@@ -2072,69 +2114,69 @@ VOID LOADER_ENTRY::Get_PreLink()
 
   ncmds = MACH_GET_NCMDS(binary);
 
-  for (cnt = 0; cnt < ncmds; cnt++) {
+  for (UINTN cnt = 0; cnt < ncmds; cnt++) {
     loadCommand = (struct load_command *)(binary + binaryIndex);
     cmdsize = loadCommand->cmdsize;
 
     switch (loadCommand->cmd) {
       case LC_SEGMENT_64: //19
         segCmd64 = (struct segment_command_64 *)loadCommand;
-      if (AsciiStrCmp(segCmd64->segname, kTextSegment) == 0) {
-        kernelvmAddr = segCmd64->vmaddr;
-      }
-        if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0) {
+        if (strcmp(segCmd64->segname, kTextSegment) == 0) {
+          kernelvmAddr = segCmd64->vmaddr;
+        }
+        if (strcmp(segCmd64->segname, kPrelinkTextSegment) == 0) {
  //         DBG("Found PRELINK_TEXT, 64bit\n");
           if (segCmd64->vmsize > 0) {
             // 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx
             // PrelinkTextAddr = xxxxxxxx + KernelRelocBase
        //?     PrelinkTextAddr = (UINT32)(segCmd64->vmaddr ? (segCmd64->vmaddr - kernelvmAddr) + KernelRelocBase : 0);
             PrelinkTextAddr = (UINT32)(segCmd64->vmaddr ? segCmd64->vmaddr + KernelRelocBase : 0);
-            PrelinkTextSize = (UINT32)segCmd64->vmsize;
-            PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
+            PrelinkTextSize = (UINT32)(segCmd64->filesize);
+            PrelinkTextLoadCmdAddr = binaryIndex; //(UINT32)(UINTN)segCmd64;
           }
-          DumpSeg(binary, segCmd64);
+          DumpSeg(segCmd64);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
-          UINT32 PrelinkTextAddr32 = segCmd64->vmaddr - kernelvmAddr;
+          UINT32 PrelinkTextAddr32 = (UINT32)(segCmd64->vmaddr - kernelvmAddr);
           for (int j=0; j<20; ++j) {
             DBG("%02x", binary[PrelinkTextAddr32+j]);
           }
           DBG("\n");
 
         }
-        if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
+        if (strcmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section_64 *sect;
 
-          DumpSeg(binary, segCmd64);
+          DumpSeg(segCmd64);
           sectionIndex = sizeof(struct segment_command_64);
 
           while(sectionIndex < segCmd64->cmdsize) {
             sect = (struct section_64 *)((UINT8*)segCmd64 + sectionIndex);
-            sectionIndex += sizeof(struct section_64);
 
-            if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0) {
+            if(strcmp(sect->sectname, kPrelinkInfoSection) == 0 && strcmp(sect->segname, kPrelinkInfoSegment) == 0) {
               if (sect->size > 0) {
                 // 64bit sect->addr is 0xffffff80xxxxxxxx
                 // PrelinkInfoAddr = xxxxxxxx + KernelRelocBase
-                PrelinkInfoLoadCmdAddr = (UINT32)(UINTN)sect;
+                PrelinkInfoLoadCmdAddr = binaryIndex + sectionIndex; //(UINT32)(UINTN)sect;
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-              DBG("__info found at 0x%llx: addr = 0x%llx, size = 0x%llx\n", (UINTN)sect, sect->addr, sect->size);
+              DBG("__info found at 0x%llx: addr = 0x%x, size = 0x%llx\n", (UINTN)sect, sect->offset, sect->size);
               DBG("PrelinkInfoLoadCmdAddr = 0x%X, PrelinkInfoAddr = 0x%X, PrelinkInfoSize = 0x%X\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
             }
+            sectionIndex += sizeof(struct section_64);
           }
         }
         break;
-
+#if 0  //exclude 32bit
       case LC_SEGMENT:
         segCmd = (struct segment_command *)loadCommand;
         //DBG("segCmd->segname = %s\n",segCmd->segname);
         //DBG("segCmd->vmaddr = 0x%08X\n",segCmd->vmaddr)
         //DBG("segCmd->vmsize = 0x%08X\n",segCmd->vmsize);
-        if (AsciiStrCmp(segCmd->segname, kPrelinkTextSegment) == 0) {
+        if (strcmp(segCmd->segname, kPrelinkTextSegment) == 0) {
           //DBG("Found PRELINK_TEXT, 32bit\n");
           if (segCmd->vmsize > 0) {
             // PrelinkTextAddr = vmaddr + KernelRelocBase
@@ -2147,7 +2189,7 @@ VOID LOADER_ENTRY::Get_PreLink()
           //    PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //gBS->Stall(30*1000000);
         }
-        if (AsciiStrCmp(segCmd->segname, kPrelinkInfoSegment) == 0) {
+        if (strcmp(segCmd->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;
           struct section *sect;
 
@@ -2168,7 +2210,7 @@ VOID LOADER_ENTRY::Get_PreLink()
             sect = (struct section *)((UINT8*)segCmd + sectionIndex);
             sectionIndex += sizeof(struct section);
 
-            if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0) {
+            if(strcmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0) {
               if (sect->size > 0) {
                 // PrelinkInfoAddr = sect->addr + KernelRelocBase
                 PrelinkInfoLoadCmdAddr = (UINT32)(UINTN)sect;
@@ -2183,7 +2225,7 @@ VOID LOADER_ENTRY::Get_PreLink()
           }
         }
         break;
-#if 0
+
       case LC_SYMTAB:
         symCmd = (struct symtab_command *)loadCommand;
 //      struct symtab_command {
@@ -2243,8 +2285,8 @@ LOADER_ENTRY::FindBootArgs()
       DBG_RT( "bootArgs2->flags = 0x%hx\n", bootArgs2->flags);
       DBG_RT( "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
       DBG_RT( "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
-      if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
-        gBS->Stall(5000000);
+ //     if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
+      Stall(5000000);
 
       // disable other pointer
       bootArgs1 = NULL;
@@ -2461,6 +2503,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
     DBG( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
 //    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
+/*
     KernelOffset = 0;
     while (KernelOffset < KERNEL_MAX_SIZE) {
       if ((MACH_GET_MAGIC(KernelData+KernelOffset) == MH_MAGIC_64 ) || (MACH_GET_MAGIC(KernelData+KernelOffset) == MH_CIGAM_64)) {
@@ -2476,6 +2519,12 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
       }
       KernelOffset += 4;
     }
+ */
+    if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+      // BigSur
+      KernelOffset = GetTextExec();
+//      DBG("BigSur: KernelOffset =0x%X\n", KernelOffset);
+    }
     is64BitKernel = TRUE;
   } else {
     // not valid Mach-O header - exiting
@@ -2483,13 +2532,16 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
     KernelData = NULL;
     return;
   }
- // DBG( " kernel offset at 0x%x\n", KernelOffset);
+  DBG( " kernel offset at 0x%x\n", KernelOffset);
   // find __PRELINK_TEXT and __PRELINK_INFO
-  Get_PreLink();
+  if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+    Get_PreLink(); // BigSur
+  } else {
+    Get_PreLink();
+  }
   //find symbol tables
   struct  symtab_command  *symCmd = NULL;
-  UINT32 symCmdOffset = 0;
-  Get_Symtab(&KernelData[KernelOffset], &symCmdOffset);
+  UINT32 symCmdOffset = Get_Symtab(&KernelData[KernelOffset]);
   if (symCmdOffset != 0) {
     symCmd = (struct symtab_command *)&KernelData[KernelOffset + symCmdOffset];
     AddrVtable = symCmd->symoff; //this offset relative to KernelData+0

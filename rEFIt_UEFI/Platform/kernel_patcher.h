@@ -40,6 +40,7 @@ const char   kDataSegment[] =                       "__DATA";
 const char   kDataConstSegment[] =                  "__DATA_CONST";
 const char   kKldSegment[] =                        "__KLD";
 const char   kHibSegment[] =                        "__HIB";
+const char   kTextExecSegment[] =                   "__TEXT_EXEC";
 const char   kConstSection[] =                      "__const";
 const char   kBssSection[] =                        "__bss";
 const char   kCommonSection[] =                     "__common";
