@@ -186,7 +186,7 @@ BOOLEAN CompareMemMask(const UINT8 *Source, const UINT8 *Search, UINTN SearchSiz
 VOID  CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize);
 UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize);
 UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN taskLocation);
-UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec);
+//UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec);
 //
 // Searches Source for Search pattern of size SearchSize
 // and replaces it with Replace up to MaxReplaces times.

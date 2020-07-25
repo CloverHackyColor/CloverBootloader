@@ -23,7 +23,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 1
+#define KERNEL_DEBUG 0
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
@@ -133,32 +133,34 @@ UINT32 LOADER_ENTRY::searchSectionByNum(UINT8 * binary, UINT32 Num)
   }
   
   ncmds = MACH_GET_NCMDS(binary);
-  binaryIndex = sizeof(struct mach_header_64);
+  binaryIndex = sizeof(struct mach_header_64); //20
+  DBG("segSize=0x%lx secsize=0x%lx\n", sizeof(struct segment_command_64), sizeof(struct section_64)); //48, 50
   
   for (UINTN cnt = 0; cnt < ncmds; cnt++) {
-    loadCommand = (struct segment_command_64 *)(binary + binaryIndex);
-    cmdsize = loadCommand->cmdsize;
+    loadCommand = (struct segment_command_64 *)(binary + binaryIndex); //20, 158
+    cmdsize = loadCommand->cmdsize; //138, 278
     
     switch (loadCommand->cmd) {
     case LC_SEGMENT_64:
-      nsect = loadCommand->nsects;
+      nsect = loadCommand->nsects; //3, 7,
       if (currsect == 0) {
-        textAddr = binaryIndex + sizeof(struct segment_command_64);
+        textAddr = binaryIndex + sizeof(struct segment_command_64); //20+48=68
       }
-      if (currsect + nsect >= Num - 1) {
-        UINT32 sectAddr = binaryIndex + sizeof(struct segment_command_64) + sizeof(struct section_64) * (currsect - Num + 1);
+      if (currsect + nsect >= Num - 1) { //3+7 >= 9
+        UINT32 sectAddr = binaryIndex + sizeof(struct segment_command_64) + sizeof(struct section_64) * (Num - currsect - 1);
+        //158+48+50*
         if (*(UINT32*)(binary + sectAddr) == 0x73625F5F) { //special case for __bss
           DBG("__bss will be used as __text\n");
           return textAddr;
         }
         return sectAddr;
       }
-      currsect += nsect;
+      currsect += nsect; //3
       break;
     default:
       break;
     }
-    binaryIndex += cmdsize;
+    binaryIndex += cmdsize; //20+138=158,
   }
   return 0;
 }
@@ -224,7 +226,14 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   }
   DBG("found section %d at pos=%d\n", vArray[i].n_sect, i);
   DBG("name offset=0x%lx vtable_off=0x%lx\n", symCmd->stroff + Offset, symCmd->symoff + i * sizeof(struct nlist_64));
+//  INT32 textAddr = searchSectionByNum(driver, 1);
   INT32 lSegVAddr = searchSectionByNum(driver, vArray[i].n_sect);
+  DBG("section begin:\n");
+  for (int j=0; j<20; ++j) {
+    DBG("%02X", driver[lSegVAddr+j]);
+  }
+  DBG("\n");
+
   /*
   switch (vArray[i].Seg) {
   case ID_SEG_DATA:
@@ -277,7 +286,18 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   UINT64 FileOff = TextSeg->offset;
   DBG("Absolut=0x%llx Fileoff=0x%llx\n", Absolut, FileOff);
   UINTN procAddr = vArray[i].n_value - Absolut + FileOff;
+//  UINT32 procAddr32 = (UINT32)(vArray[i].n_value); //it is not work
   DBG("procAddr=0x%llx\n", procAddr);
+#if KERNEL_DEBUG
+  if (Absolut != 0) {
+    UINT8 *procVM = (UINT8*)&driver[procAddr];
+    DBG("procedure begin:\n");
+    for (int j=0; j<30; ++j) {
+      DBG("%02X", procVM[j]);
+    }
+    DBG("\n");
+  }
+#endif
   return procAddr;
 }
 
@@ -2134,6 +2154,7 @@ void LOADER_ENTRY::Get_PreLink()
             PrelinkTextSize = (UINT32)(segCmd64->filesize);
             PrelinkTextLoadCmdAddr = binaryIndex; //(UINT32)(UINTN)segCmd64;
           }
+#if KERNEL_DEBUG
           DumpSeg(segCmd64);
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
@@ -2142,7 +2163,7 @@ void LOADER_ENTRY::Get_PreLink()
             DBG("%02x", binary[PrelinkTextAddr32+j]);
           }
           DBG("\n");
-
+#endif
         }
         if (strcmp(segCmd64->segname, kPrelinkInfoSegment) == 0) {
           UINT32 sectionIndex;

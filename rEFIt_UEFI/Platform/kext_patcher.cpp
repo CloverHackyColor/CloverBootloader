@@ -22,7 +22,7 @@ extern "C" {
 
 
 #ifndef DEBUG_ALL
-#define KEXT_DEBUG 1
+#define KEXT_DEBUG 0
 #else
 #define KEXT_DEBUG DEBUG_ALL
 #endif
@@ -142,7 +142,7 @@ UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN t
   }
   return 0;
 }
-
+/*
 UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec)
 {
   BOOLEAN eq;
@@ -168,7 +168,7 @@ UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8*
   }
   return 0;
 }
-
+*/
 UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize)
 {
   if (!Source || !Search || !SearchSize) {
