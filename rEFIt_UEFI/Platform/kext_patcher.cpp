@@ -22,7 +22,7 @@ extern "C" {
 
 
 #ifndef DEBUG_ALL
-#define KEXT_DEBUG 0
+#define KEXT_DEBUG 1
 #else
 #define KEXT_DEBUG DEBUG_ALL
 #endif
@@ -1497,6 +1497,7 @@ VOID LOADER_ENTRY::PatchPrelinkedKexts()
   DBG("\n");
 
   DictPtr = WholePlist;
+  //new dict is the new kext
   while ((DictPtr = strstr(DictPtr, "dict>")) != NULL) {
     if (DictPtr[-1] == '<') {
       // opening dict
