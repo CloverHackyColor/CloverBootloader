@@ -22,7 +22,7 @@ extern "C" {
 
 
 #ifndef DEBUG_ALL
-#define KEXT_DEBUG 0
+#define KEXT_DEBUG 1
 #else
 #define KEXT_DEBUG DEBUG_ALL
 #endif
@@ -485,7 +485,7 @@ VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 
     SEGMENT *textSeg = (SEGMENT *)&Driver[textName];
     Start = textSeg->fileoff;
     Size = textSeg->filesize;
-	DBG("found __text [%llu,%llu]\n",Start, Size);
+    DBG("found __text [%llX,%llX]\n",Start, Size);
     if (Start > DriverSize) Start = 0;
     if (Size > DriverSize) {
       Size = DriverSize;

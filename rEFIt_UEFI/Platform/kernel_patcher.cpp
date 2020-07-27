@@ -23,7 +23,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 0
+#define KERNEL_DEBUG 1
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
@@ -220,7 +220,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     return 0;
   }
   INT32 i;
-  size_t Offset;
+  UINT32 Offset;
   bool found = false;
   for (i = 0; i < lSizeVtable; ++i) {
     Offset = vArray[i].n_un.n_strx;
@@ -234,14 +234,14 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     return 0;
   }
   DBG("found section %d at pos=%d\n", vArray[i].n_sect, i);
-  DBG("name offset=0x%lx vtable_off=0x%lx\n", symCmd->stroff + Offset, symCmd->symoff + i * sizeof(struct nlist_64));
+  DBG("name offset=0x%x vtable_off=0x%lx\n", symCmd->stroff + Offset, symCmd->symoff + i * sizeof(struct nlist_64));
 //  INT32 textAddr = searchSectionByNum(driver, 1);
   INT32 lSegVAddr = searchSectionByNum(driver, vArray[i].n_sect);
-  DBG("section begin:\n");
-  for (int j=0; j<20; ++j) {
-    DBG("%02X", driver[lSegVAddr+j]);
-  }
-  DBG("\n");
+//  DBG("section begin:\n");
+//  for (int j=0; j<20; ++j) {
+//    DBG("%02X", driver[lSegVAddr+j]);
+//  }
+//  DBG("\n");
 
   /*
   switch (vArray[i].Seg) {
@@ -296,10 +296,18 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   DBG("Absolut=0x%llx Fileoff=0x%llx\n", Absolut, FileOff);
   UINTN procAddr = vArray[i].n_value - Absolut + FileOff;
 //  UINT32 procAddr32 = (UINT32)(vArray[i].n_value); //it is not work
+  if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+    procAddr -= shift;
+  }
   DBG("procAddr=0x%llx\n", procAddr);
 #if KERNEL_DEBUG
   if (Absolut != 0) {
-    UINT8 *procVM = (UINT8*)&driver[procAddr];
+    UINT8 *procVM;
+    if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+      procVM = (UINT8*)&KernelData[procAddr];
+    } else {
+      procVM = (UINT8*)&driver[procAddr];
+    }
     DBG("procedure begin:\n");
     for (int j=0; j<30; ++j) {
       DBG("%02X", procVM[j]);
