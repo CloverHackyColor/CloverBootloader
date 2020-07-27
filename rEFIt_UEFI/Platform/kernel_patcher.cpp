@@ -23,7 +23,7 @@
 //#include "sse3_5_patcher.h"
 
 #ifndef DEBUG_ALL
-#define KERNEL_DEBUG 1
+#define KERNEL_DEBUG 0
 #else
 #define KERNEL_DEBUG DEBUG_ALL
 #endif
@@ -198,15 +198,15 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
   const char* Names = NULL;
   struct  symtab_command *symCmd = NULL;
   UINT32 symCmdOffset = Get_Symtab(driver);
-  DBG("symCmdOffset=0x%X\n", symCmdOffset);
+  DBG("symCmdOffset=0x%X\n", symCmdOffset); //0x418
   if (symCmdOffset != 0) {
     if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
-      symCmd = (struct symtab_command *)&KernelData[symCmdOffset];
-      vArray = (struct nlist_64*)(&KernelData[symCmd->symoff]);
+      symCmd = (struct symtab_command *)&driver[symCmdOffset];
+      vArray = (struct nlist_64*)(&KernelData[symCmd->symoff - shift]);
       lSizeVtable = symCmd->nsyms;
-      Names = (const char*)(&KernelData[symCmd->stroff]);
-      DBG("driverKC: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", symCmd->symoff, lSizeVtable, symCmd->stroff);
-
+      Names = (const char*)(&KernelData[symCmd->stroff - shift]);
+      DBG("driverKC: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n",
+          symCmd->symoff - shift, lSizeVtable, symCmd->stroff - shift);
     } else {
       symCmd = (struct symtab_command *)&driver[symCmdOffset];
       vArray = (struct nlist_64*)(&driver[symCmd->symoff]);

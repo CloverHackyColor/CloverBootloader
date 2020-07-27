@@ -22,7 +22,7 @@ extern "C" {
 
 
 #ifndef DEBUG_ALL
-#define KEXT_DEBUG 1
+#define KEXT_DEBUG 0
 #else
 #define KEXT_DEBUG DEBUG_ALL
 #endif
@@ -601,7 +601,7 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
   if (NumLion_X64 + NumLion_i386 + NumML + NumMavMoj3 + NumMoj4 > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skip it
-	  printf("AppleRTCPatch: ERROR: multiple patterns found (LionX64: %llu, Lioni386: %llu, ML: %llu, MavMoj3: %llu, Moj4: %llu) - skipping patching!\n",
+	  DBG_RT("AppleRTCPatch: ERROR: multiple patterns found (LionX64: %llu, Lioni386: %llu, ML: %llu, MavMoj3: %llu, Moj4: %llu) - skipping patching!\n",
           NumLion_X64, NumLion_i386, NumML, NumMavMoj3, NumMoj4);
     Stall(5000000);
     return;
@@ -629,9 +629,23 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
   //RodionS
 
   UINTN procLocation = searchProcInDriver(Driver, DriverSize, "updateChecksum");
-  DBG("updateChecksum at 0x%llx", procLocation);
+  DBG("updateChecksum at 0x%llx\n", procLocation);
   if (procLocation != 0) {
-    Driver[procLocation] = 0xC3;
+    if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+      DBG("procedure in kernel space\n");
+      for (int j = 0; j < 20; ++j) {
+        DBG("%02X", KernelData[procLocation + j]);
+      }
+      DBG("\n");
+      KernelData[procLocation] = 0xC3;
+    } else {
+      DBG("procedure in Driver space\n");
+      for (int j = 0; j < 20; ++j) {
+        DBG("%02X", Driver[procLocation + j]);
+      }
+      DBG("\n");
+      Driver[procLocation] = 0xC3;
+    }
     DBG_RT("AppleRTC: patched\n");
   } else {
     DBG_RT("AppleRTC: not patched\n");
@@ -1039,28 +1053,41 @@ VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
   DBG("8 apple patch\n");
   UINTN procAddr = searchProcInDriver(Driver, DriverSize, "initFB");
   UINTN verbose  = searchProcInDriver(Driver, DriverSize, "gIOFBVerboseBoot");
-  UINTN patchLoc = FindRelative32(Driver, procAddr, 0x300, verbose-1);
-  if (patchLoc != 0 && Driver[patchLoc + 1] == 0x75) {
-    Driver[patchLoc + 1] = 0xEB;
-    DBG("8 apples patch success\n");
+  if (procAddr != 0) {
+    UINTN patchLoc;
+  
+    if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+      DBG("procedure in kernel space\n");
+      patchLoc = FindRelative32(KernelData, procAddr, 0x300, verbose-1);
+      for (int j = 0; j < 20; ++j) {
+        DBG("%02X", KernelData[procAddr + j]);
+      }
+      DBG("\n");
+      if (patchLoc != 0 && KernelData[patchLoc + 1] == 0x75) {
+        KernelData[patchLoc + 1] = 0xEB;
+        DBG("8 apples patch success\n");
+      } else {
+        DBG("8 apples patch not found, loc=0x%llx\n", patchLoc);
+      }
+    } else {
+      DBG("procedure in Driver space\n");
+      patchLoc = FindRelative32(Driver, procAddr, 0x300, verbose-1);
+      for (int j = 0; j < 20; ++j) {
+        DBG("%02X", Driver[patchLoc + j]);
+      }
+      DBG("\n");
+      if (patchLoc != 0 && Driver[patchLoc + 1] == 0x75) {
+        Driver[patchLoc + 1] = 0xEB;
+        DBG("8 apples patch success\n");
+      } else {
+        DBG("8 apples patch not found, loc=0x%llx\n", patchLoc);
+      }
+    }
+    DBG_RT("AppleRTC: patched\n");
   } else {
-    DBG("8 apples patch not found, loc=0x%llx\n", patchLoc);
-//    if (patchLoc != 0) {
-//      for (int i=0; i<10; ++i) {
-//        DBG_RT("%02x", Driver[patchLoc+i]);
-//      }
-//      DBG_RT("\n");
-//    } else if (procAddr != 0) {
-//      for (int i=0; i<10; ++i) {
-//        DBG_RT("%02x", Driver[procAddr+i]);
-//      }
-//      DBG_RT("\n");
-//    }
-//    DBG_RT("  procAddr=0x%llx\n", procAddr);
-//    DBG_RT("  verbose=0x%llx\n", verbose);
-
-//    Stall(20000000);
+    DBG_RT("AppleRTC: not patched\n");
   }
+
   Stall(5000000);
 }
 
