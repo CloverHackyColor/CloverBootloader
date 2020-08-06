@@ -440,20 +440,20 @@ VOID PatchAllTables()
     }
     if (NewTable->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
       if (gSettings.PatchDsdtNum > 0) {
-        //DBG("Patching SSDT:\n");
-        UINT32 i;
-    CHAR8  OTID[9];
-    OTID[8] = 0;
-    CopyMem(OTID, &NewTable->OemTableId, 8);
-    DBG("Patching SSDT %s Length=%d\n",  OTID, (INT32)Len);
+        DBG("Patching SSDTs: %d patches each\n", gSettings.PatchDsdtNum);
 
-        for (i = 0; i < gSettings.PatchDsdtNum; i++) {
+//        CHAR8  OTID[9];
+//        OTID[8] = 0;
+//        CopyMem(OTID, &NewTable->OemTableId, 8);
+//        DBG("Patching SSDT %s Length=%d\n",  OTID, (INT32)Len);
+
+        for (UINT32 i = 0; i < gSettings.PatchDsdtNum; i++) {
           if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
             continue;
           }
-          DBG("%d. [%s]:", i, gSettings.PatchDsdtLabel[i]);
+//          DBG("%d. [%s]:", i, gSettings.PatchDsdtLabel[i]);
           if (!gSettings.PatchDsdtMenuItem[i].BValue) {
-            DBG(" disabled\n");
+//            DBG(" disabled\n");
             continue;
           }
           if (!gSettings.PatchDsdtTgt[i]) {

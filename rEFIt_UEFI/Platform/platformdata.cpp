@@ -486,7 +486,7 @@ PLATFORMDATA ApplePlatformData[] =
   //iMac17,1 / iMac (Retina 5K, 27-inch, Late 2015)
   { "iMac17,1", "IM171.88Z.F000.B00.2004240904", "178.0.0.0.0", "Mac-B809C3757DA9BB8D", // Intel Core i7-6700K @ 4.00 GHz
     "iMac17,1", "1.0", "C02QFHACGG7L", "iMac-Aluminum", // i5: Mac-65CE76090165799A/Mac-DB15BD556843C820, i7: Mac-B809C3757DA9BB8D
-    { 0x02, 0x33, 0x0f, 0, 0, 0x12 },  "j95j95am", "j95", 0xf0c008 }, //Note: why? i5: 2.33f12 but for i7: 2.34f3
+    { 0x02, 0x34, 0x0f, 0, 0, 0x03 },  "j95j95am", "j95", 0xf0c008 }, //Note: why? i5: 2.33f12 but for i7: 2.34f3
   //iMac18,1 / iMac (21.5-inch, 2017)
   { "iMac18,1", "IM181.88Z.F000.B00.2004240927", "183.0.0.0.0", "Mac-4B682C642B45593E", // Intel Core i5-7360U @ 2.30 GHz
     "iMac", "1.0", "C02TDHACH7JY", "iMac-Aluminum",

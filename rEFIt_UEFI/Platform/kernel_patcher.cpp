@@ -2176,7 +2176,7 @@ void LOADER_ENTRY::Get_PreLink()
           DBG("PrelinkTextLoadCmdAddr = 0x%X, PrelinkTextAddr = 0x%X, PrelinkTextSize = 0x%X\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           UINT32 PrelinkTextAddr32 = (UINT32)(segCmd64->vmaddr - kernelvmAddr);
-          for (int j=0; j<20; ++j) {
+          for (int j=0; j<30; ++j) {
             DBG("%02x", binary[PrelinkTextAddr32+j]);
           }
           DBG("\n");
@@ -2248,7 +2248,7 @@ void LOADER_ENTRY::Get_PreLink()
             sect = (struct section *)((UINT8*)segCmd + sectionIndex);
             sectionIndex += sizeof(struct section);
 
-            if(strcmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0) {
+            if(strcmp(sect->sectname, kPrelinkInfoSection) == 0 && strcmp(sect->segname, kPrelinkInfoSegment) == 0) {
               if (sect->size > 0) {
                 // PrelinkInfoAddr = sect->addr + KernelRelocBase
                 PrelinkInfoLoadCmdAddr = (UINT32)(UINTN)sect;
@@ -2264,21 +2264,6 @@ void LOADER_ENTRY::Get_PreLink()
         }
         break;
 
-      case LC_SYMTAB:
-        symCmd = (struct symtab_command *)loadCommand;
-//      struct symtab_command {
-//        uint32_t  cmd;    /* LC_SYMTAB == 2 */
-//        uint32_t  cmdsize;  /* sizeof(struct symtab_command) */
-//        uint32_t  symoff;    /* symbol table offset */
-//        uint32_t  nsyms;    /* number of symbol table entries */
-//        uint32_t  stroff;    /* string table offset */
-//        uint32_t  strsize;  /* string table size in bytes */
-//      };
-        AddrVtable = symCmd->symoff;
-        SizeVtable = symCmd->nsyms;
-        NamesTable = symCmd->stroff;
-        DBG("SymTab: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
-      break;
 #endif
       default:
         break;

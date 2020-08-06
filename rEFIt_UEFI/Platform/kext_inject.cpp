@@ -298,7 +298,7 @@ VOID LOADER_ENTRY::AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t
   SIDELOAD_KEXT           *CurrentPlugInKext;
   EFI_STATUS              Status;
 
-  MsgLog("Preparing kexts injection for arch=%ls from %ls\n", (archCpuType==CPU_TYPE_X86_64)?L"x86_64":(archCpuType==CPU_TYPE_I386)?L"i386":L"", SrcDir);
+  MsgLog("Preparing kexts injection from %ls\n", SrcDir);
   CurrentKext = InjectKextList;
   while (CurrentKext) {
 //    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
@@ -368,10 +368,10 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
 //  }
 
 //  if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
-    if (LoadOptions.contains("arch=x86_64")) {
+  if (LoadOptions.contains("arch=x86_64")) {
     archCpuType = CPU_TYPE_X86_64;
 //  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
-    } else if (LoadOptions.contains("arch=i386")) {
+  } else if (LoadOptions.contains("arch=i386")) {
     archCpuType = CPU_TYPE_I386;
   } else if (OSVersion != NULL) {
     UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
@@ -386,8 +386,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
   if ((KernelAndKextPatches != NULL) &&
       (KernelAndKextPatches->NrForceKexts > 0) &&
       (KernelAndKextPatches->ForceKexts != NULL)) {
-    INT32 i = 0;
-    for (; i < KernelAndKextPatches->NrForceKexts; ++i) {
+    for (INT32 i = 0; i < KernelAndKextPatches->NrForceKexts; ++i) {
       MsgLog("  Force kext: %ls\n", KernelAndKextPatches->ForceKexts[i]);
       if (Volume && Volume->RootDir) {
         // Check if the entry is a directory
