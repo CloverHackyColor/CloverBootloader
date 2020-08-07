@@ -673,12 +673,12 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       Volume->HasBootCode = FALSE;
 
 #ifdef JIEF_DEBUG
-*Bootable = TRUE;
-Volume->HasBootCode = TRUE;
-Volume->LegacyOS->IconName = L"win";
-Volume->LegacyOS->Name = L"Windows";
-Volume->LegacyOS->Type = OSTYPE_WIN;
-Volume->BootType = BOOTING_BY_PBR;
+//*Bootable = TRUE;
+//Volume->HasBootCode = TRUE;
+//Volume->LegacyOS->IconName = L"win";
+//Volume->LegacyOS->Name = L"Windows";
+//Volume->LegacyOS->Type = OSTYPE_WIN;
+//Volume->BootType = BOOTING_BY_PBR;
 #endif
 
     // check for MBR partition table
@@ -940,26 +940,6 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     
     return EFI_SUCCESS;
   }
-
-  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString if it's not an APFS volume
-
-  // Browse all folders under root that looks like an UUID
-  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
-		REFIT_DIR_ITER  DirIter;
-		EFI_FILE_INFO  *DirEntry = NULL;
-		DirIterOpen(Volume->RootDir, L"\\", &DirIter);
-		while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
-		  if (DirEntry->FileName[0] == '.') {
-			  //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
-        continue;
-		  }
-		  EFI_GUID guid;
-		  if ( StrToGuidLE(DirEntry->FileName, &guid) == EFI_SUCCESS ) {
-			  Volume->ApfsTargetUUIDArray.Add(DirEntry->FileName);
-		  }
-		}
-		DirIterClose(&DirIter);
-  }
   
   if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
       EFI_FILE_HANDLE     FileHandle;
@@ -1032,6 +1012,29 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     } else {
       Volume->VolName = EfiStrDuplicate(L"Unknown HD"); //To be able to free it
     }
+  }
+
+  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString if it's not an APFS volume
+
+
+  // Browse all folders under root that looks like an UUID
+  if ( Volume->ApfsFileSystemUUID.notEmpty() )
+  {
+
+		REFIT_DIR_ITER  DirIter;
+		EFI_FILE_INFO  *DirEntry = NULL;
+		DirIterOpen(Volume->RootDir, L"\\", &DirIter);
+		while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+		  if (DirEntry->FileName[0] == '.') {
+			  //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
+        continue;
+		  }
+		  EFI_GUID guid;
+		  if ( StrToGuidLE(DirEntry->FileName, &guid) == EFI_SUCCESS ) {
+			  Volume->ApfsTargetUUIDArray.Add(DirEntry->FileName);
+		  }
+		}
+		DirIterClose(&DirIter);
   }
   
   //Status = GetOSVersion(Volume); NOTE: Sothor - We will find icon names later once we have found boot.efi on the volume //here we set Volume->IconName (tiger,leo,snow,lion,cougar, etc)
