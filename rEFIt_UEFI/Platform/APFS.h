@@ -8,23 +8,28 @@
 #ifndef PLATFORM_APFS_H_
 #define PLATFORM_APFS_H_
 
-/* Switch for APFS support */
-extern UINTN 						  APFSUUIDBankCounter;
-extern UINT8 						 *APFSUUIDBank;
-extern EFI_GUID                        APFSSignature;
-extern BOOLEAN                         APFSSupport;
+
+constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842";
 
 
-UINT8 *APFSContainer_Support(VOID);
-
-//Function for obtaining unique part id from APFS partition
-//IN DevicePath
-//Out: EFI_GUID
-//null if it is not APFS part
+/*
+ * Function for obtaining unique part id from APFS partition
+ *   IN: DevicePath
+ *   OUT: EFI_GUID
+ *   returns null if it is not APFS part
+ */
 EFI_GUID *APFSPartitionUUIDExtract(
-  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
+
+XString8 APFSPartitionUUIDExtractAsXString8(
+    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  );
+
+//XStringW APFSPartitionUUIDExtractAsXStringW(
+//    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+//  );
 
 
 #endif /* PLATFORM_APFS_H_ */

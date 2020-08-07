@@ -115,9 +115,6 @@ UINT16                          gBacklightLevel;
 BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;
 BOOLEAN                         gRemapSmBiosIsRequire;
-CONST CHAR16                        **SystemPlists                = NULL;
-CONST CHAR16                        **InstallPlists               = NULL;
-CONST CHAR16                        **RecoveryPlists              = NULL;
 
 // QPI
 BOOLEAN                         SetTable132                 = FALSE;
@@ -6366,22 +6363,26 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   TagPtr     DictPointer = NULL;
   TagPtr     Dict        = NULL;
   TagPtr     Prop        = NULL;
-  UINTN      i           = 0;
-  UINTN      j           = 0;
 
   if (!Entry || !Entry->Volume) {
     return OSVersion;
   }
 
-  if (OSTYPE_IS_OSX(Entry->LoaderType)) {
-    // Detect exact version for Mac OS X Regular/Server
-    i = 0;
-    while (SystemPlists[i] != NULL && !FileExists(Entry->Volume->RootDir, SystemPlists[i])) {
-      i++;
+  if (OSTYPE_IS_OSX(Entry->LoaderType))
+  {
+  	XString8 uuidPrefix;
+    if ( Entry->APFSTargetUUID.notEmpty() ) uuidPrefix = SPrintf("\\%ls", Entry->APFSTargetUUID.wc_str());
+
+  	XStringW plist = SWPrintf("%s\\System\\Library\\CoreServices\\SystemVersion.plist", uuidPrefix.c_str());
+		if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+			plist = SWPrintf("%s\\System\\Library\\CoreServices\\ServerVersion.plist", uuidPrefix.c_str());
+			if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+				plist.setEmpty();
+    	}
     }
 
-    if (SystemPlists[i] != NULL) { // found macOS System
-      Status = egLoadFile(Entry->Volume->RootDir, SystemPlists[i], (UINT8 **)&PlistBuffer, &PlistLen);
+    if ( plist.notEmpty() ) { // found macOS System
+      Status = egLoadFile(Entry->Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
@@ -6587,14 +6588,16 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
     // 2nd stage - 3
     // Check for plist - Preboot of APFS
-    if (OSVersion == NULL && APFSSupport == TRUE) {
-      i = 0;
-      while (InstallPlists[i] != NULL && !FileExists(Entry->Volume->RootDir, InstallPlists[i])) {
-        i++;
-      }
+    if ( OSVersion == NULL )
+    {
+			XStringW plist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"_XSW;
+			if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+				plist.setEmpty();
+			}
 
-      if (InstallPlists[i] != NULL) {
-        Status = egLoadFile(Entry->Volume->RootDir, InstallPlists[i], (UINT8 **)&PlistBuffer, &PlistLen);
+      if ( plist.notEmpty() ) { // found macOS System
+
+        Status = egLoadFile(Entry->Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "ProductVersion");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
@@ -6610,14 +6613,27 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   }
 
   if (OSTYPE_IS_OSX_RECOVERY (Entry->LoaderType)) {
-    j = 0;
-    while (RecoveryPlists[j] != NULL && !FileExists(Entry->Volume->RootDir, RecoveryPlists[j])) {
-      j++;
-    }
-    // Detect exact version for OS X Recovery
 
-    if (RecoveryPlists[j] != NULL) {
-      Status = egLoadFile(Entry->Volume->RootDir, RecoveryPlists[j], (UINT8 **)&PlistBuffer, &PlistLen);
+  	XString8 uuidPrefix;
+    if ( Entry->APFSTargetUUID.notEmpty() ) uuidPrefix = SPrintf("\\%ls", Entry->APFSTargetUUID.wc_str());
+
+  	XStringW plist = SWPrintf("%s\\SystemVersion.plist", uuidPrefix.c_str());
+		if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+			plist = SWPrintf("%s\\ServerVersion.plist", uuidPrefix.c_str());
+			if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+        plist = L"\\com.apple.recovery.boot\\SystemVersion.plist"_XSW;
+        if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+          plist = L"\\com.apple.recovery.boot\\ServerVersion.plist"_XSW;
+          if ( !FileExists(Entry->Volume->RootDir, plist) ) {
+					  plist.setEmpty();
+					}
+				}
+    	}
+    }
+
+    // Detect exact version for OS X Recovery
+    if ( plist.notEmpty() ) { // found macOS System
+      Status = egLoadFile(Entry->Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {

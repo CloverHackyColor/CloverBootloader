@@ -346,6 +346,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			class LOADER_ENTRY : public REFIT_MENU_ITEM_BOOTNUM
 			{
 			  public:
+				XStringW APFSTargetUUID;
+
 				CONST CHAR16     *VolName;
 				EFI_DEVICE_PATH  *DevicePath;
 				UINT16            Flags;

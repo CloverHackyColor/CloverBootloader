@@ -897,7 +897,14 @@ VOID LOADER_ENTRY::StartLoader()
   }
 
   if (gSettings.LastBootedVolume) {
-    SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
+    if ( APFSTargetUUID.notEmpty() ) {
+      // Jief : we need to LoaderPath. If not, GUI can't know which target was selected.
+      SetStartupDiskVolume(Volume, LoaderPath);
+    }else{
+      // Jief : I'm not sure why NullXStringW was given if LoaderType == OSTYPE_OSX.
+      //        Let's do it like it was before when not in case of APFSTargetUUID
+      SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
+    }
   } else if (gSettings.DefaultVolume != NULL) {
     // DefaultVolume specified in Config.plist or in Boot Option
     // we'll remove macOS Startup Disk vars which may be present if it is used
@@ -1768,120 +1775,6 @@ VOID SetOEMPath(CONST CHAR16 *ConfName)
     }
   }
 
-//System / Install / Recovery version filler
-const CHAR16 SystemVersionPlist[]     = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
-const CHAR16 ServerVersionPlist[]     = L"\\System\\Library\\CoreServices\\ServerVersion.plist";
-const CHAR16 InstallVersionPlist[]    = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist";
-const CHAR16 RecoveryVersionPlist[]   = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-const CHAR16 APFSSysPlistPath[]       = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\SystemVersion.plist";
-const CHAR16 APFSServerPlistPath[]    = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\ServerVersion.plist";
-const CHAR16 APFSInstallPlistPath[]   = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\SystemVersion.plist";
-const CHAR16 APFSRecPlistPath[]       = L"\\00000000-0000-0000-0000-000000000000\\SystemVersion.plist";
-  
-
-VOID SystemVersionInit(VOID)
-{
-  //Plists iterators
-  UINTN      SysIter            = 2;
-  UINTN      InsIter            = 1;
-  UINTN      RecIter            = 1;
-  UINTN      k                  = 0;
-  UINTN      i;
-
-  // If scanloader starts multiple times, then we need to free systemplists, installplists, recoveryplists variables, also
-  // refresh APFSUUIDBank
-  if ((SystemPlists != NULL) || (InstallPlists != NULL) || (RecoveryPlists != NULL)) {
-    if ((APFSUUIDBank != NULL) && (APFSSupport == TRUE)) {
-      FreePool(APFSUUIDBank);
-      //Reset APFSUUIDBank counter, we will re-enumerate it
-      APFSUUIDBankCounter = 0;
-      APFSUUIDBank = APFSContainer_Support();
-      if (APFSUUIDBankCounter == 0) {
-        APFSSupport = FALSE;
-      }
-    }
-    if (SystemPlists != NULL) {
-      k = 0;
-      while (SystemPlists[k] != NULL) {
-        SystemPlists[k] = NULL;
-        k++;
-      }
-      FreePool(SystemPlists);
-      SystemPlists = NULL;
-    }
-    if (InstallPlists != NULL) {
-      k = 0;
-      while (InstallPlists[k] != NULL) {
-        InstallPlists[k] = NULL;
-        k++;
-      }
-      FreePool(InstallPlists);
-      InstallPlists = NULL;
-    }
-    if (RecoveryPlists != NULL) {
-      k = 0;
-      while (RecoveryPlists[k] != NULL) {
-        RecoveryPlists[k] = NULL;
-        k++;
-      }
-      FreePool(RecoveryPlists);
-      RecoveryPlists = NULL;
-    }
-  }
-  /************************************************************************/
-  /*Allocate Memory for systemplists, installplists and recoveryplists********************/
-  //Check apfs support
-  if (APFSSupport == TRUE) {
-    SystemPlists = (__typeof__(SystemPlists))AllocateZeroPool((2*APFSUUIDBankCounter+3)*sizeof(CHAR16 *));//array of pointers
-    InstallPlists = (__typeof__(InstallPlists))AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
-    RecoveryPlists = (__typeof__(RecoveryPlists))AllocateZeroPool((APFSUUIDBankCounter+2)*sizeof(CHAR16 *));//array of pointers
-  } else {
-    SystemPlists = (__typeof__(SystemPlists))AllocateZeroPool(sizeof(CHAR16 *)*3);
-    InstallPlists = (__typeof__(InstallPlists))AllocateZeroPool(sizeof(CHAR16 *)*2);
-    RecoveryPlists = (__typeof__(RecoveryPlists))AllocateZeroPool(sizeof(CHAR16 *)*2);
-  }
-  /* Fill it with standard paths*******************************************/
-  SystemPlists[0] = SystemVersionPlist;
-  SystemPlists[1] = ServerVersionPlist;
-  SystemPlists[2] = NULL;
-  InstallPlists[0] = InstallVersionPlist;
-  InstallPlists[1] = NULL;
-  RecoveryPlists[0] = RecoveryVersionPlist;
-  RecoveryPlists[1] = NULL;
-  /************************************************************************/
-  //Fill Plists 
-  for (i = 0; i < APFSUUIDBankCounter; i++) {
-    //Store UUID from bank
-    XStringW CurrentUUID = GuidLEToStr((EFI_GUID *)((UINT8 *)APFSUUIDBank+i*0x10));
-    //Init temp string with system/install/recovery APFS path
-    CHAR16 *TmpSysPlistPath    = (__typeof__(TmpSysPlistPath))AllocateZeroPool(sizeof(APFSSysPlistPath));
-    CHAR16 *TmpServerPlistPath = (__typeof__(TmpServerPlistPath))AllocateZeroPool(sizeof(APFSServerPlistPath));
-    CHAR16 *TmpInsPlistPath    = (__typeof__(TmpInsPlistPath))AllocateZeroPool(sizeof(APFSInstallPlistPath));
-    CHAR16 *TmpRecPlistPath    = (__typeof__(TmpRecPlistPath))AllocateZeroPool(sizeof(APFSRecPlistPath));
-    CopyMem(TmpSysPlistPath, APFSSysPlistPath, sizeof(APFSSysPlistPath));
-    CopyMem(TmpServerPlistPath, APFSServerPlistPath, sizeof(APFSServerPlistPath));
-    CopyMem(TmpInsPlistPath, APFSInstallPlistPath, sizeof(APFSInstallPlistPath));
-    CopyMem(TmpRecPlistPath, APFSRecPlistPath, sizeof(APFSRecPlistPath));
-    INTN size = CurrentUUID.length() * sizeof(CHAR16); //not including null termination 36 * 2 = 72
-//    DBG("check CurrentUUID bank=%lld size = %lld\n", i, size);
-//    DBG("check CurrentUUID string = %ls\n", CurrentUUID.wc_str()); //check passed
-    CopyMem(TmpSysPlistPath+1, CurrentUUID.wc_str(), size);
-    CopyMem(TmpServerPlistPath+1, CurrentUUID.wc_str(), size);
-    CopyMem(TmpInsPlistPath+1, CurrentUUID.wc_str(), size);
-    CopyMem(TmpRecPlistPath+1, CurrentUUID.wc_str(), size);
-    //Fill SystemPlists/InstallPlists/RecoveryPlists arrays
-    SystemPlists[SysIter] = TmpSysPlistPath;
-    SystemPlists[SysIter+1] = TmpServerPlistPath;
-    SystemPlists[SysIter+2] = NULL;
-    InstallPlists[InsIter] = TmpInsPlistPath;
-    InstallPlists[InsIter+1] = NULL;
-    RecoveryPlists[RecIter] = TmpRecPlistPath;
-    RecoveryPlists[RecIter+1] = NULL;
-    SysIter+=2;
-    InsIter++;
-    RecIter++;
-  }
-}
 
 #ifdef DEBUG_CLOVER
 XStringW g_str(L"g_str:foobar");
@@ -1981,7 +1874,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 	DBG("Clover : Image base = 0x%llX\n", (uintptr_t)SelfLoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 #ifdef JIEF_DEBUG
-  gBS->Stall(1500000); // to give time to gdb to connect
+//  gBS->Stall(1500000); // to give time to gdb to connect
+  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
 
@@ -2401,25 +2295,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     OptionMenu.Entries.Empty();
     InitKextList();
     ScanVolumes();
-
-    //Check apfs driver loaded state
-    //Free APFSUUIDBank
-    if (APFSUUIDBank != NULL) {
-     //Free mem
-     FreePool(APFSUUIDBank);
-     //Reset counter
-     APFSUUIDBankCounter=0;
-    }
-    /* APFS container support */
-    //Fill APFSUUIDBank
-    APFSUUIDBank = APFSContainer_Support();
-    if (APFSUUIDBankCounter != 0) {
-      APFSSupport = TRUE;
-    } else {
-      APFSSupport = FALSE;
-    }
-    //Fill systemversion plists path
-    SystemVersionInit();
 
     // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
     if (!AfterTool) {

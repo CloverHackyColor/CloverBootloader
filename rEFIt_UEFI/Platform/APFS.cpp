@@ -7,6 +7,7 @@
 
 #include "Platform.h"
 #include "guid.h"
+#include "APFS.h"
 
 
 /*  S. Mitrofanov 08.06.2016
@@ -28,21 +29,16 @@
  *   3:                APFS Volume Recovery                521.1 MB   disk1s3
  *   4:                APFS Volume VM                      1.1 GB     disk1s4
  */
-UINTN    APFSUUIDBankCounter = 0;
-UINT8   *APFSUUIDBank        = NULL;
-//Vednor APFS device path signature
-//BE74FCF7-0B7C-49F3-9147-01F4042E6842
-EFI_GUID APFSSignature       = {0xBE74FCF7, 0x0B7C, 0x49F3, { 0x91, 0x47, 0x01, 0xf4, 0x04, 0x2E, 0x68, 0x42 }};
-BOOLEAN                 APFSSupport     = FALSE;
 
 
-
-//Function for obtaining unique part id from APFS partition
-//IN DevicePath
-//Out: EFI_GUID
-//null if it is not APFS part
+/*
+ * Function for obtaining unique part id from APFS partition
+ *   IN: DevicePath
+ *   OUT: EFI_GUID
+ *   returns null if it is not APFS part
+ */
 EFI_GUID *APFSPartitionUUIDExtract(
-  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   while (!IsDevicePathEndType(DevicePath) &&
@@ -51,35 +47,36 @@ EFI_GUID *APFSPartitionUUIDExtract(
   }
   if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
     //Check that vendor-assigned GUID defines APFS Container Partition
-    if ( GuidLEToStr((EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(GuidLEToStr(&APFSSignature)) ) {
+    if ( GuidLEToXString8((EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
       return (EFI_GUID *)((UINT8 *)DevicePath+0x14);
     }
   }
   return NULL;
 }
 
-UINT8 *APFSContainer_Support(VOID) {
-  /*
-   * S. Mtr 2017
-   * APFS Container partition support
-   * Gather System PartitionUniqueGUID
-   * edit: 17.06.2017
-   * Fiil UUIDBank only with APFS container UUIDs
-   */
-  UINTN                     VolumeIndex;
-  REFIT_VOLUME             *Volume;
-  EFI_GUID                 *TmpUUID    = NULL;
-
-  //Fill APFSUUIDBank
-  APFSUUIDBank = (__typeof__(APFSUUIDBank))AllocateZeroPool(0x10*Volumes.size());
-  for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
-    Volume = &Volumes[VolumeIndex];
-    //Check that current volume - apfs partition
-    if ((TmpUUID = APFSPartitionUUIDExtract(Volume->DevicePath)) != NULL){
-      CopyMem(APFSUUIDBank+APFSUUIDBankCounter*0x10,(UINT8 *)TmpUUID,0x10);
-      APFSUUIDBankCounter++;
-    }
-  }
-  return APFSUUIDBank;
+/*
+ * Function for obtaining unique part id from APFS partition
+ *   IN: DevicePath
+ *   OUT: EFI_GUID
+ *   returns empty string if it is not APFS part
+ */
+XString8 APFSPartitionUUIDExtractAsXString8(
+    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  )
+{
+  EFI_GUID* uuid = APFSPartitionUUIDExtract(DevicePath);
+  if ( uuid ) return GuidLEToXString8(uuid);
+  return ""_XS8;
 }
+
+
+//XStringW APFSPartitionUUIDExtractAsXStringW(
+//    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+//  )
+//{
+//  EFI_GUID* uuid = APFSPartitionUUIDExtract(DevicePath);
+//  if ( uuid ) return GuidLEToXStringW(uuid);
+//  return L""_XSW;
+//}
+
 

@@ -1165,7 +1165,7 @@ FindStartupDiskVolume (
         EFI_DEVICE_PATH *MediaPath = FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
         if (MediaPath) {
           EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
-          XStringW MediaPathGuidStr = GuidLEToStr(MediaPathGuid);
+          XStringW MediaPathGuidStr = GuidLEToXStringW(MediaPathGuid);
    //       DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
           if (StrStr(gEfiBootLoaderPath, MediaPathGuidStr.wc_str())) {
             DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName, LoaderPath.wc_str());

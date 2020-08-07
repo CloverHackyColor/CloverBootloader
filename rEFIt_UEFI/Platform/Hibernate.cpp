@@ -926,7 +926,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                 DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {
                 //TmpStr = PoolPrint(L"%s", strguid(&TmpGuid));
-                XStringW TmpStr =  GuidLEToStr(&TmpGuid);
+                XStringW TmpStr =  GuidLEToXStringW(&TmpGuid);
                 //           DBG("got the guid %ls\n", TmpStr);
                 CopyMem((VOID*)Ptr, TmpStr.wc_str(), TmpStr.sizeInNativeChars());
               }

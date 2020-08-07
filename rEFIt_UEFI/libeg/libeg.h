@@ -142,6 +142,7 @@ extern "C" {
 #endif
 
 #include "../cpp_foundation/XString.h"
+#include "../cpp_foundation/XStringArray.h"
 /* types */
 
 typedef enum {
@@ -264,6 +265,8 @@ typedef struct {
   UINT32              DriveCRC32;
   EFI_GUID            RootUUID; //for recovery it is UUID of parent partition
   UINT64              SleepImageOffset;
+  XString8            ApfsFileSystemUUID; // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
+  XStringArray        ApfsTargetUUIDArray; // this is the array of folders that are named as UUID
 } REFIT_VOLUME;
 
 typedef struct KEXT_PATCH KEXT_PATCH;

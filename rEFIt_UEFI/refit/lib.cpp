@@ -36,6 +36,8 @@
 
 #include "Platform.h"
 #include "screen.h"
+#include "../Platform/guid.h"
+#include "../Platform/APFS.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LIB 1
@@ -728,14 +730,17 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   Volume->DevicePath = (__typeof__(Volume->DevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
   Volume->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
-  
+
   //    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
 #if REFIT_DEBUG > 0
   if (Volume->DevicePath != NULL) {
     DBG(" %ls\n", FileDevicePathToStr(Volume->DevicePath));
-//#if REFIT_DEBUG >= 2
-    //       DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
-//#endif
+    //#if REFIT_DEBUG >= 2
+    //    DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
+    //#endif
+  }
+  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
+	  DBG("          apfsFileSystemUUID=%s\n", Volume->ApfsFileSystemUUID.c_str());
   }
 #else
     DBG("\n");
@@ -934,6 +939,26 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       Volume->LegacyOS->IconName = EfiStrDuplicate(L"legacy");
     
     return EFI_SUCCESS;
+  }
+
+  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString if it's not an APFS volume
+
+  // Browse all folders under root that looks like an UUID
+  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
+		REFIT_DIR_ITER  DirIter;
+		EFI_FILE_INFO  *DirEntry = NULL;
+		DirIterOpen(Volume->RootDir, L"\\", &DirIter);
+		while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+		  if (DirEntry->FileName[0] == '.') {
+			  //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
+        continue;
+		  }
+		  EFI_GUID guid;
+		  if ( StrToGuidLE(DirEntry->FileName, &guid) == EFI_SUCCESS ) {
+			  Volume->ApfsTargetUUIDArray.Add(DirEntry->FileName);
+		  }
+		}
+		DirIterClose(&DirIter);
   }
   
   if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {

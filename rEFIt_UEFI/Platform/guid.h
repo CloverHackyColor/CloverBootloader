@@ -18,11 +18,12 @@ IsValidGuidAsciiString (
 
 EFI_STATUS
 StrToGuidLE (
-  IN      CHAR16   *Str,
+  IN      CONST CHAR16   *Str,
      OUT  EFI_GUID *Guid);
 
 CHAR16 * GuidBeToStr(EFI_GUID *Guid);
-XStringW GuidLEToStr(EFI_GUID *Guid);
+XString8 GuidLEToXString8(EFI_GUID *Guid);
+XStringW GuidLEToXStringW(EFI_GUID *Guid);
 
 
 
