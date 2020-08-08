@@ -726,12 +726,12 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   
   // get device path
   DiskDevicePath = DevicePathFromHandle(Volume->DeviceHandle);
+//Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
   DevicePathSize = GetDevicePathSize (DiskDevicePath);
   Volume->DevicePath = (__typeof__(Volume->DevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
   Volume->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
 
-  //    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
 #if REFIT_DEBUG > 0
   if (Volume->DevicePath != NULL) {
     DBG(" %ls\n", FileDevicePathToStr(Volume->DevicePath));
@@ -746,6 +746,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     DBG("\n");
 #endif
   
+  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString if it's not an APFS volume
   Volume->DiskKind = DISK_KIND_INTERNAL;  // default
   
   // get block i/o
@@ -808,7 +809,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
           DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
   //              DBG("        Vendor volume\n");
-        Volume->DiskKind = DISK_KIND_NODISK;
+        if ( Volume->ApfsFileSystemUUID.isEmpty() ) {
+          Volume->DiskKind = DISK_KIND_NODISK; // Jief, don't know why DISK_KIND_NODISK in that case. That prevents Recovery badge to appear. If it's not APFS, let's do it like it was before.
+        }
         break;
       }
       // LEGACY CD-ROM
@@ -1013,9 +1016,6 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       Volume->VolName = EfiStrDuplicate(L"Unknown HD"); //To be able to free it
     }
   }
-
-  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString if it's not an APFS volume
-
 
   // Browse all folders under root that looks like an UUID
   if ( Volume->ApfsFileSystemUUID.notEmpty() )
