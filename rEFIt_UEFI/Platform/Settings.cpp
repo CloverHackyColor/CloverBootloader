@@ -148,32 +148,7 @@ BOOLEAN                       gProvideConsoleGopEnable;
 //extern INTN                     OldChosenAudio;
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = {
-  -1,             // INTN        Timeout;
-  0,              // UINTN       DisableFlags;
-  FALSE,          // BOOLEAN     TextOnly;
-  TRUE,           // BOOLEAN     Quiet;
-  FALSE,          // BOOLEAN     LegacyFirst;
-  FALSE,          // BOOLEAN     NoLegacy;
-  FALSE,          // BOOLEAN     DebugLog;
-  FALSE,          // BOOLEAN     FastBoot;
-  FALSE,          // BOOLEAN     NeverHibernate;
-  FALSE,          // BOOLEAN     StrictHibernate;
-  FALSE,          // BOOLEAN     RtcHibernateAware;
-  FALSE,          // BOOLEAN     HibernationFixup;
-  FALSE,          // BOOLEAN     SignatureFixup;
-
-  NULL,           // CHAR16      *Theme;
-  NULL,           // CHAR16      *ScreenResolution;
-  0,              // INTN        ConsoleMode;
-  FALSE,          // BOOLEAN     CustomIcons;
-  ICON_FORMAT_DEF, // INTN       IconFormat;
-  FALSE,          // BOOLEAN     NoEarlyProgress;
-  0xFF,           // INT32       Timezone; / 0xFF - not set
-  FALSE,          // BOOLEAN     ShowOptimus;
-  0xC0,           // INTN        Codepage;
-  0xC0,           // INTN        CodepageSize; //extended latin
-};
+REFIT_CONFIG   GlobalConfig;
 
 static struct FIX_CONFIG { const CHAR8* oldName; const CHAR8* newName; UINT32 bitData; } FixesConfig[] =
 {
@@ -236,9 +211,9 @@ ParseACPIName(CHAR8 *String)
     //Parse forward but put in stack LIFO "_SB.PCI0.RP02.PXSX"  -1,3,8,13,18
     pos0 = -1;
     while (pos0 < Len) {
-      List = (__typeof__(List))AllocateZeroPool(sizeof(ACPI_NAME_LIST));
+      List = (__typeof__(List))BllocateZeroPool(sizeof(ACPI_NAME_LIST));
       List->Next = Next;
-      List->Name = (__typeof__(List->Name))AllocateZeroPool(5);
+      List->Name = (__typeof__(List->Name))BllocateZeroPool(5);
       pos1 = pos0 + 1;
       while ((pos1 < Len) && String[pos1] != '.') pos1++; // 3,8,13,18
       //    if ((pos1 == Len) || (String[pos1] == ',')) { //always
@@ -261,7 +236,7 @@ ParseACPIName(CHAR8 *String)
 
 VOID
 ParseLoadOptions (
-                  OUT  CHAR16** Conf,
+                  OUT  XStringW* ConfNamePtr,
                   OUT  TagPtr* Dict
                   )
 {
@@ -282,8 +257,9 @@ ParseLoadOptions (
   CHAR8 *AsciiConf;
 
   AsciiConf              = NULL;
-  *Conf                  = NULL;
   *Dict                  = NULL;
+
+  XStringW& ConfName = *ConfNamePtr;
 
   Start = (CHAR8*)SelfLoadedImage->LoadOptions;
   End   = (CHAR8*)((CHAR8*)SelfLoadedImage->LoadOptions + SelfLoadedImage->LoadOptionsSize);
@@ -332,13 +308,7 @@ ParseLoadOptions (
     return;
   }
 
-  AsciiConf = (__typeof__(AsciiConf))AllocateCopyPool(TailSize + 1, Start);
-  if (AsciiConf != NULL) {
-    *(AsciiConf + TailSize) = '\0';
-    *Conf = (__typeof_am__(*Conf))AllocateZeroPool((TailSize + 1) * sizeof(**Conf));
-    AsciiStrToUnicodeStrS (AsciiConf, *Conf, TailSize);
-    FreePool(AsciiConf);
-  }
+  ConfName.strncpy(Start, TailSize + 1);
 }
 
 //
@@ -377,7 +347,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 {
   EFI_STATUS      Status;
   BO_BOOT_OPTION  BootOption;
-  CHAR16          *VarName;
+  XStringW        VarName;
   UINTN           VarSize = 0;
   UINT8           *BootVariable;
   UINTN           NameSize;
@@ -389,14 +359,12 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   INTN            BootIndex = 0, Index;
 
 
-  VarName = PoolPrint(L"Boot%04x", Entry->BootNum);
-  BootVariable = (UINT8*)GetNvramVariable(VarName, &gEfiGlobalVariableGuid, NULL, &VarSize);
+  VarName = SWPrintf("Boot%04llX", Entry->BootNum);
+  BootVariable = (UINT8*)GetNvramVariable(VarName.wc_str(), &gEfiGlobalVariableGuid, NULL, &VarSize);
   if ((BootVariable == NULL) || (VarSize == 0)) {
-    DBG("Boot option %ls not found\n", VarName);
-    FreePool(VarName);
+    DBG("Boot option %ls not found\n", VarName.wc_str());
     return;
   }
-  FreePool(VarName);
 
   //decode the variable
   BootOption.Variable = BootVariable;
@@ -414,7 +382,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   Data = BootOption.OptionalData + 4;
   NameSize = *(UINT16*)Data;
   Data += 2;
-  if (StriCmp((CHAR16*)Data, Entry->Volume->VolName) != 0) {
+  if (StriCmp((CHAR16*)Data, Entry->Volume->VolName.wc_str()) != 0) {
 	  DBG("Boot option %llu has other volume name %ls\n", Entry->BootNum, (CHAR16*)Data);
     FreePool(BootVariable);
     return;
@@ -500,7 +468,7 @@ UINT8
   if (Prop != NULL) {
     if (Prop->data != NULL /*&& Prop->dataLen > 0*/) { //rehabman: allow zero length data
       // data property
-      Data = (__typeof__(Data))AllocateZeroPool(Prop->dataLen);
+      Data = (__typeof__(Data))BllocateZeroPool(Prop->dataLen);
       CopyMem(Data, Prop->data, Prop->dataLen);
 
       if (DataLen != NULL) {
@@ -516,7 +484,7 @@ UINT8
     } else {
       // assume data in hex encoded string property
       Len = (UINT32)AsciiStrLen(Prop->string) >> 1; // number of hex digits
-      Data = (__typeof__(Data))AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
+      Data = (__typeof__(Data))BllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
       Len  = hex2bin (Prop->string, Data, Len);
 
       if (DataLen != NULL) {
@@ -538,37 +506,37 @@ UINT8
 EFI_STATUS
 LoadUserSettings (
                   IN EFI_FILE *RootDir,
-                  IN CONST CHAR16   *ConfName,
+                  IN const XStringW& ConfName,
                   TagPtr   *Dict)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
   CHAR8*     gConfigPtr = NULL;
-  CHAR16*    ConfigPlistPath;
-  CHAR16*    ConfigOemPath;
+  XStringW   ConfigPlistPath;
+  XStringW   ConfigOemPath;
 
   //  DbgHeader("LoadUserSettings");
 
   // load config
-  if ((ConfName == NULL) || (Dict == NULL)) {
+  if ( ConfName.isEmpty() || Dict == NULL ) {
     return EFI_NOT_FOUND;
   }
 
-  ConfigPlistPath = PoolPrint(L"EFI\\CLOVER\\%s.plist", ConfName);
-  ConfigOemPath   = PoolPrint(L"%s\\%s.plist", OEMPath, ConfName);
+  ConfigPlistPath = SWPrintf("EFI\\CLOVER\\%ls.plist", ConfName.wc_str());
+  ConfigOemPath   = SWPrintf("%ls\\%ls.plist", OEMPath.wc_str(), ConfName.wc_str());
   if (FileExists (SelfRootDir, ConfigOemPath)) {
-    Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &Size);
+    Status = egLoadFile(SelfRootDir, ConfigOemPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
   }
   if (EFI_ERROR(Status)) {
     if ((RootDir != NULL) && FileExists (RootDir, ConfigPlistPath)) {
-      Status = egLoadFile(RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
+      Status = egLoadFile(RootDir, ConfigPlistPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
     }
     if (!EFI_ERROR(Status)) {
-      DBG("Using %ls.plist at RootDir at path: %ls\n", ConfName, ConfigPlistPath);
+      DBG("Using %ls.plist at RootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
     } else {
-      Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &Size);
+      Status = egLoadFile(SelfRootDir, ConfigPlistPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
       if (!EFI_ERROR(Status)) {
-        DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName, ConfigPlistPath);
+        DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
       }
     }
   }
@@ -824,33 +792,16 @@ CUSTOM_LOADER_ENTRY
     return NULL;
   }
 
-//  DuplicateEntry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
   CUSTOM_LOADER_ENTRY* DuplicateEntry = new CUSTOM_LOADER_ENTRY;
   if (DuplicateEntry != NULL) {
-    if (Entry->Volume != NULL) {
-      DuplicateEntry->Volume         = EfiStrDuplicate (Entry->Volume);
-    }
-
-	DuplicateEntry->Path           = Entry->Path;
-
-	DuplicateEntry->LoadOptions        = Entry->LoadOptions;
-
-    if (Entry->FullTitle.notEmpty()) {
-      DuplicateEntry->FullTitle      = Entry->FullTitle;
-    }
-
-    if (Entry->Title.notEmpty()) {
-      DuplicateEntry->Title          = Entry->Title;
-    }
-
-    if (Entry->ImagePath != NULL) {
-      DuplicateEntry->ImagePath      = EfiStrDuplicate (Entry->ImagePath);
-    }
-
-    if (Entry->DriveImagePath) {
-      DuplicateEntry->DriveImagePath = EfiStrDuplicate (Entry->DriveImagePath);
-    }
-    DuplicateEntry->BootBgColor = Entry->BootBgColor;
+    DuplicateEntry->Volume           = Entry->Volume;
+    DuplicateEntry->Path             = Entry->Path;
+    DuplicateEntry->LoadOptions      = Entry->LoadOptions;
+    DuplicateEntry->FullTitle        = Entry->FullTitle;
+    DuplicateEntry->Title            = Entry->Title;
+    DuplicateEntry->ImagePath        = Entry->ImagePath;
+    DuplicateEntry->DriveImagePath   = Entry->DriveImagePath;
+    DuplicateEntry->BootBgColor      = Entry->BootBgColor;
     DuplicateEntry->Image            = Entry->Image;
     DuplicateEntry->DriveImage       = Entry->DriveImage;
     DuplicateEntry->Hotkey           = Entry->Hotkey;
@@ -990,7 +941,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     INTN   i, Count = GetTagCount (Prop);
     if (Count > 0) {
       TagPtr Prop2 = NULL;
-      CHAR16 **newForceKexts = (__typeof__(newForceKexts))AllocateZeroPool((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
+      CHAR16 **newForceKexts = (__typeof__(newForceKexts))BllocateZeroPool((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
 
       if (Patches->ForceKexts != NULL) {
         CopyMem(newForceKexts, Patches->ForceKexts, (Patches->NrForceKexts * sizeof(CHAR16 *)));
@@ -1017,7 +968,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           }
 
           if (AsciiStrSize(Prop2->string) > 1) {
-            Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))AllocateZeroPool(AsciiStrSize(Prop2->string) * sizeof(CHAR16));
+            Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))BllocateZeroPool(AsciiStrSize(Prop2->string) * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
             DBG(" - [%d]: %ls\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
             ++Patches->NrForceKexts;
@@ -1071,7 +1022,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
     if (Count > 0) {
       TagPtr     Prop2 = NULL, Dict = NULL;
-      KEXT_PATCH *newPatches = (__typeof__(newPatches))AllocateZeroPool(Count * sizeof(KEXT_PATCH));
+      KEXT_PATCH *newPatches = new KEXT_PATCH[Count];
 
       Patches->KextPatches = newPatches;
       DBG("KextsToPatch: %lld requested\n", Count);
@@ -1102,7 +1053,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
           //this is impossible because UnicodeStrToAsciiStr not extend output size
-          //         UnicodeStrToAsciiStr(PoolPrint(L"%a (%a)", KextPatchesLabel, Dict->string), KextPatchesLabel);
+          //         UnicodeStrToAsciiStr(SWPrintf("%s (%s)", KextPatchesLabel, Dict->string), KextPatchesLabel);
 
           AsciiStrCatS(KextPatchesLabel, 255, " (");
           AsciiStrCatS(KextPatchesLabel, 255, Dict->string);
@@ -1132,7 +1083,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->KextPatches[Patches->NrKexts].StartMask = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartMask))AllocateZeroPool(FindLen);
+          Patches->KextPatches[Patches->NrKexts].StartMask = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartMask))BllocateZeroPool(FindLen);
           SetMem(Patches->KextPatches[Patches->NrKexts].StartMask, FindLen, 0xFF);
           if (TmpData != NULL) {
             CopyMem(Patches->KextPatches[Patches->NrKexts].StartMask, TmpData, ReplaceLen);
@@ -1173,7 +1124,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
         FreePool(TmpData);
         // take into account a possibility to set ReplaceLen < FindLen. In this case assumes MaskReplace = 0 for the rest of bytes 
-        Patches->KextPatches[Patches->NrKexts].Patch = (__typeof__(Patches->KextPatches[Patches->NrKexts].Patch))AllocateZeroPool(FindLen);
+        Patches->KextPatches[Patches->NrKexts].Patch = (__typeof__(Patches->KextPatches[Patches->NrKexts].Patch))BllocateZeroPool(FindLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         CopyMem(Patches->KextPatches[Patches->NrKexts].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
@@ -1184,7 +1135,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KextPatches[Patches->NrKexts].MaskReplace = NULL;
         } else {
-          Patches->KextPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->KextPatches[Patches->NrKexts].MaskReplace))AllocateZeroPool(FindLen);
+          Patches->KextPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->KextPatches[Patches->NrKexts].MaskReplace))BllocateZeroPool(FindLen);
           CopyMem(Patches->KextPatches[Patches->NrKexts].MaskReplace, TmpData, MaskLen); //other bytes are zeros, means no replace
         }
         FreePool(TmpData);
@@ -1267,7 +1218,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
-      KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool(Count * sizeof(KERNEL_PATCH));
+      KERNEL_PATCH  *newPatches = new KERNEL_PATCH[Count];
 
       Patches->KernelPatches = newPatches;
       DBG("KernelToPatch: %lld requested\n", Count);
@@ -1310,7 +1261,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->KernelPatches[Patches->NrKernels].StartMask = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartMask))AllocateZeroPool(FindLen);
+          Patches->KernelPatches[Patches->NrKernels].StartMask = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartMask))BllocateZeroPool(FindLen);
           SetMem(Patches->KernelPatches[Patches->NrKernels].StartMask, FindLen, 0xFF);
           if (TmpData != NULL) {
             CopyMem(Patches->KernelPatches[Patches->NrKernels].StartMask, TmpData, ReplaceLen);
@@ -1351,7 +1302,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         FreePool(TmpData);
         // this is "Replace" string len of ReplaceLen
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        Patches->KernelPatches[Patches->NrKernels].Patch = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Patch))AllocateZeroPool(FindLen);
+        Patches->KernelPatches[Patches->NrKernels].Patch = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Patch))BllocateZeroPool(FindLen);
         CopyMem(Patches->KernelPatches[Patches->NrKernels].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
@@ -1360,7 +1311,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->KernelPatches[Patches->NrKernels].MaskReplace = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKernels].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskReplace))AllocateZeroPool(FindLen);
+          Patches->KernelPatches[Patches->NrKernels].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskReplace))BllocateZeroPool(FindLen);
           CopyMem(Patches->KernelPatches[Patches->NrKernels].MaskReplace, TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -1427,7 +1378,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
-      KERNEL_PATCH  *newPatches = (__typeof__(newPatches))AllocateZeroPool(Count * sizeof(KERNEL_PATCH));
+      KERNEL_PATCH  *newPatches = new KERNEL_PATCH[Count];
 
       Patches->BootPatches = newPatches;
       DBG("BootPatches: %lld requested\n", Count);
@@ -1471,7 +1422,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->BootPatches[Patches->NrBoots].StartMask = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartMask))AllocateZeroPool(FindLen);
+          Patches->BootPatches[Patches->NrBoots].StartMask = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartMask))BllocateZeroPool(FindLen);
           SetMem(Patches->BootPatches[Patches->NrBoots].StartMask, FindLen, 0xFF);
           if (TmpData != NULL) {
             CopyMem(Patches->BootPatches[Patches->NrBoots].StartMask, TmpData, ReplaceLen);
@@ -1503,7 +1454,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           CopyMem(Patches->BootPatches[Patches->NrBoots].MaskFind, TmpData, MaskLen);
         }
         FreePool(TmpData);
-        Patches->BootPatches[Patches->NrBoots].Patch = (__typeof__(Patches->BootPatches[Patches->NrBoots].Patch))AllocateZeroPool(FindLen);
+        Patches->BootPatches[Patches->NrBoots].Patch = (__typeof__(Patches->BootPatches[Patches->NrBoots].Patch))BllocateZeroPool(FindLen);
         CopyMem(Patches->BootPatches[Patches->NrBoots].Patch, TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
@@ -1512,7 +1463,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (TmpData == NULL || MaskLen == 0) {
           Patches->BootPatches[Patches->NrBoots].MaskReplace = NULL; //this is old behavior
         } else {
-          Patches->BootPatches[Patches->NrBoots].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskReplace))AllocateZeroPool(FindLen);
+          Patches->BootPatches[Patches->NrBoots].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskReplace))BllocateZeroPool(FindLen);
           CopyMem(Patches->BootPatches[Patches->NrBoots].MaskReplace, TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -1845,25 +1796,17 @@ FillinCustomEntry (
 
   Prop = GetProperty(DictPointer, "Volume");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Volume) {
-      FreePool(Entry->Volume);
-    }
-
-    Entry->Volume = PoolPrint(L"%a", Prop->string);
+    Entry->Volume.takeValueFrom(Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "Path");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Path.SWPrintf("%s", Prop->string);
+    Entry->Path.takeValueFrom(Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "Settings");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Settings) {
-      FreePool(Entry->Settings);
-    }
-
-    Entry->Settings = PoolPrint(L"%a", Prop->string);
+    Entry->Settings.takeValueFrom(Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "CommonSettings");
@@ -1897,13 +1840,10 @@ FillinCustomEntry (
 
   Prop = GetProperty(DictPointer, "Image");
   if (Prop != NULL) {
-    if (Entry->ImagePath) {
-      FreePool(Entry->ImagePath);
-      Entry->ImagePath = NULL;
-    }
+    Entry->ImagePath.setEmpty();
     Entry->Image.setEmpty();
     if (Prop->type == kTagTypeString) {
-      Entry->ImagePath = PoolPrint(L"%a", Prop->string);
+      Entry->ImagePath = SWPrintf("%s", Prop->string);
     }
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
@@ -1919,13 +1859,10 @@ FillinCustomEntry (
 
   Prop = GetProperty(DictPointer, "DriveImage");
   if (Prop != NULL) {
-    if (Entry->DriveImagePath != NULL) {
-      FreePool(Entry->DriveImagePath);
-      Entry->DriveImagePath = NULL;
-    }
+    Entry->DriveImagePath.setEmpty();
     Entry->DriveImage.setEmpty();
     if (Prop->type == kTagTypeString) {
-      Entry->DriveImagePath = PoolPrint(L"%a", Prop->string);
+      Entry->DriveImagePath = SWPrintf("%s", Prop->string);
     }
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
@@ -1957,7 +1894,7 @@ FillinCustomEntry (
       } else if (AsciiStriCmp (Prop->string, "Theme") == 0) {
         Entry->CustomBoot  = CUSTOM_BOOT_THEME;
       } else {
-        // CHAR16 *customLogo = PoolPrint(L"%a", Prop->string);
+        // CHAR16 *customLogo = SWPrintf("%s", Prop->string);
         XStringW customLogo = XStringW().takeValueFrom(Prop->string);
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
         Entry->CustomLogo.LoadXImage(SelfRootDir, customLogo);
@@ -2049,14 +1986,14 @@ FillinCustomEntry (
       Entry->Title = L"Install macOS"_XSW;
     }
   }
-  if (Entry->Image.isEmpty() && (Entry->ImagePath == NULL)) {
+  if (Entry->Image.isEmpty() && (Entry->ImagePath.isEmpty())) {
     if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
-      Entry->ImagePath = L"mac";
+      Entry->ImagePath = L"mac"_XSW;
     }
   }
-  if (Entry->DriveImage.isEmpty() && (Entry->DriveImagePath == NULL)) {
+  if (Entry->DriveImage.isEmpty() && (Entry->DriveImagePath.isEmpty())) {
     if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
-      Entry->DriveImagePath = L"recovery";
+      Entry->DriveImagePath = L"recovery"_XSW;
     }
   }
   // OS Specific flags
@@ -2195,10 +2132,7 @@ FillingCustomLegacy (
 
   Prop = GetProperty(DictPointer, "Volume");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Volume != NULL) {
-      FreePool(Entry->Volume);
-    }
-    Entry->Volume = PoolPrint(L"%a", Prop->string);
+    Entry->Volume.takeValueFrom(Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "FullTitle");
@@ -2293,15 +2227,12 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 
   Prop = GetProperty(DictPointer, "Volume");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    if (Entry->Volume) {
-      FreePool(Entry->Volume);
-    }
-    Entry->Volume = PoolPrint(L"%a", Prop->string);
+    Entry->Volume.takeValueFrom(Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "Path");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Path.SWPrintf("%s", Prop->string);
+    Entry->Path.takeValueFrom(Prop->string);
   }
 
   Prop = GetProperty(DictPointer, "Arguments");
@@ -2326,12 +2257,9 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 
   Prop = GetProperty(DictPointer, "Image");
   if (Prop != NULL) {
-    if (Entry->ImagePath != NULL) {
-      FreePool(Entry->ImagePath);
-      Entry->ImagePath = NULL;
-    }
+    Entry->ImagePath.setEmpty();
     if (Prop->type == kTagTypeString) {
-      Entry->ImagePath = PoolPrint(L"%a", Prop->string);
+      Entry->ImagePath.takeValueFrom(Prop->string);
     }
     Entry->Image.LoadXImage(ThemeX.ThemeDir, Entry->ImagePath);
   } else {
@@ -2494,7 +2422,7 @@ GetEarlyUserSettings (
           if (AsciiStriCmp (Prop->string, "LastBootedVolume") == 0) {
             gSettings.LastBootedVolume = TRUE;
           } else {
-            gSettings.DefaultVolume = (__typeof__(gSettings.DefaultVolume))AllocateZeroPool(Size * sizeof(CHAR16));
+            gSettings.DefaultVolume = (__typeof__(gSettings.DefaultVolume))BllocateZeroPool(Size * sizeof(CHAR16));
             AsciiStrToUnicodeStrS(Prop->string, gSettings.DefaultVolume, Size);
           }
         }
@@ -2502,7 +2430,7 @@ GetEarlyUserSettings (
 
       Prop = GetProperty(DictPointer, "DefaultLoader");
       if (Prop != NULL) {
-        gSettings.DefaultLoader = (__typeof__(gSettings.DefaultLoader))AllocateZeroPool(AsciiStrSize (Prop->string) * sizeof(CHAR16));
+        gSettings.DefaultLoader = (__typeof__(gSettings.DefaultLoader))BllocateZeroPool(AsciiStrSize (Prop->string) * sizeof(CHAR16));
         AsciiStrToUnicodeStrS (Prop->string, gSettings.DefaultLoader, AsciiStrSize (Prop->string));
       }
 
@@ -2584,7 +2512,7 @@ GetEarlyUserSettings (
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.SecureBootWhiteListCount = 0;
-          gSettings.SecureBootWhiteList = (__typeof__(gSettings.SecureBootWhiteList))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          gSettings.SecureBootWhiteList = (__typeof__(gSettings.SecureBootWhiteList))BllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootWhiteList) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement(Prop, i, &Dict2))) {
@@ -2596,7 +2524,7 @@ GetEarlyUserSettings (
               }
 
               if ((Dict2->type == kTagTypeString) && Dict2->string) {
-                gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = PoolPrint(L"%a", Dict2->string);
+                gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = SWPrintf("%s", Dict2->string).forgetDataWithoutFreeing();
               }
             }
           }
@@ -2608,7 +2536,7 @@ GetEarlyUserSettings (
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.SecureBootBlackListCount = 0;
-          gSettings.SecureBootBlackList = (__typeof__(gSettings.SecureBootBlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          gSettings.SecureBootBlackList = (__typeof__(gSettings.SecureBootBlackList))BllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootBlackList) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement(Prop, i, &Dict2))) {
@@ -2620,7 +2548,7 @@ GetEarlyUserSettings (
               }
 
               if ((Dict2->type == kTagTypeString) && Dict2->string) {
-                gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = PoolPrint(L"%a", Dict2->string);
+                gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = SWPrintf("%s", Dict2->string).forgetDataWithoutFreeing();
               }
             }
           }
@@ -2681,7 +2609,7 @@ GetEarlyUserSettings (
           } else if (AsciiStriCmp (Prop->string, "Theme") == 0) {
             gSettings.CustomBoot = CUSTOM_BOOT_THEME;
           } else {
-            // CHAR16 *customLogo   = PoolPrint(L"%a", Prop->string);
+            // CHAR16 *customLogo   = SWPrintf("%s", Prop->string);
             XStringW customLogo = XStringW().takeValueFrom(Prop->string);
             gSettings.CustomBoot = CUSTOM_BOOT_USER;
             if (gSettings.CustomLogo != NULL) {
@@ -2766,12 +2694,12 @@ GetEarlyUserSettings (
       Prop = GetProperty(DictPointer, "Theme");
       if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
         ThemeX.Theme.takeValueFrom(Prop->string);
-        GlobalConfig.Theme = PoolPrint(L"%a", Prop->string);
-        DBG("Default theme: %ls\n", GlobalConfig.Theme);
+        GlobalConfig.Theme.takeValueFrom(Prop->string);
+        DBG("Default theme: %ls\n", GlobalConfig.Theme.wc_str());
         OldChosenTheme = 0xFFFF; //default for embedded
         for (UINTN i = 0; i < ThemesNum; i++) {
           //now comparison is case sensitive
-          if (StriCmp(GlobalConfig.Theme, ThemesList[i]) == 0) {
+          if (StriCmp(GlobalConfig.Theme.wc_str(), ThemesList[i]) == 0) {
             OldChosenTheme = i;
             break;
           }
@@ -2805,7 +2733,7 @@ GetEarlyUserSettings (
       Prop = GetProperty(DictPointer, "ScreenResolution");
       if (Prop != NULL) {
         if ((Prop->type == kTagTypeString) && Prop->string) {
-          GlobalConfig.ScreenResolution = PoolPrint(L"%a", Prop->string);
+          GlobalConfig.ScreenResolution.takeValueFrom(Prop->string);
         }
       }
 
@@ -2915,7 +2843,7 @@ GetEarlyUserSettings (
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
           gSettings.HVCount = 0;
-          gSettings.HVHideStrings = (__typeof__(gSettings.HVHideStrings))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          gSettings.HVHideStrings = (__typeof__(gSettings.HVHideStrings))BllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.HVHideStrings) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement(Prop, i, &Dict2))) {
@@ -2927,7 +2855,7 @@ GetEarlyUserSettings (
               }
 
               if ((Dict2->type == kTagTypeString) && Dict2->string) {
-                gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", Dict2->string);
+                gSettings.HVHideStrings[gSettings.HVCount] = SWPrintf("%s", Dict2->string).forgetDataWithoutFreeing();
                 if (gSettings.HVHideStrings[gSettings.HVCount]) {
                   DBG("Hiding entries with string %ls\n", gSettings.HVHideStrings[gSettings.HVCount]);
                   gSettings.HVCount++;
@@ -3013,7 +2941,6 @@ GetEarlyUserSettings (
                 break;
               }
               // Allocate an entry
-//              Entry = (CUSTOM_LOADER_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LOADER_ENTRY));
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
 
               // Fill it in
@@ -3040,7 +2967,7 @@ GetEarlyUserSettings (
                 break;
               }
               // Allocate an entry
-              Entry = (CUSTOM_LEGACY_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_LEGACY_ENTRY));
+              Entry = new CUSTOM_LEGACY_ENTRY;
               if (Entry) {
                 // Fill it in
                 if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry(Entry)) {
@@ -3067,7 +2994,7 @@ GetEarlyUserSettings (
               }
 
               // Allocate an entry
-              Entry = (CUSTOM_TOOL_ENTRY *)AllocateZeroPool(sizeof(CUSTOM_TOOL_ENTRY));
+              Entry = new CUSTOM_TOOL_ENTRY;
               if (Entry) {
                 // Fill it in
                 if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry(Entry)) {
@@ -3098,7 +3025,7 @@ GetEarlyUserSettings (
           BOOLEAN           Valid;
 
           // alloc space for up to 16 entries
-          gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
+          gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))BllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
 
           // get all entries
           for (i = 0; i < Count; i++) {
@@ -3165,12 +3092,12 @@ GetEarlyUserSettings (
       INTN   i, Count = GetTagCount (DictPointer);
       if (Count > 0) {
         gSettings.BlackListCount = 0;
-        gSettings.BlackList = (__typeof__(gSettings.BlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
+        gSettings.BlackList = (__typeof__(gSettings.BlackList))BllocateZeroPool(Count * sizeof(CHAR16 *));
 
         for (i = 0; i < Count; i++) {
           if (!EFI_ERROR(GetElement(DictPointer, i, &Prop)) &&
               Prop != NULL && (Prop->type == kTagTypeString)) {
-            gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", Prop->string);
+            gSettings.BlackList[gSettings.BlackListCount++] = SWPrintf("%s", Prop->string).forgetDataWithoutFreeing();
           }
         }
       }
@@ -3273,7 +3200,7 @@ GetEarlyUserSettings (
               break;
             }
 
-            gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize] = (__typeof__(char *))AllocateZeroPool(256);
+            gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize] = (__typeof__(char *))BllocateZeroPool(256);
             
             Prop = GetProperty(Dict3, "Comment");
             if (Prop != NULL && (Prop->type == kTagTypeString) && Prop->string) {
@@ -3308,7 +3235,7 @@ GetListOfConfigs ()
   ConfigsNum = 0;
   OldChosenConfig = 0;
 
-  DirIterOpen(SelfRootDir, OEMPath, &DirIter);
+  DirIterOpen(SelfRootDir, OEMPath.wc_str(), &DirIter);
   DbgHeader("Found config plists");
   while (DirIterNext(&DirIter, 2, L"config*.plist", &DirEntry)) {
     CHAR16  FullName[256];
@@ -3316,7 +3243,7 @@ GetListOfConfigs ()
       continue;
     }
 
-	  snwprintf(FullName, 512, "%ls\\%ls", OEMPath, DirEntry->FileName);
+	  snwprintf(FullName, 512, "%ls\\%ls", OEMPath.wc_str(), DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
         OldChosenConfig = ConfigsNum;
@@ -3336,7 +3263,7 @@ GetListOfDsdts ()
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
   INTN              NameLen;
-  CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
+  XStringW          AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
   if (DsdtsNum > 0) {
     for (UINTN i = 0; i < DsdtsNum; i++) {
@@ -3348,7 +3275,7 @@ GetListOfDsdts ()
   DsdtsNum = 0;
   OldChosenDsdt = 0xFFFF;
 
-  DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
+  DirIterOpen(SelfRootDir, AcpiPath.wc_str(), &DirIter);
   DbgHeader("Found DSDT tables");
   while (DirIterNext(&DirIter, 2, L"DSDT*.aml", &DirEntry)) {
     CHAR16  FullName[256];
@@ -3356,7 +3283,7 @@ GetListOfDsdts ()
       continue;
     }
 
-    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
+    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath.wc_str(), DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, gSettings.DsdtName) == 0) {
         OldChosenDsdt = DsdtsNum;
@@ -3377,8 +3304,8 @@ GetListOfACPI ()
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
-  INTN i, Count = gSettings.DisabledAMLCount;
-  CHAR16*     AcpiPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
+  INTN               Count = gSettings.DisabledAMLCount;
+  XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
   while (ACPIPatchedAML != NULL) {
     if (ACPIPatchedAML->FileName) {
@@ -3390,7 +3317,7 @@ GetListOfACPI ()
   }
   ACPIPatchedAML = NULL;
 
-  DirIterOpen(SelfRootDir, AcpiPath, &DirIter);
+  DirIterOpen(SelfRootDir, AcpiPath.wc_str(), &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
     CHAR16  FullName[256];
@@ -3401,13 +3328,13 @@ GetListOfACPI ()
       continue;
     }
 
-    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath, DirEntry->FileName);
+    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath.wc_str(), DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
-      ACPIPatchedAMLTmp = (__typeof__(ACPIPatchedAMLTmp))AllocateZeroPool(sizeof(ACPI_PATCHED_AML)); // if changing, notice freepool above
-      ACPIPatchedAMLTmp->FileName = PoolPrint(L"%s", DirEntry->FileName); // if changing, notice freepool above
+      ACPIPatchedAMLTmp = new ACPI_PATCHED_AML; // if changing, notice freepool above
+      ACPIPatchedAMLTmp->FileName = SWPrintf("%ls", DirEntry->FileName).forgetDataWithoutFreeing(); // if changing, notice freepool above
 
-      for (i = 0; i < Count; i++) {
+      for (INTN i = 0; i < Count; i++) {
         if ((gSettings.DisabledAML[i] != NULL) &&
             (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
             ) {
@@ -3422,39 +3349,36 @@ GetListOfACPI ()
   }
 
   DirIterClose(&DirIter);
-  FreePool(AcpiPath);
 }
 
-CHAR16* GetBundleVersion(CHAR16 *FullName)
+XStringW GetBundleVersion(const XStringW& FullName)
 {
   EFI_STATUS      Status;
-  CHAR16*         CFBundleVersion = NULL;
-  CHAR16*         InfoPlistPath;
+  XStringW        CFBundleVersion;
+  XStringW        InfoPlistPath;
   CHAR8*          InfoPlistPtr = NULL;
   TagPtr          InfoPlistDict = NULL;
   TagPtr          Prop = NULL;
   UINTN           Size;
 
-  InfoPlistPath = PoolPrint(L"%s\\%s", FullName, L"Contents\\Info.plist");
-  Status = egLoadFile(SelfRootDir, InfoPlistPath, (UINT8**)&InfoPlistPtr, &Size);
+  InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\Info.plist");
+  Status = egLoadFile(SelfRootDir, InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   if (EFI_ERROR(Status)) {
-    FreePool(InfoPlistPath);
-    InfoPlistPath = PoolPrint(L"%s", FullName, L"Info.plist"); //special kexts like IOGraphics
-    Status = egLoadFile(SelfRootDir, InfoPlistPath, (UINT8**)&InfoPlistPtr, &Size);
+//    InfoPlistPath = SWPrintf("%ls", FullName, L"Info.plist"); // Jief : there was this line. Seems that L"Info.plist" parameter was not used
+    Status = egLoadFile(SelfRootDir, FullName.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
-    Status = ParseXML((const CHAR8*)InfoPlistPtr, &InfoPlistDict, (UINT32)Size);
+    Status = ParseXML(InfoPlistPtr, &InfoPlistDict, (UINT32)Size);
     if(!EFI_ERROR(Status)) {
       Prop = GetProperty(InfoPlistDict, "CFBundleVersion");
       if (Prop != NULL && Prop->string != NULL) {
-        CFBundleVersion = PoolPrint(L"%a", Prop->string);
+        CFBundleVersion = SWPrintf("%s", Prop->string);
       }
     }
   }
   if (InfoPlistPtr) {
     FreePool(InfoPlistPtr);
   }
-  FreePool(InfoPlistPath);
   return CFBundleVersion;
 }
 
@@ -3465,18 +3389,18 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   EFI_FILE_INFO*  DirEntry;
   SIDELOAD_KEXT*  mKext;
   SIDELOAD_KEXT*  mPlugInKext;
-  CHAR16*         FullName;
-  CHAR16*         FullPath = PoolPrint(L"%s\\KEXTS\\%s", OEMPath, KextDirNameUnderOEMPath);
+  XStringW        FullName;
+  XStringW        FullPath = SWPrintf("%ls\\KEXTS\\%ls", OEMPath.wc_str(), KextDirNameUnderOEMPath);
   REFIT_DIR_ITER  PlugInsIter;
   EFI_FILE_INFO   *PlugInEntry;
-  CHAR16*         PlugInsPath;
-  CHAR16*         PlugInsName;
+  XStringW        PlugInsPath;
+  XStringW         PlugInsName;
   BOOLEAN         Blocked = FALSE;
   if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
     Blocked = TRUE;
   }
 
-  DirIterOpen(SelfRootDir, FullPath, &DirIter);
+  DirIterOpen(SelfRootDir, FullPath.wc_str(), &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
       continue;
@@ -3485,12 +3409,12 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      <key>CFBundleVersion</key>
      <string>8.8.8</string>
      */
-    FullName = PoolPrint(L"%s\\%s", FullPath, DirEntry->FileName);
+    FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
 
-    mKext = (__typeof__(mKext))AllocateZeroPool(sizeof(SIDELOAD_KEXT));
-    mKext->FileName = PoolPrint(L"%s", DirEntry->FileName);
+    mKext = new SIDELOAD_KEXT;
+    mKext->FileName = SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
-    mKext->KextDirNameUnderOEMPath = PoolPrint(L"%s", KextDirNameUnderOEMPath);
+    mKext->KextDirNameUnderOEMPath = SWPrintf("%ls", KextDirNameUnderOEMPath);
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
@@ -3498,46 +3422,42 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
-    PlugInsPath = PoolPrint(L"%s\\%s", FullName, L"Contents\\PlugIns");
+    PlugInsPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\PlugIns");
 
-    DirIterOpen(SelfRootDir, PlugInsPath, &PlugInsIter);
+    DirIterOpen(SelfRootDir, PlugInsPath.wc_str(), &PlugInsIter);
     while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
       if (PlugInEntry->FileName[0] == L'.' || StrStr(PlugInEntry->FileName, L".kext") == NULL) {
         continue;
       }
-      PlugInsName = PoolPrint(L"%s\\%s", PlugInsPath, PlugInEntry->FileName);
-      mPlugInKext = (__typeof__(mPlugInKext))AllocateZeroPool(sizeof(SIDELOAD_KEXT));
-      mPlugInKext->FileName = PoolPrint(L"%s", PlugInEntry->FileName);
+      PlugInsName = SWPrintf("%ls\\%ls", PlugInsPath.wc_str(), PlugInEntry->FileName);
+      mPlugInKext = new SIDELOAD_KEXT;
+      mPlugInKext->FileName = SWPrintf("%ls", PlugInEntry->FileName);
       mPlugInKext->MenuItem.BValue = Blocked;
-      mPlugInKext->KextDirNameUnderOEMPath = PoolPrint(L"%s", KextDirNameUnderOEMPath);
+      mPlugInKext->KextDirNameUnderOEMPath = SWPrintf("%ls", KextDirNameUnderOEMPath);
       mPlugInKext->Next    = mKext->PlugInList;
       mPlugInKext->Version = GetBundleVersion(PlugInsName);
       mKext->PlugInList    = mPlugInKext;
       //      DBG("---| added plugin=%ls, MatchOS=%ls\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
-      FreePool(PlugInsName);
     }
-    FreePool(PlugInsPath);
-    FreePool(FullName);
     DirIterClose(&PlugInsIter);
   }
   DirIterClose(&DirIter);
-  FreePool(FullPath);
 }
 
 VOID InitKextList()
 {
   REFIT_DIR_ITER  KextsIter;
   EFI_FILE_INFO   *FolderEntry = NULL;
-  CHAR16          *KextsPath;
+  XStringW        KextsPath;
 
   if (InjectKextList) {
     return;  //don't scan again
   }
-  KextsPath = PoolPrint(L"%s\\kexts", OEMPath);
+  KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
 
   // Iterate over kexts directory
 
-  DirIterOpen(SelfRootDir, KextsPath, &KextsIter);
+  DirIterOpen(SelfRootDir, KextsPath.wc_str(), &KextsIter);
   while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
     if (FolderEntry->FileName[0] == L'.') {
       continue;
@@ -3545,7 +3465,6 @@ VOID InitKextList()
     GetListOfInjectKext(FolderEntry->FileName);
   }
   DirIterClose(&KextsIter);
-  FreePool(KextsPath);
 }
 
 #define CONFIG_THEME_FILENAME L"theme.plist"
@@ -3557,7 +3476,7 @@ GetListOfThemes ()
   EFI_STATUS     Status          = EFI_NOT_FOUND;
   REFIT_DIR_ITER DirIter;
   EFI_FILE_INFO  *DirEntry;
-  CHAR16         *ThemeTestPath;
+  XStringW        ThemeTestPath;
   EFI_FILE       *ThemeTestDir   = NULL;
   CHAR8          *ThemePtr       = NULL;
   UINTN          Size = 0;
@@ -3573,29 +3492,26 @@ GetListOfThemes ()
     }
     //DBG("Found theme directory: %ls", DirEntry->FileName);
 	  DBG("- [%02llu]: %ls", ThemesNum, DirEntry->FileName);
-    ThemeTestPath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", DirEntry->FileName);
-    if (ThemeTestPath != NULL) {
-      Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath, EFI_FILE_MODE_READ, 0);
-      if (!EFI_ERROR(Status)) {
-        Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
-        if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
-          Status = egLoadFile(ThemeTestDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
-          if (EFI_ERROR(Status)) {
-            Status = EFI_NOT_FOUND;
-            DBG(" - bad theme because %ls nor %ls can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);
-          }
-        }
-        if (!EFI_ERROR(Status)) {
-          //we found a theme
-          if ((StriCmp(DirEntry->FileName, L"embedded") == 0) ||
-              (StriCmp(DirEntry->FileName, L"random") == 0)) {
-            ThemePtr = NULL;
-          } else {
-            ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(StrSize(DirEntry->FileName), DirEntry->FileName);
-          }
+    ThemeTestPath = SWPrintf("EFI\\CLOVER\\themes\\%ls", DirEntry->FileName);
+    Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath.wc_str(), EFI_FILE_MODE_READ, 0);
+    if (!EFI_ERROR(Status)) {
+      Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+      if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
+        Status = egLoadFile(ThemeTestDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+        if (EFI_ERROR(Status)) {
+          Status = EFI_NOT_FOUND;
+          DBG(" - bad theme because %ls nor %ls can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);
         }
       }
-      FreePool(ThemeTestPath);
+      if (!EFI_ERROR(Status)) {
+        //we found a theme
+        if ((StriCmp(DirEntry->FileName, L"embedded") == 0) ||
+            (StriCmp(DirEntry->FileName, L"random") == 0)) {
+          ThemePtr = NULL;
+        } else {
+          ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(StrSize(DirEntry->FileName), DirEntry->FileName);
+        }
+      }
     }
     DBG("\n");
     if (ThemePtr) {
@@ -3972,7 +3888,7 @@ XTheme::GetThemeTagSettings(void* DictP)
   return EFI_SUCCESS;
 }
 
-void* XTheme::LoadTheme (const CHAR16 *TestTheme)
+void* XTheme::LoadTheme(const XStringW& TestTheme)
 
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
@@ -3980,26 +3896,22 @@ void* XTheme::LoadTheme (const CHAR16 *TestTheme)
   CHAR8      *ThemePtr = NULL;
   UINTN      Size      = 0;
 
-  if (TestTheme == NULL) {
+  if (TestTheme.isEmpty()) {
     return NULL;
   }
-  if (ThemePath != NULL) {
-    FreePool(ThemePath);
-  }
   if (UGAHeight > HEIGHT_2K) {
-    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s@2x", TestTheme);
+    ThemePath = SWPrintf("EFI\\CLOVER\\themes\\%ls@2x", TestTheme.wc_str());
   } else {
-    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
+    ThemePath = SWPrintf("EFI\\CLOVER\\themes\\%ls", TestTheme.wc_str());
   }
-  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     if (ThemeDir != NULL) {
       ThemeDir->Close (ThemeDir);
       ThemeDir = NULL;
     }
-    FreePool(ThemePath);
-    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", TestTheme);
-    Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+    ThemePath = SWPrintf("EFI\\CLOVER\\themes\\%ls", TestTheme.wc_str());
+    Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
   }
 
   if (!EFI_ERROR(Status)) {
@@ -4009,13 +3921,13 @@ void* XTheme::LoadTheme (const CHAR16 *TestTheme)
       if (EFI_ERROR(Status)) {
         ThemeDict = NULL;
       } else {
-        ThemeDict = (__typeof__(ThemeDict))AllocateZeroPool(sizeof(TagStruct));
+        ThemeDict = (__typeof__(ThemeDict))BllocateZeroPool(sizeof(TagStruct));
         ThemeDict->type = kTagTypeNone;
       }
       if (ThemeDict == NULL) {
         DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
       } else {
-        DBG("Using vector theme '%ls' (%ls)\n", TestTheme, ThemePath);
+        DBG("Using vector theme '%ls' (%ls)\n", TestTheme.wc_str(), ThemePath.wc_str());
       }
     } else {
       Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
@@ -4027,7 +3939,7 @@ void* XTheme::LoadTheme (const CHAR16 *TestTheme)
         if (ThemeDict == NULL) {
           DBG("xml file %ls not parsed\n", CONFIG_THEME_FILENAME);
         } else {
-          DBG("Using theme '%ls' (%ls)\n", TestTheme, ThemePath);
+          DBG("Using theme '%ls' (%ls)\n", TestTheme.wc_str(), ThemePath.wc_str());
         }
       }
     }
@@ -4046,7 +3958,6 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
   UINTN      i;
   TagPtr     ThemeDict    = NULL;
   CHAR8      *ChosenTheme = NULL;
-  CHAR16     *TestTheme   = NULL;
   UINTN      Rnd;
   EFI_TIME   Now;
 	
@@ -4104,30 +4015,27 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
   ThemeX.GetThemeTagSettings(NULL);
 
   if (ThemesNum > 0  &&
-      (!GlobalConfig.Theme || StriCmp(GlobalConfig.Theme, L"embedded") != 0)) {
+      (GlobalConfig.Theme.isEmpty() || StriCmp(GlobalConfig.Theme.wc_str(), L"embedded") != 0)) {
     // Try special theme first
+      XStringW TestTheme;
  //   if (Time != NULL) {
       if ((Now.Month == 12) && ((Now.Day >= 25) && (Now.Day <= 31))) {
-        TestTheme = PoolPrint(L"christmas");
+        TestTheme = L"christmas"_XSW;
       } else if ((Now.Month == 1) && ((Now.Day >= 1) && (Now.Day <= 3))) {
-        TestTheme = PoolPrint(L"newyear");
+        TestTheme = L"newyear"_XSW;
       }
 
-      if (TestTheme != NULL) {
-        ThemeDict = (TagPtr)ThemeX.LoadTheme (TestTheme);
+      if (TestTheme.notEmpty()) {
+        ThemeDict = (TagPtr)ThemeX.LoadTheme(TestTheme);
         if (ThemeDict != NULL) {
-          DBG("special theme %ls found and %ls parsed\n", TestTheme, CONFIG_THEME_FILENAME);
+          DBG("special theme %ls found and %ls parsed\n", TestTheme.wc_str(), CONFIG_THEME_FILENAME);
 //          ThemeX.Theme.takeValueFrom(TestTheme);
-          if (GlobalConfig.Theme) {
-            FreePool(GlobalConfig.Theme);
-          }
           GlobalConfig.Theme = TestTheme;
 
         } else { // special theme not loaded
-          DBG("special theme %ls not found, skipping\n", TestTheme/*, CONFIG_THEME_FILENAME*/);
-          FreePool(TestTheme);
+          DBG("special theme %ls not found, skipping\n", TestTheme.wc_str()/*, CONFIG_THEME_FILENAME*/);
         }
-        TestTheme = NULL;
+        TestTheme.setEmpty();
       }
 //    }
     // Try theme from nvram
@@ -4138,29 +4046,25 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
           goto finish;
         }
         if (AsciiStrCmp(ChosenTheme, "random") == 0) {
-          ThemeDict = (TagPtr)ThemeX.LoadTheme (ThemesList[Rnd]);
+          ThemeDict = (TagPtr)ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
           goto finish;
         }
 
-        TestTheme   = PoolPrint(L"%a", ChosenTheme);
-        if (TestTheme != NULL) {
+        TestTheme.takeValueFrom(ChosenTheme);
+        if (TestTheme.notEmpty()) {
           ThemeDict = (TagPtr)ThemeX.LoadTheme (TestTheme);
           if (ThemeDict != NULL) {
             DBG("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
 //            ThemeX.Theme.takeValueFrom(TestTheme);
-            if (GlobalConfig.Theme) {
-              FreePool(GlobalConfig.Theme);
-            }
             GlobalConfig.Theme = TestTheme;
           } else { // theme from nvram not loaded
-            if (GlobalConfig.Theme) {
-              DBG("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, GlobalConfig.Theme);
+            if (GlobalConfig.Theme.notEmpty()) {
+              DBG("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, GlobalConfig.Theme.wc_str());
             } else {
               DBG("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
-            FreePool(TestTheme);
           }
-          TestTheme = NULL;
+          TestTheme.setEmpty();
         }
         FreePool(ChosenTheme);
         ChosenTheme = NULL;
@@ -4168,18 +4072,18 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
     }
     // Try to get theme from settings
     if (ThemeDict == NULL) {
-      if (!GlobalConfig.Theme) {
+      if (GlobalConfig.Theme.isEmpty()) {
         DBG("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-        ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);
+        ThemeDict = (TagPtr)ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
       } else {
-        if (StriCmp(GlobalConfig.Theme, L"random") == 0) {
-          ThemeDict = (TagPtr)ThemeX.LoadTheme(ThemesList[Rnd]);
+        if (StriCmp(GlobalConfig.Theme.wc_str(), L"random") == 0) {
+          ThemeDict = (TagPtr)ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
         } else {
           ThemeDict = (TagPtr)ThemeX.LoadTheme(GlobalConfig.Theme);
           if (ThemeDict == NULL) {
-            DBG("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme);
+            DBG("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme.wc_str());
           } else {
-            DBG("chosen theme %ls\n", GlobalConfig.Theme);
+            DBG("chosen theme %ls\n", GlobalConfig.Theme.wc_str());
           }
         }
       }
@@ -4197,10 +4101,6 @@ finish:
 
     ThemeX.FillByEmbedded();
     OldChosenTheme = 0xFFFF;
-    if (ThemePath != NULL) {
-      FreePool(ThemePath);
-      ThemePath = NULL;
-    }
 
     if (ThemeX.ThemeDir != NULL) {
       ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
@@ -4262,8 +4162,8 @@ ParseSMBIOSSettings(
                     )
 {
   CHAR8  *i, *j;
-  CHAR8  *Res1 = (__typeof__(Res1))AllocateZeroPool(9);
-  CHAR8  *Res2 = (__typeof__(Res2))AllocateZeroPool(11);
+  CHAR8  *Res1 = (__typeof__(Res1))BllocateZeroPool(9);
+  CHAR8  *Res2 = (__typeof__(Res2))BllocateZeroPool(11);
   CHAR16 UStr[64];
   TagPtr Prop, Prop1;
   BOOLEAN Default = FALSE;
@@ -4820,7 +4720,7 @@ GetUserSettings(
 
           EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
           UINTN strlength  = AsciiStrLen(Prop->string);
-          cDeviceProperties = (__typeof__(cDeviceProperties))AllocateZeroPool(strlength + 1);
+          cDeviceProperties = (__typeof__(cDeviceProperties))BllocateZeroPool(strlength + 1);
           AsciiStrCpyS(cDeviceProperties, strlength + 1, Prop->string);
           //-------
           Status = gBS->AllocatePages (
@@ -4841,31 +4741,30 @@ GetUserSettings(
         else if (Prop->type == kTagTypeDict) {
           //analyze dict-array
           INTN   i, Count = GetTagCount(Prop);
-          gSettings.AddProperties = (__typeof__(gSettings.AddProperties))AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
+          gSettings.AddProperties = new DEV_PROPERTY[Count];
           DEV_PROPERTY *DevPropDevice;
           DEV_PROPERTY *DevProps;
           DEV_PROPERTY **Child;
 
           if (Count > 0) {
-			  DBG("Add %lld devices (kTagTypeDict):\n", Count);
+			    DBG("Add %lld devices (kTagTypeDict):\n", Count);
 
             for (i = 0; i < Count; i++) {
               Prop2 = NULL;
               EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
               if (!EFI_ERROR(GetElement(Prop, i, &Prop2))) {  //take a <key> with DevicePath
                 if ((Prop2 != NULL) && (Prop2->type == kTagTypeKey)) {
-                  CHAR16* DevicePathStr = PoolPrint(L"%a", Prop2->string);
+                  XStringW DevicePathStr = SWPrintf("%s", Prop2->string);
                   //         DBG("Device: %ls\n", DevicePathStr);
 
                   // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
-                  if (StriCmp(DevicePathStr, L"PrimaryGPU") == 0) {
+                  if (StriCmp(DevicePathStr.wc_str(), L"PrimaryGPU") == 0) {
                     DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
-                  } else if (StriCmp(DevicePathStr, L"SecondaryGPU") == 0 && NGFX > 1) {
+                  } else if (StriCmp(DevicePathStr.wc_str(), L"SecondaryGPU") == 0 && NGFX > 1) {
                     DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
                   } else {
-                    DevicePath = ConvertTextToDevicePath(DevicePathStr); //TODO
+                    DevicePath = ConvertTextToDevicePath(DevicePathStr.wc_str()); //TODO
                   }
-                  FreePool(DevicePathStr);
                   if (DevicePath == NULL) {
                     continue;
                   }
@@ -4873,7 +4772,7 @@ GetUserSettings(
                 else continue;
                 //Create Device node
                 DevPropDevice = gSettings.ArbProperties;
-                gSettings.ArbProperties = (__typeof__(gSettings.ArbProperties))AllocateZeroPool(sizeof(DEV_PROPERTY));
+                gSettings.ArbProperties = new DEV_PROPERTY;
                 gSettings.ArbProperties->Next = DevPropDevice; //next device
                 gSettings.ArbProperties->Child = NULL;
                 gSettings.ArbProperties->Device = 0; //to differ from arbitrary
@@ -4889,7 +4788,7 @@ GetUserSettings(
                   for (INTN j = 0; j < PropCount; j++) {
                     Prop3 = NULL;
                     DevProps = *Child;
-                    *Child = (__typeof_am__(*Child))AllocateZeroPool(sizeof(**Child));
+                    *Child = new DEV_PROPERTY;
                   //  *Child = new (__typeof_am__(**Child))();
                     (*Child)->Next = DevProps;
 
@@ -4923,13 +4822,13 @@ GetUserSettings(
                         (*Child)->ValueType = kTagTypeInteger;
                       }
                       else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
-                        (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
+                        (*Child)->Value = (__typeof__((*Child)->Value))BllocateZeroPool(4);
                         (*Child)->Value[0] = TRUE;
                         (*Child)->ValueLen = 1;
                         (*Child)->ValueType = kTagTypeTrue;
                       }
                       else if (Prop3 && (Prop3->type == kTagTypeFalse)) {
-                        (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
+                        (*Child)->Value = (__typeof__((*Child)->Value))BllocateZeroPool(4);
                         //(*Child)->Value[0] = FALSE;
                         (*Child)->ValueLen = 1;
                         (*Child)->ValueType = kTagTypeFalse;
@@ -4937,7 +4836,7 @@ GetUserSettings(
                       else if (Prop3 && (Prop3->type == kTagTypeData)) {
                         UINTN Size = Prop3->dataLen;
                         //     (*Child)->Value = GetDataSetting(Prop3, "Value", &Size);  //TODO
-                        UINT8* Data = (__typeof__(Data))AllocateZeroPool(Size);
+                        UINT8* Data = (__typeof__(Data))BllocateZeroPool(Size);
                         CopyMem(Data, Prop3->data, Size);
                         (*Child)->Value = Data;
                         (*Child)->ValueLen = Size;
@@ -5013,7 +4912,7 @@ GetUserSettings(
                 if (!EFI_ERROR(GetElement(Dict2, PropIndex, &Dict3))) {
 
                   DevProp = gSettings.ArbProperties;
-                  gSettings.ArbProperties = (__typeof__(gSettings.ArbProperties))AllocateZeroPool(sizeof(DEV_PROPERTY));
+                  gSettings.ArbProperties = new DEV_PROPERTY;
                   gSettings.ArbProperties->Next = DevProp;
 
                   gSettings.ArbProperties->Device = (UINT32)DeviceAddr;
@@ -5039,12 +4938,12 @@ GetUserSettings(
                     gSettings.ArbProperties->ValueLen = 4;
                     gSettings.ArbProperties->ValueType = kTagTypeInteger;
                   } else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
-                    gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocateZeroPool(4);
+                    gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))BllocateZeroPool(4);
                     gSettings.ArbProperties->Value[0] = TRUE;
                     gSettings.ArbProperties->ValueLen = 1;
                     gSettings.ArbProperties->ValueType = kTagTypeTrue;
                   } else if (Prop3 && (Prop3->type == kTagTypeFalse)) {
-                    gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocateZeroPool(4);
+                    gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))BllocateZeroPool(4);
                     //gSettings.ArbProperties->Value[0] = FALSE;
                     gSettings.ArbProperties->ValueLen = 1;
                     gSettings.ArbProperties->ValueType = kTagTypeFalse;
@@ -5075,7 +4974,7 @@ GetUserSettings(
 
         if (Count > 0) {
 			DBG("Add %lld properties:\n", Count);
-          gSettings.AddProperties = (__typeof__(gSettings.AddProperties))AllocateZeroPool(Count * sizeof(DEV_PROPERTY));
+          gSettings.AddProperties = new DEV_PROPERTY[Count];
 
           for (i = 0; i < Count; i++) {
             UINTN Size = 0;
@@ -5437,13 +5336,13 @@ GetUserSettings(
           INTN   i, Count = GetTagCount (Prop);
           if (Count > 0) {
             gSettings.PatchDsdtNum      = (UINT32)Count;
-            gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool(Count * sizeof(UINT32));
-            gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
-            gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.PatchDsdtMenuItem = (__typeof__(gSettings.PatchDsdtMenuItem))AllocateZeroPool(Count * sizeof(INPUT_ITEM));
+            gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))BllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))BllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))BllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.LenToFind = (__typeof__(gSettings.LenToFind))BllocateZeroPool(Count * sizeof(UINT32));
+            gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))BllocateZeroPool(Count * sizeof(UINT32));
+            gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))BllocateZeroPool(Count * sizeof(UINT8*));
+            gSettings.PatchDsdtMenuItem = new INPUT_ITEM[Count];
             DBG("PatchesDSDT: %lld requested\n", Count);
 
             for (i = 0; i < Count; i++) {
@@ -5460,7 +5359,7 @@ GetUserSettings(
               }
 
               DBG(" - [%02lld]:", i);
-              DSDTPatchesLabel = (__typeof__(DSDTPatchesLabel))AllocateZeroPool(256);
+              DSDTPatchesLabel = (__typeof__(DSDTPatchesLabel))BllocateZeroPool(256);
 
               Prop3 = GetProperty(Prop2, "Comment");
               if (Prop3 != NULL && (Prop3->type == kTagTypeString) && Prop3->string) {
@@ -5468,7 +5367,7 @@ GetUserSettings(
               } else {
                 snprintf(DSDTPatchesLabel, 255, " (NoLabel)");
               }
-              gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
+              gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))BllocateZeroPool(256);
               snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel);
               DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
 
@@ -5748,12 +5647,12 @@ GetUserSettings(
         Prop2 = NULL;
         if (Count > 0) {
           gSettings.SortedACPICount = 0;
-          gSettings.SortedACPI = (__typeof__(gSettings.SortedACPI))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          gSettings.SortedACPI = (__typeof__(gSettings.SortedACPI))BllocateZeroPool(Count * sizeof(CHAR16 *));
 
           for (i = 0; i < Count; i++) {
             if (!EFI_ERROR(GetElement(Prop, i, &Prop2)) &&
                 (Prop2 != NULL) && (Prop2->type == kTagTypeString)) {
-              gSettings.SortedACPI[gSettings.SortedACPICount++] = PoolPrint(L"%a", Prop2->string);
+              gSettings.SortedACPI[gSettings.SortedACPICount++] = SWPrintf("%s", Prop2->string).forgetDataWithoutFreeing();
             }
           }
         }
@@ -5768,7 +5667,7 @@ GetUserSettings(
         Prop2 = NULL;
         if (Count > 0) {
           gSettings.DisabledAMLCount = 0;
-          gSettings.DisabledAML = (__typeof__(gSettings.DisabledAML))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          gSettings.DisabledAML = (__typeof__(gSettings.DisabledAML))BllocateZeroPool(Count * sizeof(CHAR16 *));
 
           if (gSettings.DisabledAML) {
             for (i = 0; i < Count; i++) {
@@ -5776,7 +5675,7 @@ GetUserSettings(
                   (Prop2 != NULL) &&
                   (Prop2->type == kTagTypeString)
                   ) {
-                gSettings.DisabledAML[gSettings.DisabledAMLCount++] = PoolPrint(L"%a", Prop2->string);
+                gSettings.DisabledAML[gSettings.DisabledAMLCount++] = SWPrintf("%s", Prop2->string).forgetDataWithoutFreeing();
               }
             }
           }
@@ -5788,7 +5687,7 @@ GetUserSettings(
         INTN   i, Count = GetTagCount(Prop);
         if (Count > 0) {
           gSettings.DeviceRenameCount = 0;
-          gSettings.DeviceRename = (__typeof__(gSettings.DeviceRename))AllocateZeroPool(Count * sizeof(ACPI_NAME_LIST));
+          gSettings.DeviceRename = (__typeof__(gSettings.DeviceRename))BllocateZeroPool(Count * sizeof(ACPI_NAME_LIST));
 			DBG("Devices to rename %lld\n", Count);
           for (i = 0; i < Count; i++) {
             Prop2 = NULL;
@@ -6162,7 +6061,7 @@ GetUserSettings(
         INTN   i, Count = GetTagCount (Prop);
         CHAR16 UStr[64];
         RtVariablesNum = 0;
-        RtVariables = (__typeof__(RtVariables))AllocateZeroPool(Count * sizeof(RT_VARIABLES));
+        RtVariables = (__typeof__(RtVariables))BllocateZeroPool(Count * sizeof(RT_VARIABLES));
         for (i = 0; i < Count; i++) {
           Status = GetElement(Prop, i, &Dict);
           if (!EFI_ERROR(Status)) {
@@ -6316,16 +6215,14 @@ GetUserSettings(
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
     if (gThemeChanged) {
-      if (GlobalConfig.Theme) {
-        FreePool(GlobalConfig.Theme);
-      }
+      GlobalConfig.Theme.setEmpty();
       DictPointer = GetProperty(Dict, "GUI");
       if (DictPointer != NULL) {
         Prop = GetProperty(DictPointer, "Theme");
         if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string) {
  //         GlobalConfig.Theme = XStringW().takeValueFrom(Prop->string).forgetDataWithoutFreeing();
-          GlobalConfig.Theme = PoolPrint(L"%a", Prop->string);
-          DBG("Theme from new config: %ls\n", GlobalConfig.Theme);
+          GlobalConfig.Theme.takeValueFrom(Prop->string);
+          DBG("Theme from new config: %ls\n", GlobalConfig.Theme.wc_str());
         }
       }
     }
@@ -6513,26 +6410,27 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // Check for ia.log - InstallESD/createinstallmedia/startosinstall
     // Implemented by Sherlocks
     if (OSVersion == NULL) {
-      CONST CHAR8  *s, *fileBuffer, *targetString;
-      CHAR8  *Res5 = (__typeof__(Res5))AllocateZeroPool(5);
-      CHAR8  *Res6 = (__typeof__(Res6))AllocateZeroPool(6);
-      CHAR8  *Res7 = (__typeof__(Res7))AllocateZeroPool(7);
-      CHAR8  *Res8 = (__typeof__(Res8))AllocateZeroPool(8);
+      CONST CHAR8  *s, *fileBuffer;
+      CHAR8  *Res5 = (__typeof__(Res5))BllocateZeroPool(5);
+      CHAR8  *Res6 = (__typeof__(Res6))BllocateZeroPool(6);
+      CHAR8  *Res7 = (__typeof__(Res7))BllocateZeroPool(7);
+      CHAR8  *Res8 = (__typeof__(Res8))BllocateZeroPool(8);
       UINTN  fileLen = 0;
-      CONST CHAR16 *InstallerLog = L"\\Mac OS X Install Data\\ia.log"; // 10.7
+      XStringW InstallerLog;
+      InstallerLog = L"\\Mac OS X Install Data\\ia.log"_XSW; // 10.7
       if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
-        InstallerLog = L"\\OS X Install Data\\ia.log"; // 10.8 - 10.11
+        InstallerLog = L"\\OS X Install Data\\ia.log"_XSW; // 10.8 - 10.11
         if (!FileExists (Entry->Volume->RootDir, InstallerLog)) {
-          InstallerLog = L"\\macOS Install Data\\ia.log"; // 10.12+
+          InstallerLog = L"\\macOS Install Data\\ia.log"_XSW; // 10.12+
         }
       }
       if (FileExists (Entry->Volume->RootDir, InstallerLog)) {
-        Status = egLoadFile(Entry->Volume->RootDir, InstallerLog, (UINT8 **)&fileBuffer, &fileLen);
+        Status = egLoadFile(Entry->Volume->RootDir, InstallerLog.wc_str(), (UINT8 **)&fileBuffer, &fileLen);
         if (!EFI_ERROR(Status)) {
-          targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
-          CopyMem((VOID*)targetString, (VOID*)fileBuffer, fileLen);
+          XString8 targetString;
+          targetString.strncpy(fileBuffer, fileLen);
       //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
-          s = AsciiStrStr(targetString, "Running OS Build: Mac OS X ");
+          s = AsciiStrStr(targetString.c_str(), "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {
             snprintf (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
             OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Res5), Res5);
@@ -6581,7 +6479,6 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
             }
           }
           FreePool(fileBuffer);
-          FreePool(targetString);
         }
       }
     }
@@ -6829,16 +6726,16 @@ GetDevices ()
   NHDA = 0;
   AudioNum = 0;
   //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
-  CHAR16 *GopDevicePathStr = NULL;
-  CHAR16 *DevicePathStr = NULL;
+  XStringW GopDevicePathStr;
+  XStringW DevicePathStr;
 
   DbgHeader("GetDevices");
 
   // Get GOP handle, in order to check to which GPU the monitor is currently connected
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &HandleCount, &HandleArray);
   if (!EFI_ERROR(Status)) {
-    GopDevicePathStr = DevicePathToStr(DevicePathFromHandle(HandleArray[0]));
-    DBG("GOP found at: %ls\n", GopDevicePathStr);
+    GopDevicePathStr = DevicePathToXStringW(DevicePathFromHandle(HandleArray[0]));
+    DBG("GOP found at: %ls\n", GopDevicePathStr.wc_str());
   }
 
   // Scan PCI handles
@@ -6890,8 +6787,8 @@ GetDevices ()
           GFX_PROPERTIES *gfx = &gGraphics[NGFX];
 
           // GOP device path should contain the device path of the GPU to which the monitor is connected
-          DevicePathStr = DevicePathToStr(DevicePathFromHandle(HandleArray[Index]));
-          if (StrStr(GopDevicePathStr, DevicePathStr)) {
+          DevicePathStr = DevicePathToXStringW(DevicePathFromHandle(HandleArray[Index]));
+          if (StrStr(GopDevicePathStr.wc_str(), DevicePathStr.wc_str())) {
             DBG(" - GOP: Provided by device\n");
             if (NGFX != 0) {
                // we found GOP on a GPU scanned later, make space for this GPU at first position
@@ -6901,9 +6798,6 @@ GetDevices ()
                ZeroMem(&gGraphics[0], sizeof(GFX_PROPERTIES));
                gfx = &gGraphics[0]; // GPU with active GOP will be added at the first position
             }
-          }
-          if (DevicePathStr != NULL) {
-            FreePool(DevicePathStr);
           }
 
           gfx->DeviceID       = Pci.Hdr.DeviceId;
@@ -7171,9 +7065,6 @@ GetDevices ()
       }
     }
   }
-  if (GopDevicePathStr != NULL) {
-    FreePool(GopDevicePathStr);
-  }
 }
 
 
@@ -7215,7 +7106,7 @@ SetDevices (LOADER_ENTRY *Entry)
       continue;
     }
     device = devprop_add_device_pci(device_inject_string, NULL, Prop->DevicePath);
-    DBG("add device: %ls\n", DevicePathToStr(Prop->DevicePath));
+    DBG("add device: %ls\n", DevicePathToXStringW(Prop->DevicePath).wc_str());
     Prop2 = Prop->Child;
     while (Prop2) {
       if (Prop2->MenuItem.BValue) {
@@ -8167,18 +8058,15 @@ SaveSettings ()
   return EFI_SUCCESS;
 }
 
-CHAR16
-*GetOtherKextsDir (BOOLEAN On)
+XStringW GetOtherKextsDir (BOOLEAN On)
 {
-  CHAR16 *SrcDir         = NULL;
+  XStringW SrcDir;
 
-  SrcDir     = PoolPrint(L"%s\\kexts\\%a", OEMPath, On?"Other":"Off");
+  SrcDir = SWPrintf("%ls\\kexts\\%s", OEMPath.wc_str(), On?"Other":"Off");
   if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-    FreePool(SrcDir);
-    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", On?"Other":"Off");
+    SrcDir = SWPrintf("\\EFI\\CLOVER\\kexts\\%s", On?"Other":"Off");
     if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-      FreePool(SrcDir);
-      SrcDir = NULL;
+      SrcDir.setEmpty();
     }
   }
 
@@ -8187,12 +8075,11 @@ CHAR16
 
 //dmazar
 // caller is responsible for FreePool the result
-CHAR16
-*GetOSVersionKextsDir (
+XStringW
+GetOSVersionKextsDir (
                        CHAR8 *OSVersion
                        )
 {
-  CHAR16 *SrcDir         = NULL;
   CHAR8  FixedVersion[16];
   CHAR8  *DotPtr;
 
@@ -8214,13 +8101,11 @@ CHAR16
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version specific or default to Other
-  SrcDir     = PoolPrint(L"%s\\kexts\\%a", OEMPath, FixedVersion);
+  XStringW SrcDir = SWPrintf("%ls\\kexts\\%s", OEMPath.wc_str(), FixedVersion);
   if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-    FreePool(SrcDir);
-    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%a", FixedVersion);
+    SrcDir = SWPrintf("\\EFI\\CLOVER\\kexts\\%s", FixedVersion);
     if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-      FreePool(SrcDir);
-      SrcDir = NULL;
+      SrcDir.setEmpty();
     }
   }
   return SrcDir;
@@ -8229,7 +8114,7 @@ CHAR16
 EFI_STATUS
 InjectKextsFromDir (
                     EFI_STATUS Status,
-                    CHAR16 *SrcDir
+                    CONST CHAR16 *SrcDir
                     )
 {
 
@@ -8245,7 +8130,7 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
 {
   EFI_STATUS           Status;
   FSINJECTION_PROTOCOL *FSInject;
-  CHAR16               *SrcDir         = NULL;
+  XStringW              SrcDir;
   //BOOLEAN              InjectionNeeded = FALSE;
   //BOOLEAN              BlockCaches     = FALSE;
   FSI_STRING_LIST      *Blacklist      = 0;
@@ -8322,7 +8207,7 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
     FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache"); // 10.6/10.6 - 10.9
 
     if (gSettings.BlockKexts[0] != L'\0') {
-      FSInject->AddStringToList(Blacklist, PoolPrint(L"\\System\\Library\\Extensions\\%s", gSettings.BlockKexts));
+      FSInject->AddStringToList(Blacklist, SWPrintf("\\System\\Library\\Extensions\\%ls", gSettings.BlockKexts).wc_str());
     }
   }
 
@@ -8336,13 +8221,12 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
                                 L"\\System\\Library\\Extensions",
                                 SelfVolume->DeviceHandle,
                                 //GetOtherKextsDir (),
-                                SrcDir,
+                                SrcDir.wc_str(),
                                 Blacklist,
                                 ForceLoadKexts
                                 );
     //InjectKextsFromDir(Status, GetOtherKextsDir());
-    InjectKextsFromDir(Status, SrcDir);
-    FreePool(SrcDir);
+    InjectKextsFromDir(Status, SrcDir.wc_str());
 
     SrcDir = GetOSVersionKextsDir(OSVersion);
     Status = FSInject->Install(
@@ -8350,13 +8234,12 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
                                 L"\\System\\Library\\Extensions",
                                 SelfVolume->DeviceHandle,
                                 //GetOSVersionKextsDir(OSVersion),
-                                SrcDir,
+                                SrcDir.wc_str(),
                                 Blacklist,
                                 ForceLoadKexts
                                 );
     //InjectKextsFromDir(Status, GetOSVersionKextsDir(OSVersion));
-    InjectKextsFromDir(Status, SrcDir);
-    FreePool(SrcDir);
+    InjectKextsFromDir(Status, SrcDir.wc_str());
   } else {
     MsgLog("skipping kext injection (not requested)\n");
   }

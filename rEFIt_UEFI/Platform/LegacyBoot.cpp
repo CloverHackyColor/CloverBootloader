@@ -488,7 +488,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 		return Status;
 	}
     
-    DBG("boot from partition %ls\n", FileDevicePathToStr(volume->DevicePath));
+    DBG("boot from partition %ls\n", FileDevicePathToXStringW(volume->DevicePath).wc_str());
     
 	Status = InitializeBiosIntCaller(); //mThunkContext);
 	if (EFI_ERROR(Status)) {
@@ -631,7 +631,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	}
 	
 	if (HdPath != NULL) {
-    DBG("boot from partition %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+    DBG("boot from partition %ls\n", FileDevicePathToXStringW((EFI_DEVICE_PATH *)HdPath).wc_str());
 		LbaOffset	= (UINT32)HdPath->PartitionStart;
 		LbaSize		= (UINT32)HdPath->PartitionSize;
         DBG("starting from 0x%X LBA \n", LbaOffset);
@@ -878,7 +878,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   }
 
   if (HdPath != NULL) {
-    DBG("boot from partition %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+    DBG("boot from partition %ls\n", FileDevicePathToXStringW((EFI_DEVICE_PATH *)HdPath).wc_str());
     LbaOffset	= (UINT32)HdPath->PartitionStart;
     LbaSize		= (UINT32)HdPath->PartitionSize;
     DBG("starting from 0x%X LBA \n", LbaOffset);
@@ -921,7 +921,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // todo: if we managed to get BbsTable, then we may find
   // BIOS drive from there, by matching PCI bus, device, function
   //
-  DBG("Looking for parent disk of %ls\n", FileDevicePathToStr(volume->DevicePath));
+  DBG("Looking for parent disk of %ls\n", FileDevicePathToXStringW(volume->DevicePath).wc_str());
   BiosDriveNum = 0;
   for (i = 0; i < Volumes.size(); i++) {
     if (&Volumes[i] != volume && Volumes[i].BlockIO == volume->WholeDiskBlockIO)

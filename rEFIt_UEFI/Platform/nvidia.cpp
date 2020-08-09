@@ -2178,7 +2178,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   const         INT32 MAX_BIOS_VERSION_LENGTH = 32;
   EFI_STATUS    Status = EFI_NOT_FOUND;
   DevPropDevice *device = NULL;
-  CHAR8         *devicepath = NULL;
+  XString8      devicepath;
   BOOLEAN       load_vbios = gSettings.LoadVBios;
   BOOLEAN       Injected = FALSE;
   UINT8         *rom = NULL;
@@ -2193,12 +2193,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   UINT8         *buffer = NULL;
   UINTN         bufferLen = 0;
   UINTN         j, n_ports = 0;
-  UINTN         i, version_start;
+  UINTN         i;
   INT32         crlf_count = 0;
   option_rom_pci_header_t    *rom_pci_header;
-  CHAR8*        s;
-  CHAR8*        s1;
-  CHAR8*        version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
+  XString8      version_str;
   BOOLEAN       RomAssigned = FALSE;
   UINT32        device_id, subsys_id;
   CARDLIST      *nvcard;
@@ -2294,7 +2292,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
 
   if (EFI_ERROR(Status)) {
-    rom = (__typeof__(rom))AllocateZeroPool(NVIDIA_ROM_SIZE+1);
+    rom = (__typeof__(rom))BllocateZeroPool(NVIDIA_ROM_SIZE+1);
     // PRAMIN first
     read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
 
@@ -2321,7 +2319,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
           if (buffer[i] == 0x55 && buffer[i+1] == 0xaa) {
 			  DBG(" header found at: %llu\n", i);
             bufferLen -= i;
-            rom = (__typeof__(rom))AllocateZeroPool(bufferLen);
+            rom = (__typeof__(rom))BllocateZeroPool(bufferLen);
             for (j = 0; j < bufferLen; j++) {
               rom[j] = buffer[i+j];
             }
@@ -2367,7 +2365,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         if (crlf_count == 2) {
           if (rom[i-1] == 0x20) i--; // strip last " "
 
-          for (version_start = i; version_start > (i-MAX_BIOS_VERSION_LENGTH); version_start--) {
+          for (UINTN version_start = i; version_start > (i-MAX_BIOS_VERSION_LENGTH); version_start--) {
             // find start
             if (rom[version_start] == 0x00) {
               version_start++;
@@ -2376,13 +2374,13 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
               if (strncmp((const CHAR8*)rom + version_start, "Version ", 8) == 0) {
                 version_start += 8;
               }
-              s = (CHAR8*)(rom + version_start);
-              s1 = version_str;
-              while ((*s > ' ') && (*s < 'z') && ((INTN)(s1 - version_str) < MAX_BIOS_VERSION_LENGTH)) {
-                *s1++ = *s++;
+              CHAR8* s = (CHAR8*)(rom + version_start);
+              CHAR8* p = s;
+              while ((*p > ' ') && (*p < 'z') && ((INTN)(p-s) < MAX_BIOS_VERSION_LENGTH)) {
+                p++;
               }
-              *s1 = 0;
-              DBG("version %s\n", version_str);
+              version_str.strncpy(s, p-s);
+              DBG("version %s\n", version_str.c_str());
               break;
             }
           }
@@ -2391,13 +2389,13 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       }
     }
   } else {
-    snprintf(version_str, sizeof(version_str), "1.0");
+    version_str.takeValueFrom("1.0");
   }
 
   DBG("nVidia %s ", model);
 	DBG(" %dMB NV%02hX [%04hX:%04hX] :: %s => device #%d\n", (UINT32)(RShiftU64(videoRam, 20)),
       nvCardType, nvda_dev->vendor_id, nvda_dev->device_id,
-      devicepath, devices_number);
+      devicepath.c_str(), devices_number);
 
   if (!device_inject_string) {
     device_inject_string = devprop_create_string();
@@ -2528,7 +2526,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
   devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
-  devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
+  devprop_add_value(device, "rom-revision", (UINT8*)version_str.c_str(), version_str.sizeInBytes());
   if (gMobile) {
     DBG("Nvidia Mobile backlight\n");
     devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&boot_display, 4);
@@ -2541,7 +2539,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
 done:
   devices_number++;
-  FreePool(version_str);
   if (buffer) {
     FreePool(buffer);
   }

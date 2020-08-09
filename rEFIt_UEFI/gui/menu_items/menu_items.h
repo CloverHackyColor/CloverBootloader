@@ -264,9 +264,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	class REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER : public REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
-	  CONST CHAR16     *DevicePathString;
-	  XStringArray          LoadOptions; //moved here for compatibility with legacy
-	  XStringW    LoaderPath;
+	  XStringW     DevicePathString;
+	  XStringArray LoadOptions; //moved here for compatibility with legacy
+	  XStringW     LoaderPath;
     XIcon        DriveImage;
     XIcon        BadgeImage;
 
@@ -302,11 +302,11 @@ class REFIT_ABSTRACT_MENU_ENTRY
 		{
 		  public:
 			REFIT_VOLUME     *Volume;
-			CONST CHAR16     *VolName;
+			XStringW         VolName;
 			EFI_DEVICE_PATH  *DevicePath;
 			UINT16            Flags;
 
-			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), VolName(NULL), DevicePath(NULL), Flags(0)  {};
+			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), DevicePath(NULL), Flags(0)  {};
 
 			REFIT_MENU_ENTRY_CLOVER* getPartiallyDuplicatedEntry() const;
 			virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return this; };
@@ -348,7 +348,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			  public:
 				XStringW APFSTargetUUID;
 
-				CONST CHAR16     *VolName;
+				XStringW          VolName;
 				EFI_DEVICE_PATH  *DevicePath;
 				UINT16            Flags;
 				UINT8             LoaderType;
@@ -359,7 +359,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				UINT8             CustomBoot;
 				XImage            CustomLogo;
 				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
-				CONST CHAR16            *Settings;
+				XStringW          Settings;
         UINT8             *KernelData;
         UINT32            AddrVtable;
         UINT32            SizeVtable;
@@ -441,9 +441,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
  //       int           is_mkext_v1(UINT8* drvPtr);
  //       void          patch_mkext_v1(UINT8 *drvPtr); //not used
  
-        EFI_STATUS LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
-        EFI_STATUS AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType);
-        void      LoadPlugInKexts(IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
+        EFI_STATUS LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
+        EFI_STATUS AddKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType);
+        void      LoadPlugInKexts(IN EFI_FILE *RootDir, IN CONST CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
         void      AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t archCpuType);
         void      KextPatcherRegisterKexts(void *FSInject, void *ForceLoadKexts);
         void      KextPatcherStart();

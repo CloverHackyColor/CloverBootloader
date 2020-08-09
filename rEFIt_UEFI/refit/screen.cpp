@@ -40,6 +40,7 @@
 #include "../libeg/XTheme.h"
 #include "../Platform/BasicIO.h"
 #include "menu.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCR 1

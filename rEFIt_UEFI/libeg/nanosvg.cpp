@@ -488,10 +488,10 @@ static void nsvg__curveBounds(float* bounds, float* curve)
 NSVGparser* nsvg__createParser()
 {
   NSVGparser* p;
-  p = (NSVGparser*)AllocateZeroPool(sizeof(NSVGparser));
+  p = (NSVGparser*)BllocateZeroPool(sizeof(NSVGparser));
   if (p == NULL) return NULL;
 
-  p->image = (NSVGimage*)AllocateZeroPool(sizeof(NSVGimage));
+  p->image = (NSVGimage*)BllocateZeroPool(sizeof(NSVGimage));
   if (p->image == NULL) {
     FreePool(p);
     return NULL;
@@ -797,7 +797,7 @@ static NSVGgradientData* nsvg__findGradientData(NSVGparser* p, const char* id)
 
 static NSVGgradientLink* nsvg__createGradientLink(const char* id)
 {
-  NSVGgradientLink* grad = (NSVGgradientLink*)AllocateZeroPool(sizeof(NSVGgradientLink));
+  NSVGgradientLink* grad = (NSVGgradientLink*)BllocateZeroPool(sizeof(NSVGgradientLink));
   if (grad == NULL) return NULL;
   strncpy(grad->id, id, 63);
   grad->id[63] = '\0';
@@ -838,7 +838,7 @@ static NSVGgradient* nsvg__createGradient(NSVGparser* p, NSVGshape* shape, NSVGg
   }
   if (stops == NULL) return NULL;
   //  DumpFloat2("gradient final xform:", data->xform, 6);
-  grad = (NSVGgradient*)AllocateZeroPool(sizeof(NSVGgradient) + sizeof(NSVGgradientStop)*(nstops-1));
+  grad = (NSVGgradient*)BllocateZeroPool(sizeof(NSVGgradient) + sizeof(NSVGgradientStop)*(nstops-1));
   if (grad == NULL) return NULL;
   // The shape width and height.
   if (data->units == NSVG_OBJECT_SPACE) {
@@ -967,7 +967,7 @@ static void nsvg__addShape(NSVGparser* p)
   if (p->plist == NULL /*&& !p->isText*/ )
     return;
 
-  shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+  shape = (NSVGshape*)BllocateZeroPool(sizeof(NSVGshape));
   if (shape == NULL) return;
 
   memcpy(shape->id, attr->id, sizeof shape->id);
@@ -1102,11 +1102,11 @@ static void nsvg__addPath(NSVGparser* p, char closed)
   if (closed)
     nsvg__lineTo(p, p->pts[0], p->pts[1]);
 
-  path = (NSVGpath*)AllocateZeroPool(sizeof(NSVGpath));
+  path = (NSVGpath*)BllocateZeroPool(sizeof(NSVGpath));
   if (path == NULL) {
     return;
   }
-  path->pts = (float*)AllocateZeroPool(p->npts*2*sizeof(float));
+  path->pts = (float*)BllocateZeroPool(p->npts*2*sizeof(float));
   if (path->pts == NULL) {
     FreePool(path);
     return;
@@ -1853,7 +1853,7 @@ static int nsvg__parseStrokeDashArray(NSVGparser* p, const char* str, float* str
 
 static NSVGclipPath* nsvg__createClipPath(const char* name, int index)
 {
-  NSVGclipPath* clipPath = (NSVGclipPath*)AllocateZeroPool(sizeof(NSVGclipPath));
+  NSVGclipPath* clipPath = (NSVGclipPath*)BllocateZeroPool(sizeof(NSVGclipPath));
   if (clipPath == NULL) return NULL;
 
   strncpy(clipPath->id, name, 63);
@@ -1978,7 +1978,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "font-size") == 0) {
     if (!attr->fontFace) {
       //      DBG("font face=%d\n", sizeof(NSVGfont));
-      attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
+      attr->fontFace = (NSVGfont*)BllocateZeroPool(sizeof(NSVGfont));
     }
     attr->fontFace->fontSize = nsvg__parseCoordinate(p, value, 0.0f, nsvg__actualLength(p));
   } else if (strcmp(name, "clip-path") == 0) {
@@ -1997,7 +1997,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "font-family") == 0) {
     if (!attr->fontFace) {
       //     DBG("font face=%d\n", sizeof(NSVGfont));
-      attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
+      attr->fontFace = (NSVGfont*)BllocateZeroPool(sizeof(NSVGfont));
     }
     if (attr->fontFace) {
       if (value[0] == 0x27) {  //'
@@ -2010,7 +2010,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
     }
   } else if (strcmp(name, "font-weight") == 0) {
     if (!attr->fontFace) {
-      attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
+      attr->fontFace = (NSVGfont*)BllocateZeroPool(sizeof(NSVGfont));
     }
     if (attr->fontFace) {
       //      char* Next = 0;
@@ -2021,7 +2021,7 @@ static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
   } else if (strcmp(name, "font-style") == 0)  {
     DBG("attr=%s value=%s\n", name, value);
     if (!attr->fontFace) {
-      attr->fontFace = (NSVGfont*)AllocateZeroPool(sizeof(NSVGfont));
+      attr->fontFace = (NSVGfont*)BllocateZeroPool(sizeof(NSVGfont));
     }
     if (strstr(value, "italic") != NULL)  {
       DBG("it is italic\n");
@@ -2697,7 +2697,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
     takeXformBounds(ref, &xform[0], shape->bounds);
 //    DumpFloat2("used shape has bounds", shape->bounds, 4);
   } else if (refSym) {
-    shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+    shape = (NSVGshape*)BllocateZeroPool(sizeof(NSVGshape));
     if (!shape) return;
     memcpy(shape->xform, xform, sizeof(float)*6);
 //    nsvg__xformMultiply(shape->xform, &xform[0]);
@@ -2809,7 +2809,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
 
   int i;
     DBG("text found\n");
-  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  NSVGtext* text = (NSVGtext*)BllocateZeroPool(sizeof(NSVGtext));
   if (!text) {
     return;
   }
@@ -3123,7 +3123,7 @@ static void nsvg__parsePoly(NSVGparser* p, const char** attr, int closeFlag)
  if (href == NULL)
  return;
 
- shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+ shape = (NSVGshape*)BllocateZeroPool(sizeof(NSVGshape));
  if (shape == NULL) return;
 
  memcpy(shape->id, attr->id, sizeof shape->id);
@@ -3222,7 +3222,7 @@ static void parsePattern(NSVGparser* p, const char** dict)
     }
   }
 
-  pt = (__typeof__(pt))AllocateZeroPool(sizeof(NSVGpattern));
+  pt = (__typeof__(pt))BllocateZeroPool(sizeof(NSVGpattern));
   AsciiStrCpyS(pt->id, 64, attr->id);
   pt->width = w;
   pt->height = h;
@@ -3277,7 +3277,7 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
 static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
 {
   int i;
-  NSVGgradientData* grad = (NSVGgradientData*)AllocateZeroPool(sizeof(NSVGgradientData));
+  NSVGgradientData* grad = (NSVGgradientData*)BllocateZeroPool(sizeof(NSVGgradientData));
   if (grad == NULL) return;
   //defaults
   grad->units = NSVG_USER_SPACE; //NSVG_OBJECT_SPACE;
@@ -3412,7 +3412,7 @@ static void nsvg__parseSymbol(NSVGparser* p, const char** dict)
   NSVGsymbol* symbol;
   NSVGattrib* curAttr = nsvg__getAttr(p);
   int i;
-  symbol = (NSVGsymbol*)AllocateZeroPool(sizeof(NSVGsymbol));
+  symbol = (NSVGsymbol*)BllocateZeroPool(sizeof(NSVGsymbol));
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "viewBox") == 0) {
       char* Next = 0;
@@ -3440,7 +3440,7 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
     return;
   }
   //  DBG("parse group\n");
-  group = (NSVGgroup*)AllocateZeroPool(sizeof(NSVGgroup));
+  group = (NSVGgroup*)BllocateZeroPool(sizeof(NSVGgroup));
 
   //  if (curAttr->id[0] == '\0') //skip anonymous groups
   //    return;
@@ -3560,7 +3560,7 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
     return;
   }
 
-  font = (__typeof__(font))AllocateZeroPool(sizeof(*font));
+  font = (__typeof__(font))BllocateZeroPool(sizeof(*font));
 
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "horiz-adv-x") == 0) {
@@ -3737,7 +3737,7 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
 
   p->plist = NULL;
 
-  glyph = (NSVGglyph*)AllocateZeroPool(sizeof(NSVGglyph));
+  glyph = (NSVGglyph*)BllocateZeroPool(sizeof(NSVGglyph));
   if (!glyph) {
     return;
   }
@@ -3971,7 +3971,7 @@ float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UIN
     return x;
   }
 
-  shape = (NSVGshape*)AllocateZeroPool(sizeof(NSVGshape));
+  shape = (NSVGshape*)BllocateZeroPool(sizeof(NSVGshape));
   if (shape == NULL) return x;
 
   g = p->text->font->glyphs;
@@ -4411,7 +4411,7 @@ void nsvgDelete(NSVGimage* image)
  if (p == NULL)
  return NULL;
 
- res = (NSVGpath*)AllocateZeroPool(sizeof(NSVGpath));
+ res = (NSVGpath*)BllocateZeroPool(sizeof(NSVGpath));
  if (res == NULL) return NULL;
 
  res->pts = (float*)AllocatePool(p->npts*2*sizeof(float));

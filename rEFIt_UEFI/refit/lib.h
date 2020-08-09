@@ -304,12 +304,12 @@ extern EFI_HANDLE       SelfDeviceHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
 extern EFI_FILE         *SelfDir;
-extern CHAR16           *SelfDirPath;
+extern XStringW          SelfDirPath;
 extern EFI_DEVICE_PATH  *SelfDevicePath;
 extern EFI_DEVICE_PATH  *SelfFullDevicePath;
-extern CHAR16           *ThemePath;
+extern XStringW          ThemePath;
 extern EFI_FILE         *OEMDir;
-extern CHAR16           *OEMPath;
+extern XStringW          OEMPath;
 extern EFI_FILE         *OemThemeDir;
 
 extern REFIT_VOLUME     *SelfVolume;
@@ -344,7 +344,7 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
 
 VOID ScanVolumes(VOID);
 
-REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName);
+REFIT_VOLUME *FindVolumeByName(IN CONST CHAR16 *VolName);
 
 BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath);
 BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST XStringW& RelativePath);
@@ -365,8 +365,9 @@ CHAR16 * egFindExtension(IN CHAR16 *FileName);
 
 INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength);
 
-//CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW DevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW FileDevicePathFileToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 //UINTN   FileDevicePathNameLen(IN CONST FILEPATH_DEVICE_PATH  *FilePath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);

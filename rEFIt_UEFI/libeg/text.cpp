@@ -287,7 +287,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   FontPixel  = FontImage.GetPixel(0,0);
   UINT16 c0 = 0x20;
   INTN RealWidth = CharScaledWidth;
-  INTN Shift = (FontWidth - CharWidth) * textScale / 2;
+  INTN Shift = INTN((FontWidth - CharWidth) * textScale / 2); // cast to INTN to avoid warning
   if (Shift < 0) {
     Shift = 0;
   }
@@ -329,7 +329,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
             RightSpace = 0; //empty place for invisible characters
           }
           //RealWidth = CharScaledWidth - (int)(RightSpace * textScale); //a part of char
-          RealWidth = (FontWidth - RightSpace) * textScale; //a part of char
+          RealWidth = (__typeof__(RealWidth))((FontWidth - RightSpace) * textScale); //a part of char
         }
       } else {
         LeftSpace = 2;

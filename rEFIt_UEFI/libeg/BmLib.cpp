@@ -91,8 +91,7 @@ EfiLibOpenRoot (
 
 /**
 
-  Function gets the file system information from an open file descriptor,
-  and stores it in a buffer allocated from pool.
+  Function gets the file system information from an open file descriptor.
 
 
   @param FHand           The file handle.
@@ -101,7 +100,7 @@ EfiLibOpenRoot (
   @retval                NULL is returned if failed to get Volume Label Info.
 
 **/
-EFI_FILE_SYSTEM_VOLUME_LABEL *
+XStringW
 EfiLibFileSystemVolumeLabelInfo (
   IN EFI_FILE_HANDLE      FHand
   )
@@ -109,32 +108,23 @@ EfiLibFileSystemVolumeLabelInfo (
   EFI_STATUS    Status;
   EFI_FILE_SYSTEM_VOLUME_LABEL *VolumeInfo = NULL;
   UINTN         Size = 0;
+  XStringW returnValue;
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    VolumeInfo = (__typeof__(VolumeInfo))AllocateZeroPool(Size);
+    VolumeInfo = (__typeof__(VolumeInfo))BllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
     // Check to make sure this isn't actually EFI_FILE_SYSTEM_INFO
     if (!EFI_ERROR(Status))
     {
        EFI_FILE_SYSTEM_INFO *FSInfo = (EFI_FILE_SYSTEM_INFO *)VolumeInfo;
-       if (FSInfo->Size == (UINT64)Size)
-       {
-          // Allocate a new volume label
-          VolumeInfo = (EFI_FILE_SYSTEM_VOLUME_LABEL *)EfiStrDuplicate(FSInfo->VolumeLabel);
-          FreePool(FSInfo);
-       }
-    }
-    if (!EFI_ERROR(Status))
-    {
-       return VolumeInfo;
+       returnValue.takeValueFrom(FSInfo->VolumeLabel);
     }
     FreePool(VolumeInfo);
   }
-
-  return NULL;
+  return returnValue;
 }
 
 /**
@@ -242,7 +232,7 @@ EfiLibFileInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    FileInfo = (__typeof__(FileInfo))AllocateZeroPool(Size);
+    FileInfo = (__typeof__(FileInfo))BllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   }
   
@@ -262,7 +252,7 @@ EfiLibFileSystemInfo (
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
-    FileSystemInfo = (__typeof__(FileSystemInfo))AllocateZeroPool(Size);
+    FileSystemInfo = (__typeof__(FileSystemInfo))BllocateZeroPool(Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   }
   
@@ -319,7 +309,7 @@ EfiReallocatePool (
 
   NewPool = NULL;
   if (NewSize != 0) {
-    NewPool = (__typeof__(NewPool))AllocateZeroPool(NewSize);
+    NewPool = (__typeof__(NewPool))BllocateZeroPool(NewSize);
   }
 
   if (OldPool != NULL) {

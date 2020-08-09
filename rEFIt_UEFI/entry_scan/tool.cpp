@@ -84,7 +84,6 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
     return FALSE;
   }
   // Allocate the entry
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
   Entry = new REFIT_MENU_ENTRY_LOADER_TOOL();
   if (Entry == NULL) {
     return FALSE;
@@ -102,7 +101,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
 //  Entry->ImageHover = ImageHover;
   Entry->LoaderPath = LoaderPath;
   Entry->DevicePath = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
-  Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
+  Entry->DevicePathString = FileDevicePathToXStringW(Entry->DevicePath);
   Entry->LoadOptions = Options;
   //actions
   Entry->AtClick = ActionSelect;
@@ -122,7 +121,6 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
 //  EFI_STATUS        Status;
 
   // prepare the menu entry
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(*Entry));
   Entry = new REFIT_MENU_ENTRY_CLOVER();
   Entry->Title.takeValueFrom(LoaderTitle);
 //  Entry->Tag            = TAG_CLOVER;
@@ -133,7 +131,7 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   Entry->LoaderPath      = LoaderPath;
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
-  Entry->DevicePathString = FileDevicePathToStr(Entry->DevicePath);
+  Entry->DevicePathString = FileDevicePathToXStringW(Entry->DevicePath);
   Entry->Flags           = 0;
   Entry->LoadOptions.setEmpty();
 //  Entry->LoaderType      = OSTYPE_OTHER;
@@ -144,7 +142,6 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   Entry->AtRightClick = ActionDetails;
 
   // create the submenu
-//  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN;
 
   SubScreen->Title.takeValueFrom(LoaderTitle);
@@ -152,7 +149,7 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->GetAnime();
-  SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToStr(Volume->DevicePath));
+  SubScreen->AddMenuInfoLine_f("%ls", FileDevicePathToXStringW(Volume->DevicePath).wc_str());
 
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -255,7 +252,7 @@ VOID AddCustomTool(VOID)
       continue;
     }
 
-    if (Custom->Volume) {
+    if (Custom->Volume.notEmpty()) {
 		DBG("Custom tool %llu matching \"%ls\" ...\n", i, Custom->Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
@@ -289,9 +286,9 @@ VOID AddCustomTool(VOID)
       }
 
       // Check for exact volume matches
-      if (Custom->Volume) {
-        if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
-            ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+      if (Custom->Volume.notEmpty()) {
+        if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
+            ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
           DBG("skipped\n");
           continue;
         }
@@ -303,7 +300,7 @@ VOID AddCustomTool(VOID)
       }
       // Change to custom image if needed
       Image = Custom->Image;
-      if (Image.isEmpty() && Custom->ImagePath) {
+      if (Image.isEmpty() && Custom->ImagePath.notEmpty()) {
         Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
       }
       if (Image.isEmpty()) {

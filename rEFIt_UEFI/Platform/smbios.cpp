@@ -2052,8 +2052,8 @@ EFI_STATUS PrepatchSmbios()
   }
 
   //Create space for SPD
-  //gRAM = (__typeof__(gRAM))AllocateZeroPool(sizeof(MEM_STRUCTURE));
-  //gDMI = (__typeof__(gDMI))AllocateZeroPool(sizeof(DMI));
+  //gRAM = (__typeof__(gRAM))BllocateZeroPool(sizeof(MEM_STRUCTURE));
+  //gDMI = (__typeof__(gDMI))BllocateZeroPool(sizeof(DMI));
 
   //Collect information for use in menu
   GetTableType1();
@@ -2073,7 +2073,7 @@ VOID PatchSmbios(VOID) //continue
 
   DbgHeader("PatchSmbios");
 
-  newSmbiosTable.Raw = (UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
+  newSmbiosTable.Raw = (UINT8*)BllocateZeroPool(MAX_TABLE_SIZE);
   //Slice - order of patching is significant
   PatchTableType0();
   PatchTableType1();

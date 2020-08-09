@@ -26,11 +26,16 @@ typedef ctor* ctor_ptr;
 #if defined(__clang__)
 
 
-void construct_globals_objects()
+void construct_globals_objects(EFI_HANDLE ImageHandle)
 {
+  EFI_LOADED_IMAGE* LoadedImage;
+  EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+  if ( EFI_ERROR(Status) ) {
+    panic("construct_globals_objects: Cannot get LoadedImage protocol");
+  }
 
   UINT32 PeCoffHeaderOffset = 0;
-  EFI_IMAGE_DOS_HEADER* DosHdr = (EFI_IMAGE_DOS_HEADER*)SelfLoadedImage->ImageBase;
+  EFI_IMAGE_DOS_HEADER* DosHdr = (EFI_IMAGE_DOS_HEADER*)LoadedImage->ImageBase;
   if (DosHdr->e_magic == EFI_IMAGE_DOS_SIGNATURE) {
     // DOS image header is present, so read the PE header after the DOS image header
     PeCoffHeaderOffset = DosHdr->e_lfanew;
@@ -38,7 +43,7 @@ void construct_globals_objects()
   DBG("ImageContext.PeCoffHeaderOffset: %08X %d\n", PeCoffHeaderOffset, PeCoffHeaderOffset);
 
 
-	EFI_IMAGE_OPTIONAL_HEADER_UNION* ImgHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *) ((UINTN) (SelfLoadedImage->ImageBase) + PeCoffHeaderOffset);
+	EFI_IMAGE_OPTIONAL_HEADER_UNION* ImgHdr = (EFI_IMAGE_OPTIONAL_HEADER_UNION *) ((UINTN) (LoadedImage->ImageBase) + PeCoffHeaderOffset);
 	EFI_IMAGE_SECTION_HEADER* SectionHeader = (EFI_IMAGE_SECTION_HEADER *) ((UINTN) ImgHdr + sizeof(UINT32) + sizeof(EFI_IMAGE_FILE_HEADER) + ImgHdr->Pe32.FileHeader.SizeOfOptionalHeader);
 
 	for (int Index = 0; Index < ImgHdr->Pe32.FileHeader.NumberOfSections; Index++, SectionHeader++)
@@ -50,8 +55,8 @@ void construct_globals_objects()
 		if (strcmp((CONST CHAR8*) SectionHeader->Name, ".ctorss") == 0)
 		{
 
-			ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
-			ctor_ptr* ctorend = (ctor_ptr*) (((UINTN) (SelfLoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
+			ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (LoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
+			ctor_ptr* ctorend = (ctor_ptr*) (((UINTN) (LoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
 			while (currentCtor < ctorend)
 			{
 				DBG("&currentCtor %X %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
@@ -73,9 +78,10 @@ ctor_ptr* p = (ctor_ptr*)&__beginning_of_section_ctors;
 ctor_ptr* pend = (ctor_ptr*)&__end_of_section_ctors;
 
 
-void construct_globals_objects() {
+void construct_globals_objects(EFI_HANDLE ImageHandle)
+{
+    (void)ImageHandle;
     DBG("CTOR %X %d\n", (UINTN)p, (UINTN)p);
-//    DBG("CTOR %X %d\n", (UINTN)p[0], (UINTN)p[0]);
     while ( p < pend ) {
     	DBG("CTOR %X %d\n", (UINTN)p[0], (UINTN)p[0]);
     	(*p)();

@@ -375,32 +375,31 @@ EFIAPI OurBlockIoRead (
 
 /** Get sleep image location (volume and name) */
 VOID
-GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, CHAR16 **SleepImageName)
+GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, XStringW* SleepImageNamePtr)
 {
   EFI_STATUS          Status = EFI_NOT_FOUND;
   UINT8               *PrefBuffer = NULL;
   UINTN               PrefBufferLen = 0;
   TagPtr              PrefDict, dict, dict2, prop;
-  CONST CHAR16              *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
-  CONST CHAR16              *PrefName2 = L"\\Library\\Preferences\\com.apple.PowerManagement.plist";
-  CHAR16              *PrefName3 = NULL;
-  CHAR16              *ImageName = NULL;
+  CONST CHAR16       *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
+  CONST CHAR16       *PrefName2 = L"\\Library\\Preferences\\com.apple.PowerManagement.plist";
   REFIT_VOLUME        *ImageVolume = Volume;
   
+  XStringW&           SleepImageName = *SleepImageNamePtr;
   
   if (Volume->RootDir) {
     // find sleep image entry from plist
     Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
     if (EFI_ERROR(Status)) {
-      PrefName3 = PoolPrint(L"\\Library\\Preferences\\com.apple.PowerManagement.%s.plist", GuidBeToStr(&gUuid));
-      Status = egLoadFile(Volume->RootDir, PrefName3, &PrefBuffer, &PrefBufferLen);
+      XStringW PrefName3 = SWPrintf("\\Library\\Preferences\\com.apple.PowerManagement.%ls.plist", GuidBeToStr(&gUuid).wc_str());
+      Status = egLoadFile(Volume->RootDir, PrefName3.wc_str(), &PrefBuffer, &PrefBufferLen);
       if (EFI_ERROR(Status)) {
         Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
         if (!EFI_ERROR(Status)) {
           DBG("    read prefs %ls status=%s\n", PrefName2, strerror(Status));
         }
       } else {
-        DBG("    read prefs %ls status=%s\n", PrefName3, strerror(Status));
+        DBG("    read prefs %ls status=%s\n", PrefName3.wc_str(), strerror(Status));
       }
     } else {
       DBG("    read prefs %ls status=%s\n", PrefName, strerror(Status));
@@ -416,10 +415,9 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
         if (dict2) {
           prop = GetProperty(dict2, "Hibernate File");
           if (prop && prop->type == kTagTypeString ) {
-            CHAR16 *p;
             if (AsciiStrStr(prop->string, "/Volumes/")) {
               CHAR8 *VolNameStart = NULL, *VolNameEnd = NULL;
-              CHAR16 *VolName = NULL;
+              XStringW VolName;
               UINTN VolNameSize = 0;
               // Extract Volumes Name
               VolNameStart = AsciiStrStr(prop->string + 1, "/") + 1;
@@ -428,51 +426,45 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
                 if (VolNameEnd) {
                   VolNameSize = (VolNameEnd - VolNameStart + 1) * sizeof(CHAR16);
                   if (VolNameSize > 0) {
-                    VolName = (__typeof__(VolName))AllocateZeroPool(VolNameSize);
+                    VolName.strncpy(VolNameStart, VolNameSize);
                   }
                 }
               }
-              if (VolName) {
-                snwprintf(VolName, VolNameSize, "%s", VolNameStart);
-                ImageVolume = FindVolumeByName(VolName);
+              if (VolName.notEmpty()) {
+                ImageVolume = FindVolumeByName(VolName.wc_str());
                 if (ImageVolume) {
-                  ImageName = PoolPrint(L"%a", VolNameEnd);
+                  SleepImageName = SWPrintf("%s", VolNameEnd);
                 } else {
                   ImageVolume = Volume;
                 }
-                FreePool(VolName);
               }
             } else if (AsciiStrStr(prop->string, "/var") && !AsciiStrStr(prop->string, "private")) {
-              ImageName = PoolPrint(L"\\private%a", prop->string);
+              SleepImageName = SWPrintf("\\private%s", prop->string);
             } else {
-              ImageName = PoolPrint(L"%a", prop->string);
+              SleepImageName = SWPrintf("%s", prop->string);
             }
-            p = ImageName;
+            wchar_t* p = SleepImageName.data(0);
             while (*p) {
               if (*p == L'/') {
                 *p = L'\\';
               }
               p++;
             }
-            DBG("    SleepImage name from pref: ImageVolume = '%ls', ImageName = '%ls'\n", ImageVolume->VolName, ImageName);
+            DBG("    SleepImage name from pref: ImageVolume = '%ls', ImageName = '%ls'\n", ImageVolume->VolName.wc_str(), SleepImageName.wc_str());
           }
         }
       }
     }
   }
   
-  if (!ImageName) {
-    ImageName = PoolPrint(L"\\private\\var\\vm\\sleepimage");
-    DBG("    using default sleep image name = %ls\n", ImageName);
+  if (SleepImageName.isEmpty()) {
+    SleepImageName = SWPrintf("\\private\\var\\vm\\sleepimage");
+    DBG("    using default sleep image name = %ls\n", SleepImageName.wc_str());
   }
   if (PrefBuffer) {
     FreePool(PrefBuffer); //allocated by egLoadFile
   }
-  if (PrefName3) {
-    FreePool(PrefName3); //allocated by PoolPrint
-  }
   *SleepImageVolume = ImageVolume;
-  *SleepImageName = ImageName;
 }
 
 
@@ -491,7 +483,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   EFI_FILE            *File = NULL;
   VOID                *Buffer;
   UINTN               BufferSize;
-  CHAR16              *ImageName;
+  XStringW            ImageName;
   REFIT_VOLUME        *ImageVolume;
   
   if (!Volume) {
@@ -519,7 +511,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   
   if (ImageVolume->RootDir) {
     // Open sleepimage
-    Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName, EFI_FILE_MODE_READ, 0);
+    Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName.wc_str(), EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
       DBG("    sleepimage not found -> %s\n", strerror(Status));
       return 0;
@@ -799,18 +791,16 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   /*  Status = GetRootUUID(Volume);
    if (!EFI_ERROR(Status)) {
    EFI_GUID TmpGuid;
-   CHAR16 *TmpStr = NULL;
    CHAR16 *Ptr = GuidLEToStr(&Volume->RootUUID);
    DBG("got str=%ls\n", Ptr);
    Status = StrToGuidLE (Ptr, &TmpGuid);
    if (EFI_ERROR(Status)) {
    DBG("    cant convert Str %ls to GUID\n", Ptr);
    } else {
-   TmpStr = PoolPrint(L"%s", strguid(&TmpGuid));  //PoolPrint не работает!!!
-   DBG("got the guid %ls\n", TmpStr);
+   XStringW TmpStr = SWPrintf("%ls", strguid(&TmpGuid));
+   DBG("got the guid %ls\n", TmpStr.wc_str());
    CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
    DBG("fter CopyMem: %ls\n", Ptr);
-   FreePool(TmpStr);
    }
    }
    */
@@ -906,8 +896,8 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
             //              UINTN                       Size;
             CHAR16                      *Ptr = (CHAR16*)&OffsetHexStr[0];
             
-            DBG("    boot-image before: %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
-			  snwprintf(OffsetHexStr, sizeof(OffsetHexStr), "%ls", (CHAR16 *)(Value + 0x20));
+            DBG("    boot-image before: %ls\n", FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL*)Value).wc_str());
+			      snwprintf(OffsetHexStr, sizeof(OffsetHexStr), "%ls", (CHAR16 *)(Value + 0x20));
             //      DBG("OffsetHexStr=%ls\n", OffsetHexStr);
             while ((*Ptr != L':') && (*Ptr != 0)) {
               Ptr++;
@@ -921,14 +911,13 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               
               ResumeFromCoreStorage = TRUE;
               //         DBG("got str=%ls\n", Ptr);
-              Status = StrToGuidLE (Ptr, &TmpGuid);
+              Status = StrToGuidLE(Ptr, &TmpGuid);
               if (EFI_ERROR(Status)) {
                 DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {
-                //TmpStr = PoolPrint(L"%s", strguid(&TmpGuid));
-                XStringW TmpStr =  GuidLEToXStringW(&TmpGuid);
-                //           DBG("got the guid %ls\n", TmpStr);
-                CopyMem((VOID*)Ptr, TmpStr.wc_str(), TmpStr.sizeInNativeChars());
+                XStringW TmpStr = GuidLEToXStringW(&TmpGuid);
+                //DBG("got the guid %ls\n", TmpStr);
+                memcpy((VOID*)Ptr, TmpStr.wc_str(), TmpStr.sizeInBytes());
               }
             }
             if (StrCmp(gST->FirmwareVendor, L"INSYDE Corp.") != 0) {
@@ -939,13 +928,13 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               //  DBG(" boot-image device path:\n");
               Size = GetDevicePathSize(BootImageDevPath);
               Value = (UINT8*)BootImageDevPath;
-              DBG("    boot-image after: %ls\n", FileDevicePathToStr(BootImageDevPath));
+              DBG("    boot-image after: %ls\n", FileDevicePathToXStringW(BootImageDevPath).wc_str());
               //Apple's device path differs from UEFI BIOS device path that will be used by boot.efi
               //Value[6] = 8; //Acpi(PNP0A08,0)
               Value[22] = SataNum;
               Value[24] = 0xFF;
               Value[25] = 0xFF;
-              DBG("    boot-image corrected: %ls\n", FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)Value));
+              DBG("    boot-image corrected: %ls\n", FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL*)Value).wc_str());
               PrintBytes(Value, Size);
               
               Status = gRT->SetVariable(L"boot-image", &gEfiAppleBootGuid,
@@ -1019,7 +1008,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     Size = GetDevicePathSize(BootImageDevPath);
     VarData = (UINT8*)BootImageDevPath;
     PrintBytes(VarData, Size);
-    DBG("boot-image before: %ls\n", FileDevicePathToStr(BootImageDevPath));
+    DBG("boot-image before: %ls\n", FileDevicePathToXStringW(BootImageDevPath).wc_str());
     //      VarData[6] = 8;
     
     //  VarData[24] = 0xFF;

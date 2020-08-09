@@ -14,6 +14,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //#include "device_tree.h"
 #include "kernel_patcher.h"
 #include "usbfix.h"
+#include "../Platform/cpu.h"
 
 #ifndef DEBUG_ALL
 #define PATCH_DEBUG 0
@@ -414,6 +415,99 @@ GuiEventsInitialize ()
 	
 	return Status;
 }  
+
+//EFI_STATUS
+//WaitForSingleEvent (
+//          IN EFI_EVENT        Event,
+//          IN UINT64           Timeout OPTIONAL
+//          )
+//{
+//  EFI_STATUS          Status;
+//  UINTN            Index;
+//
+//  EFI_EVENT          WaitList[3];
+//  EFI_EVENT          TimerEvent;
+//
+//  if (Timeout != 0)
+//  {
+//    //
+//    // Create a timer event
+//    //
+//    Status = gBS->CreateEvent(EVT_TIMER, 0, NULL, NULL, &TimerEvent);
+//    if (!EFI_ERROR(Status))
+//    {
+//      //
+//      // Set the timer event
+//      //
+//      gBS->SetTimer(TimerEvent, TimerRelative, Timeout);
+//
+//      //
+//      // Wait for the original event or the timer
+//      //
+//      WaitList[0] = Event;
+//      WaitList[1] = TimerEvent;
+//
+//      Status = gBS->WaitForEvent(2, WaitList, &Index);
+//      gBS->CloseEvent (TimerEvent);
+//      if (!EFI_ERROR(Status) && Index == 1)
+//      {
+//        Status = EFI_TIMEOUT;
+//      }
+//    }
+//  }
+//  else
+//  {
+//    WaitList[0] = Event;
+//    Status = gBS->WaitForEvent (1, WaitList, &Index);
+//  }
+//  return Status;
+//}
+//
+
+//set Timeout in ms
+EFI_STATUS
+WaitFor2EventWithTsc (
+                     IN  EFI_EVENT        Event1,
+                     IN  EFI_EVENT        Event2,
+                     IN  UINT64           Timeout OPTIONAL
+                    )
+{
+  EFI_STATUS        Status;
+  UINTN             Index;
+  EFI_EVENT         WaitList[2];
+  UINT64            t0, t1;
+  //all arguments are UINT64, we can use native divide and multiply
+  UINT64            Delta = DivU64x64Remainder(MultU64x64(Timeout, gCPUStructure.TSCFrequency), 1000, NULL);
+
+  if (Timeout != 0)
+  {
+    t0 = AsmReadTsc();
+    do {
+      Status = gBS->CheckEvent(Event1);
+      if (!EFI_ERROR(Status)) {
+        break;
+      }
+      if (Event2) {
+        Status = gBS->CheckEvent(Event2);
+        if (!EFI_ERROR(Status)) {
+          break;
+        }
+      }
+      // Let's try to relax processor a bit
+      CpuPause();
+      Status = EFI_TIMEOUT;
+      t1 = AsmReadTsc();
+    } while ((t1 - t0) < Delta);
+  }
+  else
+  {
+    WaitList[0] = Event1;
+    WaitList[1] = Event2;
+    Status = gBS->WaitForEvent (2, WaitList, &Index);
+  }
+  return Status;
+}
+
 
 EFI_STATUS
 EventsInitialize (IN LOADER_ENTRY *Entry)

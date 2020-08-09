@@ -207,7 +207,8 @@ typedef enum {
   CheckBit,
 } ITEM_TYPE;
 
-typedef struct {
+class INPUT_ITEM {
+public:
   ITEM_TYPE ItemType; //string, value, boolean
   BOOLEAN Valid;
   BOOLEAN BValue;
@@ -217,7 +218,12 @@ typedef struct {
   //  CHAR8*  AValue;
   CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
   UINTN   LineShift;
-} INPUT_ITEM;
+
+  INPUT_ITEM() : ItemType(BoolValue), Valid(0), BValue(0), Pad8(0), IValue(0), SValue(0), LineShift(0) {};
+  INPUT_ITEM(const INPUT_ITEM& other) = delete; // Can be defined if needed
+  const INPUT_ITEM& operator = ( const INPUT_ITEM & ) = delete; // Can be defined if needed
+  ~INPUT_ITEM() { }
+};
 
 typedef struct {
   EFI_STATUS          LastStatus;
@@ -237,17 +243,18 @@ typedef struct {
 
 typedef struct {
   UINT8               Type;
-  CONST CHAR16              *IconName;
-  CONST CHAR16              *Name;
+  CONST CHAR16       *IconName;
+  CONST CHAR16       *Name;
 } LEGACY_OS;
 
-typedef struct {
+class REFIT_VOLUME {
+public:
   EFI_DEVICE_PATH     *DevicePath;
   EFI_HANDLE          DeviceHandle;
   EFI_FILE            *RootDir;
-  CONST CHAR16              *DevicePathString;
-  CONST CHAR16              *VolName;
-  CONST CHAR16              *VolLabel;
+  XStringW            DevicePathString;
+  XStringW            VolName;
+  XStringW            VolLabel;
   UINT8               DiskKind;
   LEGACY_OS           *LegacyOS;
   BOOLEAN             Hidden;
@@ -267,11 +274,20 @@ typedef struct {
   UINT64              SleepImageOffset;
   XString8            ApfsFileSystemUUID; // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
   XStringArray        ApfsTargetUUIDArray; // this is the array of folders that are named as UUID
-} REFIT_VOLUME;
 
-typedef struct KEXT_PATCH KEXT_PATCH;
-struct KEXT_PATCH
+  REFIT_VOLUME() : DevicePath(0), DeviceHandle(0), RootDir(0), DiskKind(0), LegacyOS(0), Hidden(0), BootType(0), IsAppleLegacy(0), HasBootCode(0),
+                   IsMbrPartition(0), MbrPartitionIndex(0), BlockIO(0), BlockIOOffset(0), WholeDiskBlockIO(0), WholeDiskDevicePath(0), WholeDiskDeviceHandle(0),
+                   MbrPartitionTable(0), DriveCRC32(0), RootUUID({0,0,0,{0,0,0,0,0,0,0,0}}), SleepImageOffset(0)
+                 {}
+  REFIT_VOLUME(const REFIT_VOLUME& other) = delete; // Can be defined if needed
+  const REFIT_VOLUME& operator = ( const REFIT_VOLUME & ) = delete; // Can be defined if needed
+  ~REFIT_VOLUME() {}
+
+};
+
+class KEXT_PATCH
 {
+public:
   CHAR8       *Name;
   CHAR8       *Label;
   BOOLEAN     IsPlistPatch;
@@ -289,9 +305,17 @@ struct KEXT_PATCH
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
+
+  KEXT_PATCH() : Name(0), Label(0), IsPlistPatch(0), DataLen(0), Data(0), Patch(0), MaskFind(0), MaskReplace(0),
+                   StartPattern(0), StartMask(0), StartPatternLen(0), SearchLen(0), ProcedureName(0), MatchOS(0), MatchBuild(0)
+                 { memset(align, 0, sizeof(align)); }
+  KEXT_PATCH(const KEXT_PATCH& other) = delete; // Can be defined if needed
+  const KEXT_PATCH& operator = ( const KEXT_PATCH & ) = delete; // Can be defined if needed
+  ~KEXT_PATCH() {}
 };
 
-typedef struct {
+class KERNEL_PATCH {
+public:
   CHAR8       *Label;
   INTN        DataLen;
   UINT8       *Data;
@@ -307,7 +331,14 @@ typedef struct {
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
-} KERNEL_PATCH;
+
+  KERNEL_PATCH() : Label(0), DataLen(0), Data(0), Patch(0), MaskFind(0), MaskReplace(0), StartPattern(0), StartMask(0),
+                   StartPatternLen(0), SearchLen(0), ProcedureName(0), Count(0), MatchOS(0), MatchBuild(0)
+                 { }
+  KERNEL_PATCH(const KERNEL_PATCH& other) = delete; // Can be defined if needed
+  const KERNEL_PATCH& operator = ( const KERNEL_PATCH & ) = delete; // Can be defined if needed
+  ~KERNEL_PATCH() {}
+} ;
 
 typedef struct KERNEL_AND_KEXT_PATCHES
 {

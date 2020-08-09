@@ -58,20 +58,20 @@ EFI_HANDLE       SelfDeviceHandle;
 EFI_LOADED_IMAGE *SelfLoadedImage;
 EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
-CHAR16           *SelfDirPath;
+XStringW          SelfDirPath;
 EFI_DEVICE_PATH  *SelfDevicePath;
 EFI_DEVICE_PATH  *SelfFullDevicePath;
 
 XTheme ThemeX;
 
-CHAR16           *ThemePath;
+XStringW         ThemePath;
 BOOLEAN          gThemeChanged = FALSE;
 //BOOLEAN          gBootArgsChanged = FALSE;
 BOOLEAN          gBootChanged = FALSE;
 BOOLEAN          gThemeOptionsChanged = FALSE;
 
 EFI_FILE         *OEMDir;
-CHAR16           *OEMPath;
+XStringW          OEMPath;
 EFI_FILE         *OemThemeDir = NULL;
 
 
@@ -138,23 +138,6 @@ BOOLEAN MetaiMatch (
                     IN CONST CHAR16   *Pattern
                     );
 
-/**
- This function converts an input device structure to a Unicode string.
- 
- @param DevPath                  A pointer to the device path structure.
- 
- @return A new allocated Unicode string that represents the device path.
- 
- **/
-CHAR16 *
-EFIAPI
-DevicePathToStr (
-                 IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
-                 )
-{
-  return ConvertDevicePathToText (DevPath, TRUE, TRUE);
-}
-
 
 
 EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root)
@@ -191,7 +174,7 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
   EFI_STATUS  Status;
-  CHAR16      *FilePathAsString;
+  XStringW    FilePathAsString;
   UINTN       i;
   UINTN                     DevicePathSize;
   EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
@@ -207,25 +190,24 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
   SelfDevicePath = (__typeof__(SelfDevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
   
-	DBG("SelfDevicePath=%ls @%llX\n", FileDevicePathToStr(SelfDevicePath), (uintptr_t)SelfDeviceHandle);
+	DBG("SelfDevicePath=%ls @%llX\n", FileDevicePathToXStringW(SelfDevicePath).wc_str(), (uintptr_t)SelfDeviceHandle);
   
   // find the current directory
-  FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
-  if (FilePathAsString != NULL) {
+  FilePathAsString = FileDevicePathToXStringW(SelfLoadedImage->FilePath);
+  if (FilePathAsString.notEmpty()) {
     SelfFullDevicePath = FileDevicePath(SelfDeviceHandle, FilePathAsString);
-    for (i = StrLen(FilePathAsString); i > 0 && FilePathAsString[i] != '\\'; i--) ;
+    for (i = FilePathAsString.length(); i > 0 && FilePathAsString[i] != '\\'; i--) ;
     if (i > 0) {
-      FilePathAsString[i] = 0;
+      FilePathAsString = FilePathAsString.subString(0, i);
     } else {
-      FilePathAsString[0] = L'\\';
-      FilePathAsString[1] = 0;
+      FilePathAsString = L"\\"_XSW;
     }
   } else {
-    FilePathAsString = (__typeof__(FilePathAsString))AllocateCopyPool(StrSize(L"\\"), L"\\");
+    FilePathAsString = L"\\"_XSW;
   }
   SelfDirPath = FilePathAsString;
   
-  DBG("SelfDirPath = %ls\n", SelfDirPath);
+  DBG("SelfDirPath = %ls\n", SelfDirPath.wc_str());
   
   return FinishInitRefitLib();
 }
@@ -284,7 +266,7 @@ EFI_STATUS ReinitSelfLib(VOID)
   }
   
   TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
-  DBG("reinit: self device path=%ls\n", FileDevicePathToStr(TmpDevicePath));
+  DBG("reinit: self device path=%ls\n", FileDevicePathToXStringW(TmpDevicePath).wc_str());
   if(TmpDevicePath == NULL)
 		return EFI_NOT_FOUND;
   
@@ -301,11 +283,11 @@ EFI_STATUS ReinitSelfLib(VOID)
     return EFI_NOT_FOUND;
   }
   SelfDeviceHandle = NewSelfHandle;
-  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
 
 
-  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
-  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath.wc_str(), EFI_FILE_MODE_READ, 0);
+  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath.wc_str(), EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while reopening our installation directory");
   return Status;
 }
@@ -324,9 +306,9 @@ EFI_STATUS FinishInitRefitLib(VOID)
       return EFI_LOAD_ERROR;
     }
   }
-  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
-  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath.wc_str(), EFI_FILE_MODE_READ, 0);
+  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath.wc_str(), EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while opening our installation directory");
   return Status;
 }
@@ -497,7 +479,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       AsciiStrToUnicodeStrS((CHAR8*)&tmp[0], volumeName, 255);
 			//	}
       DBG("Detected name %ls\n", volumeName);
-      Volume->VolName = PoolPrint(L"%s", volumeName);
+      Volume->VolName.takeValueFrom(volumeName);
       for (i=8; i<2000; i++) { //vendor search
         if (SectorBuffer[i] == 'A') {
           if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "APPLE")) {
@@ -717,12 +699,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   UINTN                   PartialLength = 0;
   UINTN                   DevicePathSize;
   //  UINTN                   BufferSize = 255;
-  EFI_FILE_SYSTEM_VOLUME_LABEL *VolumeInfo;
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
   EFI_FILE_INFO           *RootInfo = NULL;
   BOOLEAN                 Bootable;
   //  EFI_INPUT_KEY           Key;
-  CHAR16                  *tmpName;
   
   // get device path
   DiskDevicePath = DevicePathFromHandle(Volume->DeviceHandle);
@@ -730,11 +710,11 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   DevicePathSize = GetDevicePathSize (DiskDevicePath);
   Volume->DevicePath = (__typeof__(Volume->DevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
   CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
-  Volume->DevicePathString = FileDevicePathToStr(Volume->DevicePath);
+  Volume->DevicePathString = FileDevicePathToXStringW(Volume->DevicePath);
 
 #if REFIT_DEBUG > 0
   if (Volume->DevicePath != NULL) {
-    DBG(" %ls\n", FileDevicePathToStr(Volume->DevicePath));
+    DBG(" %ls\n", FileDevicePathToXStringW(Volume->DevicePath).wc_str());
     //#if REFIT_DEBUG >= 2
     //    DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
     //#endif
@@ -931,12 +911,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //    DBG("LegacyBoot volume\n");
     
     if (HdPath) {
-      tmpName = (CHAR16*)AllocateZeroPool(60);
-      snwprintf(tmpName, 60, "Legacy HD%d", HdPath->PartitionNumber);
-      Volume->VolName = EfiStrDuplicate(tmpName);
-      FreePool(tmpName);
-    } else if (!Volume->VolName) {
-      Volume->VolName =  EfiStrDuplicate(L"Whole Disc Boot");
+      Volume->VolName = SWPrintf("Legacy HD%d", HdPath->PartitionNumber);
+    } else if (Volume->VolName.isEmpty()) {
+      Volume->VolName = L"Whole Disc Boot"_XSW;
     }
     if (!Volume->LegacyOS->IconName)
       Volume->LegacyOS->IconName = EfiStrDuplicate(L"legacy");
@@ -958,38 +935,34 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
                 while (BufferSize > 0 && (Buffer[BufferSize-1]=='\n' || Buffer[BufferSize-1]=='\r')) {
                   Buffer[--BufferSize]='\0';
                 }
-          	Volume->VolLabel = PoolPrint(L"%a", Buffer);
+          	Volume->VolLabel = SWPrintf("%s", Buffer);
           }
       }
   }
   
   // get volume name
-  if (!Volume->VolName) {
+  if (Volume->VolName.isEmpty()) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
       //DBG("  Volume name from FileSystem: '%ls'\n", FileSystemInfoPtr->VolumeLabel);
-      Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
+      Volume->VolName.takeValueFrom(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
   }
-  if (!Volume->VolName) {
-    VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
-    if (VolumeInfo) {
-      //DBG("  Volume name from VolumeLabel: '%ls'\n", VolumeInfo->VolumeLabel);
-      Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
-      FreePool(VolumeInfo);
-    }
+  if (Volume->VolName.isEmpty()) {
+    Volume->VolName = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
+    //DBG("  Volume name from VolumeLabel: '%ls'\n", Volume->VolName.wc_str());
   }
-  if (!Volume->VolName) {
+  if (Volume->VolName.isEmpty()) {
     RootInfo = EfiLibFileInfo (Volume->RootDir);
     if (RootInfo) {
       //DBG("  Volume name from RootFile: '%ls'\n", RootInfo->FileName);
-      Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
+      Volume->VolName.takeValueFrom(RootInfo->FileName);
       FreePool(RootInfo);
     }
   }
   if (
-      Volume->VolName == NULL
+      Volume->VolName.isEmpty()
       || Volume->VolName[0] == 0
       || (Volume->VolName[0] == L'\\' && Volume->VolName[1] == 0)
       || (Volume->VolName[0] == L'/' && Volume->VolName[1] == 0)
@@ -997,23 +970,20 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   {
     VOID *Instance;
     if (!EFI_ERROR(gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {
-      Volume->VolName = L"EFI";                                 \
+      Volume->VolName = L"EFI"_XSW;                                 \
     }
   }
-  if (!Volume->VolName) {
+  if (Volume->VolName.isEmpty()) {
 //    DBG("Create unknown name\n");
     //        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
     //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     
     if (HdPath) {
       
-      tmpName = (CHAR16*)AllocateZeroPool(128);
-      snwprintf(tmpName, 128, "Unknown HD%d", HdPath->PartitionNumber);
-      Volume->VolName = EfiStrDuplicate(tmpName);
-      FreePool(tmpName);
+      Volume->VolName.SWPrintf( "Unknown HD%d", HdPath->PartitionNumber);
       // NOTE: this is normal for Apple's VenMedia device paths
     } else {
-      Volume->VolName = EfiStrDuplicate(L"Unknown HD"); //To be able to free it
+      Volume->VolName = L"Unknown HD"_XSW; //To be able to free it
     }
   }
 
@@ -1080,11 +1050,11 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
       } else {
         
         // found a logical partition
-        Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(*Volume));
+        Volume = new REFIT_VOLUME;
         Volume->DiskKind = WholeDiskVolume->DiskKind;
         Volume->IsMbrPartition = TRUE;
         Volume->MbrPartitionIndex = LogicalPartitionIndex++;
-        Volume->VolName = PoolPrint(L"Partition %d", Volume->MbrPartitionIndex + 1);
+        Volume->VolName = SWPrintf("Partition %llu", Volume->MbrPartitionIndex + 1);
         Volume->BlockIO = WholeDiskVolume->BlockIO;
         Volume->BlockIOOffset = ExtCurrent + EMbrTable[i].StartLBA;
         Volume->WholeDiskBlockIO = WholeDiskVolume->BlockIO;
@@ -1131,8 +1101,8 @@ VOID ScanVolumes(VOID)
   // first pass: collect information about all handles
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
-    REFIT_VOLUME* Volume = (__typeof__(Volume))AllocateZeroPool(sizeof(*Volume));
-    Volume->LegacyOS = (__typeof__(Volume->LegacyOS))AllocateZeroPool(sizeof(LEGACY_OS));
+    REFIT_VOLUME* Volume = new REFIT_VOLUME;
+    Volume->LegacyOS = (__typeof__(Volume->LegacyOS))BllocateZeroPool(sizeof(LEGACY_OS));
     Volume->DeviceHandle = Handles[HandleIndex];
     if (Volume->DeviceHandle == SelfDeviceHandle) {
       SelfVolume = Volume;
@@ -1148,8 +1118,8 @@ VOID ScanVolumes(VOID)
 //      AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       if (!gSettings.ShowHiddenEntries) {
         for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-          if (StriStr(Volume->DevicePathString, gSettings.HVHideStrings[HVi]) ||
-              (Volume->VolName != NULL && StriStr(Volume->VolName, gSettings.HVHideStrings[HVi]))) {
+          if (StriStr(Volume->DevicePathString.wc_str(), gSettings.HVHideStrings[HVi]) ||
+              (Volume->VolName.notEmpty() && StriStr(Volume->VolName.wc_str(), gSettings.HVHideStrings[HVi]))) {
             Volume->Hidden = TRUE;
             DBG("        hiding this volume\n");
             break;
@@ -1176,12 +1146,12 @@ VOID ScanVolumes(VOID)
   //  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("        WARNING: SelfVolume not found"); //Slice - and what?
-    SelfVolume = (__typeof__(SelfVolume))AllocateZeroPool(sizeof(REFIT_VOLUME));
+    SelfVolume = new REFIT_VOLUME;
     SelfVolume->DeviceHandle = SelfDeviceHandle;
     SelfVolume->DevicePath = SelfDevicePath;
     SelfVolume->RootDir = SelfRootDir;
     SelfVolume->DiskKind = DISK_KIND_BOOTER;
-    SelfVolume->VolName = L"Clover";
+    SelfVolume->VolName = L"Clover"_XSW;
     SelfVolume->LegacyOS->Type = OSTYPE_EFI;
     SelfVolume->HasBootCode = TRUE;
     SelfVolume->BootType = BOOTING_BY_PBR;
@@ -1250,8 +1220,8 @@ VOID ScanVolumes(VOID)
         Volume->IsMbrPartition = TRUE;
         Volume->MbrPartitionTable = MbrTable;
         Volume->MbrPartitionIndex = PartitionIndex;
-        if (Volume->VolName == NULL)
-          Volume->VolName = PoolPrint(L"Partition %d", PartitionIndex + 1);
+        if (Volume->VolName.isEmpty())
+          Volume->VolName = SWPrintf("Partition %llu", PartitionIndex + 1);
         break;
       }
       
@@ -1299,7 +1269,7 @@ VOID ReinitVolumes(VOID)
       continue;
     }
 	  DBG("Volume %llu at reinit found:\n", VolumeIndex);
-    DBG("Volume->DevicePath=%ls\n", FileDevicePathToStr(Volume->DevicePath));
+    DBG("Volume->DevicePath=%ls\n", FileDevicePathToXStringW(Volume->DevicePath).wc_str());
     VolumesFound++;
     if (Volume->DevicePath != NULL) {
       // get the handle for that path
@@ -1341,7 +1311,7 @@ VOID ReinitVolumes(VOID)
 //  VolumesCount = VolumesFound;
 }
 
-REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
+REFIT_VOLUME *FindVolumeByName(IN CONST CHAR16 *VolName)
 {
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
@@ -1355,7 +1325,7 @@ REFIT_VOLUME *FindVolumeByName(IN CHAR16 *VolName)
     if (!Volume) {
       continue;
     }
-    if (Volume->VolName && StrCmp(Volume->VolName,VolName) == 0) {
+    if (Volume->VolName.equal(VolName) == 0) {
       return Volume;
     }
   }
@@ -1442,7 +1412,7 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
     
     // read next directory entry
     LastBufferSize = BufferSize = 256;
-    Buffer = (__typeof__(Buffer))AllocateZeroPool(BufferSize);
+    Buffer = (__typeof__(Buffer))BllocateZeroPool(BufferSize);
     for (IterCount = 0; ; IterCount++) {
       Status = Directory->Read(Directory, &BufferSize, Buffer);
       if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)
@@ -1657,16 +1627,35 @@ INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *Search
   return -1;
 }
 
+/**
+ This function converts an input device structure to a Unicode string.
+
+ @param DevPath                  A pointer to the device path structure.
+
+ @return A new allocated Unicode string that represents the device path.
+
+ **/
+XStringW DevicePathToXStringW (
+    IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+  )
+{
+  CHAR16* DevicePathStr = ConvertDevicePathToText (DevPath, TRUE, TRUE);
+  XStringW returnValue;
+  returnValue.stealValueFrom(DevicePathStr); // do not FreePool FilePath, it's now owned by returnValue
+  return returnValue;
+
+}
+
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   CHAR16      *FilePath;
   CHAR16      *Char;
   CONST CHAR16      *Tail;
   
-  FilePath = DevicePathToStr(DevPath);
+  FilePath = ConvertDevicePathToText(DevPath, TRUE, TRUE);
   // fix / into '\\'
   if (FilePath != NULL) {
     for (Char = FilePath; *Char != L'\0'; Char++) {
@@ -1685,26 +1674,28 @@ CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
     }
     Char = (CHAR16*)StrStr(FilePath, L"\\\\"); // cast is ok because FilePath is not const, and we know that StrStr returns a pointer in FilePath. Will disappear when using a string object instead of CHAR16*
   }
-  return FilePath;
+  XStringW returnValue;
+  returnValue.stealValueFrom(FilePath); // do not FreePool FilePath, it's now owned by returnValue
+  return returnValue;
 }
 
-CHAR16 *FileDevicePathFileToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+XStringW FileDevicePathFileToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   EFI_DEVICE_PATH_PROTOCOL *Node;
   
   if (DevPath == NULL) {
-    return NULL;
+    return NullXStringW;
   }
   
   Node = (EFI_DEVICE_PATH_PROTOCOL *)DevPath;
   while (!IsDevicePathEnd(Node)) {
     if ((Node->Type == MEDIA_DEVICE_PATH) &&
         (Node->SubType == MEDIA_FILEPATH_DP)) {
-      return FileDevicePathToStr(Node);
+      return FileDevicePathToXStringW(Node);
     }
     Node = NextDevicePathNode(Node);
   }
-  return NULL;
+  return NullXStringW;
 }
 
 BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
@@ -1716,7 +1707,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
   
   Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    data = (__typeof__(data))AllocateZeroPool(dataSize);
+    data = (__typeof__(data))BllocateZeroPool(dataSize);
     Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
     if (EFI_ERROR(Status)) {
 		DBG("Can't get %ls, size=%llu\n", Name, dataSize);
@@ -1729,7 +1720,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
       }
       DBG("\n");
       if (DevicePathAt >= 0) {
-        DBG("%ls: %ls\n", Name, FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL*)&data[DevicePathAt]));
+        DBG("%ls: %ls\n", Name, FileDevicePathToXStringW((EFI_DEVICE_PATH_PROTOCOL*)&data[DevicePathAt]).wc_str());
       }
     }
   }

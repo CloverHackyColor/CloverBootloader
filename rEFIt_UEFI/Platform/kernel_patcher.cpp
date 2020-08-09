@@ -125,7 +125,7 @@ UINT32 LOADER_ENTRY::searchSectionByNum(UINT8 * binary, UINT32 Num)
   UINT32  binaryIndex;
   UINT32  currsect = 0;
   UINT32  nsect;
-  UINT32  textAddr;
+  UINT32  textAddr = 0; // Init to avoid warning
   struct segment_command_64 *loadCommand;
   //  struct  symtab_command      *symCmd;
   if (!Num) {
@@ -220,7 +220,7 @@ UINTN LOADER_ENTRY::searchProcInDriver(UINT8 * driver, UINT32 driverLen, const c
     return 0;
   }
   INT32 i;
-  UINT32 Offset;
+  UINT32 Offset = 0; // Init to avoid warning
   bool found = false;
   for (i = 0; i < lSizeVtable; ++i) {
     Offset = vArray[i].n_un.n_strx;

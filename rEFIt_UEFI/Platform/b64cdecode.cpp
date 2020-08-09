@@ -107,7 +107,7 @@ UINT8 *Base64DecodeClover(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 		return NULL;
 	}
 	// to simplify, we'll allocate the same size, although smaller size is needed
-	DecodedData = (__typeof__(DecodedData))AllocateZeroPool(EncodedSize);
+	DecodedData = (__typeof__(DecodedData))BllocateZeroPool(EncodedSize);
 
 	base64_init_decodestate(&state_in);
 	DecodedSizeInternal = base64_decode_block(EncodedData, (const int)EncodedSize, (char*) DecodedData, &state_in);

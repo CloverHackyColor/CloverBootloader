@@ -55,7 +55,7 @@ UINT32 device_inject_stringlength   = 0;
 DevPropString *devprop_create_string(VOID)
 {
   //	DBG("Begin creating strings for devices:\n");
-  device_inject_string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
+  device_inject_string = (DevPropString*)BllocateZeroPool(sizeof(DevPropString));
 
   if(device_inject_string == NULL)
     return NULL;
@@ -66,22 +66,18 @@ DevPropString *devprop_create_string(VOID)
 }
 
 
-CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
+XString8 get_pci_dev_path(pci_dt_t *PciDt)
 {
   //	DBG("get_pci_dev_path");
-  CHAR8*		tmp;
-  CHAR16*		devpathstr = NULL;
+  XString8  returnValue;
+  XStringW	devpathstr;
   EFI_DEVICE_PATH_PROTOCOL*	DevicePath = NULL;
-  UINTN Size;
 
-  DevicePath = DevicePathFromHandle (PciDt->DeviceHandle);
+  DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
   if (!DevicePath)
-    return NULL;
-  devpathstr = FileDevicePathToStr(DevicePath);
-  Size = StrLen(devpathstr) + 1;
-  tmp = (__typeof__(tmp))AllocateZeroPool(Size);
-  UnicodeStrToAsciiStrS(devpathstr, tmp, Size);
-  return tmp;
+    return NullXString;
+  returnValue = FileDevicePathToXStringW(DevicePath);
+  return returnValue;
 
 }
 
@@ -142,7 +138,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   if (!DevicePath)
     return NULL;
 
-  device = (__typeof__(device))AllocateZeroPool(sizeof(DevPropDevice));
+  device = (__typeof__(device))BllocateZeroPool(sizeof(DevPropDevice));
   if (!device) {
     return NULL;
   }
@@ -201,7 +197,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
   StringBuf->length += device->length;
 
   if(!StringBuf->entries) {
-    StringBuf->entries = (DevPropDevice**)AllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
+    StringBuf->entries = (DevPropDevice**)BllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
     if(!StringBuf->entries) {
       FreePool(device);
       return NULL;
@@ -234,7 +230,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UIN
    DBG("\n"); */
   l = AsciiStrLen(nm);
   length = (UINT32)((l * 2) + len + (2 * sizeof(UINT32)) + 2);
-  data = (UINT8*)AllocateZeroPool(length);
+  data = (UINT8*)BllocateZeroPool(length);
   if(!data)
     return FALSE;
 
@@ -260,7 +256,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UIN
 
   offset = device->length - (24 + (6 * device->num_pci_devpaths));
 
-  newdata = (UINT8*)AllocateZeroPool((length + offset));
+  newdata = (UINT8*)BllocateZeroPool((length + offset));
   if(!newdata)
     return FALSE;
   if((device->data) && (offset > 1)) {

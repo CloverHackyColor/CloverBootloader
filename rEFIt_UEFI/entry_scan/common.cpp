@@ -39,6 +39,7 @@
 #include "../Platform/guid.h"
 #include "../Platform/APFS.h"
 #include "../Platform/cpu.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_COMMON_MENU 1
@@ -394,10 +395,10 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
   for (Index = 0; Index < Volumes.size(); ++Index) {
     REFIT_VOLUME     *Volume = &Volumes[Index];
     if ((Volume == NULL) || (Volume->RootDir == NULL) ||
-        ((Volume->DevicePathString == NULL) && (Volume->VolName == NULL))) {
+        ((Volume->DevicePathString.isEmpty()) && (Volume->VolName.isEmpty()))) {
       continue;
     }
-	  REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG(SWPrintf("%ls", (Volume->VolName == NULL) ? Volume->DevicePathString : Volume->VolName), TAG_OFFSET + Index, MENU_EXIT_ENTER);
+	  REFIT_SIMPLE_MENU_ENTRY_TAG *Entry = new REFIT_SIMPLE_MENU_ENTRY_TAG(SWPrintf("%ls", (Volume->VolName.isEmpty()) ? Volume->DevicePathString.wc_str() : Volume->VolName.wc_str()), TAG_OFFSET + Index, MENU_EXIT_ENTER);
     Menu.Entries.AddReference(Entry, true);
   }
   // Setup menu
@@ -437,25 +438,23 @@ BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCO
   }
   if (Root != NULL) {
     // Get the file path
-    CHAR16 *DevicePathStr = FileDevicePathToStr(Root);
-    if (DevicePathStr != NULL) {
+    XStringW DevicePathStr = FileDevicePathToXStringW(Root);
+    if (DevicePathStr.notEmpty()) {
       UINTN Index = 0;
       // Check the volumes for a match
       for (Index = 0; Index < Volumes.size(); ++Index) {
         REFIT_VOLUME *Volume = &Volumes[Index];
-        UINTN         Length;
         if ((Volume == NULL) || (Volume->RootDir == NULL) ||
-            (Volume->DevicePathString == NULL)) {
+            (Volume->DevicePathString.isEmpty())) {
           continue;
         }
-        Length = StrLen(Volume->DevicePathString);
-        if (Length == 0) {
+        if (Volume->DevicePathString.length() == 0) {
           continue;
         }
         // If the path begins with this volumes path it matches
-        if (StrniCmp(DevicePathStr, Volume->DevicePathString, Length)) {
+        if (StrniCmp(DevicePathStr.wc_str(), Volume->DevicePathString.wc_str(), Volume->DevicePathString.length())) {
           // Need to
-          CHAR16 *FilePath = DevicePathStr + Length;
+          CHAR16 *FilePath = DevicePathStr.data(Volume->DevicePathString.length());
           UINTN   FileLength = StrLen(FilePath);
           if (FileLength == 0) {
             // If there is no path left then open the root
@@ -488,7 +487,6 @@ BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCO
           }
         }
       }
-      FreePool(DevicePathStr);
     }
   }
   return AskUserForFilePathFromVolumes(Title, Result);

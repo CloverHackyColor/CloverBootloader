@@ -35,7 +35,7 @@ typedef FSI_STRING_LIST_ENTRY FSI_STRING_LIST;
  * @param ForceLoadKexts list of kexts (paths to their Info.plists, like L"\\ATI5000Controller.kext\\Contents\\Info.plist")
  *                       that we'll force to be loaded by boot.efi by changing OSBundleRequired to Root
  */
-typedef EFI_STATUS (EFIAPI * FSINJECTION_INSTALL)(IN EFI_HANDLE TgtHandle, IN JCONST CHAR16 *TgtDir, IN EFI_HANDLE SrcHandle, IN CHAR16 *SrcDir, IN FSI_STRING_LIST *Blacklist, IN FSI_STRING_LIST *ForceLoadKexts);
+typedef EFI_STATUS (EFIAPI * FSINJECTION_INSTALL)(IN EFI_HANDLE TgtHandle, IN JCONST CHAR16 *TgtDir, IN EFI_HANDLE SrcHandle, IN JCONST CHAR16 *SrcDir, IN FSI_STRING_LIST *Blacklist, IN FSI_STRING_LIST *ForceLoadKexts);
 
 /**
  * FSINJECTION_PROTOCOL.CreateStringList() type definition

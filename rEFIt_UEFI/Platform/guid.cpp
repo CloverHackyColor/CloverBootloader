@@ -359,10 +359,10 @@ StrToGuidLE (
 }
 
 //Slice - I need GuidBEToStr :(
-CHAR16 * GuidBeToStr(EFI_GUID *Guid)
+XStringW GuidBeToStr(EFI_GUID *Guid)
 {
   UINT8 *GuidData = (UINT8 *)Guid;
-  CHAR16 *Str = PoolPrint(L"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",                          
+  XStringW Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
                           GuidData[3], GuidData[2], GuidData[1], GuidData[0],
                           GuidData[5], GuidData[4],
                           GuidData[7], GuidData[6],

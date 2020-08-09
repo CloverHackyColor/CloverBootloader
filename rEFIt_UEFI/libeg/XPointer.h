@@ -4,7 +4,6 @@
 //#include "../refit/IO.h"
 #include "libeg.h"
 
-class REFIT_MENU_SCREEN;
 class XImage;
 
 class XPointer

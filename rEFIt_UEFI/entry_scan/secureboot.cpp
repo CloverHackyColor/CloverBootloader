@@ -59,7 +59,7 @@ VOID EnableSecureBoot(VOID)
 {
   EFI_STATUS  Status = EFI_NOT_FOUND;
   BOOLEAN     WantDefaultKeys;
-  CHAR16     *ErrorString = NULL;
+  CONST CHAR16     *ErrorString = NULL;
   UINTN       CloverSignatureSize = 0;
   VOID       *CloverSignature = NULL;
   // Check in setup mode
@@ -122,12 +122,9 @@ VOID EnableSecureBoot(VOID)
     }
   }
   if (EFI_ERROR(Status)) {
-    CHAR16 *Str = PoolPrint(L"Enabling secure boot failed because\n%s", ErrorString);
-    if (Str != NULL) {
-      AlertMessage(L"Enable Secure Boot", Str);
-      FreePool(Str);
-    }
-    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString, strerror(Status));
+    XStringW Str = SWPrintf("Enabling secure boot failed because\n%ls", ErrorString);
+    AlertMessage(L"Enable Secure Boot", Str);
+    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString.wc_str(), strerror(Status));
     DisableSecureBoot();
   }
 }
@@ -167,20 +164,14 @@ STATIC VOID DisableMessage(IN EFI_STATUS  Status,
                            IN CHAR16     *String,
                            IN CHAR16     *ErrorString)
 {
-  CHAR16 *Str = NULL;
+  XStringW Str;
   if (ErrorString != NULL) {
-    Str = PoolPrint(L"%s\n%s\n%s", String, ErrorString, strerror(Status));
+    Str = SWPrintf(L"%ls\n%ls\n%ls", String, ErrorString, strerror(Status));
   } else {
-    Str = PoolPrint(L"%s\n%s", String, strerror(Status));
+    Str = SWPrintf(L"%s\n%s", String, strerror(Status));
   }
-  if (Str != NULL) {
-    DBG("Secure Boot: %ls", Str);
-    AlertMessage(L"Disable Secure Boot", Str);
-    FreePool(Str);
-  } else {
-    DBG("Secure Boot: %ls", String);
-    AlertMessage(L"Disable Secure Boot", String);
-  }
+  DBG("Secure Boot: %ls", Str.wc_str());
+  AlertMessage(L"Disable Secure Boot", Str);
 }
 
 // Disable secure boot

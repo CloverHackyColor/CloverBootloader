@@ -24,10 +24,18 @@ EFI_STATUS
 GuiEventsInitialize (VOID);
 
 
+// timeout will be in ms here, as small as 1ms and up
+EFI_STATUS
+WaitFor2EventWithTsc (
+                      IN EFI_EVENT        Event1,
+                      IN EFI_EVENT        Event2,
+                      IN UINT64           Timeout OPTIONAL
+                    );
+
+
 EFI_STATUS
 EjectVolume (
   IN REFIT_VOLUME *Volume
   );
-
 
 #endif /* PLATFORM_EVENTS_H_ */

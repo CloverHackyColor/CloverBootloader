@@ -960,7 +960,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 {
   UINTN           j;
   UINTN           i;
-  CHAR8           *devicepath;
+  XString8        devicepath;
   CONST CHAR8           *model;
   DevPropDevice   *device = NULL;
   UINT8           BuiltIn = 0x00;
@@ -990,7 +990,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   //DBG("Finally model=%s\n", model);
 
 	MsgLog("%s [%04hX:%04hX] :: %s\n",
-      model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
+      model, gma_dev->vendor_id, gma_dev->device_id, devicepath.c_str());
 
   // Resolution
   switch (UGAWidth) {

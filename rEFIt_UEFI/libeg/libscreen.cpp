@@ -171,7 +171,7 @@ VOID egDumpSetConsoleVideoModes(VOID)
       if (Status == EFI_SUCCESS) {
         //MsgLog("  Mode %d: %dx%d%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         if (!Once) {
-			MsgLog(" - [%02llu]: %llux%llu%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
+        MsgLog(" - [%02llu]: %llux%llu%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         }
         // Select highest mode (-1) or lowest mode (-2) as/if requested
         if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Height > BestHeight || (Height == BestHeight && Width > BestWidth))) ||
@@ -197,12 +197,12 @@ VOID egDumpSetConsoleVideoModes(VOID)
     // Mode is valid
     if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
       Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
-		MsgLog("  Setting mode (%llu): %s\n", BestMode, strerror(Status));
+      MsgLog("  Setting mode (%llu): %s\n", BestMode, strerror(Status));
     } else {
-		MsgLog("  Selected mode (%llu) is already set\n", BestMode);
+      MsgLog("  Selected mode (%llu) is already set\n", BestMode);
     }
   } else if (BestMode != 0) {
-	  MsgLog("  Selected mode (%llu) is not valid\n", BestMode);
+    MsgLog("  Selected mode (%llu) is not valid\n", BestMode);
   }
 }
 
@@ -385,15 +385,11 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
  
     // if it not the first run, just restore resolution   
     if (egScreenWidth  != 0 && egScreenHeight != 0) {
- //       Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
       XStringW Resolution = SWPrintf("%llux%llu", egScreenWidth, egScreenHeight);
-//        if (Resolution) { //no sense
-            Status = egSetScreenResolution(Resolution.wc_str());
- //           FreePool(Resolution);
-            if (!EFI_ERROR(Status)) {
-                return;
-            }
-//        }
+      Status = egSetScreenResolution(Resolution.wc_str());
+      if (!EFI_ERROR(Status)) {
+        return;
+      }
     }
 
     egDumpSetConsoleVideoModes();
@@ -402,8 +398,8 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
  //       egDumpGOPVideoModes();
-        if (GlobalConfig.ScreenResolution != NULL) {
-            if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution))) {
+        if (GlobalConfig.ScreenResolution.notEmpty()) {
+            if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution.wc_str()))) {
                 if (SetMaxResolution) {
                     egSetMaxResolution();
                 }
@@ -534,13 +530,12 @@ VOID egClearScreen(IN const void *Color)
 //
 // Make a screenshot
 //
-//CONST CHAR8 ScreenShotName[] = "EFI\\CLOVER\\misc\\screenshot";
 EFI_STATUS egScreenShot(VOID)
 {
   EFI_STATUS      Status = EFI_NOT_READY;
   //take screen
   XImage Screen(egScreenWidth, egScreenHeight);
-	MsgLog("Make screenshot W=%llu H=%llu\n", egScreenWidth, egScreenHeight);
+  MsgLog("Make screenshot W=%llu H=%llu\n", egScreenWidth, egScreenHeight);
   Screen.GetArea(0, 0, egScreenWidth, egScreenHeight);
   //convert to PNG
   UINT8           *FileData = NULL;
@@ -556,9 +551,7 @@ EFI_STATUS egScreenShot(VOID)
     return EFI_NOT_READY;
   }
   //save file with a first unoccupied name
-//  XStringW CommonName(L"EFI\\CLOVER\\misc\\screenshot"_XSW);
   for (UINTN Index = 0; Index < 60; Index++) {
-//    ScreenshotName = PoolPrint(L"%a%d.png", ScreenShotName, Index);
     XStringW Name = SWPrintf("EFI\\CLOVER\\misc\\screenshot%lld.png", Index);
     if (!FileExists(SelfRootDir, Name.wc_str())) {
       Status = egSaveFile(SelfRootDir, Name.wc_str(), FileData, FileDataLength);

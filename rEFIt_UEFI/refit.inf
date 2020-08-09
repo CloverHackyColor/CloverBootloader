@@ -51,8 +51,6 @@
   refit/menu.h
   refit/screen.cpp
   refit/screen.h
-  refit/IO.cpp
-  refit/IO.h
   entry_scan/common.cpp
   entry_scan/common.h
   entry_scan/legacy.cpp
@@ -205,6 +203,8 @@
 #	Platform/stringTable.cpp
 	Platform/usbfix.h
 	Platform/usbfix.cpp
+  Platform/Utils.cpp
+  Platform/Utils.h
 #	Platform/UsbMass.h
 #	Platform/UsbMassBoot.h
 #	Platform/UsbMassImpl.h
@@ -257,7 +257,6 @@
   cpp_unit_test/global_test.cpp
   cpp_unit_test/LoadOptions_test.cpp
   cpp_unit_test/LoadOptions_test.h
-  cpp_unit_test/poolprint-test.h
   cpp_unit_test/printf_lite-test.cpp
   cpp_unit_test/printf_lite-test.h
   cpp_unit_test/printf_lite-test-cpp_conf.h

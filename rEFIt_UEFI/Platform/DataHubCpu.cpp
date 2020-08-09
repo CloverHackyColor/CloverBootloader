@@ -430,8 +430,6 @@ SetupDataForOSX(BOOLEAN Hibernate)
   UINT64     CpuSpeed;
   UINT64     TscFrequency;
   UINT64     ARTFrequency;
-  CHAR16*    ProductName;
-  CHAR16*    SerialNumber;
   UINTN      Revision;
   UINT16     Zero = 0;
   BOOLEAN    isRevLess = (gSettings.REV[0] == 0 &&
@@ -474,11 +472,11 @@ SetupDataForOSX(BOOLEAN Hibernate)
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
   if (!EFI_ERROR(Status)) {
-    ProductName = (__typeof__(ProductName))AllocateZeroPool(128);
-    AsciiStrToUnicodeStrS(gSettings.ProductName, ProductName, 64);
+    XStringW ProductName;
+    ProductName.takeValueFrom(gSettings.ProductName);
 
-    SerialNumber = (__typeof__(SerialNumber))AllocateZeroPool(128);
-    AsciiStrToUnicodeStrS(gSettings.SerialNr,    SerialNumber, 64);
+    XStringW SerialNumber;
+    SerialNumber.takeValueFrom(gSettings.SerialNr);
 
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));
 
@@ -498,8 +496,8 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
     DevPathSupportedVal = 1;
     LogDataHub(&gEfiMiscSubClassGuid,      L"DevicePathsSupported", &DevPathSupportedVal, sizeof(UINT32));
-    LogDataHub(&gEfiMiscSubClassGuid,      L"Model",                ProductName,         (UINT32)StrSize(ProductName));
-    LogDataHub(&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   SerialNumber,        (UINT32)StrSize(SerialNumber));
+    LogDataHub(&gEfiMiscSubClassGuid,      L"Model",                (VOID*)ProductName.wc_str(),         (UINT32)ProductName.sizeInNativeChars());
+    LogDataHub(&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   (VOID*)SerialNumber.wc_str(),        (UINT32)SerialNumber.sizeInNativeChars());
 
     if (gSettings.InjectSystemID) {
       LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));

@@ -6,8 +6,6 @@
 //
 
 #include "FloatLib.h"
-#include "../refit/IO.h"
-
 
 //#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
 //#define fabsf(x) ((x >= 0.0f)?x:(-x))
@@ -351,7 +349,7 @@ VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
 //}
 #endif
 //
-//CHAR16* PoolPrintFloat(float X)
+//CHAR16* P__oolPrintFloat(float X)
 //{
 //  INTN I, Fract;
 //  CHAR8 S = ' ';
@@ -362,7 +360,7 @@ VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
 //    S = '-';
 //  }
 //  Fract = (INTN)fabsf((X - D) * 1000000.0f);
-//  return PoolPrint(L"%c%d.%06d", S, I, Fract);
+//  return P__oolPrint(L"%c%d.%06d", S, I, Fract);
 //}
 
 static UINT32 seed = 12345;

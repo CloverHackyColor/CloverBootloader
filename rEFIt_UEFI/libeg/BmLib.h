@@ -58,7 +58,7 @@ EfiLibOpenRoot (
   @retval                NULL is returned if failed to get Volume Label Info.
 
 **/
-EFI_FILE_SYSTEM_VOLUME_LABEL *
+XStringW
 EfiLibFileSystemVolumeLabelInfo (
   IN EFI_FILE_HANDLE      FHand
   );

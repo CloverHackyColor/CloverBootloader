@@ -16,7 +16,6 @@
 #include "XToolsCommon_test.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
-  #include "poolprint-test.h"
   #include "printlib-test.h"
 #endif
 
@@ -61,11 +60,6 @@ bool all_tests()
 		    printf("printlib_tests() failed at test %d\n", ret);
 		    all_ok = false;
     	}
-    	ret = poolprint_tests();
-    	if ( ret != 0 ) {
-	    	printf("poolprint_tests() failed at test %d\n", ret);
-		    all_ok = false;
-	    }
 #endif
 #ifndef _MSC_VER
 	ret = printf_lite_tests();

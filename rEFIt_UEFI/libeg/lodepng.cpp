@@ -114,6 +114,7 @@ define them in your own project's source files without needing to change
 lodepng source code. Don't forget to remove "static" if you copypaste them
 from here.*/
 
+// NOTE : lodepng_malloc has to set memory to zero, which is not the original design of lodepng.
 #ifdef LODEPNG_COMPILE_ALLOCATORS
 void* lodepng_malloc(size_t size) {
 #ifdef LODEPNG_MAX_ALLOC
@@ -770,7 +771,7 @@ static unsigned HuffmanTree_makeTable(HuffmanTree* tree) {
 
   /* compute maxlens: max total bit length of symbols sharing prefix in the first table*/
  // for(i = 0; i < headsize; ++i) maxlens[i] = 0;
-//  SetMem((void*)maxlens, headsize * sizeof(*maxlens), 0); //we already have AllocateZeroPool
+//  SetMem((void*)maxlens, headsize * sizeof(*maxlens), 0); //we already have A_llocateZeroPool
   for(i = 0; i < tree->numcodes; i++) {
     unsigned symbol = tree->codes[i];
     unsigned l = tree->lengths[i];

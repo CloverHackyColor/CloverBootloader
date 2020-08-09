@@ -64,7 +64,6 @@ VOID AddSecureBootTool(VOID)
   if (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode) {
     return;
   }
-//  Entry = (__typeof__(Entry))AllocateZeroPool(sizeof(LOADER_ENTRY));
   if (gSettings.SecureBoot) {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
     Entry->Title.SWPrintf("Clover Secure Boot Configuration");
@@ -269,18 +268,12 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
     if (DevicePathStr != NULL) {
       CHAR16 *FileDevicePathStr = FileDevicePathFileToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (FileDevicePathStr != NULL) {
-        CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", ErrorString, DevicePathStr, FileDevicePathStr);
-        if (Str != NULL) {
-          AlertMessage(L"Insert Image Authentication", Str);
-          FreePool(Str);
-        }
+        XStringW Str = SWPrintf(L"%ls\n%ls\n%ls", ErrorString, DevicePathStr, FileDevicePathStr);
+				AlertMessage(L"Insert Image Authentication", Str);
         FreePool(FileDevicePathStr);
       } else {
-        CHAR16 *Str = PoolPrint(L"%s\n%s", ErrorString, DevicePathStr);
-        if (Str != NULL) {
-          AlertMessage(L"Insert Image Authentication", Str);
-          FreePool(Str);
-        }
+        XStringW Str = SWPrintf(L"%ls\n%ls", ErrorString, DevicePathStr);
+				AlertMessage(L"Insert Image Authentication", Str);
       }
       FreePool(DevicePathStr);
     } else {
@@ -350,18 +343,12 @@ EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *
     if (DevicePathStr != NULL) {
       CHAR16 *FileDevicePathStr = FileDevicePathFileToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
       if (FileDevicePathStr != NULL) {
-        CHAR16 *Str = PoolPrint(L"%s\n%s\n%s", ErrorString, DevicePathStr, FileDevicePathStr);
-        if (Str != NULL) {
-          AlertMessage(L"Remove Image Authentication", Str);
-          FreePool(Str);
-        }
+        XStringW Str = SWPrintf(L"%ls\n%ls\n%ls", ErrorString, DevicePathStr, FileDevicePathStr);
+				AlertMessage(L"Remove Image Authentication", Str);
         FreePool(FileDevicePathStr);
       } else {
-        CHAR16 *Str = PoolPrint(L"%s\n%s", ErrorString, DevicePathStr);
-        if (Str != NULL) {
-          AlertMessage(L"Remove Image Authentication", Str);
-          FreePool(Str);
-        }
+        XStringW Str = SWPrintf(L"%ls\n%ls", ErrorString, DevicePathStr);
+				AlertMessage(L"Remove Image Authentication", Str);
       }
       FreePool(DevicePathStr);
     } else {

@@ -53,6 +53,7 @@
 #include "../Platform/AcpiPatcher.h"
 #include "../Platform/Nvram.h"
 #include "../refit/screen.h"
+#include "../Platform/Events.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -712,7 +713,7 @@ EFI_STATUS REFIT_MENU_SCREEN::WaitForInputEventPoll(UINTN TimeoutDefault)
   UINTN TimeoutRemain = TimeoutDefault * 100;
 
   while (TimeoutRemain != 0) {
-    Status = WaitFor2EventWithTsc (gST->ConIn->WaitForKey, NULL, 10);
+    Status = WaitFor2EventWithTsc(gST->ConIn->WaitForKey, NULL, 10);
     if (Status != EFI_TIMEOUT) {
       break;
     }
@@ -801,7 +802,6 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
     }
 
     if (HaveTimeout) {
-      //TimeoutMessage = PoolPrint(L"%s in %d seconds", TimeoutText.data(), TimeoutCountdown);
       XStringW TOMessage = SWPrintf("%ls in %lld seconds", TimeoutText.wc_str(), TimeoutCountdown);
       ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TOMessage.data());
     }
@@ -1087,7 +1087,6 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
   static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
   static UINTN MenuPosY = 0;
   //static CHAR16 **DisplayStrings;
-  CHAR16 *TimeoutMessage;
   CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
 	UINTN OldChosenItem = ~(UINTN)0;
 
@@ -1316,9 +1315,8 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
         // paint or update message
         gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
         gST->ConOut->SetCursorPosition (gST->ConOut, 3, ConHeight - 1);
-        TimeoutMessage = PoolPrint(L"%s  ", ParamText);
-        gST->ConOut->OutputString (gST->ConOut, TimeoutMessage);
-        FreePool(TimeoutMessage);
+        XStringW TimeoutMessage = SWPrintf("%ls  ", ParamText);
+        gST->ConOut->OutputString (gST->ConOut, TimeoutMessage.wc_str());
       }
 
       break;
@@ -1960,12 +1958,11 @@ VOID REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
   switch (TextC) {
     case TEXT_CORNER_REVISION:
       // Display Clover boot volume
-      if (SelfVolume->VolLabel && SelfVolume->VolLabel[0] != L'#') {
-   //     Text = PoolPrint(L"%s, booted from %s", gFirmwareRevision, SelfVolume->VolLabel);
-        Text = XStringW() + gFirmwareRevision + L", booted from "_XSW + SelfVolume->VolLabel;
+      if (SelfVolume->VolLabel.notEmpty()  &&  SelfVolume->VolLabel[0] != L'#') {
+        Text = SWPrintf("%ls, booted from %ls", gFirmwareRevision, SelfVolume->VolLabel.wc_str());
       }
       if (Text.isEmpty()) {
-        Text = XStringW() + gFirmwareRevision + L" "_XSW + SelfVolume->VolName;
+        Text = SWPrintf("%ls %ls", gFirmwareRevision, SelfVolume->VolName.wc_str());
       }
       break;
     case TEXT_CORNER_HELP:

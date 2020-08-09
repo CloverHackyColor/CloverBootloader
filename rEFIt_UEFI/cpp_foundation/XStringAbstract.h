@@ -732,7 +732,7 @@ class XStringAbstract : public __String<T, ThisXStringClass>
 //	ThisXStringClass& operator =(const O* S)	{ strcpy(S); return *this; }
 
 protected:
-	ThisXStringClass& takeValueFromLiteral (const T* s)
+	ThisXStringClass& takeValueFromLiteral(const T* s)
 	{
 		if ( m_allocatedSize > 0 ) panic("XStringAbstract::takeValueFromLiteral -> m_allocatedSize > 0");
 		m_data = (T*)s;
@@ -874,13 +874,21 @@ public:
 			// nothing to do
 		}
 	}
+
+  ThisXStringClass& stealValueFrom(T* S) {
+    if ( m_allocatedSize > 0 ) free((void*)m_data);
+    m_data = S;
+    m_allocatedSize = utf_size_of_utf_string(m_data, S) + 1;
+    return *((ThisXStringClass*)this);
+  }
+
 	/* takeValueFrom */
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S) { strcpy(S.s()); return *((ThisXStringClass*)this); }
-    template<typename O>
-    ThisXStringClass& takeValueFrom(const O* S) { strcpy(S); return *((ThisXStringClass*)this); }
-    template<typename O, enable_if(is_char(O))>
-    ThisXStringClass& takeValueFrom(const O C) { strcpy(C); return *((ThisXStringClass*)this); }
+  template<typename O>
+  ThisXStringClass& takeValueFrom(const O* S) { strcpy(S); return *((ThisXStringClass*)this); }
+  template<typename O, enable_if(is_char(O))>
+  ThisXStringClass& takeValueFrom(const O C) { strcpy(C); return *((ThisXStringClass*)this); }
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S, size_t len) { strncpy(S.data(0), len); return *((ThisXStringClass*)this);	}
 	template<typename O>

@@ -120,7 +120,7 @@ void qsort(void* Array, int Num, INTN Size,
 //caller is responsible for free memory
 NSVGrasterizer* nsvgCreateRasterizer()
 {
-  NSVGrasterizer* r = (NSVGrasterizer*)AllocateZeroPool(sizeof(NSVGrasterizer));
+  NSVGrasterizer* r = (NSVGrasterizer*)BllocateZeroPool(sizeof(NSVGrasterizer));
   if (r == NULL) return NULL;
   r->tessTol = 0.1f;  //0.25f;
   r->distTol = 0.01f;
@@ -159,7 +159,7 @@ static NSVGmemPage* nsvg__nextPage(NSVGrasterizer* r, NSVGmemPage* cur)
   }
 
   // Alloc new page
-  newp = (NSVGmemPage*)AllocateZeroPool(sizeof(NSVGmemPage));
+  newp = (NSVGmemPage*)BllocateZeroPool(sizeof(NSVGmemPage));
   if (newp == NULL) return NULL;
 
 
@@ -1750,7 +1750,7 @@ void nsvg__rasterizeClipPaths(
   // r->stencil = (unsigned char*)realloc(
   //                                      r->stencil, r->stencilSize * clipPathCount);
   if (oldSize == 0) {
-    r->stencil = (unsigned char*)AllocateZeroPool(r->stencilSize * clipPathCount);
+    r->stencil = (unsigned char*)BllocateZeroPool(r->stencilSize * clipPathCount);
     if (r->stencil == NULL) return;
   } else {
     r->stencil = (unsigned char*)ReallocatePool(oldSize, r->stencilSize * clipPathCount, r->stencil);

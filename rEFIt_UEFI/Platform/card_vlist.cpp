@@ -70,7 +70,7 @@ LIST_ENTRY gCardList = INITIALIZE_LIST_HEAD_VARIABLE (gCardList);
 VOID AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
 {
 	CARDLIST* new_card;		
-	new_card = (__typeof__(new_card))AllocateZeroPool(sizeof(CARDLIST));
+	new_card = (__typeof__(new_card))BllocateZeroPool(sizeof(CARDLIST));
 	if (new_card) {	
     new_card->Signature = CARDLIST_SIGNATURE;
 	  new_card->Id = Id;

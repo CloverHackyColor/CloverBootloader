@@ -36,6 +36,7 @@
 #include "entry_scan.h"
 #include "../refit/screen.h"
 #include "../refit/menu.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LEGACY 1
@@ -55,7 +56,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 {
   LEGACY_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
-  CONST CHAR16      *VolDesc;
+  XStringW           VolDesc;
   CHAR16             ShortcutLetter = 0;
 //  INTN               i;
   
@@ -68,7 +69,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 //      DBG("entry %lld\n", i);
       // Only want legacy
       if (MainEntry.getLEGACY_ENTRY()) {
-        if (StriCmp(MainEntry.getLEGACY_ENTRY()->DevicePathString, Volume->DevicePathString) == 0) {
+        if (StriCmp(MainEntry.getLEGACY_ENTRY()->DevicePathString.wc_str(), Volume->DevicePathString.wc_str()) == 0) {
           return  true;
         }
       }
@@ -80,9 +81,9 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
     while (Custom) {
       if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
           (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
-        if (Custom->Volume) {
-          if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
-              ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+        if (Custom->Volume.notEmpty()) {
+          if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
+              ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
             if (Custom->Type != 0) {
               if (Custom->Type == Volume->LegacyOS->Type) {
                 return  false;
@@ -110,10 +111,10 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
       LTitle = L"Legacy OS"_XSW;
   } else
     LTitle = LoaderTitle;
-  if (Volume->VolName != NULL)
+  if (Volume->VolName.notEmpty())
     VolDesc = Volume->VolName;
   else
-    VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
+    VolDesc.takeValueFrom((Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD");
 //DBG("VolDesc=%ls\n", VolDesc);
 
   // prepare the menu entry
@@ -165,10 +166,9 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   Entry->LoadOptions.setEmpty();
   Entry->LoadOptions.Add((Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB" : "HD"));
   // create the submenu
-//  SubScreen = (__typeof__(SubScreen))AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen = new REFIT_MENU_SCREEN();
 //  SubScreen->Title = L"Boot Options for "_XSW + LoaderTitle + L" on "_XSW + VolDesc;
-	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle.wc_str(), VolDesc);
+	SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", LoaderTitle.wc_str(), VolDesc.wc_str());
 
   SubScreen->TitleImage = Entry->Image;  //it is XIcon
   SubScreen->ID = SCREEN_BOOT;
@@ -296,13 +296,13 @@ VOID AddCustomLegacy(VOID)
       DBG("Custom legacy %llu skipped because it is hidden.\n", i);
       continue;
     }
-    if (Custom->Volume) {
-      DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume);
+    if (Custom->Volume.notEmpty()) {
+      DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume.wc_str());
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
       Volume = &Volumes[VolumeIndex];
       
-      DBG("   Checking volume \"%ls\" (%ls) ... ", Volume->VolName, Volume->DevicePathString);
+      DBG("   Checking volume \"%ls\" (%ls) ... ", Volume->VolName.wc_str(), Volume->DevicePathString.wc_str());
       
       // skip volume if its kind is configured as disabled
       if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0)
@@ -356,9 +356,9 @@ VOID AddCustomLegacy(VOID)
       }
       
       // Check for exact volume matches
-      if (Custom->Volume) {
-        if ((StrStr(Volume->DevicePathString, Custom->Volume) == NULL) &&
-            ((Volume->VolName == NULL) || (StrStr(Volume->VolName, Custom->Volume) == NULL))) {
+      if (Custom->Volume.notEmpty()) {
+        if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
+            ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
           DBG("skipped\n");
           continue;
         }

@@ -121,7 +121,7 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
 //extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
 //extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
-EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext_v)
+EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext_v)
 {
   EFI_STATUS  Status;
   UINT8*      infoDictBuffer = NULL;
@@ -131,8 +131,8 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN 
   UINTN       executableBufferLength = 0;
   CHAR8*      bundlePathBuffer = NULL;
   UINTN       bundlePathBufferLength = 0;
-  CHAR16      *TempName;
-  CHAR16      *Executable;
+  XStringW    TempName;
+  XStringW    Executable;
   TagPtr      dict = NULL;
   TagPtr      prop = NULL;
   BOOLEAN     NoContents = FALSE;
@@ -140,19 +140,17 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN 
   _BooterKextFileInfo *infoAddr = NULL;
   _DeviceTreeBuffer *kext = (_DeviceTreeBuffer *)kext_v;
 
-  TempName = PoolPrint(L"%s\\%s", FileName, L"Contents\\Info.plist");
+  TempName = SWPrintf("%ls\\%ls", FileName, L"Contents\\Info.plist");
   // snwprintf(TempName, 512, L"%s\\%s", FileName, "Contents\\Info.plist");
-  Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
-  FreePool(TempName);
+  Status = egLoadFile(RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
   if (EFI_ERROR(Status)) {
     //try to find a planar kext, without Contents
-    TempName = PoolPrint(L"%s\\%s", FileName, L"Info.plist");
+    TempName = SWPrintf("%ls\\%ls", FileName, L"Info.plist");
     //  snwprintf(TempName, 512, L"%s\\%s", FileName, "Info.plist");
     infoDictBufferLength = 0;
-    Status = egLoadFile(RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
-    FreePool(TempName);
+    Status = egLoadFile(RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
     if (EFI_ERROR(Status)) {
-      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName, strerror(Status));
+      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), strerror(Status));
       return EFI_NOT_FOUND;
     }
     NoContents = TRUE;
@@ -171,18 +169,16 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN 
     
   prop = GetProperty(dict,"CFBundleExecutable");
   if(prop!=0) {
-    Executable = PoolPrint(L"%a", prop->string);
+    Executable.takeValueFrom(prop->string);
     //   AsciiStrToUnicodeStrS(prop->string, Executable, 256);
     if (NoContents) {
-      TempName = PoolPrint(L"%s\\%s", FileName, Executable);
+      TempName = SWPrintf("%ls\\%ls", FileName, Executable.wc_str());
       //     snwprintf(TempName, 512, "%s\\%s", FileName, Executable);
     } else {
-      TempName = PoolPrint(L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
+      TempName = SWPrintf("%ls\\%ls\\%ls", FileName, L"Contents\\MacOS", Executable.wc_str());
       //    snwprintf(TempName, 512, L"%s\\%s\\%s", FileName, "Contents\\MacOS",Executable);
     }
-    FreePool(Executable);
-    Status = egLoadFile(RootDir, TempName, &executableFatBuffer, &executableBufferLength);
-    FreePool(TempName);
+    Status = egLoadFile(RootDir, TempName.wc_str(), &executableFatBuffer, &executableBufferLength);
     if (EFI_ERROR(Status)) {
       FreePool(infoDictBuffer);
       MsgLog("Failed to load extra kext (executable not found): %ls\n", FileName);
@@ -197,7 +193,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN 
     }
   }
   bundlePathBufferLength = StrLen(FileName) + 1;
-  bundlePathBuffer = (__typeof__(bundlePathBuffer))AllocateZeroPool(bundlePathBufferLength);
+  bundlePathBuffer = (__typeof__(bundlePathBuffer))BllocateZeroPool(bundlePathBufferLength);
   UnicodeStrToAsciiStrS(FileName, bundlePathBuffer, bundlePathBufferLength);
 
   kext->length = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength);
@@ -219,7 +215,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN 
   return EFI_SUCCESS;
 }
 
-EFI_STATUS LOADER_ENTRY::AddKext(IN EFI_FILE *RootDir, IN CHAR16 *FileName, IN cpu_type_t archCpuType)
+EFI_STATUS LOADER_ENTRY::AddKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType)
 {
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
@@ -269,11 +265,11 @@ UINT32 GetKextsSize()
   return kextsSize;
 }
 
-VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
+VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, IN CONST CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
 {
    REFIT_DIR_ITER          PlugInIter;
    EFI_FILE_INFO           *PlugInFile;
-   CHAR16                  *FileName;
+   XStringW                FileName;
    if ((RootDir == NULL) || (DirName == NULL)) {
       return;
    }
@@ -281,19 +277,18 @@ VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, IN CHAR16 *DirName, IN 
    while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
      if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
        continue;   // skip this
-     FileName = PoolPrint(L"%s\\%s", DirName, PlugInFile->FileName);
+     FileName = SWPrintf("%ls\\%ls", DirName, PlugInFile->FileName);
      //     snwprintf(FileName, 512, "%s\\%s", DirName, PlugInFile->FileName);
-     MsgLog("    %ls PlugIn kext: %ls\n", Force ? L"Force" : L"Extra", FileName);
-     AddKext( RootDir, FileName, archCpuType);
-     FreePool(FileName);
+     MsgLog("    %ls PlugIn kext: %ls\n", Force ? L"Force" : L"Extra", FileName.wc_str());
+     AddKext( RootDir, FileName.wc_str(), archCpuType);
    }
    DirIterClose(&PlugInIter);
 }
 
 VOID LOADER_ENTRY::AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t archCpuType)
 {
-  CHAR16                  *FileName;
-  CHAR16                  *PlugInName;
+  XStringW                 FileName;
+  XStringW                 PlugInName;
   SIDELOAD_KEXT           *CurrentKext;
   SIDELOAD_KEXT           *CurrentPlugInKext;
   EFI_STATUS              Status;
@@ -302,37 +297,35 @@ VOID LOADER_ENTRY::AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t
   CurrentKext = InjectKextList;
   while (CurrentKext) {
 //    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
-    if (StrCmp(CurrentKext->KextDirNameUnderOEMPath, Path) == 0) {
-      FileName = PoolPrint(L"%s\\%s", SrcDir, CurrentKext->FileName);
+    if (StrCmp(CurrentKext->KextDirNameUnderOEMPath.wc_str(), Path) == 0) {
+      FileName = SWPrintf("%ls\\%ls", SrcDir, CurrentKext->FileName.wc_str());
       //   snwprintf(FileName, 512, "%s\\%s", SrcDir, CurrentKext->FileName);
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
-        MsgLog("->Extra kext: %ls (v.%ls)\n", FileName, CurrentKext->Version);
-        Status = AddKext(SelfVolume->RootDir, FileName, archCpuType);
+        MsgLog("->Extra kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());
+        Status = AddKext(SelfVolume->RootDir, FileName.wc_str(), archCpuType);
         if(!EFI_ERROR(Status)) {
           // decide which plugins to inject
           CurrentPlugInKext = CurrentKext->PlugInList;
           while (CurrentPlugInKext) {
-            PlugInName = PoolPrint(L"%s\\%s\\%s", FileName, L"Contents\\PlugIns", CurrentPlugInKext->FileName);
+            PlugInName = SWPrintf("%ls\\%ls\\%ls", FileName.wc_str(), L"Contents\\PlugIns", CurrentPlugInKext->FileName.wc_str());
             //     snwprintf(PlugInName, 512, L"%s\\%s\\%s", FileName, "Contents\\PlugIns", CurrentPlugInKext->FileName);
             if (!(CurrentPlugInKext->MenuItem.BValue)) {
               // inject PlugIn require
-              MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
-              AddKext(SelfVolume->RootDir, PlugInName, archCpuType);
+              MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext->Version.wc_str());
+              AddKext(SelfVolume->RootDir, PlugInName.wc_str(), archCpuType);
             } else {
-              MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName, CurrentPlugInKext->Version);
+              MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext->Version.wc_str());
             }
-            FreePool(PlugInName);
             CurrentPlugInKext = CurrentPlugInKext->Next;
           } // end of plug-in kext injection
         }
       } else {
         // disable current kext injection
         if (!StriStr(SrcDir, L"Off")) {
-          MsgLog("Disabled kext: %ls (v.%ls)\n", FileName, CurrentKext->Version);
+          MsgLog("Disabled kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());
         }
       }
-      FreePool(FileName);
     }
     CurrentKext = CurrentKext->Next;
   } // end of kext injection
@@ -341,11 +334,11 @@ VOID LOADER_ENTRY::AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t
 
 EFI_STATUS LOADER_ENTRY::LoadKexts()
 {
-  CHAR16                  *SrcDir = NULL;
+  XStringW                SrcDir;
   REFIT_DIR_ITER          PlugInIter;
-  EFI_FILE_INFO           *PlugInFile;
-  CHAR16                  *FileName;
-  CHAR16                  *PlugIns;
+  EFI_FILE_INFO          *PlugInFile;
+  XStringW                FileName;
+  XStringW                PlugIns;
 //  CONST CHAR16                  *Arch = NULL;
 //  CONST CHAR16                  *Ptr = NULL;
 #if defined(MDE_CPU_X64)
@@ -358,9 +351,6 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
   UINTN                    extra_size;
   VOID                    *extra;
 
-  SIDELOAD_KEXT           *CurrentKext = NULL;
-  SIDELOAD_KEXT           *CurrentPlugInKext = NULL;
-  SIDELOAD_KEXT           *Next = NULL;
 
   // Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
 //  if (LoadOptions.notEmpty()) {
@@ -395,23 +385,20 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
           while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
             if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
               continue;   // skip this
-            FileName = PoolPrint(L"%s\\%s", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+            FileName = SWPrintf("%ls\\%ls", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
             //    snwprintf(FileName, 512, "%s\\%s", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
-            MsgLog("  Force kext: %ls\n", FileName);
-            AddKext( Volume->RootDir, FileName, archCpuType);
-            PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", FileName);
+            MsgLog("  Force kext: %ls\n", FileName.wc_str());
+            AddKext( Volume->RootDir, FileName.wc_str(), archCpuType);
+            PlugIns = SWPrintf("%ls\\Contents\\PlugIns", FileName.wc_str());
             //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", FileName);
-            LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
-            FreePool(FileName);
-            FreePool(PlugIns);
+            LoadPlugInKexts(Volume->RootDir, PlugIns.wc_str(), archCpuType, TRUE);
           }
           DirIterClose(&PlugInIter);
         } else {
           AddKext( Volume->RootDir, KernelAndKextPatches->ForceKexts[i], archCpuType);
-          PlugIns = PoolPrint(L"%s\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
+          PlugIns = SWPrintf("%ls\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
           //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
-          LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
-          FreePool(PlugIns);
+          LoadPlugInKexts(Volume->RootDir, PlugIns.wc_str(), archCpuType, TRUE);
         }
       }
     }
@@ -436,71 +423,65 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
-  if ((SrcDir = GetOtherKextsDir(TRUE)) != NULL) {
-    AddKexts(SrcDir, L"Other", archCpuType);
-    FreePool(SrcDir);
+  SrcDir = GetOtherKextsDir(TRUE);
+  if ( SrcDir.notEmpty() ) {
+    AddKexts(SrcDir.wc_str(), L"Other", archCpuType);
   } else {
     DBG("GetOtherKextsDir(TRUE) return NULL\n");
   }
     // slice: CLOVER/kexts/Off keep disabled kext which can be allowed
-  if ((SrcDir = GetOtherKextsDir(FALSE)) != NULL) {
-    AddKexts(SrcDir, L"Off", archCpuType);
-    FreePool(SrcDir);
+  SrcDir = GetOtherKextsDir(FALSE);
+  if ( SrcDir.notEmpty() ) {
+    AddKexts(SrcDir.wc_str(), L"Off", archCpuType);
   } else {
     DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
   // Add kext from 10
   {
-    CHAR16 *OSAllVersionKextsDir;
-    CHAR16 *OSShortVersionKextsDir;
-    CHAR16 *OSVersionKextsDirName;
-    CHAR16 *DirName;
-    CHAR16 *DirPath;
-    OSAllVersionKextsDir = PoolPrint(L"%s\\kexts\\10", OEMPath);
+    XStringW OSAllVersionKextsDir;
+    XStringW OSShortVersionKextsDir;
+    XStringW OSVersionKextsDirName;
+    XStringW DirName;
+    XStringW DirPath;
+    OSAllVersionKextsDir = SWPrintf("%ls\\kexts\\10", OEMPath.wc_str());
     // snwprintf(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), "%s\\kexts\\10", OEMPath);
-    AddKexts(OSAllVersionKextsDir, L"10", archCpuType);
-    FreePool(OSAllVersionKextsDir);
+    AddKexts(OSAllVersionKextsDir.wc_str(), L"10", archCpuType);
 
     if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = PoolPrint(L"10_install");
+      DirName = SWPrintf("10_install");
       // snwprintf(DirName, sizeof(DirName), "10_install");
     } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = PoolPrint(L"10_recovery");
+      DirName = SWPrintf("10_recovery");
       // snwprintf(DirName, sizeof(DirName), "10_recovery");
     } else {
-      DirName = PoolPrint(L"10_normal");
+      DirName = SWPrintf("10_normal");
       // snwprintf(DirName, sizeof(DirName), "10_normal");
     }
-    DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
+    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
-    AddKexts( DirPath, DirName, archCpuType);
-    FreePool(DirPath);
-    FreePool(DirName);
+    AddKexts(DirPath.wc_str(), DirName.wc_str(), archCpuType);
 
 
     // Add kext from 10.{version}
 
-    OSShortVersionKextsDir = PoolPrint(L"%s\\kexts\\%s", OEMPath, UniShortOSVersion);
+    OSShortVersionKextsDir = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), UniShortOSVersion);
     // snwprintf(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), "%s\\kexts\\%s", OEMPath, UniShortOSVersion);
-    AddKexts( OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
-    FreePool(OSShortVersionKextsDir);
+    AddKexts( OSShortVersionKextsDir.wc_str(), UniShortOSVersion, archCpuType);
 
     if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = PoolPrint(L"%s_install", UniShortOSVersion);
+      DirName = SWPrintf("%ls_install", UniShortOSVersion);
       // snwprintf(DirName, sizeof(DirName), "%s_install", UniShortOSVersion);
     } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = PoolPrint(L"%s_recovery", UniShortOSVersion);
+      DirName = SWPrintf("%ls_recovery", UniShortOSVersion);
       // snwprintf(DirName, sizeof(DirName), "%s_recovery", UniShortOSVersion);
     } else {
-      DirName = PoolPrint(L"%s_normal", UniShortOSVersion);
+      DirName = SWPrintf("%ls_normal", UniShortOSVersion);
       // snwprintf(DirName, sizeof(DirName), "%s_normal", UniShortOSVersion);
     }
-    DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
+    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
-    AddKexts( DirPath, DirName, archCpuType);
-    FreePool(DirPath);
-    FreePool(DirName);
+    AddKexts(DirPath.wc_str(), DirName.wc_str(), archCpuType);
 
 
     // Add kext from :
@@ -508,44 +489,40 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     // 10.{version}.{minor version} if minor version is > 0
 
     if ( AsciiStrCmp(ShortOSVersion, OSVersion) == 0 ) {
-      OSVersionKextsDirName = PoolPrint(L"%a.0", OSVersion);
+      OSVersionKextsDirName = SWPrintf("%s.0", OSVersion);
       // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a.0", OSVersion);
     } else {
-      OSVersionKextsDirName = PoolPrint(L"%a", OSVersion);
+      OSVersionKextsDirName = SWPrintf("%s", OSVersion);
       // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a", OSVersion);
     }
 
-    DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
+    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), OSVersionKextsDirName.wc_str());
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
-    AddKexts( DirPath, OSVersionKextsDirName, archCpuType);
-    FreePool(DirPath);
+    AddKexts(DirPath.wc_str(), OSVersionKextsDirName.wc_str(), archCpuType);
 
     if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = PoolPrint(L"%s_install", OSVersionKextsDirName);
+      DirName = SWPrintf("%ls_install", OSVersionKextsDirName.wc_str());
       // snwprintf(DirName, sizeof(DirName), "%s_install", OSVersionKextsDirName);
     } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = PoolPrint(L"%s_recovery", OSVersionKextsDirName);
+      DirName = SWPrintf("%ls_recovery", OSVersionKextsDirName.wc_str());
       // snwprintf(DirName, sizeof(DirName), "%s_recovery", OSVersionKextsDirName);
     } else {
-      DirName = PoolPrint(L"%s_normal", OSVersionKextsDirName);
+      DirName = SWPrintf("%ls_normal", OSVersionKextsDirName.wc_str());
       // snwprintf(DirName, sizeof(DirName), "%s_normal", OSVersionKextsDirName);
     }
-    DirPath = PoolPrint(L"%s\\kexts\\%s", OEMPath, DirName);
+    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
     // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
-    AddKexts( DirPath, DirName, archCpuType);
-    FreePool(DirPath);
-    FreePool(DirName);
-    FreePool(OSVersionKextsDirName);
+    AddKexts(DirPath.wc_str(), DirName.wc_str(), archCpuType);
   }
 
 
   // reserve space in the device tree
   if (GetKextCount() > 0) {
     mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
-    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
+    mm_extra = (__typeof__(mm_extra))BllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
     /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
     extra_size = GetKextsSize();
-    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+    extra = (__typeof__(extra))BllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
     /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE));
     // MsgLog("count: %d    \n", GetKextCount());
     // MsgLog("mm_extra_size: %d    \n", mm_extra_size);
@@ -556,24 +533,29 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     FreePool(extra);
   }
 
-  //No more InjectKextList needed. Will free the list
-  while (InjectKextList) {
-    CurrentKext = InjectKextList->Next;
-    CurrentPlugInKext = InjectKextList->PlugInList;
-    while (CurrentPlugInKext) {
-      Next = CurrentPlugInKext->Next;
-      FreePool(CurrentPlugInKext->FileName);
-      FreePool(CurrentPlugInKext->KextDirNameUnderOEMPath);
-      FreePool(CurrentPlugInKext->Version);
-      FreePool(CurrentPlugInKext);
-      CurrentPlugInKext = Next;
-    }
-    FreePool(InjectKextList->FileName);
-    FreePool(InjectKextList->KextDirNameUnderOEMPath);
-    FreePool(InjectKextList->Version);
-    FreePool(InjectKextList);
-    InjectKextList = CurrentKext;
-  }
+//  SIDELOAD_KEXT           *CurrentKext = NULL;
+//  SIDELOAD_KEXT           *CurrentPlugInKext = NULL;
+//  SIDELOAD_KEXT           *Next = NULL;
+//  //No more InjectKextList needed. Will free the list
+//  while (InjectKextList) {
+//    CurrentKext = InjectKextList->Next;
+//    CurrentPlugInKext = InjectKextList->PlugInList;
+//    while (CurrentPlugInKext) {
+//      Next = CurrentPlugInKext->Next;
+//      FreePool(CurrentPlugInKext->FileName);
+//      FreePool(CurrentPlugInKext->KextDirNameUnderOEMPath);
+//      FreePool(CurrentPlugInKext->Version);
+//      FreePool(CurrentPlugInKext);
+//      CurrentPlugInKext = Next;
+//    }
+//    FreePool(InjectKextList->FileName);
+//    FreePool(InjectKextList->KextDirNameUnderOEMPath);
+//    FreePool(InjectKextList->Version);
+//    FreePool(InjectKextList);
+//    InjectKextList = CurrentKext;
+//  }
+  delete InjectKextList;
+  InjectKextList = NULL;
   return EFI_SUCCESS;
 }
 

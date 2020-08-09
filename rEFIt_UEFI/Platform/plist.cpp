@@ -99,7 +99,7 @@ XMLDecode(CHAR8* src)
   len = AsciiStrLen(src);
 
 #if 0
-  out = (__typeof__(out))AllocateZeroPool(len+1);
+  out = (__typeof__(out))BllocateZeroPool(len+1);
   if (!out)
     return 0;
 #else // unsafe
@@ -213,7 +213,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     return EFI_INVALID_PARAMETER;
   }
 
-  configBuffer = (__typeof__(configBuffer))AllocateZeroPool(bufferSize+1);
+  configBuffer = (__typeof__(configBuffer))BllocateZeroPool(bufferSize+1);
   if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -932,7 +932,7 @@ TagPtr NewTag( void )
   TagPtr  tag;
 
   if (gTagsFree == NULL) {
-    tag = (TagPtr)AllocateZeroPool(TAGCACHESIZE * sizeof(TagStruct));
+    tag = (TagPtr)BllocateZeroPool(TAGCACHESIZE * sizeof(TagStruct));
     if (tag == NULL) {
       return NULL;
     }
@@ -1002,7 +1002,7 @@ CHAR8* NewSymbol(CHAR8* tmpString)
   // Add the new symbol.
   if (symbol == NULL) {
     len = AsciiStrLen(tmpString);
-    symbol = (SymbolPtr)AllocateZeroPool(sizeof(Symbol) + len + 1);
+    symbol = (SymbolPtr)BllocateZeroPool(sizeof(Symbol) + len + 1);
     if (symbol == NULL)  {
       return NULL;
     }

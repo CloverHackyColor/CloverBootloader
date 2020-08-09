@@ -397,7 +397,7 @@ AddToBootOrder (
   //
   // Make new order buffer with space for our option
   //
-  BootOrderNew = (__typeof__(BootOrderNew))AllocateZeroPool((BootOrderLen + 1) * sizeof(UINT16));
+  BootOrderNew = (__typeof__(BootOrderNew))BllocateZeroPool((BootOrderLen + 1) * sizeof(UINT16));
   if (BootOrderNew == NULL) {
     DBG("AddToBootOrder: EFI_OUT_OF_RESOURCES\n");
 	if (BootOrder) {
@@ -529,16 +529,12 @@ PrintBootOption (
     )
 {
     UINTN               VarSizeTmp;
-    CHAR16              *FPStr;
-    
     
 	DBG("%2llu) Boot%04hX: %ls, Attr: 0x%X\n",
         Index, BootOption->BootNum, BootOption->Description, BootOption->Attributes);
-    FPStr = FileDevicePathToStr(BootOption->FilePathList);
-    DBG("    %ls\n", FPStr);
-    FreePool(FPStr);
+  DBG("    %ls\n", FileDevicePathToXStringW(BootOption->FilePathList).wc_str());
     
-    VarSizeTmp = sizeof(BootOption->Attributes)
+  VarSizeTmp = sizeof(BootOption->Attributes)
                         + sizeof(BootOption->FilePathListLength)
                         + BootOption->DescriptionSize
                         + BootOption->FilePathListLength
@@ -651,7 +647,7 @@ CompileBootOption (
                                 + BootOption->DescriptionSize 
                                 + BootOption->FilePathListLength
                                 + BootOption->OptionalDataSize;
-    BootOption->Variable = (__typeof__(BootOption->Variable))AllocateZeroPool(BootOption->VariableSize);
+    BootOption->Variable = (__typeof__(BootOption->Variable))BllocateZeroPool(BootOption->VariableSize);
     if (BootOption->Variable == NULL) {
         DBG("CompileBootOption: EFI_OUT_OF_RESOURCES\n");
         return EFI_OUT_OF_RESOURCES;
@@ -778,14 +774,14 @@ FindBootOptionForFile (
     return EFI_OUT_OF_RESOURCES;
   }
   SearchedDevicePathSize[0] = GetDevicePathSize (SearchedDevicePath[0]);
-	DBG(" Searching for: %ls (Len: %llu)\n", FileDevicePathToStr(SearchedDevicePath[0]), SearchedDevicePathSize[0]);
+	DBG(" Searching for: %ls (Len: %llu)\n", FileDevicePathToXStringW(SearchedDevicePath[0]).wc_str(), SearchedDevicePathSize[0]);
 
   Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, TRUE, &SearchedDevicePath[1]);
   if (EFI_ERROR(Status)) {
     return EFI_OUT_OF_RESOURCES;
   }
   SearchedDevicePathSize[1] = GetDevicePathSize (SearchedDevicePath[1]);
-	DBG(" and for: %ls (Len: %llu)\n", FileDevicePathToStr(SearchedDevicePath[1]), SearchedDevicePathSize[1]);
+	DBG(" and for: %ls (Len: %llu)\n", FileDevicePathToXStringW(SearchedDevicePath[1]).wc_str(), SearchedDevicePathSize[1]);
 
   //
   // Iterate over all BootXXXX vars (actually, only ones that are in BootOrder list)
@@ -937,7 +933,7 @@ AddBootOption (
 
 
   DBG("AddBootOption: %ls\n", BootOption->Description);
-  DBG(" FilePath: %ls\n", FileDevicePathToStr(BootOption->FilePathList));
+  DBG(" FilePath: %ls\n", FileDevicePathToXStringW(BootOption->FilePathList).wc_str());
 	DBG(" BootIndex: %llu\n", BootIndex);
 
   //

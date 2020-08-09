@@ -484,7 +484,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   if (!p) {
     return 0;
   }
-  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
+  NSVGtext* text = (NSVGtext*)BllocateZeroPool(sizeof(NSVGtext));
   if (!text) {
     return 0;
   }

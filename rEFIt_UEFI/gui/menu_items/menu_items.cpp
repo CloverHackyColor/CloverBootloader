@@ -49,12 +49,12 @@ REFIT_MENU_ENTRY_CLOVER* REFIT_MENU_ENTRY_CLOVER::getPartiallyDuplicatedEntry() 
 {
 	REFIT_MENU_ENTRY_CLOVER* DuplicateEntry = new REFIT_MENU_ENTRY_CLOVER();
 
-    DuplicateEntry->AtClick      = ActionEnter;
-    DuplicateEntry->Volume          = Volume;
-    DuplicateEntry->DevicePathString= EfiStrDuplicate(DevicePathString);
-    DuplicateEntry->LoadOptions     = LoadOptions;
-    DuplicateEntry->LoaderPath      = LoaderPath;
-	DuplicateEntry->VolName         = EfiStrDuplicate(VolName);
+  DuplicateEntry->AtClick      = ActionEnter;
+  DuplicateEntry->Volume          = Volume;
+  DuplicateEntry->DevicePathString= DevicePathString;
+  DuplicateEntry->LoadOptions     = LoadOptions;
+  DuplicateEntry->LoaderPath      = LoaderPath;
+	DuplicateEntry->VolName         = VolName;
 	DuplicateEntry->DevicePath      = DevicePath;
 	DuplicateEntry->Flags           = Flags;
 	return DuplicateEntry;
@@ -64,12 +64,12 @@ LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
 {
 	LOADER_ENTRY* DuplicateEntry = new LOADER_ENTRY();
 
-    DuplicateEntry->AtClick      = ActionEnter;
-    DuplicateEntry->Volume          = Volume;
-    DuplicateEntry->DevicePathString= EfiStrDuplicate(DevicePathString);
-    DuplicateEntry->LoadOptions     = LoadOptions;
-    DuplicateEntry->LoaderPath      = LoaderPath;
-	DuplicateEntry->VolName         = EfiStrDuplicate(VolName);
+  DuplicateEntry->AtClick      = ActionEnter;
+  DuplicateEntry->Volume          = Volume;
+  DuplicateEntry->DevicePathString= DevicePathString;
+  DuplicateEntry->LoadOptions     = LoadOptions;
+  DuplicateEntry->LoaderPath      = LoaderPath;
+	DuplicateEntry->VolName         = VolName;
 	DuplicateEntry->DevicePath      = DevicePath;
 	DuplicateEntry->Flags           = Flags;
 	DuplicateEntry->LoaderType      = LoaderType;

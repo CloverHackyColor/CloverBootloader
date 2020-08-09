@@ -185,7 +185,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
  //     DBG("not found wave data\n");
       goto DONE_ERROR;
     }
-//    TempData = (__typeof__(TempData))AllocateZeroPool(Len * sizeof(INT16));
+//    TempData = (__typeof__(TempData))BllocateZeroPool(Len * sizeof(INT16));
     TempData = (__typeof__(TempData))AllocateAlignedPages(EFI_SIZE_TO_PAGES(Len + 4095), 128);
     Tmp = *(Ptr++);
     for (Ind = 0; Ind < WaveData.SamplesLength / 2 - 1; Ind++) {
@@ -256,7 +256,6 @@ GetStoredOutput()
   UINTN h;
 
   // Device Path.
-  CHAR16 *StoredDevicePathStr = NULL;
   EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
   UINT8 *StoredDevicePath = NULL; //it is EFI_DEVICE_PATH_PROTOCOL*
   UINTN StoredDevicePathSize = 0;
@@ -293,12 +292,10 @@ GetStoredOutput()
 
   //we have to convert str->data if happen
   if ((StoredDevicePath[0] != 2) && (StoredDevicePath[1] != 1)) {
-    StoredDevicePathStr = PoolPrint(L"%s", (CHAR16*)StoredDevicePath);
+    XStringW StoredDevicePathStr = SWPrintf("%ls", (CHAR16*)StoredDevicePath);
     FreePool(StoredDevicePath);
-    DBG("stored device=%ls\n", StoredDevicePathStr);
-    StoredDevicePath = (UINT8*)ConvertTextToDevicePath((CHAR16*)StoredDevicePathStr);
-    FreePool(StoredDevicePathStr);
-    StoredDevicePathStr = NULL;
+    DBG("stored device=%ls\n", StoredDevicePathStr.wc_str());
+    StoredDevicePath = (UINT8*)ConvertTextToDevicePath(StoredDevicePathStr.wc_str());
     StoredDevicePathSize = GetDevicePathSize((EFI_DEVICE_PATH_PROTOCOL *)StoredDevicePath);
   }
 

@@ -1431,12 +1431,16 @@ SimpleString teststartWith_(const InitialValue& initialValue)
 					 );
 //initia__String.startWith(subStr);
 
-		subStr = initia__String.subString(0, count-1) + ((char32_t)(initialValue.utf32[count-1]+1));
-		expectedResult = false;
-		CHECK_RESULT(initia__String.startWith(subStr) == expectedResult,
-					 ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
-					 ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
-					 );
+    if ( count > 0 )
+    {
+      char32_t c32 = initialValue.utf32[count-1]+1;
+      subStr = initia__String.subString(0, count-1) + c32;
+      expectedResult = false;
+      CHECK_RESULT(initia__String.startWith(subStr) == expectedResult,
+             ssprintf("\"%s\".startWith(\"%s\") == %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult),
+             ssprintf("\"%s\".startWith(\"%s\") != %d", SimpleString(initia__String.s()).c_str(), SimpleString(subStr.s()).c_str(), expectedResult)
+             );
+    }
 //subStr = initia__String.subString(0, count-1);
 //subStr = subStr + ((char32_t)(initialValue.utf32[count-1]+1));
 //initia__String.startWith(subStr);
@@ -1557,6 +1561,24 @@ int XString_tests()
 //testCompare(XString, utf8, utf16);
 //testindexOf_<XString>(testStringMultiCoded4CaseArray[0].utf8);
 //testTakeValueFrom_<XString16>(testStringMultiCodedArray[0].utf16, testStringMultiCodedArray[0].utf16);
+
+  {
+    char* p = (char*)malloc(11);
+    strcpy(p, "0123456789");
+    XString8 t8;
+    t8.stealValueFrom(p);
+    char* p2 = (char*)malloc(11);
+    strcpy(p2, "9876543210");
+    t8.stealValueFrom(p2);
+  }
+  {
+    char16_t* p16 = (char16_t*)malloc(11*sizeof(char16_t));
+    memcpy((char*)p16, (char*)u"0123456789", 11*sizeof(char16_t));
+    XString16 t16;
+    t16.stealValueFrom(p16);
+  }
+
+
 
 	TEST_ALL_CLASSES(testDefaultCtor, __TEST0);
 	TEST_ALL_CLASSES(testEmpty, __TEST0);

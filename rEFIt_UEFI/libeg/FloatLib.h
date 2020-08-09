@@ -57,6 +57,6 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
 VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size,
                INTN (*compare)(CONST VOID* a, CONST VOID* b));
 #endif
-//CHAR16* PoolPrintFloat(float X);
+
 
 #endif /* FloatLib_h */

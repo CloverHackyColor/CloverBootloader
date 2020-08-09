@@ -31,7 +31,7 @@ Headers collection for procedures
 #include "Settings.h"
 
 #ifndef CLOVERAPPLICATION
-#include "../refit/IO.h"
+#include "../Platform/Utils.h"
 #endif
 
 
@@ -41,5 +41,9 @@ Headers collection for procedures
 #define MsgLog(...)  DebugLog(DEBUG_ALL, __VA_ARGS__)
 #endif
 
+
+
+// Jief : temporary rename
+#define BllocateZeroPool AllocateZeroPool
 
 #endif

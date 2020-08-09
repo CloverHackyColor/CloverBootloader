@@ -48,7 +48,7 @@ typedef struct {
 } option_rom_pci_header_t;
 
 
-CHAR8  *get_pci_dev_path(pci_dt_t *pci_dt);
+XString8 get_pci_dev_path(pci_dt_t *pci_dt);
 UINT32 pci_config_read32(pci_dt_t *pci_dt, UINT8 reg);
 extern pci_dt_t* nvdevice;
 VOID* PCIReadRom(pci_dt_t* device);

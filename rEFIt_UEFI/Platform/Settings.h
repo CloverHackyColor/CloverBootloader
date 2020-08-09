@@ -78,15 +78,20 @@ struct ACPI_NAME_LIST {
 	CHAR8          *Name;
 };
 
-typedef struct ACPI_DROP_TABLE ACPI_DROP_TABLE;
-struct ACPI_DROP_TABLE
+class ACPI_DROP_TABLE
 {
+public:
   ACPI_DROP_TABLE *Next;
   UINT32          Signature;
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem;
   BOOLEAN         OtherOS;
+
+  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(0) {}
+  ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = delete; // Can be defined if needed
+  const ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = delete; // Can be defined if needed
+  ~ACPI_DROP_TABLE() {}
 };
 
 typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
@@ -95,15 +100,15 @@ struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY     *SubEntries;
   XIcon                  Image;
   XIcon                  DriveImage;
-  CONST CHAR16            *ImagePath;
-  CONST CHAR16            *DriveImagePath;
-  CONST CHAR16            *Volume;
-  XStringW                Path;
-  XStringArray            LoadOptions;
+  XStringW               ImagePath;
+  XStringW               DriveImagePath;
+  XStringW               Volume;
+  XStringW               Path;
+  XStringArray           LoadOptions;
 
   XStringW FullTitle;
   XStringW Title;
-  CONST CHAR16            *Settings;
+  XStringW Settings;
   CHAR16                  Hotkey;
   BOOLEAN                 CommonSettings;
   UINT8                   Flags;
@@ -125,35 +130,49 @@ struct CUSTOM_LOADER_ENTRY {
 
 };
 
-typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
-struct CUSTOM_LEGACY_ENTRY {
-  CUSTOM_LEGACY_ENTRY   *Next;
+class CUSTOM_LEGACY_ENTRY
+{
+public:
+  CUSTOM_LEGACY_ENTRY* Next;
   XIcon                Image;
   XIcon                DriveImage;
-  CONST CHAR16          *ImagePath;
-  CONST CHAR16          *DriveImagePath;
-  CONST CHAR16          *Volume;
-  XStringW              FullTitle;
-  XStringW              Title;
-  CHAR16              Hotkey;
-  UINT8               Flags;
-  UINT8               Type;
-  UINT8               VolumeType;
+  XStringW             ImagePath;
+  XStringW             DriveImagePath;
+  XStringW             Volume;
+  XStringW             FullTitle;
+  XStringW             Title;
+  CHAR16               Hotkey;
+  UINT8                Flags;
+  UINT8                Type;
+  UINT8                VolumeType;
+
+  CUSTOM_LEGACY_ENTRY() : Next(0), Hotkey(0), Flags(0), Type(0), VolumeType(0) { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
+  CUSTOM_LEGACY_ENTRY& operator=(const CUSTOM_LEGACY_ENTRY&) = delete;
 };
 
-typedef struct CUSTOM_TOOL_ENTRY CUSTOM_TOOL_ENTRY;
-struct CUSTOM_TOOL_ENTRY {
+class CUSTOM_TOOL_ENTRY
+{
+public:
   CUSTOM_TOOL_ENTRY *Next;
-  XIcon            Image;
-  CHAR16            *ImagePath;
-  CHAR16            *Volume;
-  XStringW          Path;
-  XStringArray      LoadOptions;
-  XStringW          FullTitle;
-  XStringW          Title;
-  CHAR16            Hotkey;
-  UINT8             Flags;
-  UINT8             VolumeType;
+  XIcon              Image;
+  XStringW           ImagePath;
+  XStringW           Volume;
+  XStringW           Path;
+  XStringArray       LoadOptions;
+  XStringW           FullTitle;
+  XStringW           Title;
+  CHAR16             Hotkey;
+  UINT8              Flags;
+  UINT8              VolumeType;
+
+  CUSTOM_TOOL_ENTRY() : Next(0), Hotkey(0), Flags(0), VolumeType(0) { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
+  CUSTOM_TOOL_ENTRY& operator=(const CUSTOM_TOOL_ENTRY&) = delete;
 };
 
 typedef enum {
@@ -170,8 +189,9 @@ typedef enum {
   kTagTypeFloat
 } TAG_TYPE;
 
-typedef struct DEV_PROPERTY DEV_PROPERTY; //yyyy
-struct DEV_PROPERTY {
+class DEV_PROPERTY
+{
+public:
   UINT32        Device;
   EFI_DEVICE_PATH_PROTOCOL* DevicePath;
   CHAR8         *Key;
@@ -182,6 +202,12 @@ struct DEV_PROPERTY {
   CHAR8         *Label;
   INPUT_ITEM    MenuItem;
   TAG_TYPE      ValueType;
+
+  DEV_PROPERTY() : Device(0), DevicePath(0), Key(0), Value(0), ValueLen(0), Next(0), Child(0), Label(0), ValueType(kTagTypeNone) { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  DEV_PROPERTY(const DEV_PROPERTY&) = delete;
+  DEV_PROPERTY& operator=(const DEV_PROPERTY&) = delete;
 };
 
 typedef struct {
@@ -530,7 +556,7 @@ typedef struct {
 
   DEV_PROPERTY            *ArbProperties;
   
-  UINTN QuirksMask;
+  UINT32 QuirksMask;
   UINTN MaxSlide;
 
 } SETTINGS_DATA;
@@ -581,23 +607,34 @@ typedef struct {
 } SLOT_DEVICE;
 
 // ACPI/PATCHED/AML
-typedef struct ACPI_PATCHED_AML ACPI_PATCHED_AML;
-struct ACPI_PATCHED_AML
+class ACPI_PATCHED_AML
 {
+public:
   ACPI_PATCHED_AML  *Next;
   CHAR16            *FileName;
   INPUT_ITEM        MenuItem;
+
+  ACPI_PATCHED_AML() : Next(0), FileName(0) {};
+  ACPI_PATCHED_AML(const ACPI_PATCHED_AML& other) = delete; // Can be defined if needed
+  const ACPI_PATCHED_AML& operator = ( const ACPI_PATCHED_AML & ) = delete; // Can be defined if needed
+  ~ACPI_PATCHED_AML() { }
 };
 
 // syscl - Side load kext
-typedef struct SIDELOAD_KEXT SIDELOAD_KEXT;
-struct SIDELOAD_KEXT {
+class SIDELOAD_KEXT
+{
+public:
   SIDELOAD_KEXT  *Next;
   SIDELOAD_KEXT  *PlugInList;
-  CHAR16         *FileName;
-  CHAR16         *KextDirNameUnderOEMPath;
-  CHAR16         *Version;
+  XStringW       FileName;
+  XStringW       KextDirNameUnderOEMPath;
+  XStringW       Version;
   INPUT_ITEM     MenuItem;
+  
+  SIDELOAD_KEXT() : Next(0), PlugInList(0) {};
+  SIDELOAD_KEXT(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
+  const SIDELOAD_KEXT& operator = ( const SIDELOAD_KEXT & ) = delete; // Can be defined if needed
+  ~SIDELOAD_KEXT() { delete Next; delete PlugInList; }
 };
 
 typedef struct RT_VARIABLES RT_VARIABLES;
@@ -684,7 +721,9 @@ extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 // config module
 //
 
-typedef struct {
+class REFIT_CONFIG
+{
+public:
   INTN        Timeout;
   UINTN       DisableFlags; //to disable some volume types (optical, firewire etc)
   BOOLEAN     TextOnly;
@@ -698,8 +737,8 @@ typedef struct {
   BOOLEAN     RtcHibernateAware;
   BOOLEAN     HibernationFixup;
   BOOLEAN     SignatureFixup;
-  CHAR16      *Theme;
-  CHAR16      *ScreenResolution;
+  XStringW    Theme;
+  XStringW    ScreenResolution;
   INTN        ConsoleMode;
   BOOLEAN     CustomIcons;
   INTN        IconFormat;
@@ -708,7 +747,43 @@ typedef struct {
   BOOLEAN     ShowOptimus;
   INTN        Codepage;
   INTN        CodepageSize;
-} REFIT_CONFIG;
+
+  /*
+   * Defqult ctor :
+   *   -1,             // INTN        Timeout;
+   *   0,              // UINTN       DisableFlags;
+   *   FALSE,          // BOOLEAN     TextOnly;
+   *   TRUE,           // BOOLEAN     Quiet;
+   *   FALSE,          // BOOLEAN     LegacyFirst;
+   *   FALSE,          // BOOLEAN     NoLegacy;
+   *   FALSE,          // BOOLEAN     DebugLog;
+   *   FALSE,          // BOOLEAN     FastBoot;
+   *   FALSE,          // BOOLEAN     NeverHibernate;
+   *   FALSE,          // BOOLEAN     StrictHibernate;
+   *   FALSE,          // BOOLEAN     RtcHibernateAware;
+   *   FALSE,          // BOOLEAN     HibernationFixup;
+   *   FALSE,          // BOOLEAN     SignatureFixup;
+   *   L""_XSW,        // XStringW    Theme;
+   *   L""_XSW,        // XStringW    ScreenResolution;
+   *   0,              // INTN        ConsoleMode;
+   *   FALSE,          // BOOLEAN     CustomIcons;
+   *   ICON_FORMAT_DEF, // INTN       IconFormat;
+   *   FALSE,          // BOOLEAN     NoEarlyProgress;
+   *   0xFF,           // INT32       Timezone; / 0xFF - not set
+   *   FALSE,          // BOOLEAN     ShowOptimus;
+   *   0xC0,           // INTN        Codepage;
+   *   0xC0,           // INTN        CodepageSize; //extended latin
+};
+   *
+   */
+  REFIT_CONFIG() : Timeout(-1), DisableFlags(0), TextOnly(FALSE), Quiet(TRUE), LegacyFirst(FALSE), NoLegacy(FALSE), DebugLog(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
+                   RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
+                   ShowOptimus(FALSE), Codepage(0xC0), CodepageSize(0xC0) {};
+  REFIT_CONFIG(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
+  const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
+  ~REFIT_CONFIG() {  }
+
+} ;
 
 
 extern REFIT_CONFIG GlobalConfig;
@@ -782,10 +857,10 @@ InitTheme (
 //  EFI_TIME *Time
   );
 
-CHAR16*
+XStringW
 GetOtherKextsDir (BOOLEAN On);
 
-CHAR16*
+XStringW
 GetOSVersionKextsDir (
   CHAR8 *OSVersion
   );
@@ -798,7 +873,7 @@ InjectKextsFromDir (
 
 VOID
 ParseLoadOptions (
-  OUT  CHAR16 **Conf,
+  OUT  XStringW* ConfName,
   OUT  TagPtr *Dict
   );
 
@@ -846,9 +921,9 @@ InitKextList(VOID);
 
 EFI_STATUS
 LoadUserSettings (
-  IN  EFI_FILE *RootDir,
-      CONST CHAR16   *ConfName,
-      TagPtr   *dict
+    IN  EFI_FILE *RootDir,
+    const XStringW& ConfName,
+    TagPtr   *dict
   );
 
 VOID

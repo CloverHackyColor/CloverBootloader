@@ -671,7 +671,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
   // needed at least for laptops
   //fullBanks = (gDMI->MemoryModules == gDMI->CntMemorySlots);
 
-  spdbuf = (__typeof__(spdbuf))AllocateZeroPool(MAX_SPD_SIZE);
+  spdbuf = (__typeof__(spdbuf))BllocateZeroPool(MAX_SPD_SIZE);
 
   // Search MAX_RAM_SLOTS slots
   //==>

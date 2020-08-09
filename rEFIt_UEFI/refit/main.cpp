@@ -70,6 +70,7 @@
 #include "../Platform/BootOptions.h"
 #include "../Platform/boot.h"
 #include "../Platform/kext_inject.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MAIN 1
@@ -505,28 +506,28 @@ VOID LOADER_ENTRY::FilterBootPatches()
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
-  CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
+  CHAR16 *csrLog = (__typeof__(csrLog))BllocateZeroPool(SVALUE_MAX_SIZE);
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");
   if (csrCfg & CSR_ALLOW_UNRESTRICTED_FS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_FS"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_FS"));
   if (csrCfg & CSR_ALLOW_TASK_FOR_PID)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_TASK_FOR_PID"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_TASK_FOR_PID"));
   if (csrCfg & CSR_ALLOW_KERNEL_DEBUGGER)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_KERNEL_DEBUGGER"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_KERNEL_DEBUGGER"));
   if (csrCfg & CSR_ALLOW_APPLE_INTERNAL)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_APPLE_INTERNAL"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_APPLE_INTERNAL"));
   if (csrCfg & CSR_ALLOW_UNRESTRICTED_DTRACE)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_DTRACE"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_DTRACE"));
   if (csrCfg & CSR_ALLOW_UNRESTRICTED_NVRAM)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNRESTRICTED_NVRAM"));
   if (csrCfg & CSR_ALLOW_DEVICE_CONFIGURATION)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_DEVICE_CONFIGURATION"));
   if (csrCfg & CSR_ALLOW_ANY_RECOVERY_OS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_ANY_RECOVERY_OS"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_ANY_RECOVERY_OS"));
   if (csrCfg & CSR_ALLOW_UNAPPROVED_KEXTS)
-    StrCatS(csrLog, SVALUE_MAX_SIZE/2, PoolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNAPPROVED_KEXTS"));
+    StrCatS(csrLog, SVALUE_MAX_SIZE/2, P__oolPrint(L"%a%a", StrLen(csrLog) ? " | " : "", "CSR_ALLOW_UNAPPROVED_KEXTS"));
     
   if (StrLen(csrLog)) {
     DBG("CSR_CFG: %ls\n", csrLog);
@@ -577,11 +578,11 @@ VOID LOADER_ENTRY::StartLoader()
 
 //  DBG("StartLoader() start\n");
   DbgHeader("StartLoader");
-  if (Settings) {
-    DBG("  Settings: %ls\n", Settings);
+  if (Settings.notEmpty()) {
+    DBG("  Settings: %ls\n", Settings.wc_str());
     Status = LoadUserSettings(SelfRootDir, Settings, &dict);
     if (!EFI_ERROR(Status)) {
-      DBG(" - found custom settings for this entry: %ls\n", Settings);
+      DBG(" - found custom settings for this entry: %ls\n", Settings.wc_str());
       gBootChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
       if (EFI_ERROR(Status)) {
@@ -1192,7 +1193,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
         if (DriversArrSize == 0) {
           // new array
           DriversArrSize = 16;
-          DriversArr = (__typeof__(DriversArr))AllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
+          DriversArr = (__typeof__(DriversArr))BllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
         } else if (DriversArrNum + 1 == DriversArrSize) {
           // extend array
           DriversArr = (__typeof__(DriversArr))ReallocatePool(DriversArrSize, DriversArrSize + 16, DriversArr);
@@ -1619,8 +1620,8 @@ INTN FindDefaultEntry(VOID)
       }
 
       Volume = Entry.Volume;
-      if ((Volume->VolName == NULL || StrCmp(Volume->VolName, gSettings.DefaultVolume) != 0) &&
-          !StrStr(Volume->DevicePathString, gSettings.DefaultVolume)) {
+      if ((Volume->VolName.isEmpty() || StrCmp(Volume->VolName.wc_str(), gSettings.DefaultVolume) != 0) &&
+          !StrStr(Volume->DevicePathString.wc_str(), gSettings.DefaultVolume)) {
         continue;
       }
 
@@ -1629,7 +1630,7 @@ INTN FindDefaultEntry(VOID)
         continue;
       }
 
-		DBG(" - found entry %lld. '%ls', Volume '%ls', DevicePath '%ls'\n", Index, Entry.Title.s(), Volume->VolName, Entry.DevicePathString);
+		DBG(" - found entry %lld. '%ls', Volume '%ls', DevicePath '%ls'\n", Index, Entry.Title.s(), Volume->VolName.wc_str(), Entry.DevicePathString.wc_str());
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1734,44 +1735,42 @@ extern UINT8                           *gLanMmio[4];     // their MMIO regions
 extern UINT8                           gLanMac[4][6];    // their MAC addresses
 extern UINTN                           nLanPaths;        // number of LAN pathes
 
-BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, IN CHAR16 *path, CONST CHAR16 *ConfName)
+BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, const XStringW& path, const XStringW& ConfName)
 {
 	BOOLEAN res = FileExists(Root, path);
 	if ( res ) {
 	  CHAR16 ConfigPath[1024];
-		snwprintf(ConfigPath, sizeof(ConfigPath), "%ls\\%ls.plist", path, ConfName);
+		snwprintf(ConfigPath, sizeof(ConfigPath), "%ls\\%ls.plist", path.wc_str(), ConfName.wc_str());
 	  BOOLEAN res2 = FileExists(Root, ConfigPath);
 	  if ( res2 ) {
 	  	OEMPath = path;
-	  	DBG("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath);
+	  	DBG("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath.wc_str());
 	  	return 1;
 	  }else{
-	  	DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path, ConfName);
-	  	FreePool(path);
+	  	DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path.wc_str(), ConfName.wc_str());
 	  }
 	}else{
-		DBG("CheckOEMPathExists tried %ls. Dir not exists\n", path);
-		FreePool(path);
+		DBG("CheckOEMPathExists tried %ls. Dir not exists\n", path.wc_str());
 	}
 	return 0;
 }
 
-VOID SetOEMPath(CONST CHAR16 *ConfName)
+VOID SetOEMPath(const XStringW& ConfName)
   {
-    OEMPath = PoolPrint(L"%s", L"EFI\\CLOVER");
-    if (ConfName == NULL) {
-      DBG("set OEMPath (ConfName == NULL): %ls\n", OEMPath);
-    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
-    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
-    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
-    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a--%02x-%02x-%02x-%02x-%02x-%02x", gSettings.OEMProduct, gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
-    } else if (!gFirmwareClover && SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI", gSettings.OEMBoard), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMProduct), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
+    OEMPath.takeValueFrom("EFI\\CLOVER");
+    if ( ConfName.isEmpty() ) {
+      DBG("set OEMPath (ConfName == NULL): %ls\n", OEMPath.wc_str());
+    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
+    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
+    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
+    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
+    } else if (!gFirmwareClover && SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s\\UEFI", gSettings.OEMBoard), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMProduct), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMBoard), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
     } else {
-      DBG("set OEMPath by default: %ls\n", OEMPath);
+      DBG("set OEMPath by default: %ls\n", OEMPath.wc_str());
     }
   }
 
@@ -1813,7 +1812,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	//UINT64            TscDiv;
 	//UINT64            TscRemainder = 0;
 //  LOADER_ENTRY      *LoaderEntry;
-  CHAR16            *ConfName = NULL;
+  XStringW          ConfName;
   TagPtr            smbiosTags = NULL;
   TagPtr            UniteTag = NULL;
   BOOLEAN           UniteConfigs = FALSE;
@@ -1841,13 +1840,26 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   ConsoleInHandle = SystemTable->ConsoleInHandle;
   
+  {
+    EFI_LOADED_IMAGE* LoadedImage;
+    Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+    if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+
+#ifdef JIEF_DEBUG
+    gBS->Stall(1500000); // to give time to gdb to connect
+//  gBS->Stall(0500000); // to give time to gdb to connect
+//  PauseForKey(L"press\n");
+#endif
+  }
+  construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
+
 
   gRT->GetTime(&Now, NULL);
 
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   if (!gFirmwareRevision) {
-//    gFirmwareRevision = PoolPrint(L"%d", gST->FirmwareRevision);
+//    gFirmwareRevision = P__oolPrint(L"%d", gST->FirmwareRevision);
   }
   InitializeConsoleSim();
   InitBooterLog();
@@ -1872,14 +1884,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status))
     return Status;
 
-	DBG("Clover : Image base = 0x%llX\n", (uintptr_t)SelfLoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
-#ifdef JIEF_DEBUG
-//  gBS->Stall(1500000); // to give time to gdb to connect
-  gBS->Stall(0500000); // to give time to gdb to connect
-//  PauseForKey(L"press\n");
-#endif
-
-  construct_globals_objects(); // do this after SelfLoadedImage is initialized
 #ifdef JIEF_DEBUG
   all_tests();
 //  PauseForKey(L"press\n");
@@ -1958,23 +1962,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       GetBootFromOption();
     } else {
       ParseLoadOptions(&ConfName, &gConfigDict[1]);
-      if (ConfName) {
-        if (StrLen(ConfName) == 0) {
+        if (ConfName.isEmpty()) {
           gConfigDict[1] = NULL;
-          FreePool(ConfName);
-          ConfName = NULL;
         } else {
           SetOEMPath(ConfName);
           Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
           DBG("%ls\\%ls.plist%ls loaded with name from LoadOptions: %s\n",
-              OEMPath, ConfName, EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
+              OEMPath.wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
           if (EFI_ERROR(Status)) {
             gConfigDict[1] = NULL;
-            FreePool(ConfName);
-            ConfName = NULL;
           }
         }
-      }
     }
   }
   if (gConfigDict[1]) {
@@ -1987,15 +1985,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
   if (!gConfigDict[1] || UniteConfigs) {
-    SetOEMPath(L"config");
-    Status = LoadUserSettings(SelfRootDir, L"config", &gConfigDict[0]);
-      DBG("%ls\\config.plist%ls loaded: %s\n", OEMPath, EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
+    SetOEMPath(L"config"_XSW);
+    Status = LoadUserSettings(SelfRootDir, L"config"_XSW, &gConfigDict[0]);
+      DBG("%ls\\config.plist%ls loaded: %s\n", OEMPath.wc_str(), EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
   }
 	snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
-/*  gSettings.ConfigName = PoolPrint(L"%s%s%s", */
                                    gConfigDict[0] ? L"config": L"",
                                    (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
-                                   !gConfigDict[1] ? L"": (ConfName ? ConfName : L"Load Options"));
+                                   !gConfigDict[1] ? L"": (ConfName.notEmpty() ? ConfName.wc_str() : L"Load Options"));
   gSettings.MainConfigName = EfiStrDuplicate(gSettings.ConfigName);
 
   gSettings.PointerEnabled = TRUE;
@@ -2246,7 +2243,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    dropDSM = gSettings.DropOEM_DSM;   //if set by user
 //  }
   // Load any extra SMBIOS information
-  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios", &smbiosTags)) && (smbiosTags != NULL)) {
+  if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios"_XSW, &smbiosTags)) && (smbiosTags != NULL)) {
     TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
     if (dictPointer) {
       ParseSMBIOSSettings(dictPointer);
@@ -2628,8 +2625,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           }
       */
           if (  LoaderEntry->LoadOptions.contains("BO-ADD")  ) {
-            CHAR16 *Description;
-            CONST CHAR16 *VolName;
+            XStringW Description;
             CONST CHAR16 *LoaderName;
             INTN EntryIndex, NameSize, Name2Size;
             LOADER_ENTRY *Entry;
@@ -2648,11 +2644,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
               }
 
               Entry = (LOADER_ENTRY *)MainMenu.Entries[EntryIndex].getLOADER_ENTRY();
-              VolName = Entry->Volume->VolName;
-              if (VolName == NULL) {
-                VolName = L"";
+              XStringW& VolName = Entry->Volume->VolName;
+              if (VolName.isEmpty()) {
+                VolName = NullXStringW;
               }
-              NameSize = StrSize(VolName); //can't use StrSize with NULL! Stupid UEFI!!!
+              NameSize = VolName.sizeInBytes();
               Name2Size = 0;
               if (Entry->LoaderPath.notEmpty()) {
                 LoaderName = Basename(Entry->LoaderPath.wc_str());
@@ -2663,15 +2659,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                 Name2Size = StrSize(LoaderName);
               }
 
-              Description = PoolPrint(L"Clover start %s at %s", (LoaderName != NULL)?LoaderName:L"legacy", VolName);
+              Description = SWPrintf("Clover start %ls at %ls", (LoaderName != NULL)?LoaderName:L"legacy", VolName.wc_str());
               OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
-              OptionalData = (__typeof__(OptionalData))AllocateZeroPool(OptionalDataSize);
+              OptionalData = (__typeof__(OptionalData))BllocateZeroPool(OptionalDataSize);
               if (OptionalData == NULL) {
                 break;
               }
               CopyMem(OptionalData, "Clvr", 4); //signature = 0x72766c43
               CopyMem(OptionalData + 4, &NameSize, 2);
-              CopyMem(OptionalData + 6, VolName, NameSize);
+              CopyMem(OptionalData + 6, VolName.wc_str(), VolName.sizeInBytes());
               if (Name2Size != 0) {
                 CopyMem(OptionalData + 6 + NameSize, LoaderName, Name2Size);
               }
@@ -2680,7 +2676,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                     LoaderEntry->Volume->DeviceHandle,
                                     LoaderEntry->LoaderPath,
                                     TRUE,
-                                    Description,
+                                    Description.wc_str(),
                                     OptionalData,
                                     OptionalDataSize,
                                     EntryIndex,
@@ -2691,7 +2687,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                 Entry->BootNum = BootNum;
               }
               FreePool(OptionalData);
-              FreePool(Description);
             } //for (EntryIndex
 
 
