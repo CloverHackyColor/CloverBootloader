@@ -216,7 +216,7 @@ public:
   UINT32  IValue;
   //  UINT64  UValue;
   //  CHAR8*  AValue;
-  CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
+  XStringW SValue;
   UINTN   LineShift;
 
   INPUT_ITEM() : ItemType(BoolValue), Valid(0), BValue(0), Pad8(0), IValue(0), SValue(0), LineShift(0) {};
@@ -241,11 +241,18 @@ typedef struct {
   UINT32 Size;
 } MBR_PARTITION_INFO;
 
-typedef struct {
-  UINT8               Type;
-  CONST CHAR16       *IconName;
-  CONST CHAR16       *Name;
-} LEGACY_OS;
+class LEGACY_OS
+{
+public:
+  UINT8         Type;
+  XStringW      IconName;
+  XStringW      Name;
+
+  LEGACY_OS() : Type(0) {}
+  LEGACY_OS(const LEGACY_OS& other) = delete; // Can be defined if needed
+  const LEGACY_OS& operator = ( const LEGACY_OS & ) = delete; // Can be defined if needed
+  ~LEGACY_OS() {}
+} ;
 
 class REFIT_VOLUME {
 public:

@@ -500,15 +500,14 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
   UINTN         ind = 0;
-  UINTN         i = 0;
   UINTN         MenuExit = 0;
   //UINTN         LogSize;
   UINTN         Pos = (Entries[ScrollState.CurrentSelection]).Row;
   REFIT_MENU_ENTRY_ITEM_ABSTRACT& selectedEntry = *Entries[ScrollState.CurrentSelection].getREFIT_MENU_ITEM_IEM_ABSTRACT();
   INPUT_ITEM    *Item = selectedEntry.Item;
-  CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
+  XStringW      Backup = Item->SValue;
   UINTN         BackupPos, BackupShift;
-  CHAR16        *Buffer;
+//  XStringW      Buffer;
   //SCROLL_STATE  StateLine;
 
   /*
@@ -538,14 +537,14 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 #endif
 
 
-  if ((Item->ItemType != BoolValue) &&
-      (Item->ItemType != RadioSwitch) &&
-      (Item->ItemType != CheckBit)) {
-    // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
-    Item->SValue = (__typeof__(Item->SValue))ReallocatePool(StrSize(Item->SValue), SVALUE_MAX_SIZE, Item->SValue);
-  }
+//  if ((Item->ItemType != BoolValue) &&
+//      (Item->ItemType != RadioSwitch) &&
+//      (Item->ItemType != CheckBit)) {
+//    // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
+//    Item->SValue.dataSized(SVALUE_MAX_SIZE);
+//  }
 
-  Buffer = Item->SValue;
+//  Buffer = Item->SValue;
   BackupShift = Item->LineShift;
   BackupPos = Pos;
 
@@ -579,7 +578,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 
       switch (key.ScanCode) {
         case SCAN_RIGHT:
-          if (Pos + Item->LineShift < StrLen(Buffer)) {
+          if (Pos + Item->LineShift < Item->SValue.length()) {
             if (Pos < LineSize)
               Pos++;
             else
@@ -597,11 +596,11 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
           Item->LineShift=0;
           break;
         case SCAN_END:
-          if (StrLen(Buffer) < LineSize)
-            Pos = StrLen(Buffer);
+          if (Item->SValue.length() < LineSize)
+            Pos = Item->SValue.length();
           else {
             Pos = LineSize;
-            Item->LineShift = StrLen(Buffer) - LineSize;
+            Item->LineShift = Item->SValue.length() - LineSize;
           }
           break;
         case SCAN_ESC:
@@ -624,10 +623,11 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 
         case SCAN_DELETE:
           // forward delete
-          if (Pos + Item->LineShift < StrLen(Buffer)) {
-            for (i = Pos + Item->LineShift; i < StrLen(Buffer); i++) {
-               Buffer[i] = Buffer[i+1];
-            }
+          if (Pos + Item->LineShift < Item->SValue.length()) {
+            Item->SValue.deleteCharsAtPos(Pos + Item->LineShift);
+//            for (i = Pos + Item->LineShift; i < Item->SValue.length(); i++) {
+//               Buffer[i] = Buffer[i+1];
+//            }
             /*
             // Commented this out because it looks weird - Forward Delete should not
             // affect anything left of the cursor even if it's just to shift more of the
@@ -643,10 +643,11 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
 
       switch (key.UnicodeChar) {
         case CHAR_BACKSPACE:
-          if (Buffer[0] != CHAR_NULL && Pos != 0) {
-            for (i = Pos + Item->LineShift; i <= StrLen(Buffer); i++) {
-               Buffer[i-1] = Buffer[i];
-            }
+          if (Item->SValue[0] != CHAR_NULL && Pos != 0) {
+            Item->SValue.deleteCharsAtPos(Pos + Item->LineShift - 1);
+//            for (i = Pos + Item->LineShift; i <= Item->SValue.length(); i++) {
+//               Buffer[i-1] = Buffer[i];
+//            }
             Item->LineShift > 0 ? Item->LineShift-- : Pos--;
           }
 
@@ -661,11 +662,12 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
         default:
           if ((key.UnicodeChar >= 0x20) &&
               (key.UnicodeChar < 0x80)){
-            if (StrSize(Buffer) < SVALUE_MAX_SIZE) {
-              for (i = StrLen(Buffer)+1; i > Pos + Item->LineShift; i--) {
-                 Buffer[i] = Buffer[i-1];
-              }
-              Buffer[i] = key.UnicodeChar;
+            if ( Item->SValue.length() < SVALUE_MAX_SIZE) {
+              Item->SValue.insertAtPos(key.UnicodeChar, Pos + Item->LineShift);
+//              for (i = StrLen(Buffer)+1; i > Pos + Item->LineShift; i--) {
+//                 Buffer[i] = Buffer[i-1];
+//              }
+//              Buffer[i] = key.UnicodeChar;
               Pos < LineSize ? Pos++ : Item->LineShift++;
             }
           }
@@ -684,8 +686,8 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
       break;
 
     case MENU_EXIT_ESCAPE:
-      if (StrCmp(Item->SValue, Backup) != 0) {
-		  snwprintf(Item->SValue, SVALUE_MAX_SIZE, "%ls", Backup);
+      if ( !Item->SValue.equal(Backup) ) {
+        Item->SValue = Backup;
         if (Item->ItemType != BoolValue) {
           Item->LineShift = BackupShift;
           (Entries[ScrollState.CurrentSelection]).Row = BackupPos;
@@ -695,9 +697,8 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
       break;
   }
   Item->Valid = FALSE;
-  FreePool(Backup);
-  if (Item->SValue) {
-    MsgLog("EDITED: %ls\n", Item->SValue);
+  if (Item->SValue.notEmpty()) {
+    MsgLog("EDITED: %ls\n", Item->SValue.wc_str());
   }
   return 0;
 }
@@ -1087,7 +1088,7 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
   static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
   static UINTN MenuPosY = 0;
   //static CHAR16 **DisplayStrings;
-  CHAR16 ResultString[TITLE_MAX_LEN]; // assume a title max length of around 128
+  XStringW ResultString;
 	UINTN OldChosenItem = ~(UINTN)0;
 
   switch (Function) {
@@ -1148,61 +1149,60 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
         gST->ConOut->OutputString(gST->ConOut, BlankLine);
       }
 
-        BeginTextScreen(Title.wc_str());
+      BeginTextScreen(Title.wc_str());
 
-        if (InfoLines.size() > 0) {
-          gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+      if (InfoLines.size() > 0) {
+        gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
 
-          for (i = 0; i < (INTN)InfoLines.size(); i++) {
-            gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-            gST->ConOut->OutputString (gST->ConOut, InfoLines[i].data());
-          }
-        }
-
-        for (i = ScrollState.FirstVisible; i <= ScrollState.LastVisible && i <= ScrollState.MaxIndex; i++) {
-      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - ScrollState.FirstVisible));
-
-      if (i == ScrollState.CurrentSelection) {
-        gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-      } else {
-        gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-      }
-
-      StrCpyS(ResultString, TITLE_MAX_LEN, Entries[i].Title.wc_str());
-
-      if (Entries[i].getREFIT_INPUT_DIALOG()) {
-        REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[i];
-        if (entry.getREFIT_INPUT_DIALOG()) {
-          if ((entry).Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, (entry).Item->BValue ? L": [+]" : L": [ ]");
-          } else {
-            StrCatS(ResultString, TITLE_MAX_LEN, (entry).Item->SValue);
-          }
-        } else if (entry.getREFIT_MENU_CHECKBIT()) {
-          // check boxes
-          StrCatS(ResultString, TITLE_MAX_LEN, ((entry).Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]");
-        } else if (entry.getREFIT_MENU_SWITCH()) {
-          // radio buttons
-
-          // update chosen config
-          if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
-            OldChosenItem = OldChosenConfig;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
-            OldChosenItem = OldChosenDsdt;
-          } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
-            OldChosenItem = OldChosenAudio;
-          }
-
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Row == OldChosenItem) ? L": (*)" : L": ( )");
+        for (i = 0; i < (INTN)InfoLines.size(); i++) {
+          gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
+          gST->ConOut->OutputString (gST->ConOut, InfoLines[i].data());
         }
       }
 
-      for (j = StrLen(ResultString); j < (INTN)TextMenuWidth; j++) {
-        ResultString[j] = L' ';
-      }
+      for (i = ScrollState.FirstVisible; i <= ScrollState.LastVisible && i <= ScrollState.MaxIndex; i++) {
+        gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - ScrollState.FirstVisible));
 
-      ResultString[j] = 0;
-        gST->ConOut->OutputString(gST->ConOut, ResultString);
+        if (i == ScrollState.CurrentSelection) {
+          gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
+        } else {
+          gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+        }
+
+        ResultString.takeValueFrom(Entries[i].Title);
+
+        if (Entries[i].getREFIT_INPUT_DIALOG()) {
+          REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[i];
+          if (entry.getREFIT_INPUT_DIALOG()) {
+            if ((entry).Item->ItemType == BoolValue) {
+              ResultString += (entry).Item->BValue ? L": [+]" : L": [ ]";
+            } else {
+              ResultString += (entry).Item->SValue;
+            }
+          } else if (entry.getREFIT_MENU_CHECKBIT()) {
+            // check boxes
+            ResultString += ((entry).Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]";
+          } else if (entry.getREFIT_MENU_SWITCH()) {
+            // radio buttons
+
+            // update chosen config
+            if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 90) {
+              OldChosenItem = OldChosenConfig;
+            } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 116) {
+              OldChosenItem = OldChosenDsdt;
+            } else if (entry.getREFIT_MENU_SWITCH()->Item->IValue == 119) {
+              OldChosenItem = OldChosenAudio;
+            }
+
+            ResultString += (entry.Row == OldChosenItem) ? L": (*)" : L": ( )";
+          }
+        }
+
+        for ( j = ResultString.length() ; j < (INTN)TextMenuWidth; j++ ) {
+          ResultString += L' ';
+        }
+
+        gST->ConOut->OutputString(gST->ConOut, ResultString.wc_str());
       }
 
       // scrolling indicators
@@ -1231,18 +1231,18 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (ScrollState.LastSelection - ScrollState.FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
       //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[ScrollState.LastSelection]);
-			StrCpyS(ResultString, TITLE_MAX_LEN, Entries[ScrollState.LastSelection].Title.wc_str());
+			ResultString = Entries[ScrollState.LastSelection].Title;
       if (Entries[ScrollState.LastSelection].getREFIT_INPUT_DIALOG()) {
         REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[ScrollState.LastSelection];
         if (entry.getREFIT_INPUT_DIALOG()) {
           if (entry.Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->BValue ? L": [+]" : L": [ ]");
+            ResultString += entry.Item->BValue ? L": [+]" : L": [ ]";
           } else {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->SValue);
+            ResultString += entry.Item->SValue;
           }
         } else if (entry.getREFIT_MENU_CHECKBIT()) {
           // check boxes
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]");
+          ResultString += (entry.Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]";
         } else if (entry.getREFIT_MENU_SWITCH()) {
           // radio buttons
 
@@ -1254,32 +1254,31 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
             OldChosenItem = OldChosenAudio;
           }
 
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Row == OldChosenItem) ? L": (*)" : L": ( )");
+          ResultString += (entry.Row == OldChosenItem) ? L": (*)" : L": ( )";
         }
       }
 
-      for (j = StrLen(ResultString); j < (INTN) TextMenuWidth; j++) {
-        ResultString[j] = L' ';
+      for (j = ResultString.length(); j < (INTN) TextMenuWidth; j++) {
+        ResultString += L' ';
       }
 
-      ResultString[j] = 0;
-      gST->ConOut->OutputString (gST->ConOut, ResultString);
+      gST->ConOut->OutputString (gST->ConOut, ResultString.wc_str());
 
         // current selection
       gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (ScrollState.CurrentSelection - ScrollState.FirstVisible));
       gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-      StrCpyS(ResultString, TITLE_MAX_LEN, Entries[ScrollState.CurrentSelection].Title.wc_str());
+      ResultString = Entries[ScrollState.CurrentSelection].Title;
       if (Entries[ScrollState.CurrentSelection].getREFIT_INPUT_DIALOG()) {
         REFIT_INPUT_DIALOG& entry = (REFIT_INPUT_DIALOG&) Entries[ScrollState.CurrentSelection];
         if (entry.getREFIT_INPUT_DIALOG()) {
           if (entry.Item->ItemType == BoolValue) {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->BValue ? L": [+]" : L": [ ]");
+            ResultString += entry.Item->BValue ? L": [+]" : L": [ ]";
           } else {
-            StrCatS(ResultString, TITLE_MAX_LEN, entry.Item->SValue);
+            ResultString += entry.Item->SValue;
           }
         } else if (entry.getREFIT_MENU_CHECKBIT()) {
           // check boxes
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]");
+          ResultString += (entry.Item->IValue & (entry.Row)) ? L": [+]" : L": [ ]";
         } else if (entry.getREFIT_MENU_SWITCH()) {
           // radio buttons
 
@@ -1291,16 +1290,15 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
             OldChosenItem = OldChosenAudio;
           }
 
-          StrCatS(ResultString, TITLE_MAX_LEN, (entry.Row == OldChosenItem) ? L": (*)" : L": ( )");
+          ResultString += (entry.Row == OldChosenItem) ? L": (*)" : L": ( )";
         }
       }
 
-      for (j = StrLen(ResultString); j < (INTN) TextMenuWidth; j++) {
-        ResultString[j] = L' ';
+      for (j = ResultString.length() ; j < (INTN) TextMenuWidth; j++) {
+        ResultString += L' ';
       }
 
-      ResultString[j] = 0;
-      gST->ConOut->OutputString (gST->ConOut, ResultString);
+      gST->ConOut->OutputString (gST->ConOut, ResultString.wc_str());
         //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[ScrollState.CurrentSelection]);
 
       break;
@@ -1784,7 +1782,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                        ctrlTextX, EntryL->Place.YPos, 0xFFFF, MenuWidth);
           ThemeX.Buttons[(inputDialogEntry->Item->BValue)?3:2].DrawOnBack(ctrlX, EntryL->Place.YPos + PlaceCentre, ThemeX.Background);
         } else {
-          ResultString += (inputDialogEntry->Item->SValue + inputDialogEntry->Item->LineShift) + L" "_XSW;
+          ResultString += (inputDialogEntry->Item->SValue.wc_str() + inputDialogEntry->Item->LineShift) + L" "_XSW;
           DrawMenuText(ResultString, 0,
                        EntriesPosX, EntryL->Place.YPos, TitleLen + EntryL->Row, MenuWidth);
           ThemeX.FillRectAreaOfScreen(MenuWidth + ((ctrlTextX + EntriesPosX) >> 1), EntryL->Place.YPos, ctrlTextX - EntriesPosX, ThemeX.TextHeight); //clean tail
@@ -1839,7 +1837,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
                        ctrlTextX, EntryC->Place.YPos, 0xFFFF, MenuWidth);
           ThemeX.Buttons[(inputDialogEntry->Item->BValue)?3:2].DrawOnBack(ctrlX, EntryC->Place.YPos + PlaceCentre, ThemeX.Background);
         } else {
-          ResultString += (inputDialogEntry->Item->SValue + inputDialogEntry->Item->LineShift) + L" "_XSW;
+          ResultString += (inputDialogEntry->Item->SValue.wc_str() + inputDialogEntry->Item->LineShift) + L" "_XSW;
           DrawMenuText(ResultString, MenuWidth,
                        EntriesPosX, EntryC->Place.YPos, TitleLen + EntryC->Row, MenuWidth);
         }
@@ -2532,7 +2530,7 @@ VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootAr
   if (Inx == 3 || Inx == 116) {
     InputBootArgs->Row          = 0;
   } else {
-    InputBootArgs->Row          = Cursor?StrLen(InputItems[Inx].SValue):0xFFFF;
+    InputBootArgs->Row          = Cursor?InputItems[Inx].SValue.length():0xFFFF;
   }
   InputBootArgs->Item           = &InputItems[Inx];
   InputBootArgs->AtClick        = Cursor?ActionSelect:ActionEnter;

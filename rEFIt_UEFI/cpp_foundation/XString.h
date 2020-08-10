@@ -83,7 +83,8 @@ class XString16 : public XStringAbstract<char16_t, XString16>
 {
   public:
 	XString16() : XStringAbstract<char16_t, XString16>() {};
-	XString16(const XString16& S) : XStringAbstract<char16_t, XString16>(S) {}
+  XString16(const XString16& S) : XStringAbstract<char16_t, XString16>(S) {}
+  XString16(const LString16& S) : XStringAbstract<char16_t, XString16>(S) {}
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
 	XString16(const OtherXStringClass& S) : XStringAbstract<char16_t, XString16>(S) {}
@@ -109,7 +110,8 @@ class XString32 : public XStringAbstract<char32_t, XString32>
 {
   public:
 	XString32() : XStringAbstract<char32_t, XString32>() {};
-	XString32(const XString32& S) : XStringAbstract<char32_t, XString32>(S) {}
+  XString32(const XString32& S) : XStringAbstract<char32_t, XString32>(S) {}
+  XString32(const LString32& S) : XStringAbstract<char32_t, XString32>(S) {}
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
 	XString32(const OtherXStringClass& S) : XStringAbstract<char32_t, XString32>(S) {}
@@ -137,11 +139,11 @@ class XStringW : public XStringAbstract<wchar_t, XStringW>
   public:
 	XStringW() : XStringAbstract<wchar_t, XStringW>() {};
 	XStringW(const XStringW& S) : XStringAbstract<wchar_t, XStringW>(S) {}
+  XStringW(const LStringW& S) : XStringAbstract<wchar_t, XStringW>(S) { }
 
 	template<class OtherXStringClass, enable_if( is___String(OtherXStringClass) && !is___LString(OtherXStringClass))> // enable_if is to avoid constructing with a non-corresponding LString. To avoid memory allocation.
 	XStringW(const OtherXStringClass& S) : XStringAbstract<wchar_t, XStringW>(S) {}
 	
-	XStringW(const LStringW& S) : XStringAbstract<wchar_t, XStringW>(S) { }
 
 	XStringW& operator=(const XStringW &S) { this->XStringAbstract<wchar_t, XStringW>::operator=(S); return *this; }
 

@@ -399,19 +399,19 @@ bool displayOnlyIfFailed_tmp;
 #define CHECK_RESULT(condition, okmessage, failedmessage) \
   do { \
 	if ( !(condition) ) { \
-        if ( title_tmp_needs_reprinted ) { \
-            printf("%s", title_tmp.c_str()); \
-		} \
+    if ( title_tmp_needs_reprinted ) { \
+      printf("%s", title_tmp.c_str()); \
+    } \
 		printf(" : -> "); \
 		printf("%s", failedmessage.c_str()); \
-        printf("\n"); \
-        title_tmp_needs_reprinted = true; \
-        nbTestFailed += 1; \
+    printf("\n"); \
+    title_tmp_needs_reprinted = true; \
+    nbTestFailed += 1; \
 	}else if ( !displayOnlyIfFailed_tmp ) { \
-        if ( title_tmp_needs_reprinted ) { \
-            printf("%s", title_tmp.c_str()); \
+    if ( title_tmp_needs_reprinted ) { \
+      printf("%s", title_tmp.c_str()); \
 		} \
-        title_tmp_needs_reprinted = true; \
+    title_tmp_needs_reprinted = true; \
 		printf(" -> OK : %s\n", okmessage.c_str()); \
 	} \
 	nbTest += 1; \
@@ -533,6 +533,7 @@ SimpleString testTakeValueFrom_(const TestStringSrc& src, const TestStringExpect
 		xstr.takeValueFrom(src.cha);
 		
 		CHECK_XSTRING_EQUAL_TESTSTRING(xstr, expectedResult);
+xstr.takeValueFrom(src.cha);
 	}
 	// strcpy(native char type)
 	{
@@ -599,9 +600,9 @@ SimpleString testTakeValueFrom_(const TestStringSrc& src, const TestStringExpect
 }
 
 #define testTakeValueFrom(XStringClass, classEncoding, encoding1) \
-    if ( displayMainTitle) printf("Test %s::testTakeValueFrom, strcpy(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-    	testTakeValueFrom_<XStringClass>(testStringMultiCodedArray[i].encoding1, testStringMultiCodedArray[i].classEncoding); \
+  if ( displayMainTitle) printf("Test %s::testTakeValueFrom, strcpy(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+    	testTakeValueFrom_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].encoding1, testStringMultiCodedArray[testStringMultiCodedIndex].classEncoding); \
 	} \
 
 
@@ -663,8 +664,8 @@ SimpleString testchar32At_(const InitialValue& initialValue)
 
 #define testchar32At(XStringClass, classEncoding, integralType) \
     if ( displayMainTitle) printf("Test %s::testchar32At\n", STRINGIFY(XStringClass)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-        testchar32At_<XStringClass, integralType>(testStringMultiCodedArray[i].classEncoding); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+        testchar32At_<XStringClass, integralType>(testStringMultiCodedArray[testStringMultiCodedIndex].classEncoding); \
 	}
 
 
@@ -710,6 +711,7 @@ SimpleString teststrncpy_(const TestStringSameAsClass& encodedSameAsClass, const
 					 ssprintf("xstr.length() == expectedLength (%zu)", expectedLength),
 					 ssprintf("xstr.length() != expectedLength (%zu!=%zu)", xstr.length(), expectedLength)
 					 );
+xstr.strncpy(src.cha, i);
 		CHECK_RESULT(memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) == 0, // cannot include terminator as xstr is a substring of encodedSameAsClass. But length() test shows that xstr is really a substring.
 					 ssprintf("memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) == 0"),
 					 ssprintf("memcmp(xstr.s(), encodedSameAsClass.cha, xstr.sizeInBytes()) != 0")
@@ -720,8 +722,8 @@ SimpleString teststrncpy_(const TestStringSameAsClass& encodedSameAsClass, const
 
 #define teststrncpy(XStringClass, classEncoding, encoding1) \
     if ( displayMainTitle) printf("Test %s::teststrncpy(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-        teststrncpy_<XStringClass>(testStringMultiCodedArray[i].classEncoding, testStringMultiCodedArray[i].encoding1); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+        teststrncpy_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].classEncoding, testStringMultiCodedArray[testStringMultiCodedIndex].encoding1); \
 	} \
 
 
@@ -835,9 +837,9 @@ SimpleString teststrcat_(const InitialValue& initialValue, const TestString<Test
 
 #define teststrcat(XStringClass, classEncoding, encoding1, encoding2) \
     if ( displayMainTitle) printf("Test %s(%s)::teststrcat(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1), STRINGIFY(encoding2)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
     	for ( size_t j = 0 ; j < nbTestStringMultiCoded ; j++ ) { \
-	        teststrcat_<XStringClass>(testStringMultiCodedArray[i].encoding1, testStringMultiCodedArray[i].encoding2); \
+	        teststrcat_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].encoding1, testStringMultiCodedArray[testStringMultiCodedIndex].encoding2); \
 		} \
 	} \
 
@@ -895,9 +897,9 @@ SimpleString teststrncat_(const InitialValue& initialValue, const ValueToCat& va
 
 #define teststrncat(XStringClass, classEncoding, encoding1, encoding2) \
     if ( displayMainTitle) printf("Test %s(%s)::teststrncat(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding1), STRINGIFY(encoding2)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
     	for ( size_t j = 0 ; j < nbTestStringMultiCoded ; j++ ) { \
-	        teststrncat_<XStringClass>(testStringMultiCodedArray[i].encoding1, testStringMultiCodedArray[i].encoding2); \
+	        teststrncat_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].encoding1, testStringMultiCodedArray[testStringMultiCodedIndex].encoding2); \
 		} \
 	} \
 
@@ -946,8 +948,8 @@ subStr = str.subString(pos, count);
 
 #define testSubString(XStringClass, classEncoding) \
     if ( displayMainTitle) printf("Test %s::testSubString\n", STRINGIFY(XStringClass)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-		testSubString_<XStringClass>(testStringMultiCodedArray[i].classEncoding); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+		testSubString_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].classEncoding); \
 	} \
 
 
@@ -1156,8 +1158,8 @@ SimpleString testCompare_(const InitialValue& initialValue)
 
 #define testCompare(XStringClass, classEncoding, encoding) \
     if ( displayMainTitle) printf("Test %s::strcmp(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-		testCompare_<XStringClass>(testStringMultiCodedArray[i].encoding); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+		testCompare_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].encoding); \
 	} \
 
 
@@ -1326,12 +1328,12 @@ SimpleString testindexOf_(const InitialValue& initialValue)
 }
 
 #define testindexOf(XStringClass, classEncoding, encoding) \
-    if ( displayMainTitle) printf("Test %s::testindexOf(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-		testindexOf_<XStringClass>(testStringMultiCodedArray[i].encoding); \
+  if ( displayMainTitle) printf("Test %s::testindexOf(%s)\n", STRINGIFY(XStringClass), STRINGIFY(encoding)); \
+  for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+    testindexOf_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].encoding); \
 	} \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded4CaseArray ; i++ ) { \
-		testindexOf_<XStringClass>(testStringMultiCoded4CaseArray[i].encoding); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded4CaseArray ; testStringMultiCodedIndex++ ) { \
+		testindexOf_<XStringClass>(testStringMultiCoded4CaseArray[testStringMultiCodedIndex].encoding); \
 	} \
 
 
@@ -1363,8 +1365,8 @@ SimpleString testlastChar_(const InitialValue& initialValue)
 
 #define testlastChar(XStringClass, classEncoding) \
     if ( displayMainTitle) printf("Test %s::testlastChar\n", STRINGIFY(XStringClass)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-		testlastChar_<XStringClass>(testStringMultiCodedArray[i].classEncoding); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+		testlastChar_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].classEncoding); \
 	} \
 
 
@@ -1398,8 +1400,8 @@ SimpleString testtrim_(const InitialValue& initialValue, const ExpectedValue& ex
 
 #define testtrim(XStringClass, classEncoding) \
     if ( displayMainTitle) printf("Test %s::testtrim\n", STRINGIFY(XStringClass)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded4TrimArray ; i++ ) { \
-		testtrim_<XStringClass>(testStringMultiCoded4TrimArray[i].classEncoding, testStringMultiCoded4TrimArray[i].classEncoding##_expectedResult); \
+	for ( size_t testtrim = 0 ; testtrim < nbTestStringMultiCoded4TrimArray ; testtrim++ ) { \
+		testtrim_<XStringClass>(testStringMultiCoded4TrimArray[testtrim].classEncoding, testStringMultiCoded4TrimArray[testtrim].classEncoding##_expectedResult); \
 	} \
 
 
@@ -1454,8 +1456,8 @@ SimpleString teststartWith_(const InitialValue& initialValue)
 
 #define teststartWith(XStringClass, classEncoding) \
     if ( displayMainTitle) printf("Test %s::teststartWith\n", STRINGIFY(XStringClass)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded ; i++ ) { \
-		teststartWith_<XStringClass>(testStringMultiCodedArray[i].classEncoding); \
+	for ( size_t testStringMultiCodedIndex = 0 ; testStringMultiCodedIndex < nbTestStringMultiCoded ; testStringMultiCodedIndex++ ) { \
+		teststartWith_<XStringClass>(testStringMultiCodedArray[testStringMultiCodedIndex].classEncoding); \
 	} \
 
 
@@ -1484,8 +1486,8 @@ XStringClass xstr2 = initia__String.basename();
 
 #define testbasename(XStringClass, classEncoding) \
     if ( displayMainTitle) printf("Test %s::testbasename\n", STRINGIFY(XStringClass)); \
-	for ( size_t i = 0 ; i < nbTestStringMultiCoded4BasenameArray ; i++ ) { \
-		testbasename_<XStringClass>(testStringMultiCoded4BasenameArray[i].classEncoding, testStringMultiCoded4BasenameArray[i].classEncoding##_expectedResult); \
+	for ( size_t testbasename = 0 ; testbasename < nbTestStringMultiCoded4BasenameArray ; testbasename++ ) { \
+		testbasename_<XStringClass>(testStringMultiCoded4BasenameArray[testbasename].classEncoding, testStringMultiCoded4BasenameArray[testbasename].classEncoding##_expectedResult); \
 	} \
 
 
@@ -1562,6 +1564,20 @@ int XString_tests()
 //testindexOf_<XString>(testStringMultiCoded4CaseArray[0].utf8);
 //testTakeValueFrom_<XString16>(testStringMultiCodedArray[0].utf16, testStringMultiCodedArray[0].utf16);
 
+//  int i = utf8_size_of_utf32_string(U"煉璉秊練");
+  XString32 xsw = U"éàùœ°æÂƒÌÚ®"_XS32;
+//  char32_t c1 = xsw[0];
+//  char32_t c2 = xsw[1];
+  xsw.insertAtPos(L'A', 2);
+  
+  XStringW xsw2;
+  xsw2.takeValueFrom(xsw, 1);
+  
+  XString8 xs8 = "  toTRIM  "_XS8;
+//  xs8.trim();
+  xs8.lowerAscii();
+
+  // Quick check of stealValueFrom. TOTO proper test
   {
     char* p = (char*)malloc(11);
     strcpy(p, "0123456789");

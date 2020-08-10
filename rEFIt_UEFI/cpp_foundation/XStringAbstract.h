@@ -208,9 +208,9 @@ protected:
 	size_t Xmin(size_t x1, size_t x2) const { if ( x1 < x2 ) return x1; return x2; }
 	size_t Xmax(size_t x1, size_t x2) const { if ( x1 > x2 ) return x1; return x2; }
 
-// Methods _data is protected intentionally. They are const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
-// If you need a non-const pointer for low-level access, to use dataSized and have to specify the size
-	// pos is counted in logical char
+  // Method _data is protected intentionally. It's a const method returning non-const pointer. That's intentional, but dangerous. Do not expose to public.
+  // If you need a non-const pointer for low-level access, use dataSized and specify the size
+	// pos is counted in logical char (UTF32 char)
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	T* _data(IntegralType pos) const
 	{
@@ -392,39 +392,6 @@ public:
 	template<typename O>
 	bool startWithIC(const O* other) const { return XStringAbstract__startWith(m_data, other, true); }
 
-	//---------------------------------------------------------------------  String modification
-
-	void lowerAscii()
-	{
-		T* s = m_data;
-		while ( *s ) {
-			*s = asciiToLower(*s);
-			s++;
-		}
-	}
-
-	void upperAscii()
-	{
-		T* s = m_data;
-		while ( *s ) {
-			*s = asciiToUpper(*s);
-			s++;
-		}
-	}
-	
-	void trim()
-	{
-		T* start = 0;
-		size_t count = 0;
-		T* s = m_data;
-		while ( *s && unsigned_type(T)(*s) <= 32 ) s++;
-		start = s;
-		while ( *s && unsigned_type(T)(*s) > 32 ) s++;
-		count = uintptr_t(s - start);
-		memmove(m_data, start, count*sizeof(T));
-		m_data[count] = 0;
-	}
-
 	//---------------------------------------------------------------------
 
 	ThisXStringClass basename() const
@@ -451,17 +418,6 @@ public:
 //		return subString(0, idx);
 //	}
 
-//	void deleteCountCharsAt(size_t pos, size_t count=1);
-//{
-//	if ( pos < size() ) {
-//		if ( count != MAX_XSIZE  &&  pos + count < size() ) {
-//			memmove( _data(pos), data(pos+count), (size()-pos-count)*sizeof(T)); // memmove handles overlapping memory move
-//			setLength(size()-count);/* data()[length()-count]=0 done in setLength */
-//		}else{
-//			setSize(pos);/* data()[pos]=0 done in setLength */
-//		}
-//	}
-//}
 //	void insert(const __String<T, ThisXStringClass>& Str, size_t pos);
 //{
 //	if ( pos < size() ) {
@@ -627,41 +583,33 @@ class XStringAbstract : public __String<T, ThisXStringClass>
 	static T nullChar;
 
   protected:
-  	size_t m_allocatedSize;
+  	size_t m_allocatedSize; // Must include null terminator. Real memory allocated is only m_allocatedSize (not m_allocatedSize+1)
 	
 	//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 	// Init , Alloc
 	//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-//
-//	void Init(size_t aSize=0)
-//	{
-//		//DBG_XSTRING("Init aSize=%d\n", aSize);
-//		// We don't allocate any memory at first. To not have to test all the time if m_data is null, we init it to an empty string
-//		m_data = &nullChar;
-//		m_allocatedSize = 0;
-//		// if aSize == 0, nothing is done, because m_allocatedSize == aSize
-//		CheckSize(aSize, 0);
-//	}
 	
 	/*
-	 * nNewSize doesn't include null terminator. Alloc(0) will allocate 1 char.
-	 * NOTE : m_allocatedSize WILL include the the null terminator. Alloc(0) makes m_allocatedSize == 1
+	 * nNewSize must include null terminator.
 	 */
 	void Alloc(size_t nNewSize)
 	{
-			if ( m_allocatedSize == 0 ) m_data = (T*)malloc( (nNewSize+1)*sizeof(T) );
-			else m_data = (T*)Xrealloc(m_data, (nNewSize+1)*sizeof(T), (m_allocatedSize+1)*sizeof(T));
+			if ( m_allocatedSize == 0 ) m_data = (T*)malloc( nNewSize*sizeof(T) );
+			else m_data = (T*)Xrealloc(m_data, nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
 			if ( !m_data ) {
-				panic("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, uintptr_t(m_data), (nNewSize+1)*sizeof(T), (m_allocatedSize+1)*sizeof(T));
+				panic("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, uintptr_t(m_data), nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
 			}
 			m_allocatedSize = nNewSize;
 	}
+
 //  public:
+  /*
+   * Make sure this string has allocated size of at least nNewSize+1.
+   */
 	T *CheckSize(size_t nNewSize, size_t nGrowBy = XStringGrowByDefault) // nNewSize is in number of chars, NOT bytes
 	{
 		//DBG_XSTRING("CheckSize: m_size=%d, nNewSize=%d\n", m_size, nNewSize);
-		
-		if ( m_allocatedSize < nNewSize )
+		if ( m_allocatedSize < nNewSize+1 )
 		{
 			nNewSize += nGrowBy;
 			if ( m_allocatedSize == 0 ) { //if ( *m_data ) {
@@ -669,12 +617,11 @@ class XStringAbstract : public __String<T, ThisXStringClass>
 				if ( nNewSize < len ) nNewSize = len;
 				T* m_dataSav = m_data;
 				m_data = NULL;
-				Alloc(nNewSize);
+				Alloc(nNewSize+1);
 				utf_string_from_utf_string(m_data, m_allocatedSize, m_dataSav);
 			}else{
-				Alloc(nNewSize);
+				Alloc(nNewSize+1);
 			}
-//			m_data[m_allocatedSize] = 0; // we allocated one more char (nNewSize+1). This \0 is an extra precaution. It's not for the normal null terminator. All string operation must considered that only m_allocatedSize bytes were allocated.
 		}
 		return m_data;
 	}
@@ -690,7 +637,8 @@ class XStringAbstract : public __String<T, ThisXStringClass>
 //	}
 
 
-  public:
+public:
+
 	/* default ctor */
 	XStringAbstract() : __String<T, ThisXStringClass>(&nullChar), m_allocatedSize(0) {}
 	
@@ -788,7 +736,7 @@ public:
 	{
 		if ( otherChar != 0) {
 			size_t newSize = utf_size_of_utf_string_len(m_data, &otherChar, 1);
-			CheckSize(newSize+1, 0);
+			CheckSize(newSize, 0);
 			utf_string_from_utf_string_len(m_data, m_allocatedSize, &otherChar, 1);
 			m_data[newSize] = 0;
 		}else{
@@ -801,7 +749,7 @@ public:
 	{
 		if ( other && *other ) {
 			size_t newSize = utf_size_of_utf_string(m_data, other);
-			CheckSize(newSize+1, 0);
+			CheckSize(newSize, 0);
 			utf_string_from_utf_string(m_data, m_allocatedSize, other);
 			m_data[newSize] = 0;
 		}else{
@@ -814,7 +762,7 @@ public:
 	{
 		if ( other && *other && other_len > 0 ) {
 			size_t newSize = utf_size_of_utf_string_len(m_data, other, other_len);
-			CheckSize(newSize+1, 0);
+			CheckSize(newSize, 0);
 			utf_string_from_utf_string_len(m_data, m_allocatedSize, other, other_len);
 			m_data[newSize] = 0;
 		}else{
@@ -829,34 +777,34 @@ public:
 		if ( otherChar ) {
 			size_t currentSize = size_of_utf_string(m_data);
 			size_t newSize = currentSize + utf_size_of_utf_string_len(m_data, &otherChar, 1);
-			CheckSize(newSize+1, 0);
+			CheckSize(newSize, 0);
 			utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, &otherChar, 1);
 			m_data[newSize] = 0;
 		}else{
 			// nothing to do
 		}
 	}
-	/* strcat char* */
-	template<typename O>
-	void strcat(const O* other)
-	{
-		if ( other && *other ) {
-			size_t currentSize = size_of_utf_string(m_data); // size is number of T, not in bytes
-			size_t newSize = currentSize + utf_size_of_utf_string(m_data, other); // size is number of T, not in bytes
-			CheckSize(newSize+1, 0);
-			utf_string_from_utf_string(m_data+currentSize, m_allocatedSize-currentSize, other);
-			m_data[newSize] = 0;
-		}else{
-			// nothing to do
-		}
-	}
+  /* strcat char* */
+  template<typename O>
+  void strcat(const O* other)
+  {
+    if ( other && *other ) {
+      size_t currentSize = size_of_utf_string(m_data); // size is number of T, not in bytes
+      size_t newSize = currentSize + utf_size_of_utf_string(m_data, other); // size is number of T, not in bytes
+      CheckSize(newSize, 0);
+      utf_string_from_utf_string(m_data+currentSize, m_allocatedSize-currentSize, other);
+      m_data[newSize] = 0;
+    }else{
+      // nothing to do
+    }
+  }
 	/* strcat __String */
 	template<typename OtherCharType, class OtherXStringClass>
 	void strcat(const __String<OtherCharType, OtherXStringClass>& other)
 	{
 		size_t currentSize = size_of_utf_string(m_data); // size is number of T, not in bytes
 		size_t newSize = currentSize + utf_size_of_utf_string(m_data, other.s()); // size is number of T, not in bytes
-		CheckSize(newSize+1, 0);
+		CheckSize(newSize, 0);
 		utf_string_from_utf_string(m_data+currentSize, m_allocatedSize-currentSize, other.s());
 		m_data[newSize] = 0;
 	}
@@ -867,13 +815,121 @@ public:
 		if ( other && *other && other_len > 0 ) {
 			size_t currentSize = size_of_utf_string(m_data);
 			size_t newSize = currentSize + utf_size_of_utf_string_len(m_data, other, other_len);
-			CheckSize(newSize+1, 0);
+			CheckSize(newSize, 0);
 			utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, other, other_len);
 			m_data[newSize] = 0;
 		}else{
 			// nothing to do
 		}
 	}
+    
+  /* insert char* */
+  template<typename O>
+  ThisXStringClass&  insertAtPos(const O* other, size_t other_len, size_t pos)
+  {
+    if ( !other || !*other ) return *((ThisXStringClass*)this);
+    
+    size_t currentLength = __String<T, ThisXStringClass>::length();
+    if ( pos >= currentLength ) {
+      strncat(other, other_len);
+      return *((ThisXStringClass*)this);
+    }
+
+    size_t currentSize = size_of_utf_string(m_data);
+    size_t otherSize = utf_size_of_utf_string_len(m_data, other, other_len);
+    CheckSize(currentSize+otherSize, 0);
+    size_t start = size_of_utf_string_len(m_data, pos); // size is number of T, not in bytes
+    memmove( m_data + start + otherSize, m_data + start, (currentSize-start+1)*sizeof(T)); // memmove handles overlapping memory move
+    utf_stringnn_from_utf_string(m_data+start, otherSize, other);
+//    m_data[newSize] = 0;
+    return *((ThisXStringClass*)this);
+  }
+  
+  /* insert char* */
+  template<typename O>
+  ThisXStringClass&  insertAtPos(const O* other, size_t pos)
+  {
+    if ( !other || !*other ) return *((ThisXStringClass*)this);
+    
+    size_t currentLength = __String<T, ThisXStringClass>::length();
+    if ( pos >= currentLength ) {
+      strcat(other);
+      return *((ThisXStringClass*)this);
+    }
+
+    size_t currentSize = size_of_utf_string(m_data);
+    size_t otherSize = utf_size_of_utf_string(m_data, other);
+    CheckSize(currentSize+otherSize, 0);
+    size_t start = size_of_utf_string_len(m_data, pos); // size is number of T, not in bytes
+    memmove( m_data + start + otherSize, m_data + start, (currentSize-start+1)*sizeof(T)); // memmove handles overlapping memory move
+    utf_stringnn_from_utf_string(m_data+start, otherSize, other);
+//    m_data[newSize] = 0;
+    return *((ThisXStringClass*)this);
+  }
+  /* insert char */
+  template<typename O, enable_if(is_char(O))>
+  void insertAtPos(O otherChar, size_t pos)
+  {
+    insertAtPos(&otherChar, 1, pos);
+  }
+
+  ThisXStringClass& deleteCharsAtPos(size_t pos, size_t count=1)
+  {
+    size_t currentLength = __String<T, ThisXStringClass>::length();
+    if ( pos >= currentLength ) return *((ThisXStringClass*)this);
+
+    size_t currentSize = size_of_utf_string(m_data); // size is number of T, not in bytes
+    CheckSize(currentSize, 0); // Although we only delete, we have to CheckSize in case this string point to a litteral.
+
+    size_t start = size_of_utf_string_len(m_data, pos); // size is number of T, not in bytes
+
+//    if ( pos+count >= currentLength ) count = currentLength - pos;
+    if ( pos+count >= currentLength ) {
+      m_data[start] = 0;
+    }else{
+      size_t end = start + size_of_utf_string_len(m_data+start, count); // size is number of T, not in bytes
+      memmove( m_data + start, m_data + end, (currentSize-end+1)*sizeof(T)); // memmove handles overlapping memory move
+    }
+    // Handle length change when implementing caching length feature.
+    return *((ThisXStringClass*)this);
+  }
+  
+  void trim()
+  {
+    T* start = 0;
+    size_t count = 0;
+    T* s = m_data;
+    while ( *s && unsigned_type(T)(*s) <= 32 ) s++;
+    start = s;
+    while ( *s && unsigned_type(T)(*s) > 32 ) s++;
+    count = uintptr_t(s - start);
+    CheckSize(count); // We have to CheckSize in case this string point to a litteral.
+    memmove(m_data, start, count*sizeof(T));
+    m_data[count] = 0;
+  }
+
+  void lowerAscii()
+  {
+    size_t currentSize = size_of_utf_string(m_data); // size is number of T, not in bytes
+    CheckSize(currentSize, 0); // We have to CheckSize in case this string point to a litteral.
+    T* s = m_data;
+    while ( *s ) {
+      *s = asciiToLower(*s);
+      s++;
+    }
+  }
+
+  void upperAscii()
+  {
+    size_t currentSize = size_of_utf_string(m_data); // size is number of T, not in bytes
+    CheckSize(currentSize, 0); // We have to CheckSize in case this string point to a litteral.
+    T* s = m_data;
+    while ( *s ) {
+      *s = asciiToUpper(*s);
+      s++;
+    }
+  }
+
 
   ThisXStringClass& stealValueFrom(T* S) {
     if ( m_allocatedSize > 0 ) free((void*)m_data);
@@ -940,7 +996,7 @@ struct __string_type { typedef void type; };
 template< typename T >
 struct __string_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef __String<typename T::char_t, typename T::xs_t> type; };
 
-#define is___String_t(x) decltype(test_pre_is_base_of<    typename __string_type<x>::type , x>(0))
+#define is___String_t(x) decltype(test_pre_is_base_of<typename __string_type<x>::type , x>(0))
 #define is___String(x) is___String_t(x)::value
 
 

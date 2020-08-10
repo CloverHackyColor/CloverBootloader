@@ -103,7 +103,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   }
   XStringW LTitle;
   if (LoaderTitle.isEmpty()) {
-    if (Volume->LegacyOS->Name != NULL) {
+    if (Volume->LegacyOS->Name.notEmpty()) {
       LTitle.takeValueFrom(Volume->LegacyOS->Name);
       if (Volume->LegacyOS->Name[0] == 'W' || Volume->LegacyOS->Name[0] == 'L')
         ShortcutLetter = Volume->LegacyOS->Name[0];
