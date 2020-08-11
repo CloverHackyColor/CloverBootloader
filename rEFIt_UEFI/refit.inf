@@ -105,6 +105,8 @@
   libeg/libegint.h
   libeg/XImage.cpp
   libeg/XImage.h
+  libeg/XIcon.cpp
+  libeg/XIcon.h
   libeg/XPointer.cpp
   libeg/XPointer.h
   libeg/XTheme.cpp
@@ -241,6 +243,10 @@
   cpp_foundation/unicode_conversions.cpp
   cpp_foundation/unicode_conversions.h
   cpp_foundation/XArray.h
+  cpp_foundation/XBuffer.cpp
+  cpp_foundation/XBuffer.h
+  cpp_foundation/XRBuffer.cpp
+  cpp_foundation/XRBuffer.h
   cpp_foundation/XObjArray.h
   cpp_foundation/XStringAbstract.h
   cpp_foundation/XString.cpp

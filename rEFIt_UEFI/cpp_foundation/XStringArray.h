@@ -67,7 +67,7 @@ class XStringArray_/* : public XStringArraySuper*/
   public:
 	typedef XStringClass_ XStringClass;
 
-	XStringArray_() {};
+	XStringArray_() : array() {};
 
 	size_t size() const { return array.size(); }
 	void setEmpty() { array.Empty(); }
@@ -93,7 +93,7 @@ class XStringArray_/* : public XStringArraySuper*/
           >
   XStringClass ConcatAll(const Type1& Separator, const Type2& Prefix, const Type3& Suffix) const
   {
-      xsize i;
+      size_t i;
       XStringClass s;
 
       if ( array.size() > 0 ) {
@@ -123,7 +123,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<class OtherXStringArrayClass>
 	bool Equal(const OtherXStringArrayClass &aStrings) const
 	{
-		xsize ui;
+		size_t ui;
 		
 		if ( array.size() != aStrings.size() ) return false;
 		for ( ui=0 ; ui<array.size() ; ui+=1 ) {
@@ -183,7 +183,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<class OtherXStringArrayClass>
 	bool Same(const OtherXStringArrayClass &aStrings) const
 	{
-		xsize i;
+		size_t i;
 		
 		for ( i=0 ; i<this->size() ; i+=1 ) {
 			if ( !aStrings.contains(array.ElementAt(i)) ) return false;
@@ -236,7 +236,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<class OtherXStringClass>
 	void import(const XStringArray_<OtherXStringClass> &aStrings)
 	{
-		xsize i;
+		size_t i;
 		
 		for ( i=0 ; i<aStrings.size() ; i+=1 ) {
 			array.AddCopy(aStrings[i]);
@@ -249,7 +249,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	}
 	void importID(const XStringArray_ &aStrings) /* ignore Duplicate */
 	{
-		xsize i;
+		size_t i;
 		
 		for ( i=0 ; i<aStrings.size() ; i+=1 ) {
 			if ( !Contains(aStrings[i]) ) AddCopy(aStrings[i]);

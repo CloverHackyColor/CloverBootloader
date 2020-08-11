@@ -9,8 +9,13 @@ class XImage;
 class XPointer
 {
 public:
-  XPointer();
-  ~XPointer();
+  XPointer() : SimplePointerProtocol(NULL), PointerImage(NULL),
+               oldImage(0, 0), newPlace(), oldPlace(), LastClickTime(0), State{0}, MouseEvent(NoEvents), Alive(false), night(false)
+             {}
+  XPointer(const XPointer&) = delete;
+  XPointer& operator=(const XPointer&) = delete;
+
+  ~XPointer() {};
 
 protected:
   EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;

@@ -8,7 +8,8 @@
 
 #include "boot.h"
 
-#define DBG_RT( ...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
+//#define DBG_RT( ...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
+#define DBG_RT(...)    if ( KernelAndKextPatches.KPDebug ) { printf(__VA_ARGS__); }
 
 
 #define CPUFAMILY_INTEL_6_13		  0xaa33392b

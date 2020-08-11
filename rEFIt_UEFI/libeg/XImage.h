@@ -50,7 +50,7 @@ protected:
   XArray<EFI_GRAPHICS_OUTPUT_BLT_PIXEL> PixelData;
  
 public:
-  XImage();
+  XImage() : Width(0), Height(0), PixelData() {};
   XImage(UINTN W, UINTN H);
   XImage(const XImage& Image, float scale = 0.f); //the constructor can accept 0 scale as 1.f
   virtual ~XImage();

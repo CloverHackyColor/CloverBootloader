@@ -248,7 +248,7 @@ public:
   XStringW      IconName;
   XStringW      Name;
 
-  LEGACY_OS() : Type(0) {}
+  LEGACY_OS() : Type(0), IconName(), Name() {}
   LEGACY_OS(const LEGACY_OS& other) = delete; // Can be defined if needed
   const LEGACY_OS& operator = ( const LEGACY_OS & ) = delete; // Can be defined if needed
   ~LEGACY_OS() {}
@@ -282,9 +282,9 @@ public:
   XString8            ApfsFileSystemUUID; // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
   XString8Array        ApfsTargetUUIDArray; // this is the array of folders that are named as UUID
 
-  REFIT_VOLUME() : DevicePath(0), DeviceHandle(0), RootDir(0), DiskKind(0), LegacyOS(0), Hidden(0), BootType(0), IsAppleLegacy(0), HasBootCode(0),
+  REFIT_VOLUME() : DevicePath(0), DeviceHandle(0), RootDir(0), DevicePathString(), VolName(), VolLabel(), DiskKind(0), LegacyOS(0), Hidden(0), BootType(0), IsAppleLegacy(0), HasBootCode(0),
                    IsMbrPartition(0), MbrPartitionIndex(0), BlockIO(0), BlockIOOffset(0), WholeDiskBlockIO(0), WholeDiskDevicePath(0), WholeDiskDeviceHandle(0),
-                   MbrPartitionTable(0), DriveCRC32(0), RootUUID({0,0,0,{0,0,0,0,0,0,0,0}}), SleepImageOffset(0)
+                   MbrPartitionTable(0), DriveCRC32(0), RootUUID({0,0,0,{0,0,0,0,0,0,0,0}}), SleepImageOffset(0), ApfsFileSystemUUID(), ApfsTargetUUIDArray()
                  {}
   REFIT_VOLUME(const REFIT_VOLUME& other) = delete; // Can be defined if needed
   const REFIT_VOLUME& operator = ( const REFIT_VOLUME & ) = delete; // Can be defined if needed
@@ -313,9 +313,9 @@ public:
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
 
-  KEXT_PATCH() : Name(0), Label(0), IsPlistPatch(0), DataLen(0), Data(0), Patch(0), MaskFind(0), MaskReplace(0),
-                   StartPattern(0), StartMask(0), StartPatternLen(0), SearchLen(0), ProcedureName(0), MatchOS(0), MatchBuild(0)
-                 { memset(align, 0, sizeof(align)); }
+  KEXT_PATCH() : Name(0), Label(0), IsPlistPatch(0), align{0}, DataLen(0), Data(0), Patch(0), MaskFind(0), MaskReplace(0),
+                   StartPattern(0), StartMask(0), StartPatternLen(0), SearchLen(0), ProcedureName(0), MatchOS(0), MatchBuild(0), MenuItem()
+                 { }
   KEXT_PATCH(const KEXT_PATCH& other) = delete; // Can be defined if needed
   const KEXT_PATCH& operator = ( const KEXT_PATCH & ) = delete; // Can be defined if needed
   ~KEXT_PATCH() {}
@@ -340,15 +340,16 @@ public:
   INPUT_ITEM  MenuItem;
 
   KERNEL_PATCH() : Label(0), DataLen(0), Data(0), Patch(0), MaskFind(0), MaskReplace(0), StartPattern(0), StartMask(0),
-                   StartPatternLen(0), SearchLen(0), ProcedureName(0), Count(0), MatchOS(0), MatchBuild(0)
+                   StartPatternLen(0), SearchLen(0), ProcedureName(0), Count(0), MatchOS(0), MatchBuild(0), MenuItem()
                  { }
   KERNEL_PATCH(const KERNEL_PATCH& other) = delete; // Can be defined if needed
   const KERNEL_PATCH& operator = ( const KERNEL_PATCH & ) = delete; // Can be defined if needed
   ~KERNEL_PATCH() {}
 } ;
 
-typedef struct KERNEL_AND_KEXT_PATCHES
+class KERNEL_AND_KEXT_PATCHES
 {
+public:
   BOOLEAN KPDebug;
 //  BOOLEAN KPKernelCpu;
   BOOLEAN KPKernelLapic;
@@ -399,7 +400,16 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   INT32   NrBoots;
   KERNEL_PATCH *BootPatches;
 
-} KERNEL_AND_KEXT_PATCHES;
+  KERNEL_AND_KEXT_PATCHES() : KPDebug(0), KPKernelLapic(0), KPKernelXCPM(0), KPKernelPm(0), KPAppleIntelCPUPM(0), KPAppleRTC(0), KPDELLSMBIOS(0), KPPanicNoKextDump(0),
+                   EightApple(0), pad{0}, FakeCPUID(0), KPATIConnectorsController(0), KPATIConnectorsData(0), KPATIConnectorsDataLen(0),
+                   KPATIConnectorsPatch(0), NrKexts(0), align40(0), KextPatches(0), NrForceKexts(0), align50(0), ForceKexts(),
+                   NrKernels(0), KernelPatches(0), NrBoots(0), BootPatches(0)
+                 { }
+  KERNEL_AND_KEXT_PATCHES(const KERNEL_AND_KEXT_PATCHES& other) = delete; // Can be defined if needed
+  const KERNEL_AND_KEXT_PATCHES& operator = ( const KERNEL_AND_KEXT_PATCHES & ) = delete; // Can be defined if needed
+  ~KERNEL_AND_KEXT_PATCHES() {}
+
+} ;
 
 
 
@@ -443,8 +453,8 @@ public:
   INTN     Height;
 	
   EG_RECT() : XPos(0), YPos(0), Width(0), Height(0) {};
-  EG_RECT(INTN x, INTN y, INTN w, INTN h) { XPos = x; YPos = y; Width = w; Height = h; }
-  EG_RECT(const EG_RECT& other) { XPos = other.XPos; YPos = other.YPos; Width = other.Width; Height = other.Height; }
+  EG_RECT(INTN x, INTN y, INTN w, INTN h) : XPos(x), YPos(y), Width(w), Height(h) { }
+  EG_RECT(const EG_RECT& other) : XPos(other.XPos), YPos(other.YPos), Width(other.Width), Height(other.Height) { }
   const EG_RECT& operator = (const EG_RECT& other) { XPos = other.XPos; YPos = other.YPos; Width = other.Width; Height = other.Height; return *this; }
   bool operator == (const EG_RECT& other) { return XPos == other.XPos  &&  YPos == other.YPos  &&  Width == other.Width  &&  Height == other.Height; }
   bool operator != (const EG_RECT& other) { return !(*this == other); }

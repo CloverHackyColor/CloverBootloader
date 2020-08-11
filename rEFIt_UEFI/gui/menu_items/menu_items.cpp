@@ -75,7 +75,7 @@ LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
 	DuplicateEntry->LoaderType      = LoaderType;
 	DuplicateEntry->OSVersion       = OSVersion;
 	DuplicateEntry->BuildVersion    = BuildVersion;
-	DuplicateEntry->KernelAndKextPatches = KernelAndKextPatches;
+	CopyKernelAndKextPatches(&DuplicateEntry->KernelAndKextPatches, &KernelAndKextPatches);
 	return DuplicateEntry;
 }
 

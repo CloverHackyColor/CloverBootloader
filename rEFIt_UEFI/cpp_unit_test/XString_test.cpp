@@ -53,18 +53,18 @@ class SimpleString
 	char* data;
 	size_t allocatedSize;
 public:
-	SimpleString() : data(NULL) {}
-	SimpleString(const SimpleString& simpleString) {
+	SimpleString() : data(NULL), allocatedSize(0) {}
+	SimpleString(const SimpleString& simpleString) : data(NULL), allocatedSize(0) {
 		allocatedSize = strlen(simpleString.data)+1;
 		data = (char*)malloc(allocatedSize);
 		strcpy(data, simpleString.data);
 	}
-	SimpleString(const char* s) {
+	SimpleString(const char* s) : data(NULL), allocatedSize(0) {
 		allocatedSize = strlen(s)+1;
 		data = (char*)malloc(allocatedSize);
 		strcpy(data, s);
 	}
-	SimpleString(const char16_t* s) {
+	SimpleString(const char16_t* s) : data(NULL), allocatedSize(0) {
 		#if defined(__GNUC__) && !defined(__clang__)
 		    data = 0; // silence warning
 		#endif
@@ -72,7 +72,7 @@ public:
 		data = (char*)malloc(allocatedSize);
 		utf_string_from_utf_string(data, allocatedSize, s);
 	}
-	SimpleString(const char32_t* s) {
+	SimpleString(const char32_t* s) : data(NULL), allocatedSize(0) {
 		#if defined(__GNUC__) && !defined(__clang__)
 		    data = 0; // silence warning
 		#endif
@@ -80,7 +80,7 @@ public:
 		data = (char*)malloc(allocatedSize);
 		utf_string_from_utf_string(data, allocatedSize, s);
 	}
-	SimpleString(const wchar_t* s) {
+	SimpleString(const wchar_t* s) : data(NULL), allocatedSize(0) {
 		#if defined(__GNUC__) && !defined(__clang__)
 		    data = 0; // silence warning
 		#endif

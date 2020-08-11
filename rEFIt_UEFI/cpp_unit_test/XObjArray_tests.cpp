@@ -12,6 +12,9 @@ class TestObjInt
   {
   	*m_destructor_called=false;
   };
+  TestObjInt(const TestObjInt&) = delete;
+  TestObjInt& operator=(const TestObjInt&) = delete;
+
   ~TestObjInt()
   {
   	*m_destructor_called = true;

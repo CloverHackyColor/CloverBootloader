@@ -46,10 +46,12 @@ public:
   EG_RECT FilmPlace;  // Screen has several Films each in own place
 
 public:
-  FILM() : AnimeRun(0), LastDraw(0), CurrentFrame(0)
-  {}
-  FILM(INTN Id) : Id(Id), RunOnce(FALSE), NumFrames(0), AnimeRun(0), LastDraw(0), CurrentFrame(0)
-  {}
+  FILM() : Id(0), RunOnce(0), NumFrames(0), FrameTime(0), FilmX(0), FilmY(0), ScreenEdgeHorizontal(0), ScreenEdgeVertical(0),
+           NudgeX(0), NudgeY(0), Path(), AnimeRun(0), LastDraw(0), Frames(), LastIndex(0), CurrentFrame(0), FilmPlace()
+         {}
+  FILM(INTN Id) : Id(Id), RunOnce(0), NumFrames(0), FrameTime(0), FilmX(0), FilmY(0), ScreenEdgeHorizontal(0), ScreenEdgeVertical(0),
+           NudgeX(0), NudgeY(0), Path(), AnimeRun(0), LastDraw(0), Frames(), LastIndex(0), CurrentFrame(0), FilmPlace()
+         {}
   ~FILM() {}
 
   INTN GetIndex() { return  Id; }
@@ -94,7 +96,7 @@ class XCinema
   XObjArray<FILM> Cinema;
 
   public:
-  XCinema() {}
+  XCinema() : Cinema() {}
   ~XCinema() {}
 
   FILM* GetFilm(INTN Id);

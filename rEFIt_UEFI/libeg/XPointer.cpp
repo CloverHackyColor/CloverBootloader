@@ -25,18 +25,6 @@
 #define POINTER_WIDTH  64
 #define POINTER_HEIGHT 64
 
-XPointer::XPointer()
-            : SimplePointerProtocol(NULL), PointerImage(NULL),
-//              newImage(POINTER_WIDTH, POINTER_HEIGHT),
-              oldImage(0, 0), Alive(false), night(false)
-{
-
-}
-
-XPointer::~XPointer()
-{
-}
-
 void XPointer::Hide()
 {
   if (Alive) {

@@ -25,13 +25,13 @@ class XArray
 {
   protected:
 	TYPE *m_data;
-	xsize m_len;
-	xsize m_allocatedSize;
-	xsize _GrowBy;
+	size_t m_len;
+	size_t m_allocatedSize;
+//	size_t _GrowBy;
 
   public:
-	void Init();
-	XArray() { Init(); }
+//	void Init();
+	XArray() : m_data(0), m_len(0), m_allocatedSize(0) { }
 	XArray(const XArray<TYPE> &anArray);
 	const XArray<TYPE> &operator =(const XArray<TYPE> &anArray);
 	virtual ~XArray();
@@ -41,10 +41,10 @@ class XArray
 	TYPE *data() { return m_data; }
 
   public:
-	xsize allocatedSize() const { return m_allocatedSize; }
-	xsize length() const { return m_len; }
-	xsize size() const { return m_len; }
-	void  setSize(xsize l);
+	size_t allocatedSize() const { return m_allocatedSize; }
+	size_t length() const { return m_len; }
+	size_t size() const { return m_len; }
+	void  setSize(size_t l);
 
   //low case functions like in std::vector
 
@@ -54,17 +54,17 @@ class XArray
   const TYPE& end() const { return ElementAt(m_len - 1); }
         TYPE& end()       { return ElementAt(m_len - 1); }
 
-  xsize insert(const TYPE newElement, xsize pos, xsize count = 1) { return Insert(newElement, pos, count); }
+  size_t insert(const TYPE newElement, size_t pos, size_t count = 1) { return Insert(newElement, pos, count); }
  
 //--------------------------------------------------
 
-	const TYPE& ElementAt(xsize nIndex) const;
-	TYPE& ElementAt(xsize nIndex);
+	const TYPE& ElementAt(size_t nIndex) const;
+	TYPE& ElementAt(size_t nIndex);
 	const TYPE& ElementAt(int nIndex) const;
 	TYPE& ElementAt(int nIndex);
 
-//	const TYPE& operator[](xsize nIndex) const { return ElementAt(nIndex); }
-//	      TYPE& operator[](xsize nIndex)       { return ElementAt(nIndex); }
+//	const TYPE& operator[](size_t nIndex) const { return ElementAt(nIndex); }
+//	      TYPE& operator[](size_t nIndex)       { return ElementAt(nIndex); }
 //	const TYPE& operator[]( int nIndex)  const { return ElementAt(nIndex); }
 	      TYPE& operator[]( int nIndex)        { return ElementAt(nIndex); }
 //	const TYPE& operator[]( unsigned long long nIndex)  const { return ElementAt((size_t)nIndex); }
@@ -79,34 +79,34 @@ class XArray
 
 	const TYPE * operator +( int i) const { return m_data+i; };
 	      TYPE * operator +( int i)       { return m_data+i; };
-	const TYPE * operator +(xsize i) const { return m_data+i; };
-	      TYPE * operator +(xsize i)       { return m_data+i; };
+	const TYPE * operator +(size_t i) const { return m_data+i; };
+	      TYPE * operator +(size_t i)       { return m_data+i; };
 	const TYPE * operator -( int i) const { return m_data-i; };
 	      TYPE * operator -( int i)       { return m_data-i; };
-	const TYPE * operator -(xsize i) const { return m_data-i; };
-	      TYPE * operator -(xsize i)       { return m_data-i; };
+	const TYPE * operator -(size_t i) const { return m_data-i; };
+	      TYPE * operator -(size_t i)       { return m_data-i; };
 
-//	xsize Add(const TYPE newElement);
+//	size_t Add(const TYPE newElement);
 //	TYPE         AddNew();
-//	xsize Inserts(const TYPE &newElement, xsize pos, xsize count);
+//	size_t Inserts(const TYPE &newElement, size_t pos, size_t count);
 
-	void CheckSize(xsize nNewSize);
-	void CheckSize(xsize nNewSize, xsize nGrowBy);
+	void CheckSize(size_t nNewSize);
+	void CheckSize(size_t nNewSize, size_t nGrowBy);
 
-	xsize AddUninitialized(xsize count); // add count uninitialzed elements
-	xsize Add(const TYPE newElement, xsize count = 1);
-	xsize AddArray(const TYPE *newElements, xsize count = 1);
-	xsize Insert(const TYPE newElement, xsize pos, xsize count = 1);
+	size_t AddUninitialized(size_t count); // add count uninitialzed elements
+	size_t Add(const TYPE newElement, size_t count = 1);
+	size_t AddArray(const TYPE *newElements, size_t count = 1);
+	size_t Insert(const TYPE newElement, size_t pos, size_t count = 1);
 
 	void Remove(const TYPE *Element);
 	void Remove(const TYPE &Element);
-	void RemoveAtIndex(xsize nIndex);
+	void RemoveAtIndex(size_t nIndex);
 	void RemoveAtIndex(int nIndex);
 
 	void setEmpty();
 	bool isEmpty() const { return size() == 0; }
     
-  xsize indexOf(TYPE& e) const;
+  size_t indexOf(TYPE& e) const;
 	bool contains(TYPE& e) const { return indexOf(e) != MAX_XSIZE; } //logically it should be named as Contains(e)
 };
 
@@ -117,9 +117,9 @@ class XArray
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 template<class TYPE>
-xsize XArray<TYPE>::indexOf(TYPE& e) const
+size_t XArray<TYPE>::indexOf(TYPE& e) const
 {
-  xsize i;
+  size_t i;
 
 	for ( i=0 ; i<size() ; i+=1 ) {
 		if ( ElementAt(i) == e ) return i;
@@ -127,21 +127,21 @@ xsize XArray<TYPE>::indexOf(TYPE& e) const
 	return MAX_XSIZE;
 }
 
-/* Constructeur */
-template<class TYPE>
-void XArray<TYPE>::Init()
-{
-	m_data = nullptr;
-	m_allocatedSize = 0;
-	m_len = 0;
-	_GrowBy = XArrayGrowByDefault;
-}
+///* Constructeur */
+//template<class TYPE>
+//void XArray<TYPE>::Init()
+//{
+//	m_data = nullptr;
+//	m_allocatedSize = 0;
+//	m_len = 0;
+//	_GrowBy = XArrayGrowByDefault;
+//}
 
 /* Constructeur */
 template<class TYPE>
-XArray<TYPE>::XArray(const XArray<TYPE> &anArray)
+XArray<TYPE>::XArray(const XArray<TYPE> &anArray) : m_data(0), m_len(0), m_allocatedSize(0)
 {
-	Init();
+//	Init();
 	AddArray(anArray.data(), anArray.size());
 }
 
@@ -161,7 +161,7 @@ const XArray<TYPE> &XArray<TYPE>::operator =(const XArray<TYPE> &anArray)
   }
 //
 //
-//xsize ui;
+//size_t ui;
 //
 //	setEmpty();
 //	for ( ui=0 ; ui<anArray.length() ; ui+=1 ) Add(anArray[ui] );
@@ -178,7 +178,7 @@ XArray<TYPE>::~XArray()
 
 /* CheckSize()  // nNewSize is number of TYPE, not in bytes */
 template<class TYPE>
-void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
+void XArray<TYPE>::CheckSize(size_t nNewSize, size_t nGrowBy)
 {
 //XArray_DBG("CheckSize: m_len=%d, m_size=%d, nGrowBy=%d, nNewSize=%d\n", m_len, m_size, nGrowBy, nNewSize);
 	if ( nNewSize > m_allocatedSize ) {
@@ -194,20 +194,20 @@ void XArray<TYPE>::CheckSize(xsize nNewSize, xsize nGrowBy)
 
 /* CheckSize() */
 template<class TYPE>
-void XArray<TYPE>::CheckSize(xsize nNewSize)
+void XArray<TYPE>::CheckSize(size_t nNewSize)
 {
 	CheckSize(nNewSize, XArrayGrowByDefault);
 }
 
-/* SetLength (xsize i) */
+/* SetLength (size_t i) */
 template<class TYPE>
-void XArray<TYPE>::setSize(xsize l)
+void XArray<TYPE>::setSize(size_t l)
 {
 	CheckSize(l, XArrayGrowByDefault); // be sure the size is allocated
 	m_len = l;
 	#ifdef DEBUG
 		if(m_len > m_allocatedSize) {
-			panic("XArray::SetLength(xsize) -> _Len > _Size");
+			panic("XArray::SetLength(size_t) -> _Len > _Size");
 		}
 	#endif
 }
@@ -215,11 +215,11 @@ void XArray<TYPE>::setSize(xsize l)
 
 /* ElementAt() */
 template<class TYPE>
-TYPE &XArray<TYPE>::ElementAt(xsize index)
+TYPE &XArray<TYPE>::ElementAt(size_t index)
 {
 //	#ifdef _DEBUG
 		if ( index >= m_len ) {
-			panic("XArray::ElementAt(xsize) -> Operator [] : index > m_len");
+			panic("XArray::ElementAt(size_t) -> Operator [] : index > m_len");
 		}
 //	#endif
 	return  m_data[index];
@@ -227,11 +227,11 @@ TYPE &XArray<TYPE>::ElementAt(xsize index)
 
 /* ElementAt() */
 template<class TYPE>
-const TYPE& XArray<TYPE>::ElementAt(xsize index) const
+const TYPE& XArray<TYPE>::ElementAt(size_t index) const
 {
 //	#ifdef _DEBUG
 		if ( index >= m_len ) {
-			panic("XArray::ElementAt(xsize) const -> Operator [] : index > m_len");
+			panic("XArray::ElementAt(size_t) const -> Operator [] : index > m_len");
 		}
 //	#endif
 	return  m_data[index];
@@ -267,21 +267,21 @@ const TYPE& XArray<TYPE>::ElementAt(int index) const
 	return  m_data[index];
 }
 
-/* Add(xsize) */
+/* Add(size_t) */
 template<class TYPE>
-xsize XArray<TYPE>::AddUninitialized(xsize count)
+size_t XArray<TYPE>::AddUninitialized(size_t count)
 {
 	CheckSize(m_len+count);
 	m_len += count;
 	return m_len-count;
 }
 
-/* Add(TYPE, xsize) */
+/* Add(TYPE, size_t) */
 template<class TYPE>
-xsize XArray<TYPE>::Add(const TYPE newElement, xsize count)
+size_t XArray<TYPE>::Add(const TYPE newElement, size_t count)
 {
-//  XArray_DBG("xsize XArray<TYPE>::Add(const TYPE newElement, xsize count) -> Enter. count=%d _Len=%d _Size=%d\n", count, m_len, m_size);
-  xsize i;
+//  XArray_DBG("size_t XArray<TYPE>::Add(const TYPE newElement, size_t count) -> Enter. count=%d _Len=%d _Size=%d\n", count, m_len, m_size);
+  size_t i;
 
 	CheckSize(m_len+count);
 	for ( i=0 ; i<count ; i++ ) {
@@ -291,11 +291,11 @@ xsize XArray<TYPE>::Add(const TYPE newElement, xsize count)
 	return m_len-count;
 }
 
-/* Add(TYPE *, xsize) */
+/* Add(TYPE *, size_t) */
 template<class TYPE>
-xsize XArray<TYPE>::AddArray(const TYPE *newElements, xsize count)
+size_t XArray<TYPE>::AddArray(const TYPE *newElements, size_t count)
 {
-  xsize i;
+  size_t i;
 
 	CheckSize(m_len+count);
 	for ( i=0 ; i<count ; i++ ) {
@@ -305,11 +305,11 @@ xsize XArray<TYPE>::AddArray(const TYPE *newElements, xsize count)
 	return m_len-count;
 }
 
-/* Insert(TYPE &, xsize, xsize) */
+/* Insert(TYPE &, size_t, size_t) */
 template<class TYPE>
-xsize XArray<TYPE>::Insert(const TYPE newElement, xsize pos, xsize count)
+size_t XArray<TYPE>::Insert(const TYPE newElement, size_t pos, size_t count)
 {
-  xsize i;
+  size_t i;
 
 	if ( pos  < m_len ) {
 		CheckSize(m_len+count);
@@ -324,9 +324,9 @@ xsize XArray<TYPE>::Insert(const TYPE newElement, xsize pos, xsize count)
 	}
 }
 
-/* Remove(xsize) */
+/* Remove(size_t) */
 template<class TYPE>
-void XArray<TYPE>::RemoveAtIndex(xsize nIndex)
+void XArray<TYPE>::RemoveAtIndex(size_t nIndex)
 {
 	if ( nIndex  < m_len ) {
 		if ( nIndex<m_len-1 ) memmove(&m_data[nIndex], &m_data[nIndex+1], (m_len-nIndex-1)*sizeof(TYPE));
@@ -334,7 +334,7 @@ void XArray<TYPE>::RemoveAtIndex(xsize nIndex)
 		return;
 	}
 	#if defined(_DEBUG) && defined(TRACE)
-		TRACE("XArray::Remove(xsize) -> nIndex > m_len\n");
+		TRACE("XArray::Remove(size_t) -> nIndex > m_len\n");
 	#endif
 }
 
@@ -348,7 +348,7 @@ void XArray<TYPE>::RemoveAtIndex(int nIndex)
 	}
 	#endif
 
-	RemoveAtIndex( (xsize)nIndex ); // Check of nIndex is made in Remove(xsize nIndex)
+	RemoveAtIndex( (size_t)nIndex ); // Check of nIndex is made in Remove(size_t nIndex)
 	return;
 }
 
@@ -356,7 +356,7 @@ void XArray<TYPE>::RemoveAtIndex(int nIndex)
 template<class TYPE>
 void XArray<TYPE>::Remove(const TYPE &Element)
 {
-  xsize i;
+  size_t i;
 
 	for ( i=0 ; i<m_len ; i+= 1) {
 		if ( m_data[i] == Element ) {

@@ -88,7 +88,7 @@ public:
   INPUT_ITEM      MenuItem;
   BOOLEAN         OtherOS;
 
-  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(0) {}
+  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), MenuItem(), OtherOS(0) {}
   ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = delete; // Can be defined if needed
   const ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = delete; // Can be defined if needed
   ~ACPI_DROP_TABLE() {}
@@ -120,9 +120,10 @@ struct CUSTOM_LOADER_ENTRY {
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 
-  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(0), DriveImagePath(0), Volume(0), Settings(0), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
-                          KernelScan(0), CustomBoot(0), BootBgColor({0,0,0,0})
-						{ memset(&KernelAndKextPatches, 0, sizeof(KernelAndKextPatches)); }
+  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), Path(), LoadOptions(),
+                          FullTitle(), Title(), Settings(), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
+                          KernelScan(0), CustomBoot(0), CustomLogo(), BootBgColor({0,0,0,0}), KernelAndKextPatches()
+						{ }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
@@ -146,7 +147,7 @@ public:
   UINT8                Type;
   UINT8                VolumeType;
 
-  CUSTOM_LEGACY_ENTRY() : Next(0), Hotkey(0), Flags(0), Type(0), VolumeType(0) { }
+  CUSTOM_LEGACY_ENTRY() : Next(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), FullTitle(), Title(), Hotkey(0), Flags(0), Type(0), VolumeType(0) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
@@ -168,7 +169,7 @@ public:
   UINT8              Flags;
   UINT8              VolumeType;
 
-  CUSTOM_TOOL_ENTRY() : Next(0), Hotkey(0), Flags(0), VolumeType(0) { }
+  CUSTOM_TOOL_ENTRY() : Next(0), Image(), ImagePath(), Volume(), Path(), LoadOptions(), FullTitle(), Title(), Hotkey(0), Flags(0), VolumeType(0) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
@@ -203,15 +204,15 @@ public:
   INPUT_ITEM    MenuItem;
   TAG_TYPE      ValueType;
 
-  DEV_PROPERTY() : Device(0), DevicePath(0), Key(0), Value(0), ValueLen(0), Next(0), Child(0), Label(0), ValueType(kTagTypeNone) { }
+  DEV_PROPERTY() : Device(0), DevicePath(0), Key(0), Value(0), ValueLen(0), Next(0), Child(0), Label(0), MenuItem(), ValueType(kTagTypeNone) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   DEV_PROPERTY(const DEV_PROPERTY&) = delete;
   DEV_PROPERTY& operator=(const DEV_PROPERTY&) = delete;
 };
 
-typedef struct {
-
+class SETTINGS_DATA {
+public:
   // SMBIOS TYPE0
   CHAR8                   VendorName[64];
   CHAR8                   RomVersion[64];
@@ -494,10 +495,10 @@ typedef struct {
   //Patch DSDT arbitrary
   UINT32                  PatchDsdtNum;
   UINT8                   **PatchDsdtFind;
-  UINT32 *LenToFind;
-  UINT8  **PatchDsdtReplace;
+  UINT32                  *LenToFind;
+  UINT8                   **PatchDsdtReplace;
 
-  UINT32 *LenToReplace;
+  UINT32                  *LenToReplace;
   BOOLEAN                 DebugDSDT;
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
@@ -559,7 +560,40 @@ typedef struct {
   UINT32 QuirksMask;
   UINTN MaxSlide;
 
-} SETTINGS_DATA;
+
+  SETTINGS_DATA() : VendorName{0}, RomVersion{0}, EfiVersion{0}, ReleaseDate{0}, ManufactureName{0}, ProductName{0}, VersionNr{0}, SerialNr{0}, SmUUID({0,0,0,{0}}),
+                    SmUUIDConfig(0), pad0{0}, FamilyName{0}, OEMProduct{0}, OEMVendor{0}, BoardManufactureName{0}, BoardSerialNumber{0}, BoardNumber{0}, LocationInChassis{0},
+                    BoardVersion{0}, OEMBoard{0}, BoardType(0), Pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer{0}, ChassisAssetTag{0}, CpuFreqMHz(0),
+                    BusSpeed(0), Turbo(0), EnabledCores(0), UserChange(0), QEMU(0), SmbiosVersion(0), Attribute(0), Pad17{0}, MemoryManufacturer{0},
+                    MemorySerialNumber{0}, MemoryPartNumber{0}, MemorySpeed{0}, CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0), XMPDetection(0),
+                    UseARTFreq(0), PlatformFeature(0), NoRomInfo(0), Language{0}, BootArgs{0}, CustomUuid{0}, DefaultVolume(0), DefaultLoader(0), LastBootedVolume(0),
+                    SkipHibernateTimeout(0), IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
+                    WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), Pad22{0}, DefaultBackgroundColor(0), ResetAddr(0), ResetVal(0), NoASPM(0),
+                    DropSSDT(0), NoOemTableId(0), NoDynamicExtract(0), AutoMerge(0), GeneratePStates(0), GenerateCStates(0), GenerateAPSN(0), GenerateAPLF(0), GeneratePluginType(0),
+                    PLimitDict(0), UnderVoltStep(0), DoubleFirstState(0), SuspendOverride(0), EnableC2(0), EnableC4(0), EnableC6(0), EnableISS(0), SlpSmiEnable(0),
+                    FixHeaders(0), C3Latency(0), smartUPS(0), PatchNMI(0), EnableC7(0), SavingMode(0), DsdtName{0}, FixDsdt(0), MinMultiplier(0),
+                    MaxMultiplier(0), PluginType(0), FixMCFG(0), DeviceRenameCount(0), DeviceRename(0), StringInjector(0), InjectSystemID(0), NoDefaultProperties(0), ReuseFFFF(0),
+                    FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
+                    InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
+                    LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName{0}, VideoPorts(0), NvidiaGeneric(0),
+                    NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), NvidiaWeb(0), pad41{0}, DualLink(0),
+                    IgPlatform(0), SecureBootWhiteListCount(0), SecureBootBlackListCount(0), SecureBootWhiteList(0), SecureBootBlackList(0), SecureBoot(0), SecureBootSetupMode(0), SecureBootPolicy(0), HDAInjection(0),
+                    HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
+                    LegacyBoot{0}, LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(0), HVCount(0), KernelAndKextPatches(), KextPatchesAllowed(0),
+                    KernelPatchesAllowed(0), AirportBridgeDeviceName{0}, KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
+                    RefCLK(0), RtMLB(0), RtROM(0), RtROMLen(0), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr{0}, DisableCloverHotkeys(0), NeverDoRecovery(0),
+                    ConfigName{0}, MainConfigName(0), BlackListCount(0), BlackList(0), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
+                    ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), PatchDsdtNum(0), PatchDsdtFind(0), LenToFind(0), PatchDsdtReplace(0), LenToReplace(0), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
+                    AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), ShowHiddenEntries(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
+                    CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
+                    PatchDsdtLabel(0), PatchDsdtTgt(0), PatchDsdtMenuItem(0), IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0)
+                  {};
+  SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
+  const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
+  ~SETTINGS_DATA() {}
+
+};
 
 typedef enum {
   english = 0,  //en
@@ -614,7 +648,7 @@ public:
   CHAR16            *FileName;
   INPUT_ITEM        MenuItem;
 
-  ACPI_PATCHED_AML() : Next(0), FileName(0) {};
+  ACPI_PATCHED_AML() : Next(0), FileName(0), MenuItem() {};
   ACPI_PATCHED_AML(const ACPI_PATCHED_AML& other) = delete; // Can be defined if needed
   const ACPI_PATCHED_AML& operator = ( const ACPI_PATCHED_AML & ) = delete; // Can be defined if needed
   ~ACPI_PATCHED_AML() { }
@@ -631,7 +665,7 @@ public:
   XStringW       Version;
   INPUT_ITEM     MenuItem;
   
-  SIDELOAD_KEXT() : Next(0), PlugInList(0) {};
+  SIDELOAD_KEXT() : Next(0), PlugInList(0), FileName(), KextDirNameUnderOEMPath(), Version(), MenuItem() {};
   SIDELOAD_KEXT(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
   const SIDELOAD_KEXT& operator = ( const SIDELOAD_KEXT & ) = delete; // Can be defined if needed
   ~SIDELOAD_KEXT() { delete Next; delete PlugInList; }
@@ -777,7 +811,7 @@ public:
    *
    */
   REFIT_CONFIG() : Timeout(-1), DisableFlags(0), TextOnly(FALSE), Quiet(TRUE), LegacyFirst(FALSE), NoLegacy(FALSE), DebugLog(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
-                   RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
+                   RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), Theme(), ScreenResolution(), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
                    ShowOptimus(FALSE), Codepage(0xC0), CodepageSize(0xC0) {};
   REFIT_CONFIG(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
@@ -930,6 +964,10 @@ VOID
 ParseSMBIOSSettings (
   TagPtr dictPointer
   );
+
+BOOLEAN
+CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
+                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src);
 
 
 #endif

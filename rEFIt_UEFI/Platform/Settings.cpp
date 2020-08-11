@@ -642,7 +642,7 @@ AddCustomSubEntry (
 
 BOOLEAN
 CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
-                          IN      KERNEL_AND_KEXT_PATCHES *Src)
+                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src)
 {
   if (Dst == NULL || Src == NULL) return FALSE;
 

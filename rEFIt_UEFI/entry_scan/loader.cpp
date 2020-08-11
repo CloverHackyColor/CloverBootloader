@@ -757,7 +757,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   }
   Entry->BootBgColor = BootBgColor;
 
-  Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
+//  Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
+  CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, Patches == NULL ? &gSettings.KernelAndKextPatches : Patches);
 #ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 #endif

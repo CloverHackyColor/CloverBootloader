@@ -6,43 +6,10 @@
 #include "libeg.h"
 //#include "nanosvg.h"
 #include "XImage.h"
+#include "XIcon.h"
 #include "XCinema.h"
 
-extern const INTN IconsNamesSize;
 #define INDICATOR_SIZE (52)
-
-class XIcon
-{
-public:
-  INTN Id;  //for example BUILTIN_ICON_POINTER
-  XString8 Name; //for example "os_moja", "vol_internal"
-  XImage Image;
-  XImage ImageNight;
-  bool Native;
-  void *ImageSVG;  //NSVGimage*
-  void *ImageSVGnight;
-protected:
-  bool Empty;
-public:
-  XIcon(): Id(0), Name(), Image(), ImageNight(), Native(false), ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(true)
-  {};
-  XIcon(INTN Id, bool Embedded = false);
-  ~XIcon();
-  
-  bool isEmpty() const  { return Empty; }
-  void setFilled() { Empty = false; }
-  void setEmpty()  { Empty = true; }
-  
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const wchar_t* LIconName);
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
-
-  // Default are not valid, as usual. We delete them. If needed, proper ones can be created
-//  Icon(const Icon&) = delete;
-  XIcon& operator=(const XIcon&); // = delete;
-  void GetEmbedded();
-  XImage* GetBest(bool night, bool *free = nullptr);
-};
 
 class XTheme
 {
@@ -138,6 +105,15 @@ public:
   XCinema Cinema;
 
   void *SVGParser;
+  
+  void Init();
+  XTheme(); //default constructor
+  XTheme(const XTheme&) = delete;
+  XTheme& operator=(const XTheme&) = delete;
+
+  ~XTheme();
+
+  
   //fill the theme
 //  const XImage& GetIcon(const char* Name);
 //  const XImage& GetIcon(const CHAR16* Name);
@@ -177,10 +153,6 @@ public:
   void FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height);
 //  void InitSelection();
   void InitBar();
-
-  void Init();
-  XTheme(); //default constructor
-  ~XTheme();
 
 protected:
   //internal layout variables instead of globals in menu.cpp

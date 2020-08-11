@@ -246,7 +246,7 @@
 		954BBE98238196EE0032425F /* Locale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Locale.swift; sourceTree = "<group>"; };
 		954C3DF0237DF0250059C698 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		954DECD423899F5F006A9876 /* Bootmanager.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Bootmanager.png; sourceTree = "<group>"; };
-		954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clover-Bridging-Header.h"; sourceTree = "<group>"; };
+		954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = "Clover-Bridging-Header.h"; sourceTree = "<group>"; };
 		954FCFD72391818300C9273C /* NSWindowFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSWindowFix.h; sourceTree = "<group>"; };
 		954FCFD82391818300C9273C /* NSWindowFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSWindowFix.m; sourceTree = "<group>"; };
 		955005EC242531E300AB3979 /* PE_Undo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PE_Undo.swift; sourceTree = "<group>"; };
@@ -1240,6 +1240,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 			};
 			name = Debug;
 		};
@@ -1296,6 +1297,7 @@
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 			};
 			name = Release;
 		};

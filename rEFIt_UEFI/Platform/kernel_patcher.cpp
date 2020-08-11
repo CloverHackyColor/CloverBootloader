@@ -39,7 +39,7 @@
 
 // runtime debug
 //make it a member of LOADER_ENTRY class entry.DBG_RT(...)
-//#define DBG_RT( ...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { printf(__VA_ARGS__); }
+//#define DBG_RT( ...)    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches.KPDebug) { printf(__VA_ARGS__); }
 
 
 //EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
@@ -824,8 +824,8 @@ BOOLEAN LOADER_ENTRY::PatchCPUID(const UINT8* Location, INT32 LenLoc,
   INT32 patchLocation=0, patchLocation1=0;
   INT32 Adr = 0, Num;
   BOOLEAN Patched = FALSE;
-  UINT8 FakeModel = (KernelAndKextPatches->FakeCPUID >> 4) & 0x0f;
-  UINT8 FakeExt = (KernelAndKextPatches->FakeCPUID >> 0x10) & 0x0f;
+  UINT8 FakeModel = (KernelAndKextPatches.FakeCPUID >> 4) & 0x0f;
+  UINT8 FakeExt = (KernelAndKextPatches.FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
     Adr = FindBin(&KernelData[Adr], 0x800000 - Adr, Location, (UINT32)LenLoc);
     if (Adr < 0) {
@@ -1025,7 +1025,7 @@ BOOLEAN LOADER_ENTRY::KernelPatchPm()
     }
   }
     
-  if (KernelAndKextPatches->KPDebug) {
+  if (KernelAndKextPatches.KPDebug) {
     gBS->Stall(3000000);
   }
 #endif
@@ -1196,7 +1196,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
     }
   }
     
-//  if (KernelAndKextPatches->KPDebug) {
+//  if (KernelAndKextPatches.KPDebug) {
     Stall(3000000);
 //  }
     
@@ -1243,7 +1243,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
     }
   }
 
-//  if (KernelAndKextPatches->KPDebug) {
+//  if (KernelAndKextPatches.KPDebug) {
     Stall(3000000);
 //  }
 
@@ -1477,7 +1477,7 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM()
     return FALSE;
   }
 
-  KernelAndKextPatches->FakeCPUID = (UINT32)(os_version < AsciiOSVersionToUint64("10.10.3") ? 0x0306C0 : 0x040674);
+  KernelAndKextPatches.FakeCPUID = (UINT32)(os_version < AsciiOSVersionToUint64("10.10.3") ? 0x0306C0 : 0x040674);
   KernelCPUIDPatch();
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
@@ -1534,7 +1534,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
     return FALSE;
   }
 
-  KernelAndKextPatches->FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
+  KernelAndKextPatches.FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
   KernelCPUIDPatch();
 
   // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
@@ -2308,7 +2308,7 @@ LOADER_ENTRY::FindBootArgs()
       DBG_RT( "bootArgs2->flags = 0x%hx\n", bootArgs2->flags);
       DBG_RT( "bootArgs2->kslide = 0x%x\n", bootArgs2->kslide);
       DBG_RT( "bootArgs2->bootMemStart = 0x%llx\n", bootArgs2->bootMemStart);
- //     if (KernelAndKextPatches && KernelAndKextPatches->KPDebug)
+ //     if (KernelAndKextPatches && KernelAndKextPatches.KPDebug)
       Stall(5000000);
 
       // disable other pointer
@@ -2354,25 +2354,25 @@ LOADER_ENTRY::KernelUserPatch()
 {
   INTN Num, i = 0, y = 0;
 
-  // if we modify directly KernelAndKextPatches->KernelPatches[i].SearchLen, it will wrong for next driver
-  UINTN SearchLen = KernelAndKextPatches->KernelPatches[i].SearchLen;
+  // if we modify directly KernelAndKextPatches.KernelPatches[i].SearchLen, it will wrong for next driver
+  UINTN SearchLen = KernelAndKextPatches.KernelPatches[i].SearchLen;
 
   // old confuse
   // We are using KernelAndKextPatches as set by Custom Entries.
   // while config patches go to gSettings.KernelAndKextPatches
   // how to resolve it?
   
-  for (; i < KernelAndKextPatches->NrKernels; ++i) {
-	  DBG( "Patch[%lld]: %s\n", i, KernelAndKextPatches->KernelPatches[i].Label);
-    if (!KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
-      //DBG_RT( "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, KernelAndKextPatches->KernelPatches[i].Label, OSVersion);
+  for (; i < KernelAndKextPatches.NrKernels; ++i) {
+	  DBG( "Patch[%lld]: %s\n", i, KernelAndKextPatches.KernelPatches[i].Label);
+    if (!KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
+      //DBG_RT( "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, KernelAndKextPatches.KernelPatches[i].Label, OSVersion);
       DBG( "==> disabled\n");
       continue;
     }
     bool once = false;
     UINTN procLen = 0;
-    UINTN procAddr = searchProc(KernelAndKextPatches->KernelPatches[i].ProcedureName);
-    DBG("procedure %s found at 0x%llx\n", KernelAndKextPatches->KernelPatches[i].ProcedureName, procAddr);
+    UINTN procAddr = searchProc(KernelAndKextPatches.KernelPatches[i].ProcedureName);
+    DBG("procedure %s found at 0x%llx\n", KernelAndKextPatches.KernelPatches[i].ProcedureName, procAddr);
     if (SearchLen == 0) {
       SearchLen = KERNEL_MAX_SIZE;
       procLen = KERNEL_MAX_SIZE - procAddr;
@@ -2383,21 +2383,21 @@ LOADER_ENTRY::KernelUserPatch()
     UINT8 * curs = &KernelData[procAddr];
     UINTN j = 0;
     while (j < KERNEL_MAX_SIZE) {
-      if (!KernelAndKextPatches->KernelPatches[i].StartPattern || //old behavior
+      if (!KernelAndKextPatches.KernelPatches[i].StartPattern || //old behavior
           CompareMemMask((const UINT8*)curs,
-                         (const UINT8*)KernelAndKextPatches->KernelPatches[i].StartPattern,
-                         KernelAndKextPatches->KernelPatches[i].StartPatternLen,
-                         (const UINT8*)KernelAndKextPatches->KernelPatches[i].StartMask,
-                         KernelAndKextPatches->KernelPatches[i].StartPatternLen)) {
+                         (const UINT8*)KernelAndKextPatches.KernelPatches[i].StartPattern,
+                         KernelAndKextPatches.KernelPatches[i].StartPatternLen,
+                         (const UINT8*)KernelAndKextPatches.KernelPatches[i].StartMask,
+                         KernelAndKextPatches.KernelPatches[i].StartPatternLen)) {
         DBG( " StartPattern found\n");
         Num = SearchAndReplaceMask(curs,
                                    procLen,
-                                   (const UINT8*)KernelAndKextPatches->KernelPatches[i].Data,
-                                   (const UINT8*)KernelAndKextPatches->KernelPatches[i].MaskFind,
-                                   KernelAndKextPatches->KernelPatches[i].DataLen,
-                                   (const UINT8*)KernelAndKextPatches->KernelPatches[i].Patch,
-                                   (const UINT8*)KernelAndKextPatches->KernelPatches[i].MaskReplace,
-                                   KernelAndKextPatches->KernelPatches[i].Count
+                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Data,
+                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskFind,
+                                   KernelAndKextPatches.KernelPatches[i].DataLen,
+                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Patch,
+                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskReplace,
+                                   KernelAndKextPatches.KernelPatches[i].Count
                                    );
         
         if (Num) {
@@ -2407,15 +2407,15 @@ LOADER_ENTRY::KernelUserPatch()
         }
         DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
         if (once ||
-            !KernelAndKextPatches->KernelPatches[i].StartPattern ||
-            !KernelAndKextPatches->KernelPatches[i].StartPatternLen) {
+            !KernelAndKextPatches.KernelPatches[i].StartPattern ||
+            !KernelAndKextPatches.KernelPatches[i].StartPatternLen) {
           break;
         }
       }
       j++; curs++;
     }
   }
-  if (KernelAndKextPatches->KPDebug) {
+  if (KernelAndKextPatches.KPDebug) {
     gBS->Stall(2000000);
   }
 
@@ -2427,37 +2427,37 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 {
   INTN Num, i = 0, y = 0;
 
-  // if we modify directly KernelAndKextPatches->BootPatches[i].SearchLen, it will wrong for next driver
-  UINTN SearchLen = KernelAndKextPatches->BootPatches[i].SearchLen;
+  // if we modify directly KernelAndKextPatches.BootPatches[i].SearchLen, it will wrong for next driver
+  UINTN SearchLen = KernelAndKextPatches.BootPatches[i].SearchLen;
 
   if (!SearchLen) {
     SearchLen = BooterSize;
   }
-  for (; i < KernelAndKextPatches->NrBoots; ++i) {
-	  DBG( "Patch[%lld]: %s\n", i, KernelAndKextPatches->BootPatches[i].Label);
-    if (!KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
+  for (; i < KernelAndKextPatches.NrBoots; ++i) {
+	  DBG( "Patch[%lld]: %s\n", i, KernelAndKextPatches.BootPatches[i].Label);
+    if (!KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
       DBG( "==> disabled\n");
       continue;
     }
     UINT8 * curs = BooterData;
     UINTN j = 0;
     while (j < BooterSize) {
-      if (!KernelAndKextPatches->BootPatches[i].StartPattern || //old behavior
+      if (!KernelAndKextPatches.BootPatches[i].StartPattern || //old behavior
           CompareMemMask((const UINT8*)curs,
-                         (const UINT8*)KernelAndKextPatches->BootPatches[i].StartPattern,
-                         KernelAndKextPatches->BootPatches[i].StartPatternLen,
-                         (const UINT8*)KernelAndKextPatches->BootPatches[i].StartMask,
-                         KernelAndKextPatches->BootPatches[i].StartPatternLen)) {
+                         (const UINT8*)KernelAndKextPatches.BootPatches[i].StartPattern,
+                         KernelAndKextPatches.BootPatches[i].StartPatternLen,
+                         (const UINT8*)KernelAndKextPatches.BootPatches[i].StartMask,
+                         KernelAndKextPatches.BootPatches[i].StartPatternLen)) {
         DBG( " StartPattern found\n");
 
         Num = SearchAndReplaceMask(curs,
                                    SearchLen,
-                                   (const UINT8*)KernelAndKextPatches->BootPatches[i].Data,
-                                   (const UINT8*)KernelAndKextPatches->BootPatches[i].MaskFind,
-                                   KernelAndKextPatches->BootPatches[i].DataLen,
-                                   (const UINT8*)KernelAndKextPatches->BootPatches[i].Patch,
-                                   (const UINT8*)KernelAndKextPatches->BootPatches[i].MaskReplace,
-                                   KernelAndKextPatches->BootPatches[i].Count
+                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Data,
+                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskFind,
+                                   KernelAndKextPatches.BootPatches[i].DataLen,
+                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Patch,
+                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskReplace,
+                                   KernelAndKextPatches.BootPatches[i].Count
                                    );
         if (Num) {
           y++;
@@ -2466,15 +2466,15 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
         }
 
         DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
-        if (!KernelAndKextPatches->BootPatches[i].StartPattern ||
-            !KernelAndKextPatches->BootPatches[i].StartPatternLen) {
+        if (!KernelAndKextPatches.BootPatches[i].StartPattern ||
+            !KernelAndKextPatches.BootPatches[i].StartPatternLen) {
           break;
         }
       }
       j++; curs++;
     }
   }
-//  if (KernelAndKextPatches->KPDebug) {
+//  if (KernelAndKextPatches.KPDebug) {
 //    gBS->Stall(2000000);
 //  }
   Stall(2000000);
@@ -2600,24 +2600,24 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
    * it was intended for custom entries but not work if no custom entries used
    * so set common until better solution invented
    */
-  KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
+  //KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
+  CopyKernelAndKextPatches(&KernelAndKextPatches, &gSettings.KernelAndKextPatches);
 
   PatcherInited = false;
-  if (KernelAndKextPatches == NULL) return; //entry is not null as double check
   KernelAndKextPatcherInit();
 
   KextPatchesNeeded = (
-    KernelAndKextPatches->KPAppleIntelCPUPM ||
-    KernelAndKextPatches->KPAppleRTC ||
-    KernelAndKextPatches->EightApple ||
-    KernelAndKextPatches->KPDELLSMBIOS ||
-    (KernelAndKextPatches->KPATIConnectorsPatch != NULL) ||
-    ((KernelAndKextPatches->NrKexts > 0) && (KernelAndKextPatches->KextPatches != NULL))
+    KernelAndKextPatches.KPAppleIntelCPUPM ||
+    KernelAndKextPatches.KPAppleRTC ||
+    KernelAndKextPatches.EightApple ||
+    KernelAndKextPatches.KPDELLSMBIOS ||
+    (KernelAndKextPatches.KPATIConnectorsPatch != NULL) ||
+    ((KernelAndKextPatches.NrKexts > 0) && (KernelAndKextPatches.KextPatches != NULL))
   );
 
 //  DBG_RT("\nKernelToPatch: ");
-//  DBG_RT("Kernels patches: %d\n", KernelAndKextPatches->NrKernels);
-  if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches->KernelPatches != NULL) && KernelAndKextPatches->NrKernels) {
+//  DBG_RT("Kernels patches: %d\n", KernelAndKextPatches.NrKernels);
+  if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches.KernelPatches != NULL) && KernelAndKextPatches.NrKernels) {
 //    DBG_RT("Enabled: \n");
     DBG("Kernels patches: enabled \n");
 //    KernelAndKextPatcherInit();
@@ -2634,7 +2634,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   }
 /*
   DBG_RT( "\nKernelCpu patch: ");
-  if (KernelAndKextPatches->KPKernelCpu) {
+  if (KernelAndKextPatches.KPKernelCpu) {
     //
     // Kernel patches
     //
@@ -2655,8 +2655,8 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
 */
   //other method for KernelCPU patch is FakeCPUID
   DBG_RT( "\nFakeCPUID patch: ");
-  if (KernelAndKextPatches->FakeCPUID) {
-    DBG_RT( "Enabled: 0x%06x\n", KernelAndKextPatches->FakeCPUID);
+  if (KernelAndKextPatches.FakeCPUID) {
+    DBG_RT( "Enabled: 0x%06x\n", KernelAndKextPatches.FakeCPUID);
 //    KernelAndKextPatcherInit();
 //    if (KernelData == NULL) goto NoKernelData;
     KernelCPUIDPatch();
@@ -2666,7 +2666,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
 
   // CPU power management patch for CPU with locked msr
   DBG_RT( "\nKernelPm patch: ");
-  if (KernelAndKextPatches->KPKernelPm || KernelAndKextPatches->KPKernelXCPM) {
+  if (KernelAndKextPatches.KPKernelPm || KernelAndKextPatches.KPKernelXCPM) {
     DBG_RT( "Enabled: \n");
     DBG( "KernelPm patch: Enabled\n");
 //    KernelAndKextPatcherInit();
@@ -2682,7 +2682,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   
   // Patch to not dump kext at panic (c)vit9696
   DBG_RT( "\nPanicNoKextDump patch: ");
-  if (KernelAndKextPatches->KPPanicNoKextDump) {
+  if (KernelAndKextPatches.KPPanicNoKextDump) {
     DBG_RT( "Enabled: \n");
 //    KernelAndKextPatcherInit();
 //    if (KernelData == NULL) goto NoKernelData;
@@ -2695,7 +2695,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
 
   // Lapic Panic Kernel Patch
   DBG_RT( "\nKernelLapic patch: ");
-  if (KernelAndKextPatches->KPKernelLapic) {
+  if (KernelAndKextPatches.KPKernelLapic) {
     DBG_RT( "Enabled: \n");
 //    KernelAndKextPatcherInit();
 //    if (KernelData == NULL) goto NoKernelData;
@@ -2711,7 +2711,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     DBG_RT( "Disabled\n");
   }
 
-  if (KernelAndKextPatches->KPKernelXCPM) {
+  if (KernelAndKextPatches.KPKernelXCPM) {
     //
     // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
     //
@@ -2803,7 +2803,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
   //
   // Kext add
   //
-//  if (KernelAndKextPatches->KPDebug) {
+//  if (KernelAndKextPatches.KPDebug) {
 //    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
 //        OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
 //    disabled kext injection if FakeSMC is already present

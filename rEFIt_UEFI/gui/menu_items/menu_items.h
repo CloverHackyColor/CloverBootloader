@@ -135,23 +135,30 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual void StartLegacy() {};
   virtual void StartTool() {};
 
-  REFIT_ABSTRACT_MENU_ENTRY() : Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-  {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-  {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_) : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-  {};
+  REFIT_ABSTRACT_MENU_ENTRY()
+      : Title(), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_)
+      : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_)
+      : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      {};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-  : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), Image(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-  {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_,
-                            CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, const XIcon& Icon_,
-                            EG_RECT Place_, ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-                            REFIT_MENU_SCREEN *SubScreen_)
-  : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_),
-  Image(Icon_), Place(Place_),
-  AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
-  SubScreen(SubScreen_) {};
+      : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      {};
+//  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_,
+//                            CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, const XIcon& Icon_,
+//                            EG_RECT Place_, ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
+//                            REFIT_MENU_SCREEN *SubScreen_)
+//              : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_),
+//                Image(Icon_), Place(Place_),
+//                AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
+//                SubScreen(SubScreen_)
+//              {};
+
+  REFIT_ABSTRACT_MENU_ENTRY(const REFIT_ABSTRACT_MENU_ENTRY&) = delete;
+  REFIT_ABSTRACT_MENU_ENTRY& operator=(const REFIT_ABSTRACT_MENU_ENTRY&) = delete;
 
   virtual ~REFIT_ABSTRACT_MENU_ENTRY() {}; // virtual destructor : this is vital
 };
@@ -238,6 +245,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	public:
 	  INPUT_ITEM        *Item;
 	  REFIT_MENU_ENTRY_ITEM_ABSTRACT() : Item(0) {}
+    REFIT_MENU_ENTRY_ITEM_ABSTRACT(const REFIT_MENU_ENTRY_ITEM_ABSTRACT&) = delete;
+    REFIT_MENU_ENTRY_ITEM_ABSTRACT& operator=(const REFIT_MENU_ENTRY_ITEM_ABSTRACT&) = delete;
 	  virtual REFIT_MENU_ENTRY_ITEM_ABSTRACT* getREFIT_MENU_ITEM_IEM_ABSTRACT() { return this; };
 	};
 
@@ -271,8 +280,11 @@ class REFIT_ABSTRACT_MENU_ENTRY
     XIcon        BadgeImage;
 
     REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER()
-    : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), DriveImage(), BadgeImage()
-    {}
+        : REFIT_ABSTRACT_MENU_ENTRY(), DevicePathString(0), LoadOptions(), LoaderPath(), DriveImage(), BadgeImage()
+        {}
+    REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(const REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER&) = delete;
+    REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER& operator=(const REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER&) = delete;
+
     virtual  XIcon* getDriveImage()  { return &DriveImage; };
     virtual  XIcon* getBadgeImage()  { return &BadgeImage; };
 
@@ -291,6 +303,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
       void              StartTool();
 
 			REFIT_MENU_ENTRY_LOADER_TOOL() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), NoMemset(1), Flags(0), DevicePath(0) {};
+      REFIT_MENU_ENTRY_LOADER_TOOL(const REFIT_MENU_ENTRY_LOADER_TOOL&) = delete;
+      REFIT_MENU_ENTRY_LOADER_TOOL& operator=(const REFIT_MENU_ENTRY_LOADER_TOOL&) = delete;
 
 			virtual REFIT_MENU_ENTRY_LOADER_TOOL* getREFIT_MENU_ENTRY_LOADER_TOOL() { return this; };
 		};
@@ -306,7 +320,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			EFI_DEVICE_PATH  *DevicePath;
 			UINT16            Flags;
 
-			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), DevicePath(NULL), Flags(0)  {};
+			REFIT_MENU_ENTRY_CLOVER() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), VolName(), DevicePath(NULL), Flags(0)  {};
+      REFIT_MENU_ENTRY_CLOVER(const REFIT_MENU_ENTRY_CLOVER&) = delete;
+      REFIT_MENU_ENTRY_CLOVER& operator=(const REFIT_MENU_ENTRY_CLOVER&) = delete;
 
 			REFIT_MENU_ENTRY_CLOVER* getPartiallyDuplicatedEntry() const;
 			virtual REFIT_MENU_ENTRY_CLOVER* getREFIT_MENU_ENTRY_CLOVER() { return this; };
@@ -322,6 +338,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			UINTN             BootNum;
 
 			REFIT_MENU_ITEM_BOOTNUM() : REFIT_MENU_ITEM_ABSTRACT_ENTRY_LOADER(), Volume(NULL), BootNum(0) {};
+      REFIT_MENU_ITEM_BOOTNUM(const REFIT_MENU_ITEM_BOOTNUM&) = delete;
+      REFIT_MENU_ITEM_BOOTNUM& operator=(const REFIT_MENU_ITEM_BOOTNUM&) = delete;
 			virtual REFIT_MENU_ITEM_BOOTNUM* getREFIT_MENU_ITEM_BOOTNUM() { return this; };
 		} ;
 
@@ -341,8 +359,6 @@ class REFIT_ABSTRACT_MENU_ENTRY
 
 			//---------------------------------------  LOADER_ENTRY  ---------------------------------------//
 
-			struct KERNEL_AND_KEXT_PATCHES;
-
 			class LOADER_ENTRY : public REFIT_MENU_ITEM_BOOTNUM
 			{
 			  public:
@@ -358,7 +374,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 
 				UINT8             CustomBoot;
 				XImage            CustomLogo;
-				KERNEL_AND_KEXT_PATCHES *KernelAndKextPatches;
+				KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 				XStringW          Settings;
         UINT8             *KernelData;
         UINT32            AddrVtable;
@@ -396,15 +412,17 @@ class REFIT_ABSTRACT_MENU_ENTRY
         
 
 				LOADER_ENTRY()
-						: REFIT_MENU_ITEM_BOOTNUM(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
+						: REFIT_MENU_ITEM_BOOTNUM(), APFSTargetUUID(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
               BootBgColor({0,0,0,0}),
-              CustomBoot(0), KernelAndKextPatches(0), Settings(0), KernelData(0),
-              AddrVtable(0), SizeVtable(0), NamesTable(0), shift(0),
+              CustomBoot(0), CustomLogo(), KernelAndKextPatches(), Settings(0), KernelData(0),
+              AddrVtable(0), SizeVtable(0), NamesTable(0), SegVAddr(0), shift(0),
               PatcherInited(false), gSNBEAICPUFixRequire(false), gBDWEIOPCIFixRequire(false), isKernelcache(false), is64BitKernel(false),
               KernelSlide(0), KernelOffset(0), PrelinkTextLoadCmdAddr(0), PrelinkTextAddr(0), PrelinkTextSize(0),
               PrelinkInfoLoadCmdAddr(0), PrelinkInfoAddr(0), PrelinkInfoSize(0),
               KernelRelocBase(0), bootArgs1(0), bootArgs2(0), dtRoot(0), dtLength(0)
 						{};
+        LOADER_ENTRY(const LOADER_ENTRY&) = delete;
+        LOADER_ENTRY& operator=(const LOADER_ENTRY&) = delete;
         
         void          SetKernelRelocBase();
         void          FindBootArgs();
@@ -468,7 +486,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         BOOLEAN   KernelIvyE5XCPM();
         void      EightApplePatch(UINT8 *Driver, UINT32 DriverSize);
         
-        void Stall(int Pause) { if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) { gBS->Stall(Pause); } };
+        void Stall(int Pause) { if ( KernelAndKextPatches.KPDebug ) { gBS->Stall(Pause); } };
         void StartLoader();
         void AddDefaultMenu();
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;

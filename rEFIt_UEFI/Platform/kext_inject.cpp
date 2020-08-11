@@ -373,20 +373,19 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
   }
 
   // Force kexts to load
-  if ((KernelAndKextPatches != NULL) &&
-      (KernelAndKextPatches->NrForceKexts > 0) &&
-      (KernelAndKextPatches->ForceKexts != NULL)) {
-    for (INT32 i = 0; i < KernelAndKextPatches->NrForceKexts; ++i) {
-      MsgLog("  Force kext: %ls\n", KernelAndKextPatches->ForceKexts[i]);
+  if ((KernelAndKextPatches.NrForceKexts > 0) &&
+      (KernelAndKextPatches.ForceKexts != NULL)) {
+    for (INT32 i = 0; i < KernelAndKextPatches.NrForceKexts; ++i) {
+      MsgLog("  Force kext: %ls\n", KernelAndKextPatches.ForceKexts[i]);
       if (Volume && Volume->RootDir) {
         // Check if the entry is a directory
-        if (StrStr(KernelAndKextPatches->ForceKexts[i], L".kext") == NULL) {
-          DirIterOpen(Volume->RootDir, KernelAndKextPatches->ForceKexts[i], &PlugInIter);
+        if (StrStr(KernelAndKextPatches.ForceKexts[i], L".kext") == NULL) {
+          DirIterOpen(Volume->RootDir, KernelAndKextPatches.ForceKexts[i], &PlugInIter);
           while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
             if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
               continue;   // skip this
-            FileName = SWPrintf("%ls\\%ls", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
-            //    snwprintf(FileName, 512, "%s\\%s", KernelAndKextPatches->ForceKexts[i], PlugInFile->FileName);
+            FileName = SWPrintf("%ls\\%ls", KernelAndKextPatches.ForceKexts[i], PlugInFile->FileName);
+            //    snwprintf(FileName, 512, "%s\\%s", KernelAndKextPatches.ForceKexts[i], PlugInFile->FileName);
             MsgLog("  Force kext: %ls\n", FileName.wc_str());
             AddKext( Volume->RootDir, FileName.wc_str(), archCpuType);
             PlugIns = SWPrintf("%ls\\Contents\\PlugIns", FileName.wc_str());
@@ -395,9 +394,9 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
           }
           DirIterClose(&PlugInIter);
         } else {
-          AddKext( Volume->RootDir, KernelAndKextPatches->ForceKexts[i], archCpuType);
-          PlugIns = SWPrintf("%ls\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
-          //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", KernelAndKextPatches->ForceKexts[i]);
+          AddKext( Volume->RootDir, KernelAndKextPatches.ForceKexts[i], archCpuType);
+          PlugIns = SWPrintf("%ls\\Contents\\PlugIns", KernelAndKextPatches.ForceKexts[i]);
+          //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", KernelAndKextPatches.ForceKexts[i]);
           LoadPlugInKexts(Volume->RootDir, PlugIns.wc_str(), archCpuType, TRUE);
         }
       }
@@ -739,7 +738,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
   KextCount = GetKextCount();
   if (KextCount == 0) {
     DBG_RT("no kexts to inject.\nPausing 5 secs ...\n");
-    if (KernelAndKextPatches->KPDebug) {
+    if (KernelAndKextPatches.KPDebug) {
       gBS->Stall(5000000);
     }
     return EFI_NOT_FOUND;
@@ -832,9 +831,9 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
         SavedValue = InfoPlist[drvinfo->infoDictLength];
         InfoPlist[drvinfo->infoDictLength] = '\0';
  //       KernelAndKextPatcherInit();
-        for (i = 0; i < KernelAndKextPatches->NrKexts; i++) {
-          if ((KernelAndKextPatches->KextPatches[i].DataLen > 0) &&
-              (AsciiStrStr(InfoPlist, KernelAndKextPatches->KextPatches[i].Name) != NULL)) {
+        for (i = 0; i < KernelAndKextPatches.NrKexts; i++) {
+          if ((KernelAndKextPatches.KextPatches[i].DataLen > 0) &&
+              (AsciiStrStr(InfoPlist, KernelAndKextPatches.KextPatches[i].Name) != NULL)) {
             AnyKextPatch(
                          (UINT8*)(UINTN)drvinfo->executablePhysAddr,
                          drvinfo->executableLength,

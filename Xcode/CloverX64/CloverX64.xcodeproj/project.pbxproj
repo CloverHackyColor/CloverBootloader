@@ -467,6 +467,12 @@
 		9AD469562452B63800D6D0DB /* XToolsConf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD469542452B63300D6D0DB /* XToolsConf.h */; };
 		9AD469572452B63800D6D0DB /* XToolsConf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD469542452B63300D6D0DB /* XToolsConf.h */; };
 		9AD469582452B63900D6D0DB /* XToolsConf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD469542452B63300D6D0DB /* XToolsConf.h */; };
+		9AEFE64624E2A7D1005D56D8 /* XIcon.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AEFE64424E2A7D0005D56D8 /* XIcon.h */; };
+		9AEFE64724E2A7D1005D56D8 /* XIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AEFE64524E2A7D0005D56D8 /* XIcon.cpp */; };
+		9AEFE64C24E2C64B005D56D8 /* XBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AEFE64824E2C64B005D56D8 /* XBuffer.cpp */; };
+		9AEFE64D24E2C64B005D56D8 /* XRBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AEFE64924E2C64B005D56D8 /* XRBuffer.h */; };
+		9AEFE64E24E2C64B005D56D8 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AEFE64A24E2C64B005D56D8 /* XRBuffer.cpp */; };
+		9AEFE64F24E2C64B005D56D8 /* XBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AEFE64B24E2C64B005D56D8 /* XBuffer.h */; };
 		9AF41562242BABC700D2644C /* printlib-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */; };
 		9AF41563242BABC700D2644C /* printlib-test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41560242BABC700D2644C /* printlib-test.h */; };
 		9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AF41565242BAD5600D2644C /* printf_lite-test-cpp_conf.h */; };
@@ -1034,6 +1040,12 @@
 		9AD4694E2452B5A600D6D0DB /* Pci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pci.h; sourceTree = "<group>"; };
 		9AD4694F2452B5A600D6D0DB /* OneLinerMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneLinerMacros.h; sourceTree = "<group>"; };
 		9AD469542452B63300D6D0DB /* XToolsConf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsConf.h; sourceTree = "<group>"; };
+		9AEFE64424E2A7D0005D56D8 /* XIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XIcon.h; sourceTree = "<group>"; };
+		9AEFE64524E2A7D0005D56D8 /* XIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XIcon.cpp; sourceTree = "<group>"; };
+		9AEFE64824E2C64B005D56D8 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
+		9AEFE64924E2C64B005D56D8 /* XRBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRBuffer.h; sourceTree = "<group>"; };
+		9AEFE64A24E2C64B005D56D8 /* XRBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRBuffer.cpp; sourceTree = "<group>"; };
+		9AEFE64B24E2C64B005D56D8 /* XBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBuffer.h; sourceTree = "<group>"; };
 		9AF4155F242BABC700D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF41560242BABC700D2644C /* printlib-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test.h"; sourceTree = "<group>"; };
 		9AF41561242BABC700D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
@@ -1299,19 +1311,17 @@
 		9AC77F5C24176C04005CDD5C /* libeg */ = {
 			isa = PBXGroup;
 			children = (
-				9A105B3824483AD50006DE06 /* image.h */,
-				9A105B2424464A830006DE06 /* BmLib.h */,
-				9A105B2324464A830006DE06 /* ftol.asm */,
-				9A105B18244644C50006DE06 /* XCinema.cpp */,
-				9A105B19244644C50006DE06 /* XCinema.h */,
 				9AC77F5F24176C04005CDD5C /* BmLib.cpp */,
+				9A105B2424464A830006DE06 /* BmLib.h */,
 				9AC77F6B24176C04005CDD5C /* EfiFileLib.h */,
 				9AC77F6A24176C04005CDD5C /* egemb_font.cpp */,
 				9AC77F5E24176C04005CDD5C /* egemb_icons_dark.cpp */,
 				9AC77F6224176C04005CDD5C /* egemb_icons.cpp */,
 				9AC77F6D24176C04005CDD5C /* FloatLib.cpp */,
 				9AC77F7324176C04005CDD5C /* FloatLib.h */,
+				9A105B2324464A830006DE06 /* ftol.asm */,
 				9AC77F6424176C04005CDD5C /* image.cpp */,
+				9A105B3824483AD50006DE06 /* image.h */,
 				9AC77F6824176C04005CDD5C /* libeg.h */,
 				9AC77F6124176C04005CDD5C /* libegint.h */,
 				9AC77F7424176C04005CDD5C /* libscreen.cpp */,
@@ -1323,8 +1333,12 @@
 				9AC77F6E24176C04005CDD5C /* nanosvgrast.cpp */,
 				9AC77F6924176C04005CDD5C /* scroll_images.cpp */,
 				9AC77F6624176C04005CDD5C /* text.cpp */,
-				9A105B2224464A830006DE06 /* VectorGraphics.h */,
 				9AC77F6524176C04005CDD5C /* VectorGraphics.cpp */,
+				9A105B2224464A830006DE06 /* VectorGraphics.h */,
+				9A105B18244644C50006DE06 /* XCinema.cpp */,
+				9A105B19244644C50006DE06 /* XCinema.h */,
+				9AEFE64524E2A7D0005D56D8 /* XIcon.cpp */,
+				9AEFE64424E2A7D0005D56D8 /* XIcon.h */,
 				9AC77F7524176C04005CDD5C /* XImage.cpp */,
 				9AC77F7124176C04005CDD5C /* XImage.h */,
 				9AC77F7024176C04005CDD5C /* XPointer.cpp */,
@@ -1420,16 +1434,20 @@
 		9AC77FAB24176C04005CDD5C /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
-				9A7AEDE6245963BF003AAD04 /* XToolsCommon.h */,
 				9A9AEB90243F7B5600FBD7D8 /* unicode_conversions.cpp */,
 				9A9AEB93243F7B5600FBD7D8 /* unicode_conversions.h */,
 				9AC77FB624176C04005CDD5C /* XArray.h */,
+				9AEFE64824E2C64B005D56D8 /* XBuffer.cpp */,
+				9AEFE64B24E2C64B005D56D8 /* XBuffer.h */,
 				9AC77FB724176C04005CDD5C /* XObjArray.h */,
+				9AEFE64A24E2C64B005D56D8 /* XRBuffer.cpp */,
+				9AEFE64924E2C64B005D56D8 /* XRBuffer.h */,
 				9A28CC91241AB33700F3D247 /* XString.cpp */,
 				9A28CC92241AB33700F3D247 /* XString.h */,
 				9A35A6172451FE1500CAFF76 /* XStringAbstract.h */,
 				9AC77FAF24176C04005CDD5C /* XStringArray.cpp */,
 				9AC77FAC24176C04005CDD5C /* XStringArray.h */,
+				9A7AEDE6245963BF003AAD04 /* XToolsCommon.h */,
 			);
 			path = cpp_foundation;
 			sourceTree = "<group>";
@@ -1459,6 +1477,7 @@
 				9AC7808C24176C04005CDD5C /* remove_ref.h in Headers */,
 				9AC7803124176C04005CDD5C /* loader.h in Headers */,
 				9AC7800724176C04005CDD5C /* AmlGenerator.h in Headers */,
+				9AEFE64624E2A7D1005D56D8 /* XIcon.h in Headers */,
 				9A105B2D24464A830006DE06 /* BmLib.h in Headers */,
 				9AF4173F242F15CC00D2644C /* BootLog.h in Headers */,
 				9AC77FC024176C04005CDD5C /* XObjArray_tests.h in Headers */,
@@ -1494,6 +1513,7 @@
 				9A105B6A24483AE40006DE06 /* stdlib.h in Headers */,
 				9AC7803524176C04005CDD5C /* b64cdecode.h in Headers */,
 				9AC7805224176C04005CDD5C /* EfiFileLib.h in Headers */,
+				9AEFE64D24E2C64B005D56D8 /* XRBuffer.h in Headers */,
 				9AC7807324176C04005CDD5C /* menu_globals.h in Headers */,
 				9AC7809824176C04005CDD5C /* XObjArray.h in Headers */,
 				9A9AEB99243F7B7A00FBD7D8 /* printf_lite-test.h in Headers */,
@@ -1520,6 +1540,7 @@
 				9A105B7A24483AE40006DE06 /* cpu.h in Headers */,
 				9AC7803824176C04005CDD5C /* ati_reg.h in Headers */,
 				9A105B81244852D70006DE06 /* VersionString.h in Headers */,
+				9AEFE64F24E2C64B005D56D8 /* XBuffer.h in Headers */,
 				9AC7804824176C04005CDD5C /* libegint.h in Headers */,
 				9AC7800624176C04005CDD5C /* memvendors.h in Headers */,
 				9AC7800B24176C04005CDD5C /* kernel_patcher.h in Headers */,
@@ -2039,6 +2060,7 @@
 				9AC7804524176C04005CDD5C /* egemb_icons_dark.cpp in Sources */,
 				9AC7805024176C04005CDD5C /* scroll_images.cpp in Sources */,
 				9AC7809024176C04005CDD5C /* XStringArray.cpp in Sources */,
+				9AEFE64C24E2C64B005D56D8 /* XBuffer.cpp in Sources */,
 				9AC7801024176C04005CDD5C /* PlatformDriverOverride.cpp in Sources */,
 				9AC7800224176C04005CDD5C /* HdaCodecDump.cpp in Sources */,
 				9AC7801A24176C04005CDD5C /* Nvram.cpp in Sources */,
@@ -2071,6 +2093,7 @@
 				9AC7803F24176C04005CDD5C /* usbfix.cpp in Sources */,
 				9AC7804624176C04005CDD5C /* BmLib.cpp in Sources */,
 				9AC7804024176C04005CDD5C /* card_vlist.cpp in Sources */,
+				9AEFE64724E2A7D1005D56D8 /* XIcon.cpp in Sources */,
 				9AC780B32417EE4B005CDD5C /* global_test.cpp in Sources */,
 				9AC7805624176C04005CDD5C /* load_icns.cpp in Sources */,
 				9A105B6924483AE40006DE06 /* APFS.cpp in Sources */,
@@ -2091,6 +2114,7 @@
 				9AC7806924176C04005CDD5C /* lockedgraphics.cpp in Sources */,
 				9A28CC97241AB34800F3D247 /* XString_test.cpp in Sources */,
 				9AC269A824E0514100254048 /* Utils.cpp in Sources */,
+				9AEFE64E24E2C64B005D56D8 /* XRBuffer.cpp in Sources */,
 				9A4185BA2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9AC7803724176C04005CDD5C /* device_inject.cpp in Sources */,
 				9AC7804224176C04005CDD5C /* Settings.cpp in Sources */,
@@ -2561,6 +2585,7 @@
 					"-Wchar-subscripts",
 					"-Wmismatched-tags",
 					"-Wimplicit-function-declaration",
+					"-Weffc++",
 				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
@@ -2640,6 +2665,7 @@
 					"-Wchar-subscripts",
 					"-Wmismatched-tags",
 					"-Wimplicit-function-declaration",
+					"-Weffc++",
 				);
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;

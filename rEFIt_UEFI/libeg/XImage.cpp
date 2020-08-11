@@ -18,13 +18,8 @@
 
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL NullColor = {0,0,0,0};
 
-XImage::XImage()
-{
-  Width = 0;
-  Height = 0;
-}
 
-XImage::XImage(UINTN W, UINTN H)
+XImage::XImage(UINTN W, UINTN H) : Width(0), Height(0), PixelData() // initialisation of Width and Height and , PixelData() to avoid warning with -Weffc++
 {
 //  Width = W;
 //  Height = H; //included below
@@ -38,7 +33,7 @@ XImage& XImage::operator= (const XImage& other)
 	return *this;
 }
 
-XImage::XImage(const XImage& Image, float scale)
+XImage::XImage(const XImage& Image, float scale) : Width(0), Height(0), PixelData() // initialisation of Width and Height and , PixelData() to avoid warning with -Weffc++
 {
   UINTN SrcWidth = Image.GetWidth();
   UINTN SrcHeight = Image.GetHeight();

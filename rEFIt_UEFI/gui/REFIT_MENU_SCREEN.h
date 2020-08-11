@@ -113,12 +113,11 @@ public:
 
 
   REFIT_MENU_SCREEN()
-  : ID(0), Title(), TitleImage(),
-  TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
-  OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
-  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
-  FilmC(),
-  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+      : ID(0), Title(), TitleImage(), InfoLines(), Entries(),
+        TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
+        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {
     EFI_TIME          Now;
     gRT->GetTime(&Now, NULL);
@@ -131,37 +130,41 @@ public:
       Daylight = true;
     }
   };
+
   REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
-  : ID(ID), Title(TTitle), TitleImage(),
-  TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
-  OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
-  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
-  FilmC(),
-  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+      : ID(ID), Title(TTitle), TitleImage(), InfoLines(), Entries(),
+        TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
+        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {};
+
   //TODO exclude CHAR16
   REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC)
-  : ID(ID), Title(), TitleImage(),
-  TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
-  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
-  FilmC(),
-  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+      : ID(ID), Title(), TitleImage(), InfoLines(), Entries(),
+        TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
+        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {
     Title.takeValueFrom(TitleC);
     TimeoutText.takeValueFrom(TimeoutTextC);
   };
 
   REFIT_MENU_SCREEN(UINTN ID, XStringW  TTitle, XStringW  TTimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
-  : ID(ID), Title(TTitle), TitleImage(),
-  TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
-  OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false),
-  /*AnimeRun(0), LastDraw(0), CurrentFrame(0),*/
-  FilmC(),
-  mAction(ActionNone), mItemID(0)//, mPointer(NULL) //, StyleFunc(&REFIT_MENU_SCREEN::TextMenuStyle)
+      : ID(ID), Title(TTitle), TitleImage(), InfoLines(), Entries(),
+        TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
+        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {
     Entries.AddReference(entry1, false);
     Entries.AddReference(entry2, false);
   };
+
+  REFIT_MENU_SCREEN(const REFIT_MENU_SCREEN&) = delete;
+  REFIT_MENU_SCREEN& operator=(const REFIT_MENU_SCREEN&) = delete;
+
 
   //Scroll functions
   VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
@@ -213,7 +216,7 @@ public:
   virtual VOID GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual VOID TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
 
-  ~REFIT_MENU_SCREEN() {};
+  virtual ~REFIT_MENU_SCREEN() {};
 };
 
 #endif

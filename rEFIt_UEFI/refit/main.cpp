@@ -415,89 +415,89 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 #endif
 VOID LOADER_ENTRY::FilterKextPatches()
 {
-  if (gSettings.KextPatchesAllowed && (KernelAndKextPatches->KextPatches != NULL) && (KernelAndKextPatches->NrKexts != 0)) {
+  if (gSettings.KextPatchesAllowed && (KernelAndKextPatches.KextPatches != NULL) && (KernelAndKextPatches.NrKexts != 0)) {
     DBG("Filtering KextPatches:\n");
-    for (INTN i = 0; i < KernelAndKextPatches->NrKexts; i++) {
+    for (INTN i = 0; i < KernelAndKextPatches.NrKexts; i++) {
 		DBG(" - [%02lld]: %s :: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
-        KernelAndKextPatches->KextPatches[i].Label,
-        KernelAndKextPatches->KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
+        KernelAndKextPatches.KextPatches[i].Label,
+        KernelAndKextPatches.KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
         OSVersion,
-        KernelAndKextPatches->KextPatches[i].MatchOS ? KernelAndKextPatches->KextPatches[i].MatchOS : "All",
-        KernelAndKextPatches->KextPatches[i].MatchBuild != NULL ? KernelAndKextPatches->KextPatches[i].MatchBuild : "All"
+        KernelAndKextPatches.KextPatches[i].MatchOS ? KernelAndKextPatches.KextPatches[i].MatchOS : "All",
+        KernelAndKextPatches.KextPatches[i].MatchBuild != NULL ? KernelAndKextPatches.KextPatches[i].MatchBuild : "All"
       );
-      if (!KernelAndKextPatches->KextPatches[i].MenuItem.BValue) {
+      if (!KernelAndKextPatches.KextPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
       
-      if ((BuildVersion != NULL) && (KernelAndKextPatches->KextPatches[i].MatchBuild != NULL)) {
-        KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KextPatches[i].MatchBuild, BuildVersion);
-        DBG(" ==> %s\n", KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      if ((BuildVersion != NULL) && (KernelAndKextPatches.KextPatches[i].MatchBuild != NULL)) {
+        KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchBuild, BuildVersion);
+        DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
-      KernelAndKextPatches->KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KextPatches[i].MatchOS, OSVersion);
-      DBG(" ==> %s\n", KernelAndKextPatches->KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchOS, OSVersion);
+      DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
 
 VOID LOADER_ENTRY::FilterKernelPatches()
 {
-  if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches->KernelPatches != NULL) && KernelAndKextPatches->NrKernels) {
+  if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches.KernelPatches != NULL) && KernelAndKextPatches.NrKernels) {
     INTN i = 0;
     DBG("Filtering KernelPatches:\n");
-    for (; i < KernelAndKextPatches->NrKernels; ++i) {
+    for (; i < KernelAndKextPatches.NrKernels; ++i) {
 		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
-        KernelAndKextPatches->KernelPatches[i].Label,
+        KernelAndKextPatches.KernelPatches[i].Label,
         OSVersion,
-        KernelAndKextPatches->KernelPatches[i].MatchOS ? KernelAndKextPatches->KernelPatches[i].MatchOS : "All",
-        KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL ? KernelAndKextPatches->KernelPatches[i].MatchBuild : "no"
+        KernelAndKextPatches.KernelPatches[i].MatchOS ? KernelAndKextPatches.KernelPatches[i].MatchOS : "All",
+        KernelAndKextPatches.KernelPatches[i].MatchBuild != NULL ? KernelAndKextPatches.KernelPatches[i].MatchBuild : "no"
       );
-      if (!KernelAndKextPatches->KernelPatches[i].MenuItem.BValue) {
+      if (!KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
 
-      if ((BuildVersion != NULL) && (KernelAndKextPatches->KernelPatches[i].MatchBuild != NULL)) {
-        KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KernelPatches[i].MatchBuild, BuildVersion);
-        DBG(" ==> %s by build\n", KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      if ((BuildVersion != NULL) && (KernelAndKextPatches.KernelPatches[i].MatchBuild != NULL)) {
+        KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchBuild, BuildVersion);
+        DBG(" ==> %s by build\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
-      KernelAndKextPatches->KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->KernelPatches[i].MatchOS, OSVersion);
-      DBG(" ==> %s by OS\n", KernelAndKextPatches->KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchOS, OSVersion);
+      DBG(" ==> %s by OS\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
 }
 
 VOID LOADER_ENTRY::FilterBootPatches()
 {
-  if ((KernelAndKextPatches->BootPatches != NULL) && KernelAndKextPatches->NrBoots) {
+  if ((KernelAndKextPatches.BootPatches != NULL) && KernelAndKextPatches.NrBoots) {
     DBG("Filtering BootPatches:\n");
-    for (INTN i = 0; i < KernelAndKextPatches->NrBoots; ++i) {
+    for (INTN i = 0; i < KernelAndKextPatches.NrBoots; ++i) {
 		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
           i,
-          KernelAndKextPatches->BootPatches[i].Label,
+          KernelAndKextPatches.BootPatches[i].Label,
           OSVersion,
-          KernelAndKextPatches->BootPatches[i].MatchOS ? KernelAndKextPatches->BootPatches[i].MatchOS : "All",
-          KernelAndKextPatches->BootPatches[i].MatchBuild != NULL ? KernelAndKextPatches->BootPatches[i].MatchBuild : "no"
+          KernelAndKextPatches.BootPatches[i].MatchOS ? KernelAndKextPatches.BootPatches[i].MatchOS : "All",
+          KernelAndKextPatches.BootPatches[i].MatchBuild != NULL ? KernelAndKextPatches.BootPatches[i].MatchBuild : "no"
           );
-      if (!KernelAndKextPatches->BootPatches[i].MenuItem.BValue) {
+      if (!KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
 
-      if ((BuildVersion != NULL) && (KernelAndKextPatches->BootPatches[i].MatchBuild != NULL)) {
-        KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->BootPatches[i].MatchBuild, BuildVersion);
-        DBG(" ==> %s by build\n", KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      if ((BuildVersion != NULL) && (KernelAndKextPatches.BootPatches[i].MatchBuild != NULL)) {
+        KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchBuild, BuildVersion);
+        DBG(" ==> %s by build\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
  
-      KernelAndKextPatches->BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches->BootPatches[i].MatchOS, OSVersion);
-      DBG(" ==> %s by OS\n", KernelAndKextPatches->BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
+      KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchOS, OSVersion);
+      DBG(" ==> %s by OS\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
   
     }
   }
@@ -778,7 +778,7 @@ VOID LOADER_ENTRY::StartLoader()
     PatchACPI(Volume, OSVersion);
 
     // If KPDebug is true boot in verbose mode to see the debug messages
-    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPDebug) {
+    if (KernelAndKextPatches.KPDebug) {
       LoadOptions.AddID("-v"_XS8);
     }
 
@@ -815,7 +815,7 @@ VOID LOADER_ENTRY::StartLoader()
     /**
      * syscl - append "-xcpm" argument conditionally if set KernelXCPM on Intel Haswell+ low-end CPUs
      */
-    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPKernelXCPM &&
+    if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
        (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
@@ -826,7 +826,7 @@ VOID LOADER_ENTRY::StartLoader()
     }
     
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
-    if ((KernelAndKextPatches != NULL) && KernelAndKextPatches->KPKernelXCPM &&
+    if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
         (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
         (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12")) &&
@@ -1853,7 +1853,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
 
-
   gRT->GetTime(&Now, NULL);
 
   // firmware detection
@@ -1920,7 +1919,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
-  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
+//  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
 
   Status = InitializeUnicodeCollationProtocol();
   if (EFI_ERROR(Status)) {
