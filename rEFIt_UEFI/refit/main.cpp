@@ -200,7 +200,7 @@ bailout:
 
 
 static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
-                                    IN CONST XStringArray& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                    IN CONST XString8Array& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
                                     IN CONST XStringW& ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
@@ -312,7 +312,7 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CONST XStringArray& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                IN CONST XString8Array& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
                                 IN CONST XStringW& ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
@@ -757,10 +757,10 @@ VOID LOADER_ENTRY::StartLoader()
       XString8 KernelLocation;
 
       if (OSVersion && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9")) {
-        KernelLocation.SPrintf("\"Kernel=/mach_kernel\"");
+        KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
       } else {
         // used for 10.10, 10.11, and new version.
-        KernelLocation.SPrintf("\"Kernel=/System/Library/Kernels/kernel\"");
+        KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
       }
       LoadOptions.AddID(KernelLocation);
     }
@@ -1166,7 +1166,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 
 	  snwprintf(FileName, 512, "%ls\\%ls", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
-                           NullXStringArray, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
+                           NullXString8Array, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
     }
@@ -2332,7 +2332,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-      XStringArray TmpArgs = Split<XStringArray>(gSettings.BootArgs, " ");
+    XString8Array TmpArgs = Split<XString8Array>(gSettings.BootArgs, " ");
       DBG("after NVRAM boot-args=%s\n", gSettings.BootArgs);
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", gSettings.OptionsBits);

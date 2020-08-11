@@ -71,7 +71,7 @@ CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
 INPUT_ITEM *InputItems = NULL;
 INTN TextStyle; //why global? It will be class SCREEN member
 
-UINT32 EncodeOptions(const XStringArray& Options)
+UINT32 EncodeOptions(const XString8Array& Options)
 {
   UINT32 OptionsBits = 0;
   INTN Index;
@@ -116,7 +116,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
         gSettings.NvidiaWeb = TRUE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;
-//        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
+//        Entry->LoadOptions = Split<XString8Array>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
         Entry->LoadOptions.AddID(ArgOptional[INX_NVWEBON]);
       }
     }
@@ -125,7 +125,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
         gSettings.NvidiaWeb = FALSE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;
-//        Entry->LoadOptions = Split<XStringArray>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
+//        Entry->LoadOptions = Split<XString8Array>(loaderEntry->LoadOptions.ConcatAll(" "_XS8).wc_str(), " ");
         Entry->LoadOptions.removeIC(ArgOptional[INX_NVWEBON]);
       }
     }

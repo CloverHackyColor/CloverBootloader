@@ -20,7 +20,7 @@ extern CONST CHAR16 *VBIOS_BIN;
 extern INPUT_ITEM *InputItems;
 
 VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry);
-UINT32 EncodeOptions(const XStringArray& Options);
+UINT32 EncodeOptions(const XString8Array& Options);
 
 
 

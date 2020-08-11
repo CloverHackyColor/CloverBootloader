@@ -8,5 +8,5 @@
 #include "XStringArray.h"
 
 
-const XStringArray NullXStringArray;
+const XString8Array NullXString8Array;
 const XStringWArray NullXStringWArray;

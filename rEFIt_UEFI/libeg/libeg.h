@@ -280,7 +280,7 @@ public:
   EFI_GUID            RootUUID; //for recovery it is UUID of parent partition
   UINT64              SleepImageOffset;
   XString8            ApfsFileSystemUUID; // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
-  XStringArray        ApfsTargetUUIDArray; // this is the array of folders that are named as UUID
+  XString8Array        ApfsTargetUUIDArray; // this is the array of folders that are named as UUID
 
   REFIT_VOLUME() : DevicePath(0), DeviceHandle(0), RootDir(0), DiskKind(0), LegacyOS(0), Hidden(0), BootType(0), IsAppleLegacy(0), HasBootCode(0),
                    IsMbrPartition(0), MbrPartitionIndex(0), BlockIO(0), BlockIOOffset(0), WholeDiskBlockIO(0), WholeDiskDevicePath(0), WholeDiskDeviceHandle(0),

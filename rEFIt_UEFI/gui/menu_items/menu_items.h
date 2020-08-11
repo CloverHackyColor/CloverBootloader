@@ -265,7 +265,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 	{
 	public:
 	  XStringW     DevicePathString;
-	  XStringArray LoadOptions; //moved here for compatibility with legacy
+	  XString8Array LoadOptions; //moved here for compatibility with legacy
 	  XStringW     LoaderPath;
     XIcon        DriveImage;
     XIcon        BadgeImage;

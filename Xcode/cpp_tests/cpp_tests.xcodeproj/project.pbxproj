@@ -261,16 +261,12 @@
 		9A0B084C2402FE9B00E2B470 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
-				9A9EA7F7245AAB310076EC02 /* XToolsCommon_test.cpp */,
-				9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */,
-				9A4FFA802451C88D0050B38B /* XString_test.cpp */,
-				9A4FFA7F2451C88C0050B38B /* XString_test.h */,
-				9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */,
-				9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */,
 				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
 				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A0B08642403144C00E2B470 /* global_test.cpp */,
 				9A57C20A2418A1FD0029A39F /* global_test.h */,
+				9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */,
+				9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */,
 				9AF41572242CBE7600D2644C /* poolprint-test-cpp_conf.h */,
 				9AF41571242CBE7600D2644C /* poolprint-test.cpp */,
 				9AF41575242CBE7600D2644C /* poolprint-test.h */,
@@ -290,8 +286,12 @@
 				9A0B084E2402FE9B00E2B470 /* XArray_tests.h */,
 				9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */,
 				9A0B08502402FE9B00E2B470 /* XObjArray_tests.h */,
+				9A4FFA802451C88D0050B38B /* XString_test.cpp */,
+				9A4FFA7F2451C88C0050B38B /* XString_test.h */,
 				9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */,
 				9A0B084D2402FE9B00E2B470 /* XStringArray_test.h */,
+				9A9EA7F7245AAB310076EC02 /* XToolsCommon_test.cpp */,
+				9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */,
 			);
 			name = cpp_unit_test;
 			path = ../../rEFIt_UEFI/cpp_unit_test;

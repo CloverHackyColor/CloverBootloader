@@ -726,7 +726,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     DBG("\n");
 #endif
   
-  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString if it's not an APFS volume
+  Volume->ApfsFileSystemUUID = APFSPartitionUUIDExtractAsXString8(Volume->DevicePath); // NullXString8 if it's not an APFS volume
   Volume->DiskKind = DISK_KIND_INTERNAL;  // default
   
   // get block i/o

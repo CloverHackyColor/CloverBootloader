@@ -29,7 +29,7 @@ int BootOptions_tests()
 //		if ( LoadOptions3 != "opt1 opt2"_XS8 ) return 13;
 //	}
 	{
-		XStringArray LoadOptions;
+		XString8Array LoadOptions;
 		
 		LoadOptions.AddID("opt1"_XS8);
 		LoadOptions.AddID("opt2"_XS8);
@@ -37,13 +37,13 @@ int BootOptions_tests()
 		
 		if ( LoadOptions.ConcatAll(" "_XS8) != "opt1 opt2 opt3"_XS8 ) return 30;
 		
-		XStringArray LoadOptions1 = LoadOptions;
+		XString8Array LoadOptions1 = LoadOptions;
 		LoadOptions1.remove("opt1"_XS8);
 		if ( LoadOptions1.ConcatAll(" "_XS8) != "opt2 opt3"_XS8 ) return 31;
-		XStringArray LoadOptions2 = LoadOptions;
+		XString8Array LoadOptions2 = LoadOptions;
 		LoadOptions2.remove("opt2"_XS8);
 		if ( LoadOptions2.ConcatAll(" "_XS8) != "opt1 opt3"_XS8 ) return 32;
-		XStringArray LoadOptions3 = LoadOptions;
+		XString8Array LoadOptions3 = LoadOptions;
 		LoadOptions3.remove("opt3"_XS8);
 		if ( LoadOptions3.ConcatAll(" "_XS8) != "opt1 opt2"_XS8 ) return 33;
 	}

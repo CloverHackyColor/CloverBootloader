@@ -104,7 +104,7 @@ struct CUSTOM_LOADER_ENTRY {
   XStringW               DriveImagePath;
   XStringW               Volume;
   XStringW               Path;
-  XStringArray           LoadOptions;
+  XString8Array           LoadOptions;
 
   XStringW FullTitle;
   XStringW Title;
@@ -161,7 +161,7 @@ public:
   XStringW           ImagePath;
   XStringW           Volume;
   XStringW           Path;
-  XStringArray       LoadOptions;
+  XString8Array       LoadOptions;
   XStringW           FullTitle;
   XStringW           Title;
   CHAR16             Hotkey;

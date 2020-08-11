@@ -75,7 +75,7 @@
 
 STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *FullTitle, IN CONST CHAR16 *LoaderTitle,
                             IN REFIT_VOLUME *Volume, const XIcon& Image,
-                            IN CHAR16 ShortcutLetter, IN CONST XStringArray& Options)
+                            IN CHAR16 ShortcutLetter, IN CONST XString8Array& Options)
 {
   REFIT_MENU_ENTRY_LOADER_TOOL *Entry;
   // Check the loader exists
@@ -196,8 +196,8 @@ VOID ScanTool(VOID)
 
   //    DBG("Scanning for tools...\n");
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
-    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi"_XSW, NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray)) {
-      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi"_XSW, NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXStringArray);
+    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi"_XSW, NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
+      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi"_XSW, NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
     }
   }
 

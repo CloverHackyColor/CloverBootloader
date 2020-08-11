@@ -2590,9 +2590,9 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
     TimeoutSeconds = 0;
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
-      XStringArray TmpArgs;
+      XString8Array TmpArgs;
       if (AsciiStrLen(gSettings.BootArgs) > 0) {
-        TmpArgs = Split<XStringArray>(gSettings.BootArgs, " ");
+        TmpArgs = Split<XString8Array>(gSettings.BootArgs, " ");
       }
       SubMenuIndex = -1;
 

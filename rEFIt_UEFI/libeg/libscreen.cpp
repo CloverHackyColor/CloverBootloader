@@ -439,9 +439,9 @@ XString8 egScreenDescription(VOID)
 {
     if (egHasGraphics) {
         if (GraphicsOutput != NULL) {
-            return SPrintf("Graphics Output (UEFI), %lldx%lld", egScreenWidth, egScreenHeight);
+            return S8Printf("Graphics Output (UEFI), %lldx%lld", egScreenWidth, egScreenHeight);
         } else if (UgaDraw != NULL) {
-            return SPrintf("UGA Draw (EFI 1.10), %lldx%lld", egScreenWidth, egScreenHeight);
+            return S8Printf("UGA Draw (EFI 1.10), %lldx%lld", egScreenWidth, egScreenHeight);
         } else {
             return "Internal Error"_XS8;
         }

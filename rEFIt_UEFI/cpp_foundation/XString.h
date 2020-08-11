@@ -49,22 +49,22 @@ class XString8 : public XStringAbstract<char, XString8>
 	using XStringAbstract<char, XString8>::operator =;
 	
 protected:
-	static void transmitSPrintf(const char* buf, unsigned int nbchar, void* context)
+	static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context)
 	{
 		((XString8*)(context))->strncat(buf, nbchar);
 	}
 public:
-	void vSPrintf(const char* format, va_list va)
+	void vS8Printf(const char* format, va_list va)
 	{
 		setEmpty();
-		vprintf_with_callback(format, va, transmitSPrintf, this);
+		vprintf_with_callback(format, va, transmitS8Printf, this);
 	}
-	void SPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
+	void S8Printf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
 	{
 		va_list     va;
 
 		va_start (va, format);
-		vSPrintf(format, va);
+		vS8Printf(format, va);
 		va_end(va);
 	}
 };
@@ -136,7 +136,7 @@ class LStringW : public LString<wchar_t, XStringW>
 
 class XStringW : public XStringAbstract<wchar_t, XStringW>
 {
-  public:
+public:
 	XStringW() : XStringAbstract<wchar_t, XStringW>() {};
 	XStringW(const XStringW& S) : XStringAbstract<wchar_t, XStringW>(S) {}
   XStringW(const LStringW& S) : XStringAbstract<wchar_t, XStringW>(S) { }
@@ -148,8 +148,6 @@ class XStringW : public XStringAbstract<wchar_t, XStringW>
 	XStringW& operator=(const XStringW &S) { this->XStringAbstract<wchar_t, XStringW>::operator=(S); return *this; }
 
 	using XStringAbstract<wchar_t, XStringW>::operator =;
-
-
 
 protected:
 	static void transmitSPrintf(const wchar_t* buf, unsigned int nbchar, void* context)
@@ -178,14 +176,14 @@ constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t len);
 constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t len);
 constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t len);
 
-extern const XString8 NullXString;
+extern const XString8 NullXString8;
 extern const XStringW NullXStringW;
 
 #ifdef _MSC_VER
 #   define __attribute__(x)
 #endif
 
-XString8 SPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
+XString8 S8Printf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
 XStringW SWPrintf(const char* format, ...) __attribute__((__format__ (__printf__, 1, 2)));
 
 

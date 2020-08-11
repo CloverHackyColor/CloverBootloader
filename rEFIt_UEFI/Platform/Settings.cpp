@@ -1820,12 +1820,12 @@ FillinCustomEntry (
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->string);
 //    }
-	Entry->LoadOptions.import(Split<XStringArray>(Prop->string, " "));
+	Entry->LoadOptions.import(Split<XString8Array>(Prop->string, " "));
   } else {
     Prop = GetProperty(DictPointer, "Arguments");
     if (Prop != NULL && (Prop->type == kTagTypeString)) {
 //      Entry->Options.SPrintf("%s", Prop->string);
-      Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
+      Entry->LoadOptions = Split<XString8Array>(Prop->string, " ");
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
@@ -2242,7 +2242,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->string);
 //    }
-      Entry->LoadOptions = Split<XStringArray>(Prop->string, " ");
+      Entry->LoadOptions = Split<XString8Array>(Prop->string, " ");
   }
 
   Prop = GetProperty(DictPointer, "FullTitle");
@@ -6268,7 +6268,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX(Entry->LoaderType))
   {
   	XString8 uuidPrefix;
-    if ( Entry->APFSTargetUUID.notEmpty() ) uuidPrefix = SPrintf("\\%ls", Entry->APFSTargetUUID.wc_str());
+    if ( Entry->APFSTargetUUID.notEmpty() ) uuidPrefix = S8Printf("\\%ls", Entry->APFSTargetUUID.wc_str());
 
   	XStringW plist = SWPrintf("%s\\System\\Library\\CoreServices\\SystemVersion.plist", uuidPrefix.c_str());
 		if ( !FileExists(Entry->Volume->RootDir, plist) ) {
@@ -6512,7 +6512,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   if (OSTYPE_IS_OSX_RECOVERY (Entry->LoaderType)) {
 
   	XString8 uuidPrefix;
-    if ( Entry->APFSTargetUUID.notEmpty() ) uuidPrefix = SPrintf("\\%ls", Entry->APFSTargetUUID.wc_str());
+    if ( Entry->APFSTargetUUID.notEmpty() ) uuidPrefix = S8Printf("\\%ls", Entry->APFSTargetUUID.wc_str());
 
   	XStringW plist = SWPrintf("%s\\SystemVersion.plist", uuidPrefix.c_str());
 		if ( !FileExists(Entry->Volume->RootDir, plist) ) {

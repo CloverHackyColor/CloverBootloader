@@ -1370,7 +1370,7 @@ EFI_STATUS SetStartupDiskVolume (
   //
   if (Guid != NULL) {
     XString8 EfiBootDevice;
-    EfiBootDevice.SPrintf(
+    EfiBootDevice.S8Printf(
 			"<array><dict>"
 	    "<key>IOMatch</key>"
 	    "<dict>"

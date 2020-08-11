@@ -75,7 +75,7 @@ XString8 get_pci_dev_path(pci_dt_t *PciDt)
 
   DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
   if (!DevicePath)
-    return NullXString;
+    return NullXString8;
   returnValue = FileDevicePathToXStringW(DevicePath);
   return returnValue;
 

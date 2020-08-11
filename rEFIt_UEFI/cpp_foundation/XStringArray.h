@@ -84,68 +84,40 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	XStringClass& elementAt(IntegralType i) { return array[i]; }
 
+  template<class Type1, class Type2, class Type3,
+      enable_if(
+                (  is_char(Type1) || is_char_ptr(Type1) || is___String(Type1)  ) &&
+                (  is_char(Type2) || is_char_ptr(Type2) || is___String(Type2)  ) &&
+                (  is_char(Type3) || is_char_ptr(Type3) || is___String(Type3)  )
+               )
+          >
+  XStringClass ConcatAll(const Type1& Separator, const Type2& Prefix, const Type3& Suffix) const
+  {
+      xsize i;
+      XStringClass s;
 
-//	template<class XStringClass1, class XStringClass2, class XStringClass3, enable_if(is___String(XStringClass1) && is___String(XStringClass2) && is___String(XStringClass3))>
-//	XStringClass ConcatAll(const XStringClass1& Separator, const XStringClass2& Prefix, const XStringClass3& Suffix) const
-//	{
-//		xsize i;
-//		XStringClass s;
-//
-//		if ( array.size() > 0 ) {
-//			s = Prefix;
-//			s += array.ElementAt(0);
-//			for ( i=1 ; i<array.size() ; i+=1 ) {
-//				s += Separator;
-//				s += array.ElementAt(i);
-//			}
-//			s += Suffix;
-//		}
-//		return s;
-//	}
-    
-    template<class Type1, class Type2, class Type3,
-        enable_if(
-                  (  is_char(Type1) || is_char_ptr(Type1) || is___String(Type1)  ) &&
-                  (  is_char(Type2) || is_char_ptr(Type2) || is___String(Type2)  ) &&
-                  (  is_char(Type3) || is_char_ptr(Type3) || is___String(Type3)  )
-                 )
-            >
-    XStringClass ConcatAll(const Type1& Separator, const Type2& Prefix, const Type3& Suffix) const
-    {
-//        auto separator = _xstringarray__char_type<Type1>::getCharPtr(Separator);
-//        auto prefix = _xstringarray__char_type<Type2>::getCharPtr(Prefix);
-//        auto suffix = _xstringarray__char_type<Type3>::getCharPtr(Suffix);
-
-        xsize i;
-        XStringClass s;
-        
-        if ( array.size() > 0 ) {
-            s.takeValueFrom(Prefix);
-            s += array.ElementAt(0);
-            for ( i=1 ; i<array.size() ; i+=1 ) {
-                s += Separator;
-                s += array.ElementAt(i);
-            }
-            s += Suffix;
-        }
-        return s;
-    }
+      if ( array.size() > 0 ) {
+          s.takeValueFrom(Prefix);
+          s += array.ElementAt(0);
+          for ( i=1 ; i<array.size() ; i+=1 ) {
+              s += Separator;
+              s += array.ElementAt(i);
+          }
+          s += Suffix;
+      }
+      return s;
+  }
 
 	XStringClass ConcatAll() const
 	{
 		return ConcatAll(", ", "", "");
 	}
 
-//    template<class XStringClass1, enable_if(is___String(XStringClass1))>
-//    XStringClass ConcatAll(const XStringClass1& Separator) const
-//    {
-//        return ConcatAll(Separator, NullXString, NullXString);
-//    }
-    template<class Type1, enable_if(is_char(Type1) || is_char_ptr(Type1) || is___String(Type1))>
-    XStringClass ConcatAll(const Type1& Separator) const
-    {
-        return ConcatAll(Separator, "", "");
-    }
+  template<class Type1, enable_if(is_char(Type1) || is_char_ptr(Type1) || is___String(Type1))>
+  XStringClass ConcatAll(const Type1& Separator) const
+  {
+      return ConcatAll(Separator, "", "");
+  }
 
 
 	template<class OtherXStringArrayClass>
@@ -314,10 +286,10 @@ class XStringArray_/* : public XStringArraySuper*/
 
 };
 
-class XStringArray : public XStringArray_<XString8>
+class XString8Array : public XStringArray_<XString8>
 {
 };
-extern const XStringArray NullXStringArray;
+extern const XString8Array NullXString8Array;
 
 class XString16Array : public XStringArray_<XString16>
 {
