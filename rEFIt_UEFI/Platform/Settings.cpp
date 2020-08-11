@@ -673,6 +673,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   if ((Src->NrForceKexts > 0) && (Src->ForceKexts != NULL)) {
     INTN i;
     Dst->ForceKexts = (__typeof__(Dst->ForceKexts))AllocatePool (Src->NrForceKexts * sizeof(CHAR16 *));
+    Dst->NrForceKexts = 0;
 
     for (i = 0; i < Src->NrForceKexts; i++) {
       Dst->ForceKexts[Dst->NrForceKexts++] = EfiStrDuplicate (Src->ForceKexts[i]);
@@ -682,7 +683,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   if ((Src->NrKexts > 0) && (Src->KextPatches != NULL)) {
     INTN i;
     Dst->KextPatches = (__typeof__(Dst->KextPatches))AllocatePool (Src->NrKexts * sizeof(KEXT_PATCH));
-
+    Dst->NrKexts = 0;
     for (i = 0; i < Src->NrKexts; i++)
     {
       if ((Src->KextPatches[i].DataLen <= 0) ||
@@ -706,6 +707,16 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
       Dst->KextPatches[Dst->NrKexts].Patch = (__typeof__(Dst->KextPatches[Dst->NrKexts].Patch))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
       Dst->KextPatches[Dst->NrKexts].MatchOS = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchOS))AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
       Dst->KextPatches[Dst->NrKexts].MatchBuild = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchBuild))AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
+      if (Src->KextPatches[i].MaskFind != NULL) {
+        Dst->KextPatches[Dst->NrKexts].MaskFind = (__typeof__(Dst->KextPatches[Dst->NrKexts].MaskFind))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].MaskFind);
+      } else {
+        Dst->KextPatches[Dst->NrKexts].MaskFind = NULL;
+      }
+      if (Src->KextPatches[i].MaskReplace != NULL) {
+        Dst->KextPatches[Dst->NrKexts].MaskReplace = (__typeof__(Dst->KextPatches[Dst->NrKexts].MaskReplace))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].MaskReplace);
+      } else {
+        Dst->KextPatches[Dst->NrKexts].MaskReplace = NULL;
+      }
       if (Src->KextPatches[i].StartPattern != NULL) {
         Dst->KextPatches[Dst->NrKexts].StartPattern = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartPattern))AllocateCopyPool(Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartPattern);
         Dst->KextPatches[Dst->NrKexts].StartMask = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartMask))AllocateCopyPool(Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartMask);
@@ -729,6 +740,7 @@ CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
   if ((Src->NrKernels > 0) && (Src->KernelPatches != NULL)) {
     INTN i;
     Dst->KernelPatches = (__typeof__(Dst->KernelPatches))AllocatePool (Src->NrKernels * sizeof(KERNEL_PATCH));
+    Dst->NrKernels = 0;
 
     for (i = 0; i < Src->NrKernels; i++)
     {
