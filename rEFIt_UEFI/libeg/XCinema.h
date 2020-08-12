@@ -101,7 +101,7 @@ class XCinema
 
   FILM* GetFilm(INTN Id);
   void AddFilm(FILM* NewFilm);
-  void setEmpty() { Cinema.Empty(); }
+  void setEmpty() { Cinema.setEmpty(); }
 };
 
 #endif /* XCinema_h */

@@ -56,8 +56,8 @@ class XObjArrayNC
 	size_t size() const { return _Len; }
 	size_t length() const { return _Len; }
 
-	bool NotNull() const { return size() > 0; }
-	bool IsNull() const { return size() == 0; }
+	bool notEmpty() const { return size() > 0; }
+	bool isEmpty() const { return size() == 0; }
 
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const TYPE &ElementAt(IntegralType nIndex) const
@@ -111,7 +111,7 @@ class XObjArrayNC
 	//void Remove(int nIndex);
 	void RemoveAllBut(const TYPE *Element);
 
-	void Empty();
+	void setEmpty();
 
   public:
 	void CheckSize(size_t nNewSize, size_t nGrowBy = XArrayGrowByDefault);
@@ -188,7 +188,7 @@ const XObjArray<TYPE> &XObjArray<TYPE>::operator =(const XObjArray<TYPE> &anObjA
   size_t ui;
 
 	if ( this == &anObjArray ) return *this; // self assignement
-  	XObjArrayNC<TYPE>::Empty();
+  	XObjArrayNC<TYPE>::setEmpty();
 	this->CheckSize(anObjArray.length(), 0);
 	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
 	return *this;
@@ -199,7 +199,7 @@ template<class TYPE>
 XObjArrayNC<TYPE>::~XObjArrayNC()
 {
 //printf("XObjArray Destructor\n");
-	Empty();
+	setEmpty();
 	if ( _Data ) free(_Data);
 }
 
@@ -234,7 +234,7 @@ template<class TYPE>
 size_t XObjArray<TYPE>::AddCopy(const TYPE &newElement, bool FreeIt)
 {
 	XObjArrayNC<TYPE>::CheckSize(XObjArray<TYPE>::_Len+1);
-	XObjArray<TYPE>::_Data[XObjArray<TYPE>::_Len].Object = new TYPE(newElement);
+  XObjArray<TYPE>::_Data[XObjArray<TYPE>::_Len].Object = new TYPE(newElement);
 	XObjArray<TYPE>::_Data[XObjArray<TYPE>::_Len].FreeIt = FreeIt;
 	XObjArray<TYPE>::_Len += 1;
 	return XObjArray<TYPE>::_Len-1;
@@ -555,7 +555,7 @@ void XObjArrayNC<TYPE>::RemoveAllBut(const TYPE *Element)
 
 /* Empty() */
 template<class TYPE>
-void XObjArrayNC<TYPE>::Empty()
+void XObjArrayNC<TYPE>::setEmpty()
 {
   size_t i;
 

@@ -45,6 +45,13 @@ inline char* strncpy(char * dst, const char * src, size_t len)
 	return dst;
 }
 
+extern void* memset(void *b, int c, size_t len); // memset is defined in cpp_util/memory.cpp because it is required by c++
+//inline void* memset(void *b, int c, size_t len)
+//{
+//  SetMem(b, len, c);
+//  return b;
+//}
+
 //inline char* strncat(char *restrict s1, const char *restrict s2, size_t n)
 //{
 //	return AsciiStrCatS(s1, AsciiStrLen(strDest)+1,strSource)

@@ -368,8 +368,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				EFI_DEVICE_PATH  *DevicePath;
 				UINT16            Flags;
 				UINT8             LoaderType;
-				CHAR8            *OSVersion;
-				CHAR8            *BuildVersion;
+				XString8          OSVersion;
+				XString8          BuildVersion;
         EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
 
 				UINT8             CustomBoot;
@@ -430,8 +430,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void          Get_PreLink();
         UINT32        Get_Symtab(UINT8*  binary);
         UINT32        GetTextExec();
-        UINTN         searchProc(const char *procedure);
-        UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const char *procedure);
+        UINTN         searchProc(const XString8& procedure);
+        UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const XString8& procedure);
         UINT32        searchSectionByNum(UINT8 * Binary, UINT32 Num);
         void          KernelAndKextsPatcherStart();
         void          KernelAndKextPatcherInit();
@@ -462,13 +462,13 @@ class REFIT_ABSTRACT_MENU_ENTRY
         EFI_STATUS LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
         EFI_STATUS AddKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType);
         void      LoadPlugInKexts(IN EFI_FILE *RootDir, IN CONST CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
-        void      AddKexts(CONST CHAR16 *SrcDir, CONST CHAR16 *Path, cpu_type_t archCpuType);
+        void      AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType);
         void      KextPatcherRegisterKexts(void *FSInject, void *ForceLoadKexts);
         void      KextPatcherStart();
         void      PatchPrelinkedKexts();
         void      PatchLoadedKexts();
         void      PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
-        void      AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N);
+        void      AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, size_t N);
         void      ATIConnectorsPatchInit();
         void      ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize);
         void      ATIConnectorsPatchRegisterKexts(void *FSInject_v, void *ForceLoadKexts_v);

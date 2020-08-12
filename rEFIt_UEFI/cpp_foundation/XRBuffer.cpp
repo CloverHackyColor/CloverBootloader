@@ -1,6 +1,6 @@
 //*************************************************************************************************
 //
-//                                          Buffer
+//                                          Read only Buffer
 //
 //*************************************************************************************************
 
@@ -15,7 +15,7 @@
 #include "XString.h"
 #include "XStringArray.h"
 
-const XRBuffer NullXRBuffer;
+//const XRBuffer NullXRBuffer;
 
 
 //*************************************************************************************************
@@ -23,25 +23,20 @@ const XRBuffer NullXRBuffer;
 //                                          RBuffer (ConstBuffer)
 //
 //*************************************************************************************************
-void XRBuffer::Initialize(const void *p, size_t count)
-{
-	_RData = (unsigned char*)p;
-	_Len = count;
-	_Index = 0;
-}
 
-XRBuffer::XRBuffer(const XRBuffer &aXRBuffer, size_t pos, size_t count) : _RData(0), _Len(0), _Index(0)
+template <typename T>
+XRBuffer<T>::XRBuffer(const XRBuffer &aXRBuffer, size_t pos, size_t count) : _RData(0), m_size(0), _Index(0)
 {
-	if ( pos < aXRBuffer.Length() ) {
-    _Len = count;
-		if ( _Len > aXRBuffer.Length()-pos ) _Len = aXRBuffer.Length()-pos;
+	if ( pos < aXRBuffer.size() ) {
+    m_size = count;
+		if ( m_size > aXRBuffer.size()-pos ) m_size = aXRBuffer.size()-pos;
 		_RData = (unsigned char*)aXRBuffer.Data(pos);
 	}
 }
 /*
 XRBuffer::XRBuffer(const XBuffer &aXBuffer, size_t pos, size_t count)
 {
-	if ( count > aXBuffer.Length() ) count = aXBuffer.Length();
+	if ( count > aXBuffer.size() ) count = aXBuffer.size();
 	_Data = aXBuffer.UCData();
 	_Len = count;
 	_Index = 0;
@@ -51,27 +46,30 @@ XRBuffer::XRBuffer(const XBuffer &aXBuffer, size_t pos, size_t count)
 //-------------------------------------------------------------------------------------------------
 //                                               
 //-------------------------------------------------------------------------------------------------
-bool XRBuffer::Get(void *buf, size_t count)
+template <typename T>
+bool XRBuffer<T>::Get(void *buf, size_t count)
 {
-	if ( Length() - Index() >= count ) {
-		memcpy(buf, Data(Index()), count);
-		SetIndex(Index()+count);
+	if ( size() - index() >= count ) {
+		memcpy(buf, Data(index()), count);
+		setIndex(index()+count);
 		return true;
 	}
 	return false;
 }
 
-size_t XRBuffer::IdxOf(const XString8& aXString8, size_t Pos) const
+template <typename T>
+size_t XRBuffer<T>::IdxOf(const XString8& aXString8, size_t Pos) const
 {
-	if ( aXString8.length() > Length()-Pos ) return MAX_XSIZE;
-	size_t nb = Length()-aXString8.length()+1;
+	if ( aXString8.length() > size()-Pos ) return MAX_XSIZE;
+	size_t nb = size()-aXString8.sizeInBytes()+1;
 	for ( size_t ui=Pos ; ui<nb ; ui+=1 ) {
 		if ( strncmp(CData(ui), aXString8.c_str(), aXString8.sizeInBytes()) == 0 ) return ui;
 	}
 	return  MAX_XSIZE;
 }
 
-size_t XRBuffer::IdxOf(const XString8Array& aXString8Array, size_t Pos, size_t *n) const
+template <typename T>
+size_t XRBuffer<T>::IdxOf(const XString8Array& aXString8Array, size_t Pos, size_t *n) const
 {
   size_t pos;
 
@@ -85,21 +83,22 @@ size_t XRBuffer::IdxOf(const XString8Array& aXString8Array, size_t Pos, size_t *
 	return MAX_XSIZE;
 }
 
-size_t XRBuffer::Sizeof() const
+template <typename T>
+size_t XRBuffer<T>::Sizeof() const
 {
-	return sizeof(unsigned int)+Length();
+	return sizeof(unsigned int)+size();
 }
 /*
 bool XRBuffer::WriteToBuf(char *buf, size_t *idx, size_t count) const
 {
   unsigned int longueur;
 
-	if ( count-*idx < sizeof(longueur) + Length() ) return NON;
-	longueur = Length();
+	if ( count-*idx < sizeof(longueur) + size() ) return NON;
+	longueur = size();
 	memcpy(buf+*idx, &longueur, sizeof(longueur));
 	*idx += sizeof(longueur);
-	memcpy(buf+*idx, _Data, Length());
-	*idx += Length();
+	memcpy(buf+*idx, _Data, size());
+	*idx += size();
 	return OUI;
 }
 */
@@ -108,7 +107,7 @@ bool XRBuffer::WriteToBuf(char *buf, size_t *idx, size_t count) const
 //  XFILE f;
 //
 //	f.OpenT(FileName, "wb");
-//	f.WriteT(Data(), Length());
+//	f.WriteT(Data(), size());
 //	f.CloseT();
 //}
 //
@@ -126,7 +125,7 @@ bool XRBuffer::WriteToBuf(char *buf, size_t *idx, size_t count) const
 //{
 //  size_t longueur;
 //
-//	longueur = Length();
+//	longueur = size();
 //	if ( fwrite(&longueur, sizeof(longueur), 1, fp) != 1 ) return NON;
 //	if ( longueur > 0  &&  fwrite(Data(), longueur, 1, fp) != 1 ) return NON;
 //	return OUI;
@@ -136,7 +135,7 @@ bool XRBuffer::WriteToBuf(char *buf, size_t *idx, size_t count) const
 //{
 //  size_t longueur;
 //
-//	longueur = Length();
+//	longueur = size();
 //	f->WriteT(&longueur, sizeof(longueur));
 //	if ( longueur > 0 ) f->WriteT(Data(), longueur);
 //}

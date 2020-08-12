@@ -112,7 +112,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
     LOADER_ENTRY* loaderEntry = Entry->getLOADER_ENTRY();
     // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
     if (gSettings.OptionsBits & OPT_NVWEBON) {
-      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12"_XS8)) {
         gSettings.NvidiaWeb = TRUE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;
@@ -121,7 +121,7 @@ VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
       }
     }
     if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
-      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12")) {
+      if (AsciiOSVersionToUint64(loaderEntry->OSVersion) >= AsciiOSVersionToUint64("10.12"_XS8)) {
         gSettings.NvidiaWeb = FALSE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;

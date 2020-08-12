@@ -208,14 +208,15 @@ UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search
 }
 
 
-UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
+UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *Replace, INTN MaxReplaces)
 {
   UINTN     NumReplaces = 0;
   UINTN     Skip = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
   UINT8     *End = Source + SourceSize;
-  UINT8     *SearchEnd = Search + SearchSize;
-  UINT8     *Pos = NULL;
+  const UINT8     *SearchEnd = Search + SearchSize;
+  const UINT8     *Pos = NULL;
+  UINT8     *SourcePos = NULL;
   UINT8     *FirstMatch = Source;
   if (!Source || !Search || !Replace || !SearchSize) {
     return 0;
@@ -242,11 +243,11 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN
       }
       
       if (Pos == SearchEnd) { // pattern found
-        Pos = FirstMatch;
+        SourcePos = FirstMatch;
         break;
       }
       else
-        Pos = NULL;
+        SourcePos = NULL;
       
       Source = FirstMatch + 1;
 /*      if (Pos != Search) {
@@ -255,11 +256,11 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, UINT8 *Search, UINTN
       
     }
 
-    if (!Pos) {
+    if (!SourcePos) {
       break;
     }
-    CopyMem(Pos, Replace, SearchSize);
-    SetMem(Pos + SearchSize, Skip, 0x20); //fill skip places with spaces
+    CopyMem(SourcePos, Replace, SearchSize);
+    SetMem(SourcePos + SearchSize, Skip, 0x20); //fill skip places with spaces
     NumReplaces++;
     MaxReplaces--;
     Source = FirstMatch + SearchSize + Skip;
@@ -366,13 +367,13 @@ VOID LOADER_ENTRY::ATIConnectorsPatchInit()
               sizeof(ATIKextBundleId[0]),
 		   "com.apple.kext.ATI%sController", // when it was AsciiSPrint, %a was used with KPATIConnectorsController which is CHAR16 ??? Result is printing stop at first char <= 255
            //now it is CHAR8*
-           KernelAndKextPatches.KPATIConnectorsController
+           KernelAndKextPatches.KPATIConnectorsController.c_str()
               );
   // ML
   snprintf(ATIKextBundleId[1],
               sizeof(ATIKextBundleId[1]),
 		   "com.apple.kext.AMD%sController", // when it was AsciiSPrint, %a was used with KPATIConnectorsController which is CHAR16 ??? Result is printing stop at first char <= 255
-           KernelAndKextPatches.KPATIConnectorsController
+           KernelAndKextPatches.KPATIConnectorsController.c_str()
               );
   
   ATIConnectorsPatchInited = TRUE;
@@ -391,11 +392,11 @@ VOID LOADER_ENTRY::ATIConnectorsPatchRegisterKexts(void *FSInject_v, void *Force
   FSI_STRING_LIST *ForceLoadKexts = (FSI_STRING_LIST *)ForceLoadKexts_v;
   // for future?
   FSInject->AddStringToList(ForceLoadKexts,
-                            SWPrintf("\\AMD%sController.kext\\Contents\\Info.plist", KernelAndKextPatches.KPATIConnectorsController).wc_str()
+                            SWPrintf("\\AMD%sController.kext\\Contents\\Info.plist", KernelAndKextPatches.KPATIConnectorsController.c_str()).wc_str()
                             );
   // Lion, ML, SnowLeo 10.6.7 2011 MBP
   FSInject->AddStringToList(ForceLoadKexts,
-                            SWPrintf("\\ATI%sController.kext\\Contents\\Info.plist", KernelAndKextPatches.KPATIConnectorsController).wc_str()
+                            SWPrintf("\\ATI%sController.kext\\Contents\\Info.plist", KernelAndKextPatches.KPATIConnectorsController.c_str()).wc_str()
                             );
   // SnowLeo
   FSInject->AddStringToList(ForceLoadKexts, L"\\ATIFramebuffer.kext\\Contents\\Info.plist");
@@ -419,12 +420,12 @@ VOID LOADER_ENTRY::ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *I
   UINTN   Num = 0;
   
 	DBG_RT("\nATIConnectorsPatch: driverAddr = %llx, driverSize = %x\nController = %s\n",
-         (UINTN)Driver, DriverSize, KernelAndKextPatches.KPATIConnectorsController);
+         (UINTN)Driver, DriverSize, KernelAndKextPatches.KPATIConnectorsController.c_str());
   ExtractKextBundleIdentifier(InfoPlist);
 	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
   
   // number of occurences od Data should be 1
-  Num = SearchAndCount(Driver, DriverSize, KernelAndKextPatches.KPATIConnectorsData, KernelAndKextPatches.KPATIConnectorsDataLen);
+  Num = SearchAndCount(Driver, DriverSize, KernelAndKextPatches.KPATIConnectorsData.data(), KernelAndKextPatches.KPATIConnectorsData.size());
   if (Num > 1) {
     // error message - shoud always be printed
 	  printf("==> KPATIConnectorsData found %llu times in %s - skipping patching!\n", Num, gKextBundleIdentifier);
@@ -435,9 +436,9 @@ VOID LOADER_ENTRY::ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *I
   // patch
   Num = SearchAndReplace(Driver,
                          DriverSize,
-                         KernelAndKextPatches.KPATIConnectorsData,
-                         KernelAndKextPatches.KPATIConnectorsDataLen,
-                         KernelAndKextPatches.KPATIConnectorsPatch,
+                         KernelAndKextPatches.KPATIConnectorsData.data(),
+                         KernelAndKextPatches.KPATIConnectorsData.size(),
+                         KernelAndKextPatches.KPATIConnectorsPatch.data(),
                          1);
     if (Num > 0) {
 		DBG_RT("==> patched %llu times!\n", Num);
@@ -628,7 +629,7 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
 #else
   //RodionS
 
-  UINTN procLocation = searchProcInDriver(Driver, DriverSize, "updateChecksum");
+  UINTN procLocation = searchProcInDriver(Driver, DriverSize, "updateChecksum"_XS8);
   DBG("updateChecksum at 0x%llx\n", procLocation);
   if (procLocation != 0) {
     if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
@@ -752,13 +753,13 @@ VOID LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
 	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
     
     // now let's patch it
-    if (os_ver < AsciiOSVersionToUint64("10.9") || os_ver >= AsciiOSVersionToUint64("10.14")) {
+    if (os_ver < AsciiOSVersionToUint64("10.9"_XS8) || os_ver >= AsciiOSVersionToUint64("10.14"_XS8)) {
         DBG("Unsupported macOS.\nSandyBridge-E requires macOS 10.9 - 10.13.x, aborted\n");
         DBG("SNBE_AICPUPatch() <===FALSE\n");
         return;
     }
     
-    if (os_ver < AsciiOSVersionToUint64("10.10")) {
+    if (os_ver < AsciiOSVersionToUint64("10.10"_XS8)) {
         // 10.9.x
         const UINT8 find[][3] = {
             { 0x84, 0x2F, 0x01 },
@@ -786,7 +787,7 @@ VOID LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
                 DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
             }
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.11")) {
+    } else if (os_ver < AsciiOSVersionToUint64("10.11"_XS8)) {
         // 10.10.x
         const UINT8 find[][3] = {
             { 0x3E, 0x75, 0x39 },
@@ -838,7 +839,7 @@ VOID LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.12")) {
+    } else if (os_ver < AsciiOSVersionToUint64("10.12"_XS8)) {
         // 10.11
         const UINT8 find[][3] = {
             { 0x3E, 0x75, 0x39 },
@@ -889,7 +890,7 @@ VOID LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.13")) {
+    } else if (os_ver < AsciiOSVersionToUint64("10.13"_XS8)) {
         // 10.12
         const UINT8 find[][3] = {
             { 0x01, 0x74, 0x61 },
@@ -940,7 +941,7 @@ VOID LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.15")) {
+    } else if (os_ver < AsciiOSVersionToUint64("10.15"_XS8)) {
         // 10.13/10.14
         const UINT8 find[][3] = {
             { 0x01, 0x74, 0x61 },
@@ -1030,9 +1031,9 @@ VOID LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
   // now, let's patch it!
   //
 
-  if (os_ver < AsciiOSVersionToUint64("10.12")) {
+  if (os_ver < AsciiOSVersionToUint64("10.12"_XS8)) {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_El, sizeof(BroadwellE_IOPCI_Find_El), BroadwellE_IOPCI_Repl_El, 0);
-  } else if (os_ver < AsciiOSVersionToUint64("10.14")) {
+  } else if (os_ver < AsciiOSVersionToUint64("10.14"_XS8)) {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_SieHS, sizeof(BroadwellE_IOPCI_Find_SieHS), BroadwellE_IOPCI_Repl_SieHS, 0);
   } else {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_MojCata, sizeof(BroadwellE_IOPCI_Find_MojCata), BroadwellE_IOPCI_Repl_MojCata, 0);
@@ -1051,8 +1052,8 @@ VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
 {
 //  UINTN procLen = 0;
   DBG("8 apple patch\n");
-  UINTN procAddr = searchProcInDriver(Driver, DriverSize, "initFB");
-  UINTN verbose  = searchProcInDriver(Driver, DriverSize, "gIOFBVerboseBoot");
+  UINTN procAddr = searchProcInDriver(Driver, DriverSize, "initFB"_XS8);
+  UINTN verbose  = searchProcInDriver(Driver, DriverSize, "gIOFBVerboseBoot"_XS8);
   if (procAddr != 0) {
     UINTN patchLoc;
   
@@ -1105,18 +1106,17 @@ VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
 // Generic kext patch functions
 //
 //
-VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N)
+VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, size_t N)
 {
   UINTN   Num = 0;
-  INTN    Ind;
 
   // if we modify value directly at KernelAndKextPatches->KextPatches[N].SearchLen, it will be wrong for next driver
   UINTN   SearchLen = KernelAndKextPatches.KextPatches[N].SearchLen;
   
-  DBG_RT("\nAnyKextPatch %d: driverAddr = %llx, driverSize = %x\nAnyKext = %s\n",
-         N, (UINTN)Driver, DriverSize, KernelAndKextPatches.KextPatches[N].Label);
-  DBG("\nAnyKextPatch %d: driverAddr = %llx, driverSize = %x\nLabel = %s\n",
-      N, (UINTN)Driver, DriverSize, KernelAndKextPatches.KextPatches[N].Label);
+  DBG_RT("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\nAnyKext = %s\n",
+         N, (UINTN)Driver, DriverSize, KernelAndKextPatches.KextPatches[N].Label.c_str());
+  DBG("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\nLabel = %s\n",
+      N, (UINTN)Driver, DriverSize, KernelAndKextPatches.KextPatches[N].Label.c_str());
 
   if (!KernelAndKextPatches.KextPatches[N].MenuItem.BValue) {
     return;
@@ -1152,20 +1152,20 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     while (j < DriverSize) {
       if (!KernelAndKextPatches.KextPatches[N].StartPattern || //old behavior
           CompareMemMask((const UINT8*)curs,
-                         (const UINT8 *)KernelAndKextPatches.KextPatches[N].StartPattern,
-                         KernelAndKextPatches.KextPatches[N].StartPatternLen,
-                         (const UINT8 *)KernelAndKextPatches.KextPatches[N].StartMask,
-                         KernelAndKextPatches.KextPatches[N].StartPatternLen)) {
+                         KernelAndKextPatches.KextPatches[N].StartPattern.data(),
+                         KernelAndKextPatches.KextPatches[N].StartPattern.size(),
+                         KernelAndKextPatches.KextPatches[N].StartMask.data(),
+                         KernelAndKextPatches.KextPatches[N].StartPattern.size())) {
         DBG_RT(" StartPattern found\n");
 
         Num = SearchAndReplaceMask(curs,
                                    procLen,
-                                   (const UINT8*)KernelAndKextPatches.KextPatches[N].Data,
-                                   (const UINT8*)KernelAndKextPatches.KextPatches[N].MaskFind,
-                                   KernelAndKextPatches.KextPatches[N].DataLen,
-                                   (const UINT8*)KernelAndKextPatches.KextPatches[N].Patch,
-                                   (const UINT8*)KernelAndKextPatches.KextPatches[N].MaskReplace,
-                                   -1);
+                                   KernelAndKextPatches.KextPatches[N].Data.data(),
+                                   KernelAndKextPatches.KextPatches[N].MaskFind.data(),
+                                   KernelAndKextPatches.KextPatches[N].Data.size(),
+                                   KernelAndKextPatches.KextPatches[N].Patch.data(),
+                                   KernelAndKextPatches.KextPatches[N].MaskReplace.data(),
+                                   KernelAndKextPatches.KextPatches[N].Count);
         if (Num) {
           curs += SearchLen - 1;
           j    += SearchLen - 1;
@@ -1173,7 +1173,7 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
       }
       if (once ||
           !KernelAndKextPatches.KextPatches[N].StartPattern ||
-          !KernelAndKextPatches.KextPatches[N].StartPatternLen) {
+          !KernelAndKextPatches.KextPatches[N].StartPattern.size()) {
         break;
       }
       j++; curs++;
@@ -1181,21 +1181,21 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   } else {
     // Info plist patch
     DBG_RT("Info.plist data : '");
-    for (Ind = 0; Ind < KernelAndKextPatches.KextPatches[N].DataLen; Ind++) {
+    for (size_t Ind = 0; Ind < KernelAndKextPatches.KextPatches[N].Data.size(); Ind++) {
       DBG_RT("%c", KernelAndKextPatches.KextPatches[N].Data[Ind]);
     }
     DBG_RT("' ->\n");
     DBG_RT("Info.plist patch: '");
-    for (Ind = 0; Ind < KernelAndKextPatches.KextPatches[N].DataLen; Ind++) {
+    for (size_t Ind = 0; Ind < KernelAndKextPatches.KextPatches[N].Data.size(); Ind++) {
       DBG_RT("%c", KernelAndKextPatches.KextPatches[N].Patch[Ind]);
     }
     DBG_RT("' \n");
     
     Num = SearchAndReplaceTxt((UINT8*)InfoPlist,
                            InfoPlistSize,
-                           KernelAndKextPatches.KextPatches[N].Data,
-                           KernelAndKextPatches.KextPatches[N].DataLen,
-                           KernelAndKextPatches.KextPatches[N].Patch,
+                           KernelAndKextPatches.KextPatches[N].Data.data(),
+                           KernelAndKextPatches.KextPatches[N].Data.size(),
+                           KernelAndKextPatches.KextPatches[N].Patch.data(),
                            -1);
   }
   
@@ -1216,13 +1216,13 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
 VOID LOADER_ENTRY::KextPatcherRegisterKexts(void *FSInject_v, void *ForceLoadKexts)
 {
   FSINJECTION_PROTOCOL *FSInject = (FSINJECTION_PROTOCOL *)FSInject_v;
-  if (KernelAndKextPatches.KPATIConnectorsController != NULL) {
+  if (KernelAndKextPatches.KPATIConnectorsController.notEmpty()) {
     ATIConnectorsPatchRegisterKexts(FSInject_v, ForceLoadKexts);
   }
   
-  for (INTN i = 0; i < KernelAndKextPatches.NrKexts; i++) {
+  for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
     FSInject->AddStringToList((FSI_STRING_LIST*)ForceLoadKexts,
-                              SWPrintf("\\%s.kext\\Contents\\Info.plist", KernelAndKextPatches.KextPatches[i].Name).wc_str() );
+                              SWPrintf("\\%s.kext\\Contents\\Info.plist", KernelAndKextPatches.KextPatches[i].Name.c_str()).wc_str() );
   }
 }
 
@@ -1232,7 +1232,7 @@ VOID LOADER_ENTRY::KextPatcherRegisterKexts(void *FSInject_v, void *ForceLoadKex
 //
 VOID LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
-  if (KernelAndKextPatches.KPATIConnectorsController != NULL) {
+  if (KernelAndKextPatches.KPATIConnectorsController.notEmpty()) {
     //
     // ATIConnectors
     //
@@ -1301,13 +1301,13 @@ VOID LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist,
   }
   //com.apple.iokit.IOGraphicsFamily
   
-    for (INT32 i = 0; i < KernelAndKextPatches.NrKexts; i++) {
-      CHAR8 *Name = KernelAndKextPatches.KextPatches[i].Name;
-      BOOLEAN   isBundle = (AsciiStrStr(Name, ".") != NULL);
-      if ((KernelAndKextPatches.KextPatches[i].DataLen > 0) &&
-          isBundle?(AsciiStrCmp(gKextBundleIdentifier, Name) == 0):(AsciiStrStr(gKextBundleIdentifier, Name) != NULL)) {
+    for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
+      XString8& Name = KernelAndKextPatches.KextPatches[i].Name;
+      BOOLEAN   isBundle = Name.contains(".");
+      if ((KernelAndKextPatches.KextPatches[i].Data.size() > 0) &&
+          isBundle?(AsciiStrCmp(gKextBundleIdentifier, Name.c_str()) == 0):(AsciiStrStr(gKextBundleIdentifier, Name.c_str()) != NULL)) {
       //    (AsciiStrStr(InfoPlist, KernelAndKextPatches.KextPatches[i].Name) != NULL)) {
-        DBG_RT("\n\nPatch kext: %s\n", KernelAndKextPatches.KextPatches[i].Name);
+        DBG_RT("\n\nPatch kext: %s\n", KernelAndKextPatches.KextPatches[i].Name.c_str());
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i);
       }
     }

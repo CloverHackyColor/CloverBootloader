@@ -70,7 +70,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	XStringArray_() : array() {};
 
 	size_t size() const { return array.size(); }
-	void setEmpty() { array.Empty(); }
+	void setEmpty() { array.setEmpty(); }
 	bool isEmpty() const { return this->size() == 0 ; }
 	bool notEmpty() const { return this->size() > 0 ; }
 	

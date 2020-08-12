@@ -22,7 +22,7 @@
 // Macros that directly map functions to BaseLib, BaseMemoryLib, and DebugLib functions
 // originally from OpensslLib
 
-#define memset(dest,ch,count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
+//#define memset(dest,ch,count)             SetMem(dest,(UINTN)(count),(UINT8)(ch))
 #define memchr(buf,ch,count)              ScanMem8(buf,(UINTN)(count),(UINT8)ch)
 #define memcmp(buf1,buf2,count)           (int)(CompareMem(buf1,buf2,(UINTN)(count)))
 //#define memmove(dest,source,count)        CopyMem(dest,source,(UINTN)(count))

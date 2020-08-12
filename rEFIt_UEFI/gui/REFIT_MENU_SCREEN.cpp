@@ -466,7 +466,7 @@ VOID REFIT_MENU_SCREEN::FreeMenu()
         Tentry->SubScreen = NULL;
       }
     }
-    Entries.Empty();
+    Entries.setEmpty();
   }
   InfoLines.setEmpty();
 }

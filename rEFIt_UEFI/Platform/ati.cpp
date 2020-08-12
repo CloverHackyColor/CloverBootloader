@@ -1392,10 +1392,10 @@ BOOLEAN get_conntype_val(value_t *val, INTN index, BOOLEAN Sier)
   //0x400: DisplayPort
   //0x02:  LVDS
 
-  if ((CurrentPatches == NULL) || (CurrentPatches->KPATIConnectorsDataLen == 0)) {
+  if ((CurrentPatches == NULL) || (CurrentPatches->KPATIConnectorsData.isEmpty())) {
     return FALSE;
   }
-  ct = CurrentPatches->KPATIConnectorsPatch;
+  ct = CurrentPatches->KPATIConnectorsPatch.data();
   Len = Sier?24:16;
 
   /*  if (gMobile) {
@@ -1546,13 +1546,13 @@ VOID free_val(value_t *val )
     value_t    default_val;
  } AtiDevProp;
  */
-VOID devprop_add_list(AtiDevProp devprop_list[], CHAR8 *OSVersion)
+VOID devprop_add_list(AtiDevProp devprop_list[], const XString8& OSVersion)
 {
   INTN i, pnum;
   BOOLEAN Sier;
   value_t *val = (__typeof__(val))BllocateZeroPool(sizeof(value_t));
 
-  Sier = (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.12"));
+  Sier = (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.12"_XS8));
 
   for (i = 0; devprop_list[i].name != NULL; i++) {
     if ((devprop_list[i].flags & card->flags) != 0) {

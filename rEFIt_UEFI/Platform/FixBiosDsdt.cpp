@@ -3712,7 +3712,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, CHAR8* OSVersion)
+UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const XString8& OSVersion)
 {
   UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
@@ -5300,7 +5300,7 @@ VOID RenameDevices(UINT8* table)
 	MsgLog("  %lld replacements\n", Num);
 }
 
-VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, CHAR8 *OSVersion)
+VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, const XString8& OSVersion)
 {
   UINT32 DsdtLen;
 

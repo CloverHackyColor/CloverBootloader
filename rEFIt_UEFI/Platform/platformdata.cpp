@@ -641,7 +641,8 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
   }
 
-  AsciiStrCpyS (gSettings.EfiVersion, 64,           ApplePlatformData[Model].efiversion);
+  gSettings.EfiVersion.takeValueFrom(ApplePlatformData[Model].efiversion);
+  gSettings.EfiVersion.trim();
   AsciiStrCpyS (gSettings.ManufactureName, 64,      BiosVendor);
   if (Redefine) {
     AsciiStrCpyS (gSettings.ProductName, 64,        ApplePlatformData[Model].productName);

@@ -203,7 +203,7 @@ void XArray<TYPE>::CheckSize(size_t nNewSize)
 template<class TYPE>
 void XArray<TYPE>::setSize(size_t l)
 {
-	CheckSize(l, XArrayGrowByDefault); // be sure the size is allocated
+	CheckSize(l, 0); // be sure the size is allocated
 	m_len = l;
 	#ifdef DEBUG
 		if(m_len > m_allocatedSize) {

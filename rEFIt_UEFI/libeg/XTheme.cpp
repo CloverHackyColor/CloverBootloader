@@ -27,7 +27,7 @@ extern "C" {
 
 
 //xtheme class
-XTheme::XTheme() : Icons(), ThemeDir(0), HideBadges(0), HideUIFlags(0), Font(FONT_ALFA), CharWidth(0), SelectionColor(0), FontFileName(),
+XTheme::XTheme() : Icons(), ThemeDir(0), HideBadges(0), HideUIFlags(0), Font(FONT_ALFA), CharWidth(0), SelectionColor(0), FontFileName(), Theme(),
                    BannerFileName(), SelectionSmallFileName(), SelectionBigFileName(), SelectionIndicatorName(), DefaultSelection(),
                    BackgroundName(), BackgroundScale(imNone), BackgroundSharp(0), BackgroundDark(0), SelectionOnTop(0), BootCampStyle(0),
                    BadgeOffsetX(0), BadgeOffsetY(0), BadgeScale(0), ThemeDesignWidth(0), ThemeDesignHeight(0), BannerPosX(0), BannerPosY(0),
@@ -294,7 +294,7 @@ void XTheme::FillByEmbedded()
   SelectionColor = 0xA0A0A080;
   SelectionBackgroundPixel = { 0xa0, 0xa0, 0xa0, 0x80 };
 
-  Icons.Empty();
+  Icons.setEmpty();
   for (INTN i = 0; i < BUILTIN_ICON_COUNT; ++i) { //this is embedded icon count
     XIcon* NewIcon = new XIcon(i, true);
     Icons.AddReference(NewIcon, true);
@@ -453,7 +453,7 @@ void XTheme::ClearScreen() //and restore background and banner
 void XTheme::FillByDir() //assume ThemeDir is defined by InitTheme() procedure
 {
   EFI_STATUS Status;
-  Icons.Empty();
+  Icons.setEmpty();
   for (INTN i = 0; i < IconsNamesSize; ++i) { //scan full table
     Status = EFI_NOT_FOUND;
     XIcon* NewIcon = new XIcon(i); //initialize without embedded

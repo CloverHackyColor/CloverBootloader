@@ -468,8 +468,8 @@ VOID PatchTableType0()
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->Vendor, gSettings.VendorName);
   }
   if(iStrLen(gSettings.RomVersion, 64)>0){
-    if(iStrLen(gSettings.EfiVersion, 64)>0){
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, gSettings.EfiVersion);
+    if( gSettings.EfiVersion.notEmpty() ) {
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, gSettings.EfiVersion.c_str());
     } else {
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, gSettings.RomVersion);
     }

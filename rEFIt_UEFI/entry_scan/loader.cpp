@@ -452,7 +452,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
                                        EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor,
                                        IN UINT8 CustomBoot,
                                        IN XImage *CustomLogo,
-                                       IN KERNEL_AND_KEXT_PATCHES *Patches,
+                                       IN const KERNEL_AND_KEXT_PATCHES* Patches,
                                        IN BOOLEAN CustomEntry)
 {
   EFI_DEVICE_PATH       *LoaderDevicePath;
@@ -604,7 +604,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   }
 
   Entry->LoaderType = OSType;
-  Entry->BuildVersion = NULL;
+  Entry->BuildVersion.setEmpty();
   Entry->OSVersion = GetOSVersion(Entry);
 //DBG("OSVersion=%s \n", Entry->OSVersion);
   // detect specific loaders
@@ -758,7 +758,9 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   Entry->BootBgColor = BootBgColor;
 
 //  Entry->KernelAndKextPatches = ((Patches == NULL) ? (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)) : Patches);
-  CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, Patches == NULL ? &gSettings.KernelAndKextPatches : Patches);
+//  CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, Patches == NULL ? &gSettings.KernelAndKextPatches : Patches);
+  Entry->KernelAndKextPatches = Patches == NULL ? gSettings.KernelAndKextPatches : *Patches;
+  
 #ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
 #endif
@@ -783,11 +785,11 @@ void LOADER_ENTRY::AddDefaultMenu()
   constexpr LString8 splashLitteral = "splash";
 
   // Only kernels up to 10.7 have 32-bit mode
-  KernelIs64BitOnly = (OSVersion == NULL ||
-                       os_version >= AsciiOSVersionToUint64("10.8"));
+  KernelIs64BitOnly = (OSVersion.isEmpty() ||
+                       os_version >= AsciiOSVersionToUint64("10.8"_XS8));
   
-  const char* macOS = (os_version < AsciiOSVersionToUint64("10.8"))? "Mac OS X" :
-                      (os_version < AsciiOSVersionToUint64("10.12"))? "OS X" : "macOS";
+  const char* macOS = (os_version < AsciiOSVersionToUint64("10.8"_XS8))? "Mac OS X" :
+                      (os_version < AsciiOSVersionToUint64("10.12"_XS8))? "OS X" : "macOS";
 
   FileName = LoaderPath.basename();
 
@@ -820,7 +822,7 @@ void LOADER_ENTRY::AddDefaultMenu()
   if (LoaderType == OSTYPE_OSX ||
       LoaderType == OSTYPE_OSX_INSTALLER ||
       LoaderType == OSTYPE_RECOVERY) { // entries for Mac OS X
-    SubScreen->AddMenuInfoLine_f("%s: %s", macOS, OSVersion);
+    SubScreen->AddMenuInfoLine_f("%s: %s", macOS, OSVersion.c_str());
 
     if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
       SubEntry = getPartiallyDuplicatedEntry();
@@ -856,7 +858,7 @@ void LOADER_ENTRY::AddDefaultMenu()
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(), true);
     SubScreen->AddMenuInfo_f("=== boot-args ===");
     if (!KernelIs64BitOnly) {
-      if (os_version < AsciiOSVersionToUint64("10.8")) {
+      if (os_version < AsciiOSVersionToUint64("10.8"_XS8)) {
         SubScreen->AddMenuCheck("Mac OS X 32bit",   OPT_I386, 68);
       }
 //      SubScreen->AddMenuCheck(XString8().SPrintf("%s 64bit", macOS).c_str(), OPT_X64,  68);
@@ -864,7 +866,7 @@ void LOADER_ENTRY::AddDefaultMenu()
     }
     SubScreen->AddMenuCheck("Verbose (-v)",                               OPT_VERBOSE, 68);
     // No Caches option works on 10.6 - 10.9
-    if (os_version < AsciiOSVersionToUint64("10.10")) {
+    if (os_version < AsciiOSVersionToUint64("10.10"_XS8)) {
       SubScreen->AddMenuCheck("Without caches (-f)",                        OPT_NOCACHES, 68);
     }
     SubScreen->AddMenuCheck("Single User (-s)",                           OPT_SINGLE_USER, 68);

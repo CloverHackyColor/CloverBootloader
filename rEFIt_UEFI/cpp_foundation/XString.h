@@ -32,6 +32,9 @@ class LString8 : public LString<char, XString8>
 	// no assignement, no destructor
 
 	friend constexpr LString8 operator "" _XS8 ( const char* s, size_t) { return LString8(s); }
+
+  const char* c_str() const { return m_data; }
+
 };
 
 class XString8 : public XStringAbstract<char, XString8>
@@ -47,7 +50,9 @@ class XString8 : public XStringAbstract<char, XString8>
 	XString8& operator=(const XString8 &S) { this->XStringAbstract<char, XString8>::operator=(S); return *this; }
 
 	using XStringAbstract<char, XString8>::operator =;
-	
+
+  const char* c_str() const { return m_data; }
+
 protected:
 	static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context)
 	{
@@ -132,6 +137,8 @@ class LStringW : public LString<wchar_t, XStringW>
 	constexpr LStringW(const wchar_t* s) : LString<wchar_t, XStringW>(s) {};
 	
 	friend constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t) { return LStringW(s); }
+
+  const wchar_t* wc_str() const { return m_data; }
 };
 
 class XStringW : public XStringAbstract<wchar_t, XStringW>
@@ -148,6 +155,8 @@ public:
 	XStringW& operator=(const XStringW &S) { this->XStringAbstract<wchar_t, XStringW>::operator=(S); return *this; }
 
 	using XStringAbstract<wchar_t, XStringW>::operator =;
+
+	const wchar_t* wc_str() const { return m_data; }
 
 protected:
 	static void transmitSPrintf(const wchar_t* buf, unsigned int nbchar, void* context)

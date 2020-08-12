@@ -1251,7 +1251,7 @@ static VOID UninitVolumes(VOID)
     Volume->WholeDiskDeviceHandle = NULL;
     FreePool(Volume);
   }
-  Volumes.Empty();
+  Volumes.setEmpty();
 }
 
 VOID ReinitVolumes(VOID)

@@ -60,7 +60,7 @@ VOID
 FixBiosDsdt (
   UINT8                                     *Dsdt,
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *fadt,
-  CHAR8                                     *OSVersion
+  const XString8&                            OSVersion
   );
 
 

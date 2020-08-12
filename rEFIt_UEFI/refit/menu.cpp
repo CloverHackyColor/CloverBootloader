@@ -259,7 +259,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.RefCLK);
 
   InputItems[InputItemsCount].ItemType = ASString;  //51 OS version if non-detected
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s ", NonDetected);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s ", NonDetected.c_str());
 
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount++].BValue = gSettings.InjectEDID;
@@ -427,7 +427,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = 116;
 
   InputItems[InputItemsCount].ItemType = ASString;  //117
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.EfiVersion);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.EfiVersion.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //118
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BooterCfgStr);
 
@@ -676,7 +676,7 @@ VOID ApplyInputs(VOID)
 
   i++; //51
   if (InputItems[i].Valid) {
-	  snprintf(NonDetected, 64, "%ls", InputItems[i].SValue.wc_str());
+	  NonDetected = InputItems[i].SValue;
   }
 
   i++; //52
@@ -1019,7 +1019,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //117
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.EfiVersion, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.EfiVersion = InputItems[i].SValue;
   }
   i++; //118
   if (InputItems[i].Valid) {
@@ -1537,11 +1537,9 @@ VOID HelpRefit(VOID)
 // user-callable dispatcher functions
 //
 
-REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *CTitle)
+REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, const XString8& Title)
 {
-    if (CTitle) Entry->Title.takeValueFrom(CTitle);
-    else Entry->Title.setEmpty();
-
+  Entry->Title = Title;
   Entry->Image =  OptionMenu.TitleImage;
   Entry->AtClick = AtClick;
   // create the submenu
@@ -1554,7 +1552,7 @@ REFIT_ABSTRACT_MENU_ENTRY* NewEntry_(REFIT_ABSTRACT_MENU_ENTRY *Entry, REFIT_MEN
   return Entry;
 }
 
-REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, CONST CHAR8 *Title)
+REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScreen, ACTION AtClick, UINTN ID, const XString8& Title)
 {
 	REFIT_MENU_ITEM_OPTIONS* Entry = new REFIT_MENU_ITEM_OPTIONS();
 	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
@@ -1583,7 +1581,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuGraphics()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GRAPHICS, "Graphics Injector->"_XS8);
 	SubScreen->AddMenuInfoLine_f("Number of VideoCard%s=%llu",((NGFX!=1)?"s":""), NGFX);
   SubScreen->AddMenuItemInput(52, "InjectEDID", FALSE);
   SubScreen->AddMenuItemInput(53, "Fake Vendor EDID:", TRUE);
@@ -1671,7 +1669,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIO, "Audio tuning->"_XS8);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options to tune the HDA devices");
@@ -1706,7 +1704,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSpeedStep()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CPU, "CPU tuning->"_XS8);
 	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
   SubScreen->AddMenuInfoLine_f("Model: %2X/%2X/%2X",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping);
@@ -1748,18 +1746,15 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextPatches()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
-  INTN                 NrKexts = gSettings.KernelAndKextPatches.NrKexts;
-  KEXT_PATCH  *KextPatchesMenu = gSettings.KernelAndKextPatches.KextPatches; //zzzz
-  INTN                 Index;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXTS, "Custom kexts patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXTS, "Custom kexts patches->"_XS8);
 
-  for (Index = 0; Index < NrKexts; Index++) {
+  for ( size_t Index = 0; Index < gSettings.KernelAndKextPatches.KextPatches.size(); Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title.SWPrintf("%90s", KextPatchesMenu[Index].Label);
+    InputBootArgs->Title.SWPrintf("%90s", gSettings.KernelAndKextPatches.KextPatches[Index].Label.c_str());
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &(KextPatchesMenu[Index].MenuItem);
+    InputBootArgs->Item = &(gSettings.KernelAndKextPatches.KextPatches[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);
@@ -1769,28 +1764,17 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextPatches()
   return Entry;
 }
 
-REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(CONST CHAR16* UniSysVer)
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(const XString8& UniSysVer)
 {
   REFIT_MENU_ITEM_OPTIONS     *Entry = NULL;
   REFIT_MENU_SCREEN    *SubScreen = NULL;
   REFIT_INPUT_DIALOG   *InputBootArgs;
-  UINTN i = 0;
   SIDELOAD_KEXT        *Kext = NULL;
-  CHAR8                sysVer[256];
-
-  UnicodeStrToAsciiStrS(UniSysVer, sysVer, sizeof(sysVer));
-  for (i = 0; i < sizeof(sysVer)-2; i++) {
-    if (sysVer[i] == '\0') {
-      sysVer[i+0] = '-';
-      sysVer[i+1] = '>';
-      sysVer[i+2] = '\0';
-      break;
-    }
-  }
+  XString8              sysVer = S8Printf("%s->", UniSysVer.c_str());
 
   Kext = InjectKextList;
   while (Kext) {
-    if (StrCmp(Kext->KextDirNameUnderOEMPath.wc_str(), UniSysVer) == 0) {
+    if ( Kext->KextDirNameUnderOEMPath == UniSysVer ) {
     	if ( SubScreen == NULL ) {
           Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
           SubScreen->AddMenuInfoLine_f("Choose/check kext to disable:");
@@ -1830,44 +1814,41 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 	REFIT_MENU_SCREEN  *SubScreen;
 	XStringW           kextDir;
 //	UINTN               i;
-	CHAR8               ShortOSVersion[8];
+	XString8           ShortOSVersion;
 //	CHAR16             *UniSysVer = NULL;
-	CHAR8              *ChosenOS = OSVersion;
 
 	SubEntry = new LOADER_ENTRY();
-	NewEntry_(SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->");
+	NewEntry_(SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->"_XS8);
 	SubEntry->Flags = Flags;
-	if (ChosenOS) {
+	if (OSVersion.notEmpty()) {
 //    DBG("chosen os %s\n", ChosenOS);
 		//shorten os version 10.11.6 -> 10.11
 		for (int i = 0; i < 8; i++) {
-			ShortOSVersion[i] = ChosenOS[i];
-			if (ShortOSVersion[i] == '\0') {
+			if (OSVersion[i] == '\0') {
 				break;
 			}
-			if (((i > 2) && (ShortOSVersion[i] == '.')) || (i == 5)) {
-				ShortOSVersion[i] = '\0';
+			if (((i > 2) && (OSVersion[i] == '.')) || (i == 5)) {
 				break;
 			}
+			ShortOSVersion += OSVersion[i];
 		}
 
-		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s",
-		                ShortOSVersion);
+		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", ShortOSVersion.c_str());
 
 		// Add kext from 10
 		{
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"10"), true);
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection("10"_XS8), true);
 
-			CHAR16 DirName[256];
+			XString8 DirName;
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				snwprintf(DirName, sizeof(DirName), "10_install");
+				DirName = "10_install"_XS8;
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					snwprintf(DirName, sizeof(DirName), "10_recovery");
+					DirName = "10_recovery"_XS8;
 				}
 				else {
-					snwprintf(DirName, sizeof(DirName), "10_normal");
+					DirName = "10_normal"_XS8;
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
@@ -1875,19 +1856,19 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 
 		// Add kext from 10.{version}
 		{
-			CHAR16 DirName[256];
-			snwprintf(DirName, sizeof(DirName), "%s", ShortOSVersion);
+			XString8 DirName;
+			DirName.takeValueFrom(ShortOSVersion);
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				snwprintf(DirName, sizeof(DirName), "%s_install", ShortOSVersion);
+				DirName.S8Printf("%s_install", ShortOSVersion.c_str());
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					snwprintf(DirName, sizeof(DirName), "%s_recovery", ShortOSVersion);
+          DirName.S8Printf("%s_recovery", ShortOSVersion.c_str());
 				}
 				else {
-					snwprintf(DirName, sizeof(DirName), "%s_normal", ShortOSVersion);
+          DirName.S8Printf("%s_normal", ShortOSVersion.c_str());
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
@@ -1898,44 +1879,40 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 		// 10.{version}.{minor version} if minor version is > 0
 		{
 			{
-				CHAR16 OSVersionKextsDirName[256];
-				if ( AsciiStrCmp(ShortOSVersion, OSVersion) == 0 ) {
-					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s.0", OSVersion);
+				XString8 OSVersionKextsDirName;
+				if ( ShortOSVersion == OSVersion ) {
+					OSVersionKextsDirName.S8Printf("%s.0", OSVersion.c_str());
 				}else{
-					snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%s", OSVersion);
+					OSVersionKextsDirName = OSVersion;
 				}
 				SubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
 			}
 
-			CHAR16 DirName[256];
+			XString8 DirName;
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				snwprintf(DirName, sizeof(DirName), "%s_install",
-				        OSVersion);
+				DirName.S8Printf("%s_install", OSVersion.c_str());
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					snwprintf(DirName, sizeof(DirName), "%s_recovery",
-					        OSVersion);
+					DirName.S8Printf("%s_recovery", OSVersion.c_str());
 				}
 				else {
-					snwprintf(DirName, sizeof(DirName), "%s_normal",
-					        OSVersion);
+					DirName.S8Printf("%s_normal", OSVersion.c_str());
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 	}
 	else {
-		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s",
-		                ChosenOS);
+		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", OSVersion.c_str());
 	}
 	kextDir = GetOtherKextsDir(TRUE);
 	if ( kextDir.notEmpty() ) {
-		SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"Other"), true);
+		SubScreen->AddMenuEntry(SubMenuKextBlockInjection("Other"_XS8), true);
 	}
 	kextDir = GetOtherKextsDir(FALSE);
 	if ( kextDir.notEmpty() ) {
-		SubScreen->AddMenuEntry(SubMenuKextBlockInjection(L"Off"), true);
+		SubScreen->AddMenuEntry(SubMenuKextBlockInjection("Off"_XS8), true);
 	}
 
 	SubScreen->AddMenuEntry(&MenuEntryReturn, false);
@@ -1949,18 +1926,15 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKernelPatches()
   REFIT_MENU_ITEM_OPTIONS     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
-  INTN                 NrKernels = gSettings.KernelAndKextPatches.NrKernels;
-  KERNEL_PATCH  *KernelPatchesMenu = gSettings.KernelAndKextPatches.KernelPatches; //zzzz
-  INTN                 Index;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KERNELS, "Custom kernel patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KERNELS, "Custom kernel patches->"_XS8);
 
-  for (Index = 0; Index < NrKernels; Index++) {
+  for (size_t Index = 0; Index < gSettings.KernelAndKextPatches.KernelPatches.size(); Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title.SWPrintf("%90s", KernelPatchesMenu[Index].Label);
+    InputBootArgs->Title.SWPrintf("%90s", gSettings.KernelAndKextPatches.KernelPatches[Index].Label.c_str());
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &(KernelPatchesMenu[Index].MenuItem);
+    InputBootArgs->Item = &(gSettings.KernelAndKextPatches.KernelPatches[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);
@@ -1975,18 +1949,15 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBootPatches()
   REFIT_MENU_ITEM_OPTIONS     *Entry;
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
-  INTN                 NrBoots = gSettings.KernelAndKextPatches.NrBoots;
-  KERNEL_PATCH  *BootPatchesMenu = gSettings.KernelAndKextPatches.BootPatches; //zzzz
-  INTN                 Index;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BOOTER, "Custom booter patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BOOTER, "Custom booter patches->"_XS8);
 
-  for (Index = 0; Index < NrBoots; Index++) {
+  for (size_t Index = 0; Index < gSettings.KernelAndKextPatches.BootPatches.size(); Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title.SWPrintf("%90s", BootPatchesMenu[Index].Label);
+    InputBootArgs->Title.SWPrintf("%90s", gSettings.KernelAndKextPatches.BootPatches[Index].Label.c_str());
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &(BootPatchesMenu[Index].MenuItem);
+    InputBootArgs->Item = &(gSettings.KernelAndKextPatches.BootPatches[Index].MenuItem);
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);
@@ -2001,7 +1972,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BINARIES, "Binaries patching->"_XS8);
 
   SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
   SubScreen->AddMenuInfoLine_f("Real CPUID: 0x%06X", gCPUStructure.Signature);
@@ -2040,7 +2011,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
   sign[4] = 0;
   OTID[8] = 0;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->"_XS8);
 
   if (gSettings.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
@@ -2091,7 +2062,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->"_XS8);
 
 	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
 	SubScreen->AddMenuInfoLine_f("%s", gSettings.OEMProduct);
@@ -2122,7 +2093,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
   REFIT_MENU_SCREEN  *SubScreen;
 //  REFIT_INPUT_DIALOG *InputBootArgs;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NullXString8);
   //  Entry->Title.SPrintf("DSDT fix mask [0x%08hhx]->", gSettings.FixDsdt);
 
   SubScreen->AddMenuCheck("Add DTGP",     FIX_DTGP, 67);
@@ -2174,7 +2145,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()
   INPUT_ITEM   *DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
   INTN                 Index;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->"_XS8);
 
   for (Index = 0; Index < PatchDsdtNum; Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
@@ -2198,7 +2169,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdts()
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "Dsdt name->"_XS8);
 
   SubScreen->AddMenuInfoLine_f("Select a DSDT file:");
   SubScreen->AddMenuItemSwitch(116,  "BIOS.aml", FALSE);
@@ -2225,7 +2196,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuACPI()
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the options menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_ACPI, "ACPI patching->"_XS8);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options to patch ACPI");
@@ -2250,7 +2221,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_AUDIOPORTS, "Startup sound output->"_XS8);
 
   SubScreen->AddMenuInfoLine_f("Select an audio output, press F7 to test");
   SubScreen->AddMenuItemInput(120, "Volume:", TRUE);
@@ -2312,7 +2283,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
 
   UINT32              DevAddr, OldDevAddr = 0;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->"_XS8);
 
   if (gSettings.ArbProperties) {
     DEV_PROPERTY *Prop = gSettings.ArbProperties;
@@ -2352,7 +2323,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
   REFIT_MENU_ITEM_OPTIONS   *Entry;
   REFIT_MENU_SCREEN  *SubScreen;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_USB, "PCI devices->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_USB, "PCI devices->"_XS8);
 
   SubScreen->AddMenuItemInput(74,  "USB Ownership", FALSE);
   SubScreen->AddMenuItemInput(92,  "USB Injection", FALSE);
@@ -2379,7 +2350,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Themes->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Themes->"_XS8);
 
   SubScreen->AddMenuInfoLine_f("Installed themes:");
   //add embedded
@@ -2406,7 +2377,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuGUI()
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the options menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_GUI, "GUI tuning->"_XS8);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options to tune the Interface");
@@ -2434,7 +2405,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuCSR()
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CSR, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_CSR, NullXString8);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Modify the System Integrity Protection configuration.");
@@ -2465,7 +2436,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the main menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NullXString8);
 //  Entry->Title.SPrintf("boot_args->flags [0x%02hhx]->", gSettings.BooterConfig);
 
   // submenu description
@@ -2493,13 +2464,13 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSystem()
   REFIT_MENU_SCREEN  *SubScreen;
 
   // create the entry in the options menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SYSTEM, "System Parameters->"_XS8);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options for booted OS");
 
   SubScreen->AddMenuItemInput(2,  "Block kext:", TRUE);
-  SubScreen->AddMenuItemInput(51, "Set OS version if not:", TRUE);
+  SubScreen->AddMenuItemInput(51, "Set OS version if not detected:", TRUE);
   SubScreen->AddMenuItemInput(118, "Booter Cfg Command:", TRUE);
 
   SubScreen->AddMenuEntry(SubMenuCSR(), true);
@@ -2516,7 +2487,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuConfigs()
   REFIT_MENU_SWITCH *InputBootArgs;
   UINTN               i;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Configs->");
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_THEME, "Configs->"_XS8);
 
   SubScreen->AddMenuInfoLine_f("Select a config file:");
 
@@ -2541,7 +2512,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   REFIT_MENU_SCREEN  *SubScreen;
   
   // create the entry in the main menu
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_QUIRKS, NULL);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_QUIRKS, NullXString8);
   Entry->Title.SWPrintf("Quirks mask [0x%04x]->", gSettings.QuirksMask);
   
   // submenu description

@@ -108,7 +108,7 @@ int XStringArray_tests()
         
         XString8Array LoadOptions2;
         
-        LoadOptions2 = Split<XString8Array>(array.ConcatAll(" "_XS8).wc_str(), " ");
+        LoadOptions2 = Split<XString8Array>(array.ConcatAll(" "_XS8).c_str(), " ");
         if ( LoadOptions2 != array ) return 22;
         
         LoadOptions2 = Split<XString8Array>(array.ConcatAll(" "_XS8), " ");

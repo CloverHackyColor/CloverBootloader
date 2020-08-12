@@ -1553,7 +1553,7 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
     CopyMem((VOID*)(UINTN)dsdt, buffer, DsdtLen);
     buffer = (UINT8*)(UINTN)dsdt;
     if (FullPatch) {
-      FixBiosDsdt(buffer, FadtPointer, NULL);
+      FixBiosDsdt(buffer, FadtPointer, NullXString8);
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
       OriginDsdt = OriginDsdtFixed;
     }
@@ -1672,7 +1672,7 @@ void LoadAllPatchedAML(CONST CHAR16* AcpiOemPath, UINTN Pass)
   }
 }
 
-EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, CHAR8 *OSVersion)
+EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 {
   EFI_STATUS                    Status = EFI_SUCCESS;
   UINTN                         Index;

@@ -1390,7 +1390,7 @@ SimpleString testtrim_(const InitialValue& initialValue, const ExpectedValue& ex
 	
 	CHECK_RESULT(str.strcmp(expectedValue.cha) == 0,
 				 ssprintf("str.strcmp(expectedValue.cha) == 0 (\"%s\")", SimpleString(expectedValue.cha).c_str()),
-				 ssprintf("str.strcmp(expectedValue.cha) != 0 (\"%s\"!=\"%s\")", SimpleString(str.c_str()).c_str(), SimpleString(expectedValue.cha).c_str())
+				 ssprintf("str.strcmp(expectedValue.cha) != 0 (\"%s\"!=\"%s\")", SimpleString(str.s()).c_str(), SimpleString(expectedValue.cha).c_str())
 				 );
 //str.takeValueFrom(initialValue.cha);
 //str.trim();

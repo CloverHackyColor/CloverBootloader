@@ -233,7 +233,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 {
   EFI_STATUS      Status;
 
-  Icons.Empty();
+  Icons.setEmpty();
 
   // --- Parse theme.svg --- low case
   NSVGparser   *mainParser = nsvgParse((CHAR8*)buffer, 72, 1.f); //the buffer will be modified, it is how nanosvg works

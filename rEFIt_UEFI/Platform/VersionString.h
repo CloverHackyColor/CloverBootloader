@@ -2,7 +2,7 @@
 #define __REFIT_STRING_H__
 
 
-extern CHAR8 NonDetected[];  //longer string
+extern XString8 NonDetected;
 
 /**
   Convert a Null-terminated ASCII string representing version number (separate by dots)
@@ -19,7 +19,7 @@ extern CHAR8 NonDetected[];  //longer string
   @return Result
 
 **/
-UINT64 AsciiStrVersionToUint64(const CHAR8 *Version, UINT8 MaxDigitByPart, UINT8 MaxParts);
+UINT64 AsciiStrVersionToUint64(const XString8& Version, UINT8 MaxDigitByPart, UINT8 MaxParts);
 
 
 /* Macro to use the AsciiStrVersionToUint64 for OSX Version strings */

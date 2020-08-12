@@ -232,9 +232,9 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
     if (LoadOptionsPrefix != NULL) {
       // NOTE: That last space is also added by the EFI shell and seems to be significant
       //  when passing options to Apple's boot.efi...
-      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.ConcatAll(" "_XS8).wc_str());
+      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.ConcatAll(" "_XS8).c_str());
     }else{
-      loadOptionsW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS8).wc_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
+      loadOptionsW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS8).c_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
     }
     // NOTE: We also include the terminating null in the length for safety.
     ChildLoadedImage->LoadOptionsSize = (UINT32)loadOptionsW.sizeInBytes() + sizeof(wchar_t);
@@ -393,17 +393,17 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("\tFakeCPUID: 0x%X\n", Patches->FakeCPUID);
   DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? "(null)": Patches->KPATIConnectorsController);
   DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
-  DBG("\t%d Kexts to load\n", Patches->NrForceKexts);
+  DBG("\t%d Kexts to load\n", Patches->ForceKexts.size());
   if (Patches->ForceKexts) {
     INTN i = 0;
-    for (; i < Patches->NrForceKexts; ++i) {
+    for (; i < Patches->ForceKexts.size(); ++i) {
        DBG("\t  KextToLoad[%d]: %ls\n", i, Patches->ForceKexts[i]);
     }
   }
-  DBG("\t%d Kexts to patch\n", Patches->NrKexts);
+  DBG("\t%d Kexts to patch\n", Patches->KextPatches.size());
   if (Patches->KextPatches) {
     INTN i = 0;
-    for (; i < Patches->NrKexts; ++i) {
+    for (; i < Patches->KextPatches.size(); ++i) {
        if (Patches->KextPatches[i].IsPlistPatch) {
           DBG("\t  KextPatchPlist[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
        } else {
@@ -415,23 +415,23 @@ VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 #endif
 VOID LOADER_ENTRY::FilterKextPatches()
 {
-  if (gSettings.KextPatchesAllowed && (KernelAndKextPatches.KextPatches != NULL) && (KernelAndKextPatches.NrKexts != 0)) {
+  if ( gSettings.KextPatchesAllowed && KernelAndKextPatches.KextPatches.size() > 0 ) {
     DBG("Filtering KextPatches:\n");
-    for (INTN i = 0; i < KernelAndKextPatches.NrKexts; i++) {
-		DBG(" - [%02lld]: %s :: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
+    for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
+      DBG(" - [%02zu]: %s :: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
-        KernelAndKextPatches.KextPatches[i].Label,
+        KernelAndKextPatches.KextPatches[i].Label.c_str(),
         KernelAndKextPatches.KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
-        OSVersion,
-        KernelAndKextPatches.KextPatches[i].MatchOS ? KernelAndKextPatches.KextPatches[i].MatchOS : "All",
-        KernelAndKextPatches.KextPatches[i].MatchBuild != NULL ? KernelAndKextPatches.KextPatches[i].MatchBuild : "All"
+        OSVersion.c_str(),
+        KernelAndKextPatches.KextPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchOS.c_str() : "All",
+        KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchBuild.c_str() : "All"
       );
       if (!KernelAndKextPatches.KextPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
       
-      if ((BuildVersion != NULL) && (KernelAndKextPatches.KextPatches[i].MatchBuild != NULL)) {
+      if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty())) {
         KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
@@ -445,23 +445,22 @@ VOID LOADER_ENTRY::FilterKextPatches()
 
 VOID LOADER_ENTRY::FilterKernelPatches()
 {
-  if (gSettings.KernelPatchesAllowed && (KernelAndKextPatches.KernelPatches != NULL) && KernelAndKextPatches.NrKernels) {
-    INTN i = 0;
+  if ( gSettings.KernelPatchesAllowed && KernelAndKextPatches.KernelPatches.notEmpty() ) {
     DBG("Filtering KernelPatches:\n");
-    for (; i < KernelAndKextPatches.NrKernels; ++i) {
-		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
+    for (size_t i = 0; i < KernelAndKextPatches.KernelPatches.size(); ++i) {
+      DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
-        KernelAndKextPatches.KernelPatches[i].Label,
-        OSVersion,
-        KernelAndKextPatches.KernelPatches[i].MatchOS ? KernelAndKextPatches.KernelPatches[i].MatchOS : "All",
-        KernelAndKextPatches.KernelPatches[i].MatchBuild != NULL ? KernelAndKextPatches.KernelPatches[i].MatchBuild : "no"
+        KernelAndKextPatches.KernelPatches[i].Label.c_str(),
+        OSVersion.c_str(),
+        KernelAndKextPatches.KernelPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchOS.c_str() : "All",
+        KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchBuild.c_str() : "no"
       );
       if (!KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
 
-      if ((BuildVersion != NULL) && (KernelAndKextPatches.KernelPatches[i].MatchBuild != NULL)) {
+      if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty())) {
         KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
@@ -475,22 +474,22 @@ VOID LOADER_ENTRY::FilterKernelPatches()
 
 VOID LOADER_ENTRY::FilterBootPatches()
 {
-  if ((KernelAndKextPatches.BootPatches != NULL) && KernelAndKextPatches.NrBoots) {
+  if ( KernelAndKextPatches.BootPatches.notEmpty() ) {
     DBG("Filtering BootPatches:\n");
-    for (INTN i = 0; i < KernelAndKextPatches.NrBoots; ++i) {
-		DBG(" - [%02lld]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
+    for (size_t i = 0; i < KernelAndKextPatches.BootPatches.size(); ++i) {
+      DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
           i,
-          KernelAndKextPatches.BootPatches[i].Label,
-          OSVersion,
-          KernelAndKextPatches.BootPatches[i].MatchOS ? KernelAndKextPatches.BootPatches[i].MatchOS : "All",
-          KernelAndKextPatches.BootPatches[i].MatchBuild != NULL ? KernelAndKextPatches.BootPatches[i].MatchBuild : "no"
+          KernelAndKextPatches.BootPatches[i].Label.c_str(),
+          OSVersion.c_str(),
+          KernelAndKextPatches.BootPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchOS.c_str() : "All",
+          KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchBuild.c_str() : "no"
           );
       if (!KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
 
-      if ((BuildVersion != NULL) && (KernelAndKextPatches.BootPatches[i].MatchBuild != NULL)) {
+      if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty())) {
         KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
@@ -689,7 +688,7 @@ VOID LOADER_ENTRY::StartLoader()
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
     // For these cases, take OSVersion from loaded boot.efi image in memory
-    if (/*LoaderType == OSTYPE_OSX_INSTALLER ||*/ !OSVersion) {
+    if (/*LoaderType == OSTYPE_OSX_INSTALLER ||*/ OSVersion.isEmpty()) {
 
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
@@ -715,29 +714,22 @@ VOID LOADER_ENTRY::StartLoader()
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
-            if (OSVersion != NULL) {
-              FreePool(OSVersion);
-            }
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrLen(InstallerVersion)+1, InstallerVersion);
-            OSVersion[AsciiStrLen(InstallerVersion)] = '\0';
-            DBG("Corrected OSVersion: %s\n", OSVersion);
+            OSVersion.takeValueFrom(InstallerVersion);
+            DBG("Corrected OSVersion: %s\n", OSVersion.c_str());
           }
         }
       }
 
-      if (BuildVersion != NULL) {
-        FreePool(BuildVersion);
-        BuildVersion = NULL;
-      }
+      BuildVersion.setEmpty();
     }
 
-    if (BuildVersion != NULL) {
-      DBG(" %s (%s)\n", OSVersion, BuildVersion);
+    if (BuildVersion.notEmpty()) {
+      DBG(" %s (%s)\n", OSVersion.c_str(), BuildVersion.c_str());
     } else {
-      DBG(" %s\n", OSVersion);
+      DBG(" %s\n", OSVersion.c_str());
     }
 
-    if (OSVersion && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"))) {
+    if (OSVersion.notEmpty() && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"_XS8))) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
         gSettings.CsrActiveConfig = (UINT32)0xB7F;
         gSettings.BooterConfig = 0x28;
@@ -756,7 +748,7 @@ VOID LOADER_ENTRY::StartLoader()
     if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
       XString8 KernelLocation;
 
-      if (OSVersion && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9")) {
+      if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
         KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
       } else {
         // used for 10.10, 10.11, and new version.
@@ -818,8 +810,8 @@ VOID LOADER_ENTRY::StartLoader()
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
-       (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
-       (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12")) &&
+       (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5"_XS8)) &&
+       (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12"_XS8)) &&
        (!LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
         LoadOptions.AddID("-xcpm"_XS8);
@@ -828,8 +820,8 @@ VOID LOADER_ENTRY::StartLoader()
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
-        (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5")) &&
-        (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12")) &&
+        (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5"_XS8)) &&
+        (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12"_XS8)) &&
         (!LoadOptions.containsIC("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
       LoadOptions.AddID("-xcpm"_XS8);
@@ -2287,8 +2279,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     gBootChanged = FALSE;
 
-    MainMenu.Entries.Empty();
-    OptionMenu.Entries.Empty();
+    MainMenu.Entries.setEmpty();
+    OptionMenu.Entries.setEmpty();
     InitKextList();
     ScanVolumes();
 
@@ -2317,8 +2309,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         DBG("change theme\n");
         InitTheme(FALSE);
         //OptionMenu.FreeMenu(); // it is already freed at loop beginning
-        AboutMenu.Entries.Empty();
-        HelpMenu.Entries.Empty();
+        AboutMenu.Entries.setEmpty();
+        HelpMenu.Entries.setEmpty();
       }
       DBG("theme inited\n");
       if (ThemeX.embedded) {

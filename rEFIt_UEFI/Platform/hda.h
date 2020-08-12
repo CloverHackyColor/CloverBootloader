@@ -327,7 +327,7 @@ BOOLEAN
 setup_hda_devprop (
   EFI_PCI_IO_PROTOCOL *PciIo,
   pci_dt_t *hda_dev,
-  CHAR8 *OSVersion
+  const XString8& OSVersion
   );
 
 BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle);

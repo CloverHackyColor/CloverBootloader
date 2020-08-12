@@ -16,50 +16,66 @@
 class XStringW;
 class XString8;
 class XString8Array;
-class XBuffer;
 
+template <typename T>
 class XRBuffer
 {
   protected:
-	const unsigned char *_RData;
-	size_t _Len;
+	const T* _RData;
+	size_t m_size;
 	size_t _Index;
 
   public:
 	void Initialize(const void *p, size_t count);
-  XRBuffer() : _RData(0), _Len(0), _Index(0) { }
-	XRBuffer(const void *p, size_t count) : _RData((const unsigned char *)p), _Len(count), _Index(0) { Initialize(p, count); }
+  XRBuffer() : _RData(0), m_size(0), _Index(0) { }
+	XRBuffer(const T* p, size_t count) : _RData(p), m_size(count), _Index(0) { }
 	XRBuffer(const XRBuffer& aXRBuffer, size_t pos = 0, size_t count = MAX_XSIZE);
+//  {
+//    if ( pos < aXRBuffer.Length() ) {
+//      _Len = count;
+//      if ( _Len > aXRBuffer.Length()-pos ) _Len = aXRBuffer.Length()-pos;
+//      _RData = (unsigned char*)aXRBuffer.Data(pos);
+//    }
+//  }
 
 
 //	XRBuffer(const XBuffer &aBuffer, unsigned int pos = 0, unsigned int count = MAX_XSIZE);
 
   public:
 
-	const void *Data(size_t ui=0) const { return _RData+ui; }
+	const T* data() const { return _RData; }
+
 	const char *CData(size_t ui=0) const { return (char *)(_RData+ui); }
-	const unsigned char *UCData(size_t ui=0) const { return _RData+ui; }
+	const unsigned char *UCData(size_t ui=0) const { return (unsigned char*)(_RData+ui); }
 
 	size_t Sizeof() const;
 
-	size_t Length() const { return _Len; }
-	size_t Index() const { return _Index; }
-	void SetIndex(size_t Idx) { _Index = Idx; };
+	size_t size() const { return m_size; }
+	size_t index() const { return _Index; }
 
-	// IsNull ? //
-	bool IsNull() const { return Length() == 0 ; }
-	bool NotNull() const { return Length() > 0 ; }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	void setIndex(IntegralType Idx)
+  {
+    if (Idx < 0) {
+      panic("XBuffer::setIndex : Idx >= m_size. System halted\n");
+    }
+    _Index = Idx;
+  }
+
+	bool isEmpty() const { return m_size == 0 ; }
+	bool notEmpty() const { return m_size > 0 ; }
 
 	// Cast //
 	operator const char *() const { return CData(); }
 
 	// [] //
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	unsigned char operator [](IntegralType i) const {
+	T& operator [](IntegralType i)
+	{
     if (i < 0) {
       panic("XRBuffer::operator [] : i < 0. System halted\n");
     }
-    if ( (unsigned_type(IntegralType))i >= _Len ) {
+    if ( (unsigned_type(IntegralType))i >= m_size ) {
       panic("XRBuffer::operator [] : index > len. System halted\n");
     }
     return UCData()[i];

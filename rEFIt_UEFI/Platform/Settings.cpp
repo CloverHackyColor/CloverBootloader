@@ -640,159 +640,159 @@ AddCustomSubEntry (
   return TRUE;
 }
 
-BOOLEAN
-CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
-                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src)
-{
-  if (Dst == NULL || Src == NULL) return FALSE;
-
-  Dst->KPDebug           = Src->KPDebug;
-//  Dst->KPKernelCpu       = Src->KPKernelCpu;
-  Dst->KPKernelLapic     = Src->KPKernelLapic;
-  Dst->KPKernelXCPM      = Src->KPKernelXCPM;
-  Dst->KPKernelPm        = Src->KPKernelPm;
-  Dst->KPAppleIntelCPUPM = Src->KPAppleIntelCPUPM;
-  Dst->KPAppleRTC        = Src->KPAppleRTC;
-  Dst->EightApple        = Src->EightApple;
-  Dst->KPDELLSMBIOS      = Src->KPDELLSMBIOS;
-  Dst->FakeCPUID         = Src->FakeCPUID;
-  Dst->KPPanicNoKextDump = Src->KPPanicNoKextDump;
-
-  if (Src->KPATIConnectorsController != NULL) {
-    Dst->KPATIConnectorsController = (__typeof__(Dst->KPATIConnectorsController))AllocateCopyPool(AsciiStrSize(Src->KPATIConnectorsController) ,Src->KPATIConnectorsController);
-  }
-
-  if ((Src->KPATIConnectorsDataLen > 0) &&
-      (Src->KPATIConnectorsData != NULL) &&
-      (Src->KPATIConnectorsPatch != NULL)) {
-    Dst->KPATIConnectorsDataLen = Src->KPATIConnectorsDataLen;
-    Dst->KPATIConnectorsData = (__typeof__(Dst->KPATIConnectorsData))AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsData);
-    Dst->KPATIConnectorsPatch = (__typeof__(Dst->KPATIConnectorsPatch))AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsPatch);
-  }
-
-  if ((Src->NrForceKexts > 0) && (Src->ForceKexts != NULL)) {
-    INTN i;
-    Dst->ForceKexts = (__typeof__(Dst->ForceKexts))AllocatePool (Src->NrForceKexts * sizeof(CHAR16 *));
-    Dst->NrForceKexts = 0;
-
-    for (i = 0; i < Src->NrForceKexts; i++) {
-      Dst->ForceKexts[Dst->NrForceKexts++] = EfiStrDuplicate (Src->ForceKexts[i]);
-    }
-  }
-
-  if ((Src->NrKexts > 0) && (Src->KextPatches != NULL)) {
-    INTN i;
-    Dst->KextPatches = (__typeof__(Dst->KextPatches))AllocatePool (Src->NrKexts * sizeof(KEXT_PATCH));
-    Dst->NrKexts = 0;
-    for (i = 0; i < Src->NrKexts; i++)
-    {
-      if ((Src->KextPatches[i].DataLen <= 0) ||
-          (Src->KextPatches[i].Data == NULL) ||
-          (Src->KextPatches[i].Patch == NULL)) {
-        continue;
-      }
-
-      if (Src->KextPatches[i].Name) {
-        Dst->KextPatches[Dst->NrKexts].Name       = (CHAR8 *)AllocateCopyPool(AsciiStrSize (Src->KextPatches[i].Name), Src->KextPatches[i].Name);
-      }
-
-      if (Src->KextPatches[i].Label) {
-        Dst->KextPatches[Dst->NrKexts].Label      = (CHAR8 *)AllocateCopyPool(AsciiStrSize (Src->KextPatches[i].Label), Src->KextPatches[i].Label);
-      }
-
-      Dst->KextPatches[Dst->NrKexts].MenuItem.BValue     = Src->KextPatches[i].MenuItem.BValue;
-      Dst->KextPatches[Dst->NrKexts].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
-      Dst->KextPatches[Dst->NrKexts].DataLen      = Src->KextPatches[i].DataLen;
-      Dst->KextPatches[Dst->NrKexts].Data = (__typeof__(Dst->KextPatches[Dst->NrKexts].Data))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
-      Dst->KextPatches[Dst->NrKexts].Patch = (__typeof__(Dst->KextPatches[Dst->NrKexts].Patch))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
-      Dst->KextPatches[Dst->NrKexts].MatchOS = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchOS))AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
-      Dst->KextPatches[Dst->NrKexts].MatchBuild = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchBuild))AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
-      if (Src->KextPatches[i].MaskFind != NULL) {
-        Dst->KextPatches[Dst->NrKexts].MaskFind = (__typeof__(Dst->KextPatches[Dst->NrKexts].MaskFind))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].MaskFind);
-      } else {
-        Dst->KextPatches[Dst->NrKexts].MaskFind = NULL;
-      }
-      if (Src->KextPatches[i].MaskReplace != NULL) {
-        Dst->KextPatches[Dst->NrKexts].MaskReplace = (__typeof__(Dst->KextPatches[Dst->NrKexts].MaskReplace))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].MaskReplace);
-      } else {
-        Dst->KextPatches[Dst->NrKexts].MaskReplace = NULL;
-      }
-      if (Src->KextPatches[i].StartPattern != NULL) {
-        Dst->KextPatches[Dst->NrKexts].StartPattern = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartPattern))AllocateCopyPool(Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartPattern);
-        Dst->KextPatches[Dst->NrKexts].StartMask = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartMask))AllocateCopyPool(Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartMask);
-      } else {
-        Dst->KextPatches[Dst->NrKexts].StartPattern = NULL;
-        Dst->KextPatches[Dst->NrKexts].StartMask = NULL;
-      }
-      //ProcedureName
-      if (Src->KextPatches[i].ProcedureName != NULL) {
-        INTN len = strlen(Src->KextPatches[i].ProcedureName);
-        Dst->KextPatches[Dst->NrKexts].ProcedureName = (__typeof__(Dst->KextPatches[Dst->NrKexts].ProcedureName))AllocateCopyPool(len+1, Src->KextPatches[i].ProcedureName);
-      } else {
-        Dst->KextPatches[Dst->NrKexts].ProcedureName = NULL;
-      }
-      Dst->KextPatches[Dst->NrKexts].StartPatternLen = Src->KextPatches[i].StartPatternLen;
-      Dst->KextPatches[Dst->NrKexts].SearchLen = Src->KextPatches[i].SearchLen;
-      ++(Dst->NrKexts);
-    }
-  }
-
-  if ((Src->NrKernels > 0) && (Src->KernelPatches != NULL)) {
-    INTN i;
-    Dst->KernelPatches = (__typeof__(Dst->KernelPatches))AllocatePool (Src->NrKernels * sizeof(KERNEL_PATCH));
-    Dst->NrKernels = 0;
-
-    for (i = 0; i < Src->NrKernels; i++)
-    {
-      if ((Src->KernelPatches[i].DataLen <= 0) ||
-          (Src->KernelPatches[i].Data == NULL) ||
-          (Src->KernelPatches[i].Patch == NULL)) {
-        continue;
-      }
-
-      if (Src->KernelPatches[i].Label) {
-        Dst->KernelPatches[Dst->NrKernels].Label      = (CHAR8 *)AllocateCopyPool(AsciiStrSize (Src->KernelPatches[i].Label), Src->KernelPatches[i].Label);
-      }
-
-      Dst->KernelPatches[Dst->NrKernels].MenuItem.BValue     = Src->KernelPatches[i].MenuItem.BValue;
-      Dst->KernelPatches[Dst->NrKernels].DataLen      = Src->KernelPatches[i].DataLen;
-      Dst->KernelPatches[Dst->NrKernels].Data = (__typeof__(Dst->KernelPatches[Dst->NrKernels].Data))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Data);
-      Dst->KernelPatches[Dst->NrKernels].Patch = (__typeof__(Dst->KernelPatches[Dst->NrKernels].Patch))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Patch);
-      Dst->KernelPatches[Dst->NrKernels].Count        = Src->KernelPatches[i].Count;
-      Dst->KernelPatches[Dst->NrKernels].MatchOS = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MatchOS))AllocateCopyPool(AsciiStrSize(Src->KernelPatches[i].MatchOS), Src->KernelPatches[i].MatchOS);
-      Dst->KernelPatches[Dst->NrKernels].MatchBuild = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MatchBuild))AllocateCopyPool(AsciiStrSize(Src->KernelPatches[i].MatchBuild), Src->KernelPatches[i].MatchBuild);
-      if (Src->KernelPatches[i].MaskFind != NULL) {
-        Dst->KernelPatches[Dst->NrKernels].MaskFind = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MaskFind))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].MaskFind);
-      } else {
-        Dst->KernelPatches[Dst->NrKernels].MaskFind = NULL;
-      }
-      if (Src->KernelPatches[i].MaskReplace != NULL) {
-        Dst->KernelPatches[Dst->NrKernels].MaskReplace = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MaskReplace))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].MaskReplace);
-      } else {
-        Dst->KernelPatches[Dst->NrKernels].MaskReplace = NULL;
-      }
-      if (Src->KernelPatches[i].StartPattern != NULL) {
-        Dst->KernelPatches[Dst->NrKernels].StartPattern = (__typeof__(Dst->KernelPatches[Dst->NrKernels].StartPattern))AllocateCopyPool(Src->KernelPatches[i].StartPatternLen, Src->KernelPatches[i].StartPattern);
-        Dst->KernelPatches[Dst->NrKernels].StartMask = (__typeof__(Dst->KernelPatches[Dst->NrKernels].StartMask))AllocateCopyPool(Src->KernelPatches[i].StartPatternLen, Src->KernelPatches[i].StartMask);
-      } else {
-        Dst->KernelPatches[Dst->NrKernels].StartPattern = NULL;
-        Dst->KernelPatches[Dst->NrKernels].StartMask    = NULL;
-      }
-      Dst->KernelPatches[Dst->NrKernels].StartPatternLen = Src->KernelPatches[i].StartPatternLen;
-      Dst->KernelPatches[Dst->NrKernels].SearchLen = Src->KernelPatches[i].SearchLen;
-      if (Src->KernelPatches[i].ProcedureName != NULL) {
-        INTN len = strlen(Src->KernelPatches[i].ProcedureName);
-        Dst->KernelPatches[Dst->NrKernels].ProcedureName = (__typeof__(Dst->KernelPatches[Dst->NrKernels].ProcedureName))AllocateCopyPool(len+1, Src->KernelPatches[i].ProcedureName);
-      } else {
-        Dst->KernelPatches[Dst->NrKernels].ProcedureName = NULL;
-      }
-
-      ++(Dst->NrKernels);
-    }
-  }
-
-  return TRUE;
-}
+//BOOLEAN
+//CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
+//                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src)
+//{
+//  if (Dst == NULL || Src == NULL) return FALSE;
+//
+//  Dst->KPDebug           = Src->KPDebug;
+////  Dst->KPKernelCpu       = Src->KPKernelCpu;
+//  Dst->KPKernelLapic     = Src->KPKernelLapic;
+//  Dst->KPKernelXCPM      = Src->KPKernelXCPM;
+//  Dst->KPKernelPm        = Src->KPKernelPm;
+//  Dst->KPAppleIntelCPUPM = Src->KPAppleIntelCPUPM;
+//  Dst->KPAppleRTC        = Src->KPAppleRTC;
+//  Dst->EightApple        = Src->EightApple;
+//  Dst->KPDELLSMBIOS      = Src->KPDELLSMBIOS;
+//  Dst->FakeCPUID         = Src->FakeCPUID;
+//  Dst->KPPanicNoKextDump = Src->KPPanicNoKextDump;
+//
+//  if (Src->KPATIConnectorsController != NULL) {
+//    Dst->KPATIConnectorsController = (__typeof__(Dst->KPATIConnectorsController))AllocateCopyPool(AsciiStrSize(Src->KPATIConnectorsController) ,Src->KPATIConnectorsController);
+//  }
+//
+//  if ((Src->KPATIConnectorsDataLen > 0) &&
+//      (Src->KPATIConnectorsData != NULL) &&
+//      (Src->KPATIConnectorsPatch != NULL)) {
+//    Dst->KPATIConnectorsDataLen = Src->KPATIConnectorsDataLen;
+//    Dst->KPATIConnectorsData = (__typeof__(Dst->KPATIConnectorsData))AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsData);
+//    Dst->KPATIConnectorsPatch = (__typeof__(Dst->KPATIConnectorsPatch))AllocateCopyPool(Src->KPATIConnectorsDataLen, Src->KPATIConnectorsPatch);
+//  }
+//
+//  if ((Src->ForceKexts.size() > 0) && (Src->ForceKexts != NULL)) {
+//    INTN i;
+//    Dst->ForceKexts = (__typeof__(Dst->ForceKexts))AllocatePool (Src->ForceKexts.size() * sizeof(CHAR16 *));
+//    Dst->ForceKexts.size() = 0;
+//
+//    for (i = 0; i < Src->ForceKexts.size(); i++) {
+//      Dst->ForceKexts[Dst->ForceKexts.size()++] = EfiStrDuplicate (Src->ForceKexts[i]);
+//    }
+//  }
+//
+//  if ((Src->NrKexts > 0) && (Src->KextPatches != NULL)) {
+//    INTN i;
+//    Dst->KextPatches = (__typeof__(Dst->KextPatches))AllocatePool (Src->NrKexts * sizeof(KEXT_PATCH));
+//    Dst->NrKexts = 0;
+//    for (i = 0; i < Src->NrKexts; i++)
+//    {
+//      if ((Src->KextPatches[i].DataLen <= 0) ||
+//          (Src->KextPatches[i].Data == NULL) ||
+//          (Src->KextPatches[i].Patch == NULL)) {
+//        continue;
+//      }
+//
+//      if (Src->KextPatches[i].Name) {
+//        Dst->KextPatches[Dst->NrKexts].Name       = (CHAR8 *)AllocateCopyPool(AsciiStrSize (Src->KextPatches[i].Name), Src->KextPatches[i].Name);
+//      }
+//
+//      if (Src->KextPatches[i].Label) {
+//        Dst->KextPatches[Dst->NrKexts].Label      = (CHAR8 *)AllocateCopyPool(AsciiStrSize (Src->KextPatches[i].Label), Src->KextPatches[i].Label);
+//      }
+//
+//      Dst->KextPatches[Dst->NrKexts].MenuItem.BValue     = Src->KextPatches[i].MenuItem.BValue;
+//      Dst->KextPatches[Dst->NrKexts].IsPlistPatch = Src->KextPatches[i].IsPlistPatch;
+//      Dst->KextPatches[Dst->NrKexts].DataLen      = Src->KextPatches[i].DataLen;
+//      Dst->KextPatches[Dst->NrKexts].Data = (__typeof__(Dst->KextPatches[Dst->NrKexts].Data))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Data);
+//      Dst->KextPatches[Dst->NrKexts].Patch = (__typeof__(Dst->KextPatches[Dst->NrKexts].Patch))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].Patch);
+//      Dst->KextPatches[Dst->NrKexts].MatchOS = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchOS))AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].MatchOS), Src->KextPatches[i].MatchOS);
+//      Dst->KextPatches[Dst->NrKexts].MatchBuild = (__typeof__(Dst->KextPatches[Dst->NrKexts].MatchBuild))AllocateCopyPool(AsciiStrSize(Src->KextPatches[i].MatchBuild), Src->KextPatches[i].MatchBuild);
+//      if (Src->KextPatches[i].MaskFind != NULL) {
+//        Dst->KextPatches[Dst->NrKexts].MaskFind = (__typeof__(Dst->KextPatches[Dst->NrKexts].MaskFind))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].MaskFind);
+//      } else {
+//        Dst->KextPatches[Dst->NrKexts].MaskFind = NULL;
+//      }
+//      if (Src->KextPatches[i].MaskReplace != NULL) {
+//        Dst->KextPatches[Dst->NrKexts].MaskReplace = (__typeof__(Dst->KextPatches[Dst->NrKexts].MaskReplace))AllocateCopyPool(Src->KextPatches[i].DataLen, Src->KextPatches[i].MaskReplace);
+//      } else {
+//        Dst->KextPatches[Dst->NrKexts].MaskReplace = NULL;
+//      }
+//      if (Src->KextPatches[i].StartPattern != NULL) {
+//        Dst->KextPatches[Dst->NrKexts].StartPattern = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartPattern))AllocateCopyPool(Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartPattern);
+//        Dst->KextPatches[Dst->NrKexts].StartMask = (__typeof__(Dst->KextPatches[Dst->NrKexts].StartMask))AllocateCopyPool(Src->KextPatches[i].StartPatternLen, Src->KextPatches[i].StartMask);
+//      } else {
+//        Dst->KextPatches[Dst->NrKexts].StartPattern = NULL;
+//        Dst->KextPatches[Dst->NrKexts].StartMask = NULL;
+//      }
+//      //ProcedureName
+//      if (Src->KextPatches[i].ProcedureName != NULL) {
+//        INTN len = strlen(Src->KextPatches[i].ProcedureName);
+//        Dst->KextPatches[Dst->NrKexts].ProcedureName = (__typeof__(Dst->KextPatches[Dst->NrKexts].ProcedureName))AllocateCopyPool(len+1, Src->KextPatches[i].ProcedureName);
+//      } else {
+//        Dst->KextPatches[Dst->NrKexts].ProcedureName = NULL;
+//      }
+//      Dst->KextPatches[Dst->NrKexts].StartPatternLen = Src->KextPatches[i].StartPatternLen;
+//      Dst->KextPatches[Dst->NrKexts].SearchLen = Src->KextPatches[i].SearchLen;
+//      ++(Dst->NrKexts);
+//    }
+//  }
+//
+//  if ((Src->NrKernels > 0) && (Src->KernelPatches != NULL)) {
+//    INTN i;
+//    Dst->KernelPatches = (__typeof__(Dst->KernelPatches))AllocatePool (Src->NrKernels * sizeof(KEXT_PATCH));
+//    Dst->NrKernels = 0;
+//
+//    for (i = 0; i < Src->NrKernels; i++)
+//    {
+//      if ((Src->KernelPatches[i].DataLen <= 0) ||
+//          (Src->KernelPatches[i].Data == NULL) ||
+//          (Src->KernelPatches[i].Patch == NULL)) {
+//        continue;
+//      }
+//
+//      if (Src->KernelPatches[i].Label) {
+//        Dst->KernelPatches[Dst->NrKernels].Label      = (CHAR8 *)AllocateCopyPool(AsciiStrSize (Src->KernelPatches[i].Label), Src->KernelPatches[i].Label);
+//      }
+//
+//      Dst->KernelPatches[Dst->NrKernels].MenuItem.BValue     = Src->KernelPatches[i].MenuItem.BValue;
+//      Dst->KernelPatches[Dst->NrKernels].DataLen      = Src->KernelPatches[i].DataLen;
+//      Dst->KernelPatches[Dst->NrKernels].Data = (__typeof__(Dst->KernelPatches[Dst->NrKernels].Data))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Data);
+//      Dst->KernelPatches[Dst->NrKernels].Patch = (__typeof__(Dst->KernelPatches[Dst->NrKernels].Patch))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].Patch);
+//      Dst->KernelPatches[Dst->NrKernels].Count        = Src->KernelPatches[i].Count;
+//      Dst->KernelPatches[Dst->NrKernels].MatchOS = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MatchOS))AllocateCopyPool(AsciiStrSize(Src->KernelPatches[i].MatchOS), Src->KernelPatches[i].MatchOS);
+//      Dst->KernelPatches[Dst->NrKernels].MatchBuild = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MatchBuild))AllocateCopyPool(AsciiStrSize(Src->KernelPatches[i].MatchBuild), Src->KernelPatches[i].MatchBuild);
+//      if (Src->KernelPatches[i].MaskFind != NULL) {
+//        Dst->KernelPatches[Dst->NrKernels].MaskFind = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MaskFind))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].MaskFind);
+//      } else {
+//        Dst->KernelPatches[Dst->NrKernels].MaskFind = NULL;
+//      }
+//      if (Src->KernelPatches[i].MaskReplace != NULL) {
+//        Dst->KernelPatches[Dst->NrKernels].MaskReplace = (__typeof__(Dst->KernelPatches[Dst->NrKernels].MaskReplace))AllocateCopyPool(Src->KernelPatches[i].DataLen, Src->KernelPatches[i].MaskReplace);
+//      } else {
+//        Dst->KernelPatches[Dst->NrKernels].MaskReplace = NULL;
+//      }
+//      if (Src->KernelPatches[i].StartPattern != NULL) {
+//        Dst->KernelPatches[Dst->NrKernels].StartPattern = (__typeof__(Dst->KernelPatches[Dst->NrKernels].StartPattern))AllocateCopyPool(Src->KernelPatches[i].StartPatternLen, Src->KernelPatches[i].StartPattern);
+//        Dst->KernelPatches[Dst->NrKernels].StartMask = (__typeof__(Dst->KernelPatches[Dst->NrKernels].StartMask))AllocateCopyPool(Src->KernelPatches[i].StartPatternLen, Src->KernelPatches[i].StartMask);
+//      } else {
+//        Dst->KernelPatches[Dst->NrKernels].StartPattern = NULL;
+//        Dst->KernelPatches[Dst->NrKernels].StartMask    = NULL;
+//      }
+//      Dst->KernelPatches[Dst->NrKernels].StartPatternLen = Src->KernelPatches[i].StartPatternLen;
+//      Dst->KernelPatches[Dst->NrKernels].SearchLen = Src->KernelPatches[i].SearchLen;
+//      if (Src->KernelPatches[i].ProcedureName != NULL) {
+//        INTN len = strlen(Src->KernelPatches[i].ProcedureName);
+//        Dst->KernelPatches[Dst->NrKernels].ProcedureName = (__typeof__(Dst->KernelPatches[Dst->NrKernels].ProcedureName))AllocateCopyPool(len+1, Src->KernelPatches[i].ProcedureName);
+//      } else {
+//        Dst->KernelPatches[Dst->NrKernels].ProcedureName = NULL;
+//      }
+//
+//      ++(Dst->NrKernels);
+//    }
+//  }
+//
+//  return TRUE;
+//}
 
 STATIC
 CUSTOM_LOADER_ENTRY
@@ -823,7 +823,8 @@ CUSTOM_LOADER_ENTRY
     DuplicateEntry->KernelScan       = Entry->KernelScan;
     DuplicateEntry->CustomBoot       = Entry->CustomBoot;
     DuplicateEntry->CustomLogo       = Entry->CustomLogo;
-    CopyKernelAndKextPatches (&DuplicateEntry->KernelAndKextPatches, &Entry->KernelAndKextPatches);
+//    CopyKernelAndKextPatches (&DuplicateEntry->KernelAndKextPatches, &Entry->KernelAndKextPatches);
+    DuplicateEntry->KernelAndKextPatches = Entry->KernelAndKextPatches;
   }
 
   return DuplicateEntry;
@@ -915,36 +916,25 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     UINTN len = 0, i=0;
 
     // ATIConnectors patch
-    Patches->KPATIConnectorsController = (__typeof__(Patches->KPATIConnectorsController))AllocateCopyPool(AsciiStrSize(Prop->string), Prop->string);
+    Patches->KPATIConnectorsController.takeValueFrom(Prop->string);
  //   AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrSize(Prop->string));
 
-    Patches->KPATIConnectorsData = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
-    Patches->KPATIConnectorsDataLen = len;
-    Patches->KPATIConnectorsPatch = GetDataSetting (DictPointer, "ATIConnectorsPatch", &i);
+    UINT8* p = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
+    Patches->KPATIConnectorsData.stealValueFrom(p, len);
+    p = GetDataSetting (DictPointer, "ATIConnectorsPatch", &i);
+    Patches->KPATIConnectorsPatch.stealValueFrom(p, i);
 
     if (Patches->KPATIConnectorsData == NULL
         || Patches->KPATIConnectorsPatch == NULL
-        || Patches->KPATIConnectorsDataLen == 0
-        || Patches->KPATIConnectorsDataLen != i) {
+        || Patches->KPATIConnectorsData.size() == 0
+        || Patches->KPATIConnectorsData.size() != i) {
       // invalid params - no patching
       DBG("ATIConnectors patch: invalid parameters!\n");
 
-      if (Patches->KPATIConnectorsController != NULL) {
-        FreePool(Patches->KPATIConnectorsController);
-      }
-
-      if (Patches->KPATIConnectorsData != NULL) {
-        FreePool(Patches->KPATIConnectorsData);
-      }
-
-      if (Patches->KPATIConnectorsPatch != NULL) {
-        FreePool(Patches->KPATIConnectorsPatch);
-      }
-
-      Patches->KPATIConnectorsController = NULL;
-      Patches->KPATIConnectorsData       = NULL;
-      Patches->KPATIConnectorsPatch      = NULL;
-      Patches->KPATIConnectorsDataLen    = 0;
+      Patches->KPATIConnectorsController.setEmpty();
+      Patches->KPATIConnectorsData.setEmpty();
+      Patches->KPATIConnectorsPatch.setEmpty();
+      Patches->KPATIConnectorsController.setEmpty();
     }
   }
 
@@ -953,14 +943,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     INTN   i, Count = GetTagCount (Prop);
     if (Count > 0) {
       TagPtr Prop2 = NULL;
-      CHAR16 **newForceKexts = (__typeof__(newForceKexts))BllocateZeroPool((Patches->NrForceKexts + Count) * sizeof(CHAR16 *));
 
-      if (Patches->ForceKexts != NULL) {
-        CopyMem(newForceKexts, Patches->ForceKexts, (Patches->NrForceKexts * sizeof(CHAR16 *)));
-        FreePool(Patches->ForceKexts);
-      }
-
-      Patches->ForceKexts = newForceKexts;
       DBG("ForceKextsToLoad: %lld requested\n", Count);
 
       for (i = 0; i < Count; i++) {
@@ -980,10 +963,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           }
 
           if (AsciiStrSize(Prop2->string) > 1) {
-            Patches->ForceKexts[Patches->NrForceKexts] = (__typeof_am__(Patches->ForceKexts[Patches->NrForceKexts]))BllocateZeroPool(AsciiStrSize(Prop2->string) * sizeof(CHAR16));
-            AsciiStrToUnicodeStrS(Prop2->string, Patches->ForceKexts[Patches->NrForceKexts], 255);
-            DBG(" - [%d]: %ls\n", Patches->NrForceKexts, Patches->ForceKexts[Patches->NrForceKexts]);
-            ++Patches->NrForceKexts;
+            Patches->ForceKexts.Add(Prop2->string);
+            DBG(" - [%zu]: %ls\n", Patches->ForceKexts.size(), Patches->ForceKexts[Patches->ForceKexts.size()-1].wc_str());
           }
         }
       }
@@ -993,55 +974,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = GetProperty(DictPointer, "KextsToPatch");
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
-    //delete old and create new
-    if (Patches->KextPatches) {
-      for (i = 0; i < Patches->NrKexts; i++) {
-        if (Patches->KextPatches[i].Name) {
-          FreePool(Patches->KextPatches[i].Name);
-        }
-        if (Patches->KextPatches[i].Label) {
-          FreePool(Patches->KextPatches[i].Label);
-        }
-        if (Patches->KextPatches[i].Data) {
-          FreePool(Patches->KextPatches[i].Data);
-        }
-        if (Patches->KextPatches[i].Patch) {
-          FreePool(Patches->KextPatches[i].Patch);
-        }
-        if (Patches->KextPatches[i].MaskFind) {
-          FreePool(Patches->KextPatches[i].MaskFind);
-        }
-        if (Patches->KextPatches[i].MaskReplace) {
-          FreePool(Patches->KextPatches[i].MaskReplace);
-        }
-        if (Patches->KextPatches[i].MatchOS) {
-          FreePool(Patches->KextPatches[i].MatchOS);
-        }
-        if (Patches->KextPatches[i].MatchBuild) {
-          FreePool(Patches->KextPatches[i].MatchBuild);
-        }
-        if (Patches->KextPatches[i].StartPattern) {
-          FreePool(Patches->KextPatches[i].StartPattern);
-        }
-        if (Patches->KextPatches[i].StartMask) {
-          FreePool(Patches->KextPatches[i].StartMask);
-        }
-
-      }
-      Patches->NrKexts = 0;
-      FreePool(Patches->KextPatches);
-      Patches->KextPatches = NULL;
-    }
+    
+    Patches->KextPatches.setEmpty();
+    
     if (Count > 0) {
       TagPtr     Prop2 = NULL, Dict = NULL;
-      KEXT_PATCH *newPatches = new KEXT_PATCH[Count];
 
-      Patches->KextPatches = newPatches;
       DBG("KextsToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
-        CHAR8 *KextPatchesName, *KextPatchesLabel;
+//        CHAR8 *KextPatchesName, *KextPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
-        UINT8 *TmpData, *TmpPatch;
+//        UINT8 *TmpPatch;
         EFI_STATUS Status = GetElement(Prop, i, &Prop2);
         if (EFI_ERROR(Status)) {
           DBG(" - [%02lld]: Patches error %s getting next element\n", i, strerror(Status));
@@ -1059,46 +1002,46 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        KextPatchesName = (__typeof__(KextPatchesName))AllocateCopyPool(255, Dict->string);
-        KextPatchesLabel = (__typeof__(KextPatchesLabel))AllocateCopyPool(255, KextPatchesName);
+        KEXT_PATCH* newPatchPtr = new KEXT_PATCH();
+        KEXT_PATCH& newPatch = *newPatchPtr;
+        
+        newPatch.Name.takeValueFrom(Dict->string);
+        newPatch.Label.takeValueFrom(newPatch.Name);
 
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
           //this is impossible because UnicodeStrToAsciiStr not extend output size
           //         UnicodeStrToAsciiStr(SWPrintf("%s (%s)", KextPatchesLabel, Dict->string), KextPatchesLabel);
 
-          AsciiStrCatS(KextPatchesLabel, 255, " (");
-          AsciiStrCatS(KextPatchesLabel, 255, Dict->string);
-          AsciiStrCatS(KextPatchesLabel, 255, ")");
+          newPatch.Label += " (";
+          newPatch.Label += Dict->string;
+          newPatch.Label += ")";
 
         } else {
-          AsciiStrCatS(KextPatchesLabel, 255, " (NoLabel)");
+          newPatch.Label += " (NoLabel)";
         }
-        DBG(" %s", KextPatchesLabel);
+        DBG(" %s", newPatch.Label.c_str());
 
-        Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = TRUE;
+        newPatch.MenuItem.BValue     = TRUE;
         Dict = GetProperty(Prop2, "Disabled");
         if ((Dict != NULL) && IsPropertyTrue(Dict)) {
-          Patches->KextPatches[Patches->NrKexts].MenuItem.BValue     = FALSE;
+          newPatch.MenuItem.BValue     = FALSE;
         }
         
         Dict = GetProperty(Prop2, "RangeFind");
-        Patches->KextPatches[Patches->NrKexts].SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
+        newPatch.SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
         
-        TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
+        UINT8* TmpData = GetDataSetting(Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
-          Patches->KextPatches[Patches->NrKexts].StartPatternLen = FindLen;
-          Patches->KextPatches[Patches->NrKexts].StartPattern = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartPattern))AllocateCopyPool(FindLen, TmpData);
-          FreePool(TmpData);
+          newPatch.StartPattern.stealValueFrom(TmpData, FindLen);
         }
         
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->KextPatches[Patches->NrKexts].StartMask = (__typeof__(Patches->KextPatches[Patches->NrKexts].StartMask))BllocateZeroPool(FindLen);
-          SetMem(Patches->KextPatches[Patches->NrKexts].StartMask, FindLen, 0xFF);
+          newPatch.StartMask.memset(0xFF, FindLen);
           if (TmpData != NULL) {
-            CopyMem(Patches->KextPatches[Patches->NrKexts].StartMask, TmpData, ReplaceLen);
+            newPatch.StartMask.ncpy(TmpData, ReplaceLen);
           }
         }
         if (TmpData != NULL) {
@@ -1106,7 +1049,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
         TmpData    = GetDataSetting (Prop2, "Find", &FindLen);
-        TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
+        UINT8* TmpPatch   = GetDataSetting (Prop2, "Replace", &ReplaceLen);
 
         if (!FindLen || !ReplaceLen) {
           DBG(" - invalid Find/Replace data - skipping!\n");
@@ -1115,76 +1058,65 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         
         Dict = GetProperty(Prop2, "Procedure");
         if (Dict != NULL) {
-          INTN len = strlen(Dict->string);
-          Patches->KextPatches[Patches->NrKexts].ProcedureName = (__typeof__(Patches->KextPatches[Patches->NrKexts].ProcedureName))AllocateCopyPool(len+1, Dict->string);
+          newPatch.ProcedureName.takeValueFrom(Dict->string);
         }
 
 
-        Patches->KextPatches[Patches->NrKexts].Data = (__typeof__(Patches->KextPatches[Patches->NrKexts].Data))AllocateCopyPool(FindLen, TmpData);
-        Patches->KextPatches[Patches->NrKexts].DataLen      = FindLen;
-        FreePool(TmpData);
+        newPatch.Data.stealValueFrom(TmpData, FindLen);
         
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
 
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->KextPatches[Patches->NrKexts].MaskFind = NULL;
         } else {
-          Patches->KextPatches[Patches->NrKexts].MaskFind = (__typeof__(Patches->KextPatches[Patches->NrKexts].MaskFind))AllocatePool (FindLen);
-          SetMem(Patches->KextPatches[Patches->NrKexts].MaskFind, FindLen, 0xFF);
-          CopyMem(Patches->KextPatches[Patches->NrKexts].MaskFind, TmpData, MaskLen);
+          newPatch.MaskFind.memset(FindLen, 0xFF);
+          newPatch.MaskFind.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
         // take into account a possibility to set ReplaceLen < FindLen. In this case assumes MaskReplace = 0 for the rest of bytes 
-        Patches->KextPatches[Patches->NrKexts].Patch = (__typeof__(Patches->KextPatches[Patches->NrKexts].Patch))BllocateZeroPool(FindLen);
+        newPatch.Patch.memset(0, FindLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        CopyMem(Patches->KextPatches[Patches->NrKexts].Patch, TmpPatch, ReplaceLen);
+        newPatch.Patch.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
+        
         MaskLen = 0;
         TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen);
         MaskLen = MIN(ReplaceLen, MaskLen);
-
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->KextPatches[Patches->NrKexts].MaskReplace = NULL;
         } else {
-          Patches->KextPatches[Patches->NrKexts].MaskReplace = (__typeof__(Patches->KextPatches[Patches->NrKexts].MaskReplace))BllocateZeroPool(FindLen);
-          CopyMem(Patches->KextPatches[Patches->NrKexts].MaskReplace, TmpData, MaskLen); //other bytes are zeros, means no replace
+          newPatch.MaskReplace.memset(0, FindLen);
+          newPatch.MaskReplace.ncpy(TmpData, MaskLen); //other bytes are zeros, means no replace
         }
         FreePool(TmpData);
-        Patches->KextPatches[Patches->NrKexts].MatchOS      = NULL;
-        Patches->KextPatches[Patches->NrKexts].MatchBuild   = NULL;
-        Patches->KextPatches[Patches->NrKexts].Name = (__typeof__(Patches->KextPatches[Patches->NrKexts].Name))AllocateCopyPool(AsciiStrSize(KextPatchesName), KextPatchesName);
-        FreePool(KextPatchesName);
-        Patches->KextPatches[Patches->NrKexts].Label = (__typeof__(Patches->KextPatches[Patches->NrKexts].Label))AllocateCopyPool(AsciiStrSize(KextPatchesLabel), KextPatchesLabel);
-        FreePool(KextPatchesLabel);
 
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty(Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KextPatches[Patches->NrKexts].MatchOS = (__typeof__(Patches->KextPatches[Patches->NrKexts].MatchOS))AllocateCopyPool(AsciiStrSize(Dict->string), Dict->string);
-          DBG(" :: MatchOS: %s", Patches->KextPatches[Patches->NrKexts].MatchOS);
+          newPatch.MatchOS.takeValueFrom(Dict->string);
+          DBG(" :: MatchOS: %s", newPatch.MatchOS.c_str());
         }
 
         Dict = GetProperty(Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KextPatches[Patches->NrKexts].MatchBuild = (__typeof__(Patches->KextPatches[Patches->NrKexts].MatchBuild))AllocateCopyPool(AsciiStrSize(Dict->string), Dict->string);
-          DBG(" :: MatchBuild: %s", Patches->KextPatches[Patches->NrKexts].MatchBuild);
+          newPatch.MatchBuild.takeValueFrom(Dict->string);
+          DBG(" :: MatchBuild: %s", newPatch.MatchBuild.c_str());
         }
 
         // check if this is Info.plist patch or kext binary patch
         Dict = GetProperty(Prop2, "InfoPlistPatch");
-        Patches->KextPatches[Patches->NrKexts].IsPlistPatch = IsPropertyTrue(Dict);
+        newPatch.IsPlistPatch = IsPropertyTrue(Dict);
 
-        if (Patches->KextPatches[Patches->NrKexts].IsPlistPatch) {
+        if (newPatch.IsPlistPatch) {
           DBG(" :: PlistPatch");
         } else {
           DBG(" :: BinPatch");
         }
 
-		  DBG(" :: data len: %lld\n", Patches->KextPatches[Patches->NrKexts].DataLen);
-        if (!Patches->KextPatches[Patches->NrKexts++].MenuItem.BValue) {
+        DBG(" :: data len: %zu\n", newPatch.Data.size());
+        if (newPatch.MenuItem.BValue) {
           DBG(" - patch disabled at config\n");
         }
+        Patches->KextPatches.AddReference(newPatchPtr, true);
       }
     }
 
@@ -1199,43 +1131,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new
-    if (Patches->KernelPatches) {
-      // free all subarrays
-      for (i = 0; i < Patches->NrKernels; i++) {
-        if (Patches->KernelPatches[i].Label) {
-          FreePool(Patches->KernelPatches[i].Label);
-        }
-        if (Patches->KernelPatches[i].Data) {
-          FreePool(Patches->KernelPatches[i].Data);
-        }
-        if (Patches->KernelPatches[i].Patch) {
-          FreePool(Patches->KernelPatches[i].Patch);
-        }
-        if (Patches->KernelPatches[i].MaskFind) {
-          FreePool(Patches->KernelPatches[i].MaskFind);
-        }
-        if (Patches->KernelPatches[i].MaskReplace) {
-          FreePool(Patches->KernelPatches[i].MaskReplace);
-        }
-        if (Patches->KernelPatches[i].MatchOS) {
-          FreePool(Patches->KernelPatches[i].MatchOS);
-        }
-        if (Patches->KernelPatches[i].MatchBuild) {
-          FreePool(Patches->KernelPatches[i].MatchBuild);
-        }
-      }
-      Patches->NrKernels = 0;
-      FreePool(Patches->KernelPatches);
-      Patches->KernelPatches = NULL;
-    }
+    Patches->KernelPatches.setEmpty();
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
-      KERNEL_PATCH  *newPatches = new KERNEL_PATCH[Count];
-
-      Patches->KernelPatches = newPatches;
       DBG("KernelToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
-        CHAR8 *KernelPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement(Prop, i, &Prop2);
@@ -1249,34 +1149,34 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
         DBG(" - [%02lld]:", i);
 
+        KEXT_PATCH* newKernelPatchPtr = new KEXT_PATCH;
+        KEXT_PATCH& newKernelPatch = *newKernelPatchPtr;
+
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
-          KernelPatchesLabel = (__typeof__(KernelPatchesLabel))AllocateCopyPool(AsciiStrSize (Dict->string), Dict->string);
+          newKernelPatch.Label.takeValueFrom(Dict->string);
         } else {
-          KernelPatchesLabel = (__typeof__(KernelPatchesLabel))AllocateCopyPool(8, "NoLabel");
+          newKernelPatch.Label = "NoLabel"_XS8;
         }
-        DBG(" %s", KernelPatchesLabel);
+        DBG(" %s", newKernelPatch.Label.c_str());
 
         Dict = GetProperty(Prop2, "Disabled");
-        Patches->KernelPatches[Patches->NrKernels].MenuItem.BValue   = !IsPropertyTrue(Dict);
+        newKernelPatch.MenuItem.BValue   = !IsPropertyTrue(Dict);
         
         Dict = GetProperty(Prop2, "RangeFind");
-        Patches->KernelPatches[Patches->NrKernels].SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
+        newKernelPatch.SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
         
         TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
-          Patches->KernelPatches[Patches->NrKernels].StartPatternLen = FindLen;
-          Patches->KernelPatches[Patches->NrKernels].StartPattern = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartPattern))AllocateCopyPool(FindLen, TmpData);
-          FreePool(TmpData);
+          newKernelPatch.StartPattern.stealValueFrom(TmpData, FindLen);
         }
         
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->KernelPatches[Patches->NrKernels].StartMask = (__typeof__(Patches->KernelPatches[Patches->NrKernels].StartMask))BllocateZeroPool(FindLen);
-          SetMem(Patches->KernelPatches[Patches->NrKernels].StartMask, FindLen, 0xFF);
+          newKernelPatch.StartMask.memset(0xFF, FindLen);
           if (TmpData != NULL) {
-            CopyMem(Patches->KernelPatches[Patches->NrKernels].StartMask, TmpData, ReplaceLen);
+            newKernelPatch.StartMask.ncpy(TmpData, ReplaceLen);
           }
         }
         if (TmpData != NULL) {
@@ -1294,64 +1194,55 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         
         Dict = GetProperty(Prop2, "Procedure");
         if (Dict != NULL) {
-          INTN len = strlen(Dict->string);
-          Patches->KernelPatches[Patches->NrKernels].ProcedureName = (__typeof__(Patches->KernelPatches[Patches->NrKernels].ProcedureName))AllocateCopyPool(len+1, Dict->string);
+          newKernelPatch.ProcedureName.takeValueFrom(Dict->string);
         }
 
 
-        Patches->KernelPatches[Patches->NrKernels].Data = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Data))AllocateCopyPool(FindLen, TmpData);
-        Patches->KernelPatches[Patches->NrKernels].DataLen      = FindLen;
-        FreePool(TmpData);
+        newKernelPatch.Data.stealValueFrom(TmpData, FindLen);
+
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->KernelPatches[Patches->NrKernels].MaskFind = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKernels].MaskFind = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskFind))AllocatePool (FindLen);
-          SetMem(Patches->KernelPatches[Patches->NrKernels].MaskFind, FindLen, 0xFF);
-          CopyMem(Patches->KernelPatches[Patches->NrKernels].MaskFind, TmpData, MaskLen);
+          newKernelPatch.MaskFind.memset(0xFF, FindLen);
+          newKernelPatch.MaskFind.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
         // this is "Replace" string len of ReplaceLen
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        Patches->KernelPatches[Patches->NrKernels].Patch = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Patch))BllocateZeroPool(FindLen);
-        CopyMem(Patches->KernelPatches[Patches->NrKernels].Patch, TmpPatch, ReplaceLen);
+        newKernelPatch.Patch.memset(0, FindLen);
+        newKernelPatch.Patch.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
         TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen); //reuse MaskLen
         MaskLen = MIN(ReplaceLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->KernelPatches[Patches->NrKernels].MaskReplace = NULL;
         } else {
-          Patches->KernelPatches[Patches->NrKernels].MaskReplace = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MaskReplace))BllocateZeroPool(FindLen);
-          CopyMem(Patches->KernelPatches[Patches->NrKernels].MaskReplace, TmpData, MaskLen);
+          newKernelPatch.MaskReplace.memset(0, FindLen);
+          newKernelPatch.MaskReplace.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
-        Patches->KernelPatches[Patches->NrKernels].Count        = 0;
-        Patches->KernelPatches[Patches->NrKernels].MatchOS      = NULL;
-        Patches->KernelPatches[Patches->NrKernels].MatchBuild   = NULL;
-        Patches->KernelPatches[Patches->NrKernels].Label = (__typeof__(Patches->KernelPatches[Patches->NrKernels].Label))AllocateCopyPool(AsciiStrSize (KernelPatchesLabel), KernelPatchesLabel);
+        newKernelPatch.Count        = 0;
 
         Dict = GetProperty(Prop2, "Count");
         if (Dict != NULL) {
-          Patches->KernelPatches[Patches->NrKernels].Count = GetPropertyInteger(Dict, 0);
+          newKernelPatch.Count = GetPropertyInteger(Dict, 0);
         }
-        FreePool(KernelPatchesLabel);
 
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty(Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KernelPatches[Patches->NrKernels].MatchOS = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MatchOS))AllocateCopyPool(AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchOS: %s", Patches->KernelPatches[Patches->NrKernels].MatchOS);
+          newKernelPatch.MatchOS.takeValueFrom(Dict->string);
+          DBG(" :: MatchOS: %s", newKernelPatch.MatchOS.c_str());
         }
 
         Dict = GetProperty(Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->KernelPatches[Patches->NrKernels].MatchBuild = (__typeof__(Patches->KernelPatches[Patches->NrKernels].MatchBuild))AllocateCopyPool(AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchBuild: %s", Patches->KernelPatches[Patches->NrKernels].MatchBuild);
+          newKernelPatch.MatchBuild.takeValueFrom(Dict->string);
+          DBG(" :: MatchBuild: %s", newKernelPatch.MatchBuild.c_str());
         }
-		  DBG(" :: data len: %lld\n", Patches->KernelPatches[Patches->NrKernels].DataLen);
-        Patches->NrKernels++;
+        DBG(" :: data len: %zu\n", newKernelPatch.Data.size());
+        Patches->KernelPatches.AddReference(newKernelPatchPtr, true);
       }
     }
   }
@@ -1360,42 +1251,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   if (Prop != NULL) {
     INTN   i, Count = GetTagCount (Prop);
     //delete old and create new
-    if (Patches->BootPatches) {
-      // free all subtree
-      for (i = 0; i < Patches->NrBoots; i++) {
-        if (Patches->BootPatches[i].Label) {
-          FreePool(Patches->BootPatches[i].Label);
-        }
-        if (Patches->BootPatches[i].Data) {
-          FreePool(Patches->BootPatches[i].Data);
-        }
-        if (Patches->BootPatches[i].Patch) {
-          FreePool(Patches->BootPatches[i].Patch);
-        }
-        if (Patches->BootPatches[i].MaskFind) {
-          FreePool(Patches->BootPatches[i].MaskFind);
-        }
-        if (Patches->BootPatches[i].MaskReplace) {
-          FreePool(Patches->BootPatches[i].MaskReplace);
-        }
-        if (Patches->BootPatches[i].MatchOS) {
-          FreePool(Patches->BootPatches[i].MatchOS);
-        }
-        if (Patches->BootPatches[i].MatchBuild) {
-          FreePool(Patches->BootPatches[i].MatchBuild);
-        }
-      }
-      Patches->NrBoots = 0;
-      FreePool(Patches->BootPatches);
-    }
+    Patches->BootPatches.setEmpty();
     if (Count > 0) {
       TagPtr        Prop2 = NULL, Dict = NULL;
-      KERNEL_PATCH  *newPatches = new KERNEL_PATCH[Count];
 
-      Patches->BootPatches = newPatches;
       DBG("BootPatches: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
-        CHAR8 *BootPatchesLabel;
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
         EFI_STATUS Status = GetElement(Prop, i, &Prop2);
@@ -1408,36 +1269,36 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
         DBG(" - [%02lld]:", i);
 
+        KEXT_PATCH* newBootPatchPtr = new KEXT_PATCH;
+        KEXT_PATCH& newBootPatch = *newBootPatchPtr;
+
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
-          BootPatchesLabel = (__typeof__(BootPatchesLabel))AllocateCopyPool(AsciiStrSize (Dict->string), Dict->string);
+          newBootPatch.Label.takeValueFrom(Dict->string);
         } else {
-          BootPatchesLabel = (__typeof__(BootPatchesLabel))AllocateCopyPool(8, "NoLabel");
+          newBootPatch.Label = "NoLabel"_XS8;
         }
 
-        DBG(" %s", BootPatchesLabel);
+        DBG(" %s", newBootPatch.Label.c_str());
 
         Dict = GetProperty(Prop2, "Disabled");
-        Patches->BootPatches[Patches->NrBoots].MenuItem.BValue   = !IsPropertyTrue(Dict);
-        Patches->BootPatches[Patches->NrBoots].MenuItem.ItemType = BoolValue;
+        newBootPatch.MenuItem.BValue   = !IsPropertyTrue(Dict);
+        newBootPatch.MenuItem.ItemType = BoolValue;
         
         Dict = GetProperty(Prop2, "RangeFind");
-        Patches->BootPatches[Patches->NrBoots].SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
+        newBootPatch.SearchLen = GetPropertyInteger(Dict, 0); //default 0 will be calculated later
         
         TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
-          Patches->BootPatches[Patches->NrBoots].StartPatternLen = FindLen;
-          Patches->BootPatches[Patches->NrBoots].StartPattern = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartPattern))AllocateCopyPool(FindLen, TmpData);
-          FreePool(TmpData);
+          newBootPatch.StartPattern.stealValueFrom(TmpData, FindLen);
         }
         
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          Patches->BootPatches[Patches->NrBoots].StartMask = (__typeof__(Patches->BootPatches[Patches->NrBoots].StartMask))BllocateZeroPool(FindLen);
-          SetMem(Patches->BootPatches[Patches->NrBoots].StartMask, FindLen, 0xFF);
+          newBootPatch.StartMask.memset(0xFF, FindLen);
           if (TmpData != NULL) {
-            CopyMem(Patches->BootPatches[Patches->NrBoots].StartMask, TmpData, ReplaceLen);
+            newBootPatch.StartMask.ncpy(TmpData, ReplaceLen);
           }
         }
         if (TmpData != NULL) {
@@ -1452,58 +1313,50 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        Patches->BootPatches[Patches->NrBoots].Data = (__typeof__(Patches->BootPatches[Patches->NrBoots].Data))AllocateCopyPool(FindLen, TmpData);
-        Patches->BootPatches[Patches->NrBoots].DataLen      = FindLen;
-        FreePool(TmpData);
+        newBootPatch.Data.stealValueFrom(TmpData, FindLen);
+
         MaskLen = 0;
-        TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
+        TmpData    = GetDataSetting(Prop2, "MaskFind", &MaskLen);
         MaskLen = MIN(FindLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->BootPatches[Patches->NrBoots].MaskFind = NULL;
         } else {
-          Patches->BootPatches[Patches->NrBoots].MaskFind = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskFind))AllocatePool (FindLen);
-          SetMem(Patches->BootPatches[Patches->NrBoots].MaskFind, FindLen, 0xFF);
-          CopyMem(Patches->BootPatches[Patches->NrBoots].MaskFind, TmpData, MaskLen);
+          newBootPatch.MaskFind.memset(0xFF, FindLen);
+          newBootPatch.MaskFind.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
-        Patches->BootPatches[Patches->NrBoots].Patch = (__typeof__(Patches->BootPatches[Patches->NrBoots].Patch))BllocateZeroPool(FindLen);
-        CopyMem(Patches->BootPatches[Patches->NrBoots].Patch, TmpPatch, ReplaceLen);
+        newBootPatch.Patch.memset(0, FindLen);
+        newBootPatch.Patch.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
-        TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen);
+        TmpData    = GetDataSetting(Prop2, "MaskReplace", &MaskLen);
         MaskLen = MIN(ReplaceLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
-          Patches->BootPatches[Patches->NrBoots].MaskReplace = NULL; //this is old behavior
         } else {
-          Patches->BootPatches[Patches->NrBoots].MaskReplace = (__typeof__(Patches->BootPatches[Patches->NrBoots].MaskReplace))BllocateZeroPool(FindLen);
-          CopyMem(Patches->BootPatches[Patches->NrBoots].MaskReplace, TmpData, MaskLen);
+          newBootPatch.MaskReplace.memset(0, FindLen);
+          newBootPatch.MaskReplace.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
-        Patches->BootPatches[Patches->NrBoots].Count        = 0;
-        Patches->BootPatches[Patches->NrBoots].MatchOS      = NULL;
-        Patches->BootPatches[Patches->NrBoots].MatchBuild   = NULL;
-        Patches->BootPatches[Patches->NrBoots].Label = (__typeof__(Patches->BootPatches[Patches->NrBoots].Label))AllocateCopyPool(AsciiStrSize (BootPatchesLabel), BootPatchesLabel);
+        newBootPatch.Count        = 0;
 
         Dict = GetProperty(Prop2, "Count");
         if (Dict != NULL) {
-          Patches->BootPatches[Patches->NrBoots].Count = GetPropertyInteger(Dict, 0);
+          newBootPatch.Count = GetPropertyInteger(Dict, 0);
         }
-        FreePool(BootPatchesLabel);
 
         Dict = GetProperty(Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->BootPatches[Patches->NrBoots].MatchOS = (__typeof__(Patches->BootPatches[Patches->NrBoots].MatchOS))AllocateCopyPool(AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchOS: %s", Patches->BootPatches[Patches->NrBoots].MatchOS);
+          newBootPatch.MatchOS.takeValueFrom(Dict->string);
+          DBG(" :: MatchOS: %s", newBootPatch.MatchOS.c_str());
         }
 
         Dict = GetProperty(Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          Patches->BootPatches[Patches->NrBoots].MatchBuild = (__typeof__(Patches->BootPatches[Patches->NrBoots].MatchBuild))AllocateCopyPool(AsciiStrSize (Dict->string), Dict->string);
-          DBG(" :: MatchBuild: %s", Patches->BootPatches[Patches->NrBoots].MatchBuild);
+          newBootPatch.MatchBuild.takeValueFrom(Dict->string);
+          DBG(" :: MatchBuild: %s", newBootPatch.MatchBuild.c_str());
         }
 
-		  DBG(" :: data len: %lld\n", Patches->BootPatches[Patches->NrBoots].DataLen);
-        Patches->NrBoots++;
+        DBG(" :: data len: %zu\n", newBootPatch.Data.size());
+        Patches->BootPatches.AddReference(newBootPatchPtr, true);
       }
     }
   }
@@ -1513,17 +1366,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 }
 
 BOOLEAN
-IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
+IsPatchEnabled (const XString8& MatchOSEntry, const XString8& CurrOS)
 {
   INTN i;
   BOOLEAN ret = FALSE;
   struct MatchOSes *mos; // = (__typeof__(mos))AllocatePool(sizeof(struct MatchOSes));
 
-  if (!MatchOSEntry || !CurrOS) {
+  if (MatchOSEntry.isEmpty() || CurrOS.isEmpty()) {
     return TRUE; //undefined matched corresponds to old behavior
   }
 
-  mos = GetStrArraySeparatedByChar(MatchOSEntry, ',');
+  mos = GetStrArraySeparatedByChar(MatchOSEntry.c_str(), ',');
   if (!mos) {
     return TRUE; //memory fails -> anyway the patch enabled
   }
@@ -1537,8 +1390,8 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
   for (i = 0; i < mos->count; ++i) {
     // dot represent MatchOS
     if (
-        ((AsciiStrStr(mos->array[i], ".") != NULL) && IsOSValid(mos->array[i], CurrOS)) || // MatchOS
-        (AsciiStrStr(mos->array[i], CurrOS) != NULL) // MatchBuild
+        ((AsciiStrStr(mos->array[i], ".") != NULL) && IsOSValid(mos->array[i], CurrOS.c_str())) || // MatchOS
+        (AsciiStrStr(mos->array[i], CurrOS.c_str()) != NULL) // MatchBuild
         ) {
       //DBG("\nthis patch will activated for OS %ls!\n", mos->array[i]);
       ret =  TRUE;
@@ -1550,7 +1403,7 @@ IsPatchEnabled (CHAR8 *MatchOSEntry, CHAR8 *CurrOS)
 }
 
 struct
-MatchOSes *GetStrArraySeparatedByChar(CHAR8 *str, CHAR8 sep)
+MatchOSes *GetStrArraySeparatedByChar(const CHAR8 *str, CHAR8 sep)
 {
   struct MatchOSes *mo;
   INTN len = 0, i = 0, inc = 1, newLen = 0;
@@ -1659,7 +1512,7 @@ TrimMatchOSArray(struct MatchOSes *s)
   }
 }
 
-BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
+BOOLEAN IsOSValid(const CHAR8 *MatchOS, const CHAR8 *CurrOS)
 {
   /* example for valid matches are:
    10.7, only 10.7 (10.7.1 will be skipped)
@@ -1713,7 +1566,7 @@ BOOLEAN IsOSValid(CHAR8 *MatchOS, CHAR8 *CurrOS)
   return ret;
 }
 
-INTN countOccurrences( CHAR8 *s, CHAR8 c )
+INTN countOccurrences( const CHAR8 *s, CHAR8 c )
 {
   return *s == '\0'
   ? 0
@@ -2061,7 +1914,8 @@ FillinCustomEntry (
 //      CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
  //                               (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
 
-      CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, &gSettings.KernelAndKextPatches);
+//      CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, &gSettings.KernelAndKextPatches);
+      Entry->KernelAndKextPatches = gSettings.KernelAndKextPatches;
 
       //#ifdef DUMP_KERNEL_KEXT_PATCHES
       //    DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
@@ -2688,7 +2542,7 @@ GetEarlyUserSettings (
     // KernelAndKextPatches
     DictPointer = GetProperty(Dict, "KernelAndKextPatches");
     if (DictPointer != NULL) {
-      FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), DictPointer);
+      FillinKextPatches(&gSettings.KernelAndKextPatches, DictPointer);
     }
 
     DictPointer = GetProperty(Dict, "GUI");
@@ -4423,16 +4277,16 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty(DictPointer, "EfiVersion");
   if (Prop != NULL) {
-    if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->string, 4, 5)) {
-      DBG("Using latest EfiVersion from clover: %s\n", gSettings.EfiVersion);
-    } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->string, 4, 5)) {
-      AsciiStrCpyS (gSettings.EfiVersion, 64, Prop->string);
-      DBG("Using latest EfiVersion from config: %s\n", gSettings.EfiVersion);
+    if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(XString8(Prop->string), 4, 5)) {
+      DBG("Using latest EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
+    } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(XString8(Prop->string), 4, 5)) {
+      gSettings.EfiVersion.takeValueFrom(Prop->string).trim();
+      DBG("Using latest EfiVersion from config: %s\n", gSettings.EfiVersion.c_str());
     } else {
-      DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion);
+      DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
     }
-  } else if (iStrLen(gSettings.EfiVersion, 64) > 0) {
-    DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion);
+  } else if (iStrLen(gSettings.EfiVersion.c_str(), 64) > 0) {
+    DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
   }
 
   Prop = GetProperty(DictPointer, "FirmwareFeatures");
@@ -6221,7 +6075,7 @@ GetUserSettings(
       DictPointer = GetProperty(Dict, "KernelAndKextPatches");
       if (DictPointer != NULL) {
         DBG("refill kernel patches bcoz gBootChanged\n");
-        FillinKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)), DictPointer);
+        FillinKextPatches(&gSettings.KernelAndKextPatches, DictPointer);
       }
     } else {
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
@@ -6263,9 +6117,9 @@ static CONST CHAR8 *SearchString(
   return NULL;
 }
 */
-CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
+XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
 {
-  CHAR8      *OSVersion  = NULL;
+  XString8   OSVersion;
   EFI_STATUS Status      = EFI_NOT_FOUND;
   CHAR8*     PlistBuffer = NULL;
   UINTN      PlistLen;
@@ -6274,7 +6128,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
   TagPtr     Prop        = NULL;
 
   if (!Entry || !Entry->Volume) {
-    return OSVersion;
+    return NullXString8;
   }
 
   if (OSTYPE_IS_OSX(Entry->LoaderType))
@@ -6295,11 +6149,11 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+          OSVersion.takeValueFrom(Prop->string);
         }
         Prop = GetProperty(Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+          Entry->BuildVersion.takeValueFrom(Prop->string);
         }
       }
     }
@@ -6326,18 +6180,18 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+          OSVersion.takeValueFrom(Prop->string);
         }
         Prop = GetProperty(Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+          Entry->BuildVersion.takeValueFrom(Prop->string);
         }
       }
     }
 
     // 1st stage - 2
     // Check for plist - createinstallmedia/NetInstall
-    if (OSVersion == NULL) {
+    if (OSVersion.isEmpty()) {
       InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - ...
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
@@ -6345,27 +6199,27 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           Prop = GetProperty(Dict, "Kernel Flags");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
             if (AsciiStrStr (Prop->string, "Install%20macOS%20BigSur") || AsciiStrStr (Prop->string, "Install%20macOS%2011.0")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "11.0");
+              OSVersion = "11.0"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%2010.16")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.16");
+              OSVersion = "10.16"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Catalina") || AsciiStrStr (Prop->string, "Install%20macOS%2010.15")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.15");
+              OSVersion = "10.15"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Mojave") || AsciiStrStr (Prop->string, "Install%20macOS%2010.14")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.14");
+              OSVersion = "10.14"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20High%20Sierra") || AsciiStrStr (Prop->string, "Install%20macOS%2010.13")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.13");
+              OSVersion = "10.13"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20macOS%20Sierra") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.12")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.12");
+              OSVersion = "10.12"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20El%20Capitan") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.11")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.11");
+              OSVersion = "10.11"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Yosemite") || AsciiStrStr (Prop->string, "Install%20OS%20hhX%2010.10")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(6, "10.10");
+              OSVersion = "10.10"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mavericks.app")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.9");
+              OSVersion = "10.9"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20OS%20hhX%20Mountain%20Lion")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.8");
+              OSVersion = "10.8"_XS8;
             } else if (AsciiStrStr (Prop->string, "Install%20Mac%20OS%20hhX%20Lion")) {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.7");
+              OSVersion = "10.7"_XS8;
             }
           }
         }
@@ -6374,7 +6228,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
     // 2nd stage - 1
     // Check for plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
-    if (OSVersion == NULL) {
+    if (OSVersion.isEmpty()) {
       InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
@@ -6399,11 +6253,11 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "ProductVersion");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+            OSVersion.takeValueFrom(Prop->string);
           }
           Prop = GetProperty(Dict, "ProductBuildVersion");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+            Entry->BuildVersion.takeValueFrom(Prop->string);
           }
           // In InstallInfo.plist, there is no a version key only when updating from AppStore in 10.13+
           // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
@@ -6411,7 +6265,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
           if (DictPointer != NULL) {
             Prop = GetProperty(DictPointer, "version");
             if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-              OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+              OSVersion.takeValueFrom(Prop->string);
             }
           }
         }
@@ -6421,12 +6275,12 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
     // 2nd stage - 2
     // Check for ia.log - InstallESD/createinstallmedia/startosinstall
     // Implemented by Sherlocks
-    if (OSVersion == NULL) {
+    if (OSVersion.isEmpty()) {
       CONST CHAR8  *s, *fileBuffer;
-      CHAR8  *Res5 = (__typeof__(Res5))BllocateZeroPool(5);
-      CHAR8  *Res6 = (__typeof__(Res6))BllocateZeroPool(6);
-      CHAR8  *Res7 = (__typeof__(Res7))BllocateZeroPool(7);
-      CHAR8  *Res8 = (__typeof__(Res8))BllocateZeroPool(8);
+//      CHAR8  *Res5 = (__typeof__(Res5))BllocateZeroPool(5);
+//      CHAR8  *Res6 = (__typeof__(Res6))BllocateZeroPool(6);
+//      CHAR8  *Res7 = (__typeof__(Res7))BllocateZeroPool(7);
+//      CHAR8  *Res8 = (__typeof__(Res8))BllocateZeroPool(8);
       UINTN  fileLen = 0;
       XStringW InstallerLog;
       InstallerLog = L"\\Mac OS X Install Data\\ia.log"_XSW; // 10.7
@@ -6444,50 +6298,36 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       //    s = SearchString(targetString, fileLen, "Running OS Build: Mac OS X ", 27);
           s = AsciiStrStr(targetString.c_str(), "Running OS Build: Mac OS X ");
           if (s[31] == ' ') {
-            snprintf (Res5, 5, "%c%c.%c\n", s[27], s[28], s[30]);
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Res5), Res5);
+            OSVersion.S8Printf("%c%c.%c\n", s[27], s[28], s[30]);
             if (s[38] == ')') {
-              snprintf (Res6, 6, "%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res6), Res6);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37]);
             } else if (s[39] == ')') {
-              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res7), Res7);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[33], s[34], s[35], s[36], s[37], s[38]);
             }
           } else if (s[31] == '.') {
-            snprintf (Res7, 7, "%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Res7), Res7);
+            OSVersion.S8Printf("%c%c.%c.%c\n", s[27], s[28], s[30], s[32]);
             if (s[40] == ')') {
-              snprintf (Res6, 6, "%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res6), Res6);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39]);
             } else if (s[41] == ')') {
-              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res7), Res7);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[35], s[36], s[37], s[38], s[39], s[40]);
             }
           } else if (s[32] == ' ') {
-            snprintf (Res6, 6, "%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Res6), Res6);
+            OSVersion.S8Printf("%c%c.%c%c\n", s[27], s[28], s[30], s[31]);
             if (s[39] == ')') {
-              snprintf (Res6, 6, "%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res6), Res6);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38]);
             } else if (s[40] == ')') {
-              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res7), Res7);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39]);
             } else if (s[41] == ')') {
-              snprintf (Res8, 8, "%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res8), Res8);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c%c%c\n", s[34], s[35], s[36], s[37], s[38], s[39], s[40]);
             }
           } else if (s[32] == '.') {
-            snprintf (Res8, 8, "%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Res8), Res8);
+            OSVersion.S8Printf("%c%c.%c%c.%c\n", s[27], s[28], s[30], s[31], s[33]);
             if (s[41] == ')') {
-              snprintf (Res6, 6, "%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res6), Res6);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40]);
             } else if (s[42] == ')') {
-              snprintf (Res7, 7, "%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res7), Res7);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41]);
             } else if (s[43] == ')') {
-              snprintf (Res8, 8, "%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
-              Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Res8), Res8);
+              Entry->BuildVersion.S8Printf("%c%c%c%c%c%c%c\n", s[36], s[37], s[38], s[39], s[40], s[41], s[42]);
             }
           }
           FreePool(fileBuffer);
@@ -6497,7 +6337,7 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
     // 2nd stage - 3
     // Check for plist - Preboot of APFS
-    if ( OSVersion == NULL )
+    if ( OSVersion.isEmpty() )
     {
 			XStringW plist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"_XSW;
 			if ( !FileExists(Entry->Volume->RootDir, plist) ) {
@@ -6510,11 +6350,11 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "ProductVersion");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+            OSVersion.takeValueFrom(Prop->string);
           }
           Prop = GetProperty(Dict, "ProductBuildVersion");
           if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-            Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+            Entry->BuildVersion.takeValueFrom(Prop->string);
           }
         }
       }
@@ -6546,16 +6386,16 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          OSVersion = (__typeof__(OSVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+          OSVersion.takeValueFrom(Prop->string);
         }
         Prop = GetProperty(Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string != NULL && Prop->string[0] != '\0') {
-          Entry->BuildVersion = (__typeof__(Entry->BuildVersion))AllocateCopyPool(AsciiStrSize (Prop->string), Prop->string);
+          Entry->BuildVersion.takeValueFrom(Prop->string);
         }
       }
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {
       // Special case - com.apple.recovery.boot/boot.efi exists but SystemVersion.plist doesn't --> 10.9 recovery
-      OSVersion = (__typeof__(OSVersion))AllocateCopyPool(5, "10.9");
+      OSVersion = "10.9"_XS8;
     }
   }
 
@@ -6568,51 +6408,49 @@ CHAR8 *GetOSVersion(IN LOADER_ENTRY *Entry)
 
 //constexpr XStringW iconMac = L"mac"_XSW;
 CONST XStringW
-GetOSIconName (
-                IN  CONST CHAR8 *OSVersion
-                )
+GetOSIconName (const XString8& OSVersion)
 {
   XStringW OSIconName;
-  if (OSVersion == NULL) {
+  if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
-  } else if ((AsciiStrStr (OSVersion, "10.16") != 0) ||
-             (AsciiStrStr (OSVersion, "11.0")  != 0)) {
+  } else if (OSVersion.contains("10.16") ||
+             (OSVersion.contains("11.0")  != 0)) {
     // Big Sur
     OSIconName = L"bigsur,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.15") != 0) {
+  } else if (OSVersion.contains("10.15") != 0) {
     // Catalina
     OSIconName = L"cata,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.14") != 0) {
+  } else if (OSVersion.contains("10.14") != 0) {
     // Mojave
     OSIconName = L"moja,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.13") != 0) {
+  } else if (OSVersion.contains("10.13") != 0) {
     // High Sierra
     OSIconName = L"hsierra,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.12") != 0) {
+  } else if (OSVersion.contains("10.12") != 0) {
     // Sierra
     OSIconName = L"sierra,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.11") != 0) {
+  } else if (OSVersion.contains("10.11") != 0) {
     // El Capitan
     OSIconName = L"cap,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.10") != 0) {
+  } else if (OSVersion.contains("10.10") != 0) {
     // Yosemite
     OSIconName = L"yos,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.9") != 0) {
+  } else if (OSVersion.contains("10.9") != 0) {
     // Mavericks
     OSIconName = L"mav,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.8") != 0) {
+  } else if (OSVersion.contains("10.8") != 0) {
     // Mountain Lion
     OSIconName = L"cougar,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.7") != 0) {
+  } else if (OSVersion.contains("10.7") != 0) {
     // Lion
     OSIconName = L"lion,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.6") != 0) {
+  } else if (OSVersion.contains("10.6") != 0) {
     // Snow Leopard
     OSIconName = L"snow,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.5") != 0) {
+  } else if (OSVersion.contains("10.5") != 0) {
     // Leopard
     OSIconName = L"leo,mac"_XSW;
-  } else if (AsciiStrStr (OSVersion, "10.4") != 0) {
+  } else if (OSVersion.contains("10.4") != 0) {
     // Tiger
     OSIconName = L"tiger,mac"_XSW;
   } else {
@@ -8089,17 +7927,17 @@ XStringW GetOtherKextsDir (BOOLEAN On)
 // caller is responsible for FreePool the result
 XStringW
 GetOSVersionKextsDir (
-                       CHAR8 *OSVersion
+                       const XString8& OSVersion
                        )
 {
-  CHAR8  FixedVersion[16];
+  XString8 FixedVersion;
   CHAR8  *DotPtr;
 
-  if (OSVersion != NULL) {
-    AsciiStrnCpyS(FixedVersion, 16, OSVersion, 5);
+  if (OSVersion.notEmpty()) {
+    FixedVersion.strncpy(OSVersion.c_str(), 5);
     //    DBG("%s\n", FixedVersion);
     // OSVersion may contain minor version too (can be 10.x or 10.x.y)
-    if ((DotPtr = AsciiStrStr (FixedVersion, ".")) != NULL) {
+    if ((DotPtr = AsciiStrStr (FixedVersion.c_str(), ".")) != NULL) {
       DotPtr = AsciiStrStr (DotPtr+1, "."); // second dot
     }
 
@@ -8113,9 +7951,9 @@ GetOSVersionKextsDir (
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version specific or default to Other
-  XStringW SrcDir = SWPrintf("%ls\\kexts\\%s", OEMPath.wc_str(), FixedVersion);
+  XStringW SrcDir = SWPrintf("%ls\\kexts\\%s", OEMPath.wc_str(), FixedVersion.c_str());
   if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-    SrcDir = SWPrintf("\\EFI\\CLOVER\\kexts\\%s", FixedVersion);
+    SrcDir = SWPrintf("\\EFI\\CLOVER\\kexts\\%s", FixedVersion.c_str());
     if (!FileExists (SelfVolume->RootDir, SrcDir)) {
       SrcDir.setEmpty();
     }

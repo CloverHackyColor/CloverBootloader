@@ -243,8 +243,6 @@ public:
 	size_t sizeInBytesIncludingTerminator() const { return (size_of_utf_string(m_data)+1)*sizeof(T); } // usefull for unit tests
 
 
-	const T* wc_str() const { return m_data; }
-	const T* c_str() const { return m_data; }
 	const T* s() const { return m_data; }
 	const T* data() const { return m_data; } // todo delete
 
