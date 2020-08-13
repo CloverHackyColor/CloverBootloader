@@ -15,7 +15,7 @@
 
 #define XStringGrowByDefault 10
 #define XArrayGrowByDefault 8
-//extern xsize XBufferGrowByDefault;
+#define XBufferGrowByDefault 16
 
 /* For convience, operator [] is define with int parameter.
  * Defining __XTOOLS_CHECK_OVERFLOW__ make a check that the parameter is >= 0

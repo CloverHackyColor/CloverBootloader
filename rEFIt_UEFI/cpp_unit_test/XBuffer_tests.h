@@ -1,0 +1,2 @@
+
+int XBuffer_tests();

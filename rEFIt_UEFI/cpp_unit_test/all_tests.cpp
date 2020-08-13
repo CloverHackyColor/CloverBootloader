@@ -14,6 +14,7 @@
 #include "printf_lite-test.h"
 #include "LoadOptions_test.h"
 #include "XToolsCommon_test.h"
+#include "XBuffer_tests.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -37,11 +38,11 @@ bool all_tests()
 //		all_ok = false;
 //	}
 #if defined(JIEF_DEBUG)
-    ret = XStringArray_tests();
-    if ( ret != 0 ) {
-        printf("XStringArray_tests() failed at test %d\n", ret);
-        all_ok = false;
-    }
+  ret = XBuffer_tests();
+  if ( ret != 0 ) {
+      printf("XBuffer_tests() failed at test %d\n", ret);
+      all_ok = false;
+  }
 	ret = XToolsCommon_tests();
 	if ( ret != 0 ) {
 		printf("printlib_tests() failed at test %d\n", ret);
@@ -103,11 +104,16 @@ bool all_tests()
 		printf("XStringArray_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
-	ret = BootOptions_tests();
-	if ( ret != 0 ) {
-		printf("BootOptions_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+  ret = BootOptions_tests();
+  if ( ret != 0 ) {
+    printf("BootOptions_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = XBuffer_tests();
+  if ( ret != 0 ) {
+    printf("XBuffer_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
 //	ret = XUINTN_tests();
 //	if ( ret != 0 ) {
 //		printf("XUINTN_tests() failed at test %d\n", ret);

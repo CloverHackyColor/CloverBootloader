@@ -520,7 +520,8 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
 
     // all current settings
-    LogDataHub(&gEfiMiscSubClassGuid, L"Settings", &gSettings, sizeof(gSettings));
+    XBuffer<UINT8> xb = gSettings.serialize();
+    LogDataHub(&gEfiMiscSubClassGuid, L"Settings", xb.data(), (UINT32)xb.size());
   }
   if (!gAppleSmc) {
     return;

@@ -7961,3 +7961,364 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
   return Status;
 }
 
+
+//namespace old {
+//#include "../../CloverApp/Clover/Clover-Bridging-Header.h"
+//}
+
+XBuffer<UINT8> SETTINGS_DATA::serialize() const
+{
+  XBuffer<UINT8> xb;
+
+  // SMBIOS TYPE0
+  xb.ncat(VendorName, sizeof(VendorName));
+  xb.ncat(RomVersion, sizeof(RomVersion));
+  xb.ncat(EfiVersion.c_str(), MIN(EfiVersion.length(), 64)); xb.memsetAtPos(xb.size(), 0, 64-MIN(EfiVersion.length(), 64));
+  xb.ncat(ReleaseDate, sizeof(ReleaseDate));
+  // SMBIOS TYPE1
+  xb.ncat(ManufactureName ,sizeof(ManufactureName));
+  xb.ncat(ProductName, sizeof(ProductName));
+  xb.ncat(VersionNr, sizeof(VersionNr));
+  xb.ncat(SerialNr, sizeof(SerialNr));
+  xb.ncat(&SmUUID, sizeof(SmUUID));
+  xb.cat(SmUUIDConfig);
+  xb.ncat(&pad0, sizeof(pad0));
+//CHAR8                    Uuid[64]);
+//CHAR8                    SKUNumber[64]);
+  xb.ncat(&FamilyName, sizeof(FamilyName));
+  xb.ncat(&OEMProduct, sizeof(OEMProduct));
+  xb.ncat(&OEMVendor, sizeof(OEMVendor));
+  // SMBIOS TYPE2
+  xb.ncat(&BoardManufactureName, sizeof(BoardManufactureName));
+  xb.ncat(&BoardSerialNumber, sizeof(BoardSerialNumber));
+  xb.ncat(&BoardNumber, sizeof(BoardNumber)); //Board-ID
+  xb.ncat(&LocationInChassis, sizeof(LocationInChassis));
+  xb.ncat(&BoardVersion, sizeof(BoardVersion));
+  xb.ncat(&OEMBoard, sizeof(OEMBoard));
+  xb.cat(BoardType);
+  xb.cat(pad1);
+  // SMBIOS TYPE3
+  xb.cat(Mobile);
+  xb.cat(ChassisType);
+  xb.ncat(&ChassisManufacturer, sizeof(ChassisManufacturer));
+  xb.ncat(&ChassisAssetTag, sizeof(ChassisAssetTag));
+  // SMBIOS TYPE4
+  xb.cat(CpuFreqMHz);
+  xb.cat(BusSpeed); //in kHz
+  xb.cat(Turbo);
+  xb.cat(EnabledCores);
+  xb.cat(UserChange);
+  xb.cat(QEMU);
+  // SMBIOS TYPE17
+  xb.cat(SmbiosVersion);
+  xb.cat(Attribute);
+  xb.ncat(&pad17, sizeof(pad17));
+  xb.ncat(&MemoryManufacturer, sizeof(MemoryManufacturer));
+  xb.ncat(&MemorySerialNumber, sizeof(MemorySerialNumber));
+  xb.ncat(&MemoryPartNumber, sizeof(MemoryPartNumber));
+  xb.ncat(&MemorySpeed, sizeof(MemorySpeed));
+  // SMBIOS TYPE131
+  xb.cat(CpuType);
+  // SMBIOS TYPE132
+  xb.cat(QPI);
+  xb.cat(SetTable132);
+  xb.cat(TrustSMBIOS);
+  xb.cat(InjectMemoryTables);
+  xb.cat(XMPDetection);
+  xb.cat(UseARTFreq);
+  // SMBIOS TYPE133
+  xb.ncat(&pad18, sizeof(pad18));
+  xb.cat(PlatformFeature);
+
+  // PatchTableType11
+  xb.cat(NoRomInfo);
+
+  // OS parameters
+  xb.ncat(&Language, sizeof(Language));
+  xb.ncat(&BootArgs, sizeof(BootArgs));
+  xb.ncat(&pad19, sizeof(pad19));
+  xb.ncat(&CustomUuid, sizeof(CustomUuid));
+  xb.ncat(&pad20, sizeof(pad20));
+  xb.cat(DefaultVolume);
+  xb.cat(DefaultLoader);
+//Boot
+  xb.cat(LastBootedVolume);
+  xb.cat(SkipHibernateTimeout);
+//Monitor
+  xb.cat(IntelMaxBacklight);
+  xb.ncat(&pad21, sizeof(pad21));
+  xb.cat(VendorEDID);
+  xb.cat(ProductEDID);
+  xb.cat(BacklightLevel);
+  xb.cat(BacklightLevelConfig);
+  xb.cat(IntelBacklight);
+//Boot options
+  xb.cat(MemoryFix);
+  xb.cat(WithKexts);
+  xb.cat(WithKextsIfNoFakeSMC);
+  xb.cat(FakeSMCFound);
+  xb.cat(NoCaches);
+
+  // GUI parameters
+  xb.cat(Debug);
+//  BOOLEAN                 Proportional); //never used
+  xb.ncat(&pad22, sizeof(pad22));
+  xb.cat(DefaultBackgroundColor);
+
+  //ACPI
+  xb.cat(ResetAddr);
+  xb.cat(ResetVal);
+  xb.cat(NoASPM);
+  xb.cat(DropSSDT);
+  xb.cat(NoOemTableId);
+  xb.cat(NoDynamicExtract);
+  xb.cat(AutoMerge);
+  xb.cat(GeneratePStates);
+  xb.cat(GenerateCStates);
+  xb.cat(GenerateAPSN);
+  xb.cat(GenerateAPLF);
+  xb.cat(GeneratePluginType);
+  xb.cat(PLimitDict);
+  xb.cat(UnderVoltStep);
+  xb.cat(DoubleFirstState);
+  xb.cat(SuspendOverride);
+  xb.cat(EnableC2);
+  xb.cat(EnableC4);
+  xb.cat(EnableC6);
+  xb.cat(EnableISS);
+  xb.cat(SlpSmiEnable);
+  xb.cat(FixHeaders);
+  xb.ncat(&pad23, sizeof(pad23));
+  xb.cat(C3Latency);
+  xb.cat(smartUPS);
+  xb.cat(PatchNMI);
+  xb.cat(EnableC7);
+  xb.cat(SavingMode);
+  xb.ncat(&DsdtName, sizeof(DsdtName));
+  xb.cat(FixDsdt);
+  xb.cat(MinMultiplier);
+  xb.cat(MaxMultiplier);
+  xb.cat(PluginType);
+//  BOOLEAN                 DropMCFG);
+  xb.cat(FixMCFG);
+  xb.cat(DeviceRenameCount);
+  xb.cat(DeviceRename);
+  //Injections
+  xb.cat(StringInjector);
+  xb.cat(InjectSystemID);
+  xb.cat(NoDefaultProperties);
+  xb.cat(ReuseFFFF);
+
+  //PCI devices
+  xb.cat(FakeATI);    //97
+  xb.cat(FakeNVidia);
+  xb.cat(FakeIntel);
+  xb.cat(FakeLAN);   //100
+  xb.cat(FakeWIFI);
+  xb.cat(FakeSATA);
+  xb.cat(FakeXHCI);  //103
+  xb.cat(FakeIMEI);  //106
+
+  //Graphics
+//  UINT16                  PCIRootUID);
+  xb.cat(GraphicsInjector);
+  xb.cat(InjectIntel);
+  xb.cat(InjectATI);
+  xb.cat(InjectNVidia);
+  xb.cat(DeInit);
+  xb.cat(LoadVBios);
+  xb.cat(PatchVBios);
+  xb.ncat(&pad24, sizeof(pad24));
+  xb.cat(PatchVBiosBytes);
+  xb.cat(PatchVBiosBytesCount);
+  xb.cat(InjectEDID);
+  xb.cat(LpcTune);
+  xb.cat(DropOEM_DSM); //vacant
+  xb.ncat(&pad25, sizeof(pad25));
+  xb.cat(CustomEDID);
+  xb.cat(CustomEDIDsize);
+  xb.cat(EdidFixHorizontalSyncPulseWidth);
+  xb.cat(EdidFixVideoInputSignal);
+  xb.ncat(&pad26, sizeof(pad26));
+  xb.ncat(&FBName, sizeof(FBName));
+  xb.cat(VideoPorts);
+  xb.cat(NvidiaGeneric);
+  xb.cat(NvidiaNoEFI);
+  xb.cat(NvidiaSingle);
+  xb.ncat(&pad27, sizeof(pad27));
+  xb.cat(VRAM);
+  xb.ncat(&Dcfg, sizeof(Dcfg));
+  xb.ncat(&NVCAP, sizeof(NVCAP));
+  xb.cat(BootDisplay);
+  xb.cat(NvidiaWeb);
+  xb.ncat(&pad41, sizeof(pad41));
+  xb.cat(DualLink);
+  xb.cat(IgPlatform);
+
+  // Secure boot white/black list
+  xb.cat(SecureBootWhiteListCount);
+  xb.cat(SecureBootBlackListCount);
+  xb.cat(SecureBootWhiteList);
+  xb.cat(SecureBootBlackList);
+
+  // Secure boot
+  xb.cat(SecureBoot);
+  xb.cat(SecureBootSetupMode);
+  xb.cat(SecureBootPolicy);
+
+  // HDA
+  xb.cat(HDAInjection);
+  xb.cat(HDALayoutId);
+
+  // USB DeviceTree injection
+  xb.cat(USBInjection);
+  xb.cat(USBFixOwnership);
+  xb.cat(InjectClockID);
+  xb.cat(HighCurrent);
+  xb.cat(NameEH00);
+  xb.cat(NameXH00);
+  xb.cat(LANInjection);
+  xb.cat(HDMIInjection);
+
+ // UINT8                   pad61[2]);
+
+  // LegacyBoot
+  xb.ncat(&LegacyBoot, sizeof(LegacyBoot));
+  xb.cat(LegacyBiosDefaultEntry);
+
+  //SkyLake
+  xb.cat(HWP);
+  xb.cat(TDP);
+  xb.cat(HWPValue);
+
+  //Volumes hiding
+  xb.cat(HVHideStrings);
+  xb.cat(HVCount);
+
+  // KernelAndKextPatches
+  xb.memsetAtPos(xb.size(), 0, 112);  //KernelAndKextPatches was 112 bytes
+  xb.cat(KextPatchesAllowed);
+  xb.cat(KernelPatchesAllowed); //From GUI: Only for user patches, not internal Clover
+  xb.ncat(&AirportBridgeDeviceName, sizeof(AirportBridgeDeviceName));
+
+  // Pre-language
+  xb.cat(KbdPrevLang);
+
+  //Pointer
+  xb.cat(PointerEnabled);
+  xb.ncat(&pad28, sizeof(pad28));
+  xb.cat(PointerSpeed);
+  xb.cat(DoubleClickTime);
+  xb.cat(PointerMirror);
+
+//  UINT8                   pad7[6]);
+  xb.cat(CustomBoot);
+  xb.ncat(&pad29, sizeof(pad29));
+  xb.cat(CustomLogo);
+  xb.cat(RefCLK);
+
+  // SysVariables
+  xb.ncat(&pad30, sizeof(pad30));
+  xb.cat(RtMLB);
+  xb.cat(RtROM);
+  xb.cat(RtROMLen);
+  xb.cat(CsrActiveConfig);
+  xb.cat(BooterConfig);
+  xb.ncat(&BooterCfgStr, sizeof(BooterCfgStr));
+  xb.cat(DisableCloverHotkeys);
+  xb.cat(NeverDoRecovery);
+
+  // Multi-config
+  xb.ncat(&ConfigName, sizeof(ConfigName));
+  xb.ncat(&pad31, sizeof(pad31));
+  xb.cat(MainConfigName);
+
+  //Drivers
+  xb.cat(BlackListCount);
+  xb.cat(BlackList);
+
+  //SMC keys
+  xb.ncat(&RPlt, sizeof(RPlt));
+  xb.ncat(&RBr, sizeof(RBr));
+  xb.ncat(&EPCI, sizeof(EPCI));
+  xb.ncat(&REV, sizeof(REV));
+
+  //other devices
+  xb.cat(Rtc8Allowed);
+  xb.cat(ForceHPET);
+  xb.cat(ResetHDA);
+  xb.cat(PlayAsync);
+  xb.ncat(&pad32, sizeof(pad32));
+  xb.cat(DisableFunctions);
+
+  //Patch DSDT arbitrary
+  xb.cat(PatchDsdtNum);
+  xb.cat(PatchDsdtFind);
+  xb.cat(LenToFind);
+  xb.cat(PatchDsdtReplace);
+  xb.cat(LenToReplace);
+  xb.cat(DebugDSDT);
+  xb.cat(SlpWak);
+  xb.cat(UseIntelHDMI);
+  xb.cat(AFGLowPowerState);
+  xb.cat(PNLF_UID);
+//  UINT8                   pad83[4]);
+
+  // Table dropping
+  xb.ncat(&pad34, sizeof(pad34));
+  xb.cat(ACPIDropTables);
+
+  // Custom entries
+  xb.cat(DisableEntryScan);
+  xb.cat(DisableToolScan);
+  xb.cat(ShowHiddenEntries);
+  xb.cat(KernelScan);
+  xb.cat(LinuxScan);
+//  UINT8                   pad84[3]);
+  xb.ncat(&pad35, sizeof(pad35));
+  xb.cat(CustomEntries);
+  xb.cat(CustomLegacy);
+  xb.cat(CustomTool);
+
+  //Add custom properties
+  xb.cat(NrAddProperties);
+  xb.cat(AddProperties);
+
+  //BlackListed kexts
+  xb.ncat(&BlockKexts, sizeof(BlockKexts));
+
+  //ACPI tables
+  xb.cat(SortedACPICount);
+  xb.cat(SortedACPI);
+
+  // ACPI/PATCHED/AML
+  xb.cat(DisabledAMLCount);
+  xb.ncat(&pad36, sizeof(pad36));
+  xb.cat(DisabledAML);
+  xb.cat(PatchDsdtLabel);
+  xb.cat(PatchDsdtTgt);
+  xb.cat(PatchDsdtMenuItem);
+
+  //other
+  xb.cat(IntelMaxValue);
+//  UINT32                  AudioVolume);
+
+  // boot.efi
+  xb.cat(OptionsBits);
+  xb.cat(FlagsBits);
+  xb.cat(UIScale);
+  xb.cat(EFILoginHiDPI);
+  xb.ncat(&flagstate, sizeof(flagstate));
+  xb.ncat(&pad37, sizeof(pad37));
+  xb.cat(ArbProperties);
+//  xb.cat(QuirksMask);
+//  xb.ncat(&pad38, sizeof(pad38));
+//  xb.cat(MaxSlide);
+
+//  if ( xb.size() != sizeof(old::SETTINGS_DATA) ) {
+  if ( xb.size() != 3088 ) {
+    DBG("BUG\n");
+  }
+  return xb;
+}
+

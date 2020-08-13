@@ -54,6 +54,8 @@ class XBuffer : public XBuffer_Super
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   const T* data(IntegralType i) const { return XBuffer_Super::data(i); }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  T* data(IntegralType i) { return _WData + i; }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   T* dataSized(IntegralType size) {
@@ -77,6 +79,7 @@ class XBuffer : public XBuffer_Super
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	void setSize(IntegralType size) { CheckSize(size); XBuffer_Super::m_size = size; };
+
 	void setEmpty() { setSize(0); };
 
   /* [] */
@@ -112,26 +115,30 @@ class XBuffer : public XBuffer_Super
 
 	void ncpy(const void *buf, size_t len);
 	// Cat
-	void Cat(const void *buf, size_t len);
+	void ncat(const void *buf, size_t len);
 
-  void Cat(bool b) { Cat(&b, sizeof(b)); };
+  void cat(bool b) { ncat(&b, sizeof(b)); };
 
-  void Cat(char c) { Cat(&c, sizeof(c)); };
-	void Cat(unsigned char b) { Cat(&b, sizeof(b)); };
-	void Cat(short s) { Cat(&s, sizeof(s)); };
-	void Cat(unsigned short us) { Cat(&us, sizeof(us)); };
-	void Cat(int i) { Cat(&i, sizeof(i)); };
-	void Cat(unsigned int ui) { Cat(&ui, sizeof(ui)); };
-	void Cat(long l) { Cat(&l, sizeof(l)); };
-	void Cat(unsigned long ul) { Cat(&ul, sizeof(ul)); };
-	void Cat(unsigned long long ull) { Cat(&ull, sizeof(ull)); };
+  void cat(char c) { ncat(&c, sizeof(c)); };
+  void cat(unsigned char c) { ncat(&c, sizeof(c)); };
+  void cat(signed char c) { ncat(&c, sizeof(c)); };
+  void cat(signed short s) { ncat(&s, sizeof(s)); };
+  void cat(unsigned short us) { ncat(&us, sizeof(us)); };
+  void cat(signed int i) { ncat(&i, sizeof(i)); };
+	void cat(unsigned int ui) { ncat(&ui, sizeof(ui)); };
+  void cat(signed long l) { ncat(&l, sizeof(l)); };
+	void cat(unsigned long ul) { ncat(&ul, sizeof(ul)); };
+  void cat(signed long long ull) { ncat(&ull, sizeof(ull)); };
+  void cat(unsigned long long ull) { ncat(&ull, sizeof(ull)); };
 
-  void Cat(float f) { Cat(&f, sizeof(f)); };
-  void Cat(double d) { Cat(&d, sizeof(d)); };
+  void cat(float f) { ncat(&f, sizeof(f)); };
+  void cat(double d) { ncat(&d, sizeof(d)); };
 
-	void Cat(const XString8 &aXString8);
-	void Cat(const XBuffer &unXBuffer) { Cat(unXBuffer.Length()); Cat(unXBuffer.Data(), unXBuffer.Length()); }
-	void Delete(unsigned int pos, unsigned int count=1);
+  void cat(void* p) { ncat(&p, sizeof(p)); };
+
+	void cat(const XString8 &aXString8);
+	void cat(const XBuffer &unXBuffer) { ncat(unXBuffer.Length()); ncat(unXBuffer.Data(), unXBuffer.Length()); }
+	void deleteAtPos(unsigned int pos, unsigned int count=1);
 
 	const XBuffer &operator += (const XRBuffer<T> &aBuffer);
 
@@ -267,24 +274,24 @@ void XBuffer<T>::ncpy(const void *buf, size_t len)
 }
 
 template <typename T>
-void XBuffer<T>::Cat(const void *buf, size_t len)
+void XBuffer<T>::ncat(const void *buf, size_t len)
 {
   if ( buf && len > 0 ) {
     CheckSize(size()+len);
-    memcpy(Data(size()), buf, len);
-    SetLength(size()+len);
+    memcpy(data(size()), buf, len);
+    setSize(size()+len);
   }
 }
 
 template <typename T>
-void XBuffer<T>::Cat(const XString8 &aXString8)
+void XBuffer<T>::cat(const XString8 &aXString8)
 {
-  Cat(aXString8.sizeInBytes());
-  Cat(aXString8.data(),aXString8.sizeInBytes());
+  cat(aXString8.sizeInBytes());
+  cat(aXString8.data(),aXString8.sizeInBytes());
 };
 
 template <typename T>
-void XBuffer<T>::Delete(unsigned int pos, unsigned int count)
+void XBuffer<T>::deleteAtPos(unsigned int pos, unsigned int count)
 {
   if ( pos < size() ) {
     if ( pos + count < size() ) {

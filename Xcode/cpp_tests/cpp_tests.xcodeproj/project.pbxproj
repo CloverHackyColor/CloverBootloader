@@ -81,6 +81,10 @@
 		9A57C2252418B9A00029A39F /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
 		9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
 		9A57C2282418B9A00029A39F /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
+		9A670D1C24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
+		9A670D1D24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
+		9A670D1E24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
+		9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
@@ -174,6 +178,8 @@
 		9A57C20A2418A1FD0029A39F /* global_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
 		9A57C22F2418B9A00029A39F /* cpp_tests UTF16 unsigned char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 unsigned char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A57C266241A799B0029A39F /* XString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString.h; sourceTree = "<group>"; };
+		9A670D1A24E535AB00B5D780 /* XBuffer_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBuffer_tests.h; sourceTree = "<group>"; };
+		9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer_tests.cpp; sourceTree = "<group>"; };
 		9A6BA73C2449977300BDA52C /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
 		9A7AEDE82459696C003AAD04 /* XToolsCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon.h; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -292,6 +298,8 @@
 				9A0B084D2402FE9B00E2B470 /* XStringArray_test.h */,
 				9A9EA7F7245AAB310076EC02 /* XToolsCommon_test.cpp */,
 				9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */,
+				9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */,
+				9A670D1A24E535AB00B5D780 /* XBuffer_tests.h */,
 			);
 			name = cpp_unit_test;
 			path = ../../rEFIt_UEFI/cpp_unit_test;
@@ -524,6 +532,7 @@
 				9A28CD11241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
+				9A670D1D24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458B2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */,
 			);
@@ -553,6 +562,7 @@
 				9A2A7C7C24576CCE00422263 /* strcmp.cpp in Sources */,
 				9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */,
 				9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */,
+				9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9A2A7C7F24576CCE00422263 /* printf_lite-test.cpp in Sources */,
 				9A2A7C8024576CCE00422263 /* Platform.cpp in Sources */,
 			);
@@ -582,6 +592,7 @@
 				9A28CD12241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */,
+				9A670D1E24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458C2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A57C2282418B9A00029A39F /* Platform.cpp in Sources */,
 			);
@@ -611,6 +622,7 @@
 				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A28CD10241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */,
+				9A670D1C24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458A2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A0B085E240300E000E2B470 /* Platform.cpp in Sources */,
 			);
