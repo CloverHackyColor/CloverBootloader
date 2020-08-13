@@ -922,30 +922,7 @@ BOOLEAN IsPatchEnabled(const XString8& MatchOSEntry, const XString8& CurrOS);
 /** return true if a given os contains '.' as separator,
  and then match components of the current booted OS. Also allow 10.10.x format meaning all revisions
  of the 10.10 OS */
-BOOLEAN IsOSValid(const CHAR8 *MatchOS, const CHAR8 *CurrOS);
-
-// Micky1979: Next five functions (+ needed struct) are to split a string like "10.10.5,10.7,10.11.6,10.8.x"
-// in their components separated by comma (in this case)
-struct MatchOSes {
-    INTN   count;
-    CHAR8* array[100];
-};
-
-
-/** return MatchOSes struct (count+array) with the components of str that contains the given char sep as separator. */
-struct
-MatchOSes *GetStrArraySeparatedByChar(const CHAR8 *str, CHAR8 sep);
-
-/** trim spaces in MatchOSes struct array */
-VOID
-TrimMatchOSArray(struct MatchOSes *s);
-
-/** free MatchOSes struct and its array. */
-VOID deallocMatchOSes(struct MatchOSes *s);
-
-/** count occurrences of a given char in a char* string. */
-INTN
-countOccurrences(const CHAR8 *s, CHAR8 c);
+BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS);
 
 
 //get default boot

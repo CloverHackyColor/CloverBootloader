@@ -1368,151 +1368,34 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 BOOLEAN
 IsPatchEnabled (const XString8& MatchOSEntry, const XString8& CurrOS)
 {
-  INTN i;
   BOOLEAN ret = FALSE;
-  struct MatchOSes *mos; // = (__typeof__(mos))AllocatePool(sizeof(struct MatchOSes));
 
   if (MatchOSEntry.isEmpty() || CurrOS.isEmpty()) {
     return TRUE; //undefined matched corresponds to old behavior
   }
 
-  mos = GetStrArraySeparatedByChar(MatchOSEntry.c_str(), ',');
-  if (!mos) {
-    return TRUE; //memory fails -> anyway the patch enabled
-  }
+  XString8Array mos = Split<XString8Array>(MatchOSEntry, ","_XS8).trimEachString();
   
-  TrimMatchOSArray(mos);
-  
-  if (AsciiStrStr(mos->array[0], "All") != NULL) {
+  if ( mos[0] == "All"_XS8) {
     return TRUE;
   }
 
-  for (i = 0; i < mos->count; ++i) {
+  for (size_t i = 0; i < mos.size(); ++i) {
     // dot represent MatchOS
     if (
-        ((AsciiStrStr(mos->array[i], ".") != NULL) && IsOSValid(mos->array[i], CurrOS.c_str())) || // MatchOS
-        (AsciiStrStr(mos->array[i], CurrOS.c_str()) != NULL) // MatchBuild
+        ( mos[i].contains("."_XS8) && IsOSValid(mos[i], CurrOS)) || // MatchOS
+        ( mos[i].contains(CurrOS) ) // MatchBuild
         ) {
       //DBG("\nthis patch will activated for OS %ls!\n", mos->array[i]);
       ret =  TRUE;
       break;
     }
   }
-  deallocMatchOSes(mos);
   return ret;
 }
 
-struct
-MatchOSes *GetStrArraySeparatedByChar(const CHAR8 *str, CHAR8 sep)
-{
-  struct MatchOSes *mo;
-  INTN len = 0, i = 0, inc = 1, newLen = 0;
-  //  CHAR8 *comp = NULL; //unused
-  CHAR8 doubleSep[2];
 
-  mo = (__typeof__(mo))AllocatePool(sizeof(struct MatchOSes));
-  if (!mo) {
-    return NULL;
-  }
-  mo->count = countOccurrences( str, sep ) + 1;
-  //  DBG("found %d %c in %ls\n", mo->count, sep, str);
-  len = (INTN)AsciiStrLen(str);
-  doubleSep[0] = sep; doubleSep[1] = sep;
-
-  if(AsciiStrStr(str, doubleSep) || !len || str[0] == sep || str[len -1] == sep) {
-    mo->count = 0;
-    mo->array[0] = NULL;
-    //    DBG("emtpy string\n");
-    return mo;
-  }
-
-  if (mo->count > 1) {
-    //INTN indexes[mo->count + 1];
-    INTN *indexes = (INTN *) AllocatePool(mo->count + 1);
-
-    for (i = 0; i < len; ++i) {
-      CHAR8 c = str[i];
-      if (c == sep) {
-        indexes[inc]=i;
-        //        DBG("index %d = %d\n", inc, i);
-        inc++;
-      }
-    }
-    // manually add first index
-    indexes[0] = 0;
-    // manually add last index
-    indexes[mo->count] = len;
-
-    for (i = 0; i < mo->count; ++i) {
-      INTN startLocation, endLocation;
-      mo->array[i] = 0;
-
-      if (i == 0) {
-        startLocation = indexes[0];
-        endLocation = indexes[1] - 1;
-      } else if (i == mo->count - 1) { // never reach the end of the array
-        startLocation = indexes[i] + 1;
-        endLocation = len;
-      } else {
-        startLocation = indexes[i] + 1;
-        endLocation = indexes[i + 1] - 1;
-      }
-      //      DBG("start %d, end %d\n", startLocation, endLocation);
-      newLen = (endLocation - startLocation) + 2;
-      /*     comp = (CHAR8 *) AllocatePool(newLen);
-       AsciiStrnCpy(comp, str + startLocation, newLen);
-       comp[newLen] = '\0'; */
-      mo->array[i] = (__typeof_am__(mo->array[i]))AllocateCopyPool(newLen, str + startLocation);
-      mo->array[i][newLen - 1] = '\0';
-    }
-
-    FreePool(indexes);
-  }
-  else {
-    //    DBG("str contains only one component and it is our string %ls!\n", str);
-    mo->array[0] = (__typeof_am__(mo->array[0]))AllocateCopyPool(AsciiStrLen(str)+1, str);
-  }
-  return mo;
-}
-
-CHAR8*
-TrimString(CHAR8* String)
-{
-  CHAR8 *TempString, *End, *TrimmedString;
-  
-  if (!String) {
-    return NULL;
-  }
-  
-  TempString = String;
-  for ( ; *TempString == ' '; TempString++) {
-  }
-  
-  End = TempString + AsciiStrLen(TempString) - 1;
-  
-  for ( ; (End > TempString) && (*End == ' '); End--) {
-  }
-  *(End + 1) = '\0';
-  
-  TrimmedString = (__typeof__(TrimmedString))AllocateCopyPool(AsciiStrSize(TempString), TempString);
-  FreePool(String);
-  return TrimmedString;
-}
-
-VOID
-TrimMatchOSArray(struct MatchOSes *s)
-{
-  INTN i;
-  if (!s) {
-    return;
-  }
-  
-  for (i = 0; i < s->count; i++) {
-    s->array[i] = TrimString(s->array[i]);
-  }
-}
-
-BOOLEAN IsOSValid(const CHAR8 *MatchOS, const CHAR8 *CurrOS)
+BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS)
 {
   /* example for valid matches are:
    10.7, only 10.7 (10.7.1 will be skipped)
@@ -1521,75 +1404,45 @@ BOOLEAN IsOSValid(const CHAR8 *MatchOS, const CHAR8 *CurrOS)
    */
 
   BOOLEAN ret = FALSE;
-  struct MatchOSes *osToc;
-  struct MatchOSes *currOStoc;
 
-  if (!MatchOS || !CurrOS) {
+  if (MatchOS.isEmpty() || CurrOS.isEmpty()) {
     return TRUE; //undefined matched corresponds to old behavior
   }
 
-  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
-  currOStoc = GetStrArraySeparatedByChar(CurrOS,  '.');
+//  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
+  XString8Array osToc = Split<XString8Array>(MatchOS, "."_XS8).trimEachString();
+  XString8Array currOStoc = Split<XString8Array>(CurrOS, "."_XS8).trimEachString();
 
-  if (osToc->count == 2) {
-    if (currOStoc->count == 2) {
-      if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
-          && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0) {
+  if (osToc.size() == 2) {
+    if (currOStoc.size() == 2) {
+      if ( osToc[0] == currOStoc[0] && osToc[1] == currOStoc[1]) {
         ret = TRUE;
       }
     }
-  } else if (osToc->count == 3) {
-    if (currOStoc->count == 3) {
-      if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
-          && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0
-          && AsciiStrCmp(osToc->array[2], currOStoc->array[2]) == 0) {
+  } else if (osToc.size() == 3) {
+    if (currOStoc.size() == 3) {
+      if ( osToc[0] == currOStoc[0]
+          && osToc[1] == currOStoc[1]
+          && osToc[2] == currOStoc[2]) {
         ret = TRUE;
-      } else if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
-                 && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0
-                 && (AsciiStrCmp(osToc->array[2], "x") == 0 || AsciiStrCmp(osToc->array[2], "X") == 0)) {
+      } else if ( osToc[0] == currOStoc[0]
+                 && osToc[1] == currOStoc[1]
+                 && osToc[2].equalIC("x") ) {
         ret = TRUE;
       }
-    } else if (currOStoc->count == 2) {
-      if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
-          && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0) {
+    } else if (currOStoc.size() == 2) {
+      if ( osToc[0] == currOStoc[0]
+          && osToc[1] ==  currOStoc[1] ) {
         ret = TRUE;
-      } else if (AsciiStrCmp(osToc->array[0], currOStoc->array[0]) == 0
-                 && AsciiStrCmp(osToc->array[1], currOStoc->array[1]) == 0
-                 && (AsciiStrCmp(osToc->array[2], "x") == 0 || AsciiStrCmp(osToc->array[2], "X") == 0)) {
+      } else if ( osToc[0] == currOStoc[0]
+                 && osToc[1] ==  currOStoc[1]
+                 && osToc[2].equalIC("x") == 0 ) {
         ret = TRUE;
       }
     }
   }
-
-  deallocMatchOSes(osToc);
-  deallocMatchOSes(currOStoc);
   return ret;
 }
-
-INTN countOccurrences( const CHAR8 *s, CHAR8 c )
-{
-  return *s == '\0'
-  ? 0
-  : countOccurrences( s + 1, c ) + (*s == c);
-}
-
-VOID deallocMatchOSes(struct MatchOSes *s)
-{
-  INTN i;
-
-  if (!s) {
-    return;
-  }
-
-  for (i = 0; i < s->count; i++) {
-    if (s->array[i]) {
-      FreePool(s->array[i]);
-    }
-  }
-
-  FreePool(s);
-}
-// End of MatchOS
 
 UINT8 CheckVolumeType(UINT8 VolumeType, TagPtr Prop)
 {

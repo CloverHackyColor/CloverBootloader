@@ -20,45 +20,41 @@ template<typename T, typename Tdummy=void>
 struct _xstringarray__char_type;
 
 template<typename T>
+struct _xstringarray__char_type<T, enable_if_t(is___String(T))>
+{
+//    typedef const char* type;
+    static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
+};
+
+template<typename T>
 struct _xstringarray__char_type<T*, enable_if_t(is_char(T))>
 {
-    typedef const T* type;
     static const T* getCharPtr(T* t) { return t; }
 };
 //
 //template<typename T>
 //struct _xstringarray__char_type<const T*, enable_if_t(is_char(T))>
 //{
-//    typedef const T* type;
 //    static const T* getCharPtr(const T* t) { return t; }
 //};
 //
 //template<typename T>
 //struct _xstringarray__char_type<const T[]>
 //{
-//    typedef const T* type;
 //    static const T* getCharPtr(const T* t) { return t; }
 //};
 //
 //template<typename T, size_t _Np>
 //struct _xstringarray__char_type<const T[_Np]>
 //{
-//    typedef const T* type;
 //    static const T* getCharPtr(const T* t) { return t; }
 //};
 
-template<typename T>
-struct _xstringarray__char_type<T, enable_if_t(is___String(T))>
-{
-    typedef const char* type;
-    static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
-};
 
 
+//#define XStringArraySuper XObjArray<XStringClass>
 
-#define XStringArraySuper XObjArray<XStringClass>
-
-template<class XStringClass_>
+template<class XStringClass_, class XStringArrayClass>
 class XStringArray_/* : public XStringArraySuper*/
 {
   protected:
@@ -76,8 +72,10 @@ class XStringArray_/* : public XStringArraySuper*/
 	
 //	#define enable_if _xtools_enable_if_t
 	/* [] */
-	template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	const XStringClass& operator [](IntegralType i) const { return array[i]; }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const XStringClass& operator [](IntegralType i) const { return array[i]; }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  XStringClass& operator [](IntegralType i) { return array[i]; }
 	/* ElementAt */
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const XStringClass& elementAt(IntegralType i) const { return array[i]; }
@@ -196,7 +194,7 @@ class XStringArray_/* : public XStringArraySuper*/
 
     // Add
 	template<typename CharType>
-    void AddStrings(const CharType* Val1, ...)
+  void AddStrings(const CharType* Val1, ...)
 	{
 		va_list va;
 		const wchar_t *p;
@@ -204,14 +202,14 @@ class XStringArray_/* : public XStringArraySuper*/
 		{
 			XStringClass* newS = new XStringClass;
 			newS->takeValueFrom(Val1);
-			XStringArraySuper::AddReference(newS, true);
+			AddReference(newS, true);
 		}
 		va_start(va, Val1);
 		p = VA_ARG(va, const CharType*);
 		while ( p != nullptr ) {
 			XStringClass* newS = new XStringClass;
 			newS->takeValueFrom(Val1);
-			XStringArraySuper::AddReference(newS, true);
+			AddReference(newS, true);
 			p = VA_ARG(va, const CharType*);
 		}
 		va_end(va);
@@ -228,13 +226,13 @@ class XStringArray_/* : public XStringArraySuper*/
 		array.AddReference(xstr, true);
 	}
 
-//    void Add(const XStringClass &aString) { array.AddCopy(aString); }
-    template<typename XStringClass1, enable_if(is___String(XStringClass1))>
-    void Add(const XStringClass1 &aString) { Add(aString.s()); }
+  template<typename XStringClass1, enable_if(is___String(XStringClass1))>
+  void Add(const XStringClass1 &aString) { Add(aString.s()); }
 
 	void AddReference(XStringClass *newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
-	template<class OtherXStringClass>
-	void import(const XStringArray_<OtherXStringClass> &aStrings)
+
+	template<class OtherXStringClass, class OtherXStringArrayClass>
+	void import(const XStringArray_<OtherXStringClass, OtherXStringArrayClass> &aStrings)
 	{
 		size_t i;
 		
@@ -283,25 +281,32 @@ class XStringArray_/* : public XStringArraySuper*/
 			} while ( i > 0 );
 		}
 	}
+  XStringArrayClass trimEachString()
+  {
+    for ( size_t i=0 ; i<array.size() ; i+=1 ) {
+      array.ElementAt(i).trim();
+    }
+    return *((XStringArrayClass*)this);
+  }
 
 };
 
-class XString8Array : public XStringArray_<XString8>
+class XString8Array : public XStringArray_<XString8, XString8Array>
 {
 };
 extern const XString8Array NullXString8Array;
 
-class XString16Array : public XStringArray_<XString16>
+class XString16Array : public XStringArray_<XString16, XString16Array>
 {
 };
 extern const XString16Array NullXString16Array;
 
-class XString32Array : public XStringArray_<XString32>
+class XString32Array : public XStringArray_<XString32, XString32Array>
 {
 };
 extern const XString32Array NullXString32Array;
 
-class XStringWArray : public XStringArray_<XStringW>
+class XStringWArray : public XStringArray_<XStringW, XStringWArray>
 {
 };
 extern const XStringWArray NullXStringWArray;
@@ -320,8 +325,8 @@ extern const XStringWArray NullXStringWArray;
 //template<class XStringArrayClass, typename CharType1, typename CharType2, enable_if(is_char(CharType1) && is_char(CharType2))>
 template<class XStringArrayClass, typename Type1, typename Type2,
     enable_if(
-              (  is_char_ptr(Type1) || is___String(Type1)  ) &&
-              (  is_char_ptr(Type2) || is___String(Type2)  )
+              (  is_char_ptr(Type1) || is___String(Type1) || is___LString(Type1)  ) &&
+              (  is_char_ptr(Type2) || is___String(Type2) || is___LString(Type2)  )
              )
         >
 XStringArrayClass Split(Type1 S, const Type2 Separator)
