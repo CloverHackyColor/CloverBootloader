@@ -488,7 +488,7 @@ public:
   // Multi-config
   CHAR16                  ConfigName[30];
   UINT8                   pad31[4];
-  CHAR16                  *MainConfigName;
+//  XString8                MainConfigName;
 
   //Drivers
   INTN                    BlackListCount;
@@ -602,7 +602,7 @@ public:
                     LegacyBoot{0}, LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(0), HVCount(0), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName{0}, KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
                     RefCLK(0), RtMLB(0), RtROM(0), RtROMLen(0), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr{0}, DisableCloverHotkeys(0), NeverDoRecovery(0),
-                    ConfigName{0}, MainConfigName(0), BlackListCount(0), BlackList(0), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
+                    ConfigName{0}, /*MainConfigName(0),*/ BlackListCount(0), BlackList(0), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), PatchDsdtNum(0), PatchDsdtFind(0), LenToFind(0), PatchDsdtReplace(0), LenToReplace(0), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), ShowHiddenEntries(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),

@@ -8231,7 +8231,7 @@ XBuffer<UINT8> SETTINGS_DATA::serialize() const
   // Multi-config
   xb.ncat(&ConfigName, sizeof(ConfigName));
   xb.ncat(&pad31, sizeof(pad31));
-  xb.cat(MainConfigName);
+  xb.cat(uintptr_t(0)); // MainConfigName was a CHAR16*
 
   //Drivers
   xb.cat(BlackListCount);

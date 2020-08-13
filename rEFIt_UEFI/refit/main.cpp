@@ -1984,7 +1984,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                    gConfigDict[0] ? L"config": L"",
                                    (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
                                    !gConfigDict[1] ? L"": (ConfName.notEmpty() ? ConfName.wc_str() : L"Load Options"));
-  gSettings.MainConfigName = EfiStrDuplicate(gSettings.ConfigName);
+  //gSettings.MainConfigName.takeValueFrom(gSettings.ConfigName);
 
   gSettings.PointerEnabled = TRUE;
   gSettings.PointerSpeed = 2;

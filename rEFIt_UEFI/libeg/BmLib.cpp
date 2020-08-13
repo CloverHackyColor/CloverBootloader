@@ -127,32 +127,7 @@ EfiLibFileSystemVolumeLabelInfo (
   return returnValue;
 }
 
-/**
-  Duplicate a string.
 
-  @param Src             The source.
-
-  @return A new string which is duplicated copy of the source.
-  @retval NULL If there is not enough memory.
-
-**/
-CHAR16 *
-EfiStrDuplicate (
-  IN CONST CHAR16   *Src
-				 )
-{
-  CHAR16  *Dest;
-  UINTN   Size;
-
-  Size  = StrSize (Src); //at least 2bytes
-  Dest = (__typeof__(Dest))AllocatePool (Size);
-//  ASSERT (Dest != NULL);
-  if (Dest != NULL) {
-    CopyMem(Dest, Src, Size);
-  }
-
-  return Dest;
-}
 //Compare strings case insensitive
 // return 0 if strings are equal not accounting match case
 INTN
