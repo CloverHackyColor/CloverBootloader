@@ -38,6 +38,12 @@ bool i_have_panicked = false;
  * Function panic_ seems useless. It's same as panic(). It's to be able to put a breakpoint in gdb with br panic_(). This is done in gdb_launch script in Qemu
  */
 static void panic_(const char* format, VA_LIST va)
+#ifndef PANIC_CAN_RETURN
+    __attribute__ ((noreturn));
+#endif
+;
+
+static void panic_(const char* format, VA_LIST va)
 {
 	if ( format ) {
 		vprintf(format, va);
@@ -50,6 +56,7 @@ static void panic_(const char* format, VA_LIST va)
 
 void panic(const char* format, ...)
 {
+#ifdef PANIC_CAN_RETURN
 	if ( stop_at_panic ) {
 		VA_LIST va;
 		VA_START(va, format);
@@ -58,6 +65,11 @@ void panic(const char* format, ...)
 	}else{
 		i_have_panicked = true;
 	}
+#else
+  VA_LIST va;
+  VA_START(va, format);
+  panic_(format, va); // panic doesn't return
+#endif
 }
 
 

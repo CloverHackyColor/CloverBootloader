@@ -140,7 +140,7 @@ OSTYPE_COMPARE_IMP(OSTYPE_IS_LINUX, type1, type2) || OSTYPE_COMPARE_IMP(OSTYPE_I
 #define OSFLAG_NOCACHES       (1 << 3)
 #define OSFLAG_NODEFAULTARGS  (1 << 4)
 #define OSFLAG_NODEFAULTMENU  (1 << 5)
-#define OSFLAG_HIDDEN         (1 << 6)
+//#define OSFLAG_HIDDEN         (1 << 6)
 #define OSFLAG_DISABLED       (1 << 7)
 #define OSFLAG_HIBERNATED     (1 << 8)
 #define OSFLAG_NOSIP          (1 << 9)

@@ -69,38 +69,11 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 //      DBG("entry %lld\n", i);
       // Only want legacy
       if (MainEntry.getLEGACY_ENTRY()) {
-        if (StriCmp(MainEntry.getLEGACY_ENTRY()->DevicePathString.wc_str(), Volume->DevicePathString.wc_str()) == 0) {
+        if ( MainEntry.getLEGACY_ENTRY()->DevicePathString.equalIC(Volume->DevicePathString) ) {
           return  true;
         }
       }
     }
-
-  // If this isn't a custom entry make sure it's not hidden by a custom entry
-  if (!CustomEntry) {
-    CUSTOM_LEGACY_ENTRY *Custom = gSettings.CustomLegacy;
-    while (Custom) {
-      if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
-          (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries)) {
-        if (Custom->Volume.notEmpty()) {
-          if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
-              ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
-            if (Custom->Type != 0) {
-              if (Custom->Type == Volume->LegacyOS->Type) {
-                return  false;
-              }
-            } else {
-              return  false;
-            }
-          }
-        } else if (Custom->Type != 0) {
-          if (Custom->Type == Volume->LegacyOS->Type) {
-            return  false;
-          }
-        }
-      }
-      Custom = Custom->Next;
-    }
-  }
   XStringW LTitle;
   if (LoaderTitle.isEmpty()) {
     if (Volume->LegacyOS->Name.notEmpty()) {
@@ -165,6 +138,32 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 //  Entry->LoadOptions      = (Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD"_XS8 : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB"_XS8 : "HD"_XS8);
   Entry->LoadOptions.setEmpty();
   Entry->LoadOptions.Add((Volume->DiskKind == DISK_KIND_OPTICAL) ? "CD" : ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? "USB" : "HD"));
+  
+  // If this isn't a custom entry make sure it's not hidden by a custom entry
+  if (!CustomEntry) {
+    CUSTOM_LEGACY_ENTRY *Custom = gSettings.CustomLegacy;
+    while (Custom) {
+      if ( OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)  ||  Custom->Hidden ) {
+        if (Custom->Volume.notEmpty()) {
+          if ( !Volume->DevicePathString.contains(Custom->Volume)  &&  !Volume->VolName.contains(Custom->Volume) ) {
+            if (Custom->Type != 0) {
+              if (Custom->Type == Volume->LegacyOS->Type) {
+                Entry->Hidden = true;
+              }
+            } else {
+              Entry->Hidden = true;
+            }
+          }
+        } else if (Custom->Type != 0) {
+          if (Custom->Type == Volume->LegacyOS->Type) {
+            Entry->Hidden = true;
+          }
+        }
+      }
+      Custom = Custom->Next;
+    }
+  }
+  
   // create the submenu
   SubScreen = new REFIT_MENU_SCREEN();
 //  SubScreen->Title = L"Boot Options for "_XSW + LoaderTitle + L" on "_XSW + VolDesc;
@@ -292,10 +291,10 @@ VOID AddCustomLegacy(VOID)
       DBG("Custom legacy %llu skipped because it is disabled.\n", i);
       continue;
     }
-    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-      DBG("Custom legacy %llu skipped because it is hidden.\n", i);
-      continue;
-    }
+//    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+//      DBG("Custom legacy %llu skipped because it is hidden.\n", i);
+//      continue;
+//    }
     if (Custom->Volume.notEmpty()) {
       DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume.wc_str());
     }

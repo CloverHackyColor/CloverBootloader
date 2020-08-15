@@ -1659,9 +1659,9 @@ FillinCustomEntry (
         (Prop->string.equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyTrue(Prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
+      Entry->Hidden = true;
     } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
+      Entry->Hidden = false;
     }
   }
 
@@ -1911,9 +1911,9 @@ FillingCustomLegacy (
         (Prop->string.equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyTrue(Prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
+      Entry->Hidden = true;
     } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
+      Entry->Hidden = false;
     }
   }
 
@@ -2007,9 +2007,9 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
         (Prop->string.equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyTrue(Prop)) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_HIDDEN);
+      Entry->Hidden = true;
     } else {
-      Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_HIDDEN);
+      Entry->Hidden = false;
     }
   }
 
@@ -2557,25 +2557,17 @@ GetEarlyUserSettings (
       if (Prop != NULL) {
         INTN   i, Count = GetTagCount (Prop);
         if (Count > 0) {
-          gSettings.HVCount = 0;
-          gSettings.HVHideStrings = (__typeof__(gSettings.HVHideStrings))AllocateZeroPool(Count * sizeof(CHAR16 *));
-          if (gSettings.HVHideStrings) {
-            for (i = 0; i < Count; i++) {
-              if (EFI_ERROR(GetElement(Prop, i, &Dict2))) {
-                continue;
-              }
-
-              if (Dict2 == NULL) {
-                break;
-              }
-
-              if ((Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-                gSettings.HVHideStrings[gSettings.HVCount] = SWPrintf("%s", Dict2->string.c_str()).forgetDataWithoutFreeing();
-                if (gSettings.HVHideStrings[gSettings.HVCount]) {
-                  DBG("Hiding entries with string %ls\n", gSettings.HVHideStrings[gSettings.HVCount]);
-                  gSettings.HVCount++;
-                }
-              }
+          gSettings.HVHideStrings.setEmpty();
+          for (i = 0; i < Count; i++) {
+            if (EFI_ERROR(GetElement(Prop, i, &Dict2))) {
+              continue;
+            }
+            if (Dict2 == NULL) {
+              break;
+            }
+            if ((Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
+              gSettings.HVHideStrings.Add(Dict2->string);
+              DBG("Hiding entries with string %s\n", Dict2->string.c_str());
             }
           }
         }
@@ -8018,7 +8010,7 @@ checkOffset(CpuType);
   WriteOldFixLengthString(Language, 16);
 checkOffset(BootArgs);
   WriteOldFixLengthString(BootArgs, 256);
-  xb.cat((char)0);
+  xb.memsetAtPos(xb.size(), 0, 1);
 checkOffset(CustomUuid);
   WriteOldFixLengthString(CustomUuid, 40);
   xb.ncat(&pad20, sizeof(pad20));
@@ -8182,8 +8174,8 @@ checkOffset(LegacyBoot);
   xb.cat(HWPValue);
 
   //Volumes hiding
-  xb.cat(HVHideStrings);
-  xb.cat(HVCount);
+  xb.cat(uintptr_t(0)); // HVHideStrings was **
+  xb.cat((INTN)0);
 
   // KernelAndKextPatches
   xb.memsetAtPos(xb.size(), 0, 112);  //KernelAndKextPatches was 112 bytes
@@ -8263,7 +8255,7 @@ checkOffset(Rtc8Allowed);
   // Custom entries
   xb.cat(DisableEntryScan);
   xb.cat(DisableToolScan);
-  xb.cat(ShowHiddenEntries);
+  xb.cat((BOOLEAN)0); // was ShowHiddenEntries (BOOLEAN)
   xb.cat(KernelScan);
   xb.cat(LinuxScan);
 //  UINT8                   pad84[3]);

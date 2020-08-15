@@ -247,10 +247,10 @@ VOID AddCustomTool(VOID)
 		DBG("Custom tool %llu skipped because it is disabled.\n", i);
       continue;
     }
-    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
-		DBG("Custom tool %llu skipped because it is hidden.\n", i);
-      continue;
-    }
+//    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+//		DBG("Custom tool %llu skipped because it is hidden.\n", i);
+//      continue;
+//    }
 
     if (Custom->Volume.notEmpty()) {
 		DBG("Custom tool %llu matching \"%ls\" ...\n", i, Custom->Volume);

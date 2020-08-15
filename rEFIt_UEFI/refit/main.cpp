@@ -2479,9 +2479,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       // Hide toggle
       if (MenuExit == MENU_EXIT_HIDE_TOGGLE) {
-        gSettings.ShowHiddenEntries = !gSettings.ShowHiddenEntries;
-        AfterTool = TRUE;
-        break;
+          MainMenu.Entries.includeHidden = !MainMenu.Entries.includeHidden;
+          continue;
       }
 
       // We don't allow exiting the main menu with the Escape key.

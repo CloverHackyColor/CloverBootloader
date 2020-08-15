@@ -8,8 +8,17 @@
 extern bool stop_at_panic;
 extern bool i_have_panicked;
 
-void panic(void);
-void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+void panic(void)
+#ifndef PANIC_CAN_RETURN
+    __attribute__ ((noreturn));
+#endif
+;
+
+void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)))
+#ifndef PANIC_CAN_RETURN
+    __attribute__ ((noreturn));
+#endif
+;
 
 
 class DontStopAtPanic

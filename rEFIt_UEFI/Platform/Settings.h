@@ -94,8 +94,9 @@ public:
   ~ACPI_DROP_TABLE() {}
 };
 
-typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
-struct CUSTOM_LOADER_ENTRY {
+class CUSTOM_LOADER_ENTRY
+{
+public:
   CUSTOM_LOADER_ENTRY     *Next;
   CUSTOM_LOADER_ENTRY     *SubEntries;
   XIcon                  Image;
@@ -112,6 +113,7 @@ struct CUSTOM_LOADER_ENTRY {
   CHAR16                  Hotkey;
   BOOLEAN                 CommonSettings;
   UINT8                   Flags;
+  bool                    Hidden;
   UINT8                   Type;
   UINT8                   VolumeType;
   UINT8                   KernelScan;
@@ -121,7 +123,7 @@ struct CUSTOM_LOADER_ENTRY {
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 
   CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), Path(), LoadOptions(),
-                          FullTitle(), Title(), Settings(), Hotkey(0), CommonSettings(0), Flags(0), Type(0), VolumeType(0),
+                          FullTitle(), Title(), Settings(), Hotkey(0), CommonSettings(0), Flags(0), Hidden(0), Type(0), VolumeType(0),
                           KernelScan(0), CustomBoot(0), CustomLogo(), BootBgColor({0,0,0,0}), KernelAndKextPatches()
 						{ }
 
@@ -144,10 +146,11 @@ public:
   XStringW             Title;
   CHAR16               Hotkey;
   UINT8                Flags;
+  bool                 Hidden;
   UINT8                Type;
   UINT8                VolumeType;
 
-  CUSTOM_LEGACY_ENTRY() : Next(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), FullTitle(), Title(), Hotkey(0), Flags(0), Type(0), VolumeType(0) { }
+  CUSTOM_LEGACY_ENTRY() : Next(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), Type(0), VolumeType(0) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
@@ -167,9 +170,10 @@ public:
   XStringW           Title;
   CHAR16             Hotkey;
   UINT8              Flags;
+  bool               Hidden;
   UINT8              VolumeType;
 
-  CUSTOM_TOOL_ENTRY() : Next(0), Image(), ImagePath(), Volume(), Path(), LoadOptions(), FullTitle(), Title(), Hotkey(0), Flags(0), VolumeType(0) { }
+  CUSTOM_TOOL_ENTRY() : Next(0), Image(), ImagePath(), Volume(), Path(), LoadOptions(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), VolumeType(0) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
@@ -446,9 +450,7 @@ public:
   UINT32                  HWPValue;
 
   //Volumes hiding
-  CHAR16                  **HVHideStrings;
-
-  INTN                    HVCount;
+  XString8Array           HVHideStrings;
 
   // KernelAndKextPatches
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;  //zzzz
@@ -531,7 +533,6 @@ public:
   // Custom entries
   BOOLEAN                 DisableEntryScan;
   BOOLEAN                 DisableToolScan;
-  BOOLEAN                 ShowHiddenEntries;
   UINT8                   KernelScan;
   BOOLEAN                 LinuxScan;
   UINT8                   pad35[3];
@@ -600,12 +601,12 @@ public:
                     NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), NvidiaWeb(0), pad41{0}, DualLink(0),
                     IgPlatform(0), SecureBootWhiteListCount(0), SecureBootBlackListCount(0), SecureBootWhiteList(0), SecureBootBlackList(0), SecureBoot(0), SecureBootSetupMode(0), SecureBootPolicy(0), HDAInjection(0),
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
-                    LegacyBoot{0}, LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(0), HVCount(0), KernelAndKextPatches(), KextPatchesAllowed(0),
+                    LegacyBoot{0}, LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName{0}, KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
                     RefCLK(0), RtMLB(0), RtROM(0), RtROMLen(0), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr{0}, DisableCloverHotkeys(0), NeverDoRecovery(0),
                     ConfigName{0}, /*MainConfigName(0),*/ BlackListCount(0), BlackList(0), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), PatchDsdtNum(0), PatchDsdtFind(0), LenToFind(0), PatchDsdtReplace(0), LenToReplace(0), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
-                    AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), ShowHiddenEntries(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
+                    AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
                     PatchDsdtLabel(0), PatchDsdtTgt(0), PatchDsdtMenuItem(0), IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
                     ArbProperties(0), QuirksMask(0), MaxSlide(0)

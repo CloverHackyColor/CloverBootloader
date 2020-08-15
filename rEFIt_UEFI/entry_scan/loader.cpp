@@ -488,6 +488,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
     }
   }
 // DBG("OSType =%d\n", OSType);
+  // DBG("prepare the menu entry\n");
+  // prepare the menu entry
+  Entry = new LOADER_ENTRY();
+
   if (!CustomEntry) {
     CUSTOM_LOADER_ENTRY *Custom;
     UINTN                CustomIndex = 0;
@@ -507,8 +511,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
     Custom = gSettings.CustomEntries;
     while (Custom) {
       // Check if the custom entry is hidden or disabled
-      if ((OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED) ||
-           (OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN) && !gSettings.ShowHiddenEntries))) {
+      if ( OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)  || Custom->Hidden ) {
 
         INTN volume_match=0;
         INTN volume_type_match=0;
@@ -568,16 +571,13 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
         } else {
           // Custom entry match
           DBG("%sSkipped because matching custom entry %llu!\n", indent, CustomIndex);
-          return NULL;
+          Entry->Hidden = true;
         }
       }
       Custom = Custom->Next;
       ++CustomIndex;
     }
   }
-// DBG("prepare the menu entry\n");
-  // prepare the menu entry
-  Entry = new LOADER_ENTRY();
   Entry->Row = 0;
   Entry->Volume = Volume;
   Entry->APFSTargetUUID = APFSTargetUUID;
@@ -999,7 +999,6 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
                        IN UINT8 OSType, IN UINT8 Flags)
 {
   LOADER_ENTRY *Entry;
-  INTN          HVi;
 
   if ((LoaderPath.isEmpty()) || (Volume == NULL) || (Volume->RootDir == NULL) || !FileExists(Volume->RootDir, LoaderPath)) {
     return NULL;
@@ -1010,19 +1009,19 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
     DBG("        skipped because entry is disabled\n");
     return NULL;
   }
-  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Flags, OSFLAG_HIDDEN)) {
-    DBG("        skipped because entry is hidden\n");
-    return NULL;
-  }
+//  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Flags, OSFLAG_HIDDEN)) {
+//    DBG("        skipped because entry is hidden\n");
+//    return NULL;
+//  }
   //don't add hided entries
-  if (!gSettings.ShowHiddenEntries) {
-    for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-      if ( LoaderPath.containsIC(gSettings.HVHideStrings[HVi]) ) {
-        DBG("        hiding entry: %ls\n", LoaderPath.s());
-        return NULL;
-      }
-    }
-  }
+//  if (!gSettings.ShowHiddenEntries) {
+//    for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
+//      if ( LoaderPath.containsIC(gSettings.HVHideStrings[HVi]) ) {
+//        DBG("        hiding entry: %ls\n", LoaderPath.s());
+//        return NULL;
+//      }
+//    }
+//  }
   Entry = CreateLoaderEntry(LoaderPath, LoaderOptions, FullTitle, LoaderTitle, Volume, APFSTargetUUID, Image, NULL, OSType, Flags, 0, MenuBackgroundPixel, CUSTOM_BOOT_DISABLED, NULL, NULL, FALSE);
   if (Entry != NULL) {
     if ((Entry->LoaderType == OSTYPE_OSX) ||
@@ -1037,6 +1036,16 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
       }
       if (gSettings.NoCaches) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+      }
+    }
+    if ( Volume->Hidden ) {
+      Entry->Hidden = true;
+    }else{
+      for (size_t HVi = 0; HVi < gSettings.HVHideStrings.size(); HVi++) {
+        if ( LoaderPath.containsIC(gSettings.HVHideStrings[HVi]) ) {
+          DBG("        hiding entry: %ls\n", LoaderPath.s());
+          Entry->Hidden = true;
+        }
       }
     }
     //TODO there is a problem that Entry->Flags is unique while InputItems are global ;(
@@ -1342,10 +1351,10 @@ VOID ScanLoader(VOID)
       continue;
     }
 
-    if (Volume->Hidden) {
-      DBG(", hidden\n");
-      continue;
-    }
+//    if (Volume->Hidden) {
+//      DBG(", hidden\n");
+//      continue;
+//    }
     DBG("\n");
 
     // check for Mac OS X Install Data
@@ -1435,6 +1444,7 @@ VOID ScanLoader(VOID)
       AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI"_XSW, NullXString8Array, L""_XSW, L"Microsoft EFI CDBOOT"_XSW, Volume, L""_XSW, NULL, OSTYPE_WINEFI, 0);
     }
 
+
 #if defined(ANDX86)
     if (TRUE) { //gSettings.AndroidScan
       // check for Android loaders
@@ -1467,40 +1477,14 @@ VOID ScanLoader(VOID)
     }
     //     DBG("search for internal UEFI\n");
     if (Volume->DiskKind == DISK_KIND_INTERNAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, NullXString8Array, L""_XSW, L"UEFI internal"_XSW, Volume, L""_XSW, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
+      LOADER_ENTRY* le = AddLoaderEntry(BOOT_LOADER_PATH, NullXString8Array, L""_XSW, L"UEFI internal"_XSW, Volume, L""_XSW, NULL, OSTYPE_OTHER, 0);
+      le->Hidden = true;
     }
     //    DBG("search for external UEFI\n");
     if (Volume->DiskKind == DISK_KIND_EXTERNAL) {
-      AddLoaderEntry(BOOT_LOADER_PATH, NullXString8Array, L""_XSW, L"UEFI external"_XSW, Volume, L""_XSW, NULL, OSTYPE_OTHER, OSFLAG_HIDDEN);
+      LOADER_ENTRY* le = AddLoaderEntry(BOOT_LOADER_PATH, NullXString8Array, L""_XSW, L"UEFI external"_XSW, Volume, L""_XSW, NULL, OSTYPE_OTHER, 0);
+      le->Hidden = true;
     }
-  }
-
-
-  /* Pass to add non redundant Preboot volume AND redundant as hidden */
-
-  for (UINTN VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
-    REFIT_VOLUME* Volume = &Volumes[VolumeIndex];
-    if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
-      //DBG(", no file system\n", VolumeIndex);
-      continue;
-    }
-    DBG("- [%02llu]: '%ls'", VolumeIndex, Volume->VolName.wc_str());
-    if (Volume->VolName.isEmpty()) {
-      Volume->VolName = L"Unknown"_XSW;
-    }
-
-    // skip volume if its kind is configured as disabled
-    if (((1ull<<Volume->DiskKind) & GlobalConfig.DisableFlags) != 0)
-    {
-      DBG(", flagged disable\n");
-      continue;
-    }
-
-    if (Volume->Hidden) {
-      DBG(", hidden\n");
-      continue;
-    }
-    DBG("\n");
 
     if ( Volume->ApfsTargetUUIDArray.size() > 0 ) {
 
@@ -1508,7 +1492,6 @@ VOID ScanLoader(VOID)
       {
         const XString8& ApfsTargetUUID = Volume->ApfsTargetUUIDArray[i];
 
-        int flag = 0;
         const LOADER_ENTRY* targetLoaderEntry = NULL;
         for ( size_t entryIdx = 0 ; entryIdx < MainMenu.Entries.size() ; entryIdx ++ )
         {
@@ -1516,12 +1499,11 @@ VOID ScanLoader(VOID)
             const LOADER_ENTRY* loaderEntry = MainMenu.Entries[entryIdx].getLOADER_ENTRY();
             if ( loaderEntry->Volume->ApfsFileSystemUUID == ApfsTargetUUID ) {
               targetLoaderEntry = loaderEntry;
-              flag = OSFLAG_HIDDEN;
             }
           }
         }
         if ( targetLoaderEntry ) {
-          AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, SWPrintf("Boot Mac OS X from %ls via %ls", targetLoaderEntry->VolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX, OSFLAG_HIDDEN);
+          AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, SWPrintf("Boot Mac OS X from %ls via %ls", targetLoaderEntry->VolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX, 0);
           //Try to add Recovery APFS entry
           AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, SWPrintf("Boot Mac OS X Recovery for %ls via %ls", targetLoaderEntry->VolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0);
           //Try to add macOS install entry
@@ -1554,6 +1536,28 @@ VOID ScanLoader(VOID)
       }
     }
   }
+
+  for (size_t entryIdx1 = 0; entryIdx1 < MainMenu.Entries.sizeIncludingHidden(); entryIdx1++)
+  {
+      LOADER_ENTRY* loaderEntry1Ptr = MainMenu.Entries.ElementAt(entryIdx1).getLOADER_ENTRY();
+      if ( !loaderEntry1Ptr ) continue;
+      LOADER_ENTRY& loaderEntry1 = *loaderEntry1Ptr;
+
+      if ( loaderEntry1.LoaderType == OSTYPE_OSX  &&  loaderEntry1.APFSTargetUUID.notEmpty() )
+      {
+        for ( size_t entryIdx2 = 0 ; entryIdx2 < MainMenu.Entries.sizeIncludingHidden() ; entryIdx2 ++ )
+        {
+          if ( MainMenu.Entries.ElementAt(entryIdx2).getLOADER_ENTRY() ) {
+            LOADER_ENTRY& loaderEntry2 = *MainMenu.Entries.ElementAt(entryIdx2).getLOADER_ENTRY();
+            if ( loaderEntry2.Volume->ApfsFileSystemUUID == loaderEntry1.APFSTargetUUID ) {
+              loaderEntry1.Hidden = true;
+            }
+          }
+        }
+      }
+  }
+
+
 }
 
 STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
@@ -1588,10 +1592,10 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
     return;
   }
 
-  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+//  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
 //    DBG("Custom %lsentry %llu skipped because it is hidden.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
-    return;
-  }
+//    return;
+//  }
 
 #if 0  //if someone want to debug this
   DBG("Custom %lsentry %llu ", IsSubEntry ? L"sub " : L"", CustomIndex);

@@ -1087,7 +1087,6 @@ VOID ScanVolumes(VOID)
   //  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
   //  EFI_GUID                *Guid; //for debug only
   //  EFI_INPUT_KEY Key;
-  INT32                   HVi;
   
   //    DBG("Scanning volumes...\n");
   DbgHeader("ScanVolumes");
@@ -1114,15 +1113,12 @@ VOID ScanVolumes(VOID)
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
       Volumes.AddReference(Volume, false);
-//      AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-      if (!gSettings.ShowHiddenEntries) {
-        for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-          if (StriStr(Volume->DevicePathString.wc_str(), gSettings.HVHideStrings[HVi]) ||
-              (Volume->VolName.notEmpty() && StriStr(Volume->VolName.wc_str(), gSettings.HVHideStrings[HVi]))) {
-            Volume->Hidden = TRUE;
-            DBG("        hiding this volume\n");
-            break;
-          }
+      for (size_t HVi = 0; HVi < gSettings.HVHideStrings.size(); HVi++) {
+        if ( Volume->DevicePathString.containsIC(gSettings.HVHideStrings[HVi]) ||
+             Volume->VolName.containsIC(gSettings.HVHideStrings[HVi])
+           ) {
+          Volume->Hidden = TRUE;
+          DBG("        hiding this volume\n");
         }
       }
       

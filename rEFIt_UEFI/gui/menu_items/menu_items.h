@@ -98,7 +98,8 @@ class XPointer;
 class REFIT_ABSTRACT_MENU_ENTRY
 {
   public:
-  XStringW          Title;
+  XStringW           Title;
+  bool               Hidden;
   UINTN              Row;
   CHAR16             ShortcutDigit;
   CHAR16             ShortcutLetter;
@@ -136,16 +137,16 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual void StartTool() {};
 
   REFIT_ABSTRACT_MENU_ENTRY()
-      : Title(), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      : Title(), Hidden(0), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
       {};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_)
-      : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      : Title(Title_), Hidden(0), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
       {};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_)
-      : Title(Title_), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      : Title(Title_), Hidden(0), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
       {};
   REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-      : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
+      : Title(Title_), Hidden(0), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
       {};
 //  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_,
 //                            CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, const XIcon& Icon_,

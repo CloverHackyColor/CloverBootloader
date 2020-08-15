@@ -68,6 +68,62 @@ class REFIT_ABSTRACT_MENU_ENTRY;
 
 typedef VOID (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
 
+class EntryArray : public XObjArray<REFIT_ABSTRACT_MENU_ENTRY>
+{
+public:
+  bool includeHidden = false;
+
+  size_t sizeIncludingHidden() const { return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size(); }
+
+  size_t size() const
+  {
+    if ( includeHidden ) return sizeIncludingHidden();
+    size_t size = 0;
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      const REFIT_ABSTRACT_MENU_ENTRY& entry = XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i);
+      if ( !entry.Hidden ) {
+        size++;
+      }
+    }
+    return size;
+  }
+  size_t length() const { return size(); }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  REFIT_ABSTRACT_MENU_ENTRY& operator[](IntegralType nIndex)
+  {
+    if ( includeHidden ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::operator [] (nIndex);
+    if (nIndex < 0) {
+      panic("EntryArray::operator[] : i < 0. System halted\n");
+    }
+    size_t size = 0;
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( !XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).Hidden ) {
+        if ( size == (unsigned_type(IntegralType))nIndex ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i);
+        size++;
+      }
+    }
+    panic("EntryArray::operator[] nIndex > size()");
+  }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const REFIT_ABSTRACT_MENU_ENTRY& operator[](IntegralType nIndex) const
+  {
+    if ( includeHidden ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::operator [] (nIndex);
+    if (nIndex < 0) {
+      panic("EntryArray::operator[] : i < 0. System halted\n");
+    }
+    size_t size = 0;
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( !XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).Hidden ) {
+        if ( size == (unsigned_type(IntegralType))nIndex ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i);
+        size++;
+      }
+    }
+    panic("EntryArray::operator[] nIndex > size()");
+  }
+};
+
 class REFIT_MENU_SCREEN
 {
 public:
@@ -78,7 +134,7 @@ public:
   XIcon             TitleImage;
   XStringWArray     InfoLines;
 
-  XObjArray<REFIT_ABSTRACT_MENU_ENTRY> Entries;
+  EntryArray Entries;
   
   INTN              TimeoutSeconds;
   bool              Daylight;
