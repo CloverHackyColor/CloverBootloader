@@ -999,8 +999,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 			  //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
         continue;
 		  }
-		  EFI_GUID guid;
-		  if ( StrToGuidLE(DirEntry->FileName, &guid) == EFI_SUCCESS ) {
+		  if ( IsValidGuidAsciiString(LStringW(DirEntry->FileName)) ) {
 			  Volume->ApfsTargetUUIDArray.Add(DirEntry->FileName);
 		  }
 		}
@@ -1412,7 +1411,7 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
     
     // read next directory entry
     LastBufferSize = BufferSize = 256;
-    Buffer = (__typeof__(Buffer))BllocateZeroPool(BufferSize);
+    Buffer = (__typeof__(Buffer))AllocateZeroPool(BufferSize);
     for (IterCount = 0; ; IterCount++) {
       Status = Directory->Read(Directory, &BufferSize, Buffer);
       if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)
@@ -1707,7 +1706,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
   
   Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    data = (__typeof__(data))BllocateZeroPool(dataSize);
+    data = (__typeof__(data))AllocateZeroPool(dataSize);
     Status = gRT->GetVariable (Name, Guid, NULL, &dataSize, data);
     if (EFI_ERROR(Status)) {
 		DBG("Can't get %ls, size=%llu\n", Name, dataSize);

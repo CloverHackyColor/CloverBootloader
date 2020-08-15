@@ -365,7 +365,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->SetIndex((UINTN)GetPropertyInteger(Dict2, 1)); //default=main screen
 
       Dict2 = GetProperty(Dict3, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
+      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
         NewFilm->Path.takeValueFrom(Dict2->string);
       }
 
@@ -376,19 +376,19 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->FrameTime = (UINTN)GetPropertyInteger(Dict2, 50); //default will be 50ms
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp(Dict2->string, "left") == 0) {
+      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
+        if (Dict2->string.equal("left")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (AsciiStrCmp(Dict2->string, "right") == 0) {
+        } else if (Dict2->string.equal("right")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string) {
-        if (AsciiStrCmp(Dict2->string, "top") == 0) {
+      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
+        if (Dict2->string.equal("top")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (AsciiStrCmp(Dict2->string, "bottom") == 0) {
+        } else if (Dict2->string.equal("bottom")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }
@@ -484,7 +484,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   if (!p) {
     return 0;
   }
-  NSVGtext* text = (NSVGtext*)BllocateZeroPool(sizeof(NSVGtext));
+  NSVGtext* text = (NSVGtext*)AllocateZeroPool(sizeof(NSVGtext));
   if (!text) {
     return 0;
   }

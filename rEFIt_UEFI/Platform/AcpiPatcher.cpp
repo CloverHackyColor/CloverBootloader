@@ -796,7 +796,7 @@ VOID MarkTableAsSaved(VOID *TableEntry)
     //DBG(" Allocaing mSavedTables");
     mSavedTablesEntries = SAVED_TABLES_ALLOC_ENTRIES;
     mSavedTablesNum = 0;
-    mSavedTables = (__typeof__(mSavedTables))BllocateZeroPool(sizeof(*mSavedTables) * mSavedTablesEntries);
+    mSavedTables = (__typeof__(mSavedTables))AllocateZeroPool(sizeof(*mSavedTables) * mSavedTablesEntries);
     if (mSavedTables == NULL) {
       return;
     }
@@ -1508,7 +1508,7 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
   XStringW           PathDsdt;
   XStringW           AcpiOemPath     = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
-  PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName);
+  PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
 
   if (FileExists(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()))) {
     DBG("DSDT found in Clover volume OEM folder: %ls%ls\n", AcpiOemPath.wc_str(), PathDsdt.wc_str());
@@ -1713,7 +1713,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
   DbgHeader("PatchACPI");
 
-  PathDsdt = SWPrintf("\\%ls", gSettings.DsdtName);
+  PathDsdt = SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
   //try to find in SystemTable
   for(Index = 0; Index < gST->NumberOfTableEntries; Index++) {
     if(CompareGuid (&gST->ConfigurationTable[Index].VendorGuid, &gEfiAcpi20TableGuid)) {
@@ -1850,7 +1850,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     DBG("old FADT length=%X\n", oldLength);
     CopyMem(newFadt, FadtPointer, oldLength); //old data
     newFadt->Header.Length = 0xF4;
-    CopyMem(newFadt->Header.OemId, BiosVendor, 6);
+    CopyMem(newFadt->Header.OemId, BiosVendor.c_str(), 6);
     if (newFadt->Header.Revision < EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
       newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
     }
@@ -2069,7 +2069,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
   // XsdtReplaceSizes array is used to keep track of allocations for the merged tables,
   //  as those tables may need to be freed if patched later.
-  XsdtReplaceSizes = (__typeof__(XsdtReplaceSizes))BllocateZeroPool(XsdtTableCount() * sizeof(*XsdtReplaceSizes));
+  XsdtReplaceSizes = (__typeof__(XsdtReplaceSizes))AllocateZeroPool(XsdtTableCount() * sizeof(*XsdtReplaceSizes));
 
   // Load merged ACPI files from ACPI/patched
   LoadAllPatchedAML(AcpiOemPath.wc_str(), AUTOMERGE_PASS1);
@@ -2307,11 +2307,11 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
   EFI_PHYSICAL_ADDRESS  Dsdt;
 
   // load if exists
-  Status = LoadAcpiTable(PathPatched, gSettings.DsdtName, &Buffer, &BufferLen);
+  Status = LoadAcpiTable(PathPatched, gSettings.DsdtName.wc_str(), &Buffer, &BufferLen);
 
   if (!EFI_ERROR(Status)) {
     // loaded - allocate EfiACPIReclaim
-    DBG("Loaded DSDT at %ls\\%ls\n", PathPatched, gSettings.DsdtName);
+    DBG("Loaded DSDT at %ls\\%ls\n", PathPatched, gSettings.DsdtName.wc_str());
     Dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,

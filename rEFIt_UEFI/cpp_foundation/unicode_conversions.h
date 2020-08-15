@@ -244,6 +244,11 @@ size_t length_of_wchar_string(const wchar_t* s);
 
 #ifdef __cplusplus
 
+inline char*     get_char32_from_string(char* s,     char32_t* char32) { return (char*)get_char32_from_utf8_string(s, char32); }
+inline char16_t* get_char32_from_string(char16_t* s, char32_t* char32) { return (char16_t*)get_char32_from_utf16_string(s, char32); }
+inline char32_t* get_char32_from_string(char32_t* s, char32_t* char32) { *char32 = *s; if ( !*s ) return s; return s+1; }
+inline wchar_t*  get_char32_from_string(wchar_t* s,  char32_t* char32) { return (wchar_t*)get_char32_from_string((wchar_cast*)s, char32); }
+
 inline const char* get_char32_from_string(const char* s, char32_t* char32) { return get_char32_from_utf8_string(s, char32); }
 inline const char16_t* get_char32_from_string(const char16_t* s, char32_t* char32) { return get_char32_from_utf16_string(s, char32); }
 inline const char32_t* get_char32_from_string(const char32_t* s, char32_t* char32) { *char32 = *s; if ( !*s ) return s; return s+1; }

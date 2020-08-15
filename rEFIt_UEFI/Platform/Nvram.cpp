@@ -98,8 +98,8 @@ GetEfiTimeInMs (
 VOID *GetNvramVariable(
 	IN      CONST CHAR16   *VariableName,
 	IN      EFI_GUID *VendorGuid,
-	   OUT  UINT32   *Attributes    OPTIONAL,
-	   OUT  UINTN    *DataSize      OPTIONAL)
+	OUT     UINT32   *Attributes    OPTIONAL,
+	OUT     UINTN    *DataSize      OPTIONAL)
 {
   EFI_STATUS Status;
   VOID       *Data       = NULL;
@@ -108,7 +108,7 @@ VOID *GetNvramVariable(
   //
   UINTN      IntDataSize = 0;
   
-  Status = gRT->GetVariable (VariableName,     VendorGuid, Attributes, &IntDataSize, NULL);
+  Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
   if (IntDataSize == 0) {
     return NULL;
   }
@@ -117,7 +117,7 @@ VOID *GetNvramVariable(
     //
     // Allocate the buffer to return
     //
-    Data = (__typeof__(Data))BllocateZeroPool(IntDataSize + 1);
+    Data = (__typeof__(Data))AllocateZeroPool(IntDataSize + 1);
     if (Data != NULL) {
       //
       // Read variable into the allocated buffer.
@@ -134,6 +134,42 @@ VOID *GetNvramVariable(
     *DataSize = IntDataSize;
   }
   return Data;
+}
+
+/** Reads and returns value of NVRAM variable. */
+XString8 GetNvramVariableAsXString8(
+  IN      CONST CHAR16   *VariableName,
+  IN      EFI_GUID       *VendorGuid,
+  OUT     UINT32         *Attributes    OPTIONAL,
+  OUT     UINTN          *DataSize      OPTIONAL)
+{
+  EFI_STATUS Status;
+  XString8 returnValue;
+  //
+  // Pass in a zero size buffer to find the required buffer size.
+  //
+  UINTN      IntDataSize = 0;
+  
+  Status = gRT->GetVariable (VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
+  if (IntDataSize == 0) {
+    return NullXString8;
+  }
+
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    //
+    // Read variable into the allocated buffer.
+    //
+    Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, returnValue.dataSized(IntDataSize+1));
+    if (EFI_ERROR(Status)) {
+      IntDataSize = 0;
+      returnValue.setEmpty();
+    }
+  }
+  if (DataSize != NULL) {
+    *DataSize = IntDataSize;
+  }
+  *returnValue.data(IntDataSize) = 0;
+  return returnValue;
 }
 
 
@@ -179,8 +215,18 @@ SetNvramVariable (
   //DBG(" -> writing new (%s)\n", strerror(Status));
   //return Status;
  
-  return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
+  return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
   
+}
+EFI_STATUS
+SetNvramXString8 (
+    IN  CONST CHAR16     *VariableName,
+    IN  EFI_GUID   *VendorGuid,
+    IN  UINT32      Attributes,
+    const XString8& s
+  )
+{
+  return SetNvramVariable(VariableName, VendorGuid, Attributes, s.sizeInBytes(), (void*)s.c_str());
 }
 
 /** Sets NVRAM variable. Does nothing if variable with the same name already exists. */
@@ -200,7 +246,7 @@ AddNvramVariable (
   if (OldData == NULL)
   {
     // set new value
-    return gRT->SetVariable (VariableName, VendorGuid, Attributes, DataSize, Data);
+    return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, Data);
 //  DBG(" -> writing new (%s)\n", strerror(Status));
 	} else {
 		FreePool(OldData);
@@ -208,6 +254,16 @@ AddNvramVariable (
 	}
 }
 
+EFI_STATUS
+AddNvramXString8(
+  IN  CONST CHAR16   *VariableName,
+  IN  EFI_GUID *VendorGuid,
+  IN  UINT32   Attributes,
+  const XString8& s
+  )
+{
+  return AddNvramVariable(VariableName, VendorGuid, Attributes, s.sizeInBytes(), (void*)s.c_str());
+}
 
 /** Deletes NVRAM variable. */
 EFI_STATUS
@@ -290,7 +346,7 @@ ResetNativeNvram ()
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
   NameSize = sizeof (CHAR16);
-  Name = (__typeof__(Name))BllocateZeroPool(NameSize);
+  Name = (__typeof__(Name))AllocateZeroPool(NameSize);
   if (Name == NULL) {
     return Status;
   }
@@ -419,7 +475,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   
 
   NameSize = sizeof (CHAR16);
-  Name = (__typeof__(Name))BllocateZeroPool(NameSize);
+  Name = (__typeof__(Name))AllocateZeroPool(NameSize);
   if (Name == NULL) {
     return;
   }
@@ -1004,45 +1060,45 @@ PutNvramPlistToRtVars ()
 //    DBG("tag: %s\n", Tag->string);
     // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
     // in kernel and kext patcher when mixing UEFI and CloverEFI boot
-    if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-RelocBase") == 0) {
+    if ( Tag->string == "OsxAptioFixDrv-RelocBase"_XS8 ) {
       DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
       continue;
-    } else if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-ErrorExitingBootServices") == 0) {
+    } else if ( Tag->string == "OsxAptioFixDrv-ErrorExitingBootServices"_XS8 ) {
       DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
       continue;
-    } else if (AsciiStrCmp(Tag->string, "EmuVariableUefiPresent") == 0) {
+    } else if ( Tag->string == "EmuVariableUefiPresent"_XS8 ) {
       DBG(" Skipping EmuVariableUefiPresent\n");
       continue;
-    } else if (AsciiStrCmp(Tag->string, "aapl,panic-info") == 0) {
+    } else if ( Tag->string == "aapl,panic-info"_XS8 ) {
         DBG(" Skipping aapl,panic-info\n");
         continue;
     }
 
     // key to unicode; check if key buffer is large enough
-    if (AsciiStrLen(Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {
-      DBG(" ERROR: Skipping too large key %s\n", Tag->string);
+    if ( Tag->string.length() > sizeof(KeyBuf) - 1 ) {
+      DBG(" ERROR: Skipping too large key %s\n", Tag->string.c_str());
       continue;
     }
 
-    if (AsciiStrCmp(Tag->string, "Boot0082") == 0 || AsciiStrCmp(Tag->string, "BootNext") == 0) {
+    if ( Tag->string == "Boot0082"_XS8 || Tag->string == "BootNext"_XS8 ) {
       VendorGuid = &gEfiGlobalVariableGuid;
       // it may happen only in this case
       GlobalConfig.HibernationFixup = TRUE;
     }
 
-    AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
+//    AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
     if (!GlobalConfig.DebugLog) {
-      DBG(" Adding Key: %ls: ", KeyBuf);
+      DBG(" Adding Key: %s: ", Tag->string.c_str());
     }
     // process value tag
     
     if (ValTag->type == kTagTypeString) {
       
       // <string> element
-      Value = ValTag->string;
-      Size  = AsciiStrLen((CONST CHAR8*)Value);
+      Value = (void*)ValTag->string.c_str();
+      Size  = ValTag->string.length();
       if (!GlobalConfig.DebugLog) {
-		  DBG("String: Size = %lld, Val = '%s'\n", Size, (__typeof__(ValTag->string))Value);
+		    DBG("String: Size = %lld, Val = '%s'\n", Size, ValTag->string.c_str());
       }
       
     } else if (ValTag->type == kTagTypeData) {
@@ -1053,14 +1109,14 @@ PutNvramPlistToRtVars ()
       if (!GlobalConfig.DebugLog) {
 		  DBG("Size = %lld, Data: ", Size);
         for (i = 0; i < Size; i++) {
-          DBG("%02hhX ", *((__typeof__(ValTag->string))Value + i));
+          DBG("%02hhX ", *(((UINT8*)Value) + i));
         }
       }
       if (!GlobalConfig.DebugLog) {
        DBG("\n");
       }
     } else {
-		DBG("ERROR: Unsupported tag type: %llu\n", ValTag->type);
+		 DBG("ERROR: Unsupported tag type: %llu\n", ValTag->type);
       continue;
     }
     
@@ -1380,7 +1436,7 @@ EFI_STATUS SetStartupDiskVolume (
 	    "</dict>"
 	    "</dict></array>", strguid(Guid));
     DBG ("  * efi-boot-device: %s\n", EfiBootDevice.c_str());
-    Status        = SetNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid, Attributes, EfiBootDevice.sizeInBytes(), EfiBootDevice.c_str());
+    Status        = SetNvramXString8(L"efi-boot-device", &gEfiAppleBootGuid, Attributes, EfiBootDevice);
   }
   
   return Status;

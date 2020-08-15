@@ -47,7 +47,6 @@
 
 
 
-SymbolPtr gSymbolsHead = NULL;
 TagPtr    gTagsFree = NULL;
 CHAR8* buffer_start = NULL;
 
@@ -66,9 +65,6 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32* len
 
 TagPtr     NewTag( void );
 EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag,UINT32* lenPtr);
-CHAR8*      NewSymbol(CHAR8* string);
-VOID        FreeSymbol(CHAR8* string);
-SymbolPtr   FindSymbol( char * string, SymbolPtr * prevSymbol );
 
 /* Function for basic XML character entities parsing */
 typedef struct XMLEntity {
@@ -85,6 +81,7 @@ CONST XMLEntity ents[] = {
   _e("amp;", '&')
 };
 
+/* Replace XML entities by their value */
 CHAR8*
 XMLDecode(CHAR8* src)
 {
@@ -99,7 +96,7 @@ XMLDecode(CHAR8* src)
   len = AsciiStrLen(src);
 
 #if 0
-  out = (__typeof__(out))BllocateZeroPool(len+1);
+  out = (__typeof__(out))AllocateZeroPool(len+1);
   if (!out)
     return 0;
 #else // unsafe
@@ -213,7 +210,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
     return EFI_INVALID_PARAMETER;
   }
 
-  configBuffer = (__typeof__(configBuffer))BllocateZeroPool(bufferSize+1);
+  configBuffer = (__typeof__(configBuffer))AllocateZeroPool(bufferSize+1);
   if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -280,12 +277,12 @@ TagPtr GetProperty( TagPtr dict, const CHAR8* key )
     tag = tagList;
     tagList = tag->tagNext;
 
-    if ((tag->type != kTagTypeKey) || (tag->string == 0)) {
+    if ( tag->type != kTagTypeKey ||  tag->string.isEmpty() ) {
       continue;
 
     }
 
-    if (!AsciiStriCmp(tag->string, key)) {
+    if ( tag->string.equalIC(key) ) {
       return tag->tag;
     }
   }
@@ -308,7 +305,7 @@ TagPtr GetNextProperty(TagPtr dict)
 		tag = tagList;
 		tagList = tag->tagNext;
 
-		if ((tag->type != kTagTypeKey) || (tag->string == 0)) {
+		if ( tag->type != kTagTypeKey ||  tag->string.isEmpty() ) {
 			continue;
 
 		}
@@ -517,7 +514,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr* tag, UINT32 type, UINT32 empty, 
   }
 
   tmpTag->type = type;
-  tmpTag->string = 0;
+  tmpTag->string.setEmpty();
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start : 0);
   tmpTag->tag = tagList;
   tmpTag->tagNext = 0;
@@ -536,7 +533,6 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
   EFI_STATUS  Status;
   UINT32      length = 0;
   UINT32      length2 = 0;
-  CHAR8*      tmpString;
   TagPtr      tmpTag;
   TagPtr      subTag = NULL;
 
@@ -556,15 +552,8 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
     return EFI_OUT_OF_RESOURCES;
   }
 
-  tmpString = NewSymbol(buffer);
-  if (tmpString == NULL) {
-    FreeTag(subTag);
-    FreeTag(tmpTag);
-    return EFI_OUT_OF_RESOURCES;
-  }
-
   tmpTag->type = kTagTypeKey;
-  tmpTag->string = tmpString;
+  tmpTag->string.takeValueFrom(buffer);
   tmpTag->tag = subTag;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
   tmpTag->tagNext = 0;
@@ -582,7 +571,6 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
-  CHAR8*    tmpString;
   TagPtr    tmpTag;
 
   Status = FixDataMatchingTag(buffer, kXMLTagString, &length);
@@ -595,16 +583,8 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
     return EFI_OUT_OF_RESOURCES;
   }
 
-  tmpString = XMLDecode(buffer);
-  tmpString = NewSymbol(tmpString);
-  if (tmpString == NULL)
-  {
-    FreeTag(tmpTag);
-    return EFI_OUT_OF_RESOURCES;
-  }
-
   tmpTag->type = kTagTypeString;
-  tmpTag->string = tmpString;
+  tmpTag->string.takeValueFrom(XMLDecode(buffer));
   tmpTag->tag = NULL;
   tmpTag->tagNext = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
@@ -641,7 +621,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   integer = 0;
   if(buffer[0] == '<') {
     tmpTag->type = kTagTypeInteger;
-    tmpTag->string = 0;
+    tmpTag->string.setEmpty();
     tmpTag->tag = 0;
     tmpTag->offset =  0;
     tmpTag->tagNext = 0;
@@ -696,7 +676,8 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 
 
   tmpTag->type = kTagTypeInteger;
-  tmpTag->string = (CHAR8*)(UINTN)integer;
+  tmpTag->string.S8Printf("%lld", integer);
+  tmpTag->intValue = integer;
   tmpTag->tag = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
   tmpTag->tagNext = NULL;
@@ -733,7 +714,9 @@ EFI_STATUS ParseTagFloat(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   AsciiStrToFloat(buffer, NULL, &fVar.B.fNum);
 //----
   tmpTag->type = kTagTypeFloat;
-  tmpTag->string = fVar.string;
+  tmpTag->string.S8Printf("%f", fVar.B.fNum);
+  tmpTag->intValue = (INTN)fVar.B.fNum;
+  tmpTag->floatValue = fVar.B.fNum;
   tmpTag->tag = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
   tmpTag->tagNext = NULL;
@@ -752,7 +735,6 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   UINT32    length = 0;
   UINTN     len = 0;
   TagPtr    tmpTag;
-  CHAR8*    tmpString;
 
   Status = FixDataMatchingTag(buffer, kXMLTagData,&length);
   if (EFI_ERROR(Status)) {
@@ -764,11 +746,10 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
     return EFI_OUT_OF_RESOURCES;
   }
   //Slice - correction as Apple 2003
-  tmpString = NewSymbol(buffer);
   tmpTag->type = kTagTypeData;
-  tmpTag->string = tmpString;
+  tmpTag->string.takeValueFrom(buffer);
   // dmazar: base64 decode data
-  tmpTag->data = (UINT8 *)Base64DecodeClover(tmpTag->string, &len);
+  tmpTag->data = (UINT8 *)Base64DecodeClover(tmpTag->string.c_str(), &len);
   tmpTag->dataLen = len;
   tmpTag->tag = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
@@ -801,7 +782,7 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
   }
 
   tmpTag->type = kTagTypeDate;
-  tmpTag->string = NULL;
+  tmpTag->string.setEmpty();
   tmpTag->tag = NULL;
   tmpTag->tagNext = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
@@ -825,7 +806,7 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenP
   }
 
   tmpTag->type = type;
-  tmpTag->string = NULL;
+  tmpTag->string.setEmpty();
   tmpTag->tag = NULL;
   tmpTag->tagNext = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
@@ -932,7 +913,7 @@ TagPtr NewTag( void )
   TagPtr  tag;
 
   if (gTagsFree == NULL) {
-    tag = (TagPtr)BllocateZeroPool(TAGCACHESIZE * sizeof(TagStruct));
+    tag = (TagPtr)AllocateZeroPool(TAGCACHESIZE * sizeof(TagStruct));
     if (tag == NULL) {
       return NULL;
     }
@@ -967,9 +948,8 @@ void FreeTag( TagPtr tag )
     return;
   }
 
-  if (tag->type != kTagTypeInteger && tag->string)  {
-    FreeSymbol(tag->string);
-  }
+  tag->string.setEmpty();
+
   if (tag->data) {
     FreePool(tag->data);
   }
@@ -979,7 +959,7 @@ void FreeTag( TagPtr tag )
 
   // Clear and free the tag.
   tag->type = kTagTypeNone;
-  tag->string = NULL;
+  tag->string.setEmpty();
   tag->data = NULL;
   tag->dataLen = 0;
   tag->tag = NULL;
@@ -989,108 +969,6 @@ void FreeTag( TagPtr tag )
 }
 
 
-CHAR8* NewSymbol(CHAR8* tmpString)
-{
-#if 0
-  SymbolPtr lastGuy = 0; // never used
-#endif
-  SymbolPtr symbol;
-  UINTN      len;
-  // Look for string in the list of symbols.
-  symbol = FindSymbol(tmpString, 0);
-
-  // Add the new symbol.
-  if (symbol == NULL) {
-    len = AsciiStrLen(tmpString);
-    symbol = (SymbolPtr)BllocateZeroPool(sizeof(Symbol) + len + 1);
-    if (symbol == NULL)  {
-      return NULL;
-    }
-
-    // Set the symbol's data.
-    symbol->refCount = 0;
-
-    AsciiStrnCpyS(symbol->string, len+1, tmpString, len);
-
-    // Add the symbol to the list.
-    symbol->next = gSymbolsHead;
-    gSymbolsHead = symbol;
-  }
-
-  // Update the refCount and return the string.
-  symbol->refCount++;
-
-#if 0
-  if (lastGuy && lastGuy->next != 0) { // lastGuy is always 0, accessing to ((SymbolPtr)null)->next can be dangerous.
-    return NULL;
-  }
-#endif
-
-  return symbol->string;
-}
-
-//==========================================================================
-// FreeSymbol
-
-void FreeSymbol(CHAR8* tmpString)
-{
-  SymbolPtr symbol, prev;
-  prev = NULL;
-
-  // Look for string in the list of symbols.
-  symbol = FindSymbol(tmpString, &prev);
-  if (symbol == NULL) {
-    return;
-  }
-
-  // Update the refCount.
-  symbol->refCount--;
-
-  if (symbol->refCount != 0) {
-    return;
-  }
-
-  // Remove the symbol from the list.
-  if (prev != NULL) {
-    prev->next = symbol->next;
-  }
-  else {
-    gSymbolsHead = symbol->next;
-  }
-
-  // Free the symbol's memory.
-  FreePool(symbol);
-}
-
-//==========================================================================
-// FindSymbol
-
-SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
-{
-  SymbolPtr symbol, prev;
-
-  if (tmpString == NULL) {
-    return NULL;
-  }
-
-  symbol = gSymbolsHead;
-  prev = NULL;
-
-  while (symbol != NULL) {
-    if (!AsciiStrCmp(symbol->string, tmpString)) {
-      break;
-    }
-
-    prev = symbol;
-    symbol = symbol->next;
-  }
-
-  if ((symbol != NULL) && (prevSymbol != NULL)) {
-    *prevSymbol = prev;
-  }
-
-  return symbol;
-}
 
 
 
@@ -1105,7 +983,7 @@ IsPropertyTrue(
 {
   return Prop != NULL &&
   ((Prop->type == kTagTypeTrue) ||
-   ((Prop->type == kTagTypeString) && Prop->string &&
+   ((Prop->type == kTagTypeString) && Prop->string.notEmpty() &&
     ((Prop->string[0] == 'y') || (Prop->string[0] == 'Y'))));
 }
 
@@ -1120,7 +998,7 @@ IsPropertyFalse(
 {
   return Prop != NULL &&
   ((Prop->type == kTagTypeFalse) ||
-   ((Prop->type == kTagTypeString) && Prop->string &&
+   ((Prop->type == kTagTypeString) && Prop->string.notEmpty() &&
     ((Prop->string[0] == 'N') || (Prop->string[0] == 'n'))));
 }
 
@@ -1142,18 +1020,18 @@ GetPropertyInteger(
   }
 
   if (Prop->type == kTagTypeInteger) {
-    return (INTN)Prop->string; //this is union char* or size_t
-  } else if ((Prop->type == kTagTypeString) && Prop->string) {
-    if ((Prop->string[1] == 'x') || (Prop->string[1] == 'X')) {
-      return (INTN)AsciiStrHexToUintn (Prop->string);
+    return Prop->intValue; //this is union char* or size_t
+  } else if ((Prop->type == kTagTypeString) && Prop->string.notEmpty()) {
+    if ( Prop->string.length() > 2  &&  (Prop->string[1] == 'x' || Prop->string[1] == 'X') ) {
+      return (INTN)AsciiStrHexToUintn(Prop->string);
     }
 
     if (Prop->string[0] == '-') {
-      return -(INTN)AsciiStrDecimalToUintn (Prop->string + 1);
+      return -(INTN)AsciiStrDecimalToUintn (Prop->string.c_str() + 1);
     }
 
 //    return (INTN)AsciiStrDecimalToUintn (Prop->string);
-    return (INTN)AsciiStrDecimalToUintn((Prop->string[0] == '+') ? (Prop->string + 1) : Prop->string);
+    return (INTN)AsciiStrDecimalToUintn((Prop->string[0] == '+') ? (Prop->string.c_str() + 1) : Prop->string.c_str());
   }
   return Default;
 }
@@ -1164,12 +1042,10 @@ float GetPropertyFloat (TagPtr Prop, float Default)
     return Default;
   }
   if (Prop->type == kTagTypeFloat) {
-    FlMix       fVar;
-    fVar.string = Prop->string;
-    return fVar.B.fNum; //this is union char* or float
-  } else if ((Prop->type == kTagTypeString) && Prop->string) {
+    return Prop->floatValue; //this is union char* or float
+  } else if ((Prop->type == kTagTypeString) && Prop->string.notEmpty()) {
     float fVar = 0.f;
-    if(!AsciiStrToFloat(Prop->string, NULL, &fVar)) //if success then return 0
+    if(!AsciiStrToFloat(Prop->string.c_str(), NULL, &fVar)) //if success then return 0
       return fVar;
   }
   

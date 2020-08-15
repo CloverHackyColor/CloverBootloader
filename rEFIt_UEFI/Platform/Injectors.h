@@ -15,7 +15,7 @@ extern UINT8                *mProperties;
 extern CHAR8                *gDeviceProperties;
 extern UINT32               cPropSize;
 extern UINT8                *cProperties;
-extern CHAR8                *cDeviceProperties;
+extern XString8              cDeviceProperties;
 extern CHAR8                *BootOSName;
 extern OC_ABC_SETTINGS      gQuirks;
 

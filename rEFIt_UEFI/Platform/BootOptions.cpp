@@ -397,7 +397,7 @@ AddToBootOrder (
   //
   // Make new order buffer with space for our option
   //
-  BootOrderNew = (__typeof__(BootOrderNew))BllocateZeroPool((BootOrderLen + 1) * sizeof(UINT16));
+  BootOrderNew = (__typeof__(BootOrderNew))AllocateZeroPool((BootOrderLen + 1) * sizeof(UINT16));
   if (BootOrderNew == NULL) {
     DBG("AddToBootOrder: EFI_OUT_OF_RESOURCES\n");
 	if (BootOrder) {
@@ -647,7 +647,7 @@ CompileBootOption (
                                 + BootOption->DescriptionSize 
                                 + BootOption->FilePathListLength
                                 + BootOption->OptionalDataSize;
-    BootOption->Variable = (__typeof__(BootOption->Variable))BllocateZeroPool(BootOption->VariableSize);
+    BootOption->Variable = (__typeof__(BootOption->Variable))AllocateZeroPool(BootOption->VariableSize);
     if (BootOption->Variable == NULL) {
         DBG("CompileBootOption: EFI_OUT_OF_RESOURCES\n");
         return EFI_OUT_OF_RESOURCES;

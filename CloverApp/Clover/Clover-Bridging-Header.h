@@ -19,10 +19,10 @@
 #endif
 */
 
-#import "NSWindowFix.h"
-#import "ThemeImage.h"
-#import "gfxutil.h"
-#import "efidevp.h"
+//#import "NSWindowFix.h"
+//#import "ThemeImage.h"
+//#import "gfxutil.h"
+//#import "efidevp.h"
 
 #define VOID void
 #define CONST const
@@ -31,7 +31,9 @@ typedef signed char         INT8;
 typedef unsigned char       UINT8;
 typedef UINT8               BOOLEAN;
 typedef char                CHAR8;
+#ifndef CHAR16
 typedef unsigned short      CHAR16;
+#endif
 typedef short               INT16;
 typedef unsigned short      UINT16;
 typedef int                 INT32;
@@ -112,8 +114,7 @@ typedef enum {
   kTagTypeArray
 } TAG_TYPE;
 
-typedef struct DEV_PROPERTY DEV_PROPERTY; //yyyy
-struct DEV_PROPERTY {
+typedef struct DEV_PROPERTY {
   UINT32        Device;
   EFI_DEVICE_PATH_PROTOCOL* DevicePath;
   CHAR8         *Key;
@@ -124,10 +125,9 @@ struct DEV_PROPERTY {
   CHAR8         *Label;
   INPUT_ITEM    MenuItem;
   TAG_TYPE      ValueType;
-};
+} DEV_PROPERTY;
 
-typedef struct KEXT_PATCH KEXT_PATCH;
-struct KEXT_PATCH
+typedef struct KEXT_PATCH
 {
   CHAR8       *Name;
   CHAR8       *Label;
@@ -141,7 +141,7 @@ struct KEXT_PATCH
   CHAR8       *MatchOS;
   CHAR8       *MatchBuild;
   INPUT_ITEM  MenuItem;
-};
+} KEXT_PATCH;
 
 typedef struct {
   CHAR8       *Label;
@@ -209,31 +209,27 @@ typedef struct KERNEL_AND_KEXT_PATCHES
   
 } KERNEL_AND_KEXT_PATCHES;
 
-typedef struct ACPI_NAME_LIST ACPI_NAME_LIST;
-struct ACPI_NAME_LIST {
+typedef struct ACPI_NAME_LIST {
   ACPI_NAME_LIST *Next;
   CHAR8          *Name;
-};
+} ACPI_NAME_LIST;
 
-typedef struct ACPI_DROP_TABLE ACPI_DROP_TABLE;
-struct ACPI_DROP_TABLE
+typedef struct ACPI_DROP_TABLE
 {
   ACPI_DROP_TABLE *Next;
   UINT32          Signature;
   UINT32          Length;
   UINT64          TableId;
   INPUT_ITEM      MenuItem;
-};
+} ACPI_DROP_TABLE;
 
-typedef struct RT_VARIABLES RT_VARIABLES;
-struct RT_VARIABLES {
+typedef struct RT_VARIABLES {
   //  BOOLEAN  Disabled;
   CHAR16   *Name;
   EFI_GUID VarGuid;
-};
+} RT_VARIABLES;
 
-typedef struct CUSTOM_LOADER_ENTRY CUSTOM_LOADER_ENTRY;
-struct CUSTOM_LOADER_ENTRY {
+typedef struct CUSTOM_LOADER_ENTRY {
   CUSTOM_LOADER_ENTRY     *Next;
   CUSTOM_LOADER_ENTRY     *SubEntries;
   EG_IMAGE                *Image;
@@ -256,10 +252,9 @@ struct CUSTOM_LOADER_ENTRY {
   EG_IMAGE                *CustomLogo;
   EG_PIXEL                *BootBgColor;
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches; //zzzz
-};
+} CUSTOM_LOADER_ENTRY;
 
-typedef struct CUSTOM_LEGACY_ENTRY CUSTOM_LEGACY_ENTRY;
-struct CUSTOM_LEGACY_ENTRY {
+typedef struct CUSTOM_LEGACY_ENTRY {
   CUSTOM_LEGACY_ENTRY *Next;
   EG_IMAGE            *Image;
   EG_IMAGE            *DriveImage;
@@ -272,10 +267,9 @@ struct CUSTOM_LEGACY_ENTRY {
   UINT8               Flags;
   UINT8               Type;
   UINT8               VolumeType;
-};
+} CUSTOM_LEGACY_ENTRY;
 
-typedef struct CUSTOM_TOOL_ENTRY CUSTOM_TOOL_ENTRY;
-struct CUSTOM_TOOL_ENTRY {
+typedef struct CUSTOM_TOOL_ENTRY {
   CUSTOM_TOOL_ENTRY *Next;
   EG_IMAGE          *Image;
   CHAR16            *ImagePath;
@@ -287,7 +281,7 @@ struct CUSTOM_TOOL_ENTRY {
   CHAR16            Hotkey;
   UINT8             Flags;
   UINT8             VolumeType;
-};
+} CUSTOM_TOOL_ENTRY;
 
 // Set of Search & replace bytes for VideoBiosPatchBytes().
 typedef struct _VBIOS_PATCH_BYTES {

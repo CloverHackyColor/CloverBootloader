@@ -1518,6 +1518,10 @@ class C
 //constexpr LStringW g_xsw1 = L"foobar";
 //XString g_xs2 = "foobar"_XS8;
 
+
+// U'𐄔' = 0x10114 : this is 2 utf16 chars (codepoint > 0xFFFF)
+// U'𐅃' = 0x10143 : this is 2 utf16 chars (codepoint > 0xFFFF)
+
 int XString_tests()
 {
 #ifdef JIEF_DEBUG
@@ -1576,6 +1580,12 @@ int XString_tests()
   XString8 xs8 = "  toTRIM  "_XS8;
 //  xs8.trim();
   xs8.lowerAscii();
+  
+  XString8 xsReplace = "babcbdeb"_XS8;
+  xsReplace.replaceAll(U'b', U'𐅃');
+
+  XString8 xsReplace2 = "𐄔a𐄔c𐄔de𐄔"_XS8;
+  xsReplace2.replaceAll(U'𐄔', U'x');
 
   // Quick check of stealValueFrom. TOTO proper test
   {

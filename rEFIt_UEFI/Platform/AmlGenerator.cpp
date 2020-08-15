@@ -52,7 +52,7 @@ BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node)
 
 AML_CHUNK* aml_create_node(AML_CHUNK* parent)
 {
-	AML_CHUNK* node = (AML_CHUNK*)BllocateZeroPool(sizeof(AML_CHUNK));
+	AML_CHUNK* node = (AML_CHUNK*)AllocateZeroPool(sizeof(AML_CHUNK));
 	
 	aml_add_to_parent(parent, node);
 	
@@ -91,7 +91,7 @@ AML_CHUNK* aml_add_buffer(AML_CHUNK* parent,  CONST UINT8* buffer, UINT32 size)
 	{
 		node->Type = AML_CHUNK_NONE;
 		node->Length = (UINT16)size;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		CopyMem(node->Buffer, buffer, node->Length);
 	}
 	
@@ -107,7 +107,7 @@ AML_CHUNK* aml_add_byte(AML_CHUNK* parent, UINT8 value)
 		node->Type = AML_CHUNK_BYTE;
 		
 		node->Length = 1;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		node->Buffer[0] = value;
 	}
 	
@@ -122,7 +122,7 @@ AML_CHUNK* aml_add_word(AML_CHUNK* parent, UINT16 value)
 	{
 		node->Type = AML_CHUNK_WORD;
 		node->Length = 2;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		node->Buffer[0] = value & 0xff;
 		node->Buffer[1] = value >> 8;
 	}
@@ -138,7 +138,7 @@ AML_CHUNK* aml_add_dword(AML_CHUNK* parent, UINT32 value)
 	{
 		node->Type = AML_CHUNK_DWORD;
 		node->Length = 4;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		node->Buffer[0] = value & 0xff;
 		node->Buffer[1] = (value >> 8) & 0xff;
 		node->Buffer[2] = (value >> 16) & 0xff;
@@ -156,7 +156,7 @@ AML_CHUNK* aml_add_qword(AML_CHUNK* parent, UINT64 value)
 	{
 		node->Type = AML_CHUNK_QWORD;
 		node->Length = 8;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		node->Buffer[0] = value & 0xff;
     node->Buffer[1] = RShiftU64(value, 8) & 0xff;
     node->Buffer[2] = RShiftU64(value, 16) & 0xff;
@@ -206,7 +206,7 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 	if (count == 1) 
 	{
 		node->Length = (UINT16)(4 + root);
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length+4);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length+4);
 		CopyMem(node->Buffer, name, 4 + root);
     offset += 4 + root;
 		return (UINT32)offset;
@@ -215,7 +215,7 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 	if (count == 2) 
 	{
 		node->Length = 2 + 8;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length+4);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length+4);
 		node->Buffer[offset++] = 0x5c; // Root Char
 		node->Buffer[offset++] = 0x2e; // Double name
 		CopyMem(node->Buffer+offset, name + root, 8);
@@ -224,7 +224,7 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 	}
 	
 	node->Length = (UINT16)(3 + (count << 2));
-	node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length+4);
+	node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length+4);
 	node->Buffer[offset++] = 0x5c; // Root Char
 	node->Buffer[offset++] = 0x2f; // Multi name
 	node->Buffer[offset++] = (CHAR8)count; // Names count
@@ -288,7 +288,7 @@ AML_CHUNK* aml_add_package(AML_CHUNK* parent)
 		node->Type = AML_CHUNK_PACKAGE;
 		
 		node->Length = 1;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 	}
 	
 	return node;
@@ -303,7 +303,7 @@ AML_CHUNK* aml_add_alias(AML_CHUNK* parent, /* CONST*/ CHAR8* name1, /* CONST*/ 
 		node->Type = AML_CHUNK_ALIAS;
 		
 		node->Length = 8;
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		aml_fill_simple_name(node->Buffer, name1);
 		aml_fill_simple_name(node->Buffer+4, name2);
 	}
@@ -385,7 +385,7 @@ AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, /* CONST*/ UINT8* data, UINT32
 	    INTN offset=0;
 		node->Type = AML_CHUNK_BUFFER;
 		node->Length = (UINT8)(size + 2);
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;  //0x0A
 		node->Buffer[offset++] = (CHAR8)size;
 		CopyMem(node->Buffer+offset, data, node->Length);
@@ -404,7 +404,7 @@ AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* StringBuf)
 	    UINTN len = AsciiStrLen(StringBuf);
 		node->Type = AML_CHUNK_BUFFER;
 		node->Length = (UINT8)(len + 3);
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(node->Length);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;
 		node->Buffer[offset++] = (CHAR8)(len + 1);
 		CopyMem(node->Buffer+offset, StringBuf, len);
@@ -423,7 +423,7 @@ AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* StringBuf)
 	    INTN len = AsciiStrLen(StringBuf);
 		node->Type = AML_CHUNK_STRING;
 		node->Length = (UINT8)(len + 1);
-		node->Buffer = (__typeof__(node->Buffer))BllocateZeroPool(len + 1);
+		node->Buffer = (__typeof__(node->Buffer))AllocateZeroPool(len + 1);
 		CopyMem(node->Buffer, StringBuf, len);
 //		node->Buffer[len] = '\0';
 	}

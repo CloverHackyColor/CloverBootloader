@@ -412,7 +412,7 @@ EFI_STATUS SaveHdaDumpBin()
 		HdaCodec.WidgetCount = AudioFuncGroup->WidgetsCount;
 		
 		// Allocate space for codec data
-		HdaCodecData = (__typeof__(HdaCodecData))BllocateZeroPool(HdaCodecDataSize);
+		HdaCodecData = (__typeof__(HdaCodecData))AllocateZeroPool(HdaCodecDataSize);
 		HdaCodecDataPtr = HdaCodecData;
 	
 		if (!HdaCodecData)

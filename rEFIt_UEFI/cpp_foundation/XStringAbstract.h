@@ -232,10 +232,6 @@ public:
 
 	// no assignement, no destructor
 
-	template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	T* data(IntegralType pos) const { return _data(pos); }
-
-
 	size_t length() const { return length_of_utf_string(m_data); }
 //	size_t sizeZZ() const { return size_of_utf_string(m_data); }
 	size_t sizeInNativeChars() const { return size_of_utf_string(m_data); }
@@ -244,7 +240,7 @@ public:
 
 
 	const T* s() const { return m_data; }
-	const T* data() const { return m_data; } // todo delete
+	const T* data() const { return m_data; }
 
 	/* Empty ? */
 	bool isEmpty() const { return m_data == nullptr  ||  *m_data == 0; }
@@ -592,8 +588,12 @@ class XStringAbstract : public __String<T, ThisXStringClass>
 	 */
 	void Alloc(size_t nNewSize)
 	{
-			if ( m_allocatedSize == 0 ) m_data = (T*)malloc( nNewSize*sizeof(T) );
-			else m_data = (T*)Xrealloc(m_data, nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
+			if ( m_allocatedSize == 0 ) {
+        m_data = (T*)malloc( nNewSize*sizeof(T) );
+      }
+			else {
+        m_data = (T*)Xrealloc(m_data, nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
+      }
 			if ( !m_data ) {
 				panic("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, uintptr_t(m_data), nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
 			}
@@ -604,7 +604,7 @@ class XStringAbstract : public __String<T, ThisXStringClass>
   /*
    * Make sure this string has allocated size of at least nNewSize+1.
    */
-	T *CheckSize(size_t nNewSize, size_t nGrowBy = XStringGrowByDefault) // nNewSize is in number of chars, NOT bytes
+	bool CheckSize(size_t nNewSize, size_t nGrowBy = XStringGrowByDefault) // nNewSize is in number of chars, NOT bytes
 	{
 		//DBG_XSTRING("CheckSize: m_size=%d, nNewSize=%d\n", m_size, nNewSize);
 		if ( m_allocatedSize < nNewSize+1 )
@@ -617,11 +617,13 @@ class XStringAbstract : public __String<T, ThisXStringClass>
 				m_data = NULL;
 				Alloc(nNewSize+1);
 				utf_string_from_utf_string(m_data, m_allocatedSize, m_dataSav);
+        return true;
 			}else{
 				Alloc(nNewSize+1);
+        return true;
 			}
-		}
-		return m_data;
+    }
+		return false;
 	}
 //	void setSize(size_t newSize) // nNewSize is in number of chars, NOT bytes
 //	{
@@ -697,6 +699,10 @@ public:
 		else m_data[0] = 0;
 	}
 
+  T* data() const { return m_data; }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  T* data(IntegralType pos) const { return __String<T, ThisXStringClass>::_data(pos); }
 	
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	T* dataSized(IntegralType size)
@@ -894,6 +900,39 @@ public:
     return *((ThisXStringClass*)this);
   }
   
+  ThisXStringClass& replaceAll(char32_t charToSearch, char32_t charToReplaceBy)
+  {
+    size_t currentSize = __String<T, ThisXStringClass>::sizeInNativeChars(); // size is number of T, not in bytes
+    size_t charToSearchSize = utf_size_of_utf_string_len(m_data, &charToSearch, 1); // size is number of T, not in bytes
+    size_t charToReplaceBySize = utf_size_of_utf_string_len(m_data, &charToReplaceBy, 1); // size is number of T, not in bytes
+    // careful because 'charToReplaceBySize - charToSearchSize' overflows when charToSearchSize > charToReplaceBySize, which happens.
+
+    char32_t char32;
+    T* previousData = m_data;
+    T* previousP = m_data;
+    T* p = get_char32_from_string(previousP, &char32);;
+    while ( char32 ) {
+      if (!char32) break;
+      if ( char32 == charToSearch ) {
+        if ( CheckSize(currentSize + charToReplaceBySize - charToSearchSize) ) {
+          previousP = m_data + ( previousP - previousData );
+          p = m_data + ( p - previousData );
+          previousData = m_data;
+        }
+        memmove(p+charToReplaceBySize-charToSearchSize, p, uintptr_t(m_data + currentSize - p + 1)*sizeof(T));
+        p += charToReplaceBySize;
+        p -= charToSearchSize;
+        currentSize += charToReplaceBySize;
+        currentSize -= charToSearchSize;
+        utf_stringnn_from_utf_string(previousP, charToReplaceBySize, &charToReplaceBy);
+      }
+      previousP = p;
+      p = get_char32_from_string(previousP, &char32);;
+    }
+    return *((ThisXStringClass*)this);
+  }
+
+
   void trim()
   {
     T* start = 0;
@@ -946,7 +985,7 @@ public:
   template<typename O, enable_if(is_char(O))>
   ThisXStringClass& takeValueFrom(const O C) { strcpy(C); return *((ThisXStringClass*)this); }
 	template<typename O, class OtherXStringClass>
-	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S, size_t len) { strncpy(S.data(0), len); return *((ThisXStringClass*)this);	}
+	ThisXStringClass& takeValueFrom(const __String<O, OtherXStringClass>& S, size_t len) { strncpy(S.s(), len); return *((ThisXStringClass*)this);	}
 	template<typename O>
 	ThisXStringClass& takeValueFrom(const O* S, size_t len) {	strncpy(S, len); return *((ThisXStringClass*)this); }
 	

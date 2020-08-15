@@ -31,24 +31,24 @@ struct _xstringarray__char_type<T*, enable_if_t(is_char(T))>
 {
     static const T* getCharPtr(T* t) { return t; }
 };
-//
+
 //template<typename T>
 //struct _xstringarray__char_type<const T*, enable_if_t(is_char(T))>
 //{
 //    static const T* getCharPtr(const T* t) { return t; }
 //};
-//
-//template<typename T>
-//struct _xstringarray__char_type<const T[]>
-//{
-//    static const T* getCharPtr(const T* t) { return t; }
-//};
-//
-//template<typename T, size_t _Np>
-//struct _xstringarray__char_type<const T[_Np]>
-//{
-//    static const T* getCharPtr(const T* t) { return t; }
-//};
+
+template<typename T>
+struct _xstringarray__char_type<const T[]>
+{
+    static const T* getCharPtr(T* t) { return t; }
+};
+
+template<typename T, size_t _Np>
+struct _xstringarray__char_type<T[_Np]>
+{
+    static const T* getCharPtr(const T* t) { return t; }
+};
 
 
 

@@ -505,7 +505,7 @@ VOID LOADER_ENTRY::FilterBootPatches()
 VOID ReadSIPCfg()
 {
   UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
-  CHAR16 *csrLog = (__typeof__(csrLog))BllocateZeroPool(SVALUE_MAX_SIZE);
+  CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
     StrCatS(csrLog, SVALUE_MAX_SIZE/2, L"CSR_ALLOW_UNTRUSTED_KEXTS");
@@ -898,7 +898,7 @@ VOID LOADER_ENTRY::StartLoader()
       //        Let's do it like it was before when not in case of APFSTargetUUID
       SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
     }
-  } else if (gSettings.DefaultVolume != NULL) {
+  } else if (gSettings.DefaultVolume.notEmpty()) {
     // DefaultVolume specified in Config.plist or in Boot Option
     // we'll remove macOS Startup Disk vars which may be present if it is used
     // to reboot into another volume
@@ -1016,7 +1016,7 @@ VOID LEGACY_ENTRY::StartLegacy()
 
     if (gSettings.LastBootedVolume) {
       SetStartupDiskVolume(Volume, NullXStringW);
-    } else if (gSettings.DefaultVolume != NULL) {
+    } else if (gSettings.DefaultVolume.notEmpty()) {
       // DefaultVolume specified in Config.plist:
       // we'll remove macOS Startup Disk vars which may be present if it is used
       // to reboot into another volume
@@ -1040,11 +1040,11 @@ VOID LEGACY_ENTRY::StartLegacy()
           Status = bootMBR(Volume);
           break;
         case BOOTING_BY_PBR:
-          if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosDefault") == 0) {
+          if (gSettings.LegacyBoot == "LegacyBiosDefault"_XS8) {
             Status = bootLegacyBiosDefault(gSettings.LegacyBiosDefaultEntry);
-          } else if (StrCmp(gSettings.LegacyBoot, L"PBRtest") == 0) {
+          } else if (gSettings.LegacyBoot == "PBRtest"_XS8) {
             Status = bootPBRtest(Volume);
-          } else if (StrCmp(gSettings.LegacyBoot, L"PBRsata") == 0) {
+          } else if (gSettings.LegacyBoot == "PBRsata"_XS8) {
             Status = bootPBR(Volume, TRUE);
           } else {
             // default
@@ -1185,7 +1185,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
         if (DriversArrSize == 0) {
           // new array
           DriversArrSize = 16;
-          DriversArr = (__typeof__(DriversArr))BllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
+          DriversArr = (__typeof__(DriversArr))AllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
         } else if (DriversArrNum + 1 == DriversArrSize) {
           // extend array
           DriversArr = (__typeof__(DriversArr))ReallocatePool(DriversArrSize, DriversArrSize + 16, DriversArr);
@@ -1593,10 +1593,10 @@ INTN FindDefaultEntry(VOID)
   // if not found, then try DefaultVolume from config.plist
   // if not null or empty, search volume that matches gSettings.DefaultVolume
   //
-  if (gSettings.DefaultVolume != NULL) {
+  if (gSettings.DefaultVolume.notEmpty()) {
 
     // if not null or empty, also search for loader that matches gSettings.DefaultLoader
-    SearchForLoader = (gSettings.DefaultLoader != NULL && gSettings.DefaultLoader[0] != L'\0');
+    SearchForLoader = gSettings.DefaultLoader.notEmpty();
 /*
     if (SearchForLoader) {
       DBG("Searching for DefaultVolume '%ls', DefaultLoader '%ls' ...\n", gSettings.DefaultVolume, gSettings.DefaultLoader);
@@ -1612,8 +1612,8 @@ INTN FindDefaultEntry(VOID)
       }
 
       Volume = Entry.Volume;
-      if ((Volume->VolName.isEmpty() || StrCmp(Volume->VolName.wc_str(), gSettings.DefaultVolume) != 0) &&
-          !StrStr(Volume->DevicePathString.wc_str(), gSettings.DefaultVolume)) {
+      if ( (Volume->VolName.isEmpty() || Volume->VolName != gSettings.DefaultVolume)  &&
+           !Volume->DevicePathString.contains(gSettings.DefaultVolume) ) {
         continue;
       }
 
@@ -1644,7 +1644,7 @@ VOID SetVariablesFromNvram()
 {
   CHAR8  *tmpString;
   UINTN   Size = 0;
-  UINTN   index = 0, index2, len, i;
+  UINTN   index = 0, index2, i;
   CHAR8  *arg = NULL;
 
 //  DbgHeader("SetVariablesFromNvram");
@@ -1690,19 +1690,15 @@ VOID SetVariablesFromNvram()
         DBG("...ignoring arg:%s\n", arg);
         continue;
       }
-      if (!AsciiStrStr(gSettings.BootArgs, arg)) {
+      if (!gSettings.BootArgs.contains(arg)) {
         //this arg is not present will add
         DBG("...adding arg:%s\n", arg);
-        len = iStrLen(gSettings.BootArgs, 256);
-        if (len + index2 > 256) {
-          DBG("boot-args overflow... bytes=%llu+%llu\n", len, index2);
-          break;
-        }
-        gSettings.BootArgs[len++] = 0x20;
+        gSettings.BootArgs.trim();
+        gSettings.BootArgs += ' ';
         for (i = 0; i < index2; i++) {
-          gSettings.BootArgs[len++] = arg[i];
+          gSettings.BootArgs += arg[i];
         }
-        gSettings.BootArgs[len++] = 0x20;
+        gSettings.BootArgs += ' ';
       }
     }
     FreePool(arg);
@@ -1752,15 +1748,15 @@ VOID SetOEMPath(const XStringW& ConfName)
     OEMPath.takeValueFrom("EFI\\CLOVER");
     if ( ConfName.isEmpty() ) {
       DBG("set OEMPath (ConfName == NULL): %ls\n", OEMPath.wc_str());
-    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
-    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
-    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
-    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct, gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
-    } else if (!gFirmwareClover && SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s\\UEFI", gSettings.OEMBoard), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMProduct), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMBoard), ConfName)) {
-    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMBoard, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
+    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
+    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
+    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
+    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
+    } else if (!gFirmwareClover && SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s\\UEFI", gSettings.OEMBoard.c_str()), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMProduct.c_str()), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMProduct.c_str(), (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMBoard.c_str()), ConfName)) {
+    } else if (SetOEMPathIfExists(SelfRootDir, SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMBoard.c_str(), (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
     } else {
       DBG("set OEMPath by default: %ls\n", OEMPath.wc_str());
     }
@@ -1800,7 +1796,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   REFIT_ABSTRACT_MENU_ENTRY  *OptionEntry = NULL;
   INTN              DefaultIndex;
   UINTN             MenuExit;
-  UINTN             Size, i;
+  UINTN             i;
 	//UINT64            TscDiv;
 	//UINT64            TscRemainder = 0;
 //  LOADER_ENTRY      *LoaderEntry;
@@ -1927,19 +1923,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   PrepatchSmbios();
 
   //replace / with _
-  Size = iStrLen(gSettings.OEMProduct, 64);
-  for (i=0; i<Size; i++) {
-    if (gSettings.OEMProduct[i] == 0x2F) {
-      gSettings.OEMProduct[i] = 0x5F;
-    }
-  }
-  Size = iStrLen(gSettings.OEMBoard, 64);
-  for (i=0; i<Size; i++) {
-    if (gSettings.OEMBoard[i] == 0x2F) {
-      gSettings.OEMBoard[i] = 0x5F;
-    }
-  }
-  DBG("Running on: '%s' with board '%s'\n", gSettings.OEMProduct, gSettings.OEMBoard);
+  gSettings.OEMProduct.replaceAll(U'/', U'_');
+  gSettings.OEMBoard.replaceAll(U'/', U'_');
+  DBG("Running on: '%s' with board '%s'\n", gSettings.OEMProduct.c_str(), gSettings.OEMBoard.c_str());
 
   GetCPUProperties();
   GetDevices();
@@ -2250,7 +2236,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GlobalConfig.StrictHibernate = FALSE;    
   }
 */
-  HaveDefaultVolume = gSettings.DefaultVolume != NULL;
+  HaveDefaultVolume = gSettings.DefaultVolume.notEmpty();
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
       !HaveDefaultVolume &&
@@ -2316,7 +2302,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (ThemeX.embedded) {
         DBG("Chosen embedded theme\n");
       } else {
-        DBG("Chosen theme %ls\n", ThemeX.Theme.data());
+        DBG("Chosen theme %ls\n", ThemeX.Theme.wc_str());
       }
 
 //      DBG("initial boot-args=%s\n", gSettings.BootArgs);
@@ -2324,7 +2310,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       SetVariablesFromNvram();
       
     XString8Array TmpArgs = Split<XString8Array>(gSettings.BootArgs, " ");
-      DBG("after NVRAM boot-args=%s\n", gSettings.BootArgs);
+      DBG("after NVRAM boot-args=%s\n", gSettings.BootArgs.c_str());
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", gSettings.OptionsBits);
       FillInputs(TRUE);
@@ -2652,7 +2638,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
               Description = SWPrintf("Clover start %ls at %ls", (LoaderName != NULL)?LoaderName:L"legacy", VolName.wc_str());
               OptionalDataSize = NameSize + Name2Size + 4 + 2; //signature + VolNameSize
-              OptionalData = (__typeof__(OptionalData))BllocateZeroPool(OptionalDataSize);
+              OptionalData = (__typeof__(OptionalData))AllocateZeroPool(OptionalDataSize);
               if (OptionalData == NULL) {
                 break;
               }

@@ -130,7 +130,7 @@ STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureLis
   OldSignatureList = *SignatureList;
   if (OldSignatureList == NULL) {
     // There is no list so create a new signature list
-    NewSignatureList = (EFI_SIGNATURE_LIST *)BllocateZeroPool(sizeof(EFI_SIGNATURE_LIST) + DataSize);
+    NewSignatureList = (EFI_SIGNATURE_LIST *)AllocateZeroPool(sizeof(EFI_SIGNATURE_LIST) + DataSize);
     if (NewSignatureList == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -162,7 +162,7 @@ STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureLis
     Ptr += OldSignatureList->SignatureSize;
   }
   // Create a new list for signatures
-  NewSignatureList = (EFI_SIGNATURE_LIST *)BllocateZeroPool(OldSignatureList->SignatureListSize + DataSize);
+  NewSignatureList = (EFI_SIGNATURE_LIST *)AllocateZeroPool(OldSignatureList->SignatureListSize + DataSize);
   if (NewSignatureList == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -666,7 +666,7 @@ STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
   SectionPtr = (EFI_IMAGE_SECTION_HEADER *)(ImageBase + PeHeaderOffset + sizeof(EFI_IMAGE_FILE_HEADER) +
                                             sizeof(UINT32) + PeHeader.Pe32->FileHeader.SizeOfOptionalHeader);
   // Allocate a new array for the image section headers
-  Sections = (__typeof__(Sections))BllocateZeroPool(sizeof(EFI_IMAGE_SECTION_HEADER) * PeHeader.Pe32->FileHeader.NumberOfSections);
+  Sections = (__typeof__(Sections))AllocateZeroPool(sizeof(EFI_IMAGE_SECTION_HEADER) * PeHeader.Pe32->FileHeader.NumberOfSections);
   if (Sections == NULL) {
     goto Failed;
   }
@@ -711,7 +711,7 @@ STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
   }
   // Create the signature list
   Size = (sizeof(EFI_SIGNATURE_LIST) + sizeof(EFI_GUID) + 256);
-  Database = (__typeof__(Database))BllocateZeroPool(Size);
+  Database = (__typeof__(Database))AllocateZeroPool(Size);
   if (Database == NULL) {
     goto Failed;
   }

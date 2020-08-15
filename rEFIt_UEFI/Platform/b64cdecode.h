@@ -53,7 +53,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 
 UINT8
 *Base64DecodeClover (
-  IN      CHAR8 *EncodedData,
+  IN CONST CHAR8 *EncodedData,
      OUT  UINTN *DecodedSize
   );
 

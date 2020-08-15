@@ -211,42 +211,42 @@ public:
   DEV_PROPERTY& operator=(const DEV_PROPERTY&) = delete;
 };
 
-#pragma GCC diagnostic error "-Wpadded"
+//#pragma GCC diagnostic error "-Wpadded"
 
 class SETTINGS_DATA {
 public:
   // SMBIOS TYPE0
-  CHAR8                   VendorName[64];
-  CHAR8                   RomVersion[64];
+  XString8                VendorName;
+  XString8                RomVersion;
   XString8                EfiVersion;
-  CHAR8                   ReleaseDate[64];
+  XString8                ReleaseDate;
   // SMBIOS TYPE1
-  CHAR8                   ManufactureName[64];
-  CHAR8                   ProductName[64];
-  CHAR8                   VersionNr[64];
-  CHAR8                   SerialNr[64];
+  XString8                   ManufactureName;
+  XString8                ProductName;
+  XString8                   VersionNr;
+  XString8                   SerialNr;
   EFI_GUID                SmUUID;
   BOOLEAN                 SmUUIDConfig;
   CHAR8                   pad0[7];
-//CHAR8                    Uuid[64];
-//CHAR8                    SKUNumber[64];
-  CHAR8                   FamilyName[64];
-  CHAR8                   OEMProduct[64];
-  CHAR8                   OEMVendor[64];
+//CHAR8                    Uuid;
+//CHAR8                    SKUNumber;
+  XString8                   FamilyName;
+  XString8                   OEMProduct;
+  XString8                   OEMVendor;
   // SMBIOS TYPE2
-  CHAR8                   BoardManufactureName[64];
-  CHAR8                   BoardSerialNumber[64];
-  CHAR8                   BoardNumber[64]; //Board-ID
-  CHAR8                   LocationInChassis[64];
-  CHAR8                   BoardVersion[64];
-  CHAR8                   OEMBoard[64];
+  XString8                   BoardManufactureName;
+  XString8                   BoardSerialNumber;
+  XString8                   BoardNumber; //Board-ID
+  XString8                   LocationInChassis;
+  XString8                   BoardVersion;
+  XString8                   OEMBoard;
   UINT8                   BoardType;
   UINT8                   pad1;
   // SMBIOS TYPE3
   BOOLEAN                 Mobile;
   UINT8                   ChassisType;
-  CHAR8                   ChassisManufacturer[64];
-  CHAR8                   ChassisAssetTag[64];
+  XString8                   ChassisManufacturer;
+  XString8                   ChassisAssetTag;
   // SMBIOS TYPE4
   UINT32                  CpuFreqMHz;
   UINT32                  BusSpeed; //in kHz
@@ -258,10 +258,10 @@ public:
   UINT16                  SmbiosVersion;
   INT8                    Attribute;
   INT8                    pad17[1];
-  CHAR8                   MemoryManufacturer[64];
-  CHAR8                   MemorySerialNumber[64];
-  CHAR8                   MemoryPartNumber[64];
-  CHAR8                   MemorySpeed[64];
+  XString8                   MemoryManufacturer;
+  XString8                   MemorySerialNumber;
+  XString8                   MemoryPartNumber;
+  XString8                   MemorySpeed;
   // SMBIOS TYPE131
   UINT16                  CpuType;
   // SMBIOS TYPE132
@@ -280,14 +280,15 @@ public:
   BOOLEAN                 NoRomInfo;
 
   // OS parameters
-  CHAR8                   Language[16];
-  CHAR8                   BootArgs[256];
-  INT8                    pad19[1];
-  CHAR16                  CustomUuid[40];
+  INT8                    pad181[7];
+  XString8                Language;
+  XString8                BootArgs;
+  INT8                    pad19[2];
+  XStringW                CustomUuid;
 
   INT8                    pad20[6];
-  CHAR16                  *DefaultVolume;
-  CHAR16                  *DefaultLoader;
+  XStringW                DefaultVolume;
+  XStringW                DefaultLoader;
 //Boot
   BOOLEAN                 LastBootedVolume;
   BOOLEAN                 SkipHibernateTimeout;
@@ -342,7 +343,7 @@ public:
   BOOLEAN                 EnableC7;
   UINT8                   SavingMode;
 
-  CHAR16                  DsdtName[28];
+  XStringW                DsdtName;
   UINT32                  FixDsdt;
   UINT8                   MinMultiplier;
   UINT8                   MaxMultiplier;
@@ -391,7 +392,7 @@ public:
   UINT8                   EdidFixVideoInputSignal;
 
   UINT8                   pad26[1];
-  CHAR16                  FBName[16];
+  XStringW                FBName;
   UINT16                  VideoPorts;
   BOOLEAN                 NvidiaGeneric;
   BOOLEAN                 NvidiaNoEFI;
@@ -436,7 +437,7 @@ public:
  // UINT8                   pad61[2];
 
   // LegacyBoot
-  CHAR16                  LegacyBoot[32];
+  XStringW                LegacyBoot;
   UINT16                  LegacyBiosDefaultEntry;
 
   //SkyLake
@@ -454,7 +455,7 @@ public:
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
-  CHAR8                   AirportBridgeDeviceName[5];
+  XString8                AirportBridgeDeviceName;
 
   // Pre-language
   BOOLEAN                 KbdPrevLang;
@@ -475,13 +476,13 @@ public:
 
   // SysVariables
   UINT8                   pad30[4];
-  CHAR8                   *RtMLB;
+  XString8                RtMLB;
   UINT8                   *RtROM;
   UINTN                   RtROMLen;
 
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
-  CHAR8                   BooterCfgStr[64];
+  XString8                BooterCfgStr;
   BOOLEAN                 DisableCloverHotkeys;
   BOOLEAN                 NeverDoRecovery;
 
@@ -618,7 +619,7 @@ public:
 
 };
 
-#pragma GCC diagnostic ignored "-Wpadded"
+//#pragma GCC diagnostic ignored "-Wpadded"
 
 typedef enum {
   english = 0,  //en

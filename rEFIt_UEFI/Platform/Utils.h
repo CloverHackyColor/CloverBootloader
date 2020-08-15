@@ -36,10 +36,39 @@
 
 
 ////VOID        LowCase (IN OUT CHAR8 *Str);
-UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
+UINT32      hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
 BOOLEAN     IsHexDigit (CHAR8 c);
-UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
+UINT8       hexstrtouint8 (CONST CHAR8* buf); //one or two hex letters to one byte
 XString8    Bytes2HexStr(UINT8 *data, UINTN len);
 
+inline
+UINT64
+EFIAPI
+AsciiStrHexToUint64 (
+    const XString8& String
+  )
+{
+  return AsciiStrHexToUint64(String.c_str());
+}
+
+inline
+UINTN
+EFIAPI
+AsciiStrHexToUintn (
+    const XString8& String
+  )
+{
+  return AsciiStrHexToUintn(String.c_str());
+}
+
+inline
+UINTN
+EFIAPI
+AsciiStrDecimalToUintn (
+  const XString8& String
+  )
+{
+  return AsciiStrDecimalToUintn(String.c_str());
+}
 
 #endif

@@ -125,7 +125,7 @@ static EFI_STATUS AddLockedGraphicsGOP(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
   }
   // Create a new locked graphics if needed
   if (Ptr == NULL) {
-    Ptr = (LOCKED_GRAPHICS *)BllocateZeroPool(sizeof(LOCKED_GRAPHICS));
+    Ptr = (LOCKED_GRAPHICS *)AllocateZeroPool(sizeof(LOCKED_GRAPHICS));
     if (Ptr == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }
@@ -319,7 +319,7 @@ static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
   }
   // Create a new locked graphics if needed
   if (Ptr == NULL) {
-    Ptr = (LOCKED_GRAPHICS *)BllocateZeroPool(sizeof(LOCKED_GRAPHICS));
+    Ptr = (LOCKED_GRAPHICS *)AllocateZeroPool(sizeof(LOCKED_GRAPHICS));
     if (Ptr == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

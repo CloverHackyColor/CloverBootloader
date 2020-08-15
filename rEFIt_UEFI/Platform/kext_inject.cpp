@@ -81,7 +81,7 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
   return EFI_SUCCESS;
 }
 
-void toLowerStr(CHAR8 *tstr, CHAR8 *str) {
+void toLowerStr(CHAR8 *tstr, IN CONST CHAR8 *str) {
     UINT16 cnt = 0;
     
     for (cnt = 0; *str != '\0' && cnt <= 0xFF; cnt++, str++, tstr++) {
@@ -96,21 +96,21 @@ void toLowerStr(CHAR8 *tstr, CHAR8 *str) {
 BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
 {
     BOOLEAN inject = TRUE;
-    TagPtr  osBundleRequired;
-    CHAR8   osbundlerequired[256];
+    TagPtr  osBundleRequiredTag;
+    XString8 osbundlerequired;
     
-    osBundleRequired = GetProperty(dict,"OSBundleRequired");
-    if (osBundleRequired)
-        toLowerStr(osbundlerequired, osBundleRequired->string);
-    else
-        osbundlerequired[0] = '\0';
+    osBundleRequiredTag = GetProperty(dict,"OSBundleRequired");
+    if (osBundleRequiredTag) {
+      osbundlerequired = osBundleRequiredTag->string;
+      osbundlerequired.lowerAscii();
+    }
 
     if (OSTYPE_IS_OSX_RECOVERY(loaderType) ||
         OSTYPE_IS_OSX_INSTALLER(loaderType)) {
-        if (strncmp(osbundlerequired, "root", 4) &&
-            strncmp(osbundlerequired, "local", 5) &&
-            strncmp(osbundlerequired, "console", 7) &&
-            strncmp(osbundlerequired, "network-root", 12)) {
+        if ( osbundlerequired != "root"_XS8  &&
+             osbundlerequired != "local"_XS8  &&
+             osbundlerequired != "console"_XS8  &&
+             osbundlerequired != "network-root"_XS8 ) {
             inject = FALSE;
         }
     }
@@ -193,7 +193,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
     }
   }
   bundlePathBufferLength = StrLen(FileName) + 1;
-  bundlePathBuffer = (__typeof__(bundlePathBuffer))BllocateZeroPool(bundlePathBufferLength);
+  bundlePathBuffer = (__typeof__(bundlePathBuffer))AllocateZeroPool(bundlePathBufferLength);
   UnicodeStrToAsciiStrS(FileName, bundlePathBuffer, bundlePathBufferLength);
 
   kext->length = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength);
@@ -517,10 +517,10 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
   // reserve space in the device tree
   if (GetKextCount() > 0) {
     mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
-    mm_extra = (__typeof__(mm_extra))BllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
+    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
     /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
     extra_size = GetKextsSize();
-    extra = (__typeof__(extra))BllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
     /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE));
     // MsgLog("count: %d    \n", GetKextCount());
     // MsgLog("mm_extra_size: %d    \n", mm_extra_size);

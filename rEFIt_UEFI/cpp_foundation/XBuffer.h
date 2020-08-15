@@ -136,7 +136,7 @@ class XBuffer : public XBuffer_Super
 
   void cat(void* p) { ncat(&p, sizeof(p)); };
 
-	void cat(const XString8 &aXString8);
+//	void cat(const XString8 &aXString8);
 	void cat(const XBuffer &unXBuffer) { ncat(unXBuffer.Length()); ncat(unXBuffer.Data(), unXBuffer.Length()); }
 	void deleteAtPos(unsigned int pos, unsigned int count=1);
 
@@ -282,13 +282,13 @@ void XBuffer<T>::ncat(const void *buf, size_t len)
     setSize(size()+len);
   }
 }
-
-template <typename T>
-void XBuffer<T>::cat(const XString8 &aXString8)
-{
-  cat(aXString8.sizeInBytes());
-  cat(aXString8.data(),aXString8.sizeInBytes());
-};
+//
+//template <typename T>
+//void XBuffer<T>::cat(const XString8 &aXString8)
+//{
+//  cat(aXString8.sizeInBytes());
+//  cat(aXString8.s(), aXString8.sizeInBytes());
+//};
 
 template <typename T>
 void XBuffer<T>::deleteAtPos(unsigned int pos, unsigned int count)

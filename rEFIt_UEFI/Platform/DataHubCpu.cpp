@@ -83,7 +83,7 @@ typedef struct {
   UINT32                    NameLen; /// 0x58 (in bytes)
   UINT32                    ValLen;  /// 0x5c
   UINT8                     Data[1]; /// 0x60 Name Value
-} PLATFORM_DATA;
+} PLATFORM_DATA_RECORD;
 #pragma pack()
 
 // CopyRecord
@@ -96,7 +96,7 @@ typedef struct {
 ///
 /// @return The size of the new PLATFORM_DATA object is returned
 UINT32 EFIAPI
-CopyRecord(IN        PLATFORM_DATA *Rec,
+CopyRecord(IN        PLATFORM_DATA_RECORD *Rec,
            IN  CONST CHAR16        *Name,
            IN        VOID          *Val,
            IN        UINT32        ValLen)
@@ -116,29 +116,46 @@ EFI_STATUS EFIAPI
 LogDataHub(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
            IN  VOID     *Data,
-           IN  UINT32   DataSize)
+           IN  UINT32    DataSize)
 {
   UINT32        RecordSize;
   EFI_STATUS    Status;
-  PLATFORM_DATA *PlatformData;
+  PLATFORM_DATA_RECORD *platform_data_record;
 
-  PlatformData = (PLATFORM_DATA*)AllocatePool(sizeof(PLATFORM_DATA) + DataSize + EFI_CPU_DATA_MAXIMUM_LENGTH);
-  if (PlatformData == NULL) {
+  platform_data_record = (PLATFORM_DATA_RECORD*)AllocatePool(sizeof(PLATFORM_DATA_RECORD) + DataSize + EFI_CPU_DATA_MAXIMUM_LENGTH);
+  if (platform_data_record == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
 
-  RecordSize = CopyRecord(PlatformData, Name, Data, DataSize);
+  RecordSize = CopyRecord(platform_data_record, Name, Data, DataSize);
   Status     = gDataHub->LogData(gDataHub,
                                  TypeGuid,                   // DataRecordGuid
                                  &gDataHubPlatformGuid,      // ProducerName (always)
                                  EFI_DATA_RECORD_CLASS_DATA,
-                                 PlatformData,
+                                 platform_data_record,
                                  RecordSize);
 
-  FreePool(PlatformData);
+  FreePool(platform_data_record);
   return Status;
 }
 
+EFI_STATUS EFIAPI
+LogDataHubXString8(IN  EFI_GUID *TypeGuid,
+           IN  CONST CHAR16   *Name,
+           const XString8& s)
+{
+  if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) panic("LogDataHub s.length > MAX_UINT32");
+  return LogDataHub(TypeGuid, Name, (void*)s.c_str(), (UINT32)s.sizeInBytesIncludingTerminator());
+}
+
+EFI_STATUS EFIAPI
+LogDataHubXStringW(IN  EFI_GUID *TypeGuid,
+           IN  CONST CHAR16   *Name,
+           const XStringW& s)
+{
+  if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) panic("LogDataHub s.length > MAX_UINT32");
+  return LogDataHub(TypeGuid, Name, (void*)s.wc_str(), (UINT32)s.sizeInBytesIncludingTerminator());
+}
 
 
 // SetVariablesForOSX
@@ -194,7 +211,6 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   CONST CHAR16  *KbdPrevLang;
   UINTN   LangLen;
-  CHAR8   *VariablePtr;
   VOID    *OldData;
   UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8   *PlatformLang;
@@ -215,15 +231,14 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   Attributes     = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
 
-  if (gSettings.RtMLB != NULL) {
-    if (AsciiStrLen(gSettings.RtMLB) != 17) {
+  if (gSettings.RtMLB.notEmpty()) {
+    if ( gSettings.RtMLB.length() != 17 ) {
       DBG("** Warning: Your MLB is not suitable for iMessage(must be 17 chars long) !\n");
     }
 
-    SetNvramVariable(L"MLB",
+    SetNvramXString8(L"MLB",
                      &gEfiAppleNvramGuid,
                      Attributes,
-                     AsciiStrLen(gSettings.RtMLB),
                      gSettings.RtMLB);
   }
 
@@ -249,7 +264,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                    &gFwFeaturesMask);
 
   // HW_MLB and HW_ROM are also around on some Macs with the same values as MLB and ROM
-  AddNvramVariable(L"HW_BID", &gEfiAppleNvramGuid, Attributes, AsciiStrLen(gSettings.BoardNumber), gSettings.BoardNumber);
+  AddNvramXString8(L"HW_BID", &gEfiAppleNvramGuid, Attributes, gSettings.BoardNumber);
 
 
   //
@@ -264,17 +279,8 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     // Do not mess with prev-lang:kbd on UEFI systems without NVRAM emulation; it's OS X's business
     KbdPrevLang = L"prev-lang:kbd";
     OldData = (__typeof__(OldData))GetNvramVariable(KbdPrevLang, &gEfiAppleBootGuid, NULL, NULL);
-    if (OldData == NULL) {
-      LangLen     = 16;
-      VariablePtr = &gSettings.Language[15];
-      for (LangLen = 16; ((*VariablePtr == ' ') || (*VariablePtr == 0)) && (LangLen != 0); --LangLen) {
-        --VariablePtr;
-      }
-
-      gRT->SetVariable(KbdPrevLang, &gEfiAppleBootGuid, Attributes, LangLen, &gSettings.Language);
-    } else {
-      FreePool(OldData);
-    }
+    gSettings.Language.trim();
+    SetNvramXString8(KbdPrevLang, &gEfiAppleBootGuid, Attributes, gSettings.Language);
   } else {
     Attributes |= EFI_VARIABLE_NON_VOLATILE;
   }
@@ -361,9 +367,8 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
   }
 */
-  INTN CfgStrLen = AsciiStrLen(gSettings.BooterCfgStr);
-  if (CfgStrLen > 0) {
-    SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, CfgStrLen+1, &gSettings.BooterCfgStr[0]);
+  if ( gSettings.BooterCfgStr.notEmpty() ) {
+    SetNvramXString8(L"bootercfg", &gEfiAppleBootGuid, Attributes, gSettings.BooterCfgStr);
   } else {
     DeleteNvramVariable(L"bootercfg", &gEfiAppleBootGuid);
   }
@@ -490,14 +495,14 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency",     &CpuSpeed,            sizeof(UINT64));
 
     //gSettings.BoardNumber
-    LogDataHub(&gEfiMiscSubClassGuid,      L"board-id",         &gSettings.BoardNumber,   (UINT32)iStrLen(gSettings.BoardNumber, 64) + 1);
+    LogDataHubXString8(&gEfiMiscSubClassGuid,      L"board-id",         gSettings.BoardNumber);
     TscFrequency++;
     LogDataHub(&gEfiProcessorSubClassGuid, L"board-rev",       &TscFrequency,        1);
 
     DevPathSupportedVal = 1;
     LogDataHub(&gEfiMiscSubClassGuid,      L"DevicePathsSupported", &DevPathSupportedVal, sizeof(UINT32));
-    LogDataHub(&gEfiMiscSubClassGuid,      L"Model",                (VOID*)ProductName.wc_str(),         (UINT32)ProductName.sizeInNativeChars());
-    LogDataHub(&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   (VOID*)SerialNumber.wc_str(),        (UINT32)SerialNumber.sizeInNativeChars());
+    LogDataHubXStringW(&gEfiMiscSubClassGuid,      L"Model",                ProductName);
+    LogDataHubXStringW(&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   SerialNumber);
 
     if (gSettings.InjectSystemID) {
       LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
@@ -506,9 +511,9 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &Revision, sizeof(UINT32));
 
     // collect info about real hardware
-    LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  (UINT32)iStrLen(gSettings.OEMVendor,  64) + 1);
-    LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, (UINT32)iStrLen(gSettings.OEMProduct, 64) + 1);
-    LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   (UINT32)iStrLen(gSettings.OEMBoard,   64) + 1);
+    LogDataHubXString8(&gEfiMiscSubClassGuid, L"OEMVendor",  gSettings.OEMVendor);
+    LogDataHubXString8(&gEfiMiscSubClassGuid, L"OEMProduct", gSettings.OEMProduct);
+    LogDataHubXString8(&gEfiMiscSubClassGuid, L"OEMBoard",   gSettings.OEMBoard);
 
     // SMC helper
     if (!isRevLess) {

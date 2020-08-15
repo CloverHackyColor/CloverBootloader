@@ -58,7 +58,7 @@ CHAR8* gDeviceProperties = NULL;
 
 UINT32 cPropSize = 0;
 UINT8* cProperties = NULL;
-CHAR8* cDeviceProperties = NULL;
+XString8 cDeviceProperties;
 CHAR8* BootOSName = NULL;
 
 UINT16 KeyboardVendor = 0x05ac; //Apple inc.

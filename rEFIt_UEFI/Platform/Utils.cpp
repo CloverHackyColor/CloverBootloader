@@ -34,7 +34,7 @@
 //  }
 //}
 
-UINT8 hexstrtouint8 (CHAR8* buf)
+UINT8 hexstrtouint8 (const CHAR8* buf)
 {
 	INT8 i = 0;
 	if (IS_DIGIT(buf[0]))
@@ -60,7 +60,7 @@ BOOLEAN IsHexDigit (CHAR8 c) {
 
 //out value is a number of byte.  out = len
 
-UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
+UINT32 hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
 {
 	CHAR8	*p;
 	UINT32	i, outlen = 0;

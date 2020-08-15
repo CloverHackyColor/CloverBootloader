@@ -137,13 +137,12 @@ typedef enum {
 } MACHINE_TYPES;
 
 
-
-
-
-extern CONST CHAR8                          *BiosVendor;
-extern CONST CHAR8                          *AppleManufacturer;
-extern CONST CHAR8                          *AppleBoardSN;
-extern CONST CHAR8                          *AppleBoardLocation;
+constexpr LString8 DefaultMemEntry        = "N/A";
+constexpr LString8 DefaultSerial          = "CT288GT9VT6";
+constexpr LString8 BiosVendor             = "Apple Inc.";
+constexpr LString8 AppleManufacturer      = "Apple Computer, Inc."; //Old name, before 2007
+constexpr LString8 AppleBoardSN           = "C02140302D5DMT31M";
+constexpr LString8 AppleBoardLocation     = "Part Component";
 
 extern UINT32                         gFwFeatures;
 extern UINT32                         gFwFeaturesMask;
@@ -158,7 +157,7 @@ SetDMISettingsForModel (
   );
 
 MACHINE_TYPES GetModelFromString (
-  CHAR8 *ProductName
+  const XString8& ProductName
   );
 
 VOID

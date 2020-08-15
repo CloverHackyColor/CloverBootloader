@@ -609,16 +609,16 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
   
   // load file
   XStringW FileName = L"icons\\" + IconName + L".icns";
-  Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+  Status = egLoadFile(BaseDir, FileName.wc_str(), &FileData, &FileDataLength);
   if (EFI_ERROR(Status)) {
     FileName = L"icons\\" + IconName + L".png";
-    Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+    Status = egLoadFile(BaseDir, FileName.wc_str(), &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
       FileName = IconName + L".png";
-      Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+      Status = egLoadFile(BaseDir, FileName.wc_str(), &FileData, &FileDataLength);
       if (EFI_ERROR(Status)) {
         FileName = IconName; //may be it already contain extension, for example Logo.png
-        Status = egLoadFile(BaseDir, FileName.data(), &FileData, &FileDataLength);
+        Status = egLoadFile(BaseDir, FileName.wc_str(), &FileData, &FileDataLength);
         if (EFI_ERROR(Status)) {
           return Status;
         }
@@ -629,7 +629,7 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
   // decode it
   Status = FromPNG(FileData, FileDataLength);  
   if (EFI_ERROR(Status)) {
-    DBG("%ls not decoded. Status=%s\n", IconName.data(), strerror(Status));
+    DBG("%ls not decoded. Status=%s\n", IconName.wc_str(), strerror(Status));
   }
   FreePool(FileData);
   return Status;

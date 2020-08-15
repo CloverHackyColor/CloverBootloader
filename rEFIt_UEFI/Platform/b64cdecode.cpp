@@ -92,7 +92,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
  * Decodes EncodedData into a new allocated buffer and returns it. Caller is responsible to FreePool() it.
  * If DecodedSize != NULL, then size od decoded data is put there.
  */
-UINT8 *Base64DecodeClover(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize)
+UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 {
 	UINTN				EncodedSize;
 	UINTN				DecodedSizeInternal;
@@ -107,7 +107,7 @@ UINT8 *Base64DecodeClover(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 		return NULL;
 	}
 	// to simplify, we'll allocate the same size, although smaller size is needed
-	DecodedData = (__typeof__(DecodedData))BllocateZeroPool(EncodedSize);
+	DecodedData = (__typeof__(DecodedData))AllocateZeroPool(EncodedSize);
 
 	base64_init_decodestate(&state_in);
 	DecodedSizeInternal = base64_decode_block(EncodedData, (const int)EncodedSize, (char*) DecodedData, &state_in);

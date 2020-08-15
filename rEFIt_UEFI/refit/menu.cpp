@@ -194,10 +194,10 @@ VOID FillInputs(BOOLEAN New)
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount++].BValue = gSettings.InjectATI;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
-      if (StrLen(gSettings.FBName) > 2) { //fool proof: cfg_name is 3 character or more.
-		  InputItems[InputItemsCount++].SValue.SWPrintf("%ls", gSettings.FBName);
+      if ( gSettings.FBName.length() > 2 ) { //fool proof: cfg_name is 3 character or more.
+		    InputItems[InputItemsCount++].SValue.SWPrintf("%ls", gSettings.FBName.wc_str());
       } else {
-		  InputItems[InputItemsCount++].SValue.SWPrintf("%s", gGraphics[i].Config);
+		    InputItems[InputItemsCount++].SValue.SWPrintf("%s", gGraphics[i].Config);
       }
     } else if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
@@ -335,25 +335,25 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.SavingMode);
 
   InputItems[InputItemsCount].ItemType = ASString;  //78
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ProductName);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ProductName.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //79
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.VersionNr);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.VersionNr.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //80
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.SerialNr);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.SerialNr.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //81
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardNumber);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardNumber.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //82
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardSerialNumber);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardSerialNumber.c_str());
   InputItems[InputItemsCount].ItemType = Decimal;  //83
   InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.BoardType);
   InputItems[InputItemsCount].ItemType = ASString;  //84
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardVersion);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardVersion.c_str());
   InputItems[InputItemsCount].ItemType = Decimal;  //85
   InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.ChassisType);
   InputItems[InputItemsCount].ItemType = ASString;  //86
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.RomVersion);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.RomVersion.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //87
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ReleaseDate);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ReleaseDate.c_str());
 
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount++].BValue = gSettings.DoubleFirstState;
@@ -429,7 +429,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = ASString;  //117
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.EfiVersion.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //118
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BooterCfgStr);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BooterCfgStr.c_str());
 
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //119 - Audio chooser
   InputItems[InputItemsCount++].IValue = 119;
@@ -486,11 +486,11 @@ VOID ApplyInputs(VOID)
       }
     } while (*(++ch));
 
-	  snprintf(gSettings.BootArgs, 255, "%ls ", InputItems[i].SValue.wc_str());
+	  gSettings.BootArgs = InputItems[i].SValue;
   }
   i++; //1
   if (InputItems[i].Valid) {
-	  snwprintf(gSettings.DsdtName, sizeof(gSettings.DsdtName), "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.DsdtName = InputItems[i].SValue;
   }
   i++; //2
   if (InputItems[i].Valid) {
@@ -598,7 +598,7 @@ VOID ApplyInputs(VOID)
     i++; //22
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
-		  snwprintf(gSettings.FBName, 32, "%ls", InputItems[i].SValue.wc_str());
+		  gSettings.FBName = InputItems[i].SValue;
       } else if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 256);
         snprintf(AString, 255, "%ls", InputItems[i].SValue.wc_str());
@@ -806,7 +806,7 @@ VOID ApplyInputs(VOID)
 
   i++; //78
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.ProductName, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.ProductName = InputItems[i].SValue;
     // let's fill all other fields based on this ProductName
     // to serve as default
     Model = GetModelFromString(gSettings.ProductName);
@@ -817,19 +817,19 @@ VOID ApplyInputs(VOID)
 
   i++; //79
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.VersionNr, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.VersionNr = InputItems[i].SValue;
   }
   i++; //80
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.SerialNr, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.SerialNr = InputItems[i].SValue;
   }
   i++; //81
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.BoardNumber, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.BoardNumber = InputItems[i].SValue;
   }
   i++; //82
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.BoardSerialNumber, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.BoardSerialNumber = InputItems[i].SValue;
   }
   i++; //83
   if (InputItems[i].Valid) {
@@ -837,7 +837,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //84
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.BoardVersion, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.BoardVersion = InputItems[i].SValue;
   }
   i++; //85
   if (InputItems[i].Valid) {
@@ -845,11 +845,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //86
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.RomVersion, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.RomVersion = InputItems[i].SValue;
   }
   i++; //87
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.ReleaseDate, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.ReleaseDate = InputItems[i].SValue;
   }
 
   i++; //88
@@ -1012,9 +1012,9 @@ VOID ApplyInputs(VOID)
   i++; //116
   if (InputItems[i].Valid) {
     if (OldChosenDsdt == 0xFFFF) {
-      snwprintf(gSettings.DsdtName, 64, "BIOS.aml");
+      gSettings.DsdtName = L"BIOS.aml"_XSW;
     } else {
-		snwprintf(gSettings.DsdtName, 64, "%ls", DsdtsList[OldChosenDsdt]);
+		gSettings.DsdtName.SWPrintf("%ls", DsdtsList[OldChosenDsdt]);
     }
   }
   i++; //117
@@ -1023,7 +1023,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //118
   if (InputItems[i].Valid) {
-	  snprintf(gSettings.BooterCfgStr, 64, "%ls", InputItems[i].SValue.wc_str());
+	  gSettings.BooterCfgStr = InputItems[i].SValue;
   }
   i++; //119
   if (InputItems[i].Valid) {
@@ -2065,8 +2065,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->"_XS8);
 
 	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
-	SubScreen->AddMenuInfoLine_f("%s", gSettings.OEMProduct);
-	SubScreen->AddMenuInfoLine_f("with board %s", gSettings.OEMBoard);
+	SubScreen->AddMenuInfoLine_f("%s", gSettings.OEMProduct.c_str());
+	SubScreen->AddMenuInfoLine_f("with board %s", gSettings.OEMBoard.c_str());
 
   SubScreen->AddMenuItemInput(78,  "Product Name:", TRUE);
   SubScreen->AddMenuItemInput(79,  "Product Version:", TRUE);

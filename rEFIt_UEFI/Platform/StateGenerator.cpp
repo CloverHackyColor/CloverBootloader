@@ -463,7 +463,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
       aml_calculate_size(root);
 
-      ssdt = (SSDT_TABLE *)BllocateZeroPool(root->Size);
+      ssdt = (SSDT_TABLE *)AllocateZeroPool(root->Size);
       aml_write_node(root, (CHAR8*)ssdt, 0);
       ssdt->Length = root->Size;
       FixChecksum(ssdt);
@@ -682,7 +682,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   
   aml_calculate_size(root);
   
-  ssdt = (SSDT_TABLE *)BllocateZeroPool(root->Size);
+  ssdt = (SSDT_TABLE *)AllocateZeroPool(root->Size);
   
   aml_write_node(root, (CHAR8*)ssdt, 0);
   

@@ -804,7 +804,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
 
     if (HaveTimeout) {
       XStringW TOMessage = SWPrintf("%ls in %lld seconds", TimeoutText.wc_str(), TimeoutCountdown);
-      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TOMessage.data());
+      ((*this).*(StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, TOMessage.wc_str());
     }
 
     if (gEvent) { //for now used at CD eject.
@@ -1156,7 +1156,7 @@ VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
         for (i = 0; i < (INTN)InfoLines.size(); i++) {
           gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-          gST->ConOut->OutputString (gST->ConOut, InfoLines[i].data());
+          gST->ConOut->OutputString (gST->ConOut, InfoLines[i].wc_str());
         }
       }
 
@@ -2396,7 +2396,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 
               ThemeX.FillRectAreaOfScreen(textPosX, textPosY, EntriesWidth + ThemeX.TileXSpace,
                                    MessageHeight);
-              DrawBCSText(Entries[i].Title.data(), textPosX, textPosY, X_IS_CENTER);
+              DrawBCSText(Entries[i].Title.wc_str(), textPosX, textPosY, X_IS_CENTER);
             }
           }
         } else {
@@ -2591,7 +2591,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
       XString8Array TmpArgs;
-      if (AsciiStrLen(gSettings.BootArgs) > 0) {
+      if ( gSettings.BootArgs.length() > 0) {
         TmpArgs = Split<XString8Array>(gSettings.BootArgs, " ");
       }
       SubMenuIndex = -1;
@@ -2653,11 +2653,11 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ TempChosenEntry->getLOADER_ENTRY()) {
           if (TempChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
-            snprintf(gSettings.BootArgs, 255, "%s", TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8).c_str());
+            gSettings.BootArgs = TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8);
           } else {
             ZeroMem(&gSettings.BootArgs, 255);
           }
-          DBG(" boot with args: %s\n", gSettings.BootArgs);
+          DBG(" boot with args: %s\n", gSettings.BootArgs.c_str());
         }
 
         //---- Details submenu (kexts disabling etc)

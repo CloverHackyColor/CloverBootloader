@@ -26,18 +26,13 @@
 #define kXMLTagFloat     "real"
 
 
-struct Symbol {
-  UINTN         refCount;
-  struct Symbol *next;
-  CHAR8         string[1];
-};
-typedef struct Symbol Symbol, *SymbolPtr;
-
 
 typedef struct TagStruct {
 
   UINTN  type;
-  CHAR8  *string;
+  XString8 string;
+  INTN     intValue;
+  float    floatValue;
   UINT8  *data;
   UINTN  dataLen;
   UINTN  offset;
