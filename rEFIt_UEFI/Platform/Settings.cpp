@@ -2613,7 +2613,7 @@ GetEarlyUserSettings (
               gSettings.KernelScan = KERNEL_SCAN_NONE;
             } else if ((Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
               if ((Dict2->string[0] == 'N') || (Dict2->string[0] == 'n')) {
-                gSettings.KernelScan = ((Dict2->string[1] == 'E') || (Dict2->string[1] == 'e')) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
+                gSettings.KernelScan = ( Dict2->string.length() > 1  &&  (Dict2->string[1] == 'E' || Dict2->string[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
               } else if ((Dict2->string[0] == 'O') || (Dict2->string[0] == 'o')) {
                 gSettings.KernelScan = KERNEL_SCAN_OLDEST;
               } else if ((Dict2->string[0] == 'F') || (Dict2->string[0] == 'f')) {
@@ -4830,11 +4830,12 @@ GetUserSettings(
             gSettings.HDALayoutId = (INT32)Prop->intValue; //must be signed
             gSettings.HDAInjection = (gSettings.HDALayoutId > 0);
           } else if (Prop->type == kTagTypeString){
-            if ((Prop->string[0] == 'n') || (Prop->string[0] == 'N')) {
+            if ( Prop->string.length() > 0  &&  (Prop->string[0] == 'n' || Prop->string[0] == 'N') ) {
               // if starts with n or N, then no HDA injection
               gSettings.HDAInjection = FALSE;
-            } else if ((Prop->string[0] == '0')  &&
-                       (Prop->string[1] == 'x' || Prop->string[1] == 'X')) {
+            } else if ( Prop->string.length() > 1  &&
+                        Prop->string[0] == '0'  &&
+                        ( Prop->string[1] == 'x' || Prop->string[1] == 'X' ) ) {
               // assume it's a hex layout id
               gSettings.HDALayoutId = (INT32)AsciiStrHexToUintn(Prop->string);
               gSettings.HDAInjection = TRUE;

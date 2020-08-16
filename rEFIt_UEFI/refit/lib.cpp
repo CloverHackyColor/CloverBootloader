@@ -961,12 +961,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       FreePool(RootInfo);
     }
   }
-  if (
-      Volume->VolName.isEmpty()
-      || Volume->VolName[0] == 0
-      || (Volume->VolName[0] == L'\\' && Volume->VolName[1] == 0)
-      || (Volume->VolName[0] == L'/' && Volume->VolName[1] == 0)
-      )
+  if ( Volume->VolName.isEmpty() || Volume->VolName.equal("\\") || Volume->VolName.equal(L"/") )
   {
     VOID *Instance;
     if (!EFI_ERROR(gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {

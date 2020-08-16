@@ -1022,7 +1022,7 @@ GetPropertyInteger(
   if (Prop->type == kTagTypeInteger) {
     return Prop->intValue; //this is union char* or size_t
   } else if ((Prop->type == kTagTypeString) && Prop->string.notEmpty()) {
-    if ( Prop->string.length() > 2  &&  (Prop->string[1] == 'x' || Prop->string[1] == 'X') ) {
+    if ( Prop->string.length() > 1  &&  (Prop->string[1] == 'x' || Prop->string[1] == 'X') ) {
       return (INTN)AsciiStrHexToUintn(Prop->string);
     }
 
