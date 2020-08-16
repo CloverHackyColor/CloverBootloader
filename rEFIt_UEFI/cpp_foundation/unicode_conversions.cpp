@@ -329,8 +329,13 @@ size_t utf32_string_from_utf8_string(char32_t* dst, size_t dst_max_size, const c
 {
   if ( dst_max_size <= 0 ) return 0;
   size_t size = utf32_stringnn_from_utf8_string(dst, dst_max_size, s);
-  *(dst+size) = 0;
-  return size;
+  if ( size >= dst_max_size ) {
+    *(dst + dst_max_size - 1) = 0;
+    return dst_max_size-1;
+  }else{
+    *(dst + size) = 0;
+    return size;
+  }
 }
 //
 //size_t utf32_string_from_utf8_string(char32_t* dst, size_t dst_max_size, const char* s)
@@ -866,7 +871,7 @@ size_t utf32_stringnn_from_utf16_string(char32_t* dst, size_t dst_max_size, cons
   if ( !s ) return 0;
 
   char32_t* p = dst;
-  char32_t* p_max = dst + dst_max_size - 1;
+  char32_t* p_max = dst + dst_max_size;
 
   char32_t c;
   while ( *s  &&  p < p_max ) {
