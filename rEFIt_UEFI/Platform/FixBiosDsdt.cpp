@@ -1227,10 +1227,7 @@ BOOLEAN GetName(UINT8 *dsdt, INT32 adr, OUT CHAR8* name, OUT INTN *shift)
   return TRUE;
 }
 
-// if (CmpAdr(dsdt, j, NetworkADR1))
-// Name (_ADR, 0x90000)
-template <typename T, enable_if( is_char_ptr(T)  ||  is___String(T) )>
-BOOLEAN CmpAdr (const T& dsdt, UINT32 j, UINT32 PciAdr)
+BOOLEAN CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
 {
   // Name (_ADR, 0x001f0001)
   return (BOOLEAN)
@@ -1292,9 +1289,13 @@ BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
    (dsdt[j + 9] == ((PNP & 0x00ff) >> 0)));
 }
 
-template <typename T, enable_if( is_char_ptr(T)  ||  is___String(T) )>
+template <typename T, enable_if( is___String(T) )>
 INT32 CmpDev(UINT8 *dsdt, UINT32 i, const T& Name)
 {
+  if ( Name.length() != 4 ) {
+    MsgLog("ATTENTION : CmpDev called with a name with length() != 4\n");
+    return 0;
+  }
   if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
       (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
       (((dsdt[i-2] == 0x82) && (dsdt[i-3] == 0x5B) && (dsdt[i-1] < 0x40)) ||
@@ -1310,6 +1311,11 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, const T& Name)
     }
   }
   return 0;
+}
+
+INT32 CmpDev(UINT8 *dsdt, UINT32 i, CONST CHAR8* Name)
+{
+  return CmpDev(dsdt, i, LString8(Name));
 }
 
 //the procedure can find BIN array UNSIGNED CHAR8 sizeof N inside part of large array "dsdt" size of len
@@ -1818,7 +1824,7 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UIN
 
   DBG("Start ByBridge Rename Fix\n");
   for (i=0x20; len >= 10 && i < len - 10; i++) {
-    if (CmpDev(dsdt, i, (UINT8*)TgtBrgName)) {
+    if (CmpDev(dsdt, i, TgtBrgName)) {
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
         continue;
@@ -3414,7 +3420,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   }
   //Find Device MCHC by name
   for (i=0x20; len >= 10 && i < len - 10; i++) {
-    k = CmpDev(dsdt, i, (UINT8*)"MCHC");
+    k = CmpDev(dsdt, i, "MCHC");
     if (k != 0) {
       DBG("device name (MCHC) found at %X, don't add!\n", k);
    //   break;
@@ -3519,7 +3525,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   }
   //Find Device IMEI by name
   for (i=0x20; len >= 10 && i < len - 10; i++) {
-    k = CmpDev(dsdt, i, (UINT8*)"IMEI");
+    k = CmpDev(dsdt, i, "IMEI");
     if (k != 0) {
       MsgLog("device name (IMEI) found at %X, don't add!\n", k);
       return len;

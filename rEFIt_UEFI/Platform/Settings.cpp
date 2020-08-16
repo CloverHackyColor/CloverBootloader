@@ -537,8 +537,12 @@ LoadUserSettings (
       Status = egLoadFile(SelfRootDir, ConfigPlistPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
       if (!EFI_ERROR(Status)) {
         DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
+      }else{
+        DBG("Cannot find %ls.plist at path: '%ls' or '%ls'\n", ConfName.wc_str(), ConfigPlistPath.wc_str(), ConfigOemPath.wc_str());
       }
     }
+  }else{
+    DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigOemPath.wc_str());
   }
 
   if (!EFI_ERROR(Status) && gConfigPtr != NULL) {
