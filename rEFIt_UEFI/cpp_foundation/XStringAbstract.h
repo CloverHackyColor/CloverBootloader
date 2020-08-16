@@ -935,13 +935,20 @@ public:
 
   void trim()
   {
+    size_t lengthInNativeBytes = __String<T, ThisXStringClass>::sizeInNativeChars();
+    if ( lengthInNativeBytes == 0 ) return;
     T* start = 0;
     size_t count = 0;
     T* s = m_data;
     while ( *s && unsigned_type(T)(*s) <= 32 ) s++;
+    if ( !*s ) {
+      m_data[0] = 0;
+      return;
+    }
     start = s;
-    while ( *s && unsigned_type(T)(*s) > 32 ) s++;
-    count = uintptr_t(s - start);
+    s = m_data + lengthInNativeBytes - 1;
+    while ( *s && unsigned_type(T)(*s) <= 32 ) s--;
+    count = uintptr_t(s - start) + 1;
     CheckSize(count); // We have to CheckSize in case this string point to a litteral.
     memmove(m_data, start, count*sizeof(T));
     m_data[count] = 0;

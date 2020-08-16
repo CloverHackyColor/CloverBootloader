@@ -1577,9 +1577,20 @@ int XString_tests()
   XStringW xsw2;
   xsw2.takeValueFrom(xsw, 1);
   
-  XString8 xs8 = "  toTRIM  "_XS8;
-//  xs8.trim();
-  xs8.lowerAscii();
+  {
+    XString8 xs8 = "  to TRIM  "_XS8;
+    xs8.trim();
+    if ( xs8 != "to TRIM"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  {
+    XString8 xs8 = "Apple Inc."_XS8;
+    xs8.trim();
+    if ( xs8 != "Apple Inc."_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
   
   XString8 xsReplace = "babcbdeb"_XS8;
   xsReplace.replaceAll(U'b', U'𐅃');
