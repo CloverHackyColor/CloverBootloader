@@ -1592,11 +1592,99 @@ int XString_tests()
     }
   }
   
-  XString8 xsReplace = "babcbdeb"_XS8;
-  xsReplace.replaceAll(U'b', U'𐅃');
+  {
+    XString8 xsReplace = "babcbdeb"_XS8;
+    xsReplace.replaceAll(U'b', U'𐅃');
+  }
+  {
+    XString8 xsReplace2 = "𐄔a𐄔c𐄔de𐄔"_XS8;
+    xsReplace2.replaceAll(U'𐄔', U'x');
+  }
+//  {
+//    XString8 xsReplace = "𐅃𐅃ab"_XS8;
+//    xsReplace.replaceAll("𐅃𐅃"_XS8, "12"_XS8);
+//    if ( xsReplace != "12ab"_XS8 ) {
+//      nbTestFailed += 1;
+//    }
+//  }
 
-  XString8 xsReplace2 = "𐄔a𐄔c𐄔de𐄔"_XS8;
-  xsReplace2.replaceAll(U'𐄔', U'x');
+  // TODO proper test
+  // XSW XS8
+  {
+    XString8 xsReplace = "12ab12cd12ef1212"_XS8;
+    xsReplace.replaceAll(L"12"_XSW, L"𐅃𐅃"_XSW);
+    if ( xsReplace != "𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  {
+    XString8 xsReplace = "𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XS8;
+    xsReplace.replaceAll(L"𐅃𐅃"_XSW, L"12"_XSW);
+    if ( xsReplace != "12ab12cd12ef1212"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  // XS8 XSW
+  {
+    XStringW xsReplace = L"12ab12cd12ef1212"_XSW;
+    xsReplace.replaceAll("12"_XS8, "𐅃𐅃"_XS8);
+    if ( xsReplace != "𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  {
+    XStringW xsReplace = L"𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XSW;
+    xsReplace.replaceAll("𐅃𐅃"_XS8, "12"_XS8);
+    if ( xsReplace != "12ab12cd12ef1212"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  //XSW XSW
+  {
+    XStringW xsReplace = L"12ab12cd12ef1212"_XSW;
+    xsReplace.replaceAll(L"12"_XSW, L"𐅃𐅃"_XSW);
+    if ( xsReplace != L"𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XSW ) {
+      nbTestFailed += 1;
+    }
+  }
+  {
+    XStringW xsReplace = L"𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XSW;
+    xsReplace.replaceAll(L"𐅃𐅃"_XSW, L"12"_XSW);
+    if ( xsReplace != L"12ab12cd12ef1212"_XSW ) {
+      nbTestFailed += 1;
+    }
+  }
+  // XS8 XS8
+  {
+    XString8 xsReplace = "12ab12cd12ef1212"_XS8;
+    xsReplace.replaceAll("12"_XS8, "𐅃𐅃"_XS8);
+    if ( xsReplace != "𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  {
+    XString8 xsReplace = "𐅃𐅃ab𐅃𐅃cd𐅃𐅃ef𐅃𐅃𐅃𐅃"_XS8;
+    xsReplace.replaceAll("𐅃𐅃"_XS8, "12"_XS8);
+    if ( xsReplace != "12ab12cd12ef1212"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  //
+  {
+    XString8 xsReplace = "ab𐅃𐅃cd𐅃𐅃𐅃𐅃ef"_XS8;
+    xsReplace.replaceAll("𐅃𐅃"_XS8, "12"_XS8);
+    if ( xsReplace != "ab12cd1212ef"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+  {
+    XString8 xsReplace = "ab𐅃𐅃cd𐅃𐅃𐅃ef"_XS8;
+    xsReplace.replaceAll("𐅃𐅃"_XS8, "12"_XS8);
+    if ( xsReplace != "ab12cd12𐅃ef"_XS8 ) {
+      nbTestFailed += 1;
+    }
+  }
+
 
   // Quick check of stealValueFrom. TOTO proper test
   {

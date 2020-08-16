@@ -639,7 +639,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       while (*i != '.') {
         i--;
       }
-      gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
+      gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
       break;
 
     default:
@@ -649,7 +649,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       while (*i != '.') {
         i--;
       }
-      gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", i[3], i[4], i[5], i[6], i[1], i[2]);
+      gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
       break;
   }
 

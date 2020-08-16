@@ -61,9 +61,9 @@ StrHToBuf (
   //
   // Two hex char make up one byte
   //
-  StrLength = length_of_utf_string(Str);
+  StrLength = BufferLength * sizeof (CHAR16);
 
-  for(Index = 0; Index < StrLength; Index++, Str++) {
+  for(Index = 0; Index < StrLength; Index++) {
 
     if ((Str[Index] >= (__typeof__(*Str))'a') && (Str[Index] <= (__typeof__(*Str))'f')) {
       Digit = (UINT8) (Str[Index] - (__typeof__(*Str))'a' + 0x0A);

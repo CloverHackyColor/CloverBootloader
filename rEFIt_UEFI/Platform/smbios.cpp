@@ -1118,7 +1118,7 @@ VOID PatchTableType11()
 //  AsciiStrnCatS(OEMString, MAX_OEM_STRING, gSettings.BoardNumber, iStrLen(gSettings.BoardNumber, 64));
 //	snprintf(TempRev, MAX_OEM_STRING, "\n⌘  Powered by %s\n", gRevisionStr);
 //  AsciiStrCatS(OEMString, MAX_OEM_STRING, TempRev);
-  XString8 OEMString = S8Printf("Apple ROM Version.\n  Board-ID       : %s\n⌘  Powered by %s\n", gSettings.BoardNumber.c_str(), gRevisionStr);
+  XString8 OEMString = S8Printf("Apple ROM Version.\n  Board-ID       : %s\r\n⌘  Powered by %s\r\n", gSettings.BoardNumber.c_str(), gRevisionStr);
 
   UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
 

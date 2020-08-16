@@ -4175,7 +4175,7 @@ ParseSMBIOSSettings(
   Prop = GetProperty(DictPointer, "SmUUID");
   if (Prop != NULL) {
     if (IsValidGuidAsciiString(Prop->string)) {
-      StrToGuidLE (Prop->string, &gSettings.SmUUID);
+      StrToGuidLE(Prop->string, &gSettings.SmUUID);
       gSettings.SmUUIDConfig = TRUE;
     } else {
       DBG("Error: invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->string.c_str());

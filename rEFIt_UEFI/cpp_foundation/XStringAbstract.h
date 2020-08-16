@@ -50,9 +50,6 @@
 
 
 
-
-
-
 #define asciiToLower(ch) (((ch >= L'A') && (ch <= L'Z')) ? ((ch - L'A') + L'a') : ch)
 #define asciiToUpper(ch) (((ch >= L'a') && (ch <= L'z')) ? ((ch - L'a') + L'A') : ch)
 
@@ -569,6 +566,61 @@ protected:
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
+
+///* __String + char32_t */
+//template<typename CharType1, class XStringClass1>
+//XStringClass1 operator + (const __String<CharType1, XStringClass1>& p1, char32_t p2) { XStringClass1 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
+//
+///* __String + __String */
+//template<typename CharType1, class XStringClass1, typename CharType2, class XStringClass2>
+//XStringClass1 operator + (const __String<CharType1, XStringClass1>& p1, const __String<CharType2, XStringClass2>& p2) { XStringClass1 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
+//
+///* char* + __String */
+//template<typename CharType1, typename CharType2, class XStringClass2>
+//XStringClass2 operator + (const CharType1* p1, const __String<CharType2, XStringClass2>& p2) { XStringClass2 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
+//
+///* __String + char* */
+//template<typename T1, class XStringClass1, typename CharType2>
+//XStringClass1 operator + (const __String<T1, XStringClass1>& p1, const CharType2* p2) { XStringClass1 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
+
+
+template <typename Base> _xtools__true_type is_base_of_test_func( Base* );
+template <typename Base> _xtools__false_type is_base_of_test_func( void* );
+template <typename B, typename D>
+auto test_pre_is_base_of(int) -> decltype(is_base_of_test_func<B>(static_cast<D*>(nullptr)));
+
+
+template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
+struct __string_type { typedef void type; };
+template< typename T >
+struct __string_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef __String<typename T::char_t, typename T::xs_t> type; };
+
+#define is___String_t(x) decltype(test_pre_is_base_of<typename __string_type<x>::type , x>(0))
+#define is___String(x) is___String_t(x)::value
+
+
+template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
+struct __lstring_type { typedef void type; };
+template< typename T >
+struct __lstring_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef LString<typename T::char_t, typename T::xs_t> type; };
+
+#define is___LString_t(x) decltype(test_pre_is_base_of<    typename __lstring_type<x>::type , x>(0))
+#define is___LString(x) is___LString_t(x)::value
+
+/* __string_class_or<T1, T2>::type is T1 is T1 is a subclass of __String. If T1 is not a subclass of __String, returns T2 if it's a subclass of __String */
+template <typename T1, typename T2, typename Tdummy=void>
+struct __string_class_or;
+template <typename T1, typename T2>
+struct __string_class_or<T1, T2, enable_if_t(!is___String(T1) && !is___String(T2))> { /*typedef double type;*/ };
+template <typename T1, typename T2>
+struct __string_class_or<T1, T2, enable_if_t(is___String(T1))> { typedef typename T1::xs_t type; };
+template <typename T1, typename T2>
+struct __string_class_or<T1, T2, enable_if_t(!is___String(T1) && is___String(T2))> { typedef typename T2::xs_t type; };
+
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
 #define m_data __String<T, ThisXStringClass>::m_data
 
 template<class T, class ThisXStringClass>
@@ -931,6 +983,41 @@ public:
     }
     return *((ThisXStringClass*)this);
   }
+  
+  template<typename OtherXStringClass1, class OtherXStringClass2, enable_if( is___String(OtherXStringClass1) && is___String(OtherXStringClass2))>
+  ThisXStringClass& replaceAll(const OtherXStringClass1& search, const OtherXStringClass2& replaceBy )
+  {
+    size_t currentSize = __String<T, ThisXStringClass>::sizeInNativeChars(); // size is number of T, not in bytes
+    size_t sizeLeft = currentSize; // size is number of T, not in bytes
+    size_t searchSize = utf_size_of_utf_string(m_data, search.s()); // size is number of T, not in bytes
+    size_t replaceBySize = utf_size_of_utf_string(m_data, replaceBy.s()); // size is number of T, not in bytes
+    // careful because 'charToReplaceBySize - charToSearchSize' overflows when charToSearchSize > charToReplaceBySize, which happens.
+
+//    size_t pos = __String<T, ThisXStringClass>::indexOf(search);
+    T* previousData = m_data;
+    T* previousP = m_data;
+    T* p = m_data;
+    size_t pos = XStringAbstract__indexOf((const T**)&p, search.s(), 0, false);
+    while ( pos != MAX_XSIZE ) {
+      if ( CheckSize(currentSize + replaceBySize - searchSize) ) {
+          previousP = m_data + ( previousP - previousData );
+          p = m_data + ( p - previousData );
+          previousData = m_data;
+      }
+      sizeLeft -= p-previousP;
+      memmove(p+replaceBySize, p+searchSize, (sizeLeft - searchSize + 1)*sizeof(T));
+//      memmove(m_data+pos+replaceBySize-searchSize, m_data+pos, (currentSize - pos + 1)*sizeof(T));
+      utf_stringnn_from_utf_string(p, replaceBySize, replaceBy.s());
+      p += replaceBySize;
+      currentSize += replaceBySize;
+      currentSize -= searchSize;
+      sizeLeft -= searchSize;
+// sizeLeft is equal to utf_size_of_utf_string(p, p);
+      previousP = p;
+      pos = XStringAbstract__indexOf((const T**)&p, search.s(), 0, false);
+    }
+    return *((ThisXStringClass*)this);
+  }
 
 
   void trim()
@@ -1011,58 +1098,6 @@ public:
 template<class T, class ThisXStringClass>
 T XStringAbstract<T, ThisXStringClass>::nullChar = 0;
 
-
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-///* __String + char32_t */
-//template<typename CharType1, class XStringClass1>
-//XStringClass1 operator + (const __String<CharType1, XStringClass1>& p1, char32_t p2) { XStringClass1 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
-//
-///* __String + __String */
-//template<typename CharType1, class XStringClass1, typename CharType2, class XStringClass2>
-//XStringClass1 operator + (const __String<CharType1, XStringClass1>& p1, const __String<CharType2, XStringClass2>& p2) { XStringClass1 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
-//
-///* char* + __String */
-//template<typename CharType1, typename CharType2, class XStringClass2>
-//XStringClass2 operator + (const CharType1* p1, const __String<CharType2, XStringClass2>& p2) { XStringClass2 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
-//
-///* __String + char* */
-//template<typename T1, class XStringClass1, typename CharType2>
-//XStringClass1 operator + (const __String<T1, XStringClass1>& p1, const CharType2* p2) { XStringClass1 s; s.takeValueFrom(p1); s.strcat(p2); return s; }
-
-
-template <typename Base> _xtools__true_type is_base_of_test_func( Base* );
-template <typename Base> _xtools__false_type is_base_of_test_func( void* );
-template <typename B, typename D>
-auto test_pre_is_base_of(int) -> decltype(is_base_of_test_func<B>(static_cast<D*>(nullptr)));
-
-
-template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
-struct __string_type { typedef void type; };
-template< typename T >
-struct __string_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef __String<typename T::char_t, typename T::xs_t> type; };
-
-#define is___String_t(x) decltype(test_pre_is_base_of<typename __string_type<x>::type , x>(0))
-#define is___String(x) is___String_t(x)::value
-
-
-template< class, class = _xtools__void_t<>, class = _xtools__void_t<> >
-struct __lstring_type { typedef void type; };
-template< typename T >
-struct __lstring_type<T, _xtools__void_t<typename T::xs_t>, _xtools__void_t<typename T::char_t>> { typedef LString<typename T::char_t, typename T::xs_t> type; };
-
-#define is___LString_t(x) decltype(test_pre_is_base_of<    typename __lstring_type<x>::type , x>(0))
-#define is___LString(x) is___LString_t(x)::value
-
-/* __string_class_or<T1, T2>::type is T1 is T1 is a subclass of __String. If T1 is not a subclass of __String, returns T2 if it's a subclass of __String */
-template <typename T1, typename T2, typename Tdummy=void>
-struct __string_class_or;
-template <typename T1, typename T2>
-struct __string_class_or<T1, T2, enable_if_t(!is___String(T1) && !is___String(T2))> { /*typedef double type;*/ };
-template <typename T1, typename T2>
-struct __string_class_or<T1, T2, enable_if_t(is___String(T1))> { typedef typename T1::xs_t type; };
-template <typename T1, typename T2>
-struct __string_class_or<T1, T2, enable_if_t(!is___String(T1) && is___String(T2))> { typedef typename T2::xs_t type; };
 
 //------------------------------------------------------- + operator
 

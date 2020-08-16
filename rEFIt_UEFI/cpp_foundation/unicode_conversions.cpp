@@ -545,7 +545,6 @@ size_t utf8_stringnn_from_utf16_string(char* dst, size_t dst_max_size, const cha
     return 0;
   }
   char* p = dst;
-  dst_max_size -= 1;
   while ( *s  &&  dst_max_size > 0 ) {
     char32_t utf32_char;
     s = get_char32_from_utf16_string(s, &utf32_char);

@@ -38,7 +38,7 @@
   IoLib
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG -DPRINTF_EMIT_CR=1
-  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG  -DPRINTF_EMIT_CR=1
-  MSFT:*_*_*_CC_FLAGS = /D PRINTF_EMIT_CR=1
+  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
+  MSFT:*_*_*_CC_FLAGS = 
 
