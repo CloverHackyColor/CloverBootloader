@@ -1315,6 +1315,10 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, const T& Name)
 
 INT32 CmpDev(UINT8 *dsdt, UINT32 i, CONST CHAR8* Name)
 {
+  if ( !Name ) {
+    MsgLog("ATTENTION : CmpDev called with a name == NULL\n");
+    return 0;
+  }
   return CmpDev(dsdt, i, LString8(Name));
 }
 
@@ -3163,7 +3167,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   ArptName = FALSE;
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     // AirPort Address
-    if ( CmpAdr(dsdt, i, ArptADR1) || CmpDev(dsdt, i, gSettings.AirportBridgeDeviceName) ) {
+    if ( CmpAdr(dsdt, i, ArptADR1)  ||  (gSettings.AirportBridgeDeviceName.notEmpty() && CmpDev(dsdt, i, gSettings.AirportBridgeDeviceName))   ) {
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
         continue;
