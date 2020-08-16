@@ -3150,6 +3150,10 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   CHAR8 NameCard[32];
 
   if (!ArptADR1) return len; // no device - no patch
+  if ( gSettings.AirportBridgeDeviceName.notEmpty() && gSettings.AirportBridgeDeviceName.length() != 4 ) {
+    MsgLog("AirportBridgeDeviceName must be 4 char long : ignored");
+    gSettings.AirportBridgeDeviceName.setEmpty();
+  }
 
   if (gSettings.FakeWIFI) {
     FakeID = gSettings.FakeWIFI >> 16;
