@@ -4470,7 +4470,7 @@ GetUserSettings(
                 gSettings.ArbProperties->Child = NULL;
                 gSettings.ArbProperties->Device = 0; //to differ from arbitrary
                 gSettings.ArbProperties->DevicePath = DevicePath; //this is pointer
-                gSettings.ArbProperties->Label = (__typeof__(gSettings.ArbProperties->Label))AllocateCopyPool(Prop2->string.sizeInBytes(), Prop2->string.c_str());
+                gSettings.ArbProperties->Label = (__typeof__(gSettings.ArbProperties->Label))AllocateCopyPool(Prop2->string.sizeInBytes() + 1, Prop2->string.c_str());
                 Child = &(gSettings.ArbProperties->Child);
 
                 Prop2 = Prop2->tag; //take a <dict> for this device
@@ -4493,18 +4493,18 @@ GetUserSettings(
                         ) {
                       if (Prop3->string[0] != '#') {
                         (*Child)->MenuItem.BValue = TRUE;
-                        (*Child)->Key = (__typeof__((*Child)->Key))AllocateCopyPool(Prop3->string.sizeInBytes(), Prop3->string.c_str());
+                        (*Child)->Key = (__typeof__((*Child)->Key))AllocateCopyPool(Prop3->string.sizeInBytes() + 1, Prop3->string.c_str());
                       }
                       else {
                         (*Child)->MenuItem.BValue = FALSE;
-                        (*Child)->Key = (__typeof__((*Child)->Key))AllocateCopyPool(Prop3->string.sizeInBytes() , Prop3->string.c_str() + 1);
+                        (*Child)->Key = (__typeof__((*Child)->Key))AllocateCopyPool(Prop3->string.sizeInBytes() + 1, Prop3->string.c_str() + 1);
                       }
 
                       Prop3 = Prop3->tag; //expected value
                       //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
                       if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string.notEmpty()) {
                         //first suppose it is Ascii string
-                        (*Child)->Value = (__typeof__((*Child)->Value))AllocateCopyPool(Prop3->string.sizeInBytes(), Prop3->string.c_str());
+                        (*Child)->Value = (__typeof__((*Child)->Value))AllocateCopyPool(Prop3->string.sizeInBytes() + 1, Prop3->string.c_str());
                         (*Child)->ValueLen = Prop3->string.sizeInBytes() + 1;
                         (*Child)->ValueType = kTagTypeString;
                       }
