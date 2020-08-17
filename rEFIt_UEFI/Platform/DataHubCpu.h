@@ -8,6 +8,8 @@
 #ifndef PLATFORM_DATAHUBCPU_H_
 #define PLATFORM_DATAHUBCPU_H_
 
+#include "../gui/menu_items/menu_items.h"
+
 EFI_STATUS
 EFIAPI
 SetVariablesForOSX (LOADER_ENTRY *Entry);

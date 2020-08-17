@@ -35,8 +35,8 @@
  */
 
 #include "screen.h"
-#include "../Platform/Platform.h"
-#include "../libeg/libegint.h" // included Platform.h
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../libeg/libegint.h"
 #include "../libeg/XTheme.h"
 #include "../Platform/BasicIO.h"
 #include "menu.h"

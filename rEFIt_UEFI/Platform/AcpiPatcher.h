@@ -8,7 +8,7 @@
 #ifndef PLATFORM_ACPIPATCHER_H_
 #define PLATFORM_ACPIPATCHER_H_
 
-
+#include "../Platform/Settings.h"
 
 #pragma pack(push)
 #pragma pack(1)

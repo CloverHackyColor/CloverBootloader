@@ -28,7 +28,7 @@
  *  code split out from drivers.c by Soren Spies, 2005
  */
 //Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "b64cdecode.h"
 #include "plist.h"
 #include "../libeg/FloatLib.h"
@@ -47,7 +47,7 @@
 
 
 
-TagPtr    gTagsFree = NULL;
+XObjArray<TagStruct> gTagsFree;
 CHAR8* buffer_start = NULL;
 
 // Forward declarations
@@ -517,7 +517,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr* tag, UINT32 type, UINT32 empty, 
   tmpTag->string.setEmpty();
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start : 0);
   tmpTag->tag = tagList;
-  tmpTag->tagNext = 0;
+  tmpTag->tagNext = NULL;
 
   *tag = tmpTag;
   *lenPtr=pos;
@@ -556,7 +556,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
   tmpTag->string.takeValueFrom(buffer);
   tmpTag->tag = subTag;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
-  tmpTag->tagNext = 0;
+  tmpTag->tagNext = NULL;
 
   *tag = tmpTag;
   *lenPtr = length + length2;
@@ -613,19 +613,19 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   }
 
   tmpTag = NewTag();
-  if (tmpTag == NULL)  {
-    return EFI_OUT_OF_RESOURCES;
-  }
+  tmpTag->type = kTagTypeInteger;
+  tmpTag->string.setEmpty();
+  tmpTag->intValue = 0;
+  tmpTag->floatValue = 0;
+  tmpTag->tag = NULL;
+  tmpTag->offset =  0;
+  tmpTag->tagNext = NULL;
+
   size = length;
-
   integer = 0;
-  if(buffer[0] == '<') {
-    tmpTag->type = kTagTypeInteger;
-    tmpTag->string.setEmpty();
-    tmpTag->tag = 0;
-    tmpTag->offset =  0;
-    tmpTag->tagNext = 0;
-
+  
+  if(buffer[0] == '<')
+  {
     *tag = tmpTag;
     length = 0;
     return EFI_SUCCESS;
@@ -675,12 +675,8 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   }
 
 
-  tmpTag->type = kTagTypeInteger;
-  tmpTag->string.S8Printf("%lld", integer);
   tmpTag->intValue = integer;
-  tmpTag->tag = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
-  tmpTag->tagNext = NULL;
 
   *tag = tmpTag;
   *lenPtr = length;
@@ -714,8 +710,6 @@ EFI_STATUS ParseTagFloat(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   AsciiStrToFloat(buffer, NULL, &fVar.B.fNum);
 //----
   tmpTag->type = kTagTypeFloat;
-  tmpTag->string.S8Printf("%f", fVar.B.fNum);
-  tmpTag->intValue = (INTN)fVar.B.fNum;
   tmpTag->floatValue = fVar.B.fNum;
   tmpTag->tag = NULL;
   tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
@@ -905,39 +899,19 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag, UINT32* lenPtr)
 
 //==========================================================================
 // NewTag
-#define TAGCACHESIZE 0x1000
 
 TagPtr NewTag( void )
 {
-  UINT32  cnt;
   TagPtr  tag;
 
-  if (gTagsFree == NULL) {
-    tag = (TagPtr)AllocateZeroPool(TAGCACHESIZE * sizeof(TagStruct));
-    if (tag == NULL) {
-      return NULL;
-    }
-
-    // Initalize the new tags.
-    for (cnt = 0; cnt < TAGCACHESIZE - 1; cnt++) {
-      tag[cnt].type = kTagTypeNone;
-      tag[cnt].tagNext = tag + cnt + 1;
-    }
-    tag[TAGCACHESIZE - 1].tagNext = 0;
-
-    gTagsFree = tag;
+  if ( gTagsFree.size() > 0 ) {
+    tag = &gTagsFree[0];
+    gTagsFree.RemoveWithoutFreeingAtIndex(0);
+    return tag;
   }
-
-  tag = gTagsFree;
-  gTagsFree = tag->tagNext;
-  if (gTagsFree == NULL) {  //end of cache
-    gTagsFree = NewTag();
-    tag->tagNext = gTagsFree; //add new cache to old one
-  }
-
+  tag = new TagStruct();
   return tag;
 }
-#undef TAGCACHESIZE
 
 //==========================================================================
 // XMLFreeTag
@@ -964,8 +938,8 @@ void FreeTag( TagPtr tag )
   tag->dataLen = 0;
   tag->tag = NULL;
   tag->offset = 0;
-  tag->tagNext = gTagsFree;
-  gTagsFree = tag;
+  tag->tagNext = NULL;
+  gTagsFree.AddReference(tag, false);
 }
 
 

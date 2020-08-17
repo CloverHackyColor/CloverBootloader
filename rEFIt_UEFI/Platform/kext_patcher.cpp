@@ -15,8 +15,10 @@ extern "C" {
 #endif
 
 #include <UefiLoader.h>
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "kernel_patcher.h"
+#include "kext_inject.h"
+#include "../gui/menu_items/menu_items.h"
 
 #define OLD_METHOD 0
 

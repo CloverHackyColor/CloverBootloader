@@ -30,6 +30,7 @@
 #include "../include/Devices.h"
 #include "ati_reg.h"
 #include "../../Version.h"
+#include "../Platform/Settings.h"
 
 #include <Protocol/OcQuirksProtocol.h>
 
@@ -920,8 +921,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     UINTN len = 0, i=0;
 
     // ATIConnectors patch
-    Patches->KPATIConnectorsController.takeValueFrom(Prop->string);
- //   AsciiStrToUnicodeStrS (Prop->string, Patches->KPATIConnectorsController, AsciiStrSize(Prop->string));
+    Patches->KPATIConnectorsController = Prop->string;
+ //   AsciiStrToUnicodeStrS (Prop->string.c_str(), Patches->KPATIConnectorsController, AsciiStrSize(Prop->string.c_str()));
 
     UINT8* p = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
     Patches->KPATIConnectorsData.stealValueFrom(p, len);
@@ -968,7 +969,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           }
 
           if (AsciiStrSize(p) > 1) {
-            Patches->ForceKexts.Add(Prop2->string);
+            Patches->ForceKexts.Add(p);
             DBG(" - [%zu]: %ls\n", Patches->ForceKexts.size(), Patches->ForceKexts[Patches->ForceKexts.size()-1].wc_str());
           }
         }
@@ -1010,14 +1011,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         KEXT_PATCH* newPatchPtr = new KEXT_PATCH();
         KEXT_PATCH& newPatch = *newPatchPtr;
         
-        newPatch.Name.takeValueFrom(Dict->string);
+        newPatch.Name = Dict->string;
         newPatch.Label.takeValueFrom(newPatch.Name);
 
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
-          //this is impossible because UnicodeStrToAsciiStr not extend output size
-          //         UnicodeStrToAsciiStr(SWPrintf("%s (%s)", KextPatchesLabel, Dict->string), KextPatchesLabel);
-
           newPatch.Label += " (";
           newPatch.Label += Dict->string;
           newPatch.Label += ")";
@@ -1063,7 +1061,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         
         Dict = GetProperty(Prop2, "Procedure");
         if (Dict != NULL) {
-          newPatch.ProcedureName.takeValueFrom(Dict->string);
+          newPatch.ProcedureName = Dict->string;
         }
 
 
@@ -1097,13 +1095,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty(Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          newPatch.MatchOS.takeValueFrom(Dict->string);
+          newPatch.MatchOS = Dict->string;
           DBG(" :: MatchOS: %s", newPatch.MatchOS.c_str());
         }
 
         Dict = GetProperty(Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          newPatch.MatchBuild.takeValueFrom(Dict->string);
+          newPatch.MatchBuild = Dict->string;
           DBG(" :: MatchBuild: %s", newPatch.MatchBuild.c_str());
         }
 
@@ -1159,7 +1157,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
-          newKernelPatch.Label.takeValueFrom(Dict->string);
+          newKernelPatch.Label = Dict->string;
         } else {
           newKernelPatch.Label = "NoLabel"_XS8;
         }
@@ -1199,7 +1197,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         
         Dict = GetProperty(Prop2, "Procedure");
         if (Dict != NULL) {
-          newKernelPatch.ProcedureName.takeValueFrom(Dict->string);
+          newKernelPatch.ProcedureName = Dict->string;
         }
 
 
@@ -1237,13 +1235,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         // check enable/disabled patch (OS based) by Micky1979
         Dict = GetProperty(Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          newKernelPatch.MatchOS.takeValueFrom(Dict->string);
+          newKernelPatch.MatchOS = Dict->string;
           DBG(" :: MatchOS: %s", newKernelPatch.MatchOS.c_str());
         }
 
         Dict = GetProperty(Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          newKernelPatch.MatchBuild.takeValueFrom(Dict->string);
+          newKernelPatch.MatchBuild = Dict->string;
           DBG(" :: MatchBuild: %s", newKernelPatch.MatchBuild.c_str());
         }
         DBG(" :: data len: %zu\n", newKernelPatch.Data.size());
@@ -1279,7 +1277,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         Dict = GetProperty(Prop2, "Comment");
         if (Dict != NULL) {
-          newBootPatch.Label.takeValueFrom(Dict->string);
+          newBootPatch.Label = Dict->string;
         } else {
           newBootPatch.Label = "NoLabel"_XS8;
         }
@@ -1350,13 +1348,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         Dict = GetProperty(Prop2, "MatchOS");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          newBootPatch.MatchOS.takeValueFrom(Dict->string);
+          newBootPatch.MatchOS = Dict->string;
           DBG(" :: MatchOS: %s", newBootPatch.MatchOS.c_str());
         }
 
         Dict = GetProperty(Prop2, "MatchBuild");
         if ((Dict != NULL) && (Dict->type == kTagTypeString)) {
-          newBootPatch.MatchBuild.takeValueFrom(Dict->string);
+          newBootPatch.MatchBuild = Dict->string;
           DBG(" :: MatchBuild: %s", newBootPatch.MatchBuild.c_str());
         }
 
@@ -1519,17 +1517,17 @@ FillinCustomEntry (
 
   Prop = GetProperty(DictPointer, "Volume");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Volume.takeValueFrom(Prop->string);
+    Entry->Volume = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "Path");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Path.takeValueFrom(Prop->string);
+    Entry->Path = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "Settings");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Settings.takeValueFrom(Prop->string);
+    Entry->Settings = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "CommonSettings");
@@ -1554,11 +1552,11 @@ FillinCustomEntry (
   }
   Prop = GetProperty(DictPointer, "Title");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Title.takeValueFrom(Prop->string);
+    Entry->Title = Prop->string;
   }
   Prop = GetProperty(DictPointer, "FullTitle");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->FullTitle.takeValueFrom(Prop->string);
+    Entry->FullTitle = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "Image");
@@ -1617,8 +1615,7 @@ FillinCustomEntry (
       } else if (Prop->string.equalIC("Theme")) {
         Entry->CustomBoot  = CUSTOM_BOOT_THEME;
       } else {
-        // CHAR16 *customLogo = SWPrintf("%s", Prop->string);
-        XStringW customLogo = XStringW().takeValueFrom(Prop->string);
+        XStringW customLogo = XStringW() = Prop->string;
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
         Entry->CustomLogo.LoadXImage(SelfRootDir, customLogo);
         if (Entry->CustomLogo.isEmpty()) {
@@ -1631,7 +1628,7 @@ FillinCustomEntry (
       Entry->CustomBoot = CUSTOM_BOOT_USER;
       Entry->CustomLogo.FromPNG(Prop->data, Prop->dataLen);
       if (Entry->CustomLogo.isEmpty()) {
-        DBG("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
+        DBG("Custom boot logo not decoded from data!\n"/*, Prop->string.c_str()*/);
         Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
       }
     } else {
@@ -1856,17 +1853,17 @@ FillingCustomLegacy (
 
   Prop = GetProperty(DictPointer, "Volume");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Volume.takeValueFrom(Prop->string);
+    Entry->Volume = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "FullTitle");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->FullTitle.takeValueFrom(Prop->string);
+    Entry->FullTitle = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "Title");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Title.takeValueFrom(Prop->string);
+    Entry->Title = Prop->string;
   }
   Prop = GetProperty(DictPointer, "Image");
   if (Prop != NULL) {
@@ -1971,19 +1968,19 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 
   Prop = GetProperty(DictPointer, "FullTitle");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->FullTitle.takeValueFrom(Prop->string);
+    Entry->FullTitle = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "Title");
   if (Prop != NULL && (Prop->type == kTagTypeString)) {
-    Entry->Title.takeValueFrom(Prop->string);
+    Entry->Title = Prop->string;
   }
 
   Prop = GetProperty(DictPointer, "Image");
   if (Prop != NULL) {
     Entry->ImagePath.setEmpty();
     if (Prop->type == kTagTypeString) {
-      Entry->ImagePath.takeValueFrom(Prop->string);
+      Entry->ImagePath = Prop->string;
     }
     Entry->Image.LoadXImage(ThemeX.ThemeDir, Entry->ImagePath);
   } else {
@@ -2328,8 +2325,7 @@ GetEarlyUserSettings (
           } else if (Prop->string.equalIC("Theme")) {
             gSettings.CustomBoot = CUSTOM_BOOT_THEME;
           } else {
-            // CHAR16 *customLogo   = SWPrintf("%s", Prop->string);
-            XStringW customLogo = XStringW().takeValueFrom(Prop->string);
+            XStringW customLogo = XStringW() = Prop->string;
             gSettings.CustomBoot = CUSTOM_BOOT_USER;
             if (gSettings.CustomLogo != NULL) {
               delete gSettings.CustomLogo;
@@ -2350,7 +2346,7 @@ GetEarlyUserSettings (
           gSettings.CustomLogo = new XImage;
           gSettings.CustomLogo->FromPNG(Prop->data, Prop->dataLen);
           if (gSettings.CustomLogo->isEmpty()) {
-            DBG("Custom boot logo not decoded from data!\n"/*, Prop->string*/);
+            DBG("Custom boot logo not decoded from data!\n"/*, Prop->string.c_str()*/);
             gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
           }
         } else {
@@ -2468,7 +2464,7 @@ GetEarlyUserSettings (
             GlobalConfig.ConsoleMode = -2;
             DBG("ConsoleMode will be set to lowest mode\n");
           } else {
-            GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->string.c_str());
+            GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->string);
           }
         }
         if (GlobalConfig.ConsoleMode > 0) {
@@ -3268,7 +3264,7 @@ XTheme::GetThemeTagSettings(void* DictP)
 
     Dict2 = GetProperty(Dict, "Path");
     if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-      BackgroundName.takeValueFrom(Dict2->string);
+      BackgroundName = Dict2->string;
     }
 
     Dict2 = GetProperty(Dict, "Sharp");
@@ -3281,14 +3277,14 @@ XTheme::GetThemeTagSettings(void* DictP)
   Dict = GetProperty(DictPointer, "Banner");
   if (Dict != NULL) {
     // retain for legacy themes.
-    if ((Dict->type == kTagTypeString) && Dict->string.notEmpty()) {
-      BannerFileName.takeValueFrom(Dict->string);
+    if ( Dict->type == kTagTypeString && Dict->string.notEmpty() ) {
+      BannerFileName = Dict->string;
     } else {
       // for new placement settings
       Dict2 = GetProperty(Dict, "Path");
       if (Dict2 != NULL) {
-        if ((Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-          BannerFileName.takeValueFrom(Dict2->string);
+        if ( Dict2->type == kTagTypeString && Dict2->string.notEmpty() ) {
+          BannerFileName = Dict2->string;
         }
       }
 
@@ -3446,18 +3442,18 @@ XTheme::GetThemeTagSettings(void* DictP)
     SelectionColor = (UINTN)GetPropertyInteger(Dict2, SelectionColor);
 
     Dict2 = GetProperty(Dict, "Small");
-    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-      SelectionSmallFileName.takeValueFrom(Dict2->string);
+    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty()) {
+      SelectionSmallFileName = Dict2->string;
     }
 
     Dict2 = GetProperty(Dict, "Big");
-    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-      SelectionBigFileName.takeValueFrom(Dict2->string);
+    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty()) {
+      SelectionBigFileName = Dict2->string;
     }
 
     Dict2 = GetProperty(Dict, "Indicator");
-    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-      SelectionIndicatorName.takeValueFrom(Dict2->string);
+    if ( Dict2 && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty()) {
+      SelectionIndicatorName = Dict2->string;
     }
 
     Dict2 = GetProperty(Dict, "OnTop");
@@ -3496,8 +3492,8 @@ XTheme::GetThemeTagSettings(void* DictP)
     }
     if (Font == FONT_LOAD) {
       Dict2 = GetProperty(Dict, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-        FontFileName.takeValueFrom(Dict2->string);
+      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty()) {
+        FontFileName = Dict2->string;
       }
     }
     Dict2 = GetProperty(Dict, "CharWidth");
@@ -3525,8 +3521,8 @@ XTheme::GetThemeTagSettings(void* DictP)
       NewFilm->SetIndex((UINTN)GetPropertyInteger(Dict2, 1)); //default=main screen
 
       Dict2 = GetProperty(Dict3, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-        NewFilm->Path.takeValueFrom(Dict2->string);
+      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty()) {
+        NewFilm->Path = Dict2->string;
       }
 
       Dict2 = GetProperty(Dict3, "Frames");
@@ -4080,7 +4076,7 @@ ParseSMBIOSSettings(
         }
       }
     } else {
-      //DBG("BiosReleaseDate: set to %s from config, Ignore BiosReleaseDate\n", Prop1->string);
+      //DBG("BiosReleaseDate: set to %s from config, Ignore BiosReleaseDate\n", Prop1->string.c_str());
       //DBG("Using BiosReleaseDate from clover\n");
     }
   } else {
@@ -4108,10 +4104,10 @@ ParseSMBIOSSettings(
 
   Prop = GetProperty(DictPointer, "EfiVersion");
   if (Prop != NULL) {
-    if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(XString8(Prop->string), 4, 5)) {
+    if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->string, 4, 5)) {
       DBG("Using latest EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
-    } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(XString8(Prop->string), 4, 5)) {
-      gSettings.EfiVersion.takeValueFrom(Prop->string).trim();
+    } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->string, 4, 5)) {
+      gSettings.EfiVersion = Prop->string;
       DBG("Using latest EfiVersion from config: %s\n", gSettings.EfiVersion.c_str());
     } else {
       DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
@@ -4470,7 +4466,7 @@ GetUserSettings(
                 gSettings.ArbProperties->Child = NULL;
                 gSettings.ArbProperties->Device = 0; //to differ from arbitrary
                 gSettings.ArbProperties->DevicePath = DevicePath; //this is pointer
-                gSettings.ArbProperties->Label = (__typeof__(gSettings.ArbProperties->Label))AllocateCopyPool(Prop2->string.sizeInBytes() + 1, Prop2->string.c_str());
+                gSettings.ArbProperties->Label = S8Printf("%s", Prop2->string.c_str()).forgetDataWithoutFreeing();
                 Child = &(gSettings.ArbProperties->Child);
 
                 Prop2 = Prop2->tag; //take a <dict> for this device
@@ -4493,24 +4489,24 @@ GetUserSettings(
                         ) {
                       if (Prop3->string[0] != '#') {
                         (*Child)->MenuItem.BValue = TRUE;
-                        (*Child)->Key = (__typeof__((*Child)->Key))AllocateCopyPool(Prop3->string.sizeInBytes() + 1, Prop3->string.c_str());
+                        (*Child)->Key = S8Printf("%s", Prop3->string.c_str()).forgetDataWithoutFreeing();
                       }
                       else {
                         (*Child)->MenuItem.BValue = FALSE;
-                        (*Child)->Key = (__typeof__((*Child)->Key))AllocateCopyPool(Prop3->string.sizeInBytes() + 1, Prop3->string.c_str() + 1);
+                        (*Child)->Key = S8Printf("%s", Prop3->string.c_str() - 1).forgetDataWithoutFreeing();
                       }
 
                       Prop3 = Prop3->tag; //expected value
                       //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
                       if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string.notEmpty()) {
                         //first suppose it is Ascii string
-                        (*Child)->Value = (__typeof__((*Child)->Value))AllocateCopyPool(Prop3->string.sizeInBytes() + 1, Prop3->string.c_str());
-                        (*Child)->ValueLen = Prop3->string.sizeInBytes() + 1;
+                        (*Child)->Value = (UINT8*)S8Printf("%s", Prop3->string.c_str()).forgetDataWithoutFreeing();
+                        (*Child)->ValueLen = Prop3->string.sizeInBytesIncludingTerminator();
                         (*Child)->ValueType = kTagTypeString;
                       }
                       else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
                         (*Child)->Value = (__typeof__((*Child)->Value))AllocatePool(4);
-                        CopyMem((*Child)->Value, &(Prop3->string), 4);
+                        CopyMem((*Child)->Value, &Prop3->intValue, 4);
                         (*Child)->ValueLen = 4;
                         (*Child)->ValueType = kTagTypeInteger;
                       }
@@ -4615,18 +4611,18 @@ GetUserSettings(
 
                   Prop3 = GetProperty(Dict3, "Key");
                   if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string.notEmpty()) {
-                    gSettings.ArbProperties->Key = (__typeof__(gSettings.ArbProperties->Key))AllocateCopyPool(Prop3->string.sizeInBytesIncludingTerminator(), Prop3->string.c_str());
+                    gSettings.ArbProperties->Key = S8Printf("%s", Prop3->string.c_str()).forgetDataWithoutFreeing();
                   }
 
                   Prop3 = GetProperty(Dict3, "Value");
                   if (Prop3 && (Prop3->type == kTagTypeString) && Prop3->string.notEmpty()) {
                     //first suppose it is Ascii string
-                    gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocateCopyPool(Prop3->string.sizeInBytesIncludingTerminator(), Prop3->string.c_str());
+                    gSettings.ArbProperties->Value = (UINT8*)S8Printf("%s", Prop3->string.c_str()).forgetDataWithoutFreeing();
                     gSettings.ArbProperties->ValueLen = Prop3->string.sizeInBytesIncludingTerminator();
                     gSettings.ArbProperties->ValueType = kTagTypeString;
                   } else if (Prop3 && (Prop3->type == kTagTypeInteger)) {
                     gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocatePool(4);
-                    CopyMem(gSettings.ArbProperties->Value, &(Prop3->string), 4);
+                    CopyMem(gSettings.ArbProperties->Value, &Prop3->intValue, 4);
                     gSettings.ArbProperties->ValueLen = 4;
                     gSettings.ArbProperties->ValueType = kTagTypeInteger;
                   } else if (Prop3 && (Prop3->type == kTagTypeTrue)) {
@@ -4723,17 +4719,17 @@ GetUserSettings(
 
             Prop2 = GetProperty(Dict2, "Key");
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string.notEmpty()) {
-              gSettings.AddProperties[Index].Key = (__typeof__(gSettings.AddProperties[Index].Key))AllocateCopyPool(Prop2->string.sizeInBytesIncludingTerminator(), Prop2->string.c_str());
+              gSettings.AddProperties[Index].Key = S8Printf("%s", Prop2->string.c_str()).forgetDataWithoutFreeing();
             }
 
             Prop2 = GetProperty(Dict2, "Value");
             if (Prop2 && (Prop2->type == kTagTypeString) && Prop2->string.notEmpty()) {
               //first suppose it is Ascii string
-              gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocateCopyPool(Prop2->string.sizeInBytesIncludingTerminator(), Prop2->string.c_str());
+              gSettings.AddProperties[Index].Value = (UINT8*)S8Printf("%s", Prop2->string.c_str()).forgetDataWithoutFreeing();
               gSettings.AddProperties[Index].ValueLen = Prop2->string.sizeInBytesIncludingTerminator();
             } else if (Prop2 && (Prop2->type == kTagTypeInteger)) {
               gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocatePool (4);
-              CopyMem(gSettings.AddProperties[Index].Value, &(Prop2->string), 4);
+              CopyMem(gSettings.AddProperties[Index].Value, &Prop2->intValue, 4);
               gSettings.AddProperties[Index].ValueLen = 4;
             } else {
               //else  data
@@ -5099,7 +5095,7 @@ GetUserSettings(
           } else if (IsPropertyFalse(Prop)) {
             gSettings.DropOEM_DSM = 0;
           } else if (Prop->type == kTagTypeInteger) {
-            gSettings.DropOEM_DSM = (UINT16)(UINTN)Prop->string;
+            gSettings.DropOEM_DSM = (UINT16)(UINTN)Prop->??;
           } else if (Prop->type == kTagTypeDict) {
             Prop2 = GetProperty(Prop, "ATI");
             if (IsPropertyTrue(Prop2)) {
@@ -5477,17 +5473,17 @@ GetUserSettings(
             // Get memory vendor
             Dict2 = GetProperty(Prop3, "Vendor");
             if (Dict2 && Dict2->type == kTagTypeString && Dict2->string.notEmpty()) {
-              SlotPtr->Vendor   = (__typeof__(SlotPtr->Vendor))AllocateCopyPool(Dict2->string.sizeInBytesIncludingTerminator(), Dict2->string.c_str());
+              SlotPtr->Vendor   = S8Printf("%s", Dict2->string.c_str()).forgetDataWithoutFreeing();
             }
             // Get memory part number
             Dict2 = GetProperty(Prop3, "Part");
             if (Dict2 && Dict2->type == kTagTypeString && Dict2->string.notEmpty()) {
-              SlotPtr->PartNo   = (__typeof__(SlotPtr->PartNo))AllocateCopyPool(Dict2->string.sizeInBytesIncludingTerminator(), Dict2->string.c_str());
+              SlotPtr->PartNo   = S8Printf("%s", Dict2->string.c_str()).forgetDataWithoutFreeing();
             }
             // Get memory serial number
             Dict2 = GetProperty(Prop3, "Serial");
             if (Dict2 && Dict2->type == kTagTypeString && Dict2->string.notEmpty()) {
-              SlotPtr->SerialNo = (__typeof__(SlotPtr->SerialNo))AllocateCopyPool(Dict2->string.sizeInBytesIncludingTerminator(), Dict2->string.c_str());
+              SlotPtr->SerialNo = S8Printf("%s", Dict2->string.c_str()).forgetDataWithoutFreeing();
             }
             // Get memory type
             SlotPtr->Type = MemoryTypeDdr3;
@@ -5808,7 +5804,7 @@ GetUserSettings(
 
       Prop = GetProperty(DictPointer, "CustomUUID");
       if (Prop != NULL) {
-        if (IsValidGuidAsciiString (Prop->string)) {
+        if (IsValidGuidAsciiString(Prop->string)) {
           gSettings.CustomUuid = Prop->string;
           DBG("Converted CustomUUID %ls\n", gSettings.CustomUuid.wc_str());
           Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
@@ -5902,7 +5898,6 @@ GetUserSettings(
       if (DictPointer != NULL) {
         Prop = GetProperty(DictPointer, "Theme");
         if ((Prop != NULL) && (Prop->type == kTagTypeString) && Prop->string.notEmpty()) {
- //         GlobalConfig.Theme = XStringW().takeValueFrom(Prop->string).forgetDataWithoutFreeing();
           GlobalConfig.Theme.takeValueFrom(Prop->string);
           DBG("Theme from new config: %ls\n", GlobalConfig.Theme.wc_str());
         }
@@ -5965,11 +5960,11 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string.notEmpty() ) {
-          OSVersion.takeValueFrom(Prop->string);
+          OSVersion = Prop->string;
         }
         Prop = GetProperty(Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string.notEmpty() ) {
-          Entry->BuildVersion.takeValueFrom(Prop->string);
+          Entry->BuildVersion = Prop->string;
         }
       }
     }
@@ -5996,11 +5991,11 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string.notEmpty() ) {
-          OSVersion.takeValueFrom(Prop->string);
+          OSVersion = Prop->string;
         }
         Prop = GetProperty(Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string.notEmpty() ) {
-          Entry->BuildVersion.takeValueFrom(Prop->string);
+          Entry->BuildVersion = Prop->string;
         }
       }
     }
@@ -6013,7 +6008,7 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
         Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "Kernel Flags");
-          if (Prop != NULL && Prop->string.notEmpty() ) {
+          if ( Prop != NULL && Prop->string.notEmpty() ) {
             if ( Prop->string.contains("Install%20macOS%20BigSur") || Prop->string.contains("Install%20macOS%2011.0")) {
               OSVersion = "11.0"_XS8;
             } else if ( Prop->string.contains("Install%20macOS%2010.16")) {
@@ -6069,11 +6064,11 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "ProductVersion");
           if (Prop != NULL && Prop->string.notEmpty() ) {
-            OSVersion.takeValueFrom(Prop->string);
+            OSVersion = Prop->string;
           }
           Prop = GetProperty(Dict, "ProductBuildVersion");
           if (Prop != NULL && Prop->string.notEmpty() ) {
-            Entry->BuildVersion.takeValueFrom(Prop->string);
+            Entry->BuildVersion = Prop->string;
           }
           // In InstallInfo.plist, there is no a version key only when updating from AppStore in 10.13+
           // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
@@ -6081,7 +6076,7 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
           if (DictPointer != NULL) {
             Prop = GetProperty(DictPointer, "version");
             if (Prop != NULL && Prop->string.notEmpty() ) {
-              OSVersion.takeValueFrom(Prop->string);
+              OSVersion = Prop->string;
             }
           }
         }
@@ -6166,11 +6161,11 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = GetProperty(Dict, "ProductVersion");
           if (Prop != NULL && Prop->string.notEmpty() ) {
-            OSVersion.takeValueFrom(Prop->string);
+            OSVersion = Prop->string;
           }
           Prop = GetProperty(Dict, "ProductBuildVersion");
           if (Prop != NULL && Prop->string.notEmpty() ) {
-            Entry->BuildVersion.takeValueFrom(Prop->string);
+            Entry->BuildVersion = Prop->string;
           }
         }
       }
@@ -6202,11 +6197,11 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = GetProperty(Dict, "ProductVersion");
         if (Prop != NULL && Prop->string.notEmpty() ) {
-          OSVersion.takeValueFrom(Prop->string);
+          OSVersion = Prop->string;
         }
         Prop = GetProperty(Dict, "ProductBuildVersion");
         if (Prop != NULL && Prop->string.notEmpty() ) {
-          Entry->BuildVersion.takeValueFrom(Prop->string);
+          Entry->BuildVersion = Prop->string;
         }
       }
     } else if (FileExists (Entry->Volume->RootDir, L"\\com.apple.recovery.boot\\boot.efi")) {

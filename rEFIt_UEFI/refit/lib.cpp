@@ -34,10 +34,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "screen.h"
 #include "../Platform/guid.h"
 #include "../Platform/APFS.h"
+#include "../refit/lib.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LIB 1

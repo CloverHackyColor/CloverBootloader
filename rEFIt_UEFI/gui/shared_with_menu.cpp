@@ -39,10 +39,11 @@
  *  THIS will most likely disappear soon !
  */
 
-#include <Platform.h>
-//#include "../refit/lib.h"
-//#include "menu_items/menu_items.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../refit/lib.h"
+#include "menu_items/menu_items.h"
 //#include "../entry_scan/common.h"
+#include "../Platform/Settings.h"
 
 CONST XString8 ArgOptional[NUM_OPT] = {
   "arch=i386"_XS8,       //0

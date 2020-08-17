@@ -5,9 +5,6 @@ This class will replace EG_IMAGE structure and methods
 #if !defined(__XIMAGE_H__)
 #define __XIMAGE_H__
 
-//#include <Platform.h>
-//
-
 extern "C" {
 #include <Protocol/GraphicsOutput.h>
 }

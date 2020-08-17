@@ -42,6 +42,8 @@ extern "C" {
 #include "libegint.h"
 #include "nanosvg.h"
 #include "VectorGraphics.h"
+#include "XTheme.h"
+#include "../Platform/Settings.h"
 
 //#include "egemb_font.h"
 //#define FONT_CELL_WIDTH (7)

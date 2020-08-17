@@ -3,7 +3,7 @@
   JrCs 2014
 */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 XString8 NonDetected = "10.10.10"_XS8;  //longer string
 

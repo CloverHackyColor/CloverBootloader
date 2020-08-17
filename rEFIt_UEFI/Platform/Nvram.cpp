@@ -5,7 +5,7 @@
  *  dmazar, 2012
  */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "Nvram.h"
 #include "BootOptions.h"
 #include "guid.h"
@@ -1033,7 +1033,6 @@ PutNvramPlistToRtVars ()
   TagPtr     Tag;
   TagPtr     ValTag;
   INTN       Size, i;
-  CHAR16     KeyBuf[128];
   VOID       *Value;
   
   if (gNvramDict == NULL) {
@@ -1074,11 +1073,11 @@ PutNvramPlistToRtVars ()
         continue;
     }
 
-    // key to unicode; check if key buffer is large enough
-    if ( Tag->string.length() > sizeof(KeyBuf) - 1 ) {
-      DBG(" ERROR: Skipping too large key %s\n", Tag->string.c_str());
-      continue;
-    }
+//    // key to unicode; check if key buffer is large enough
+//    if ( Tag->string.length() > sizeof(KeyBuf) - 1 ) {
+//      DBG(" ERROR: Skipping too large key %s\n", Tag->string.c_str());
+//      continue;
+//    }
 
     if ( Tag->string == "Boot0082"_XS8 || Tag->string == "BootNext"_XS8 ) {
       VendorGuid = &gEfiGlobalVariableGuid;
@@ -1087,8 +1086,9 @@ PutNvramPlistToRtVars ()
     }
 
 //    AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
+    XStringW KeyBuf = Tag->string;
     if (!GlobalConfig.DebugLog) {
-      DBG(" Adding Key: %s: ", Tag->string.c_str());
+      DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
     }
     // process value tag
     
@@ -1134,7 +1134,7 @@ PutNvramPlistToRtVars ()
                     ); */
 
     SetNvramVariable (
-                      KeyBuf,
+                      KeyBuf.wc_str(),
                       VendorGuid,
                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                       Size,

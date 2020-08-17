@@ -8,9 +8,10 @@
  */
 
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 //#include <Library/MemLogLib.h>
 #include "DataHubCpu.h"
+#include "../Platform/Settings.h"
 
 extern  EFI_GUID  gEfiMiscSubClassGuid;
 

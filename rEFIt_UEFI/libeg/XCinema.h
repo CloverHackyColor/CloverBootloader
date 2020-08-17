@@ -16,9 +16,9 @@ extern "C" {
 #include "../cpp_foundation/XString.h"
 #include "../libeg/libeg.h"
 #include "XImage.h"
-#include "XTheme.h"
 
 class XTheme;
+class XCinema;
 
 class FILM
 {

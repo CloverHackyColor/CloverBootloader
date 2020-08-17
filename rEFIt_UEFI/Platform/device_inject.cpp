@@ -8,10 +8,12 @@
 
 
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "device_inject.h"
 #include "FixBiosDsdt.h"
 #include "../include/Devices.h"
+#include "../refit/lib.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_INJECT
 #ifndef DEBUG_ALL

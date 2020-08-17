@@ -19,7 +19,7 @@
   Removed commented out code in rev 2965
 */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 STATIC EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode = EfiConsoleControlScreenText;
 

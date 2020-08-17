@@ -26,9 +26,24 @@
 #define kXMLTagFloat     "real"
 
 
+typedef enum {
+  kTagTypeNone,
+  kTagTypeDict,
+  kTagTypeKey,
+  kTagTypeString,
+  kTagTypeInteger,
+  kTagTypeData,
+  kTagTypeDate,
+  kTagTypeFalse,
+  kTagTypeTrue,
+  kTagTypeArray,
+  kTagTypeFloat
+} TAG_TYPE;
 
-typedef struct TagStruct {
 
+class TagStruct
+{
+public:
   UINTN  type;
   XString8 string;
   INTN     intValue;
@@ -36,10 +51,16 @@ typedef struct TagStruct {
   UINT8  *data;
   UINTN  dataLen;
   UINTN  offset;
-  struct TagStruct *tag;
-  struct TagStruct *tagNext;
+  TagStruct *tag;
+  TagStruct *tagNext;
 
-} TagStruct, *TagPtr;
+  TagStruct() : type(kTagTypeNone), string(), intValue(0), floatValue(0), data(0), dataLen(0), offset(0), tag(NULL), tagNext(NULL) {}
+  TagStruct(const TagStruct& other) = delete; // Can be defined if needed
+  const TagStruct& operator = ( const TagStruct & ) = delete; // Can be defined if needed
+  ~TagStruct() {}
+};
+
+typedef TagStruct* TagPtr;
 
 typedef union {
   struct {

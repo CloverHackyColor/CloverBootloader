@@ -16,6 +16,9 @@ kext injection
 ////////////////////
 #define RoundPage(x)  ((((UINTN)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
 
+
+#define KERNEL_MAX_SIZE 80000000
+
 #define KEXT_SIGNATURE SIGNATURE_32('M','O','S','X')
 
 /*

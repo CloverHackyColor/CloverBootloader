@@ -10,7 +10,7 @@ LegacyBoot.c - support for boot legacy OS such as WindowsXP and Linux
 Portion from XOM project
 Copyright (c) 2006 JLA 
 */
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "LegacyBiosThunk.h"
 //#include <Protocol/Bds.h>
 #include "AcpiPatcher.h"

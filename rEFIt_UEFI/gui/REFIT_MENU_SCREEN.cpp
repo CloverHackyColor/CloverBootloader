@@ -34,7 +34,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#include "Platform.h"
 #include "../libeg/libegint.h"   //this includes platform.h
 //#include "../include/scroll_images.h"
 

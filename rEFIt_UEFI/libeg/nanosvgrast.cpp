@@ -37,6 +37,7 @@
 
 #include "nanosvg.h"
 #include "FloatLib.h"
+#include "XImage.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 0

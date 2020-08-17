@@ -8,6 +8,7 @@
 #ifndef PLATFORM_GUID_H_
 #define PLATFORM_GUID_H_
 
+#include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/unicode_conversions.h"
 
 /** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */

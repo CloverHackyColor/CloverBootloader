@@ -8,7 +8,7 @@
  */
 
 
-#include <Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "AcpiPatcher.h"
 #include "guid.h"
 #include "APFS.h"

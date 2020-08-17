@@ -1,6 +1,8 @@
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "kext_inject.h"
 #include "DataHubCpu.h"
+#include "../Platform/plist.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define KEXT_INJECT_DEBUG 1

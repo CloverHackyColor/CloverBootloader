@@ -2,12 +2,13 @@
  * a class for mouse support
  */
 
-#include <Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 #include "XPointer.h"
 #include "libegint.h"   //this includes platform.h 
 #include "../refit/screen.h"
 #include "../refit/menu.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MOUSE 0

@@ -36,6 +36,7 @@
 #define __REFIT_MENU_SCREEN_H__
 
 
+#include "../Platform/Settings.h"
 #include "../libeg/libegint.h"
 //#include "../libeg/libeg.h"
 #include "../refit/lib.h"

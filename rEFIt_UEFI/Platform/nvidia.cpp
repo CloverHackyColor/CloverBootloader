@@ -47,7 +47,7 @@
  *  SOFTWARE.
  */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "nvidia.h"
 #include "device_inject.h"
 #include "smbios.h"
@@ -55,6 +55,7 @@
 #include "FixBiosDsdt.h"
 #include "../include/Pci.h"
 #include "../include/Devices.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_NVIDIA
 #ifndef DEBUG_ALL

@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "kernel_patcher.h"
 #include "usbfix.h"
 #include "../Platform/cpu.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define PATCH_DEBUG 0

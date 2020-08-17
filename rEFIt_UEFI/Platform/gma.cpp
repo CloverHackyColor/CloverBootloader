@@ -61,11 +61,12 @@
  */
 
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "gma.h"
 #include "platformdata.h"
 #include "FixBiosDsdt.h"
 #include "../include/Devices.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_GMA
 #ifndef DEBUG_ALL

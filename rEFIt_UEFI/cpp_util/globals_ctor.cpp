@@ -16,7 +16,8 @@ extern "C" {
 //  #include <stddef.h>
 }
 #include "globals_ctor.h"
-#include <Platform/Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Protocol/LoadedImage.h>
 
 
 

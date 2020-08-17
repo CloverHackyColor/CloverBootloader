@@ -107,7 +107,7 @@ class XObjArrayNC
 	void Remove(const TYPE &Element);
 	void RemoveAtIndex(size_t nIndex);
 	void RemoveAtIndex(int nIndex);
-	void RemoveWithoutFreeing(size_t nIndex); // If you use this, there might be a design problem somewhere ???
+	void RemoveWithoutFreeingAtIndex(size_t nIndex); // If you use this, there might be a design problem somewhere ???
 	//void Remove(int nIndex);
 	void RemoveAllBut(const TYPE *Element);
 
@@ -429,12 +429,9 @@ void XObjArrayNC<TYPE>::SetFreeIt(const TYPE *Element, bool Flag)
 template<class TYPE>
 void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex)
 {
-	if ( nIndex  < XObjArrayNC<TYPE>::_Len )
-	{
-  	if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
-		panic("void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex) : BUG nIndex (%zu) is > length(). System halted\n", nIndex);
-	  }
-	}
+  if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
+    panic("void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex) : BUG nIndex (%zu) is > length(). System halted\n", nIndex);
+  }
 	if ( _Data[nIndex].FreeIt )
 	{
 		TYPE *TmpObject; // BCB 4 oblige me to use a tmp var for doing the delete.
@@ -452,7 +449,7 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex)
 //-------------------------------------------------------------------------------------------------
 /* RemoveWithoutFreeing(size_t) */
 template<class TYPE>
-void XObjArrayNC<TYPE>::RemoveWithoutFreeing(size_t nIndex)
+void XObjArrayNC<TYPE>::RemoveWithoutFreeingAtIndex(size_t nIndex)
 {
 	if ( nIndex < _Len )
 	{
@@ -461,7 +458,7 @@ void XObjArrayNC<TYPE>::RemoveWithoutFreeing(size_t nIndex)
 		return;
 	}
 	#if defined(_DEBUG)
-		throw "XObjArray::RemoveWithoutFreeing(size_t) -> nIndex > _Len\n";
+		panic("XObjArray::RemoveWithoutFreeing(size_t) -> nIndex > _Len");
 	#endif
 }
 

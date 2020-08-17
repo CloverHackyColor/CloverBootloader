@@ -14,13 +14,14 @@
 
 #include "VectorGraphics.h"
 
-#include "../Platform/Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 #include "nanosvg.h"
 #include "FloatLib.h"
 #include "lodepng.h"
 #include "../refit/screen.h"
 #include "../cpp_foundation/XString.h"
+#include "../refit/lib.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1

@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "LegacyBiosThunk.h"
 #include <posix.h>
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 #ifndef DEBUG_ALL
 #define DEBUG_LBTHUNK 0

@@ -34,10 +34,11 @@
  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "cpu.h"
 #include "smbios.h"
 #include "kernel_patcher.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_CPU 1

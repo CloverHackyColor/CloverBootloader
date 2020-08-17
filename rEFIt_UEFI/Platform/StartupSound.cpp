@@ -29,7 +29,7 @@
 */
 
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "StartupSound.h"
 #include "Settings.h"
 #include "Nvram.h"

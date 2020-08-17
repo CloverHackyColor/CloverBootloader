@@ -1,6 +1,8 @@
 #ifndef __LIBSAIO_GMA_H
 #define __LIBSAIO_GMA_H
+
 #include "device_inject.h"
+#include "../gui/menu_items/menu_items.h"
 
 BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev);
 

@@ -6,7 +6,7 @@
 //  Copyright © 2017 Jief. All rights reserved.
 //
 
-#include <Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <limits.h>
 #include "../cpp_foundation/unicode_conversions.h"
 #include <printlib-test-cpp_conf.h>

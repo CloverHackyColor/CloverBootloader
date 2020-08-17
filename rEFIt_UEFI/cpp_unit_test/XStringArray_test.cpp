@@ -1,4 +1,4 @@
-#include <Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../cpp_foundation/XStringArray.h"
 
 int XStringArray_tests()

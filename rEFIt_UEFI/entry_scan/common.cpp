@@ -33,7 +33,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "../Platform/Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "entry_scan.h"
 #include "../refit/menu.h"
 #include "../Platform/guid.h"

@@ -18,11 +18,12 @@
  * SOFTWARE.
  */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "FixBiosDsdt.h"
 #include "../include/Devices.h"
 #include "../include/Pci.h"
 #include "device_inject.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_HDA
 #ifndef DEBUG_ALL

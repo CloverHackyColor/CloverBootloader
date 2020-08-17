@@ -6,6 +6,7 @@
 
 #include "../gui/menu_items/menu_items.h"
 #include "../Platform/plist.h"
+//class TagStruct;
 
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
@@ -179,20 +180,6 @@ public:
   CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
   CUSTOM_TOOL_ENTRY& operator=(const CUSTOM_TOOL_ENTRY&) = delete;
 };
-
-typedef enum {
-  kTagTypeNone,
-  kTagTypeDict,
-  kTagTypeKey,
-  kTagTypeString,
-  kTagTypeInteger,
-  kTagTypeData,
-  kTagTypeDate,
-  kTagTypeFalse,
-  kTagTypeTrue,
-  kTagTypeArray,
-  kTagTypeFloat
-} TAG_TYPE;
 
 class DEV_PROPERTY
 {

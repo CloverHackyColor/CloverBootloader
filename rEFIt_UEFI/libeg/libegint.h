@@ -41,7 +41,7 @@
 //#include <efi.h>
 //#include <efilib.h>
 
-#include "../Platform/Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 
 #if defined(_MSC_VER)

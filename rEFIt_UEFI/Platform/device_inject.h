@@ -5,8 +5,6 @@
  *	Cleaned and merged by iNDi
  */
 
-//#include "Platform.h"
-
 #ifndef __LIBSAIO_DEVICE_INJECT_H
 #define __LIBSAIO_DEVICE_INJECT_H
 

@@ -498,9 +498,6 @@ extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 //VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 
-#define KERNEL_MAX_SIZE 80000000
-
-
 
 
 VOID ReinitVolumes(VOID);

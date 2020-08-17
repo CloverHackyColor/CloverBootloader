@@ -1,4 +1,4 @@
-#include <Platform/Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 #if 0
 #define DBG(...) DebugLog(2, __VA_ARGS__)

@@ -1,7 +1,8 @@
 // Slice 2014
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <Library/NetLib.h>
+#include "../refit/lib.h"
 
 #ifndef DEBUG_MAC
 #ifndef DEBUG_ALL

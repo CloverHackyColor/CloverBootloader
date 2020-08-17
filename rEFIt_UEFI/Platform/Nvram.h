@@ -11,6 +11,8 @@
 #define NON_APPLE_SMC_SIGNATURE SIGNATURE_64('S','M','C','H','E','L','P','E')
 
 #include "../cpp_foundation/XString.h"
+#include "../gui/REFIT_MENU_SCREEN.h"
+
 
 extern EFI_GUID                       *gEfiBootDeviceGuid;
 extern EFI_DEVICE_PATH_PROTOCOL       *gEfiBootDeviceData;

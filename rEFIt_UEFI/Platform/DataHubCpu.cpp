@@ -37,7 +37,7 @@
 #endif
 
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "Nvram.h"
 #include "platformdata.h"
 #include "smbios.h"
@@ -279,8 +279,12 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
     // Do not mess with prev-lang:kbd on UEFI systems without NVRAM emulation; it's OS X's business
     KbdPrevLang = L"prev-lang:kbd";
     OldData = (__typeof__(OldData))GetNvramVariable(KbdPrevLang, &gEfiAppleBootGuid, NULL, NULL);
-    gSettings.Language.trim();
-    SetNvramXString8(KbdPrevLang, &gEfiAppleBootGuid, Attributes, gSettings.Language);
+    if (OldData == NULL) {
+      gSettings.Language.trim();
+      SetNvramXString8(KbdPrevLang, &gEfiAppleBootGuid, Attributes, gSettings.Language);
+    } else {
+      FreePool(OldData);
+    }
   } else {
     Attributes |= EFI_VARIABLE_NON_VOLATILE;
   }

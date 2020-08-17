@@ -5,7 +5,7 @@
 //totally rebuilt by Slice, 2012-2013
 // NForce additions by Oscar09, 2013
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "FixBiosDsdt.h"
 #include "StateGenerator.h"
 #include "AcpiPatcher.h"

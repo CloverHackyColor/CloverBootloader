@@ -2,7 +2,8 @@
 #include "lodepng.h"
 #include "nanosvg.h"
 #include "libegint.h"  //for egDecodeIcns
-
+#include "../refit/lib.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_XIMAGE 1

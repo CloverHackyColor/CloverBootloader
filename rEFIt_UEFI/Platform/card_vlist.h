@@ -8,6 +8,8 @@
 #ifndef PLATFORM_CARD_VLIST_H_
 #define PLATFORM_CARD_VLIST_H_
 
+#include "../Platform/plist.h"
+
 
 typedef struct {
   UINT32            Signature;

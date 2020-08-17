@@ -1,24 +1,6 @@
-//#ifdef CLOVER_BUILD
-//#include "../../Platform/BootLog.h"
 
-#include <Platform.h>
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
-//
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
-//
-//#include <Library/BaseLib.h> // for CpuDeadLoop
-//
-//#ifdef __cplusplus
-//} // extern "C"
-//#endif
-//
-//#else
-//
-//#include <Platform.h>
-//
-//#endif
 
 #if defined(CLOVER_BUILD) || !defined(_MSC_VER)
 void abort(void)

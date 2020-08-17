@@ -15,8 +15,8 @@
  * XMP detection - apianti
  */
 
-//
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../Platform/Settings.h"
 #include "spd.h"
 #include "memvendors.h"
 #include "cpu.h"

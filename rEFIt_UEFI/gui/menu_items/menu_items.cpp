@@ -33,7 +33,7 @@
  */
 
 
-#include "../../Platform/Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "menu_items.h"
 
 #include "../../libeg/libeg.h"

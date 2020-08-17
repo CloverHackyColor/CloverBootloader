@@ -6,7 +6,7 @@
  *  based on works by mackerintel 2008, orByte 2006, Signal64, THeKiNG
  */
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 #ifndef DEBUG_ALL
 #define DEBUG_USB 0
@@ -19,7 +19,6 @@
 #else
 #define DBG(...) DebugLog(DEBUG_USB, __VA_ARGS__)
 #endif
-
 
 #define PCI_IF_OHCI      0x10
 #define PCI_IF_XHCI     0x30

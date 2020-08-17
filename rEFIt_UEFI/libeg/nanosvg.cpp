@@ -39,6 +39,7 @@
 #include "FloatLib.h"
 #include "../Platform/b64cdecode.h"
 #include "XImage.h"
+#include "../refit/lib.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 0

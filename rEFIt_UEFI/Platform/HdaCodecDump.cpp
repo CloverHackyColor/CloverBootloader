@@ -25,6 +25,7 @@
 #include "HdaCodecDump.h"
 #include "StateGenerator.h"
 #include "AmlGenerator.h"
+#include "../Platform/Settings.h"
 
 CONST CHAR8 *gWidgetNames[HDA_WIDGET_TYPE_VENDOR + 1] = {
 	"Audio Output", "Audio Input", "Audio Mixer",

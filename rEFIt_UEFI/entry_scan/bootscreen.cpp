@@ -36,6 +36,7 @@
 #include "../refit/screen.h"
 #include "../libeg/XImage.h"
 #include "../libeg/XTheme.h"
+#include "../Platform/Settings.h"
 
 extern "C" {
 #include <Protocol/GraphicsOutput.h>

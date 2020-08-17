@@ -1,6 +1,6 @@
 //Slice 2013
 
-#include "Platform.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "AcpiPatcher.h"
 
 #ifndef DEBUG_ALL
