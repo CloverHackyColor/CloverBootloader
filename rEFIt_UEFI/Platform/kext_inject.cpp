@@ -103,7 +103,7 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
     
     osBundleRequiredTag = GetProperty(dict,"OSBundleRequired");
     if (osBundleRequiredTag) {
-      osbundlerequired = osBundleRequiredTag->string;
+      osbundlerequired = osBundleRequiredTag->stringValue();
       osbundlerequired.lowerAscii();
     }
 
@@ -170,9 +170,9 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
   }
     
   prop = GetProperty(dict,"CFBundleExecutable");
-  if(prop!=0) {
-    Executable.takeValueFrom(prop->string);
-    //   AsciiStrToUnicodeStrS(prop->string, Executable, 256);
+  if( prop != NULL && prop->isString() && prop->stringValue().notEmpty() ) {
+    Executable.takeValueFrom(prop->stringValue());
+    //   AsciiStrToUnicodeStrS(prop->stringValue(), Executable, 256);
     if (NoContents) {
       TempName = SWPrintf("%ls\\%ls", FileName, Executable.wc_str());
       //     snwprintf(TempName, 512, "%s\\%s", FileName, Executable);

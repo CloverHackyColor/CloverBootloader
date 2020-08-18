@@ -1079,7 +1079,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	BbsDPN = (BBS_BBS_DEVICE_PATH *) CreateDeviceNode(BBS_DEVICE_PATH, BBS_BBS_DP, sizeof(BBS_BBS_DEVICE_PATH));
 	BbsDPN->DeviceType = BBS_TYPE_HARDDRIVE; // BBS_TYPE_CDROM;
 	BbsDPN->StatusFlag = 0;
-	BbsDPN->String[0] = '\0';
+	BbsDPN->stringValue()[0] = '\0';
 	
 	// appends end-of-device-path node and returns complete DP
 	BbsDP = (BBS_BBS_DEVICE_PATH *) AppendDevicePathNode(NULL, (EFI_DEVICE_PATH_PROTOCOL *) BbsDPN);

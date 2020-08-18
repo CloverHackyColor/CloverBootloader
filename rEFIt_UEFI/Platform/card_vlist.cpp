@@ -112,7 +112,7 @@ VOID FillCardList(TagPtr CfgDict)
       CONST CHAR8 *key = VEN[Index];
       
       prop = GetProperty(CfgDict, key);
-      if(prop && (prop->type == kTagTypeArray)) {
+      if( prop  &&  prop->isArray() ) {
         INTN		i;
         INTN		 count;
         
@@ -130,8 +130,9 @@ VOID FillCardList(TagPtr CfgDict)
           
           if (status == EFI_SUCCESS) {
             if (element) {
-              if ((prop2 = GetProperty(element, "Model")) != 0) {
-                model_name = prop2->string.c_str();
+              prop2 = GetProperty(element, "Model");
+              if ( prop2->isString() && prop2->stringValue().notEmpty() ) {
+                model_name = prop2->stringValue().c_str();
               } else {
                 model_name = "VideoCard";
               }

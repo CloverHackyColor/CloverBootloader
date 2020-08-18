@@ -1506,14 +1506,6 @@ XStringClass xstr2 = initia__String.basename();
 //	(void)xsw;
 //}
 
-class C
-{
-  public:
-	typedef char char_t;
-	const char* data;
-	constexpr C() : data(0) { }
-};
-
 //constexpr LString8 g_xs1 = "foobar";
 //constexpr LStringW g_xsw1 = L"foobar";
 //XString g_xs2 = "foobar"_XS8;

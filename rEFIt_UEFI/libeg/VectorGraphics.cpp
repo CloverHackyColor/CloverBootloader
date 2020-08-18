@@ -366,8 +366,8 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->SetIndex((UINTN)GetPropertyInteger(Dict2, 1)); //default=main screen
 
       Dict2 = GetProperty(Dict3, "Path");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-        NewFilm->Path.takeValueFrom(Dict2->string);
+      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
+        NewFilm->Path.takeValueFrom(Dict2->stringValue());
       }
 
       Dict2 = GetProperty(Dict3, "Frames");
@@ -377,19 +377,19 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->FrameTime = (UINTN)GetPropertyInteger(Dict2, 50); //default will be 50ms
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-        if (Dict2->string.equal("left")) {
+      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
+        if (Dict2->stringValue().equal("left")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Dict2->string.equal("right")) {
+        } else if (Dict2->stringValue().equal("right")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->type == kTagTypeString) && Dict2->string.notEmpty() ) {
-        if (Dict2->string.equal("top")) {
+      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
+        if (Dict2->stringValue().equal("top")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Dict2->string.equal("bottom")) {
+        } else if (Dict2->stringValue().equal("bottom")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }

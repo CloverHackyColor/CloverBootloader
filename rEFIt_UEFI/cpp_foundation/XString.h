@@ -52,7 +52,7 @@ class XString8 : public XStringAbstract<char, XString8>
 	using XStringAbstract<char, XString8>::operator =;
 
   const char* c_str() const { return m_data; }
-  char* copy_str() const { return (char*)AllocateCopyPool(length()+1, m_data); }
+//  char* copy_str() const { return (char*)AllocateCopyPool(length()+1, m_data); }
 
 protected:
 	static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context)

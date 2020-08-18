@@ -1004,7 +1004,7 @@ public:
           p = m_data + ( p - previousData );
           previousData = m_data;
       }
-      sizeLeft -= p-previousP;
+      sizeLeft -= uintptr_t(p-previousP);
       memmove(p+replaceBySize, p+searchSize, (sizeLeft - searchSize + 1)*sizeof(T));
 //      memmove(m_data+pos+replaceBySize-searchSize, m_data+pos, (currentSize - pos + 1)*sizeof(T));
       utf_stringnn_from_utf_string(p, replaceBySize, replaceBy.s());

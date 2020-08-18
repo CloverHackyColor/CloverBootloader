@@ -1955,9 +1955,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gConfigDict[1]) {
     UniteTag = GetProperty(gConfigDict[1], "Unite");
     if(UniteTag) {
-      UniteConfigs =  (UniteTag->type == kTagTypeTrue) ||
-                      ((UniteTag->type == kTagTypeString) &&
-                      ((UniteTag->string[0] == 'y') || (UniteTag->string[0] == 'Y')));
+      UniteConfigs = UniteTag->isTrueOrYy();
       DBG("UniteConfigs = %ls", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
     }
   }

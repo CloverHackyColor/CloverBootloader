@@ -205,11 +205,8 @@
 		9AF4156E242CBC6000D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "printf_lite-conf.h"; sourceTree = "<group>"; };
 		9AF4156F242CBE7500D2644C /* printlib-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test.h"; sourceTree = "<group>"; };
 		9AF41570242CBE7500D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
-		9AF41571242CBE7600D2644C /* poolprint-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "poolprint-test.cpp"; sourceTree = "<group>"; };
-		9AF41572242CBE7600D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF41573242CBE7600D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
 		9AF41574242CBE7600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
-		9AF41575242CBE7600D2644C /* poolprint-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test.h"; sourceTree = "<group>"; };
 		9AF41578242CBED700D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF41579242CBED700D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -273,9 +270,6 @@
 				9A57C20A2418A1FD0029A39F /* global_test.h */,
 				9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */,
 				9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */,
-				9AF41572242CBE7600D2644C /* poolprint-test-cpp_conf.h */,
-				9AF41571242CBE7600D2644C /* poolprint-test.cpp */,
-				9AF41575242CBE7600D2644C /* poolprint-test.h */,
 				9AF41574242CBE7600D2644C /* printf_lite-test-cpp_conf.h */,
 				9AA045892425F94D000D6970 /* printf_lite-test.cpp */,
 				9AA045882425F94D000D6970 /* printf_lite-test.h */,

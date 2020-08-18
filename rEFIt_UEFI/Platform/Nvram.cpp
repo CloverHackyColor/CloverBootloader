@@ -1046,66 +1046,66 @@ PutNvramPlistToRtVars ()
   DbgHeader("PutNvramPlistToRtVars");
 //  DBG("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
-  for (Tag = gNvramDict->tag; Tag != NULL; Tag = Tag->tagNext) {
+  for (Tag = gNvramDict->dictTagValue(); Tag != NULL; Tag = Tag->nextTagValue()) {
     EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
     Value  = NULL;
-    ValTag = (TagPtr)Tag->tag;
+    ValTag = Tag->dictTagValue();
 
     // process only valid <key> tags
-    if (Tag->type != kTagTypeKey || ValTag == NULL) {
-		DBG(" ERROR: Tag is not <key>, type = %llu\n", Tag->type);
+    if (!Tag->isKey() || ValTag == NULL) {
+		  DBG(" ERROR: Tag is not <key> : type %s\n", ValTag->getTypeAsXString8().c_str());
       continue;
     }
-//    DBG("tag: %s\n", Tag->string);
+//    DBG("tag: %s\n", Tag->stringValue());
     // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
     // in kernel and kext patcher when mixing UEFI and CloverEFI boot
-    if ( Tag->string == "OsxAptioFixDrv-RelocBase"_XS8 ) {
+    if ( Tag->keyValue() == "OsxAptioFixDrv-RelocBase"_XS8 ) {
       DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
       continue;
-    } else if ( Tag->string == "OsxAptioFixDrv-ErrorExitingBootServices"_XS8 ) {
+    } else if ( Tag->keyValue() == "OsxAptioFixDrv-ErrorExitingBootServices"_XS8 ) {
       DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
       continue;
-    } else if ( Tag->string == "EmuVariableUefiPresent"_XS8 ) {
+    } else if ( Tag->keyValue() == "EmuVariableUefiPresent"_XS8 ) {
       DBG(" Skipping EmuVariableUefiPresent\n");
       continue;
-    } else if ( Tag->string == "aapl,panic-info"_XS8 ) {
+    } else if ( Tag->keyValue() == "aapl,panic-info"_XS8 ) {
         DBG(" Skipping aapl,panic-info\n");
         continue;
     }
 
 //    // key to unicode; check if key buffer is large enough
-//    if ( Tag->string.length() > sizeof(KeyBuf) - 1 ) {
-//      DBG(" ERROR: Skipping too large key %s\n", Tag->string.c_str());
+//    if ( Tag->keyValue().length() > sizeof(KeyBuf) - 1 ) {
+//      DBG(" ERROR: Skipping too large key %s\n", Tag->keyValue().c_str());
 //      continue;
 //    }
 
-    if ( Tag->string == "Boot0082"_XS8 || Tag->string == "BootNext"_XS8 ) {
+    if ( Tag->keyValue() == "Boot0082"_XS8 || Tag->keyValue() == "BootNext"_XS8 ) {
       VendorGuid = &gEfiGlobalVariableGuid;
       // it may happen only in this case
       GlobalConfig.HibernationFixup = TRUE;
     }
 
-//    AsciiStrToUnicodeStrS(Tag->string, KeyBuf, 128);
-    XStringW KeyBuf = Tag->string;
+//    AsciiStrToUnicodeStrS(Tag->stringValue(), KeyBuf, 128);
+    XStringW KeyBuf = Tag->keyValue();
     if (!GlobalConfig.DebugLog) {
       DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
     }
     // process value tag
     
-    if (ValTag->type == kTagTypeString) {
+    if (ValTag->isString()) {
       
       // <string> element
-      Value = (void*)ValTag->string.c_str();
-      Size  = ValTag->string.length();
+      Value = (void*)ValTag->stringValue().c_str();
+      Size  = ValTag->stringValue().length();
       if (!GlobalConfig.DebugLog) {
-		    DBG("String: Size = %lld, Val = '%s'\n", Size, ValTag->string.c_str());
+		    DBG("String: Size = %lld, Val = '%s'\n", Size, ValTag->stringValue().c_str());
       }
       
-    } else if (ValTag->type == kTagTypeData) {
+    } else if (ValTag->isData()) {
       
       // <data> element
-      Size  = ValTag->dataLen;
-      Value = ValTag->data;
+      Size  = ValTag->dataLenValue();
+      Value = ValTag->dataValue();
       if (!GlobalConfig.DebugLog) {
 		  DBG("Size = %lld, Data: ", Size);
         for (i = 0; i < Size; i++) {
@@ -1116,7 +1116,7 @@ PutNvramPlistToRtVars ()
        DBG("\n");
       }
     } else {
-		 DBG("ERROR: Unsupported tag type: %llu\n", ValTag->type);
+		  DBG("ERROR: Unsupported tag type: %s\n", ValTag->getTypeAsXString8().c_str());
       continue;
     }
     

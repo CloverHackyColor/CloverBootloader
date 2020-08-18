@@ -414,13 +414,13 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
         dict2 = GetProperty(dict, "AC Power");
         if (dict2) {
           prop = GetProperty(dict2, "Hibernate File");
-          if (prop && prop->type == kTagTypeString ) {
-            if (prop->string.contains("/Volumes/")) {
+          if (prop && prop->isString() ) {
+            if (prop->stringValue().contains("/Volumes/")) {
               CHAR8 *VolNameStart = NULL, *VolNameEnd = NULL;
               XStringW VolName;
               UINTN VolNameSize = 0;
               // Extract Volumes Name
-              VolNameStart = AsciiStrStr(prop->string.c_str() + 1, "/") + 1;
+              VolNameStart = AsciiStrStr(prop->stringValue().c_str() + 1, "/") + 1;
               if (VolNameStart) {
                 VolNameEnd = AsciiStrStr(VolNameStart, "/");
                 if (VolNameEnd) {
@@ -438,10 +438,10 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
                   ImageVolume = Volume;
                 }
               }
-            } else if ( prop->string.contains("/var") && !prop->string.contains("private")) {
-              SleepImageName = SWPrintf("\\private%s", prop->string.c_str());
+            } else if ( prop->stringValue().contains("/var") && !prop->stringValue().contains("private")) {
+              SleepImageName = SWPrintf("\\private%s", prop->stringValue().c_str());
             } else {
-              SleepImageName = SWPrintf("%s", prop->string.c_str());
+              SleepImageName = SWPrintf("%s", prop->stringValue().c_str());
             }
             wchar_t* p = SleepImageName.data(0);
             while (*p) {
