@@ -1046,10 +1046,11 @@ PutNvramPlistToRtVars ()
   DbgHeader("PutNvramPlistToRtVars");
 //  DBG("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
-  for (Tag = gNvramDict->dictTagValue(); Tag != NULL; Tag = Tag->nextTagValue()) {
+  for (Tag = gNvramDict->dictTagValue(); Tag != NULL; Tag = Tag->nextTagValue())
+  {
     EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
     Value  = NULL;
-    ValTag = Tag->dictTagValue();
+    if ( Tag->isKey() ) ValTag = Tag->keyTagValue();
 
     // process only valid <key> tags
     if (!Tag->isKey() || ValTag == NULL) {
