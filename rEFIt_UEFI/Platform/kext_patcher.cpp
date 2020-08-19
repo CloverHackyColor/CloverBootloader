@@ -1113,14 +1113,15 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   UINTN   Num = 0;
 
   // if we modify value directly at KernelAndKextPatches->KextPatches[N].SearchLen, it will be wrong for next driver
-  UINTN   SearchLen = KernelAndKextPatches.KextPatches[N].SearchLen;
+  const KEXT_PATCH& kextpatch = KernelAndKextPatches.KextPatches[N];
+  UINTN   SearchLen = kextpatch.SearchLen;
   
   DBG_RT("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\nAnyKext = %s\n",
-         N, (UINTN)Driver, DriverSize, KernelAndKextPatches.KextPatches[N].Label.c_str());
+         N, (UINTN)Driver, DriverSize, kextpatch.Label.c_str());
   DBG("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\nLabel = %s\n",
-      N, (UINTN)Driver, DriverSize, KernelAndKextPatches.KextPatches[N].Label.c_str());
+      N, (UINTN)Driver, DriverSize, kextpatch.Label.c_str());
 
-  if (!KernelAndKextPatches.KextPatches[N].MenuItem.BValue) {
+  if (!kextpatch.MenuItem.BValue) {
     return;
   }
 
@@ -1136,12 +1137,12 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
 
 	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
 
-  if (!KernelAndKextPatches.KextPatches[N].IsPlistPatch) {
+  if (!kextpatch.IsPlistPatch) {
     // kext binary patch
     DBG_RT("Binary patch\n");
     bool once = false;
     UINTN procLen = 0;
-    UINTN procAddr = searchProcInDriver(Driver, DriverSize, KernelAndKextPatches.KextPatches[N].ProcedureName);
+    UINTN procAddr = searchProcInDriver(Driver, DriverSize, kextpatch.ProcedureName);
     
     if (SearchLen == DriverSize) {
       procLen = DriverSize - procAddr;
@@ -1152,30 +1153,30 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     UINT8 * curs = &Driver[procAddr];
     UINTN j = 0;
     while (j < DriverSize) {
-      if (!KernelAndKextPatches.KextPatches[N].StartPattern || //old behavior
+      if (!kextpatch.StartPattern || //old behavior
           CompareMemMask((const UINT8*)curs,
-                         KernelAndKextPatches.KextPatches[N].StartPattern.data(),
-                         KernelAndKextPatches.KextPatches[N].StartPattern.size(),
-                         KernelAndKextPatches.KextPatches[N].StartMask.data(),
-                         KernelAndKextPatches.KextPatches[N].StartPattern.size())) {
+                         kextpatch.StartPattern.data(),
+                         kextpatch.StartPattern.size(),
+                         kextpatch.StartMask.data(),
+                         kextpatch.StartPattern.size())) {
         DBG_RT(" StartPattern found\n");
 
         Num = SearchAndReplaceMask(curs,
                                    procLen,
-                                   KernelAndKextPatches.KextPatches[N].Data.data(),
-                                   KernelAndKextPatches.KextPatches[N].MaskFind.data(),
-                                   KernelAndKextPatches.KextPatches[N].Data.size(),
-                                   KernelAndKextPatches.KextPatches[N].Patch.data(),
-                                   KernelAndKextPatches.KextPatches[N].MaskReplace.data(),
-                                   KernelAndKextPatches.KextPatches[N].Count);
+                                   kextpatch.Data.data(),
+                                   kextpatch.MaskFind.data(),
+                                   kextpatch.Data.size(),
+                                   kextpatch.Patch.data(),
+                                   kextpatch.MaskReplace.data(),
+                                   kextpatch.Count);
         if (Num) {
           curs += SearchLen - 1;
           j    += SearchLen - 1;
         }
       }
       if (once ||
-          !KernelAndKextPatches.KextPatches[N].StartPattern ||
-          !KernelAndKextPatches.KextPatches[N].StartPattern.size()) {
+          !kextpatch.StartPattern ||
+          !kextpatch.StartPattern.size()) {
         break;
       }
       j++; curs++;
@@ -1183,27 +1184,27 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   } else {
     // Info plist patch
     DBG_RT("Info.plist data : '");
-    for (size_t Ind = 0; Ind < KernelAndKextPatches.KextPatches[N].Data.size(); Ind++) {
-      DBG_RT("%c", KernelAndKextPatches.KextPatches[N].Data[Ind]);
+    for (size_t Ind = 0; Ind < kextpatch.Data.size(); Ind++) {
+      DBG_RT("%c", kextpatch.Data[Ind]);
     }
     DBG_RT("' ->\n");
     DBG_RT("Info.plist patch: '");
-    for (size_t Ind = 0; Ind < KernelAndKextPatches.KextPatches[N].Data.size(); Ind++) {
-      DBG_RT("%c", KernelAndKextPatches.KextPatches[N].Patch[Ind]);
+    for (size_t Ind = 0; Ind < kextpatch.Data.size(); Ind++) {
+      DBG_RT("%c", kextpatch.Patch[Ind]);
     }
     DBG_RT("' \n");
     
     Num = SearchAndReplaceTxt((UINT8*)InfoPlist,
                            InfoPlistSize,
-                           KernelAndKextPatches.KextPatches[N].Data.data(),
-                           KernelAndKextPatches.KextPatches[N].Data.size(),
-                           KernelAndKextPatches.KextPatches[N].Patch.data(),
+                           kextpatch.Data.data(),
+                           kextpatch.Data.size(),
+                           kextpatch.Patch.data(),
                            -1);
   }
   
   if (KernelAndKextPatches.KPDebug) {
     if (Num > 0) {
-		DBG_RT("==> patched %llu times!\n", Num);
+		  DBG_RT("==> patched %llu times!\n", Num);
     } else {
       DBG_RT("==> NOT patched!\n");
     }

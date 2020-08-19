@@ -470,7 +470,7 @@ UINT8
       Data = (__typeof__(Data))AllocateZeroPool(Prop->dataLenValue());
       CopyMem(Data, Prop->dataValue(), Prop->dataLenValue());
 
-      if (DataLen != NULL) *DataLen = 0;
+      if (DataLen != NULL) *DataLen = Prop->dataLenValue();
       /*
        DBG("Data: %p, Len: %d = ", Data, Prop->dataLen);
        for (i = 0; i < Prop->dataLen; i++) {
@@ -484,7 +484,7 @@ UINT8
       Data = (__typeof__(Data))AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
       Len  = hex2bin(Prop->stringValue().c_str(), Data, Len);
 
-      if (DataLen != NULL) *DataLen = 0;
+      if (DataLen != NULL) *DataLen = Len;
       /*
        DBG("Data(str): %p, Len: %d = ", data, len);
        for (i = 0; i < Len; i++) {
@@ -499,7 +499,7 @@ UINT8
   }else{
     if (DataLen != NULL) *DataLen = 0;
   }
-  return NULL;
+  return Data;
 }
 
 EFI_STATUS
@@ -1000,8 +1000,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         if (Prop2 == NULL) {
           break;
         }
-        if ( !Prop2->isString() ) {
-        	MsgLog("ATTENTION : property not string in KextsToPatch\n");
+        if ( !Prop2->isDict() ) {
+        	MsgLog("ATTENTION : property not dict in KextsToPatch\n");
           continue;
         }
         DBG(" - [%02lld]:", i);
