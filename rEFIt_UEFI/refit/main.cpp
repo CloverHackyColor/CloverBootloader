@@ -1938,17 +1938,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       GetBootFromOption();
     } else {
       ParseLoadOptions(&ConfName, &gConfigDict[1]);
-        if (ConfName.isEmpty()) {
+      if (ConfName.isEmpty()) {
+        gConfigDict[1] = NULL;
+      } else {
+        SetOEMPath(ConfName);
+        Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
+        DBG("%ls\\%ls.plist%ls loaded with name from LoadOptions: %s\n",
+            OEMPath.wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
+        if (EFI_ERROR(Status)) {
           gConfigDict[1] = NULL;
-        } else {
-          SetOEMPath(ConfName);
-          Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
-          DBG("%ls\\%ls.plist%ls loaded with name from LoadOptions: %s\n",
-              OEMPath.wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
-          if (EFI_ERROR(Status)) {
-            gConfigDict[1] = NULL;
-          }
         }
+      }
     }
   }
   if (gConfigDict[1]) {

@@ -327,12 +327,12 @@ GetBootFromOption(VOID)
   NameSize = *(UINT16*)Data;
 
   Data += 2; // pointer to Volume name
-  gSettings.DefaultVolume.strncpy((const char*)Data, NameSize);
+  gSettings.DefaultVolume.strncpy((__typeof__(gSettings.DefaultVolume.wc_str()))Data, NameSize);
 
   Data += NameSize;
   Name2Size = Len - NameSize;
   if (Name2Size != 0) {
-    gSettings.DefaultLoader.strncpy((const char*)Data, NameSize);
+    gSettings.DefaultLoader.strncpy((__typeof__(gSettings.DefaultVolume.wc_str()))Data, NameSize);
   }
 
   DBG("Clover started with option to boot %ls from %ls\n",
