@@ -328,6 +328,13 @@ void XTheme::FillByEmbedded()
 
 void XTheme::ClearScreen() //and restore background and banner
 {
+  if ( UGAWidth == 0 || UGAHeight == 0 ) {
+      // jief : I had the case where no graphic protocol were availbale. So UGAWidth == 0 && UGAHeight == 0 which panic because Background would be empty.
+      //        Background.GetPixelPtr(0, 0) panic on an empty image because there is no pixel at x=0 y=0
+      // test could be "if ( UGAWidth == 0 && UGAHeight == 0 )" (&& instead of ||), but I feel like if one of the dimension is 0, we have a graphic problem.
+      // also, should we implement the case if we are in text mode ?
+      return;
+  }
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL FirstBannerPixel = MenuBackgroundPixel;
   if (BanHeight < 2) {
     BanHeight = ((UGAHeight - (int)(LayoutHeight * Scale)) >> 1);
