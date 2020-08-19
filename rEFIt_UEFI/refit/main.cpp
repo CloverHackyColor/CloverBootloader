@@ -571,7 +571,7 @@ VOID LOADER_ENTRY::StartLoader()
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage = NULL;
   CONST CHAR8                   *InstallerVersion;
-  TagPtr                  dict = NULL;
+  TagStruct*                  dict = NULL;
   UINTN                   i;
   NSVGfont                *font; // , *nextFont;
 
@@ -1801,8 +1801,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	//UINT64            TscRemainder = 0;
 //  LOADER_ENTRY      *LoaderEntry;
   XStringW          ConfName;
-  TagPtr            smbiosTags = NULL;
-  TagPtr            UniteTag = NULL;
+  TagStruct*        smbiosTags = NULL;
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
   BOOLEAN           HaveDefaultVolume;
@@ -1953,7 +1952,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
   if (gConfigDict[1]) {
-    UniteTag = GetProperty(gConfigDict[1], "Unite");
+    const TagStruct* UniteTag = GetProperty(gConfigDict[1], "Unite");
     if(UniteTag) {
       UniteConfigs = UniteTag->isTrueOrYy();
       DBG("UniteConfigs = %ls", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
@@ -2219,7 +2218,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  }
   // Load any extra SMBIOS information
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios"_XSW, &smbiosTags)) && (smbiosTags != NULL)) {
-    TagPtr dictPointer = GetProperty(smbiosTags,"SMBIOS");
+    const TagStruct* dictPointer = GetProperty(smbiosTags,"SMBIOS");
     if (dictPointer) {
       ParseSMBIOSSettings(dictPointer);
     } else {

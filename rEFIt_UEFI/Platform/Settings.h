@@ -738,7 +738,7 @@ extern UINT16                          gBacklightLevel;
 //extern BOOLEAN                         defDSM;
 //extern UINT16                          dropDSM;
 
-extern TagPtr                          gConfigDict[];
+extern TagStruct*                          gConfigDict[];
 
 // ACPI/PATCHED/AML
 extern ACPI_PATCHED_AML                *ACPIPatchedAML;
@@ -890,13 +890,13 @@ GetRootUUID (
 EFI_STATUS
 GetEarlyUserSettings (
   IN  EFI_FILE *RootDir,
-      TagPtr   CfgDict
+      const TagStruct*   CfgDict
   );
 
 EFI_STATUS
 GetUserSettings (
   IN  EFI_FILE *RootDir,
-      TagPtr CfgDict
+      const TagStruct* CfgDict
   );
 
 EFI_STATUS
@@ -922,7 +922,7 @@ InjectKextsFromDir (
 VOID
 ParseLoadOptions (
   OUT  XStringW* ConfName,
-  OUT  TagPtr *Dict
+  OUT  TagStruct** Dict
   );
 
 EFI_STATUS
@@ -948,12 +948,12 @@ EFI_STATUS
 LoadUserSettings (
     IN  EFI_FILE *RootDir,
     const XStringW& ConfName,
-    TagPtr   *dict
+    TagStruct** dict
   );
 
 VOID
 ParseSMBIOSSettings (
-  TagPtr dictPointer
+  const TagStruct* dictPointer
   );
 
 //BOOLEAN

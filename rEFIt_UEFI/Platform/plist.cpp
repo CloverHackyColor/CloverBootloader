@@ -70,10 +70,21 @@ void TagStruct::FreeTag()
     _tag->FreeTag();
     _tag = NULL;
   }
-  if ( _nextTag ) {
-    _nextTag->FreeTag();
-    _nextTag = NULL;
+//  while ( tagIdx < _dictOrArrayContent.notEmpty() ) {
+//    _dictOrArrayContent[0].FreeTag();
+//    _dictOrArrayContent.RemoveWithoutFreeingAtIndex(0);
+//  }
+  // this loop is better because removing objects from the end don't do any memory copying.
+  for (size_t tagIdx = _dictOrArrayContent.size() ; tagIdx > 0  ; ) {
+    tagIdx--;
+    _dictOrArrayContent[tagIdx].FreeTag();
+    _dictOrArrayContent.RemoveWithoutFreeingAtIndex(tagIdx);
   }
+
+//  if ( _nextTag ) {
+//    _nextTag->FreeTag();
+//    _nextTag = NULL;
+//  }
 
   gTagsFree.AddReference(this, false);
 }
@@ -89,20 +100,19 @@ void TagStruct::FreeTag()
 CHAR8* buffer_start = NULL;
 
 // Forward declarations
-EFI_STATUS ParseTagDict( CHAR8* buffer, TagPtr * tag, UINT32 empty, UINT32* lenPtr);
-EFI_STATUS ParseTagArray( CHAR8* buffer, TagPtr * tag, UINT32 empty, UINT32* lenPtr);
-EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagFloat(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
-EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, bool value, UINT32* lenPtr);
-//defined in Platform.h
-//EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr *dict1);
-//INTN GetTagCount( TagPtr dict );
+EFI_STATUS ParseTagDict( CHAR8* buffer, TagStruct* * tag, UINT32 empty, UINT32* lenPtr);
+EFI_STATUS ParseTagArray( CHAR8* buffer, TagStruct* * tag, UINT32 empty, UINT32* lenPtr);
+EFI_STATUS ParseTagKey( char * buffer, TagStruct* * tag, UINT32* lenPtr);
+EFI_STATUS ParseTagString(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
+EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
+EFI_STATUS ParseTagFloat(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
+EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
+EFI_STATUS ParseTagDate(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr);
+EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagStruct* * tag, bool value, UINT32* lenPtr);
 
-TagPtr     NewTag( void );
+EFI_STATUS XMLParseNextTag (CHAR8  *buffer, TagStruct**tag, UINT32 *lenPtr);
+
+TagStruct*     NewTag( void );
 EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag,UINT32* lenPtr);
 
 /* Function for basic XML character entities parsing */
@@ -171,56 +181,53 @@ XMLDecode(CHAR8* src)
   return out;
 }
 
-INTN GetTagCount( TagPtr dict )
+INTN GetTagCount(const TagStruct* dict )
 {
   INTN count = 0;
-  TagPtr tagList, tag;
 
-  if ( !dict || (!dict->isDict() && !dict->isArray()) ) {
+  if ( !dict ) return 0;
+  
+  if ( dict->isArray() ) {
+    return dict->dictOrArrayContent().size(); // If we are an array, any element is valid
+  }else
+  if ( dict->isDict() ) {
+    const XObjArray<TagStruct>& tagList = dict->dictOrArrayContent();
+    for (size_t tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ ) {
+      if ( tagList[tagIdx].isKey() ) count++;
+    }
+    return count;
+  }else{
     return 0;
   }
-  tag = 0;
-  tagList = dict->dictOrArrayTagValue();
-  while (tagList)
-  {
-    tag = tagList;
-    tagList = tag->nextTagValue();
-
-    if ( (dict->isDict() && tag->isKey()) ||
-          dict->isArray()  // If we are an array, any element is valid
-        )
-    {
-		  count++;
-    }
-
-    //if(tag->type == kTagTypeKey) printf("Located key %s\n", tag->stringValue());
-  }
-
-  return count;
 }
 
-EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
+EFI_STATUS GetElement(const TagStruct* dict, INTN id, const TagStruct** dict1)
 {
   INTN element = 0;
-  TagPtr child;
 
-  if( !dict || (!dict->isArray() && !dict->isDict()) ) {
-    return EFI_UNSUPPORTED;
-  }
+  if ( !dict ) return EFI_UNSUPPORTED;
+  if ( id < 0 ) return EFI_UNSUPPORTED;
 
-  child = dict->dictOrArrayTagValue();
-  while (child != NULL)
-  {
-	  if ( (dict->isDict() && child->isKey()) ||  //in Dict count Keys
-		      dict->isArray()  // If we are an array, any element is valid
-		  )
-	  {
-		  if (element++ >= id) break;
-	  }
-    child = child->nextTagValue();
+  if ( dict->isArray() ) {
+    if ( (size_t)id < dict->dictOrArrayContent().size() ) {
+      *dict1 = &dict->dictOrArrayContent()[id];
+      return EFI_SUCCESS;
+    }
+  }else
+  if ( dict->isDict() ) {
+    const XObjArray<TagStruct>& tagList = dict->dictOrArrayContent();
+    size_t tagIdx;
+    for (tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ ) {
+      if ( tagList[tagIdx].isKey() ) {
+        if ( element == id ) {
+          *dict1 = &tagList[tagIdx];
+          return EFI_SUCCESS;
+        }
+        element++;
+      }
+    }
   }
-  *dict1 = child;
-  return EFI_SUCCESS;
+  return EFI_UNSUPPORTED;
 }
 
 // Expects to see one dictionary in the XML file, the final pos will be returned
@@ -229,12 +236,12 @@ EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
 // tag pointer and returns the end of the dic, or returns -1 if not found.
 //
 
-EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
+EFI_STATUS ParseXML(const CHAR8* buffer, TagStruct** dict, UINT32 bufSize)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
   UINT32    pos = 0;
-  TagPtr    tag = NULL;
+  TagStruct*    tag = NULL;
   CHAR8*    configBuffer = NULL;
   UINT32    bufferSize = 0;
   UINTN     i;
@@ -301,26 +308,22 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict, UINT32 bufSize)
 //==========================================================================
 // GetProperty
 
-TagPtr GetProperty( TagPtr dict, const CHAR8* key )
+const TagStruct* GetProperty(const TagStruct* dict, const CHAR8* key )
 {
   if ( !dict->isDict() ) return NULL;
   
-  TagPtr tag = NULL;
-  TagPtr tagList = dict->dictOrArrayTagValue();
-  while (tagList)
+  const XObjArray<TagStruct>& tagList = dict->dictOrArrayContent();
+  for (size_t tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ )
   {
-    tag = tagList;
-    tagList = tag->nextTagValue();
-
-    if ( tag->isKey()  &&  tag->keyValue().equalIC(key) ) return tag->keyTagValue();
+    if ( tagList[tagIdx].isKey()  &&  tagList[tagIdx].keyValue().equalIC(key) ) return tagList[tagIdx].keyTagValue();
   }
 
   return NULL;
 }
 
-//TagPtr GetNextProperty(TagPtr dict)
+//TagStruct* GetNextProperty(TagStruct* dict)
 //{
-//	TagPtr tagList, tag;
+//	TagStruct* tagList, tag;
 //
 //	if (dict->isDict()) {
 //		return NULL;
@@ -348,7 +351,7 @@ TagPtr GetProperty( TagPtr dict, const CHAR8* key )
 //==========================================================================
 // ParseNextTag
 
-EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
+EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32      length = 0;
@@ -484,13 +487,11 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr* tag, UINT32* lenPtr)
 //==========================================================================
 // ParseTagList
 
-EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagPtr* tag, UINT32 empty, UINT32* lenPtr)
+EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 empty, UINT32* lenPtr)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
   UINT32    pos;
-  TagPtr    tagList;
-  TagPtr    tagTail;
-  TagPtr    tmpTag = NULL;
+  TagStruct*    tagTail;
   UINT32    length = 0;
 
   if (isArray) {
@@ -498,13 +499,21 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagPtr* tag, UINT32 empty
   } else {
     DBG("parsing dict len=%d\n", *lenPtr);
   }
-  tagList = NULL;
   tagTail = NULL;
   pos = 0;
 
+  TagStruct* dictOrArrayTag = NewTag();
+  if (isArray) {
+    dictOrArrayTag->setArrayTagValue(NULL);
+  } else {
+    dictOrArrayTag->setDictTagValue(NULL);
+  }
+  XObjArray<TagStruct>& tagList = dictOrArrayTag->dictOrArrayContent();
+
   if (!empty) {
     while (TRUE) {
-      Status = XMLParseNextTag(buffer + pos, &tmpTag, &length);
+      TagStruct* newDictOrArrayTag = NULL;
+      Status = XMLParseNextTag(buffer + pos, &newDictOrArrayTag, &length);
       if (EFI_ERROR(Status)) {
         DBG("error XMLParseNextTag in array: %s\n", strerror(Status));
         break;
@@ -512,53 +521,31 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagPtr* tag, UINT32 empty
 
       pos += length;
 
-      if (tmpTag == NULL) {
+      if (newDictOrArrayTag == NULL) {
         break;
       }
 
-      if (tagTail) {
-        tagTail->setNextTagValue(tmpTag);
-      } else {
-        tagList = tmpTag;
-      }
-      tagTail = tmpTag;
+      tagList.AddReference(newDictOrArrayTag, true);
     }
 
     if (EFI_ERROR(Status)) {
-      if (tagList) {
-        FreeTag(tagList);
-      }
+      FreeTag(dictOrArrayTag);
       return Status;
     }
   }
 
-  tmpTag = NewTag();
-  if (tmpTag == NULL) {
-    if (tagList) {
-      FreeTag(tagList);
-    }
-    DBG("next tag is NULL\n");
-    return EFI_OUT_OF_RESOURCES;
-  }
-
-  if (isArray) {
-    tmpTag->setArrayTagValue(tagList);
-  } else {
-    tmpTag->setDictTagValue(tagList);
-  }
-
-  *tag = tmpTag;
+  *tag = dictOrArrayTag;
   *lenPtr=pos;
   DBG(" return from ParseTagList with len=%d\n", *lenPtr);
   return Status;
 }
 
-EFI_STATUS ParseTagDict( CHAR8* buffer, TagPtr* tag, UINT32 empty, UINT32* lenPtr)
+EFI_STATUS ParseTagDict( CHAR8* buffer, TagStruct** tag, UINT32 empty, UINT32* lenPtr)
 {
   return __ParseTagList(false, buffer, tag, empty, lenPtr);
 }
 
-EFI_STATUS ParseTagArray( CHAR8* buffer, TagPtr* tag, UINT32 empty, UINT32* lenPtr)
+EFI_STATUS ParseTagArray( CHAR8* buffer, TagStruct** tag, UINT32 empty, UINT32* lenPtr)
 {
   return __ParseTagList(true, buffer, tag, empty, lenPtr);
 }
@@ -566,13 +553,13 @@ EFI_STATUS ParseTagArray( CHAR8* buffer, TagPtr* tag, UINT32 empty, UINT32* lenP
 //==========================================================================
 // ParseTagKey
 
-EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
+EFI_STATUS ParseTagKey( char * buffer, TagStruct** tag, UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32      length = 0;
   UINT32      length2 = 0;
-  TagPtr      tmpTag;
-  TagPtr      subTag = NULL;
+  TagStruct*      tmpTag;
+  TagStruct*      subTag = NULL;
 
   Status = FixDataMatchingTag(buffer, kXMLTagKey, &length);
   DBG("fixing key len=%d status=%s\n", length, strerror(Status));
@@ -596,11 +583,11 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr* tag, UINT32* lenPtr)
 //==========================================================================
 // ParseTagString
 
-EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
+EFI_STATUS ParseTagString(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
-  TagPtr    tmpTag;
+  TagStruct*    tmpTag;
 
   Status = FixDataMatchingTag(buffer, kXMLTagString, &length);
   if (EFI_ERROR(Status)) {
@@ -622,7 +609,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 //==========================================================================
 // ParseTagInteger
 
-EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
+EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
@@ -630,7 +617,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
   UINT32    size;
   BOOLEAN   negative = FALSE;
   CHAR8*    val = buffer;
-  TagPtr tmpTag;
+  TagStruct* tmpTag;
 
   Status = FixDataMatchingTag(buffer, kXMLTagInteger, &length);
   if (EFI_ERROR(Status)) {
@@ -704,11 +691,11 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 //==========================================================================
 // ParseTagFloat
 
-EFI_STATUS ParseTagFloat(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
+EFI_STATUS ParseTagFloat(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32      length;
-  TagPtr      tmpTag;
+  TagStruct*      tmpTag;
   
   Status = FixDataMatchingTag(buffer, kXMLTagFloat, &length);
   if (EFI_ERROR(Status)) {
@@ -733,11 +720,11 @@ EFI_STATUS ParseTagFloat(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 //==========================================================================
 // ParseTagData
 
-EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
+EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
-  TagPtr    tmpTag;
+  TagStruct*    tmpTag;
 
   Status = FixDataMatchingTag(buffer, kXMLTagData,&length);
   if (EFI_ERROR(Status)) {
@@ -764,11 +751,11 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 //==========================================================================
 // ParseTagDate
 
-EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
+EFI_STATUS ParseTagDate(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
 {
   EFI_STATUS  Status;
   UINT32    length = 0;
-  TagPtr    tmpTag;
+  TagStruct*    tmpTag;
 
   Status = FixDataMatchingTag(buffer, kXMLTagDate,&length);
   if (EFI_ERROR(Status)) {
@@ -792,9 +779,9 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 //==========================================================================
 // ParseTagBoolean
 
-EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, bool value, UINT32* lenPtr)
+EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagStruct* * tag, bool value, UINT32* lenPtr)
 {
-  TagPtr tmpTag;
+  TagStruct* tmpTag;
 
   tmpTag = NewTag();
   if (tmpTag == NULL) {
@@ -898,9 +885,9 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag, UINT32* lenPtr)
 //==========================================================================
 // NewTag
 
-TagPtr NewTag( void )
+TagStruct* NewTag( void )
 {
-  TagPtr  tag;
+  TagStruct*  tag;
 
   if ( gTagsFree.size() > 0 ) {
     tag = &gTagsFree[0];
@@ -914,7 +901,7 @@ TagPtr NewTag( void )
 //==========================================================================
 // XMLFreeTag
 
-void FreeTag( TagPtr tag )
+void FreeTag( TagStruct* tag )
 {
   if (tag == NULL) {
     return;
@@ -931,7 +918,7 @@ void FreeTag( TagPtr tag )
  else return FALSE
  */
 BOOLEAN
-IsPropertyTrue(TagPtr Prop)
+IsPropertyTrue(const TagStruct* Prop)
 {
   return Prop != NULL && Prop->isTrueOrYy();
 }
@@ -941,7 +928,7 @@ IsPropertyTrue(TagPtr Prop)
  else return FALSE
  */
 BOOLEAN
-IsPropertyFalse(TagPtr Prop)
+IsPropertyFalse(const TagStruct* Prop)
 {
   return Prop != NULL && Prop->isFalseOrNn();
 }
@@ -955,7 +942,7 @@ IsPropertyFalse(TagPtr Prop)
  */
 INTN
 GetPropertyInteger(
-                    TagPtr Prop,
+                    const TagStruct* Prop,
                     INTN Default
                     )
 {
@@ -980,7 +967,7 @@ GetPropertyInteger(
   return Default;
 }
 
-float GetPropertyFloat (TagPtr Prop, float Default)
+float GetPropertyFloat (const TagStruct* Prop, float Default)
 {
   if (Prop == NULL) {
     return Default;

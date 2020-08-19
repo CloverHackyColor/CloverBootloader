@@ -9,6 +9,8 @@
 #include "XIcon.h"
 #include "XCinema.h"
 
+class TagStruct;
+
 #define INDICATOR_SIZE (52)
 
 class XTheme
@@ -141,11 +143,11 @@ public:
 //  void AddIcon(XIcon& NewIcon);  //return EFI_STATUS?
   void FillByEmbedded();
   void FillByDir();
-  EFI_STATUS GetThemeTagSettings(void* DictPointer);
+  EFI_STATUS GetThemeTagSettings(const TagStruct* DictPointer);
   void parseTheme(void* p, const char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
   EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image, void **SVGIcon);
-  void* LoadTheme(const XStringW& TestTheme); //return TagPtr why?
+  TagStruct* LoadTheme(const XStringW& TestTheme); //return TagStruct* why?
   EFI_STATUS LoadSvgFrame(INTN i, OUT XImage* XFrame); // for animation
 
   //screen operations

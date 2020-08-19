@@ -45,47 +45,55 @@ extern XObjArray<TagStruct> gTagsFree;
 
 class TagStruct
 {
-  UINTN  type; // type is private. Use is... functions.
+  UINTN  type; // type is private. Use is...() functions.
   XString8 _string;
   INTN     _intValue;
   float    _floatValue;
   UINT8  *_data;
   UINTN  _dataLen;
   TagStruct *_tag;
-  TagStruct *_nextTag;
+  XObjArray<TagStruct> _dictOrArrayContent;
 
 public:
 
-  TagStruct() : type(kTagTypeNone), _string(), _intValue(0), _floatValue(0), _data(0), _dataLen(0), /*offset(0), */_tag(NULL), _nextTag(NULL) {}
+  TagStruct() : type(kTagTypeNone), _string(), _intValue(0), _floatValue(0), _data(0), _dataLen(0), /*offset(0), */_tag(NULL), _dictOrArrayContent() {}
   TagStruct(const TagStruct& other) = delete; // Can be defined if needed
   const TagStruct& operator = ( const TagStruct & ) = delete; // Can be defined if needed
-  ~TagStruct() {}
+  ~TagStruct() { delete _data; delete _tag; }
 
   void FreeTag();
 
 //  Property<XString8> string();
-  bool isDict() { return type == kTagTypeDict; }
-  bool isKey() { return type == kTagTypeKey; }
-  bool isString() { return type == kTagTypeString; }
-  bool isInt() { return type == kTagTypeInteger; }
-  bool isFloat() { return type == kTagTypeFloat; }
-  bool isBool() { return type == kTagTypeTrue  ||  type == kTagTypeFalse; }
-  bool isData() { return type == kTagTypeData; }
-  bool isDate() { return type == kTagTypeDate; }
-  bool isArray() { return type == kTagTypeArray; }
+  bool isDict() const { return type == kTagTypeDict; }
+  bool isKey() const { return type == kTagTypeKey; }
+  bool isString() const { return type == kTagTypeString; }
+  bool isInt() const { return type == kTagTypeInteger; }
+  bool isFloat() const { return type == kTagTypeFloat; }
+  bool isBool() const { return type == kTagTypeTrue  ||  type == kTagTypeFalse; }
+  bool isData() const { return type == kTagTypeData; }
+  bool isDate() const { return type == kTagTypeDate; }
+  bool isArray() const { return type == kTagTypeArray; }
 
-  TagStruct* nextTagValue()
+  const XObjArray<TagStruct>& dictOrArrayContent() const
   {
-    return _nextTag;
+    if ( isDict() ) return _dictOrArrayContent;
+    if ( isArray() ) return _dictOrArrayContent;
+    panic("TagStruct::dictOrArrayTagValue() : !isDict() && isArray() ");
   }
-  void setNextTagValue(TagStruct* nextTag)
+  XObjArray<TagStruct>& dictOrArrayContent()
   {
-    if ( nextTag == NULL ) panic("TagStruct::setDictNextTagValue() : nextTag == NULL ");
-    if ( _nextTag != NULL ) panic("TagStruct::setDictNextTagValue() : _nextTag != NULL ");
-    _nextTag = nextTag;
+    if ( isDict() ) return _dictOrArrayContent;
+    if ( isArray() ) return _dictOrArrayContent;
+    panic("TagStruct::dictOrArrayTagValue() : !isDict() && isArray() ");
   }
+//  void setNextTagValue(TagStruct* nextTag)
+//  {
+//    if ( nextTag == NULL ) panic("TagStruct::setDictNextTagValue() : nextTag == NULL ");
+//    if ( _nextTag != NULL ) panic("TagStruct::setDictNextTagValue() : _nextTag != NULL ");
+//    _nextTag = nextTag;
+//  }
 
-  const XString8 getTypeAsXString8() {
+  const XString8 getTypeAsXString8() const {
     if ( isDict() ) return "Dict"_XS8;
     if ( isKey() ) return "Dict"_XS8;
     if ( isString() ) return "Dict"_XS8;
@@ -99,6 +107,11 @@ public:
   }
 
   // getter and setter
+  const UINT8* dataValue() const
+  {
+    if ( !isData() ) panic("TagStruct::dataValue() : !isData() ");
+    return _data;
+  }
   UINT8* dataValue()
   {
     if ( !isData() ) panic("TagStruct::dataValue() : !isData() ");
@@ -109,7 +122,7 @@ public:
     if ( !isData() ) panic("TagStruct::dataStringValue() : !isData() ");
     return _string;
   }
-  UINTN dataLenValue()
+  UINTN dataLenValue() const
   {
     if ( !isData() ) panic("TagStruct::dataLenValue() : !isData() ");
     return _dataLen;
@@ -144,9 +157,8 @@ public:
     // empty dict is allowed
     //if ( tagList == NULL ) panic("TagStruct::setDictTagValue() : tagList == NULL ");
     if ( _tag != NULL ) panic("TagStruct::setDictTagValue() : _tag != NULL ");
-    if ( _nextTag != NULL ) panic("TagStruct::setDictTagValue() : _nextTag != NULL ");
+    if ( _dictOrArrayContent.notEmpty() ) panic("TagStruct::setDictTagValue() : __dictOrArrayContent.notEmpty() ");
     _tag = tagList;
-    _nextTag = NULL;
     type = kTagTypeDict;
   }
 
@@ -160,17 +172,23 @@ public:
     // Array value with tagList = NULL is allowed
     //if ( tag == NULL ) panic("TagStruct::setArrayValue() : tag == NULL ");
     if ( _tag != NULL ) panic("TagStruct::setArrayValue() : _tag != NULL ");
-    if ( _nextTag != NULL ) panic("TagStruct::setArrayTagValue() : _nextTag != NULL ");
+    if ( _dictOrArrayContent.notEmpty() ) panic("TagStruct::setArrayTagValue() : __dictOrArrayContent.notEmpty() ");
     _tag = tag;
     type = kTagTypeArray;
   }
 
+  
+  const XString8& keyValue() const
+  {
+    if ( !isKey() ) panic("TagStruct::keyValue() : !isKey() ");
+    return _string;
+  }
   XString8& keyValue()
   {
     if ( !isKey() ) panic("TagStruct::keyValue() : !isKey() ");
     return _string;
   }
-  TagStruct* keyTagValue()
+  const TagStruct* keyTagValue() const
   {
     if ( !isKey() ) panic("TagStruct::keyTagValue() : !isKey() ");
     return _tag;
@@ -183,7 +201,12 @@ public:
     _tag = subTag;
   }
 
-  const XString8& stringValue()
+  const XString8& stringValue() const
+  {
+    if ( !isString() ) panic("TagStruct::stringValue() : !isString() ");
+    return _string;
+  }
+  XString8& stringValue()
   {
     if ( !isString() ) panic("TagStruct::stringValue() : !isString() ");
     return _string;
@@ -196,7 +219,7 @@ public:
     _string = xstring;
   }
   
-  INTN intValue()
+  INTN intValue() const
   {
     if ( !isInt() ) panic("TagStruct::intValue() : !isInt() ");
     return _intValue;
@@ -207,7 +230,7 @@ public:
     _intValue = i;
   }
   
-  float floatValue()
+  float floatValue() const
   {
     if ( !isFloat() ) panic("TagStruct::floatValue() : !isFloat() ");
     return _floatValue;
@@ -218,7 +241,7 @@ public:
     _floatValue = f;
   }
 
-  INTN boolValue()
+  INTN boolValue() const
   {
     if ( !isBool() ) panic("TagStruct::boolValue() : !isBool() ");
     return type == kTagTypeTrue;
@@ -230,29 +253,29 @@ public:
   }
   
   // Convenience method
-  bool isTrue()
+  bool isTrue() const
   {
     if ( isBool() ) return boolValue();
     return false;
   }
-  bool isFalse()
+  bool isFalse() const
   {
     if ( isBool() ) return !boolValue();
     return false;
   }
-  bool isTrueOrYy()
+  bool isTrueOrYy() const
   {
     if ( isBool() ) return boolValue();
     if ( isString() && stringValue().notEmpty() && (stringValue()[0] == 'y' || stringValue()[0] == 'Y') ) return true;
     return false;
   }
-  bool isTrueOrYes()
+  bool isTrueOrYes() const
   {
     if ( isBool() ) return boolValue();
     if ( isString() && stringValue().equal("Yes"_XS8) ) return true;
     return false;
   }
-  bool isFalseOrNn()
+  bool isFalseOrNn() const
   {
     if ( isBool() ) return !boolValue();
     if ( isString() && stringValue().notEmpty() && (stringValue()[0] == 'n' || stringValue()[0] == 'N') ) return true;
@@ -266,15 +289,13 @@ public:
   }
 };
 
-typedef TagStruct* TagPtr;
-
-typedef union {
-  struct {
-    float  fNum; //4 bytes
-    UINT32 pad;  // else 4
-  } B;
-  CHAR8  *string;
-} FlMix;
+//typedef union {
+//  struct {
+//    float  fNum; //4 bytes
+//    UINT32 pad;  // else 4
+//  } B;
+//  CHAR8  *string;
+//} FlMix;
 
 
 CHAR8*
@@ -285,29 +306,24 @@ XMLDecode (
 EFI_STATUS
 ParseXML(
   CONST CHAR8  *buffer,
-        TagPtr *dict,
+        TagStruct* *dict,
         UINT32 bufSize
   );
 
 
 //VOID RenderSVGfont(NSVGfont  *fontSVG);
 
-TagPtr
+const TagStruct*
 GetProperty(
-        TagPtr dict,
+  const TagStruct* dict,
   CONST CHAR8* key
   );
 
-EFI_STATUS
-XMLParseNextTag (
-  CHAR8  *buffer,
-  TagPtr *tag,
-  UINT32 *lenPtr
-  );
+TagStruct* NewTag( void );
 
 VOID
 FreeTag (
-  TagPtr tag
+  TagStruct* tag
   );
 
 EFI_STATUS
@@ -320,33 +336,33 @@ GetNextTag (
 
 INTN
 GetTagCount (
-  TagPtr dict
+  const TagStruct* dict
   );
 
 EFI_STATUS
 GetElement(
-  TagPtr dict,
+  const TagStruct* dict,
   INTN   id,
-  TagPtr *dict1
+  const TagStruct** dict1
 );
 
 BOOLEAN
 IsPropertyTrue(
-  TagPtr Prop
+  const TagStruct* Prop
   );
 
 BOOLEAN
 IsPropertyFalse(
-  TagPtr Prop
+  const TagStruct* Prop
   );
 
 INTN
 GetPropertyInteger(
-  TagPtr Prop,
+  const TagStruct* Prop,
   INTN Default
   );
 
-float GetPropertyFloat (TagPtr Prop, float Default);
+float GetPropertyFloat (const TagStruct* Prop, float Default);
 
 
 #endif /* PLATFORM_PLIST_H_ */

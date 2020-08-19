@@ -474,7 +474,7 @@ VOID ApplyInputs(VOID)
 //  UINT32 k;
   CHAR16 *ch;
   CHAR8  AString[256];
-  TagPtr dict;
+
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
     ZeroMem(&gSettings.BootArgs, 256);
@@ -863,6 +863,7 @@ VOID ApplyInputs(VOID)
 
   i++; //90
   if (InputItems[i].Valid) {
+    TagStruct* dict;
     Status = LoadUserSettings(SelfRootDir, XStringW(ConfigsList[OldChosenConfig]), &dict);
     if (!EFI_ERROR(Status)) {
       gBootChanged = TRUE;

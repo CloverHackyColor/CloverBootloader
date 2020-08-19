@@ -28,7 +28,7 @@ typedef struct {
 
 VOID
 FillCardList (
-  TagPtr CfgDict
+  const TagStruct* CfgDict
   );
 
 CARDLIST

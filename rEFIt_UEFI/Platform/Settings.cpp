@@ -73,7 +73,7 @@ SIDELOAD_KEXT                   *InjectKextList = NULL;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
-TagPtr                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
+TagStruct*                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
@@ -238,7 +238,7 @@ ParseACPIName(const XString8& String)
 VOID
 ParseLoadOptions (
                   OUT  XStringW* ConfNamePtr,
-                  OUT  TagPtr* Dict
+                  OUT  TagStruct** Dict
                   )
 {
   CHAR8 *End;
@@ -455,12 +455,12 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 //
 UINT8
 *GetDataSetting (
-                 IN      TagPtr Dict,
+                 IN      const TagStruct* Dict,
                  IN      CONST CHAR8  *PropName,
                  OUT     UINTN  *DataLen
                  )
 {
-  TagPtr Prop;
+  const TagStruct* Prop;
   UINT8  *Data = NULL;
 
   Prop = GetProperty(Dict, PropName);
@@ -506,7 +506,7 @@ EFI_STATUS
 LoadUserSettings (
                   IN EFI_FILE *RootDir,
                   IN const XStringW& ConfName,
-                  TagPtr   *Dict)
+                  TagStruct** Dict)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
@@ -836,9 +836,9 @@ CUSTOM_LOADER_ENTRY
 STATIC
 BOOLEAN
 FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
-                   TagPtr DictPointer)
+                   const TagStruct* DictPointer)
 {
-  TagPtr Prop;
+  const TagStruct* Prop;
   // UINTN  i;
 
   if (Patches == NULL || DictPointer == NULL) {
@@ -944,7 +944,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   if ( Prop != NULL ) {
     INTN   i, Count = GetTagCount (Prop);
     if (Count > 0) {
-      TagPtr Prop2 = NULL;
+      const TagStruct* Prop2 = NULL;
 
       DBG("ForceKextsToLoad: %lld requested\n", Count);
 
@@ -984,7 +984,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KextPatches.setEmpty();
     
     if (Count > 0) {
-      TagPtr     Prop2 = NULL, Dict = NULL;
+      const TagStruct* Prop2 = NULL;
+      const TagStruct* Dict = NULL;
 
       DBG("KextsToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
@@ -1147,7 +1148,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     //delete old and create new
     Patches->KernelPatches.setEmpty();
     if (Count > 0) {
-      TagPtr        Prop2 = NULL, Dict = NULL;
+      const TagStruct* Prop2 = NULL;
+      const TagStruct* Dict = NULL;
       DBG("KernelToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
@@ -1274,7 +1276,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     //delete old and create new
     Patches->BootPatches.setEmpty();
     if (Count > 0) {
-      TagPtr        Prop2 = NULL, Dict = NULL;
+      const TagStruct* Prop2 = NULL;
+      const TagStruct* Dict = NULL;
 
       DBG("BootPatches: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
@@ -1468,7 +1471,7 @@ BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS)
   return ret;
 }
 
-UINT8 CheckVolumeType(UINT8 VolumeType, TagPtr Prop)
+UINT8 CheckVolumeType(UINT8 VolumeType, const TagStruct* Prop)
 {
  	if ( !Prop->isString() ) {
    	MsgLog("ATTENTION : Prop property not string in CheckVolumeType\n");
@@ -1487,9 +1490,10 @@ UINT8 CheckVolumeType(UINT8 VolumeType, TagPtr Prop)
   return VolumeTypeTmp;
 }
 
-UINT8 GetVolumeType(TagPtr DictPointer)
+UINT8 GetVolumeType(const TagStruct* DictPointer)
 {
-  TagPtr Prop, Prop2;
+  const TagStruct* Prop;
+  const TagStruct* Prop2;
   UINT8 VolumeType = 0;
 
   Prop = GetProperty(DictPointer, "VolumeType");
@@ -1525,11 +1529,11 @@ STATIC
 BOOLEAN
 FillinCustomEntry (
                    IN OUT  CUSTOM_LOADER_ENTRY *Entry,
-                   TagPtr DictPointer,
+                   const TagStruct* DictPointer,
                    IN      BOOLEAN SubEntry
                    )
 {
-  TagPtr Prop;
+  const TagStruct* Prop;
 
   if ((Entry == NULL) || (DictPointer == NULL)) {
     return FALSE;
@@ -1829,7 +1833,7 @@ FillinCustomEntry (
     } else if ( Prop->isDict()  ||  Prop->isArray() ) {
       CUSTOM_LOADER_ENTRY *CustomSubEntry;
       INTN   i, Count = GetTagCount (Prop);
-      TagPtr Dict = NULL;
+      const TagStruct* Dict = NULL;
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
       if (Count > 0) {
         for (i = 0; i < Count; i++) {
@@ -1858,10 +1862,10 @@ FillinCustomEntry (
 BOOLEAN
 FillingCustomLegacy (
                     IN OUT CUSTOM_LEGACY_ENTRY *Entry,
-                    TagPtr DictPointer
+                    const TagStruct* DictPointer
                     )
 {
-  TagPtr Prop;
+  const TagStruct* Prop;
   if ((Entry == NULL) || (DictPointer == NULL)) {
     return FALSE;
   }
@@ -1954,9 +1958,9 @@ FillingCustomLegacy (
 }
 
 BOOLEAN
-FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
+FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagStruct* DictPointer)
 {
-  TagPtr Prop;
+  const TagStruct* Prop;
   if ((Entry == NULL) || (DictPointer == NULL)) {
     return FALSE;
   }
@@ -2041,9 +2045,10 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, TagPtr DictPointer)
 
 // EDID reworked by Sherlocks
 VOID
-GetEDIDSettings(TagPtr DictPointer)
+GetEDIDSettings(const TagStruct* DictPointer)
 {
-  TagPtr Prop, Dict;
+  const TagStruct* Prop;
+  const TagStruct* Dict;
   UINTN  j = 128;
 
   Dict = GetProperty(DictPointer, "EDID");
@@ -2097,14 +2102,14 @@ GetEDIDSettings(TagPtr DictPointer)
 EFI_STATUS
 GetEarlyUserSettings (
                       IN EFI_FILE *RootDir,
-                      TagPtr CfgDict
+                      const TagStruct* CfgDict
                       )
 {
   EFI_STATUS  Status = EFI_SUCCESS;
-  TagPtr      Dict;
-  TagPtr      Dict2;
-  TagPtr      DictPointer;
-  TagPtr      Prop;
+  const TagStruct*      Dict;
+  const TagStruct*      Dict2;
+  const TagStruct*      DictPointer;
+  const TagStruct*      Prop;
   VOID        *Value = NULL;
   BOOLEAN     SpecialBootMode = FALSE;
 
@@ -2663,7 +2668,7 @@ GetEarlyUserSettings (
         if (Prop != NULL) {
 //          CUSTOM_LOADER_ENTRY *Entry;
           INTN   i, Count = GetTagCount(Prop);
-          TagPtr Dict3;
+          const TagStruct* Dict3;
 
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
@@ -2689,7 +2694,7 @@ GetEarlyUserSettings (
         if (Prop != NULL) {
           CUSTOM_LEGACY_ENTRY *Entry;
           INTN   i, Count = GetTagCount(Prop);
-          TagPtr Dict3;
+          const TagStruct* Dict3;
 
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
@@ -2716,7 +2721,7 @@ GetEarlyUserSettings (
         if (Prop != NULL) {
           CUSTOM_TOOL_ENTRY *Entry;
           INTN   i, Count = GetTagCount(Prop);
-          TagPtr Dict3;
+          const TagStruct* Dict3;
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
               if (EFI_ERROR(GetElement(Prop, i, &Dict3))) {
@@ -2919,7 +2924,7 @@ GetEarlyUserSettings (
       Dict2 = GetProperty(DictPointer, "MmioWhitelist");
       if (Dict2 != NULL) {
         INTN   Count = GetTagCount(Dict2);
-        TagPtr Dict3;
+        const TagStruct* Dict3;
         //OC_SCHEMA_INTEGER_IN  ("Address", OC_MMIO_WL_STRUCT, Address),
         //OC_SCHEMA_STRING_IN   ("Comment", OC_MMIO_WL_STRUCT, Comment),
         //OC_SCHEMA_BOOLEAN_IN  ("Enabled", OC_MMIO_WL_STRUCT, Enabled),
@@ -3095,8 +3100,8 @@ XStringW GetBundleVersion(const XStringW& FullName)
   XStringW        CFBundleVersion;
   XStringW        InfoPlistPath;
   CHAR8*          InfoPlistPtr = NULL;
-  TagPtr          InfoPlistDict = NULL;
-  TagPtr          Prop = NULL;
+  TagStruct*      InfoPlistDict = NULL;
+  const TagStruct*      Prop = NULL;
   UINTN           Size;
 
   InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\Info.plist");
@@ -3260,10 +3265,11 @@ GetListOfThemes ()
 }
 
 EFI_STATUS
-XTheme::GetThemeTagSettings(void* DictP)
+XTheme::GetThemeTagSettings(const TagStruct* DictPointer)
 {
-  TagPtr Dict, Dict2, Dict3;
-  TagPtr DictPointer = (TagPtr)DictP;
+  const TagStruct* Dict;
+  const TagStruct* Dict2;
+  const TagStruct* Dict3;
 
   //fill default to have an ability change theme
   //assume Xtheme is already inited by embedded values
@@ -3275,7 +3281,7 @@ XTheme::GetThemeTagSettings(void* DictP)
   Font                     = FONT_LOAD; //not default
 
   // if NULL parameter, quit after setting default values, this is embedded theme
-  if (DictP == NULL) {
+  if (DictPointer == NULL) {
     return EFI_SUCCESS;
   }
 
@@ -3626,11 +3632,11 @@ XTheme::GetThemeTagSettings(void* DictP)
   return EFI_SUCCESS;
 }
 
-void* XTheme::LoadTheme(const XStringW& TestTheme)
+TagStruct* XTheme::LoadTheme(const XStringW& TestTheme)
 
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
-  TagPtr     ThemeDict = NULL;
+  TagStruct*     ThemeDict = NULL;
   CHAR8      *ThemePtr = NULL;
   UINTN      Size      = 0;
 
@@ -3655,11 +3661,12 @@ void* XTheme::LoadTheme(const XStringW& TestTheme)
   if (!EFI_ERROR(Status)) {
     Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
     if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-      Status = ParseSVGXTheme((const CHAR8*)ThemePtr);
+      Status = ParseSVGXTheme(ThemePtr);
       if (EFI_ERROR(Status)) {
         ThemeDict = NULL;
       } else {
-        ThemeDict = new TagStruct;
+        ThemeDict = NewTag();
+        ThemeDict->setDictTagValue(NULL); // to make it a dict // TODO improve by creating a newDictTag static method.
       }
       if (ThemeDict == NULL) {
         DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
@@ -3669,7 +3676,7 @@ void* XTheme::LoadTheme(const XStringW& TestTheme)
     } else {
       Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
       if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
-        Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict, 0);
+        Status = ParseXML(ThemePtr, &ThemeDict, 0);
         if (EFI_ERROR(Status)) {
           ThemeDict = NULL;
         }
@@ -3684,7 +3691,7 @@ void* XTheme::LoadTheme(const XStringW& TestTheme)
   if (ThemePtr != NULL) {
     FreePool(ThemePtr);
   }
-  return (void*)ThemeDict;
+  return ThemeDict;
 }
 
 EFI_STATUS
@@ -3693,7 +3700,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
   EFI_STATUS Status       = EFI_NOT_FOUND;
   UINTN      Size         = 0;
   UINTN      i;
-  TagPtr     ThemeDict    = NULL;
+  TagStruct*     ThemeDict    = NULL;
   CHAR8      *ChosenTheme = NULL;
   UINTN      Rnd;
   EFI_TIME   Now;
@@ -3763,7 +3770,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
       }
 
       if (TestTheme.notEmpty()) {
-        ThemeDict = (TagPtr)ThemeX.LoadTheme(TestTheme);
+        ThemeDict = ThemeX.LoadTheme(TestTheme);
         if (ThemeDict != NULL) {
           DBG("special theme %ls found and %ls parsed\n", TestTheme.wc_str(), CONFIG_THEME_FILENAME);
 //          ThemeX.Theme.takeValueFrom(TestTheme);
@@ -3783,13 +3790,13 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
           goto finish;
         }
         if (AsciiStrCmp(ChosenTheme, "random") == 0) {
-          ThemeDict = (TagPtr)ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
+          ThemeDict = ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
           goto finish;
         }
 
         TestTheme.takeValueFrom(ChosenTheme);
         if (TestTheme.notEmpty()) {
-          ThemeDict = (TagPtr)ThemeX.LoadTheme (TestTheme);
+          ThemeDict = ThemeX.LoadTheme (TestTheme);
           if (ThemeDict != NULL) {
             DBG("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
 //            ThemeX.Theme.takeValueFrom(TestTheme);
@@ -3811,12 +3818,12 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
     if (ThemeDict == NULL) {
       if (GlobalConfig.Theme.isEmpty()) {
         DBG("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-        ThemeDict = (TagPtr)ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
+        ThemeDict = ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
       } else {
         if (StriCmp(GlobalConfig.Theme.wc_str(), L"random") == 0) {
-          ThemeDict = (TagPtr)ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
+          ThemeDict = ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
         } else {
-          ThemeDict = (TagPtr)ThemeX.LoadTheme(GlobalConfig.Theme);
+          ThemeDict = ThemeX.LoadTheme(GlobalConfig.Theme);
           if (ThemeDict == NULL) {
             DBG("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme.wc_str());
           } else {
@@ -3854,9 +3861,9 @@ finish:
     ThemeX.Theme.takeValueFrom(GlobalConfig.Theme); //XStringW from CHAR16*)
     // read theme settings
     if (!ThemeX.TypeSVG) {
-      TagPtr DictPointer = GetProperty(ThemeDict, "Theme");
+      const TagStruct* DictPointer = GetProperty(ThemeDict, "Theme");
       if (DictPointer != NULL) {
-        Status = ThemeX.GetThemeTagSettings((void*)DictPointer);
+        Status = ThemeX.GetThemeTagSettings(DictPointer);
         if (EFI_ERROR(Status)) {
           DBG("Config theme error: %s\n", strerror(Status));
         } else {
@@ -3895,10 +3902,11 @@ finish:
 
 VOID
 ParseSMBIOSSettings(
-                    TagPtr DictPointer
+                    const TagStruct* DictPointer
                     )
 {
-  TagPtr Prop, Prop1;
+  const TagStruct* Prop;
+  const TagStruct* Prop1;
   BOOLEAN Default = FALSE;
 
 
@@ -4352,16 +4360,16 @@ ParseSMBIOSSettings(
 EFI_STATUS
 GetUserSettings(
                 IN  EFI_FILE *RootDir,
-                TagPtr CfgDict
+                const TagStruct* CfgDict
                 )
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
-  TagPtr     Dict;
-  TagPtr     Dict2;
-  TagPtr     Prop;
-  TagPtr     Prop2;
-  TagPtr     Prop3;
-  TagPtr     DictPointer;
+  const TagStruct*     Dict;
+  const TagStruct*     Dict2;
+  const TagStruct*     Prop;
+  const TagStruct*     Prop2;
+  const TagStruct*     Prop3;
+  const TagStruct*     DictPointer;
   BOOLEAN    IsValidCustomUUID = FALSE;
   //UINTN      i;
 
@@ -4715,7 +4723,7 @@ GetUserSettings(
             DBG("\n");
             Dict2 = GetProperty(Prop2, "CustomProperties");
             if (Dict2 != NULL) {
-              TagPtr Dict3;
+              const TagStruct* Dict3;
               INTN PropIndex, PropCount = GetTagCount (Dict2);
 
               for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
@@ -6030,7 +6038,7 @@ GetUserSettings(
 
      DictPointer = GetProperty(Dict, "SMCKeys");
      if (DictPointer != NULL) {   //sss
-     TagPtr     Key, ValArray;
+     TagStruct*     Key, ValArray;
      for (Key = DictPointer->tag; Key != NULL; Key = Key->tagNext) {
      ValArray = Prop->tag;
      if (Key->type != kTagTypeKey || ValArray == NULL) {
@@ -6104,9 +6112,9 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
   EFI_STATUS Status      = EFI_NOT_FOUND;
   CHAR8*     PlistBuffer = NULL;
   UINTN      PlistLen;
-  TagPtr     DictPointer = NULL;
-  TagPtr     Dict        = NULL;
-  TagPtr     Prop        = NULL;
+  TagStruct*     Dict        = NULL;
+  const TagStruct*     DictPointer = NULL;
+  const TagStruct*     Prop        = NULL;
 
   if (!Entry || !Entry->Volume) {
     return NullXString8;
@@ -6508,8 +6516,8 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
   EFI_STATUS Status;
   CHAR8      *PlistBuffer;
   UINTN      PlistLen;
-  TagPtr     Dict;
-  TagPtr     Prop;
+  TagStruct*     Dict;
+  const TagStruct*     Prop;
 
   CONST CHAR16*    SystemPlistR;
   CONST CHAR16*    SystemPlistP;

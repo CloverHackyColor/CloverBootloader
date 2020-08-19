@@ -101,12 +101,12 @@ CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
   return NULL;
 }
 
-VOID FillCardList(TagPtr CfgDict)
+VOID FillCardList(const TagStruct* CfgDict)
 {
   if (IsListEmpty(&gCardList) && (CfgDict != NULL)) {
     CONST CHAR8 *VEN[] = { "NVIDIA",  "ATI" };
     INTN Index, Count = sizeof(VEN) / sizeof(VEN[0]);
-    TagPtr      prop;
+    const TagStruct*      prop;
     
     for (Index = 0; Index < Count; Index++) {
       CONST CHAR8 *key = VEN[Index];
@@ -116,8 +116,8 @@ VOID FillCardList(TagPtr CfgDict)
         INTN		i;
         INTN		 count;
         
-        TagPtr		element		= 0;
-        TagPtr		prop2		= 0;
+        const TagStruct*		prop2		= 0;
+        const TagStruct*    element    = 0;
         count = GetTagCount(prop);
         for (i = 0; i < count; i++) {
           CONST CHAR8     *model_name = NULL;

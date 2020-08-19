@@ -95,10 +95,10 @@ void toLowerStr(CHAR8 *tstr, IN CONST CHAR8 *str) {
     *tstr = '\0';
 }
 
-BOOLEAN checkOSBundleRequired(UINT8 loaderType, TagPtr dict)
+BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagStruct* dict)
 {
     BOOLEAN inject = TRUE;
-    TagPtr  osBundleRequiredTag;
+    const TagStruct*  osBundleRequiredTag;
     XString8 osbundlerequired;
     
     osBundleRequiredTag = GetProperty(dict,"OSBundleRequired");
@@ -135,8 +135,8 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
   UINTN       bundlePathBufferLength = 0;
   XStringW    TempName;
   XStringW    Executable;
-  TagPtr      dict = NULL;
-  TagPtr      prop = NULL;
+  TagStruct*      dict = NULL;
+  const TagStruct*      prop = NULL;
   BOOLEAN     NoContents = FALSE;
   BOOLEAN     inject = FALSE;
   _BooterKextFileInfo *infoAddr = NULL;

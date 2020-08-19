@@ -380,7 +380,10 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   EFI_STATUS          Status = EFI_NOT_FOUND;
   UINT8               *PrefBuffer = NULL;
   UINTN               PrefBufferLen = 0;
-  TagPtr              PrefDict, dict, dict2, prop;
+  TagStruct*          PrefDict;
+  const TagStruct*    dict;
+  const TagStruct*    dict2;
+  const TagStruct*    prop;
   CONST CHAR16       *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
   CONST CHAR16       *PrefName2 = L"\\Library\\Preferences\\com.apple.PowerManagement.plist";
   REFIT_VOLUME        *ImageVolume = Volume;
