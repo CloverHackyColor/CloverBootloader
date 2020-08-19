@@ -116,7 +116,7 @@ public:
   }
   void setDataValue(UINT8* data, UINTN dataLen)
   {
-    if ( data == NULL ) panic("TagStruct::setDictValue() : _data == NULL ");
+    if ( data == NULL ) panic("TagStruct::setDataValue() : _data == NULL ");
     _data = data;
     _dataLen = dataLen;
     type = kTagTypeData;
@@ -141,9 +141,10 @@ public:
   }
   void setDictTagValue(TagStruct* tagList)
   {
-    if ( tagList == NULL ) panic("TagStruct::setDictValue() : tagList == NULL ");
-    if ( _tag != NULL ) panic("TagStruct::setDictValue() : _tag != NULL ");
-    if ( _nextTag != NULL ) panic("TagStruct::setDictValue() : _nextTag != NULL ");
+    // empty dict is allowed
+    //if ( tagList == NULL ) panic("TagStruct::setDictTagValue() : tagList == NULL ");
+    if ( _tag != NULL ) panic("TagStruct::setDictTagValue() : _tag != NULL ");
+    if ( _nextTag != NULL ) panic("TagStruct::setDictTagValue() : _nextTag != NULL ");
     _tag = tagList;
     _nextTag = NULL;
     type = kTagTypeDict;

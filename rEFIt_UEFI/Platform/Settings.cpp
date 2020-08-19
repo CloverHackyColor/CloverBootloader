@@ -510,7 +510,7 @@ LoadUserSettings (
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
-  CHAR8*     gConfigPtr = NULL;
+  CHAR8*     ConfigPtr = NULL;
   XStringW   ConfigPlistPath;
   XStringW   ConfigOemPath;
 
@@ -524,16 +524,16 @@ LoadUserSettings (
   ConfigPlistPath = SWPrintf("EFI\\CLOVER\\%ls.plist", ConfName.wc_str());
   ConfigOemPath   = SWPrintf("%ls\\%ls.plist", OEMPath.wc_str(), ConfName.wc_str());
   if (FileExists (SelfRootDir, ConfigOemPath)) {
-    Status = egLoadFile(SelfRootDir, ConfigOemPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
+    Status = egLoadFile(SelfRootDir, ConfigOemPath.wc_str(), (UINT8**)&ConfigPtr, &Size);
   }
   if (EFI_ERROR(Status)) {
     if ((RootDir != NULL) && FileExists (RootDir, ConfigPlistPath)) {
-      Status = egLoadFile(RootDir, ConfigPlistPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
+      Status = egLoadFile(RootDir, ConfigPlistPath.wc_str(), (UINT8**)&ConfigPtr, &Size);
     }
     if (!EFI_ERROR(Status)) {
       DBG("Using %ls.plist at RootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
     } else {
-      Status = egLoadFile(SelfRootDir, ConfigPlistPath.wc_str(), (UINT8**)&gConfigPtr, &Size);
+      Status = egLoadFile(SelfRootDir, ConfigPlistPath.wc_str(), (UINT8**)&ConfigPtr, &Size);
       if (!EFI_ERROR(Status)) {
         DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
       }else{
@@ -544,8 +544,8 @@ LoadUserSettings (
     DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigOemPath.wc_str());
   }
 
-  if (!EFI_ERROR(Status) && gConfigPtr != NULL) {
-    Status = ParseXML((const CHAR8*)gConfigPtr, Dict, (UINT32)Size);
+  if (!EFI_ERROR(Status) && ConfigPtr != NULL) {
+    Status = ParseXML((const CHAR8*)ConfigPtr, Dict, (UINT32)Size);
     if (EFI_ERROR(Status)) {
       //  Dict = NULL;
       DBG("config.plist parse error Status=%s\n", strerror(Status));
