@@ -101,7 +101,7 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagStruct* dict)
     const TagStruct*  osBundleRequiredTag;
     XString8 osbundlerequired;
     
-    osBundleRequiredTag = GetProperty(dict,"OSBundleRequired");
+    osBundleRequiredTag = dict->dictPropertyForKey("OSBundleRequired");
     if (osBundleRequiredTag) {
       osbundlerequired = osBundleRequiredTag->stringValue();
       osbundlerequired.lowerAscii();
@@ -157,7 +157,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
     }
     NoContents = TRUE;
   }
-  if(ParseXML((CHAR8*)infoDictBuffer,&dict,(UINT32)infoDictBufferLength)!=0) {
+  if( ParseXML((CHAR8*)infoDictBuffer, &dict,(UINT32)infoDictBufferLength)!=0 ) {
     FreePool(infoDictBuffer);
     MsgLog("Failed to load extra kext (failed to parse Info.plist): %ls\n", FileName);
     return EFI_NOT_FOUND;
@@ -169,7 +169,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
       return EFI_UNSUPPORTED;
   }
     
-  prop = GetProperty(dict,"CFBundleExecutable");
+  prop = dict->dictPropertyForKey("CFBundleExecutable");
   if( prop != NULL && prop->isString() && prop->stringValue().notEmpty() ) {
     Executable.takeValueFrom(prop->stringValue());
     //   AsciiStrToUnicodeStrS(prop->stringValue(), Executable, 256);
@@ -213,6 +213,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
   FreePool(infoDictBuffer);
   FreePool(executableFatBuffer);
   FreePool(bundlePathBuffer);
+  dict->FreeTag();
 
   return EFI_SUCCESS;
 }

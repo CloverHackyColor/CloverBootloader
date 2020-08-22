@@ -489,6 +489,10 @@ public:
 //	int Compare(const char32_t* S) const { return ::Compare<T, char32_t>(m_data, S); };
 //	int Compare(const wchar_t* S) const { return ::Compare<T, wchar_t>(m_data, S); };
 //
+
+  template<typename O>
+  int strncmp(const O* S, size_t n) const { return XStringAbstract__ncompare(m_data, S, n, false); }
+
 	template<typename O, class OtherXStringClass>
 	bool equal(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(m_data, S.s(), false) == 0; }
 	template<typename O>

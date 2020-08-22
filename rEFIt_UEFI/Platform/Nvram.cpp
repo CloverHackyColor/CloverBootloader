@@ -1030,8 +1030,7 @@ VOID
 PutNvramPlistToRtVars ()
 {
 //  EFI_STATUS Status;
-  const TagStruct*     ValTag;
-  INTN       Size, i;
+  size_t            Size;
   const VOID       *Value;
   
   if (gNvramDict == NULL) {
@@ -1041,109 +1040,115 @@ PutNvramPlistToRtVars ()
       return;
     }
   }
-  
+  if ( !gNvramDict->isDict() ) {
+    DBG("PutNvramPlistToRtVars: MALFORMED PLIST nvram.plist. Root must be a dict\n");
+    return;
+  }
   DbgHeader("PutNvramPlistToRtVars");
 //  DBG("PutNvramPlistToRtVars ...\n");
   // iterate over dict elements
-  for (size_t tagIdx = 0 ; tagIdx < gNvramDict->dictOrArrayContent().size() ; tagIdx++ )
+  size_t count = gNvramDict->dictKeyCount(); // ok
+  for (size_t tagIdx = 0 ; tagIdx < count ; tagIdx++ )
   {
-    const TagStruct& Tag = gNvramDict->dictOrArrayContent()[tagIdx];
+    const TagStruct* keyTag;
+    const TagStruct* valueTag;
+    if ( EFI_ERROR(gNvramDict->dictKeyAndValueAtIndex(tagIdx, &keyTag, &valueTag)) ) { //If GetKeyValueAtIndex return success, key and value != NULL
+      MsgLog("MALFORMED PLIST nvram.plist. A key is expected at pos : %zu\n", tagIdx);
+      continue;
+    }
     EFI_GUID *VendorGuid = &gEfiAppleBootGuid;
     Value  = NULL;
-    if ( Tag.isKey() )
-    {
-      ValTag = Tag.keyTagValue();
+    if ( tagIdx + 1 < gNvramDict->dictContent().size()  &&  !gNvramDict->dictContent()[tagIdx+1].isKey() ) valueTag = &gNvramDict->dictContent()[tagIdx+1];
 
-      // process only valid <key> tags
-      if (!Tag.isKey() || ValTag == NULL) {
-        DBG(" ERROR: Tag is not <key> : type %s\n", ValTag->getTypeAsXString8().c_str());
-        continue;
-      }
-  //    DBG("tag: %s\n", Tag.stringValue());
-      // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
-      // in kernel and kext patcher when mixing UEFI and CloverEFI boot
-      if ( Tag.keyValue() == "OsxAptioFixDrv-RelocBase"_XS8 ) {
-        DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
-        continue;
-      } else if ( Tag.keyValue() == "OsxAptioFixDrv-ErrorExitingBootServices"_XS8 ) {
-        DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
-        continue;
-      } else if ( Tag.keyValue() == "EmuVariableUefiPresent"_XS8 ) {
-        DBG(" Skipping EmuVariableUefiPresent\n");
-        continue;
-      } else if ( Tag.keyValue() == "aapl,panic-info"_XS8 ) {
-          DBG(" Skipping aapl,panic-info\n");
-          continue;
-      }
+    // process only valid <key> tags
+    if ( valueTag == NULL ) {
+      DBG(" ERROR: ValTag is not NULL\n");
+      continue;
+    }
+//    DBG("tag: %s\n", Tag.stringValue());
+    // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
+    // in kernel and kext patcher when mixing UEFI and CloverEFI boot
+    if ( keyTag->keyStringValue() == "OsxAptioFixDrv-RelocBase"_XS8 ) {
+      DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
+      continue;
+    } else if ( keyTag->keyStringValue() == "OsxAptioFixDrv-ErrorExitingBootServices"_XS8 ) {
+      DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
+      continue;
+    } else if ( keyTag->keyStringValue() == "EmuVariableUefiPresent"_XS8 ) {
+      DBG(" Skipping EmuVariableUefiPresent\n");
+      continue;
+    } else if ( keyTag->keyStringValue() == "aapl,panic-info"_XS8 ) {
+      DBG(" Skipping aapl,panic-info\n");
+      continue;
+    }
 
-  //    // key to unicode; check if key buffer is large enough
-  //    if ( Tag.keyValue().length() > sizeof(KeyBuf) - 1 ) {
-  //      DBG(" ERROR: Skipping too large key %s\n", Tag.keyValue().c_str());
-  //      continue;
-  //    }
+//    // key to unicode; check if key buffer is large enough
+//    if ( Tag.keyValue().length() > sizeof(KeyBuf) - 1 ) {
+//      DBG(" ERROR: Skipping too large key %s\n", Tag.keyValue().c_str());
+//      continue;
+//    }
 
-      if ( Tag.keyValue() == "Boot0082"_XS8 || Tag.keyValue() == "BootNext"_XS8 ) {
-        VendorGuid = &gEfiGlobalVariableGuid;
-        // it may happen only in this case
-        GlobalConfig.HibernationFixup = TRUE;
-      }
+    if ( keyTag->keyStringValue() == "Boot0082"_XS8 || keyTag->keyStringValue() == "BootNext"_XS8 ) {
+      VendorGuid = &gEfiGlobalVariableGuid;
+      // it may happen only in this case
+      GlobalConfig.HibernationFixup = TRUE;
+    }
 
-  //    AsciiStrToUnicodeStrS(Tag.stringValue(), KeyBuf, 128);
-      XStringW KeyBuf = Tag.keyValue();
+//    AsciiStrToUnicodeStrS(Tag.stringValue(), KeyBuf, 128);
+    XStringW KeyBuf = keyTag->keyStringValue();
+    if (!GlobalConfig.DebugLog) {
+      DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
+    }
+    // process value tag
+    
+    if (valueTag->isString()) {
+      
+      // <string> element
+      Value = (void*)valueTag->stringValue().c_str();
+      Size  = valueTag->stringValue().length();
       if (!GlobalConfig.DebugLog) {
-        DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
-      }
-      // process value tag
-      
-      if (ValTag->isString()) {
-        
-        // <string> element
-        Value = (void*)ValTag->stringValue().c_str();
-        Size  = ValTag->stringValue().length();
-        if (!GlobalConfig.DebugLog) {
-          DBG("String: Size = %lld, Val = '%s'\n", Size, ValTag->stringValue().c_str());
-        }
-        
-      } else if (ValTag->isData()) {
-        
-        // <data> element
-        Size  = ValTag->dataLenValue();
-        Value = ValTag->dataValue();
-        if (!GlobalConfig.DebugLog) {
-        DBG("Size = %lld, Data: ", Size);
-          for (i = 0; i < Size; i++) {
-            DBG("%02hhX ", *(((UINT8*)Value) + i));
-          }
-        }
-        if (!GlobalConfig.DebugLog) {
-         DBG("\n");
-        }
-      } else {
-        DBG("ERROR: Unsupported tag type: %s\n", ValTag->getTypeAsXString8().c_str());
-        continue;
+        DBG("String: Size = %zu, Val = '%s'\n", Size, valueTag->stringValue().c_str());
       }
       
-      if (Size == 0 || !Value) {
-        continue;
-      }
+    } else if (valueTag->isData()) {
       
-      // set RT var: all vars visible in nvram.plist are gEfiAppleBootGuid
-  /*   Status = gRT->SetVariable (
-                      KeyBuf,
+      // <data> element
+      Size  = valueTag->dataLenValue();
+      Value = valueTag->dataValue();
+      if (!GlobalConfig.DebugLog) {
+      DBG("Size = %zu, Data: ", Size);
+        for (size_t i = 0; i < Size; i++) {
+          DBG("%02hhX ", *(((UINT8*)Value) + i));
+        }
+      }
+      if (!GlobalConfig.DebugLog) {
+       DBG("\n");
+      }
+    } else {
+      DBG("ERROR: Unsupported tag type: %s\n", valueTag->getTypeAsXString8().c_str());
+      continue;
+    }
+    
+    if (Size == 0 || !Value) {
+      continue;
+    }
+    
+    // set RT var: all vars visible in nvram.plist are gEfiAppleBootGuid
+/*   Status = gRT->SetVariable (
+                    KeyBuf,
+                    VendorGuid,
+                    EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                    Size,
+                    Value
+                    ); */
+
+    SetNvramVariable (
+                      KeyBuf.wc_str(),
                       VendorGuid,
                       EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                       Size,
                       Value
-                      ); */
-
-      SetNvramVariable (
-                        KeyBuf.wc_str(),
-                        VendorGuid,
-                        EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                        Size,
-                        Value
-                        );
-    }
+                      );
   }
 }
 

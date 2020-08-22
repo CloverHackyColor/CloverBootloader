@@ -111,14 +111,14 @@ VOID FillCardList(const TagStruct* CfgDict)
     for (Index = 0; Index < Count; Index++) {
       CONST CHAR8 *key = VEN[Index];
       
-      prop = GetProperty(CfgDict, key);
+      prop = CfgDict->dictPropertyForKey(key);
       if( prop  &&  prop->isArray() ) {
         INTN		i;
         INTN		 count;
         
         const TagStruct*		prop2		= 0;
         const TagStruct*    element    = 0;
-        count = GetTagCount(prop);
+        count = prop->arrayContent().size();
         for (i = 0; i < count; i++) {
           CONST CHAR8     *model_name = NULL;
           UINT32		dev_id		= 0;
@@ -126,40 +126,39 @@ VOID FillCardList(const TagStruct* CfgDict)
           UINT64		VramSize	= 0;
           UINTN     VideoPorts  = 0;
           BOOLEAN   LoadVBios = FALSE;
-          EFI_STATUS status = GetElement(prop, i, &element);
-          
-          if (status == EFI_SUCCESS) {
-            if (element) {
-              prop2 = GetProperty(element, "Model");
-              if ( prop2->isString() && prop2->stringValue().notEmpty() ) {
-                model_name = prop2->stringValue().c_str();
-              } else {
-                model_name = "VideoCard";
-              }
-              
-              prop2 = GetProperty(element, "IOPCIPrimaryMatch");
-              dev_id = (UINT32)GetPropertyInteger(prop2, 0);
-              
-              prop2 = GetProperty(element, "IOPCISubDevId");
-              subdev_id = (UINT32)GetPropertyInteger(prop2, 0);
-              
-              prop2 = GetProperty(element, "VRAM");
-              VramSize = LShiftU64((UINTN)GetPropertyInteger(prop2, (INTN)VramSize), 20); //Mb -> bytes
-              
-              prop2 = GetProperty(element, "VideoPorts");
-              VideoPorts = (UINT16)GetPropertyInteger(prop2, VideoPorts);
-              
-              prop2 = GetProperty(element, "LoadVBios");
-              if (prop2 != NULL && IsPropertyTrue(prop2)) {
-                LoadVBios = TRUE;
-              }
-              
-              DBG("FillCardList :: %s : \"%s\" (%08X, %08X)\n", key, model_name, dev_id, subdev_id);
-              
-              AddCard(model_name, dev_id, subdev_id, VramSize, VideoPorts, LoadVBios);
-            }
-            
+          element = &prop->arrayContent()[i];
+          if ( !element->isDict()) {
+            MsgLog("MALFORMED PLIST in FillCardList() : element is not a dict");
+            continue;
           }
+          
+          prop2 = element->dictPropertyForKey("Model");
+          if ( prop2->isString() && prop2->stringValue().notEmpty() ) {
+            model_name = prop2->stringValue().c_str();
+          } else {
+            model_name = "VideoCard";
+          }
+          
+          prop2 = element->dictPropertyForKey("IOPCIPrimaryMatch");
+          dev_id = (UINT32)GetPropertyAsInteger(prop2, 0);
+          
+          prop2 = element->dictPropertyForKey("IOPCISubDevId");
+          subdev_id = (UINT32)GetPropertyAsInteger(prop2, 0);
+          
+          prop2 = element->dictPropertyForKey("VRAM");
+          VramSize = LShiftU64((UINTN)GetPropertyAsInteger(prop2, (INTN)VramSize), 20); //Mb -> bytes
+          
+          prop2 = element->dictPropertyForKey("VideoPorts");
+          VideoPorts = (UINT16)GetPropertyAsInteger(prop2, VideoPorts);
+          
+          prop2 = element->dictPropertyForKey("LoadVBios");
+          if (prop2 != NULL && IsPropertyNotNullAndTrue(prop2)) {
+            LoadVBios = TRUE;
+          }
+          
+          DBG("FillCardList :: %s : \"%s\" (%08X, %08X)\n", key, model_name, dev_id, subdev_id);
+          
+          AddCard(model_name, dev_id, subdev_id, VramSize, VideoPorts, LoadVBios);
         }
       }
     }

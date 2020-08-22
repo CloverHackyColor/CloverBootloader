@@ -24,10 +24,9 @@ template<class TYPE>
 class XArray
 {
   protected:
-	TYPE *m_data;
+	TYPE*  m_data;
 	size_t m_len;
 	size_t m_allocatedSize;
-//	size_t _GrowBy;
 
   public:
 //	void Init();

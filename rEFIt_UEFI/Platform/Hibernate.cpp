@@ -412,11 +412,11 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   if (!EFI_ERROR(Status)) {
     Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, (UINT32)PrefBufferLen);
     if (!EFI_ERROR(Status)) {
-      dict = GetProperty(PrefDict, "Custom Profile");
+      dict = PrefDict->dictPropertyForKey("Custom Profile");
       if (dict) {
-        dict2 = GetProperty(dict, "AC Power");
+        dict2 = dict->dictPropertyForKey("AC Power");
         if (dict2) {
-          prop = GetProperty(dict2, "Hibernate File");
+          prop = dict2->dictPropertyForKey("Hibernate File");
           if (prop && prop->isString() ) {
             if (prop->stringValue().contains("/Volumes/")) {
               CHAR8 *VolNameStart = NULL, *VolNameEnd = NULL;
@@ -457,6 +457,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
           }
         }
       }
+      PrefDict->FreeTag();
     }
   }
   

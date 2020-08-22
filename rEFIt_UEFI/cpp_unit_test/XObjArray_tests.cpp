@@ -1,6 +1,7 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../cpp_foundation/XObjArray.h"
+#include "../cpp_foundation/XArray.h"
 
 class TestObjInt
 {
@@ -62,5 +63,11 @@ int XObjArray_tests()
 	delete(obj14);
 	if ( !m_destructor_called14 ) return 11;
 
+  {
+    XObjArray<XString8> testCtor(true, new XString8("s1"_XS8), new XString8("s2"_XS8), new XString8("s3"_XS8), NULL);
+    if ( testCtor[0] != "s1"_XS8 ) return 20;
+    if ( testCtor[1] != "s2"_XS8 ) return 21;
+    if ( testCtor[2] != "s3"_XS8 ) return 22;
+  }
 	return 0;
 }

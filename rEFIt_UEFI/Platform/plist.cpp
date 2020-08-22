@@ -34,7 +34,7 @@
 #include "../libeg/FloatLib.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_PLIST 0
+#define DEBUG_PLIST 1
 #else
 #define DEBUG_PLIST DEBUG_ALL
 #endif
@@ -44,52 +44,6 @@
 #else
 #define DBG(...) DebugLog(DEBUG_PLIST, __VA_ARGS__)
 #endif
-
-XObjArray<TagStruct> gTagsFree;
-
-
-
-
-void TagStruct::FreeTag()
-{
-  // Clear and free the tag.
-  type = kTagTypeNone;
-
-  _string.setEmpty();
-  _intValue = 0;
-  _floatValue = 0;
-
-  if ( _data ) {
-      FreePool(_data);
-      _data = NULL;
-  }
-  _dataLen = 0;
-
-  
-  if ( _tag ) {
-    _tag->FreeTag();
-    _tag = NULL;
-  }
-//  while ( tagIdx < _dictOrArrayContent.notEmpty() ) {
-//    _dictOrArrayContent[0].FreeTag();
-//    _dictOrArrayContent.RemoveWithoutFreeingAtIndex(0);
-//  }
-  // this loop is better because removing objects from the end don't do any memory copying.
-  for (size_t tagIdx = _dictOrArrayContent.size() ; tagIdx > 0  ; ) {
-    tagIdx--;
-    _dictOrArrayContent[tagIdx].FreeTag();
-    _dictOrArrayContent.RemoveWithoutFreeingAtIndex(tagIdx);
-  }
-
-//  if ( _nextTag ) {
-//    _nextTag->FreeTag();
-//    _nextTag = NULL;
-//  }
-
-  gTagsFree.AddReference(this, false);
-}
-
-
 
 
 
@@ -112,22 +66,31 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagStruct* * tag, bool value, UINT32* 
 
 EFI_STATUS XMLParseNextTag (CHAR8  *buffer, TagStruct**tag, UINT32 *lenPtr);
 
-TagStruct*     NewTag( void );
 EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag,UINT32* lenPtr);
 
 /* Function for basic XML character entities parsing */
-typedef struct XMLEntity {
-  const CHAR8* name;
-  UINTN nameLen;
+class XMLEntity
+{
+public:
+  const XString8 name;
+  size_t nameLen;
   CHAR8 value;
-} XMLEntity;
 
-/* This is ugly, but better than specifying the lengths by hand */
-#define _e(str,c) {str,sizeof(str)-1,c}
-CONST XMLEntity ents[] = {
-  _e("quot;",'"'), _e("apos;",'\''),
-  _e("lt;",  '<'), _e("gt;",  '>'),
-  _e("amp;", '&')
+  XMLEntity() : name(), nameLen(0), value(0) { }
+  XMLEntity(const XString8& _name, CHAR8 _value) : name(_name), nameLen(name.length()), value(_value) { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  XMLEntity(const XMLEntity&) = delete;
+  XMLEntity& operator=(const XMLEntity&) = delete;
+
+};
+
+const XMLEntity ents[] = {
+  { "quot;"_XS8, '"' },
+  {"apos;"_XS8,'\''},
+  {"lt;"_XS8,  '<'},
+  {"gt;"_XS8,  '>'},
+  {"amp;"_XS8, '&'}
 };
 
 /* Replace XML entities by their value */
@@ -163,7 +126,7 @@ XMLDecode(CHAR8* src)
       UINTN i;
       s++;
       for (i = 0; i < sizeof(ents)/sizeof(ents[0]); i++) {
-        if ( strncmp(s, ents[i].name, ents[i].nameLen) == 0 ) {
+        if ( ents[i].name.strncmp(s, ents[i].nameLen) == 0 ) {
           entFound = TRUE;
           break;
         }
@@ -181,54 +144,153 @@ XMLDecode(CHAR8* src)
   return out;
 }
 
-INTN GetTagCount(const TagStruct* dict )
-{
-  INTN count = 0;
 
-  if ( !dict ) return 0;
-  
-  if ( dict->isArray() ) {
-    return dict->dictOrArrayContent().size(); // If we are an array, any element is valid
-  }else
-  if ( dict->isDict() ) {
-    const XObjArray<TagStruct>& tagList = dict->dictOrArrayContent();
-    for (size_t tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ ) {
-      if ( tagList[tagIdx].isKey() ) count++;
-    }
-    return count;
-  }else{
-    return 0;
+/****************************************  TagStruct  ****************************************/
+
+XObjArray<TagStruct> gTagsFree;
+
+//UINTN newtagcount = 0;
+//UINTN tagcachehit = 0;
+TagStruct* TagStruct::getEmptyTag()
+{
+  TagStruct*  tag;
+
+  if ( gTagsFree.size() > 0 ) {
+    tag = &gTagsFree[0];
+    gTagsFree.RemoveWithoutFreeingAtIndex(0);
+//tagcachehit++;
+//DBG("tagcachehit=%lld\n", tagcachehit);
+    return tag;
   }
+  tag = new TagStruct();
+//newtagcount += 1;
+//DBG("newtagcount=%lld\n", newtagcount);
+  return tag;
 }
 
-EFI_STATUS GetElement(const TagStruct* dict, INTN id, const TagStruct** dict1)
+TagStruct* TagStruct::getEmptyDictTag()
+{
+  TagStruct* newDictTag = getEmptyTag();
+  newDictTag->type = kTagTypeDict;
+  return newDictTag;
+}
+
+TagStruct* TagStruct::getEmptyArrayTag()
+{
+  TagStruct* newArrayTag = getEmptyTag();
+  newArrayTag->type = kTagTypeArray;
+  return newArrayTag;
+}
+
+void TagStruct::FreeTag()
+{
+  // Clear and free the tag.
+  type = kTagTypeNone;
+
+  _string.setEmpty();
+  _intValue = 0;
+  _floatValue = 0;
+
+  if ( _data ) {
+      FreePool(_data);
+      _data = NULL;
+  }
+  _dataLen = 0;
+
+  //while ( tagIdx < _dictOrArrayContent.notEmpty() ) {
+  //  _dictOrArrayContent[0].FreeTag();
+  //  _dictOrArrayContent.RemoveWithoutFreeingAtIndex(0);
+  //}
+  // this loop is better because removing objects from the end don't do any memory copying.
+  for (size_t tagIdx = _dictOrArrayContent.size() ; tagIdx > 0  ; ) {
+    tagIdx--;
+    _dictOrArrayContent[tagIdx].FreeTag();
+    _dictOrArrayContent.RemoveWithoutFreeingAtIndex(tagIdx);
+  }
+
+  gTagsFree.AddReference(this, false);
+}
+
+
+
+INTN TagStruct::dictKeyCount() const
+{
+  if ( !isDict() ) panic("TagStruct::dictKeyCount() : !isDict() ");
+  INTN count = 0;
+  for (size_t tagIdx = 0 ; tagIdx + 1 < _dictOrArrayContent.size() ; tagIdx++ ) { // tagIdx + 1 because a key as a last element cannot have value and is ignored. Can't do size()-1, because it's unsigned.
+    if ( _dictOrArrayContent[tagIdx].isKey()  &&   !_dictOrArrayContent[tagIdx+1].isKey() ) { // if this key is followed by another key, it'll be ignored
+      count++;
+    }
+  }
+  return count;
+}
+
+EFI_STATUS TagStruct::dictKeyAndValueAtIndex(INTN id, const TagStruct** key, const TagStruct** value) const
 {
   INTN element = 0;
+  *key = NULL;
+  *value = NULL;
 
-  if ( !dict ) return EFI_UNSUPPORTED;
   if ( id < 0 ) return EFI_UNSUPPORTED;
 
-  if ( dict->isArray() ) {
-    if ( (size_t)id < dict->dictOrArrayContent().size() ) {
-      *dict1 = &dict->dictOrArrayContent()[id];
-      return EFI_SUCCESS;
-    }
-  }else
-  if ( dict->isDict() ) {
-    const XObjArray<TagStruct>& tagList = dict->dictOrArrayContent();
-    size_t tagIdx;
-    for (tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ ) {
-      if ( tagList[tagIdx].isKey() ) {
-        if ( element == id ) {
-          *dict1 = &tagList[tagIdx];
-          return EFI_SUCCESS;
-        }
-        element++;
+  const XObjArray<TagStruct>& tagList = _dictOrArrayContent;
+  size_t tagIdx;
+  for (tagIdx = 0 ; tagIdx + 1 < tagList.size() ; tagIdx++ ) { // tagIdx + 1 because a key as a last element cannot have value and is ignored. Can't do size()-1, because it's unsigned.
+    if ( tagList[tagIdx].isKey()  &&  !tagList[tagIdx+1].isKey() ) {
+      if ( element == id ) {
+        *key = &tagList[tagIdx];
+        *value = &tagList[tagIdx+1];
+        return EFI_SUCCESS;
       }
+      element++;
     }
   }
   return EFI_UNSUPPORTED;
 }
+
+const TagStruct* TagStruct::dictPropertyForKey(const CHAR8* key) const
+{
+  const XObjArray<TagStruct>& tagList = _dictOrArrayContent;
+  for (size_t tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ )
+  {
+    if ( tagList[tagIdx].isKey()  &&  tagList[tagIdx].keyStringValue().equalIC(key) ) {
+      if ( tagIdx+1 >= tagList.size() ) return NULL;
+      if ( tagList[tagIdx+1].isKey() ) return NULL;
+      return &tagList[tagIdx+1];
+    }
+  }
+
+  return NULL;
+}
+
+//TagStruct* GetNextProperty(TagStruct* dict)
+//{
+//  TagStruct* tagList, tag;
+//
+//  if (dict->isDict()) {
+//    return NULL;
+//  }
+//
+//  tag = NULL;
+//  tagList = dict->tag;
+//  while (tagList)
+//  {
+//    tag = tagList;
+//    tagList = tag->tagNext;
+//
+//    if ( !tag->isKey() ||  tag->keyValue().isEmpty() ) {
+//      continue;
+//
+//    }
+//    return tag->tag;
+//  }
+//
+//  return NULL;
+//}
+
+
+
+/****************************************  XML  ****************************************/
 
 // Expects to see one dictionary in the XML file, the final pos will be returned
 // If the pos is not equal to the strlen, then there are multiple dicts
@@ -286,7 +348,8 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagStruct** dict, UINT32 bufSize)
       break;
     }
 
-	  FreeTag(tag); tag = NULL;
+	  tag->FreeTag();
+    tag = NULL;
   }
 
 //  FreePool(configBuffer);
@@ -304,48 +367,6 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagStruct** dict, UINT32 bufSize)
 //
 
 #define DOFREE 1
-
-//==========================================================================
-// GetProperty
-
-const TagStruct* GetProperty(const TagStruct* dict, const CHAR8* key )
-{
-  if ( !dict->isDict() ) return NULL;
-  
-  const XObjArray<TagStruct>& tagList = dict->dictOrArrayContent();
-  for (size_t tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ )
-  {
-    if ( tagList[tagIdx].isKey()  &&  tagList[tagIdx].keyValue().equalIC(key) ) return tagList[tagIdx].keyTagValue();
-  }
-
-  return NULL;
-}
-
-//TagStruct* GetNextProperty(TagStruct* dict)
-//{
-//	TagStruct* tagList, tag;
-//
-//	if (dict->isDict()) {
-//		return NULL;
-//	}
-//
-//	tag = NULL;
-//	tagList = dict->tag;
-//	while (tagList)
-//	{
-//		tag = tagList;
-//		tagList = tag->tagNext;
-//
-//		if ( !tag->isKey() ||  tag->keyValue().isEmpty() ) {
-//			continue;
-//
-//		}
-//		return tag->tag;
-//	}
-//
-//	return NULL;
-//}
-
 
 
 //==========================================================================
@@ -502,13 +523,16 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 e
   tagTail = NULL;
   pos = 0;
 
-  TagStruct* dictOrArrayTag = NewTag();
+  TagStruct* dictOrArrayTag;
+  XObjArray<TagStruct>* tagListPtr;
   if (isArray) {
-    dictOrArrayTag->setArrayTagValue(NULL);
+    dictOrArrayTag = TagStruct::getEmptyArrayTag();
+    tagListPtr = &dictOrArrayTag->arrayContent();
   } else {
-    dictOrArrayTag->setDictTagValue(NULL);
+    dictOrArrayTag = TagStruct::getEmptyDictTag();
+    tagListPtr = &dictOrArrayTag->dictContent();
   }
-  XObjArray<TagStruct>& tagList = dictOrArrayTag->dictOrArrayContent();
+  XObjArray<TagStruct>& tagList = *tagListPtr;
 
   if (!empty) {
     while (TRUE) {
@@ -529,7 +553,7 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 e
     }
 
     if (EFI_ERROR(Status)) {
-      FreeTag(dictOrArrayTag);
+      dictOrArrayTag->FreeTag();
       return Status;
     }
   }
@@ -559,7 +583,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagStruct** tag, UINT32* lenPtr)
   UINT32      length = 0;
   UINT32      length2 = 0;
   TagStruct*      tmpTag;
-  TagStruct*      subTag = NULL;
+//  TagStruct*      subTag = NULL;
 
   Status = FixDataMatchingTag(buffer, kXMLTagKey, &length);
   DBG("fixing key len=%d status=%s\n", length, strerror(Status));
@@ -567,16 +591,16 @@ EFI_STATUS ParseTagKey( char * buffer, TagStruct** tag, UINT32* lenPtr)
     return Status;
   }
 
-  Status = XMLParseNextTag(buffer + length, &subTag, &length2);
-  if (EFI_ERROR(Status)) {
-    return Status;
-  }
-  tmpTag = NewTag();
-  tmpTag->setKeyValue(LString8(buffer), subTag);
+//  Status = XMLParseNextTag(buffer + length, &subTag, &length2);
+//  if (EFI_ERROR(Status)) {
+//    return Status;
+//  }
+  tmpTag = TagStruct::getEmptyTag();
+  tmpTag->setKeyValue(LString8(buffer));
 
   *tag = tmpTag;
   *lenPtr = length + length2;
-  DBG("parse key '%s' success len=%d\n", tmpString, *lenPtr);
+  DBG("parse key '%s' success len=%d\n", tmpTag->keyStringValue().c_str(), *lenPtr);
   return EFI_SUCCESS;
 }
 
@@ -594,7 +618,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
     return Status;
   }
 
-  tmpTag = NewTag();
+  tmpTag = TagStruct::getEmptyTag();
   if (tmpTag == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -602,7 +626,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
   tmpTag->setStringValue(LString8(XMLDecode(buffer)));
   *tag = tmpTag;
   *lenPtr = length;
-  DBG(" parse string %s\n", tmpString);
+  DBG(" parse string %s\n", tmpTag->stringValue().c_str());
   return EFI_SUCCESS;
 }
 
@@ -624,7 +648,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
     return Status;
   }
 
-  tmpTag = NewTag();
+  tmpTag = TagStruct::getEmptyTag();
   tmpTag->setIntValue(0);
 
   size = length;
@@ -651,7 +675,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
       else {
         MsgLog("ParseTagInteger hex error (0x%hhX) in buffer %s\n", *val, buffer);
         //        getchar();
-        FreeTag(tmpTag);
+        tmpTag->FreeTag();
         return EFI_UNSUPPORTED;
       }
     }
@@ -668,7 +692,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
         if (*val < '0' || *val > '9') {
           MsgLog("ParseTagInteger decimal error (0x%hhX) in buffer %s\n", *val, buffer);
           //          getchar();
-          FreeTag(tmpTag);
+          tmpTag->FreeTag();
           return EFI_UNSUPPORTED;
         }
         integer = (integer * 10) + (*val++ - '0');
@@ -702,7 +726,7 @@ EFI_STATUS ParseTagFloat(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
     return Status;
   }
   
-  tmpTag = NewTag();
+  tmpTag = TagStruct::getEmptyTag();
   if (tmpTag == NULL)  {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -731,7 +755,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
     return Status;
   }
 
-  tmpTag = NewTag();
+  tmpTag = TagStruct::getEmptyTag();
   if (tmpTag == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -763,7 +787,7 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagStruct* * tag,UINT32* lenPtr)
   }
 
 
-  tmpTag = NewTag();
+  tmpTag = TagStruct::getEmptyTag();
   if (tmpTag == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -783,7 +807,7 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagStruct* * tag, bool value, UINT32* 
 {
   TagStruct* tmpTag;
 
-  tmpTag = NewTag();
+  tmpTag = TagStruct::getEmptyTag();
   if (tmpTag == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -883,34 +907,6 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CONST CHAR8* tag, UINT32* lenPtr)
 }
 
 //==========================================================================
-// NewTag
-
-TagStruct* NewTag( void )
-{
-  TagStruct*  tag;
-
-  if ( gTagsFree.size() > 0 ) {
-    tag = &gTagsFree[0];
-    gTagsFree.RemoveWithoutFreeingAtIndex(0);
-    return tag;
-  }
-  tag = new TagStruct();
-  return tag;
-}
-
-//==========================================================================
-// XMLFreeTag
-
-void FreeTag( TagStruct* tag )
-{
-  if (tag == NULL) {
-    return;
-  }
-  tag->FreeTag();
-}
-
-
-
 
 
 /*
@@ -918,7 +914,7 @@ void FreeTag( TagStruct* tag )
  else return FALSE
  */
 BOOLEAN
-IsPropertyTrue(const TagStruct* Prop)
+IsPropertyNotNullAndTrue(const TagStruct* Prop)
 {
   return Prop != NULL && Prop->isTrueOrYy();
 }
@@ -928,7 +924,7 @@ IsPropertyTrue(const TagStruct* Prop)
  else return FALSE
  */
 BOOLEAN
-IsPropertyFalse(const TagStruct* Prop)
+IsPropertyNotNullAndFalse(const TagStruct* Prop)
 {
   return Prop != NULL && Prop->isFalseOrNn();
 }
@@ -941,7 +937,7 @@ IsPropertyFalse(const TagStruct* Prop)
  <string>0x12abd</string>
  */
 INTN
-GetPropertyInteger(
+GetPropertyAsInteger(
                     const TagStruct* Prop,
                     INTN Default
                     )

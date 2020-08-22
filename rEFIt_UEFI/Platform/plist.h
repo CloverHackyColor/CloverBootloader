@@ -42,7 +42,6 @@ typedef enum {
 class TagStruct;
 extern XObjArray<TagStruct> gTagsFree;
 
-
 class TagStruct
 {
   UINTN  type; // type is private. Use is...() functions.
@@ -51,16 +50,18 @@ class TagStruct
   float    _floatValue;
   UINT8  *_data;
   UINTN  _dataLen;
-  TagStruct *_tag;
   XObjArray<TagStruct> _dictOrArrayContent;
 
 public:
 
-  TagStruct() : type(kTagTypeNone), _string(), _intValue(0), _floatValue(0), _data(0), _dataLen(0), /*offset(0), */_tag(NULL), _dictOrArrayContent() {}
+  TagStruct() : type(kTagTypeNone), _string(), _intValue(0), _floatValue(0), _data(0), _dataLen(0), _dictOrArrayContent() {}
   TagStruct(const TagStruct& other) = delete; // Can be defined if needed
   const TagStruct& operator = ( const TagStruct & ) = delete; // Can be defined if needed
-  ~TagStruct() { delete _data; delete _tag; }
+  ~TagStruct() { delete _data; }
 
+  static TagStruct* getEmptyTag();
+  static TagStruct* getEmptyDictTag();
+  static TagStruct* getEmptyArrayTag();
   void FreeTag();
 
 //  Property<XString8> string();
@@ -73,25 +74,6 @@ public:
   bool isData() const { return type == kTagTypeData; }
   bool isDate() const { return type == kTagTypeDate; }
   bool isArray() const { return type == kTagTypeArray; }
-
-  const XObjArray<TagStruct>& dictOrArrayContent() const
-  {
-    if ( isDict() ) return _dictOrArrayContent;
-    if ( isArray() ) return _dictOrArrayContent;
-    panic("TagStruct::dictOrArrayTagValue() : !isDict() && isArray() ");
-  }
-  XObjArray<TagStruct>& dictOrArrayContent()
-  {
-    if ( isDict() ) return _dictOrArrayContent;
-    if ( isArray() ) return _dictOrArrayContent;
-    panic("TagStruct::dictOrArrayTagValue() : !isDict() && isArray() ");
-  }
-//  void setNextTagValue(TagStruct* nextTag)
-//  {
-//    if ( nextTag == NULL ) panic("TagStruct::setDictNextTagValue() : nextTag == NULL ");
-//    if ( _nextTag != NULL ) panic("TagStruct::setDictNextTagValue() : _nextTag != NULL ");
-//    _nextTag = nextTag;
-//  }
 
   const XString8 getTypeAsXString8() const {
     if ( isDict() ) return "Dict"_XS8;
@@ -106,7 +88,11 @@ public:
     panic("Unknown type %lld : this is bug", type);
   }
 
-  // getter and setter
+  /*
+   *  getters and setters
+   */
+
+  /* data */
   const UINT8* dataValue() const
   {
     if ( !isData() ) panic("TagStruct::dataValue() : !isData() ");
@@ -117,11 +103,11 @@ public:
     if ( !isData() ) panic("TagStruct::dataValue() : !isData() ");
     return _data;
   }
-  const XString8& dataStringValue()
-  {
-    if ( !isData() ) panic("TagStruct::dataStringValue() : !isData() ");
-    return _string;
-  }
+//  const XString8& dataStringValue()
+//  {
+//    if ( !isData() ) panic("TagStruct::dataStringValue() : !isData() ");
+//    return _string;
+//  }
   UINTN dataLenValue() const
   {
     if ( !isData() ) panic("TagStruct::dataLenValue() : !isData() ");
@@ -135,6 +121,7 @@ public:
     type = kTagTypeData;
   }
 
+  /* date */
   const XString8& dateValue()
   {
     if ( !isDict() ) panic("TagStruct::dictValue() : !isDict() ");
@@ -147,60 +134,52 @@ public:
     _string = xstring;
   }
 
-  TagStruct* dictTagValue()
+  /* dict */
+  const XObjArray<TagStruct>& dictContent() const
   {
-    if ( !isDict() ) panic("TagStruct::dictValue() : !isDict() ");
-    return _tag;
+    if ( !isDict() ) panic("TagStruct::dictContent() : !isDict() ");
+    return _dictOrArrayContent;
   }
-  void setDictTagValue(TagStruct* tagList)
+  XObjArray<TagStruct>& dictContent()
   {
-    // empty dict is allowed
-    //if ( tagList == NULL ) panic("TagStruct::setDictTagValue() : tagList == NULL ");
-    if ( _tag != NULL ) panic("TagStruct::setDictTagValue() : _tag != NULL ");
-    if ( _dictOrArrayContent.notEmpty() ) panic("TagStruct::setDictTagValue() : __dictOrArrayContent.notEmpty() ");
-    _tag = tagList;
-    type = kTagTypeDict;
+    if ( !isDict() ) panic("TagStruct::dictContent() : !isDict() ");
+    return _dictOrArrayContent;
+  }
+  INTN dictKeyCount() const;
+  EFI_STATUS dictKeyAndValueAtIndex(INTN id, const TagStruct** key, const TagStruct** value) const;
+  const TagStruct* dictPropertyForKey(const CHAR8* key ) const;
+
+  /* array */
+  const XObjArray<TagStruct>& arrayContent() const
+  {
+    if ( isArray() ) return _dictOrArrayContent;
+    panic("TagStruct::arrayContent() const : !isArray() ");
+  }
+  XObjArray<TagStruct>& arrayContent()
+  {
+    if ( isArray() ) return _dictOrArrayContent;
+    panic("TagStruct::arrayContent() : !isDict() && !isArray() ");
   }
 
-  TagStruct* arrayTagValue()
+  /* key */
+  const XString8& keyStringValue() const
   {
-    if ( !isArray() ) panic("TagStruct::arrayValue() : !isArray() ");
-    return _tag;
-  }
-  void setArrayTagValue(TagStruct* tag)
-  {
-    // Array value with tagList = NULL is allowed
-    //if ( tag == NULL ) panic("TagStruct::setArrayValue() : tag == NULL ");
-    if ( _tag != NULL ) panic("TagStruct::setArrayValue() : _tag != NULL ");
-    if ( _dictOrArrayContent.notEmpty() ) panic("TagStruct::setArrayTagValue() : __dictOrArrayContent.notEmpty() ");
-    _tag = tag;
-    type = kTagTypeArray;
-  }
-
-  
-  const XString8& keyValue() const
-  {
-    if ( !isKey() ) panic("TagStruct::keyValue() : !isKey() ");
+    if ( !isKey() ) panic("TagStruct::keyStringValue() const : !isKey() ");
     return _string;
   }
-  XString8& keyValue()
+  XString8& keyStringValue()
   {
-    if ( !isKey() ) panic("TagStruct::keyValue() : !isKey() ");
+    if ( !isKey() ) panic("TagStruct::keyStringValue() : !isKey() ");
     return _string;
   }
-  const TagStruct* keyTagValue() const
-  {
-    if ( !isKey() ) panic("TagStruct::keyTagValue() : !isKey() ");
-    return _tag;
-  }
-  void setKeyValue(const XString8& xstring, TagStruct* subTag)
+  void setKeyValue(const XString8& xstring)
   {
     if ( xstring.isEmpty() ) panic("TagStruct::setKeyValue() : xstring.isEmpty() ");
     type = kTagTypeKey;
     _string = xstring;
-    _tag = subTag;
   }
 
+  /* string */
   const XString8& stringValue() const
   {
     if ( !isString() ) panic("TagStruct::stringValue() : !isString() ");
@@ -219,6 +198,7 @@ public:
     _string = xstring;
   }
   
+  /* int */
   INTN intValue() const
   {
     if ( !isInt() ) panic("TagStruct::intValue() : !isInt() ");
@@ -230,6 +210,7 @@ public:
     _intValue = i;
   }
   
+  /* float */
   float floatValue() const
   {
     if ( !isFloat() ) panic("TagStruct::floatValue() : !isFloat() ");
@@ -241,6 +222,7 @@ public:
     _floatValue = f;
   }
 
+  /* bool */
   INTN boolValue() const
   {
     if ( !isBool() ) panic("TagStruct::boolValue() : !isBool() ");
@@ -281,21 +263,7 @@ public:
     if ( isString() && stringValue().notEmpty() && (stringValue()[0] == 'n' || stringValue()[0] == 'N') ) return true;
     return false;
   }
-  TagStruct* dictOrArrayTagValue()
-  {
-    if ( isDict() ) return dictTagValue();
-    if ( isArray() ) return arrayTagValue();
-    panic("TagStruct::dictOrArrayTagValue() : !isDict() && isArray() ");
-  }
 };
-
-//typedef union {
-//  struct {
-//    float  fNum; //4 bytes
-//    UINT32 pad;  // else 4
-//  } B;
-//  CHAR8  *string;
-//} FlMix;
 
 
 CHAR8*
@@ -311,21 +279,6 @@ ParseXML(
   );
 
 
-//VOID RenderSVGfont(NSVGfont  *fontSVG);
-
-const TagStruct*
-GetProperty(
-  const TagStruct* dict,
-  CONST CHAR8* key
-  );
-
-TagStruct* NewTag( void );
-
-VOID
-FreeTag (
-  TagStruct* tag
-  );
-
 EFI_STATUS
 GetNextTag (
   UINT8  *buffer,
@@ -334,30 +287,18 @@ GetNextTag (
   UINT32 *length
   );
 
-INTN
-GetTagCount (
-  const TagStruct* dict
-  );
-
-EFI_STATUS
-GetElement(
-  const TagStruct* dict,
-  INTN   id,
-  const TagStruct** dict1
-);
-
 BOOLEAN
-IsPropertyTrue(
+IsPropertyNotNullAndTrue(
   const TagStruct* Prop
   );
 
 BOOLEAN
-IsPropertyFalse(
+IsPropertyNotNullAndFalse(
   const TagStruct* Prop
   );
 
 INTN
-GetPropertyInteger(
+GetPropertyAsInteger(
   const TagStruct* Prop,
   INTN Default
   );

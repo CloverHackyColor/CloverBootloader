@@ -869,7 +869,7 @@ VOID ApplyInputs(VOID)
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
       Status = GetUserSettings(SelfRootDir, dict);
-      if (gConfigDict[2]) FreeTag(gConfigDict[2]);
+      if (gConfigDict[2]) gConfigDict[2]->FreeTag();
       gConfigDict[2] = dict;
       snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);
     }

@@ -123,7 +123,26 @@ class XObjArray : public XObjArrayNC<TYPE>
 {
   public:
 	XObjArray() : XObjArrayNC<TYPE>() {}
+
+  XObjArray(bool FreeThem, TYPE* n1, ...);
+
+  XObjArray(const TYPE &n1, bool FreeIt = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, const TYPE &n12, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, const TYPE &n12, const TYPE &n13, bool FreeThem = true);
+  XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, const TYPE &n12, const TYPE &n13, const TYPE &n14, bool FreeThem = true);
+
 	XObjArray(const XObjArray<TYPE> &anObjArray);
+
 	const XObjArray<TYPE> &operator =(const XObjArray<TYPE> &anObjArray);
 
 	size_t AddCopy(const TYPE &newElement, bool FreeIt = true);
@@ -169,6 +188,225 @@ void XObjArrayNC<TYPE>::Init()
 //	}
 //	#endif
 }
+/* Constructeur */
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(bool FreeThem, TYPE* n1, ...)
+{
+  va_list     va;
+
+  va_start (va, n1);
+  size_t count = 0;
+  TYPE* t = VA_ARG(va, TYPE*);
+  while ( t != nullptr ) {
+    count++;
+    t = VA_ARG(va, TYPE*);
+  }
+  va_end(va);
+
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(count+1, (size_t)0);
+  XObjArrayNC<TYPE>::AddReference(n1, FreeThem);
+
+  va_start (va, n1);
+  t = VA_ARG(va, TYPE*);
+  while ( t != nullptr ) {
+    XObjArrayNC<TYPE>::AddReference(t, FreeThem);
+    t = VA_ARG(va, TYPE*);
+  }
+  va_end(va);
+}
+
+
+
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, bool FreeIt)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(1, (size_t)0);
+  AddCopy(n1, FreeIt);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(2, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(3, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(4, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(5, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(6, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(7, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(8, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(9, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+  AddCopy(n9, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(10, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+  AddCopy(n9, FreeThem);
+  AddCopy(n10, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(11, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+  AddCopy(n9, FreeThem);
+  AddCopy(n10, FreeThem);
+  AddCopy(n11, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, const TYPE &n12, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(12, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+  AddCopy(n9, FreeThem);
+  AddCopy(n10, FreeThem);
+  AddCopy(n11, FreeThem);
+  AddCopy(n12, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, const TYPE &n12, const TYPE &n13, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(13, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+  AddCopy(n9, FreeThem);
+  AddCopy(n10, FreeThem);
+  AddCopy(n11, FreeThem);
+  AddCopy(n12, FreeThem);
+  AddCopy(n13, FreeThem);
+}
+template<class TYPE>
+XObjArray<TYPE>::XObjArray(const TYPE &n1, const TYPE &n2, const TYPE &n3, const TYPE &n4, const TYPE &n5, const TYPE &n6, const TYPE &n7, const TYPE &n8, const TYPE &n9, const TYPE &n10, const TYPE &n11, const TYPE &n12, const TYPE &n13, const TYPE &n14, bool FreeThem)
+{
+  XObjArrayNC<TYPE>::Init();
+  this->CheckSize(14, (size_t)0);
+  AddCopy(n1, FreeThem);
+  AddCopy(n2, FreeThem);
+  AddCopy(n3, FreeThem);
+  AddCopy(n4, FreeThem);
+  AddCopy(n5, FreeThem);
+  AddCopy(n6, FreeThem);
+  AddCopy(n7, FreeThem);
+  AddCopy(n8, FreeThem);
+  AddCopy(n9, FreeThem);
+  AddCopy(n10, FreeThem);
+  AddCopy(n11, FreeThem);
+  AddCopy(n12, FreeThem);
+  AddCopy(n13, FreeThem);
+  AddCopy(n14, FreeThem);
+}
 
 /* Constructeur */
 template<class TYPE>
@@ -176,7 +414,7 @@ XObjArray<TYPE>::XObjArray(const XObjArray<TYPE> &anObjArray) : XObjArrayNC<TYPE
 {
   size_t ui;
 
-  	XObjArrayNC<TYPE>::Init();
+  XObjArrayNC<TYPE>::Init();
 	this->CheckSize(anObjArray.size(), (size_t)0);
 	for ( ui=0 ; ui<anObjArray.size() ; ui+=1 ) AddCopy(anObjArray.ElementAt(ui));
 }

@@ -1952,7 +1952,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
   if (gConfigDict[1]) {
-    const TagStruct* UniteTag = GetProperty(gConfigDict[1], "Unite");
+    const TagStruct* UniteTag = gConfigDict[1]->dictPropertyForKey("Unite");
     if(UniteTag) {
       UniteConfigs = UniteTag->isTrueOrYy();
       DBG("UniteConfigs = %ls", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
@@ -2218,7 +2218,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  }
   // Load any extra SMBIOS information
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios"_XSW, &smbiosTags)) && (smbiosTags != NULL)) {
-    const TagStruct* dictPointer = GetProperty(smbiosTags,"SMBIOS");
+    const TagStruct* dictPointer = smbiosTags->dictPropertyForKey("SMBIOS");
     if (dictPointer) {
       ParseSMBIOSSettings(dictPointer);
     } else {
