@@ -2,6 +2,8 @@
 SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
 SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
 
+#SCRIPT_DIR="$(pwd)" # copy in terminal to be able to copy and paste command from this file
+
 OSTYPE=`uname -s`
 echo $OSTYPE
 
@@ -35,9 +37,9 @@ then
 	then
 	  killall qemu-system-x86_64
 	fi
-	> "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
+	> ./serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
-	hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
+	hdiutil attach ./disk_image_gpt.img || exit 1
 
 	shopt -s nocasematch
 
@@ -56,19 +58,20 @@ then
 
 	diskutil eject /Volumes/QEMU_EFI || exit 1
 		
-	/usr/local/bin/qemu-system-x86_64 \
-	  -L "$SCRIPT_DIR" \
+	./qemu_portable/qemu-system-x86_64 \
+	  -L qemu_portable \
 	  -m 2048 \
 	  -cpu core2duo \
-	  -bios bios.bin \
+	  -bios bios.bin-1.13.0 \
 	  -machine q35 \
 	  -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 	  -device ahci,id=ahi \
-	  -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
+	  -drive format=raw,id=hda,file=./disk_image_gpt.img \
 	  -usb \
 	  -device usb-mouse,bus=usb-bus.0,port=2 \
 	  -device usb-kbd,bus=usb-bus.0,port=1 \
-	  -serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
+	  -serial file:./serial0_qemu_out.log \
+	  -nic none \
 	  -gdb tcp::9000 &
 	  [[ $? -eq 0 ]] || exit 1
 
@@ -77,8 +80,8 @@ then
 	image_base_str="Clover : Image base = "
 
     getImageBase() {
-		[ -f "$SCRIPT_DIR"/serial0_qemu_out.log ] || return 1
-		grep "$image_base_str" "$SCRIPT_DIR"/serial0_qemu_out.log
+		[ -f ./serial0_qemu_out.log ] || return 1
+		grep "$image_base_str" ./serial0_qemu_out.log
 		return $?
 	}
 
@@ -91,11 +94,11 @@ then
 
 	if [ $count -ge $timeout ]
 	then
-	  echo Cannot find "\"Clover : Image base = \"" in "$SCRIPT_DIR"/serial0_qemu_out.log after $timeout seconds
+	  echo Cannot find "\"Clover : Image base = \"" in ./serial0_qemu_out.log after $timeout seconds
 	  exit 1
 	fi
 
-	adr="$(grep "$image_base_str" "$SCRIPT_DIR"/serial0_qemu_out.log | awk '{printf "0x%x",$8/NR}')"
+	adr="$(grep "$image_base_str" ./serial0_qemu_out.log | awk '{printf "0x%x",$8/NR}')"
   echo adr="$adr"
 
 
