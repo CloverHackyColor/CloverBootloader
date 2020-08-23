@@ -4605,11 +4605,15 @@ GetUserSettings(
                       (*Child)->ValueType = kTagTypeString;
                     }
                     else if (value2 && (value2->isInt())) {
-                      (*Child)->Value = (__typeof__((*Child)->Value))AllocatePool(sizeof(value2->intValue()));
-//                        CopyMem((*Child)->Value, &value2->intValue, 4);
-                      *(INTN*)((*Child)->Value) = value2->intValue();
-                      (*Child)->ValueLen = sizeof(value2->intValue());
-                      (*Child)->ValueType = kTagTypeInteger;
+                      if ( value2->intValue() < MIN_INT32  ||  value2->intValue() > MAX_INT32 ) {
+                        MsgLog("Invalid int value for key %s\n", key2->keyStringValue().c_str());
+                      }else{
+                        INT32 intValue = (INT32)value2->intValue();
+                        (*Child)->Value = (__typeof__((*Child)->Value))AllocatePool(sizeof(intValue));
+                        *(INT32*)((*Child)->Value) = intValue;
+                        (*Child)->ValueLen = sizeof(intValue);
+                        (*Child)->ValueType = kTagTypeInteger;
+                      }
                     }
                     else if (value2 && value2->isTrue() ) {
                       (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
