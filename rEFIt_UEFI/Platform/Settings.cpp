@@ -1122,7 +1122,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
         DBG(" :: data len: %zu\n", newPatch.Data.size());
-        if (newPatch.MenuItem.BValue) {
+        if (!newPatch.MenuItem.BValue) {
           DBG(" - patch disabled at config\n");
         }
         Patches->KextPatches.AddReference(newPatchPtr, true);
