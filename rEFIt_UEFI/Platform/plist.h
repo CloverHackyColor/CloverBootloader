@@ -77,14 +77,14 @@ public:
 
   const XString8 getTypeAsXString8() const {
     if ( isDict() ) return "Dict"_XS8;
-    if ( isKey() ) return "Dict"_XS8;
-    if ( isString() ) return "Dict"_XS8;
-    if ( isInt() ) return "Dict"_XS8;
-    if ( isFloat() ) return "Dict"_XS8;
-    if ( isBool() ) return "Dict"_XS8;
-    if ( isData() ) return "Dict"_XS8;
-    if ( isDate() ) return "Dict"_XS8;
-    if ( isArray() ) return "Dict"_XS8;
+    if ( isKey() ) return "Key"_XS8;
+    if ( isString() ) return "String"_XS8;
+    if ( isInt() ) return "Int"_XS8;
+    if ( isFloat() ) return "Float"_XS8;
+    if ( isBool() ) return "Bool"_XS8;
+    if ( isData() ) return "Data"_XS8;
+    if ( isDate() ) return "Date"_XS8;
+    if ( isArray() ) return "Array"_XS8;
     panic("Unknown type %lld : this is bug", type);
   }
 
