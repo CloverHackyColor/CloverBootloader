@@ -48,7 +48,7 @@ int base64_decode_value(char value_in);
 
 
 
-int base64_decode_block(const char* code_in, const int length_in, char* plaintext_out, base64_decodestate* state_in);
+long base64_decode_block(const char* code_in, const int length_in, char* plaintext_out, base64_decodestate* state_in);
 
 
 UINT8

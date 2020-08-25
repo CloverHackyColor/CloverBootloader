@@ -135,6 +135,8 @@ extern UINTN                 AudioNum;
 extern HDA_OUTPUTS           AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
+extern EFI_DXE_SERVICES  *gDS;
+
 //#ifdef _cplusplus
 //void FreePool(const wchar_t * A)
 //{
@@ -164,7 +166,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
     ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
-    DBG("  status=%s", strerror(Status));
+    DBG("  status=%s", efiStrError(Status));
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
@@ -571,7 +573,7 @@ VOID LOADER_ENTRY::StartLoader()
   EFI_HANDLE              ImageHandle = NULL;
   EFI_LOADED_IMAGE        *LoadedImage = NULL;
   CONST CHAR8                   *InstallerVersion;
-  TagStruct*                  dict = NULL;
+  TagDict*                  dict = NULL;
   UINTN                   i;
   NSVGfont                *font; // , *nextFont;
 
@@ -583,9 +585,9 @@ VOID LOADER_ENTRY::StartLoader()
     if (!EFI_ERROR(Status)) {
       DBG(" - found custom settings for this entry: %ls\n", Settings.wc_str());
       gBootChanged = TRUE;
-      Status = GetUserSettings(SelfRootDir, dict);
+      Status = GetUserSettings(dict);
       if (EFI_ERROR(Status)) {
-        DBG(" - ... but: %s\n", strerror(Status));
+        DBG(" - ... but: %s\n", efiStrError(Status));
       } else {
         if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
           gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
@@ -596,7 +598,7 @@ VOID LOADER_ENTRY::StartLoader()
         //DBG("Custom KernelAndKextPatches copyed to started entry\n");
       }
     } else {
-      DBG(" - [!] LoadUserSettings failed: %s\n", strerror(Status));
+      DBG(" - [!] LoadUserSettings failed: %s\n", efiStrError(Status));
     }
   }
   
@@ -656,7 +658,7 @@ VOID LOADER_ENTRY::StartLoader()
   // Load image into memory (will be started later)
   Status = LoadEFIImage(DevicePath, LoaderPath.basename(), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
-    DBG("Image is not loaded, status=%s\n", strerror(Status));
+    DBG("Image is not loaded, status=%s\n", efiStrError(Status));
     return; // no reason to continue if loading image failed
   }
   egClearScreen(&BootBgColor); //if not set then it is already MenuBackgroundPixel
@@ -939,10 +941,10 @@ VOID LOADER_ENTRY::StartLoader()
     
     // Initialize the boot screen
     if (EFI_ERROR(Status = InitBootScreen(this))) {
-      if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %s!\n", strerror(Status));
+      if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %s!\n", efiStrError(Status));
     }
     else if (EFI_ERROR(Status = LockBootScreen())) {
-      DBG("Failed to lock custom boot screen: %s!\n", strerror(Status));
+      DBG("Failed to lock custom boot screen: %s!\n", efiStrError(Status));
     }
   } // !OSTYPE_IS_WINDOWS
 
@@ -988,7 +990,7 @@ VOID LOADER_ENTRY::StartLoader()
   StartEFILoadedImage(ImageHandle, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL);
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
-    DBG("Failed to unlock custom boot screen: %s!\n", strerror(Status));
+    DBG("Failed to unlock custom boot screen: %s!\n", efiStrError(Status));
   }
   if (OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)) {
     // return back orig OutputString
@@ -1270,7 +1272,7 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
                                   (VOID **) &BlockIo
                                   );
     if (EFI_ERROR(Status)) {
-      //DBG(" BlockIo: %s - skipping\n", strerror(Status));
+      //DBG(" BlockIo: %s - skipping\n", efiStrError(Status));
       continue;
     }
     if (BlockIo->Media == NULL) {
@@ -1321,8 +1323,8 @@ VOID DisconnectInvalidDiskIoChildDrivers(VOID)
         }
         Found = TRUE;
         Status = gBS->DisconnectController (Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, NULL);
-        //DBG(" BY_DRIVER Agent: %p, Disconnect: %s", OpenInfo[OpenInfoIndex].AgentHandle, strerror(Status));
-        DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %s\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, strerror(Status));
+        //DBG(" BY_DRIVER Agent: %p, Disconnect: %s", OpenInfo[OpenInfoIndex].AgentHandle, efiStrError(Status));
+        DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %s\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, efiStrError(Status));
       }
     }
     FreePool(OpenInfo);
@@ -1367,7 +1369,7 @@ VOID DisconnectSomeDevices(VOID)
         if (BlockIo->Media->BlockSize == 2048) {
           // disconnect CD controller
           Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
-          DBG("CD disconnect %s", strerror(Status));
+          DBG("CD disconnect %s", efiStrError(Status));
         }
       }
 /*      for (Index = 0; Index < HandleCount; Index++) {
@@ -1395,7 +1397,7 @@ VOID DisconnectSomeDevices(VOID)
       for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
         Status = gBS->DisconnectController(ControllerHandles[Index2],
                                            NULL, NULL);
-        DBG("Driver [%d] disconnect %s\n", Index2, strerror(Status));
+        DBG("Driver [%d] disconnect %s\n", Index2, efiStrError(Status));
       }
     } */
 
@@ -1414,7 +1416,7 @@ VOID DisconnectSomeDevices(VOID)
                                    EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
         if (EFI_ERROR(Status)) {
-//          DBG("CompName %s\n", strerror(Status));
+//          DBG("CompName %s\n", efiStrError(Status));
           continue;
         }
         Status = CompName->GetDriverName(CompName, "eng", &DriverName);
@@ -1425,7 +1427,7 @@ VOID DisconnectSomeDevices(VOID)
           for (Index2 = 0; Index2 < ControllerHandleCount; Index2++) {
             Status = gBS->DisconnectController(ControllerHandles[Index2],
                                                Handles[Index], NULL);
-//            DBG("Disconnect [%ls] from %X: %s\n", DriverName, ControllerHandles[Index2], strerror(Status));
+//            DBG("Disconnect [%ls] from %X: %s\n", DriverName, ControllerHandles[Index2], efiStrError(Status));
           }
         }
       }
@@ -1453,7 +1455,7 @@ VOID DisconnectSomeDevices(VOID)
           if(IS_PCI_VGA(&Pci) == TRUE) {
             // disconnect VGA
             Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
-            DBG("disconnect %s", strerror(Status));
+            DBG("disconnect %s", efiStrError(Status));
           }
         }
       }
@@ -1801,7 +1803,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	//UINT64            TscRemainder = 0;
 //  LOADER_ENTRY      *LoaderEntry;
   XStringW          ConfName;
-  TagStruct*        smbiosTags = NULL;
+  TagDict*          smbiosTags = NULL;
   BOOLEAN           UniteConfigs = FALSE;
   EFI_TIME          Now;
   BOOLEAN           HaveDefaultVolume;
@@ -1910,14 +1912,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   Status = InitializeUnicodeCollationProtocol();
   if (EFI_ERROR(Status)) {
-    DBG("UnicodeCollation Status=%s\n", strerror(Status));
+    DBG("UnicodeCollation Status=%s\n", efiStrError(Status));
   }
   
   Status = gBS->HandleProtocol(ConsoleInHandle, &gEfiSimpleTextInputExProtocolGuid, (VOID **)&SimpleTextEx);
   if ( EFI_ERROR(Status) ) {
     SimpleTextEx = NULL;
   }
-  DBG("SimpleTextEx Status=%s\n", strerror(Status));
+  DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
 
   PrepatchSmbios();
 
@@ -1944,7 +1946,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         SetOEMPath(ConfName);
         Status = LoadUserSettings(SelfRootDir, ConfName, &gConfigDict[1]);
         DBG("%ls\\%ls.plist%ls loaded with name from LoadOptions: %s\n",
-            OEMPath.wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
+            OEMPath.wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
         if (EFI_ERROR(Status)) {
           gConfigDict[1] = NULL;
         }
@@ -1952,7 +1954,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
   if (gConfigDict[1]) {
-    const TagStruct* UniteTag = gConfigDict[1]->dictPropertyForKey("Unite");
+    const TagStruct* UniteTag = gConfigDict[1]->propertyForKey("Unite");
     if(UniteTag) {
       UniteConfigs = UniteTag->isTrueOrYy();
       DBG("UniteConfigs = %ls", UniteConfigs ? L"TRUE\n": L"FALSE\n" );
@@ -1961,7 +1963,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!gConfigDict[1] || UniteConfigs) {
     SetOEMPath(L"config"_XSW);
     Status = LoadUserSettings(SelfRootDir, L"config"_XSW, &gConfigDict[0]);
-      DBG("%ls\\config.plist%ls loaded: %s\n", OEMPath.wc_str(), EFI_ERROR(Status) ? L" not" : L"", strerror(Status));
+    DBG("%ls\\config.plist%ls loaded: %s\n", OEMPath.wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
   }
 	snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
                                    gConfigDict[0] ? L"config": L"",
@@ -2103,7 +2105,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
-    DebugLog(2, " %s", strerror(Status));
+    DebugLog(2, " %s", efiStrError(Status));
     PauseForKey(L"Error reinit refit\n");
 #ifdef ENABLE_SECURE_BOOT
     UninstallSecureBoot();
@@ -2183,9 +2185,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Second step. Load config.plist into gSettings
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
-      Status = GetUserSettings(SelfRootDir, gConfigDict[i]);
+      Status = GetUserSettings(gConfigDict[i]);
       if (EFI_ERROR(Status)) {
- //       DBG("Error in Second part of settings%d: %s\n", i, strerror(Status));
+        DBG("Error in Second part of settings %llu: %s\n", i, efiStrError(Status));
       }
     }
   }
@@ -2218,7 +2220,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  }
   // Load any extra SMBIOS information
   if (!EFI_ERROR(LoadUserSettings(SelfRootDir, L"smbios"_XSW, &smbiosTags)) && (smbiosTags != NULL)) {
-    const TagStruct* dictPointer = smbiosTags->dictPropertyForKey("SMBIOS");
+    const TagDict* dictPointer = smbiosTags->dictPropertyForKey("SMBIOS");
     if (dictPointer) {
       ParseSMBIOSSettings(dictPointer);
     } else {

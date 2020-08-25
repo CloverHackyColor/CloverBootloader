@@ -78,9 +78,14 @@ int XStringAbstract__startWith(const S* src, const O* other, bool ignoreCase)
 	return src_char32 != 0;
 }
 
+/*
+ * Returns 1 if src > other
+ */
 template<typename S, typename O>
 int XStringAbstract__compare(const S* src, const O* other, bool ignoreCase)
 {
+  if ( src == NULL || *src == 0 ) return other == NULL || *other == 0 ? 0 : -1;
+  if ( other == NULL || *other == 0 ) return 1;
 //	size_t len_s = length_of_utf_string(src);
 //	size_t len_other = length_of_utf_string(other);
 	size_t nb = 0;
@@ -729,10 +734,11 @@ public:
 	/* Copy Assign */ // Only other XString, no litteral at the moment.
 	XStringAbstract& operator=(const XStringAbstract &S)  { takeValueFrom(S); return *this; }
 	/* Assign */
+	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Weffc++"
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& operator =(const __String<O, OtherXStringClass>& S)	{ strcpy(S.s()); return *((ThisXStringClass*)this); }
-  #pragma GCC diagnostic warning "-Weffc++"
+  #pragma GCC diagnostic pop
 // TEMPORARILY DISABLED
 //	template<class O>
 //	ThisXStringClass& operator =(const O* S)	{ strcpy(S); return *this; }
@@ -966,7 +972,7 @@ public:
     char32_t char32;
     T* previousData = m_data;
     T* previousP = m_data;
-    T* p = get_char32_from_string(previousP, &char32);;
+    T* p = get_char32_from_string(previousP, &char32);
     while ( char32 ) {
       if (!char32) break;
       if ( char32 == charToSearch ) {
@@ -983,7 +989,7 @@ public:
         utf_stringnn_from_utf_string(previousP, charToReplaceBySize, &charToReplaceBy);
       }
       previousP = p;
-      p = get_char32_from_string(previousP, &char32);;
+      p = get_char32_from_string(previousP, &char32);
     }
     return *((ThisXStringClass*)this);
   }

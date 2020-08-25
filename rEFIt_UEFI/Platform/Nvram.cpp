@@ -26,7 +26,7 @@
 extern XObjArray<REFIT_VOLUME> Volumes;
 
 // for saving nvram.plist and it's data
-TagStruct*                   gNvramDict;
+TagDict*                   gNvramDict;
 
 //
 // vars filled after call to GetEfiBootDeviceFromNvram ()
@@ -208,11 +208,11 @@ SetNvramVariable (
     // not the same - delete previous one if attributes are different
     if (OldAttributes != Attributes) {
       DeleteNvramVariable (VariableName, VendorGuid);
-      //DBG(", diff. attr: deleting old (%s)", strerror(Status));
+      //DBG(", diff. attr: deleting old (%s)", efiStrError(Status));
     }
   }
   //DBG("\n"); // for debug without Status
-  //DBG(" -> writing new (%s)\n", strerror(Status));
+  //DBG(" -> writing new (%s)\n", efiStrError(Status));
   //return Status;
  
   return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
@@ -247,7 +247,7 @@ AddNvramVariable (
   {
     // set new value
     return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, Data);
-//  DBG(" -> writing new (%s)\n", strerror(Status));
+//  DBG(" -> writing new (%s)\n", efiStrError(Status));
 	} else {
 		FreePool(OldData);
     return EFI_ABORTED;
@@ -276,7 +276,7 @@ DeleteNvramVariable (
     
   // Delete: attributes and data size = 0
   Status = gRT->SetVariable (VariableName, VendorGuid, 0, 0, NULL);
-  //DBG("DeleteNvramVariable (%ls, guid = %s):\n", VariableName, strerror(Status));
+  //DBG("DeleteNvramVariable (%ls, guid = %s):\n", VariableName, efiStrError(Status));
     
   return Status;
 }
@@ -382,7 +382,7 @@ ResetNativeNvram ()
           //DBG("OK\n");
           Restart = TRUE;
         } else {
-          //DBG("FAIL (%s)\n", strerror(Status));
+          //DBG("FAIL (%s)\n", efiStrError(Status));
           break;
         }
       }
@@ -521,7 +521,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
         Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, TypeFromName(Name), 0xC0);
         if (!EFI_ERROR(Status)) {
           Status = gAppleSmc->SmcWriteValue(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, Data);
-          //       DBG("Write to AppleSMC status=%s\n", strerror(Status));
+          //       DBG("Write to AppleSMC status=%s\n", efiStrError(Status));
         }
         NumKey++;
       }
@@ -904,7 +904,7 @@ LoadNvramPlist(
     //
     // parse it into gNvramDict 
     //
-    Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict, (UINT32)Size);
+    Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict, Size);
 //    if(Status != EFI_SUCCESS) {
 //        DBG(" parsing error\n");
 //    }
@@ -971,7 +971,7 @@ LoadLatestNvramPlist()
 //      DBG(" - no nvram.plist - skipping!\n");
       continue;
     }
-//    DBG(" Status=%s\n", strerror(Status));
+//    DBG(" Status=%s\n", efiStrError(Status));
     if (GlobalConfig.FastBoot) {
       VolumeWithLatestNvramPlist = Volume;
       break;
@@ -1018,7 +1018,7 @@ LoadLatestNvramPlist()
  // else {
  //   DBG(" nvram.plist not found!\n");
  // }
-  DBG("loaded Status=%s\n", strerror(Status));
+  DBG("loaded Status=%s\n", efiStrError(Status));
   return Status;
 }
 
@@ -1050,9 +1050,9 @@ PutNvramPlistToRtVars ()
   size_t count = gNvramDict->dictKeyCount(); // ok
   for (size_t tagIdx = 0 ; tagIdx < count ; tagIdx++ )
   {
-    const TagStruct* keyTag;
+    const TagKey* keyTag;
     const TagStruct* valueTag;
-    if ( EFI_ERROR(gNvramDict->dictKeyAndValueAtIndex(tagIdx, &keyTag, &valueTag)) ) { //If GetKeyValueAtIndex return success, key and value != NULL
+    if ( EFI_ERROR(gNvramDict->getKeyAndValueAtIndex(tagIdx, &keyTag, &valueTag)) ) { //If GetKeyValueAtIndex return success, key and value != NULL
       MsgLog("MALFORMED PLIST nvram.plist. A key is expected at pos : %zu\n", tagIdx);
       continue;
     }
@@ -1104,17 +1104,17 @@ PutNvramPlistToRtVars ()
     if (valueTag->isString()) {
       
       // <string> element
-      Value = (void*)valueTag->stringValue().c_str();
-      Size  = valueTag->stringValue().length();
+      Value = (void*)valueTag->getString()->stringValue().c_str();
+      Size  = valueTag->getString()->stringValue().length();
       if (!GlobalConfig.DebugLog) {
-        DBG("String: Size = %zu, Val = '%s'\n", Size, valueTag->stringValue().c_str());
+        DBG("String: Size = %zu, Val = '%s'\n", Size, valueTag->getString()->stringValue().c_str());
       }
       
     } else if (valueTag->isData()) {
       
       // <data> element
-      Size  = valueTag->dataLenValue();
-      Value = valueTag->dataValue();
+      Size  = valueTag->getData()->getData()->dataLenValue();
+      Value = valueTag->getData()->getData()->dataValue();
       if (!GlobalConfig.DebugLog) {
       DBG("Size = %zu, Data: ", Size);
         for (size_t i = 0; i < Size; i++) {
@@ -1461,14 +1461,14 @@ RemoveStartupDiskVolume ()
 //    DBG("RemoveStartupDiskVolume:\n");
     
     /*Status =*/ DeleteNvramVariable (L"efi-boot-device", &gEfiAppleBootGuid);
-//    DBG("  * efi-boot-device = %s\n", strerror(Status));
+//    DBG("  * efi-boot-device = %s\n", efiStrError(Status));
     
     /*Status =*/ DeleteNvramVariable (L"efi-boot-device-data", &gEfiAppleBootGuid);
-//    DBG("  * efi-boot-device-data = %s\n", strerror(Status));
+//    DBG("  * efi-boot-device-data = %s\n", efiStrError(Status));
     
     /*Status =*/ DeleteNvramVariable (L"BootCampHD", &gEfiAppleBootGuid);
-//    DBG("  * BootCampHD = %s\n", strerror(Status));
-//    DBG("Removed efi-boot-device-data variable: %s\n", strerror(Status));
+//    DBG("  * BootCampHD = %s\n", efiStrError(Status));
+//    DBG("Removed efi-boot-device-data variable: %s\n", efiStrError(Status));
 }
 
 

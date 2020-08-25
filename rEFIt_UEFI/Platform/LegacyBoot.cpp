@@ -225,7 +225,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
     LegacyBiosInt86(0x13, &Regs);
 		Status = EFI_NOT_FOUND;
 	}
-	DBG("LegacyBiosInt86 status=%s, AH=%hhX\n", strerror(Status), Regs.H.AH);
+	DBG("LegacyBiosInt86 status=%s, AH=%hhX\n", efiStrError(Status), Regs.H.AH);
 	return Status;
 }
 
@@ -337,7 +337,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
 		}
 		if (EFI_ERROR(Status)) {
-			DBG("CDROMBoot: Unable to read block %X: %s\n", 0x11, strerror(Status));
+			DBG("CDROMBoot: Unable to read block %X: %s\n", 0x11, efiStrError(Status));
 			return Status;
 		}
 	}
@@ -351,7 +351,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	lba = sectorBuffer[0x47] + sectorBuffer[0x48] * 256 + sectorBuffer[0x49] * 65536 + sectorBuffer[0x4A] * 16777216;
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, 2048, sectorBuffer);
 	if (EFI_ERROR(Status)) {
-		DBG("CDROMBoot: Unable to read block %llX: %s\n", lba, strerror(Status));
+		DBG("CDROMBoot: Unable to read block %llX: %s\n", lba, efiStrError(Status));
 		return Status;
 	}
 	
@@ -393,7 +393,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	// Read the boot sectors into the boot load address
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, bootSize, addrToPointer(bootLoadAddress));
 	if (EFI_ERROR(Status)) {
-		DBG("CDROMBoot: Unable to read block %llu: %s\n", lba, strerror(Status));
+		DBG("CDROMBoot: Unable to read block %llu: %s\n", lba, efiStrError(Status));
 		return Status;
 	}
   
@@ -500,7 +500,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	// Read the MBR
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pMBR);
 	if (EFI_ERROR(Status)) {
-		DBG("HDBoot: Unable to read MBR: %s\n", strerror(Status));
+		DBG("HDBoot: Unable to read MBR: %s\n", efiStrError(Status));
 		return Status;
 	}
 	
@@ -570,7 +570,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	// Read the boot sector
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, activePartition->StartLBA, 512, pBootSector);
 	if (EFI_ERROR(Status)) {
-		DBG("HDBoot: Unable to read partition %d's boot sector: %s\n", partitionIndex, strerror(Status));
+		DBG("HDBoot: Unable to read partition %d's boot sector: %s\n", partitionIndex, efiStrError(Status));
 		Status = EFI_NOT_FOUND;
 		return Status;
 	}
@@ -774,7 +774,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // get EfiLegacy8259Protocol - mandatory
   //
   Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
-  DBG("EfiLegacy8259ProtocolGuid: %s\n", strerror(Status));
+  DBG("EfiLegacy8259ProtocolGuid: %s\n", efiStrError(Status));
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -787,16 +787,16 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // get EfiLegacyBiosProtocol - optional
   //
   Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
-  DBG("EfiLegacyBiosProtocolGuid: %s\n", strerror(Status));
+  DBG("EfiLegacyBiosProtocolGuid: %s\n", efiStrError(Status));
   if (!EFI_ERROR(Status)) {
     //
     // call PrepareToBootEfi() to init BIOS drives
     //
 
     //Status = LegacyBios->GetBbsInfo(LegacyBios, &HddCount, &HddInfo, &BbsCount, &BbsTable);
-    //DBG("GetBbsInfo = %s, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", strerror(Status), HddCount, HddInfo, BbsCount, BbsTable);
+    //DBG("GetBbsInfo = %s, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", efiStrError(Status), HddCount, HddInfo, BbsCount, BbsTable);
     Status = LegacyBios->PrepareToBootEfi(LegacyBios, &BbsCount, &BbsTable);
-    DBG("PrepareToBootEfi = %s, BbsCount=%d, BbsTabl%p\n", strerror(Status), BbsCount, BbsTable);
+    DBG("PrepareToBootEfi = %s, BbsCount=%d, BbsTabl%p\n", efiStrError(Status), BbsCount, BbsTable);
     //PauseForKey(L"continue ...\n");
 
     //
@@ -1055,7 +1055,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	// get EfiLegacyBiosProtocol - optional
 	//
 	Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
-	DBG("EfiLegacyBiosProtocolGuid: %s\n", strerror(Status));
+	DBG("EfiLegacyBiosProtocolGuid: %s\n", efiStrError(Status));
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -1079,7 +1079,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	BbsDPN = (BBS_BBS_DEVICE_PATH *) CreateDeviceNode(BBS_DEVICE_PATH, BBS_BBS_DP, sizeof(BBS_BBS_DEVICE_PATH));
 	BbsDPN->DeviceType = BBS_TYPE_HARDDRIVE; // BBS_TYPE_CDROM;
 	BbsDPN->StatusFlag = 0;
-	BbsDPN->stringValue()[0] = '\0';
+	BbsDPN->getString()->stringValue()[0] = '\0';
 	
 	// appends end-of-device-path node and returns complete DP
 	BbsDP = (BBS_BBS_DEVICE_PATH *) AppendDevicePathNode(NULL, (EFI_DEVICE_PATH_PROTOCOL *) BbsDPN);
@@ -1090,7 +1090,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	// do boot from default MBR hard disk
 	//
 	Status = LegacyBios->LegacyBoot(LegacyBios, BbsDP, 0, NULL);
-	DBG("LegacyBios->LegacyBoot(): %s\n", strerror(Status));
+	DBG("LegacyBios->LegacyBoot(): %s\n", efiStrError(Status));
 	
 	return Status;
 }

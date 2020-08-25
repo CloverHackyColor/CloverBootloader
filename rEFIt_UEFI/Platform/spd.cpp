@@ -904,7 +904,7 @@ VOID ScanSPD()
                gPci.Hdr.ClassCode[2],
                gPci.Hdr.ClassCode[1],
                gPci.Hdr.ClassCode[0],
-               strerror(Status)
+               efiStrError(Status)
                );
           read_smb(PciIo, gPci.Hdr.VendorId, gPci.Hdr.DeviceId);
         }

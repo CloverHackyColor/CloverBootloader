@@ -93,21 +93,21 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
   // poll ICS[0] to become 0
   Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 100000/*delay in 100ns*/, &data64);
   ics = (UINT16)(data64 & 0xFFFF);
-  //DBG("poll ICS[0] == 0: Status=%s, ICS=%X, ICS[0]=%d\n", strerror(Status), ics, (ics & 0x0001));
+  //DBG("poll ICS[0] == 0: Status=%s, ICS=%X, ICS[0]=%d\n", efiStrError(Status), ics, (ics & 0x0001));
   if (EFI_ERROR(Status)) return 0;
   // prepare and write verb to ICO
   data32 = codecAdr << 28 | ((nodeId & 0xFF)<<20) | (verb & 0xFFFFF);
   Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0, HDA_ICO, 1, &data32);
-  //DBG("ICO write verb Codec=%X, Node=%X, verb=%X, command verb=%X: Status=%s\n", codecAdr, nodeId, verb, data32, strerror(Status));
+  //DBG("ICO write verb Codec=%X, Node=%X, verb=%X, command verb=%X: Status=%s\n", codecAdr, nodeId, verb, data32, efiStrError(Status));
   if (EFI_ERROR(Status)) return 0;
   // write 11b to ICS[1:0] to send command
   ics |= 0x3;
   Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, 0, HDA_ICS, 1, &ics);
-  //DBG("ICS[1:0] = 11b: Status=%s\n", strerror(Status));
+  //DBG("ICS[1:0] = 11b: Status=%s\n", efiStrError(Status));
   if (EFI_ERROR(Status)) return 0;
   // poll ICS[1:0] to become 10b
   Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x3/*mask*/, 0x2/*value*/, 100000/*delay in 100ns*/, &data64);
-  //DBG("poll ICS[0] == 0: Status=%s\n", strerror(Status));
+  //DBG("poll ICS[0] == 0: Status=%s\n", efiStrError(Status));
   if (EFI_ERROR(Status)) return 0;
   // read IRI for VendorId/DeviceId
   Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0, HDA_IRI, 1, &data32);

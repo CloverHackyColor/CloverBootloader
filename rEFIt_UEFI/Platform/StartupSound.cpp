@@ -88,7 +88,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   if (SoundFile) {
     Status = egLoadFile(Dir, SoundFile, &FileData, &FileDataLength);
     if (EFI_ERROR(Status)) {
-//      DBG("file sound read: %ls %s\n", SoundFile, strerror(Status));
+//      DBG("file sound read: %ls %s\n", SoundFile, efiStrError(Status));
       goto DONE_ERROR;
     }
   } else {
@@ -100,7 +100,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   
   Status = WaveGetFileData(FileData, (UINT32)FileDataLength, &WaveData); //
   if (EFI_ERROR(Status)) {
-    MsgLog(" wrong sound file, wave status=%s\n", strerror(Status));
+    MsgLog(" wrong sound file, wave status=%s\n", efiStrError(Status));
     //if error then data not allocated
     goto DONE_ERROR;
   }
@@ -213,24 +213,24 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   Status = AudioIo->SetupPlayback(AudioIo, (UINT8)(AudioList[OutputIndex].Index), OutputVolume,
                                   freq, bits, (UINT8)(WaveData.Format->Channels));
   if (EFI_ERROR(Status)) {
-    MsgLog("StartupSound: Error setting up playback: %s\n", strerror(Status));
+    MsgLog("StartupSound: Error setting up playback: %s\n", efiStrError(Status));
     goto DONE_ERROR;
   }
 //  DBG("playback set\n");
   // Start playback.
   if (gSettings.PlayAsync) {
     Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0, NULL, NULL);
-//    DBG("async started, status=%s\n", strerror(Status));
+//    DBG("async started, status=%s\n", efiStrError(Status));
   } else {
     Status = AudioIo->StartPlayback(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0);
-//    DBG("sync started, status=%s\n", strerror(Status));
+//    DBG("sync started, status=%s\n", efiStrError(Status));
 //    if (!EFI_ERROR(Status)) {
 //      FreePool(TempData);
 //    }
   }
 
   if (EFI_ERROR(Status)) {
-    MsgLog("StartupSound: Error starting playback: %s\n", strerror(Status));
+    MsgLog("StartupSound: Error starting playback: %s\n", efiStrError(Status));
   }
 
 DONE_ERROR:
@@ -244,7 +244,7 @@ DONE_ERROR:
     // and we can't free memory up to stop AsyncPlay
     FreeAlignedPages(WaveData.Samples, EFI_SIZE_TO_PAGES(WaveData.SamplesLength + 4095));
   }
-  DBG("sound play end with status=%s\n", strerror(Status));
+  DBG("sound play end with status=%s\n", efiStrError(Status));
   return Status;
 }
 
@@ -274,7 +274,7 @@ GetStoredOutput()
   // Get Audio I/O protocols.
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiAudioIoProtocolGuid, NULL, &AudioIoHandleCount, &AudioIoHandles);
   if (EFI_ERROR(Status)) {
-    MsgLog("No AudioIoProtocol, status=%s\n", strerror(Status));
+    MsgLog("No AudioIoProtocol, status=%s\n", efiStrError(Status));
     goto DONE;
   }
 	DBG("found %llu handles with audio\n", AudioIoHandleCount);
@@ -335,7 +335,7 @@ GetStoredOutput()
     Status = gRT->GetVariable(BOOT_CHIME_VAR_INDEX, &gBootChimeVendorVariableGuid, NULL,
                               &OutputPortIndexSize, &OutputPortIndex);
     if (EFI_ERROR(Status)) {
-      MsgLog("Bad output index, status=%s, set 0\n", strerror(Status));
+      MsgLog("Bad output index, status=%s, set 0\n", efiStrError(Status));
       OutputPortIndex = 0;
     }
   }
@@ -424,7 +424,7 @@ VOID GetOutputs()
   // Get Audio I/O protocols.
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiAudioIoProtocolGuid, NULL, &AudioIoHandleCount, &AudioIoHandles);
   if (EFI_ERROR(Status)) {
-    MsgLog("No AudioIoProtocols, status=%s\n", strerror(Status));
+    MsgLog("No AudioIoProtocols, status=%s\n", efiStrError(Status));
     return;
   }
 

@@ -11,6 +11,9 @@
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/unicode_conversions.h"
 
+
+extern "C" EFI_GUID  gEfiMiscSubClassGuid;
+
 /** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 template <typename T, enable_if( is___String(T) )>
 BOOLEAN IsValidGuidAsciiString(const T& Str)

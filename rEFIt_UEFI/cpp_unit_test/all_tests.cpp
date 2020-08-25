@@ -15,6 +15,7 @@
 #include "LoadOptions_test.h"
 #include "XToolsCommon_test.h"
 #include "XBuffer_tests.h"
+#include "plist_tests.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -38,16 +39,16 @@ bool all_tests()
 //		all_ok = false;
 //	}
 #if defined(JIEF_DEBUG)
-  ret = XBuffer_tests();
+  ret = plist_tests();
   if ( ret != 0 ) {
-      printf("XBuffer_tests() failed at test %d\n", ret);
-      all_ok = false;
+    printf("plist_tests() failed at test %d\n", ret);
+    all_ok = false;
   }
-	ret = XToolsCommon_tests();
-	if ( ret != 0 ) {
-		printf("printlib_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+//  ret = XBuffer_tests();
+//  if ( ret != 0 ) {
+//      printf("XBuffer_tests() failed at test %d\n", ret);
+//      all_ok = false;
+//  }
 //return ret;
 //    ret = XUINTN_tests();
 //    if ( ret != 0 ) {
@@ -84,6 +85,11 @@ bool all_tests()
 		printf("strncmp_tests() failed at test %d\n", ret);
 		all_ok = false;
 	}
+  ret = XToolsCommon_tests();
+  if ( ret != 0 ) {
+    printf("printlib_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
 	ret = XArray_tests();
 	if ( ret != 0 ) {
 		printf("XArray_tests() failed at test %d\n", ret);
@@ -114,11 +120,11 @@ bool all_tests()
     printf("XBuffer_tests() failed at test %d\n", ret);
     all_ok = false;
   }
-//	ret = XUINTN_tests();
-//	if ( ret != 0 ) {
-//		printf("XUINTN_tests() failed at test %d\n", ret);
-//		all_ok = false;
-//	}
+  ret = plist_tests();
+  if ( ret != 0 ) {
+    printf("plist_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
 
 	if ( !all_ok ) {
 		printf("A test failed\n");

@@ -196,10 +196,10 @@ XObjArray<TYPE>::XObjArray(bool FreeThem, TYPE* n1, ...)
 
   va_start (va, n1);
   size_t count = 0;
-  TYPE* t = VA_ARG(va, TYPE*);
+  TYPE* t = va_arg(va, TYPE*);
   while ( t != nullptr ) {
     count++;
-    t = VA_ARG(va, TYPE*);
+    t = va_arg(va, TYPE*);
   }
   va_end(va);
 
@@ -208,10 +208,10 @@ XObjArray<TYPE>::XObjArray(bool FreeThem, TYPE* n1, ...)
   XObjArrayNC<TYPE>::AddReference(n1, FreeThem);
 
   va_start (va, n1);
-  t = VA_ARG(va, TYPE*);
+  t = va_arg(va, TYPE*);
   while ( t != nullptr ) {
     XObjArrayNC<TYPE>::AddReference(t, FreeThem);
-    t = VA_ARG(va, TYPE*);
+    t = va_arg(va, TYPE*);
   }
   va_end(va);
 }

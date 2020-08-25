@@ -13,9 +13,8 @@ int vprintf(const char* format, VA_LIST ap);
 int printf(const char* format, ...) __attribute__((format(printf, 1, 2)));
 
 
-//int snprintf(char* str, size_t size, const char* format, ...) __attribute__((format(printf, 1, 2)));;
-
-const char* strerror(EFI_STATUS errnum);
+//int snprintf(char* str, size_t size, const char* format, ...) __attribute__((format(printf, 1, 2)));
+const char* efiStrError(EFI_STATUS errnum);
 const char* strguid(EFI_GUID* guid);
 
 

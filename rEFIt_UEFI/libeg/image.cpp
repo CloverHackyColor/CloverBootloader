@@ -147,7 +147,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
     if (EFI_ERROR(Status)) {
-      DBG("no ESP %s\n", strerror(Status));
+      DBG("no ESP %s\n", efiStrError(Status));
       return Status;
     }
   }
@@ -165,10 +165,10 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     
   if (EFI_ERROR(Status)) {
       // make dir
-//    DBG("no dir %s\n", strerror(Status));
+//    DBG("no dir %s\n", efiStrError(Status));
       Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                                EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
-//    DBG("cant make dir %s\n", strerror(Status));
+//    DBG("cant make dir %s\n", efiStrError(Status));
   }
   // end of folder checking
 
@@ -180,7 +180,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     if (Status == EFI_WARN_DELETE_FAILURE) {
       //This is READ_ONLY file system
       CreateNew = FALSE; // will write into existing file (Slice - ???)
-//      DBG("RO FS %s\n", strerror(Status));
+//      DBG("RO FS %s\n", efiStrError(Status));
     }
   }
 
@@ -189,7 +189,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
     if (EFI_ERROR(Status)) {
-//      DBG("no write %s\n", strerror(Status));
+//      DBG("no write %s\n", efiStrError(Status));
       return Status;
     }
   } else {
@@ -197,7 +197,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
     EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
     if (Info) {
       if (Info->FileSize < FileDataLength) {
-//        DBG("no old file %s\n", strerror(Status));
+//        DBG("no old file %s\n", efiStrError(Status));
         return EFI_NOT_FOUND;
       }
       FreePool(Info);
@@ -205,14 +205,14 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
   }
 
   if (!FileHandle) {
-//    DBG("no FileHandle %s\n", strerror(Status));
+//    DBG("no FileHandle %s\n", efiStrError(Status));
     return EFI_DEVICE_ERROR;
   }
 
   BufferSize = FileDataLength;
   Status = FileHandle->Write(FileHandle, &BufferSize, (VOID*)FileData); // CONST missing in EFI_FILE_HANDLE->write
   FileHandle->Close(FileHandle);
-//  DBG("not written %s\n", strerror(Status));
+//  DBG("not written %s\n", efiStrError(Status));
   return Status;
 }
 
@@ -227,7 +227,7 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
   if (BaseDir == NULL) {
     Status = egFindESP(&BaseDir);
     if (EFI_ERROR(Status)) {
-      //DBG(" %s\n", strerror(Status));
+      //DBG(" %s\n", efiStrError(Status));
       return Status;
     }
   }
@@ -237,12 +237,12 @@ EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
 
   if (EFI_ERROR(Status)) {
     // Write new dir
-    //DBG("%s, attempt to create one:", strerror(Status));
+    //DBG("%s, attempt to create one:", efiStrError(Status));
     Status = BaseDir->Open(BaseDir, &FileHandle, DirName,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, EFI_FILE_DIRECTORY);
   }
 
-  //DBG(" %s\n", strerror(Status));
+  //DBG(" %s\n", efiStrError(Status));
   return Status;
 }
 

@@ -436,7 +436,7 @@ AddToBootOrder (
                              BootOrderLen * sizeof(UINT16),
                              BootOrderNew
                              );
-  DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, strerror(Status));
+  DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, efiStrError(Status));
   PrintBootOrder(BootOrderNew, BootOrderLen);
 
   FreePool(BootOrder);
@@ -506,7 +506,7 @@ DeleteFromBootOrder (
                                BootOrderLen * sizeof(UINT16),
                                BootOrder
                                );
-    DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, strerror(Status));
+    DBG("SetVariable: %ls = %s\n", BOOT_ORDER_VAR, efiStrError(Status));
     
     FreePool(BootOrder);
     
@@ -797,7 +797,7 @@ FindBootOptionForFile (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-		DBG("FindBootOptionForFile: Boot%04hX: %s\n", BootOrder[Index], strerror(Status));
+		DBG("FindBootOptionForFile: Boot%04hX: %s\n", BootOrder[Index], efiStrError(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
       continue;
     }
@@ -863,7 +863,7 @@ PrintBootOptions (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-		DBG("%2llu) Boot%04hX: ERROR, not found: %s\n", Index, BootOrder[Index], strerror(Status));
+		DBG("%2llu) Boot%04hX: ERROR, not found: %s\n", Index, BootOrder[Index], efiStrError(Status));
       continue;
     }
 
@@ -941,7 +941,7 @@ AddBootOption (
   //
   Status = FindFreeBootNum (&BootOption->BootNum);
   if (EFI_ERROR(Status)) {
-    DBG("FindFreeBootNum: %s\n", strerror(Status));
+    DBG("FindFreeBootNum: %s\n", efiStrError(Status));
     return Status;
   }
 	DBG(" Found BootNum: %04hX\n", BootOption->BootNum);
@@ -967,7 +967,7 @@ AddBootOption (
                              BootOption->Variable
                              );
   if (EFI_ERROR(Status)) {
-    DBG("SetVariable: %ls = %s\n", VarName, strerror(Status));
+    DBG("SetVariable: %ls = %s\n", VarName, efiStrError(Status));
     return Status;
   }
   DBG(" %ls saved\n", VarName);
@@ -1036,7 +1036,7 @@ AddBootOptionForFile (
   Status = AddBootOption (&BootOption, BootIndex);
   if (EFI_ERROR(Status)) {
     FreePool(BootOption.FilePathList);
-    DBG("AddBootOptionForFile: Error: %s\n", strerror(Status));
+    DBG("AddBootOptionForFile: Error: %s\n", efiStrError(Status));
     return Status;
   }
 
@@ -1082,7 +1082,7 @@ DeleteBootOption (
                              NULL
                              );
   if (EFI_ERROR(Status)) {
-    DBG(" Error del. variable: %ls = %s\n", VarName, strerror(Status));
+    DBG(" Error del. variable: %ls = %s\n", VarName, efiStrError(Status));
     return Status;
   }
   DBG(" %ls deleted\n", VarName);
@@ -1166,7 +1166,7 @@ DeleteBootOptionsContainingFile (
     //
     Status = GetBootOption (BootOrder[Index], &BootOption);
     if (EFI_ERROR(Status)) {
-		DBG("DeleteBootOptionContainingFile: Boot%04hX: ERROR: %s\n", BootOrder[Index], strerror(Status));
+		DBG("DeleteBootOptionContainingFile: Boot%04hX: ERROR: %s\n", BootOrder[Index], efiStrError(Status));
       //WaitForKeyPress(L"press a key to continue\n\n");
       continue;
     }
@@ -1189,7 +1189,7 @@ DeleteBootOptionsContainingFile (
     FreePool(BootOption.Variable);
   }
 
-  DBG("DeleteBootOptionContainingFile: %s\n", strerror(ReturnStatus));
+  DBG("DeleteBootOptionContainingFile: %s\n", efiStrError(ReturnStatus));
   return ReturnStatus;
 }
 

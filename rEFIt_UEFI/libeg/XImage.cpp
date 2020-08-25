@@ -630,7 +630,7 @@ EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
   // decode it
   Status = FromPNG(FileData, FileDataLength);  
   if (EFI_ERROR(Status)) {
-    DBG("%ls not decoded. Status=%s\n", IconName.wc_str(), strerror(Status));
+    DBG("%ls not decoded. Status=%s\n", IconName.wc_str(), efiStrError(Status));
   }
   FreePool(FileData);
   return Status;

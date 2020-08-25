@@ -5,6 +5,7 @@
 //  Created by Slice on 20.06.2018.
 //
 
+#include <Platform.h>
 #include "FloatLib.h"
 
 //#define memcpy(dest,source,count) CopyMem(dest,(void*)source,(UINTN)(count))
@@ -282,8 +283,9 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
     }
     Temp = 0;
     Status = AsciiStrDecimalToUintnS(String, &TmpStr, &Temp);
+    if ( Temp > MAX_INTN ) return RETURN_UNSUPPORTED;
     if (Status == RETURN_SUCCESS) {
-      Ftemp = PowF(10.0f, ExpSign * Temp);
+      Ftemp = PowF(10.0f, ExpSign * (INTN)Temp); // cast to avoid warning
       Mantissa *= Ftemp;
     }
   }

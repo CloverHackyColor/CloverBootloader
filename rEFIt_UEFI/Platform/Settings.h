@@ -5,7 +5,7 @@
 #define HEIGHT_2K 1100
 
 #include "../gui/menu_items/menu_items.h"
-#include "../Platform/plist.h"
+#include "../Platform/plist/plist.h"
 //class TagStruct;
 
 //// SysVariables
@@ -738,7 +738,7 @@ extern UINT16                          gBacklightLevel;
 //extern BOOLEAN                         defDSM;
 //extern UINT16                          dropDSM;
 
-extern TagStruct*                          gConfigDict[];
+extern TagDict*                          gConfigDict[];
 
 // ACPI/PATCHED/AML
 extern ACPI_PATCHED_AML                *ACPIPatchedAML;
@@ -890,14 +890,11 @@ GetRootUUID (
 EFI_STATUS
 GetEarlyUserSettings (
   IN  EFI_FILE *RootDir,
-      const TagStruct*   CfgDict
+      const TagDict*   CfgDict
   );
 
 EFI_STATUS
-GetUserSettings (
-  IN  EFI_FILE *RootDir,
-      const TagStruct* CfgDict
-  );
+GetUserSettings (const TagDict* CfgDict);
 
 EFI_STATUS
 InitTheme (
@@ -922,7 +919,7 @@ InjectKextsFromDir (
 VOID
 ParseLoadOptions (
   OUT  XStringW* ConfName,
-  OUT  TagStruct** Dict
+  OUT  TagDict** Dict
   );
 
 EFI_STATUS
@@ -948,17 +945,19 @@ EFI_STATUS
 LoadUserSettings (
     IN  EFI_FILE *RootDir,
     const XStringW& ConfName,
-    TagStruct** dict
+    TagDict** dict
   );
 
 VOID
 ParseSMBIOSSettings (
-  const TagStruct* dictPointer
+  const TagDict* dictPointer
   );
 
 //BOOLEAN
 //CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
 //                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src);
 
+
+void testConfigPlist();
 
 #endif

@@ -149,7 +149,7 @@ VOID egDumpGOPVideoModes(VOID)
             MsgLog("- Mode %d: %dx%d PixFmt = %ls, PixPerScanLine = %d\n",
                   Mode, Info->HorizontalResolution, Info->VerticalResolution, PixelFormatDesc, Info->PixelsPerScanLine);
         } else {
-            MsgLog("- Mode %d: %s\n", Mode, strerror(Status));
+            MsgLog("- Mode %d: %s\n", Mode, efiStrError(Status));
         }
     }
     
@@ -199,7 +199,7 @@ VOID egDumpSetConsoleVideoModes(VOID)
     // Mode is valid
     if (BestMode-1 != (UINTN)gST->ConOut->Mode->Mode) {
       Status = gST->ConOut->SetMode(gST->ConOut, BestMode-1);
-      MsgLog("  Setting mode (%llu): %s\n", BestMode, strerror(Status));
+      MsgLog("  Setting mode (%llu): %s\n", BestMode, efiStrError(Status));
     } else {
       MsgLog("  Selected mode (%llu) is already set\n", BestMode);
     }
@@ -255,7 +255,7 @@ EFI_STATUS egSetMaxResolution()
       MsgLog(" - set\n");
     } else {
       // we can not set BestMode - search for first one that we can
-      MsgLog(" - %s\n", strerror(Status));
+      MsgLog(" - %s\n", efiStrError(Status));
       Status = egSetMode(1);
     }
   }
@@ -283,11 +283,11 @@ EFI_STATUS egSetMode(INT32 Next)
     Mode = (Mode >= (INT32)MaxMode)?0:Mode;
     Mode = (Mode < 0)?((INT32)MaxMode - 1):Mode;
     Status = GraphicsOutput->QueryMode(GraphicsOutput, (UINT32)Mode, &SizeOfInfo, &Info);
-    MsgLog("QueryMode %d Status=%s\n", Mode, strerror(Status));
+    MsgLog("QueryMode %d Status=%s\n", Mode, efiStrError(Status));
     if (Status == EFI_SUCCESS) {
       //Status = GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
       Status = GopSetModeAndReconnectTextOut((UINT32)Mode);
-      //MsgLog("SetMode %d Status=%s\n", Mode, strerror(Status));
+      //MsgLog("SetMode %d Status=%s\n", Mode, efiStrError(Status));
       egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
       egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
     }
@@ -585,7 +585,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
     }
 
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
-    MsgLog("Video mode change to mode #%d: %s\n", ModeNumber, strerror(Status));
+    MsgLog("Video mode change to mode #%d: %s\n", ModeNumber, efiStrError(Status));
 
     if (gFirmwareClover && !EFI_ERROR(Status)) { 
         // When we change mode on GOP, we need to reconnect the drivers which produce simple text out

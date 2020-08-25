@@ -124,7 +124,7 @@ VOID EnableSecureBoot(VOID)
   if (EFI_ERROR(Status)) {
     XStringW Str = SWPrintf("Enabling secure boot failed because\n%ls", ErrorString);
     AlertMessage(L"Enable Secure Boot", Str);
-    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString.wc_str(), strerror(Status));
+    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString.wc_str(), efiStrError(Status));
     DisableSecureBoot();
   }
 }
@@ -166,9 +166,9 @@ STATIC VOID DisableMessage(IN EFI_STATUS  Status,
 {
   XStringW Str;
   if (ErrorString != NULL) {
-    Str = SWPrintf(L"%ls\n%ls\n%ls", String, ErrorString, strerror(Status));
+    Str = SWPrintf(L"%ls\n%ls\n%ls", String, ErrorString, efiStrError(Status));
   } else {
-    Str = SWPrintf(L"%s\n%s", String, strerror(Status));
+    Str = SWPrintf(L"%s\n%s", String, efiStrError(Status));
   }
   DBG("Secure Boot: %ls", Str.wc_str());
   AlertMessage(L"Disable Secure Boot", Str);
@@ -358,7 +358,7 @@ InternalFileAuthentication(IN CONST EFI_SECURITY_ARCH_PROTOCOL *This,
   if (EFI_ERROR(Status)) {
     CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
-      DBG("VerifySecureBootImage(1): %s %ls\n", strerror(Status), DevicePathStr);
+      DBG("VerifySecureBootImage(1): %s %ls\n", efiStrError(Status), DevicePathStr);
       FreePool(DevicePathStr);
     }
   }
@@ -385,7 +385,7 @@ Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
   if (EFI_ERROR(Status)) {
     CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
-      DBG("VerifySecureBootImage(2): %s %ls\n", strerror(Status), DevicePathStr);
+      DBG("VerifySecureBootImage(2): %s %ls\n", efiStrError(Status), DevicePathStr);
       FreePool(DevicePathStr);
     }
   }
@@ -404,7 +404,7 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   if (EFI_ERROR(Status)) {
     CHAR16 *DevicePathStr = FileDevicePathToStr((EFI_DEVICE_PATH_PROTOCOL *)DevicePath);
     if (DevicePathStr) {
-      DBG("VerifySecureBootImage: %s %ls\n", strerror(Status), DevicePathStr);
+      DBG("VerifySecureBootImage: %s %ls\n", efiStrError(Status), DevicePathStr);
       FreePool(DevicePathStr);
     }
   }

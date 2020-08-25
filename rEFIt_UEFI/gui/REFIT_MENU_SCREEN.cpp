@@ -987,10 +987,10 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
 /* just a sample code
       case SCAN_F7:
         Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
-        DBG("create folder %s\n", strerror(Status));
+        DBG("create folder %s\n", efiStrError(Status));
         if (!EFI_ERROR(Status)) {
           Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\new_folder\\new_file.txt", (UINT8*)SomeText, sizeof(*SomeText)+1);
-          DBG("create file %s\n", strerror(Status));
+          DBG("create file %s\n", efiStrError(Status));
         }
         break;
 */
@@ -999,7 +999,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
               OldChosenAudio = 0; //security correction
         }
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
-			DBG("open %llu audio handle status=%s\n", OldChosenAudio, strerror(Status));
+			DBG("open %llu audio handle status=%s\n", OldChosenAudio, efiStrError(Status));
         if (!EFI_ERROR(Status)) {
           StartupSoundPlay(SelfRootDir, NULL); //play embedded sound
         }
@@ -1819,7 +1819,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
       TitleLen = ResultString.length();
       if ( EntryC->getREFIT_MENU_SWITCH() ) {
         if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 3) {
-          OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;;
+          OldChosenItem = (OldChosenTheme == 0xFFFF) ? 0: OldChosenTheme + 1;
         } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 90) {
           OldChosenItem = OldChosenConfig;
         } else if (EntryC->getREFIT_MENU_SWITCH()->Item->IValue == 116) {
@@ -2429,7 +2429,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
 //      DBG("MouseBirth\n");
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at all! Status=%s\n", strerror(Status));
+        DBG("can't bear mouse at all! Status=%s\n", efiStrError(Status));
       }
       break;
 
@@ -2466,7 +2466,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at sel! Status=%s\n", strerror(Status));
+        DBG("can't bear mouse at sel! Status=%s\n", efiStrError(Status));
       }
       break;
 
@@ -2486,7 +2486,7 @@ VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamT
       DrawTextCorner(TEXT_CORNER_REVISION, X_IS_RIGHT);
       Status = MouseBirth();
       if(EFI_ERROR(Status)) {
-        DBG("can't bear mouse at timeout! Status=%s\n", strerror(Status));
+        DBG("can't bear mouse at timeout! Status=%s\n", efiStrError(Status));
       }
       break;
 

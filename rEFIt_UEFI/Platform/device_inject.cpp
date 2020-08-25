@@ -109,7 +109,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
                             &res
                             );
   if (EFI_ERROR(Status)) {
-    DBG("pci_config_read32 failed %s\n", strerror(Status));
+    DBG("pci_config_read32 failed %s\n", efiStrError(Status));
     return 0;
   }
   return res;

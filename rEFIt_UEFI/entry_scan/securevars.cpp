@@ -118,7 +118,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
         if (Database != NULL) {
           FreePool(Database);
         }
-        DBG("Failed to modify authorized database with Canonical key! %s\n", strerror(Status));
+        DBG("Failed to modify authorized database with Canonical key! %s\n", efiStrError(Status));
         return Status;
       }
       Status = AppendSignatureToDatabase(&Database, &DatabaseSize, &gEfiCertX509Guid, (VOID *)gSecureBootMSPCADatabaseKey, sizeof(gSecureBootMSPCADatabaseKey));
@@ -126,7 +126,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
         if (Database != NULL) {
           FreePool(Database);
         }
-        DBG("Failed to modify authorized database with MS PCA key! %s\n", strerror(Status));
+        DBG("Failed to modify authorized database with MS PCA key! %s\n", efiStrError(Status));
         return Status;
       }
       Status = AppendSignatureToDatabase(&Database, &DatabaseSize, &gEfiCertX509Guid, (VOID *)gSecureBootMSUEFICADatabaseKey, sizeof(gSecureBootMSUEFICADatabaseKey));
@@ -134,7 +134,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
         if (Database != NULL) {
           FreePool(Database);
         }
-        DBG("Failed to modify authorized database with MS UEFICA key! %s\n", strerror(Status));
+        DBG("Failed to modify authorized database with MS UEFICA key! %s\n", efiStrError(Status));
         return Status;
       }
     }
@@ -148,7 +148,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
     // Append keys if needed...
   }
   if (EFI_ERROR(Status)) {
-    DBG("Failed to set the authorized database! %s\n", strerror(Status));
+    DBG("Failed to set the authorized database! %s\n", efiStrError(Status));
     return Status;
   }
   // We set the unauthorized database
@@ -168,7 +168,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
       FreePool(Database);
       DatabaseSize = 0;
       if (EFI_ERROR(Status)) {
-        DBG("Failed to set the unauthorized database! %s\n", strerror(Status));
+        DBG("Failed to set the unauthorized database! %s\n", efiStrError(Status));
         return Status;
       }
     }
@@ -194,7 +194,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
         if (Database != NULL) {
           FreePool(Database);
         }
-        DBG("Failed to modify exchange database with MS exchange key! %s\n", strerror(Status));
+        DBG("Failed to modify exchange database with MS exchange key! %s\n", efiStrError(Status));
         return Status;
       }
     }
@@ -207,7 +207,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
     if (Database != NULL) {
       FreePool(Database);
     }
-    DBG("Failed to modify exchange database! %s\n", strerror(Status));
+    DBG("Failed to modify exchange database! %s\n", efiStrError(Status));
     return Status;
   }
   DBG("Setting the exchange database ...\n");
@@ -216,7 +216,7 @@ EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
   DatabaseSize = 0;
   Database = NULL;
   if (EFI_ERROR(Status)) {
-    DBG("Failed to set exchange database key! %s\n", strerror(Status));
+    DBG("Failed to set exchange database key! %s\n", efiStrError(Status));
     return Status;
   }
   // Unsure if default platform database should be enrolled.....???

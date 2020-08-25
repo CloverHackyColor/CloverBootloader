@@ -863,12 +863,12 @@ VOID ApplyInputs(VOID)
 
   i++; //90
   if (InputItems[i].Valid) {
-    TagStruct* dict;
+    TagDict* dict;
     Status = LoadUserSettings(SelfRootDir, XStringW(ConfigsList[OldChosenConfig]), &dict);
     if (!EFI_ERROR(Status)) {
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
-      Status = GetUserSettings(SelfRootDir, dict);
+      Status = GetUserSettings(dict);
       if (gConfigDict[2]) gConfigDict[2]->FreeTag();
       gConfigDict[2] = dict;
       snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);

@@ -1,8 +1,9 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "kext_inject.h"
 #include "DataHubCpu.h"
-#include "../Platform/plist.h"
+#include "../Platform/plist/plist.h"
 #include "../Platform/Settings.h"
+#include "../Platform/guid.h"
 
 #ifndef DEBUG_ALL
 #define KEXT_INJECT_DEBUG 1
@@ -95,15 +96,15 @@ void toLowerStr(CHAR8 *tstr, IN CONST CHAR8 *str) {
     *tstr = '\0';
 }
 
-BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagStruct* dict)
+BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagDict* dict)
 {
     BOOLEAN inject = TRUE;
     const TagStruct*  osBundleRequiredTag;
     XString8 osbundlerequired;
     
-    osBundleRequiredTag = dict->dictPropertyForKey("OSBundleRequired");
+    osBundleRequiredTag = dict->propertyForKey("OSBundleRequired");
     if (osBundleRequiredTag) {
-      osbundlerequired = osBundleRequiredTag->stringValue();
+      osbundlerequired = osBundleRequiredTag->getString()->stringValue();
       osbundlerequired.lowerAscii();
     }
 
@@ -135,7 +136,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
   UINTN       bundlePathBufferLength = 0;
   XStringW    TempName;
   XStringW    Executable;
-  TagStruct*      dict = NULL;
+  TagDict*    dict = NULL;
   const TagStruct*      prop = NULL;
   BOOLEAN     NoContents = FALSE;
   BOOLEAN     inject = FALSE;
@@ -152,12 +153,12 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
     infoDictBufferLength = 0;
     Status = egLoadFile(RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
     if (EFI_ERROR(Status)) {
-      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), strerror(Status));
+      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), efiStrError(Status));
       return EFI_NOT_FOUND;
     }
     NoContents = TRUE;
   }
-  if( ParseXML((CHAR8*)infoDictBuffer, &dict,(UINT32)infoDictBufferLength)!=0 ) {
+  if( ParseXML((CHAR8*)infoDictBuffer, &dict,infoDictBufferLength)!=0 ) {
     FreePool(infoDictBuffer);
     MsgLog("Failed to load extra kext (failed to parse Info.plist): %ls\n", FileName);
     return EFI_NOT_FOUND;
@@ -169,10 +170,10 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileNam
       return EFI_UNSUPPORTED;
   }
     
-  prop = dict->dictPropertyForKey("CFBundleExecutable");
-  if( prop != NULL && prop->isString() && prop->stringValue().notEmpty() ) {
-    Executable.takeValueFrom(prop->stringValue());
-    //   AsciiStrToUnicodeStrS(prop->stringValue(), Executable, 256);
+  prop = dict->propertyForKey("CFBundleExecutable");
+  if( prop != NULL && prop->isString() && prop->getString()->stringValue().notEmpty() ) {
+    Executable.takeValueFrom(prop->getString()->stringValue());
+    //   AsciiStrToUnicodeStrS(prop->getString()->stringValue(), Executable, 256);
     if (NoContents) {
       TempName = SWPrintf("%ls\\%ls", FileName, Executable.wc_str());
       //     snwprintf(TempName, 512, "%s\\%s", FileName, Executable);

@@ -8,7 +8,7 @@
 #ifndef PLATFORM_CARD_VLIST_H_
 #define PLATFORM_CARD_VLIST_H_
 
-#include "../Platform/plist.h"
+#include "../Platform/plist/plist.h"
 
 
 typedef struct {
@@ -28,7 +28,7 @@ typedef struct {
 
 VOID
 FillCardList (
-  const TagStruct* CfgDict
+  const TagDict* CfgDict
   );
 
 CARDLIST

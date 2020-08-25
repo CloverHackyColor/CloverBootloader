@@ -199,7 +199,7 @@ EFI_STATUS XTheme::ParseSVGXIcon(INTN Id, const XString8& IconNameX, OUT XImage*
   XImage NewImage(iWidth, iHeight); //empty
   if (IconImage->shapes == NULL) {
     *Image = NewImage;
- //   DBG("return empty with status=%s\n", strerror(Status));
+ //   DBG("return empty with status=%s\n", efiStrError(Status));
     return Status;
   }
   IconImage->scale = Scale;
@@ -293,13 +293,13 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     }
     XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image, &NewIcon->ImageSVG);
-//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
+//    DBG("parse %s status %s\n", NewIcon->Name.c_str(), efiStrError(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
       NewIcon->setFilled();
       ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
     }
- //   DBG("parse night %s status %s\n", NewIcon->Name.c_str(), strerror(Status));
+ //   DBG("parse night %s status %s\n", NewIcon->Name.c_str(), efiStrError(Status));
     Icons.AddReference(NewIcon, true);
     if (EFI_ERROR(Status)) {
       if (i >= BUILTIN_ICON_VOL_INTERNAL_HFS && i <= BUILTIN_ICON_VOL_INTERNAL_REC) {
@@ -316,7 +316,7 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
     if (AsciiStrLen(IconsNames[i]) == 0) break;
     XIcon* NewIcon = new XIcon(i, false); //initialize without embedded
     Status = ParseSVGXIcon(i, NewIcon->Name, &NewIcon->Image, &NewIcon->ImageSVG);
-//    DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, strerror(Status));
+//    DBG("parse %s i=%lld status %s\n", NewIcon->Name.c_str(), i, efiStrError(Status));
     NewIcon->Native = !EFI_ERROR(Status);
     if (!EFI_ERROR(Status)) {
       ParseSVGXIcon(i, NewIcon->Name + "_night"_XS8, &NewIcon->ImageNight, &NewIcon->ImageSVGnight);
@@ -366,8 +366,8 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->SetIndex((UINTN)GetPropertyInteger(Dict2, 1)); //default=main screen
 
       Dict2 = GetProperty(Dict3, "Path");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        NewFilm->Path.takeValueFrom(Dict2->stringValue());
+      if (Dict2 != NULL && (Dict2->isString()) && Dict2->getString()->stringValue().notEmpty() ) {
+        NewFilm->Path.takeValueFrom(Dict2->getString()->stringValue());
       }
 
       Dict2 = GetProperty(Dict3, "Frames");
@@ -377,19 +377,19 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
       NewFilm->FrameTime = (UINTN)GetPropertyInteger(Dict2, 50); //default will be 50ms
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        if (Dict2->stringValue().equal("left")) {
+      if (Dict2 != NULL && (Dict2->isString()) && Dict2->getString()->stringValue().notEmpty() ) {
+        if (Dict2->getString()->stringValue().equal("left")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Dict2->stringValue().equal("right")) {
+        } else if (Dict2->getString()->stringValue().equal("right")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        if (Dict2->stringValue().equal("top")) {
+      if (Dict2 != NULL && (Dict2->isString()) && Dict2->getString()->stringValue().notEmpty() ) {
+        if (Dict2->getString()->stringValue().equal("top")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Dict2->stringValue().equal("bottom")) {
+        } else if (Dict2->getString()->stringValue().equal("bottom")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }
@@ -440,7 +440,7 @@ EFI_STATUS XTheme::LoadSvgFrame(INTN i, OUT XImage* XFrame)
   XString8 XFrameName = S8Printf("frame_%04lld", i+1);
   Status = ParseSVGXIcon(BUILTIN_ICON_ANIME, XFrameName, XFrame, NULL); //svg anime will be full redesigned
   if (EFI_ERROR(Status)) {
-    DBG("frame '%s' not loaded, status=%s\n", XFrameName.c_str(), strerror(Status));
+    DBG("frame '%s' not loaded, status=%s\n", XFrameName.c_str(), efiStrError(Status));
   }
 
   return Status;
@@ -654,7 +654,7 @@ VOID testSVG()
 //    DBG("create test textbuffer\n");
     XImage TextBufferXY(Width, Height);
     Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
-    DBG("test Font.svg loaded status=%s\n", strerror(Status));
+    DBG("test Font.svg loaded status=%s\n", efiStrError(Status));
     if (!EFI_ERROR(Status)) {
       p = nsvgParse((CHAR8*)FileData, 72, 1.f);
       if (!p) {

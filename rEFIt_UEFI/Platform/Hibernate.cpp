@@ -380,10 +380,10 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   EFI_STATUS          Status = EFI_NOT_FOUND;
   UINT8               *PrefBuffer = NULL;
   UINTN               PrefBufferLen = 0;
-  TagStruct*          PrefDict;
-  const TagStruct*    dict;
-  const TagStruct*    dict2;
-  const TagStruct*    prop;
+//  TagDict*            PrefDict;
+//  const TagStruct*    dict;
+//  const TagStruct*    dict2;
+//  const TagStruct*    prop;
   CONST CHAR16       *PrefName = L"\\Library\\Preferences\\SystemConfiguration\\com.apple.PowerManagement.plist";
   CONST CHAR16       *PrefName2 = L"\\Library\\Preferences\\com.apple.PowerManagement.plist";
   REFIT_VOLUME        *ImageVolume = Volume;
@@ -399,31 +399,32 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
       if (EFI_ERROR(Status)) {
         Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
         if (!EFI_ERROR(Status)) {
-          DBG("    read prefs %ls status=%s\n", PrefName2, strerror(Status));
+          DBG("    read prefs %ls status=%s\n", PrefName2, efiStrError(Status));
         }
       } else {
-        DBG("    read prefs %ls status=%s\n", PrefName3.wc_str(), strerror(Status));
+        DBG("    read prefs %ls status=%s\n", PrefName3.wc_str(), efiStrError(Status));
       }
     } else {
-      DBG("    read prefs %ls status=%s\n", PrefName, strerror(Status));
+      DBG("    read prefs %ls status=%s\n", PrefName, efiStrError(Status));
     }
   }
   
   if (!EFI_ERROR(Status)) {
-    Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, (UINT32)PrefBufferLen);
+    TagDict* PrefDict;
+    Status = ParseXML((const CHAR8*)PrefBuffer, &PrefDict, PrefBufferLen);
     if (!EFI_ERROR(Status)) {
-      dict = PrefDict->dictPropertyForKey("Custom Profile");
+      const TagDict* dict = PrefDict->dictPropertyForKey("Custom Profile");
       if (dict) {
-        dict2 = dict->dictPropertyForKey("AC Power");
+        const TagDict* dict2 = dict->dictPropertyForKey("AC Power");
         if (dict2) {
-          prop = dict2->dictPropertyForKey("Hibernate File");
+          const TagStruct* prop = dict2->propertyForKey("Hibernate File");
           if (prop && prop->isString() ) {
-            if (prop->stringValue().contains("/Volumes/")) {
+            if (prop->getString()->stringValue().contains("/Volumes/")) {
               CHAR8 *VolNameStart = NULL, *VolNameEnd = NULL;
               XStringW VolName;
               UINTN VolNameSize = 0;
               // Extract Volumes Name
-              VolNameStart = AsciiStrStr(prop->stringValue().c_str() + 1, "/") + 1;
+              VolNameStart = AsciiStrStr(prop->getString()->stringValue().c_str() + 1, "/") + 1;
               if (VolNameStart) {
                 VolNameEnd = AsciiStrStr(VolNameStart, "/");
                 if (VolNameEnd) {
@@ -441,10 +442,10 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
                   ImageVolume = Volume;
                 }
               }
-            } else if ( prop->stringValue().contains("/var") && !prop->stringValue().contains("private")) {
-              SleepImageName = SWPrintf("\\private%s", prop->stringValue().c_str());
+            } else if ( prop->getString()->stringValue().contains("/var") && !prop->getString()->stringValue().contains("private")) {
+              SleepImageName = SWPrintf("\\private%s", prop->getString()->stringValue().c_str());
             } else {
-              SleepImageName = SWPrintf("%s", prop->stringValue().c_str());
+              SleepImageName = SWPrintf("%s", prop->getString()->stringValue().c_str());
             }
             wchar_t* p = SleepImageName.data(0);
             while (*p) {
@@ -517,7 +518,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
     // Open sleepimage
     Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName.wc_str(), EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
-      DBG("    sleepimage not found -> %s\n", strerror(Status));
+      DBG("    sleepimage not found -> %s\n", efiStrError(Status));
       return 0;
     }
   }
@@ -553,7 +554,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   if (Status == EFI_INVALID_PARAMETER) {
     Status = EFI_SUCCESS;
   }
-  //  DBG("    Reading completed -> %s\n", strerror(Status));
+  //  DBG("    Reading completed -> %s\n", efiStrError(Status));
   
   // Close sleepimage
   File->Close(File);
@@ -564,7 +565,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   }
   
   if (EFI_ERROR(Status)) {
-    DBG("     can not read sleepimage -> %s\n", strerror(Status));
+    DBG("     can not read sleepimage -> %s\n", efiStrError(Status));
     return 0;
   }
   
@@ -618,7 +619,7 @@ IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
   }
   Status = BlockIo->ReadBlocks(BlockIo, BlockIo->Media->MediaId, 2, BlockIo->Media->BlockSize, Buffer);
   if (EFI_ERROR(Status)) {
-    DBG("     can not read HFS+ header -> %s\n", strerror(Status));
+    DBG("     can not read HFS+ header -> %s\n", efiStrError(Status));
     FreePages(Buffer, Pages);
     return FALSE;
   }
@@ -945,7 +946,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
                                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                         Size , Value);
               if (EFI_ERROR(Status)) {
-                DBG(" can not write boot-image -> %s\n", strerror(Status));
+                DBG(" can not write boot-image -> %s\n", efiStrError(Status));
                 ret = FALSE;
               }
             }
@@ -1023,7 +1024,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
                               EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               Size , BootImageDevPath);
     if (EFI_ERROR(Status)) {
-      DBG(" can not write boot-image -> %s\n", strerror(Status));
+      DBG(" can not write boot-image -> %s\n", efiStrError(Status));
       return FALSE;
     }
   }
@@ -1031,7 +1032,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   // now we should delete boot0082 to do hibernate only once
   Status = DeleteBootOption(0x82);
   if (EFI_ERROR(Status)) {
-    DBG("Options 0082 was not deleted: %s\n", strerror(Status));
+    DBG("Options 0082 was not deleted: %s\n", efiStrError(Status));
   }
   
   //
@@ -1066,7 +1067,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
     // Prior to 10.13.6.
     //
     Status = GetVariable2 (L"IOHibernateRTCVariables", &gEfiAppleBootGuid, &Value, &Size);
-	  DBG("get IOHR variable status=%s, size=%llu, RTC info=%d\n", strerror(Status), Size, HasHibernateInfoInRTC);
+	  DBG("get IOHR variable status=%s, size=%llu, RTC info=%d\n", efiStrError(Status), Size, HasHibernateInfoInRTC);
     if (!HasHibernateInfo && !EFI_ERROR(Status) && Size == sizeof (RtcVars)) {
       CopyMem(RtcRawVars, Value, sizeof (RtcVars));
       HasHibernateInfo = (RtcVars.signature[0] == 'A' && RtcVars.signature[1] == 'A' &&
@@ -1171,7 +1172,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   }
   
   if (EFI_ERROR(Status)) {
-    DBG(" can not write boot-switch-vars -> %s\n", strerror(Status));
+    DBG(" can not write boot-switch-vars -> %s\n", efiStrError(Status));
     return FALSE;
   }
   

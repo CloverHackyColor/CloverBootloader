@@ -33,14 +33,3 @@ void* memset(void* dst, int ch, size_t count)
 #endif
 
 } // extern "C"
-
-
-CONST CHAR16 *
-EFIAPI
-ConstStrStr (
-  IN      CONST CHAR16              *String,
-  IN      CONST CHAR16              *SearchString
-  )
-{
-  return StrStr((CHAR16*)String, SearchString);
-}

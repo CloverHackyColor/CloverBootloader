@@ -750,7 +750,8 @@ VOID GetTableType4()
   gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
   gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
 
-  if (Size > 0x23) {  //Smbios <=2.3
+  size_t off = OFFSET_OF(SMBIOS_TABLE_TYPE4, EnabledCoreCount);
+  if (SmbiosTable.Type4->Hdr.Length > off) {  //Smbios >= 2.5
     gSettings.EnabledCores = SmbiosTable.Type4->EnabledCoreCount;
   } else {
     gSettings.EnabledCores = 0; //to change later
@@ -1281,12 +1282,14 @@ VOID GetTableType17()
     }
     //    DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
     //    DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
-    DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
-    DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
-    DBG("SmbiosTable.Type17->Bank/Device = %s %s\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
-    DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SMBIOS[Index].Vendor);
-    DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SMBIOS[Index].SerialNo);
-    DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[Index].PartNo);
+    if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
+      DBG("SmbiosTable.Type17->Speed = %dMHz\n", gRAM.SMBIOS[Index].Frequency);
+      DBG("SmbiosTable.Type17->Size = %dMB\n", gRAM.SMBIOS[Index].ModuleSize);
+      DBG("SmbiosTable.Type17->Bank/Device = %s %s\n", GetSmbiosString(SmbiosTable, SmbiosTable.Type17->BankLocator), GetSmbiosString(SmbiosTable, SmbiosTable.Type17->DeviceLocator));
+      DBG("SmbiosTable.Type17->Vendor = %s\n", gRAM.SMBIOS[Index].Vendor);
+      DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.SMBIOS[Index].SerialNo);
+      DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[Index].PartNo);
+    }
 
     /*
      if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
@@ -1690,7 +1693,7 @@ VOID PatchTableType17()
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
         (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) &&
-        (strncmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
+        (!gRAM.SPD[SPDIndex].Vendor || strncmp(gRAM.SPD[SPDIndex].Vendor, "NoName", 6) == 0)) {
       DBG("Type17->Manufacturer corrected by SMBIOS from NoName to %s\n", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, LString8(gRAM.SMBIOS[SMBIOSIndex].Vendor));
     }
@@ -2000,7 +2003,6 @@ EFI_STATUS PrepatchSmbios()
   //  DBG("OEM SMBIOS EPS=%p\n", Smbios);
   //  DBG("OEM Tables = %X\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
   if (!Smbios) {
-    Status = EFI_NOT_FOUND;
     //    DBG("Original SMBIOS System Table not found! Getting from Hob...\n");
     Smbios = GetSmbiosTablesFromHob();
     //    DBG("HOB SMBIOS EPS=%p\n", Smbios);

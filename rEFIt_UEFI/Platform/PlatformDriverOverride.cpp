@@ -126,7 +126,7 @@ OurPlatformDriverLoaded (
                              EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   
   if (EFI_ERROR(Status)) {
-    DBG(" CompName %s\n", strerror(Status));
+    DBG(" CompName %s\n", efiStrError(Status));
     return EFI_UNSUPPORTED;
   }
   Status = CompName->GetDriverName(CompName, "eng", &DriverName);
@@ -222,7 +222,7 @@ VOID RegisterDriversToHighestPriority(IN EFI_HANDLE *PriorityDrivers)
                                                      &mOurPlatformDriverOverrideProtocol,
                                                      NULL
                                                      );
-    DBG("%s\n", strerror(Status));
+    DBG("%s\n", efiStrError(Status));
     return;
   }
   

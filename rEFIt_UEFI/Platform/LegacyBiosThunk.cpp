@@ -178,7 +178,7 @@ DisconnectVga ( VOID )
           // disconnect VGA
           DBG("Disonnecting VGA\n");
           Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
-          DBG("disconnect %s", strerror(Status));
+          DBG("disconnect %s", efiStrError(Status));
         }
       }
     }

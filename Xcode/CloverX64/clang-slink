@@ -69,7 +69,7 @@ ld -arch x86_64 -u __ModuleEntryPoint  -e __ModuleEntryPoint -preload -segalign 
 source ./mtoc_path.txt
 [[ $? == 0 ]] && "$MTOC" -subsystem UEFI_APPLICATION  -align 0x20 ./"$outputname".dll ./"$outputname".pecoff
 
-[[ $? == 0 ]] && dsymutil ./"$outputname".dll
+[[ $? == 0 ]] && dsymutil ./"$outputname".dll 2>&1 | sed "s/warning//g"
 
 [[ $? == 0 ]] && "$edk2prefix"/BaseTools/Source/C/bin/GenFw -e UEFI_APPLICATION -o ./"$outputname".efi ./"$outputname".pecoff
 

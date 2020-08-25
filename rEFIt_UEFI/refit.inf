@@ -191,8 +191,30 @@
 	Platform/platformdata.cpp
     Platform/PlatformDriverOverride.h
     Platform/PlatformDriverOverride.cpp
-	Platform/plist.h
-	Platform/plist.cpp
+  Platform/plist/base64.h
+  Platform/plist/base64.cpp
+  Platform/plist/plist.h
+  Platform/plist/plist.cpp
+  Platform/plist/TagArray.h
+  Platform/plist/TagArray.cpp
+  Platform/plist/TagBool.h
+  Platform/plist/TagBool.cpp
+  Platform/plist/TagData.h
+  Platform/plist/TagData.cpp
+  Platform/plist/TagDate.h
+  Platform/plist/TagDate.cpp
+  Platform/plist/TagDict.h
+  Platform/plist/TagDict.cpp
+  Platform/plist/TagFloat.h
+  Platform/plist/TagFloat.cpp
+  Platform/plist/TagInt64.h
+  Platform/plist/TagInt64.cpp
+  Platform/plist/TagKey.h
+  Platform/plist/TagKey.cpp
+  Platform/plist/TagString8.h
+  Platform/plist/TagString8.cpp
+  Platform/plist/xml.h
+  Platform/plist/xml.cpp
 # Platform/Pointer.cpp
 	Platform/Settings.cpp
 	Platform/Settings.h
@@ -240,6 +262,7 @@
   cpp_util/operatorNewDelete.cpp
   cpp_util/operatorNewDelete.h
   cpp_util/remove_ref.h
+  cpp_util/pure_virtual.cpp
   cpp_foundation/unicode_conversions.cpp
   cpp_foundation/unicode_conversions.h
   cpp_foundation/XArray.h
@@ -281,6 +304,8 @@
   cpp_unit_test/XString_test.h
   cpp_unit_test/XStringArray_test.cpp
   cpp_unit_test/XStringArray_test.h
+  cpp_unit_test/plist_tests.cpp
+  cpp_unit_test/plist_tests.h
   cpp_unit_test/XToolsCommon_test.h
 #  cpp_unit_test/XUINTN_test.cpp
 #  cpp_unit_test/XUINTN_test.h

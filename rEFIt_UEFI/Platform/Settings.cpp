@@ -73,7 +73,7 @@ SIDELOAD_KEXT                   *InjectKextList = NULL;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
-TagStruct*                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
+TagDict*                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
@@ -238,7 +238,7 @@ ParseACPIName(const XString8& String)
 VOID
 ParseLoadOptions (
                   OUT  XStringW* ConfNamePtr,
-                  OUT  TagStruct** Dict
+                  OUT  TagDict** Dict
                   )
 {
   CHAR8 *End;
@@ -282,7 +282,7 @@ ParseLoadOptions (
     if (PlistStringsLen < TailSize) {
       if (AsciiStriNCmp(PlistStrings[i], Start, PlistStringsLen)) {
         DBG(" - found plist string = %s, parse XML in LoadOptions\n", PlistStrings[i]);
-        if (ParseXML(Start, Dict, (UINT32)TailSize) != EFI_SUCCESS) {
+        if (ParseXML(Start, Dict, TailSize) != EFI_SUCCESS) {
           *Dict = NULL;
           DBG("  - [!] xml in load options is bad\n");
           return;
@@ -406,7 +406,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
                              sizeof(UINT16),
                              &Entry->BootNum);
   if (EFI_ERROR(Status)) {
-    DBG("Can't save BootCurrent, status=%s\n", strerror(Status));
+    DBG("Can't save BootCurrent, status=%s\n", efiStrError(Status));
   }
   //Next step is rotate BootOrder to set BootNum to first place
   BootOrder = (__typeof__(BootOrder))GetNvramVariable(L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
@@ -438,7 +438,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
                                BootOrderNew
                                );
     if (EFI_ERROR(Status)) {
-      DBG("Can't save BootOrder, status=%s\n", strerror(Status));
+      DBG("Can't save BootOrder, status=%s\n", efiStrError(Status));
     }
     DBG("Set new BootOrder\n");
     PrintBootOrder(BootOrderNew, VarSize);
@@ -455,7 +455,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 //
 UINT8
 *GetDataSetting (
-                 IN      const TagStruct* Dict,
+                 IN      const TagDict* Dict,
                  IN      CONST CHAR8  *PropName,
                  OUT     UINTN  *DataLen
                  )
@@ -463,14 +463,14 @@ UINT8
   const TagStruct* Prop;
   UINT8  *Data = NULL;
 
-  Prop = Dict->dictPropertyForKey(PropName);
+  Prop = Dict->propertyForKey(PropName);
   if (Prop != NULL) {
     if (Prop->isData() /*&& Prop->dataLen > 0*/) { //rehabman: allow zero length data
       // data property
-      Data = (__typeof__(Data))AllocateZeroPool(Prop->dataLenValue());
-      CopyMem(Data, Prop->dataValue(), Prop->dataLenValue());
+      Data = (__typeof__(Data))AllocateZeroPool(Prop->getData()->dataLenValue());
+      CopyMem(Data, Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
 
-      if (DataLen != NULL) *DataLen = Prop->dataLenValue();
+      if (DataLen != NULL) *DataLen = Prop->getData()->dataLenValue();
       /*
        DBG("Data: %p, Len: %d = ", Data, Prop->dataLen);
        for (i = 0; i < Prop->dataLen; i++) {
@@ -480,9 +480,9 @@ UINT8
        */
     } else if ( Prop->isString() ) {
       // assume data in hex encoded string property
-      UINT32 Len = (UINT32)Prop->stringValue().length() >> 1; // number of hex digits
+      UINT32 Len = (UINT32)Prop->getString()->stringValue().length() >> 1; // number of hex digits
       Data = (__typeof__(Data))AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
-      Len  = hex2bin(Prop->stringValue().c_str(), Data, Len);
+      Len  = hex2bin(Prop->getString()->stringValue().c_str(), Data, Len);
 
       if (DataLen != NULL) *DataLen = Len;
       /*
@@ -506,7 +506,7 @@ EFI_STATUS
 LoadUserSettings (
                   IN EFI_FILE *RootDir,
                   IN const XStringW& ConfName,
-                  TagStruct** Dict)
+                  TagDict** Dict)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
@@ -545,13 +545,14 @@ LoadUserSettings (
   }
 
   if (!EFI_ERROR(Status) && ConfigPtr != NULL) {
-    Status = ParseXML((const CHAR8*)ConfigPtr, Dict, (UINT32)Size);
+    Status = ParseXML((const CHAR8*)ConfigPtr, Dict, Size);
     if (EFI_ERROR(Status)) {
       //  Dict = NULL;
-      DBG("config.plist parse error Status=%s\n", strerror(Status));
+      DBG("config.plist parse error Status=%s\n", efiStrError(Status));
       return Status;
     }
   }
+  // free configPtr ?
   return Status;
 }
 
@@ -836,16 +837,17 @@ CUSTOM_LOADER_ENTRY
 STATIC
 BOOLEAN
 FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
-                   const TagStruct* DictPointer)
+                   const TagDict* DictPointer)
 {
   const TagStruct* Prop;
+  const TagArray* arrayProp;
   // UINTN  i;
 
   if (Patches == NULL || DictPointer == NULL) {
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Debug");
+  Prop = DictPointer->propertyForKey("Debug");
   if (Prop != NULL || gBootChanged) {
     Patches->KPDebug = IsPropertyNotNullAndTrue(Prop);
   }
@@ -855,12 +857,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPKernelCpu = IsPropertyTrue(Prop);
   }
 */
-  Prop = DictPointer->dictPropertyForKey("KernelLapic");
+  Prop = DictPointer->propertyForKey("KernelLapic");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelLapic = IsPropertyNotNullAndTrue(Prop);
   }
 
-  Prop = DictPointer->dictPropertyForKey("KernelXCPM");
+  Prop = DictPointer->propertyForKey("KernelXCPM");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelXCPM = IsPropertyNotNullAndTrue(Prop);
     if (IsPropertyNotNullAndTrue(Prop)) {
@@ -868,17 +870,17 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("KernelPm");
+  Prop = DictPointer->propertyForKey("KernelPm");
   if (Prop != NULL || gBootChanged) {
     Patches->KPKernelPm = IsPropertyNotNullAndTrue(Prop);
   }
   
-  Prop = DictPointer->dictPropertyForKey("PanicNoKextDump");
+  Prop = DictPointer->propertyForKey("PanicNoKextDump");
   if (Prop != NULL || gBootChanged) {
     Patches->KPPanicNoKextDump = IsPropertyNotNullAndTrue(Prop);
   }
 
-  Prop = DictPointer->dictPropertyForKey("AppleIntelCPUPM");
+  Prop = DictPointer->propertyForKey("AppleIntelCPUPM");
   if (Prop != NULL || gBootChanged) {
     Patches->KPAppleIntelCPUPM = IsPropertyNotNullAndTrue(Prop);
   }
@@ -888,12 +890,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     Patches->KPAppleIntelCPUPM = TRUE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("AppleRTC");
+  Prop = DictPointer->propertyForKey("AppleRTC");
   if (Prop != NULL || gBootChanged) {
     Patches->KPAppleRTC = !IsPropertyNotNullAndFalse(Prop);  //default = TRUE
   }
 
-  Prop = DictPointer->dictPropertyForKey("EightApple");
+  Prop = DictPointer->propertyForKey("EightApple");
   if (Prop != NULL || gBootChanged) {
     Patches->EightApple = IsPropertyNotNullAndTrue(Prop);
   }
@@ -904,22 +906,22 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   // syscl: we do not need gBootChanged and Prop is empty condition
   // this change will boost Dell SMBIOS Patch a bit
   // but the major target is to make code clean
-  Prop = DictPointer->dictPropertyForKey("DellSMBIOSPatch");
+  Prop = DictPointer->propertyForKey("DellSMBIOSPatch");
   Patches->KPDELLSMBIOS = IsPropertyNotNullAndTrue(Prop); // default == FALSE
   gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
 
-  Prop = DictPointer->dictPropertyForKey("FakeCPUID");
+  Prop = DictPointer->propertyForKey("FakeCPUID");
   if (Prop != NULL || gBootChanged) {
     Patches->FakeCPUID = (UINT32)GetPropertyAsInteger(Prop, 0);
     DBG("FakeCPUID: %X\n", Patches->FakeCPUID);
   }
 
-  Prop = DictPointer->dictPropertyForKey("ATIConnectorsController");
+  Prop = DictPointer->propertyForKey("ATIConnectorsController");
   if ( Prop != NULL && Prop->isString() ) {
     UINTN len = 0, i=0;
 
     // ATIConnectors patch
-    Patches->KPATIConnectorsController = Prop->stringValue();
+    Patches->KPATIConnectorsController = Prop->getString()->stringValue();
 
     UINT8* p = GetDataSetting (DictPointer, "ATIConnectorsData", &len);
     Patches->KPATIConnectorsData.stealValueFrom(p, len);
@@ -943,35 +945,31 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   /*
    * ForceKextsToLoad is an array of string
    */
-  Prop = DictPointer->dictPropertyForKey("ForceKextsToLoad");
-  if ( Prop != NULL ) {
-    if ( !Prop->isArray() ) {
-      MsgLog("MALFORMED PLIST : ForceKextsToLoad content must an array\n");
-    }else{
-      INTN i;
-      INTN Count = Prop->arrayContent().size();
-      if (Count > 0) {
-        const TagStruct* Prop2 = NULL;
+  arrayProp = DictPointer->arrayPropertyForKey("ForceKextsToLoad");
+  if ( arrayProp != NULL ) {
+    INTN i;
+    INTN Count = arrayProp->arrayContent().size();
+    if (Count > 0) {
+      const TagStruct* Prop2 = NULL;
 
-        DBG("ForceKextsToLoad: %lld requested\n", Count);
+      DBG("ForceKextsToLoad: %lld requested\n", Count);
 
-        for (i = 0; i < Count; i++) {
-          Prop2 = &Prop->arrayContent()[i];
-          if ( !Prop2->isString() ) {
-            MsgLog("ATTENTION : property not string in ForceKextsToLoad\n");
-            continue;
+      for (i = 0; i < Count; i++) {
+        Prop2 = &arrayProp->arrayContent()[i];
+        if ( !Prop2->isString() ) {
+          MsgLog("ATTENTION : property not string in ForceKextsToLoad\n");
+          continue;
+        }
+
+        if (Prop2->getString()->stringValue().notEmpty()) {
+          const CHAR8* p = Prop2->getString()->stringValue().c_str();
+          if (*p == '\\') {
+            ++p;
           }
 
-          if (Prop2->stringValue().notEmpty()) {
-            const CHAR8* p = Prop2->stringValue().c_str();
-            if (*p == '\\') {
-              ++p;
-            }
-
-            if (AsciiStrSize(p) > 1) {
-              Patches->ForceKexts.Add(p);
-              DBG(" - [%zu]: %ls\n", Patches->ForceKexts.size(), Patches->ForceKexts[Patches->ForceKexts.size()-1].wc_str());
-            }
+          if (AsciiStrSize(p) > 1) {
+            Patches->ForceKexts.Add(p);
+            DBG(" - [%zu]: %ls\n", Patches->ForceKexts.size(), Patches->ForceKexts[Patches->ForceKexts.size()-1].wc_str());
           }
         }
       }
@@ -979,28 +977,28 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   }
 
   // KextsToPatch is an array of dict
-  Prop = DictPointer->dictPropertyForKey("KextsToPatch");
-  if (Prop != NULL) {
+  arrayProp = DictPointer->arrayPropertyForKey("KextsToPatch");
+  if (arrayProp != NULL) {
     INTN i;
-    INTN Count = Prop->arrayContent().size();
+    INTN Count = arrayProp->arrayContent().size();
     
     Patches->KextPatches.setEmpty();
     
     if (Count > 0) {
-      const TagStruct* Prop2 = NULL;
+      const TagDict* Prop2 = NULL;
       const TagStruct* Dict = NULL;
 
       DBG("KextsToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
-        Prop2 = &Prop->arrayContent()[i];
+        Prop2 = arrayProp->dictElementAt(i);
         if ( !Prop2->isDict() ) {
         	MsgLog("ATTENTION : property not dict in KextsToPatch\n");
           continue;
         }
         DBG(" - [%02lld]:", i);
 
-        Dict = Prop2->dictPropertyForKey("Name");
+        Dict = Prop2->propertyForKey("Name");
         if (Dict == NULL) {
           DBG(" patch without Name, skipped\n");
           continue;
@@ -1013,13 +1011,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         KEXT_PATCH* newPatchPtr = new KEXT_PATCH();
         KEXT_PATCH& newPatch = *newPatchPtr;
         
-        newPatch.Name = Dict->stringValue();
+        newPatch.Name = Dict->getString()->stringValue();
         newPatch.Label.takeValueFrom(newPatch.Name);
 
-        Dict = Prop2->dictPropertyForKey("Comment");
+        Dict = Prop2->propertyForKey("Comment");
         if (Dict != NULL) {
           newPatch.Label += " (";
-          newPatch.Label += Dict->stringValue();
+          newPatch.Label += Dict->getString()->stringValue();
           newPatch.Label += ")";
 
         } else {
@@ -1028,12 +1026,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         DBG(" %s", newPatch.Label.c_str());
 
         newPatch.MenuItem.BValue     = TRUE;
-        Dict = Prop2->dictPropertyForKey("Disabled");
+        Dict = Prop2->propertyForKey("Disabled");
         if ((Dict != NULL) && IsPropertyNotNullAndTrue(Dict)) {
           newPatch.MenuItem.BValue     = FALSE;
         }
         
-        Dict = Prop2->dictPropertyForKey("RangeFind");
+        Dict = Prop2->propertyForKey("RangeFind");
         newPatch.SearchLen = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
         
         UINT8* TmpData = GetDataSetting(Prop2, "StartPattern", &FindLen);
@@ -1061,10 +1059,10 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
         
-        Dict = Prop2->dictPropertyForKey("Procedure");
+        Dict = Prop2->propertyForKey("Procedure");
         if ( Dict != NULL ) {
         	if ( Dict->isString() ) {
-	          newPatch.ProcedureName = Dict->stringValue();
+	          newPatch.ProcedureName = Dict->getString()->stringValue();
 	        }else{
 	        	MsgLog("ATTENTION : Procedure property not string in KextsToPatch\n");
 	        }
@@ -1099,20 +1097,20 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         FreePool(TmpData);
 
         // check enable/disabled patch (OS based) by Micky1979
-        Dict = Prop2->dictPropertyForKey("MatchOS");
+        Dict = Prop2->propertyForKey("MatchOS");
         if ((Dict != NULL) && (Dict->isString())) {
-          newPatch.MatchOS = Dict->stringValue();
+          newPatch.MatchOS = Dict->getString()->stringValue();
           DBG(" :: MatchOS: %s", newPatch.MatchOS.c_str());
         }
 
-        Dict = Prop2->dictPropertyForKey("MatchBuild");
+        Dict = Prop2->propertyForKey("MatchBuild");
         if ((Dict != NULL) && (Dict->isString())) {
-          newPatch.MatchBuild = Dict->stringValue();
+          newPatch.MatchBuild = Dict->getString()->stringValue();
           DBG(" :: MatchBuild: %s", newPatch.MatchBuild.c_str());
         }
 
         // check if this is Info.plist patch or kext binary patch
-        Dict = Prop2->dictPropertyForKey("InfoPlistPatch");
+        Dict = Prop2->propertyForKey("InfoPlistPatch");
         newPatch.IsPlistPatch = IsPropertyNotNullAndTrue(Dict);
 
         if (newPatch.IsPlistPatch) {
@@ -1138,46 +1136,43 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   /*
    * KernelToPatch is an array of dict
    */
-  Prop = DictPointer->dictPropertyForKey("KernelToPatch");
+  arrayProp = DictPointer->arrayPropertyForKey("KernelToPatch");
   if (Prop != NULL) {
     INTN   i;
-    INTN   Count = Prop->arrayContent().size();
+    INTN   Count = arrayProp->arrayContent().size();
     //delete old and create new
     Patches->KernelPatches.setEmpty();
     if (Count > 0) {
-      const TagStruct* Prop2 = NULL;
-      const TagStruct* Dict = NULL;
+      const TagDict* Prop2 = NULL;
+      const TagStruct* prop3 = NULL;
       DBG("KernelToPatch: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
 
-        Prop2 = &Prop->arrayContent()[i];
-        if ( !Prop2->isDict() ) {
-          MsgLog("MALFORMED PLIST : KernelToPatch must be an array of dict");
-          continue;
-        }
+        Prop2 = arrayProp->dictElementAt(i, "KernelToPatch"_XS8);
+
         DBG(" - [%02lld]:", i);
 
         KEXT_PATCH* newKernelPatchPtr = new KEXT_PATCH;
         KEXT_PATCH& newKernelPatch = *newKernelPatchPtr;
 
         newKernelPatch.Label = "NoLabel"_XS8;
-        Dict = Prop2->dictPropertyForKey("Comment");
-        if (Dict != NULL) {
-        	if ( Dict->isString() ) {
-	          newKernelPatch.Label = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("Comment");
+        if (prop3 != NULL) {
+        	if ( prop3->isString() ) {
+	          newKernelPatch.Label = prop3->getString()->stringValue();
 	        }else{
 	        	MsgLog("ATTENTION : Comment property not string in KernelToPatch\n");
 	        }
         }
         DBG(" %s", newKernelPatch.Label.c_str());
 
-        Dict = Prop2->dictPropertyForKey("Disabled");
-        newKernelPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(Dict);
+        prop3 = Prop2->propertyForKey("Disabled");
+        newKernelPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(prop3);
         
-        Dict = Prop2->dictPropertyForKey("RangeFind");
-        newKernelPatch.SearchLen = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
+        prop3 = Prop2->propertyForKey("RangeFind");
+        newKernelPatch.SearchLen = GetPropertyAsInteger(prop3, 0); //default 0 will be calculated later
         
         TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
@@ -1205,10 +1200,10 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
         
-        Dict = Prop2->dictPropertyForKey("Procedure");
-        if (Dict != NULL) {
-        	if ( Dict->isString() ) {
-	          newKernelPatch.ProcedureName = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("Procedure");
+        if (prop3 != NULL) {
+        	if ( prop3->isString() ) {
+	          newKernelPatch.ProcedureName = prop3->getString()->stringValue();
 	        }else{
 	        	MsgLog("ATTENTION : Procedure property not string in KernelToPatch\n");
 	        }
@@ -1241,21 +1236,21 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         FreePool(TmpData);
         newKernelPatch.Count        = 0;
 
-        Dict = Prop2->dictPropertyForKey("Count");
-        if (Dict != NULL) {
-          newKernelPatch.Count = GetPropertyAsInteger(Dict, 0);
+        prop3 = Prop2->propertyForKey("Count");
+        if (prop3 != NULL) {
+          newKernelPatch.Count = GetPropertyAsInteger(prop3, 0);
         }
 
         // check enable/disabled patch (OS based) by Micky1979
-        Dict = Prop2->dictPropertyForKey("MatchOS");
-        if ((Dict != NULL) && (Dict->isString())) {
-          newKernelPatch.MatchOS = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("MatchOS");
+        if ((prop3 != NULL) && (prop3->isString())) {
+          newKernelPatch.MatchOS = prop3->getString()->stringValue();
           DBG(" :: MatchOS: %s", newKernelPatch.MatchOS.c_str());
         }
 
-        Dict = Prop2->dictPropertyForKey("MatchBuild");
-        if ((Dict != NULL) && (Dict->isString())) {
-          newKernelPatch.MatchBuild = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("MatchBuild");
+        if ((prop3 != NULL) && (prop3->isString())) {
+          newKernelPatch.MatchBuild = prop3->getString()->stringValue();
           DBG(" :: MatchBuild: %s", newKernelPatch.MatchBuild.c_str());
         }
         DBG(" :: data len: %zu\n", newKernelPatch.Data.size());
@@ -1267,36 +1262,33 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   /*
    * BootPatches is an array of dict
    */
-  Prop = DictPointer->dictPropertyForKey("BootPatches");
+  arrayProp = DictPointer->arrayPropertyForKey("BootPatches");
   if (Prop != NULL) {
     INTN   i;
-    INTN   Count = Prop->arrayContent().size();
+    INTN   Count = arrayProp->arrayContent().size();
     //delete old and create new
     Patches->BootPatches.setEmpty();
     if (Count > 0) {
-      const TagStruct* Prop2 = NULL;
-      const TagStruct* Dict = NULL;
+      const TagDict* Prop2 = NULL;
+      const TagStruct* prop3 = NULL;
 
       DBG("BootPatches: %lld requested\n", Count);
       for (i = 0; i < Count; i++) {
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         UINT8 *TmpData, *TmpPatch;
 
-        Prop2 = &Prop->arrayContent()[i];
-        if ( !Prop2->isDict() ) {
-          MsgLog("MALFORMED PLIST : KernelToPatch must be an array of dict");
-          continue;
-        }
+        Prop2 = arrayProp->dictElementAt(i, "BootPatches"_XS8);
+
         DBG(" - [%02lld]:", i);
 
         KEXT_PATCH* newBootPatchPtr = new KEXT_PATCH;
         KEXT_PATCH& newBootPatch = *newBootPatchPtr;
 
         newBootPatch.Label = "NoLabel"_XS8;
-        Dict = Prop2->dictPropertyForKey("Comment");
-        if (Dict != NULL) {
-        	if ( Dict->isString() ) {
-	          newBootPatch.Label = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("Comment");
+        if (prop3 != NULL) {
+        	if ( prop3->isString() ) {
+	          newBootPatch.Label = prop3->getString()->stringValue();
 	        }else{
 	        	MsgLog("ATTENTION : Comment property not string in KernelToPatch\n");
 	        }
@@ -1304,12 +1296,12 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         DBG(" %s", newBootPatch.Label.c_str());
 
-        Dict = Prop2->dictPropertyForKey("Disabled");
-        newBootPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(Dict);
+        prop3 = Prop2->propertyForKey("Disabled");
+        newBootPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(prop3);
         newBootPatch.MenuItem.ItemType = BoolValue;
         
-        Dict = Prop2->dictPropertyForKey("RangeFind");
-        newBootPatch.SearchLen = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
+        prop3 = Prop2->propertyForKey("RangeFind");
+        newBootPatch.SearchLen = GetPropertyAsInteger(prop3, 0); //default 0 will be calculated later
         
         TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
@@ -1361,20 +1353,20 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         FreePool(TmpData);
         newBootPatch.Count        = 0;
 
-        Dict = Prop2->dictPropertyForKey("Count");
-        if (Dict != NULL) {
-          newBootPatch.Count = GetPropertyAsInteger(Dict, 0);
+        prop3 = Prop2->propertyForKey("Count");
+        if (prop3 != NULL) {
+          newBootPatch.Count = GetPropertyAsInteger(prop3, 0);
         }
 
-        Dict = Prop2->dictPropertyForKey("MatchOS");
-        if ((Dict != NULL) && (Dict->isString())) {
-          newBootPatch.MatchOS = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("MatchOS");
+        if ((prop3 != NULL) && (prop3->isString())) {
+          newBootPatch.MatchOS = prop3->getString()->stringValue();
           DBG(" :: MatchOS: %s", newBootPatch.MatchOS.c_str());
         }
 
-        Dict = Prop2->dictPropertyForKey("MatchBuild");
-        if ((Dict != NULL) && (Dict->isString())) {
-          newBootPatch.MatchBuild = Dict->stringValue();
+        prop3 = Prop2->propertyForKey("MatchBuild");
+        if ((prop3 != NULL) && (prop3->isString())) {
+          newBootPatch.MatchBuild = prop3->getString()->stringValue();
           DBG(" :: MatchBuild: %s", newBootPatch.MatchBuild.c_str());
         }
 
@@ -1474,34 +1466,34 @@ UINT8 CheckVolumeType(UINT8 VolumeType, const TagStruct* Prop)
    	return 0;
   }
   UINT8 VolumeTypeTmp = VolumeType;
-  if (Prop->stringValue().equalIC("Internal")) {
+  if (Prop->getString()->stringValue().equalIC("Internal")) {
     VolumeTypeTmp |= VOLTYPE_INTERNAL;
-  } else if (Prop->stringValue().equalIC("External")) {
+  } else if (Prop->getString()->stringValue().equalIC("External")) {
     VolumeTypeTmp |= VOLTYPE_EXTERNAL;
-  } else if (Prop->stringValue().equalIC("Optical")) {
+  } else if (Prop->getString()->stringValue().equalIC("Optical")) {
     VolumeTypeTmp |= VOLTYPE_OPTICAL;
-  } else if (Prop->stringValue().equalIC("FireWire")) {
+  } else if (Prop->getString()->stringValue().equalIC("FireWire")) {
     VolumeTypeTmp |= VOLTYPE_FIREWIRE;
   }
   return VolumeTypeTmp;
 }
 
-UINT8 GetVolumeType(const TagStruct* DictPointer)
+UINT8 GetVolumeType(const TagDict* DictPointer)
 {
   const TagStruct* Prop;
   UINT8 VolumeType = 0;
 
-  Prop = DictPointer->dictPropertyForKey("VolumeType");
+  Prop = DictPointer->propertyForKey("VolumeType");
   if (Prop != NULL) {
     if (Prop->isString()) {
       VolumeType = CheckVolumeType(0, Prop);
     } else if (Prop->isArray()) {
       INTN   i;
-      INTN   Count = Prop->arrayContent().size();
+      INTN   Count = Prop->getArray()->arrayContent().size();
       if (Count > 0) {
         for (i = 0; i < Count; i++) {
-          const TagStruct* Prop2 = &Prop->arrayContent()[i];
-          if ( !Prop2->isString() || Prop2->stringValue().isEmpty() ) {
+          const TagStruct* Prop2 = &Prop->getArray()->arrayContent()[i];
+          if ( !Prop2->isString() || Prop2->getString()->stringValue().isEmpty() ) {
             continue;
           }
           VolumeType = CheckVolumeType(VolumeType, Prop2);
@@ -1517,7 +1509,7 @@ STATIC
 BOOLEAN
 FillinCustomEntry (
                    IN OUT  CUSTOM_LOADER_ENTRY *Entry,
-                   const TagStruct* DictPointer,
+                   const TagDict* DictPointer,
                    IN      BOOLEAN SubEntry
                    )
 {
@@ -1527,61 +1519,61 @@ FillinCustomEntry (
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Disabled");
+  Prop = DictPointer->propertyForKey("Disabled");
   if (IsPropertyNotNullAndTrue(Prop)) {
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Volume");
+  Prop = DictPointer->propertyForKey("Volume");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Volume = Prop->stringValue();
+    Entry->Volume = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("Path");
+  Prop = DictPointer->propertyForKey("Path");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Path = Prop->stringValue();
+    Entry->Path = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("Settings");
+  Prop = DictPointer->propertyForKey("Settings");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Settings = Prop->stringValue();
+    Entry->Settings = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("CommonSettings");
+  Prop = DictPointer->propertyForKey("CommonSettings");
   Entry->CommonSettings = IsPropertyNotNullAndTrue(Prop);
 
 
-  Prop = DictPointer->dictPropertyForKey("AddArguments");
+  Prop = DictPointer->propertyForKey("AddArguments");
   if (Prop != NULL && (Prop->isString())) {
 //    if (Entry->LoadOptions.notEmpty()) {
-//      Entry->Options.SPrintf("%s %s", Entry->Options.c_str(), Prop->stringValue());
+//      Entry->Options.SPrintf("%s %s", Entry->Options.c_str(), Prop->getString()->stringValue());
 //    } else {
-//      Entry->Options.SPrintf("%s", Prop->stringValue());
+//      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
 //    }
-	Entry->LoadOptions.import(Split<XString8Array>(Prop->stringValue(), " "));
+	Entry->LoadOptions.import(Split<XString8Array>(Prop->getString()->stringValue(), " "));
   } else {
-    Prop = DictPointer->dictPropertyForKey("Arguments");
+    Prop = DictPointer->propertyForKey("Arguments");
     if (Prop != NULL && (Prop->isString())) {
-//      Entry->Options.SPrintf("%s", Prop->stringValue());
-      Entry->LoadOptions = Split<XString8Array>(Prop->stringValue(), " ");
+//      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
+      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
       Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
-  Prop = DictPointer->dictPropertyForKey("Title");
+  Prop = DictPointer->propertyForKey("Title");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Title = Prop->stringValue();
+    Entry->Title = Prop->getString()->stringValue();
   }
-  Prop = DictPointer->dictPropertyForKey("FullTitle");
+  Prop = DictPointer->propertyForKey("FullTitle");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->FullTitle = Prop->stringValue();
+    Entry->FullTitle = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("Image");
+  Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
     Entry->ImagePath.setEmpty();
     Entry->Image.setEmpty();
     if (Prop->isString()) {
-      Entry->ImagePath = SWPrintf("%s", Prop->stringValue().c_str());
+      Entry->ImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
     }
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
@@ -1595,12 +1587,12 @@ FillinCustomEntry (
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("DriveImage");
+  Prop = DictPointer->propertyForKey("DriveImage");
   if (Prop != NULL) {
     Entry->DriveImagePath.setEmpty();
     Entry->DriveImage.setEmpty();
     if (Prop->isString()) {
-      Entry->DriveImagePath = SWPrintf("%s", Prop->stringValue().c_str());
+      Entry->DriveImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
     }
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
@@ -1614,25 +1606,25 @@ FillinCustomEntry (
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Hotkey");
-  if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-    Entry->Hotkey = Prop->stringValue()[0];
+  Prop = DictPointer->propertyForKey("Hotkey");
+  if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+    Entry->Hotkey = Prop->getString()->stringValue()[0];
   }
 
   // Whether or not to draw boot screen
-  Prop = DictPointer->dictPropertyForKey("CustomLogo");
+  Prop = DictPointer->propertyForKey("CustomLogo");
   if (Prop != NULL) {
     if (IsPropertyNotNullAndTrue(Prop)) {
       Entry->CustomBoot    = CUSTOM_BOOT_APPLE;
-    } else if ((Prop->isString()) && Prop->stringValue().notEmpty()) {
-      if (Prop->stringValue().equalIC("Apple")) {
+    } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      if (Prop->getString()->stringValue().equalIC("Apple")) {
         Entry->CustomBoot  = CUSTOM_BOOT_APPLE;
-      } else if (Prop->stringValue().equalIC("Alternate")) {
+      } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
         Entry->CustomBoot  = CUSTOM_BOOT_ALT_APPLE;
-      } else if (Prop->stringValue().equalIC("Theme")) {
+      } else if (Prop->getString()->stringValue().equalIC("Theme")) {
         Entry->CustomBoot  = CUSTOM_BOOT_THEME;
       } else {
-        XStringW customLogo = XStringW() = Prop->stringValue();
+        XStringW customLogo = XStringW() = Prop->getString()->stringValue();
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
         Entry->CustomLogo.LoadXImage(SelfRootDir, customLogo);
         if (Entry->CustomLogo.isEmpty()) {
@@ -1640,11 +1632,11 @@ FillinCustomEntry (
           Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
         }
       }
-    } else if ( Prop->isData() && Prop->dataLenValue() > 0 ) {
+    } else if ( Prop->isData() && Prop->getData()->dataLenValue() > 0 ) {
       Entry->CustomBoot = CUSTOM_BOOT_USER;
-      Entry->CustomLogo.FromPNG(Prop->dataValue(), Prop->dataLenValue());
+      Entry->CustomLogo.FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
       if (Entry->CustomLogo.isEmpty()) {
-        DBG("Custom boot logo not decoded from data!\n"/*, Prop->stringValue().c_str()*/);
+        DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
         Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
       }
     } else {
@@ -1655,10 +1647,10 @@ FillinCustomEntry (
     Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
   }
 
-  Prop = DictPointer->dictPropertyForKey("BootBgColor");
+  Prop = DictPointer->propertyForKey("BootBgColor");
   if (Prop != NULL && Prop->isString()) {
     UINTN   Color;
-    Color = AsciiStrHexToUintn(Prop->stringValue());
+    Color = AsciiStrHexToUintn(Prop->getString()->stringValue());
 
     Entry->BootBgColor.Red = (Color >> 24) & 0xFF;
     Entry->BootBgColor.Green = (Color >> 16) & 0xFF;
@@ -1670,10 +1662,10 @@ FillinCustomEntry (
   // - No (show the entry)
   // - Yes (hide the entry but can be show with F3)
   // - Always (always hide the entry)
-  Prop = DictPointer->dictPropertyForKey("Hidden");
+  Prop = DictPointer->propertyForKey("Hidden");
   if (Prop != NULL) {
     if ((Prop->isString()) &&
-        (Prop->stringValue().equalIC("Always"))) {
+        (Prop->getString()->stringValue().equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyNotNullAndTrue(Prop)) {
       Entry->Hidden = true;
@@ -1682,24 +1674,24 @@ FillinCustomEntry (
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Type");
+  Prop = DictPointer->propertyForKey("Type");
   if (Prop != NULL && (Prop->isString())) {
-    if ((Prop->stringValue().equalIC("OSX")) ||
-        (Prop->stringValue().equalIC("macOS"))) {
+    if ((Prop->getString()->stringValue().equalIC("OSX")) ||
+        (Prop->getString()->stringValue().equalIC("macOS"))) {
       Entry->Type = OSTYPE_OSX;
-    } else if (Prop->stringValue().equalIC("OSXInstaller")) {
+    } else if (Prop->getString()->stringValue().equalIC("OSXInstaller")) {
       Entry->Type = OSTYPE_OSX_INSTALLER;
-    } else if (Prop->stringValue().equalIC("OSXRecovery")) {
+    } else if (Prop->getString()->stringValue().equalIC("OSXRecovery")) {
       Entry->Type = OSTYPE_RECOVERY;
-    } else if (Prop->stringValue().equalIC("Windows")) {
+    } else if (Prop->getString()->stringValue().equalIC("Windows")) {
       Entry->Type = OSTYPE_WINEFI;
-    } else if (Prop->stringValue().equalIC("Linux")) {
+    } else if (Prop->getString()->stringValue().equalIC("Linux")) {
       Entry->Type = OSTYPE_LIN;
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
-    } else if (Prop->stringValue().equalIC("LinuxKernel")) {
+    } else if (Prop->getString()->stringValue().equalIC("LinuxKernel")) {
       Entry->Type = OSTYPE_LINEFI;
     } else {
-      DBG("** Warning: unknown custom entry Type '%s'\n", Prop->stringValue().c_str());
+      DBG("** Warning: unknown custom entry Type '%s'\n", Prop->getString()->stringValue().c_str());
       Entry->Type = OSTYPE_OTHER;
     }
   } else {
@@ -1739,15 +1731,15 @@ FillinCustomEntry (
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
     //  Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
 
-    Prop = DictPointer->dictPropertyForKey("InjectKexts");
+    Prop = DictPointer->propertyForKey("InjectKexts");
     if (Prop != NULL) {
       if ( Prop->isTrueOrYes() ) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
-      } else if ( Prop->isString() && Prop->stringValue().equalIC("Detect") ) {
+      } else if ( Prop->isString() && Prop->getString()->stringValue().equalIC("Detect") ) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else {
-        DBG("** Warning: unknown custom entry InjectKexts value '%s'\n", Prop->stringValue().c_str());
+        DBG("** Warning: unknown custom entry InjectKexts value '%s'\n", Prop->getString()->stringValue().c_str());
       }
     } else {
       // Use global settings
@@ -1763,7 +1755,7 @@ FillinCustomEntry (
     // NoCaches default value
     Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
 
-    Prop = DictPointer->dictPropertyForKey("NoCaches");
+    Prop = DictPointer->propertyForKey("NoCaches");
     if (Prop != NULL) {
       if (IsPropertyNotNullAndTrue(Prop)) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
@@ -1793,20 +1785,20 @@ FillinCustomEntry (
   }
 
   if (Entry->Type == OSTYPE_LINEFI) {
-    Prop = DictPointer->dictPropertyForKey("Kernel");
+    Prop = DictPointer->propertyForKey("Kernel");
     if (Prop != NULL) {
-      if ((Prop->isString()) && Prop->stringValue().notEmpty()) {
-        if ((Prop->stringValue()[0] == 'N') || (Prop->stringValue()[0] == 'n')) {
+      if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        if ((Prop->getString()->stringValue()[0] == 'N') || (Prop->getString()->stringValue()[0] == 'n')) {
           Entry->KernelScan = KERNEL_SCAN_NEWEST;
-        } else if ((Prop->stringValue()[0] == 'O') || (Prop->stringValue()[0] == 'o')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'O') || (Prop->getString()->stringValue()[0] == 'o')) {
           Entry->KernelScan = KERNEL_SCAN_OLDEST;
-        } else if ((Prop->stringValue()[0] == 'F') || (Prop->stringValue()[0] == 'f')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'F') || (Prop->getString()->stringValue()[0] == 'f')) {
           Entry->KernelScan = KERNEL_SCAN_FIRST;
-        } else if ((Prop->stringValue()[0] == 'L') || (Prop->stringValue()[0] == 'l')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'L') || (Prop->getString()->stringValue()[0] == 'l')) {
           Entry->KernelScan = KERNEL_SCAN_LAST;
-        } else if ((Prop->stringValue()[0] == 'M') || (Prop->stringValue()[0] == 'm')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'M') || (Prop->getString()->stringValue()[0] == 'm')) {
           Entry->KernelScan = KERNEL_SCAN_MOSTRECENT;
-        } else if ((Prop->stringValue()[0] == 'E') || (Prop->stringValue()[0] == 'e')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'E') || (Prop->getString()->stringValue()[0] == 'e')) {
           Entry->KernelScan = KERNEL_SCAN_EARLIEST;
         }
       }
@@ -1817,22 +1809,17 @@ FillinCustomEntry (
    * Sub entries
    * an array of dict OR a bool
   */
-  Prop = DictPointer->dictPropertyForKey("SubEntries");
+  Prop = DictPointer->propertyForKey("SubEntries");
   if (Prop != NULL) {
-    if ( Prop->isBool() && Prop->boolValue() ) {
+    if ( Prop->isBool() && Prop->getBool()->boolValue() ) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
     } else if ( Prop->isArray() ) {
       CUSTOM_LOADER_ENTRY *CustomSubEntry;
       INTN   i;
-      INTN   Count = Prop->arrayContent().size();
-      const TagStruct* Dict = NULL;
+      INTN   Count = Prop->getArray()->arrayContent().size();
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
       for (i = 0; i < Count; i++) {
-        Dict = &Prop->arrayContent()[i];
-        if ( !Dict->isDict() ) {
-          MsgLog("MALFORMED PLIST : SubEntries array must contains only dict");
-          continue;
-        }
+        const TagDict* Dict = Prop->getArray()->dictElementAt(i, "SubEntries"_XS8);
         // Allocate a sub entry
         CustomSubEntry = DuplicateCustomEntry (Entry);
         if (CustomSubEntry) {
@@ -1853,7 +1840,7 @@ FillinCustomEntry (
 BOOLEAN
 FillingCustomLegacy (
                     IN OUT CUSTOM_LEGACY_ENTRY *Entry,
-                    const TagStruct* DictPointer
+                    const TagDict* DictPointer
                     )
 {
   const TagStruct* Prop;
@@ -1861,29 +1848,29 @@ FillingCustomLegacy (
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Disabled");
+  Prop = DictPointer->propertyForKey("Disabled");
   if (IsPropertyNotNullAndTrue(Prop)) {
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Volume");
+  Prop = DictPointer->propertyForKey("Volume");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Volume = Prop->stringValue();
+    Entry->Volume = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("FullTitle");
+  Prop = DictPointer->propertyForKey("FullTitle");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->FullTitle = Prop->stringValue();
+    Entry->FullTitle = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("Title");
+  Prop = DictPointer->propertyForKey("Title");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Title = Prop->stringValue();
+    Entry->Title = Prop->getString()->stringValue();
   }
-  Prop = DictPointer->dictPropertyForKey("Image");
+  Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
     if (Prop->isString()) {
-      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->stringValue());
+      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->getString()->stringValue());
     }
   } else {
     UINTN DataLen = 0;
@@ -1896,10 +1883,10 @@ FillingCustomLegacy (
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("DriveImage");
+  Prop = DictPointer->propertyForKey("DriveImage");
   if (Prop != NULL) {
     if (Prop->isString()) {
-      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->stringValue());
+      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->getString()->stringValue());
     }
   } else {
     UINTN DataLen = 0;
@@ -1912,19 +1899,19 @@ FillingCustomLegacy (
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Hotkey");
-  if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-    Entry->Hotkey = Prop->stringValue()[0];
+  Prop = DictPointer->propertyForKey("Hotkey");
+  if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+    Entry->Hotkey = Prop->getString()->stringValue()[0];
   }
 
   // Hidden Property, Values:
   // - No (show the entry)
   // - Yes (hide the entry but can be show with F3)
   // - Always (always hide the entry)
-  Prop = DictPointer->dictPropertyForKey("Hidden");
+  Prop = DictPointer->propertyForKey("Hidden");
   if (Prop != NULL) {
     if ((Prop->isString()) &&
-        (Prop->stringValue().equalIC("Always"))) {
+        (Prop->getString()->stringValue().equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyNotNullAndTrue(Prop)) {
       Entry->Hidden = true;
@@ -1933,11 +1920,11 @@ FillingCustomLegacy (
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Type");
+  Prop = DictPointer->propertyForKey("Type");
   if (Prop != NULL && (Prop->isString())) {
-    if (Prop->stringValue().equalIC("Windows")) {
+    if (Prop->getString()->stringValue().equalIC("Windows")) {
       Entry->Type = OSTYPE_WIN;
-    } else if (Prop->stringValue().equalIC("Linux")) {
+    } else if (Prop->getString()->stringValue().equalIC("Linux")) {
       Entry->Type = OSTYPE_LIN;
     } else {
       Entry->Type = OSTYPE_OTHER;
@@ -1949,53 +1936,53 @@ FillingCustomLegacy (
 }
 
 BOOLEAN
-FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagStruct* DictPointer)
+FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
 {
   const TagStruct* Prop;
   if ((Entry == NULL) || (DictPointer == NULL)) {
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Disabled");
+  Prop = DictPointer->propertyForKey("Disabled");
   if (IsPropertyNotNullAndTrue(Prop)) {
     return FALSE;
   }
 
-  Prop = DictPointer->dictPropertyForKey("Volume");
+  Prop = DictPointer->propertyForKey("Volume");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Volume.takeValueFrom(Prop->stringValue());
+    Entry->Volume.takeValueFrom(Prop->getString()->stringValue());
   }
 
-  Prop = DictPointer->dictPropertyForKey("Path");
+  Prop = DictPointer->propertyForKey("Path");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Path.takeValueFrom(Prop->stringValue());
+    Entry->Path.takeValueFrom(Prop->getString()->stringValue());
   }
 
-  Prop = DictPointer->dictPropertyForKey("Arguments");
+  Prop = DictPointer->propertyForKey("Arguments");
   if (Prop != NULL && (Prop->isString())) {
 //    if (!Entry->Options.isEmpty()) {
 //      Entry->Options.setEmpty();
 //    } else {
-//      Entry->Options.SPrintf("%s", Prop->stringValue());
+//      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
 //    }
-      Entry->LoadOptions = Split<XString8Array>(Prop->stringValue(), " ");
+      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
   }
 
-  Prop = DictPointer->dictPropertyForKey("FullTitle");
+  Prop = DictPointer->propertyForKey("FullTitle");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->FullTitle = Prop->stringValue();
+    Entry->FullTitle = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("Title");
+  Prop = DictPointer->propertyForKey("Title");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Title = Prop->stringValue();
+    Entry->Title = Prop->getString()->stringValue();
   }
 
-  Prop = DictPointer->dictPropertyForKey("Image");
+  Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
     Entry->ImagePath.setEmpty();
     if (Prop->isString()) {
-      Entry->ImagePath = Prop->stringValue();
+      Entry->ImagePath = Prop->getString()->stringValue();
     }
     Entry->Image.LoadXImage(ThemeX.ThemeDir, Entry->ImagePath);
   } else {
@@ -2008,19 +1995,19 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagStruct* DictPointer
       FreePool(TmpData);
     }
   }
-  Prop = DictPointer->dictPropertyForKey("Hotkey");
-  if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-    Entry->Hotkey = Prop->stringValue()[0];
+  Prop = DictPointer->propertyForKey("Hotkey");
+  if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+    Entry->Hotkey = Prop->getString()->stringValue()[0];
   }
 
   // Hidden Property, Values:
   // - No (show the entry)
   // - Yes (hide the entry but can be show with F3)
   // - Always (always hide the entry)
-  Prop = DictPointer->dictPropertyForKey("Hidden");
+  Prop = DictPointer->propertyForKey("Hidden");
   if (Prop != NULL) {
     if ((Prop->isString()) &&
-        (Prop->stringValue().equalIC("Always"))) {
+        (Prop->getString()->stringValue().equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyNotNullAndTrue(Prop)) {
       Entry->Hidden = true;
@@ -2036,20 +2023,20 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagStruct* DictPointer
 
 // EDID reworked by Sherlocks
 VOID
-GetEDIDSettings(const TagStruct* DictPointer)
+GetEDIDSettings(const TagDict* DictPointer)
 {
   const TagStruct* Prop;
-  const TagStruct* Dict;
+  const TagDict* Dict;
   UINTN  j = 128;
 
   Dict = DictPointer->dictPropertyForKey("EDID");
   if (Dict != NULL) {
-    Prop = Dict->dictPropertyForKey("Inject");
+    Prop = Dict->propertyForKey("Inject");
     gSettings.InjectEDID = IsPropertyNotNullAndTrue(Prop); // default = false!
 
     if (gSettings.InjectEDID){
       //DBG("Inject EDID\n");
-      Prop = Dict->dictPropertyForKey("Custom");
+      Prop = Dict->propertyForKey("Custom");
       if (Prop != NULL) {
         gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
         if ((j % 128) != 0) {
@@ -2061,25 +2048,25 @@ GetEDIDSettings(const TagStruct* DictPointer)
         }
       }
 
-      Prop = Dict->dictPropertyForKey("VendorID");
+      Prop = Dict->propertyForKey("VendorID");
       if (Prop) {
         gSettings.VendorEDID = (UINT16)GetPropertyAsInteger(Prop, gSettings.VendorEDID);
         //DBG("  VendorID = 0x%04lx\n", gSettings.VendorEDID);
       }
 
-      Prop = Dict->dictPropertyForKey("ProductID");
+      Prop = Dict->propertyForKey("ProductID");
       if (Prop) {
         gSettings.ProductEDID = (UINT16)GetPropertyAsInteger(Prop, gSettings.ProductEDID);
         //DBG("  ProductID = 0x%04lx\n", gSettings.ProductEDID);
       }
 
-      Prop = Dict->dictPropertyForKey("HorizontalSyncPulseWidth");
+      Prop = Dict->propertyForKey("HorizontalSyncPulseWidth");
       if (Prop) {
         gSettings.EdidFixHorizontalSyncPulseWidth = (UINT16)GetPropertyAsInteger(Prop, gSettings.EdidFixHorizontalSyncPulseWidth);
         //DBG("  EdidFixHorizontalSyncPulseWidth = 0x%02lx\n", gSettings.EdidFixHorizontalSyncPulseWidth);
       }
 
-      Prop = Dict->dictPropertyForKey("VideoInputSignal");
+      Prop = Dict->propertyForKey("VideoInputSignal");
       if (Prop) {
         gSettings.EdidFixVideoInputSignal = (UINT8)GetPropertyAsInteger(Prop, gSettings.EdidFixVideoInputSignal);
         //DBG("  EdidFixVideoInputSignal = 0x%02lx\n", gSettings.EdidFixVideoInputSignal);
@@ -2093,14 +2080,15 @@ GetEDIDSettings(const TagStruct* DictPointer)
 EFI_STATUS
 GetEarlyUserSettings (
                       IN EFI_FILE *RootDir,
-                      const TagStruct* CfgDict
+                      const TagDict* CfgDict
                       )
 {
   EFI_STATUS  Status = EFI_SUCCESS;
-  const TagStruct*      Dict;
-  const TagStruct*      Dict2;
-  const TagStruct*      DictPointer;
-  const TagStruct*      Prop;
+//  const TagDict*      Dict;
+//  const TagDict*      Dict2;
+//  const TagDict*      DictPointer;
+//  const TagStruct*    Prop;
+//  const TagArray*     arrayProp;
   VOID        *Value = NULL;
   BOOLEAN     SpecialBootMode = FALSE;
 
@@ -2119,64 +2107,63 @@ GetEarlyUserSettings (
   gSettings.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
   gSettings.KernelPatchesAllowed            = TRUE;
 
-  Dict = CfgDict;
-  if (Dict != NULL) {
+  if (CfgDict != NULL) {
     //DBG("Loading early settings\n");
     DbgHeader("GetEarlyUserSettings");
 
-    DictPointer = Dict->dictPropertyForKey("Boot");
-    if (DictPointer != NULL) {
-      Prop = DictPointer->dictPropertyForKey("Timeout");
+    const TagDict* BootDict = CfgDict->dictPropertyForKey("Boot");
+    if (BootDict != NULL) {
+      const TagStruct* Prop = BootDict->propertyForKey("Timeout");
       if (Prop != NULL) {
         GlobalConfig.Timeout = (INT32)GetPropertyAsInteger(Prop, GlobalConfig.Timeout);
 		  DBG("timeout set to %lld\n", GlobalConfig.Timeout);
       }
 
-      Prop = DictPointer->dictPropertyForKey("SkipHibernateTimeout");
+      Prop = BootDict->propertyForKey("SkipHibernateTimeout");
       gSettings.SkipHibernateTimeout = IsPropertyNotNullAndTrue(Prop);
 
       //DisableCloverHotkeys
-      Prop = DictPointer->dictPropertyForKey("DisableCloverHotkeys");
+      Prop = BootDict->propertyForKey("DisableCloverHotkeys");
       gSettings.DisableCloverHotkeys = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("Arguments");
-      if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-        gSettings.BootArgs = Prop->stringValue();
+      Prop = BootDict->propertyForKey("Arguments");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        gSettings.BootArgs = Prop->getString()->stringValue();
       }
 
       // defaults if "DefaultVolume" is not present or is empty
       gSettings.LastBootedVolume = FALSE;
       //     gSettings.DefaultVolume    = NULL;
 
-      Prop = DictPointer->dictPropertyForKey("DefaultVolume");
+      Prop = BootDict->propertyForKey("DefaultVolume");
       if (Prop != NULL) {
-        if ( Prop->isString()  &&  Prop->stringValue().notEmpty() ) {
+        if ( Prop->isString()  &&  Prop->getString()->stringValue().notEmpty() ) {
           gSettings.DefaultVolume.setEmpty();
           // check for special value for remembering boot volume
-          if (Prop->stringValue().equalIC("LastBootedVolume")) {
+          if (Prop->getString()->stringValue().equalIC("LastBootedVolume")) {
             gSettings.LastBootedVolume = TRUE;
           } else {
-            gSettings.DefaultVolume = Prop->stringValue();
+            gSettings.DefaultVolume = Prop->getString()->stringValue();
           }
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("DefaultLoader");
+      Prop = BootDict->propertyForKey("DefaultLoader");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in DefaultLoader\n");
         }else{
-	        gSettings.DefaultLoader = Prop->stringValue();
+	        gSettings.DefaultLoader = Prop->getString()->stringValue();
 	      }
       }
 
-      Prop = DictPointer->dictPropertyForKey("Debug");
+      Prop = BootDict->propertyForKey("Debug");
       GlobalConfig.DebugLog       = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("Fast");
+      Prop = BootDict->propertyForKey("Fast");
       GlobalConfig.FastBoot       = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("NoEarlyProgress");
+      Prop = BootDict->propertyForKey("NoEarlyProgress");
       GlobalConfig.NoEarlyProgress = IsPropertyNotNullAndTrue(Prop);
 
       if (SpecialBootMode) {
@@ -2184,28 +2171,28 @@ GetEarlyUserSettings (
         DBG("Fast option enabled\n");
       }
 
-      Prop = DictPointer->dictPropertyForKey("NeverHibernate");
+      Prop = BootDict->propertyForKey("NeverHibernate");
       GlobalConfig.NeverHibernate = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("StrictHibernate");
+      Prop = BootDict->propertyForKey("StrictHibernate");
       GlobalConfig.StrictHibernate = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("RtcHibernateAware");
+      Prop = BootDict->propertyForKey("RtcHibernateAware");
       GlobalConfig.RtcHibernateAware = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("HibernationFixup");
+      Prop = BootDict->propertyForKey("HibernationFixup");
       if (Prop) {
         GlobalConfig.HibernationFixup = IsPropertyNotNullAndTrue(Prop); //it will be set automatically
       }
 
-      Prop = DictPointer->dictPropertyForKey("SignatureFixup");
+      Prop = BootDict->propertyForKey("SignatureFixup");
       GlobalConfig.SignatureFixup = IsPropertyNotNullAndTrue(Prop);
 
       //      Prop = GetProperty(DictPointer, "GetLegacyLanAddress");
       //      GetLegacyLanAddress = IsPropertyTrue(Prop);
 
       // Secure boot
-      Prop = DictPointer->dictPropertyForKey("Secure");
+      Prop = BootDict->propertyForKey("Secure");
       if (Prop != NULL) {
         if ( Prop->isFalse() ) {
           // Only disable setup mode, we want always secure boot
@@ -2217,70 +2204,70 @@ GetEarlyUserSettings (
         }
       }
       // Secure boot policy
-      Prop = DictPointer->dictPropertyForKey("Policy");
-      if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-        if ((Prop->stringValue()[0] == 'D') || (Prop->stringValue()[0] == 'd')) {
+      Prop = BootDict->propertyForKey("Policy");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        if ((Prop->getString()->stringValue()[0] == 'D') || (Prop->getString()->stringValue()[0] == 'd')) {
           // Deny all images
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
-        } else if ((Prop->stringValue()[0] == 'A') || (Prop->stringValue()[0] == 'a')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'A') || (Prop->getString()->stringValue()[0] == 'a')) {
           // Allow all images
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
-        } else if ((Prop->stringValue()[0] == 'Q') || (Prop->stringValue()[0] == 'q')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'Q') || (Prop->getString()->stringValue()[0] == 'q')) {
           // Query user
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
-        } else if ((Prop->stringValue()[0] == 'I') || (Prop->stringValue()[0] == 'i')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'I') || (Prop->getString()->stringValue()[0] == 'i')) {
           // Insert
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
-        } else if ((Prop->stringValue()[0] == 'W') || (Prop->stringValue()[0] == 'w')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'W') || (Prop->getString()->stringValue()[0] == 'w')) {
           // White list
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
-        } else if ((Prop->stringValue()[0] == 'B') || (Prop->stringValue()[0] == 'b')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'B') || (Prop->getString()->stringValue()[0] == 'b')) {
           // Black list
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
-        } else if ((Prop->stringValue()[0] == 'U') || (Prop->stringValue()[0] == 'u')) {
+        } else if ((Prop->getString()->stringValue()[0] == 'U') || (Prop->getString()->stringValue()[0] == 'u')) {
           // User policy
           gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
         }
       }
       // Secure boot white list
-      Prop = DictPointer->dictPropertyForKey("WhiteList");
-      if (Prop != NULL && Prop->isArray()) {
+      const TagArray* arrayProp = BootDict->arrayPropertyForKey("WhiteList");
+      if (Prop != NULL) {
         INTN   i;
-        INTN   Count = Prop->arrayContent().size();
+        INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
           gSettings.SecureBootWhiteListCount = 0;
           gSettings.SecureBootWhiteList = (__typeof__(gSettings.SecureBootWhiteList))AllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootWhiteList) {
             for (i = 0; i < Count; i++) {
-              Dict2 = &Prop->arrayContent()[i];
-              if ( !Dict2->isString() ) {
+              const TagStruct* prop2 = &arrayProp->arrayContent()[i];
+              if ( !prop2->isString() ) {
                 MsgLog("MALFORMED PLIST : WhiteList must be an array of string");
                 continue;
               }
-              if ( Dict2->stringValue().notEmpty() ) {
-                gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = SWPrintf("%s", Dict2->stringValue().c_str()).forgetDataWithoutFreeing();
+              if ( prop2->getString()->stringValue().notEmpty() ) {
+                gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = SWPrintf("%s", prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
               }
             }
           }
         }
       }
       // Secure boot black list
-      Prop = DictPointer->dictPropertyForKey("BlackList");
-      if (Prop != NULL && Prop->isArray()) {
+      arrayProp = BootDict->arrayPropertyForKey("BlackList");
+      if (arrayProp != NULL && arrayProp->isArray()) {
         INTN   i;
-        INTN   Count = Prop->arrayContent().size();
+        INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
           gSettings.SecureBootBlackListCount = 0;
           gSettings.SecureBootBlackList = (__typeof__(gSettings.SecureBootBlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
           if (gSettings.SecureBootBlackList) {
             for (i = 0; i < Count; i++) {
-              Dict2 = &Prop->arrayContent()[i];
-              if ( !Dict2->isString() ) {
+              const TagStruct* prop2 = &arrayProp->arrayContent()[i];
+              if ( !prop2->isString() ) {
                 MsgLog("MALFORMED PLIST : BlackList must be an array of string");
                 continue;
               }
-              if ( Dict2->stringValue().notEmpty() ) {
-                gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = SWPrintf("%s", Dict2->stringValue().c_str()).forgetDataWithoutFreeing();
+              if ( prop2->getString()->stringValue().notEmpty() ) {
+                gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = SWPrintf("%s", prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
               }
             }
           }
@@ -2288,21 +2275,21 @@ GetEarlyUserSettings (
       }
 
       // XMP memory profiles
-      Prop = DictPointer->dictPropertyForKey("XMPDetection");
+      Prop = BootDict->propertyForKey("XMPDetection");
       if (Prop != NULL) {
         gSettings.XMPDetection = 0;
         if ( Prop->isFalse() ) {
           gSettings.XMPDetection = -1;
         } else if ( Prop->isString() ) {
-          if ((Prop->stringValue()[0] == 'n') ||
-              (Prop->stringValue()[0] == 'N') ||
-              (Prop->stringValue()[0] == '-')) {
+          if ((Prop->getString()->stringValue()[0] == 'n') ||
+              (Prop->getString()->stringValue()[0] == 'N') ||
+              (Prop->getString()->stringValue()[0] == '-')) {
             gSettings.XMPDetection = -1;
           } else {
-            gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->stringValue().c_str());
+            gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->getString()->stringValue().c_str());
           }
-        } else if (Prop->isInt()) {
-          gSettings.XMPDetection   = Prop->intValue();
+        } else if (Prop->isInt64()) {
+          gSettings.XMPDetection   = Prop->getInt64()->intValue();
         }
         // Check that the setting value is sane
         if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
@@ -2311,12 +2298,12 @@ GetEarlyUserSettings (
       }
 
       // Legacy bios protocol
-      Prop = DictPointer->dictPropertyForKey("Legacy");
+      Prop = BootDict->propertyForKey("Legacy");
       if (Prop != NULL)  {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : Prop property not string in Legacy\n");
         }else{
-          gSettings.LegacyBoot = Prop->stringValue();
+          gSettings.LegacyBoot = Prop->getString()->stringValue();
         }
       } else if (gFirmwareClover) {
         // default for CLOVER EFI boot
@@ -2327,25 +2314,25 @@ GetEarlyUserSettings (
       }
 
       // Entry for LegacyBiosDefault
-      Prop = DictPointer->dictPropertyForKey("LegacyBiosDefaultEntry");
+      Prop = BootDict->propertyForKey("LegacyBiosDefaultEntry");
       if (Prop != NULL) {
         gSettings.LegacyBiosDefaultEntry = (UINT16)GetPropertyAsInteger(Prop, 0); // disabled by default
       }
 
       // Whether or not to draw boot screen
-      Prop = DictPointer->dictPropertyForKey("CustomLogo");
+      Prop = BootDict->propertyForKey("CustomLogo");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
           gSettings.CustomBoot   = CUSTOM_BOOT_APPLE;
-        } else if ((Prop->isString()) && Prop->stringValue().notEmpty()) {
-          if (Prop->stringValue().equalIC("Apple")) {
+        } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+          if (Prop->getString()->stringValue().equalIC("Apple")) {
             gSettings.CustomBoot = CUSTOM_BOOT_APPLE;
-          } else if (Prop->stringValue().equalIC("Alternate")) {
+          } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
             gSettings.CustomBoot = CUSTOM_BOOT_ALT_APPLE;
-          } else if (Prop->stringValue().equalIC("Theme")) {
+          } else if (Prop->getString()->stringValue().equalIC("Theme")) {
             gSettings.CustomBoot = CUSTOM_BOOT_THEME;
           } else {
-            XStringW customLogo = XStringW() = Prop->stringValue();
+            XStringW customLogo = XStringW() = Prop->getString()->stringValue();
             gSettings.CustomBoot = CUSTOM_BOOT_USER;
             if (gSettings.CustomLogo != NULL) {
               delete gSettings.CustomLogo;
@@ -2357,15 +2344,15 @@ GetEarlyUserSettings (
               gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
             }
           }
-        } else if ( Prop->isData()  && Prop->dataLenValue() > 0 ) {
+        } else if ( Prop->isData()  && Prop->getData()->dataLenValue() > 0 ) {
           gSettings.CustomBoot = CUSTOM_BOOT_USER;
           if (gSettings.CustomLogo != NULL) {
             delete gSettings.CustomLogo;
           }
           gSettings.CustomLogo = new XImage;
-          gSettings.CustomLogo->FromPNG(Prop->dataValue(), Prop->dataLenValue());
+          gSettings.CustomLogo->FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
           if (gSettings.CustomLogo->isEmpty()) {
-            DBG("Custom boot logo not decoded from data!\n"/*, Prop->stringValue().c_str()*/);
+            DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
             gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
           }
         } else {
@@ -2379,15 +2366,15 @@ GetEarlyUserSettings (
 
     //*** SYSTEM ***
 
-    DictPointer = Dict->dictPropertyForKey("SystemParameters");
-    if (DictPointer != NULL) {
+    const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
+    if (SystemParametersDict != NULL) {
       // Inject kexts
-      Prop = DictPointer->dictPropertyForKey("InjectKexts");
+      const TagStruct* Prop = SystemParametersDict->propertyForKey("InjectKexts");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
           gSettings.WithKexts            = TRUE;
         } else if ((Prop->isString()) &&
-                   (Prop->stringValue().equalIC("Detect"))) {
+                   (Prop->getString()->stringValue().equalIC("Detect"))) {
           //   gSettings.WithKexts            = TRUE;
           gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
@@ -2396,26 +2383,26 @@ GetEarlyUserSettings (
       }
 
       // No caches - obsolete
-      Prop = DictPointer->dictPropertyForKey("NoCaches");
+      Prop = SystemParametersDict->propertyForKey("NoCaches");
       if (IsPropertyNotNullAndTrue(Prop)) {
         gSettings.NoCaches = TRUE;
       }
       //test float
-      Prop = DictPointer->dictPropertyForKey("BlueValue");
+      Prop = SystemParametersDict->propertyForKey("BlueValue");
       float tmpF = GetPropertyFloat(Prop, 1.2f);
       DBG(" get BlueValue=%f\n", tmpF);
       
     }
 
     // KernelAndKextPatches
-    DictPointer = Dict->dictPropertyForKey("KernelAndKextPatches");
-    if (DictPointer != NULL) {
-      FillinKextPatches(&gSettings.KernelAndKextPatches, DictPointer);
+    const TagDict* KernelAndKextPatchesDict = CfgDict->dictPropertyForKey("KernelAndKextPatches");
+    if (KernelAndKextPatchesDict != NULL) {
+      FillinKextPatches(&gSettings.KernelAndKextPatches, KernelAndKextPatchesDict);
     }
 
-    DictPointer = Dict->dictPropertyForKey("GUI");
-    if (DictPointer != NULL) {
-      Prop = DictPointer->dictPropertyForKey("Timezone");
+    const TagDict* GUIDict = CfgDict->dictPropertyForKey("GUI");
+    if (GUIDict != NULL) {
+      const TagStruct* Prop = GUIDict->propertyForKey("Timezone");
       GlobalConfig.Timezone = (INT32)GetPropertyAsInteger(Prop, GlobalConfig.Timezone);
       //initialize Daylight when we know timezone
       EFI_TIME          Now;
@@ -2425,10 +2412,10 @@ GetEarlyUserSettings (
       if (NowHour >= 24 ) NowHour -= 24;
       ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
 
-      Prop = DictPointer->dictPropertyForKey("Theme");
-      if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-        ThemeX.Theme.takeValueFrom(Prop->stringValue());
-        GlobalConfig.Theme.takeValueFrom(Prop->stringValue());
+      Prop = GUIDict->propertyForKey("Theme");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        ThemeX.Theme.takeValueFrom(Prop->getString()->stringValue());
+        GlobalConfig.Theme.takeValueFrom(Prop->getString()->stringValue());
         DBG("Default theme: %ls\n", GlobalConfig.Theme.wc_str());
         OldChosenTheme = 0xFFFF; //default for embedded
         for (UINTN i = 0; i < ThemesNum; i++) {
@@ -2440,50 +2427,50 @@ GetEarlyUserSettings (
         }
       }
       // get embedded theme property even when starting with other themes, as they may be changed later
-      Prop = DictPointer->dictPropertyForKey("EmbeddedThemeType");
-      if (Prop && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-        if (Prop->stringValue().equalIC("Dark")) {
+      Prop = GUIDict->propertyForKey("EmbeddedThemeType");
+      if (Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        if (Prop->getString()->stringValue().equalIC("Dark")) {
           ThemeX.DarkEmbedded = TRUE;
           //ThemeX.Font = FONT_GRAY;
-        } else if (Prop->stringValue().equalIC("Light")) {
+        } else if (Prop->getString()->stringValue().equalIC("Light")) {
           ThemeX.DarkEmbedded = FALSE;
           //ThemeX.Font = FONT_ALFA;
-        } else if (Prop->stringValue().equalIC("Daytime")) {
+        } else if (Prop->getString()->stringValue().equalIC("Daytime")) {
           ThemeX.DarkEmbedded = !ThemeX.Daylight;
           //ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
         }
       }
-      Prop = DictPointer->dictPropertyForKey("PlayAsync"); //PlayAsync
+      Prop = GUIDict->propertyForKey("PlayAsync"); //PlayAsync
       gSettings.PlayAsync = IsPropertyNotNullAndTrue(Prop);
 
       // CustomIcons
-      Prop = DictPointer->dictPropertyForKey("CustomIcons");
+      Prop = GUIDict->propertyForKey("CustomIcons");
       GlobalConfig.CustomIcons = IsPropertyNotNullAndTrue(Prop);
-      Prop = DictPointer->dictPropertyForKey("TextOnly");
+      Prop = GUIDict->propertyForKey("TextOnly");
       GlobalConfig.TextOnly = IsPropertyNotNullAndTrue(Prop);
-      Prop = DictPointer->dictPropertyForKey("ShowOptimus");
+      Prop = GUIDict->propertyForKey("ShowOptimus");
       GlobalConfig.ShowOptimus = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("ScreenResolution");
+      Prop = GUIDict->propertyForKey("ScreenResolution");
       if (Prop != NULL) {
-        if ((Prop->isString()) && Prop->stringValue().notEmpty()) {
-          GlobalConfig.ScreenResolution.takeValueFrom(Prop->stringValue());
+        if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+          GlobalConfig.ScreenResolution.takeValueFrom(Prop->getString()->stringValue());
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("ConsoleMode");
+      Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
-        if (Prop->isInt()) {
-          GlobalConfig.ConsoleMode = Prop->intValue();
-        } else if ((Prop->isString()) && Prop->stringValue().notEmpty()) {
-          if ( Prop->stringValue().contains("Max") ) {
+        if (Prop->isInt64()) {
+          GlobalConfig.ConsoleMode = Prop->getInt64()->intValue();
+        } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+          if ( Prop->getString()->stringValue().contains("Max") ) {
             GlobalConfig.ConsoleMode = -1;
             DBG("ConsoleMode will be set to highest mode\n");
-          } else if ( Prop->stringValue().contains("Min") ) {
+          } else if ( Prop->getString()->stringValue().contains("Min") ) {
             GlobalConfig.ConsoleMode = -2;
             DBG("ConsoleMode will be set to lowest mode\n");
           } else {
-            GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->stringValue());
+            GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->getString()->stringValue());
           }
         }
         if (GlobalConfig.ConsoleMode > 0) {
@@ -2491,50 +2478,50 @@ GetEarlyUserSettings (
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("Language");
+      Prop = GUIDict->propertyForKey("Language");
       if (Prop != NULL) {
-        gSettings.Language = Prop->stringValue();
-        if ( Prop->stringValue().contains("en") ) {
+        gSettings.Language = Prop->getString()->stringValue();
+        if ( Prop->getString()->stringValue().contains("en") ) {
           gLanguage = english;
           GlobalConfig.Codepage = 0xC0;
           GlobalConfig.CodepageSize = 0;
-        } else if ( Prop->stringValue().contains("ru")) {
+        } else if ( Prop->getString()->stringValue().contains("ru")) {
           gLanguage = russian;
           GlobalConfig.Codepage = 0x410;
           GlobalConfig.CodepageSize = 0x40;
-        } else if ( Prop->stringValue().contains("ua")) {
+        } else if ( Prop->getString()->stringValue().contains("ua")) {
           gLanguage = ukrainian;
           GlobalConfig.Codepage = 0x400;
           GlobalConfig.CodepageSize = 0x60;
-        } else if ( Prop->stringValue().contains("fr")) {
+        } else if ( Prop->getString()->stringValue().contains("fr")) {
           gLanguage = french; //default is extended latin
-        } else if ( Prop->stringValue().contains("it")) {
+        } else if ( Prop->getString()->stringValue().contains("it")) {
           gLanguage = italian;
-        } else if ( Prop->stringValue().contains("es")) {
+        } else if ( Prop->getString()->stringValue().contains("es")) {
           gLanguage = spanish;
-        } else if ( Prop->stringValue().contains("pt")) {
+        } else if ( Prop->getString()->stringValue().contains("pt")) {
           gLanguage = portuguese;
-        } else if ( Prop->stringValue().contains("br")) {
+        } else if ( Prop->getString()->stringValue().contains("br")) {
           gLanguage = brasil;
-        } else if ( Prop->stringValue().contains("de")) {
+        } else if ( Prop->getString()->stringValue().contains("de")) {
           gLanguage = german;
-        } else if ( Prop->stringValue().contains("nl")) {
+        } else if ( Prop->getString()->stringValue().contains("nl")) {
           gLanguage = dutch;
-        } else if ( Prop->stringValue().contains("pl")) {
+        } else if ( Prop->getString()->stringValue().contains("pl")) {
           gLanguage = polish;
-        } else if ( Prop->stringValue().contains("cz")) {
+        } else if ( Prop->getString()->stringValue().contains("cz")) {
           gLanguage = czech;
-        } else if ( Prop->stringValue().contains("hr")) {
+        } else if ( Prop->getString()->stringValue().contains("hr")) {
           gLanguage = croatian;
-        } else if ( Prop->stringValue().contains("id")) {
+        } else if ( Prop->getString()->stringValue().contains("id")) {
           gLanguage = indonesian;
-        } else if ( Prop->stringValue().contains("zh_CN")) {
+        } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
           gLanguage = chinese;
           GlobalConfig.Codepage = 0x3400;
           GlobalConfig.CodepageSize = 0x19C0;
-        } else if ( Prop->stringValue().contains("ro")) {
+        } else if ( Prop->getString()->stringValue().contains("ro")) {
           gLanguage = romanian;
-        } else if ( Prop->stringValue().contains("ko")) {
+        } else if ( Prop->getString()->stringValue().contains("ko")) {
           gLanguage = korean;
           GlobalConfig.Codepage = 0x1100;
           GlobalConfig.CodepageSize = 0x100;
@@ -2542,106 +2529,106 @@ GetEarlyUserSettings (
       }
 
 //      if (gSettings.Language != NULL) { // gSettings.Language != NULL cannot be false because gSettings.Language is dclared as CHAR8 Language[16]; Must we replace by gSettings.Language[0] != NULL
-        Prop = DictPointer->dictPropertyForKey("KbdPrevLang");
-        if (Prop != NULL) {
-          gSettings.KbdPrevLang = IsPropertyNotNullAndTrue(Prop);
-        }
+      Prop = GUIDict->propertyForKey("KbdPrevLang");
+      if (Prop != NULL) {
+        gSettings.KbdPrevLang = IsPropertyNotNullAndTrue(Prop);
+      }
 //      }
 
-      Prop = DictPointer->dictPropertyForKey("Mouse");
-      if (Prop != NULL) {
-        Dict2 = Prop->dictPropertyForKey("Speed");
-        if (Dict2 != NULL) {
-          gSettings.PointerSpeed = (INT32)GetPropertyAsInteger(Dict2, 0);
+      const TagDict* MouseDict = GUIDict->dictPropertyForKey("Mouse");
+      if (MouseDict != NULL) {
+        const TagStruct* prop = MouseDict->propertyForKey("Speed");
+        if (prop != NULL) {
+          gSettings.PointerSpeed = (INT32)GetPropertyAsInteger(prop, 0);
           gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
         }
         //but we can disable mouse even if there was positive speed
-        Dict2 = Prop->dictPropertyForKey("Enabled");
-        if (IsPropertyNotNullAndFalse(Dict2)) {
+        prop = MouseDict->propertyForKey("Enabled");
+        if (IsPropertyNotNullAndFalse(prop)) {
           gSettings.PointerEnabled = FALSE;
         }
 
-        Dict2 = Prop->dictPropertyForKey("Mirror");
-        if (IsPropertyNotNullAndTrue(Dict2)) {
+        prop = MouseDict->propertyForKey("Mirror");
+        if (IsPropertyNotNullAndTrue(prop)) {
           gSettings.PointerMirror = TRUE;
         }
 
-        Dict2 = Prop->dictPropertyForKey("DoubleClickTime");
-        if (Dict2 != NULL) {
-          gSettings.DoubleClickTime = (UINT64)GetPropertyAsInteger(Dict2, 500);
+        prop = MouseDict->propertyForKey("DoubleClickTime");
+        if (prop != NULL) {
+          gSettings.DoubleClickTime = (UINT64)GetPropertyAsInteger(prop, 500);
         }
       }
       // hide by name/uuid. Array of string
-      Prop = DictPointer->dictPropertyForKey("Hide");
-      if (Prop != NULL) {
+      const TagArray* HideArray = GUIDict->arrayPropertyForKey("Hide");
+      if (HideArray != NULL) {
         INTN   i;
-        INTN   Count = Prop->arrayContent().size();
+        INTN   Count = HideArray->arrayContent().size();
         if (Count > 0) {
           gSettings.HVHideStrings.setEmpty();
           for (i = 0; i < Count; i++) {
-            Dict2 = &Prop->arrayContent()[i];
-            if ( !Dict2->isString()) {
+            const TagStruct* prop2 = &HideArray->arrayContent()[i];
+            if ( !prop2->isString()) {
               MsgLog("MALFORMED PLIST : Hide must be an array of string");
               continue;
             }
-            if ( Dict2->stringValue().notEmpty() ) {
-              gSettings.HVHideStrings.Add(Dict2->stringValue());
-              DBG("Hiding entries with string %s\n", Dict2->stringValue().c_str());
+            if ( prop2->getString()->stringValue().notEmpty() ) {
+              gSettings.HVHideStrings.Add(prop2->getString()->stringValue());
+              DBG("Hiding entries with string %s\n", prop2->getString()->stringValue().c_str());
             }
           }
         }
       }
       gSettings.LinuxScan = TRUE;
       // Disable loader scan
-      Prop = DictPointer->dictPropertyForKey("Scan");
+      Prop = GUIDict->propertyForKey("Scan");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndFalse(Prop)) {
           gSettings.DisableEntryScan = TRUE;
           gSettings.DisableToolScan  = TRUE;
           GlobalConfig.NoLegacy      = TRUE;
         } else if (Prop->isDict()) {
-          Dict2 = Prop->dictPropertyForKey("Entries");
-          if (IsPropertyNotNullAndFalse(Dict2)) {
+          const TagStruct* prop2 = Prop->getDict()->propertyForKey("Entries");
+          if (IsPropertyNotNullAndFalse(prop2)) {
             gSettings.DisableEntryScan = TRUE;
           }
 
-          Dict2 = Prop->dictPropertyForKey("Tool");
-          if (IsPropertyNotNullAndFalse(Dict2)) {
+          prop2 = Prop->getDict()->propertyForKey("Tool");
+          if (IsPropertyNotNullAndFalse(prop2)) {
             gSettings.DisableToolScan = TRUE;
           }
 
-          Dict2 = Prop->dictPropertyForKey("Linux");
-          gSettings.LinuxScan = !IsPropertyNotNullAndFalse(Dict2);
+          prop2 = Prop->getDict()->propertyForKey("Linux");
+          gSettings.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
 
-          Dict2 = Prop->dictPropertyForKey("Legacy");
-          if (Dict2 != NULL) {
-            if (Dict2->isFalse()) {
+          prop2 = Prop->getDict()->propertyForKey("Legacy");
+          if (prop2 != NULL) {
+            if (prop2->isFalse()) {
               GlobalConfig.NoLegacy = TRUE;
-            } else if ((Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-              if ((Dict2->stringValue()[0] == 'N') || (Dict2->stringValue()[0] == 'n')) {
+            } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
+              if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
                 GlobalConfig.NoLegacy = TRUE;
-              } else if ((Dict2->stringValue()[0] == 'F') || (Dict2->stringValue()[0] == 'f')) {
+              } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
                 GlobalConfig.LegacyFirst = TRUE;
               }
             }
           }
 
-          Dict2 = Prop->dictPropertyForKey("Kernel");
-          if (Dict2 != NULL) {
-            if (Dict2->isFalse()) {
+          prop2 = Prop->getDict()->propertyForKey("Kernel");
+          if (prop2 != NULL) {
+            if (prop2->isFalse()) {
               gSettings.KernelScan = KERNEL_SCAN_NONE;
-            } else if ((Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-              if ((Dict2->stringValue()[0] == 'N') || (Dict2->stringValue()[0] == 'n')) {
-                gSettings.KernelScan = ( Dict2->stringValue().length() > 1  &&  (Dict2->stringValue()[1] == 'E' || Dict2->stringValue()[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
-              } else if ((Dict2->stringValue()[0] == 'O') || (Dict2->stringValue()[0] == 'o')) {
+            } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
+              if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
+                gSettings.KernelScan = ( prop2->getString()->stringValue().length() > 1  &&  (prop2->getString()->stringValue()[1] == 'E' || prop2->getString()->stringValue()[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
+              } else if ((prop2->getString()->stringValue()[0] == 'O') || (prop2->getString()->stringValue()[0] == 'o')) {
                 gSettings.KernelScan = KERNEL_SCAN_OLDEST;
-              } else if ((Dict2->stringValue()[0] == 'F') || (Dict2->stringValue()[0] == 'f')) {
+              } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
                 gSettings.KernelScan = KERNEL_SCAN_FIRST;
-              } else if ((Dict2->stringValue()[0] == 'L') || (Dict2->stringValue()[0] == 'l')) {
+              } else if ((prop2->getString()->stringValue()[0] == 'L') || (prop2->getString()->stringValue()[0] == 'l')) {
                 gSettings.KernelScan = KERNEL_SCAN_LAST;
-              } else if ((Dict2->stringValue()[0] == 'M') || (Dict2->stringValue()[0] == 'm')) {
+              } else if ((prop2->getString()->stringValue()[0] == 'M') || (prop2->getString()->stringValue()[0] == 'm')) {
                 gSettings.KernelScan = KERNEL_SCAN_MOSTRECENT;
-              } else if ((Dict2->stringValue()[0] == 'E') || (Dict2->stringValue()[0] == 'e')) {
+              } else if ((prop2->getString()->stringValue()[0] == 'E') || (prop2->getString()->stringValue()[0] == 'e')) {
                 gSettings.KernelScan = KERNEL_SCAN_EARLIEST;
               }
             }
@@ -2649,21 +2636,15 @@ GetEarlyUserSettings (
         }
       }
       // Custom entries
-      Dict2 = DictPointer->dictPropertyForKey("Custom");
-      if (Dict2 != NULL) {
-        Prop = Dict2->dictPropertyForKey("Entries"); // Entries is an array of dict
+      const TagDict* CustomDict2 = GUIDict->dictPropertyForKey("Custom");
+      if (CustomDict2 != NULL) {
+        const TagArray* arrayProp = CustomDict2->arrayPropertyForKey("Entries"); // Entries is an array of dict
         if (Prop != NULL) {
           INTN   i;
-          INTN   Count = Prop->arrayContent().size();
-          const TagStruct* Dict3;
-
+          INTN   Count = arrayProp->arrayContent().size();
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
-              Dict3 = &Prop->arrayContent()[i];
-              if ( !Dict3->isDict() ) {
-                MsgLog("MALFORMED PLIST : Entries must be an array of dict");
-                continue;
-              }
+              const TagDict* Dict3 = arrayProp->dictElementAt(i, "Custom/Entries"_XS8);
               // Allocate an entry
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
               // Fill it in
@@ -2674,20 +2655,14 @@ GetEarlyUserSettings (
           }
         }
 
-        Prop = Dict2->dictPropertyForKey("Legacy"); // is an array of dict
-        if (Prop != NULL) {
+        const TagArray* LegacyArray = CustomDict2->arrayPropertyForKey("Legacy"); // is an array of dict
+        if (LegacyArray != NULL) {
           CUSTOM_LEGACY_ENTRY *Entry;
           INTN   i;
-          INTN   Count = Prop->arrayContent().size();
-          const TagStruct* Dict3;
-
+          INTN   Count = LegacyArray->arrayContent().size();
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
-              Dict3 = &Prop->arrayContent()[i];
-              if ( !Dict3->isDict() ) {
-                MsgLog("MALFORMED PLIST : Entries must be an array of dict");
-                continue;
-              }
+              const TagDict* Dict3 = LegacyArray->dictElementAt(i, "Legacy"_XS8);
               // Allocate an entry
               Entry = new CUSTOM_LEGACY_ENTRY;
               if (Entry) {
@@ -2700,15 +2675,14 @@ GetEarlyUserSettings (
           }
         }
 
-        Prop = Dict2->dictPropertyForKey("Tool"); // is an array of dict
-        if (Prop != NULL) {
+        const TagArray* ToolArray = CustomDict2->arrayPropertyForKey("Tool"); // is an array of dict
+        if (ToolArray != NULL) {
           CUSTOM_TOOL_ENTRY *Entry;
           INTN   i;
-          INTN   Count = Prop->arrayContent().size();
-          const TagStruct* Dict3;
+          INTN   Count = ToolArray->arrayContent().size();
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
-              Dict3 = &Prop->arrayContent()[i];
+              const TagDict* Dict3 = ToolArray->dictElementAt(i, "Tool"_XS8);
               if ( !Dict3->isDict() ) {
                 MsgLog("MALFORMED PLIST : Entries must be an array of dict");
                 continue;
@@ -2727,15 +2701,15 @@ GetEarlyUserSettings (
       }
     }
 
-    DictPointer = Dict->dictPropertyForKey("Graphics");
-    if (DictPointer != NULL) {
+    const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
+    if (GraphicsDict != NULL) {
 
-      Prop                              = DictPointer->dictPropertyForKey("PatchVBios");
+      const TagStruct* Prop             = GraphicsDict->propertyForKey("PatchVBios");
       gSettings.PatchVBios              = IsPropertyNotNullAndTrue(Prop);
 
       gSettings.PatchVBiosBytesCount    = 0;
 
-      Dict2 = DictPointer->dictPropertyForKey("PatchVBiosBytes"); // array of dict
+      const TagArray* Dict2 = GraphicsDict->arrayPropertyForKey("PatchVBiosBytes"); // array of dict
       if (Dict2 != NULL) {
         INTN   i;
         INTN   Count = Dict2->arrayContent().size();
@@ -2750,16 +2724,12 @@ GetEarlyUserSettings (
 
           // get all entries
           for (i = 0; i < Count; i++) {
-            Prop = &Prop->arrayContent()[i];
-            if ( !Dict2->isDict() ) {
-              MsgLog("MALFORMED PLIST : PatchVBiosBytes must be an array of dict");
-              continue;
-            }
+            const TagDict* dict3 = Dict2->dictElementAt(i, "Graphics/PatchVBiosBytes"_XS8);
             Valid = TRUE;
             // read entry
             VBiosPatch          = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
-            VBiosPatch->Find    = GetDataSetting (Prop, "Find",    &FindSize);
-            VBiosPatch->Replace = GetDataSetting (Prop, "Replace", &ReplaceSize);
+            VBiosPatch->Find    = GetDataSetting (dict3, "Find",    &FindSize);
+            VBiosPatch->Replace = GetDataSetting (dict3, "Replace", &ReplaceSize);
 
             if (VBiosPatch->Find == NULL || FindSize == 0) {
               Valid = FALSE;
@@ -2801,111 +2771,111 @@ GetEarlyUserSettings (
         }
       }
 
-      GetEDIDSettings(DictPointer);
+      GetEDIDSettings(GraphicsDict);
     }
 
-    DictPointer = Dict->dictPropertyForKey("DisableDrivers"); // array of string
-    if (DictPointer != NULL) {
+    const TagArray* DisableDriversArray = CfgDict->arrayPropertyForKey("DisableDrivers"); // array of string
+    if (DisableDriversArray != NULL) {
       INTN   i;
-      INTN   Count = DictPointer->arrayContent().size();
+      INTN   Count = DisableDriversArray->arrayContent().size();
       if (Count > 0) {
         gSettings.BlackListCount = 0;
         gSettings.BlackList = (__typeof__(gSettings.BlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
 
         for (i = 0; i < Count; i++) {
-          Prop = &DictPointer->arrayContent()[i];
+          const TagStruct* Prop = &DisableDriversArray->arrayContent()[i];
           if ( !Prop->isString()) {
             MsgLog("MALFORMED PLIST : DisableDrivers must be an array of string");
             continue;
           }
-          gSettings.BlackList[gSettings.BlackListCount++] = SWPrintf("%s", Prop->stringValue().c_str()).forgetDataWithoutFreeing();
+          gSettings.BlackList[gSettings.BlackListCount++] = SWPrintf("%s", Prop->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
         }
       }
     }
 
-    DictPointer            = Dict->dictPropertyForKey(       "Devices");
-    if (DictPointer != NULL) {
-      Dict2                = DictPointer->dictPropertyForKey("Audio");
+    const TagDict* DevicesDict = CfgDict->dictPropertyForKey("Devices");
+    if (DevicesDict != NULL) {
+      const TagDict* Dict2 = DevicesDict->dictPropertyForKey("Audio");
       if (Dict2 != NULL) {
         // HDA
-        Prop               = Dict2->dictPropertyForKey(      "ResetHDA");
+        const TagStruct* Prop = Dict2->propertyForKey("ResetHDA");
         gSettings.ResetHDA = IsPropertyNotNullAndTrue(Prop);
       }
     }
 
-    DictPointer = Dict->dictPropertyForKey("RtVariables");
-    if (DictPointer != NULL) {
-      Prop = DictPointer->dictPropertyForKey("ROM");
+    const TagDict* RtVariablesDict = CfgDict->dictPropertyForKey("RtVariables");
+    if (RtVariablesDict != NULL) {
+      const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in ROM\n");
         }else{
-          if ((Prop->stringValue().equalIC("UseMacAddr0")) ||
-              (Prop->stringValue().equalIC("UseMacAddr1"))) {
+          if ((Prop->getString()->stringValue().equalIC("UseMacAddr0")) ||
+              (Prop->getString()->stringValue().equalIC("UseMacAddr1"))) {
             GetLegacyLanAddress = TRUE;
           }
         }
       }
     }
 
-    DictPointer = Dict->dictPropertyForKey("Quirks");
+    const TagDict* DictPointer = CfgDict->dictPropertyForKey("Quirks");
     if (DictPointer != NULL) {
-      Prop               = DictPointer->dictPropertyForKey( "AvoidRuntimeDefrag");
+      const TagStruct* Prop;
+      Prop               = DictPointer->propertyForKey( "AvoidRuntimeDefrag");
       gQuirks.AvoidRuntimeDefrag = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
-      Prop               = DictPointer->dictPropertyForKey( "DevirtualiseMmio");
+      Prop               = DictPointer->propertyForKey( "DevirtualiseMmio");
       gQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
-      Prop               = DictPointer->dictPropertyForKey( "DisableSingleUser");
+      Prop               = DictPointer->propertyForKey( "DisableSingleUser");
       gQuirks.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.DisableSingleUser? QUIRK_SU:0;
-      Prop               = DictPointer->dictPropertyForKey( "DisableVariableWrite");
+      Prop               = DictPointer->propertyForKey( "DisableVariableWrite");
       gQuirks.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.DisableVariableWrite? QUIRK_VAR:0;
-      Prop               = DictPointer->dictPropertyForKey( "DiscardHibernateMap");
+      Prop               = DictPointer->propertyForKey( "DiscardHibernateMap");
       gQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
-      Prop               = DictPointer->dictPropertyForKey( "EnableSafeModeSlide");
+      Prop               = DictPointer->propertyForKey( "EnableSafeModeSlide");
       gQuirks.EnableSafeModeSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
-      Prop               = DictPointer->dictPropertyForKey( "EnableWriteUnprotector");
+      Prop               = DictPointer->propertyForKey( "EnableWriteUnprotector");
       gQuirks.EnableWriteUnprotector = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
-      Prop               = DictPointer->dictPropertyForKey( "ForceExitBootServices");
+      Prop               = DictPointer->propertyForKey( "ForceExitBootServices");
       gQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.ForceExitBootServices? QUIRK_EXIT:0;
-      Prop               = DictPointer->dictPropertyForKey( "ProtectMemoryRegions");
+      Prop               = DictPointer->propertyForKey( "ProtectMemoryRegions");
       gQuirks.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
-      Prop               = DictPointer->dictPropertyForKey( "ProtectSecureBoot");
+      Prop               = DictPointer->propertyForKey( "ProtectSecureBoot");
       gQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.ProtectMemoryRegions? QUIRK_SECURE:0;
-      Prop               = DictPointer->dictPropertyForKey( "ProtectUefiServices");
+      Prop               = DictPointer->propertyForKey( "ProtectUefiServices");
       gQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.ProtectUefiServices? QUIRK_UEFI:0;
-      Prop               = DictPointer->dictPropertyForKey( "ProvideConsoleGopEnable");
+      Prop               = DictPointer->propertyForKey( "ProvideConsoleGopEnable");
       gProvideConsoleGopEnable = IsPropertyNotNullAndTrue(Prop);
-      Prop               = DictPointer->dictPropertyForKey( "ProvideCustomSlide");
+      Prop               = DictPointer->propertyForKey( "ProvideCustomSlide");
       gQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
-      Prop               = DictPointer->dictPropertyForKey( "ProvideMaxSlide");
+      Prop               = DictPointer->propertyForKey( "ProvideMaxSlide");
       gQuirks.ProvideMaxSlide = GetPropertyAsInteger(Prop, 0);
-      Prop               = DictPointer->dictPropertyForKey( "RebuildAppleMemoryMap");
+      Prop               = DictPointer->propertyForKey( "RebuildAppleMemoryMap");
       gQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
-      Prop               = DictPointer->dictPropertyForKey( "SetupVirtualMap");
+      Prop               = DictPointer->propertyForKey( "SetupVirtualMap");
       gQuirks.SetupVirtualMap = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.SetupVirtualMap? QUIRK_VIRT:0;
-      Prop               = DictPointer->dictPropertyForKey( "SignalAppleOS");
+      Prop               = DictPointer->propertyForKey( "SignalAppleOS");
       gQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.SignalAppleOS? QUIRK_OS:0;
-      Prop               = DictPointer->dictPropertyForKey( "SyncRuntimePermissions");
+      Prop               = DictPointer->propertyForKey( "SyncRuntimePermissions");
       gQuirks.SyncRuntimePermissions = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
-      Dict2 = DictPointer->dictPropertyForKey("MmioWhitelist"); // array of dict
+      const TagArray* Dict2 = DictPointer->arrayPropertyForKey("MmioWhitelist"); // array of dict
       if (Dict2 != NULL) {
         INTN   Count = Dict2->arrayContent().size();
-        const TagStruct* Dict3;
         //OC_SCHEMA_INTEGER_IN  ("Address", OC_MMIO_WL_STRUCT, Address),
         //OC_SCHEMA_STRING_IN   ("Comment", OC_MMIO_WL_STRUCT, Comment),
         //OC_SCHEMA_BOOLEAN_IN  ("Enabled", OC_MMIO_WL_STRUCT, Enabled),
@@ -2915,26 +2885,22 @@ GetEarlyUserSettings (
           gQuirks.MmioWhitelistEnabled = (__typeof__(gQuirks.MmioWhitelistEnabled))AllocatePool(sizeof(BOOLEAN) * Count);
           gQuirks.MmioWhitelistSize = 0;
           for (INTN i = 0; i < Count; i++) {
-            Dict3 = &Dict2->arrayContent()[i];
-            if ( !Dict3->isDict() ) {
-              MsgLog("MALFORMED PLIST : MmioWhitelist must be an array of dict");
-              continue;
-            }
+            const TagDict* Dict3 = Dict2->dictElementAt(i, "MmioWhitelist"_XS8);
 
             gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize] = (__typeof__(char *))AllocateZeroPool(256);
             
-            Prop = Dict3->dictPropertyForKey("Comment");
-            if (Prop != NULL && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-              snprintf(gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize], 255, "%s", Prop->stringValue().c_str());
+            const TagStruct* Prop2 = Dict3->propertyForKey("Comment");
+            if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
+              snprintf(gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize], 255, "%s", Prop2->getString()->stringValue().c_str());
             } else {
               snprintf(gQuirks.MmioWhitelistLabels[gQuirks.MmioWhitelistSize], 255, " (NoLabel)");
             }
             
-            Prop = Dict2->dictPropertyForKey("Address");
-            if (Prop != 0) {
-              gQuirks.MmioWhitelist[gQuirks.MmioWhitelistSize] = GetPropertyAsInteger(Prop, 0);
-              Prop = Dict2->dictPropertyForKey("Enabled");
-              gQuirks.MmioWhitelistEnabled[gQuirks.MmioWhitelistSize] = IsPropertyNotNullAndTrue(Prop);
+            Prop2 = Dict3->propertyForKey("Address");
+            if (Prop2 != 0) {
+              gQuirks.MmioWhitelist[gQuirks.MmioWhitelistSize] = GetPropertyAsInteger(Prop2, 0);
+              Prop2 = Dict3->propertyForKey("Enabled");
+              gQuirks.MmioWhitelistEnabled[gQuirks.MmioWhitelistSize] = IsPropertyNotNullAndTrue(Prop2);
             }
             gQuirks.MmioWhitelistSize++;
           }
@@ -3078,7 +3044,7 @@ XStringW GetBundleVersion(const XStringW& FullName)
   XStringW        CFBundleVersion;
   XStringW        InfoPlistPath;
   CHAR8*          InfoPlistPtr = NULL;
-  TagStruct*      InfoPlistDict = NULL;
+  TagDict*      InfoPlistDict = NULL;
   const TagStruct*      Prop = NULL;
   UINTN           Size;
 
@@ -3089,11 +3055,11 @@ XStringW GetBundleVersion(const XStringW& FullName)
     Status = egLoadFile(SelfRootDir, FullName.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
-    Status = ParseXML(InfoPlistPtr, &InfoPlistDict, (UINT32)Size);
+    Status = ParseXML(InfoPlistPtr, &InfoPlistDict, Size);
     if(!EFI_ERROR(Status)) {
-      Prop = InfoPlistDict->dictPropertyForKey("CFBundleVersion");
-      if (Prop != NULL && Prop->isString() && Prop->stringValue().notEmpty()) {
-        CFBundleVersion = SWPrintf("%s", Prop->stringValue().c_str());
+      Prop = InfoPlistDict->propertyForKey("CFBundleVersion");
+      if (Prop != NULL && Prop->isString() && Prop->getString()->stringValue().notEmpty()) {
+        CFBundleVersion = SWPrintf("%s", Prop->getString()->stringValue().c_str());
       }
     }
   }
@@ -3244,11 +3210,12 @@ GetListOfThemes ()
 }
 
 EFI_STATUS
-XTheme::GetThemeTagSettings(const TagStruct* DictPointer)
+XTheme::GetThemeTagSettings(const TagDict* DictPointer)
 {
-  const TagStruct* Dict;
-  const TagStruct* Dict2;
-  const TagStruct* Dict3;
+  const TagDict* Dict;
+  const TagDict* Dict3;
+  const TagStruct* Prop;
+  const TagStruct* Prop2;
 
   //fill default to have an ability change theme
   //assume Xtheme is already inited by embedded values
@@ -3264,269 +3231,270 @@ XTheme::GetThemeTagSettings(const TagStruct* DictPointer)
     return EFI_SUCCESS;
   }
 
-  Dict    = DictPointer->dictPropertyForKey("BootCampStyle");
-  BootCampStyle = IsPropertyNotNullAndTrue(Dict);
+  Prop    = DictPointer->propertyForKey("BootCampStyle");
+  BootCampStyle = IsPropertyNotNullAndTrue(Prop);
 
   Dict    = DictPointer->dictPropertyForKey("Background");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("Type");
-    if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-      if ((Dict2->stringValue()[0] == 'S') || (Dict2->stringValue()[0] == 's')) {
+    Prop = Dict->propertyForKey("Type");
+    if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+      if ((Prop->getString()->stringValue()[0] == 'S') || (Prop->getString()->stringValue()[0] == 's')) {
         BackgroundScale = imScale;
-      } else if ((Dict2->stringValue()[0] == 'T') || (Dict2->stringValue()[0] == 't')) {
+      } else if ((Prop->getString()->stringValue()[0] == 'T') || (Prop->getString()->stringValue()[0] == 't')) {
         BackgroundScale = imTile;
       }
     }
 
-    Dict2 = Dict->dictPropertyForKey("Path");
-    if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-      BackgroundName = Dict2->stringValue();
+    Prop = Dict->propertyForKey("Path");
+    if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+      BackgroundName = Prop->getString()->stringValue();
     }
 
-    Dict2 = Dict->dictPropertyForKey("Sharp");
-    BackgroundSharp  = GetPropertyAsInteger(Dict2, BackgroundSharp);
+    Prop = Dict->propertyForKey("Sharp");
+    BackgroundSharp  = GetPropertyAsInteger(Prop, BackgroundSharp);
 
-    Dict2 = Dict->dictPropertyForKey("Dark");
-    BackgroundDark   = IsPropertyNotNullAndTrue(Dict2);
+    Prop = Dict->propertyForKey("Dark");
+    BackgroundDark   = IsPropertyNotNullAndTrue(Prop);
   }
 
-  Dict = DictPointer->dictPropertyForKey("Banner");
-  if (Dict != NULL) {
+  Prop = DictPointer->propertyForKey("Banner");
+  if (Prop != NULL) {
     // retain for legacy themes.
-    if ( Dict->isString() && Dict->stringValue().notEmpty() ) {
-      BannerFileName = Dict->stringValue();
+    if ( Prop->isString() && Prop->getString()->stringValue().notEmpty() ) {
+      BannerFileName = Prop->getString()->stringValue();
     } else {
       // for new placement settings
-      Dict2 = Dict->dictPropertyForKey("Path");
-      if (Dict2 != NULL) {
-        if ( Dict2->isString() && Dict2->stringValue().notEmpty() ) {
-          BannerFileName = Dict2->stringValue();
+      Dict = Prop->getDict();
+      Prop2 = Dict->propertyForKey("Path");
+      if (Prop2 != NULL) {
+        if ( Prop2->isString() && Prop2->getString()->stringValue().notEmpty() ) {
+          BannerFileName = Prop2->getString()->stringValue();
         }
       }
 
-      Dict2 = Dict->dictPropertyForKey("ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        if (Dict2->stringValue().equal("left")) {
+      Prop2 = Dict->propertyForKey("ScreenEdgeX");
+      if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty() ) {
+        if (Prop2->getString()->stringValue().equal("left")) {
           BannerEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Dict2->stringValue().equal("right")) {
+        } else if (Prop2->getString()->stringValue().equal("right")) {
           BannerEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
-      Dict2 = Dict->dictPropertyForKey("ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        if (Dict2->stringValue().equal("top")) {
+      Prop2 = Dict->propertyForKey("ScreenEdgeY");
+      if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty() ) {
+        if (Prop2->getString()->stringValue().equal("top")) {
           BannerEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Dict2->stringValue().equal("bottom")) {
+        } else if (Prop2->getString()->stringValue().equal("bottom")) {
           BannerEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }
 
-      Dict2 = Dict->dictPropertyForKey("DistanceFromScreenEdgeX%");
-      BannerPosX   = GetPropertyAsInteger(Dict2, 0);
+      Prop2 = Dict->propertyForKey("DistanceFromScreenEdgeX%");
+      BannerPosX   = GetPropertyAsInteger(Prop2, 0);
 
-      Dict2 = Dict->dictPropertyForKey("DistanceFromScreenEdgeY%");
-      BannerPosY   = GetPropertyAsInteger(Dict2, 0);
+      Prop2 = Dict->propertyForKey("DistanceFromScreenEdgeY%");
+      BannerPosY   = GetPropertyAsInteger(Prop2, 0);
 
-      Dict2 = Dict->dictPropertyForKey("NudgeX");
-      BannerNudgeX = GetPropertyAsInteger(Dict2, 0);
+      Prop2 = Dict->propertyForKey("NudgeX");
+      BannerNudgeX = GetPropertyAsInteger(Prop2, 0);
 
-      Dict2 = Dict->dictPropertyForKey("NudgeY");
-      BannerNudgeY = GetPropertyAsInteger(Dict2, 0);
+      Prop2 = Dict->propertyForKey("NudgeY");
+      BannerNudgeY = GetPropertyAsInteger(Prop2, 0);
     }
   }
 
   Dict = DictPointer->dictPropertyForKey("Badges");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("Swap");
-    if (Dict2 != NULL && Dict2->isTrue()) {
+    Prop = Dict->propertyForKey("Swap");
+    if (Prop != NULL && Prop->isTrue()) {
       HideBadges |= HDBADGES_SWAP;
       DBG("OS main and drive as badge\n");
     }
 
-    Dict2 = Dict->dictPropertyForKey("Show");
-    if (Dict2 != NULL && Dict2->isTrue()) {
+    Prop = Dict->propertyForKey("Show");
+    if (Prop != NULL && Prop->isTrue()) {
       HideBadges |= HDBADGES_SHOW;
     }
 
-    Dict2 = Dict->dictPropertyForKey("Inline");
-    if (Dict2 != NULL && Dict2->isTrue()) {
+    Prop = Dict->propertyForKey("Inline");
+    if (Prop != NULL && Prop->isTrue()) {
       HideBadges |= HDBADGES_INLINE;
     }
 
     // blackosx added X and Y position for badge offset.
-    Dict2 = Dict->dictPropertyForKey("OffsetX");
-    BadgeOffsetX = GetPropertyAsInteger(Dict2, BadgeOffsetX);
+    Prop = Dict->propertyForKey("OffsetX");
+    BadgeOffsetX = GetPropertyAsInteger(Prop, BadgeOffsetX);
 
-    Dict2 = Dict->dictPropertyForKey("OffsetY");
-    BadgeOffsetY = GetPropertyAsInteger(Dict2, BadgeOffsetY);
+    Prop = Dict->propertyForKey("OffsetY");
+    BadgeOffsetY = GetPropertyAsInteger(Prop, BadgeOffsetY);
 
-    Dict2 = Dict->dictPropertyForKey("Scale");
-    ThemeX.BadgeScale = GetPropertyAsInteger(Dict2, BadgeScale);
+    Prop = Dict->propertyForKey("Scale");
+    ThemeX.BadgeScale = GetPropertyAsInteger(Prop, BadgeScale);
   }
 
   Dict = DictPointer->dictPropertyForKey("Origination");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("DesignWidth");
-    ThemeDesignWidth = GetPropertyAsInteger(Dict2, ThemeDesignWidth);
+    Prop = Dict->propertyForKey("DesignWidth");
+    ThemeDesignWidth = GetPropertyAsInteger(Prop, ThemeDesignWidth);
 
-    Dict2 = Dict->dictPropertyForKey("DesignHeight");
-    ThemeDesignHeight = GetPropertyAsInteger(Dict2, ThemeDesignHeight);
+    Prop = Dict->propertyForKey("DesignHeight");
+    ThemeDesignHeight = GetPropertyAsInteger(Prop, ThemeDesignHeight);
   }
 
   Dict = DictPointer->dictPropertyForKey("Layout");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("BannerOffset");
-    LayoutBannerOffset = GetPropertyAsInteger(Dict2, LayoutBannerOffset);
+    Prop = Dict->propertyForKey("BannerOffset");
+    LayoutBannerOffset = GetPropertyAsInteger(Prop, LayoutBannerOffset);
 
-    Dict2 = Dict->dictPropertyForKey("ButtonOffset");
-    LayoutButtonOffset = GetPropertyAsInteger(Dict2, LayoutButtonOffset);
+    Prop = Dict->propertyForKey("ButtonOffset");
+    LayoutButtonOffset = GetPropertyAsInteger(Prop, LayoutButtonOffset);
 
-    Dict2 = Dict->dictPropertyForKey("TextOffset");
-    LayoutTextOffset = GetPropertyAsInteger(Dict2, LayoutTextOffset);
+    Prop = Dict->propertyForKey("TextOffset");
+    LayoutTextOffset = GetPropertyAsInteger(Prop, LayoutTextOffset);
 
-    Dict2 = Dict->dictPropertyForKey("AnimAdjustForMenuX");
-    LayoutAnimMoveForMenuX = GetPropertyAsInteger(Dict2, LayoutAnimMoveForMenuX);
+    Prop = Dict->propertyForKey("AnimAdjustForMenuX");
+    LayoutAnimMoveForMenuX = GetPropertyAsInteger(Prop, LayoutAnimMoveForMenuX);
 
-    Dict2 = Dict->dictPropertyForKey("Vertical");
-    VerticalLayout = IsPropertyNotNullAndTrue(Dict2);
+    Prop = Dict->propertyForKey("Vertical");
+    VerticalLayout = IsPropertyNotNullAndTrue(Prop);
 
     // GlobalConfig.MainEntriesSize
-    Dict2 = Dict->dictPropertyForKey("MainEntriesSize");
-    MainEntriesSize = GetPropertyAsInteger(Dict2, MainEntriesSize);
+    Prop = Dict->propertyForKey("MainEntriesSize");
+    MainEntriesSize = GetPropertyAsInteger(Prop, MainEntriesSize);
 
-    Dict2 = Dict->dictPropertyForKey("TileXSpace");
-    TileXSpace = GetPropertyAsInteger(Dict2, TileXSpace);
+    Prop = Dict->propertyForKey("TileXSpace");
+    TileXSpace = GetPropertyAsInteger(Prop, TileXSpace);
 
-    Dict2 = Dict->dictPropertyForKey("TileYSpace");
-    TileYSpace = GetPropertyAsInteger(Dict2, TileYSpace);
+    Prop = Dict->propertyForKey("TileYSpace");
+    TileYSpace = GetPropertyAsInteger(Prop, TileYSpace);
 
-    Dict2 = Dict->dictPropertyForKey("SelectionBigWidth");
-    row0TileSize = GetPropertyAsInteger(Dict2, row0TileSize);
+    Prop = Dict->propertyForKey("SelectionBigWidth");
+    row0TileSize = GetPropertyAsInteger(Prop, row0TileSize);
 
-    Dict2 = Dict->dictPropertyForKey("SelectionSmallWidth");
-    row1TileSize = (INTN)GetPropertyAsInteger(Dict2, row1TileSize);
+    Prop = Dict->propertyForKey("SelectionSmallWidth");
+    row1TileSize = (INTN)GetPropertyAsInteger(Prop, row1TileSize);
 
   }
 
   Dict = DictPointer->dictPropertyForKey("Components");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("Banner");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("Banner");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_BANNER;
     }
 
-    Dict2 = Dict->dictPropertyForKey("Functions");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("Functions");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_FUNCS;
     }
 
-    Dict2 = Dict->dictPropertyForKey("Tools");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("Tools");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_TOOLS;
     }
 
-    Dict2 = Dict->dictPropertyForKey("Label");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("Label");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_LABEL;
     }
 
-    Dict2 = Dict->dictPropertyForKey("Revision");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("Revision");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_REVISION;
     }
 
-    Dict2 = Dict->dictPropertyForKey("Help");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("Help");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_HELP;
     }
 
-    Dict2 = Dict->dictPropertyForKey("MenuTitle");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("MenuTitle");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_MENU_TITLE;
     }
 
-    Dict2 = Dict->dictPropertyForKey("MenuTitleImage");
-    if (Dict2 && Dict2->isFalse()) {
+    Prop = Dict->propertyForKey("MenuTitleImage");
+    if (Prop && Prop->isFalse()) {
       HideUIFlags |= HIDEUI_FLAG_MENU_TITLE_IMAGE;
     }
   }
 
   Dict = DictPointer->dictPropertyForKey("Selection");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("Color");
-    SelectionColor = (UINTN)GetPropertyAsInteger(Dict2, SelectionColor);
+    Prop = Dict->propertyForKey("Color");
+    SelectionColor = (UINTN)GetPropertyAsInteger(Prop, SelectionColor);
 
-    Dict2 = Dict->dictPropertyForKey("Small");
-    if ( Dict2 && (Dict2->isString()) && Dict2->stringValue().notEmpty()) {
-      SelectionSmallFileName = Dict2->stringValue();
+    Prop = Dict->propertyForKey("Small");
+    if ( Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      SelectionSmallFileName = Prop->getString()->stringValue();
     }
 
-    Dict2 = Dict->dictPropertyForKey("Big");
-    if ( Dict2 && (Dict2->isString()) && Dict2->stringValue().notEmpty()) {
-      SelectionBigFileName = Dict2->stringValue();
+    Prop = Dict->propertyForKey("Big");
+    if ( Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      SelectionBigFileName = Prop->getString()->stringValue();
     }
 
-    Dict2 = Dict->dictPropertyForKey("Indicator");
-    if ( Dict2 && (Dict2->isString()) && Dict2->stringValue().notEmpty()) {
-      SelectionIndicatorName = Dict2->stringValue();
+    Prop = Dict->propertyForKey("Indicator");
+    if ( Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      SelectionIndicatorName = Prop->getString()->stringValue();
     }
 
-    Dict2 = Dict->dictPropertyForKey("OnTop");
-    SelectionOnTop = IsPropertyNotNullAndTrue(Dict2);
+    Prop = Dict->propertyForKey("OnTop");
+    SelectionOnTop = IsPropertyNotNullAndTrue(Prop);
 
-    Dict2 = Dict->dictPropertyForKey("ChangeNonSelectedGrey");
-    NonSelectedGrey = IsPropertyNotNullAndTrue(Dict2);
+    Prop = Dict->propertyForKey("ChangeNonSelectedGrey");
+    NonSelectedGrey = IsPropertyNotNullAndTrue(Prop);
   }
 
   Dict = DictPointer->dictPropertyForKey("Scroll");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("Width");
-    ScrollWidth = (UINTN)GetPropertyAsInteger(Dict2, ScrollWidth);
+    Prop = Dict->propertyForKey("Width");
+    ScrollWidth = (UINTN)GetPropertyAsInteger(Prop, ScrollWidth);
 
-    Dict2 = Dict->dictPropertyForKey("Height");
-    ScrollButtonsHeight = (UINTN)GetPropertyAsInteger(Dict2, ScrollButtonsHeight);
+    Prop = Dict->propertyForKey("Height");
+    ScrollButtonsHeight = (UINTN)GetPropertyAsInteger(Prop, ScrollButtonsHeight);
 
-    Dict2 = Dict->dictPropertyForKey("BarHeight");
-    ScrollBarDecorationsHeight = (UINTN)GetPropertyAsInteger(Dict2, ScrollBarDecorationsHeight);
+    Prop = Dict->propertyForKey("BarHeight");
+    ScrollBarDecorationsHeight = (UINTN)GetPropertyAsInteger(Prop, ScrollBarDecorationsHeight);
 
-    Dict2 = Dict->dictPropertyForKey("ScrollHeight");
-    ScrollScrollDecorationsHeight = (UINTN)GetPropertyAsInteger(Dict2,ScrollScrollDecorationsHeight);
+    Prop = Dict->propertyForKey("ScrollHeight");
+    ScrollScrollDecorationsHeight = (UINTN)GetPropertyAsInteger(Prop,ScrollScrollDecorationsHeight);
   }
 
   Dict = DictPointer->dictPropertyForKey("Font");
   if (Dict != NULL) {
-    Dict2 = Dict->dictPropertyForKey("Type");
-    if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-      if ((Dict2->stringValue()[0] == 'A') || (Dict2->stringValue()[0] == 'B')) {
+    Prop = Dict->propertyForKey("Type");
+    if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+      if ((Prop->getString()->stringValue()[0] == 'A') || (Prop->getString()->stringValue()[0] == 'B')) {
         Font = FONT_ALFA;
-      } else if ((Dict2->stringValue()[0] == 'G') || (Dict2->stringValue()[0] == 'W')) {
+      } else if ((Prop->getString()->stringValue()[0] == 'G') || (Prop->getString()->stringValue()[0] == 'W')) {
         Font = FONT_GRAY;
-      } else if ((Dict2->stringValue()[0] == 'L') || (Dict2->stringValue()[0] == 'l')) {
+      } else if ((Prop->getString()->stringValue()[0] == 'L') || (Prop->getString()->stringValue()[0] == 'l')) {
         Font = FONT_LOAD;
       }
     }
     if (Font == FONT_LOAD) {
-      Dict2 = Dict->dictPropertyForKey("Path");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty()) {
-        FontFileName = Dict2->stringValue();
+      Prop = Dict->propertyForKey("Path");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        FontFileName = Prop->getString()->stringValue();
       }
     }
-    Dict2 = Dict->dictPropertyForKey("CharWidth");
-    CharWidth = (UINTN)GetPropertyAsInteger(Dict2, CharWidth);
+    Prop = Dict->propertyForKey("CharWidth");
+    CharWidth = (UINTN)GetPropertyAsInteger(Prop, CharWidth);
     if (CharWidth & 1) {
       MsgLog("Warning! Character width %lld should be even!\n", CharWidth);
     }
 
-    Dict2 = Dict->dictPropertyForKey("Proportional");
-    Proportional = IsPropertyNotNullAndTrue(Dict2);
+    Prop = Dict->propertyForKey("Proportional");
+    Proportional = IsPropertyNotNullAndTrue(Prop);
   }
   
-  Dict = DictPointer->dictPropertyForKey("Anime"); // array of dict
-  if (Dict != NULL) {
-    INTN   Count = Dict->arrayContent().size();
+  const TagArray* AnimeArray = DictPointer->arrayPropertyForKey("Anime"); // array of dict
+  if (AnimeArray != NULL) {
+    INTN   Count = AnimeArray->arrayContent().size();
     for (INTN i = 0; i < Count; i++) {
-      Dict3 = &Dict->arrayContent()[i];
+      Dict3 = AnimeArray->dictElementAt(i, "Anime"_XS8);
       if ( !Dict3->isDict() ) {
         MsgLog("MALFORMED PLIST : Anime must be an array of dict");
         continue;
@@ -3534,54 +3502,54 @@ XTheme::GetThemeTagSettings(const TagStruct* DictPointer)
 
       FILM *NewFilm = new FILM();
 
-      Dict2 = Dict3->dictPropertyForKey("ID");
-      NewFilm->SetIndex((UINTN)GetPropertyAsInteger(Dict2, 1)); //default=main screen
+      Prop = Dict3->propertyForKey("ID");
+      NewFilm->SetIndex((UINTN)GetPropertyAsInteger(Prop, 1)); //default=main screen
 
-      Dict2 = Dict3->dictPropertyForKey("Path");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty()) {
-        NewFilm->Path = Dict2->stringValue();
+      Prop = Dict3->propertyForKey("Path");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        NewFilm->Path = Prop->getString()->stringValue();
       }
 
-      Dict2 = Dict3->dictPropertyForKey("Frames");
-      NewFilm->NumFrames = (UINTN)GetPropertyAsInteger(Dict2, 0);
+      Prop = Dict3->propertyForKey("Frames");
+      NewFilm->NumFrames = (UINTN)GetPropertyAsInteger(Prop, 0);
 
-      Dict2 = Dict3->dictPropertyForKey("FrameTime");
-      NewFilm->FrameTime = (UINTN)GetPropertyAsInteger(Dict2, 50); //default will be 50ms
+      Prop = Dict3->propertyForKey("FrameTime");
+      NewFilm->FrameTime = (UINTN)GetPropertyAsInteger(Prop, 50); //default will be 50ms
 
-      Dict2 = Dict3->dictPropertyForKey("ScreenEdgeX");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        if (Dict2->stringValue().equal("left")) {
+      Prop = Dict3->propertyForKey("ScreenEdgeX");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+        if (Prop->getString()->stringValue().equal("left")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Dict2->stringValue().equal("right")) {
+        } else if (Prop->getString()->stringValue().equal("right")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
-      Dict2 = Dict3->dictPropertyForKey("ScreenEdgeY");
-      if (Dict2 != NULL && (Dict2->isString()) && Dict2->stringValue().notEmpty() ) {
-        if (Dict2->stringValue().equal("top")) {
+      Prop = Dict3->propertyForKey("ScreenEdgeY");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+        if (Prop->getString()->stringValue().equal("top")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Dict2->stringValue().equal("bottom")) {
+        } else if (Prop->getString()->stringValue().equal("bottom")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }
 
       //default values are centre
 
-      Dict2 = Dict3->dictPropertyForKey("DistanceFromScreenEdgeX%");
-      NewFilm->FilmX = GetPropertyAsInteger(Dict2, INITVALUE);
+      Prop = Dict3->propertyForKey("DistanceFromScreenEdgeX%");
+      NewFilm->FilmX = GetPropertyAsInteger(Prop, INITVALUE);
 
-      Dict2 = Dict3->dictPropertyForKey("DistanceFromScreenEdgeY%");
-      NewFilm->FilmY = GetPropertyAsInteger(Dict2, INITVALUE);
+      Prop = Dict3->propertyForKey("DistanceFromScreenEdgeY%");
+      NewFilm->FilmY = GetPropertyAsInteger(Prop, INITVALUE);
 
-      Dict2 = Dict3->dictPropertyForKey("NudgeX");
-      NewFilm->NudgeX = GetPropertyAsInteger(Dict2, INITVALUE);
+      Prop = Dict3->propertyForKey("NudgeX");
+      NewFilm->NudgeX = GetPropertyAsInteger(Prop, INITVALUE);
 
-      Dict2 = Dict3->dictPropertyForKey("NudgeY");
-      NewFilm->NudgeY = GetPropertyAsInteger(Dict2, INITVALUE);
+      Prop = Dict3->propertyForKey("NudgeY");
+      NewFilm->NudgeY = GetPropertyAsInteger(Prop, INITVALUE);
 
-      Dict2 = Dict3->dictPropertyForKey("Once");
-      NewFilm->RunOnce = IsPropertyNotNullAndTrue(Dict2);
+      Prop = Dict3->propertyForKey("Once");
+      NewFilm->RunOnce = IsPropertyNotNullAndTrue(Prop);
 
       NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
       ThemeX.Cinema.AddFilm(NewFilm);
@@ -3612,11 +3580,11 @@ XTheme::GetThemeTagSettings(const TagStruct* DictPointer)
   return EFI_SUCCESS;
 }
 
-TagStruct* XTheme::LoadTheme(const XStringW& TestTheme)
+TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
 
 {
   EFI_STATUS Status    = EFI_UNSUPPORTED;
-  TagStruct*     ThemeDict = NULL;
+  TagDict*     ThemeDict = NULL;
   CHAR8      *ThemePtr = NULL;
   UINTN      Size      = 0;
 
@@ -3645,7 +3613,7 @@ TagStruct* XTheme::LoadTheme(const XStringW& TestTheme)
       if (EFI_ERROR(Status)) {
         ThemeDict = NULL;
       } else {
-        ThemeDict = TagStruct::getEmptyDictTag();
+        ThemeDict = TagDict::getEmptyTag();
       }
       if (ThemeDict == NULL) {
         DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
@@ -3679,7 +3647,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
   EFI_STATUS Status       = EFI_NOT_FOUND;
   UINTN      Size         = 0;
   UINTN      i;
-  TagStruct*     ThemeDict    = NULL;
+  TagDict*     ThemeDict    = NULL;
   CHAR8      *ChosenTheme = NULL;
   UINTN      Rnd;
   EFI_TIME   Now;
@@ -3840,11 +3808,11 @@ finish:
     ThemeX.Theme.takeValueFrom(GlobalConfig.Theme); //XStringW from CHAR16*)
     // read theme settings
     if (!ThemeX.TypeSVG) {
-      const TagStruct* DictPointer = ThemeDict->dictPropertyForKey("Theme");
+      const TagDict* DictPointer = ThemeDict->dictPropertyForKey("Theme");
       if (DictPointer != NULL) {
         Status = ThemeX.GetThemeTagSettings(DictPointer);
         if (EFI_ERROR(Status)) {
-          DBG("Config theme error: %s\n", strerror(Status));
+          DBG("Config theme error: %s\n", efiStrError(Status));
         } else {
           ThemeX.FillByDir();
         }
@@ -3881,7 +3849,7 @@ finish:
 
 VOID
 ParseSMBIOSSettings(
-                    const TagStruct* DictPointer
+                    const TagDict* DictPointer
                     )
 {
   const TagStruct* Prop;
@@ -3889,13 +3857,13 @@ ParseSMBIOSSettings(
   BOOLEAN Default = FALSE;
 
 
-  Prop = DictPointer->dictPropertyForKey("ProductName");
+  Prop = DictPointer->propertyForKey("ProductName");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in ProductName\n");
     }else{
       MACHINE_TYPES Model;
-      gSettings.ProductName = Prop->stringValue();
+      gSettings.ProductName = Prop->getString()->stringValue();
       // let's fill all other fields based on this ProductName
       // to serve as default
       Model = GetModelFromString(gSettings.ProductName);
@@ -3911,17 +3879,17 @@ ParseSMBIOSSettings(
   }
   DBG("Using ProductName from config: %s\n", gSettings.ProductName.c_str());
 
-  Prop = DictPointer->dictPropertyForKey("SmbiosVersion");
+  Prop = DictPointer->propertyForKey("SmbiosVersion");
   gSettings.SmbiosVersion = (UINT16)GetPropertyAsInteger(Prop, 0x204);
 
   // Check for BiosVersion and BiosReleaseDate by Sherlocks
-  Prop = DictPointer->dictPropertyForKey("BiosVersion");
+  Prop = DictPointer->propertyForKey("BiosVersion");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       DBG("BiosVersion: not set, Using BiosVersion from clover\n");
     }else{
       const CHAR8* i = gSettings.RomVersion.c_str();
-      const CHAR8* j = Prop->stringValue().c_str();
+      const CHAR8* j = Prop->getString()->stringValue().c_str();
 
       i += AsciiStrLen(i);
       while (*i != '.') {
@@ -3945,15 +3913,15 @@ ParseSMBIOSSettings(
           } else if ((i[5] == j[5]) && (i[6] == j[6])) {
             DBG("Found same BiosVersion in clover and config\n");
           } else {
-            gSettings.RomVersion = Prop->stringValue();
+            gSettings.RomVersion = Prop->getString()->stringValue();
             DBG("Using latest BiosVersion from config\n");
           }
         } else {
-          gSettings.RomVersion = Prop->stringValue();
+          gSettings.RomVersion = Prop->getString()->stringValue();
           DBG("Using latest BiosVersion from config\n");
         }
       } else {
-        gSettings.RomVersion = Prop->stringValue();
+        gSettings.RomVersion = Prop->getString()->stringValue();
         DBG("Using latest BiosVersion from config\n");
       }
     }
@@ -3962,14 +3930,14 @@ ParseSMBIOSSettings(
   }
   DBG("BiosVersion: %s\n", gSettings.RomVersion.c_str());
 
-  Prop1 = DictPointer->dictPropertyForKey("BiosReleaseDate");
+  Prop1 = DictPointer->propertyForKey("BiosReleaseDate");
   if (Prop1 != NULL) {
     if ( !Prop1->isString() ) {
       MsgLog("ATTENTION : property not string in BiosReleaseDate\n");
     }else{
       if (Prop != NULL) {
         const CHAR8* i = gSettings.ReleaseDate.c_str();
-        const CHAR8* j = Prop1->stringValue().c_str();
+        const CHAR8* j = Prop1->getString()->stringValue().c_str();
 
         if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 8)) {
           if (((i[6] > '0') && (j[6] == '0')) || ((i[6] >= j[6]) && (i[7] > j[7]))) {
@@ -3987,15 +3955,15 @@ ParseSMBIOSSettings(
               } else if ((i[3] == j[3]) && (i[4] == j[4])) {
                 //DBG("Found same BiosReleaseDate in clover and config\n");
               } else {
-                gSettings.ReleaseDate = Prop1->stringValue();
+                gSettings.ReleaseDate = Prop1->getString()->stringValue();
                 //DBG("Using latest BiosReleaseDate from config\n");
               }
             } else {
-              gSettings.ReleaseDate = Prop1->stringValue();
+              gSettings.ReleaseDate = Prop1->getString()->stringValue();
               //DBG("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            gSettings.ReleaseDate = Prop1->stringValue();
+            gSettings.ReleaseDate = Prop1->getString()->stringValue();
             //DBG("Using latest BiosReleaseDate from config\n");
           }
         } else if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 10)) {
@@ -4041,15 +4009,15 @@ ParseSMBIOSSettings(
               } else if ((i[3] == j[3]) && (i[4] == j[4])) {
                 //DBG("Found same BiosReleaseDate in clover and config\n");
               } else {
-                gSettings.ReleaseDate = Prop1->stringValue();
+                gSettings.ReleaseDate = Prop1->getString()->stringValue();
                 //DBG("Using latest BiosReleaseDate from config\n");
               }
             } else {
-              gSettings.ReleaseDate = Prop1->stringValue();
+              gSettings.ReleaseDate = Prop1->getString()->stringValue();
               //DBG("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            gSettings.ReleaseDate = Prop1->stringValue();
+            gSettings.ReleaseDate = Prop1->getString()->stringValue();
             //DBG("Using latest BiosReleaseDate from config\n");
           }
         } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 8)) {
@@ -4102,7 +4070,7 @@ ParseSMBIOSSettings(
           }
         }
       } else {
-        //DBG("BiosReleaseDate: set to %s from config, Ignore BiosReleaseDate\n", Prop1->stringValue().c_str());
+        //DBG("BiosReleaseDate: set to %s from config, Ignore BiosReleaseDate\n", Prop1->getString()->stringValue().c_str());
         //DBG("Using BiosReleaseDate from clover\n");
       }
     }
@@ -4129,7 +4097,7 @@ ParseSMBIOSSettings(
   }
   DBG("BiosReleaseDate: %s\n", gSettings.ReleaseDate.c_str());
 
-  Prop = DictPointer->dictPropertyForKey("EfiVersion");
+  Prop = DictPointer->propertyForKey("EfiVersion");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in EfiVersion\n");
@@ -4137,10 +4105,10 @@ ParseSMBIOSSettings(
         DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
       }
     }else{
-      if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->stringValue(), 4, 5)) {
+      if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->getString()->stringValue(), 4, 5)) {
         DBG("Using latest EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
-      } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->stringValue(), 4, 5)) {
-        gSettings.EfiVersion = Prop->stringValue();
+      } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->getString()->stringValue(), 4, 5)) {
+        gSettings.EfiVersion = Prop->getString()->stringValue();
         gSettings.EfiVersion.trim();
         DBG("Using latest EfiVersion from config: %s\n", gSettings.EfiVersion.c_str());
       } else {
@@ -4151,7 +4119,7 @@ ParseSMBIOSSettings(
     DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
   }
 
-  Prop = DictPointer->dictPropertyForKey("FirmwareFeatures");
+  Prop = DictPointer->propertyForKey("FirmwareFeatures");
   if (Prop != NULL) {
     gFwFeatures = (UINT32)GetPropertyAsInteger(Prop, gFwFeatures);
     DBG("Using FirmwareFeatures from config: 0x%08X\n", gFwFeatures);
@@ -4159,7 +4127,7 @@ ParseSMBIOSSettings(
     DBG("Using FirmwareFeatures from clover: 0x%08X\n", gFwFeatures);
   }
 
-  Prop = DictPointer->dictPropertyForKey("FirmwareFeaturesMask");
+  Prop = DictPointer->propertyForKey("FirmwareFeaturesMask");
   if (Prop != NULL) {
     gFwFeaturesMask = (UINT32)GetPropertyAsInteger(Prop, gFwFeaturesMask);
     DBG("Using FirmwareFeaturesMask from config: 0x%08X\n", gFwFeaturesMask);
@@ -4167,7 +4135,7 @@ ParseSMBIOSSettings(
     DBG("Using FirmwareFeaturesMask from clover: 0x%08X\n", gFwFeaturesMask);
   }
 
-  Prop = DictPointer->dictPropertyForKey("PlatformFeature");
+  Prop = DictPointer->propertyForKey("PlatformFeature");
   if (Prop != NULL) {
     gPlatformFeature = (UINT64)GetPropertyAsInteger(Prop, (INTN)gPlatformFeature);
   } else {
@@ -4178,93 +4146,93 @@ ParseSMBIOSSettings(
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("BiosVendor");
+  Prop = DictPointer->propertyForKey("BiosVendor");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in BiosVendor\n");
     }else{
-      gSettings.VendorName = Prop->stringValue();
+      gSettings.VendorName = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Manufacturer");
+  Prop = DictPointer->propertyForKey("Manufacturer");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Manufacturer\n");
     }else{
-      gSettings.ManufactureName = Prop->stringValue();
+      gSettings.ManufactureName = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Version");
+  Prop = DictPointer->propertyForKey("Version");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Version\n");
     }else{
-      gSettings.VersionNr = Prop->stringValue();
+      gSettings.VersionNr = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Family");
+  Prop = DictPointer->propertyForKey("Family");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Family\n");
     }else{
-      gSettings.FamilyName = Prop->stringValue();
+      gSettings.FamilyName = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("SerialNumber");
+  Prop = DictPointer->propertyForKey("SerialNumber");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in SerialNumber\n");
     }else{
-      gSettings.SerialNr = Prop->stringValue();
+      gSettings.SerialNr = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("SmUUID");
+  Prop = DictPointer->propertyForKey("SmUUID");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in SmUUID\n");
     }else{
-      if (IsValidGuidAsciiString(Prop->stringValue())) {
-        StrToGuidLE(Prop->stringValue(), &gSettings.SmUUID);
+      if (IsValidGuidAsciiString(Prop->getString()->stringValue())) {
+        StrToGuidLE(Prop->getString()->stringValue(), &gSettings.SmUUID);
         gSettings.SmUUIDConfig = TRUE;
       } else {
-        DBG("Error: invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->stringValue().c_str());
+        DBG("Error: invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
       }
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("BoardManufacturer");
+  Prop = DictPointer->propertyForKey("BoardManufacturer");
   if ( Prop != NULL ) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in BoardManufacturer\n");
     }else{
-      if( Prop->stringValue().notEmpty() ) {
-        gSettings.BoardManufactureName = Prop->stringValue();
+      if( Prop->getString()->stringValue().notEmpty() ) {
+        gSettings.BoardManufactureName = Prop->getString()->stringValue();
       }
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("BoardSerialNumber");
+  Prop = DictPointer->propertyForKey("BoardSerialNumber");
   if ( Prop != NULL ) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in BoardSerialNumber\n");
     }else{
-      if( Prop->stringValue().notEmpty() ) {
-        gSettings.BoardSerialNumber = Prop->stringValue();
+      if( Prop->getString()->stringValue().notEmpty() ) {
+        gSettings.BoardSerialNumber = Prop->getString()->stringValue();
       }
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("Board-ID");
+  Prop = DictPointer->propertyForKey("Board-ID");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Board-ID\n");
     }else{
-      gSettings.BoardNumber = Prop->stringValue();
+      gSettings.BoardNumber = Prop->getString()->stringValue();
       DBG("Board-ID set from config as %s\n", gSettings.BoardNumber.c_str());
     }
   }
@@ -4272,22 +4240,22 @@ ParseSMBIOSSettings(
   if (!Default) {
     gSettings.BoardVersion = gSettings.ProductName;
   }
-  Prop = DictPointer->dictPropertyForKey("BoardVersion");
+  Prop = DictPointer->propertyForKey("BoardVersion");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in BoardVersion\n");
     }else{
-      gSettings.BoardVersion = Prop->stringValue();
+      gSettings.BoardVersion = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("BoardType");
+  Prop = DictPointer->propertyForKey("BoardType");
   if (Prop != NULL) {
     gSettings.BoardType = (UINT8)GetPropertyAsInteger(Prop, gSettings.BoardType);
     DBG("BoardType: 0x%hhX\n", gSettings.BoardType);
   }
 
-  Prop = DictPointer->dictPropertyForKey("Mobile");
+  Prop = DictPointer->propertyForKey("Mobile");
   if (Prop != NULL) {
     if (IsPropertyNotNullAndFalse(Prop))
       gSettings.Mobile = FALSE;
@@ -4297,111 +4265,613 @@ ParseSMBIOSSettings(
     gSettings.Mobile = gSettings.ProductName.contains("MacBook");
   }
 
-  Prop = DictPointer->dictPropertyForKey("LocationInChassis");
+  Prop = DictPointer->propertyForKey("LocationInChassis");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in LocationInChassis\n");
     }else{
-      gSettings.LocationInChassis = Prop->stringValue();
+      gSettings.LocationInChassis = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("ChassisManufacturer");
+  Prop = DictPointer->propertyForKey("ChassisManufacturer");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in ChassisManufacturer\n");
     }else{
-      gSettings.ChassisManufacturer = Prop->stringValue();
+      gSettings.ChassisManufacturer = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("ChassisAssetTag");
+  Prop = DictPointer->propertyForKey("ChassisAssetTag");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in ChassisAssetTag\n");
     }else{
-      gSettings.ChassisAssetTag = Prop->stringValue();
+      gSettings.ChassisAssetTag = Prop->getString()->stringValue();
     }
   }
 
-  Prop = DictPointer->dictPropertyForKey("ChassisType");
+  Prop = DictPointer->propertyForKey("ChassisType");
   if (Prop != NULL) {
     gSettings.ChassisType = (UINT8)GetPropertyAsInteger(Prop, gSettings.ChassisType);
     DBG("ChassisType: 0x%hhX\n", gSettings.ChassisType);
   }
 
-  Prop = DictPointer->dictPropertyForKey("NoRomInfo");
+  Prop = DictPointer->propertyForKey("NoRomInfo");
   if (Prop != NULL) {
     gSettings.NoRomInfo = IsPropertyNotNullAndTrue(Prop);
   }
 }
 
+static void getACPISettings(const TagDict *CfgDict)
+{
+  const TagDict* ACPIDict = CfgDict->dictPropertyForKey("ACPI");
+  if (ACPIDict) {
+    const TagArray* DropTablesArray = ACPIDict->arrayPropertyForKey("DropTables"); // array of dict
+    if (DropTablesArray) {
+      INTN   i;
+      INTN Count = DropTablesArray->arrayContent().size();
+      BOOLEAN Dropped;
+      
+      if (Count > 0) {
+        DBG("Dropping %lld tables:\n", Count);
+        
+        for (i = 0; i < Count; i++) {
+          UINT32 Signature = 0;
+          UINT32 TabLength = 0;
+          UINT64 TableId = 0;
+          BOOLEAN OtherOS = FALSE;
+          
+          const TagDict* Dict2 = DropTablesArray->dictElementAt(i, "ACPI/DropTables"_XS8);
+          
+          DBG(" - [%02lld]: Drop table ", i);
+          // Get the table signatures to drop
+          const TagStruct* Prop2 = Dict2->propertyForKey("Signature");
+          if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
+            CHAR8  s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+            const CHAR8 *str = Prop2->getString()->stringValue().c_str();
+            if (*str) {
+              s1 = *str++;
+            }
+            if (*str) {
+              s2 = *str++;
+            }
+            if (*str) {
+              s3 = *str++;
+            }
+            if (*str) {
+              s4 = *str++;
+            }
+            Signature = SIGNATURE_32(s1, s2, s3, s4);
+            DBG(" signature=\"%c%c%c%c\" (%8.8X)\n", s1, s2, s3, s4, Signature);
+          }
+          // Get the table ids to drop
+          Prop2 = Dict2->propertyForKey("TableId");
+          if (Prop2 != NULL) {
+            if ( !Prop2->isString() ) {
+              MsgLog("ATTENTION : property not string in TableId\n");
+            }else{
+              UINTN  IdIndex = 0;
+              CHAR8  Id[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+              const CHAR8 *Str = Prop2->getString()->stringValue().c_str();
+              if (Str) {
+                while (*Str && (IdIndex < 8)) {
+                  //      DBG("%c", *Str);
+                  Id[IdIndex++] = *Str++;
+                }
+              }
+              
+              CopyMem(&TableId, (CHAR8*)&Id[0], 8);
+              DBG(" table-id=\"%s\" (%16.16llX)\n", Id, TableId);
+            }
+          }
+          // Get the table len to drop
+          Prop2 = Dict2->propertyForKey("Length");
+          if (Prop2 != NULL) {
+            TabLength = (UINT32)GetPropertyAsInteger(Prop2, 0);
+            DBG(" length=%d(0x%X)", TabLength, TabLength);
+          }
+          // Check if to drop for other OS as well
+          Prop2 = Dict2->propertyForKey("DropForAllOS");
+          if (Prop2 != NULL) {
+            OtherOS = IsPropertyNotNullAndTrue(Prop2);
+          }
+          
+          DBG("----\n");
+          //set to drop
+          if (gSettings.ACPIDropTables) {
+            ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+            DBG("         - set table: %08X, %16llx to drop:", Signature, TableId);
+            Dropped = FALSE;
+            while (DropTable) {
+              if (((Signature == DropTable->Signature) &&
+                   (!TableId || (DropTable->TableId == TableId)) &&
+                   (!TabLength || (DropTable->Length == TabLength))) ||
+                  (!Signature && (DropTable->TableId == TableId))) {
+                DropTable->MenuItem.BValue = TRUE;
+                DropTable->OtherOS = OtherOS;
+                gSettings.DropSSDT         = FALSE; //if one item=true then dropAll=false by default
+                //DBG(" true");
+                Dropped = TRUE;
+              }
+              DropTable = DropTable->Next;
+            }
+            DBG(" %s\n", Dropped ? "yes" : "no");
+          }
+        }
+      }
+    }
+    
+    const TagDict* DSDTDict = ACPIDict->dictPropertyForKey("DSDT");
+    if (DSDTDict) {
+      //gSettings.DsdtName by default is "DSDT.aml", but name "BIOS" will mean autopatch
+      const TagStruct* Prop = DSDTDict->propertyForKey("Name");
+      if (Prop != NULL) {
+        if ( !Prop->isString() ) {
+          MsgLog("ATTENTION : property not string in DSDT/Name\n");
+        }else{
+          gSettings.DsdtName = Prop->getString()->stringValue();
+        }
+      }
+      
+      Prop = DSDTDict->propertyForKey("Debug");
+      gSettings.DebugDSDT = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = DSDTDict->propertyForKey("Rtc8Allowed");
+      gSettings.Rtc8Allowed = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = DSDTDict->propertyForKey("PNLF_UID");
+      gSettings.PNLF_UID = (UINT8)GetPropertyAsInteger(Prop, 0x0A);
+      
+      Prop = DSDTDict->propertyForKey("FixMask");
+      gSettings.FixDsdt = (UINT32)GetPropertyAsInteger(Prop, gSettings.FixDsdt);
+      
+      const TagDict* FixesDict = DSDTDict->dictPropertyForKey("Fixes");
+      if (FixesDict != NULL) {
+        UINTN Index;
+        //         DBG("Fixes will override DSDT fix mask %08X!\n", gSettings.FixDsdt);
+        gSettings.FixDsdt = 0;
+        for (Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
+          const TagStruct* Prop2 = FixesDict->propertyForKey(FixesConfig[Index].newName);
+          if (!Prop2 && FixesConfig[Index].oldName) {
+            Prop2 = FixesDict->propertyForKey(FixesConfig[Index].oldName);
+          }
+          if (IsPropertyNotNullAndTrue(Prop2)) {
+            gSettings.FixDsdt |= FixesConfig[Index].bitData;
+          }
+        }
+      }
+      DBG(" - final DSDT Fix mask=%08X\n", gSettings.FixDsdt);
+      
+      const TagArray* PatchesArray = DSDTDict->arrayPropertyForKey("Patches"); // array of dict
+      if (PatchesArray != NULL) {
+        INTN   i;
+        INTN Count = PatchesArray->arrayContent().size();
+        if (Count > 0) {
+          gSettings.PatchDsdtNum      = (UINT32)Count;
+          gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool(Count * sizeof(UINT8*));
+          gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool(Count * sizeof(UINT8*));
+          gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool(Count * sizeof(UINT8*));
+          gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool(Count * sizeof(UINT32));
+          gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
+          gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
+          gSettings.PatchDsdtMenuItem = new INPUT_ITEM[Count];
+          DBG("PatchesDSDT: %lld requested\n", Count);
+          
+          for (i = 0; i < Count; i++) {
+            UINTN Size = 0;
+            const TagDict* Prop2 = PatchesArray->dictElementAt(i,"DSDT/Patches"_XS8);
+            DBG(" - [%02lld]:", i);
+            XString8 DSDTPatchesLabel;
+            
+            const TagStruct* Prop3 = Prop2->propertyForKey("Comment");
+            if (Prop3 != NULL && (Prop3->isString()) && Prop3->getString()->stringValue().notEmpty()) {
+              DSDTPatchesLabel = Prop3->getString()->stringValue();
+            } else {
+              DSDTPatchesLabel = " (NoLabel)"_XS8;
+            }
+            gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
+            snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel.c_str());
+            DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
+            
+            Prop3 = Prop2->propertyForKey("Disabled");
+            gSettings.PatchDsdtMenuItem[i].BValue = !IsPropertyNotNullAndTrue(Prop3);
+            
+            //DBG(" DSDT bin patch #%d ", i);
+            gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",     &Size);
+            DBG(" lenToFind: %llu", Size);
+            gSettings.LenToFind[i]        = (UINT32)Size;
+            gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
+            DBG(", lenToReplace: %llu", Size);
+            gSettings.LenToReplace[i]     = (UINT32)Size;
+            gSettings.PatchDsdtTgt[i]     = (CHAR8*)GetDataSetting (Prop2, "TgtBridge", &Size);
+            DBG(", Target Bridge: %s\n", gSettings.PatchDsdtTgt[i]);
+            if (!gSettings.PatchDsdtMenuItem[i].BValue) {
+              DBG("  patch disabled at config\n");
+            }
+          }
+        } //if count > 0
+      } //if prop PatchesDSDT
+      
+      Prop = DSDTDict->propertyForKey("ReuseFFFF");
+      if (IsPropertyNotNullAndTrue(Prop)) {
+        gSettings.ReuseFFFF = TRUE;
+      }
+      
+      Prop = DSDTDict->propertyForKey("SuspendOverride");
+      if (IsPropertyNotNullAndTrue(Prop)) {
+        gSettings.SuspendOverride = TRUE;
+      }
+      /*
+       Prop   = GetProperty(Dict2, "DropOEM_DSM");
+       defDSM = FALSE;
+       
+       if (Prop != NULL) {
+       defDSM = TRUE; //set by user
+       if (IsPropertyTrue(Prop)) {
+       gSettings.DropOEM_DSM = 0xFFFF;
+       } else if (IsPropertyFalse(Prop)) {
+       gSettings.DropOEM_DSM = 0;
+       } else if (Prop->isInt()) {
+       gSettings.DropOEM_DSM = (UINT16)(UINTN)Prop->??;
+       } else if (Prop->type == kTagTypeDict) {
+       Prop2 = GetProperty(Prop, "ATI");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_ATI;
+       }
+       
+       Prop2 = GetProperty(Prop, "NVidia");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_NVIDIA;
+       }
+       
+       Prop2 = GetProperty(Prop, "IntelGFX");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_INTEL;
+       }
+       
+       Prop2 = GetProperty(Prop, "HDA");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_HDA;
+       }
+       
+       Prop2 = GetProperty(Prop, "HDMI");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_HDMI;
+       }
+       
+       Prop2 = GetProperty(Prop, "SATA");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_SATA;
+       }
+       
+       Prop2 = GetProperty(Prop, "LAN");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_LAN;
+       }
+       
+       Prop2 = GetProperty(Prop, "WIFI");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_WIFI;
+       }
+       
+       Prop2 = GetProperty(Prop, "USB");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_USB;
+       }
+       
+       Prop2 = GetProperty(Prop, "LPC");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_LPC;
+       }
+       
+       Prop2 = GetProperty(Prop, "SmBUS");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_SMBUS;
+       }
+       
+       Prop2 = GetProperty(Prop, "Firewire");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_FIREWIRE;
+       }
+       
+       Prop2 = GetProperty(Prop, "IDE");
+       if (IsPropertyTrue(Prop2)) {
+       gSettings.DropOEM_DSM |= DEV_IDE;
+       }
+       }
+       }
+       */
+    }
+    
+    const TagDict* SSDTDict = ACPIDict->dictPropertyForKey("SSDT");
+    if (SSDTDict) {
+      const TagStruct* Prop2 = SSDTDict->propertyForKey("Generate");
+      if (Prop2 != NULL) {
+        if (IsPropertyNotNullAndTrue(Prop2)) {
+          gSettings.GeneratePStates = TRUE;
+          gSettings.GenerateCStates = TRUE;
+          gSettings.GenerateAPSN = TRUE;
+          gSettings.GenerateAPLF = TRUE;
+          gSettings.GeneratePluginType = TRUE;
+          
+        } else if (IsPropertyNotNullAndFalse(Prop2)) {
+          gSettings.GeneratePStates = FALSE;
+          gSettings.GenerateCStates = FALSE;
+          gSettings.GenerateAPSN = FALSE;
+          gSettings.GenerateAPLF = FALSE;
+          gSettings.GeneratePluginType = FALSE;
+          
+        } else if (Prop2->isDict()) {
+          const TagStruct* Prop = Prop2->getDict()->propertyForKey("PStates");
+          gSettings.GeneratePStates = IsPropertyNotNullAndTrue(Prop);
+          gSettings.GenerateAPSN = gSettings.GeneratePStates;
+          gSettings.GenerateAPLF = gSettings.GeneratePStates;
+          gSettings.GeneratePluginType = gSettings.GeneratePStates;
+          Prop = Prop2->getDict()->propertyForKey("CStates");
+          gSettings.GenerateCStates = IsPropertyNotNullAndTrue(Prop);
+          Prop = Prop2->getDict()->propertyForKey("APSN");
+          if (Prop) {
+            gSettings.GenerateAPSN = IsPropertyNotNullAndTrue(Prop);
+          }
+          Prop = Prop2->getDict()->propertyForKey("APLF");
+          if (Prop) {
+            gSettings.GenerateAPLF = IsPropertyNotNullAndTrue(Prop);
+          }
+          Prop = Prop2->getDict()->propertyForKey("PluginType");
+          if (Prop) {
+            gSettings.GeneratePluginType = IsPropertyNotNullAndTrue(Prop);
+          }
+        }
+      }
+      
+      const TagStruct* Prop = SSDTDict->propertyForKey("DropOem");
+      gSettings.DropSSDT  = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = SSDTDict->propertyForKey("NoOemTableId"); // to disable OEM table ID on ACPI/orgin/SSDT file names
+      gSettings.NoOemTableId = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = SSDTDict->propertyForKey("NoDynamicExtract"); // to disable extracting child SSDTs
+      gSettings.NoDynamicExtract = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = SSDTDict->propertyForKey("UseSystemIO");
+      gSettings.EnableISS = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = SSDTDict->propertyForKey("EnableC7");
+      if (Prop != NULL) {
+        gSettings.EnableC7 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC7: %s\n", gSettings.EnableC7 ? "yes" : "no");
+      }
+      
+      Prop = SSDTDict->propertyForKey("EnableC6");
+      if (Prop != NULL) {
+        gSettings.EnableC6 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC6: %s\n", gSettings.EnableC6 ? "yes" : "no");
+      }
+      
+      Prop = SSDTDict->propertyForKey("EnableC4");
+      if (Prop != NULL) {
+        gSettings.EnableC4 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC4: %s\n", gSettings.EnableC4 ? "yes" : "no");
+      }
+      
+      Prop = SSDTDict->propertyForKey("EnableC2");
+      if (Prop != NULL) {
+        gSettings.EnableC2 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC2: %s\n", gSettings.EnableC2 ? "yes" : "no");
+      }
+      
+      Prop = SSDTDict->propertyForKey("C3Latency");
+      if (Prop != NULL) {
+        gSettings.C3Latency = (UINT16)GetPropertyAsInteger(Prop, gSettings.C3Latency);
+        DBG("C3Latency: %d\n", gSettings.C3Latency);
+      }
+      
+      Prop                       = SSDTDict->propertyForKey("PLimitDict");
+      gSettings.PLimitDict       = (UINT8)GetPropertyAsInteger(Prop, 0);
+      
+      Prop                       = SSDTDict->propertyForKey("UnderVoltStep");
+      gSettings.UnderVoltStep    = (UINT8)GetPropertyAsInteger(Prop, 0);
+      
+      Prop                       = SSDTDict->propertyForKey("DoubleFirstState");
+      gSettings.DoubleFirstState = IsPropertyNotNullAndTrue(Prop);
+      
+      Prop = SSDTDict->propertyForKey("MinMultiplier");
+      if (Prop != NULL) {
+        gSettings.MinMultiplier  = (UINT8)GetPropertyAsInteger(Prop, gSettings.MinMultiplier);
+        DBG("MinMultiplier: %d\n", gSettings.MinMultiplier);
+      }
+      
+      Prop = SSDTDict->propertyForKey("MaxMultiplier");
+      if (Prop != NULL) {
+        gSettings.MaxMultiplier = (UINT8)GetPropertyAsInteger(Prop, gSettings.MaxMultiplier);
+        DBG("MaxMultiplier: %d\n", gSettings.MaxMultiplier);
+      }
+      
+      Prop = SSDTDict->propertyForKey("PluginType");
+      if (Prop != NULL) {
+        gSettings.PluginType = (UINT8)GetPropertyAsInteger(Prop, gSettings.PluginType);
+        DBG("PluginType: %d\n", gSettings.PluginType);
+      }
+    }
+    
+    //     Prop               = GetProperty(DictPointer, "DropMCFG");
+    //     gSettings.DropMCFG = IsPropertyTrue(Prop);
+    
+    const TagStruct* Prop = ACPIDict->propertyForKey("ResetAddress");
+    if (Prop) {
+      gSettings.ResetAddr = (UINT32)GetPropertyAsInteger(Prop, 0x64);
+      DBG("ResetAddr: 0x%llX\n", gSettings.ResetAddr);
+      
+      if (gSettings.ResetAddr  == 0x64) {
+        gSettings.ResetVal = 0xFE;
+      } else if  (gSettings.ResetAddr  == 0xCF9) {
+        gSettings.ResetVal = 0x06;
+      }
+      
+      DBG("Calc ResetVal: 0x%hhX\n", gSettings.ResetVal);
+    }
+    
+    Prop = ACPIDict->propertyForKey("ResetValue");
+    if (Prop) {
+      gSettings.ResetVal = (UINT8)GetPropertyAsInteger(Prop, gSettings.ResetVal);
+      DBG("ResetVal: 0x%hhX\n", gSettings.ResetVal);
+    }
+    //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
+    
+    Prop = ACPIDict->propertyForKey("HaltEnabler");
+    gSettings.SlpSmiEnable = IsPropertyNotNullAndTrue(Prop);
+    
+    //
+    Prop = ACPIDict->propertyForKey("FixHeaders");
+    gSettings.FixHeaders = IsPropertyNotNullAndTrue(Prop);
+    
+    Prop = ACPIDict->propertyForKey("FixMCFG");
+    gSettings.FixMCFG = IsPropertyNotNullAndTrue(Prop);
+    
+    
+    Prop = ACPIDict->propertyForKey("DisableASPM");
+    gSettings.NoASPM = IsPropertyNotNullAndTrue(Prop);
+    
+    Prop = ACPIDict->propertyForKey("smartUPS");
+    if (Prop) {
+      gSettings.smartUPS   = IsPropertyNotNullAndTrue(Prop);
+      DBG("smartUPS: present\n");
+    }
+    
+    Prop               = ACPIDict->propertyForKey("PatchAPIC");
+    gSettings.PatchNMI = IsPropertyNotNullAndTrue(Prop);
+    
+    const TagArray* SortedOrderArray = ACPIDict->arrayPropertyForKey("SortedOrder"); // array of string
+    if (Prop) {
+      INTN   i;
+      INTN Count = SortedOrderArray->arrayContent().size();
+      const TagStruct* Prop2 = NULL;
+      if (Count > 0) {
+        gSettings.SortedACPICount = 0;
+        gSettings.SortedACPI = (__typeof__(gSettings.SortedACPI))AllocateZeroPool(Count * sizeof(CHAR16 *));
+        
+        for (i = 0; i < Count; i++) {
+          Prop2 = &SortedOrderArray->arrayContent()[i];
+          if ( !Prop2->isString()) {
+            MsgLog("MALFORMED PLIST : SortedOrder must be an array of string");
+            continue;
+          }
+          gSettings.SortedACPI[gSettings.SortedACPICount++] = SWPrintf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+        }
+      }
+    }
+    
+    Prop = ACPIDict->propertyForKey("AutoMerge");
+    gSettings.AutoMerge  = IsPropertyNotNullAndTrue(Prop);
+    
+    const TagArray* DisabledAMLArray = ACPIDict->arrayPropertyForKey("DisabledAML"); // array of string
+    if (DisabledAMLArray) {
+      INTN   i;
+      INTN Count = DisabledAMLArray->arrayContent().size();
+      const TagStruct* Prop2 = NULL;
+      if (Count > 0) {
+        gSettings.DisabledAMLCount = 0;
+        gSettings.DisabledAML = (__typeof__(gSettings.DisabledAML))AllocateZeroPool(Count * sizeof(CHAR16 *));
+        
+        if (gSettings.DisabledAML) {
+          for (i = 0; i < Count; i++) {
+            Prop2 = &DisabledAMLArray->arrayContent()[i];
+            if ( !Prop2->isString()) {
+              MsgLog("MALFORMED PLIST : DisabledAML must be an array of string");
+              continue;
+            }
+            gSettings.DisabledAML[gSettings.DisabledAMLCount++] = SWPrintf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+          }
+        }
+      }
+    }
+    
+    const TagDict* RenameDevicesDict = ACPIDict->dictPropertyForKey("RenameDevices"); // dict of key/string
+    if ( RenameDevicesDict ) {
+      INTN   i;
+      INTN Count = RenameDevicesDict->dictKeyCount();
+      if (Count > 0) {
+        gSettings.DeviceRenameCount = 0;
+        gSettings.DeviceRename = (__typeof__(gSettings.DeviceRename))AllocateZeroPool(Count * sizeof(ACPI_NAME_LIST));
+        DBG("Devices to rename %lld\n", Count);
+        for (i = 0; i < Count; i++) {
+          const TagKey* key;
+          const TagStruct* value;
+          if ( !EFI_ERROR(RenameDevicesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {
+            ACPI_NAME_LIST *List = ParseACPIName(key->keyStringValue());
+            gSettings.DeviceRename[gSettings.DeviceRenameCount].Next = List;
+            while (List) {
+              DBG("%s:", List->Name);
+              List = List->Next;
+            }
+            if (value->isString()) {
+              gSettings.DeviceRename[gSettings.DeviceRenameCount++].Name = S8Printf("%s", value->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+              DBG("->will be renamed to %s\n", value->getString()->stringValue().c_str());
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 EFI_STATUS
-GetUserSettings(
-                IN  EFI_FILE *RootDir,
-                const TagStruct* CfgDict
-                )
+GetUserSettings(const TagDict* CfgDict)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
-  const TagStruct*     Dict;
-  const TagStruct*     Dict2;
-  const TagStruct*     Prop;
-//  const TagStruct*     Prop2;
-//  const TagStruct*     Prop3;
-  const TagStruct*     DictPointer;
   BOOLEAN    IsValidCustomUUID = FALSE;
-  //UINTN      i;
 
-  Dict              = CfgDict;
-  if (Dict != NULL) {
-    //    DBG("Loading main settings\n");
+  if (CfgDict != NULL) {
     DbgHeader ("GetUserSettings");
 
     // Boot settings.
     // Discussion. Why Arguments is here? It should be SystemParameters property!
     // we will read them again because of change in GUI menu. It is not only EarlySettings
     //
-    DictPointer = Dict->dictPropertyForKey("Boot");
-    if (DictPointer != NULL) {
+    const TagDict* BootDict = CfgDict->dictPropertyForKey("Boot");
+    if (BootDict != NULL) {
 
-      Prop = DictPointer->dictPropertyForKey("Arguments");
-      if ( Prop != NULL  &&  Prop->isString()  &&  Prop->stringValue().notEmpty()  &&  !gSettings.BootArgs.contains(Prop->stringValue()) ) {
-        gSettings.BootArgs = Prop->stringValue();
+      const TagStruct* Prop = BootDict->propertyForKey("Arguments");
+      if ( Prop != NULL  &&  Prop->isString()  &&  Prop->getString()->stringValue().notEmpty()  &&  !gSettings.BootArgs.contains(Prop->getString()->stringValue()) ) {
+        gSettings.BootArgs = Prop->getString()->stringValue();
         //gBootArgsChanged = TRUE;
         //gBootChanged = TRUE;
       }
 
-      Prop                     = DictPointer->dictPropertyForKey("NeverDoRecovery");
+      Prop                     = BootDict->propertyForKey("NeverDoRecovery");
       gSettings.NeverDoRecovery  = IsPropertyNotNullAndTrue(Prop);
     }
 
 
     //Graphics
 
-    DictPointer = Dict->dictPropertyForKey("Graphics");
-    if (DictPointer != NULL) {
+    const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
+    if (GraphicsDict != NULL) {
       INTN i;
-      Dict2     = DictPointer->dictPropertyForKey("Inject");
-      if (Dict2 != NULL) {
-        if (IsPropertyNotNullAndTrue(Dict2)) {
+      const TagStruct* Prop     = GraphicsDict->propertyForKey("Inject");
+      if (Prop != NULL) {
+        if (IsPropertyNotNullAndTrue(Prop)) {
           gSettings.GraphicsInjector = TRUE;
           gSettings.InjectIntel      = TRUE;
           gSettings.InjectATI        = TRUE;
           gSettings.InjectNVidia     = TRUE;
-        } else if (Dict2->isDict()) {
-          Prop = Dict2->dictPropertyForKey("Intel");
-          if (Prop != NULL) {
-            gSettings.InjectIntel = IsPropertyNotNullAndTrue(Prop);
+        } else if (Prop->isDict()) {
+          const TagDict* Dict2 = Prop->getDict();
+          const TagStruct* Prop2 = Dict2->propertyForKey("Intel");
+          if (Prop2 != NULL) {
+            gSettings.InjectIntel = IsPropertyNotNullAndTrue(Prop2);
           }
 
-          Prop = Dict2->dictPropertyForKey("ATI");
-          if (Prop != NULL) {
-            gSettings.InjectATI = IsPropertyNotNullAndTrue(Prop);
+          Prop2 = Dict2->propertyForKey("ATI");
+          if (Prop2 != NULL) {
+            gSettings.InjectATI = IsPropertyNotNullAndTrue(Prop2);
           }
 
-          Prop = Dict2->dictPropertyForKey("NVidia");
-          if (Prop != NULL) {
-            gSettings.InjectNVidia = IsPropertyNotNullAndTrue(Prop);
+          Prop2 = Dict2->propertyForKey("NVidia");
+          if (Prop2 != NULL) {
+            gSettings.InjectNVidia = IsPropertyNotNullAndTrue(Prop2);
           }
         } else {
           gSettings.GraphicsInjector = FALSE;
@@ -4411,43 +4881,43 @@ GetUserSettings(
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("RadeonDeInit");
+      Prop = GraphicsDict->propertyForKey("RadeonDeInit");
       gSettings.DeInit = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("VRAM");
+      Prop = GraphicsDict->propertyForKey("VRAM");
       gSettings.VRAM = (UINTN)GetPropertyAsInteger(Prop, (INTN)gSettings.VRAM); //Mb
       //
-      Prop = DictPointer->dictPropertyForKey("RefCLK");
+      Prop = GraphicsDict->propertyForKey("RefCLK");
       gSettings.RefCLK = (UINT16)GetPropertyAsInteger(Prop, 0);
 
-      Prop = DictPointer->dictPropertyForKey("LoadVBios");
+      Prop = GraphicsDict->propertyForKey("LoadVBios");
       gSettings.LoadVBios = IsPropertyNotNullAndTrue(Prop);
 
       for (i = 0; i < (INTN)NGFX; i++) {
         gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
       }
 
-      Prop = DictPointer->dictPropertyForKey("VideoPorts");
+      Prop = GraphicsDict->propertyForKey("VideoPorts");
       gSettings.VideoPorts   = (UINT16)GetPropertyAsInteger(Prop, gSettings.VideoPorts);
 
-      Prop = DictPointer->dictPropertyForKey("BootDisplay");
+      Prop = GraphicsDict->propertyForKey("BootDisplay");
       gSettings.BootDisplay = (INT8)GetPropertyAsInteger(Prop, -1);
 
-      Prop = DictPointer->dictPropertyForKey("FBName");
+      Prop = GraphicsDict->propertyForKey("FBName");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in FBName\n");
         }else{
-          gSettings.FBName = Prop->stringValue();
+          gSettings.FBName = Prop->getString()->stringValue();
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("NVCAP");
+      Prop = GraphicsDict->propertyForKey("NVCAP");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in NVCAP\n");
         }else{
-          hex2bin (Prop->stringValue().c_str(), (UINT8*)&gSettings.NVCAP[0], 20);
+          hex2bin (Prop->getString()->stringValue().c_str(), (UINT8*)&gSettings.NVCAP[0], 20);
           DBG("Read NVCAP:");
 
           for (i = 0; i<20; i++) {
@@ -4459,64 +4929,64 @@ GetUserSettings(
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("display-cfg");
+      Prop = GraphicsDict->propertyForKey("display-cfg");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in display-cfg\n");
         }else{
-          hex2bin (Prop->stringValue().c_str(), (UINT8*)&gSettings.Dcfg[0], 8);
+          hex2bin (Prop->getString()->stringValue().c_str(), (UINT8*)&gSettings.Dcfg[0], 8);
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("DualLink");
+      Prop = GraphicsDict->propertyForKey("DualLink");
       gSettings.DualLink = (UINT32)GetPropertyAsInteger(Prop, gSettings.DualLink);
 
       //InjectEDID - already done in earlysettings
       //No! Take again
-      GetEDIDSettings(DictPointer);
+      GetEDIDSettings(GraphicsDict);
 
       // ErmaC: NvidiaGeneric
-      Prop = DictPointer->dictPropertyForKey("NvidiaGeneric");
+      Prop = GraphicsDict->propertyForKey("NvidiaGeneric");
       gSettings.NvidiaGeneric = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("NvidiaNoEFI");
+      Prop = GraphicsDict->propertyForKey("NvidiaNoEFI");
       gSettings.NvidiaNoEFI = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("NvidiaSingle");
+      Prop = GraphicsDict->propertyForKey("NvidiaSingle");
       gSettings.NvidiaSingle = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("ig-platform-id");
+      Prop = GraphicsDict->propertyForKey("ig-platform-id");
       gSettings.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.IgPlatform);
 
-      Prop = DictPointer->dictPropertyForKey("snb-platform-id");
+      Prop = GraphicsDict->propertyForKey("snb-platform-id");
       gSettings.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.IgPlatform);
 
-      FillCardList(DictPointer); //#@ Getcardslist
+      FillCardList(GraphicsDict); //#@ Getcardslist
     }
 
-    DictPointer = Dict->dictPropertyForKey("Devices");
-    if (DictPointer != NULL) {
-      Prop = DictPointer->dictPropertyForKey("Inject");
+    const TagDict* DevicesDict = CfgDict->dictPropertyForKey("Devices");
+    if (DevicesDict != NULL) {
+      const TagStruct* Prop = DevicesDict->propertyForKey("Inject");
       gSettings.StringInjector = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("SetIntelBacklight");
+      Prop = DevicesDict->propertyForKey("SetIntelBacklight");
       gSettings.IntelBacklight = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("SetIntelMaxBacklight");
+      Prop = DevicesDict->propertyForKey("SetIntelMaxBacklight");
       gSettings.IntelMaxBacklight = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("IntelMaxValue");
+      Prop = DevicesDict->propertyForKey("IntelMaxValue");
       gSettings.IntelMaxValue = (UINT16)GetPropertyAsInteger(Prop, gSettings.IntelMaxValue);
 
       /*
        * Properties is a single string, or a dict
        */
-      Prop = DictPointer->dictPropertyForKey("Properties");
+      Prop = DevicesDict->propertyForKey("Properties");
       if (Prop != NULL) {
         if (Prop->isString()) {
 
           EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-          cDeviceProperties = Prop->stringValue();
+          cDeviceProperties = Prop->getString()->stringValue();
           //-------
           Status = gBS->AllocatePages (
                                        AllocateMaxAddress,
@@ -4534,7 +5004,9 @@ GetUserSettings(
           //---------
         }
         else if ( Prop->isDict() ) {
-          INTN   i, Count = Prop->dictKeyCount(); //ok
+          INTN i;
+          const TagDict* PropertiesDict = Prop->getDict();
+          INTN Count = PropertiesDict->dictKeyCount(); //ok
           gSettings.AddProperties = new DEV_PROPERTY[Count];
           DEV_PROPERTY *DevPropDevice;
           DEV_PROPERTY *DevProps;
@@ -4544,11 +5016,11 @@ GetUserSettings(
 			      DBG("Add %lld devices (kTagTypeDict):\n", Count);
 
             for (i = 0; i < Count; i++) {
-              const TagStruct* key;
+              const TagKey* key;
               const TagStruct* value;
               EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
 
-              if ( !EFI_ERROR(Prop->dictKeyAndValueAtIndex(i, &key, &value)) ) {  //take a <key> with DevicePath. If GetKeyValueAtIndex return success, key and value != NULL
+              if ( !EFI_ERROR(PropertiesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {  //take a <key> with DevicePath. If GetKeyValueAtIndex return success, key and value != NULL
                 XStringW DevicePathStr = key->keyStringValue();
                 //         DBG("Device: %ls\n", DevicePathStr);
 
@@ -4575,7 +5047,8 @@ GetUserSettings(
 
                 if ((value != NULL) && (value->isDict())) {
                   INTN PropCount = 0;
-                  PropCount = value->dictKeyCount();
+                  const TagDict* valueDict = value->getDict();
+                  PropCount = valueDict->dictKeyCount();
                   //         DBG("Add %d properties:\n", PropCount);
                   for (INTN j = 0; j < PropCount; j++) {
                     DevProps = *Child;
@@ -4583,9 +5056,9 @@ GetUserSettings(
                   //  *Child = new (__typeof_am__(**Child))();
                     (*Child)->Next = DevProps;
 
-                    const TagStruct* key2;
+                    const TagKey* key2;
                     const TagStruct* value2;
-                    if (EFI_ERROR(value->dictKeyAndValueAtIndex(j, &key2, &value2))) {
+                    if (EFI_ERROR(valueDict->getKeyAndValueAtIndex(j, &key2, &value2))) {
                       continue;
                     }
                     if (key2->keyStringValue()[0] != '#') {
@@ -4598,17 +5071,17 @@ GetUserSettings(
                     }
 
                     //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
-                    if (value2 && (value2->isString()) && value2->stringValue().notEmpty()) {
+                    if (value2 && (value2->isString()) && value2->getString()->stringValue().notEmpty()) {
                       //first suppose it is Ascii string
-                      (*Child)->Value = (UINT8*)S8Printf("%s", value2->stringValue().c_str()).forgetDataWithoutFreeing();
-                      (*Child)->ValueLen = value2->stringValue().sizeInBytesIncludingTerminator();
+                      (*Child)->Value = (UINT8*)S8Printf("%s", value2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                      (*Child)->ValueLen = value2->getString()->stringValue().sizeInBytesIncludingTerminator();
                       (*Child)->ValueType = kTagTypeString;
                     }
-                    else if (value2 && (value2->isInt())) {
-                      if ( value2->intValue() < MIN_INT32  ||  value2->intValue() > MAX_INT32 ) {
+                    else if (value2 && (value2->isInt64())) {
+                      if ( value2->getInt64()->intValue() < MIN_INT32  ||  value2->getInt64()->intValue() > MAX_INT32 ) {
                         MsgLog("Invalid int value for key %s\n", key2->keyStringValue().c_str());
                       }else{
-                        INT32 intValue = (INT32)value2->intValue();
+                        INT32 intValue = (INT32)value2->getInt64()->intValue();
                         (*Child)->Value = (__typeof__((*Child)->Value))AllocatePool(sizeof(intValue));
                         *(INT32*)((*Child)->Value) = intValue;
                         (*Child)->ValueLen = sizeof(intValue);
@@ -4628,10 +5101,10 @@ GetUserSettings(
                       (*Child)->ValueType = kTagTypeFalse;
                     }
                     else if (value2 && (value2->isData())) {
-                      UINTN Size = value2->dataLenValue();
+                      UINTN Size = value2->getData()->dataLenValue();
                       //     (*Child)->Value = GetDataSetting(value2, "Value", &Size);  //TODO
                       UINT8* Data = (__typeof__(Data))AllocateZeroPool(Size);
-                      CopyMem(Data, value2->dataValue(), Size);
+                      CopyMem(Data, value2->getData()->dataValue(), Size);
                       (*Child)->Value = Data;
                       (*Child)->ValueLen = Size;
                       (*Child)->ValueType = kTagTypeData;
@@ -4644,19 +5117,19 @@ GetUserSettings(
         }
       }
 
-      Prop  = DictPointer->dictPropertyForKey("LANInjection");
+      Prop  = DevicesDict->propertyForKey("LANInjection");
       gSettings.LANInjection = !IsPropertyNotNullAndFalse(Prop);  //default = TRUE
 
-      Prop  = DictPointer->dictPropertyForKey("HDMIInjection");
+      Prop  = DevicesDict->propertyForKey("HDMIInjection");
       gSettings.HDMIInjection = IsPropertyNotNullAndTrue(Prop);
 
-      Prop  = DictPointer->dictPropertyForKey("NoDefaultProperties");
+      Prop  = DevicesDict->propertyForKey("NoDefaultProperties");
       gSettings.NoDefaultProperties = !IsPropertyNotNullAndFalse(Prop);
 
-      Prop = DictPointer->dictPropertyForKey("Arbitrary"); // array of dict
-      if (Prop != NULL) {
+      const TagArray* ArbitraryArray = DevicesDict->arrayPropertyForKey("Arbitrary"); // array of dict
+      if (ArbitraryArray != NULL) {
         INTN Index;
-        INTN   Count = Prop->arrayContent().size();
+        INTN   Count = ArbitraryArray->arrayContent().size();
         DEV_PROPERTY *DevProp;
 
         if (Count > 0) {
@@ -4665,25 +5138,21 @@ GetUserSettings(
             UINTN DeviceAddr = 0U;
             XString8 Label;
             DBG(" - [%02lld]:", Index);
-            const TagStruct*     Prop2;
-            Prop2 = &Prop->arrayContent()[Index];
-            if ( !Prop2->isDict() ) {
-              MsgLog("MALFORMED PLIST : Arbitrary must be an array of dict");
-              continue;
-            }
-            Dict2 = Prop2->dictPropertyForKey("PciAddr");
-            if (Dict2 != NULL) {
+            const TagDict* Dict2 = ArbitraryArray->dictElementAt(Index, "Arbitrary"_XS8);
+            const TagStruct*     Prop3;
+            Prop3 = Dict2->propertyForKey("PciAddr");
+            if (Prop3 != NULL) {
               UINT8 Bus, Dev, Func;
 
-              if ( !Dict2->isString() ) {
+              if ( !Prop3->isString() ) {
                 MsgLog("ATTENTION : property not string in PciAddr\n");
                 continue;
               }
-              if ( Dict2->stringValue().length() < 2  ||  Dict2->stringValue()[2] != ':') {
-                DBG(" wrong PciAddr string: %s\n", Dict2->stringValue().c_str());
+              if ( Prop3->getString()->stringValue().length() < 2  ||  Prop3->getString()->stringValue()[2] != ':') {
+                DBG(" wrong PciAddr string: %s\n", Prop3->getString()->stringValue().c_str());
                 continue;
               }
-              CONST CHAR8* Str = Dict2->stringValue().c_str();
+              CONST CHAR8* Str = Prop3->getString()->stringValue().c_str();
               Bus   = hexstrtouint8(Str);
               Dev   = hexstrtouint8(&Str[3]);
               Func  = hexstrtouint8(&Str[6]);
@@ -4695,28 +5164,24 @@ GetUserSettings(
               continue;
             }
 
-            Dict2 = Prop2->dictPropertyForKey("Comment");
-            if (Dict2 != NULL) {
-              if ( !Dict2->isString() ) {
+            Prop3 = Dict2->propertyForKey("Comment");
+            if (Prop3 != NULL) {
+              if ( !Prop3->isString() ) {
                 MsgLog("ATTENTION : property not string in Comment\n");
               }else{
-                Label += Dict2->stringValue();
-                DBG(" (%s)", Dict2->stringValue().c_str());
+                Label += Prop3->getString()->stringValue();
+                DBG(" (%s)", Prop3->getString()->stringValue().c_str());
               }
             }
             DBG("\n");
-            Dict2 = Prop2->dictPropertyForKey("CustomProperties"); // array of dict
-            if (Dict2 != NULL) {
-              const TagStruct* Dict3;
+            const TagArray* CustomPropertiesArray = Dict2->arrayPropertyForKey("CustomProperties"); // array of dict
+            if (CustomPropertiesArray != NULL) {
+              const TagDict* Dict3;
               INTN PropIndex;
-              INTN PropCount = Dict2->arrayContent().size();
+              INTN PropCount = CustomPropertiesArray->arrayContent().size();
 
               for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
-                Dict3 = &Dict2->arrayContent()[PropIndex];
-                if ( !Dict3->isDict() ) {
-                  MsgLog("MALFORMED PLIST : CustomProperties must be an array of dict");
-                  continue;
-                }
+                Dict3 = CustomPropertiesArray->dictElementAt(PropIndex, "CustomProperties"_XS8);
                 DevProp = gSettings.ArbProperties;
                 gSettings.ArbProperties = new DEV_PROPERTY;
                 gSettings.ArbProperties->Next = DevProp;
@@ -4724,32 +5189,37 @@ GetUserSettings(
                 gSettings.ArbProperties->Device = (UINT32)DeviceAddr;
                 gSettings.ArbProperties->Label = (__typeof__(gSettings.ArbProperties->Label))AllocateCopyPool(Label.sizeInBytesIncludingTerminator(), Label.c_str());
 
-                const TagStruct* Prop3 = Dict3->dictPropertyForKey("Disabled");
-                gSettings.ArbProperties->MenuItem.BValue = !IsPropertyNotNullAndTrue(Prop3);
+                const TagStruct* DisabledProp = Dict3->propertyForKey("Disabled");
+                gSettings.ArbProperties->MenuItem.BValue = !IsPropertyNotNullAndTrue(DisabledProp);
 
-                Prop3 = Dict3->dictPropertyForKey("Key");
-                if (Prop3 && (Prop3->isString()) && Prop3->stringValue().notEmpty()) {
-                  gSettings.ArbProperties->Key = S8Printf("%s", Prop3->stringValue().c_str()).forgetDataWithoutFreeing();
+                DisabledProp = Dict3->propertyForKey("Key");
+                if (DisabledProp && (DisabledProp->isString()) && DisabledProp->getString()->stringValue().notEmpty()) {
+                  gSettings.ArbProperties->Key = S8Printf("%s", DisabledProp->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
                 }
 
-                Prop3 = Dict3->dictPropertyForKey("Value");
-                if (Prop3 && (Prop3->isString()) && Prop3->stringValue().notEmpty()) {
+                DisabledProp = Dict3->propertyForKey("Value");
+                if (DisabledProp && (DisabledProp->isString()) && DisabledProp->getString()->stringValue().notEmpty()) {
                   //first suppose it is Ascii string
-                  gSettings.ArbProperties->Value = (UINT8*)S8Printf("%s", Prop3->stringValue().c_str()).forgetDataWithoutFreeing();
-                  gSettings.ArbProperties->ValueLen = Prop3->stringValue().sizeInBytesIncludingTerminator();
+                  gSettings.ArbProperties->Value = (UINT8*)S8Printf("%s", DisabledProp->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                  gSettings.ArbProperties->ValueLen = DisabledProp->getString()->stringValue().sizeInBytesIncludingTerminator();
                   gSettings.ArbProperties->ValueType = kTagTypeString;
-                } else if (Prop3 && (Prop3->isInt())) {
-                  gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocatePool(sizeof(Prop3->intValue()));
-//                    CopyMem(gSettings.ArbProperties->Value, &Prop3->intValue, 4);
-                  *(INTN*)(gSettings.ArbProperties->Value) = Prop3->intValue();
-                  gSettings.ArbProperties->ValueLen = sizeof(Prop3->intValue());
-                  gSettings.ArbProperties->ValueType = kTagTypeInteger;
-                } else if ( Prop3 && Prop3->isTrue() ) {
+                } else if (DisabledProp && (DisabledProp->isInt64())) {
+                  if ( DisabledProp->getInt64()->intValue() < MIN_INT32  ||  DisabledProp->getInt64()->intValue() > MAX_INT32 ) {
+                    MsgLog("Invalid int value for key 'Value'\n");
+                  }else{
+                    INT32 intValue = (INT32)DisabledProp->getInt64()->intValue();
+                    gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocatePool(sizeof(intValue));
+  //                    CopyMem(gSettings.ArbProperties->Value, &Prop3->intValue, 4);
+                    *(INT32*)(gSettings.ArbProperties->Value) = intValue;
+                    gSettings.ArbProperties->ValueLen = sizeof(intValue);
+                    gSettings.ArbProperties->ValueType = kTagTypeInteger;
+                  }
+                } else if ( DisabledProp && DisabledProp->isTrue() ) {
                   gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocateZeroPool(4);
                   gSettings.ArbProperties->Value[0] = TRUE;
                   gSettings.ArbProperties->ValueLen = 1;
                   gSettings.ArbProperties->ValueType = kTagTypeTrue;
-                } else if ( Prop3 && Prop3->isFalse() ) {
+                } else if ( DisabledProp && DisabledProp->isFalse() ) {
                   gSettings.ArbProperties->Value = (__typeof__(gSettings.ArbProperties->Value))AllocateZeroPool(4);
                   //gSettings.ArbProperties->Value[0] = FALSE;
                   gSettings.ArbProperties->ValueLen = 1;
@@ -4773,10 +5243,10 @@ GetUserSettings(
         //        gSettings.NrAddProperties = 0xFFFE;
       }
       //can use AddProperties with ArbProperties
-      Prop = DictPointer->dictPropertyForKey("AddProperties"); // array of dict
+      const TagArray* AddPropertiesArray = DevicesDict->arrayPropertyForKey("AddProperties"); // array of dict
       if (Prop != NULL) {
         INTN i;
-        INTN Count = Prop->arrayContent().size();
+        INTN Count = AddPropertiesArray->arrayContent().size();
         INTN Index = 0;  //begin from 0 if second enter
 
         if (Count > 0) {
@@ -4786,40 +5256,36 @@ GetUserSettings(
           for (i = 0; i < Count; i++) {
             UINTN Size = 0;
 			  DBG(" - [%02lld]:", i);
-            Dict2 = &Prop->arrayContent()[i];
-            if ( !Dict2->isDict() ) {
-              MsgLog("MALFORMED PLIST : AddProperties must be an array of dict");
-              continue;
-            }
-            const TagStruct* Prop2 = Dict2->dictPropertyForKey("Device");
-            if (Prop2 && (Prop2->isString()) && Prop2->stringValue().notEmpty()) {
+            const TagDict* Dict2 = AddPropertiesArray->dictElementAt(i, "AddProperties"_XS8);
+            const TagStruct* DeviceProp = Dict2->propertyForKey("Device");
+            if (DeviceProp && (DeviceProp->isString()) && DeviceProp->getString()->stringValue().notEmpty()) {
               DEV_PROPERTY *Property = &gSettings.AddProperties[Index];
 
-              if (Prop2->stringValue().equalIC("ATI")) {
+              if (DeviceProp->getString()->stringValue().equalIC("ATI")) {
                 Property->Device = (UINT32)DEV_ATI;
-              } else if (Prop2->stringValue().equalIC("NVidia")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("NVidia")) {
                 Property->Device = (UINT32)DEV_NVIDIA;
-              } else if (Prop2->stringValue().equalIC("IntelGFX")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("IntelGFX")) {
                 Property->Device = (UINT32)DEV_INTEL;
-              } else if (Prop2->stringValue().equalIC("LAN")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("LAN")) {
                 Property->Device = (UINT32)DEV_LAN;
-              } else if (Prop2->stringValue().equalIC("WIFI")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("WIFI")) {
                 Property->Device = (UINT32)DEV_WIFI;
-              } else if (Prop2->stringValue().equalIC("Firewire")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("Firewire")) {
                 Property->Device = (UINT32)DEV_FIREWIRE;
-              } else if (Prop2->stringValue().equalIC("SATA")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("SATA")) {
                 Property->Device = (UINT32)DEV_SATA;
-              } else if (Prop2->stringValue().equalIC("IDE")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("IDE")) {
                 Property->Device = (UINT32)DEV_IDE;
-              } else if (Prop2->stringValue().equalIC("HDA")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("HDA")) {
                 Property->Device = (UINT32)DEV_HDA;
-              } else if (Prop2->stringValue().equalIC("HDMI")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("HDMI")) {
                 Property->Device = (UINT32)DEV_HDMI;
-              } else if (Prop2->stringValue().equalIC("LPC")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("LPC")) {
                 Property->Device = (UINT32)DEV_LPC;
-              } else if (Prop2->stringValue().equalIC("SmBUS")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("SmBUS")) {
                 Property->Device = (UINT32)DEV_SMBUS;
-              } else if (Prop2->stringValue().equalIC("USB")) {
+              } else if (DeviceProp->getString()->stringValue().equalIC("USB")) {
                 Property->Device = (UINT32)DEV_USB;
               } else {
                 DBG(" unknown device, ignored\n"/*, i*/);
@@ -4827,26 +5293,31 @@ GetUserSettings(
               }
             }
 
-            if ( Prop2->isString() ) DBG(" %s ", Prop2->stringValue().c_str());
+            if ( DeviceProp->isString() ) DBG(" %s ", DeviceProp->getString()->stringValue().c_str());
 
-            Prop2 = Dict2->dictPropertyForKey("Disabled");
+            const TagStruct* Prop2 = Dict2->propertyForKey("Disabled");
             gSettings.AddProperties[Index].MenuItem.BValue = !IsPropertyNotNullAndTrue(Prop2);
 
-            Prop2 = Dict2->dictPropertyForKey("Key");
-            if (Prop2 && (Prop2->isString()) && Prop2->stringValue().notEmpty()) {
-              gSettings.AddProperties[Index].Key = S8Printf("%s", Prop2->stringValue().c_str()).forgetDataWithoutFreeing();
+            Prop2 = Dict2->propertyForKey("Key");
+            if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
+              gSettings.AddProperties[Index].Key = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
             }
 
-            Prop2 = Dict2->dictPropertyForKey("Value");
-            if (Prop2 && (Prop2->isString()) && Prop2->stringValue().notEmpty()) {
+            Prop2 = Dict2->propertyForKey("Value");
+            if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
               //first suppose it is Ascii string
-              gSettings.AddProperties[Index].Value = (UINT8*)S8Printf("%s", Prop2->stringValue().c_str()).forgetDataWithoutFreeing();
-              gSettings.AddProperties[Index].ValueLen = Prop2->stringValue().sizeInBytesIncludingTerminator();
-            } else if (Prop2 && (Prop2->isInt())) {
-              gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocatePool (sizeof(Prop2->intValue()));
-//              CopyMem(gSettings.AddProperties[Index].Value, &Prop2->intValue, 4);
-              *(INTN*)(gSettings.AddProperties[Index].Value) = Prop2->intValue();
-              gSettings.AddProperties[Index].ValueLen = sizeof(Prop2->intValue());
+              gSettings.AddProperties[Index].Value = (UINT8*)S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+              gSettings.AddProperties[Index].ValueLen = Prop2->getString()->stringValue().sizeInBytesIncludingTerminator();
+            } else if (Prop2 && (Prop2->isInt64())) {
+              if ( Prop2->getInt64()->intValue() < MIN_INT32  ||  Prop2->getInt64()->intValue() > MAX_INT32 ) {
+                MsgLog("Invalid int value for key 'Value'\n");
+              }else{
+                INT32 intValue = (INT32)Prop2->getInt64()->intValue();
+                gSettings.AddProperties[Index].Value = (__typeof__(gSettings.AddProperties[Index].Value))AllocatePool (sizeof(intValue));
+  //              CopyMem(gSettings.AddProperties[Index].Value, &Prop2->intValue, 4);
+                *(INT32*)(gSettings.AddProperties[Index].Value) = intValue;
+                gSettings.AddProperties[Index].ValueLen = sizeof(intValue);
+              }
             } else {
               //else  data
               gSettings.AddProperties[Index].Value = GetDataSetting (Dict2, "Value", &Size);
@@ -4867,71 +5338,71 @@ GetUserSettings(
       }
       //end AddProperties
 
-      Prop = DictPointer->dictPropertyForKey("FakeID");
-      if (Prop != NULL) {
-        const TagStruct* Prop2 = Prop->dictPropertyForKey("ATI");
+      const TagDict* FakeIDDict = DevicesDict->dictPropertyForKey("FakeID");
+      if (FakeIDDict != NULL) {
+        const TagStruct* Prop2 = FakeIDDict->propertyForKey("ATI");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeATI  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeATI  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("NVidia");
+        Prop2 = FakeIDDict->propertyForKey("NVidia");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeNVidia  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeNVidia  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("IntelGFX");
+        Prop2 = FakeIDDict->propertyForKey("IntelGFX");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeIntel  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeIntel  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("LAN");
+        Prop2 = FakeIDDict->propertyForKey("LAN");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeLAN  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeLAN  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("WIFI");
+        Prop2 = FakeIDDict->propertyForKey("WIFI");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeWIFI  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeWIFI  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("SATA");
+        Prop2 = FakeIDDict->propertyForKey("SATA");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeSATA  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeSATA  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("XHCI");
+        Prop2 = FakeIDDict->propertyForKey("XHCI");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeXHCI  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeXHCI  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
 
-        Prop2 = Prop->dictPropertyForKey("IMEI");
+        Prop2 = FakeIDDict->propertyForKey("IMEI");
         if (Prop2 && (Prop2->isString())) {
-          gSettings.FakeIMEI  = (UINT32)AsciiStrHexToUint64(Prop2->stringValue());
+          gSettings.FakeIMEI  = (UINT32)AsciiStrHexToUint64(Prop2->getString()->stringValue());
         }
       }
 
-      Prop                   = DictPointer->dictPropertyForKey("UseIntelHDMI");
+      Prop                   = DevicesDict->propertyForKey("UseIntelHDMI");
       gSettings.UseIntelHDMI = IsPropertyNotNullAndTrue(Prop);
 
-      Prop                = DictPointer->dictPropertyForKey("ForceHPET");
+      Prop                = DevicesDict->propertyForKey("ForceHPET");
       gSettings.ForceHPET = IsPropertyNotNullAndTrue(Prop);
 
-      Prop                = DictPointer->dictPropertyForKey("DisableFunctions");
+      Prop                = DevicesDict->propertyForKey("DisableFunctions");
       if (Prop && (Prop->isString())) {
-        gSettings.DisableFunctions  = (UINT32)AsciiStrHexToUint64(Prop->stringValue());
+        gSettings.DisableFunctions  = (UINT32)AsciiStrHexToUint64(Prop->getString()->stringValue());
       }
 
-      Prop                = DictPointer->dictPropertyForKey("AirportBridgeDeviceName");
+      Prop                = DevicesDict->propertyForKey("AirportBridgeDeviceName");
       if (Prop && (Prop->isString())) {
-        gSettings.AirportBridgeDeviceName = Prop->stringValue();
+        gSettings.AirportBridgeDeviceName = Prop->getString()->stringValue();
       }
 
-      const TagStruct* Prop2 = DictPointer->dictPropertyForKey("Audio");
-      if (Prop2 != NULL) {
+      const TagDict* AudioDict = DevicesDict->dictPropertyForKey("Audio");
+      if (AudioDict != NULL) {
         // HDA
         //       Prop = GetProperty(Prop2, "ResetHDA");
         //       gSettings.ResetHDA = IsPropertyTrue(Prop);
-        Prop = Prop2->dictPropertyForKey("Inject");
+        Prop = AudioDict->propertyForKey("Inject");
         if (Prop != NULL) {
           // enabled by default
           // syntax:
@@ -4942,584 +5413,65 @@ GetUserSettings(
           //   converts it to decimal 887 and injects this as layout-id.
           //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
           // - all other values are equal to HDAInjection=Detect
-          if (Prop->isInt()) {
-            gSettings.HDALayoutId = (INT32)Prop->intValue(); //must be signed
+          if (Prop->isInt64()) {
+            gSettings.HDALayoutId = (INT32)Prop->getInt64()->intValue(); //must be signed
             gSettings.HDAInjection = (gSettings.HDALayoutId > 0);
           } else if (Prop->isString()){
-            if ( Prop->stringValue().notEmpty()  &&  (Prop->stringValue()[0] == 'n' || Prop->stringValue()[0] == 'N') ) {
+            if ( Prop->getString()->stringValue().notEmpty()  &&  (Prop->getString()->stringValue()[0] == 'n' || Prop->getString()->stringValue()[0] == 'N') ) {
               // if starts with n or N, then no HDA injection
               gSettings.HDAInjection = FALSE;
-            } else if ( Prop->stringValue().length() > 1  &&
-                        Prop->stringValue()[0] == '0'  &&
-                        ( Prop->stringValue()[1] == 'x' || Prop->stringValue()[1] == 'X' ) ) {
+            } else if ( Prop->getString()->stringValue().length() > 1  &&
+                        Prop->getString()->stringValue()[0] == '0'  &&
+                        ( Prop->getString()->stringValue()[1] == 'x' || Prop->getString()->stringValue()[1] == 'X' ) ) {
               // assume it's a hex layout id
-              gSettings.HDALayoutId = (INT32)AsciiStrHexToUintn(Prop->stringValue());
+              gSettings.HDALayoutId = (INT32)AsciiStrHexToUintn(Prop->getString()->stringValue());
               gSettings.HDAInjection = TRUE;
             } else {
               // assume it's a decimal layout id
-              gSettings.HDALayoutId = (INT32)AsciiStrDecimalToUintn(Prop->stringValue());
+              gSettings.HDALayoutId = (INT32)AsciiStrDecimalToUintn(Prop->getString()->stringValue());
               gSettings.HDAInjection = TRUE;
             }
           }
         }
 
-        Prop = Prop2->dictPropertyForKey("AFGLowPowerState");
+        Prop = AudioDict->propertyForKey("AFGLowPowerState");
         gSettings.AFGLowPowerState = IsPropertyNotNullAndTrue(Prop);
       }
 
-      Prop2 = DictPointer->dictPropertyForKey("USB");
-      if (Prop2 != NULL) {
+      const TagDict* USBDict = DevicesDict->dictPropertyForKey("USB");
+      if (USBDict != NULL) {
         // USB
-        Prop = Prop2->dictPropertyForKey("Inject");
+        Prop = USBDict->propertyForKey("Inject");
         gSettings.USBInjection = !IsPropertyNotNullAndFalse(Prop); // enabled by default
 
-        Prop = Prop2->dictPropertyForKey("AddClockID");
+        Prop = USBDict->propertyForKey("AddClockID");
         gSettings.InjectClockID = IsPropertyNotNullAndTrue(Prop); // disabled by default
         // enabled by default for CloverEFI
         // disabled for others
         gSettings.USBFixOwnership = gFirmwareClover;
-        Prop = Prop2->dictPropertyForKey("FixOwnership");
+        Prop = USBDict->propertyForKey("FixOwnership");
         if (Prop != NULL) {
           gSettings.USBFixOwnership = IsPropertyNotNullAndTrue(Prop);
         }
         DBG("USB FixOwnership: %s\n", gSettings.USBFixOwnership?"yes":"no");
 
-        Prop = Prop2->dictPropertyForKey("HighCurrent");
+        Prop = USBDict->propertyForKey("HighCurrent");
         gSettings.HighCurrent = IsPropertyNotNullAndTrue(Prop);
 
-        Prop = Prop2->dictPropertyForKey("NameEH00");
+        Prop = USBDict->propertyForKey("NameEH00");
         gSettings.NameEH00 = IsPropertyNotNullAndTrue(Prop);
       }
     }
 
     //*** ACPI ***//
 
-    DictPointer = Dict->dictPropertyForKey("ACPI");
-    if (DictPointer) {
-      Prop = DictPointer->dictPropertyForKey("DropTables"); // array of dict
-      if (Prop) {
-        INTN   i;
-        INTN Count = Prop->arrayContent().size();
-        BOOLEAN Dropped;
-
-        if (Count > 0) {
-          DBG("Dropping %lld tables:\n", Count);
-
-          for (i = 0; i < Count; i++) {
-            UINT32 Signature = 0;
-            UINT32 TabLength = 0;
-            UINT64 TableId = 0;
-            BOOLEAN OtherOS = FALSE;
-
-            Dict2 = &Prop->arrayContent()[i];
-            if ( !Dict2->isDict() ) {
-              MsgLog("MALFORMED PLIST : DropTables must be an array of dict");
-              continue;
-            }
-
-            DBG(" - [%02lld]: Drop table ", i);
-            // Get the table signatures to drop
-            const TagStruct* Prop2 = Dict2->dictPropertyForKey("Signature");
-            if (Prop2 && (Prop2->isString()) && Prop2->stringValue().notEmpty()) {
-              CHAR8  s1 = 0, s2 = 0, s3 = 0, s4 = 0;
-              const CHAR8 *str = Prop2->stringValue().c_str();
-              if (*str) {
-                s1 = *str++;
-              }
-              if (*str) {
-                s2 = *str++;
-              }
-              if (*str) {
-                s3 = *str++;
-              }
-              if (*str) {
-                s4 = *str++;
-               }
-              Signature = SIGNATURE_32(s1, s2, s3, s4);
-              DBG(" signature=\"%c%c%c%c\" (%8.8X)\n", s1, s2, s3, s4, Signature);
-            }
-            // Get the table ids to drop
-            Prop2 = Dict2->dictPropertyForKey("TableId");
-            if (Prop2 != NULL) {
-              if ( !Prop2->isString() ) {
-                MsgLog("ATTENTION : property not string in TableId\n");
-              }else{
-                UINTN  IdIndex = 0;
-                CHAR8  Id[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-                const CHAR8 *Str = Prop2->stringValue().c_str();
-                if (Str) {
-                  while (*Str && (IdIndex < 8)) {
-              //      DBG("%c", *Str);
-                    Id[IdIndex++] = *Str++;
-                  }
-                }
-
-                CopyMem(&TableId, (CHAR8*)&Id[0], 8);
-                DBG(" table-id=\"%s\" (%16.16llX)\n", Id, TableId);
-              }
-            }
-            // Get the table len to drop
-            Prop2 = Dict2->dictPropertyForKey("Length");
-            if (Prop2 != NULL) {
-              TabLength = (UINT32)GetPropertyAsInteger(Prop2, 0);
-              DBG(" length=%d(0x%X)", TabLength, TabLength);
-            }
-            // Check if to drop for other OS as well
-            Prop2 = Dict2->dictPropertyForKey("DropForAllOS");
-            if (Prop2 != NULL) {
-              OtherOS = IsPropertyNotNullAndTrue(Prop2);
-            }
-
-            DBG("----\n");
-            //set to drop
-            if (gSettings.ACPIDropTables) {
-              ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
-              DBG("         - set table: %08X, %16llx to drop:", Signature, TableId);
-              Dropped = FALSE;
-              while (DropTable) {
-                if (((Signature == DropTable->Signature) &&
-                     (!TableId || (DropTable->TableId == TableId)) &&
-                     (!TabLength || (DropTable->Length == TabLength))) ||
-                    (!Signature && (DropTable->TableId == TableId))) {
-                  DropTable->MenuItem.BValue = TRUE;
-                  DropTable->OtherOS = OtherOS;
-                  gSettings.DropSSDT         = FALSE; //if one item=true then dropAll=false by default
-                  //DBG(" true");
-                  Dropped = TRUE;
-                }
-                DropTable = DropTable->Next;
-              }
-              DBG(" %s\n", Dropped ? "yes" : "no");
-            }
-          }
-        }
-      }
-
-      Dict2 = DictPointer->dictPropertyForKey("DSDT");
-      if (Dict2) {
-        //gSettings.DsdtName by default is "DSDT.aml", but name "BIOS" will mean autopatch
-        Prop = Dict2->dictPropertyForKey("Name");
-        if (Prop != NULL) {
-          if ( !Prop->isString() ) {
-            MsgLog("ATTENTION : property not string in DSDT/Name\n");
-          }else{
-            gSettings.DsdtName = Prop->stringValue();
-          }
-        }
-
-        Prop = Dict2->dictPropertyForKey("Debug");
-        gSettings.DebugDSDT = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("Rtc8Allowed");
-        gSettings.Rtc8Allowed = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("PNLF_UID");
-        gSettings.PNLF_UID = (UINT8)GetPropertyAsInteger(Prop, 0x0A);
-
-        Prop = Dict2->dictPropertyForKey("FixMask");
-        gSettings.FixDsdt = (UINT32)GetPropertyAsInteger(Prop, gSettings.FixDsdt);
-
-        Prop = Dict2->dictPropertyForKey("Fixes");
-        if (Prop != NULL) {
-          UINTN Index;
-          //         DBG("Fixes will override DSDT fix mask %08X!\n", gSettings.FixDsdt);
-          if (Prop->isDict()) {
-            gSettings.FixDsdt = 0;
-            for (Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
-              const TagStruct* Prop2 = Prop->dictPropertyForKey(FixesConfig[Index].newName);
-              if (!Prop2 && FixesConfig[Index].oldName) {
-                Prop2 = Prop->dictPropertyForKey(FixesConfig[Index].oldName);
-              }
-              if (IsPropertyNotNullAndTrue(Prop2)) {
-                gSettings.FixDsdt |= FixesConfig[Index].bitData;
-              }
-            }
-          }
-        }
-        DBG(" - final DSDT Fix mask=%08X\n", gSettings.FixDsdt);
-
-        Prop = Dict2->dictPropertyForKey("Patches"); // array of dict
-        if (Prop != NULL) {
-          INTN   i;
-          INTN Count = Prop->arrayContent().size();
-          if (Count > 0) {
-            gSettings.PatchDsdtNum      = (UINT32)Count;
-            gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool(Count * sizeof(UINT32));
-            gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
-            gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
-            gSettings.PatchDsdtMenuItem = new INPUT_ITEM[Count];
-            DBG("PatchesDSDT: %lld requested\n", Count);
-
-            for (i = 0; i < Count; i++) {
-              UINTN Size = 0;
-              const TagStruct* Prop2 = &Prop->arrayContent()[i];
-              if ( !Prop2->isDict() ) {
-                MsgLog("MALFORMED PLIST : Patches must be an array of dict");
-                continue;
-              }
-              DBG(" - [%02lld]:", i);
-              XString8 DSDTPatchesLabel;
-
-              const TagStruct* Prop3 = Prop2->dictPropertyForKey("Comment");
-              if (Prop3 != NULL && (Prop3->isString()) && Prop3->stringValue().notEmpty()) {
-                DSDTPatchesLabel = Prop3->stringValue();
-              } else {
-                DSDTPatchesLabel = " (NoLabel)"_XS8;
-              }
-              gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
-              snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel.c_str());
-              DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
-
-              Prop3 = Prop2->dictPropertyForKey("Disabled");
-              gSettings.PatchDsdtMenuItem[i].BValue = !IsPropertyNotNullAndTrue(Prop3);
-
-              //DBG(" DSDT bin patch #%d ", i);
-              gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",     &Size);
-              DBG(" lenToFind: %llu", Size);
-              gSettings.LenToFind[i]        = (UINT32)Size;
-              gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
-              DBG(", lenToReplace: %llu", Size);
-              gSettings.LenToReplace[i]     = (UINT32)Size;
-              gSettings.PatchDsdtTgt[i]     = (CHAR8*)GetDataSetting (Prop2, "TgtBridge", &Size);
-              DBG(", Target Bridge: %s\n", gSettings.PatchDsdtTgt[i]);
-              if (!gSettings.PatchDsdtMenuItem[i].BValue) {
-                DBG("  patch disabled at config\n");
-              }
-            }
-          } //if count > 0
-        } //if prop PatchesDSDT
-
-        Prop = Dict2->dictPropertyForKey("ReuseFFFF");
-        if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.ReuseFFFF = TRUE;
-        }
-
-        Prop = Dict2->dictPropertyForKey("SuspendOverride");
-        if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.SuspendOverride = TRUE;
-        }
-/*
-        Prop   = GetProperty(Dict2, "DropOEM_DSM");
-        defDSM = FALSE;
-
-        if (Prop != NULL) {
-          defDSM = TRUE; //set by user
-          if (IsPropertyTrue(Prop)) {
-            gSettings.DropOEM_DSM = 0xFFFF;
-          } else if (IsPropertyFalse(Prop)) {
-            gSettings.DropOEM_DSM = 0;
-          } else if (Prop->isInt()) {
-            gSettings.DropOEM_DSM = (UINT16)(UINTN)Prop->??;
-          } else if (Prop->type == kTagTypeDict) {
-            Prop2 = GetProperty(Prop, "ATI");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_ATI;
-            }
-
-            Prop2 = GetProperty(Prop, "NVidia");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_NVIDIA;
-            }
-
-            Prop2 = GetProperty(Prop, "IntelGFX");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_INTEL;
-            }
-
-            Prop2 = GetProperty(Prop, "HDA");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_HDA;
-            }
-
-            Prop2 = GetProperty(Prop, "HDMI");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_HDMI;
-            }
-
-            Prop2 = GetProperty(Prop, "SATA");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_SATA;
-            }
-
-            Prop2 = GetProperty(Prop, "LAN");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_LAN;
-            }
-
-            Prop2 = GetProperty(Prop, "WIFI");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_WIFI;
-            }
-
-            Prop2 = GetProperty(Prop, "USB");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_USB;
-            }
-
-            Prop2 = GetProperty(Prop, "LPC");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_LPC;
-            }
-
-            Prop2 = GetProperty(Prop, "SmBUS");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_SMBUS;
-            }
-
-            Prop2 = GetProperty(Prop, "Firewire");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_FIREWIRE;
-            }
-
-            Prop2 = GetProperty(Prop, "IDE");
-            if (IsPropertyTrue(Prop2)) {
-              gSettings.DropOEM_DSM |= DEV_IDE;
-            }
-          }
-        }
- */
-      }
-
-      Dict2 = DictPointer->dictPropertyForKey("SSDT");
-      if (Dict2) {
-        const TagStruct* Prop2;
-        Prop2 = Dict2->dictPropertyForKey("Generate");
-        if (Prop2 != NULL) {
-          if (IsPropertyNotNullAndTrue(Prop2)) {
-            gSettings.GeneratePStates = TRUE;
-            gSettings.GenerateCStates = TRUE;
-            gSettings.GenerateAPSN = TRUE;
-            gSettings.GenerateAPLF = TRUE;
-            gSettings.GeneratePluginType = TRUE;
-
-          } else if (IsPropertyNotNullAndFalse(Prop2)) {
-            gSettings.GeneratePStates = FALSE;
-            gSettings.GenerateCStates = FALSE;
-            gSettings.GenerateAPSN = FALSE;
-            gSettings.GenerateAPLF = FALSE;
-            gSettings.GeneratePluginType = FALSE;
-
-          } else if (Prop2->isDict()) {
-            Prop = Prop2->dictPropertyForKey("PStates");
-            gSettings.GeneratePStates = IsPropertyNotNullAndTrue(Prop);
-            gSettings.GenerateAPSN = gSettings.GeneratePStates;
-            gSettings.GenerateAPLF = gSettings.GeneratePStates;
-            gSettings.GeneratePluginType = gSettings.GeneratePStates;
-            Prop = Prop2->dictPropertyForKey("CStates");
-            gSettings.GenerateCStates = IsPropertyNotNullAndTrue(Prop);
-            Prop = Prop2->dictPropertyForKey("APSN");
-            if (Prop) {
-              gSettings.GenerateAPSN = IsPropertyNotNullAndTrue(Prop);
-            }
-            Prop = Prop2->dictPropertyForKey("APLF");
-            if (Prop) {
-              gSettings.GenerateAPLF = IsPropertyNotNullAndTrue(Prop);
-            }
-            Prop = Prop2->dictPropertyForKey("PluginType");
-            if (Prop) {
-              gSettings.GeneratePluginType = IsPropertyNotNullAndTrue(Prop);
-            }
-          }
-        }
-
-        Prop = Dict2->dictPropertyForKey("DropOem");
-        gSettings.DropSSDT  = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("NoOemTableId"); // to disable OEM table ID on ACPI/orgin/SSDT file names
-        gSettings.NoOemTableId = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("NoDynamicExtract"); // to disable extracting child SSDTs
-        gSettings.NoDynamicExtract = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("UseSystemIO");
-        gSettings.EnableISS = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("EnableC7");
-        if (Prop != NULL) {
-          gSettings.EnableC7 = IsPropertyNotNullAndTrue(Prop);
-          DBG("EnableC7: %s\n", gSettings.EnableC7 ? "yes" : "no");
-        }
-
-        Prop = Dict2->dictPropertyForKey("EnableC6");
-        if (Prop != NULL) {
-          gSettings.EnableC6 = IsPropertyNotNullAndTrue(Prop);
-          DBG("EnableC6: %s\n", gSettings.EnableC6 ? "yes" : "no");
-        }
-
-        Prop = Dict2->dictPropertyForKey("EnableC4");
-        if (Prop != NULL) {
-          gSettings.EnableC4 = IsPropertyNotNullAndTrue(Prop);
-          DBG("EnableC4: %s\n", gSettings.EnableC4 ? "yes" : "no");
-        }
-
-        Prop = Dict2->dictPropertyForKey("EnableC2");
-        if (Prop != NULL) {
-          gSettings.EnableC2 = IsPropertyNotNullAndTrue(Prop);
-          DBG("EnableC2: %s\n", gSettings.EnableC2 ? "yes" : "no");
-        }
-
-        Prop = Dict2->dictPropertyForKey("C3Latency");
-        if (Prop != NULL) {
-          gSettings.C3Latency = (UINT16)GetPropertyAsInteger(Prop, gSettings.C3Latency);
-          DBG("C3Latency: %d\n", gSettings.C3Latency);
-        }
-
-        Prop                       = Dict2->dictPropertyForKey("PLimitDict");
-        gSettings.PLimitDict       = (UINT8)GetPropertyAsInteger(Prop, 0);
-
-        Prop                       = Dict2->dictPropertyForKey("UnderVoltStep");
-        gSettings.UnderVoltStep    = (UINT8)GetPropertyAsInteger(Prop, 0);
-
-        Prop                       = Dict2->dictPropertyForKey("DoubleFirstState");
-        gSettings.DoubleFirstState = IsPropertyNotNullAndTrue(Prop);
-
-        Prop = Dict2->dictPropertyForKey("MinMultiplier");
-        if (Prop != NULL) {
-          gSettings.MinMultiplier  = (UINT8)GetPropertyAsInteger(Prop, gSettings.MinMultiplier);
-          DBG("MinMultiplier: %d\n", gSettings.MinMultiplier);
-        }
-
-        Prop = Dict2->dictPropertyForKey("MaxMultiplier");
-        if (Prop != NULL) {
-          gSettings.MaxMultiplier = (UINT8)GetPropertyAsInteger(Prop, gSettings.MaxMultiplier);
-          DBG("MaxMultiplier: %d\n", gSettings.MaxMultiplier);
-        }
-
-        Prop = Dict2->dictPropertyForKey("PluginType");
-        if (Prop != NULL) {
-          gSettings.PluginType = (UINT8)GetPropertyAsInteger(Prop, gSettings.PluginType);
-          DBG("PluginType: %d\n", gSettings.PluginType);
-        }
-      }
-
-      //     Prop               = GetProperty(DictPointer, "DropMCFG");
-      //     gSettings.DropMCFG = IsPropertyTrue(Prop);
-
-      Prop = DictPointer->dictPropertyForKey("ResetAddress");
-      if (Prop) {
-        gSettings.ResetAddr = (UINT32)GetPropertyAsInteger(Prop, 0x64);
-		  DBG("ResetAddr: 0x%llX\n", gSettings.ResetAddr);
-
-        if (gSettings.ResetAddr  == 0x64) {
-          gSettings.ResetVal = 0xFE;
-        } else if  (gSettings.ResetAddr  == 0xCF9) {
-          gSettings.ResetVal = 0x06;
-        }
-
-        DBG("Calc ResetVal: 0x%hhX\n", gSettings.ResetVal);
-      }
-
-      Prop = DictPointer->dictPropertyForKey("ResetValue");
-      if (Prop) {
-        gSettings.ResetVal = (UINT8)GetPropertyAsInteger(Prop, gSettings.ResetVal);
-        DBG("ResetVal: 0x%hhX\n", gSettings.ResetVal);
-      }
-      //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
-
-      Prop = DictPointer->dictPropertyForKey("HaltEnabler");
-      gSettings.SlpSmiEnable = IsPropertyNotNullAndTrue(Prop);
-
-      //
-      Prop = DictPointer->dictPropertyForKey("FixHeaders");
-      gSettings.FixHeaders = IsPropertyNotNullAndTrue(Prop);
-
-      Prop = DictPointer->dictPropertyForKey("FixMCFG");
-      gSettings.FixMCFG = IsPropertyNotNullAndTrue(Prop);
-
-
-      Prop = DictPointer->dictPropertyForKey("DisableASPM");
-      gSettings.NoASPM = IsPropertyNotNullAndTrue(Prop);
-
-      Prop = DictPointer->dictPropertyForKey("smartUPS");
-      if (Prop) {
-        gSettings.smartUPS   = IsPropertyNotNullAndTrue(Prop);
-        DBG("smartUPS: present\n");
-      }
-
-      Prop               = DictPointer->dictPropertyForKey("PatchAPIC");
-      gSettings.PatchNMI = IsPropertyNotNullAndTrue(Prop);
-
-      Prop               = DictPointer->dictPropertyForKey("SortedOrder"); // array of string
-      if (Prop) {
-        INTN   i;
-        INTN Count = Prop->arrayContent().size();
-        const TagStruct* Prop2 = NULL;
-        if (Count > 0) {
-          gSettings.SortedACPICount = 0;
-          gSettings.SortedACPI = (__typeof__(gSettings.SortedACPI))AllocateZeroPool(Count * sizeof(CHAR16 *));
-
-          for (i = 0; i < Count; i++) {
-            Prop2 = &Prop->arrayContent()[i];
-            if ( !Prop2->isString()) {
-              MsgLog("MALFORMED PLIST : SortedOrder must be an array of string");
-              continue;
-            }
-            gSettings.SortedACPI[gSettings.SortedACPICount++] = SWPrintf("%s", Prop2->stringValue().c_str()).forgetDataWithoutFreeing();
-          }
-        }
-      }
-
-      Prop = DictPointer->dictPropertyForKey("AutoMerge");
-      gSettings.AutoMerge  = IsPropertyNotNullAndTrue(Prop);
-
-      Prop = DictPointer->dictPropertyForKey("DisabledAML"); // array of string
-      if (Prop) {
-        INTN   i;
-        INTN Count = Prop->arrayContent().size();
-        const TagStruct* Prop2 = NULL;
-        if (Count > 0) {
-          gSettings.DisabledAMLCount = 0;
-          gSettings.DisabledAML = (__typeof__(gSettings.DisabledAML))AllocateZeroPool(Count * sizeof(CHAR16 *));
-
-          if (gSettings.DisabledAML) {
-            for (i = 0; i < Count; i++) {
-              Prop2 = &Prop->arrayContent()[i];
-              if ( !Prop2->isString()) {
-                MsgLog("MALFORMED PLIST : DisabledAML must be an array of string");
-                continue;
-              }
-              gSettings.DisabledAML[gSettings.DisabledAMLCount++] = SWPrintf("%s", Prop2->stringValue().c_str()).forgetDataWithoutFreeing();
-            }
-          }
-        }
-      }
-
-      Prop = DictPointer->dictPropertyForKey("RenameDevices"); // dict of key/string
-      if (Prop && Prop->isDict()) {
-        INTN   i;
-        INTN Count = Prop->dictKeyCount();
-        if (Count > 0) {
-          gSettings.DeviceRenameCount = 0;
-          gSettings.DeviceRename = (__typeof__(gSettings.DeviceRename))AllocateZeroPool(Count * sizeof(ACPI_NAME_LIST));
-			    DBG("Devices to rename %lld\n", Count);
-          for (i = 0; i < Count; i++) {
-            const TagStruct* key;
-            const TagStruct* value;
-            if ( !EFI_ERROR(Prop->dictKeyAndValueAtIndex(i, &key, &value)) ) {
-              ACPI_NAME_LIST *List = ParseACPIName(key->keyStringValue());
-              gSettings.DeviceRename[gSettings.DeviceRenameCount].Next = List;
-              while (List) {
-                DBG("%s:", List->Name);
-                List = List->Next;
-              }
-              if (value->isString()) {
-                gSettings.DeviceRename[gSettings.DeviceRenameCount++].Name = S8Printf("%s", value->stringValue().c_str()).forgetDataWithoutFreeing();
-                DBG("->will be renamed to %s\n", value->stringValue().c_str());
-              }
-            }
-          }
-        }
-      }
-    }
+    getACPISettings(CfgDict);
 
     //*** SMBIOS ***//
-    DictPointer = Dict->dictPropertyForKey("SMBIOS");
-    if (DictPointer != NULL) {
-      ParseSMBIOSSettings(DictPointer);
-      Prop = DictPointer->dictPropertyForKey("Trust");
+    const TagDict* SMBIOSDict = CfgDict->dictPropertyForKey("SMBIOS");
+    if (SMBIOSDict != NULL) {
+      ParseSMBIOSSettings(SMBIOSDict);
+      const TagStruct* Prop = SMBIOSDict->propertyForKey("Trust");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndFalse(Prop)) {
           gSettings.TrustSMBIOS = FALSE;
@@ -5527,7 +5479,7 @@ GetUserSettings(
           gSettings.TrustSMBIOS = TRUE;
         }
       }
-      Prop = DictPointer->dictPropertyForKey("MemoryRank");
+      Prop = SMBIOSDict->propertyForKey("MemoryRank");
       gSettings.Attribute = (INT8)GetPropertyAsInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
 
       // Delete the user memory when a new config is selected
@@ -5541,36 +5493,32 @@ GetUserSettings(
       gSettings.InjectMemoryTables = FALSE;
 
       // Inject memory tables into SMBIOS
-      Prop = DictPointer->dictPropertyForKey("Memory");
-      if (Prop != NULL){
+      const TagDict* MemoryDict = SMBIOSDict->dictPropertyForKey("Memory");
+      if (MemoryDict != NULL){
         // Get memory table count
-        const TagStruct* Prop2   = Prop->dictPropertyForKey("SlotCount");
+        const TagStruct* Prop2   = MemoryDict->propertyForKey("SlotCount");
         gRAM.UserInUse = (UINT8)GetPropertyAsInteger(Prop2, 0);
         // Get memory channels
-        Prop2             = Prop->dictPropertyForKey("Channels");
+        Prop2             = MemoryDict->propertyForKey("Channels");
         gRAM.UserChannels = (UINT8)GetPropertyAsInteger(Prop2, 0);
         // Get memory tables
-        Prop2 = Prop->dictPropertyForKey("Modules"); // array of dict
-        if (Prop2 != NULL) {
-          INTN Count = Prop2->arrayContent().size();
+        const TagArray* ModulesArray = MemoryDict->arrayPropertyForKey("Modules"); // array of dict
+        if (ModulesArray != NULL) {
+          INTN Count = ModulesArray->arrayContent().size();
           for (i = 0; i < Count; i++) {
-            const TagStruct* Prop3 = &Prop2->arrayContent()[i];
-            if ( !Prop3->isDict() ) {
-              MsgLog("MALFORMED PLIST : Patches must be an array of dict");
-              continue;
-            }
+            const TagDict* Prop3 = ModulesArray->dictElementAt(i, "SMBIOS/Memory/Modules"_XS8);
             UINT8 Slot = MAX_RAM_SLOTS;
             RAM_SLOT_INFO *SlotPtr;
             // Get memory slot
-            Dict2 = Prop3->dictPropertyForKey("Slot");
-            if (Dict2 == NULL) {
+            Prop2 = Prop3->propertyForKey("Slot");
+            if (Prop2 == NULL) {
               continue;
             }
 
-            if (Dict2->isString() && Dict2->stringValue().notEmpty() ) {
-              Slot = (UINT8)AsciiStrDecimalToUintn(Dict2->stringValue());
-            } else if (Dict2->isInt()) {
-              Slot = Dict2->intValue();
+            if (Prop2->isString() && Prop2->getString()->stringValue().notEmpty() ) {
+              Slot = (UINT8)AsciiStrDecimalToUintn(Prop2->getString()->stringValue());
+            } else if (Prop2->isInt64()) {
+              Slot = Prop2->getInt64()->intValue();
             } else {
               continue;
             }
@@ -5582,37 +5530,37 @@ GetUserSettings(
             SlotPtr = &gRAM.User[Slot];
 
             // Get memory size
-            Dict2 = Prop3->dictPropertyForKey("Size");
-            SlotPtr->ModuleSize = (UINT32)GetPropertyAsInteger(Dict2, SlotPtr->ModuleSize);
+            Prop2 = Prop3->propertyForKey("Size");
+            SlotPtr->ModuleSize = (UINT32)GetPropertyAsInteger(Prop2, SlotPtr->ModuleSize);
             // Get memory frequency
-            Dict2 = Prop3->dictPropertyForKey("Frequency");
-            SlotPtr->Frequency  = (UINT32)GetPropertyAsInteger(Dict2, SlotPtr->Frequency);
+            Prop2 = Prop3->propertyForKey("Frequency");
+            SlotPtr->Frequency  = (UINT32)GetPropertyAsInteger(Prop2, SlotPtr->Frequency);
             // Get memory vendor
-            Dict2 = Prop3->dictPropertyForKey("Vendor");
-            if (Dict2 && Dict2->isString() && Dict2->stringValue().notEmpty()) {
-              SlotPtr->Vendor   = S8Printf("%s", Dict2->stringValue().c_str()).forgetDataWithoutFreeing();
+            Prop2 = Prop3->propertyForKey("Vendor");
+            if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
+              SlotPtr->Vendor   = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
             }
             // Get memory part number
-            Dict2 = Prop3->dictPropertyForKey("Part");
-            if (Dict2 && Dict2->isString() && Dict2->stringValue().notEmpty()) {
-              SlotPtr->PartNo   = S8Printf("%s", Dict2->stringValue().c_str()).forgetDataWithoutFreeing();
+            Prop2 = Prop3->propertyForKey("Part");
+            if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
+              SlotPtr->PartNo   = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
             }
             // Get memory serial number
-            Dict2 = Prop3->dictPropertyForKey("Serial");
-            if (Dict2 && Dict2->isString() && Dict2->stringValue().notEmpty()) {
-              SlotPtr->SerialNo = S8Printf("%s", Dict2->stringValue().c_str()).forgetDataWithoutFreeing();
+            Prop2 = Prop3->propertyForKey("Serial");
+            if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
+              SlotPtr->SerialNo = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
             }
             // Get memory type
             SlotPtr->Type = MemoryTypeDdr3;
-            Dict2 = Prop3->dictPropertyForKey("Type");
-            if (Dict2 && Dict2->isString() && Dict2->stringValue().notEmpty()) {
-              if (Dict2->stringValue().equalIC("DDR2")) {
+            Prop2 = Prop3->propertyForKey("Type");
+            if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
+              if (Prop2->getString()->stringValue().equalIC("DDR2")) {
                 SlotPtr->Type = MemoryTypeDdr2;
-              } else if (Dict2->stringValue().equalIC("DDR3")) {
+              } else if (Prop2->getString()->stringValue().equalIC("DDR3")) {
                 SlotPtr->Type = MemoryTypeDdr3;
-              } else if (Dict2->stringValue().equalIC("DDR4")) {
+              } else if (Prop2->getString()->stringValue().equalIC("DDR4")) {
                 SlotPtr->Type = MemoryTypeDdr4;
-              } else if (Dict2->stringValue().equalIC("DDR")) {
+              } else if (Prop2->getString()->stringValue().equalIC("DDR")) {
                 SlotPtr->Type = MemoryTypeDdr;
               }
             }
@@ -5631,45 +5579,40 @@ GetUserSettings(
         }
       }
 
-      Prop = DictPointer->dictPropertyForKey("Slots"); // array of dict
-      if (Prop != NULL) {
+      const TagArray* SlotsArray = SMBIOSDict->arrayPropertyForKey("Slots"); // array of dict
+      if (SlotsArray != NULL) {
         INTN   DeviceN;
-        INTN Count = Prop->arrayContent().size();
-        const TagStruct* Prop3 = NULL;
+        INTN Count = SlotsArray->arrayContent().size();
 
         for (INTN Index = 0; Index < Count; ++Index) {
-          Prop3 = &Prop->arrayContent()[Index];
-          if ( !Prop3->isDict()) {
-            MsgLog("MALFORMED PLIST : Slots must be an array of dict");
-            continue;
-          }
+          const TagDict* SlotsDict = SlotsArray->dictElementAt(Index, "SMBIOS/Slots"_XS8);
           if (!Index) {
             DBG("Slots->Devices:\n");
           }
 
-          const TagStruct* Prop2 = Prop3->dictPropertyForKey("Device");
+          const TagStruct* Prop2 = SlotsDict->propertyForKey("Device");
           DeviceN = -1;
-          if (Prop2 && (Prop2->isString()) && Prop2->stringValue().notEmpty()) {
-            if (Prop2->stringValue().equalIC("ATI")) {
+          if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
+            if (Prop2->getString()->stringValue().equalIC("ATI")) {
               DeviceN = 0;
-            } else if (Prop2->stringValue().equalIC("NVidia")) {
+            } else if (Prop2->getString()->stringValue().equalIC("NVidia")) {
               DeviceN = 1;
-            } else if (Prop2->stringValue().equalIC("IntelGFX")) {
+            } else if (Prop2->getString()->stringValue().equalIC("IntelGFX")) {
               DeviceN = 2;
-            } else if (Prop2->stringValue().equalIC("LAN")) {
+            } else if (Prop2->getString()->stringValue().equalIC("LAN")) {
               DeviceN = 5;
-            } else if (Prop2->stringValue().equalIC("WIFI")) {
+            } else if (Prop2->getString()->stringValue().equalIC("WIFI")) {
               DeviceN = 6;
-            } else if (Prop2->stringValue().equalIC("Firewire")) {
+            } else if (Prop2->getString()->stringValue().equalIC("Firewire")) {
               DeviceN = 12;
-            } else if (Prop2->stringValue().equalIC("HDMI")) {
+            } else if (Prop2->getString()->stringValue().equalIC("HDMI")) {
               DeviceN = 4;
-            } else if (Prop2->stringValue().equalIC("USB")) {
+            } else if (Prop2->getString()->stringValue().equalIC("USB")) {
               DeviceN = 11;
-            } else if (Prop2->stringValue().equalIC("NVME")) {
+            } else if (Prop2->getString()->stringValue().equalIC("NVME")) {
               DeviceN = 13;
             } else {
-              DBG(" - add properties to unknown device %s, ignored\n", Prop2->stringValue().c_str());
+              DBG(" - add properties to unknown device %s, ignored\n", Prop2->getString()->stringValue().c_str());
               continue;
             }
           } else {
@@ -5679,11 +5622,11 @@ GetUserSettings(
 
           if (DeviceN >= 0) {
             SLOT_DEVICE *SlotDevice = &SlotDevices[DeviceN];
-            Prop2                   = Prop3->dictPropertyForKey("ID");
+            Prop2                   = SlotsDict->propertyForKey("ID");
             SlotDevice->SlotID      = (UINT8)GetPropertyAsInteger(Prop2, DeviceN);
             SlotDevice->SlotType    = SlotTypePci;
 
-            Prop2                   = Prop3->dictPropertyForKey("Type");
+            Prop2                   = SlotsDict->propertyForKey("Type");
             if (Prop2 != NULL) {
               switch ((UINT8)GetPropertyAsInteger(Prop2, 0)) {
                 case 0:
@@ -5715,9 +5658,9 @@ GetUserSettings(
                   break;
               }
             }
-            Prop2 = Prop3->dictPropertyForKey("Name");
-            if (Prop2 && (Prop2->isString()) && Prop2->stringValue().notEmpty()) {
-				snprintf (SlotDevice->SlotName, 31, "%s", Prop2->stringValue().c_str());
+            Prop2 = SlotsDict->propertyForKey("Name");
+            if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
+				snprintf (SlotDevice->SlotName, 31, "%s", Prop2->getString()->stringValue().c_str());
             } else {
 				snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
             }
@@ -5729,81 +5672,81 @@ GetUserSettings(
     }
 
     //CPU
-    DictPointer = Dict->dictPropertyForKey("CPU");
-    if (DictPointer != NULL) {
-      Prop = DictPointer->dictPropertyForKey("QPI");
+    const TagDict* CPUDict = CfgDict->dictPropertyForKey("CPU");
+    if (CPUDict != NULL) {
+      const TagStruct* Prop = CPUDict->propertyForKey("QPI");
       if (Prop != NULL) {
         gSettings.QPI = (UINT16)GetPropertyAsInteger(Prop, gSettings.QPI);
         DBG("QPI: %dMHz\n", gSettings.QPI);
       }
 
-      Prop = DictPointer->dictPropertyForKey("FrequencyMHz");
+      Prop = CPUDict->propertyForKey("FrequencyMHz");
       if (Prop != NULL) {
         gSettings.CpuFreqMHz = (UINT32)GetPropertyAsInteger(Prop, gSettings.CpuFreqMHz);
         DBG("CpuFreq: %dMHz\n", gSettings.CpuFreqMHz);
       }
 
-      Prop = DictPointer->dictPropertyForKey("Type");
+      Prop = CPUDict->propertyForKey("Type");
       gSettings.CpuType = GetAdvancedCpuType();
       if (Prop != NULL) {
         gSettings.CpuType = (UINT16)GetPropertyAsInteger(Prop, gSettings.CpuType);
 		  DBG("CpuType: %hX\n", gSettings.CpuType);
       }
 
-      Prop = DictPointer->dictPropertyForKey("QEMU");
+      Prop = CPUDict->propertyForKey("QEMU");
       gSettings.QEMU = IsPropertyNotNullAndTrue(Prop);
       if (gSettings.QEMU) {
         DBG("QEMU: true\n");
       }
 
-      Prop = DictPointer->dictPropertyForKey("UseARTFrequency");
+      Prop = CPUDict->propertyForKey("UseARTFrequency");
       gSettings.UseARTFreq = IsPropertyNotNullAndTrue(Prop);
 
       gSettings.UserChange = FALSE;
-      Prop = DictPointer->dictPropertyForKey("BusSpeedkHz");
+      Prop = CPUDict->propertyForKey("BusSpeedkHz");
       if (Prop != NULL) {
         gSettings.BusSpeed = (UINT32)GetPropertyAsInteger(Prop, gSettings.BusSpeed);
         DBG("BusSpeed: %dkHz\n", gSettings.BusSpeed);
         gSettings.UserChange = TRUE;
       }
 
-      Prop = DictPointer->dictPropertyForKey("C6");
+      Prop = CPUDict->propertyForKey("C6");
       if (Prop != NULL) {
         gSettings.EnableC6 = IsPropertyNotNullAndTrue(Prop);
       }
 
-      Prop = DictPointer->dictPropertyForKey("C4");
+      Prop = CPUDict->propertyForKey("C4");
       if (Prop != NULL) {
         gSettings.EnableC4 = IsPropertyNotNullAndTrue(Prop);
       }
 
-      Prop = DictPointer->dictPropertyForKey("C2");
+      Prop = CPUDict->propertyForKey("C2");
       if (Prop != NULL) {
         gSettings.EnableC2 = IsPropertyNotNullAndTrue(Prop);
       }
 
       //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
-      Prop                 = DictPointer->dictPropertyForKey("Latency");
+      Prop                 = CPUDict->propertyForKey("Latency");
       gSettings.C3Latency  = (UINT16)GetPropertyAsInteger(Prop, gSettings.C3Latency);
 
-      Prop                 = DictPointer->dictPropertyForKey("SavingMode");
+      Prop                 = CPUDict->propertyForKey("SavingMode");
       gSettings.SavingMode = (UINT8)GetPropertyAsInteger(Prop, 0xFF); //the default value means not set
 
-      Prop                 = DictPointer->dictPropertyForKey("HWPEnable");
+      Prop                 = CPUDict->propertyForKey("HWPEnable");
       if (Prop && IsPropertyNotNullAndTrue(Prop) && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
         gSettings.HWP = TRUE;
         AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
       }
-      Prop                 = DictPointer->dictPropertyForKey("HWPValue");
+      Prop                 = CPUDict->propertyForKey("HWPValue");
       if (Prop && gSettings.HWP) {
         gSettings.HWPValue = (UINT32)GetPropertyAsInteger(Prop, 0);
         AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.HWPValue);
       }
 
-      Prop                 = DictPointer->dictPropertyForKey("TDP");
+      Prop                 = CPUDict->propertyForKey("TDP");
       gSettings.TDP  = (UINT8)GetPropertyAsInteger(Prop, 0);
 
-      Prop                 = DictPointer->dictPropertyForKey("TurboDisable");
+      Prop                 = CPUDict->propertyForKey("TurboDisable");
       if (Prop && IsPropertyNotNullAndTrue(Prop)) {
         UINT64 msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
         gSettings.Turbo = 0;
@@ -5813,23 +5756,23 @@ GetUserSettings(
     }
 
     // RtVariables
-    DictPointer = Dict->dictPropertyForKey("RtVariables");
-    if (DictPointer != NULL) {
+    const TagDict* RtVariablesDict = CfgDict->dictPropertyForKey("RtVariables");
+    if (RtVariablesDict != NULL) {
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
-      Prop = DictPointer->dictPropertyForKey("ROM");
+      const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in RtVariables/ROM\n");
         }else{
-          if (Prop->stringValue().equalIC("UseMacAddr0")) {
+          if (Prop->getString()->stringValue().equalIC("UseMacAddr0")) {
             gSettings.RtROM         = &gLanMac[0][0];
             gSettings.RtROMLen      = 6;
-          } else if (Prop->stringValue().equalIC("UseMacAddr1")) {
+          } else if (Prop->getString()->stringValue().equalIC("UseMacAddr1")) {
             gSettings.RtROM         = &gLanMac[1][0];
             gSettings.RtROMLen      = 6;
           } else {
             UINTN ROMLength         = 0;
-            gSettings.RtROM         = GetDataSetting (DictPointer, "ROM", &ROMLength);
+            gSettings.RtROM         = GetDataSetting (RtVariablesDict, "ROM", &ROMLength);
             gSettings.RtROMLen      = ROMLength;
           }
 
@@ -5841,84 +5784,80 @@ GetUserSettings(
       }
 
       // MLB: <string>some value</string>
-      Prop = DictPointer->dictPropertyForKey("MLB");
+      Prop = RtVariablesDict->propertyForKey("MLB");
       if ( Prop != NULL ) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in RtVariables/MLB\n");
         }else{
-          if( Prop->stringValue().notEmpty() ) {
-            gSettings.RtMLB = Prop->stringValue();
+          if( Prop->getString()->stringValue().notEmpty() ) {
+            gSettings.RtMLB = Prop->getString()->stringValue();
           }
         }
       }
       // CsrActiveConfig
-      Prop = DictPointer->dictPropertyForKey("CsrActiveConfig");
+      Prop = RtVariablesDict->propertyForKey("CsrActiveConfig");
       gSettings.CsrActiveConfig = (UINT32)GetPropertyAsInteger(Prop, 0x267); //the value 0xFFFF means not set
 
       //BooterConfig
-      Prop = DictPointer->dictPropertyForKey("BooterConfig");
+      Prop = RtVariablesDict->propertyForKey("BooterConfig");
       gSettings.BooterConfig = (UINT16)GetPropertyAsInteger(Prop, 0); //the value 0 means not set
       //let it be string like "log=0"
-      Prop = DictPointer->dictPropertyForKey("BooterCfg");
+      Prop = RtVariablesDict->propertyForKey("BooterCfg");
       if ( Prop != NULL ) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in RtVariables/BooterCfg\n");
         }else{
-          if( Prop->stringValue().notEmpty() ) {
-            gSettings.BooterCfgStr = Prop->stringValue();
+          if( Prop->getString()->stringValue().notEmpty() ) {
+            gSettings.BooterCfgStr = Prop->getString()->stringValue();
           }
         }
       }
       //Block external variables
-      Prop = DictPointer->dictPropertyForKey("Block"); // array of dict
-      if (Prop != NULL) {
+      const TagArray* BlockArray = RtVariablesDict->arrayPropertyForKey("Block"); // array of dict
+      if (BlockArray != NULL) {
         INTN   i;
-        INTN Count = Prop->arrayContent().size();
+        INTN Count = BlockArray->arrayContent().size();
         RtVariablesNum = 0;
         RtVariables = (__typeof__(RtVariables))AllocateZeroPool(Count * sizeof(RT_VARIABLES));
         for (i = 0; i < Count; i++) {
-          Dict = &Prop->arrayContent()[i];
-          if ( !Prop->isDict()) {
-            MsgLog("MALFORMED PLIST : Slots must be an array of dict");
-            continue;
-          }
-          const TagStruct* Prop2 = Dict->dictPropertyForKey("Comment");
+          CfgDict = BlockArray->dictElementAt(i, "Block"_XS8);
+          const TagStruct* Prop2 = CfgDict->propertyForKey("Comment");
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
               MsgLog("ATTENTION : property not string in Block/Comment\n");
             }else{
-              if( Prop2->stringValue().notEmpty() ) {
-                DBG(" %s\n", Prop2->stringValue().c_str());
+              if( Prop2->getString()->stringValue().notEmpty() ) {
+                DBG(" %s\n", Prop2->getString()->stringValue().c_str());
               }
             }
           }
-          Prop2 = Dict->dictPropertyForKey("Disabled");
+          Prop2 = CfgDict->propertyForKey("Disabled");
           if (IsPropertyNotNullAndFalse(Prop2)) {
             continue;
           }
-          Prop2 = Dict->dictPropertyForKey("Guid");
+          Prop2 = CfgDict->propertyForKey("Guid");
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
               MsgLog("ATTENTION : property not string in Block/Guid\n");
             }else{
-              if( Prop2->stringValue().notEmpty() ) {
-                if (IsValidGuidAsciiString(Prop2->stringValue())) {
-                  StrToGuidLE(Prop2->stringValue(), &RtVariables[RtVariablesNum].VarGuid);
+              if( Prop2->getString()->stringValue().notEmpty() ) {
+                if (IsValidGuidAsciiString(Prop2->getString()->stringValue())) {
+                  StrToGuidLE(Prop2->getString()->stringValue(), &RtVariables[RtVariablesNum].VarGuid);
                 }else{
-                 DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->stringValue().c_str());
+                 DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
                 }
               }
             }
           }
 
-          Prop2 = Dict->dictPropertyForKey("Name");
+          Prop2 = CfgDict->propertyForKey("Name");
           RtVariables[RtVariablesNum].Name = NULL;
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
               MsgLog("ATTENTION : property not string in Block/Name\n");
             }else{
-              if( Prop2->stringValue().notEmpty() ) {
-                snwprintf(RtVariables[RtVariablesNum].Name, 64, "%s", Prop2->stringValue().c_str());
+              if( Prop2->getString()->stringValue().notEmpty() ) {
+                snwprintf(RtVariables[RtVariablesNum].Name, 64, "%s", Prop2->getString()->stringValue().c_str());
               }
             }
           }
@@ -5943,22 +5882,22 @@ GetUserSettings(
     gSettings.InjectSystemID = TRUE;
 
     // SystemParameters again - values that can depend on previous params
-    DictPointer = Dict->dictPropertyForKey("SystemParameters");
-    if (DictPointer != NULL) {
+    const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
+    if (SystemParametersDict != NULL) {
       //BacklightLevel
-      Prop = DictPointer->dictPropertyForKey("BacklightLevel");
+      const TagStruct* Prop = SystemParametersDict->propertyForKey("BacklightLevel");
       if (Prop != NULL) {
         gSettings.BacklightLevel       = (UINT16)GetPropertyAsInteger(Prop, gSettings.BacklightLevel);
         gSettings.BacklightLevelConfig = TRUE;
       }
 
-      Prop = DictPointer->dictPropertyForKey("CustomUUID");
+      Prop = SystemParametersDict->propertyForKey("CustomUUID");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in SystemParameters/CustomUUID\n");
         }else{
-          if (IsValidGuidAsciiString(Prop->stringValue())) {
-            gSettings.CustomUuid = Prop->stringValue();
+          if (IsValidGuidAsciiString(Prop->getString()->stringValue())) {
+            gSettings.CustomUuid = Prop->getString()->stringValue();
             DBG("Converted CustomUUID %ls\n", gSettings.CustomUuid.wc_str());
             Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
             if (!EFI_ERROR(Status)) {
@@ -5971,34 +5910,34 @@ GetUserSettings(
           }
 
           if (!IsValidCustomUUID) {
-            DBG("Error: invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->stringValue().c_str());
+            DBG("Error: invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
           }
         }
       }
       //else gUuid value from SMBIOS
       //     DBG("Finally use %s\n", strguid(&gUuid));
 
-      Prop                     = DictPointer->dictPropertyForKey("InjectSystemID");
+      Prop                     = SystemParametersDict->propertyForKey("InjectSystemID");
       gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyNotNullAndFalse(Prop) : IsPropertyNotNullAndTrue(Prop);
 
-      Prop                     = DictPointer->dictPropertyForKey("NvidiaWeb");
+      Prop                     = SystemParametersDict->propertyForKey("NvidiaWeb");
       gSettings.NvidiaWeb      = IsPropertyNotNullAndTrue(Prop);
 
     }
 
 
-    DictPointer = Dict->dictPropertyForKey("BootGraphics");
-    if (DictPointer != NULL) {
-      Prop = DictPointer->dictPropertyForKey("DefaultBackgroundColor");
+    const TagDict* BootGraphicsDict = CfgDict->dictPropertyForKey("BootGraphics");
+    if (BootGraphicsDict != NULL) {
+      const TagStruct* Prop = BootGraphicsDict->propertyForKey("DefaultBackgroundColor");
       gSettings.DefaultBackgroundColor = (UINT32)GetPropertyAsInteger(Prop, 0x80000000); //the value 0x80000000 means not set
 
-      Prop = DictPointer->dictPropertyForKey("UIScale");
+      Prop = BootGraphicsDict->propertyForKey("UIScale");
       gSettings.UIScale = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
 
-      Prop = DictPointer->dictPropertyForKey("EFILoginHiDPI");
+      Prop = BootGraphicsDict->propertyForKey("EFILoginHiDPI");
       gSettings.EFILoginHiDPI = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
 
-      Prop = DictPointer->dictPropertyForKey("flagstate");
+      Prop = BootGraphicsDict->propertyForKey("flagstate");
       *(UINT32*)&gSettings.flagstate[0] = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
 
     }
@@ -6038,28 +5977,28 @@ GetUserSettings(
      */
 
     if (gBootChanged) {
-      DictPointer = Dict->dictPropertyForKey("KernelAndKextPatches");
-      if (DictPointer != NULL) {
+      const TagDict* KernelAndKextPatchesDict = CfgDict->dictPropertyForKey("KernelAndKextPatches");
+      if (KernelAndKextPatchesDict != NULL) {
         DBG("refill kernel patches bcoz gBootChanged\n");
-        FillinKextPatches(&gSettings.KernelAndKextPatches, DictPointer);
+        FillinKextPatches(&gSettings.KernelAndKextPatches, KernelAndKextPatchesDict);
       }
     } else {
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
     if (gThemeChanged) {
       GlobalConfig.Theme.setEmpty();
-      DictPointer = Dict->dictPropertyForKey("GUI");
-      if (DictPointer != NULL) {
-        Prop = DictPointer->dictPropertyForKey("Theme");
-        if ((Prop != NULL) && (Prop->isString()) && Prop->stringValue().notEmpty()) {
-          GlobalConfig.Theme.takeValueFrom(Prop->stringValue());
+      const TagDict* GUIDict = CfgDict->dictPropertyForKey("GUI");
+      if (GUIDict != NULL) {
+        const TagStruct* Prop = GUIDict->propertyForKey("Theme");
+        if ((Prop != NULL) && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+          GlobalConfig.Theme.takeValueFrom(Prop->getString()->stringValue());
           DBG("Theme from new config: %ls\n", GlobalConfig.Theme.wc_str());
         }
       }
     }
     SaveSettings();
   }
-  //DBG("config.plist read and return %s\n", strerror(Status));
+  //DBG("config.plist read and return %s\n", efiStrError(Status));
   return EFI_SUCCESS;
 }
 /*
@@ -6088,8 +6027,8 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
   EFI_STATUS Status      = EFI_NOT_FOUND;
   CHAR8*     PlistBuffer = NULL;
   UINTN      PlistLen;
-  TagStruct*     Dict        = NULL;
-  const TagStruct*     DictPointer = NULL;
+  TagDict*     Dict        = NULL;
+  const TagDict*     DictPointer = NULL;
   const TagStruct*     Prop        = NULL;
 
   if (!Entry || !Entry->Volume) {
@@ -6112,23 +6051,23 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
     if ( plist.notEmpty() ) { // found macOS System
       Status = egLoadFile(Entry->Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-        Prop = Dict->dictPropertyForKey("ProductVersion");
+        Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
           if ( !Prop->isString() ) {
             MsgLog("ATTENTION : property not string in ProductVersion\n");
           }else{
-            if( Prop->stringValue().notEmpty() ) {
-              OSVersion = Prop->stringValue();
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              OSVersion = Prop->getString()->stringValue();
             }
           }
         }
-        Prop = Dict->dictPropertyForKey("ProductBuildVersion");
+        Prop = Dict->propertyForKey("ProductBuildVersion");
         if ( Prop != NULL ) {
           if ( !Prop->isString() ) {
             MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
           }else{
-            if( Prop->stringValue().notEmpty() ) {
-              Entry->BuildVersion = Prop->stringValue();
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              Entry->BuildVersion = Prop->getString()->stringValue();
             }
           }
         }
@@ -6156,23 +6095,23 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
     if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
       Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-        Prop = Dict->dictPropertyForKey("ProductVersion");
+        Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
           if ( !Prop->isString() ) {
             MsgLog("ATTENTION : property not string in ProductVersion\n");
           }else{
-            if( Prop->stringValue().notEmpty() ) {
-              OSVersion = Prop->stringValue();
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              OSVersion = Prop->getString()->stringValue();
             }
           }
         }
-        Prop = Dict->dictPropertyForKey("ProductBuildVersion");
+        Prop = Dict->propertyForKey("ProductBuildVersion");
         if ( Prop != NULL ) {
           if ( !Prop->isString() ) {
             MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
           }else{
-            if( Prop->stringValue().notEmpty() ) {
-              Entry->BuildVersion = Prop->stringValue();
+            if( Prop->getString()->stringValue().notEmpty() ) {
+              Entry->BuildVersion = Prop->getString()->stringValue();
             }
           }
         }
@@ -6187,32 +6126,32 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-          Prop = Dict->dictPropertyForKey("Kernel Flags");
+          Prop = Dict->propertyForKey("Kernel Flags");
           if ( Prop != NULL ) {
             if ( !Prop->isString() ) {
               MsgLog("ATTENTION : property not string in Kernel Flags\n");
             }else{
-              if ( Prop->stringValue().contains("Install%20macOS%20BigSur") || Prop->stringValue().contains("Install%20macOS%2011.0")) {
+              if ( Prop->getString()->stringValue().contains("Install%20macOS%20BigSur") || Prop->getString()->stringValue().contains("Install%20macOS%2011.0")) {
                 OSVersion = "11.0"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20macOS%2010.16")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%2010.16")) {
                 OSVersion = "10.16"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20macOS%20Catalina") || Prop->stringValue().contains("Install%20macOS%2010.15")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Catalina") || Prop->getString()->stringValue().contains("Install%20macOS%2010.15")) {
                 OSVersion = "10.15"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20macOS%20Mojave") || Prop->stringValue().contains("Install%20macOS%2010.14")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Mojave") || Prop->getString()->stringValue().contains("Install%20macOS%2010.14")) {
                 OSVersion = "10.14"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20macOS%20High%20Sierra") || Prop->stringValue().contains("Install%20macOS%2010.13")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20High%20Sierra") || Prop->getString()->stringValue().contains("Install%20macOS%2010.13")) {
                 OSVersion = "10.13"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20macOS%20Sierra") || Prop->stringValue().contains("Install%20OS%20hhX%2010.12")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20macOS%20Sierra") || Prop->getString()->stringValue().contains("Install%20OS%20hhX%2010.12")) {
                 OSVersion = "10.12"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20OS%20hhX%20El%20Capitan") || Prop->stringValue().contains("Install%20OS%20hhX%2010.11")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20El%20Capitan") || Prop->getString()->stringValue().contains("Install%20OS%20hhX%2010.11")) {
                 OSVersion = "10.11"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20OS%20hhX%20Yosemite") || Prop->stringValue().contains("Install%20OS%20hhX%2010.10")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20Yosemite") || Prop->getString()->stringValue().contains("Install%20OS%20hhX%2010.10")) {
                 OSVersion = "10.10"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20OS%20hhX%20Mavericks.app")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20Mavericks.app")) {
                 OSVersion = "10.9"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20OS%20hhX%20Mountain%20Lion")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20OS%20hhX%20Mountain%20Lion")) {
                 OSVersion = "10.8"_XS8;
-              } else if ( Prop->stringValue().contains("Install%20Mac%20OS%20hhX%20Lion")) {
+              } else if ( Prop->getString()->stringValue().contains("Install%20Mac%20OS%20hhX%20Lion")) {
                 OSVersion = "10.7"_XS8;
               }
             }
@@ -6246,23 +6185,23 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
         Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-          Prop = Dict->dictPropertyForKey("ProductVersion");
+          Prop = Dict->propertyForKey("ProductVersion");
           if ( Prop != NULL ) {
             if ( !Prop->isString() ) {
               MsgLog("ATTENTION : property not string in ProductVersion\n");
             }else{
-              if( Prop->stringValue().notEmpty() ) {
-                OSVersion = Prop->stringValue();
+              if( Prop->getString()->stringValue().notEmpty() ) {
+                OSVersion = Prop->getString()->stringValue();
               }
             }
           }
-          Prop = Dict->dictPropertyForKey("ProductBuildVersion");
+          Prop = Dict->propertyForKey("ProductBuildVersion");
           if ( Prop != NULL ) {
             if ( !Prop->isString() ) {
               MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
             }else{
-              if( Prop->stringValue().notEmpty() ) {
-                Entry->BuildVersion = Prop->stringValue();
+              if( Prop->getString()->stringValue().notEmpty() ) {
+                Entry->BuildVersion = Prop->getString()->stringValue();
               }
             }
           }
@@ -6270,12 +6209,12 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
           // If use the startosinstall in 10.13+, this version key exists in InstallInfo.plist
           DictPointer = Dict->dictPropertyForKey("System Image Info"); // 10.12+
           if (DictPointer != NULL) {
-            Prop = DictPointer->dictPropertyForKey("version");
+            Prop = DictPointer->propertyForKey("version");
             if ( Prop != NULL ) {
               if ( !Prop->isString() ) {
                 MsgLog("ATTENTION : property not string in version\n");
               }else{
-                OSVersion = Prop->stringValue();
+                OSVersion = Prop->getString()->stringValue();
               }
             }
           }
@@ -6360,20 +6299,20 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
 
         Status = egLoadFile(Entry->Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-          Prop = Dict->dictPropertyForKey("ProductVersion");
+          Prop = Dict->propertyForKey("ProductVersion");
           if ( Prop != NULL ) {
             if ( !Prop->isString() ) {
               MsgLog("ATTENTION : property not string in ProductVersion\n");
             }else{
-              OSVersion = Prop->stringValue();
+              OSVersion = Prop->getString()->stringValue();
             }
           }
-          Prop = Dict->dictPropertyForKey("ProductBuildVersion");
+          Prop = Dict->propertyForKey("ProductBuildVersion");
           if ( Prop != NULL ) {
             if ( !Prop->isString() ) {
               MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
             }else{
-              Entry->BuildVersion = Prop->stringValue();
+              Entry->BuildVersion = Prop->getString()->stringValue();
             }
           }
         }
@@ -6405,20 +6344,20 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
     if ( plist.notEmpty() ) { // found macOS System
       Status = egLoadFile(Entry->Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
-        Prop = Dict->dictPropertyForKey("ProductVersion");
+        Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
           if ( !Prop->isString() ) {
             MsgLog("ATTENTION : property not string in ProductVersion\n");
           }else{
-            OSVersion = Prop->stringValue();
+            OSVersion = Prop->getString()->stringValue();
           }
         }
-        Prop = Dict->dictPropertyForKey("ProductBuildVersion");
+        Prop = Dict->propertyForKey("ProductBuildVersion");
         if ( Prop != NULL ) {
           if ( !Prop->isString() ) {
             MsgLog("ATTENTION : property not string in ProductBuildVersion\n");
           }else{
-            Entry->BuildVersion = Prop->stringValue();
+            Entry->BuildVersion = Prop->getString()->stringValue();
           }
         }
       }
@@ -6497,7 +6436,7 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
   EFI_STATUS Status;
   CHAR8      *PlistBuffer;
   UINTN      PlistLen;
-  TagStruct*     Dict;
+  TagDict*     Dict;
   const TagStruct*     Prop;
 
   CONST CHAR16*    SystemPlistR;
@@ -6569,12 +6508,12 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
       return EFI_NOT_FOUND;
     }
 
-    Prop = Dict->dictPropertyForKey("Root UUID");
+    Prop = Dict->propertyForKey("Root UUID");
     if ( Prop != NULL ) {
       if ( !Prop->isString() ) {
         MsgLog("ATTENTION : property not string in Root UUID\n");
       }else{
-        Status = StrToGuidLE(Prop->stringValue(), &Volume->RootUUID);
+        Status = StrToGuidLE(Prop->getString()->stringValue(), &Volume->RootUUID);
       }
     }
 
@@ -8024,7 +7963,7 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
   // get FSINJECTION_PROTOCOL
   Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
   if (EFI_ERROR(Status)) {
-    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", strerror(Status));
+    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", efiStrError(Status));
     MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
     return EFI_NOT_STARTED;
   }
@@ -8532,3 +8471,54 @@ checkOffset(OptionsBits);
   return xb;
 }
 
+//TagDict* regenerateConfigPlist_addDictToDict(TagDict* dict)
+//{
+//  TagDict* tagDict = TagDict::getEmptyTag();
+//  dict->dictContent().AddReference(tagDict, true);
+//  return tagDict;
+//}
+//TagKey* regenerateConfigPlist_addKeyToDict(TagDict* dict, const XString8& key)
+//{
+//  TagKey* tagKey = TagKey::getEmptyTag();
+//  tagKey->setKeyValue(key);
+//  dict->dictContent().AddReference(tagKey, true);
+//  return tagKey;
+//}
+//TagBool* regenerateConfigPlist_addBoolToDict(TagDict* dict, const bool value)
+//{
+//  TagBool* tagBool = TagBool::getEmptyTag();
+//  tagBool->setBoolValue(value);
+//  dict->dictContent().AddReference(tagBool, true);
+//  return tagBool;
+//}
+//void regenerateConfigPlist_addKeyAndBoolToDict(TagDict* dict, const XString8& key, const bool value)
+//{
+//  regenerateConfigPlist_addKeyToDict(dict, key);
+//  regenerateConfigPlist_addBoolToDict(dict, value);
+//}
+//
+//void testConfigPlist()
+//{
+//  TagDict* plist = TagDict::getEmptyTag();
+//  regenerateConfigPlist_addKeyToDict(plist, "ACPI"_XS8);
+//  TagDict* ACPIDict = regenerateConfigPlist_addDictToDict(plist);
+//  regenerateConfigPlist_addKeyAndBoolToDict(ACPIDict, "AutoMerge"_XS8, gSettings.AutoMerge);
+//  regenerateConfigPlist_addKeyToDict(ACPIDict, "DSDT"_XS8);
+//  TagDict* DSDTDict = regenerateConfigPlist_addDictToDict(ACPIDict);
+//  regenerateConfigPlist_addKeyToDict(DSDTDict, "Debug"_XS8);
+//  regenerateConfigPlist_addBoolToDict(DSDTDict, gSettings.KernelAndKextPatches.KPDebug);
+////  regenerateConfigPlist_addKeyToDict(DSDTDict, "DropOEM_DSM"_XS8);
+////  TagDict* DropOEM_DSMDict = regenerateConfigPlist_addDictToDict(DSDTDict);
+//  regenerateConfigPlist_addKeyToDict(DSDTDict, "Fixes"_XS8);
+//  TagDict* FixesDict = regenerateConfigPlist_addDictToDict(DSDTDict);
+//  for (size_t Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
+//    if ( gSettings.FixDsdt & FixesConfig[Index].bitData ) {
+//      regenerateConfigPlist_addKeyToDict(FixesDict, LString8(FixesConfig[Index].newName));
+//      regenerateConfigPlist_addBoolToDict(FixesDict, true);
+//    }
+//  }
+//  XString8 s;
+//  plist->sprintf(0, &s);
+//  MsgLog("%s\n", s.c_str());
+//}
+//

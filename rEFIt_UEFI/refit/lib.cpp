@@ -862,7 +862,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     RemainingDevicePath = DiskDevicePath;
     Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
     if (EFI_ERROR(Status)) {
-      DBG("Can't find WholeDevicePath: %s\n", strerror(Status));
+      DBG("Can't find WholeDevicePath: %s\n", efiStrError(Status));
     } else {
       Volume->WholeDiskDeviceHandle = WholeDiskHandle;
       Volume->WholeDiskDevicePath = DuplicateDevicePath(RemainingDevicePath);
@@ -876,7 +876,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         
       } else {
         Volume->WholeDiskBlockIO = NULL;
-      //  DBG("no WholeDiskBlockIO: %s\n", strerror(Status));
+      //  DBG("no WholeDiskBlockIO: %s\n", efiStrError(Status));
         
         //CheckError(Status, L"from HandleProtocol");
       }
@@ -1358,7 +1358,7 @@ BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
   //DBG("DeleteFile: %ls\n", RelativePath);
   // open file for read/write to see if it exists, need write for delete
   Status = Root->Open(Root, &File, RelativePath, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
-  //DBG(" Open: %s\n", strerror(Status));
+  //DBG(" Open: %s\n", efiStrError(Status));
   if (Status == EFI_SUCCESS) {
     // exists - check if it is a file
     FileInfo = EfiLibFileInfo(File);
@@ -1380,7 +1380,7 @@ BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
     // it's a file - delete it
     //DBG(" File is file\n");
     Status = File->Delete(File);
-    //DBG(" Delete: %s\n", strerror(Status));
+    //DBG(" Delete: %s\n", efiStrError(Status));
     
     return Status == EFI_SUCCESS;
   }

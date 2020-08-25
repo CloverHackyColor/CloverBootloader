@@ -56,14 +56,14 @@
 */
 
 // Experimental <--
-
+#include "../include/Efi.h"
 #include "../libeg/libeg.h"
+
 #ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
 #include "../libeg/XTheme.h"
 extern XTheme ThemeX; //global variable defined in lib.cpp
-
 #endif
 
 #define REFIT_DEBUG (2)
@@ -73,8 +73,6 @@ extern XTheme ThemeX; //global variable defined in lib.cpp
 extern "C" {
 #endif
 
-
-#include <Protocol/SimpleFileSystem.h>
 
 #ifdef __cplusplus
 }

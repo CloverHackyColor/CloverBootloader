@@ -23,7 +23,7 @@ void base64_init_decodestate(base64_decodestate* state_in)
 	state_in->plainchar = 0;
 }
 
-int base64_decode_block(const char* code_in, const int length_in, char* plaintext_out, base64_decodestate* state_in)
+long base64_decode_block(const char* code_in, const int length_in, char* plaintext_out, base64_decodestate* state_in)
 {
 	const char* codechar = code_in;
 	char* plainchar = plaintext_out;
@@ -41,7 +41,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 				{
 					state_in->step = step_a;
 					state_in->plainchar = *plainchar;
-					return (int)(plainchar - plaintext_out);
+					return plainchar - plaintext_out;
 				}
 				fragment = base64_decode_value(*codechar++);
 			} while (fragment < 0);
@@ -52,7 +52,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 				{
 					state_in->step = step_b;
 					state_in->plainchar = *plainchar;
-					return (int)(plainchar - plaintext_out);
+					return plainchar - plaintext_out;
 				}
 				fragment = base64_decode_value(*codechar++);
 			} while (fragment < 0);
@@ -64,7 +64,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 				{
 					state_in->step = step_c;
 					state_in->plainchar = *plainchar;
-					return (int)(plainchar - plaintext_out);
+					return plainchar - plaintext_out;
 				}
 				fragment = base64_decode_value(*codechar++);
 			} while (fragment < 0);
@@ -76,7 +76,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 				{
 					state_in->step = step_d;
 					state_in->plainchar = *plainchar;
-					return (int)(plainchar - plaintext_out);
+					return plainchar - plaintext_out;
 				}
 				fragment = base64_decode_value(*codechar++);
 			} while (fragment < 0);
@@ -84,7 +84,7 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 		}
 	}
 	/* control should not reach here */
-	return (int)(plainchar - plaintext_out);
+	return plainchar - plaintext_out;
 }
 
 
@@ -95,14 +95,14 @@ int base64_decode_block(const char* code_in, const int length_in, char* plaintex
 UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 {
 	UINTN				EncodedSize;
-	UINTN				DecodedSizeInternal;
+	INTN				DecodedSizeInternal;
 	UINT8				*DecodedData;
 	base64_decodestate	state_in;
 
 	if (EncodedData == NULL) {
 		return NULL;
 	}
-	EncodedSize = AsciiStrLen(EncodedData);
+	EncodedSize = strlen(EncodedData);
 	if (EncodedSize == 0) {
 		return NULL;
 	}
@@ -113,7 +113,8 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 	DecodedSizeInternal = base64_decode_block(EncodedData, (const int)EncodedSize, (char*) DecodedData, &state_in);
 
 	if (DecodedSize != NULL) {
-		*DecodedSize = DecodedSizeInternal;
+    if ( DecodedSizeInternal < 0 ) panic("Base64DecodeClover : DecodedSizeInternal < 0");
+		*DecodedSize = (UINTN)DecodedSizeInternal;
 	}
 
 	return DecodedData;

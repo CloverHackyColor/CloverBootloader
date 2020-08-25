@@ -8,15 +8,6 @@
 #ifndef FloatLib_h
 #define FloatLib_h
 
-extern "C" {
-#include <Uefi.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/BaseLib.h>
-#include <Library/MemoryAllocationLib.h>
-//#include <Library/PrintLib.h>
-}
-
 #define PI (3.1415926536f)
 #define PI2 (6.283185307179586f)
 #define PI5 (1.570796326794897f)

@@ -142,7 +142,7 @@ void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path alread
       if (FileExists(ThemeDir, Name)) {
         Status = NewImage.LoadXImage(ThemeDir, Name);
       }
-//      DBG("  read status=%s\n", strerror(Status));
+//      DBG("  read status=%s\n", efiStrError(Status));
     }
     if (!EFI_ERROR(Status)) {
       AddFrame(&NewImage, Index);

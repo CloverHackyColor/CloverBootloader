@@ -101,17 +101,16 @@ CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
   return NULL;
 }
 
-VOID FillCardList(const TagStruct* CfgDict)
+VOID FillCardList(const TagDict* CfgDict)
 {
   if (IsListEmpty(&gCardList) && (CfgDict != NULL)) {
     CONST CHAR8 *VEN[] = { "NVIDIA",  "ATI" };
-    INTN Index, Count = sizeof(VEN) / sizeof(VEN[0]);
-    const TagStruct*      prop;
+    size_t Count = sizeof(VEN) / sizeof(VEN[0]);
     
-    for (Index = 0; Index < Count; Index++) {
+    for (size_t Index = 0; Index < Count; Index++) {
       CONST CHAR8 *key = VEN[Index];
       
-      prop = CfgDict->dictPropertyForKey(key);
+      const TagArray* prop = CfgDict->arrayPropertyForKey(key);
       if( prop  &&  prop->isArray() ) {
         INTN		i;
         INTN		 count;
@@ -131,27 +130,28 @@ VOID FillCardList(const TagStruct* CfgDict)
             MsgLog("MALFORMED PLIST in FillCardList() : element is not a dict");
             continue;
           }
+          const TagDict* dictElement = element->getDict();
           
-          prop2 = element->dictPropertyForKey("Model");
-          if ( prop2->isString() && prop2->stringValue().notEmpty() ) {
-            model_name = prop2->stringValue().c_str();
+          prop2 = dictElement->propertyForKey("Model");
+          if ( prop2->isString() && prop2->getString()->stringValue().notEmpty() ) {
+            model_name = prop2->getString()->stringValue().c_str();
           } else {
             model_name = "VideoCard";
           }
           
-          prop2 = element->dictPropertyForKey("IOPCIPrimaryMatch");
+          prop2 = dictElement->propertyForKey("IOPCIPrimaryMatch");
           dev_id = (UINT32)GetPropertyAsInteger(prop2, 0);
           
-          prop2 = element->dictPropertyForKey("IOPCISubDevId");
+          prop2 = dictElement->propertyForKey("IOPCISubDevId");
           subdev_id = (UINT32)GetPropertyAsInteger(prop2, 0);
           
-          prop2 = element->dictPropertyForKey("VRAM");
+          prop2 = dictElement->propertyForKey("VRAM");
           VramSize = LShiftU64((UINTN)GetPropertyAsInteger(prop2, (INTN)VramSize), 20); //Mb -> bytes
           
-          prop2 = element->dictPropertyForKey("VideoPorts");
+          prop2 = dictElement->propertyForKey("VideoPorts");
           VideoPorts = (UINT16)GetPropertyAsInteger(prop2, VideoPorts);
           
-          prop2 = element->dictPropertyForKey("LoadVBios");
+          prop2 = dictElement->propertyForKey("LoadVBios");
           if (prop2 != NULL && IsPropertyNotNullAndTrue(prop2)) {
             LoadVBios = TRUE;
           }

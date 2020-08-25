@@ -21,7 +21,7 @@ extern "C" {
 
 #include "../../cpp_foundation/XString.h"
 
-static XString8 stdio_static_buf = XString8().takeValueFrom("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX  "); // prealloc stdio_static_buf. It has to be at least 2 chars because of 'while ( n > size - 2 )' in strguid and strerror
+static XString8 stdio_static_buf = XString8().takeValueFrom("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX  "); // prealloc stdio_static_buf. It has to be at least 2 chars because of 'while ( n > size - 2 )' in strguid and efiStrError
                                                                                                        // = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX  "_XS8 won't work because allocatedSize() will stay 0
 static XStringW stdio_static_wbuf;
 
@@ -44,7 +44,7 @@ int printf(const char* format, ...)
 }
 
 
-const char* strerror(EFI_STATUS Status)
+const char* efiStrError(EFI_STATUS Status)
 {
 	size_t size = stdio_static_buf.allocatedSize();
 	UINTN n = 0;
