@@ -10,6 +10,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemLogLib.h>
 #include <Library/DebugLib.h>
+#include <Library/SerialPortLib.h>
+#include <Library/DebugPrintErrorLevelLib.h>
 
 #include <Library/IoLib.h>
 #include <Library/PciLib.h>
@@ -522,9 +524,17 @@ MemLogfVA (
   }
 
   //
+  // Check driver debug mask value and global mask
+  //
+  if ((DebugMode & GetDebugPrintErrorLevel ()) == 0) {
+    return;
+  }
+  //
   // Write to standard debug device also
   //
-  DebugPrint(DEBUG_INFO, "%a", LastMessage);
+  // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
+  SerialPortWrite((UINT8*)LastMessage, len);
+//  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 }
 
 /**
