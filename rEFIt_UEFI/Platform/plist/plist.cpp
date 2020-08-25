@@ -179,7 +179,7 @@ bool TagStruct::debugIsEqual(const TagStruct& other, const XString8& label) cons
 void TagStruct::printf(unsigned int ident) const
 {
   XString8 s;
-  sprintf(0, &s);
+  sprintf(ident, &s);
   MsgLog("%s", s.c_str());
 }
 

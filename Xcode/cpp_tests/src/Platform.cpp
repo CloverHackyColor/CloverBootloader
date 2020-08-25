@@ -57,25 +57,71 @@ void CpuDeadLoop(void)
 //
 //    return res;
 //}
-//
-//void DebugLog(INTN DebugMode, const char *FormatString, ...)
-//{
-//	(void)DebugMode;
-//
-//	char* NewFormat = (char*)alloca(strlen(FormatString)+1);
-////	dull_replace(FormatString, "%a", "%s", NewFormat);
-//	
-//	va_list va;
-//	va_start(va, FormatString);
-//	vprintf(NewFormat, va);
-//	va_end(va);
-//}
+
+void DebugLog(INTN DebugMode, const char *FormatString, ...)
+{
+	(void)DebugMode;
+
+	va_list va;
+	va_start(va, FormatString);
+	vprintf(FormatString, va);
+	va_end(va);
+}
 
 void PauseForKey(const wchar_t* msg)
 {
 	printf("%ls", msg);
 	getchar();
 }
+
+static char efiStrError_buf[40];
+const char* efiStrError(EFI_STATUS Status)
+{
+  snprintf(efiStrError_buf, sizeof(efiStrError_buf), "efi error %llu(0x%llx)", Status, Status);
+  return efiStrError_buf;
+}
+
+
+RETURN_STATUS
+EFIAPI
+AsciiStrDecimalToUintnS (
+  IN  CONST CHAR8              *String,
+  OUT       CHAR8              **EndPointer,  OPTIONAL
+  OUT       UINTN              *Data
+  )
+{
+  *Data = 0;
+  if ( !String ) return RETURN_INVALID_PARAMETER;
+  int ret = sscanf(String, "%llu", Data);
+  if ( EndPointer ) *EndPointer += ret;
+  if ( ret == 0 ) return RETURN_INVALID_PARAMETER;
+  return RETURN_SUCCESS;
+}
+
+UINTN EFIAPI AsciiStrHexToUintn(IN CONST CHAR8 *String)
+{
+  if ( !String ) return RETURN_INVALID_PARAMETER;
+  UINTN value = 0;
+  int ret = sscanf(String, "%llx", &value);
+  if ( ret == 0 ) return 0;
+  return value;
+}
+
+UINTN
+EFIAPI
+AsciiStrDecimalToUintn (
+  IN      CONST CHAR8               *String
+  )
+{
+  if ( !String ) panic("AsciiStrDecimalToUintn : !String");
+  UINTN value;
+  int ret = sscanf(String, "%llu", &value);
+  if ( ret == 0 ) return 0;
+  return value;
+}
+
+
+
 
 
 
@@ -141,59 +187,3 @@ CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString)
 {
 	return (CHAR16*)wcsstr_fixed(String, SearchString);
 }
-
-
-
-//UINTN AsciiStrLen(const char* String)
-//{
-//	return (UINTN)strlen(String);
-//}
-//
-//INTN AsciiStrCmp (const char *FirstString,const char *SecondString)
-//{
-//	return (INTN)strcmp(FirstString, SecondString);
-//}
-//int StrCmp(const wchar_t* FirstString, const wchar_t* SecondString)
-//{
-//#if __WCHAR_MAX__ > 0xFFFFu || _MSC_VER
-//	int ret = wcscmp(FirstString, SecondString);
-//	return ret;
-//#else
-//	// Looks like wcscmp doesn't work with Utf16, even if compiled with -fshort-wchar.
-//	// So conversion to Utf32 needed first.
-//
-//	std::vector<char32_t> FirstStringUtf32;
-//	std::vector<char32_t> SecondStringUtf32;
-//
-//	convert_utf16_to_utf32((const char16_t*)FirstString, StrLen(FirstString), &FirstStringUtf32);
-//	convert_utf16_to_utf32((const char16_t*)SecondString, StrLen(SecondString), &SecondStringUtf32);
-//
-//	int ret = wcscmp((const wchar_t*)FirstStringUtf32.data(), (const wchar_t*)SecondStringUtf32.data());
-//	return ret;
-//#endif
-//}
-//
-//int StrnCmp(const wchar_t* FirstString, const wchar_t* SecondString, UINTN Length)
-//{
-//#if __WCHAR_MAX__ > 0xFFFFu
-//	return wcsncmp(FirstString, SecondString, Length);
-//#else
-//
-//#ifdef _MSC_VER
-//	return wcsncmp(FirstString, SecondString, (size_t)Length);
-//#else
-//	// Looks like wcscmp doesn't work with Utf16, even if compiled with -fshort-wchar.
-//	// So conversion to Utf32 needed first.
-//
-//	std::vector<char32_t> FirstStringUtf32;
-//	std::vector<char32_t> SecondStringUtf32;
-//
-//	convert_utf16_to_utf32((const char16_t*)FirstString, StrLen(FirstString), &FirstStringUtf32);
-//	convert_utf16_to_utf32((const char16_t*)SecondString, StrLen(FirstString), &SecondStringUtf32);
-//
-//	int ret = wcsncmp((const wchar_t*)FirstStringUtf32.data(), (const wchar_t*)SecondStringUtf32.data(), Length);
-////printf("wcsncmp=%d\n", ret);
-//	return ret;
-//#endif
-//#endif
-//}

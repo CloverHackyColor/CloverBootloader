@@ -1333,7 +1333,7 @@ int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUF
 									, NULL, 0
   #endif
                                    );
-	*(char*)(SPrintfContext.printf_callback_vsnprintf_buffer) = 0;
+	if ( len > 0 ) *(char*)(SPrintfContext.printf_callback_vsnprintf_buffer) = 0;
 	return SPrintfContext.printf_callback_vsnprintf_count;
 }
 
