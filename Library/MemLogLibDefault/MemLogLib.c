@@ -514,7 +514,8 @@ MemLogfVA (
                              Marker);
 //  mMemLog->Cursor += DataWritten;
 // vsnprintf doesn't return the number of char printed. TODO will do it soon in printf_lite
-  mMemLog->Cursor += AsciiStrLen(mMemLog->Cursor);
+  UINTN LastMessageLen = AsciiStrLen(mMemLog->Cursor);
+  mMemLog->Cursor += LastMessageLen;
 
   //
   // Pass this last message to callback if defined
@@ -533,7 +534,7 @@ MemLogfVA (
   // Write to standard debug device also
   //
   // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
-  SerialPortWrite((UINT8*)LastMessage, len);
+  SerialPortWrite((UINT8*)LastMessage, LastMessageLen);
 //  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 }
 

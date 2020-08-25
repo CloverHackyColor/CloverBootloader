@@ -345,6 +345,8 @@
   OpensslLib
   NetLib
   WaveLib
+  BaseDebugPrintErrorLevelLib
+  BaseSerialPortLib
 
 [Guids]
   gEfiAcpiTableGuid
