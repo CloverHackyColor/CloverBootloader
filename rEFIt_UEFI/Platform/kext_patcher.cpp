@@ -1116,9 +1116,9 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   const KEXT_PATCH& kextpatch = KernelAndKextPatches.KextPatches[N];
   UINTN   SearchLen = kextpatch.SearchLen;
   
-  DBG_RT("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\nAnyKext = %s\n",
+  DBG_RT("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\n  Label = %s\n",
          N, (UINTN)Driver, DriverSize, kextpatch.Label.c_str());
-  DBG("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\nLabel = %s\n",
+  DBG("\nAnyKextPatch %zu: driverAddr = %llx, driverSize = %x\n  Label = %s\n",
       N, (UINTN)Driver, DriverSize, kextpatch.Label.c_str());
 
   if (!kextpatch.MenuItem.BValue) {

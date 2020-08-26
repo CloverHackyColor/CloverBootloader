@@ -33,6 +33,9 @@ inline char* strcat(char* s1, const char* s2)
 	return s1;
 }
 
+char* strncat(char* s1, const char* s2, size_t n);
+
+
 inline char* strcpy(char* dst, const char* src)
 {
 	AsciiStrCpyS(dst,AsciiStrLen(src)+1,src);
@@ -44,6 +47,12 @@ inline char* strncpy(char * dst, const char * src, size_t len)
 	AsciiStrnCpyS(dst,(UINTN)len+1,src,(UINTN)len);
 	return dst;
 }
+
+//// edkII Strcmp seems quite inefficient, even vs a naive implementation
+int strcmp(const char* s1, const char* s2);
+int strncmp(const char* s1, const char* s2, size_t n);
+
+int strncmp(const char *s1, const char *s2, size_t n);
 
 extern void* memset(void *b, int c, size_t len); // memset is defined in cpp_util/memory.cpp because it is required by c++
 //inline void* memset(void *b, int c, size_t len)

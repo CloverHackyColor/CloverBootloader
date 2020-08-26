@@ -68,7 +68,11 @@ extern "C"
  * 2017/08/31 : Save 22 bytes + bufsize of my STM32F103
  */
 #ifndef PRINTF_LITE_BUF_SIZE
-#define PRINTF_LITE_BUF_SIZE 200
+# define PRINTF_LITE_BUF_SIZE 200
+#else
+# if PRINTF_LITE_BUF_SIZE > 255
+#   error PRINTF_LITE_BUF_SIZE > 255
+# endif
 #endif
 /*
  * Fallback on something close if specifier isn't supported.
@@ -110,7 +114,10 @@ extern "C"
 #define PRINTF_LITE_SHORTSHORTINT_SUPPORT 1
 #endif
 #ifndef PRINTF_LITE_TIMESTAMP_SUPPORT
-#define PRINTF_LITE_TIMESTAMP_SUPPORT 0 // 240 bytes
+#define PRINTF_LITE_TIMESTAMP_SUPPORT 1 // 240 bytes
+#endif
+#ifndef PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION
+#define PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION 0
 #endif
 #ifndef PRINTF_LITE_FIELDWIDTH_SUPPORT
 #define PRINTF_LITE_FIELDWIDTH_SUPPORT 1 // 107 bytes
@@ -130,8 +137,8 @@ extern "C"
 #ifndef PRINTF_LITE_USPECIFIER_SUPPORT
 #define PRINTF_LITE_USPECIFIER_SUPPORT 1 // 96 bytes. If not supported, u specifier become d
 #endif
-#ifndef PRINTF_EMIT_CR
-#define PRINTF_EMIT_CR 0
+#ifndef PRINTF_EMIT_CR_SUPPORT
+#define PRINTF_EMIT_CR_SUPPORT 0
 #endif
 /*=====================================================  Private definition ============================================*/
 #if PRINTF_UTF8_OUTPUT_SUPPORT == 1
@@ -167,19 +174,83 @@ typedef union {
 
 
 /*=====================================================  User function ============================================*/
-
-void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							, int* newline, int timestamp
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void vprintf_with_callback_timestamp_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, int emitCr); // emitCr is a boolean flag
+  inline void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp) {
+    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, newline, timestamp, 0);
+  }
+  inline void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr) {
+    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, emitCr);
+  }
+  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
+    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, 0);
+  }
+# else
+  void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp);
+  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
+    vprintf_with_callback_timestamp(format, valist, transmitBufCallBack, context, NULL, 0);
+  }
+# endif
+#else
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr);
+  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
+    vprintf_with_callback_emitcr(format, valist, transmitBufCallBack, context, 0);
+  }
+# else
+  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
+# endif
 #endif
-						   );
 
-#if PRINTF_UNICODE_OUTPUT_SUPPORT == 1
-void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCallBackType transmitBufCallBack, void* context
+
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							, int* newline, int timestamp
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void printf_with_callback_timestamp_emitcr(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, int emitCr, ...);
+  inline void printf_with_callback_timestamp(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, ...) {
+    va_list va;
+    va_start(va, timestamp);
+    vprintf_with_callback_timestamp(format, va, transmitBufCallBack, context, newline, timestamp);
+    va_end(va);
+  }
+  inline void printf_with_callback__emitcr(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr, ...) {
+    va_list va;
+    va_start(va, emitCr);
+    vprintf_with_callback_emitcr(format, va, transmitBufCallBack, context, emitCr);
+    va_end(va);
+  }
+  inline void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...) {
+    va_list va;
+    va_start(va, context);
+    vprintf_with_callback(format, va, transmitBufCallBack, context);
+    va_end(va);
+  }
+# else
+  void printf_with_callback_timestamp(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, ...);
+  inline void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...) {
+    va_list va;
+    va_start(va, context);
+    vprintf_with_callback_timestamp(format, va, transmitBufCallBack, context, NULL, 0);
+    va_end(va);
+  }
+# endif
+#else
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void printf_with_callback_emitcr(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, bool emitCr, ...);
+# else
+  void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...);
+# endif
 #endif
-						   );
+
+
+
+#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+void vwprintf_with_callback_timestamp(const char* format, va_list valist, transmitWBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp);
+inline void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCallBackType transmitWBufCallBack, void* context) {
+  vwprintf_with_callback_timestamp(format, valist, transmitWBufCallBack, context, NULL, 0);
+}
+#else
+void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCallBackType transmitWBufCallBack, void* context);
 #endif
 
 #if PRINTF_LITE_SNPRINTF_SUPPORT == 1
@@ -201,5 +272,20 @@ void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCall
 }
 #endif
 
+//#if defined(__cplusplus)  &&  PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+//  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context){
+//    vprintf_with_callback(format, valist, transmitBufCallBack, NULL, 0, context);
+//  }
+//#endif
+//#if defined(__cplusplus)  &&  PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+//  void printf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context){
+//    printf_with_callback(format, valist, transmitBufCallBack, NULL, 0, context);
+//  }
+//#endif
+//#if defined(__cplusplus)  &&  PRINTF_UNICODE_OUTPUT_SUPPORT == 1  &&  PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+//  void vwprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context){
+//    vwprintf_with_callback(format, valist, transmitBufCallBack, NULL, 0, context);
+//  }
+//#endif
 
 #endif // __PRINTF_LITE_H__

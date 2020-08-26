@@ -1832,6 +1832,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   {
     EFI_LOADED_IMAGE* LoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+
+//    if ( !EFI_ERROR(Status) ) {
+//      XString8 msg = S8Printf("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+//      SerialPortWrite((UINT8*)msg.c_str(), msg.length());
+//    }
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG

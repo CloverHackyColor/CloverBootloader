@@ -29,10 +29,9 @@ extern "C"
 {
 #endif
 
-#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-static void print_timestamp(PrintfParams* printfParams);
+#if PRINTF_LITE_BUF_SIZE == 0
+#define PRINTF_LITE_REENTRANT 1 // call printf_with_callback from print_timestamp
 #endif
-
 
 #if PRINTF_UTF8_OUTPUT_SUPPORT == 1  &&  PRINTF_UNICODE_OUTPUT_SUPPORT == 1
 	#define print_char_macro(c, printfParams) printfParams->printCharFunction(c, printfParams);
@@ -97,8 +96,35 @@ typedef struct PrintfParams {
   #if PRINTF_LITE_XSPECIFIER_SUPPORT == 1
 	int uppercase;
   #endif
+  #if PRINTF_EMIT_CR_SUPPORT
+  int emitCr;
+  #endif
   void* context;
 } PrintfParams;
+
+
+#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+#   if PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION == 1
+      extern char* printf_lite_get_timestamp(void);
+#   else
+      static void print_timestamp(PrintfParams* printfParams);
+#   endif
+#endif
+
+#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...);
+
+#ifdef ARDUINO
+void printf_with_callback(const __FlashStringHelper* format, transmitBufCallBackType transmitBufCallBack
+#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+              , int* newline, int timestamp,
+#endif // PRINTF_LITE_TIMESTAMP_SUPPORT
+            ...);
+#endif // ARDUINO
+
+//#include <inttypes.h> // for PRIu32
+
+#endif // PRINTF_LITE_REENTRANT
 
 
 #if PRINTF_UTF8_OUTPUT_SUPPORT == 1
@@ -112,10 +138,19 @@ static void print_utf8_char(int c, PrintfParams* printfParams)
 			if ( *printfParams->newlinePtr )
 			{
 				*printfParams->newlinePtr = 0; // to do BEFORE call to printTimeStamp
-				if ( printfParams->timestamp ) print_timestamp(printfParams);
+        #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+          #if PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION == 1
+            char* ts = printf_lite_get_timestamp();
+            if ( printfParams->timestamp  &&  ts ) {
+              while (*ts ) print_utf8_char(*ts++, printfParams);
+            }
+          #else
+            if ( printfParams->timestamp ) print_timestamp(printfParams);
+          #endif
+        #endif
 			}
-			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_utf8_char('\r', printfParams);
+			#if PRINTF_EMIT_CR_SUPPORT == 1
+				if ( printfParams->emitCr  &&  c == '\n' ) print_utf8_char('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 				printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
@@ -124,8 +159,8 @@ static void print_utf8_char(int c, PrintfParams* printfParams)
 			#endif
 			if ( c == '\n' ) *printfParams->newlinePtr = 1;
 		}else{
-			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_utf8_char('\r', printfParams);
+			#if PRINTF_EMIT_CR_SUPPORT == 1
+				if ( printfParams->emitCr  &&  c == '\n' ) print_utf8_char('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
@@ -135,8 +170,8 @@ static void print_utf8_char(int c, PrintfParams* printfParams)
 		}
   #else
 		{
-			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_utf8_char('\r', printfParams);
+			#if PRINTF_EMIT_CR_SUPPORT == 1
+				if ( printfParams.emit_cr  &&  c == '\n' ) print_utf8_char('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.buf[(printfParams->bufIdx)++] = (char)c;
@@ -165,10 +200,17 @@ static void print_wchar(int c, PrintfParams* printfParams)
 			if ( *printfParams->newlinePtr )
 			{
 				*printfParams->newlinePtr = 0; // to do BEFORE call to printTimeStamp
-				if ( printfParams->timestamp ) print_timestamp(printfParams);
+        #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+          #if PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION == 1
+            char* ts = printf_lite_get_timestamp();
+            if ( printfParams->timestamp ) printf_with_callback("%s", printfParams->transmitBufCallBack.transmitBufCallBack, printfParams->context, ts);
+          #else
+            if ( printfParams->timestamp ) print_timestamp(printfParams);
+          #endif
+        #endif
 			}
-			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_wchar('\r', printfParams);
+			#if PRINTF_EMIT_CR_SUPPORT == 1
+				if ( printfParams->emitCr  &&  c == '\n' ) print_wchar('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c;
@@ -179,8 +221,8 @@ static void print_wchar(int c, PrintfParams* printfParams)
 				*printfParams->newlinePtr = 1;
 			}
 		}else{
-			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_wchar('\r', printfParams);
+			#if PRINTF_EMIT_CR_SUPPORT == 1
+				if ( printfParams->emitCr  &&  c == '\n' ) print_wchar('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c;
@@ -190,8 +232,8 @@ static void print_wchar(int c, PrintfParams* printfParams)
 		}
   #else
     {
-			#if PRINTF_EMIT_CR == 1
-				if ( c == '\n' ) print_wchar('\r', printfParams);
+			#if PRINTF_EMIT_CR_SUPPORT == 1
+				if ( printfParams.emit_cr  &&  c == '\n' ) print_wchar('\r', printfParams);
 			#endif
 			#if PRINTF_LITE_BUF_SIZE > 1
 					printfParams->buf.wbuf[(printfParams->bufIdx)++] = (wchar_t)c; // cast suposed to be safe, as this function must be called
@@ -504,26 +546,27 @@ static void print_ulonglong(UINT_BIGGEST_TYPE v, unsigned int base, PrintfParams
 
 #if defined(EFIAPI)
 
-#error TODO
+extern uint32_t getUptimeInMilliseconds();
 
 #elif defined(__APPLE__)
 
 #include <mach/mach_time.h>
+#include <time.h>
 
 uint32_t getUptimeInMilliseconds()
 {
     static mach_timebase_info_data_t s_timebase_info;
 
     kern_return_t result = mach_timebase_info(&s_timebase_info);
-    (void(result));
+    (void)result;
 //    assert(result == 0);
     
-    // multiply to get value in the nano seconds
-    double multiply = (double)s_timebase_info.numer / (double)s_timebase_info.denom;
-    // divide to get value in the seconds
-    multiply /= 1000;
-
-    return mach_absolute_time() * multiply;
+    uint64_t time = mach_absolute_time();
+    time *= s_timebase_info.numer;
+    time /= s_timebase_info.denom;
+    time /= 1000;
+    time /= 1000;
+    return (uint32_t)(time);
 }
 #endif
 #endif //PRINTF_LITE_TIMESTAMP_SUPPORT
@@ -543,29 +586,9 @@ static void print_longlong(INT_BIGGEST_TYPE v, unsigned int base, PrintfParams* 
 	else print_ulonglong((UINT_BIGGEST_TYPE)-v, base, printfParams, 1); // -(INT64_MIN) == INT64_MIN !!! But cast as UINT64, it becomes +v. Good for us.
 }
 
-#define PRINTF_LITE_REENTRANT 1
-#if PRINTF_LITE_REENTRANT == 1  &&  PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-
-void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack,
-#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							int* newline, int timestamp,
-#endif // PRINTF_LITE_TIMESTAMP_SUPPORT
-						...);
-
-#ifdef ARDUINO
-void printf_with_callback(const __FlashStringHelper* format, transmitBufCallBackType transmitBufCallBack
-#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							, int* newline, int timestamp,
-#endif // PRINTF_LITE_TIMESTAMP_SUPPORT
-						...);
-#endif // ARDUINO
-
-#include <inttypes.h> // for PRIu32
-
-#endif // PRINTF_LITE_REENTRANT
 
 
-#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+#if PRINTF_LITE_TIMESTAMP_SUPPORT == 1  &&  PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION == 0
 static void print_timestamp(PrintfParams* printfParams)
 {
 	#ifdef USE_HAL_DRIVER
@@ -591,9 +614,9 @@ static void print_timestamp(PrintfParams* printfParams)
 	ms %= 1000;
 #if PRINTF_LITE_REENTRANT == 1
     #ifdef ARDUINO
-        printf_with_callback(F("%03" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%03" PRIu32 " - "), printfParams->transmitBufCallBack, NULL, 0, h, m, s, ms);
+        printf_with_callback(F("%03" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%03" PRIu32 " - "), printfParams->transmitBufCallBack.transmitBufCallBack, NULL, h, m, s, ms);
     #else
-        printf_with_callback("%03" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%03" PRIu32 " - ", printfParams->transmitBufCallBack, NULL, 0, h, m, s, ms);
+        printf_with_callback("%03" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%03" PRIu32 " - ", printfParams->transmitBufCallBack.transmitBufCallBack, NULL, h, m, s, ms);
     #endif
 #else
     // non reentrant version take a bit more code size
@@ -1095,11 +1118,19 @@ __attribute__((noinline, section(".vprintf_with_callback")))
 #elif DEFINE_SECTIONS == 2
 __attribute__((noinline, section(".printf_lite")))
 #endif
-void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							, int* newline, int timestamp
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void vprintf_with_callback_timestamp_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, int emitCr)
+# else
+  void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp)
+# endif
+#else
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr)
+# else
+  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context)
+# endif
 #endif
-						)
 {
 	PrintfParams printfParams;
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
@@ -1115,6 +1146,9 @@ void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBa
 		printfParams.printCharFunction = print_utf8_char;
 	#endif
 	printfParams.transmitBufCallBack.transmitBufCallBack = transmitBufCallBack;
+  #if PRINTF_EMIT_CR_SUPPORT == 1
+    printfParams.emitCr = emitCr;
+  #endif
 	printfParams.context = context;
 
 	while ( 1 ) //Iterate over formatting string
@@ -1130,28 +1164,53 @@ void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBa
 	va_end(valist);
 }
 
+
 #if DEFINE_SECTIONS == 1
 __attribute__((noinline, section(".printf_with_callback")))
 #elif DEFINE_SECTIONS == 2
 __attribute__((noinline, section(".printf_lite")))
 #endif
-void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context,
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							int* newline, int timestamp,
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void printf_with_callback_timestamp_emitcr(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, int emitCr, ...)
+# else
+  void printf_with_callback_timestamp(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, ...)
+# endif
+#else
+# if PRINTF_EMIT_CR_SUPPORT == 1
+  void printf_with_callback_emitcr(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr, ...)
+# else
+  void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...)
+# endif
 #endif
-						...)
 {
 	va_list valist;
     #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
+      # if PRINTF_EMIT_CR_SUPPORT == 1
+        va_start(valist, emitCr);
+      # else
         va_start(valist, timestamp);
+      #endif
     #else
+      # if PRINTF_EMIT_CR_SUPPORT == 1
+        va_start(valist, emitCr);
+      # else
         va_start(valist, context);
+      #endif
     #endif
-	vprintf_with_callback(format, valist, transmitBufCallBack, context
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-									, NULL, 0
+    # if PRINTF_EMIT_CR_SUPPORT == 1
+      vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, newline, timestamp, emitCr);
+    # else
+      vprintf_with_callback_timestamp(format, valist, transmitBufCallBack, context, newline, timestamp);
+    # endif
+  #else
+    # if PRINTF_EMIT_CR_SUPPORT == 1
+      vprintf_with_callback_emitcr(format, valist, transmitBufCallBack, context, emitCr);
+    # else
+      vprintf_with_callback(format, valist, transmitBufCallBack, context);
+    # endif
   #endif
-                         );
 	va_end(valist);
 }
 
@@ -1224,55 +1283,95 @@ tryagain:
 	}
 }
 
-
-void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCallBackType transmitWBufCallBack, void* context
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-							, int* newline, int timestamp
+
+  void vwprintf_with_callback_timestamp(const char* format, va_list valist, transmitWBufCallBackType transmitWBufCallBack, void* context, int* newline, int timestamp)
+  {
+    PrintfParams printfParams;
+    printfParams.newlinePtr = newline;
+    printfParams.timestamp = timestamp;
+    #if PRINTF_LITE_BUF_SIZE > 1
+    printfParams.bufIdx = 0;
+    #endif
+    printfParams.inDirective = 0;
+    printfParams.unicode_output = 1;
+    printfParams.printCharFunction = print_wchar;
+    printfParams.transmitBufCallBack.transmitWBufCallBack = transmitWBufCallBack;
+    printfParams.context = context;
+
+    while ( *format ) //Iterate over formatting string
+    {
+      char32_t c;
+      format = get_utf32_from_utf8(format, &c);
+      if (format == 0) break;
+      if ( c <= 0x80) {
+        printf_handle_format_char((char)c, VALIST_PARAM(valist), &printfParams);
+        continue;
+      }
+    #if __WCHAR_MAX__ <= 0xFFFFu
+      if ( c <= 0xFFFF) {
+          print_wchar((wchar_t)c, &printfParams);
+      } else {
+          c -= halfBase;
+          print_wchar((wchar_t)((c >> halfShift) + UNI_SUR_HIGH_START), &printfParams);
+          print_wchar((wchar_t)((c & halfMask) + UNI_SUR_LOW_START), &printfParams);
+      }
+    #else
+      print_wchar((wchar_t)c, &printfParams);
+    #endif
+    }
+    #if PRINTF_LITE_BUF_SIZE > 1
+    if ( printfParams.bufIdx > 0 ) printfParams.transmitBufCallBack.transmitBufCallBack(printfParams.buf.buf, printfParams.bufIdx, printfParams.context);
+    #endif
+
+    va_end(valist);
+  }
+
+#else
+
+
+  void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCallBackType transmitWBufCallBack, void* context)
+  {
+    PrintfParams printfParams;
+    #if PRINTF_LITE_BUF_SIZE > 1
+    printfParams.bufIdx = 0;
+    #endif
+    printfParams.inDirective = 0;
+    printfParams.unicode_output = 1;
+    printfParams.printCharFunction = print_wchar;
+    printfParams.transmitBufCallBack.transmitWBufCallBack = transmitWBufCallBack;
+    printfParams.emitCr = 0;
+    printfParams.context = context;
+
+    while ( *format ) //Iterate over formatting string
+    {
+      char32_t c;
+      format = get_utf32_from_utf8(format, &c);
+      if (format == 0) break;
+      if ( c <= 0x80) {
+        printf_handle_format_char((char)c, VALIST_PARAM(valist), &printfParams);
+        continue;
+      }
+    #if __WCHAR_MAX__ <= 0xFFFFu
+      if ( c <= 0xFFFF) {
+          print_wchar((wchar_t)c, &printfParams);
+      } else {
+          c -= halfBase;
+          print_wchar((wchar_t)((c >> halfShift) + UNI_SUR_HIGH_START), &printfParams);
+          print_wchar((wchar_t)((c & halfMask) + UNI_SUR_LOW_START), &printfParams);
+      }
+    #else
+      print_wchar((wchar_t)c, &printfParams);
+    #endif
+    }
+    #if PRINTF_LITE_BUF_SIZE > 1
+    if ( printfParams.bufIdx > 0 ) printfParams.transmitBufCallBack.transmitBufCallBack(printfParams.buf.buf, printfParams.bufIdx, printfParams.context);
+    #endif
+
+    va_end(valist);
+  }
+
 #endif
-						)
-{
-	PrintfParams printfParams;
-  #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-	printfParams.newlinePtr = newline;
-	printfParams.timestamp = timestamp;
-  #endif
-  #if PRINTF_LITE_BUF_SIZE > 1
-	printfParams.bufIdx = 0;
-  #endif
-	printfParams.inDirective = 0;
-	printfParams.unicode_output = 1;
-	printfParams.printCharFunction = print_wchar;
-	printfParams.transmitBufCallBack.transmitWBufCallBack = transmitWBufCallBack;
-	printfParams.context = context;
-
-	while ( *format ) //Iterate over formatting string
-	{
-		char32_t c;
-		format = get_utf32_from_utf8(format, &c);
-		if (format == 0) break;
-		if ( c <= 0x80) {
-			printf_handle_format_char((char)c, VALIST_PARAM(valist), &printfParams);
-			continue;
-		}
-  #if __WCHAR_MAX__ <= 0xFFFFu
-		if ( c <= 0xFFFF) {
-				print_wchar((wchar_t)c, &printfParams);
-		} else {
-				c -= halfBase;
-				print_wchar((wchar_t)((c >> halfShift) + UNI_SUR_HIGH_START), &printfParams);
-				print_wchar((wchar_t)((c & halfMask) + UNI_SUR_LOW_START), &printfParams);
-		}
-  #else
-		print_wchar((wchar_t)c, &printfParams);
-  #endif
-	}
-  #if PRINTF_LITE_BUF_SIZE > 1
-	if ( printfParams.bufIdx > 0 ) printfParams.transmitBufCallBack.transmitBufCallBack(printfParams.buf.buf, printfParams.bufIdx, printfParams.context);
-  #endif
-
-	va_end(valist);
-}
-
 void wprintf_with_callback(const char* format, transmitWBufCallBackType transmitWBufCallBack, void* context,
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
 							int* newline, int timestamp,
@@ -1285,11 +1384,11 @@ void wprintf_with_callback(const char* format, transmitWBufCallBackType transmit
     #else
         va_start(valist, context);
     #endif
-	vwprintf_with_callback(format, valist, transmitWBufCallBack, context
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-									, NULL, 0
+    vwprintf_with_callback_timestamp(format, valist, transmitWBufCallBack, context, newline, timestamp);
+  #else
+    vwprintf_with_callback(format, valist, transmitWBufCallBack, context);
   #endif
-                         );
 	va_end(valist);
 }
 #endif
@@ -1328,11 +1427,11 @@ int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUF
 	SPrintfContext.printf_callback_vsnprintf_buffer = buf;
 	SPrintfContext.printf_callback_vsnprintf_buffer_len = len > 0 ? len-1 : 0;
 	SPrintfContext.printf_callback_vsnprintf_count = 0;
-	vprintf_with_callback(format, valist, transmitSPrintf, (void*)&SPrintfContext
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-									, NULL, 0
+    vprintf_with_callback_timestamp(format, valist, transmitSPrintf, (void*)&SPrintfContext, NULL, 0);
+  #else
+    vprintf_with_callback(format, valist, transmitSPrintf, (void*)&SPrintfContext);
   #endif
-                                   );
 	if ( len > 0 ) *(char*)(SPrintfContext.printf_callback_vsnprintf_buffer) = 0;
 	return SPrintfContext.printf_callback_vsnprintf_count;
 }
@@ -1374,11 +1473,11 @@ int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnwprint, PRINTF_CFUNCTION_SU
 	SWPrintfContext.printf_callback_vsnprintf_buffer = buf;
 	SWPrintfContext.printf_callback_vsnprintf_buffer_len = len-1;
 	SWPrintfContext.printf_callback_vsnprintf_count = 0;
-	vwprintf_with_callback(format, valist, transmitSWPrintf, (void*)(&SWPrintfContext)
   #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
-									, NULL, 0
+    vwprintf_with_callback_timestamp(format, valist, transmitSWPrintf, (void*)(&SWPrintfContext), NULL, 0);
+  #else
+    vwprintf_with_callback(format, valist, transmitSWPrintf, (void*)(&SWPrintfContext));
   #endif
-                                   );
 	*(wchar_t*)(SWPrintfContext.printf_callback_vsnprintf_buffer) = 0;
 #if VSNWPRINTF_RETURN_MINUS1_ON_OVERFLOW == 1
 	if ( (size_t)(SWPrintfContext.printf_callback_vsnprintf_count) >= len ) return -1;

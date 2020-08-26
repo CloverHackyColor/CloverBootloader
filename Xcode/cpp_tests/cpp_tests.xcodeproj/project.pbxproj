@@ -26,9 +26,6 @@
 		9A28CD0C241B8DD400F3D247 /* strcmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */; };
 		9A28CD0D241B8DD400F3D247 /* strcmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */; };
 		9A28CD0E241B8DD400F3D247 /* strcmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */; };
-		9A28CD10241B9EF800F3D247 /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD0F241B9EF800F3D247 /* strcmp.cpp */; };
-		9A28CD11241B9EF800F3D247 /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD0F241B9EF800F3D247 /* strcmp.cpp */; };
-		9A28CD12241B9EF800F3D247 /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD0F241B9EF800F3D247 /* strcmp.cpp */; };
 		9A28CD16241BACBB00F3D247 /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD15241BACBB00F3D247 /* strlen_test.cpp */; };
 		9A28CD17241BACBB00F3D247 /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD15241BACBB00F3D247 /* strlen_test.cpp */; };
 		9A28CD18241BACBB00F3D247 /* strlen_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD15241BACBB00F3D247 /* strlen_test.cpp */; };
@@ -57,7 +54,6 @@
 		9A2A7C7924576CCE00422263 /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08642403144C00E2B470 /* global_test.cpp */; };
 		9A2A7C7A24576CCE00422263 /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9A2A7C7B24576CCE00422263 /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
-		9A2A7C7C24576CCE00422263 /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD0F241B9EF800F3D247 /* strcmp.cpp */; };
 		9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
 		9A2A7C7F24576CCE00422263 /* printf_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA045892425F94D000D6970 /* printf_lite-test.cpp */; };
@@ -219,7 +215,6 @@
 		9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD07241B8DD400F3D247 /* strcmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strcmp_test.h; sourceTree = "<group>"; };
 		9A28CD08241B8DD400F3D247 /* strncmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strncmp_test.h; sourceTree = "<group>"; };
-		9A28CD0F241B9EF800F3D247 /* strcmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcmp.cpp; sourceTree = "<group>"; };
 		9A28CD13241B9FEE00F3D247 /* posix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
 		9A28CD14241BACBB00F3D247 /* strlen_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strlen_test.h; sourceTree = "<group>"; };
 		9A28CD15241BACBB00F3D247 /* strlen_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strlen_test.cpp; sourceTree = "<group>"; };
@@ -418,7 +413,6 @@
 				9AC790112452C45A0004FBE9 /* abort.h */,
 				9A28CD1D241BB61B00F3D247 /* abort.cpp */,
 				9A28CD1E241BB61B00F3D247 /* strlen.cpp */,
-				9A28CD0F241B9EF800F3D247 /* strcmp.cpp */,
 			);
 			path = Posix;
 			sourceTree = "<group>";
@@ -674,7 +668,6 @@
 				9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */,
 				9A36E4F924F3B537007A1107 /* xml.cpp in Sources */,
 				9A0B087D2403B08400E2B470 /* XStringArray_test.cpp in Sources */,
-				9A28CD11241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A36E51124F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F124F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50924F3B537007A1107 /* TagDate.cpp in Sources */,
@@ -719,7 +712,6 @@
 				9A2A7C7A24576CCE00422263 /* printf_lite.c in Sources */,
 				9A36E4FB24F3B537007A1107 /* xml.cpp in Sources */,
 				9A2A7C7B24576CCE00422263 /* XStringArray_test.cpp in Sources */,
-				9A2A7C7C24576CCE00422263 /* strcmp.cpp in Sources */,
 				9A36E51324F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F324F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50B24F3B537007A1107 /* TagDate.cpp in Sources */,
@@ -764,7 +756,6 @@
 				9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */,
 				9A36E4FA24F3B537007A1107 /* xml.cpp in Sources */,
 				9A57C2252418B9A00029A39F /* XStringArray_test.cpp in Sources */,
-				9A28CD12241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A36E51224F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F224F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50A24F3B537007A1107 /* TagDate.cpp in Sources */,
@@ -813,7 +804,6 @@
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50824F3B537007A1107 /* TagDate.cpp in Sources */,
-				9A28CD10241B9EF800F3D247 /* strcmp.cpp in Sources */,
 				9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */,
 				9A670D1C24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,

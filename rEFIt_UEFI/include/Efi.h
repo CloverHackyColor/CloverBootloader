@@ -53,6 +53,7 @@ extern "C" {
 #include <Library/IoLib.h>
 #include <Library/DxeServicesTableLib.h>
 #include <Library/HobLib.h>
+#include <Library/SerialPortLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 

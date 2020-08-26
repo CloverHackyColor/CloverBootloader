@@ -39,9 +39,9 @@ bool all_tests()
 //		all_ok = false;
 //	}
 #if defined(JIEF_DEBUG)
-  ret = plist_tests();
+  ret = printf_lite_tests();
   if ( ret != 0 ) {
-    printf("plist_tests() failed at test %d\n", ret);
+    printf("printf_lite_tests() failed at test %d\n", ret);
     all_ok = false;
   }
 //  ret = XBuffer_tests();

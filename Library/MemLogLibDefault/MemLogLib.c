@@ -209,11 +209,11 @@ MemLogInit (
                                                    mMemLog,
                                                    NULL
                                                    );
-  MemLog(TRUE, 1, "MemLog inited, TSC freq: %ld\n", mMemLog->TscFreqSec);
+  MemLogf(TRUE, 1, "MemLog inited, TSC freq: %lld\n", mMemLog->TscFreqSec);
   if (InitError[0] != '\0') {
-    MemLog(TRUE, 1, "CPU was calibrated with RTC\n");
+    MemLogf(TRUE, 1, "CPU was calibrated with RTC\n");
   } else {
-    MemLog(TRUE, 1, "CPU was calibrated with ACPI PM Timer\n");
+    MemLogf(TRUE, 1, "CPU was calibrated with ACPI PM Timer\n");
   }
   return Status;
 }
@@ -433,6 +433,56 @@ int _fltused=0; // it should be a single underscore since the double one is the 
 #endif
 #endif
 
+static int printfNewline = 1;
+static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context)
+{
+  //
+  // Check if buffer can accept nbchar chars.
+  // Increase buffer if not.
+  //
+  if ( mMemLog->BufferSize - (UINTN)(mMemLog->Cursor - mMemLog->Buffer) <= nbchar )
+  {
+    UINTN Offset;
+    // not enough place for max line - make buffer bigger
+    // but not too big (if something gets out of controll)
+    if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
+    // Out of resources!
+      return;
+    }
+    Offset = mMemLog->Cursor - mMemLog->Buffer;
+    mMemLog->Buffer = ReallocatePool(mMemLog->BufferSize, mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE, mMemLog->Buffer);
+    mMemLog->BufferSize += MEM_LOG_INITIAL_SIZE;
+    mMemLog->Cursor = mMemLog->Buffer + Offset;
+  }
+  CopyMem(mMemLog->Cursor, buf, nbchar);
+  mMemLog->Cursor += nbchar;
+}
+
+const char* printf_lite_get_timestamp()
+{
+  UINT64    dTStartSec;
+  UINT64    dTStartMs;
+  UINT64    dTLastSec;
+  UINT64    dTLastMs;
+  UINT64    CurrentTsc;
+
+  mTimingTxt[0] = '\0';
+
+  if (mMemLog != NULL && mMemLog->TscFreqSec != 0) {
+    CurrentTsc = AsmReadTsc();
+
+    dTStartMs = DivU64x64Remainder(MultU64x32(CurrentTsc - mMemLog->TscStart, 1000), mMemLog->TscFreqSec, NULL);
+    dTStartSec = DivU64x64Remainder(dTStartMs, 1000, &dTStartMs);
+
+    dTLastMs = DivU64x64Remainder(MultU64x32(CurrentTsc - mMemLog->TscLast, 1000), mMemLog->TscFreqSec, NULL);
+    dTLastSec = DivU64x64Remainder(dTLastMs, 1000, &dTLastMs);
+
+    snprintf(mTimingTxt, sizeof(mTimingTxt), "%lld:%03lld  %lld:%03lld  ", dTStartSec, dTStartMs, dTLastSec, dTLastMs);
+    mMemLog->TscLast = CurrentTsc;
+  }
+  return mTimingTxt;
+}
+
 /**
   Prints a log message to memory buffer.
 
@@ -452,7 +502,6 @@ MemLogfVA (
   )
 {
   EFI_STATUS      Status;
-  CHAR8           *LastMessage;
 
   if (Format == NULL) {
     return;
@@ -466,62 +515,18 @@ MemLogfVA (
   }
 
   //
-  // Check if buffer can accept MEM_LOG_MAX_LINE_SIZE chars.
-  // Increase buffer if not.
-  //
-  if ((UINTN)(mMemLog->Cursor - mMemLog->Buffer) + MEM_LOG_MAX_LINE_SIZE > mMemLog->BufferSize) {
-      UINTN Offset;
-      // not enough place for max line - make buffer bigger
-      // but not too big (if something gets out of controll)
-      if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
-      // Out of resources!
-        return;
-      }
-      Offset = mMemLog->Cursor - mMemLog->Buffer;
-      mMemLog->Buffer = ReallocatePool(mMemLog->BufferSize, mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE, mMemLog->Buffer);
-      mMemLog->BufferSize += MEM_LOG_INITIAL_SIZE;
-      mMemLog->Cursor = mMemLog->Buffer + Offset;
-    }
-
-  //
   // Add log to buffer
   //
-  LastMessage = mMemLog->Cursor;
-  UINTN TimingDataWritten = 0;
-  if (Timing) {
-    //
-    // Write timing only at the beginning of a new line
-    //
-    if ((mMemLog->Buffer[0] == '\0') || (mMemLog->Cursor[-1] == '\n')) {
-      TimingDataWritten = AsciiSPrint(
-                                mMemLog->Cursor,
-                                mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
-                                "%a  ",
-                                GetTiming ());
-      mMemLog->Cursor += TimingDataWritten;
-    }
+  UINTN LastMessage = mMemLog->Cursor - mMemLog->Buffer;
 
-  }
-//  DataWritten = AsciiVSPrint(
-//                             mMemLog->Cursor,
-//                             mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
-//                             Format,
-//                             Marker);
-  /*DataWritten =*/ vsnprintf(
-                             mMemLog->Cursor,
-                             mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
-                             Format,
-                             Marker);
-//  mMemLog->Cursor += DataWritten;
-// vsnprintf doesn't return the number of char printed. TODO will do it soon in printf_lite
-  UINTN LastMessageLen = AsciiStrLen(mMemLog->Cursor);
-  mMemLog->Cursor += LastMessageLen;
+  vprintf_with_callback_timestamp_emitcr(Format, Marker, transmitS8Printf, NULL, &printfNewline, 1, 1);
+  size_t DataWritten = mMemLog->Cursor - mMemLog->Buffer - LastMessage;
 
   //
   // Pass this last message to callback if defined
   //
   if (mMemLog->Callback != NULL) {
-    mMemLog->Callback(DebugMode, LastMessage);
+    mMemLog->Callback(DebugMode,  mMemLog->Buffer + LastMessage);
   }
 
   //
@@ -534,7 +539,7 @@ MemLogfVA (
   // Write to standard debug device also
   //
   // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
-  SerialPortWrite((UINT8*)LastMessage, TimingDataWritten+LastMessageLen);
+  SerialPortWrite((UINT8*)(mMemLog->Buffer + LastMessage), DataWritten);
 //  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 }
 

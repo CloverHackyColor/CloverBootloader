@@ -16,7 +16,10 @@
 	#endif
 	typedef UINT32 char32_t;
 	typedef UINT16 char16_t;
+  typedef UINT32 uint32_t;
+  #define PRIu32 d
 #endif
+
 
 #ifdef _MSC_VER
 #   define __attribute__(x)
@@ -26,10 +29,14 @@
 #define DEFINE_SECTIONS 0
 #endif
 
+#define PRINTF_LITE_BUF_SIZE 255 // not more than 255
+#define PRINTF_LITE_TIMESTAMP_SUPPORT 1
+#define PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION 1
+#define PRINTF_EMIT_CR_SUPPORT 1
+
 
 #define PRINTF_CFUNCTION_PREFIX
 #define PRINTF_CFUNCTION_SUFFIX f
-#define PRINTF_EMIT_CR 0
 
 
 

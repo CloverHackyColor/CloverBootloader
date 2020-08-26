@@ -37,9 +37,6 @@
 
 void abort(void);
 
-//// edkII Strcmp seems quite inefficient, even vs a naive implementation
-int strcmp(const char* s1, const char* s2);
-int strncmp(const char* s1, const char* s2, size_t n);
 size_t strlen(const char *str);
 
 

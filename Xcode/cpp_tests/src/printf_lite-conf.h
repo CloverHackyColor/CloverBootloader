@@ -10,6 +10,7 @@
 #include <stdarg.h>
 #include <stddef.h> // for size_t
 #include <stdint.h>
+#include <inttypes.h>
 
 #ifndef __cplusplus
 	#ifdef _MSC_VER
@@ -30,8 +31,8 @@
 
 #define PRINTF_CFUNCTION_PREFIX
 #define PRINTF_CFUNCTION_SUFFIX fl
-#define PRINTF_EMIT_CR 0
-
+#define PRINTF_LITE_TIMESTAMP_SUPPORT 1
+#define PRINTF_EMIT_CR_SUPPORT 1
 
 
 #endif // __PRINTF_LITE_CONF_H__

@@ -121,7 +121,7 @@
   Platform/Posix/stdlib.h
   Platform/Posix/stdio.h
   Platform/Posix/stdio.cpp
-  Platform/Posix/strcmp.cpp
+  Platform/Posix/string.cpp
   Platform/Posix/string.h
   Platform/Posix/strlen.cpp
   Platform/Posix/wchar.h

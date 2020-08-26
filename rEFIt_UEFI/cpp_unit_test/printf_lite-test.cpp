@@ -140,6 +140,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
     testWPrintf(label,L##expectResult,expectedRet,format,c,d,e,f,g); \
 }
 
+int test_printf_with_callback_timestamp();
 
 int printf_lite_tests(void)
 {
@@ -524,6 +525,71 @@ int printf_lite_tests(void)
         Test1arg(F("-1.789010"), F("%015.2f"), -1.78901f);
     #endif
 
+// TODO : check when CLOVER_BUILD because of special timing function
+//    nbTestFailed += test_printf_with_callback_timestamp();
+
     return nbTestFailed;
 }
 
+static int printfNewline = 1;
+static char test_printf_with_callback_timestamp_buf[1024];
+
+
+static void test_printf_transmitS8Printf(const char* buf, unsigned int nbchar, void* context)
+{
+  (void)context;
+  strncat(test_printf_with_callback_timestamp_buf, buf, nbchar);
+}
+
+int test_printf_with_callback_timestamp()
+{
+  test_printf_with_callback_timestamp_buf[0] = 0;
+  printf_with_callback_timestamp("Hello %s\n", test_printf_transmitS8Printf, nullptr, &printfNewline, 1, "world");
+  size_t i;
+  for ( i=0 ; i<sizeof(test_printf_with_callback_timestamp_buf) ; i++ ) {
+    if ( test_printf_with_callback_timestamp_buf[i] == ':' ) break;
+    if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1;
+  }
+  if ( i < 1 ) return 1;
+  if ( test_printf_with_callback_timestamp_buf[i] != ':' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != ':' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != '.' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != ' ' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != '-' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != ' ' ) return 1; else i++;
+  if ( strcmp(&test_printf_with_callback_timestamp_buf[i], "Hello world\n") != 0) {
+    nbTestFailed += 1;
+  }
+  
+  test_printf_with_callback_timestamp_buf[0] = 0;
+  printf_with_callback_timestamp_emitcr("Hello %s\n", test_printf_transmitS8Printf, nullptr, &printfNewline, 1, 1, "world");
+  for ( i=0 ; i<sizeof(test_printf_with_callback_timestamp_buf) ; i++ ) {
+    if ( test_printf_with_callback_timestamp_buf[i] == ':' ) break;
+    if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1;
+  }
+  if ( i < 1 ) return 1;
+  if ( test_printf_with_callback_timestamp_buf[i] != ':' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != ':' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != '.' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] < '0' or test_printf_with_callback_timestamp_buf[i] > '9' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != ' ' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != '-' ) return 1; else i++;
+  if ( test_printf_with_callback_timestamp_buf[i] != ' ' ) return 1; else i++;
+  if ( strcmp(&test_printf_with_callback_timestamp_buf[i], "Hello world\r\n") != 0) {
+    nbTestFailed += 1;
+  }
+  return 0;
+}
