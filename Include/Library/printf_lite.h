@@ -174,30 +174,36 @@ typedef union {
 
 
 /*=====================================================  User function ============================================*/
+// I tried to inline this in printf_lite.h, but GCC seems to not accept that an inline function could call another inline function.
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
 # if PRINTF_EMIT_CR_SUPPORT == 1
   void vprintf_with_callback_timestamp_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, int emitCr); // emitCr is a boolean flag
-  inline void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp) {
-    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, newline, timestamp, 0);
-  }
-  inline void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr) {
-    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, emitCr);
-  }
-  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
-    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, 0);
-  }
+  void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp);
+//  inline void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp) {
+//    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, newline, timestamp, 0);
+//  }
+  void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr);
+//  inline void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr) {
+//    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, emitCr);
+//  }
+  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
+//  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
+//    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, 0);
+//  }
 # else
   void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp);
-  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
-    vprintf_with_callback_timestamp(format, valist, transmitBufCallBack, context, NULL, 0);
-  }
+  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
+//  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
+//    vprintf_with_callback_timestamp(format, valist, transmitBufCallBack, context, NULL, 0);
+//  }
 # endif
 #else
 # if PRINTF_EMIT_CR_SUPPORT == 1
   void vprintf_with_callback_emitcr(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int emitCr);
-  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
-    vprintf_with_callback_emitcr(format, valist, transmitBufCallBack, context, 0);
-  }
+  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
+//  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
+//    vprintf_with_callback_emitcr(format, valist, transmitBufCallBack, context, 0);
+//  }
 # else
   void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
 # endif
