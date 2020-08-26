@@ -452,7 +452,6 @@ MemLogfVA (
   )
 {
   EFI_STATUS      Status;
-  UINTN           DataWritten;
   CHAR8           *LastMessage;
 
   if (Format == NULL) {
@@ -488,17 +487,18 @@ MemLogfVA (
   // Add log to buffer
   //
   LastMessage = mMemLog->Cursor;
+  UINTN TimingDataWritten = 0;
   if (Timing) {
     //
     // Write timing only at the beginning of a new line
     //
     if ((mMemLog->Buffer[0] == '\0') || (mMemLog->Cursor[-1] == '\n')) {
-      DataWritten = AsciiSPrint(
+      TimingDataWritten = AsciiSPrint(
                                 mMemLog->Cursor,
                                 mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
                                 "%a  ",
                                 GetTiming ());
-      mMemLog->Cursor += DataWritten;
+      mMemLog->Cursor += TimingDataWritten;
     }
 
   }
@@ -507,7 +507,7 @@ MemLogfVA (
 //                             mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
 //                             Format,
 //                             Marker);
-  DataWritten = vsnprintf(
+  /*DataWritten =*/ vsnprintf(
                              mMemLog->Cursor,
                              mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
                              Format,
@@ -534,7 +534,7 @@ MemLogfVA (
   // Write to standard debug device also
   //
   // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
-  SerialPortWrite((UINT8*)LastMessage, LastMessageLen);
+  SerialPortWrite((UINT8*)LastMessage, TimingDataWritten+LastMessageLen);
 //  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 }
 
