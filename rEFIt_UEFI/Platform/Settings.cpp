@@ -2808,7 +2808,7 @@ GetEarlyUserSettings (
       const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
-          MsgLog("ATTENTION : property not string in ROM\n");
+          // that's ok. Property can be data, but not when the value is 'UseMacAddr0' or 'UseMacAddr1';
         }else{
           if ((Prop->getString()->stringValue().equalIC("UseMacAddr0")) ||
               (Prop->getString()->stringValue().equalIC("UseMacAddr1"))) {
@@ -4821,7 +4821,6 @@ EFI_STATUS
 GetUserSettings(const TagDict* CfgDict)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
-  BOOLEAN    IsValidCustomUUID = FALSE;
 
   if (CfgDict != NULL) {
     DbgHeader ("GetUserSettings");
@@ -5761,25 +5760,23 @@ GetUserSettings(const TagDict* CfgDict)
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
       const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
-        if ( !Prop->isString() ) {
-          MsgLog("ATTENTION : property not string in RtVariables/ROM\n");
-        }else{
-          if (Prop->getString()->stringValue().equalIC("UseMacAddr0")) {
-            gSettings.RtROM         = &gLanMac[0][0];
-            gSettings.RtROMLen      = 6;
-          } else if (Prop->getString()->stringValue().equalIC("UseMacAddr1")) {
-            gSettings.RtROM         = &gLanMac[1][0];
-            gSettings.RtROMLen      = 6;
-          } else {
-            UINTN ROMLength         = 0;
-            gSettings.RtROM         = GetDataSetting (RtVariablesDict, "ROM", &ROMLength);
-            gSettings.RtROMLen      = ROMLength;
-          }
+        if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr0") ) {
+          gSettings.RtROM         = &gLanMac[0][0];
+          gSettings.RtROMLen      = 6;
+        } else if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr1") ) {
+          gSettings.RtROM         = &gLanMac[1][0];
+          gSettings.RtROMLen      = 6;
+        } else if ( Prop->isString()  ||  Prop->isData() ) { // GetDataSetting accept both
+          UINTN ROMLength         = 0;
+          gSettings.RtROM         = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
+          gSettings.RtROMLen      = ROMLength;
+        } else {
+          MsgLog("MALFORMED PLIST : property not string or data in RtVariables/ROM\n");
+        }
 
-          if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
-            gSettings.RtROM       = NULL;
-            gSettings.RtROMLen    = 0;
-          }
+        if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
+          gSettings.RtROM       = NULL;
+          gSettings.RtROMLen    = 0;
         }
       }
 
@@ -5896,6 +5893,7 @@ GetUserSettings(const TagDict* CfgDict)
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in SystemParameters/CustomUUID\n");
         }else{
+          BOOLEAN IsValidCustomUUID = FALSE;
           if (IsValidGuidAsciiString(Prop->getString()->stringValue())) {
             gSettings.CustomUuid = Prop->getString()->stringValue();
             DBG("Converted CustomUUID %ls\n", gSettings.CustomUuid.wc_str());
@@ -5905,7 +5903,7 @@ GetUserSettings(const TagDict* CfgDict)
               // if CustomUUID specified, then default for InjectSystemID=FALSE
               // to stay compatibile with previous Clover behaviour
               gSettings.InjectSystemID = FALSE;
-              //            DBG("The UUID is valid\n");
+              DBG("The UUID is valid\n");
             }
           }
 

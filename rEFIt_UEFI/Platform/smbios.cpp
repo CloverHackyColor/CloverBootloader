@@ -1379,18 +1379,18 @@ VOID PatchTableType17()
         DBG("SmbiosTable.Type17->SerialNumber = %s\n", gRAM.User[UserIndex].SerialNo);
         DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.User[UserIndex].PartNo);
 
-        if (iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
+        if (gRAM.User[UserIndex].Vendor && iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, LString8(gRAM.User[UserIndex].Vendor));
         } else {
 
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, unknown);
         }
-        if (iStrLen(gRAM.User[UserIndex].SerialNo, 64) > 0) {
+        if (gRAM.User[UserIndex].SerialNo && iStrLen(gRAM.User[UserIndex].SerialNo, 64) > 0) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, LString8(gRAM.User[UserIndex].SerialNo));
         } else {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, unknown);
         }
-        if (iStrLen(gRAM.User[UserIndex].PartNo, 64) > 0) {
+        if (gRAM.User[UserIndex].PartNo && iStrLen(gRAM.User[UserIndex].PartNo, 64) > 0) {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, LString8(gRAM.User[UserIndex].PartNo));
         } else {
           UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, unknown);
