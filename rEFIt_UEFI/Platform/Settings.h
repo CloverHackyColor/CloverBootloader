@@ -204,6 +204,22 @@ public:
 
 //#pragma GCC diagnostic error "-Wpadded"
 
+class DSDT_Patch
+{
+public :
+  XBuffer<UINT8>   PatchDsdtFind;
+  XBuffer<UINT8>   PatchDsdtReplace;
+  XString8         PatchDsdtLabel;
+  XString8         PatchDsdtTgt;
+  INPUT_ITEM       PatchDsdtMenuItem;
+
+  DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt(), PatchDsdtMenuItem() { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  DSDT_Patch(const DEV_PROPERTY&) = delete;
+  DSDT_Patch& operator=(const DEV_PROPERTY&) = delete;
+};
+
 class SETTINGS_DATA {
 public:
   // SMBIOS TYPE0
@@ -499,12 +515,16 @@ public:
   UINT32                  DisableFunctions;
 
   //Patch DSDT arbitrary
-  UINT32                  PatchDsdtNum;
-  UINT8                   **PatchDsdtFind;
-  UINT32                  *LenToFind;
-  UINT8                   **PatchDsdtReplace;
+  XObjArray<DSDT_Patch>   DSDTPatchArray;
+//  UINT32                  PatchDsdtNum;
+//  UINT8                   **PatchDsdtFind;
+//  UINT32                  *LenToFind;
+//  UINT8                   **PatchDsdtReplace;
+//  UINT32                  *LenToReplace;
+//  CHAR8                   **PatchDsdtLabel;
+//  CHAR8                   **PatchDsdtTgt;
+//  INPUT_ITEM              *PatchDsdtMenuItem;
 
-  UINT32                  *LenToReplace;
   BOOLEAN                 DebugDSDT;
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
@@ -547,9 +567,6 @@ public:
   UINT32                  DisabledAMLCount;
   UINT8                   pad36[4];
   CHAR16                  **DisabledAML;
-  CHAR8                   **PatchDsdtLabel;
-  CHAR8                   **PatchDsdtTgt;
-  INPUT_ITEM              *PatchDsdtMenuItem;
 
   //other
   UINT32                  IntelMaxValue;
@@ -592,10 +609,10 @@ public:
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
                     RefCLK(0), RtMLB(), RtROM(0), RtROMLen(0), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), DisableCloverHotkeys(0), NeverDoRecovery(0),
                     ConfigName{0}, /*MainConfigName(0),*/ BlackListCount(0), BlackList(0), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
-                    ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), PatchDsdtNum(0), PatchDsdtFind(0), LenToFind(0), PatchDsdtReplace(0), LenToReplace(0), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
+                    ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), DSDTPatchArray(), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
-                    PatchDsdtLabel(0), PatchDsdtTgt(0), PatchDsdtMenuItem(0), IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
+                    IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
                     ArbProperties(0), QuirksMask(0), MaxSlide(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed

@@ -1338,10 +1338,15 @@ INT32 FindBin (UINT8 *dsdt, UINT32 len, const UINT8* bin, UINT32 N)
       }
     }
     if (eq) {
-      return (INT32)i;
+      return (INT32)i; // TODO that is an usafe cast !!!
     }
   }
   return -1;
+}
+INT32 FindBin (UINT8 *dsdt, size_t len, const XBuffer<UINT8>& bin) {
+  if ( len > MAX_INT32 ) panic("FindBin : len > MAX_INT32"); // check against INT32, even though parameter of FindBin is UINT32. Because return value is INT32, parameter should not be > MAX_INT32
+  if ( bin.size() > MAX_INT32 ) panic("FindBin : bin.size() > MAX_INT32");
+  return FindBin(dsdt, (UINT32)len, bin.data(), (UINT32)bin.size());
 }
 
 //if (!FindMethod(dsdt, len, "DTGP"))
@@ -1757,23 +1762,28 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   return len;
 }
 
-UINT32 FixAny (UINT8* dsdt, UINT32 len, const UINT8* ToFind, UINT32 LenTF, const UINT8* ToReplace, UINT32 LenTR)
+UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8> ToReplace)
 {
-  INT32 sizeoffset, adr;
+  size_t sizeoffset;
+  INT32 adr;
   UINT32 i;
   BOOLEAN found = FALSE;
-  if (!ToFind || !LenTF || !LenTR) {
+  if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
     DBG(" invalid patches!\n");
     return len;
   }
   MsgLog(" pattern %02hhX%02hhX%02hhX%02hhX,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
-  if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
+  if ((ToFind.size() + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     MsgLog(" the patch is too large!\n");
     return len;
   }
-  sizeoffset = LenTR - LenTF;
+  sizeoffset = ToReplace.size() - ToFind.size();
+  if ( sizeoffset > MAX_INT32 ) {
+    DBG(" invalid patches (sizeoffset > MAX_INT32)!\n");
+    return len;
+  }
   for (i = 20; i < len; ) {
-    adr = FindBin(dsdt + i, len - i, ToFind, LenTF);
+    adr = FindBin(dsdt + i, len - i, ToFind);
     if (adr < 0) {
       if (found) {
         MsgLog(" ]\n");
@@ -1790,38 +1800,36 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const UINT8* ToFind, UINT32 LenTF, const
 
 //    MsgLog(" (%X)", adr);
     found = TRUE;
-    len = move_data(adr + i, dsdt, len, sizeoffset);
-    if ((LenTR > 0) && (ToReplace != NULL)) {
-      CopyMem(dsdt + adr + i, ToReplace, LenTR);
-    }
-    len = CorrectOuterMethod(dsdt, len, adr + i - 2, sizeoffset);
-    len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
-    i += adr + LenTR;
+    len = move_data(adr + i, dsdt, len, (INT32)sizeoffset); // safe cast, sizeoffset > MAX_INT32
+    CopyMem(dsdt + adr + i, ToReplace.data(), ToReplace.size());
+    len = CorrectOuterMethod(dsdt, len, adr + i - 2, (INT32)sizeoffset); // safe cast, sizeoffset > MAX_INT32
+    len = CorrectOuters(dsdt, len, adr + i - 3, (INT32)sizeoffset); // safe cast, sizeoffset > MAX_INT32
+    i += adr + ToReplace.size();
   }
   MsgLog(" ]\n"); //should not be here
   return len;
 }
 
 //new method. by goodwin_c
-UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UINT8* ToFind, UINT32 LenTF, const UINT8* ToReplace, UINT32 LenTR)
+UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XString8& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
 {
   INT32 adr;
   BOOLEAN found = FALSE;
   UINT32 i, k;
   UINT32 BrdADR = 0, BridgeSize;
 
-  if (!ToFind || !LenTF || !LenTR) {
+  if ( ToFind.isEmpty() || ToReplace.isEmpty() ) {
     DBG(" invalid patches!\n");
     return len;
   }
 
-  if (LenTF != LenTR) {
+  if (ToFind.size() != ToReplace.size()) {
     DBG(" find/replace different size!\n");
     return len;
   }
 
   DBG(" pattern %02hhX%02hhX%02hhX%02hhX,", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
-  if ((LenTF + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
+  if ((ToFind.size() + sizeof(EFI_ACPI_DESCRIPTION_HEADER)) > len) {
     DBG(" the patch is too large!\n");
     return len;
   }
@@ -1835,12 +1843,12 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UIN
       }
       BridgeSize = get_size(dsdt, BrdADR);
       if(!BridgeSize) continue;
-      if(BridgeSize <= LenTF) continue;
+      if(BridgeSize <= ToFind.size()) continue;
 
       k = 0;
       found = FALSE;
       while (k <= 100) {
-        adr = FindBin(dsdt + BrdADR, BridgeSize, ToFind, LenTF);
+        adr = FindBin(dsdt + BrdADR, BridgeSize, ToFind);
         if (adr < 0) {
           if (found) {
             DBG(" ]\n");
@@ -1856,8 +1864,8 @@ UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, CHAR8* TgtBrgName, const UIN
 
         DBG(" (%X)", adr);
         found = TRUE;
-        if ((LenTR > 0) && (ToReplace != NULL)) {
-          CopyMem(dsdt + BrdADR + adr, ToReplace, LenTR);
+        if ( ToReplace.notEmpty() ) {
+          CopyMem(dsdt + BrdADR + adr, ToReplace.data(), ToReplace.size());
         }
         k++;
       }
@@ -5344,26 +5352,26 @@ VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   CheckHardware();
 
   //arbitrary fixes
-  if (gSettings.PatchDsdtNum > 0) {
+  if (gSettings.DSDTPatchArray.size() > 0) {
     MsgLog("Patching DSDT:\n");
-    for (i = 0; i < gSettings.PatchDsdtNum; i++) {
-      if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
+    for (i = 0; i < gSettings.DSDTPatchArray.size(); i++) {
+      if ( gSettings.DSDTPatchArray[i].PatchDsdtFind.isEmpty() ) {
         continue;
       }
 
-      MsgLog(" - [%s]:", gSettings.PatchDsdtLabel[i]); //yyyy
-      if (gSettings.PatchDsdtMenuItem[i].BValue) {
-        if (!gSettings.PatchDsdtTgt[i]) {
+      MsgLog(" - [%s]:", gSettings.DSDTPatchArray[i].PatchDsdtLabel.c_str()); //yyyy
+      if (gSettings.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
+        if (!gSettings.DSDTPatchArray[i].PatchDsdtTgt[i]) {
               DsdtLen = FixAny(temp, DsdtLen,
-                           (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                           (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+                           gSettings.DSDTPatchArray[i].PatchDsdtFind,
+                           gSettings.DSDTPatchArray[i].PatchDsdtReplace);
 
         }else{
     //      DBG("Patching: renaming in bridge\n");
           DsdtLen = FixRenameByBridge2(temp, DsdtLen,
-                           gSettings.PatchDsdtTgt[i],
-                           (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                           (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+                           gSettings.DSDTPatchArray[i].PatchDsdtTgt,
+                           gSettings.DSDTPatchArray[i].PatchDsdtFind,
+                           gSettings.DSDTPatchArray[i].PatchDsdtReplace);
 
         }
       } else {

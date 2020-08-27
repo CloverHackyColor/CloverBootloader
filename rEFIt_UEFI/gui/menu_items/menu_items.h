@@ -365,7 +365,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 			  public:
 				XStringW APFSTargetUUID;
 
-				XStringW          VolName;
+				XStringW          DisplayedVolName;
 				EFI_DEVICE_PATH  *DevicePath;
 				UINT16            Flags;
 				UINT8             LoaderType;
@@ -413,9 +413,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
         
 
 				LOADER_ENTRY()
-						: REFIT_MENU_ITEM_BOOTNUM(), APFSTargetUUID(), VolName(0), DevicePath(0), Flags(0), LoaderType(0), OSVersion(0), BuildVersion(0),
+						: REFIT_MENU_ITEM_BOOTNUM(), APFSTargetUUID(), DisplayedVolName(), DevicePath(0), Flags(0), LoaderType(0), OSVersion(), BuildVersion(),
               BootBgColor({0,0,0,0}),
-              CustomBoot(0), CustomLogo(), KernelAndKextPatches(), Settings(0), KernelData(0),
+              CustomBoot(0), CustomLogo(), KernelAndKextPatches(), Settings(), KernelData(0),
               AddrVtable(0), SizeVtable(0), NamesTable(0), SegVAddr(0), shift(0),
               PatcherInited(false), gSNBEAICPUFixRequire(false), gBDWEIOPCIFixRequire(false), isKernelcache(false), is64BitKernel(false),
               KernelSlide(0), KernelOffset(0), PrelinkTextLoadCmdAddr(0), PrelinkTextAddr(0), PrelinkTextSize(0),

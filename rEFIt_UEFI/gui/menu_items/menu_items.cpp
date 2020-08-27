@@ -69,7 +69,7 @@ LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
   DuplicateEntry->DevicePathString= DevicePathString;
   DuplicateEntry->LoadOptions     = LoadOptions;
   DuplicateEntry->LoaderPath      = LoaderPath;
-	DuplicateEntry->VolName         = VolName;
+	DuplicateEntry->DisplayedVolName         = DisplayedVolName;
 	DuplicateEntry->DevicePath      = DevicePath;
 	DuplicateEntry->Flags           = Flags;
 	DuplicateEntry->LoaderType      = LoaderType;

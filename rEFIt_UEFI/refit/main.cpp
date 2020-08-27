@@ -1840,12 +1840,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-    gBS->Stall(1500000); // to give time to gdb to connect
-//  gBS->Stall(0500000); // to give time to gdb to connect
+//    gBS->Stall(1500000); // to give time to gdb to connect
+  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
   }
   construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
+#ifdef JIEF_DEBUG
+//  all_tests();
+//  PauseForKey(L"press\n");
+#endif
 
   gRT->GetTime(&Now, NULL);
 
@@ -1877,10 +1881,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status))
     return Status;
 
-#ifdef JIEF_DEBUG
-  all_tests();
-//  PauseForKey(L"press\n");
-#endif
 
   //dumping SETTING structure
   // if you change something in Platform.h, please uncomment and test that all offsets

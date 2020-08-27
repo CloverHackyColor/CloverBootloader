@@ -430,8 +430,8 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 //      tmpName = (CHAR16*)A_llocateZeroPool((fileLen+1)*2);
 //      AsciiStrToUnicodeStrS(targetString, tmpName, fileLen);
 
-      Entry->VolName.strncpy(fileBuffer, fileLen);
-      DBG("Created name:%ls\n", Entry->VolName.wc_str());
+      Entry->DisplayedVolName.strncpy(fileBuffer, fileLen);
+      DBG("Created name:%ls\n", Entry->DisplayedVolName.wc_str());
 
       FreePool(fileBuffer);
     }
@@ -583,7 +583,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   Entry->APFSTargetUUID = APFSTargetUUID;
 
   Entry->LoaderPath       = LoaderPath;
-  Entry->VolName          = Volume->VolName;
+  Entry->DisplayedVolName          = Volume->VolName;
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
   Entry->Flags            = OSFLAG_SET(Flags, OSFLAG_USEGRAPHICS);
@@ -633,7 +633,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       ShortcutLetter = 'M';
-      if ( Entry->VolName.isEmpty() ) {
+      if ( Entry->DisplayedVolName.isEmpty() ) {
         // else no sense to override it with dubious name
         GetOSXVolumeName(Entry);
       }
@@ -681,7 +681,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
 
   BOOLEAN BootCampStyle = ThemeX.BootCampStyle;
 
-  if ( Entry->Title.isEmpty()  &&  Entry->VolName.isEmpty() ) {
+  if ( Entry->Title.isEmpty()  &&  Entry->DisplayedVolName.isEmpty() ) {
     XStringW BasenameXW = XStringW(Basename(Volume->DevicePathString.wc_str()));
  //   DBG("encounter Entry->VolName ==%ls and StrLen(Entry->VolName) ==%llu\n",Entry->VolName, StrLen(Entry->VolName));
     if (BootCampStyle) {
@@ -700,7 +700,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
  //   DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n", LoaderTitle.wc_str(), Entry->VolName);
     if (BootCampStyle) {
       if ((StriCmp(LoaderTitle.wc_str(), L"macOS") == 0) || (StriCmp(LoaderTitle.wc_str(), L"Recovery") == 0)) {
-        Entry->Title.takeValueFrom(Entry->VolName);
+        Entry->Title.takeValueFrom(Entry->DisplayedVolName);
       } else {
         if (!LoaderTitle.isEmpty()) {
           Entry->Title = LoaderTitle;
@@ -710,7 +710,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
       }
     } else {
       Entry->Title.SWPrintf("Boot %ls from %ls", (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str() : LoaderPath.basename().wc_str(),
-                            Entry->VolName.wc_str());
+                            Entry->DisplayedVolName.wc_str());
     }
   }
 //  DBG("Entry->Title =%ls\n", Entry->Title.wc_str());
@@ -795,7 +795,7 @@ void LOADER_ENTRY::AddDefaultMenu()
 
   // create the submenu
   SubScreen = new REFIT_MENU_SCREEN;
-  SubScreen->Title.SWPrintf("Options for %ls on %ls", Title.wc_str(), VolName.wc_str());
+  SubScreen->Title.SWPrintf("Options for %ls on %ls", Title.wc_str(), DisplayedVolName.wc_str());
 
   SubScreen->TitleImage = Image;
   SubScreen->ID = LoaderType + 20; //wow
@@ -809,7 +809,7 @@ void LOADER_ENTRY::AddDefaultMenu()
     SubScreen->AddMenuInfoLine_f("UUID: %s", strguid(Guid));
   }
   if ( Volume->ApfsFileSystemUUID.notEmpty() ||  APFSTargetUUID.notEmpty() ) {
-    SubScreen->AddMenuInfoLine_f("APFS volume name: %ls", VolName.wc_str());
+    SubScreen->AddMenuInfoLine_f("APFS volume name: %ls", DisplayedVolName.wc_str());
   }
   if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
     SubScreen->AddMenuInfoLine_f("APFS File System UUID: %s", Volume->ApfsFileSystemUUID.c_str());
@@ -1503,9 +1503,9 @@ VOID ScanLoader(VOID)
           }
         }
         if ( targetLoaderEntry ) {
-          AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, SWPrintf("Boot Mac OS X from %ls via %ls", targetLoaderEntry->VolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX, 0);
+          AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, SWPrintf("Boot Mac OS X from %ls via %ls", targetLoaderEntry->DisplayedVolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX, 0);
           //Try to add Recovery APFS entry
-          AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, SWPrintf("Boot Mac OS X Recovery for %ls via %ls", targetLoaderEntry->VolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0);
+          AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, SWPrintf("Boot Mac OS X Recovery for %ls via %ls", targetLoaderEntry->DisplayedVolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0);
           //Try to add macOS install entry
           AddLoaderEntry(SWPrintf("\\%s\\com.apple.installer\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, L""_XSW, L"macOS Install Prebooter"_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX_INSTALLER, 0);
         }
@@ -1528,7 +1528,7 @@ VOID ScanLoader(VOID)
           } else {
             AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, L""_XSW, L"FileVault Prebooter"_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX, 0);
             //Try to add Recovery APFS entry
-            AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, SWPrintf("Boot Mac OS X Recovery for %ls via %ls", targetLoaderEntry->VolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0);
+            AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, SWPrintf("Boot Mac OS X Recovery for %ls via %ls", targetLoaderEntry->DisplayedVolName.wc_str(), Volume->VolName.wc_str()), L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0);
             //Try to add macOS install entry
             AddLoaderEntry(SWPrintf("\\%s\\com.apple.installer\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, L""_XSW, L"macOS Install Prebooter"_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX_INSTALLER, 0);
           }
@@ -1882,7 +1882,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           // Add subscreen
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
           if (SubScreen) {
-            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath.wc_str(), Entry->VolName.wc_str());
+            SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom->Title.notEmpty()) ? Custom->Title.wc_str() : CustomPath.wc_str(), Entry->DisplayedVolName.wc_str());
             SubScreen->TitleImage = Entry->Image;
             SubScreen->ID = Custom->Type + 20;
             SubScreen->GetAnime();
@@ -1908,6 +1908,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
           SubMenu->AddMenuEntry(Entry, true);
         else
           MainMenu.AddMenuEntry(Entry, true);
+        Entry->Hidden = Custom->Hidden;
       }
     } while (FindCustomPath && Custom->Type == OSTYPE_LINEFI && Custom->KernelScan == KERNEL_SCAN_ALL); // repeat loop only for kernel scanning
 

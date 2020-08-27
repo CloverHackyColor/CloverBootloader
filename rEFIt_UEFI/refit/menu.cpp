@@ -2142,18 +2142,17 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
 
-  INTN             PatchDsdtNum = gSettings.PatchDsdtNum;
-  INPUT_ITEM   *DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
-  INTN                 Index;
+  size_t        PatchDsdtNum = gSettings.DSDTPatchArray.size();
+//  INPUT_ITEM*   DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->"_XS8);
 
-  for (Index = 0; Index < PatchDsdtNum; Index++) {
+  for (size_t Index = 0; Index < PatchDsdtNum; Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title.SWPrintf("%90s", gSettings.PatchDsdtLabel[Index]);
+    InputBootArgs->Title.SWPrintf("%90s", gSettings.DSDTPatchArray[Index].PatchDsdtLabel.c_str());
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &DSDTPatchesMenu[Index];
+    InputBootArgs->Item = &gSettings.DSDTPatchArray[Index].PatchDsdtMenuItem;
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);

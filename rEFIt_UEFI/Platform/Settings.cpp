@@ -4449,17 +4449,20 @@ static void getACPISettings(const TagDict *CfgDict)
         INTN   i;
         INTN Count = PatchesArray->arrayContent().size();
         if (Count > 0) {
-          gSettings.PatchDsdtNum      = (UINT32)Count;
-          gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool(Count * sizeof(UINT8*));
-          gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool(Count * sizeof(UINT8*));
-          gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool(Count * sizeof(UINT8*));
-          gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool(Count * sizeof(UINT32));
-          gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
-          gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
-          gSettings.PatchDsdtMenuItem = new INPUT_ITEM[Count];
+//          gSettings.DSDTPatchArray.size()      = (UINT32)Count;
+//          gSettings.PatchDsdtFind = (__typeof__(gSettings.PatchDsdtFind))AllocateZeroPool(Count * sizeof(UINT8*));
+//          gSettings.PatchDsdtReplace = (__typeof__(gSettings.PatchDsdtReplace))AllocateZeroPool(Count * sizeof(UINT8*));
+//          gSettings.PatchDsdtTgt = (__typeof__(gSettings.PatchDsdtTgt))AllocateZeroPool(Count * sizeof(UINT8*));
+//          gSettings.LenToFind = (__typeof__(gSettings.LenToFind))AllocateZeroPool(Count * sizeof(UINT32));
+//          gSettings.LenToReplace = (__typeof__(gSettings.LenToReplace))AllocateZeroPool(Count * sizeof(UINT32));
+//          gSettings.PatchDsdtLabel = (__typeof__(gSettings.PatchDsdtLabel))AllocateZeroPool(Count * sizeof(UINT8*));
+//          gSettings.PatchDsdtMenuItem = new INPUT_ITEM[Count];
           DBG("PatchesDSDT: %lld requested\n", Count);
-          
-          for (i = 0; i < Count; i++) {
+          gSettings.DSDTPatchArray.setEmpty();
+          for (i = 0; i < Count; i++)
+          {
+            DSDT_Patch* dsdtPatchPtr = new DSDT_Patch();
+            DSDT_Patch& dsdtPatch = *dsdtPatchPtr;
             UINTN Size = 0;
             const TagDict* Prop2 = PatchesArray->dictElementAt(i,"DSDT/Patches"_XS8);
             DBG(" - [%02lld]:", i);
@@ -4471,25 +4474,26 @@ static void getACPISettings(const TagDict *CfgDict)
             } else {
               DSDTPatchesLabel = " (NoLabel)"_XS8;
             }
-            gSettings.PatchDsdtLabel[i] = (__typeof_am__(gSettings.PatchDsdtLabel[i]))AllocateZeroPool(256);
-            snprintf(gSettings.PatchDsdtLabel[i], 255, "%s", DSDTPatchesLabel.c_str());
-            DBG(" (%s)", gSettings.PatchDsdtLabel[i]);
+            dsdtPatch.PatchDsdtLabel = DSDTPatchesLabel;
+            DBG(" (%s)", dsdtPatch.PatchDsdtLabel.c_str());
             
             Prop3 = Prop2->propertyForKey("Disabled");
-            gSettings.PatchDsdtMenuItem[i].BValue = !IsPropertyNotNullAndTrue(Prop3);
+            dsdtPatch.PatchDsdtMenuItem.BValue = !IsPropertyNotNullAndTrue(Prop3);
             
             //DBG(" DSDT bin patch #%d ", i);
-            gSettings.PatchDsdtFind[i]    = GetDataSetting (Prop2, "Find",     &Size);
-            DBG(" lenToFind: %llu", Size);
-            gSettings.LenToFind[i]        = (UINT32)Size;
-            gSettings.PatchDsdtReplace[i] = GetDataSetting (Prop2, "Replace",  &Size);
-            DBG(", lenToReplace: %llu", Size);
-            gSettings.LenToReplace[i]     = (UINT32)Size;
-            gSettings.PatchDsdtTgt[i]     = (CHAR8*)GetDataSetting (Prop2, "TgtBridge", &Size);
-            DBG(", Target Bridge: %s\n", gSettings.PatchDsdtTgt[i]);
-            if (!gSettings.PatchDsdtMenuItem[i].BValue) {
+            UINT8* data = GetDataSetting (Prop2, "Find", &Size);
+            dsdtPatch.PatchDsdtFind.stealValueFrom(data, Size);
+            DBG(" lenToFind: %zu", dsdtPatch.PatchDsdtFind.size());
+            data = GetDataSetting (Prop2, "Replace",  &Size);
+            dsdtPatch.PatchDsdtReplace.stealValueFrom(data, Size);
+            DBG(", lenToReplace: %zu", dsdtPatch.PatchDsdtReplace.size());
+            data = GetDataSetting (Prop2, "TgtBridge", &Size);
+            dsdtPatch.PatchDsdtTgt.stealValueFrom((char*)data);
+            DBG(", Target Bridge: %s\n", dsdtPatch.PatchDsdtTgt.c_str());
+            if (!dsdtPatch.PatchDsdtMenuItem.BValue) {
               DBG("  patch disabled at config\n");
             }
+            gSettings.DSDTPatchArray.AddReference(dsdtPatchPtr, true);
           }
         } //if count > 0
       } //if prop PatchesDSDT
@@ -8397,11 +8401,12 @@ checkOffset(Rtc8Allowed);
   xb.cat(DisableFunctions);
 
   //Patch DSDT arbitrary
-  xb.cat(PatchDsdtNum);
-  xb.cat(PatchDsdtFind);
-  xb.cat(LenToFind);
-  xb.cat(PatchDsdtReplace);
-  xb.cat(LenToReplace);
+  xb.cat((UINT32)DSDTPatchArray.size()); // PatchDsdtNum
+  xb.cat(uintptr_t(0)); // PatchDsdtFind
+  xb.cat(uintptr_t(0)); // LenToFind
+  xb.cat(uintptr_t(0)); // PatchDsdtReplace
+  xb.cat(uintptr_t(0)); // LenToReplace
+checkOffset(DebugDSDT);
   xb.cat(DebugDSDT);
   xb.cat(SlpWak);
   xb.cat(UseIntelHDMI);
@@ -8441,9 +8446,9 @@ checkOffset(CustomEntries);
   xb.cat(DisabledAMLCount);
   xb.ncat(&pad36, sizeof(pad36));
   xb.cat(DisabledAML);
-  xb.cat(PatchDsdtLabel);
-  xb.cat(PatchDsdtTgt);
-  xb.cat(PatchDsdtMenuItem);
+  xb.cat(uintptr_t(0)); // PatchDsdtLabel
+  xb.cat(uintptr_t(0)); // PatchDsdtTgt
+  xb.cat(uintptr_t(0)); // PatchDsdtMenuItem
 
   //other
   xb.cat(IntelMaxValue);

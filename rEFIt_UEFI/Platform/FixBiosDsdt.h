@@ -8,6 +8,7 @@
 #ifndef PLATFORM_FIXBIOSDSDT_H_
 #define PLATFORM_FIXBIOSDSDT_H_
 
+#include "../cpp_foundation/XBuffer.h"
 
 
 //DSDT fixes MASK
@@ -79,29 +80,12 @@ FindBin (
   const UINT8  *Pattern,
   UINT32 PatternLen
   );
+INT32 FindBin (UINT8 *dsdt, size_t len, const XBuffer<UINT8>& bin);
 
 
-UINT32
-FixAny (
-  UINT8* dsdt,
-  UINT32 len,
-  const UINT8* ToFind,
-  UINT32 LenTF,
-  const UINT8* ToReplace,
-  UINT32 LenTR
-  );
+UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8> ToReplace);
+UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XString8& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace);
 
-
-UINT32
-FixRenameByBridge2 (
-  UINT8* dsdt,
-  UINT32 len,
-  CHAR8* TgtBrgName,
-  const UINT8* ToFind,
-  UINT32 LenTF,
-  const UINT8* ToReplace,
-  UINT32 LenTR
-  );
 
 
 

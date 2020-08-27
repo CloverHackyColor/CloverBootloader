@@ -439,34 +439,31 @@ VOID PatchAllTables()
       }
     }
     if (NewTable->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-      if (gSettings.PatchDsdtNum > 0) {
-        DBG("Patching SSDTs: %d patches each\n", gSettings.PatchDsdtNum);
+      if (gSettings.DSDTPatchArray.size() > 0) {
+        DBG("Patching SSDTs: %zu patches each\n", gSettings.DSDTPatchArray.size());
 
 //        CHAR8  OTID[9];
 //        OTID[8] = 0;
 //        CopyMem(OTID, &NewTable->OemTableId, 8);
 //        DBG("Patching SSDT %s Length=%d\n",  OTID, (INT32)Len);
 
-        for (UINT32 i = 0; i < gSettings.PatchDsdtNum; i++) {
-          if (!gSettings.PatchDsdtFind[i] || !gSettings.LenToFind[i]) {
+        for (UINT32 i = 0; i < gSettings.DSDTPatchArray.size(); i++) {
+          if ( gSettings.DSDTPatchArray[i].PatchDsdtFind.isEmpty() ) {
             continue;
           }
 //          DBG("%d. [%s]:", i, gSettings.PatchDsdtLabel[i]);
-          if (!gSettings.PatchDsdtMenuItem[i].BValue) {
+          if (!gSettings.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
 //            DBG(" disabled\n");
             continue;
           }
-          if (!gSettings.PatchDsdtTgt[i]) {
+          if ( gSettings.DSDTPatchArray[i].PatchDsdtTgt.notEmpty() ) {
             Len = FixAny((UINT8*)NewTable, Len,
-                         (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                         (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+                         gSettings.DSDTPatchArray[i].PatchDsdtFind,
+                         gSettings.DSDTPatchArray[i].PatchDsdtReplace);
             //DBG(" OK\n");
           }else{
             //DBG("Patching: renaming in bridge\n");
-            Len = FixRenameByBridge2((UINT8*)NewTable, Len,
-				     gSettings.PatchDsdtTgt[i],
-                                     (const UINT8*)gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
-                                     (const UINT8*)gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+            Len = FixRenameByBridge2((UINT8*)NewTable, Len, gSettings.DSDTPatchArray[i].PatchDsdtTgt, gSettings.DSDTPatchArray[i].PatchDsdtFind, gSettings.DSDTPatchArray[i].PatchDsdtReplace);
           }
         }
       }
