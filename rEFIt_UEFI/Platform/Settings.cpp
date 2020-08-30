@@ -2591,15 +2591,12 @@ GetEarlyUserSettings (
           if (IsPropertyNotNullAndFalse(prop2)) {
             gSettings.DisableEntryScan = TRUE;
           }
-
           prop2 = Prop->getDict()->propertyForKey("Tool");
           if (IsPropertyNotNullAndFalse(prop2)) {
             gSettings.DisableToolScan = TRUE;
           }
-
           prop2 = Prop->getDict()->propertyForKey("Linux");
           gSettings.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
-
           prop2 = Prop->getDict()->propertyForKey("Legacy");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
@@ -2609,10 +2606,9 @@ GetEarlyUserSettings (
                 GlobalConfig.NoLegacy = TRUE;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
                 GlobalConfig.LegacyFirst = TRUE;
-              }
+               }
             }
           }
-
           prop2 = Prop->getDict()->propertyForKey("Kernel");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
@@ -2639,11 +2635,10 @@ GetEarlyUserSettings (
       const TagDict* CustomDict2 = GUIDict->dictPropertyForKey("Custom");
       if (CustomDict2 != NULL) {
         const TagArray* arrayProp = CustomDict2->arrayPropertyForKey("Entries"); // Entries is an array of dict
-        if (Prop != NULL) {
-          INTN   i;
+        if (arrayProp != NULL) {
           INTN   Count = arrayProp->arrayContent().size();
           if (Count > 0) {
-            for (i = 0; i < Count; i++) {
+            for (INTN i = 0; i < Count; i++) {
               const TagDict* Dict3 = arrayProp->dictElementAt(i, "Custom/Entries"_XS8);
               // Allocate an entry
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
@@ -2654,7 +2649,6 @@ GetEarlyUserSettings (
             }
           }
         }
-
         const TagArray* LegacyArray = CustomDict2->arrayPropertyForKey("Legacy"); // is an array of dict
         if (LegacyArray != NULL) {
           CUSTOM_LEGACY_ENTRY *Entry;
@@ -2674,7 +2668,6 @@ GetEarlyUserSettings (
             }
           }
         }
-
         const TagArray* ToolArray = CustomDict2->arrayPropertyForKey("Tool"); // is an array of dict
         if (ToolArray != NULL) {
           CUSTOM_TOOL_ENTRY *Entry;
@@ -2700,7 +2693,6 @@ GetEarlyUserSettings (
         }
       }
     }
-
     const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
     if (GraphicsDict != NULL) {
 
@@ -2718,7 +2710,6 @@ GetEarlyUserSettings (
           UINTN             FindSize    = 0;
           UINTN             ReplaceSize = 0;
           BOOLEAN           Valid;
-
           // alloc space for up to 16 entries
           gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
 
@@ -5246,11 +5237,11 @@ GetUserSettings(const TagDict* CfgDict)
       }
       //can use AddProperties with ArbProperties
       const TagArray* AddPropertiesArray = DevicesDict->arrayPropertyForKey("AddProperties"); // array of dict
-      if (Prop != NULL) {
+      if (AddPropertiesArray != NULL) {
         INTN i;
         INTN Count = AddPropertiesArray->arrayContent().size();
         INTN Index = 0;  //begin from 0 if second enter
-
+//count = 0x1F1E1D1C1B1A1918
         if (Count > 0) {
 			DBG("Add %lld properties:\n", Count);
           gSettings.AddProperties = new DEV_PROPERTY[Count];
