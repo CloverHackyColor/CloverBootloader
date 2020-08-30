@@ -1210,7 +1210,6 @@ UsbBusControllerDriverSupported (
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
-//  DBG("1\n");
   if (EFI_ERROR(Status)) {
     //
     // If failed to open USB_HC2, fall back to USB_HC
@@ -1226,7 +1225,6 @@ UsbBusControllerDriverSupported (
     if (Status == EFI_ALREADY_STARTED) {
       return EFI_SUCCESS;
     }
-//  DBG("2\n");
     if (EFI_ERROR(Status)) {
       return Status;
     }
@@ -1242,7 +1240,6 @@ UsbBusControllerDriverSupported (
           );
 
   } else {
-//    DBG("3\n");
     //
     // Close the USB_HC2 used to perform the supported test
     //
@@ -1253,7 +1250,6 @@ UsbBusControllerDriverSupported (
            Controller
            );
   }
-//  DBG("4\n");
   //
   // Open the EFI Device Path protocol needed to perform the supported test
   //
@@ -1268,7 +1264,6 @@ UsbBusControllerDriverSupported (
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
-//  DBG("5\n");
   if (!EFI_ERROR(Status)) {
     //
     // Close protocol, don't use device path protocol in the Support() function
@@ -1282,7 +1277,6 @@ UsbBusControllerDriverSupported (
 
     return EFI_SUCCESS;
   }
-//  DBG("6\n");
   return Status;
 }
 

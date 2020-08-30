@@ -1866,19 +1866,19 @@ BOOLEAN radeon_card_posted(VOID)
 #if 1
   //dump radeon registers after BIOS POST
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_0_SCRATCH);
-	DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
+//	DBG("BIOS_0_SCRATCH=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_1_SCRATCH);
-	DBG("1=0x%08llX, ", reg);
+//	DBG("1=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_2_SCRATCH);
-	DBG("2=0x%08llX, ", reg);
+//	DBG("2=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_3_SCRATCH);
-	DBG("3=0x%08llX, ", reg);
+//	DBG("3=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_4_SCRATCH);
-	DBG("4=0x%08llX, ", reg);
+	DBG("RADEON_BIOS_4_SCRATCH=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_5_SCRATCH);
-	DBG("5=0x%08llX, ", reg);
+//	DBG("5=0x%08llX, ", reg);
   reg = (UINTN)REG32(card->mmio, RADEON_BIOS_6_SCRATCH);
-	DBG("6=0x%08llX\n", reg);
+//	DBG("6=0x%08llX\n", reg);
 #endif
 
   // first check CRTCs
