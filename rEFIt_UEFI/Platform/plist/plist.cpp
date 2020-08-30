@@ -237,7 +237,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
   } else {
     bufferSize = (UINT32)strlen(buffer);
   }
-
+  DBG("buffer size=%ld\n", bufferSize);
   if(dict == NULL) {
     return EFI_INVALID_PARAMETER;
   }
@@ -253,11 +253,11 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
       configBuffer[i] = 0x20;  //replace random zero bytes to spaces
     }
   }
-
   buffer_start = configBuffer;
   while (TRUE)
   {
     Status = XMLParseNextTag(configBuffer + pos, &tag, &length);
+    DBG("pos=%u\n", pos);
     if (EFI_ERROR(Status)) {
       DBG("error parsing next tag\n");
       break;
@@ -275,13 +275,11 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagDict** dict, size_t bufSize)
 	  tag->FreeTag();
     tag = NULL;
   }
-
 //  FreePool(configBuffer);
 
   if (EFI_ERROR(Status)) {
     return Status;
   }
-
   *dict = tag->getDict();
   return EFI_SUCCESS;
 }
@@ -676,8 +674,9 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
   // dmazar: base64 decode data
   UINTN  len = 0;
   UINT8* data = (UINT8 *)Base64DecodeClover(buffer, &len);
-  tmpTag->setDataValue(data, len);
-
+  if (data != nullptr && len != 0) {
+    tmpTag->setDataValue(data, len);
+  }
   *tag = tmpTag;
   *lenPtr = length;
 

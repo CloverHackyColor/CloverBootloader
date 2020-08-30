@@ -5361,7 +5361,7 @@ VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
 
       MsgLog(" - [%s]:", gSettings.DSDTPatchArray[i].PatchDsdtLabel.c_str()); //yyyy
       if (gSettings.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
-        if (!gSettings.DSDTPatchArray[i].PatchDsdtTgt[i]) {
+        if (gSettings.DSDTPatchArray[i].PatchDsdtTgt.isEmpty()) {
               DsdtLen = FixAny(temp, DsdtLen,
                            gSettings.DSDTPatchArray[i].PatchDsdtFind,
                            gSettings.DSDTPatchArray[i].PatchDsdtReplace);

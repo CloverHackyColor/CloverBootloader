@@ -2591,15 +2591,12 @@ GetEarlyUserSettings (
           if (IsPropertyNotNullAndFalse(prop2)) {
             gSettings.DisableEntryScan = TRUE;
           }
-
           prop2 = Prop->getDict()->propertyForKey("Tool");
           if (IsPropertyNotNullAndFalse(prop2)) {
             gSettings.DisableToolScan = TRUE;
           }
-
           prop2 = Prop->getDict()->propertyForKey("Linux");
           gSettings.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
-
           prop2 = Prop->getDict()->propertyForKey("Legacy");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
@@ -2609,10 +2606,9 @@ GetEarlyUserSettings (
                 GlobalConfig.NoLegacy = TRUE;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
                 GlobalConfig.LegacyFirst = TRUE;
-              }
+               }
             }
           }
-
           prop2 = Prop->getDict()->propertyForKey("Kernel");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
@@ -2639,11 +2635,10 @@ GetEarlyUserSettings (
       const TagDict* CustomDict2 = GUIDict->dictPropertyForKey("Custom");
       if (CustomDict2 != NULL) {
         const TagArray* arrayProp = CustomDict2->arrayPropertyForKey("Entries"); // Entries is an array of dict
-        if (Prop != NULL) {
-          INTN   i;
+        if (arrayProp != NULL) {
           INTN   Count = arrayProp->arrayContent().size();
           if (Count > 0) {
-            for (i = 0; i < Count; i++) {
+            for (INTN i = 0; i < Count; i++) {
               const TagDict* Dict3 = arrayProp->dictElementAt(i, "Custom/Entries"_XS8);
               // Allocate an entry
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
@@ -2654,7 +2649,6 @@ GetEarlyUserSettings (
             }
           }
         }
-
         const TagArray* LegacyArray = CustomDict2->arrayPropertyForKey("Legacy"); // is an array of dict
         if (LegacyArray != NULL) {
           CUSTOM_LEGACY_ENTRY *Entry;
@@ -2674,7 +2668,6 @@ GetEarlyUserSettings (
             }
           }
         }
-
         const TagArray* ToolArray = CustomDict2->arrayPropertyForKey("Tool"); // is an array of dict
         if (ToolArray != NULL) {
           CUSTOM_TOOL_ENTRY *Entry;
@@ -2700,7 +2693,6 @@ GetEarlyUserSettings (
         }
       }
     }
-
     const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
     if (GraphicsDict != NULL) {
 
@@ -2718,7 +2710,6 @@ GetEarlyUserSettings (
           UINTN             FindSize    = 0;
           UINTN             ReplaceSize = 0;
           BOOLEAN           Valid;
-
           // alloc space for up to 16 entries
           gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
 
@@ -2945,7 +2936,7 @@ GetListOfConfigs ()
 }
 
 VOID
-GetListOfDsdts ()
+GetListOfDsdts()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
@@ -2986,14 +2977,14 @@ GetListOfDsdts ()
 
 
 VOID
-GetListOfACPI ()
+GetListOfACPI()
 {
   REFIT_DIR_ITER    DirIter;
-  EFI_FILE_INFO     *DirEntry;
+  EFI_FILE_INFO     *DirEntry = NULL;
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
   INTN               Count = gSettings.DisabledAMLCount;
   XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
-
+//  DBG("Get list of ACPI at path %ls\n", AcpiPath.wc_str());
   while (ACPIPatchedAML != NULL) {
     if (ACPIPatchedAML->FileName) {
       FreePool(ACPIPatchedAML->FileName);
@@ -3003,18 +2994,19 @@ GetListOfACPI ()
     FreePool(ACPIPatchedAMLTmp);
   }
   ACPIPatchedAML = NULL;
-
+//  DBG("free acpi list done\n");
   DirIterOpen(SelfRootDir, AcpiPath.wc_str(), &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
     CHAR16  FullName[256];
+//    DBG("next entry is %ls\n", DirEntry->FileName);
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
     if (StriStr(DirEntry->FileName, L"DSDT")) {
       continue;
     }
-
+//    DBG("Found name %ls\n", DirEntry->FileName);
     snwprintf(FullName, 512, "%ls\\%ls", AcpiPath.wc_str(), DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
@@ -3047,16 +3039,16 @@ XStringW GetBundleVersion(const XStringW& FullName)
   TagDict*      InfoPlistDict = NULL;
   const TagStruct*      Prop = NULL;
   UINTN           Size;
-
   InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\Info.plist");
   Status = egLoadFile(SelfRootDir, InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   if (EFI_ERROR(Status)) {
-//    InfoPlistPath = SWPrintf("%ls", FullName, L"Info.plist"); // Jief : there was this line. Seems that L"Info.plist" parameter was not used
+    InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
     Status = egLoadFile(SelfRootDir, FullName.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
+    DBG("file %ls\n", InfoPlistPath.wc_str());
     Status = ParseXML(InfoPlistPtr, &InfoPlistDict, Size);
-    if(!EFI_ERROR(Status)) {
+    if(!EFI_ERROR(Status) && (InfoPlistDict != nullptr)) {
       Prop = InfoPlistDict->propertyForKey("CFBundleVersion");
       if (Prop != NULL && Prop->isString() && Prop->getString()->stringValue().notEmpty()) {
         CFBundleVersion = SWPrintf("%s", Prop->getString()->stringValue().c_str());
@@ -3087,7 +3079,6 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
     Blocked = TRUE;
   }
-
   DirIterOpen(SelfRootDir, FullPath.wc_str(), &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
@@ -3098,11 +3089,11 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      <string>8.8.8</string>
      */
     FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
-
     mKext = new SIDELOAD_KEXT;
     mKext->FileName = SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
     mKext->KextDirNameUnderOEMPath = SWPrintf("%ls", KextDirNameUnderOEMPath);
+
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
@@ -3144,7 +3135,6 @@ VOID InitKextList()
   KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
 
   // Iterate over kexts directory
-
   DirIterOpen(SelfRootDir, KextsPath.wc_str(), &KextsIter);
   while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
     if (FolderEntry->FileName[0] == L'.') {
@@ -5247,11 +5237,11 @@ GetUserSettings(const TagDict* CfgDict)
       }
       //can use AddProperties with ArbProperties
       const TagArray* AddPropertiesArray = DevicesDict->arrayPropertyForKey("AddProperties"); // array of dict
-      if (Prop != NULL) {
+      if (AddPropertiesArray != NULL) {
         INTN i;
         INTN Count = AddPropertiesArray->arrayContent().size();
         INTN Index = 0;  //begin from 0 if second enter
-
+//count = 0x1F1E1D1C1B1A1918
         if (Count > 0) {
 			DBG("Add %lld properties:\n", Count);
           gSettings.AddProperties = new DEV_PROPERTY[Count];
