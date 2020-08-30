@@ -1153,7 +1153,7 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
     UINT8 * curs = &Driver[procAddr];
     UINTN j = 0;
     while (j < DriverSize) {
-      if (!kextpatch.StartPattern || //old behavior
+      if (kextpatch.StartPattern.isEmpty() || //old behavior
           CompareMemMask((const UINT8*)curs,
                          kextpatch.StartPattern.data(),
                          kextpatch.StartPattern.size(),
@@ -1174,9 +1174,7 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
           j    += SearchLen - 1;
         }
       }
-      if (once ||
-          !kextpatch.StartPattern ||
-          !kextpatch.StartPattern.size()) {
+      if ( once || kextpatch.StartPattern.isEmpty() ) {
         break;
       }
       j++; curs++;

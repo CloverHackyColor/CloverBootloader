@@ -141,6 +141,8 @@
 		9A670D1D24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
 		9A670D1E24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
 		9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
+		9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */; };
+		9A7D518524FC32F700FA1CC3 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
@@ -267,6 +269,10 @@
 		9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer_tests.cpp; sourceTree = "<group>"; };
 		9A6BA73C2449977300BDA52C /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
 		9A7AEDE82459696C003AAD04 /* XToolsCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon.h; sourceTree = "<group>"; };
+		9A7D518024FC32F700FA1CC3 /* XBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBuffer.h; sourceTree = "<group>"; };
+		9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
+		9A7D518224FC32F700FA1CC3 /* XRBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRBuffer.h; sourceTree = "<group>"; };
+		9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRBuffer.cpp; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
@@ -331,6 +337,10 @@
 		9A0B08432402FE9300E2B470 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */,
+				9A7D518024FC32F700FA1CC3 /* XBuffer.h */,
+				9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */,
+				9A7D518224FC32F700FA1CC3 /* XRBuffer.h */,
 				9A7AEDE82459696C003AAD04 /* XToolsCommon.h */,
 				9A4FFA7C2451C8330050B38B /* XString.cpp */,
 				9A57C266241A799B0029A39F /* XString.h */,
@@ -777,6 +787,7 @@
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
+				9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */,
 				9A36E52C24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A36E53C24F3EDED007A1107 /* base64.cpp in Sources */,
@@ -800,6 +811,7 @@
 				9A0B08582402FF7F00E2B470 /* XStringArray_test.cpp in Sources */,
 				9A36E4F824F3B537007A1107 /* xml.cpp in Sources */,
 				9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */,
+				9A7D518524FC32F700FA1CC3 /* XRBuffer.cpp in Sources */,
 				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,

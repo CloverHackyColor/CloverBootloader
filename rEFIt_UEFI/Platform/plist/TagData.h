@@ -9,19 +9,19 @@
 #define __TagData_h__
 
 #include "plist.h"
+#include "../../cpp_foundation/XBuffer.h"
 
 class TagData : public TagStruct
 {
   static XObjArray<TagData> tagsFree;
-  UINT8  *_data;
-  UINTN  _dataLen;
+  XBuffer<UINT8> dataBuffer;
 
 public:
 
-  TagData() : _data(NULL), _dataLen(0) {}
+  TagData() : dataBuffer() {}
   TagData(const TagData& other) = delete; // Can be defined if needed
   const TagData& operator = (const TagData&); // Can be defined if needed
-  virtual ~TagData() { delete _data; }
+  virtual ~TagData() { }
   
   virtual bool operator == (const TagStruct& other) const;
 
@@ -41,23 +41,23 @@ public:
   const UINT8* dataValue() const
   {
 //    if ( !isData() ) panic("TagData::dataValue() : !isData() ");
-    return _data;
+    return dataBuffer.data();
   }
   UINT8* dataValue()
   {
 //    if ( !isData() ) panic("TagData::dataValue() : !isData() ");
-    return _data;
+    return dataBuffer.data();
   }
   UINTN dataLenValue() const
   {
 //    if ( !isData() ) panic("TagData::dataLenValue() : !isData() ");
-    return _dataLen;
+    return dataBuffer.size();
   }
   void setDataValue(UINT8* data, UINTN dataLen)
   {
-    if ( data == NULL ) panic("TagData::setDataValue() : _data == NULL ");
-    _data = data;
-    _dataLen = dataLen;
+    if ( data == NULL && dataLen != 0 ) panic("TagData::setDataValue() : data == NULL && dataLen != 0 ");
+    if ( data != NULL && dataLen == 0 ) panic("TagData::setDataValue() : data != NULL && dataLen == 0 ");
+    dataBuffer.stealValueFrom(data, dataLen);
   }
 
 };

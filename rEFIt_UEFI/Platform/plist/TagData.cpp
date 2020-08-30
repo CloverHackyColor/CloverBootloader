@@ -69,19 +69,14 @@ TagData* TagData::getEmptyTag()
 
 void TagData::FreeTag()
 {
-  if ( _data ) FreePool(_data);
-  _data = NULL;
-  _dataLen = 0;
+  dataBuffer.setEmpty();
   tagsFree.AddReference(this, true);
 }
 
 bool TagData::operator == (const TagStruct& other) const
 {
   if ( !other.isData() ) return false;
-  if ( _dataLen != other.getData()->_dataLen ) return false;
-  if ( _dataLen > 0 ) { // if dataLen > 0, data cannot be NULL. Enforce by ctor and set setDataValue
-    if ( memcmp((void*)_data, (void*)other.getData()->_data, _dataLen) != 0 ) return false;
-  }
+  if ( dataBuffer != other.getData()->dataBuffer ) return false;
   return true;
 }
 
@@ -89,9 +84,9 @@ void TagData::sprintf(unsigned int ident, XString8* s) const
 {
   for (size_t i = 0 ; i < (size_t)ident ; i++) *s += " ";
   *s += "<data>\n"_XS8;
-  if ( _dataLen > 0 ) {
+  if ( dataBuffer.size() > 0 ) {
     size_t outputLen;
-    char* output = base64_encode(_data, _dataLen, &outputLen);
+    char* output = base64_encode(dataBuffer.data(), dataBuffer.size(), &outputLen);
     for (size_t i = 0 ; i < (size_t)ident ; i++) *s += " ";
     (*s).strncat(output, outputLen);
     free(output);

@@ -23,7 +23,7 @@ class XBuffer : public XBuffer_Super
 	T*_WData; // same as RData (see XRBuffer)
 	size_t m_allocatedSize;
 
-	void Initialize(T* p, size_t count, size_t index);
+	void Initialize(const T* p, size_t count, size_t index);
   public:
 	XBuffer() : _WData(NULL), m_allocatedSize(0) { Initialize(NULL, 0, 0); } // ": _WData(NULL), m_allocatedSize(0)" to avoid effc++ warning
 
@@ -50,7 +50,8 @@ class XBuffer : public XBuffer_Super
 	void CheckSize(size_t nNewSize, size_t nGrowBy = XBufferGrowByDefault);
 
   void* vdata() const { return XBuffer_Super::data(); }
-  T* data() const { return _WData; }
+  const T* data() const { return _WData; }
+  T* data() { return _WData; }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   const T* data(IntegralType i) const { return XBuffer_Super::data(i); }
@@ -82,9 +83,24 @@ class XBuffer : public XBuffer_Super
 
 	void setEmpty() { setSize(0); };
 
+  bool operator == (const XBuffer<T>& other) const {
+    if ( size() != other.size() ) return false;
+    if ( size() == 0 ) return true;
+    if ( memcmp(_WData, other._WData, size()) != 0 ) return false;
+    return true;
+  }
+  bool operator != (const XBuffer<T>& other) const { return !(*this == other); }
+
   /* [] */
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   T& operator [](IntegralType i)
+  {
+    if (i < 0) panic("XBuffer::[] : i < 0. System halted\n");
+    if ( (unsigned_type(IntegralType))i >= size() ) panic("XBuffer::[] : i > _Len. System halted\n");
+    return _WData[(unsigned_type(IntegralType))i];
+  }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const T& operator [](IntegralType i) const
   {
     if (i < 0) panic("XBuffer::[] : i < 0. System halted\n");
     if ( (unsigned_type(IntegralType))i >= size() ) panic("XBuffer::[] : i > _Len. System halted\n");
@@ -153,7 +169,7 @@ class XBuffer : public XBuffer_Super
 
 //*************************************************************************************************
 template <typename T>
-void XBuffer<T>::Initialize(T* p, size_t count, size_t index)
+void XBuffer<T>::Initialize(const T* p, size_t count, size_t index)
 {
   if ( p!=NULL && count>0 )
   {

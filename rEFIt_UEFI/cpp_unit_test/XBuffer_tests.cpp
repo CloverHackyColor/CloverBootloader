@@ -16,5 +16,12 @@ int XBuffer_tests()
   xb_uint8.cat(p2);
   xb_uint8.cat(uintptr_t(0));
 
+  XBuffer<UINT8> xb_uint8_2;
+  xb_uint8_2.cat(uintptr_t(1));
+  xb_uint8_2.cat(uintptr_t(2));
+  xb_uint8_2.cat(uintptr_t(0));
+
+  if ( xb_uint8_2 != xb_uint8 ) return 1;
+
   return 0;
 }

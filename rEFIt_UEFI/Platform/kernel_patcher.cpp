@@ -2383,7 +2383,7 @@ LOADER_ENTRY::KernelUserPatch()
     UINT8 * curs = &KernelData[procAddr];
     UINTN j = 0;
     while (j < KERNEL_MAX_SIZE) {
-      if (!KernelAndKextPatches.KernelPatches[i].StartPattern || //old behavior
+      if (KernelAndKextPatches.KernelPatches[i].StartPattern.isEmpty() || //old behavior
           CompareMemMask((const UINT8*)curs,
                          KernelAndKextPatches.KernelPatches[i].StartPattern.data(),
                          KernelAndKextPatches.KernelPatches[i].StartPattern.size(),
@@ -2406,9 +2406,7 @@ LOADER_ENTRY::KernelUserPatch()
           j    += SearchLen - 1;
         }
         DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
-        if (once ||
-            !KernelAndKextPatches.KernelPatches[i].StartPattern ||
-            !KernelAndKextPatches.KernelPatches[i].StartPattern.size()) {
+        if ( once || KernelAndKextPatches.KernelPatches[i].StartPattern.isEmpty() ) {
           break;
         }
       }
@@ -2444,7 +2442,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
     UINT8 * curs = BooterData;
     UINTN j = 0;
     while (j < BooterSize) {
-      if (!KernelAndKextPatches.BootPatches[i].StartPattern || //old behavior
+      if (KernelAndKextPatches.BootPatches[i].StartPattern.isEmpty() || //old behavior
           CompareMemMask((const UINT8*)curs,
                          (const UINT8*)KernelAndKextPatches.BootPatches[i].StartPattern.data(),
                          KernelAndKextPatches.BootPatches[i].StartPattern.size(),
@@ -2468,8 +2466,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
         }
 
         DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
-        if (!KernelAndKextPatches.BootPatches[i].StartPattern ||
-            !KernelAndKextPatches.BootPatches[i].StartPattern.size()) {
+        if ( KernelAndKextPatches.BootPatches[i].StartPattern.isEmpty() ) {
           break;
         }
       }
@@ -2614,7 +2611,7 @@ LOADER_ENTRY::KernelAndKextsPatcherStart()
     KernelAndKextPatches.KPAppleRTC ||
     KernelAndKextPatches.EightApple ||
     KernelAndKextPatches.KPDELLSMBIOS ||
-    KernelAndKextPatches.KPATIConnectorsPatch != NULL ||
+    KernelAndKextPatches.KPATIConnectorsPatch.notEmpty() ||
     KernelAndKextPatches.KextPatches.size() > 0
   );
 

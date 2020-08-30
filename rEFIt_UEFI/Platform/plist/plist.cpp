@@ -674,9 +674,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagStruct* * tag, UINT32* lenPtr)
   // dmazar: base64 decode data
   UINTN  len = 0;
   UINT8* data = (UINT8 *)Base64DecodeClover(buffer, &len);
-  if (data != nullptr && len != 0) {
-    tmpTag->setDataValue(data, len);
-  }
+  tmpTag->setDataValue(data, len);
   *tag = tmpTag;
   *lenPtr = length;
 

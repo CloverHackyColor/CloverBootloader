@@ -928,8 +928,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     p = GetDataSetting (DictPointer, "ATIConnectorsPatch", &i);
     Patches->KPATIConnectorsPatch.stealValueFrom(p, i);
 
-    if (Patches->KPATIConnectorsData == NULL
-        || Patches->KPATIConnectorsPatch == NULL
+    if (Patches->KPATIConnectorsData.isEmpty()
+        || Patches->KPATIConnectorsPatch.isEmpty()
         || Patches->KPATIConnectorsData.size() == 0
         || Patches->KPATIConnectorsData.size() != i) {
       // invalid params - no patching

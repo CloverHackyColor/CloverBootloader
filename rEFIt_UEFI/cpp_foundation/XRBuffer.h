@@ -52,6 +52,14 @@ class XRBuffer
 
 	size_t size() const { return m_size; }
 	size_t index() const { return _Index; }
+ 
+  bool operator == (const XRBuffer<T>& other) const {
+    if ( m_size != other.m_size ) return false;
+    if ( m_size == 0 ) return true;
+    if ( memcmp(_RData, other._RData, m_size) != 0 ) return false;
+    return true;
+  }
+  bool operator != (const XRBuffer<T>& other) const { return !(*this == other); }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	void setIndex(IntegralType Idx)
@@ -66,7 +74,8 @@ class XRBuffer
 	bool notEmpty() const { return m_size > 0 ; }
 
 	// Cast //
-	operator const char *() const { return CData(); }
+  //  Automatic cast are a bit dangerous...
+  //	operator const char *() const { return CData(); }
 
 	// [] //
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
@@ -78,7 +87,18 @@ class XRBuffer
     if ( (unsigned_type(IntegralType))i >= m_size ) {
       panic("XRBuffer::operator [] : index > len. System halted\n");
     }
-    return UCData()[i];
+    return _RData[i];
+  } // underflow ? overflow ?
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const T& operator [](IntegralType i) const
+  {
+    if (i < 0) {
+      panic("XRBuffer::operator [] : i < 0. System halted\n");
+    }
+    if ( (unsigned_type(IntegralType))i >= m_size ) {
+      panic("XRBuffer::operator [] : index > len. System halted\n");
+    }
+    return _RData[i];
   } // underflow ? overflow ?
 
 	bool Get(void *buf, size_t count);
