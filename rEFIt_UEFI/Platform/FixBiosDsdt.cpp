@@ -1293,7 +1293,7 @@ template <typename T, enable_if( is___String(T) )>
 INT32 CmpDev(UINT8 *dsdt, UINT32 i, const T& Name)
 {
   if ( Name.length() != 4 ) {
-    MsgLog("ATTENTION : CmpDev called with a name with length() != 4\n");
+    MsgLog("ATTENTION : CmpDev called with a %s with length() != 4 %ld\n", Name.data(), Name.length());
     return 0;
   }
   if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
