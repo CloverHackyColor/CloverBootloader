@@ -2945,7 +2945,7 @@ GetListOfConfigs ()
 }
 
 VOID
-GetListOfDsdts ()
+GetListOfDsdts()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
@@ -2986,14 +2986,14 @@ GetListOfDsdts ()
 
 
 VOID
-GetListOfACPI ()
+GetListOfACPI()
 {
   REFIT_DIR_ITER    DirIter;
-  EFI_FILE_INFO     *DirEntry;
+  EFI_FILE_INFO     *DirEntry = NULL;
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
   INTN               Count = gSettings.DisabledAMLCount;
   XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
-
+//  DBG("Get list of ACPI at path %ls\n", AcpiPath.wc_str());
   while (ACPIPatchedAML != NULL) {
     if (ACPIPatchedAML->FileName) {
       FreePool(ACPIPatchedAML->FileName);
@@ -3003,18 +3003,19 @@ GetListOfACPI ()
     FreePool(ACPIPatchedAMLTmp);
   }
   ACPIPatchedAML = NULL;
-
+//  DBG("free acpi list done\n");
   DirIterOpen(SelfRootDir, AcpiPath.wc_str(), &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
     CHAR16  FullName[256];
+//    DBG("next entry is %ls\n", DirEntry->FileName);
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
     if (StriStr(DirEntry->FileName, L"DSDT")) {
       continue;
     }
-
+//    DBG("Found name %ls\n", DirEntry->FileName);
     snwprintf(FullName, 512, "%ls\\%ls", AcpiPath.wc_str(), DirEntry->FileName);
     if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
@@ -3047,16 +3048,15 @@ XStringW GetBundleVersion(const XStringW& FullName)
   TagDict*      InfoPlistDict = NULL;
   const TagStruct*      Prop = NULL;
   UINTN           Size;
-
   InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\Info.plist");
   Status = egLoadFile(SelfRootDir, InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   if (EFI_ERROR(Status)) {
-//    InfoPlistPath = SWPrintf("%ls", FullName, L"Info.plist"); // Jief : there was this line. Seems that L"Info.plist" parameter was not used
+    InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
     Status = egLoadFile(SelfRootDir, FullName.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
     Status = ParseXML(InfoPlistPtr, &InfoPlistDict, Size);
-    if(!EFI_ERROR(Status)) {
+    if(!EFI_ERROR(Status) && (InfoPlistDict != nullptr)) {
       Prop = InfoPlistDict->propertyForKey("CFBundleVersion");
       if (Prop != NULL && Prop->isString() && Prop->getString()->stringValue().notEmpty()) {
         CFBundleVersion = SWPrintf("%s", Prop->getString()->stringValue().c_str());
@@ -3087,7 +3087,6 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
     Blocked = TRUE;
   }
-
   DirIterOpen(SelfRootDir, FullPath.wc_str(), &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
@@ -3098,11 +3097,11 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      <string>8.8.8</string>
      */
     FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
-
     mKext = new SIDELOAD_KEXT;
     mKext->FileName = SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
     mKext->KextDirNameUnderOEMPath = SWPrintf("%ls", KextDirNameUnderOEMPath);
+
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
@@ -3144,7 +3143,6 @@ VOID InitKextList()
   KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
 
   // Iterate over kexts directory
-
   DirIterOpen(SelfRootDir, KextsPath.wc_str(), &KextsIter);
   while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
     if (FolderEntry->FileName[0] == L'.') {

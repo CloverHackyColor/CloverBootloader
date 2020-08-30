@@ -2268,7 +2268,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       GetListOfACPI(); //ssdt and other tables
     }
     gBootChanged = FALSE;
-
     MainMenu.Entries.setEmpty();
     OptionMenu.Entries.setEmpty();
     InitKextList();

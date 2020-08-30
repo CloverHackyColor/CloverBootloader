@@ -456,7 +456,7 @@ VOID PatchAllTables()
 //            DBG(" disabled\n");
             continue;
           }
-          if ( gSettings.DSDTPatchArray[i].PatchDsdtTgt.notEmpty() ) {
+          if ( gSettings.DSDTPatchArray[i].PatchDsdtTgt.isEmpty() ) {
             Len = FixAny((UINT8*)NewTable, Len,
                          gSettings.DSDTPatchArray[i].PatchDsdtFind,
                          gSettings.DSDTPatchArray[i].PatchDsdtReplace);
