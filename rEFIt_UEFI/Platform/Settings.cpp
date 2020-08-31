@@ -95,8 +95,7 @@ UINT8                           *gLanMmio[4];     // their MMIO regions
 UINT8                           gLanMac[4][6];    // their MAC addresses
 UINTN                           nLanPaths;        // number of LAN pathes
 
-UINTN                           ThemesNum                   = 0;
-CONST CHAR16                          *ThemesList[100]; //no more then 100 themes?
+XStringWArray                   ThemeNameArray;
 UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
 UINTN                           DsdtsNum = 0;
@@ -2416,9 +2415,9 @@ GetEarlyUserSettings (
         GlobalConfig.Theme.takeValueFrom(Prop->getString()->stringValue());
         DBG("Default theme: %ls\n", GlobalConfig.Theme.wc_str());
         OldChosenTheme = 0xFFFF; //default for embedded
-        for (UINTN i = 0; i < ThemesNum; i++) {
+        for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
           //now comparison is case sensitive
-          if (StriCmp(GlobalConfig.Theme.wc_str(), ThemesList[i]) == 0) {
+          if ( GlobalConfig.Theme.equalIC(ThemeNameArray[i]) ) {
             OldChosenTheme = i;
             break;
           }
@@ -3159,7 +3158,7 @@ GetListOfThemes ()
 
   DbgHeader("GetListOfThemes");
 
-  ThemesNum = 0;
+  ThemeNameArray.setEmpty();
   DirIterOpen(SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
   while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
     if (DirEntry->FileName[0] == '.') {
@@ -3167,7 +3166,7 @@ GetListOfThemes ()
       continue;
     }
     //DBG("Found theme directory: %ls", DirEntry->FileName);
-	  DBG("- [%02llu]: %ls", ThemesNum, DirEntry->FileName);
+	  DBG("- [%02zuu]: %ls", ThemeNameArray.size(), DirEntry->FileName);
     ThemeTestPath = SWPrintf("EFI\\CLOVER\\themes\\%ls", DirEntry->FileName);
     Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath.wc_str(), EFI_FILE_MODE_READ, 0);
     if (!EFI_ERROR(Status)) {
@@ -3185,7 +3184,7 @@ GetListOfThemes ()
             (StriCmp(DirEntry->FileName, L"random") == 0)) {
           ThemePtr = NULL;
         } else {
-          ThemesList[ThemesNum++] = (CHAR16*)AllocateCopyPool(StrSize(DirEntry->FileName), DirEntry->FileName);
+          ThemeNameArray.Add(DirEntry->FileName);
         }
       }
     }
@@ -3688,12 +3687,12 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
    */
   ThemeX.FontImage.setEmpty();
 
-  Rnd = (ThemesNum != 0) ? Now.Second % ThemesNum : 0;
+  Rnd = (ThemeNameArray.size() != 0) ? Now.Second % ThemeNameArray.size() : 0;
 
   //  DBG("...done\n");
   ThemeX.GetThemeTagSettings(NULL);
 
-  if (ThemesNum > 0  &&
+  if (ThemeNameArray.size() > 0  &&
       (GlobalConfig.Theme.isEmpty() || StriCmp(GlobalConfig.Theme.wc_str(), L"embedded") != 0)) {
     // Try special theme first
       XStringW TestTheme;
@@ -3725,7 +3724,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
           goto finish;
         }
         if (AsciiStrCmp(ChosenTheme, "random") == 0) {
-          ThemeDict = ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
+          ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
           goto finish;
         }
 
@@ -3752,11 +3751,11 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
     // Try to get theme from settings
     if (ThemeDict == NULL) {
       if (GlobalConfig.Theme.isEmpty()) {
-        DBG("no default theme, get random theme %ls\n", ThemesList[Rnd]);
-        ThemeDict = ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
+        DBG("no default theme, get random theme %ls\n", ThemeNameArray[Rnd].wc_str());
+        ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
       } else {
         if (StriCmp(GlobalConfig.Theme.wc_str(), L"random") == 0) {
-          ThemeDict = ThemeX.LoadTheme(XStringW(ThemesList[Rnd]));
+          ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
         } else {
           ThemeDict = ThemeX.LoadTheme(GlobalConfig.Theme);
           if (ThemeDict == NULL) {
@@ -3818,8 +3817,8 @@ finish:
     }
 
   }
-  for (i = 0; i < ThemesNum; i++) {
-    if ( ThemeX.Theme.equalIC(ThemesList[i]) ) {
+  for (i = 0; i < ThemeNameArray.size(); i++) {
+    if ( ThemeX.Theme.equalIC(ThemeNameArray[i]) ) {
       OldChosenTheme = i;
       break;
     }

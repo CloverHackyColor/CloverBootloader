@@ -725,11 +725,10 @@ RT_VARIABLES() : Name(), VarGuid{0} {};
 extern XObjArray<RT_VARIABLES> BlockRtVariableArray;
 extern XObjArray<HDA_OUTPUTS> AudioList;
 
-extern CONST CHAR16* ThemesList[100]; //no more then 100 themes?
+extern XStringWArray ThemeNameArray;
 extern CHAR16*       ConfigsList[20];
 extern CHAR16*       DsdtsList[20];
 extern UINTN DsdtsNum;
-extern UINTN ThemesNum;
 extern UINTN ConfigsNum;
 //extern INTN    ScrollButtonsHeight;
 //extern INTN    ScrollBarDecorationsHeight;

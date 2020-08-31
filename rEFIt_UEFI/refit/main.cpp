@@ -125,8 +125,6 @@ extern VOID HelpRefit(VOID);
 extern VOID AboutRefit(VOID);
 //extern BOOLEAN BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize, LOADER_ENTRY *Entry);
 
-extern UINTN                ThemesNum;
-extern CONST CHAR16               *ThemesList[];
 extern UINTN                 ConfigsNum;
 extern CHAR16                *ConfigsList[];
 extern UINTN                 DsdtsNum;
@@ -612,12 +610,6 @@ VOID LOADER_ENTRY::StartLoader()
   }
   
   //Free memory
-  for (i = 0; i < ThemesNum; i++) {
-    if (ThemesList[i]) {
-      FreePool(ThemesList[i]);
-      ThemesList[i] = NULL;
-    }
-  }
   for (i = 0; i < ConfigsNum; i++) {
     if (ConfigsList[i]) {
       FreePool(ConfigsList[i]);

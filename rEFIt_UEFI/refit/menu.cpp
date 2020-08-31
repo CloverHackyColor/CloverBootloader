@@ -501,7 +501,7 @@ VOID ApplyInputs(VOID)
     if (OldChosenTheme == 0xFFFF) {
       GlobalConfig.Theme = L"embedded"_XSW;
     } else {
-      GlobalConfig.Theme.takeValueFrom(ThemesList[OldChosenTheme]);
+      GlobalConfig.Theme.takeValueFrom(ThemeNameArray[OldChosenTheme]);
     }
 
     //will change theme after ESC
@@ -2356,9 +2356,9 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuThemes()
   //add embedded
   SubScreen->AddMenuItemSwitch(3,  "embedded", FALSE);
 
-  for (i = 0; i < ThemesNum; i++) {
+  for (i = 0; i < ThemeNameArray.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title.takeValueFrom(ThemesList[i]);
+    InputBootArgs->Title.takeValueFrom(ThemeNameArray[i]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i + 1;
     InputBootArgs->Item = &InputItems[3];
