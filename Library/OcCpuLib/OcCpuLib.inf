@@ -51,6 +51,7 @@
   FrequencyDetect.c
   OcCpuLib.c
   OcCpuInternals.h
+  ../../Include/Library/OcCpuLib.h
 
 [Sources.Ia32]
   Ia32/Atomic.nasm

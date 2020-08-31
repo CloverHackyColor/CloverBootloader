@@ -33,6 +33,7 @@
 [Sources]
   OcDevicePathLib.c
   ExpandDevicePath.c
+  ../../Include/Library/OcDevicePathLib.h
 
 [Packages]
   CloverPkg.dec

@@ -30,6 +30,7 @@
 
 [Sources]
   OcAppleKeysLib.c
+  ../../Include/Library/OcAppleKeysLib.h
 
 [Packages]
   CloverPkg.dec

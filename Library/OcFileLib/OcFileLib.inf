@@ -36,6 +36,7 @@
   GptPartitionEntry.c
   FirmwareFile.c
   FsConnectQuirk.c
+  ../../Include/Library/OcFileLib.h
 
 [Packages]
   CloverPkg.dec

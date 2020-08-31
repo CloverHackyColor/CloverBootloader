@@ -50,3 +50,4 @@
   ReleaseUsbOwnership.c
   ProtocolSupport.c
   Math.c
+  ../../Include/Library/OcMiscLib.h

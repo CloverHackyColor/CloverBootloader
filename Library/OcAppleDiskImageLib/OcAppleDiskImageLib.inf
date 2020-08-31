@@ -47,3 +47,4 @@
   OcAppleDiskImageLib.c
   OcAppleDiskImageLibInternal.c
   OcAppleDiskImageLibInternal.h
+  ../../Include/Library/OcAppleDiskImageLib.h

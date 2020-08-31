@@ -30,6 +30,7 @@
 
 [Sources]
   OcXmlLib.c
+  ../../Include/Library/OcXmlLib.h
 
 [Packages]
   CloverPkg.dec

@@ -44,6 +44,7 @@
   PolicyManagement.c
   OcBootManagementLib.c
   VariableManagement.c
+  ../../Include/Library/OcBootManagementLib.h
 
 [Packages]
   CloverPkg.dec

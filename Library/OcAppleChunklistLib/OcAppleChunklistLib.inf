@@ -33,3 +33,4 @@
 
 [Sources]
   OcAppleChunklistLib.c
+  ../../Include/Library/OcAppleChunklistLib.h

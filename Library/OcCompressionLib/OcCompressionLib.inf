@@ -30,6 +30,7 @@
 
 [Sources]
   OcCompressionLib.c
+  ../../Include/Library/OcCompressionLib.h
 
   lzss/lzss.c
   lzss/lzss.h

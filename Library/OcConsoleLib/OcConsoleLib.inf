@@ -48,6 +48,7 @@
   TextOutputNull.c
   TextOutputSystem.c
   UgaPassThrough.c
+  ../../Include/Library/OcConsoleLib.h
 
 [Packages]
   CloverPkg.dec

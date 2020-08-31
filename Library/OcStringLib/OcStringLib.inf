@@ -33,6 +33,7 @@
 [Sources]
   OcAsciiLib.c
   OcUnicodeLib.c
+  ../../Include/Library/OcStringLib.h
 
 [Packages]
   CloverPkg.dec

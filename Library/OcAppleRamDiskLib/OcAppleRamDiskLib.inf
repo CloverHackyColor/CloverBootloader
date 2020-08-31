@@ -34,3 +34,4 @@
 
 [Sources]
   OcAppleRamDiskLib.c
+  ../../Include/Library/OcAppleRamDiskLib.h

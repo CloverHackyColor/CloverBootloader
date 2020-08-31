@@ -32,6 +32,7 @@
 
 [Sources]
   OcOSInfoLib.c
+  ../../Include/Library/OcOSInfoLib.h
 
 [Packages]
   CloverPkg.dec

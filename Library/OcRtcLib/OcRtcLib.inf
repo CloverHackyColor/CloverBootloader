@@ -32,6 +32,7 @@
   AppleRtcRam.c
   OcRtcLib.c
   OcRtcLibInternal.h
+  ../../Include/Library/OcRtcLib.h
 
 [Packages]
   CloverPkg.dec

@@ -32,6 +32,7 @@
 
 [Sources]
   OcAppleBootPolicyLib.c
+  ../../Include/Library/OcAppleBootPolicyLib.h
 
 [Packages]
   CloverPkg.dec

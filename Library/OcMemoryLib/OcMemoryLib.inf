@@ -54,3 +54,4 @@
   LegacyRegionUnLock.c
   UmmMalloc.c
   VirtualMemory.c
+  ../../Include/Library/OcMemoryLib.h
