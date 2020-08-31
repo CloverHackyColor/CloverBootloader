@@ -101,8 +101,7 @@ UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
 UINTN                           DsdtsNum = 0;
 CHAR16                          *DsdtsList[20];
-UINTN                           AudioNum;
-HDA_OUTPUTS                     AudioList[20];
+XObjArray<HDA_OUTPUTS>          AudioList;
 XObjArray<RT_VARIABLES>         BlockRtVariableArray;
 
 // firmware
@@ -6538,7 +6537,7 @@ GetDevices ()
 
   NGFX = 0;
   NHDA = 0;
-  AudioNum = 0;
+  AudioList.setEmpty();
   //Arpt.Valid = FALSE; //global variables initialized by 0 - c-language
   XStringW GopDevicePathStr;
   XStringW DevicePathStr;

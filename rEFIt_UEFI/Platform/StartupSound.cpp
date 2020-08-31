@@ -34,8 +34,6 @@
 #include "Settings.h"
 #include "Nvram.h"
 
-extern UINTN                           AudioNum;
-extern HDA_OUTPUTS                     AudioList[20];
 extern UINT8 EmbeddedSound[];
 extern UINTN EmbeddedSoundLength;
 
@@ -67,15 +65,14 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   UINT8           *FileData = NULL;
   UINTN           FileDataLength = 0U;
   WAVE_FILE_DATA  WaveData;
-  UINT8           OutputIndex;
   UINT8           OutputVolume = DefaultAudioVolume;
   UINT16          *TempData = NULL;
   UINTN           Len;
   
-  if (OldChosenAudio > AudioNum) {
+  if (OldChosenAudio >= AudioList.size()) {
     OldChosenAudio = 0; //security correction
   }
-  OutputIndex = (OldChosenAudio & 0xFF);
+  size_t OutputIndex = (OldChosenAudio & 0xFF);
 
   WaveData.Samples = NULL;
   WaveData.SamplesLength = 0;
@@ -164,7 +161,7 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
       goto DONE_ERROR;
   }
 
-  DBG("output to channel %d with volume %d, len=%d\n", OutputIndex, OutputVolume, WaveData.SamplesLength);
+  DBG("output to channel %zu with volume %d, len=%d\n", OutputIndex, OutputVolume, WaveData.SamplesLength);
   DBG(" sound channels=%d bits=%d freq=%d\n", WaveData.Format->Channels, WaveData.Format->BitsPerSample, WaveData.Format->SamplesPerSec);
 
   if (!WaveData.SamplesLength || !OutputVolume) {
@@ -206,11 +203,11 @@ StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
   }
 
   // Setup playback.
-  if (OutputIndex > AudioNum) {
+  if (OutputIndex >= AudioList.size()) {
     OutputIndex = 0;
     DBG("wrong index for Audio output\n");
   }
-  Status = AudioIo->SetupPlayback(AudioIo, (UINT8)(AudioList[OutputIndex].Index), OutputVolume,
+  Status = AudioIo->SetupPlayback(AudioIo, AudioList[OutputIndex].Index, OutputVolume,
                                   freq, bits, (UINT8)(WaveData.Format->Channels));
   if (EFI_ERROR(Status)) {
     MsgLog("StartupSound: Error setting up playback: %s\n", efiStrError(Status));
@@ -341,8 +338,8 @@ GetStoredOutput()
   }
   OutputPortIndex &= 0x2F;
 	DBG("got index=%llu\n", OutputPortIndex);
-  if (OutputPortIndex > AudioNum) {
-	  DBG("... but max=%llu, so reset to 0\n", AudioNum);
+  if (OutputPortIndex >= AudioList.size()) {
+	  DBG("... but max=%zu, so reset to 0\n", AudioList.size());
     OutputPortIndex = 0;
   }
   // Get stored volume. If this fails, just use the max.
@@ -419,7 +416,7 @@ VOID GetOutputs()
 
   UINTN h;
 
-  AudioNum = 0;
+  AudioList.setEmpty();
 
   // Get Audio I/O protocols.
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiAudioIoProtocolGuid, NULL, &AudioIoHandleCount, &AudioIoHandles);
@@ -440,17 +437,25 @@ VOID GetOutputs()
     if (EFI_ERROR(Status)) {
       continue;
     }
+    if ( OutputPortsCount > 255 ) {
+      // SetupPlayback cannot handle index > 255 because parameter is UINT8
+      DBG("GetOutputs() : OutputPortsCount > 255.\n");
+      OutputPortsCount = 255;
+    }
     AudioIoPrivateData = AUDIO_IO_PRIVATE_DATA_FROM_THIS(AudioIoTmp);
     if (!AudioIoPrivateData) {
       continue;
     }
     HdaCodecDev = AudioIoPrivateData->HdaCodecDev;
     for (i = 0; i < OutputPortsCount; i++) {
+      HDA_OUTPUTS* hdaOutputPtr = new HDA_OUTPUTS();
+      HDA_OUTPUTS& hdaOutput = *hdaOutputPtr;
       //    HdaCodecDev->OutputPorts[i];
-      AudioList[AudioNum].Name = HdaCodecDev->Name;
-      AudioList[AudioNum].Handle = AudioIoHandles[h];
-      AudioList[AudioNum].Device = HdaOutputPorts[i].Device;
-      AudioList[AudioNum++].Index = i;
+      hdaOutput.Name.takeValueFrom(HdaCodecDev->Name);
+      hdaOutput.Handle = AudioIoHandles[h];
+      hdaOutput.Device = HdaOutputPorts[i].Device;
+      hdaOutput.Index = (UINT8)i; // safe cast : OutputPortsCount is <= 255.
+      AudioList.AddReference(hdaOutputPtr, true);
     }
   }
 

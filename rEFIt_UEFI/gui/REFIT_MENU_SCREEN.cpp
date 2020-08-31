@@ -995,7 +995,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         break;
 */
       case SCAN_F7:
-        if (OldChosenAudio > AudioNum) {
+        if (OldChosenAudio >= AudioList.size()) {
               OldChosenAudio = 0; //security correction
         }
         Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);

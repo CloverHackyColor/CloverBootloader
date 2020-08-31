@@ -131,8 +131,6 @@ extern UINTN                 ConfigsNum;
 extern CHAR16                *ConfigsList[];
 extern UINTN                 DsdtsNum;
 extern CHAR16                *DsdtsList[];
-extern UINTN                 AudioNum;
-extern HDA_OUTPUTS           AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 
 extern EFI_DXE_SERVICES  *gDS;
@@ -2282,10 +2280,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // log Audio devices in boot-log. This is for clients like Clover.app
     GetOutputs();
-    for (i = 0; i < AudioNum; i++) {
-      if (AudioList[i].Name) {
+    for (i = 0; i < AudioList.size(); i++) {
+      if (AudioList[i].Name.notEmpty()) {
         // Never change this log, otherwise clients will stop interprete the output.
-	  	  MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name, AudioOutputNames[AudioList[i].Device], i);
+	  	  MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device], i);
       }
     }
     

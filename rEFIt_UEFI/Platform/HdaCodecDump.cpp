@@ -56,8 +56,6 @@ CONST CHAR8 *gColors[HDA_CONFIG_DEFAULT_COLOR_OTHER + 1] = {
 
 CONST CHAR8  hdcID[4]       = HDC_ID;
 
-extern UINTN					AudioNum;
-extern HDA_OUTPUTS				AudioList[20];
 extern EFI_AUDIO_IO_PROTOCOL	*AudioIo;
 extern XStringW           		 OEMPath;
 
@@ -280,7 +278,7 @@ EFI_STATUS SaveHdaDumpTxt()
 	UINTN MemLogStartLen;
 
 	// Print each codec found.
-	for (UINTN i = 0; i < AudioNum; i++) {
+	for (UINTN i = 0; i < AudioList.size(); i++) {
 		MemLogStartLen = GetMemLogLen();
 		MemLogStart = GetMemLogBuffer() + MemLogStartLen;
 		
@@ -354,7 +352,7 @@ EFI_STATUS SaveHdaDumpBin()
    	EFI_HDA_IO_PROTOCOL *HdaIo;
     XStringW MiscPath = SWPrintf("%ls\\misc", OEMPath.wc_str());
 	
-	for (UINTN i = 0; i < AudioNum; i++) {
+	for (UINTN i = 0; i < AudioList.size(); i++) {
 		HDA_WIDGET_DEV *Widgets;
 		UINTN WidgetCount;
 		UINT32 HdaCodecDataSize;

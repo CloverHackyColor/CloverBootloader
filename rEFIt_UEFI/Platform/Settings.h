@@ -6,7 +6,6 @@
 
 #include "../gui/menu_items/menu_items.h"
 #include "../Platform/plist/plist.h"
-//class TagStruct;
 
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
@@ -17,13 +16,20 @@
 //  INPUT_ITEM        MenuItem;
 //};
 
-typedef struct {
-  CHAR16          *Name;
+class HDA_OUTPUTS
+{
+public:
+  XStringW        Name;
 //  CHAR8           *LineName;
-  INTN            Index;
+  UINT8            Index;
   EFI_HANDLE      Handle;
   EFI_AUDIO_IO_PROTOCOL_DEVICE Device;
-} HDA_OUTPUTS;
+
+  HDA_OUTPUTS() : Name(), Index(0), Handle(0), Device(EfiAudioIoDeviceOther) {}
+  HDA_OUTPUTS(const HDA_OUTPUTS& other) = delete; // Can be defined if needed
+  const HDA_OUTPUTS& operator = ( const HDA_OUTPUTS & ) = delete; // Can be defined if needed
+  ~HDA_OUTPUTS() {}
+};
 
 typedef enum {
   Unknown,
@@ -717,9 +723,7 @@ RT_VARIABLES() : Name(), VarGuid{0} {};
 
 
 extern XObjArray<RT_VARIABLES> BlockRtVariableArray;
-
-extern UINTN       AudioNum;
-extern HDA_OUTPUTS AudioList[20];
+extern XObjArray<HDA_OUTPUTS> AudioList;
 
 extern CONST CHAR16* ThemesList[100]; //no more then 100 themes?
 extern CHAR16*       ConfigsList[20];

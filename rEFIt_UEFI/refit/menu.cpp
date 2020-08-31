@@ -1029,8 +1029,8 @@ VOID ApplyInputs(VOID)
   i++; //119
   if (InputItems[i].Valid) {
     EFI_DEVICE_PATH_PROTOCOL*  DevicePath = NULL;
-    UINT8 TmpIndex;
-    if (OldChosenAudio > AudioNum) {
+    int TmpIndex;
+    if (OldChosenAudio >= AudioList.size()) {
 //      DBG("crasy OldChosenAudio = %lld\n", OldChosenAudio);
       OldChosenAudio = 0;
     }
@@ -2226,9 +2226,9 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   SubScreen->AddMenuInfoLine_f("Select an audio output, press F7 to test");
   SubScreen->AddMenuItemInput(120, "Volume:", TRUE);
 
-  for (i = 0; i < AudioNum; i++) {
+  for (i = 0; i < AudioList.size(); i++) {
     InputBootArgs = new REFIT_MENU_SWITCH;
-    InputBootArgs->Title.SWPrintf("%ls_%s", AudioList[i].Name, AudioOutputNames[AudioList[i].Device]);
+    InputBootArgs->Title.SWPrintf("%ls_%s", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device]);
 //    InputBootArgs->Tag = TAG_SWITCH_OLD;
     InputBootArgs->Row = i;
     InputBootArgs->Item = &InputItems[119];
