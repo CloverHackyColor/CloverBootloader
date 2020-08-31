@@ -2767,8 +2767,7 @@ GetEarlyUserSettings (
       INTN   i;
       INTN   Count = DisableDriversArray->arrayContent().size();
       if (Count > 0) {
-        gSettings.BlackListCount = 0;
-        gSettings.BlackList = (__typeof__(gSettings.BlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
+        gSettings.DisabledDriverArray.setEmpty();
 
         for (i = 0; i < Count; i++) {
           const TagStruct* Prop = &DisableDriversArray->arrayContent()[i];
@@ -2776,7 +2775,7 @@ GetEarlyUserSettings (
             MsgLog("MALFORMED PLIST : DisableDrivers must be an array of string");
             continue;
           }
-          gSettings.BlackList[gSettings.BlackListCount++] = SWPrintf("%s", Prop->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+          gSettings.DisabledDriverArray.Add(Prop->getString()->stringValue());
         }
       }
     }
@@ -5384,7 +5383,11 @@ GetUserSettings(const TagDict* CfgDict)
 
       Prop                = DevicesDict->propertyForKey("AirportBridgeDeviceName");
       if (Prop && (Prop->isString())) {
-        gSettings.AirportBridgeDeviceName = Prop->getString()->stringValue();
+        if ( Prop->getString()->stringValue().length() != 4 ) {
+           MsgLog("ERROR IN PLIST : AirportBridgeDeviceName must 4 chars long");
+        }else{
+          gSettings.AirportBridgeDeviceName = Prop->getString()->stringValue();
+        }
       }
 
       const TagDict* AudioDict = DevicesDict->dictPropertyForKey("Audio");
@@ -8370,8 +8373,8 @@ checkOffset(CustomBoot);
   xb.cat(uintptr_t(0)); // MainConfigName was a CHAR16*
 
   //Drivers
-  xb.cat(BlackListCount);
-  xb.cat(BlackList);
+  xb.cat(DisabledDriverArray.size()); // BlackListCount
+  xb.cat(uintptr_t(0));  // BlackList was a pointer
 
   //SMC keys
   xb.ncat(&RPlt, sizeof(RPlt));

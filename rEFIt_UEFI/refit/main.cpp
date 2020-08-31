@@ -1081,7 +1081,6 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   UINTN                   DriversArrSize;
   UINTN                   DriversArrNum;
   EFI_HANDLE              *DriversArr;
-  INTN                    i;
   BOOLEAN                 Skip;
   UINT8                   AptioBlessed;
   STATIC CHAR16 CONST * CONST AptioNames[] = {
@@ -1106,10 +1105,11 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 //only one driver with highest priority will obtain status "Loaded"
   DirIterOpen(SelfRootDir, Path, &DirIter);
 #define BOOLEAN_AT_INDEX(k) (*(BOOLEAN*)((UINTN)&gDriversFlags + AptioIndices[(k)]))
-  for (i = 0; i != ARRAY_SIZE(AptioIndices); ++i)
+  for (size_t i = 0; i != ARRAY_SIZE(AptioIndices); ++i)
     BOOLEAN_AT_INDEX(i) = FALSE;
   AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
   while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
+    size_t i;
     for (i = 0; i != ARRAY_SIZE(AptioNames); ++i)
       if (StrStr(DirEntry->FileName, AptioNames[i]) != NULL)
         break;
@@ -1125,8 +1125,8 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   DirIterOpen(SelfRootDir, Path, &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
     Skip = (DirEntry->FileName[0] == L'.');
-    for (i=0; i<gSettings.BlackListCount; i++) {
-      if (StrStr(DirEntry->FileName, gSettings.BlackList[i]) != NULL) {
+    for (size_t i=0; i<gSettings.DisabledDriverArray.size(); i++) {
+      if (StrStr(DirEntry->FileName, gSettings.DisabledDriverArray[i].wc_str()) != NULL) {
         Skip = TRUE;   // skip this
         break;
       }
@@ -1134,7 +1134,8 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     if (Skip) {
       continue;
     }
-
+    {
+      size_t i;
     // either AptioMem, AptioFix* or LowMemFix exclusively
     for (i = 0; i != ARRAY_SIZE(AptioNames); ++i)
       if (StrStr(DirEntry->FileName, AptioNames[i]) != NULL)
@@ -1145,6 +1146,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
         BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
       AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
+    }
     }
 #undef BOOLEAN_AT_INDEX
 
@@ -1200,13 +1202,6 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   if (DriversToConnectNum != NULL && DriversToConnect != NULL) {
     *DriversToConnectNum = DriversArrNum;
     *DriversToConnect = DriversArr;
-  }
-//release memory for BlackList
-  for (i=0; i<gSettings.BlackListCount; i++) {
-    if (gSettings.BlackList[i]) {
-      FreePool(gSettings.BlackList[i]);
-      gSettings.BlackList[i] = NULL;
-    }
   }
 }
 

@@ -1508,12 +1508,12 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
   PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
 
   if (FileExists(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()))) {
-    DBG("DSDT found in Clover volume OEM folder: %ls%ls\n", AcpiOemPath.wc_str(), PathDsdt.wc_str());
+    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: %ls%ls\n", AcpiOemPath.wc_str(), PathDsdt.wc_str());
     Status = egLoadFile(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &DsdtLen);
   }
 
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()))) {
-    DBG("DSDT found in Clover volume common folder: %ls%ls\n", PathPatched.wc_str(), PathDsdt.wc_str());
+    DBG("SaveOemDsdt: DSDT found in Clover volume common folder: %ls%ls\n", PathPatched.wc_str(), PathDsdt.wc_str());
     Status = egLoadFile(SelfRootDir, SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &DsdtLen);
   }
 
