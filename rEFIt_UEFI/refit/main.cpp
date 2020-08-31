@@ -1136,17 +1136,17 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     }
     {
       size_t i;
-    // either AptioMem, AptioFix* or LowMemFix exclusively
-    for (i = 0; i != ARRAY_SIZE(AptioNames); ++i)
-      if (StrStr(DirEntry->FileName, AptioNames[i]) != NULL)
-        break;
-    if (i != ARRAY_SIZE(AptioNames)) {
-      if (((UINT8) i) != AptioBlessed)
-        continue;
-      if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
-        BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
-      AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
-    }
+      // either AptioMem, AptioFix* or LowMemFix exclusively
+      for (i = 0; i != ARRAY_SIZE(AptioNames); ++i)
+        if (StrStr(DirEntry->FileName, AptioNames[i]) != NULL)
+          break;
+      if (i != ARRAY_SIZE(AptioNames)) {
+        if (((UINT8) i) != AptioBlessed)
+          continue;
+        if (AptioBlessed < (UINT8) ARRAY_SIZE(AptioIndices))
+          BOOLEAN_AT_INDEX(AptioBlessed) = TRUE;
+        AptioBlessed = (UINT8) ARRAY_SIZE(AptioNames);
+      }
     }
 #undef BOOLEAN_AT_INDEX
 

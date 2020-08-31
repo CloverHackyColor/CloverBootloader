@@ -2654,7 +2654,7 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
           if (TempChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
             gSettings.BootArgs = TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8);
           } else {
-            ZeroMem(&gSettings.BootArgs, 255);
+            gSettings.BootArgs.setEmpty();
           }
           DBG(" boot with args: %s\n", gSettings.BootArgs.c_str());
         }

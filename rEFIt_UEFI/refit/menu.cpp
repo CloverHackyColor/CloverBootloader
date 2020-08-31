@@ -471,22 +471,13 @@ VOID ApplyInputs(VOID)
   BOOLEAN NeedSave = TRUE;
   INTN i = 0;
   UINTN j;
-//  UINT32 k;
-  CHAR16 *ch;
   CHAR8  AString[256];
 
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
-    ZeroMem(&gSettings.BootArgs, 256);
-    gBootChanged = TRUE;
-    ch = InputItems[i].SValue.data(0);
-    do {
-      if (*ch == L'\\') {
-        *ch = L'_';
-      }
-    } while (*(++ch));
-
 	  gSettings.BootArgs = InputItems[i].SValue;
+	  gSettings.BootArgs.replaceAll('\\', '_');
+    gBootChanged = TRUE;
   }
   i++; //1
   if (InputItems[i].Valid) {
