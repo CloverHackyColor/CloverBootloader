@@ -4734,7 +4734,7 @@ static void getACPISettings(const TagDict *CfgDict)
     gSettings.PatchNMI = IsPropertyNotNullAndTrue(Prop);
     
     const TagArray* SortedOrderArray = ACPIDict->arrayPropertyForKey("SortedOrder"); // array of string
-    if (Prop) {
+    if (SortedOrderArray) {
       INTN   i;
       INTN Count = SortedOrderArray->arrayContent().size();
       const TagStruct* Prop2 = NULL;
