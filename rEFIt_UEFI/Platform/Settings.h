@@ -702,13 +702,21 @@ public:
   ~SIDELOAD_KEXT() { delete Next; delete PlugInList; }
 };
 
-typedef struct RT_VARIABLES RT_VARIABLES;
-struct RT_VARIABLES {
-//  BOOLEAN  Disabled;
-  CHAR16   *Name;
+class RT_VARIABLES
+{
+public:
+  XStringW Name;
   EFI_GUID VarGuid;
+
+RT_VARIABLES() : Name(), VarGuid{0} {};
+  RT_VARIABLES(const RT_VARIABLES& other) = delete; // Can be defined if needed
+  const RT_VARIABLES& operator = ( const RT_VARIABLES & ) = delete; // Can be defined if needed
+  ~RT_VARIABLES() { }
 };
-extern RT_VARIABLES                 *RtVariables;
+
+
+
+extern XObjArray<RT_VARIABLES> BlockRtVariableArray;
 
 extern UINTN       AudioNum;
 extern HDA_OUTPUTS AudioList[20];

@@ -103,8 +103,7 @@ UINTN                           DsdtsNum = 0;
 CHAR16                          *DsdtsList[20];
 UINTN                           AudioNum;
 HDA_OUTPUTS                     AudioList[20];
-UINTN                           RtVariablesNum;
-RT_VARIABLES                    *RtVariables;
+XObjArray<RT_VARIABLES>         BlockRtVariableArray;
 
 // firmware
 BOOLEAN                         gFirmwareClover             = FALSE;
@@ -5808,8 +5807,9 @@ GetUserSettings(const TagDict* CfgDict)
       if (BlockArray != NULL) {
         INTN   i;
         INTN Count = BlockArray->arrayContent().size();
-        RtVariablesNum = 0;
-        RtVariables = (__typeof__(RtVariables))AllocateZeroPool(Count * sizeof(RT_VARIABLES));
+        BlockRtVariableArray.setEmpty();
+        RT_VARIABLES* RtVariablePtr = new RT_VARIABLES();
+        RT_VARIABLES& RtVariable = *RtVariablePtr;
         for (i = 0; i < Count; i++) {
           CfgDict = BlockArray->dictElementAt(i, "Block"_XS8);
           const TagStruct* Prop2 = CfgDict->propertyForKey("Comment");
@@ -5833,7 +5833,7 @@ GetUserSettings(const TagDict* CfgDict)
             }else{
               if( Prop2->getString()->stringValue().notEmpty() ) {
                 if (IsValidGuidAsciiString(Prop2->getString()->stringValue())) {
-                  StrToGuidLE(Prop2->getString()->stringValue(), &RtVariables[RtVariablesNum].VarGuid);
+                  StrToGuidLE(Prop2->getString()->stringValue(), &RtVariable.VarGuid);
                 }else{
                  DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
                 }
@@ -5842,17 +5842,17 @@ GetUserSettings(const TagDict* CfgDict)
           }
 
           Prop2 = CfgDict->propertyForKey("Name");
-          RtVariables[RtVariablesNum].Name = NULL;
+          RtVariable.Name.setEmpty();
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
               MsgLog("ATTENTION : property not string in Block/Name\n");
             }else{
               if( Prop2->getString()->stringValue().notEmpty() ) {
-                snwprintf(RtVariables[RtVariablesNum].Name, 64, "%s", Prop2->getString()->stringValue().c_str());
+                RtVariable.Name = Prop2->getString()->stringValue();
               }
             }
           }
-          RtVariablesNum++;
+          BlockRtVariableArray.AddReference(RtVariablePtr, true);
         }
       }
     }

@@ -67,7 +67,6 @@ EFI_GUID gDataHubPlatformGuid = {
 
 extern EFI_GUID                     gDataHubPlatformGuid;
 extern APPLE_SMC_IO_PROTOCOL        *gAppleSmc;
-extern UINTN                        RtVariablesNum;
 
 
 typedef union {
@@ -175,11 +174,11 @@ OvrSetVariable(
   EFI_STATUS			Status;
   UINTN i;
 
-  for (i = 0; i < RtVariablesNum; i++) {
-    if (!CompareGuid(&RtVariables[i].VarGuid, VendorGuid)) {
+  for (i = 0; i < BlockRtVariableArray.size(); i++) {
+    if (!CompareGuid(&BlockRtVariableArray[i].VarGuid, VendorGuid)) {
       continue;
     }
-    if (!RtVariables[i].Name || RtVariables[i].Name[0] == L'*' || StrCmp(VariableName, RtVariables[i].Name) == 0) {
+    if (BlockRtVariableArray[i].Name.isEmpty() || BlockRtVariableArray[i].Name[0] == L'*' || BlockRtVariableArray[i].Name == LStringW(VariableName) ) {
       return EFI_SUCCESS;
     }
   }
@@ -218,7 +217,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   //
   // firmware Variables
   //
-  if (RtVariablesNum > 0) {
+  if (BlockRtVariableArray.size() > 0) {
     OvrRuntimeServices(gRT);
   }
   

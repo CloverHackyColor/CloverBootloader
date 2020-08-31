@@ -8,7 +8,8 @@ const char* config_all =
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\"> \
 <plist version=\"1.0\"> \
 <dict> \
-  <key>ACPI</key> \
+  <key>Test null data</key> \
+  <data></data> \
   <dict> \
     <key>AutoMerge</key> \
     <true/> \
