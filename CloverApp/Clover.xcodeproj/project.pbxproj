@@ -449,6 +449,7 @@
 		95E68ADD235B86A1002B37A5 /* Disks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disks.swift; sourceTree = "<group>"; };
 		95E68ADE235B86A1002B37A5 /* bdmesg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = bdmesg.swift; sourceTree = "<group>"; };
 		95E68AE4235B89D9002B37A5 /* Installer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Installer.swift; sourceTree = "<group>"; };
+		A5263CE524FEC13300B3EB14 /* CloverOldHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CloverOldHeaders.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -679,6 +680,7 @@
 				95E68AD2235B8632002B37A5 /* Info.plist */,
 				95E68AD3235B8632002B37A5 /* Clover.entitlements */,
 				954FCFD023917A8A00C9273C /* Clover-Bridging-Header.h */,
+				A5263CE524FEC13300B3EB14 /* CloverOldHeaders.h */,
 				954FCFD72391818300C9273C /* NSWindowFix.h */,
 				954FCFD82391818300C9273C /* NSWindowFix.m */,
 				9580403E2414070F00F09F2C /* ThemeImage.h */,

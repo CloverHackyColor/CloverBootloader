@@ -2226,6 +2226,7 @@
 		A52313392448B3F300421FB2 /* VersionString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionString.cpp; sourceTree = "<group>"; };
 		A523133A2448B3F400421FB2 /* usbfix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = usbfix.h; sourceTree = "<group>"; };
 		A523133C2448B43C00421FB2 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../Version.h; sourceTree = "<group>"; };
+		A5263CE424FEBD6E00B3EB14 /* CloverOldHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CloverOldHeaders.h; path = ../CloverApp/Clover/CloverOldHeaders.h; sourceTree = "<group>"; };
 		A529342B24FB9255004241C3 /* XBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBuffer.h; sourceTree = "<group>"; };
 		A529342C24FB9256004241C3 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
 		A529342E24FB9265004241C3 /* XRBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRBuffer.h; sourceTree = "<group>"; };
@@ -16880,6 +16881,7 @@
 				A5C324A624B5022F004E20CC /* Guid */,
 				A5C3244F24B5022F004E20CC /* IndustryStandard */,
 				A5C3309A24B6F110004E20CC /* AppleMacEfi.h */,
+				A5263CE424FEBD6E00B3EB14 /* CloverOldHeaders.h */,
 				A5C3246124B5022F004E20CC /* EfiLdrHandoff.h */,
 				A5C3246224B5022F004E20CC /* Library */,
 				A5C3247F24B5022F004E20CC /* Protocol */,

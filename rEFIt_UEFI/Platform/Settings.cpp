@@ -8075,7 +8075,7 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection ()
 
 
 namespace old {
-#include "../../CloverApp/Clover/Clover-Bridging-Header.h"
+#include "../../CloverApp/Clover/CloverOldHeaders.h"
 }
 
 static void breakpoint()
