@@ -3165,7 +3165,7 @@ GetListOfThemes ()
       continue;
     }
     //DBG("Found theme directory: %ls", DirEntry->FileName);
-	  DBG("- [%02zuu]: %ls", ThemeNameArray.size(), DirEntry->FileName);
+	  DBG("- [%02zu]: %ls", ThemeNameArray.size(), DirEntry->FileName);
     ThemeTestPath = SWPrintf("EFI\\CLOVER\\themes\\%ls", DirEntry->FileName);
     Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath.wc_str(), EFI_FILE_MODE_READ, 0);
     if (!EFI_ERROR(Status)) {
