@@ -3042,7 +3042,7 @@ XStringW GetBundleVersion(const XStringW& FullName)
     Status = egLoadFile(SelfRootDir, FullName.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
-    DBG("file %ls\n", InfoPlistPath.wc_str());
+    //DBG("about to parse xml file %ls\n", InfoPlistPath.wc_str());
     Status = ParseXML(InfoPlistPtr, &InfoPlistDict, Size);
     if(!EFI_ERROR(Status) && (InfoPlistDict != nullptr)) {
       Prop = InfoPlistDict->propertyForKey("CFBundleVersion");
