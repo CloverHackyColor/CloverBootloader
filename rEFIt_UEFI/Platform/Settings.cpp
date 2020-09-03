@@ -1134,7 +1134,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
    * KernelToPatch is an array of dict
    */
   arrayProp = DictPointer->arrayPropertyForKey("KernelToPatch");
-  if (Prop != NULL) {
+  if (arrayProp != NULL) {
     INTN   i;
     INTN   Count = arrayProp->arrayContent().size();
     //delete old and create new
@@ -1260,7 +1260,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
    * BootPatches is an array of dict
    */
   arrayProp = DictPointer->arrayPropertyForKey("BootPatches");
-  if (Prop != NULL) {
+  if (arrayProp != NULL) {
     INTN   i;
     INTN   Count = arrayProp->arrayContent().size();
     //delete old and create new
@@ -2228,7 +2228,7 @@ GetEarlyUserSettings (
       }
       // Secure boot white list
       const TagArray* arrayProp = BootDict->arrayPropertyForKey("WhiteList");
-      if (Prop != NULL) {
+      if (arrayProp != NULL) {
         INTN   i;
         INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
