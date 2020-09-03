@@ -1732,6 +1732,8 @@ FillinCustomEntry (
     if (Prop != NULL) {
       if ( Prop->isTrueOrYes() ) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+      } else if ( Prop->isFalseOrNn() ) {
+        // nothing to do
       } else if ( Prop->isString() && Prop->getString()->stringValue().equalIC("Detect") ) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
@@ -2640,7 +2642,7 @@ GetEarlyUserSettings (
               // Allocate an entry
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
               // Fill it in
-              if (Entry != NULL && (!FillinCustomEntry(Entry, Dict3, FALSE) || !AddCustomLoaderEntry(Entry))) {
+              if ( !FillinCustomEntry(Entry, Dict3, FALSE) || !AddCustomLoaderEntry(Entry) ) {
                 delete Entry;
               }
             }
@@ -2656,11 +2658,9 @@ GetEarlyUserSettings (
               const TagDict* Dict3 = LegacyArray->dictElementAt(i, "Legacy"_XS8);
               // Allocate an entry
               Entry = new CUSTOM_LEGACY_ENTRY;
-              if (Entry) {
-                // Fill it in
-                if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry(Entry)) {
-                  FreePool(Entry);
-                }
+              // Fill it in
+              if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry(Entry)) {
+                delete Entry;
               }
             }
           }
@@ -2673,17 +2673,11 @@ GetEarlyUserSettings (
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
               const TagDict* Dict3 = ToolArray->dictElementAt(i, "Tool"_XS8);
-              if ( !Dict3->isDict() ) {
-                MsgLog("MALFORMED PLIST : Entries must be an array of dict");
-                continue;
-              }
               // Allocate an entry
               Entry = new CUSTOM_TOOL_ENTRY;
-              if (Entry) {
                 // Fill it in
                 if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry(Entry)) {
-                  FreePool(Entry);
-                }
+                  delete Entry;
               }
             }
           }
