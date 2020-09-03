@@ -25,12 +25,21 @@ static void panic_(const char* format, VA_LIST va)
 #endif
 ;
 
+#define FATAL_ERROR_MSG "\nA fatal error happened. System halted.\n"
 static void panic_(const char* format, VA_LIST va)
 {
 	if ( format ) {
 		vprintf(format, va);
+		#ifdef DEBUG_ON_SERIAL_PORT
+		  char buf[500];
+		  vsnprintf(buf, sizeof(buf)-1, format, va);
+		  SerialPortWrite((UINT8*)buf, strlen(buf));
+		#endif
 	}
-	printf("A fatal error happened. System halted\n");
+	printf(FATAL_ERROR_MSG);
+  #ifdef DEBUG_ON_SERIAL_PORT
+    SerialPortWrite((UINT8*)FATAL_ERROR_MSG, strlen(FATAL_ERROR_MSG));
+  #endif
 	while (1) { // this will avoid warning : Function declared 'noreturn' should not return
 		CpuDeadLoop();
 	}

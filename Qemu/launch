@@ -24,8 +24,13 @@ set -x
 
 if [ "$OSTYPE" = "Darwin" ]
 then
+	if ! [ -f ./Qemu/qemu_portable/qemu-system-x86_64 ]
+	then
 	if ! [ -f /usr/local/bin/qemu-system-x86_64 ]
 	then
+			echo "You must install Qemu with \"brew install qemu\"", or restore the folder \'qemu_portable\'
+			exit 1
+		fi
 		echo "You must install Qemu with \"brew install qemu\""
 		exit 1
 	fi
@@ -65,8 +70,8 @@ then
     set -m
 
 	cd "$SCRIPT_DIR"
-	/usr/local/bin/qemu-system-x86_64 \
-	    -L . \
+	./qemu_portable/qemu-system-x86_64 \
+	    -L qemu_portable \
 	    -m 2048 \
 	    -cpu core2duo \
 	    -bios ./bios.bin-1.13.0 \
