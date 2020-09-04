@@ -91,6 +91,7 @@ long base64_decode_block(const char* code_in, const int length_in, char* plainte
 /** UEFI interface to base54 decode.
  * Decodes EncodedData into a new allocated buffer and returns it. Caller is responsible to FreePool() it.
  * If DecodedSize != NULL, then size od decoded data is put there.
+ * If return value is not NULL, DecodedSize IS > 0
  */
 UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 {
@@ -111,6 +112,11 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 
 	base64_init_decodestate(&state_in);
 	DecodedSizeInternal = base64_decode_block(EncodedData, (const int)EncodedSize, (char*) DecodedData, &state_in);
+
+	if ( DecodedSizeInternal == 0 ) {
+    FreePool(DecodedData);
+    DecodedData = NULL;
+  }
 
 	if (DecodedSize != NULL) {
     if ( DecodedSizeInternal < 0 ) panic("Base64DecodeClover : DecodedSizeInternal < 0");
