@@ -24,6 +24,7 @@
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 #  OcSupportPkg/OcSupportPkg.dec
   UefiCpuPkg/UefiCpuPkg.dec
+  OpenCorePkg/OpenCorePkg.dec
 
 [LibraryClasses]
   BaseLib

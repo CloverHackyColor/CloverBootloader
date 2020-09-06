@@ -51,6 +51,7 @@
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+  OpenCorePkg/OpenCorePkg.dec
 
 
 [LibraryClasses]
