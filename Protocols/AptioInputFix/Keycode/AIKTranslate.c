@@ -157,7 +157,7 @@ VOID
 AIKTranslate (
   IN  AMI_EFI_KEY_DATA    *KeyData,
   OUT APPLE_MODIFIER_MAP  *Modifiers,
-  OUT APPLE_KEY           *Key
+  OUT APPLE_KEY_CODE           *Key
   )
 {
   AIK_PS2KEY_TO_USB  Ps2Key;

@@ -298,6 +298,7 @@
   cpp_unit_test/strncmp_test.h
   cpp_unit_test/XArray_tests.cpp
   cpp_unit_test/XArray_tests.h
+  cpp_unit_test/XBuffer_tests.cpp
   cpp_unit_test/XBuffer_tests.h
   cpp_unit_test/XObjArray_tests.cpp
   cpp_unit_test/XObjArray_tests.h
@@ -316,11 +317,13 @@
 
 [Packages]
   CloverPkg.dec
+  OpenCorePkg/OpenCorePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   NetworkPkg/NetworkPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint
@@ -330,7 +333,7 @@
   BaseMemoryLib
   BaseLib
   DevicePathLib
-  DeviceTreeLib
+  OcDeviceTreeLib
   DebugLib
   DxeServicesLib
   DxeServicesTableLib
@@ -348,6 +351,8 @@
   WaveLib
   BaseDebugPrintErrorLevelLib
   BaseSerialPortLib
+  OpenCoreLib
+  OcDebugLogLib
 
 [Guids]
   gEfiAcpiTableGuid
@@ -386,6 +391,9 @@
   gEfiCertRsa2048Sha256Guid
   gEfiCertTypeRsa2048Sha256Guid
 
+  gOcVendorVariableGuid
+  gOcReadOnlyVariableGuid
+  gOcWriteOnlyVariableGuid
   gAppleOSLoadedNamedEventGuid
   gBootChimeVendorVariableGuid
 

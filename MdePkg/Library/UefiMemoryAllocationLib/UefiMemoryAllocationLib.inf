@@ -31,7 +31,7 @@
   MdePkg/MdePkg.dec
 
 [LibraryClasses]
-  DebugLib
+#  DebugLib
   BaseMemoryLib
   UefiBootServicesTableLib
 

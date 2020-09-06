@@ -92,6 +92,7 @@ class REFIT_SIMPLE_MENU_ENTRY_TAG;
 class REFIT_MENU_ENTRY_ITEM_ABSTRACT;
 class REFIT_MENU_ITEM_BOOTNUM;
 class XPointer;
+class SIDELOAD_KEXT;
 
 /**********************************************************  REFIT_ABSTRACT_MENU_ENTRY  *************************************************************/
 
@@ -464,6 +465,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         EFI_STATUS AddKext(IN EFI_FILE *RootDir, IN CONST CHAR16 *FileName, IN cpu_type_t archCpuType);
         void      LoadPlugInKexts(IN EFI_FILE *RootDir, IN CONST CHAR16 *DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
         void      AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType);
+        void      AddKextsInArray(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray);
         void      KextPatcherRegisterKexts(void *FSInject, void *ForceLoadKexts);
         void      KextPatcherStart();
         void      PatchPrelinkedKexts();
@@ -489,6 +491,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         
         void Stall(int Pause) { if ( KernelAndKextPatches.KPDebug ) { gBS->Stall(Pause); } };
         void StartLoader();
+        void StartLoader11();
         void AddDefaultMenu();
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };

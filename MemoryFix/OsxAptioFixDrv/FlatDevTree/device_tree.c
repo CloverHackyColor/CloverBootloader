@@ -31,7 +31,7 @@
 #include "device_tree.h"
 
 #define round_long(x)	(((x) + 3UL) & ~(3UL))
-#define next_prop(x)	((DeviceTreeNodeProperty *) (((UINT8*)x) + sizeof(DeviceTreeNodeProperty) + round_long(x->length)))
+#define next_prop(x)	((DTProperty *) (((UINT8*)x) + sizeof(DTProperty) + round_long(x->length)))
 
 /* Entry*/
 
@@ -44,13 +44,13 @@ RealDTEntry DTRootNode;
 RealDTEntry
 skipProperties(RealDTEntry entry)
 {
-	DeviceTreeNodeProperty *prop;
+	DTProperty *prop;
 	UINTN k;
 
 	if (entry == NULL || entry->nProperties == 0) {
 		return NULL;
 	} else {
-		prop = (DeviceTreeNodeProperty *) (entry + 1);
+		prop = (DTProperty *) (entry + 1);
 		for (k = 0; k < entry->nProperties; k++) {
 			prop = next_prop(prop);
 		}
@@ -170,7 +170,7 @@ INTN find_entry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 
 	// Search current entry
 	for (k = 0; k < nodeP->nProperties; ++k) {
-		DeviceTreeNodeProperty *propP = (DeviceTreeNodeProperty *) (VOID *) startingP;
+		DTProperty *propP = (DTProperty *) (VOID *) startingP;
 
 		startingP += sizeof (*propP) + ((propP->length + 3) & -4);
 
@@ -368,17 +368,17 @@ DTRestartEntryIteration(DTEntryIterator iterator)
 INTN
 DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, UINTN *propertySize)
 {
-	DeviceTreeNodeProperty *prop;
+	DTProperty *prop;
 	UINTN k;
 
 	if (entry == NULL || entry->nProperties == 0) {
 		return kError;
 	} else {
-		prop = (DeviceTreeNodeProperty *) (entry + 1);
+		prop = (DTProperty *) (entry + 1);
 		for (k = 0; k < entry->nProperties; k++) {
 			if (AsciiStrCmp((CHAR8*)prop->name, (CHAR8*)propertyName) == 0) {
 				*propertyValue = (VOID *) (((UINT8*)prop)
-						+ sizeof(DeviceTreeNodeProperty));
+						+ sizeof(DTProperty));
 				*propertySize = prop->length;
 				return kSuccess;
 			}
@@ -435,7 +435,7 @@ DTIterateProperties(DTPropertyIterator iterator, CHAR8 **foundProperty)
 	} else {
 		iter->currentIndex++;
 		if (iter->currentIndex == 1) {
-			iter->currentProperty = (DeviceTreeNodeProperty *) (iter->entry + 1);
+			iter->currentProperty = (DTProperty *) (iter->entry + 1);
 		} else {
 			iter->currentProperty = next_prop(iter->currentProperty);
 		}

@@ -48,9 +48,9 @@ CHAR16          *gEfiBootLoaderPath;
 EFI_GUID        *gEfiBootDeviceGuid;
 
 // Lilu / OpenCore
-EFI_GUID    gOcVendorVariableGuid     = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
-EFI_GUID    gOcReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
-EFI_GUID    gOcWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
+//EFI_GUID    gOcVendorVariableGuid     = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
+//EFI_GUID    gOcReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
+//EFI_GUID    gOcWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
 
 // Ozmosis
 EFI_GUID    mOzmosisProprietary1Guid    = { 0x1F8E0C02, 0x58A9, 0x4E34, { 0xAE, 0x22, 0x2B, 0x63, 0x74, 0x5F, 0xA1, 0x01 } };
@@ -733,12 +733,12 @@ BootVolumeMediaDevicePathNodesEqual (
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
-    DevicePath1 = FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);
+    DevicePath1 = Clover_FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);
     if (DevicePath1 == NULL) {
         return FALSE;
     }
 
-    DevicePath2 = FindDevicePathNodeWithType (DevicePath2, MEDIA_DEVICE_PATH, 0);
+    DevicePath2 = Clover_FindDevicePathNodeWithType (DevicePath2, MEDIA_DEVICE_PATH, 0);
     if (DevicePath2 == NULL) {
         return FALSE;
     }
@@ -841,12 +841,12 @@ GetEfiBootDeviceFromNvram ()
   // if gEfiBootVolume contains FilePathNode, then split them into gEfiBootVolume dev path and gEfiBootLoaderPath
   //
   gEfiBootLoaderPath = NULL;
-  FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+  FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
   if (FileDevPath != NULL) {
     gEfiBootLoaderPath = (__typeof__(gEfiBootLoaderPath))AllocateCopyPool(StrSize(FileDevPath->PathName), FileDevPath->PathName);
     // copy DevPath and write end of path node after in place of file path node
     gEfiBootVolume = DuplicateDevicePath (gEfiBootVolume);
-    FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+    FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
     SetDevicePathEndNode (FileDevPath);
     // gEfiBootVolume now contains only Volume path
   }
@@ -1192,7 +1192,7 @@ FindStartupDiskVolume (
   // Check if gEfiBootVolume is disk or partition volume
   //
   EfiBootVolumeStr  = FileDevicePathToXStringW(gEfiBootVolume);
-  IsPartitionVolume = NULL != FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
+  IsPartitionVolume = NULL != Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
   DBG("  - Volume: %ls = %ls\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr.wc_str());
 
   //
@@ -1229,7 +1229,7 @@ FindStartupDiskVolume (
         LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
         REFIT_VOLUME* Volume = LoaderEntry.Volume;
         EFI_DEVICE_PATH *DevicePath = LoaderEntry.DevicePath;
-        EFI_DEVICE_PATH *MediaPath = FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
+        EFI_DEVICE_PATH *MediaPath = Clover_FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
         if (MediaPath) {
           EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
           XStringW MediaPathGuidStr = GuidLEToXStringW(MediaPathGuid);

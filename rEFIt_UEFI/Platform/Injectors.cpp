@@ -21,7 +21,7 @@
 #include <Protocol/OSInfo.h>
 #include <Protocol/AppleGraphConfig.h>
 #include <Protocol/KeyboardInfo.h>
-#include <Protocol/OcQuirksProtocol.h>
+#include <Protocol/OcQuirksProtocol4Clover.h>
 #include "Injectors.h"
 #include "../Platform/Settings.h"
 
@@ -251,7 +251,7 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 	GetScreenInfo
 };
 
-#define EFI_OS_INFO_PROTOCOL_REVISION  0x01
+//#define EFI_OS_INFO_PROTOCOL_REVISION  0x01 // OpenCore define this to 03
 
 // OS_INFO_VENDOR_NAME
 #define OS_INFO_VENDOR_NAME  "Apple Inc."
@@ -354,12 +354,12 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
 EFI_STATUS
 EFIAPI
 GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
-                 OUT OC_ABC_SETTINGS    *Buffer,
+                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
                  OUT BOOLEAN            *GopEnable
                  )
 {
   DBG("GetQuirksConfig called\n");
-  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS));
+  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS_4CLOVER));
   *GopEnable = gProvideConsoleGopEnable;
   return EFI_SUCCESS;
 }

@@ -114,7 +114,7 @@ KeyMapCreateKeyStrokesBuffer (
   
   APPLE_KEY_MAP_AGGREGATOR *Aggregator;
   UINTN                    BufferSize;
-  APPLE_KEY                *Memory;
+  APPLE_KEY_CODE                *Memory;
   APPLE_KEY_STROKES_INFO   *KeyStrokesInfo;
   
   if (!This || !Index) {
@@ -135,7 +135,7 @@ KeyMapCreateKeyStrokesBuffer (
   
   if (Memory != NULL) {
     KeyStrokesInfo = AllocateZeroPool(sizeof (APPLE_KEY_STROKES_INFO)
-                                       + (KeyBufferSize * sizeof (APPLE_KEY)));
+                                       + (KeyBufferSize * sizeof (APPLE_KEY_CODE)));
     Status         = EFI_OUT_OF_RESOURCES;
     
     if (KeyStrokesInfo != NULL) {
@@ -194,7 +194,7 @@ KeyMapSetKeyStrokeBufferKeys (
                               IN UINTN                            Index,
                               IN APPLE_MODIFIER_MAP               Modifiers,
                               IN UINTN                            NumberOfKeys,
-                              IN APPLE_KEY                        *Keys
+                              IN APPLE_KEY_CODE                        *Keys
                               )
 {
   EFI_STATUS               Status;
@@ -217,7 +217,7 @@ KeyMapSetKeyStrokeBufferKeys (
       KeyStrokesInfo->Hdr.NumberOfKeys = NumberOfKeys;
       KeyStrokesInfo->Hdr.Modifiers    = Modifiers;
       
-      CopyMem((VOID *)&KeyStrokesInfo->Keys, (VOID *)Keys, (NumberOfKeys * sizeof(APPLE_KEY)));
+      CopyMem((VOID *)&KeyStrokesInfo->Keys, (VOID *)Keys, (NumberOfKeys * sizeof(APPLE_KEY_CODE)));
       
       Status = EFI_SUCCESS;
     }
@@ -232,7 +232,7 @@ EFIAPI
 ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
               OUT UINT16 *ModifyFlags,
               OUT UINTN  *PressedKeyCount,
-              OUT APPLE_KEY *Keys)
+              OUT APPLE_KEY_CODE *Keys)
 {
   EFI_STATUS               Status;
   
@@ -243,7 +243,7 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
   UINTN                    DbNoKeyStrokes;
   UINTN                    Index;
   UINTN                    Index2;
-  APPLE_KEY                Key;
+  APPLE_KEY_CODE                Key;
   
   if (!This || !ModifyFlags || !PressedKeyCount) {
     return EFI_INVALID_PARAMETER;
@@ -301,7 +301,7 @@ ReadKeyState (APPLE_KEY_STATE_PROTOCOL* This,
   Status     = EFI_SUCCESS;
   
   if (Keys != NULL) {
-    CopyMem((VOID *)Keys, (VOID *)Aggregator->KeyBuffer, (DbNoKeyStrokes * sizeof(APPLE_KEY)));
+    CopyMem((VOID *)Keys, (VOID *)Aggregator->KeyBuffer, (DbNoKeyStrokes * sizeof(APPLE_KEY_CODE)));
   }
     
   return Status;
@@ -314,13 +314,13 @@ EFIAPI
 SearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
                  IN UINT16 ModifyFlags,
                  IN UINTN PressedKeyCount,
-                 IN OUT APPLE_KEY *Keys,
+                 IN OUT APPLE_KEY_CODE *Keys,
                  IN BOOLEAN ExactMatch)
 {
   EFI_STATUS         Status;
   
   UINTN              DbNoKeys;
-  APPLE_KEY          DbKeys[DB_KEYS_NUM];
+  APPLE_KEY_CODE          DbKeys[DB_KEYS_NUM];
   APPLE_MODIFIER_MAP DbModifiers;
   INTN               Result;
   UINTN              Index;
@@ -344,7 +344,7 @@ SearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
         KeyMapBubbleSort ((UINT16 *)Keys, PressedKeyCount);
         KeyMapBubbleSort ((UINT16 *)DbKeys, DbNoKeys);
         
-        Result = CompareMem ((VOID *)Keys, (VOID *)DbKeys, (PressedKeyCount * sizeof (APPLE_KEY)));
+        Result = CompareMem ((VOID *)Keys, (VOID *)DbKeys, (PressedKeyCount * sizeof (APPLE_KEY_CODE)));
         
         if (Result == 0) {
           Status = EFI_SUCCESS;

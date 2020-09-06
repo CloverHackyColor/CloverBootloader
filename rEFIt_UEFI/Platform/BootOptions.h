@@ -54,7 +54,7 @@ typedef struct {
 
 /** Finds and returns pointer to specified DevPath node in DevicePath or NULL. */
 EFI_DEVICE_PATH_PROTOCOL *
-FindDevicePathNodeWithType (
+Clover_FindDevicePathNodeWithType (
   IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath,
   IN  UINT8                    Type,
   IN  UINT8                    SubType      OPTIONAL

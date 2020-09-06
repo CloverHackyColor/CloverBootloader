@@ -28,64 +28,12 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 #pragma warning ( disable : 4200 )
 #endif
 
-/**
-  Verifies the storage size of a given data type.
-
-  This macro generates a divide by zero error or a zero size array declaration in
-  the preprocessor if the size is incorrect.  These are declared as "extern" so
-  the space for these arrays will not be in the modules.
-
-  @param  TYPE  The date type to determine the size of.
-  @param  Size  The expected size for the TYPE.
-
-**/
-#define VERIFY_SIZE_OF(TYPE, Size) extern UINT8 _VerifySizeof##TYPE[(unsigned char)((sizeof(TYPE) == (Size))) / (unsigned char)((sizeof(TYPE) == (Size)))]
-
-//
-// Verify that ProcessorBind.h produced UEFI Data Types that are compliant with
-// Section 2.3.1 of the UEFI 2.3 Specification.
-//
-VERIFY_SIZE_OF (BOOLEAN, 1);
-VERIFY_SIZE_OF (INT8, 1);
-VERIFY_SIZE_OF (UINT8, 1);
-VERIFY_SIZE_OF (INT16, 2);
-VERIFY_SIZE_OF (UINT16, 2);
-VERIFY_SIZE_OF (INT32, 4);
-VERIFY_SIZE_OF (UINT32, 4);
-VERIFY_SIZE_OF (INT64, 8);
-VERIFY_SIZE_OF (UINT64, 8);
-VERIFY_SIZE_OF (CHAR8, 1);
-VERIFY_SIZE_OF (CHAR16, 2);
-
-//
-// The following three enum types are used to verify that the compiler
-// configuration for enum types is compliant with Section 2.3.1 of the
-// UEFI 2.3 Specification. These enum types and enum values are not
-// intended to be used. A prefix of '__' is used avoid conflicts with
-// other types.
-//
-typedef enum {
-  __VerifyUint8EnumValue = 0xff
-} __VERIFY_UINT8_ENUM_SIZE;
-
-typedef enum {
-  __VerifyUint16EnumValue = 0xffff
-} __VERIFY_UINT16_ENUM_SIZE;
-
-typedef enum {
-  __VerifyUint32EnumValue = 0xffffffff
-} __VERIFY_UINT32_ENUM_SIZE;
-
-VERIFY_SIZE_OF (__VERIFY_UINT8_ENUM_SIZE, 4);
-VERIFY_SIZE_OF (__VERIFY_UINT16_ENUM_SIZE, 4);
-VERIFY_SIZE_OF (__VERIFY_UINT32_ENUM_SIZE, 4);
-
 //
 // The Microsoft* C compiler can removed references to unreferenced data items
 //  if the /OPT:REF linker option is used. We defined a macro as this is a
 //  a non standard extension
 //
-#if defined(_MSC_EXTENSIONS) && _MSC_VER < 1800 && !defined (MDE_CPU_EBC)
+#if defined(_MSC_VER) && _MSC_VER < 1800 && !defined (MDE_CPU_EBC)
   ///
   /// Remove global variable from the linked image if there are no references to
   /// it after all compiler and linker optimizations have been performed.
@@ -247,7 +195,7 @@ VERIFY_SIZE_OF (__VERIFY_UINT32_ENUM_SIZE, 4);
 ///
 #define ASM_PFX(name) _CONCATENATE (__USER_LABEL_PREFIX__, name)
 
-#if __APPLE__
+#ifdef __APPLE__
   //
   // Apple extension that is used by the linker to optimize code size
   // with assembly functions. Put at the end of your .S files
@@ -680,7 +628,7 @@ typedef char* VA_LIST;
 #define VA_END(Marker)                  (Marker = (VA_LIST) 0)
 #define VA_COPY(Dest, Start)            ((void)((Dest) = (Start)))
 
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
 
 #if defined(MDE_CPU_X64) && !defined(NO_MSABI_VA_FUNCS)
 //
@@ -840,15 +788,73 @@ typedef UINTN  *BASE_LIST;
   @return  Offset, in bytes, of field.
 
 **/
-#ifdef __GNUC__
-#if __GNUC__ >= 4
+#if (defined(__GNUC__) && __GNUC__ >= 4) || defined(__clang__)
 #define OFFSET_OF(TYPE, Field) ((UINTN) __builtin_offsetof(TYPE, Field))
-#endif
 #endif
 
 #ifndef OFFSET_OF
 #define OFFSET_OF(TYPE, Field) ((UINTN) &(((TYPE *)0)->Field))
 #endif
+
+/**
+  Portable definition for compile time assertions.
+  Equivalent to C11 static_assert macro from assert.h.
+
+  @param  Expression  Boolean expression.
+  @param  Message     Raised compiler diagnostic message when expression is false.
+
+**/
+#ifdef __cplusplus
+  #define STATIC_ASSERT(Expression, Message) static_assert(Expression, Message)
+#else
+  #ifdef MDE_CPU_EBC
+    #define STATIC_ASSERT(Expression, Message)
+  #elif defined(_MSC_EXTENSIONS)
+    #define STATIC_ASSERT static_assert
+  #else
+    #define STATIC_ASSERT _Static_assert
+  #endif
+#endif
+
+//
+// Verify that ProcessorBind.h produced UEFI Data Types that are compliant with
+// Section 2.3.1 of the UEFI 2.3 Specification.
+//
+
+STATIC_ASSERT (sizeof (BOOLEAN) == 1, "sizeof (BOOLEAN) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (INT8)    == 1, "sizeof (INT8) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (UINT8)   == 1, "sizeof (UINT8) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (INT16)   == 2, "sizeof (INT16) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (UINT16)  == 2, "sizeof (UINT16) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (INT32)   == 4, "sizeof (INT32) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (UINT32)  == 4, "sizeof (UINT32) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (INT64)   == 8, "sizeof (INT64) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (UINT64)  == 8, "sizeof (UINT64) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (CHAR8)   == 1, "sizeof (CHAR8) does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (CHAR16)  == 2, "sizeof (CHAR16) does not meet UEFI Specification Data Type requirements");
+
+//
+// The following three enum types are used to verify that the compiler
+// configuration for enum types is compliant with Section 2.3.1 of the
+// UEFI 2.3 Specification. These enum types and enum values are not
+// intended to be used. A prefix of '__' is used avoid conflicts with
+// other types.
+//
+typedef enum {
+  __VerifyUint8EnumValue = 0xff
+} __VERIFY_UINT8_ENUM_SIZE;
+
+typedef enum {
+  __VerifyUint16EnumValue = 0xffff
+} __VERIFY_UINT16_ENUM_SIZE;
+
+typedef enum {
+  __VerifyUint32EnumValue = 0xffffffff
+} __VERIFY_UINT32_ENUM_SIZE;
+
+STATIC_ASSERT (sizeof (__VERIFY_UINT8_ENUM_SIZE) == 4, "Size of enum does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (__VERIFY_UINT16_ENUM_SIZE) == 4, "Size of enum does not meet UEFI Specification Data Type requirements");
+STATIC_ASSERT (sizeof (__VERIFY_UINT32_ENUM_SIZE) == 4, "Size of enum does not meet UEFI Specification Data Type requirements");
 
 /**
   Macro that returns a pointer to the data structure that contains a specified field of
@@ -1277,7 +1283,7 @@ typedef UINTN RETURN_STATUS;
 
   **/
   #define RETURN_ADDRESS(L)     ((L == 0) ? _ReturnAddress() : (VOID *) 0)
-#elif defined(__GNUC__)
+#elif defined (__GNUC__) || defined (__clang__)
   void * __builtin_return_address (unsigned int level);
   /**
     Get the return address of the calling function.

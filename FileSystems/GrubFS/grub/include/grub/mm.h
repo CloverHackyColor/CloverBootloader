@@ -38,7 +38,7 @@ void *EXPORT_FUNC(grub_memalign) (grub_size_t align, grub_size_t size);
 #endif
 
 void grub_mm_check_real (const char *file, int line);
-#define grub_mm_check() grub_mm_check_real (GRUB_FILE, __LINE__);
+#define grub_mm_check() grub_mm_check_real (GRUB_STRINGIFY(GRUB_FILE), __LINE__);
 
 /* For debugging.  */
 #if defined(MM_DEBUG) && !defined(GRUB_UTIL) && !defined (GRUB_MACHINE_EMU)
@@ -49,19 +49,19 @@ void grub_mm_dump_free (void);
 void grub_mm_dump (unsigned lineno);
 
 #define grub_malloc(size)	\
-  grub_debug_malloc (GRUB_FILE, __LINE__, size)
+  grub_debug_malloc (GRUB_STRINGIFY(GRUB_FILE), __LINE__, size)
 
 #define grub_zalloc(size)	\
-  grub_debug_zalloc (GRUB_FILE, __LINE__, size)
+  grub_debug_zalloc (GRUB_STRINGIFY(GRUB_FILE), __LINE__, size)
 
 #define grub_realloc(ptr,size)	\
-  grub_debug_realloc (GRUB_FILE, __LINE__, ptr, size)
+  grub_debug_realloc (GRUB_STRINGIFY(GRUB_FILE), __LINE__, ptr, size)
 
 #define grub_memalign(align,size)	\
-  grub_debug_memalign (GRUB_FILE, __LINE__, align, size)
+  grub_debug_memalign (GRUB_STRINGIFY(GRUB_FILE), __LINE__, align, size)
 
 #define grub_free(ptr)	\
-  grub_debug_free (GRUB_FILE, __LINE__, ptr)
+  grub_debug_free (GRUB_STRINGIFY(GRUB_FILE), __LINE__, ptr)
 
 void *EXPORT_FUNC(grub_debug_malloc) (const char *file, int line,
 				      grub_size_t size);

@@ -65,7 +65,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 
 static grub_dl_t my_mod;
 
-#define assert(boolean) real_assert (boolean, GRUB_FILE, __LINE__)
+#define assert(boolean) real_assert (boolean, GRUB_STRINGIFY(GRUB_FILE), __LINE__)
 static inline void
 real_assert (int boolean, const char *file, const int line)
 {

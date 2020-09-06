@@ -14,7 +14,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
+//#include <Library/DebugLib.h>
 
 /**
   Allocates one or more 4KB pages of a certain memory type.

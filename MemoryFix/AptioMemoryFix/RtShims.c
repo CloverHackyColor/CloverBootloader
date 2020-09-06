@@ -15,7 +15,7 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 
-#include <Guid/OcVariables.h>
+#include <Guid/OcVariable.h>
 
 #include "Config.h"
 #include "RtShims.h"

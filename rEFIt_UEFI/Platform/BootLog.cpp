@@ -13,7 +13,7 @@
 #include "DataHubCpu.h"
 #include "../Platform/Settings.h"
 
-extern  EFI_GUID  gEfiMiscSubClassGuid;
+#include "guid.h"
 
 
 /** Prints Number of bytes in a row (hex and ascii). Row size is MaxNumber. */

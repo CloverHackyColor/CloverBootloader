@@ -136,7 +136,7 @@ StrStriBasic (
  *  If SubType == 0 then it is ignored.
  */
 EFI_DEVICE_PATH_PROTOCOL *
-FindDevicePathNodeWithType (
+Clover_FindDevicePathNodeWithType (
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
     IN  UINT8           Type,
     IN  UINT8           SubType OPTIONAL
@@ -202,12 +202,12 @@ CreateBootOptionDevicePath (
         //
         // Find HD Media dev path node and extract only that portion of dev path
         //
-        TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
+        TmpDevPath = DuplicateDevicePath (Clover_FindDevicePathNodeWithType (*DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
         if (TmpDevPath != NULL) {
             FreePool(*DevicePath);
             *DevicePath = TmpDevPath;
         } /* else {
-          TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, HARDWARE_DEVICE_PATH, HW_VENDOR_DP));
+          TmpDevPath = DuplicateDevicePath (Clover_FindDevicePathNodeWithType (*DevicePath, HARDWARE_DEVICE_PATH, HW_VENDOR_DP));
           if (TmpDevPath != NULL) {
             FreePool(*DevicePath);
             *DevicePath = TmpDevPath;
@@ -1173,7 +1173,7 @@ DeleteBootOptionsContainingFile (
 
     //PrintBootOption (&BootOption, Index);
 
-    FilePathDP = (FILEPATH_DEVICE_PATH*) FindDevicePathNodeWithType (BootOption.FilePathList, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+    FilePathDP = (FILEPATH_DEVICE_PATH*) Clover_FindDevicePathNodeWithType (BootOption.FilePathList, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
 
     if ((FilePathDP != NULL) &&
         (StriStr (FilePathDP->PathName, FileName) != NULL)) {

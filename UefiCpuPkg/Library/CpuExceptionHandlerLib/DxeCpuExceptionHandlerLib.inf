@@ -1,0 +1,59 @@
+## @file
+#  CPU Exception Handler library instance for DXE modules.
+#
+#  Copyright (c) 2013 - 2018, Intel Corporation. All rights reserved.<BR>
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeCpuExceptionHandlerLib
+  MODULE_UNI_FILE                = DxeCpuExceptionHandlerLib.uni
+  FILE_GUID                      = B6E9835A-EDCF-4748-98A8-27D3C722E02D
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.1
+  LIBRARY_CLASS                  = CpuExceptionHandlerLib|DXE_CORE DXE_DRIVER UEFI_APPLICATION
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources.Ia32]
+  Ia32/ExceptionHandlerAsm.nasm
+  Ia32/ExceptionTssEntryAsm.nasm
+  Ia32/ArchExceptionHandler.c
+  Ia32/ArchInterruptDefs.h
+
+[Sources.X64]
+  X64/Xcode5ExceptionHandlerAsm.nasm
+  X64/ArchExceptionHandler.c
+  X64/ArchInterruptDefs.h
+
+[Sources.common]
+  CpuExceptionCommon.h
+  CpuExceptionCommon.c
+  PeiDxeSmmCpuException.c
+  DxeException.c
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdCpuStackGuard
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuStackSwitchExceptionList
+  gUefiCpuPkgTokenSpaceGuid.PcdCpuKnownGoodStackSize
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  SerialPortLib
+  PrintLib
+  SynchronizationLib
+  LocalApicLib
+  PeCoffGetEntryPointLib
+  MemoryAllocationLib
+  DebugLib

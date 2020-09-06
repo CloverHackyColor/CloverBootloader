@@ -60,6 +60,13 @@
 #include "../Platform/Injectors.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 
+extern "C" {
+#include <Library/OcConfigurationLib.h>
+extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
+
+} // extern "C"
+
+
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
 #else
@@ -913,22 +920,22 @@ VOID ApplyInputs(VOID)
   i++; //101  - Quirks
   if (InputItems[i].Valid) {
     gSettings.QuirksMask = InputItems[i].IValue;
-    gQuirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
-    gQuirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
-    gQuirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
-    gQuirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
-    gQuirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
-    gQuirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
-    gQuirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
-    gQuirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
-    gQuirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
-    gQuirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
-    gQuirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
-    gQuirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
-    gQuirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
-    gQuirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
-    gQuirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
-    gQuirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
+    mOpenCoreConfiguration.Booter.Quirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
+    mOpenCoreConfiguration.Booter.Quirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
+    mOpenCoreConfiguration.Booter.Quirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
+    mOpenCoreConfiguration.Booter.Quirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
+    mOpenCoreConfiguration.Booter.Quirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
+    mOpenCoreConfiguration.Booter.Quirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
+    mOpenCoreConfiguration.Booter.Quirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
+    mOpenCoreConfiguration.Booter.Quirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
+    mOpenCoreConfiguration.Booter.Quirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
+    mOpenCoreConfiguration.Booter.Quirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
+    mOpenCoreConfiguration.Booter.Quirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
+    mOpenCoreConfiguration.Booter.Quirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
+    mOpenCoreConfiguration.Booter.Quirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
+    mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
+    mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
+    mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
 	  DBG("applied Quirks mask:%x\n", gSettings.QuirksMask); //default is 0xA861
   }
   i++; //102
@@ -2437,7 +2444,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
   SubScreen->AddMenuCheck("Hi DPI",             kBootArgsFlagHiDPI, 65);
   SubScreen->AddMenuCheck("Black Screen",       kBootArgsFlagBlack, 65);
   SubScreen->AddMenuCheck("CSR Active Config",  kBootArgsFlagCSRActiveConfig, 65);
-  SubScreen->AddMenuCheck("CSR Pending Config", kBootArgsFlagCSRPendingConfig, 65);
+  SubScreen->AddMenuCheck("CSR Pending Config", kBootArgsFlagCSRConfigMode, 65);
   SubScreen->AddMenuCheck("CSR Boot",           kBootArgsFlagCSRBoot, 65);
   SubScreen->AddMenuCheck("Black Background",   kBootArgsFlagBlackBg, 65);
   SubScreen->AddMenuCheck("Login UI",           kBootArgsFlagLoginUI, 65);

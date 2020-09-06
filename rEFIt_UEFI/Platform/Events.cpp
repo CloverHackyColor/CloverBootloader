@@ -259,7 +259,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	// Patch kernel and kexts if needed
 	//
   LOADER_ENTRY *Entry = ((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY();
-	if (Entry) {
+	if ( Entry && Entry->OSVersion.startWith("10") ) {
     Entry->KernelAndKextsPatcherStart();
   }
 	

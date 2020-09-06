@@ -412,7 +412,7 @@ grub_free (void *ptr)
       do
 	{
 	  grub_printf ("%s:%d: q=%p, q->size=0x%x, q->magic=0x%x\n",
-		       GRUB_FILE, __LINE__, q, q->size, q->magic);
+		       GRUB_STRINGIFY(GRUB_FILE), __LINE__, q, q->size, q->magic);
 	  q = q->next;
 	}
       while (q != r->first);

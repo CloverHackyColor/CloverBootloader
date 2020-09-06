@@ -72,6 +72,10 @@
 #include "../Platform/kext_inject.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 
+extern "C" {
+#include "../../OpenCorePkg/Include/Acidanthera/OpenCore.h"
+}
+
 #ifndef DEBUG_ALL
 #define DEBUG_MAIN 1
 #else
@@ -564,6 +568,11 @@ VOID CheckEmptyFB()
 
 VOID LOADER_ENTRY::StartLoader()
 {
+  if ( OSVersion.startWith("11") ) {
+    StartLoader11();
+    return;
+  }
+
   EFI_STATUS              Status;
   EFI_TEXT_STRING         ConOutOutputString = 0;
   EFI_HANDLE              ImageHandle = NULL;
@@ -645,6 +654,7 @@ VOID LOADER_ENTRY::StartLoader()
   
   //DumpKernelAndKextPatches(KernelAndKextPatches);
   DBG("start loader\n");
+  XStringW devicePathString = DevicePathToXStringW(DevicePath);
   // Load image into memory (will be started later)
   Status = LoadEFIImage(DevicePath, LoaderPath.basename(), NULL, &ImageHandle);
   if (EFI_ERROR(Status)) {
@@ -964,6 +974,644 @@ VOID LOADER_ENTRY::StartLoader()
 
 
   
+  DBG("Closing log\n");
+  if (SavePreBootLog) {
+    Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
+    if (EFI_ERROR(Status)) {
+      /*Status = */SaveBooterLog(NULL, PREBOOT_LOG);
+    }
+  }
+
+//  DBG("StartEFIImage\n");
+//  StartEFIImage(DevicePath, LoadOptions,
+//                Basename(LoaderPath), Basename(LoaderPath), NULL, NULL);
+
+//  DBG("StartEFILoadedImage\n");
+  StartEFILoadedImage(ImageHandle, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL);
+  // Unlock boot screen
+  if (EFI_ERROR(Status = UnlockBootScreen())) {
+    DBG("Failed to unlock custom boot screen: %s!\n", efiStrError(Status));
+  }
+  if (OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)) {
+    // return back orig OutputString
+    gST->ConOut->OutputString = ConOutOutputString;
+  }
+
+//  PauseForKey(L"FinishExternalScreen");
+  FinishExternalScreen();
+//  PauseForKey(L"System started?!");
+}
+extern "C" {
+#include <Library/OcVirtualFsLib.h>
+#include <Library/OcConfigurationLib.h>
+#include <Library/OcDevicePathLib.h>
+#include <Library/OcDebugLogLib.h>
+extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
+extern OC_STORAGE_CONTEXT mOpenCoreStorage;
+extern OC_CPU_INFO mOpenCoreCpuInfo;
+extern OC_BOOTSTRAP_PROTOCOL mOpenCoreBootStrap;
+extern OC_RSA_PUBLIC_KEY* mOpenCoreVaultKey;
+
+EFI_STATUS
+EFIAPI
+OcKernelFileOpen (
+  IN  EFI_FILE_PROTOCOL       *This,
+  OUT EFI_FILE_PROTOCOL       **NewHandle,
+  IN  CHAR16                  *FileName,
+  IN  UINT64                  OpenMode,
+  IN  UINT64                  Attributes
+  );
+
+EFI_STATUS
+EFIAPI
+InternalEfiLoadImage (
+  IN  BOOLEAN                      BootPolicy,
+  IN  EFI_HANDLE                   ParentImageHandle,
+  IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath,
+  IN  VOID                         *SourceBuffer OPTIONAL,
+  IN  UINTN                        SourceSize,
+  OUT EFI_HANDLE                   *ImageHandle
+  );
+
+EFI_STATUS
+EFIAPI
+OcStartImage (
+  IN  EFI_HANDLE  ImageHandle,
+  OUT UINTN       *ExitDataSize,
+  OUT CHAR16      **ExitData  OPTIONAL
+  );
+
+VOID
+OcLoadBooterUefiSupport (
+  IN OC_GLOBAL_CONFIG  *Config
+  );
+} // extern "C"
+
+#define OC_STRING_ASSIGN(ocString, value) do { \
+  ocString.DynValue = NULL; \
+  strcpy(ocString.Value, value); \
+  ocString.MaxSize = sizeof(ocString.Value); \
+  ocString.Size = strlen(value)+1; \
+} while (0)
+
+VOID LOADER_ENTRY::StartLoader11()
+{
+  EFI_STATUS              Status;
+  EFI_TEXT_STRING         ConOutOutputString = 0;
+  EFI_HANDLE              ImageHandle = NULL;
+  EFI_LOADED_IMAGE        *LoadedImage = NULL;
+  CONST CHAR8                   *InstallerVersion;
+  UINTN                   i;
+  NSVGfont                *font; // , *nextFont;
+
+
+  DbgHeader("StartLoader11");
+
+
+//  if (Settings.notEmpty()) {
+//    DBG("  Settings: %ls\n", Settings.wc_str());
+//    Status = LoadUserSettings(SelfRootDir, Settings, &dict);
+//    if (!EFI_ERROR(Status)) {
+//      DBG(" - found custom settings for this entry: %ls\n", Settings.wc_str());
+//      gBootChanged = TRUE;
+//      Status = GetUserSettings(dict);
+//      if (EFI_ERROR(Status)) {
+//        DBG(" - ... but: %s\n", efiStrError(Status));
+//      } else {
+//        if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
+//          gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
+//        }
+//        //CopyMem(KernelAndKextPatches,
+//        //         &gSettings.KernelAndKextPatches,
+//        //         sizeof(KERNEL_AND_KEXT_PATCHES));
+//        //DBG("Custom KernelAndKextPatches copyed to started entry\n");
+//      }
+//    } else {
+//      DBG(" - [!] LoadUserSettings failed: %s\n", efiStrError(Status));
+//    }
+//  }
+
+//  DBG("Finally: ExternalClock=%lluMHz BusSpeed=%llukHz CPUFreq=%uMHz",
+//          DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo),
+//          DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo),
+//          gCPUStructure.MaxSpeed);
+//  if (gSettings.QPI) {
+//    DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
+//  } else {
+//    // to match the value of hw.busfrequency in the terminal
+//    DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
+//  }
+//
+//
+//  if (OSVersion.notEmpty() && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"_XS8))) {
+//    if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
+//      gSettings.CsrActiveConfig = (UINT32)0xB7F;
+//      gSettings.BooterConfig = 0x28;
+//    }
+////      ReadSIPCfg();
+//  }
+//
+//  FilterKextPatches();
+//  FilterKernelPatches();
+//  FilterBootPatches();
+//  if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
+//    DBG("Will not patch boot.efi\n");
+//  }
+//
+//  // Set boot argument for kernel if no caches, this should force kernel loading
+//  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
+//    XString8 KernelLocation;
+//
+//    if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
+//      KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
+//    } else {
+//      // used for 10.10, 10.11, and new version.
+//      KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
+//    }
+//    LoadOptions.AddID(KernelLocation);
+//  }
+//
+//  //we are booting OSX - restore emulation if it's not installed before g boot.efi
+//  if (gEmuVariableControl != NULL) {
+//      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+//  }
+//
+//  // first patchACPI and find PCIROOT and RTC
+//  // but before ACPI patch we need smbios patch
+//  CheckEmptyFB();
+//  PatchSmbios();
+////    DBG("PatchACPI\n");
+//  PatchACPI(Volume, OSVersion);
+//
+//  // If KPDebug is true boot in verbose mode to see the debug messages
+//  if (KernelAndKextPatches.KPDebug) {
+//    LoadOptions.AddID("-v"_XS8);
+//  }
+//
+//  DbgHeader("RestSetup macOS");
+//
+////    DBG("SetDevices\n");
+//  SetDevices(this);
+////    DBG("SetFSInjection\n");
+//  SetFSInjection();
+//  //PauseForKey(L"SetFSInjection");
+////    DBG("SetVariablesForOSX\n");
+//  SetVariablesForOSX(this);
+////    DBG("SetVariablesForOSX\n");
+//  EventsInitialize(this);
+////    DBG("FinalizeSmbios\n");
+//  FinalizeSmbios();
+//
+//  SetCPUProperties();
+//
+//  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+//    DoHibernateWake = PrepareHibernation(Volume);
+//  }
+//  SetupDataForOSX(DoHibernateWake);
+//
+//
+//  if (  gDriversFlags.AptioFixLoaded &&
+//        !DoHibernateWake &&
+//        !LoadOptions.containsStartWithIC("slide=")  ) {
+//    // Add slide=0 argument for ML+ if not present
+//    LoadOptions.AddID("slide=0"_XS8);
+//  }
+
+  XObjArray<SIDELOAD_KEXT> kextArray;
+  if (!DoHibernateWake) {
+    AddKextsInArray(LStringW(L"Kexts\\11"), LStringW(L"11"), CPU_TYPE_X86_64, &kextArray);
+  }
+
+  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, "Auto");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Default");
+  mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = 0;
+  mOpenCoreConfiguration.Kernel.Force.Count = 0;
+
+  mOpenCoreConfiguration.Kernel.Add.Count = kextArray.size();
+  mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
+  mOpenCoreConfiguration.Kernel.Add.ValueSize = sizeof(OC_KERNEL_ADD_ENTRY); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)AllocatePool(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+
+  for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
+  {
+    const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
+    DBG("load kext : KextDirNameUnderOEMPath=%ls FileName=%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
+    size_t allocSize = sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]));
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (OC_KERNEL_ADD_ENTRY*) AllocatePool (allocSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, "Any");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Comment, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MaxKernel, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, S8Printf("%ls/%ls", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str()).c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents/MacOS/%ls", KextEntry.FileName.subString(0, KextEntry.FileName.indexOf(".")).wc_str()).c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageDataSize = 0;
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistData = NULL;
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistDataSize = 0;
+  }
+  // Seems that Lilu must be first.
+  if ( kextArray.size() > 1 ) {
+    for (size_t kextIdx = 1 ; kextIdx < kextArray.size() ; kextIdx++ ) {
+      if ( XString8(LString8(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath.Value)).contains("Lilu.kext") ) {
+        OC_KERNEL_ADD_ENTRY* v0 = mOpenCoreConfiguration.Kernel.Add.Values[0];
+        mOpenCoreConfiguration.Kernel.Add.Values[0] = mOpenCoreConfiguration.Kernel.Add.Values[kextIdx];
+        mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = v0;
+      }
+    }
+  }
+
+
+  EFI_HANDLE EntryHandle = NULL;
+  Status = InternalEfiLoadImage (
+    FALSE,
+    gImageHandle,
+    DevicePath,
+    NULL,
+    0,
+    &EntryHandle
+    );
+  if ( EFI_ERROR(Status) ) return; // TODO message ?
+
+  EFI_STATUS OptionalStatus = gBS->HandleProtocol (
+      EntryHandle,
+      &gEfiLoadedImageProtocolGuid,
+      (VOID **) &LoadedImage
+      );
+  if ( EFI_ERROR(OptionalStatus) ) return; // TODO message ?
+  XStringW loadOptions = SWPrintf("-v");
+  LoadedImage->LoadOptions = (void*)loadOptions.wc_str();
+  LoadedImage->LoadOptionsSize = (UINT32)loadOptions.sizeInBytesIncludingTerminator();
+
+
+  Status = OcStartImage (EntryHandle, 0, NULL);
+  if ( EFI_ERROR(Status) ) return; // TODO message ?
+
+
+
+
+return;
+
+
+  //Free memory
+  for (i = 0; i < ConfigsNum; i++) {
+    if (ConfigsList[i]) {
+      FreePool(ConfigsList[i]);
+      ConfigsList[i] = NULL;
+    }
+  }
+  for (i = 0; i < DsdtsNum; i++) {
+    if (DsdtsList[i]) {
+      FreePool(DsdtsList[i]);
+      DsdtsList[i] = NULL;
+    }
+  }
+  OptionMenu.FreeMenu();
+  //there is a place to free memory
+  // GuiAnime
+  // mainParser
+  // BuiltinIcons
+  // OSIcons
+  NSVGfontChain *fontChain = fontsDB;
+  while (fontChain) {
+    font = fontChain->font;
+    NSVGfontChain *nextChain = fontChain->next;
+    if (font) {
+      nsvg__deleteFont(font);
+      fontChain->font = NULL;
+    }
+    FreePool(fontChain);
+    fontChain = nextChain;
+  }
+  fontsDB = NULL;
+//  nsvg__deleteParser(mainParser); //temporary disabled
+  //destruct_globals_objects(NULL); //we can't destruct our globals here. We need, for example, Volumes.
+
+  //DumpKernelAndKextPatches(KernelAndKextPatches);
+  DBG("start loader\n");
+  XStringW devicePathString = DevicePathToXStringW(DevicePath);
+  // Load image into memory (will be started later)
+  Status = LoadEFIImage(DevicePath, LoaderPath.basename(), NULL, &ImageHandle);
+  if (EFI_ERROR(Status)) {
+    DBG("Image is not loaded, status=%s\n", efiStrError(Status));
+    return; // no reason to continue if loading image failed
+  }
+  egClearScreen(&BootBgColor); //if not set then it is already MenuBackgroundPixel
+
+//  KillMouse();
+
+//  if (LoaderType == OSTYPE_OSX) {
+  if (OSTYPE_IS_OSX(LoaderType) ||
+      OSTYPE_IS_OSX_RECOVERY(LoaderType) ||
+      OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+
+    // To display progress bar properly (especially in FV2 mode) boot.efi needs to be in graphics mode.
+    // Unfortunately many UEFI implementations change the resolution when SetMode happens.
+    // This is not what boot.efi expects, and it freely calls SetMode at its will.
+    // As a result we see progress bar at improper resolution and the background is also missing (10.12.x+).
+    //
+    // libeg already has a workaround for SetMode behaviour, so we extend it for boot.efi support.
+    // The approach tries to be  follows:
+    // 1. Ensure we have graphics mode set (since it is a must in the future).
+    // 2. Request text mode for boot.efi, which it expects by default (here a SetMode libeg hack will trigger
+    //    on problematic UEFI implementations like AMI).
+    egSetGraphicsModeEnabled(TRUE);
+    egSetGraphicsModeEnabled(FALSE);
+
+    DBG("GetOSVersion:");
+
+    //needed for boot.efi patcher
+    Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+    // Correct OSVersion if it was not found
+    // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
+    // For these cases, take OSVersion from loaded boot.efi image in memory
+    if (/*LoaderType == OSTYPE_OSX_INSTALLER ||*/ OSVersion.isEmpty()) {
+
+      if (!EFI_ERROR(Status)) {
+        // version in boot.efi appears as "Mac OS X 10.?"
+        /*
+          Start OSName Mac OS X 10.12 End OSName Start OSVendor Apple Inc. End
+        */
+  //      InstallerVersion = SearchString((CHAR8*)LoadedImage->ImageBase, LoadedImage->ImageSize, "Mac OS X ", 9);
+        InstallerVersion = AsciiStrStr((CHAR8*)LoadedImage->ImageBase, "Mac OS X ");
+        if (InstallerVersion != NULL) { // string was found
+          InstallerVersion += 9; // advance to version location
+
+          if (strncmp(InstallerVersion, "10.7", 4) &&
+              strncmp(InstallerVersion, "10.8", 4) &&
+              strncmp(InstallerVersion, "10.9", 4) &&
+              strncmp(InstallerVersion, "10.10", 5) &&
+              strncmp(InstallerVersion, "10.11", 5) &&
+              strncmp(InstallerVersion, "10.12", 5) &&
+              strncmp(InstallerVersion, "10.13", 5) &&
+              strncmp(InstallerVersion, "10.14", 5) &&
+              strncmp(InstallerVersion, "10.15", 5) &&
+              strncmp(InstallerVersion, "10.16", 5) &&
+              strncmp(InstallerVersion, "11.0", 4)) {
+            InstallerVersion = NULL; // flag known version was not found
+          }
+          if (InstallerVersion != NULL) { // known version was found in image
+            OSVersion.takeValueFrom(InstallerVersion);
+            DBG("Corrected OSVersion: %s\n", OSVersion.c_str());
+          }
+        }
+      }
+
+      BuildVersion.setEmpty();
+    }
+
+    if (BuildVersion.notEmpty()) {
+      DBG(" %s (%s)\n", OSVersion.c_str(), BuildVersion.c_str());
+    } else {
+      DBG(" %s\n", OSVersion.c_str());
+    }
+
+    if (OSVersion.notEmpty() && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"_XS8))) {
+      if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
+        gSettings.CsrActiveConfig = (UINT32)0xB7F;
+        gSettings.BooterConfig = 0x28;
+      }
+//      ReadSIPCfg();
+    }
+
+    FilterKextPatches();
+    FilterKernelPatches();
+    FilterBootPatches();
+    if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
+      DBG("Will not patch boot.efi\n");
+    }
+
+    // Set boot argument for kernel if no caches, this should force kernel loading
+    if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
+      XString8 KernelLocation;
+
+      if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
+        KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
+      } else {
+        // used for 10.10, 10.11, and new version.
+        KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
+      }
+      LoadOptions.AddID(KernelLocation);
+    }
+
+    //we are booting OSX - restore emulation if it's not installed before g boot.efi
+    if (gEmuVariableControl != NULL) {
+        gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+    }
+
+    // first patchACPI and find PCIROOT and RTC
+    // but before ACPI patch we need smbios patch
+    CheckEmptyFB();
+    PatchSmbios();
+//    DBG("PatchACPI\n");
+    PatchACPI(Volume, OSVersion);
+
+    // If KPDebug is true boot in verbose mode to see the debug messages
+    if (KernelAndKextPatches.KPDebug) {
+      LoadOptions.AddID("-v"_XS8);
+    }
+
+    DbgHeader("RestSetup macOS");
+
+//    DBG("SetDevices\n");
+    SetDevices(this);
+//    DBG("SetFSInjection\n");
+    SetFSInjection();
+    //PauseForKey(L"SetFSInjection");
+//    DBG("SetVariablesForOSX\n");
+    SetVariablesForOSX(this);
+//    DBG("SetVariablesForOSX\n");
+    EventsInitialize(this);
+//    DBG("FinalizeSmbios\n");
+    FinalizeSmbios();
+
+    SetCPUProperties();
+
+    if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+      DoHibernateWake = PrepareHibernation(Volume);
+    }
+    SetupDataForOSX(DoHibernateWake);
+
+
+    if (  gDriversFlags.AptioFixLoaded &&
+          !DoHibernateWake &&
+          !LoadOptions.containsStartWithIC("slide=")  ) {
+      // Add slide=0 argument for ML+ if not present
+      LoadOptions.AddID("slide=0"_XS8);
+    }
+
+
+    /**
+     * syscl - append "-xcpm" argument conditionally if set KernelXCPM on Intel Haswell+ low-end CPUs
+     */
+    if (KernelAndKextPatches.KPKernelXCPM &&
+        gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+       (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
+       (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5"_XS8)) &&
+       (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12"_XS8)) &&
+       (!LoadOptions.containsIC("-xcpm"))) {
+        // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
+        LoadOptions.AddID("-xcpm"_XS8);
+    }
+
+    // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
+    if (KernelAndKextPatches.KPKernelXCPM &&
+        gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
+        (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5"_XS8)) &&
+        (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12"_XS8)) &&
+        (!LoadOptions.containsIC("-xcpm"))) {
+      // add "-xcpm" argv if not present on Ivy Bridge
+      LoadOptions.AddID("-xcpm"_XS8);
+    }
+
+    if (AudioIo) {
+      AudioIo->StopPlayback(AudioIo);
+//      CheckSyncSound(true);
+      EFI_DRIVER_BINDING_PROTOCOL  *DriverBinding =  NULL;
+      Status = gBS->HandleProtocol(AudioDriverHandle, &gEfiDriverBindingProtocolGuid, (VOID **)&DriverBinding);
+      if (DriverBinding) {
+        DriverBinding->Stop(DriverBinding, AudioDriverHandle, 0, NULL);
+      }
+    }
+
+//    DBG("Set FakeCPUID: 0x%X\n", gSettings.FakeCPUID);
+//    DBG("LoadKexts\n");
+    // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
+    if (!DoHibernateWake) {
+      LoadKexts();
+    }
+
+    // blocking boot.efi output if -v is not specified
+    // note: this blocks output even if -v is specified in
+    // /Library/Preferences/SystemConfiguration/com.apple.Boot.plist
+    // which is wrong
+    // apianti - only block console output if using graphics
+    //           but don't block custom boot logo
+    if (LoadOptions.containsIC("-v")) {
+          Flags = OSFLAG_UNSET(Flags, OSFLAG_USEGRAPHICS);
+    }
+  }
+  else if (OSTYPE_IS_WINDOWS(LoaderType)) {
+
+    if (AudioIo) {
+        AudioIo->StopPlayback(AudioIo);
+    }
+
+    DBG("Closing events for Windows\n");
+    gBS->CloseEvent (OnReadyToBootEvent);
+    gBS->CloseEvent (ExitBootServiceEvent);
+    gBS->CloseEvent (mSimpleFileSystemChangeEvent);
+
+
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }
+
+    PatchACPI_OtherOS(L"Windows", FALSE);
+    //PauseForKey(L"continue");
+
+  }
+  else if (OSTYPE_IS_LINUX(LoaderType) || (LoaderType == OSTYPE_LINEFI)) {
+
+    DBG("Closing events for Linux\n");
+    gBS->CloseEvent (OnReadyToBootEvent);
+    gBS->CloseEvent (ExitBootServiceEvent);
+    gBS->CloseEvent (mSimpleFileSystemChangeEvent);
+
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }
+    //FinalizeSmbios();
+    PatchACPI_OtherOS(L"Linux", FALSE);
+    //PauseForKey(L"continue");
+  }
+
+  if (gSettings.LastBootedVolume) {
+    if ( APFSTargetUUID.notEmpty() ) {
+      // Jief : we need to LoaderPath. If not, GUI can't know which target was selected.
+      SetStartupDiskVolume(Volume, LoaderPath);
+    }else{
+      // Jief : I'm not sure why NullXStringW was given if LoaderType == OSTYPE_OSX.
+      //        Let's do it like it was before when not in case of APFSTargetUUID
+      SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
+    }
+  } else if (gSettings.DefaultVolume.notEmpty()) {
+    // DefaultVolume specified in Config.plist or in Boot Option
+    // we'll remove macOS Startup Disk vars which may be present if it is used
+    // to reboot into another volume
+    RemoveStartupDiskVolume();
+  }
+/*
+  {
+    //    UINT32                    machineSignature    = 0;
+    EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
+    EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs = NULL;
+
+    //    DBG("---dump hibernations data---\n");
+    FadtPointer = GetFadt();
+    if (FadtPointer != NULL) {
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+
+      DBG("  Firmware wake address=%08lx\n", Facs->FirmwareWakingVector);
+      DBG("  Firmware wake 64 addr=%16llx\n",  Facs->XFirmwareWakingVector);
+      DBG("  Hardware signature   =%08lx\n", Facs->HardwareSignature);
+      DBG("  GlobalLock           =%08lx\n", Facs->GlobalLock);
+      DBG("  Flags                =%08lx\n", Facs->Flags);
+      DBG(" HS at offset 0x%08X\n", OFFSET_OF(EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE, HardwareSignature));
+      //   machineSignature = Facs->HardwareSignature;
+    }
+  }
+*/
+
+//    DBG("BeginExternalScreen\n");
+  BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, L"Booting OS"*/);
+
+  if (!OSTYPE_IS_WINDOWS(LoaderType) && !OSTYPE_IS_LINUX(LoaderType)) {
+    if (OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)) {
+      // save orig OutputString and replace it with
+      // null implementation
+      ConOutOutputString = gST->ConOut->OutputString;
+      gST->ConOut->OutputString = NullConOutOutputString;
+    }
+
+    // Initialize the boot screen
+    if (EFI_ERROR(Status = InitBootScreen(this))) {
+      if (Status != EFI_ABORTED) DBG("Failed to initialize custom boot screen: %s!\n", efiStrError(Status));
+    }
+    else if (EFI_ERROR(Status = LockBootScreen())) {
+      DBG("Failed to lock custom boot screen: %s!\n", efiStrError(Status));
+    }
+  } // !OSTYPE_IS_WINDOWS
+
+  if (OSTYPE_IS_OSX(LoaderType) ||
+      OSTYPE_IS_OSX_RECOVERY(LoaderType) ||
+      OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+
+    if (DoHibernateWake) {
+      DBG("Closing events for wake\n");
+      gBS->CloseEvent (OnReadyToBootEvent);
+      gBS->CloseEvent (ExitBootServiceEvent);
+      gBS->CloseEvent (mSimpleFileSystemChangeEvent);
+//      gBS->CloseEvent (mVirtualAddressChangeEvent);
+      // When doing hibernate wake, save to DataHub only up to initial size of log
+      SavePreBootLog = FALSE;
+    } else {
+      // delete boot-switch-vars if exists
+      Status = gRT->SetVariable(L"boot-switch-vars", &gEfiAppleBootGuid,
+                                EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                0, NULL);
+      DeleteNvramVariable(L"IOHibernateRTCVariables", &gEfiAppleBootGuid);
+      DeleteNvramVariable(L"boot-image",              &gEfiAppleBootGuid);
+
+    }
+    SetupBooterLog(!DoHibernateWake);
+  }
+
+
+
   DBG("Closing log\n");
   if (SavePreBootLog) {
     Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
@@ -1765,7 +2413,6 @@ XStringW g_str2(L"g_str:foobar2");
 //XStringW g_str12(L"g_str:foobar2");
 #endif
 
-
 //
 // main entry point
 //
@@ -1825,12 +2472,36 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-    gBS->Stall(1500000); // to give time to gdb to connect
+//    gBS->Stall(3500000); // to give time to gdb to connect
 //  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
   }
+
   construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
+
+
+  EFI_LOADED_IMAGE* OcLoadedImage;
+  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
+
+  OcConfigureLogProtocol (
+    127,
+    0,
+    2151678018,
+    2147483648,
+    OPEN_CORE_LOG_PREFIX_PATH,
+    mOpenCoreStorage.FileSystem
+    );
+  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
+  OcAppleDebugLogInstallProtocol(0);
+  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
+  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+  OcImageLoaderInit ();
+
+
+
 #ifdef JIEF_DEBUG
 //  all_tests();
 //  PauseForKey(L"press\n");
@@ -2075,6 +2746,85 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
+
+//
+//
+//  OC_GLOBAL_CONFIG* Config = &mOpenCoreConfiguration;
+//
+//
+//  memset(Config, 0, sizeof(*Config));
+//  OC_STRING_ASSIGN(Config->Kernel.Scheme.KernelCache, "Auto");
+//  OC_STRING_ASSIGN(Config->Misc.Security.SecureBootModel, "Default");
+//  Config->Kernel.Scheme.FuzzyMatch = 0;
+//  Config->Kernel.Force.Count = 0;
+//
+//  Config->Kernel.Add.Count = 2;
+//  Config->Kernel.Add.AllocCount = Config->Kernel.Add.Count;
+//  Config->Kernel.Add.ValueSize = sizeof(OC_KERNEL_ADD_ENTRY); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+//  Config->Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)AllocatePool(Config->Kernel.Add.AllocCount*sizeof(*Config->Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+//
+//  Config->Kernel.Add.Values[0] = (OC_KERNEL_ADD_ENTRY*)AllocatePool(sizeof(__typeof_am__(*Config->Kernel.Add.Values[0]))); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+//  Config->Kernel.Add.Values[0]->Enabled = 1;
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->Arch, "Any");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->Comment, "Comment Lilu.kext");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->MaxKernel, "");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->MinKernel, "");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->Identifier, "");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->BundlePath, "11/Lilu.kext");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->ExecutablePath, "Contents/MacOS/Lilu");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->PlistPath, "Contents/Info.plist");
+//  Config->Kernel.Add.Values[0]->ImageData = NULL;
+//  Config->Kernel.Add.Values[0]->ImageDataSize = 0;
+//  Config->Kernel.Add.Values[0]->PlistData = NULL;
+//  Config->Kernel.Add.Values[0]->PlistDataSize = 0;
+//
+//  Config->Kernel.Add.Values[1] = (OC_KERNEL_ADD_ENTRY*)AllocatePool(sizeof(__typeof_am__(*Config->Kernel.Add.Values[1]))); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+//  Config->Kernel.Add.Values[1]->Enabled = 1;
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->Arch, "Any");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->Comment, "Comment VirtualSMC.kext");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->MaxKernel, "");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->MinKernel, "");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->Identifier, "");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->BundlePath, "11/VirtualSMC.kext");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->ExecutablePath, "Contents/MacOS/VirtualSMC");
+//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->PlistPath, "Contents/Info.plist");
+//  Config->Kernel.Add.Values[1]->ImageData = NULL;
+//  Config->Kernel.Add.Values[1]->ImageDataSize = 0;
+//  Config->Kernel.Add.Values[1]->PlistData = NULL;
+//  Config->Kernel.Add.Values[1]->PlistDataSize = 0;
+//
+
+//  UINTN                   HandleCount = 0;
+//  EFI_HANDLE              *Handles = NULL;
+//  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &HandleCount, &Handles);
+//  UINTN HandleIndex;
+//  for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+//    EFI_DEVICE_PATH_PROTOCOL* DevicePath = DevicePathFromHandle(Handles[HandleIndex]);
+//    XStringW DevicePathXString = DevicePathToXStringW(DevicePath);
+//    if ( LString8("PciRoot(0x0)/Pci(0x11,0x0)/Pci(0x5,0x0)/Sata(0x1,0x0,0x0)/HD(3,0,0,0x40040,0x1BBFFC0)") == DevicePathXString ) break;
+//  }
+//    EFI_DEVICE_PATH_PROTOCOL* jfkImagePath = FileDevicePath(Handles[HandleIndex], L"\\System\\Library\\CoreServices\\boot.efi");
+//    XStringW DevicePathXString = DevicePathToXStringW(jfkImagePath);
+//
+//    EFI_HANDLE EntryHandle = NULL;
+//    Status = InternalEfiLoadImage (
+//      FALSE,
+//      gImageHandle,
+//      jfkImagePath,
+//      NULL,
+//      0,
+//      &EntryHandle
+//      );
+//  //  OcLoadBootEntry (Context, Context->
+//    Status = OcStartImage (EntryHandle, 0, NULL);
+
+
+
+
+
+
+
+
 
   DbgHeader("InitScreen");
 	

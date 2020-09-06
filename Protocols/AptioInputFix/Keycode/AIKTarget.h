@@ -68,7 +68,7 @@ typedef struct {
   //
   // Previously reported Apple active keys
   //
-  APPLE_KEY                          Keys[AIK_TARGET_BUFFER_SIZE];
+  APPLE_KEY_CODE                          Keys[AIK_TARGET_BUFFER_SIZE];
 
   //
   // Previously reported Apple key timestamps

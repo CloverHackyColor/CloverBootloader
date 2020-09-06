@@ -10,6 +10,8 @@ extern "C" {
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/OcDeviceTreeLib.h>
+
 #ifdef __cplusplus
 }
 #endif
@@ -1613,7 +1615,7 @@ VOID LOADER_ENTRY::PatchLoadedKexts()
         //DBG(L"Prop: %s\n", PropName);
         if (AsciiStrStr(PropName,"Driver-")) {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
-          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
+          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DTProperty));
           //if (DbgCount < 3) DBG(L"%s: paddr = %hhX, length = %hhX\n", PropName, PropEntry->paddr, PropEntry->length);
           
           // PropEntry->paddr points to _BooterKextFileInfo

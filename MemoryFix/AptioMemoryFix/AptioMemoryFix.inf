@@ -23,7 +23,7 @@
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 #  OcSupportPkg/OcSupportPkg.dec
-  CloverEFI/UefiCpuPkg/UefiCpuPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -32,9 +32,9 @@
   CpuLib
   DevicePathLib
   MemoryAllocationLib
-  DeviceTreeLib
+  OcDeviceTreeLib
 #  DevicePathLib
-  MachoLib
+  OcMachoLib
 #  OcStringLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint

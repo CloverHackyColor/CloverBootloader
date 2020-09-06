@@ -1,4 +1,10 @@
+/*
+ *
+ */
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+extern "C" {
+#include <Library/OcDeviceTreeLib.h>
+}
 #include "kext_inject.h"
 #include "DataHubCpu.h"
 #include "../Platform/plist/plist.h"
@@ -336,6 +342,53 @@ VOID LOADER_ENTRY::AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_ty
 
 }
 
+// Jief : this should replace LOADER_ENTRY::AddKexts
+VOID LOADER_ENTRY::AddKextsInArray(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray)
+{
+  XStringW                 FileName;
+  XStringW                 PlugInName;
+  SIDELOAD_KEXT           *CurrentKext;
+  SIDELOAD_KEXT           *CurrentPlugInKext;
+
+  MsgLog("Preparing kexts injection from %ls\n", SrcDir.wc_str());
+  CurrentKext = InjectKextList;
+  while (CurrentKext) {
+//    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
+    if ( CurrentKext->KextDirNameUnderOEMPath == Path ) {
+      FileName = SWPrintf("%ls\\%ls", SrcDir.wc_str(), CurrentKext->FileName.wc_str());
+      //   snwprintf(FileName, 512, "%s\\%s", SrcDir, CurrentKext->FileName);
+      if (!(CurrentKext->MenuItem.BValue)) {
+        // inject require
+        MsgLog("->Extra kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());
+//        Status = AddKext(SelfVolume->RootDir, FileName.wc_str(), archCpuType);
+        kextArray->AddReference(CurrentKext, false); // do not free, CurrentKext belongs to an other object
+        // decide which plugins to inject
+        CurrentPlugInKext = CurrentKext->PlugInList;
+        while (CurrentPlugInKext) {
+          PlugInName = SWPrintf("%ls\\%ls\\%ls", FileName.wc_str(), L"Contents\\PlugIns", CurrentPlugInKext->FileName.wc_str());
+          //     snwprintf(PlugInName, 512, L"%s\\%s\\%s", FileName, "Contents\\PlugIns", CurrentPlugInKext->FileName);
+          if (!(CurrentPlugInKext->MenuItem.BValue)) {
+            // inject PlugIn require
+            MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext->Version.wc_str());
+//              AddKext(SelfVolume->RootDir, PlugInName.wc_str(), archCpuType);
+            kextArray->AddReference(CurrentPlugInKext, false); // do not free, CurrentKext belongs to an other object
+          } else {
+            MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext->Version.wc_str());
+          }
+          CurrentPlugInKext = CurrentPlugInKext->Next;
+        } // end of plug-in kext injection
+      } else {
+        // disable current kext injection
+        if ( SrcDir.containsIC(L"Off") ) {
+          MsgLog("Disabled kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());
+        }
+      }
+    }
+    CurrentKext = CurrentKext->Next;
+  } // end of kext injection
+
+}
+
 EFI_STATUS LOADER_ENTRY::LoadKexts()
 {
   XStringW                SrcDir;
@@ -439,6 +492,8 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
+  if ( !OSVersion.contains(".") ) panic("!OSVersion.contains('.')");
+  XStringW osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
   // Add kext from 10
   {
     XStringW OSAllVersionKextsDir;
@@ -446,90 +501,74 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     XStringW OSVersionKextsDirName;
     XStringW DirName;
     XStringW DirPath;
-    OSAllVersionKextsDir = SWPrintf("%ls\\kexts\\10", OEMPath.wc_str());
-    // snwprintf(OSAllVersionKextsDir, sizeof(OSAllVersionKextsDir), "%s\\kexts\\10", OEMPath);
-    AddKexts(OSAllVersionKextsDir, L"10"_XSW, archCpuType);
+
+    OSAllVersionKextsDir = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), osMajorVersion.wc_str());
+    AddKexts(OSAllVersionKextsDir, osMajorVersion, archCpuType);
 
     if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = SWPrintf("10_install");
-      // snwprintf(DirName, sizeof(DirName), "10_install");
+      DirName = SWPrintf("%ls_install", osMajorVersion.wc_str());
     } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = SWPrintf("10_recovery");
-      // snwprintf(DirName, sizeof(DirName), "10_recovery");
+      DirName = SWPrintf("%ls_recovery", osMajorVersion.wc_str());
     } else {
-      DirName = SWPrintf("10_normal");
-      // snwprintf(DirName, sizeof(DirName), "10_normal");
+      DirName = SWPrintf("%ls_normal", osMajorVersion.wc_str());
     }
     DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
-    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
     AddKexts(DirPath, DirName, archCpuType);
 
 
-    // Add kext from 10.{version}
+    // Add kext from ${osMajorVersion}.{version}
 
     OSShortVersionKextsDir = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), UniShortOSVersion.wc_str());
-    // snwprintf(OSShortVersionKextsDir, sizeof(OSShortVersionKextsDir), "%s\\kexts\\%s", OEMPath, UniShortOSVersion);
     AddKexts( OSShortVersionKextsDir, UniShortOSVersion, archCpuType);
 
     if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
       DirName = SWPrintf("%ls_install", UniShortOSVersion.wc_str());
-      // snwprintf(DirName, sizeof(DirName), "%s_install", UniShortOSVersion);
     } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
       DirName = SWPrintf("%ls_recovery", UniShortOSVersion.wc_str());
-      // snwprintf(DirName, sizeof(DirName), "%s_recovery", UniShortOSVersion);
     } else {
       DirName = SWPrintf("%ls_normal", UniShortOSVersion.wc_str());
-      // snwprintf(DirName, sizeof(DirName), "%s_normal", UniShortOSVersion);
     }
     DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
-    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
     AddKexts(DirPath, DirName, archCpuType);
 
 
     // Add kext from :
-    // 10.{version}.0 if NO minor version
-    // 10.{version}.{minor version} if minor version is > 0
+    // ${osMajorVersion}.{version}.0 if NO minor version
+    // ${osMajorVersion}.{version}.{minor version} if minor version is > 0
 
     if ( UniShortOSVersion == OSVersion ) {
       OSVersionKextsDirName = SWPrintf("%s.0", OSVersion.c_str());
-      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a.0", OSVersion);
     } else {
       OSVersionKextsDirName = SWPrintf("%s", OSVersion.c_str());
-      // snwprintf(OSVersionKextsDirName, sizeof(OSVersionKextsDirName), "%a", OSVersion);
     }
 
     DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), OSVersionKextsDirName.wc_str());
-    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, OSVersionKextsDirName);
     AddKexts(DirPath, OSVersionKextsDirName, archCpuType);
 
     if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
       DirName = SWPrintf("%ls_install", OSVersionKextsDirName.wc_str());
-      // snwprintf(DirName, sizeof(DirName), "%s_install", OSVersionKextsDirName);
     } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
       DirName = SWPrintf("%ls_recovery", OSVersionKextsDirName.wc_str());
-      // snwprintf(DirName, sizeof(DirName), "%s_recovery", OSVersionKextsDirName);
     } else {
       DirName = SWPrintf("%ls_normal", OSVersionKextsDirName.wc_str());
-      // snwprintf(DirName, sizeof(DirName), "%s_normal", OSVersionKextsDirName);
     }
     DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
-    // snwprintf(DirPath, sizeof(DirPath), "%s\\kexts\\%s", OEMPath, DirName);
     AddKexts(DirPath, DirName, archCpuType);
   }
 
 
   // reserve space in the device tree
   if (GetKextCount() > 0) {
-    mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
-    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
-    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
+    mm_extra_size = GetKextCount() * (sizeof(DTProperty) + sizeof(_DeviceTreeBuffer));
+    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DTProperty));
+    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DTProperty)));
     extra_size = GetKextsSize();
-    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
-    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE));
+    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE);
+    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE));
     // MsgLog("count: %d    \n", GetKextCount());
     // MsgLog("mm_extra_size: %d    \n", mm_extra_size);
     // MsgLog("extra_size: %d     \n", extra_size);
-    // MsgLog("offset: %d       \n", extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+    // MsgLog("offset: %d       \n", extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE);
     //no more needed
     FreePool(mm_extra);
     FreePool(extra);
@@ -631,7 +670,7 @@ typedef struct {
 
 int LOADER_ENTRY::is_mkext_v1(UINT8* drvPtr)
 {
-  _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
+  _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DTProperty));
   MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)(dtb->paddr);
 
   if (mkext_ptr->Magic == MKEXT_MAGIC
@@ -645,7 +684,7 @@ int LOADER_ENTRY::is_mkext_v1(UINT8* drvPtr)
 
 void LOADER_ENTRY::patch_mkext_v1(UINT8 *drvPtr)
 {
-  _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DeviceTreeNodeProperty));
+  _DeviceTreeBuffer *dtb = (_DeviceTreeBuffer*) (((UINT8*)drvPtr) + sizeof(DTProperty));
   MKextHeader* mkext_ptr = (MKextHeader*)(UINTN)dtb->paddr;
 
   UINT32 mkext_len      = SwapBytes32(mkext_ptr->Length);
@@ -719,7 +758,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
   CHAR8                             *ptr;
   OpaqueDTPropertyIterator          OPropIter;
   DTPropertyIterator                iter = &OPropIter;
-  DeviceTreeNodeProperty            *prop = NULL;
+  DTProperty            *prop = NULL;
 
   UINT8                             *infoPtr = 0;
   UINT8                             *extraPtr = 0;
@@ -794,12 +833,12 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
 
   // make space for memory map entries
   platformEntry->NumProperties -= 2;
-  offset = sizeof(DeviceTreeNodeProperty) + ((DeviceTreeNodeProperty*) infoPtr)->Length;
+  offset = sizeof(DTProperty) + ((DTProperty*) infoPtr)->Length;
   CopyMem(drvPtr+offset, drvPtr, infoPtr-drvPtr);
 
   // make space behind device tree
   // platformEntry->nProperties--;
-  offset = sizeof(DeviceTreeNodeProperty)+((DeviceTreeNodeProperty*) extraPtr)->Length;
+  offset = sizeof(DTProperty)+((DTProperty*) extraPtr)->Length;
   CopyMem(extraPtr, extraPtr+offset, dtLen-(UINTN)(extraPtr-dtEntry)-offset);
   *deviceTreeLength -= (UINT32)offset;
 
@@ -816,14 +855,14 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
       drvinfo->bundlePathPhysAddr += (UINT32) KextBase;
 
       memmapEntry->NumProperties++;
-      prop = ((DeviceTreeNodeProperty*) drvPtr);
+      prop = ((DTProperty*) drvPtr);
       prop->Length = sizeof(_DeviceTreeBuffer);
-      mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DeviceTreeNodeProperty));
+      mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DTProperty));
       mm->paddr = (UINT32)KextBase;
       mm->length = KextEntry->kext.length;
       snprintf(prop->Name, 31, "Driver-%X", (UINT32)KextBase);
 
-      drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
+      drvPtr += sizeof(DTProperty) + sizeof(_DeviceTreeBuffer);
       KextBase = RoundPage(KextBase + KextEntry->kext.length);
       DBG_RT(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
       DBG(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);

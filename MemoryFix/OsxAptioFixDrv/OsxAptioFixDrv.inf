@@ -30,7 +30,7 @@
   BaseLib
   CpuLib
   DevicePathLib
-  DeviceTreeLib
+  OcDeviceTreeLib
   
 [Sources]
   OsxAptioFixDrv.c
@@ -66,6 +66,7 @@
   gEfiFileSystemInfoGuid						## CONSUMES
   gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
   gEfiGlobalVariableGuid
+  gEfiMiscSubClassGuid
 
 [Protocols]
   gEfiLoadedImageProtocolGuid

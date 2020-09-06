@@ -67,7 +67,7 @@ void grub_test_assert_helper (int cond, const char *file,
   __attribute__ ((format (GNU_PRINTF, 6, 7)));
 
 #define grub_test_assert(cond, ...)				\
-  grub_test_assert_helper(cond, GRUB_FILE, __FUNCTION__, __LINE__,     \
+  grub_test_assert_helper(cond, GRUB_STRINGIFY(GRUB_FILE), __FUNCTION__, __LINE__,     \
                          #cond, ## __VA_ARGS__);
 
 void grub_unit_test_init (void);

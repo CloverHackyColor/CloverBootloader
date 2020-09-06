@@ -30,7 +30,7 @@
   BaseLib
   CpuLib
   DevicePathLib
-  DeviceTreeLib
+  OcDeviceTreeLib
   
 [Sources]
   OsxAptioFix3Drv.c

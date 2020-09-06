@@ -124,6 +124,7 @@ typedef struct SEGMENT {
   UINT32 SizeNamesTable;
 } SEGMENT;
 
+extern LIST_ENTRY gKextList; // Jief : globals variables... not great.
 
 //extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
 //extern BootArgs1    *bootArgs1;

@@ -31,7 +31,7 @@ extern "C" {
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/DeviceTreeLib.h>
+//#include <Library/DeviceTreeLib.h>
 #include <Library/GenericBdsLib.h>
 #include <Library/HiiLib.h>
 #include <Library/HdaModels.h>
@@ -63,6 +63,7 @@ extern "C" {
 #include <IndustryStandard/AppleHid.h>
 #include <IndustryStandard/AppleSmBios.h>
 #include <IndustryStandard/AppleFeatures.h>
+#include <IndustryStandard/AppleBootArgs.h>
 #include <IndustryStandard/Bmp.h>
 #include <IndustryStandard/HdaCodec.h>
 #include <IndustryStandard/Pci22.h>
