@@ -150,7 +150,7 @@
   SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
 !else
   BaseSerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
-  SerialPortLib|MdeModulePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
+  SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
 !endif
   BaseDebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   DebugLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
