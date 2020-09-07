@@ -462,7 +462,8 @@
   gEmuVariableControlProtocolGuid
   gEfiAudioIoProtocolGuid # CONSUMES
   gOcQuirksProtocolGuid
-
+  gAptioMemoryFixProtocolGuid
+  
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
 

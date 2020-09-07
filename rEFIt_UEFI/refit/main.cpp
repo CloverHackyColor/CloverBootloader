@@ -1068,114 +1068,159 @@ VOID LOADER_ENTRY::StartLoader11()
   DbgHeader("StartLoader11");
 
 
-//  if (Settings.notEmpty()) {
-//    DBG("  Settings: %ls\n", Settings.wc_str());
-//    Status = LoadUserSettings(SelfRootDir, Settings, &dict);
-//    if (!EFI_ERROR(Status)) {
-//      DBG(" - found custom settings for this entry: %ls\n", Settings.wc_str());
-//      gBootChanged = TRUE;
-//      Status = GetUserSettings(dict);
-//      if (EFI_ERROR(Status)) {
-//        DBG(" - ... but: %s\n", efiStrError(Status));
-//      } else {
-//        if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
-//          gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
-//        }
-//        //CopyMem(KernelAndKextPatches,
-//        //         &gSettings.KernelAndKextPatches,
-//        //         sizeof(KERNEL_AND_KEXT_PATCHES));
-//        //DBG("Custom KernelAndKextPatches copyed to started entry\n");
-//      }
-//    } else {
-//      DBG(" - [!] LoadUserSettings failed: %s\n", efiStrError(Status));
-//    }
-//  }
+  if (Settings.notEmpty()) {
+    DBG("  Settings: %ls\n", Settings.wc_str());
+    TagDict* dict;
+    Status = LoadUserSettings(SelfRootDir, Settings, &dict);
+    if (!EFI_ERROR(Status)) {
+      DBG(" - found custom settings for this entry: %ls\n", Settings.wc_str());
+      gBootChanged = TRUE;
+      Status = GetUserSettings(dict);
+      if (EFI_ERROR(Status)) {
+        DBG(" - ... but: %s\n", efiStrError(Status));
+      } else {
+        if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
+          gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
+        }
+        //CopyMem(KernelAndKextPatches,
+        //         &gSettings.KernelAndKextPatches,
+        //         sizeof(KERNEL_AND_KEXT_PATCHES));
+        //DBG("Custom KernelAndKextPatches copyed to started entry\n");
+      }
+    } else {
+      DBG(" - [!] LoadUserSettings failed: %s\n", efiStrError(Status));
+    }
+  }
 
-//  DBG("Finally: ExternalClock=%lluMHz BusSpeed=%llukHz CPUFreq=%uMHz",
-//          DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo),
-//          DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo),
-//          gCPUStructure.MaxSpeed);
-//  if (gSettings.QPI) {
-//    DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
-//  } else {
-//    // to match the value of hw.busfrequency in the terminal
-//    DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
-//  }
+  DBG("Finally: ExternalClock=%lluMHz BusSpeed=%llukHz CPUFreq=%uMHz",
+          DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo),
+          DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo),
+          gCPUStructure.MaxSpeed);
+  if (gSettings.QPI) {
+    DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
+  } else {
+    // to match the value of hw.busfrequency in the terminal
+    DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
+  }
+
+
+  if (OSVersion.notEmpty() && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"_XS8))) {
+    if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
+      gSettings.CsrActiveConfig = (UINT32)0xB7F;
+      gSettings.BooterConfig = 0x28;
+    }
+//      ReadSIPCfg();
+  }
+
+  FilterKextPatches();
+  FilterKernelPatches();
+  FilterBootPatches();
+  if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
+    DBG("Will not patch boot.efi\n");
+  }
+
+  // Set boot argument for kernel if no caches, this should force kernel loading
+  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
+    XString8 KernelLocation;
+
+    if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
+      KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
+    } else {
+      // used for 10.10, 10.11, and new version.
+      KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
+    }
+    LoadOptions.AddID(KernelLocation);
+  }
+
+  //we are booting OSX - restore emulation if it's not installed before g boot.efi
+  if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+  }
+
+  // first patchACPI and find PCIROOT and RTC
+  // but before ACPI patch we need smbios patch
+  CheckEmptyFB();
+  PatchSmbios();
+//    DBG("PatchACPI\n");
+  PatchACPI(Volume, OSVersion);
+
+  // If KPDebug is true boot in verbose mode to see the debug messages
+  if (KernelAndKextPatches.KPDebug) {
+    LoadOptions.AddID("-v"_XS8);
+  }
+
+  DbgHeader("RestSetup macOS");
+
+//    DBG("SetDevices\n");
+  SetDevices(this);
+//    DBG("SetFSInjection\n");
+  SetFSInjection();
+  //PauseForKey(L"SetFSInjection");
+//    DBG("SetVariablesForOSX\n");
+  SetVariablesForOSX(this);
+//    DBG("SetVariablesForOSX\n");
+  EventsInitialize(this);
+//    DBG("FinalizeSmbios\n");
+  FinalizeSmbios();
+
+  SetCPUProperties();
+
+  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+    DoHibernateWake = PrepareHibernation(Volume);
+  }
+  SetupDataForOSX(DoHibernateWake);
+
+
+  if (  gDriversFlags.AptioFixLoaded &&
+        !DoHibernateWake &&
+        !LoadOptions.containsStartWithIC("slide=")  ) {
+    // Add slide=0 argument for ML+ if not present
+    LoadOptions.AddID("slide=0"_XS8);
+  }
+
+//  UINTN HandleCount = 0;
+//  EFI_HANDLE* HandleBuffer = NULL;
+//  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *OpenInfo = NULL;
+//  UINTN OpenInfoCount;
 //
 //
-//  if (OSVersion.notEmpty() && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"_XS8))) {
-//    if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
-//      gSettings.CsrActiveConfig = (UINT32)0xB7F;
-//      gSettings.BooterConfig = 0x28;
+//  Status = gBS->LocateHandleBuffer (ByProtocol, &gAptioMemoryFixProtocolGuid, NULL, &HandleCount, &HandleBuffer);
+//  if ( !EFI_ERROR(Status) )
+//  {
+//    for (UINTN HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+//      EFI_HANDLE Interface = NULL;
+//      Status = gBS->HandleProtocol(HandleBuffer[HandleIndex], &gAptioMemoryFixProtocolGuid, &Interface);
+//      if ( !EFI_ERROR(Status) ) {
+//        Status = gBS->UninstallProtocolInterface(HandleBuffer[HandleIndex], &gAptioMemoryFixProtocolGuid, Interface);
+//        if (EFI_ERROR(Status)) panic("Cannot uninstall AptioMemoryFix protocol. Status=%s\n", efiStrError(Status));
+//      }else{
+//        if ( Status != EFI_UNSUPPORTED ) DBG("HandleProtocol  status=%s\n", efiStrError(Status));
+//      }
 //    }
-////      ReadSIPCfg();
+//  }else{
+//    DBG("LocateHandleBuffer  status=%s\n", efiStrError(Status));
+//    // Assume no protocol AptioMemoryFix is installed.
 //  }
 //
-//  FilterKextPatches();
-//  FilterKernelPatches();
-//  FilterBootPatches();
-//  if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
-//    DBG("Will not patch boot.efi\n");
-//  }
 //
-//  // Set boot argument for kernel if no caches, this should force kernel loading
-//  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
-//    XString8 KernelLocation;
-//
-//    if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
-//      KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
-//    } else {
-//      // used for 10.10, 10.11, and new version.
-//      KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
-//    }
-//    LoadOptions.AddID(KernelLocation);
-//  }
-//
-//  //we are booting OSX - restore emulation if it's not installed before g boot.efi
-//  if (gEmuVariableControl != NULL) {
-//      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-//  }
-//
-//  // first patchACPI and find PCIROOT and RTC
-//  // but before ACPI patch we need smbios patch
-//  CheckEmptyFB();
-//  PatchSmbios();
-////    DBG("PatchACPI\n");
-//  PatchACPI(Volume, OSVersion);
-//
-//  // If KPDebug is true boot in verbose mode to see the debug messages
-//  if (KernelAndKextPatches.KPDebug) {
-//    LoadOptions.AddID("-v"_XS8);
-//  }
-//
-//  DbgHeader("RestSetup macOS");
-//
-////    DBG("SetDevices\n");
-//  SetDevices(this);
-////    DBG("SetFSInjection\n");
-//  SetFSInjection();
-//  //PauseForKey(L"SetFSInjection");
-////    DBG("SetVariablesForOSX\n");
-//  SetVariablesForOSX(this);
-////    DBG("SetVariablesForOSX\n");
-//  EventsInitialize(this);
-////    DBG("FinalizeSmbios\n");
-//  FinalizeSmbios();
-//
-//  SetCPUProperties();
-//
-//  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
-//    DoHibernateWake = PrepareHibernation(Volume);
-//  }
-//  SetupDataForOSX(DoHibernateWake);
-//
-//
-//  if (  gDriversFlags.AptioFixLoaded &&
-//        !DoHibernateWake &&
-//        !LoadOptions.containsStartWithIC("slide=")  ) {
-//    // Add slide=0 argument for ML+ if not present
-//    LoadOptions.AddID("slide=0"_XS8);
-//  }
+  EFI_LOADED_IMAGE* OcLoadedImage;
+  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
+
+  OcConfigureLogProtocol (
+    127,
+    0,
+    2151678018,
+    2147483648,
+    OPEN_CORE_LOG_PREFIX_PATH,
+    mOpenCoreStorage.FileSystem
+    );
+  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
+  OcAppleDebugLogInstallProtocol(0);
+  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
+  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+  OcImageLoaderInit ();
 
   XObjArray<SIDELOAD_KEXT> kextArray;
   if (!DoHibernateWake) {
@@ -2472,7 +2517,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-//    gBS->Stall(3500000); // to give time to gdb to connect
+    gBS->Stall(3500000); // to give time to gdb to connect
 //  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
@@ -2481,24 +2526,22 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
 
 
-  EFI_LOADED_IMAGE* OcLoadedImage;
-  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
-
-  OcConfigureLogProtocol (
-    127,
-    0,
-    2151678018,
-    2147483648,
-    OPEN_CORE_LOG_PREFIX_PATH,
-    mOpenCoreStorage.FileSystem
-    );
-  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
-  OcAppleDebugLogInstallProtocol(0);
-  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
-  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-  OcImageLoaderInit ();
+//  EFI_LOADED_IMAGE* OcLoadedImage;
+//  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
+//  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+//  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
+//
+//  OcConfigureLogProtocol (
+//    127,
+//    0,
+//    2151678018,
+//    2147483648,
+//    OPEN_CORE_LOG_PREFIX_PATH,
+//    mOpenCoreStorage.FileSystem
+//    );
+//  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
+//  OcAppleDebugLogInstallProtocol(0);
+//  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
 
 
 
