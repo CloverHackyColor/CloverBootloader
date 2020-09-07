@@ -844,6 +844,107 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     return FALSE;
   }
 
+  Prop = DictPointer->propertyForKey("OcFuzzyMatch");
+  if (Prop != NULL || gBootChanged) {
+    Patches->FuzzyMatch = IsPropertyNotNullAndTrue(Prop);
+  }
+
+  Prop = DictPointer->propertyForKey("OcKernelCache");
+  if (Prop != NULL || gBootChanged) {
+    if ( Prop->isString() ) {
+      Patches->OcKernelCache = Prop->getString()->stringValue();
+    }else{
+      MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
+      Patches->OcKernelCache = "Auto"_XS8;
+    }
+  }
+
+  {
+    const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("OcQuirks");
+    if ( OcQuirksDict )
+    {
+      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("ExternalDiskIcons");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("ThirdPartyDrives");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("XhciPortLimit");
+      if (Prop != NULL || gBootChanged) {
+        Patches->OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
+      }
+    }
+  }
+
   Prop = DictPointer->propertyForKey("Debug");
   if (Prop != NULL || gBootChanged) {
     Patches->KPDebug = IsPropertyNotNullAndTrue(Prop);

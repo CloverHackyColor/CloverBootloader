@@ -462,7 +462,7 @@ public:
   XString8Array           HVHideStrings;
 
   // KernelAndKextPatches
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;  //zzzz
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
@@ -979,10 +979,6 @@ VOID
 ParseSMBIOSSettings (
   const TagDict* dictPointer
   );
-
-//BOOLEAN
-//CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
-//                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src);
 
 
 void testConfigPlist();

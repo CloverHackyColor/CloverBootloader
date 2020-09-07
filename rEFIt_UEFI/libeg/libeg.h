@@ -42,6 +42,11 @@
 #include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/XBuffer.h"
+
+extern "C" {
+#include <Library/OcConfigurationLib.h>
+}
+
 /* types */
 
 typedef enum {
@@ -267,6 +272,9 @@ public:
 class KERNEL_AND_KEXT_PATCHES
 {
 public:
+  BOOLEAN FuzzyMatch;
+  XString8 OcKernelCache;
+  OC_KERNEL_QUIRKS OcKernelQuirks;
   BOOLEAN KPDebug;
 //  BOOLEAN KPKernelCpu;
   BOOLEAN KPKernelLapic;
@@ -317,7 +325,7 @@ public:
 //  INT32   NrBoots;
   XObjArray<KEXT_PATCH> BootPatches;
 
-  KERNEL_AND_KEXT_PATCHES() : KPDebug(0), KPKernelLapic(0), KPKernelXCPM(0), KPKernelPm(0), KPAppleIntelCPUPM(0), KPAppleRTC(0), KPDELLSMBIOS(0), KPPanicNoKextDump(0),
+  KERNEL_AND_KEXT_PATCHES() : FuzzyMatch(0), OcKernelCache(), OcKernelQuirks{0}, KPDebug(0), KPKernelLapic(0), KPKernelXCPM(0), KPKernelPm(0), KPAppleIntelCPUPM(0), KPAppleRTC(0), KPDELLSMBIOS(0), KPPanicNoKextDump(0),
                    EightApple(0), pad{0}, FakeCPUID(0), KPATIConnectorsController(0), KPATIConnectorsData(),
                    KPATIConnectorsPatch(), align40(0), KextPatches(), align50(0), ForceKexts(),
                    KernelPatches(), BootPatches()

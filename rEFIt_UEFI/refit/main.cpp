@@ -1241,8 +1241,8 @@ VOID LOADER_ENTRY::StartLoader11()
   memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, "Auto");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Default");
-  mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = 0;
-  mOpenCoreConfiguration.Kernel.Force.Count = 0;
+  mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.KernelAndKextPatches.FuzzyMatch;
+  memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.KernelAndKextPatches.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
 
   mOpenCoreConfiguration.Kernel.Add.Count = kextArray.size();
   mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
@@ -1252,7 +1252,7 @@ VOID LOADER_ENTRY::StartLoader11()
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
   {
     const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
-    DBG("load kext : KextDirNameUnderOEMPath=%ls FileName=%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
+    DBG("Bridge kext to OC : KextDirNameUnderOEMPath=%ls FileName=%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
     size_t allocSize = sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]));
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (OC_KERNEL_ADD_ENTRY*) AllocatePool (allocSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
@@ -1278,6 +1278,16 @@ VOID LOADER_ENTRY::StartLoader11()
         mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = v0;
       }
     }
+  }
+  for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
+  {
+    const KEXT_PATCH& kextPatch = KernelAndKextPatches.KextPatches[kextPatchIdx];
+    DBG("TODO !!!!!!!! Bridge kext patch to OC : %s\n", kextPatch.Label.c_str());
+  }
+  for (size_t forceKextIdx = 0 ; forceKextIdx < KernelAndKextPatches.ForceKexts.size() ; forceKextIdx++ )
+  {
+    const XStringW& forceKext = KernelAndKextPatches.ForceKexts[forceKextIdx];
+    DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
   }
 
 
@@ -2805,85 +2815,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
-
-//
-//
-//  OC_GLOBAL_CONFIG* Config = &mOpenCoreConfiguration;
-//
-//
-//  memset(Config, 0, sizeof(*Config));
-//  OC_STRING_ASSIGN(Config->Kernel.Scheme.KernelCache, "Auto");
-//  OC_STRING_ASSIGN(Config->Misc.Security.SecureBootModel, "Default");
-//  Config->Kernel.Scheme.FuzzyMatch = 0;
-//  Config->Kernel.Force.Count = 0;
-//
-//  Config->Kernel.Add.Count = 2;
-//  Config->Kernel.Add.AllocCount = Config->Kernel.Add.Count;
-//  Config->Kernel.Add.ValueSize = sizeof(OC_KERNEL_ADD_ENTRY); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-//  Config->Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)AllocatePool(Config->Kernel.Add.AllocCount*sizeof(*Config->Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-//
-//  Config->Kernel.Add.Values[0] = (OC_KERNEL_ADD_ENTRY*)AllocatePool(sizeof(__typeof_am__(*Config->Kernel.Add.Values[0]))); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-//  Config->Kernel.Add.Values[0]->Enabled = 1;
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->Arch, "Any");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->Comment, "Comment Lilu.kext");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->MaxKernel, "");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->MinKernel, "");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->Identifier, "");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->BundlePath, "11/Lilu.kext");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->ExecutablePath, "Contents/MacOS/Lilu");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[0]->PlistPath, "Contents/Info.plist");
-//  Config->Kernel.Add.Values[0]->ImageData = NULL;
-//  Config->Kernel.Add.Values[0]->ImageDataSize = 0;
-//  Config->Kernel.Add.Values[0]->PlistData = NULL;
-//  Config->Kernel.Add.Values[0]->PlistDataSize = 0;
-//
-//  Config->Kernel.Add.Values[1] = (OC_KERNEL_ADD_ENTRY*)AllocatePool(sizeof(__typeof_am__(*Config->Kernel.Add.Values[1]))); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-//  Config->Kernel.Add.Values[1]->Enabled = 1;
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->Arch, "Any");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->Comment, "Comment VirtualSMC.kext");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->MaxKernel, "");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->MinKernel, "");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->Identifier, "");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->BundlePath, "11/VirtualSMC.kext");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->ExecutablePath, "Contents/MacOS/VirtualSMC");
-//  OC_STRING_ASSIGN(Config->Kernel.Add.Values[1]->PlistPath, "Contents/Info.plist");
-//  Config->Kernel.Add.Values[1]->ImageData = NULL;
-//  Config->Kernel.Add.Values[1]->ImageDataSize = 0;
-//  Config->Kernel.Add.Values[1]->PlistData = NULL;
-//  Config->Kernel.Add.Values[1]->PlistDataSize = 0;
-//
-
-//  UINTN                   HandleCount = 0;
-//  EFI_HANDLE              *Handles = NULL;
-//  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &HandleCount, &Handles);
-//  UINTN HandleIndex;
-//  for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-//    EFI_DEVICE_PATH_PROTOCOL* DevicePath = DevicePathFromHandle(Handles[HandleIndex]);
-//    XStringW DevicePathXString = DevicePathToXStringW(DevicePath);
-//    if ( LString8("PciRoot(0x0)/Pci(0x11,0x0)/Pci(0x5,0x0)/Sata(0x1,0x0,0x0)/HD(3,0,0,0x40040,0x1BBFFC0)") == DevicePathXString ) break;
-//  }
-//    EFI_DEVICE_PATH_PROTOCOL* jfkImagePath = FileDevicePath(Handles[HandleIndex], L"\\System\\Library\\CoreServices\\boot.efi");
-//    XStringW DevicePathXString = DevicePathToXStringW(jfkImagePath);
-//
-//    EFI_HANDLE EntryHandle = NULL;
-//    Status = InternalEfiLoadImage (
-//      FALSE,
-//      gImageHandle,
-//      jfkImagePath,
-//      NULL,
-//      0,
-//      &EntryHandle
-//      );
-//  //  OcLoadBootEntry (Context, Context->
-//    Status = OcStartImage (EntryHandle, 0, NULL);
-
-
-
-
-
-
-
-
 
   DbgHeader("InitScreen");
 	
