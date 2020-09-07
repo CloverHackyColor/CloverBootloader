@@ -6106,6 +6106,14 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       }
     }
 
+    if ( OSVersion.isEmpty() )
+    {
+      if ( FileExists(Entry->Volume->RootDir, SWPrintf("\\%ls\\com.apple.installer\\BridgeVersion.plist", Entry->APFSTargetUUID.wc_str()).wc_str()) ) {
+        OSVersion = "11.0"_XS8;
+        // TODO sa far, is there is a BridgeVersion.plist, it's version 11.0. Has to be improved with next releases.
+      }
+    }
+
     // 1st stage - 2
     // Check for plist - createinstallmedia/NetInstall
     if (OSVersion.isEmpty()) {

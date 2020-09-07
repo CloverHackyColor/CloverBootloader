@@ -1286,11 +1286,6 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
 
 }
 
-//constants
-//const XStringW APFSFVBootPath      = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\boot.efi"_XSW;
-//const XStringW APFSRecBootPath     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi"_XSW;
-//const XStringW APFSInstallBootPath = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi"_XSW;
-
 #define Paper 1
 #define Rock  2
 #define Scissor 4

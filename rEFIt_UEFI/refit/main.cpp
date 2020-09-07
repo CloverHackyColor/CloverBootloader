@@ -1045,6 +1045,14 @@ VOID
 OcLoadBooterUefiSupport (
   IN OC_GLOBAL_CONFIG  *Config
   );
+
+UINT64
+InternalCalculateARTFrequencyIntel (
+  OUT UINT64   *CPUFrequency,
+  OUT UINT64   *TscAdjustPtr OPTIONAL,
+  IN  BOOLEAN  Recalculate
+  );
+
 } // extern "C"
 
 #define OC_STRING_ASSIGN(ocString, value) do { \
@@ -1202,14 +1210,17 @@ VOID LOADER_ENTRY::StartLoader11()
 //    // Assume no protocol AptioMemoryFix is installed.
 //  }
 //
-//
+
+  UINT64 CPUFrequencyFromART;
+  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
+
   EFI_LOADED_IMAGE* OcLoadedImage;
   Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
   Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
 
   OcConfigureLogProtocol (
-    127,
+    9,
     0,
     2151678018,
     2147483648,
@@ -2506,6 +2517,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   ConsoleInHandle = SystemTable->ConsoleInHandle;
   
+#ifdef DEBUG_ON_SERIAL_PORT
+  SerialPortInitialize();
+#endif
+
   {
     EFI_LOADED_IMAGE* LoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
@@ -2525,14 +2540,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
 
-
+//  UINT64 CPUFrequencyFromART;
+//  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
+//
 //  EFI_LOADED_IMAGE* OcLoadedImage;
 //  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
 //  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
 //  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
 //
 //  OcConfigureLogProtocol (
-//    127,
+//    9,
 //    0,
 //    2151678018,
 //    2147483648,
@@ -2541,7 +2558,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    );
 //  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
 //  OcAppleDebugLogInstallProtocol(0);
-//  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
 
 
 
