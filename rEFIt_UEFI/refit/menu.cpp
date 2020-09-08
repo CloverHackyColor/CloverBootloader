@@ -1834,20 +1834,23 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 
 		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", ShortOSVersion.c_str());
 
-		// Add kext from 10
-		{
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection("10"_XS8), true);
+    // Add kext from 10 or 11
+    if ( OSVersion.contains(".") )
+    {
+      XString8 osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
+
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(osMajorVersion), true);
 
 			XString8 DirName;
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				DirName = "10_install"_XS8;
+				DirName = S8Printf("%s_install", osMajorVersion.c_str());
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					DirName = "10_recovery"_XS8;
+					DirName = S8Printf("%s_recovery", osMajorVersion.c_str());
 				}
 				else {
-					DirName = "10_normal"_XS8;
+					DirName = S8Printf("%s_normal", osMajorVersion.c_str());
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);

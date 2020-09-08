@@ -492,10 +492,11 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
-  if ( !OSVersion.contains(".") ) panic("!OSVersion.contains('.')");
-  XStringW osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
-  // Add kext from 10
+  if ( OSVersion.contains(".") )
   {
+  // Add kext from 10 or 11
+    XStringW osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
+
     XStringW OSAllVersionKextsDir;
     XStringW OSShortVersionKextsDir;
     XStringW OSVersionKextsDirName;
@@ -554,6 +555,8 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     }
     DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
     AddKexts(DirPath, DirName, archCpuType);
+  }else{
+    //MsgLog("No os version is detected\n");
   }
 
 
@@ -574,27 +577,6 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     FreePool(extra);
   }
 
-//  SIDELOAD_KEXT           *CurrentKext = NULL;
-//  SIDELOAD_KEXT           *CurrentPlugInKext = NULL;
-//  SIDELOAD_KEXT           *Next = NULL;
-//  //No more InjectKextList needed. Will free the list
-//  while (InjectKextList) {
-//    CurrentKext = InjectKextList->Next;
-//    CurrentPlugInKext = InjectKextList->PlugInList;
-//    while (CurrentPlugInKext) {
-//      Next = CurrentPlugInKext->Next;
-//      FreePool(CurrentPlugInKext->FileName);
-//      FreePool(CurrentPlugInKext->KextDirNameUnderOEMPath);
-//      FreePool(CurrentPlugInKext->Version);
-//      FreePool(CurrentPlugInKext);
-//      CurrentPlugInKext = Next;
-//    }
-//    FreePool(InjectKextList->FileName);
-//    FreePool(InjectKextList->KextDirNameUnderOEMPath);
-//    FreePool(InjectKextList->Version);
-//    FreePool(InjectKextList);
-//    InjectKextList = CurrentKext;
-//  }
   delete InjectKextList;
   InjectKextList = NULL;
   return EFI_SUCCESS;
