@@ -49,7 +49,7 @@ class XBuffer : public XBuffer_Super
   public:
 	void CheckSize(size_t nNewSize, size_t nGrowBy = XBufferGrowByDefault);
 
-  void* vdata() const { return XBuffer_Super::data(); }
+  void* vdata() const { return (void*)XBuffer_Super::data(); }
   const T* data() const { return _WData; }
   T* data() { return _WData; }
 

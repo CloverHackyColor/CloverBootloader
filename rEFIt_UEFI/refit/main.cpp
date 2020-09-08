@@ -1061,6 +1061,12 @@ InternalCalculateARTFrequencyIntel (
   ocString.MaxSize = sizeof(ocString.Value); \
   ocString.Size = strlen(value)+1; \
 } while (0)
+#define OC_STRING_ASSIGN_N(ocString, value, len) do { \
+  ocString.DynValue = NULL; \
+  memcpy(ocString.Value, value, len); \
+  ocString.MaxSize = sizeof(ocString.Value); \
+  ocString.Size = len; \
+} while (0)
 
 VOID LOADER_ENTRY::StartLoader11()
 {
@@ -1186,6 +1192,22 @@ VOID LOADER_ENTRY::StartLoader11()
     LoadOptions.AddID("slide=0"_XS8);
   }
 
+  if (gSettings.LastBootedVolume) {
+    if ( APFSTargetUUID.notEmpty() ) {
+      // Jief : we need to LoaderPath. If not, GUI can't know which target was selected.
+      SetStartupDiskVolume(Volume, LoaderPath);
+    }else{
+      // Jief : I'm not sure why NullXStringW was given if LoaderType == OSTYPE_OSX.
+      //        Let's do it like it was before when not in case of APFSTargetUUID
+      SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
+    }
+  } else if (gSettings.DefaultVolume.notEmpty()) {
+    // DefaultVolume specified in Config.plist or in Boot Option
+    // we'll remove macOS Startup Disk vars which may be present if it is used
+    // to reboot into another volume
+    RemoveStartupDiskVolume();
+  }
+
 //  UINTN HandleCount = 0;
 //  EFI_HANDLE* HandleBuffer = NULL;
 //  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *OpenInfo = NULL;
@@ -1246,15 +1268,14 @@ VOID LOADER_ENTRY::StartLoader11()
 
   mOpenCoreConfiguration.Kernel.Add.Count = kextArray.size();
   mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
-  mOpenCoreConfiguration.Kernel.Add.ValueSize = sizeof(OC_KERNEL_ADD_ENTRY); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  mOpenCoreConfiguration.Kernel.Add.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
   mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)AllocatePool(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
   {
     const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
     DBG("Bridge kext to OC : KextDirNameUnderOEMPath=%ls FileName=%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
-    size_t allocSize = sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]));
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (OC_KERNEL_ADD_ENTRY*) AllocatePool (allocSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))AllocatePool(mOpenCoreConfiguration.Kernel.Add.ValueSize);
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, "Any");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Comment, "");
@@ -1279,10 +1300,36 @@ VOID LOADER_ENTRY::StartLoader11()
       }
     }
   }
+
+  XObjArray<KEXT_PATCH> selectedPathArray;
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
   {
-    const KEXT_PATCH& kextPatch = KernelAndKextPatches.KextPatches[kextPatchIdx];
-    DBG("TODO !!!!!!!! Bridge kext patch to OC : %s\n", kextPatch.Label.c_str());
+    if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue ) selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
+  }
+
+  mOpenCoreConfiguration.Kernel.Patch.Count = selectedPathArray.size();
+  mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
+  mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
+  mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)AllocatePool(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
+  for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
+  {
+    const KEXT_PATCH& kextPatch = selectedPathArray[kextPatchIdx];
+    DBG("Bridge kext patch to OC : %s\n", kextPatch.Label.c_str());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, "Any");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Comment, kextPatch.Label.c_str());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = 0;
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Data.vdata(), kextPatch.Data.size());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, "kernel");
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = kextPatch.Count;
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MinKernel, "");
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Patch.vdata(), kextPatch.Patch.size());
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.vdata(), kextPatch.MaskReplace.size());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Skip = 0;
   }
   for (size_t forceKextIdx = 0 ; forceKextIdx < KernelAndKextPatches.ForceKexts.size() ; forceKextIdx++ )
   {
@@ -1308,9 +1355,11 @@ VOID LOADER_ENTRY::StartLoader11()
       (VOID **) &LoadedImage
       );
   if ( EFI_ERROR(OptionalStatus) ) return; // TODO message ?
-  XStringW loadOptions = SWPrintf("-v");
-  LoadedImage->LoadOptions = (void*)loadOptions.wc_str();
-  LoadedImage->LoadOptionsSize = (UINT32)loadOptions.sizeInBytesIncludingTerminator();
+
+//  XStringW LoadOptionsAsXStringW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS8).c_str());
+  XStringW LoadOptionsAsXStringW = SWPrintf("%ls %s ", Basename(LoaderPath.wc_str()), LoadOptions.ConcatAll(" "_XS8).c_str());
+  LoadedImage->LoadOptions = (void*)LoadOptionsAsXStringW.wc_str();
+  LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
 
 
   Status = OcStartImage (EntryHandle, 0, NULL);
