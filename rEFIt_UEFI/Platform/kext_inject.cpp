@@ -350,13 +350,12 @@ VOID LOADER_ENTRY::AddKextsInArray(const XStringW& SrcDir, const XStringW& Path,
   SIDELOAD_KEXT           *CurrentKext;
   SIDELOAD_KEXT           *CurrentPlugInKext;
 
-  MsgLog("Preparing kexts injection from %ls\n", SrcDir.wc_str());
+  MsgLog("AddKextsInArray from %ls\n", SrcDir.wc_str());
   CurrentKext = InjectKextList;
   while (CurrentKext) {
-//    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
+    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
     if ( CurrentKext->KextDirNameUnderOEMPath == Path ) {
       FileName = SWPrintf("%ls\\%ls", SrcDir.wc_str(), CurrentKext->FileName.wc_str());
-      //   snwprintf(FileName, 512, "%s\\%s", SrcDir, CurrentKext->FileName);
       if (!(CurrentKext->MenuItem.BValue)) {
         // inject require
         MsgLog("->Extra kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());

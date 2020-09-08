@@ -108,7 +108,7 @@ FixOwnership(VOID)
                 DBG("USB UHCI Base=%X PortBase=%X\n", Base, PortBase);                 
                 Command = 0x8f00;
                 Status = PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0xC0, 1, &Command);
-                if (PortBase) {
+                if (PortBase && (PortBase & BIT0) == 0) {
                   IoWrite16 (PortBase, 0x0002);
                   gBS->Stall (500);
                   IoWrite16 (PortBase+4, 0);

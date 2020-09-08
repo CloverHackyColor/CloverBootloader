@@ -1068,6 +1068,22 @@ InternalCalculateARTFrequencyIntel (
   ocString.Size = len; \
 } while (0)
 
+size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kextName, size_t pos)
+{
+  XObjArray<SIDELOAD_KEXT>& kextArray = *kextArrayPtr;
+
+  for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
+    if ( XString8(LString8(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath.Value)).contains(kextName) ) {
+      if ( pos >= kextArray.size() ) panic("pos >= kextArray.size()");
+      OC_KERNEL_ADD_ENTRY* entry = mOpenCoreConfiguration.Kernel.Add.Values[kextIdx];
+      mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = mOpenCoreConfiguration.Kernel.Add.Values[pos];
+      mOpenCoreConfiguration.Kernel.Add.Values[pos] = entry;
+      return pos+1;
+    }
+  }
+  return pos;
+}
+
 VOID LOADER_ENTRY::StartLoader11()
 {
   EFI_STATUS              Status;
@@ -1208,11 +1224,17 @@ VOID LOADER_ENTRY::StartLoader11()
     RemoveStartupDiskVolume();
   }
 
+  {
+    EFI_HANDLE Interface = NULL;
+    Status = gBS->LocateProtocol(&gAptioMemoryFixProtocolGuid, NULL, &Interface );
+    if ( !EFI_ERROR(Status) ) {
+      panic("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
+    }
+  }
+
+// Attempt to unload AptioMemoryFix. Something doesn't work well.
 //  UINTN HandleCount = 0;
 //  EFI_HANDLE* HandleBuffer = NULL;
-//  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *OpenInfo = NULL;
-//  UINTN OpenInfoCount;
-//
 //
 //  Status = gBS->LocateHandleBuffer (ByProtocol, &gAptioMemoryFixProtocolGuid, NULL, &HandleCount, &HandleBuffer);
 //  if ( !EFI_ERROR(Status) )
@@ -1291,22 +1313,22 @@ VOID LOADER_ENTRY::StartLoader11()
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistDataSize = 0;
   }
   // Seems that Lilu must be first.
-  if ( kextArray.size() > 1 ) {
-    for (size_t kextIdx = 1 ; kextIdx < kextArray.size() ; kextIdx++ ) {
-      if ( XString8(LString8(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath.Value)).contains("Lilu.kext") ) {
-        OC_KERNEL_ADD_ENTRY* v0 = mOpenCoreConfiguration.Kernel.Add.Values[0];
-        mOpenCoreConfiguration.Kernel.Add.Values[0] = mOpenCoreConfiguration.Kernel.Add.Values[kextIdx];
-        mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = v0;
-      }
-    }
-  }
+  size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
+  pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "SMCProcessor.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "SMCSuperIO.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "USBPorts.kext"_XS8, pos);
+
+
 
   XObjArray<KEXT_PATCH> selectedPathArray;
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
   {
     if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue ) selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
   }
-
   mOpenCoreConfiguration.Kernel.Patch.Count = selectedPathArray.size();
   mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
   mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
