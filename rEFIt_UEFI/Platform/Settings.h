@@ -222,8 +222,22 @@ public :
   DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt(), PatchDsdtMenuItem() { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  DSDT_Patch(const DEV_PROPERTY&) = delete;
-  DSDT_Patch& operator=(const DEV_PROPERTY&) = delete;
+  DSDT_Patch(const DSDT_Patch&) = delete;
+  DSDT_Patch& operator=(const DSDT_Patch&) = delete;
+};
+
+class MMIOWhiteList
+{
+public :
+  UINTN        address;
+  XString8     comment;
+  bool         enabled;
+
+  MMIOWhiteList() : address(0), comment(), enabled(false) { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  MMIOWhiteList(const MMIOWhiteList&) = delete;
+  MMIOWhiteList& operator=(const MMIOWhiteList&) = delete;
 };
 
 class SETTINGS_DATA {
@@ -591,6 +605,9 @@ public:
   UINT8                   pad38[4];
   UINTN MaxSlide;
 
+  OC_BOOTER_QUIRKS   ocBooterQuirks;
+  XObjArray<MMIOWhiteList> mmioWhiteListArray;
+
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID({0,0,0,{0}}),
                     SmUUIDConfig(0), pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
@@ -618,7 +635,7 @@ public:
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0)
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray()
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed

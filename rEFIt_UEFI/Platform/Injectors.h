@@ -17,7 +17,7 @@ extern UINT32               cPropSize;
 extern UINT8                *cProperties;
 extern XString8              cDeviceProperties;
 extern CHAR8                *BootOSName;
-extern OC_ABC_SETTINGS_4CLOVER      gQuirks;
+//extern OC_ABC_SETTINGS_4CLOVER      gQuirks;
 
 EFI_STATUS
 SetPrivateVarProto (VOID);

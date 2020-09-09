@@ -140,7 +140,7 @@ EFI_GUID            gUuid;
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern BOOLEAN                NeedPMfix;
-OC_ABC_SETTINGS_4CLOVER               gQuirks;
+//OC_ABC_SETTINGS_4CLOVER               gQuirks;
 BOOLEAN                       gProvideConsoleGopEnable;
 
 //extern INTN                     OldChosenAudio;
@@ -2900,61 +2900,65 @@ GetEarlyUserSettings (
       }
     }
 
-    const TagDict* DictPointer = CfgDict->dictPropertyForKey("Quirks");
+    const TagDict* DictPointer = CfgDict->dictPropertyForKey("OcBooter");
     if (DictPointer != NULL) {
-      const TagStruct* Prop;
-      Prop               = DictPointer->propertyForKey( "AvoidRuntimeDefrag");
-      gQuirks.OcAbcSettings.AvoidRuntimeDefrag = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
-      Prop               = DictPointer->propertyForKey( "DevirtualiseMmio");
-      gQuirks.OcAbcSettings.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.DevirtualiseMmio? QUIRK_MMIO:0;
-      Prop               = DictPointer->propertyForKey( "DisableSingleUser");
-      gQuirks.OcAbcSettings.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.DisableSingleUser? QUIRK_SU:0;
-      Prop               = DictPointer->propertyForKey( "DisableVariableWrite");
-      gQuirks.OcAbcSettings.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.DisableVariableWrite? QUIRK_VAR:0;
-      Prop               = DictPointer->propertyForKey( "DiscardHibernateMap");
-      gQuirks.OcAbcSettings.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.DiscardHibernateMap? QUIRK_HIBER:0;
-      Prop               = DictPointer->propertyForKey( "EnableSafeModeSlide");
-      gQuirks.OcAbcSettings.EnableSafeModeSlide = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.EnableSafeModeSlide? QUIRK_SAFE:0;
-      Prop               = DictPointer->propertyForKey( "EnableWriteUnprotector");
-      gQuirks.OcAbcSettings.EnableWriteUnprotector = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.EnableWriteUnprotector? QUIRK_UNPROT:0;
-      Prop               = DictPointer->propertyForKey( "ForceExitBootServices");
-      gQuirks.OcAbcSettings.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.ForceExitBootServices? QUIRK_EXIT:0;
-      Prop               = DictPointer->propertyForKey( "ProtectMemoryRegions");
-      gQuirks.OcAbcSettings.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.ProtectMemoryRegions? QUIRK_REGION:0;
-      Prop               = DictPointer->propertyForKey( "ProtectSecureBoot");
-      gQuirks.OcAbcSettings.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.ProtectMemoryRegions? QUIRK_SECURE:0;
-      Prop               = DictPointer->propertyForKey( "ProtectUefiServices");
-      gQuirks.OcAbcSettings.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.ProtectUefiServices? QUIRK_UEFI:0;
-      Prop               = DictPointer->propertyForKey( "ProvideConsoleGopEnable");
-      gProvideConsoleGopEnable = IsPropertyNotNullAndTrue(Prop);
-      Prop               = DictPointer->propertyForKey( "ProvideCustomSlide");
-      gQuirks.OcAbcSettings.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.ProvideCustomSlide? QUIRK_CUSTOM:0;
-      Prop               = DictPointer->propertyForKey( "ProvideMaxSlide");
-      gQuirks.OcAbcSettings.ProvideMaxSlide = GetPropertyAsInteger(Prop, 0);
-      Prop               = DictPointer->propertyForKey( "RebuildAppleMemoryMap");
-      gQuirks.OcAbcSettings.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.RebuildAppleMemoryMap? QUIRK_MAP:0;
-      Prop               = DictPointer->propertyForKey( "SetupVirtualMap");
-      gQuirks.OcAbcSettings.SetupVirtualMap = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.SetupVirtualMap? QUIRK_VIRT:0;
-      Prop               = DictPointer->propertyForKey( "SignalAppleOS");
-      gQuirks.OcAbcSettings.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.SignalAppleOS? QUIRK_OS:0;
-      Prop               = DictPointer->propertyForKey( "SyncRuntimePermissions");
-      gQuirks.OcAbcSettings.SyncRuntimePermissions = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gQuirks.OcAbcSettings.SyncRuntimePermissions? QUIRK_PERM:0;
+      const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("Quirks");
+      if (OcQuirksDict != NULL) {
+        const TagStruct* Prop;
+        Prop               = OcQuirksDict->propertyForKey( "AvoidRuntimeDefrag");
+        gSettings.ocBooterQuirks.AvoidRuntimeDefrag = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
+        Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");
+        gSettings.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
+        Prop               = OcQuirksDict->propertyForKey( "DisableSingleUser");
+        gSettings.ocBooterQuirks.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DisableSingleUser? QUIRK_SU:0;
+        Prop               = OcQuirksDict->propertyForKey( "DisableVariableWrite");
+        gSettings.ocBooterQuirks.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DisableVariableWrite? QUIRK_VAR:0;
+        Prop               = OcQuirksDict->propertyForKey( "DiscardHibernateMap");
+        gSettings.ocBooterQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
+        Prop               = OcQuirksDict->propertyForKey( "EnableSafeModeSlide");
+        gSettings.ocBooterQuirks.EnableSafeModeSlide = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
+        Prop               = OcQuirksDict->propertyForKey( "EnableWriteUnprotector");
+        gSettings.ocBooterQuirks.EnableWriteUnprotector = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
+        Prop               = OcQuirksDict->propertyForKey( "ForceExitBootServices");
+        gSettings.ocBooterQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ForceExitBootServices? QUIRK_EXIT:0;
+        Prop               = OcQuirksDict->propertyForKey( "ProtectMemoryRegions");
+        gSettings.ocBooterQuirks.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
+        Prop               = OcQuirksDict->propertyForKey( "ProtectSecureBoot");
+        gSettings.ocBooterQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectMemoryRegions? QUIRK_SECURE:0;
+        Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
+        gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
+        Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
+        gProvideConsoleGopEnable = IsPropertyNotNullAndTrue(Prop);
+        Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
+        gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
+        Prop               = OcQuirksDict->propertyForKey( "ProvideMaxSlide");
+        gSettings.ocBooterQuirks.ProvideMaxSlide = GetPropertyAsInteger(Prop, 0);
+        Prop               = OcQuirksDict->propertyForKey( "RebuildAppleMemoryMap");
+        gSettings.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
+        Prop               = OcQuirksDict->propertyForKey( "SetupVirtualMap");
+        gSettings.ocBooterQuirks.SetupVirtualMap = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SetupVirtualMap? QUIRK_VIRT:0;
+        Prop               = OcQuirksDict->propertyForKey( "SignalAppleOS");
+        gSettings.ocBooterQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SignalAppleOS? QUIRK_OS:0;
+        Prop               = OcQuirksDict->propertyForKey( "SyncRuntimePermissions");
+        gSettings.ocBooterQuirks.SyncRuntimePermissions = IsPropertyNotNullAndTrue(Prop);
+        gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
+      }
+      gSettings.mmioWhiteListArray.setEmpty();
       const TagArray* Dict2 = DictPointer->arrayPropertyForKey("MmioWhitelist"); // array of dict
       if (Dict2 != NULL) {
         INTN   Count = Dict2->arrayContent().size();
@@ -2962,29 +2966,26 @@ GetEarlyUserSettings (
         //OC_SCHEMA_STRING_IN   ("Comment", OC_MMIO_WL_STRUCT, Comment),
         //OC_SCHEMA_BOOLEAN_IN  ("Enabled", OC_MMIO_WL_STRUCT, Enabled),
         if (Count > 0) {
-          gQuirks.MmioWhitelistLabels = (__typeof__(gQuirks.MmioWhitelistLabels))AllocatePool(sizeof(char*) * Count);
-          gQuirks.OcAbcSettings.MmioWhitelist = (__typeof__(gQuirks.OcAbcSettings.MmioWhitelist))AllocatePool(sizeof(*gQuirks.OcAbcSettings.MmioWhitelist) * Count);
-          gQuirks.MmioWhitelistEnabled = (__typeof__(gQuirks.MmioWhitelistEnabled))AllocatePool(sizeof(BOOLEAN) * Count);
-          gQuirks.OcAbcSettings.MmioWhitelistSize = 0;
-          for (INTN i = 0; i < Count; i++) {
+          for (INTN i = 0; i < Count; i++)
+          {
             const TagDict* Dict3 = Dict2->dictElementAt(i, "MmioWhitelist"_XS8);
+            MMIOWhiteList* mmioWhiteListPtr = new MMIOWhiteList();
+            MMIOWhiteList& mmioWhiteList = *mmioWhiteListPtr;
 
-            gQuirks.MmioWhitelistLabels[gQuirks.OcAbcSettings.MmioWhitelistSize] = (__typeof__(char *))AllocateZeroPool(256);
-            
             const TagStruct* Prop2 = Dict3->propertyForKey("Comment");
-            if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
-              snprintf(gQuirks.MmioWhitelistLabels[gQuirks.OcAbcSettings.MmioWhitelistSize], 255, "%s", Prop2->getString()->stringValue().c_str());
+            if (Prop2 != NULL && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
+              mmioWhiteList.comment = Prop2->getString()->stringValue();
             } else {
-              snprintf(gQuirks.MmioWhitelistLabels[gQuirks.OcAbcSettings.MmioWhitelistSize], 255, " (NoLabel)");
+              mmioWhiteList.comment = " (NoLabel)"_XS8;
             }
             
             Prop2 = Dict3->propertyForKey("Address");
             if (Prop2 != 0) {
-              gQuirks.OcAbcSettings.MmioWhitelist[gQuirks.OcAbcSettings.MmioWhitelistSize] = GetPropertyAsInteger(Prop2, 0);
+              mmioWhiteList.address = GetPropertyAsInteger(Prop2, 0);
               Prop2 = Dict3->propertyForKey("Enabled");
-              gQuirks.MmioWhitelistEnabled[gQuirks.OcAbcSettings.MmioWhitelistSize] = IsPropertyNotNullAndTrue(Prop2);
+              mmioWhiteList.enabled = IsPropertyNotNullAndTrue(Prop2);
             }
-            gQuirks.OcAbcSettings.MmioWhitelistSize++;
+            gSettings.mmioWhiteListArray.AddReference(mmioWhiteListPtr, true);
           }
         }
       }

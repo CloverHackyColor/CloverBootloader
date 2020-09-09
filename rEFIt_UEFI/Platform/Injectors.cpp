@@ -349,26 +349,26 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
   UsbKbGetKeyboardDeviceInfo
 };
 
-#define OCQUIRKS_PROTOCOL_REVISION  23
-
-EFI_STATUS
-EFIAPI
-GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
-                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
-                 OUT BOOLEAN            *GopEnable
-                 )
-{
-  DBG("GetQuirksConfig called\n");
-  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS_4CLOVER));
-  *GopEnable = gProvideConsoleGopEnable;
-  return EFI_SUCCESS;
-}
-
-OCQUIRKS_PROTOCOL mQuirksConfig = {
-  OCQUIRKS_PROTOCOL_REVISION,
-  0,  //reserved
-  GetQuirksConfig
-};
+//#define OCQUIRKS_PROTOCOL_REVISION  23
+//
+//EFI_STATUS
+//EFIAPI
+//GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
+//                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
+//                 OUT BOOLEAN            *GopEnable
+//                 )
+//{
+//  DBG("GetQuirksConfig called\n");
+//  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS_4CLOVER));
+//  *GopEnable = gProvideConsoleGopEnable;
+//  return EFI_SUCCESS;
+//}
+//
+//OCQUIRKS_PROTOCOL mQuirksConfig = {
+//  OCQUIRKS_PROTOCOL_REVISION,
+//  0,  //reserved
+//  GetQuirksConfig
+//};
 
 EFI_STATUS
 SetPrivateVarProto(VOID)
@@ -385,8 +385,8 @@ SetPrivateVarProto(VOID)
                                                        &mGraphConfig,
                                                        &gEfiKeyboardInfoProtocolGuid,
                                                        &mKeyboardInfo,
-                                                       &gOcQuirksProtocolGuid,
-                                                       &mQuirksConfig,
+//                                                       &gOcQuirksProtocolGuid,
+//                                                       &mQuirksConfig,
                                                        NULL
                                                        );
 	//obligatory protocol

@@ -1184,7 +1184,7 @@ VOID LOADER_ENTRY::StartLoader11()
 //    DBG("SetDevices\n");
   SetDevices(this);
 //    DBG("SetFSInjection\n");
-  SetFSInjection();
+  //SetFSInjection();
   //PauseForKey(L"SetFSInjection");
 //    DBG("SetVariablesForOSX\n");
   SetVariablesForOSX(this);
@@ -1255,6 +1255,8 @@ VOID LOADER_ENTRY::StartLoader11()
 //  }
 //
 
+  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+
   UINT64 CPUFrequencyFromART;
   InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
 
@@ -1273,6 +1275,23 @@ VOID LOADER_ENTRY::StartLoader11()
     );
   DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
   OcAppleDebugLogInstallProtocol(0);
+
+  mOpenCoreConfiguration.Booter.MmioWhitelist.Count = gSettings.mmioWhiteListArray.size();
+  mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount = mOpenCoreConfiguration.Booter.MmioWhitelist.Count;
+  mOpenCoreConfiguration.Booter.MmioWhitelist.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Booter.MmioWhitelist.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  mOpenCoreConfiguration.Booter.MmioWhitelist.Values = (OC_BOOTER_WL_ENTRY**)AllocatePool(mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount*sizeof(*mOpenCoreConfiguration.Booter.MmioWhitelist.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  for ( size_t idx = 0 ; idx < gSettings.mmioWhiteListArray.size() ; idx++ ) {
+    const MMIOWhiteList& entry = gSettings.mmioWhiteListArray[idx];
+    DBG("Bridge mmioWhiteList[%zu] to OC : comment=%s\n", idx, entry.comment.c_str());
+    mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx] = (__typeof_am__(*mOpenCoreConfiguration.Booter.MmioWhitelist.Values))AllocatePool(mOpenCoreConfiguration.Booter.MmioWhitelist.ValueSize);
+    mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Address = entry.address;
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Comment, entry.comment.c_str());
+    mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Enabled = entry.enabled;
+  }
+
+  memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
+
+
   OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
   OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
   OcImageLoaderInit ();
@@ -1282,7 +1301,8 @@ VOID LOADER_ENTRY::StartLoader11()
     AddKextsInArray(LStringW(L"Kexts\\11"), LStringW(L"11"), CPU_TYPE_X86_64, &kextArray);
   }
 
-  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+
+
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, "Auto");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Default");
   mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.KernelAndKextPatches.FuzzyMatch;
