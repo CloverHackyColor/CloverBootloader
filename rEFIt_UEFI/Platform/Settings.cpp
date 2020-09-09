@@ -3188,7 +3188,7 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
     mKext->Next = InjectKextList;
     mKext->Version = GetBundleVersion(FullName);
     InjectKextList = mKext;
-    //   DBG("Added mKext=%ls, MatchOS=%ls\n", mKext->FileName, mKext->MatchOS);
+    DBG("Added Kext=%ls\\%ls\n", KextDirNameUnderOEMPath, mKext->FileName.wc_str());
 
     // Obtain PlugInList
     // Iterate over PlugIns directory

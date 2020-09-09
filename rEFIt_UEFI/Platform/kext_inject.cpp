@@ -353,7 +353,7 @@ VOID LOADER_ENTRY::AddKextsInArray(const XStringW& SrcDir, const XStringW& Path,
   MsgLog("AddKextsInArray from %ls\n", SrcDir.wc_str());
   CurrentKext = InjectKextList;
   while (CurrentKext) {
-    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName, CurrentKext->KextDirNameUnderOEMPath, Path);
+    DBG("  current kext name=%ls path=%ls, match against=%ls\n", CurrentKext->FileName.wc_str(), CurrentKext->KextDirNameUnderOEMPath.wc_str(), Path.wc_str());
     if ( CurrentKext->KextDirNameUnderOEMPath == Path ) {
       FileName = SWPrintf("%ls\\%ls", SrcDir.wc_str(), CurrentKext->FileName.wc_str());
       if (!(CurrentKext->MenuItem.BValue)) {
