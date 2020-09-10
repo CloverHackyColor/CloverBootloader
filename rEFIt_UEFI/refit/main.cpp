@@ -568,7 +568,7 @@ VOID CheckEmptyFB()
 
 VOID LOADER_ENTRY::StartLoader()
 {
-  if ( OSVersion.startWith("11") ) {
+  if (1 || OSVersion.startWith("11") ) {
     StartLoader11();
     return;
   }
@@ -1542,6 +1542,9 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       }
     }
     if (Skip) {
+      continue;
+    }
+    if (StrStr(DirEntry->FileName, L"OcQuirks") != NULL) {
       continue;
     }
     {
