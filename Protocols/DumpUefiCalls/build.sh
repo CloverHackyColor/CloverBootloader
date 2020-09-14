@@ -53,7 +53,7 @@ case `uname` in
         echo DumpUefiCalls requires Snow Leopard or later OS
         exit 1
       else
-        TARGET_TOOLS=XCODE5
+        TARGET_TOOLS=XCODE8
       fi
       ;;
   Linux*)
@@ -80,12 +80,12 @@ do
 
   if [[ $arg == cleanall ]]; then
     make -C $WORKSPACE/BaseTools clean
-    build -p $WORKSPACE/Clover/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Protocols/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/Clover/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Protocols/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
@@ -95,6 +95,6 @@ done
 # Build the edk2 ShellPkg
 #
 echo Running edk2 build for DumpUefiCalls
-build -p $WORKSPACE/Clover/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3
+build -p $WORKSPACE/Protocols/DumpUefiCalls/DumpUefiCalls.dsc -a $PROCESSOR -t $TARGET_TOOLS -b DEBUG -n 3
 exit $?
 

@@ -81,8 +81,15 @@ FsGetSelfFileSystem(VOID)
 	if (gLoadedImage == NULL) {
 		return NULL;
 	}
-	
-	return FsGetFileSystem(gLoadedImage->DeviceHandle);
+  if( gLoadedImage->DeviceHandle != NULL ) return FsGetFileSystem(gLoadedImage->DeviceHandle);
+
+  EFI_STATUS Status = gBS->HandleProtocol(gLoadedImage->ParentHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &gLoadedImage);
+  if (Status != EFI_SUCCESS) {
+    Print(L"FsGetLoadedImage: HandleProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
+    return NULL;
+  }
+
+  return FsGetFileSystem(gLoadedImage->DeviceHandle);
 }
 
 /** Returns root dir from given file system. */
