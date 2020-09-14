@@ -568,7 +568,7 @@ VOID CheckEmptyFB()
 
 VOID LOADER_ENTRY::StartLoader()
 {
-  if (1 || OSVersion.startWith("11") ) {
+  if (/* DISABLES CODE */ (1) || OSVersion.startWith("11") ) {
     StartLoader11();
     return;
   }
@@ -1002,6 +1002,7 @@ VOID LOADER_ENTRY::StartLoader()
 //  PauseForKey(L"System started?!");
 }
 extern "C" {
+#include <Library/OcOSInfoLib.h>
 #include <Library/OcVirtualFsLib.h>
 #include <Library/OcConfigurationLib.h>
 #include <Library/OcDevicePathLib.h>
@@ -1068,16 +1069,19 @@ InternalCalculateARTFrequencyIntel (
   ocString.Size = (UINT32)len;   /* unsafe cast */ \
 } while (0)
 
-size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kextName, size_t pos)
+size_t setKextAtPos(XString8Array* kextArrayPtr, const XString8& kextName, size_t pos)
 {
-  XObjArray<SIDELOAD_KEXT>& kextArray = *kextArrayPtr;
+  XString8Array& kextArray = *kextArrayPtr;
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
-    if ( XString8(LString8(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath.Value)).contains(kextName) ) {
+    if ( kextArray[kextIdx].contains(kextName) ) {
       if ( pos >= kextArray.size() ) panic("pos >= kextArray.size()");
-      OC_KERNEL_ADD_ENTRY* entry = mOpenCoreConfiguration.Kernel.Add.Values[kextIdx];
-      mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = mOpenCoreConfiguration.Kernel.Add.Values[pos];
-      mOpenCoreConfiguration.Kernel.Add.Values[pos] = entry;
+      if ( pos == kextIdx ) return pos+1;
+      if ( pos > kextIdx ) pos -= 1;
+      XString8 kextToMove;
+      kextToMove.stealValueFrom(kextArray[kextIdx].forgetDataWithoutFreeing());
+      kextArray.removeAtPos(kextIdx);
+      kextArray.insertAtPos(kextToMove, pos);
       return pos+1;
     }
   }
@@ -1181,7 +1185,7 @@ VOID LOADER_ENTRY::StartLoader11()
 //    DBG("SetVariablesForOSX\n");
   SetVariablesForOSX(this);
 //    DBG("SetVariablesForOSX\n");
-  EventsInitialize(this);
+//  EventsInitialize(this);
 //    DBG("FinalizeSmbios\n");
   FinalizeSmbios();
 
@@ -1288,9 +1292,9 @@ VOID LOADER_ENTRY::StartLoader11()
   OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
   OcImageLoaderInit ();
 
-  XObjArray<SIDELOAD_KEXT> kextArray;
+  XString8Array kextArray;
   if (!DoHibernateWake) {
-    AddKextsInArray(LStringW(L"Kexts\\11"), LStringW(L"11"), CPU_TYPE_X86_64, &kextArray);
+    AddKextsInArray(&kextArray);
   }
 
 
@@ -1305,25 +1309,6 @@ VOID LOADER_ENTRY::StartLoader11()
   mOpenCoreConfiguration.Kernel.Add.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
   mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)AllocatePool(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
 
-  for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
-  {
-    const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
-    DBG("Bridge kext to OC : KextDirNameUnderOEMPath=%ls FileName=%ls\n", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))AllocatePool(mOpenCoreConfiguration.Kernel.Add.ValueSize);
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, "Any");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Comment, "");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MaxKernel, "");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, S8Printf("%ls/%ls", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str()).c_str());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents/MacOS/%ls", KextEntry.FileName.subString(0, KextEntry.FileName.indexOf(".")).wc_str()).c_str());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageDataSize = 0;
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistData = NULL;
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistDataSize = 0;
-  }
   // Seems that Lilu must be first.
   size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
   pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
@@ -1334,6 +1319,26 @@ VOID LOADER_ENTRY::StartLoader11()
   pos = setKextAtPos(&kextArray, "SMCSuperIO.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "USBPorts.kext"_XS8, pos);
 
+
+  for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
+  {
+    const XString8& KextEntry = kextArray[kextIdx];
+    DBG("Bridge kext to OC : Path=%s\n", KextEntry.c_str());
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))AllocatePool(mOpenCoreConfiguration.Kernel.Add.ValueSize);
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, "Any");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Comment, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MaxKernel, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, KextEntry.c_str()); // do NOT delete kextArray, or make a copy.
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents/MacOS/%s", KextEntry.subString(0, KextEntry.indexOf(".")).c_str()).c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageDataSize = 0;
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistData = NULL;
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistDataSize = 0;
+  }
 
 
   XObjArray<KEXT_PATCH> selectedPathArray;
@@ -1369,6 +1374,10 @@ VOID LOADER_ENTRY::StartLoader11()
   {
     const XStringW& forceKext = KernelAndKextPatches.ForceKexts[forceKextIdx];
     DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
+  }
+
+  if (OcOSInfoInstallProtocol (false) == NULL) {
+    DEBUG ((DEBUG_ERROR, "OC: Failed to install os info protocol\n"));
   }
 
 
@@ -1544,7 +1553,10 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     if (Skip) {
       continue;
     }
-    if (StrStr(DirEntry->FileName, L"OcQuirks") != NULL) {
+    if ( LStringW(DirEntry->FileName).containsIC("OcQuirks") ) {
+      continue;
+    }
+    if ( LStringW(DirEntry->FileName).containsIC("AptioMemoryFix") ) {
       continue;
     }
     {
