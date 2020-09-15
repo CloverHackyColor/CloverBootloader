@@ -1768,39 +1768,36 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(const XString8& UniSysVer)
   REFIT_MENU_ITEM_OPTIONS     *Entry = NULL;
   REFIT_MENU_SCREEN    *SubScreen = NULL;
   REFIT_INPUT_DIALOG   *InputBootArgs;
-  SIDELOAD_KEXT        *Kext = NULL;
   XString8              sysVer = S8Printf("%s->", UniSysVer.c_str());
 
-  Kext = InjectKextList;
-  while (Kext) {
-    if ( Kext->KextDirNameUnderOEMPath == UniSysVer ) {
+  for ( size_t idx = 0 ; idx < InjectKextList.size() ; idx ++ ) {
+    SIDELOAD_KEXT& Kext = InjectKextList[idx];
+    if ( Kext.KextDirNameUnderOEMPath == UniSysVer ) {
     	if ( SubScreen == NULL ) {
           Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
           SubScreen->AddMenuInfoLine_f("Choose/check kext to disable:");
     	}
       InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title.SWPrintf("%ls, v.%ls", Kext->FileName.wc_str(), Kext->Version.wc_str());
+      InputBootArgs->Title.SWPrintf("%ls, v.%ls", Kext.FileName.wc_str(), Kext.Version.wc_str());
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &(Kext->MenuItem);
+      InputBootArgs->Item = &(Kext.MenuItem);
       InputBootArgs->AtClick = ActionEnter;
       InputBootArgs->AtRightClick = ActionDetails;
       SubScreen->AddMenuEntry(InputBootArgs, true);
 
-      SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
-      while (plugInKext) {
+      for ( size_t idxPlugin = 0 ; idxPlugin < Kext.PlugInList.size() ; idxPlugin ++ ) {
+        SIDELOAD_KEXT& plugInKext = Kext.PlugInList[idxPlugin];
         InputBootArgs = new REFIT_INPUT_DIALOG;
-        InputBootArgs->Title.SWPrintf("  |-- %ls, v.%ls", plugInKext->FileName.wc_str(), plugInKext->Version.wc_str());
+        InputBootArgs->Title.SWPrintf("  |-- %ls, v.%ls", plugInKext.FileName.wc_str(), plugInKext.Version.wc_str());
 //        InputBootArgs->Tag = TAG_INPUT;
         InputBootArgs->Row = 0xFFFF; //cursor
-        InputBootArgs->Item = &(plugInKext->MenuItem);
+        InputBootArgs->Item = &(plugInKext.MenuItem);
         InputBootArgs->AtClick = ActionEnter;
         InputBootArgs->AtRightClick = ActionDetails;
         SubScreen->AddMenuEntry(InputBootArgs, true);
-        plugInKext = plugInKext->Next;
       }
     }
-    Kext = Kext->Next;
   }
 
   if ( SubScreen != NULL ) SubScreen->AddMenuEntry(&MenuEntryReturn, false);

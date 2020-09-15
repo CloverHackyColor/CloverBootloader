@@ -338,52 +338,48 @@ VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, const XString8& DirName
 //}
 
 // Jief : this should replace LOADER_ENTRY::AddKexts
-VOID LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XString8Array* kextArray)
+VOID LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray)
 {
   XStringW                 FileName;
   XStringW                 PlugInName;
-  SIDELOAD_KEXT           *CurrentKext;
-  SIDELOAD_KEXT           *CurrentPlugInKext;
 
   MsgLog("AddKextsInArray from %s\n", SrcDir.c_str());
-  CurrentKext = InjectKextList;
-  while (CurrentKext) {
-    DBG("  current kext name=%ls path=%ls, match against=%s\n", CurrentKext->FileName.wc_str(), CurrentKext->KextDirNameUnderOEMPath.wc_str(), Path.c_str());
-    if ( CurrentKext->KextDirNameUnderOEMPath == Path ) {
-      FileName = SWPrintf("%s\\%ls", SrcDir.c_str(), CurrentKext->FileName.wc_str());
-      if (!(CurrentKext->MenuItem.BValue)) {
+  for ( size_t idx = 0 ; idx < InjectKextList.size() ; idx ++ ) {
+    SIDELOAD_KEXT& CurrentKext = InjectKextList[idx];
+    DBG("  current kext name=%ls path=%ls, match against=%s\n", CurrentKext.FileName.wc_str(), CurrentKext.KextDirNameUnderOEMPath.wc_str(), Path.c_str());
+    if ( CurrentKext.KextDirNameUnderOEMPath == Path ) {
+      FileName = SWPrintf("%s\\%ls", SrcDir.c_str(), CurrentKext.FileName.wc_str());
+      if (!(CurrentKext.MenuItem.BValue)) {
         // inject require
-        MsgLog("->Extra kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());
+        MsgLog("->Extra kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext.Version.wc_str());
 //        Status = AddKext(SelfVolume->RootDir, FileName.wc_str(), archCpuType);
-        kextArray->Add(FileName.forgetDataWithoutFreeing()); // do not free, CurrentKext belongs to an other object
+        kextArray->AddReference(&CurrentKext, false); // do not free, CurrentKext belongs to an other object
         // decide which plugins to inject
-        CurrentPlugInKext = CurrentKext->PlugInList;
-        while (CurrentPlugInKext) {
-          PlugInName = SWPrintf("%ls\\%ls\\%ls", FileName.wc_str(), L"Contents\\PlugIns", CurrentPlugInKext->FileName.wc_str());
-          //     snwprintf(PlugInName, 512, L"%s\\%s\\%s", FileName, "Contents\\PlugIns", CurrentPlugInKext->FileName);
-          if (!(CurrentPlugInKext->MenuItem.BValue)) {
+        for ( size_t idxPlugin = 0 ; idxPlugin < CurrentKext.PlugInList.size() ; idxPlugin ++ ) {
+          SIDELOAD_KEXT& CurrentPlugInKext = CurrentKext.PlugInList[idxPlugin];
+          PlugInName = SWPrintf("%ls\\Contents\\PlugIns\\%ls", FileName.wc_str(), CurrentPlugInKext.FileName.wc_str());
+          //     snwprintf(PlugInName, 512, L"%s\\%s\\%s", FileName, "Contents\\PlugIns", CurrentPlugInKext.FileName);
+          if (!(CurrentPlugInKext.MenuItem.BValue)) {
             // inject PlugIn require
-            MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext->Version.wc_str());
+            MsgLog("    |-- PlugIn kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext.Version.wc_str());
 //              AddKext(SelfVolume->RootDir, PlugInName.wc_str(), archCpuType);
-            kextArray->Add(PlugInName.forgetDataWithoutFreeing()); // do not free, CurrentKext belongs to an other object
+            kextArray->AddReference(&CurrentPlugInKext, false); // do not free, CurrentKext belongs to an other object
           } else {
-            MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext->Version.wc_str());
+            MsgLog("    |-- Disabled plug-in kext: %ls (v.%ls)\n", PlugInName.wc_str(), CurrentPlugInKext.Version.wc_str());
           }
-          CurrentPlugInKext = CurrentPlugInKext->Next;
         } // end of plug-in kext injection
       } else {
         // disable current kext injection
         if ( SrcDir.containsIC(L"Off") ) {
-          MsgLog("Disabled kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext->Version.wc_str());
+          MsgLog("Disabled kext: %ls (v.%ls)\n", FileName.wc_str(), CurrentKext.Version.wc_str());
         }
       }
     }
-    CurrentKext = CurrentKext->Next;
   } // end of kext injection
 
 }
 
-void LOADER_ENTRY::AddKextsInArray(XString8Array* kextArray)
+void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
 {
   XStringW                SrcDir;
   REFIT_DIR_ITER          PlugInIter;
@@ -553,7 +549,7 @@ void LOADER_ENTRY::AddKextsInArray(XString8Array* kextArray)
 
 EFI_STATUS LOADER_ENTRY::LoadKexts()
 {
-  XString8Array kextArray;
+  XObjArray<SIDELOAD_KEXT> kextArray;
   AddKextsInArray(&kextArray);
 
 
@@ -583,7 +579,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     }
 
   for (size_t idx = 0 ; idx < kextArray.size()  ; idx++ ) {
-    AddKext(Volume->RootDir, kextArray[idx], archCpuType);
+    AddKext(Volume->RootDir, kextArray[idx].FileName, archCpuType);
   }
 
   UINTN                    mm_extra_size;
@@ -608,8 +604,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     FreePool(extra);
   }
 
-  delete InjectKextList;
-  InjectKextList = NULL;
+  InjectKextList.setEmpty();
   return EFI_SUCCESS;
 }
 

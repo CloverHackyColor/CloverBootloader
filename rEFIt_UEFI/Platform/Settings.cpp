@@ -69,7 +69,7 @@ INTN LayoutTextOffset = 0;
 INTN LayoutButtonOffset = 0;
 
 ACPI_PATCHED_AML                *ACPIPatchedAML = NULL;
-SIDELOAD_KEXT                   *InjectKextList = NULL;
+XObjArray<SIDELOAD_KEXT>        InjectKextList;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
@@ -3182,18 +3182,17 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      */
     FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
     mKext = new SIDELOAD_KEXT;
-    mKext->FileName = SWPrintf("%ls", DirEntry->FileName);
+    mKext->FileName.SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
-    mKext->KextDirNameUnderOEMPath = SWPrintf("%ls", KextDirNameUnderOEMPath);
-
-    mKext->Next = InjectKextList;
+    mKext->KextDirNameUnderOEMPath.SWPrintf("%ls", KextDirNameUnderOEMPath);
     mKext->Version = GetBundleVersion(FullName);
-    InjectKextList = mKext;
+    InjectKextList.AddReference(mKext, true);
+
     DBG("Added Kext=%ls\\%ls\n", KextDirNameUnderOEMPath, mKext->FileName.wc_str());
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
-    PlugInsPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\PlugIns");
+    PlugInsPath = SWPrintf("%ls\\Contents\\PlugIns", FullName.wc_str());
 
     DirIterOpen(SelfRootDir, PlugInsPath.wc_str(), &PlugInsIter);
     while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
@@ -3202,12 +3201,11 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
       }
       PlugInsName = SWPrintf("%ls\\%ls", PlugInsPath.wc_str(), PlugInEntry->FileName);
       mPlugInKext = new SIDELOAD_KEXT;
-      mPlugInKext->FileName = SWPrintf("%ls", PlugInEntry->FileName);
+      mPlugInKext->FileName.SWPrintf("%ls", PlugInEntry->FileName);
       mPlugInKext->MenuItem.BValue = Blocked;
-      mPlugInKext->KextDirNameUnderOEMPath = SWPrintf("%ls", KextDirNameUnderOEMPath);
-      mPlugInKext->Next    = mKext->PlugInList;
+      mPlugInKext->KextDirNameUnderOEMPath = SWPrintf("%ls\\%ls\\Contents\\PlugIns", KextDirNameUnderOEMPath, mKext->FileName.wc_str());
       mPlugInKext->Version = GetBundleVersion(PlugInsName);
-      mKext->PlugInList    = mPlugInKext;
+      mKext->PlugInList.AddReference(mPlugInKext, true);
       //      DBG("---| added plugin=%ls, MatchOS=%ls\n", mPlugInKext->FileName, mPlugInKext->MatchOS);
     }
     DirIterClose(&PlugInsIter);
@@ -3221,7 +3219,7 @@ VOID InitKextList()
   EFI_FILE_INFO   *FolderEntry = NULL;
   XStringW        KextsPath;
 
-  if (InjectKextList) {
+  if (InjectKextList.notEmpty()) {
     return;  //don't scan again
   }
   KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());

@@ -711,17 +711,16 @@ public:
 class SIDELOAD_KEXT
 {
 public:
-  SIDELOAD_KEXT  *Next;
-  SIDELOAD_KEXT  *PlugInList;
+  XObjArray<SIDELOAD_KEXT> PlugInList;
   XStringW       FileName;
   XStringW       KextDirNameUnderOEMPath;
   XStringW       Version;
   INPUT_ITEM     MenuItem;
   
-  SIDELOAD_KEXT() : Next(0), PlugInList(0), FileName(), KextDirNameUnderOEMPath(), Version(), MenuItem() {};
+  SIDELOAD_KEXT() : PlugInList(), FileName(), KextDirNameUnderOEMPath(), Version(), MenuItem() {};
   SIDELOAD_KEXT(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
   const SIDELOAD_KEXT& operator = ( const SIDELOAD_KEXT & ) = delete; // Can be defined if needed
-  ~SIDELOAD_KEXT() { delete Next; delete PlugInList; }
+  ~SIDELOAD_KEXT() { }
 };
 
 class RT_VARIABLES
@@ -788,7 +787,7 @@ extern TagDict*                          gConfigDict[];
 extern ACPI_PATCHED_AML                *ACPIPatchedAML;
 
 // Sideload/inject kext
-extern SIDELOAD_KEXT                   *InjectKextList;
+extern XObjArray<SIDELOAD_KEXT>         InjectKextList;
 
 // SysVariables
 //extern SYSVARIABLES                   *SysVariables;

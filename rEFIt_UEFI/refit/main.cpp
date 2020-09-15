@@ -1002,6 +1002,7 @@ VOID LOADER_ENTRY::StartLoader()
 //  PauseForKey(L"System started?!");
 }
 extern "C" {
+#include <Library/OcRtcLib.h>
 #include <Library/OcOSInfoLib.h>
 #include <Library/OcVirtualFsLib.h>
 #include <Library/OcConfigurationLib.h>
@@ -1012,6 +1013,16 @@ extern OC_STORAGE_CONTEXT mOpenCoreStorage;
 extern OC_CPU_INFO mOpenCoreCpuInfo;
 extern OC_BOOTSTRAP_PROTOCOL mOpenCoreBootStrap;
 extern OC_RSA_PUBLIC_KEY* mOpenCoreVaultKey;
+extern EFI_HANDLE mLoadHandle;
+
+EFI_STATUS
+EFIAPI
+OcStartImage_2 (
+  IN  OC_BOOT_ENTRY               *Chosen,
+  IN  EFI_HANDLE                  ImageHandle,
+  OUT UINTN                       *ExitDataSize,
+  OUT CHAR16                      **ExitData    OPTIONAL
+  );
 
 EFI_STATUS
 EFIAPI
@@ -1056,36 +1067,48 @@ InternalCalculateARTFrequencyIntel (
 
 } // extern "C"
 
-#define OC_STRING_ASSIGN(ocString, value) do { \
-  ocString.DynValue = NULL; \
-  strcpy(ocString.Value, value); \
-  ocString.MaxSize = sizeof(ocString.Value); \
-  ocString.Size = (UINT32)strlen(value)+1;   /* unsafe cast */ \
-} while (0)
 #define OC_STRING_ASSIGN_N(ocString, value, len) do { \
-  ocString.DynValue = NULL; \
-  memcpy(ocString.Value, value, len); \
-  ocString.MaxSize = sizeof(ocString.Value); \
-  ocString.Size = (UINT32)len;   /* unsafe cast */ \
+  if( len >= sizeof(ocString.Value) ) { \
+    memset(ocString.Value, 0, sizeof(ocString.Value)); \
+    ocString.DynValue = (__typeof__(ocString.DynValue))malloc(len); \
+    memcpy(ocString.DynValue, value, len); \
+    ocString.MaxSize = (UINT32)len; \
+    ocString.Size = (UINT32)len;   /* unsafe cast */ \
+  }else{ \
+    ocString.DynValue = NULL; \
+    memcpy(ocString.Value, value, len); \
+    ocString.MaxSize = sizeof(ocString.Value); \
+    ocString.Size = (UINT32)len;   /* unsafe cast */ \
+  } \
 } while (0)
 
-size_t setKextAtPos(XString8Array* kextArrayPtr, const XString8& kextName, size_t pos)
+#define OC_STRING_ASSIGN(ocString, value) OC_STRING_ASSIGN_N(ocString, value, strlen(value)+1)
+
+
+size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kextName, size_t pos)
 {
-  XString8Array& kextArray = *kextArrayPtr;
+  XObjArray<SIDELOAD_KEXT>& kextArray = *kextArrayPtr;
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
-    if ( kextArray[kextIdx].contains(kextName) ) {
+    if ( kextArray[kextIdx].FileName.contains(kextName) ) {
       if ( pos >= kextArray.size() ) panic("pos >= kextArray.size()");
       if ( pos == kextIdx ) return pos+1;
       if ( pos > kextIdx ) pos -= 1;
-      XString8 kextToMove;
-      kextToMove.stealValueFrom(kextArray[kextIdx].forgetDataWithoutFreeing());
-      kextArray.removeAtPos(kextIdx);
-      kextArray.insertAtPos(kextToMove, pos);
+      SIDELOAD_KEXT* kextToMove = &kextArray[kextIdx];
+      kextArray.RemoveWithoutFreeingAtIndex(kextIdx);
+      kextArray.InsertRef(kextToMove, pos, false);
       return pos+1;
     }
   }
   return pos;
+}
+
+extern "C" {
+VOID
+OcMain (
+  IN OC_STORAGE_CONTEXT        *Storage,
+  IN EFI_DEVICE_PATH_PROTOCOL  *LoadPath OPTIONAL
+  );
 }
 
 VOID LOADER_ENTRY::StartLoader11()
@@ -1145,30 +1168,30 @@ VOID LOADER_ENTRY::StartLoader11()
   FilterKernelPatches();
   FilterBootPatches();
 
-  // Set boot argument for kernel if no caches, this should force kernel loading
-  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
-    XString8 KernelLocation;
+//  // Set boot argument for kernel if no caches, this should force kernel loading
+//  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
+//    XString8 KernelLocation;
+//
+//    if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
+//      KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
+//    } else {
+//      // used for 10.10, 10.11, and new version.
+//      KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
+//    }
+//    LoadOptions.AddID(KernelLocation);
+//  }
+//
+//  //we are booting OSX - restore emulation if it's not installed before g boot.efi
+//  if (gEmuVariableControl != NULL) {
+//      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+//  }
 
-    if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
-      KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
-    } else {
-      // used for 10.10, 10.11, and new version.
-      KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
-    }
-    LoadOptions.AddID(KernelLocation);
-  }
-
-  //we are booting OSX - restore emulation if it's not installed before g boot.efi
-  if (gEmuVariableControl != NULL) {
-      gEmuVariableControl->InstallEmulation(gEmuVariableControl);
-  }
-
-  // first patchACPI and find PCIROOT and RTC
-  // but before ACPI patch we need smbios patch
-  CheckEmptyFB();
-  PatchSmbios();
-//    DBG("PatchACPI\n");
-  PatchACPI(Volume, OSVersion);
+//  // first patchACPI and find PCIROOT and RTC
+//  // but before ACPI patch we need smbios patch
+//  CheckEmptyFB();
+//  PatchSmbios();
+////    DBG("PatchACPI\n");
+//  PatchACPI(Volume, OSVersion);
 
   // If KPDebug is true boot in verbose mode to see the debug messages
   if (KernelAndKextPatches.KPDebug) {
@@ -1177,24 +1200,24 @@ VOID LOADER_ENTRY::StartLoader11()
 
   DbgHeader("RestSetup macOS");
 
-//    DBG("SetDevices\n");
-  SetDevices(this);
-//    DBG("SetFSInjection\n");
-  //SetFSInjection();
-  //PauseForKey(L"SetFSInjection");
-//    DBG("SetVariablesForOSX\n");
-  SetVariablesForOSX(this);
-//    DBG("SetVariablesForOSX\n");
-//  EventsInitialize(this);
-//    DBG("FinalizeSmbios\n");
-  FinalizeSmbios();
-
-  SetCPUProperties();
-
-  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
-    DoHibernateWake = PrepareHibernation(Volume);
-  }
-  SetupDataForOSX(DoHibernateWake);
+////    DBG("SetDevices\n");
+//  SetDevices(this);
+////    DBG("SetFSInjection\n");
+//  //SetFSInjection();
+//  //PauseForKey(L"SetFSInjection");
+////    DBG("SetVariablesForOSX\n");
+//  SetVariablesForOSX(this);
+////    DBG("SetVariablesForOSX\n");
+////  EventsInitialize(this);
+////    DBG("FinalizeSmbios\n");
+//  FinalizeSmbios();
+//
+//  SetCPUProperties();
+//
+//  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+//    DoHibernateWake = PrepareHibernation(Volume);
+//  }
+//  SetupDataForOSX(DoHibernateWake);
 
 
   if (  gDriversFlags.AptioFixLoaded &&
@@ -1251,8 +1274,6 @@ VOID LOADER_ENTRY::StartLoader11()
 //  }
 //
 
-  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
-
   UINT64 CPUFrequencyFromART;
   InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
 
@@ -1261,21 +1282,44 @@ VOID LOADER_ENTRY::StartLoader11()
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
   Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
 
-  OcConfigureLogProtocol (
-    9,
-    0,
-    2151678018,
-    2147483648,
-    OPEN_CORE_LOG_PREFIX_PATH,
-    mOpenCoreStorage.FileSystem
-    );
-  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
-  OcAppleDebugLogInstallProtocol(0);
+  OcMain(&mOpenCoreStorage, NULL);
+
+  // Uncomment OcMiscBoot to run the OC bootpicker
+//  OcMiscBoot (
+//    &mOpenCoreStorage,
+//    &mOpenCoreConfiguration,
+//    NULL,
+//    OcStartImage_2,
+//    mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
+//    mLoadHandle
+//    );
+
+#ifdef JIEF_DEBUG
+  // Save mOpenCoreConfiguration built from OC config.plist for debug
+  OC_GLOBAL_CONFIG mOpenCoreConfigurationBak = mOpenCoreConfiguration;
+#endif
+
+//  OcConfigureLogProtocol (
+//    9,
+//    0,
+//    2151678018,
+//    2147483648,
+//    OPEN_CORE_LOG_PREFIX_PATH,
+//    mOpenCoreStorage.FileSystem
+//    );
+//  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
+//  OcAppleDebugLogInstallProtocol(0);
+
+  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
 
   mOpenCoreConfiguration.Booter.MmioWhitelist.Count = (UINT32)gSettings.mmioWhiteListArray.size();
   mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount = mOpenCoreConfiguration.Booter.MmioWhitelist.Count;
   mOpenCoreConfiguration.Booter.MmioWhitelist.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Booter.MmioWhitelist.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-  mOpenCoreConfiguration.Booter.MmioWhitelist.Values = (OC_BOOTER_WL_ENTRY**)AllocatePool(mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount*sizeof(*mOpenCoreConfiguration.Booter.MmioWhitelist.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  if ( mOpenCoreConfiguration.Booter.MmioWhitelist.Count > 0 ) {
+    mOpenCoreConfiguration.Booter.MmioWhitelist.Values = (OC_BOOTER_WL_ENTRY**)AllocatePool(mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount*sizeof(*mOpenCoreConfiguration.Booter.MmioWhitelist.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  }else{
+    mOpenCoreConfiguration.Booter.MmioWhitelist.Values = NULL;
+  }
   for ( size_t idx = 0 ; idx < gSettings.mmioWhiteListArray.size() ; idx++ ) {
     const MMIOWhiteList& entry = gSettings.mmioWhiteListArray[idx];
     DBG("Bridge mmioWhiteList[%zu] to OC : comment=%s\n", idx, entry.comment.c_str());
@@ -1288,11 +1332,11 @@ VOID LOADER_ENTRY::StartLoader11()
   memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
 
 
-  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
-  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-  OcImageLoaderInit ();
+//  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
+//  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+//  OcImageLoaderInit ();
 
-  XString8Array kextArray;
+  XObjArray<SIDELOAD_KEXT> kextArray;
   if (!DoHibernateWake) {
     AddKextsInArray(&kextArray);
   }
@@ -1322,8 +1366,8 @@ VOID LOADER_ENTRY::StartLoader11()
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
   {
-    const XString8& KextEntry = kextArray[kextIdx];
-    DBG("Bridge kext to OC : Path=%s\n", KextEntry.c_str());
+    const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
+    DBG("Bridge kext to OC : Path=%ls\n", KextEntry.FileName.wc_str());
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))AllocatePool(mOpenCoreConfiguration.Kernel.Add.ValueSize);
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, "Any");
@@ -1331,8 +1375,8 @@ VOID LOADER_ENTRY::StartLoader11()
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MaxKernel, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, KextEntry.c_str()); // do NOT delete kextArray, or make a copy.
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents/MacOS/%s", KextEntry.subString(0, KextEntry.indexOf(".")).c_str()).c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, S8Printf("%ls\\%ls", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str()).c_str()); // do NOT delete kextArray, or make a copy.
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str()).c_str());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageDataSize = 0;
@@ -1360,7 +1404,8 @@ VOID LOADER_ENTRY::StartLoader11()
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Comment, kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = 0;
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Data.vdata(), kextPatch.Data.size());
+
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Data.data(), kextPatch.Data.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, "kernel");
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.Count;
     OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
@@ -1376,13 +1421,16 @@ VOID LOADER_ENTRY::StartLoader11()
     DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
   }
 
-  if (OcOSInfoInstallProtocol (false) == NULL) {
-    DEBUG ((DEBUG_ERROR, "OC: Failed to install os info protocol\n"));
-  }
-
+//  if (OcOSInfoInstallProtocol (false) == NULL) {
+//    DEBUG ((DEBUG_ERROR, "OC: Failed to install os info protocol\n"));
+//  }
+//  if (OcAppleRtcRamInstallProtocol (false) == NULL) {
+//    DEBUG ((DEBUG_ERROR, "OC: Failed to install rtc ram protocol\n"));
+//  }
 
   EFI_HANDLE EntryHandle = NULL;
-  Status = InternalEfiLoadImage (
+  // point to InternalEfiLoadImage from OC
+  Status = gBS->LoadImage (
     FALSE,
     gImageHandle,
     DevicePath,
@@ -1405,8 +1453,8 @@ VOID LOADER_ENTRY::StartLoader11()
   LoadedImage->LoadOptions = (void*)LoadOptionsAsXStringW.wc_str();
   LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
 
-
-  Status = OcStartImage (EntryHandle, 0, NULL);
+  // point to OcStartImage from OC
+  Status = gBS->StartImage (EntryHandle, 0, NULL);
   if ( EFI_ERROR(Status) ) return; // TODO message ?
 
 }

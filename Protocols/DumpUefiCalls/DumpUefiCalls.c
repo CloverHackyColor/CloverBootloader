@@ -139,7 +139,6 @@ DumpUefiCallsEntrypoint (
 )
 {
 
-#ifdef JIEF_DEBUG
   {
     EFI_LOADED_IMAGE* LoadedImage;
     EFI_STATUS Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
@@ -148,16 +147,14 @@ DumpUefiCallsEntrypoint (
       CHAR8 buf[50];
       AsciiSPrint(buf, sizeof(buf)-1, "DumpEfiCalls : Image base = 0x%X\n", (UINTN)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
       SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
-      AsciiSPrint(buf, sizeof(buf)-1, "LoadedImage.DeviceHandle = 0x%X\n", (UINTN)LoadedImage->DeviceHandle); // do not change, it's used by grep to feed the debugger
+      AsciiSPrint(buf, sizeof(buf)-1, "2LoadedImage.DeviceHandle = 0x%X\n", (UINTN)LoadedImage->DeviceHandle);
+      SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
+    }else{
+      CHAR8 buf[50];
+      AsciiSPrint(buf, sizeof(buf)-1, "DumpEfiCalls : HandleProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
       SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
     }
-//    if ( !EFI_ERROR(Status) ) DBG("DumpEfiCalls : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
-
-    gBS->Stall(3500000); // to give time to gdb to connect
-//  gBS->Stall(0500000); // to give time to gdb to connect
-//  PauseForKey(L"press\n");
   }
-#endif
 
 	//
 	// Override StartImage

@@ -465,8 +465,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
         EFI_STATUS AddKext(IN EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType);
         void      LoadPlugInKexts(IN EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
 //        void      AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType);
-        void      AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XString8Array* kextArray);
-        void      AddKextsInArray(XString8Array* kextArray);
+        void      AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray);
+        void      AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray);
         void      KextPatcherRegisterKexts(void *FSInject, void *ForceLoadKexts);
         void      KextPatcherStart();
         void      PatchPrelinkedKexts();
