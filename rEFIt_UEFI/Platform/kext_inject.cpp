@@ -346,7 +346,7 @@ VOID LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8
   MsgLog("AddKextsInArray from %s\n", SrcDir.c_str());
   for ( size_t idx = 0 ; idx < InjectKextList.size() ; idx ++ ) {
     SIDELOAD_KEXT& CurrentKext = InjectKextList[idx];
-    DBG("  current kext name=%ls path=%ls, match against=%s\n", CurrentKext.FileName.wc_str(), CurrentKext.KextDirNameUnderOEMPath.wc_str(), Path.c_str());
+//    DBG("  current kext name=%ls path=%ls, match against=%s\n", CurrentKext.FileName.wc_str(), CurrentKext.KextDirNameUnderOEMPath.wc_str(), Path.c_str());
     if ( CurrentKext.KextDirNameUnderOEMPath == Path ) {
       FileName = SWPrintf("%s\\%ls", SrcDir.c_str(), CurrentKext.FileName.wc_str());
       if (!(CurrentKext.MenuItem.BValue)) {

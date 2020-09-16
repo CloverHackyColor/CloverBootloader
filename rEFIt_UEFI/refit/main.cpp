@@ -1065,6 +1065,19 @@ InternalCalculateARTFrequencyIntel (
   IN  BOOLEAN  Recalculate
   );
 
+EFI_STATUS
+ClOcReadConfigurationFile(
+  IN  OC_STORAGE_CONTEXT *Storage,
+  IN  CONST CHAR16* configPath,
+  OUT OC_GLOBAL_CONFIG   *Config
+ );
+
+VOID
+OcMain (
+  IN OC_STORAGE_CONTEXT        *Storage,
+  IN EFI_DEVICE_PATH_PROTOCOL  *LoadPath OPTIONAL
+  );
+
 } // extern "C"
 
 #define OC_STRING_ASSIGN_N(ocString, value, len) do { \
@@ -1103,12 +1116,74 @@ size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kext
   return pos;
 }
 
-extern "C" {
-VOID
-OcMain (
-  IN OC_STORAGE_CONTEXT        *Storage,
-  IN EFI_DEVICE_PATH_PROTOCOL  *LoadPath OPTIONAL
-  );
+void debugStartImageWithOC()
+{
+MsgLog("debugStartImageWithOC\n");
+  UINT64 CPUFrequencyFromART;
+  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
+
+  EFI_LOADED_IMAGE* OcLoadedImage;
+  EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
+
+  Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
+  if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
+
+  mOpenCoreConfiguration.Misc.Debug.Target = 0;
+
+  OcMain(&mOpenCoreStorage, NULL);
+
+  XStringW devicePathToLookFor;
+//  devicePathToLookFor.takeValueFrom("PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0x0,0x0)/HD(4,GPT,CA224585-830E-4274-5826-1ACB6DA08A4E,0x299F000,0x4AE6310)/VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,1ABE434C8D0357398516CFDF0A9DD7EF)"); // Jief High Sierra DevicePath
+  devicePathToLookFor.takeValueFrom("PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0x0,0x0)/HD(2,GPT,D8C7DA82-1E4C-4579-BA7C-6737A5D43464,0x64028,0x1BF08E8)"); // Jief Big Sur Install device path
+  UINTN                   HandleCount = 0;
+  EFI_HANDLE              *Handles = NULL;
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &HandleCount, &Handles);
+  UINTN HandleIndex = 0;
+  for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+    EFI_DEVICE_PATH_PROTOCOL* DevicePath = DevicePathFromHandle(Handles[HandleIndex]);
+    CHAR16* UnicodeDevicePath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
+MsgLog("debugStartImageWithOC : path %ls\n", UnicodeDevicePath);
+    if ( StrCmp(devicePathToLookFor.wc_str(), UnicodeDevicePath) == 0 ) break;
+  }
+  if ( HandleIndex < HandleCount )
+  {
+    EFI_DEVICE_PATH_PROTOCOL* jfkImagePath = FileDevicePath(Handles[HandleIndex], L"\\System\\Library\\CoreServices\\boot.efi");
+    CHAR16* UnicodeDevicePath = ConvertDevicePathToText (jfkImagePath, FALSE, FALSE); (void)UnicodeDevicePath;
+
+    EFI_HANDLE EntryHandle = NULL;
+
+    // point to InternalEfiLoadImage from OC
+    Status = gBS->LoadImage (
+      FALSE,
+      gImageHandle,
+      jfkImagePath,
+      NULL,
+      0,
+      &EntryHandle
+      );
+    if ( EFI_ERROR(Status) ) return; // TODO message ?
+
+    EFI_LOADED_IMAGE *LoadedImage = NULL;
+    EFI_STATUS OptionalStatus = gBS->HandleProtocol (
+        EntryHandle,
+        &gEfiLoadedImageProtocolGuid,
+        (VOID **) &LoadedImage
+        );
+    if ( EFI_ERROR(OptionalStatus) ) return; // TODO message ?
+
+  //  XStringW LoadOptionsAsXStringW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS8).c_str());
+    XStringW LoadOptionsAsXStringW = SWPrintf("boot.efi -v -no_compat_check slide=0 kext-dev-mode=1 keepsyms=1 -wegdbg igfxgl=1 bpr_probedelay=200 bpr_initialdelay=400 bpr_postresetdelay=400 ");
+    LoadedImage->LoadOptions = (void*)LoadOptionsAsXStringW.wc_str();
+    LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
+
+    // point to OcStartImage from OC
+    Status = gBS->StartImage (EntryHandle, 0, NULL);
+    if ( EFI_ERROR(Status) ) return; // TODO message ?
+  }else{
+    MsgLog("debugStartImageWithOC : not found\n");
+  }
 }
 
 VOID LOADER_ENTRY::StartLoader11()
@@ -1119,6 +1194,7 @@ VOID LOADER_ENTRY::StartLoader11()
 
   DbgHeader("StartLoader11");
 
+//debugStartImageWithOC(); // ok
 
   if (Settings.notEmpty()) {
     DBG("  Settings: %ls\n", Settings.wc_str());
@@ -1188,18 +1264,18 @@ VOID LOADER_ENTRY::StartLoader11()
 
 //  // first patchACPI and find PCIROOT and RTC
 //  // but before ACPI patch we need smbios patch
-//  CheckEmptyFB();
-//  PatchSmbios();
-////    DBG("PatchACPI\n");
-//  PatchACPI(Volume, OSVersion);
-
-  // If KPDebug is true boot in verbose mode to see the debug messages
-  if (KernelAndKextPatches.KPDebug) {
-    LoadOptions.AddID("-v"_XS8);
-  }
-
+  CheckEmptyFB();
+  PatchSmbios();
+//    DBG("PatchACPI\n");
+  PatchACPI(Volume, OSVersion);
+//
+//  // If KPDebug is true boot in verbose mode to see the debug messages
+//  if (KernelAndKextPatches.KPDebug) {
+//    LoadOptions.AddID("-v"_XS8);
+//  }
+//
   DbgHeader("RestSetup macOS");
-
+//
 ////    DBG("SetDevices\n");
 //  SetDevices(this);
 ////    DBG("SetFSInjection\n");
@@ -1210,7 +1286,7 @@ VOID LOADER_ENTRY::StartLoader11()
 ////    DBG("SetVariablesForOSX\n");
 ////  EventsInitialize(this);
 ////    DBG("FinalizeSmbios\n");
-//  FinalizeSmbios();
+  FinalizeSmbios();
 //
 //  SetCPUProperties();
 //
@@ -1218,14 +1294,14 @@ VOID LOADER_ENTRY::StartLoader11()
 //    DoHibernateWake = PrepareHibernation(Volume);
 //  }
 //  SetupDataForOSX(DoHibernateWake);
-
-
-  if (  gDriversFlags.AptioFixLoaded &&
-        !DoHibernateWake &&
-        !LoadOptions.containsStartWithIC("slide=")  ) {
-    // Add slide=0 argument for ML+ if not present
-    LoadOptions.AddID("slide=0"_XS8);
-  }
+//
+//
+//  if (  gDriversFlags.AptioFixLoaded &&
+//        !DoHibernateWake &&
+//        !LoadOptions.containsStartWithIC("slide=")  ) {
+//    // Add slide=0 argument for ML+ if not present
+//    LoadOptions.AddID("slide=0"_XS8);
+//  }
 
   if (gSettings.LastBootedVolume) {
     if ( APFSTargetUUID.notEmpty() ) {
@@ -1274,31 +1350,8 @@ VOID LOADER_ENTRY::StartLoader11()
 //  }
 //
 
-  UINT64 CPUFrequencyFromART;
-  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
 
-  EFI_LOADED_IMAGE* OcLoadedImage;
-  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
-
-  OcMain(&mOpenCoreStorage, NULL);
-
-  // Uncomment OcMiscBoot to run the OC bootpicker
-//  OcMiscBoot (
-//    &mOpenCoreStorage,
-//    &mOpenCoreConfiguration,
-//    NULL,
-//    OcStartImage_2,
-//    mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
-//    mLoadHandle
-//    );
-
-#ifdef JIEF_DEBUG
-  // Save mOpenCoreConfiguration built from OC config.plist for debug
-  OC_GLOBAL_CONFIG mOpenCoreConfigurationBak = mOpenCoreConfiguration;
-#endif
-
+// if OC is NOT initialized with OcMain, we need the following
 //  OcConfigureLogProtocol (
 //    9,
 //    0,
@@ -1310,7 +1363,47 @@ VOID LOADER_ENTRY::StartLoader11()
 //  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
 //  OcAppleDebugLogInstallProtocol(0);
 
+
+//debugStartImageWithOC(); // ok BS_I
+
+DBG("Beginning OC\n");
+  UINT64 CPUFrequencyFromART;
+  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
+
+  EFI_LOADED_IMAGE* OcLoadedImage;
+  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
+
+
+#ifdef JIEF_DEBUG
+//  Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
+//  if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
+
+/*  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration)); */
+//  memset(&mOpenCoreConfiguration.Acpi, 0, sizeof(mOpenCoreConfiguration.Acpi));
+//  memset(&mOpenCoreConfiguration.Booter, 0, sizeof(mOpenCoreConfiguration.Booter));
+//  memset(&mOpenCoreConfiguration.DeviceProperties, 0, sizeof(mOpenCoreConfiguration.DeviceProperties));
+//  memset(&mOpenCoreConfiguration.Kernel, 0, sizeof(mOpenCoreConfiguration.Kernel));
+//  memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
+//  memset(&mOpenCoreConfiguration.Nvram, 0, sizeof(mOpenCoreConfiguration.Nvram));
+//  memset(&mOpenCoreConfiguration.PlatformInfo, 0, sizeof(mOpenCoreConfiguration.PlatformInfo));
+//  memset(&mOpenCoreConfiguration.Uefi, 0, sizeof(mOpenCoreConfiguration.Uefi));
+#endif
+
   memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+
+  if ( GlobalConfig.DebugLog ) {
+    mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
+    mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
+    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true;
+    mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 2151678018;
+    mOpenCoreConfiguration.Misc.Debug.Target = 65;
+  }
+
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
+
 
   mOpenCoreConfiguration.Booter.MmioWhitelist.Count = (UINT32)gSettings.mmioWhiteListArray.size();
   mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount = mOpenCoreConfiguration.Booter.MmioWhitelist.Count;
@@ -1329,12 +1422,14 @@ VOID LOADER_ENTRY::StartLoader11()
     mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Enabled = entry.enabled;
   }
 
+  static_assert(sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks));
   memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
 
-
-//  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
-//  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-//  OcImageLoaderInit ();
+//
+//// if OC is NOT initialized with OcMain, we need the following
+////  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
+////  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+////  OcImageLoaderInit ();
 
   XObjArray<SIDELOAD_KEXT> kextArray;
   if (!DoHibernateWake) {
@@ -1343,8 +1438,8 @@ VOID LOADER_ENTRY::StartLoader11()
 
 
 
-  OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, "Auto");
-  OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Default");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "X86_64");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.KernelAndKextPatches.OcKernelCache.c_str());
   mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.KernelAndKextPatches.FuzzyMatch;
   memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.KernelAndKextPatches.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
 
@@ -1421,12 +1516,32 @@ VOID LOADER_ENTRY::StartLoader11()
     DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
   }
 
+
+
+  OcMain(&mOpenCoreStorage, NULL);
+
+
+// if OC is NOT initialized with OcMain, we need the following
 //  if (OcOSInfoInstallProtocol (false) == NULL) {
 //    DEBUG ((DEBUG_ERROR, "OC: Failed to install os info protocol\n"));
 //  }
 //  if (OcAppleRtcRamInstallProtocol (false) == NULL) {
 //    DEBUG ((DEBUG_ERROR, "OC: Failed to install rtc ram protocol\n"));
 //  }
+
+////  Uncomment OcMiscBoot to run the OC bootpicker
+//  OcMiscBoot (
+//    &mOpenCoreStorage,
+//    &mOpenCoreConfiguration,
+//    NULL,
+//    OcStartImage_2,
+//    mOpenCoreConfiguration.Uefi.Quirks.RequestBootVarRouting,
+//    mLoadHandle
+//    );
+
+  CHAR16* UnicodeDevicePath = NULL; (void)UnicodeDevicePath;
+    UnicodeDevicePath = ConvertDevicePathToText (DevicePath, FALSE, FALSE);
+  MsgLog("DevicePAth = %ls\n", UnicodeDevicePath);
 
   EFI_HANDLE EntryHandle = NULL;
   // point to InternalEfiLoadImage from OC
@@ -2285,7 +2400,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
   
   ConsoleInHandle = SystemTable->ConsoleInHandle;
-  
+
 #ifdef DEBUG_ON_SERIAL_PORT
   SerialPortInitialize();
 #endif
@@ -2361,10 +2476,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
 
 
+
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
-
 
   //dumping SETTING structure
   // if you change something in Platform.h, please uncomment and test that all offsets
@@ -2409,6 +2524,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     SimpleTextEx = NULL;
   }
   DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
+
+//debugStartImageWithOC(); // ok BS_I
 
   PrepatchSmbios();
 
@@ -2468,6 +2585,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeSecureBoot();
 #endif // ENABLE_SECURE_BOOT
 
+//debugStartImageWithOC(); // ok
 
   {
 //    UINT32                    machineSignature    = 0;
@@ -2561,6 +2679,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //DBG("LoadDrivers() start\n");
   LoadDrivers();
   //DBG("LoadDrivers() end\n");
+
+//debugStartImageWithOC(); // ok
 
 /*  if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded) {
