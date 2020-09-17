@@ -1422,7 +1422,7 @@ DBG("Beginning OC\n");
     mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Enabled = entry.enabled;
   }
 
-  static_assert(sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks));
+  static_assert(sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks), "sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks)");
   memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
 
 //
