@@ -865,9 +865,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
   {
     const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("OcQuirks");
+if ( !OcQuirksDict ) panic("Cannot find OcQuirks under KernelAndKextPatches (OC kernel quirks)");
     if ( OcQuirksDict )
     {
       Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
+if ( !Prop ) panic("Cannot find AppleCpuPmCfgLock in OcQuirks under KernelAndKextPatches (OC kernel quirks)");
       if (Prop != NULL || gBootChanged) {
         Patches->OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
       }
@@ -2904,10 +2906,12 @@ GetEarlyUserSettings (
       }
     }
 
-    const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("Quirks");
+    const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
+if ( !OcQuirksDict ) panic("Cannot find OcQuirks under root (OC booter quirks)");
     if (OcQuirksDict != NULL) {
       const TagStruct* Prop;
       Prop               = OcQuirksDict->propertyForKey("AvoidRuntimeDefrag");
+if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
       gSettings.ocBooterQuirks.AvoidRuntimeDefrag = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
       Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");

@@ -1276,16 +1276,16 @@ VOID LOADER_ENTRY::StartLoader11()
 //
   DbgHeader("RestSetup macOS");
 //
-////    DBG("SetDevices\n");
-//  SetDevices(this);
-////    DBG("SetFSInjection\n");
-//  //SetFSInjection();
-//  //PauseForKey(L"SetFSInjection");
-////    DBG("SetVariablesForOSX\n");
-//  SetVariablesForOSX(this);
-////    DBG("SetVariablesForOSX\n");
-////  EventsInitialize(this);
-////    DBG("FinalizeSmbios\n");
+//    DBG("SetDevices\n");
+  SetDevices(this);
+//    DBG("SetFSInjection\n");
+  //SetFSInjection();
+  //PauseForKey(L"SetFSInjection");
+//    DBG("SetVariablesForOSX\n");
+  SetVariablesForOSX(this);
+//    DBG("SetVariablesForOSX\n");
+//  EventsInitialize(this);
+//    DBG("FinalizeSmbios\n");
   FinalizeSmbios();
 //
 //  SetCPUProperties();
@@ -1364,7 +1364,7 @@ VOID LOADER_ENTRY::StartLoader11()
 //  OcAppleDebugLogInstallProtocol(0);
 
 
-//debugStartImageWithOC(); // ok BS_I
+//debugStartImageWithOC();
 
 DBG("Beginning OC\n");
   UINT64 CPUFrequencyFromART;
