@@ -2264,7 +2264,21 @@ GetEarlyUserSettings (
       }
 
       Prop = BootDict->propertyForKey("Debug");
-      GlobalConfig.DebugLog       = IsPropertyNotNullAndTrue(Prop);
+      if ( Prop ) {
+        if ( Prop->isString() ) {
+          if ( Prop->getString()->stringValue().equalIC("true") ) GlobalConfig.DebugLog = true;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) GlobalConfig.DebugLog = false;
+          else if ( Prop->getString()->stringValue().equalIC("scratch") ) {
+            GlobalConfig.DebugLog = true;
+            GlobalConfig.ScratchDebugLogAtStart = true;
+          }
+          else MsgLog("MALFORMED config.plist : property Boot/Debug must be true, false, or scratch\n");
+        }else if ( Prop->isBool() ) {
+          GlobalConfig.DebugLog = Prop->getBool()->boolValue();
+        }else{
+          MsgLog("MALFORMED config.plist : property Boot/Debug must be a string (true, false, or scratch) or <true/> or <false/>\n");
+        }
+      }
 
       Prop = BootDict->propertyForKey("Fast");
       GlobalConfig.FastBoot       = IsPropertyNotNullAndTrue(Prop);
