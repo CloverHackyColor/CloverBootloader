@@ -353,7 +353,8 @@
   BaseDebugPrintErrorLevelLib
   BaseSerialPortLib
   OpenCoreLib
-  OcDebugLogLib
+  #OcDebugLogLib
+  OcDebugLogLibOc2Clover
 
 [Guids]
   gEfiAcpiTableGuid

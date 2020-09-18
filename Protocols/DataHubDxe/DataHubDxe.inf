@@ -67,7 +67,7 @@
   BaseLib
   UefiLib
   UefiDriverEntryPoint
-  #OcDataHubLib
+  OcDataHubLib
 
 
 [Protocols]

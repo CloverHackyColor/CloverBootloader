@@ -852,7 +852,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = DictPointer->propertyForKey("OcKernelCache");
   if (Prop != NULL || gBootChanged) {
     if ( Prop->isString() ) {
-      Patches->OcKernelCache = Prop->getString()->stringValue();
+      if ( Prop->getString()->stringValue().notEmpty() ) {
+        Patches->OcKernelCache = Prop->getString()->stringValue();
+      }else{
+        Patches->OcKernelCache = "Auto"_XS8;
+      }
     }else{
       MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
       Patches->OcKernelCache = "Auto"_XS8;
@@ -861,9 +865,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
   {
     const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("OcQuirks");
+if ( !OcQuirksDict ) panic("Cannot find OcQuirks under KernelAndKextPatches (OC kernel quirks)");
     if ( OcQuirksDict )
     {
       Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
+if ( !Prop ) panic("Cannot find AppleCpuPmCfgLock in OcQuirks under KernelAndKextPatches (OC kernel quirks)");
       if (Prop != NULL || gBootChanged) {
         Patches->OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
       }
@@ -2258,7 +2264,21 @@ GetEarlyUserSettings (
       }
 
       Prop = BootDict->propertyForKey("Debug");
-      GlobalConfig.DebugLog       = IsPropertyNotNullAndTrue(Prop);
+      if ( Prop ) {
+        if ( Prop->isString() ) {
+          if ( Prop->getString()->stringValue().equalIC("true") ) GlobalConfig.DebugLog = true;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) GlobalConfig.DebugLog = false;
+          else if ( Prop->getString()->stringValue().equalIC("scratch") ) {
+            GlobalConfig.DebugLog = true;
+            GlobalConfig.ScratchDebugLogAtStart = true;
+          }
+          else MsgLog("MALFORMED config.plist : property Boot/Debug must be true, false, or scratch\n");
+        }else if ( Prop->isBool() ) {
+          GlobalConfig.DebugLog = Prop->getBool()->boolValue();
+        }else{
+          MsgLog("MALFORMED config.plist : property Boot/Debug must be a string (true, false, or scratch) or <true/> or <false/>\n");
+        }
+      }
 
       Prop = BootDict->propertyForKey("Fast");
       GlobalConfig.FastBoot       = IsPropertyNotNullAndTrue(Prop);
@@ -2900,10 +2920,12 @@ GetEarlyUserSettings (
       }
     }
 
-    const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("Quirks");
+    const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
+if ( !OcQuirksDict ) panic("Cannot find OcQuirks under root (OC booter quirks)");
     if (OcQuirksDict != NULL) {
       const TagStruct* Prop;
       Prop               = OcQuirksDict->propertyForKey("AvoidRuntimeDefrag");
+if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
       gSettings.ocBooterQuirks.AvoidRuntimeDefrag = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
       Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");

@@ -10,11 +10,8 @@ extern "C" {
 #endif
 
 
+#include <Uefi/UefiBaseType.h>
 #include <Protocol/SimpleFileSystem.h> // for EFI_FILE_HANDLE
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 
 //#define SAFE_LOG_SIZE  80
@@ -59,5 +56,19 @@ PrintBytes (
   IN  VOID *Bytes,
   IN  UINTN Number
   );
+
+
+/*
+ * OpenCore
+ */
+// This use the EDK format
+VOID EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...);
+
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 #endif
