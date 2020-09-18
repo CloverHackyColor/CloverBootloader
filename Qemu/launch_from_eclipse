@@ -39,6 +39,11 @@ then
 	fi
 	> ./serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
+	if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
+	then
+		unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip
+		rm -rf "$SCRIPT_DIR"/__MACOSX
+	fi
 	hdiutil attach ./disk_image_gpt.img || exit 1
 
 	shopt -s nocasematch
@@ -67,6 +72,7 @@ then
 	  -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 	  -device ahci,id=ahi \
 	  -drive format=raw,id=hda,file=./disk_image_gpt.img \
+	  -cdrom "/JiefLand/3.Infos/3.Infos-Mac/MacOs/11.0.20A5343j Big Sur/BigSurInstall.iso" \
 	  -usb \
 	  -device usb-mouse,bus=usb-bus.0,port=2 \
 	  -device usb-kbd,bus=usb-bus.0,port=1 \

@@ -1007,7 +1007,7 @@ extern "C" {
 #include <Library/OcVirtualFsLib.h>
 #include <Library/OcConfigurationLib.h>
 #include <Library/OcDevicePathLib.h>
-#include <Library/OcDebugLogLib.h>
+
 extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
 extern OC_STORAGE_CONTEXT mOpenCoreStorage;
 extern OC_CPU_INFO mOpenCoreCpuInfo;
@@ -1396,9 +1396,9 @@ DBG("Beginning OC\n");
   if ( GlobalConfig.DebugLog ) {
     mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
     mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
-    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true;
-    mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 2151678018;
-    mOpenCoreConfiguration.Misc.Debug.Target = 65;
+//    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true; // already done by Clover ?
+    mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80400042;
+    mOpenCoreConfiguration.Misc.Debug.Target = 0x41;
   }
 
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
@@ -2423,26 +2423,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
-
-//  UINT64 CPUFrequencyFromART;
-//  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
-//
-//  EFI_LOADED_IMAGE* OcLoadedImage;
-//  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
-//  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-//  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
-//
-//  OcConfigureLogProtocol (
-//    9,
-//    0,
-//    2151678018,
-//    2147483648,
-//    OPEN_CORE_LOG_PREFIX_PATH,
-//    mOpenCoreStorage.FileSystem
-//    );
-//  DEBUG ((DEBUG_INFO, "OC: Log initialized...\n"));
-//  OcAppleDebugLogInstallProtocol(0);
-
 
 
 #ifdef JIEF_DEBUG

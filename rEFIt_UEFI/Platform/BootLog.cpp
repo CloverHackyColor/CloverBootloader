@@ -57,7 +57,7 @@ PrintBytes(IN VOID *Bytes, IN UINTN Number)
 	}
 }
 
-
+static EFI_FILE_PROTOCOL* gLogFile = NULL;
 
 EFI_FILE_PROTOCOL* GetDebugLogFile()
 {
@@ -66,6 +66,8 @@ EFI_FILE_PROTOCOL* GetDebugLogFile()
   EFI_FILE_PROTOCOL   *RootDir;
   EFI_FILE_PROTOCOL   *LogFile;
   
+  if ( gLogFile ) return gLogFile;
+
   // get RootDir from device we are loaded from
   Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
   if (EFI_ERROR(Status)) {
@@ -108,12 +110,14 @@ EFI_FILE_PROTOCOL* GetDebugLogFile()
     LogFile = NULL;
   }
   
+  gLogFile = LogFile;
   return LogFile;
 }
 
 
 VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 {
+  EFI_STATUS              Status;
   STATIC BOOLEAN          FirstTimeSave = TRUE;
 //  STATIC UINTN            Position = 0;
   CHAR8                   *MemLogBuffer;
@@ -134,7 +138,7 @@ VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
     // Advance to the EOF so we append
     EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
     if (Info) {
-      LogFile->SetPosition(LogFile, Info->FileSize);
+      Status = LogFile->SetPosition(LogFile, Info->FileSize);
       // If we haven't had root before this write out whole log
       if (FirstTimeSave) {
         Text = MemLogBuffer;
@@ -142,9 +146,11 @@ VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
         FirstTimeSave = FALSE;
       }
       // Write out this message
-      LogFile->Write(LogFile, &TextLen, Text);
+      Status = LogFile->Write(LogFile, &TextLen, Text);
+      Status = LogFile->Flush(LogFile);
+      (void)Status;
     }
-    LogFile->Close(LogFile);
+//    LogFile->Close(LogFile);
   }
 }
 
@@ -228,3 +234,25 @@ EFI_STATUS SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *F
   return egSaveFile(BaseDir, FileName, (UINT8*)MemLogBuffer, MemLogLen);
 }
 
+
+
+
+/*
+ * Redirection of OpenCore log to Clover Log.
+ */
+
+/*
+ * This function is called from OpenCore when there is a DEBUG ((expression))
+ * Mapping from DEBUG to DebugLogForOC is made in OpenCoreFromClover.h
+ */
+VOID EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...)
+{
+   VA_LIST Marker;
+
+   if (FormatString == NULL ) return;
+
+   // Print message to log buffer
+   VA_START(Marker, FormatString);
+   MemLogVA(TRUE, 1, FormatString, Marker);
+   VA_END(Marker);
+}

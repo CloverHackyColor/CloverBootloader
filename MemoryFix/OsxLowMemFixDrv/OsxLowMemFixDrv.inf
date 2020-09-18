@@ -58,6 +58,8 @@
   gEfiDiskIoProtocolGuid
   gEfiDiskIo2ProtocolGuid
   gEfiGraphicsOutputProtocolGuid
+  gEfiDataHubProtocolGuid                       ## PRODUCES
+  gEfiProcessorSubClassGuid
 
 [Depex]
 

@@ -148,12 +148,14 @@
 !ifdef DEBUG_ON_SERIAL_PORT
   BaseSerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
   SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+  DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 !else
   BaseSerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
+  DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
 !endif
   BaseDebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
-  DebugLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
+  #DebugLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
 
@@ -185,7 +187,6 @@
   OcConsoleLib|OpenCorePkg/Library/OcConsoleLib/OcConsoleLib.inf
   OcCpuLib|OpenCorePkg/Library/OcCpuLib/OcCpuLib.inf
   OcCryptoLib|OpenCorePkg/Library/OcCryptoLib/OcCryptoLib.inf
-  OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
   OcDevicePathLib|OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib.inf
   OcFileLib|OpenCorePkg/Library/OcFileLib/OcFileLib.inf
   OcMemoryLib|OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf
@@ -199,7 +200,6 @@
   OcTemplateLib|OpenCorePkg/Library/OcTemplateLib/OcTemplateLib.inf
   OcXmlLib|OpenCorePkg/Library/OcXmlLib/OcXmlLib.inf
   OcDeviceTreeLib|OpenCorePkg/Library/OcDeviceTreeLib/OcDeviceTreeLib.inf
-  OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
   OcDataHubLib|OpenCorePkg/Library/OcDataHubLib/OcDataHubLib.inf
   OcAppleImg4Lib|OpenCorePkg/Library/OcAppleImg4Lib/OcAppleImg4Lib.inf
   OcAppleKernelLib|OpenCorePkg/Library/OcAppleKernelLib/OcAppleKernelLib.inf
@@ -210,7 +210,7 @@
   OcAppleSecureBootLib|OpenCorePkg/Library/OcAppleSecureBootLib/OcAppleSecureBootLib.inf
   OcAppleImageVerificationLib|OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf
   OcDriverConnectionLib|OpenCorePkg/Library/OcDriverConnectionLib/OcDriverConnectionLib.inf
-  OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
+  #OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
   OcAcpiLib|OpenCorePkg/Library/OcAcpiLib/OcAcpiLib.inf
   OcAppleEventLib|OpenCorePkg/Library/OcAppleEventLib/OcAppleEventLib.inf
   #OcAppleImageConversionLib|OpenCorePkg/Library/OcAppleImageConversionLib/OcAppleImageConversionLib.inf
@@ -228,6 +228,7 @@
   #OcPngLib|OpenCorePkg/Library/OcPngLib/OcPngLib.inf
   
   OpenCoreLib|OpenCorePkg/Platform/OpenCore/OpenCoreLib.inf
+  OcDebugLogLibOc2Clover|OpenCorePkg/Library/OcDebugLogLibOc2Clover/OcDebugLogLibOc2Clover.inf
 
   #MachoLib|Library/MachoLib/MachoLib.inf
 
@@ -282,6 +283,216 @@
 #
 ###################################################################################################
 [Components]
+
+  OpenCorePkg/Platform/OpenCore/OpenCoreLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcGuardLib/OcGuardLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAfterBootCompatLib/OcAfterBootCompatLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleBootPolicyLib/OcAppleBootPolicyLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleChunklistLib/OcAppleChunklistLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleDiskImageLib/OcAppleDiskImageLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleKeyMapLib/OcAppleKeyMapLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleKeysLib/OcAppleKeysLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleRamDiskLib/OcAppleRamDiskLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcBootManagementLib/OcBootManagementLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcCompressionLib/OcCompressionLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcConsoleLib/OcConsoleLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcCpuLib/OcCpuLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcCryptoLib/OcCryptoLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcFileLib/OcFileLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcMiscLib/OcMiscLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcOSInfoLib/OcOSInfoLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcRngLib/OcRngLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcRtcLib/OcRtcLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcSerializeLib/OcSerializeLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcStringLib/OcStringLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcStorageLib/OcStorageLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcTemplateLib/OcTemplateLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcXmlLib/OcXmlLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcDeviceTreeLib/OcDeviceTreeLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcDataHubLib/OcDataHubLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleImg4Lib/OcAppleImg4Lib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleKernelLib/OcAppleKernelLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcMachoLib/OcMachoLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcVirtualFsLib/OcVirtualFsLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcMacInfoLib/OcMacInfoLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcApfsLib/OcApfsLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleSecureBootLib/OcAppleSecureBootLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcDriverConnectionLib/OcDriverConnectionLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  #OcDebugLogLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
+  OpenCorePkg/Library/OcAcpiLib/OcAcpiLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleEventLib/OcAppleEventLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  #OcAppleImageConversionLib|OpenCorePkg/Library/OcAppleImageConversionLib/OcAppleImageConversionLib.inf
+  OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcInputLib/OcInputLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcAppleUserInterfaceThemeLib/OcAppleUserInterfaceThemeLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcConfigurationLib/OcConfigurationLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcDevicePropertyLib/OcDevicePropertyLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcFirmwareVolumeLib/OcFirmwareVolumeLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcHashServicesLib/OcHashServicesLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcSmbiosLib/OcSmbiosLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcSmcLib/OcSmcLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcUnicodeCollationEngLib/OcUnicodeCollationEngGenericLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  OpenCorePkg/Library/OcPeCoffLib/OcPeCoffLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+  #OcPngLib|OpenCorePkg/Library/OcPngLib/OcPngLib.inf
+  OpenCorePkg/Platform/OpenCore/OpenCoreLib.inf {
+    <BuildOptions>
+      *_*_*_CC_FLAGS   = -include OpenCoreFromClover.h
+  }
+
+
 	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
@@ -552,8 +763,7 @@
       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
     <LibraryClasses>
-      DebugLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
-      #DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
       SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
   }
 
@@ -641,8 +851,7 @@
 		gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 	<LibraryClasses>
 		SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-    DebugLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
-		#DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+		DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
 	  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
 	}
 !else
@@ -671,8 +880,7 @@
       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
     <LibraryClasses>
       SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-      DebugLib|OpenCorePkg/Library/OcDebugLogLib/OcDebugLogLib.inf
-      #DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
       DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   }
  !else
@@ -748,7 +956,7 @@ DEFINE EXIT_USBKB_FLAG = -DEXIT_USBKB
 !endif
 
 
-DEFINE BUILD_OPTIONS=-DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(NOUDMA_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(ANDX86_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG) $(DEBUG_ON_SERIAL_PORT_FLAG) $(EXIT_USBKB_FLAG)
+DEFINE BUILD_OPTIONS=-DMDEPKG_NDEBUG -DCLOVER_BUILD $(VBIOS_PATCH_CLOVEREFI_FLAG) $(ONLY_SATA_0_FLAG) $(BLOCKIO_FLAG) $(NOUSB_FLAG) $(NOUDMA_FLAG) $(AMD_FLAG) $(SECURE_BOOT_FLAG) $(ANDX86_FLAG) $(PS2MOUSE_LEGACYBOOT_FLAG) $(DEBUG_ON_SERIAL_PORT_FLAG) $(EXIT_USBKB_FLAG)
 
   #MSFT:*_*_*_CC_FLAGS  = /FAcs /FR$(@R).SBR /wd4701 /wd4703 $(BUILD_OPTIONS)
   MSFT:*_*_*_CC_FLAGS  = /FAcs $(BUILD_OPTIONS) -Dinline=__inline /Zi -D DISABLE_NEW_DEPRECATED_INTERFACES -D OC_TARGET_DEBUG
