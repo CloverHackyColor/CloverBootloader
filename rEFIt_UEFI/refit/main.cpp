@@ -1375,23 +1375,56 @@ DBG("Beginning OC\n");
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
   Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
 
+/*
+ * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
+ * The boot should work.
+ * Next, comment out the next lines one by one. Once the boot failed, we got the section that
+ * holds the setting that makes a difference.
+ */
+#define READ_FROM_OC
+#define USE_OC_SECTION_Acpi
+#define USE_OC_SECTION_Booter
+#define USE_OC_SECTION_DeviceProperties
+#define USE_OC_SECTION_Kernel
+#define USE_OC_SECTION_Misc
+#define USE_OC_SECTION_Nvram
+#define USE_OC_SECTION_PlatformInfo
+#define USE_OC_SECTION_Uefi
 
-#ifdef JIEF_DEBUG
-//  Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
-//  if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
-
-/*  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration)); */
-//  memset(&mOpenCoreConfiguration.Acpi, 0, sizeof(mOpenCoreConfiguration.Acpi));
-//  memset(&mOpenCoreConfiguration.Booter, 0, sizeof(mOpenCoreConfiguration.Booter));
-//  memset(&mOpenCoreConfiguration.DeviceProperties, 0, sizeof(mOpenCoreConfiguration.DeviceProperties));
-//  memset(&mOpenCoreConfiguration.Kernel, 0, sizeof(mOpenCoreConfiguration.Kernel));
-//  memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
-//  memset(&mOpenCoreConfiguration.Nvram, 0, sizeof(mOpenCoreConfiguration.Nvram));
-//  memset(&mOpenCoreConfiguration.PlatformInfo, 0, sizeof(mOpenCoreConfiguration.PlatformInfo));
-//  memset(&mOpenCoreConfiguration.Uefi, 0, sizeof(mOpenCoreConfiguration.Uefi));
-#endif
+#if !defined(READ_FROM_OC)
 
   memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+
+#else
+  Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
+  if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
+
+  #ifndef USE_OC_SECTION_Acpi
+    memset(&mOpenCoreConfiguration.Acpi, 0, sizeof(mOpenCoreConfiguration.Acpi));
+  #endif
+  #ifndef USE_OC_SECTION_Booter
+    memset(&mOpenCoreConfiguration.Booter, 0, sizeof(mOpenCoreConfiguration.Booter));
+  #endif
+  #ifndef USE_OC_SECTION_DeviceProperties
+    memset(&mOpenCoreConfiguration.DeviceProperties, 0, sizeof(mOpenCoreConfiguration.DeviceProperties));
+  #endif
+  #ifndef USE_OC_SECTION_Kernel
+    memset(&mOpenCoreConfiguration.Kernel, 0, sizeof(mOpenCoreConfiguration.Kernel));
+  #endif
+  #ifndef USE_OC_SECTION_Misc
+    memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
+  #endif
+  #ifndef USE_OC_SECTION_Nvram
+    memset(&mOpenCoreConfiguration.Nvram, 0, sizeof(mOpenCoreConfiguration.Nvram));
+  #endif
+  #ifndef USE_OC_SECTION_PlatformInfo
+    memset(&mOpenCoreConfiguration.PlatformInfo, 0, sizeof(mOpenCoreConfiguration.PlatformInfo));
+  #endif
+  #ifndef USE_OC_SECTION_Uefi
+    memset(&mOpenCoreConfiguration.Uefi, 0, sizeof(mOpenCoreConfiguration.Uefi));
+  #endif
+
+#endif
 
   if ( GlobalConfig.DebugLog ) {
     mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
@@ -1404,6 +1437,7 @@ DBG("Beginning OC\n");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
 
+#ifndef USE_OC_SECTION_Booter
 
   mOpenCoreConfiguration.Booter.MmioWhitelist.Count = (UINT32)gSettings.mmioWhiteListArray.size();
   mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount = mOpenCoreConfiguration.Booter.MmioWhitelist.Count;
@@ -1425,11 +1459,15 @@ DBG("Beginning OC\n");
   static_assert(sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks), "sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks)");
   memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
 
-//
-//// if OC is NOT initialized with OcMain, we need the following
-////  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
-////  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-////  OcImageLoaderInit ();
+#endif
+
+
+// if OC is NOT initialized with OcMain, we need the following
+//  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
+//  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+//  OcImageLoaderInit ();
+
+#ifndef USE_OC_SECTION_Kernel
 
   XObjArray<SIDELOAD_KEXT> kextArray;
   if (!DoHibernateWake) {
@@ -1515,7 +1553,7 @@ DBG("Beginning OC\n");
     const XStringW& forceKext = KernelAndKextPatches.ForceKexts[forceKextIdx];
     DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
   }
-
+#endif
 
 
   OcMain(&mOpenCoreStorage, NULL);
