@@ -852,7 +852,11 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   Prop = DictPointer->propertyForKey("OcKernelCache");
   if (Prop != NULL || gBootChanged) {
     if ( Prop->isString() ) {
-      Patches->OcKernelCache = Prop->getString()->stringValue();
+      if ( Prop->getString()->stringValue().notEmpty() ) {
+        Patches->OcKernelCache = Prop->getString()->stringValue();
+      }else{
+        Patches->OcKernelCache = "Auto"_XS8;
+      }
     }else{
       MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
       Patches->OcKernelCache = "Auto"_XS8;
