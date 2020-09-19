@@ -1381,17 +1381,17 @@ DBG("Beginning OC\n");
  * Next, comment out the next lines one by one. Once the boot failed, we got the section that
  * holds the setting that makes a difference.
  */
-#define READ_FROM_OC
-#define USE_OC_SECTION_Acpi
-#define USE_OC_SECTION_Booter
-#define USE_OC_SECTION_DeviceProperties
-#define USE_OC_SECTION_Kernel
-#define USE_OC_SECTION_Misc
-#define USE_OC_SECTION_Nvram
-#define USE_OC_SECTION_PlatformInfo
-#define USE_OC_SECTION_Uefi
+//#define USE_OC_SECTION_Acpi
+//#define USE_OC_SECTION_Booter
+//#define USE_OC_SECTION_DeviceProperties
+//#define USE_OC_SECTION_Kernel
+//#define USE_OC_SECTION_Misc
+//#define USE_OC_SECTION_Nvram
+//#define USE_OC_SECTION_PlatformInfo
+//#define USE_OC_SECTION_Uefi
 
-#if !defined(READ_FROM_OC)
+#if !defined(USE_OC_SECTION_Acpi) && !defined(USE_OC_SECTION_Booter) && !defined(USE_OC_SECTION_DeviceProperties) && !defined(USE_OC_SECTION_Kernel) && !defined(USE_OC_SECTION_Misc) && \
+    !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
   memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
 
