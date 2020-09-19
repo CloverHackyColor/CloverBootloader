@@ -126,7 +126,7 @@ const TagDict* TagArray::dictElementAt(size_t idx, const XString8& currentTag) c
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isDict() ) {
-    MsgLog("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
+    panic("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
   }
   return _arrayContent[idx].getDict();
 }
@@ -135,7 +135,7 @@ const TagArray* TagArray::arrayElementAt(size_t idx, const XString8& currentTag)
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isArray() ) {
-    MsgLog("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
+    panic("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
   }
   return _arrayContent[idx].getArray();
 }
@@ -144,7 +144,7 @@ const TagDict* TagArray::dictElementAt(size_t idx) const
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isDict() ) {
-    MsgLog("MALFORMED PLIST : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", idx, idx, tag->getTypeAsXString8().c_str());
+    panic("MALFORMED PLIST : TagArray::dictElementAt(%zu) -> trying to get a dict element at %zu, but element is %s\n", idx, idx, tag->getTypeAsXString8().c_str());
   }
   return _arrayContent[idx].getDict();
 }
@@ -153,7 +153,7 @@ const TagArray* TagArray::arrayElementAt(size_t idx) const
 {
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isArray() ) {
-    MsgLog("MALFORMED PLIST : TagArray::dictElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", idx, idx, tag->getTypeAsXString8().c_str());
+    panic("MALFORMED PLIST : TagArray::dictElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", idx, idx, tag->getTypeAsXString8().c_str());
   }
   return _arrayContent[idx].getArray();
 }
