@@ -1401,27 +1401,51 @@ DBG("Beginning OC\n");
 
   #ifndef USE_OC_SECTION_Acpi
     memset(&mOpenCoreConfiguration.Acpi, 0, sizeof(mOpenCoreConfiguration.Acpi));
+    DBG("Erase mOpenCoreConfiguration.Acpi\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Acpi\n");
   #endif
   #ifndef USE_OC_SECTION_Booter
     memset(&mOpenCoreConfiguration.Booter, 0, sizeof(mOpenCoreConfiguration.Booter));
+    DBG("Erase mOpenCoreConfiguration.Booter\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Booter\n");
   #endif
   #ifndef USE_OC_SECTION_DeviceProperties
     memset(&mOpenCoreConfiguration.DeviceProperties, 0, sizeof(mOpenCoreConfiguration.DeviceProperties));
+    DBG("Erase mOpenCoreConfiguration.DeviceProperties\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.DeviceProperties\n");
   #endif
   #ifndef USE_OC_SECTION_Kernel
     memset(&mOpenCoreConfiguration.Kernel, 0, sizeof(mOpenCoreConfiguration.Kernel));
+    DBG("Erase mOpenCoreConfiguration.Kernel\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Kernel\n");
   #endif
   #ifndef USE_OC_SECTION_Misc
     memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
+    DBG("Erase mOpenCoreConfiguration.Misc\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Misc\n");
   #endif
   #ifndef USE_OC_SECTION_Nvram
     memset(&mOpenCoreConfiguration.Nvram, 0, sizeof(mOpenCoreConfiguration.Nvram));
+    DBG("Erase mOpenCoreConfiguration.Nvram\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Nvram\n");
   #endif
   #ifndef USE_OC_SECTION_PlatformInfo
     memset(&mOpenCoreConfiguration.PlatformInfo, 0, sizeof(mOpenCoreConfiguration.PlatformInfo));
+    DBG("Erase mOpenCoreConfiguration.PlatformInfo\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.PlatformInfo\n");
   #endif
   #ifndef USE_OC_SECTION_Uefi
     memset(&mOpenCoreConfiguration.Uefi, 0, sizeof(mOpenCoreConfiguration.Uefi));
+    DBG("Erase mOpenCoreConfiguration.Uefi\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Uefi\n");
   #endif
 
 #endif
@@ -2454,7 +2478,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-    gBS->Stall(3500000); // to give time to gdb to connect
+    gBS->Stall(1500000); // to give time to gdb to connect
 //  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif

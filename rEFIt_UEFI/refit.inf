@@ -446,7 +446,7 @@
   gEfiSecurityArchProtocolGuid
   gEfiSecurity2ArchProtocolGuid
 
-  gAppleDevicePropertyProtocolGuid
+#  gEfiDevicePathPropertyDatabaseProtocolGuid
   gAppleFramebufferInfoProtocolGuid
   gEfiConsoleControlProtocolGuid
   gAppleGraphConfigProtocolGuid
