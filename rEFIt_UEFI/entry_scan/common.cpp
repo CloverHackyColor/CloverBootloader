@@ -71,7 +71,7 @@ const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI
             DevicePath = NextDevicePathNode(DevicePath);
           }
           if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
-            if ( GuidLEToXString8((EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
+            if ( GuidLEToXString8(*(EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
               IconNum = BUILTIN_ICON_VOL_INTERNAL_APFS;
             }
           } else {

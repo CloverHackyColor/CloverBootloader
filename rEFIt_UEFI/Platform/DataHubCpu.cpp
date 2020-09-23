@@ -97,7 +97,7 @@ typedef struct {
 UINT32 EFIAPI
 CopyRecord(IN        PLATFORM_DATA_RECORD *Rec,
            IN  CONST CHAR16        *Name,
-           IN        VOID          *Val,
+           IN        const VOID          *Val,
            IN        UINT32        ValLen)
 {
   CopyMem(&Rec->Hdr, &mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
@@ -114,7 +114,7 @@ CopyRecord(IN        PLATFORM_DATA_RECORD *Rec,
 EFI_STATUS EFIAPI
 LogDataHub(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
-           IN  VOID     *Data,
+           IN  const VOID     *Data,
            IN  UINT32    DataSize)
 {
   UINT32        RecordSize;
@@ -214,6 +214,9 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8   *PlatformLang;
 
+  EFI_GUID uuid;
+  gSettings.getUUID(&uuid);
+
   //
   // firmware Variables
   //
@@ -225,8 +228,8 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   SetNvramVariable(L"system-id",
                    &gEfiAppleNvramGuid,
                    EFI_VARIABLE_BOOTSERVICE_ACCESS,
-                   sizeof(gUuid),
-                   &gUuid);
+                   sizeof(uuid),
+                   &uuid);
 
   Attributes     = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
 
@@ -241,12 +244,12 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
                      gSettings.RtMLB);
   }
 
-  if (gSettings.RtROM != NULL) {
+  if (gSettings.RtROM.notEmpty()) {
     SetNvramVariable(L"ROM",
                      &gEfiAppleNvramGuid,
                      Attributes,
-                     gSettings.RtROMLen,
-                     gSettings.RtROM);
+                     gSettings.RtROM.size(),
+                     gSettings.RtROM.vdata());
   }
 
   SetNvramVariable(L"FirmwareFeatures",
@@ -310,11 +313,11 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
-  if (!gSettings.InjectSystemID) {
-    if (gSettings.SmUUIDConfig) {
-      SetNvramVariable(L"platform-uuid", &gEfiAppleBootGuid, Attributes, 16, &gUuid);
+  if (!gSettings.ShouldInjectSystemID()) {
+    if (gSettings.SmUUID.notEmpty()) {
+      SetNvramVariable(L"platform-uuid", &gEfiAppleBootGuid, Attributes, sizeof(uuid), &uuid);
     } else {
-      AddNvramVariable(L"platform-uuid", &gEfiAppleBootGuid, Attributes, 16, &gUuid);
+      AddNvramVariable(L"platform-uuid", &gEfiAppleBootGuid, Attributes, sizeof(uuid), &uuid);
     }
   }
 
@@ -507,8 +510,10 @@ SetupDataForOSX(BOOLEAN Hibernate)
     LogDataHubXStringW(&gEfiMiscSubClassGuid,      L"Model",                ProductName);
     LogDataHubXStringW(&gEfiMiscSubClassGuid,      L"SystemSerialNumber",   SerialNumber);
 
-    if (gSettings.InjectSystemID) {
-      LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
+    if (gSettings.ShouldInjectSystemID()) {
+      EFI_GUID uuid;
+      gSettings.getUUID(&uuid);
+      LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &uuid, sizeof(uuid));
     }
 
     LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &Revision, sizeof(UINT32));

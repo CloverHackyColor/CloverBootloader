@@ -25,9 +25,12 @@ static void panic_(const char* format, VA_LIST va)
 #endif
 ;
 
+extern void egSetGraphicsModeEnabled(BOOLEAN);
+
 #define FATAL_ERROR_MSG "\nA fatal error happened. System halted.\n"
 static void panic_(const char* format, VA_LIST va)
 {
+egSetGraphicsModeEnabled(false);
 	if ( format ) {
 		vprintf(format, va);
 		#ifdef DEBUG_ON_SERIAL_PORT

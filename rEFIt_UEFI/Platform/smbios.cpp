@@ -24,6 +24,7 @@
 #include "cpu.h"
 #include "platformdata.h"
 #include "AcpiPatcher.h"
+#include "guid.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -494,7 +495,7 @@ VOID GetTableType1()
     return;
   }
 
-  CopyMem((VOID*)&gSettings.SmUUID, (VOID*)&SmbiosTable.Type1->Uuid, 16);
+  gSettings.SmUUID = GuidLEToXString8(SmbiosTable.Type1->Uuid);
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
   gSettings.OEMProduct.strncpy(s, iStrLen(s, 64)); //strncpy take care of ending zero
 
@@ -525,8 +526,10 @@ VOID PatchTableType1()
   newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
   Once = TRUE;
 
-  if((gSettings.SmUUID.Data3 & 0xF000) != 0) {
-    CopyMem((VOID*)&newSmbiosTable.Type1->Uuid, (VOID*)&gSettings.SmUUID, 16);
+  EFI_GUID SmUUID;
+  StrToGuidLE(gSettings.SmUUID, &SmUUID);
+  if((SmUUID.Data3 & 0xF000) != 0) {
+    CopyMem((VOID*)&newSmbiosTable.Type1->Uuid, (VOID*)&SmUUID, sizeof(SmUUID));
   }
 
   gSettings.ManufactureName.trim();

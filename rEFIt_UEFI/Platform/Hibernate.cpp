@@ -394,7 +394,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
     // find sleep image entry from plist
     Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
     if (EFI_ERROR(Status)) {
-      XStringW PrefName3 = SWPrintf("\\Library\\Preferences\\com.apple.PowerManagement.%ls.plist", GuidBeToStr(&gUuid).wc_str());
+      XStringW PrefName3 = SWPrintf("\\Library\\Preferences\\com.apple.PowerManagement.%s.plist", gSettings.getUUID().c_str());
       Status = egLoadFile(Volume->RootDir, PrefName3.wc_str(), &PrefBuffer, &PrefBufferLen);
       if (EFI_ERROR(Status)) {
         Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
@@ -920,7 +920,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               if (EFI_ERROR(Status)) {
                 DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {
-                XStringW TmpStr = GuidLEToXStringW(&TmpGuid);
+                XStringW TmpStr = GuidLEToXStringW(TmpGuid);
                 //DBG("got the guid %ls\n", TmpStr);
                 memcpy((VOID*)Ptr, TmpStr.wc_str(), TmpStr.sizeInBytes());
               }
