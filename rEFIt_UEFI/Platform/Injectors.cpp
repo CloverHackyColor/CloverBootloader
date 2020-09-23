@@ -379,12 +379,11 @@ SetPrivateVarProto(VOID)
                                                        NULL
                                                        );
 	//obligatory protocol
-// jief : disabled, OC does it.
-//  Status = gBS->InstallProtocolInterface (&gImageHandle,
-//                                          &gEfiDevicePathPropertyDatabaseProtocolGuid,
-//                                          EFI_NATIVE_INTERFACE,
-//                                          &mDeviceProperties
-//                                          );
+  Status = gBS->InstallProtocolInterface (&gImageHandle,
+                                          &gEfiDevicePathPropertyDatabaseProtocolGuid,
+                                          EFI_NATIVE_INTERFACE,
+                                          &mDeviceProperties
+                                          );
 	
   return Status;
 }

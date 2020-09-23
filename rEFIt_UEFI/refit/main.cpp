@@ -1287,21 +1287,21 @@ VOID LOADER_ENTRY::StartLoader11()
 //  EventsInitialize(this);
 //    DBG("FinalizeSmbios\n");
   FinalizeSmbios();
-//
-//  SetCPUProperties();
-//
-//  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
-//    DoHibernateWake = PrepareHibernation(Volume);
-//  }
-//  SetupDataForOSX(DoHibernateWake);
-//
-//
-//  if (  gDriversFlags.AptioFixLoaded &&
-//        !DoHibernateWake &&
-//        !LoadOptions.containsStartWithIC("slide=")  ) {
-//    // Add slide=0 argument for ML+ if not present
-//    LoadOptions.AddID("slide=0"_XS8);
-//  }
+
+  SetCPUProperties();
+
+  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+    DoHibernateWake = PrepareHibernation(Volume);
+  }
+  SetupDataForOSX(DoHibernateWake);
+
+
+  if (  gDriversFlags.AptioFixLoaded &&
+        !DoHibernateWake &&
+        !LoadOptions.containsStartWithIC("slide=")  ) {
+    // Add slide=0 argument for ML+ if not present
+    LoadOptions.AddID("slide=0"_XS8);
+  }
 
   if (gSettings.LastBootedVolume) {
     if ( APFSTargetUUID.notEmpty() ) {
@@ -1588,7 +1588,7 @@ DBG("Beginning OC\n");
 
 
   mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = true;
-  OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, "Max");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
   OcMain(&mOpenCoreStorage, NULL);
 
 
