@@ -14,6 +14,8 @@
 
 extern "C" EFI_GUID  gEfiMiscSubClassGuid;
 
+constexpr const LString8 nullGuid = "00000000-0000-0000-0000-000000000000";
+
 /** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 template <typename T, enable_if( is___String(T) )>
 BOOLEAN IsValidGuidAsciiString(const T& Str)

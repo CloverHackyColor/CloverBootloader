@@ -7,6 +7,7 @@
 #include "smbios.h"
 #include "cpu.h"
 #include "Nvram.h"
+#include "guid.h"
 
 /* Machine Default Data */
 
@@ -1398,7 +1399,7 @@ VOID GetDefaultSettings()
   gSettings.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
 
-  gSettings.SmUUID.setEmpty();
+  gSettings.SmUUID = nullGuid;
   gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
   gSettings.RtROM.setEmpty();
   gSettings.CsrActiveConfig      = 0xFFFF;

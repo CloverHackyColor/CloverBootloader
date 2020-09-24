@@ -1394,6 +1394,7 @@ DBG("Beginning OC\n");
     !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
   memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+  DBG("config-oc.plist isn't use at all\n");
 
 #else
   Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
@@ -1456,10 +1457,20 @@ DBG("Beginning OC\n");
 //    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true; // already done by Clover ?
     mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80400042;
     mOpenCoreConfiguration.Misc.Debug.Target = 0x41;
+  }else{
+#ifdef JIEF_DEBUG
+    egSetGraphicsModeEnabled(false);
+    mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
+    mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80000042;
+    mOpenCoreConfiguration.Misc.Debug.Target = 0x3;
+#endif
   }
 
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
+#ifdef JIEF_DEBUG
+  mOpenCoreConfiguration.Nvram.WriteFlash = true;
+#endif
 
 #ifndef USE_OC_SECTION_Booter
 
@@ -1587,7 +1598,7 @@ DBG("Beginning OC\n");
 #endif
 
 
-  mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = true;
+//  mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = true;
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
   OcMain(&mOpenCoreStorage, NULL);
 
@@ -2578,6 +2589,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 //debugStartImageWithOC(); // ok BS_I
 
+  GetDefaultSettings(); // do this before PrepatchSmbios() because PrepatchSmbios() change gSettings.SmUUID.
+                        // TODO : there is a mixup between SmUUID read from the platform and the SmUUID set by the user. They should be read in 2 different vars.
   PrepatchSmbios();
 
   //replace / with _
@@ -2587,7 +2600,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   GetCPUProperties();
   GetDevices();
-  GetDefaultSettings();
 
   // LoadOptions Parsing
   DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);
