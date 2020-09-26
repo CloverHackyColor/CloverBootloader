@@ -5243,6 +5243,8 @@ VOID RenameDevices(UINT8* table)
   CHAR8 *Replace;
   CHAR8 *Find;
 
+  if ( gSettings.DeviceRenameCount <= 0 ) return; // to avoid message "0 replacement"
+
   INTN i;
   INTN k=0; // Cland complain about possible use uninitialised. Not true, but I don't like warnings.
   UINTN index;

@@ -11,7 +11,7 @@
 //EFI_GUID gAppleFirmwarePasswordProtocolGuid     = {0x8FFEEB3A, 0x4C98, 0x4630, {0x80, 0x3F, 0x74, 0x0F, 0x95, 0x67, 0x09, 0x1D}};
 //gEfiGlobalVariableGuid
 //EFI_GUID gEfiGlobalVarGuid                      = {0x8BE4DF61, 0x93CA, 0x11D2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
-//EFI_GUID gAppleDevicePropertyProtocolGuid       = {0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}};
+//EFI_GUID gEfiDevicePathPropertyDatabaseProtocolGuid       = {0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}};
 //EFI_GUID gEfi AppleBootGuid                      = {0x7C436110, 0xAB2A, 0x4BBB, {0xA8, 0x80, 0xFE, 0x41, 0x99, 0x5C, 0x9F, 0x82}}; //gAppleBootVariableGuid
 //EFI_GUID gEfiAppleNvramGuid                     = {0x4D1EDE05, 0x38C7, 0x4A6A, {0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x8C, 0x14}}; //gAppleVendorVariableGuid
 //EFI_GUID gAppleFramebufferInfoProtocolGuid      = {0xE316E100, 0x0751, 0x4C49, {0x90, 0x56, 0x48, 0x6C, 0x7E, 0x47, 0x29, 0x03}};
@@ -143,9 +143,9 @@ F0 00 00 00                                     | ....
 
 
 //Slice - I need GuidBEToStr :(
-XStringW GuidBeToStr(EFI_GUID *Guid)
+XStringW GuidBeToStr(const EFI_GUID& Guid)
 {
-  UINT8 *GuidData = (UINT8 *)Guid;
+  UINT8 *GuidData = (UINT8 *)&Guid;
   XStringW Str = SWPrintf("%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
                           GuidData[3], GuidData[2], GuidData[1], GuidData[0],
                           GuidData[5], GuidData[4],
@@ -156,21 +156,21 @@ XStringW GuidBeToStr(EFI_GUID *Guid)
 }
 
 
-XStringW GuidLEToXStringW(EFI_GUID *Guid)
+XStringW GuidLEToXStringW(const EFI_GUID& Guid)
 {
   XStringW returnValue;
   returnValue.SWPrintf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-  Guid->Data1, Guid->Data2, Guid->Data3, Guid->Data4[0], Guid->Data4[1],
-  Guid->Data4[2], Guid->Data4[3], Guid->Data4[4], Guid->Data4[5], Guid->Data4[6], Guid->Data4[7]);
+  Guid.Data1, Guid.Data2, Guid.Data3, Guid.Data4[0], Guid.Data4[1],
+  Guid.Data4[2], Guid.Data4[3], Guid.Data4[4], Guid.Data4[5], Guid.Data4[6], Guid.Data4[7]);
   return returnValue;
 }
 
-XString8 GuidLEToXString8(EFI_GUID *Guid)
+XString8 GuidLEToXString8(const EFI_GUID& Guid)
 {
   XString8 returnValue;
   returnValue.S8Printf("%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-  Guid->Data1, Guid->Data2, Guid->Data3, Guid->Data4[0], Guid->Data4[1], 
-  Guid->Data4[2], Guid->Data4[3], Guid->Data4[4], Guid->Data4[5], Guid->Data4[6], Guid->Data4[7]);
+  Guid.Data1, Guid.Data2, Guid.Data3, Guid.Data4[0], Guid.Data4[1],
+  Guid.Data4[2], Guid.Data4[3], Guid.Data4[4], Guid.Data4[5], Guid.Data4[6], Guid.Data4[7]);
   return returnValue;
 }
 

@@ -1287,21 +1287,21 @@ VOID LOADER_ENTRY::StartLoader11()
 //  EventsInitialize(this);
 //    DBG("FinalizeSmbios\n");
   FinalizeSmbios();
-//
-//  SetCPUProperties();
-//
-//  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
-//    DoHibernateWake = PrepareHibernation(Volume);
-//  }
-//  SetupDataForOSX(DoHibernateWake);
-//
-//
-//  if (  gDriversFlags.AptioFixLoaded &&
-//        !DoHibernateWake &&
-//        !LoadOptions.containsStartWithIC("slide=")  ) {
-//    // Add slide=0 argument for ML+ if not present
-//    LoadOptions.AddID("slide=0"_XS8);
-//  }
+
+  SetCPUProperties();
+
+  if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
+    DoHibernateWake = PrepareHibernation(Volume);
+  }
+  SetupDataForOSX(DoHibernateWake);
+
+
+  if (  gDriversFlags.AptioFixLoaded &&
+        !DoHibernateWake &&
+        !LoadOptions.containsStartWithIC("slide=")  ) {
+    // Add slide=0 argument for ML+ if not present
+    LoadOptions.AddID("slide=0"_XS8);
+  }
 
   if (gSettings.LastBootedVolume) {
     if ( APFSTargetUUID.notEmpty() ) {
@@ -1375,23 +1375,81 @@ DBG("Beginning OC\n");
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
   Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, L"EFI\\CLOVER", NULL);
 
+/*
+ * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
+ * The boot should work.
+ * Next, comment out the next lines one by one. Once the boot failed, we got the section that
+ * holds the setting that makes a difference.
+ */
+//#define USE_OC_SECTION_Acpi
+//#define USE_OC_SECTION_Booter
+//#define USE_OC_SECTION_DeviceProperties
+//#define USE_OC_SECTION_Kernel
+//#define USE_OC_SECTION_Misc
+//#define USE_OC_SECTION_Nvram
+//#define USE_OC_SECTION_PlatformInfo
+//#define USE_OC_SECTION_Uefi
 
-#ifdef JIEF_DEBUG
-//  Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
-//  if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
-
-/*  memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration)); */
-//  memset(&mOpenCoreConfiguration.Acpi, 0, sizeof(mOpenCoreConfiguration.Acpi));
-//  memset(&mOpenCoreConfiguration.Booter, 0, sizeof(mOpenCoreConfiguration.Booter));
-//  memset(&mOpenCoreConfiguration.DeviceProperties, 0, sizeof(mOpenCoreConfiguration.DeviceProperties));
-//  memset(&mOpenCoreConfiguration.Kernel, 0, sizeof(mOpenCoreConfiguration.Kernel));
-//  memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
-//  memset(&mOpenCoreConfiguration.Nvram, 0, sizeof(mOpenCoreConfiguration.Nvram));
-//  memset(&mOpenCoreConfiguration.PlatformInfo, 0, sizeof(mOpenCoreConfiguration.PlatformInfo));
-//  memset(&mOpenCoreConfiguration.Uefi, 0, sizeof(mOpenCoreConfiguration.Uefi));
-#endif
+#if !defined(USE_OC_SECTION_Acpi) && !defined(USE_OC_SECTION_Booter) && !defined(USE_OC_SECTION_DeviceProperties) && !defined(USE_OC_SECTION_Kernel) && !defined(USE_OC_SECTION_Misc) && \
+    !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
   memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+  DBG("config-oc.plist isn't use at all\n");
+
+#else
+  Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
+  if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
+
+  #ifndef USE_OC_SECTION_Acpi
+    memset(&mOpenCoreConfiguration.Acpi, 0, sizeof(mOpenCoreConfiguration.Acpi));
+    DBG("Erase mOpenCoreConfiguration.Acpi\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Acpi\n");
+  #endif
+  #ifndef USE_OC_SECTION_Booter
+    memset(&mOpenCoreConfiguration.Booter, 0, sizeof(mOpenCoreConfiguration.Booter));
+    DBG("Erase mOpenCoreConfiguration.Booter\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Booter\n");
+  #endif
+  #ifndef USE_OC_SECTION_DeviceProperties
+    memset(&mOpenCoreConfiguration.DeviceProperties, 0, sizeof(mOpenCoreConfiguration.DeviceProperties));
+    DBG("Erase mOpenCoreConfiguration.DeviceProperties\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.DeviceProperties\n");
+  #endif
+  #ifndef USE_OC_SECTION_Kernel
+    memset(&mOpenCoreConfiguration.Kernel, 0, sizeof(mOpenCoreConfiguration.Kernel));
+    DBG("Erase mOpenCoreConfiguration.Kernel\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Kernel\n");
+  #endif
+  #ifndef USE_OC_SECTION_Misc
+    memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
+    DBG("Erase mOpenCoreConfiguration.Misc\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Misc\n");
+  #endif
+  #ifndef USE_OC_SECTION_Nvram
+    memset(&mOpenCoreConfiguration.Nvram, 0, sizeof(mOpenCoreConfiguration.Nvram));
+    DBG("Erase mOpenCoreConfiguration.Nvram\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Nvram\n");
+  #endif
+  #ifndef USE_OC_SECTION_PlatformInfo
+    memset(&mOpenCoreConfiguration.PlatformInfo, 0, sizeof(mOpenCoreConfiguration.PlatformInfo));
+    DBG("Erase mOpenCoreConfiguration.PlatformInfo\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.PlatformInfo\n");
+  #endif
+  #ifndef USE_OC_SECTION_Uefi
+    memset(&mOpenCoreConfiguration.Uefi, 0, sizeof(mOpenCoreConfiguration.Uefi));
+    DBG("Erase mOpenCoreConfiguration.Uefi\n");
+  #else
+    DBG("Keep mOpenCoreConfiguration.Uefi\n");
+  #endif
+
+#endif
 
   if ( GlobalConfig.DebugLog ) {
     mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
@@ -1399,11 +1457,22 @@ DBG("Beginning OC\n");
 //    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true; // already done by Clover ?
     mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80400042;
     mOpenCoreConfiguration.Misc.Debug.Target = 0x41;
+  }else{
+#ifdef JIEF_DEBUG
+    egSetGraphicsModeEnabled(false);
+    mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
+    mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80000042;
+    mOpenCoreConfiguration.Misc.Debug.Target = 0x3;
+#endif
   }
 
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
+#ifdef JIEF_DEBUG
+  mOpenCoreConfiguration.Nvram.WriteFlash = true;
+#endif
 
+#ifndef USE_OC_SECTION_Booter
 
   mOpenCoreConfiguration.Booter.MmioWhitelist.Count = (UINT32)gSettings.mmioWhiteListArray.size();
   mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount = mOpenCoreConfiguration.Booter.MmioWhitelist.Count;
@@ -1425,11 +1494,15 @@ DBG("Beginning OC\n");
   static_assert(sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks), "sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks)");
   memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
 
-//
-//// if OC is NOT initialized with OcMain, we need the following
-////  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
-////  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
-////  OcImageLoaderInit ();
+#endif
+
+
+// if OC is NOT initialized with OcMain, we need the following
+//  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
+//  OcLoadKernelSupport(&mOpenCoreStorage, &mOpenCoreConfiguration, &mOpenCoreCpuInfo);
+//  OcImageLoaderInit ();
+
+#ifndef USE_OC_SECTION_Kernel
 
   XObjArray<SIDELOAD_KEXT> kextArray;
   if (!DoHibernateWake) {
@@ -1438,7 +1511,7 @@ DBG("Beginning OC\n");
 
 
 
-  OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "X86_64");
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "x86_64");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.KernelAndKextPatches.OcKernelCache.c_str());
   mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.KernelAndKextPatches.FuzzyMatch;
   memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.KernelAndKextPatches.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
@@ -1446,7 +1519,8 @@ DBG("Beginning OC\n");
   mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
   mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
   mOpenCoreConfiguration.Kernel.Add.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-  mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)AllocatePool(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+  mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY**)malloc(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Add.Values)); // sizeof(OC_KERNEL_ADD_ENTRY*) == sizeof(ptr)
+  memset(mOpenCoreConfiguration.Kernel.Add.Values, 0, mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Add.Values));
 
   // Seems that Lilu must be first.
   size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
@@ -1463,15 +1537,20 @@ DBG("Beginning OC\n");
   {
     const SIDELOAD_KEXT& KextEntry = kextArray[kextIdx];
     DBG("Bridge kext to OC : Path=%ls\n", KextEntry.FileName.wc_str());
-    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))AllocatePool(mOpenCoreConfiguration.Kernel.Add.ValueSize);
+    mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))malloc(mOpenCoreConfiguration.Kernel.Add.ValueSize);
+    memset(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx], 0, mOpenCoreConfiguration.Kernel.Add.ValueSize);
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, "Any");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Comment, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MaxKernel, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, S8Printf("%ls\\%ls", KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str()).c_str()); // do NOT delete kextArray, or make a copy.
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str()).c_str());
+    XStringW execpath = S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str());
+    XStringW fullPath = SWPrintf("%ls\\Kexts\\%s\\%ls", OEMPath.wc_str(), OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath), execpath.wc_str());
+    if ( FileExists(SelfRootDir, fullPath) ) {
+      OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str()).c_str());
+    }
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist"); // TODO : is always Contents/Info.plist ?
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageDataSize = 0;
@@ -1488,13 +1567,14 @@ DBG("Beginning OC\n");
   mOpenCoreConfiguration.Kernel.Patch.Count = (UINT32)selectedPathArray.size();
   mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
   mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
-  mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)AllocatePool(mOpenCoreConfiguration.Kernel.Add.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
+  mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
+  memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
   {
     const KEXT_PATCH& kextPatch = selectedPathArray[kextPatchIdx];
     DBG("Bridge kext patch to OC : %s\n", kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, "Any");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Comment, kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = 0;
@@ -1515,9 +1595,11 @@ DBG("Beginning OC\n");
     const XStringW& forceKext = KernelAndKextPatches.ForceKexts[forceKextIdx];
     DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
   }
+#endif
 
 
-
+//  mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = true;
+  OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
   OcMain(&mOpenCoreStorage, NULL);
 
 
@@ -2416,7 +2498,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-    gBS->Stall(3500000); // to give time to gdb to connect
+    gBS->Stall(1500000); // to give time to gdb to connect
 //  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
@@ -2507,6 +2589,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 //debugStartImageWithOC(); // ok BS_I
 
+  GetDefaultSettings(); // do this before PrepatchSmbios() because PrepatchSmbios() change gSettings.SmUUID.
+                        // TODO : there is a mixup between SmUUID read from the platform and the SmUUID set by the user. They should be read in 2 different vars.
   PrepatchSmbios();
 
   //replace / with _
@@ -2516,7 +2600,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   GetCPUProperties();
   GetDevices();
-  GetDefaultSettings();
 
   // LoadOptions Parsing
   DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);

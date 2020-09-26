@@ -45,7 +45,7 @@ AddNvramVariable (
   IN  EFI_GUID *VendorGuid,
   IN  UINT32   Attributes,
   IN  UINTN    DataSize,
-  IN  VOID     *Data
+  IN  const VOID     *Data
   );
 EFI_STATUS
 AddNvramXString8 (

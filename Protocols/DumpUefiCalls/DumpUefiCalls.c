@@ -138,7 +138,7 @@ DumpUefiCallsEntrypoint (
 	IN EFI_SYSTEM_TABLE			*SystemTable
 )
 {
-
+#ifdef DEBUG_ON_SERIAL_PORT
   {
     EFI_LOADED_IMAGE* LoadedImage;
     EFI_STATUS Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
@@ -155,6 +155,7 @@ DumpUefiCallsEntrypoint (
       SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
     }
   }
+#endif
 
 	//
 	// Override StartImage

@@ -37,19 +37,8 @@
 #define DBG(...) DebugLog(DEBUG_PRO, __VA_ARGS__)
 #endif
 
-EFI_GUID gDevicePropertiesGuid = {
-  0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
-};
-/*
-EFI_GUID gAppleFramebufferInfoProtocolGuid = {
-	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
-}; */
-// gEfiKeyboardInfoProtocolGuid
-// {0xE82A0A1E, 0x0E4D, 0x45AC, {0xA6, 0xDC, 0x2A, 0xE0, 0x58, 0x00, 0xD3, 0x11}}
 
-// C5C5DA95-7D5C-45E6-B2F1-3FD52BB10077 - EfiOSInfo
-// 03622D6D-362A-4E47-9710-C238B23755C1 - GraphConfig
-
+extern EFI_GUID gEfiDevicePathPropertyDatabaseProtocolGuid;
 extern EFI_GUID gAppleFramebufferInfoProtocolGuid;
 extern BOOLEAN  gProvideConsoleGopEnable;
 
@@ -376,7 +365,7 @@ SetPrivateVarProto(VOID)
   EFI_STATUS  Status;
   //This must be independent install
   // optional protocols
-  /*Status = */gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
+  Status = gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
                                                        &gAppleFramebufferInfoProtocolGuid,
                                                        &mScreenInfo, 
 //                                                       &gEfiOSInfoProtocolGuid,
@@ -391,7 +380,7 @@ SetPrivateVarProto(VOID)
                                                        );
 	//obligatory protocol
   Status = gBS->InstallProtocolInterface (&gImageHandle,
-                                          &gDevicePropertiesGuid,
+                                          &gEfiDevicePathPropertyDatabaseProtocolGuid,
                                           EFI_NATIVE_INTERFACE,
                                           &mDeviceProperties
                                           );

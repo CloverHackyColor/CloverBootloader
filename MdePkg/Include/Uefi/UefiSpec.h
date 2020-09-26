@@ -747,7 +747,7 @@ EFI_STATUS
   IN  EFI_GUID                     *VendorGuid,
   IN  UINT32                       Attributes,
   IN  UINTN                        DataSize,
-  IN  VOID                         *Data
+  IN  JCONST VOID                         *Data
   );
 
 

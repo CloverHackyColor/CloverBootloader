@@ -252,8 +252,7 @@ public:
   XString8                ProductName;
   XString8                   VersionNr;
   XString8                   SerialNr;
-  EFI_GUID                SmUUID;
-  BOOLEAN                 SmUUIDConfig;
+  XString8                SmUUID;
   CHAR8                   pad0[7];
 //CHAR8                    Uuid;
 //CHAR8                    SKUNumber;
@@ -311,7 +310,7 @@ public:
   XString8                Language;
   XString8                BootArgs;
   INT8                    pad19[2];
-  XStringW                CustomUuid;
+  XString8                CustomUuid;
 
   INT8                    pad20[6];
   XStringW                DefaultVolume;
@@ -382,7 +381,7 @@ public:
   ACPI_NAME_LIST          *DeviceRename;
   //Injections
   BOOLEAN                 StringInjector;
-  BOOLEAN                 InjectSystemID;
+  UINT8                   InjectSystemID_; // 0=false, 1=true, other value = default.
   BOOLEAN                 NoDefaultProperties;
 
   BOOLEAN                 ReuseFFFF;
@@ -502,8 +501,7 @@ public:
   // SysVariables
   UINT8                   pad30[4];
   XString8                RtMLB;
-  UINT8                   *RtROM;
-  UINTN                   RtROMLen;
+  XBuffer<UINT8>          RtROM;
 
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
@@ -609,8 +607,8 @@ public:
   XObjArray<MMIOWhiteList> mmioWhiteListArray;
 
 
-  SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID({0,0,0,{0}}),
-                    SmUUIDConfig(0), pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
+  SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
+                    pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
                     BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(), CpuFreqMHz(0),
                     BusSpeed(0), Turbo(0), EnabledCores(0), UserChange(0), QEMU(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
                     MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0), XMPDetection(0),
@@ -620,7 +618,7 @@ public:
                     DropSSDT(0), NoOemTableId(0), NoDynamicExtract(0), AutoMerge(0), GeneratePStates(0), GenerateCStates(0), GenerateAPSN(0), GenerateAPLF(0), GeneratePluginType(0),
                     PLimitDict(0), UnderVoltStep(0), DoubleFirstState(0), SuspendOverride(0), EnableC2(0), EnableC4(0), EnableC6(0), EnableISS(0), SlpSmiEnable(0),
                     FixHeaders(0), C3Latency(0), smartUPS(0), PatchNMI(0), EnableC7(0), SavingMode(0), DsdtName(), FixDsdt(0), MinMultiplier(0),
-                    MaxMultiplier(0), PluginType(0), FixMCFG(0), DeviceRenameCount(0), DeviceRename(0), StringInjector(0), InjectSystemID(0), NoDefaultProperties(0), ReuseFFFF(0),
+                    MaxMultiplier(0), PluginType(0), FixMCFG(0), DeviceRenameCount(0), DeviceRename(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0), ReuseFFFF(0),
                     FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
                     InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
                     LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
@@ -629,7 +627,7 @@ public:
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
                     LegacyBoot(), LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
-                    RefCLK(0), RtMLB(), RtROM(0), RtROMLen(0), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), DisableCloverHotkeys(0), NeverDoRecovery(0),
+                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), DisableCloverHotkeys(0), NeverDoRecovery(0),
                     ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), DSDTPatchArray(), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
@@ -644,6 +642,16 @@ public:
 
   ~SETTINGS_DATA() {}
 
+  const XString8& getUUID();
+  const XString8& getUUID(EFI_GUID* efiGuid);
+  bool ShouldInjectSystemID() {
+    if ( CustomUuid.notEmpty() ){
+      if ( InjectSystemID_ == 2 ) return false;
+      else return InjectSystemID_;
+    }
+    if ( SmUUID.notEmpty() && InjectSystemID_ == 2 ) return false;
+    return InjectSystemID_;
+  }
 };
 
 //#pragma GCC diagnostic ignored "-Wpadded"
@@ -802,8 +810,6 @@ extern CONST CHAR8* gBuildInfo;
 
 extern BOOLEAN                        ResumeFromCoreStorage;
 extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
-
-extern EFI_GUID                       gUuid;
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 

@@ -135,8 +135,6 @@ CONST CHAR8* gFirmwareBuildDate = "unknown";
 CONST CHAR8* gBuildInfo = NULL;
 #endif
 
-EFI_GUID            gUuid;
-
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern BOOLEAN                NeedPMfix;
@@ -4297,8 +4295,7 @@ ParseSMBIOSSettings(
       MsgLog("ATTENTION : property not string in SmUUID\n");
     }else{
       if (IsValidGuidAsciiString(Prop->getString()->stringValue())) {
-        StrToGuidLE(Prop->getString()->stringValue(), &gSettings.SmUUID);
-        gSettings.SmUUIDConfig = TRUE;
+        gSettings.SmUUID = Prop->getString()->stringValue();
       } else {
         DBG("Error: invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
       }
@@ -5863,28 +5860,22 @@ GetUserSettings(const TagDict* CfgDict)
     }
 
     // RtVariables
+    gSettings.RtROM.setEmpty();
     const TagDict* RtVariablesDict = CfgDict->dictPropertyForKey("RtVariables");
     if (RtVariablesDict != NULL) {
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
       const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
         if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr0") ) {
-          gSettings.RtROM         = &gLanMac[0][0];
-          gSettings.RtROMLen      = 6;
+          gSettings.RtROM.ncpy(&gLanMac[0][0], 6);
         } else if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr1") ) {
-          gSettings.RtROM         = &gLanMac[1][0];
-          gSettings.RtROMLen      = 6;
+          gSettings.RtROM.ncpy(&gLanMac[1][0], 6);
         } else if ( Prop->isString()  ||  Prop->isData() ) { // GetDataSetting accept both
           UINTN ROMLength         = 0;
-          gSettings.RtROM         = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
-          gSettings.RtROMLen      = ROMLength;
+          VOID* ROM = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
+          gSettings.RtROM.ncpy(ROM, ROMLength);
         } else {
           MsgLog("MALFORMED PLIST : property not string or data in RtVariables/ROM\n");
-        }
-
-        if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
-          gSettings.RtROM       = NULL;
-          gSettings.RtROMLen    = 0;
         }
       }
 
@@ -5972,9 +5963,10 @@ GetUserSettings(const TagDict* CfgDict)
       }
     }
 
-    if (gSettings.RtROM == NULL) {
-      gSettings.RtROM    = (UINT8*)&gSettings.SmUUID.Data4[2];
-      gSettings.RtROMLen = 6;
+    if (gSettings.RtROM.isEmpty()) {
+      EFI_GUID uuid;
+      StrToGuidLE(gSettings.SmUUID, &uuid);
+      gSettings.RtROM.ncpy(&uuid.Data4[2], 6);
     }
 
     if (gSettings.RtMLB.isEmpty()) {
@@ -5984,8 +5976,7 @@ GetUserSettings(const TagDict* CfgDict)
     // if CustomUUID and InjectSystemID are not specified
     // then use InjectSystemID=TRUE and SMBIOS UUID
     // to get Chameleon's default behaviour (to make user's life easier)
-    CopyMem((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
-    gSettings.InjectSystemID = TRUE;
+//    CopyMem((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
 
     // SystemParameters again - values that can depend on previous params
     const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
@@ -6002,30 +5993,39 @@ GetUserSettings(const TagDict* CfgDict)
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in SystemParameters/CustomUUID\n");
         }else{
-          BOOLEAN IsValidCustomUUID = FALSE;
           if (IsValidGuidAsciiString(Prop->getString()->stringValue())) {
-            gSettings.CustomUuid = Prop->getString()->stringValue();
-            DBG("Converted CustomUUID %ls\n", gSettings.CustomUuid.wc_str());
-            Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
-            if (!EFI_ERROR(Status)) {
-              IsValidCustomUUID = TRUE;
-              // if CustomUUID specified, then default for InjectSystemID=FALSE
-              // to stay compatibile with previous Clover behaviour
-              gSettings.InjectSystemID = FALSE;
-              DBG("The UUID is valid\n");
-            }
-          }
-
-          if (!IsValidCustomUUID) {
+          gSettings.CustomUuid = Prop->getString()->stringValue();
+            // if CustomUUID specified, then default for InjectSystemID=FALSE
+            // to stay compatibile with previous Clover behaviour
+            DBG("The UUID is valid\n");
+          }else{
             DBG("Error: invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
+            gSettings.CustomUuid = {0};
           }
         }
       }
       //else gUuid value from SMBIOS
       //     DBG("Finally use %s\n", strguid(&gUuid));
 
+      gSettings.InjectSystemID_ = 2;
       Prop                     = SystemParametersDict->propertyForKey("InjectSystemID");
-      gSettings.InjectSystemID = gSettings.InjectSystemID ? !IsPropertyNotNullAndFalse(Prop) : IsPropertyNotNullAndTrue(Prop);
+      if ( Prop ) {
+        if ( Prop->isBool() ) gSettings.InjectSystemID_ = Prop->getBool()->boolValue();
+        else if (  Prop->isString() ) {
+          // TODO a function that takes a string and return if it's true or false
+          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.InjectSystemID_ = 1;
+          else if ( Prop->getString()->stringValue()[0] == 'y' ) gSettings.InjectSystemID_ = 1;
+          else if ( Prop->getString()->stringValue()[0] == 'Y' ) gSettings.InjectSystemID_ = 1;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.InjectSystemID_ = 0;
+          else if ( Prop->getString()->stringValue().equalIC("n") ) gSettings.InjectSystemID_ = 0;
+          else if ( Prop->getString()->stringValue().equalIC("N") ) gSettings.InjectSystemID_ = 0;
+          else {
+            DBG("MALFORMED PLIST : SMBIOS/InjectSystemID must be true, yes, false, no, or non existant");
+          }
+        }else{
+          DBG("MALFORMED PLIST : SMBIOS/InjectSystemID must be <true/>, <false/> or non existant");
+        }
+      }
 
       Prop                     = SystemParametersDict->propertyForKey("NvidiaWeb");
       gSettings.NvidiaWeb      = IsPropertyNotNullAndTrue(Prop);
@@ -8230,7 +8230,7 @@ checkOffset(RomVersion);
   WriteOldFixLengthString(VersionNr, 64);
   WriteOldFixLengthString(SerialNr, 64);
   xb.ncat(&SmUUID, sizeof(SmUUID));
-  xb.cat(SmUUIDConfig);
+  xb.cat((BOOLEAN)SmUUID.notEmpty());
   xb.ncat(&pad0, sizeof(pad0));
 //CHAR8                    Uuid[64]);
 //CHAR8                    SKUNumber[64]);
@@ -8290,7 +8290,7 @@ checkOffset(BootArgs);
   WriteOldFixLengthString(BootArgs, 256);
   xb.memsetAtPos(xb.size(), 0, 1);
 checkOffset(CustomUuid);
-  WriteOldFixLengthString(CustomUuid, 40);
+  WriteOldFixLengthString(XStringW(CustomUuid), 40);
   xb.ncat(&pad20, sizeof(pad20));
 checkOffset(DefaultVolume);
   xb.cat(uintptr_t(0)); //DefaultVolume was CHAR16*
@@ -8362,7 +8362,7 @@ checkOffset(FixMCFG);
   xb.cat(DeviceRename);
   //Injections
   xb.cat(StringInjector);
-  xb.cat(InjectSystemID);
+  xb.cat(InjectSystemID_);
   xb.cat(NoDefaultProperties);
   xb.cat(ReuseFFFF);
 
@@ -8480,9 +8480,12 @@ checkOffset(CustomBoot);
 
   // SysVariables
   xb.ncat(&pad30, sizeof(pad30));
+checkOffset(RtMLB);
   xb.cat(uintptr_t(0)); // RtMLB was CHAR8*
-  xb.cat(RtROM);
-  xb.cat(RtROMLen);
+  xb.cat(uintptr_t(0)); // RtROM was UINT8*
+checkOffset(RtROMLen);
+  xb.cat(RtROM.size());
+checkOffset(CsrActiveConfig);
   xb.cat(CsrActiveConfig);
   xb.cat(BooterConfig);
   WriteOldFixLengthString(BooterCfgStr, 64);
@@ -8638,3 +8641,25 @@ checkOffset(OptionsBits);
 //  MsgLog("%s\n", s.c_str());
 //}
 //
+
+EFI_GUID nullUUID = {0};
+
+const XString8& SETTINGS_DATA::getUUID()
+{
+  if ( CustomUuid.notEmpty() ) return CustomUuid;
+  return SmUUID;
+}
+
+const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
+{
+  if ( CustomUuid.notEmpty() ) {
+    EFI_STATUS Status = StrToGuidLE(CustomUuid, uuid);
+    if ( EFI_ERROR(Status) ) panic("CustomUuid(%s) is not valid", CustomUuid.c_str()); // we panic, because it's a bug. Validity is checked when imported from settings
+    return CustomUuid;
+  }
+  EFI_STATUS Status = StrToGuidLE(SmUUID, uuid);
+  if ( EFI_ERROR(Status) ) panic("CustomUuid(%s) is not valid", CustomUuid.c_str()); // same as before
+  return SmUUID;
+}
+
+
