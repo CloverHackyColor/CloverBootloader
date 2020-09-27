@@ -1468,8 +1468,8 @@ DBG("Beginning OC\n");
 
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
-#ifdef JIEF_DEBUG
   mOpenCoreConfiguration.Nvram.WriteFlash = true;
+#ifdef JIEF_DEBUG
 #endif
 
 #ifndef USE_OC_SECTION_Booter

@@ -878,7 +878,7 @@ public:
                    DebugLog(FALSE), ScratchDebugLogAtStart(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
                    RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), Theme(), ScreenResolution(), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
                    ShowOptimus(FALSE), Codepage(0xC0), CodepageSize(0xC0) {};
-  REFIT_CONFIG(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
+  REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
   ~REFIT_CONFIG() {  }
 
