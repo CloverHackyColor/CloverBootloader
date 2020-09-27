@@ -1597,7 +1597,9 @@ DBG("Beginning OC\n");
   }
 #endif
 
-
+  #ifndef USE_OC_SECTION_PlatformInfo
+    mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = false; //already done by CLover.
+  #endif
 //  mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = true;
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
   OcMain(&mOpenCoreStorage, NULL);
