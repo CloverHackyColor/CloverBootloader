@@ -42,6 +42,7 @@
 #include "platformdata.h"
 #include "smbios.h"
 #include "cpu.h"
+#include "DataHubCpu.h"
 
 #include <Guid/DataHubRecords.h>
 

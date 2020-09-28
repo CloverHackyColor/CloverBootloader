@@ -20,7 +20,7 @@ EFIAPI
 LogDataHub (
   EFI_GUID *TypeGuid,
   CONST CHAR16   *Name,
-  VOID     *Data,
+  const VOID     *Data,
   UINT32   DataSize
   );
 
