@@ -668,7 +668,7 @@ UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
 {
   UINT16 PartNum = 0; //if not found then zero mean whole disk
   HARDDRIVE_DEVICE_PATH       *HdPath     = NULL;
-  EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
+  const EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
   
   while (DevicePath && !IsDevicePathEnd (DevicePath)) {
     if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&

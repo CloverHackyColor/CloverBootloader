@@ -579,7 +579,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     }
 
   for (size_t idx = 0 ; idx < kextArray.size()  ; idx++ ) {
-    AddKext(Volume->RootDir, kextArray[idx].FileName, archCpuType);
+    AddKext(SelfVolume->RootDir, S8Printf("%ls\\kexts\\%ls\\%ls", OEMPath.wc_str(), kextArray[idx].KextDirNameUnderOEMPath.wc_str(), kextArray[idx].FileName.wc_str()), archCpuType);
   }
 
   UINTN                    mm_extra_size;

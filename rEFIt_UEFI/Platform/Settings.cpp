@@ -257,8 +257,8 @@ ParseLoadOptions (
 
   XStringW& ConfName = *ConfNamePtr;
 
-  Start = (CHAR8*)SelfLoadedImage->LoadOptions;
-  End   = (CHAR8*)((CHAR8*)SelfLoadedImage->LoadOptions + SelfLoadedImage->LoadOptionsSize);
+  Start = (CHAR8*)self.getSelfLoadedImage().LoadOptions;
+  End   = (CHAR8*)((CHAR8*)self.getSelfLoadedImage().LoadOptions + self.getSelfLoadedImage().LoadOptionsSize);
   while ((Start < End) && ((*Start == ' ') || (*Start == '\\') || (*Start == '/')))
   {
     ++Start;
@@ -308,14 +308,14 @@ ParseLoadOptions (
 }
 
 //
-// analyze SelfLoadedImage->LoadOptions to extract Default Volume and Default Loader
+// analyze self.getSelfLoadedImage().LoadOptions to extract Default Volume and Default Loader
 // input and output data are global
 //
 VOID
 GetBootFromOption(VOID)
 {
-  UINT8  *Data = (UINT8*)SelfLoadedImage->LoadOptions;
-  UINTN  Len = SelfLoadedImage->LoadOptionsSize;
+  UINT8  *Data = (UINT8*)self.getSelfLoadedImage().LoadOptions;
+  UINTN  Len = self.getSelfLoadedImage().LoadOptionsSize;
   UINTN  NameSize, Name2Size;
 
   Data += 4; //skip signature as we already here

@@ -32,6 +32,7 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <Platform.h>
 #include "entry_scan.h"
 
 #ifndef DEBUG_ALL
@@ -389,7 +390,7 @@ static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *P
 
 static EFI_STATUS EFIAPI LockedCloseProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *Protocol, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle)
 {
-  if (Handle == SelfImageHandle) {
+  if (Handle == self.getSelfImageHandle()) {
     if (Protocol == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -434,7 +435,7 @@ static EFI_STATUS LockGraphicsGOP(VOID)
   // Open GOP protocols, they will be modified by our modified boot services
   Size /= sizeof(EFI_HANDLE *);
   for (i = 0; i < Size; ++i) {
-     gBS->OpenProtocol(Buffer[i], &gEfiGraphicsOutputProtocolGuid, &Interface, SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+     gBS->OpenProtocol(Buffer[i], &gEfiGraphicsOutputProtocolGuid, &Interface, self.getSelfImageHandle(), NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   }
   return EFI_SUCCESS;
 }
@@ -463,7 +464,7 @@ static EFI_STATUS LockGraphicsUGA(VOID)
    // Open UGA protocols, they will be modified by our modified boot services
    Size /= sizeof(EFI_HANDLE *);
    for (i = 0; i < Size; ++i) {
-      gBS->OpenProtocol(Buffer[i], &gEfiUgaDrawProtocolGuid, &Interface, SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+      gBS->OpenProtocol(Buffer[i], &gEfiUgaDrawProtocolGuid, &Interface, self.getSelfImageHandle(), NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
    }
    return EFI_SUCCESS;
 }

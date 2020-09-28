@@ -165,7 +165,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   // load the image into memory
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
   for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
-    ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
+    ReturnStatus = Status = gBS->LoadImage(FALSE, self.getSelfImageHandle(), DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
     DBG("  status=%s", efiStrError(Status));
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
@@ -568,7 +568,7 @@ VOID CheckEmptyFB()
 
 VOID LOADER_ENTRY::StartLoader()
 {
-  if (/* DISABLES CODE */ (1) || OSVersion.startWith("11") ) {
+  if ( ( OSTYPE_IS_OSX(LoaderType) || OSTYPE_IS_OSX_RECOVERY(LoaderType) || OSTYPE_IS_OSX_INSTALLER(LoaderType) )  &&   OSVersion.startWith("11") ) {
     StartLoader11();
     return;
   }
@@ -1823,7 +1823,7 @@ static VOID ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 #undef BOOLEAN_AT_INDEX
 
 	  snwprintf(FileName, 512, "%ls\\%ls", Path, DirEntry->FileName);
-    Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
+    Status = StartEFIImage(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName),
                            NullXString8Array, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
@@ -2500,13 +2500,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if ( !EFI_ERROR(Status) ) DBG("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-    gBS->Stall(1500000); // to give time to gdb to connect
+    gBS->Stall(2500000); // to give time to gdb to connect
 //  gBS->Stall(0500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
   }
 
-  construct_globals_objects(gImageHandle); // do this after SelfLoadedImage is initialized
+  construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
 
 
 #ifdef JIEF_DEBUG
@@ -2604,10 +2604,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   GetDevices();
 
   // LoadOptions Parsing
-  DBG("Clover load options size = %d bytes\n", SelfLoadedImage->LoadOptionsSize);
-  if ((SelfLoadedImage->LoadOptions != NULL) &&
-      (SelfLoadedImage->LoadOptionsSize != 0)){
-    if (*(UINT32*)SelfLoadedImage->LoadOptions == CLOVER_SIGN) {
+  DBG("Clover load options size = %d bytes\n", self.getSelfLoadedImage().LoadOptionsSize);
+  if ((self.getSelfLoadedImage().LoadOptions != NULL) &&
+      (self.getSelfLoadedImage().LoadOptionsSize != 0)){
+    if (*(UINT32*)self.getSelfLoadedImage().LoadOptions == CLOVER_SIGN) {
       GetBootFromOption();
     } else {
       ParseLoadOptions(&ConfName, &gConfigDict[1]);

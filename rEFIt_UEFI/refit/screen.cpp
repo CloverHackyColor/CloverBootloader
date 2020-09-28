@@ -92,8 +92,6 @@ static BOOLEAN GraphicsScreenDirty;
 
 // general defines and variables
 
-static BOOLEAN haveError = FALSE;
-
 //
 // Screen initialization and switching
 //
@@ -284,40 +282,6 @@ StatusToString (
 	snwprintf(Buffer, 64, "EFI Error %s", efiStrError(Status));
 }*/
 
-
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
-{
-//    CHAR16 ErrorName[64];
-    
-    if (!EFI_ERROR(Status))
-        return FALSE;
-    
-//    StatusToString(ErrorName, Status);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    printf("Fatal Error: %s %ls\n", efiStrError(Status), where);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    haveError = TRUE;
-    
-    //gBS->Exit(ImageHandle, ExitStatus, ExitDataSize, ExitData);
-    
-    return TRUE;
-}
-
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
-{
-//    CHAR16 ErrorName[64];
-    
-    if (!EFI_ERROR(Status))
-        return FALSE;
-    
-//    StatusToString(ErrorName, Status);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    printf("Error: %s %ls\n", efiStrError(Status), where);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    haveError = TRUE;
-    
-    return TRUE;
-}
 
 //
 // Graphics functions

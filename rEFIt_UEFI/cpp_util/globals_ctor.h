@@ -1,5 +1,5 @@
 
 /*
- * NOTE : SelfLoadedImage must be initialized to call this.
+ * NOTE : self.getSelfLoadedImage() must be initialized to call this.
  */
 extern void construct_globals_objects(EFI_HANDLE ImageHandle);

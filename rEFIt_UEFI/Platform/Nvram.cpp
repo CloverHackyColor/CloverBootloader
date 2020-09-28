@@ -565,7 +565,7 @@ VOID DumpSmcKeys()
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID
 *FindGPTPartitionGuidInDevicePath (
-  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   HARDDRIVE_DEVICE_PATH *HDDDevPath;
@@ -598,8 +598,8 @@ EFI_GUID
 /** Returns TRUE if dev paths are equal. Ignores some differences. */
 BOOLEAN
 BootVolumeDevicePathEqual (
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
+  const   EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
+  const   EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
   BOOLEAN          Equal;
@@ -729,8 +729,8 @@ BootVolumeDevicePathEqual (
 /** Returns TRUE if dev paths contain the same MEDIA_DEVICE_PATH. */
 BOOLEAN
 BootVolumeMediaDevicePathNodesEqual (
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
+  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
+  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
     DevicePath1 = Clover_FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);

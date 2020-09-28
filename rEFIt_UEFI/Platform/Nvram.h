@@ -95,7 +95,7 @@ GetEfiBootDeviceFromNvram (VOID);
 
 EFI_GUID
 *FindGPTPartitionGuidInDevicePath (
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  const  EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
 VOID

@@ -1523,7 +1523,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_LOCATE_DEVICE_PATH)(
   IN     EFI_GUID                         *Protocol,
-  IN OUT EFI_DEVICE_PATH_PROTOCOL         **DevicePath,
+  IN OUT EFI_DEVICE_PATH_PROTOCOL         * JCONST *DevicePath,
   OUT    EFI_HANDLE                       *Device
   );
 

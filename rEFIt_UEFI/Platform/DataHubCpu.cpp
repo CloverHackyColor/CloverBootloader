@@ -395,7 +395,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
         gDriversFlags.AptioFix3Loaded || gDriversFlags.AptioMemFixLoaded)  {
       EFI_STATUS          Status;
       REFIT_VOLUME *Volume = Entry->Volume;
-      EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
+      const EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
       // We need to remember from which device we boot, to make silence boot while special recovery boot
       Status = gRT->SetVariable(L"specialbootdevice", &gEfiAppleBootGuid,
                                 EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

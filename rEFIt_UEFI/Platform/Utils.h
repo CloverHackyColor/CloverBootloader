@@ -71,4 +71,16 @@ AsciiStrDecimalToUintn (
   return AsciiStrDecimalToUintn(String.c_str());
 }
 
+extern BOOLEAN haveError;
+
+
+BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
+BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
+
+//EFI_DEVICE_PATH_PROTOCOL *
+//EFIAPI
+//NextDevicePathNode (
+//  IN VOID  *Node
+//  );
+
 #endif

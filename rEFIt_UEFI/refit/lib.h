@@ -297,13 +297,9 @@ typedef enum {
 #define SCREEN_EDGE_RIGHT   70000
 #define SCREEN_EDGE_BOTTOM  80000
 
-extern EFI_HANDLE       SelfImageHandle;
-extern EFI_HANDLE       SelfDeviceHandle;
-extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
 extern EFI_FILE         *SelfDir;
 extern XStringW          SelfDirPath;
-extern EFI_DEVICE_PATH  *SelfDevicePath;
 extern EFI_DEVICE_PATH  *SelfFullDevicePath;
 extern XStringW          ThemePath;
 extern EFI_FILE         *OEMDir;
@@ -363,10 +359,10 @@ CHAR16 * egFindExtension(IN CHAR16 *FileName);
 
 INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength);
 
-XStringW DevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-XStringW FileDevicePathFileToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-//UINTN   FileDevicePathNameLen(IN CONST FILEPATH_DEVICE_PATH  *FilePath);
+XStringW DevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW FileDevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW FileDevicePathFileToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath);
+//UINTN   FileDevicePathNameLen(const FILEPATH_DEVICE_PATH  *FilePath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 

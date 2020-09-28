@@ -15,6 +15,3 @@ VOID BltClearScreen();
 INTN HybridRepositioning(INTN Edge, INTN Value, INTN ImageDimension, INTN ScreenDimension, INTN DesignScreenDimension);
 INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
 
-
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
