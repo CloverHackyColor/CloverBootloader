@@ -139,7 +139,6 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern BOOLEAN                NeedPMfix;
 //OC_ABC_SETTINGS_4CLOVER               gQuirks;
-BOOLEAN                       gProvideConsoleGopEnable;
 
 //extern INTN                     OldChosenAudio;
 
@@ -2576,6 +2575,9 @@ GetEarlyUserSettings (
         }
       }
 
+      Prop = GUIDict->propertyForKey("ProvideConsoleGop");
+      gSettings.ProvideConsoleGop = IsPropertyNotNullAndTrue(Prop);
+
       Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
         if (Prop->isInt64()) {
@@ -2956,8 +2958,6 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
       gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
-      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
-      gProvideConsoleGopEnable = IsPropertyNotNullAndTrue(Prop);
       Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
       gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;

@@ -80,7 +80,6 @@ extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
 #endif
 
 extern CONST CHAR8      *AudioOutputNames[];
-extern BOOLEAN          gProvideConsoleGopEnable;
 
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
@@ -448,7 +447,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Decimal;  //122
   InputItems[InputItemsCount++].SValue.SWPrintf("%04lld", gSettings.MaxSlide);
   InputItems[InputItemsCount].ItemType = BoolValue; //123
-  InputItems[InputItemsCount++].BValue = gProvideConsoleGopEnable;
+  InputItems[InputItemsCount++].BValue = gSettings.ProvideConsoleGop;
 
 
 
@@ -1073,8 +1072,8 @@ VOID ApplyInputs(VOID)
   }
   i++; //123
   if (InputItems[i].Valid) {
-    gProvideConsoleGopEnable = InputItems[i].BValue;
-    DBG("applied ConsoleGopEnable=%s\n", gProvideConsoleGopEnable?"Y":"N");
+    gSettings.ProvideConsoleGop = InputItems[i].BValue;
+    DBG("applied ConsoleGopEnable=%s\n", gSettings.ProvideConsoleGop ? "Y" : "N" );
   }
 
 

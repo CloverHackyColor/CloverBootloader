@@ -606,6 +606,8 @@ public:
   OC_BOOTER_QUIRKS   ocBooterQuirks;
   XObjArray<MMIOWhiteList> mmioWhiteListArray;
 
+  BOOLEAN ProvideConsoleGop;
+
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
                     pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
@@ -633,7 +635,7 @@ public:
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray()
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray(), ProvideConsoleGop(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed

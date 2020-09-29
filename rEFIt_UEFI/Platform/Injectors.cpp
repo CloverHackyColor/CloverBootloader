@@ -40,7 +40,6 @@
 
 extern EFI_GUID gEfiDevicePathPropertyDatabaseProtocolGuid;
 extern EFI_GUID gAppleFramebufferInfoProtocolGuid;
-extern BOOLEAN  gProvideConsoleGopEnable;
 
 UINT32 mPropSize = 0;
 UINT8* mProperties = NULL;
