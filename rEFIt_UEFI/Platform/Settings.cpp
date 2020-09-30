@@ -3045,8 +3045,9 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
       Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
       gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
+// We can't use that Quirks because we don't delegate SMBios to OC.
+//      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
+//      gSettings.KernelAndKextPatches.OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
 if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forgot to merge your quirks into one section. Update your config.plist");

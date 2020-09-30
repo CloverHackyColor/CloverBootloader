@@ -1002,6 +1002,7 @@ DBG("Beginning OC\n");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.KernelAndKextPatches.OcKernelCache.c_str());
   mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.KernelAndKextPatches.FuzzyMatch;
   memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.KernelAndKextPatches.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
+  mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = false; // To be double sure. But we don't have settings in config.plist so it should already be false
 
   mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
   mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
