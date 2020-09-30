@@ -32,7 +32,6 @@
 #include "../../Version.h"
 #include "../Platform/Settings.h"
 
-#include "../../Include/Protocol/OcQuirksProtocol4Clover.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -138,9 +137,6 @@ CONST CHAR8* gBuildInfo = NULL;
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern BOOLEAN                NeedPMfix;
-//OC_ABC_SETTINGS_4CLOVER               gQuirks;
-
-//extern INTN                     OldChosenAudio;
 
 // global configuration with default values
 REFIT_CONFIG   GlobalConfig;
@@ -842,110 +838,112 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   }
 
   Prop = DictPointer->propertyForKey("OcFuzzyMatch");
-  if (Prop != NULL || gBootChanged) {
-    Patches->FuzzyMatch = IsPropertyNotNullAndTrue(Prop);
-  }
-
+if ( Prop ) panic("config.plist/KernelAndKextPatches/OcFuzzyMatch has been moved in section config.plist/Quirks. Update your config.plist");
+//  if (Prop != NULL || gBootChanged) {
+//    Patches->FuzzyMatch = IsPropertyNotNullAndTrue(Prop);
+//  }
+//
   Prop = DictPointer->propertyForKey("OcKernelCache");
-  if (Prop != NULL || gBootChanged) {
-    if ( Prop->isString() ) {
-      if ( Prop->getString()->stringValue().notEmpty() ) {
-        Patches->OcKernelCache = Prop->getString()->stringValue();
-      }else{
-        Patches->OcKernelCache = "Auto"_XS8;
-      }
-    }else{
-      MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
-      Patches->OcKernelCache = "Auto"_XS8;
-    }
-  }
+if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been moved in section config.plist/Quirks. Update your config.plist");
+//  if (Prop != NULL || gBootChanged) {
+//    if ( Prop->isString() ) {
+//      if ( Prop->getString()->stringValue().notEmpty() ) {
+//        Patches->OcKernelCache = Prop->getString()->stringValue();
+//      }else{
+//        Patches->OcKernelCache = "Auto"_XS8;
+//      }
+//    }else{
+//      MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
+//      Patches->OcKernelCache = "Auto"_XS8;
+//    }
+//  }
 
   {
     const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("OcQuirks");
-if ( !OcQuirksDict ) panic("Cannot find OcQuirks under KernelAndKextPatches (OC kernel quirks)");
-    if ( OcQuirksDict )
-    {
-      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
-if ( !Prop ) panic("Cannot find AppleCpuPmCfgLock in OcQuirks under KernelAndKextPatches (OC kernel quirks)");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("ExternalDiskIcons");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("ThirdPartyDrives");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
-      }
-
-      Prop = OcQuirksDict->propertyForKey("XhciPortLimit");
-      if (Prop != NULL || gBootChanged) {
-        Patches->OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
-      }
-    }
+if ( OcQuirksDict ) panic("config.plist/KernelAndKextPatches/OcQuirks has been merged in the config.plist/Quirks section. Update your config.plist");
+//    if ( OcQuirksDict )
+//    {
+//      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
+//if ( !Prop ) panic("Cannot find AppleCpuPmCfgLock in OcQuirks under KernelAndKextPatches (OC kernel quirks)");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("ExternalDiskIcons");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("ThirdPartyDrives");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
+//      }
+//
+//      Prop = OcQuirksDict->propertyForKey("XhciPortLimit");
+//      if (Prop != NULL || gBootChanged) {
+//        Patches->OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
+//      }
+//    }
   }
 
   Prop = DictPointer->propertyForKey("Debug");
@@ -2920,13 +2918,17 @@ GetEarlyUserSettings (
       }
     }
 
+    gSettings.mmioWhiteListArray.setEmpty();
     const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
-if ( !OcQuirksDict ) panic("Cannot find OcQuirks under root (OC booter quirks)");
+if ( OcQuirksDict ) panic("config.plist/OcQuirks has been renamed Quirks. Update your config.plist");
+
+    OcQuirksDict = CfgDict->dictPropertyForKey("Quirks");
+if ( !OcQuirksDict ) panic("Cannot find config.plist/Quirks");
     if (OcQuirksDict != NULL) {
       const TagStruct* Prop;
       Prop               = OcQuirksDict->propertyForKey("AvoidRuntimeDefrag");
 if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
-      gSettings.ocBooterQuirks.AvoidRuntimeDefrag = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
       Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");
       gSettings.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
@@ -2941,10 +2943,10 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
       gSettings.ocBooterQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
       Prop               = OcQuirksDict->propertyForKey( "EnableSafeModeSlide");
-      gSettings.ocBooterQuirks.EnableSafeModeSlide = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ocBooterQuirks.EnableSafeModeSlide = !IsPropertyNotNullAndFalse(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
       Prop               = OcQuirksDict->propertyForKey( "EnableWriteUnprotector");
-      gSettings.ocBooterQuirks.EnableWriteUnprotector = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ocBooterQuirks.EnableWriteUnprotector = !IsPropertyNotNullAndFalse(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
       Prop               = OcQuirksDict->propertyForKey( "ForceExitBootServices");
       gSettings.ocBooterQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
@@ -2958,6 +2960,8 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
       gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
+      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
+      gSettings.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop);
       Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
       gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
@@ -2967,13 +2971,13 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
       gSettings.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
       Prop               = OcQuirksDict->propertyForKey( "SetupVirtualMap");
-      gSettings.ocBooterQuirks.SetupVirtualMap = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ocBooterQuirks.SetupVirtualMap = !IsPropertyNotNullAndFalse(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SetupVirtualMap? QUIRK_VIRT:0;
       Prop               = OcQuirksDict->propertyForKey( "SignalAppleOS");
       gSettings.ocBooterQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SignalAppleOS? QUIRK_OS:0;
       Prop               = OcQuirksDict->propertyForKey( "SyncRuntimePermissions");
-      gSettings.ocBooterQuirks.SyncRuntimePermissions = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ocBooterQuirks.SyncRuntimePermissions = !IsPropertyNotNullAndFalse(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
       gSettings.mmioWhiteListArray.setEmpty();
 
@@ -3007,6 +3011,76 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
           }
         }
       }
+
+      Prop = OcQuirksDict->propertyForKey("FuzzyMatch");
+      if (Prop != NULL || gBootChanged) {
+        gSettings.KernelAndKextPatches.FuzzyMatch = !IsPropertyNotNullAndFalse(Prop);
+      }
+
+      Prop = OcQuirksDict->propertyForKey("KernelCache");
+      if (Prop != NULL || gBootChanged) {
+        if ( Prop->isString() ) {
+          if ( Prop->getString()->stringValue().notEmpty() ) {
+            gSettings.KernelAndKextPatches.OcKernelCache = Prop->getString()->stringValue();
+          }else{
+            gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
+          }
+        }else{
+          MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
+          gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
+        }
+      }
+
+
+      // Booter Quirks
+      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
+if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forgot to merge your quirks into one section. Update your config.plist");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("ExternalDiskIcons");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("ThirdPartyDrives");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
+
+      Prop = OcQuirksDict->propertyForKey("XhciPortLimit");
+      gSettings.KernelAndKextPatches.OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
     }
   }
 

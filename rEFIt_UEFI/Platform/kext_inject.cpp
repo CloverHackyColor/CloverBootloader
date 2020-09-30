@@ -604,7 +604,7 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     FreePool(extra);
   }
 
-  InjectKextList.setEmpty();
+//  InjectKextList.setEmpty();
   return EFI_SUCCESS;
 }
 
