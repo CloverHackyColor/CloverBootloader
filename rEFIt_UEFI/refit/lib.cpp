@@ -55,13 +55,9 @@
 
 // variables
 
-EFI_HANDLE       SelfImageHandle;
-EFI_HANDLE       SelfDeviceHandle;
-EFI_LOADED_IMAGE *SelfLoadedImage;
 EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
 XStringW          SelfDirPath;
-EFI_DEVICE_PATH  *SelfDevicePath;
 EFI_DEVICE_PATH  *SelfFullDevicePath;
 
 XTheme ThemeX;
@@ -175,29 +171,16 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
-  EFI_STATUS  Status;
   XStringW    FilePathAsString;
   UINTN       i;
-  UINTN                     DevicePathSize;
-  EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
   
-  SelfImageHandle = ImageHandle;
-  Status = gBS->HandleProtocol(SelfImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &SelfLoadedImage);
-  if (CheckFatalError(Status, L"while getting a LoadedImageProtocol handle"))
-    return Status;
+  self.initialize(ImageHandle);
   
-  SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-  TmpDevicePath = DevicePathFromHandle (SelfDeviceHandle);
-  DevicePathSize = GetDevicePathSize (TmpDevicePath);
-  SelfDevicePath = (__typeof__(SelfDevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
-  CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
-  
-	DBG("SelfDevicePath=%ls @%llX\n", FileDevicePathToXStringW(SelfDevicePath).wc_str(), (uintptr_t)SelfDeviceHandle);
   
   // find the current directory
-  FilePathAsString = FileDevicePathToXStringW(SelfLoadedImage->FilePath);
+  FilePathAsString = FileDevicePathToXStringW(self.getSelfLoadedImage().FilePath);
   if (FilePathAsString.notEmpty()) {
-    SelfFullDevicePath = FileDevicePath(SelfDeviceHandle, FilePathAsString);
+    SelfFullDevicePath = FileDevicePath(self.getSelfDeviceHandle(), FilePathAsString);
     for (i = FilePathAsString.length(); i > 0 && FilePathAsString[i] != '\\'; i--) ;
     if (i > 0) {
       FilePathAsString = FilePathAsString.subString(0, i);
@@ -263,11 +246,11 @@ EFI_STATUS ReinitSelfLib(VOID)
 
 //  DbgHeader("ReinitSelfLib");
   
-  if (!SelfDevicePath) {
-    return EFI_NOT_FOUND;
-  }
+//  if (!self.getSelfDevicePath()) {
+//    return EFI_NOT_FOUND;
+//  }
   
-  TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
+  TmpDevicePath = DuplicateDevicePath(&self.getSelfDevicePath());
   DBG("reinit: self device path=%ls\n", FileDevicePathToXStringW(TmpDevicePath).wc_str());
   if(TmpDevicePath == NULL)
 		return EFI_NOT_FOUND;
@@ -284,7 +267,9 @@ EFI_STATUS ReinitSelfLib(VOID)
     DBG("SelfRootDir can't be reopened\n");
     return EFI_NOT_FOUND;
   }
-  SelfDeviceHandle = NewSelfHandle;
+//  panic("todo");
+//  self.getSelfDeviceHandle() = NewSelfHandle;
+  self.initialize(self.getSelfImageHandle());
   /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
 
 
@@ -301,9 +286,8 @@ EFI_STATUS FinishInitRefitLib(VOID)
 	EFI_STATUS                Status;
   
   if (SelfRootDir == NULL) {
-    SelfRootDir = EfiLibOpenRoot(SelfLoadedImage->DeviceHandle);
+    SelfRootDir = EfiLibOpenRoot(self.getSelfLoadedImage().DeviceHandle);
     if (SelfRootDir != NULL) {
-      SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
     } else {
       return EFI_LOAD_ERROR;
     }
@@ -1099,7 +1083,7 @@ VOID ScanVolumes(VOID)
     REFIT_VOLUME* Volume = new REFIT_VOLUME;
     Volume->LegacyOS = new LEGACY_OS;
     Volume->DeviceHandle = Handles[HandleIndex];
-    if (Volume->DeviceHandle == SelfDeviceHandle) {
+    if (Volume->DeviceHandle == self.getSelfDeviceHandle()) {
       SelfVolume = Volume;
     }
     
@@ -1139,8 +1123,8 @@ VOID ScanVolumes(VOID)
   if (SelfVolume == NULL){
     DBG("        WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = new REFIT_VOLUME;
-    SelfVolume->DeviceHandle = SelfDeviceHandle;
-    SelfVolume->DevicePath = SelfDevicePath;
+    SelfVolume->DeviceHandle = self.getSelfDeviceHandle();
+    SelfVolume->DevicePath = DuplicateDevicePath(&self.getSelfDevicePath());
     SelfVolume->RootDir = SelfRootDir;
     SelfVolume->DiskKind = DISK_KIND_BOOTER;
     SelfVolume->VolName = L"Clover"_XSW;
@@ -1252,7 +1236,7 @@ VOID ReinitVolumes(VOID)
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
   UINTN           VolumesFound = 0;
-  EFI_DEVICE_PATH         *RemainingDevicePath;
+  const EFI_DEVICE_PATH  *RemainingDevicePath;
   EFI_HANDLE              DeviceHandle, WholeDiskHandle;
   
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
@@ -1266,7 +1250,8 @@ VOID ReinitVolumes(VOID)
     if (Volume->DevicePath != NULL) {
       // get the handle for that path
       RemainingDevicePath = Volume->DevicePath;
-      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &DeviceHandle);
+
+      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, const_cast<EFI_DEVICE_PATH**>(&RemainingDevicePath), &DeviceHandle);
       
       if (!EFI_ERROR(Status)) {
         Volume->DeviceHandle = DeviceHandle;
@@ -1282,7 +1267,7 @@ VOID ReinitVolumes(VOID)
     if (Volume->WholeDiskDevicePath != NULL) {
       // get the handle for that path
       RemainingDevicePath = DuplicateDevicePath(Volume->WholeDiskDevicePath);
-      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
+      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, const_cast<EFI_DEVICE_PATH**>(&RemainingDevicePath), &WholeDiskHandle);
       
       if (!EFI_ERROR(Status)) {
         Volume->WholeDiskBlockIO = (__typeof__(Volume->WholeDiskBlockIO))WholeDiskHandle;
@@ -1628,7 +1613,7 @@ INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *Search
 
  **/
 XStringW DevicePathToXStringW (
-    IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+    const EFI_DEVICE_PATH_PROTOCOL     *DevPath
   )
 {
   CHAR16* DevicePathStr = ConvertDevicePathToText (DevPath, TRUE, TRUE);
@@ -1641,7 +1626,7 @@ XStringW DevicePathToXStringW (
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+XStringW FileDevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   CHAR16      *FilePath;
   CHAR16      *Char;
@@ -1671,7 +1656,7 @@ XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return returnValue;
 }
 
-XStringW FileDevicePathFileToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+XStringW FileDevicePathFileToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   EFI_DEVICE_PATH_PROTOCOL *Node;
   

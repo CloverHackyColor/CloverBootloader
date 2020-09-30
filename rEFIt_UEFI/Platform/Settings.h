@@ -606,6 +606,8 @@ public:
   OC_BOOTER_QUIRKS   ocBooterQuirks;
   XObjArray<MMIOWhiteList> mmioWhiteListArray;
 
+  BOOLEAN ProvideConsoleGop;
+
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
                     pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
@@ -633,7 +635,7 @@ public:
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray()
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray(), ProvideConsoleGop(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
@@ -878,7 +880,7 @@ public:
                    DebugLog(FALSE), ScratchDebugLogAtStart(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
                    RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), Theme(), ScreenResolution(), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
                    ShowOptimus(FALSE), Codepage(0xC0), CodepageSize(0xC0) {};
-  REFIT_CONFIG(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
+  REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
   ~REFIT_CONFIG() {  }
 

@@ -604,7 +604,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	UINT32                      LbaOffset	= 0;
 	UINT32                      LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
-	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
+	const EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
     UINT8                       BiosDriveNum;
 //  UINT16                      OldMask;
 //  UINT16                      NewMask;
@@ -752,7 +752,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   UINT32                      LbaOffset		= 0;
   UINT32                      LbaSize			= 0;
   HARDDRIVE_DEVICE_PATH       *HdPath			= NULL;
-  EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
+  const EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
   UINT8                       BiosDriveNum;
   //UINT16                      OldMask;
   //UINT16                      NewMask;

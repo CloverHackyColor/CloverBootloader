@@ -38,7 +38,7 @@
  *   returns null if it is not APFS part
  */
 EFI_GUID *APFSPartitionUUIDExtract(
-    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   while (!IsDevicePathEndType(DevicePath) &&
@@ -61,7 +61,7 @@ EFI_GUID *APFSPartitionUUIDExtract(
  *   returns empty string if it is not APFS part
  */
 XString8 APFSPartitionUUIDExtractAsXString8(
-    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   EFI_GUID* uuid = APFSPartitionUUIDExtract(DevicePath);

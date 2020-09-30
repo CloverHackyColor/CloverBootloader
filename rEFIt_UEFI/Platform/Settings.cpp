@@ -139,7 +139,6 @@ EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
 extern BOOLEAN                NeedPMfix;
 //OC_ABC_SETTINGS_4CLOVER               gQuirks;
-BOOLEAN                       gProvideConsoleGopEnable;
 
 //extern INTN                     OldChosenAudio;
 
@@ -257,8 +256,8 @@ ParseLoadOptions (
 
   XStringW& ConfName = *ConfNamePtr;
 
-  Start = (CHAR8*)SelfLoadedImage->LoadOptions;
-  End   = (CHAR8*)((CHAR8*)SelfLoadedImage->LoadOptions + SelfLoadedImage->LoadOptionsSize);
+  Start = (CHAR8*)self.getSelfLoadedImage().LoadOptions;
+  End   = (CHAR8*)((CHAR8*)self.getSelfLoadedImage().LoadOptions + self.getSelfLoadedImage().LoadOptionsSize);
   while ((Start < End) && ((*Start == ' ') || (*Start == '\\') || (*Start == '/')))
   {
     ++Start;
@@ -308,14 +307,14 @@ ParseLoadOptions (
 }
 
 //
-// analyze SelfLoadedImage->LoadOptions to extract Default Volume and Default Loader
+// analyze self.getSelfLoadedImage().LoadOptions to extract Default Volume and Default Loader
 // input and output data are global
 //
 VOID
 GetBootFromOption(VOID)
 {
-  UINT8  *Data = (UINT8*)SelfLoadedImage->LoadOptions;
-  UINTN  Len = SelfLoadedImage->LoadOptionsSize;
+  UINT8  *Data = (UINT8*)self.getSelfLoadedImage().LoadOptions;
+  UINTN  Len = self.getSelfLoadedImage().LoadOptionsSize;
   UINTN  NameSize, Name2Size;
 
   Data += 4; //skip signature as we already here
@@ -2576,6 +2575,9 @@ GetEarlyUserSettings (
         }
       }
 
+      Prop = GUIDict->propertyForKey("ProvideConsoleGop");
+      gSettings.ProvideConsoleGop = IsPropertyNotNullAndTrue(Prop);
+
       Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
         if (Prop->isInt64()) {
@@ -2956,8 +2958,6 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
       gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
-      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
-      gProvideConsoleGopEnable = IsPropertyNotNullAndTrue(Prop);
       Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
       gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
