@@ -603,6 +603,9 @@ MainBuildScript() {
       fi
       echo "#define REVISION_STR \"Clover revision: ${clover_revision} $sha1\"" >> "$CLOVERROOT"/Version.h
 #      echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
+      rev_date=$(git show -s --format=%ci $(git rev-parse HEAD))
+      echo "#define REVISION_DATE \"${rev_date}\"" >> "$CLOVERROOT"/Version.h
+      echo "#define COMMIT_HASH \"$(git rev-parse HEAD)\"" >> "$CLOVERROOT"/Version.h
 
       local clover_build_info="Args: "
       if [[ -n "$@" ]]; then
