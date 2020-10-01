@@ -857,7 +857,7 @@
 !else
 	rEFIt_UEFI/refit.inf {
     <LibraryClasses>
-      BaseMemoryLib|MdePkg/Library/UefiMemoryLib/UefiMemoryLib.inf
+      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   }
 !endif
 
