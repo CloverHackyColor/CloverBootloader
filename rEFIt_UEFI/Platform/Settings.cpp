@@ -859,8 +859,8 @@ if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been move
 //  }
 
   {
-    const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("OcQuirks");
-if ( OcQuirksDict ) panic("config.plist/KernelAndKextPatches/OcQuirks has been merged in the config.plist/Quirks section. Update your config.plist");
+//    const TagDict* OcQuirksDict = DictPointer->dictPropertyForKey("OcQuirks");
+//if ( OcQuirksDict ) panic("config.plist/KernelAndKextPatches/OcQuirks has been merged in the config.plist/Quirks section. Update your config.plist");
 //    if ( OcQuirksDict )
 //    {
 //      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
@@ -1266,6 +1266,8 @@ if ( OcQuirksDict ) panic("config.plist/KernelAndKextPatches/OcQuirks has been m
 	        }
         }
         DBG(" %s", newKernelPatch.Label.c_str());
+        
+        newKernelPatch.Name = "kernel"_XS8;
 
         prop3 = Prop2->propertyForKey("Disabled");
         newKernelPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(prop3);
@@ -1392,8 +1394,9 @@ if ( OcQuirksDict ) panic("config.plist/KernelAndKextPatches/OcQuirks has been m
 	        	MsgLog("ATTENTION : Comment property not string in KernelToPatch\n");
 	        }
         }
-
         DBG(" %s", newBootPatch.Label.c_str());
+        
+        newBootPatch.Name = "boot.efi"_XS8;
 
         prop3 = Prop2->propertyForKey("Disabled");
         newBootPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(prop3);
