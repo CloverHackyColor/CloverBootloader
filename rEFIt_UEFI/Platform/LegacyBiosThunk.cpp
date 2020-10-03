@@ -65,7 +65,7 @@ InitializeBiosIntCaller (
     return Status;
   }
   
-  mThunkContext->RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
+  mThunkContext->RealModeBuffer     = (void*)(UINTN)LegacyRegionBase;
   mThunkContext->RealModeBufferSize = LegacyRegionSize;
   mThunkContext->ThunkAttributes    = THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
   DBG("mThunkContext->RealModeBuffer: %p, mThunkContext->RealModeBufferSize: %d\n", mThunkContext->RealModeBuffer, mThunkContext->RealModeBufferSize);
@@ -126,7 +126,7 @@ InitializeInterruptRedirection (
   //
   // Copy code to legacy region
   //
-  CopyMem((VOID *)(UINTN)LegacyRegionBase, (VOID *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
+  CopyMem((void *)(UINTN)LegacyRegionBase, (void *)&InterruptRedirectionCode[0], sizeof (InterruptRedirectionCode));
 
   //
   // Get VectorBase, it should be 0x68
@@ -153,7 +153,7 @@ InitializeInterruptRedirection (
   When BiosVideo disconnects, it takes care of setting Text VGA Mode (80x25) which works properly with Legacy mode
 **/
 EFI_STATUS
-DisconnectVga ( VOID )
+DisconnectVga ( void )
 {
   EFI_STATUS              Status;
   UINTN                   HandleCount = 0;
@@ -166,7 +166,7 @@ DisconnectVga ( VOID )
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &Handles);
   if (Status == EFI_SUCCESS) {
     for (Index = 0; Index < HandleCount; Index++) {
-      Status = gBS->HandleProtocol(Handles[Index], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
+      Status = gBS->HandleProtocol(Handles[Index], &gEfiPciIoProtocolGuid, (void **) &PciIo);
       if (EFI_ERROR(Status)) {
         continue;
       }
@@ -305,7 +305,7 @@ LegacyBiosFarCall86 (
   IN  UINT16							Segment,
   IN  UINT16							Offset,
   IN  IA32_REGISTER_SET					*Regs
-//  IN  VOID                            *Stack
+//  IN  void                            *Stack
 //  IN  UINTN                           StackSize
   )
 {
@@ -380,7 +380,7 @@ LegacyBiosFarCall86 (
     #endif
 
   // Save current rate of DXE Timer and disable DXE timer
-  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (VOID **) &Timer);
+  Status = gBS->LocateProtocol (&gEfiTimerArchProtocolGuid, NULL, (void **) &Timer);
   if (!EFI_ERROR(Status)) {
     Timer->GetTimerPeriod (Timer, &TimerPeriod);
     Timer->SetTimerPeriod (Timer, 0);

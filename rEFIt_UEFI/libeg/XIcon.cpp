@@ -227,18 +227,18 @@ void XIcon::GetEmbedded()
 XIcon::~XIcon() {}
 
 //copy from XImage for our purpose
-EFI_STATUS XIcon::LoadXImage(EFI_FILE *BaseDir, const char* IconName)
+EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const char* IconName)
 {
   return LoadXImage(BaseDir, XStringW().takeValueFrom(IconName));
 }
 
-EFI_STATUS XIcon::LoadXImage(EFI_FILE *BaseDir, const wchar_t* LIconName)
+EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const wchar_t* LIconName)
 {
   return LoadXImage(BaseDir, XStringW().takeValueFrom(LIconName));
 }
 //dont call this procedure for SVG theme BaseDir == NULL?
 //it can be used for other files
-EFI_STATUS XIcon::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
+EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
 {
   EFI_STATUS Status = Image.LoadXImage(BaseDir, IconName);
   ImageNight.LoadXImage(BaseDir, IconName + L"_night"_XSW);

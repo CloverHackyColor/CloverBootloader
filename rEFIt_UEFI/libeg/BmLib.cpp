@@ -32,7 +32,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 EFI_STATUS
 EfiLibLocateProtocol (
   IN  EFI_GUID    *ProtocolGuid,
-  OUT VOID        **Interface
+  OUT void        **Interface
   )
 {
   EFI_STATUS  Status;
@@ -40,7 +40,7 @@ EfiLibLocateProtocol (
   Status = gBS->LocateProtocol (
                   ProtocolGuid,
                   NULL,
-                  (VOID **) Interface
+                  (void **) Interface
                   );
   return Status;
 }
@@ -54,14 +54,14 @@ EfiLibLocateProtocol (
   @return A valid file handle or NULL is returned
 
 **/
-EFI_FILE_HANDLE
+EFI_FILE*
 EfiLibOpenRoot (
   IN EFI_HANDLE                   DeviceHandle
   )
 {
   EFI_STATUS                      Status;
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *Volume;
-  EFI_FILE_HANDLE                 File;
+  EFI_FILE*                 File;
 
   File = NULL;
 
@@ -71,7 +71,7 @@ EfiLibOpenRoot (
   Status = gBS->HandleProtocol (
                   DeviceHandle,
                   &gEfiSimpleFileSystemProtocolGuid,
-                  (VOID **) &Volume
+                  (void **) &Volume
                   );
 
   //
@@ -102,7 +102,7 @@ EfiLibOpenRoot (
 **/
 XStringW
 EfiLibFileSystemVolumeLabelInfo (
-  IN EFI_FILE_HANDLE      FHand
+  const EFI_FILE*      FHand
   )
 {
   EFI_STATUS    Status;
@@ -110,7 +110,7 @@ EfiLibFileSystemVolumeLabelInfo (
   UINTN         Size = 0;
   XStringW returnValue;
   
-  Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
+  Status = FHand->GetInfo(FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
     Size += 2;
@@ -196,7 +196,7 @@ AsciiStrStriN (
 **/
 EFI_FILE_INFO *
 EfiLibFileInfo (
-  IN EFI_FILE_HANDLE      FHand
+  const EFI_FILE*      FHand
   )
 {
   EFI_STATUS    Status;
@@ -216,7 +216,7 @@ EfiLibFileInfo (
 
 EFI_FILE_SYSTEM_INFO *
 EfiLibFileSystemInfo (
-                IN EFI_FILE_HANDLE      FHand
+                const EFI_FILE*      FHand
                 )
 {
   EFI_STATUS    Status;
@@ -273,14 +273,14 @@ EfiDevicePathInstanceCount (
   @retval   NULL  Allocation failed.
 
 **/
-VOID *
+void *
 EfiReallocatePool (
-  IN VOID                 *OldPool,
+  IN void                 *OldPool,
   IN UINTN                OldSize,
   IN UINTN                NewSize
   )
 {
-  VOID  *NewPool;
+  void  *NewPool;
 
   NewPool = NULL;
   if (NewSize != 0) {

@@ -18,7 +18,7 @@ extern "C" {
 // Keyboard input
 //
 
-BOOLEAN ReadAllKeyStrokes(VOID)
+BOOLEAN ReadAllKeyStrokes(void)
 {
     BOOLEAN       GotKeyStrokes;
     EFI_STATUS    Status;
@@ -36,7 +36,7 @@ BOOLEAN ReadAllKeyStrokes(VOID)
     return GotKeyStrokes;
 }
 
-VOID PauseForKey(CONST CHAR16* msg)
+void PauseForKey(CONST CHAR16* msg)
 {
     UINTN index;
     if (msg) {
@@ -57,7 +57,7 @@ VOID PauseForKey(CONST CHAR16* msg)
 
 // Jief, TODO : not sure of the difference between this and PauseForKey. Looks like none. Can it be removed ?
 
-VOID
+void
 WaitForKeyPress(
     CHAR16          *Message
     )
@@ -77,7 +77,7 @@ WaitForKeyPress(
 }
 
 //#if REFIT_DEBUG > 0
-//VOID DebugPause(VOID)
+//void DebugPause(void)
 //{
 //    // show console and wait for key
 //    SwitchToText(FALSE);
@@ -88,7 +88,7 @@ WaitForKeyPress(
 //}
 //#endif
 
-VOID EndlessIdleLoop(VOID)
+void EndlessIdleLoop(void)
 {
     UINTN index;
 

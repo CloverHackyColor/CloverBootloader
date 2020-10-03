@@ -95,14 +95,14 @@ GetEfiTimeInMs (
 }
 
 /** Reads and returns value of NVRAM variable. */
-VOID *GetNvramVariable(
+void *GetNvramVariable(
 	IN      CONST CHAR16   *VariableName,
 	IN      EFI_GUID *VendorGuid,
 	OUT     UINT32   *Attributes    OPTIONAL,
 	OUT     UINTN    *DataSize      OPTIONAL)
 {
   EFI_STATUS Status;
-  VOID       *Data       = NULL;
+  void       *Data       = NULL;
   //
   // Pass in a zero size buffer to find the required buffer size.
   //
@@ -180,11 +180,11 @@ SetNvramVariable (
     IN  EFI_GUID   *VendorGuid,
     IN  UINT32      Attributes,
     IN  UINTN       DataSize,
-    IN  CONST VOID *Data
+    IN  CONST void *Data
   )
 {
   //EFI_STATUS Status;
-  VOID   *OldData;
+  void   *OldData;
   UINTN  OldDataSize = 0;
   UINT32 OldAttributes = 0;
   
@@ -215,7 +215,7 @@ SetNvramVariable (
   //DBG(" -> writing new (%s)\n", efiStrError(Status));
   //return Status;
  
-  return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
+  return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, (void*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
   
 }
 EFI_STATUS
@@ -236,10 +236,10 @@ AddNvramVariable (
 	IN  EFI_GUID *VendorGuid,
 	IN  UINT32   Attributes,
 	IN  UINTN    DataSize,
-	IN  const VOID     *Data
+	IN  const void     *Data
   )
 {
-  VOID       *OldData;
+  void       *OldData;
 
   //DBG("SetNvramVariable (%ls, guid, 0x%X, %d):\n", VariableName, Attributes, DataSize);
   OldData = (__typeof__(OldData))GetNvramVariable(VariableName, VendorGuid, NULL, NULL);
@@ -341,7 +341,7 @@ ResetNativeNvram ()
   BOOLEAN         Restart = TRUE;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
-  EFI_FILE_HANDLE FileHandle;
+  EFI_FILE* FileHandle;
 
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
@@ -457,7 +457,7 @@ INT8 NKey[4] = {0, 0, 0, 0};
 INT8 SAdr[4] = {0, 0, 3, 0};
 INT8 SNum[1] = {1};
 
-VOID
+void
 GetSmcKeys (BOOLEAN WriteToSMC)
 {
   EFI_STATUS                  Status;
@@ -480,7 +480,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
     return;
   }
   DbgHeader("Dump SMC keys from NVRAM");
-  Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (VOID**)&gAppleSmc);
+  Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (void**)&gAppleSmc);
   if (!EFI_ERROR(Status)) {
     DBG("found AppleSMC protocol\n");    
   } else {
@@ -553,7 +553,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   FreePool(Name);
 }
 #if CHECK_SMC
-VOID DumpSmcKeys()
+void DumpSmcKeys()
 {
   if (!gAppleSmc || !gAppleSmc->DumpData) {
     return;
@@ -785,7 +785,7 @@ GetEfiBootDeviceFromNvram ()
     }
   }
   if (gEfiBootDeviceData == NULL) {
-    VOID *Value;
+    void *Value;
     UINTN Size2=0;
     EFI_STATUS Status;
     Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
@@ -925,7 +925,7 @@ LoadLatestNvramPlist()
 //  UINTN           Index;
   REFIT_VOLUME    *Volume;
 //  EFI_GUID        *Guid;
-  EFI_FILE_HANDLE FileHandle = NULL;
+  EFI_FILE* FileHandle = NULL;
   EFI_FILE_INFO   *FileInfo = NULL;
   UINT64          LastModifTimeMs;
   UINT64          ModifTimeMs;
@@ -1026,12 +1026,12 @@ LoadLatestNvramPlist()
 /** Puts all vars from nvram.plist to RT vars. Should be used in CloverEFI only
  *  or if some UEFI boot uses EmuRuntimeDxe driver.
  */
-VOID
+void
 PutNvramPlistToRtVars ()
 {
 //  EFI_STATUS Status;
   size_t            Size;
-  const VOID       *Value;
+  const void       *Value;
   
   if (gNvramDict == NULL) {
     /*Status = */LoadLatestNvramPlist();
@@ -1453,7 +1453,7 @@ EFI_STATUS SetStartupDiskVolume (
 
 
 /** Deletes Startup disk vars: efi-boot-device, efi-boot-device-data, BootCampHD. */
-VOID
+void
 RemoveStartupDiskVolume ()
 {
 //    EFI_STATUS Status;
@@ -1472,7 +1472,7 @@ RemoveStartupDiskVolume ()
 }
 
 
-VOID ResetNvram ()
+void ResetNvram ()
 {
   if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
     if (gEmuVariableControl != NULL) {

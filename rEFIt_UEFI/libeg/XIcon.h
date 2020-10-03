@@ -32,9 +32,9 @@ public:
   void setFilled() { Empty = false; }
   void setEmpty()  { Empty = true; }
   
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const wchar_t* LIconName);
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
+  EFI_STATUS LoadXImage(const EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+  EFI_STATUS LoadXImage(const EFI_FILE *Dir, const wchar_t* LIconName);
+  EFI_STATUS LoadXImage(const EFI_FILE *Dir, const char* IconName);
 
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
 //  Icon(const Icon&) = delete;

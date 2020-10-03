@@ -57,7 +57,7 @@ extern BOOLEAN gGuiIsReady;
 extern BOOLEAN gThemeNeedInit;
 
 // Add secure boot tool entry
-VOID AddSecureBootTool(VOID)
+void AddSecureBootTool(void)
 {
   LOADER_ENTRY *Entry;
   // If in forced mode or no secure boot then don't add tool
@@ -145,7 +145,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 }
 
 // Find a device path's signature list
-STATIC VOID *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
+STATIC void *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
                                         OUT UINTN                          *DatabaseSize)
 {
   EFI_IMAGE_EXECUTION_INFO_TABLE  *ImageExeInfoTable = NULL;
@@ -162,7 +162,7 @@ STATIC VOID *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *Devi
     return NULL;
   }
   // Get the execution information table
-  if (EFI_ERROR(EfiGetSystemConfigurationTable(&gEfiImageSecurityDatabaseGuid, (VOID **)&ImageExeInfoTable)) ||
+  if (EFI_ERROR(EfiGetSystemConfigurationTable(&gEfiImageSecurityDatabaseGuid, (void **)&ImageExeInfoTable)) ||
       (ImageExeInfoTable == NULL)) {
     return NULL;
   }
@@ -210,12 +210,12 @@ STATIC VOID *FindImageSignatureDatabase(IN  CONST EFI_DEVICE_PATH_PROTOCOL *Devi
 
 // Insert secure boot image signature
 EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                           IN VOID                           *FileBuffer,
+                                           IN void                           *FileBuffer,
                                            IN UINTN                           FileSize)
 {
   EFI_STATUS  Status = EFI_INVALID_PARAMETER;
   CHAR16     *ErrorString = NULL;
-  VOID       *Database = NULL;
+  void       *Database = NULL;
   UINTN       DatabaseSize = 0;
   // Check that either the device path or the file buffer is valid
   if ((DevicePath == NULL) && ((FileBuffer == NULL) || (FileSize == 0))) {
@@ -285,12 +285,12 @@ EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *De
 
 // Insert secure boot image signature
 EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                             IN VOID                           *FileBuffer,
+                                             IN void                           *FileBuffer,
                                              IN UINTN                           FileSize)
 {
   EFI_STATUS  Status = EFI_INVALID_PARAMETER;
   CHAR16     *ErrorString = NULL;
-  VOID       *Database;
+  void       *Database;
   UINTN       DatabaseSize = 0;
   // Check that either the device path or the file buffer is valid
   if (DevicePath == NULL) {
@@ -403,7 +403,7 @@ STATIC REFIT_MENU_SCREEN  SecureBootPolicyMenu = { 0, L"Secure Boot Policy", NUL
                                               /*    FILM_CENTRE, FILM_CENTRE,*/ { 0, 0, 0, 0 } , NULL };
 
 // Configure secure boot
-BOOLEAN ConfigureSecureBoot(VOID)
+BOOLEAN ConfigureSecureBoot(void)
 {
   BOOLEAN StillConfiguring = TRUE;
   do

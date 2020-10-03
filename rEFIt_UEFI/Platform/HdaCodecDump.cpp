@@ -26,6 +26,7 @@
 #include "StateGenerator.h"
 #include "AmlGenerator.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
 
 CONST CHAR8 *gWidgetNames[HDA_WIDGET_TYPE_VENDOR + 1] = {
 	"Audio Output", "Audio Input", "Audio Mixer",
@@ -59,7 +60,7 @@ CONST CHAR8  hdcID[4]       = HDC_ID;
 extern EFI_AUDIO_IO_PROTOCOL	*AudioIo;
 extern XStringW           		 OEMPath;
 
-VOID
+void
 EFIAPI
 HdaCodecDumpPrintRatesFormats(
     IN UINT32 Rates,
@@ -117,7 +118,7 @@ HdaCodecDumpPrintRatesFormats(
     HdaLog("\n");
 }
 
-VOID
+void
 EFIAPI
 HdaCodecDumpPrintAmpCaps(
     IN UINT32 AmpCaps) {
@@ -129,7 +130,7 @@ HdaCodecDumpPrintAmpCaps(
         HdaLog("N/A\n");
 }
 
-VOID
+void
 EFIAPI
 HdaCodecDumpPrintWidgets(
 	IN EFI_HDA_IO_PROTOCOL *HdaIo,
@@ -273,7 +274,6 @@ EFI_STATUS SaveHdaDumpTxt()
 //    EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
    	HDA_FUNC_GROUP *AudioFuncGroup;
    	EFI_HDA_IO_PROTOCOL *HdaIo;
-	XStringW MiscPath = SWPrintf("%ls\\misc", OEMPath.wc_str());
 	CHAR8 *MemLogStart;
 	UINTN MemLogStartLen;
 
@@ -284,7 +284,7 @@ EFI_STATUS SaveHdaDumpTxt()
 		
 	    HdaLog("HdaCodecDump Start\n");
 	
-		Status = gBS->HandleProtocol(AudioList[i].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
+		Status = gBS->HandleProtocol(AudioList[i].Handle, &gEfiAudioIoProtocolGuid, (void**)&AudioIo);
 		
 		if (EFI_ERROR(Status))
 			continue;
@@ -332,11 +332,12 @@ EFI_STATUS SaveHdaDumpTxt()
 		UINTN WidgetCount = AudioFuncGroup->WidgetsCount;
 		HdaCodecDumpPrintWidgets(HdaIo, Widgets, WidgetCount);
 		
-		XStringW PathHdaDump = SWPrintf("%ls\\HdaCodec#%llu (%ls).txt", MiscPath.wc_str(), i, HdaCodecDev->Name);
+		XStringW PathHdaDump = SWPrintf("misc\\HdaCodec#%llu (%ls).txt", i, HdaCodecDev->Name);
 
-    Status = egSaveFile(SelfRootDir, PathHdaDump.wc_str(), (VOID *)MemLogStart, GetMemLogLen() - MemLogStartLen);
+    Status = egSaveFile(&self.getCloverDir(), PathHdaDump.wc_str(), (void *)MemLogStart, GetMemLogLen() - MemLogStartLen);
     if (EFI_ERROR(Status)) {
-      Status = egSaveFile(NULL, PathHdaDump.wc_str(), (VOID *)MemLogStart, GetMemLogLen() - MemLogStartLen);
+      // Jief : don't write outside SelfDir
+//      Status = egSaveFile(NULL, PathHdaDump.wc_str(), (void *)MemLogStart, GetMemLogLen() - MemLogStartLen);
 		}
 	}
   return Status;
@@ -350,7 +351,6 @@ EFI_STATUS SaveHdaDumpBin()
 //    EFI_HDA_CODEC_INFO_PROTOCOL *HdaCodecInfo;
    	HDA_FUNC_GROUP *AudioFuncGroup;
    	EFI_HDA_IO_PROTOCOL *HdaIo;
-    XStringW MiscPath = SWPrintf("%ls\\misc", OEMPath.wc_str());
 	
 	for (UINTN i = 0; i < AudioList.size(); i++) {
 		HDA_WIDGET_DEV *Widgets;
@@ -362,7 +362,7 @@ EFI_STATUS SaveHdaDumpBin()
 		UINT8 *HdaCodecDataPtr;
 		XStringW PathHdaDump;
 		
-		Status = gBS->HandleProtocol(AudioList[i].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
+		Status = gBS->HandleProtocol(AudioList[i].Handle, &gEfiAudioIoProtocolGuid, (void**)&AudioIo);
 		
 		if (EFI_ERROR(Status))
 			continue;
@@ -471,9 +471,9 @@ EFI_STATUS SaveHdaDumpBin()
 			HdaCodecDataPtr += sizeof(HdaWidget);
 		}
 	
-		PathHdaDump = SWPrintf("%ls\\HdaCodec#%llu (%ls).bin", MiscPath.wc_str(), i, HdaCodecDev->Name);
+		PathHdaDump = SWPrintf("misc\\HdaCodec#%llu (%ls).bin", i, HdaCodecDev->Name);
 
-		Status = egSaveFile(SelfRootDir, PathHdaDump.wc_str(), HdaCodecData, HdaCodecDataSize);
+		Status = egSaveFile(&self.getCloverDir(), PathHdaDump.wc_str(), HdaCodecData, HdaCodecDataSize);
     if (EFI_ERROR(Status)) {
       Status = egSaveFile(NULL, PathHdaDump.wc_str(), HdaCodecData, HdaCodecDataSize);
 		}

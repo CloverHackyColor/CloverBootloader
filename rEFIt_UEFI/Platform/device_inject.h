@@ -49,10 +49,10 @@ typedef struct {
 XString8 get_pci_dev_path(pci_dt_t *pci_dt);
 UINT32 pci_config_read32(pci_dt_t *pci_dt, UINT8 reg);
 extern pci_dt_t* nvdevice;
-VOID* PCIReadRom(pci_dt_t* device);
+void* PCIReadRom(pci_dt_t* device);
 
 #if 0 //never do this
-extern VOID setupDeviceProperties(Node *node);
+extern void setupDeviceProperties(Node *node);
 #endif
 
 struct ACPIDevPath {
@@ -117,7 +117,7 @@ DevPropString	*devprop_create_string(void);
 DevPropDevice	*devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt, EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 BOOLEAN			devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UINTN len);
 CHAR8			*devprop_generate_string(DevPropString *string);
-VOID			devprop_free_string(DevPropString *string);
+void			devprop_free_string(DevPropString *string);
 
 BOOLEAN set_eth_props(pci_dt_t *eth_dev);
 BOOLEAN set_usb_props(pci_dt_t *usb_dev);

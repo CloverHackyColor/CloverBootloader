@@ -82,7 +82,7 @@ EFI_STATUS
     IN     APPLE_GETVAR_PROTOCOL        *This,
     IN     EFI_DEVICE_PATH_PROTOCOL     *DevicePath,
     IN     CHAR16                       *Name,
-    OUT    VOID                         *Value, OPTIONAL
+    OUT    void                         *Value, OPTIONAL
     IN OUT UINTN                        *Size
 );
 
@@ -107,7 +107,7 @@ EFI_STATUS
     IN APPLE_GETVAR_PROTOCOL        *This,
     IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath,
     IN CHAR16                       *Name,
-    IN VOID                         *Value,
+    IN void                         *Value,
     IN UINTN                        Size
 );
 
@@ -187,7 +187,7 @@ APPLE_GETVAR_PROTOCOL mDeviceProperties=
 };
 
 typedef	EFI_STATUS (EFIAPI *EFI_SCREEN_INFO_FUNCTION)(
-                                                      VOID* This, 
+                                                      void* This, 
                                                       UINT64* baseAddress,
                                                       UINT64* frameBufferSize,
                                                       UINT32* byterPerRow,
@@ -200,7 +200,7 @@ typedef struct {
 	EFI_SCREEN_INFO_FUNCTION GetScreenInfo;	
 } EFI_INTERFACE_SCREEN_INFO;
 
-EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize,
+EFI_STATUS EFIAPI GetScreenInfo(void* This, UINT64* baseAddress, UINT64* frameBufferSize,
                          UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
 {
   /*
@@ -215,7 +215,7 @@ EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBu
 	
 	Status = gBS->HandleProtocol (gST->ConsoleOutHandle,
                                 &gEfiGraphicsOutputProtocolGuid,
-                                (VOID **) &mGraphicsOutput);
+                                (void **) &mGraphicsOutput);
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
   //this print never occured so this procedure is redundant
@@ -246,7 +246,7 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 
 extern EFI_GUID gAppleOSLoadedNamedEventGuid;
 // OSInfoOSNameImpl
-VOID
+void
 EFIAPI
 OSInfoOSNameImpl (
                   OUT CHAR8 *OSName
@@ -255,13 +255,13 @@ OSInfoOSNameImpl (
   // for future developers
   // this variable can be used at OnExitBoootServices,
   // as it will be set by boot.efi
-  BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
+  BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (void*)OSName);
   DBG("OSInfo:OSName called\n");
   EfiNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
 }
 
 // OSInfoOSVendorImpl
-VOID
+void
 EFIAPI
 OSInfoOSVendorImpl (
                     IN CHAR8 *OSVendor
@@ -299,7 +299,7 @@ EFI_OS_INFO_PROTOCOL mEfiOSInfo = {
 EFI_STATUS
 EFIAPI
 RestoreConfig (APPLE_GRAPH_CONFIG_PROTOCOL* This,
-               UINT32 Param1, UINT32 Param2, VOID* Param3, VOID* Param4, VOID* Param5
+               UINT32 Param1, UINT32 Param2, void* Param3, void* Param4, void* Param5
                )
 {
   DBG("RestoreConfig called Param1=%x\n", Param1);
@@ -359,7 +359,7 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
 //};
 
 EFI_STATUS
-SetPrivateVarProto(VOID)
+SetPrivateVarProto(void)
 {
   EFI_STATUS  Status;
   //This must be independent install

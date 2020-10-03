@@ -26,7 +26,7 @@ typedef struct {
 #define CARDLIST_SIGNATURE SIGNATURE_32('C','A','R','D')
 
 
-VOID
+void
 FillCardList (
   const TagDict* CfgDict
   );
@@ -37,7 +37,7 @@ CARDLIST
   UINT32 SubId
   );
 
-VOID
+void
 AddCard (
   CONST CHAR8 *Model,
   UINT32      Id,

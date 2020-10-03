@@ -98,7 +98,7 @@ typedef struct {
 UINT32 EFIAPI
 CopyRecord(IN        PLATFORM_DATA_RECORD *Rec,
            IN  CONST CHAR16        *Name,
-           IN        const VOID          *Val,
+           IN        const void          *Val,
            IN        UINT32        ValLen)
 {
   CopyMem(&Rec->Hdr, &mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
@@ -115,7 +115,7 @@ CopyRecord(IN        PLATFORM_DATA_RECORD *Rec,
 EFI_STATUS EFIAPI
 LogDataHub(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
-           IN  const VOID     *Data,
+           IN  const void     *Data,
            IN  UINT32    DataSize)
 {
   UINT32        RecordSize;
@@ -169,7 +169,7 @@ OvrSetVariable(
   IN EFI_GUID		*VendorGuid,
   IN UINT32			Attributes,
   IN UINTN			DataSize,
-  IN VOID				*Data
+  IN void				*Data
 )
 {
   EFI_STATUS			Status;
@@ -211,7 +211,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   CONST CHAR16  *KbdPrevLang;
   UINTN   LangLen;
-  VOID    *OldData;
+  void    *OldData;
   UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8   *PlatformLang;
 
@@ -310,7 +310,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
 
   None           = "none";
-  AddNvramVariable(L"security-mode", &gEfiAppleBootGuid, Attributes, 5, (VOID*)None);
+  AddNvramVariable(L"security-mode", &gEfiAppleBootGuid, Attributes, 5, (void*)None);
 
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
@@ -381,7 +381,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
   if (gSettings.NvidiaWeb) {
     NvidiaWebValue = "1";
-    SetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, Attributes, 2, (VOID*)NvidiaWebValue);
+    SetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, Attributes, 2, (void*)NvidiaWebValue);
   } else {
     DeleteNvramVariable(L"nvda_drv", &gEfiAppleBootGuid);
   }
@@ -421,7 +421,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   return EFI_SUCCESS;
 }
 
-VOID
+void
 AddSMCkey(SMC_KEY Key, SMC_DATA_SIZE Size, SMC_KEY_TYPE Type, SMC_DATA *Data)
 {
   if (gAppleSmc && (gAppleSmc->Signature == NON_APPLE_SMC_SIGNATURE)) {
@@ -432,7 +432,7 @@ AddSMCkey(SMC_KEY Key, SMC_DATA_SIZE Size, SMC_KEY_TYPE Type, SMC_DATA *Data)
 
 // SetupDataForOSX
 /// Sets the DataHub data used by OS X
-VOID EFIAPI
+void EFIAPI
 SetupDataForOSX(BOOLEAN Hibernate)
 {
   EFI_STATUS Status;
@@ -482,7 +482,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
   gSettings.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);
 
   // Locate DataHub Protocol
-  Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
+  Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (void**)&gDataHub);
   if (!EFI_ERROR(Status)) {
     XStringW ProductName;
     ProductName.takeValueFrom(gSettings.ProductName);

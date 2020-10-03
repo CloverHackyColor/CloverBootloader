@@ -28,7 +28,7 @@
 #define OHCI_INTRSTATUS    0x0c
 
 EFI_STATUS
-FixOwnership(VOID)
+FixOwnership(void)
 /*++
  
  Routine Description:
@@ -80,7 +80,7 @@ FixOwnership(VOID)
       Status = gBS->HandleProtocol (
                       HandleArray[Index],
                       &gEfiPciIoProtocolGuid,
-                      (VOID **)&PciIo
+                      (void **)&PciIo
                       );
       if (!EFI_ERROR(Status)) {
         //
@@ -301,7 +301,7 @@ FixOwnership(VOID)
                     if (!(Value & (0x1 << 16)))
                       break;
                     Value |= (0x1 << 24);
-                    (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
+                    (void) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                     TimeOut = 40;
                     while (TimeOut--) {
                       gBS->Stall(500);
@@ -317,7 +317,7 @@ FixOwnership(VOID)
                       break;
                     Value &= 0x1F1FEE;
                     Value |= 0xE0000000;
-                    (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
+                    (void) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap + 4, 1, &Value);
                     //
                     // Clear all ownership
                     //
@@ -325,7 +325,7 @@ FixOwnership(VOID)
                     if (EFI_ERROR(Status))
                       break;
                     Value &= ~((0x1 << 24) | (0x1 << 16));
-                    (VOID) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
+                    (void) PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0 /* BAR0 */, (UINT64) ExtendCap, 1, &Value);
                     break;
                   } //Value & FF
                   if (!(Value & 0xFF00))

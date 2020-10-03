@@ -689,7 +689,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   ssdt->Length = root->Size;
   FixChecksum(ssdt);
 //  ssdt->Checksum = 0;
-//  ssdt->Checksum = (UINT8)(256 - Checksum8((VOID*)ssdt, ssdt->Length));
+//  ssdt->Checksum = (UINT8)(256 - Checksum8((void*)ssdt, ssdt->Length));
   
   aml_destroy_node(root);
   

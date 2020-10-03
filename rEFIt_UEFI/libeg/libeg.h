@@ -131,7 +131,7 @@ public:
 
 typedef struct {
   EFI_STATUS          LastStatus;
-  EFI_FILE            *DirHandle;
+  const EFI_FILE            *DirHandle;
   BOOLEAN             CloseDirHandle;
   EFI_FILE_INFO       *LastFileInfo;
 } REFIT_DIR_ITER;
@@ -409,32 +409,32 @@ typedef struct EG_RECT {
 
 /* functions */
 
-VOID    egInitScreen(IN BOOLEAN SetMaxResolution);
-VOID    egDumpGOPVideoModes(VOID);
+void    egInitScreen(IN BOOLEAN SetMaxResolution);
+void    egDumpGOPVideoModes(void);
 //EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
-//EFI_STATUS egSetMaxResolution(VOID);
+//EFI_STATUS egSetMaxResolution(void);
 EFI_STATUS egSetMode(INT32 Next);
 
-VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
-XString8 egScreenDescription(VOID);
-BOOLEAN egHasGraphicsMode(VOID);
-BOOLEAN egIsGraphicsModeEnabled(VOID);
-VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
+void    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
+XString8 egScreenDescription(void);
+BOOLEAN egHasGraphicsMode(void);
+BOOLEAN egIsGraphicsModeEnabled(void);
+void    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 // NOTE: Even when egHasGraphicsMode() returns FALSE, you should
 //  call egSetGraphicsModeEnabled(FALSE) to ensure the system
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
 
-EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
+EFI_STATUS egLoadFile(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength);
-EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
-                      IN CONST VOID *FileData, IN UINTN FileDataLength);
-EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *DirName);
-EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir);
+EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
+                      IN CONST void *FileData, IN UINTN FileDataLength);
+EFI_STATUS egMkDir(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *DirName);
+EFI_STATUS egFindESP(OUT EFI_FILE** RootDir);
 
-VOID egClearScreen(IN const void *Color);
+void egClearScreen(IN const void *Color);
 
-EFI_STATUS egScreenShot(VOID);
+EFI_STATUS egScreenShot(void);
 
 
 #endif /* __LIBEG_LIBEG_H__ */

@@ -188,7 +188,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   return true;
 }
 
-VOID ScanLegacy(VOID)
+void ScanLegacy(void)
 {
   UINTN                   VolumeIndex, VolumeIndex2;
   BOOLEAN                 ShowVolume, HideIfOthersFound;
@@ -270,7 +270,7 @@ VOID ScanLegacy(VOID)
 }
 
 // Add custom legacy
-VOID AddCustomLegacy(VOID)
+void AddCustomLegacy(void)
 {
   UINTN                VolumeIndex, VolumeIndex2;
   BOOLEAN              ShowVolume, HideIfOthersFound;
@@ -373,13 +373,13 @@ VOID AddCustomLegacy(VOID)
       // Change to custom image if needed
       MainIcon = Custom->Image;
       if (MainIcon.Image.isEmpty()) {
-        MainIcon.Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
+        MainIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom->ImagePath);
       }
 
       // Change to custom drive image if needed
       DriveIcon = Custom->DriveImage;
       if (DriveIcon.Image.isEmpty()) {
-        DriveIcon.Image.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
+        DriveIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom->DriveImagePath);
       }
       // Create a legacy entry for this volume
       if (AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, &MainIcon, &DriveIcon, Custom->Hotkey, TRUE))

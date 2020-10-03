@@ -181,7 +181,7 @@ CreateBootOptionDevicePath (
     //
     // Check that FileDeviceHandle is file system volume
     //
-    Status = gBS->HandleProtocol (FileDeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&Volume);
+    Status = gBS->HandleProtocol (FileDeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (void**)&Volume);
     if (EFI_ERROR(Status)) {
         DBG("CreateBootOptionDevicePath: FileDeviceHandle %p is not fs volume", FileDeviceHandle);
         return EFI_INVALID_PARAMETER;
@@ -310,7 +310,7 @@ DevicePathEqual (
 
 
 /** Prints BootOrder with DBG. */
-VOID
+void
 PrintBootOrder (
     IN  UINT16          BootOrder[],
     IN  UINTN           BootOrderLen
@@ -522,7 +522,7 @@ DeleteFromBootOrder (
 
 
 /** Prints BootOption with DBG(). */
-VOID
+void
 PrintBootOption (
     IN  BO_BOOT_OPTION  *BootOption,
     IN  UINTN           Index
@@ -829,7 +829,7 @@ FindBootOptionForFile (
 }
 
 /** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
-VOID
+void
 PrintBootOptions (
     IN  BOOLEAN         AllBootOptions
     )

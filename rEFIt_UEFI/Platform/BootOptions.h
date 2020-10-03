@@ -16,7 +16,7 @@ typedef struct {
     ///
     /// Pointer to raw EFI_LOAD_OPTION (BootXXXX) variable content.
     ///
-    VOID                     *Variable;
+    void                     *Variable;
     ///
     /// Variable size in bytes.
     ///
@@ -65,13 +65,13 @@ EFI_STATUS
 ParseBootOption (OUT BO_BOOT_OPTION  *BootOption);
 
 /** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
-VOID
+void
 PrintBootOptions (
   IN  BOOLEAN AllBootOptions
   );
 
 /** Prints BootOrder with DBG. */
-VOID
+void
 PrintBootOrder (
     IN  UINT16 BootOrder[],
     IN  UINTN  BootOrderLen

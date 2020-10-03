@@ -150,7 +150,7 @@ DECLARE_EMB_EXTERN_WITH_SIZE(emb_dark_checkbox_checked)
 /* types */
 
 
-//VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileData, OUT UINTN *FileDataLength);
+//void egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileData, OUT UINTN *FileDataLength);
 
 
 #endif /* __LIBEG_LIBEGINT_H__ */

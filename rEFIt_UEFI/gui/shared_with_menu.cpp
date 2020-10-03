@@ -67,7 +67,7 @@ CONST XString8 ArgOptional[NUM_OPT] = {
   "-shikioff"_XS8,       //18
   "nvda_drv=1"_XS8       //19
 };
-CONST CHAR16 *VBIOS_BIN = L"EFI\\CLOVER\\misc\\c0000.bin";
+CONST CHAR16 *VBIOS_BIN = L"misc\\c0000.bin";
 
 INPUT_ITEM *InputItems = NULL;
 INTN TextStyle; //why global? It will be class SCREEN member
@@ -90,7 +90,7 @@ UINT32 EncodeOptions(const XString8Array& Options)
   return OptionsBits;
 }
 
-VOID DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
+void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
 {
   //set checked option
   INTN Index;

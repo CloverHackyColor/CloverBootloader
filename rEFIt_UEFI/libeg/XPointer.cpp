@@ -53,11 +53,11 @@ EFI_STATUS XPointer::MouseBirth()
   }
 
   // Try first to use mouse from System Table
-  Status = gBS->HandleProtocol(gST->ConsoleInHandle, &gEfiSimplePointerProtocolGuid, (VOID**)&SimplePointerProtocol);
+  Status = gBS->HandleProtocol(gST->ConsoleInHandle, &gEfiSimplePointerProtocolGuid, (void**)&SimplePointerProtocol);
   if (EFI_ERROR(Status)) {
     // not found, so use the first found device
     DBG("MouseBirth: No mouse at ConIn, checking if any other device exists\n");
-    Status = gBS->LocateProtocol(&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&SimplePointerProtocol);
+    Status = gBS->LocateProtocol(&gEfiSimplePointerProtocolGuid, NULL, (void**)&SimplePointerProtocol);
   }
 
   if (EFI_ERROR(Status)) {
@@ -93,7 +93,7 @@ EFI_STATUS XPointer::MouseBirth()
   return Status;
 }
 
-VOID XPointer::Draw()
+void XPointer::Draw()
 {
   oldPlace = newPlace;
 
@@ -106,7 +106,7 @@ VOID XPointer::Draw()
   PointerImage->Draw(newPlace.XPos, newPlace.YPos); //zero means no scale
 }
 
-VOID XPointer::KillMouse()
+void XPointer::KillMouse()
 {
 
   Alive = false;
@@ -124,7 +124,7 @@ VOID XPointer::KillMouse()
   SimplePointerProtocol = NULL;
 }
 
-VOID XPointer::UpdatePointer(bool daylight)
+void XPointer::UpdatePointer(bool daylight)
 {
   UINT64                    Now;
   EFI_STATUS                Status;

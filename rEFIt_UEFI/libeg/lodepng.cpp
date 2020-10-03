@@ -71,7 +71,7 @@ with the "LODEPNG_COMPILE_" #defines divide this up further in an intermixed way
 //#define memset(dest,ch,count)     SetMem(dest,(UINTN)(count),(UINT8)(ch))
 
 //Slice my qsort implementation.It can be moved into common library
-VOID QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int(*compare)(CONST VOID* a, CONST VOID* b), VOID* Temp)
+void QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int(*compare)(CONST void* a, CONST void* b), void* Temp)
 {
   INTN i = Low, j = High;
   UINT8 *Med;
@@ -97,9 +97,9 @@ VOID QuickSortWorker(UINT8* Array, INTN Low, INTN High, INTN Size, int(*compare)
   if (High > i)   QuickSortWorker(Array, i, High, Size, compare, Temp);
 }
 
-VOID QuickSort(VOID* Array, INTN Number, INTN Size, int(*compare)(CONST VOID* a, CONST VOID* b))
+void QuickSort(void* Array, INTN Number, INTN Size, int(*compare)(CONST void* a, CONST void* b))
 {
-  VOID* Buffer = (__typeof__(Buffer))AllocatePool(Size);
+  void* Buffer = (__typeof__(Buffer))AllocatePool(Size);
   QuickSortWorker((UINT8*)Array, 0, Number - 1, Size, compare, Buffer);
   FreePool(Buffer);
 }

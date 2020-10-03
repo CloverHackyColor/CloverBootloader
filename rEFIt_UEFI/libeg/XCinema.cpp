@@ -29,7 +29,7 @@
 // object XCinema Cinema is a part of Theme
 // object FILM* FilmC is a part or current Screen. Must be initialized from Cinema somewhere on Screen init
 // assumed one Film per screen
-VOID REFIT_MENU_SCREEN::UpdateFilm()
+void REFIT_MENU_SCREEN::UpdateFilm()
 {
   if (FilmC == nullptr || !FilmC->AnimeRun) {
 //    DBG("no anime -> run=%d\n", FilmC->AnimeRun?1:0);
@@ -128,7 +128,7 @@ void FILM::AddFrame(XImage* Frame, INTN Index)
 
 void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path already exist as a member. Is it the same ?
 {
-  EFI_FILE *ThemeDir = TheTheme.ThemeDir;
+  const EFI_FILE *ThemeDir = &TheTheme.getThemeDir();
   EFI_STATUS Status;
   LastIndex = 0;
   for (INTN Index = 0; Index < NumFrames; Index++) {

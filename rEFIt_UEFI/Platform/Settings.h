@@ -895,14 +895,14 @@ SetFSInjection (
   IN LOADER_ENTRY *Entry
   );
 
-VOID
+void
 SetDevices (
   LOADER_ENTRY *Entry
   );
 //
 // check if this entry corresponds to Boot# variable and then set BootCurrent
 //
-VOID
+void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 
 
@@ -912,13 +912,13 @@ GetOSVersion (
   );
 
 
-VOID GetListOfThemes(VOID);
-VOID GetListOfConfigs(VOID);
-VOID GetListOfACPI(VOID);
-VOID GetListOfDsdts(VOID);
+void GetListOfThemes(void);
+void GetListOfConfigs(void);
+void GetListOfACPI(void);
+void GetListOfDsdts(void);
 
 // syscl - get list of inject kext(s)
-VOID GetListOfInjectKext(CHAR16 *);
+void GetListOfInjectKext(CHAR16 *);
 
 UINT32
 GetCrc32 (
@@ -926,8 +926,8 @@ GetCrc32 (
   UINTN Size
   );
 
-VOID
-GetDevices(VOID);
+void
+GetDevices(void);
 
 
 CONST XStringW
@@ -942,8 +942,7 @@ GetRootUUID (
 
 EFI_STATUS
 GetEarlyUserSettings (
-  IN  EFI_FILE *RootDir,
-      const TagDict*   CfgDict
+  const TagDict*   CfgDict
   );
 
 EFI_STATUS
@@ -969,14 +968,14 @@ InjectKextsFromDir (
   CHAR16 *SrcDir
   );
 
-VOID
+void
 ParseLoadOptions (
   OUT  XStringW* ConfName,
   OUT  TagDict** Dict
   );
 
 EFI_STATUS
-SaveSettings (VOID);
+SaveSettings (void);
 
 
 
@@ -990,18 +989,17 @@ BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS);
 
 
 //get default boot
-VOID GetBootFromOption(VOID);
-VOID
-InitKextList(VOID);
+void GetBootFromOption(void);
+void
+InitKextList(void);
 
 EFI_STATUS
 LoadUserSettings (
-    IN  EFI_FILE *RootDir,
     const XStringW& ConfName,
     TagDict** dict
   );
 
-VOID
+void
 ParseSMBIOSSettings (
   const TagDict* dictPointer
   );

@@ -13,7 +13,7 @@
  *  Does this by installing our EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL
  *  or by overriding existing EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.GetDriver.
  */
-VOID
+void
 RegisterDriversToHighestPriority (
   IN  EFI_HANDLE *PriorityDrivers
   );

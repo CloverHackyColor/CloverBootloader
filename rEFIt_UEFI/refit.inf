@@ -218,6 +218,8 @@
 # Platform/Pointer.cpp
   Platform/Self.cpp
   Platform/Self.h
+  Platform/SelfOem.cpp
+  Platform/SelfOem.h
   Platform/Settings.cpp
   Platform/Settings.h
 	Platform/smbios.h

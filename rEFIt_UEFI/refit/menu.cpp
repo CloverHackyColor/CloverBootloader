@@ -59,6 +59,7 @@
 #include "../Platform/boot.h"
 #include "../Platform/Injectors.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "Self.h"
 
 extern "C" {
 #include <Library/OcConfigurationLib.h>
@@ -129,7 +130,7 @@ REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
 REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 
 
-VOID FillInputs(BOOLEAN New)
+void FillInputs(BOOLEAN New)
 {
   UINTN i,j; //for loops
   CHAR8 tmp[41];
@@ -470,7 +471,7 @@ VOID FillInputs(BOOLEAN New)
 }
 
 
-VOID ApplyInputs(VOID)
+void ApplyInputs(void)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   MACHINE_TYPES Model;
@@ -861,7 +862,7 @@ VOID ApplyInputs(VOID)
   i++; //90
   if (InputItems[i].Valid) {
     TagDict* dict;
-    Status = LoadUserSettings(SelfRootDir, XStringW(ConfigsList[OldChosenConfig]), &dict);
+    Status = LoadUserSettings(XStringW(ConfigsList[OldChosenConfig]), &dict);
     if (!EFI_ERROR(Status)) {
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
@@ -1083,7 +1084,7 @@ VOID ApplyInputs(VOID)
 }
 
 
-VOID AboutRefit(VOID)
+void AboutRefit(void)
 {
   if (AboutMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
@@ -1093,8 +1094,8 @@ VOID AboutRefit(VOID)
 //      AboutMenu.TitleImage.setEmpty(); //done in the constructor
 //    }
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
-    AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
-    AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
+    if ( "unknown"_XS8 != LString8(gRevisionStr) ) AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
+    if ( "unknown"_XS8 != LString8(gFirmwareBuildDate) ) AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
     AboutMenu.AddMenuInfo_f(" ");
     AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
     AboutMenu.AddMenuInfo_f("Portions Copyright (c) Intel Corporation");
@@ -1137,7 +1138,7 @@ VOID AboutRefit(VOID)
   AboutMenu.RunMenu(NULL);
 }
 
-VOID HelpRefit(VOID)
+void HelpRefit(void)
 {
   if (HelpMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
@@ -1556,7 +1557,7 @@ REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScree
 	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
 }
 
-VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
+void ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
     ChosenEntry->Title.SWPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
@@ -2238,7 +2239,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   return Entry;
 }
 
-VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
+void CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 {
 	REFIT_INPUT_DIALOG  *InputBootArgs;
 
@@ -2542,7 +2543,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
 }
 
 
-VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_ABSTRACT_MENU_ENTRY    *TmpChosenEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY    *NextChosenEntry = NULL;

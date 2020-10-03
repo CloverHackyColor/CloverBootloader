@@ -13,6 +13,8 @@
 #include "../include/Pci.h"
 #include "../include/Devices.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
+#include "SelfOem.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_ATI 1
@@ -1529,7 +1531,7 @@ BOOLEAN get_vramtotalsize_val(value_t *val, INTN index, BOOLEAN Sier)
   return TRUE;
 }
 
-VOID free_val(value_t *val )
+void free_val(value_t *val )
 {
 //  if (val->type == kPtr) {
     FreePool(val->data);
@@ -1547,7 +1549,7 @@ VOID free_val(value_t *val )
     value_t    default_val;
  } AtiDevProp;
  */
-VOID devprop_add_list(AtiDevProp devprop_list[], const XString8& OSVersion)
+void devprop_add_list(AtiDevProp devprop_list[], const XString8& OSVersion)
 {
   INTN i, pnum;
   BOOLEAN Sier;
@@ -1570,7 +1572,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[], const XString8& OSVersion)
               newname[1] = (CHAR8)(0x30 + pnum); // convert to ascii for number 0..9
               devprop_add_value(card->device, newname, val->data, val->size);
               free_val(val);
-              FreePool((VOID*)newname);
+              FreePool((void*)newname);
             }
           }
 //          devprop_list[i].name[1] = 0x30; // write back our "@0," for a next possible card
@@ -1592,7 +1594,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[], const XString8& OSVersion)
                                 devprop_list[i].default_val.type == kCst ?
                                 (UINT8 *)&(devprop_list[i].default_val.data) : devprop_list[i].default_val.data,
                                 devprop_list[i].default_val.size);
-              FreePool((VOID*)newname);
+              FreePool((void*)newname);
             }
           }
 //          devprop_list[i].name[1] = 0x30; // write back our "@0," for a next possible card
@@ -1632,19 +1634,17 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 {
   EFI_STATUS            Status = EFI_NOT_FOUND;
   UINTN bufferLen = 0;
-  CHAR16 FileName[64];
   UINT8*  buffer = 0;
 
-	snwprintf(FileName, 128, "\\ROM\\%04hX_%04hX.rom", vendor_id, device_id);
-  if (FileExists(OEMDir, FileName)) {
+	XStringW FileName = SWPrintf("ROM\\%04hX_%04hX.rom", vendor_id, device_id);
+  if (FileExists(&selfOem.getOemDir(), FileName)) {
 	  DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
-    Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
+    Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status)) {
-	  snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\%04hX_%04hX.rom", vendor_id, device_id);
-    if (FileExists(SelfRootDir, FileName)){
+    if (FileExists(&self.getCloverDir(), FileName)){
 		DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
-      Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+      Status = egLoadFile(&self.getCloverDir(), FileName.wc_str(), &buffer, &bufferLen);
     }
   }
 
@@ -1746,7 +1746,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
   return TRUE;
 }
 
-BOOLEAN read_disabled_vbios(VOID)
+BOOLEAN read_disabled_vbios(void)
 {
   BOOLEAN ret = FALSE;
   ati_chip_family_t chip_family = card->info->chip_family;
@@ -1859,7 +1859,7 @@ BOOLEAN read_disabled_vbios(VOID)
   return ret;
 }
 
-BOOLEAN radeon_card_posted(VOID)
+BOOLEAN radeon_card_posted(void)
 {
   UINTN reg;
 //  ati_chip_family_t chip_family = card->info->chip_family;
@@ -1902,7 +1902,7 @@ BOOLEAN radeon_card_posted(VOID)
 }
 
 #if 0  //may be inject this as saved-config?
-BOOLEAN devprop_add_pci_config_space(VOID)
+BOOLEAN devprop_add_pci_config_space(void)
 {
   int offset;
 

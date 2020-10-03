@@ -199,6 +199,8 @@
 		9A9EA807245AD9B30076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
 		9A9EA808245AD9B40076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
 		9A9EA80A245AD9E50076EC02 /* XToolsCommon_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */; };
+		9AABBE1C2524863E0033A009 /* SelfOem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AABBE1A2524863D0033A009 /* SelfOem.cpp */; };
+		9AABBE1D2524863E0033A009 /* SelfOem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AABBE1B2524863E0033A009 /* SelfOem.h */; };
 		9AC269A824E0514100254048 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC269A624E0514000254048 /* Utils.cpp */; };
 		9AC269A924E0514100254048 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC269A724E0514000254048 /* Utils.h */; };
 		9AC77FB924176C04005CDD5C /* XStringArray_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECC24176C04005CDD5C /* XStringArray_test.h */; };
@@ -789,6 +791,8 @@
 		9A9D3B2124221563006D8CD9 /* printf_lite-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printf_lite-test.cpp"; sourceTree = "<group>"; };
 		9A9EA7FC245AD97E0076EC02 /* XToolsCommon_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon_test.h; sourceTree = "<group>"; };
 		9A9EA7FD245AD97F0076EC02 /* XToolsCommon_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon_test.cpp; sourceTree = "<group>"; };
+		9AABBE1A2524863D0033A009 /* SelfOem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelfOem.cpp; sourceTree = "<group>"; };
+		9AABBE1B2524863E0033A009 /* SelfOem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfOem.h; sourceTree = "<group>"; };
 		9AC269A624E0514000254048 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		9AC269A724E0514000254048 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		9AC77EC424176BF2005CDD5C /* libCloverX64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCloverX64.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1141,6 +1145,8 @@
 		9AC77F1624176C04005CDD5C /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9AABBE1A2524863D0033A009 /* SelfOem.cpp */,
+				9AABBE1B2524863E0033A009 /* SelfOem.h */,
 				9A61B2FE2522165100AEE0FA /* Self.cpp */,
 				9A61B2FF2522165100AEE0FA /* Self.h */,
 				9A36E57324F56156007A1107 /* plist */,
@@ -1455,6 +1461,7 @@
 				9AC7803E24176C04005CDD5C /* spd.h in Headers */,
 				9A105B7524483AE40006DE06 /* stdarg.h in Headers */,
 				9A36E5C224F5616F007A1107 /* TagFloat.h in Headers */,
+				9AABBE1D2524863E0033A009 /* SelfOem.h in Headers */,
 				9AD469502452B5A600D6D0DB /* Efi.h in Headers */,
 				9AC7801724176C04005CDD5C /* device_inject.h in Headers */,
 				9A36E59524F5616F007A1107 /* TagDict.h in Headers */,
@@ -1935,6 +1942,7 @@
 				9A105B6924483AE40006DE06 /* APFS.cpp in Sources */,
 				9AC7805124176C04005CDD5C /* egemb_font.cpp in Sources */,
 				9AC7806424176C04005CDD5C /* securemenu.cpp in Sources */,
+				9AABBE1C2524863E0033A009 /* SelfOem.cpp in Sources */,
 				9A36E5D124F5616F007A1107 /* plist.cpp in Sources */,
 				9AC7804D24176C04005CDD5C /* text.cpp in Sources */,
 				9AC7800C24176C04005CDD5C /* AmlGenerator.cpp in Sources */,
@@ -2326,6 +2334,7 @@
 					$PROJECT_DIR/../../OpenCorePkg/Include/Apple,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Acidanthera,
 					$PROJECT_DIR/../../OpenCorePkg/Include/AMI,
+					$PROJECT_DIR/../../OpenCorePkg/Include/Intel,
 					$PROJECT_DIR/../../UefiCpuPkg/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
@@ -2410,6 +2419,7 @@
 					$PROJECT_DIR/../../OpenCorePkg/Include/Apple,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Acidanthera,
 					$PROJECT_DIR/../../OpenCorePkg/Include/AMI,
+					$PROJECT_DIR/../../OpenCorePkg/Include/Intel,
 					$PROJECT_DIR/../../UefiCpuPkg/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;

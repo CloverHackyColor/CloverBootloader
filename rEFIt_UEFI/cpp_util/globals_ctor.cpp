@@ -30,7 +30,7 @@ typedef ctor* ctor_ptr;
 void construct_globals_objects(EFI_HANDLE ImageHandle)
 {
   EFI_LOADED_IMAGE* LoadedImage;
-  EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+  EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &LoadedImage);
   if ( EFI_ERROR(Status) ) {
     panic("construct_globals_objects: Cannot get LoadedImage protocol");
   }
@@ -58,12 +58,14 @@ void construct_globals_objects(EFI_HANDLE ImageHandle)
 
 			ctor_ptr* currentCtor = (ctor_ptr*) (((UINTN) (LoadedImage->ImageBase)) + SectionHeader->PointerToRawData);
 			ctor_ptr* ctorend = (ctor_ptr*) (((UINTN) (LoadedImage->ImageBase)) + SectionHeader->PointerToRawData + SectionHeader->Misc.VirtualSize);
+			size_t i = 0;
 			while (currentCtor < ctorend)
 			{
-				DBG("&currentCtor %X %d\n", (UINTN) (currentCtor), (UINTN) (currentCtor));
-				DBG("currentCtor %X %d\n", (UINTN) (*currentCtor), (UINTN) (*currentCtor));
+				DBG("&currentCtor[%zu] %llX %lld\n", i, (UINTN) (currentCtor), (UINTN) (currentCtor));
+				DBG("currentCtor[%zu] %llX %lld\n", i, (UINTN) (*currentCtor), (UINTN) (*currentCtor));
 				if (*currentCtor != NULL) (*currentCtor)();
 				currentCtor++;
+				i++;
 			}
 		}
 	}
@@ -82,9 +84,9 @@ ctor_ptr* pend = (ctor_ptr*)&__end_of_section_ctors;
 void construct_globals_objects(EFI_HANDLE ImageHandle)
 {
     (void)ImageHandle;
-    DBG("CTOR %X %d\n", (UINTN)p, (UINTN)p);
+    DBG("CTOR %llX %lld\n", (UINTN)p, (UINTN)p);
     while ( p < pend ) {
-    	DBG("CTOR %X %d\n", (UINTN)p[0], (UINTN)p[0]);
+    	DBG("CTOR %llX %lld\n", (UINTN)p[0], (UINTN)p[0]);
     	(*p)();
     	p++;
     }

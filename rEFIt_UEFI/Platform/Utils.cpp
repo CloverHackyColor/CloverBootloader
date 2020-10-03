@@ -23,7 +23,7 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 //
-//VOID LowCase (IN OUT CHAR8 *Str)
+//void LowCase (IN OUT CHAR8 *Str)
 //{
 //  while (*Str) {
 //    if (IS_UPPER(*Str)) {

@@ -59,7 +59,7 @@ EFI_AUDIO_IO_PROTOCOL *AudioIo = NULL;
 
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile)
+StartupSoundPlay(const EFI_FILE* Dir, CONST CHAR16* SoundFile)
 {
   EFI_STATUS Status;
   UINT8           *FileData = NULL;
@@ -299,7 +299,7 @@ GetStoredOutput()
   // Try to find the matching device exposing an Audio I/O protocol.
   for (h = 0; h < AudioIoHandleCount; h++) {
     // Open Device Path protocol.
-    Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiDevicePathProtocolGuid, (VOID**)&DevicePath);
+    Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiDevicePathProtocolGuid, (void**)&DevicePath);
     if (EFI_ERROR(Status)) {
 		DBG("no DevicePath at %llu handle AudioIo\n", h);
       continue;
@@ -308,7 +308,7 @@ GetStoredOutput()
     // Compare Device Paths. If they match, we have our Audio I/O device.
     if (!CompareMem(StoredDevicePath, DevicePath, StoredDevicePathSize)) {
       // Open Audio I/O protocol.
-      Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (VOID**)&AudioIoProto);
+      Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (void**)&AudioIoProto);
       if (EFI_ERROR(Status)) {
         DBG("dont handle AudioIo\n");
         goto DONE;
@@ -402,7 +402,7 @@ EFI_STATUS CheckSyncSound(BOOLEAN Stop)
   return Status;
 }
 
-VOID GetOutputs()
+void GetOutputs()
 {
   EFI_STATUS Status;
   // Audio I/O.
@@ -427,7 +427,7 @@ VOID GetOutputs()
 
   for (h = 0; h < AudioIoHandleCount; h++) {
     UINTN i;
-    Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (VOID**)&AudioIoTmp);
+    Status = gBS->HandleProtocol(AudioIoHandles[h], &gEfiAudioIoProtocolGuid, (void**)&AudioIoTmp);
     if (EFI_ERROR(Status)) {
 		DBG("dont handle AudioIo at %llu\n", h);
       continue;

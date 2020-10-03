@@ -388,17 +388,17 @@ extern UINT64                         TurboMsr;
 extern CPU_STRUCTURE                  gCPUStructure;
 
 
-VOID
-GetCPUProperties (VOID);
+void
+GetCPUProperties (void);
 
 MACHINE_TYPES
-GetDefaultModel (VOID);
+GetDefaultModel (void);
 
 UINT16
-GetAdvancedCpuType (VOID);
+GetAdvancedCpuType (void);
 
-VOID
-SetCPUProperties (VOID);
+void
+SetCPUProperties (void);
 
 
 

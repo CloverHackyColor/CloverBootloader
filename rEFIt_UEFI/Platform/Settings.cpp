@@ -31,6 +31,9 @@
 #include "ati_reg.h"
 #include "../../Version.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
+#include "SelfOem.h"
+#include "Net.h"
 
 
 #ifndef DEBUG_ALL
@@ -88,12 +91,6 @@ UINTN                           NGFX                        = 0; // number of GF
 UINTN                           NHDA                        = 0; // number of HDA Devices
 
 
-UINTN                           nLanCards;        // number of LAN cards
-UINT16                          gLanVendor[4];    // their vendors
-UINT8                           *gLanMmio[4];     // their MMIO regions
-UINT8                           gLanMac[4][6];    // their MAC addresses
-UINTN                           nLanPaths;        // number of LAN pathes
-
 XStringWArray                   ThemeNameArray;
 UINTN                           ConfigsNum;
 CHAR16                          *ConfigsList[20];
@@ -133,6 +130,8 @@ CONST CHAR8* gRevisionStr = "unknown";
 CONST CHAR8* gFirmwareBuildDate = "unknown";
 CONST CHAR8* gBuildInfo = NULL;
 #endif
+
+const char* path_independant __attribute__((used)) = "path_independant";
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -225,7 +224,7 @@ ParseACPIName(const XString8& String)
   return List;
 }
 
-VOID
+void
 ParseLoadOptions (
                   OUT  XStringW* ConfNamePtr,
                   OUT  TagDict** Dict
@@ -306,8 +305,8 @@ ParseLoadOptions (
 // analyze self.getSelfLoadedImage().LoadOptions to extract Default Volume and Default Loader
 // input and output data are global
 //
-VOID
-GetBootFromOption(VOID)
+void
+GetBootFromOption(void)
 {
   UINT8  *Data = (UINT8*)self.getSelfLoadedImage().LoadOptions;
   UINTN  Len = self.getSelfLoadedImage().LoadOptionsSize;
@@ -333,7 +332,7 @@ GetBootFromOption(VOID)
 //
 // check if this entry corresponds to Boot# variable and then set BootCurrent
 //
-VOID
+void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 {
   EFI_STATUS      Status;
@@ -494,15 +493,14 @@ UINT8
 
 EFI_STATUS
 LoadUserSettings (
-                  IN EFI_FILE *RootDir,
                   IN const XStringW& ConfName,
                   TagDict** Dict)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   UINTN      Size = 0;
   CHAR8*     ConfigPtr = NULL;
-  XStringW   ConfigPlistPath;
-  XStringW   ConfigOemPath;
+//  XStringW   ConfigPlistPath;
+//  XStringW   ConfigOemPath;
 
   //  DbgHeader("LoadUserSettings");
 
@@ -511,27 +509,24 @@ LoadUserSettings (
     return EFI_NOT_FOUND;
   }
 
-  ConfigPlistPath = SWPrintf("EFI\\CLOVER\\%ls.plist", ConfName.wc_str());
-  ConfigOemPath   = SWPrintf("%ls\\%ls.plist", OEMPath.wc_str(), ConfName.wc_str());
-  if (FileExists (SelfRootDir, ConfigOemPath)) {
-    Status = egLoadFile(SelfRootDir, ConfigOemPath.wc_str(), (UINT8**)&ConfigPtr, &Size);
+//  ConfigPlistPath = SWPrintf("%ls.plist", ConfName.wc_str());
+//  ConfigOemPath   = SWPrintf("%ls\\%ls.plist", selfOem.getOOEMPath.wc_str(), ConfName.wc_str());
+  XStringW configFilename = SWPrintf("%ls.plist", ConfName.wc_str());
+  if (FileExists (&selfOem.getOemDir(), configFilename)) {
+    Status = egLoadFile(&selfOem.getOemDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
   }
   if (EFI_ERROR(Status)) {
-    if ((RootDir != NULL) && FileExists (RootDir, ConfigPlistPath)) {
-      Status = egLoadFile(RootDir, ConfigPlistPath.wc_str(), (UINT8**)&ConfigPtr, &Size);
+    DBG("Cannot find %ls at path: '%ls', trying '%ls'\n", configFilename.wc_str(), selfOem.getOemFullPath().wc_str(), self.getCloverDirPathAsXStringW().wc_str());
+    if ( FileExists(&self.getCloverDir(), configFilename.wc_str())) {
+      Status = egLoadFile(&self.getCloverDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
     }
     if (!EFI_ERROR(Status)) {
-      DBG("Using %ls.plist at RootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
+      DBG("Using %ls at path: %ls\n", configFilename.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
     } else {
-      Status = egLoadFile(SelfRootDir, ConfigPlistPath.wc_str(), (UINT8**)&ConfigPtr, &Size);
-      if (!EFI_ERROR(Status)) {
-        DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigPlistPath.wc_str());
-      }else{
-        DBG("Cannot find %ls.plist at path: '%ls' or '%ls'\n", ConfName.wc_str(), ConfigPlistPath.wc_str(), ConfigOemPath.wc_str());
-      }
+      DBG("Cannot find %ls at path: '%ls'\n", configFilename.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
     }
   }else{
-    DBG("Using %ls.plist at SelfRootDir at path: %ls\n", ConfName.wc_str(), ConfigOemPath.wc_str());
+    DBG("Using %ls at path: %ls\n", configFilename.wc_str(), selfOem.getOemFullPath().wc_str());
   }
 
   if (!EFI_ERROR(Status) && ConfigPtr != NULL) {
@@ -1728,7 +1723,7 @@ FillinCustomEntry (
       } else {
         XStringW customLogo = XStringW() = Prop->getString()->stringValue();
         Entry->CustomBoot  = CUSTOM_BOOT_USER;
-        Entry->CustomLogo.LoadXImage(SelfRootDir, customLogo);
+        Entry->CustomLogo.LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
         if (Entry->CustomLogo.isEmpty()) {
           DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
           Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
@@ -1974,7 +1969,7 @@ FillingCustomLegacy (
   Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
     if (Prop->isString()) {
-      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->getString()->stringValue());
+      Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Prop->getString()->stringValue());
     }
   } else {
     UINTN DataLen = 0;
@@ -1990,7 +1985,7 @@ FillingCustomLegacy (
   Prop = DictPointer->propertyForKey("DriveImage");
   if (Prop != NULL) {
     if (Prop->isString()) {
-      Entry->Image.LoadXImage(ThemeX.ThemeDir, Prop->getString()->stringValue());
+      Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Prop->getString()->stringValue());
     }
   } else {
     UINTN DataLen = 0;
@@ -2088,7 +2083,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
     if (Prop->isString()) {
       Entry->ImagePath = Prop->getString()->stringValue();
     }
-    Entry->Image.LoadXImage(ThemeX.ThemeDir, Entry->ImagePath);
+    Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Entry->ImagePath);
   } else {
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
@@ -2126,7 +2121,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
 }
 
 // EDID reworked by Sherlocks
-VOID
+void
 GetEDIDSettings(const TagDict* DictPointer)
 {
   const TagStruct* Prop;
@@ -2183,7 +2178,6 @@ GetEDIDSettings(const TagDict* DictPointer)
 
 EFI_STATUS
 GetEarlyUserSettings (
-                      IN EFI_FILE *RootDir,
                       const TagDict* CfgDict
                       )
 {
@@ -2193,7 +2187,7 @@ GetEarlyUserSettings (
 //  const TagDict*      DictPointer;
 //  const TagStruct*    Prop;
 //  const TagArray*     arrayProp;
-  VOID        *Value = NULL;
+  void        *Value = NULL;
   BOOLEAN     SpecialBootMode = FALSE;
 
   {
@@ -2456,7 +2450,7 @@ GetEarlyUserSettings (
               delete gSettings.CustomLogo;
             }
             gSettings.CustomLogo = new XImage;
-            gSettings.CustomLogo->LoadXImage(RootDir, customLogo);
+            gSettings.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
             if (gSettings.CustomLogo->isEmpty()) {
               DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
               gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
@@ -3091,7 +3085,7 @@ if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forg
   return Status;
 }
 
-VOID
+void
 GetListOfConfigs ()
 {
   REFIT_DIR_ITER    DirIter;
@@ -3101,16 +3095,12 @@ GetListOfConfigs ()
   ConfigsNum = 0;
   OldChosenConfig = 0;
 
-  DirIterOpen(SelfRootDir, OEMPath.wc_str(), &DirIter);
+  DirIterOpen(&selfOem.getOemDir(), NULL, &DirIter);
   DbgHeader("Found config plists");
   while (DirIterNext(&DirIter, 2, L"config*.plist", &DirEntry)) {
-    CHAR16  FullName[256];
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
-
-	  snwprintf(FullName, 512, "%ls\\%ls", OEMPath.wc_str(), DirEntry->FileName);
-    if (FileExists(SelfRootDir, FullName)) {
       if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
         OldChosenConfig = ConfigsNum;
       }
@@ -3119,17 +3109,15 @@ GetListOfConfigs ()
       ConfigsList[ConfigsNum++][NameLen] = L'\0';
       DBG("- %ls\n", DirEntry->FileName);
     }
-  }
   DirIterClose(&DirIter);
 }
 
-VOID
+void
 GetListOfDsdts()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry;
   INTN              NameLen;
-  XStringW          AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
   if (DsdtsNum > 0) {
     for (UINTN i = 0; i < DsdtsNum; i++) {
@@ -3141,16 +3129,12 @@ GetListOfDsdts()
   DsdtsNum = 0;
   OldChosenDsdt = 0xFFFF;
 
-  DirIterOpen(SelfRootDir, AcpiPath.wc_str(), &DirIter);
+  DirIterOpen(&selfOem.getOemDir(), L"ACPI\\patched", &DirIter);
   DbgHeader("Found DSDT tables");
   while (DirIterNext(&DirIter, 2, L"DSDT*.aml", &DirEntry)) {
-    CHAR16  FullName[256];
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
-
-    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath.wc_str(), DirEntry->FileName);
-    if (FileExists(SelfRootDir, FullName)) {
       if ( gSettings.DsdtName.equalIC(DirEntry->FileName) ) {
         OldChosenDsdt = DsdtsNum;
       }
@@ -3159,19 +3143,18 @@ GetListOfDsdts()
       DsdtsList[DsdtsNum++][NameLen] = L'\0';
       DBG("- %ls\n", DirEntry->FileName);
     }
-  }
   DirIterClose(&DirIter);
 }
 
 
-VOID
+void
 GetListOfACPI()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry = NULL;
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
   INTN               Count = gSettings.DisabledAMLCount;
-  XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
+//  XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 //  DBG("Get list of ACPI at path %ls\n", AcpiPath.wc_str());
   while (ACPIPatchedAML != NULL) {
     if (ACPIPatchedAML->FileName) {
@@ -3183,10 +3166,9 @@ GetListOfACPI()
   }
   ACPIPatchedAML = NULL;
 //  DBG("free acpi list done\n");
-  DirIterOpen(SelfRootDir, AcpiPath.wc_str(), &DirIter);
+  DirIterOpen(&selfOem.getOemDir(), L"ACPI\\patched", &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
-    CHAR16  FullName[256];
 //    DBG("next entry is %ls\n", DirEntry->FileName);
     if (DirEntry->FileName[0] == L'.') {
       continue;
@@ -3195,8 +3177,6 @@ GetListOfACPI()
       continue;
     }
 //    DBG("Found name %ls\n", DirEntry->FileName);
-    snwprintf(FullName, 512, "%ls\\%ls", AcpiPath.wc_str(), DirEntry->FileName);
-    if (FileExists(SelfRootDir, FullName)) {
       BOOLEAN ACPIDisabled = FALSE;
       ACPIPatchedAMLTmp = new ACPI_PATCHED_AML; // if changing, notice freepool above
       ACPIPatchedAMLTmp->FileName = SWPrintf("%ls", DirEntry->FileName).forgetDataWithoutFreeing(); // if changing, notice freepool above
@@ -3213,12 +3193,14 @@ GetListOfACPI()
       ACPIPatchedAMLTmp->Next = ACPIPatchedAML;
       ACPIPatchedAML = ACPIPatchedAMLTmp;
     }
-  }
 
   DirIterClose(&DirIter);
 }
 
-XStringW GetBundleVersion(const XStringW& FullName)
+/*
+ * Relative path to SelfDir (the efi dir)
+ */
+XStringW GetBundleVersion(const XStringW& pathUnderSelf)
 {
   EFI_STATUS      Status;
   XStringW        CFBundleVersion;
@@ -3227,11 +3209,11 @@ XStringW GetBundleVersion(const XStringW& FullName)
   TagDict*      InfoPlistDict = NULL;
   const TagStruct*      Prop = NULL;
   UINTN           Size;
-  InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Contents\\Info.plist");
-  Status = egLoadFile(SelfRootDir, InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
+  InfoPlistPath = SWPrintf("%ls\\%ls", pathUnderSelf.wc_str(), L"Contents\\Info.plist");
+  Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   if (EFI_ERROR(Status)) {
-    InfoPlistPath = SWPrintf("%ls\\%ls", FullName.wc_str(), L"Info.plist");
-    Status = egLoadFile(SelfRootDir, FullName.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
+    InfoPlistPath = SWPrintf("%ls\\%ls", pathUnderSelf.wc_str(), L"Info.plist");
+    Status = egLoadFile(&self.getCloverDir(), InfoPlistPath.wc_str(), (UINT8**)&InfoPlistPtr, &Size);
   }
   if(!EFI_ERROR(Status)) {
     //DBG("about to parse xml file %ls\n", InfoPlistPath.wc_str());
@@ -3250,7 +3232,7 @@ XStringW GetBundleVersion(const XStringW& FullName)
   return CFBundleVersion;
 }
 
-VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
+void GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
 {
 
   REFIT_DIR_ITER  DirIter;
@@ -3258,7 +3240,7 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   SIDELOAD_KEXT*  mKext;
   SIDELOAD_KEXT*  mPlugInKext;
   XStringW        FullName;
-  XStringW        FullPath = SWPrintf("%ls\\KEXTS\\%ls", OEMPath.wc_str(), KextDirNameUnderOEMPath);
+//  XStringW        FullPath = SWPrintf("%ls\\KEXTS\\%ls", OEMPath.wc_str(), KextDirNameUnderOEMPath);
   REFIT_DIR_ITER  PlugInsIter;
   EFI_FILE_INFO   *PlugInEntry;
   XStringW        PlugInsPath;
@@ -3267,7 +3249,7 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
     Blocked = TRUE;
   }
-  DirIterOpen(SelfRootDir, FullPath.wc_str(), &DirIter);
+  DirIterOpen(&selfOem.getKextsDir(), KextDirNameUnderOEMPath, &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
       continue;
@@ -3276,21 +3258,22 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      <key>CFBundleVersion</key>
      <string>8.8.8</string>
      */
-    FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
+//    FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
+    XStringW pathRelToSelfDir = SWPrintf("%ls\\%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextDirNameUnderOEMPath, DirEntry->FileName);
     mKext = new SIDELOAD_KEXT;
     mKext->FileName.SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
     mKext->KextDirNameUnderOEMPath.SWPrintf("%ls", KextDirNameUnderOEMPath);
-    mKext->Version = GetBundleVersion(FullName);
+    mKext->Version = GetBundleVersion(pathRelToSelfDir);
     InjectKextList.AddReference(mKext, true);
 
-    DBG("Added Kext=%ls\\%ls\n", KextDirNameUnderOEMPath, mKext->FileName.wc_str());
+    DBG("Added Kext=%ls\\%ls\n", mKext->KextDirNameUnderOEMPath.wc_str(), mKext->FileName.wc_str());
 
     // Obtain PlugInList
     // Iterate over PlugIns directory
-    PlugInsPath = SWPrintf("%ls\\Contents\\PlugIns", FullName.wc_str());
+    PlugInsPath = SWPrintf("%ls\\Contents\\PlugIns", pathRelToSelfDir.wc_str());
 
-    DirIterOpen(SelfRootDir, PlugInsPath.wc_str(), &PlugInsIter);
+    DirIterOpen(&self.getCloverDir(), PlugInsPath.wc_str(), &PlugInsIter);
     while (DirIterNext(&PlugInsIter, 1, L"*.kext", &PlugInEntry)) {
       if (PlugInEntry->FileName[0] == L'.' || StrStr(PlugInEntry->FileName, L".kext") == NULL) {
         continue;
@@ -3309,19 +3292,19 @@ VOID GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   DirIterClose(&DirIter);
 }
 
-VOID InitKextList()
+void InitKextList()
 {
   REFIT_DIR_ITER  KextsIter;
   EFI_FILE_INFO   *FolderEntry = NULL;
-  XStringW        KextsPath;
+//  XStringW        KextsPath;
 
   if (InjectKextList.notEmpty()) {
     return;  //don't scan again
   }
-  KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
+//  KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
 
   // Iterate over kexts directory
-  DirIterOpen(SelfRootDir, KextsPath.wc_str(), &KextsIter);
+  DirIterOpen(&selfOem.getKextsDir(), NULL, &KextsIter);
   while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
     if (FolderEntry->FileName[0] == L'.') {
       continue;
@@ -3334,7 +3317,7 @@ VOID InitKextList()
 #define CONFIG_THEME_FILENAME L"theme.plist"
 #define CONFIG_THEME_SVG L"theme.svg"
 
-VOID
+void
 GetListOfThemes ()
 {
   EFI_STATUS     Status          = EFI_NOT_FOUND;
@@ -3348,7 +3331,7 @@ GetListOfThemes ()
   DbgHeader("GetListOfThemes");
 
   ThemeNameArray.setEmpty();
-  DirIterOpen(SelfRootDir, L"\\EFI\\CLOVER\\themes", &DirIter);
+  DirIterOpen(&self.getThemesDir(), NULL, &DirIter);
   while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
     if (DirEntry->FileName[0] == '.') {
       //DBG("Skip theme: %ls\n", DirEntry->FileName);
@@ -3356,8 +3339,7 @@ GetListOfThemes ()
     }
     //DBG("Found theme directory: %ls", DirEntry->FileName);
 	  DBG("- [%02zu]: %ls", ThemeNameArray.size(), DirEntry->FileName);
-    ThemeTestPath = SWPrintf("EFI\\CLOVER\\themes\\%ls", DirEntry->FileName);
-    Status = SelfRootDir->Open(SelfRootDir, &ThemeTestDir, ThemeTestPath.wc_str(), EFI_FILE_MODE_READ, 0);
+    Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeTestDir, DirEntry->FileName, EFI_FILE_MODE_READ, 0);
     if (!EFI_ERROR(Status)) {
       Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
       if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
@@ -3768,18 +3750,18 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
     return NULL;
   }
   if (UGAHeight > HEIGHT_2K) {
-    ThemePath = SWPrintf("EFI\\CLOVER\\themes\\%ls@2x", TestTheme.wc_str());
+    m_ThemePath = SWPrintf("%ls@2x", TestTheme.wc_str());
   } else {
-    ThemePath = SWPrintf("EFI\\CLOVER\\themes\\%ls", TestTheme.wc_str());
+    m_ThemePath = SWPrintf("%ls", TestTheme.wc_str());
   }
-  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+  Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeDir, m_ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR(Status)) {
     if (ThemeDir != NULL) {
       ThemeDir->Close (ThemeDir);
       ThemeDir = NULL;
     }
-    ThemePath = SWPrintf("EFI\\CLOVER\\themes\\%ls", TestTheme.wc_str());
-    Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+    m_ThemePath = SWPrintf("%ls", TestTheme.wc_str());
+    Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeDir, m_ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
   }
 
   if (!EFI_ERROR(Status)) {
@@ -3794,7 +3776,7 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
       if (ThemeDict == NULL) {
         DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
       } else {
-        DBG("Using vector theme '%ls' (%ls)\n", TestTheme.wc_str(), ThemePath.wc_str());
+        DBG("Using vector theme '%ls' (%ls)\n", TestTheme.wc_str(), m_ThemePath.wc_str());
       }
     } else {
       Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
@@ -3806,7 +3788,7 @@ TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
         if (ThemeDict == NULL) {
           DBG("xml file %ls not parsed\n", CONFIG_THEME_FILENAME);
         } else {
-          DBG("Using theme '%ls' (%ls)\n", TestTheme.wc_str(), ThemePath.wc_str());
+          DBG("Using theme '%ls' (%ls)\n", TestTheme.wc_str(), m_ThemePath.wc_str());
         }
       }
     }
@@ -3969,16 +3951,17 @@ finish:
     ThemeX.FillByEmbedded();
     OldChosenTheme = 0xFFFF;
 
-    if (ThemeX.ThemeDir != NULL) {
-      ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
-      ThemeX.ThemeDir = NULL;
-    }
+    ThemeX.closeThemeDir();
+//    if (ThemeX.ThemeDir != NULL) {
+//      ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
+//      ThemeX.ThemeDir = NULL;
+//    }
 
  //   ThemeX.GetThemeTagSettings(NULL); already done
     //fill some fields
     //ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
     ThemeX.embedded = true;
-    Status = StartupSoundPlay(ThemeX.ThemeDir, NULL);
+    Status = StartupSoundPlay(&ThemeX.getThemeDir(), NULL);
   } else { // theme loaded successfully
     ThemeX.embedded = false;
     ThemeX.Theme.takeValueFrom(GlobalConfig.Theme); //XStringW from CHAR16*)
@@ -3997,12 +3980,12 @@ finish:
     ThemeDict->FreeTag();
 
     if (!ThemeX.Daylight) {
-      Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound_night.wav");
+      Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound_night.wav");
       if (EFI_ERROR(Status)) {
-        Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound.wav");
+        Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound.wav");
       }
     } else {
-      Status = StartupSoundPlay(ThemeX.ThemeDir, L"sound.wav");
+      Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound.wav");
     }
 
   }
@@ -4023,7 +4006,7 @@ finish:
   return Status;
 }
 
-VOID
+void
 ParseSMBIOSSettings(
                     const TagDict* DictPointer
                     )
@@ -5950,7 +5933,7 @@ GetUserSettings(const TagDict* CfgDict)
           gSettings.RtROM.ncpy(&gLanMac[1][0], 6);
         } else if ( Prop->isString()  ||  Prop->isData() ) { // GetDataSetting accept both
           UINTN ROMLength         = 0;
-          VOID* ROM = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
+          void* ROM = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
           gSettings.RtROM.ncpy(ROM, ROMLength);
         } else {
           MsgLog("MALFORMED PLIST : property not string or data in RtVariables/ROM\n");
@@ -6054,7 +6037,7 @@ GetUserSettings(const TagDict* CfgDict)
     // if CustomUUID and InjectSystemID are not specified
     // then use InjectSystemID=TRUE and SMBIOS UUID
     // to get Chameleon's default behaviour (to make user's life easier)
-//    CopyMem((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
+//    CopyMem((void*)&gUuid, (void*)&gSettings.SmUUID, sizeof(EFI_GUID));
 
     // SystemParameters again - values that can depend on previous params
     const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
@@ -6153,7 +6136,7 @@ GetUserSettings(const TagDict* CfgDict)
      {
      EFI_GUID AppleGuid;
 
-     CopyMem((VOID*)&AppleGuid, (VOID*)&gUuid, sizeof(EFI_GUID));
+     CopyMem((void*)&AppleGuid, (void*)&gUuid, sizeof(EFI_GUID));
      AppleGuid.Data1 = SwapBytes32 (AppleGuid.Data1);
      AppleGuid.Data2 = SwapBytes16 (AppleGuid.Data2);
      AppleGuid.Data3 = SwapBytes16 (AppleGuid.Data3);
@@ -6718,7 +6701,7 @@ GetRootUUID (IN  REFIT_VOLUME *Volume)
 }
 
 
-VOID
+void
 GetDevices ()
 {
   EFI_STATUS          Status;
@@ -6764,7 +6747,7 @@ GetDevices ()
 
   if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; ++Index) {
-      Status = gBS->HandleProtocol(HandleArray[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+      Status = gBS->HandleProtocol(HandleArray[Index], &gEfiPciIoProtocolGuid, (void **)&PciIo);
       if (!EFI_ERROR(Status)) {
         // Read PCI BUS
         PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
@@ -7083,7 +7066,7 @@ GetDevices ()
 }
 
 
-VOID
+void
 SetDevices (LOADER_ENTRY *Entry)
 {
   //  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
@@ -7161,7 +7144,7 @@ SetDevices (LOADER_ENTRY *Entry)
 
   if (!EFI_ERROR(Status)) {
     for (i = 0; i < HandleCount; i++) {
-      Status = gBS->HandleProtocol (HandleBuffer[i], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+      Status = gBS->HandleProtocol (HandleBuffer[i], &gEfiPciIoProtocolGuid, (void **)&PciIo);
       if (!EFI_ERROR(Status)) {
         // Read PCI BUS
         Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
@@ -7951,7 +7934,7 @@ SetDevices (LOADER_ENTRY *Entry)
       mPropSize = hex2bin (gDeviceProperties, mProperties, mPropSize);
       //     DBG("Final size of mProperties=%d\n", mPropSize);
       //---------
-      //      Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\misc\\devprop.bin", (UINT8*)mProperties, mPropSize);
+      //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirPathAsXStringW().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
       //and now we can free memory?
       if (gSettings.AddProperties) {
         FreePool(gSettings.AddProperties);
@@ -8075,21 +8058,13 @@ SaveSettings ()
 
 XStringW GetOtherKextsDir (BOOLEAN On)
 {
-  XStringW SrcDir;
-
-  SrcDir = SWPrintf("%ls\\kexts\\%s", OEMPath.wc_str(), On?"Other":"Off");
-  if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-    SrcDir = SWPrintf("\\EFI\\CLOVER\\kexts\\%s", On?"Other":"Off");
-    if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-      SrcDir.setEmpty();
-    }
+  if ( FileExists(&selfOem.getKextsDir(), On ? L"Other" : L"Off") ) {
+    return On ? L"Other"_XSW : L"Off"_XSW;
   }
-
-  return SrcDir;
+  return NullXStringW;
 }
 
 //dmazar
-// caller is responsible for FreePool the result
 XStringW
 GetOSVersionKextsDir (
                        const XString8& OSVersion
@@ -8116,9 +8091,9 @@ GetOSVersionKextsDir (
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version specific or default to Other
-  XStringW SrcDir = SWPrintf("%ls\\kexts\\%s", OEMPath.wc_str(), FixedVersion.c_str());
-  if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-    SrcDir = SWPrintf("\\EFI\\CLOVER\\kexts\\%s", FixedVersion.c_str());
+  XStringW SrcDir = SWPrintf("%ls\\kexts\\%s", selfOem.getOemFullPath().wc_str(), FixedVersion.c_str());
+  if (!FileExists (&self.getSelfVolumeRootDir(), SrcDir)) {
+    SrcDir = SWPrintf("\\%ls\\kexts\\%s", self.getCloverDirPathAsXStringW().wc_str(), FixedVersion.c_str());
     if (!FileExists (SelfVolume->RootDir, SrcDir)) {
       SrcDir.setEmpty();
     }

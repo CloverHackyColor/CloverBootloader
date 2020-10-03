@@ -36,8 +36,8 @@ public:
   void Hide();
   bool isAlive();
   EFI_STATUS MouseBirth();
-  VOID KillMouse();
-  VOID UpdatePointer(bool daylight);
+  void KillMouse();
+  void UpdatePointer(bool daylight);
   bool MouseInRect(EG_RECT *Place);
 
   bool isEmpty() const { return PointerImage->isEmpty(); }
@@ -46,6 +46,6 @@ public:
   EG_RECT& GetPlace() { return newPlace; }
 
 protected:
-  VOID Draw();
-  VOID DrawPointer();
+  void Draw();
+  void DrawPointer();
 };

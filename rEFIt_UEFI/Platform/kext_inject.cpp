@@ -127,10 +127,10 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagDict* dict)
     return inject;
 }
 
-//extern VOID KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
-//extern VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
+//extern void KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
+//extern void AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
-EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT VOID *kext_v)
+EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext_v)
 {
   EFI_STATUS  Status;
   UINT8*      infoDictBuffer = NULL;
@@ -220,7 +220,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(IN EFI_FILE *RootDir, const XString8& FileName
   return EFI_SUCCESS;
 }
 
-EFI_STATUS LOADER_ENTRY::AddKext(IN EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType)
+EFI_STATUS LOADER_ENTRY::AddKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType)
 {
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
@@ -270,7 +270,7 @@ UINT32 GetKextsSize()
   return kextsSize;
 }
 
-VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
+void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
 {
    REFIT_DIR_ITER          PlugInIter;
    EFI_FILE_INFO           *PlugInFile;
@@ -290,7 +290,7 @@ VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, const XString8& DirName
    DirIterClose(&PlugInIter);
 }
 
-//VOID LOADER_ENTRY::AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType)
+//void LOADER_ENTRY::AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType)
 //{
 //  XStringW                 FileName;
 //  XStringW                 PlugInName;
@@ -338,7 +338,7 @@ VOID LOADER_ENTRY::LoadPlugInKexts(IN EFI_FILE *RootDir, const XString8& DirName
 //}
 
 // Jief : this should replace LOADER_ENTRY::AddKexts
-VOID LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray)
+void LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray)
 {
   XStringW                 FileName;
   XStringW                 PlugInName;
@@ -489,7 +489,7 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     XStringW DirName;
     XStringW DirPath;
 
-    OSAllVersionKextsDir = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), osMajorVersion.wc_str());
+    OSAllVersionKextsDir = SWPrintf("%ls", osMajorVersion.wc_str());
     AddKextsFromDirInArray(OSAllVersionKextsDir, osMajorVersion, archCpuType, kextArray);
 
     if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
@@ -499,13 +499,13 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     } else {
       DirName = SWPrintf("%ls_normal", osMajorVersion.wc_str());
     }
-    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
+    DirPath = SWPrintf("%ls", DirName.wc_str());
     AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
 
 
     // Add kext from ${osMajorVersion}.{version}
 
-    OSShortVersionKextsDir = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), UniShortOSVersion.wc_str());
+    OSShortVersionKextsDir = SWPrintf("%ls", UniShortOSVersion.wc_str());
     AddKextsFromDirInArray( OSShortVersionKextsDir, UniShortOSVersion, archCpuType, kextArray);
 
     if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
@@ -515,7 +515,7 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     } else {
       DirName = SWPrintf("%ls_normal", UniShortOSVersion.wc_str());
     }
-    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
+    DirPath = SWPrintf("%ls", DirName.wc_str());
     AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
 
 
@@ -529,7 +529,7 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
       OSVersionKextsDirName = SWPrintf("%s", OSVersion.c_str());
     }
 
-    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), OSVersionKextsDirName.wc_str());
+    DirPath = SWPrintf("%ls", OSVersionKextsDirName.wc_str());
     AddKextsFromDirInArray(DirPath, OSVersionKextsDirName, archCpuType, kextArray);
 
     if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
@@ -539,7 +539,7 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     } else {
       DirName = SWPrintf("%ls_normal", OSVersionKextsDirName.wc_str());
     }
-    DirPath = SWPrintf("%ls\\kexts\\%ls", OEMPath.wc_str(), DirName.wc_str());
+    DirPath = SWPrintf("%ls", DirName.wc_str());
     AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
   }else{
     //MsgLog("No os version is detected\n");
@@ -579,13 +579,13 @@ EFI_STATUS LOADER_ENTRY::LoadKexts()
     }
 
   for (size_t idx = 0 ; idx < kextArray.size()  ; idx++ ) {
-    AddKext(SelfVolume->RootDir, S8Printf("%ls\\kexts\\%ls\\%ls", OEMPath.wc_str(), kextArray[idx].KextDirNameUnderOEMPath.wc_str(), kextArray[idx].FileName.wc_str()), archCpuType);
+    AddKext(SelfVolume->RootDir, S8Printf("%ls\\%ls", kextArray[idx].KextDirNameUnderOEMPath.wc_str(), kextArray[idx].FileName.wc_str()), archCpuType);
   }
 
   UINTN                    mm_extra_size;
-  VOID                    *mm_extra;
+  void                    *mm_extra;
   UINTN                    extra_size;
-  VOID                    *extra;
+  void                    *extra;
 
   // reserve space in the device tree
   if (GetKextCount() > 0) {
@@ -798,7 +798,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
   // Status = gBS->AllocatePages(AllocateAddress, EfiLoaderData, kextsPages, &kextsBase);
   // if (EFI_ERROR(Status)) { MsgLog("Kext inject: could not allocate memory\n"); return Status; }
   // Desc->NumberOfPages += kextsPages;
-  // CopyMem((VOID*)kextsBase, (VOID*)(UINTN)kext.paddr, kext.length);
+  // CopyMem((void*)kextsBase, (void*)(UINTN)kext.paddr, kext.length);
   // drvinfo = (_BooterKextFileInfo*) kextsBase;
   // drvinfo->infoDictPhysAddr += (UINT32)kextsBase;
   // drvinfo->executablePhysAddr += (UINT32)kextsBase;
@@ -854,7 +854,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
     for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
       KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
 
-      CopyMem((VOID*) KextBase, (VOID*)(UINTN) KextEntry->kext.paddr, KextEntry->kext.length);
+      CopyMem((void*) KextBase, (void*)(UINTN) KextEntry->kext.paddr, KextEntry->kext.length);
       drvinfo = (_BooterKextFileInfo*) KextBase;
       drvinfo->infoDictPhysAddr += (UINT32) KextBase;
       drvinfo->executablePhysAddr += (UINT32) KextBase;
@@ -936,7 +936,7 @@ const UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0
 //
 
 
-VOID EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
+void EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
 {
 //  UINTN   Num = 0;
   UINTN   NumSnow_i386_EXT   = 0;

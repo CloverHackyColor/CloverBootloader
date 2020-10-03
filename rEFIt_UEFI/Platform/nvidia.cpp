@@ -56,6 +56,8 @@
 #include "../include/Pci.h"
 #include "../include/Devices.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
+#include "SelfOem.h"
 
 #ifndef DEBUG_NVIDIA
 #ifndef DEBUG_ALL
@@ -1663,7 +1665,7 @@ static nvidia_card_info_t nvidia_card_exceptions[] = {
   { 0x10DE124D,  0x146210CC,  "MSi GeForce GT 635M" }
 };
 
-EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
+EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, void* rom, UINT16 arch)
 {
   EFI_STATUS Status;
   EFI_PCI_IO_PROTOCOL    *PciIo;
@@ -1673,7 +1675,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
   UINT32 old_bar0_pramin = 0;
 
   DBG("read_nVidia_ROM\n");
-  Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) {
     return EFI_NOT_FOUND;
   }
@@ -1747,7 +1749,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
 }
 
 
-EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
+EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, void* rom)
 {
   EFI_STATUS Status;
   EFI_PCI_IO_PROTOCOL    *PciIo;
@@ -1757,7 +1759,7 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
   DBG("PROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle,
                              &gEfiPciIoProtocolGuid,
-                             (VOID**)&PciIo,
+                             (void**)&PciIo,
                              gImageHandle,
                              NULL,
                              EFI_OPEN_PROTOCOL_GET_PROTOCOL);
@@ -2190,7 +2192,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   //UINT32        subsystem;
   INT32         nvPatch = 0;
   CONST CHAR8         *model = NULL;
-  CHAR16        FileName[64];
   UINT8         *buffer = NULL;
   UINTN         bufferLen = 0;
   UINTN         j, n_ports = 0;
@@ -2259,34 +2260,29 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
 
   if (load_vbios) {
-	  snwprintf(FileName, 128, "ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
+	  XStringW FileName = SWPrintf("ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
 
-    if (FileExists(OEMDir, FileName)) {
-		DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-
-      Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
+    if (FileExists(&selfOem.getOemDir(), FileName)) {
+      DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
+      Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
     } else {
-		snwprintf(FileName, 128, "ROM\\10de_%04hX.rom", nvda_dev->device_id);
-      if (FileExists(OEMDir, FileName)) {
+		  FileName.SWPrintf("ROM\\10de_%04hX.rom", nvda_dev->device_id);
+      if (FileExists(&selfOem.getOemDir(), FileName)) {
 		  DBG("Found generic VBIOS ROM file (10de_%04hX.rom)\n", nvda_dev->device_id);
-
-        Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
+        Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
       }
     }
 
-	  snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
+	  FileName.SWPrintf("ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
     if (EFI_ERROR(Status)) {
-      if (FileExists(SelfRootDir, FileName)) {
-		  DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-
-        Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+      if (FileExists(&self.getCloverDir(), FileName)) {
+        DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
+        Status = egLoadFile(&self.getCloverDir(), FileName.wc_str(), &buffer, &bufferLen);
       } else {
-		  snwprintf(FileName, 128, "\\EFI\\CLOVER\\ROM\\10de_%04hX.rom", nvda_dev->device_id);
-
-        if (FileExists(SelfRootDir, FileName)) {
-			DBG("Found generic VBIOS ROM file (10de_%04hX.rom)\n", nvda_dev->device_id);
-
-          Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+        FileName.SWPrintf("ROM\\10de_%04hX.rom", nvda_dev->device_id);
+        if (FileExists(&self.getCloverDir(), FileName)) {
+          DBG("Found generic VBIOS ROM file (10de_%04hX.rom)\n", nvda_dev->device_id);
+          Status = egLoadFile(&self.getCloverDir(), FileName.wc_str(), &buffer, &bufferLen);
         }
       }
     }

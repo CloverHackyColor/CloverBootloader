@@ -36,8 +36,8 @@ bootLegacyBiosDefault (
   IN  UINT16 LegacyBiosDefaultEntry
   );
 
-VOID
-DumpBiosMemoryMap (VOID);
+void
+DumpBiosMemoryMap (void);
 
 
 #endif /* PLATFORM_LEGACYBOOT_H_ */

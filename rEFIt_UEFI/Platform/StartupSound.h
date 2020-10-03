@@ -21,9 +21,9 @@ extern EFI_AUDIO_IO_PROTOCOL    *AudioIo;
 
 
 EFI_STATUS
-StartupSoundPlay(EFI_FILE *Dir, CONST CHAR16* SoundFile);
+StartupSoundPlay(const EFI_FILE* Dir, CONST CHAR16* SoundFile);
 
-VOID GetOutputs();
+void GetOutputs();
 
 EFI_STATUS CheckSyncSound(BOOLEAN Stop);
 

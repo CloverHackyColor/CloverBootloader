@@ -67,7 +67,7 @@ class REFIT_MENU_ENTRY_ITEM_ABSTRACT;
 class REFIT_MENU_ENTRY;
 class REFIT_ABSTRACT_MENU_ENTRY;
 
-typedef VOID (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
+typedef void (REFIT_MENU_SCREEN::*MENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
 
 class EntryArray : public XObjArray<REFIT_ABSTRACT_MENU_ENTRY>
 {
@@ -224,29 +224,29 @@ public:
 
 
   //Scroll functions
-  VOID InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
+  void InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                   IN UINTN VisibleSpace, IN INTN Selected);
-  VOID UpdateScroll(IN UINTN Movement);
+  void UpdateScroll(IN UINTN Movement);
 //  void InitBar();
-  VOID ScrollingBar();
-  VOID SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State);
+  void ScrollingBar();
+  void SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State);
 
   //mouse functions and event
-  VOID HidePointer();
+  void HidePointer();
   EFI_STATUS MouseBirth();
-  VOID KillMouse();
+  void KillMouse();
   EFI_STATUS CheckMouseEvent();
   EFI_STATUS WaitForInputEventPoll(UINTN TimeoutDefault);
 
   //menu functions
-  VOID AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
-  VOID AddMenuInfo_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
-  VOID AddMenuInfoLine_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
-  VOID AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
-  VOID AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
-  VOID AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
-  VOID AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
-  VOID FreeMenu();
+  void AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  void AddMenuInfo_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
+  void AddMenuInfoLine_f(CONST char *format, ...) __attribute__((format(printf, 2, 3)));
+  void AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt);
+  void AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  void AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
+  void AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
+  void FreeMenu();
   INTN FindMenuShortcutEntry(IN CHAR16 Shortcut);
   UINTN RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
@@ -254,24 +254,24 @@ public:
   UINTN InputDialog(IN MENU_STYLE_FUNC StyleFunc);
 
 
-  VOID DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
-  VOID DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
+  void DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
+  void DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
   INTN DrawTextXY(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   void EraseTextXY();
-  VOID DrawTextCorner(UINTN TextC, UINT8 Align);
-  VOID DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor, IN INTN MaxWidth);
-  VOID DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
-  VOID CountItems();
-  VOID InitAnime();
-  VOID GetAnime(); //same for xcinema
-  VOID UpdateFilm(); 
+  void DrawTextCorner(UINTN TextC, UINT8 Align);
+  void DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor, IN INTN MaxWidth);
+  void DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
+  void CountItems();
+  void InitAnime();
+  void GetAnime(); //same for xcinema
+  void UpdateFilm(); 
 
   //Style functions
 
-  virtual VOID MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
-  virtual VOID MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
-  virtual VOID GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
-  virtual VOID TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
+  virtual void MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
+  virtual void MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
+  virtual void GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
+  virtual void TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
 
   virtual ~REFIT_MENU_SCREEN() {};
 };

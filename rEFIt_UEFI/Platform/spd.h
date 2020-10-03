@@ -177,7 +177,7 @@ Byte Number Function Described Notes
  */
 
 
-VOID
-ScanSPD (VOID);
+void
+ScanSPD (void);
 
 #endif /* !__LIBSAIO_SPD_H */

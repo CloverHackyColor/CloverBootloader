@@ -86,7 +86,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathPci (
 //  IN OUT POOL_PRINT       *Str,
 //  IN PCI_DEVICE_PATH                 *DevPath
@@ -108,7 +108,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathPccard (
 //  IN OUT POOL_PRINT       *Str,
 //  IN PCCARD_DEVICE_PATH                 *DevPath
@@ -130,7 +130,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathMemMap (
 //  IN OUT POOL_PRINT       *Str,
 //  IN MEMMAP_DEVICE_PATH                 *DevPath
@@ -158,7 +158,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathController (
 //  IN OUT POOL_PRINT       *Str,
 //  IN CONTROLLER_DEVICE_PATH                 *DevPath
@@ -178,7 +178,7 @@
 //  @param  DevPath  Pointer to vendor device path
 //
 //**/
-//VOID
+//void
 //DevPathVendor (
 //  IN OUT POOL_PRINT       *Str,
 //  IN VENDOR_DEVICE_PATH                 *DevPath
@@ -303,7 +303,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathAcpi (
 //  IN OUT POOL_PRINT       *Str,
 //  IN ACPI_HID_DEVICE_PATH                 *DevPath
@@ -329,7 +329,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathExtendedAcpi (
 //  IN OUT POOL_PRINT       *Str,
 //  IN ACPI_EXTENDED_HID_DEVICE_PATH                 *DevPath
@@ -447,7 +447,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathAdrAcpi (
 //  IN OUT POOL_PRINT       *Str,
 //  IN ACPI_ADR_DEVICE_PATH                 *DevPath
@@ -479,7 +479,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathAtapi (
 //  IN OUT POOL_PRINT       *Str,
 //  IN ATAPI_DEVICE_PATH                 *DevPath
@@ -506,7 +506,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathScsi (
 //  IN OUT POOL_PRINT       *Str,
 //  IN SCSI_DEVICE_PATH                 *DevPath
@@ -528,7 +528,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathFibre (
 //  IN OUT POOL_PRINT       *Str,
 //  IN FIBRECHANNEL_DEVICE_PATH                 *DevPath
@@ -550,7 +550,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPath1394 (
 //  IN OUT POOL_PRINT       *Str,
 //  IN F1394_DEVICE_PATH                 *DevPath
@@ -572,7 +572,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathUsb (
 //  IN OUT POOL_PRINT       *Str,
 //  IN USB_DEVICE_PATH                 *DevPath
@@ -594,7 +594,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathUsbWWID (
 //  IN OUT POOL_PRINT       *Str,
 //  IN USB_WWID_DEVICE_PATH                 *DevPath
@@ -622,7 +622,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathLogicalUnit (
 //  IN OUT POOL_PRINT       *Str,
 //  IN DEVICE_LOGICAL_UNIT_DEVICE_PATH                 *DevPath
@@ -644,7 +644,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathUsbClass (
 //  IN OUT POOL_PRINT       *Str,
 //  IN USB_CLASS_DEVICE_PATH                 *DevPath
@@ -674,7 +674,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathSata (
 //  IN OUT POOL_PRINT       *Str,
 //  IN SATA_DEVICE_PATH                 *DevPath
@@ -714,7 +714,7 @@
 // representation for a device node can be used, where applicable.
 //
 // **/
-//VOID
+//void
 //DevPathToTextNVMe (
 //                   IN OUT POOL_PRINT  *Str,
 //                   IN NVME_NAMESPACE_DEVICE_PATH            *DevPath /*,
@@ -748,7 +748,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathI2O (
 //  IN OUT POOL_PRINT       *Str,
 //  IN I2O_DEVICE_PATH                 *DevPath
@@ -770,7 +770,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathMacAddr (
 //  IN OUT POOL_PRINT       *Str,
 //  IN MAC_ADDR_DEVICE_PATH                 *DevPath
@@ -806,7 +806,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathIPv4 (
 //  IN OUT POOL_PRINT       *Str,
 //  IN IPv4_DEVICE_PATH                 *DevPath
@@ -836,7 +836,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathIPv6 (
 //  IN OUT POOL_PRINT       *Str,
 //  IN IPv6_DEVICE_PATH                 *DevPath
@@ -877,7 +877,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathInfiniBand (
 //  IN OUT POOL_PRINT       *Str,
 //  IN INFINIBAND_DEVICE_PATH                 *DevPath
@@ -907,7 +907,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathUart (
 //  IN OUT POOL_PRINT       *Str,
 //  IN UART_DEVICE_PATH                 *DevPath
@@ -992,7 +992,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathiSCSI (
 //  IN OUT POOL_PRINT       *Str,
 //  IN ISCSI_DEVICE_PATH_WITH_NAME                 *DevPath
@@ -1035,7 +1035,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathVlan (
 //  IN OUT POOL_PRINT       *Str,
 //  IN VLAN_DEVICE_PATH                 *DevPath
@@ -1057,7 +1057,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathHardDrive (
 //  IN OUT POOL_PRINT       *Str,
 //  IN HARDDRIVE_DEVICE_PATH                 *DevPath
@@ -1107,7 +1107,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathCDROM (
 //  IN OUT POOL_PRINT       *Str,
 //  IN CDROM_DEVICE_PATH                 *DevPath
@@ -1129,7 +1129,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathFilePath (
 //  IN OUT POOL_PRINT       *Str,
 //  IN FILEPATH_DEVICE_PATH                 *DevPath
@@ -1151,7 +1151,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathMediaProtocol (
 //  IN OUT POOL_PRINT       *Str,
 //  IN MEDIA_PROTOCOL_DEVICE_PATH                 *DevPath
@@ -1173,7 +1173,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathFvFilePath (
 //  IN OUT POOL_PRINT       *Str,
 //  IN MEDIA_FW_VOL_FILEPATH_DEVICE_PATH                 *DevPath
@@ -1195,7 +1195,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathRelativeOffsetRange0 (
 //  IN OUT POOL_PRINT       *Str,
 //  IN MEDIA_RELATIVE_OFFSET_RANGE_DEVICE_PATH                 *DevPath
@@ -1222,7 +1222,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathBssBss (
 //  IN OUT POOL_PRINT       *Str,
 //  IN BBS_BBS_DEVICE_PATH                 *DevPath
@@ -1278,10 +1278,10 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathEndInstance (
 //  IN OUT POOL_PRINT       *Str,
-//  IN VOID                 *DevPath
+//  IN void                 *DevPath
 //  )
 //{
 //  CatPrint (Str, L",");
@@ -1297,10 +1297,10 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathNodeUnknown (
 //  IN OUT POOL_PRINT       *Str,
-//  IN VOID                 *DevPath
+//  IN void                 *DevPath
 //  )
 //{
 //  CatPrint (Str, L"?");
@@ -1315,7 +1315,7 @@
 //  @param DevPath         The device path.
 //
 //**/
-//static VOID
+//static void
 //DevPathFvPath (
 //  IN OUT POOL_PRINT       *Str,
 //  IN MEDIA_FW_VOL_DEVICE_PATH                 *DevPath
@@ -1537,7 +1537,7 @@
 //{
 //  POOL_PRINT                Str;
 //  EFI_DEVICE_PATH_PROTOCOL  *DevPathNode;
-//  VOID (*DumpNode) (POOL_PRINT *, VOID *);
+//  void (*DumpNode) (POOL_PRINT *, void *);
 //
 //  UINTN Index;
 //  UINTN NewSize;
@@ -1555,7 +1555,7 @@
 //  Status = gBS->LocateProtocol (
 //                  &gEfiDevicePathToTextProtocolGuid,
 //                  NULL,
-//                  (VOID **) &DevPathToText
+//                  (void **) &DevPathToText
 //                  );
 //  if (!EFI_ERROR(Status)) {
 //    ToText = DevPathToText->ConvertDevicePathToText (

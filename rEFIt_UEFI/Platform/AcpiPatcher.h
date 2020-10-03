@@ -51,27 +51,27 @@ PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT);
 
 UINT8
 Checksum8 (
-  VOID *startPtr,
+  void *startPtr,
   UINT32 len
   );
 
 void FixChecksum(EFI_ACPI_DESCRIPTION_HEADER* Table);
 
 
-VOID
+void
 SaveOemDsdt (
   BOOLEAN FullPatch
   );
 
-VOID
-SaveOemTables (VOID);
+void
+SaveOemTables (void);
 
 EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE
-*GetFadt (VOID);
+*GetFadt (void);
 
 
-VOID
-GetAcpiTablesList (VOID);
+void
+GetAcpiTablesList (void);
 
 
 #endif /* PLATFORM_ACPIPATCHER_H_ */

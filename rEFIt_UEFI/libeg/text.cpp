@@ -44,6 +44,7 @@ extern "C" {
 #include "VectorGraphics.h"
 #include "XTheme.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
 
 //#include "egemb_font.h"
 //#define FONT_CELL_WIDTH (7)
@@ -70,7 +71,7 @@ NSVGfontChain *fontsDB = NULL;
 //it is not good for vector theme
 //it will be better to sum each letter width for the chosen font
 // so one more parameter is TextStyle
-VOID XTheme::MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height)
+void XTheme::MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height)
 {
   INTN ScaledWidth = CharWidth;
   INTN ScaledHeight = FontHeight;
@@ -94,7 +95,7 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL FirstPixel;
   BOOLEAN     isKorean = (gLanguage == korean);
   XStringW    fontFilePath;
-  const XStringW& commonFontDir = L"EFI\\CLOVER\\font"_XSW;
+  const XStringW& commonFontDir = L"font"_XSW;
 
   if (IsEmbeddedTheme() && !isKorean) { //or initial screen before theme init
     Status = NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data)); //always success
@@ -121,7 +122,7 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
     //then take from common font folder
 //    fontFilePath = SWPrintf(L"%s\\%s", commonFontDir, isKorean ? L"FontKorean.png" : ThemeX.FontFileName.data());
     fontFilePath = commonFontDir + FontFileName;
-    Status = NewImage.LoadXImage(SelfRootDir, fontFilePath);
+    Status = NewImage.LoadXImage(&self.getCloverDir(), fontFilePath);
     //else use embedded even if it is not embedded
     if (EFI_ERROR(Status)) {
       Status = NewImage.FromPNG(ACCESS_EMB_DATA(emb_font_data), ACCESS_EMB_SIZE(emb_font_data));
@@ -170,7 +171,7 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   }
 }
 
-VOID XTheme::PrepareFont()
+void XTheme::PrepareFont()
 {
 
   TextHeight = FontHeight + (int)(TEXT_YMARGIN * 2 * Scale);

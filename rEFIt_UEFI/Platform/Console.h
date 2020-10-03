@@ -11,8 +11,10 @@
 
 
 EFI_STATUS
-InitializeConsoleSim (VOID);
+InitializeConsoleSim (void);
 
+EFI_STATUS
+UninitializeConsoleSim ();
 
 
 #endif /* PLATFORM_CONSOLE_H_ */

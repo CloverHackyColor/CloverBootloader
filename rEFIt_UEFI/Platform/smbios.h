@@ -63,13 +63,13 @@ iStrLen(
   );
 
 EFI_STATUS
-PrepatchSmbios (VOID);
+PrepatchSmbios (void);
 
-VOID
-PatchSmbios (VOID);
+void
+PatchSmbios (void);
 
-VOID
-FinalizeSmbios (VOID);
+void
+FinalizeSmbios (void);
 
 
 

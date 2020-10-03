@@ -519,7 +519,7 @@ MemLogfVA (
   //
   UINTN LastMessage = mMemLog->Cursor - mMemLog->Buffer;
 
-  vprintf_with_callback_timestamp_emitcr(Format, Marker, transmitS8Printf, NULL, &printfNewline, 1, 1);
+  vprintf_with_callback_timestamp_emitcr(Format, Marker, transmitS8Printf, NULL, &printfNewline, Timing, 1);
   size_t DataWritten = mMemLog->Cursor - mMemLog->Buffer - LastMessage;
 
   //

@@ -570,7 +570,7 @@ PLATFORMDATA ApplePlatformData[] =
     0x01, 0x43, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
 };
 
-VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
+void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 {
   const CHAR8  *i;
 
@@ -1361,7 +1361,7 @@ MACHINE_TYPES GetModelFromString(const XString8& ProductName)
   return MaxMachineType;
 }
 
-VOID GetDefaultSettings()
+void GetDefaultSettings()
 {
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;

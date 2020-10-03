@@ -425,6 +425,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 						{};
         LOADER_ENTRY(const LOADER_ENTRY&) = delete;
         LOADER_ENTRY& operator=(const LOADER_ENTRY&) = delete;
+        ~LOADER_ENTRY() {};
         
         void          SetKernelRelocBase();
         void          FindBootArgs();
@@ -461,9 +462,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
  //       int           is_mkext_v1(UINT8* drvPtr);
  //       void          patch_mkext_v1(UINT8 *drvPtr); //not used
  
-        EFI_STATUS LoadKext(IN EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
-        EFI_STATUS AddKext(IN EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType);
-        void      LoadPlugInKexts(IN EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
+        EFI_STATUS LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext);
+        EFI_STATUS AddKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType);
+        void      LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force);
 //        void      AddKexts(const XStringW& SrcDir, const XStringW& Path, cpu_type_t archCpuType);
         void      AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray);
         void      AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray);
@@ -492,7 +493,6 @@ class REFIT_ABSTRACT_MENU_ENTRY
         
         void Stall(int Pause) { if ( KernelAndKextPatches.KPDebug ) { gBS->Stall(Pause); } };
         void StartLoader();
-        void StartLoader11();
         void AddDefaultMenu();
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
