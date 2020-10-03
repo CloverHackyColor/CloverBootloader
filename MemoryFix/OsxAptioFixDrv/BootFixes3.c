@@ -12,7 +12,7 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
-#include <Library/DeviceTreeLib.h>
+#include <Library/OcDeviceTreeLib.h>
 
 #include "BootFixes3.h"
 #include "AsmFuncs.h"
@@ -798,7 +798,7 @@ DevTreeFix(BootArgs *BA)
 				}
 				
 				// get value (Address and Length)
-				PropValue = (DTMemMapEntry*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
+				PropValue = (DTMemMapEntry*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DTProperty));
 				DBG("MM Addr = %x, Len = %x ", PropValue->Address, PropValue->Length);
 				
 				// second check - Address is in our reloc block

@@ -4,11 +4,11 @@
 #include "../cpp_foundation/XString.h"
 #include "../gui/menu_items/menu_items.h"
 
-//VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine);
-//VOID AddMenuInfo(IN REFIT_MENU_SCREEN  *SubScreen, IN CONST CHAR16 *Line);
-//VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry, bool freeIt);
-//VOID AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
-//VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
+//void AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine);
+//void AddMenuInfo(IN REFIT_MENU_SCREEN  *SubScreen, IN CONST CHAR16 *Line);
+//void AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry, bool freeIt);
+//void AddMenuCheck(REFIT_MENU_SCREEN *SubScreen, CONST CHAR8 *Text, UINTN Bit, INTN ItemNum);
+//void FreeMenu(IN REFIT_MENU_SCREEN *Screen);
 //UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 //UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 
@@ -30,16 +30,16 @@ extern INTN LayoutAnimMoveForMenuX;
 extern INTN LayoutMainMenuHeight;
 
 
-VOID OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
-VOID FreeScrollBar(VOID);
+void OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
+void FreeScrollBar(void);
 
-VOID
+void
 FillInputs (
   BOOLEAN New
   );
 
-VOID
-ApplyInputs (VOID);
+void
+ApplyInputs (void);
 
 
 

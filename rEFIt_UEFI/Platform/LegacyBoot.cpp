@@ -14,6 +14,7 @@ Copyright (c) 2006 JLA
 #include "LegacyBiosThunk.h"
 //#include <Protocol/Bds.h>
 #include "AcpiPatcher.h"
+#include "Self.h"
 
 
 #ifndef DEBUG_ALL
@@ -235,7 +236,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
                              UINT32 *DriveCRC32,
                              BIOS_DISK_ADDRESS_PACKET *Dap,
-                             VOID *Buffer)
+                             void *Buffer)
 {
 	EFI_STATUS					Status;
 	
@@ -331,7 +332,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
 	if (EFI_ERROR(Status)) {
 		// Retry in case the CD was swapped out
-		Status = gBS->HandleProtocol(volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &pBlockIO);
+		Status = gBS->HandleProtocol(volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (void **) &pBlockIO);
 		if (!EFI_ERROR(Status)) {
 			//      pCDROMBlockIO = pBlockIO;
 			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
@@ -397,13 +398,16 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 		return Status;
 	}
   
-   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
-  if (EFI_ERROR(Status)) {
-    DBG("can't save legacy-boot.log\n");
-    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
-  }
+   Status = SaveBooterLog(&self.getCloverDir(), LEGBOOT_LOG_new);
+   
+   // Jief : don't write outside of SelfDir
+//  if (EFI_ERROR(Status)) {
+//    DBG("can't save legacy-boot.log\n");
+//    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+//  }
+
   /*LogSize = msgCursor - msgbuf;
-  Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
+  Status = egSaveFile(&self.getSelfRootDir(), LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
     Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
@@ -419,18 +423,18 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	
 	// Boot it
 	//  dbgStart(bootLoadAddress, enableDebugger);
-  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (void**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 /*  mCpu = NULL;
-  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
+  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (void **) &mCpu);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 */
 	
-	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(void **)&mThunkContext);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -473,17 +477,17 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	SetMem(&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	
-	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (void**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
   mCpu = NULL;
-  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
+  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (void **) &mCpu);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 	
-	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(void **)&mThunkContext);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -512,13 +516,14 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
         DBG("\n");
     }
   
-  Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
-  if (EFI_ERROR(Status)) {
-    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
-  }
+  Status = SaveBooterLog(&self.getCloverDir(), LEGBOOT_LOG_new);
+  // Jief : don't write outside SelfDir
+//  if (EFI_ERROR(Status)) {
+//    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+//  }
    /*
   LogSize = msgCursor - msgbuf;
-  Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
+  Status = egSaveFile(&self.getSelfRootDir(), LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
     Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   }
@@ -604,7 +609,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	UINT32                      LbaOffset	= 0;
 	UINT32                      LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
-	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
+	const EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
     UINT8                       BiosDriveNum;
 //  UINT16                      OldMask;
 //  UINT16                      NewMask;
@@ -639,13 +644,13 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 		return Status;
 	}
 	
-	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (void**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
   DBG("gEfiLegacy8259ProtocolGuid found\n");
 	
-	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(void **)&mThunkContext);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -666,10 +671,11 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
     DBG("\n");
   }
   DBG("Reset disk controller 0x80\n"); 
-  Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+  Status = SaveBooterLog(&self.getCloverDir(), LEGBOOT_LOG_new);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
-    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+// Jief : don't write outside SelfDir
+//    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
   }
   //after reset we can't save boot log
 	Regs.H.AH = 0x0D;		// INT 13h AH=00h: Reset floppy disk controller; 0x0D - reset hard disk controller
@@ -717,10 +723,11 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 */ 
  
   //if not success then save legacyboot.log
-  Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+  Status = SaveBooterLog(&self.getCloverDir(), LEGBOOT_LOG_new);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
-    /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
+    // Jief : don't write outside SelfDir
+//    /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
   }
 
 	return EFI_SUCCESS;	
@@ -752,7 +759,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   UINT32                      LbaOffset		= 0;
   UINT32                      LbaSize			= 0;
   HARDDRIVE_DEVICE_PATH       *HdPath			= NULL;
-  EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
+  const EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
   UINT8                       BiosDriveNum;
   //UINT16                      OldMask;
   //UINT16                      NewMask;
@@ -773,7 +780,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   //
   // get EfiLegacy8259Protocol - mandatory
   //
-  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (void**)&gLegacy8259);
   DBG("EfiLegacy8259ProtocolGuid: %s\n", efiStrError(Status));
   if (EFI_ERROR(Status)) {
     return Status;
@@ -786,7 +793,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   //
   // get EfiLegacyBiosProtocol - optional
   //
-  Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
+  Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (void**)&LegacyBios);
   DBG("EfiLegacyBiosProtocolGuid: %s\n", efiStrError(Status));
   if (!EFI_ERROR(Status)) {
     //
@@ -890,7 +897,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   // prepare ThunkContext for 16bit BIOS calls
   //
   if (mThunkContext == NULL) {
-    Status = gBS->AllocatePool (EfiBootServicesData, sizeof(THUNK_CONTEXT), (VOID **)&mThunkContext);
+    Status = gBS->AllocatePool (EfiBootServicesData, sizeof(THUNK_CONTEXT), (void **)&mThunkContext);
     if (EFI_ERROR(Status)) {
       return Status;
     }
@@ -968,10 +975,11 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
   
   //Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
   PauseForKey(L"save legacy-boot.log ...\n");
-  Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+  Status = SaveBooterLog(&self.getCloverDir(), LEGBOOT_LOG_new);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
-    /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
+// Jief : don't write outside SelfDir
+//    /*Status = */SaveBooterLog(NULL, LEGBOOT_LOG);
   }
   
   return EFI_SUCCESS;	
@@ -981,7 +989,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
 /** For DefaultLegacyBios (UEFI)
  * Patch BBS Table priorities to allow booting not only from first partition.
  */
-static VOID PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry)
+static void PatchBbsTable(EFI_LEGACY_BIOS_PROTOCOL *LegacyBios, UINT16 BootEntry)
 {
 	UINT16		Idx;
 	UINT16		IdxCount = 0;
@@ -1054,7 +1062,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	//
 	// get EfiLegacyBiosProtocol - optional
 	//
-	Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (VOID**)&LegacyBios);
+	Status = gBS->LocateProtocol(&gEfiLegacyBiosProtocolGuid, NULL, (void**)&LegacyBios);
 	DBG("EfiLegacyBiosProtocolGuid: %s\n", efiStrError(Status));
 	if (EFI_ERROR(Status)) {
 		return Status;
@@ -1063,7 +1071,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	// Patch BBS Table
 	if (LegacyBiosDefaultEntry > 0) {
 		PatchBbsTable(LegacyBios, LegacyBiosDefaultEntry);
-		/*Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+		/*Status = SaveBooterLog(&self.getSelfRootDir(), LEGBOOT_LOG);
 		if (EFI_ERROR(Status)) {
 			DBG("can't save legacy-boot.log\n");
 			Status = SaveBooterLog(NULL, LEGBOOT_LOG);
@@ -1095,7 +1103,7 @@ EFI_STATUS bootLegacyBiosDefault(IN UINT16 LegacyBiosDefaultEntry)
 	return Status;
 }
 
-VOID DumpBiosMemoryMap()
+void DumpBiosMemoryMap()
 {
   EFI_STATUS                  Status;
   INT32                       i, Length;  //for debug dump
@@ -1106,13 +1114,13 @@ VOID DumpBiosMemoryMap()
 	SetMem(&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
   
-  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (void**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return;
 	}
   DBG("gEfiLegacy8259ProtocolGuid found\n");
 	
-	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(void **)&mThunkContext);
 	if (EFI_ERROR(Status)) {
 		return;
 	}

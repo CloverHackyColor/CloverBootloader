@@ -19,6 +19,7 @@
   CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  OpenCorePkg/OpenCorePkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -30,7 +31,7 @@
   BaseLib
   CpuLib
   DevicePathLib
-  DeviceTreeLib
+  OcDeviceTreeLib
   
 [Sources]
   OsxAptioFixDrv.c
@@ -66,6 +67,7 @@
   gEfiFileSystemInfoGuid						## CONSUMES
   gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
   gEfiGlobalVariableGuid
+  gEfiMiscSubClassGuid
 
 [Protocols]
   gEfiLoadedImageProtocolGuid

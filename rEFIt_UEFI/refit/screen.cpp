@@ -61,10 +61,10 @@ UINTN ConHeight;
 CHAR16 *BlankLine = NULL;
 INTN BanHeight = 0;
 
-static VOID SwitchToText(IN BOOLEAN CursorEnabled);
-static VOID SwitchToGraphics(VOID);
-static VOID DrawScreenHeader(IN CONST CHAR16 *Title);
-static VOID UpdateConsoleVars(VOID);
+static void SwitchToText(IN BOOLEAN CursorEnabled);
+static void SwitchToGraphics(void);
+static void DrawScreenHeader(IN CONST CHAR16 *Title);
+static void UpdateConsoleVars(void);
 static INTN ConvertEdgeAndPercentageToPixelPosition(INTN Edge, INTN DesiredPercentageFromEdge, INTN ImageDimension, INTN ScreenDimension);
 INTN CalculateNudgePosition(INTN Position, INTN NudgeValue, INTN ImageDimension, INTN ScreenDimension);
 //INTN RecalculateImageOffset(INTN AnimDimension, INTN ValueToScale, INTN ScreenDimensionToFit, INTN ThemeDesignDimension);
@@ -92,13 +92,11 @@ static BOOLEAN GraphicsScreenDirty;
 
 // general defines and variables
 
-static BOOLEAN haveError = FALSE;
-
 //
 // Screen initialization and switching
 //
 
-VOID InitScreen(IN BOOLEAN SetMaxResolution)
+void InitScreen(IN BOOLEAN SetMaxResolution)
 {
 	//DbgHeader("InitScreen");
     // initialize libeg
@@ -123,7 +121,7 @@ VOID InitScreen(IN BOOLEAN SetMaxResolution)
 	//DrawScreenHeader(L"Initializing...");
 }
 
-VOID SetupScreen(VOID)
+void SetupScreen(void)
 {
     if (GlobalConfig.TextOnly) {
         // switch to text mode if requested
@@ -137,13 +135,13 @@ VOID SetupScreen(VOID)
     }
 }
 
-static VOID SwitchToText(IN BOOLEAN CursorEnabled)
+static void SwitchToText(IN BOOLEAN CursorEnabled)
 {
   egSetGraphicsModeEnabled(FALSE);
 	gST->ConOut->EnableCursor(gST->ConOut, CursorEnabled);
 }
 
-static VOID SwitchToGraphics(VOID)
+static void SwitchToGraphics(void)
 {
     if (AllowGraphicsMode && !egIsGraphicsModeEnabled()) {
       InitScreen(FALSE);
@@ -155,7 +153,7 @@ static VOID SwitchToGraphics(VOID)
 //
 // Screen control for running tools
 //
-VOID BeginTextScreen(IN CONST CHAR16 *Title)
+void BeginTextScreen(IN CONST CHAR16 *Title)
 {
     DrawScreenHeader(Title);
     SwitchToText(FALSE);
@@ -164,7 +162,7 @@ VOID BeginTextScreen(IN CONST CHAR16 *Title)
     haveError = FALSE;
 }
 
-VOID FinishTextScreen(IN BOOLEAN WaitAlways)
+void FinishTextScreen(IN BOOLEAN WaitAlways)
 {
     if (haveError || WaitAlways) {
         SwitchToText(FALSE);
@@ -175,7 +173,7 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways)
     haveError = FALSE;
 }
 
-VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/)
+void BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/)
 {
 	if (!AllowGraphicsMode) {
         UseGraphicsMode = FALSE;
@@ -197,7 +195,7 @@ VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode/*, IN CONST CHAR16 *Title*/)
     haveError = FALSE;
 }
 
-VOID FinishExternalScreen(VOID)
+void FinishExternalScreen(void)
 {
     // make sure we clean up later
     GraphicsScreenDirty = TRUE;
@@ -213,7 +211,7 @@ VOID FinishExternalScreen(VOID)
     haveError = FALSE;
 }
 
-VOID TerminateScreen(VOID)
+void TerminateScreen(void)
 {
     // clear text screen
 	gST->ConOut->SetAttribute(gST->ConOut, ATTR_BANNER);
@@ -223,7 +221,7 @@ VOID TerminateScreen(VOID)
 	gST->ConOut->EnableCursor(gST->ConOut, TRUE);
 }
 
-static VOID DrawScreenHeader(IN CONST CHAR16 *Title)
+static void DrawScreenHeader(IN CONST CHAR16 *Title)
 {
   UINTN i;
 	CHAR16* BannerLine = (__typeof__(BannerLine))AllocatePool((ConWidth + 1) * sizeof(CHAR16));
@@ -275,7 +273,7 @@ static VOID DrawScreenHeader(IN CONST CHAR16 *Title)
 // Error handling
 //
 /*
-VOID
+void
 StatusToString (
 				OUT CHAR16      *Buffer,
 				EFI_STATUS      Status
@@ -285,45 +283,11 @@ StatusToString (
 }*/
 
 
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
-{
-//    CHAR16 ErrorName[64];
-    
-    if (!EFI_ERROR(Status))
-        return FALSE;
-    
-//    StatusToString(ErrorName, Status);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    printf("Fatal Error: %s %ls\n", efiStrError(Status), where);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    haveError = TRUE;
-    
-    //gBS->Exit(ImageHandle, ExitStatus, ExitDataSize, ExitData);
-    
-    return TRUE;
-}
-
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
-{
-//    CHAR16 ErrorName[64];
-    
-    if (!EFI_ERROR(Status))
-        return FALSE;
-    
-//    StatusToString(ErrorName, Status);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    printf("Error: %s %ls\n", efiStrError(Status), where);
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    haveError = TRUE;
-    
-    return TRUE;
-}
-
 //
 // Graphics functions
 //
 
-VOID SwitchToGraphicsAndClear(VOID) //called from MENU_FUNCTION_INIT
+void SwitchToGraphicsAndClear(void) //called from MENU_FUNCTION_INIT
 {
   SwitchToGraphics();
   ThemeX.Background.DrawWithoutCompose(0,0,0,0);
@@ -419,7 +383,7 @@ void REFIT_MENU_SCREEN::GetAnime()
   }
 }
 
-VOID REFIT_MENU_SCREEN::InitAnime()
+void REFIT_MENU_SCREEN::InitAnime()
 {
   if (gThemeChanged) {
     FilmC = nullptr;
@@ -478,7 +442,7 @@ VOID REFIT_MENU_SCREEN::InitAnime()
 // Sets next/previous available screen resolution, according to specified offset
 //
 
-VOID SetNextScreenMode(INT32 Next)
+void SetNextScreenMode(INT32 Next)
 {
     EFI_STATUS Status;
 
@@ -493,7 +457,7 @@ VOID SetNextScreenMode(INT32 Next)
 // This should be called when initializing screen, or when resolution changes
 //
 
-static VOID UpdateConsoleVars()
+static void UpdateConsoleVars()
 {
     UINTN i;
 

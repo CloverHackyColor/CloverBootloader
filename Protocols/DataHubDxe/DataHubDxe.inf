@@ -40,7 +40,7 @@
   FILE_GUID                      = 53BCC14F-C24F-434C-B294-8ED2D4CC1860
   MODULE_TYPE                    = DXE_DRIVER
   VERSION_STRING                 = 1.0
-  ENTRY_POINT                    = DataHubInstall
+  ENTRY_POINT                    = CloverDataHubInstall
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -67,7 +67,7 @@
   BaseLib
   UefiLib
   UefiDriverEntryPoint
-  DebugLib
+  OcDataHubLib
 
 
 [Protocols]

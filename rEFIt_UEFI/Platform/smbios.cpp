@@ -24,6 +24,7 @@
 #include "cpu.h"
 #include "platformdata.h"
 #include "AcpiPatcher.h"
+#include "guid.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,7 +63,7 @@ constexpr LString8 unknown("unknown");
 EFI_GUID                        gRemapEfiSmbiosTableGuid = REMAP_SMBIOS_TABLE_GUID;
 
 //EFI_PHYSICAL_ADDRESS      *smbiosTable;
-VOID                        *Smbios;  //pointer to SMBIOS data
+void                        *Smbios;  //pointer to SMBIOS data
 SMBIOS_TABLE_ENTRY_POINT    *EntryPoint; //SmbiosEps original
 SMBIOS_TABLE_ENTRY_POINT    *SmbiosEpsNew; //new SmbiosEps
 //for patching
@@ -175,20 +176,20 @@ BOOLEAN IsEntryPointStructureValid (IN SMBIOS_TABLE_ENTRY_POINT *EntryPointStruc
   return (Checksum == 0);
 }
 
-VOID* FindOemSMBIOSPtr (VOID)
+void* FindOemSMBIOSPtr (void)
 {
   UINTN      Address;
 
   // Search 0x0f0000 - 0x0fffff for SMBIOS Ptr
   for (Address = 0xf0000; Address < 0xfffff; Address += 0x10) {
     if (*(UINT32 *)(Address) == SMBIOS_PTR && IsEntryPointStructureValid((SMBIOS_TABLE_ENTRY_POINT*)Address)) {
-      return (VOID *)Address;
+      return (void *)Address;
     }
   }
   return NULL;
 }
 
-VOID* GetSmbiosTablesFromHob (VOID)
+void* GetSmbiosTablesFromHob (void)
 {
   EFI_PHYSICAL_ADDRESS       *Table;
   EFI_PEI_HOB_POINTERS       GuidHob;
@@ -197,28 +198,28 @@ VOID* GetSmbiosTablesFromHob (VOID)
   if (GuidHob.Raw != NULL) {
     Table = (__typeof__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
     if (Table != NULL) {
-      return (VOID *)(UINTN)*Table;
+      return (void *)(UINTN)*Table;
     }
   }
   GuidHob.Raw = (__typeof_am__(GuidHob.Raw))GetFirstGuidHob (&gEfiSmbios3TableGuid);
   if (GuidHob.Raw != NULL) {
     Table = (__typeof_am__(Table))GET_GUID_HOB_DATA (GuidHob.Guid);
     if (Table != NULL) {
-      return (VOID *)(UINTN)*Table;
+      return (void *)(UINTN)*Table;
     }
   }
   return NULL;
 }
 
-VOID* GetSmbiosTablesFromConfigTables (VOID)
+void* GetSmbiosTablesFromConfigTables (void)
 {
   EFI_STATUS              Status;
   EFI_PHYSICAL_ADDRESS    *Table;
 
-  Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)&Table);
+  Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (void **)&Table);
   if (EFI_ERROR(Status) || Table == NULL) {
     Table = NULL;
-    Status = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid, (VOID **)&Table);
+    Status = EfiGetSystemConfigurationTable (&gEfiSmbios3TableGuid, (void **)&Table);
     if (EFI_ERROR(Status)) {
       Table = NULL;
     }
@@ -387,7 +388,7 @@ CHAR8* GetSmbiosString (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABL
   return AString; //return pointer to Ascii string
 }
 
-VOID AddSmbiosEndOfTable()
+void AddSmbiosEndOfTable()
 {
   SMBIOS_STRUCTURE* StructurePtr = (SMBIOS_STRUCTURE*)Current;
   StructurePtr->Type    = SMBIOS_TYPE_END_OF_TABLE;
@@ -399,7 +400,7 @@ VOID AddSmbiosEndOfTable()
   NumberOfRecords++;
 }
 
-VOID UniquifySmbiosTableStr (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* str_idx)
+void UniquifySmbiosTableStr (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* str_idx)
 {
   INTN            i, j;
   SMBIOS_TABLE_STRING    cmp_idx;
@@ -424,7 +425,7 @@ VOID UniquifySmbiosTableStr (APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS
 }
 
 /* Patching Functions */
-VOID PatchTableType0()
+void PatchTableType0()
 {
   // BIOS information
   //
@@ -434,8 +435,8 @@ VOID PatchTableType0()
     return;
   }
   TableSize = SmbiosTableLength(SmbiosTable);
-  ZeroMem((VOID*)newSmbiosTable.Type0, MAX_TABLE_SIZE);
-  CopyMem((VOID*)newSmbiosTable.Type0, (VOID*)SmbiosTable.Type0, TableSize); //can't point to union
+  ZeroMem((void*)newSmbiosTable.Type0, MAX_TABLE_SIZE);
+  CopyMem((void*)newSmbiosTable.Type0, (void*)SmbiosTable.Type0, TableSize); //can't point to union
   /* Real Mac
    BIOS Information (Type 0)
    Raw Data:
@@ -483,7 +484,7 @@ VOID PatchTableType0()
   Handle = LogSmbiosTable(newSmbiosTable);
 }
 
-VOID GetTableType1()
+void GetTableType1()
 {
   CHAR8* s;
   // System Information
@@ -494,7 +495,7 @@ VOID GetTableType1()
     return;
   }
 
-  CopyMem((VOID*)&gSettings.SmUUID, (VOID*)&SmbiosTable.Type1->Uuid, 16);
+  gSettings.SmUUID = GuidLEToXString8(SmbiosTable.Type1->Uuid);
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
   gSettings.OEMProduct.strncpy(s, iStrLen(s, 64)); //strncpy take care of ending zero
 
@@ -502,7 +503,7 @@ VOID GetTableType1()
 }
 
 
-VOID PatchTableType1()
+void PatchTableType1()
 {
   // System Information
   //
@@ -515,8 +516,8 @@ VOID PatchTableType1()
   Size = SmbiosTable.Type1->Hdr.Length; //old size
   TableSize = SmbiosTableLength(SmbiosTable); //including strings
   NewSize = 27; //sizeof(SMBIOS_TABLE_TYPE1);
-  ZeroMem((VOID*)newSmbiosTable.Type1, MAX_TABLE_SIZE);
-  CopyMem((VOID*)newSmbiosTable.Type1, (VOID*)SmbiosTable.Type1, Size); //copy main table
+  ZeroMem((void*)newSmbiosTable.Type1, MAX_TABLE_SIZE);
+  CopyMem((void*)newSmbiosTable.Type1, (void*)SmbiosTable.Type1, Size); //copy main table
   CopyMem((CHAR8*)newSmbiosTable.Type1+NewSize, (CHAR8*)SmbiosTable.Type1+Size, TableSize - Size); //copy strings
   newSmbiosTable.Type1->Hdr.Length = (UINT8)NewSize;
 
@@ -525,8 +526,10 @@ VOID PatchTableType1()
   newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
   Once = TRUE;
 
-  if((gSettings.SmUUID.Data3 & 0xF000) != 0) {
-    CopyMem((VOID*)&newSmbiosTable.Type1->Uuid, (VOID*)&gSettings.SmUUID, 16);
+  EFI_GUID SmUUID;
+  StrToGuidLE(gSettings.SmUUID, &SmUUID);
+  if((SmUUID.Data3 & 0xF000) != 0) {
+    CopyMem((void*)&newSmbiosTable.Type1->Uuid, (void*)&SmUUID, sizeof(SmUUID));
   }
 
   gSettings.ManufactureName.trim();
@@ -558,7 +561,7 @@ VOID PatchTableType1()
   return;
 }
 
-VOID GetTableType2()
+void GetTableType2()
 {
   CHAR8* s;
   // System Information
@@ -575,12 +578,12 @@ VOID GetTableType2()
 }
 
 
-VOID PatchTableType2()
+void PatchTableType2()
 {
   // BaseBoard Information
   //
   NewSize = 0x10; //sizeof(SMBIOS_TABLE_TYPE2);
-  ZeroMem((VOID*)newSmbiosTable.Type2, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type2, MAX_TABLE_SIZE);
 
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
   if (SmbiosTable.Raw == NULL) {
@@ -594,17 +597,17 @@ VOID PatchTableType2()
     TableSize = SmbiosTableLength(SmbiosTable); //including strings
 
     if (NewSize > Size) {
-      CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, Size); //copy main table
+      CopyMem((void*)newSmbiosTable.Type2, (void*)SmbiosTable.Type2, Size); //copy main table
       CopyMem((CHAR8*)newSmbiosTable.Type2 + NewSize, (CHAR8*)SmbiosTable.Type2 + Size, TableSize - Size); //copy strings
     } else {
-      CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, TableSize); //copy full table
+      CopyMem((void*)newSmbiosTable.Type2, (void*)SmbiosTable.Type2, TableSize); //copy full table
     }
   }
 
   newSmbiosTable.Type2->Hdr.Length = (UINT8)NewSize;
   newSmbiosTable.Type2->ChassisHandle = mHandle3;  //from GetTableType3
   newSmbiosTable.Type2->BoardType = gSettings.BoardType;
-  ZeroMem((VOID*)&newSmbiosTable.Type2->FeatureFlag, sizeof(BASE_BOARD_FEATURE_FLAGS));
+  ZeroMem((void*)&newSmbiosTable.Type2->FeatureFlag, sizeof(BASE_BOARD_FEATURE_FLAGS));
   newSmbiosTable.Type2->FeatureFlag.Motherboard = 1;
   newSmbiosTable.Type2->FeatureFlag.Replaceable = 1;
   if (gSettings.BoardType == 11) {
@@ -649,7 +652,7 @@ VOID PatchTableType2()
   return;
 }
 
-VOID GetTableType3()
+void GetTableType3()
 {
   // System Chassis Information
   //
@@ -665,7 +668,7 @@ VOID GetTableType3()
   return;
 }
 
-VOID PatchTableType3()
+void PatchTableType3()
 {
   // System Chassis Information
   //
@@ -677,14 +680,14 @@ VOID PatchTableType3()
   Size = SmbiosTable.Type3->Hdr.Length; //old size
   TableSize = SmbiosTableLength(SmbiosTable); //including strings
   NewSize = 0x15; //sizeof(SMBIOS_TABLE_TYPE3);
-  ZeroMem((VOID*)newSmbiosTable.Type3, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type3, MAX_TABLE_SIZE);
 
   if (NewSize > Size) {
-    CopyMem((VOID*)newSmbiosTable.Type3, (VOID*)SmbiosTable.Type3, Size); //copy main table
+    CopyMem((void*)newSmbiosTable.Type3, (void*)SmbiosTable.Type3, Size); //copy main table
     CopyMem((CHAR8*)newSmbiosTable.Type3 + NewSize, (CHAR8*)SmbiosTable.Type3 + Size, TableSize - Size); //copy strings
     newSmbiosTable.Type3->Hdr.Length = (UINT8)NewSize;
   } else {
-    CopyMem((VOID*)newSmbiosTable.Type3, (VOID*)SmbiosTable.Type3, TableSize); //copy full table
+    CopyMem((void*)newSmbiosTable.Type3, (void*)SmbiosTable.Type3, TableSize); //copy full table
   }
 
   newSmbiosTable.Type3->BootupState = ChassisStateSafe;
@@ -724,7 +727,7 @@ VOID PatchTableType3()
   return;
 }
 
-VOID GetTableType4()
+void GetTableType4()
 {
   // Processor Information
   //
@@ -763,7 +766,7 @@ VOID GetTableType4()
   return;
 }
 
-VOID PatchTableType4()
+void PatchTableType4()
 {
   // Processor Information
   //
@@ -788,8 +791,8 @@ VOID PatchTableType4()
       AddBrand = 48;
     }
     NewSize = sizeof(SMBIOS_TABLE_TYPE4);
-    ZeroMem((VOID*)newSmbiosTable.Type4, MAX_TABLE_SIZE);
-    CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy main table
+    ZeroMem((void*)newSmbiosTable.Type4, MAX_TABLE_SIZE);
+    CopyMem((void*)newSmbiosTable.Type4, (void*)SmbiosTable.Type4, Size); //copy main table
     CopyMem((CHAR8*)newSmbiosTable.Type4+NewSize, (CHAR8*)SmbiosTable.Type4+Size, TableSize - Size); //copy strings
     newSmbiosTable.Type4->Hdr.Length = (UINT8)NewSize;
 
@@ -912,7 +915,7 @@ VOID PatchTableType4()
     newSmbiosTable.Type4->ProcessorId.Signature.ProcessorType    = gCPUStructure.Type;
     newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXModel    = gCPUStructure.Extmodel;
     newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXFamily  = gCPUStructure.Extfamily;
-    //    CopyMem((VOID*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (VOID*)&gCPUStructure.Features, 4);
+    //    CopyMem((void*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (void*)&gCPUStructure.Features, 4);
     //    newSmbiosTable.Type4->ProcessorId.FeatureFlags = (PROCESSOR_FEATURE_FLAGS)(UINT32)gCPUStructure.Features;
     if (Size <= 0x26) {
       newSmbiosTable.Type4->ProcessorFamily2 = newSmbiosTable.Type4->ProcessorFamily;
@@ -945,7 +948,7 @@ VOID PatchTableType4()
   return;
 }
 
-VOID PatchTableType6()
+void PatchTableType6()
 {
   UINT8 SizeField = 0;
   //
@@ -979,7 +982,7 @@ VOID PatchTableType6()
   return;
 }
 
-VOID PatchTableType7()
+void PatchTableType7()
 {
   // Cache Information
   //
@@ -1003,8 +1006,8 @@ VOID PatchTableType7()
       break;
     }
     TableSize = SmbiosTableLength(SmbiosTable);
-    ZeroMem((VOID*)newSmbiosTable.Type7, MAX_TABLE_SIZE);
-    CopyMem((VOID*)newSmbiosTable.Type7, (VOID*)SmbiosTable.Type7, TableSize);
+    ZeroMem((void*)newSmbiosTable.Type7, MAX_TABLE_SIZE);
+    CopyMem((void*)newSmbiosTable.Type7, (void*)SmbiosTable.Type7, TableSize);
     correctSD = (newSmbiosTable.Type7->SocketDesignation == 0);
     CoreCache = newSmbiosTable.Type7->CacheConfiguration & 3;
     Once = TRUE;
@@ -1033,7 +1036,7 @@ VOID PatchTableType7()
   return;
 }
 
-VOID PatchTableType9()
+void PatchTableType9()
 {
   //
   // System Slots (Type 9)
@@ -1063,7 +1066,7 @@ VOID PatchTableType9()
   for (Index = 0; Index < 15; Index++) {
     if (SlotDevices[Index].Valid) {
       INTN Dev, Func;
-      ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
+      ZeroMem((void*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
       newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
       newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
       newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
@@ -1091,7 +1094,7 @@ VOID PatchTableType9()
   return;
 }
 
-VOID PatchTableType11()
+void PatchTableType11()
 {
   //  CHAR8    *OEMString = "Apple inc. uses Clover"; //something else here?
   // System Information
@@ -1101,8 +1104,8 @@ VOID PatchTableType11()
     MsgLog("Table 11 present, but rewritten for us\n");
   }
   //  TableSize = SmbiosTableLength(SmbiosTable);
-  ZeroMem((VOID*)newSmbiosTable.Type11, MAX_TABLE_SIZE);
-  //  CopyMem((VOID*)newSmbiosTable.Type11, (VOID*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
+  ZeroMem((void*)newSmbiosTable.Type11, MAX_TABLE_SIZE);
+  //  CopyMem((void*)newSmbiosTable.Type11, (void*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
   newSmbiosTable.Type11->Hdr.Type = EFI_SMBIOS_TYPE_OEM_STRINGS;
   newSmbiosTable.Type11->Hdr.Length = 5;
   newSmbiosTable.Type11->Hdr.Handle = 0x0B00; //common rule
@@ -1131,7 +1134,7 @@ VOID PatchTableType11()
 #define NUM_OTHER_TYPES 14
 const UINT8 tableTypes[] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 41, 129, 217, 219};
 
-VOID PatchTableTypeSome()
+void PatchTableTypeSome()
 {
   for (UINTN IndexType = 0; IndexType < sizeof(tableTypes); IndexType++) {
     for (Index = 0; Index < 32; Index++) {
@@ -1145,7 +1148,7 @@ VOID PatchTableTypeSome()
   return;
 }
 
-VOID GetTableType16()
+void GetTableType16()
 {
   // Physical Memory Array
   //
@@ -1169,7 +1172,7 @@ VOID GetTableType16()
 }
 
 
-VOID PatchTableType16()
+void PatchTableType16()
 {
   // Physical Memory Array
   //
@@ -1181,8 +1184,8 @@ VOID PatchTableType16()
     return;
   }
   TableSize = SmbiosTableLength(SmbiosTable);
-  ZeroMem((VOID*)newSmbiosTable.Type16, MAX_TABLE_SIZE);
-  CopyMem((VOID*)newSmbiosTable.Type16, (VOID*)SmbiosTable.Type16, TableSize);
+  ZeroMem((void*)newSmbiosTable.Type16, MAX_TABLE_SIZE);
+  CopyMem((void*)newSmbiosTable.Type16, (void*)SmbiosTable.Type16, TableSize);
   newSmbiosTable.Type16->Hdr.Handle = mHandle16;
   // Slice - I am not sure if I want these values
   // newSmbiosTable.Type16->Location = MemoryArrayLocationProprietaryAddonCard;
@@ -1195,7 +1198,7 @@ VOID PatchTableType16()
   LogSmbiosTable(newSmbiosTable);
 }
 
-VOID GetTableType17()
+void GetTableType17()
 {
   // Memory Device
   //
@@ -1301,7 +1304,7 @@ VOID GetTableType17()
   }
 }
 
-VOID PatchTableType17()
+void PatchTableType17()
 {
   XString8   deviceLocator;
   XString8   bankLocator;
@@ -1355,7 +1358,7 @@ VOID PatchTableType17()
     for (Index = 0; Index < gRAM.UserInUse; Index++) {
       UINTN UserIndex = channelMap[Index];
       UINT8 bank = (UINT8)(Index / gRAM.UserChannels);
-      ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
+      ZeroMem((void*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
       newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
       newSmbiosTable.Type17->TotalWidth = 0xFFFF;
@@ -1610,7 +1613,7 @@ VOID PatchTableType17()
       DBG("SmbiosTable.Type17->PartNumber = %s\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
 
       TableSize = SmbiosTableLength(SmbiosTable);
-      CopyMem((VOID*)newSmbiosTable.Type17, (VOID *)SmbiosTable.Type17, TableSize);
+      CopyMem((void*)newSmbiosTable.Type17, (void *)SmbiosTable.Type17, TableSize);
       newSmbiosTable.Type17->AssetTag = 0;
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, LString8(gRAM.SMBIOS[SMBIOSIndex].Vendor));
@@ -1636,7 +1639,7 @@ VOID PatchTableType17()
         DBG(" partNum unknown\n");
       }
     } else {
-      ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
+      ZeroMem((void*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
       newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
       newSmbiosTable.Type17->TotalWidth = 0xFFFF;
@@ -1748,7 +1751,7 @@ VOID PatchTableType17()
   }
 }
 
-VOID
+void
 PatchTableType19 ()
 {
   //
@@ -1786,7 +1789,7 @@ PatchTableType19 ()
     TotalEnd = (UINT32)(LShiftU64(mTotalSystemMemory, 10) - 1);
   }
   gTotalMemory = LShiftU64(mTotalSystemMemory, 20);
-  ZeroMem((VOID*)newSmbiosTable.Type19, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type19, MAX_TABLE_SIZE);
   newSmbiosTable.Type19->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS;
   newSmbiosTable.Type19->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE19);
   newSmbiosTable.Type19->Hdr.Handle = SomeHandle;
@@ -1798,7 +1801,7 @@ PatchTableType19 ()
   return ;
 }
 
-VOID PatchTableType20 ()
+void PatchTableType20 ()
 {
   UINTN  j = 0, k = 0, m = 0;
   //
@@ -1811,8 +1814,8 @@ VOID PatchTableType20 ()
       return ;
     }
     TableSize = SmbiosTableLength(SmbiosTable);
-    ZeroMem((VOID*)newSmbiosTable.Type20, MAX_TABLE_SIZE);
-    CopyMem((VOID*)newSmbiosTable.Type20, (VOID*)SmbiosTable.Type20, TableSize);
+    ZeroMem((void*)newSmbiosTable.Type20, MAX_TABLE_SIZE);
+    CopyMem((void*)newSmbiosTable.Type20, (void*)SmbiosTable.Type20, TableSize);
     for (j=0; j < TotalCount; j++) {
       //EndingAddress in kb while mMemory in Mb
       if ((UINT32)(mMemory17[j] << 10) > newSmbiosTable.Type20->EndingAddress) {
@@ -1837,7 +1840,7 @@ VOID PatchTableType20 ()
   return ;
 }
 
-VOID GetTableType32()
+void GetTableType32()
 {
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_BOOT_INFORMATION, 0);
   if (SmbiosTable.Raw == NULL) {
@@ -1850,7 +1853,7 @@ VOID GetTableType32()
  * Apple Specific Structures.
  * Firmware Table, FirmwareVolume (TYPE 128).
  */
-VOID PatchTableType128()
+void PatchTableType128()
 {
   /**
    * Useful information.
@@ -1868,7 +1871,7 @@ VOID PatchTableType128()
   //SmbiosTable = GetSmbiosTableFromType (EntryPoint, 128, 0);
 
   // initialise new table
-  ZeroMem((VOID*)newSmbiosTable.Type128, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type128, MAX_TABLE_SIZE);
 
   // common rules
   newSmbiosTable.Type128->Hdr.Type = 128;
@@ -1901,7 +1904,7 @@ VOID PatchTableType128()
   return ;
 }
 
-VOID PatchTableType130()
+void PatchTableType130()
 {
   //
   // MemorySPD (TYPE 130)
@@ -1920,7 +1923,7 @@ VOID PatchTableType130()
 
 
 
-VOID PatchTableType131()
+void PatchTableType131()
 {
   // Get Table Type131
   SmbiosTable = GetSmbiosTableFromType (EntryPoint, 131, 0);
@@ -1929,7 +1932,7 @@ VOID PatchTableType131()
 	  MsgLog("Change to: %hX\n", gSettings.CpuType);
   }
 
-  ZeroMem((VOID*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
   newSmbiosTable.Type131->Hdr.Type = 131;
   newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2;
   newSmbiosTable.Type131->Hdr.Handle = 0x8300; //common rule
@@ -1939,7 +1942,7 @@ VOID PatchTableType131()
   return;
 }
 
-VOID PatchTableType132()
+void PatchTableType132()
 {
   if (!gSettings.SetTable132) {
     //DBG("disabled Table 132\n");
@@ -1953,7 +1956,7 @@ VOID PatchTableType132()
 	  MsgLog("Change to: %hX\n", gSettings.QPI);
   }
 
-  ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
   newSmbiosTable.Type132->Hdr.Type = 132;
   newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2;
   newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
@@ -1969,7 +1972,7 @@ VOID PatchTableType132()
   return;
 }
 
-VOID PatchTableType133()
+void PatchTableType133()
 {
   if (gPlatformFeature == 0xFFFF) {
     return;
@@ -1980,12 +1983,12 @@ VOID PatchTableType133()
 	  MsgLog("Table 133 is present, PlatformFeature=%llX\n", SmbiosTable.Type133->PlatformFeature);
 	  MsgLog("Change to: %llX\n", gPlatformFeature);
   }
-  ZeroMem((VOID*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
+  ZeroMem((void*)newSmbiosTable.Type133, MAX_TABLE_SIZE);
   newSmbiosTable.Type133->Hdr.Type = 133;
   newSmbiosTable.Type133->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+8;
   newSmbiosTable.Type133->Hdr.Handle = 0x8500; //ugly
   //  newSmbiosTable.Type133->PlatformFeature = gPlatformFeature;
-  CopyMem((VOID*)&newSmbiosTable.Type133->PlatformFeature, (VOID*)&gPlatformFeature, 8);
+  CopyMem((void*)&newSmbiosTable.Type133->PlatformFeature, (void*)&gPlatformFeature, 8);
   Handle = LogSmbiosTable(newSmbiosTable);
   return;
 }
@@ -2020,7 +2023,7 @@ EFI_STATUS PrepatchSmbios()
 
   //original EPS and tables
   EntryPoint = (SMBIOS_TABLE_ENTRY_POINT*)Smbios; //yes, it is old SmbiosEPS
-  //  Smbios = (VOID*)(UINT32)EntryPoint->TableAddress; // here is flat Smbios database. Work with it
+  //  Smbios = (void*)(UINT32)EntryPoint->TableAddress; // here is flat Smbios database. Work with it
   //how many we need to add for tables 128, 130, 131, 132 and for strings?
   BufferLen = 0x20 + EntryPoint->TableLength + 64 * 10;
   //new place for EPS and tables. Allocated once for both
@@ -2046,10 +2049,10 @@ EFI_STATUS PrepatchSmbios()
   NumberOfRecords = 0;
   MaxStructureSize = 0;
   //preliminary fill EntryPoint with some data
-  CopyMem((VOID *)SmbiosEpsNew, (VOID *)EntryPoint, sizeof(SMBIOS_TABLE_ENTRY_POINT));
+  CopyMem((void *)SmbiosEpsNew, (void *)EntryPoint, sizeof(SMBIOS_TABLE_ENTRY_POINT));
 
 
-  Smbios = (VOID*)(SmbiosEpsNew + 1); //this is a C-language trick. I hate it but use. +1 means +sizeof(SMBIOS_TABLE_ENTRY_POINT)
+  Smbios = (void*)(SmbiosEpsNew + 1); //this is a C-language trick. I hate it but use. +1 means +sizeof(SMBIOS_TABLE_ENTRY_POINT)
   Current = (UINT8*)Smbios; //begin fill tables from here
   SmbiosEpsNew->TableAddress = (UINT32)(UINTN)Current;
   SmbiosEpsNew->EntryPointLength = sizeof(SMBIOS_TABLE_ENTRY_POINT); // no matter on other versions
@@ -2082,7 +2085,7 @@ EFI_STATUS PrepatchSmbios()
   return   Status;
 }
 
-VOID PatchSmbios(VOID) //continue
+void PatchSmbios(void) //continue
 {
 
   DbgHeader("PatchSmbios");
@@ -2114,13 +2117,13 @@ VOID PatchSmbios(VOID) //continue
   if(MaxStructureSize > MAX_TABLE_SIZE){
     //    DBG("Too long SMBIOS!\n");
   }
-  FreePool((VOID*)newSmbiosTable.Raw);
+  FreePool((void*)newSmbiosTable.Raw);
 
   // there is no need to keep all tables in numeric order. It is not needed
   // neither by specs nor by AppleSmbios.kext
 }
 
-VOID FinalizeSmbios() //continue
+void FinalizeSmbios() //continue
 {
   EFI_PEI_HOB_POINTERS  GuidHob;
   EFI_PEI_HOB_POINTERS  HobStart;
@@ -2172,7 +2175,7 @@ VOID FinalizeSmbios() //continue
     // syscl: remap smbios table 1 guid
     //
     DBG("Remap smbios table type 1 guid.\n");
-    gBS->InstallConfigurationTable (&gRemapEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+    gBS->InstallConfigurationTable (&gRemapEfiSmbiosTableGuid, (void*)SmbiosEpsNew);
   }
   else
   {
@@ -2180,7 +2183,7 @@ VOID FinalizeSmbios() //continue
     // use origin smbios guid table
     //
     DBG("Use origin smbios table type 1 guid.\n");
-    gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+    gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (void*)SmbiosEpsNew);
   }
 
   gST->Hdr.CRC32 = 0;
@@ -2199,7 +2202,7 @@ VOID FinalizeSmbios() //continue
     //PauseForKey(L"installing SMBIOS in Hob\n");
     *Table = (UINT32)(UINTN)SmbiosEpsNew;
   }
-  //  egSaveFile(NULL, L"EFI\\CLOVER\\misc\\smbios.bin", (UINT8*)(UINTN)SmbiosEpsNew, SmbiosEpsNew->TableLength);
+  //  egSaveFile(NULL, SWPrintf("%ls\\misc\\smbios.bin", self.getCloverDirPathAsXStringW().wc_str()).wc_str(), (UINT8*)(UINTN)SmbiosEpsNew, SmbiosEpsNew->TableLength);
   return;
 }
 

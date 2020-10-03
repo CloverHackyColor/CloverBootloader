@@ -20,11 +20,11 @@ EFIAPI
 LogDataHub (
   EFI_GUID *TypeGuid,
   CONST CHAR16   *Name,
-  VOID     *Data,
+  const void     *Data,
   UINT32   DataSize
   );
 
-VOID
+void
 EFIAPI
 SetupDataForOSX (BOOLEAN Hibernate);
 

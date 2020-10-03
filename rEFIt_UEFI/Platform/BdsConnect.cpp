@@ -25,10 +25,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 /*
-VOID
+void
 EFIAPI
 BdsLibConnectAll (
-  VOID
+  void
   )
 {
   //
@@ -57,9 +57,9 @@ BdsLibConnectAll (
 
 **/
 /*
-VOID
+void
 BdsLibGenericConnectAll (
-  VOID
+  void
   )
 {
   //
@@ -208,7 +208,7 @@ BdsLibConnectDevicePath (
 EFI_STATUS
 EFIAPI
 BdsLibConnectAllEfi (
-  VOID
+  void
   )
 {
   EFI_STATUS  Status;
@@ -253,7 +253,7 @@ BdsLibConnectAllEfi (
 EFI_STATUS
 EFIAPI
 BdsLibDisconnectAllEfi (
-  VOID
+  void
   )
 {
   EFI_STATUS  Status;
@@ -390,11 +390,15 @@ EFI_STATUS ScanDeviceHandles(EFI_HANDLE ControllerHandle,
             }
           }
           
+//MsgLog("ScanDeviceHandles FreePool(OpenInfo)\n");
           FreePool(OpenInfo);
+//MsgLog("ScanDeviceHandles FreePool(OpenInfo) after\n");
         }
       }
+//MsgLog("ScanDeviceHandles FreePool(ProtocolGuidArray)\n");
       
       FreePool(ProtocolGuidArray);
+//MsgLog("ScanDeviceHandles FreePool(ProtocolGuidArray) after\n");
     }
   }
   
@@ -433,7 +437,7 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 	EFI_PCI_IO_PROTOCOL*	PciIo = NULL;
 	PCI_TYPE00				Pci;
   
-  
+MsgLog("1\n");
 	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &AllHandleCount, &AllHandleBuffer);
 	if (EFI_ERROR(Status)) 
 		return Status;
@@ -460,7 +464,7 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
       
 			if (!Parent) {
 				if (HandleType[Index] & EFI_HANDLE_TYPE_DEVICE_HANDLE) {
-					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID**)&PciIo);
+					Status = gBS->HandleProtocol (AllHandleBuffer[Index], &gEfiPciIoProtocolGuid, (void**)&PciIo);
 					if (!EFI_ERROR(Status)) {
 						Status = PciIo->Pci.Read (PciIo,EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
 						if (!EFI_ERROR(Status)) {
@@ -492,10 +496,10 @@ Done:
   sure all the system controllers have driver to manage it if have.
 
 **/
-VOID
+void
 EFIAPI
 BdsLibConnectAllDriversToAllControllers (
-  VOID
+  void
   )
 {
   EFI_STATUS  Status;
@@ -589,7 +593,7 @@ BdsLibConnectUsbDevByShortFormDP(
       Status = gBS->HandleProtocol (
                       HandleArray[Index],
                       &gEfiPciIoProtocolGuid,
-                      (VOID **)&PciIo
+                      (void **)&PciIo
                       );
       if (!EFI_ERROR(Status)) {
         //

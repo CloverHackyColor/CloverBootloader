@@ -9,11 +9,11 @@
 #define PLATFORM_BASICIO_H_
 
 
-BOOLEAN ReadAllKeyStrokes(VOID);
-VOID PauseForKey(CONST CHAR16* msg);
+BOOLEAN ReadAllKeyStrokes(void);
+void PauseForKey(CONST CHAR16* msg);
 
-//VOID DebugPause(VOID);
-VOID EndlessIdleLoop(VOID);
+//void DebugPause(void);
+void EndlessIdleLoop(void);
 
 
 

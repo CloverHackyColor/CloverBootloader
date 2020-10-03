@@ -53,6 +53,7 @@
 #include "../Platform/Nvram.h"
 #include "../refit/screen.h"
 #include "../Platform/Events.h"
+#include "Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -147,7 +148,7 @@ BOOLEAN mGuiReady = FALSE;
 
 
 
-VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
+void REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
 {
 
 //DBG("%s, %s : Line=%s\n", __FILE__, __LINE__, XString(Line).c);
@@ -185,7 +186,7 @@ VOID REFIT_MENU_SCREEN::AddMenuInfo_f(CONST char *format, ...)
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
 #define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
+void REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
                        IN UINTN VisibleSpace, IN INTN Selected)
 {
   //ItemCount - a number to scroll (Row0)
@@ -242,7 +243,7 @@ VOID REFIT_MENU_SCREEN::InitScroll(IN INTN ItemCount, IN UINTN MaxCount,
 
 }
 
-VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
+void REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
 {
   INTN Lines;
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
@@ -418,7 +419,7 @@ VOID REFIT_MENU_SCREEN::UpdateScroll(IN UINTN Movement)
     HidePointer();
 }
 
-VOID REFIT_MENU_SCREEN::HidePointer()
+void REFIT_MENU_SCREEN::HidePointer()
 {
   if ( mPointer.isAlive() ) mPointer.Hide();
 }
@@ -430,12 +431,12 @@ EFI_STATUS REFIT_MENU_SCREEN::MouseBirth()
   return mPointer.MouseBirth();
 }
 
-VOID REFIT_MENU_SCREEN::KillMouse()
+void REFIT_MENU_SCREEN::KillMouse()
 {
   /*if ( mPointer ) */mPointer.KillMouse();
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuInfoLine_f(CONST char *format, ...)
+void REFIT_MENU_SCREEN::AddMenuInfoLine_f(CONST char *format, ...)
 {
   XStringW* s = new XStringW();
   VA_LIST va;
@@ -445,14 +446,14 @@ VOID REFIT_MENU_SCREEN::AddMenuInfoLine_f(CONST char *format, ...)
   InfoLines.AddReference(s, true);
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt)
+void REFIT_MENU_SCREEN::AddMenuEntry(IN REFIT_ABSTRACT_MENU_ENTRY *Entry, bool freeIt)
 {
 	if ( !Entry ) return;
 	Entries.AddReference(Entry, freeIt);
 }
 
 // This is supposed to be a destructor ?
-VOID REFIT_MENU_SCREEN::FreeMenu()
+void REFIT_MENU_SCREEN::FreeMenu()
 {
   REFIT_ABSTRACT_MENU_ENTRY *Tentry = NULL;
 //TODO - here we must Free for a list of Entries, Screens, InputBootArgs
@@ -611,7 +612,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog(IN MENU_STYLE_FUNC  StyleFunc)
           break;
           //not used here
 /*        case SCAN_F6:
-          Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
+          Status = egSaveFile(&self.getSelfRootDir(), VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
           if (EFI_ERROR(Status)) {
             Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
           }
@@ -964,10 +965,11 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case SCAN_F2:
         SavePreBootLog = TRUE;
         //let it be twice
-        Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
-        if (EFI_ERROR(Status)) {
-          Status = SaveBooterLog(NULL, PREBOOT_LOG);
-        }
+        Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG_new);
+// Jief : don't write outside SelfDir
+//        if (EFI_ERROR(Status)) {
+//          Status = SaveBooterLog(NULL, PREBOOT_LOG);
+//        }
         break;
       case SCAN_F3:
          MenuExit = MENU_EXIT_HIDE_TOGGLE;
@@ -979,17 +981,18 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         SaveOemDsdt(TRUE); //full patch
         break;
       case SCAN_F6:
-        Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
-        if (EFI_ERROR(Status)) {
-          Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
-        }
+        Status = egSaveFile(&self.getCloverDir(), VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
+        // Jief : don't write outside SelfDir
+//        if (EFI_ERROR(Status)) {
+//          Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
+//        }
         break;
 /* just a sample code
       case SCAN_F7:
-        Status = egMkDir(SelfRootDir,  L"EFI\\CLOVER\\new_folder");
+        Status = egMkDir(&self.getCloverDir(),  L"new_folder");
         DBG("create folder %s\n", efiStrError(Status));
         if (!EFI_ERROR(Status)) {
-          Status = egSaveFile(SelfRootDir,  L"EFI\\CLOVER\\new_folder\\new_file.txt", (UINT8*)SomeText, sizeof(*SomeText)+1);
+          Status = egSaveFile(&self.getCloverDir(),  L"new_folder\\new_file.txt", (UINT8*)SomeText, sizeof(*SomeText)+1);
           DBG("create file %s\n", efiStrError(Status));
         }
         break;
@@ -998,10 +1001,10 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
         if (OldChosenAudio >= AudioList.size()) {
               OldChosenAudio = 0; //security correction
         }
-        Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (VOID**)&AudioIo);
-			DBG("open %llu audio handle status=%s\n", OldChosenAudio, efiStrError(Status));
+        Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (void**)&AudioIo);
+			  DBG("open %llu audio handle status=%s\n", OldChosenAudio, efiStrError(Status));
         if (!EFI_ERROR(Status)) {
-          StartupSoundPlay(SelfRootDir, NULL); //play embedded sound
+          StartupSoundPlay(&self.getCloverDir(), NULL); //play embedded sound
         }
         break;
       case SCAN_F8:
@@ -1081,7 +1084,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
 /**
  * Text Mode menu.
  */
-VOID REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
+void REFIT_MENU_SCREEN::TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN i = 0, j = 0;
   static UINTN TextMenuWidth = 0,ItemWidth = 0, MenuHeight = 0;
@@ -1412,7 +1415,7 @@ void REFIT_MENU_SCREEN::EraseTextXY() //used on boot screen
  * Helper function to draw text for Boot Camp Style.
  * @author: Needy
  */
-VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+void REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   // check if text was provided. And what else?
   if (!Text) {
@@ -1437,7 +1440,7 @@ VOID REFIT_MENU_SCREEN::DrawBCSText(IN CONST CHAR16 *Text, IN INTN XPos, IN INTN
   DrawTextXY(BCSTextX, XPos, YPos, XAlign);
 }
 
-VOID REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor, IN INTN MaxWidth)
+void REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN UINTN Cursor, IN INTN MaxWidth)
 {
   INTN Width = (MaxWidth > 0 && (XPos + MaxWidth <= UGAWidth)) ? MaxWidth : UGAWidth - XPos;
   XImage TextBufferX(Width, ThemeX.TextHeight);
@@ -1476,7 +1479,7 @@ VOID REFIT_MENU_SCREEN::DrawMenuText(IN const XStringW& Text, IN INTN SelectedWi
   SelectionBar.DrawWithoutCompose(XPos, YPos);
 }
 
-VOID REFIT_MENU_SCREEN::SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
+void REFIT_MENU_SCREEN::SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_STATE *State)
 {
 //  DBG("SetBar <= %d %d %d %d %d\n", UpPosY, DownPosY, State->MaxVisible, State->MaxIndex, State->FirstVisible);
 //SetBar <= 302 722 19 31 0
@@ -1521,7 +1524,7 @@ VOID REFIT_MENU_SCREEN::SetBar(INTN PosX, INTN UpPosY, INTN DownPosY, IN SCROLL_
 //  DBG("ScrollTotal.Height = %d\n", ScrollTotal.Height);  //ScrollTotal.Height = 420
 }
 
-VOID REFIT_MENU_SCREEN::ScrollingBar()
+void REFIT_MENU_SCREEN::ScrollingBar()
 {
   ScrollEnabled = (ScrollState.MaxFirstVisible != 0);
   if (!ScrollEnabled) {
@@ -1556,7 +1559,7 @@ VOID REFIT_MENU_SCREEN::ScrollingBar()
 /**
  * Graphical menu.
  */
-VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
+void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   INTN Chosen = 0;
   INTN ItemWidth = 0;
@@ -1875,7 +1878,7 @@ VOID REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
  * Draw entries for GUI.
  */
 
-VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos)
+void REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos)
 {
   INTN TextWidth = 0;
   INTN BadgeDim = (INTN)(BADGE_DIMENSION * ThemeX.Scale);
@@ -1919,7 +1922,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos,
   OldRow = Entries[ScrollState.CurrentSelection].Row;
 }
 
-VOID REFIT_MENU_SCREEN::CountItems()
+void REFIT_MENU_SCREEN::CountItems()
 {
   row0PosX = 0;
   row1PosX = Entries.size();
@@ -1937,7 +1940,7 @@ VOID REFIT_MENU_SCREEN::CountItems()
   }
 }
 
-VOID REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
+void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
 {
   INTN    Xpos;
 //  CHAR16  *Text = NULL;
@@ -1956,10 +1959,10 @@ VOID REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
     case TEXT_CORNER_REVISION:
       // Display Clover boot volume
       if (SelfVolume->VolLabel.notEmpty()  &&  SelfVolume->VolLabel[0] != L'#') {
-        Text = SWPrintf("%ls, booted from %ls", gFirmwareRevision, SelfVolume->VolLabel.wc_str());
+        Text = SWPrintf("%ls, booted from %ls %ls", gFirmwareRevision, SelfVolume->VolLabel.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
       }
       if (Text.isEmpty()) {
-        Text = SWPrintf("%ls %ls", gFirmwareRevision, SelfVolume->VolName.wc_str());
+        Text = SWPrintf("%ls %ls %ls", gFirmwareRevision, SelfVolume->VolName.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
       }
       break;
     case TEXT_CORNER_HELP:
@@ -1996,7 +1999,7 @@ VOID REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
   DrawTextXY(Text, Xpos, UGAHeight - (INTN)(ThemeX.TextHeight * 1.5f), Align);
 }
 
-VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
+void REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
   INTN MainSize = ThemeX.MainEntriesSize;
 //  XImage MainImage(MainSize, MainSize);
@@ -2012,7 +2015,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   //this should be inited by the Theme
   if (MainIcon.isEmpty()) {
  //   DBG(" why MainImage is empty? Report to devs\n");
-    if (!IsEmbeddedTheme()) {
+    if (!ThemeX.IsEmbeddedTheme()) {
       MainIcon = ThemeX.GetIcon("os_mac"_XS8);
     }
     if (MainIcon.Image.isEmpty()) {
@@ -2134,7 +2137,7 @@ VOID REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
 }
 
 
-VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
+void REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
 //  INTN i;
   INTN row0PosYRunning;
@@ -2285,7 +2288,7 @@ VOID REFIT_MENU_SCREEN::MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16
 /**
  * Main screen text.
  */
-VOID REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
+void REFIT_MENU_SCREEN::MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText)
 {
   EFI_STATUS Status = EFI_SUCCESS;
 //  INTN i = 0;
@@ -2508,7 +2511,7 @@ UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 }
 
 
-VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
+void REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 {
   REFIT_MENU_CHECKBIT *InputBootArgs;
 
@@ -2523,7 +2526,7 @@ VOID REFIT_MENU_SCREEN::AddMenuCheck(CONST CHAR8 *Text, UINTN Bit, INTN ItemNum)
 }
 
 
-VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+void REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootArgs, INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
   InputBootArgs->Title.takeValueFrom(Line);
   if (Inx == 3 || Inx == 116) {
@@ -2539,13 +2542,13 @@ VOID REFIT_MENU_SCREEN::AddMenuItem_(REFIT_MENU_ENTRY_ITEM_ABSTRACT* InputBootAr
   AddMenuEntry(InputBootArgs, true);
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+void REFIT_MENU_SCREEN::AddMenuItemInput(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
   REFIT_INPUT_DIALOG *InputBootArgs = new REFIT_INPUT_DIALOG;
   AddMenuItem_(InputBootArgs, Inx, Line, Cursor);
 }
 
-VOID REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
+void REFIT_MENU_SCREEN::AddMenuItemSwitch(INTN Inx, CONST CHAR8 *Line, BOOLEAN Cursor)
 {
   REFIT_MENU_SWITCH *InputBootArgs = new REFIT_MENU_SWITCH;
   AddMenuItem_(InputBootArgs, Inx, Line, Cursor);

@@ -61,7 +61,7 @@ typedef struct {
 // APPLE_KEY_STROKES_INFO
 typedef struct {
   APPLE_KEY_STROKES_INFO_HDR Hdr;   ///<
-  APPLE_KEY                  Keys;  ///<
+  APPLE_KEY_CODE                  Keys;  ///<
 } APPLE_KEY_STROKES_INFO;
 
 
@@ -69,7 +69,7 @@ typedef struct {
 typedef struct {
   UINTN                             Signature;           ///<0
   UINTN                             NextKeyStrokeIndex;  ///<0x08
-  APPLE_KEY                         *KeyBuffer;          ///<0x10
+  APPLE_KEY_CODE                         *KeyBuffer;          ///<0x10
   UINTN                             KeyBuffersSize;      ///<0x18
   LIST_ENTRY                        KeyStrokesInfoList;  ///<0x20
   APPLE_KEY_MAP_DATABASE_PROTOCOL   DatabaseProtocol;    ///<0x30 size=8*4

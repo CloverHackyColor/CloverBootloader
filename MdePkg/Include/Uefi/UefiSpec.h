@@ -82,6 +82,26 @@ typedef enum {
 // If all memory has the same reliability, then this bit is not used.
 //
 #define EFI_MEMORY_MORE_RELIABLE    0x0000000000010000ULL
+
+//
+// Note: UEFI spec 2.8 and following:
+//
+// Specific-purpose memory (SPM). The memory is earmarked for
+// specific purposes such as for specific device drivers or applications.
+// The SPM attribute serves as a hint to the OS to avoid allocating this
+// memory for core OS data or code that can not be relocated.
+//
+#define EFI_MEMORY_SP               0x0000000000040000ULL
+//
+// If this flag is set, the memory region is capable of being
+// protected with the CPU?s memory cryptographic
+// capabilities. If this flag is clear, the memory region is not
+// capable of being protected with the CPU?s memory
+// cryptographic capabilities or the CPU does not support CPU
+// memory cryptographic capabilities.
+//
+#define EFI_MEMORY_CPU_CRYPTO       0x0000000000080000ULL
+
 //
 // Runtime memory attribute
 //
@@ -727,7 +747,7 @@ EFI_STATUS
   IN  EFI_GUID                     *VendorGuid,
   IN  UINT32                       Attributes,
   IN  UINTN                        DataSize,
-  IN  VOID                         *Data
+  IN  JCONST VOID                         *Data
   );
 
 
@@ -1503,7 +1523,7 @@ typedef
 EFI_STATUS
 (EFIAPI *EFI_LOCATE_DEVICE_PATH)(
   IN     EFI_GUID                         *Protocol,
-  IN OUT EFI_DEVICE_PATH_PROTOCOL         **DevicePath,
+  IN OUT EFI_DEVICE_PATH_PROTOCOL         * JCONST *DevicePath,
   OUT    EFI_HANDLE                       *Device
   );
 

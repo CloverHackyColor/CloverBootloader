@@ -216,8 +216,12 @@
   Platform/plist/xml.h
   Platform/plist/xml.cpp
 # Platform/Pointer.cpp
-	Platform/Settings.cpp
-	Platform/Settings.h
+  Platform/Self.cpp
+  Platform/Self.h
+  Platform/SelfOem.cpp
+  Platform/SelfOem.h
+  Platform/Settings.cpp
+  Platform/Settings.h
 	Platform/smbios.h
 	Platform/smbios.cpp
 	Platform/spd.cpp
@@ -298,6 +302,7 @@
   cpp_unit_test/strncmp_test.h
   cpp_unit_test/XArray_tests.cpp
   cpp_unit_test/XArray_tests.h
+  cpp_unit_test/XBuffer_tests.cpp
   cpp_unit_test/XBuffer_tests.h
   cpp_unit_test/XObjArray_tests.cpp
   cpp_unit_test/XObjArray_tests.h
@@ -316,11 +321,14 @@
 
 [Packages]
   CloverPkg.dec
+  OpenCorePkg/OpenCorePkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   NetworkPkg/NetworkPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  OpenCorePkg/OpenCorePkg.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint
@@ -330,7 +338,7 @@
   BaseMemoryLib
   BaseLib
   DevicePathLib
-  DeviceTreeLib
+  OcDeviceTreeLib
   DebugLib
   DxeServicesLib
   DxeServicesTableLib
@@ -348,6 +356,9 @@
   WaveLib
   BaseDebugPrintErrorLevelLib
   BaseSerialPortLib
+  OpenCoreLib
+  #OcDebugLogLib
+  OcDebugLogLibOc2Clover
 
 [Guids]
   gEfiAcpiTableGuid
@@ -386,6 +397,9 @@
   gEfiCertRsa2048Sha256Guid
   gEfiCertTypeRsa2048Sha256Guid
 
+  gOcVendorVariableGuid
+  gOcReadOnlyVariableGuid
+  gOcWriteOnlyVariableGuid
   gAppleOSLoadedNamedEventGuid
   gBootChimeVendorVariableGuid
 
@@ -436,7 +450,7 @@
   gEfiSecurityArchProtocolGuid
   gEfiSecurity2ArchProtocolGuid
 
-  gAppleDevicePropertyProtocolGuid
+#  gEfiDevicePathPropertyDatabaseProtocolGuid
   gAppleFramebufferInfoProtocolGuid
   gEfiConsoleControlProtocolGuid
   gAppleGraphConfigProtocolGuid
@@ -453,7 +467,8 @@
   gEmuVariableControlProtocolGuid
   gEfiAudioIoProtocolGuid # CONSUMES
   gOcQuirksProtocolGuid
-
+  gAptioMemoryFixProtocolGuid
+  
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
 

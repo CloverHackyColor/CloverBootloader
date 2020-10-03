@@ -63,7 +63,7 @@ extern EFI_GUID gEfiAppleBootGuid;
  * the driver OsxAptioFixDrv is old and mostly not used in favour of its successors.
  * anyway we will keep it for new investigations.
  */
-VOID LOADER_ENTRY::SetKernelRelocBase()
+void LOADER_ENTRY::SetKernelRelocBase()
 {
 //  EFI_STATUS      Status;
   UINTN           DataSize = sizeof(KernelRelocBase);
@@ -393,7 +393,7 @@ UINTN LOADER_ENTRY::searchProc(const XString8& procedure)
 #if 0
 //TimeWalker - extended and corrected for systems up to Yosemite
 //TODO - Slice: no more needed
-VOID LOADER_ENTRY::KernelPatcher_64()
+void LOADER_ENTRY::KernelPatcher_64()
 {
   UINT8       *bytes = KernelData;
   UINT32      patchLocation=0, patchLocation1=0;
@@ -527,7 +527,7 @@ VOID LOADER_ENTRY::KernelPatcher_64()
 
     // patch ssse3
     if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
-      Patcher_SSE3_6((VOID*)bytes);
+      Patcher_SSE3_6((void*)bytes);
     }
     if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.7",4)==0)) {
       Patcher_SSE3_7();
@@ -626,7 +626,7 @@ VOID LOADER_ENTRY::KernelPatcher_64()
   }
 }
 
-VOID LOADER_ENTRY::KernelPatcher_32()
+void LOADER_ENTRY::KernelPatcher_32()
 {
   UINT8* bytes = KernelData;
   UINT32 patchLocation=0, patchLocation1=0;
@@ -727,10 +727,10 @@ VOID LOADER_ENTRY::KernelPatcher_32()
     if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
 
     if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
-      Patcher_SSE3_6((VOID*)bytes);
+      Patcher_SSE3_6((void*)bytes);
     }
     if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.5",4)==0)) {
-      Patcher_SSE3_5((VOID*)bytes);
+      Patcher_SSE3_5((void*)bytes);
     }
   }
 }
@@ -850,7 +850,7 @@ BOOLEAN LOADER_ENTRY::PatchCPUID(const UINT8* Location, INT32 LenLoc,
   return Patched;
 }
 
-VOID LOADER_ENTRY::KernelCPUIDPatch()
+void LOADER_ENTRY::KernelCPUIDPatch()
 {
 // Tiger/Leopard patterns
   DBG_RT( "CPUID: try Tiger/Leopard patch...\n");
@@ -1256,12 +1256,12 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_32()
 // SandyBridge-E, Ivy Bridge, Ivy Bridge-E, Haswell Celeron/Pentium, Haswell-E, Broadwell-E, ...
 // credit Pike R.Alpha, stinga11, syscl
 //
-//BOOLEAN (*EnableExtCpuXCPM)(VOID *kernelData);
+//BOOLEAN (*EnableExtCpuXCPM)(void *kernelData);
 
 //
 // syscl - applyKernPatch a wrapper for SearchAndReplace() to make the CpuPM patch tidy and clean
 //
-VOID LOADER_ENTRY::applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *repl, const CHAR8 *comment)
+void LOADER_ENTRY::applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *repl, const CHAR8 *comment)
 {
     DBG("Searching %s...\n", comment);
     if (SearchAndReplace(KernelData, KERNEL_MAX_SIZE, find, size, repl, 0)) {
@@ -1888,7 +1888,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   return TRUE;
 }
 #if 0
-VOID Patcher_SSE3_6(VOID* kernelData)
+void Patcher_SSE3_6(void* kernelData)
 {
   UINT8* bytes = (UINT8*)kernelData;
   UINT32 patchLocation1 = 0;
@@ -1960,7 +1960,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
 
 }
 
-VOID Patcher_SSE3_5(VOID* kernelData)
+void Patcher_SSE3_5(void* kernelData)
 {
   UINT8* bytes = (UINT8*)kernelData;
   UINT32 patchLocation1 = 0;
@@ -2028,7 +2028,7 @@ VOID Patcher_SSE3_5(VOID* kernelData)
 
 }
 
-VOID Patcher_SSE3_7()
+void Patcher_SSE3_7()
 {
      // not support yet
      return;
@@ -2275,7 +2275,7 @@ void LOADER_ENTRY::Get_PreLink()
   return;
 }
 
-VOID
+void
 LOADER_ENTRY::FindBootArgs()
 {
   UINT8           *ptr;
@@ -2480,7 +2480,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
   return (y != 0);
 }
 
-VOID
+void
 LOADER_ENTRY::KernelAndKextPatcherInit()
 {
   if (PatcherInited) {
@@ -2591,7 +2591,7 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
 	DBG( "isKernelcache: %ls\n", isKernelcache ? L"Yes" : L"No");
 }
 
-VOID
+void
 LOADER_ENTRY::KernelAndKextsPatcherStart()
 {
   BOOLEAN KextPatchesNeeded, patchedOk;

@@ -54,11 +54,11 @@
 //
 // Basic file operations should be separated into separate file
 //
-EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
+EFI_STATUS egLoadFile(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength)
 {
   EFI_STATUS          Status = EFI_NOT_FOUND;
-  EFI_FILE_HANDLE     FileHandle = 0;
+  EFI_FILE*     FileHandle = 0;
   EFI_FILE_INFO       *FileInfo;
   UINT64              ReadSize;
   UINTN               BufferSize;
@@ -68,7 +68,7 @@ EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
     goto Error;
   }
 
-  Status = BaseDir->Open(BaseDir, &FileHandle, (CHAR16*)FileName, EFI_FILE_MODE_READ, 0); // const missing in EFI_FILE_HANDLE->Open
+  Status = BaseDir->Open(BaseDir, &FileHandle, (CHAR16*)FileName, EFI_FILE_MODE_READ, 0); // const missing const EFI_FILE*->Open
   if (EFI_ERROR(Status) || !FileHandle) {
     goto Error;
   }
@@ -117,7 +117,7 @@ Error:
 //Slice - this is gEfiPartTypeSystemPartGuid
 //static EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
 //there is assumed only one ESP partition. What if there are two HDD gpt formatted?
-EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
+EFI_STATUS egFindESP(OUT EFI_FILE** RootDir)
 {
     EFI_STATUS          Status;
     UINTN               HandleCount = 0;
@@ -133,23 +133,25 @@ EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
     return Status;
 }
 //if (NULL, ...) then save to EFI partition
-EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
-                      IN CONST VOID *FileData, IN UINTN FileDataLength)
+EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
+                      IN CONST void *FileData, IN UINTN FileDataLength)
 {
   EFI_STATUS          Status;
-  EFI_FILE_HANDLE     FileHandle;
+  EFI_FILE*           FileHandle;
   UINTN               BufferSize;
   BOOLEAN             CreateNew = TRUE;
-  CONST CHAR16              *p = FileName + StrLen(FileName);
+  CONST CHAR16        *p = FileName + StrLen(FileName);
   CHAR16              DirName[256];
   UINTN               dirNameLen;
+  EFI_FILE*           espDir;
 
   if (BaseDir == NULL) {
-    Status = egFindESP(&BaseDir);
+    Status = egFindESP(&espDir);
     if (EFI_ERROR(Status)) {
       DBG("no ESP %s\n", efiStrError(Status));
       return Status;
     }
+    BaseDir = espDir;
   }
     
   // syscl - make directory if not exist
@@ -210,26 +212,28 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *File
   }
 
   BufferSize = FileDataLength;
-  Status = FileHandle->Write(FileHandle, &BufferSize, (VOID*)FileData); // CONST missing in EFI_FILE_HANDLE->write
+  Status = FileHandle->Write(FileHandle, &BufferSize, (void*)FileData); // CONST missing const EFI_FILE*->write
   FileHandle->Close(FileHandle);
 //  DBG("not written %s\n", efiStrError(Status));
   return Status;
 }
 
 
-EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *DirName)
+EFI_STATUS egMkDir(const EFI_FILE* BaseDir OPTIONAL, const CHAR16 *DirName)
 {
   EFI_STATUS          Status;
-  EFI_FILE_HANDLE     FileHandle;
+  EFI_FILE*     FileHandle;
 
   //DBG("Looking up dir assets (%ls):", DirName);
 
   if (BaseDir == NULL) {
-    Status = egFindESP(&BaseDir);
+    EFI_FILE* espDir;
+    Status = egFindESP(&espDir);
     if (EFI_ERROR(Status)) {
       //DBG(" %s\n", efiStrError(Status));
       return Status;
     }
+    BaseDir = espDir;
   }
 
   Status = BaseDir->Open(BaseDir, &FileHandle, DirName,

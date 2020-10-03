@@ -128,7 +128,7 @@ BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
   UINTN               Index;
 
   // get device PciIo protocol
-  Status = gBS->OpenProtocol(PciDevHandle, &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol(PciDevHandle, &gEfiPciIoProtocolGuid, (void **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) {
     return FALSE;
   }

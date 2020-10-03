@@ -28,7 +28,7 @@ UINT8       GetOSTypeFromPath(IN CONST XStringW& Path);
 
 #ifdef DUMP_KERNEL_KEXT_PATCHES
 // Utils functions
-VOID DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
+void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches);
 #endif
 
 

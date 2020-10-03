@@ -38,7 +38,7 @@
  *   returns null if it is not APFS part
  */
 EFI_GUID *APFSPartitionUUIDExtract(
-    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   while (!IsDevicePathEndType(DevicePath) &&
@@ -47,7 +47,7 @@ EFI_GUID *APFSPartitionUUIDExtract(
   }
   if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
     //Check that vendor-assigned GUID defines APFS Container Partition
-    if ( GuidLEToXString8((EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
+    if ( GuidLEToXString8(*(EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
       return (EFI_GUID *)((UINT8 *)DevicePath+0x14);
     }
   }
@@ -61,11 +61,11 @@ EFI_GUID *APFSPartitionUUIDExtract(
  *   returns empty string if it is not APFS part
  */
 XString8 APFSPartitionUUIDExtractAsXString8(
-    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   EFI_GUID* uuid = APFSPartitionUUIDExtract(DevicePath);
-  if ( uuid ) return GuidLEToXString8(uuid);
+  if ( uuid ) return GuidLEToXString8(*uuid);
   return ""_XS8;
 }
 

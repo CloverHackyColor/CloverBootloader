@@ -21,7 +21,7 @@
 #include <Protocol/OSInfo.h>
 #include <Protocol/AppleGraphConfig.h>
 #include <Protocol/KeyboardInfo.h>
-#include <Protocol/OcQuirksProtocol.h>
+#include <Protocol/OcQuirksProtocol4Clover.h>
 #include "Injectors.h"
 #include "../Platform/Settings.h"
 
@@ -37,21 +37,9 @@
 #define DBG(...) DebugLog(DEBUG_PRO, __VA_ARGS__)
 #endif
 
-EFI_GUID gDevicePropertiesGuid = {
-  0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
-};
-/*
-EFI_GUID gAppleFramebufferInfoProtocolGuid = {
-	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
-}; */
-// gEfiKeyboardInfoProtocolGuid
-// {0xE82A0A1E, 0x0E4D, 0x45AC, {0xA6, 0xDC, 0x2A, 0xE0, 0x58, 0x00, 0xD3, 0x11}}
 
-// C5C5DA95-7D5C-45E6-B2F1-3FD52BB10077 - EfiOSInfo
-// 03622D6D-362A-4E47-9710-C238B23755C1 - GraphConfig
-
+extern EFI_GUID gEfiDevicePathPropertyDatabaseProtocolGuid;
 extern EFI_GUID gAppleFramebufferInfoProtocolGuid;
-extern BOOLEAN  gProvideConsoleGopEnable;
 
 UINT32 mPropSize = 0;
 UINT8* mProperties = NULL;
@@ -94,7 +82,7 @@ EFI_STATUS
     IN     APPLE_GETVAR_PROTOCOL        *This,
     IN     EFI_DEVICE_PATH_PROTOCOL     *DevicePath,
     IN     CHAR16                       *Name,
-    OUT    VOID                         *Value, OPTIONAL
+    OUT    void                         *Value, OPTIONAL
     IN OUT UINTN                        *Size
 );
 
@@ -119,7 +107,7 @@ EFI_STATUS
     IN APPLE_GETVAR_PROTOCOL        *This,
     IN EFI_DEVICE_PATH_PROTOCOL     *DevicePath,
     IN CHAR16                       *Name,
-    IN VOID                         *Value,
+    IN void                         *Value,
     IN UINTN                        Size
 );
 
@@ -199,7 +187,7 @@ APPLE_GETVAR_PROTOCOL mDeviceProperties=
 };
 
 typedef	EFI_STATUS (EFIAPI *EFI_SCREEN_INFO_FUNCTION)(
-                                                      VOID* This, 
+                                                      void* This, 
                                                       UINT64* baseAddress,
                                                       UINT64* frameBufferSize,
                                                       UINT32* byterPerRow,
@@ -212,7 +200,7 @@ typedef struct {
 	EFI_SCREEN_INFO_FUNCTION GetScreenInfo;	
 } EFI_INTERFACE_SCREEN_INFO;
 
-EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize,
+EFI_STATUS EFIAPI GetScreenInfo(void* This, UINT64* baseAddress, UINT64* frameBufferSize,
                          UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
 {
   /*
@@ -227,7 +215,7 @@ EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBu
 	
 	Status = gBS->HandleProtocol (gST->ConsoleOutHandle,
                                 &gEfiGraphicsOutputProtocolGuid,
-                                (VOID **) &mGraphicsOutput);
+                                (void **) &mGraphicsOutput);
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
   //this print never occured so this procedure is redundant
@@ -251,14 +239,14 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 	GetScreenInfo
 };
 
-#define EFI_OS_INFO_PROTOCOL_REVISION  0x01
+//#define EFI_OS_INFO_PROTOCOL_REVISION  0x01 // OpenCore define this to 03
 
 // OS_INFO_VENDOR_NAME
 #define OS_INFO_VENDOR_NAME  "Apple Inc."
 
 extern EFI_GUID gAppleOSLoadedNamedEventGuid;
 // OSInfoOSNameImpl
-VOID
+void
 EFIAPI
 OSInfoOSNameImpl (
                   OUT CHAR8 *OSName
@@ -267,13 +255,13 @@ OSInfoOSNameImpl (
   // for future developers
   // this variable can be used at OnExitBoootServices,
   // as it will be set by boot.efi
-  BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (VOID*)OSName);
+  BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (void*)OSName);
   DBG("OSInfo:OSName called\n");
   EfiNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
 }
 
 // OSInfoOSVendorImpl
-VOID
+void
 EFIAPI
 OSInfoOSVendorImpl (
                     IN CHAR8 *OSVendor
@@ -311,7 +299,7 @@ EFI_OS_INFO_PROTOCOL mEfiOSInfo = {
 EFI_STATUS
 EFIAPI
 RestoreConfig (APPLE_GRAPH_CONFIG_PROTOCOL* This,
-               UINT32 Param1, UINT32 Param2, VOID* Param3, VOID* Param4, VOID* Param5
+               UINT32 Param1, UINT32 Param2, void* Param3, void* Param4, void* Param5
                )
 {
   DBG("RestoreConfig called Param1=%x\n", Param1);
@@ -349,49 +337,49 @@ EFI_KEYBOARD_INFO_PROTOCOL mKeyboardInfo = {
   UsbKbGetKeyboardDeviceInfo
 };
 
-#define OCQUIRKS_PROTOCOL_REVISION  23
+//#define OCQUIRKS_PROTOCOL_REVISION  23
+//
+//EFI_STATUS
+//EFIAPI
+//GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
+//                 OUT OC_ABC_SETTINGS_4CLOVER    *Buffer,
+//                 OUT BOOLEAN            *GopEnable
+//                 )
+//{
+//  DBG("GetQuirksConfig called\n");
+//  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS_4CLOVER));
+//  *GopEnable = gProvideConsoleGopEnable;
+//  return EFI_SUCCESS;
+//}
+//
+//OCQUIRKS_PROTOCOL mQuirksConfig = {
+//  OCQUIRKS_PROTOCOL_REVISION,
+//  0,  //reserved
+//  GetQuirksConfig
+//};
 
 EFI_STATUS
-EFIAPI
-GetQuirksConfig (IN  OCQUIRKS_PROTOCOL  *This,
-                 OUT OC_ABC_SETTINGS    *Buffer,
-                 OUT BOOLEAN            *GopEnable
-                 )
-{
-  DBG("GetQuirksConfig called\n");
-  CopyMem(Buffer, &gQuirks, sizeof(OC_ABC_SETTINGS));
-  *GopEnable = gProvideConsoleGopEnable;
-  return EFI_SUCCESS;
-}
-
-OCQUIRKS_PROTOCOL mQuirksConfig = {
-  OCQUIRKS_PROTOCOL_REVISION,
-  0,  //reserved
-  GetQuirksConfig
-};
-
-EFI_STATUS
-SetPrivateVarProto(VOID)
+SetPrivateVarProto(void)
 {
   EFI_STATUS  Status;
   //This must be independent install
   // optional protocols
-  /*Status = */gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
+  Status = gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
                                                        &gAppleFramebufferInfoProtocolGuid,
                                                        &mScreenInfo, 
-                                                       &gEfiOSInfoProtocolGuid,
-                                                       &mEfiOSInfo,
+//                                                       &gEfiOSInfoProtocolGuid,
+//                                                       &mEfiOSInfo,
                                                        &gAppleGraphConfigProtocolGuid,
                                                        &mGraphConfig,
                                                        &gEfiKeyboardInfoProtocolGuid,
                                                        &mKeyboardInfo,
-                                                       &gOcQuirksProtocolGuid,
-                                                       &mQuirksConfig,
+//                                                       &gOcQuirksProtocolGuid,
+//                                                       &mQuirksConfig,
                                                        NULL
                                                        );
 	//obligatory protocol
   Status = gBS->InstallProtocolInterface (&gImageHandle,
-                                          &gDevicePropertiesGuid,
+                                          &gEfiDevicePathPropertyDatabaseProtocolGuid,
                                           EFI_NATIVE_INTERFACE,
                                           &mDeviceProperties
                                           );

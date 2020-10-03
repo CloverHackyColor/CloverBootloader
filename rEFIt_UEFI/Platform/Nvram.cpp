@@ -48,9 +48,9 @@ CHAR16          *gEfiBootLoaderPath;
 EFI_GUID        *gEfiBootDeviceGuid;
 
 // Lilu / OpenCore
-EFI_GUID    gOcVendorVariableGuid     = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
-EFI_GUID    gOcReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
-EFI_GUID    gOcWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
+//EFI_GUID    gOcVendorVariableGuid     = { 0x4D1FDA02, 0x38C7, 0x4A6A, { 0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x01, 0x02 } };
+//EFI_GUID    gOcReadOnlyVariableGuid   = { 0xE09B9297, 0x7928, 0x4440, { 0x9A, 0xAB, 0xD1, 0xF8, 0x53, 0x6F, 0xBF, 0x0A } };
+//EFI_GUID    gOcWriteOnlyVariableGuid  = { 0xF0B9AF8F, 0x2222, 0x4840, { 0x8A, 0x37, 0xEC, 0xF7, 0xCC, 0x8C, 0x12, 0xE1 } };
 
 // Ozmosis
 EFI_GUID    mOzmosisProprietary1Guid    = { 0x1F8E0C02, 0x58A9, 0x4E34, { 0xAE, 0x22, 0x2B, 0x63, 0x74, 0x5F, 0xA1, 0x01 } };
@@ -95,14 +95,14 @@ GetEfiTimeInMs (
 }
 
 /** Reads and returns value of NVRAM variable. */
-VOID *GetNvramVariable(
+void *GetNvramVariable(
 	IN      CONST CHAR16   *VariableName,
 	IN      EFI_GUID *VendorGuid,
 	OUT     UINT32   *Attributes    OPTIONAL,
 	OUT     UINTN    *DataSize      OPTIONAL)
 {
   EFI_STATUS Status;
-  VOID       *Data       = NULL;
+  void       *Data       = NULL;
   //
   // Pass in a zero size buffer to find the required buffer size.
   //
@@ -180,11 +180,11 @@ SetNvramVariable (
     IN  EFI_GUID   *VendorGuid,
     IN  UINT32      Attributes,
     IN  UINTN       DataSize,
-    IN  CONST VOID *Data
+    IN  CONST void *Data
   )
 {
   //EFI_STATUS Status;
-  VOID   *OldData;
+  void   *OldData;
   UINTN  OldDataSize = 0;
   UINT32 OldAttributes = 0;
   
@@ -215,7 +215,7 @@ SetNvramVariable (
   //DBG(" -> writing new (%s)\n", efiStrError(Status));
   //return Status;
  
-  return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, (VOID*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
+  return gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, (void*)Data); // CONST missing in EFI_SET_VARIABLE->SetVariable
   
 }
 EFI_STATUS
@@ -236,10 +236,10 @@ AddNvramVariable (
 	IN  EFI_GUID *VendorGuid,
 	IN  UINT32   Attributes,
 	IN  UINTN    DataSize,
-	IN  VOID     *Data
+	IN  const void     *Data
   )
 {
-  VOID       *OldData;
+  void       *OldData;
 
   //DBG("SetNvramVariable (%ls, guid, 0x%X, %d):\n", VariableName, Attributes, DataSize);
   OldData = (__typeof__(OldData))GetNvramVariable(VariableName, VendorGuid, NULL, NULL);
@@ -341,7 +341,7 @@ ResetNativeNvram ()
   BOOLEAN         Restart = TRUE;
   UINTN           VolumeIndex;
   REFIT_VOLUME    *Volume;
-  EFI_FILE_HANDLE FileHandle;
+  EFI_FILE* FileHandle;
 
   //DbgHeader("ResetNativeNvram: cleanup NVRAM variables");
 
@@ -457,7 +457,7 @@ INT8 NKey[4] = {0, 0, 0, 0};
 INT8 SAdr[4] = {0, 0, 3, 0};
 INT8 SNum[1] = {1};
 
-VOID
+void
 GetSmcKeys (BOOLEAN WriteToSMC)
 {
   EFI_STATUS                  Status;
@@ -480,7 +480,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
     return;
   }
   DbgHeader("Dump SMC keys from NVRAM");
-  Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (VOID**)&gAppleSmc);
+  Status = gBS->LocateProtocol(&gAppleSMCProtocolGuid, NULL, (void**)&gAppleSmc);
   if (!EFI_ERROR(Status)) {
     DBG("found AppleSMC protocol\n");    
   } else {
@@ -553,7 +553,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
   FreePool(Name);
 }
 #if CHECK_SMC
-VOID DumpSmcKeys()
+void DumpSmcKeys()
 {
   if (!gAppleSmc || !gAppleSmc->DumpData) {
     return;
@@ -565,7 +565,7 @@ VOID DumpSmcKeys()
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID
 *FindGPTPartitionGuidInDevicePath (
-  IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   )
 {
   HARDDRIVE_DEVICE_PATH *HDDDevPath;
@@ -598,8 +598,8 @@ EFI_GUID
 /** Returns TRUE if dev paths are equal. Ignores some differences. */
 BOOLEAN
 BootVolumeDevicePathEqual (
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
+  const   EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
+  const   EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
   BOOLEAN          Equal;
@@ -729,16 +729,16 @@ BootVolumeDevicePathEqual (
 /** Returns TRUE if dev paths contain the same MEDIA_DEVICE_PATH. */
 BOOLEAN
 BootVolumeMediaDevicePathNodesEqual (
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
+  EFI_DEVICE_PATH_PROTOCOL *DevicePath1,
+  EFI_DEVICE_PATH_PROTOCOL *DevicePath2
   )
 {
-    DevicePath1 = FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);
+    DevicePath1 = Clover_FindDevicePathNodeWithType (DevicePath1, MEDIA_DEVICE_PATH, 0);
     if (DevicePath1 == NULL) {
         return FALSE;
     }
 
-    DevicePath2 = FindDevicePathNodeWithType (DevicePath2, MEDIA_DEVICE_PATH, 0);
+    DevicePath2 = Clover_FindDevicePathNodeWithType (DevicePath2, MEDIA_DEVICE_PATH, 0);
     if (DevicePath2 == NULL) {
         return FALSE;
     }
@@ -785,7 +785,7 @@ GetEfiBootDeviceFromNvram ()
     }
   }
   if (gEfiBootDeviceData == NULL) {
-    VOID *Value;
+    void *Value;
     UINTN Size2=0;
     EFI_STATUS Status;
     Status = GetVariable2 (L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size2);
@@ -841,12 +841,12 @@ GetEfiBootDeviceFromNvram ()
   // if gEfiBootVolume contains FilePathNode, then split them into gEfiBootVolume dev path and gEfiBootLoaderPath
   //
   gEfiBootLoaderPath = NULL;
-  FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+  FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
   if (FileDevPath != NULL) {
     gEfiBootLoaderPath = (__typeof__(gEfiBootLoaderPath))AllocateCopyPool(StrSize(FileDevPath->PathName), FileDevPath->PathName);
     // copy DevPath and write end of path node after in place of file path node
     gEfiBootVolume = DuplicateDevicePath (gEfiBootVolume);
-    FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+    FileDevPath = (FILEPATH_DEVICE_PATH *)Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
     SetDevicePathEndNode (FileDevPath);
     // gEfiBootVolume now contains only Volume path
   }
@@ -925,7 +925,7 @@ LoadLatestNvramPlist()
 //  UINTN           Index;
   REFIT_VOLUME    *Volume;
 //  EFI_GUID        *Guid;
-  EFI_FILE_HANDLE FileHandle = NULL;
+  EFI_FILE* FileHandle = NULL;
   EFI_FILE_INFO   *FileInfo = NULL;
   UINT64          LastModifTimeMs;
   UINT64          ModifTimeMs;
@@ -1026,12 +1026,12 @@ LoadLatestNvramPlist()
 /** Puts all vars from nvram.plist to RT vars. Should be used in CloverEFI only
  *  or if some UEFI boot uses EmuRuntimeDxe driver.
  */
-VOID
+void
 PutNvramPlistToRtVars ()
 {
 //  EFI_STATUS Status;
   size_t            Size;
-  const VOID       *Value;
+  const void       *Value;
   
   if (gNvramDict == NULL) {
     /*Status = */LoadLatestNvramPlist();
@@ -1192,7 +1192,7 @@ FindStartupDiskVolume (
   // Check if gEfiBootVolume is disk or partition volume
   //
   EfiBootVolumeStr  = FileDevicePathToXStringW(gEfiBootVolume);
-  IsPartitionVolume = NULL != FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
+  IsPartitionVolume = NULL != Clover_FindDevicePathNodeWithType (gEfiBootVolume, MEDIA_DEVICE_PATH, 0);
   DBG("  - Volume: %ls = %ls\n", IsPartitionVolume ? L"partition" : L"disk", EfiBootVolumeStr.wc_str());
 
   //
@@ -1229,10 +1229,10 @@ FindStartupDiskVolume (
         LOADER_ENTRY& LoaderEntry = *MainMenu->Entries[Index].getLOADER_ENTRY();
         REFIT_VOLUME* Volume = LoaderEntry.Volume;
         EFI_DEVICE_PATH *DevicePath = LoaderEntry.DevicePath;
-        EFI_DEVICE_PATH *MediaPath = FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
+        EFI_DEVICE_PATH *MediaPath = Clover_FindDevicePathNodeWithType(DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
         if (MediaPath) {
           EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
-          XStringW MediaPathGuidStr = GuidLEToXStringW(MediaPathGuid);
+          XStringW MediaPathGuidStr = GuidLEToXStringW(*MediaPathGuid);
    //       DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
           if (StrStr(gEfiBootLoaderPath, MediaPathGuidStr.wc_str())) {
             DBG("   - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName.wc_str(), LoaderPath.wc_str());
@@ -1453,7 +1453,7 @@ EFI_STATUS SetStartupDiskVolume (
 
 
 /** Deletes Startup disk vars: efi-boot-device, efi-boot-device-data, BootCampHD. */
-VOID
+void
 RemoveStartupDiskVolume ()
 {
 //    EFI_STATUS Status;
@@ -1472,7 +1472,7 @@ RemoveStartupDiskVolume ()
 }
 
 
-VOID ResetNvram ()
+void ResetNvram ()
 {
   if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
     if (gEmuVariableControl != NULL) {

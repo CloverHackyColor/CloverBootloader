@@ -305,7 +305,7 @@ UINT8 smb_read_byte(UINT32 base, UINT8 adr, UINT16 cmd)
 
 
 /** Read from spd *used* values only*/
-VOID init_spd(UINT16* spd_indexes, UINT8* spd, UINT32 base, UINT8 slot)
+void init_spd(UINT16* spd_indexes, UINT8* spd, UINT32 base, UINT8 slot)
 {
   UINT16 i;
   for (i=0; spd_indexes[i]; i++) {
@@ -589,7 +589,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 #define PCI_COMMAND_OFFSET                          0x04
 
 /** Read from smbus the SPD content and interpret it for detecting memory attributes */
-STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
+STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
 {
   //	EFI_STATUS	Status;
   UINT16      speed;
@@ -859,7 +859,7 @@ STATIC VOID read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
   }
 }
 
-VOID ScanSPD()
+void ScanSPD()
 {
   EFI_STATUS            Status;
   EFI_HANDLE            *HandleBuffer = NULL;
@@ -884,7 +884,7 @@ VOID ScanSPD()
   
   if (!EFI_ERROR(Status)) {
     for (Index = 0; Index < HandleCount; ++Index) {
-      Status = gBS->HandleProtocol(HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+      Status = gBS->HandleProtocol(HandleBuffer[Index], &gEfiPciIoProtocolGuid, (void **)&PciIo);
       if (!EFI_ERROR(Status)) {
         // Read PCI BUS
         //PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
@@ -921,7 +921,7 @@ VOID ScanSPD()
       if (!EFI_ERROR(Status)) {
         for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
           if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-            Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+            Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(void **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
             
             if (!EFI_ERROR(Status)) {
               // Read PCI BUS 

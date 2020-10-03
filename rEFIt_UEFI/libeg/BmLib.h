@@ -29,7 +29,7 @@
 EFI_STATUS
 EfiLibLocateProtocol (
   IN  EFI_GUID    *ProtocolGuid,
-  OUT VOID        **Interface
+  OUT void        **Interface
   );
 
 /**
@@ -41,7 +41,7 @@ EfiLibLocateProtocol (
   @return A valid file handle or NULL is returned
 
 **/
-EFI_FILE_HANDLE
+EFI_FILE*
 EfiLibOpenRoot (
   IN EFI_HANDLE                   DeviceHandle
   );
@@ -60,7 +60,7 @@ EfiLibOpenRoot (
 **/
 XStringW
 EfiLibFileSystemVolumeLabelInfo (
-  IN EFI_FILE_HANDLE      FHand
+  const EFI_FILE*      FHand
   );
 
 
@@ -101,12 +101,12 @@ AsciiStrStriN (
 **/
 EFI_FILE_INFO *
 EfiLibFileInfo (
-  IN EFI_FILE_HANDLE      FHand
+  const EFI_FILE*      FHand
   );
 
 EFI_FILE_SYSTEM_INFO *
 EfiLibFileSystemInfo (
-                IN EFI_FILE_HANDLE      FHand
+                const EFI_FILE*      FHand
                 );
 
 /**
@@ -138,9 +138,9 @@ EfiDevicePathInstanceCount (
   @retval   NULL  Allocation failed.
 
 **/
-VOID *
+void *
 EfiReallocatePool (
-  IN VOID                 *OldPool,
+  IN void                 *OldPool,
   IN UINTN                OldSize,
   IN UINTN                NewSize
   );

@@ -40,6 +40,8 @@
 #include "../Platform/APFS.h"
 #include "../refit/lib.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
+#include "SelfOem.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LIB 1
@@ -55,26 +57,13 @@
 
 // variables
 
-EFI_HANDLE       SelfImageHandle;
-EFI_HANDLE       SelfDeviceHandle;
-EFI_LOADED_IMAGE *SelfLoadedImage;
-EFI_FILE         *SelfRootDir;
-EFI_FILE         *SelfDir;
-XStringW          SelfDirPath;
-EFI_DEVICE_PATH  *SelfDevicePath;
-EFI_DEVICE_PATH  *SelfFullDevicePath;
-
 XTheme ThemeX;
 
-XStringW         ThemePath;
+//XStringW         ThemePath;
 BOOLEAN          gThemeChanged = FALSE;
 //BOOLEAN          gBootArgsChanged = FALSE;
 BOOLEAN          gBootChanged = FALSE;
 BOOLEAN          gThemeOptionsChanged = FALSE;
-
-EFI_FILE         *OEMDir;
-XStringW          OEMPath;
-EFI_FILE         *OemThemeDir = NULL;
 
 
 REFIT_VOLUME     *SelfVolume = NULL;
@@ -88,9 +77,7 @@ EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
 
 // functions
 
-static EFI_STATUS FinishInitRefitLib(VOID);
-
-static VOID UninitVolumes(VOID);
+static void UninitVolumes(void);
 
 // S. Mtr
 /* Function for parsing nodes from device path
@@ -175,151 +162,33 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
-  EFI_STATUS  Status;
-  XStringW    FilePathAsString;
-  UINTN       i;
-  UINTN                     DevicePathSize;
-  EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
-  
-  SelfImageHandle = ImageHandle;
-  Status = gBS->HandleProtocol(SelfImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &SelfLoadedImage);
-  if (CheckFatalError(Status, L"while getting a LoadedImageProtocol handle"))
-    return Status;
-  
-  SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-  TmpDevicePath = DevicePathFromHandle (SelfDeviceHandle);
-  DevicePathSize = GetDevicePathSize (TmpDevicePath);
-  SelfDevicePath = (__typeof__(SelfDevicePath))AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
-  CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
-  
-	DBG("SelfDevicePath=%ls @%llX\n", FileDevicePathToXStringW(SelfDevicePath).wc_str(), (uintptr_t)SelfDeviceHandle);
-  
-  // find the current directory
-  FilePathAsString = FileDevicePathToXStringW(SelfLoadedImage->FilePath);
-  if (FilePathAsString.notEmpty()) {
-    SelfFullDevicePath = FileDevicePath(SelfDeviceHandle, FilePathAsString);
-    for (i = FilePathAsString.length(); i > 0 && FilePathAsString[i] != '\\'; i--) ;
-    if (i > 0) {
-      FilePathAsString = FilePathAsString.subString(0, i);
-    } else {
-      FilePathAsString = L"\\"_XSW;
-    }
-  } else {
-    FilePathAsString = L"\\"_XSW;
-  }
-  SelfDirPath = FilePathAsString;
-  
-  DBG("SelfDirPath = %ls\n", SelfDirPath.wc_str());
-  
-  return FinishInitRefitLib();
+  self.initialize(ImageHandle);
+  DBG("SelfDirPath = %ls\n", self.getCloverDirPathAsXStringW().wc_str());
+  return EFI_SUCCESS;
 }
 
-VOID UninitRefitLib(VOID)
+void UninitRefitLib(void)
 {
   // called before running external programs to close open file handles
   
-  if (SelfDir != NULL) {
-    SelfDir->Close(SelfDir);
-    SelfDir = NULL;
-  }
-  
-  if (OEMDir != NULL) {
-    OEMDir->Close(OEMDir);
-    OEMDir = NULL;
-  }
-  if (ThemeX.ThemeDir != NULL) {
-    ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
-    ThemeX.ThemeDir = NULL;
-  }
+  ThemeX.closeThemeDir();
 
-
-  if (SelfRootDir != NULL) {
-    SelfRootDir->Close(SelfRootDir);
-    SelfRootDir = NULL;
-  }
+  self.closeHandle();
+  selfOem.closeHandle();
   
   UninitVolumes();
 }
 
-EFI_STATUS ReinitRefitLib(VOID)
-{
-  // called after running external programs to re-open file handles
-  //
-  ReinitVolumes();
-  
-  if (SelfVolume != NULL && SelfVolume->RootDir != NULL)
-    SelfRootDir = SelfVolume->RootDir;
-  
-  return FinishInitRefitLib();
-}
-
-EFI_STATUS ReinitSelfLib(VOID)
+EFI_STATUS ReinitRefitLib(void)
 {
   // called after reconnect drivers to re-open file handles
   
-  EFI_STATUS  Status;
-  EFI_HANDLE                NewSelfHandle;
-	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
+  self.reInitialize();
+  selfOem.reInitialize();
 
-//  DbgHeader("ReinitSelfLib");
-  
-  if (!SelfDevicePath) {
-    return EFI_NOT_FOUND;
-  }
-  
-  TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
-  DBG("reinit: self device path=%ls\n", FileDevicePathToXStringW(TmpDevicePath).wc_str());
-  if(TmpDevicePath == NULL)
-		return EFI_NOT_FOUND;
-  
-  NewSelfHandle = NULL;
-	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
-                                  &TmpDevicePath,
-                                  &NewSelfHandle);
-  CheckError(Status, L"while reopening our self handle");
-	DBG("new SelfHandle=%llX\n", (uintptr_t)NewSelfHandle);
-  
-  SelfRootDir = EfiLibOpenRoot(NewSelfHandle);
-  if (SelfRootDir == NULL) {
-    DBG("SelfRootDir can't be reopened\n");
-    return EFI_NOT_FOUND;
-  }
-  SelfDeviceHandle = NewSelfHandle;
-  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+  ThemeX.openThemeDir();
 
-
-  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath.wc_str(), EFI_FILE_MODE_READ, 0);
-  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath.wc_str(), EFI_FILE_MODE_READ, 0);
-  CheckFatalError(Status, L"while reopening our installation directory");
-  return Status;
-}
-
-
-static
-EFI_STATUS FinishInitRefitLib(VOID)
-{
-	EFI_STATUS                Status;
-  
-  if (SelfRootDir == NULL) {
-    SelfRootDir = EfiLibOpenRoot(SelfLoadedImage->DeviceHandle);
-    if (SelfRootDir != NULL) {
-      SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-    } else {
-      return EFI_LOAD_ERROR;
-    }
-  }
-  /*Status = */SelfRootDir->Open(SelfRootDir, &ThemeX.ThemeDir, ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
-  /*Status = */SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath.wc_str(), EFI_FILE_MODE_READ, 0);
-  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath.wc_str(), EFI_FILE_MODE_READ, 0);
-  CheckFatalError(Status, L"while opening our installation directory");
-  return Status;
-}
-BOOLEAN IsEmbeddedTheme()
-{
-  if (ThemeX.embedded) {
-    ThemeX.ThemeDir = NULL;
-  }
-  return ThemeX.ThemeDir == NULL;
+  return EFI_SUCCESS;
 }
 
 
@@ -365,11 +234,11 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
   for (HandleIndex = 0; HandleIndex < HandleCount && PathCount < MaxPaths; HandleIndex++) {
     Handle = Handles[HandleIndex];
     
-    Status = gBS->HandleProtocol(Handle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+    Status = gBS->HandleProtocol(Handle, &gEfiLoadedImageProtocolGuid, (void **) &LoadedImage);
     if (EFI_ERROR(Status))
       continue;  // This can only happen if the firmware scewed up, ignore it.
     
-    Status = gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiDevicePathProtocolGuid, (VOID **) &DevicePath);
+    Status = gBS->HandleProtocol(LoadedImage->DeviceHandle, &gEfiDevicePathProtocolGuid, (void **) &DevicePath);
     if (EFI_ERROR(Status))
       continue;  // This happens, ignore it.
     
@@ -407,7 +276,7 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
 // volume functions
 //
 
-static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootable)
+static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootable)
 {
   EFI_STATUS              Status;
   UINT8                   *SectorBuffer;
@@ -687,7 +556,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   }
 //  gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 //  FreeAlignedPages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
-  FreeAlignedPages((VOID*)SectorBuffer, EFI_SIZE_TO_PAGES (2048));
+  FreeAlignedPages((void*)SectorBuffer, EFI_SIZE_TO_PAGES (2048));
 }
 
 //at start we have only Volume->DeviceHandle
@@ -732,7 +601,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   Volume->DiskKind = DISK_KIND_INTERNAL;  // default
   
   // get block i/o
-  Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &(Volume->BlockIO));
+  Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (void **) &(Volume->BlockIO));
   if (EFI_ERROR(Status)) {
     Volume->BlockIO = NULL;
  //   DBG("        Warning: Can't get BlockIO protocol.\n");
@@ -867,7 +736,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       Volume->WholeDiskDeviceHandle = WholeDiskHandle;
       Volume->WholeDiskDevicePath = DuplicateDevicePath(RemainingDevicePath);
       // look at the BlockIO protocol
-      Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
+      Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (void **) &Volume->WholeDiskBlockIO);
       if (!EFI_ERROR(Status)) {
         //          DBG("WholeDiskBlockIO %hhX BlockSize=%d\n", Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->BlockSize);
         // check the media block size
@@ -924,7 +793,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
   
   if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
-      EFI_FILE_HANDLE     FileHandle;
+      EFI_FILE*     FileHandle;
       Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"\\.VolumeLabel.txt", EFI_FILE_MODE_READ, 0);
       if (!EFI_ERROR(Status)) {
           CHAR8 Buffer[32+1];
@@ -965,7 +834,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
   if ( Volume->VolName.isEmpty() || Volume->VolName.equal("\\") || Volume->VolName.equal(L"/") )
   {
-    VOID *Instance;
+    void *Instance;
     if (!EFI_ERROR(gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {
       Volume->VolName = L"EFI"_XSW;                                 \
     }
@@ -1008,7 +877,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   return EFI_SUCCESS;
 }
 
-static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)
+static void ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)
 {
   EFI_STATUS              Status;
   REFIT_VOLUME            *Volume;
@@ -1062,14 +931,14 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
           Volume->HasBootCode = FALSE;
         
         Volumes.AddReference(Volume, false);
-//        AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
+//        AddListElement((void ***) &Volumes, &VolumesCount, Volume);
       }
     }
   }
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
 
-VOID ScanVolumes(VOID)
+void ScanVolumes(void)
 {
   EFI_STATUS              Status;
   UINTN                   HandleCount = 0;
@@ -1099,7 +968,7 @@ VOID ScanVolumes(VOID)
     REFIT_VOLUME* Volume = new REFIT_VOLUME;
     Volume->LegacyOS = new LEGACY_OS;
     Volume->DeviceHandle = Handles[HandleIndex];
-    if (Volume->DeviceHandle == SelfDeviceHandle) {
+    if (Volume->DeviceHandle == self.getSelfDeviceHandle()) {
       SelfVolume = Volume;
     }
     
@@ -1139,15 +1008,15 @@ VOID ScanVolumes(VOID)
   if (SelfVolume == NULL){
     DBG("        WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = new REFIT_VOLUME;
-    SelfVolume->DeviceHandle = SelfDeviceHandle;
-    SelfVolume->DevicePath = SelfDevicePath;
-    SelfVolume->RootDir = SelfRootDir;
+    SelfVolume->DeviceHandle = self.getSelfDeviceHandle();
+    SelfVolume->DevicePath = DuplicateDevicePath(&self.getSelfDevicePath());
+    SelfVolume->RootDir = const_cast<EFI_FILE*>(&self.getSelfVolumeRootDir()); // TODO : SelfVolume->RootDir should be const ! we should duplicate ?
     SelfVolume->DiskKind = DISK_KIND_BOOTER;
     SelfVolume->VolName = L"Clover"_XSW;
     SelfVolume->LegacyOS->Type = OSTYPE_EFI;
     SelfVolume->HasBootCode = TRUE;
     SelfVolume->BootType = BOOTING_BY_PBR;
-    //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
+    //   AddListElement((void ***) &Volumes, &VolumesCount, SelfVolume);
     //    DBG("SelfVolume Nr %d created\n", VolumesCount);
   }
   
@@ -1224,7 +1093,7 @@ VOID ScanVolumes(VOID)
   }
 }
 
-static VOID UninitVolumes(VOID)
+static void UninitVolumes(void)
 {
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
@@ -1246,13 +1115,13 @@ static VOID UninitVolumes(VOID)
   Volumes.setEmpty();
 }
 
-VOID ReinitVolumes(VOID)
+void ReinitVolumes(void)
 {
   EFI_STATUS              Status;
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
   UINTN           VolumesFound = 0;
-  EFI_DEVICE_PATH         *RemainingDevicePath;
+  const EFI_DEVICE_PATH  *RemainingDevicePath;
   EFI_HANDLE              DeviceHandle, WholeDiskHandle;
   
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); VolumeIndex++) {
@@ -1266,7 +1135,8 @@ VOID ReinitVolumes(VOID)
     if (Volume->DevicePath != NULL) {
       // get the handle for that path
       RemainingDevicePath = Volume->DevicePath;
-      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &DeviceHandle);
+
+      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, const_cast<EFI_DEVICE_PATH**>(&RemainingDevicePath), &DeviceHandle);
       
       if (!EFI_ERROR(Status)) {
         Volume->DeviceHandle = DeviceHandle;
@@ -1282,12 +1152,12 @@ VOID ReinitVolumes(VOID)
     if (Volume->WholeDiskDevicePath != NULL) {
       // get the handle for that path
       RemainingDevicePath = DuplicateDevicePath(Volume->WholeDiskDevicePath);
-      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
+      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, const_cast<EFI_DEVICE_PATH**>(&RemainingDevicePath), &WholeDiskHandle);
       
       if (!EFI_ERROR(Status)) {
         Volume->WholeDiskBlockIO = (__typeof__(Volume->WholeDiskBlockIO))WholeDiskHandle;
         // get the BlockIO protocol
-        Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
+        Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (void **) &Volume->WholeDiskBlockIO);
         if (EFI_ERROR(Status)) {
           Volume->WholeDiskBlockIO = NULL;
           CheckError(Status, L"from HandleProtocol");
@@ -1349,7 +1219,7 @@ BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST XStringW& RelativePath)
 	return FileExists(Root, RelativePath.wc_str());
 }
 
-BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
+BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
 {
   EFI_STATUS  Status;
   EFI_FILE    *File;
@@ -1387,10 +1257,10 @@ BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
   return FALSE;
 }
 
-EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode)
+EFI_STATUS DirNextEntry(const EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode)
 {
   EFI_STATUS Status;
-  VOID *Buffer;
+  void *Buffer;
   UINTN LastBufferSize, BufferSize;
   INTN IterCount;
   
@@ -1448,14 +1318,14 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
   return Status;
 }
 
-VOID DirIterOpen(IN EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter)
+void DirIterOpen(const EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter)
 {
   if (RelativePath == NULL) {
     DirIter->LastStatus = EFI_SUCCESS;
     DirIter->DirHandle = BaseDir;
     DirIter->CloseDirHandle = FALSE;
   } else {
-    DirIter->LastStatus = BaseDir->Open(BaseDir, &(DirIter->DirHandle), RelativePath, EFI_FILE_MODE_READ, 0);
+    DirIter->LastStatus = BaseDir->Open(BaseDir, const_cast<EFI_FILE**>(&(DirIter->DirHandle)), RelativePath, EFI_FILE_MODE_READ, 0);
     DirIter->CloseDirHandle = EFI_ERROR(DirIter->LastStatus) ? FALSE : TRUE;
   }
   DirIter->LastFileInfo = NULL;
@@ -1522,7 +1392,7 @@ MetaiMatch (
 
 
 EFI_STATUS
-InitializeUnicodeCollationProtocol (VOID)
+InitializeUnicodeCollationProtocol (void)
 {
 	EFI_STATUS  Status;
 	
@@ -1538,13 +1408,13 @@ InitializeUnicodeCollationProtocol (VOID)
 	Status = gBS->LocateProtocol (
                                 &gEfiUnicodeCollation2ProtocolGuid,
                                 NULL,
-                                (VOID **) &mUnicodeCollation
+                                (void **) &mUnicodeCollation
                                 );
   if (EFI_ERROR(Status)) {
     Status = gBS->LocateProtocol (
                                   &gEfiUnicodeCollationProtocolGuid,
                                   NULL,
-                                  (VOID **) &mUnicodeCollation
+                                  (void **) &mUnicodeCollation
                                   );
     
   }
@@ -1572,7 +1442,7 @@ CONST CHAR16 * Basename(IN CONST CHAR16 *Path)
   return FileName;
 }
 
-VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
+void ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
 {
   INTN i;
   
@@ -1604,7 +1474,7 @@ CHAR16 * egFindExtension(IN CHAR16 *FileName)
 // memory string search
 //
 
-INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength)
+INTN FindMem(IN CONST void *Buffer, IN UINTN BufferLength, IN CONST void *SearchString, IN UINTN SearchStringLength)
 {
   CONST UINT8 *BufferPtr;
   UINTN Offset;
@@ -1628,7 +1498,7 @@ INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *Search
 
  **/
 XStringW DevicePathToXStringW (
-    IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+    const EFI_DEVICE_PATH_PROTOCOL     *DevPath
   )
 {
   CHAR16* DevicePathStr = ConvertDevicePathToText (DevPath, TRUE, TRUE);
@@ -1641,7 +1511,7 @@ XStringW DevicePathToXStringW (
 //
 // Aptio UEFI returns File DevPath as 2 nodes (dir, file)
 // and DevicePathToStr connects them with /, but we need '\\'
-XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+XStringW FileDevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   CHAR16      *FilePath;
   CHAR16      *Char;
@@ -1671,7 +1541,7 @@ XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
   return returnValue;
 }
 
-XStringW FileDevicePathFileToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+XStringW FileDevicePathFileToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath)
 {
   EFI_DEVICE_PATH_PROTOCOL *Node;
   
@@ -1723,7 +1593,7 @@ BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt)
   return FALSE;
 }
 
-VOID DbgHeader(CONST CHAR8 *str)
+void DbgHeader(CONST CHAR8 *str)
 {
   CHAR8 strLog[50];
   INTN len;

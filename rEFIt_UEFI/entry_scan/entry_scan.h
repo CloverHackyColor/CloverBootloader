@@ -47,12 +47,12 @@ extern REFIT_MENU_SCREEN MainMenu;
 
 extern XObjArray<REFIT_VOLUME> Volumes;
 // common
-const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 
 
 // Ask user for file path from directory menu
 BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
-                                  IN CHAR16 *ParentPath, IN EFI_FILE *Dir,
+                                  IN CHAR16 *ParentPath, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 // Ask user for file path from volumes menu
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
@@ -60,22 +60,22 @@ BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_
 BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCOL *Root OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 
 // legacy
-VOID ScanLegacy(VOID);
-VOID AddCustomLegacy(VOID);
+void ScanLegacy(void);
+void AddCustomLegacy(void);
 
 // loader
-VOID ScanLoader(VOID);
-VOID AddCustomEntries(VOID);
+void ScanLoader(void);
+void AddCustomEntries(void);
 BOOLEAN IsCustomBootEntry(IN LOADER_ENTRY *Entry);
 
 // tool
-VOID ScanTool(VOID);
-VOID AddCustomTool(VOID);
+void ScanTool(void);
+void AddCustomTool(void);
 
 // locked graphics
 CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode);
-EFI_STATUS LockBootScreen(VOID);
-EFI_STATUS UnlockBootScreen(VOID);
+EFI_STATUS LockBootScreen(void);
+EFI_STATUS UnlockBootScreen(void);
 
 // secure boot
 #ifdef ENABLE_SECURE_BOOT
@@ -96,56 +96,56 @@ EFI_STATUS UnlockBootScreen(VOID);
 #define DEFAULT_UNAUTHORIZED_DATABASE_NAME L"dbxDefault"
 #define DEFAULT_UNAUTHORIZED_DATABASE_GUID gEfiGlobalVariableGuid
 
-VOID AddSecureBootTool(VOID);
-VOID InitializeSecureBoot(VOID);
-EFI_STATUS InstallSecureBoot(VOID);
-VOID UninstallSecureBoot(VOID);
-VOID EnableSecureBoot(VOID);
-VOID DisableSecureBoot(VOID);
-BOOLEAN ConfigureSecureBoot(VOID);
+void AddSecureBootTool(void);
+void InitializeSecureBoot(void);
+EFI_STATUS InstallSecureBoot(void);
+void UninstallSecureBoot(void);
+void EnableSecureBoot(void);
+void DisableSecureBoot(void);
+BOOLEAN ConfigureSecureBoot(void);
 CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy);
 EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-EFI_STATUS EnrollSecureBootKeys(IN VOID    *AuthorizedDatabase,
+EFI_STATUS EnrollSecureBootKeys(IN void    *AuthorizedDatabase,
                                 IN UINTN    AuthorizedDatabaseSize,
                                 IN BOOLEAN  WantDefaultKeys);
-EFI_STATUS ClearSecureBootKeys(VOID);
+EFI_STATUS ClearSecureBootKeys(void);
 
 // secure boot database
-VOID *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
+void *GetSignatureDatabase(IN  CHAR16   *DatabaseName,
                            IN  EFI_GUID *DatabaseGuid,
                            OUT UINTN    *DatabaseSize);
 EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
                                 IN EFI_GUID *DatabaseGuid,
-                                IN VOID     *Database,
+                                IN void     *Database,
                                 IN UINTN     DatabaseSize);
 
 // secure boot authorized database
-VOID *GetAuthorizedDatabase(UINTN *DatabaseSize);
-EFI_STATUS SetAuthorizedDatabase(IN VOID  *Database,
+void *GetAuthorizedDatabase(UINTN *DatabaseSize);
+EFI_STATUS SetAuthorizedDatabase(IN void  *Database,
                                  IN UINTN  DatabaseSize);
-EFI_STATUS ClearAuthorizedDatabase(VOID);
-VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
+EFI_STATUS ClearAuthorizedDatabase(void);
+void *GetImageSignatureDatabase(IN void    *FileBuffer,
                                 IN UINT64   FileSize,
                                 IN UINTN   *DatabaseSize,
                                 IN BOOLEAN  HashIfNoDatabase);
-EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN VOID  *Database,
+EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN void  *Database,
                                                    IN UINTN  DatabaseSize);
-EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN VOID  *Database,
+EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN void  *Database,
                                                      IN UINTN  DatabaseSize);
 EFI_STATUS AppendImageToAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                           IN VOID                           *FileBuffer,
+                                           IN void                           *FileBuffer,
                                            IN UINTN                           FileSize);
 EFI_STATUS RemoveImageFromAuthorizedDatabase(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                                             IN VOID                           *FileBuffer,
+                                             IN void                           *FileBuffer,
                                              IN UINTN                           FileSize);
-EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
+EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT void  **Database,
                                              IN OUT UINTN  *DatabaseSize,
-                                             IN     VOID   *SignatureDatabase,
+                                             IN     void   *SignatureDatabase,
                                              IN     UINTN   SignatureDatabaseSize);
-EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
+EFI_STATUS AppendSignatureToDatabase(IN OUT void     **Database,
                                      IN OUT UINTN     *DatabaseSize,
                                      IN     EFI_GUID  *SignatureType,
-                                     IN     VOID      *Signature,
+                                     IN     void      *Signature,
                                      IN     UINTN      SignatureSize);
 #endif //ENABLE_SECURE_BOOT

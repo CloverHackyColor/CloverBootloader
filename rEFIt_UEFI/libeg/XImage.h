@@ -100,10 +100,10 @@ public:
   void DrawOnBack(INTN x, INTN y, const XImage& Plate);
 //I changed the name because LoadImage is too widely used
 // will be used instead of old egLoadImage
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const wchar_t* LIconName);
-  EFI_STATUS LoadXImage(EFI_FILE *Dir, const char* IconName);
-  EFI_STATUS LoadIcns(IN EFI_FILE *Dir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
+  EFI_STATUS LoadXImage(const EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
+  EFI_STATUS LoadXImage(const EFI_FILE *Dir, const wchar_t* LIconName);
+  EFI_STATUS LoadXImage(const EFI_FILE *Dir, const char* IconName);
+  EFI_STATUS LoadIcns(const EFI_FILE *Dir, IN CONST CHAR16 *FileName, IN UINTN PixelSize);
   void EnsureImageSize(IN UINTN Width, IN UINTN Height, IN CONST EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color);
   void EnsureImageSize(IN UINTN NewWidth, IN UINTN NewHeight);
   void DummyImage(IN UINTN PixelSize);

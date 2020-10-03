@@ -550,7 +550,7 @@ CONST CHAR8* get_net_model(UINT32 id) {
   return NetChipsets[0].name;
 }
 
-VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT UINT32 *Addr2, OUT UINT32 *Addr3)
+void GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT UINT32 *Addr2, OUT UINT32 *Addr3)
 {
   PCI_DEVICE_PATH *PciNode;
   UINTN           PciNodeCount;
@@ -600,7 +600,7 @@ BOOLEAN NativeUSB(UINT16 DID)
   return ((d == 0x2600) || (d == 0x2700) || (d == 0x2800) || (d == 0x3a00) || (d == /*NFORCE_USB->*/0x0a00));
 }
 
-VOID CheckHardware()
+void CheckHardware()
 {
   EFI_STATUS          Status;
   EFI_HANDLE          *HandleBuffer = NULL;
@@ -636,7 +636,7 @@ VOID CheckHardware()
       Status = gBS->HandleProtocol (
                                     Handle,
                                     &gEfiPciIoProtocolGuid,
-                                    (VOID **)&PciIo
+                                    (void **)&PciIo
                                     );
       if (!EFI_ERROR(Status)) {
         UINT32 deviceid;
@@ -851,7 +851,7 @@ VOID CheckHardware()
 
 UINT8 slash[] = {0x5c, 0};
 
-VOID InsertScore(UINT8* dsdt, UINT32 off2, INTN root)
+void InsertScore(UINT8* dsdt, UINT32 off2, INTN root)
 {
   UINT8  NumNames = 0;
   UINT32 ind = 0, i;
@@ -894,7 +894,7 @@ VOID InsertScore(UINT8* dsdt, UINT32 off2, INTN root)
   acpi_cpu_score[ind] = 0;
 }
 
-VOID findCPU(UINT8* dsdt, UINT32 length)
+void findCPU(UINT8* dsdt, UINT32 length)
 {
   UINT32  i, k, size;
   UINT32  SBSIZE = 0, SBADR = 0;
@@ -1655,7 +1655,7 @@ UINT32 GetPciDevice(UINT8 *dsdt, UINT32 len)
 
 
 // Find PCIRootUID and all need Fix Device
-VOID  findPciRoot (UINT8 *dsdt, UINT32 len)
+void  findPciRoot (UINT8 *dsdt, UINT32 len)
 {
   UINTN    j;
   UINT32 PCIADR, PCISIZE = 0;
@@ -1888,7 +1888,7 @@ UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
   return len;
 }
 
-VOID FixS3D (UINT8* dsdt, UINT32 len)
+void FixS3D (UINT8* dsdt, UINT32 len)
 {
   UINT32 i;
   DBG("Start _S3D Fix\n");
@@ -1972,7 +1972,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
       Status = gBS->HandleProtocol (
                                     Handle,
                                     &gEfiPciIoProtocolGuid,
-                                    (VOID **)&PciIo
+                                    (void **)&PciIo
                                     );
       if (!EFI_ERROR(Status)) {
         PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
@@ -4129,7 +4129,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             if (gSettings.FakeXHCI) {
               USBID[i] = gSettings.FakeXHCI >> 16;
             }
-            CopyMem(USBDATA3+k, (VOID*)&USBID[i], 4);
+            CopyMem(USBDATA3+k, (void*)&USBID[i], 4);
             sizeoffset = size3;
           } else if (USB20[i]) {
             if ((USBDATA2[25] == 0x0A) && (USBDATA2[26] == 0x04)) {
@@ -4139,7 +4139,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             } else {
               continue;
             }
-            CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
+            CopyMem(USBDATA2+k, (void*)&USBID[i], 4);
             sizeoffset = size2;
           } else {
             if ((USBDATA1[25] == 0x0A) && (USBDATA1[26] == 0x04)) {
@@ -4150,7 +4150,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
               continue;
             }
 
-            CopyMem(USBDATA1+k, (VOID*)&USBID[i], 4);
+            CopyMem(USBDATA1+k, (void*)&USBID[i], 4);
             sizeoffset = size1;
           }
 
@@ -4200,7 +4200,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                     continue;
                 }
 
-                CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
+                CopyMem(USBDATA2+k, (void*)&USBID[i], 4);
                 sizeoffset = size2;
 
             } else {
@@ -4212,7 +4212,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                     continue;
                 }
 
-                CopyMem(USBDATA1+k, (VOID*)&USBID[i], 4);
+                CopyMem(USBDATA1+k, (void*)&USBID[i], 4);
                 sizeoffset = size1;
             }
 
@@ -5024,7 +5024,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 
 }
 #endif
-VOID FixRegions (UINT8 *dsdt, UINT32 len)
+void FixRegions (UINT8 *dsdt, UINT32 len)
 {
   UINTN i, j;
   INTN  shift;
@@ -5088,7 +5088,7 @@ VOID FixRegions (UINT8 *dsdt, UINT32 len)
   }
 }
 
-VOID GetBiosRegions(UINT8  *buffer)
+void GetBiosRegions(UINT8  *buffer)
 {
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
 //  UINT8       *buffer = NULL;
@@ -5152,7 +5152,7 @@ VOID GetBiosRegions(UINT8  *buffer)
 // Although Mutex with non-zero SyncLevel is perfectly legal macOS/OS X doesn't like
 // One of the common fixes for ACPI battery status on laptops
 #define IsNameChar(ch) (((ch)>='A' && (ch)<='Z') || ((ch)>='0' && (ch)<='9') || (ch)=='_')
-VOID FixMutex(UINT8 *dsdt, UINT32 len)
+void FixMutex(UINT8 *dsdt, UINT32 len)
 {
   UINT8* p = dsdt + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
   UINT8* end = dsdt + len - 7; // pattern is 7-bytes
@@ -5236,12 +5236,14 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
   return TRUE;
 }
 
-VOID RenameDevices(UINT8* table)
+void RenameDevices(UINT8* table)
 {
   ACPI_NAME_LIST *List;
   ACPI_NAME_LIST *Bridge;
   CHAR8 *Replace;
   CHAR8 *Find;
+
+  if ( gSettings.DeviceRenameCount <= 0 ) return; // to avoid message "0 replacement"
 
   INTN i;
   INTN k=0; // Cland complain about possible use uninitialised. Not true, but I don't like warnings.
@@ -5324,7 +5326,7 @@ VOID RenameDevices(UINT8* table)
 	MsgLog("  %lld replacements\n", Num);
 }
 
-VOID FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, const XString8& OSVersion)
+void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, const XString8& OSVersion)
 {
   UINT32 DsdtLen;
 

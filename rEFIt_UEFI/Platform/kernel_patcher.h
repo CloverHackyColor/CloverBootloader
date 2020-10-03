@@ -124,6 +124,7 @@ typedef struct SEGMENT {
   UINT32 SizeNamesTable;
 } SEGMENT;
 
+extern LIST_ENTRY gKextList; // Jief : globals variables... not great.
 
 //extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
 //extern BootArgs1    *bootArgs1;
@@ -139,24 +140,24 @@ typedef struct SEGMENT {
 
 
 //extern UINT32       DisplayVendor[];
-//VOID findCPUfamily();
+//void findCPUfamily();
 
 //extern BOOLEAN                         SSSE3;
 
 
 //UINT64 kernelsize;
 
-//VOID Patcher_SSE3_5(VOID* kernelData);
-//VOID Patcher_SSE3_6(VOID* kernelData);
-//VOID Patcher_SSE3_7();
+//void Patcher_SSE3_5(void* kernelData);
+//void Patcher_SSE3_6(void* kernelData);
+//void Patcher_SSE3_7();
 
 //#include "../gui/menu_items/menu_items.h" // for LOADER_ENTRY
 //class LOADER_ENTRY;
-//VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
+//void KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 
-//VOID register_kernel_symbol(CONST CHAR8* name);
+//void register_kernel_symbol(CONST CHAR8* name);
 //UINT64 symbol_handler(CHAR8* symbolName, UINT64 addr);
-//INTN locate_symbols(VOID* kernelData);
+//INTN locate_symbols(void* kernelData);
 
 
 /////////////////////
@@ -168,14 +169,14 @@ typedef struct SEGMENT {
 // Called from SetFSInjection(), before boot.efi is started,
 // to allow patchers to prepare FSInject to force load needed kexts.
 //
-//VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts, LOADER_ENTRY *Entry);
+//void KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts, LOADER_ENTRY *Entry);
 
 //
 // Entry for all kext patches.
 // Will iterate through kext in prelinked kernel (kernelcache)
 // or DevTree (drivers boot) and do patches.
 //
-//VOID KextPatcherStart(LOADER_ENTRY *Entry);
+//void KextPatcherStart(LOADER_ENTRY *Entry);
 
 //
 // Searches Source for Search pattern of size SearchSize
@@ -184,7 +185,7 @@ typedef struct SEGMENT {
 UINTN SearchAndCount(const UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UINTN SearchSize);
 
 BOOLEAN CompareMemMask(const UINT8 *Source, const UINT8 *Search, UINTN SearchSize, const UINT8 *Mask, UINTN MaskSize);
-VOID  CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize);
+void  CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize);
 UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UINTN SearchSize, const UINT8 *MaskSearch, UINTN MaskSize);
 UINTN FindRelative32(const UINT8 *Source, UINTN Start, UINTN SourceSize, UINTN taskLocation);
 //UINTN FindSection(const UINT8 *Source, UINTN len, const UINT8* seg, const UINT8* sec);

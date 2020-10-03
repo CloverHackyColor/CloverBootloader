@@ -10,26 +10,23 @@ extern "C" {
 #endif
 
 
-#include <Protocol/SimpleFileSystem.h> // for EFI_FILE_HANDLE
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
+#include <Uefi/UefiBaseType.h>
+#include <Protocol/SimpleFileSystem.h> // for EFI_FILE*
 
 
 //#define SAFE_LOG_SIZE  80
 //#define MSG_LOG_SIZE (256 * 1024)
-#define PREBOOT_LOG  L"EFI\\CLOVER\\misc\\preboot.log"
-#define LEGBOOT_LOG  L"EFI\\CLOVER\\misc\\legacy_boot.log"
-#define BOOT_LOG     L"EFI\\CLOVER\\misc\\boot.log"
-#define SYSTEM_LOG   L"EFI\\CLOVER\\misc\\system.log"
-#define DEBUG_LOG    L"EFI\\CLOVER\\misc\\debug.log"
-//#define PREWAKE_LOG  L"EFI\\CLOVER\\misc\\prewake.log"
+#define PREBOOT_LOG_new  L"misc\\preboot.log"
+#define LEGBOOT_LOG_new  L"misc\\legacy_boot.log"
+#define BOOT_LOG_new     L"misc\\boot.log"
+#define SYSTEM_LOG_new   L"misc\\system.log"
+#define DEBUG_LOG_new    L"misc\\debug.log"
+//#define PREWAKE_LOG  L"misc\\prewake.log"
 
 
 
-VOID
-InitBooterLog (VOID);
+void
+InitBooterLog (void);
 
 EFI_STATUS
 SetupBooterLog (
@@ -38,15 +35,15 @@ SetupBooterLog (
 
 EFI_STATUS
 SaveBooterLog (
-  IN  EFI_FILE_HANDLE BaseDir  OPTIONAL,
-  IN  CONST CHAR16 *FileName
+  const EFI_FILE* BaseDir  OPTIONAL,
+  const CHAR16 *FileName
   );
 
 #ifdef _MSC_VER
 #define __attribute__(x)
 #endif
 
-VOID
+void
 EFIAPI
 DebugLog (
   IN        INTN  DebugMode,
@@ -54,10 +51,24 @@ DebugLog (
 
 
 /** Prints series of bytes. */
-VOID
+void
 PrintBytes (
-  IN  VOID *Bytes,
+  IN  void *Bytes,
   IN  UINTN Number
   );
+
+
+/*
+ * OpenCore
+ */
+// This use the EDK format
+void EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...);
+
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 
 #endif

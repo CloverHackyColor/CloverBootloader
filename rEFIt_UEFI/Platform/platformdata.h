@@ -150,7 +150,7 @@ extern UINT64                         gPlatformFeature;
 
 
 
-VOID
+void
 SetDMISettingsForModel (
   MACHINE_TYPES Model,
   BOOLEAN Redefine
@@ -160,8 +160,8 @@ MACHINE_TYPES GetModelFromString (
   const XString8& ProductName
   );
 
-VOID
-GetDefaultSettings(VOID);
+void
+GetDefaultSettings(void);
 
 
 #endif /* PLATFORM_PLATFORMDATA_H_ */

@@ -396,7 +396,7 @@ EFIAPI
 OvrReadKeyState (IN APPLE_KEY_STATE_PROTOCOL *This,
                  OUT UINT16 *ModifyFlags,
                  OUT UINTN  *PressedKeyStatesCount,
-                 OUT APPLE_KEY *PressedKeyStates)
+                 OUT APPLE_KEY_CODE *PressedKeyStates)
 {
   EFI_STATUS				Status;
 
@@ -417,7 +417,7 @@ EFIAPI
 OvrSearchKeyStroke (APPLE_KEY_STATE_PROTOCOL* This,
                  IN UINT16 ModifyFlags,
                  IN UINTN PressedKeyStatesCount,
-                 IN OUT APPLE_KEY *PressedKeyStates,
+                 IN OUT APPLE_KEY_CODE *PressedKeyStates,
                  IN BOOLEAN ExactMatch)
 {
   EFI_STATUS				Status;
@@ -745,7 +745,7 @@ OvrSetKeyStrokeBufferKeys (
                               IN UINTN                            Index,
                               IN APPLE_MODIFIER_MAP               Modifiers,
                               IN UINTN                            NumberOfKeys,
-                              IN APPLE_KEY                        *Keys
+                              IN APPLE_KEY_CODE                        *Keys
                               )
 {
   EFI_STATUS               Status;

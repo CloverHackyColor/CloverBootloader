@@ -39,14 +39,14 @@
 #include "../libeg/XImage.h"
 #include "../refit/lib.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
-
+#include "../Platform/Self.h"
 //
 // Clover File location to boot from on removable media devices
 //
-#define CLOVER_MEDIA_FILE_NAME_IA32    L"\\EFI\\CLOVER\\CLOVERIA32.EFI"_XSW
-#define CLOVER_MEDIA_FILE_NAME_IA64    L"\\EFI\\CLOVER\\CLOVERIA64.EFI"_XSW
-#define CLOVER_MEDIA_FILE_NAME_X64     L"\\EFI\\CLOVER\\CLOVERX64.EFI"_XSW
-#define CLOVER_MEDIA_FILE_NAME_ARM     L"\\EFI\\CLOVER\\CLOVERARM.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_IA32    L"CLOVERIA32.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_IA64    L"CLOVERIA64.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_X64     L"CLOVERX64.EFI"_XSW
+#define CLOVER_MEDIA_FILE_NAME_ARM     L"CLOVERARM.EFI"_XSW
 
 #if   defined (MDE_CPU_IA32)
 #define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_IA32
@@ -113,7 +113,7 @@ STATIC BOOLEAN AddToolEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Full
   return TRUE;
 }
 
-STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
+STATIC void AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
   REFIT_MENU_ENTRY_CLOVER      *Entry;
   REFIT_MENU_ENTRY_CLOVER      *SubEntry;
@@ -185,19 +185,19 @@ STATIC VOID AddCloverEntry(IN CONST XStringW& LoaderPath, IN CONST CHAR16 *Loade
   MainMenu.AddMenuEntry(Entry, true);
 }
 
-VOID ScanTool(VOID)
+void ScanTool(void)
 {
   EFI_STATUS              Status;
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
-  VOID                    *Interface;
+  void                    *Interface;
   if (ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)
     return;
 
   //    DBG("Scanning for tools...\n");
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
-    if (!AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64U.efi"_XSW, NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
-      AddToolEntry(L"\\EFI\\CLOVER\\tools\\Shell64.efi"_XSW, NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
+    if (!AddToolEntry(SWPrintf("%ls\\tools\\Shell64U.efi", self.getCloverDirPathAsXStringW().wc_str()), NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
+      AddToolEntry(SWPrintf("%ls\\tools\\Shell64.efi", self.getCloverDirPathAsXStringW().wc_str()), NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
     }
   }
 
@@ -219,10 +219,10 @@ VOID ScanTool(VOID)
           DBG(" Deleted /EFI label\n");
         }
 
-        if (FileExists(Volume->RootDir, CLOVER_MEDIA_FILE_NAME)) {
+        if (FileExists(&self.getCloverDir(), CLOVER_MEDIA_FILE_NAME)) {
           DBG(" Found Clover\n");
           // Volume->BootType = BOOTING_BY_EFI;
-          AddCloverEntry(CLOVER_MEDIA_FILE_NAME, L"Clover Boot Options", Volume);
+          AddCloverEntry(SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), CLOVER_MEDIA_FILE_NAME.wc_str()), L"Clover Boot Options", Volume);
           break;
         }
       }
@@ -231,7 +231,7 @@ VOID ScanTool(VOID)
 }
 
 // Add custom tool entries
-VOID AddCustomTool(VOID)
+void AddCustomTool(void)
 {
   UINTN             VolumeIndex;
   REFIT_VOLUME      *Volume;
@@ -301,7 +301,7 @@ VOID AddCustomTool(VOID)
       // Change to custom image if needed
       Image = Custom->Image;
       if (Image.isEmpty() && Custom->ImagePath.notEmpty()) {
-        Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
+        Image.LoadXImage(&ThemeX.getThemeDir(), Custom->ImagePath);
       }
       if (Image.isEmpty()) {
         AddToolEntry(Custom->Path, Custom->FullTitle.wc_str(), Custom->Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom->Hotkey, Custom->LoadOptions);

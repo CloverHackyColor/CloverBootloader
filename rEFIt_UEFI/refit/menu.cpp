@@ -59,6 +59,14 @@
 #include "../Platform/boot.h"
 #include "../Platform/Injectors.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "Self.h"
+
+extern "C" {
+#include <Library/OcConfigurationLib.h>
+extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
+
+} // extern "C"
+
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -73,7 +81,6 @@
 #endif
 
 extern CONST CHAR8      *AudioOutputNames[];
-extern BOOLEAN          gProvideConsoleGopEnable;
 
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
@@ -123,7 +130,7 @@ REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
 REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
 
 
-VOID FillInputs(BOOLEAN New)
+void FillInputs(BOOLEAN New)
 {
   UINTN i,j; //for loops
   CHAR8 tmp[41];
@@ -441,7 +448,7 @@ VOID FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Decimal;  //122
   InputItems[InputItemsCount++].SValue.SWPrintf("%04lld", gSettings.MaxSlide);
   InputItems[InputItemsCount].ItemType = BoolValue; //123
-  InputItems[InputItemsCount++].BValue = gProvideConsoleGopEnable;
+  InputItems[InputItemsCount++].BValue = gSettings.ProvideConsoleGop;
 
 
 
@@ -464,7 +471,7 @@ VOID FillInputs(BOOLEAN New)
 }
 
 
-VOID ApplyInputs(VOID)
+void ApplyInputs(void)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   MACHINE_TYPES Model;
@@ -855,7 +862,7 @@ VOID ApplyInputs(VOID)
   i++; //90
   if (InputItems[i].Valid) {
     TagDict* dict;
-    Status = LoadUserSettings(SelfRootDir, XStringW(ConfigsList[OldChosenConfig]), &dict);
+    Status = LoadUserSettings(XStringW(ConfigsList[OldChosenConfig]), &dict);
     if (!EFI_ERROR(Status)) {
       gBootChanged = TRUE;
       gThemeChanged = TRUE;
@@ -913,22 +920,22 @@ VOID ApplyInputs(VOID)
   i++; //101  - Quirks
   if (InputItems[i].Valid) {
     gSettings.QuirksMask = InputItems[i].IValue;
-    gQuirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
-    gQuirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
-    gQuirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
-    gQuirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
-    gQuirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
-    gQuirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
-    gQuirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
-    gQuirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
-    gQuirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
-    gQuirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
-    gQuirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
-    gQuirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
-    gQuirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
-    gQuirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
-    gQuirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
-    gQuirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
+    mOpenCoreConfiguration.Booter.Quirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
+    mOpenCoreConfiguration.Booter.Quirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
+    mOpenCoreConfiguration.Booter.Quirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
+    mOpenCoreConfiguration.Booter.Quirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
+    mOpenCoreConfiguration.Booter.Quirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
+    mOpenCoreConfiguration.Booter.Quirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
+    mOpenCoreConfiguration.Booter.Quirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
+    mOpenCoreConfiguration.Booter.Quirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
+    mOpenCoreConfiguration.Booter.Quirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
+    mOpenCoreConfiguration.Booter.Quirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
+    mOpenCoreConfiguration.Booter.Quirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
+    mOpenCoreConfiguration.Booter.Quirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
+    mOpenCoreConfiguration.Booter.Quirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
+    mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
+    mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
+    mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
 	  DBG("applied Quirks mask:%x\n", gSettings.QuirksMask); //default is 0xA861
   }
   i++; //102
@@ -1066,8 +1073,8 @@ VOID ApplyInputs(VOID)
   }
   i++; //123
   if (InputItems[i].Valid) {
-    gProvideConsoleGopEnable = InputItems[i].BValue;
-    DBG("applied ConsoleGopEnable=%s\n", gProvideConsoleGopEnable?"Y":"N");
+    gSettings.ProvideConsoleGop = InputItems[i].BValue;
+    DBG("applied ConsoleGopEnable=%s\n", gSettings.ProvideConsoleGop ? "Y" : "N" );
   }
 
 
@@ -1077,7 +1084,7 @@ VOID ApplyInputs(VOID)
 }
 
 
-VOID AboutRefit(VOID)
+void AboutRefit(void)
 {
   if (AboutMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
@@ -1087,8 +1094,8 @@ VOID AboutRefit(VOID)
 //      AboutMenu.TitleImage.setEmpty(); //done in the constructor
 //    }
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
-    AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
-    AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
+    if ( "unknown"_XS8 != LString8(gRevisionStr) ) AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
+    if ( "unknown"_XS8 != LString8(gFirmwareBuildDate) ) AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
     AboutMenu.AddMenuInfo_f(" ");
     AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
     AboutMenu.AddMenuInfo_f("Portions Copyright (c) Intel Corporation");
@@ -1131,7 +1138,7 @@ VOID AboutRefit(VOID)
   AboutMenu.RunMenu(NULL);
 }
 
-VOID HelpRefit(VOID)
+void HelpRefit(void)
 {
   if (HelpMenu.Entries.size() == 0) {
     if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_MENU_TITLE_IMAGE)) {
@@ -1550,7 +1557,7 @@ REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScree
 	return NewEntry_(Entry, SubScreen, AtClick, ID, Title)->getREFIT_MENU_ITEM_OPTIONS();
 }
 
-VOID ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
+void ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
     ChosenEntry->Title.SWPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
@@ -1761,39 +1768,36 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(const XString8& UniSysVer)
   REFIT_MENU_ITEM_OPTIONS     *Entry = NULL;
   REFIT_MENU_SCREEN    *SubScreen = NULL;
   REFIT_INPUT_DIALOG   *InputBootArgs;
-  SIDELOAD_KEXT        *Kext = NULL;
   XString8              sysVer = S8Printf("%s->", UniSysVer.c_str());
 
-  Kext = InjectKextList;
-  while (Kext) {
-    if ( Kext->KextDirNameUnderOEMPath == UniSysVer ) {
+  for ( size_t idx = 0 ; idx < InjectKextList.size() ; idx ++ ) {
+    SIDELOAD_KEXT& Kext = InjectKextList[idx];
+    if ( Kext.KextDirNameUnderOEMPath == UniSysVer ) {
     	if ( SubScreen == NULL ) {
           Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXT_INJECT, sysVer);
           SubScreen->AddMenuInfoLine_f("Choose/check kext to disable:");
     	}
       InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title.SWPrintf("%ls, v.%ls", Kext->FileName.wc_str(), Kext->Version.wc_str());
+      InputBootArgs->Title.SWPrintf("%ls, v.%ls", Kext.FileName.wc_str(), Kext.Version.wc_str());
 //      InputBootArgs->Tag = TAG_INPUT;
       InputBootArgs->Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &(Kext->MenuItem);
+      InputBootArgs->Item = &(Kext.MenuItem);
       InputBootArgs->AtClick = ActionEnter;
       InputBootArgs->AtRightClick = ActionDetails;
       SubScreen->AddMenuEntry(InputBootArgs, true);
 
-      SIDELOAD_KEXT *plugInKext = Kext->PlugInList;
-      while (plugInKext) {
+      for ( size_t idxPlugin = 0 ; idxPlugin < Kext.PlugInList.size() ; idxPlugin ++ ) {
+        SIDELOAD_KEXT& plugInKext = Kext.PlugInList[idxPlugin];
         InputBootArgs = new REFIT_INPUT_DIALOG;
-        InputBootArgs->Title.SWPrintf("  |-- %ls, v.%ls", plugInKext->FileName.wc_str(), plugInKext->Version.wc_str());
+        InputBootArgs->Title.SWPrintf("  |-- %ls, v.%ls", plugInKext.FileName.wc_str(), plugInKext.Version.wc_str());
 //        InputBootArgs->Tag = TAG_INPUT;
         InputBootArgs->Row = 0xFFFF; //cursor
-        InputBootArgs->Item = &(plugInKext->MenuItem);
+        InputBootArgs->Item = &(plugInKext.MenuItem);
         InputBootArgs->AtClick = ActionEnter;
         InputBootArgs->AtRightClick = ActionDetails;
         SubScreen->AddMenuEntry(InputBootArgs, true);
-        plugInKext = plugInKext->Next;
       }
     }
-    Kext = Kext->Next;
   }
 
   if ( SubScreen != NULL ) SubScreen->AddMenuEntry(&MenuEntryReturn, false);
@@ -1827,20 +1831,23 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 
 		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", ShortOSVersion.c_str());
 
-		// Add kext from 10
-		{
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection("10"_XS8), true);
+    // Add kext from 10 or 11
+    if ( OSVersion.contains(".") )
+    {
+      XString8 osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
+
+			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(osMajorVersion), true);
 
 			XString8 DirName;
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				DirName = "10_install"_XS8;
+				DirName = S8Printf("%s_install", osMajorVersion.c_str());
 			}
 			else {
 				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					DirName = "10_recovery"_XS8;
+					DirName = S8Printf("%s_recovery", osMajorVersion.c_str());
 				}
 				else {
-					DirName = "10_normal"_XS8;
+					DirName = S8Printf("%s_normal", osMajorVersion.c_str());
 				}
 			}
 			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
@@ -2232,7 +2239,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   return Entry;
 }
 
-VOID CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
+void CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 {
 	REFIT_INPUT_DIALOG  *InputBootArgs;
 
@@ -2437,7 +2444,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
   SubScreen->AddMenuCheck("Hi DPI",             kBootArgsFlagHiDPI, 65);
   SubScreen->AddMenuCheck("Black Screen",       kBootArgsFlagBlack, 65);
   SubScreen->AddMenuCheck("CSR Active Config",  kBootArgsFlagCSRActiveConfig, 65);
-  SubScreen->AddMenuCheck("CSR Pending Config", kBootArgsFlagCSRPendingConfig, 65);
+  SubScreen->AddMenuCheck("CSR Pending Config", kBootArgsFlagCSRConfigMode, 65);
   SubScreen->AddMenuCheck("CSR Boot",           kBootArgsFlagCSRBoot, 65);
   SubScreen->AddMenuCheck("Black Background",   kBootArgsFlagBlackBg, 65);
   SubScreen->AddMenuCheck("Login UI",           kBootArgsFlagLoginUI, 65);
@@ -2536,7 +2543,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
 }
 
 
-VOID  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
+void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_ABSTRACT_MENU_ENTRY    *TmpChosenEntry = NULL;
   REFIT_ABSTRACT_MENU_ENTRY    *NextChosenEntry = NULL;

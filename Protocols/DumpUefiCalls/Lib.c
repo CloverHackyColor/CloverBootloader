@@ -14,7 +14,7 @@
 #include <Library/DebugLib.h>
 #include <Library/PrintLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/DeviceTreeLib.h>
+//#include <Library/DeviceTreeLib.h>
 
 #include <Protocol/LoadedImage.h>
 #include <Protocol/BlockIo.h>

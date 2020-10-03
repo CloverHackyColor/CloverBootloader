@@ -23,7 +23,7 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 //
-//VOID LowCase (IN OUT CHAR8 *Str)
+//void LowCase (IN OUT CHAR8 *Str)
 //{
 //  while (*Str) {
 //    if (IS_UPPER(*Str)) {
@@ -107,4 +107,42 @@ XString8 Bytes2HexStr(UINT8 *data, UINTN len)
     result += (CHAR8) (87 + b + (((b - 10) >> 31) & -39));
   }
   return result;
+}
+
+
+BOOLEAN haveError = FALSE;
+
+
+BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
+{
+//    CHAR16 ErrorName[64];
+
+    if (!EFI_ERROR(Status))
+        return FALSE;
+
+//    StatusToString(ErrorName, Status);
+    gST->ConOut->SetAttribute (gST->ConOut, EFI_RED | EFI_BACKGROUND_BLACK);
+    printf("Fatal Error: %s %ls\n", efiStrError(Status), where);
+    gST->ConOut->SetAttribute (gST->ConOut, EFI_LIGHTGRAY | EFI_BACKGROUND_BLACK);
+    haveError = TRUE;
+
+    //gBS->Exit(ImageHandle, ExitStatus, ExitDataSize, ExitData);
+
+    return TRUE;
+}
+
+BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
+{
+//    CHAR16 ErrorName[64];
+
+    if (!EFI_ERROR(Status))
+        return FALSE;
+
+//    StatusToString(ErrorName, Status);
+    gST->ConOut->SetAttribute (gST->ConOut, EFI_RED | EFI_BACKGROUND_BLACK);
+    printf("Error: %s %ls\n", efiStrError(Status), where);
+    gST->ConOut->SetAttribute (gST->ConOut, EFI_LIGHTGRAY | EFI_BACKGROUND_BLACK);
+    haveError = TRUE;
+
+    return TRUE;
 }

@@ -38,11 +38,8 @@
 #include "libegint.h"
 #include "lodepng.h"
 #include "../Platform/Settings.h"
+#include "Self.h"
 
-
-//#include <efiUgaDraw.h>
-#include <Protocol/GraphicsOutput.h>
-//#include <Protocol/efiConsoleControl.h>
 
 // Console defines and variables
 
@@ -100,7 +97,7 @@ egConsoleControlSetMode(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, IN EFI_CONSOLE_CO
 // Screen handling
 //
 /*
-VOID egDumpGOPVideoModes(VOID)
+void egDumpGOPVideoModes(void)
 {
     EFI_STATUS  Status;
     UINT32      MaxMode;
@@ -155,7 +152,7 @@ VOID egDumpGOPVideoModes(VOID)
     
 }
 */
-VOID egDumpSetConsoleVideoModes(VOID)
+void egDumpSetConsoleVideoModes(void)
 {
   UINTN i;
   UINTN Width, Height;
@@ -358,22 +355,22 @@ EFI_STATUS egSetScreenResolution(IN const CHAR16 *WidthHeight)
     return EFI_UNSUPPORTED;
 }
 
-VOID egInitScreen(IN BOOLEAN SetMaxResolution)
+void egInitScreen(IN BOOLEAN SetMaxResolution)
 {
     EFI_STATUS Status;
     UINT32 Width, Height, Depth, RefreshRate;
 //    CHAR16 *Resolution;
 
     // get protocols
-    Status = EfiLibLocateProtocol(&ConsoleControlProtocolGuid, (VOID **) &ConsoleControl);
+    Status = EfiLibLocateProtocol(&ConsoleControlProtocolGuid, (void **) &ConsoleControl);
     if (EFI_ERROR(Status))
         ConsoleControl = NULL;
     
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (VOID **) &UgaDraw);
+    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (void **) &UgaDraw);
     if (EFI_ERROR(Status))
         UgaDraw = NULL;
     
-    Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
+    Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (void **) &GraphicsOutput);
     if (EFI_ERROR(Status))
         GraphicsOutput = NULL;
 
@@ -429,7 +426,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     }
 }
 
-VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
+void egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
 {
     if (ScreenWidth != NULL)
         *ScreenWidth = egScreenWidth;
@@ -437,7 +434,7 @@ VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
         *ScreenHeight = egScreenHeight;
 }
 
-XString8 egScreenDescription(VOID)
+XString8 egScreenDescription(void)
 {
     if (egHasGraphics) {
         if (GraphicsOutput != NULL) {
@@ -452,12 +449,12 @@ XString8 egScreenDescription(VOID)
     }
 }
 
-BOOLEAN egHasGraphicsMode(VOID)
+BOOLEAN egHasGraphicsMode(void)
 {
     return egHasGraphics;
 }
 
-BOOLEAN egIsGraphicsModeEnabled(VOID)
+BOOLEAN egIsGraphicsModeEnabled(void)
 {
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
 
@@ -469,7 +466,7 @@ BOOLEAN egIsGraphicsModeEnabled(VOID)
     return FALSE;
 }
 
-VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
+void egSetGraphicsModeEnabled(IN BOOLEAN Enable)
 {
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
     EFI_CONSOLE_CONTROL_SCREEN_MODE NewMode;
@@ -511,7 +508,7 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
 // Drawing to the screen
 //
 
-VOID egClearScreen(IN const void *Color)
+void egClearScreen(IN const void *Color)
 {
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL  FillColor = *(EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Color;
   if (!egHasGraphics)
@@ -532,7 +529,7 @@ VOID egClearScreen(IN const void *Color)
 //
 // Make a screenshot
 //
-EFI_STATUS egScreenShot(VOID)
+EFI_STATUS egScreenShot(void)
 {
   EFI_STATUS      Status = EFI_NOT_READY;
   //take screen
@@ -554,12 +551,12 @@ EFI_STATUS egScreenShot(VOID)
   }
   //save file with a first unoccupied name
   for (UINTN Index = 0; Index < 60; Index++) {
-    XStringW Name = SWPrintf("EFI\\CLOVER\\misc\\screenshot%lld.png", Index);
-    if (!FileExists(SelfRootDir, Name.wc_str())) {
-      Status = egSaveFile(SelfRootDir, Name.wc_str(), FileData, FileDataLength);
-      if (EFI_ERROR(Status))
-        Status = egSaveFile(NULL, Name.wc_str(), FileData, FileDataLength);
-
+    XStringW Name = SWPrintf("misc\\screenshot%lld.png", Index);
+    if (!FileExists(&self.getCloverDir(), Name.wc_str())) {
+      Status = egSaveFile(&self.getCloverDir(), Name.wc_str(), FileData, FileDataLength);
+      // Jief : don't write outside SelfDir
+//      if (EFI_ERROR(Status))
+//        Status = egSaveFile(NULL, Name.wc_str(), FileData, FileDataLength);
       if (!EFI_ERROR(Status)) {
         break;
       }

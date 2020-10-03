@@ -55,13 +55,13 @@
 #endif
 
 // Enable secure boot
-VOID EnableSecureBoot(VOID)
+void EnableSecureBoot(void)
 {
   EFI_STATUS  Status = EFI_NOT_FOUND;
   BOOLEAN     WantDefaultKeys;
   CONST CHAR16     *ErrorString = NULL;
   UINTN       CloverSignatureSize = 0;
-  VOID       *CloverSignature = NULL;
+  void       *CloverSignature = NULL;
   // Check in setup mode
   if (gSettings.SecureBoot || !gSettings.SecureBootSetupMode) {
     return;
@@ -70,36 +70,34 @@ VOID EnableSecureBoot(VOID)
   WantDefaultKeys = YesNoMessage(L"Secure Boot", L"Enroll the default keys too?");
   DBG("Enabling secure boot with%s default keys\n", WantDefaultKeys ? "" : "out");
   // Get this image's certificate
-  if (SelfFullDevicePath != NULL) {
-    UINT32 AuthenticationStatus = 0;
-    UINTN  FileSize = 0;
-    // Open the file buffer
-    VOID  *FileBuffer = GetFileBufferByFilePath(FALSE, SelfFullDevicePath, &FileSize, &AuthenticationStatus);
-    if (FileBuffer != NULL) {
-      if (FileSize > 0) {
-        // Retrieve the certificates
-        CloverSignature = GetImageSignatureDatabase(FileBuffer, FileSize, &CloverSignatureSize, FALSE);
-        if (CloverSignature != NULL) {
-          if (CloverSignatureSize > 0) {
-            // Found signature
-            Status = EFI_SUCCESS;
-          } else {
-            FreePool(CloverSignature);
-            CloverSignature = NULL;
-          }
+  UINT32 AuthenticationStatus = 0;
+  UINTN  FileSize = 0;
+  // Open the file buffer
+  void  *FileBuffer = GetFileBufferByFilePath(FALSE, &self.getSelfFullPath(), &FileSize, &AuthenticationStatus);
+  if (FileBuffer != NULL) {
+    if (FileSize > 0) {
+      // Retrieve the certificates
+      CloverSignature = GetImageSignatureDatabase(FileBuffer, FileSize, &CloverSignatureSize, FALSE);
+      if (CloverSignature != NULL) {
+        if (CloverSignatureSize > 0) {
+          // Found signature
+          Status = EFI_SUCCESS;
+        } else {
+          FreePool(CloverSignature);
+          CloverSignature = NULL;
         }
       }
-      FreePool(FileBuffer);
     }
-    // Check and alert about image not found
-    if ((FileBuffer == NULL) || (FileSize == 0)) {
-      CHAR16 *FilePath = FileDevicePathToStr(SelfFullDevicePath);
-      if (FilePath != NULL) {
-        DBG("Failed to load Clover image from %ls\n", FilePath);
-        FreePool(FilePath);
-      } else {
-        DBG("Failed to load Clover image\n");
-      }
+    FreePool(FileBuffer);
+  }
+  // Check and alert about image not found
+  if ((FileBuffer == NULL) || (FileSize == 0)) {
+    CHAR16 *FilePath = FileDevicePathToStr(&self.getSelfFullPath());
+    if (FilePath != NULL) {
+      DBG("Failed to load Clover image from %ls\n", FilePath);
+      FreePool(FilePath);
+    } else {
+      DBG("Failed to load Clover image\n");
     }
   }
   if (EFI_ERROR(Status) || (CloverSignature == NULL)) {
@@ -147,7 +145,7 @@ CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
   return L"Deny";
 }
 
-STATIC VOID PrintSecureBootInfo(VOID)
+STATIC void PrintSecureBootInfo(void)
 {
   // Nothing to do if secure boot is disabled or in setup mode
   if (!gSettings.SecureBoot) {
@@ -160,7 +158,7 @@ STATIC VOID PrintSecureBootInfo(VOID)
 }
 
 // Alert message for disable failure
-STATIC VOID DisableMessage(IN EFI_STATUS  Status,
+STATIC void DisableMessage(IN EFI_STATUS  Status,
                            IN CHAR16     *String,
                            IN CHAR16     *ErrorString)
 {
@@ -175,7 +173,7 @@ STATIC VOID DisableMessage(IN EFI_STATUS  Status,
 }
 
 // Disable secure boot
-VOID DisableSecureBoot(VOID)
+void DisableSecureBoot(void)
 {
   EFI_STATUS  Status;
   CHAR16     *ErrorString = NULL;
@@ -292,7 +290,7 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
 STATIC BOOLEAN EFIAPI
 CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatus,
                       IN     CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath,
-                      IN     VOID                           *FileBuffer,
+                      IN     void                           *FileBuffer,
                       IN     UINTN                           FileSize)
 {
   UINTN UserResponse = SECURE_BOOT_POLICY_DENY;
@@ -369,7 +367,7 @@ InternalFileAuthentication(IN CONST EFI_SECURITY_ARCH_PROTOCOL *This,
 EFI_STATUS EFIAPI
 Internal2FileAuthentication(IN CONST EFI_SECURITY2_ARCH_PROTOCOL *This,
                             IN CONST EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
-                            IN VOID                              *FileBuffer,
+                            IN void                              *FileBuffer,
                             IN UINTN                              FileSize,
                             IN BOOLEAN                            BootPolicy)
 {
@@ -412,7 +410,7 @@ EFI_STATUS VerifySecureBootImage(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 }
 
 // Install secure boot
-EFI_STATUS InstallSecureBoot(VOID)
+EFI_STATUS InstallSecureBoot(void)
 {
   EFI_STATUS                   Status;
   EFI_SECURITY_ARCH_PROTOCOL  *Security = NULL;
@@ -427,8 +425,8 @@ EFI_STATUS InstallSecureBoot(VOID)
     return EFI_SUCCESS;
   }
   // Locate security protocols
-  gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (VOID **)&Security2);
-  Status = gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (VOID **)&Security);
+  gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (void **)&Security2);
+  Status = gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (void **)&Security);
   if (EFI_ERROR(Status)) {
     return Status;
   }
@@ -446,13 +444,13 @@ EFI_STATUS InstallSecureBoot(VOID)
 }
 
 // Uninstall secure boot
-VOID UninstallSecureBoot(VOID)
+void UninstallSecureBoot(void)
 {
   // Uninstall policy hooks
   if (gSecurityFileAuthentication) {
     EFI_SECURITY_ARCH_PROTOCOL  *Security = NULL;
     // Restore the security protocol function
-    gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (VOID **)&Security);
+    gBS->LocateProtocol(&gEfiSecurityArchProtocolGuid, NULL, (void **)&Security);
     if (Security) {
       Security->FileAuthenticationState = gSecurityFileAuthentication;
     }
@@ -461,7 +459,7 @@ VOID UninstallSecureBoot(VOID)
   if (gSecurity2FileAuthentication) {
     EFI_SECURITY2_ARCH_PROTOCOL *Security2 = NULL;
     // Restory the security 2 protocol function
-    gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (VOID **)&Security2);
+    gBS->LocateProtocol(&gEfiSecurity2ArchProtocolGuid, NULL, (void **)&Security2);
     if (Security2) {
       Security2->FileAuthentication = gSecurity2FileAuthentication;
     }
@@ -470,7 +468,7 @@ VOID UninstallSecureBoot(VOID)
 }
 
 // Initialize secure boot
-VOID InitializeSecureBoot(VOID)
+void InitializeSecureBoot(void)
 {
   // Set secure boot variables to firmware values
   UINTN Size = sizeof(gSettings.SecureBootSetupMode);

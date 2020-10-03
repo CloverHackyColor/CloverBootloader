@@ -3,6 +3,7 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <Library/NetLib.h>
 #include "../refit/lib.h"
+#include "Net.h"
 
 #ifndef DEBUG_MAC
 #ifndef DEBUG_ALL
@@ -18,11 +19,13 @@
 #define DBG(...) DebugLog(DEBUG_MAC, __VA_ARGS__)
 #endif
 
-extern UINTN                           nLanCards;     // number of LAN cards
-extern UINTN                           nLanPaths;     // number of UEFI LAN
-extern UINT16                          gLanVendor[4]; // their vendors
-extern UINT8                           *gLanMmio[4];   // their MMIO regions
-extern UINT8                           gLanMac[4][6]; // their MAC addresses
+UINTN                           nLanCards;        // number of LAN cards
+UINT16                          gLanVendor[4];    // their vendors
+UINT8                           *gLanMmio[4];     // their MMIO regions
+UINT8                           gLanMac[4][6];    // their MAC addresses
+UINTN                           nLanPaths;        // number of UEFI LAN
+
+
 extern BOOLEAN                         GetLegacyLanAddress;
 
 //Marvell Yukon
@@ -67,7 +70,7 @@ typedef struct {
  
  */
 
-VOID
+void
 GetMacAddress()
 {
   EFI_STATUS                  Status;
@@ -111,7 +114,7 @@ GetMacAddress()
     Status = gBS->HandleProtocol (
                                   HandleBuffer[Index],
                                   &gEfiDevicePathProtocolGuid,
-                                  (VOID **) &Node
+                                  (void **) &Node
                                   );
     if (EFI_ERROR(Status)) {
       continue;

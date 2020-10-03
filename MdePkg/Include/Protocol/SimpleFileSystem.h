@@ -59,7 +59,7 @@ typedef EFI_FILE_PROTOCOL                 EFI_FILE;
 typedef
 EFI_STATUS
 (EFIAPI *EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_OPEN_VOLUME)(
-  IN EFI_SIMPLE_FILE_SYSTEM_PROTOCOL    *This,
+  IN JCONST EFI_SIMPLE_FILE_SYSTEM_PROTOCOL    *This,
   OUT EFI_FILE_PROTOCOL                 **Root
   );
 
@@ -113,9 +113,9 @@ struct _EFI_SIMPLE_FILE_SYSTEM_PROTOCOL {
 typedef
 EFI_STATUS
 (EFIAPI *EFI_FILE_OPEN)(
-  IN JCONST EFI_FILE_PROTOCOL        *This,
+  IN JCONST EFI_FILE_PROTOCOL *This,
   OUT EFI_FILE_PROTOCOL       **NewHandle,
-  IN JCONST CHAR16                   *FileName,
+  IN JCONST CHAR16            *FileName,
   IN UINT64                   OpenMode,
   IN UINT64                   Attributes
   );
@@ -150,7 +150,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_FILE_CLOSE)(
-  IN EFI_FILE_PROTOCOL  *This
+  IN JCONST EFI_FILE_PROTOCOL  *This
   );
 
 /**
@@ -192,7 +192,7 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_FILE_READ)(
-  IN EFI_FILE_PROTOCOL        *This,
+  JCONST EFI_FILE_PROTOCOL        *This,
   IN OUT UINTN                *BufferSize,
   OUT VOID                    *Buffer
   );
@@ -287,8 +287,8 @@ EFI_STATUS
 typedef
 EFI_STATUS
 (EFIAPI *EFI_FILE_GET_INFO)(
-  IN EFI_FILE_PROTOCOL        *This,
-  IN EFI_GUID                 *InformationType,
+  JCONST EFI_FILE_PROTOCOL        *This,
+  JCONST EFI_GUID                 *InformationType,
   IN OUT UINTN                *BufferSize,
   OUT VOID                    *Buffer
   );

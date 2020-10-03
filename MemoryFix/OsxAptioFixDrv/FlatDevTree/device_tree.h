@@ -83,17 +83,17 @@ Structures for a Flattened Device Tree
 
 #define kPropNameLength	32
 
-typedef struct DeviceTreeNodeProperty {
+typedef struct DTProperty {
     char		name[kPropNameLength];	// NUL terminated property name
     UINT32		length;		// Length (bytes) of following prop value
 //  unsigned long	value[1];	// Variable length value of property
 					// Padded to a multiple of a longword?
-} DeviceTreeNodeProperty;
+} DTProperty;
 
 typedef struct OpaqueDTEntry {
     UINT32		nProperties;	// Number of props[] elements (0 => end)
     UINT32		nChildren;	// Number of children[] elements
-//  DeviceTreeNodeProperty	props[];// array size == nProperties
+//  DTProperty	props[];// array size == nProperties
 //  DeviceTreeNode	children[];	// array size == nChildren
 } DeviceTreeNode;
 
@@ -118,7 +118,7 @@ typedef struct OpaqueDTEntryIterator {
 /* Property Iterator*/
 typedef struct OpaqueDTPropertyIterator {
 	RealDTEntry entry;
-	DeviceTreeNodeProperty *currentProperty;
+	DTProperty *currentProperty;
 	UINT32 currentIndex;
 } *RealDTPropertyIterator;
 

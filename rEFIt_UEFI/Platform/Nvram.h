@@ -25,7 +25,7 @@ FindStartupDiskVolume (
   REFIT_MENU_SCREEN *MainMenu
   );
 
-VOID
+void
 *GetNvramVariable(
     IN      CONST CHAR16   *VariableName,
     IN      EFI_GUID       *VendorGuid,
@@ -45,7 +45,7 @@ AddNvramVariable (
   IN  EFI_GUID *VendorGuid,
   IN  UINT32   Attributes,
   IN  UINTN    DataSize,
-  IN  VOID     *Data
+  IN  const void     *Data
   );
 EFI_STATUS
 AddNvramXString8 (
@@ -61,7 +61,7 @@ SetNvramVariable (
   IN  EFI_GUID    *VendorGuid,
   IN  UINT32       Attributes,
   IN  UINTN        DataSize,
-  IN  CONST VOID  *Data
+  IN  CONST void  *Data
   );
 EFI_STATUS
 SetNvramXString8 (
@@ -77,8 +77,8 @@ DeleteNvramVariable (
   IN  EFI_GUID *VendorGuid
   );
 
-VOID
-ResetNvram (VOID);
+void
+ResetNvram (void);
 
 BOOLEAN
 IsDeletableVariable (
@@ -87,24 +87,24 @@ IsDeletableVariable (
   );
 
 EFI_STATUS
-ResetNativeNvram (VOID);
+ResetNativeNvram (void);
 ;
 
 EFI_STATUS
-GetEfiBootDeviceFromNvram (VOID);
+GetEfiBootDeviceFromNvram (void);
 
 EFI_GUID
 *FindGPTPartitionGuidInDevicePath (
-  IN  EFI_DEVICE_PATH_PROTOCOL *DevicePath
+  const  EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
-VOID
-PutNvramPlistToRtVars (VOID);
+void
+PutNvramPlistToRtVars (void);
 
-VOID
+void
 GetSmcKeys(BOOLEAN WriteToSMC);
 #if CHECK_SMC
-VOID DumpSmcKeys();
+void DumpSmcKeys();
 #endif
 
 EFI_STATUS
@@ -113,8 +113,8 @@ SetStartupDiskVolume (
   IN  CONST XStringW& LoaderPath
   );
 
-VOID
-RemoveStartupDiskVolume (VOID);
+void
+RemoveStartupDiskVolume (void);
 
 UINT64
 GetEfiTimeInMs (IN EFI_TIME *T);

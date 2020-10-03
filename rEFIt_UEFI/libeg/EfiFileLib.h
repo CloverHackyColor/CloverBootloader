@@ -250,7 +250,7 @@ EfiSeek (
 EFI_STATUS
 EfiRead (
   IN  EFI_OPEN_FILE     *Stream,
-  OUT VOID              *Buffer,
+  OUT void              *Buffer,
   OUT UINTN             *BufferSize
   );
 
@@ -277,7 +277,7 @@ EfiRead (
 EFI_STATUS
 EfiReadAllocatePool (
   IN  EFI_OPEN_FILE     *Stream,
-  OUT VOID              **Buffer,
+  OUT void              **Buffer,
   OUT UINTN             *BufferSize
   );
 
@@ -300,7 +300,7 @@ EfiReadAllocatePool (
 EFI_STATUS
 EfiWrite (
   IN  EFI_OPEN_FILE   *Stream,
-  OUT VOID            *Buffer,
+  OUT void            *Buffer,
   OUT UINTN           *BufferSize
   );
 
@@ -348,7 +348,7 @@ EfiSetCwd (
 **/
 CHAR8 *
 EfiGetCwd (
-  VOID
+  void
   );  
 
 #endif

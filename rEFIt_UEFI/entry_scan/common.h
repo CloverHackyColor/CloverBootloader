@@ -26,12 +26,12 @@ CONST CHAR16
   IN CONST CHAR16 *SearchFor
   );
 
-VOID
+void
 StrToLower (
   IN CHAR16 *Str
   );
 
-VOID
+void
 AlertMessage (
   IN CONST CHAR16 *Title,
   IN CONST CHAR16 *Message

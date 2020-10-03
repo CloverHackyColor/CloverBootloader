@@ -10,7 +10,7 @@
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
-#include <Library/DeviceTreeLib.h>
+#include <Library/OcDeviceTreeLib.h>
 #include <Library/OcMiscLib.h>
 #include <Library/PrintLib.h>
 #include <Library/RngLib.h>

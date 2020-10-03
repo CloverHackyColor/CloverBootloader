@@ -58,7 +58,7 @@ InitializeEdidOverride ()
 }
 
 //used only if VBiosPatchNeeded and if no CustomEDID
-UINT8* getCurrentEdid (VOID)
+UINT8* getCurrentEdid (void)
 {
   EFI_STATUS                      Status;
   EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
@@ -66,7 +66,7 @@ UINT8* getCurrentEdid (VOID)
   
   DBG("EdidActive:");
   Edid = NULL;
-  Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
+  Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (void**)&EdidProtocol);
   if (!EFI_ERROR(Status)) {
     DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
@@ -78,7 +78,7 @@ UINT8* getCurrentEdid (VOID)
   return Edid;
 }
 
-VOID DebugDumpEDID(CONST CHAR8 *Message, INTN N)
+void DebugDumpEDID(CONST CHAR8 *Message, INTN N)
 {
   INTN i,j;
   // Don't dump in the case of debug logging because of too slow output
@@ -100,7 +100,7 @@ VOID DebugDumpEDID(CONST CHAR8 *Message, INTN N)
 // if EFI_SUCCESS then result in gSettings.CustomEDID != NULL
 // first priority is CustomEDID
 // second is UEFI EDID from EdidDiscoveredProtocol
-EFI_STATUS GetEdidDiscovered(VOID)
+EFI_STATUS GetEdidDiscovered(void)
 {
   EFI_STATUS  Status = EFI_SUCCESS;
   UINTN       N = 0;
@@ -111,7 +111,7 @@ EFI_STATUS GetEdidDiscovered(VOID)
     N = gSettings.CustomEDIDsize;
     DebugDumpEDID("--- Custom EDID Table", N);
   } else {
-    Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
+    Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (void **)&EdidDiscovered);
     if (!EFI_ERROR(Status)) { //discovered
       N = EdidDiscovered->SizeOfEdid;
       if (!GlobalConfig.DebugLog) {

@@ -984,7 +984,7 @@ KeyboardHandler (
   UINT32              UsbStatus;
   EFI_KEY_DESCRIPTOR  *KeyDescriptor;
   UINTN               NumberOfKeys;
-  APPLE_KEY           Keys[8];
+  APPLE_KEY_CODE           Keys[8];
 
   ASSERT (Context != NULL);
 
@@ -1104,7 +1104,7 @@ KeyboardHandler (
                                    UsbKeyboardDevice->KeyMapDbIndex,
                                    (APPLE_MODIFIER_MAP)CurModifierMap,
                                    NumberOfKeys,
-                                   &Keys[0]  //APPLE_KEY
+                                   &Keys[0]  //APPLE_KEY_CODE
                                    );
   }
 

@@ -43,10 +43,10 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
                 OUT       CHAR8              **EndPointer,  OPTIONAL
                 OUT       float              *Data);
 #if 0
-//VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X);
+//void AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X);
 
-VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size,
-               INTN (*compare)(CONST VOID* a, CONST VOID* b));
+void QuickSort(void* Array, INTN Low, INTN High, INTN Size,
+               INTN (*compare)(CONST void* a, CONST void* b));
 #endif
 
 

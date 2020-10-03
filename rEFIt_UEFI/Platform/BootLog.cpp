@@ -12,12 +12,12 @@
 //#include <Library/MemLogLib.h>
 #include "DataHubCpu.h"
 #include "../Platform/Settings.h"
-
-extern  EFI_GUID  gEfiMiscSubClassGuid;
+#include "Self.h"
+#include "guid.h"
 
 
 /** Prints Number of bytes in a row (hex and ascii). Row size is MaxNumber. */
-VOID
+void
 PrintBytesRow(IN UINT8 *Bytes, IN UINTN Number, IN UINTN MaxNumber)
 {
 	UINTN	Index;
@@ -47,8 +47,8 @@ PrintBytesRow(IN UINT8 *Bytes, IN UINTN Number, IN UINTN MaxNumber)
 }
 
 /** Prints series of bytes. */
-VOID
-PrintBytes(IN VOID *Bytes, IN UINTN Number)
+void
+PrintBytes(IN void *Bytes, IN UINTN Number)
 {
 	UINTN	Index;
 	
@@ -57,47 +57,67 @@ PrintBytes(IN VOID *Bytes, IN UINTN Number)
 	}
 }
 
-
+static EFI_FILE_PROTOCOL* gLogFile = NULL;
 
 EFI_FILE_PROTOCOL* GetDebugLogFile()
 {
   EFI_STATUS          Status;
-  EFI_LOADED_IMAGE    *LoadedImage;
-  EFI_FILE_PROTOCOL   *RootDir;
   EFI_FILE_PROTOCOL   *LogFile;
   
-  // get RootDir from device we are loaded from
-  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
-  if (EFI_ERROR(Status)) {
-    return NULL;
-  }
-  RootDir = EfiLibOpenRoot(LoadedImage->DeviceHandle);
-  if (RootDir == NULL) {
-    return NULL;
-  }
+  if ( gLogFile ) return gLogFile;
+  
+  if ( !self.isInitialized() ) return NULL;
+
+//  // get RootDir from device we are loaded from
+//  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &LoadedImage);
+//  if (EFI_ERROR(Status)) {
+//    return NULL;
+//  }
+//  RootDir = EfiLibOpenRoot(LoadedImage->DeviceHandle);
+//  if (RootDir == NULL) {
+//    return NULL;
+//  }
   
   // Open log file from current root
-  Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
-                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, DEBUG_LOG_new, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  if ( GlobalConfig.ScratchDebugLogAtStart  &&  Status == EFI_SUCCESS)
+  {
+    EFI_STATUS          StatusDelete;
+    StatusDelete = LogFile->Delete(LogFile);
+    if ( StatusDelete == EFI_SUCCESS) {
+      Status = EFI_NOT_FOUND; // to get it created next.
+    }else{
+      DebugLog(1, "Cannot delete log file %ls\\%ls from current root : %s\n", self.getCloverDirPathAsXStringW().wc_str(), DEBUG_LOG_new, efiStrError(StatusDelete));
+    }
+  }
 
   // If the log file is not found try to create it
   if (Status == EFI_NOT_FOUND) {
-    Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
-                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+    Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, DEBUG_LOG_new, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
   }
-  RootDir->Close(RootDir);
-  RootDir = NULL;
+//  RootDir->Close(RootDir);
+//  RootDir = NULL;
   
+  // Jief : do we really need this ?
   if (EFI_ERROR(Status)) {
     // try on first EFI partition
+    EFI_FILE* RootDir;
     Status = egFindESP(&RootDir);
     if (!EFI_ERROR(Status)) {
-      Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
-                             EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+      Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), DEBUG_LOG_new).wc_str(), EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+      if ( GlobalConfig.ScratchDebugLogAtStart  &&  Status == EFI_SUCCESS)
+      {
+        EFI_STATUS          StatusDelete;
+        StatusDelete = LogFile->Delete(LogFile);
+        if ( StatusDelete == EFI_SUCCESS) {
+          Status = EFI_NOT_FOUND; // to get it created next.
+        }else{
+          DebugLog(1, "Cannot delete log file %ls from 1st EFI partition : %s\n", SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), DEBUG_LOG_new).wc_str(), efiStrError(StatusDelete));
+        }
+      }
       // If the log file is not found try to create it
       if (Status == EFI_NOT_FOUND) {
-        Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
-                               EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+        Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), DEBUG_LOG_new).wc_str(), EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
       }
       RootDir->Close(RootDir);
       RootDir = NULL;
@@ -108,19 +128,21 @@ EFI_FILE_PROTOCOL* GetDebugLogFile()
     LogFile = NULL;
   }
   
+  gLogFile = LogFile;
   return LogFile;
 }
 
 
-VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
+void SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 {
+  EFI_STATUS              Status;
   STATIC BOOLEAN          FirstTimeSave = TRUE;
 //  STATIC UINTN            Position = 0;
   CHAR8                   *MemLogBuffer;
   UINTN                   MemLogLen;
   CHAR8                   *Text;
   UINTN                   TextLen;
-  EFI_FILE_HANDLE         LogFile;
+  EFI_FILE*         LogFile;
   
   MemLogBuffer = GetMemLogBuffer();
   MemLogLen = GetMemLogLen();
@@ -134,7 +156,7 @@ VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
     // Advance to the EOF so we append
     EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
     if (Info) {
-      LogFile->SetPosition(LogFile, Info->FileSize);
+      Status = LogFile->SetPosition(LogFile, Info->FileSize);
       // If we haven't had root before this write out whole log
       if (FirstTimeSave) {
         Text = MemLogBuffer;
@@ -142,13 +164,15 @@ VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
         FirstTimeSave = FALSE;
       }
       // Write out this message
-      LogFile->Write(LogFile, &TextLen, Text);
+      Status = LogFile->Write(LogFile, &TextLen, Text);
+      Status = LogFile->Flush(LogFile);
+      (void)Status;
     }
-    LogFile->Close(LogFile);
+//    LogFile->Close(LogFile);
   }
 }
 
-VOID EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
+void EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
 {
   // Print message to console
   if (DebugMode >= 2) {
@@ -165,7 +189,7 @@ VOID EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
 // DebugMode==0 Prints to msg log, only output to log on SaveBooterLog
 // DebugMode==1 Prints to msg log and DEBUG_LOG
 // DebugMode==2 Prints to msg log, DEBUG_LOG and display console
-VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
+void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
    VA_LIST Marker;
    //UINTN offset = 0;
@@ -181,7 +205,7 @@ VOID EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
    VA_END(Marker);
 }
 
-VOID InitBooterLog(VOID)
+void InitBooterLog(void)
 {
   SetMemLogCallback(MemLogCallback);
 }
@@ -213,7 +237,7 @@ EFI_STATUS SetupBooterLog(BOOLEAN AllowGrownSize)
 
 // Made msgbuf and msgCursor private to this source
 // so we need a different way of saving the msg log - apianti
-EFI_STATUS SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *FileName)
+EFI_STATUS SaveBooterLog(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileName)
 {
   CHAR8                   *MemLogBuffer;
   UINTN                   MemLogLen;
@@ -228,3 +252,25 @@ EFI_STATUS SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *F
   return egSaveFile(BaseDir, FileName, (UINT8*)MemLogBuffer, MemLogLen);
 }
 
+
+
+
+/*
+ * Redirection of OpenCore log to Clover Log.
+ */
+
+/*
+ * This function is called from OpenCore when there is a DEBUG ((expression))
+ * Mapping from DEBUG to DebugLogForOC is made in OpenCoreFromClover.h
+ */
+void EFIAPI DebugLogForOC(IN INTN DebugLevel, IN CONST CHAR8 *FormatString, ...)
+{
+   VA_LIST Marker;
+
+   if (FormatString == NULL ) return;
+
+   // Print message to log buffer
+   VA_START(Marker, FormatString);
+   MemLogVA(TRUE, 1, FormatString, Marker);
+   VA_END(Marker);
+}

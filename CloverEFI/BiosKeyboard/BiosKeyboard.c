@@ -37,7 +37,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...)
 #endif
 
-extern int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap);
+extern int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY_CODE* pKey, UINT8* pCurModifierMap);
 //
 // EFI Driver Binding Protocol Instance
 //
@@ -1840,7 +1840,7 @@ CheckKeyboardConnect (
 **/
 static int apple_need_zero = 0;
 
-int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap)
+int MapBiosKey(EFI_KEY_DATA KeyData, APPLE_KEY_CODE* pKey, UINT8* pCurModifierMap)
 {
 	if ( KeyData.Key.UnicodeChar == 0 )
 	{
@@ -2045,7 +2045,7 @@ BiosKeyboardTimerHandler (
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
   //for AppleDb
   UINTN               NumberOfKeys;
-  APPLE_KEY           Keys[8]; // APPLE_KEY is UINT16
+  APPLE_KEY_CODE           Keys[8]; // APPLE_KEY_CODE is UINT16
 
   ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
 
@@ -2310,9 +2310,9 @@ BiosKeyboardTimerHandler (
 
 */
 //  NumberOfKeys = 3;
-//  Keys[0] = (APPLE_KEY)KeyData.KeyState.KeyShiftState;
-//  Keys[1] = (APPLE_KEY)KeyData.KeyState.KeyToggleState;  //or 0?
-//  Keys[2] = (APPLE_KEY)KeyData.Key.ScanCode;
+//  Keys[0] = (APPLE_KEY_CODE)KeyData.KeyState.KeyShiftState;
+//  Keys[1] = (APPLE_KEY_CODE)KeyData.KeyState.KeyToggleState;  //or 0?
+//  Keys[2] = (APPLE_KEY_CODE)KeyData.Key.ScanCode;
 
   // Parse the modifier key, which is the first byte of keyboard input report.
   //

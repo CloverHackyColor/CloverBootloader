@@ -22,6 +22,7 @@
 #include "../refit/screen.h"
 #include "../cpp_foundation/XString.h"
 #include "../refit/lib.h"
+#include "Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1
@@ -44,7 +45,7 @@ extern const INTN IconsNamesSize;
 #define NSVG_RGB(r, g, b) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16))
 //#define NSVG_RGBA(r, g, b, a) (((unsigned int)b) | ((unsigned int)g << 8) | ((unsigned int)r << 16) | ((unsigned int)a << 24))
 
-extern VOID
+extern void
 WaitForKeyPress(CHAR16 *Message);
 
 extern void DumpFloat2 (CONST char* s, float* t, int N);
@@ -538,7 +539,7 @@ INTN renderSVGtext(XImage* TextBufferXY_ptr, INTN posX, INTN posY, INTN textType
   return (INTN)RealWidth; //x;
 }
 
-VOID testSVG()
+void testSVG()
 {
   do {
 
@@ -607,7 +608,7 @@ VOID testSVG()
     float Scale, ScaleX, ScaleY;
 
     // load file
-    Status = egLoadFile(SelfRootDir, L"Sample.svg", &FileData, &FileDataLength);
+    Status = egLoadFile(&self.getSelfVolumeRootDir(), L"Sample.svg", &FileData, &FileDataLength);
     if (!EFI_ERROR(Status)) {
       //Parse XML to vector data
 
@@ -653,7 +654,7 @@ VOID testSVG()
     Width = UGAWidth-200;
 //    DBG("create test textbuffer\n");
     XImage TextBufferXY(Width, Height);
-    Status = egLoadFile(SelfRootDir, L"Font.svg", &FileData, &FileDataLength);
+    Status = egLoadFile(&self.getSelfVolumeRootDir(), L"Font.svg", &FileData, &FileDataLength);
     DBG("test Font.svg loaded status=%s\n", efiStrError(Status));
     if (!EFI_ERROR(Status)) {
       p = nsvgParse((CHAR8*)FileData, 72, 1.f);

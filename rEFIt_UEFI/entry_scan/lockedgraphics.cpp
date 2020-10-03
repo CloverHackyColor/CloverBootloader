@@ -32,7 +32,9 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <Platform.h>
 #include "entry_scan.h"
+#include "Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LOCK_BOOT_SCREEN 1
@@ -342,7 +344,7 @@ static EFI_STATUS AddLockedGraphicsUGA(IN EFI_HANDLE Handle, IN EFI_HANDLE Agent
   return EFI_SUCCESS;
 }
 
-static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *Protocol, OUT VOID **Interface OPTIONAL, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN UINT32 Attributes)
+static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *Protocol, OUT void **Interface OPTIONAL, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle, IN UINT32 Attributes)
 {
   if ((Attributes & EFI_OPEN_PROTOCOL_GET_PROTOCOL) != 0) {
     if ((Protocol == NULL) || (Interface == NULL)) {
@@ -351,7 +353,7 @@ static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *P
     if (CompareMem(Protocol, &gEfiGraphicsOutputProtocolGuid, sizeof(EFI_GUID)) == 0) {
       EFI_GRAPHICS_OUTPUT_PROTOCOL *GOPInterface = NULL;
       // Open the actual protocol
-      EFI_STATUS Status = OldBootServices.OpenProtocol(Handle, Protocol, (VOID **)&GOPInterface, AgentHandle, ControllerHandle, Attributes);
+      EFI_STATUS Status = OldBootServices.OpenProtocol(Handle, Protocol, (void **)&GOPInterface, AgentHandle, ControllerHandle, Attributes);
       if (EFI_ERROR(Status)) {
         return Status;
       }
@@ -368,7 +370,7 @@ static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *P
     } else if (CompareMem(Protocol, &gEfiUgaDrawProtocolGuid, sizeof(EFI_GUID)) == 0) {
       EFI_UGA_DRAW_PROTOCOL *UGAInterface = NULL;
       // Open the actual protocol
-      EFI_STATUS Status = OldBootServices.OpenProtocol(Handle, Protocol, (VOID **)&UGAInterface, AgentHandle, ControllerHandle, Attributes);
+      EFI_STATUS Status = OldBootServices.OpenProtocol(Handle, Protocol, (void **)&UGAInterface, AgentHandle, ControllerHandle, Attributes);
       if (EFI_ERROR(Status)) {
         return Status;
       }
@@ -389,7 +391,7 @@ static EFI_STATUS EFIAPI LockedOpenProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *P
 
 static EFI_STATUS EFIAPI LockedCloseProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *Protocol, IN EFI_HANDLE AgentHandle, IN EFI_HANDLE ControllerHandle)
 {
-  if (Handle == SelfImageHandle) {
+  if (Handle == self.getSelfImageHandle()) {
     if (Protocol == NULL) {
       return EFI_INVALID_PARAMETER;
     }
@@ -411,10 +413,10 @@ static EFI_STATUS EFIAPI LockedCloseProtocol(IN EFI_HANDLE Handle, IN EFI_GUID *
 }
 
 // Lock the graphics GOP
-static EFI_STATUS LockGraphicsGOP(VOID)
+static EFI_STATUS LockGraphicsGOP(void)
 {
   EFI_HANDLE *Buffer;
-  VOID       *Interface;
+  void       *Interface;
   UINTN       i, Size = 0;
   // Get needed buffer size
   EFI_STATUS  Status = gBS->LocateHandle(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &Size, NULL);
@@ -434,16 +436,16 @@ static EFI_STATUS LockGraphicsGOP(VOID)
   // Open GOP protocols, they will be modified by our modified boot services
   Size /= sizeof(EFI_HANDLE *);
   for (i = 0; i < Size; ++i) {
-     gBS->OpenProtocol(Buffer[i], &gEfiGraphicsOutputProtocolGuid, &Interface, SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+     gBS->OpenProtocol(Buffer[i], &gEfiGraphicsOutputProtocolGuid, &Interface, self.getSelfImageHandle(), NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   }
   return EFI_SUCCESS;
 }
 
 // Lock the graphics UGA
-static EFI_STATUS LockGraphicsUGA(VOID)
+static EFI_STATUS LockGraphicsUGA(void)
 {
    EFI_HANDLE *Buffer;
-   VOID       *Interface;
+   void       *Interface;
    UINTN       i, Size = 0;
    // Get needed buffer size
    EFI_STATUS  Status = gBS->LocateHandle(ByProtocol, &gEfiUgaDrawProtocolGuid, NULL, &Size, NULL);
@@ -463,13 +465,13 @@ static EFI_STATUS LockGraphicsUGA(VOID)
    // Open UGA protocols, they will be modified by our modified boot services
    Size /= sizeof(EFI_HANDLE *);
    for (i = 0; i < Size; ++i) {
-      gBS->OpenProtocol(Buffer[i], &gEfiUgaDrawProtocolGuid, &Interface, SelfImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+      gBS->OpenProtocol(Buffer[i], &gEfiUgaDrawProtocolGuid, &Interface, self.getSelfImageHandle(), NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
    }
    return EFI_SUCCESS;
 }
 
 // Lock the graphics
-EFI_STATUS LockBootScreen(VOID)
+EFI_STATUS LockBootScreen(void)
 {
   // Make sure we're not locked
   if (ScreenIsLocked) {
@@ -492,7 +494,7 @@ EFI_STATUS LockBootScreen(VOID)
 }
 
 // Unlock the graphics
-EFI_STATUS UnlockBootScreen(VOID)
+EFI_STATUS UnlockBootScreen(void)
 {
   // Make sure we're locked
   if (!ScreenIsLocked) {

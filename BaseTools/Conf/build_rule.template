@@ -425,7 +425,7 @@
         @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS)  ${src}  $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff
         @"echo" [MTOC] $(MODULE_NAME)
         # create symbol file for GDB debug
-        #@-$(DSYMUTIL) ${src}
+        @-$(DSYMUTIL) ${src}
         @"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff $(GENFW_FLAGS)
         @$(CP) ${dst} $(DEBUG_DIR)
         @$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).efi

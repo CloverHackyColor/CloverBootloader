@@ -21,7 +21,7 @@ EventsInitialize (
 
 
 EFI_STATUS
-GuiEventsInitialize (VOID);
+GuiEventsInitialize (void);
 
 
 // timeout will be in ms here, as small as 1ms and up

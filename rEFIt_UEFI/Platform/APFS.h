@@ -18,13 +18,13 @@ constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842";
  *   OUT: EFI_GUID
  *   returns null if it is not APFS part
  */
-EFI_GUID *APFSPartitionUUIDExtract(
-    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+EFI_GUID* APFSPartitionUUIDExtract(
+    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
 
 XString8 APFSPartitionUUIDExtractAsXString8(
-    IN EFI_DEVICE_PATH_PROTOCOL *DevicePath
+    const EFI_DEVICE_PATH_PROTOCOL *DevicePath
   );
 
 //XStringW APFSPartitionUUIDExtractAsXStringW(

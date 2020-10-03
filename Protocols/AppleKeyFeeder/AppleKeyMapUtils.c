@@ -84,7 +84,7 @@ SendKeyRelease (
   EFI_STATUS Status;
 //DBG("SendKeyRelease\n");
 
-  APPLE_KEY appleKey; // APPLE_KEY is UINT16
+  APPLE_KEY_CODE appleKey; // APPLE_KEY_CODE is UINT16
     	Status = AppleKeyMapDb->SetKeyStrokeBufferKeys (
 							   AppleKeyMapDb,
 							   AppleKeyMapDbIndex,
@@ -108,7 +108,7 @@ SendKeyRelease (
 
 
 
-static int MapKeyData2AppleKey(EFI_KEY_DATA* KeyData, APPLE_KEY* pKey, UINT8* pCurModifierMap)
+static int MapKeyData2AppleKey(EFI_KEY_DATA* KeyData, APPLE_KEY_CODE* pKey, UINT8* pCurModifierMap)
 {
 	if ( KeyData->Key.UnicodeChar == 0 )
 	{
@@ -306,7 +306,7 @@ SendDataToAppleMap(IN EFI_KEY_DATA *KeyData)
   EFI_STATUS Status;
   UINT8 CurModifierMap  = 0;
   UINTN NumberOfKeys = 1;
-  APPLE_KEY appleKey; // APPLE_KEY is UINT16
+  APPLE_KEY_CODE appleKey; // APPLE_KEY_CODE is UINT16
 
 	if ( !AppleKeyMapDb ) {
 		Status = getAppleKeyMapDb();

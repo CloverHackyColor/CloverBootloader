@@ -297,19 +297,6 @@ typedef enum {
 #define SCREEN_EDGE_RIGHT   70000
 #define SCREEN_EDGE_BOTTOM  80000
 
-extern EFI_HANDLE       SelfImageHandle;
-extern EFI_HANDLE       SelfDeviceHandle;
-extern EFI_LOADED_IMAGE *SelfLoadedImage;
-extern EFI_FILE         *SelfRootDir;
-extern EFI_FILE         *SelfDir;
-extern XStringW          SelfDirPath;
-extern EFI_DEVICE_PATH  *SelfDevicePath;
-extern EFI_DEVICE_PATH  *SelfFullDevicePath;
-extern XStringW          ThemePath;
-extern EFI_FILE         *OEMDir;
-extern XStringW          OEMPath;
-extern EFI_FILE         *OemThemeDir;
-
 extern REFIT_VOLUME     *SelfVolume;
 #ifdef __cplusplus
 extern XObjArray<REFIT_VOLUME> Volumes;
@@ -326,21 +313,19 @@ extern BOOLEAN          gThemeOptionsChanged;
 
 EFI_STATUS  InitRefitLib(IN EFI_HANDLE ImageHandle);
 EFI_STATUS  GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root);
-VOID        UninitRefitLib(VOID);
-EFI_STATUS  ReinitRefitLib(VOID);
-EFI_STATUS  ReinitSelfLib(VOID);
-//extern EFI_STATUS FinishInitRefitLib(VOID); -- static
+void        UninitRefitLib(void);
+EFI_STATUS  ReinitRefitLib(void);
+//extern EFI_STATUS FinishInitRefitLib(void); -- static
 
-BOOLEAN     IsEmbeddedTheme(VOID);
 
-//VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
-//VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
-//VOID FreeList(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback*/);
+//void CreateList(OUT void ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
+//void AddListElement(IN OUT void ***ListPtr, IN OUT UINTN *ElementCount, IN void *NewElement);
+//void FreeList(IN OUT void ***ListPtr, IN OUT UINTN *ElementCount /*, IN Callback*/);
 
 
 EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList);
 
-VOID ScanVolumes(VOID);
+void ScanVolumes(void);
 
 REFIT_VOLUME *FindVolumeByName(IN CONST CHAR16 *VolName);
 
@@ -349,26 +334,26 @@ BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST XStringW& RelativePath);
 
 inline EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName) { return FileDevicePath(Device, FileName.wc_str()); }
 
-BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CONST CHAR16 *RelativePath);
+BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath);
 
-EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode);
+EFI_STATUS DirNextEntry(const EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode);
 
-VOID    DirIterOpen(IN EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter);
+void    DirIterOpen(const EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter);
 BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CONST CHAR16 *FilePattern OPTIONAL, OUT EFI_FILE_INFO **DirEntry);
 EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter);
 
 CONST CHAR16 * Basename(IN CONST CHAR16 *Path);
-VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
+void   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 CHAR16 * egFindExtension(IN CHAR16 *FileName);
 
-INTN FindMem(IN CONST VOID *Buffer, IN UINTN BufferLength, IN CONST VOID *SearchString, IN UINTN SearchStringLength);
+INTN FindMem(IN CONST void *Buffer, IN UINTN BufferLength, IN CONST void *SearchString, IN UINTN SearchStringLength);
 
-XStringW DevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-XStringW FileDevicePathToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-XStringW FileDevicePathFileToXStringW(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
-//UINTN   FileDevicePathNameLen(IN CONST FILEPATH_DEVICE_PATH  *FilePath);
+XStringW DevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW FileDevicePathToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath);
+XStringW FileDevicePathFileToXStringW(const EFI_DEVICE_PATH_PROTOCOL *DevPath);
+//UINTN   FileDevicePathNameLen(const FILEPATH_DEVICE_PATH  *FilePath);
 
-EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
+EFI_STATUS InitializeUnicodeCollationProtocol (void);
 
 //
 // screen module
@@ -414,7 +399,7 @@ extern INTN UGAHeight;
 extern BOOLEAN AllowGraphicsMode;
 
 #if REFIT_DEBUG > 0
-VOID DebugPause(VOID);
+void DebugPause(void);
 #else
 #define DebugPause()
 #endif
@@ -493,15 +478,15 @@ extern XObjArray<REFIT_VOLUME> Volumes;
 //
 
 extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
-//VOID FilterKextPatches(IN LOADER_ENTRY *Entry);
+//void FilterKextPatches(IN LOADER_ENTRY *Entry);
 
 
 
 
-VOID ReinitVolumes(VOID);
+void ReinitVolumes(void);
 
 
-VOID DbgHeader(CONST CHAR8 *str);
+void DbgHeader(CONST CHAR8 *str);
 
 UINTN
 NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type);

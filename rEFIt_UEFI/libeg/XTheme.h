@@ -8,6 +8,7 @@
 #include "XImage.h"
 #include "XIcon.h"
 #include "XCinema.h"
+#include "Self.h"
 
 class TagDict;
 
@@ -19,8 +20,38 @@ class XTheme
 {
 public:
   XObjArray<XIcon> Icons;
+protected:
+  XStringW     m_ThemePath;
   EFI_FILE    *ThemeDir;
 
+public:
+  void openThemeDir() {
+    if ( ThemeDir != NULL ) ThemeDir->Close(ThemeDir);
+    /*Status = */self.getCloverDir().Open(&self.getCloverDir(), &ThemeDir, m_ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+  }
+  void closeThemeDir() {
+    if ( ThemeDir != NULL ) ThemeDir->Close(ThemeDir);
+    ThemeDir = NULL;
+  }
+//  const XStringW& getThemePath() { return m_ThemePath; }
+//  void setThemePath(const XStringW& aThemePath) {
+//    m_ThemePath = aThemePath;
+//    closeThemeDir();
+//    openThemeDir();
+//  }
+  const EFI_FILE& getThemeDir() {
+    return *ThemeDir;
+  }
+  bool IsEmbeddedTheme(void)
+  {
+    if (embedded) {
+      ThemeDir = NULL;
+    }
+    return ThemeDir == NULL;
+  }
+
+
+public:
 //  UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
@@ -139,7 +170,7 @@ public:
   //overload for UTF8 text
   INTN RenderText(IN const XString8& Text, OUT XImage* CompImage_ptr,
                           IN INTN PosX, IN INTN PosY, IN UINTN Cursor, INTN textType, float textScale = 0.f);
-  VOID MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height);
+  void MeasureText(IN const XStringW& Text, OUT INTN *Width, OUT INTN *Height);
 
 
 //  void AddIcon(XIcon& NewIcon);  //return EFI_STATUS?

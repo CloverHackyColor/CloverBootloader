@@ -46,7 +46,9 @@
   gEfiFileInfoGuid								## CONSUMES
   gEfiFileSystemInfoGuid						## CONSUMES
   gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
-
+  gEfiMemorySubClassGuid
+  gEfiMiscSubClassGuid
+  
 [Protocols]
   gEfiLoadedImageProtocolGuid
   gEfiDevicePathProtocolGuid
@@ -56,6 +58,8 @@
   gEfiDiskIoProtocolGuid
   gEfiDiskIo2ProtocolGuid
   gEfiGraphicsOutputProtocolGuid
+  gEfiDataHubProtocolGuid                       ## PRODUCES
+  gEfiProcessorSubClassGuid
 
 [Depex]
 

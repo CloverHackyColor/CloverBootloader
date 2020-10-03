@@ -136,7 +136,7 @@ StrStriBasic (
  *  If SubType == 0 then it is ignored.
  */
 EFI_DEVICE_PATH_PROTOCOL *
-FindDevicePathNodeWithType (
+Clover_FindDevicePathNodeWithType (
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
     IN  UINT8           Type,
     IN  UINT8           SubType OPTIONAL
@@ -181,7 +181,7 @@ CreateBootOptionDevicePath (
     //
     // Check that FileDeviceHandle is file system volume
     //
-    Status = gBS->HandleProtocol (FileDeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&Volume);
+    Status = gBS->HandleProtocol (FileDeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (void**)&Volume);
     if (EFI_ERROR(Status)) {
         DBG("CreateBootOptionDevicePath: FileDeviceHandle %p is not fs volume", FileDeviceHandle);
         return EFI_INVALID_PARAMETER;
@@ -202,12 +202,12 @@ CreateBootOptionDevicePath (
         //
         // Find HD Media dev path node and extract only that portion of dev path
         //
-        TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
+        TmpDevPath = DuplicateDevicePath (Clover_FindDevicePathNodeWithType (*DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
         if (TmpDevPath != NULL) {
             FreePool(*DevicePath);
             *DevicePath = TmpDevPath;
         } /* else {
-          TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, HARDWARE_DEVICE_PATH, HW_VENDOR_DP));
+          TmpDevPath = DuplicateDevicePath (Clover_FindDevicePathNodeWithType (*DevicePath, HARDWARE_DEVICE_PATH, HW_VENDOR_DP));
           if (TmpDevPath != NULL) {
             FreePool(*DevicePath);
             *DevicePath = TmpDevPath;
@@ -310,7 +310,7 @@ DevicePathEqual (
 
 
 /** Prints BootOrder with DBG. */
-VOID
+void
 PrintBootOrder (
     IN  UINT16          BootOrder[],
     IN  UINTN           BootOrderLen
@@ -522,7 +522,7 @@ DeleteFromBootOrder (
 
 
 /** Prints BootOption with DBG(). */
-VOID
+void
 PrintBootOption (
     IN  BO_BOOT_OPTION  *BootOption,
     IN  UINTN           Index
@@ -829,7 +829,7 @@ FindBootOptionForFile (
 }
 
 /** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
-VOID
+void
 PrintBootOptions (
     IN  BOOLEAN         AllBootOptions
     )
@@ -1173,7 +1173,7 @@ DeleteBootOptionsContainingFile (
 
     //PrintBootOption (&BootOption, Index);
 
-    FilePathDP = (FILEPATH_DEVICE_PATH*) FindDevicePathNodeWithType (BootOption.FilePathList, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+    FilePathDP = (FILEPATH_DEVICE_PATH*) Clover_FindDevicePathNodeWithType (BootOption.FilePathList, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
 
     if ((FilePathDP != NULL) &&
         (StriStr (FilePathDP->PathName, FileName) != NULL)) {

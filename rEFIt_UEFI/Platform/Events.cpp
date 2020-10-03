@@ -61,7 +61,7 @@ EFI_HANDLE  mHandle = NULL;
 extern EFI_RUNTIME_SERVICES gOrgRS;
 
 /*
-VOID WaitForCR()
+void WaitForCR()
 {
   EFI_STATUS    Status;
   EFI_INPUT_KEY key;
@@ -81,7 +81,7 @@ VOID WaitForCR()
 */
 #if 0
 //this procedure was developed for 10.5. Seems no more needed
-VOID CorrectMemoryMap(IN UINT32 memMap, 
+void CorrectMemoryMap(IN UINT32 memMap, 
                       IN UINT32 memDescriptorSize,
                       IN OUT UINT32 *memMapSize)
 {
@@ -217,9 +217,9 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
 }
 #endif
 
-VOID
+void
 EFIAPI
-OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
+OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
 {
   /*
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL &&
@@ -259,7 +259,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	// Patch kernel and kexts if needed
 	//
   LOADER_ENTRY *Entry = ((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY();
-	if (Entry) {
+	if ( Entry && Entry->OSVersion.startWith("10") ) {
     Entry->KernelAndKextsPatcherStart();
   }
 	
@@ -339,11 +339,11 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	}
 }
 
-VOID
+void
 EFIAPI
 OnReadyToBoot (
                IN      EFI_EVENT   Event,
-               IN      VOID        *Context
+               IN      void        *Context
                )
 {
 /*
@@ -360,22 +360,22 @@ OnReadyToBoot (
   gST->ConOut->OutputString (gST->ConOut, L"-- ReadyToBoot --\n");
 }
 
-VOID
+void
 EFIAPI
 VirtualAddressChangeEvent (
                            IN EFI_EVENT  Event,
-                           IN VOID       *Context
+                           IN void       *Context
                            )
 {
-//  EfiConvertPointer (0x0, (VOID **) &mProperty);
-//  EfiConvertPointer (0x0, (VOID **) &mSmmCommunication);
+//  EfiConvertPointer (0x0, (void **) &mProperty);
+//  EfiConvertPointer (0x0, (void **) &mSmmCommunication);
 }
 
-VOID
+void
 EFIAPI
 OnSimpleFileSystem (
                     IN      EFI_EVENT  Event,
-                    IN      VOID       *Context
+                    IN      void       *Context
                     )
 {
 	EFI_TPL		OldTpl;
@@ -397,7 +397,7 @@ GuiEventsInitialize ()
 {
 	EFI_STATUS				Status;
 	EFI_EVENT				Event;
-	VOID*				  	RegSimpleFileSystem = NULL;
+	void*				  	RegSimpleFileSystem = NULL;
 	
 	gEvent = 0;
 	Status = gBS->CreateEvent (
@@ -515,7 +515,7 @@ EFI_STATUS
 EventsInitialize (IN LOADER_ENTRY *Entry)
 {
 	EFI_STATUS			Status;
-	VOID*           Registration = NULL;
+	void*           Registration = NULL;
 	
 	//
 	// Register the event to reclaim variable for OS usage.
@@ -585,7 +585,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 	ZeroMem (&CommandPacket, sizeof (EFI_SCSI_IO_SCSI_REQUEST_PACKET));
 	ZeroMem (Cdb, EFI_SCSI_OP_LENGTH_SIX);
 	
-	Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (VOID **) &ScsiIo);
+	Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (void **) &ScsiIo);
 	if (ScsiIo) {
 //		Target = &TargetArray[0];
 //		ScsiIo->GetDeviceLocation (ScsiIo, &Target, &Lun);
@@ -602,7 +602,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
     
 		Status = ScsiIo->ExecuteScsiCommand (ScsiIo, &CommandPacket, NULL);
 	} else {
-		Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &BlkIo);
+		Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (void **) &BlkIo);
 		if (BlkIo) {
 			UsbMass = USB_MASS_DEVICE_FROM_BLOCK_IO (BlkIo);
 			if (!UsbMass) {

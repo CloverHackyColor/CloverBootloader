@@ -54,7 +54,7 @@ UINT32 device_inject_stringlength   = 0;
  }
  */
 
-DevPropString *devprop_create_string(VOID)
+DevPropString *devprop_create_string(void)
 {
   //	DBG("Begin creating strings for devices:\n");
   device_inject_string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
@@ -91,7 +91,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   PCI_TYPE00				Pci;
   UINT32					res;
 
-  Status = gBS->OpenProtocol(PciDt->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  Status = gBS->OpenProtocol(PciDt->DeviceHandle, &gEfiPciIoProtocolGuid, (void**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)){
     DBG("pci_config_read cant open protocol\n");
     return 0;
@@ -262,10 +262,10 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UIN
   if(!newdata)
     return FALSE;
   if((device->data) && (offset > 1)) {
- 		CopyMem((VOID*)newdata, (VOID*)device->data, offset);
+ 		CopyMem((void*)newdata, (void*)device->data, offset);
   }
 
-  CopyMem((VOID*)(newdata + offset), (VOID*)data, length);
+  CopyMem((void*)(newdata + offset), (void*)data, length);
 
   device->length += length;
   device->string->length += length;
@@ -328,7 +328,7 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
   return ptr;
 }
 
-VOID devprop_free_string(DevPropString *StringBuf)
+void devprop_free_string(DevPropString *StringBuf)
 {
   INT32 i;
   if(!StringBuf)

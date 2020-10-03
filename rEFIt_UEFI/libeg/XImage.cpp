@@ -447,10 +447,10 @@ void XImage::GetArea(INTN x, INTN y, UINTN W, UINTN H)
   EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
-  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
+  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (void **)&GraphicsOutput);
   if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (VOID **)&UgaDraw);
+    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (void **)&UgaDraw);
     if (EFI_ERROR(Status))
       UgaDraw = NULL;
   }
@@ -509,10 +509,10 @@ void XImage::DrawWithoutCompose(INTN x, INTN y, UINTN width, UINTN height)
   EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
-  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (VOID **)&GraphicsOutput);
+  Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (void **)&GraphicsOutput);
   if (EFI_ERROR(Status)) {
     GraphicsOutput = NULL;
-    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (VOID **)&UgaDraw);
+    Status = EfiLibLocateProtocol(&UgaDrawProtocolGuid, (void **)&UgaDraw);
     if (EFI_ERROR(Status))
       UgaDraw = NULL;
   }
@@ -581,18 +581,18 @@ void XImage::DrawOnBack(INTN XPos, INTN YPos, const XImage& Plate)
  * SVG themes filled separately after ThemeName defined so the procedure just return EFI_SUCCESS
  * The function always create new image and will not be used to get a link to existing image
  */
-EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const char* IconName)
+EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const char* IconName)
 {
   return LoadXImage(BaseDir, XStringW().takeValueFrom(IconName));
 }
 
-EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const wchar_t* LIconName)
+EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const wchar_t* LIconName)
 {
   return LoadXImage(BaseDir, XStringW().takeValueFrom(LIconName));
 }
 //dont call this procedure for SVG theme BaseDir == NULL?
 //it can be used for other files
-EFI_STATUS XImage::LoadXImage(EFI_FILE *BaseDir, const XStringW& IconName)
+EFI_STATUS XImage::LoadXImage(const EFI_FILE *BaseDir, const XStringW& IconName)
 {
   EFI_STATUS      Status = EFI_NOT_FOUND;
   UINT8           *FileData = NULL;
@@ -719,7 +719,7 @@ void XImage::CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_REC
 //
 // Load an image from a .icns file
 //
-EFI_STATUS XImage::LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize)
+EFI_STATUS XImage::LoadIcns(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize)
 {
   if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
     return EFI_SUCCESS;

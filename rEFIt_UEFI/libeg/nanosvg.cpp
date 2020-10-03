@@ -2878,7 +2878,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
 //    DBG("required font %s not found, try to load external\n", text->fontFace->fontFamily);
     XStringW FontFileName = XStringW().takeValueFrom(text->fontFace->fontFamily) + L".svg"_XSW;
 //    DBG(" file name =%ls\n", FontFileName.wc_str());
-    Status = egLoadFile(ThemeX.ThemeDir, FontFileName.wc_str(), &FileData, &FileDataLength);
+    Status = egLoadFile(&ThemeX.getThemeDir(), FontFileName.wc_str(), &FileData, &FileDataLength);
 //    DBG(" font %s loaded status=%lld, %s\n", text->fontFace->fontFamily, Status, efiStrError(Status));
     if (!EFI_ERROR(Status)) {
       p1 = nsvgParse((CHAR8*)FileData, 72, 1.0f);  //later we will free parser p1

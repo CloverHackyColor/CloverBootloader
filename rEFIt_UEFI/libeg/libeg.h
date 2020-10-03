@@ -42,6 +42,11 @@
 #include "../cpp_foundation/XString.h"
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/XBuffer.h"
+
+extern "C" {
+#include <Library/OcConfigurationLib.h>
+}
+
 /* types */
 
 typedef enum {
@@ -126,7 +131,7 @@ public:
 
 typedef struct {
   EFI_STATUS          LastStatus;
-  EFI_FILE            *DirHandle;
+  const EFI_FILE            *DirHandle;
   BOOLEAN             CloseDirHandle;
   EFI_FILE_INFO       *LastFileInfo;
 } REFIT_DIR_ITER;
@@ -267,6 +272,9 @@ public:
 class KERNEL_AND_KEXT_PATCHES
 {
 public:
+  BOOLEAN FuzzyMatch;
+  XString8 OcKernelCache;
+  OC_KERNEL_QUIRKS OcKernelQuirks;
   BOOLEAN KPDebug;
 //  BOOLEAN KPKernelCpu;
   BOOLEAN KPKernelLapic;
@@ -317,7 +325,7 @@ public:
 //  INT32   NrBoots;
   XObjArray<KEXT_PATCH> BootPatches;
 
-  KERNEL_AND_KEXT_PATCHES() : KPDebug(0), KPKernelLapic(0), KPKernelXCPM(0), KPKernelPm(0), KPAppleIntelCPUPM(0), KPAppleRTC(0), KPDELLSMBIOS(0), KPPanicNoKextDump(0),
+  KERNEL_AND_KEXT_PATCHES() : FuzzyMatch(0), OcKernelCache(), OcKernelQuirks{0}, KPDebug(0), KPKernelLapic(0), KPKernelXCPM(0), KPKernelPm(0), KPAppleIntelCPUPM(0), KPAppleRTC(0), KPDELLSMBIOS(0), KPPanicNoKextDump(0),
                    EightApple(0), pad{0}, FakeCPUID(0), KPATIConnectorsController(0), KPATIConnectorsData(),
                    KPATIConnectorsPatch(), align40(0), KextPatches(), align50(0), ForceKexts(),
                    KernelPatches(), BootPatches()
@@ -401,32 +409,32 @@ typedef struct EG_RECT {
 
 /* functions */
 
-VOID    egInitScreen(IN BOOLEAN SetMaxResolution);
-VOID    egDumpGOPVideoModes(VOID);
+void    egInitScreen(IN BOOLEAN SetMaxResolution);
+void    egDumpGOPVideoModes(void);
 //EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
-//EFI_STATUS egSetMaxResolution(VOID);
+//EFI_STATUS egSetMaxResolution(void);
 EFI_STATUS egSetMode(INT32 Next);
 
-VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
-XString8 egScreenDescription(VOID);
-BOOLEAN egHasGraphicsMode(VOID);
-BOOLEAN egIsGraphicsModeEnabled(VOID);
-VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
+void    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
+XString8 egScreenDescription(void);
+BOOLEAN egHasGraphicsMode(void);
+BOOLEAN egIsGraphicsModeEnabled(void);
+void    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 // NOTE: Even when egHasGraphicsMode() returns FALSE, you should
 //  call egSetGraphicsModeEnabled(FALSE) to ensure the system
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
 
-EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CONST CHAR16 *FileName,
+EFI_STATUS egLoadFile(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength);
-EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
-                      IN CONST VOID *FileData, IN UINTN FileDataLength);
-EFI_STATUS egMkDir(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CONST CHAR16 *DirName);
-EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir);
+EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileName,
+                      IN CONST void *FileData, IN UINTN FileDataLength);
+EFI_STATUS egMkDir(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *DirName);
+EFI_STATUS egFindESP(OUT EFI_FILE** RootDir);
 
-VOID egClearScreen(IN const void *Color);
+void egClearScreen(IN const void *Color);
 
-EFI_STATUS egScreenShot(VOID);
+EFI_STATUS egScreenShot(void);
 
 
 #endif /* __LIBEG_LIBEG_H__ */

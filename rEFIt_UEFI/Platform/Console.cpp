@@ -89,3 +89,19 @@ InitializeConsoleSim ()
 
   return Status;
 }
+
+
+EFI_STATUS
+UninitializeConsoleSim ()
+{
+  EFI_STATUS Status;
+
+  Status = gBS->UninstallMultipleProtocolInterfaces (
+                  &gImageHandle,
+                  &gEfiConsoleControlProtocolGuid,
+                  &gConsoleController,
+                  NULL
+                  );
+  MsgLog("UninitializeConsoleSim : Status %s\n", efiStrError(Status));
+  return Status;
+}

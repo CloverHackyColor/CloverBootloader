@@ -11,13 +11,13 @@
 
 
 EFI_STATUS
-InitializeEdidOverride (VOID);
+InitializeEdidOverride (void);
 
 UINT8*
-getCurrentEdid (VOID);
+getCurrentEdid (void);
 
 EFI_STATUS
-GetEdidDiscovered (VOID);
+GetEdidDiscovered (void);
 
 
 

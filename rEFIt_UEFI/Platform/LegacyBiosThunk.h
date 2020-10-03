@@ -103,7 +103,7 @@ LegacyBiosFarCall86 (
   IN  UINT16                        Segment,
   IN  UINT16                        Offset,
   IN  IA32_REGISTER_SET				*Regs //,
-//  IN  VOID                          *Stack,
+//  IN  void                          *Stack,
 //  IN  UINTN                         StackSize
   );
 

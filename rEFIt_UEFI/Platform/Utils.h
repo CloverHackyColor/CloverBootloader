@@ -35,7 +35,7 @@
 #define IS_PUNCT(x) ((x == '.') || (x == '-'))
 
 
-////VOID        LowCase (IN OUT CHAR8 *Str);
+////void        LowCase (IN OUT CHAR8 *Str);
 UINT32      hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
 BOOLEAN     IsHexDigit (CHAR8 c);
 UINT8       hexstrtouint8 (CONST CHAR8* buf); //one or two hex letters to one byte
@@ -70,5 +70,17 @@ AsciiStrDecimalToUintn (
 {
   return AsciiStrDecimalToUintn(String.c_str());
 }
+
+extern BOOLEAN haveError;
+
+
+BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
+BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
+
+//EFI_DEVICE_PATH_PROTOCOL *
+//EFIAPI
+//NextDevicePathNode (
+//  IN void  *Node
+//  );
 
 #endif

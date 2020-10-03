@@ -11,7 +11,7 @@
 
 
 EFI_STATUS
-FixOwnership (VOID);
+FixOwnership (void);
 
 
 

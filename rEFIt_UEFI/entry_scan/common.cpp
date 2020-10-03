@@ -55,7 +55,7 @@
 
 extern CONST CHAR8* IconsNames[];
 
-const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
+const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 
 {
   UINTN IconNum = 0;
@@ -71,7 +71,7 @@ const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, IN EFI
             DevicePath = NextDevicePathNode(DevicePath);
           }
           if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
-            if ( GuidLEToXString8((EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
+            if ( GuidLEToXString8(*(EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
               IconNum = BUILTIN_ICON_VOL_INTERNAL_APFS;
             }
           } else {
@@ -257,7 +257,7 @@ CONST CHAR16 *StriStr(IN CONST CHAR16 *Str,
   return NULL;
 }
 
-VOID StrToLower(IN CHAR16 *Str)
+void StrToLower(IN CHAR16 *Str)
 {
    while (*Str) {
      *Str = TO_LOWER(*Str);
@@ -324,7 +324,7 @@ extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 // it is not good to use Options menu style for messages and one line dialogs
 // it can be a semitransparent rectangular at the screen centre as it was in Clover v1.0
 STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, XStringW(), XStringW(), &MenuEntryReturn, NULL);
-VOID AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
+void AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
 {
   CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
   AlertMessageMenu.Title = Title;
@@ -363,7 +363,7 @@ BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
 }
 // Ask user for file path from directory menu
 BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
-                                  IN CHAR16 *ParentPath OPTIONAL, IN EFI_FILE *Dir,
+                                  IN CHAR16 *ParentPath OPTIONAL, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   //REFIT_MENU_SCREEN   Menu = { 0, L"Please Select File...", NULL, 0, NULL, 0, NULL,

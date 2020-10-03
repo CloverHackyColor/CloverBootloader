@@ -627,7 +627,7 @@ size_t XObjArrayNC<TYPE>::InsertRef(TYPE *newElement, size_t pos, bool FreeIt)
 		XObjArrayNC<TYPE>::_Len += 1;
 		return pos;
 	}else{
-		return AddRef(newElement, FreeIt);
+		return AddReference(newElement, FreeIt);
 	}
 }
 

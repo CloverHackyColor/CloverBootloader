@@ -310,9 +310,9 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
  }
  */
 #if 0
-VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONST VOID* a, CONST VOID* b)) {
+void QuickSort(void* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONST void* a, CONST void* b)) {
   INTN i = Low, j = High;
-  VOID *Med, *Temp;
+  void *Med, *Temp;
   Med = Array + ((Low + High) / 2) * Size; // Central element, just pointer
   Temp = (__typeof__(Temp))AllocatePool(Size);
   // Sort around center
@@ -336,7 +336,7 @@ VOID QuickSort(VOID* Array, INTN Low, INTN High, INTN Size, INTN (*compare)(CONS
 }
 //
 ////S must be allocated before use
-//VOID AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
+//void AsciiSPrintFloat(CHAR8* S, INTN N, CHAR8* F, float X)
 //{
 //  INTN I, Fract;
 //  float D;

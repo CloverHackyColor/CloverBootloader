@@ -114,7 +114,7 @@ AIKTargetWriteEntry (
   )
 {
   APPLE_MODIFIER_MAP  Modifiers;
-  APPLE_KEY           Key;
+  APPLE_KEY_CODE           Key;
   UINTN               Index;
   UINTN               InsertIndex;
   UINT64              OldestCounter;

@@ -24,6 +24,8 @@
 #include "platformdata.h"
 #include "smbios.h"
 #include "cpu.h"
+#include "Self.h"
+#include "SelfOem.h"
 
 #define EBDA_BASE_ADDRESS            0x40E
 
@@ -103,7 +105,7 @@ static void stripTrailingSpaces(CHAR8* sgn)
   lastNonSpace[1] = 0;
 }
 
-VOID* FindAcpiRsdPtr()
+void* FindAcpiRsdPtr()
 {
   UINTN                           Address;
   UINTN                           Index;
@@ -112,7 +114,7 @@ VOID* FindAcpiRsdPtr()
   //
   for (Address = 0xe0000; Address < 0xfffff; Address += 0x10) {
     if (*(UINT64 *)(Address) == EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
-      return (VOID *)Address;
+      return (void *)Address;
     }
   }
   //
@@ -122,13 +124,13 @@ VOID* FindAcpiRsdPtr()
   if ( Address == 0 ) return 0; // Jief : if Address==0, the first access at *(UINT64 *)(Address + Index) is at address 0. It's supposed to crash.
   for (Index = 0; Index < 0x400 ; Index += 16) {
     if (*(UINT64 *)(Address + Index) == EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
-      return (VOID *)Address;
+      return (void *)Address;
     }
   }
   return NULL;
 }
 
-UINT8 Checksum8(VOID* startPtr, UINT32 len)
+UINT8 Checksum8(void* startPtr, UINT32 len)
 {
   UINT8 Value = 0;
   UINT8 *ptr = (UINT8*)startPtr;
@@ -247,7 +249,7 @@ void AddDropTable(EFI_ACPI_DESCRIPTION_HEADER* Table, UINT32 Index)
   gSettings.ACPIDropTables = DropTable;
 }
 
-VOID GetAcpiTablesList()
+void GetAcpiTablesList()
 {
   DbgHeader("GetAcpiTablesList");
 
@@ -401,7 +403,7 @@ BOOLEAN PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
   return (Ret1 || Ret2 || Ret3);
 }
 
-VOID PatchAllTables()
+void PatchAllTables()
 {
   UINT32 Count = XsdtTableCount();
   UINT64* Ptr = XsdtEntryPtrFromIndex(0);
@@ -488,7 +490,7 @@ VOID PatchAllTables()
   }
 }
 
-EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
+EFI_STATUS InsertTable(void* TableEntry, UINTN Length)
 {
   if (!TableEntry) {
     return EFI_NOT_FOUND;
@@ -553,7 +555,7 @@ UINTN IndexFromFileName(CONST CHAR16* FileName)
   return Result;
 }
 
-EFI_STATUS ReplaceOrInsertTable(VOID* TableEntry, UINTN Length, UINTN MatchIndex, INTN Pass)
+EFI_STATUS ReplaceOrInsertTable(void* TableEntry, UINTN Length, UINTN MatchIndex, INTN Pass)
 {
   if (!TableEntry) {
     return EFI_NOT_FOUND;
@@ -744,8 +746,8 @@ void PostCleanupXSDT()
 }
 
 
-/** Saves Buffer of Length to disk as DirName\\FileName. */
-EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CONST CHAR16 *DirName, CONST CHAR16 *FileName)
+/** Saves Buffer of Length to disk as OemDir\\DirName\\FileName. */
+EFI_STATUS SaveBufferToDisk(void *Buffer, UINTN Length, CONST CHAR16 *DirName, CONST CHAR16 *FileName)
 {
   if (DirName == NULL || FileName == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -753,10 +755,11 @@ EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CONST CHAR16 *DirName, C
 
   XStringW PathName = SWPrintf("%ls\\%ls", DirName, FileName);
 
-  EFI_STATUS Status = egSaveFile(SelfRootDir, PathName.wc_str(), Buffer, Length);
-  if (EFI_ERROR(Status)) {
-    Status = egSaveFile(NULL, PathName.wc_str(), Buffer, Length);
-  }
+  EFI_STATUS Status = egSaveFile(&selfOem.getOemDir(), PathName.wc_str(), Buffer, Length);
+  // Do not write outside OemDir
+//  if (EFI_ERROR(Status)) {
+//    Status = egSaveFile(NULL, PathName.wc_str(), Buffer, Length);
+//  }
   return Status;
 }
 
@@ -764,12 +767,12 @@ EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CONST CHAR16 *DirName, C
 // Remembering saved tables
 //
 #define SAVED_TABLES_ALLOC_ENTRIES  64
-VOID   **mSavedTables = NULL;
+void   **mSavedTables = NULL;
 UINTN   mSavedTablesEntries = 0;
 UINTN   mSavedTablesNum = 0;
 
 /** Returns TRUE is TableEntry is already saved. */
-BOOLEAN IsTableSaved(VOID *TableEntry)
+BOOLEAN IsTableSaved(void *TableEntry)
 {
   UINTN   Index;
 
@@ -784,7 +787,7 @@ BOOLEAN IsTableSaved(VOID *TableEntry)
 }
 
 /** Adds TableEntry to mSavedTables if not already there. */
-VOID MarkTableAsSaved(VOID *TableEntry)
+void MarkTableAsSaved(void *TableEntry)
 {
   //
   // If mSavedTables does not exists yet - allocate it
@@ -875,7 +878,7 @@ static XStringW GenerateFileName(CONST CHAR16* FileNamePrefix, UINTN SsdtCount, 
   return FileName;
 }
 
-VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirName, CONST CHAR16 *FileNamePrefix, UINTN SsdtCount)
+void DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirName, CONST CHAR16 *FileNamePrefix, UINTN SsdtCount)
 {
   EFI_STATUS    Status = EFI_SUCCESS;
   INTN          j, k, pacLen, pacCount;
@@ -934,14 +937,14 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
           for (k = 0; k < 16; k++) {
             DBG("%02hhX ", ((UINT8*)adr)[k]);
           }
-          if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
+          if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((void*)adr)) {
             XStringW FileName = GenerateFileName(FileNamePrefix, SsdtCount, ChildCount, OemTableId);
             len = ((UINT16*)adr)[2];
 			      DBG("Internal length = %llu", len);
-            Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName.wc_str());
+            Status = SaveBufferToDisk((void*)adr, len, DirName, FileName.wc_str());
             if (!EFI_ERROR(Status)) {
               DBG(" -> %ls", FileName.wc_str());
-              MarkTableAsSaved((VOID*)adr);
+              MarkTableAsSaved((void*)adr);
               ChildCount++;
             } else {
               DBG(" -> %s", efiStrError(Status));
@@ -979,12 +982,12 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
         for(k=0; k<16; k++){
           DBG("%02hhX ", ((UINT8*)adr)[k]);
         }
-        if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
+        if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((void*)adr)) {
           XStringW FileName = GenerateFileName(FileNamePrefix, SsdtCount, ChildCount, OemTableId);
-          Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName.wc_str());
+          Status = SaveBufferToDisk((void*)adr, len, DirName, FileName.wc_str());
           if (!EFI_ERROR(Status)) {
             DBG(" -> %ls", FileName.wc_str());
-            MarkTableAsSaved((VOID*)adr);
+            MarkTableAsSaved((void*)adr);
             ChildCount++;
           } else {
             DBG(" -> %s", efiStrError(Status));
@@ -1184,9 +1187,9 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
 
   RsdPtr = (__typeof__(RsdPtr))FindAcpiRsdPtr();
   if (RsdPtr == NULL) {
-    /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **)&RsdPtr);
+    /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (void **)&RsdPtr);
     if (RsdPtr == NULL) {
-      /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **)&RsdPtr);
+      /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (void **)&RsdPtr);
       if (RsdPtr == NULL) {
         return NULL;
       }
@@ -1203,7 +1206,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
     // Search Acpi 2.0 or newer in UEFI Sys.Tables
     //
     RsdPtr = NULL;
-    /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPtr);
+    /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (void**)&RsdPtr);
     if (RsdPtr != NULL) {
       DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
       Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
@@ -1234,7 +1237,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
  *  ACPI tables given by RsdPtr.
  *  Takes tables from Xsdt if present or from Rsdt if Xsdt is not present.
  */
-VOID DumpTables(VOID *RsdPtrVoid, CONST CHAR16 *DirName)
+void DumpTables(void *RsdPtrVoid, CONST CHAR16 *DirName)
 {
   EFI_STATUS      Status;
   UINTN           Length;
@@ -1435,11 +1438,11 @@ VOID DumpTables(VOID *RsdPtrVoid, CONST CHAR16 *DirName)
  *
  * Dumping of other tables to log can be removed if it turns out that there is no value in doing it.
  */
-VOID SaveOemTables()
+void SaveOemTables()
 {
 //  EFI_STATUS              Status;
-  VOID                   *RsdPtr;
-  XStringW                AcpiOriginPath = SWPrintf("%ls\\ACPI\\origin", OEMPath.wc_str());
+  void                   *RsdPtr;
+  XStringW                AcpiOriginPath = L"ACPI\\origin"_XSW;
   BOOLEAN                 Saved = FALSE;
   CHAR8                  *MemLogStart;
   UINTN                   MemLogStartLen;
@@ -1490,7 +1493,7 @@ VOID SaveOemTables()
   FreePool(mSavedTables);
 }
 
-VOID SaveOemDsdt(BOOLEAN FullPatch)
+void SaveOemDsdt(BOOLEAN FullPatch)
 {
   EFI_STATUS                                    Status = EFI_NOT_FOUND;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;
@@ -1499,23 +1502,24 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
   UINTN              Pages;
   UINT8             *buffer = NULL;
   UINTN              DsdtLen = 0;
-  XStringW           OriginDsdt      = SWPrintf("%ls\\ACPI\\origin\\DSDT.aml", OEMPath.wc_str());
-  XStringW           OriginDsdtFixed = SWPrintf("%ls\\ACPI\\origin\\DSDT-%x.aml", OEMPath.wc_str(), gSettings.FixDsdt);
-  constexpr LStringW PathPatched     = L"\\EFI\\CLOVER\\ACPI\\patched";
+  XStringW           OriginDsdt      = SWPrintf("ACPI\\origin\\DSDT.aml");
+  XStringW           OriginDsdtFixed = SWPrintf("ACPI\\origin\\DSDT-%x.aml", gSettings.FixDsdt);
+//  constexpr LStringW PathPatched     = L"\\EFI\\CL OVER\\ACPI\\patched";
   XStringW           PathDsdt;
-  XStringW           AcpiOemPath     = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
+//  XStringW           AcpiOemPath     = SWPrintf("ACPI\\patched");
 
-  PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
+//  PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
 
-  if (FileExists(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()))) {
-    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: %ls%ls\n", AcpiOemPath.wc_str(), PathDsdt.wc_str());
-    Status = egLoadFile(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &DsdtLen);
+  if (FileExists(&selfOem.getOemDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()))) {
+    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: ACPI\\patched\\%ls\n", gSettings.DsdtName.wc_str());
+    Status = egLoadFile(&selfOem.getOemDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()).wc_str(), &buffer, &DsdtLen);
   }
 
-  if (EFI_ERROR(Status) && FileExists(SelfRootDir, SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()))) {
-    DBG("SaveOemDsdt: DSDT found in Clover volume common folder: %ls%ls\n", PathPatched.wc_str(), PathDsdt.wc_str());
-    Status = egLoadFile(SelfRootDir, SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &DsdtLen);
-  }
+//  Jief : Do not write outside OemPath
+//  if (EFI_ERROR(Status) && FileExists(&self.getSelfRootDir(), SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()))) {
+//    DBG("SaveOemDsdt: DSDT found in Clover volume common folder: %ls%ls\n", PathPatched.wc_str(), PathDsdt.wc_str());
+//    Status = egLoadFile(&self.getSelfRootDir(), SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &DsdtLen);
+//  }
 
   if (EFI_ERROR(Status)) {
     FadtPointer = GetFadt();
@@ -1547,21 +1551,22 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
   //if success insert dsdt pointer into ACPI tables
   if(!EFI_ERROR(Status))
   {
-    CopyMem((VOID*)(UINTN)dsdt, buffer, DsdtLen);
+    CopyMem((void*)(UINTN)dsdt, buffer, DsdtLen);
     buffer = (UINT8*)(UINTN)dsdt;
     if (FullPatch) {
       FixBiosDsdt(buffer, FadtPointer, NullXString8);
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
       OriginDsdt = OriginDsdtFixed;
     }
-    Status = egSaveFile(SelfRootDir, OriginDsdt.wc_str(), buffer, DsdtLen);
-    if (EFI_ERROR(Status)) {
-      Status = egSaveFile(NULL, OriginDsdt.wc_str(), buffer, DsdtLen);
-    }
+    Status = egSaveFile(&selfOem.getOemDir(), OriginDsdt.wc_str(), buffer, DsdtLen);
+// Jief : do not write outside of OemDir
+//    if (EFI_ERROR(Status)) {
+//      Status = egSaveFile(NULL, OriginDsdt.wc_str(), buffer, DsdtLen);
+//    }
     if (!EFI_ERROR(Status)) {
       MsgLog("DSDT saved to %ls\n", OriginDsdt.wc_str());
     } else {
-      MsgLog("Saving DSDT to %ls failed - %s\n", OriginDsdt.wc_str(), efiStrError(Status));
+      MsgLog("Saving DSDT to %ls\\%ls failed - %s\n", selfOem.getOemFullPath().wc_str(), OriginDsdt.wc_str(), efiStrError(Status));
     }
     gBS->FreePages(dsdt, Pages);
   }
@@ -1569,7 +1574,6 @@ VOID SaveOemDsdt(BOOLEAN FullPatch)
 
 BOOLEAN LoadPatchedAML(CONST CHAR16* AcpiOemPath, CONST CHAR16* PartName, UINTN Pass)
 {
-  CHAR16 FullName[256];
   // pass1 prefilter based on file names (optimization that avoids loading same files twice)
   UINTN Index = IGNORE_INDEX;
   if (AUTOMERGE_PASS1 == Pass) {
@@ -1583,10 +1587,9 @@ BOOLEAN LoadPatchedAML(CONST CHAR16* AcpiOemPath, CONST CHAR16* PartName, UINTN 
       return FALSE;
     }
   }
-	snwprintf(FullName, sizeof(FullName), "%ls\\%ls", AcpiOemPath, PartName);
   UINT8 *buffer = NULL;
   UINTN bufferLen = 0;
-  EFI_STATUS Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
+  EFI_STATUS Status = egLoadFile(&selfOem.getOemDir(), SWPrintf("%ls\\%ls", AcpiOemPath, PartName).wc_str(), &buffer, &bufferLen);
   if (!EFI_ERROR(Status)) {
     if (buffer) {
       EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
@@ -1683,14 +1686,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   SSDT_TABLE              *Ssdt = NULL;
   UINT8                   *buffer = NULL;
   UINTN                   bufferLen = 0;
-  constexpr LStringW      PathPatched   = L"\\EFI\\CLOVER\\ACPI\\patched";
+//  constexpr LStringW      PathPatched   = L"\\EFI\\CL OVER\\ACPI\\patched";
   XStringW                PathDsdt;    //  = L"\\DSDT.aml";
-//  CHAR16*                 PatchedAPIC = L"\\EFI\\CLOVER\\ACPI\\origin\\APIC-p.aml";
+//  CHAR16*                 PatchedAPIC = L"\\EFI\\CL OVER\\ACPI\\origin\\APIC-p.aml";
   UINT32*                 rf = NULL;
   UINT64*                 xf = NULL;
   UINT64                  XDsdt; //save values if present
   UINT64                  XFirmwareCtrl;
-  EFI_FILE                *RootDir;
+//  EFI_FILE                *RootDir;
   UINT32                  eCntR; //, eCntX;
   UINT32                  *pEntryR;
   CHAR8                   *pEntry;
@@ -1706,7 +1709,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   BOOLEAN            DsdtLoaded = FALSE;
   BOOLEAN            NeedUpdate = FALSE;
   OPER_REGION       *tmpRegion;
-  XStringW           AcpiOemPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
+//  XStringW           AcpiOemPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 
   DbgHeader("PatchACPI");
 
@@ -1822,7 +1825,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
     if(!EFI_ERROR(Status))
     {
-      CopyMem((VOID*)(UINTN)BufferPtr, Xsdt, Xsdt->Header.Length);
+      CopyMem((void*)(UINTN)BufferPtr, Xsdt, Xsdt->Header.Length);
       Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;
     }
     //   DBG("Finishing RsdPointer\n");
@@ -1956,24 +1959,28 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     DBG("Volume not found!\n");
     return EFI_NOT_FOUND;
   }
-  RootDir = Volume->RootDir;
+//  RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
 
-  if (FileExists(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()))) {
-    DBG("DSDT found in Clover volume OEM folder: %ls%ls\n", AcpiOemPath.wc_str(), PathDsdt.wc_str());
-    Status = egLoadFile(SelfRootDir, SWPrintf("%ls%ls", AcpiOemPath.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &bufferLen);
+  XStringW acpiPath = SWPrintf("ACPI\\patched\\%ls", PathDsdt.wc_str());
+  
+  if ( FileExists(&selfOem.getOemDir(), acpiPath) ) {
+    DBG("DSDT found in Clover volume OEM folder: %ls\\%ls\n", selfOem.getOemFullPath().wc_str(), acpiPath.wc_str());
+    Status = egLoadFile(&self.getCloverDir(), acpiPath.wc_str(), &buffer, &bufferLen);
     //REVIEW: memory leak... buffer
   }
 
-  if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
+  // Jief : Do we really need a specific DSDT per volume ?
+  if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
-    Status = egLoadFile(RootDir, PathDsdt.wc_str(), &buffer, &bufferLen);
+    Status = egLoadFile(Volume->RootDir, PathDsdt.wc_str(), &buffer, &bufferLen);
     //REVIEW: memory leak... buffer
   }
 
-  if (EFI_ERROR(Status) && FileExists(SelfRootDir, SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()))) {
-    DBG("DSDT found in Clover volume: %ls%ls\n", PathPatched.wc_str(), PathDsdt.wc_str());
-    Status = egLoadFile(SelfRootDir, SWPrintf("%ls%ls", PathPatched.wc_str(), PathDsdt.wc_str()).wc_str(), &buffer, &bufferLen);
+  //  Jief : may I suggest to remove that. Loading from outside of OemPath might be confusing
+  if ( EFI_ERROR(Status)  &&  FileExists(&self.getCloverDir(), acpiPath) ) {
+    DBG("DSDT found in Clover volume: %ls\\%ls\n", self.getCloverDirPathAsXStringW().wc_str(), acpiPath.wc_str());
+    Status = egLoadFile(&self.getCloverDir(), acpiPath.wc_str(), &buffer, &bufferLen);
     //REVIEW: memory leak... buffer
   }
   //
@@ -1996,7 +2003,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status)) {
       //      DBG("page is allocated, write DSDT into\n");
-      CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
+      CopyMem((void*)(UINTN)dsdt, buffer, bufferLen);
 
       FadtPointer->Dsdt  = (UINT32)dsdt;
       FadtPointer->XDsdt = dsdt;
@@ -2021,7 +2028,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status)) {
-      CopyMem((VOID*)(UINTN)dsdt, TableHeader, bufferLen);
+      CopyMem((void*)(UINTN)dsdt, TableHeader, bufferLen);
 
       FadtPointer->Dsdt  = (UINT32)dsdt;
       FadtPointer->XDsdt = dsdt;
@@ -2034,9 +2041,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 //  }
 
   if (gSettings.DebugDSDT) {
-    DBG("Output DSDT before patch to /EFI/CLOVER/ACPI/origin/DSDT-or.aml\n");
-    Status = egSaveFile(SelfRootDir, L"\\EFI\\CLOVER\\ACPI\\origin\\DSDT-or.aml",
-                        (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
+    DBG("Output DSDT before patch to %ls\\ACPI\\origin\\DSDT-or.aml\n", selfOem.getOemFullPath().wc_str());
+    Status = egSaveFile(&selfOem.getOemDir(), L"ACPI\\origin\\DSDT-or.aml", (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
   }
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
@@ -2045,11 +2051,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer, OSVersion);
   if (gSettings.DebugDSDT) {
     for (Index=0; Index < 60; Index++) {
-      CHAR16          DsdtPatchedName[128];
-		snwprintf(DsdtPatchedName, 256, "\\EFI\\CLOVER\\ACPI\\origin\\DSDT-pa%llu.aml", Index);
-      if(!FileExists(SelfRootDir, DsdtPatchedName)){
-        Status = egSaveFile(SelfRootDir, DsdtPatchedName,
-                            (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
+      XStringW DsdtPatchedName = SWPrintf("ACPI\\origin\\DSDT-pa%llu.aml", Index);
+      if(!FileExists(&selfOem.getOemDir(), DsdtPatchedName)){
+        Status = egSaveFile(&selfOem.getOemDir(), DsdtPatchedName.wc_str(), (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
         if (!EFI_ERROR(Status)) {
           break;
         }
@@ -2069,7 +2073,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   XsdtReplaceSizes = (__typeof__(XsdtReplaceSizes))AllocateZeroPool(XsdtTableCount() * sizeof(*XsdtReplaceSizes));
 
   // Load merged ACPI files from ACPI/patched
-  LoadAllPatchedAML(AcpiOemPath.wc_str(), AUTOMERGE_PASS1);
+  LoadAllPatchedAML(L"ACPI\\patched", AUTOMERGE_PASS1);
 
   // Drop tables
   if (gSettings.ACPIDropTables) {
@@ -2096,7 +2100,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   PatchAllTables();
 
   // Load add-on ACPI files from ACPI/patched
-  LoadAllPatchedAML(AcpiOemPath.wc_str(), AUTOMERGE_PASS2);
+  LoadAllPatchedAML(L"ACPI\\patched", AUTOMERGE_PASS2);
 
   if (XsdtReplaceSizes) {
     FreePool(XsdtReplaceSizes);
@@ -2138,7 +2142,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
       Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
       if(!EFI_ERROR(Status)) {
         //save old table and drop it from XSDT
-        CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
+        CopyMem((void*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
         DropTableFromXSDT(APIC_SIGN, 0, 0);
         ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
         ApicTable->Revision = EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION;
@@ -2194,7 +2198,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
           DBG("New APIC table successfully inserted\n");
         }
         /*
-        Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
+        Status = egSaveFile(&self.getSelfRootDir(), PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
         if (EFI_ERROR(Status)) {
           Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
         }
@@ -2284,9 +2288,9 @@ EFI_STATUS LoadAcpiTable (
 
   // checking \EFI\ACPI\patched dir
   XStringW TmpStr = SWPrintf("%ls\\%ls", PathPatched, TableName);
-  if (FileExists(SelfRootDir, TmpStr)) {
+  if (FileExists(&self.getCloverDir(), TmpStr)) {
     DBG("found %ls\n", TmpStr.wc_str());
-    Status = egLoadFile(SelfRootDir, TmpStr.wc_str(), Buffer, BufferLen);
+    Status = egLoadFile(&self.getCloverDir(), TmpStr.wc_str(), Buffer, BufferLen);
   }
   return Status;
 }
@@ -2308,7 +2312,7 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
 
   if (!EFI_ERROR(Status)) {
     // loaded - allocate EfiACPIReclaim
-    DBG("Loaded DSDT at %ls\\%ls\n", PathPatched, gSettings.DsdtName.wc_str());
+    DBG("Loaded DSDT at %ls\\%ls\\%ls\n", self.getCloverDirPathAsXStringW().wc_str(), PathPatched, gSettings.DsdtName.wc_str());
     Dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -2319,13 +2323,13 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
 
     if(!EFI_ERROR(Status)) {
       // copy DSDT into EfiACPIReclaim block
-      CopyMem((VOID*)(UINTN)Dsdt, Buffer, BufferLen);
+      CopyMem((void*)(UINTN)Dsdt, Buffer, BufferLen);
 
       // update FADT
       FadtPointer->Dsdt  = (UINT32)Dsdt;
       FadtPointer->XDsdt = Dsdt;
       FixChecksum(&FadtPointer->Header);
-		DBG("DSDT at 0x%llX injected to FADT 0x%p\n", Dsdt, FadtPointer);
+	    DBG("DSDT at 0x%llX injected to FADT 0x%p\n", Dsdt, FadtPointer);
     }
 
     FreePool(Buffer);
@@ -2410,11 +2414,11 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
   RsdPointer = NULL;
 
-  Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID **) &RsdPointer);
+  Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (void **) &RsdPointer);
   if (RsdPointer != NULL) {
 	  DBG("OtherOS: Found Acpi 2.0 RSDP 0x%llX\n", (uintptr_t)RsdPointer);
   } else {
-    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID **) &RsdPointer);
+    Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (void **) &RsdPointer);
     if (RsdPointer != NULL) {
 		DBG("Found Acpi 1.0 RSDP 0x%llX\n", (uintptr_t)RsdPointer);
     }
@@ -2469,14 +2473,14 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
 
   // prepare dirs that will be searched for custom ACPI tables
-  XStringW AcpiOemPath = SWPrintf("%ls\\ACPI\\%ls", OEMPath.wc_str(), OsSubdir);
+  XStringW AcpiOemPath = SWPrintf("%ls\\ACPI\\%ls", selfOem.getOemPathRelToSelfDir().wc_str(), OsSubdir);
   XStringW PathPatched;
-  if (FileExists(SelfRootDir, AcpiOemPath)) {
+  if (FileExists(&self.getCloverDir(), AcpiOemPath)) {
     PathPatched = AcpiOemPath;
   } else {
-    PathPatched = SWPrintf("\\EFI\\CLOVER\\ACPI\\%ls", OsSubdir);
+    PathPatched = SWPrintf("ACPI\\%ls", OsSubdir);
   }
-  if (!FileExists(SelfRootDir, PathPatched)) {
+  if (!FileExists(&self.getCloverDir(), PathPatched)) {
     DBG("Dir %ls not found. No patching will be done.\n", OsSubdir);
     return EFI_NOT_FOUND;
   }
@@ -2512,7 +2516,7 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   // find and inject other ACPI tables
   //
 
-  DirIterOpen(SelfRootDir, PathPatched.wc_str(), &DirIter);
+  DirIterOpen(&self.getCloverDir(), PathPatched.wc_str(), &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
 
     if (DirEntry->FileName[0] == L'.') {

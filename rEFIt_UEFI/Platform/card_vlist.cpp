@@ -67,7 +67,7 @@
 LIST_ENTRY gCardList = INITIALIZE_LIST_HEAD_VARIABLE (gCardList);
 
 
-VOID AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
+void AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
 {
 	CARDLIST* new_card;		
 	new_card = (__typeof__(new_card))AllocateZeroPool(sizeof(CARDLIST));
@@ -101,7 +101,7 @@ CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
   return NULL;
 }
 
-VOID FillCardList(const TagDict* CfgDict)
+void FillCardList(const TagDict* CfgDict)
 {
   if (IsListEmpty(&gCardList) && (CfgDict != NULL)) {
     CONST CHAR8 *VEN[] = { "NVIDIA",  "ATI" };

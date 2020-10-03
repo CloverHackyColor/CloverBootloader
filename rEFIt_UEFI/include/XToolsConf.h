@@ -19,7 +19,7 @@
  */
 #define __XTOOLS_CHECK_OVERFLOW__
 
-#define Xrealloc(ptr, newsize, oldsize) realloc(ptr, newsize, oldsize)
+#define Xrealloc(ptr, newsize, oldsize) reallocWithOldSize(ptr, newsize, oldsize)
 
 
 #endif

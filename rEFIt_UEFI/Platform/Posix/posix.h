@@ -32,7 +32,7 @@
 //#define strncpy(strDest,strSource,count)  AsciiStrnCpyS(strDest,(UINTN)count+1,strSource,(UINTN)count)
 //#define strlen(str)                       (size_t)(AsciiStrLen(str))
 //#define strcat(strDest,strSource)         AsciiStrCatS(strDest,AsciiStrLen(strDest)+1,strSource)
-#define strchr(str,ch)                    ScanMem8((VOID *)(str),AsciiStrSize(str),(UINT8)ch)
+#define strchr(str,ch)                    ScanMem8((void *)(str),AsciiStrSize(str),(UINT8)ch)
 #define strstr(a,b)                       AsciiStrStr(a,b)
 
 void abort(void);

@@ -23,7 +23,8 @@
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 #  OcSupportPkg/OcSupportPkg.dec
-  CloverEFI/UefiCpuPkg/UefiCpuPkg.dec
+  UefiCpuPkg/UefiCpuPkg.dec
+  OpenCorePkg/OpenCorePkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -32,9 +33,9 @@
   CpuLib
   DevicePathLib
   MemoryAllocationLib
-  DeviceTreeLib
+  OcDeviceTreeLib
 #  DevicePathLib
-  MachoLib
+  OcMachoLib
 #  OcStringLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
@@ -92,7 +93,7 @@
   gEfiDiskIo2ProtocolGuid                     ## CONSUMES
   gEfiConsoleControlProtocolGuid              ## SOMETIMES_CONSUMES
   gAppleFirmwarePasswordProtocolGuid          ## SOMETIMES_CONSUMES
-  gAppleDevicePropertyProtocolGuid            ## SOMETIMES_CONSUMES
+  #gAppleDevicePropertyProtocolGuid            ## SOMETIMES_CONSUMES
   gAppleFramebufferInfoProtocolGuid           ## SOMETIMES_CONSUMES
   gAppleKeyStateProtocolGuid                  ## SOMETIMES_CONSUMES
   gAppleNetBootProtocolGuid                   ## SOMETIMES_CONSUMES

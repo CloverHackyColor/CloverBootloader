@@ -200,7 +200,7 @@ INT32 mac_to_posix(UINT32 mac_time)
   return mac_time ?  mac_time - 2082844800 : 0;
 }
 /* not used
- VOID fsw_efi_decode_time(OUT EFI_TIME *EfiTime, IN UINT32 UnixTime)
+ void fsw_efi_decode_time(OUT EFI_TIME *EfiTime, IN UINT32 UnixTime)
  {
  INT32        days, rem;
  INT32        y, newy, yleap;
@@ -291,7 +291,7 @@ SimpleRtcRead (
 }
 
 STATIC
-VOID
+void
 SimpleRtcWrite (
                 IN UINT8 Offset,
                 IN UINT8 Value
@@ -321,7 +321,7 @@ EFIAPI OurBlockIoRead (
                        IN UINT32                         MediaId,
                        IN EFI_LBA                        Lba,
                        IN UINTN                          BufferSize,
-                       OUT VOID                          *Buffer
+                       OUT void                          *Buffer
                        )
 {
   EFI_STATUS          Status;
@@ -374,7 +374,7 @@ EFIAPI OurBlockIoRead (
 }
 
 /** Get sleep image location (volume and name) */
-VOID
+void
 GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, XStringW* SleepImageNamePtr)
 {
   EFI_STATUS          Status = EFI_NOT_FOUND;
@@ -394,7 +394,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
     // find sleep image entry from plist
     Status = egLoadFile(Volume->RootDir, PrefName, &PrefBuffer, &PrefBufferLen);
     if (EFI_ERROR(Status)) {
-      XStringW PrefName3 = SWPrintf("\\Library\\Preferences\\com.apple.PowerManagement.%ls.plist", GuidBeToStr(&gUuid).wc_str());
+      XStringW PrefName3 = SWPrintf("\\Library\\Preferences\\com.apple.PowerManagement.%s.plist", gSettings.getUUID().c_str());
       Status = egLoadFile(Volume->RootDir, PrefName3.wc_str(), &PrefBuffer, &PrefBufferLen);
       if (EFI_ERROR(Status)) {
         Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
@@ -486,7 +486,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
 {
   EFI_STATUS          Status = EFI_SUCCESS;
   EFI_FILE            *File = NULL;
-  VOID                *Buffer;
+  void                *Buffer;
   UINTN               BufferSize;
   XStringW            ImageName;
   REFIT_VOLUME        *ImageVolume;
@@ -592,7 +592,7 @@ BOOLEAN
 IsSleepImageValidBySleepTime (IN REFIT_VOLUME *Volume)
 {
   EFI_STATUS          Status;
-  VOID                *Buffer;
+  void                *Buffer;
   EFI_BLOCK_IO_PROTOCOL   *BlockIo;
   HFSPlusVolumeHeaderMin  *HFSHeader;
   UINT32              HFSVolumeModifyDate;
@@ -668,7 +668,7 @@ UINT16 PartNumForVolume(REFIT_VOLUME *Volume)
 {
   UINT16 PartNum = 0; //if not found then zero mean whole disk
   HARDDRIVE_DEVICE_PATH       *HdPath     = NULL;
-  EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
+  const EFI_DEVICE_PATH_PROTOCOL    *DevicePath = Volume->DevicePath;
   
   while (DevicePath && !IsDevicePathEnd (DevicePath)) {
     if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
@@ -804,7 +804,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
    } else {
    XStringW TmpStr = SWPrintf("%ls", strguid(&TmpGuid));
    DBG("got the guid %ls\n", TmpStr.wc_str());
-   CopyMem((VOID*)Ptr, TmpStr, StrSize(TmpStr));
+   CopyMem((void*)Ptr, TmpStr, StrSize(TmpStr));
    DBG("fter CopyMem: %ls\n", Ptr);
    }
    }
@@ -839,7 +839,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   if (!gFirmwareClover &&
       (!gDriversFlags.EmuVariableLoaded || GlobalConfig.HibernationFixup)) {
     DBG("    UEFI with NVRAM? ");
-    Status = GetVariable2 (L"Boot0082", &gEfiGlobalVariableGuid, (VOID**)&Data, &Size);
+    Status = GetVariable2 (L"Boot0082", &gEfiGlobalVariableGuid, (void**)&Data, &Size);
     if (EFI_ERROR(Status))  {
       DBG(" no, Boot0082 not exists\n");
       ret = FALSE;
@@ -890,7 +890,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
            4:609  0:000      Boot0082 points to Volume with UUID:BA92975E-E2FB-48E6-95CC-8138B286F646
            4:609  0:000      boot-image before: PciRoot(0x0)\Pci(0x1F,0x2)\Sata(0x5,0x0,0x0)\25593c7000:A82E84C6-9DD6-49D6-960A-0F4C2FE4851C
            */
-          Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, (VOID**)&Value, &Size);
+          Status = GetVariable2 (L"boot-image", &gEfiAppleBootGuid, (void**)&Value, &Size);
           if (EFI_ERROR(Status)) {
             // leave it as is
             DBG("    boot-image not found while we want StrictHibernate\n");
@@ -920,9 +920,9 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
               if (EFI_ERROR(Status)) {
                 DBG("    cant convert Str %ls to GUID\n", Ptr);
               } else {
-                XStringW TmpStr = GuidLEToXStringW(&TmpGuid);
+                XStringW TmpStr = GuidLEToXStringW(TmpGuid);
                 //DBG("got the guid %ls\n", TmpStr);
-                memcpy((VOID*)Ptr, TmpStr.wc_str(), TmpStr.sizeInBytes());
+                memcpy((void*)Ptr, TmpStr.wc_str(), TmpStr.sizeInBytes());
               }
             }
             if (StrCmp(gST->FirmwareVendor, L"INSYDE Corp.") != 0) {
@@ -986,7 +986,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   UINT64                      SleepImageOffset;
   EFI_DEVICE_PATH_PROTOCOL    *BootImageDevPath;
   UINTN                       Size = 0;
-  VOID                        *Value = NULL;
+  void                        *Value = NULL;
   AppleRTCHibernateVars       RtcVars;
   UINT8                       *VarData = NULL;
   REFIT_VOLUME                *SleepImageVolume;

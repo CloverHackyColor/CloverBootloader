@@ -10,6 +10,8 @@ extern "C" {
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/OcDeviceTreeLib.h>
+
 #ifdef __cplusplus
 }
 #endif
@@ -110,7 +112,7 @@ BOOLEAN CompareMemMask(const UINT8 *Source, const UINT8 *Search, UINTN SearchSiz
   return TRUE;
 }
 
-VOID CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize)
+void CopyMemMask(UINT8 *Dest, const UINT8 *Replace, const UINT8 *Mask, UINTN SearchSize)
 {
   UINT8 M, D;
   // the procedure is called from SearchAndReplaceMask with own check but for future it is better to check twice
@@ -274,7 +276,7 @@ UINTN SearchAndReplaceTxt(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search,
 CHAR8 gKextBundleIdentifier[256];
 
 /** Extracts kext BundleIdentifier from given Plist into gKextBundleIdentifier */
-VOID ExtractKextBundleIdentifier(CHAR8 *Plist)
+void ExtractKextBundleIdentifier(CHAR8 *Plist)
 {
   CHAR8     *Tag;
   CHAR8     *BIStart;
@@ -358,7 +360,7 @@ CHAR8 ATIKextBundleId[2][64];
 //
 // Inits patcher: prepares ATIKextBundleIds.
 //
-VOID LOADER_ENTRY::ATIConnectorsPatchInit()
+void LOADER_ENTRY::ATIConnectorsPatchInit()
 {
   //
   // prepar boundle ids
@@ -388,7 +390,7 @@ VOID LOADER_ENTRY::ATIConnectorsPatchInit()
 //
 // Registers kexts that need force-load during WithKexts boot.
 //
-VOID LOADER_ENTRY::ATIConnectorsPatchRegisterKexts(void *FSInject_v, void *ForceLoadKexts_v)
+void LOADER_ENTRY::ATIConnectorsPatchRegisterKexts(void *FSInject_v, void *ForceLoadKexts_v)
 {
   FSINJECTION_PROTOCOL *FSInject = (FSINJECTION_PROTOCOL *)FSInject_v;
   FSI_STRING_LIST *ForceLoadKexts = (FSI_STRING_LIST *)ForceLoadKexts_v;
@@ -416,7 +418,7 @@ VOID LOADER_ENTRY::ATIConnectorsPatchRegisterKexts(void *FSInject_v, void *Force
 //
 // Patch function.
 //
-VOID LOADER_ENTRY::ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   
   UINTN   Num = 0;
@@ -468,7 +470,7 @@ const UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
 const UINT8   MovE2ToCx[]   = { 0x66, 0xB9, 0xE2, 0x00 };
 const UINT8   Wrmsr[]       = { 0x0F, 0x30 };
 
-VOID LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::AppleIntelCPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   UINTN   Index1;
   UINTN   Index2;
@@ -576,7 +578,7 @@ const UINT8   Moj4CataReplace[] = { 0xeb, 0x33, 0x0f, 0xb7 };
 // we are planning to patch.
 //
 
-VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
 #if OLD_METHOD
   UINTN   Num = 0;
@@ -668,7 +670,7 @@ VOID LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
 //
 // not used since 4242
 #if 0
-VOID LOADER_ENTRY::CheckForFakeSMC(CHAR8 *InfoPlist)
+void LOADER_ENTRY::CheckForFakeSMC(CHAR8 *InfoPlist)
 {
   if (OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC) &&
       OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
@@ -701,7 +703,7 @@ STATIC UINT8   DELL_SMBIOS_GUID_Replace[] = { 0x45, 0x42, 0x39, 0x44, 0x32, 0x44
 // all computers even though Apple.Inc should obey the rule
 // that's why we can be so confident to write patch pattern this way - syscl
 //
-VOID LOADER_ENTRY::DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   //
   // syscl
@@ -742,7 +744,7 @@ VOID LOADER_ENTRY::DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
 // SNBE_AICPUPatch implemented by syscl
 // Fix AppleIntelCPUPowerManagement on SandyBridge-E (c) omni, stinga11
 //
-VOID LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
     UINT32 i;
     UINT64 os_ver = AsciiOSVersionToUint64(OSVersion);
@@ -1018,7 +1020,7 @@ const UINT8   BroadwellE_IOPCI_Repl_SieHS[] = { 0x48, 0x81, 0xFB, 0x00, 0x00, 0x
 const UINT8   BroadwellE_IOPCI_Find_MojCata[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x40 };
 const UINT8   BroadwellE_IOPCI_Repl_MojCata[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 0x80 };
 
-VOID LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   UINTN count = 0;
   UINT64 os_ver = AsciiOSVersionToUint64(OSVersion);
@@ -1050,7 +1052,7 @@ VOID LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
   Stall(5000000);
 }
 
-VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
+void LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
 {
 //  UINTN procLen = 0;
   DBG("8 apple patch\n");
@@ -1108,7 +1110,7 @@ VOID LOADER_ENTRY::EightApplePatch(UINT8 *Driver, UINT32 DriverSize)
 // Generic kext patch functions
 //
 //
-VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, size_t N)
+void LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, size_t N)
 {
   UINTN   Num = 0;
 
@@ -1214,7 +1216,7 @@ VOID LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
 // Called from SetFSInjection(), before boot.efi is started,
 // to allow patchers to prepare FSInject to force load needed kexts.
 //
-VOID LOADER_ENTRY::KextPatcherRegisterKexts(void *FSInject_v, void *ForceLoadKexts)
+void LOADER_ENTRY::KextPatcherRegisterKexts(void *FSInject_v, void *ForceLoadKexts)
 {
   FSINJECTION_PROTOCOL *FSInject = (FSINJECTION_PROTOCOL *)FSInject_v;
   if (KernelAndKextPatches.KPATIConnectorsController.notEmpty()) {
@@ -1231,7 +1233,7 @@ VOID LOADER_ENTRY::KextPatcherRegisterKexts(void *FSInject_v, void *ForceLoadKex
 // PatchKext is called for every kext from prelinked kernel (kernelcache) or from DevTree (booting with drivers).
 // Add kext detection code here and call kext specific patch function.
 //
-VOID LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+void LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   if (KernelAndKextPatches.KPATIConnectorsController.notEmpty()) {
     //
@@ -1486,7 +1488,7 @@ UINT64 GetPlistHexValue(CONST CHAR8 *Plist, CONST CHAR8 *Key, CONST CHAR8 *Whole
 //       ...
 //     </dict>
 //       ...
-VOID LOADER_ENTRY::PatchPrelinkedKexts()
+void LOADER_ENTRY::PatchPrelinkedKexts()
 {
   CHAR8     *WholePlist;
   CHAR8     *DictPtr;
@@ -1586,7 +1588,7 @@ VOID LOADER_ENTRY::PatchPrelinkedKexts()
 // Iterates over kexts loaded by booter
 // and calls PatchKext() for each.
 //
-VOID LOADER_ENTRY::PatchLoadedKexts()
+void LOADER_ENTRY::PatchLoadedKexts()
 {
   DTEntry             MMEntry;
   _BooterKextFileInfo *KextFileInfo;
@@ -1613,7 +1615,7 @@ VOID LOADER_ENTRY::PatchLoadedKexts()
         //DBG(L"Prop: %s\n", PropName);
         if (AsciiStrStr(PropName,"Driver-")) {
           // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
-          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DeviceTreeNodeProperty));
+          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->CurrentProperty) + sizeof(DTProperty));
           //if (DbgCount < 3) DBG(L"%s: paddr = %hhX, length = %hhX\n", PropName, PropEntry->paddr, PropEntry->length);
           
           // PropEntry->paddr points to _BooterKextFileInfo
@@ -1648,7 +1650,7 @@ VOID LOADER_ENTRY::PatchLoadedKexts()
 // Will iterate through kext in prelinked kernel (kernelcache)
 // or DevTree (drivers boot) and do patches.
 //
-VOID LOADER_ENTRY::KextPatcherStart()
+void LOADER_ENTRY::KextPatcherStart()
 {
 //  if (isKernelcache) {
     DBG_RT("Patching kernelcache ...\n");

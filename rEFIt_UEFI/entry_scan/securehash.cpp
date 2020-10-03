@@ -61,10 +61,10 @@
 #define EFIGUID_SIZE (CERT_SIZE + sizeof(EFI_GUID))
 
 // Check database for signature
-STATIC EFI_STATUS CheckSignatureIsInDatabase(IN VOID     *Database,
+STATIC EFI_STATUS CheckSignatureIsInDatabase(IN void     *Database,
                                              IN UINTN     DatabaseSize,
                                              IN EFI_GUID *SignatureType,
-                                             IN VOID     *Signature,
+                                             IN void     *Signature,
                                              IN UINTN     SignatureSize)
 {
   UINT8 *DatabasePtr;
@@ -113,7 +113,7 @@ STATIC EFI_STATUS CheckSignatureIsInDatabase(IN VOID     *Database,
 // Append a signature to a signature list
 STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureList,
                                         IN     EFI_GUID            *SignatureType,
-                                        IN     VOID                *Signature,
+                                        IN     void                *Signature,
                                         IN     UINTN                SignatureSize)
 {
   EFI_SIGNATURE_LIST *OldSignatureList;
@@ -179,7 +179,7 @@ STATIC EFI_STATUS AppendSignatureToList(IN OUT EFI_SIGNATURE_LIST **SignatureLis
 }
 
 // Append a signature list to a signature database
-STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT VOID               **Database,
+STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT void               **Database,
                                                 IN OUT UINTN               *DatabaseSize,
                                                 IN     EFI_SIGNATURE_LIST  *SignatureList)
 {
@@ -262,10 +262,10 @@ STATIC EFI_STATUS AppendSignatureListToDatabase(IN OUT VOID               **Data
 }
 
 // Append a signature to a signature database
-EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
+EFI_STATUS AppendSignatureToDatabase(IN OUT void     **Database,
                                      IN OUT UINTN     *DatabaseSize,
                                      IN     EFI_GUID  *SignatureType,
-                                     IN     VOID      *Signature,
+                                     IN     void      *Signature,
                                      IN     UINTN      SignatureSize)
 {
   // Create a new signature list
@@ -284,9 +284,9 @@ EFI_STATUS AppendSignatureToDatabase(IN OUT VOID     **Database,
 }
 
 // Append a signature database to another signature database
-EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
+EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT void  **Database,
                                              IN OUT UINTN  *DatabaseSize,
-                                             IN     VOID   *SignatureDatabase,
+                                             IN     void   *SignatureDatabase,
                                              IN     UINTN   SignatureDatabaseSize)
 {
   UINT8 *Ptr, *End;
@@ -316,11 +316,11 @@ EFI_STATUS AppendSignatureDatabaseToDatabase(IN OUT VOID  **Database,
 }
 
 // Add image signature database to authorized database
-EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN VOID  *Database,
+EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN void  *Database,
                                                    IN UINTN  DatabaseSize)
 {
   EFI_STATUS  Status;
-  VOID       *AuthDatabase;
+  void       *AuthDatabase;
   UINTN       AuthDatabaseSize;
   // Check parameters
   if ((Database == NULL) || (DatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
@@ -350,15 +350,15 @@ EFI_STATUS AppendImageDatabaseToAuthorizedDatabase(IN VOID  *Database,
   return Status;
 }
 
-STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT VOID     **Database,
+STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT void     **Database,
                                               IN OUT UINTN     *DatabaseSize,
                                               IN     EFI_GUID  *SignatureType,
-                                              IN     VOID      *Signature,
+                                              IN     void      *Signature,
                                               IN     UINTN      SignatureSize)
 {
   UINT8 *Ptr, *End;
-  VOID  *OldDatabase;
-  VOID  *NewDatabase = NULL;
+  void  *OldDatabase;
+  void  *NewDatabase = NULL;
   UINTN  OldDatabaseSize;
   UINTN  NewDatabaseSize = 0;
   // Check parameters
@@ -433,7 +433,7 @@ STATIC EFI_STATUS RemoveSignatureFromDatabase(IN OUT VOID     **Database,
   return EFI_SUCCESS;
 }
 
-STATIC EFI_STATUS RemoveSignatureListFromDatabase(IN OUT VOID               **Database,
+STATIC EFI_STATUS RemoveSignatureListFromDatabase(IN OUT void               **Database,
                                                   IN OUT UINTN               *DatabaseSize,
                                                   IN     EFI_SIGNATURE_LIST  *SignatureList)
 {
@@ -469,9 +469,9 @@ STATIC EFI_STATUS RemoveSignatureListFromDatabase(IN OUT VOID               **Da
   return EFI_SUCCESS;
 }
 
-STATIC EFI_STATUS RemoveSignatureDatabaseFromDatabase(IN OUT VOID  **Database,
+STATIC EFI_STATUS RemoveSignatureDatabaseFromDatabase(IN OUT void  **Database,
                                                       IN OUT UINTN  *DatabaseSize,
-                                                      IN     VOID   *SignatureDatabase,
+                                                      IN     void   *SignatureDatabase,
                                                       IN     UINTN   SignatureDatabaseSize)
 {
   UINT8 *Ptr, *End;
@@ -501,11 +501,11 @@ STATIC EFI_STATUS RemoveSignatureDatabaseFromDatabase(IN OUT VOID  **Database,
 }
 
 // Remove image signature database from authorized database
-EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN VOID  *Database,
+EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN void  *Database,
                                                      IN UINTN  DatabaseSize)
 {
   EFI_STATUS  Status;
-  VOID       *AuthDatabase;
+  void       *AuthDatabase;
   UINTN       AuthDatabaseSize;
   // Check parameters
   if ((Database == NULL) || (DatabaseSize <= sizeof(EFI_SIGNATURE_LIST))) {
@@ -533,24 +533,24 @@ EFI_STATUS RemoveImageDatabaseFromAuthorizedDatabase(IN VOID  *Database,
   return Status;
 }
 
-VOID *GetAuthorizedDatabase(UINTN *DatabaseSize)
+void *GetAuthorizedDatabase(UINTN *DatabaseSize)
 {
    return GetSignatureDatabase(AUTHORIZED_DATABASE_NAME, &AUTHORIZED_DATABASE_GUID, DatabaseSize);
 }
-EFI_STATUS SetAuthorizedDatabase(IN VOID  *Database,
+EFI_STATUS SetAuthorizedDatabase(IN void  *Database,
                                  IN UINTN  DatabaseSize)
 {
    return SetSignatureDatabase(AUTHORIZED_DATABASE_NAME, &AUTHORIZED_DATABASE_GUID, Database, DatabaseSize);
 }
 
 // Clear authorized signature database
-EFI_STATUS ClearAuthorizedDatabase(VOID)
+EFI_STATUS ClearAuthorizedDatabase(void)
 {
    return SetAuthorizedDatabase(NULL, 0);
 }
 
 // Create a secure boot image signature
-STATIC VOID *CreateImageSignatureDatabase(IN VOID   *FileBuffer,
+STATIC void *CreateImageSignatureDatabase(IN void   *FileBuffer,
                                           IN UINT64  FileSize,
                                           IN UINTN  *DatabaseSize)
 {
@@ -742,13 +742,13 @@ Failed:
 }
 
 // Get a secure boot image signature
-VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
+void *GetImageSignatureDatabase(IN void    *FileBuffer,
                                 IN UINT64   FileSize,
                                 IN UINTN   *DatabaseSize,
                                 IN BOOLEAN  HashIfNoDatabase)
 {
   UINTN                                Size = 0;
-  VOID                                *Database = NULL;
+  void                                *Database = NULL;
   UINT8                               *Ptr, *End;
   WIN_CERTIFICATE_UEFI_GUID           *GuidCert;
   EFI_IMAGE_DOS_HEADER                *DosHeader;
@@ -818,7 +818,7 @@ VOID *GetImageSignatureDatabase(IN VOID    *FileBuffer,
     UINTN            Length = Cert->dwLength;
     UINTN            Alignment = (Length % SECDIR_ALIGNMENT_SIZE);
     UINTN            SigSize = 0;
-    VOID            *Signature = NULL;
+    void            *Signature = NULL;
     EFI_GUID        *SigGuid = NULL;
     // Get the alignment length
     if (Alignment != 0) {

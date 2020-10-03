@@ -13,7 +13,7 @@
 
 INTN renderSVGtext(XImage* TextBufferXY, INTN posX, INTN posY, INTN textType, const XStringW& string, UINTN Cursor);
 
-VOID testSVG(VOID);
+void testSVG(void);
 
 
 #endif /* LIBEG_VECTORGRAPHICS_H_ */

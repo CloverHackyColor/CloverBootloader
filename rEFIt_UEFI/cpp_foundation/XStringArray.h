@@ -229,7 +229,11 @@ class XStringArray_/* : public XStringArraySuper*/
   template<typename XStringClass1, enable_if(is___String(XStringClass1))>
   void Add(const XStringClass1 &aString) { Add(aString.s()); }
 
-	void AddReference(XStringClass *newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
+  template<typename XStringClass1, enable_if(is___String(XStringClass1))>
+  void insertAtPos(const XStringClass1 &aString, size_t pos) { array.InsertRef(new XStringClass1(aString), pos, true); }
+
+  void AddReference(XStringClass *newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
+  void insertReferenceAtPos(XStringClass *newElement, size_t pos, bool FreeIt) { array.InsertRef(newElement, pos, FreeIt); }
 
 	template<class OtherXStringClass, class OtherXStringArrayClass>
 	void import(const XStringArray_<OtherXStringClass, OtherXStringArrayClass> &aStrings)
@@ -253,20 +257,24 @@ class XStringArray_/* : public XStringArraySuper*/
 			if ( !Contains(aStrings[i]) ) AddCopy(aStrings[i]);
 		}
 	}
-	void remove(const XStringClass &aString)
-	{
-		if ( array.size() > 0 )
-		{
-			size_t i = array.size();
-			do {
-				i--;
-				if ( array[i] == aString ) {
-					array.RemoveAtIndex(i);
-					break;
-				}
-			} while ( i > 0 );
-		}
-	}
+  void remove(const XStringClass &aString)
+  {
+    if ( array.size() > 0 )
+    {
+      size_t i = array.size();
+      do {
+        i--;
+        if ( array[i] == aString ) {
+          array.RemoveAtIndex(i);
+          break;
+        }
+      } while ( i > 0 );
+    }
+  }
+  void removeAtPos(size_t pos)
+  {
+    array.RemoveAtIndex(pos);
+  }
 	void removeIC(const XStringClass &aString)
 	{
 		if ( array.size() > 0 )

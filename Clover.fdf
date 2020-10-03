@@ -104,7 +104,7 @@ INF  CloverEFI/OsxSmbiosGenDxe/SmbiosGen.inf
 INF  CloverEFI/OsxBdsDxe/BdsDxe.inf
 INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-INF  CloverEFI/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+#INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf

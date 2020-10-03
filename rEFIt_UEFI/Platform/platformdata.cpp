@@ -7,6 +7,7 @@
 #include "smbios.h"
 #include "cpu.h"
 #include "Nvram.h"
+#include "guid.h"
 
 /* Machine Default Data */
 
@@ -569,7 +570,7 @@ PLATFORMDATA ApplePlatformData[] =
     0x01, 0x43, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
 };
 
-VOID SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
+void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
 {
   const CHAR8  *i;
 
@@ -1360,7 +1361,7 @@ MACHINE_TYPES GetModelFromString(const XString8& ProductName)
   return MaxMachineType;
 }
 
-VOID GetDefaultSettings()
+void GetDefaultSettings()
 {
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
@@ -1398,10 +1399,9 @@ VOID GetDefaultSettings()
   gSettings.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
 
-  gSettings.SmUUIDConfig         = FALSE;
+  gSettings.SmUUID = nullGuid;
   gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
-  gSettings.RtROM                = NULL;
-  gSettings.RtROMLen             = 0;
+  gSettings.RtROM.setEmpty();
   gSettings.CsrActiveConfig      = 0xFFFF;
   gSettings.BooterConfig         = 0;
 //  MemSet(gSettings.BooterCfgStr, 64, 0);

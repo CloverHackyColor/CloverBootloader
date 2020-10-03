@@ -29,7 +29,7 @@
   PcdLib.c
 
 [LibraryClasses]
-  DebugLib
+#  DebugLib
   BaseMemoryLib
 
 [Packages]

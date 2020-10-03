@@ -23,6 +23,7 @@
 #include <grub/symbol.h>
 #include <grub/err.h>
 #include <grub/compiler.h>
+#include <grub/misc.h>
 
 struct grub_list
 {
@@ -48,7 +49,7 @@ grub_bad_type_cast_real (int line, const char *file)
 	      file, line);
 }
 
-#define grub_bad_type_cast() grub_bad_type_cast_real(__LINE__, GRUB_FILE)
+#define grub_bad_type_cast() grub_bad_type_cast_real(__LINE__, GRUB_STRINGIFY(GRUB_FILE))
 
 #define GRUB_FIELD_MATCH(ptr, type, field) \
   ((char *) &(ptr)->field == (char *) &((type) (ptr))->field)

@@ -53,6 +53,7 @@
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   CloverPkg.dec
+  OpenCorePkg/OpenCorePkg.dec
 
 [LibraryClasses]
   UefiLib

@@ -461,7 +461,7 @@ void nsvg__xformMultiply(float* t, float* s);
 void nsvg__deleteFont(NSVGfont* font);
 void nsvg__imageBounds(NSVGimage* image, float* bounds);
 float addLetter(NSVGparser* p, CHAR16 letter, float x, float y, float scale, UINT32 color);
-VOID RenderSVGfont(NSVGfont  *fontSVG, UINT32 color);
+void RenderSVGfont(NSVGfont  *fontSVG, UINT32 color);
 
 //--------------- Rasterizer --------------
 typedef struct NSVGrasterizer NSVGrasterizer;
@@ -469,7 +469,7 @@ typedef void (*recursive_image)(const void *obj, NSVGrasterizer *r, const char *
 
 
 // Allocated rasterizer context.
-NSVGrasterizer* nsvgCreateRasterizer(VOID);
+NSVGrasterizer* nsvgCreateRasterizer(void);
 
 // Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
 //   r - pointer to rasterizer context

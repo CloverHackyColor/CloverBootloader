@@ -13,6 +13,8 @@
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/PeCoffLib.h>
+#include <Library/PrintLib.h>
+#include <Library/SerialPortLib.h>
 
 #include <Protocol/LoadedImage.h>
 //#include <Protocol/Runtime.h>
@@ -136,6 +138,25 @@ DumpUefiCallsEntrypoint (
 	IN EFI_SYSTEM_TABLE			*SystemTable
 )
 {
+#ifdef DEBUG_ON_SERIAL_PORT
+  {
+    EFI_LOADED_IMAGE* LoadedImage;
+    EFI_STATUS Status = gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+
+    if ( !EFI_ERROR(Status) ) {
+      CHAR8 buf[50];
+      AsciiSPrint(buf, sizeof(buf)-1, "DumpEfiCalls : Image base = 0x%X\n", (UINTN)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+      SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
+      AsciiSPrint(buf, sizeof(buf)-1, "2LoadedImage.DeviceHandle = 0x%X\n", (UINTN)LoadedImage->DeviceHandle);
+      SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
+    }else{
+      CHAR8 buf[50];
+      AsciiSPrint(buf, sizeof(buf)-1, "DumpEfiCalls : HandleProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
+      SerialPortWrite((UINT8*)buf, AsciiStrLen(buf));
+    }
+  }
+#endif
+
 	//
 	// Override StartImage
 	// other overrides will be done from there when boot loader is started

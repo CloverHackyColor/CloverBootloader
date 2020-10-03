@@ -176,6 +176,10 @@ size_t XStringAbstract__indexOf(const O* s, size_t Pos, const P* other, bool toL
 	return XStringAbstract__indexOf(&s, other, Pos, toLower);
 }
 
+/*
+ * Find the last occurence of other, until pos
+ * NOTE : do not pass SIZE_T_MAX as pos. maximum value is SIZE_T_MAX-1
+ */
 template<typename O, typename P>
 size_t XStringAbstract__rindexOf(const O* s, size_t Pos, const P* other, bool toLower)
 {
@@ -379,6 +383,11 @@ public:
 		return ret;
 	}
 
+  template<typename O, enable_if(is_char(O))>
+  bool startWith(O otherChar) const {
+    O other[2] = { otherChar, 0};
+    return XStringAbstract__startWith(m_data, other, false);
+  }
 	template<typename O, class OtherXStringClass>
 	bool startWith(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWith(m_data, otherS.m_data, false); }
 	template<typename O>

@@ -14,26 +14,28 @@
 
 extern "C" EFI_GUID  gEfiMiscSubClassGuid;
 
+constexpr const LString8 nullGuid = "00000000-0000-0000-0000-000000000000";
+
 /** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 template <typename T, enable_if( is___String(T) )>
 BOOLEAN IsValidGuidAsciiString(const T& Str)
 {
-  UINTN   Index;
+  UINTN   Index4IsValidGuidAsciiString; // stupid name to avoid warning : Declaration shadows a variable in the global namespace
 
   if ( Str.length() != 36 ) {
     return FALSE;
   }
 
-  for (Index = 0; Index < 36; Index++) {
-    if (Index == 8 || Index == 13 || Index == 18 || Index == 23) {
-      if (Str[Index] != '-') {
+  for (Index4IsValidGuidAsciiString = 0; Index4IsValidGuidAsciiString < 36; Index4IsValidGuidAsciiString++) {
+    if (Index4IsValidGuidAsciiString == 8 || Index4IsValidGuidAsciiString == 13 || Index4IsValidGuidAsciiString == 18 || Index4IsValidGuidAsciiString == 23) {
+      if (Str[Index4IsValidGuidAsciiString] != '-') {
         return FALSE;
       }
     } else {
       if (!(
-            (Str[Index] >= '0' && Str[Index] <= '9')
-            || (Str[Index] >= 'a' && Str[Index] <= 'f')
-            || (Str[Index] >= 'A' && Str[Index] <= 'F')
+            (Str[Index4IsValidGuidAsciiString] >= '0' && Str[Index4IsValidGuidAsciiString] <= '9')
+            || (Str[Index4IsValidGuidAsciiString] >= 'a' && Str[Index4IsValidGuidAsciiString] <= 'f')
+            || (Str[Index4IsValidGuidAsciiString] >= 'A' && Str[Index4IsValidGuidAsciiString] <= 'F')
             )
           )
       {
@@ -54,7 +56,7 @@ StrHToBuf (
           const T& t
           )
 {
-  UINTN       Index;
+  UINTN       Index4IsValidGuidAsciiString; // stupid name to avoid warning : Declaration shadows a variable in the global namespace
   UINTN       StrLength;
   UINT8       Digit;
   UINT8       Byte;
@@ -67,14 +69,14 @@ StrHToBuf (
   //
   StrLength = BufferLength * sizeof (CHAR16);
 
-  for(Index = 0; Index < StrLength; Index++) {
+  for(Index4IsValidGuidAsciiString = 0; Index4IsValidGuidAsciiString < StrLength; Index4IsValidGuidAsciiString++) {
 
-    if ((Str[Index] >= (__typeof__(*Str))'a') && (Str[Index] <= (__typeof__(*Str))'f')) {
-      Digit = (UINT8) (Str[Index] - (__typeof__(*Str))'a' + 0x0A);
-    } else if ((Str[Index] >= (__typeof__(*Str))'A') && (Str[Index] <= (__typeof__(*Str))'F')) {
-      Digit = (UINT8) (Str[Index] - L'A' + 0x0A);
-    } else if ((Str[Index] >= (__typeof__(*Str))'0') && (Str[Index] <= (__typeof__(*Str))'9')) {
-      Digit = (UINT8) (Str[Index] - (__typeof__(*Str))'0');
+    if ((Str[Index4IsValidGuidAsciiString] >= (__typeof__(*Str))'a') && (Str[Index4IsValidGuidAsciiString] <= (__typeof__(*Str))'f')) {
+      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - (__typeof__(*Str))'a' + 0x0A);
+    } else if ((Str[Index4IsValidGuidAsciiString] >= (__typeof__(*Str))'A') && (Str[Index4IsValidGuidAsciiString] <= (__typeof__(*Str))'F')) {
+      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - L'A' + 0x0A);
+    } else if ((Str[Index4IsValidGuidAsciiString] >= (__typeof__(*Str))'0') && (Str[Index4IsValidGuidAsciiString] <= (__typeof__(*Str))'9')) {
+      Digit = (UINT8) (Str[Index4IsValidGuidAsciiString] - (__typeof__(*Str))'0');
     } else {
       return EFI_INVALID_PARAMETER;
     }
@@ -83,15 +85,15 @@ StrHToBuf (
     // For odd characters, write the upper nibble for each buffer byte,
     // and for even characters, the lower nibble.
     //
-    if ((Index & 1) == 0) {
+    if ((Index4IsValidGuidAsciiString & 1) == 0) {
       Byte = (UINT8) (Digit << 4);
     } else {
-      Byte = Buf[Index / 2];
+      Byte = Buf[Index4IsValidGuidAsciiString / 2];
       Byte &= 0xF0;
       Byte = (UINT8) (Byte | Digit);
     }
 
-    Buf[Index / 2] = Byte;
+    Buf[Index4IsValidGuidAsciiString / 2] = Byte;
   }
 
   return EFI_SUCCESS;
@@ -173,9 +175,9 @@ StrToGuidLE (
 }
 
 
-XStringW GuidBeToStr(EFI_GUID *Guid);
-XString8 GuidLEToXString8(EFI_GUID *Guid);
-XStringW GuidLEToXStringW(EFI_GUID *Guid);
+XStringW GuidBeToStr(const EFI_GUID& Guid);
+XString8 GuidLEToXString8(const EFI_GUID& Guid);
+XStringW GuidLEToXStringW(const EFI_GUID& Guid);
 
 
 

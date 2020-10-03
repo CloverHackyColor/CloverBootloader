@@ -99,7 +99,7 @@ void post_startup_cpu_fixups(void)
 }
 
 
-VOID DoCpuid(UINT32 selector, UINT32 *data)
+void DoCpuid(UINT32 selector, UINT32 *data)
 {
   AsmCpuid(selector, data, data+1, data+2, data+3);
 }
@@ -107,7 +107,7 @@ VOID DoCpuid(UINT32 selector, UINT32 *data)
 //
 // Should be used after PrepatchSmbios() but before users's config.plist reading
 //
-VOID GetCPUProperties (VOID)
+void GetCPUProperties (void)
 {
   UINT32    reg[4];
   UINT64    msr = 0;
@@ -1092,7 +1092,7 @@ VOID GetCPUProperties (VOID)
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &HandleBuffer);
     if (Status == EFI_SUCCESS) {
       for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-        Status = gBS->HandleProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
+        Status = gBS->HandleProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (void **) &PciIo);
         if (!EFI_ERROR(Status)) {
           /* Read PCI BUS */
           Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
@@ -1162,7 +1162,7 @@ VOID GetCPUProperties (VOID)
   //  return;
 }
 
-VOID SetCPUProperties (VOID)
+void SetCPUProperties (void)
 {
   UINT64    msr = 0;
 

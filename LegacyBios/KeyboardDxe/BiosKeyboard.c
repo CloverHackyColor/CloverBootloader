@@ -1737,7 +1737,7 @@ BiosKeyboardTimerHandler (
   BIOS_KEYBOARD_CONSOLE_IN_EX_NOTIFY *CurrentNotify;
   //for AppleDb
   //UINTN               NumberOfKeys;
-  //APPLE_KEY           Keys[8];
+  //APPLE_KEY_CODE           Keys[8];
 
 
   BiosKeyboardPrivate = Context;

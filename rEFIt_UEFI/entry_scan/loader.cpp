@@ -46,6 +46,7 @@
 #include "../Platform/guid.h"
 #include "../refit/lib.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LOADER 1
@@ -299,7 +300,7 @@ UINT8 GetOSTypeFromPath(IN CONST XStringW& Path)
 static const XStringW linux = L"linux"_XSW;
 
 STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
-                       IN EFI_FILE_PROTOCOL *RootDir)
+                       const EFI_FILE_PROTOCOL *RootDir)
 {
   UINTN Index;
 #if defined(ANDX86)
@@ -350,7 +351,7 @@ STATIC CONST XString8 LinuxInitImagePath[] = {
 };
 STATIC CONST UINTN LinuxInitImagePathCount = (sizeof(LinuxInitImagePath) / sizeof(LinuxInitImagePath[0]));
 
-STATIC XString8Array LinuxKernelOptions(IN EFI_FILE_PROTOCOL *Dir,
+STATIC XString8Array LinuxKernelOptions(const EFI_FILE_PROTOCOL *Dir,
                                   IN CONST CHAR16            *Version,
                                   IN CONST CHAR16            *PartUUID,
                                   IN CONST XString8Array&           Options OPTIONAL)
@@ -410,7 +411,7 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 //      CHAR16  *tmpName;
       //Create null terminated string
 //      targetString = (CHAR8*) A_llocateZeroPool(fileLen+1);
-//      CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+//      CopyMem( (void*)targetString, (void*)fileBuffer, fileLen);
 //      DBG("found disk_label with contents:%s\n", targetString);
 
       //      NOTE: Sothor - This was never run. If we need this correct it and uncomment it.
@@ -479,13 +480,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   }
 
   // Ignore this loader if it's self path
-  FilePathAsString = FileDevicePathToXStringW(SelfFullDevicePath);
-  if (FilePathAsString.notEmpty()) {
-    INTN Comparison = StriCmp(FilePathAsString.wc_str(), LoaderDevicePathString.wc_str());
-    if (Comparison == 0) {
-      DBG("%s skipped because path `%ls` is self path!\n", indent, LoaderDevicePathString.wc_str());
-      return NULL;
-    }
+  XStringW selfDevicePathAsXStringW = FileDevicePathToXStringW(&self.getSelfDevicePath());
+  if ( selfDevicePathAsXStringW == LoaderDevicePathString ) {
+    DBG("%s skipped because path `%ls` is self path!\n", indent, LoaderDevicePathString.wc_str());
+    return NULL;
   }
 // DBG("OSType =%d\n", OSType);
   // DBG("prepare the menu entry\n");
@@ -1057,7 +1055,7 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
   return NULL;
 }
 
-STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStringW *CustomPath, XIcon *CustomImage)
+STATIC void LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStringW *CustomPath, XIcon *CustomImage)
 {
   // When used for Regular Entries, all found entries will be added by AddLoaderEntry()
   // When used for Custom Entries (detected by CustomPath!=NULL), CustomPath+CustomImage will be set to the first entry found and execution will stop
@@ -1098,7 +1096,7 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
         XIcon ImageX = ThemeX.GetIcon(L"os_"_XSW + OSName); //will the image be destroyed or rewritten by next image after the cycle end?
         if (ImageX.isEmpty()) {
           // no preloaded icon, try to load from dir
-          ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSName);
+          ImageX.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + OSName);
         }
         if (CustomPath) { 
           *CustomPath = File;
@@ -1121,7 +1119,7 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
         OSIconName = OSIconName.subString(0, OSIconName.indexOf(','));
         XIcon ImageX = ThemeX.GetIcon(L"os_"_XSW + OSIconName);
         if (ImageX.isEmpty()) {
-          ImageX.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + OSIconName);
+          ImageX.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + OSIconName);
         }
         if (CustomPath) {
           *CustomPath = LinuxEntryData[Index].Path;
@@ -1286,16 +1284,11 @@ STATIC VOID LinuxScan(REFIT_VOLUME *Volume, UINT8 KernelScan, UINT8 Type, XStrin
 
 }
 
-//constants
-//const XStringW APFSFVBootPath      = L"\\00000000-0000-0000-0000-000000000000\\System\\Library\\CoreServices\\boot.efi"_XSW;
-//const XStringW APFSRecBootPath     = L"\\00000000-0000-0000-0000-000000000000\\boot.efi"_XSW;
-//const XStringW APFSInstallBootPath = L"\\00000000-0000-0000-0000-000000000000\\com.apple.installer\\boot.efi"_XSW;
-
 #define Paper 1
 #define Rock  2
 #define Scissor 4
 
-VOID AddPRSEntry(REFIT_VOLUME *Volume)
+void AddPRSEntry(REFIT_VOLUME *Volume)
 {
   INTN WhatBoot = 0;
   //CONST INTN Paper = 1;
@@ -1328,7 +1321,7 @@ VOID AddPRSEntry(REFIT_VOLUME *Volume)
 #undef Rock
 #undef Scissor
 
-VOID ScanLoader(VOID)
+void ScanLoader(void)
 {
   //DBG("Scanning loaders...\n");
   DbgHeader("ScanLoader");
@@ -1458,7 +1451,7 @@ VOID ScanLoader(VOID)
           if (aFound && (aFound == aIndex)) {
             XIcon ImageX;
             XStringW IconXSW = XStringW().takeValueFrom(AndroidEntryData[Index].Icon);
-            ImageX.LoadXImage(ThemeX.ThemeDir, (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
+            ImageX.LoadXImage(&ThemeX.getThemeDir(), (L"os_"_XSW + IconXSW.subString(0, IconXSW.indexOf(','))).wc_str());
             AddLoaderEntry(AndroidEntryData[Index].Path, NullXString8Array, L""_XSW, XStringW().takeValueFrom(AndroidEntryData[Index].Title), Volume, L""_XSW,
                            (ImageX.isEmpty() ? NULL : &ImageX), OSTYPE_LIN, OSFLAG_NODEFAULTARGS);
           }
@@ -1560,7 +1553,7 @@ VOID ScanLoader(VOID)
 
 }
 
-STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
+STATIC void AddCustomEntry(IN UINTN                CustomIndex,
                            IN XStringW             CustomPath,
                            IN CUSTOM_LOADER_ENTRY *Custom,
                            IN REFIT_MENU_SCREEN   *SubMenu)
@@ -1709,13 +1702,13 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 
     // Change to custom image if needed
     if (Image.isEmpty() && Custom->ImagePath.notEmpty()) {
-      Image.LoadXImage(ThemeX.ThemeDir, Custom->ImagePath);
+      Image.LoadXImage(&ThemeX.getThemeDir(), Custom->ImagePath);
       if (Image.isEmpty()) {
-        Image.LoadXImage(ThemeX.ThemeDir, L"os_"_XSW + Custom->ImagePath);
+        Image.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + Custom->ImagePath);
         if (Image.isEmpty()) {
-          Image.LoadXImage(SelfDir, Custom->ImagePath);
+          Image.LoadXImage(&self.getCloverDir(), Custom->ImagePath);
           if (Image.isEmpty()) {
-            Image.LoadXImage(SelfRootDir, Custom->ImagePath);
+            Image.LoadXImage(&self.getSelfVolumeRootDir(), Custom->ImagePath);
             if (Image.isEmpty()) {
               Image.LoadXImage(Volume->RootDir, Custom->ImagePath);
             }
@@ -1726,11 +1719,11 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 
     // Change to custom drive image if needed
     if (DriveImage.isEmpty() && Custom->DriveImagePath.notEmpty()) {
-      DriveImage.LoadXImage(ThemeX.ThemeDir, Custom->DriveImagePath);
+      DriveImage.LoadXImage(&ThemeX.getThemeDir(), Custom->DriveImagePath);
       if (DriveImage.isEmpty()) {
-        DriveImage.LoadXImage(SelfDir, Custom->ImagePath);
+        DriveImage.LoadXImage(&self.getCloverDir(), Custom->ImagePath);
         if (DriveImage.isEmpty()) {
-          DriveImage.LoadXImage(SelfRootDir, Custom->ImagePath);
+          DriveImage.LoadXImage(&self.getSelfVolumeRootDir(), Custom->ImagePath);
           if (DriveImage.isEmpty()) {
             DriveImage.LoadXImage(Volume->RootDir, Custom->ImagePath);
           }
@@ -1921,7 +1914,7 @@ STATIC VOID AddCustomEntry(IN UINTN                CustomIndex,
 }
 
 // Add custom entries
-VOID AddCustomEntries(VOID)
+void AddCustomEntries(void)
 {
   CUSTOM_LOADER_ENTRY *Custom;
   UINTN                i = 0;

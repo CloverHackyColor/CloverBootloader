@@ -222,8 +222,22 @@ public :
   DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt(), PatchDsdtMenuItem() { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  DSDT_Patch(const DEV_PROPERTY&) = delete;
-  DSDT_Patch& operator=(const DEV_PROPERTY&) = delete;
+  DSDT_Patch(const DSDT_Patch&) = delete;
+  DSDT_Patch& operator=(const DSDT_Patch&) = delete;
+};
+
+class MMIOWhiteList
+{
+public :
+  UINTN        address;
+  XString8     comment;
+  bool         enabled;
+
+  MMIOWhiteList() : address(0), comment(), enabled(false) { }
+
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  MMIOWhiteList(const MMIOWhiteList&) = delete;
+  MMIOWhiteList& operator=(const MMIOWhiteList&) = delete;
 };
 
 class SETTINGS_DATA {
@@ -238,8 +252,7 @@ public:
   XString8                ProductName;
   XString8                   VersionNr;
   XString8                   SerialNr;
-  EFI_GUID                SmUUID;
-  BOOLEAN                 SmUUIDConfig;
+  XString8                SmUUID;
   CHAR8                   pad0[7];
 //CHAR8                    Uuid;
 //CHAR8                    SKUNumber;
@@ -297,7 +310,7 @@ public:
   XString8                Language;
   XString8                BootArgs;
   INT8                    pad19[2];
-  XStringW                CustomUuid;
+  XString8                CustomUuid;
 
   INT8                    pad20[6];
   XStringW                DefaultVolume;
@@ -368,7 +381,7 @@ public:
   ACPI_NAME_LIST          *DeviceRename;
   //Injections
   BOOLEAN                 StringInjector;
-  BOOLEAN                 InjectSystemID;
+  UINT8                   InjectSystemID_; // 0=false, 1=true, other value = default.
   BOOLEAN                 NoDefaultProperties;
 
   BOOLEAN                 ReuseFFFF;
@@ -462,7 +475,7 @@ public:
   XString8Array           HVHideStrings;
 
   // KernelAndKextPatches
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;  //zzzz
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
@@ -488,8 +501,7 @@ public:
   // SysVariables
   UINT8                   pad30[4];
   XString8                RtMLB;
-  UINT8                   *RtROM;
-  UINTN                   RtROMLen;
+  XBuffer<UINT8>          RtROM;
 
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
@@ -591,9 +603,14 @@ public:
   UINT8                   pad38[4];
   UINTN MaxSlide;
 
+  OC_BOOTER_QUIRKS   ocBooterQuirks;
+  XObjArray<MMIOWhiteList> mmioWhiteListArray;
 
-  SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID({0,0,0,{0}}),
-                    SmUUIDConfig(0), pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
+  BOOLEAN ProvideConsoleGop;
+
+
+  SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
+                    pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
                     BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(), CpuFreqMHz(0),
                     BusSpeed(0), Turbo(0), EnabledCores(0), UserChange(0), QEMU(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
                     MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0), XMPDetection(0),
@@ -603,7 +620,7 @@ public:
                     DropSSDT(0), NoOemTableId(0), NoDynamicExtract(0), AutoMerge(0), GeneratePStates(0), GenerateCStates(0), GenerateAPSN(0), GenerateAPLF(0), GeneratePluginType(0),
                     PLimitDict(0), UnderVoltStep(0), DoubleFirstState(0), SuspendOverride(0), EnableC2(0), EnableC4(0), EnableC6(0), EnableISS(0), SlpSmiEnable(0),
                     FixHeaders(0), C3Latency(0), smartUPS(0), PatchNMI(0), EnableC7(0), SavingMode(0), DsdtName(), FixDsdt(0), MinMultiplier(0),
-                    MaxMultiplier(0), PluginType(0), FixMCFG(0), DeviceRenameCount(0), DeviceRename(0), StringInjector(0), InjectSystemID(0), NoDefaultProperties(0), ReuseFFFF(0),
+                    MaxMultiplier(0), PluginType(0), FixMCFG(0), DeviceRenameCount(0), DeviceRename(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0), ReuseFFFF(0),
                     FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
                     InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
                     LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
@@ -612,13 +629,13 @@ public:
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
                     LegacyBoot(), LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
-                    RefCLK(0), RtMLB(), RtROM(0), RtROMLen(0), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), DisableCloverHotkeys(0), NeverDoRecovery(0),
+                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), DisableCloverHotkeys(0), NeverDoRecovery(0),
                     ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), DSDTPatchArray(), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0)
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray(), ProvideConsoleGop(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
@@ -627,6 +644,16 @@ public:
 
   ~SETTINGS_DATA() {}
 
+  const XString8& getUUID();
+  const XString8& getUUID(EFI_GUID* efiGuid);
+  bool ShouldInjectSystemID() {
+    if ( CustomUuid.notEmpty() ){
+      if ( InjectSystemID_ == 2 ) return false;
+      else return InjectSystemID_;
+    }
+    if ( SmUUID.notEmpty() && InjectSystemID_ == 2 ) return false;
+    return InjectSystemID_;
+  }
 };
 
 //#pragma GCC diagnostic ignored "-Wpadded"
@@ -694,17 +721,16 @@ public:
 class SIDELOAD_KEXT
 {
 public:
-  SIDELOAD_KEXT  *Next;
-  SIDELOAD_KEXT  *PlugInList;
+  XObjArray<SIDELOAD_KEXT> PlugInList;
   XStringW       FileName;
   XStringW       KextDirNameUnderOEMPath;
   XStringW       Version;
   INPUT_ITEM     MenuItem;
   
-  SIDELOAD_KEXT() : Next(0), PlugInList(0), FileName(), KextDirNameUnderOEMPath(), Version(), MenuItem() {};
+  SIDELOAD_KEXT() : PlugInList(), FileName(), KextDirNameUnderOEMPath(), Version(), MenuItem() {};
   SIDELOAD_KEXT(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
   const SIDELOAD_KEXT& operator = ( const SIDELOAD_KEXT & ) = delete; // Can be defined if needed
-  ~SIDELOAD_KEXT() { delete Next; delete PlugInList; }
+  ~SIDELOAD_KEXT() { }
 };
 
 class RT_VARIABLES
@@ -771,7 +797,7 @@ extern TagDict*                          gConfigDict[];
 extern ACPI_PATCHED_AML                *ACPIPatchedAML;
 
 // Sideload/inject kext
-extern SIDELOAD_KEXT                   *InjectKextList;
+extern XObjArray<SIDELOAD_KEXT>         InjectKextList;
 
 // SysVariables
 //extern SYSVARIABLES                   *SysVariables;
@@ -786,8 +812,6 @@ extern CONST CHAR8* gBuildInfo;
 
 extern BOOLEAN                        ResumeFromCoreStorage;
 extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
-
-extern EFI_GUID                       gUuid;
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
@@ -806,6 +830,7 @@ public:
   BOOLEAN     LegacyFirst;
   BOOLEAN     NoLegacy;
   BOOLEAN     DebugLog;
+  BOOLEAN     ScratchDebugLogAtStart;
   BOOLEAN     FastBoot;
   BOOLEAN     NeverHibernate;
   BOOLEAN     StrictHibernate;
@@ -851,10 +876,11 @@ public:
 };
    *
    */
-  REFIT_CONFIG() : Timeout(-1), DisableFlags(0), TextOnly(FALSE), Quiet(TRUE), LegacyFirst(FALSE), NoLegacy(FALSE), DebugLog(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
+  REFIT_CONFIG() : Timeout(-1), DisableFlags(0), TextOnly(FALSE), Quiet(TRUE), LegacyFirst(FALSE), NoLegacy(FALSE),
+                   DebugLog(FALSE), ScratchDebugLogAtStart(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
                    RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), Theme(), ScreenResolution(), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
                    ShowOptimus(FALSE), Codepage(0xC0), CodepageSize(0xC0) {};
-  REFIT_CONFIG(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
+  REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
   ~REFIT_CONFIG() {  }
 
@@ -869,14 +895,14 @@ SetFSInjection (
   IN LOADER_ENTRY *Entry
   );
 
-VOID
+void
 SetDevices (
   LOADER_ENTRY *Entry
   );
 //
 // check if this entry corresponds to Boot# variable and then set BootCurrent
 //
-VOID
+void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 
 
@@ -886,13 +912,13 @@ GetOSVersion (
   );
 
 
-VOID GetListOfThemes(VOID);
-VOID GetListOfConfigs(VOID);
-VOID GetListOfACPI(VOID);
-VOID GetListOfDsdts(VOID);
+void GetListOfThemes(void);
+void GetListOfConfigs(void);
+void GetListOfACPI(void);
+void GetListOfDsdts(void);
 
 // syscl - get list of inject kext(s)
-VOID GetListOfInjectKext(CHAR16 *);
+void GetListOfInjectKext(CHAR16 *);
 
 UINT32
 GetCrc32 (
@@ -900,8 +926,8 @@ GetCrc32 (
   UINTN Size
   );
 
-VOID
-GetDevices(VOID);
+void
+GetDevices(void);
 
 
 CONST XStringW
@@ -916,8 +942,7 @@ GetRootUUID (
 
 EFI_STATUS
 GetEarlyUserSettings (
-  IN  EFI_FILE *RootDir,
-      const TagDict*   CfgDict
+  const TagDict*   CfgDict
   );
 
 EFI_STATUS
@@ -943,14 +968,14 @@ InjectKextsFromDir (
   CHAR16 *SrcDir
   );
 
-VOID
+void
 ParseLoadOptions (
   OUT  XStringW* ConfName,
   OUT  TagDict** Dict
   );
 
 EFI_STATUS
-SaveSettings (VOID);
+SaveSettings (void);
 
 
 
@@ -964,25 +989,20 @@ BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS);
 
 
 //get default boot
-VOID GetBootFromOption(VOID);
-VOID
-InitKextList(VOID);
+void GetBootFromOption(void);
+void
+InitKextList(void);
 
 EFI_STATUS
 LoadUserSettings (
-    IN  EFI_FILE *RootDir,
     const XStringW& ConfName,
     TagDict** dict
   );
 
-VOID
+void
 ParseSMBIOSSettings (
   const TagDict* dictPointer
   );
-
-//BOOLEAN
-//CopyKernelAndKextPatches (IN OUT  KERNEL_AND_KEXT_PATCHES *Dst,
-//                          IN      CONST KERNEL_AND_KEXT_PATCHES *Src);
 
 
 void testConfigPlist();
