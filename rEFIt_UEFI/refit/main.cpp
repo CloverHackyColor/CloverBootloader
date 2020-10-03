@@ -74,6 +74,7 @@
 
 extern "C" {
 #include "../../OpenCorePkg/Include/Acidanthera/OpenCore.h"
+#include "../../OpenCorePkg/Include/Acidanthera/Library/OcConsoleLib.h"
 }
 
 #ifndef DEBUG_ALL
@@ -1063,13 +1064,13 @@ DBG("Beginning OC\n");
     DBG("Bridge kext patch to OC : %s\n", kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, "");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, kextPatch.ProcedureName.c_str());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Comment, kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = 0;
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
 
     OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Data.data(), kextPatch.Data.size());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, "kernel");
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.Name.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.Count;
     OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
@@ -1086,7 +1087,8 @@ DBG("Beginning OC\n");
 #endif
 
 
-  mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.ProvideConsoleGop;
+    mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = FALSE; //gSettings.ProvideConsoleGop;
+    OcProvideConsoleGop(gSettings.ProvideConsoleGop);
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
   OcMain(&mOpenCoreStorage, NULL);
 

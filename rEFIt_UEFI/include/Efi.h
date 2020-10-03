@@ -92,15 +92,15 @@ extern "C" {
 
 #include <Protocol/FSInjectProtocol.h>
 #include <Protocol/MsgLog.h>
-#include <Protocol/efiConsoleControl.h>
+//#include <Protocol/efiConsoleControl.h>
 #include <Protocol/EmuVariableControl.h>
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
 
+#include "../../OpenCorePkg/Include/Acidanthera/Library/OcConsoleLib.h"
 #ifdef __cplusplus
 }
 #endif
-
 
 
 #define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF

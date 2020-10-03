@@ -91,13 +91,11 @@
 		A5456D6F23FC5B08000BF18C /* DevicePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4223FC5B05000BF18C /* DevicePath.cpp */; };
 		A5456D7123FC5B08000BF18C /* device_inject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4523FC5B07000BF18C /* device_inject.cpp */; };
 		A5456D7223FC5B08000BF18C /* DataHubCpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D4623FC5B07000BF18C /* DataHubCpu.cpp */; };
-		A5456D7D23FC5B40000BF18C /* IO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7623FC5B3D000BF18C /* IO.cpp */; };
 		A5456D7E23FC5B40000BF18C /* icns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7723FC5B3E000BF18C /* icns.cpp */; };
 		A5456D7F23FC5B40000BF18C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7823FC5B3E000BF18C /* main.cpp */; };
 		A5456D8023FC5B40000BF18C /* lib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7923FC5B3F000BF18C /* lib.cpp */; };
 		A5456D8123FC5B40000BF18C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7A23FC5B3F000BF18C /* menu.cpp */; };
 		A5456D8223FC5B40000BF18C /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7B23FC5B3F000BF18C /* screen.cpp */; };
-		A5456D8323FC5B40000BF18C /* list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7C23FC5B40000BF18C /* list.cpp */; };
 		A5456D9023FC5B72000BF18C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8423FC5B6D000BF18C /* globals_dtor.cpp */; };
 		A5456D9123FC5B72000BF18C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8523FC5B6E000BF18C /* globals_ctor.cpp */; };
 		A5456D9323FC5B72000BF18C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8A23FC5B70000BF18C /* memory.cpp */; };
@@ -2379,16 +2377,12 @@
 		A5456D4523FC5B07000BF18C /* device_inject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device_inject.cpp; sourceTree = "<group>"; };
 		A5456D4623FC5B07000BF18C /* DataHubCpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHubCpu.cpp; sourceTree = "<group>"; };
 		A5456D4723FC5B08000BF18C /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
-		A5456D7323FC5B3C000BF18C /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
 		A5456D7423FC5B3C000BF18C /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
-		A5456D7523FC5B3D000BF18C /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
-		A5456D7623FC5B3D000BF18C /* IO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IO.cpp; sourceTree = "<group>"; };
 		A5456D7723FC5B3E000BF18C /* icns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = icns.cpp; sourceTree = "<group>"; };
 		A5456D7823FC5B3E000BF18C /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A5456D7923FC5B3F000BF18C /* lib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lib.cpp; sourceTree = "<group>"; };
 		A5456D7A23FC5B3F000BF18C /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu.cpp; sourceTree = "<group>"; };
 		A5456D7B23FC5B3F000BF18C /* screen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = screen.cpp; sourceTree = "<group>"; };
-		A5456D7C23FC5B40000BF18C /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = list.cpp; sourceTree = "<group>"; };
 		A5456D8423FC5B6D000BF18C /* globals_dtor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = globals_dtor.cpp; sourceTree = "<group>"; };
 		A5456D8523FC5B6E000BF18C /* globals_ctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = globals_ctor.cpp; sourceTree = "<group>"; };
 		A5456D8623FC5B6E000BF18C /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
@@ -8979,12 +8973,8 @@
 			isa = PBXGroup;
 			children = (
 				A5456D7723FC5B3E000BF18C /* icns.cpp */,
-				A5456D7623FC5B3D000BF18C /* IO.cpp */,
-				A5456D7323FC5B3C000BF18C /* IO.h */,
 				A5456D7923FC5B3F000BF18C /* lib.cpp */,
 				A5456D7423FC5B3C000BF18C /* lib.h */,
-				A5456D7C23FC5B40000BF18C /* list.cpp */,
-				A5456D7523FC5B3D000BF18C /* list.h */,
 				A5456D7823FC5B3E000BF18C /* main.cpp */,
 				A570FAFE240BA4D00057F26D /* menu.h */,
 				A5456D7A23FC5B3F000BF18C /* menu.cpp */,
@@ -24438,7 +24428,6 @@
 				A5AAFCBA237F13B4009CD413 /* UsbMouse.c in Sources */,
 				A5AA0669237F13C2009CD413 /* SetMem.S in Sources */,
 				A5AAFC62237F13B3009CD413 /* PciBus.c in Sources */,
-				A5456D8323FC5B40000BF18C /* list.cpp in Sources */,
 				A5AA0622237F13C2009CD413 /* ScanMem32Wrapper.c in Sources */,
 				A5AAFC0D237F13B3009CD413 /* ConfigRouting.c in Sources */,
 				A5AA05D5237F13C1009CD413 /* LRotU32.c in Sources */,
@@ -25630,7 +25619,6 @@
 				A5AAFBB4237F13B3009CD413 /* unicode_unfold_key.c in Sources */,
 				A5AA0581237F13C1009CD413 /* Monitor.nasm in Sources */,
 				A5AAFB9D237F13B3009CD413 /* unicode.c in Sources */,
-				A5456D7D23FC5B40000BF18C /* IO.cpp in Sources */,
 				A5AAFB73237F13B3009CD413 /* S3Asm.nasm in Sources */,
 				A5AA06B7237F13C2009CD413 /* SetMem32.nasm in Sources */,
 				A5456D5723FC5B08000BF18C /* usbfix.cpp in Sources */,

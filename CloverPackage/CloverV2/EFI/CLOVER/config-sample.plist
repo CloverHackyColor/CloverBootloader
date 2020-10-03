@@ -1104,7 +1104,24 @@
 		<key>ForceExitBootServices</key>
 		<false/>
 		<key>MmioWhitelist</key>
-		<array/>
+		<array>
+			<dict>
+				<key>Address</key>
+				<integer>4275159040</integer>
+				<key>Comment</key>
+				<string>Haswell: SB_RCBA is a 0x4 page memory region, containing SPI_BASE at 0x3800 (SPI_BASE_ADDRESS)</string>
+				<key>Enabled</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Address</key>
+				<integer>4278190080</integer>
+				<key>Comment</key>
+				<string>Generic: PCI root is a 0x1000 page memory region used by some firmwares</string>
+				<key>Enabled</key>
+				<false/>
+			</dict>
+		</array>
 		<key>ProtectMemoryRegions</key>
 		<false/>
 		<key>ProtectSecureBoot</key>
@@ -1124,6 +1141,42 @@
 		<key>SignalAppleOS</key>
 		<false/>
 		<key>SyncRuntimePermissions</key>
+		<true/>
+		<key>FuzzyMatch</key>
+		<true/>
+		<key>KernelCache</key>
+		<string>Auto</string>
+		<key>AppleCpuPmCfgLock</key>
+		<false/>
+		<key>AppleXcpmCfgLock</key>
+		<true/>
+		<key>AppleXcpmExtraMsrs</key>
+		<false/>
+		<key>AppleXcpmForceBoost</key>
+		<false/>
+		<key>CustomSMBIOSGuid</key>
+		<false/>
+		<key>DisableIoMapper</key>
+		<true/>
+		<key>DisableLinkeditJettison</key>
+		<true/>
+		<key>DisableRtcChecksum</key>
+		<false/>
+		<key>DummyPowerManagement</key>
+		<false/>
+		<key>ExternalDiskIcons</key>
+		<false/>
+		<key>IncreasePciBarSize</key>
+		<false/>
+		<key>LapicKernelPanic</key>
+		<false/>
+		<key>PanicNoKextDump</key>
+		<true/>
+		<key>PowerTimeoutKernelPanic</key>
+		<true/>
+		<key>ThirdPartyDrives</key>
+		<false/>
+		<key>XhciPortLimit</key>
 		<true/>
 	</dict>
 </dict>

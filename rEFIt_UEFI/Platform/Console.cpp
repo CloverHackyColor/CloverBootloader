@@ -21,6 +21,11 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
+extern "C" {
+//#include "../../OpenCorePkg/Include/Acidanthera/OpenCore.h"
+//#include "../../OpenCorePkg/Include/Acidanthera/Library/OcConsoleLib.h"
+}
+
 STATIC EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode = EfiConsoleControlScreenText;
 
 EFI_STATUS
