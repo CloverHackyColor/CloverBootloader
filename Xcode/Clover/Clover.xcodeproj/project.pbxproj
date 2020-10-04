@@ -2200,8 +2200,6 @@
 		A51C784621E0981C001385A7 /* HdaControllerInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerInfo.c; sourceTree = "<group>"; };
 		A51C784721E0981C001385A7 /* HdaControllerMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaControllerMem.c; sourceTree = "<group>"; };
 		A51C784821E0981C001385A7 /* HdaModels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaModels.c; sourceTree = "<group>"; };
-		A52212DA24BD80EF00DAB7D6 /* OcMemoryLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcMemoryLib.h; sourceTree = "<group>"; };
-		A52213D024BE04A300DAB7D6 /* OcQuirksProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcQuirksProtocol.h; sourceTree = "<group>"; };
 		A523130F2448792B00421FB2 /* image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = image.h; sourceTree = "<group>"; };
 		A52313102448B12A00421FB2 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		A52313112448B12A00421FB2 /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
@@ -6996,7 +6994,6 @@
 		A5C3244A24B4EA26004E20CC /* OpenRuntime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OpenRuntime.c; sourceTree = "<group>"; };
 		A5C3244B24B4EA26004E20CC /* UefiRuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiRuntimeServices.c; sourceTree = "<group>"; };
 		A5C3245024B5022F004E20CC /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
-		A5C3245124B5022F004E20CC /* AppleMachoImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleMachoImage.h; sourceTree = "<group>"; };
 		A5C3245224B5022F004E20CC /* AppleSmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSmBios.h; sourceTree = "<group>"; };
 		A5C3245324B5022F004E20CC /* PiBootMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		A5C3245424B5022F004E20CC /* PeImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeImage.h; sourceTree = "<group>"; };
@@ -7008,63 +7005,39 @@
 		A5C3245A24B5022F004E20CC /* AppleCsrConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCsrConfig.h; sourceTree = "<group>"; };
 		A5C3245B24B5022F004E20CC /* PciCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PciCommand.h; sourceTree = "<group>"; };
 		A5C3245C24B5022F004E20CC /* AppleBootArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleBootArgs.h; sourceTree = "<group>"; };
-		A5C3245D24B5022F004E20CC /* AppleHid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleHid.h; sourceTree = "<group>"; };
 		A5C3245E24B5022F004E20CC /* AtomBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomBios.h; sourceTree = "<group>"; };
 		A5C3245F24B5022F004E20CC /* UsbHid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbHid.h; sourceTree = "<group>"; };
 		A5C3246024B5022F004E20CC /* PciBus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PciBus.h; sourceTree = "<group>"; };
 		A5C3246124B5022F004E20CC /* EfiLdrHandoff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiLdrHandoff.h; sourceTree = "<group>"; };
-		A5C3246324B5022F004E20CC /* OcMiscLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcMiscLib.h; sourceTree = "<group>"; };
 		A5C3246424B5022F004E20CC /* HdaRegisters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaRegisters.h; sourceTree = "<group>"; };
-		A5C3246524B5022F004E20CC /* OcDevicePathLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcDevicePathLib.h; sourceTree = "<group>"; };
-		A5C3246624B5022F004E20CC /* OcFileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcFileLib.h; sourceTree = "<group>"; };
 		A5C3246724B5022F004E20CC /* HdaModels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaModels.h; sourceTree = "<group>"; };
-		A5C3246824B5022F004E20CC /* OcTemplateLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcTemplateLib.h; sourceTree = "<group>"; };
 		A5C3246924B5022F004E20CC /* UefiHiiServicesLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiHiiServicesLib.h; sourceTree = "<group>"; };
-		A5C3246A24B5022F004E20CC /* OcStorageLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcStorageLib.h; sourceTree = "<group>"; };
 		A5C3246B24B5022F004E20CC /* MachoLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachoLib.h; sourceTree = "<group>"; };
-		A5C3246C24B5022F004E20CC /* OcAfterBootCompatLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAfterBootCompatLib.h; sourceTree = "<group>"; };
-		A5C3246D24B5022F004E20CC /* OcStringLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcStringLib.h; sourceTree = "<group>"; };
-		A5C3246E24B5022F004E20CC /* OcXmlLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcXmlLib.h; sourceTree = "<group>"; };
 		A5C3246F24B5022F004E20CC /* HdaVerbs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaVerbs.h; sourceTree = "<group>"; };
 		A5C3247024B5022F004E20CC /* UsbMass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
-		A5C3247124B5022F004E20CC /* OcSerializeLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcSerializeLib.h; sourceTree = "<group>"; };
 		A5C3247224B5022F004E20CC /* printf_lite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = printf_lite.h; sourceTree = "<group>"; };
-		A5C3247324B5022F004E20CC /* OcBootManagementLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcBootManagementLib.h; sourceTree = "<group>"; };
 		A5C3247424B5022F004E20CC /* PeCoffLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeCoffLib.h; sourceTree = "<group>"; };
-		A5C3247524B5022F004E20CC /* OcGuardLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcGuardLib.h; sourceTree = "<group>"; };
-		A5C3247624B5022F004E20CC /* DeviceTreeLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceTreeLib.h; sourceTree = "<group>"; };
 		A5C3247724B5022F004E20CC /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "printf_lite-conf.h"; sourceTree = "<group>"; };
 		A5C3247824B5022F004E20CC /* GenericBdsLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		A5C3247924B5022F004E20CC /* UsbMassBoot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
-		A5C3247A24B5022F004E20CC /* OcAppleBootPolicyLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleBootPolicyLib.h; sourceTree = "<group>"; };
-		A5C3247B24B5022F004E20CC /* OcCryptoLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcCryptoLib.h; sourceTree = "<group>"; };
 		A5C3247C24B5022F004E20CC /* MemLogLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLogLib.h; sourceTree = "<group>"; };
 		A5C3247D24B5022F004E20CC /* VideoBiosPatchLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLib.h; sourceTree = "<group>"; };
 		A5C3247E24B5022F004E20CC /* WaveLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveLib.h; sourceTree = "<group>"; };
 		A5C3248024B5022F004E20CC /* NullTextOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NullTextOutput.h; sourceTree = "<group>"; };
 		A5C3248124B5022F004E20CC /* UsbMassImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
-		A5C3248224B5022F004E20CC /* OSInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSInfo.h; sourceTree = "<group>"; };
-		A5C3248324B5022F004E20CC /* OcFirmwareRuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcFirmwareRuntime.h; sourceTree = "<group>"; };
 		A5C3248424B5022F004E20CC /* AppleImageCodecProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleImageCodecProtocol.h; sourceTree = "<group>"; };
-		A5C3248524B5022F004E20CC /* AmiPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmiPointer.h; sourceTree = "<group>"; };
 		A5C3248624B5022F004E20CC /* AppleDeviceControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDeviceControl.h; sourceTree = "<group>"; };
 		A5C3248724B5022F004E20CC /* HdaControllerInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaControllerInfo.h; sourceTree = "<group>"; };
 		A5C3248824B5022F004E20CC /* AppleKeyState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyState.h; sourceTree = "<group>"; };
 		A5C3248924B5022F004E20CC /* efiConsoleControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		A5C3248A24B5022F004E20CC /* ApplePartitionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePartitionInfo.h; sourceTree = "<group>"; };
 		A5C3248B24B5022F004E20CC /* AudioIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioIo.h; sourceTree = "<group>"; };
-		A5C3248C24B5022F004E20CC /* AmiKeycode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmiKeycode.h; sourceTree = "<group>"; };
 		A5C3248D24B5022F004E20CC /* FSInjectProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSInjectProtocol.h; sourceTree = "<group>"; };
 		A5C3248E24B5022F004E20CC /* HdaIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaIo.h; sourceTree = "<group>"; };
 		A5C3248F24B5022F004E20CC /* EmuVariableControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmuVariableControl.h; sourceTree = "<group>"; };
 		A5C3249024B5022F004E20CC /* KeyboardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardInfo.h; sourceTree = "<group>"; };
-		A5C3249124B5022F004E20CC /* AppleBeepGen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleBeepGen.h; sourceTree = "<group>"; };
-		A5C3249224B5022F004E20CC /* AppleKeyMapDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyMapDatabase.h; sourceTree = "<group>"; };
-		A5C3249324B5022F004E20CC /* AppleKeyMapAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleKeyMapAggregator.h; sourceTree = "<group>"; };
 		A5C3249424B5022F004E20CC /* AppleSMC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleSMC.h; sourceTree = "<group>"; };
 		A5C3249524B5022F004E20CC /* PciIoImp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PciIoImp.h; sourceTree = "<group>"; };
-		A5C3249624B5022F004E20CC /* AppleVoiceOver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleVoiceOver.h; sourceTree = "<group>"; };
-		A5C3249724B5022F004E20CC /* OcAfterBootCompat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAfterBootCompat.h; sourceTree = "<group>"; };
 		A5C3249824B5022F004E20CC /* AptioMemoryFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AptioMemoryFix.h; sourceTree = "<group>"; };
 		A5C3249924B5022F004E20CC /* HdaCodecInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HdaCodecInfo.h; sourceTree = "<group>"; };
 		A5C3249A24B5022F004E20CC /* ApfsEfiBootRecordInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsEfiBootRecordInfo.h; sourceTree = "<group>"; };
@@ -7072,11 +7045,8 @@
 		A5C3249C24B5022F004E20CC /* MsgLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MsgLog.h; sourceTree = "<group>"; };
 		A5C3249D24B5022F004E20CC /* SimpleAudioOut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleAudioOut.h; sourceTree = "<group>"; };
 		A5C3249E24B5022F004E20CC /* AppleDiskIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDiskIo.h; sourceTree = "<group>"; };
-		A5C3249F24B5022F004E20CC /* AppleBootPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleBootPolicy.h; sourceTree = "<group>"; };
-		A5C324A024B5022F004E20CC /* AppleEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleEvent.h; sourceTree = "<group>"; };
 		A5C324A124B5022F004E20CC /* AppleGraphConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleGraphConfig.h; sourceTree = "<group>"; };
 		A5C324A224B5022F004E20CC /* Hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
-		A5C324A324B5022F004E20CC /* OcAudio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAudio.h; sourceTree = "<group>"; };
 		A5C324A424B5022F004E20CC /* FlashLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlashLayout.h; sourceTree = "<group>"; };
 		A5C324A524B5022F004E20CC /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
 		A5C324A724B5022F004E20CC /* PciOptionRomTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PciOptionRomTable.h; sourceTree = "<group>"; };
@@ -7084,30 +7054,12 @@
 		A5C324A924B5022F004E20CC /* DxeCoreFileName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DxeCoreFileName.h; sourceTree = "<group>"; };
 		A5C324AA24B5022F004E20CC /* LdrMemoryDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LdrMemoryDescriptor.h; sourceTree = "<group>"; };
 		A5C324AB24B5022F004E20CC /* ConsoleOutConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConsoleOutConfig.h; sourceTree = "<group>"; };
-		A5C324AC24B5022F004E20CC /* OcVariables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcVariables.h; sourceTree = "<group>"; };
 		A5C324AD24B5022F004E20CC /* FlashMapHob.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlashMapHob.h; sourceTree = "<group>"; };
-		A5C324AE24B5022F004E20CC /* OcVariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcVariable.h; sourceTree = "<group>"; };
 		A5C324AF24B5022F004E20CC /* MicrosoftVariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MicrosoftVariable.h; sourceTree = "<group>"; };
 		A5C324B024B5022F004E20CC /* AcpiDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiDescription.h; sourceTree = "<group>"; };
 		A5C324B124B5022F004E20CC /* ApplePlatformInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePlatformInfo.h; sourceTree = "<group>"; };
 		A5C324B224B5022F004E20CC /* AppleApfsInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleApfsInfo.h; sourceTree = "<group>"; };
 		A5C324B324B5022F004E20CC /* EfiImageFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiImageFormat.h; sourceTree = "<group>"; };
-		A5C32A4824B6CF9B004E20CC /* OcStringLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcStringLib.inf; sourceTree = "<group>"; };
-		A5C32A4924B6CF9B004E20CC /* OcUnicodeLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcUnicodeLib.c; sourceTree = "<group>"; };
-		A5C32A4A24B6CF9B004E20CC /* OcAsciiLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAsciiLib.c; sourceTree = "<group>"; };
-		A5C32A4C24B6CF9B004E20CC /* OcSerializeLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcSerializeLib.c; sourceTree = "<group>"; };
-		A5C32A4D24B6CF9B004E20CC /* OcSerializeLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcSerializeLib.inf; sourceTree = "<group>"; };
-		A5C32A4F24B6CF9B004E20CC /* ConsoleControl.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConsoleControl.c; sourceTree = "<group>"; };
-		A5C32A5024B6CF9B004E20CC /* OcConsoleLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcConsoleLibInternal.h; sourceTree = "<group>"; };
-		A5C32A5124B6CF9B004E20CC /* ResolutionParsing.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ResolutionParsing.c; sourceTree = "<group>"; };
-		A5C32A5224B6CF9B004E20CC /* OcConsoleLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcConsoleLib.inf; sourceTree = "<group>"; };
-		A5C32A5324B6CF9B004E20CC /* UgaPassThrough.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UgaPassThrough.c; sourceTree = "<group>"; };
-		A5C32A5424B6CF9B004E20CC /* OcConsoleLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcConsoleLib.c; sourceTree = "<group>"; };
-		A5C32A5524B6CF9B004E20CC /* FramebufferInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FramebufferInfo.c; sourceTree = "<group>"; };
-		A5C32A5624B6CF9B004E20CC /* ConsoleGop.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConsoleGop.c; sourceTree = "<group>"; };
-		A5C32A5724B6CF9B004E20CC /* TextOutputNull.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TextOutputNull.c; sourceTree = "<group>"; };
-		A5C32A5824B6CF9B004E20CC /* TextOutputSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TextOutputSystem.c; sourceTree = "<group>"; };
-		A5C32A5924B6CF9B004E20CC /* TextOutputBuiltin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TextOutputBuiltin.c; sourceTree = "<group>"; };
 		A5C32A5B24B6CF9B004E20CC /* LzmaCustomDecompressLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LzmaCustomDecompressLib.inf; sourceTree = "<group>"; };
 		A5C32A5D24B6CF9B004E20CC /* lzma.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lzma.txt; sourceTree = "<group>"; };
 		A5C32A5E24B6CF9B004E20CC /* history.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = history.txt; sourceTree = "<group>"; };
@@ -7124,35 +7076,8 @@
 		A5C32A6A24B6CF9B004E20CC /* LzmaDecompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LzmaDecompress.c; sourceTree = "<group>"; };
 		A5C32A6B24B6CF9B004E20CC /* GuidedSectionExtraction.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GuidedSectionExtraction.c; sourceTree = "<group>"; };
 		A5C32A6C24B6CF9B004E20CC /* UefiLzma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLzma.h; sourceTree = "<group>"; };
-		A5C32A6E24B6CF9B004E20CC /* AppleRtcRam.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleRtcRam.c; sourceTree = "<group>"; };
-		A5C32A6F24B6CF9B004E20CC /* OcRtcLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcRtcLibInternal.h; sourceTree = "<group>"; };
-		A5C32A7024B6CF9B004E20CC /* OcRtcLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcRtcLib.inf; sourceTree = "<group>"; };
-		A5C32A7124B6CF9B004E20CC /* OcRtcLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcRtcLib.c; sourceTree = "<group>"; };
 		A5C32A7324B6CF9B004E20CC /* DeviceTreeLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DeviceTreeLib.c; sourceTree = "<group>"; };
 		A5C32A7424B6CF9B004E20CC /* DeviceTreeLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DeviceTreeLib.inf; sourceTree = "<group>"; };
-		A5C32A7624B6CF9B004E20CC /* OcAppleChunklistLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleChunklistLib.c; sourceTree = "<group>"; };
-		A5C32A7724B6CF9B004E20CC /* OcAppleChunklistLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAppleChunklistLib.inf; sourceTree = "<group>"; };
-		A5C32A7924B6CF9B004E20CC /* Aes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Aes.c; sourceTree = "<group>"; };
-		A5C32A7A24B6CF9B004E20CC /* Sha2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Sha2.c; sourceTree = "<group>"; };
-		A5C32A7B24B6CF9B004E20CC /* BigNumMontgomery.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BigNumMontgomery.c; sourceTree = "<group>"; };
-		A5C32A7C24B6CF9B004E20CC /* OcCryptoLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcCryptoLib.inf; sourceTree = "<group>"; };
-		A5C32A7E24B6CF9B004E20CC /* BigNumWordMul64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BigNumWordMul64.c; sourceTree = "<group>"; };
-		A5C32A7F24B6CF9B004E20CC /* BigNumLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BigNumLibInternal.h; sourceTree = "<group>"; };
-		A5C32A8024B6CF9B004E20CC /* BigNumLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BigNumLib.h; sourceTree = "<group>"; };
-		A5C32A8124B6CF9B004E20CC /* Sha1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Sha1.c; sourceTree = "<group>"; };
-		A5C32A8224B6CF9B004E20CC /* BigNumPrimitives.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BigNumPrimitives.c; sourceTree = "<group>"; };
-		A5C32A8324B6CF9B004E20CC /* PasswordHash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PasswordHash.c; sourceTree = "<group>"; };
-		A5C32A8524B6CF9B004E20CC /* BigNumWordMul64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BigNumWordMul64.c; sourceTree = "<group>"; };
-		A5C32A8624B6CF9B004E20CC /* ChaCha.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ChaCha.c; sourceTree = "<group>"; };
-		A5C32A8724B6CF9B004E20CC /* RsaDigitalSign.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RsaDigitalSign.c; sourceTree = "<group>"; };
-		A5C32A8824B6CF9B004E20CC /* Md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Md5.c; sourceTree = "<group>"; };
-		A5C32A8924B6CF9B004E20CC /* SecureMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SecureMem.c; sourceTree = "<group>"; };
-		A5C32A8B24B6CF9B004E20CC /* DirectReset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DirectReset.c; sourceTree = "<group>"; };
-		A5C32A8C24B6CF9B004E20CC /* Math.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Math.c; sourceTree = "<group>"; };
-		A5C32A8D24B6CF9B004E20CC /* ReleaseUsbOwnership.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ReleaseUsbOwnership.c; sourceTree = "<group>"; };
-		A5C32A8E24B6CF9B004E20CC /* ProtocolSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ProtocolSupport.c; sourceTree = "<group>"; };
-		A5C32A8F24B6CF9B004E20CC /* OcMiscLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcMiscLib.inf; sourceTree = "<group>"; };
-		A5C32A9024B6CF9B004E20CC /* DataPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataPatcher.c; sourceTree = "<group>"; };
 		A5C32A9224B6CF9B004E20CC /* BasePeCoffLibInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasePeCoffLibInternals.h; sourceTree = "<group>"; };
 		A5C32A9324B6CF9B004E20CC /* BasePeCoff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BasePeCoff.c; sourceTree = "<group>"; };
 		A5C32A9424B6CF9B004E20CC /* VBoxPeCoffLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxPeCoffLib.inf; sourceTree = "<group>"; };
@@ -7162,89 +7087,10 @@
 		A5C32A9924B6CF9B004E20CC /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		A5C32A9A24B6CF9B004E20CC /* printf_lite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = printf_lite.h; sourceTree = "<group>"; };
 		A5C32A9B24B6CF9B004E20CC /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
-		A5C32A9D24B6CF9B004E20CC /* OcBootManagementLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcBootManagementLib.c; sourceTree = "<group>"; };
-		A5C32A9E24B6CF9B004E20CC /* BootEntryInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootEntryInfo.c; sourceTree = "<group>"; };
-		A5C32A9F24B6CF9B004E20CC /* DmgBootSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DmgBootSupport.c; sourceTree = "<group>"; };
-		A5C32AA024B6CF9B004E20CC /* ApplePanic.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ApplePanic.c; sourceTree = "<group>"; };
-		A5C32AA124B6CF9B004E20CC /* BootManagementInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootManagementInternal.h; sourceTree = "<group>"; };
-		A5C32AA224B6CF9B004E20CC /* HotKeySupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HotKeySupport.c; sourceTree = "<group>"; };
-		A5C32AA324B6CF9B004E20CC /* OcBootManagementLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcBootManagementLib.inf; sourceTree = "<group>"; };
-		A5C32AA424B6CF9B004E20CC /* PolicyManagement.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PolicyManagement.c; sourceTree = "<group>"; };
-		A5C32AA524B6CF9B004E20CC /* DefaultEntryChoice.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DefaultEntryChoice.c; sourceTree = "<group>"; };
-		A5C32AA624B6CF9B004E20CC /* BootAudio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootAudio.c; sourceTree = "<group>"; };
-		A5C32AA724B6CF9B004E20CC /* BootArguments.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootArguments.c; sourceTree = "<group>"; };
-		A5C32AA824B6CF9B004E20CC /* BootSignature.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = BootSignature.bin; sourceTree = "<group>"; };
-		A5C32AA924B6CF9B004E20CC /* AppleHibernate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleHibernate.c; sourceTree = "<group>"; };
-		A5C32AAA24B6CF9B004E20CC /* BootEntryManagement.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootEntryManagement.c; sourceTree = "<group>"; };
-		A5C32AAB24B6CF9B004E20CC /* VariableManagement.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VariableManagement.c; sourceTree = "<group>"; };
-		A5C32AAE24B6CF9B004E20CC /* lzss.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lzss.c; sourceTree = "<group>"; };
-		A5C32AAF24B6CF9B004E20CC /* lzss.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lzss.h; sourceTree = "<group>"; };
-		A5C32AB024B6CF9B004E20CC /* OcCompressionLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcCompressionLib.c; sourceTree = "<group>"; };
-		A5C32AB224B6CF9C004E20CC /* zlib_uefi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = zlib_uefi.c; sourceTree = "<group>"; };
-		A5C32AB324B6CF9C004E20CC /* zutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
-		A5C32AB424B6CF9C004E20CC /* inftrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
-		A5C32AB524B6CF9C004E20CC /* inflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
-		A5C32AB624B6CF9C004E20CC /* compress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compress.c; sourceTree = "<group>"; };
-		A5C32AB724B6CF9C004E20CC /* deflate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deflate.c; sourceTree = "<group>"; };
-		A5C32AB824B6CF9C004E20CC /* inffixed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffixed.h; sourceTree = "<group>"; };
-		A5C32AB924B6CF9C004E20CC /* trees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
-		A5C32ABA24B6CF9C004E20CC /* inffast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inffast.h; sourceTree = "<group>"; };
-		A5C32ABB24B6CF9C004E20CC /* crc32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = crc32.c; sourceTree = "<group>"; };
-		A5C32ABC24B6CF9C004E20CC /* infback.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = infback.c; sourceTree = "<group>"; };
-		A5C32ABD24B6CF9C004E20CC /* deflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deflate.h; sourceTree = "<group>"; };
-		A5C32ABE24B6CF9C004E20CC /* zlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zlib.h; sourceTree = "<group>"; };
-		A5C32ABF24B6CF9C004E20CC /* inflate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = inflate.h; sourceTree = "<group>"; };
-		A5C32AC024B6CF9C004E20CC /* inftrees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inftrees.c; sourceTree = "<group>"; };
-		A5C32AC124B6CF9C004E20CC /* uncompr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = uncompr.c; sourceTree = "<group>"; };
-		A5C32AC224B6CF9C004E20CC /* trees.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
-		A5C32AC324B6CF9C004E20CC /* crc32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = crc32.h; sourceTree = "<group>"; };
-		A5C32AC424B6CF9C004E20CC /* inffast.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
-		A5C32AC524B6CF9C004E20CC /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
-		A5C32AC624B6CF9C004E20CC /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
-		A5C32AC724B6CF9C004E20CC /* OcCompressionLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcCompressionLib.inf; sourceTree = "<group>"; };
-		A5C32AC924B6CF9C004E20CC /* lzvn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lzvn.h; sourceTree = "<group>"; };
-		A5C32ACA24B6CF9C004E20CC /* lzvn.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lzvn.c; sourceTree = "<group>"; };
-		A5C32ACC24B6CF9C004E20CC /* OcAppleKeyMapLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAppleKeyMapLib.inf; sourceTree = "<group>"; };
-		A5C32ACD24B6CF9C004E20CC /* OcAppleKeyMapLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleKeyMapLib.c; sourceTree = "<group>"; };
-		A5C32ACF24B6CF9C004E20CC /* OcStorageLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcStorageLib.inf; sourceTree = "<group>"; };
-		A5C32AD024B6CF9C004E20CC /* OcStorageLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcStorageLib.c; sourceTree = "<group>"; };
 		A5C32AD224B6CF9C004E20CC /* UefiHiiServicesLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiHiiServicesLib.inf; sourceTree = "<group>"; };
 		A5C32AD324B6CF9C004E20CC /* UefiHiiServicesLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiHiiServicesLib.c; sourceTree = "<group>"; };
-		A5C32AD524B6CF9C004E20CC /* Canary.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Canary.c; sourceTree = "<group>"; };
-		A5C32AD624B6CF9C004E20CC /* Ubsan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ubsan.h; sourceTree = "<group>"; };
-		A5C32AD724B6CF9C004E20CC /* UbsanPrintf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UbsanPrintf.c; sourceTree = "<group>"; };
-		A5C32AD824B6CF9C004E20CC /* OcGuardLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcGuardLib.inf; sourceTree = "<group>"; };
-		A5C32AD924B6CF9C004E20CC /* BitOverflow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BitOverflow.c; sourceTree = "<group>"; };
-		A5C32ADA24B6CF9C004E20CC /* TripleOverflow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TripleOverflow.c; sourceTree = "<group>"; };
-		A5C32ADB24B6CF9C004E20CC /* Ubsan.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Ubsan.c; sourceTree = "<group>"; };
-		A5C32ADC24B6CF9C004E20CC /* NativeOverflow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NativeOverflow.c; sourceTree = "<group>"; };
-		A5C32ADE24B6CF9C004E20CC /* OcAppleKeysLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAppleKeysLib.inf; sourceTree = "<group>"; };
-		A5C32ADF24B6CF9C004E20CC /* OcAppleKeysLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleKeysLib.c; sourceTree = "<group>"; };
-		A5C32AE124B6CF9C004E20CC /* OcAppleBootPolicyLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleBootPolicyLib.c; sourceTree = "<group>"; };
-		A5C32AE224B6CF9C004E20CC /* OcAppleBootPolicyLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAppleBootPolicyLib.inf; sourceTree = "<group>"; };
-		A5C32AE424B6CF9C004E20CC /* OcAppleDiskImageLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleDiskImageLib.c; sourceTree = "<group>"; };
-		A5C32AE524B6CF9C004E20CC /* OcAppleDiskImageLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleDiskImageLibInternal.h; sourceTree = "<group>"; };
-		A5C32AE624B6CF9C004E20CC /* OcAppleDiskImageLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAppleDiskImageLib.inf; sourceTree = "<group>"; };
-		A5C32AE724B6CF9C004E20CC /* OcAppleDiskImageBlockIo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleDiskImageBlockIo.c; sourceTree = "<group>"; };
-		A5C32AE824B6CF9C004E20CC /* OcAppleDiskImageLibInternal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleDiskImageLibInternal.c; sourceTree = "<group>"; };
-		A5C32AEB24B6CF9C004E20CC /* RngDelay.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = RngDelay.nasm; sourceTree = "<group>"; };
-		A5C32AEC24B6CF9C004E20CC /* OcRngLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcRngLib.c; sourceTree = "<group>"; };
-		A5C32AEE24B6CF9C004E20CC /* RngDelay.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = RngDelay.nasm; sourceTree = "<group>"; };
-		A5C32AEF24B6CF9C004E20CC /* OcRngLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcRngLib.inf; sourceTree = "<group>"; };
-		A5C32AF024B6CF9C004E20CC /* OcRngInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcRngInternals.h; sourceTree = "<group>"; };
 		A5C32AF224B6CF9C004E20CC /* X86TimerLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
 		A5C32AF324B6CF9C004E20CC /* DuetTimerLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DuetTimerLib.inf; sourceTree = "<group>"; };
-		A5C32AF524B6CF9C004E20CC /* CustomSlide.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CustomSlide.c; sourceTree = "<group>"; };
-		A5C32AF724B6CF9C004E20CC /* ContextSwitchSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ContextSwitchSupport.c; sourceTree = "<group>"; };
-		A5C32AF824B6CF9C004E20CC /* ContextSwitch.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = ContextSwitch.nasm; sourceTree = "<group>"; };
-		A5C32AF924B6CF9C004E20CC /* ContextSwitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContextSwitch.h; sourceTree = "<group>"; };
-		A5C32AFA24B6CF9C004E20CC /* BootCompatInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootCompatInternal.h; sourceTree = "<group>"; };
-		A5C32AFB24B6CF9C004E20CC /* ServiceOverrides.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ServiceOverrides.c; sourceTree = "<group>"; };
-		A5C32AFD24B6CF9C004E20CC /* ContextSwitchSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ContextSwitchSupport.c; sourceTree = "<group>"; };
-		A5C32AFE24B6CF9C004E20CC /* ContextSwitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContextSwitch.h; sourceTree = "<group>"; };
-		A5C32AFF24B6CF9C004E20CC /* KernelSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = KernelSupport.c; sourceTree = "<group>"; };
-		A5C32B0024B6CF9C004E20CC /* OcAfterBootCompatLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAfterBootCompatLib.inf; sourceTree = "<group>"; };
-		A5C32B0124B6CF9C004E20CC /* OcAfterBootCompatLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAfterBootCompatLib.c; sourceTree = "<group>"; };
 		A5C32B0324B6CF9C004E20CC /* OpensslLibNull.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OpensslLibNull.c; sourceTree = "<group>"; };
 		A5C32B0524B6CF9C004E20CC /* time.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = time.h; sourceTree = "<group>"; };
 		A5C32B0624B6CF9C004E20CC /* stdlib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdlib.h; sourceTree = "<group>"; };
@@ -8495,34 +8341,6 @@
 		A5C3303724B6CF9F004E20CC /* CrtWrapper.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CrtWrapper.c; sourceTree = "<group>"; };
 		A5C3303924B6CF9F004E20CC /* HdaDevicesLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HdaDevicesLib.c; sourceTree = "<group>"; };
 		A5C3303A24B6CF9F004E20CC /* HdaDevicesLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HdaDevicesLib.inf; sourceTree = "<group>"; };
-		A5C3303C24B6CF9F004E20CC /* OcDevicePathLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcDevicePathLib.inf; sourceTree = "<group>"; };
-		A5C3303D24B6CF9F004E20CC /* ExpandDevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExpandDevicePath.c; sourceTree = "<group>"; };
-		A5C3303E24B6CF9F004E20CC /* OcDevicePathLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcDevicePathLib.c; sourceTree = "<group>"; };
-		A5C3304024B6CF9F004E20CC /* MachoLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachoLib.inf; sourceTree = "<group>"; };
-		A5C3304124B6CF9F004E20CC /* MachoLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MachoLibInternal.h; sourceTree = "<group>"; };
-		A5C3304224B6CF9F004E20CC /* Header.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Header.c; sourceTree = "<group>"; };
-		A5C3304324B6CF9F004E20CC /* Symbols.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Symbols.c; sourceTree = "<group>"; };
-		A5C3304424B6CF9F004E20CC /* Relocations.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Relocations.c; sourceTree = "<group>"; };
-		A5C3304524B6CF9F004E20CC /* CxxSymbols.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CxxSymbols.c; sourceTree = "<group>"; };
-		A5C3304724B6CF9F004E20CC /* OpenFile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OpenFile.c; sourceTree = "<group>"; };
-		A5C3304824B6CF9F004E20CC /* FsConnectQuirk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FsConnectQuirk.c; sourceTree = "<group>"; };
-		A5C3304924B6CF9F004E20CC /* GptPartitionEntry.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GptPartitionEntry.c; sourceTree = "<group>"; };
-		A5C3304A24B6CF9F004E20CC /* ReadFile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ReadFile.c; sourceTree = "<group>"; };
-		A5C3304B24B6CF9F004E20CC /* FirmwareFile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FirmwareFile.c; sourceTree = "<group>"; };
-		A5C3304C24B6CF9F004E20CC /* GetVolumeLabel.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GetVolumeLabel.c; sourceTree = "<group>"; };
-		A5C3304D24B6CF9F004E20CC /* FileProtocol.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileProtocol.c; sourceTree = "<group>"; };
-		A5C3304E24B6CF9F004E20CC /* GetFileInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GetFileInfo.c; sourceTree = "<group>"; };
-		A5C3304F24B6CF9F004E20CC /* LocateFileSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LocateFileSystem.c; sourceTree = "<group>"; };
-		A5C3305024B6CF9F004E20CC /* OcFileLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcFileLib.inf; sourceTree = "<group>"; };
-		A5C3305224B6CF9F004E20CC /* OcCpuInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcCpuInternals.h; sourceTree = "<group>"; };
-		A5C3305424B6CF9F004E20CC /* Microcode.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = Microcode.nasm; sourceTree = "<group>"; };
-		A5C3305524B6CF9F004E20CC /* Atomic.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = Atomic.nasm; sourceTree = "<group>"; };
-		A5C3305624B6CF9F004E20CC /* FrequencyDetect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FrequencyDetect.c; sourceTree = "<group>"; };
-		A5C3305724B6CF9F004E20CC /* OcCpuLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcCpuLib.inf; sourceTree = "<group>"; };
-		A5C3305824B6CF9F004E20CC /* AppleCpuSupport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AppleCpuSupport.c; sourceTree = "<group>"; };
-		A5C3305924B6CF9F004E20CC /* OcCpuLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcCpuLib.c; sourceTree = "<group>"; };
-		A5C3305B24B6CF9F004E20CC /* Microcode.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = Microcode.nasm; sourceTree = "<group>"; };
-		A5C3305C24B6CF9F004E20CC /* Atomic.nasm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.nasm; path = Atomic.nasm; sourceTree = "<group>"; };
 		A5C3305E24B6CF9F004E20CC /* PlatformData.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PlatformData.c; sourceTree = "<group>"; };
 		A5C3305F24B6CF9F004E20CC /* BdsPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BdsPlatform.h; sourceTree = "<group>"; };
 		A5C3306024B6CF9F004E20CC /* BdsPlatform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsPlatform.c; sourceTree = "<group>"; };
@@ -8535,14 +8353,8 @@
 		A5C3306824B6CF9F004E20CC /* VideoBiosPatchLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLibInternal.h; sourceTree = "<group>"; };
 		A5C3306924B6CF9F004E20CC /* edid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = edid.h; sourceTree = "<group>"; };
 		A5C3306A24B6CF9F004E20CC /* 915resolution.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = 915resolution.c; sourceTree = "<group>"; };
-		A5C3306C24B6CF9F004E20CC /* OcXmlLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcXmlLib.c; sourceTree = "<group>"; };
-		A5C3306D24B6CF9F004E20CC /* OcXmlLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcXmlLib.inf; sourceTree = "<group>"; };
 		A5C3306F24B6CF9F004E20CC /* WaveLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = WaveLib.c; sourceTree = "<group>"; };
 		A5C3307024B6CF9F004E20CC /* WaveLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = WaveLib.inf; sourceTree = "<group>"; };
-		A5C3307224B6CF9F004E20CC /* OcOSInfoLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcOSInfoLib.c; sourceTree = "<group>"; };
-		A5C3307324B6CF9F004E20CC /* OcOSInfoLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcOSInfoLib.inf; sourceTree = "<group>"; };
-		A5C3307524B6CF9F004E20CC /* OcTemplateLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcTemplateLib.inf; sourceTree = "<group>"; };
-		A5C3307624B6CF9F004E20CC /* OcTemplateLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcTemplateLib.c; sourceTree = "<group>"; };
 		A5C3307824B6CF9F004E20CC /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		A5C3307924B6CF9F004E20CC /* GenericBdsLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GenericBdsLib.inf; sourceTree = "<group>"; };
 		A5C3307A24B6CF9F004E20CC /* BdsBoot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsBoot.c; sourceTree = "<group>"; };
@@ -8557,36 +8369,16 @@
 		A5C3308424B6CF9F004E20CC /* MemoryIntrinsics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryIntrinsics.c; sourceTree = "<group>"; };
 		A5C3308524B6CF9F004E20CC /* CopyMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = CopyMem.c; sourceTree = "<group>"; };
 		A5C3308624B6CF9F004E20CC /* IntrinsicLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = IntrinsicLib.inf; sourceTree = "<group>"; };
-		A5C3308824B6CF9F004E20CC /* MemoryMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryMap.c; sourceTree = "<group>"; };
-		A5C3308924B6CF9F004E20CC /* MemoryAttributes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryAttributes.c; sourceTree = "<group>"; };
-		A5C3308A24B6CF9F004E20CC /* VirtualMemory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VirtualMemory.c; sourceTree = "<group>"; };
-		A5C3308B24B6CF9F004E20CC /* LegacyRegionLock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegionLock.c; sourceTree = "<group>"; };
-		A5C3308C24B6CF9F004E20CC /* LegacyRegionUnLock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegionUnLock.c; sourceTree = "<group>"; };
-		A5C3308D24B6CF9F004E20CC /* MemoryDebug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryDebug.c; sourceTree = "<group>"; };
-		A5C3308E24B6CF9F004E20CC /* MemoryAlloc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryAlloc.c; sourceTree = "<group>"; };
-		A5C3308F24B6CF9F004E20CC /* OcMemoryLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcMemoryLib.inf; sourceTree = "<group>"; };
-		A5C3309024B6CF9F004E20CC /* UmmMalloc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UmmMalloc.c; sourceTree = "<group>"; };
-		A5C3309224B6CFA0004E20CC /* OcAppleRamDiskLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcAppleRamDiskLib.inf; sourceTree = "<group>"; };
-		A5C3309324B6CFA0004E20CC /* OcAppleRamDiskLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleRamDiskLib.c; sourceTree = "<group>"; };
 		A5C3309524B6CFB8004E20CC /* OcQuirks.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcQuirks.inf; sourceTree = "<group>"; };
 		A5C3309624B6CFB8004E20CC /* OcQuirks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcQuirks.c; sourceTree = "<group>"; };
 		A5C3309724B6CFB8004E20CC /* OcQuirks.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = OcQuirks.plist; sourceTree = "<group>"; };
-		A5C3309824B6E3D8004E20CC /* AppleVariable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleVariable.h; sourceTree = "<group>"; };
-		A5C3309924B6F088004E20CC /* OcConsoleLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcConsoleLib.h; sourceTree = "<group>"; };
 		A5C3309A24B6F110004E20CC /* AppleMacEfi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleMacEfi.h; sourceTree = "<group>"; };
 		A5C3309C24B6FAF6004E20CC /* AppleMacEfiSpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleMacEfiSpec.h; sourceTree = "<group>"; };
 		A5C3309E24B6FC35004E20CC /* MicrosoftWindows.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MicrosoftWindows.h; sourceTree = "<group>"; };
 		A5C3309F24B6FDA1004E20CC /* VirtualMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualMemory.h; sourceTree = "<group>"; };
-		A5C330A024B6FE08004E20CC /* AppleBless.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleBless.h; sourceTree = "<group>"; };
-		A5C330A124B6FF55004E20CC /* AppleRtcRam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleRtcRam.h; sourceTree = "<group>"; };
-		A5C330A224B6FF97004E20CC /* OcCpuLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcCpuLib.h; sourceTree = "<group>"; };
-		A5C330A324B701B8004E20CC /* OcAppleChunklistLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleChunklistLib.h; sourceTree = "<group>"; };
 		A5C330A424B702AC004E20CC /* CpuId.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuId.h; sourceTree = "<group>"; };
 		A5C330A524B70353004E20CC /* AppleChunklist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleChunklist.h; sourceTree = "<group>"; };
-		A5C330A624B7042B004E20CC /* OcAppleRamDiskLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleRamDiskLib.h; sourceTree = "<group>"; };
-		A5C330A724B70465004E20CC /* AppleFramebufferInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleFramebufferInfo.h; sourceTree = "<group>"; };
 		A5C330A824B704B5004E20CC /* AppleRtc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleRtc.h; sourceTree = "<group>"; };
-		A5C330A924B7051C004E20CC /* AppleRamDisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleRamDisk.h; sourceTree = "<group>"; };
 		A5C330AB24B70FB8004E20CC /* Microcode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Microcode.h; sourceTree = "<group>"; };
 		A5C330AC24B70FB8004E20CC /* SmramSaveStateMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmramSaveStateMap.h; sourceTree = "<group>"; };
 		A5C330AE24B70FB8004E20CC /* Pentium4Msr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pentium4Msr.h; sourceTree = "<group>"; };
@@ -8619,31 +8411,11 @@
 		A5C330CA24B70FB8004E20CC /* StmApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StmApi.h; sourceTree = "<group>"; };
 		A5C330CB24B70FB8004E20CC /* ArchitecturalMsr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ArchitecturalMsr.h; sourceTree = "<group>"; };
 		A5C330CC24B70FB8004E20CC /* Msr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Msr.h; sourceTree = "<group>"; };
-		A5C330CD24B72611004E20CC /* AppleDiskImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDiskImage.h; sourceTree = "<group>"; };
-		A5C330CE24B72668004E20CC /* OcAppleDiskImageLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleDiskImageLib.h; sourceTree = "<group>"; };
 		A5C330CF24B726B2004E20CC /* AppleDiskImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDiskImage.h; sourceTree = "<group>"; };
 		A5C330D024B726ED004E20CC /* AppleIntelCpuInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleIntelCpuInfo.h; sourceTree = "<group>"; };
-		A5C330D124B727C9004E20CC /* OcDebugLogLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcDebugLogLib.h; sourceTree = "<group>"; };
-		A5C330D224B72957004E20CC /* OcLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcLog.h; sourceTree = "<group>"; };
-		A5C330D324B729BE004E20CC /* AppleDebugLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDebugLog.h; sourceTree = "<group>"; };
-		A5C330D424B72B67004E20CC /* OcCompressionLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcCompressionLib.h; sourceTree = "<group>"; };
-		A5C330D524B72BB7004E20CC /* AppleFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleFile.h; sourceTree = "<group>"; };
-		A5C330D624B72C0A004E20CC /* OcTimerLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcTimerLib.h; sourceTree = "<group>"; };
-		A5C330D724B72C5C004E20CC /* OcAppleKeyMapLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleKeyMapLib.h; sourceTree = "<group>"; };
-		A5C330D824B72CAD004E20CC /* OcOSInfoLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcOSInfoLib.h; sourceTree = "<group>"; };
 		A5C330D924B75A15004E20CC /* AppleDiskLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDiskLabel.h; sourceTree = "<group>"; };
-		A5C330DA24B75B82004E20CC /* OcAppleKeysLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcAppleKeysLib.h; sourceTree = "<group>"; };
-		A5C330DB24B75D22004E20CC /* AppleHfsInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleHfsInfo.h; sourceTree = "<group>"; };
-		A5C330DC24B75DF7004E20CC /* AppleOSLoaded.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleOSLoaded.h; sourceTree = "<group>"; };
 		A5C330DD24B76102004E20CC /* ProcessorInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessorInfo.h; sourceTree = "<group>"; };
 		A5C330DE24B78048004E20CC /* GenericIch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericIch.h; sourceTree = "<group>"; };
-		A5C330E024B7900E004E20CC /* OcAppleLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcAppleLog.c; sourceTree = "<group>"; };
-		A5C330E124B7900E004E20CC /* DebugHelp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DebugHelp.c; sourceTree = "<group>"; };
-		A5C330E224B7900E004E20CC /* DebugPrint.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DebugPrint.c; sourceTree = "<group>"; };
-		A5C330E324B7900E004E20CC /* OcDebugLogLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OcDebugLogLib.inf; sourceTree = "<group>"; };
-		A5C330E424B7900E004E20CC /* OcLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcLog.c; sourceTree = "<group>"; };
-		A5C330E524B7900E004E20CC /* OcLogInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcLogInternal.h; sourceTree = "<group>"; };
-		A5C330E624B7900E004E20CC /* OcDebugLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OcDebugLogLib.c; sourceTree = "<group>"; };
 		A5D12C1C243A0B0B00DFA98A /* bootscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bootscreen.h; sourceTree = "<group>"; };
 		A5D12C1D243A0B1B00DFA98A /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		A5D12C1E243A0B2700DFA98A /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
@@ -20964,9 +20736,7 @@
 				A5C3245624B5022F004E20CC /* AppleFatBinaryImage.h */,
 				A5C3245924B5022F004E20CC /* AppleFeatures.h */,
 				A5C3245824B5022F004E20CC /* AppleHibernate.h */,
-				A5C3245D24B5022F004E20CC /* AppleHid.h */,
 				A5C330D024B726ED004E20CC /* AppleIntelCpuInfo.h */,
-				A5C3245124B5022F004E20CC /* AppleMachoImage.h */,
 				A5C330A824B704B5004E20CC /* AppleRtc.h */,
 				A5C3245224B5022F004E20CC /* AppleSmBios.h */,
 				A5C3245E24B5022F004E20CC /* AtomBios.h */,
@@ -20990,38 +20760,12 @@
 		A5C3246224B5022F004E20CC /* Library */ = {
 			isa = PBXGroup;
 			children = (
-				A5C3247624B5022F004E20CC /* DeviceTreeLib.h */,
 				A5C3247824B5022F004E20CC /* GenericBdsLib.h */,
 				A5C3246724B5022F004E20CC /* HdaModels.h */,
 				A5C3246424B5022F004E20CC /* HdaRegisters.h */,
 				A5C3246F24B5022F004E20CC /* HdaVerbs.h */,
 				A5C3246B24B5022F004E20CC /* MachoLib.h */,
 				A5C3247C24B5022F004E20CC /* MemLogLib.h */,
-				A5C3246C24B5022F004E20CC /* OcAfterBootCompatLib.h */,
-				A5C3247A24B5022F004E20CC /* OcAppleBootPolicyLib.h */,
-				A5C330A324B701B8004E20CC /* OcAppleChunklistLib.h */,
-				A5C330CE24B72668004E20CC /* OcAppleDiskImageLib.h */,
-				A5C330D724B72C5C004E20CC /* OcAppleKeyMapLib.h */,
-				A5C330DA24B75B82004E20CC /* OcAppleKeysLib.h */,
-				A5C330A624B7042B004E20CC /* OcAppleRamDiskLib.h */,
-				A5C3247324B5022F004E20CC /* OcBootManagementLib.h */,
-				A5C330D424B72B67004E20CC /* OcCompressionLib.h */,
-				A5C3309924B6F088004E20CC /* OcConsoleLib.h */,
-				A5C330A224B6FF97004E20CC /* OcCpuLib.h */,
-				A5C3247B24B5022F004E20CC /* OcCryptoLib.h */,
-				A5C330D124B727C9004E20CC /* OcDebugLogLib.h */,
-				A5C3246524B5022F004E20CC /* OcDevicePathLib.h */,
-				A5C3246624B5022F004E20CC /* OcFileLib.h */,
-				A5C3247524B5022F004E20CC /* OcGuardLib.h */,
-				A52212DA24BD80EF00DAB7D6 /* OcMemoryLib.h */,
-				A5C3246324B5022F004E20CC /* OcMiscLib.h */,
-				A5C330D824B72CAD004E20CC /* OcOSInfoLib.h */,
-				A5C3247124B5022F004E20CC /* OcSerializeLib.h */,
-				A5C3246A24B5022F004E20CC /* OcStorageLib.h */,
-				A5C3246D24B5022F004E20CC /* OcStringLib.h */,
-				A5C3246824B5022F004E20CC /* OcTemplateLib.h */,
-				A5C330D624B72C0A004E20CC /* OcTimerLib.h */,
-				A5C3246E24B5022F004E20CC /* OcXmlLib.h */,
 				A5C3247424B5022F004E20CC /* PeCoffLib.h */,
 				A5C3247724B5022F004E20CC /* printf_lite-conf.h */,
 				A5C3247224B5022F004E20CC /* printf_lite.h */,
@@ -21037,28 +20781,15 @@
 		A5C3247F24B5022F004E20CC /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
-				A5C3248C24B5022F004E20CC /* AmiKeycode.h */,
-				A5C3248524B5022F004E20CC /* AmiPointer.h */,
 				A5C3249A24B5022F004E20CC /* ApfsEfiBootRecordInfo.h */,
-				A5C3249124B5022F004E20CC /* AppleBeepGen.h */,
-				A5C3249F24B5022F004E20CC /* AppleBootPolicy.h */,
-				A5C330D324B729BE004E20CC /* AppleDebugLog.h */,
 				A5C3248624B5022F004E20CC /* AppleDeviceControl.h */,
-				A5C330CD24B72611004E20CC /* AppleDiskImage.h */,
 				A5C3249E24B5022F004E20CC /* AppleDiskIo.h */,
-				A5C324A024B5022F004E20CC /* AppleEvent.h */,
-				A5C330A724B70465004E20CC /* AppleFramebufferInfo.h */,
 				A5C324A124B5022F004E20CC /* AppleGraphConfig.h */,
 				A5C3248424B5022F004E20CC /* AppleImageCodecProtocol.h */,
-				A5C3249324B5022F004E20CC /* AppleKeyMapAggregator.h */,
-				A5C3249224B5022F004E20CC /* AppleKeyMapDatabase.h */,
 				A5C3248824B5022F004E20CC /* AppleKeyState.h */,
 				A5C3248A24B5022F004E20CC /* ApplePartitionInfo.h */,
 				A5C3249B24B5022F004E20CC /* ApplePlatformInfoDatabase.h */,
-				A5C330A924B7051C004E20CC /* AppleRamDisk.h */,
-				A5C330A124B6FF55004E20CC /* AppleRtcRam.h */,
 				A5C3249424B5022F004E20CC /* AppleSMC.h */,
-				A5C3249624B5022F004E20CC /* AppleVoiceOver.h */,
 				A5C3249824B5022F004E20CC /* AptioMemoryFix.h */,
 				A5C3248B24B5022F004E20CC /* AudioIo.h */,
 				A5C3248924B5022F004E20CC /* efiConsoleControl.h */,
@@ -21071,12 +20802,6 @@
 				A5C3249024B5022F004E20CC /* KeyboardInfo.h */,
 				A5C3249C24B5022F004E20CC /* MsgLog.h */,
 				A5C3248024B5022F004E20CC /* NullTextOutput.h */,
-				A5C3249724B5022F004E20CC /* OcAfterBootCompat.h */,
-				A5C324A324B5022F004E20CC /* OcAudio.h */,
-				A5C3248324B5022F004E20CC /* OcFirmwareRuntime.h */,
-				A5C330D224B72957004E20CC /* OcLog.h */,
-				A52213D024BE04A300DAB7D6 /* OcQuirksProtocol.h */,
-				A5C3248224B5022F004E20CC /* OSInfo.h */,
 				A5C3249524B5022F004E20CC /* PciIoImp.h */,
 				A5C3249D24B5022F004E20CC /* SimpleAudioOut.h */,
 				A5C3248124B5022F004E20CC /* UsbMassImpl.h */,
@@ -21092,17 +20817,10 @@
 				A5C324A924B5022F004E20CC /* DxeCoreFileName.h */,
 				A5C324AA24B5022F004E20CC /* LdrMemoryDescriptor.h */,
 				A5C324AB24B5022F004E20CC /* ConsoleOutConfig.h */,
-				A5C324AC24B5022F004E20CC /* OcVariables.h */,
 				A5C324AD24B5022F004E20CC /* FlashMapHob.h */,
-				A5C324AE24B5022F004E20CC /* OcVariable.h */,
 				A5C324AF24B5022F004E20CC /* MicrosoftVariable.h */,
 				A5C324B024B5022F004E20CC /* AcpiDescription.h */,
-				A5C330DC24B75DF7004E20CC /* AppleOSLoaded.h */,
-				A5C3309824B6E3D8004E20CC /* AppleVariable.h */,
-				A5C330A024B6FE08004E20CC /* AppleBless.h */,
-				A5C330D524B72BB7004E20CC /* AppleFile.h */,
 				A5C324B124B5022F004E20CC /* ApplePlatformInfo.h */,
-				A5C330DB24B75D22004E20CC /* AppleHfsInfo.h */,
 				A5C324B224B5022F004E20CC /* AppleApfsInfo.h */,
 			);
 			path = Guid;
@@ -21117,34 +20835,7 @@
 				A5C3303824B6CF9F004E20CC /* HdaDevicesLib */,
 				A5C3308324B6CF9F004E20CC /* IntrinsicLib */,
 				A5C32A5A24B6CF9B004E20CC /* LzmaCustomDecompressLib */,
-				A5C3303F24B6CF9F004E20CC /* MachoLib */,
 				A5C32A9624B6CF9B004E20CC /* MemLogLibDefault */,
-				A5C32AF424B6CF9C004E20CC /* OcAfterBootCompatLib */,
-				A5C32AE024B6CF9C004E20CC /* OcAppleBootPolicyLib */,
-				A5C32A7524B6CF9B004E20CC /* OcAppleChunklistLib */,
-				A5C32AE324B6CF9C004E20CC /* OcAppleDiskImageLib */,
-				A5C32ACB24B6CF9C004E20CC /* OcAppleKeyMapLib */,
-				A5C32ADD24B6CF9C004E20CC /* OcAppleKeysLib */,
-				A5C3309124B6CF9F004E20CC /* OcAppleRamDiskLib */,
-				A5C32A9C24B6CF9B004E20CC /* OcBootManagementLib */,
-				A5C32AAC24B6CF9B004E20CC /* OcCompressionLib */,
-				A5C32A4E24B6CF9B004E20CC /* OcConsoleLib */,
-				A5C3305124B6CF9F004E20CC /* OcCpuLib */,
-				A5C32A7824B6CF9B004E20CC /* OcCryptoLib */,
-				A5C330DF24B7900E004E20CC /* OcDebugLogLib */,
-				A5C3303B24B6CF9F004E20CC /* OcDevicePathLib */,
-				A5C3304624B6CF9F004E20CC /* OcFileLib */,
-				A5C32AD424B6CF9C004E20CC /* OcGuardLib */,
-				A5C3308724B6CF9F004E20CC /* OcMemoryLib */,
-				A5C32A8A24B6CF9B004E20CC /* OcMiscLib */,
-				A5C3307124B6CF9F004E20CC /* OcOSInfoLib */,
-				A5C32AE924B6CF9C004E20CC /* OcRngLib */,
-				A5C32A6D24B6CF9B004E20CC /* OcRtcLib */,
-				A5C32A4B24B6CF9B004E20CC /* OcSerializeLib */,
-				A5C32ACE24B6CF9C004E20CC /* OcStorageLib */,
-				A5C32A4724B6CF9B004E20CC /* OcStringLib */,
-				A5C3307424B6CF9F004E20CC /* OcTemplateLib */,
-				A5C3306B24B6CF9F004E20CC /* OcXmlLib */,
 				A5C32B0224B6CF9C004E20CC /* OpensslLib */,
 				A5C3305D24B6CF9F004E20CC /* OsxBdsPlatformLib */,
 				A5C32AD124B6CF9C004E20CC /* UefiHiiServicesLib */,
@@ -21154,43 +20845,6 @@
 			);
 			name = Library;
 			path = ../../Library;
-			sourceTree = "<group>";
-		};
-		A5C32A4724B6CF9B004E20CC /* OcStringLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A4824B6CF9B004E20CC /* OcStringLib.inf */,
-				A5C32A4924B6CF9B004E20CC /* OcUnicodeLib.c */,
-				A5C32A4A24B6CF9B004E20CC /* OcAsciiLib.c */,
-			);
-			path = OcStringLib;
-			sourceTree = "<group>";
-		};
-		A5C32A4B24B6CF9B004E20CC /* OcSerializeLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A4C24B6CF9B004E20CC /* OcSerializeLib.c */,
-				A5C32A4D24B6CF9B004E20CC /* OcSerializeLib.inf */,
-			);
-			path = OcSerializeLib;
-			sourceTree = "<group>";
-		};
-		A5C32A4E24B6CF9B004E20CC /* OcConsoleLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A4F24B6CF9B004E20CC /* ConsoleControl.c */,
-				A5C32A5024B6CF9B004E20CC /* OcConsoleLibInternal.h */,
-				A5C32A5124B6CF9B004E20CC /* ResolutionParsing.c */,
-				A5C32A5224B6CF9B004E20CC /* OcConsoleLib.inf */,
-				A5C32A5324B6CF9B004E20CC /* UgaPassThrough.c */,
-				A5C32A5424B6CF9B004E20CC /* OcConsoleLib.c */,
-				A5C32A5524B6CF9B004E20CC /* FramebufferInfo.c */,
-				A5C32A5624B6CF9B004E20CC /* ConsoleGop.c */,
-				A5C32A5724B6CF9B004E20CC /* TextOutputNull.c */,
-				A5C32A5824B6CF9B004E20CC /* TextOutputSystem.c */,
-				A5C32A5924B6CF9B004E20CC /* TextOutputBuiltin.c */,
-			);
-			path = OcConsoleLib;
 			sourceTree = "<group>";
 		};
 		A5C32A5A24B6CF9B004E20CC /* LzmaCustomDecompressLib */ = {
@@ -21232,17 +20886,6 @@
 			path = C;
 			sourceTree = "<group>";
 		};
-		A5C32A6D24B6CF9B004E20CC /* OcRtcLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A6E24B6CF9B004E20CC /* AppleRtcRam.c */,
-				A5C32A6F24B6CF9B004E20CC /* OcRtcLibInternal.h */,
-				A5C32A7024B6CF9B004E20CC /* OcRtcLib.inf */,
-				A5C32A7124B6CF9B004E20CC /* OcRtcLib.c */,
-			);
-			path = OcRtcLib;
-			sourceTree = "<group>";
-		};
 		A5C32A7224B6CF9B004E20CC /* DeviceTreeLib */ = {
 			isa = PBXGroup;
 			children = (
@@ -21250,66 +20893,6 @@
 				A5C32A7424B6CF9B004E20CC /* DeviceTreeLib.inf */,
 			);
 			path = DeviceTreeLib;
-			sourceTree = "<group>";
-		};
-		A5C32A7524B6CF9B004E20CC /* OcAppleChunklistLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A7624B6CF9B004E20CC /* OcAppleChunklistLib.c */,
-				A5C32A7724B6CF9B004E20CC /* OcAppleChunklistLib.inf */,
-			);
-			path = OcAppleChunklistLib;
-			sourceTree = "<group>";
-		};
-		A5C32A7824B6CF9B004E20CC /* OcCryptoLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A7924B6CF9B004E20CC /* Aes.c */,
-				A5C32A7A24B6CF9B004E20CC /* Sha2.c */,
-				A5C32A7B24B6CF9B004E20CC /* BigNumMontgomery.c */,
-				A5C32A7C24B6CF9B004E20CC /* OcCryptoLib.inf */,
-				A5C32A7D24B6CF9B004E20CC /* X64 */,
-				A5C32A7F24B6CF9B004E20CC /* BigNumLibInternal.h */,
-				A5C32A8024B6CF9B004E20CC /* BigNumLib.h */,
-				A5C32A8124B6CF9B004E20CC /* Sha1.c */,
-				A5C32A8224B6CF9B004E20CC /* BigNumPrimitives.c */,
-				A5C32A8324B6CF9B004E20CC /* PasswordHash.c */,
-				A5C32A8424B6CF9B004E20CC /* Ia32 */,
-				A5C32A8624B6CF9B004E20CC /* ChaCha.c */,
-				A5C32A8724B6CF9B004E20CC /* RsaDigitalSign.c */,
-				A5C32A8824B6CF9B004E20CC /* Md5.c */,
-				A5C32A8924B6CF9B004E20CC /* SecureMem.c */,
-			);
-			path = OcCryptoLib;
-			sourceTree = "<group>";
-		};
-		A5C32A7D24B6CF9B004E20CC /* X64 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A7E24B6CF9B004E20CC /* BigNumWordMul64.c */,
-			);
-			path = X64;
-			sourceTree = "<group>";
-		};
-		A5C32A8424B6CF9B004E20CC /* Ia32 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A8524B6CF9B004E20CC /* BigNumWordMul64.c */,
-			);
-			path = Ia32;
-			sourceTree = "<group>";
-		};
-		A5C32A8A24B6CF9B004E20CC /* OcMiscLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A8B24B6CF9B004E20CC /* DirectReset.c */,
-				A5C32A8C24B6CF9B004E20CC /* Math.c */,
-				A5C32A8D24B6CF9B004E20CC /* ReleaseUsbOwnership.c */,
-				A5C32A8E24B6CF9B004E20CC /* ProtocolSupport.c */,
-				A5C32A8F24B6CF9B004E20CC /* OcMiscLib.inf */,
-				A5C32A9024B6CF9B004E20CC /* DataPatcher.c */,
-			);
-			path = OcMiscLib;
 			sourceTree = "<group>";
 		};
 		A5C32A9124B6CF9B004E20CC /* VBoxPeCoffLib */ = {
@@ -21335,104 +20918,6 @@
 			path = MemLogLibDefault;
 			sourceTree = "<group>";
 		};
-		A5C32A9C24B6CF9B004E20CC /* OcBootManagementLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A9D24B6CF9B004E20CC /* OcBootManagementLib.c */,
-				A5C32A9E24B6CF9B004E20CC /* BootEntryInfo.c */,
-				A5C32A9F24B6CF9B004E20CC /* DmgBootSupport.c */,
-				A5C32AA024B6CF9B004E20CC /* ApplePanic.c */,
-				A5C32AA124B6CF9B004E20CC /* BootManagementInternal.h */,
-				A5C32AA224B6CF9B004E20CC /* HotKeySupport.c */,
-				A5C32AA324B6CF9B004E20CC /* OcBootManagementLib.inf */,
-				A5C32AA424B6CF9B004E20CC /* PolicyManagement.c */,
-				A5C32AA524B6CF9B004E20CC /* DefaultEntryChoice.c */,
-				A5C32AA624B6CF9B004E20CC /* BootAudio.c */,
-				A5C32AA724B6CF9B004E20CC /* BootArguments.c */,
-				A5C32AA824B6CF9B004E20CC /* BootSignature.bin */,
-				A5C32AA924B6CF9B004E20CC /* AppleHibernate.c */,
-				A5C32AAA24B6CF9B004E20CC /* BootEntryManagement.c */,
-				A5C32AAB24B6CF9B004E20CC /* VariableManagement.c */,
-			);
-			path = OcBootManagementLib;
-			sourceTree = "<group>";
-		};
-		A5C32AAC24B6CF9B004E20CC /* OcCompressionLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AAD24B6CF9B004E20CC /* lzss */,
-				A5C32AB024B6CF9B004E20CC /* OcCompressionLib.c */,
-				A5C32AB124B6CF9B004E20CC /* zlib */,
-				A5C32AC724B6CF9C004E20CC /* OcCompressionLib.inf */,
-				A5C32AC824B6CF9C004E20CC /* lzvn */,
-			);
-			path = OcCompressionLib;
-			sourceTree = "<group>";
-		};
-		A5C32AAD24B6CF9B004E20CC /* lzss */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AAE24B6CF9B004E20CC /* lzss.c */,
-				A5C32AAF24B6CF9B004E20CC /* lzss.h */,
-			);
-			path = lzss;
-			sourceTree = "<group>";
-		};
-		A5C32AB124B6CF9B004E20CC /* zlib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AB224B6CF9C004E20CC /* zlib_uefi.c */,
-				A5C32AB324B6CF9C004E20CC /* zutil.h */,
-				A5C32AB424B6CF9C004E20CC /* inftrees.h */,
-				A5C32AB524B6CF9C004E20CC /* inflate.c */,
-				A5C32AB624B6CF9C004E20CC /* compress.c */,
-				A5C32AB724B6CF9C004E20CC /* deflate.c */,
-				A5C32AB824B6CF9C004E20CC /* inffixed.h */,
-				A5C32AB924B6CF9C004E20CC /* trees.h */,
-				A5C32ABA24B6CF9C004E20CC /* inffast.h */,
-				A5C32ABB24B6CF9C004E20CC /* crc32.c */,
-				A5C32ABC24B6CF9C004E20CC /* infback.c */,
-				A5C32ABD24B6CF9C004E20CC /* deflate.h */,
-				A5C32ABE24B6CF9C004E20CC /* zlib.h */,
-				A5C32ABF24B6CF9C004E20CC /* inflate.h */,
-				A5C32AC024B6CF9C004E20CC /* inftrees.c */,
-				A5C32AC124B6CF9C004E20CC /* uncompr.c */,
-				A5C32AC224B6CF9C004E20CC /* trees.c */,
-				A5C32AC324B6CF9C004E20CC /* crc32.h */,
-				A5C32AC424B6CF9C004E20CC /* inffast.c */,
-				A5C32AC524B6CF9C004E20CC /* adler32.c */,
-				A5C32AC624B6CF9C004E20CC /* zconf.h */,
-			);
-			path = zlib;
-			sourceTree = "<group>";
-		};
-		A5C32AC824B6CF9C004E20CC /* lzvn */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AC924B6CF9C004E20CC /* lzvn.h */,
-				A5C32ACA24B6CF9C004E20CC /* lzvn.c */,
-			);
-			path = lzvn;
-			sourceTree = "<group>";
-		};
-		A5C32ACB24B6CF9C004E20CC /* OcAppleKeyMapLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32ACC24B6CF9C004E20CC /* OcAppleKeyMapLib.inf */,
-				A5C32ACD24B6CF9C004E20CC /* OcAppleKeyMapLib.c */,
-			);
-			path = OcAppleKeyMapLib;
-			sourceTree = "<group>";
-		};
-		A5C32ACE24B6CF9C004E20CC /* OcStorageLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32ACF24B6CF9C004E20CC /* OcStorageLib.inf */,
-				A5C32AD024B6CF9C004E20CC /* OcStorageLib.c */,
-			);
-			path = OcStorageLib;
-			sourceTree = "<group>";
-		};
 		A5C32AD124B6CF9C004E20CC /* UefiHiiServicesLib */ = {
 			isa = PBXGroup;
 			children = (
@@ -21442,79 +20927,6 @@
 			path = UefiHiiServicesLib;
 			sourceTree = "<group>";
 		};
-		A5C32AD424B6CF9C004E20CC /* OcGuardLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AD524B6CF9C004E20CC /* Canary.c */,
-				A5C32AD624B6CF9C004E20CC /* Ubsan.h */,
-				A5C32AD724B6CF9C004E20CC /* UbsanPrintf.c */,
-				A5C32AD824B6CF9C004E20CC /* OcGuardLib.inf */,
-				A5C32AD924B6CF9C004E20CC /* BitOverflow.c */,
-				A5C32ADA24B6CF9C004E20CC /* TripleOverflow.c */,
-				A5C32ADB24B6CF9C004E20CC /* Ubsan.c */,
-				A5C32ADC24B6CF9C004E20CC /* NativeOverflow.c */,
-			);
-			path = OcGuardLib;
-			sourceTree = "<group>";
-		};
-		A5C32ADD24B6CF9C004E20CC /* OcAppleKeysLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32ADE24B6CF9C004E20CC /* OcAppleKeysLib.inf */,
-				A5C32ADF24B6CF9C004E20CC /* OcAppleKeysLib.c */,
-			);
-			path = OcAppleKeysLib;
-			sourceTree = "<group>";
-		};
-		A5C32AE024B6CF9C004E20CC /* OcAppleBootPolicyLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AE124B6CF9C004E20CC /* OcAppleBootPolicyLib.c */,
-				A5C32AE224B6CF9C004E20CC /* OcAppleBootPolicyLib.inf */,
-			);
-			path = OcAppleBootPolicyLib;
-			sourceTree = "<group>";
-		};
-		A5C32AE324B6CF9C004E20CC /* OcAppleDiskImageLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AE424B6CF9C004E20CC /* OcAppleDiskImageLib.c */,
-				A5C32AE524B6CF9C004E20CC /* OcAppleDiskImageLibInternal.h */,
-				A5C32AE624B6CF9C004E20CC /* OcAppleDiskImageLib.inf */,
-				A5C32AE724B6CF9C004E20CC /* OcAppleDiskImageBlockIo.c */,
-				A5C32AE824B6CF9C004E20CC /* OcAppleDiskImageLibInternal.c */,
-			);
-			path = OcAppleDiskImageLib;
-			sourceTree = "<group>";
-		};
-		A5C32AE924B6CF9C004E20CC /* OcRngLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AEA24B6CF9C004E20CC /* X64 */,
-				A5C32AEC24B6CF9C004E20CC /* OcRngLib.c */,
-				A5C32AED24B6CF9C004E20CC /* Ia32 */,
-				A5C32AEF24B6CF9C004E20CC /* OcRngLib.inf */,
-				A5C32AF024B6CF9C004E20CC /* OcRngInternals.h */,
-			);
-			path = OcRngLib;
-			sourceTree = "<group>";
-		};
-		A5C32AEA24B6CF9C004E20CC /* X64 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AEB24B6CF9C004E20CC /* RngDelay.nasm */,
-			);
-			path = X64;
-			sourceTree = "<group>";
-		};
-		A5C32AED24B6CF9C004E20CC /* Ia32 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AEE24B6CF9C004E20CC /* RngDelay.nasm */,
-			);
-			path = Ia32;
-			sourceTree = "<group>";
-		};
 		A5C32AF124B6CF9C004E20CC /* DuetTimerLib */ = {
 			isa = PBXGroup;
 			children = (
@@ -21522,40 +20934,6 @@
 				A5C32AF324B6CF9C004E20CC /* DuetTimerLib.inf */,
 			);
 			path = DuetTimerLib;
-			sourceTree = "<group>";
-		};
-		A5C32AF424B6CF9C004E20CC /* OcAfterBootCompatLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AF524B6CF9C004E20CC /* CustomSlide.c */,
-				A5C32AF624B6CF9C004E20CC /* X64 */,
-				A5C32AFA24B6CF9C004E20CC /* BootCompatInternal.h */,
-				A5C32AFB24B6CF9C004E20CC /* ServiceOverrides.c */,
-				A5C32AFC24B6CF9C004E20CC /* Ia32 */,
-				A5C32AFF24B6CF9C004E20CC /* KernelSupport.c */,
-				A5C32B0024B6CF9C004E20CC /* OcAfterBootCompatLib.inf */,
-				A5C32B0124B6CF9C004E20CC /* OcAfterBootCompatLib.c */,
-			);
-			path = OcAfterBootCompatLib;
-			sourceTree = "<group>";
-		};
-		A5C32AF624B6CF9C004E20CC /* X64 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AF724B6CF9C004E20CC /* ContextSwitchSupport.c */,
-				A5C32AF824B6CF9C004E20CC /* ContextSwitch.nasm */,
-				A5C32AF924B6CF9C004E20CC /* ContextSwitch.h */,
-			);
-			path = X64;
-			sourceTree = "<group>";
-		};
-		A5C32AFC24B6CF9C004E20CC /* Ia32 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32AFD24B6CF9C004E20CC /* ContextSwitchSupport.c */,
-				A5C32AFE24B6CF9C004E20CC /* ContextSwitch.h */,
-			);
-			path = Ia32;
 			sourceTree = "<group>";
 		};
 		A5C32B0224B6CF9C004E20CC /* OpensslLib */ = {
@@ -23502,78 +22880,6 @@
 			path = HdaDevicesLib;
 			sourceTree = "<group>";
 		};
-		A5C3303B24B6CF9F004E20CC /* OcDevicePathLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3303C24B6CF9F004E20CC /* OcDevicePathLib.inf */,
-				A5C3303D24B6CF9F004E20CC /* ExpandDevicePath.c */,
-				A5C3303E24B6CF9F004E20CC /* OcDevicePathLib.c */,
-			);
-			path = OcDevicePathLib;
-			sourceTree = "<group>";
-		};
-		A5C3303F24B6CF9F004E20CC /* MachoLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3304024B6CF9F004E20CC /* MachoLib.inf */,
-				A5C3304124B6CF9F004E20CC /* MachoLibInternal.h */,
-				A5C3304224B6CF9F004E20CC /* Header.c */,
-				A5C3304324B6CF9F004E20CC /* Symbols.c */,
-				A5C3304424B6CF9F004E20CC /* Relocations.c */,
-				A5C3304524B6CF9F004E20CC /* CxxSymbols.c */,
-			);
-			path = MachoLib;
-			sourceTree = "<group>";
-		};
-		A5C3304624B6CF9F004E20CC /* OcFileLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3304724B6CF9F004E20CC /* OpenFile.c */,
-				A5C3304824B6CF9F004E20CC /* FsConnectQuirk.c */,
-				A5C3304924B6CF9F004E20CC /* GptPartitionEntry.c */,
-				A5C3304A24B6CF9F004E20CC /* ReadFile.c */,
-				A5C3304B24B6CF9F004E20CC /* FirmwareFile.c */,
-				A5C3304C24B6CF9F004E20CC /* GetVolumeLabel.c */,
-				A5C3304D24B6CF9F004E20CC /* FileProtocol.c */,
-				A5C3304E24B6CF9F004E20CC /* GetFileInfo.c */,
-				A5C3304F24B6CF9F004E20CC /* LocateFileSystem.c */,
-				A5C3305024B6CF9F004E20CC /* OcFileLib.inf */,
-			);
-			path = OcFileLib;
-			sourceTree = "<group>";
-		};
-		A5C3305124B6CF9F004E20CC /* OcCpuLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3305224B6CF9F004E20CC /* OcCpuInternals.h */,
-				A5C3305324B6CF9F004E20CC /* X64 */,
-				A5C3305624B6CF9F004E20CC /* FrequencyDetect.c */,
-				A5C3305724B6CF9F004E20CC /* OcCpuLib.inf */,
-				A5C3305824B6CF9F004E20CC /* AppleCpuSupport.c */,
-				A5C3305924B6CF9F004E20CC /* OcCpuLib.c */,
-				A5C3305A24B6CF9F004E20CC /* Ia32 */,
-			);
-			path = OcCpuLib;
-			sourceTree = "<group>";
-		};
-		A5C3305324B6CF9F004E20CC /* X64 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3305424B6CF9F004E20CC /* Microcode.nasm */,
-				A5C3305524B6CF9F004E20CC /* Atomic.nasm */,
-			);
-			path = X64;
-			sourceTree = "<group>";
-		};
-		A5C3305A24B6CF9F004E20CC /* Ia32 */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3305B24B6CF9F004E20CC /* Microcode.nasm */,
-				A5C3305C24B6CF9F004E20CC /* Atomic.nasm */,
-			);
-			path = Ia32;
-			sourceTree = "<group>";
-		};
 		A5C3305D24B6CF9F004E20CC /* OsxBdsPlatformLib */ = {
 			isa = PBXGroup;
 			children = (
@@ -23600,15 +22906,6 @@
 			path = VideoBiosPatchLib;
 			sourceTree = "<group>";
 		};
-		A5C3306B24B6CF9F004E20CC /* OcXmlLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3306C24B6CF9F004E20CC /* OcXmlLib.c */,
-				A5C3306D24B6CF9F004E20CC /* OcXmlLib.inf */,
-			);
-			path = OcXmlLib;
-			sourceTree = "<group>";
-		};
 		A5C3306E24B6CF9F004E20CC /* WaveLib */ = {
 			isa = PBXGroup;
 			children = (
@@ -23616,24 +22913,6 @@
 				A5C3307024B6CF9F004E20CC /* WaveLib.inf */,
 			);
 			path = WaveLib;
-			sourceTree = "<group>";
-		};
-		A5C3307124B6CF9F004E20CC /* OcOSInfoLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3307224B6CF9F004E20CC /* OcOSInfoLib.c */,
-				A5C3307324B6CF9F004E20CC /* OcOSInfoLib.inf */,
-			);
-			path = OcOSInfoLib;
-			sourceTree = "<group>";
-		};
-		A5C3307424B6CF9F004E20CC /* OcTemplateLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3307524B6CF9F004E20CC /* OcTemplateLib.inf */,
-				A5C3307624B6CF9F004E20CC /* OcTemplateLib.c */,
-			);
-			path = OcTemplateLib;
 			sourceTree = "<group>";
 		};
 		A5C3307724B6CF9F004E20CC /* GenericBdsLib */ = {
@@ -23662,31 +22941,6 @@
 				A5C3308624B6CF9F004E20CC /* IntrinsicLib.inf */,
 			);
 			path = IntrinsicLib;
-			sourceTree = "<group>";
-		};
-		A5C3308724B6CF9F004E20CC /* OcMemoryLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3308824B6CF9F004E20CC /* MemoryMap.c */,
-				A5C3308924B6CF9F004E20CC /* MemoryAttributes.c */,
-				A5C3308A24B6CF9F004E20CC /* VirtualMemory.c */,
-				A5C3308B24B6CF9F004E20CC /* LegacyRegionLock.c */,
-				A5C3308C24B6CF9F004E20CC /* LegacyRegionUnLock.c */,
-				A5C3308D24B6CF9F004E20CC /* MemoryDebug.c */,
-				A5C3308E24B6CF9F004E20CC /* MemoryAlloc.c */,
-				A5C3308F24B6CF9F004E20CC /* OcMemoryLib.inf */,
-				A5C3309024B6CF9F004E20CC /* UmmMalloc.c */,
-			);
-			path = OcMemoryLib;
-			sourceTree = "<group>";
-		};
-		A5C3309124B6CF9F004E20CC /* OcAppleRamDiskLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C3309224B6CFA0004E20CC /* OcAppleRamDiskLib.inf */,
-				A5C3309324B6CFA0004E20CC /* OcAppleRamDiskLib.c */,
-			);
-			path = OcAppleRamDiskLib;
 			sourceTree = "<group>";
 		};
 		A5C3309424B6CFB8004E20CC /* OcQuirks */ = {
@@ -23760,20 +23014,6 @@
 				A5C330C824B70FB8004E20CC /* Msr.h */,
 			);
 			path = Amd;
-			sourceTree = "<group>";
-		};
-		A5C330DF24B7900E004E20CC /* OcDebugLogLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C330E024B7900E004E20CC /* OcAppleLog.c */,
-				A5C330E124B7900E004E20CC /* DebugHelp.c */,
-				A5C330E224B7900E004E20CC /* DebugPrint.c */,
-				A5C330E324B7900E004E20CC /* OcDebugLogLib.inf */,
-				A5C330E424B7900E004E20CC /* OcLog.c */,
-				A5C330E524B7900E004E20CC /* OcLogInternal.h */,
-				A5C330E624B7900E004E20CC /* OcDebugLogLib.c */,
-			);
-			path = OcDebugLogLib;
 			sourceTree = "<group>";
 		};
 		A5DEBF3423BF687D00C41734 /* cpp_util */ = {

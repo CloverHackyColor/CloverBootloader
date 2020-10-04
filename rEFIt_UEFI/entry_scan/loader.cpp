@@ -744,10 +744,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   if (ThemeX.HideBadges & HDBADGES_SHOW) {
     if (ThemeX.HideBadges & HDBADGES_SWAP) {
       Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0);
-       DBG(" Show badge as Drive.\n");
+       DBG("    Show badge as Drive.\n");
     } else {
       Entry->BadgeImage.Image = XImage(Entry->Image.Image, 0);
-       DBG(" Show badge as OSImage.\n");
+       DBG("    Show badge as OSImage.\n");
     }
     if (!Entry->BadgeImage.Image.isEmpty()) {
       Entry->BadgeImage.setFilled();
@@ -1002,9 +1002,9 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
     return NULL;
   }
 
-  DBG("        AddLoaderEntry for Volume Name=%ls\n", Volume->VolName.wc_str());
+  DBG("     AddLoaderEntry for Volume Name=%ls\n", Volume->VolName.wc_str());
   if (OSFLAG_ISSET(Flags, OSFLAG_DISABLED)) {
-    DBG("        skipped because entry is disabled\n");
+    DBG("     skipped because entry is disabled\n");
     return NULL;
   }
 //  if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Flags, OSFLAG_HIDDEN)) {
@@ -1041,7 +1041,7 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
     }else{
       for (size_t HVi = 0; HVi < gSettings.HVHideStrings.size(); HVi++) {
         if ( LoaderPath.containsIC(gSettings.HVHideStrings[HVi]) ) {
-          DBG("        hiding entry: %ls\n", LoaderPath.s());
+          DBG("     hiding entry: %ls\n", LoaderPath.s());
           Entry->Hidden = true;
         }
       }
