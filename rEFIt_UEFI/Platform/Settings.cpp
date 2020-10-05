@@ -3303,15 +3303,17 @@ void InitKextList()
   }
 //  KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
 
-  // Iterate over kexts directory
-  DirIterOpen(&selfOem.getKextsDir(), NULL, &KextsIter);
-  while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
-    if (FolderEntry->FileName[0] == L'.') {
-      continue;
+  if ( selfOem.isKextsDirFound() ) {
+    // Iterate over kexts directory
+    DirIterOpen(&selfOem.getKextsDir(), NULL, &KextsIter);
+    while (DirIterNext(&KextsIter, 1, L"*", &FolderEntry)) {
+      if (FolderEntry->FileName[0] == L'.') {
+        continue;
+      }
+      GetListOfInjectKext(FolderEntry->FileName);
     }
-    GetListOfInjectKext(FolderEntry->FileName);
+    DirIterClose(&KextsIter);
   }
-  DirIterClose(&KextsIter);
 }
 
 #define CONFIG_THEME_FILENAME L"theme.plist"
@@ -8058,6 +8060,7 @@ SaveSettings ()
 
 XStringW GetOtherKextsDir (BOOLEAN On)
 {
+  if ( !selfOem.isKextsDirFound() ) return NullXStringW;
   if ( FileExists(&selfOem.getKextsDir(), On ? L"Other" : L"Off") ) {
     return On ? L"Other"_XSW : L"Off"_XSW;
   }

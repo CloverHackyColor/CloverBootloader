@@ -47,9 +47,10 @@ public:
   const XStringW& getOemPathRelToSelfDir() { return m_OemPathRelToSelfDir; }
   const XStringW& getOemFullPath() { return m_OemFulPath; }
 
-  const EFI_FILE& getKextsDir() { return *m_KextsDir; }
-  const XStringW& getKextsPathRelToSelfDir() { return m_KextsPathRelToSelfDir; }
-  const XStringW& getKextsFullPath() { return m_KextsFullPath; }
+  bool  isKextsDirFound() { return m_KextsDir != NULL; }
+  const EFI_FILE& getKextsDir() { if ( m_KextsDir == NULL) panic("Kexts dir wasn't found at initialization"); return *m_KextsDir; }
+  const XStringW& getKextsPathRelToSelfDir() { if ( m_KextsDir == NULL) panic("Kexts dir wasn't found at initialization"); return m_KextsPathRelToSelfDir; }
+  const XStringW& getKextsFullPath() { if ( m_KextsDir == NULL) panic("Kexts dir wasn't found at initialization"); return m_KextsFullPath; }
 
 };
 

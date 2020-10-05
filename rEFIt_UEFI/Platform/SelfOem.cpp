@@ -116,19 +116,29 @@ EFI_STATUS SelfOem::_initialize()
   DBG("Oem dir = %ls\n", (*this).getOemFullPath().wc_str());
 
   Status = m_OemDir->Open(m_OemDir, &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
-  if ( Status != EFI_SUCCESS  &&  Status != EFI_NOT_FOUND ) {
-    panic("Cannot open kexts dir %ls\\%ls : %s", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
+  if ( EFI_ERROR(Status) ) {
+    DBG("Cannot open %ls\\%ls : %s", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
   }
-  if ( Status == EFI_NOT_FOUND ) {
+//  if ( Status != EFI_SUCCESS  &&  Status != EFI_NOT_FOUND ) {
+//    panic("Cannot open kexts dir %ls\\%ls : %s", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
+//  }
+  if ( EFI_ERROR(Status) ) {
     Status = self.getCloverDir().Open(&self.getCloverDir(), &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
-    if ( EFI_ERROR(Status) ) panic("Cannot open kexts dir at '%ls\\%ls'", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str());
-    m_KextsPathRelToSelfDir = KEXTS_DIRNAME;
-    m_KextsFullPath.SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str());
+    if ( EFI_ERROR(Status) ) {
+      DBG("Cannot open %ls\\%ls : %s", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
+      //panic("Cannot open kexts dir at '%ls\\%ls'", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str());
+      m_KextsDir = NULL;
+      m_KextsPathRelToSelfDir.setEmpty();
+      m_KextsFullPath.setEmpty();
+    }else{
+      m_KextsPathRelToSelfDir = KEXTS_DIRNAME;
+      m_KextsFullPath.SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str());
+    }
   }else{
     m_KextsPathRelToSelfDir.SWPrintf("%ls\\%ls", getOemPathRelToSelfDir().wc_str(), KEXTS_DIRNAME.wc_str());
     m_KextsFullPath.SWPrintf("%ls\\%ls", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str());
   }
-  DBG("Kexts dir = '%ls'\n", getKextsFullPath().wc_str());
+  DBG("Kexts dir = '%ls'\n", m_KextsFullPath.wc_str()); // do not use 'getKextsFullPath()', it could panic
 
   return EFI_SUCCESS;
 }
