@@ -256,7 +256,7 @@ OSInfoOSNameImpl (
   // this variable can be used at OnExitBoootServices,
   // as it will be set by boot.efi
   BootOSName = (__typeof__(BootOSName))AllocateCopyPool(AsciiStrLen(OSName) + 1, (void*)OSName);
-  DBG("OSInfo:OSName called\n");
+  DBG("OSInfo:OSName called. OSName=%s\n", OSName);
   EfiNamedEventSignal (&gAppleOSLoadedNamedEventGuid);
 }
 
@@ -367,8 +367,8 @@ SetPrivateVarProto(void)
   Status = gBS->InstallMultipleProtocolInterfaces (&gImageHandle,
                                                        &gAppleFramebufferInfoProtocolGuid,
                                                        &mScreenInfo, 
-//                                                       &gEfiOSInfoProtocolGuid,
-//                                                       &mEfiOSInfo,
+                                                       &gEfiOSInfoProtocolGuid,
+                                                       &mEfiOSInfo,
                                                        &gAppleGraphConfigProtocolGuid,
                                                        &mGraphConfig,
                                                        &gEfiKeyboardInfoProtocolGuid,
