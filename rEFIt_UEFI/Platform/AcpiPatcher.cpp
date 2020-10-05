@@ -1572,7 +1572,7 @@ void SaveOemDsdt(BOOLEAN FullPatch)
   }
 }
 
-BOOLEAN LoadPatchedAML(CONST CHAR16* AcpiOemPath, CONST CHAR16* PartName, UINTN Pass)
+BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST CHAR16* PartName, UINTN Pass)
 {
   // pass1 prefilter based on file names (optimization that avoids loading same files twice)
   UINTN Index = IGNORE_INDEX;
@@ -1589,7 +1589,7 @@ BOOLEAN LoadPatchedAML(CONST CHAR16* AcpiOemPath, CONST CHAR16* PartName, UINTN 
   }
   UINT8 *buffer = NULL;
   UINTN bufferLen = 0;
-  EFI_STATUS Status = egLoadFile(&selfOem.getOemDir(), SWPrintf("%ls\\%ls", AcpiOemPath, PartName).wc_str(), &buffer, &bufferLen);
+  EFI_STATUS Status = egLoadFile(&dir, SWPrintf("%ls\\%ls", acpiOemPath.wc_str(), PartName).wc_str(), &buffer, &bufferLen);
   if (!EFI_ERROR(Status)) {
     if (buffer) {
       EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
@@ -1613,7 +1613,7 @@ BOOLEAN LoadPatchedAML(CONST CHAR16* AcpiOemPath, CONST CHAR16* PartName, UINTN 
 
 #define BVALUE_ATTEMPTED 2  // special value for MenuItem.BValue to avoid excessive log output
 
-void LoadAllPatchedAML(CONST CHAR16* AcpiOemPath, UINTN Pass)
+void LoadAllPatchedAML(const XStringW& acpiPathUnderOem, UINTN Pass)
 {
   if (!gSettings.AutoMerge && AUTOMERGE_PASS1 == Pass) {
     // nothing to do in this case, since AutoMerge=false -> no tables ever merged
@@ -1639,8 +1639,8 @@ void LoadAllPatchedAML(CONST CHAR16* AcpiOemPath, UINTN Pass)
           }
         }
         if (!ACPIPatchedAMLTmp) { // NULL when not disabled
-			DBG("Inserting table[%llu]:%ls from %ls: ", Index, gSettings.SortedACPI[Index], AcpiOemPath);
-          if (LoadPatchedAML(AcpiOemPath, gSettings.SortedACPI[Index], Pass)) {
+			DBG("Inserting table[%llu]:%ls from %ls\\%ls: ", Index, gSettings.SortedACPI[Index], selfOem.getOemFullPath().wc_str(), acpiPathUnderOem.wc_str());
+          if (LoadPatchedAML(selfOem.getOemDir(), acpiPathUnderOem, gSettings.SortedACPI[Index], Pass)) {
             // avoid inserting table again on second pass
             for (ACPI_PATCHED_AML* temp2 = ACPIPatchedAML; temp2; temp2 = temp2->Next) {
               if (0 == StriCmp(temp2->FileName, gSettings.SortedACPI[Index])) {
@@ -1656,8 +1656,8 @@ void LoadAllPatchedAML(CONST CHAR16* AcpiOemPath, UINTN Pass)
       DBG("Unsorted\n");
       for (ACPIPatchedAMLTmp = ACPIPatchedAML; ACPIPatchedAMLTmp; ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next) {
         if (!ACPIPatchedAMLTmp->MenuItem.BValue) {
-          DBG("Inserting %ls from %ls: ", ACPIPatchedAMLTmp->FileName, AcpiOemPath);
-          if (LoadPatchedAML(AcpiOemPath, ACPIPatchedAMLTmp->FileName, Pass)) {
+          DBG("Inserting %ls from %ls\\%ls: ", ACPIPatchedAMLTmp->FileName, selfOem.getOemFullPath().wc_str(), acpiPathUnderOem.wc_str());
+          if (LoadPatchedAML(selfOem.getOemDir(), acpiPathUnderOem, ACPIPatchedAMLTmp->FileName, Pass)) {
             // avoid inserting table again on second pass
             ACPIPatchedAMLTmp->MenuItem.BValue = BVALUE_ATTEMPTED;
           }
@@ -2073,7 +2073,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   XsdtReplaceSizes = (__typeof__(XsdtReplaceSizes))AllocateZeroPool(XsdtTableCount() * sizeof(*XsdtReplaceSizes));
 
   // Load merged ACPI files from ACPI/patched
-  LoadAllPatchedAML(L"ACPI\\patched", AUTOMERGE_PASS1);
+  LoadAllPatchedAML(L"ACPI\\patched"_XSW, AUTOMERGE_PASS1);
 
   // Drop tables
   if (gSettings.ACPIDropTables) {
@@ -2100,7 +2100,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   PatchAllTables();
 
   // Load add-on ACPI files from ACPI/patched
-  LoadAllPatchedAML(L"ACPI\\patched", AUTOMERGE_PASS2);
+  LoadAllPatchedAML(L"ACPI\\patched"_XSW, AUTOMERGE_PASS2);
 
   if (XsdtReplaceSizes) {
     FreePool(XsdtReplaceSizes);

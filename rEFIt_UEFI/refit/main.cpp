@@ -1110,7 +1110,6 @@ DBG("Beginning OC\n");
   #endif
   mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.ProvideConsoleGop;
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
-  OcMain(&mOpenCoreStorage, NULL);
 
 
 // if OC is NOT initialized with OcMain, we need the following
@@ -1139,6 +1138,8 @@ DBG("Beginning OC\n");
   Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
   Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirPathAsXStringW().wc_str(), NULL);
+
+  OcMain(&mOpenCoreStorage, NULL);
 
   CHAR16* UnicodeDevicePath = NULL; (void)UnicodeDevicePath;
   UnicodeDevicePath = ConvertDevicePathToText (DevicePath, FALSE, FALSE);
