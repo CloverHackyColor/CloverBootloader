@@ -3333,6 +3333,10 @@ GetListOfThemes ()
   DbgHeader("GetListOfThemes");
 
   ThemeNameArray.setEmpty();
+  if ( !self.themesDirExists() ) {
+    DBG("No theme dir was discovered\n");
+    return;
+  }
   DirIterOpen(&self.getThemesDir(), NULL, &DirIter);
   while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
     if (DirEntry->FileName[0] == '.') {

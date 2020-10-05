@@ -270,6 +270,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
 
   //PauseForKey(L"Returned from StartImage\n");
 
+  ReinitRefitLib();
   // control returns here when the child image calls Exit()
   if (ImageTitle.notEmpty()) {
 	  snwprintf(ErrorInfo, 512, "returned from %ls", ImageTitle.s());

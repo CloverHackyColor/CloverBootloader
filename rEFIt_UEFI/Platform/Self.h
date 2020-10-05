@@ -48,7 +48,7 @@ public:
   EFI_STATUS reInitialize();
   void closeHandle();
 
-  bool isInitialized() const { return m_SelfImageHandle != NULL; }
+  bool isInitialized() const { return m_CloverDir != NULL; }
 
   EFI_HANDLE getSelfImageHandle() { return m_SelfImageHandle; }
   const EFI_LOADED_IMAGE& getSelfLoadedImage() { return *m_SelfLoadedImage; }
