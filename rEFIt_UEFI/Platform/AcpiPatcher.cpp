@@ -1966,7 +1966,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   
   if ( FileExists(&selfOem.getOemDir(), acpiPath) ) {
     DBG("DSDT found in Clover volume OEM folder: %ls\\%ls\n", selfOem.getOemFullPath().wc_str(), acpiPath.wc_str());
-    Status = egLoadFile(&self.getCloverDir(), acpiPath.wc_str(), &buffer, &bufferLen);
+    Status = egLoadFile(&selfOem.getOemDir(), acpiPath.wc_str(), &buffer, &bufferLen);
     //REVIEW: memory leak... buffer
   }
 
