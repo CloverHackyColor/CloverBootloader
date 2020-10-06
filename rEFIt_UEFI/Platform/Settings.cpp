@@ -1189,6 +1189,12 @@ if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been move
           newPatch.MaskReplace.ncpy(TmpData, MaskLen); //other bytes are zeros, means no replace
         }
         FreePool(TmpData);
+        
+        newPatch.Count = 1;
+        Dict = Prop2->propertyForKey("Count");
+        if (Dict != NULL) {
+          newPatch.Count = GetPropertyAsInteger(Dict, 1);
+        }
 
         // check enable/disabled patch (OS based) by Micky1979
         Dict = Prop2->propertyForKey("MatchOS");
