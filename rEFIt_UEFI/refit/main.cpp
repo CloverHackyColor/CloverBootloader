@@ -2380,7 +2380,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   //MsgLog("Starting Clover rev %ls on %ls EFI\n", gFirmwareRevision, gST->FirmwareVendor);
 	MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
-
+  MsgLog("Build id: %s\n", gBuildId.c_str());
 	if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
 
 

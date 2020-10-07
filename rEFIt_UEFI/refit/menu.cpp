@@ -1096,6 +1096,7 @@ void AboutRefit(void)
 //    AboutMenu.AddMenuInfo_f(("Clover Version 5.0"));
     if ( "unknown"_XS8 != LString8(gRevisionStr) ) AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
     if ( "unknown"_XS8 != LString8(gFirmwareBuildDate) ) AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
+    if ( "unknown"_XS8 != gBuildId ) AboutMenu.AddMenuInfo_f(" Build id: %s", gBuildId.c_str());
     AboutMenu.AddMenuInfo_f(" ");
     AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
     AboutMenu.AddMenuInfo_f("Portions Copyright (c) Intel Corporation");

@@ -131,9 +131,9 @@ CONST CHAR8* gFirmwareBuildDate = "unknown";
 CONST CHAR8* gBuildInfo = NULL;
 #endif
 #ifdef BUILD_ID
-constexpr const LString8 gBuildId __attribute__((used)) = "Clover build id: " BUILD_ID;
+const LString8 gBuildId __attribute__((used)) = "Clover build id: " BUILD_ID;
 #else
-constexpr const LString8 gBuildId __attribute__((used)) = "Clover build id: " "unknown";
+const LString8 gBuildId __attribute__((used)) = "Clover build id: " "unknown";
 #endif
 
 const char* path_independant __attribute__((used)) = "path_independant";
