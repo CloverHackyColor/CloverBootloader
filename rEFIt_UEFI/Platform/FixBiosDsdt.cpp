@@ -1289,13 +1289,8 @@ BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
    (dsdt[j + 9] == ((PNP & 0x00ff) >> 0)));
 }
 
-template <typename T, enable_if( is___String(T) )>
-INT32 CmpDev(UINT8 *dsdt, UINT32 i, const T& Name)
+INT32 CmpDev(UINT8 *dsdt, UINT32 i, const char Name[4])
 {
-  if ( Name.length() != 4 ) {
-    MsgLog("ATTENTION : CmpDev called with a %s with length() != 4 %ld\n", Name.data(), Name.length());
-    return 0;
-  }
   if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
       (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
       (((dsdt[i-2] == 0x82) && (dsdt[i-3] == 0x5B) && (dsdt[i-1] < 0x40)) ||
@@ -1313,13 +1308,23 @@ INT32 CmpDev(UINT8 *dsdt, UINT32 i, const T& Name)
   return 0;
 }
 
-INT32 CmpDev(UINT8 *dsdt, UINT32 i, CONST CHAR8* Name)
+//template <typename T, enable_if( is___String(T) )>
+INT32 CmpDev(UINT8 *dsdt, UINT32 i, const XString8& Name)
 {
-  if ( !Name ) {
-    MsgLog("ATTENTION : CmpDev called with a name == NULL\n");
+  if ( Name.length() != 4 ) {
+    MsgLog("ATTENTION : CmpDev called with a %s with length() != 4 %ld\n", Name.data(), Name.length());
     return 0;
   }
-  return CmpDev(dsdt, i, LString8(Name));
+  return CmpDev(dsdt, i, Name.c_str());
+}
+
+INT32 CmpDev(UINT8 *dsdt, UINT32 i, const XBuffer<UINT8>& Name)
+{
+  if ( Name.size() != 4 ) {
+    MsgLog("ATTENTION : CmpDev called with a name whose size() != 4\n");
+    return 0;
+  }
+  return CmpDev(dsdt, i, Name.CData());
 }
 
 //the procedure can find BIN array UNSIGNED CHAR8 sizeof N inside part of large array "dsdt" size of len
@@ -1811,7 +1816,7 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
 }
 
 //new method. by goodwin_c
-UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XString8& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
+UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace)
 {
   INT32 adr;
   BOOLEAN found = FALSE;

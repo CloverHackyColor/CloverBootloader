@@ -216,7 +216,7 @@ public :
   XBuffer<UINT8>   PatchDsdtFind;
   XBuffer<UINT8>   PatchDsdtReplace;
   XString8         PatchDsdtLabel;
-  XString8         PatchDsdtTgt;
+  XBuffer<UINT8>   PatchDsdtTgt;
   INPUT_ITEM       PatchDsdtMenuItem;
 
   DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt(), PatchDsdtMenuItem() { }

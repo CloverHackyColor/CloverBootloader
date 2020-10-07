@@ -4468,8 +4468,15 @@ static void getACPISettings(const TagDict *CfgDict)
             dsdtPatch.PatchDsdtReplace.stealValueFrom(data, Size);
             DBG(", lenToReplace: %zu", dsdtPatch.PatchDsdtReplace.size());
             data = GetDataSetting (Prop2, "TgtBridge", &Size);
-            dsdtPatch.PatchDsdtTgt.stealValueFrom((char*)data);
-            DBG(", Target Bridge: %s\n", dsdtPatch.PatchDsdtTgt.c_str());
+            if ( Size != 0 ) {
+              if ( Size != 4 ) {
+                DBG("\n          TgtBridge must 4 bytes. It's %llu byte(s). Ignored\n", Size);
+              }else{
+                dsdtPatch.PatchDsdtTgt.stealValueFrom(data, Size);
+                DBG(", Target Bridge: %c%c%c%c", dsdtPatch.PatchDsdtTgt[0], dsdtPatch.PatchDsdtTgt[1], dsdtPatch.PatchDsdtTgt[2], dsdtPatch.PatchDsdtTgt[3]);
+              }
+            }
+            DBG("\n");
             if (!dsdtPatch.PatchDsdtMenuItem.BValue) {
               DBG("  patch disabled at config\n");
             }
