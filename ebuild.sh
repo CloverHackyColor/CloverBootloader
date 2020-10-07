@@ -589,8 +589,8 @@ MainBuildScript() {
     if (( $SkipAutoGen == 0 )) || (( $FORCEREBUILD == 1 )); then
 
  #     local clover_revision=$(cat "${CLOVERROOT}/${VERSTXT}")     
- #     local clover_revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
-	  local clover_revision=$(git describe --tags --abbrev=0)
+ #     local clover_revision=$(git describe --tags $(git rev-list --tags --max-count=1))
+      local clover_revision=$(git describe --tags --abbrev=0)
       local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
       #echo "#define FIRMWARE_VERSION \"2.31\"" > "$CLOVERROOT"/Version.h
 
@@ -602,10 +602,25 @@ MainBuildScript() {
         sha1="($(git rev-parse --abbrev-ref HEAD), commit $(git rev-parse --short HEAD))"
       fi
       echo "#define REVISION_STR \"Clover revision: ${clover_revision} $sha1\"" >> "$CLOVERROOT"/Version.h
-#      echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> "$CLOVERROOT"/Version.h
+
       rev_date=$(git show -s --format=%ci $(git rev-parse HEAD))
       echo "#define REVISION_DATE \"${rev_date}\"" >> "$CLOVERROOT"/Version.h
-      echo "#define COMMIT_HASH \"$(git rev-parse HEAD)\"" >> "$CLOVERROOT"/Version.h
+      COMMIT_HASH="$(git rev-parse HEAD)"
+      echo "#define COMMIT_HASH \"$COMMIT_HASH\"" >> "$CLOVERROOT"/Version.h
+      #build_id_date="$(date +%Y%m%d%H%M%S)"
+      build_id_date="$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S)"
+      number_of_commit="$(git rev-list tags/$(git describe --tags --abbrev=0)..HEAD --count)"
+      if [ $number_of_commit -gt 0 ]
+      then
+        build_id="$build_id_date"-"${COMMIT_HASH::7}"
+      else
+        build_id="$build_id_date"-"${COMMIT_HASH::7}"-"$clover_revision"
+      fi
+      if [[ -n $(git status -s) ]]
+      then
+        build_id="$build_id"-dirty
+      fi
+      echo "#define BUILD_ID \"$build_id\"" >> "$CLOVERROOT"/Version.h
 
       local clover_build_info="Args: "
       if [[ -n "$@" ]]; then
@@ -909,8 +924,18 @@ if [[ "$SYSNAME" != Linux ]]; then
 fi
 
 MainBuildScript $@
+
 export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
 export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
+
+rm -rf ${WORKSPACE}/Build/*.efi
+rm -rf ${WORKSPACE}/Build/*.zip
+
+dstFileName=CloverX64-"$BUILDTARGET"_"$TOOLCHAIN"-"$(grep -aEo "Clover build id: [^[:cntrl:]]*" < "$BUILD_DIR_ARCH"/CLOVERX64.efi | sed "s/Clover build id: //")"
+
+copyBin "$BUILD_DIR_ARCH"/CLOVERX64.efi ${WORKSPACE}/Build/"$dstFileName".efi
+rm -f ${WORKSPACE}/Build/"$dstFileName".zip
+zip ${WORKSPACE}/Build/"$dstFileName".zip ${WORKSPACE}/Build/"$dstFileName".efi
 
 if [[ -z $MODULEFILE  ]] && (( $NOBOOTFILES == 0 )); then
     MainPostBuildScript
