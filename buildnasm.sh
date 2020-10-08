@@ -8,7 +8,7 @@
 # Nasm source version
 # here we can change source versions of tools
 #
-export NASM_VERSION=${NASM_VERSION:-2.14.02}
+export NASM_VERSION=${NASM_VERSION:-2.15.05}
 
 # Change PREFIX if you want nasm installed on different place
 #

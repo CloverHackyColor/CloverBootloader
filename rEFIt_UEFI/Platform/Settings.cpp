@@ -837,14 +837,14 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
     return FALSE;
   }
 
-  Prop = DictPointer->propertyForKey("OcFuzzyMatch");
-if ( Prop ) panic("config.plist/KernelAndKextPatches/OcFuzzyMatch has been moved in section config.plist/Quirks. Update your config.plist");
+//  Prop = DictPointer->propertyForKey("OcFuzzyMatch");
+//if ( Prop ) panic("config.plist/KernelAndKextPatches/OcFuzzyMatch has been moved in section config.plist/Quirks. Update your config.plist");
 //  if (Prop != NULL || gBootChanged) {
 //    Patches->FuzzyMatch = IsPropertyNotNullAndTrue(Prop);
 //  }
 //
-  Prop = DictPointer->propertyForKey("OcKernelCache");
-if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been moved in section config.plist/Quirks. Update your config.plist");
+//  Prop = DictPointer->propertyForKey("OcKernelCache");
+//if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been moved in section config.plist/Quirks. Update your config.plist");
 //  if (Prop != NULL || gBootChanged) {
 //    if ( Prop->isString() ) {
 //      if ( Prop->getString()->stringValue().notEmpty() ) {
@@ -1124,15 +1124,21 @@ if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been move
         }
         DBG(" %s", newPatch.Label.c_str());
 
-        newPatch.MenuItem.BValue     = TRUE;
+     //   newPatch.MenuItem.BValue     = TRUE;
         Dict = Prop2->propertyForKey("Disabled");
-        if ((Dict != NULL) && IsPropertyNotNullAndTrue(Dict)) {
-          newPatch.MenuItem.BValue     = FALSE;
-        }
+        newPatch.MenuItem.BValue = !IsPropertyNotNullAndTrue(Dict); //if absent then false, BValue = !Disabled
+        
+     //   if ((Dict != NULL) && IsPropertyNotNullAndTrue(Dict)) {
+     //     newPatch.MenuItem.BValue     = FALSE;
+     //   }
+        
         
         Dict = Prop2->propertyForKey("RangeFind");
         newPatch.SearchLen = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
-        
+
+        Dict = Prop2->propertyForKey("Skip");
+        newPatch.Skip = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
+
         UINT8* TmpData = GetDataSetting(Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
           newPatch.StartPattern.stealValueFrom(TmpData, FindLen);
@@ -1280,6 +1286,9 @@ if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been move
         
         prop3 = Prop2->propertyForKey("RangeFind");
         newKernelPatch.SearchLen = GetPropertyAsInteger(prop3, 0); //default 0 will be calculated later
+
+        prop3 = Prop2->propertyForKey("Skip");
+        newKernelPatch.Skip = GetPropertyAsInteger(prop3, 0); //default 0 will be calculated later
         
         TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
@@ -1410,7 +1419,10 @@ if ( Prop ) panic("config.plist/KernelAndKextPatches/OcKernelCache has been move
         
         prop3 = Prop2->propertyForKey("RangeFind");
         newBootPatch.SearchLen = GetPropertyAsInteger(prop3, 0); //default 0 will be calculated later
-        
+ 
+        prop3 = Prop2->propertyForKey("Skip");
+        newBootPatch.Skip = GetPropertyAsInteger(prop3, 0); //default 0 will be calculated later
+
         TmpData    = GetDataSetting (Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
           newBootPatch.StartPattern.stealValueFrom(TmpData, FindLen);
@@ -2802,9 +2814,9 @@ GetEarlyUserSettings (
               const TagDict* Dict3 = ToolArray->dictElementAt(i, "Tool"_XS8);
               // Allocate an entry
               Entry = new CUSTOM_TOOL_ENTRY;
-                // Fill it in
-                if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry(Entry)) {
-                  delete Entry;
+              // Fill it in
+              if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry(Entry)) {
+                delete Entry;
               }
             }
           }
@@ -2927,16 +2939,16 @@ GetEarlyUserSettings (
     }
 
     gSettings.mmioWhiteListArray.setEmpty();
-    const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
-if ( OcQuirksDict ) panic("config.plist/OcQuirks has been renamed Quirks. Update your config.plist");
+ //   const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
+//if ( OcQuirksDict ) panic("config.plist/OcQuirks has been renamed Quirks. Update your config.plist");
 
-    OcQuirksDict = CfgDict->dictPropertyForKey("Quirks");
-if ( !OcQuirksDict ) panic("Cannot find config.plist/Quirks");
+    const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("Quirks");
+//if ( !OcQuirksDict ) panic("Cannot find config.plist/Quirks");
     if (OcQuirksDict != NULL) {
       const TagStruct* Prop;
       Prop               = OcQuirksDict->propertyForKey("AvoidRuntimeDefrag");
-if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
-      gSettings.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop);
+//if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
+      gSettings.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop); //true if absent so no panic
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
       Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");
       gSettings.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
@@ -3041,11 +3053,13 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
 
 
       // Booter Quirks
-      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
+//      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
+//      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = gSettings.KernelAndKextPatches.KPKernelPm;
 
-      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
+//      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock"); //
+//      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = gSettings.KernelAndKextPatches.KPKernelXCPM;
 
       Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
       gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
@@ -3058,7 +3072,7 @@ if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC bo
 //      gSettings.KernelAndKextPatches.OcKernelQuirks.CustomSmbiosGuid = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
-if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forgot to merge your quirks into one section. Update your config.plist");
+//if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forgot to merge your quirks into one section. Update your config.plist");
       gSettings.KernelAndKextPatches.OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
@@ -3076,11 +3090,13 @@ if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forg
       Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
       gSettings.KernelAndKextPatches.OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
+ //     Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
+ //     gSettings.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
 
-      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop);
+//      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
+//      gSettings.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop); //KPPanicNoKextDump
+      gSettings.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
 
       Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
       gSettings.KernelAndKextPatches.OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);

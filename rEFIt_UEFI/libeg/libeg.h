@@ -211,6 +211,7 @@ public:
   INTN        SearchLen;
   XString8         ProcedureName; //procedure len will be StartPatternLen
   INTN             Count;
+  INTN             Skip;
   XString8         MatchOS;
   XString8         MatchBuild;
 //  CHAR8       *Name;
@@ -236,7 +237,7 @@ public:
 //                   StartPattern(0), StartMask(0), StartPatternLen(0), SearchLen(0), ProcedureName(0), Count(-1), MatchOS(0), MatchBuild(0), MenuItem()
 //                 { }
   KEXT_PATCH() : Name(), Label(), IsPlistPatch(0), Data(), Patch(), MaskFind(), MaskReplace(),
-                   StartPattern(), StartMask(), SearchLen(0), ProcedureName(), Count(-1), MatchOS(), MatchBuild(), MenuItem()
+                   StartPattern(), StartMask(), SearchLen(0), ProcedureName(), Count(-1), Skip(0), MatchOS(), MatchBuild(), MenuItem()
                  { }
   KEXT_PATCH(const KEXT_PATCH& other) = default; // default is fine if there is only native type and objects that have copy ctor
   KEXT_PATCH& operator = ( const KEXT_PATCH & ) = default; // default is fine if there is only native type and objects that have copy ctor
