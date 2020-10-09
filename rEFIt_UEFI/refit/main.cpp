@@ -1671,6 +1671,9 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     if ( LStringW(DirEntry->FileName).containsIC("AptioMemoryFix") ) {
       continue;
     }
+    if ( LStringW(DirEntry->FileName).containsIC("OpenRuntime") ) {
+      continue;
+    }
     {
       size_t i;
       // either AptioMem, AptioFix* or LowMemFix exclusively
