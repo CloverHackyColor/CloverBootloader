@@ -805,7 +805,7 @@ void MarkTableAsSaved(void *TableEntry)
   //
   // If TableEntry is not in mSavedTables - add it
   //
-  //DBG(" MarkTableAsSaved %p", TableEntry);
+  //DBG(" MarkTableAsSaved %llx", TableEntry);
   if (IsTableSaved(TableEntry)) {
     // already saved
     //DBG(" - already saved\n");
@@ -1299,12 +1299,12 @@ void DumpTables(void *RsdPtrVoid, CONST CHAR16 *DirName)
   if (RsdPtr->Revision == 0) {
     // Acpi 1.0 - no Xsdt
     Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
-    DBG("  (Rsdt: %p)\n", Rsdt);
+    DBG("  (Rsdt: %llx)\n", (UINTN)Rsdt);
   } else {
     // Acpi 2.0 or newer - may have Xsdt and/or Rsdt
     Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
     Xsdt = (XSDT_TABLE *)(UINTN)(RsdPtr->XsdtAddress);
-    DBG("  (Xsdt: %p, Rsdt: %p)\n", Xsdt, Rsdt);
+    DBG("  (Xsdt: %llx, Rsdt: %llx)\n", (UINTN)Xsdt, (UINTN)Rsdt);
   }
 
   if (Rsdt == NULL && Xsdt == NULL) {
@@ -1457,7 +1457,7 @@ void SaveOemTables()
   //  RsdPtr = NULL;
   RsdPtr = FindAcpiRsdPtr();
   if (RsdPtr != NULL) {
-    DBG("Found BIOS RSDP at %p\n", RsdPtr);
+    DBG("Found BIOS RSDP at %llx\n", (UINTN)RsdPtr);
     if (gFirmwareClover) {
       // Save it
       DumpTables(RsdPtr, AcpiOriginPath.wc_str());
@@ -1473,7 +1473,7 @@ void SaveOemTables()
   RsdPtr = NULL;
   /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &RsdPtr);
   if (RsdPtr != NULL) { //it may be EFI_SUCCESS but null pointer
-    DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
+    DBG("Found UEFI Acpi 2.0 RSDP at %llx\n", (UINTN)RsdPtr);
     // if tables already saved, then just print to log
     DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath.wc_str());
     Saved = TRUE;
@@ -1484,7 +1484,7 @@ void SaveOemTables()
   RsdPtr = NULL;
   /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, &RsdPtr);
   if (RsdPtr != NULL) {
-    DBG("Found UEFI Acpi 1.0 RSDP at %p\n", RsdPtr);
+    DBG("Found UEFI Acpi 1.0 RSDP at %llx\n", (UINTN)RsdPtr);
     // if tables already saved, then just print to log
     DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath.wc_str());
     //    Saved = TRUE;
@@ -1732,23 +1732,23 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     return EFI_UNSUPPORTED;
   }
   Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
-  // DBG("RSDT 0x%p\n", Rsdt);
+  // DBG("RSDT 0x%llx\n", Rsdt);
   rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, 0);
   if(rf) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
-    //   DBG("FADT from RSDT: 0x%p\n", FadtPointer);
+    //   DBG("FADT from RSDT: 0x%llx\n", FadtPointer);
   }
 
   Xsdt = NULL;
   if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1)) {
     Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
-    //   DBG("XSDT 0x%p\n", Xsdt);
+    //   DBG("XSDT 0x%llx\n", Xsdt);
     xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE, 0);
     if(xf) {
       //Slice - change priority. First Xsdt, second Rsdt
       if (*xf) {
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
-        //       DBG("FADT from XSDT: 0x%p\n", FadtPointer);
+        //       DBG("FADT from XSDT: 0x%llx\n", FadtPointer);
       } else {
         *xf =  (UINT64)(UINTN)FadtPointer;
         //       DBG("reuse FADT\n");  //never happens
@@ -1772,7 +1772,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
         // and Xsdt will come after it
         BufferPtr += 0x30;
-        //     DBG("::pointers %p %p\n", NewRsdPointer, RsdPointer);
+        //     DBG("::pointers %llx %llx\n", NewRsdPointer, RsdPointer);
         // Signature, Checksum, OemId, Reserved/Revision, RsdtAddress
         CopyMem(NewRsdPointer, RsdPointer, sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER));
         NewRsdPointer->Revision = 2;
@@ -2329,7 +2329,7 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
       FadtPointer->Dsdt  = (UINT32)Dsdt;
       FadtPointer->XDsdt = Dsdt;
       FixChecksum(&FadtPointer->Header);
-	    DBG("DSDT at 0x%llX injected to FADT 0x%p\n", Dsdt, FadtPointer);
+	    DBG("DSDT at 0x%llX injected to FADT 0x%llx\n", Dsdt, (UINTN)FadtPointer);
     }
 
     FreePool(Buffer);

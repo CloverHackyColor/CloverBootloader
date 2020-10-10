@@ -432,11 +432,12 @@ void LOADER_ENTRY::FilterKextPatches()
         KernelAndKextPatches.KextPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchOS.c_str() : "All",
         KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchBuild.c_str() : "All"
       );
-      if (!KernelAndKextPatches.KextPatches[i].MenuItem.BValue) {
+      if (!gSettings.KernelAndKextPatches.KextPatches[i].MenuItem.BValue) {
+        KernelAndKextPatches.KextPatches[i].MenuItem.BValue = false;
         DBG(" ==> disabled by user\n");
         continue;
       }
-      
+      KernelAndKextPatches.KextPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty())) {
         KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
@@ -461,11 +462,12 @@ void LOADER_ENTRY::FilterKernelPatches()
         KernelAndKextPatches.KernelPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchOS.c_str() : "All",
         KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchBuild.c_str() : "no"
       );
-      if (!KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
+      if (!gSettings.KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
+        KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = false;
         DBG(" ==> disabled by user\n");
         continue;
       }
-
+      KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty())) {
         KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
@@ -490,11 +492,11 @@ void LOADER_ENTRY::FilterBootPatches()
           KernelAndKextPatches.BootPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchOS.c_str() : "All",
           KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchBuild.c_str() : "no"
           );
-      if (!KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
+      if (!gSettings.KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
         DBG(" ==> disabled by user\n");
         continue;
       }
-
+      KernelAndKextPatches.BootPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty())) {
         KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
@@ -1144,7 +1146,7 @@ DBG("Beginning OC\n");
 
   CHAR16* UnicodeDevicePath = NULL; (void)UnicodeDevicePath;
   UnicodeDevicePath = ConvertDevicePathToText (DevicePath, FALSE, FALSE);
-  MsgLog("DevicePAth = %ls\n", UnicodeDevicePath);
+  MsgLog("DevicePath = %ls\n", UnicodeDevicePath);
 
   // point to InternalEfiLoadImage from OC
   Status = gBS->LoadImage (
