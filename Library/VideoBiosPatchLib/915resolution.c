@@ -213,13 +213,13 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		map->bios = BT_ATI_1;
 		
 		map->ati_tables.MasterDataTables = (UINT16 *) &((ATOM_MASTER_DATA_TABLE *) (map->bios_ptr + map->ati_tables.AtomRomHeader->usMasterDataTableOffset))->ListOfDataTables;
-		DBG(", MasterDataTables: 0x%p", map->ati_tables.MasterDataTables);
+		DBG(", MasterDataTables: 0x%llx", (UINTN)map->ati_tables.MasterDataTables);
 		std_vesa_offset = (UINT16) ((ATOM_MASTER_LIST_OF_DATA_TABLES *)map->ati_tables.MasterDataTables)->StandardVESA_Timing;
 		std_vesa = (ATOM_STANDARD_VESA_TIMING *) (map->bios_ptr + std_vesa_offset);
-		DBG(", std_vesa: 0x%p", std_vesa);
+		DBG(", std_vesa: 0x%llx", (UINTN)std_vesa);
 		
 		map->ati_mode_table = (CHAR8 *) &std_vesa->aModeTimings;
-		DBG(", ati_mode_table: 0x%p", map->ati_mode_table);
+		DBG(", ati_mode_table: 0x%llx", (UINTN)map->ati_mode_table);
 		if (map->ati_mode_table == 0)
 		{
 			DBG("\n Unable to locate the mode table.\n");

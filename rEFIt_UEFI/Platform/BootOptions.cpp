@@ -183,7 +183,7 @@ CreateBootOptionDevicePath (
     //
     Status = gBS->HandleProtocol (FileDeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (void**)&Volume);
     if (EFI_ERROR(Status)) {
-        DBG("CreateBootOptionDevicePath: FileDeviceHandle %p is not fs volume", FileDeviceHandle);
+        DBG("CreateBootOptionDevicePath: FileDeviceHandle %llx is not fs volume", (UINTN)FileDeviceHandle);
         return EFI_INVALID_PARAMETER;
     }
     
@@ -756,7 +756,7 @@ FindBootOptionForFile (
   UINTN               SearchedDevicePathSize[2];
 
 
-  DBG("FindBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName.wc_str());
+  DBG("FindBootOptionForFile: %llx, %ls\n", (UINTN)FileDeviceHandle, FileName.wc_str());
 
   //
   // Get BootOrder - we will search only options listed in BootOrder.
@@ -1011,8 +1011,8 @@ AddBootOptionForFile (
   BO_BOOT_OPTION      BootOption;
 
 
-	DBG("\nAddBootOptionForFile: %p, %ls, %ls\n %ls, %llu\n",
-      FileDeviceHandle, FileName.wc_str(),
+	DBG("\nAddBootOptionForFile: %llx, %ls, %ls\n %ls, %llu\n",
+      (UINTN)FileDeviceHandle, FileName.wc_str(),
       UseShortForm ? L"ShortDevPath" : L"FullDevPath",
       Description, BootIndex);
 
@@ -1111,7 +1111,7 @@ DeleteBootOptionForFile (
   IN  UINT16          BootNum;
 
 
-  DBG("\nDeleteBootOptionForFile: %p, %ls\n", FileDeviceHandle, FileName.wc_str());
+  DBG("\nDeleteBootOptionForFile: %llx, %ls\n", (UINTN)FileDeviceHandle, FileName.wc_str());
   do {
     Status = FindBootOptionForFile (FileDeviceHandle, FileName, &BootNum, NULL);
     if (!EFI_ERROR(Status)) {

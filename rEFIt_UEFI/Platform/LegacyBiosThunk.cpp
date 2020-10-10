@@ -68,7 +68,7 @@ InitializeBiosIntCaller (
   mThunkContext->RealModeBuffer     = (void*)(UINTN)LegacyRegionBase;
   mThunkContext->RealModeBufferSize = LegacyRegionSize;
   mThunkContext->ThunkAttributes    = THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
-  DBG("mThunkContext->RealModeBuffer: %p, mThunkContext->RealModeBufferSize: %d\n", mThunkContext->RealModeBuffer, mThunkContext->RealModeBufferSize);
+  DBG("mThunkContext->RealModeBuffer: %llx, mThunkContext->RealModeBufferSize: %d\n", (UINTN)(mThunkContext->RealModeBuffer), mThunkContext->RealModeBufferSize);
   AsmPrepareThunk16(mThunkContext);
   return Status;
 }

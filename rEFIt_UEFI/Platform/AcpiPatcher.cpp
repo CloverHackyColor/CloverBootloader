@@ -1018,7 +1018,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR8 *Check
   OemTableId[8] = 0;
   stripTrailingSpaces(OemTableId);
 
-  DBG(" %p: '%s', '%s', Rev: %d, Len: %d", TableEntry, Signature, OemTableId, TableEntry->Revision, TableEntry->Length);
+  DBG(" %llx: '%s', '%s', Rev: %d, Len: %d", (UINTN)TableEntry, Signature, OemTableId, TableEntry->Revision, TableEntry->Length);
 
   //
   // Additional checks
@@ -1150,7 +1150,7 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CONST
     // Take Signature for printing
     CopyMem(&Signature[0], &Facs->Signature, 4);
     Signature[4] = 0;
-    DBG("      %p: '%s', Ver: %d, Len: %d", Facs, Signature, Facs->Version, Facs->Length);
+    DBG("      %llx: '%s', Ver: %d, Len: %d", (UINTN)Facs, Signature, Facs->Version, Facs->Length);
 
     // FACS checks
     if (Facs->Signature != EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
@@ -1208,7 +1208,7 @@ EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt()
     RsdPtr = NULL;
     /*Status = */EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (void**)&RsdPtr);
     if (RsdPtr != NULL) {
-      DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
+      DBG("Found UEFI Acpi 2.0 RSDP at %llx\n", (UINTN)RsdPtr);
       Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
       if (RsdPtr->Revision > 0) {
         if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
@@ -1251,13 +1251,13 @@ void DumpTables(void *RsdPtrVoid, CONST CHAR16 *DirName)
   //
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER* RsdPtr = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)RsdPtrVoid;
   if (DirName != NULL) {
-    DBG("Saving ACPI tables from RSDP %p to %ls ...\n", RsdPtr, DirName);
+    DBG("Saving ACPI tables from RSDP %llx to %ls ...\n", (UINTN)RsdPtr, DirName);
   } else {
-    DBG("Printing ACPI tables from RSDP %p ...\n", RsdPtr);
+    DBG("Printing ACPI tables from RSDP %llx ...\n", (UINTN)RsdPtr);
   }
 
   if (RsdPtr->Signature != EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
-	  DBG(" RsdPrt at %p has invaid signature 0x%llx - exiting.\n", RsdPtr, RsdPtr->Signature);
+	  DBG(" RsdPrt at %llx has invaid signature 0x%llx - exiting.\n", (UINTN)RsdPtr, RsdPtr->Signature);
     return;
   }
 
@@ -1270,7 +1270,7 @@ void DumpTables(void *RsdPtrVoid, CONST CHAR16 *DirName)
   Rsdt = NULL;
   Xsdt = NULL;
 
-  DBG(" %p: '%s', Rev: %d", RsdPtr, Signature, RsdPtr->Revision);
+  DBG(" %llx: '%s', Rev: %d", (UINTN)RsdPtr, Signature, RsdPtr->Revision);
   if (RsdPtr->Revision == 0) {
     // Acpi 1.0
     Length = sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER);

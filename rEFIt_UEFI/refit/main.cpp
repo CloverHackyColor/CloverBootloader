@@ -385,7 +385,7 @@ void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
     DBG("Kernel and Kext Patches null pointer\n");
     return;
   }
-  DBG("Kernel and Kext Patches at %p:\n", Patches);
+  DBG("Kernel and Kext Patches at %llx:\n", (UINTN)Patches);
   DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
 //  DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
@@ -1067,11 +1067,13 @@ DBG("Beginning OC\n");
   XObjArray<KEXT_PATCH> selectedPathArray;
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
   {
-    if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue ) selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
+ //   if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue )
+    selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
   }
   for (size_t kernelPatchIdx = 0 ; kernelPatchIdx < KernelAndKextPatches.KernelPatches.size() ; kernelPatchIdx++ )
   {
-    if ( KernelAndKextPatches.KernelPatches[kernelPatchIdx].MenuItem.BValue ) selectedPathArray.AddReference(&KernelAndKextPatches.KernelPatches[kernelPatchIdx], false);
+ //   if ( KernelAndKextPatches.KernelPatches[kernelPatchIdx].MenuItem.BValue )
+    selectedPathArray.AddReference(&KernelAndKextPatches.KernelPatches[kernelPatchIdx], false);
   }
   mOpenCoreConfiguration.Kernel.Patch.Count = (UINT32)selectedPathArray.size();
   mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
@@ -1849,7 +1851,7 @@ void DisconnectInvalidDiskIoChildDrivers(void)
         Found = TRUE;
         Status = gBS->DisconnectController (Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, NULL);
         //DBG(" BY_DRIVER Agent: %p, Disconnect: %s", OpenInfo[OpenInfoIndex].AgentHandle, efiStrError(Status));
-        DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %s\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, efiStrError(Status));
+        DBG(" - Handle %llx with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %llx, Disconnect: %s\n", (UINTN)Handles[Index], (UINTN)(OpenInfo[OpenInfoIndex].AgentHandle), efiStrError(Status));
       }
     }
     FreePool(OpenInfo);
