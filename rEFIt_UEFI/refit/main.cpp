@@ -385,7 +385,7 @@ void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
     DBG("Kernel and Kext Patches null pointer\n");
     return;
   }
-  DBG("Kernel and Kext Patches at %llx:\n", (UINTN)Patches);
+  DBG("Kernel and Kext Patches at %llx:\n", (uintptr_t)Patches);
   DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
 //  DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
@@ -397,23 +397,23 @@ void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   // Dell smbios truncate fix
   DBG("\tDellSMBIOSPatch: %c\n", Patches->KPDELLSMBIOS ? 'y' : 'n');
   DBG("\tFakeCPUID: 0x%X\n", Patches->FakeCPUID);
-  DBG("\tATIController: %s\n", (Patches->KPATIConnectorsController == NULL) ? "(null)": Patches->KPATIConnectorsController);
-  DBG("\tATIDataLength: %d\n", Patches->KPATIConnectorsDataLen);
-  DBG("\t%d Kexts to load\n", Patches->ForceKexts.size());
-  if (Patches->ForceKexts) {
-    INTN i = 0;
+  DBG("\tATIController: %s\n", Patches->KPATIConnectorsController.isEmpty() ? "(null)": Patches->KPATIConnectorsController.c_str());
+  DBG("\tATIDataLength: %zu\n", Patches->KPATIConnectorsData.size());
+  DBG("\t%zu Kexts to load\n", Patches->ForceKexts.size());
+  if (Patches->ForceKexts.size()) {
+    size_t i = 0;
     for (; i < Patches->ForceKexts.size(); ++i) {
-       DBG("\t  KextToLoad[%d]: %ls\n", i, Patches->ForceKexts[i]);
+       DBG("\t  KextToLoad[%zu]: %ls\n", i, Patches->ForceKexts[i].wc_str());
     }
   }
-  DBG("\t%d Kexts to patch\n", Patches->KextPatches.size());
-  if (Patches->KextPatches) {
-    INTN i = 0;
+  DBG("\t%zu Kexts to patch\n", Patches->KextPatches.size());
+  if (Patches->KextPatches.size()) {
+    size_t i = 0;
     for (; i < Patches->KextPatches.size(); ++i) {
        if (Patches->KextPatches[i].IsPlistPatch) {
-          DBG("\t  KextPatchPlist[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+          DBG("\t  KextPatchPlist[%zu]: %zu bytes, %s\n", i, Patches->KextPatches[i].Data.size(), Patches->KextPatches[i].Name.c_str());
        } else {
-          DBG("\t  KextPatch[%d]: %d bytes, %s\n", i, Patches->KextPatches[i].DataLen, Patches->KextPatches[i].Name);
+          DBG("\t  KextPatch[%zu]: %zu bytes, %s\n", i, Patches->KextPatches[i].Data.size(), Patches->KextPatches[i].Name.c_str());
        }
     }
   }
@@ -685,6 +685,26 @@ size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kext
     }
   }
   return pos;
+}
+
+static XStringW getDriversPath()
+{
+#if defined(MDE_CPU_X64)
+  if (gFirmwareClover) {
+    if (FileExists(&self.getCloverDir(), L"drivers\\BIOS")) {
+      return L"drivers\\BIOS"_XSW;
+    } else {
+      return L"drivers64"_XSW;
+    }
+  } else
+  if (FileExists(&self.getCloverDir(), L"drivers\\UEFI")) {
+    return L"drivers\\UEFI"_XSW;
+  } else {
+    return L"drivers64UEFI"_XSW;
+  }
+#else
+  return L"drivers32"_XSW;
+#endif
 }
 
 void debugStartImageWithOC()
@@ -959,10 +979,12 @@ DBG("Beginning OC\n");
 #endif
   }
 
+  #ifndef USE_OC_SECTION_Misc
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
+  #endif
+  #ifdef USE_OC_SECTION_Nvram
   mOpenCoreConfiguration.Nvram.WriteFlash = true;
-#ifdef JIEF_DEBUG
 #endif
 
 #ifndef USE_OC_SECTION_Booter
@@ -1144,7 +1166,26 @@ DBG("Beginning OC\n");
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
   Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirPathAsXStringW().wc_str(), NULL);
 
+  XStringW FileName = SWPrintf("%ls\\%ls\\%s", self.getCloverDirPathAsXStringW().wc_str(), getDriversPath().wc_str(), "OpenRuntime.efi");
+  EFI_HANDLE DriverHandle;
+  Status = gBS->LoadImage(false, gImageHandle, FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NULL, 0, &DriverHandle);
+  DBG("Load OpenRuntime.efi : Status %s\n", efiStrError(Status));
+  Status = gBS->StartImage(DriverHandle, 0, 0);
+  DBG("Start OpenRuntime.efi : Status %s\n", efiStrError(Status));
+
   OcMain(&mOpenCoreStorage, NULL);
+//  {
+//    gCurrentConfig = &gMainConfig;
+//    RedirectRuntimeServices();
+//    EFI_HANDLE Handle = NULL;
+//    Status = gBS->InstallMultipleProtocolInterfaces (
+//      &Handle,
+//      &gOcFirmwareRuntimeProtocolGuid,
+//      &mOcFirmwareRuntimeProtocol,
+//      NULL
+//      );
+//    DBG("Install gOcFirmwareRuntimeProtocolGuid : Status %s\n", efiStrError(Status));
+//  }
 
   CHAR16* UnicodeDevicePath = NULL; (void)UnicodeDevicePath;
   UnicodeDevicePath = ConvertDevicePathToText (DevicePath, FALSE, FALSE);
@@ -1851,7 +1892,7 @@ void DisconnectInvalidDiskIoChildDrivers(void)
         Found = TRUE;
         Status = gBS->DisconnectController (Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, NULL);
         //DBG(" BY_DRIVER Agent: %p, Disconnect: %s", OpenInfo[OpenInfoIndex].AgentHandle, efiStrError(Status));
-        DBG(" - Handle %llx with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %llx, Disconnect: %s\n", (UINTN)Handles[Index], (UINTN)(OpenInfo[OpenInfoIndex].AgentHandle), efiStrError(Status));
+        DBG(" - Handle %llx with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %llx, Disconnect: %s\n", (uintptr_t)Handles[Index], (uintptr_t)(OpenInfo[OpenInfoIndex].AgentHandle), efiStrError(Status));
       }
     }
     FreePool(OpenInfo);

@@ -3046,7 +3046,7 @@ GetEarlyUserSettings (
             gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
           }
         }else{
-          MsgLog("MALFORMED PLIST : KernelAndKextPatches/KernelCache must be a string");
+          MsgLog("MALFORMED PLIST : Quirks/KernelCache must be a string");
           gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
         }
       }

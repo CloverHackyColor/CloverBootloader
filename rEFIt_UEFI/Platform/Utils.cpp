@@ -120,6 +120,8 @@ BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
     if (!EFI_ERROR(Status))
         return FALSE;
 
+    MsgLog("Fatal Error: %s %ls\n", efiStrError(Status), where);
+
 //    StatusToString(ErrorName, Status);
     gST->ConOut->SetAttribute (gST->ConOut, EFI_RED | EFI_BACKGROUND_BLACK);
     printf("Fatal Error: %s %ls\n", efiStrError(Status), where);
@@ -137,6 +139,8 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 
     if (!EFI_ERROR(Status))
         return FALSE;
+
+    MsgLog("Fatal Error: %s %ls\n", efiStrError(Status), where);
 
 //    StatusToString(ErrorName, Status);
     gST->ConOut->SetAttribute (gST->ConOut, EFI_RED | EFI_BACKGROUND_BLACK);

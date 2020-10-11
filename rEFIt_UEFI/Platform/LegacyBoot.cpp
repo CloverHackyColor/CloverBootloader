@@ -803,7 +803,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
     //Status = LegacyBios->GetBbsInfo(LegacyBios, &HddCount, &HddInfo, &BbsCount, &BbsTable);
     //DBG("GetBbsInfo = %s, HddCnt=%d, HddInfo=%p, BbsCount=%d, BbsTabl%p\n", efiStrError(Status), HddCount, HddInfo, BbsCount, BbsTable);
     Status = LegacyBios->PrepareToBootEfi(LegacyBios, &BbsCount, &BbsTable);
-    DBG("PrepareToBootEfi = %s, BbsCount=%d, BbsTabl%llx\n", efiStrError(Status), BbsCount, (UINTN)BbsTable);
+    DBG("PrepareToBootEfi = %s, BbsCount=%d, BbsTabl%llx\n", efiStrError(Status), BbsCount, (uintptr_t)BbsTable);
     //PauseForKey(L"continue ...\n");
 
     //
