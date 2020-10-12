@@ -497,6 +497,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				LOADER_ENTRY* getPartiallyDuplicatedEntry() const;
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
         LOADER_ENTRY* SubMenuKextInjectMgmt();
+        void DelegateKernelPatches();
 			} ;
 
 

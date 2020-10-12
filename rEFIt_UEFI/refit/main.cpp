@@ -775,7 +775,48 @@ MsgLog("debugStartImageWithOC : path %ls\n", UnicodeDevicePath);
   }else{
     MsgLog("debugStartImageWithOC : not found\n");
   }
+}
+
+void LOADER_ENTRY::DelegateKernelPatches()
+{
+  XObjArray<KEXT_PATCH> selectedPathArray;
+  for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
+  {
+    if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue )
+      selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
   }
+  for (size_t kernelPatchIdx = 0 ; kernelPatchIdx < KernelAndKextPatches.KernelPatches.size() ; kernelPatchIdx++ )
+  {
+    if ( KernelAndKextPatches.KernelPatches[kernelPatchIdx].MenuItem.BValue )
+      selectedPathArray.AddReference(&KernelAndKextPatches.KernelPatches[kernelPatchIdx], false);
+  }
+  mOpenCoreConfiguration.Kernel.Patch.Count = (UINT32)selectedPathArray.size();
+  mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
+  mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
+  mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
+  memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
+  for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
+  {
+    const KEXT_PATCH& kextPatch = selectedPathArray[kextPatchIdx];  //as well as kernel patches
+    DBG("Bridge %s patch to OC : %s\n", kextPatch.Name.c_str(), kextPatch.Label.c_str());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, kextPatch.ProcedureName.c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Comment, kextPatch.Label.c_str());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = (UINT32)kextPatch.Count;
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
+    
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Data.data(), kextPatch.Data.size());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.Name.c_str());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.SearchLen;
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MinKernel, "");
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Patch.vdata(), kextPatch.Patch.size());
+    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.vdata(), kextPatch.MaskReplace.size());
+    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Skip = (UINT32)kextPatch.Skip;
+  }
+}
 
 void LOADER_ENTRY::StartLoader()
 {
@@ -1085,44 +1126,8 @@ DBG("Beginning OC\n");
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistDataSize = 0;
   }
 
-
-  XObjArray<KEXT_PATCH> selectedPathArray;
-  for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
-  {
- //   if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue )
-    selectedPathArray.AddReference(&KernelAndKextPatches.KextPatches[kextPatchIdx], false);
-  }
-  for (size_t kernelPatchIdx = 0 ; kernelPatchIdx < KernelAndKextPatches.KernelPatches.size() ; kernelPatchIdx++ )
-  {
- //   if ( KernelAndKextPatches.KernelPatches[kernelPatchIdx].MenuItem.BValue )
-    selectedPathArray.AddReference(&KernelAndKextPatches.KernelPatches[kernelPatchIdx], false);
-  }
-  mOpenCoreConfiguration.Kernel.Patch.Count = (UINT32)selectedPathArray.size();
-  mOpenCoreConfiguration.Kernel.Patch.AllocCount = mOpenCoreConfiguration.Kernel.Patch.Count;
-  mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
-  mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
-  memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
-  for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
-  {
-    const KEXT_PATCH& kextPatch = selectedPathArray[kextPatchIdx];  //as well as kernel patches
-    DBG("Bridge %s patch to OC : %s\n", kextPatch.Name.c_str(), kextPatch.Label.c_str());
-    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, kextPatch.ProcedureName.c_str());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Comment, kextPatch.Label.c_str());
-    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Count = (UINT32)kextPatch.Count;
-    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
-
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Data.data(), kextPatch.Data.size());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.Name.c_str());
-    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.SearchLen;
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MinKernel, "");
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Replace, kextPatch.Patch.vdata(), kextPatch.Patch.size());
-    OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->ReplaceMask, kextPatch.MaskReplace.vdata(), kextPatch.MaskReplace.size());
-    mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Skip = (UINT32)kextPatch.Skip;
-  }
+//DelegateKernelPatches();
+    
   for (size_t forceKextIdx = 0 ; forceKextIdx < KernelAndKextPatches.ForceKexts.size() ; forceKextIdx++ )
   {
     const XStringW& forceKext = KernelAndKextPatches.ForceKexts[forceKextIdx];
@@ -1301,6 +1306,8 @@ DBG("Beginning OC\n");
     if (LoadedImage && !BooterPatch((UINT8*)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
       DBG("Will not patch boot.efi\n");
     }
+    
+    DelegateKernelPatches();
 
     // Set boot argument for kernel if no caches, this should force kernel loading
     if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
