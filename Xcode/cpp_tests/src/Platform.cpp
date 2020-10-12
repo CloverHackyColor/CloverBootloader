@@ -171,9 +171,14 @@ void SetMem(void *Destination, UINTN Length, char c)
 	memset(Destination, c, (size_t)Length);
 }
 
-void CopyMem(void *Destination, void *Source, UINTN Length)
+void CopyMem(void *Destination, const void *Source, UINTN Length)
 {
 	memmove(Destination, Source, (size_t)Length);
+}
+
+INTN CompareMem(const void* DestinationBuffer, const void* SourceBuffer, UINTN Length)
+{
+  return memcmp(SourceBuffer, DestinationBuffer, Length);
 }
 
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src)

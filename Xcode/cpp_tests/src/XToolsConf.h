@@ -1,8 +1,6 @@
 #ifndef __XTOOLSCONF_H__
 #define __XTOOLSCONF_H__
 
-#include <posix.h>
-
 
 #define xsize size_t
 //#define xisize INTN
@@ -24,6 +22,9 @@
 #define __XTOOLS_CHECK_OVERFLOW__
 
 #define Xrealloc(ptr, newsize, oldsize) realloc(ptr, newsize)
+
+#include <Platform.h>
+#include <posix.h>
 
 
 

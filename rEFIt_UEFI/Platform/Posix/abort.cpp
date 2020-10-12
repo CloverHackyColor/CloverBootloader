@@ -5,10 +5,10 @@
 #if defined(CLOVER_BUILD) || !defined(_MSC_VER)
 void abort(void)
 {
-	printf("A fatal error happened. System halted\n");
-	while (1) { // tis will avoid warning : Function declared 'noreturn' should not return
-		CpuDeadLoop();
-	}
+  printf("A fatal error happened. System halted\n");
+  while (1) { // tis will avoid warning : Function declared 'noreturn' should not return
+    CpuDeadLoop();
+  }
 }
 #endif
 
@@ -25,40 +25,44 @@ static void panic_(const char* format, VA_LIST va)
 #endif
 ;
 
+#ifdef CLOVER_BUILD
 extern void egSetGraphicsModeEnabled(BOOLEAN);
+#endif
 
 #define FATAL_ERROR_MSG "\nA fatal error happened. System halted.\n"
 static void panic_(const char* format, VA_LIST va)
 {
-egSetGraphicsModeEnabled(false);
-	if ( format ) {
-		vprintf(format, va);
-		#ifdef DEBUG_ON_SERIAL_PORT
-		  char buf[500];
-		  vsnprintf(buf, sizeof(buf)-1, format, va);
-		  SerialPortWrite((UINT8*)buf, strlen(buf));
-		#endif
-	}
-	printf(FATAL_ERROR_MSG);
+#ifdef CLOVER_BUILD
+  egSetGraphicsModeEnabled(false);
+#endif
+  if ( format ) {
+    vprintf(format, va);
+    #ifdef DEBUG_ON_SERIAL_PORT
+      char buf[500];
+      vsnprintf(buf, sizeof(buf)-1, format, va);
+      SerialPortWrite((UINT8*)buf, strlen(buf));
+    #endif
+  }
+  printf(FATAL_ERROR_MSG);
   #ifdef DEBUG_ON_SERIAL_PORT
     SerialPortWrite((UINT8*)FATAL_ERROR_MSG, strlen(FATAL_ERROR_MSG));
   #endif
-	while (1) { // this will avoid warning : Function declared 'noreturn' should not return
-		CpuDeadLoop();
-	}
+  while (1) { // this will avoid warning : Function declared 'noreturn' should not return
+    CpuDeadLoop();
+  }
 }
 
 void panic(const char* format, ...)
 {
 #ifdef PANIC_CAN_RETURN
-	if ( stop_at_panic ) {
-		VA_LIST va;
-		VA_START(va, format);
-		panic_(format, va); // panic doesn't return
-//		VA_END(va);
-	}else{
-		i_have_panicked = true;
-	}
+  if ( stop_at_panic ) {
+    VA_LIST va;
+    VA_START(va, format);
+    panic_(format, va); // panic doesn't return
+//    VA_END(va);
+  }else{
+    i_have_panicked = true;
+  }
 #else
   VA_LIST va;
   VA_START(va, format);
@@ -69,5 +73,5 @@ void panic(const char* format, ...)
 
 void panic(void)
 {
-	panic(nullptr);
+  panic(nullptr);
 }

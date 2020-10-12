@@ -21,14 +21,6 @@
 #include <wchar.h>
 #include "posix.h"
 
-#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
-#include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
-#include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
-#include "../../../rEFIt_UEFI/cpp_foundation/XObjArray.h"
-
-#include "xcode_utf_fixed.h"
-
-
 #ifndef __cplusplus
 //typedef uint16_t wchar_t;
 typedef uint32_t char32_t;
@@ -149,6 +141,15 @@ typedef RETURN_STATUS             EFI_STATUS;
 #define __typeof__(x) decltype(x)
 #endif
 
+
+#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
+#include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
+#include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
+#include "../../../rEFIt_UEFI/cpp_foundation/XObjArray.h"
+
+#include "xcode_utf_fixed.h"
+
+
 void CpuDeadLoop(void);
 void DebugLog(INTN DebugMode, const char *FormatString, ...);
 #define MsgLog ::printf
@@ -190,7 +191,8 @@ void FreePool(const void* Buffer);
 
 void ZeroMem(void *Destination, UINTN Length);
 void SetMem(void *Destination, UINTN Length, char c);
-void CopyMem(void *Destination, void *Source, UINTN Length);
+void CopyMem(void *Destination, const void *Source, UINTN Length);
+INTN CompareMem(const void* DestinationBuffer, const void* SourceBuffer, UINTN Length);
 
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src);
 CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString);

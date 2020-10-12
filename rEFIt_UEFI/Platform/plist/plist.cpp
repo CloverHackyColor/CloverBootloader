@@ -586,7 +586,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagStruct** tag, UINT32* lenPtr)
         integer = (integer * 16) + (*val++ - 'a' + 10);
       }
       else if ((*val >= 'A' && *val <= 'F')) {  // A - F
-        integer = (integer * 16) + (*val++ - 'a' + 10);
+        integer = (integer * 16) + (*val++ - 'A' + 10);
       }
       else {
         MsgLog("ParseTagInteger hex error (0x%hhX) in buffer %s\n", *val, buffer);

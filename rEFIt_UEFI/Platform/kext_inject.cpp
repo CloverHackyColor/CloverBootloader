@@ -10,6 +10,7 @@ extern "C" {
 #include "../Platform/plist/plist.h"
 #include "../Platform/Settings.h"
 #include "../Platform/guid.h"
+#include "MemoryOperation.h"
 
 #ifndef DEBUG_ALL
 #define KEXT_INJECT_DEBUG 1
@@ -1127,7 +1128,7 @@ void EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       patchLocation2 = FindMemMask(&KernelData[procLocation], 0x500, find3, sizeof(find3), mask3, sizeof(mask3));
       DBG("IOTaskHasEntitlement at 0x%llx, loadExecutable at 0x%llx\n", taskLocation, procLocation);
       DBG("find3 at 0x%llx\n", patchLocation2);
-      if (patchLocation2 != KERNEL_MAX_SIZE) {
+      if (patchLocation2 != MAX_UINTN) {
         DBG_RT("=> patch SIP applied\n");
         patchLocation2 += procLocation;
         KernelData[patchLocation2 + 3] = 0xEB;
@@ -1247,7 +1248,7 @@ void EFIAPI LOADER_ENTRY::KernelBooterExtensionsPatch()
       } else {
  */
       //The patch is not needed for bigsur
-      if (patchLocation3 != KERNEL_MAX_SIZE) {
+      if (patchLocation3 != MAX_UINTN) {
         DBG("==> patched KxldUnmap (10.14 - 10.15)\n");
         // 00 0F 85 XX XX 00 00 48
         // 00 90 E9 XX XX 00 00 48
