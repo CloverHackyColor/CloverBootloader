@@ -16,6 +16,8 @@
 #include "XToolsCommon_test.h"
 #include "XBuffer_tests.h"
 #include "plist_tests.h"
+#include "find_replace_mask_Clover_tests.h"
+#include "find_replace_mask_OC_tests.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -33,12 +35,23 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-//	ret = XString_tests();
-//	if ( ret != 0 ) {
-//		printf("XString16_tests() failed at test %d\n", ret);
-//		all_ok = false;
-//	}
+//  ret = XString_tests();
+//  if ( ret != 0 ) {
+//    printf("XString16_tests() failed at test %d\n", ret);
+//    all_ok = false;
+//  }
 #if defined(JIEF_DEBUG)
+  ret = find_replace_mask_Clover_tests();
+  if ( ret != 0 ) {
+    printf("xml_lite_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = find_replace_mask_OC_tests();
+  if ( ret != 0 ) {
+    printf("xml_lite_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+//  return 1;
   ret = printf_lite_tests();
   if ( ret != 0 ) {
     printf("printf_lite_tests() failed at test %d\n", ret);
@@ -57,59 +70,59 @@ bool all_tests()
 //    }
 #endif
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
-		ret = printlib_tests();
-	    if ( ret != 0 ) {
-		    printf("printlib_tests() failed at test %d\n", ret);
-		    all_ok = false;
-    	}
+    ret = printlib_tests();
+      if ( ret != 0 ) {
+        printf("printlib_tests() failed at test %d\n", ret);
+        all_ok = false;
+      }
 #endif
 #ifndef _MSC_VER
-	ret = printf_lite_tests();
-	if ( ret != 0 ) {
-		printf("printf_lite_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+  ret = printf_lite_tests();
+  if ( ret != 0 ) {
+    printf("printf_lite_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
 #endif
-	ret = strlen_tests();
-	if ( ret != 0 ) {
-		printf("strlen_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = strcmp_tests();
-	if ( ret != 0 ) {
-		printf("strcmp_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = strncmp_tests();
-	if ( ret != 0 ) {
-		printf("strncmp_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+  ret = strlen_tests();
+  if ( ret != 0 ) {
+    printf("strlen_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = strcmp_tests();
+  if ( ret != 0 ) {
+    printf("strcmp_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = strncmp_tests();
+  if ( ret != 0 ) {
+    printf("strncmp_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
   ret = XToolsCommon_tests();
   if ( ret != 0 ) {
     printf("printlib_tests() failed at test %d\n", ret);
     all_ok = false;
   }
-	ret = XArray_tests();
-	if ( ret != 0 ) {
-		printf("XArray_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = XObjArray_tests();
-	if ( ret != 0 ) {
-		printf("XObjArray_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = XString_tests();
-	if ( ret != 0 ) {
-		printf("XString_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
-	ret = XStringArray_tests();
-	if ( ret != 0 ) {
-		printf("XStringArray_tests() failed at test %d\n", ret);
-		all_ok = false;
-	}
+  ret = XArray_tests();
+  if ( ret != 0 ) {
+    printf("XArray_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = XObjArray_tests();
+  if ( ret != 0 ) {
+    printf("XObjArray_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = XString_tests();
+  if ( ret != 0 ) {
+    printf("XString_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = XStringArray_tests();
+  if ( ret != 0 ) {
+    printf("XStringArray_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
   ret = BootOptions_tests();
   if ( ret != 0 ) {
     printf("BootOptions_tests() failed at test %d\n", ret);
@@ -120,29 +133,34 @@ bool all_tests()
     printf("XBuffer_tests() failed at test %d\n", ret);
     all_ok = false;
   }
-  ret = plist_tests();
+  ret = find_replace_mask_Clover_tests();
   if ( ret != 0 ) {
-    printf("plist_tests() failed at test %d\n", ret);
+    printf("xml_lite_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = find_replace_mask_OC_tests();
+  if ( ret != 0 ) {
+    printf("xml_lite_tests() failed at test %d\n", ret);
     all_ok = false;
   }
 
-	if ( !all_ok ) {
-		printf("A test failed\n");
-	}
-	
+  if ( !all_ok ) {
+    printf("A test failed\n");
+  }
+  
 #if defined(JIEF_DEBUG)
-	if ( all_ok ) {
-		printf("All tests succeeded\n");
-	}
+  if ( all_ok ) {
+    printf("All tests succeeded\n");
+  }
 #endif
-	
+  
 #if defined(CLOVER_BUILD) && defined(JIEF_DEBUG)
-	if ( all_ok ) {
-//		PauseForKey(L"press");
-	}else{
-		PauseForKey(L"press");
-	}
+  if ( all_ok ) {
+//    PauseForKey(L"press");
+  }else{
+    PauseForKey(L"press");
+  }
 #endif
 
-	return all_ok;
+  return all_ok;
 }

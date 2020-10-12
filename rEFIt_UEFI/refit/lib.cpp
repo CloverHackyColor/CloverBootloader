@@ -186,6 +186,7 @@ EFI_STATUS ReinitRefitLib(void)
   self.reInitialize();
   selfOem.reInitialize();
 
+  ReinitVolumes();
   ThemeX.openThemeDir();
 
   return EFI_SUCCESS;

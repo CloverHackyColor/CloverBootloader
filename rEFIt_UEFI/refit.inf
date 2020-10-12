@@ -180,6 +180,8 @@
 	Platform/LegacyBoot.h
 	Platform/LegacyBoot.cpp
 	Platform/memvendors.h
+  Platform/MemoryOperation.h
+  Platform/MemoryOperation.c
 	Platform/nvidia.h
 	Platform/nvidia.cpp
     Platform/Net.h
@@ -286,6 +288,10 @@
 #  cpp_foundation/XUINTN.h
   cpp_unit_test/all_tests.h
   cpp_unit_test/all_tests.cpp
+  cpp_unit_test/find_replace_mask_Clover_tests.h
+  cpp_unit_test/find_replace_mask_Clover_tests.cpp
+  cpp_unit_test/find_replace_mask_OC_tests.h
+  cpp_unit_test/find_replace_mask_OC_tests.cpp
   cpp_unit_test/global_test.h
   cpp_unit_test/global_test.cpp
   cpp_unit_test/LoadOptions_test.cpp

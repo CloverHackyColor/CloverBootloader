@@ -143,6 +143,19 @@
 		9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */; };
 		9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */; };
 		9A7D518524FC32F700FA1CC3 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */; };
+		9A838CA4253423F0008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
+		9A838CA5253423F0008303F5 /* find_replace_mask_OC_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */; };
+		9A838CA6253425A3008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		9A838CA7253425A3008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; };
+		9A838CA8253425A4008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; };
+		9A838CA9253425A4008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; };
+		9A838CAC25342626008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
+		9A838CAD25342629008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
+		9A838CAE2534262A008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
+		9A838CAF2534262A008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
+		9A838CB025345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
+		9A838CB125345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
+		9A838CB225345E94008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
@@ -273,6 +286,13 @@
 		9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
 		9A7D518224FC32F700FA1CC3 /* XRBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRBuffer.h; sourceTree = "<group>"; };
 		9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRBuffer.cpp; sourceTree = "<group>"; };
+		9A838A4A253423A5008303F5 /* DataPatcher.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; path = DataPatcher.c; sourceTree = "<group>"; };
+		9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = find_replace_mask_Clover_tests.cpp; sourceTree = "<group>"; };
+		9A838CA1253423F0008303F5 /* find_replace_mask_OC_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = find_replace_mask_OC_tests.h; sourceTree = "<group>"; };
+		9A838CA2253423F0008303F5 /* find_replace_mask_Clover_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = find_replace_mask_Clover_tests.h; sourceTree = "<group>"; };
+		9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = find_replace_mask_OC_tests.cpp; sourceTree = "<group>"; };
+		9A838CAA25342626008303F5 /* MemoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryOperation.h; sourceTree = "<group>"; };
+		9A838CAB25342626008303F5 /* MemoryOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryOperation.cpp; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
@@ -358,6 +378,10 @@
 		9A0B084C2402FE9B00E2B470 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */,
+				9A838CA2253423F0008303F5 /* find_replace_mask_Clover_tests.h */,
+				9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */,
+				9A838CA1253423F0008303F5 /* find_replace_mask_OC_tests.h */,
 				9A36E52A24F3C845007A1107 /* plist_tests.cpp */,
 				9A36E52B24F3C846007A1107 /* plist_tests.h */,
 				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
@@ -409,6 +433,8 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A838CAB25342626008303F5 /* MemoryOperation.cpp */,
+				9A838CAA25342626008303F5 /* MemoryOperation.h */,
 				9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */,
 				9A36E51D24F3B82A007A1107 /* b64cdecode.h */,
 				9A36E4D924F3B51C007A1107 /* plist */,
@@ -480,9 +506,35 @@
 			path = libeg;
 			sourceTree = "<group>";
 		};
+		9A83876E253423A4008303F5 /* OpenCorePkg */ = {
+			isa = PBXGroup;
+			children = (
+				9A8389CD253423A5008303F5 /* Library */,
+			);
+			name = OpenCorePkg;
+			path = ../../OpenCorePkg;
+			sourceTree = "<group>";
+		};
+		9A8389CD253423A5008303F5 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				9A838A44253423A5008303F5 /* OcMiscLib */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		9A838A44253423A5008303F5 /* OcMiscLib */ = {
+			isa = PBXGroup;
+			children = (
+				9A838A4A253423A5008303F5 /* DataPatcher.c */,
+			);
+			path = OcMiscLib;
+			sourceTree = "<group>";
+		};
 		9A9223242402FD1000483CBA = {
 			isa = PBXGroup;
 			children = (
+				9A83876E253423A4008303F5 /* OpenCorePkg */,
 				9A36E51C24F3B5B4007A1107 /* rEFIt_UEFI */,
 				9A1A3FD82424BC22008C89EB /* MemLogLibDefault */,
 				9A92232F2402FD1000483CBA /* Main */,
@@ -653,6 +705,7 @@
 			files = (
 				9A36E50524F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50124F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A838CAD25342629008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50D24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A36E52D24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -664,6 +717,7 @@
 				9A36E51924F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7F9245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52724F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A838CB125345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD23241BB61B00F3D247 /* strlen.cpp in Sources */,
 				9A28CD4C241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
@@ -676,6 +730,7 @@
 				9A36E4FD24F3B537007A1107 /* TagBool.cpp in Sources */,
 				9A36E4F524F3B537007A1107 /* plist.cpp in Sources */,
 				9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */,
+				9A838CA7253425A3008303F5 /* DataPatcher.c in Sources */,
 				9A36E4F924F3B537007A1107 /* xml.cpp in Sources */,
 				9A0B087D2403B08400E2B470 /* XStringArray_test.cpp in Sources */,
 				9A36E51124F3B537007A1107 /* TagArray.cpp in Sources */,
@@ -697,6 +752,7 @@
 			files = (
 				9A36E50724F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50324F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A838CAF2534262A008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50F24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */,
 				9A36E52F24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -708,6 +764,7 @@
 				9A36E51B24F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7FB245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52924F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A838CB225345E94008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A2A7C7124576CCE00422263 /* strlen.cpp in Sources */,
 				9A2A7C7224576CCE00422263 /* xcode_utf_fixed.cpp in Sources */,
 				9A2A7C7324576CCE00422263 /* main.cpp in Sources */,
@@ -720,6 +777,7 @@
 				9A36E4FF24F3B537007A1107 /* TagBool.cpp in Sources */,
 				9A36E4F724F3B537007A1107 /* plist.cpp in Sources */,
 				9A2A7C7A24576CCE00422263 /* printf_lite.c in Sources */,
+				9A838CA9253425A4008303F5 /* DataPatcher.c in Sources */,
 				9A36E4FB24F3B537007A1107 /* xml.cpp in Sources */,
 				9A2A7C7B24576CCE00422263 /* XStringArray_test.cpp in Sources */,
 				9A36E51324F3B537007A1107 /* TagArray.cpp in Sources */,
@@ -741,6 +799,7 @@
 			files = (
 				9A36E50624F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50224F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A838CAE2534262A008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50E24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A36E52E24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -752,6 +811,7 @@
 				9A36E51A24F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7FA245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52824F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A838CB025345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD24241BB61B00F3D247 /* strlen.cpp in Sources */,
 				9A28CD4D241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A57C21B2418B9A00029A39F /* main.cpp in Sources */,
@@ -764,6 +824,7 @@
 				9A36E4FE24F3B537007A1107 /* TagBool.cpp in Sources */,
 				9A36E4F624F3B537007A1107 /* plist.cpp in Sources */,
 				9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */,
+				9A838CA8253425A4008303F5 /* DataPatcher.c in Sources */,
 				9A36E4FA24F3B537007A1107 /* xml.cpp in Sources */,
 				9A57C2252418B9A00029A39F /* XStringArray_test.cpp in Sources */,
 				9A36E51224F3B537007A1107 /* TagArray.cpp in Sources */,
@@ -783,6 +844,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A838CAC25342626008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50424F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
@@ -794,9 +856,11 @@
 				9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */,
 				9A4FFA812451C88D0050B38B /* XString_test.cpp in Sources */,
 				9A28CD22241BB61B00F3D247 /* strlen.cpp in Sources */,
+				9A838CA6253425A3008303F5 /* DataPatcher.c in Sources */,
 				9A36E51824F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7F8245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52624F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A838CA4253423F0008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD4B241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
 				9A28CD16241BACBB00F3D247 /* strlen_test.cpp in Sources */,
@@ -811,6 +875,7 @@
 				9A0B08582402FF7F00E2B470 /* XStringArray_test.cpp in Sources */,
 				9A36E4F824F3B537007A1107 /* xml.cpp in Sources */,
 				9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */,
+				9A838CA5253423F0008303F5 /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A7D518524FC32F700FA1CC3 /* XRBuffer.cpp in Sources */,
 				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
@@ -951,7 +1016,10 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = JIEF_DEBUG;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					JIEF_DEBUG,
+					UNIT_TESTS,
+				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1037,7 +1105,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = UNIT_TESTS;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
