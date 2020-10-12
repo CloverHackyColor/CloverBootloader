@@ -12,6 +12,7 @@
  * So, for this to work, pass macro definition argument on command line : wcslen=utf16_wcslen wcsncmp=utf16_wcsncmp wcsstr=utf16_wcsstr
  */
 
+#include "xcode_utf_fixed.h"
 #include <wchar.h>
 #include <vector>
 #include <cwchar>

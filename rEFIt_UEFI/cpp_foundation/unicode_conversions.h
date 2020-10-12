@@ -7,11 +7,16 @@
 #ifndef __unicode_conversions_h__
 #define __unicode_conversions_h__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h>
 #include <wchar.h>
 #include <string.h>
 
 #ifndef __cplusplus
+#include <stdint.h>
 //typedef uint16_t wchar_t;
 typedef uint32_t char32_t;
 typedef uint16_t char16_t;
@@ -244,11 +249,17 @@ char32_t get_char32_from_utf32_string_at_pos(const char32_t* s, size_t pos);
 
 /******   convenience   *****/
 
-inline size_t length_of_utf8_string(const char* s) {return utf32_size_of_utf8_string(s); }
-inline size_t length_of_utf16_string(const char16_t* s) {return utf32_size_of_utf16_string(s); }
-inline size_t length_of_utf32_string(const char32_t* s) {return utf32_size_of_utf32_string(s); } // UTF32 length == size
-size_t length_of_wchar_string(const wchar_t* s);
+inline size_t length_of_utf8_string(const char* s);
+inline size_t length_of_utf16_string(const char16_t* s);
+inline size_t length_of_utf32_string(const char32_t* s); // UTF32 length == size
+inline size_t length_of_wchar_string(const wchar_t* s);
 
+
+#ifdef __cplusplus
+}
+#endif
+
+/* ==================================  C++ Convienience  ============================================= */
 
 #ifdef __cplusplus
 

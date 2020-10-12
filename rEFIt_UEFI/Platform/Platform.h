@@ -29,6 +29,7 @@ Headers collection for procedures
 #include "BootLog.h"
 #include "BasicIO.h"
 #include "VersionString.h"
+#include "Utils.h"
 //#include "Settings.h"
 
 #ifndef CLOVERAPPLICATION

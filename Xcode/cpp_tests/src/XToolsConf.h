@@ -23,9 +23,10 @@
 
 #define Xrealloc(ptr, newsize, oldsize) realloc(ptr, newsize)
 
-#include <Platform.h>
+//#include <Platform.h>
 #include <posix.h>
-
-
+#include <inttypes.h>
+#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
+#include <Library/Base.h>
 
 #endif

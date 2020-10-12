@@ -6,7 +6,14 @@
 
 #include "unicode_conversions.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include <string.h> // for memcpy
+//#include <uintptr_t.h> // for memcpy
+//#include <sys/_types/_uintptr_t.h>
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -49,7 +56,7 @@ static inline int is_high_surrogate(char16_t uc) { return (uc & 0xfffffc00) == 0
 static inline int is_low_surrogate(char16_t uc) { return (uc & 0xfffffc00) == 0xdc00; }
 
 static inline char32_t surrogate_to_utf32(char16_t high, char16_t low) {
-    return char32_t((high << 10) + low - 0x35fdc00); // Safe cast, it fits in 32 bits
+    return (char32_t)((high << 10) + low - 0x35fdc00); // Safe cast, it fits in 32 bits
 }
 
 
@@ -239,21 +246,21 @@ const char* get_char32_from_utf8_string(const char* s, char32_t* char32)
 					return s;
 				}
 				/* 4-byte code */
-				c = char32_t((*s & 0x7) << 18); // & result type is int. We know it fits in 32 bits. Safe to cast to char32_t
-				c |= char32_t((*(s+1) & 0x3f) << 12);
-				c |= char32_t((*(s+2) & 0x3f) << 6);
+				c = (char32_t)((*s & 0x7) << 18); // & result type is int. We know it fits in 32 bits. Safe to cast to char32_t
+				c |= (char32_t)((*(s+1) & 0x3f) << 12);
+				c |= (char32_t)((*(s+2) & 0x3f) << 6);
 				c |= *(s+3) & 0x3f;
 				s += 4;
 			} else {
 				/* 3-byte code */
-				c = char32_t((*s & 0xf) << 12);
-				c |= char32_t((*(s+1) & 0x3f) << 6);
+				c = (char32_t)((*s & 0xf) << 12);
+				c |= (char32_t)((*(s+1) & 0x3f) << 6);
 				c |= *(s+2) & 0x3f;
 				s += 3;
 			}
 		} else {
 			/* 2-byte code */
-			c = char32_t((*s & 0x1f) << 6);
+			c = (char32_t)((*s & 0x1f) << 6);
 			c |= *(s+1) & 0x3f;
 			s += 2;
 		}
@@ -1245,7 +1252,7 @@ size_t utf8_size_of_utf8_string(const char* s)
 	while ( char32 ) {
 		p = get_char32_from_utf8_string(p, &char32);
 	}
-	return (uintptr_t(p)-uintptr_t(s));
+	return (uintptr_t)p - (uintptr_t)s;
 //
 //	const char* p = s;
 //	while ( *p++ );
@@ -1338,7 +1345,7 @@ size_t utf8_stringnn_from_utf8_string(char* dst, size_t dst_max_size, const char
     if ( dst_max_size <= 0 ) break;
     s = get_char32_from_utf8_string(s, &char32);
   }
-  return uintptr_t(p)-uintptr_t(dst);
+  return (uintptr_t)p - (uintptr_t)dst;
 }
 
 size_t utf8_string_from_utf8_string(char* dst, size_t dst_max_size, const char *s)
@@ -1388,7 +1395,7 @@ size_t utf8_string_from_utf8_string_len(char* dst, size_t dst_max_size, const ch
 		len--;
 	}
 	*p = 0;
-	return uintptr_t(p)-uintptr_t(dst)-1;
+	return (uintptr_t)p - (uintptr_t)dst - 1;
 }
 
 size_t utf16_stringnn_from_utf16_string(char16_t* dst, size_t dst_max_size, const char16_t *s)
@@ -1403,7 +1410,7 @@ size_t utf16_stringnn_from_utf16_string(char16_t* dst, size_t dst_max_size, cons
     if ( dst_max_size <= 0 ) break;
     s = get_char32_from_utf16_string(s, &char32);
   }
-  return uintptr_t(p - dst);
+  return (uintptr_t)(p - dst);
 }
 
 
@@ -1461,7 +1468,7 @@ size_t utf16_string_from_utf16_string_len(char16_t* dst, size_t dst_max_size, co
 		len--;
 	}
 	*p = 0;
-	return uintptr_t(p)-uintptr_t(dst)-1;
+	return (uintptr_t)p - (uintptr_t)dst - 1;
 }
 
 size_t utf32_stringnn_from_utf32_string(char32_t* dst, size_t dst_max_size, const char32_t *s)
@@ -1559,6 +1566,9 @@ char32_t get_char32_from_utf32_string_at_pos(const char32_t* s, size_t pos)
 }
 
 /******   convenience   *****/
+size_t length_of_utf8_string(const char* s) {return utf32_size_of_utf8_string(s); }
+size_t length_of_utf16_string(const char16_t* s) {return utf32_size_of_utf16_string(s); }
+size_t length_of_utf32_string(const char32_t* s) {return utf32_size_of_utf32_string(s); } // UTF32 length == size
 
 size_t length_of_wchar_string(const wchar_t* s)
 {
@@ -1569,3 +1579,6 @@ size_t length_of_wchar_string(const wchar_t* s)
 #endif
 }
 
+#ifdef __cplusplus
+}
+#endif

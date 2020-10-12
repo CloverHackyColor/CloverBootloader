@@ -2,6 +2,7 @@
 
 //#include "../../OpenCorePkg/Include/Acidanthera/Library/OcMiscLib.h"
 
+extern "C" {
 
 INT32
 FindPattern (
@@ -26,6 +27,8 @@ ApplyPatch (
   IN UINT32        Skip
   );
 
+}
+
 static int breakpoint(int i)
 {
   return i;
@@ -48,6 +51,21 @@ int find_replace_mask_OC_tests()
 
   int32 = FindPattern((UINT8*)"\xC0", (UINT8*)"\xF0", 1, (UINT8*)"\x00\xCC\x00", 3, 0);
   if ( int32 != 1 ) breakpoint(1);
+
+  /*
+   * For OC, the mask pattern must applied to the source, first.
+   * 0xCF & 0xF0 = 0xC0
+   */
+  int32 = FindPattern((UINT8*)"\xCF", (UINT8*)"\xF0", 1, (UINT8*)"\x00\xCC\x00", 3, 0);
+  if ( int32 != -1 ) breakpoint(1);
+
+  // Search in clever
+  int32 = FindPattern((UINT8*)"\x43\x6c\x65\x76\x65\x72", (UINT8*)"\xDF\xFF\xFF\xFF\xFF\xFF", 6, (UINT8*)"\x01\x63\x6c\x65\x76\x65\x72\x02", 8, 0);
+  if ( int32 != 1 ) breakpoint(1);
+  // Search in Clever
+  int32 = FindPattern((UINT8*)"\x43\x6c\x65\x76\x65\x72", (UINT8*)"\xDF\xFF\xFF\xFF\xFF\xFF", 6, (UINT8*)"\x01\x43\x6c\x65\x76\x65\x72\x02", 8, 0);
+  if ( int32 != 1 ) breakpoint(1);
+
 
   // Simple patch of 3 bytes
   {
@@ -91,6 +109,26 @@ int find_replace_mask_OC_tests()
     uint32 = ApplyPatch((UINT8*)"\xC0", (UINT8*)"\xF0", 1,
                        (UINT8*)"\x22", (UINT8*)"\x0F",
                        buf, 3, 0, 0);
+    if ( uint32 != 1 ) breakpoint(1);
+    if ( memcmp(buf, expectedBuf, 3) != 0 ) breakpoint(1);
+  }
+  // Patch clever to clover
+  {
+    UINT8 buf[] = { 0x01, 0x63, 0x6c, 0x65, 0x76, 0x65, 0x72, 0x02 };
+    UINT8 expectedBuf[] = { 0x01, 0x63, 0x6c, 0x6f, 0x76, 0x65, 0x72, 0x02 };
+    uint32 = ApplyPatch((UINT8*)"\x43\x6c\x65\x76\x65\x72", (UINT8*)"\xDF\xFF\xFF\xFF\xFF\xFF", 6,
+                        (UINT8*)"\x43\x6c\x6f\x76\x65\x72", (UINT8*)"\x00\x00\xFF\x00\x00\x00",
+                        buf, 8, 0, 0);
+    if ( uint32 != 1 ) breakpoint(1);
+    if ( memcmp(buf, expectedBuf, 3) != 0 ) breakpoint(1);
+  }
+  // Patch Clever to clover
+  {
+    UINT8 buf[] = { 0x01, 0x43, 0x6c, 0x65, 0x76, 0x65, 0x72, 0x02 };
+    UINT8 expectedBuf[] = { 0x01, 0x43, 0x6c, 0x6f, 0x76, 0x65, 0x72, 0x02 };
+    uint32 = ApplyPatch((UINT8*)"\x43\x6c\x65\x76\x65\x72", (UINT8*)"\xDF\xFF\xFF\xFF\xFF\xFF", 6,
+                        (UINT8*)"\x43\x6c\x6f\x76\x65\x72", (UINT8*)"\x00\x00\xFF\x00\x00\x00",
+                        buf, 8, 0, 0);
     if ( uint32 != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 3) != 0 ) breakpoint(1);
   }

@@ -780,7 +780,7 @@ public:
 	{
 		if ( size<0 ) panic("T* dataSized() -> i < 0");
 		if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) panic("T* dataSized() -> i > MAX_XSIZE");
-		CheckSize((size_t)size);
+		CheckSize((unsigned_type(IntegralType))size);
 		return __String<T, ThisXStringClass>::_data(0);
 	}
 //

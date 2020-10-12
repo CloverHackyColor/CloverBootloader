@@ -2,6 +2,8 @@
  Slice 2012
  */
 
+#include <Platform.h>
+
 #include "../entry_scan/entry_scan.h"
 #include "../entry_scan/loader.h"
 #include "kernel_patcher.h"

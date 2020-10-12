@@ -79,7 +79,12 @@ class XBuffer : public XBuffer_Super
 	size_t size() const { return XRBuffer<T>::size(); }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	void setSize(IntegralType size) { CheckSize(size); XBuffer_Super::m_size = size; };
+	void setSize(IntegralType size) {
+    if ( size<0 ) panic("XBuffer::setSize() -> i < 0");
+    if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) panic("XBuffer::setSize() -> i > MAX_XSIZE");
+    CheckSize((unsigned_type(IntegralType))size);
+    XBuffer_Super::m_size = (unsigned_type(IntegralType))size;
+  };
 
 	void setEmpty() { setSize(0); };
 

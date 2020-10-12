@@ -149,13 +149,16 @@
 		9A838CA7253425A3008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; };
 		9A838CA8253425A4008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; };
 		9A838CA9253425A4008303F5 /* DataPatcher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838A4A253423A5008303F5 /* DataPatcher.c */; };
-		9A838CAC25342626008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
-		9A838CAD25342629008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
-		9A838CAE2534262A008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
-		9A838CAF2534262A008303F5 /* MemoryOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CAB25342626008303F5 /* MemoryOperation.cpp */; };
 		9A838CB025345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
 		9A838CB125345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
 		9A838CB225345E94008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */; };
+		9A838CB425347C36008303F5 /* MemoryOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB325347C36008303F5 /* MemoryOperation.c */; };
+		9A838CBA25348237008303F5 /* BaseMemoryLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB925348237008303F5 /* BaseMemoryLib.c */; };
+		9A838CBB25348530008303F5 /* BaseMemoryLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB925348237008303F5 /* BaseMemoryLib.c */; };
+		9A838CBC25348530008303F5 /* BaseMemoryLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB925348237008303F5 /* BaseMemoryLib.c */; };
+		9A838CBD25348530008303F5 /* BaseMemoryLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB925348237008303F5 /* BaseMemoryLib.c */; };
+		9A838CC0253485C8008303F5 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CBF253485C8008303F5 /* BaseLib.c */; };
+		9A838CC3253485DC008303F5 /* DebugLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CC2253485DC008303F5 /* DebugLib.c */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
@@ -286,22 +289,30 @@
 		9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
 		9A7D518224FC32F700FA1CC3 /* XRBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRBuffer.h; sourceTree = "<group>"; };
 		9A7D518324FC32F700FA1CC3 /* XRBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XRBuffer.cpp; sourceTree = "<group>"; };
-		9A838A4A253423A5008303F5 /* DataPatcher.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; path = DataPatcher.c; sourceTree = "<group>"; };
+		9A838A4A253423A5008303F5 /* DataPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataPatcher.c; sourceTree = "<group>"; };
 		9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = find_replace_mask_Clover_tests.cpp; sourceTree = "<group>"; };
 		9A838CA1253423F0008303F5 /* find_replace_mask_OC_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = find_replace_mask_OC_tests.h; sourceTree = "<group>"; };
 		9A838CA2253423F0008303F5 /* find_replace_mask_Clover_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = find_replace_mask_Clover_tests.h; sourceTree = "<group>"; };
 		9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = find_replace_mask_OC_tests.cpp; sourceTree = "<group>"; };
 		9A838CAA25342626008303F5 /* MemoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryOperation.h; sourceTree = "<group>"; };
-		9A838CAB25342626008303F5 /* MemoryOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryOperation.cpp; sourceTree = "<group>"; };
+		9A838CB325347C36008303F5 /* MemoryOperation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = MemoryOperation.c; sourceTree = "<group>"; };
+		9A838CB52534808A008303F5 /* Uefi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uefi.h; sourceTree = "<group>"; };
+		9A838CB825348237008303F5 /* BaseMemoryLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseMemoryLib.h; sourceTree = "<group>"; };
+		9A838CB925348237008303F5 /* BaseMemoryLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BaseMemoryLib.c; sourceTree = "<group>"; };
+		9A838CBE253485C8008303F5 /* BaseLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseLib.h; sourceTree = "<group>"; };
+		9A838CBF253485C8008303F5 /* BaseLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BaseLib.c; sourceTree = "<group>"; };
+		9A838CC1253485DC008303F5 /* DebugLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugLib.h; sourceTree = "<group>"; };
+		9A838CC2253485DC008303F5 /* DebugLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DebugLib.c; sourceTree = "<group>"; };
+		9A838CC425348610008303F5 /* OcMiscLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcMiscLib.h; sourceTree = "<group>"; };
+		9A838CC52534933F008303F5 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
+		9A838CC62534946C008303F5 /* ProcessorBind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		9A9AEB8B243F73CE00FBD7D8 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
-		9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = unicode_conversions.cpp; sourceTree = "<group>"; };
+		9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c.preprocessed; fileEncoding = 4; path = unicode_conversions.cpp; sourceTree = "<group>"; };
 		9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon_test.h; sourceTree = "<group>"; };
 		9A9EA7F7245AAB310076EC02 /* XToolsCommon_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XToolsCommon_test.cpp; sourceTree = "<group>"; };
-		9AA045732425D200000D6970 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
-		9AA045742425D200000D6970 /* IO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IO.cpp; sourceTree = "<group>"; };
 		9AA045882425F94D000D6970 /* printf_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test.h"; sourceTree = "<group>"; };
 		9AA045892425F94D000D6970 /* printf_lite-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printf_lite-test.cpp"; sourceTree = "<group>"; };
 		9AC790112452C45A0004FBE9 /* abort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abort.h; sourceTree = "<group>"; };
@@ -433,7 +444,7 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				9A838CAB25342626008303F5 /* MemoryOperation.cpp */,
+				9A838CB325347C36008303F5 /* MemoryOperation.c */,
 				9A838CAA25342626008303F5 /* MemoryOperation.h */,
 				9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */,
 				9A36E51D24F3B82A007A1107 /* b64cdecode.h */,
@@ -531,9 +542,34 @@
 			path = OcMiscLib;
 			sourceTree = "<group>";
 		};
+		9A838CB6253481F5008303F5 /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				9A838CB7253481FF008303F5 /* Library */,
+			);
+			path = Include;
+			sourceTree = "<group>";
+		};
+		9A838CB7253481FF008303F5 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				9A838CB825348237008303F5 /* BaseMemoryLib.h */,
+				9A838CB925348237008303F5 /* BaseMemoryLib.c */,
+				9A838CBE253485C8008303F5 /* BaseLib.h */,
+				9A838CBF253485C8008303F5 /* BaseLib.c */,
+				9A838CC1253485DC008303F5 /* DebugLib.h */,
+				9A838CC2253485DC008303F5 /* DebugLib.c */,
+				9A838CC425348610008303F5 /* OcMiscLib.h */,
+				9A838CC52534933F008303F5 /* Base.h */,
+				9A838CC62534946C008303F5 /* ProcessorBind.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
 		9A9223242402FD1000483CBA = {
 			isa = PBXGroup;
 			children = (
+				9A838CB6253481F5008303F5 /* Include */,
 				9A83876E253423A4008303F5 /* OpenCorePkg */,
 				9A36E51C24F3B5B4007A1107 /* rEFIt_UEFI */,
 				9A1A3FD82424BC22008C89EB /* MemLogLibDefault */,
@@ -563,24 +599,15 @@
 				9A9223302402FD1000483CBA /* main.cpp */,
 				9A0B085D240300E000E2B470 /* Platform.cpp */,
 				9A92234D2402FD9500483CBA /* Platform.h */,
-				9AA045782425D44D000D6970 /* PoolPrint */,
 				9A28CD13241B9FEE00F3D247 /* posix.h */,
 				9AF4156E242CBC6000D2644C /* printf_lite-conf.h */,
 				9AF4156B242CBB5600D2644C /* printf_lite-test-cpp_conf.h */,
 				9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */,
 				9A28CD49241F437C00F3D247 /* xcode_utf_fixed.h */,
+				9A838CB52534808A008303F5 /* Uefi.h */,
 			);
 			name = Main;
 			path = src;
-			sourceTree = "<group>";
-		};
-		9AA045782425D44D000D6970 /* PoolPrint */ = {
-			isa = PBXGroup;
-			children = (
-				9AA045742425D200000D6970 /* IO.cpp */,
-				9AA045732425D200000D6970 /* IO.h */,
-			);
-			path = PoolPrint;
 			sourceTree = "<group>";
 		};
 		9AD469462452B30500D6D0DB /* gui */ = {
@@ -705,7 +732,6 @@
 			files = (
 				9A36E50524F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50124F3B537007A1107 /* TagDict.cpp in Sources */,
-				9A838CAD25342629008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50D24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A36E52D24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -739,6 +765,7 @@
 				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E52024F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
+				9A838CBB25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1D24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458B2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A36E51524F3B537007A1107 /* TagFloat.cpp in Sources */,
@@ -752,7 +779,6 @@
 			files = (
 				9A36E50724F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50324F3B537007A1107 /* TagDict.cpp in Sources */,
-				9A838CAF2534262A008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50F24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */,
 				9A36E52F24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -786,6 +812,7 @@
 				9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */,
 				9A36E52224F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */,
+				9A838CBD25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9A2A7C7F24576CCE00422263 /* printf_lite-test.cpp in Sources */,
 				9A36E51724F3B537007A1107 /* TagFloat.cpp in Sources */,
@@ -799,7 +826,6 @@
 			files = (
 				9A36E50624F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50224F3B537007A1107 /* TagDict.cpp in Sources */,
-				9A838CAE2534262A008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50E24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A36E52E24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -833,6 +859,7 @@
 				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E52124F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */,
+				9A838CBC25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1E24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458C2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A36E51624F3B537007A1107 /* TagFloat.cpp in Sources */,
@@ -844,7 +871,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A838CAC25342626008303F5 /* MemoryOperation.cpp in Sources */,
 				9A36E50424F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
@@ -860,6 +886,8 @@
 				9A36E51824F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7F8245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52624F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A838CB425347C36008303F5 /* MemoryOperation.c in Sources */,
+				9A838CC0253485C8008303F5 /* BaseLib.c in Sources */,
 				9A838CA4253423F0008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD4B241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
@@ -882,7 +910,9 @@
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50824F3B537007A1107 /* TagDate.cpp in Sources */,
 				9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */,
+				9A838CC3253485DC008303F5 /* DebugLib.c in Sources */,
 				9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */,
+				9A838CBA25348237008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1C24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458A2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A36E51424F3B537007A1107 /* TagFloat.cpp in Sources */,
@@ -970,7 +1000,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_ASSIGN_ENUM = YES;
@@ -1042,7 +1072,10 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/src",
+					"$(PROJECT_DIR)/Include",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1061,7 +1094,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_ASSIGN_ENUM = YES;
@@ -1128,7 +1161,10 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/src";
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/src",
+					"$(PROJECT_DIR)/Include",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

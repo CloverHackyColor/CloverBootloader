@@ -11,11 +11,11 @@
 
 
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <Uefi.h>
 
 
 //#include <Library/BaseLib.h>

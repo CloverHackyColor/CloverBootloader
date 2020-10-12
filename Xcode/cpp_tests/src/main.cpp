@@ -29,5 +29,5 @@ printf("sizeof(size_t)=%zu\n", sizeof(size_t));
 //printf("%zd\n", (size_t)MAX_UINT64);
 #endif
 
-	return all_tests();
+	return all_tests() ? 0 : -1 ;
 }

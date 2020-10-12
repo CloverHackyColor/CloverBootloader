@@ -5,9 +5,7 @@
 
 #include "MemoryOperation.h"
 
-#include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
 
 
 //

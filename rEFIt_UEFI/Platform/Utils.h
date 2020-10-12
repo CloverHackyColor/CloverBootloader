@@ -18,6 +18,17 @@
 
 #include "../cpp_foundation/XString.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <Library/BaseLib.h>
+  
+#ifdef __cplusplus
+}
+#endif
+
+
 //Unicode
 #define IS_COMMA(a)                ((a) == L',')
 #define IS_HYPHEN(a)               ((a) == L'-')

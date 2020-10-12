@@ -82,57 +82,7 @@ const char* efiStrError(EFI_STATUS Status)
 }
 
 
-RETURN_STATUS
-EFIAPI
-AsciiStrDecimalToUintnS (
-  IN  CONST CHAR8              *String,
-  OUT       CHAR8              **EndPointer,  OPTIONAL
-  OUT       UINTN              *Data
-  )
-{
-  *Data = 0;
-  if ( !String ) return RETURN_INVALID_PARAMETER;
-  int ret = sscanf(String, "%llu", Data);
-  if ( EndPointer ) *EndPointer += ret;
-  if ( ret == 0 ) return RETURN_INVALID_PARAMETER;
-  return RETURN_SUCCESS;
-}
 
-UINTN EFIAPI AsciiStrHexToUintn(IN CONST CHAR8 *String)
-{
-  if ( !String ) return RETURN_INVALID_PARAMETER;
-  UINTN value = 0;
-  int ret = sscanf(String, "%llx", &value);
-  if ( ret == 0 ) return 0;
-  return value;
-}
-
-UINTN
-EFIAPI
-AsciiStrDecimalToUintn (
-  IN      CONST CHAR8               *String
-  )
-{
-  if ( !String ) panic("AsciiStrDecimalToUintn : !String");
-  UINTN value;
-  int ret = sscanf(String, "%llu", &value);
-  if ( ret == 0 ) return 0;
-  return value;
-}
-
-
-
-
-
-
-UINTN StrLen(const wchar_t* String)
-{
-	return size_of_utf_string(String);
-}
-UINTN StrLen(const char16_t* String)
-{
-	return size_of_utf_string(String);
-}
 
 
 
@@ -161,34 +111,9 @@ void FreePool(const void* Buffer)
 	free((void*)Buffer);
 }
 
-void ZeroMem(void *Destination, UINTN Length)
-{
-	memset(Destination, 0, (size_t)Length);
-}
-
-void SetMem(void *Destination, UINTN Length, char c)
-{
-	memset(Destination, c, (size_t)Length);
-}
-
-void CopyMem(void *Destination, const void *Source, UINTN Length)
-{
-	memmove(Destination, Source, (size_t)Length);
-}
-
-INTN CompareMem(const void* DestinationBuffer, const void* SourceBuffer, UINTN Length)
-{
-  return memcmp(SourceBuffer, DestinationBuffer, Length);
-}
-
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src)
 {
 	CHAR16* newS = (CHAR16*)malloc((wcslen_fixed(Src)+1)*sizeof(wchar_t));
 	memcpy(newS, Src, (wcslen_fixed(Src)+1)*sizeof(wchar_t));
 	return newS;
-}
-
-CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString)
-{
-	return (CHAR16*)wcsstr_fixed(String, SearchString);
 }
