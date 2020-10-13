@@ -3057,11 +3057,11 @@ GetEarlyUserSettings (
       // Booter Quirks
 //      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
 //      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = gSettings.KernelAndKextPatches.KPKernelPm;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
 
 //      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock"); //
 //      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = gSettings.KernelAndKextPatches.KPKernelXCPM;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = gSettings.KernelAndKextPatches.KPKernelPm;
 
       Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
       gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
