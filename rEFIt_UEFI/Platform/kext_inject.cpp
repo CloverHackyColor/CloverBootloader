@@ -103,7 +103,7 @@ void toLowerStr(CHAR8 *tstr, IN CONST CHAR8 *str) {
     *tstr = '\0';
 }
 
-BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagDict* dict)
+BOOLEAN LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
 {
     BOOLEAN inject = TRUE;
     const TagStruct*  osBundleRequiredTag;
@@ -115,8 +115,8 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagDict* dict)
       osbundlerequired.lowerAscii();
     }
 
-    if (OSTYPE_IS_OSX_RECOVERY(loaderType) ||
-        OSTYPE_IS_OSX_INSTALLER(loaderType)) {
+    if (OSTYPE_IS_OSX_RECOVERY(LoaderType) ||
+        OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
         if ( osbundlerequired != "root"_XS8  &&
              osbundlerequired != "local"_XS8  &&
              osbundlerequired != "console"_XS8  &&
@@ -131,6 +131,82 @@ BOOLEAN checkOSBundleRequired(UINT8 loaderType, const TagDict* dict)
 //extern void KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
 //extern void AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
+//XStringW infoPlistPath = getKextPlist(KextEntry);
+void LOADER_ENTRY::getKextPlist(const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents,  XStringW* OutName)
+{
+  EFI_STATUS  Status;
+  XStringW    TempName;
+  UINT8*      infoDictBuffer = NULL;
+  UINTN       infoDictBufferLength = 0;
+  
+  TempName = SWPrintf("%ls\\%ls", KextEntry.FileName.wc_str(), L"Contents\\Info.plist");
+  Status = egLoadFile(SelfVolume->RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
+
+  if (EFI_ERROR(Status)) {
+    //try to find a planar kext, without Contents
+    TempName = SWPrintf("%ls\\%ls", KextEntry.FileName.wc_str(), L"Info.plist");
+    infoDictBufferLength = 0;
+    Status = egLoadFile(SelfVolume->RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
+    if (EFI_ERROR(Status)) {
+      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), efiStrError(Status));
+      return; // L""_XSW;
+    }
+    *NoContents = TRUE;
+  } else {
+    *NoContents = FALSE;
+  }
+  *OutName = TempName;
+  return; // &TempName;
+}
+
+//TagDict*    dict = getInfoPlist(infoPlistPath);
+TagDict* LOADER_ENTRY::getInfoPlist(const XStringW& infoPlistPath)
+{
+  EFI_STATUS  Status;
+  UINT8*      infoDictBuffer = NULL;
+  UINTN       infoDictBufferLength = 0;
+  TagDict*    dict = NULL;
+
+  Status = egLoadFile(SelfVolume->RootDir, infoPlistPath.wc_str(), &infoDictBuffer, &infoDictBufferLength);
+  if (!EFI_ERROR(Status)) {  //double check
+    if( ParseXML((CHAR8*)infoDictBuffer, &dict, infoDictBufferLength)!=0 ) {
+      MsgLog("Failed to parse Info.plist: %ls\n", infoPlistPath.wc_str());
+      dict =  NULL;
+    }
+    FreePool(infoDictBuffer);
+    return dict;
+  }
+  return NULL;
+}
+
+//XStringW execpath = getKextExecPath(KextEntry, dict);
+void LOADER_ENTRY::getKextExecPath(const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents, OUT XStringW* OutName)
+{
+  EFI_STATUS  Status;
+  const TagStruct* prop = NULL;
+  XStringW    TempName = L""_XSW;
+  UINT8*      executableFatBuffer = NULL;
+  UINTN       executableBufferLength = 0;
+  
+  prop = dict->propertyForKey("CFBundleExecutable");
+  if( prop != NULL && prop->isString() && prop->getString()->stringValue().notEmpty() ) {
+    XString8 Executable = prop->getString()->stringValue();
+    if (NoContents) {
+      TempName = SWPrintf("%ls\\%s", KextEntry.FileName.wc_str(), Executable.c_str());
+    } else {
+      TempName = SWPrintf("%ls\\Contents\\MacOS\\%s", KextEntry.FileName.wc_str(), Executable.c_str());
+    }
+    Status = egLoadFile(SelfVolume->RootDir, TempName.wc_str(), &executableFatBuffer, &executableBufferLength);
+    if (EFI_ERROR(Status)) {
+      MsgLog("Failed to load kext executable: %ls\n", KextEntry.FileName.wc_str());
+      return;
+    }
+    *OutName = TempName;
+  }
+  return; //no executable
+}
+
+//it seems no more used? Or???
 EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext_v)
 {
   EFI_STATUS  Status;
@@ -168,7 +244,7 @@ EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileN
     return EFI_NOT_FOUND;
   }
     
-  inject = checkOSBundleRequired(LoaderType, dict);
+  inject = checkOSBundleRequired(dict);
   if(!inject) {
       MsgLog("Skipping kext injection by OSBundleRequired : %s\n", FileName.c_str());
       return EFI_UNSUPPORTED;

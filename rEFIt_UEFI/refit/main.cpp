@@ -735,11 +735,11 @@ MsgLog("debugStartImageWithOC\n");
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     EFI_DEVICE_PATH_PROTOCOL* DevicePath = DevicePathFromHandle(Handles[HandleIndex]);
     CHAR16* UnicodeDevicePath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
-MsgLog("debugStartImageWithOC : path %ls\n", UnicodeDevicePath);
+    MsgLog("debugStartImageWithOC : path %ls\n", UnicodeDevicePath);
     if ( StrCmp(devicePathToLookFor.wc_str(), UnicodeDevicePath) == 0 ) break;
   }
   if ( HandleIndex < HandleCount )
-{
+  {
     EFI_DEVICE_PATH_PROTOCOL* jfkImagePath = FileDevicePath(Handles[HandleIndex], L"\\System\\Library\\CoreServices\\boot.efi");
     CHAR16* UnicodeDevicePath = ConvertDevicePathToText (jfkImagePath, FALSE, FALSE); (void)UnicodeDevicePath;
 
@@ -1108,7 +1108,31 @@ DBG("Beginning OC\n");
     }else{
       DBG("Cannot find kext bundlePath at '%s'\n", bundlePath.c_str());
     }
+#if 1
+    //CFBundleExecutable
+    BOOLEAN     NoContents = FALSE;
+    XStringW    infoPlistPath = L""_XSW;
+    getKextPlist(KextEntry, &NoContents, &infoPlistPath);
+    TagDict*    dict = getInfoPlist(infoPlistPath);
+    BOOLEAN inject = checkOSBundleRequired(dict);
+    if (inject) {
+      if ( infoPlistPath.notEmpty()) {
+        if (NoContents) {
+          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Info.plist");
+        } else {
+          OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistPath, "Contents/Info.plist");
+        }
+      }else{
+        DBG("Cannot find kext info.plist at '%ls'\n", KextEntry.FileName.wc_str());
+      }
+      XStringW execpath;
+      getKextExecPath(KextEntry, dict, NoContents, &execpath);
+      if (execpath.notEmpty()) {
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("%ls", execpath.wc_str()).c_str());
+      }
+    }
 
+#else
     XStringW execpath = S8Printf("Contents\\MacOS\\%ls", KextEntry.FileName.subString(0, KextEntry.FileName.rindexOf(".")).wc_str());
     XStringW fullPath = SWPrintf("%s\\%ls", OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath), execpath.wc_str());
     if ( FileExists(&self.getCloverDir(), fullPath) ) {
@@ -1120,10 +1144,12 @@ DBG("Beginning OC\n");
     }else{
       DBG("Cannot find kext info.plist at '%ls'\n", infoPlistPath.wc_str());
     }
+#endif
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageData = NULL;
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ImageDataSize = 0;
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistData = NULL;
     mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->PlistDataSize = 0;
+
   }
 
 //DelegateKernelPatches();

@@ -498,6 +498,11 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				virtual LOADER_ENTRY* getLOADER_ENTRY() { return this; };
         LOADER_ENTRY* SubMenuKextInjectMgmt();
         void DelegateKernelPatches();
+        
+        BOOLEAN checkOSBundleRequired(const TagDict* dict);
+        void getKextPlist(const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents, XStringW*  plist );
+        TagDict* getInfoPlist(const XStringW& infoPlistPath);
+        void getKextExecPath(const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents, XStringW* exec );
 			} ;
 
 
