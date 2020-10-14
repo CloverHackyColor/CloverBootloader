@@ -1013,7 +1013,7 @@ void ApplyInputs(void)
     if (OldChosenDsdt == 0xFFFF) {
       gSettings.DsdtName = L"BIOS.aml"_XSW;
     } else {
-		gSettings.DsdtName.SWPrintf("%ls", DsdtsList[OldChosenDsdt]);
+      gSettings.DsdtName.SWPrintf("%ls", DsdtsList[OldChosenDsdt]);
     }
   }
   i++; //117

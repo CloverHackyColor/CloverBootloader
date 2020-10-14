@@ -1809,7 +1809,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
           pEntryR++;
           pEntry += sizeof(UINT64);
         } else {
-			DBG("RSDT entry %llu = 0 ... skip it\n", Index);
+          DBG("RSDT entry %llu = 0 ... skip it\n", Index);
           Xsdt->Header.Length -= sizeof(UINT64);
           pEntryR++;
         }
@@ -1970,18 +1970,20 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     //REVIEW: memory leak... buffer
   }
 
-  // Jief : Do we really need a specific DSDT per volume ?
+  //Slice: the idea was from past
+  // first priority DSDT.aml from the root of booted volume. It allows to keep different DSDT for different systems
+  // second priority is DSDT from OEM folder
+  // third priority is /EFI/CLOVER/ACPI/patched/DSDT*.aml choosen from GUI.
+  
   if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
     Status = egLoadFile(Volume->RootDir, PathDsdt.wc_str(), &buffer, &bufferLen);
-    //REVIEW: memory leak... buffer
   }
 
   //  Jief : may I suggest to remove that. Loading from outside of OemPath might be confusing
   if ( EFI_ERROR(Status)  &&  FileExists(&self.getCloverDir(), acpiPath) ) {
     DBG("DSDT found in Clover volume: %ls\\%ls\n", self.getCloverDirPathAsXStringW().wc_str(), acpiPath.wc_str());
     Status = egLoadFile(&self.getCloverDir(), acpiPath.wc_str(), &buffer, &bufferLen);
-    //REVIEW: memory leak... buffer
   }
   //
   //apply DSDT loaded from a file into buffer
@@ -1989,7 +1991,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   //
   DsdtLoaded = FALSE;
   if (!EFI_ERROR(Status)) {
-    //custom DSDT is loaded so not need to drop _DSM - NO! We need to drop them!
     // if we will apply fixes, allocate additional space
     bufferLen = bufferLen + bufferLen / 8;
     dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
@@ -2004,13 +2005,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     if(!EFI_ERROR(Status)) {
       //      DBG("page is allocated, write DSDT into\n");
       CopyMem((void*)(UINTN)dsdt, buffer, bufferLen);
-
+      //once we copied buffer to other place we can free the buffer
       FadtPointer->Dsdt  = (UINT32)dsdt;
       FadtPointer->XDsdt = dsdt;
       FixChecksum(&FadtPointer->Header);
       DsdtLoaded = TRUE;
     }
   }
+  if(buffer) FreePool(buffer); //the buffer is allocated if egLoadFile() is success. Else the pointer must be nullptr
 
   if (!DsdtLoaded) {
     // allocate space for fixes
@@ -2020,6 +2022,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
     //    bufferLen = bufferLen + bufferLen / 8;
     //    DBG(" new len = 0x%X\n", bufferLen);
 
+    //Slice: new buffer is greater then origin by 12.5%. It is dirty hack but we live with it
+    // there will be the sense reallocate buffer if one patch requires increasing the buffer
+    // this is headache to predict how many new bytes we need.
     dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS;
     Status = gBS->AllocatePages(AllocateMaxAddress,
                                 EfiACPIReclaimMemory,
@@ -2028,7 +2033,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status)) {
-      CopyMem((void*)(UINTN)dsdt, TableHeader, bufferLen);
+      CopyMem((void*)(UINTN)dsdt, TableHeader, bufferLen); //can't free TableHeader because we are not allocate it
 
       FadtPointer->Dsdt  = (UINT32)dsdt;
       FadtPointer->XDsdt = dsdt;
@@ -2332,7 +2337,7 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
 	    DBG("DSDT at 0x%llX injected to FADT 0x%llx\n", Dsdt, (UINTN)FadtPointer);
     }
 
-    FreePool(Buffer);
+    if(Buffer) FreePool(Buffer);
   }
 
   return Status;
