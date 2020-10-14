@@ -836,7 +836,7 @@ void LOADER_ENTRY::AddDefaultMenu()
       SubEntry->Title.SWPrintf("Boot %s with selected options", macOS);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
-    
+#if 0
     SubEntry = getPartiallyDuplicatedEntry();
     if (SubEntry) {
       SubEntry->Title.SWPrintf("Boot %s with injected kexts", macOS);
@@ -852,7 +852,7 @@ void LOADER_ENTRY::AddDefaultMenu()
       SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
-
+#endif
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(), true);
     SubScreen->AddMenuInfo_f("=== boot-args ===");
     if (!KernelIs64BitOnly) {
