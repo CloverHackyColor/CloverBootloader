@@ -131,32 +131,27 @@ BOOLEAN LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
 //extern void KernelAndKextPatcherInit(IN LOADER_ENTRY *Entry);
 //extern void AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N, LOADER_ENTRY *Entry);
 
-//XStringW infoPlistPath = getKextPlist(KextEntry);
-void LOADER_ENTRY::getKextPlist(const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents,  XStringW* OutName)
+//XStringW infoPlistPath = getKextPlist(dir, KextEntry, &NoContents);
+XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents)
 {
   EFI_STATUS  Status;
   XStringW    TempName;
-  UINT8*      infoDictBuffer = NULL;
-  UINTN       infoDictBufferLength = 0;
   
-  TempName = SWPrintf("%ls\\%ls", KextEntry.FileName.wc_str(), L"Contents\\Info.plist");
-  Status = egLoadFile(SelfVolume->RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
+  TempName = SWPrintf("%ls\\%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str(), L"Contents\\Info.plist");
+  MsgLog("info plist path: %ls\n", TempName.wc_str());
 
-  if (EFI_ERROR(Status)) {
+  if (!FileExists(&self.getCloverDir(), TempName)) {
     //try to find a planar kext, without Contents
-    TempName = SWPrintf("%ls\\%ls", KextEntry.FileName.wc_str(), L"Info.plist");
-    infoDictBufferLength = 0;
-    Status = egLoadFile(SelfVolume->RootDir, TempName.wc_str(), &infoDictBuffer, &infoDictBufferLength);
-    if (EFI_ERROR(Status)) {
+    TempName = SWPrintf("%ls\\%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str(), L"Info.plist");
+    if (!FileExists(&self.getCloverDir(), TempName)) {
       MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), efiStrError(Status));
-      return; // L""_XSW;
+      return L""_XSW;
     }
     *NoContents = TRUE;
   } else {
     *NoContents = FALSE;
   }
-  *OutName = TempName;
-  return; // &TempName;
+  return TempName;
 }
 
 //TagDict*    dict = getInfoPlist(infoPlistPath);
@@ -167,7 +162,7 @@ TagDict* LOADER_ENTRY::getInfoPlist(const XStringW& infoPlistPath)
   UINTN       infoDictBufferLength = 0;
   TagDict*    dict = NULL;
 
-  Status = egLoadFile(SelfVolume->RootDir, infoPlistPath.wc_str(), &infoDictBuffer, &infoDictBufferLength);
+  Status = egLoadFile(&self.getCloverDir(), infoPlistPath.wc_str(), &infoDictBuffer, &infoDictBufferLength);
   if (!EFI_ERROR(Status)) {  //double check
     if( ParseXML((CHAR8*)infoDictBuffer, &dict, infoDictBufferLength)!=0 ) {
       MsgLog("Failed to parse Info.plist: %ls\n", infoPlistPath.wc_str());
@@ -179,31 +174,27 @@ TagDict* LOADER_ENTRY::getInfoPlist(const XStringW& infoPlistPath)
   return NULL;
 }
 
-//XStringW execpath = getKextExecPath(KextEntry, dict);
-void LOADER_ENTRY::getKextExecPath(const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents, OUT XStringW* OutName)
+//XString8 execpath = getKextExecPath(dir, KextEntry, dict, NoContents);
+XString8  LOADER_ENTRY::getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents)
 {
-  EFI_STATUS  Status;
   const TagStruct* prop = NULL;
-  XStringW    TempName = L""_XSW;
-  UINT8*      executableFatBuffer = NULL;
-  UINTN       executableBufferLength = 0;
+  XString8    TempName;
   
   prop = dict->propertyForKey("CFBundleExecutable");
   if( prop != NULL && prop->isString() && prop->getString()->stringValue().notEmpty() ) {
-    XString8 Executable = prop->getString()->stringValue();
+    const XString8& Executable = prop->getString()->stringValue();
     if (NoContents) {
-      TempName = SWPrintf("%ls\\%s", KextEntry.FileName.wc_str(), Executable.c_str());
+      TempName = S8Printf("%s", Executable.c_str());
     } else {
-      TempName = SWPrintf("%ls\\Contents\\MacOS\\%s", KextEntry.FileName.wc_str(), Executable.c_str());
+      TempName = S8Printf("Contents\\MacOS\\%s", Executable.c_str());
     }
-    Status = egLoadFile(SelfVolume->RootDir, TempName.wc_str(), &executableFatBuffer, &executableBufferLength);
-    if (EFI_ERROR(Status)) {
+    const XStringW& fullPath = SWPrintf("%ls\\%ls\\%s", dirPath.wc_str(), KextEntry.FileName.wc_str(), TempName.c_str());
+    if (!FileExists(&self.getCloverDir(), fullPath)) {
       MsgLog("Failed to load kext executable: %ls\n", KextEntry.FileName.wc_str());
-      return;
+      return ""_XS8; //no executable
     }
-    *OutName = TempName;
   }
-  return; //no executable
+  return TempName;
 }
 
 //it seems no more used? Or???

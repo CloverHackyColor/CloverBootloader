@@ -1102,7 +1102,9 @@ DBG("Beginning OC\n");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
 
-    XString8 bundlePath = S8Printf("%ls\\%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
+    XStringW dirPath = SWPrintf("%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str());
+//    XString8 bundlePath = S8Printf("%ls\\%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
+    XString8 bundlePath = S8Printf("%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str());
     if ( FileExists(&self.getCloverDir(), bundlePath) ) {
       OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->BundlePath, bundlePath.c_str());
     }else{
@@ -1110,10 +1112,9 @@ DBG("Beginning OC\n");
     }
 #if 1
     //CFBundleExecutable
-    BOOLEAN     NoContents = FALSE;
-    XStringW    infoPlistPath = L""_XSW;
-    getKextPlist(KextEntry, &NoContents, &infoPlistPath);
-    TagDict*    dict = getInfoPlist(infoPlistPath);
+    BOOLEAN   NoContents = FALSE;
+    XStringW  infoPlistPath = getKextPlist(dirPath, KextEntry, &NoContents); //it will be fullPath, including dir
+    TagDict*  dict = getInfoPlist(infoPlistPath);
     BOOLEAN inject = checkOSBundleRequired(dict);
     if (inject) {
       if ( infoPlistPath.notEmpty()) {
@@ -1125,10 +1126,10 @@ DBG("Beginning OC\n");
       }else{
         DBG("Cannot find kext info.plist at '%ls'\n", KextEntry.FileName.wc_str());
       }
-      XStringW execpath;
-      getKextExecPath(KextEntry, dict, NoContents, &execpath);
+      XString8 execpath = getKextExecPath(dirPath, KextEntry, dict, NoContents);
       if (execpath.notEmpty()) {
-        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, S8Printf("%ls", execpath.wc_str()).c_str());
+        OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->ExecutablePath, execpath.c_str());
+        DBG("assign executable as '%s'\n", execpath.c_str());
       }
     }
 

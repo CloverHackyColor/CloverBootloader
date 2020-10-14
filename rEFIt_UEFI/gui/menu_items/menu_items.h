@@ -500,9 +500,9 @@ class REFIT_ABSTRACT_MENU_ENTRY
         void DelegateKernelPatches();
         
         BOOLEAN checkOSBundleRequired(const TagDict* dict);
-        void getKextPlist(const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents, XStringW*  plist );
+        XStringW getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents);
         TagDict* getInfoPlist(const XStringW& infoPlistPath);
-        void getKextExecPath(const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents, XStringW* exec );
+        XString8 getKextExecPath(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, TagDict* dict, BOOLEAN NoContents);
 			} ;
 
 
