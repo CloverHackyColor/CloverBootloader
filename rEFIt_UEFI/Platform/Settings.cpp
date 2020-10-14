@@ -1719,7 +1719,7 @@ FillinCustomEntry (
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
     UINTN DataLen = 0;
-    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+    UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
     if (TmpData) {
       if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
         Entry->DriveImage.setFilled();
@@ -2092,14 +2092,14 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
       Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
   }
 
-  Prop = DictPointer->propertyForKey("FullTitle");
-  if (Prop != NULL && (Prop->isString())) {
-    Entry->FullTitle = Prop->getString()->stringValue();
-  }
-
   Prop = DictPointer->propertyForKey("Title");
   if (Prop != NULL && (Prop->isString())) {
     Entry->Title = Prop->getString()->stringValue();
+  }
+
+  Prop = DictPointer->propertyForKey("FullTitle");
+  if (Prop != NULL && (Prop->isString())) {
+    Entry->FullTitle = Prop->getString()->stringValue();
   }
 
   Prop = DictPointer->propertyForKey("Image");
