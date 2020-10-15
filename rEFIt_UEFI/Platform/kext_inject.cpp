@@ -134,7 +134,6 @@ BOOLEAN LOADER_ENTRY::checkOSBundleRequired(const TagDict* dict)
 //XStringW infoPlistPath = getKextPlist(dir, KextEntry, &NoContents);
 XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT& KextEntry, BOOLEAN* NoContents)
 {
-  EFI_STATUS  Status;
   XStringW    TempName;
   
   TempName = SWPrintf("%ls\\%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str(), L"Contents\\Info.plist");
@@ -144,7 +143,7 @@ XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT
     //try to find a planar kext, without Contents
     TempName = SWPrintf("%ls\\%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str(), L"Info.plist");
     if (!FileExists(&self.getCloverDir(), TempName)) {
-      MsgLog("Failed to load extra kext : %ls status=%s\n", TempName.wc_str(), efiStrError(Status));
+      MsgLog("Failed to load extra kext : %ls \n", TempName.wc_str());
       return L""_XSW;
     }
     *NoContents = TRUE;

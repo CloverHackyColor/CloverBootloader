@@ -1004,12 +1004,18 @@ DBG("Beginning OC\n");
   #endif
 
 #endif
+    
+    
 
   if ( GlobalConfig.DebugLog ) {
     mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
     mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
 //    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true; // already done by Clover ?
+#ifndef LESS_DEBUG
     mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80400042;
+#else
+    mOpenCoreConfiguration.Misc.Debug.DisplayLevel = 0x80000042;
+#endif
     mOpenCoreConfiguration.Misc.Debug.Target = 0x41;
   }else{
 #ifdef JIEF_DEBUG

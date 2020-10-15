@@ -3080,8 +3080,9 @@ GetEarlyUserSettings (
       Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
       gSettings.KernelAndKextPatches.OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
 
-      Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
+ //     Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
+ //     gSettings.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
 
       Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
       gSettings.KernelAndKextPatches.OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);

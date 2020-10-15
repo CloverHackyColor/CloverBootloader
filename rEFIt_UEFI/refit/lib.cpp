@@ -163,7 +163,7 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
   self.initialize(ImageHandle);
-  DBG("SelfDirPath = %ls\n", self.getCloverDirPathAsXStringW().wc_str());
+//  DBG("SelfDirPath = %ls\n", self.getCloverDirPathAsXStringW().wc_str());
   return EFI_SUCCESS;
 }
 
