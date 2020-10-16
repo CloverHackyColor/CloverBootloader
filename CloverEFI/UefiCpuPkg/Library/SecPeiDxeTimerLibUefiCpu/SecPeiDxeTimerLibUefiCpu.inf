@@ -1,0 +1,63 @@
+## @file
+# Instance of Timer Library only using CPU resources.
+#
+# Timer Library that only uses CPU resources to provide calibrated delays
+#  on IA-32, x64, and IPF.
+# Note: Because CPU Local APIC and ITC could be programmed by OS, it cannot be
+#  used by SMM drivers and runtime drivers, ACPI timer is recommended for SMM
+#  drivers and runtime drivers.
+#
+# This library differs with the SecPeiDxeTimerLibCpu library in the MdePkg in
+# that it uses the local APIC library so that it supports x2APIC mode.
+#
+# Copyright (c) 2010, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php.
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = SecPeiDxeTimerLibUefiCpu
+  FILE_GUID                      = 4FFF2014-2086-4ee6-9B58-886D1967861C
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = TimerLib|BASE DXE_CORE DXE_DRIVER DXE_SAL_DRIVER PEIM PEI_CORE SEC UEFI_APPLICATION UEFI_DRIVER
+
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF
+#
+
+[Sources.Ia32, Sources.X64]
+  X86TimerLib.c
+
+[Sources.IPF]
+  IpfTimerLib.c
+
+
+[Packages]
+  MdePkg/MdePkg.dec
+  CloverEFI/UefiCpuPkg/UefiCpuPkg.dec
+
+[LibraryClasses]
+  BaseLib
+
+[LibraryClasses.IA32, LibraryClasses.X64]
+  PcdLib
+  DebugLib
+  LocalApicLib
+
+[LibraryClasses.IPF]
+  PalLib
+
+
+[Pcd.IA32, Pcd.X64]
+  gEfiMdePkgTokenSpaceGuid.PcdFSBClock  ## CONSUMES
+
