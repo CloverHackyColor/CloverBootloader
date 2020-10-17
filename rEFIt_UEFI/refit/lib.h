@@ -329,8 +329,9 @@ void ScanVolumes(void);
 
 REFIT_VOLUME *FindVolumeByName(IN CONST CHAR16 *VolName);
 
-BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST CHAR16 *RelativePath);
-BOOLEAN FileExists(IN CONST EFI_FILE *BaseDir, IN CONST XStringW& RelativePath);
+BOOLEAN FileExists(const EFI_FILE *BaseDir, const CHAR16 *RelativePath);
+BOOLEAN FileExists(const EFI_FILE *BaseDir, const XStringW& RelativePath);
+BOOLEAN FileExists(const EFI_FILE& Root, const XStringW& RelativePath);
 
 inline EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName) { return FileDevicePath(Device, FileName.wc_str()); }
 

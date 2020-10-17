@@ -196,8 +196,8 @@ void ScanTool(void)
 
   //    DBG("Scanning for tools...\n");
   if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_SHELL)) {
-    if (!AddToolEntry(SWPrintf("%ls\\tools\\Shell64U.efi", self.getCloverDirPathAsXStringW().wc_str()), NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
-      AddToolEntry(SWPrintf("%ls\\tools\\Shell64.efi", self.getCloverDirPathAsXStringW().wc_str()), NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
+    if (!AddToolEntry(SWPrintf("%ls\\tools\\Shell64U.efi", self.getCloverDirFullPath().wc_str()), NULL, L"UEFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array)) {
+      AddToolEntry(SWPrintf("%ls\\tools\\Shell64.efi", self.getCloverDirFullPath().wc_str()), NULL, L"EFI Shell 64", SelfVolume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), 'S', NullXString8Array);
     }
   }
 
@@ -222,7 +222,7 @@ void ScanTool(void)
         if (FileExists(&self.getCloverDir(), CLOVER_MEDIA_FILE_NAME)) {
           DBG(" Found Clover\n");
           // Volume->BootType = BOOTING_BY_EFI;
-          AddCloverEntry(SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), CLOVER_MEDIA_FILE_NAME.wc_str()), L"Clover Boot Options", Volume);
+          AddCloverEntry(SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), CLOVER_MEDIA_FILE_NAME.wc_str()), L"Clover Boot Options", Volume);
           break;
         }
       }

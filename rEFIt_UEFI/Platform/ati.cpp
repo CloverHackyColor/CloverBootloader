@@ -1637,11 +1637,13 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   UINT8*  buffer = 0;
 
 	XStringW FileName = SWPrintf("ROM\\%04hX_%04hX.rom", vendor_id, device_id);
-  if (FileExists(&selfOem.getOemDir(), FileName)) {
-	  DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
-    Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
+	if ( selfOem.oemDirExists() ) {
+    if (FileExists(&selfOem.getOemDir(), FileName)) {
+      DBG("Found oem generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
+      Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
+    }
   }
-  if (EFI_ERROR(Status)) {
+  if ( Status == EFI_NOT_FOUND ) {
     if (FileExists(&self.getCloverDir(), FileName)){
 		DBG("Found generic VBIOS ROM file (%04hX_%04hX.rom)\n", vendor_id, device_id);
       Status = egLoadFile(&self.getCloverDir(), FileName.wc_str(), &buffer, &bufferLen);

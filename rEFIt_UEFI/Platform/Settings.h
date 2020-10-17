@@ -16,6 +16,8 @@
 //  INPUT_ITEM        MenuItem;
 //};
 
+extern const char* path_independant;
+
 class HDA_OUTPUTS
 {
 public:

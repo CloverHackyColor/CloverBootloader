@@ -965,7 +965,7 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
       case SCAN_F2:
         SavePreBootLog = TRUE;
         //let it be twice
-        Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG_new);
+        Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
 // Jief : don't write outside SelfDir
 //        if (EFI_ERROR(Status)) {
 //          Status = SaveBooterLog(NULL, PREBOOT_LOG);
@@ -1959,10 +1959,10 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
     case TEXT_CORNER_REVISION:
       // Display Clover boot volume
       if (SelfVolume->VolLabel.notEmpty()  &&  SelfVolume->VolLabel[0] != L'#') {
-        Text = SWPrintf("%ls, booted from %ls %ls", gFirmwareRevision, SelfVolume->VolLabel.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
+        Text = SWPrintf("%ls, booted from %ls %ls", gFirmwareRevision, SelfVolume->VolLabel.wc_str(), self.getCloverDirFullPath().wc_str());
       }
       if (Text.isEmpty()) {
-        Text = SWPrintf("%ls %ls %ls", gFirmwareRevision, SelfVolume->VolName.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
+        Text = SWPrintf("%ls %ls %ls", gFirmwareRevision, SelfVolume->VolName.wc_str(), self.getCloverDirFullPath().wc_str());
       }
       break;
     case TEXT_CORNER_HELP:

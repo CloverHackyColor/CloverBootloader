@@ -716,7 +716,7 @@ MsgLog("debugStartImageWithOC\n");
   EFI_LOADED_IMAGE* OcLoadedImage;
   EFI_STATUS Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &OcLoadedImage);
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirPathAsXStringW().wc_str(), NULL);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
 
   Status = ClOcReadConfigurationFile(&mOpenCoreStorage, L"config-oc.plist", &mOpenCoreConfiguration);
   if ( EFI_ERROR(Status) ) panic("ClOcReadConfigurationFile");
@@ -1108,7 +1108,8 @@ DBG("Beginning OC\n");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->MinKernel, "");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Identifier, "");
 
-    XStringW dirPath = SWPrintf("%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str());
+    assert( selfOem.isKextsDirFound() ); // be sure before calling getKextsPathRelToSelfDir()
+    XStringW dirPath = SWPrintf("%ls\\%ls", selfOem.getKextsDirPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str());
 //    XString8 bundlePath = S8Printf("%ls\\%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextEntry.KextDirNameUnderOEMPath.wc_str(), KextEntry.FileName.wc_str());
     XString8 bundlePath = S8Printf("%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str());
     if ( FileExists(&self.getCloverDir(), bundlePath) ) {
@@ -1202,9 +1203,9 @@ DBG("Beginning OC\n");
   EFI_LOADED_IMAGE* OcLoadedImage;
   Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirPathAsXStringW().wc_str(), NULL);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
 
-  XStringW FileName = SWPrintf("%ls\\%ls\\%s", self.getCloverDirPathAsXStringW().wc_str(), getDriversPath().wc_str(), "OpenRuntime.efi");
+  XStringW FileName = SWPrintf("%ls\\%ls\\%s", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), "OpenRuntime.efi");
   EFI_HANDLE DriverHandle;
   Status = gBS->LoadImage(false, gImageHandle, FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NULL, 0, &DriverHandle);
   DBG("Load OpenRuntime.efi : Status %s\n", efiStrError(Status));
@@ -1580,7 +1581,7 @@ DBG("Beginning OC\n");
   
   DBG("Closing log\n");
   if (SavePreBootLog) {
-    Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG_new);
+    Status = SaveBooterLog(&self.getCloverDir(), PREBOOT_LOG);
     // Jief : do not write outside of SelfDir
 //    if (EFI_ERROR(Status)) {
 //      /*Status = */SaveBooterLog(NULL, PREBOOT_LOG);
@@ -1775,7 +1776,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     }
 #undef BOOLEAN_AT_INDEX
 
-	  XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), Path, DirEntry->FileName);
+	  XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NullXString8Array, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
@@ -2143,6 +2144,7 @@ static void LoadDrivers(void)
     DriversToConnectNum++;
   }
 
+  UninitRefitLib();
   if (DriversToConnectNum > 0) {
 	  DBG("%llu drivers needs connecting ...\n", DriversToConnectNum);
     // note: our platform driver protocol
@@ -2170,6 +2172,7 @@ static void LoadDrivers(void)
   }else{
     BdsLibConnectAllEfi(); // jief : without any driver loaded, i couldn't see my CD, unless I call BdsLibConnectAllEfi
   }
+  ReinitRefitLib();
 }
 
 
@@ -2548,7 +2551,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else {
         selfOem.initialize(ConfName, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
         Status = LoadUserSettings(ConfName, &gConfigDict[1]);
-        DBG("%ls\\%ls.plist %ls loaded with name from LoadOptions: %s\n", selfOem.getOemFullPath().wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
+        DBG("%ls\\%ls.plist %ls loaded with name from LoadOptions: %s\n", selfOem.getConfigDirFullPath().wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
         if (EFI_ERROR(Status)) {
           gConfigDict[1] = NULL;
         }
@@ -2565,7 +2568,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!gConfigDict[1] || UniteConfigs) {
     selfOem.initialize("config"_XS8, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
     Status = LoadUserSettings(L"config"_XSW, &gConfigDict[0]);
-    DBG("%ls\\config.plist %ls loaded: %s\n", selfOem.getOemFullPath().wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
+    DBG("%ls\\config.plist %ls loaded: %s\n", selfOem.getConfigDirFullPath().wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
   }
 	snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
                                    gConfigDict[0] ? L"config": L"",

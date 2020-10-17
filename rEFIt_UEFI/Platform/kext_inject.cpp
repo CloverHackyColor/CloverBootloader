@@ -10,6 +10,7 @@ extern "C" {
 #include "../Platform/plist/plist.h"
 #include "../Platform/Settings.h"
 #include "../Platform/guid.h"
+#include "../Platform/SelfOem.h"
 #include "MemoryOperation.h"
 
 #ifndef DEBUG_ALL
@@ -455,6 +456,9 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
   XString8                PlugIns;
 //  CONST CHAR16                  *Arch = NULL;
 //  CONST CHAR16                  *Ptr = NULL;
+
+  if ( !selfOem.isKextsDirFound() ) return;
+
 #if defined(MDE_CPU_X64)
   cpu_type_t              archCpuType=CPU_TYPE_X86_64;
 #else

@@ -2262,19 +2262,22 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   if (load_vbios) {
 	  XStringW FileName = SWPrintf("ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
 
-    if (FileExists(&selfOem.getOemDir(), FileName)) {
-      DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-      Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
-    } else {
-		  FileName.SWPrintf("ROM\\10de_%04hX.rom", nvda_dev->device_id);
+	  Status = EFI_NOT_FOUND;
+	  if ( selfOem.oemDirExists() ) {
       if (FileExists(&selfOem.getOemDir(), FileName)) {
-		  DBG("Found generic VBIOS ROM file (10de_%04hX.rom)\n", nvda_dev->device_id);
+        DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
         Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
+      } else {
+        FileName.SWPrintf("ROM\\10de_%04hX.rom", nvda_dev->device_id);
+        if (FileExists(&selfOem.getOemDir(), FileName)) {
+          DBG("Found generic VBIOS ROM file (10de_%04hX.rom)\n", nvda_dev->device_id);
+          Status = egLoadFile(&selfOem.getOemDir(), FileName.wc_str(), &buffer, &bufferLen);
+        }
       }
     }
 
-	  FileName.SWPrintf("ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
-    if (EFI_ERROR(Status)) {
+    if ( Status == EFI_NOT_FOUND ) {
+      FileName.SWPrintf("ROM\\10de_%04hX_%04hX_%04hX.rom", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
       if (FileExists(&self.getCloverDir(), FileName)) {
         DBG("Found specific VBIOS ROM file (10de_%04hX_%04hX_%04hX.rom)\n", nvda_dev->device_id, nvda_dev->subsys_id.subsys.vendor_id, nvda_dev->subsys_id.subsys.device_id);
         Status = egLoadFile(&self.getCloverDir(), FileName.wc_str(), &buffer, &bufferLen);

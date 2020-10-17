@@ -404,6 +404,16 @@ SetMemLogCallback (
 }
 
 /**
+  Sets callback that will be called when message is added to mem log.
+ **/
+MEM_LOG_CALLBACK
+EFIAPI
+GetMemLogCallback ()
+{
+  return mMemLog->Callback;
+}
+
+/**
   Returns TSC ticks per second.
  **/
 UINT64

@@ -16,17 +16,19 @@ extern "C" {
 
 //#define SAFE_LOG_SIZE  80
 //#define MSG_LOG_SIZE (256 * 1024)
-#define PREBOOT_LOG_new  L"misc\\preboot.log"
-#define LEGBOOT_LOG_new  L"misc\\legacy_boot.log"
-#define BOOT_LOG_new     L"misc\\boot.log"
-#define SYSTEM_LOG_new   L"misc\\system.log"
-#define DEBUG_LOG_new    L"misc\\debug.log"
+#define PREBOOT_LOG  L"misc\\preboot.log"
+#define LEGBOOT_LOG  L"misc\\legacy_boot.log"
+//#define BOOT_LOG_new     L"misc\\boot.log"
+//#define SYSTEM_LOG_new   L"misc\\system.log"
+#define DEBUG_LOG    L"misc\\debug.log"
 //#define PREWAKE_LOG  L"misc\\prewake.log"
 
 
 
 void
 InitBooterLog (void);
+
+void closeDebugLog();
 
 EFI_STATUS
 SetupBooterLog (

@@ -31,7 +31,7 @@ EFI_STATUS Self::_openDir(const XStringW& path, bool* b, EFI_FILE** efiDir)
   EFI_STATUS Status;
   Status = self.getCloverDir().Open(&self.getCloverDir(), efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
   if ( EFI_ERROR(Status) ) {
-    DBG("Error when opening dir '%ls\\%ls' : %s\n", self.getCloverDirPathAsXStringW().wc_str(), path.wc_str(), efiStrError(Status));
+    DBG("Error when opening dir '%ls\\%ls' : %s\n", self.getCloverDirFullPath().wc_str(), path.wc_str(), efiStrError(Status));
     *efiDir = NULL;
     *b = false;
   }else{
@@ -59,26 +59,29 @@ EFI_STATUS Self::_initialize()
 
 
   // find the current directory
-  m_CloverDirPathAsXStringW = FileDevicePathToXStringW(self.getSelfLoadedImage().FilePath);
+  m_CloverDirFullPath = FileDevicePathToXStringW(self.getSelfLoadedImage().FilePath);
   // History : if this Clover was started as BootX64.efi, redirect to /EFI/CLOVER
-  if ( m_CloverDirPathAsXStringW.equalIC("\\EFI\\Boot\\BootX64.efi") ) {
-    m_CloverDirPathAsXStringW.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi");
+  if ( m_CloverDirFullPath.equalIC("\\EFI\\Boot\\BootX64.efi") ) {
+    m_CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi");
   }
-  if ( m_CloverDirPathAsXStringW.isEmpty() ) panic("m_CloverDirPathAsXStringW.isEmpty()");
+  if ( m_CloverDirFullPath.isEmpty() ) panic("m_CloverDirFullPath.isEmpty()");
 
-  m_SelfDevicePath = FileDevicePath(self.getSelfDeviceHandle(), m_CloverDirPathAsXStringW);
+  m_SelfDevicePath = FileDevicePath(self.getSelfDeviceHandle(), m_CloverDirFullPath);
   m_SelfDevicePathAsXStringW = FileDevicePathToXStringW(m_SelfDevicePath);
 
-  if ( !m_CloverDirPathAsXStringW.startWith('\\') ) panic("m_CloverDirPathAsXStringW.endsWith('\\')");
-  if ( m_CloverDirPathAsXStringW.lastChar() == U'\\' ) panic("m_CloverDirPathAsXStringW.lastChar() == U'\\'");
-//if ( m_CloverDirPathAsXStringW.endsWith('\\') ) panic("m_CloverDirPathAsXStringW.endsWith('\\')");
+  if ( !m_CloverDirFullPath.startWith('\\') ) {
+    CHAR16* f = ConvertDevicePathToText(self.getSelfLoadedImage().FilePath, TRUE, TRUE);
+    panic("Bad format for m_CloverDirFullPath(%ls). It must start with a '\\'.\nConvertDevicePathToText=%ls", m_CloverDirFullPath.wc_str(), f);
+  }
+  if ( m_CloverDirFullPath.lastChar() == U'\\' ) panic("m_CloverDirFullPath.lastChar() == U'\\'");
+//if ( m_CloverDirFullPath.endsWith('\\') ) panic("m_CloverDirFullPath.endsWith('\\')");
 
-  size_t i = m_CloverDirPathAsXStringW.rindexOf(U'\\', SIZE_T_MAX-1);
-  if ( i != SIZE_T_MAX && i > 0 ) m_CloverDirPathAsXStringW.deleteCharsAtPos(i, SIZE_T_MAX);
+  size_t i = m_CloverDirFullPath.rindexOf(U'\\', SIZE_T_MAX-1);
+  if ( i != SIZE_T_MAX && i > 0 ) m_CloverDirFullPath.deleteCharsAtPos(i, SIZE_T_MAX);
 
-  DBG("SelfDirPath = %ls\n", m_CloverDirPathAsXStringW.wc_str());
+  DBG("SelfDirPath = %ls\n", m_CloverDirFullPath.wc_str());
 
-  Status = self.getSelfVolumeRootDir().Open(&self.getSelfVolumeRootDir(), &m_CloverDir, m_CloverDirPathAsXStringW.wc_str(), EFI_FILE_MODE_READ, 0);
+  Status = self.getSelfVolumeRootDir().Open(&self.getSelfVolumeRootDir(), &m_CloverDir, m_CloverDirFullPath.wc_str(), EFI_FILE_MODE_READ, 0);
   if ( EFI_ERROR(Status) ) panic("Cannot open getSelfRootDir()");
 
 

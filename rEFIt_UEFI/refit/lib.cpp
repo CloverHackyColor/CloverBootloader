@@ -163,7 +163,7 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
   self.initialize(ImageHandle);
-//  DBG("SelfDirPath = %ls\n", self.getCloverDirPathAsXStringW().wc_str());
+//  DBG("SelfDirPath = %ls\n", self.getCloverDirFullPath().wc_str());
   return EFI_SUCCESS;
 }
 
@@ -173,9 +173,10 @@ void UninitRefitLib(void)
   
   ThemeX.closeThemeDir();
 
-  self.closeHandle();
   selfOem.closeHandle();
+  self.closeHandle();
   
+  closeDebugLog();
   UninitVolumes();
 }
 
@@ -1215,9 +1216,14 @@ BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST CHAR16 *RelativePath)
   return FALSE;
 }
 
-BOOLEAN FileExists(IN CONST EFI_FILE *Root, IN CONST XStringW& RelativePath)
+BOOLEAN FileExists(const EFI_FILE *Root, const XStringW& RelativePath)
 {
 	return FileExists(Root, RelativePath.wc_str());
+}
+
+BOOLEAN FileExists(const EFI_FILE& Root, const XStringW& RelativePath)
+{
+  return FileExists(&Root, RelativePath.wc_str());
 }
 
 BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath)

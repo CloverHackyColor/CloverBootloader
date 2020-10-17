@@ -2202,7 +2202,7 @@ void FinalizeSmbios() //continue
     //PauseForKey(L"installing SMBIOS in Hob\n");
     *Table = (UINT32)(UINTN)SmbiosEpsNew;
   }
-  //  egSaveFile(NULL, SWPrintf("%ls\\misc\\smbios.bin", self.getCloverDirPathAsXStringW().wc_str()).wc_str(), (UINT8*)(UINTN)SmbiosEpsNew, SmbiosEpsNew->TableLength);
+  //  egSaveFile(NULL, SWPrintf("%ls\\misc\\smbios.bin", self.getCloverDirFullPath().wc_str()).wc_str(), (UINT8*)(UINTN)SmbiosEpsNew, SmbiosEpsNew->TableLength);
   return;
 }
 

@@ -203,6 +203,8 @@
 		9AABBE1D2524863E0033A009 /* SelfOem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AABBE1B2524863E0033A009 /* SelfOem.h */; };
 		9AC269A824E0514100254048 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC269A624E0514000254048 /* Utils.cpp */; };
 		9AC269A924E0514100254048 /* Utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC269A724E0514000254048 /* Utils.h */; };
+		9AC44EDD253AE78C00326488 /* MemoryOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC44EDB253AE78C00326488 /* MemoryOperation.h */; };
+		9AC44EDE253AE78C00326488 /* MemoryOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AC44EDC253AE78C00326488 /* MemoryOperation.c */; };
 		9AC77FB924176C04005CDD5C /* XStringArray_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECC24176C04005CDD5C /* XStringArray_test.h */; };
 		9AC77FBA24176C04005CDD5C /* XArray_tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77ECD24176C04005CDD5C /* XArray_tests.h */; };
 		9AC77FBB24176C04005CDD5C /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ECE24176C04005CDD5C /* XStringArray_test.cpp */; };
@@ -795,6 +797,8 @@
 		9AABBE1B2524863E0033A009 /* SelfOem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfOem.h; sourceTree = "<group>"; };
 		9AC269A624E0514000254048 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
 		9AC269A724E0514000254048 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		9AC44EDB253AE78C00326488 /* MemoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryOperation.h; sourceTree = "<group>"; };
+		9AC44EDC253AE78C00326488 /* MemoryOperation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MemoryOperation.c; sourceTree = "<group>"; };
 		9AC77EC424176BF2005CDD5C /* libCloverX64.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCloverX64.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AC77ECC24176C04005CDD5C /* XStringArray_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray_test.h; sourceTree = "<group>"; };
 		9AC77ECD24176C04005CDD5C /* XArray_tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XArray_tests.h; sourceTree = "<group>"; };
@@ -1145,6 +1149,8 @@
 		9AC77F1624176C04005CDD5C /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9AC44EDC253AE78C00326488 /* MemoryOperation.c */,
+				9AC44EDB253AE78C00326488 /* MemoryOperation.h */,
 				9AABBE1A2524863D0033A009 /* SelfOem.cpp */,
 				9AABBE1B2524863E0033A009 /* SelfOem.h */,
 				9A61B2FE2522165100AEE0FA /* Self.cpp */,
@@ -1432,6 +1438,7 @@
 				9AC780B52417EE53005CDD5C /* global_test.h in Headers */,
 				9A105B7224483AE40006DE06 /* posix.h in Headers */,
 				9AC7806324176C04005CDD5C /* CanonicalDB.h in Headers */,
+				9AC44EDD253AE78C00326488 /* MemoryOperation.h in Headers */,
 				9AC7805924176C04005CDD5C /* nanosvg.h in Headers */,
 				9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */,
 				9A105B7624483AE40006DE06 /* stdint.h in Headers */,
@@ -1970,6 +1977,7 @@
 				9AC7800924176C04005CDD5C /* AcpiPatcher.cpp in Sources */,
 				9AC7800D24176C04005CDD5C /* BdsConnect.cpp in Sources */,
 				9AC7802924176C04005CDD5C /* spd.cpp in Sources */,
+				9AC44EDE253AE78C00326488 /* MemoryOperation.c in Sources */,
 				9A105B85244852D70006DE06 /* VersionString.cpp in Sources */,
 				9A9D3B2324221563006D8CD9 /* printf_lite-test.cpp in Sources */,
 				9AC7800424176C04005CDD5C /* kext_patcher.cpp in Sources */,

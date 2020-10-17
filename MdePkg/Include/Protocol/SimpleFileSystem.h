@@ -222,7 +222,7 @@ EFI_STATUS
 (EFIAPI *EFI_FILE_WRITE)(
   IN EFI_FILE_PROTOCOL        *This,
   IN OUT UINTN                *BufferSize,
-  IN VOID                     *Buffer
+  IN JCONST VOID                     *Buffer
   );
 
 /**

@@ -28,19 +28,19 @@ constexpr const LStringW KEXTS_DIRNAME(L"Kexts");
 SelfOem selfOem;
 
 
-EFI_STATUS SelfOem::_openDir(const XStringW& path, bool* b, EFI_FILE** efiDir)
-{
-  EFI_STATUS Status;
-  Status = self.getCloverDir().Open(&self.getCloverDir(), efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
-  if ( EFI_ERROR(Status) ) {
-    DBG("Error when opening dir '%ls\\%ls' : %s\n", self.getCloverDirPathAsXStringW().wc_str(), path.wc_str(), efiStrError(Status));
-    *efiDir = NULL;
-    *b = false;
-  }else{
-    *b = true;
-  }
-  return Status;
-}
+//EFI_STATUS SelfOem::_openDir(const XStringW& path, bool* b, EFI_FILE** efiDir)
+//{
+//  EFI_STATUS Status;
+//  Status = self.getCloverDir().Open(&self.getCloverDir(), efiDir, path.wc_str(), EFI_FILE_MODE_READ, 0);
+//  if ( EFI_ERROR(Status) ) {
+//    DBG("Error when opening dir '%ls\\%ls' : %s\n", self.getCloverDirFullPath().wc_str(), path.wc_str(), efiStrError(Status));
+//    *efiDir = NULL;
+//    *b = false;
+//  }else{
+//    *b = true;
+//  }
+//  return Status;
+//}
 
 
 bool SelfOem::_checkOEMPath()
@@ -49,26 +49,30 @@ bool SelfOem::_checkOEMPath()
 
 //  if ( !selfOem.oemDirExists() ) return false;
 
-  EFI_FILE* efiDir;
-  Status = self.getCloverDir().Open(&self.getCloverDir(), &efiDir, m_OemPathRelToSelfDir.wc_str(), EFI_FILE_MODE_READ, 0);
+//  EFI_FILE* efiDir;
+  Status = self.getCloverDir().Open(&self.getCloverDir(), &m_OemDir, m_OemPathRelToSelfDir.wc_str(), EFI_FILE_MODE_READ, 0);
   if ( Status == EFI_NOT_FOUND ) {
-    DBG("_checkOEMPath Look for oem dir at path '%ls\\%ls'. Dir doesn't exist.\n", self.getCloverDirPathAsXStringW().wc_str(), m_OemPathRelToSelfDir.wc_str());
+    DBG("_checkOEMPath Look for oem dir at path '%ls\\%ls'. Dir doesn't exist.\n", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str());
+    m_OemDir = NULL;
     return false;
   }
   if ( EFI_ERROR(Status) != EFI_SUCCESS ) {
-    DBG("Cannot open dir at '%ls\\%ls' dir : %s\n", self.getCloverDirPathAsXStringW().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
+    DBG("Cannot open dir at '%ls\\%ls' dir : %s\n", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
+    m_OemDir = NULL;
     return false;
   }
-  BOOLEAN res2 = FileExists(efiDir, SWPrintf("%s.plist", m_ConfName.c_str()));
+  BOOLEAN res2 = FileExists(m_OemDir, SWPrintf("%s.plist", m_ConfName.c_str()));
   if ( !res2 ) {
-    DBG("_checkOEMPath looked for config file at '%ls\\%ls\\%s.plist'. File doesn't exist.\n", self.getCloverDirPathAsXStringW().wc_str(), m_OemPathRelToSelfDir.wc_str(), m_ConfName.c_str());
+    DBG("_checkOEMPath looked for config file at '%ls\\%ls\\%s.plist'. File doesn't exist.\n", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), m_ConfName.c_str());
+    m_OemDir->Close(m_OemDir);
+    m_OemDir = NULL;
     return false;
   }
-  DBG("_checkOEMPath: set OEMPath: '%ls\\%ls'\n", self.getCloverDirPathAsXStringW().wc_str(), m_OemPathRelToSelfDir.wc_str());
+  DBG("_checkOEMPath: set OEMPath: '%ls\\%ls'\n", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str());
   return true;
 }
 
-bool SelfOem::_setOEMPath(bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, UINTN nLanCards, UINT8 gLanMac[4][6])
+bool SelfOem::_setOemPathRelToSelfDir(bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, UINTN nLanCards, UINT8 gLanMac[4][6])
 {
 
   if ( nLanCards > 0 ) {
@@ -100,8 +104,9 @@ bool SelfOem::_setOEMPath(bool isFirmwareClover, const XString8& OEMBoard, const
   m_OemPathRelToSelfDir.SWPrintf("OEM\\%s-%d", OEMBoard.c_str(), frequency);
   if ( _checkOEMPath() ) return true;
 
-  m_OemPathRelToSelfDir.takeValueFrom(".");
-  DBG("set OEMPath to \".\"\n");
+//  m_OemPathRelToSelfDir.takeValueFrom(".");
+//  DBG("set OEMPath to \".\"\n");
+  m_OemPathRelToSelfDir.setEmpty();
 
   return false;
 }
@@ -111,34 +116,66 @@ EFI_STATUS SelfOem::_initialize()
 {
   EFI_STATUS Status;
 
-  Status = self.getCloverDir().Open(&self.getCloverDir(), &m_OemDir, m_OemPathRelToSelfDir.wc_str(), EFI_FILE_MODE_READ, 0);
-  if ( EFI_ERROR(Status) ) panic("Cannot open oem dir at '%ls\\%ls'", self.getCloverDirPathAsXStringW().wc_str(), m_OemPathRelToSelfDir.wc_str());
-  DBG("Oem dir = %ls\n", (*this).getOemFullPath().wc_str());
+  if ( oemDirExists() ) {
+    m_OemFulPath = SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str());
+    m_configDirPathRelToSelfDir = getOemPathRelToSelfDir();
+    m_configDirPathRelToSelfDirWithTrailingSlash.SWPrintf("%ls\\", m_configDirPathRelToSelfDir.wc_str());
+  }else{
+    m_OemFulPath.setEmpty();
+    m_configDirPathRelToSelfDir.setEmpty();
+    m_configDirPathRelToSelfDirWithTrailingSlash.setEmpty();
+  }
+  if ( m_OemDir == NULL ) {
+    assert( m_OemPathRelToSelfDir.isEmpty() );
+    assert( m_OemFulPath.isEmpty() );
+  }else{
+    assert( m_OemPathRelToSelfDir.notEmpty() );
+    assert( m_OemFulPath.notEmpty() );
+  }
 
-  Status = m_OemDir->Open(m_OemDir, &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
-  if ( EFI_ERROR(Status) ) {
-    DBG("Cannot open %ls\\%ls : %s", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
+
+
+  if ( m_KextsDir != NULL ) panic("%s : m_KextsDir != NULL", __FUNCTION__);
+  if ( oemDirExists() ) {
+    Status = m_OemDir->Open(m_OemDir, &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
+    if ( !EFI_ERROR(Status) ) {
+      m_KextsPathRelToSelfDir.SWPrintf("%ls\\%ls", getOemPathRelToSelfDir().wc_str(), KEXTS_DIRNAME.wc_str());
+      m_KextsFullPath.SWPrintf("%ls\\%ls", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str());
+    }else{
+      DBG("Cannot open %ls\\%ls : %s", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
+      m_KextsDir = NULL;
+    }
   }
 //  if ( Status != EFI_SUCCESS  &&  Status != EFI_NOT_FOUND ) {
 //    panic("Cannot open kexts dir %ls\\%ls : %s", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
 //  }
-  if ( EFI_ERROR(Status) ) {
+  if ( m_KextsDir == NULL ) {
     Status = self.getCloverDir().Open(&self.getCloverDir(), &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( EFI_ERROR(Status) ) {
-      DBG("Cannot open %ls\\%ls : %s", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
-      //panic("Cannot open kexts dir at '%ls\\%ls'", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str());
+      DBG("Cannot open %ls\\%ls : %s", self.getCloverDirFullPath().wc_str(), KEXTS_DIRNAME.wc_str(), efiStrError(Status));
+      //panic("Cannot open kexts dir at '%ls\\%ls'", self.getCloverDirFullPath().wc_str(), KEXTS_DIRNAME.wc_str());
       m_KextsDir = NULL;
       m_KextsPathRelToSelfDir.setEmpty();
       m_KextsFullPath.setEmpty();
     }else{
       m_KextsPathRelToSelfDir = KEXTS_DIRNAME;
-      m_KextsFullPath.SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), KEXTS_DIRNAME.wc_str());
+      m_KextsFullPath.SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), KEXTS_DIRNAME.wc_str());
     }
   }else{
-    m_KextsPathRelToSelfDir.SWPrintf("%ls\\%ls", getOemPathRelToSelfDir().wc_str(), KEXTS_DIRNAME.wc_str());
-    m_KextsFullPath.SWPrintf("%ls\\%ls", getOemFullPath().wc_str(), KEXTS_DIRNAME.wc_str());
   }
-  DBG("Kexts dir = '%ls'\n", m_KextsFullPath.wc_str()); // do not use 'getKextsFullPath()', it could panic
+  if ( m_KextsDir == NULL ) {
+    assert( m_KextsPathRelToSelfDir.isEmpty() );
+    assert( m_KextsFullPath.isEmpty() );
+  }else{
+    assert( m_KextsPathRelToSelfDir.notEmpty() );
+    assert( m_KextsFullPath.notEmpty() );
+  }
+
+  if ( isKextsDirFound() ) {
+    DBG("Kexts dir = '%ls'\n", getKextsFullPath().wc_str());
+  }else{
+    DBG("Kexts dir = none\n");
+  }
 
   return EFI_SUCCESS;
 }
@@ -146,28 +183,41 @@ EFI_STATUS SelfOem::_initialize()
 EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, UINTN nLanCards, UINT8 gLanMac[4][6])
 {
   m_ConfName = confName;
-  if ( _setOEMPath(isFirmwareClover, OEMBoard, OEMProduct, frequency, nLanCards, gLanMac) ) {
-    m_OemFulPath = SWPrintf("%ls\\%ls", self.getCloverDirPathAsXStringW().wc_str(), m_OemPathRelToSelfDir.wc_str());
-    m_OemDirExists = true;
-  }else{
-    m_OemFulPath = self.getCloverDirPathAsXStringW();
-    m_OemDirExists = false;
-  }
+
+  // Initialise m_OemPathRelToSelfDir and leave m_OemDir opened.
+  _setOemPathRelToSelfDir(isFirmwareClover, OEMBoard, OEMProduct, frequency, nLanCards, gLanMac);
+
   return _initialize();
 }
 
 EFI_STATUS SelfOem::reInitialize()
 {
   closeHandle();
+
+  // No need to call _setOemPathRelToSelfDir again, but need to open m_OemDir, if it exists
+  if ( oemDirExists() ) {
+    EFI_STATUS Status = self.getCloverDir().Open(&self.getCloverDir(), &m_OemDir, m_OemPathRelToSelfDir.wc_str(), EFI_FILE_MODE_READ, 0);
+    if ( EFI_ERROR(Status) ) {
+      panic("Impossible to reopen dir '%ls\\%ls', although it was opened the first time : %s", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
+    }
+  }
   return _initialize();
 }
 
 
 void SelfOem::closeHandle(void)
 {
+  if (m_KextsDir != NULL) {
+    m_KextsDir->Close(m_KextsDir);
+    m_KextsDir = NULL;
+    m_KextsPathRelToSelfDir.setEmpty();
+    m_KextsFullPath.setEmpty();
+  }
   if (m_OemDir != NULL) {
     m_OemDir->Close(m_OemDir);
     m_OemDir = NULL;
+    // m_OemPathRelToSelfDir.setEmpty(); // do not empty m_OemPathRelToSelfDir, we need it in reInitialize()
+    // m_OemFulPath.setEmpty(); // doesn't matter, it'll be re-initialised in _initialize()
   }
 }
 

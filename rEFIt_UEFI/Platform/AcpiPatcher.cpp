@@ -755,7 +755,7 @@ EFI_STATUS SaveBufferToDisk(void *Buffer, UINTN Length, CONST CHAR16 *DirName, C
 
   XStringW PathName = SWPrintf("%ls\\%ls", DirName, FileName);
 
-  EFI_STATUS Status = egSaveFile(&selfOem.getOemDir(), PathName.wc_str(), Buffer, Length);
+  EFI_STATUS Status = egSaveFile(&selfOem.getConfigDir(), PathName.wc_str(), Buffer, Length);
   // Do not write outside OemDir
 //  if (EFI_ERROR(Status)) {
 //    Status = egSaveFile(NULL, PathName.wc_str(), Buffer, Length);
@@ -1505,14 +1505,14 @@ void SaveOemDsdt(BOOLEAN FullPatch)
   XStringW           OriginDsdt      = SWPrintf("ACPI\\origin\\DSDT.aml");
   XStringW           OriginDsdtFixed = SWPrintf("ACPI\\origin\\DSDT-%x.aml", gSettings.FixDsdt);
 //  constexpr LStringW PathPatched     = L"\\EFI\\CL OVER\\ACPI\\patched";
-  XStringW           PathDsdt;
+//  XStringW           PathDsdt;
 //  XStringW           AcpiOemPath     = SWPrintf("ACPI\\patched");
 
 //  PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
 
-  if (FileExists(&selfOem.getOemDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()))) {
-    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: ACPI\\patched\\%ls\n", gSettings.DsdtName.wc_str());
-    Status = egLoadFile(&selfOem.getOemDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()).wc_str(), &buffer, &DsdtLen);
+  if (FileExists(selfOem.getConfigDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()))) {
+    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: \\%ls\\ACPI\\patched\\%ls\n", selfOem.getConfigDirFullPath().wc_str(), gSettings.DsdtName.wc_str());
+    Status = egLoadFile(&selfOem.getConfigDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()).wc_str(), &buffer, &DsdtLen);
   }
 
 //  Jief : Do not write outside OemPath
@@ -1558,15 +1558,15 @@ void SaveOemDsdt(BOOLEAN FullPatch)
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
       OriginDsdt = OriginDsdtFixed;
     }
-    Status = egSaveFile(&selfOem.getOemDir(), OriginDsdt.wc_str(), buffer, DsdtLen);
+    Status = egSaveFile(&selfOem.getConfigDir(), OriginDsdt.wc_str(), buffer, DsdtLen);
 // Jief : do not write outside of OemDir
 //    if (EFI_ERROR(Status)) {
 //      Status = egSaveFile(NULL, OriginDsdt.wc_str(), buffer, DsdtLen);
 //    }
     if (!EFI_ERROR(Status)) {
-      MsgLog("DSDT saved to %ls\n", OriginDsdt.wc_str());
+      MsgLog("DSDT saved to %ls\\%ls\n", selfOem.getConfigDirFullPath().wc_str(), OriginDsdt.wc_str());
     } else {
-      MsgLog("Saving DSDT to %ls\\%ls failed - %s\n", selfOem.getOemFullPath().wc_str(), OriginDsdt.wc_str(), efiStrError(Status));
+      MsgLog("Saving DSDT to %ls\\%ls failed - %s\n", selfOem.getConfigDirFullPath().wc_str(), OriginDsdt.wc_str(), efiStrError(Status));
     }
     gBS->FreePages(dsdt, Pages);
   }
@@ -1639,8 +1639,8 @@ void LoadAllPatchedAML(const XStringW& acpiPathUnderOem, UINTN Pass)
           }
         }
         if (!ACPIPatchedAMLTmp) { // NULL when not disabled
-			DBG("Inserting table[%llu]:%ls from %ls\\%ls: ", Index, gSettings.SortedACPI[Index], selfOem.getOemFullPath().wc_str(), acpiPathUnderOem.wc_str());
-          if (LoadPatchedAML(selfOem.getOemDir(), acpiPathUnderOem, gSettings.SortedACPI[Index], Pass)) {
+          DBG("Inserting table[%llu]:%ls from %ls\\%ls: ", Index, gSettings.SortedACPI[Index], selfOem.getConfigDirFullPath().wc_str(), acpiPathUnderOem.wc_str());
+          if (LoadPatchedAML(selfOem.getConfigDir(), acpiPathUnderOem, gSettings.SortedACPI[Index], Pass)) {
             // avoid inserting table again on second pass
             for (ACPI_PATCHED_AML* temp2 = ACPIPatchedAML; temp2; temp2 = temp2->Next) {
               if (0 == StriCmp(temp2->FileName, gSettings.SortedACPI[Index])) {
@@ -1656,8 +1656,8 @@ void LoadAllPatchedAML(const XStringW& acpiPathUnderOem, UINTN Pass)
       DBG("Unsorted\n");
       for (ACPIPatchedAMLTmp = ACPIPatchedAML; ACPIPatchedAMLTmp; ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next) {
         if (!ACPIPatchedAMLTmp->MenuItem.BValue) {
-          DBG("Inserting %ls from %ls\\%ls: ", ACPIPatchedAMLTmp->FileName, selfOem.getOemFullPath().wc_str(), acpiPathUnderOem.wc_str());
-          if (LoadPatchedAML(selfOem.getOemDir(), acpiPathUnderOem, ACPIPatchedAMLTmp->FileName, Pass)) {
+          DBG("Inserting %ls from %ls\\%ls: ", ACPIPatchedAMLTmp->FileName, selfOem.getConfigDirFullPath().wc_str(), acpiPathUnderOem.wc_str());
+          if (LoadPatchedAML(selfOem.getConfigDir(), acpiPathUnderOem, ACPIPatchedAMLTmp->FileName, Pass)) {
             // avoid inserting table again on second pass
             ACPIPatchedAMLTmp->MenuItem.BValue = BVALUE_ATTEMPTED;
           }
@@ -1687,7 +1687,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   UINT8                   *buffer = NULL;
   UINTN                   bufferLen = 0;
 //  constexpr LStringW      PathPatched   = L"\\EFI\\CL OVER\\ACPI\\patched";
-  XStringW                PathDsdt;    //  = L"\\DSDT.aml";
+//  XStringW                PathDsdt;    //  = L"\\DSDT.aml";
 //  CHAR16*                 PatchedAPIC = L"\\EFI\\CL OVER\\ACPI\\origin\\APIC-p.aml";
   UINT32*                 rf = NULL;
   UINT64*                 xf = NULL;
@@ -1713,7 +1713,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
   DbgHeader("PatchACPI");
 
-  PathDsdt = SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
   //try to find in SystemTable
   for(Index = 0; Index < gST->NumberOfTableEntries; Index++) {
     if(CompareGuid (&gST->ConfigurationTable[Index].VendorGuid, &gEfiAcpi20TableGuid)) {
@@ -1962,12 +1961,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 //  RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
 
-  XStringW acpiPath = SWPrintf("ACPI\\patched\\%ls", PathDsdt.wc_str());
+
+  XStringW acpiPath = SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str());
   
-  if ( FileExists(&selfOem.getOemDir(), acpiPath) ) {
-    DBG("DSDT found in Clover volume OEM folder: %ls\\%ls\n", selfOem.getOemFullPath().wc_str(), acpiPath.wc_str());
-    Status = egLoadFile(&selfOem.getOemDir(), acpiPath.wc_str(), &buffer, &bufferLen);
-    //REVIEW: memory leak... buffer
+  if ( selfOem.oemDirExists() ) {
+    if ( FileExists(&selfOem.getOemDir(), acpiPath) ) {
+      DBG("DSDT found in Clover volume OEM folder: %ls\\%ls\n", selfOem.getOemFullPath().wc_str(), acpiPath.wc_str());
+      Status = egLoadFile(&selfOem.getOemDir(), acpiPath.wc_str(), &buffer, &bufferLen);
+      //REVIEW: memory leak... buffer
+    }
   }
 
   //Slice: the idea was from past
@@ -1975,6 +1977,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   // second priority is DSDT from OEM folder
   // third priority is /EFI/CLOVER/ACPI/patched/DSDT*.aml choosen from GUI.
   
+  XStringW PathDsdt = SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
   if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
     Status = egLoadFile(Volume->RootDir, PathDsdt.wc_str(), &buffer, &bufferLen);
@@ -1982,7 +1985,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 
   //  Jief : may I suggest to remove that. Loading from outside of OemPath might be confusing
   if ( EFI_ERROR(Status)  &&  FileExists(&self.getCloverDir(), acpiPath) ) {
-    DBG("DSDT found in Clover volume: %ls\\%ls\n", self.getCloverDirPathAsXStringW().wc_str(), acpiPath.wc_str());
+    DBG("DSDT found in Clover volume: %ls\\%ls\n", self.getCloverDirFullPath().wc_str(), acpiPath.wc_str());
     Status = egLoadFile(&self.getCloverDir(), acpiPath.wc_str(), &buffer, &bufferLen);
   }
   //
@@ -2046,8 +2049,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 //  }
 
   if (gSettings.DebugDSDT) {
-    DBG("Output DSDT before patch to %ls\\ACPI\\origin\\DSDT-or.aml\n", selfOem.getOemFullPath().wc_str());
-    Status = egSaveFile(&selfOem.getOemDir(), L"ACPI\\origin\\DSDT-or.aml", (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
+    DBG("Output DSDT before patch to %ls\\ACPI\\origin\\DSDT-or.aml\n", selfOem.getConfigDirFullPath().wc_str());
+    Status = egSaveFile(&selfOem.getConfigDir(), L"ACPI\\origin\\DSDT-or.aml", (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
   }
   //native DSDT or loaded we want to apply autoFix to this
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
@@ -2057,8 +2060,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
   if (gSettings.DebugDSDT) {
     for (Index=0; Index < 60; Index++) {
       XStringW DsdtPatchedName = SWPrintf("ACPI\\origin\\DSDT-pa%llu.aml", Index);
-      if(!FileExists(&selfOem.getOemDir(), DsdtPatchedName)){
-        Status = egSaveFile(&selfOem.getOemDir(), DsdtPatchedName.wc_str(), (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
+      if(!FileExists(&selfOem.getConfigDir(), DsdtPatchedName)){
+        Status = egSaveFile(&selfOem.getConfigDir(), DsdtPatchedName.wc_str(), (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
         if (!EFI_ERROR(Status)) {
           break;
         }
@@ -2317,7 +2320,7 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
 
   if (!EFI_ERROR(Status)) {
     // loaded - allocate EfiACPIReclaim
-    DBG("Loaded DSDT at %ls\\%ls\\%ls\n", self.getCloverDirPathAsXStringW().wc_str(), PathPatched, gSettings.DsdtName.wc_str());
+    DBG("Loaded DSDT at \\%ls\\%ls\\%ls\n", self.getCloverDirFullPath().wc_str(), PathPatched, gSettings.DsdtName.wc_str());
     Dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -2478,16 +2481,19 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
   //
 
   // prepare dirs that will be searched for custom ACPI tables
-  XStringW AcpiOemPath = SWPrintf("%ls\\ACPI\\%ls", selfOem.getOemPathRelToSelfDir().wc_str(), OsSubdir);
   XStringW PathPatched;
-  if (FileExists(&self.getCloverDir(), AcpiOemPath)) {
-    PathPatched = AcpiOemPath;
-  } else {
-    PathPatched = SWPrintf("ACPI\\%ls", OsSubdir);
+  if ( selfOem.oemDirExists() ) {
+    PathPatched = SWPrintf("%ls\\ACPI\\%ls", selfOem.getOemPathRelToSelfDir().wc_str(), OsSubdir);
+    if ( !FileExists(&self.getCloverDir(), PathPatched) ) {
+      PathPatched.setEmpty();
+    }
   }
-  if (!FileExists(&self.getCloverDir(), PathPatched)) {
-    DBG("Dir %ls not found. No patching will be done.\n", OsSubdir);
-    return EFI_NOT_FOUND;
+  if ( PathPatched.isEmpty() ) {
+    PathPatched = SWPrintf("ACPI\\%ls", OsSubdir);
+    if (!FileExists(&self.getCloverDir(), PathPatched)) {
+      DBG("Dir '\\%ls\\%ls' not found. No patching will be done.\n", self.getCloverDirFullPath().wc_str(), PathPatched.wc_str());
+      return EFI_NOT_FOUND;
+    }
   }
 
   //

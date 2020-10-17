@@ -21,9 +21,9 @@ protected:
   EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *m_SelfSimpleVolume;  // Volume containing this efi.
   EFI_FILE*         m_SelfRootDir;  // Root dir of the volume containing this efi.
 
-  EFI_DEVICE_PATH*  m_CloverDirFullDevicePath; // full path, including device, to this efi.
-  EFI_FILE*         m_CloverDir; // opened m_SelfDirPath
-  XStringW          m_CloverDirPathAsXStringW; // full path, including device, to this efi.
+  EFI_DEVICE_PATH*  m_CloverDirFullDevicePath; // full path, including device, of the folder containing this efi.
+  EFI_FILE*         m_CloverDir;               // opened folder containing this efi
+  XStringW          m_CloverDirFullPath; // full path of folder containing this efi.
 //  XStringW          m_CloverDirPath; // dirname containing this efi (contains just the dir, not the device path)
 
 //  bool      m_OemDirExists;
@@ -38,7 +38,7 @@ protected:
 public:
   Self () : m_SelfImageHandle(NULL), m_SelfLoadedImage(NULL), m_SelfDevicePath(NULL), m_SelfDevicePathAsXStringW(),
             m_SelfSimpleVolume(NULL), m_SelfRootDir(NULL),
-            m_CloverDirFullDevicePath(NULL), m_CloverDir(NULL), m_CloverDirPathAsXStringW()/*, m_CloverDirPath()*/, m_ThemesDirExists(false), m_ThemesDir(0) {};
+            m_CloverDirFullDevicePath(NULL), m_CloverDir(NULL), m_CloverDirFullPath()/*, m_CloverDirPath()*/, m_ThemesDirExists(false), m_ThemesDir(0) {};
   Self(const Self&) = delete;
   Self& operator = (const Self&) = delete;
 
@@ -60,7 +60,7 @@ public:
 
   const EFI_DEVICE_PATH& getCloverDirFullDevicePath() { return *m_CloverDirFullDevicePath; }
   const EFI_FILE& getCloverDir() { return *m_CloverDir; }
-  const XStringW& getCloverDirPathAsXStringW() { return m_CloverDirPathAsXStringW; }
+  const XStringW& getCloverDirFullPath() { return m_CloverDirFullPath; }
 //  const XStringW& getCloverDirPath() { return m_CloverDirPath; } // returns path containing this efi. Like \\EFI\\CLOVER
 
 //  bool oemDirExists() { return m_OemDirExists; }

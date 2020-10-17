@@ -138,7 +138,7 @@ const LString8 gBuildId __attribute__((used)) = "Clover build id: " BUILD_ID;
 const LString8 gBuildId __attribute__((used)) = "Clover build id: " "unknown";
 #endif
 
-const char* path_independant __attribute__((used)) = "path_independant";
+const char* path_independant = "path_independant";
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -518,22 +518,27 @@ LoadUserSettings (
 
 //  ConfigPlistPath = SWPrintf("%ls.plist", ConfName.wc_str());
 //  ConfigOemPath   = SWPrintf("%ls\\%ls.plist", selfOem.getOOEMPath.wc_str(), ConfName.wc_str());
+  Status = EFI_NOT_FOUND;
   XStringW configFilename = SWPrintf("%ls.plist", ConfName.wc_str());
-  if (FileExists (&selfOem.getOemDir(), configFilename)) {
-    Status = egLoadFile(&selfOem.getOemDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
+  if ( selfOem.oemDirExists() ) {
+    if (FileExists (&selfOem.getOemDir(), configFilename)) {
+      Status = egLoadFile(&selfOem.getOemDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
+      if (EFI_ERROR(Status)) {
+        DBG("Cannot find %ls at path (%s): '%ls', trying '%ls'\n", configFilename.wc_str(), efiStrError(Status), selfOem.getOemFullPath().wc_str(), self.getCloverDirFullPath().wc_str());
+      }else{
+        DBG("Using %ls at path: %ls\n", configFilename.wc_str(), selfOem.getOemFullPath().wc_str());
+      }
+    }
   }
   if (EFI_ERROR(Status)) {
-    DBG("Cannot find %ls at path: '%ls', trying '%ls'\n", configFilename.wc_str(), selfOem.getOemFullPath().wc_str(), self.getCloverDirPathAsXStringW().wc_str());
     if ( FileExists(&self.getCloverDir(), configFilename.wc_str())) {
       Status = egLoadFile(&self.getCloverDir(), configFilename.wc_str(), (UINT8**)&ConfigPtr, &Size);
     }
-    if (!EFI_ERROR(Status)) {
-      DBG("Using %ls at path: %ls\n", configFilename.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
+    if (EFI_ERROR(Status)) {
+      DBG("Cannot find %ls at path '%ls' : %s\n", configFilename.wc_str(), self.getCloverDirFullPath().wc_str(), efiStrError(Status));
     } else {
-      DBG("Cannot find %ls at path: '%ls'\n", configFilename.wc_str(), self.getCloverDirPathAsXStringW().wc_str());
+      DBG("Using %ls at path: %ls\n", configFilename.wc_str(), self.getCloverDirFullPath().wc_str());
     }
-  }else{
-    DBG("Using %ls at path: %ls\n", configFilename.wc_str(), selfOem.getOemFullPath().wc_str());
   }
 
   if (!EFI_ERROR(Status) && ConfigPtr != NULL) {
@@ -2297,6 +2302,9 @@ GetEarlyUserSettings (
         }
       }
 
+      Prop = BootDict->propertyForKey("EmptyDebugLogAtStart");
+      GlobalConfig.ScratchDebugLogAtStart = IsPropertyNotNullAndTrue(Prop);
+
       Prop = BootDict->propertyForKey("Fast");
       GlobalConfig.FastBoot       = IsPropertyNotNullAndTrue(Prop);
 
@@ -3125,7 +3133,7 @@ GetListOfConfigs ()
   ConfigsNum = 0;
   OldChosenConfig = 0;
 
-  DirIterOpen(&selfOem.getOemDir(), NULL, &DirIter);
+  DirIterOpen(&selfOem.getConfigDir(), NULL, &DirIter);
   DbgHeader("Found config plists");
   while (DirIterNext(&DirIter, 2, L"config*.plist", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.') {
@@ -3159,7 +3167,7 @@ GetListOfDsdts()
   DsdtsNum = 0;
   OldChosenDsdt = 0xFFFF;
 
-  DirIterOpen(&selfOem.getOemDir(), L"ACPI\\patched", &DirIter);
+  DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
   DbgHeader("Found DSDT tables");
   while (DirIterNext(&DirIter, 2, L"DSDT*.aml", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.') {
@@ -3196,7 +3204,7 @@ GetListOfACPI()
   }
   ACPIPatchedAML = NULL;
 //  DBG("free acpi list done\n");
-  DirIterOpen(&selfOem.getOemDir(), L"ACPI\\patched", &DirIter);
+  DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
 //    DBG("next entry is %ls\n", DirEntry->FileName);
@@ -3276,9 +3284,13 @@ void GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
   XStringW        PlugInsPath;
   XStringW         PlugInsName;
   BOOLEAN         Blocked = FALSE;
+
+  if( !selfOem.isKextsDirFound() ) return;
+
   if (StrCmp(KextDirNameUnderOEMPath, L"Off") == 0) {
     Blocked = TRUE;
   }
+
   DirIterOpen(&selfOem.getKextsDir(), KextDirNameUnderOEMPath, &DirIter);
   while (DirIterNext(&DirIter, 1, L"*.kext", &DirEntry)) {
     if (DirEntry->FileName[0] == L'.' || StrStr(DirEntry->FileName, L".kext") == NULL) {
@@ -3289,7 +3301,7 @@ void GetListOfInjectKext(CHAR16 *KextDirNameUnderOEMPath)
      <string>8.8.8</string>
      */
 //    FullName = SWPrintf("%ls\\%ls", FullPath.wc_str(), DirEntry->FileName);
-    XStringW pathRelToSelfDir = SWPrintf("%ls\\%ls\\%ls", selfOem.getKextsPathRelToSelfDir().wc_str(), KextDirNameUnderOEMPath, DirEntry->FileName);
+    XStringW pathRelToSelfDir = SWPrintf("%ls\\%ls\\%ls", selfOem.getKextsDirPathRelToSelfDir().wc_str(), KextDirNameUnderOEMPath, DirEntry->FileName);
     mKext = new SIDELOAD_KEXT;
     mKext->FileName.SWPrintf("%ls", DirEntry->FileName);
     mKext->MenuItem.BValue = Blocked;
@@ -7977,7 +7989,7 @@ SetDevices (LOADER_ENTRY *Entry)
       mPropSize = hex2bin (gDeviceProperties, mProperties, mPropSize);
       //     DBG("Final size of mProperties=%d\n", mPropSize);
       //---------
-      //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirPathAsXStringW().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
+      //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirFullPath().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
       //and now we can free memory?
       if (gSettings.AddProperties) {
         FreePool(gSettings.AddProperties);
@@ -8108,14 +8120,15 @@ XStringW GetOtherKextsDir (BOOLEAN On)
   return NullXStringW;
 }
 
+
 //dmazar
-XStringW
-GetOSVersionKextsDir (
-                       const XString8& OSVersion
-                       )
+// Jief 2020-10: this is only called by SetFSInjection(). SetFSInjection() doesn't check for return value emptiness.
+XStringW GetOSVersionKextsDir(const XString8& OSVersion)
 {
   XString8 FixedVersion;
   CHAR8  *DotPtr;
+
+  if ( !selfOem.isKextsDirFound() ) return NullXStringW;
 
   if (OSVersion.notEmpty()) {
     FixedVersion.strncpy(OSVersion.c_str(), 5);
@@ -8135,14 +8148,10 @@ GetOSVersionKextsDir (
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version specific or default to Other
-  XStringW SrcDir = SWPrintf("%ls\\kexts\\%s", selfOem.getOemFullPath().wc_str(), FixedVersion.c_str());
-  if (!FileExists (&self.getSelfVolumeRootDir(), SrcDir)) {
-    SrcDir = SWPrintf("\\%ls\\kexts\\%s", self.getCloverDirPathAsXStringW().wc_str(), FixedVersion.c_str());
-    if (!FileExists (SelfVolume->RootDir, SrcDir)) {
-      SrcDir.setEmpty();
-    }
-  }
-  return SrcDir;
+  // Jief : NOTE selfOem.getKextsFullPath() return a path under OEM if exists, or in Clover if not.
+  XStringW SrcDir = SWPrintf("%ls\\%s", selfOem.getKextsFullPath().wc_str(), FixedVersion.c_str());
+  if (FileExists (&self.getSelfVolumeRootDir(), SrcDir)) return SrcDir;
+  return NullXStringW;
 }
 
 EFI_STATUS
@@ -8160,7 +8169,7 @@ InjectKextsFromDir (
   return Status;
 }
 
-EFI_STATUS LOADER_ENTRY::SetFSInjection ()
+EFI_STATUS LOADER_ENTRY::SetFSInjection()
 {
   EFI_STATUS           Status;
   FSINJECTION_PROTOCOL *FSInject;
