@@ -60,6 +60,16 @@ EFI_STATUS Self::_initialize()
 
   // find the current directory
   m_CloverDirFullPath = FileDevicePathToXStringW(self.getSelfLoadedImage().FilePath);
+
+  // Do this before the next check.
+  if ( !m_CloverDirFullPath.startWith('\\') ) {
+    //CHAR16* f = ConvertDevicePathToText(self.getSelfLoadedImage().FilePath, TRUE, TRUE);
+    //panic("Bad format for m_CloverDirFullPath(%ls). It must start with a '\\'.\nConvertDevicePathToText=%ls", m_CloverDirFullPath.wc_str(), f);
+    //
+    // Somefirmware seems to not put a '\' at the begining. Do not panic anymore, just add it.
+    m_CloverDirFullPath.insertAtPos('\\', 0);
+  }
+
   // History : if this Clover was started as BootX64.efi, redirect to /EFI/CLOVER
   if ( m_CloverDirFullPath.equalIC("\\EFI\\Boot\\BootX64.efi") ) {
     m_CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi");
@@ -69,10 +79,6 @@ EFI_STATUS Self::_initialize()
   m_SelfDevicePath = FileDevicePath(self.getSelfDeviceHandle(), m_CloverDirFullPath);
   m_SelfDevicePathAsXStringW = FileDevicePathToXStringW(m_SelfDevicePath);
 
-  if ( !m_CloverDirFullPath.startWith('\\') ) {
-    CHAR16* f = ConvertDevicePathToText(self.getSelfLoadedImage().FilePath, TRUE, TRUE);
-    panic("Bad format for m_CloverDirFullPath(%ls). It must start with a '\\'.\nConvertDevicePathToText=%ls", m_CloverDirFullPath.wc_str(), f);
-  }
   if ( m_CloverDirFullPath.lastChar() == U'\\' ) panic("m_CloverDirFullPath.lastChar() == U'\\'");
 //if ( m_CloverDirFullPath.endsWith('\\') ) panic("m_CloverDirFullPath.endsWith('\\')");
 
