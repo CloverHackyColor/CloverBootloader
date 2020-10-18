@@ -569,7 +569,7 @@
 				<data>VUiJ</data>
 				<key>Replace</key>
 				<data>sAHD</data>
-				<key>FindMask</key>
+				<key>MaskFind</key>
 				<data>AAAA</data>
 				<key>RangeFind</key>
 				<integer>10</integer>
@@ -1163,11 +1163,11 @@
 		<key>IncreasePciBarSize</key>
 		<false/>
 		<key>PowerTimeoutKernelPanic</key>
-		<true/>
+		<false/>
 		<key>ThirdPartyDrives</key>
 		<false/>
 		<key>XhciPortLimit</key>
-		<true/>
+		<false/>
 	</dict>
 </dict>
 </plist>

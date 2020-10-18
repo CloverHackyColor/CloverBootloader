@@ -1089,11 +1089,14 @@ DBG("Beginning OC\n");
   pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
-  pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos); // not needed special order?
   pos = setKextAtPos(&kextArray, "SMCProcessor.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "SMCSuperIO.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "USBPorts.kext"_XS8, pos);
-
+  pos = setKextAtPos(&kextArray, "VoodooGPIO.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "VoodooI2CServices.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "VoodooI2C.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "VoodooI2CHID.kext"_XS8, pos);
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
   {
