@@ -388,7 +388,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
   if (VarSize > NameSize + 6) {
     Data += NameSize;
     if (StriCmp((CHAR16*)Data, Basename(Entry->LoaderPath.wc_str())) != 0) {
-		DBG("Boot option %llu has other loader name %ls\n", Entry->BootNum, (CHAR16*)Data);
+      DBG("Boot option %llu has other loader name %ls\n", Entry->BootNum, (CHAR16*)Data);
       FreePool(BootVariable);
       return;
     }
@@ -403,6 +403,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
                              &Entry->BootNum);
   if (EFI_ERROR(Status)) {
     DBG("Can't save BootCurrent, status=%s\n", efiStrError(Status));
+    DBG("%s\n", path_independant);
   }
   //Next step is rotate BootOrder to set BootNum to first place
   BootOrder = (__typeof__(BootOrder))GetNvramVariable(L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
