@@ -37,9 +37,9 @@ declare NOEXTRAS=""
 
 while [[ $# -gt 0 ]]; do
 	case "${1}" in
-		--srcroot ) declare -r SRCROOT="${2}"; shift;; # ie. edk2/Clover/CloverPackage
-		--symroot ) declare -r SYMROOT="${2}"; shift;; # ie. edk2/Clover/CloverPackage/sym
-		--builddir ) declare -r PKG_BUILD_DIR="${2}"; shift;; # ie. edk2/Clover/CloverPackage/sym/package
+		--srcroot ) declare -r SRCROOT="${2}"; shift;; # ie. src/Clover/CloverPackage
+		--symroot ) declare -r SYMROOT="${2}"; shift;; # ie. src/Clover/CloverPackage/sym
+		--builddir ) declare -r PKG_BUILD_DIR="${2}"; shift;; # ie. src/Clover/CloverPackage/sym/package
 		--nothemes ) NOEXTRAS+=", Clover Themes";;
 		--noprefpane ) NOEXTRAS+=", Clover Prefpane/Clover Updater";;
 		--norc ) NOEXTRAS+=", RC scripts";;
@@ -82,7 +82,7 @@ COL_RESET="\x1b[39;49;00m"
 # ====== REVISION/VERSION ======
 # stage
 CLOVER_STAGE=${RC/Release Candidate }
-CLOVER_STAGE=${CLOVER_STAGE/FINAL/2.2 Final}
+CLOVER_STAGE=${CLOVER_STAGE/FINAL/5.1 Final}
 declare -r CLOVER_STAGE
 declare -r CLOVER_REVISION=$( cat revision )
 if [[ -d "$(dirname ${SRCROOT})"/.git ]];then

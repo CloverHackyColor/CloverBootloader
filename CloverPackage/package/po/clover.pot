@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover r5123\n"
-"POT-Creation-Date: 2020-10-04 07:34+0300\n"
+"Project-Id-Version: Clover r5125\n"
+"POT-Creation-Date: 2020-10-19 22:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -524,7 +524,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:101 Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid ""
-"Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI "
+"Obsolete 64bit driver to fix Memory problems on UEFI firmware such as AMI "
 "Aptio"
 msgstr ""
 
@@ -659,9 +659,7 @@ msgstr ""
 #. type: "OcQuirks.UEFI_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-msgid ""
-"A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and "
-"all OsxAptioFix variants. Installs OpenRuntime.efi as dependency."
+msgid "No more needed. Install OpenRuntime.efi only."
 msgstr ""
 
 #. type: "AudioDxe.UEFI_description"

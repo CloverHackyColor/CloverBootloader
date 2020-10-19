@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-17 15:12+0200\n"
+"POT-Creation-Date: 2020-10-19 22:25+0300\n"
 "PO-Revision-Date: 2019-07-20 10:15+0700\n"
 "Last-Translator: Badruzeus\n"
 "Language-Team: id <id@li.org>\n"
@@ -575,9 +575,10 @@ msgstr "Driver untuk membenahi masalah Input pada firmware UEFI, misalnya AMI Ap
 #. type: "AptioMemoryFix.UEFI_description"
 #: Resources/templates/Localizable.strings:101
 #: Resources/templates/Localizable.strings:143
-#, no-wrap
-msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "Driver 64-bit pilihan untuk membenahi masalah Memori pada firmware UEFI, misalnya AMI Aptio. Firmware lainnya mungkin juga kompatibel."
+#, fuzzy, no-wrap
+#| msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgid "Obsolete 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgstr "Driver 64-bit lawas untuk membenahi masalah Memory pada firmware UEFI misalnya AMI Aptio."
 
 #. type: "AudioDxe_description"
 #: Resources/templates/Localizable.strings:102
@@ -716,7 +717,7 @@ msgstr "Membuat protokol AppleGraphicsConfig opsional"
 #. type: "OcQuirks.UEFI_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency."
+msgid "No more needed. Install OpenRuntime.efi only."
 msgstr ""
 
 #. type: "AudioDxe.UEFI_description"
@@ -1417,6 +1418,9 @@ msgstr "Setel direktori EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Tidak diketahui"
+
+#~ msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+#~ msgstr "Driver 64-bit pilihan untuk membenahi masalah Memori pada firmware UEFI, misalnya AMI Aptio. Firmware lainnya mungkin juga kompatibel."
 
 #~ msgid "Clover v2"
 #~ msgstr "Clover v2.5k"

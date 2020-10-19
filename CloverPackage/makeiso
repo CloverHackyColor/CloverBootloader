@@ -136,7 +136,7 @@ cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem/Fat
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 
 # Memory fix UEFI
-cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OsxAptioFix3Drv.efi \
+cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix/OpenRuntime.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 
 # HID UEFI

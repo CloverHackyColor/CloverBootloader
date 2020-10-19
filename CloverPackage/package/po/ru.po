@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-17 15:12+0200\n"
+"POT-Creation-Date: 2020-10-19 22:25+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -577,11 +577,12 @@ msgstr "Исправляет ошибки UEFI при работе с устро
 #. type: "AptioMemoryFix.UEFI_description"
 #: Resources/templates/Localizable.strings:101
 #: Resources/templates/Localizable.strings:143
-#, no-wrap
-msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+#, fuzzy, no-wrap
+#| msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+msgid "Obsolete 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
-"Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторых других UEFI.\n"
-"Не рекомендуется ставить совместно с другими AptioFix."
+"Старый вариант коррекции ошибок памяти для AMI Aptio и некоторымх других UEFI.\n"
+"Не использовать совместно с другими AptioFix. Не поддерживает работу встроенного NVRAM."
 
 #. type: "AudioDxe_description"
 #: Resources/templates/Localizable.strings:102
@@ -714,10 +715,9 @@ msgstr "Поддержка протокола AppleGraphicsConfig."
 
 #. type: "OcQuirks.UEFI_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
-#| msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency"
-msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency."
-msgstr "Драйвер, заменяющий AptioMemoryFix с выбором набора фиксов. Также необходим OpenRuntime.efi для работы в паре."
+#, no-wrap
+msgid "No more needed. Install OpenRuntime.efi only."
+msgstr ""
 
 #. type: "AudioDxe.UEFI_description"
 #: Resources/templates/Localizable.strings:145
@@ -1400,6 +1400,16 @@ msgstr "Установить папку EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Неизвестно"
+
+#~ msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+#~ msgstr ""
+#~ "Исправляет ошибки памяти, имеющиеся в AMI Aptio и некоторых других UEFI.\n"
+#~ "Не рекомендуется ставить совместно с другими AptioFix."
+
+#, fuzzy
+#~| msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency"
+#~ msgid "A drop in replacement EFI driver for Clover that replaces AptioMemoryFix and all OsxAptioFix variants. Installs OpenRuntime.efi as dependency."
+#~ msgstr "Драйвер, заменяющий AptioMemoryFix с выбором набора фиксов. Также необходим OpenRuntime.efi для работы в паре."
 
 #~ msgid "Clover v2"
 #~ msgstr "Clover v2.5k"
