@@ -295,16 +295,19 @@ MemLogVA (
   mMemLog->Cursor += DataWritten;
   
   //
+  // Write to standard debug device also
+  //
+  // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
+  // Jief : do this before CallBack to preserve order of messages sent from inside callback.
+  SerialPortWrite((UINT8*)LastMessage, mMemLog->Cursor - LastMessage);
+//  DebugPrint(DEBUG_INFO, "%a", LastMessage);
+
+  //
   // Pass this last message to callback if defined
   //
   if (mMemLog->Callback != NULL) {
     mMemLog->Callback(DebugMode, LastMessage);
   }
-  
-  //
-  // Write to standard debug device also
-  //
-  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 }
 
 /**
@@ -533,13 +536,6 @@ MemLogfVA (
   size_t DataWritten = mMemLog->Cursor - mMemLog->Buffer - LastMessage;
 
   //
-  // Pass this last message to callback if defined
-  //
-  if (mMemLog->Callback != NULL) {
-    mMemLog->Callback(DebugMode,  mMemLog->Buffer + LastMessage);
-  }
-
-  //
   // Check driver debug mask value and global mask
   //
   if ((DebugMode & GetDebugPrintErrorLevel ()) == 0) {
@@ -549,8 +545,16 @@ MemLogfVA (
   // Write to standard debug device also
   //
   // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
+  // Jief : do this before CallBack to preserve order of messages sent from inside callback.
   SerialPortWrite((UINT8*)(mMemLog->Buffer + LastMessage), DataWritten);
 //  DebugPrint(DEBUG_INFO, "%a", LastMessage);
+
+  //
+  // Pass this last message to callback if defined
+  //
+  if (mMemLog->Callback != NULL) {
+    mMemLog->Callback(DebugMode,  mMemLog->Buffer + LastMessage);
+  }
 }
 
 /**

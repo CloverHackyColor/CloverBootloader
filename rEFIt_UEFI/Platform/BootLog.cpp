@@ -74,8 +74,11 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 }
 
 static EFI_FILE_PROTOCOL* gLogFile = NULL;
-STATIC BOOLEAN          FirstTimeSave = TRUE;
+// Do not keep a pointer to MemLogBuffer. Because a reallocation, it could become invalid.
 
+
+// Avoid debug looping. TO be able to call DBG from inside function that DBG calls, we need to suspend callback to avoid a loop.
+// Just instanciante this, the destructor will restore the callback.
 class SuspendMemLogCallback
 {
   MEM_LOG_CALLBACK memlogCallBack_saved;
@@ -83,9 +86,15 @@ public:
   SuspendMemLogCallback() {
     memlogCallBack_saved = GetMemLogCallback();
     SetMemLogCallback(NULL);
-   };
+  };
   ~SuspendMemLogCallback() { SetMemLogCallback(memlogCallBack_saved); };
 };
+
+#if DEBUG_BOOTLOG == 0
+#define DGB_nbCallback(...)
+#else
+#define DGB_nbCallback(...) do { SuspendMemLogCallback smc; DBG(__VA_ARGS__); } while (0)
+#endif
 
 void closeDebugLog()
 {
@@ -96,66 +105,61 @@ void closeDebugLog()
   SuspendMemLogCallback smc;
 
   Status = gLogFile->Close(gLogFile);
-  DBG("closeDebugLog() -> %s\n", efiStrError(Status));
   gLogFile = NULL;
+  //DGB_nbCallback("closeDebugLog() -> %s\n", efiStrError(Status));
 }
 
 
-EFI_FILE_PROTOCOL* GetDebugLogFile()
+static UINTN GetDebugLogFile()
 {
   EFI_STATUS          Status;
-  EFI_LOADED_IMAGE    *LoadedImage;
-  EFI_FILE_PROTOCOL   *RootDir;
   EFI_FILE_PROTOCOL   *LogFile;
 
-  // Avoid debug looping. We don't want DBG from this function to call this function through the callback.
-  SuspendMemLogCallback smc;
+  if ( gLogFile ) return 0;
 
-  // get RootDir from device we are loaded from
-  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
-  if (EFI_ERROR(Status)) {
-    DBG("  GetDebugLogFile() -> HandleProtocol : %s\n", efiStrError(Status));
-    return NULL;
-  }
-  RootDir = EfiLibOpenRoot(LoadedImage->DeviceHandle);
-  if (RootDir == NULL) {
-    DBG("  GetDebugLogFile() -> EfiLibOpenRoot : %s\n", efiStrError(Status));
-    return NULL;
-  }
+//  // get RootDir from device we are loaded from
+//  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
+//  if (EFI_ERROR(Status)) {
+//    DGB_nbCallback("  GetDebugLogFile() -> HandleProtocol : %s\n", efiStrError(Status));
+//  }
+//  RootDir = EfiLibOpenRoot(LoadedImage->DeviceHandle);
+//  if (RootDir == NULL) {
+//    DGB_nbCallback("  GetDebugLogFile() -> EfiLibOpenRoot : %s\n", efiStrError(Status));
+//  }
+//
+//  // Open log file from current root
+//  Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), DEBUG_LOG).wc_str(),
+//                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+
+  if ( !self.isInitialized() ) return 0;
 
   // Open log file from current root
-  Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), DEBUG_LOG).wc_str(),
-                         EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, DEBUG_LOG, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
 
   if ( !EFI_ERROR (Status) && GlobalConfig.ScratchDebugLogAtStart )
   {
-    // Here, we are not at the beginning. Some log was already sent.
-    // That's because the setting GlobalConfig.ScratchDebugLogAtStart is not set before the first log sent.
-    DBG("  GetDebugLogFile() -> deleting the log '%ls'\n", DEBUG_LOG);
+    // Here, we may not be at the first line sent to log.
+    // That's because the setting GlobalConfig.ScratchDebugLogAtStart is not set before the first log is sent.
+    DGB_nbCallback("GetDebugLogFile() -> deleting the log '%ls'\n", DEBUG_LOG);
     EFI_STATUS          StatusDelete;
     StatusDelete = LogFile->Delete(LogFile);
     if ( StatusDelete == EFI_SUCCESS) {
       GlobalConfig.ScratchDebugLogAtStart = false;
-      FirstTimeSave = true;
-      LogFile = NULL;
       Status = EFI_NOT_FOUND; // to make be reopened in the next lines.
     }else{
-      DBG("  Cannot delete log file '%ls\\%ls' : %s\n", self.getCloverDirFullPath().wc_str(), DEBUG_LOG, efiStrError(StatusDelete));
-      RootDir->Close(RootDir);
-      return NULL;
+      DGB_nbCallback("Cannot delete log file '%ls\\%ls' : %s\n", self.getCloverDirFullPath().wc_str(), DEBUG_LOG, efiStrError(StatusDelete));
     }
   }else{
-//      DBG("  GetDebugLogFile() -> open log : %s\n", efiStrError(Status));
+//      DGB_nbCallback("  GetDebugLogFile() -> open log : %s\n", efiStrError(Status));
   }
 
   // If the log file is not found try to create it
   if (Status == EFI_NOT_FOUND) {
-    Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), DEBUG_LOG).wc_str(),
-                           EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+//    Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), DEBUG_LOG).wc_str(), EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+    Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, DEBUG_LOG, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
   }
-  RootDir->Close(RootDir);
-  RootDir = NULL;
 
+//  Jief : do we need that ?
 //  if (EFI_ERROR(Status)) {
 //    // try on first EFI partition
 //    Status = egFindESP(&RootDir);
@@ -172,63 +176,72 @@ EFI_FILE_PROTOCOL* GetDebugLogFile()
 //    }
 //  }
 
-  if (EFI_ERROR(Status)) {
-    DBG("  GetDebugLogFile() -> !opened : %s\n", efiStrError(Status));
-    LogFile = NULL;
-  }
+// Jief : Instead of EfiLibFileInfo, let's use SetPosition to get the size.
+//  if (!EFI_ERROR(Status)) {
+//    EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
+//    if (Info) {
+//      Status = LogFile->SetPosition(LogFile, Info->FileSize);
+//      if ( EFI_ERROR(Status) ) {
+//        DBG("SaveMessageToDebugLogFile SetPosition error %s\n", efiStrError(Status));
+//      }
+//    }
+//  }
 
-  return LogFile;
+  if (!EFI_ERROR(Status)) {
+    Status = LogFile->SetPosition(LogFile, 0xFFFFFFFFFFFFFFFFULL);
+    if ( EFI_ERROR (Status) ) {
+      DGB_nbCallback("GetDebugLogFile() -> Cannot set log position to 0xFFFFFFFFFFFFFFFFULL : %s\n", efiStrError(Status));
+      LogFile->Close(LogFile);
+    }else{
+      UINTN size;
+      Status = LogFile->GetPosition(LogFile, &size);
+      if ( EFI_ERROR (Status) ) {
+        DGB_nbCallback("GetDebugLogFile() -> Cannot get log position : %s\n", efiStrError(Status));
+        LogFile->Close(LogFile);
+      }else{
+        //DGB_nbCallback("GetDebugLogFile() -> opened. log position = %lld (lwo %lld)\n", size, lastWrittenOffset);
+        gLogFile = LogFile;
+        return size;
+      }
+    }
+  }
+  return 0;
 }
 
 VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 {
-//  STATIC UINTN            Position = 0;
-  CHAR8                   *MemLogBuffer;
-  UINTN                   MemLogLen;
-  CHAR8                   *Text;
-  UINTN                   TextLen;
-  EFI_FILE_HANDLE         LogFile;
   EFI_STATUS Status;
 
-// Avoid debug looping. We don't want DBG from this function to call this function through the callback.
-  SuspendMemLogCallback smc;
+  UINTN lastWrittenOffset = GetDebugLogFile();
 
-  MemLogBuffer = GetMemLogBuffer();
-  MemLogLen = GetMemLogLen();
-  Text = LastMessage;
-  TextLen = AsciiStrLen(LastMessage);
+  if ( gLogFile == NULL ) return;
 
-  LogFile = GetDebugLogFile();
+  // Write out this message
+  const char* lastWrittenPointer = GetMemLogBuffer() + lastWrittenOffset;
+  UINTN TextLen = strlen(lastWrittenPointer);
+  UINTN TextLen2 = TextLen;
 
-  // Write to the log file
-  if (LogFile != NULL) {
-    // Advance to the EOF so we append
-    EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
-    if (Info) {
-      Status = LogFile->SetPosition(LogFile, Info->FileSize);
-      if ( EFI_ERROR(Status) ) {
-        DBG("SaveMessageToDebugLogFile SetPosition error %s\n", efiStrError(Status));
-      }
-      // If we haven't had root before this write out whole log
-      if (FirstTimeSave) {
-        Text = MemLogBuffer;
-        TextLen = MemLogLen;
-        FirstTimeSave = FALSE;
-        DBG("SaveMessageToDebugLogFile first time\n");
-      }
-      // Write out this message
-      UINTN TextLen2 = TextLen;
-      Status = LogFile->Write(LogFile, &TextLen2, Text);
-      if ( EFI_ERROR(Status) ) {
-        DBG("SaveMessageToDebugLogFile write error %s\n", efiStrError(Status));
-      }else{
-        if ( TextLen2 != TextLen ) {
-          DBG("SaveMessageToDebugLogFile TextLen2(%lld) != TextLen(%lld)\n", TextLen2, TextLen);
-        }
-      }
+  Status = gLogFile->Write(gLogFile, &TextLen2, lastWrittenPointer);
+  lastWrittenOffset += TextLen2;
+  if ( EFI_ERROR(Status) ) {
+    DGB_nbCallback("SaveMessageToDebugLogFile write error %s\n", efiStrError(Status));
+    closeDebugLog();
+  }else{
+    if ( TextLen2 != TextLen ) {
+      DGB_nbCallback("SaveMessageToDebugLogFile TextLen2(%lld) != TextLen(%lld)\n", TextLen2, TextLen);
+      closeDebugLog();
+    }else{
+      // Not all Firmware implements Flush. So we have to close everytime to force flush. Let's Close() instead of Flush()
+      // Is there a performance difference ? Is it worth to create a setting ? Probably not...
+//          Status = LogFile->Flush(LogFile);
+//          if ( EFI_ERROR(Status) ) {
+//            DGB_nbCallback("SaveMessageToDebugLogFile Cannot flush error %s\n", efiStrError(Status));
+//            closeDebugLog();
+//          }
     }
-    LogFile->Close(LogFile);
   }
+  // Not all Firmware implements Flush. So we have to close everytime to force flush.
+  closeDebugLog();
 }
 
 void EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
