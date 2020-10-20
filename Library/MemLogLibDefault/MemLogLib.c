@@ -273,7 +273,11 @@ MemLogVA (
   // Add log to buffer
   //
   LastMessage = mMemLog->Cursor;
+#ifdef JIEF_DEBUG
+  if (0) {
+#else
   if (Timing) {
+#endif
     //
     // Write timing only at the beginning of a new line
     //
@@ -532,7 +536,11 @@ MemLogfVA (
   //
   UINTN LastMessage = mMemLog->Cursor - mMemLog->Buffer;
 
+#ifdef JIEF_DEBUG
+  vprintf_with_callback_timestamp_emitcr(Format, Marker, transmitS8Printf, NULL, &printfNewline, 0, 1);
+#else
   vprintf_with_callback_timestamp_emitcr(Format, Marker, transmitS8Printf, NULL, &printfNewline, Timing, 1);
+#endif
   size_t DataWritten = mMemLog->Cursor - mMemLog->Buffer - LastMessage;
 
   //

@@ -36,25 +36,31 @@ public:
   }
 
   // Overload post/pre increment
-  void operator++()
+  Counter& operator++()
   {
     m_counter++;
+    return *this;
   }
 
-  void operator++(int)
-  {
-    m_counter++;
-  }
-
-  // Overload post/pre decrement
-  void operator--()
-  {
-    m_counter--;
-  }
-  void operator--(int)
+//  Counter operator++(int)
+//  {
+//    Counter tmp = *this;
+//    m_counter++;
+//    return tmp;
+//  }
+//
+//  // Overload post/pre decrement
+  Counter& operator--()
   {
     m_counter--;
+    return *this;
   }
+//  Counter operator--(int)
+//  {
+//    Counter tmp = *this;
+//    m_counter--;
+//    return tmp;
+//  }
 
 private:
   unsigned int m_counter{};
@@ -71,7 +77,7 @@ public:
     m_ptr = ptr;
     m_counter = new Counter();
     if (ptr) {
-      (*m_counter)++;
+      ++(*m_counter);
     }
   }
 
@@ -80,7 +86,7 @@ public:
   {
     m_ptr = sp.m_ptr;
     m_counter = sp.m_counter;
-    (*m_counter)++;
+    ++(*m_counter);
   }
 
   // Reference count
@@ -107,7 +113,7 @@ public:
   // Destructor
   ~Shared_ptr()
   {
-    (*m_counter)--;
+    --(*m_counter);
     if (m_counter->get() == 0) {
       delete m_counter;
       delete m_ptr;

@@ -21,7 +21,7 @@ class XTheme
 public:
   XObjArray<XIcon> Icons;
 protected:
-  XStringW     m_ThemePath;
+  XStringW     m_ThemePath = NullXStringW;
   EFI_FILE    *ThemeDir;
 
 public:

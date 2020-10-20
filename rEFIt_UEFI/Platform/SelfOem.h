@@ -14,20 +14,20 @@
 class SelfOem
 {
 protected:
-  XString8     m_ConfName;
+  XString8     m_ConfName = NullXString8; // Initialisation required by -Weffc++. Couldn't use default ctor.
 
 //  bool         m_OemDirExists;
   EFI_FILE*    m_OemDir = NULL;
-  XStringW     m_OemPathRelToSelfDir;
-  XStringW     m_OemFulPath;
+  XStringW     m_OemPathRelToSelfDir = NullXStringW;
+  XStringW     m_OemFulPath = NullXStringW;
 
 //  const EFI_FILE*    m_userConfigDir = NULL;
-  XStringW     m_configDirPathRelToSelfDir; // could also be empty if config dir is clover dir.
-  XStringW     m_configDirPathRelToSelfDirWithTrailingSlash; // could also be empty if config dir is clover dir.
+  XStringW     m_configDirPathRelToSelfDir = NullXStringW; // could also be empty if config dir is clover dir.
+  XStringW     m_configDirPathRelToSelfDirWithTrailingSlash = NullXStringW; // could also be empty if config dir is clover dir.
 
   EFI_FILE*    m_KextsDir = NULL;
-  XStringW     m_KextsPathRelToSelfDir;
-  XStringW     m_KextsFullPath;
+  XStringW     m_KextsPathRelToSelfDir = NullXStringW;
+  XStringW     m_KextsFullPath = NullXStringW;
 
 //  EFI_STATUS _openDir(const XStringW& path, bool* b, EFI_FILE** efiDir);
   bool _checkOEMPath();

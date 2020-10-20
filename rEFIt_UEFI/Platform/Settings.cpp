@@ -1556,6 +1556,14 @@ BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS)
   XString8Array osToc = Split<XString8Array>(MatchOS, "."_XS8).trimEachString();
   XString8Array currOStoc = Split<XString8Array>(CurrOS, "."_XS8).trimEachString();
 
+
+  if ( osToc.size() > 0 && currOStoc.size() > 0 && osToc[0] == "11"_XS8 && currOStoc[0] == "11"_XS8 ) {
+    if (osToc.size() == 1 ) return true;
+    if (osToc.size() == 2 ) {
+      if ( osToc[1].equalIC("x") ) return true;
+      if ( currOStoc.size() == 2 && osToc[1] == currOStoc[1] ) return true;
+    }
+  }
   if (osToc.size() == 2) {
     if (currOStoc.size() == 2) {
       if ( osToc[0] == currOStoc[0] && osToc[1] == currOStoc[1]) {
