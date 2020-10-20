@@ -64,7 +64,3 @@
   gEfiDiskInfoIdeInterfaceGuid                  ## SOMETIME_PRODUCES (The device is ATAPI device in IDE mode)
   gEfiDiskInfoAhciInterfaceGuid                 ## SOMETIME_PRODUCES (The device is ATAPI device in AHCI mode)
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os  -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
-  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG

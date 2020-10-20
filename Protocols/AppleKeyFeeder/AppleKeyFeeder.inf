@@ -57,9 +57,5 @@
     gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
   
 [BuildOptions]
-#  MSFT:*_*_*_ASM_FLAGS = /Fl
-#  XCODE:*_*_*_CC_FLAGS = -Os
-#  GCC:*_*_*_CC_FLAGS = -O0
-#  GCC:DEBUG_*_*_CC_FLAGS = -O0 -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
-#  GCC:RELEASE_*_*_CC_FLAGS = -Os -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
+#  GCC:*_*_*_CC_FLAGS = -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
   

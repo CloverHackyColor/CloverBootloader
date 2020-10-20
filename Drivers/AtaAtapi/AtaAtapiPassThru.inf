@@ -78,8 +78,4 @@
 [UserExtensions.TianoCore."ExtraFiles"]
   AtaAtapiPassThruDxeExtra.uni  
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -O3  -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -O3 -DMDEPKG_NDEBUG
-  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
  

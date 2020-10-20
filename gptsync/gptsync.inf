@@ -72,7 +72,3 @@
   gEfiBlockIoProtocolGuid
   gEfiBlockIo2ProtocolGuid
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os 
-  GCC:*_*_*_CC_FLAGS = -Os
-  MSFT:*_*_*_CC_FLAGS = /Os

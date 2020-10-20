@@ -89,6 +89,3 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution  
 
-[BuildOptions]
-#  XCODE:*_*_*_CC_FLAGS = -Os
-#  GCC:*_*_*_CC_FLAGS = -Os

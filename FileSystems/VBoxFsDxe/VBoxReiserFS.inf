@@ -78,8 +78,8 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
 
 [BuildOptions.common]
-  GCC:*_*_*_CC_FLAGS =  -Os -DFSTYPE=reiserfs
-  XCODE:*_*_*_CC_FLAGS = -Os -DFSTYPE=reiserfs
+  GCC:*_*_*_CC_FLAGS =  -DFSTYPE=reiserfs
+  XCODE:*_*_*_CC_FLAGS = -DFSTYPE=reiserfs
 # -DFSW_DEBUG_LEVEL=3
   INTEL:*_*_*_CC_FLAGS = -DFSTYPE=reiserfs
   MSFT:*_*_*_CC_FLAGS = -DFSTYPE=reiserfs

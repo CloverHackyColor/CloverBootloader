@@ -39,9 +39,4 @@
   BaseDebugPrintErrorLevelLib
   BaseSerialPortLib
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
-  GCC:RELEASE_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG
-  GCC:DEBUG_*_*_CC_FLAGS = -fno-lto -DMDEPKG_NDEBUG
-  MSFT:*_*_*_CC_FLAGS = 
 

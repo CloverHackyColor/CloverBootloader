@@ -56,6 +56,4 @@
   gEfiSimpleFileSystemProtocolGuid				## CONSUMES
   gFSInjectProtocolGuid							## PRODUCES and CONSUMES
 
-[BuildOptions]
-#  MSFT:*_*_*_ASM_FLAGS = /Fl
 

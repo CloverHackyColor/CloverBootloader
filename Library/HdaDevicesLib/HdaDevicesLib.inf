@@ -26,6 +26,3 @@
 [Sources]
   HdaDevicesLib.c
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG

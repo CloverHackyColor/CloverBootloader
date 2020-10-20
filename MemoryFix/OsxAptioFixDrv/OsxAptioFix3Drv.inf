@@ -91,5 +91,3 @@
 #  GCC:*_*_*_ASM_FLAGS = -Wa,-a=AsmList.txt
 #  GCC:*_*_*_NASM_FLAGS = -l NasmList.txt
 
-  XCODE:*_*_*_CC_FLAGS = -Os -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -Os -fno-lto -DMDEPKG_NDEBUG

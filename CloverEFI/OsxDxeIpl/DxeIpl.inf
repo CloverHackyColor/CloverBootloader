@@ -69,10 +69,7 @@
   TRUE
 
 [BuildOptions]
-#  GCC:*_*_X64_CC_FLAGS                   = $(BUILD_OPTIONS) -march=core2 -mtune=core2 -m64 -Os $(INC)
+#  GCC:*_*_X64_CC_FLAGS                   = $(BUILD_OPTIONS) -march=core2 -mtune=core2 -m64 $(INC)
 #  GCC:*_*_X64_AS_FLAGS                   = $(BUILD_OPTIONS) -march=core2 -mtune=core2 --64 $(INC)
-#  GCC:*_*_IA32_CC_FLAGS                  = $(BUILD_OPTIONS) -march=i386 -mtune=i386 -m32 -Os $(INC)
+#  GCC:*_*_IA32_CC_FLAGS                  = $(BUILD_OPTIONS) -march=i386 -mtune=i386 -m32 $(INC)
 #  GCC:*_*_IA32_AS_FLAGS                  = $(BUILD_OPTIONS) -march=i386 -mtune=i386 --32 $(INC)
-  XCODE:*_*_*_CC_FLAGS = -Os -fno-lto -UUSING_LTO -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -O0 -fno-lto -DMDEPKG_NDEBUG
-  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG

@@ -72,8 +72,4 @@
 #   #
 #   EVENT_TYPE_PERIODIC_TIMER                          ## PRODUCES
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -O0  -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -O0 -fno-lto -DMDEPKG_NDEBUG
-  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
 

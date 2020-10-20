@@ -79,8 +79,8 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
 
 [BuildOptions.common]
-  GCC:*_*_*_CC_FLAGS =  -O3  -fno-lto -DFSTYPE=hfs
-  XCODE:*_*_*_CC_FLAGS = -Os -DFSTYPE=hfs
+  GCC:*_*_*_CC_FLAGS =  -O3  -DFSTYPE=hfs
+  XCODE:*_*_*_CC_FLAGS = -DFSTYPE=hfs
 # -DFSW_DEBUG_LEVEL=3
   INTEL:*_*_*_CC_FLAGS = -DFSTYPE=hfs
   MSFT:*_*_*_CC_FLAGS = -DFSTYPE=hfs

@@ -77,7 +77,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
 
 [BuildOptions.common]
-  GCC:*_*_*_CC_FLAGS = -Os -DFSTYPE=ext4
+  GCC:*_*_*_CC_FLAGS = -DFSTYPE=ext4
 
   INTEL:*_*_*_CC_FLAGS = -DFSTYPE=ext4
 

@@ -80,7 +80,3 @@
 #  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdPs2KbdExtendedVerification|FALSE
 
-[BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os -fno-builtin -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -O0 -DMDEPKG_NDEBUG
-  MSFT:*_*_*_CC_FLAGS = /D MDEPKG_NDEBUG
