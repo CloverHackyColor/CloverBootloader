@@ -138,7 +138,8 @@ const LString8 gBuildId __attribute__((used)) = "Clover build id: " BUILD_ID;
 const LString8 gBuildId __attribute__((used)) = "Clover build id: " "unknown";
 #endif
 
-const char* path_independant = "path_independant";
+// __attribute__((used)) seems to not always work. So, in AboutRefit(), there is a trick to let the compiler thinks it's used.
+const char* path_independant __attribute__((used)) = "path_independant";
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 
@@ -403,7 +404,6 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
                              &Entry->BootNum);
   if (EFI_ERROR(Status)) {
     DBG("Can't save BootCurrent, status=%s\n", efiStrError(Status));
-    DBG("%s\n", path_independant);
   }
   //Next step is rotate BootOrder to set BootNum to first place
   BootOrder = (__typeof__(BootOrder))GetNvramVariable(L"BootOrder", &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
@@ -1556,14 +1556,6 @@ BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS)
   XString8Array osToc = Split<XString8Array>(MatchOS, "."_XS8).trimEachString();
   XString8Array currOStoc = Split<XString8Array>(CurrOS, "."_XS8).trimEachString();
 
-
-  if ( osToc.size() > 0 && currOStoc.size() > 0 && osToc[0] == "11"_XS8 && currOStoc[0] == "11"_XS8 ) {
-    if (osToc.size() == 1 ) return true;
-    if (osToc.size() == 2 ) {
-      if ( osToc[1].equalIC("x") ) return true;
-      if ( currOStoc.size() == 2 && osToc[1] == currOStoc[1] ) return true;
-    }
-  }
   if (osToc.size() == 2) {
     if (currOStoc.size() == 2) {
       if ( osToc[0] == currOStoc[0] && osToc[1] == currOStoc[1]) {
