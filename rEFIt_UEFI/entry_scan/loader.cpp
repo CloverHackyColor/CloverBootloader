@@ -1411,7 +1411,42 @@ void ScanLoader(void)
           } else if (FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\NotificationCenter.app") && !FileExists(Volume->RootDir, L"\\System\\Library\\CoreServices\\Siri.app")) {
             AddLoaderEntry(MACOSX_LOADER_PATH, NullXString8Array, L""_XSW, L"OS X"_XSW, Volume, L""_XSW, NULL, OSTYPE_OSX, 0); // 10.8 - 10.11
           } else {
-            AddLoaderEntry(MACOSX_LOADER_PATH, NullXString8Array, L""_XSW, L"macOS"_XSW, Volume, L""_XSW, NULL, OSTYPE_OSX, 0); // 10.12+
+            XString8   OSVersion;
+            if ( Volume->ApfsFileSystemUUID.notEmpty() && Volume->ApfsTargetUUIDArray.size() == 0 )
+            {
+              XStringW plist = SWPrintf("\\System\\Library\\CoreServices\\SystemVersion.plist");
+              if ( !FileExists(Volume->RootDir, plist) ) {
+                plist = SWPrintf("\\System\\Library\\CoreServices\\ServerVersion.plist");
+                if ( !FileExists(Volume->RootDir, plist) ) {
+                  plist.setEmpty();
+                }
+              }
+
+              if ( plist.notEmpty() ) { // found macOS System
+                CHAR8*     PlistBuffer = NULL;
+                UINTN      PlistLen;
+                TagDict*     Dict        = NULL;
+                const TagStruct*     Prop        = NULL;
+
+                EFI_STATUS Status = egLoadFile(Volume->RootDir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+                if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+                  Prop = Dict->propertyForKey("ProductVersion");
+                  if ( Prop != NULL ) {
+                    if ( !Prop->isString() ) {
+                      MsgLog("ATTENTION : property not string in ProductVersion\n");
+                    }else{
+                      if( Prop->getString()->stringValue().notEmpty() ) {
+                        OSVersion = Prop->getString()->stringValue();
+                      }
+                    }
+                  }
+                }
+                if ( PlistBuffer ) FreePool(PlistBuffer);
+              }
+            }
+            if ( OSVersion.isEmpty() || !OSVersion.equal("11.0") ) {
+              AddLoaderEntry(MACOSX_LOADER_PATH, NullXString8Array, L""_XSW, L"macOS"_XSW, Volume, L""_XSW, NULL, OSTYPE_OSX, 0); // 10.12+
+            }
           }
         }
       }
