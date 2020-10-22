@@ -123,6 +123,70 @@ public:
     }
     panic("EntryArray::operator[] nIndex > size()");
   }
+
+  size_t getApfsLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
+  {
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
+        if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsContainerUUID == ApfsContainerUUID ) {
+          if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsFileSystemUUID == ApfsFileSystemUUID ) {
+            return i;
+          }
+        }
+      }
+    }
+    return SIZE_T_MAX;
+  }
+
+  size_t getApfsPrebootLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
+  {
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
+        if ( (XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0 ) {
+          if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsContainerUUID == ApfsContainerUUID ) {
+            if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->APFSTargetUUID == ApfsFileSystemUUID ) {
+              return i;
+            }
+          }
+        }
+      }
+    }
+    return SIZE_T_MAX;
+  }
+
+  template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
+  void moveBefore(IntegralType1 idxFrom, IntegralType2 idxTo)
+  {
+    if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
+    if (idxFrom > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
+    if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
+    if (idxTo > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
+
+    REFIT_ABSTRACT_MENU_ENTRY* entry = &ElementAt(idxFrom);
+    RemoveWithoutFreeingAtIndex(idxFrom);
+    if ( idxTo > idxFrom ) {
+      InsertRef(entry, idxTo-1, true);
+    }else{
+      InsertRef(entry, idxTo, true);
+    }
+  }
+
+  template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
+  void moveAfter(IntegralType1 idxFrom, IntegralType2 idxTo)
+  {
+    if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
+    if (idxFrom > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
+    if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
+    if (idxTo > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
+
+    REFIT_ABSTRACT_MENU_ENTRY* entry = &ElementAt(idxFrom);
+    RemoveWithoutFreeingAtIndex(idxFrom);
+    if ( idxTo > idxFrom ) {
+      InsertRef(entry, idxTo, true);
+    }else{
+      InsertRef(entry, idxTo+1, true);
+    }
+  }
 };
 
 class REFIT_MENU_SCREEN

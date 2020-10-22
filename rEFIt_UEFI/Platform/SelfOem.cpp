@@ -135,7 +135,7 @@ EFI_STATUS SelfOem::_initialize()
 
 
 
-  if ( m_KextsDir != NULL ) panic("%s : m_KextsDir != NULL", __FUNCTION__);
+  if ( m_KextsDir != NULL ) panic("%s : Kexts dir != NULL.", __FUNCTION__);
   if ( oemDirExists() ) {
     Status = m_OemDir->Open(m_OemDir, &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( !EFI_ERROR(Status) ) {
@@ -192,6 +192,8 @@ EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, 
 
 EFI_STATUS SelfOem::reInitialize()
 {
+  if ( m_ConfName.isEmpty() ) panic("%s : initialize() must called once first", __FUNCTION__);
+
   closeHandle();
 
   // No need to call _setOemPathRelToSelfDir again, but need to open m_OemDir, if it exists

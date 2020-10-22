@@ -45,6 +45,7 @@
 
 extern "C" {
 #include <Library/OcConfigurationLib.h>
+#include <Guid/AppleApfsInfo.h>
 }
 
 /* types */
@@ -164,8 +165,8 @@ public:
   EFI_HANDLE          DeviceHandle;
   EFI_FILE            *RootDir;
   XStringW            DevicePathString;
-  XStringW            VolName;
-  XStringW            VolLabel;
+  XStringW            VolName; // comes from EfiLibFileSystemInfo, EfiLibFileSystemVolumeLabelInfo, "EFI" if gEfiPartTypeSystemPartGuid or "Unknown HD"
+  XStringW            VolLabel; // comes from \\.VolumeLabel.txt, or empty.
   UINT8               DiskKind;
   LEGACY_OS           *LegacyOS;
   BOOLEAN             Hidden;
@@ -183,7 +184,10 @@ public:
   UINT32              DriveCRC32;
   EFI_GUID            RootUUID; //for recovery it is UUID of parent partition
   UINT64              SleepImageOffset;
+  XStringW            osxVolumeName = NullXStringW; // comes from \\System\\Library\\CoreServices\\.disk_label.contentDetails, or empty.
   XString8            ApfsFileSystemUUID; // apfs file system UUID of that partition. It's not the UUID of subfolder like in Preboot.
+  XString8            ApfsContainerUUID = NullXString8;
+  APPLE_APFS_VOLUME_ROLE  ApfsRole = 0;
   XString8Array        ApfsTargetUUIDArray; // this is the array of folders that are named as UUID
 
   REFIT_VOLUME() : DevicePath(0), DeviceHandle(0), RootDir(0), DevicePathString(), VolName(), VolLabel(), DiskKind(0), LegacyOS(0), Hidden(0), BootType(0), IsAppleLegacy(0), HasBootCode(0),
@@ -194,6 +198,11 @@ public:
   const REFIT_VOLUME& operator = ( const REFIT_VOLUME & ) = delete; // Can be defined if needed
   ~REFIT_VOLUME() {}
 
+  const XStringW getVolLabelOrOSXVolumeNameOrVolName() {
+    if ( VolLabel.notEmpty() ) return VolLabel;
+    if ( osxVolumeName.notEmpty() ) return osxVolumeName;
+    return VolName;
+  }
 };
 
 class KEXT_PATCH

@@ -365,6 +365,7 @@
   OpenCoreLib
   #OcDebugLogLib
   OcDebugLogLibOc2Clover
+  OcAppleBootPolicyLib
 
 [Guids]
   gEfiAcpiTableGuid

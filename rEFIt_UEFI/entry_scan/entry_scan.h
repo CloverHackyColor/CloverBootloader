@@ -45,7 +45,6 @@ extern REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown;
 //extern REFIT_MENU_ENTRY MenuEntryExit;
 extern REFIT_MENU_SCREEN MainMenu;
 
-extern XObjArray<REFIT_VOLUME> Volumes;
 // common
 const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 

@@ -35,6 +35,7 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "lib.h"
 #include "screen.h"
 #include "../Platform/guid.h"
 #include "../Platform/APFS.h"
@@ -42,6 +43,7 @@
 #include "../Platform/Settings.h"
 #include "Self.h"
 #include "SelfOem.h"
+#include "../include/OC.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LIB 1
@@ -69,7 +71,12 @@ BOOLEAN          gThemeOptionsChanged = FALSE;
 REFIT_VOLUME     *SelfVolume = NULL;
 //REFIT_VOLUME     **Volumes = NULL;
 //UINTN            VolumesCount = 0;
-XObjArray<REFIT_VOLUME> Volumes;
+VolumesArrayClass Volumes;
+
+//REFIT_VOLUME* VolumesArrayClass::getApfsPartitionWithUUID(const XString8& ApfsContainerUUID, const XString8& APFSTargetUUID)
+//{
+//}
+
 //
 // Unicode collation protocol interface
 //
@@ -561,6 +568,25 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   FreeAlignedPages((void*)SectorBuffer, EFI_SIZE_TO_PAGES (2048));
 }
 
+//Set Entry->VolName to .disk_label.contentDetails if it exists
+STATIC XStringW GetOSXVolumeName(REFIT_VOLUME *Volume)
+{
+  XStringW returnValue;
+  EFI_STATUS  Status = EFI_NOT_FOUND;
+  CONST CHAR16* targetNameFile = L"\\System\\Library\\CoreServices\\.disk_label.contentDetails";
+  CHAR8*  fileBuffer;
+  UINTN   fileLen = 0;
+  if(FileExists(Volume->RootDir, targetNameFile)) {
+    Status = egLoadFile(Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
+    if(!EFI_ERROR(Status)) {
+      returnValue.strncpy(fileBuffer, fileLen);
+      FreePool(fileBuffer);
+      return returnValue;
+    }
+  }
+  return NullXStringW;
+}
+
 //at start we have only Volume->DeviceHandle
 static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
@@ -591,9 +617,6 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //#if REFIT_DEBUG >= 2
     //    DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
     //#endif
-  }
-  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
-	  DBG("          apfsFileSystemUUID=%s\n", Volume->ApfsFileSystemUUID.c_str());
   }
 #else
     DBG("\n");
@@ -794,6 +817,27 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     return EFI_SUCCESS;
   }
   
+  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
+    APPLE_APFS_CONTAINER_INFO       *ApfsContainerInfo;
+    APPLE_APFS_VOLUME_INFO          *ApfsVolumeInfo;
+    EFI_STATUS Status = InternalGetApfsSpecialFileInfo(Volume->RootDir, &ApfsVolumeInfo, &ApfsContainerInfo);
+    if ( !EFI_ERROR(Status) ) {
+      //DBG("Status : %s, APFS role : %x\n", efiStrError(Status), ApfsVolumeInfo->Role);
+      Volume->ApfsRole = ApfsVolumeInfo->Role;
+      Volume->ApfsContainerUUID = GuidLEToXString8(ApfsContainerInfo->Uuid);
+    }else{
+      MsgLog("Status : %s, APFS role : %x\n", efiStrError(Status), ApfsVolumeInfo->Role);
+    }
+  }
+  if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
+    DBG("          apfsFileSystemUUID=%s, ApfsContainerUUID=%s, ApfsRole=0x%x\n", Volume->ApfsFileSystemUUID.c_str(), Volume->ApfsContainerUUID.c_str(), Volume->ApfsRole);
+  }
+
+
+  Volume->osxVolumeName = GetOSXVolumeName(Volume);
+  DBG("          osxVolumeName=%ls\n", Volume->osxVolumeName.wc_str());
+
+
   if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {
       EFI_FILE*     FileHandle;
       Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"\\.VolumeLabel.txt", EFI_FILE_MODE_READ, 0);
@@ -838,7 +882,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   {
     void *Instance;
     if (!EFI_ERROR(gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {
-      Volume->VolName = L"EFI"_XSW;                                 \
+      Volume->VolName = L"EFI"_XSW;
     }
   }
   if (Volume->VolName.isEmpty()) {
@@ -873,6 +917,8 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 		}
 		DirIterClose(&DirIter);
   }
+
+  DBG("          label : %ls\n", Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
   
   //Status = GetOSVersion(Volume); NOTE: Sothor - We will find icon names later once we have found boot.efi on the volume //here we set Volume->IconName (tiger,leo,snow,lion,cougar, etc)
   

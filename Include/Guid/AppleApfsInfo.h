@@ -39,8 +39,12 @@ extern EFI_GUID gAppleApfsContainerInfoGuid;
     { 0xB4, 0x4E, 0x97, 0x45, 0x15, 0xD2, 0x7C, 0x78 } }
 
 
-#define APPLE_APFS_VOLUME_ROLE_RECOVERY  BIT2
-#define APPLE_APFS_VOLUME_ROLE_PREBOOT   BIT4
+#define APPLE_APFS_VOLUME_ROLE_RECOVERY  BIT2  // 0x04
+#define APPLE_APFS_VOLUME_ROLE_PREBOOT   BIT4  // 0x10
+#define APPLE_APFS_VOLUME_ROLE_DATA      BIT6  // 0x40
+#define APPLE_APFS_VOLUME_ROLE_VM        BIT3  // 0x08
+#define APPLE_APFS_VOLUME_ROLE_SYSTEM    BIT0  // 0x01 Main partition. Joint with DATA.
+//#define APPLE_APFS_VOLUME_ROLE_UPDATE    0xC0  // I got 0xC0, maybe the meaning is DATA + UPDATE ?
 
 typedef UINT32 APPLE_APFS_VOLUME_ROLE;
 

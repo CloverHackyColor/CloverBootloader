@@ -23,8 +23,6 @@
 #define DBG(...) DebugLog (DEBUG_SET, __VA_ARGS__)
 #endif
 
-extern XObjArray<REFIT_VOLUME> Volumes;
-
 // for saving nvram.plist and it's data
 TagDict*                   gNvramDict;
 

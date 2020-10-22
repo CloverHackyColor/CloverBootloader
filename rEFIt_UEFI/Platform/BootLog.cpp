@@ -81,7 +81,7 @@ static EFI_FILE_PROTOCOL* gLogFile = NULL;
 // Just instanciante this, the destructor will restore the callback.
 class SuspendMemLogCallback
 {
-  MEM_LOG_CALLBACK memlogCallBack_saved;
+  MEM_LOG_CALLBACK memlogCallBack_saved = NULL;
 public:
   SuspendMemLogCallback() {
     memlogCallBack_saved = GetMemLogCallback();
