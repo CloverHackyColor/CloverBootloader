@@ -138,8 +138,9 @@ XStringW LOADER_ENTRY::getKextPlist(const XStringW& dirPath, const SIDELOAD_KEXT
   XStringW    TempName;
   
   TempName = SWPrintf("%ls\\%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str(), L"Contents\\Info.plist");
+#ifndef LESS_DEBUG
   MsgLog("info plist path: %ls\n", TempName.wc_str());
-
+#endif
   if (!FileExists(&self.getCloverDir(), TempName)) {
     //try to find a planar kext, without Contents
     TempName = SWPrintf("%ls\\%ls\\%ls", dirPath.wc_str(), KextEntry.FileName.wc_str(), L"Info.plist");

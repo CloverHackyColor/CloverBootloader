@@ -50,8 +50,9 @@ EFI_STATUS Self::_initialize()
 
   m_SelfDevicePath = DuplicateDevicePath(DevicePathFromHandle(self.getSelfDeviceHandle()));
   if ( m_SelfDevicePath == NULL )  panic("m_SelfDevicePath == NULL");
+#ifdef JIEF_DEBUG
   DBG("self.getSelfDevicePath()=%ls @%llX\n", FileDevicePathToXStringW(&self.getSelfDevicePath()).wc_str(), (uintptr_t)self.getSelfDeviceHandle());
-
+#endif
   Status = gBS->HandleProtocol(self.getSelfDeviceHandle(), &gEfiSimpleFileSystemProtocolGuid, (void**)&m_SelfSimpleVolume);
   if ( EFI_ERROR(Status) ) panic("Cannot get m_SelfSimpleVolume");
   Status = getSelfSimpleVolume().OpenVolume(&getSelfSimpleVolume(), &m_SelfRootDir);
@@ -84,9 +85,9 @@ EFI_STATUS Self::_initialize()
 
   size_t i = m_CloverDirFullPath.rindexOf(U'\\', SIZE_T_MAX-1);
   if ( i != SIZE_T_MAX && i > 0 ) m_CloverDirFullPath.deleteCharsAtPos(i, SIZE_T_MAX);
-
+#ifdef JIEF_DEBUG
   DBG("SelfDirPath = %ls\n", m_CloverDirFullPath.wc_str());
-
+#endif
   Status = self.getSelfVolumeRootDir().Open(&self.getSelfVolumeRootDir(), &m_CloverDir, m_CloverDirFullPath.wc_str(), EFI_FILE_MODE_READ, 0);
   if ( EFI_ERROR(Status) ) panic("Cannot open getSelfRootDir()");
 

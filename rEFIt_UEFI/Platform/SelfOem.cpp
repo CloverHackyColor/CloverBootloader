@@ -171,13 +171,13 @@ EFI_STATUS SelfOem::_initialize()
     assert( m_KextsPathRelToSelfDir.notEmpty() );
     assert( m_KextsFullPath.notEmpty() );
   }
-
+#ifdef JIEF_DEBUG
   if ( isKextsDirFound() ) {
     DBG("Kexts dir = '%ls'\n", getKextsFullPath().wc_str());
   }else{
     DBG("Kexts dir = none\n");
   }
-
+#endif
 //DBG("%s : leave.\n", __FUNCTION__);
   return EFI_SUCCESS;
 }

@@ -207,7 +207,7 @@ const char CPU_STRING_UNKNOWN[] = "Unknown CPU Type";
 #define MSR_IA32_EXT_CONFIG         0x00EE   /* limited use - not for i7            */
 #define MSR_FLEX_RATIO              0x0194   /* limited use - not for Penryn or older      */
                                              //see no value on most CPUs
-#define  MSR_IA32_PERF_STATUS       0x0198
+#define MSR_IA32_PERF_STATUS        0x0198
 #define MSR_IA32_PERF_CONTROL       0x0199
 #define MSR_IA32_CLOCK_MODULATION   0x019A
 #define MSR_THERMAL_STATUS          0x019C

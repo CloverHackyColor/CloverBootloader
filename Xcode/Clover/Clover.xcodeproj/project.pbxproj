@@ -103,6 +103,8 @@
 		A570FB0D240D626D0057F26D /* XPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A570FB0B240D626C0057F26D /* XPointer.cpp */; };
 		A5716F83235968BE000CEC60 /* Nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = A5716F82235968BE000CEC60 /* Nasm.inc */; };
 		A571C28D240574DA00B6A2C5 /* XImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571C28B240574D900B6A2C5 /* XImage.cpp */; };
+		A57AD76B254356C4001B1DC1 /* Self.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57AD768254356C4001B1DC1 /* Self.cpp */; };
+		A57AD76C254356C4001B1DC1 /* SelfOem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57AD76A254356C4001B1DC1 /* SelfOem.cpp */; };
 		A57CF7BB241A8A13006DE51E /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CF7B9241A8A12006DE51E /* XTheme.cpp */; };
 		A57CF7C6241BE0A4006DE51E /* strcmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CF7BF241BE0A4006DE51E /* strcmp.cpp */; };
 		A57CF7C8241BE0A4006DE51E /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57CF7C3241BE0A4006DE51E /* strlen.cpp */; };
@@ -947,6 +949,10 @@
 		A571C28C240574D900B6A2C5 /* XImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XImage.h; sourceTree = "<group>"; };
 		A5779C9224C6B2EB006D1DC0 /* MachO-loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MachO-loader.h"; sourceTree = "<group>"; };
 		A5779C9324C6C1EB006D1DC0 /* UefiLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLoader.h; sourceTree = "<group>"; };
+		A57AD764254356C3001B1DC1 /* SelfOem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfOem.h; sourceTree = "<group>"; };
+		A57AD768254356C4001B1DC1 /* Self.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Self.cpp; sourceTree = "<group>"; };
+		A57AD769254356C4001B1DC1 /* Self.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Self.h; sourceTree = "<group>"; };
+		A57AD76A254356C4001B1DC1 /* SelfOem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelfOem.cpp; sourceTree = "<group>"; };
 		A57CF7B9241A8A12006DE51E /* XTheme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XTheme.cpp; sourceTree = "<group>"; };
 		A57CF7BA241A8A13006DE51E /* XTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XTheme.h; sourceTree = "<group>"; };
 		A57CF7BD241BE0A4006DE51E /* stdlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdlib.h; sourceTree = "<group>"; };
@@ -7860,6 +7866,10 @@
 				A52313322448B37A00421FB2 /* platformdata.h */,
 				A5456D0B23FC5AEE000BF18C /* PlatformDriverOverride.cpp */,
 				A52313332448B38400421FB2 /* PlatformDriverOverride.h */,
+				A57AD768254356C4001B1DC1 /* Self.cpp */,
+				A57AD769254356C4001B1DC1 /* Self.h */,
+				A57AD76A254356C4001B1DC1 /* SelfOem.cpp */,
+				A57AD764254356C3001B1DC1 /* SelfOem.h */,
 				A5456D2823FC5AFB000BF18C /* Settings.cpp */,
 				A52313352448B39700421FB2 /* Settings.h */,
 				A5456D2323FC5AF9000BF18C /* smbios.cpp */,
@@ -23589,6 +23599,7 @@
 				A5456D6823FC5B08000BF18C /* AcpiPatcher.cpp in Sources */,
 				2C794E401A0AA85900D845B0 /* Test.c in Sources */,
 				A52313152448B1C500421FB2 /* shared_with_menu.cpp in Sources */,
+				A57AD76C254356C4001B1DC1 /* SelfOem.cpp in Sources */,
 				A5D12C34243A0BDA00DFA98A /* XStringArray.cpp in Sources */,
 				A529343B24FB92BD004241C3 /* XStringArray_test.cpp in Sources */,
 				A5456D5223FC5B08000BF18C /* ati.cpp in Sources */,
@@ -23684,6 +23695,7 @@
 				A5456D9623FC5B72000BF18C /* operatorNewDelete.cpp in Sources */,
 				12AAF3A51DB75DC800A52B12 /* FirmwareVolume.c in Sources */,
 				A57CF7D7241BE111006DE51E /* XString_test.cpp in Sources */,
+				A57AD76B254356C4001B1DC1 /* Self.cpp in Sources */,
 				A5816DF62418103A003BA66C /* menu_items.cpp in Sources */,
 				A5456D6223FC5B08000BF18C /* spd.cpp in Sources */,
 				A5456D8123FC5B40000BF18C /* menu.cpp in Sources */,
