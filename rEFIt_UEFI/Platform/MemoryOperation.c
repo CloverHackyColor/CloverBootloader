@@ -4,8 +4,21 @@
  */
 
 #include "MemoryOperation.h"
+#include <BootLog.h>
 
 #include <Library/BaseMemoryLib.h>
+
+#ifndef DEBUG_MEMORYOPERATION
+#define DEBUG_MEMORYOPERATION 1
+#else
+#define DEBUG_MAIN DEBUG_ALL
+#endif
+
+#if DEBUG_MEMORYOPERATION == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_MEMORYOPERATION, __VA_ARGS__)
+#endif
 
 
 //
@@ -111,19 +124,59 @@ UINTN FindMemMask(const UINT8 *Source, UINTN SourceSize, const UINT8 *Search, UI
 }
 
 UINTN SearchAndReplaceMask(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, const UINT8 *MaskSearch, UINTN SearchSize,
-                       const UINT8 *Replace, const UINT8 *MaskReplace, INTN MaxReplaces)
+                           const UINT8 *Replace, const UINT8 *MaskReplace, INTN MaxReplaces, INTN Skip)
 {
   UINTN     NumReplaces = 0;
   BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
+  UINT8*    SourceBak = Source;
   UINT8     *End = Source + SourceSize;
   if (!Source || !Search || !Replace || !SearchSize) {
     return 0;
   }
   while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) {
     if (CompareMemMask((const UINT8 *)Source, Search, SearchSize, MaskSearch, SearchSize)) {
-      CopyMemMask(Source, Replace, MaskReplace, SearchSize);
-      NumReplaces++;
-      MaxReplaces--;
+      if ( Skip == 0 ) {
+        DBG("Replace " );
+        for (UINTN Index = 0; Index < SearchSize; ++Index) {
+          DBG("%02X", Search[Index]);
+        }
+        if ( MaskSearch ) {
+          DBG("/" );
+          for (UINTN Index = 0; Index < SearchSize; ++Index) {
+            DBG("%02X", MaskSearch[Index]);
+          }
+          DBG("(" );
+          for (UINTN Index = 0; Index < SearchSize; ++Index) {
+            DBG("%02X", Source[Index]);
+          }
+          DBG(")" );
+        }
+        DBG(" by " );
+
+        CopyMemMask(Source, Replace, MaskReplace, SearchSize);
+
+        for (UINTN Index = 0; Index < SearchSize; ++Index) {
+          DBG("%02X", Replace[Index]);
+        }
+        if ( MaskReplace ) {
+          DBG("/");
+          for (UINTN Index = 0; Index < SearchSize; ++Index) {
+            DBG("%02X", MaskReplace[Index]);
+          }
+          DBG("(");
+          for (UINTN Index = 0; Index < SearchSize; ++Index) {
+            DBG("%02X", Source[Index]);
+          }
+          DBG(")");
+        }
+
+        DBG(" at ofs:%lX\n", Source-SourceBak);
+
+        NumReplaces++;
+        MaxReplaces--;
+      }else{
+        --Skip;
+      }
       Source += SearchSize;
     } else {
       Source++;

@@ -46,7 +46,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 10,
                                   (UINT8*)"\x13\x14\x15", NULL, 3,
                                   (UINT8*)"\x23\x24\x25", NULL,
-                                  0);
+                                  0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 10) != 0 ) breakpoint(1);
   }
@@ -57,7 +57,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 10,
                                  (UINT8*)"\x13\x00\x15", (UINT8*)"\xFF\x00\xFF", 3,
                                  (UINT8*)"\x23\x24\x25", NULL,
-                                 0);
+                                 0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 10) != 0 ) breakpoint(1);
   }
@@ -69,7 +69,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 10,
                                  (UINT8*)"\x13\x00\x15", (UINT8*)"\xFF\x00\xFF", 3,
                                  (UINT8*)"\x23\x24\x25", (UINT8*)"\xFF\x00\xFF",
-                                 0);
+                                 0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 10) != 0 ) breakpoint(1);
   }
@@ -81,7 +81,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 10,
                                  (UINT8*)"\x13\x00\x15", (UINT8*)"\xFF\x00\xFF", 3,
                                  (UINT8*)"\x23\x24\x25", (UINT8*)"\xFF\xFF\x00",
-                                 0);
+                                 0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 10) != 0 ) breakpoint(1);
   }
@@ -92,7 +92,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 3,
                                  (UINT8*)"\xC0", (UINT8*)"\xF0", 1,
                                  (UINT8*)"\x22", (UINT8*)"\x0F",
-                                 0);
+                                 0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 3) != 0 ) breakpoint(1);
   }
@@ -103,7 +103,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 8,
                                   (UINT8*)"\x43\x6c\x65\x76\x65\x72", (UINT8*)"\xDF\xFF\xFF\xFF\xFF\xFF", 6,
                                   (UINT8*)"\x43\x6c\x6f\x76\x65\x72", (UINT8*)"\x00\x00\xFF\x00\x00\x00",
-                                  0);
+                                  0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 3) != 0 ) breakpoint(1);
   }
@@ -114,7 +114,7 @@ int find_replace_mask_Clover_tests()
     uintn = SearchAndReplaceMask(buf, 8,
                                  (UINT8*)"\x43\x6c\x65\x76\x65\x72", (UINT8*)"\xDF\xFF\xFF\xFF\xFF\xFF", 6,
                                  (UINT8*)"\x43\x6c\x6f\x76\x65\x72", (UINT8*)"\x00\x00\xFF\x00\x00\x00",
-                                 0);
+                                 0, 0);
     if ( uintn != 1 ) breakpoint(1);
     if ( memcmp(buf, expectedBuf, 3) != 0 ) breakpoint(1);
   }

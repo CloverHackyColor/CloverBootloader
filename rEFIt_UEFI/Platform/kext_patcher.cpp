@@ -982,7 +982,8 @@ void LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
                                    kextpatch.Data.size(),
                                    kextpatch.Patch.data(),
                                    kextpatch.MaskReplace.data(),
-                                   kextpatch.Count);
+                                   kextpatch.Count,
+                                   kextpatch.Skip);
         if (Num) {
           curs += SearchLen - 1;
           j    += SearchLen - 1;

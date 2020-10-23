@@ -2399,8 +2399,8 @@ LOADER_ENTRY::KernelUserPatch()
                                    KernelAndKextPatches.KernelPatches[i].Data.size(),
                                    (const UINT8*)KernelAndKextPatches.KernelPatches[i].Patch.data(),
                                    (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskReplace.data(),
-                                   KernelAndKextPatches.KernelPatches[i].Count
-                                   );
+                                   KernelAndKextPatches.KernelPatches[i].Count,
+                                   KernelAndKextPatches.KernelPatches[i].Skip);
         
         if (Num) {
           y++;
@@ -2459,8 +2459,8 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
                                    KernelAndKextPatches.BootPatches[i].Data.size(),
                                    (const UINT8*)KernelAndKextPatches.BootPatches[i].Patch.data(),
                                    (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskReplace.data(),
-                                   KernelAndKextPatches.BootPatches[i].Count
-                                   );
+                                   KernelAndKextPatches.BootPatches[i].Count,
+                                   KernelAndKextPatches.BootPatches[i].Skip);
         if (Num) {
           y++;
           curs += SearchLen - 1;
