@@ -114,6 +114,7 @@ bool SelfOem::_setOemPathRelToSelfDir(bool isFirmwareClover, const XString8& OEM
 
 EFI_STATUS SelfOem::_initialize()
 {
+//DBG("%s : enter.\n", __FUNCTION__);
   EFI_STATUS Status;
 
   if ( oemDirExists() ) {
@@ -177,21 +178,38 @@ EFI_STATUS SelfOem::_initialize()
     DBG("Kexts dir = none\n");
   }
 
+//DBG("%s : leave.\n", __FUNCTION__);
   return EFI_SUCCESS;
 }
 
 EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, UINTN nLanCards, UINT8 gLanMac[4][6])
 {
+//DBG("%s : enter.\n", __FUNCTION__);
+  if ( m_ConfName.notEmpty() ) panic("%s : cannot be called twice. Use reinitialize.", __FUNCTION__);
+
   m_ConfName = confName;
 
   // Initialise m_OemPathRelToSelfDir and leave m_OemDir opened.
   _setOemPathRelToSelfDir(isFirmwareClover, OEMBoard, OEMProduct, frequency, nLanCards, gLanMac);
 
-  return _initialize();
+  EFI_STATUS Status = _initialize();
+//DBG("%s : leave. Status=%s.\n", __FUNCTION__, efiStrError(Status));
+  return Status;
+}
+
+void SelfOem::unInitialize()
+{
+//DBG("%s : enter.\n", __FUNCTION__);
+  if ( m_ConfName.isEmpty() ) panic("%s : Already uninitiialized.", __FUNCTION__);
+
+  closeHandle();
+  m_ConfName.setEmpty();
+//DBG("%s : leave.\n", __FUNCTION__);
 }
 
 EFI_STATUS SelfOem::reInitialize()
 {
+//DBG("%s : enter.\n", __FUNCTION__);
   if ( m_ConfName.isEmpty() ) panic("%s : initialize() must called once first", __FUNCTION__);
 
   closeHandle();
@@ -203,12 +221,15 @@ EFI_STATUS SelfOem::reInitialize()
       panic("Impossible to reopen dir '%ls\\%ls', although it was opened the first time : %s", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
     }
   }
-  return _initialize();
+  EFI_STATUS Status = _initialize();
+//DBG("%s : leave. Status=%s.\n", __FUNCTION__, efiStrError(Status));
+  return Status;
 }
 
 
-void SelfOem::closeHandle(void)
+void SelfOem::closeHandle()
 {
+//DBG("%s : enter.\n", __FUNCTION__);
   if (m_KextsDir != NULL) {
     m_KextsDir->Close(m_KextsDir);
     m_KextsDir = NULL;
@@ -221,5 +242,6 @@ void SelfOem::closeHandle(void)
     // m_OemPathRelToSelfDir.setEmpty(); // do not empty m_OemPathRelToSelfDir, we need it in reInitialize()
     // m_OemFulPath.setEmpty(); // doesn't matter, it'll be re-initialised in _initialize()
   }
+//DBG("%s : leave.\n", __FUNCTION__);
 }
 

@@ -820,7 +820,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
     APPLE_APFS_CONTAINER_INFO       *ApfsContainerInfo;
     APPLE_APFS_VOLUME_INFO          *ApfsVolumeInfo;
-    EFI_STATUS Status = InternalGetApfsSpecialFileInfo(Volume->RootDir, &ApfsVolumeInfo, &ApfsContainerInfo);
+    Status = InternalGetApfsSpecialFileInfo(Volume->RootDir, &ApfsVolumeInfo, &ApfsContainerInfo);
     if ( !EFI_ERROR(Status) ) {
       //DBG("Status : %s, APFS role : %x\n", efiStrError(Status), ApfsVolumeInfo->Role);
       Volume->ApfsRole = ApfsVolumeInfo->Role;

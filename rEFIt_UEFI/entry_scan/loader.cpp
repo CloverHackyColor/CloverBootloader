@@ -1595,56 +1595,133 @@ void ScanLoader(void)
     }
   }
 
+  typedef struct EntryIdx {
+    size_t idx;
+    REFIT_ABSTRACT_MENU_ENTRY* entry;
+    EntryIdx(size_t _idx, REFIT_ABSTRACT_MENU_ENTRY* _entry) : idx(_idx), entry(_entry) {};
+  } EntryIdx;
+  XObjArray<EntryIdx> EntriesArrayTmp;
+  for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
+    if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY() ) {
+      if ( MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY()->APFSTargetUUID.notEmpty() ) {
+        EntriesArrayTmp.AddReference(new EntryIdx(idx, &MainMenu.Entries.ElementAt(idx)), true);
+      }
+    }
+  }
+
+
   bool hasMovedSomething;
+
+//MainMenu.Entries.moveBefore(5, 7); // this will move preboot entry just before main
 
   // Re-order preboot partition
   do {
     hasMovedSomething = false;
-    for (size_t prebootIdx = 0; !hasMovedSomething && prebootIdx < MainMenu.Entries.sizeIncludingHidden(); prebootIdx++)
+    for (size_t idx = 0; !hasMovedSomething && idx < EntriesArrayTmp.size(); )
     {
-      LOADER_ENTRY* loaderEntry1Ptr = MainMenu.Entries.ElementAt(prebootIdx).getLOADER_ENTRY();
-      if ( !loaderEntry1Ptr ) continue;
+      LOADER_ENTRY* loaderEntry1Ptr = EntriesArrayTmp.ElementAt(idx).entry->getLOADER_ENTRY();
+      if ( !loaderEntry1Ptr ) {
+        EntriesArrayTmp.RemoveAtIndex(idx);
+        // do not increment idx
+        continue;
+      }
       LOADER_ENTRY& loaderEntry1 = *loaderEntry1Ptr;
 
-      if ( (loaderEntry1.Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0 )
+      if ( loaderEntry1.LoaderType == OSTYPE_OSX  &&  (loaderEntry1.Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0 )
       {
+        size_t prebootIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
+        if ( prebootIdx == SIZE_T_MAX ) panic ("bug");
         size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID);
         if ( idxMain != SIZE_T_MAX && idxMain != prebootIdx+1 ) {
-          DBG("Move preboot entry %zu before system %zu\n", prebootIdx, idxMain);
+          DBG("Move preboot entry %zu before system %zu\n", EntriesArrayTmp.ElementAt(idx).idx, idxMain);
           MainMenu.Entries.moveBefore(prebootIdx, idxMain); // this will move preboot entry just before main
+          EntriesArrayTmp.RemoveAtIndex(idx);
           hasMovedSomething = true;
         }
       }
+      ++idx;
+    }
+  } while ( hasMovedSomething );
+
+  // Re-order installer partition
+  do {
+    hasMovedSomething = false;
+    for (size_t idx = 0; !hasMovedSomething && idx < EntriesArrayTmp.size(); )
+    {
+      LOADER_ENTRY* loaderEntry1Ptr = EntriesArrayTmp.ElementAt(idx).entry->getLOADER_ENTRY();
+      if ( !loaderEntry1Ptr ) {
+        EntriesArrayTmp.RemoveAtIndex(idx);
+        // do not increment idx
+        continue;
+      }
+      LOADER_ENTRY& loaderEntry1 = *loaderEntry1Ptr;
+
+      if ( loaderEntry1.LoaderType == OSTYPE_OSX_INSTALLER )
+      {
+        size_t installerIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
+        if ( installerIdx == SIZE_T_MAX ) panic ("bug");
+        size_t idxPreboot = MainMenu.Entries.getApfsPrebootLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID);
+        if ( idxPreboot != SIZE_T_MAX ) {
+          if ( idxPreboot != installerIdx + 1 ) {
+            DBG("Move installer entry %zu before preboot %zu\n", EntriesArrayTmp.ElementAt(idx).idx, idxPreboot);
+            MainMenu.Entries.moveBefore(installerIdx, idxPreboot); // this will move preboot entry just before main
+            EntriesArrayTmp.RemoveAtIndex(idx);
+            hasMovedSomething = true;
+          }
+        }else{
+          size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID);
+          if ( idxMain != SIZE_T_MAX ) {
+            if ( idxMain != installerIdx+1 ) {
+              DBG("Move installer entry %zu before system %zu\n", EntriesArrayTmp.ElementAt(idx).idx, idxMain);
+              MainMenu.Entries.moveBefore(installerIdx, idxMain); // this will move preboot entry just before main
+              EntriesArrayTmp.RemoveAtIndex(idx);
+              hasMovedSomething = true;
+            }
+          }
+        }
+      }
+      ++idx;
     }
   } while ( hasMovedSomething );
 
   // Re-order recovery partition
   do {
     hasMovedSomething = false;
-    for (size_t recoveryIdx = 0; !hasMovedSomething && recoveryIdx < MainMenu.Entries.sizeIncludingHidden(); recoveryIdx++)
+    for (size_t idx = 0; !hasMovedSomething && idx < EntriesArrayTmp.size(); )
     {
-      LOADER_ENTRY* loaderEntry1Ptr = MainMenu.Entries.ElementAt(recoveryIdx).getLOADER_ENTRY();
-      if ( !loaderEntry1Ptr ) continue;
+      LOADER_ENTRY* loaderEntry1Ptr = EntriesArrayTmp.ElementAt(idx).entry->getLOADER_ENTRY();
+      if ( !loaderEntry1Ptr ) {
+        EntriesArrayTmp.RemoveAtIndex(idx);
+        // do not increment idx
+        continue;
+      }
       LOADER_ENTRY& loaderEntry1 = *loaderEntry1Ptr;
 
-      if ( (loaderEntry1.Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_RECOVERY) != 0 )
+      if ( loaderEntry1.LoaderType == OSTYPE_RECOVERY  &&  (loaderEntry1.Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_RECOVERY) != 0 )
       {
+        size_t recoveryIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
+        if ( recoveryIdx == SIZE_T_MAX ) panic ("bug");
         size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID);
         if ( idxMain != SIZE_T_MAX ) {
           if ( idxMain + 1 != recoveryIdx ) {
-            DBG("Move recovery entry %zu after system %zu\n", recoveryIdx, idxMain);
+            DBG("Move recovery entry %zu after system %zu\n", EntriesArrayTmp.ElementAt(idx).idx, idxMain);
             MainMenu.Entries.moveAfter(recoveryIdx, idxMain); // this will move preboot entry just before main
+            EntriesArrayTmp.RemoveAtIndex(idx);
             hasMovedSomething = true;
           }
         }else{
           size_t idxPreboot = MainMenu.Entries.getApfsPrebootLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID);
-          if ( idxPreboot + 1 != recoveryIdx ) {
-            DBG("Move recovery entry %zu after preboot %zu\n", recoveryIdx, idxPreboot);
-            MainMenu.Entries.moveAfter(recoveryIdx, idxPreboot); // this will move preboot entry just before main
-            hasMovedSomething = true;
+          if ( idxPreboot != SIZE_T_MAX ) {
+            if ( idxPreboot + 1 != recoveryIdx ) {
+              DBG("Move recovery entry %zu after preboot %zu\n", EntriesArrayTmp.ElementAt(idx).idx, idxPreboot);
+              MainMenu.Entries.moveAfter(recoveryIdx, idxPreboot); // this will move preboot entry just before main
+              EntriesArrayTmp.RemoveAtIndex(idx);
+              hasMovedSomething = true;
+            }
           }
         }
       }
+      ++idx;
     }
   } while ( hasMovedSomething );
 }

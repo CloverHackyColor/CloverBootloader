@@ -42,6 +42,7 @@ public:
   ~SelfOem () {};
 
   EFI_STATUS initialize(const XString8& confName, bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, UINTN nLanCards, UINT8 gLanMac[4][6]);
+  void unInitialize();
   EFI_STATUS reInitialize();
   void closeHandle();
 

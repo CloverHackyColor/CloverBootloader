@@ -124,6 +124,16 @@ public:
     panic("EntryArray::operator[] nIndex > size()");
   }
 
+  size_t getIdx(const REFIT_ABSTRACT_MENU_ENTRY* entry)
+  {
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( &XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i) == entry ) {
+        return i;
+      }
+    }
+    return SIZE_T_MAX;
+  }
+
   size_t getApfsLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
   {
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
@@ -158,9 +168,9 @@ public:
   void moveBefore(IntegralType1 idxFrom, IntegralType2 idxTo)
   {
     if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
-    if (idxFrom > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
+    if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
     if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
-    if (idxTo > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
+    if ((unsigned_type(IntegralType2))idxTo >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
 
     REFIT_ABSTRACT_MENU_ENTRY* entry = &ElementAt(idxFrom);
     RemoveWithoutFreeingAtIndex(idxFrom);
@@ -175,9 +185,9 @@ public:
   void moveAfter(IntegralType1 idxFrom, IntegralType2 idxTo)
   {
     if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
-    if (idxFrom > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
+    if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
     if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
-    if (idxTo > XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
+    if ((unsigned_type(IntegralType2))idxTo >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
 
     REFIT_ABSTRACT_MENU_ENTRY* entry = &ElementAt(idxFrom);
     RemoveWithoutFreeingAtIndex(idxFrom);

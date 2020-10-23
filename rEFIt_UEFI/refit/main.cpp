@@ -2462,6 +2462,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         DBG("%ls\\%ls.plist %ls loaded with name from LoadOptions: %s\n", selfOem.getConfigDirFullPath().wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
         if (EFI_ERROR(Status)) {
           gConfigDict[1] = NULL;
+          selfOem.unInitialize();
         }
       }
     }
@@ -2475,6 +2476,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   if (!gConfigDict[1] || UniteConfigs) {
     selfOem.initialize("config"_XS8, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
+//    selfOem.unInitialize();
+//    selfOem.initialize("config"_XS8, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
     Status = LoadUserSettings(L"config"_XSW, &gConfigDict[0]);
     DBG("%ls\\config.plist %ls loaded: %s\n", selfOem.getConfigDirFullPath().wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
   }
