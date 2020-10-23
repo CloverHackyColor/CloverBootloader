@@ -97,8 +97,8 @@ updateClover() {
 echo "[UPDATE CLOVER]"
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
-  git fetch --all
-  git pull origin master
+  git fetch --all --recurse-submodules
+  git pull --recurse-submodules origin master
 else
   echo "Error: this is not a git repository, can't update!"
 fi
@@ -108,9 +108,12 @@ updateResetClover() {
 echo "[UPDATE RESET CLOVER]"
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
-  git fetch --all
+  git fetch --all --recurse-submodules
+  git submodule foreach --recursive git clean -d -f -f
+  git clean -d -f -f
+  git submodule foreach --recursive git reset --hard origin/master
   git reset --hard origin/master
-  git pull origin master
+  git pull --recurse-submodules origin master
 else
   echo "Error: this is not a git repository, can't update!"
 fi
@@ -229,8 +232,10 @@ make iso
 checkStatus() {
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
-  git fetch origin
+  git fetch --recurse-submodules origin
+  git log -n 1
   git status
+  git submodule foreach --recursive "git log -n 1 && git status"
 else
   echo "Error: this is not a git repository, can't get info!"
 fi
@@ -239,7 +244,7 @@ fi
 showdiff() {
 cd "${CLOVERROOT}"
 if [[ -d .git ]]; then
-  git fetch origin
+  git fetch --recurse-submodules origin
   git diff
 else
   echo "Error: this is not a git repository, can't get info!"
