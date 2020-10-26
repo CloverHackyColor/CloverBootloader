@@ -1,5 +1,5 @@
 //
-//  printf_lite.hpp
+//  printf_lite.c
 //
 //  Created by jief the 04 Apr 2019.
 //  Imported in CLover the 24 Feb 2020
@@ -313,8 +313,8 @@ static void print_char32_as_utf8_string(const char32_t utf32_char, PrintfParams*
 static void output_wchar_string_as_utf8(const wchar_t* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	int width_specifier = printfParams->width_specifier;
-	while ( *s  &&  (printfParams->width_specifier == 0  ||  width_specifier--) ) {
+	int precision_specifier = printfParams->precision_specifier;
+	while ( *s  &&  (printfParams->precision_specifier <= 0  ||  precision_specifier--) ) {
 //	while ( *s ) {
 #if __WCHAR_MAX__ <= 0xFFFFu
         const char16_t uc = *s++;
@@ -367,8 +367,8 @@ UTF8
 static void output_utf8_string_as_wchar(const char* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	int width_specifier = printfParams->width_specifier;
-	while ( *s  &&  (printfParams->width_specifier == 0  ||  width_specifier--) ) {
+	int precision_specifier = printfParams->precision_specifier;
+	while ( *s  &&  (printfParams->precision_specifier == 0  ||  precision_specifier--) ) {
 		char32_t c;
 		if (  *((unsigned char*)s) & 0x80  ) {
 			if (*(s+1) == 0) {
@@ -447,8 +447,16 @@ __attribute__((noinline, section(".printf_lite")))
 static void output_utf8_string_as_utf8(const char* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	if ( printfParams->width_specifier ) while ( *s && printfParams->width_specifier-- ) print_utf8_char(*s++, printfParams);
-	else while ( *s ) print_utf8_char(*s++, printfParams);
+//#if PRINTF_LITE_STRING_WIDTH_SPECIFIER_SUPPORT == 1
+//  size_t len = lengt
+//#endif
+	if ( printfParams->precision_specifier >= 0 ) {
+    while ( *s && printfParams->precision_specifier-- ) print_utf8_char(*s++, printfParams);
+  }
+	else
+  {
+    while ( *s ) print_utf8_char(*s++, printfParams);
+  }
 }
 
 #if DEFINE_SECTIONS == 1
@@ -460,8 +468,11 @@ __attribute__((noinline, section(".printf_lite")))
 static void output_wchar_string(const wchar_t* s, PrintfParams* printfParams)
 {
 	if ( !s ) return;
-	if ( printfParams->width_specifier ) while ( *s && printfParams->width_specifier-- ) print_wchar(*s++, printfParams);
-	else while ( *s ) print_wchar(*s++, printfParams);
+	if ( printfParams->precision_specifier >= 0 ) {
+    while ( *s && printfParams->precision_specifier-- ) print_wchar(*s++, printfParams);
+	}else{
+    while ( *s ) print_wchar(*s++, printfParams);
+  }
 }
 #endif
 
@@ -699,6 +710,7 @@ static void print_double(double number, PrintfParams* printfParams)
     // prints as "2.00"
     double rounding = 0.5;
     #if PRINTF_LITE_FIELDPRECISION_SUPPORT == 1
+        if ( printfParams->precision_specifier < 0 ) printfParams->precision_specifier = 6;
         for (int i = 0; i < printfParams->precision_specifier; i++) {
             rounding /= 10.0;
         }
@@ -713,7 +725,7 @@ static void print_double(double number, PrintfParams* printfParams)
     unsigned INT_BIGGEST_TYPE int_part = (unsigned INT_BIGGEST_TYPE)number; // we're sure it's positive number here.
     double remainder = number - (double)int_part;
 #if PRINTF_LITE_FIELDWIDTH_SUPPORT == 1
-	int width_specifier = printfParams->width_specifier;
+	int width_specifier = printfParams->width_specifier == -1 ? 6 : 0;
   #if PRINTF_LITE_FIELDPRECISION_SUPPORT == 1
 	printfParams->width_specifier -= printfParams->precision_specifier + (printfParams->precision_specifier ? 1 : 0); // doesn't matter if width_specifier is negative.
   #else
@@ -809,12 +821,37 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
     #if PRINTF_LITE_FALLBACK_FOR_UNSUPPORTED == 1
                     // We just have to ignore field width
     #else
-                    // It's considered a mistake. Get out directive. Nothing will be printed. Harder to debug the format string for the user, but save sapce.
+          // It's considered a mistake. Get out directive. Nothing will be printed. Harder to debug the format string for the user, but save space.
                     printfParams->inDirective = 0;
     #endif
   #endif
                 }
 			 	break;
+#ifdef PRINTF_LITE_DOT_STAR_SUPPORT
+      case '*':
+#if PRINTF_LITE_FIELDPRECISION_SUPPORT == 1  ||  (PRINTF_LITE_FALLBACK_FOR_UNSUPPORTED == 1  &&  PRINTF_LITE_FIELDWIDTH_SUPPORT == 1)
+        if  ( printfParams->inPrecisionField )
+        {
+  #if PRINTF_LITE_FIELDPRECISION_SUPPORT == 1 // just ignore if we don't support precision field
+          printfParams->precision_specifier = -2;
+  #endif
+        }
+        else
+#endif
+        {
+#if PRINTF_LITE_FIELDWIDTH_SUPPORT == 1
+          printfParams->width_specifier = -1;
+#else
+    #if PRINTF_LITE_FALLBACK_FOR_UNSUPPORTED == 1
+          // We just have to ignore field width
+    #else
+          // It's considered a mistake. Get out directive. Nothing will be printed. Harder to debug the format string for the user, but save space.
+          printfParams->inDirective = 0;
+    #endif
+#endif
+        }
+        break;
+#endif
 
 #if PRINTF_LITE_FALLBACK_FOR_UNSUPPORTED == 1  ||  PRINTF_LITE_FIELDPRECISION_SUPPORT == 1
 			case '.':
@@ -1002,6 +1039,12 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 #endif //defined(ARDUINO) && PRINTF_LITE_FLASHSTRING_SUPPORT == 1
 			case 's':
 			{
+#ifdef PRINTF_LITE_DOT_STAR_SUPPORT
+        if ( printfParams->precision_specifier == -2 ) {
+          printfParams->precision_specifier = va_arg(VALIST_ACCESS(valist), int);
+        }
+#endif
+
 #if PRINTF_CHECK_UNSUPPORTED_STRING_FORMAT == 1  &&  (PRINTF_UTF8_INPUT_SUPPORT==0 || PRINTF_UNICODE_INPUT_SUPPORT==0)
 // If both input support disabled, we can't even print "unsupported"
 #  if PRINTF_UTF8_INPUT_SUPPORT == 1 || PRINTF_UNICODE_INPUT_SUPPORT== 1
@@ -1099,7 +1142,7 @@ void printf_handle_format_char(char c, VALIST_PARAM_TYPE valist, PrintfParams* p
 				printfParams->inPrecisionField = 0;
   #endif
   #if PRINTF_LITE_FIELDPRECISION_SUPPORT == 1
-				printfParams->precision_specifier = 6; // 6 digits for float, as specified by ANSI, if I remember well
+				printfParams->precision_specifier = -1; // -1 not specified. -2 specified by parameter.
   #endif
   #if PRINTF_LITE_PADCHAR_SUPPORT == 1
 				printfParams->pad_char = ' ';

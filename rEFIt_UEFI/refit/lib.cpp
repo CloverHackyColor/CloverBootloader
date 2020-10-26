@@ -568,25 +568,6 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   FreeAlignedPages((void*)SectorBuffer, EFI_SIZE_TO_PAGES (2048));
 }
 
-//Set Entry->VolName to .disk_label.contentDetails if it exists
-STATIC XStringW GetOSXVolumeName(REFIT_VOLUME *Volume)
-{
-  XStringW returnValue;
-  EFI_STATUS  Status = EFI_NOT_FOUND;
-  CONST CHAR16* targetNameFile = L"\\System\\Library\\CoreServices\\.disk_label.contentDetails";
-  CHAR8*  fileBuffer;
-  UINTN   fileLen = 0;
-  if(FileExists(Volume->RootDir, targetNameFile)) {
-    Status = egLoadFile(Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
-    if(!EFI_ERROR(Status)) {
-      returnValue.strncpy(fileBuffer, fileLen);
-      FreePool(fileBuffer);
-      return returnValue;
-    }
-  }
-  return NullXStringW;
-}
-
 //at start we have only Volume->DeviceHandle
 static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
@@ -832,10 +813,6 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if ( Volume->ApfsFileSystemUUID.notEmpty() ) {
     DBG("          apfsFileSystemUUID=%s, ApfsContainerUUID=%s, ApfsRole=0x%x\n", Volume->ApfsFileSystemUUID.c_str(), Volume->ApfsContainerUUID.c_str(), Volume->ApfsRole);
   }
-
-
-  Volume->osxVolumeName = GetOSXVolumeName(Volume);
-  DBG("          osxVolumeName=%ls\n", Volume->osxVolumeName.wc_str());
 
 
   if ( FileExists(Volume->RootDir, L"\\.VolumeLabel.txt") ) {

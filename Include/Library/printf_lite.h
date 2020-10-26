@@ -1,5 +1,5 @@
 //
-//  printf_lite.hpp
+//  printf_lite.h
 //
 //  Created by jief the 04 Apr 2019.
 //  Imported in CLover the 24 Feb 2020
@@ -58,6 +58,14 @@ extern "C"
 
 #ifndef PRINTF_CHECK_UNSUPPORTED_STRING_FORMAT
 #define PRINTF_CHECK_UNSUPPORTED_STRING_FORMAT 0
+#endif
+
+#ifndef PRINTF_LITE_DOT_STAR_SUPPORT
+#define PRINTF_LITE_DOT_STAR_SUPPORT 1
+#endif
+
+#ifndef PRINTF_LITE_STRING_WIDTH_SPECIFIER_SUPPORT
+#define PRINTF_LITE_STRING_WIDTH_SPECIFIER_SUPPORT 1
 #endif
 
 /*

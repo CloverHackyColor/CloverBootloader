@@ -1,5 +1,5 @@
 //
-//  printf_lite.hpp
+//  printf_lite.h
 //
 //  Created by jief the 04 Apr 2019.
 //  Imported in CLover the 24 Feb 2020

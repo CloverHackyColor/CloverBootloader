@@ -582,7 +582,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   Entry->APFSTargetUUID = APFSTargetUUID;
 
   Entry->LoaderPath       = LoaderPath;
-  Entry->DisplayedVolName          = Volume->VolName;
+  Entry->DisplayedVolName = Volume->VolName;
   Entry->DevicePath       = LoaderDevicePath;
   Entry->DevicePathString = LoaderDevicePathString;
   Entry->Flags            = OSFLAG_SET(Flags, OSFLAG_USEGRAPHICS);
@@ -1518,6 +1518,7 @@ void ScanLoader(void)
       le->Hidden = true;
     }
 
+//DBG("Volume->ApfsTargetUUIDArray.size()=%zd\n", Volume->ApfsTargetUUIDArray.size());
     if ( Volume->ApfsTargetUUIDArray.size() > 0 ) {
 
       for (UINTN i = 0; i < Volume->ApfsTargetUUIDArray.size(); i++)
@@ -1530,24 +1531,63 @@ void ScanLoader(void)
         XStringW LoaderTitleInstaller;
 
         REFIT_VOLUME* targetVolume = NULL;
-        for (UINTN VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
+        for (size_t VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
           REFIT_VOLUME* Volume2 = &Volumes[VolumeIndex2];
-          //DBG("name %ls  uuid=%ls \n", Volume2->VolName, Volume2->ApfsFileSystemUUID.wc_str());
+//DBG("idx=%zu  name %ls  uuid=%s \n", VolumeIndex2, Volume2->VolName.wc_str(), Volume2->ApfsFileSystemUUID.c_str());
           if ( Volume2->ApfsContainerUUID == Volume->ApfsContainerUUID ) {
             if ( Volume2->ApfsFileSystemUUID == ApfsTargetUUID ) {
               targetVolume = Volume2;
             }
           }
         }
+//DBG("targetVolume=%d\n", targetVolume ? 1 : 0);
         if ( targetVolume ) {
           if ( (targetVolume->ApfsRole & APPLE_APFS_VOLUME_ROLE_DATA) != 0 ) {
-            for (UINTN VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
+            for (size_t VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
               REFIT_VOLUME* Volume2 = &Volumes[VolumeIndex2];
-              //DBG("name %ls  uuid=%ls \n", Volume2->VolName, Volume2->ApfsFileSystemUUID.wc_str());
+//DBG("idx=%zu  name %ls  uuid=%s \n", VolumeIndex2, Volume2->VolName.wc_str(), Volume2->ApfsFileSystemUUID.c_str());
               if ( Volume2->ApfsContainerUUID == targetVolume->ApfsContainerUUID ) {
                 if ( (Volume2->ApfsRole & APPLE_APFS_VOLUME_ROLE_SYSTEM) != 0 ) {
-                  targetVolume = Volume2;
+                  if ( !targetVolume ) {
+                    targetVolume = Volume2;
+                  }else{
+                    // More than one system partition in container. I don't know how to select which one is supposed to pair with this
+                    targetVolume = NULL; // we'll try .disk_label.contentDetails
+                    break; // we need to escape the loop after bootVolume = NULL;
+                  }
                 }
+              }
+            }
+          }
+        }
+//DBG("2) targetVolume=%d\n", targetVolume ? 1 : 0);
+        if ( !targetVolume ) {
+          REFIT_VOLUME* bootVolume = Volume;
+          if ( (Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_RECOVERY) != 0 ) {
+            for (size_t VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
+              REFIT_VOLUME* Volume2 = &Volumes[VolumeIndex2];
+//DBG("idx=%zu  name %ls  uuid=%s \n", VolumeIndex2, Volume2->VolName.wc_str(), Volume2->ApfsFileSystemUUID.c_str());
+              if ( (Volume2->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0 ) {
+                if ( Volume2->ApfsContainerUUID == Volume->ApfsContainerUUID ) {
+                  bootVolume = Volume2;
+                  break;
+                }
+              }
+            }
+          }
+          if ( bootVolume ) {
+            XStringW targetNameFile;
+            CHAR8*  fileBuffer;
+            UINTN   fileLen = 0;
+            targetNameFile.SWPrintf("%s\\System\\Library\\CoreServices\\.disk_label.contentDetails", ApfsTargetUUID.c_str());
+            if ( FileExists(bootVolume->RootDir, targetNameFile) ) {
+              EFI_STATUS Status = egLoadFile(bootVolume->RootDir, targetNameFile.wc_str(), (UINT8 **)&fileBuffer, &fileLen);
+              if(!EFI_ERROR(Status)) {
+                FullTitle.SWPrintf("Boot Mac OS X from %.*s via %ls", (int)fileLen, fileBuffer, Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
+                FullTitleRecovery.SWPrintf("Boot Mac OS X Recovery for %.*s via %ls", (int)fileLen, fileBuffer, Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
+                FullTitleInstaller.SWPrintf("Boot Mac OS X Install for %.*s via %ls", (int)fileLen, fileBuffer, Volume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
+              DBG("contentDetails name:%s\n", fileBuffer);
+                FreePool(fileBuffer);
               }
             }
           }
