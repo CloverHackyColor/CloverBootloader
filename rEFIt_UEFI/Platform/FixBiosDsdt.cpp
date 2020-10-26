@@ -5251,7 +5251,7 @@ void RenameDevices(UINT8* table)
   if ( gSettings.DeviceRenameCount <= 0 ) return; // to avoid message "0 replacement"
 
   INTN i;
-  INTN k=0; // Cland complain about possible use uninitialised. Not true, but I don't like warnings.
+  INTN k=0; // Clang complain about possible use uninitialised. Not true, but I don't like warnings.
   UINTN index;
   INTN size;
   UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
