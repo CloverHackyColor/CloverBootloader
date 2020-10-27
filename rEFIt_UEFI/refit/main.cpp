@@ -1725,7 +1725,7 @@ BOOLEAN SetOEMPathIfExists(IN EFI_FILE *Root, const XStringW& path, const XStrin
 	  	DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path.wc_str(), ConfName.wc_str());
 	  }
 	}else{
-		DBG("CheckOEMPathExists tried %ls. Dir not exists\n", path.wc_str());
+		DBG("CheckOEMPathExists tried %ls. Dir does not exist\n", path.wc_str());
 	}
 	return 0;
 }
