@@ -61,12 +61,6 @@
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "Self.h"
 
-extern "C" {
-#include <Library/OcConfigurationLib.h>
-extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
-
-} // extern "C"
-
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1
@@ -920,22 +914,22 @@ void ApplyInputs(void)
   i++; //101  - Quirks
   if (InputItems[i].Valid) {
     gSettings.QuirksMask = InputItems[i].IValue;
-    mOpenCoreConfiguration.Booter.Quirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
-    mOpenCoreConfiguration.Booter.Quirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
-    mOpenCoreConfiguration.Booter.Quirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
-    mOpenCoreConfiguration.Booter.Quirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
-    mOpenCoreConfiguration.Booter.Quirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
-    mOpenCoreConfiguration.Booter.Quirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
-    mOpenCoreConfiguration.Booter.Quirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
-    mOpenCoreConfiguration.Booter.Quirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
-    mOpenCoreConfiguration.Booter.Quirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
-    mOpenCoreConfiguration.Booter.Quirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
-    mOpenCoreConfiguration.Booter.Quirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
-    mOpenCoreConfiguration.Booter.Quirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
-    mOpenCoreConfiguration.Booter.Quirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
-    mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
-    mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
-    mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
+    gSettings.ocBooterQuirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
+    gSettings.ocBooterQuirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
+    gSettings.ocBooterQuirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
+    gSettings.ocBooterQuirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
+    gSettings.ocBooterQuirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
+    gSettings.ocBooterQuirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
+    gSettings.ocBooterQuirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
+    gSettings.ocBooterQuirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
+    gSettings.ocBooterQuirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
+    gSettings.ocBooterQuirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
+    gSettings.ocBooterQuirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
+    gSettings.ocBooterQuirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
+    gSettings.ocBooterQuirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
+    gSettings.ocBooterQuirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
+    gSettings.ocBooterQuirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
+    gSettings.ocBooterQuirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
 	  DBG("applied Quirks mask:%x\n", gSettings.QuirksMask); //default is 0xA861
   }
   i++; //102
