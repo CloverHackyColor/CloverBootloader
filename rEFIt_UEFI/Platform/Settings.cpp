@@ -2520,7 +2520,7 @@ GetEarlyUserSettings (
     }
 
     //*** SYSTEM ***
-
+    gSettings.WithKexts            = TRUE;  //default
     const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
     if (SystemParametersDict != NULL) {
       // Inject kexts
@@ -2533,8 +2533,6 @@ GetEarlyUserSettings (
           //   gSettings.WithKexts            = TRUE;
           gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
-      } else {
-        gSettings.WithKexts            = TRUE;  //default
       }
 
       // No caches - obsolete
@@ -2542,10 +2540,10 @@ GetEarlyUserSettings (
       if (IsPropertyNotNullAndTrue(Prop)) {
         gSettings.NoCaches = TRUE;
       }
-      //test float
-      Prop = SystemParametersDict->propertyForKey("BlueValue");
-      float tmpF = GetPropertyFloat(Prop, 1.2f);
-      DBG(" get BlueValue=%f\n", tmpF);
+      //test float - success
+//      Prop = SystemParametersDict->propertyForKey("BlueValue");
+//      float tmpF = GetPropertyFloat(Prop, 1.2f);
+//      DBG(" get BlueValue=%f\n", tmpF);
       
     }
 
@@ -2614,7 +2612,7 @@ GetEarlyUserSettings (
       }
 
       Prop = GUIDict->propertyForKey("ProvideConsoleGop");
-      gSettings.ProvideConsoleGop = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop); //default is true
 
       Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
@@ -3000,8 +2998,9 @@ GetEarlyUserSettings (
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
       gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
-      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
-      gSettings.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop);
+      //it is in GUI section
+//      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
+//      gSettings.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop);
       Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
       gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
@@ -5902,6 +5901,8 @@ GetUserSettings(const TagDict* CfgDict)
     }
 
     //CPU
+    gSettings.CpuType = GetAdvancedCpuType(); //let it be default
+    gSettings.SavingMode = 0xFF; //default
     const TagDict* CPUDict = CfgDict->dictPropertyForKey("CPU");
     if (CPUDict != NULL) {
       const TagStruct* Prop = CPUDict->propertyForKey("QPI");
@@ -5917,10 +5918,9 @@ GetUserSettings(const TagDict* CfgDict)
       }
 
       Prop = CPUDict->propertyForKey("Type");
-      gSettings.CpuType = GetAdvancedCpuType();
       if (Prop != NULL) {
         gSettings.CpuType = (UINT16)GetPropertyAsInteger(Prop, gSettings.CpuType);
-		  DBG("CpuType: %hX\n", gSettings.CpuType);
+        DBG("CpuType: %hX\n", gSettings.CpuType);
       }
 
       Prop = CPUDict->propertyForKey("QEMU");
@@ -6018,7 +6018,7 @@ GetUserSettings(const TagDict* CfgDict)
       }
       // CsrActiveConfig
       Prop = RtVariablesDict->propertyForKey("CsrActiveConfig");
-      gSettings.CsrActiveConfig = (UINT32)GetPropertyAsInteger(Prop, 0x267); //the value 0xFFFF means not set
+      gSettings.CsrActiveConfig = (UINT32)GetPropertyAsInteger(Prop, 0x2E7); //the value 0xFFFF means not set
 
       //BooterConfig
       Prop = RtVariablesDict->propertyForKey("BooterConfig");

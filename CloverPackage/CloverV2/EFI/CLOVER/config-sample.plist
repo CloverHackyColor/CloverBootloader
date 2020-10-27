@@ -796,6 +796,8 @@
 		</dict>
 		<key>#TextOnly</key>
 		<false/>
+		<key>ProvideConsoleGop</key>
+		<true/>
 		<key>#ConsoleMode</key>
 		<string>0</string>
 		<key>#Custom</key>
