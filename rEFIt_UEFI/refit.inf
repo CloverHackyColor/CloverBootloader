@@ -43,6 +43,7 @@
   include/OneLinerMacros.h
   include/Pci.h
   include/XToolsConf.h
+  include/OC.h
   refit/main.cpp
   refit/icns.cpp
   refit/lib.cpp
