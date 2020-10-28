@@ -133,15 +133,15 @@ CONST CHAR8* gFirmwareBuildDate = "unknown";
 CONST CHAR8* gBuildInfo = NULL;
 #endif
 #ifdef BUILD_ID
-const LString8 gBuildId __attribute__((used)) = "Clover build id: " BUILD_ID;
+const LString8 gBuildId __attribute__((used)) = BUILD_ID;
 const LString8 gBuildIdGrepTag __attribute__((used)) = "CloverBuildIdGrepTag: " BUILD_ID;
 #else
-const LString8 gBuildId __attribute__((used)) = "Clover build id: " "unknown";
+const LString8 gBuildId __attribute__((used)) = "unknown";
 const LString8 gBuildIdGrepTag __attribute__((used)) = "CloverBuildIdGrepTag: " "unknown";
 #endif
 
 // __attribute__((used)) seems to not always work. So, in AboutRefit(), there is a trick to let the compiler thinks it's used.
-const char* path_independant __attribute__((used)) = "path_independant";
+const LString8 path_independant __attribute__((used)) = "path_independant";
 
 EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
 

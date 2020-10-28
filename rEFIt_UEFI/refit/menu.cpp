@@ -1091,7 +1091,8 @@ void AboutRefit(void)
     if ( "unknown"_XS8 != LString8(gRevisionStr) ) AboutMenu.AddMenuInfo_f("%s", gRevisionStr);
     if ( "unknown"_XS8 != LString8(gFirmwareBuildDate) ) AboutMenu.AddMenuInfo_f(" Build: %s", gFirmwareBuildDate);
     if ( "unknown"_XS8 != gBuildId ) AboutMenu.AddMenuInfo_f(" Build id: %s", gBuildId.c_str());
-    AboutMenu.AddMenuInfo_f("%s", path_independant); // trick to let the compiler think path_independant is used and must be kept in binary.
+    AboutMenu.AddMenuInfo_f("%s", path_independant.c_str()); // trick to let the compiler think path_independant is used and must be kept in binary.
+    AboutMenu.Entries[AboutMenu.Entries.size()-1].Title.SWPrintf("%s", gBuildIdGrepTag.c_str());
     AboutMenu.Entries[AboutMenu.Entries.size()-1].Title.SWPrintf(" ");
     AboutMenu.AddMenuInfo_f("Based on rEFIt (c) 2006-2010 Christoph Pfisterer");
     AboutMenu.AddMenuInfo_f("Portions Copyright (c) Intel Corporation");
