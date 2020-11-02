@@ -22,7 +22,11 @@ void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2))
 #endif
 ;
 
-#define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __PRETTY_FUNCTION__)
+#ifdef _MSC_VER
+# define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __FUNCSIG__)
+#else
+# define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __PRETTY_FUNCTION__)
+#endif
 #define assertf(...) _assert(__VA_ARGS__)
 
 void _assert(bool b, const char* format, ...) __attribute__((__format__(__printf__, 2, 3)));
