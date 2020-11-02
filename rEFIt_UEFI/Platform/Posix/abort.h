@@ -9,6 +9,9 @@ extern bool stop_at_panic;
 extern bool i_have_panicked;
 
 #ifdef __cplusplus // C cannot accept 2 functions with same name and different parameters.
+#if !defined(PANIC_CAN_RETURN) && defined(_MSC_VER)
+__declspec(noreturn)
+#endif
 void panic(void)
 #ifndef PANIC_CAN_RETURN
     __attribute__ ((noreturn))
@@ -16,6 +19,9 @@ void panic(void)
 ;
 #endif
 
+#if !defined(PANIC_CAN_RETURN) && defined(_MSC_VER)
+__declspec(noreturn)
+#endif
 void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)))
 #ifndef PANIC_CAN_RETURN
     __attribute__ ((noreturn))
