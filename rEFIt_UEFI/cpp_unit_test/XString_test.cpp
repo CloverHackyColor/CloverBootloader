@@ -1583,7 +1583,7 @@ int XString_tests()
       nbTestFailed += 1;
     }
   }
-  
+#ifndef _MSC_VER
   {
     XString8 xsReplace = "babcbdeb"_XS8;
     xsReplace.replaceAll(U'b', U'𐅃');
@@ -1592,6 +1592,7 @@ int XString_tests()
     XString8 xsReplace2 = "𐄔a𐄔c𐄔de𐄔"_XS8;
     xsReplace2.replaceAll(U'𐄔', U'x');
   }
+#endif
 //  {
 //    XString8 xsReplace = "𐅃𐅃ab"_XS8;
 //    xsReplace.replaceAll("𐅃𐅃"_XS8, "12"_XS8);

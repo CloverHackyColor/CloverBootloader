@@ -43,7 +43,7 @@ UINT64 AsciiStrVersionToUint64(const XString8& Version_, UINT8 MaxDigitByPart, U
   size_t idx = 0;
   while (idx < Version.length() && MaxParts > 0) {  //Slice - NULL pointer dereferencing
     if (Version[idx] >= '0' && Version[idx] <= '9') {
-      part_value = part_value * 10 + (Version[idx] - '0');
+      part_value = part_value * 10 + (UINT16)(Version[idx] - '0');
       if (part_value > max_part_value)
         part_value = max_part_value;
     }

@@ -35,8 +35,8 @@ static void panic_(const char* format, VA_LIST va)
 {
 #ifdef CLOVER_BUILD
   egSetGraphicsModeEnabled(false);
-#endif
   printf("Clover build id: %s\n", gBuildId.c_str());
+#endif
   if ( format ) {
     vprintf(format, va);
     #ifdef DEBUG_ON_SERIAL_PORT

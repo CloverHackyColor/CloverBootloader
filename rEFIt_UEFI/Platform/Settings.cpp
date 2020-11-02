@@ -218,7 +218,7 @@ ParseACPIName(const XString8& String)
       while ((pos1 < Len) && String[pos1] != '.') pos1++; // 3,8,13,18
       //    if ((pos1 == Len) || (String[pos1] == ',')) { //always
       for (i = pos0 + 1, j = 0; i < pos1; i++) {
-        List->Name[j++] = String[i];
+        List->Name[j++] = String.data()[i]; // String[i] return a char32_t. what if there is an utf8 char ?
       }
       // extend by '_' up to 4 symbols
       if (j < 4) {
@@ -1191,7 +1191,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newPatch.MaskFind.memset(FindLen, 0xFF);
+          newPatch.MaskFind.memset(0xFF, FindLen);
           newPatch.MaskFind.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
@@ -1745,7 +1745,9 @@ FillinCustomEntry (
 
   Prop = DictPointer->propertyForKey("Hotkey");
   if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-    Entry->Hotkey = Prop->getString()->stringValue()[0];
+  	if ( Prop->getString()->stringValue()[0] < __WCHAR_MAX__ ) {
+  		Entry->Hotkey = (wchar_t)(Prop->getString()->stringValue()[0]);
+  	}
   }
 
   // Whether or not to draw boot screen
@@ -2040,7 +2042,9 @@ FillingCustomLegacy (
 
   Prop = DictPointer->propertyForKey("Hotkey");
   if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-    Entry->Hotkey = Prop->getString()->stringValue()[0];
+  	if ( Prop->getString()->stringValue()[0] < __WCHAR_MAX__ ) {
+  		Entry->Hotkey = (wchar_t)(Prop->getString()->stringValue()[0]);
+  	}
   }
 
   // Hidden Property, Values:
@@ -2136,7 +2140,9 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
   }
   Prop = DictPointer->propertyForKey("Hotkey");
   if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-    Entry->Hotkey = Prop->getString()->stringValue()[0];
+  	if ( Prop->getString()->stringValue()[0] < __WCHAR_MAX__ ) {
+  		Entry->Hotkey = (wchar_t)(Prop->getString()->stringValue()[0]);
+  	}
   }
 
   // Hidden Property, Values:
@@ -2444,7 +2450,7 @@ GetEarlyUserSettings (
             gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->getString()->stringValue().c_str());
           }
         } else if (Prop->isInt64()) {
-          gSettings.XMPDetection   = Prop->getInt64()->intValue();
+          gSettings.XMPDetection = (INT8)Prop->getInt64()->intValue();
         }
         // Check that the setting value is sane
         if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
@@ -3005,7 +3011,7 @@ GetEarlyUserSettings (
       gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
       Prop               = OcQuirksDict->propertyForKey( "ProvideMaxSlide");
-      gSettings.ocBooterQuirks.ProvideMaxSlide = GetPropertyAsInteger(Prop, 0);
+      gSettings.ocBooterQuirks.ProvideMaxSlide = (UINT8)GetPropertyAsInteger(Prop, 0); // cast will be safe when the new parser will ensure that the value is UINT8
       Prop               = OcQuirksDict->propertyForKey( "RebuildAppleMemoryMap");
       gSettings.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
@@ -5747,7 +5753,7 @@ GetUserSettings(const TagDict* CfgDict)
             if (Prop2->isString() && Prop2->getString()->stringValue().notEmpty() ) {
               Slot = (UINT8)AsciiStrDecimalToUintn(Prop2->getString()->stringValue());
             } else if (Prop2->isInt64()) {
-              Slot = Prop2->getInt64()->intValue();
+              Slot = (UINT8)Prop2->getInt64()->intValue();
             } else {
               continue;
             }

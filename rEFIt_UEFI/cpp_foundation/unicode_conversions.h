@@ -22,9 +22,9 @@ typedef uint32_t char32_t;
 typedef uint16_t char16_t;
 #endif
 
-#ifndef __WCHAR_MAX__
-#define __WCHAR_MAX__ WCHAR_MAX
-#endif
+//#ifndef __WCHAR_MAX__
+//#define __WCHAR_MAX__ WCHAR_MAX
+//#endif
 
 #if __WCHAR_MAX__ <= 0xFFFFu
     #define wchar_cast char16_t

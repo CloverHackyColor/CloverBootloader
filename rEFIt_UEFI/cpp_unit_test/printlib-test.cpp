@@ -6,6 +6,9 @@
 //  Copyright © 2017 Jief. All rights reserved.
 //
 
+#ifdef CLOVER_BUILD
+
+
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include <limits.h>
 #include "../cpp_foundation/unicode_conversions.h"
@@ -312,4 +315,7 @@ int printlib_tests(void)
 
     return nbTestFailed;
 }
+
+
+#endif
 

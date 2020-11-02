@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files\cpp_foundation">
+      <UniqueIdentifier>{0eb9ee83-e942-4504-bfde-d42542898c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files\cpp_unit_test">
+      <UniqueIdentifier>{68f7932a-49b8-45c5-a599-da63d018e1fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files\cpp_util">
+      <UniqueIdentifier>{21b60de7-bb94-4ac5-bac8-b79a9c88775d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files\MemLog">
+      <UniqueIdentifier>{91d21a18-1701-47ea-a922-90a90916a62f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files\Platform">
+      <UniqueIdentifier>{c776985f-215b-4860-b2b0-4f504f3fa26f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rEFIT_UEFI Source Files\Platform\Posix">
+      <UniqueIdentifier>{a313aceb-1b40-4fe8-b768-5432f63f0889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp_tests Source">
+      <UniqueIdentifier>{818eaf6f-6a37-48ed-bc8a-3aa1628831e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp_tests Source\Include">
+      <UniqueIdentifier>{d8380316-a9d9-4613-8d7e-a7cafecc6e6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cpp_tests Source\Include\Library">
+      <UniqueIdentifier>{390fde59-3d76-4cf1-a6a4-bca5e76a996e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenCorePkg">
+      <UniqueIdentifier>{a4caa291-23a2-4e96-bdc6-c75e7cad4eb5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XArray.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XObjArray.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\all_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XArray_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XObjArray_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XString.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\global_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XString_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringAbstract.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringArray.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\poolprint-test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\poolprint-test-cpp_conf.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test-cpp_conf.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test-cpp_conf.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strcmp_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strlen_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\abort.h">
+      <Filter>rEFIT_UEFI Source Files\Platform\Posix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_Clover_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_OC_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\plist_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XBuffer_tests.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XStringArray_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XToolsCommon_test.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Platform.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\poolprintfloat-test-cpp_conf.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\poolprint-test-cpp_conf.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\printf_lite-conf.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\printf_lite-test-cpp_conf.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\printlib-test-cpp_conf.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\XToolsConf.h">
+      <Filter>cpp_tests Source\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\src\posix.h">
+      <Filter>cpp_tests Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\src\Uefi.h">
+      <Filter>cpp_tests Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\src\xcode_utf_fixed.h">
+      <Filter>cpp_tests Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XRBuffer.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XToolsCommon.h">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.h">
+      <Filter>rEFIT_UEFI Source Files\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\Base.h">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\BaseLib.h">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\BaseMemoryLib.h">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\DebugLib.h">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\OcMiscLib.h">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\ProcessorBind.h">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\all_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XArray_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XObjArray_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XString.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\global_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XString_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XStringArray.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strcmp_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strlen_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Library\MemLogLibDefault\printf_lite.c">
+      <Filter>rEFIT_UEFI Source Files\MemLog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\abort.cpp">
+      <Filter>rEFIT_UEFI Source Files\Platform\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_Clover_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_OC_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\plist_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XBuffer_tests.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XStringArray_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XToolsCommon_test.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_unit_test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Xcode\cpp_tests\src\main.cpp">
+      <Filter>cpp_tests Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Xcode\cpp_tests\src\Platform.cpp">
+      <Filter>cpp_tests Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Xcode\cpp_tests\src\xcode_utf_fixed.cpp">
+      <Filter>cpp_tests Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XRBuffer.cpp">
+      <Filter>rEFIT_UEFI Source Files\cpp_foundation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.c">
+      <Filter>rEFIT_UEFI Source Files\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Xcode\cpp_tests\Include\Library\BaseLib.c">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Xcode\cpp_tests\Include\Library\BaseMemoryLib.c">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Xcode\cpp_tests\Include\Library\DebugLib.c">
+      <Filter>cpp_tests Source\Include\Library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\OpenCorePkg\Library\OcMiscLib\DataPatcher.c">
+      <Filter>OpenCorePkg</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

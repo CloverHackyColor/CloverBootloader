@@ -22,8 +22,7 @@ struct _xstringarray__char_type;
 template<typename T>
 struct _xstringarray__char_type<T, enable_if_t(is___String(T))>
 {
-//    typedef const char* type;
-    static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
+	static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
 };
 
 template<typename T>
@@ -51,6 +50,29 @@ struct _xstringarray__char_type<T[_Np]>
 };
 
 
+
+#ifdef _MSC_VER
+// I don't know why it's needed with VS.
+
+template<typename T>
+struct _xstringarray__char_type<T, enable_if_t(is___LString(T))>
+{
+	static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
+};
+
+template<>
+struct _xstringarray__char_type<XString8, void>
+{
+	static const typename XString8::char_t* getCharPtr(const XString8& t) { return t.s(); }
+};
+
+template<>
+struct _xstringarray__char_type<XStringW, void>
+{
+	static const typename XStringW::char_t* getCharPtr(const XStringW& t) { return t.s(); }
+};
+
+#endif
 
 //#define XStringArraySuper XObjArray<XStringClass>
 

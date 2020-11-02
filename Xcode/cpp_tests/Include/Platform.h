@@ -14,9 +14,11 @@
 #endif
 
 #include "Uefi.h"
+#include "../Include/Library/Base.h"
 #include "../Include/Library/BaseLib.h"
 #include "../Include/Library/BaseMemoryLib.h"
 #include "../../../rEFIt_UEFI/Platform/Utils.h"
+#include <stdio.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -64,7 +66,6 @@ void FreePool(const void* Buffer);
 //INTN CompareMem(const void* DestinationBuffer, const void* SourceBuffer, UINTN Length);
 
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src);
-
 
 
 #endif /* Platform_h_h */

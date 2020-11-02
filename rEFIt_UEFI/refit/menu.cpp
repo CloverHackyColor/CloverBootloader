@@ -1804,14 +1804,14 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextBlockInjection(const XString8& UniSysVer)
 LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 {
 	LOADER_ENTRY       *SubEntry;
-	REFIT_MENU_SCREEN  *SubScreen;
+	REFIT_MENU_SCREEN  *SubSubScreen;
 	XStringW           kextDir;
 //	UINTN               i;
 	XString8           ShortOSVersion;
 //	CHAR16             *UniSysVer = NULL;
 
 	SubEntry = new LOADER_ENTRY();
-	NewEntry_(SubEntry, &SubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->"_XS8);
+	NewEntry_(SubEntry, &SubSubScreen, ActionEnter, SCREEN_SYSTEM, "Block injected kexts->"_XS8);
 	SubEntry->Flags = Flags;
 	if (OSVersion.notEmpty()) {
 //    DBG("chosen os %s\n", ChosenOS);
@@ -1826,14 +1826,14 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 			ShortOSVersion += OSVersion[i];
 		}
 
-		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", ShortOSVersion.c_str());
+		SubSubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", ShortOSVersion.c_str());
 
     // Add kext from 10 or 11
     if ( OSVersion.contains(".") )
     {
       XString8 osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
 
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(osMajorVersion), true);
+			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(osMajorVersion), true);
 
 			XString8 DirName;
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
@@ -1847,14 +1847,14 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 					DirName = S8Printf("%s_normal", osMajorVersion.c_str());
 				}
 			}
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
+			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 
 		// Add kext from 10.{version}
 		{
 			XString8 DirName;
 			DirName.takeValueFrom(ShortOSVersion);
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
+			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 
 			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
 				DirName.S8Printf("%s_install", ShortOSVersion.c_str());
@@ -1867,7 +1867,7 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
           DirName.S8Printf("%s_normal", ShortOSVersion.c_str());
 				}
 			}
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
+			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 
 		// Add kext from :
@@ -1881,7 +1881,7 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 				}else{
 					OSVersionKextsDirName = OSVersion;
 				}
-				SubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
+				SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
 			}
 
 			XString8 DirName;
@@ -1896,22 +1896,22 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 					DirName.S8Printf("%s_normal", OSVersion.c_str());
 				}
 			}
-			SubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
+			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 	}
 	else {
-		SubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", OSVersion.c_str());
+		SubSubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", OSVersion.c_str());
 	}
 	kextDir = GetOtherKextsDir(TRUE);
 	if ( kextDir.notEmpty() ) {
-		SubScreen->AddMenuEntry(SubMenuKextBlockInjection("Other"_XS8), true);
+		SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection("Other"_XS8), true);
 	}
 	kextDir = GetOtherKextsDir(FALSE);
 	if ( kextDir.notEmpty() ) {
-		SubScreen->AddMenuEntry(SubMenuKextBlockInjection("Off"_XS8), true);
+		SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection("Off"_XS8), true);
 	}
 
-	SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+	SubSubScreen->AddMenuEntry(&MenuEntryReturn, false);
 	return SubEntry;
 }
 

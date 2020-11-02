@@ -579,6 +579,12 @@ uint32_t getUptimeInMilliseconds()
     time /= 1000;
     return (uint32_t)(time);
 }
+
+#elif _MSC_VER
+
+#include <Windows.h>
+//#include <sysinfoapi.h>
+
 #endif
 #endif //PRINTF_LITE_TIMESTAMP_SUPPORT
 
@@ -602,24 +608,33 @@ static void print_longlong(INT_BIGGEST_TYPE v, unsigned int base, PrintfParams* 
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1  &&  PRINTF_LITE_TIMESTAMP_CUSTOM_FUNCTION == 0
 static void print_timestamp(PrintfParams* printfParams)
 {
-	#ifdef USE_HAL_DRIVER
-		uint32_t ms = HAL_GetTick();
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(WIN64) || defined(__NT__)
+		SYSTEMTIME systime;
+		GetSystemTime(&systime);
+		uint32_t ms = systime.wMilliseconds;
+		uint32_t s = systime.wSecond;
+		uint32_t m = systime.wMinute;
+		uint32_t h = systime.wHour;
+	#else
+		#ifdef USE_HAL_DRIVER
+			uint32_t ms = HAL_GetTick();
+		#endif
+		#ifdef ARDUINO
+			uint32_t ms = millis();
+		#endif
+		#ifdef NRF51
+			uint32_t p_ticks;
+			uint32_t error_code = app_timer_cnt_get(&p_ticks);
+			APP_ERROR_CHECK(error_code);
+			uint32_t ms = p_ticks * ((NRF_RTC1->PRESCALER + 1) * 1000) / APP_TIMER_CLOCK_FREQ;
+		#endif
+		#ifdef __APPLE__
+			uint32_t ms = getUptimeInMilliseconds();
+		#endif
+		uint32_t s = ms / 1000;
+		uint32_t m = s / 60;
+		uint32_t h = m / 60;
 	#endif
-	#ifdef ARDUINO
-		uint32_t ms = millis();
-	#endif
-	#ifdef NRF51
-		uint32_t p_ticks;
-		uint32_t error_code = app_timer_cnt_get(&p_ticks);
-		APP_ERROR_CHECK(error_code);
-		uint32_t ms = p_ticks * ( ( NRF_RTC1->PRESCALER + 1 ) * 1000 ) / APP_TIMER_CLOCK_FREQ;
-	#endif
-    #ifdef __APPLE__
-        uint32_t ms = getUptimeInMilliseconds();
-    #endif
-	uint32_t s = ms/1000;
-	uint32_t m = s/60;
-	uint32_t h = m/60;
 	m %= 60;
 	s %= 60;
 	ms %= 1000;

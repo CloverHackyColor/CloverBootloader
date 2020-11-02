@@ -24,24 +24,24 @@ UINT64  gPlatformFeature;
 class PLATFORMDATA
 {
 public:
-  const XString8 productName;
-  const XString8 firmwareVersion;
-  const XString8 efiversion;
-  const XString8 boardID;
-  const XString8 productFamily;
-  const XString8 systemVersion;
-  const XString8 serialNumber;
-  const XString8 chassisAsset;
+  const LString8 productName;
+  const LString8 firmwareVersion;
+  const LString8 efiversion;
+  const LString8 boardID;
+  const LString8 productFamily;
+  const LString8 systemVersion;
+  const LString8 serialNumber;
+  const LString8 chassisAsset;
   UINT8 smcRevision[6];
-  const XString8 smcBranch;
-  const XString8 smcPlatform;
+  const LString8 smcBranch;
+  const LString8 smcPlatform;
   UINT32 smcConfig;
   
-//  PLATFORMDATA() : productName(), firmwareVersion(), efiversion(), boardID(), productFamily(), systemVersion(), serialNumber(), chassisAsset(), smcRevision{0,0,0,0,0,0}, smcBranch(), smcPlatform(), smcConfig() { }
-  PLATFORMDATA(const XString8& _productName, const XString8 _firmwareVersion, const XString8 _efiversion, const XString8 _boardID, const XString8 _productFamily,
-               const XString8 _systemVersion, const XString8 _serialNumber, const XString8 _chassisAsset,
+  //PLATFORMDATA() : productName(), firmwareVersion(), efiversion(), boardID(), productFamily(), systemVersion(), serialNumber(), chassisAsset(), smcRevision{0,0,0,0,0,0}, smcBranch(), smcPlatform(), smcConfig() { }
+  PLATFORMDATA(const LString8& _productName, const LString8& _firmwareVersion, const LString8& _efiversion, const LString8& _boardID, const LString8& _productFamily,
+               const LString8& _systemVersion, const LString8& _serialNumber, const LString8& _chassisAsset,
                UINT8 _smcRevision0, UINT8 _smcRevision1, UINT8 _smcRevision2, UINT8 _smcRevision3, UINT8 _smcRevision4, UINT8 _smcRevision5,
-               const XString8 _smcBranch, const XString8 _smcPlatform, UINT32 _smcConfig)
+               const LString8& _smcBranch, const LString8& _smcPlatform, UINT32 _smcConfig)
             :  productName(_productName), firmwareVersion(_firmwareVersion), efiversion(_efiversion), boardID(_boardID), productFamily(_productFamily),
                systemVersion(_systemVersion), serialNumber(_serialNumber), chassisAsset(_chassisAsset), smcRevision{0},
                smcBranch(_smcBranch), smcPlatform(_smcPlatform), smcConfig(_smcConfig)
@@ -97,27 +97,27 @@ public:
 PLATFORMDATA ApplePlatformData[] =
 {
   //MacBook1,1 / MacBook (13-inch)
-  { "MacBook1,1"_XS8, "MB11.88Z.0061.B03.0610121324"_XS8, NullXString8, "Mac-F4208CC8"_XS8, // Intel Core Duo T2500 @ 2.00 GHz
+  { "MacBook1,1"_XS8, "MB11.88Z.0061.B03.0610121324"_XS8, ""_XS8, "Mac-F4208CC8"_XS8, // Intel Core Duo T2500 @ 2.00 GHz
     "MacBook"_XS8, "1.1"_XS8, "4H625HACVTH"_XS8, "MacBook-White"_XS8,
     0x01, 0x04, 0x0f, 0, 0, 0x12, "branch"_XS8, "m70"_XS8, 0x71001 },
   //MacBook2,1 / MacBook (13-inch Late 2006)
-  { "MacBook2,1"_XS8, "MB21.88Z.00A5.B07.0706270922"_XS8, NullXString8, "Mac-F4208CA9"_XS8, // Intel Core 2 Duo T7200 @ 2.00 GHz
+  { "MacBook2,1"_XS8, "MB21.88Z.00A5.B07.0706270922"_XS8, ""_XS8, "Mac-F4208CA9"_XS8, // Intel Core 2 Duo T7200 @ 2.00 GHz
     "MacBook"_XS8, "1.2"_XS8, "W8713HACWGL"_XS8, "MacBook-White"_XS8,
     0x01, 0x13, 0x0f, 0, 0, 0x03, "branch"_XS8, "m75"_XS8, 0x72001 },
   //MacBook3,1 / MacBook (13-inch Late 2007)
-  { "MacBook3,1"_XS8, "MB31.88Z.008E.B02.0803051832"_XS8, NullXString8, "Mac-F22788C8"_XS8, // Intel Core 2 Duo T7500 @ 2.20 GHz
+  { "MacBook3,1"_XS8, "MB31.88Z.008E.B02.0803051832"_XS8, ""_XS8, "Mac-F22788C8"_XS8, // Intel Core 2 Duo T7500 @ 2.20 GHz
     "MacBook"_XS8, "1.3"_XS8, "W8747HACZ63"_XS8, "MacBook-White"_XS8,
     0x01, 0x24, 0x0f, 0, 0, 0x03, "branch"_XS8, "k36"_XS8, 0x72001 }, // need EPCI
   //MacBook4,1 / MacBook (13-inch, Early 2008)
-  { "MacBook4,1"_XS8, "MB41.88Z.00C1.B00.0802091535"_XS8, NullXString8, "Mac-F22788A9"_XS8, // Intel Core 2 Duo T8300 @ 2.40 GHz
+  { "MacBook4,1"_XS8, "MB41.88Z.00C1.B00.0802091535"_XS8, ""_XS8, "Mac-F22788A9"_XS8, // Intel Core 2 Duo T8300 @ 2.40 GHz
     "MacBook"_XS8, "1.3"_XS8, "W88A041A0P0"_XS8, "MacBook-Black"_XS8,
     0x01, 0x31, 0x0f, 0, 0, 0x01, "branch"_XS8, "m82"_XS8, 0x74001 },
   //MacBook5,1 / MacBook (13-inch, Aluminum, Late 2008)
-  { "MacBook5,1"_XS8, "MB51.88Z.007D.B03.0904271443"_XS8, NullXString8, "Mac-F42D89C8"_XS8, // Intel Core 2 Duo P7350 @ 2.00 GHz
+  { "MacBook5,1"_XS8, "MB51.88Z.007D.B03.0904271443"_XS8, ""_XS8, "Mac-F42D89C8"_XS8, // Intel Core 2 Duo P7350 @ 2.00 GHz
     "MacBook"_XS8, "1.3"_XS8, "W8944T1S1AQ"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x32, 0x0f, 0, 0, 0x08, "branch"_XS8, "m97"_XS8, 0x7a002 }, // need EPCI
   //MacBook5,2 / MacBook (13-inch, Early 2009)
-  { "MacBook5,2"_XS8, "MB52.88Z.0088.B05.0904162222"_XS8, NullXString8, "Mac-F22788AA"_XS8, // Intel Core 2 Duo P7450 @ 2.13 GHz
+  { "MacBook5,2"_XS8, "MB52.88Z.0088.B05.0904162222"_XS8, ""_XS8, "Mac-F22788AA"_XS8, // Intel Core 2 Duo P7450 @ 2.13 GHz
     "MacBook"_XS8, "1.3"_XS8, "W8913HAC4R1"_XS8, "MacBook-Black"_XS8,
     0x01, 0x38, 0x0f, 0, 0, 0x05, "branch"_XS8, "k36b"_XS8, 0x7a002 },
   //MacBook6,1 / MacBook (13-inch, Late 2009)
@@ -141,47 +141,47 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook"_XS8, "1.0"_XS8, "C02TQHACHH27"_XS8, "MacBook-Aluminum"_XS8,
     0x02, 0x42, 0x0f, 0, 0, 0x12, "j122"_XS8, "j122"_XS8, 0xf08009 }, // need EPCI
   //MacBookPro1,1 / MacBook Pro (15-inch Glossy)
-  { "MacBookPro1,1"_XS8, "MBP11.88Z.0055.B08.0610121325"_XS8, NullXString8, "Mac-F425BEC8"_XS8, // Intel Core Duo T2500 @ 2.00 GHz
+  { "MacBookPro1,1"_XS8, "MBP11.88Z.0055.B08.0610121325"_XS8, ""_XS8, "Mac-F425BEC8"_XS8, // Intel Core Duo T2500 @ 2.00 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8634HACVWZ"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x02, 0x0f, 0, 0, 0x10, "m1"_XS8, "m1"_XS8, 0x7b002 }, // need EPCI
   //MacBookPro1,2 / MacBook Pro (17-inch)
-  { "MacBookPro1,2"_XS8, "MBP12.88Z.0061.B03.0610121334"_XS8, NullXString8, "Mac-F42DBEC8"_XS8, // Intel Core Duo T2600 @ 2.17 GHz
+  { "MacBookPro1,2"_XS8, "MBP12.88Z.0061.B03.0610121334"_XS8, ""_XS8, "Mac-F42DBEC8"_XS8, // Intel Core Duo T2600 @ 2.17 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8629HACTHY"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x05, 0x0f, 0, 0, 0x10, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro2,1 / MacBook Pro (17-inch Core 2 Duo)
-  { "MacBookPro2,1"_XS8, "MBP21.88Z.00A5.B08.0708131242"_XS8, NullXString8, "Mac-F42189C8"_XS8, // Intel Core 2 Duo T7600 @ 2.33 GHz
+  { "MacBookPro2,1"_XS8, "MBP21.88Z.00A5.B08.0708131242"_XS8, ""_XS8, "Mac-F42189C8"_XS8, // Intel Core 2 Duo T7600 @ 2.33 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8715HACW0J"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x14, 0x0f, 0, 0, 0x05, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro2,2 / MacBook Pro (15-inch Core 2 Duo)
-  { "MacBookPro2,2"_XS8, "MBP22.88Z.00A5.B07.0708131242"_XS8, NullXString8, "Mac-F42187C8"_XS8, // Intel Core 2 Duo T7400 @ 2.16 GHz
+  { "MacBookPro2,2"_XS8, "MBP22.88Z.00A5.B07.0708131242"_XS8, ""_XS8, "Mac-F42187C8"_XS8, // Intel Core 2 Duo T7400 @ 2.16 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8827B4CW0L"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x13, 0x0f, 0, 0, 0x03, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro3,1 / MacBook Pro (17-inch 2.4GHZ) - not exists in server
-  { "MacBookPro3,1"_XS8, "MBP31.88Z.0070.B07.0803051658"_XS8, NullXString8, "Mac-F4238BC8"_XS8, // Intel Core 2 Duo T7700 @ 2.40 GHz
+  { "MacBookPro3,1"_XS8, "MBP31.88Z.0070.B07.0803051658"_XS8, ""_XS8, "Mac-F4238BC8"_XS8, // Intel Core 2 Duo T7700 @ 2.40 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8841OHZX91"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x16, 0x0f, 0, 0, 0x11, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro4,1 / MacBook Pro (17-inch, Early 2008)
-  { "MacBookPro4,1"_XS8, "MBP41.88Z.00C1.B03.0802271651"_XS8, NullXString8, "Mac-F42C89C8"_XS8, // Intel Core 2 Duo T9500 @ 2.60 GHz
+  { "MacBookPro4,1"_XS8, "MBP41.88Z.00C1.B03.0802271651"_XS8, ""_XS8, "Mac-F42C89C8"_XS8, // Intel Core 2 Duo T9500 @ 2.60 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W88484F2YP4"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x27, 0x0f, 0, 0, 0x03, "m87"_XS8, "m87"_XS8, 0x7b002 }, // need EPCI
   //MacBookPro5,1 / MacBook Pro (15-inch, Late 2008)
-  { "MacBookPro5,1"_XS8, "MBP51.88Z.007E.B06.1202061253"_XS8, NullXString8, "Mac-F42D86C8"_XS8, // Intel Core 2 Duo P8600 @ 2.40 GHz
+  { "MacBookPro5,1"_XS8, "MBP51.88Z.007E.B06.1202061253"_XS8, ""_XS8, "Mac-F42D86C8"_XS8, // Intel Core 2 Duo P8600 @ 2.40 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W88439FE1G0"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x33, 0x0f, 0, 0, 0x08, "m98"_XS8, "m98"_XS8, 0x7b002 },
   //MacBookPro5,2 / MacBook Pro (17-inch, Early 2009)
-  { "MacBookPro5,2"_XS8, "MBP52.88Z.008E.B05.0905042202"_XS8, NullXString8, "Mac-F2268EC8"_XS8, // Intel Core 2 Duo T9600 @ 2.80 GHz
+  { "MacBookPro5,2"_XS8, "MBP52.88Z.008E.B05.0905042202"_XS8, ""_XS8, "Mac-F2268EC8"_XS8, // Intel Core 2 Duo T9600 @ 2.80 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8908HAC2QP"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x42, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro5,3 / MacBook Pro (15-inch, Mid 2009)
-  { "MacBookPro5,3"_XS8, "MBP53.88Z.00AC.B03.0906151647"_XS8, NullXString8, "Mac-F22587C8"_XS8, // Intel Core 2 Duo P8800 @ 2.66 GHz
+  { "MacBookPro5,3"_XS8, "MBP53.88Z.00AC.B03.0906151647"_XS8, ""_XS8, "Mac-F22587C8"_XS8, // Intel Core 2 Duo P8800 @ 2.66 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W89E6HAC64C"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x48, 0x0f, 0, 0, 0x02, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro5,4 / MacBook Pro (15-inch, 2.53GHz, Mid 2009)
-  { "MacBookPro5,4"_XS8, "MBP53.88Z.00AC.B03.0906151647"_XS8, NullXString8, "Mac-F22587A1"_XS8, // Intel Core 2 Duo P8700 @ 2.53 GHz
+  { "MacBookPro5,4"_XS8, "MBP53.88Z.00AC.B03.0906151647"_XS8, ""_XS8, "Mac-F22587A1"_XS8, // Intel Core 2 Duo P8700 @ 2.53 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8948HAC7XJ"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x49, 0x0f, 0, 0, 0x02, "NA"_XS8, "NA"_XS8, 0x7b002 }, // need rBR RPlt EPCI
   //MacBookPro5,5 / MacBook Pro (13-inch, Mid 2009)
-  { "MacBookPro5,5"_XS8, "MBP55.88Z.00AC.B03.0906151708"_XS8, NullXString8, "Mac-F2268AC8"_XS8, // Intel Core 2 Duo P7550 @ 2.26 GHz
+  { "MacBookPro5,5"_XS8, "MBP55.88Z.00AC.B03.0906151708"_XS8, ""_XS8, "Mac-F2268AC8"_XS8, // Intel Core 2 Duo P7550 @ 2.26 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "W8951HAC66E"_XS8, "MacBook-Aluminum"_XS8,
     0x01, 0x47, 0x0f, 0, 0, 0x02, "branch"_XS8, "k24"_XS8, 0x7a003 },
   //MacBookPro6,1 / MacBook Pro (17-inch, Mid 2010)
@@ -275,37 +275,37 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro15,1 / MacBook Pro (15-inch, 2018)
   { "MacBookPro15,1"_XS8, "MBP151.88Z.F000.B00.2005132227"_XS8, "1037.120.87.0.0"_XS8, "Mac-937A206F2EE63C01"_XS8, // Intel Core i9-8950HK @ 2.90 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02X1HACKGYG"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j680"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j680"_XS8, 0 },
   //MacBookPro15,2 / MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
   { "MacBookPro15,2"_XS8, "MBP152.88Z.F000.B00.2005132218"_XS8, "1037.120.87.0.0"_XS8, "Mac-827FB448E656EC26"_XS8, // Intel Core i5-8259U @ 2.30 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02X1HACJHCD"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j132"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j132"_XS8, 0 },
   //MacBookPro15,3 / MacBook Pro (15-inch, 2019)
   { "MacBookPro15,3"_XS8, "MBP153.88Z.F000.B00.2005132208"_XS8, "1037.120.87.0.0"_XS8, "Mac-1E7E29AD0135F9BC"_XS8, // Intel Core i9-9980HK @ 2.40 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02X1HACLVCG"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j780"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j780"_XS8, 0 },
   //MacBookPro15,4 / MacBook Pro (13-inch, 2019, Two Thunderbolt 3 ports)
   { "MacBookPro15,4"_XS8, "MBP154.88Z.F000.B00.2005132135"_XS8, "1037.120.87.0.0"_XS8, "Mac-53FDB3D8DB8CA971"_XS8, // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "FVFYXHACL411"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j213"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j213"_XS8, 0 },
   //MacBookPro16,1 / MacBook Pro (16-inch, 2019)
   { "MacBookPro16,1"_XS8, "MBP161.88Z.F000.B00.2005132259"_XS8, "1037.120.87.0.0"_XS8, "Mac-E1008331FDC96864"_XS8, // Intel Core i9-9980HK @ 2.40 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02ZPHACPG8W"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j152f"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j152f"_XS8, 0 },
   //MacBookPro16,2 / MacBook Pro (13-inch, 2020, Four Thunderbolt 3 ports)
   { "MacBookPro16,2"_XS8, "MBP162.88Z.F000.B00.2005132210"_XS8, "1037.120.87.0.0"_XS8, "Mac-5F9802EFE386AA28"_XS8, // Intel Core i7-1068NG7 @ 2.30 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CLHACML7H"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j214k"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j214k"_XS8, 0 },
   //MacBookPro16,3 / MacBook Pro (13-inch, 2020, Two Thunderbolt 3 ports)
   { "MacBookPro16,3"_XS8, "MBP163.88Z.F000.B00.2005132118"_XS8, "1037.120.87.0.0"_XS8, "Mac-E7203C0F68AA0004"_XS8, // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CJHACP3XY"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "J223"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "J223"_XS8, 0 },
   //MacBookAir1,1 / MacBook Air (Original)
-  { "MacBookAir1,1"_XS8, "MBA11.88Z.00BB.B03.0803171226"_XS8, NullXString8, "Mac-F42C8CC8"_XS8, // Intel Core 2 Duo P7500 @ 1.60 GHz
+  { "MacBookAir1,1"_XS8, "MBA11.88Z.00BB.B03.0803171226"_XS8, ""_XS8, "Mac-F42C8CC8"_XS8, // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "W864947A18X"_XS8, "Air-Enclosure"_XS8,
     0x01, 0x23, 0x0f, 0, 0, 0x20, "NA"_XS8, "NA"_XS8, 0x76005 }, // need rBR RPlt EPCI
   //MacBookAir2,1 / MacBook Air (Mid 2009)
-  { "MacBookAir2,1"_XS8, "MBA21.88Z.0075.B05.1003051506"_XS8, NullXString8, "Mac-F42D88C8"_XS8, // Intel Core 2 Duo L9600 @ 2.13 GHz
+  { "MacBookAir2,1"_XS8, "MBA21.88Z.0075.B05.1003051506"_XS8, ""_XS8, "Mac-F42D88C8"_XS8, // Intel Core 2 Duo L9600 @ 2.13 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "W86494769A7"_XS8, "Air-Enclosure"_XS8,
     0x01, 0x34, 0x0f, 0, 0, 0x08, "NA"_XS8, "NA"_XS8, 0x76005 }, // need rBR RPlt EPCI
   //MacBookAir3,1 / MacBook Air (11-inch, Late 2010)
@@ -351,25 +351,25 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
   { "MacBookAir8,1"_XS8, "MBA81.88Z.F000.B00.2005132104"_XS8, "1037.120.87.0.0"_XS8, "Mac-827FAC58A8FDFA22"_XS8, // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFXJHACJK77"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j140k"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j140k"_XS8, 0 },
   //MacBookAir8,2 / MacBook Air (Retina, 13-inch, 2019)
   { "MacBookAir8,2"_XS8, "MBA82.88Z.F000.B00.2005132224"_XS8, "1037.120.87.0.0"_XS8, "Mac-226CB3C6A851A671"_XS8, // Intel Core i5-8210Y @ 1.60 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFXJHACLYWM"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j140a"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j140a"_XS8, 0 },
   //MacBookAir9,1 / MacBook Air (Retina, 13-inch, 2020)
   { "MacBookAir9,1"_XS8, "MBA91.88Z.F000.B00.2005132117"_XS8, "1037.120.87.0.0"_XS8, "Mac-0CFF9C7C2B63DF8D"_XS8, // Intel Core i5-1030NG7 @ 1.10 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFCCHACMNHP"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "J230K"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "J230K"_XS8, 0 },
   //Macmini1,1 / Mac mini (Early 2006)
-  { "Macmini1,1"_XS8, "MM11.88Z.0055.B08.0610121326"_XS8, NullXString8, "Mac-F4208EC8"_XS8, // Intel Core 2 Duo T2300 @ 1.67 GHz
+  { "Macmini1,1"_XS8, "MM11.88Z.0055.B08.0610121326"_XS8, ""_XS8, "Mac-F4208EC8"_XS8, // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini"_XS8, "1.0"_XS8, "W8702N1JU35"_XS8, "Mini-Aluminum"_XS8,
     0x01, 0x03, 0x0f, 0, 0, 0x04, "m40"_XS8, "m40"_XS8, 0x78002 }, // need EPCI
   //Macmini2,1 / Mac mini (Mid 2007)
-  { "Macmini2,1"_XS8, "MM21.88Z.009A.B00.0706281359"_XS8, NullXString8, "Mac-F4208EAA"_XS8, // Intel Core 2 Duo T7200 @ 2.00 GHz
+  { "Macmini2,1"_XS8, "MM21.88Z.009A.B00.0706281359"_XS8, ""_XS8, "Mac-F4208EAA"_XS8, // Intel Core 2 Duo T7200 @ 2.00 GHz
     "Mac mini"_XS8, "1.1"_XS8, "W8705W9LYL2"_XS8, "Mini-Aluminum"_XS8,
     0x01, 0x19, 0x0f, 0, 0, 0x02, "NA"_XS8, "NA"_XS8, 0x78002 }, // need rBR EPCI
   //Macmini3,1 / Mac mini (Late 2009)
-  { "Macmini3,1"_XS8, "MM31.88Z.0081.B06.0904271717"_XS8, NullXString8, "Mac-F22C86C8"_XS8, // Intel Core 2 Duo P8700 @ 2.53 GHz
+  { "Macmini3,1"_XS8, "MM31.88Z.0081.B06.0904271717"_XS8, ""_XS8, "Mac-F22C86C8"_XS8, // Intel Core 2 Duo P8700 @ 2.53 GHz
     "Mac mini"_XS8, "1.0"_XS8, "YM003HAC9G6"_XS8, "Mini-Aluminum"_XS8,
     0x01, 0x35, 0x0f, 0, 0, 0x01, "NA"_XS8, "NA"_XS8, 0x78002 }, // need rBR RPlt EPCI
   //Macmini4,1 / Mac mini (Mid 2010)
@@ -403,37 +403,37 @@ PLATFORMDATA ApplePlatformData[] =
   //Macmini8,1 / Mac mini (2018)
   { "Macmini8,1"_XS8, "MM81.88Z.F000.B00.2005132145"_XS8, "1037.120.87.0.0"_XS8, "Mac-7BA5B2DFE22DDD8C"_XS8, // Intel Core i7-8700B @ 3.20 GHz
     "Mac mini"_XS8, "1.0"_XS8, "C07XL9WEJYVX"_XS8, "Mini-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j174"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j174"_XS8, 0 },
   //iMac4,1 / iMac (20-inch, Early 2006)
-  { "iMac4,1"_XS8, "IM41.88Z.0055.B08.0609061538"_XS8, NullXString8, "Mac-F42786C8"_XS8, // Intel Core 2 Duo T2500 @ 2.00 GHz
+  { "iMac4,1"_XS8, "IM41.88Z.0055.B08.0609061538"_XS8, ""_XS8, "Mac-F42786C8"_XS8, // Intel Core 2 Duo T2500 @ 2.00 GHz
     "iMac"_XS8, "1.0"_XS8, "W8610HACVGM"_XS8, "iMac"_XS8,
     0x01, 0x01, 0x0f, 0, 0, 0x05, "m38m39"_XS8, "m38"_XS8, 0x73002 }, // need EPCI
   //iMac4,2 / iMac (17-inch, Late 2006 CD)
-  { "iMac4,2"_XS8, "IM42.88Z.0071.B03.0610121320"_XS8, NullXString8, "Mac-F4218EC8"_XS8, // Intel Core 2 Duo T2400 @ 1.83 GHz
+  { "iMac4,2"_XS8, "IM42.88Z.0071.B03.0610121320"_XS8, ""_XS8, "Mac-F4218EC8"_XS8, // Intel Core 2 Duo T2400 @ 1.83 GHz
     "iMac"_XS8, "1.0"_XS8, "W8727HACWH5"_XS8, "iMac"_XS8,
     0x01, 0x06, 0x0f, 0, 0, 0x00, "NA"_XS8, "NA"_XS8, 0x73002 }, // need rBR RPlt EPCI
   //iMac5,1 / iMac (20-inch, Late 2006)
-  { "iMac5,1"_XS8, "IM51.88Z.0090.B09.0706270921"_XS8, NullXString8, "Mac-F4228EC8"_XS8, // Intel Core 2 Duo T7400 @ 2.16 GHz
+  { "iMac5,1"_XS8, "IM51.88Z.0090.B09.0706270921"_XS8, ""_XS8, "Mac-F4228EC8"_XS8, // Intel Core 2 Duo T7400 @ 2.16 GHz
     "iMac"_XS8, "1.0"_XS8, "CK708HACVUW"_XS8, "iMac"_XS8,
     0x01, 0x08, 0x0f, 0, 0, 0x02, "NA"_XS8, "NA"_XS8, 0x73002 }, // need rBR RPlt EPCI
   //iMac5,2 / iMac (17-inch, Late 2006 CD)
-  { "iMac5,2"_XS8, "IM52.88Z.0090.B09.0706270913"_XS8, NullXString8, "Mac-F4218EC8"_XS8, // Intel Core 2 Duo T5600 @ 1.83 GHz
+  { "iMac5,2"_XS8, "IM52.88Z.0090.B09.0706270913"_XS8, ""_XS8, "Mac-F4218EC8"_XS8, // Intel Core 2 Duo T5600 @ 1.83 GHz
     "iMac"_XS8, "1.0"_XS8, "QP702HACWH4"_XS8, "iMac"_XS8,
     0x01, 0x06, 0x0f, 0, 0, 0x00, "NA"_XS8, "NA"_XS8, 0x73002 }, // need rBR RPlt EPCI
   //iMac6,1 / iMac (24-inch, Late 2006)
-  { "iMac6,1"_XS8, "IM61.88Z.0093.B07.0804281538"_XS8, NullXString8, "Mac-F4218FC8"_XS8, // Intel Core 2 Duo T7600 @ 2.33 GHz
+  { "iMac6,1"_XS8, "IM61.88Z.0093.B07.0804281538"_XS8, ""_XS8, "Mac-F4218FC8"_XS8, // Intel Core 2 Duo T7600 @ 2.33 GHz
     "iMac"_XS8, "1.0"_XS8, "QP708HACXA6"_XS8, "iMac"_XS8,
     0x01, 0x08, 0x0f, 0, 0, 0x02, "NA"_XS8, "NA"_XS8, 0x73002 }, // need rBR RPlt EPCI
   //iMac7,1 / iMac (20-inch, Mid 2007)
-  { "iMac7,1"_XS8, "IM71.88Z.007A.B03.0803051705"_XS8, NullXString8, "Mac-F42386C8"_XS8, // Intel Core 2 Extreme X7900 @ 2.80 GHz
+  { "iMac7,1"_XS8, "IM71.88Z.007A.B03.0803051705"_XS8, ""_XS8, "Mac-F42386C8"_XS8, // Intel Core 2 Extreme X7900 @ 2.80 GHz
     "iMac"_XS8, "1.0"_XS8, "W8739HACX85"_XS8, "iMac-Aluminum"_XS8,
     0x01, 0x20, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x73002 }, // need rBR RPlt EPCI
   //iMac8,1 / iMac (24-inch, Early 2008)
-  { "iMac8,1"_XS8, "IM81.88Z.00C1.B00.0802091538"_XS8, NullXString8, "Mac-F227BEC8"_XS8, // Intel Core 2 Duo E8235 @ 2.80 GHz
+  { "iMac8,1"_XS8, "IM81.88Z.00C1.B00.0802091538"_XS8, ""_XS8, "Mac-F227BEC8"_XS8, // Intel Core 2 Duo E8235 @ 2.80 GHz
     "iMac"_XS8, "1.3"_XS8, "QP849HACZE7"_XS8, "iMac-Aluminum"_XS8,
     0x01, 0x29, 0x0f, 0, 0, 0x01, "k3"_XS8, "k3"_XS8, 0x73002 },
   //iMac9,1 / iMac (24-inch, Early 2009)
-  { "iMac9,1"_XS8, "IM91.88Z.008D.B08.0904271717"_XS8, NullXString8, "Mac-F2218FA9"_XS8, // Intel Core 2 Duo E8435 @ 3.06 GHz
+  { "iMac9,1"_XS8, "IM91.88Z.008D.B08.0904271717"_XS8, ""_XS8, "Mac-F2218FA9"_XS8, // Intel Core 2 Duo E8435 @ 3.06 GHz
     "iMac"_XS8, "1.0"_XS8, "W8919HAC0TG"_XS8, "iMac-Aluminum"_XS8,
     0x01, 0x36, 0x0f, 0, 0, 0x03, "NA"_XS8, "NA"_XS8, 0x73002 }, // need rBR RPlt EPCI
   //iMac10,1 / iMac (27-inch, Late 2009)
@@ -527,21 +527,21 @@ PLATFORMDATA ApplePlatformData[] =
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1"_XS8, "IMP11.88Z.F000.B00.2005132136"_XS8, "1037.120.87.0.0"_XS8, "Mac-7BA5B2D9E42DDD94"_XS8, // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro"_XS8, "1.0"_XS8, "C02VVHACHX87"_XS8, "iMacPro-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j137"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j137"_XS8, 0 },
   //MacPro1,1 / Mac Pro
-  { "MacPro1,1"_XS8, "MP11.88Z.005C.B08.0707021221"_XS8, NullXString8, "Mac-F4208DC8"_XS8, // Intel Xeon X5355 @ 2.66 GHz x2
+  { "MacPro1,1"_XS8, "MP11.88Z.005C.B08.0707021221"_XS8, ""_XS8, "Mac-F4208DC8"_XS8, // Intel Xeon X5355 @ 2.66 GHz x2
     "MacPro"_XS8, "1.0"_XS8, "W88A7HACUQ2"_XS8, "Pro-Enclosure"_XS8,
     0x01, 0x07, 0x0f, 0, 0, 0x10, "m43"_XS8, "m43"_XS8, 0x79001 }, // need EPCI
   //MacPro2,1 / Mac Pro
-  { "MacPro2,1"_XS8, "MP21.88Z.007F.B06.0707021348"_XS8, NullXString8, "Mac-F4208DA9"_XS8, // Intel Xeon X5365 @ 2.99 GHz x2
+  { "MacPro2,1"_XS8, "MP21.88Z.007F.B06.0707021348"_XS8, ""_XS8, "Mac-F4208DA9"_XS8, // Intel Xeon X5365 @ 2.99 GHz x2
     "MacPro"_XS8, "1.0"_XS8, "W8930518UPZ"_XS8, "Pro-Enclosure"_XS8,
     0x01, 0x15, 0x0f, 0, 0, 0x03, "m43a"_XS8, "m43a"_XS8, 0x79001 }, // need EPCI
   //MacPro3,1 / Mac Pro (Early 2008)
-  { "MacPro3,1"_XS8, "MP31.88Z.006C.B05.0802291410"_XS8, NullXString8, "Mac-F42C88C8"_XS8, // Intel Xeon E5462 @ 2.80 GHz x2
+  { "MacPro3,1"_XS8, "MP31.88Z.006C.B05.0802291410"_XS8, ""_XS8, "Mac-F42C88C8"_XS8, // Intel Xeon E5462 @ 2.80 GHz x2
     "MacPro"_XS8, "1.3"_XS8, "W88A77AA5J4"_XS8, "Pro-Enclosure"_XS8,
     0x01, 0x30, 0x0f, 0, 0, 0x03, "m86"_XS8, "m86"_XS8, 0x79001 },
   //MacPro4,1 / Mac Pro (Early 2009)
-  { "MacPro4,1"_XS8, "MP41.88Z.0081.B08.1001221313"_XS8, NullXString8, "Mac-F221BEC8"_XS8, // Intel Xeon X5670 @ 2.93 GHz x2
+  { "MacPro4,1"_XS8, "MP41.88Z.0081.B08.1001221313"_XS8, ""_XS8, "Mac-F221BEC8"_XS8, // Intel Xeon X5670 @ 2.93 GHz x2
     "MacPro"_XS8, "1.4"_XS8, "CT930HAC4PD"_XS8, "Pro-Enclosure"_XS8,
     0x01, 0x39, 0x0f, 0, 0, 0x05, "NA"_XS8, "NA"_XS8, 0x7c002 }, // need rBR RPlt
   //MacPro5,1 / Mac Pro (Mid 2012)
@@ -555,17 +555,17 @@ PLATFORMDATA ApplePlatformData[] =
   //MacPro7,1 / Mac Pro (2019)
   { "MacPro7,1"_XS8, "MP71.88Z.F000.B00.2005132104"_XS8, "1037.120.87.0.0"_XS8, "Mac-27AD2F918AE68F61"_XS8, // Intel Xeon W-3245M CPU @ 3.20 GHz
     "MacPro"_XS8, "1.0"_XS8, "F5KZNHACP7QM"_XS8, "Pro-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, NullXString8, "j16O"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j16O"_XS8, 0 },
   //Xserve1,1 / Xserve (Late 2006)
-  { "Xserve1,1"_XS8, "XS11.88Z.0080.B01.0706271533"_XS8, NullXString8, "Mac-F4208AC8"_XS8, // Intel Xeon E5345 @ 2.33 GHz x2
+  { "Xserve1,1"_XS8, "XS11.88Z.0080.B01.0706271533"_XS8, ""_XS8, "Mac-F4208AC8"_XS8, // Intel Xeon E5345 @ 2.33 GHz x2
     "Xserve"_XS8, "1.0"_XS8, "CK703E1EV2Q"_XS8, "Xserve"_XS8,
     0x01, 0x11, 0x0f, 0, 0, 0x05, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
   //Xserve2,1 / Xserve (Early 2008)
-  { "Xserve2,1"_XS8, "XS21.88Z.006C.B06.0804011317"_XS8, NullXString8, "Mac-F42289C8"_XS8, // Intel Xeon E5472 @ 3.00 GHz x2
+  { "Xserve2,1"_XS8, "XS21.88Z.006C.B06.0804011317"_XS8, ""_XS8, "Mac-F42289C8"_XS8, // Intel Xeon E5472 @ 3.00 GHz x2
     "Xserve"_XS8, "1.0"_XS8, "CK830DLQX8S"_XS8, "Xserve"_XS8,
     0x01, 0x26, 0x0f, 0, 0, 0x03, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
   //Xserve3,1 / Xserve (Early 2009)
-  { "Xserve3,1"_XS8, "XS31.88Z.0081.B06.0908061300"_XS8, NullXString8, "Mac-F223BEC8"_XS8, // Intel Xeon E5520 @ 2.26 GHz
+  { "Xserve3,1"_XS8, "XS31.88Z.0081.B06.0908061300"_XS8, ""_XS8, "Mac-F223BEC8"_XS8, // Intel Xeon E5520 @ 2.26 GHz
     "Xserve"_XS8, "1.0"_XS8, "CK933YJ16HS"_XS8, "Xserve"_XS8,
     0x01, 0x43, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
 };

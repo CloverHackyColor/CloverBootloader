@@ -259,13 +259,10 @@
 	Platform/VersionString.cpp
 	Platform/VersionString.h
   ../Version.h
-  cpp_util/memory.cpp
   cpp_util/globals_ctor.cpp
   cpp_util/globals_ctor.h
   cpp_util/globals_dtor.cpp
   cpp_util/globals_dtor.h
-  cpp_util/memory.cpp
-  cpp_util/memory.h
   cpp_util/operatorNewDelete.cpp
   cpp_util/operatorNewDelete.h
   cpp_util/remove_ref.h
@@ -319,6 +316,7 @@
   cpp_unit_test/XStringArray_test.h
   cpp_unit_test/plist_tests.cpp
   cpp_unit_test/plist_tests.h
+  cpp_unit_test/XToolsCommon_test.cpp
   cpp_unit_test/XToolsCommon_test.h
 #  cpp_unit_test/XUINTN_test.cpp
 #  cpp_unit_test/XUINTN_test.h
@@ -367,6 +365,7 @@
   #OcDebugLogLib
   OcDebugLogLibOc2Clover
   OcAppleBootPolicyLib
+  CppMemLib
 
 [Guids]
   gEfiAcpiTableGuid

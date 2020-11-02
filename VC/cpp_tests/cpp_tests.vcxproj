@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{A9404CF4-84F9-4E75-AF2D-08BEA4563984}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>cpptests</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..\..\Xcode\cpp_tests\src</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)..\..\Xcode\cpp_tests\Include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)..\..\Xcode\cpp_tests\Include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>Platform.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\Xcode\cpp_tests\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);JIEF_DEBUG;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XObjArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XRBuffer.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XString.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringAbstract.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XToolsCommon.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\all_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_Clover_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_OC_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\global_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\plist_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\poolprint-test-cpp_conf.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\poolprint-test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test-cpp_conf.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test-cpp_conf.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strcmp_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strlen_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XArray_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XBuffer_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XObjArray_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XStringArray_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XString_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XToolsCommon_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\abort.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\Base.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\BaseLib.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\BaseMemoryLib.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\DebugLib.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\OcMiscLib.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Library\ProcessorBind.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\Platform.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\poolprint-test-cpp_conf.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\poolprintfloat-test-cpp_conf.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\printf_lite-conf.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\printf_lite-test-cpp_conf.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\printlib-test-cpp_conf.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\Include\XToolsConf.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\src\posix.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\src\Uefi.h" />
+    <ClInclude Include="..\..\Xcode\cpp_tests\src\xcode_utf_fixed.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Library\MemLogLibDefault\printf_lite.c" />
+    <ClCompile Include="..\..\OpenCorePkg\Library\OcMiscLib\DataPatcher.c" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XRBuffer.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XString.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XStringArray.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\all_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_Clover_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_OC_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\global_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\plist_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strcmp_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strlen_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XArray_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XBuffer_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XObjArray_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XStringArray_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XString_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XToolsCommon_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.c" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\abort.cpp" />
+    <ClCompile Include="..\..\Xcode\cpp_tests\Include\Library\BaseLib.c" />
+    <ClCompile Include="..\..\Xcode\cpp_tests\Include\Library\BaseMemoryLib.c" />
+    <ClCompile Include="..\..\Xcode\cpp_tests\Include\Library\DebugLib.c" />
+    <ClCompile Include="..\..\Xcode\cpp_tests\src\main.cpp" />
+    <ClCompile Include="..\..\Xcode\cpp_tests\src\Platform.cpp" />
+    <ClCompile Include="..\..\Xcode\cpp_tests\src\xcode_utf_fixed.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

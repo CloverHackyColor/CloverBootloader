@@ -743,11 +743,15 @@ public:
 	/* Copy Assign */ // Only other XString, no litteral at the moment.
 	XStringAbstract& operator=(const XStringAbstract &S)  { takeValueFrom(S); return *this; }
 	/* Assign */
+	#ifndef _MSC_VER
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Weffc++"
+	#endif
 	template<typename O, class OtherXStringClass>
 	ThisXStringClass& operator =(const __String<O, OtherXStringClass>& S)	{ strcpy(S.s()); return *((ThisXStringClass*)this); }
+	#ifndef _MSC_VER
   #pragma GCC diagnostic pop
+	#endif
 // TEMPORARILY DISABLED
 //	template<class O>
 //	ThisXStringClass& operator =(const O* S)	{ strcpy(S); return *this; }

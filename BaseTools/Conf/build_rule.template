@@ -409,8 +409,8 @@
         $(AT)"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
         $(AT)$(CP) ${dst} $(DEBUG_DIR)
         $(AT)$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).efi
-        $(AT)-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
-        $(AT)-$(CP) $(DEBUG_DIR)(+)*.pdb $(OUTPUT_DIR) 
+        -$(AT)$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+        -$(AT)$(CP) $(DEBUG_DIR)(+)*.pdb $(OUTPUT_DIR) 
         @"echo" [GENFW] $(MODULE_NAME)
 
     <Command.GCC>
@@ -421,14 +421,14 @@
         #
         #The below 2 lines are only needed for UNIXGCC tool chain, which generates PE image directly
         #
-        $(AT)-$(OBJCOPY) $(OBJCOPY_ADDDEBUGFLAG) ${src}
+        -$(AT)$(OBJCOPY) $(OBJCOPY_ADDDEBUGFLAG) ${src}
         $(AT)$(CP) $(DEBUG_DIR)(+)$(MODULE_NAME).debug $(BIN_DIR)(+)$(MODULE_NAME_GUID).debug
         @"echo" [OBJCOPY] $(MODULE_NAME)
 
         $(AT)"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
         $(AT)$(CP) ${dst} $(DEBUG_DIR)
         $(AT)$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).efi
-        $(AT)-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+        -$(AT)$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
         @"echo" [GENFW] $(MODULE_NAME)
         
     <Command.XCODE>
@@ -437,11 +437,11 @@
         $(AT)"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS)  ${src}  $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff
         @"echo" [MTOC] $(MODULE_NAME)
         # create symbol file for GDB debug
-        $(AT)-$(DSYMUTIL) ${src}
+        -$(AT)$(DSYMUTIL) ${src}
         $(AT)"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff $(GENFW_FLAGS)
         $(AT)$(CP) ${dst} $(DEBUG_DIR)
         $(AT)$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).efi
-        $(AT)-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+        -$(AT)$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
         @"echo" [GENFW] $(MODULE_NAME)
 
 [Dependency-Expression-File]
@@ -614,7 +614,7 @@
 
     <Command>
         $(AT)"$(GENFW)" -o ${dst} -j $(MICROCODE_BINARY_FILES) $(GENFW_FLAGS)
-        $(AT)-$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).bin
+        -$(AT)$(CP) ${dst} $(BIN_DIR)(+)$(MODULE_NAME_GUID).bin
 
 [EFI-Image-File]
     <InputFile>

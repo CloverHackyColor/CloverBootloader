@@ -22,10 +22,12 @@ inline void* memmove(void *dst, const void *src, size_t len)
 	return CopyMem(dst, (void*)(src), len);
 }
 
-inline void* memcpy(void *dst, const void *src, size_t len)
-{
-	return CopyMem(dst,src,len);
-}
+void* memcpy(void *dst, const void *src, size_t len);
+
+//inline void* memcpy(void *dst, const void *src, size_t len)
+//{
+//	return CopyMem(dst,src,len);
+//}
 
 inline char* strcat(char* s1, const char* s2)
 {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <IncludePath>$(ProjectDir)..\..\rEFIt_UEFI\Platform\Posix;$(ProjectDir)..\..\rEFIt_UEFI\include;$(ProjectDir)..\..\rEFIt_UEFI\libeg;$(ProjectDir)..\..\rEFIt_UEFI\entry_scan;$(ProjectDir)..\..\rEFIt_UEFI\refit;$(ProjectDir)..\..\rEFIt_UEFI\fv2;$(ProjectDir)..\..\rEFIt_UEFI\fv2\rijndael;$(ProjectDir)..\..\rEFIt_UEFI\Platform;$(ProjectDir)..\..\rEFIt_UEFI\cpp_unit_test;$(ProjectDir)..\..\rEFIt_UEFI;$(ProjectDir)..\..\Include;$(ProjectDir)..\..\UefiCpuPkg\Include;$(ProjectDir)..\..\Include\Library;$(ProjectDir)..\..\MdePkg;$(ProjectDir)..\..\MdePkg/Include;$(ProjectDir)..\..\MdePkg/Include/X64;$(ProjectDir)..\..\MdeModulePkg;$(ProjectDir)..\..\MdeModulePkg/Include;$(ProjectDir)..\..\IntelFrameworkPkg;$(ProjectDir)..\..\IntelFrameworkPkg/Include;$(ProjectDir)..\..\IntelFrameworkModulePkg;$(ProjectDir)..\..\IntelFrameworkModulePkg/Include;$(ProjectDir)..\..\EdkCompatibilityPkg;$(ProjectDir)..\..\EdkCompatibilityPkg/Compatibility/Include;$(ProjectDir)..\..\StdLib;$(ProjectDir)..\..\StdLib/Include;$(ProjectDir)..\..\StdLib/Include/X64;$(ProjectDir)..\..\OpenCorePkg;$(ProjectDir)..\..\OpenCorePkg\Include\Acidanthera;$(ProjectDir)..\..\OpenCorePkg\User\Include;$(ProjectDir)..\..\OpenCorePkg\Include\Apple;$(ProjectDir)..\..\OpenCorePkg\Include\VMWare;$(ProjectDir)..\..\OpenCorePkg\Include\Intel;$(ProjectDir)..\..\Library\OpensslLib\Include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <SupportJustMyCode>false</SupportJustMyCode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions);CLOVER_DEBUG;_LIB;JCONST=const;STRING_ARRAY_NAME=CLOVERStrings;EFIAPI=;MDEPKG_NDEBUG;CLOVER_BUILD;AMD_SUPPORT;LODEPNG;ANDX86;DEBUG_ON_SERIAL_PORT;JIEF_DEBUG</PreprocessorDefinitions>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary />
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <ForcedIncludeFiles>$(ProjectDir)..\..\Build/Clover/RELEASE_VS2017/X64/rEFIt_UEFI/refit/DEBUG/AutoGen.h</ForcedIncludeFiles>
+      <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\rEFIt_UEFI\Platform\Posix;$(ProjectDir)..\..\rEFIt_UEFI;$(ProjectDir)..\..\rEFIt_UEFI\libeg;$(ProjectDir)..\..\rEFIt_UEFI\entry_scan;$(ProjectDir)..\..\rEFIt_UEFI\refit;$(ProjectDir)..\..\rEFIt_UEFI\fv2;$(ProjectDir)..\..\rEFIt_UEFI\fv2\rijndael;$(ProjectDir)..\..\rEFIt_UEFI\Platform;$(ProjectDir)..\..\Include;$(ProjectDir)..\..\MdePkg;$(ProjectDir)..\..\MdePkg/Include;$(ProjectDir)..\..\MdePkg/Include/X64;$(ProjectDir)..\..\MdeModulePkg;$(ProjectDir)..\..\MdeModulePkg/Include;$(ProjectDir)..\..\IntelFrameworkPkg;$(ProjectDir)..\..\IntelFrameworkPkg/Include;$(ProjectDir)..\..\IntelFrameworkModulePkg;$(ProjectDir)..\..\IntelFrameworkModulePkg/Include;$(ProjectDir)..\..\EdkCompatibilityPkg;$(ProjectDir)..\..\EdkCompatibilityPkg/Compatibility/Include;$(ProjectDir)..\..\StdLib;$(ProjectDir)..\..\StdLib/Include;$(ProjectDir)..\..\StdLib/Include/X64;$(IncludePath)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
+      <AdditionalOptions>/Gs32768 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <CustomBuild>
+      <Command>cmd /c echo %cd%</Command>
+    </CustomBuild>
+    <PostBuildEvent>
+      <Command>$(ProjectDir)\LinkCmd.bat $(TargetDir) $(TargetFileName)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Generate EFI</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

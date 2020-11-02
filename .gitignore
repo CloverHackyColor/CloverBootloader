@@ -122,8 +122,6 @@ CloverPackage/revision
 CloverPackage/version
 tools
 
-#VC project
-/VC
 
 #Eclipse build folder
 /DEBUG_*/

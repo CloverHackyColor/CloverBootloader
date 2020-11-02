@@ -1805,11 +1805,11 @@ UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuff
 
 //    MsgLog(" (%X)", adr);
     found = TRUE;
-    len = move_data(adr + i, dsdt, len, (INT32)sizeoffset); // safe cast, sizeoffset > MAX_INT32
+    len = move_data(adr + i, dsdt, len, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
     CopyMem(dsdt + adr + i, ToReplace.data(), ToReplace.size());
-    len = CorrectOuterMethod(dsdt, len, adr + i - 2, (INT32)sizeoffset); // safe cast, sizeoffset > MAX_INT32
-    len = CorrectOuters(dsdt, len, adr + i - 3, (INT32)sizeoffset); // safe cast, sizeoffset > MAX_INT32
-    i += adr + ToReplace.size();
+    len = CorrectOuterMethod(dsdt, len, adr + i - 2, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
+    len = CorrectOuters(dsdt, len, adr + i - 3, (INT32)sizeoffset); // safe cast, sizeoffset < MAX_INT32
+    i += (UINT32)(adr + ToReplace.size()); // if there is no bug before, it should be safe cast.
   }
   MsgLog(" ]\n"); //should not be here
   return len;

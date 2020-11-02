@@ -79,7 +79,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
     if (Volume->LegacyOS->Name.notEmpty()) {
       LTitle.takeValueFrom(Volume->LegacyOS->Name);
       if (Volume->LegacyOS->Name[0] == 'W' || Volume->LegacyOS->Name[0] == 'L')
-        ShortcutLetter = Volume->LegacyOS->Name[0];
+        ShortcutLetter = (wchar_t)Volume->LegacyOS->Name[0]; // cast safe because value is 'W' or 'L'
     } else
       LTitle = L"Legacy OS"_XSW;
   } else

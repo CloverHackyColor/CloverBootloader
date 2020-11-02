@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{28BACFE9-9CB5-4518-A18F-C83F4F2CEAD3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Clover</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>CloverX64</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Clover.props" />
+    <Import Project="CloverDebug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Clover.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)..\..\rEFIt_UEFI;$(ProjectDir)..\..\rEFIt_UEFI\libeg;$(ProjectDir)..\..\rEFIt_UEFI\entry_scan;$(ProjectDir)..\..\rEFIt_UEFI\refit;$(ProjectDir)..\..\rEFIt_UEFI\fv2;$(ProjectDir)..\..\rEFIt_UEFI\fv2\rijndael;$(ProjectDir)..\..\rEFIt_UEFI\Platform;$(ProjectDir)..\..\Include;$(ProjectDir)..\..\OpensslLib\Include;$(ProjectDir)..\..\OpensslLib\openssl-1.0.1e\include;$(ProjectDir)..\..\MdePkg;$(ProjectDir)..\..\MdePkg/Include;$(ProjectDir)..\..\MdePkg/Include/X64;$(ProjectDir)..\..\MdeModulePkg;$(ProjectDir)..\..\MdeModulePkg/Include;$(ProjectDir)..\..\IntelFrameworkPkg;$(ProjectDir)..\..\IntelFrameworkPkg/Include;$(ProjectDir)..\..\IntelFrameworkModulePkg;$(ProjectDir)..\..\IntelFrameworkModulePkg/Include;$(ProjectDir)..\..\EdkCompatibilityPkg;$(ProjectDir)..\..\EdkCompatibilityPkg/Compatibility/Include;$(ProjectDir)..\..\StdLib;$(ProjectDir)..\..\StdLib/Include;$(ProjectDir)..\..\StdLib/Include/X64;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <RuntimeLibrary />
+      <BasicRuntimeChecks />
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions);JCONST=const;STRING_ARRAY_NAME=CLOVERStrings;EFIAPI=;MDEPKG_NDEBUG;CLOVER_BUILD;AMD_SUPPORT;LODEPNG;ANDX86;DEBUG_ON_SERIAL_PORT</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <ForcedIncludeFiles>$(ProjectDir)..\..\Build/Clover/RELEASE_VS2017/X64/rEFIt_UEFI/refit/DEBUG/AutoGen.h</ForcedIncludeFiles>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild />
+      <RuntimeLibrary />
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalOptions>/NODEFAULTLIB %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Build\Clover\RELEASE_VS2017\X64\rEFIt_UEFI\refit\DEBUG\AutoGen.c" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XRBuffer.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XString.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_foundation\XStringArray.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\all_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_Clover_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_OC_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\global_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\plist_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strcmp_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strlen_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XArray_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XBuffer_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XObjArray_tests.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XStringArray_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XString_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_unit_test\XToolsCommon_test.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\globals_ctor.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\globals_dtor.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\operatorNewDelete.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\cpp_util\pure_virtual.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\bootscreen.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\common.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\legacy.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\loader.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\lockedgraphics.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\secureboot.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\securehash.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\securemenu.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\securevars.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\entry_scan\tool.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\gui\menu_items\menu_items.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\gui\REFIT_MENU_SCREEN.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\gui\shared_with_menu.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\BmLib.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\egemb_font.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\egemb_icons.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\egemb_icons_dark.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\FloatLib.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\image.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\libscreen.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\load_icns.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\lodepng.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\nanosvg.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\nanosvgrast.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\scroll_images.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\text.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\VectorGraphics.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\XCinema.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\XIcon.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\XImage.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\XPointer.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\libeg\XTheme.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\AcpiPatcher.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\AmlGenerator.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\APFS.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\ati.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\b64cdecode.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BasicIO.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BdsConnect.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BootLog.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\BootOptions.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\card_vlist.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Console.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\cpu.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\DataHubCpu.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\DevicePath.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\device_inject.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Edid.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Events.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\gma.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\guid.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\hda.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\HdaCodecDump.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Hibernate.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Injectors.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kernel_patcher.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kext_inject.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\kext_patcher.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\LegacyBiosThunk.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\LegacyBoot.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.c" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Net.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\nvidia.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Nvram.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\platformdata.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\PlatformDriverOverride.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\base64.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\plist.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagArray.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagBool.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagData.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagDate.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagDict.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagFloat.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagInt64.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagKey.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\TagString8.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\plist\xml.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\abort.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\stdio.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\string.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\strlen.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Posix\wchar.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Self.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\SelfOem.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Settings.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\smbios.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\sound.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\spd.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\StartupSound.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\StateGenerator.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\usbfix.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\Utils.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\Platform\VersionString.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\refit\icns.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\refit\lib.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\refit\main.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\refit\menu.cpp" />
+    <ClCompile Include="..\..\rEFIt_UEFI\refit\screen.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\unicode_conversions.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XBuffer.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XObjArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XRBuffer.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XString.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringAbstract.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XStringArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_foundation\XToolsCommon.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\all_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_Clover_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\find_replace_mask_OC_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\global_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\LoadOptions_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\plist_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test-cpp_conf.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printf_lite-test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test-cpp_conf.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\printlib-test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strcmp_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strlen_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\strncmp_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XArray_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XBuffer_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XObjArray_tests.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XStringArray_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XString_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_unit_test\XToolsCommon_test.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\globals_ctor.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\globals_dtor.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\operatorNewDelete.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\cpp_util\remove_ref.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\CanonicalDB.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\CloverDB.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\CloverKEK.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\entry_scan.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\loader.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\MSKEK.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\MSPCADB.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\MSUEFICADB.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\securebootkeys.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\entry_scan\tool.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\gui\menu_items\menu_globals.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\gui\menu_items\menu_items.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\gui\REFIT_MENU_SCREEN.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\gui\shared_with_menu.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\BmLib.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\EfiFileLib.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\FloatLib.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\image.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\libeg.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\libegint.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\lodepng.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\nanosvg.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\VectorGraphics.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\XCinema.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\XIcon.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\XImage.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\XPointer.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\libeg\XTheme.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\AcpiPatcher.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\AmlGenerator.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\APFS.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\ati_reg.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\b64cdecode.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BasicIO.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\boot.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BootLog.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\BootOptions.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\card_vlist.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Console.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\cpu.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\DataHubCpu.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\device_inject.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Edid.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Events.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\FixBiosDsdt.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\gma.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\guid.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\hda.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\HdaCodecDump.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Hibernate.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Injectors.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\kernel_patcher.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\kext_inject.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LegacyBiosThunk.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LegacyBoot.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\loader.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\LoaderUefi.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\MachO-loader.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\MemoryOperation.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\memvendors.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Net.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\nvidia.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Nvram.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Platform.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\platformdata.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\PlatformDriverOverride.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\base64.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\plist.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagArray.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagBool.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagData.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagDate.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagDict.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagFloat.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagInt64.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagKey.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\TagString8.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\plist\xml.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\abort.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\limits.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\posix.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdarg.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdbool.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stddef.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdint.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdio.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\stdlib.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\string.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Posix\wchar.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Self.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\SelfOem.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Settings.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\smbios.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\spd.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\sse3_5_patcher.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\sse3_patcher.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\StartupSound.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\StateGenerator.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\usbfix.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\Utils.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\Platform\VersionString.h" />
+    <ClInclude Include="..\..\rEFIt_UEFI\refit\lib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\rEFIt_UEFI\libeg\ftol.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
