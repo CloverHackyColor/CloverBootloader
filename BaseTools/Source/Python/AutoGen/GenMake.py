@@ -131,29 +131,29 @@ class BuildFile(object):
 
     ## directory creation template
     _MD_TEMPLATE_ = {
-        "nmake" :   'if not exist %(dir)s $(MD) %(dir)s',
-        "gmake" :   "$(MD) %(dir)s"
+        "nmake" :   '$(AT)if not exist %(dir)s $(MD) %(dir)s',
+        "gmake" :   "$(AT)$(MD) %(dir)s"
     }
 
     ## directory removal template
     _RD_TEMPLATE_ = {
-        "nmake" :   'if exist %(dir)s $(RD) %(dir)s',
-        "gmake" :   "$(RD) %(dir)s"
+        "nmake" :   '$(AT)if exist %(dir)s $(RD) %(dir)s',
+        "gmake" :   "$(AT)$(RD) %(dir)s"
     }
     ## cp if exist
     _CP_TEMPLATE_ = {
-        "nmake" :   'if exist %(Src)s $(CP) %(Src)s %(Dst)s',
-        "gmake" :   "test -f %(Src)s && $(CP) %(Src)s %(Dst)s"
+        "nmake" :   '$(AT)if exist %(Src)s $(CP) %(Src)s %(Dst)s',
+        "gmake" :   "$(AT)test -f %(Src)s && $(CP) %(Src)s %(Dst)s"
     }
 
     _CD_TEMPLATE_ = {
-        "nmake" :   'if exist %(dir)s cd %(dir)s',
-        "gmake" :   "test -e %(dir)s && cd %(dir)s"
+        "nmake" :   '$(AT)if exist %(dir)s cd %(dir)s',
+        "gmake" :   "$(AT)test -e %(dir)s && cd %(dir)s"
     }
 
     _MAKE_TEMPLATE_ = {
-        "nmake" :   'if exist %(file)s "$(MAKE)" $(MAKE_FLAGS) -f %(file)s',
-        "gmake" :   'test -e %(file)s && "$(MAKE)" $(MAKE_FLAGS) -f %(file)s'
+        "nmake" :   '$(AT)if exist %(file)s "$(MAKE)" $(MAKE_FLAGS) -f %(file)s',
+        "gmake" :   '$(AT)test -e %(file)s && "$(MAKE)" $(MAKE_FLAGS) -f %(file)s'
     }
 
     _INCLUDE_CMD_ = {
@@ -229,7 +229,7 @@ class BuildFile(object):
 #
 class ModuleMakefile(BuildFile):
     ## template used to generate the makefile for module
-    _TEMPLATE_ = TemplateString('''\
+    TemplStr = '''\
 ${makefile_header}
 
 #
@@ -409,7 +409,27 @@ ${END}\t$(RM) *.pdb *.idb > NUL 2>&1
 #
 cleanlib:
 \t${BEGIN}-@${library_build_command} cleanall
-\t${END}@cd $(MODULE_BUILD_DIR)\n\n''')
+\t${END}@cd $(MODULE_BUILD_DIR)\n\n'''
+
+    if sys.platform == "win32":
+            _TEMPLATE_ = TemplateString('''
+AT = @
+!IF defined(V) && "$(V)" != "0"
+AT = 
+!ENDIF
+
+''' + TemplStr)
+
+    else:
+            _TEMPLATE_ = TemplateString('''
+#Verbose
+AT_ = @
+AT_0 = @
+AT_1 =
+AT = $(AT_$(V))
+
+''' + TemplStr)
+
 
     _FILE_MACRO_TEMPLATE = TemplateString("${macro_name} = ${BEGIN} \\\n    ${source_file}${END}\n")
     _BUILD_TARGET_TEMPLATE = TemplateString("${BEGIN}${target} : ${deps}\n${END}\t${cmd}\n")
@@ -737,12 +757,12 @@ cleanlib:
             self.BuildTargetList.append('%s : %s' % (OutputFile, DepsFileString))
             CmdString = ' '.join(FfsCmdList).strip()
             CmdString = self.ReplaceMacro(CmdString)
-            self.BuildTargetList.append('\t%s' % CmdString)
+            self.BuildTargetList.append('\t$(AT)%s' % CmdString)
 
             self.ParseSecCmd(DepsFileList, Cmd[1])
             for SecOutputFile, SecDepsFile, SecCmd in self.FfsOutputFileList :
                 self.BuildTargetList.append('%s : %s' % (self.ReplaceMacro(SecOutputFile), self.ReplaceMacro(SecDepsFile)))
-                self.BuildTargetList.append('\t%s' % self.ReplaceMacro(SecCmd))
+                self.BuildTargetList.append('\t$(AT)%s' % self.ReplaceMacro(SecCmd))
             self.FfsOutputFileList = []
 
     def ParseSecCmd(self, OutputFileList, CmdTuple):
