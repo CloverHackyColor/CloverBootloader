@@ -6254,8 +6254,6 @@
 		A5C32A6A24B6CF9B004E20CC /* LzmaDecompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LzmaDecompress.c; sourceTree = "<group>"; };
 		A5C32A6B24B6CF9B004E20CC /* GuidedSectionExtraction.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GuidedSectionExtraction.c; sourceTree = "<group>"; };
 		A5C32A6C24B6CF9B004E20CC /* UefiLzma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLzma.h; sourceTree = "<group>"; };
-		A5C32A7324B6CF9B004E20CC /* DeviceTreeLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DeviceTreeLib.c; sourceTree = "<group>"; };
-		A5C32A7424B6CF9B004E20CC /* DeviceTreeLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DeviceTreeLib.inf; sourceTree = "<group>"; };
 		A5C32A9224B6CF9B004E20CC /* BasePeCoffLibInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasePeCoffLibInternals.h; sourceTree = "<group>"; };
 		A5C32A9324B6CF9B004E20CC /* BasePeCoff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BasePeCoff.c; sourceTree = "<group>"; };
 		A5C32A9424B6CF9B004E20CC /* VBoxPeCoffLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxPeCoffLib.inf; sourceTree = "<group>"; };
@@ -7583,6 +7581,9 @@
 		A5D12C3C243A0CAD00DFA98A /* string.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = string.h; sourceTree = "<group>"; };
 		A5D12C3D243A0CBA00DFA98A /* wchar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wchar.cpp; sourceTree = "<group>"; };
 		A5D12C3E243A0CBB00DFA98A /* wchar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wchar.h; sourceTree = "<group>"; };
+		A5E1C2EB2551E05700F2C2EB /* memory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
+		A5E1C2EC2551E05700F2C2EB /* CppMemLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = CppMemLib.inf; sourceTree = "<group>"; };
+		A5E1C2ED2551E05700F2C2EB /* memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		A5E283D12347AE550068ED34 /* MemoryMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryMap.c; sourceTree = "<group>"; };
 		A5E283D22347AE550068ED34 /* ServiceOverrides.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceOverrides.h; sourceTree = "<group>"; };
 		A5E283D32347AE550068ED34 /* BootFixes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootFixes.c; sourceTree = "<group>"; };
@@ -21130,7 +21131,7 @@
 		A5C32A4624B6CF9B004E20CC /* Library */ = {
 			isa = PBXGroup;
 			children = (
-				A5C32A7224B6CF9B004E20CC /* DeviceTreeLib */,
+				A5E1C2EA2551E05700F2C2EB /* CppMemLib */,
 				A5C32AF124B6CF9C004E20CC /* DuetTimerLib */,
 				A5C3307724B6CF9F004E20CC /* GenericBdsLib */,
 				A5C3303824B6CF9F004E20CC /* HdaDevicesLib */,
@@ -21185,15 +21186,6 @@
 				A5C32A6724B6CF9B004E20CC /* LzmaDec.h */,
 			);
 			path = C;
-			sourceTree = "<group>";
-		};
-		A5C32A7224B6CF9B004E20CC /* DeviceTreeLib */ = {
-			isa = PBXGroup;
-			children = (
-				A5C32A7324B6CF9B004E20CC /* DeviceTreeLib.c */,
-				A5C32A7424B6CF9B004E20CC /* DeviceTreeLib.inf */,
-			);
-			path = DeviceTreeLib;
 			sourceTree = "<group>";
 		};
 		A5C32A9124B6CF9B004E20CC /* VBoxPeCoffLib */ = {
@@ -23277,6 +23269,16 @@
 				A571C28A240574BB00B6A2C5 /* remove_ref.h */,
 			);
 			path = cpp_util;
+			sourceTree = "<group>";
+		};
+		A5E1C2EA2551E05700F2C2EB /* CppMemLib */ = {
+			isa = PBXGroup;
+			children = (
+				A5E1C2EB2551E05700F2C2EB /* memory.cpp */,
+				A5E1C2EC2551E05700F2C2EB /* CppMemLib.inf */,
+				A5E1C2ED2551E05700F2C2EB /* memory.h */,
+			);
+			path = CppMemLib;
 			sourceTree = "<group>";
 		};
 		A5E283CF2347AE550068ED34 /* MemoryFix */ = {

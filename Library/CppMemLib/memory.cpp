@@ -15,7 +15,7 @@ extern "C" {
 
 
 #ifdef __GNUC__
-  void* memset(void* dst, int ch, UINTN count) __attribute__ ((used));
+  //void* memset(void* dst, int ch, UINTN count) __attribute__ ((used));
   //void* memcpy(void* dst, const void* src, UINT64 count) __attribute__ ((used));
 #else
 //  void* memset(void* dst, int ch, UINT64 count);
