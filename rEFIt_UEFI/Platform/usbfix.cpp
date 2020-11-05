@@ -9,7 +9,7 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 #ifndef DEBUG_ALL
-#define DEBUG_USB 0
+#define DEBUG_USB 1
 #else
 #define DEBUG_USB DEBUG_ALL
 #endif
@@ -43,6 +43,7 @@ FixOwnership(void)
  EFI_NOT_FOUND
  --*/
 {
+DBG("FixOwnership() -> begin\n");
   EFI_STATUS          Status;
   EFI_HANDLE          *HandleArray = NULL;
   UINTN             HandleArrayCount = 0;

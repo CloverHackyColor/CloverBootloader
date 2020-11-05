@@ -837,6 +837,15 @@ void LOADER_ENTRY::StartLoader()
 
 DBG("Beginning OC\n");
 
+  UINT64 CPUFrequencyFromART;
+  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
+
+  EFI_LOADED_IMAGE* OcLoadedImage;
+  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
+  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
+
+
 
 /*
  * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
@@ -886,6 +895,10 @@ DBG("Beginning OC\n");
     DBG("Erase mOpenCoreConfiguration.Kernel\n");
   #else
     DBG("Keep mOpenCoreConfiguration.Kernel\n");
+    for ( size_t i = 0 ; i < mOpenCoreConfiguration.Kernel.Add.Count ; i ++ ) {
+      OC_KERNEL_ADD_ENTRY* entry = mOpenCoreConfiguration.Kernel.Add.Values[i];
+      OC_STRING_ASSIGN(entry->BundlePath, S8Printf("Kexts\\%s", OC_BLOB_GET(&entry->BundlePath)).c_str());
+    }
   #endif
   #ifndef USE_OC_SECTION_Misc
     memset(&mOpenCoreConfiguration.Misc, 0, sizeof(mOpenCoreConfiguration.Misc));
@@ -910,6 +923,15 @@ DBG("Beginning OC\n");
     DBG("Erase mOpenCoreConfiguration.Uefi\n");
   #else
     DBG("Keep mOpenCoreConfiguration.Uefi\n");
+//    memset(&mOpenCoreConfiguration.Uefi.Apfs, 0, sizeof(mOpenCoreConfiguration.Uefi.Apfs));
+//    memset(&mOpenCoreConfiguration.Uefi.Audio, 0, sizeof(mOpenCoreConfiguration.Uefi.Audio));
+//    memset(&mOpenCoreConfiguration.Uefi.ConnectDrivers, 0, sizeof(mOpenCoreConfiguration.Uefi.ConnectDrivers));
+//    memset(&mOpenCoreConfiguration.Uefi.Drivers, 0, sizeof(mOpenCoreConfiguration.Uefi.Drivers));
+//    memset(&mOpenCoreConfiguration.Uefi.Input, 0, sizeof(mOpenCoreConfiguration.Uefi.Input));
+//    memset(&mOpenCoreConfiguration.Uefi.Output, 0, sizeof(mOpenCoreConfiguration.Uefi.Output));
+//    memset(&mOpenCoreConfiguration.Uefi.ProtocolOverrides, 0, sizeof(mOpenCoreConfiguration.Uefi.ProtocolOverrides));
+//    memset(&mOpenCoreConfiguration.Uefi.Quirks, 0, sizeof(mOpenCoreConfiguration.Uefi.Quirks));
+//    memset(&mOpenCoreConfiguration.Uefi.ReservedMemory, 0, sizeof(mOpenCoreConfiguration.Uefi.ReservedMemory)); // doesn't matter
   #endif
 
 #endif
@@ -1110,14 +1132,6 @@ DBG("Beginning OC\n");
 //    );
 
 
-  UINT64 CPUFrequencyFromART;
-  InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
-
-  EFI_LOADED_IMAGE* OcLoadedImage;
-  Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-  Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
-
   XStringW FileName = SWPrintf("%ls\\%ls\\%s", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), "OpenRuntime.efi");
   EFI_HANDLE DriverHandle;
   Status = gBS->LoadImage(false, gImageHandle, FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NULL, 0, &DriverHandle);
@@ -1297,8 +1311,8 @@ DBG("Beginning OC\n");
 //    DBG("SetVariablesForOSX\n");
     SetVariablesForOSX(this);
 //    DBG("SetVariablesForOSX\n");
-// Jief : we don't need our ExitBootService, OC has one.
-//  EventsInitialize(this);
+// Jief : if we want to use our FixUSBOwnership, we need our OnExitBootServices
+    EventsInitialize(this);
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
 

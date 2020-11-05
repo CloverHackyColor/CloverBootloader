@@ -258,10 +258,11 @@ OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
 	//
 	// Patch kernel and kexts if needed
 	//
-  LOADER_ENTRY *Entry = ((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY();
-	if ( Entry && Entry->OSVersion.startWith("10") ) {
-    Entry->KernelAndKextsPatcherStart();
-  }
+//  Jief : OpenCore is doing the kernel patching for all versions.
+//  LOADER_ENTRY *Entry = ((REFIT_ABSTRACT_MENU_ENTRY*)Context)->getLOADER_ENTRY();
+//	if ( Entry && Entry->OSVersion.startWith("10") ) {
+//    Entry->KernelAndKextsPatcherStart();
+//  }
 	
 #if 0  //it will be as a sample of possible patches in future
 //    gBS->Stall(2000000);
