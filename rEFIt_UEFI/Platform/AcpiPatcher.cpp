@@ -2049,6 +2049,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
 //  }
 
   if (gSettings.DebugDSDT) {
+    TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->XDsdt;
+    bufferLen = TableHeader->Length;
+
     DBG("Output DSDT before patch to %ls\\ACPI\\origin\\DSDT-or.aml\n", selfOem.getConfigDirFullPath().wc_str());
     Status = egSaveFile(&selfOem.getConfigDir(), L"ACPI\\origin\\DSDT-or.aml", (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
   }

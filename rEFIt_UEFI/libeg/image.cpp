@@ -196,14 +196,15 @@ EFI_STATUS egSaveFile(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *FileNam
     }
   } else {
     //to write into existing file we must sure it size larger then our data
-    EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
-    if (Info) {
-      if (Info->FileSize < FileDataLength) {
+//    EFI_FILE_INFO *Info = EfiLibFileInfo(FileHandle);
+//    if (Info) {
+//      if (Info->FileSize < FileDataLength) {
 //        DBG("no old file %s\n", efiStrError(Status));
-        return EFI_NOT_FOUND;
-      }
-      FreePool(Info);
-    }
+//        return EFI_NOT_FOUND;
+//      }
+//      FreePool(Info);
+//    }
+    Status = FileHandle->Delete(FileHandle); //don't write into existing file. Delete it!
   }
 
   if (!FileHandle) {
