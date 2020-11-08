@@ -17,10 +17,11 @@ echo "preinstall: Root of system folder... $4"
 #############################################################################
 
 DEST_VOL="${3}"
+install_tmp="${DEST_VOL}/Private/tmp"
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 CLOVER_INSTALLER_PLIST_NEW_DIR=$(dirname "$CLOVER_INSTALLER_PLIST_NEW")
 
 [[ ! -d "$CLOVER_INSTALLER_PLIST_NEW_DIR" ]] && mkdir -p "$CLOVER_INSTALLER_PLIST_NEW_DIR"
 rm -f "$CLOVER_INSTALLER_PLIST_NEW"
-
+mkdir -p "$install_tmp"
 exit 0

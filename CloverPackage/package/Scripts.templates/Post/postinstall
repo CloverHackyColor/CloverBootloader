@@ -16,13 +16,13 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-DEST_VOL="${3}"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+DEST_VOL="$3"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 CLOVER_INSTALLER_PLIST="${DEST_VOL}@CLOVER_INSTALLER_PLIST@"
 bootervolumename="EFI"
 bootvolume="/Volumes/${bootervolumename}"
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 config_plist_file="${EFI_ROOT_DIR}"/EFI/CLOVER/config.plist
 plistbuddy='/usr/libexec/PlistBuddy'
 
@@ -89,14 +89,19 @@ if [[ -f "$CLOVER_INSTALLER_PLIST_NEW" ]]; then
 fi
 
 # Clean up
-rm -f "${DEST_VOL}/boottype"
+rm -f "${DEST_VOL}/Private/tmp/boottype"
 
 # Remove link to the partition that contain the EFI folder
-rm -rf "${DEST_VOL}"/EFIROOTDIR
+rm -rf "${DEST_VOL}"/Private/tmp/EFIROOTDIR
+
+# Remove Clover files
+rm -rf "${DEST_VOL}"/Private/tmp/usr
 
 # show the log as html immediately
 # cp -R "${EFI_ROOT_DIR}/EFI/Clover_Install_Log.txt" /tmp/
 # rm -f /tmp/Clover_Install_Log.html
 # textutil -cat html -output /tmp/Clover_Install_Log.html /tmp/Clover_Install_Log.txt
 # open /tmp/Clover_Install_Log.html
+
+
 

@@ -3,15 +3,16 @@
 diskloader="@MBR_SECTOR_FILE@"
 
 DEST_VOL="${3}"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/PlistBuddy'
 installer_choice="@INSTALLER_CHOICE@"
 installer_altboot_refid='@INSTALLER_ALTBOOT_REFID@'
-#fdisk440="${DEST_VOL}"/usr/local/bin/fdisk440
-boot1install="${DEST_VOL}"/usr/local/bin/boot1-install
-partutil="${DEST_VOL}"/usr/local/bin/partutil
+#fdisk440="${DEST_VOL}"/Private/tmp/usr/local/bin/fdisk440
+boot1install="${DEST_VOL}"/Private/tmp/usr/local/bin/boot1-install
+partutil="${DEST_VOL}"/Private/tmp/usr/local/bin/partutil
+
 
 function finish {
     local exit_code=$?
@@ -139,8 +140,8 @@ echo dd if=${bootrdisk} count=1 bs=512 of=/tmp/origMBR >> "$install_log"
 dd if=${bootrdisk} count=1 bs=512 of=/tmp/origMBR
 echo cp /tmp/origMBR /tmp/newMBR >> "$install_log"
 cp /tmp/origMBR /tmp/newMBR
-echo dd if="${DEST_VOL}/usr/standalone/i386/${diskloader}" of=/tmp/newMBR bs=440 count=1 conv=notrunc >> "$install_log"
-dd if="${DEST_VOL}/usr/standalone/i386/${diskloader}" of=/tmp/newMBR bs=440 count=1 conv=notrunc
+echo dd if="${DEST_VOL}/Private/tmp/usr/standalone/i386/${diskloader}" of=/tmp/newMBR bs=440 count=1 conv=notrunc >> "$install_log"
+dd if="${DEST_VOL}/Private/tmp/usr/standalone/i386/${diskloader}" of=/tmp/newMBR bs=440 count=1 conv=notrunc
 echo fdisk -f /tmp/newMBR -u -y ${bootrdisk} >> "$install_log"
 fdisk -f /tmp/newMBR -u -y ${bootrdisk}
 echo "" >> "$install_log"
@@ -152,9 +153,9 @@ tmp_log=/tmp/install.log
 partitionloaderfat_copy="/tmp/$partitionloaderfat"
 partitionloaderexfat_copy="/tmp/$partitionloaderexfat"
 partitionloaderhfs_copy="/tmp/$partitionloaderhfs"
-cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" "$partitionloaderfat_copy"
-cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderexfat}" "$partitionloaderexfat_copy"
-cp -p "${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" "$partitionloaderhfs_copy"
+cp -p "${DEST_VOL}/Private/tmp/usr/standalone/i386/${partitionloaderfat}" "$partitionloaderfat_copy"
+cp -p "${DEST_VOL}/Private/tmp/usr/standalone/i386/${partitionloaderexfat}" "$partitionloaderexfat_copy"
+cp -p "${DEST_VOL}/Private/tmp/usr/standalone/i386/${partitionloaderhfs}" "$partitionloaderhfs_copy"
 
 # Try to unmount the partition first
 mnt_pt=$(LC_ALL=C mount | egrep "^$bootdev on" | sed 's/^.* on *//;s/ ([^(]*//')

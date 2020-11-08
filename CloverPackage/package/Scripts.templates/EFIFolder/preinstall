@@ -28,9 +28,9 @@ else
     DEST_VOL="$3"
 fi
 
-EFI_ROOT_DIR="${DEST_VOL}"/EFIROOTDIR
+EFI_ROOT_DIR="${DEST_VOL}"/Private/tmp/EFIROOTDIR
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/PlistBuddy'
 installer_target_esp_refid='@INSTALLER_TARGET_ESP_REFID@'
 
@@ -78,80 +78,31 @@ fi
 # ---------------------------------------------
 # Preparing Backing up of Clover files
 # ---------------------------------------------
-old_revision='r0000'
-for cloverfile in BOOT/BOOTX64.efi CLOVER/CLOVERX64.efi CLOVER/CLOVERIA32.efi; do
-    cloverpath="${EFI_ROOT_DIR}/EFI/$cloverfile"
-    if [[ -f "$cloverpath" ]]; then
-        old_revision=r$(grep --text 'Clover revision:' "${cloverpath}" | sed -nE 's/^.*Clover revision: //p' | sed -nE 's/ *([0-9]+).*/\1/p')
-        break
-    fi
-done
 
-keepBackupLimit=$(GetNVRamKey 'Clover.KeepBackupLimit')
-backupDirOnDestVol=$(GetNVRamKey 'Clover.BackupDirOnDestVol')
-if [[ "$backupDirOnDestVol" =~ N|n ]]; then
-    backupRootDir="$EFI_ROOT_DIR/EFI-Backups"
-    [[ -z "$keepBackupLimit" ]] && keepBackupLimit=0
-else
-    backupRootDir="$DEST_VOL/EFI-Backups" # backup on destination volume (default)
-    [[ -z "$keepBackupLimit" ]] && keepBackupLimit=10
-fi
-backupDir="${backupRootDir}/$old_revision/"$( date -j "+%F-%Hh%M" )
+date=`date -j +%F-%Hh%M`
 
-# Remove old backup directories if needed
-if [[ "$keepBackupLimit" =~ [[:digit:]]+ ]]; then
-    index=1
-    while IFS= read -r -u3 -d $'\n' dir ;do # 'fix xemacs fontification
-        if [[ "$index" -ge "$keepBackupLimit" ]]; then
-            rm -rf "$dir"
-        fi
-        (( index++ ))
-    done 3< <(find "$backupRootDir" -type d -depth 2 2>/dev/null | tail -r)
+BackupDir="$HOME/Desktop/Clover EFI Backups/$date"
+
+exitcode=0
+
+if [ "$exitcode" != "0" ]
+then
+
+	echo "EFI partition !"
 fi
 
-if [[ -n "$keepBackupLimit" && "$keepBackupLimit" -ne 0 ]]; then
-    # ---------------------------------------------
-    # Backing up Clover files
-    # ---------------------------------------------
+ if [ "$exitcode" == "0" ] && [ ! -d "$BackupDir/EFI" ]
+ then
+ 	if [ -d /Volumes/ESP/EFI ]
+ 	then
+ 		if [ ! -d "$BackupDir" ]
+	 	then
+	 		mkdir -p "$BackupDir"
+	 		cp -Rp "$EFI_ROOT_DIR/" "$BackupDir/$date"
+	 	fi
+	 fi
+ fi
 
-    # Create the backup directory
-    mkdir -p "$backupDir"
-
-    echo "======================================================" >> "$install_log"
-    echo "Backing up EFI files" >> "$install_log"
-    echo "" >> "$install_log"
-
-    # Backup stage2
-    if [ -f "$EFI_ROOT_DIR/boot" ];then
-        echo "Backing up stage2 file $EFI_ROOT_DIR/boot  to ${backupDir}/boot" >> "$install_log"
-        cp -p "$EFI_ROOT_DIR/boot" "${backupDir}/boot"
-    fi
-    if [ -f "$EFI_ROOT_DIR/boot1" ];then
-        echo "Backing up stage2 file $EFI_ROOT_DIR/boot1 to ${backupDir}/boot1" >> "$install_log"
-        cp -p "$EFI_ROOT_DIR/boot1" "${backupDir}/boot1"
-    fi
-    if [ -f "$EFI_ROOT_DIR/boot3" ];then
-        echo "Backing up stage2 file $EFI_ROOT_DIR/boot3 to ${backupDir}/boot3" >> "$install_log"
-        cp -p "$EFI_ROOT_DIR/boot3" "${backupDir}/boot3"
-    fi
-    if [ -f "$EFI_ROOT_DIR/boot6" ];then
-        echo "Backing up stage2 file $EFI_ROOT_DIR/boot6 to ${backupDir}/boot6" >> "$install_log"
-        cp -p "$EFI_ROOT_DIR/boot6" "${backupDir}/boot6"
-    fi
-
-    # Backup /EFI directory
-    if [ -d "$EFI_ROOT_DIR/EFI" ];then
-        echo "Backing up $EFI_ROOT_DIR/EFI folder to ${backupDir}/EFI"   >> "$install_log"
-        cp -pR "$EFI_ROOT_DIR/EFI" "${backupDir}/EFI"
-    fi
-
-    chflags -R nohidden "$backupDir" # Remove the invisible flag of files in the backups
-
-fi
-
-# Remove empty directories
-find "$backupRootDir" -type d -maxdepth 2 -empty -print0 2>/dev/null | xargs -0 rmdir
-find "$backupRootDir" -type d -maxdepth 1 -empty -print0 2>/dev/null | xargs -0 rmdir
 
 # Remove old CloverPrefpane
 pkg='@CLOVER_PACKAGE_IDENTITY@.cloverprefpane'
@@ -206,3 +157,9 @@ rm -f "${EFI_ROOT_DIR}"/EFI/CLOVER/CLOVERX64.efi
 
 # Remove old CloverEFI files
 #rm -fv "$EFI_ROOT_DIR"/boot{3,6,7}
+
+exit $exitcode
+
+
+
+

@@ -528,7 +528,7 @@ main ()
      ${SRCROOT}/CloverV2/EFI/BOOT ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
         addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
                   --pkg-refs="$packageRefId" "${choiceId}"
@@ -560,28 +560,28 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
     choiceId="BiosBoot"
 
     ls "${SRCROOT}"/CloverV2/Bootloaders/x64/boot? &>/dev/null && \
-     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0af     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0ss     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1x      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1xalt   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/x64/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0af     ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0ss     ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1x      ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1xalt   ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
 
-#    ditto --noextattr --noqtn ${SRCROOT}/utils/fdisk440/fdisk440.8        ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/man/man8/
-#    ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install              ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+#    ditto --noextattr --noqtn ${SRCROOT}/utils/fdisk440/fdisk440.8        ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/man/man8/
+#    ditto --noextattr --noqtn ${SYMROOT}/utils/fdisk440                   ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/boot1-install              ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
 
     # Add some documentation
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Description.txt  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/EFIROOTDIR/EFI/CLOVER/doc/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Description.txt  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/EFIROOTDIR/EFI/CLOVER/doc/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-#    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{fdisk440,boot1-install}
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/boot1-install
+#    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{fdisk440,boot1-install}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/boot1-install
     
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
 
@@ -596,13 +596,13 @@ fi
     packagesidentity="$clover_package_identity"
     choiceId="Utils"
     # Utils
-    ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-   # ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
-    ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder         ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/bdmesg            ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+   # ditto --noextattr --noqtn ${SYMROOT}/utils/clover-genconfig  ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/partutil          ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
+    ditto --noextattr --noqtn ${SYMROOT}/utils/espfinder         ${PKG_BUILD_DIR}/${choiceId}/Root/Private/tmp/usr/local/bin/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    #chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,clover-genconfig,partutil,espfinder}
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/local/bin/{bdmesg,partutil,espfinder}
+    #chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,clover-genconfig,partutil,espfinder}
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}"/Root/Private/tmp/usr/local/bin/{bdmesg,partutil,espfinder}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageUtilsRefId=$packageRefId
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
@@ -637,7 +637,7 @@ fi
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
 # End build EFI folder package
 
@@ -663,7 +663,7 @@ fi
 
 
 
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     addChoice --start-visible="true" \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageRefId" "${choiceId}"
@@ -686,7 +686,7 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
                        MarkChoice
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  ${choiceId}
 
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     addChoice --start-selected="choicePreviouslySelected('$packageRefId')"                          \
               --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$choiceId'].selected"  \
               --visible="choices['boot0af'].selected || choices['boot0ss'].selected"                \
@@ -701,7 +701,7 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
                        --subst="INSTALLER_CHOICE=$packageRefId"         \
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
                        ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     addChoice --group="Bootloader"                                                                \
               --enabled="!choices['UEFI.only'].selected"                                          \
               --start-selected="choicePreviouslySelected('$packageRefId') || checkBootFromUEFI()" \
@@ -718,7 +718,7 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
                        --subst="MBR_SECTOR_FILE"=boot0af                \
                        InstallBootsectors
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --enabled="!choices['UEFI.only'].selected"                   \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
@@ -734,7 +734,7 @@ if [[ ${NOEXTRAS} != *"CloverEFI"* ]]; then
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
                        --subst="MBR_SECTOR_FILE"=boot0ss                \
                        InstallBootsectors
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/Private/tmp/EFIROOTDIR"
     addChoice --group="Bootloader"                                          \
               --enabled="!choices['UEFI.only'].selected"                    \
               --start-selected="choicePreviouslySelected('$packageRefId')"  \
@@ -825,7 +825,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_LEGACY" && ${NOEXTRAS}
 
     packagesidentity="${clover_package_identity}".drivers64.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_LEGACY" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -866,7 +866,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY" &
     echo "===================== drivers64 ========================"
     packagesidentity="${clover_package_identity}".drivers64
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -895,7 +895,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/Fi
     addGroupChoices --title="FileSystem64" --description="FileSystem64" --parent=Drivers64 "FileSystem64"
     packagesidentity="${clover_package_identity}".drivers64
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileSystem" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -954,7 +954,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/Fi
       "Drivers64FV2"
     packagesidentity="${clover_package_identity}".fv2.drivers64
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_LEGACY/FileVault2" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_LEGACY"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -993,7 +993,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_UEFI" ]]; then
     addGroupChoices --title="Recommended64UEFI" --description="Recommended64UEFI" --parent=Drivers64UEFI "Recommended64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1030,7 +1030,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI" ]];
     echo "=================== drivers64 UEFI ====================="
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1057,7 +1057,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID"
     addGroupChoices --title="HID64UEFI" --description="HID64UEFI" --parent=Drivers64UEFI "HID64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/HID" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1087,7 +1087,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/File
     addGroupChoices --title="FileSystem64UEFI" --description="FileSystem64UEFI" --parent=Drivers64UEFI "FileSystem64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileSystem" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1144,7 +1144,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Memo
     addGroupChoices --title="MemoryFix64UEFI" --description="MemoryFix64UEFI" --parent=Drivers64UEFI --exclusive_zero_or_one_choice "MemoryFix64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/MemoryFix" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1179,7 +1179,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/File
     addGroupChoices --title="Drivers64UEFIFV2" --description="Drivers64UEFIFV2"  --parent=Drivers64UEFI "Drivers64UEFIFV2"
     packagesidentity="${clover_package_identity}".fv2.drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/FileVault2" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1214,7 +1214,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Othe
     addGroupChoices --title="Other64UEFI" --description="Other64UEFI" --parent=Drivers64UEFI "Other64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Other" -type f -name '*.efi' -depth 1 | sort -f ))
-    local driverDestDir="/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
+    local driverDestDir="/Private/tmp/EFIROOTDIR/EFI/CLOVER/drivers/$DRIVERS_UEFI"
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -1339,7 +1339,7 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
     packagesidentity="${clover_package_identity}".themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
     local themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
-    local themeDestDir='/EFIROOTDIR/EFI/CLOVER/themes'
+    local themeDestDir='/Private/tmp/EFIROOTDIR/EFI/CLOVER/themes'
     local defaultTheme=  # $(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/CLOVER/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
@@ -1364,7 +1364,7 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
     # Special themes
     packagesidentity="${clover_package_identity}".special.themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
-    local themeDestDir='/EFIROOTDIR/EFI/CLOVER/themes'
+    local themeDestDir='/Private/tmp/EFIROOTDIR/EFI/CLOVER/themes'
     local currentMonth=$(date -j +'%-m')
     for (( i = 0 ; i < ${#specialThemes[@]} ; i++ )); do
         local themeName=${specialThemes[$i]##*/}
@@ -1445,6 +1445,7 @@ fi
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice  --start-visible="false" --start-selected="true"  --pkg-refs="$packageRefId" "${choiceId}"
 # End build post install package
+
 
 }
 

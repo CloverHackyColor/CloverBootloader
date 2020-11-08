@@ -15,20 +15,20 @@ echo "preinstall: Path to dest volume..... $3"
 echo "preinstall: Root of system folder... $4"
 
 DEST_VOL="$3"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
 
-if [[ -d "${DEST_VOL}/usr/standalone/i386/ia32" ]]; then
+if [[ -d "${DEST_VOL}/Private/tmp/usr/standalone/i386/ia32" ]]; then
     while read -r -u3 file; do
-        cp -v "${DEST_VOL}/usr/standalone/i386/ia32/$file" "${EFI_ROOT_DIR}/"
+        cp -v "${DEST_VOL}/Private/tmp/usr/standalone/i386/ia32/$file" "${EFI_ROOT_DIR}/"
         chflags hidden "${EFI_ROOT_DIR}/$file"
-    done 3< <(ls "${DEST_VOL}/usr/standalone/i386/ia32/")
+    done 3< <(ls "${DEST_VOL}/Private/tmp/usr/standalone/i386/ia32/")
 fi
 
-if [[ -d "${DEST_VOL}/usr/standalone/i386/x64" ]]; then
+if [[ -d "${DEST_VOL}/Private/tmp/usr/standalone/i386/x64" ]]; then
     while read -r -u3 file; do
-        cp -v "${DEST_VOL}/usr/standalone/i386/x64/$file" "${EFI_ROOT_DIR}/"
+        cp -v "${DEST_VOL}/Private/tmp/usr/standalone/i386/x64/$file" "${EFI_ROOT_DIR}/"
         chflags hidden "${EFI_ROOT_DIR}/$file"
-    done 3< <(ls "${DEST_VOL}/usr/standalone/i386/x64/")
+    done 3< <(ls "${DEST_VOL}/Private/tmp/usr/standalone/i386/x64/")
 fi
 
 exit 0

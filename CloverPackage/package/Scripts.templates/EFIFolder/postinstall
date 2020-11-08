@@ -15,12 +15,16 @@ echo "==============================================="
 # echo "preinstall: Root of system folder... $4"
 
 DEST_VOL="$3"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
 
 # config.plist
 customPlists=$(find "${EFI_ROOT_DIR}"/EFI/CLOVER/OEM -name *.plist | grep -Ev 'SystemProductName')
 if [[ ! -f "${EFI_ROOT_DIR}/EFI/CLOVER/config.plist" && "${customPlists}" == "" ]]; then
     cp -fv "${EFI_ROOT_DIR}/EFI/CLOVER/config-sample.plist" "${EFI_ROOT_DIR}/EFI/CLOVER/config.plist"
 fi
+
+
 # Don't keep config-sample.plist
 rm -f "${EFI_ROOT_DIR}/EFI/CLOVER/config-sample.plist"
+
+

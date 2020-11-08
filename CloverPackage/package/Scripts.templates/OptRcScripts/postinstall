@@ -16,10 +16,10 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-DEST_VOL="${3}"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+DEST_VOL="$3"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 
 plistbuddy='/usr/libexec/PlistBuddy'
 installer_on_target_refid='@INSTALLER_ON_TARGET_REFID@'

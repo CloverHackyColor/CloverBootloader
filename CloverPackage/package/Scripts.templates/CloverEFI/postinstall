@@ -17,19 +17,19 @@ echo "preinstall: Root of system folder... $4"
 #############################################################################
 
 DEST_VOL="${3}"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 installer_choice="@INSTALLER_CHOICE@"
 
 boottype='@CLOVER_EFI_ARCH@'
 cloverEFIFile='@CLOVER_BOOT_FILE@'
 
-echo "$boottype" > "${DEST_VOL}/boottype"
+echo "$boottype" > "${DEST_VOL}/Private/tmp/boottype"
 
-if [[ -f "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
-    cp -v "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" "${EFI_ROOT_DIR}/boot"
+if [[ -f "${DEST_VOL}/Private/tmp/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
+    cp -v "${DEST_VOL}/Private/tmp/usr/standalone/i386/$boottype/$cloverEFIFile" "${EFI_ROOT_DIR}/boot"
     #chflags hidden "${EFI_ROOT_DIR}/boot"
     echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${EFI_ROOT_DIR}/boot" >> "$install_log"
 fi

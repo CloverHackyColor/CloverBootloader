@@ -12,9 +12,9 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-DEST_VOL="${3}"
-EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+DEST_VOL="$3"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/Private/tmp/EFIROOTDIR; pwd -P)
+install_log="${DEST_VOL}/Private/tmp/Clover_Install_Log.txt"
 driver_dir="@DRIVER_DIR@"
 driver_name="@DRIVER_NAME@"
 

@@ -2,7 +2,7 @@
 
 <installer-gui-script minSpecVersion='1'>
 
-	<options hostArchitectures='i386' allow-external-scripts='true'/>
+	<options hostArchitectures='i386' allow-external-scripts='yes'/>
 	<domains enable_anywhere="true"/>
 
 	<welcome file='Welcome.html'/>
@@ -10,12 +10,12 @@
 	<readme file='Description.html'/>
 	<conclusion file="Conclusion.html"/>
 	<background file='background.tiff' alignment='topleft' scaling='proportional'/>
-  <background-darkAqua file="background.tiff" alignment='topleft' scaling="proportional"/>
-  
+        <background-darkAqua file='background.tiff' alignment='topleft' scaling='proportional'/>
+
 	<title>Clover r%CLOVERREVISION% EFI bootloader</title>
 
 	<script>
-    
+
 	function installCheckScript()
 	{
 		var obj = system.ioregistry.matchingClass("AppleSMC");
@@ -34,7 +34,7 @@
 		system.log('volCheckScript: Passed.');
 		return true;
 	}
-  
+
 	function upgrade_allowed(){
 		var upgradable = true;
 		var upgradeAction = my.choice.packageUpgradeAction;
@@ -92,46 +92,5 @@
 		}
 		return true;
 	}
-  
-  function checkFileSystemIsWritable()
-	{
-    var writable = true;
-    var cmd = '[[ yes == $(diskutil info / | grep -i \'read-only volume:\' | awk \'{print $NF}\' | tr \'[:upper:]\' \'[:lower:]\') ]]'
-    r = system.run('/bin/bash', '-c', cmd);
-    system.log('checkFileSystemIsWritable diskutil result = ' + r);
-
-    writable = (r != 0);
-    
-    if (writable) {
-      system.log('checkFileSystemIsWritable: file system is writable: Passed');
-    } else {
-      system.log('checkFileSystemIsWritable: root file system is read only, try to make it RW...');
-      var cmd2 = '/usr/bin/osascript -e\''
-      cmd2 += 'do shell script "mount -uw /'
-      cmd2 += '" with prompt '
-      cmd2 += '"' + system.localizedString('MakingRootRW') + '"'
-      cmd2 += ' with administrator privileges\''
-      
-      try
-      {
-        r2 = system.run('/bin/bash', '-c', cmd2);
-        writable = (r2 == 0);
-        if (writable) {
-          system.log('mount -uw / succeded.');
-        }
-      } catch (e) {
-        system.log('mount -uw / returned with error: ' + e);
-        writable = false;
-      }
-    
-      if (writable == false) {
-        my.result.message = system.localizedString('GoToFailRootRW');
-        my.result.type = 'Fatal';
-      }
-    }
-
-		return writable;
-	}
 
 	</script>
-  <installation-check script="checkFileSystemIsWritable()"/>
