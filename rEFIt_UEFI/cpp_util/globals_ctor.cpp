@@ -84,9 +84,9 @@ ctor_ptr* pend = (ctor_ptr*)&__end_of_section_ctors;
 void construct_globals_objects(EFI_HANDLE ImageHandle)
 {
     (void)ImageHandle;
-    DBG("CTOR %llX %lld\n", (UINTN)p, (UINTN)p);
+    DBG("CTORS %llX(%lld) size %ld\n", (UINTN)p, (UINTN)p, pend-p );
     while ( p < pend ) {
-    	DBG("CTOR %llX %lld\n", (UINTN)p[0], (UINTN)p[0]);
+      DBG("CTOR %llX(%lld)\n", (UINTN)p[0], (UINTN)p[0]);
     	(*p)();
     	p++;
     }

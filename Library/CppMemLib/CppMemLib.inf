@@ -31,6 +31,8 @@
 #  VALID_ARCHITECTURES           = IA32 X64
 #
 
+# Jief : The only reason we need this, is because  MSVC needs memcpy and memset to be compiled without /GL
+
 [Sources]
   memory.cpp
 
@@ -46,4 +48,3 @@
 
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /GL-
-  GCC:*_*_*_CC_FLAGS = -Os -fno-lto
