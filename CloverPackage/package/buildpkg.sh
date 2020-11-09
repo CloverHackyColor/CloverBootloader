@@ -1166,7 +1166,7 @@ if [[ -d "${SRCROOT}/CloverV2/EFI/CLOVER/drivers/$DRIVERS_OFF/$DRIVERS_UEFI/Memo
 
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="MemoryFix64UEFI"  --title="$driverName"                \
-                  --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                  --start-visible="true" --start-selected="true"  \
                   --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
@@ -1333,7 +1333,7 @@ fi
 if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
     echo "======================== Themes ========================"
     addGroupChoices "Themes"
-    local specialThemes=('christmas' 'newyear')
+    local specialThemes=('christmas')
 
     # Using themes section from Azi's/package branch.
     packagesidentity="${clover_package_identity}".themes
@@ -1369,7 +1369,7 @@ if [[ ${NOEXTRAS} != *"Clover Themes"* ]]; then
     for (( i = 0 ; i < ${#specialThemes[@]} ; i++ )); do
         local themeName=${specialThemes[$i]##*/}
         # Don't add christmas and newyear themes if month < 11
-        [[ $currentMonth -lt 11 ]] && [[ "$themeName" == christmas || "$themeName" == newyear ]] && continue
+        [[ $currentMonth -lt 11 ]] && [[ "$themeName" == christmas ]] && continue
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
         rsync -r --exclude=.svn --exclude="*~" "$artwork/${specialThemes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")

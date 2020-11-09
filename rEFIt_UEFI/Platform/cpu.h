@@ -182,7 +182,7 @@ const char CPU_STRING_UNKNOWN[] = "Unknown CPU Type";
 #define MSR_IA32_PLATFORM_ID        0x0017
 //#define IA32_APIC_BASE              0x001B  /* used also for AMD */
 #define MSR_CORE_THREAD_COUNT       0x0035   /* limited use - not for Penryn or older  */
-//#define IA32_TSC_ADJUST             0x003B
+#define IA32_TSC_ADJUST             0x003B
 #define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
 #define MSR_FSB_FREQ                0x00CD   /* limited use - not for i7            */
 /*
@@ -316,11 +316,12 @@ MSR C001006B  0000-0000-0000-0000
 #define CPUID_4    4
 #define CPUID_5    5
 #define CPUID_6    6
-#define CPUID_80   7
-#define CPUID_81   8
-#define CPUID_87   9
-#define CPUID_88   10
-#define CPUID_81E  11
+#define CPUID_7    7
+#define CPUID_80   10
+#define CPUID_81   11
+#define CPUID_87   12
+#define CPUID_88   13
+#define CPUID_81E  14
 #define CPUID_15   15
 #define CPUID_MAX  16
 

@@ -284,7 +284,7 @@ void GetCPUProperties (void)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     // Determine turbo boost support
     DoCpuid(6, gCPUStructure.CPUID[CPUID_6]);
-    gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & (1 << 1)) != 0);
+    gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & BIT1) != 0);
     DBG(" The CPU%s supported turbo\n", gCPUStructure.Turbo?"":" not");
     //get cores and threads
     switch (gCPUStructure.Model)
@@ -349,6 +349,15 @@ void GetCPUProperties (void)
       default:
         gCPUStructure.Cores = 0;
         break;
+    }
+  }
+  
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+    DoCpuid(7, gCPUStructure.CPUID[CPUID_7]);
+    if ((gCPUStructure.CPUID[CPUID_7][EBX] & BIT1) != 0) {
+      DBG(" IA32_TSC_ADJUST MSR is supported \n");
+      msr = AsmReadMsr64(IA32_TSC_ADJUST);  //0x3B
+      DBG(" value to adjust = %llu\n", msr);
     }
   }
 
@@ -512,7 +521,7 @@ void GetCPUProperties (void)
              
              //----test C3 patch
              msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL); //0xE2
-				 MsgLog("MSR 0xE2 before patch %08llX\n", msr);
+             MsgLog("MSR 0xE2 before patch %08llX\n", msr);
              if (msr & 0x8000) {
                MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
                NeedPMfix = TRUE;
@@ -524,13 +533,13 @@ void GetCPUProperties (void)
              //   MsgLog("MSR 0xE4              %08X\n", msr);
              //------------
              msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE
-				 MsgLog("MSR 0xCE              %08llX_%08llX\n", (msr>>32), msr & 0xFFFFFFFFull);
+             MsgLog("MSR 0xCE              %08llX_%08llX\n", (msr>>32), msr & 0xFFFFFFFFull);
              gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
              gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
              //--- Check if EIST locked
              msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE); //0x1A0
              if (msr & _Bit(20)) {
-				 MsgLog("MSR 0x1A0             %08llX\n", msr);
+               MsgLog("MSR 0x1A0             %08llX\n", msr);
                MsgLog("   EIST is locked and %s\n", (msr & _Bit(16))?"enabled":"disabled");
              }
              
@@ -545,13 +554,13 @@ void GetCPUProperties (void)
                    AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL));
                    gBS->Stall(10);
                    msr = AsmReadMsr64(MSR_FLEX_RATIO);
-					 MsgLog("corrected FLEX_RATIO = %llX\n", msr);
+                   MsgLog("corrected FLEX_RATIO = %llX\n", msr);
                  }
                }
              }
              if ((gCPUStructure.CPUID[CPUID_6][ECX] & (1 << 3)) != 0) {
                msr = AsmReadMsr64(IA32_ENERGY_PERF_BIAS); //0x1B0
-				 MsgLog("MSR 0x1B0             %08llX\n", msr);
+               MsgLog("MSR 0x1B0             %08llX\n", msr);
              }
              
              if(gCPUStructure.MaxRatio) {
@@ -633,8 +642,8 @@ void GetCPUProperties (void)
                gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
              }
              DBG("MSR dumps:\n");
-           DBG("\t@0x00CD=%llx\n", msr);
-           DBG("\t@0x0198=%llx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
+             DBG("\t@0x00CD=%llx\n", msr);
+             DBG("\t@0x0198=%llx\n", AsmReadMsr64(MSR_IA32_PERF_STATUS));
              break;
            default:
              gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
@@ -679,8 +688,6 @@ void GetCPUProperties (void)
     UINT64	busFrequency		= 0;
     UINT64	cpuFrequency		= 0;
 
-
-    
     gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
 	  DBG("CurrentSpeed: %llu\n", DivU64x32(gCPUStructure.TSCFrequency, Mega));
     
@@ -1112,7 +1119,7 @@ void GetCPUProperties (void)
               //Slice - why 2:1? Intel spec said 3:4 - QCLK_RATIO at offset 0x50
               //  && (Device == 2) && (Function == 1)) {
               && (Device == 3) && (Function == 4)) {
-			  DBG("Found QCLK_RATIO at bus 0x%02llX dev=%llX funs=%llX\n", Bus, Device, Function);
+            DBG("Found QCLK_RATIO at bus 0x%02llX dev=%llX funs=%llX\n", Bus, Device, Function);
             Status = PciIo->Mem.Read (
                                       PciIo,
                                       EfiPciIoWidthUint32,
