@@ -108,7 +108,6 @@ build/
 !default.mode2v3
 !default.perspectivev3
 xcuserdata/
-xcshareddata/
 
 # Translation files
 CloverUpdater.strings
@@ -125,4 +124,7 @@ tools
 
 #Eclipse build folder
 /DEBUG_*/
+/RELEASE_*/
+
+#copy I make sometimes
 /rEFIt_UEFI copy*/

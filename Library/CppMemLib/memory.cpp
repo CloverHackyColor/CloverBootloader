@@ -14,13 +14,13 @@ extern "C" {
  */
 
 
-#ifdef __GNUC__
-  //void* memset(void* dst, int ch, UINTN count) __attribute__ ((used));
-  //void* memcpy(void* dst, const void* src, UINT64 count) __attribute__ ((used));
-#else
-//  void* memset(void* dst, int ch, UINT64 count);
-  //void* memcpy(void* dst, const void* src, UINT64 count);
-#endif
+// Jief : I think __attribute__ ((used)) was needed for older version of GCC, can't remember.
+//        If you want to put it back, do it only for the compiler version that really needs it.
+//        Nov 2020 : With Gcc 10.2, defining it for memset is ok, but not needed. Defining it for memcpy generates an error in GenFW.
+//#ifdef __GNUC__
+//  void* memset(void* dst, int ch, UINTN count) __attribute__ ((used));
+//  void* memcpy(void* dst, const void* src, UINTN count) __attribute__ ((used));
+//#endif
 
 void* memset(void* dst, int ch, UINTN count)
 {

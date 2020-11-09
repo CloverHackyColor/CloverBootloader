@@ -526,6 +526,17 @@ ScanSections64 (
   }
 
   //
+  // List all sections.
+  //
+  for (i = 0; i < mEhdr->e_shnum; i++) {
+    Elf_Shdr *shdr = GetShdrByIndex(i);
+    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
+    CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
+    NormalMsg("section %d %s sh_addr_in_memory_image=%llu(0x%llx) sh_offset_in_file=%llu(0x%llx) sh_size=%llu(0x%llx) sh_addralign=%llu sh_flags=0x%llx", i, sectName, shdr->sh_addr, shdr->sh_addr, shdr->sh_offset, shdr->sh_offset, shdr->sh_size, shdr->sh_size, shdr->sh_addralign, shdr->sh_flags);
+  }
+
+
+  //
   // First text sections.
   //
   mCoffOffset = CoffAlign(mCoffOffset);
@@ -534,17 +545,15 @@ ScanSections64 (
   SectionCount = 0;
   for (i = 0; i < mEhdr->e_shnum; i++) {
     Elf_Shdr *shdr = GetShdrByIndex(i);
-    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
-    CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
+    /*debug*/Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
+    /*debug*/CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
     if (IsTextShdr(shdr)) {
       if ((shdr->sh_addralign != 0) && (shdr->sh_addralign != 1)) {
         // the alignment field is valid
         if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
           // if the section address is aligned we must align PE/COFF
-          UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
-mCoffOffset=mCoffOffsetNew;
+          /*debug*/NormalMsg("Text section %d %s size=%llu mCoffOffset=%d(0x%x)", i, sectName, shdr->sh_size, mCoffOffset, mCoffOffset);
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
         }
@@ -590,17 +599,15 @@ mCoffOffset=mCoffOffsetNew;
   SectionCount = 0;
   for (i = 0; i < mEhdr->e_shnum; i++) {
     Elf_Shdr *shdr = GetShdrByIndex(i);
-    Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
-    CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
+    /*debug*/Elf_Shdr *Namedr = GetShdrByIndex(mEhdr->e_shstrndx);
+    /*debug*/CHAR8* sectName = ((CHAR8*)mEhdr) + Namedr->sh_offset + shdr->sh_name;
     if (IsDataShdr(shdr)) {
       if ((shdr->sh_addralign != 0) && (shdr->sh_addralign != 1)) {
         // the alignment field is valid
         if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
           // if the section address is aligned we must align PE/COFF
-          UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
-mCoffOffset=mCoffOffsetNew;
+          /*debug*/NormalMsg("Data section %d %s size=%llu mCoffOffset=%d(0x%x)", i, sectName, shdr->sh_size, mCoffOffset, mCoffOffset);
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
         }
@@ -673,6 +680,7 @@ mCoffOffset=mCoffOffsetNew;
   //
   // Allocate base Coff file.  Will be expanded later for relocations.
   //
+  NormalMsg("Allocate %d bytes for mCoffFile", mCoffOffset);
   mCoffFile = (UINT8 *)malloc(mCoffOffset);
   if (mCoffFile == NULL) {
     Error (NULL, 0, 4001, "Resource", "memory cannot be allocated!");
@@ -1026,8 +1034,8 @@ WriteSections64 (
           }
         } else if (mEhdr->e_machine == EM_AARCH64) {
 
+          INT64 Offset;
           switch (ELF_R_TYPE(Rel->r_info)) {
-            INT64 Offset;
 
           case R_AARCH64_LD64_GOT_LO12_NC:
             //

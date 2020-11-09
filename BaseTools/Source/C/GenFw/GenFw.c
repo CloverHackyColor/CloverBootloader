@@ -1161,6 +1161,8 @@ Returns:
   OutputFileTime         = 0;
   ZeroDebugFlag          = FALSE;
 
+  SetPrintLevel(INFO_LOG_LEVEL + 1);
+
   if (argc == 1) {
     Error (NULL, 0, 1001, "Missing options", "No input options.");
     Usage ();
@@ -1377,6 +1379,14 @@ Returns:
     if ((stricmp (argv[0], "-v") == 0) || (stricmp (argv[0], "--verbose") == 0)) {
       SetPrintLevel (VERBOSE_LOG_LEVEL);
       VerboseMsg ("Verbose output Mode Set!");
+      argc --;
+      argv ++;
+      continue;
+    }
+    
+    if ((stricmp (argv[0], "--info") == 0)) {
+      SetPrintLevel (INFO_LOG_LEVEL);
+      NormalMsg ("Info output Mode Set!");
       argc --;
       argv ++;
       continue;
