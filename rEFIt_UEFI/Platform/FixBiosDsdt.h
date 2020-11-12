@@ -9,7 +9,7 @@
 #define PLATFORM_FIXBIOSDSDT_H_
 
 #include "../cpp_foundation/XBuffer.h"
-
+#include "../Platform/MacOsVersion.h"
 
 //DSDT fixes MASK
 //0x00FF
@@ -61,7 +61,7 @@ void
 FixBiosDsdt (
   UINT8                                     *Dsdt,
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *fadt,
-  const XString8&                            OSVersion
+  const MacOsVersion&                        OSVersion
   );
 
 

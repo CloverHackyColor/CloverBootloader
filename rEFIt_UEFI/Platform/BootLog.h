@@ -28,7 +28,7 @@ extern "C" {
 void
 InitBooterLog (void);
 
-void closeDebugLog();
+void closeDebugLog(void);
 
 EFI_STATUS
 SetupBooterLog (

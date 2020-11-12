@@ -559,8 +559,10 @@ void LOADER_ENTRY::DellSMBIOSPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
 void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
     UINT32 i;
-    UINT64 os_ver = AsciiOSVersionToUint64(OSVersion);
+//    UINT64 os_ver = AsciiOSVersionToUint64(OSVersion);
     
+  if ( OSVersion.isEmpty() ) return; // Jief : not 100% sure, but if OSVersion is unknown, it's > 11.0.1
+
 	DBG_RT("\nSNBE_AICPUPatch: driverAddr = %llx, driverSize = %x\n", (UINTN)Driver, DriverSize);
   if (KernelAndKextPatches.KPDebug) {
         ExtractKextBundleIdentifier(InfoPlist);
@@ -569,13 +571,13 @@ void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
 	DBG_RT("Kext: %s\n", gKextBundleIdentifier);
     
     // now let's patch it
-    if (os_ver < AsciiOSVersionToUint64("10.9"_XS8) || os_ver >= AsciiOSVersionToUint64("10.14"_XS8)) {
+    if (OSVersion < MacOsVersion("10.9"_XS8) || OSVersion >= MacOsVersion("10.14"_XS8)) {
         DBG("Unsupported macOS.\nSandyBridge-E requires macOS 10.9 - 10.13.x, aborted\n");
         DBG("SNBE_AICPUPatch() <===FALSE\n");
         return;
     }
     
-    if (os_ver < AsciiOSVersionToUint64("10.10"_XS8)) {
+    if (OSVersion < MacOsVersion("10.10"_XS8)) {
         // 10.9.x
         const UINT8 find[][3] = {
             { 0x84, 0x2F, 0x01 },
@@ -603,7 +605,7 @@ void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
                 DBG("SNBE_AICPUPatch (%d/7) not apply\n", i);
             }
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.11"_XS8)) {
+    } else if (OSVersion < MacOsVersion("10.11"_XS8)) {
         // 10.10.x
         const UINT8 find[][3] = {
             { 0x3E, 0x75, 0x39 },
@@ -655,7 +657,7 @@ void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.12"_XS8)) {
+    } else if (OSVersion < MacOsVersion("10.12"_XS8)) {
         // 10.11
         const UINT8 find[][3] = {
             { 0x3E, 0x75, 0x39 },
@@ -706,7 +708,7 @@ void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.13"_XS8)) {
+    } else if (OSVersion < MacOsVersion("10.13"_XS8)) {
         // 10.12
         const UINT8 find[][3] = {
             { 0x01, 0x74, 0x61 },
@@ -757,7 +759,7 @@ void LOADER_ENTRY::SNBE_AICPUPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
         } else {
             DBG("SNBE_AICPUPatch (7/7) not apply\n");
         }
-    } else if (os_ver < AsciiOSVersionToUint64("10.15"_XS8)) {
+    } else if (OSVersion < MacOsVersion("10.15"_XS8)) {
         // 10.13/10.14
         const UINT8 find[][3] = {
             { 0x01, 0x74, 0x61 },
@@ -835,7 +837,7 @@ const UINT8   BroadwellE_IOPCI_Repl_MojCata[] = { 0x48, 0x3D, 0x00, 0x00, 0x00, 
 void LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   UINTN count = 0;
-  UINT64 os_ver = AsciiOSVersionToUint64(OSVersion);
+//  UINT64 os_ver = AsciiOSVersionToUint64(OSVersion);
     
 	DBG_RT("\nBDWE_IOPCIPatch: driverAddr = %llx, driverSize = %x\n", (UINTN)Driver, DriverSize);
   if (KernelAndKextPatches.KPDebug) {
@@ -847,9 +849,9 @@ void LOADER_ENTRY::BDWE_IOPCIPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *Info
   // now, let's patch it!
   //
 
-  if (os_ver < AsciiOSVersionToUint64("10.12"_XS8)) {
+  if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.12"_XS8)) {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_El, sizeof(BroadwellE_IOPCI_Find_El), BroadwellE_IOPCI_Repl_El, 0);
-  } else if (os_ver < AsciiOSVersionToUint64("10.14"_XS8)) {
+  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.14"_XS8)) {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_SieHS, sizeof(BroadwellE_IOPCI_Find_SieHS), BroadwellE_IOPCI_Repl_SieHS, 0);
   } else {
     count = SearchAndReplace(Driver, DriverSize, BroadwellE_IOPCI_Find_MojCata, sizeof(BroadwellE_IOPCI_Find_MojCata), BroadwellE_IOPCI_Repl_MojCata, 0);

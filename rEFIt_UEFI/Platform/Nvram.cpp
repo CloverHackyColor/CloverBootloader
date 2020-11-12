@@ -6,6 +6,7 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../include/OsType.h"
 #include "Nvram.h"
 #include "BootOptions.h"
 #include "guid.h"

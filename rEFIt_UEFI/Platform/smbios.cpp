@@ -1212,7 +1212,9 @@ void GetTableType17()
       //      DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
       continue;
     }
+#ifndef JIEF_DEBUG // it's all 0 in VMWare
 	  DBG("Type 17 Index = %llu\n", Index);
+#endif
     //gDMI->CntMemorySlots++;
     if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE) {
       DBG("Table has error information, checking\n"); //why skipping?
@@ -1274,7 +1276,9 @@ void GetTableType17()
         gRAM.Frequency = SmbiosTable.Type17->Speed;
       }
     } else {
+#ifndef JIEF_DEBUG // always the case in VMWare
       DBG("Ignoring insane frequency value %dMHz\n", SmbiosTable.Type17->Speed);
+#endif
     }
     // Fill rest of information if in use
     if (gRAM.SMBIOS[Index].InUse) {

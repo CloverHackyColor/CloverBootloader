@@ -36,6 +36,8 @@
 #include "Self.h"
 #include "SelfOem.h"
 #include "Net.h"
+#include "MacOsVersion.h"
+#include "../include/OsType.h"
 
 
 #ifndef DEBUG_ALL
@@ -1510,8 +1512,37 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   return TRUE;
 }
 
+
 BOOLEAN
-IsPatchEnabled (const XString8& MatchOSEntry, const XString8& CurrOS)
+IsPatchEnabledByBuildNumber(const XString8& MatchOSEntry, const XString8& Build)
+{
+  BOOLEAN ret = FALSE;
+
+  if (MatchOSEntry.isEmpty() || Build.isEmpty()) {
+    return TRUE; //undefined matched corresponds to old behavior
+  }
+
+  XString8Array mos = Split<XString8Array>(MatchOSEntry, ","_XS8).trimEachString();
+  
+  if ( mos[0] == "All"_XS8) {
+    return TRUE;
+  }
+
+  for (size_t i = 0; i < mos.size(); ++i) {
+    // dot represent MatchOS
+    MacOsVersion mosv = mos[i];
+    if ( mos[i].contains(Build) ) { // MatchBuild
+      //DBG("\nthis patch will activated for OS %ls!\n", mos->array[i]);
+      ret =  TRUE;
+      break;
+    }
+  }
+  return ret;
+}
+
+
+BOOLEAN
+IsPatchEnabled(const XString8& MatchOSEntry, const MacOsVersion& CurrOS)
 {
   BOOLEAN ret = FALSE;
 
@@ -1527,10 +1558,8 @@ IsPatchEnabled (const XString8& MatchOSEntry, const XString8& CurrOS)
 
   for (size_t i = 0; i < mos.size(); ++i) {
     // dot represent MatchOS
-    if (
-        ( mos[i].contains("."_XS8) && IsOSValid(mos[i], CurrOS)) || // MatchOS
-        ( mos[i].contains(CurrOS) ) // MatchBuild
-        ) {
+    MacOsVersion mosv = mos[i];
+    if ( CurrOS.match(mos[i]) ) {
       //DBG("\nthis patch will activated for OS %ls!\n", mos->array[i]);
       ret =  TRUE;
       break;
@@ -1540,61 +1569,61 @@ IsPatchEnabled (const XString8& MatchOSEntry, const XString8& CurrOS)
 }
 
 
-BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS)
-{
-  /* example for valid matches are:
-   10.7, only 10.7 (10.7.1 will be skipped)
-   10.10.2 only 10.10.2 (10.10.1 or 10.10.5 will be skipped)
-   10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
-   */
-
-  BOOLEAN ret = FALSE;
-
-  if (MatchOS.isEmpty() || CurrOS.isEmpty()) {
-    return TRUE; //undefined matched corresponds to old behavior
-  }
-
-//  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
-  XString8Array osToc = Split<XString8Array>(MatchOS, "."_XS8).trimEachString();
-  XString8Array currOStoc = Split<XString8Array>(CurrOS, "."_XS8).trimEachString();
-
-  if ( osToc.size() > 0 && currOStoc.size() > 0 && osToc[0] == "11"_XS8 && currOStoc[0] == "11"_XS8 ) {
-    if (osToc.size() == 1 ) return true;
-    if (osToc.size() == 2 ) {
-      if ( osToc[1].equalIC("x") ) return true;
-      if ( currOStoc.size() == 2 && osToc[1] == currOStoc[1] ) return true;
-    }
-  }
-  if (osToc.size() == 2) {
-    if (currOStoc.size() == 2) {
-      if ( osToc[0] == currOStoc[0] && osToc[1] == currOStoc[1]) {
-        ret = TRUE;
-      }
-    }
-  } else if (osToc.size() == 3) {
-    if (currOStoc.size() == 3) {
-      if ( osToc[0] == currOStoc[0]
-          && osToc[1] == currOStoc[1]
-          && osToc[2] == currOStoc[2]) {
-        ret = TRUE;
-      } else if ( osToc[0] == currOStoc[0]
-                 && osToc[1] == currOStoc[1]
-                 && osToc[2].equalIC("x") ) {
-        ret = TRUE;
-      }
-    } else if (currOStoc.size() == 2) {
-      if ( osToc[0] == currOStoc[0]
-          && osToc[1] ==  currOStoc[1] ) {
-        ret = TRUE;
-      } else if ( osToc[0] == currOStoc[0]
-                 && osToc[1] ==  currOStoc[1]
-                 && osToc[2].equalIC("x") == 0 ) {
-        ret = TRUE;
-      }
-    }
-  }
-  return ret;
-}
+//BOOLEAN IsOSValid(const XString8& MatchOS, const MacOsVersion& CurrOS)
+//{
+//  /* example for valid matches are:
+//   10.7, only 10.7 (10.7.1 will be skipped)
+//   10.10.2 only 10.10.2 (10.10.1 or 10.10.5 will be skipped)
+//   10.10.x (or 10.10.X), in this case is valid for all minor version of 10.10 (10.10.(0-9))
+//   */
+//
+//  BOOLEAN ret = FALSE;
+//
+//  if (MatchOS.isEmpty() || CurrOS.isEmpty()) {
+//    return TRUE; //undefined matched corresponds to old behavior
+//  }
+//
+////  osToc = GetStrArraySeparatedByChar(MatchOS, '.');
+//  XString8Array osToc = Split<XString8Array>(MatchOS, "."_XS8).trimEachString();
+//  XString8Array currOStoc = Split<XString8Array>(CurrOS, "."_XS8).trimEachString();
+//
+//  if ( osToc.size() > 0 && currOStoc.size() > 0 && osToc[0] == "11"_XS8 && currOStoc[0] == "11"_XS8 ) {
+//    if (osToc.size() == 1 ) return true;
+//    if (osToc.size() == 2 ) {
+//      if ( osToc[1].equalIC("x") ) return true;
+//      if ( currOStoc.size() == 2 && osToc[1] == currOStoc[1] ) return true;
+//    }
+//  }
+//  if (osToc.size() == 2) {
+//    if (currOStoc.size() == 2) {
+//      if ( osToc[0] == currOStoc[0] && osToc[1] == currOStoc[1]) {
+//        ret = TRUE;
+//      }
+//    }
+//  } else if (osToc.size() == 3) {
+//    if (currOStoc.size() == 3) {
+//      if ( osToc[0] == currOStoc[0]
+//          && osToc[1] == currOStoc[1]
+//          && osToc[2] == currOStoc[2]) {
+//        ret = TRUE;
+//      } else if ( osToc[0] == currOStoc[0]
+//                 && osToc[1] == currOStoc[1]
+//                 && osToc[2].equalIC("x") ) {
+//        ret = TRUE;
+//      }
+//    } else if (currOStoc.size() == 2) {
+//      if ( osToc[0] == currOStoc[0]
+//          && osToc[1] ==  currOStoc[1] ) {
+//        ret = TRUE;
+//      } else if ( osToc[0] == currOStoc[0]
+//                 && osToc[1] ==  currOStoc[1]
+//                 && osToc[2].equalIC("x") == 0 ) {
+//        ret = TRUE;
+//      }
+//    }
+//  }
+//  return ret;
+//}
 
 UINT8 CheckVolumeType(UINT8 VolumeType, const TagStruct* Prop)
 {
@@ -6260,7 +6289,7 @@ static CONST CHAR8 *SearchString(
   return NULL;
 }
 */
-XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
+MacOsVersion GetOSVersion(IN LOADER_ENTRY *Entry)
 {
   XString8   OSVersion;
   EFI_STATUS Status      = EFI_NOT_FOUND;
@@ -6322,17 +6351,27 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
 
     // 1st stage - 1
     // Check for plist - createinstallmedia/BaseSystem/InstallDVD/InstallESD
-    CONST CHAR16 *InstallerPlist = L"\\.IABootFilesSystemVersion.plist"; // 10.9 - 10.13.3
-    if (!FileExists (Entry->Volume->RootDir, InstallerPlist) && FileExists (Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
-        ((FileExists (Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
-         FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
-         FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
-         FileExists (Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
-         FileExists (Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4+
-      InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist";
+
+    XStringW InstallerPlist;
+
+    if ( Entry->APFSTargetUUID.notEmpty() ) {
+      InstallerPlist = SWPrintf("%ls\\System\\Library\\CoreServices\\SystemVersion.plist", Entry->APFSTargetUUID.wc_str());
+      if ( !FileExists(Entry->Volume->RootDir, InstallerPlist) ) InstallerPlist.setEmpty();
+    }
+
+    if ( InstallerPlist.isEmpty() ) {
+      InstallerPlist = SWPrintf("\\.IABootFilesSystemVersion.plist"); // 10.9 - 10.13.3
+      if (!FileExists(Entry->Volume->RootDir, InstallerPlist) && FileExists (Entry->Volume->RootDir, L"\\System\\Library\\CoreServices\\boot.efi") &&
+          ((FileExists(Entry->Volume->RootDir, L"\\BaseSystem.dmg") && FileExists (Entry->Volume->RootDir, L"\\mach_kernel")) || // 10.7/10.8
+           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\Mac OS X Installer.app") || // 10.6/10.7
+           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\OS X Installer.app") || // 10.8 - 10.11
+           FileExists(Entry->Volume->RootDir, L"\\System\\Installation\\CDIS\\macOS Installer.app") || // 10.12+
+           FileExists(Entry->Volume->RootDir, L"\\.IAPhysicalMedia"))) { // 10.13.4+
+        InstallerPlist = SWPrintf("\\System\\Library\\CoreServices\\SystemVersion.plist");
+      }
     }
     if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-      Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+      Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
       if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
         Prop = Dict->propertyForKey("ProductVersion");
         if ( Prop != NULL ) {
@@ -6358,20 +6397,20 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
       }
     }
 
-    if ( OSVersion.isEmpty() )
-    {
-      if ( FileExists(Entry->Volume->RootDir, SWPrintf("\\%ls\\com.apple.installer\\BridgeVersion.plist", Entry->APFSTargetUUID.wc_str()).wc_str()) ) {
-        OSVersion = "11.0"_XS8;
-        // TODO sa far, is there is a BridgeVersion.plist, it's version 11.0. Has to be improved with next releases.
-      }
-    }
+//    if ( OSVersion.isEmpty() )
+//    {
+//      if ( FileExists(Entry->Volume->RootDir, SWPrintf("\\%ls\\com.apple.installer\\BridgeVersion.plist", Entry->APFSTargetUUID.wc_str()).wc_str()) ) {
+//        OSVersion = "11.0"_XS8;
+//        // TODO so far, is there is a BridgeVersion.plist, it's version 11.0. Has to be improved with next releases.
+//      }
+//    }
 
     // 1st stage - 2
     // Check for plist - createinstallmedia/NetInstall
     if (OSVersion.isEmpty()) {
-      InstallerPlist = L"\\.IABootFiles\\com.apple.Boot.plist"; // 10.9 - ...
+      InstallerPlist = SWPrintf("\\.IABootFiles\\com.apple.Boot.plist"); // 10.9 - ...
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+        Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = Dict->propertyForKey("Kernel Flags");
           if ( Prop != NULL ) {
@@ -6410,27 +6449,27 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
     // 2nd stage - 1
     // Check for plist - AppStore/createinstallmedia/startosinstall/Fusion Drive
     if (OSVersion.isEmpty()) {
-      InstallerPlist = L"\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"; // 10.12.4+
+      InstallerPlist = SWPrintf("\\macOS Install Data\\Locked Files\\Boot Files\\SystemVersion.plist"); // 10.12.4+
       if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        InstallerPlist = L"\\macOS Install Data\\InstallInfo.plist"; // 10.12+
+        InstallerPlist = SWPrintf("\\macOS Install Data\\InstallInfo.plist"); // 10.12+
         if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-          InstallerPlist = L"\\com.apple.boot.R\\SystemVersion.plist"; // 10.12+
+          InstallerPlist = SWPrintf("\\com.apple.boot.R\\SystemVersion.plist)"); // 10.12+
           if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-            InstallerPlist = L"\\com.apple.boot.P\\SystemVersion.plist"; // 10.12+
+            InstallerPlist = SWPrintf("\\com.apple.boot.P\\SystemVersion.plist"); // 10.12+
             if (!FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-              InstallerPlist = L"\\com.apple.boot.S\\SystemVersion.plist"; // 10.12+
+              InstallerPlist = SWPrintf("\\com.apple.boot.S\\SystemVersion.plist"); // 10.12+
               if (!FileExists (Entry->Volume->RootDir, InstallerPlist) &&
                   (FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                    FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel") ||
                    FileExists (Entry->Volume->RootDir, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"))) {
-                InstallerPlist = L"\\System\\Library\\CoreServices\\SystemVersion.plist"; // 10.11
+                InstallerPlist = SWPrintf("\\System\\Library\\CoreServices\\SystemVersion.plist"); // 10.11
               }
             }
           }
         }
       }
       if (FileExists (Entry->Volume->RootDir, InstallerPlist)) {
-        Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist, (UINT8 **)&PlistBuffer, &PlistLen);
+        Status = egLoadFile(Entry->Volume->RootDir, InstallerPlist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
         if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
           Prop = Dict->propertyForKey("ProductVersion");
           if ( Prop != NULL ) {
@@ -6624,51 +6663,56 @@ XString8 GetOSVersion(IN LOADER_ENTRY *Entry)
 
 //constexpr XStringW iconMac = L"mac"_XSW;
 CONST XStringW
-GetOSIconName (const XString8& OSVersion)
+GetOSIconName (const MacOsVersion& OSVersion)
 {
   XStringW OSIconName;
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
-  } else if (OSVersion.contains("10.16") ||
-             (OSVersion.contains("11.0")  != 0)) {
+  } else if ( (OSVersion.elementAt(0) == 10 && OSVersion.elementAt(1) == 16 ) ||
+              (OSVersion.elementAt(0) == 11 && OSVersion.elementAt(1) == 0 )
+            ) {
     // Big Sur
     OSIconName = L"bigsur,mac"_XSW;
-  } else if (OSVersion.contains("10.15") != 0) {
-    // Catalina
-    OSIconName = L"cata,mac"_XSW;
-  } else if (OSVersion.contains("10.14") != 0) {
-    // Mojave
-    OSIconName = L"moja,mac"_XSW;
-  } else if (OSVersion.contains("10.13") != 0) {
-    // High Sierra
-    OSIconName = L"hsierra,mac"_XSW;
-  } else if (OSVersion.contains("10.12") != 0) {
-    // Sierra
-    OSIconName = L"sierra,mac"_XSW;
-  } else if (OSVersion.contains("10.11") != 0) {
-    // El Capitan
-    OSIconName = L"cap,mac"_XSW;
-  } else if (OSVersion.contains("10.10") != 0) {
-    // Yosemite
-    OSIconName = L"yos,mac"_XSW;
-  } else if (OSVersion.contains("10.9") != 0) {
-    // Mavericks
-    OSIconName = L"mav,mac"_XSW;
-  } else if (OSVersion.contains("10.8") != 0) {
-    // Mountain Lion
-    OSIconName = L"cougar,mac"_XSW;
-  } else if (OSVersion.contains("10.7") != 0) {
-    // Lion
-    OSIconName = L"lion,mac"_XSW;
-  } else if (OSVersion.contains("10.6") != 0) {
-    // Snow Leopard
-    OSIconName = L"snow,mac"_XSW;
-  } else if (OSVersion.contains("10.5") != 0) {
-    // Leopard
-    OSIconName = L"leo,mac"_XSW;
-  } else if (OSVersion.contains("10.4") != 0) {
-    // Tiger
-    OSIconName = L"tiger,mac"_XSW;
+  }else if ( OSVersion.elementAt(0) == 10 ) {
+    if ( OSVersion.elementAt(1) == 15 ) {
+      // Catalina
+      OSIconName = L"cata,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 14 ) {
+      // Mojave
+      OSIconName = L"moja,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 13 ) {
+      // High Sierra
+      OSIconName = L"hsierra,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 12 ) {
+      // Sierra
+      OSIconName = L"sierra,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 11 ) {
+      // El Capitan
+      OSIconName = L"cap,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 10 ) {
+      // Yosemite
+      OSIconName = L"yos,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 9 ) {
+      // Mavericks
+      OSIconName = L"mav,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 8 ) {
+      // Mountain Lion
+      OSIconName = L"cougar,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 7 ) {
+      // Lion
+      OSIconName = L"lion,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 6 ) {
+      // Snow Leopard
+      OSIconName = L"snow,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 5 ) {
+      // Leopard
+      OSIconName = L"leo,mac"_XSW;
+    } else if ( OSVersion.elementAt(1) == 4 ) {
+      // Tiger
+      OSIconName = L"tiger,mac"_XSW;
+    } else {
+      OSIconName = L"mac"_XSW;
+    }
   } else {
     OSIconName = L"mac"_XSW;
   }
@@ -8139,25 +8183,25 @@ XStringW GetOtherKextsDir (BOOLEAN On)
 
 //dmazar
 // Jief 2020-10: this is only called by SetFSInjection(). SetFSInjection() doesn't check for return value emptiness.
-XStringW GetOSVersionKextsDir(const XString8& OSVersion)
+XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion)
 {
-  XString8 FixedVersion;
-  CHAR8  *DotPtr;
+//  XString8 FixedVersion;
+//  CHAR8  *DotPtr;
 
   if ( !selfOem.isKextsDirFound() ) return NullXStringW;
 
-  if (OSVersion.notEmpty()) {
-    FixedVersion.strncpy(OSVersion.c_str(), 5);
-    //    DBG("%s\n", FixedVersion);
-    // OSVersion may contain minor version too (can be 10.x or 10.x.y)
-    if ((DotPtr = AsciiStrStr (FixedVersion.c_str(), ".")) != NULL) {
-      DotPtr = AsciiStrStr (DotPtr+1, "."); // second dot
-    }
-
-    if (DotPtr != NULL) {
-      *DotPtr = 0;
-    }
-  }
+//  if (OSVersion.notEmpty()) {
+//    FixedVersion.strncpy(OSVersion.c_str(), 5);
+//    //    DBG("%s\n", FixedVersion);
+//    // OSVersion may contain minor version too (can be 10.x or 10.x.y)
+//    if ((DotPtr = AsciiStrStr (FixedVersion.c_str(), ".")) != NULL) {
+//      DotPtr = AsciiStrStr (DotPtr+1, "."); // second dot
+//    }
+//
+//    if (DotPtr != NULL) {
+//      *DotPtr = 0;
+//    }
+//  }
 
   //MsgLog ("OS=%ls\n", OSTypeStr);
 
@@ -8165,7 +8209,7 @@ XStringW GetOSVersionKextsDir(const XString8& OSVersion)
   // note: we are just checking for existance of particular folder, not checking if it is empty or not
   // check OEM subfolders: version specific or default to Other
   // Jief : NOTE selfOem.getKextsFullPath() return a path under OEM if exists, or in Clover if not.
-  XStringW SrcDir = SWPrintf("%ls\\%s", selfOem.getKextsFullPath().wc_str(), FixedVersion.c_str());
+  XStringW SrcDir = SWPrintf("%ls\\%s", selfOem.getKextsFullPath().wc_str(), OSVersion.asString(2).c_str());
   if (FileExists (&self.getSelfVolumeRootDir(), SrcDir)) return SrcDir;
   return NullXStringW;
 }

@@ -73,6 +73,18 @@ public:
 		vS8Printf(format, va);
 		va_end(va);
 	}
+  void vS8Catf(const char* format, va_list va)
+  {
+    vprintf_with_callback(format, va, transmitS8Printf, this);
+  }
+  void S8Catf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
+  {
+    va_list     va;
+
+    va_start (va, format);
+    vS8Catf(format, va);
+    va_end(va);
+  }
 };
 
 

@@ -1549,13 +1549,13 @@ void free_val(value_t *val )
     value_t    default_val;
  } AtiDevProp;
  */
-void devprop_add_list(AtiDevProp devprop_list[], const XString8& OSVersion)
+void devprop_add_list(AtiDevProp devprop_list[], const MacOsVersion& OSVersion)
 {
   INTN i, pnum;
   BOOLEAN Sier;
   value_t *val = (__typeof__(val))AllocateZeroPool(sizeof(value_t));
 
-  Sier = (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.12"_XS8));
+  Sier = ( OSVersion.isEmpty() || OSVersion >= MacOsVersion("10.12"_XS8));
 
   for (i = 0; devprop_list[i].name != NULL; i++) {
     if ((devprop_list[i].flags & card->flags) != 0) {

@@ -6,6 +6,7 @@
 
 #include "../gui/menu_items/menu_items.h"
 #include "../Platform/plist/plist.h"
+#include "MacOsVersion.h"
 
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
@@ -910,7 +911,7 @@ void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 
 
-XString8
+MacOsVersion
 GetOSVersion (
   IN  LOADER_ENTRY *Entry
   );
@@ -936,7 +937,7 @@ GetDevices(void);
 
 CONST XStringW
 GetOSIconName (
-  const XString8& OSVersion
+  const MacOsVersion& OSVersion
   );
 
 EFI_STATUS
@@ -961,10 +962,7 @@ InitTheme (
 XStringW
 GetOtherKextsDir (BOOLEAN On);
 
-XStringW
-GetOSVersionKextsDir (
-  CHAR8 *OSVersion
-  );
+XStringW GetOSVersionKextsDir(const MacOsVersion& OSVersion);
 
 EFI_STATUS
 InjectKextsFromDir (
@@ -984,12 +982,13 @@ SaveSettings (void);
 
 
 /** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
-BOOLEAN IsPatchEnabled(const XString8& MatchOSEntry, const XString8& CurrOS);
+BOOLEAN IsPatchEnabledByBuildNumber(const XString8& MatchOSEntry, const XString8& Build);
+BOOLEAN IsPatchEnabled(const XString8& MatchOSEntry, const MacOsVersion& CurrOS);
 
 /** return true if a given os contains '.' as separator,
  and then match components of the current booted OS. Also allow 10.10.x format meaning all revisions
  of the 10.10 OS */
-BOOLEAN IsOSValid(const XString8& MatchOS, const XString8& CurrOS);
+//BOOLEAN IsOSValid(const XString8& MatchOS, const MacOsVersion& CurrOS);
 
 
 //get default boot

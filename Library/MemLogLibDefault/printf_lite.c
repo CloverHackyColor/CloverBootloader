@@ -555,9 +555,9 @@ static void print_ulonglong(UINT_BIGGEST_TYPE v, unsigned int base, PrintfParams
 
 #if PRINTF_LITE_TIMESTAMP_SUPPORT == 1
 
-#if defined(EFIAPI)
+#if defined(IS_UEFI_MODULE)
 
-extern uint32_t getUptimeInMilliseconds();
+extern uint32_t getUptimeInMilliseconds(void);
 
 #elif defined(__APPLE__)
 

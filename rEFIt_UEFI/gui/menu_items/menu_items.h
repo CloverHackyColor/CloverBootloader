@@ -45,6 +45,7 @@
 #include "../../cpp_foundation/XStringArray.h"
 #include "../../cpp_foundation/XString.h"
 #include "../../libeg/XPointer.h"
+#include "../../Platform/MacOsVersion.h"
 
 
 //
@@ -370,7 +371,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
 				EFI_DEVICE_PATH  *DevicePath;
 				UINT16            Flags;
 				UINT8             LoaderType;
-				XString8          OSVersion;
+				MacOsVersion      OSVersion;
 				XString8          BuildVersion;
         EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
 
@@ -458,7 +459,7 @@ class REFIT_ABSTRACT_MENU_ENTRY
         
         EFI_STATUS    SetFSInjection();
         EFI_STATUS    InjectKexts(IN UINT32 deviceTreeP, IN UINT32 *deviceTreeLength);
-        EFI_STATUS    LoadKexts();
+//        EFI_STATUS    LoadKexts();
  //       int           is_mkext_v1(UINT8* drvPtr);
  //       void          patch_mkext_v1(UINT8 *drvPtr); //not used
  

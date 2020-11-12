@@ -44,7 +44,7 @@ extern UINT64                    machineSignature;
 
 //ACPI
 EFI_STATUS
-PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion);
+PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion);
 
 EFI_STATUS
 PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT);

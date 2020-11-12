@@ -12,6 +12,7 @@ extern "C" {
 #include "../Platform/guid.h"
 #include "../Platform/SelfOem.h"
 #include "MemoryOperation.h"
+#include "../include/OsType.h"
 
 #ifndef DEBUG_ALL
 #define KEXT_INJECT_DEBUG 1
@@ -479,10 +480,10 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
   } else if (LoadOptions.contains("arch=i386")) {
     archCpuType = CPU_TYPE_I386;
   } else if (OSVersion.notEmpty()) {
-    UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-    if (os_version >= AsciiOSVersionToUint64("10.8"_XS8)) {
+//    UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
+    if (OSVersion.isEmpty() || OSVersion >= MacOsVersion("10.8"_XS8)) {
       archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
-    } else if (os_version < AsciiOSVersionToUint64("10.7"_XS8)) {
+    } else if (OSVersion < MacOsVersion("10.7"_XS8)) {
       archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
     }
   }
@@ -517,22 +518,22 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     }
   }
 
-  XStringW UniOSVersion;
-  UniOSVersion = OSVersion;
-  DBG("UniOSVersion == %ls\n", UniOSVersion.wc_str());
-
-  XStringW UniShortOSVersion;
-//  XString8 ShortOSVersion;
-  if (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.10"_XS8)) {
-    // OSVersion that are earlier than 10.10(form: 10.x.y)
-//    ShortOSVersion.strncpy(OSVersion.c_str(), 4);
-    UniShortOSVersion.strncpy(OSVersion.c_str(), 4);
-  } else {
-//    ShortOSVersion.strncpy(OSVersion.c_str(), 5);
-    UniShortOSVersion.strncpy(OSVersion.c_str(), 5);
-  }
-//  DBG("ShortOSVersion == %s\n", ShortOSVersion.c_str());
-  DBG("UniShortOSVersion == %ls\n", UniShortOSVersion.wc_str());
+//  XStringW UniOSVersion;
+//  UniOSVersion = OSVersion;
+//  DBG("UniOSVersion == %ls\n", UniOSVersion.wc_str());
+//
+//  XStringW UniShortOSVersion;
+////  XString8 ShortOSVersion;
+//  if ( OSVersion  < MacOsVersion("10.10"_XS8)) {
+//    // OSVersion that are earlier than 10.10(form: 10.x.y)
+////    ShortOSVersion.strncpy(OSVersion.c_str(), 4);
+//    UniShortOSVersion.strncpy(OSVersion.c_str(), 4);
+//  } else {
+////    ShortOSVersion.strncpy(OSVersion.c_str(), 5);
+//    UniShortOSVersion.strncpy(OSVersion.c_str(), 5);
+//  }
+////  DBG("ShortOSVersion == %s\n", ShortOSVersion.c_str());
+//  DBG("UniShortOSVersion == %ls\n", UniShortOSVersion.wc_str());
 
   // syscl - allow specific load inject kext
   // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
@@ -550,43 +551,44 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
-  if ( OSVersion.contains(".") )
+  if ( OSVersion.notEmpty() )
   {
   // Add kext from 10 or 11
-    XStringW osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
+    XStringW osMajorVersion = OSVersion.asString(1);
 
     XStringW OSAllVersionKextsDir;
     XStringW OSShortVersionKextsDir;
-    XStringW OSVersionKextsDirName;
     XStringW DirName;
     XStringW DirPath;
 
     OSAllVersionKextsDir = SWPrintf("%ls", osMajorVersion.wc_str());
     AddKextsFromDirInArray(OSAllVersionKextsDir, osMajorVersion, archCpuType, kextArray);
+    DirName = S8Printf("%ls_%s", osMajorVersion.wc_str(), getSuffixForMacOsVersion(LoaderType).c_str());
 
-    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = SWPrintf("%ls_install", osMajorVersion.wc_str());
-    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = SWPrintf("%ls_recovery", osMajorVersion.wc_str());
-    } else {
-      DirName = SWPrintf("%ls_normal", osMajorVersion.wc_str());
-    }
+//    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+//      DirName = SWPrintf("%ls_install", osMajorVersion.wc_str());
+//    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
+//      DirName = SWPrintf("%ls_recovery", osMajorVersion.wc_str());
+//    } else {
+//      DirName = SWPrintf("%ls_normal", osMajorVersion.wc_str());
+//    }
     DirPath = SWPrintf("%ls", DirName.wc_str());
     AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
 
 
     // Add kext from ${osMajorVersion}.{version}
 
-    OSShortVersionKextsDir = SWPrintf("%ls", UniShortOSVersion.wc_str());
-    AddKextsFromDirInArray( OSShortVersionKextsDir, UniShortOSVersion, archCpuType, kextArray);
+    OSShortVersionKextsDir = OSVersion.asString(2);
+    AddKextsFromDirInArray( OSShortVersionKextsDir, OSShortVersionKextsDir, archCpuType, kextArray);
+    DirName = S8Printf("%ls_%s", OSShortVersionKextsDir.wc_str(), getSuffixForMacOsVersion(LoaderType).c_str());
 
-    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = SWPrintf("%ls_install", UniShortOSVersion.wc_str());
-    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = SWPrintf("%ls_recovery", UniShortOSVersion.wc_str());
-    } else {
-      DirName = SWPrintf("%ls_normal", UniShortOSVersion.wc_str());
-    }
+//    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+//      DirName = SWPrintf("%ls_install", OSShortVersionKextsDir.wc_str());
+//    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
+//      DirName = SWPrintf("%ls_recovery", OSShortVersionKextsDir.wc_str());
+//    } else {
+//      DirName = SWPrintf("%ls_normal", OSShortVersionKextsDir.wc_str());
+//    }
     DirPath = SWPrintf("%ls", DirName.wc_str());
     AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
 
@@ -595,90 +597,90 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
     // ${osMajorVersion}.{version}.0 if NO minor version
     // ${osMajorVersion}.{version}.{minor version} if minor version is > 0
 
-    if ( UniShortOSVersion == OSVersion ) {
-      OSVersionKextsDirName = SWPrintf("%s.0", OSVersion.c_str());
-    } else {
-      OSVersionKextsDirName = SWPrintf("%s", OSVersion.c_str());
-    }
+    XString8 OSVersionKextsDirName;
+    OSVersionKextsDirName = OSVersion.asString(3);
+    if ( OSVersion.elementAt(2) == -1 ) OSVersionKextsDirName.S8Catf(".0");
 
-    DirPath = SWPrintf("%ls", OSVersionKextsDirName.wc_str());
+    DirPath = SWPrintf("%s", OSVersionKextsDirName.c_str());
     AddKextsFromDirInArray(DirPath, OSVersionKextsDirName, archCpuType, kextArray);
+    DirName = S8Printf("%s_%s", OSVersionKextsDirName.c_str(), getSuffixForMacOsVersion(LoaderType).c_str());
 
-    if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-      DirName = SWPrintf("%ls_install", OSVersionKextsDirName.wc_str());
-    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-      DirName = SWPrintf("%ls_recovery", OSVersionKextsDirName.wc_str());
-    } else {
-      DirName = SWPrintf("%ls_normal", OSVersionKextsDirName.wc_str());
-    }
+//    if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+//      DirName = SWPrintf("%s_install", OSVersionKextsDirName.c_str());
+//    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
+//      DirName = SWPrintf("%s_recovery", OSVersionKextsDirName.c_str());
+//    } else {
+//      DirName = SWPrintf("%s_normal", OSVersionKextsDirName.c_str());
+//    }
     DirPath = SWPrintf("%ls", DirName.wc_str());
     AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
   }else{
     //MsgLog("No os version is detected\n");
+    AddKextsFromDirInArray("Unknown"_XS8, "Unknown"_XS8, archCpuType, kextArray);
   }
 
 }
 
-EFI_STATUS LOADER_ENTRY::LoadKexts()
-{
-  XObjArray<SIDELOAD_KEXT> kextArray;
-  AddKextsInArray(&kextArray);
-
-
-  #if defined(MDE_CPU_X64)
-    cpu_type_t              archCpuType=CPU_TYPE_X86_64;
-  #else
-    cpu_type_t              archCpuType=CPU_TYPE_I386;
-  #endif
-    // Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
-  //  if (LoadOptions.notEmpty()) {
-  //    for (Ptr = StrStr(LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
-  //  }
-
-  //  if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
-    if (LoadOptions.contains("arch=x86_64")) {
-      archCpuType = CPU_TYPE_X86_64;
-  //  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
-    } else if (LoadOptions.contains("arch=i386")) {
-      archCpuType = CPU_TYPE_I386;
-    } else if (OSVersion.notEmpty()) {
-      UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-      if (os_version >= AsciiOSVersionToUint64("10.8"_XS8)) {
-        archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
-      } else if (os_version < AsciiOSVersionToUint64("10.7"_XS8)) {
-        archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
-      }
-    }
-
-  for (size_t idx = 0 ; idx < kextArray.size()  ; idx++ ) {
-    AddKext(SelfVolume->RootDir, S8Printf("%ls\\%ls", kextArray[idx].KextDirNameUnderOEMPath.wc_str(), kextArray[idx].FileName.wc_str()), archCpuType);
-  }
-
-  UINTN                    mm_extra_size;
-  void                    *mm_extra;
-  UINTN                    extra_size;
-  void                    *extra;
-
-  // reserve space in the device tree
-  if (GetKextCount() > 0) {
-    mm_extra_size = GetKextCount() * (sizeof(DTProperty) + sizeof(_DeviceTreeBuffer));
-    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DTProperty));
-    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DTProperty)));
-    extra_size = GetKextsSize();
-    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE);
-    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE));
-    // MsgLog("count: %d    \n", GetKextCount());
-    // MsgLog("mm_extra_size: %d    \n", mm_extra_size);
-    // MsgLog("extra_size: %d     \n", extra_size);
-    // MsgLog("offset: %d       \n", extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE);
-    //no more needed
-    FreePool(mm_extra);
-    FreePool(extra);
-  }
-
-//  InjectKextList.setEmpty();
-  return EFI_SUCCESS;
-}
+//EFI_STATUS LOADER_ENTRY::LoadKexts()
+//{
+//  XObjArray<SIDELOAD_KEXT> kextArray;
+//  AddKextsInArray(&kextArray);
+//
+//
+//  #if defined(MDE_CPU_X64)
+//    cpu_type_t              archCpuType=CPU_TYPE_X86_64;
+//  #else
+//    cpu_type_t              archCpuType=CPU_TYPE_I386;
+//  #endif
+//    // Make Arch point to the last appearance of "arch=" in LoadOptions (which is what boot.efi will use).
+//  //  if (LoadOptions.notEmpty()) {
+//  //    for (Ptr = StrStr(LoadOptions, L"arch="); Ptr != NULL; Arch = Ptr + StrLen(L"arch="), Ptr = StrStr(Arch, L"arch="));
+//  //  }
+//
+//  //  if (Arch != NULL && StrnCmp(Arch,L"x86_64",StrLen(L"x86_64")) == 0) {
+//    if (LoadOptions.contains("arch=x86_64")) {
+//      archCpuType = CPU_TYPE_X86_64;
+//  //  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
+//    } else if (LoadOptions.contains("arch=i386")) {
+//      archCpuType = CPU_TYPE_I386;
+//    } else if (OSVersion.notEmpty()) {
+////      UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
+//      if (OSVersion.isEmpty() || OSVersion >= MacOsVersion("10.8"_XS8)) {
+//        archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
+//      } else if (OSVersion < MacOsVersion("10.7"_XS8)) {
+//        archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
+//      }
+//    }
+//
+//  for (size_t idx = 0 ; idx < kextArray.size()  ; idx++ ) {
+//    AddKext(SelfVolume->RootDir, S8Printf("%ls\\%ls", kextArray[idx].KextDirNameUnderOEMPath.wc_str(), kextArray[idx].FileName.wc_str()), archCpuType);
+//  }
+//
+//  UINTN                    mm_extra_size;
+//  void                    *mm_extra;
+//  UINTN                    extra_size;
+//  void                    *extra;
+//
+//  // reserve space in the device tree
+//  if (GetKextCount() > 0) {
+//    mm_extra_size = GetKextCount() * (sizeof(DTProperty) + sizeof(_DeviceTreeBuffer));
+//    mm_extra = (__typeof__(mm_extra))AllocateZeroPool(mm_extra_size - sizeof(DTProperty));
+//    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DTProperty)));
+//    extra_size = GetKextsSize();
+//    extra = (__typeof__(extra))AllocateZeroPool(extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE);
+//    /*Status =  */LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE));
+//    // MsgLog("count: %d    \n", GetKextCount());
+//    // MsgLog("mm_extra_size: %d    \n", mm_extra_size);
+//    // MsgLog("extra_size: %d     \n", extra_size);
+//    // MsgLog("offset: %d       \n", extra_size - sizeof(DTProperty) + EFI_PAGE_SIZE);
+//    //no more needed
+//    FreePool(mm_extra);
+//    FreePool(extra);
+//  }
+//
+////  InjectKextList.setEmpty();
+//  return EFI_SUCCESS;
+//}
 
 /*
  * Adler32 from Chameleon, not used

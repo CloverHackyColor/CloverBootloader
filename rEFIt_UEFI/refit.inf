@@ -180,9 +180,11 @@
 	Platform/LegacyBiosThunk.cpp
 	Platform/LegacyBoot.h
 	Platform/LegacyBoot.cpp
-	Platform/memvendors.h
+  Platform/MacOsVersion.cpp
+  Platform/MacOsVersion.h
   Platform/MemoryOperation.h
   Platform/MemoryOperation.c
+  Platform/memvendors.h
 	Platform/nvidia.h
 	Platform/nvidia.cpp
     Platform/Net.h

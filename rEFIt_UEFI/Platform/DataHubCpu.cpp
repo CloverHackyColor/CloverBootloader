@@ -38,6 +38,7 @@
 
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "../include/OsType.h"
 #include "Nvram.h"
 #include "platformdata.h"
 #include "smbios.h"
@@ -212,7 +213,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   CONST CHAR16  *KbdPrevLang;
   UINTN   LangLen;
   void    *OldData;
-  UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
+//  UINT64  os_version = AsciiOSVersionToUint64(Entry->OSVersion);
   CHAR8   *PlatformLang;
 
   EFI_GUID uuid;
@@ -407,7 +408,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   // Sherlocks: to fix "OSInstall.mpkg appears to be missing or damaged" in 10.13+, we should remove this variables.
   if (Entry->LoaderType == OSTYPE_OSX_INSTALLER) {
-    if (os_version > AsciiOSVersionToUint64("10.12"_XS8)) {
+    if (Entry->OSVersion.isEmpty() || Entry->OSVersion > MacOsVersion("10.12"_XS8)) {
       DeleteNvramVariable(L"install-product-url",  &gEfiAppleBootGuid);
       DeleteNvramVariable(L"previous-system-uuid", &gEfiAppleBootGuid);
     }

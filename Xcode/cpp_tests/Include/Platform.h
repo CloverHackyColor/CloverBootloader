@@ -17,7 +17,8 @@
 #include "../Include/Library/Base.h"
 #include "../Include/Library/BaseLib.h"
 #include "../Include/Library/BaseMemoryLib.h"
-#include "../../../rEFIt_UEFI/Platform/Utils.h"
+#include <BootLog.h>
+
 #include <stdio.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -37,15 +38,17 @@ typedef uint16_t char16_t;
 
 #include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/unicode_conversions.h"
+
+#ifdef __cplusplus
 #include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XObjArray.h"
+#endif
+#include "../../../rEFIt_UEFI/Platform/Utils.h"
 
 #include "xcode_utf_fixed.h"
 
 
 void CpuDeadLoop(void);
-void DebugLog(INTN DebugMode, const char *FormatString, ...);
-#define MsgLog ::printf
 
 void PauseForKey(const wchar_t* msg);
 
@@ -67,5 +70,7 @@ void FreePool(const void* Buffer);
 
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src);
 
+#define DEBUG_VERBOSE 0
+#define DEBUG( expression )
 
 #endif /* Platform_h_h */

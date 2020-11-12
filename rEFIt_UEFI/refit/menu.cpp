@@ -1807,7 +1807,7 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 	REFIT_MENU_SCREEN  *SubSubScreen;
 	XStringW           kextDir;
 //	UINTN               i;
-	XString8           ShortOSVersion;
+//	XString8           ShortOSVersion;
 //	CHAR16             *UniSysVer = NULL;
 
 	SubEntry = new LOADER_ENTRY();
@@ -1816,57 +1816,60 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 	if (OSVersion.notEmpty()) {
 //    DBG("chosen os %s\n", ChosenOS);
 		//shorten os version 10.11.6 -> 10.11
-		for (int i = 0; i < 8; i++) {
-			if (OSVersion[i] == '\0') {
-				break;
-			}
-			if (((i > 2) && (OSVersion[i] == '.')) || (i == 5)) {
-				break;
-			}
-			ShortOSVersion += OSVersion[i];
-		}
+//		for (int i = 0; i < 8; i++) {
+//			if (OSVersion[i] == '\0') {
+//				break;
+//			}
+//			if (((i > 2) && (OSVersion[i] == '.')) || (i == 5)) {
+//				break;
+//			}
+//			ShortOSVersion += OSVersion[i];
+//		}
+
+    XString8 ShortOSVersion = OSVersion.asString(2);
+    XString8 DirName;
 
 		SubSubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", ShortOSVersion.c_str());
 
     // Add kext from 10 or 11
-    if ( OSVersion.contains(".") )
-    {
-      XString8 osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
+//    if ( OSVersion.contains(".") )
+//    {
+//      XString8 osMajorVersion = OSVersion.subString(0, OSVersion.indexOf('.'));
 
-			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(osMajorVersion), true);
+			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersion.asString(1)), true);
+      DirName = S8Printf("%d_%s", OSVersion.elementAt(0), getSuffixForMacOsVersion(LoaderType).c_str());
 
-			XString8 DirName;
-			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				DirName = S8Printf("%s_install", osMajorVersion.c_str());
-			}
-			else {
-				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					DirName = S8Printf("%s_recovery", osMajorVersion.c_str());
-				}
-				else {
-					DirName = S8Printf("%s_normal", osMajorVersion.c_str());
-				}
-			}
+//			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+//				DirName = S8Printf("%d_install", OSVersion.elementAt(0));
+//			}
+//			else {
+//				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
+//					DirName = S8Printf("%d_recovery", OSVersion.elementAt(0));
+//				}
+//				else {
+//					DirName = S8Printf("%d_normal", OSVersion.elementAt(0));
+//				}
+//			}
 			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
-		}
+//		}
 
 		// Add kext from 10.{version}
 		{
-			XString8 DirName;
 			DirName.takeValueFrom(ShortOSVersion);
 			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
+      DirName = S8Printf("%s_%s", ShortOSVersion.c_str(), getSuffixForMacOsVersion(LoaderType).c_str());
 
-			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				DirName.S8Printf("%s_install", ShortOSVersion.c_str());
-			}
-			else {
-				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-          DirName.S8Printf("%s_recovery", ShortOSVersion.c_str());
-				}
-				else {
-          DirName.S8Printf("%s_normal", ShortOSVersion.c_str());
-				}
-			}
+//			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+//				DirName.S8Printf("%s_install", ShortOSVersion.c_str());
+//			}
+//			else {
+//				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
+//          DirName.S8Printf("%s_recovery", ShortOSVersion.c_str());
+//				}
+//				else {
+//          DirName.S8Printf("%s_normal", ShortOSVersion.c_str());
+//				}
+//			}
 			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 
@@ -1875,33 +1878,31 @@ LOADER_ENTRY* LOADER_ENTRY::SubMenuKextInjectMgmt()
 		// 10.{version}.{minor version} if minor version is > 0
 		{
 			{
-				XString8 OSVersionKextsDirName;
-				if ( ShortOSVersion == OSVersion ) {
-					OSVersionKextsDirName.S8Printf("%s.0", OSVersion.c_str());
-				}else{
-					OSVersionKextsDirName = OSVersion;
-				}
+				XString8 OSVersionKextsDirName = OSVersion.asString(3);
+				if ( OSVersion.elementAt(2) == -1 ) OSVersionKextsDirName.S8Catf(".0");
 				SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(OSVersionKextsDirName), true);
 			}
+      DirName = S8Printf("%s_%s", OSVersion.asString(3).c_str(), getSuffixForMacOsVersion(LoaderType).c_str());
 
-			XString8 DirName;
-			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-				DirName.S8Printf("%s_install", OSVersion.c_str());
-			}
-			else {
-				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-					DirName.S8Printf("%s_recovery", OSVersion.c_str());
-				}
-				else {
-					DirName.S8Printf("%s_normal", OSVersion.c_str());
-				}
-			}
+//			if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
+//				DirName.S8Printf("%s_install", OSVersion.asString(3).c_str());
+//			}
+//			else {
+//				if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
+//					DirName.S8Printf("%s_recovery", OSVersion.asString(3).c_str());
+//				}
+//				else {
+//					DirName.S8Printf("%s_normal", OSVersion.asString(3).c_str());
+//				}
+//			}
 			SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection(DirName), true);
 		}
 	}
 	else {
-		SubSubScreen->AddMenuInfoLine_f("Block injected kexts for target version of macOS: %s", OSVersion.c_str());
+		SubSubScreen->AddMenuInfoLine_f("Block injected kexts for unknown macOS version");
+    SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection("Unknown"_XS8), true);
 	}
+
 	kextDir = GetOtherKextsDir(TRUE);
 	if ( kextDir.notEmpty() ) {
 		SubSubScreen->AddMenuEntry(SubMenuKextBlockInjection("Other"_XS8), true);

@@ -212,20 +212,20 @@ int printf_lite_tests(void)
 
 
 	// Check %s with width specifier
-    Test1arg(F("|a|"), F("|%4s|"), "a");
-    Test1arg(F("|aa|"), F("|%4s|"), "aa");
-    Test1arg(F("|aaa|"), F("|%4s|"), "aaa");
-    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaa");
-    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaaa");
-    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaaaa");
+    Test1arg(F("|a|"), F("|%.4s|"), "a");
+    Test1arg(F("|aa|"), F("|%.4s|"), "aa");
+    Test1arg(F("|aaa|"), F("|%.4s|"), "aaa");
+    Test1arg(F("|aaaa|"), F("|%.4s|"), "aaaa");
+    Test1arg(F("|aaaa|"), F("|%.4s|"), "aaaaa");
+    Test1arg(F("|aaaa|"), F("|%.4s|"), "aaaaaa");
 	
 	// Check %ls with width specifier
-    Test1arg(F("|a|"), F("|%4ls|"), L"a");
-    Test1arg(F("|aa|"), F("|%4ls|"), L"aa");
-    Test1arg(F("|aaa|"), F("|%4ls|"), L"aaa");
-    Test1arg(F("|aaaa|"), F("|%4ls|"), L"aaaa");
-    Test1arg(F("|aaaa|"), F("|%4ls|"), L"aaaaa");
-    Test1arg(F("|aaaa|"), F("|%4ls|"), L"aaaaaa");
+    Test1arg(F("|a|"), F("|%.4ls|"), L"a");
+    Test1arg(F("|aa|"), F("|%.4ls|"), L"aa");
+    Test1arg(F("|aaa|"), F("|%.4ls|"), L"aaa");
+    Test1arg(F("|aaaa|"), F("|%.4ls|"), L"aaaa");
+    Test1arg(F("|aaaa|"), F("|%.4ls|"), L"aaaaa");
+    Test1arg(F("|aaaa|"), F("|%.4ls|"), L"aaaaaa");
 
 
     // These must always works. It also test that integer type are well defined

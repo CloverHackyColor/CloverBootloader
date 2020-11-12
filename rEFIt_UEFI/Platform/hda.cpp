@@ -151,7 +151,7 @@ BOOLEAN EFIAPI IsHDMIAudio(EFI_HANDLE PciDevHandle)
   return FALSE;
 }
 
-BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const XString8& OSVersion)
+BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const MacOsVersion& OSVersion)
 {
   DevPropDevice           *device = NULL;
   UINT32                  layoutId = 0;
@@ -243,7 +243,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const X
       }
     }
     if (!Injected) {
-      if ((OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.8"_XS8)) || (gSettings.HDALayoutId > 0)) {
+      if ( (OSVersion.notEmpty()  &&  OSVersion < MacOsVersion("10.8"_XS8)) || gSettings.HDALayoutId > 0 ) {
         devprop_add_value(device, "layout-id", (UINT8 *)&layoutId, 4);
       }
       layoutId = 0; // reuse variable

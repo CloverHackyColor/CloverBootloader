@@ -18,6 +18,7 @@
 #include "plist_tests.h"
 #include "find_replace_mask_Clover_tests.h"
 #include "find_replace_mask_OC_tests.h"
+#include "MacOsVersion_test.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -41,6 +42,11 @@ bool all_tests()
 //    all_ok = false;
 //  }
 #if defined(JIEF_DEBUG)
+  ret = MacOsVersion_tests();
+  if ( ret != 0 ) {
+    printf("MacOsVersion_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
   ret = find_replace_mask_Clover_tests();
   if ( ret != 0 ) {
     printf("xml_lite_tests() failed at test %d\n", ret);

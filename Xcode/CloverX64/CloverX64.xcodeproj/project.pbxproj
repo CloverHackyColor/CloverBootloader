@@ -168,6 +168,8 @@
 		9A4185BA2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
 		9A4185BB2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
 		9A4185BC2439F29D00BEAFB8 /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */; };
+		9A4C5777255ACAE8004F0B21 /* MacOsVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5775255ACAE7004F0B21 /* MacOsVersion.cpp */; };
+		9A4C5778255ACAE8004F0B21 /* MacOsVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4C5776255ACAE8004F0B21 /* MacOsVersion.h */; };
 		9A4F68562449D4AE004B2F7E /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4C24483AE30006DE06 /* stdio.cpp */; };
 		9A4F68572449D4AE004B2F7E /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4C24483AE30006DE06 /* stdio.cpp */; };
 		9A4F68592449D4B4004B2F7E /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4D24483AE30006DE06 /* abort.cpp */; };
@@ -335,14 +337,12 @@
 		9AC7807F24176C04005CDD5C /* menu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9C24176C04005CDD5C /* menu.h */; };
 		9AC7808024176C04005CDD5C /* screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9D24176C04005CDD5C /* screen.h */; };
 		9AC7808124176C04005CDD5C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9E24176C04005CDD5C /* main.cpp */; };
-		9AC7808224176C04005CDD5C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA024176C04005CDD5C /* memory.cpp */; };
 		9AC7808324176C04005CDD5C /* globals_dtor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA124176C04005CDD5C /* globals_dtor.h */; };
 		9AC7808424176C04005CDD5C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA224176C04005CDD5C /* globals_dtor.cpp */; };
 		9AC7808524176C04005CDD5C /* operatorNewDelete.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA324176C04005CDD5C /* operatorNewDelete.h */; };
 		9AC7808624176C04005CDD5C /* globals_ctor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA424176C04005CDD5C /* globals_ctor.h */; };
 		9AC7808724176C04005CDD5C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA524176C04005CDD5C /* globals_ctor.cpp */; };
 		9AC7808924176C04005CDD5C /* operatorNewDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA724176C04005CDD5C /* operatorNewDelete.cpp */; };
-		9AC7808A24176C04005CDD5C /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA824176C04005CDD5C /* memory.h */; };
 		9AC7808B24176C04005CDD5C /* abort.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA924176C04005CDD5C /* abort.h */; };
 		9AC7808C24176C04005CDD5C /* remove_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAA24176C04005CDD5C /* remove_ref.h */; };
 		9AC7808D24176C04005CDD5C /* XStringArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FAC24176C04005CDD5C /* XStringArray.h */; };
@@ -419,7 +419,6 @@
 		9AF415CA242CD75C00D2644C /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
 		9AF415CB242CD75C00D2644C /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
 		9AF415CC242CD75C00D2644C /* kernel_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2224176C04005CDD5C /* kernel_patcher.h */; };
-		9AF415CD242CD75C00D2644C /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA824176C04005CDD5C /* memory.h */; };
 		9AF415CE242CD75C00D2644C /* menu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9C24176C04005CDD5C /* menu.h */; };
 		9AF415CF242CD75C00D2644C /* MSUEFICADB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7C24176C04005CDD5C /* MSUEFICADB.h */; };
 		9AF415D0242CD75C00D2644C /* Hibernate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1A24176C04005CDD5C /* Hibernate.h */; };
@@ -484,7 +483,6 @@
 		9AF4161C242CD75C00D2644C /* securevars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7F24176C04005CDD5C /* securevars.cpp */; };
 		9AF4161E242CD75C00D2644C /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8A24176C04005CDD5C /* loader.cpp */; };
 		9AF4161F242CD75C00D2644C /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED524176C04005CDD5C /* XObjArray_tests.cpp */; };
-		9AF41621242CD75C00D2644C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA024176C04005CDD5C /* memory.cpp */; };
 		9AF41622242CD75C00D2644C /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5224176C04005CDD5C /* cpu.cpp */; };
 		9AF41623242CD75C00D2644C /* LegacyBoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1824176C04005CDD5C /* LegacyBoot.cpp */; };
 		9AF41624242CD75C00D2644C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9124176C04005CDD5C /* REFIT_MENU_SCREEN.cpp */; };
@@ -580,7 +578,6 @@
 		9AF416A7242CDA5800D2644C /* libegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F6124176C04005CDD5C /* libegint.h */; };
 		9AF416A8242CDA5800D2644C /* memvendors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1D24176C04005CDD5C /* memvendors.h */; };
 		9AF416A9242CDA5800D2644C /* kernel_patcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F2224176C04005CDD5C /* kernel_patcher.h */; };
-		9AF416AA242CDA5800D2644C /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77FA824176C04005CDD5C /* memory.h */; };
 		9AF416AB242CDA5800D2644C /* menu.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F9C24176C04005CDD5C /* menu.h */; };
 		9AF416AC242CDA5800D2644C /* MSUEFICADB.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F7C24176C04005CDD5C /* MSUEFICADB.h */; };
 		9AF416AD242CDA5800D2644C /* Hibernate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC77F1A24176C04005CDD5C /* Hibernate.h */; };
@@ -645,7 +642,6 @@
 		9AF416F9242CDA5800D2644C /* securevars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F7F24176C04005CDD5C /* securevars.cpp */; };
 		9AF416FB242CDA5800D2644C /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F8A24176C04005CDD5C /* loader.cpp */; };
 		9AF416FC242CDA5800D2644C /* XObjArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77ED524176C04005CDD5C /* XObjArray_tests.cpp */; };
-		9AF416FE242CDA5800D2644C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77FA024176C04005CDD5C /* memory.cpp */; };
 		9AF416FF242CDA5800D2644C /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F5224176C04005CDD5C /* cpu.cpp */; };
 		9AF41700242CDA5800D2644C /* LegacyBoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F1824176C04005CDD5C /* LegacyBoot.cpp */; };
 		9AF41701242CDA5800D2644C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC77F9124176C04005CDD5C /* REFIT_MENU_SCREEN.cpp */; };
@@ -782,6 +778,8 @@
 		9A36E5E024F7EF20007A1107 /* string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = string.cpp; sourceTree = "<group>"; };
 		9A4185B42439F29D00BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
 		9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
+		9A4C5775255ACAE7004F0B21 /* MacOsVersion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacOsVersion.cpp; sourceTree = "<group>"; };
+		9A4C5776255ACAE8004F0B21 /* MacOsVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOsVersion.h; sourceTree = "<group>"; };
 		9A61B2FE2522165100AEE0FA /* Self.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Self.cpp; sourceTree = "<group>"; };
 		9A61B2FF2522165100AEE0FA /* Self.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Self.h; sourceTree = "<group>"; };
 		9A63C6CA24EBEF78000EB836 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../Version.h; sourceTree = "<group>"; };
@@ -931,15 +929,12 @@
 		9AC77F9C24176C04005CDD5C /* menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = menu.h; sourceTree = "<group>"; };
 		9AC77F9D24176C04005CDD5C /* screen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screen.h; sourceTree = "<group>"; };
 		9AC77F9E24176C04005CDD5C /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		9AC77FA024176C04005CDD5C /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
 		9AC77FA124176C04005CDD5C /* globals_dtor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_dtor.h; sourceTree = "<group>"; };
 		9AC77FA224176C04005CDD5C /* globals_dtor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = globals_dtor.cpp; sourceTree = "<group>"; };
 		9AC77FA324176C04005CDD5C /* operatorNewDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operatorNewDelete.h; sourceTree = "<group>"; };
 		9AC77FA424176C04005CDD5C /* globals_ctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_ctor.h; sourceTree = "<group>"; };
 		9AC77FA524176C04005CDD5C /* globals_ctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = globals_ctor.cpp; sourceTree = "<group>"; };
-		9AC77FA624176C04005CDD5C /* panic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = panic.cpp; sourceTree = "<group>"; };
 		9AC77FA724176C04005CDD5C /* operatorNewDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = operatorNewDelete.cpp; sourceTree = "<group>"; };
-		9AC77FA824176C04005CDD5C /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		9AC77FA924176C04005CDD5C /* abort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abort.h; sourceTree = "<group>"; };
 		9AC77FAA24176C04005CDD5C /* remove_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = remove_ref.h; sourceTree = "<group>"; };
 		9AC77FAC24176C04005CDD5C /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
@@ -1152,13 +1147,6 @@
 		9AC77F1624176C04005CDD5C /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				9AC44EDC253AE78C00326488 /* MemoryOperation.c */,
-				9AC44EDB253AE78C00326488 /* MemoryOperation.h */,
-				9AABBE1A2524863D0033A009 /* SelfOem.cpp */,
-				9AABBE1B2524863E0033A009 /* SelfOem.h */,
-				9A61B2FE2522165100AEE0FA /* Self.cpp */,
-				9A61B2FF2522165100AEE0FA /* Self.h */,
-				9A36E57324F56156007A1107 /* plist */,
 				9AC77F2024176C04005CDD5C /* AcpiPatcher.cpp */,
 				9A105B4424483AE20006DE06 /* AcpiPatcher.h */,
 				9AC77F2324176C04005CDD5C /* AmlGenerator.cpp */,
@@ -1216,6 +1204,10 @@
 				9AC77F4B24176C04005CDD5C /* LegacyBiosThunk.h */,
 				9AC77F1824176C04005CDD5C /* LegacyBoot.cpp */,
 				9A105B4324483AE00006DE06 /* LegacyBoot.h */,
+				9A4C5775255ACAE7004F0B21 /* MacOsVersion.cpp */,
+				9A4C5776255ACAE8004F0B21 /* MacOsVersion.h */,
+				9AC44EDC253AE78C00326488 /* MemoryOperation.c */,
+				9AC44EDB253AE78C00326488 /* MemoryOperation.h */,
 				9AC77F1D24176C04005CDD5C /* memvendors.h */,
 				9AC77F3E24176C04005CDD5C /* Net.cpp */,
 				9A105B3D24483ADF0006DE06 /* Net.h */,
@@ -1228,7 +1220,12 @@
 				9A105B5B24483AE40006DE06 /* platformdata.h */,
 				9AC77F2724176C04005CDD5C /* PlatformDriverOverride.cpp */,
 				9A105B5924483AE30006DE06 /* PlatformDriverOverride.h */,
+				9A36E57324F56156007A1107 /* plist */,
 				9A105B4724483AE30006DE06 /* Posix */,
+				9A61B2FE2522165100AEE0FA /* Self.cpp */,
+				9A61B2FF2522165100AEE0FA /* Self.h */,
+				9AABBE1A2524863D0033A009 /* SelfOem.cpp */,
+				9AABBE1B2524863E0033A009 /* SelfOem.h */,
 				9AC77F5924176C04005CDD5C /* Settings.cpp */,
 				9AC77F2524176C04005CDD5C /* Settings.h */,
 				9AC77F5124176C04005CDD5C /* smbios.cpp */,
@@ -1366,11 +1363,8 @@
 				9AC77FA424176C04005CDD5C /* globals_ctor.h */,
 				9AC77FA224176C04005CDD5C /* globals_dtor.cpp */,
 				9AC77FA124176C04005CDD5C /* globals_dtor.h */,
-				9AC77FA024176C04005CDD5C /* memory.cpp */,
-				9AC77FA824176C04005CDD5C /* memory.h */,
 				9AC77FA724176C04005CDD5C /* operatorNewDelete.cpp */,
 				9AC77FA324176C04005CDD5C /* operatorNewDelete.h */,
-				9AC77FA624176C04005CDD5C /* panic.cpp */,
 				9AC77FAA24176C04005CDD5C /* remove_ref.h */,
 			);
 			path = cpp_util;
@@ -1409,6 +1403,7 @@
 				9A105B1E244644C50006DE06 /* XCinema.h in Headers */,
 				9AC7807224176C04005CDD5C /* menu_items.h in Headers */,
 				A5E326322428F4EE002240E8 /* XTheme.h in Headers */,
+				9A4C5778255ACAE8004F0B21 /* MacOsVersion.h in Headers */,
 				9A105B7924483AE40006DE06 /* guid.h in Headers */,
 				9AC7801C24176C04005CDD5C /* nvidia.h in Headers */,
 				9AC7808524176C04005CDD5C /* operatorNewDelete.h in Headers */,
@@ -1497,7 +1492,6 @@
 				9A36E58C24F5616F007A1107 /* plist.h in Headers */,
 				9AC7800624176C04005CDD5C /* memvendors.h in Headers */,
 				9AC7800B24176C04005CDD5C /* kernel_patcher.h in Headers */,
-				9AC7808A24176C04005CDD5C /* memory.h in Headers */,
 				9AC7807F24176C04005CDD5C /* menu.h in Headers */,
 				9AC7806224176C04005CDD5C /* MSUEFICADB.h in Headers */,
 				9AC7800324176C04005CDD5C /* Hibernate.h in Headers */,
@@ -1618,7 +1612,6 @@
 				9A36E59C24F5616F007A1107 /* TagKey.h in Headers */,
 				9AF415CB242CD75C00D2644C /* memvendors.h in Headers */,
 				9AF415CC242CD75C00D2644C /* kernel_patcher.h in Headers */,
-				9AF415CD242CD75C00D2644C /* memory.h in Headers */,
 				9AF415CE242CD75C00D2644C /* menu.h in Headers */,
 				9AF415CF242CD75C00D2644C /* MSUEFICADB.h in Headers */,
 				9A36E5BD24F5616F007A1107 /* base64.h in Headers */,
@@ -1720,7 +1713,6 @@
 				9A36E59D24F5616F007A1107 /* TagKey.h in Headers */,
 				9AF416A8242CDA5800D2644C /* memvendors.h in Headers */,
 				9AF416A9242CDA5800D2644C /* kernel_patcher.h in Headers */,
-				9AF416AA242CDA5800D2644C /* memory.h in Headers */,
 				9AF416AB242CDA5800D2644C /* menu.h in Headers */,
 				9AF416AC242CDA5800D2644C /* MSUEFICADB.h in Headers */,
 				9A36E5BE24F5616F007A1107 /* base64.h in Headers */,
@@ -1962,7 +1954,6 @@
 				9AC7807024176C04005CDD5C /* loader.cpp in Sources */,
 				9AC77FC224176C04005CDD5C /* XObjArray_tests.cpp in Sources */,
 				9A36E5E124F7EF20007A1107 /* string.cpp in Sources */,
-				9AC7808224176C04005CDD5C /* memory.cpp in Sources */,
 				9AC7803B24176C04005CDD5C /* cpu.cpp in Sources */,
 				9AC7800124176C04005CDD5C /* LegacyBoot.cpp in Sources */,
 				9AC7807524176C04005CDD5C /* REFIT_MENU_SCREEN.cpp in Sources */,
@@ -2016,6 +2007,7 @@
 				9A9AEB94243F7B5600FBD7D8 /* unicode_conversions.cpp in Sources */,
 				9AC7806C24176C04005CDD5C /* bootscreen.cpp in Sources */,
 				9AC7801424176C04005CDD5C /* Console.cpp in Sources */,
+				9A4C5777255ACAE8004F0B21 /* MacOsVersion.cpp in Sources */,
 				9AC7802E24176C04005CDD5C /* StartupSound.cpp in Sources */,
 				9AC7808724176C04005CDD5C /* globals_ctor.cpp in Sources */,
 				9AC7807724176C04005CDD5C /* screen.cpp in Sources */,
@@ -2086,7 +2078,6 @@
 				9A36E5D224F5616F007A1107 /* plist.cpp in Sources */,
 				9AF4161E242CD75C00D2644C /* loader.cpp in Sources */,
 				9AF4161F242CD75C00D2644C /* XObjArray_tests.cpp in Sources */,
-				9AF41621242CD75C00D2644C /* memory.cpp in Sources */,
 				9A36E59324F5616F007A1107 /* TagBool.cpp in Sources */,
 				9AF41622242CD75C00D2644C /* cpu.cpp in Sources */,
 				9AF41623242CD75C00D2644C /* LegacyBoot.cpp in Sources */,
@@ -2209,7 +2200,6 @@
 				9A36E5D324F5616F007A1107 /* plist.cpp in Sources */,
 				9AF416FB242CDA5800D2644C /* loader.cpp in Sources */,
 				9AF416FC242CDA5800D2644C /* XObjArray_tests.cpp in Sources */,
-				9AF416FE242CDA5800D2644C /* memory.cpp in Sources */,
 				9A36E59424F5616F007A1107 /* TagBool.cpp in Sources */,
 				9AF416FF242CDA5800D2644C /* cpu.cpp in Sources */,
 				9AF41700242CDA5800D2644C /* LegacyBoot.cpp in Sources */,

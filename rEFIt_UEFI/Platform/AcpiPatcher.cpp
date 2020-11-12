@@ -1672,7 +1672,7 @@ void LoadAllPatchedAML(const XStringW& acpiPathUnderOem, UINTN Pass)
   }
 }
 
-EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const XString8& OSVersion)
+EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
 {
   EFI_STATUS                    Status = EFI_SUCCESS;
   UINTN                         Index;

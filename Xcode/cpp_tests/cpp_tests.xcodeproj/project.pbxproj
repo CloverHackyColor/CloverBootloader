@@ -124,6 +124,14 @@
 		9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
+		9A4C576B255AAD07004F0B21 /* MacOsVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */; };
+		9A4C576C255AAD07004F0B21 /* MacOsVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */; };
+		9A4C576D255AAD07004F0B21 /* MacOsVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */; };
+		9A4C576E255AAD07004F0B21 /* MacOsVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */; };
+		9A4C5771255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */; };
+		9A4C5772255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */; };
+		9A4C5773255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */; };
+		9A4C5774255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */; };
 		9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA7C2451C8330050B38B /* XString.cpp */; };
 		9A4FFA812451C88D0050B38B /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA802451C88D0050B38B /* XString_test.cpp */; };
 		9A4FFA822451C88D0050B38B /* XString_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA802451C88D0050B38B /* XString_test.cpp */; };
@@ -233,12 +241,10 @@
 		9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD07241B8DD400F3D247 /* strcmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strcmp_test.h; sourceTree = "<group>"; };
 		9A28CD08241B8DD400F3D247 /* strncmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strncmp_test.h; sourceTree = "<group>"; };
-		9A28CD13241B9FEE00F3D247 /* posix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
 		9A28CD14241BACBB00F3D247 /* strlen_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strlen_test.h; sourceTree = "<group>"; };
 		9A28CD15241BACBB00F3D247 /* strlen_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strlen_test.cpp; sourceTree = "<group>"; };
 		9A28CD1D241BB61B00F3D247 /* abort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = abort.cpp; sourceTree = "<group>"; };
 		9A28CD1E241BB61B00F3D247 /* strlen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strlen.cpp; sourceTree = "<group>"; };
-		9A28CD49241F437C00F3D247 /* xcode_utf_fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xcode_utf_fixed.h; sourceTree = "<group>"; };
 		9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xcode_utf_fixed.cpp; sourceTree = "<group>"; };
 		9A2A7C8624576CCE00422263 /* cpp_tests UTF32 c++17 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32 c++17"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A36E4DA24F3B536007A1107 /* TagBool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagBool.h; sourceTree = "<group>"; };
@@ -275,6 +281,21 @@
 		9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadOptions_test.h; sourceTree = "<group>"; };
 		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
 		9A4185BF2439F73A00BEAFB8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
+		9A4C575E255AAC0A004F0B21 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		9A4C575F255AAC0A004F0B21 /* printf_lite-conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-conf.h"; sourceTree = "<group>"; };
+		9A4C5760255AAC0A004F0B21 /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9A4C5761255AAC0A004F0B21 /* Uefi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uefi.h; sourceTree = "<group>"; };
+		9A4C5762255AAC0A004F0B21 /* XToolsConf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsConf.h; sourceTree = "<group>"; };
+		9A4C5763255AAC0A004F0B21 /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9A4C5764255AAC0A004F0B21 /* poolprintfloat-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprintfloat-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9A4C5765255AAC0A004F0B21 /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
+		9A4C5766255AAC0A004F0B21 /* posix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posix.h; sourceTree = "<group>"; };
+		9A4C5767255AAC0A004F0B21 /* xcode_utf_fixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xcode_utf_fixed.h; sourceTree = "<group>"; };
+		9A4C5768255AAC31004F0B21 /* BootLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootLog.h; sourceTree = "<group>"; };
+		9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacOsVersion.cpp; sourceTree = "<group>"; };
+		9A4C576A255AAD07004F0B21 /* MacOsVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOsVersion.h; sourceTree = "<group>"; };
+		9A4C576F255AB280004F0B21 /* MacOsVersion_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOsVersion_test.h; sourceTree = "<group>"; };
+		9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacOsVersion_test.cpp; sourceTree = "<group>"; };
 		9A4FFA7C2451C8330050B38B /* XString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString.cpp; sourceTree = "<group>"; };
 		9A4FFA7F2451C88C0050B38B /* XString_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString_test.h; sourceTree = "<group>"; };
 		9A4FFA802451C88D0050B38B /* XString_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XString_test.cpp; sourceTree = "<group>"; };
@@ -296,7 +317,6 @@
 		9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = find_replace_mask_OC_tests.cpp; sourceTree = "<group>"; };
 		9A838CAA25342626008303F5 /* MemoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryOperation.h; sourceTree = "<group>"; };
 		9A838CB325347C36008303F5 /* MemoryOperation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp.preprocessed; fileEncoding = 4; path = MemoryOperation.c; sourceTree = "<group>"; };
-		9A838CB52534808A008303F5 /* Uefi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uefi.h; sourceTree = "<group>"; };
 		9A838CB825348237008303F5 /* BaseMemoryLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseMemoryLib.h; sourceTree = "<group>"; };
 		9A838CB925348237008303F5 /* BaseMemoryLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BaseMemoryLib.c; sourceTree = "<group>"; };
 		9A838CBE253485C8008303F5 /* BaseLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseLib.h; sourceTree = "<group>"; };
@@ -308,7 +328,6 @@
 		9A838CC62534946C008303F5 /* ProcessorBind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		9A92234D2402FD9500483CBA /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		9A9AEB8B243F73CE00FBD7D8 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
 		9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c.preprocessed; fileEncoding = 4; path = unicode_conversions.cpp; sourceTree = "<group>"; };
 		9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon_test.h; sourceTree = "<group>"; };
@@ -320,17 +339,11 @@
 		9ACAB1182426240C00BDB3CF /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printf_lite.h; path = ../../Include/Library/printf_lite.h; sourceTree = "<group>"; };
 		9AD469472452B33700D6D0DB /* shared_with_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shared_with_menu.cpp; sourceTree = "<group>"; };
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
-		9AD469592452B7C000D6D0DB /* XToolsConf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsConf.h; sourceTree = "<group>"; };
-		9AD4695A2452B7C000D6D0DB /* poolprintfloat-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprintfloat-test-cpp_conf.h"; sourceTree = "<group>"; };
-		9AF4156B242CBB5600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF4156D242CBC4900D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "printf_lite-conf.h"; path = "../../Include/Library/printf_lite-conf.h"; sourceTree = "<group>"; };
-		9AF4156E242CBC6000D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "printf_lite-conf.h"; sourceTree = "<group>"; };
 		9AF4156F242CBE7500D2644C /* printlib-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test.h"; sourceTree = "<group>"; };
 		9AF41570242CBE7500D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF41573242CBE7600D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
 		9AF41574242CBE7600D2644C /* printf_lite-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printf_lite-test-cpp_conf.h"; sourceTree = "<group>"; };
-		9AF41578242CBED700D2644C /* poolprint-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "poolprint-test-cpp_conf.h"; sourceTree = "<group>"; };
-		9AF41579242CBED700D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,6 +438,8 @@
 				9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */,
 				9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */,
 				9A670D1A24E535AB00B5D780 /* XBuffer_tests.h */,
+				9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */,
+				9A4C576F255AB280004F0B21 /* MacOsVersion_test.h */,
 			);
 			path = cpp_unit_test;
 			sourceTree = "<group>";
@@ -444,6 +459,8 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */,
+				9A4C576A255AAD07004F0B21 /* MacOsVersion.h */,
 				9A838CB325347C36008303F5 /* MemoryOperation.c */,
 				9A838CAA25342626008303F5 /* MemoryOperation.h */,
 				9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */,
@@ -545,6 +562,17 @@
 		9A838CB6253481F5008303F5 /* Include */ = {
 			isa = PBXGroup;
 			children = (
+				9A4C5768255AAC31004F0B21 /* BootLog.h */,
+				9A4C575E255AAC0A004F0B21 /* Platform.h */,
+				9A4C5760255AAC0A004F0B21 /* poolprint-test-cpp_conf.h */,
+				9A4C5764255AAC0A004F0B21 /* poolprintfloat-test-cpp_conf.h */,
+				9A4C5766255AAC0A004F0B21 /* posix.h */,
+				9A4C575F255AAC0A004F0B21 /* printf_lite-conf.h */,
+				9A4C5765255AAC0A004F0B21 /* printf_lite-test-cpp_conf.h */,
+				9A4C5763255AAC0A004F0B21 /* printlib-test-cpp_conf.h */,
+				9A4C5761255AAC0A004F0B21 /* Uefi.h */,
+				9A4C5767255AAC0A004F0B21 /* xcode_utf_fixed.h */,
+				9A4C5762255AAC0A004F0B21 /* XToolsConf.h */,
 				9A838CB7253481FF008303F5 /* Library */,
 			);
 			path = Include;
@@ -592,19 +620,9 @@
 		9A92232F2402FD1000483CBA /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				9AD469592452B7C000D6D0DB /* XToolsConf.h */,
-				9AD4695A2452B7C000D6D0DB /* poolprintfloat-test-cpp_conf.h */,
-				9AF41578242CBED700D2644C /* poolprint-test-cpp_conf.h */,
-				9AF41579242CBED700D2644C /* printlib-test-cpp_conf.h */,
 				9A9223302402FD1000483CBA /* main.cpp */,
 				9A0B085D240300E000E2B470 /* Platform.cpp */,
-				9A92234D2402FD9500483CBA /* Platform.h */,
-				9A28CD13241B9FEE00F3D247 /* posix.h */,
-				9AF4156E242CBC6000D2644C /* printf_lite-conf.h */,
-				9AF4156B242CBB5600D2644C /* printf_lite-test-cpp_conf.h */,
 				9A28CD4A241F4CCE00F3D247 /* xcode_utf_fixed.cpp */,
-				9A28CD49241F437C00F3D247 /* xcode_utf_fixed.h */,
-				9A838CB52534808A008303F5 /* Uefi.h */,
 			);
 			name = Main;
 			path = src;
@@ -743,6 +761,8 @@
 				9A36E51924F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7F9245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52724F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A4C576C255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
+				9A4C5772255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
 				9A838CB125345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD23241BB61B00F3D247 /* strlen.cpp in Sources */,
 				9A28CD4C241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
@@ -790,6 +810,8 @@
 				9A36E51B24F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7FB245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52924F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A4C576E255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
+				9A4C5774255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
 				9A838CB225345E94008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A2A7C7124576CCE00422263 /* strlen.cpp in Sources */,
 				9A2A7C7224576CCE00422263 /* xcode_utf_fixed.cpp in Sources */,
@@ -837,6 +859,8 @@
 				9A36E51A24F3B537007A1107 /* TagKey.cpp in Sources */,
 				9A9EA7FA245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52824F3BB6B007A1107 /* FloatLib.cpp in Sources */,
+				9A4C576D255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
+				9A4C5773255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
 				9A838CB025345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD24241BB61B00F3D247 /* strlen.cpp in Sources */,
 				9A28CD4D241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
@@ -873,6 +897,7 @@
 			files = (
 				9A36E50424F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A4C576B255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */,
@@ -908,6 +933,7 @@
 				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
+				9A4C5771255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
 				9A36E50824F3B537007A1107 /* TagDate.cpp in Sources */,
 				9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A838CC3253485DC008303F5 /* DebugLib.c in Sources */,
@@ -1011,7 +1037,7 @@
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_FLOAT_CONVERSION = YES;
@@ -1076,11 +1102,15 @@
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/Include",
 				);
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-include",
+					Platform.h,
+				);
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
 			};
@@ -1105,7 +1135,7 @@
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_FLOAT_CONVERSION = YES;
@@ -1165,10 +1195,14 @@
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/Include",
 				);
+				INCLUDED_SOURCE_FILE_NAMES = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-include",
+					Platform.h,
+				);
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
 			};

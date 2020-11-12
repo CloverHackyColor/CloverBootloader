@@ -74,6 +74,7 @@
 #include "Self.h"
 #include "SelfOem.h"
 #include "../Platform/Net.h"
+#include "../include/OsType.h"
 
 #include "../include/OC.h"
 
@@ -427,7 +428,7 @@ void LOADER_ENTRY::FilterKextPatches()
         i,
         KernelAndKextPatches.KextPatches[i].Label.c_str(),
         KernelAndKextPatches.KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
-        OSVersion.c_str(),
+        OSVersion.asString().c_str(),
         KernelAndKextPatches.KextPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchOS.c_str() : "All",
         KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchBuild.c_str() : "All"
       );
@@ -438,7 +439,7 @@ void LOADER_ENTRY::FilterKextPatches()
       }
       KernelAndKextPatches.KextPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty())) {
-        KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchBuild, BuildVersion);
+        KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabledByBuildNumber(KernelAndKextPatches.KextPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
@@ -457,7 +458,7 @@ void LOADER_ENTRY::FilterKernelPatches()
       DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
         KernelAndKextPatches.KernelPatches[i].Label.c_str(),
-        OSVersion.c_str(),
+        OSVersion.asString().c_str(),
         KernelAndKextPatches.KernelPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchOS.c_str() : "All",
         KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchBuild.c_str() : "no"
       );
@@ -468,7 +469,7 @@ void LOADER_ENTRY::FilterKernelPatches()
       }
       KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty())) {
-        KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchBuild, BuildVersion);
+        KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabledByBuildNumber(KernelAndKextPatches.KernelPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
@@ -487,7 +488,7 @@ void LOADER_ENTRY::FilterBootPatches()
       DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
           i,
           KernelAndKextPatches.BootPatches[i].Label.c_str(),
-          OSVersion.c_str(),
+          OSVersion.asString().c_str(),
           KernelAndKextPatches.BootPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchOS.c_str() : "All",
           KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchBuild.c_str() : "no"
           );
@@ -497,7 +498,7 @@ void LOADER_ENTRY::FilterBootPatches()
       }
       KernelAndKextPatches.BootPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty())) {
-        KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchBuild, BuildVersion);
+        KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabledByBuildNumber(KernelAndKextPatches.BootPatches[i].MatchBuild, BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
@@ -1018,6 +1019,8 @@ DBG("Beginning OC\n");
   // Seems that Lilu must be first.
   size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
   pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "SMCAMDProcessor.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "AppleALC.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "IntelMausi.kext"_XS8, pos); // not needed special order?
@@ -1238,8 +1241,8 @@ DBG("Beginning OC\n");
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
-            OSVersion.takeValueFrom(InstallerVersion);
-            DBG("Corrected OSVersion: %s\n", OSVersion.c_str());
+            OSVersion = InstallerVersion;
+            DBG("Corrected OSVersion: %s\n", OSVersion.asString().c_str());
           }
         }
       }
@@ -1248,12 +1251,12 @@ DBG("Beginning OC\n");
     }
 
     if (BuildVersion.notEmpty()) {
-      DBG(" %s (%s)\n", OSVersion.c_str(), BuildVersion.c_str());
+      DBG(" %s (%s)\n", OSVersion.asString().c_str(), BuildVersion.c_str());
     } else {
-      DBG(" %s\n", OSVersion.c_str());
+      DBG(" %s\n", OSVersion.asString().c_str());
     }
 
-    if (OSVersion.notEmpty() && (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.11"_XS8))) {
+    if ( OSVersion >= MacOsVersion("10.11"_XS8) ) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
         gSettings.CsrActiveConfig = (UINT32)0xB7F;
         gSettings.BooterConfig = 0x28;
@@ -1274,10 +1277,10 @@ DBG("Beginning OC\n");
     if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
       XString8 KernelLocation;
 
-      if (OSVersion.notEmpty() && AsciiOSVersionToUint64(OSVersion) <= AsciiOSVersionToUint64("10.9"_XS8)) {
+      if ( OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.9"_XS8) ) {
         KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
       } else {
-        // used for 10.10, 10.11, and new version.
+        // used for 10.10, 10.11, and new version. Jief : also for unknown version.
         KernelLocation.S8Printf("\"Kernel=/System/Library/Kernels/kernel\"");
       }
       LoadOptions.AddID(KernelLocation);
@@ -1338,8 +1341,7 @@ DBG("Beginning OC\n");
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
-       (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5"_XS8)) &&
-       (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12"_XS8)) &&
+       OSVersion >= MacOsVersion("10.8.5"_XS8)  &&  OSVersion < MacOsVersion("10.12"_XS8)  &&
        (!LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
         LoadOptions.AddID("-xcpm"_XS8);
@@ -1348,8 +1350,7 @@ DBG("Beginning OC\n");
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
-        (AsciiOSVersionToUint64(OSVersion) >= AsciiOSVersionToUint64("10.8.5"_XS8)) &&
-        (AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.12"_XS8)) &&
+        OSVersion >= MacOsVersion("10.8.5"_XS8)  &&  OSVersion < MacOsVersion("10.12"_XS8)  &&
         (!LoadOptions.containsIC("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
       LoadOptions.AddID("-xcpm"_XS8);

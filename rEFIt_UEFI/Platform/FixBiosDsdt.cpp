@@ -3741,7 +3741,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
-UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const XString8& OSVersion)
+UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const MacOsVersion& OSVersion)
 {
   UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
@@ -3814,7 +3814,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const XString8& OSVersion)
         aml_add_string_buffer(pack, "onboard-1");
         }
         if (!CustProperties(pack, DEV_HDA)) {
-        if ((OSVersion != NULL && AsciiOSVersionToUint64(OSVersion) < AsciiOSVersionToUint64("10.8")) || (gSettings.HDALayoutId > 0)) {
+        if ( ( OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.8") ) || gSettings.HDALayoutId > 0 ) {
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
         }
@@ -5331,7 +5331,7 @@ void RenameDevices(UINT8* table)
 	MsgLog("  %lld replacements\n", Num);
 }
 
-void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, const XString8& OSVersion)
+void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, const MacOsVersion& OSVersion)
 {
   UINT32 DsdtLen;
 

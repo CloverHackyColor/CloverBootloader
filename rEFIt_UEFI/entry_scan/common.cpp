@@ -40,6 +40,7 @@
 #include "../Platform/APFS.h"
 #include "../Platform/cpu.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../include/OsType.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_COMMON_MENU 1
