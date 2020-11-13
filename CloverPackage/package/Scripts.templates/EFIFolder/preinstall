@@ -93,7 +93,7 @@ fi
 
  if [ "$exitcode" == "0" ] && [ ! -d "$BackupDir/EFI" ]
  then
- 	if [ -d /Volumes/ESP/EFI ]
+ 	if [ -d /Private/tmp/EFIROOTDIR/EFI ]
  	then
  		if [ ! -d "$BackupDir" ]
 	 	then
