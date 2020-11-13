@@ -1539,6 +1539,7 @@ void ScanLoader(void)
         XStringW LoaderTitle;
         XStringW LoaderTitleInstaller;
 
+        // Find the "target" volume.
         REFIT_VOLUME* targetVolume = NULL;
         for (size_t VolumeIndex2 = 0; VolumeIndex2 < Volumes.size(); VolumeIndex2++) {
           REFIT_VOLUME* Volume2 = &Volumes[VolumeIndex2];
@@ -1549,6 +1550,7 @@ void ScanLoader(void)
             }
           }
         }
+        // If targetVolume is found, and it's a data partition, try to find the system partition that goes with it.
 //DBG("targetVolume=%d\n", targetVolume ? 1 : 0);
         if ( targetVolume ) {
           if ( (targetVolume->ApfsRole & APPLE_APFS_VOLUME_ROLE_DATA) != 0 ) {
@@ -1569,6 +1571,7 @@ void ScanLoader(void)
             }
           }
         }
+        // If targetVolume is not found, and it's not a recovery, find the preboot volume from the same container
 //DBG("2) targetVolume=%d\n", targetVolume ? 1 : 0);
         if ( !targetVolume ) {
           REFIT_VOLUME* bootVolume = Volume;
