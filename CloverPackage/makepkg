@@ -31,7 +31,7 @@ done
 # Go to the script directory to create the package
 cd "$(dirname $0)"
 
-revision=$(git describe --tags $(git rev-list --tags --max-count=1﻿))
+revision=$(git describe --tags)
 
 SRCROOT="${PWD}"
 SYMROOT="${SRCROOT}"/sym
