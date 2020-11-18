@@ -537,6 +537,8 @@ SetupDataForOSX(BOOLEAN Hibernate)
     // all current settings
     XBuffer<UINT8> xb = gSettings.serialize();
     LogDataHub(&gEfiMiscSubClassGuid, L"Settings", xb.data(), (UINT32)xb.size());
+  }else{
+    MsgLog("DataHub protocol not located. Smbios not send to datahub\n");
   }
   if (!gAppleSmc) {
     return;

@@ -65,7 +65,21 @@ UINTN SearchAndReplace(UINT8 *Source, UINT64 SourceSize, const UINT8 *Search, UI
   while ((Source < End) && (NoReplacesRestriction || (MaxReplaces > 0))) {
     if (CompareMem(Source, Search, SearchSize) == 0) {
  //     printf("  found pattern at %llx\n", (UINTN)(Source - Begin));
+
+      DBG("Replace " );
+      for (UINTN Index = 0; Index < SearchSize; ++Index) {
+        DBG("%02X", Search[Index]);
+      }
+      DBG(" by " );
+
+
       CopyMem(Source, Replace, SearchSize);
+
+
+      for (UINTN Index = 0; Index < SearchSize; ++Index) {
+        DBG("%02X", Replace[Index]);
+      }
+
       NumReplaces++;
       MaxReplaces--;
       Source += SearchSize;

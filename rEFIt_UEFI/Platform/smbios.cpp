@@ -337,6 +337,7 @@ EFI_STATUS UpdateSmbiosString(OUT APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTableN,
     *C2 = 0;
     *(--C2) = 0; //end of table
   }
+  //DBG("UpdateSmbiosString() -> CopyMem %s %lld\n", Buffer.c_str(), BLength);
   CopyMem(AString, Buffer.c_str(), BLength);
   *(AString + BLength) = 0; // not sure there is 0
 
@@ -2165,8 +2166,36 @@ void FinalizeSmbios() //continue
   SmbiosEpsNew->IntermediateChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew + 0x10, SmbiosEpsNew->EntryPointLength - 0x10));
   SmbiosEpsNew->EntryPointStructureChecksum = 0;
   SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
-  //  DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
-  //  DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
+//DBG("SmbiosEpsNew->TableLength = %d\n", SmbiosEpsNew->TableLength);
+//DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
+//DBG("SmbiosEpsNew->MaxStructureSize = %d\n", SmbiosEpsNew->MaxStructureSize);
+//DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
+//XString8 tmpDbg;
+//XString8 tmptmpDbg;
+//tmpDbg.dataSized(SmbiosEpsNew->TableLength*3+5*SmbiosEpsNew->TableLength/32+128);
+//for ( size_t i = 0 ; i < SmbiosEpsNew->TableLength ; ) {
+//  size_t j;
+//  for ( j = 0 ; j < SmbiosEpsNew->TableLength && j < 32 ;  j++ ) {
+////    DBG("%02x ", ((UINT8*)(SmbiosEpsNew+1))[i+j] );
+//    tmptmpDbg.S8Printf("%02x ", ((UINT8*)(SmbiosEpsNew+1))[i+j] );
+//    tmpDbg.strcat(tmptmpDbg);
+//  }
+////  DBG(" -  ");
+//  tmptmpDbg.S8Printf(" -  ");
+//  tmpDbg.strcat(tmptmpDbg);
+//  for ( j = 0 ; j < SmbiosEpsNew->TableLength && j < 32 ;  j++ ) {
+//    UINT8 c = ((UINT8*)(SmbiosEpsNew+1))[i+j];
+////    DBG("%c ", c > 32 ? c : '.');
+//    tmptmpDbg.S8Printf("%c", c > 32 ? c : '.');
+//    tmpDbg.strcat(tmptmpDbg);
+//  }
+////  DBG("\n");
+//  tmptmpDbg.S8Printf("\n");
+//  tmpDbg.strcat(tmptmpDbg);
+//  i += j;
+//}
+//DBG("%s", tmpDbg.c_str());
+//auto foo = SmbiosEpsNew;
 
   //
   // syscl: one more step: check if we need remap SMBIOS Table Type 1 Guid

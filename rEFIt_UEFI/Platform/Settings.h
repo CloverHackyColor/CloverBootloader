@@ -6,6 +6,7 @@
 
 #include "../gui/menu_items/menu_items.h"
 #include "../Platform/plist/plist.h"
+#include "../Platform/guid.h"
 #include "MacOsVersion.h"
 
 //// SysVariables
@@ -647,12 +648,15 @@ public:
 
   const XString8& getUUID();
   const XString8& getUUID(EFI_GUID* efiGuid);
+  // If CustomUuid is defined, return false by default
+  // If SmUUID is defined, return true by default.
   bool ShouldInjectSystemID() {
-    if ( CustomUuid.notEmpty() ){
+    if ( CustomUuid.notEmpty() &&  CustomUuid != nullGuid ) {
       if ( InjectSystemID_ == 2 ) return false;
       else return InjectSystemID_;
     }
-    if ( SmUUID.notEmpty() && InjectSystemID_ == 2 ) return false;
+    if ( SmUUID.isEmpty() || SmUUID == nullGuid ) return false;
+    if ( InjectSystemID_ == 2 ) return true;
     return InjectSystemID_;
   }
 };

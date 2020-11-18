@@ -80,9 +80,13 @@
 
 
 #ifndef DEBUG_ALL
-#define DEBUG_MAIN 1
+# ifdef DEBUG_ERALY_CRASH
+#   define DEBUG_MAIN 2
+# else
+#   define DEBUG_MAIN 1
+# endif
 #else
-#define DEBUG_MAIN DEBUG_ALL
+# define DEBUG_MAIN DEBUG_ALL
 #endif
 
 #if DEBUG_MAIN == 0
@@ -698,6 +702,7 @@ void LOADER_ENTRY::DelegateKernelPatches()
   mOpenCoreConfiguration.Kernel.Patch.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
   mOpenCoreConfiguration.Kernel.Patch.Values = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)*)malloc(mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
   memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0, mOpenCoreConfiguration.Kernel.Patch.AllocCount*sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
+
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
   {
     const KEXT_PATCH& kextPatch = selectedPathArray[kextPatchIdx];  //as well as kernel patches
@@ -1108,9 +1113,7 @@ DBG("Beginning OC\n");
 #endif
 
   #ifndef USE_OC_SECTION_PlatformInfo
-    // This is not read by Clover and should always be false. Which is what need if Clover takes care of SmBios
-    // If SmBios should be delegated to OC, this setting should initialised depending of SMUUID and InjectSystemID, I suppose
-    mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = false; //already done by CLover.
+    mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
   #endif
   mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.ProvideConsoleGop;
   OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
@@ -2348,6 +2351,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   ConsoleInHandle = SystemTable->ConsoleInHandle;
 
+#ifdef DEBUG_ERALY_CRASH
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Start");
+  PauseForKey(L"1) press any key\n");
+#endif
+
 #ifdef DEBUG_ON_SERIAL_PORT
   SerialPortInitialize();
 #endif
@@ -2622,6 +2630,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
+
+#ifdef DEBUG_ERALY_CRASH
+  PauseForKey(L"2) press any key\n");
+#endif
 
   DbgHeader("InitScreen");
 	
