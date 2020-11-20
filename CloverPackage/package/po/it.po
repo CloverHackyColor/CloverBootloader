@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-19 22:25+0300\n"
+"POT-Creation-Date: 2020-11-20 21:37+0300\n"
 "PO-Revision-Date: 2019-07-13 10:25+0200\n"
 "Last-Translator: vector sigma\n"
 "Language-Team: it <it@li.org>\n"
@@ -310,30 +310,41 @@ msgstr "Installare boot0af su MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:36
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Used for BIOS booting on BIOS motherboards.\n"
+#| "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
+#| "This choice will setup selected HFS/Fat32 partition to be active."
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
-"This choice will setup selected HFS/Fat32 partition to be active."
+"This choice will setup selected HFS/Fat32 partition to be active. \n"
+"WARNING On macOS Catalina and macOS Big Sur the system is a read-only file system, you cannot use this option without selecting the ESP option otherwise the installation will fail, for any older system there is no problem"
 msgstr ""
 "Necessario per l'avvio da schede madri con BIOS.\n"
 "boot0af (boot0 active first) bootloader cerca di avviare la partizione attiva definita nella MBR. Se non vi è alcuna partizione attiva, tenterà di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida.\n"
 "Se questo è selezionato la partizione HFS e Fat32 saranno attivate."
 
 #. type: "boot0ss_title"
-#: Resources/templates/Localizable.strings:40
+#: Resources/templates/Localizable.strings:41
 #, no-wrap
 msgid "Install boot0ss in MBR"
 msgstr "Installare boot0ss su MBR"
 
 #. type: "boot0ss_description"
-#: Resources/templates/Localizable.strings:41
-#, no-wrap
+#: Resources/templates/Localizable.strings:42
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Used for BIOS booting on BIOS motherboards.\n"
+#| "boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
+#| "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
+#| "This choice will not activate any partition in MBR."
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
 "boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
-"This choice will not activate any partition in MBR."
+"This choice will not activate any partition in MBR. \n"
+"WARNING On macOS Catalina and macOS Big Sur the system is a read-only file system, you cannot use this option without selecting the ESP option otherwise the installation will fail, for any older system there is no problem"
 msgstr ""
 "Necessario per l'avvio da schede madri con BIOS.\n"
 "boot0ss (boot0 signature scanning) bootloader cerca di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida. Se nessuna partizione è stata trovata, cercherà di avviare la partizione attiva definita nella MBR.\n"
@@ -341,13 +352,13 @@ msgstr ""
 "Questa scelta non attiverà alcuna partizione nella MBR."
 
 #. type: "bootNo_title"
-#: Resources/templates/Localizable.strings:46
+#: Resources/templates/Localizable.strings:48
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
 msgstr "Non aggiornare i settori MBR e PBR"
 
 #. type: "bootNo_description"
-#: Resources/templates/Localizable.strings:47
+#: Resources/templates/Localizable.strings:49
 #, no-wrap
 msgid ""
 "Don't install any bootloader (boot0X, boot1X).\n"
@@ -359,13 +370,13 @@ msgstr ""
 "Può essere usato anche se non si desidera aggiornare i settori MBR o PBR."
 
 #. type: "AltBoot_title"
-#: Resources/templates/Localizable.strings:51
+#: Resources/templates/Localizable.strings:53
 #, no-wrap
 msgid "Use alternative booting PBR"
 msgstr "Usare un bootloader alternativo PBR"
 
 #. type: "AltBoot_description"
-#: Resources/templates/Localizable.strings:52
+#: Resources/templates/Localizable.strings:54
 #, no-wrap
 msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
@@ -375,13 +386,13 @@ msgstr ""
 "File di avvio = boot{tasto premuto}"
 
 #. type: "boot64_title"
-#: Resources/templates/Localizable.strings:55
+#: Resources/templates/Localizable.strings:57
 #, no-wrap
 msgid "Install & Start 64bit boot first"
 msgstr "Installa e avvia prima in 64bit"
 
 #. type: "boot64_description"
-#: Resources/templates/Localizable.strings:56
+#: Resources/templates/Localizable.strings:58
 #, no-wrap
 msgid ""
 "Install boot files and set to start 64bit first.\n"
@@ -397,37 +408,37 @@ msgstr ""
 "Premi il tasto 6 per boot6 = Clover EFI 64bit boot."
 
 #. type: "CloverEFI_title"
-#: Resources/templates/Localizable.strings:65
+#: Resources/templates/Localizable.strings:67
 #, no-wrap
 msgid "CloverEFI"
 msgstr "CloverEFI"
 
 #. type: "CloverEFI_description"
-#: Resources/templates/Localizable.strings:66
+#: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
 msgstr "Selezionare la versione di CloverEFI da installare."
 
 #. type: "cloverEFI.64.sata_title"
-#: Resources/templates/Localizable.strings:67
+#: Resources/templates/Localizable.strings:69
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
 msgstr "CloverEFI 64-bit SATA"
 
 #. type: "cloverEFI.64.sata_description"
-#: Resources/templates/Localizable.strings:68
+#: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
 msgstr "CloverEFI 64-bit che utilizza interfaccia SATA per accedere alle unità"
 
 #. type: "cloverEFI.64.blockio_title"
-#: Resources/templates/Localizable.strings:69
+#: Resources/templates/Localizable.strings:71
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
 msgstr "CloverEFI 64-bit BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
-#: Resources/templates/Localizable.strings:70
+#: Resources/templates/Localizable.strings:72
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
@@ -435,13 +446,13 @@ msgstr ""
 "Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti."
 
 #. type: "cloverEFI.64.blockio2_title"
-#: Resources/templates/Localizable.strings:71
+#: Resources/templates/Localizable.strings:73
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO for NVIDIA NForce MCP79"
 msgstr "CloverEFI 64-bit BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio2_description"
-#: Resources/templates/Localizable.strings:72
+#: Resources/templates/Localizable.strings:74
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives for chipset NVIDIA NForce MCP79"
 msgstr ""
@@ -449,13 +460,13 @@ msgstr ""
 "Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti."
 
 #. type: "off_title"
-#: Resources/templates/Localizable.strings:77
+#: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "Drivers off"
 msgstr "Drivers di ricambio"
 
 #. type: "off_description"
-#: Resources/templates/Localizable.strings:78
+#: Resources/templates/Localizable.strings:80
 #, no-wrap
 msgid ""
 "Installs all available drivers in EFI/CLOVER/drivers/off/\n"
@@ -465,264 +476,264 @@ msgstr ""
 "La cartella è ignorata da Clover e serve solo per copiare i drivers nelle altre cartelle, magari usando la shell al boot se c’è bisogno."
 
 #. type: "Drivers64_title"
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "BIOS Drivers, 64 bit"
 msgstr "BIOS Drivers a 64 bit"
 
 #. type: "Drivers64_description"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "Select drivers for BIOS-booting."
 msgstr "Seleziona drivers per il boot da BIOS"
 
 #. type: "Recommended64UEFI_title"
-#: Resources/templates/Localizable.strings:84
-#: Resources/templates/Localizable.strings:115
+#: Resources/templates/Localizable.strings:86
+#: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid "Recommended drivers"
 msgstr "Drivers raccomandati"
 
 #. type: "Recommended64UEFI_description"
-#: Resources/templates/Localizable.strings:85
-#: Resources/templates/Localizable.strings:116
+#: Resources/templates/Localizable.strings:87
+#: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "Recommended drivers, mostly mandatory."
 msgstr "Drivers raccomandati, il più delle volte necessari"
 
 #. type: "FileSystem64UEFI_title"
-#: Resources/templates/Localizable.strings:87
-#: Resources/templates/Localizable.strings:121
+#: Resources/templates/Localizable.strings:89
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "File System drivers"
 msgstr "Drivers per i file system"
 
 #. type: "FileSystem64UEFI_description"
-#: Resources/templates/Localizable.strings:88
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:90
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "A collection of file system drivers."
 msgstr "Alcuni drivers per i file system più utilizzati."
 
 #. type: "Drivers64FV2_title"
-#: Resources/templates/Localizable.strings:90
+#: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "FileVault 2 BIOS Drivers, 64 bit"
 msgstr "Drivers per FileVault 2 da BIOS, 64 bit"
 
 #. type: "Drivers64FV2_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "Select drivers for BIOS-booting with FileVault 2."
 msgstr "Seleziona i drivers for BIOS-booting con FileVault2."
 
 #. type: "ApfsDriverLoader.UEFI_description"
-#: Resources/templates/Localizable.strings:93
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "64bit driver to load APFS filesystem driver from container"
 msgstr "Supporto per il driver del filesystem APFS incluso nel contenitore di macOS 10.14."
 
 #. type: "AppleImageCodec.UEFI_description"
-#: Resources/templates/Localizable.strings:94
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "For decode PNG and BMP images in boot UI"
 msgstr "Decodifica PNG e BMP per FileVault2."
 
 #. type: "AppleImageLoader.UEFI_description"
-#: Resources/templates/Localizable.strings:95
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "Secure AppleEfiFat binary driver with implementation of AppleLoadImage protocol with EfiBinary signature verification."
 msgstr "Assicura il driver binario AppleEfiFat con l’implementazione del protocollo AppleLoadImage e con la verifica della firma EfiBinary."
 
 #. type: "AppleKeyAggregator.UEFI_description"
-#: Resources/templates/Localizable.strings:96
-#: Resources/templates/Localizable.strings:138
+#: Resources/templates/Localizable.strings:98
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "Support for boot UI dialog for FileVault2"
 msgstr "Supporto per il boot UI dialog di FileVault2."
 
 #. type: "AppleKeyFeeder.UEFI_description"
-#: Resources/templates/Localizable.strings:97
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:99
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid "Support for PS/2 keyboard to use with FileVault2"
 msgstr "Supporto per tastiere PS/2 da usare con FileVault2"
 
 #. type: "AppleUISupport.UEFI_description"
-#: Resources/templates/Localizable.strings:98
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:100
+#: Resources/templates/Localizable.strings:142
 #, no-wrap
 msgid "Set of protocols for support EfiLoginUi for FileVault."
 msgstr "Set di protocolli per supportare EfiLoginUi di FileVault."
 
 #. type: "AppleUITheme.UEFI_description"
-#: Resources/templates/Localizable.strings:99
-#: Resources/templates/Localizable.strings:141
+#: Resources/templates/Localizable.strings:101
+#: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Create boot UI Themes support"
 msgstr "Crea il supporto boot UI Themes perFileVault2."
 
 #. type: "AptioInputFix.UEFI_description"
-#: Resources/templates/Localizable.strings:100
-#: Resources/templates/Localizable.strings:142
+#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "Driver to fix input problems on UEFI firmware such as AMI Aptio."
 msgstr "Driver che risolve i problemi di input nei firmware UEFI come AMI Aptio."
 
 #. type: "AptioMemoryFix.UEFI_description"
-#: Resources/templates/Localizable.strings:101
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:103
+#: Resources/templates/Localizable.strings:145
 #, fuzzy, no-wrap
 #| msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgid "Obsolete 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Vecchio driver  per risolvere i problemi di memoria nei firmware UEFI come AMI Aptio. Da non usare con altri driver di tipo AptioFix insieme."
 
 #. type: "AudioDxe_description"
-#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "HDA driver to play Startup Sound"
 msgstr "Driver HDA per il suono al boot."
 
 #. type: "FirmwareVolume.UEFI_description"
-#: Resources/templates/Localizable.strings:103
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:157
 #, no-wrap
 msgid "Create FirmwareVolume with cursor images"
 msgstr "Crea il FirmwareVolume con ‘cursor images’ per FileVault2."
 
 #. type: "FSInject.UEFI_description"
-#: Resources/templates/Localizable.strings:104
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid "Provide injection of kexts from Clover folder."
 msgstr "Abilita l’iniezione di estensioni del kernel dalle cartelle di Clover."
 
 #. type: "GrubEXFAT_description"
-#: Resources/templates/Localizable.strings:105
+#: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "ExFAT filesystem driver from GRUB."
 msgstr "Driver GRUB per il filesystem ExFAT."
 
 #. type: "GrubISO9660_description"
-#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "ISO 9600 filesystem driver from GRUB."
 msgstr "Driver GRUB per il filesystem ISO9600."
 
 #. type: "GrubNTFS_description"
-#: Resources/templates/Localizable.strings:107
+#: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "NTFS filesystem driver from GRUB."
 msgstr "Driver GRUB per il filesystem NTFS."
 
 #. type: "GrubUDF_description"
-#: Resources/templates/Localizable.strings:108
+#: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "UDF filesystem driver from GRUB."
 msgstr "Driver GRUB per il filesystem UDF."
 
 #. type: "SMCHelper.UEFI_description"
-#: Resources/templates/Localizable.strings:109
-#: Resources/templates/Localizable.strings:166
+#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid "Restore SMC keys left in nvram by FakeSMC"
 msgstr "Ripristina le chiavi SMC lasciate nell’NVRAM da FakeSMC."
 
 #. type: "XhciDxe_description"
-#: Resources/templates/Localizable.strings:110
+#: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "Driver USB 3.0, 64bit"
 
 #. type: "Drivers64UEFI_title"
-#: Resources/templates/Localizable.strings:112
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "UEFI Drivers, 64 bit"
 msgstr "Drivers UEFI"
 
 #. type: "Drivers64UEFI_description"
-#: Resources/templates/Localizable.strings:113
+#: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "Select drivers for UEFI-booting."
 msgstr "Seleziona drivers per UEFI-booting."
 
 #. type: "HID64UEFI_title"
-#: Resources/templates/Localizable.strings:118
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "Human Interface Devices"
 msgstr "Human Interface Devices"
 
 #. type: "HID64UEFI_description"
-#: Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid "PS2/USB drivers for mouses and keyboards."
 msgstr "Drivers PS2/USB  per mouse e tastiera."
 
 #. type: "MemoryFix64UEFI_title"
-#: Resources/templates/Localizable.strings:124
+#: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "Memory fix drivers"
 msgstr "Drivers per correzioni della memoria"
 
 #. type: "MemoryFix64UEFI_description"
-#: Resources/templates/Localizable.strings:125
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "A collection of memory fix drivers."
 msgstr "Alcuni drivers per correggere la memoria"
 
 #. type: "Drivers64UEFIFV2_title"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid "FileVault 2 UEFI Drivers, 64 bit"
 msgstr "Drivers UEFI per FileVault 2"
 
 #. type: "Drivers64UEFIFV2_description"
-#: Resources/templates/Localizable.strings:128
+#: Resources/templates/Localizable.strings:130
 #, no-wrap
 msgid "Select drivers for UEFI-booting with FileVault 2."
 msgstr "Seleziona i drivers per UEFI-booting con FileVault 2."
 
 #. type: "Other64UEFI_title"
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "Additional drivers"
 msgstr "Drivers addizionali"
 
 #. type: "Other64UEFI_description"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "Some times a bios UEFI may lack support for a particular protocol or some functionality."
 msgstr "Qualche volta il firmware UEFI può essere sprovvisto di alcuni protocolli o funzionalità."
 
 #. type: "AppleEvent.UEFI_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
 msgid "Create AppleEvent protocol for FileVault2"
 msgstr "Crea il protocollo AppleEvent per FileVault2."
 
 #. type: "AppleGraphicsConfig.UEFI_description"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "Create optional AppleGraphicsConfig protocol"
 msgstr "Crea il protocollo opzionale AppleGraphicsConfig."
 
 #. type: "OcQuirks.UEFI_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "No more needed. Install OpenRuntime.efi only."
 msgstr ""
 
 #. type: "AudioDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:145
+#: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "HDA driver to play Startup Sound at boot time"
 msgstr "Driver HDA per il suono al boot."
 
 #. type: "CsmVideoDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:148
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -736,7 +747,7 @@ msgstr ""
 "Usare con cautela!"
 
 #. type: "DataHubDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:152
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -746,7 +757,7 @@ msgstr ""
 "Questo protocollo è già presente nella maggior parte dei casi, ma può mancare in determinate configurazioni. In questo caso si dovrebbe ricevere un avviso sullo schermo."
 
 #. type: "EmuVariableUefi.UEFI_description"
-#: Resources/templates/Localizable.strings:152
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "Workaround for store UEFI variables without UEFI."
 msgstr ""
@@ -755,127 +766,127 @@ msgstr ""
 "Usare solo se si ha un problema senza di questo driver."
 
 #. type: "EnglishDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Support for UnicodeCollation protocol used by EFI Shell if it missed in UEFI."
 msgstr "Supporto per il protocollo UnicodeCollation usato nell’EFI Shell se manca nel firmware UEFI."
 
 #. type: "Fat.UEFI_description"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "FAT filesystem driver."
 msgstr "Driver per il filesystem FAT."
 
 #. type: "HashServiceFix.UEFI_description"
-#: Resources/templates/Localizable.strings:157
+#: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "Fix Hash support if absent in native UEFI BIOS"
 msgstr "Risolve il support Hash se assente ne BIOS UEFI nativo."
 
 #. type: "HFSPlus.UEFI_description"
-#: Resources/templates/Localizable.strings:158
+#: Resources/templates/Localizable.strings:160
 #, no-wrap
 msgid "Alternate HFS+ filesystem driver."
 msgstr "Driver alternativo per il filesystem HFS+."
 
 #. type: "NvmExpressDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:159
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Driver for support NVM Express devices."
 msgstr "Driver per il supporto ai devices NVM Express."
 
 #. type: "OsxAptioFix3Drv.UEFI_description"
-#: Resources/templates/Localizable.strings:160
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid "Alternate driver (v3) to fix Memory problems on UEFI firmware."
 msgstr "Driver alternativo (v3) per risolvere i problemi di memoria nei firmware UEFI. Da non usare con altri driver di tipo AptioFix insieme."
 
 #. type: "OsxAptioFixDrv.UEFI_description"
-#: Resources/templates/Localizable.strings:161
+#: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr "Vecchio driver  per risolvere i problemi di memoria nei firmware UEFI come AMI Aptio. Da non usare con altri driver di tipo AptioFix insieme."
 
 #. type: "OsxFatBinaryDrv.UEFI_description"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:164
 #, no-wrap
 msgid "Driver for support FAT Binary executables for OS X 10.9 and older."
 msgstr "Driver per supporto dei binari FAT (32/64 bit) usato in 10.9 e precedenti."
 
 #. type: "OsxLowMemFixDrv.UEFI_description"
-#: Resources/templates/Localizable.strings:163
+#: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli indirizzi per boot.efi e quindi di avviare correttamente OS X Mountain Lion (10.8). E' una variante semplificata di OsxAptioFixDrv (non utilizzare entrambi insieme)."
 
 #. type: "PartitionDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:166
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "Driver a 64 bit che aggiunge supporto a tabelle di partizione non comuni come: GPT/MBR ibrido o Mappa Partizione Apple."
 
 #. type: "Ps2MouseDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:165
+#: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr "Driver a 64 bit per mouse PS/2"
 
 #. type: "UsbKbDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:169
 #, no-wrap
 msgid "Keyboard driver for boot UI support"
 msgstr "Driver della tastiera per il supporto boot UI."
 
 #. type: "UsbMouseDxe.UEFI_description"
-#: Resources/templates/Localizable.strings:168
+#: Resources/templates/Localizable.strings:170
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr "Driver a 64 bit per mouse USB"
 
 #. type: "VBoxExt2.UEFI_description"
-#: Resources/templates/Localizable.strings:169
+#: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr "Driver a 64 bit per accedere a partizioni formattate in ext2/3"
 
 #. type: "VBoxExt4.UEFI_description"
-#: Resources/templates/Localizable.strings:170
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr "Driver a 64 bit per accedere a partizioni formattate in ext4"
 
 #. type: "VBoxHfs.UEFI_description"
-#: Resources/templates/Localizable.strings:171
+#: Resources/templates/Localizable.strings:173
 #, no-wrap
 msgid "HFS+ filesystem driver."
 msgstr "Driver per il filesystem HFS+."
 
 #. type: "VBoxIso9600.UEFI_description"
-#: Resources/templates/Localizable.strings:172
+#: Resources/templates/Localizable.strings:174
 #, no-wrap
 msgid "ISO 9600 filesystem driver."
 msgstr "Driver per il filesystem ISO 9600."
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:177
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid "Themes"
 msgstr "Temi"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:178
+#: Resources/templates/Localizable.strings:180
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Seleziona per installare i temi."
 
 #. type: "BGM_title"
-#: Resources/templates/Localizable.strings:180
+#: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Black_Green_Moody"
 msgstr "Black Green Moody"
 
 #. type: "BGM_description"
-#: Resources/templates/Localizable.strings:181
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid ""
 "BGM (Black Green and Moody) theme from Blackosx,\n"
@@ -885,13 +896,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/BGM"
 
 #. type: "embedded_title"
-#: Resources/templates/Localizable.strings:184
+#: Resources/templates/Localizable.strings:186
 #, no-wrap
 msgid "embedded"
 msgstr "Embedded"
 
 #. type: "embedded_description"
-#: Resources/templates/Localizable.strings:185
+#: Resources/templates/Localizable.strings:187
 #, fuzzy, no-wrap
 #| msgid ""
 #| "embedded theme from Blackosx,\n"
@@ -904,13 +915,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/embedded"
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:188
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:189
+#: Resources/templates/Localizable.strings:191
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -920,13 +931,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/metal"
 
 #. type: "cesium_title"
-#: Resources/templates/Localizable.strings:192
+#: Resources/templates/Localizable.strings:194
 #, no-wrap
 msgid "cesium"
 msgstr ""
 
 #. type: "cesium_description"
-#: Resources/templates/Localizable.strings:193
+#: Resources/templates/Localizable.strings:195
 #, fuzzy, no-wrap
 #| msgid ""
 #| "Vector theme from Slice,\n"
@@ -939,13 +950,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/metal"
 
 #. type: "clovy_title"
-#: Resources/templates/Localizable.strings:196
+#: Resources/templates/Localizable.strings:198
 #, no-wrap
 msgid "Clovy"
 msgstr "Clovy"
 
 #. type: "clovy_description"
-#: Resources/templates/Localizable.strings:197
+#: Resources/templates/Localizable.strings:199
 #, no-wrap
 msgid ""
 "Vector SVG theme from Clovy,\n"
@@ -955,13 +966,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/metal"
 
 #. type: "random_title"
-#: Resources/templates/Localizable.strings:200
+#: Resources/templates/Localizable.strings:202
 #, no-wrap
 msgid "random"
 msgstr "random"
 
 #. type: "random_description"
-#: Resources/templates/Localizable.strings:201
+#: Resources/templates/Localizable.strings:203
 #, no-wrap
 msgid ""
 "random theme,\n"
@@ -971,13 +982,13 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/random"
 
 #. type: "steampunkblack_title"
-#: Resources/templates/Localizable.strings:204
+#: Resources/templates/Localizable.strings:206
 #, no-wrap
 msgid "steampunkblack"
 msgstr "Steampunkblack"
 
 #. type: "steampunkblack_description"
-#: Resources/templates/Localizable.strings:205
+#: Resources/templates/Localizable.strings:207
 #, no-wrap
 msgid ""
 "steampunkblack theme from medik,\n"
@@ -987,7 +998,7 @@ msgstr ""
 "Installa in /EFI/CLOVER/themes/steampunkblack"
 
 #. type: "CloverThemeManager_title"
-#: Resources/templates/Localizable.strings:208
+#: Resources/templates/Localizable.strings:210
 #, no-wrap
 msgid "CloverThemeManager.app"
 msgstr ""
@@ -996,7 +1007,7 @@ msgstr ""
 "App installata in  /Applications."
 
 #. type: "CloverThemeManager_description"
-#: Resources/templates/Localizable.strings:209
+#: Resources/templates/Localizable.strings:211
 #, fuzzy, no-wrap
 #| msgid ""
 #| "CloverThemeManager.app by blackosx,\n"
@@ -1011,13 +1022,13 @@ msgstr ""
 "Installa in /Applications"
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:215
+#: Resources/templates/Localizable.strings:217
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Script RC sul volume di destinazione"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:216
+#: Resources/templates/Localizable.strings:218
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -1027,43 +1038,43 @@ msgstr ""
 "Il volume di destinazione deve essere un volume OSX avviabile."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:218
+#: Resources/templates/Localizable.strings:220
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Script RC su tutti gli altri volumi OSX avviabili"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:219
+#: Resources/templates/Localizable.strings:221
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Installa tutti gli script RC su tutti i volumi interni OSX avviabili oltre al volume di destinazione."
 
 #. type: "OptionalRCScripts"
-#: Resources/templates/Localizable.strings:220
+#: Resources/templates/Localizable.strings:222
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Script RC Opzionali"
 
 #. type: "disable_sleep_proxy_client_title"
-#: Resources/templates/Localizable.strings:221
+#: Resources/templates/Localizable.strings:223
 #, no-wrap
 msgid "Disable sleep proxy client"
 msgstr "Disabilita il servizio sleep proxy client"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:222
+#: Resources/templates/Localizable.strings:224
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Script che disabilita il servizio BONJOUR (sleep proxy client). Eviterà che il sistema, in caso di standby, si risvegli a tutte le  ore."
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:227
+#: Resources/templates/Localizable.strings:229
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Installare Pannello Preferenze"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:228
+#: Resources/templates/Localizable.strings:230
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1409,8 +1420,12 @@ msgstr "Imposta la directory EFI"
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#~ msgid "Preferred 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-#~ msgstr "Driver a 64 bit preferito che risolve i problemi di memoria sul firmware UEFI come AMI Aptio bios."
+#~ msgid ""
+#~ "Preferred 64bit driver to fix Memory problems on UEFI firmware such as "
+#~ "AMI Aptio"
+#~ msgstr ""
+#~ "Driver a 64 bit preferito che risolve i problemi di memoria sul firmware "
+#~ "UEFI come AMI Aptio bios."
 
 #~ msgid "Clover v2"
 #~ msgstr "Clover v2"
