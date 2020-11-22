@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 5.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-20 21:37+0300\n"
+"POT-Creation-Date: 2020-11-22 13:02+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: vector sigma\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -319,16 +319,12 @@ msgstr "Установить boot0af на диск с MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:36
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Used for BIOS booting on BIOS motherboards.\n"
-#| "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
-#| "This choice will setup selected HFS/Fat32 partition to be active."
+#, no-wrap
 msgid ""
-"Used for BIOS booting on BIOS motherboards.\n"
+"Used for BIOS booting on GPT partition.\n"
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
-"This choice will setup selected HFS/Fat32 partition to be active. \n"
-"WARNING On macOS Catalina and macOS Big Sur the system is a read-only file system, you cannot use this option without selecting the ESP option otherwise the installation will fail, for any older system there is no problem"
+"This choice will setup selected HFS/Fat32 partition to be active.\n"
+"WARNING On macOS Catalina and macOS Big Sur the system is a read-only file system, you cannot use this option without selecting the ESP option otherwise the installation will fail, for any older system there is no problem."
 msgstr ""
 "Используется для BIOS-загрузки.\n"
 "boot0af (boot0 Active First) ищет активный раздел в таблице MBR. Если такого раздела нет, будет загружен первый из разделов EFI/FAT32/HFS с загрузочной сигнатурой и этот раздел будет помечен как активный.\n"
@@ -342,18 +338,13 @@ msgstr "Установить boot0ss на диск с MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:42
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Used for BIOS booting on BIOS motherboards.\n"
-#| "boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
-#| "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
-#| "This choice will not activate any partition in MBR."
+#, no-wrap
 msgid ""
-"Used for BIOS booting on BIOS motherboards.\n"
+"Used for BIOS booting on MBR partition.\n"
 "boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR. \n"
-"WARNING On macOS Catalina and macOS Big Sur the system is a read-only file system, you cannot use this option without selecting the ESP option otherwise the installation will fail, for any older system there is no problem"
+"WARNING On macOS Catalina and macOS Big Sur the system is a read-only file system, you cannot use this option without selecting the ESP option otherwise the installation will fail, for any older system there is no problem."
 msgstr ""
 "Используется для BIOS-загрузки. \n"
 "boot0ss (boot0 Signature Scanning) ищет первый раздел типа EFI/FAT32/HFS с правильной сигнатурой сначала в таблице MBR, затем в GPT. Если таковых не найдено, будет пытаться загрузить активный раздел из MBR.\n"
@@ -590,8 +581,7 @@ msgstr "Исправляет ошибки UEFI при работе с устро
 #. type: "AptioMemoryFix.UEFI_description"
 #: Resources/templates/Localizable.strings:103
 #: Resources/templates/Localizable.strings:145
-#, fuzzy, no-wrap
-#| msgid "Old 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
+#, no-wrap
 msgid "Obsolete 64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
 "Старый вариант коррекции ошибок памяти для AMI Aptio и некоторымх других UEFI.\n"
@@ -1006,11 +996,7 @@ msgstr "CloverThemeManager"
 
 #. type: "CloverThemeManager_description"
 #: Resources/templates/Localizable.strings:211
-#, fuzzy, no-wrap
-#| msgid ""
-#| "CloverThemeManager.app by blackosx,\n"
-#| "keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
-#| "Install to /Applications"
+#, no-wrap
 msgid ""
 "CloverThemeManager.app by blackosx,\n"
 "//keeps your Themes up to date, remove or install them by choosing from a wide selection.\n"
