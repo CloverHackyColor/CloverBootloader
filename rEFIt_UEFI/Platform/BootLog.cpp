@@ -188,7 +188,8 @@ static UINTN GetDebugLogFile()
 //  }
 
   if (!EFI_ERROR(Status)) {
-    Status = LogFile->SetPosition(LogFile, 0xFFFFFFFFFFFFFFFFULL);
+    EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
+    Status = LogFile->SetPosition(LogFile, Info->FileSize); //0xFFFFFFFFFFFFFFFFULL);
     if ( EFI_ERROR (Status) ) {
       DGB_nbCallback("GetDebugLogFile() -> Cannot set log position to 0xFFFFFFFFFFFFFFFFULL : %s\n", efiStrError(Status));
       LogFile->Close(LogFile);
