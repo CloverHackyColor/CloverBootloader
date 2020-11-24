@@ -71,6 +71,8 @@ EFI_STATUS Self::_initialize()
     m_CloverDirFullPath.insertAtPos('\\', 0);
   }
 
+  m_efiFileName = m_CloverDirFullPath.basename();
+
   // History : if this Clover was started as BootX64.efi, redirect to /EFI/CLOVER
   if ( m_CloverDirFullPath.equalIC("\\EFI\\Boot\\BootX64.efi") ) {
     m_CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi");
@@ -82,8 +84,6 @@ EFI_STATUS Self::_initialize()
 
   if ( m_CloverDirFullPath.lastChar() == U'\\' ) panic("m_CloverDirFullPath.lastChar() == U'\\'");
 //if ( m_CloverDirFullPath.endsWith('\\') ) panic("m_CloverDirFullPath.endsWith('\\')");
-
-  m_efiFileName = m_CloverDirFullPath.basename();
 
   size_t i = m_CloverDirFullPath.rindexOf(U'\\', SIZE_T_MAX-1);
   if ( i != SIZE_T_MAX && i > 0 ) m_CloverDirFullPath.deleteCharsAtPos(i, SIZE_T_MAX);
