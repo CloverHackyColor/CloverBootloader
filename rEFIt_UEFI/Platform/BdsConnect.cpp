@@ -437,7 +437,6 @@ EFI_STATUS BdsLibConnectMostlyAllEfi()
 	EFI_PCI_IO_PROTOCOL*	PciIo = NULL;
 	PCI_TYPE00				Pci;
   
-MsgLog("1\n");
 	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &AllHandleCount, &AllHandleBuffer);
 	if (EFI_ERROR(Status)) 
 		return Status;

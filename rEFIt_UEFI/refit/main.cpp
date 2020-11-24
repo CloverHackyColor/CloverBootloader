@@ -1712,18 +1712,18 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     if (EFI_ERROR(Status)) {
       continue;
     }
-    if ( FileName.contains("AudioDxe") ) {
+    if ( FileName.containsIC("AudioDxe") ) {
       AudioDriverHandle = DriverHandle;
     }
-    if ( FileName.contains("EmuVariable") ) {
+    if ( FileName.containsIC("EmuVariable") ) {
       gDriversFlags.EmuVariableLoaded = TRUE;
-    } else if ( FileName.contains("Video") ) {
+    } else if ( FileName.containsIC("Video") ) {
       gDriversFlags.VideoLoaded = TRUE;
-    } else if ( FileName.contains("Partition") ) {
+    } else if ( FileName.containsIC("Partition") ) {
       gDriversFlags.PartitionLoaded = TRUE;
-    } else if ( FileName.contains("HFS") ) {
+    } else if ( FileName.containsIC("HFS") ) {
       gDriversFlags.HFSLoaded = TRUE;
-    } else if ( FileName.contains("apfs") ) {
+    } else if ( FileName.containsIC("apfs") ) {
       gDriversFlags.APFSLoaded = TRUE;
     }
     if (DriverHandle != NULL && DriversToConnectNum != NULL && DriversToConnect != NULL) {
