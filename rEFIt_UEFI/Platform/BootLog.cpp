@@ -73,6 +73,7 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 	}
 }
 
+static XStringW debugLogFileName;
 static EFI_FILE_PROTOCOL* gLogFile = NULL;
 // Do not keep a pointer to MemLogBuffer. Because a reallocation, it could become invalid.
 
@@ -133,31 +134,66 @@ static UINTN GetDebugLogFile()
 
   if ( !self.isInitialized() ) return 0;
 
-  // Open log file from current root
-  Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, DEBUG_LOG, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  EFI_TIME          Now;
+  Status = gRT->GetTime(&Now, NULL);
+  if ( EFI_ERROR(Status) ) {
+    DBG("GetTime return %s\n", efiStrError(Status));
+  }
 
-  if ( !EFI_ERROR (Status) && GlobalConfig.ScratchDebugLogAtStart )
+  if ( debugLogFileName.isEmpty() )
   {
-    // Here, we may not be at the first line sent to log.
-    // That's because the setting GlobalConfig.ScratchDebugLogAtStart is not set before the first log is sent.
-    DGB_nbCallback("GetDebugLogFile() -> deleting the log '%ls'\n", DEBUG_LOG);
-    EFI_STATUS          StatusDelete;
-    StatusDelete = LogFile->Delete(LogFile);
-    if ( StatusDelete == EFI_SUCCESS) {
-      GlobalConfig.ScratchDebugLogAtStart = false;
-      Status = EFI_NOT_FOUND; // to make be reopened in the next lines.
-    }else{
-      DGB_nbCallback("Cannot delete log file '%ls\\%ls' : %s\n", self.getCloverDirFullPath().wc_str(), DEBUG_LOG, efiStrError(StatusDelete));
+    debugLogFileName = S8Printf("misc\\%d-%d-%d_%d-%d-%d_%ls.log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second, self.getCloverEfiFileName().wc_str());
+    Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ, 0);
+    if ( !EFI_ERROR(Status) ) LogFile->Close(LogFile); // DO NOT modify Status here.
+    INTN i=1;
+    while ( Status != EFI_NOT_FOUND  &&  (i < MAX_INTN) ) {
+      debugLogFileName = S8Printf("misc\\%d-%d-%d_%d-%d-%d_%ls(%lld).log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second, self.getCloverEfiFileName().wc_str(), i);
+      Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ, 0);
+      if ( !EFI_ERROR(Status) ) LogFile->Close(LogFile); // DO NOT modify Status here.
     }
+    if ( Status != EFI_NOT_FOUND ) {
+      DBG("Cannot find a free debug log file name\n"); // I can't imagine that to happen...
+      debugLogFileName.setEmpty(); // To allow to retry at the next call
+      return 0;
+    }
+    Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+    gLogFile = LogFile;
+    return 0;
   }else{
-//      DGB_nbCallback("  GetDebugLogFile() -> open log : %s\n", efiStrError(Status));
+    Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, debugLogFileName.wc_str(), EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+
+////   Jief : Instead of EfiLibFileInfo, let's use SetPosition to get the size.
+//    if (!EFI_ERROR(Status)) {
+//      EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
+//      if (Info) {
+//        Status = LogFile->SetPosition(LogFile, Info->FileSize);
+//        if ( EFI_ERROR(Status) ) {
+//          DBG("SaveMessageToDebugLogFile SetPosition error %s\n", efiStrError(Status));
+//        }
+//      }
+//    }
+
+    if (!EFI_ERROR(Status)) {
+      Status = LogFile->SetPosition(LogFile, 0xFFFFFFFFFFFFFFFFULL);
+      if ( EFI_ERROR (Status) ) {
+        DGB_nbCallback("GetDebugLogFile() -> Cannot set log position to 0xFFFFFFFFFFFFFFFFULL : %s\n", efiStrError(Status));
+        LogFile->Close(LogFile);
+      }else{
+        UINTN size;
+        Status = LogFile->GetPosition(LogFile, &size);
+        if ( EFI_ERROR (Status) ) {
+          DGB_nbCallback("GetDebugLogFile() -> Cannot get log position : %s\n", efiStrError(Status));
+          LogFile->Close(LogFile);
+        }else{
+          //DGB_nbCallback("GetDebugLogFile() -> opened. log position = %lld (lwo %lld)\n", size, lastWrittenOffset);
+          gLogFile = LogFile;
+          return size;
+        }
+      }
+    }
+    return 0;
   }
 
-  // If the log file is not found try to create it
-  if (Status == EFI_NOT_FOUND) {
-//    Status = RootDir->Open(RootDir, &LogFile, SWPrintf("%ls\\%ls", self.getCloverDirFullPath().wc_str(), DEBUG_LOG).wc_str(), EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
-    Status = self.getCloverDir().Open(&self.getCloverDir(), &LogFile, DEBUG_LOG, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
-  }
 
 //  Jief : do we need that ?
 //  if (EFI_ERROR(Status)) {
@@ -175,38 +211,6 @@ static UINTN GetDebugLogFile()
 //      RootDir = NULL;
 //    }
 //  }
-
-// Jief : Instead of EfiLibFileInfo, let's use SetPosition to get the size.
-//  if (!EFI_ERROR(Status)) {
-//    EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
-//    if (Info) {
-//      Status = LogFile->SetPosition(LogFile, Info->FileSize);
-//      if ( EFI_ERROR(Status) ) {
-//        DBG("SaveMessageToDebugLogFile SetPosition error %s\n", efiStrError(Status));
-//      }
-//    }
-//  }
-
-  if (!EFI_ERROR(Status)) {
-    EFI_FILE_INFO *Info = EfiLibFileInfo(LogFile);
-    Status = LogFile->SetPosition(LogFile, Info->FileSize); //0xFFFFFFFFFFFFFFFFULL);
-    if ( EFI_ERROR (Status) ) {
-      DGB_nbCallback("GetDebugLogFile() -> Cannot set log position to 0xFFFFFFFFFFFFFFFFULL : %s\n", efiStrError(Status));
-      LogFile->Close(LogFile);
-    }else{
-      UINTN size;
-      Status = LogFile->GetPosition(LogFile, &size);
-      if ( EFI_ERROR (Status) ) {
-        DGB_nbCallback("GetDebugLogFile() -> Cannot get log position : %s\n", efiStrError(Status));
-        LogFile->Close(LogFile);
-      }else{
-        //DGB_nbCallback("GetDebugLogFile() -> opened. log position = %lld (lwo %lld)\n", size, lastWrittenOffset);
-        gLogFile = LogFile;
-        return size;
-      }
-    }
-  }
-  return 0;
 }
 
 VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
@@ -241,7 +245,7 @@ VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 //          }
     }
   }
-  // Not all Firmware implements Flush. So we have to close everytime to force flush.
+  // Not all Firmware implements Flush. So we have to close every time to force flush.
   closeDebugLog();
 }
 
