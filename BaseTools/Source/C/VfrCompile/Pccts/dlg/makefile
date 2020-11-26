@@ -114,7 +114,7 @@ PCCTS_H=../h
 #
 #   UNIX
 #
-BUILD_CC?=cc
+BUILD_CC?=gcc #cc doesn't include path to find stdio.h on macOS sometimes (depends on call path and if xcode is installed)
 COPT=-O
 ANTLR=${BIN_DIR}/antlr
 DLG=${BIN_DIR}/dlg
