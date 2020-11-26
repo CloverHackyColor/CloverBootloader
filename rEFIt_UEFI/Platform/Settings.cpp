@@ -6662,7 +6662,7 @@ GetOSIconName (const MacOsVersion& OSVersion)
   if (OSVersion.isEmpty()) {
     OSIconName = L"mac"_XSW;
   } else if ( (OSVersion.elementAt(0) == 10 && OSVersion.elementAt(1) == 16 ) ||
-              (OSVersion.elementAt(0) == 11 && OSVersion.elementAt(1) == 0 )
+              (OSVersion.elementAt(0) == 11 /*&& OSVersion.elementAt(1) == 0*/ )
             ) {
     // Big Sur
     OSIconName = L"bigsur,mac"_XSW;
