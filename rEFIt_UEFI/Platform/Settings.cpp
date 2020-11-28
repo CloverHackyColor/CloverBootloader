@@ -3381,6 +3381,7 @@ void InitKextList()
     return;  //don't scan again
   }
 //  KextsPath = SWPrintf("%ls\\kexts", OEMPath.wc_str());
+  DbgHeader("InitKextList");
 
   if ( selfOem.isKextsDirFound() ) {
     // Iterate over kexts directory
