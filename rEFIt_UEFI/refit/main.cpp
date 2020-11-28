@@ -1024,6 +1024,8 @@ DBG("Beginning OC\n");
   // Seems that Lilu must be first.
   size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
   pos = setKextAtPos(&kextArray, "VirtualSMC.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "FakePCIID.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "FakePCIID_XHCIMux.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "AMDRyzenCPUPowerManagement﻿﻿.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "SMCAMDProcessor.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "WhateverGreen.kext"_XS8, pos);
@@ -1036,6 +1038,11 @@ DBG("Beginning OC\n");
   pos = setKextAtPos(&kextArray, "VoodooI2CServices.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "VoodooI2C.kext"_XS8, pos);
   pos = setKextAtPos(&kextArray, "VoodooI2CHID.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "BrcmFirmwareData.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "BrcmPatchRAM2.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "BrcmPatchRAM3.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "HS80211Family.kext"_XS8, pos);
+  pos = setKextAtPos(&kextArray, "AirPortAtheros40.kext"_XS8, pos);
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ )
   {
