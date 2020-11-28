@@ -1482,7 +1482,7 @@ void ScanLoader(void)
     // AddLoaderEntry(L"\\bootmgr.efi", L"", L"Microsoft EFI mgrboot", Volume, NULL, OSTYPE_WINEFI, 0);
     // check for Microsoft boot loader/menu on CDROM
     if (!AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi"_XSW, NullXString8Array, L""_XSW, L"Microsoft EFI cdboot"_XSW, Volume, L""_XSW, NULL, OSTYPE_WINEFI, 0)) {
-      AddLoaderEntry(L"\\EFI\\MICROSOF\\BOOT\\CDBOOT.EFI"_XSW, NullXString8Array, L""_XSW, L"Microsoft EFI CDBOOT"_XSW, Volume, L""_XSW, NULL, OSTYPE_WINEFI, 0);
+      AddLoaderEntry(L"\\EFI\\MICROSOFT\\BOOT\\CDBOOT.EFI"_XSW, NullXString8Array, L""_XSW, L"Microsoft EFI CDBOOT"_XSW, Volume, L""_XSW, NULL, OSTYPE_WINEFI, 0);
     }
 
 
@@ -1617,7 +1617,7 @@ void ScanLoader(void)
         }
         AddLoaderEntry(SWPrintf("\\%s\\System\\Library\\CoreServices\\boot.efi", ApfsTargetUUID.c_str()), NullXString8Array, FullTitle, LoaderTitle, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_OSX, 0);
         //Try to add Recovery APFS entry
-        if (!AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0) {
+        if (!AddLoaderEntry(SWPrintf("\\%s\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0)) {
           //Try to add Recovery APFS entry as dmg
           AddLoaderEntry(SWPrintf("\\%s\\BaseSystem.dmg", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleRecovery, L""_XSW, Volume, Volume->ApfsTargetUUIDArray[i], NULL, OSTYPE_RECOVERY, 0);
         }
