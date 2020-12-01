@@ -949,6 +949,7 @@ void GetCPUProperties (void)
         break;
         
       case 0x17: //Bronya: For AMD Family 17h Ryzen ! //
+      case 0x19: // and 19h Ryzen
       {
         // CoreCOF = (Core::X86::Msr::PStateDef[CpuFid[7:0]]/Core::X86::Msr::PStateDef[CpuDfsId])*200
         

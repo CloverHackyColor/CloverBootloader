@@ -1211,7 +1211,7 @@ FindStartupDiskVolume (
           // case insensitive cmp
           if ( LoaderPath.equalIC(gEfiBootLoaderPath) ) {
             // that's the one
-			  DBG("    - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName.wc_str(), LoaderPath.wc_str());
+            DBG("    - found entry %lld. '%ls', Volume '%ls', '%ls'\n", Index, LoaderEntry.Title.s(), Volume->VolName.wc_str(), LoaderPath.wc_str());
             return Index;
           }
         }

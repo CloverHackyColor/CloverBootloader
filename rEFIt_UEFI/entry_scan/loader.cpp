@@ -48,6 +48,7 @@
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "Self.h"
 #include "../include/OsType.h"
+#include "../Platform/BootOptions.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LOADER 1
@@ -1869,41 +1870,44 @@ STATIC void AddCustomEntry(IN UINTN                CustomIndex,
       DBG("skipped because media is ignored\n");
       continue;
     }
-
-    if (Volume->Hidden) {
-      DBG("skipped because volume is hidden\n");
-      continue;
-    }
-
-    // Check for exact volume matches (devicepath / volumelabel)
-    if (Custom->Volume.notEmpty()) {
-      if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
-          ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
-        DBG("skipped because volume does not match\n");
-        continue;
-      }
-      // NOTE: Sothor - We dont care about legacy OS type // Check if the volume should be of certain os type
-      //if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
-      //  DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
-      //  continue;
-      //}
-      //} else if ((Custom->Type != 0) && (Volume->OSType != 0) && !OSTYPE_COMPARE(OSType, Volume->OSType)) {
-      //DBG("skipped because wrong type (%d != %d)\n", OSType, Volume->OSType);
-      //continue;
-    }
-
+    
     // Check the volume is readable and the entry exists on the volume
     if (Volume->RootDir == NULL) {
       DBG("skipped because filesystem is not readable\n");
       continue;
     }
 
-/*
-    if (StriCmp(CustomPath, MACOSX_LOADER_PATH) == 0 && FileExists(Volume->RootDir, L"\\.IAPhysicalMedia")) {
-      DBG("skipped standard macOS path because volume is 2nd stage Install Media\n");
+    if (Volume->Hidden) {
+      DBG("skipped because volume is hidden\n");
       continue;
     }
-*/
+
+    
+    // Check for exact volume matches (devicepath / volumelabel)
+    if (Custom->Volume.notEmpty()) {
+      if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
+          ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
+        bool CustomEntryFound = false;
+        //..\VenMedia(BE74FCF7-0B7C-49F3-9147-01F4042E6842,E97E25EA28F4DF46AAD44CC3F12E28D3)
+        EFI_DEVICE_PATH *MediaPath = Clover_FindDevicePathNodeWithType(Volume->DevicePath, MEDIA_DEVICE_PATH, MEDIA_VENDOR_DP);
+        if (MediaPath) {
+          EFI_GUID *MediaPathGuid = (EFI_GUID *)&((VENDOR_DEVICE_PATH_WITH_DATA*)MediaPath)->VendorDefinedData;
+          XStringW MediaPathGuidStr = GuidLEToXStringW(*MediaPathGuid);
+          //       DBG("  checking '%ls'\n", MediaPathGuidStr.wc_str());
+          if (StrStr(Custom->Volume.wc_str(), MediaPathGuidStr.wc_str())) {
+            DBG("   - found entry for volume '%ls', '%ls'\n", Custom->Volume.wc_str(), MediaPathGuidStr.wc_str());
+            CustomEntryFound = true;
+          } else {
+            DBG("  - search volume '%ls', but MediaPath '%ls' \n", Custom->Volume.wc_str(), MediaPathGuidStr.wc_str());
+          }
+        }
+        if (!CustomEntryFound) {
+          DBG("skipped because volume does not match\n");
+          continue;
+        }
+      }
+    }
+
 
     Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
     if (FindCustomPath) {

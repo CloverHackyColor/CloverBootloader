@@ -1247,7 +1247,7 @@ DBG("Beginning OC\n");
               strncmp(InstallerVersion, "10.14", 5) &&
               strncmp(InstallerVersion, "10.15", 5) &&
               strncmp(InstallerVersion, "10.16", 5) &&
-              strncmp(InstallerVersion, "11.0", 4)) {   
+              strncmp(InstallerVersion, "11.", 3)) {
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
@@ -1256,7 +1256,6 @@ DBG("Beginning OC\n");
           }
         }
       }
-
       BuildVersion.setEmpty();
     }
 
@@ -1392,13 +1391,13 @@ DBG("Beginning OC\n");
     // apianti - only block console output if using graphics
     //           but don't block custom boot logo
     if (LoadOptions.containsIC("-v")) {
-          Flags = OSFLAG_UNSET(Flags, OSFLAG_USEGRAPHICS);
+      Flags = OSFLAG_UNSET(Flags, OSFLAG_USEGRAPHICS);
     }
   }
   else if (OSTYPE_IS_WINDOWS(LoaderType)) {
 
     if (AudioIo) {
-        AudioIo->StopPlayback(AudioIo);
+      AudioIo->StopPlayback(AudioIo);
     }
 
     DBG("Closing events for Windows\n");
