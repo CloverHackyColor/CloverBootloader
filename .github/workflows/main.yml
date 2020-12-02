@@ -62,7 +62,7 @@ jobs:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         uses: ncipollo/release-action@v1
         with:
-          artifacts: *.7z,Clover.app*.pkg,CloverV2*.zip,CLOVERX64.efi.zip,Clover_r*.pkg
+          artifacts: ./*.7z, ./Clover.app*.pkg, ./CloverV2*.zip, ./CLOVERX64.efi.zip, ./Clover_r*.pkg
           bodyFile: ReleaseNotes.md
           name: Release v5.1 r${{ env.CUR_TAG }}
           prerelease: false
