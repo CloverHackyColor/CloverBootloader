@@ -41,8 +41,8 @@ jobs:
 
       - name: Generate Release Notes
         run: |
-          echo 'The latest ten updates are:' >> ReleaseNotes.md
-          git log -"10" --format="- %H %s" | sed '/^$/d' >> ReleaseNotes.md
+          echo "Recent commit descriptions are:" >> ReleaseNotes.md
+          git log $(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))..HEAD --oneline --format=" - %s" | head -10 >> ReleaseNotes.md
           echo '' >> ReleaseNotes.md
           /usr/bin/sed -i "" "s:sym/Clover:Clover:g" CloverPackage/sym/Clover*.md5
           cat CloverPackage/sym/Clover*.md5 >> ReleaseNotes.md
