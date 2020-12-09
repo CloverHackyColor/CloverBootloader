@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  build-macos:
+    name: Build Clover Release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Manage Version
+        run: |
+          git fetch --prune --unshallow --tags
+          echo "CUR_TAG=$(git tag -l | tail -1)" >> $GITHUB_ENV
+          echo "GIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Update CloverHackyColor/OpenCorePkg fork
+        run: git submodule init && git submodule update
+
+      - name: Install Dependencies
+        run: brew install p7zip
+        env:
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+          HOMEBREW_NO_AUTO_UPDATE: 1
+
+      - name: Build Clover Pack
+        run: ./buildme "" ci
+
+      - name: Prepare Release Packs
+        run: |
+          (cd "CloverPackage/CloverV2/EFI/CLOVER/" && zip -q "CLOVERX64.efi.zip" "CLOVERX64.efi" || exit 1)
+          (cd "CloverPackage/sym/CloverISO-${{ env.CUR_TAG }}" && 7z a Clover-${{ env.CUR_TAG }}-X64.iso.7z *.iso || exit 1)
+          releaseItems=(CloverPackage/sym/CloverISO*/*.7z CloverPackage/sym/Clover.app*.pkg CloverPackage/sym/CloverV2*.zip CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi.zip CloverPackage/sym/Clover_r*.pkg)
+          for releaseItem in "${releaseItems[@]}"; do cp -Rf "${releaseItem}" ./ || exit 1; done
+
+      - name: Generate Release Notes
+        run: |
+          echo "Recent commit descriptions are:" >> ReleaseNotes.md
+          git log $(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))..HEAD --oneline --format=" - %s" | head -10 >> ReleaseNotes.md
+          echo '' >> ReleaseNotes.md
+          /usr/bin/sed -i "" "s:sym/Clover:Clover:g" CloverPackage/sym/Clover*.md5
+          cat CloverPackage/sym/Clover*.md5 >> ReleaseNotes.md
+
+      - name: Upload to Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Clover beta-${{ env.GIT_SHA }}
+          path: |
+            *.7z
+            Clover.app*.pkg
+            CloverV2*.zip
+            CLOVERX64.efi.zip
+            Clover_r*.pkg
+
+      - name: Upload to Release
+        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ./*.7z, ./Clover.app*.pkg, ./CloverV2*.zip, ./CLOVERX64.efi.zip, ./Clover_r*.pkg
+          bodyFile: ReleaseNotes.md
+          name: Release v5.1 r${{ env.CUR_TAG }}
+          prerelease: false
+          tag: ${{ env.CUR_TAG }}
+          token: ${{ secrets.GITHUB_TOKEN }}

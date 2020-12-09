@@ -376,10 +376,11 @@ menu
 
 # Main
 set -e
-if [[ "$2" == travis ]]; then
+if [[ "$2" == ci ]]; then
   buildClover
   buildPkg
   buildIso
+  buildApp
 else
   menu
 fi
