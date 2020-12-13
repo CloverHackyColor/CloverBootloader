@@ -1130,8 +1130,6 @@
 		<false/>
 		<key>ProtectUefiServices</key>
 		<false/>
-		<key>ProvideConsoleGopEnable</key>
-		<true/>
 		<key>ProvideCustomSlide</key>
 		<false/>
 		<key>ProvideMaxSlide</key>
@@ -1156,8 +1154,6 @@
 		<true/>
 		<key>DisableLinkeditJettison</key>
 		<true/>
-		<key>DisableRtcChecksum</key>
-		<false/>
 		<key>DummyPowerManagement</key>
 		<false/>
 		<key>ExternalDiskIcons</key>

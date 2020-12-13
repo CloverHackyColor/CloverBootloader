@@ -1054,7 +1054,7 @@ void ScanVolumes(void)
     if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
         Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
         Volume->MbrPartitionTable != NULL) {
-		DBG("        Volume %llu has MBR\n", VolumeIndex);
+      DBG("        Volume %llu has MBR\n", VolumeIndex);
       MbrTable = Volume->MbrPartitionTable;
       for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
         if (IS_EXTENDED_PART_TYPE(MbrTable[PartitionIndex].Type)) {
@@ -1146,7 +1146,7 @@ void ReinitVolumes(void)
   EFI_STATUS              Status;
   REFIT_VOLUME            *Volume;
   UINTN                   VolumeIndex;
-  UINTN           VolumesFound = 0;
+  UINTN                   VolumesFound = 0;
   const EFI_DEVICE_PATH  *RemainingDevicePath;
   EFI_HANDLE              DeviceHandle, WholeDiskHandle;
   

@@ -5918,9 +5918,9 @@ GetUserSettings(const TagDict* CfgDict)
             }
             Prop2 = SlotsDict->propertyForKey("Name");
             if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
-				snprintf (SlotDevice->SlotName, 31, "%s", Prop2->getString()->stringValue().c_str());
+              snprintf (SlotDevice->SlotName, 31, "%s", Prop2->getString()->stringValue().c_str());
             } else {
-				snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
+              snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
             }
 
             DBG(" - %s\n", SlotDevice->SlotName);
@@ -7006,7 +7006,7 @@ GetDevices ()
                                              NULL) //NULL: get from generic lists
                           );
 
-				  DBG(" - GFX: Model=%s family %hX (%s)\n", gfx->Model, gfx->Family, CardFamily);
+            DBG(" - GFX: Model=%s family %hX (%s)\n", gfx->Model, gfx->Family, CardFamily);
               gfx->Ports                  = 0;
 
               SlotDevice                  = &SlotDevices[1];

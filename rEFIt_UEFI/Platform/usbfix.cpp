@@ -176,7 +176,7 @@ DBG("FixOwnership() -> begin\n");
                 
                 // read PCI Config 32bit USBLEGCTLSTS (eecp+4) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
-					DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
+                DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
                 //
                 // Disable the SMI in USBLEGCTLSTS firstly
                 //
@@ -216,7 +216,7 @@ DBG("FixOwnership() -> begin\n");
                 // read 32bit USBLEGCTLSTS (eecp+4) 
                 PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &usblegctlsts);
                 
-					DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
+                DBG("usblegsup=%08X isOSowned=%llu isBIOSowned=%llu usblegctlsts=%08X\n", usblegsup, isOSowned, isBIOSowned, usblegctlsts);
                 MsgLog("Legacy USB Off Done\n");  
                 
                 
@@ -282,7 +282,7 @@ DBG("FixOwnership() -> begin\n");
                   Status = EFI_NOT_FOUND; //Slice - why? :)
                   break;
                 }
-					MsgLog("USB EHCI Ownership for device %04hX value=%X\n", Pci.Hdr.DeviceId, Value); 
+                MsgLog("USB EHCI Ownership for device %04hX value=%X\n", Pci.Hdr.DeviceId, Value);
                 
                 break;
              case PCI_IF_XHCI:
