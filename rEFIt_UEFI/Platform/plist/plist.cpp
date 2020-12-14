@@ -851,6 +851,13 @@ GetPropertyAsInteger(
 
 //    return (INTN)AsciiStrDecimalToUintn (Prop->getString()->stringValue());
     return (INTN)AsciiStrDecimalToUintn((Prop->getString()->stringValue()[0] == '+') ? (Prop->getString()->stringValue().c_str() + 1) : Prop->getString()->stringValue().c_str());
+  } else if (Prop->isData()) {
+
+    INTN Size = Prop->getData()->dataLenValue();
+    if (Size > 8) Size = 8;
+    INTN Data = 0;
+    CopyMem(Data, Prop->getData()->dataValue(), Size);
+    return Data;
   }
   return Default;
 }
