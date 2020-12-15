@@ -856,7 +856,7 @@ GetPropertyAsInteger(
     INTN Size = Prop->getData()->dataLenValue();
     if (Size > 8) Size = 8;
     INTN Data = 0;
-    CopyMem(Data, Prop->getData()->dataValue(), Size);
+    CopyMem(&Data, Prop->getData()->dataValue(), Size);
     return Data;
   }
   return Default;
