@@ -995,51 +995,6 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
 
   // Resolution
   switch (UGAWidth) {
-    case 160:
-      SetUGAWidth = TRUE;
-      if(UGAHeight == 120) {
-        SetUGAHeight = TRUE;
-		  DBG("  Found quarter quarter VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      }
-      break;
-    case 240:
-      SetUGAWidth = TRUE;
-      if(UGAHeight == 160) {
-        SetUGAHeight = TRUE;
-		  DBG("  Found Half quarter VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      }
-      break;
-    case 320:
-      SetUGAWidth = TRUE;
-      if(UGAHeight == 240) {
-        SetUGAHeight = TRUE;
-		  DBG("  Found quarter VGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      }
-      break;
-    case 400:
-      SetUGAWidth = TRUE;
-      if(UGAHeight == 240) {
-        SetUGAHeight = TRUE;
-		  DBG("  Found Wide quarter VGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      }
-      break;
-    case 480:
-      SetUGAWidth = TRUE;
-      if(UGAHeight == 320) {
-        SetUGAHeight = TRUE;
-		  DBG("  Found Half-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
-      }
-      break;
     case 640:
       SetUGAWidth = TRUE;
       switch (UGAHeight) {
@@ -1076,9 +1031,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 480) {
         SetUGAHeight = TRUE;
-		  DBG("  Found Full Wide VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Full Wide VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 960:
@@ -1086,14 +1041,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 540:
           SetUGAHeight = TRUE;
-			  DBG("  Found one quarter of Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found one quarter of Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 640:
           SetUGAHeight = TRUE;
-			  DBG("  Found Double-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Double-size VGA Display - 3:2 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1102,18 +1057,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 576:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Super VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Super VGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 600:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Super VGA Display - 17:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Super VGA Display - 17:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 768:
           SetUGAHeight = TRUE;
-			  DBG("  Found XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1121,9 +1076,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 864) {
         SetUGAHeight = TRUE;
-		  DBG("  Found XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1280:
@@ -1131,22 +1086,22 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 720:
           SetUGAHeight = TRUE;
-			  DBG("  Found HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 768:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide XGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide XGA Display - 5:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 800:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1024:
           SetUGAHeight = TRUE;
-			  DBG("  Found Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1154,27 +1109,27 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 768) {
         SetUGAHeight = TRUE;
-		  DBG("  Found Full Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Full Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1400:
       SetUGAWidth = TRUE;
       if(UGAHeight == 1050) {
         SetUGAHeight = TRUE;
-		  DBG("  Found Super XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Super XGA Plus Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1440:
       SetUGAWidth = TRUE;
       if(UGAHeight == 900) {
         SetUGAHeight = TRUE;
-		  DBG("  Found Wide XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Wide XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 1600:
@@ -1182,14 +1137,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 900:
           SetUGAHeight = TRUE;
-			  DBG("  Found HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1200:
           SetUGAHeight = TRUE;
-			  DBG("  Found Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1198,10 +1153,10 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1050:
           SetUGAHeight = TRUE;
-			  DBG("  Found Widescreen Super XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Widescreen Super XGA Plus Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1210,14 +1165,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1080:
           SetUGAHeight = TRUE;
-			  DBG("  Found Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Full HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1200:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1226,14 +1181,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1152:
           SetUGAHeight = TRUE;
-			  DBG("  Found Quad Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Quad Wide XGA Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1536:
           SetUGAHeight = TRUE;
-			  DBG("  Found Quad XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Quad XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1242,18 +1197,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1440:
           SetUGAHeight = TRUE;
-			  DBG("  Found Quad HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Quad HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 1600:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2048:
           SetUGAHeight = TRUE;
-			  DBG("  Found Quad Wide XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Quad Wide XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1261,9 +1216,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 1800) {
         SetUGAHeight = TRUE;
-		  DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Wide Quad XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 3200:
@@ -1271,18 +1226,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 1800:
           SetUGAHeight = TRUE;
-			  DBG("  Found Quad HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Quad HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2048:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Quad Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Quad Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2400:
           SetUGAHeight = TRUE;
-			  DBG("  Found Quad Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Quad Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1291,14 +1246,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 2160:
           SetUGAHeight = TRUE;
-			  DBG("  Found Ultra HD, 4K Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Ultra HD, 4K Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 2400:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Quad Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Quad Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1306,9 +1261,9 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       SetUGAWidth = TRUE;
       if(UGAHeight == 3072) {
         SetUGAHeight = TRUE;
-		  DBG("  Found Hex XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Hex XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       } else {
-		  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+        DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
       }
       break;
     case 5120:
@@ -1316,18 +1271,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 2880:
           SetUGAHeight = TRUE;
-			  DBG("  Found Ultra HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Ultra HD Plus Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 3200:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Hex XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Hex XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4096:
           SetUGAHeight = TRUE;
-			  DBG("  Found Hex Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Hex Super XGA Display - 5:4 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1336,14 +1291,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 4096:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Hex Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Hex Super XGA Display - 25:16 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4800:
           SetUGAHeight = TRUE;
-			  DBG("  Found Hex Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Hex Ultra XGA Display - 4:3 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1352,14 +1307,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       switch (UGAHeight) {
         case 4320:
           SetUGAHeight = TRUE;
-			  DBG("  Found Full Ultra HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Full Ultra HD Display - 16:9 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         case 4800:
           SetUGAHeight = TRUE;
-			  DBG("  Found Wide Hex Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Wide Hex Ultra XGA Display - 16:10 :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
         default:
-			  DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
+          DBG("  Found Unknown Resolution Display - ?:? :: Width=%lld Height=%lld\n", UGAWidth, UGAHeight);
           break;
       }
       break;
@@ -1674,7 +1629,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x27AE: // "Intel GMA 950"                   // Mobile - Intel 945GM Express Chipset Family
       if (!SetFake) {
         FakeID = 0x27A28086 >> 16;
-		  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+        DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
         devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
         FakeID = 0x27A28086 & 0xFFFF;
         devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -1728,7 +1683,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0xA012: // "Intel GMA 3150"                  // Netbook - Intel NetBook Atom N4x0
       if (!SetFake) {
         FakeID = 0x27A28086 >> 16;
-		  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+        DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
         devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
         FakeID = 0x27A28086 & 0xFFFF;
         devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -1792,7 +1747,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x2A13: // "Intel GMA X3100"                 // Mobile - Intel 965 Express Chipset Family
       if (!SetFake) {
         FakeID = 0x2A028086 >> 16;
-		  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+        DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
         devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
         FakeID = 0x2A028086 & 0xFFFF;
         devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -1868,14 +1823,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         switch (gma_dev->device_id) {
           case 0x0042:
             FakeID = 0x00428086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x00428086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0046:
             FakeID = 0x00468086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x00468086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -1920,7 +1875,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         switch (gma_dev->device_id) {
           case 0x0116:
             FakeID = 0x01168086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -1932,7 +1887,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           case 0x0122:
           case 0x0126:
             FakeID = 0x01268086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2013,7 +1968,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x015A:
           if (!SetFake) {
             FakeID = 0x01528086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01528086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2026,7 +1981,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x0156:
           if (!SetFake) {
             FakeID = 0x01568086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01568086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2040,7 +1995,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x016A:
           if (!SetFake) {
             FakeID = 0x01628086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01628086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2053,7 +2008,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x0166:
           if (!SetFake) {
             FakeID = 0x01668086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x01668086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2175,14 +2130,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           case 0x0D12:
           case 0x0D16:
             FakeID = 0x04128086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x04128086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0A26:
             FakeID = 0x0A268086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0A268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2192,7 +2147,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           case 0x0A2B:
           case 0x0A2E:
             FakeID = 0x0A2E8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0A2E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2202,14 +2157,14 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           case 0x0D2B:
           case 0x0D2E:
             FakeID = 0x0D228086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0D228086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
             break;
           case 0x0D26:
             FakeID = 0x0D268086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0D268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2297,7 +2252,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1612:
           if (!SetFake) {
             FakeID = 0x16128086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16128086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2310,7 +2265,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1616:
           if (!SetFake) {
             FakeID = 0x16168086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2323,7 +2278,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x161E:
           if (!SetFake) {
             FakeID = 0x161E8086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x161E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2336,7 +2291,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1626:
           if (!SetFake) {
             FakeID = 0x16268086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2349,7 +2304,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x162B:
           if (!SetFake) {
             FakeID = 0x162B8086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x162B8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2364,7 +2319,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x162D:
           if (!SetFake) {
             FakeID = 0x16228086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x16228086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2438,7 +2393,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1906:
           if (!SetFake) {
             FakeID = 0x19028086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x19028086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2451,7 +2406,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1912:
           if (!SetFake) {
             FakeID = 0x19128086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x19128086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2465,7 +2420,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1921:
           if (!SetFake) {
             FakeID = 0x19168086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x19168086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2480,7 +2435,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1923:
           if (!SetFake) {
             FakeID = 0x191B8086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x191B8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2493,7 +2448,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x191E:
           if (!SetFake) {
             FakeID = 0x191E8086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x191E8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2506,7 +2461,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x1926:
           if (!SetFake) {
             FakeID = 0x19268086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x19268086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2521,7 +2476,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x192D:
           if (!SetFake) {
             FakeID = 0x19278086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x19278086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2537,7 +2492,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x193D:
           if (!SetFake) {
             FakeID = 0x193B8086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x193B8086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2648,7 +2603,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8) ) {
             if (!SetFake) {
               FakeID = 0x19028086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x19028086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2660,7 +2615,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59028086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59028086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2675,7 +2630,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19128086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x19128086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2687,7 +2642,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59128086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59128086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2703,7 +2658,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19168086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x19168086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2715,7 +2670,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59168086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59168086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2732,7 +2687,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x191B8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x191B8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2744,7 +2699,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x591B8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x591B8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2760,7 +2715,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x191E8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x191E8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2772,7 +2727,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x591E8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x591E8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2787,7 +2742,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19168086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x19168086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2799,7 +2754,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59238086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59238086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2814,7 +2769,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19268086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x19268086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2826,7 +2781,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59268086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59268086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2838,10 +2793,11 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
         case 0x5927:
-          if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
+          if (Entry->OSVersion.notEmpty() &&
+              Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x19278086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x19278086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2853,7 +2809,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59278086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59278086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2869,7 +2825,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.12.6"_XS8)) {
             if (!SetFake) {
               FakeID = 0x191E8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x191E8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2881,7 +2837,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.14"_XS8)) {
             if (!SetFake) {
               FakeID = 0x591E8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x591E8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -2893,7 +2849,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x87C08086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x87C08086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3012,7 +2968,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E908086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x3E908086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3024,7 +2980,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59028086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59028086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3040,7 +2996,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E918086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x3E918086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3052,7 +3008,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59128086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59128086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3069,7 +3025,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E928086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x3E928086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3081,7 +3037,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59128086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59128086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3100,7 +3056,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3E9B8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x3E9B8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3112,7 +3068,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x591B8086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x591B8086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3128,7 +3084,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
               (Entry->BuildVersion.contains("17G2") || FileExists(Entry->Volume->RootDir, CFLFBPath)))) {
             if (!SetFake) {
               FakeID = 0x3EA58086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x3EA58086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3140,7 +3096,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           } else {
             if (!SetFake) {
               FakeID = 0x59278086 >> 16;
-				DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+              DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
               devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
               FakeID = 0x59278086 & 0xFFFF;
               devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3226,7 +3182,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x0A01:
           if (!SetFake) {
             FakeID = 0x0A018086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x0A018086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3239,7 +3195,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A40:
           if (!SetFake) {
             FakeID = 0x5A408086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A408086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3252,7 +3208,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A41:
           if (!SetFake) {
             FakeID = 0x5A418086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A418086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3265,7 +3221,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A49:
           if (!SetFake) {
             FakeID = 0x5A498086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A498086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3278,7 +3234,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A50:
           if (!SetFake) {
             FakeID = 0x5A508086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A508086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3291,7 +3247,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A51:
           if (!SetFake) {
             FakeID = 0x5A518086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A518086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3305,7 +3261,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A54:
           if (!SetFake) {
             FakeID = 0x5A528086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A528086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3318,7 +3274,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         case 0x5A59:
           if (!SetFake) {
             FakeID = 0x5A598086 >> 16;
-			  DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
+            DBG("  Found FakeID Intel GFX = 0x%04x8086\n", FakeID);
             devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
             FakeID = 0x5A598086 & 0xFFFF;
             devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
@@ -3354,7 +3310,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
       }*/
 
-      // if wakes up with an HDMI connected, somtimes this value causes force reboot in 10.14+
+      // if wakes up with an HDMI connected, sometimes this value causes force reboot in 10.14+
       if ( Entry->OSVersion.notEmpty() && Entry->OSVersion < MacOsVersion("10.14"_XS8)) {
         devprop_add_value(device, "AAPL,GfxYTile", cannonlake_hd_vals[1], 4);
       }

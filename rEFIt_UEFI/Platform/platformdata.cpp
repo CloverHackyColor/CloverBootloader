@@ -300,6 +300,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "MacBookPro16,3"_XS8, "MBP163.88Z.F000.B00.2005132118"_XS8, "1037.120.87.0.0"_XS8, "Mac-E7203C0F68AA0004"_XS8, // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CJHACP3XY"_XS8, "MacBook-Aluminum"_XS8,
     0, 0, 0, 0, 0, 0, ""_XS8, "J223"_XS8, 0 },
+  //MacBookPro16,4 / MacBook Pro (16-inch, 2019)  AMD Radeon Pro 5600M
+  { "MacBookPro16,4"_XS8, "MBP164.88Z.F000.B00.2008092231"_XS8, "1554.40.9.0.0"_XS8, "Mac-A61BADE1FDAD7B05"_XS8, // Intel Core i9-9880H @ 2.30 GHz
+    "MacBook Pro"_XS8, "1.0"_XS8, "C02CWHACMD6T"_XS8, "MacBook-Aluminum"_XS8,
+    0, 0, 0, 0, 0, 0, ""_XS8, "J215"_XS8, 0 },
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1"_XS8, "MBA11.88Z.00BB.B03.0803171226"_XS8, ""_XS8, "Mac-F42C8CC8"_XS8, // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "W864947A18X"_XS8, "Air-Enclosure"_XS8,
@@ -526,12 +530,14 @@ PLATFORMDATA ApplePlatformData[] =
     0x02, 0x47, 0x0f, 0, 0, 0x03, "j138_9"_XS8, "j138"_XS8, 0xf0d009 },
   //iMac20,1 / iMac (Retina 5K, 27-inch, 2020) Intel Core i5-10500 @ 3.10 GHz
   { "iMac20,1"_XS8, "IM201.88Z.F000.B00.2008092228"_XS8, "1554.40.9.0.0"_XS8, "Mac-CFF7D910A743CAAF"_XS8,
-    "iMac"_XS8, "1.0"_XS8, "C02D38RCPN5T"_XS8, "iMac-Aluminum"_XS8,
-    0x02, 0x46, 0x0f, 0, 0, 0x12, "j185"_XS8, "j185"_XS8, 0xf0d009 },
+    "iMac"_XS8, "1.0"_XS8, "C02D3HACPN5T"_XS8, "iMac-Aluminum"_XS8,
+    0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
+//    0x02, 0x46, 0x0f, 0, 0, 0x12, "j185"_XS8, "j185"_XS8, 0xf0d009 },
   //iMac20,2 / iMac (Retina 4K, 21.5-inch, 2020) Intel Core i9-10910 @ 3.60 GHz
   { "iMac20,2"_XS8, "IM201.88Z.F000.B00.2008092228"_XS8, "1554.40.9.0.0"_XS8, "Mac-AF89B6D9451A490B"_XS8,
-    "iMac"_XS8, "1.0"_XS8, "C02D201H046M"_XS8, "iMac-Aluminum"_XS8,
-    0x02, 0x47, 0x0f, 0, 0, 0x03, "j185f"_XS8, "j185f"_XS8, 0xf0d009 },
+    "iMac"_XS8, "1.0"_XS8, "C02D2HAC046M"_XS8, "iMac-Aluminum"_XS8,
+    0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
+//    0x02, 0x47, 0x0f, 0, 0, 0x03, "j185f"_XS8, "j185f"_XS8, 0xf0d009 },
   //iMacPro1,1 /iMac Pro (2017)
   { "iMacPro1,1"_XS8, "IMP11.88Z.F000.B00.2005132136"_XS8, "1037.120.87.0.0"_XS8, "Mac-7BA5B2D9E42DDD94"_XS8, // Intel Xeon W-2140B CPU @ 3.20 GHz
     "iMac Pro"_XS8, "1.0"_XS8, "C02VVHACHX87"_XS8, "iMacPro-Aluminum"_XS8,
@@ -759,6 +765,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
     case MacBookPro162:
     case MacBookPro163:
+    case MacBookPro164:
       gFwFeatures             = 0xFDAFF066;
       break;
 
@@ -883,6 +890,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       break;
     case MacBookPro162:
     case MacBookPro163:
+    case MacBookPro164:
       gFwFeaturesMask         = 0xFFFFFF7F;
       break;
 
@@ -997,6 +1005,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro161:
     case MacBookPro162:
     case MacBookPro163:
+    case MacBookPro164:
       gPlatformFeature        = 0x32;
       break;
     case MacBookAir81:
@@ -1086,6 +1095,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro161:
     case MacBookPro162:
     case MacBookPro163:
+    case MacBookPro164:
     case MacBookAir71:
     case MacBookAir72:
     case MacBookAir81:
