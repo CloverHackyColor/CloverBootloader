@@ -533,7 +533,7 @@ PLATFORMDATA ApplePlatformData[] =
     "iMac"_XS8, "1.0"_XS8, "C02D3HACPN5T"_XS8, "iMac-Aluminum"_XS8,
     0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
 //    0x02, 0x46, 0x0f, 0, 0, 0x12, "j185"_XS8, "j185"_XS8, 0xf0d009 },
-  //iMac20,2 / iMac (Retina 4K, 21.5-inch, 2020) Intel Core i9-10910 @ 3.60 GHz
+  //iMac20,2 / iMac (Retina 5K, 27-inch, 2020) Intel Core i9-10910 @ 3.60 GHz
   { "iMac20,2"_XS8, "IM201.88Z.F000.B00.2008092228"_XS8, "1554.40.9.0.0"_XS8, "Mac-AF89B6D9451A490B"_XS8,
     "iMac"_XS8, "1.0"_XS8, "C02D2HAC046M"_XS8, "iMac-Aluminum"_XS8,
     0,0,0,0,0,0,""_XS8, "j185"_XS8, 0},
