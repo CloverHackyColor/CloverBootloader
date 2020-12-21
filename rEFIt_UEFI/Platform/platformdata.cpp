@@ -299,11 +299,11 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookPro16,3 / MacBook Pro (13-inch, 2020, Two Thunderbolt 3 ports)
   { "MacBookPro16,3"_XS8, "MBP163.88Z.F000.B00.2005132118"_XS8, "1037.120.87.0.0"_XS8, "Mac-E7203C0F68AA0004"_XS8, // Intel Core i7-8557U @ 1.70 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CJHACP3XY"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, ""_XS8, "J223"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j223"_XS8, 0 },
   //MacBookPro16,4 / MacBook Pro (16-inch, 2019)  AMD Radeon Pro 5600M
   { "MacBookPro16,4"_XS8, "MBP164.88Z.F000.B00.2008092231"_XS8, "1554.40.9.0.0"_XS8, "Mac-A61BADE1FDAD7B05"_XS8, // Intel Core i9-9880H @ 2.30 GHz
     "MacBook Pro"_XS8, "1.0"_XS8, "C02CWHACMD6T"_XS8, "MacBook-Aluminum"_XS8,
-    0, 0, 0, 0, 0, 0, ""_XS8, "J215"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j215"_XS8, 0 },
   //MacBookAir1,1 / MacBook Air (Original)
   { "MacBookAir1,1"_XS8, "MBA11.88Z.00BB.B03.0803171226"_XS8, ""_XS8, "Mac-F42C8CC8"_XS8, // Intel Core 2 Duo P7500 @ 1.60 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "W864947A18X"_XS8, "Air-Enclosure"_XS8,
@@ -363,7 +363,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir9,1 / MacBook Air (Retina, 13-inch, 2020)
   { "MacBookAir9,1"_XS8, "MBA91.88Z.F000.B00.2005132117"_XS8, "1037.120.87.0.0"_XS8, "Mac-0CFF9C7C2B63DF8D"_XS8, // Intel Core i5-1030NG7 @ 1.10 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFCCHACMNHP"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, ""_XS8, "J230K"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j230K"_XS8, 0 },
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1"_XS8, "MM11.88Z.0055.B08.0610121326"_XS8, ""_XS8, "Mac-F4208EC8"_XS8, // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini"_XS8, "1.0"_XS8, "W8702N1JU35"_XS8, "Mini-Aluminum"_XS8,
