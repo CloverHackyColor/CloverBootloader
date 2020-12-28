@@ -1,3 +1,4 @@
 [submodule "OpenCorePkg"]
 	path = OpenCorePkg
-	url = https://github.com/CloverHackyColor/OpenCorePkg.git
+	url = https://github.com/serdeliuk/OpenCorePkg.git
+	branch = 0.6.4-Clover
