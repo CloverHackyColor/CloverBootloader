@@ -477,6 +477,7 @@
   gMsgLogProtocolGuid
   gEfiPlatformDriverOverrideProtocolGuid
   gEmuVariableControlProtocolGuid
+  gEfiAudioDecodeProtocolGuid         # PRODUCES
   gEfiAudioIoProtocolGuid # CONSUMES
   gOcQuirksProtocolGuid
   gAptioMemoryFixProtocolGuid
