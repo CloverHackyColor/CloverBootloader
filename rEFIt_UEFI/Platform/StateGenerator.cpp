@@ -377,10 +377,10 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
       AML_CHUNK* metPCT;
       AML_CHUNK* root = aml_create_node(NULL);
       aml_add_buffer(root, (UINT8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
-		snprintf(name, 31, "%s%4s", acpi_cpu_score, acpi_cpu_name[0]);
-		snprintf(name1, 31, "%s%4sPSS_", acpi_cpu_score, acpi_cpu_name[0]);
-		snprintf(name2, 31, "%s%4sPCT_", acpi_cpu_score, acpi_cpu_name[0]);
-		snprintf(name3, 31, "%s%4s_PPC", acpi_cpu_score, acpi_cpu_name[0]);
+      snprintf(name, 31, "%s%4s", acpi_cpu_score, acpi_cpu_name[0]);
+      snprintf(name1, 31, "%s%4sPSS_", acpi_cpu_score, acpi_cpu_name[0]);
+      snprintf(name2, 31, "%s%4sPCT_", acpi_cpu_score, acpi_cpu_name[0]);
+      snprintf(name3, 31, "%s%4s_PPC", acpi_cpu_score, acpi_cpu_name[0]);
 
       scop = aml_add_scope(root, name);
       
@@ -444,7 +444,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
         // Add CPUs
         for (decltype(Number) i = 1; i < Number; i++) {
-			snprintf(name, 31, "%s%4s", acpi_cpu_score, acpi_cpu_name[i]);
+          snprintf(name, 31, "%s%4s", acpi_cpu_score, acpi_cpu_name[i]);
           scop = aml_add_scope(root, name);
           metPSS = aml_add_method(scop, "_PSS", 0);
           aml_add_return_name(metPSS, name1);
