@@ -12,8 +12,6 @@
 			<false/>
 			<key>#UseSystemIO</key>
 			<false/>
-			<key>#PluginType</key>
-			<integer>0</integer>
 			<key>#DoubleFirstState</key>
 			<true/>
 			<key>#EnableC2</key>
