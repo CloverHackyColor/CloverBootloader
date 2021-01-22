@@ -22,6 +22,7 @@ extern "C" {
 #include <Library/OcDevicePathLib.h>
 //#include <Library/OcCpuLib.h> // OC_CPU_INFO
 //#include <Protocol/OcBootstrap.h> // OC_BOOTSTRAP_PROTOCOL
+#include <Library/OcBootManagementLib/BootManagementInternal.h>
 
 #include <Guid/AppleApfsInfo.h>
 

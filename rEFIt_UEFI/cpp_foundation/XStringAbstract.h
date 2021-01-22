@@ -416,12 +416,15 @@ public:
 		}
 		return subString(lastSepPos+1, MAX_XSIZE);
 	}
-//	ThisXStringClass dirname() const
-//	{
-//		size_t idx = rindexOf('/');
-//		if ( idx == MAX_XSIZE ) return ThisXStringClass();
-//		return subString(0, idx);
-//	}
+	ThisXStringClass dirname() const
+	{
+	  size_t idx;
+    idx = rindexOf('\\');
+    if ( idx != MAX_XSIZE ) return subString(0, idx);
+    idx = rindexOf('/');
+    if ( idx != MAX_XSIZE ) return subString(0, idx);
+		return ThisXStringClass();
+	}
 
 //	void insert(const __String<T, ThisXStringClass>& Str, size_t pos);
 //{
