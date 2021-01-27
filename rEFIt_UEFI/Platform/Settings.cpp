@@ -2900,17 +2900,17 @@ GetEarlyUserSettings (
 
             if (VBiosPatch->Find == NULL || FindSize == 0) {
               Valid = FALSE;
-				DBG("PatchVBiosBytes[%lld]: missing Find data\n", i);
+              DBG("PatchVBiosBytes[%lld]: missing Find data\n", i);
             }
 
             if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
               Valid = FALSE;
-				DBG("PatchVBiosBytes[%lld]: missing Replace data\n", i);
+              DBG("PatchVBiosBytes[%lld]: missing Replace data\n", i);
             }
 
             if (FindSize != ReplaceSize) {
               Valid = FALSE;
-				DBG("PatchVBiosBytes[%lld]: Find and Replace data are not the same size\n", i);
+              DBG("PatchVBiosBytes[%lld]: Find and Replace data are not the same size\n", i);
             }
 
             if (Valid) {
