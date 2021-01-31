@@ -181,6 +181,17 @@
 		9ACAB117242623EE00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
 		9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */ = {isa = PBXBuildFile; fileRef = 9ACAB116242623EE00BDB3CF /* printf_lite.c */; };
+		9AD0358C25C57A4500E58351 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */; };
+		9AD0358D25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */; };
+		9AD0358E25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */; };
+		9AD0358F25C57AFB00E58351 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */; };
+		9AD0359025C57BF700E58351 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CBF253485C8008303F5 /* BaseLib.c */; };
+		9AD0359125C57BF700E58351 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CBF253485C8008303F5 /* BaseLib.c */; };
+		9AD0359225C57BF700E58351 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CBF253485C8008303F5 /* BaseLib.c */; };
+		9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
+		9AD0359525C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
+		9AD0359625C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
+		9AD0359725C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -337,6 +348,10 @@
 		9AC790112452C45A0004FBE9 /* abort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = abort.h; sourceTree = "<group>"; };
 		9ACAB116242623EE00BDB3CF /* printf_lite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = printf_lite.c; sourceTree = "<group>"; };
 		9ACAB1182426240C00BDB3CF /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = printf_lite.h; path = ../../Include/Library/printf_lite.h; sourceTree = "<group>"; };
+		9AD0358925C5797E00E58351 /* MemoryAllocationLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemoryAllocationLib.h; sourceTree = "<group>"; };
+		9AD0358A25C579B200E58351 /* PrintLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintLib.h; sourceTree = "<group>"; };
+		9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryAllocationLib.c; sourceTree = "<group>"; };
+		9AD0359325C57C8A00E58351 /* PrintLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PrintLib.c; sourceTree = "<group>"; };
 		9AD469472452B33700D6D0DB /* shared_with_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shared_with_menu.cpp; sourceTree = "<group>"; };
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
 		9AF4156D242CBC4900D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "printf_lite-conf.h"; path = "../../Include/Library/printf_lite-conf.h"; sourceTree = "<group>"; };
@@ -581,6 +596,8 @@
 		9A838CB7253481FF008303F5 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				9AD0358925C5797E00E58351 /* MemoryAllocationLib.h */,
+				9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */,
 				9A838CB825348237008303F5 /* BaseMemoryLib.h */,
 				9A838CB925348237008303F5 /* BaseMemoryLib.c */,
 				9A838CBE253485C8008303F5 /* BaseLib.h */,
@@ -590,6 +607,8 @@
 				9A838CC425348610008303F5 /* OcMiscLib.h */,
 				9A838CC52534933F008303F5 /* Base.h */,
 				9A838CC62534946C008303F5 /* ProcessorBind.h */,
+				9AD0358A25C579B200E58351 /* PrintLib.h */,
+				9AD0359325C57C8A00E58351 /* PrintLib.c */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -751,10 +770,12 @@
 				9A36E50524F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50124F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A36E50D24F3B537007A1107 /* TagData.cpp in Sources */,
+				9AD0358D25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */,
 				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A36E52D24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A36E53D24F3EDED007A1107 /* base64.cpp in Sources */,
+				9AD0359025C57BF700E58351 /* BaseLib.c in Sources */,
 				9A28CD20241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A4FFA842451C9740050B38B /* XString.cpp in Sources */,
 				9A4FFA822451C88D0050B38B /* XString_test.cpp in Sources */,
@@ -782,6 +803,7 @@
 				9A36E51124F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F124F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50924F3B537007A1107 /* TagDate.cpp in Sources */,
+				9AD0359525C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E52024F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
@@ -800,10 +822,12 @@
 				9A36E50724F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50324F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A36E50F24F3B537007A1107 /* TagData.cpp in Sources */,
+				9AD0358F25C57AFB00E58351 /* MemoryAllocationLib.c in Sources */,
 				9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */,
 				9A36E52F24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A2A7C6D24576CCE00422263 /* XObjArray_tests.cpp in Sources */,
 				9A36E53F24F3EDED007A1107 /* base64.cpp in Sources */,
+				9AD0359225C57BF700E58351 /* BaseLib.c in Sources */,
 				9A2A7C6E24576CCE00422263 /* abort.cpp in Sources */,
 				9A2A7C6F24576CCE00422263 /* XString.cpp in Sources */,
 				9A2A7C7024576CCE00422263 /* XString_test.cpp in Sources */,
@@ -831,6 +855,7 @@
 				9A36E51324F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F324F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50B24F3B537007A1107 /* TagDate.cpp in Sources */,
+				9AD0359725C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */,
 				9A36E52224F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */,
@@ -849,10 +874,12 @@
 				9A36E50624F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50224F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A36E50E24F3B537007A1107 /* TagData.cpp in Sources */,
+				9AD0358E25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */,
 				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9A36E52E24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A57C21A2418B9A00029A39F /* XObjArray_tests.cpp in Sources */,
 				9A36E53E24F3EDED007A1107 /* base64.cpp in Sources */,
+				9AD0359125C57BF700E58351 /* BaseLib.c in Sources */,
 				9A28CD21241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A4FFA852451C9740050B38B /* XString.cpp in Sources */,
 				9A4FFA832451C88D0050B38B /* XString_test.cpp in Sources */,
@@ -880,6 +907,7 @@
 				9A36E51224F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F224F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50A24F3B537007A1107 /* TagDate.cpp in Sources */,
+				9AD0359625C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A36E52124F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */,
@@ -899,6 +927,7 @@
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A4C576B255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
+				9AD0358C25C57A4500E58351 /* MemoryAllocationLib.c in Sources */,
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */,
 				9A36E52C24F3C846007A1107 /* plist_tests.cpp in Sources */,
@@ -935,6 +964,7 @@
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A4C5771255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
 				9A36E50824F3B537007A1107 /* TagDate.cpp in Sources */,
+				9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */,
 				9A838CC3253485DC008303F5 /* DebugLib.c in Sources */,
 				9A0B085B2402FF8700E2B470 /* XArray_tests.cpp in Sources */,

@@ -432,7 +432,7 @@ void LOADER_ENTRY::FilterKextPatches()
         i,
         KernelAndKextPatches.KextPatches[i].Label.c_str(),
         KernelAndKextPatches.KextPatches[i].IsPlistPatch ? "PlistPatch" : "BinPatch",
-        OSVersion.asString().c_str(),
+        macOSVersion.asString().c_str(),
         KernelAndKextPatches.KextPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchOS.c_str() : "All",
         KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KextPatches[i].MatchBuild.c_str() : "All"
       );
@@ -448,7 +448,7 @@ void LOADER_ENTRY::FilterKextPatches()
         continue; 
       }
 
-      KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchOS, OSVersion);
+      KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchOS, macOSVersion);
       DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
@@ -462,7 +462,7 @@ void LOADER_ENTRY::FilterKernelPatches()
       DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
         i,
         KernelAndKextPatches.KernelPatches[i].Label.c_str(),
-        OSVersion.asString().c_str(),
+        macOSVersion.asString().c_str(),
         KernelAndKextPatches.KernelPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchOS.c_str() : "All",
         KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.KernelPatches[i].MatchBuild.c_str() : "no"
       );
@@ -478,7 +478,7 @@ void LOADER_ENTRY::FilterKernelPatches()
         continue; 
       }
 
-      KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchOS, OSVersion);
+      KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchOS, macOSVersion);
       DBG(" ==> %s by OS\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
@@ -492,7 +492,7 @@ void LOADER_ENTRY::FilterBootPatches()
       DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
           i,
           KernelAndKextPatches.BootPatches[i].Label.c_str(),
-          OSVersion.asString().c_str(),
+          macOSVersion.asString().c_str(),
           KernelAndKextPatches.BootPatches[i].MatchOS.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchOS.c_str() : "All",
           KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty() ? KernelAndKextPatches.BootPatches[i].MatchBuild.c_str() : "no"
           );
@@ -507,7 +507,7 @@ void LOADER_ENTRY::FilterBootPatches()
         continue;
       }
  
-      KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchOS, OSVersion);
+      KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchOS, macOSVersion);
       DBG(" ==> %s by OS\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
   
     }
@@ -1265,7 +1265,7 @@ void LOADER_ENTRY::StartLoader()
     // Correct OSVersion if it was not found
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
     // For these cases, take OSVersion from loaded boot.efi image in memory
-    if (/*LoaderType == OSTYPE_OSX_INSTALLER ||*/ OSVersion.isEmpty()) {
+    if (/*LoaderType == OSTYPE_OSX_INSTALLER ||*/ macOSVersion.isEmpty()) {
 
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
@@ -1291,8 +1291,8 @@ void LOADER_ENTRY::StartLoader()
             InstallerVersion = NULL; // flag known version was not found
           }
           if (InstallerVersion != NULL) { // known version was found in image
-            OSVersion = InstallerVersion;
-            DBG("Corrected OSVersion: %s\n", OSVersion.asString().c_str());
+            macOSVersion = InstallerVersion;
+            DBG("Corrected OSVersion: %s\n", macOSVersion.asString().c_str());
           }
         }
       }
@@ -1300,12 +1300,12 @@ void LOADER_ENTRY::StartLoader()
     }
 
     if (BuildVersion.notEmpty()) {
-      DBG(" %s (%s)\n", OSVersion.asString().c_str(), BuildVersion.c_str());
+      DBG(" %s (%s)\n", macOSVersion.asString().c_str(), BuildVersion.c_str());
     } else {
-      DBG(" %s\n", OSVersion.asString().c_str());
+      DBG(" %s\n", macOSVersion.asString().c_str());
     }
 
-    if ( OSVersion >= MacOsVersion("10.11"_XS8) ) {
+    if ( macOSVersion >= MacOsVersion("10.11"_XS8) ) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
         gSettings.CsrActiveConfig = (UINT32)0xB7F;
         gSettings.BooterConfig = 0x28;
@@ -1326,7 +1326,7 @@ void LOADER_ENTRY::StartLoader()
     if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES)  &&  !LoadOptions.containsStartWithIC("Kernel=")  ) {
       XString8 KernelLocation;
 
-      if ( OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.9"_XS8) ) {
+      if ( macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.9"_XS8) ) {
         KernelLocation.S8Printf("\"Kernel=/mach_kernel\"");
       } else {
         // used for 10.10, 10.11, and new version. Jief : also for unknown version.
@@ -1345,7 +1345,7 @@ void LOADER_ENTRY::StartLoader()
 	  CheckEmptyFB();
     PatchSmbios();
 //    DBG("PatchACPI\n");
-    PatchACPI(Volume, OSVersion);
+    PatchACPI(Volume, macOSVersion);
 //
 //  // If KPDebug is true boot in verbose mode to see the debug messages
 //  if (KernelAndKextPatches.KPDebug) {
@@ -1390,7 +1390,7 @@ void LOADER_ENTRY::StartLoader()
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Vendor == CPU_VENDOR_INTEL && gCPUStructure.Model >= CPU_MODEL_HASWELL &&
        (AsciiStrStr(gCPUStructure.BrandString, "Celeron") || AsciiStrStr(gCPUStructure.BrandString, "Pentium")) &&
-       OSVersion >= MacOsVersion("10.8.5"_XS8)  &&  OSVersion < MacOsVersion("10.12"_XS8)  &&
+       macOSVersion >= MacOsVersion("10.8.5"_XS8)  &&  macOSVersion < MacOsVersion("10.12"_XS8)  &&
        (!LoadOptions.containsIC("-xcpm"))) {
         // add "-xcpm" argv if not present on Haswell+ Celeron/Pentium
         LoadOptions.AddID("-xcpm"_XS8);
@@ -1399,7 +1399,7 @@ void LOADER_ENTRY::StartLoader()
     // add -xcpm on Ivy Bridge if set KernelXCPM and system version is 10.8.5 - 10.11.x
     if (KernelAndKextPatches.KPKernelXCPM &&
         gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE &&
-        OSVersion >= MacOsVersion("10.8.5"_XS8)  &&  OSVersion < MacOsVersion("10.12"_XS8)  &&
+        macOSVersion >= MacOsVersion("10.8.5"_XS8)  &&  macOSVersion < MacOsVersion("10.12"_XS8)  &&
         (!LoadOptions.containsIC("-xcpm"))) {
       // add "-xcpm" argv if not present on Ivy Bridge
       LoadOptions.AddID("-xcpm"_XS8);

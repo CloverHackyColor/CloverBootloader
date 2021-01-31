@@ -148,6 +148,22 @@ public:
     return SIZE_T_MAX;
   }
 
+  size_t getApfsLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID, uint8_t osType)
+  {
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
+        if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->LoaderType == osType ) {
+          if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsContainerUUID == ApfsContainerUUID ) {
+            if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsFileSystemUUID == ApfsFileSystemUUID ) {
+              return i;
+            }
+          }
+        }
+      }
+    }
+    return SIZE_T_MAX;
+  }
+
   size_t getApfsPrebootLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID)
   {
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
@@ -156,6 +172,24 @@ public:
           if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsContainerUUID == ApfsContainerUUID ) {
             if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->APFSTargetUUID == ApfsFileSystemUUID ) {
               return i;
+            }
+          }
+        }
+      }
+    }
+    return SIZE_T_MAX;
+  }
+
+  size_t getApfsPrebootLoaderIdx(const XString8& ApfsContainerUUID, const XString8& ApfsFileSystemUUID, uint8_t osType)
+  {
+    for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
+      if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY() ) {
+        if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->LoaderType == osType ) {
+          if ( (XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0 ) {
+            if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->Volume->ApfsContainerUUID == ApfsContainerUUID ) {
+              if ( XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::ElementAt(i).getLOADER_ENTRY()->APFSTargetUUID == ApfsFileSystemUUID ) {
+                return i;
+              }
             }
           }
         }

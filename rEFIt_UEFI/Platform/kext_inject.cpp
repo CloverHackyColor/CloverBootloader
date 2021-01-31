@@ -408,7 +408,7 @@ void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirN
 //}
 
 // Jief : this should replace LOADER_ENTRY::AddKexts
-void LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8& Path, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray)
+void LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, cpu_type_t archCpuType, XObjArray<SIDELOAD_KEXT>* kextArray)
 {
   XStringW                 FileName;
   XStringW                 PlugInName;
@@ -417,7 +417,7 @@ void LOADER_ENTRY::AddKextsFromDirInArray(const XString8& SrcDir, const XString8
   for ( size_t idx = 0 ; idx < InjectKextList.size() ; idx ++ ) {
     SIDELOAD_KEXT& CurrentKext = InjectKextList[idx];
 //    DBG("  current kext name=%ls path=%ls, match against=%s\n", CurrentKext.FileName.wc_str(), CurrentKext.KextDirNameUnderOEMPath.wc_str(), Path.c_str());
-    if ( CurrentKext.KextDirNameUnderOEMPath == Path ) {
+    if ( CurrentKext.KextDirNameUnderOEMPath == SrcDir ) {
       FileName = SWPrintf("%s\\%ls", SrcDir.c_str(), CurrentKext.FileName.wc_str());
       if (!(CurrentKext.MenuItem.BValue)) {
         // inject require
@@ -479,12 +479,12 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
 //  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
   } else if (LoadOptions.contains("arch=i386")) {
     archCpuType = CPU_TYPE_I386;
-  } else if (OSVersion.notEmpty()) {
-//    UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-    if (OSVersion.isEmpty() || OSVersion >= MacOsVersion("10.8"_XS8)) {
-      archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
-    } else if (OSVersion < MacOsVersion("10.7"_XS8)) {
-      archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
+  } else if (macOSVersion.notEmpty()) {
+//    UINT64 os_version = AsciiOSVersionToUint64(macOSVersion);
+    if (macOSVersion.isEmpty() || macOSVersion >= MacOsVersion("10.8"_XS8)) {
+      archCpuType = CPU_TYPE_X86_64; // For macOSVersion >= 10.8, only x86_64 exists
+    } else if (macOSVersion < MacOsVersion("10.7"_XS8)) {
+      archCpuType = CPU_TYPE_I386; // For macOSVersion < 10.7, use default of i386
     }
   }
 
@@ -519,104 +519,74 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
   }
 
 //  XStringW UniOSVersion;
-//  UniOSVersion = OSVersion;
+//  UniOSVersion = macOSVersion;
 //  DBG("UniOSVersion == %ls\n", UniOSVersion.wc_str());
 //
 //  XStringW UniShortOSVersion;
 ////  XString8 ShortOSVersion;
-//  if ( OSVersion  < MacOsVersion("10.10"_XS8)) {
-//    // OSVersion that are earlier than 10.10(form: 10.x.y)
-////    ShortOSVersion.strncpy(OSVersion.c_str(), 4);
-//    UniShortOSVersion.strncpy(OSVersion.c_str(), 4);
+//  if ( macOSVersion  < MacOsVersion("10.10"_XS8)) {
+//    // macOSVersion that are earlier than 10.10(form: 10.x.y)
+////    ShortOSVersion.strncpy(macOSVersion.c_str(), 4);
+//    UniShortOSVersion.strncpy(macOSVersion.c_str(), 4);
 //  } else {
-////    ShortOSVersion.strncpy(OSVersion.c_str(), 5);
-//    UniShortOSVersion.strncpy(OSVersion.c_str(), 5);
+////    ShortOSVersion.strncpy(macOSVersion.c_str(), 5);
+//    UniShortOSVersion.strncpy(macOSVersion.c_str(), 5);
 //  }
 ////  DBG("ShortOSVersion == %s\n", ShortOSVersion.c_str());
 //  DBG("UniShortOSVersion == %ls\n", UniShortOSVersion.wc_str());
 
   // syscl - allow specific load inject kext
-  // Clover/Kexts/Other is for general injection thus we need to scan both Other and OSVersion folder
+  // Clover/Kexts/Other is for general injection thus we need to scan both Other and macOSVersion folder
   SrcDir = GetOtherKextsDir(TRUE);
   if ( SrcDir.notEmpty() ) {
-    AddKextsFromDirInArray(SrcDir, "Other"_XS8, archCpuType, kextArray);
+    AddKextsFromDirInArray(SrcDir, archCpuType, kextArray);
   } else {
     DBG("GetOtherKextsDir(TRUE) return NULL\n");
   }
     // slice: CLOVER/kexts/Off keep disabled kext which can be allowed
   SrcDir = GetOtherKextsDir(FALSE);
   if ( SrcDir.notEmpty() ) {
-    AddKextsFromDirInArray(SrcDir, "Off"_XS8, archCpuType, kextArray);
+    AddKextsFromDirInArray(SrcDir, archCpuType, kextArray);
   } else {
     DBG("GetOtherKextsDir(FALSE) return NULL\n");
   }
 
-  if ( OSVersion.notEmpty() )
+  if ( macOSVersion.notEmpty() )
   {
-  // Add kext from 10 or 11
-    XStringW osMajorVersion = OSVersion.asString(1);
+    XString8 OSVersionKextsDirName; // declare here to avoid multiple allocation
 
-    XStringW OSAllVersionKextsDir;
-    XStringW OSShortVersionKextsDir;
-    XStringW DirName;
-    XStringW DirPath;
 
-    OSAllVersionKextsDir = SWPrintf("%ls", osMajorVersion.wc_str());
-    AddKextsFromDirInArray(OSAllVersionKextsDir, osMajorVersion, archCpuType, kextArray);
-    DirName = S8Printf("%ls_%s", osMajorVersion.wc_str(), getSuffixForMacOsVersion(LoaderType).c_str());
+    // Add kext from 10 or 11
 
-//    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-//      DirName = SWPrintf("%ls_install", osMajorVersion.wc_str());
-//    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-//      DirName = SWPrintf("%ls_recovery", osMajorVersion.wc_str());
-//    } else {
-//      DirName = SWPrintf("%ls_normal", osMajorVersion.wc_str());
-//    }
-    DirPath = SWPrintf("%ls", DirName.wc_str());
-    AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
+    OSVersionKextsDirName = macOSVersion.asString(1);
+    AddKextsFromDirInArray(OSVersionKextsDirName, archCpuType, kextArray);
+    OSVersionKextsDirName.S8Catf("_%s", getSuffixForMacOsVersion(LoaderType).c_str());
+    AddKextsFromDirInArray(OSVersionKextsDirName, archCpuType, kextArray);
 
 
     // Add kext from ${osMajorVersion}.{version}
 
-    OSShortVersionKextsDir = OSVersion.asString(2);
-    AddKextsFromDirInArray( OSShortVersionKextsDir, OSShortVersionKextsDir, archCpuType, kextArray);
-    DirName = S8Printf("%ls_%s", OSShortVersionKextsDir.wc_str(), getSuffixForMacOsVersion(LoaderType).c_str());
-
-//    if (OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-//      DirName = SWPrintf("%ls_install", OSShortVersionKextsDir.wc_str());
-//    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-//      DirName = SWPrintf("%ls_recovery", OSShortVersionKextsDir.wc_str());
-//    } else {
-//      DirName = SWPrintf("%ls_normal", OSShortVersionKextsDir.wc_str());
-//    }
-    DirPath = SWPrintf("%ls", DirName.wc_str());
-    AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
+    OSVersionKextsDirName = macOSVersion.asString(2);
+    if ( macOSVersion.elementAt(1) == -1 ) OSVersionKextsDirName.S8Catf(".0");
+    AddKextsFromDirInArray( OSVersionKextsDirName, archCpuType, kextArray);
+    OSVersionKextsDirName.S8Catf("_%s", getSuffixForMacOsVersion(LoaderType).c_str());
+    AddKextsFromDirInArray(OSVersionKextsDirName, archCpuType, kextArray);
 
 
     // Add kext from :
     // ${osMajorVersion}.{version}.0 if NO minor version
     // ${osMajorVersion}.{version}.{minor version} if minor version is > 0
 
-    XString8 OSVersionKextsDirName;
-    OSVersionKextsDirName = OSVersion.asString(3);
-    if ( OSVersion.elementAt(2) == -1 ) OSVersionKextsDirName.S8Catf(".0");
+    OSVersionKextsDirName = macOSVersion.asString(3);
+    if ( macOSVersion.elementAt(1) == -1 ) OSVersionKextsDirName.S8Catf(".0");
+    if ( macOSVersion.elementAt(2) == -1 ) OSVersionKextsDirName.S8Catf(".0");
 
-    DirPath = SWPrintf("%s", OSVersionKextsDirName.c_str());
-    AddKextsFromDirInArray(DirPath, OSVersionKextsDirName, archCpuType, kextArray);
-    DirName = S8Printf("%s_%s", OSVersionKextsDirName.c_str(), getSuffixForMacOsVersion(LoaderType).c_str());
-
-//    if ( OSTYPE_IS_OSX_INSTALLER(LoaderType)) {
-//      DirName = SWPrintf("%s_install", OSVersionKextsDirName.c_str());
-//    } else if (OSTYPE_IS_OSX_RECOVERY(LoaderType)) {
-//      DirName = SWPrintf("%s_recovery", OSVersionKextsDirName.c_str());
-//    } else {
-//      DirName = SWPrintf("%s_normal", OSVersionKextsDirName.c_str());
-//    }
-    DirPath = SWPrintf("%ls", DirName.wc_str());
-    AddKextsFromDirInArray(DirPath, DirName, archCpuType, kextArray);
+    AddKextsFromDirInArray(OSVersionKextsDirName, archCpuType, kextArray);
+    OSVersionKextsDirName.S8Catf("_%s", getSuffixForMacOsVersion(LoaderType).c_str());
+    AddKextsFromDirInArray(OSVersionKextsDirName, archCpuType, kextArray);
   }else{
     //MsgLog("No os version is detected\n");
-    AddKextsFromDirInArray("Unknown"_XS8, "Unknown"_XS8, archCpuType, kextArray);
+    AddKextsFromDirInArray("Unknown"_XS8, archCpuType, kextArray);
   }
 
 }
@@ -643,12 +613,12 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
 //  //  } else if (Arch != NULL && StrnCmp(Arch,L"i386",StrLen(L"i386")) == 0) {
 //    } else if (LoadOptions.contains("arch=i386")) {
 //      archCpuType = CPU_TYPE_I386;
-//    } else if (OSVersion.notEmpty()) {
-////      UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-//      if (OSVersion.isEmpty() || OSVersion >= MacOsVersion("10.8"_XS8)) {
-//        archCpuType = CPU_TYPE_X86_64; // For OSVersion >= 10.8, only x86_64 exists
-//      } else if (OSVersion < MacOsVersion("10.7"_XS8)) {
-//        archCpuType = CPU_TYPE_I386; // For OSVersion < 10.7, use default of i386
+//    } else if (macOSVersion.notEmpty()) {
+////      UINT64 os_version = AsciiOSVersionToUint64(macOSVersion);
+//      if (macOSVersion.isEmpty() || macOSVersion >= MacOsVersion("10.8"_XS8)) {
+//        archCpuType = CPU_TYPE_X86_64; // For macOSVersion >= 10.8, only x86_64 exists
+//      } else if (macOSVersion < MacOsVersion("10.7"_XS8)) {
+//        archCpuType = CPU_TYPE_I386; // For macOSVersion < 10.7, use default of i386
 //      }
 //    }
 //
@@ -1000,7 +970,7 @@ const UINT8   KBELionReplaceEXT_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0
 
 
 //
-// We can not rely on OSVersion global variable for OS version detection,
+// We can not rely on macOSVersion global variable for OS version detection,
 // since in some cases it is not correct (install of ML from Lion, for example).
 // So, we'll use "brute-force" method - just try to patch.
 // Actually, we'll at least check that if we can find only one instance of code that

@@ -73,7 +73,7 @@ LOADER_ENTRY* LOADER_ENTRY::getPartiallyDuplicatedEntry() const
 	DuplicateEntry->DevicePath      = DevicePath;
 	DuplicateEntry->Flags           = Flags;
 	DuplicateEntry->LoaderType      = LoaderType;
-	DuplicateEntry->OSVersion       = OSVersion;
+	DuplicateEntry->macOSVersion       = macOSVersion;
 	DuplicateEntry->BuildVersion    = BuildVersion;
 //  CopyKernelAndKextPatches(&DuplicateEntry->KernelAndKextPatches, &KernelAndKextPatches);
   DuplicateEntry->KernelAndKextPatches = KernelAndKextPatches;

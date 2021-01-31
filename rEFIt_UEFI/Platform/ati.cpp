@@ -2129,7 +2129,7 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
     DBG("ATI: No default properties injected\n");
   }
 
-  devprop_add_list(ati_devprop_list, Entry->OSVersion);
+  devprop_add_list(ati_devprop_list, Entry->macOSVersion);
   if (!gSettings.NoDefaultProperties) {
     if (gSettings.UseIntelHDMI) {
       devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);

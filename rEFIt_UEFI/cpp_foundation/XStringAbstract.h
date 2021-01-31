@@ -78,6 +78,30 @@ int XStringAbstract__startWith(const S* src, const O* other, bool ignoreCase)
 	return src_char32 != 0;
 }
 
+template<typename S, typename O>
+int XStringAbstract__startWithOrEqualTo(const S* src, const O* other, bool ignoreCase)
+{
+  size_t nb = 0;
+  const S* src2 = src;
+  const O* other2 = other;
+
+  char32_t src_char32;
+  char32_t other_char32;
+  other2 = get_char32_from_string(other2, &other_char32);
+  if ( !other_char32 ) return true; // startWith with empty string is considered true
+  src2 = get_char32_from_string(src2, &src_char32);
+  while ( other_char32 ) {
+    if ( ignoreCase ) {
+      src_char32 = asciiToLower(src_char32);
+      other_char32 = asciiToLower(other_char32);
+    }
+    if ( src_char32 != other_char32 ) return false;
+    src2 = get_char32_from_string(src2, &src_char32);
+    other2 = get_char32_from_string(other2, &other_char32);
+    nb += 1;
+  };
+  return true;
+}
 /*
  * Returns 1 if src > other
  */
@@ -246,7 +270,11 @@ public:
 
 
 	const T* s() const { return m_data; }
+
 	const T* data() const { return m_data; }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const T* data(IntegralType pos) const { return __String<T, ThisXStringClass>::_data(pos); }
 
 	/* Empty ? */
 	bool isEmpty() const { return m_data == nullptr  ||  *m_data == 0; }
@@ -396,6 +424,20 @@ public:
 	bool startWithIC(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWith(m_data, otherS.m_data, true); }
 	template<typename O>
 	bool startWithIC(const O* other) const { return XStringAbstract__startWith(m_data, other, true); }
+
+  template<typename O, enable_if(is_char(O))>
+  bool startWithOrEqualTo(O otherChar) const {
+    O other[2] = { otherChar, 0};
+    return XStringAbstract__startWithOrEqualTo(m_data, other, false);
+  }
+  template<typename O, class OtherXStringClass>
+  bool startWithOrEqualTo(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWithOrEqualTo(m_data, otherS.m_data, false); }
+  template<typename O>
+  bool startWithOrEqualTo(const O* other) const { return XStringAbstract__startWithOrEqualTo(m_data, other, false); }
+  template<typename O, class OtherXStringClass>
+  bool startWithOrEqualToIC(const __String<O, OtherXStringClass>& otherS) const { return XStringAbstract__startWithOrEqualTo(m_data, otherS.m_data, true); }
+  template<typename O>
+  bool startWithOrEqualToIC(const O* other) const { return XStringAbstract__startWithOrEqualTo(m_data, other, true); }
 
 	//---------------------------------------------------------------------
 
@@ -777,10 +819,13 @@ public:
 		else m_data[0] = 0;
 	}
 
-  T* data() const { return m_data; }
+  T* data() { return m_data; }
+  const T* data() const { return m_data; }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
-  T* data(IntegralType pos) const { return __String<T, ThisXStringClass>::_data(pos); }
+  const T* data(IntegralType pos) const { return __String<T, ThisXStringClass>::_data(pos); }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  T* data(IntegralType pos) { return __String<T, ThisXStringClass>::_data(pos); }
 	
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	T* dataSized(IntegralType size)
@@ -1094,6 +1139,13 @@ public:
     if ( m_allocatedSize > 0 ) free((void*)m_data);
     m_data = S;
     m_allocatedSize = utf_size_of_utf_string(m_data, S) + 1;
+    return *((ThisXStringClass*)this);
+  }
+
+  ThisXStringClass& stealValueFrom(ThisXStringClass* S) {
+    if ( m_allocatedSize > 0 ) free((void*)m_data);
+    m_allocatedSize = S->m_allocatedSize;
+    m_data = S->forgetDataWithoutFreeing();
     return *((ThisXStringClass*)this);
   }
 

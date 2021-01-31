@@ -33,6 +33,8 @@
 #define IS_ASCII(x) ((x>=0x20) && (x<=0x7F))
 #define IS_PUNCT(x) ((x == '.') || (x == '-'))
 
+inline bool isPathSeparator(char32_t c) { return c == '/' || c == '\\'; }
+
 
 ////void        LowCase (IN OUT CHAR8 *Str);
 UINT32      hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len);

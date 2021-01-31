@@ -117,3 +117,8 @@ AsciiStrHexToUint64 (
   if ( ret == 0 ) return 0;
   return value;
 }
+
+UINTN AsciiStrLen(const char* String)
+{
+  return strlen(String);
+}

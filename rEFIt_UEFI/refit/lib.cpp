@@ -889,7 +889,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 			  //DBG("Skip dot entries: %ls\n", DirEntry->FileName);
         continue;
 		  }
-		  if ( IsValidGuidAsciiString(LStringW(DirEntry->FileName)) ) {
+		  if ( IsValidGuidString(LStringW(DirEntry->FileName)) ) {
 			  Volume->ApfsTargetUUIDArray.Add(DirEntry->FileName);
 		  }
 		}

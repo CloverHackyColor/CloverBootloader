@@ -1696,6 +1696,14 @@ int XString_tests()
     t16.stealValueFrom(p16);
   }
 
+  {
+    XString8 xs8 = "11"_XS8;
+    bool b = xs8.startWithOrEqualTo("112");
+    if ( b  ) {
+      nbTestFailed += 1;
+    }
+  }
+
 
 
 	TEST_ALL_CLASSES(testDefaultCtor, __TEST0);

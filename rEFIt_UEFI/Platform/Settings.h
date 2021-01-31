@@ -914,10 +914,9 @@ void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 
 
-MacOsVersion
-GetOSVersion (
-  IN  LOADER_ENTRY *Entry
-  );
+MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr);
+
+inline MacOsVersion GetOSVersion (IN LOADER_ENTRY *Entry) { return GetOSVersion(Entry->LoaderType, Entry->APFSTargetUUID, Entry->Volume, &Entry->BuildVersion); };
 
 
 void GetListOfThemes(void);

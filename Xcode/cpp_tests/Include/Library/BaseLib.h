@@ -21,7 +21,7 @@ UINTN StrLen(const wchar_t* String);
 //int StrCmp(const wchar_t* FirstString, const wchar_t* SecondString);
 //int StrnCmp(const wchar_t* FirstString, const wchar_t* SecondString, UINTN Length);
 //UINTN StrLen(const wchar_t* String);
-//UINTN AsciiStrLen(const char* String);
+UINTN AsciiStrLen(const char* String);
 //INTN AsciiStrCmp (const char *FirstString,const char *SecondString);
 
 CHAR16* StrStr (IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString);

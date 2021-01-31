@@ -13,11 +13,22 @@
 #include <Windows.h>
 #endif
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Uefi.h"
 #include "../Include/Library/Base.h"
 #include "../Include/Library/BaseLib.h"
 #include "../Include/Library/BaseMemoryLib.h"
+#include "../Include/Library/MemoryAllocationLib.h"
 #include <BootLog.h>
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #include <stdio.h>
 #include <limits.h>
@@ -53,20 +64,6 @@ void CpuDeadLoop(void);
 void PauseForKey(const wchar_t* msg);
 
 const char* efiStrError(EFI_STATUS Status);
-
-
-
-
-
-void* AllocatePool(UINTN  AllocationSize);
-void* AllocateZeroPool(UINTN  AllocationSize);
-void* ReallocatePool(UINTN  OldSize, UINTN  NewSize, void* OldBuffer);
-void FreePool(const void* Buffer);
-
-//void ZeroMem(void *Destination, UINTN Length);
-//void SetMem(void *Destination, UINTN Length, char c);
-//void CopyMem(void *Destination, const void *Source, UINTN Length);
-//INTN CompareMem(const void* DestinationBuffer, const void* SourceBuffer, UINTN Length);
 
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src);
 

@@ -2333,11 +2333,12 @@
 					$PROJECT_DIR/../../MdePkg/Include/X64,
 					$PROJECT_DIR/../../MdeModulePkg/Include,
 					$PROJECT_DIR/../../Library/MemLogLibDefault,
+					$PROJECT_DIR/../../UefiCpuPkg/Include,
+					$PROJECT_DIR/../../OpenCorePkg,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Apple,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Acidanthera,
 					$PROJECT_DIR/../../OpenCorePkg/Include/AMI,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Intel,
-					$PROJECT_DIR/../../UefiCpuPkg/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -2418,11 +2419,12 @@
 					$PROJECT_DIR/../../MdePkg/Include/X64,
 					$PROJECT_DIR/../../MdeModulePkg/Include,
 					$PROJECT_DIR/../../Library/MemLogLibDefault,
+					$PROJECT_DIR/../../UefiCpuPkg/Include,
+					$PROJECT_DIR/../../OpenCorePkg,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Apple,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Acidanthera,
 					$PROJECT_DIR/../../OpenCorePkg/Include/AMI,
 					$PROJECT_DIR/../../OpenCorePkg/Include/Intel,
-					$PROJECT_DIR/../../UefiCpuPkg/Include,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (

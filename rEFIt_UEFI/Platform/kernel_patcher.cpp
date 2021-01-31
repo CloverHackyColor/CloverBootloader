@@ -423,15 +423,15 @@ void LOADER_ENTRY::KernelPatcher_64()
     return;
   }
 
-//  os_version = AsciiOSVersionToUint64(OSVersion);
+//  os_version = AsciiOSVersionToUint64(macOSVersion);
 
   // make sure only kernels for OSX 10.6.0 to 10.7.3 are being patched by this approach
-  if (OSVersion >= AsciiOSVersionToUint64("10.6") && OSVersion <= AsciiOSVersionToUint64("10.7.3")) {
+  if (macOSVersion >= AsciiOSVersionToUint64("10.6") && macOSVersion <= AsciiOSVersionToUint64("10.7.3")) {
 
 //    DBG_RT( "will patch kernel for macOS 10.6.0 to 10.7.3\n");
 
     // remove tsc_init: unknown CPU family panic for kernels prior to 10.6.2 which still had Atom support
-    if (OSVersion < AsciiOSVersionToUint64("10.6.2")) {
+    if (macOSVersion < AsciiOSVersionToUint64("10.6.2")) {
       for (i=0; i<0x1000000; i++) {
         // find _tsc_init panic address by byte sequence 488d3df4632a00
         if (bytes[i] == 0x48 && bytes[i+1] == 0x8D && bytes[i+2] == 0x3D && bytes[i+3] == 0xF4 &&
@@ -476,11 +476,11 @@ void LOADER_ENTRY::KernelPatcher_64()
 
           // Determine cpuid_model address
           // for 10.6.2 kernels it's offset by 299 bytes from cpuid_family address
-          if (OSVersion ==  AsciiOSVersionToUint64("10.6.2")) {
+          if (macOSVersion ==  AsciiOSVersionToUint64("10.6.2")) {
             cpuid_model_addr = cpuid_family_addr - 0X12B;
           }
           // for 10.6.3 to 10.6.7 it's offset by 303 bytes
-          else if (OSVersion <= AsciiOSVersionToUint64("10.6.7")) {
+          else if (macOSVersion <= AsciiOSVersionToUint64("10.6.7")) {
             cpuid_model_addr = cpuid_family_addr - 0X12F;
           }
           // for 10.6.8 to 10.7.3 kernels - by 339 bytes
@@ -528,17 +528,17 @@ void LOADER_ENTRY::KernelPatcher_64()
     }
 
     // patch ssse3
-    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
+    if (!SSSE3 && (AsciiStrnCmp(macOSVersion,"10.6",4)==0)) {
       Patcher_SSE3_6((void*)bytes);
     }
-    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.7",4)==0)) {
+    if (!SSSE3 && (AsciiStrnCmp(macOSVersion,"10.7",4)==0)) {
       Patcher_SSE3_7();
     }
   }
 
   // all 10.7.4+ kernels share common CPUID switch statement logic,
   // it needs to be exploited in diff manner due to the lack of space
-  else if (OSVersion >= AsciiOSVersionToUint64("10.7.4")) {
+  else if (macOSVersion >= AsciiOSVersionToUint64("10.7.4")) {
 
     DBG_RT( "will patch kernel for macOS 10.7.4+\n");
 
@@ -725,13 +725,13 @@ void LOADER_ENTRY::KernelPatcher_32()
   bytes[patchLocation +  3] = 0x90;
   bytes[patchLocation +  4] = 0x90;
 
-  if (OSVersion) {
-    if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
+  if (macOSVersion) {
+    if (AsciiStrnCmp(macOSVersion,"10.7",4)==0) return;
 
-    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.6",4)==0)) {
+    if (!SSSE3 && (AsciiStrnCmp(macOSVersion,"10.6",4)==0)) {
       Patcher_SSE3_6((void*)bytes);
     }
-    if (!SSSE3 && (AsciiStrnCmp(OSVersion,"10.5",4)==0)) {
+    if (!SSSE3 && (AsciiStrnCmp(macOSVersion,"10.5",4)==0)) {
       Patcher_SSE3_5((void*)bytes);
     }
   }
@@ -1063,7 +1063,7 @@ BOOLEAN LOADER_ENTRY::KernelLapicPatch_64()
   // address: 002e4a2f
   // bytes:658b04251c0000003b058bb97b00
   // call _panic -> change to nop {90,90,90,90,90}
-  if ( OSVersion >= MacOsVersion("10.10"_XS8) ) {
+  if ( macOSVersion >= MacOsVersion("10.10"_XS8) ) {
     UINTN procAddr = searchProc("lapic_interrupt"_XS8);
     patchLocation1 = searchProc("_panic"_XS8);
     patchLocation2 = FindRelative32(KernelData, procAddr, 0x140, patchLocation1);
@@ -1277,9 +1277,9 @@ void LOADER_ENTRY::applyKernPatch(const UINT8 *find, UINTN size, const UINT8 *re
 // Global XCPM patches compatibility
 // Currently 10.8.5 - 10.15
 //
-static inline BOOLEAN IsXCPMOSVersionCompat(const MacOsVersion& OSVersion)
+static inline BOOLEAN IsXCPMOSVersionCompat(const MacOsVersion& macOSVersion)
 {
-  return OSVersion >= MacOsVersion("10.8.5"_XS8)  &&  OSVersion < MacOsVersion("11.1.0"_XS8);
+  return macOSVersion >= MacOsVersion("10.8.5"_XS8)  &&  macOSVersion < MacOsVersion("11.1.0"_XS8);
 }
 
 //
@@ -1304,10 +1304,10 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
   XString8     comment;
  // UINT32      i;
   UINTN      patchLocation;
-//  UINT64     os_version = AsciiOSVersionToUint64(OSVersion);
+//  UINT64     os_version = AsciiOSVersionToUint64(macOSVersion);
 
   // check OS version suit for patches
-  if (!IsXCPMOSVersionCompat(OSVersion)) {
+  if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("HaswellEXCPM(): Unsupported macOS.\n");
     DBG("HaswellEXCPM() <===FALSE\n");
     return FALSE;
@@ -1315,17 +1315,17 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
 
   // _cpuid_set_info
   comment = "_cpuid_set_info"_XS8;
-  if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.8.5"_XS8)) {
+  if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.8.5"_XS8)) {
     // 10.8.5
     const UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x74, 0x2D };
     const UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x74, 0x2D };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.10"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10"_XS8)) {
     // 10.9.x
     const UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x75, 0x07 };
     const UINT8 repl[] = { 0x83, 0xF8, 0x3F, 0x75, 0x07 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.10.1"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.10.1"_XS8)) {
     // 10.10 - 10.10.1
     const UINT8 find[] = { 0x74, 0x11, 0x83, 0xF8, 0x3C };
     const UINT8 repl[] = { 0x74, 0x11, 0x83, 0xF8, 0x3F };
@@ -1334,32 +1334,32 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
 
   // _xcpm_bootstrap
   comment = "_xcpm_bootstrap"_XS8;
-  if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.8.5"_XS8)) {
+  if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.8.5"_XS8)) {
     // 10.8.5
     const UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x54 };
     const UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x54 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.10"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10"_XS8)) {
     // 10.9.x
     const UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x68 };
     const UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x68 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.10.2"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.10.2"_XS8)) {
     // 10.10 - 10.10.2
     const UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x63 };
     const UINT8 repl[] = { 0x83, 0xFB, 0x3F, 0x75, 0x63 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.10.5"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.10.5"_XS8)) {
     // 10.10.3 - 10.10.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.11"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.11"_XS8)) {
     // 10.11 DB/PB - 10.11.0
     const UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC3, 0x83, 0xFB, 0x0D };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.11.6"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.11.6"_XS8)) {
     // 10.11.1 - 10.11.6
     const UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xB8, 0x83, 0xFB, 0x09 };
@@ -1378,28 +1378,28 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
       }
     }
 
-    /*if (OSVersion.notEmpty() && OSVersion <= AsciiOSVersionToUint64("10.12.5")) {
+    /*if (macOSVersion.notEmpty() && macOSVersion <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC1, 0x83, 0xFB, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.13")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.13")) {
     // 10.12.6
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x83, 0xF8, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.14 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.15")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
     const UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.15 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.15.4")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.15.4")) {
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.16")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.16")) {
     // vector sigma: 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
     const UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
@@ -1409,7 +1409,7 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
   comment = "_xcpm_pkg_scope_msrs"_XS8;
-  if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.8.5"_XS8)) {
+  if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.8.5"_XS8)) {
     // 10.8.5
     const UINT8 find[] = {
       0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
@@ -1424,7 +1424,7 @@ BOOLEAN LOADER_ENTRY::HaswellEXCPM()
       0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
     };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.10"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10"_XS8)) {
     // 10.9.x
     const UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
     const UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
@@ -1470,16 +1470,16 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM()
 
   UINT32      i;
   UINTN       patchLocation;
-//  UINT64      os_version = AsciiOSVersionToUint64(OSVersion);
+//  UINT64      os_version = AsciiOSVersionToUint64(macOSVersion);
 
   // check OS version suit for patches
-  if (!IsXCPMOSVersionCompat(OSVersion)) {
+  if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("BroadwellEPM(): Unsupported macOS.\n");
     DBG("BroadwellEPM() <===FALSE\n");
     return FALSE;
   }
 
-  KernelAndKextPatches.FakeCPUID = (UINT32)(OSVersion.notEmpty() && OSVersion < MacOsVersion("10.10.3"_XS8) ? 0x0306C0 : 0x040674);
+  KernelAndKextPatches.FakeCPUID = (UINT32)(macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10.3"_XS8) ? 0x0306C0 : 0x040674);
   KernelCPUIDPatch();
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
@@ -1488,7 +1488,7 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM()
   // ffffff800046882c BE07000000                      mov        esi, 0x7
   // ffffff8000468831 31D2                            xor        edx, edx
   // ffffff8000468833 E838FDFFFF                      call       sub_ffffff8000468570
-  if (OSVersion >= MacOsVersion("10.12"_XS8)) {
+  if (macOSVersion >= MacOsVersion("10.12"_XS8)) {
     // 10.12+
 //    patchLocation = 0; // clean out the value just in case
 //    for (i = 0; i < 0x1000000; i++) {
@@ -1526,11 +1526,11 @@ BOOLEAN LOADER_ENTRY::BroadwellEPM()
 BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
 {
   DBG("HaswellLowEndXCPM() ===>\n");
-//  UINT64      os_version = AsciiOSVersionToUint64(OSVersion);
+//  UINT64      os_version = AsciiOSVersionToUint64(macOSVersion);
   XString8    comment;
 
   // check OS version suit for patches
-  if (!IsXCPMOSVersionCompat(OSVersion)) {
+  if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("HaswellLowEndXCPM(): Unsupported macOS.\n");
     DBG("HaswellLowEndXCPM() <===FALSE\n");
     return FALSE;
@@ -1540,7 +1540,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
   KernelCPUIDPatch();
 
   // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
-  if (OSVersion >= MacOsVersion("10.8.5"_XS8) && OSVersion < MacOsVersion("10.12"_XS8)) {
+  if (macOSVersion >= MacOsVersion("10.8.5"_XS8) && macOSVersion < MacOsVersion("10.12"_XS8)) {
     DBG("HaswellLowEndXCPM() <===\n");
     return TRUE;
   }
@@ -1568,17 +1568,17 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
     }
   }
   /*
-  if (OSVersion.notEmpty() && OSVersion <= AsciiOSVersionToUint64("10.12.5")) {
+  if (macOSVersion.notEmpty() && macOSVersion <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.13")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.13")) {
     // 10.12.6
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.15")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
     //    ; Basic Block Input Regs: rbx -  Killed Regs: rax
     //    ffffff80004fa0f7 89D8                            mov        eax, ebx
@@ -1589,11 +1589,11 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
     const UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.15 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.15.4")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.15.4")) {
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.16")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.16")) {
     // vector sigma: 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
     const UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
@@ -1602,7 +1602,7 @@ BOOLEAN LOADER_ENTRY::HaswellLowEndXCPM()
 */
   comment = "_cpuid_set_info_rdmsr"_XS8;
   // PMheart: bytes seem stable as of 10.12
-  if (OSVersion >= MacOsVersion("10.12"_XS8)) {
+  if (macOSVersion >= MacOsVersion("10.12"_XS8)) {
     // 10.12+
     const UINT8 find[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x0F, 0x32 };
     const UINT8 repl[] = { 0xB9, 0xA0, 0x01, 0x00, 0x00, 0x31, 0xC0 };
@@ -1621,7 +1621,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
   XString8      comment;
 //  UINT32      i;
   UINTN       patchLocation;
-//  UINT64      os_version = AsciiOSVersionToUint64(OSVersion);
+//  UINT64      os_version = AsciiOSVersionToUint64(macOSVersion);
 
   // check whether Ivy Bridge
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE) {
@@ -1632,18 +1632,18 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
 
   // check OS version suit for patches
   // PMheart: attempt to add 10.14 compatibility
-  if (!IsXCPMOSVersionCompat(OSVersion)) {
+  if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("KernelIvyBridgeXCPM():Unsupported macOS.\n");
     DBG("KernelIvyBridgeXCPM() <===FALSE\n");
     return FALSE;
-  } else if (OSVersion >= MacOsVersion("10.8.5"_XS8) && OSVersion < MacOsVersion("10.12"_XS8)) {
+  } else if (macOSVersion >= MacOsVersion("10.8.5"_XS8) && macOSVersion < MacOsVersion("10.12"_XS8)) {
     // 10.8.5 - 10.11.x no need the following kernel patches on Ivy Bridge - we just use -xcpm boot-args
     DBG("KernelIvyBridgeXCPM() <===\n");
     return TRUE;
   }
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
-  if (OSVersion >= MacOsVersion("10.12"_XS8)) {
+  if (macOSVersion >= MacOsVersion("10.12"_XS8)) {
     // 10.12+
 /*    patchLocation = 0; // clean out the value just in case
     for (i = 0; i < 0x1000000; i++) {
@@ -1685,28 +1685,28 @@ BOOLEAN LOADER_ENTRY::KernelIvyBridgeXCPM()
     }
   }
 /*
-  if (OSVersion.notEmpty() && OSVersion <= AsciiOSVersionToUint64("10.12.5")) {
+  if (macOSVersion.notEmpty() && macOSVersion <= AsciiOSVersionToUint64("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.13")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.13")) {
     // 10.12.6
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x83, 0xF8, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.14 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.15")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.15")) {
     // 10.13/10.14
     const UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC6, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
     // PMheart: attempt to add 10.15 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.15.4")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.15.4")) {
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC6, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.16")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.16")) {
     // vector sigma: 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
     const UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC6, 0x80, 0xFB, 0x42 };
@@ -1727,7 +1727,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   XString8    comment;
  // UINT32      i;
   UINTN       patchLocation;
-//  UINT64      os_version = AsciiOSVersionToUint64(OSVersion);
+//  UINT64      os_version = AsciiOSVersionToUint64(macOSVersion);
   
   // check whether Ivy Bridge-E5
   if (gCPUStructure.Model != CPU_MODEL_IVY_BRIDGE_E5) {
@@ -1738,7 +1738,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   
   // check OS version suit for patches
   // PMheart: attempt to add 10.15 compatibility
-  if (!IsXCPMOSVersionCompat(OSVersion)) {
+  if (!IsXCPMOSVersionCompat(macOSVersion)) {
     DBG("KernelIvyE5XCPM(): Unsupported macOS.\n");
     DBG("KernelIvyE5XCPM() <===FALSE\n");
     return FALSE;
@@ -1747,12 +1747,12 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   // _cpuid_set_info
   // TODO: should we use FakeCPUID instead?
   comment = "_cpuid_set_info"_XS8;
-  if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.8.5"_XS8)) {
+  if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.8.5"_XS8)) {
     // 10.8.5
     const UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x74, 0x2D };
     const UINT8 repl[] = { 0x83, 0xF8, 0x3E, 0x74, 0x2D };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if ( OSVersion == MacOsVersion("10.9"_XS8) || OSVersion == MacOsVersion("10.9.1"_XS8) ) {
+  } else if ( macOSVersion == MacOsVersion("10.9"_XS8) || macOSVersion == MacOsVersion("10.9.1"_XS8) ) {
     // 10.9.0 - 10.9.1
     const UINT8 find[] = { 0x83, 0xF8, 0x3C, 0x75, 0x07 };
     const UINT8 repl[] = { 0x83, 0xF8, 0x3E, 0x75, 0x07 };
@@ -1762,7 +1762,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   // _xcpm_pkg_scope_msrs
   DBG("Searching _xcpm_pkg_scope_msrs ...\n");
   comment = "_xcpm_pkg_scope_msrs"_XS8;
-  if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.8.5"_XS8)) {
+  if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.8.5"_XS8)) {
     // 10.8.5
     const UINT8 find[] = {
       0x48, 0x8D, 0x3D, 0x02, 0x71, 0x55, 0x00, 0xBE,
@@ -1777,7 +1777,7 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
       0x00, 0x00, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90
     };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.10"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10"_XS8)) {
     // 10.9.x
     const UINT8 find[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x74, 0x13, 0x31, 0xD2, 0xE8, 0x5F, 0x02, 0x00, 0x00 };
     const UINT8 repl[] = { 0xBE, 0x07, 0x00, 0x00, 0x00, 0x90, 0x90, 0x31, 0xD2, 0x90, 0x90, 0x90, 0x90, 0x90 };
@@ -1812,32 +1812,32 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
   
   // _xcpm_bootstrap
   comment = "_xcpm_bootstrap"_XS8;
-  if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.8.5"_XS8)) {
+  if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.8.5"_XS8)) {
     // 10.8.5
     const UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x54 };
     const UINT8 repl[] = { 0x83, 0xFB, 0x3E, 0x75, 0x54 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.10"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10"_XS8)) {
     // 10.9.x
     const UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x68 };
     const UINT8 repl[] = { 0x83, 0xFB, 0x3E, 0x75, 0x68 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.10.2"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.10.2"_XS8)) {
     // 10.10 - 10.10.2
     const UINT8 find[] = { 0x83, 0xFB, 0x3C, 0x75, 0x63 };
     const UINT8 repl[] = { 0x83, 0xFB, 0x3E, 0x75, 0x63 };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.10.5"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.10.5"_XS8)) {
     // 10.10.3 - 10.10.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x0D };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.11"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.11"_XS8)) {
     // 10.11 DB/PB - 10.11.0
     const UINT8 find[] = { 0x83, 0xC3, 0xC6, 0x83, 0xFB, 0x0D };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x0D };
     applyKernPatch(find, sizeof(find), repl, comment.c_str());
-  } else if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.11.6"_XS8)) {
+  } else if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.11.6"_XS8)) {
     // 10.11.1 - 10.11.6
     const UINT8 find[] = { 0x83, 0xC3, 0xBB, 0x83, 0xFB, 0x09 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xB9, 0x83, 0xFB, 0x09 };
@@ -1857,28 +1857,28 @@ BOOLEAN LOADER_ENTRY::KernelIvyE5XCPM()
       }
     }
 
-/*    if (OSVersion.notEmpty() && OSVersion <= MacOsVersion("10.12.5")) {
+/*    if (macOSVersion.notEmpty() && macOSVersion <= MacOsVersion("10.12.5")) {
     // 10.12 - 10.12.5
     const UINT8 find[] = { 0x83, 0xC3, 0xC4, 0x83, 0xFB, 0x22 };
     const UINT8 repl[] = { 0x83, 0xC3, 0xC2, 0x83, 0xFB, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.13")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.13")) {
     // 10.12.6
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x83, 0xF8, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC2, 0x83, 0xF8, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
   // PMheart: attempt to add 10.14 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.15")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.15")) {
     // 10.13/10.14
     const UINT8 find[] = { 0x89, 0xD8, 0x04, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x89, 0xD8, 0x04, 0xC1, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
   // PMheart: attempt to add 10.15 compatibility
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.15.4")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.15.4")) {
     const UINT8 find[] = { 0x8D, 0x43, 0xC4, 0x3C, 0x22 };
     const UINT8 repl[] = { 0x8D, 0x43, 0xC1, 0x3C, 0x22 };
     applyKernPatch(find, sizeof(find), repl, comment);
-  } else if (OSVersion.notEmpty() && OSVersion < MacOsVersion("10.16")) {
+  } else if (macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.16")) {
     // vector sigma: 10.15.5 Beta 2 build 19F62f and 10.15.4 build 19E287
     const UINT8 find[] = { 0x3B, 0x7E, 0x2E, 0x80, 0xC3, 0xC4, 0x80, 0xFB, 0x42 };
     const UINT8 repl[] = { 0x00, 0x7E, 0x2E, 0x80, 0xC3, 0xC1, 0x80, 0xFB, 0x42 };
@@ -2365,7 +2365,7 @@ LOADER_ENTRY::KernelUserPatch()
   for (size_t i = 0 ; i < KernelAndKextPatches.KernelPatches.size(); ++i) {
     DBG( "Patch[%zu]: %s\n", i, KernelAndKextPatches.KernelPatches[i].Label.c_str());
     if (!KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
-      //DBG_RT( "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, KernelAndKextPatches.KernelPatches[i].Label, OSVersion);
+      //DBG_RT( "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, KernelAndKextPatches.KernelPatches[i].Label, macOSVersion);
       DBG( "==> disabled\n");
       continue;
     }
@@ -2511,10 +2511,10 @@ LOADER_ENTRY::KernelAndKextPatcherInit()
   // for ML: bootArgs2->kslide + 0x00200000
   // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
 
-//  UINT64 os_version = AsciiOSVersionToUint64(OSVersion);
-    DBG("OSVersion=%s\n", OSVersion.asString().c_str());
+//  UINT64 os_version = AsciiOSVersionToUint64(macOSVersion);
+    DBG("macOSVersion=%s\n", macOSVersion.asString().c_str());
   
-//  if (OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.6")) {
+//  if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.6")) {
 //    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
 //  } else {
     KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);

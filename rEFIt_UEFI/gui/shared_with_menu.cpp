@@ -113,7 +113,7 @@ void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
     LOADER_ENTRY* loaderEntry = Entry->getLOADER_ENTRY();
     // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
     if (gSettings.OptionsBits & OPT_NVWEBON) {
-      if ( loaderEntry->OSVersion >= MacOsVersion("10.12"_XS8) ) {
+      if ( loaderEntry->macOSVersion >= MacOsVersion("10.12"_XS8) ) {
         gSettings.NvidiaWeb = TRUE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;
@@ -122,7 +122,7 @@ void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
       }
     }
     if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
-      if ( loaderEntry->OSVersion >= MacOsVersion("10.12"_XS8)) {
+      if ( loaderEntry->macOSVersion >= MacOsVersion("10.12"_XS8)) {
         gSettings.NvidiaWeb = FALSE;
       } else {
         //Entry->LoadOptions = loaderEntry->LoadOptions;

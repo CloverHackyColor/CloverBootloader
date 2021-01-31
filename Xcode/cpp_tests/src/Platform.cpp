@@ -87,30 +87,6 @@ const char* efiStrError(EFI_STATUS Status)
 
 
 
-void* AllocatePool(UINTN  AllocationSize)
-{
-	return (void*)malloc((size_t)AllocationSize);
-}
-
-void* AllocateZeroPool(UINTN  AllocationSize)
-{
-	void* p = (void*)malloc((size_t)AllocationSize);
-	memset(p, 0, (size_t)AllocationSize);
-	return p;
-}
-
-void* ReallocatePool(UINTN  OldSize, UINTN  NewSize, void* OldBuffer)
-{
-	(void)OldSize;
-	if ( !OldBuffer ) return AllocatePool(NewSize);
-	return (void*)realloc(OldBuffer, (size_t)NewSize);
-}
-
-void FreePool(const void* Buffer)
-{
-	free((void*)Buffer);
-}
-
 CHAR16* EfiStrDuplicate (IN CONST CHAR16 *Src)
 {
 	CHAR16* newS = (CHAR16*)malloc((wcslen_fixed(Src)+1)*sizeof(wchar_t));

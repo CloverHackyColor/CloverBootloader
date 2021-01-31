@@ -17,12 +17,12 @@ extern "C" EFI_GUID  gEfiMiscSubClassGuid;
 constexpr const LString8 nullGuid = "00000000-0000-0000-0000-000000000000";
 
 /** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
-template <typename T, enable_if( is___String(T) )>
-BOOLEAN IsValidGuidAsciiString(const T& Str)
+template <typename T, typename IntegralType, enable_if( is_char(T) && is_integral(IntegralType) ) >
+BOOLEAN IsValidGuidString(const T* Str, IntegralType n)
 {
   UINTN   Index4IsValidGuidAsciiString; // stupid name to avoid warning : Declaration shadows a variable in the global namespace
 
-  if ( Str.length() != 36 ) {
+  if ( n != 36 ) {
     return FALSE;
   }
 
@@ -46,6 +46,45 @@ BOOLEAN IsValidGuidAsciiString(const T& Str)
 
   return TRUE;
 }
+
+/** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+template <typename T, enable_if( is___String(T) )>
+BOOLEAN IsValidGuidString(const T& Str)
+{
+  if ( Str.isEmpty() ) return false;
+  return IsValidGuidString(Str.data(0), Str.length());
+}
+
+///** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+//template <typename T, enable_if( is___String(T) )>
+//BOOLEAN IsValidGuidAsciiString(const T& Str)
+//{
+//  UINTN   Index4IsValidGuidAsciiString; // stupid name to avoid warning : Declaration shadows a variable in the global namespace
+//
+//  if ( Str.length() != 36 ) {
+//    return FALSE;
+//  }
+//
+//  for (Index4IsValidGuidAsciiString = 0; Index4IsValidGuidAsciiString < 36; Index4IsValidGuidAsciiString++) {
+//    if (Index4IsValidGuidAsciiString == 8 || Index4IsValidGuidAsciiString == 13 || Index4IsValidGuidAsciiString == 18 || Index4IsValidGuidAsciiString == 23) {
+//      if (Str[Index4IsValidGuidAsciiString] != '-') {
+//        return FALSE;
+//      }
+//    } else {
+//      if (!(
+//            (Str[Index4IsValidGuidAsciiString] >= '0' && Str[Index4IsValidGuidAsciiString] <= '9')
+//            || (Str[Index4IsValidGuidAsciiString] >= 'a' && Str[Index4IsValidGuidAsciiString] <= 'f')
+//            || (Str[Index4IsValidGuidAsciiString] >= 'A' && Str[Index4IsValidGuidAsciiString] <= 'F')
+//            )
+//          )
+//      {
+//        return FALSE;
+//      }
+//    }
+//  }
+//
+//  return TRUE;
+//}
 
 
 template <typename T, enable_if( is_char_ptr(T)  ||  is___String(T) )>
