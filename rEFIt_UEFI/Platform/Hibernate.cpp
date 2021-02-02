@@ -810,14 +810,14 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   
   //if sleep image is good but OSX was not hibernated.
   //or we choose "cancel hibernate wake" then it must be canceled
-  if (GlobalConfig.NeverHibernate) {
+  if (gSettings.Boot.NeverHibernate) {
     DBG("    hibernated: set as never\n");
     return FALSE;
   }
   
   DBG("    Check if volume Is Hibernated:\n");
   
-  if (!GlobalConfig.StrictHibernate) {
+  if (!gSettings.Boot.StrictHibernate) {
     // CloverEFI or UEFI with EmuVariable
     if (IsSleepImageValidBySignature(Volume)) {
       if ((gSleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
@@ -835,7 +835,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
   }
   
   if (!gFirmwareClover &&
-      (!gDriversFlags.EmuVariableLoaded || GlobalConfig.HibernationFixup)) {
+      (!gDriversFlags.EmuVariableLoaded || gSettings.Boot.HibernationFixup)) {
     DBG("    UEFI with NVRAM? ");
     Status = GetVariable2 (L"Boot0082", &gEfiGlobalVariableGuid, (void**)&Data, &Size);
     if (EFI_ERROR(Status))  {
@@ -872,7 +872,7 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
         DBG("    Boot0082 points to Volume with UUID:%s\n", strguid(BootGUID));
         
         //3. Checks for boot-image exists
-        if (GlobalConfig.StrictHibernate) {
+        if (gSettings.Boot.StrictHibernate) {
           /*
            Variable NV+RT+BS '7C436110-AB2A-4BBB-A880-FE41995C9F82:boot-image' DataSize = 0x3A
            00000000: 02 01 0C 00 D0 41 03 0A-00 00 00 00 01 01 06 00  *.....A..........*
@@ -995,7 +995,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   
   DBG("PrepareHibernation:\n");
   
-  if (!GlobalConfig.StrictHibernate) {
+  if (!gSettings.Boot.StrictHibernate) {
     // Find sleep image offset
     SleepImageOffset = GetSleepImagePosition (Volume, &SleepImageVolume);
 	  DBG(" SleepImageOffset: %llx\n", SleepImageOffset);
@@ -1050,7 +1050,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   //
   // Work with RTC memory if allowed.
   //
-  if (GlobalConfig.RtcHibernateAware) {
+  if (gSettings.Boot.RtcHibernateAware) {
     UINT8  Index;
     UINT8 *RtcRawVars = (UINT8 *)&RtcVars;
     for (Index = 0; Index < sizeof(AppleRTCHibernateVars); Index++) {
@@ -1153,7 +1153,7 @@ PrepareHibernation (IN REFIT_VOLUME *Volume)
   // For now let's preserve old behaviour without RtcHibernateAware for compatibility reasons.
   //
   Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
-  if (!GlobalConfig.RtcHibernateAware) {
+  if (!gSettings.Boot.RtcHibernateAware) {
     Attributes |= EFI_VARIABLE_NON_VOLATILE;
   }
   

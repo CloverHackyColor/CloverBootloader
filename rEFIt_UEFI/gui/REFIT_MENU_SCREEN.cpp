@@ -797,8 +797,8 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INT
     // do this BEFORE calling StyleFunc.
     EFI_TIME          Now;
     gRT->GetTime(&Now, NULL);
-    if (GlobalConfig.Timezone != 0xFF) {
-      INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+    if (gSettings.GUI.Timezone != 0xFF) {
+      INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
       if (NowHour <  0 ) NowHour += 24;
       if (NowHour >= 24 ) NowHour -= 24;
       Daylight = (NowHour > 8) && (NowHour < 20);  //this is the screen member
@@ -1953,7 +1953,7 @@ void REFIT_MENU_SCREEN::DrawTextCorner(UINTN TextC, UINT8 Align)
       // HIDEUI_ALL - included
       ((TextC == TEXT_CORNER_REVISION) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_REVISION) != 0)) ||
       ((TextC == TEXT_CORNER_HELP) && ((ThemeX.HideUIFlags & HIDEUI_FLAG_HELP) != 0)) ||
-      ((TextC == TEXT_CORNER_OPTIMUS) && (GlobalConfig.ShowOptimus == FALSE))
+      ((TextC == TEXT_CORNER_OPTIMUS) && (gSettings.GUI.ShowOptimus == FALSE))
       ) {
     return;
   }
@@ -2596,8 +2596,8 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
     if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
       XString8Array TmpArgs;
-      if ( gSettings.BootArgs.length() > 0) {
-        TmpArgs = Split<XString8Array>(gSettings.BootArgs, " ");
+      if ( gSettings.Boot.BootArgs.length() > 0) {
+        TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
       }
       SubMenuIndex = -1;
 
@@ -2658,11 +2658,11 @@ UINTN REFIT_MENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRAC
 
         if (/*MenuExit == MENU_EXIT_ENTER &&*/ TempChosenEntry->getLOADER_ENTRY()) {
           if (TempChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
-            gSettings.BootArgs = TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8);
+            gSettings.Boot.BootArgs = TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8);
           } else {
-            gSettings.BootArgs.setEmpty();
+            gSettings.Boot.BootArgs.setEmpty();
           }
-          DBG(" boot with args: %s\n", gSettings.BootArgs.c_str());
+          DBG(" boot with args: %s\n", gSettings.Boot.BootArgs.c_str());
         }
 
         //---- Details submenu (kexts disabling etc)

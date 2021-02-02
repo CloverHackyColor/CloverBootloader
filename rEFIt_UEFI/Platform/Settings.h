@@ -244,6 +244,57 @@ public :
 
 class SETTINGS_DATA {
 public:
+
+  class BootClass {
+    public:
+      INTN                    Timeout = -1;
+      bool                    SkipHibernateTimeout = false;
+      bool                    DisableCloverHotkeys = false;
+      XString8                BootArgs = XString8();
+      bool                    LastBootedVolume = false;
+      XStringW                DefaultVolume = XStringW();
+      XStringW                DefaultLoader = XStringW();
+      bool                    DebugLog = false;
+      bool                    FastBoot = false;
+      bool                    NoEarlyProgress = false;
+      bool                    NeverHibernate = false;
+      bool                    StrictHibernate = false;
+      bool                    RtcHibernateAware = false;
+      bool                    HibernationFixup = false;
+      bool                    SignatureFixup = false;
+      UINT8                   SecureBoot = 0;
+      UINT8                   SecureBootSetupMode = 0;
+      UINT8                   SecureBootPolicy = 0;
+      // Secure boot white/black list
+      UINT32                  SecureBootWhiteListCount = 0;
+      UINT32                  SecureBootBlackListCount = 0;
+      CHAR16                  **SecureBootWhiteList = 0;
+      CHAR16                  **SecureBootBlackList = 0;
+      INT8                    XMPDetection = 0;
+      // LegacyBoot
+      XStringW                LegacyBoot = XStringW();
+      UINT16                  LegacyBiosDefaultEntry = 0;
+      UINT8                   CustomBoot = 0;
+      XImage                  *CustomLogo = 0;
+
+      
+  } Boot = BootClass();
+
+  class GUIClass {
+    public:
+      INT32                   Timezone = 0xFF;
+      XStringW                Theme = XStringW();
+      bool                    CustomIcons = false;
+      bool                    TextOnly = false;
+      bool                    ShowOptimus = false;
+      XStringW                ScreenResolution = XStringW();
+      INTN                    ConsoleMode = 0;
+      INTN                    Codepage = 0xC0;
+      INTN                    CodepageSize = 0xC0;
+      bool                    LegacyFirst = false;
+      bool                    NoLegacy = false;
+  } GUI = GUIClass();
+
   // SMBIOS TYPE0
   XString8                VendorName;
   XString8                RomVersion;
@@ -297,7 +348,6 @@ public:
   BOOLEAN                 SetTable132;
   BOOLEAN                 TrustSMBIOS;
   BOOLEAN                 InjectMemoryTables;
-  INT8                    XMPDetection;
   BOOLEAN                 UseARTFreq;
   INT8                    pad18[3];
 
@@ -310,16 +360,11 @@ public:
   // OS parameters
   INT8                    pad181[7];
   XString8                Language;
-  XString8                BootArgs;
   INT8                    pad19[2];
   XString8                CustomUuid;
 
   INT8                    pad20[6];
-  XStringW                DefaultVolume;
-  XStringW                DefaultLoader;
-//Boot
-  BOOLEAN                 LastBootedVolume;
-  BOOLEAN                 SkipHibernateTimeout;
+
 //Monitor
   BOOLEAN                 IntelMaxBacklight;
   UINT8                   pad21[1];
@@ -435,17 +480,6 @@ public:
   UINT32                  DualLink;
   UINT32                  IgPlatform;
 
-  // Secure boot white/black list
-  UINT32                  SecureBootWhiteListCount;
-  UINT32                  SecureBootBlackListCount;
-  CHAR16                  **SecureBootWhiteList;
-
-  CHAR16                  **SecureBootBlackList;
-
-  // Secure boot
-  UINT8                   SecureBoot;
-  UINT8                   SecureBootSetupMode;
-  UINT8                   SecureBootPolicy;
 
   // HDA
   BOOLEAN                 HDAInjection;
@@ -464,9 +498,6 @@ public:
 
  // UINT8                   pad61[2];
 
-  // LegacyBoot
-  XStringW                LegacyBoot;
-  UINT16                  LegacyBiosDefaultEntry;
 
   //SkyLake
   BOOLEAN                 HWP;
@@ -494,9 +525,7 @@ public:
   BOOLEAN                 PointerMirror;
 
 //  UINT8                   pad7[6];
-  UINT8                   CustomBoot;
   UINT8                   pad29[6];
-  XImage                  *CustomLogo;
 
   UINT32                  RefCLK;
 
@@ -508,7 +537,6 @@ public:
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
   XString8                BooterCfgStr;
-  BOOLEAN                 DisableCloverHotkeys;
   BOOLEAN                 NeverDoRecovery;
 
   // Multi-config
@@ -615,9 +643,9 @@ public:
                     pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
                     BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(), CpuFreqMHz(0),
                     BusSpeed(0), Turbo(0), EnabledCores(0), UserChange(0), QEMU(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
-                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0), XMPDetection(0),
-                    UseARTFreq(0), PlatformFeature(0), NoRomInfo(0), Language(), BootArgs(), CustomUuid(), DefaultVolume(), DefaultLoader(), LastBootedVolume(0),
-                    SkipHibernateTimeout(0), IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
+                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0),
+                    UseARTFreq(0), PlatformFeature(0), NoRomInfo(0), Language(), CustomUuid(),
+                    IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
                     WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), ResetAddr(0), ResetVal(0), NoASPM(0),
                     DropSSDT(0), NoOemTableId(0), NoDynamicExtract(0), AutoMerge(0), GeneratePStates(0), GenerateCStates(0), GenerateAPSN(0), GenerateAPLF(0), GeneratePluginType(0),
                     PLimitDict(0), UnderVoltStep(0), DoubleFirstState(0), SuspendOverride(0), EnableC2(0), EnableC4(0), EnableC6(0), EnableISS(0), SlpSmiEnable(0),
@@ -627,11 +655,11 @@ public:
                     InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
                     LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
                     NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), NvidiaWeb(0), pad41{0}, DualLink(0),
-                    IgPlatform(0), SecureBootWhiteListCount(0), SecureBootBlackListCount(0), SecureBootWhiteList(0), SecureBootBlackList(0), SecureBoot(0), SecureBootSetupMode(0), SecureBootPolicy(0), HDAInjection(0),
+                    IgPlatform(0), HDAInjection(0),
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
-                    LegacyBoot(), LegacyBiosDefaultEntry(0), HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
-                    KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0), CustomBoot(0), CustomLogo(0),
-                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), DisableCloverHotkeys(0), NeverDoRecovery(0),
+                    HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
+                    KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0),
+                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), NeverDoRecovery(0),
                     ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), DSDTPatchArray(), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
@@ -832,29 +860,29 @@ extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 class REFIT_CONFIG
 {
 public:
-  INTN        Timeout;
+//  INTN        Timeout;
   UINTN       DisableFlags; //to disable some volume types (optical, firewire etc)
-  BOOLEAN     TextOnly;
+//  BOOLEAN     TextOnly;
   BOOLEAN     Quiet;
-  BOOLEAN     LegacyFirst;
-  BOOLEAN     NoLegacy;
-  BOOLEAN     DebugLog;
-  BOOLEAN     FastBoot;
-  BOOLEAN     NeverHibernate;
-  BOOLEAN     StrictHibernate;
-  BOOLEAN     RtcHibernateAware;
-  BOOLEAN     HibernationFixup;
-  BOOLEAN     SignatureFixup;
-  XStringW    Theme;
-  XStringW    ScreenResolution;
-  INTN        ConsoleMode;
-  BOOLEAN     CustomIcons;
+//  BOOLEAN     LegacyFirst;
+//  BOOLEAN     NoLegacy;
+//  BOOLEAN     DebugLog;
+  BOOLEAN     SpecialBootMode; // content of nvram var "aptiofixflag"
+//  BOOLEAN     NeverHibernate;
+//  BOOLEAN     StrictHibernate;
+//  BOOLEAN     RtcHibernateAware;
+//  BOOLEAN     HibernationFixup;
+//  BOOLEAN     SignatureFixup;
+//  XStringW    Theme;
+//  XStringW    ScreenResolution;
+//  INTN        ConsoleMode;
+//  BOOLEAN     CustomIcons;
   INTN        IconFormat;
-  BOOLEAN     NoEarlyProgress;
-  INT32       Timezone;
-  BOOLEAN     ShowOptimus;
-  INTN        Codepage;
-  INTN        CodepageSize;
+//  BOOLEAN     NoEarlyProgress;
+//  INT32       Timezone;
+//  BOOLEAN     ShowOptimus;
+//  INTN        Codepage;
+//  INTN        CodepageSize;
 
   /*
    * Defqult ctor :
@@ -884,13 +912,15 @@ public:
 };
    *
    */
-  REFIT_CONFIG() : Timeout(-1), DisableFlags(0), TextOnly(FALSE), Quiet(TRUE), LegacyFirst(FALSE), NoLegacy(FALSE),
-                   DebugLog(FALSE), FastBoot(FALSE), NeverHibernate(FALSE), StrictHibernate(FALSE),
-                   RtcHibernateAware(FALSE), HibernationFixup(FALSE), SignatureFixup(FALSE), Theme(), ScreenResolution(), ConsoleMode(0), CustomIcons(FALSE), IconFormat(ICON_FORMAT_DEF), NoEarlyProgress(FALSE), Timezone(0xFF),
-                   ShowOptimus(FALSE), Codepage(0xC0), CodepageSize(0xC0) {};
+  REFIT_CONFIG() : DisableFlags(0), Quiet(TRUE),
+                   SpecialBootMode(FALSE),
+                   IconFormat(ICON_FORMAT_DEF)
+                    {};
   REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
   ~REFIT_CONFIG() {  }
+
+  bool isFastBoot() { return SpecialBootMode || gSettings.Boot.FastBoot; }
 
 } ;
 

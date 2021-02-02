@@ -328,17 +328,17 @@ GetBootFromOption(void)
   NameSize = *(UINT16*)Data;
 
   Data += 2; // pointer to Volume name
-  gSettings.DefaultVolume.strncpy((__typeof__(gSettings.DefaultVolume.wc_str()))Data, NameSize);
+  gSettings.Boot.DefaultVolume.strncpy((__typeof__(gSettings.Boot.DefaultVolume.wc_str()))Data, NameSize);
 
   Data += NameSize;
   Name2Size = Len - NameSize;
   if (Name2Size != 0) {
-    gSettings.DefaultLoader.strncpy((__typeof__(gSettings.DefaultVolume.wc_str()))Data, NameSize);
+    gSettings.Boot.DefaultLoader.strncpy((__typeof__(gSettings.Boot.DefaultVolume.wc_str()))Data, NameSize);
   }
 
   DBG("Clover started with option to boot %ls from %ls\n",
-      gSettings.DefaultLoader.notEmpty() ? gSettings.DefaultLoader.wc_str() : L"legacy",
-      gSettings.DefaultVolume.wc_str());
+      gSettings.Boot.DefaultLoader.notEmpty() ? gSettings.Boot.DefaultLoader.wc_str() : L"legacy",
+      gSettings.Boot.DefaultVolume.wc_str());
 }
 
 //
@@ -2262,18 +2262,18 @@ GetEarlyUserSettings (
 //  const TagDict*      DictPointer;
 //  const TagStruct*    Prop;
 //  const TagArray*     arrayProp;
-  void        *Value = NULL;
-  BOOLEAN     SpecialBootMode = FALSE;
+//  void        *Value = NULL;
+//  BOOLEAN     SpecialBootMode = FALSE;
 
-  {
-    UINTN       Size = 0;
-    //read aptiofixflag from nvram for special boot
-    Status = GetVariable2(L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
-    if (!EFI_ERROR(Status)) {
-      SpecialBootMode = TRUE;
-      FreePool(Value);
-    }
-  }
+//  {
+//    UINTN       Size = 0;
+//    //read aptiofixflag from nvram for special boot
+//    Status = GetVariable2(L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
+//    if (!EFI_ERROR(Status)) {
+//      SpecialBootMode = TRUE;
+//      FreePool(Value);
+//    }
+//  }
 
   gSettings.KextPatchesAllowed              = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
@@ -2288,35 +2288,35 @@ GetEarlyUserSettings (
     if (BootDict != NULL) {
       const TagStruct* Prop = BootDict->propertyForKey("Timeout");
       if (Prop != NULL) {
-        GlobalConfig.Timeout = (INT32)GetPropertyAsInteger(Prop, GlobalConfig.Timeout);
-		  DBG("timeout set to %lld\n", GlobalConfig.Timeout);
+        gSettings.Boot.Timeout = (INT32)GetPropertyAsInteger(Prop, gSettings.Boot.Timeout);
+		  DBG("timeout set to %lld\n", gSettings.Boot.Timeout);
       }
 
       Prop = BootDict->propertyForKey("SkipHibernateTimeout");
-      gSettings.SkipHibernateTimeout = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.SkipHibernateTimeout = IsPropertyNotNullAndTrue(Prop);
 
       //DisableCloverHotkeys
       Prop = BootDict->propertyForKey("DisableCloverHotkeys");
-      gSettings.DisableCloverHotkeys = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.DisableCloverHotkeys = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("Arguments");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-        gSettings.BootArgs = Prop->getString()->stringValue();
+        gSettings.Boot.BootArgs = Prop->getString()->stringValue();
       }
 
       // defaults if "DefaultVolume" is not present or is empty
-      gSettings.LastBootedVolume = FALSE;
-      //     gSettings.DefaultVolume    = NULL;
+      gSettings.Boot.LastBootedVolume = FALSE;
+      //     gSettings.Boot.DefaultVolume    = NULL;
 
       Prop = BootDict->propertyForKey("DefaultVolume");
       if (Prop != NULL) {
         if ( Prop->isString()  &&  Prop->getString()->stringValue().notEmpty() ) {
-          gSettings.DefaultVolume.setEmpty();
+          gSettings.Boot.DefaultVolume.setEmpty();
           // check for special value for remembering boot volume
           if (Prop->getString()->stringValue().equalIC("LastBootedVolume")) {
-            gSettings.LastBootedVolume = TRUE;
+            gSettings.Boot.LastBootedVolume = TRUE;
           } else {
-            gSettings.DefaultVolume = Prop->getString()->stringValue();
+            gSettings.Boot.DefaultVolume = Prop->getString()->stringValue();
           }
         }
       }
@@ -2326,50 +2326,50 @@ GetEarlyUserSettings (
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in DefaultLoader\n");
         }else{
-	        gSettings.DefaultLoader = Prop->getString()->stringValue();
+	        gSettings.Boot.DefaultLoader = Prop->getString()->stringValue();
 	      }
       }
 
       Prop = BootDict->propertyForKey("Debug");
       if ( Prop ) {
         if ( Prop->isString() ) {
-          if ( Prop->getString()->stringValue().equalIC("true") ) GlobalConfig.DebugLog = true;
-          else if ( Prop->getString()->stringValue().equalIC("false") ) GlobalConfig.DebugLog = false;
+          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.Boot.DebugLog = true;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.Boot.DebugLog = false;
           else MsgLog("MALFORMED config.plist : property Boot/Debug must be true, false, or scratch\n");
         }else if ( Prop->isBool() ) {
-          GlobalConfig.DebugLog = Prop->getBool()->boolValue();
+          gSettings.Boot.DebugLog = Prop->getBool()->boolValue();
         }else{
           MsgLog("MALFORMED config.plist : property Boot/Debug must be a string (true, false) or <true/> or <false/>\n");
         }
       }
 
       Prop = BootDict->propertyForKey("Fast");
-      GlobalConfig.FastBoot       = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.FastBoot       = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("NoEarlyProgress");
-      GlobalConfig.NoEarlyProgress = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.NoEarlyProgress = IsPropertyNotNullAndTrue(Prop);
 
-      if (SpecialBootMode) {
-        GlobalConfig.FastBoot       = TRUE;
-        DBG("Fast option enabled\n");
-      }
+//      if (SpecialBootMode) {
+//        GlobalConfig.isFastBoot()       = TRUE;
+//        DBG("Fast option enabled\n");
+//      }
 
       Prop = BootDict->propertyForKey("NeverHibernate");
-      GlobalConfig.NeverHibernate = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.NeverHibernate = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("StrictHibernate");
-      GlobalConfig.StrictHibernate = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.StrictHibernate = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("RtcHibernateAware");
-      GlobalConfig.RtcHibernateAware = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.RtcHibernateAware = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("HibernationFixup");
       if (Prop) {
-        GlobalConfig.HibernationFixup = IsPropertyNotNullAndTrue(Prop); //it will be set automatically
+        gSettings.Boot.HibernationFixup = IsPropertyNotNullAndTrue(Prop); //it will be set automatically
       }
 
       Prop = BootDict->propertyForKey("SignatureFixup");
-      GlobalConfig.SignatureFixup = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.SignatureFixup = IsPropertyNotNullAndTrue(Prop);
 
       //      Prop = GetProperty(DictPointer, "GetLegacyLanAddress");
       //      GetLegacyLanAddress = IsPropertyTrue(Prop);
@@ -2379,11 +2379,11 @@ GetEarlyUserSettings (
       if (Prop != NULL) {
         if ( Prop->isFalse() ) {
           // Only disable setup mode, we want always secure boot
-          gSettings.SecureBootSetupMode = 0;
-        } else if ( Prop->isTrue()  &&  !gSettings.SecureBoot ) {
+          gSettings.Boot.SecureBootSetupMode = 0;
+        } else if ( Prop->isTrue()  &&  !gSettings.Boot.SecureBoot ) {
           // This mode will force boot policy even when no secure boot or it is disabled
-          gSettings.SecureBootSetupMode = 1;
-          gSettings.SecureBoot          = 1;
+          gSettings.Boot.SecureBootSetupMode = 1;
+          gSettings.Boot.SecureBoot          = 1;
         }
       }
       // Secure boot policy
@@ -2391,25 +2391,25 @@ GetEarlyUserSettings (
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
         if ((Prop->getString()->stringValue()[0] == 'D') || (Prop->getString()->stringValue()[0] == 'd')) {
           // Deny all images
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
         } else if ((Prop->getString()->stringValue()[0] == 'A') || (Prop->getString()->stringValue()[0] == 'a')) {
           // Allow all images
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
         } else if ((Prop->getString()->stringValue()[0] == 'Q') || (Prop->getString()->stringValue()[0] == 'q')) {
           // Query user
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
         } else if ((Prop->getString()->stringValue()[0] == 'I') || (Prop->getString()->stringValue()[0] == 'i')) {
           // Insert
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
         } else if ((Prop->getString()->stringValue()[0] == 'W') || (Prop->getString()->stringValue()[0] == 'w')) {
           // White list
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
         } else if ((Prop->getString()->stringValue()[0] == 'B') || (Prop->getString()->stringValue()[0] == 'b')) {
           // Black list
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
         } else if ((Prop->getString()->stringValue()[0] == 'U') || (Prop->getString()->stringValue()[0] == 'u')) {
           // User policy
-          gSettings.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
         }
       }
       // Secure boot white list
@@ -2418,9 +2418,9 @@ GetEarlyUserSettings (
         INTN   i;
         INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
-          gSettings.SecureBootWhiteListCount = 0;
-          gSettings.SecureBootWhiteList = (__typeof__(gSettings.SecureBootWhiteList))AllocateZeroPool(Count * sizeof(CHAR16 *));
-          if (gSettings.SecureBootWhiteList) {
+          gSettings.Boot.SecureBootWhiteListCount = 0;
+          gSettings.Boot.SecureBootWhiteList = (__typeof__(gSettings.Boot.SecureBootWhiteList))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          if (gSettings.Boot.SecureBootWhiteList) {
             for (i = 0; i < Count; i++) {
               const TagStruct* prop2 = &arrayProp->arrayContent()[i];
               if ( !prop2->isString() ) {
@@ -2428,7 +2428,7 @@ GetEarlyUserSettings (
                 continue;
               }
               if ( prop2->getString()->stringValue().notEmpty() ) {
-                gSettings.SecureBootWhiteList[gSettings.SecureBootWhiteListCount++] = SWPrintf("%s", prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                gSettings.Boot.SecureBootWhiteList[gSettings.Boot.SecureBootWhiteListCount++] = SWPrintf("%s", prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
               }
             }
           }
@@ -2440,9 +2440,9 @@ GetEarlyUserSettings (
         INTN   i;
         INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
-          gSettings.SecureBootBlackListCount = 0;
-          gSettings.SecureBootBlackList = (__typeof__(gSettings.SecureBootBlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
-          if (gSettings.SecureBootBlackList) {
+          gSettings.Boot.SecureBootBlackListCount = 0;
+          gSettings.Boot.SecureBootBlackList = (__typeof__(gSettings.Boot.SecureBootBlackList))AllocateZeroPool(Count * sizeof(CHAR16 *));
+          if (gSettings.Boot.SecureBootBlackList) {
             for (i = 0; i < Count; i++) {
               const TagStruct* prop2 = &arrayProp->arrayContent()[i];
               if ( !prop2->isString() ) {
@@ -2450,7 +2450,7 @@ GetEarlyUserSettings (
                 continue;
               }
               if ( prop2->getString()->stringValue().notEmpty() ) {
-                gSettings.SecureBootBlackList[gSettings.SecureBootBlackListCount++] = SWPrintf("%s", prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                gSettings.Boot.SecureBootBlackList[gSettings.Boot.SecureBootBlackListCount++] = SWPrintf("%s", prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
               }
             }
           }
@@ -2460,23 +2460,23 @@ GetEarlyUserSettings (
       // XMP memory profiles
       Prop = BootDict->propertyForKey("XMPDetection");
       if (Prop != NULL) {
-        gSettings.XMPDetection = 0;
+        gSettings.Boot.XMPDetection = 0;
         if ( Prop->isFalse() ) {
-          gSettings.XMPDetection = -1;
+          gSettings.Boot.XMPDetection = -1;
         } else if ( Prop->isString() ) {
           if ((Prop->getString()->stringValue()[0] == 'n') ||
               (Prop->getString()->stringValue()[0] == 'N') ||
               (Prop->getString()->stringValue()[0] == '-')) {
-            gSettings.XMPDetection = -1;
+            gSettings.Boot.XMPDetection = -1;
           } else {
-            gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->getString()->stringValue().c_str());
+            gSettings.Boot.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->getString()->stringValue().c_str());
           }
         } else if (Prop->isInt64()) {
-          gSettings.XMPDetection = (INT8)Prop->getInt64()->intValue();
+          gSettings.Boot.XMPDetection = (INT8)Prop->getInt64()->intValue();
         }
         // Check that the setting value is sane
-        if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
-          gSettings.XMPDetection   = -1;
+        if ((gSettings.Boot.XMPDetection < -1) || (gSettings.Boot.XMPDetection > 2)) {
+          gSettings.Boot.XMPDetection   = -1;
         }
       }
 
@@ -2486,65 +2486,65 @@ GetEarlyUserSettings (
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : Prop property not string in Legacy\n");
         }else{
-          gSettings.LegacyBoot = Prop->getString()->stringValue();
+          gSettings.Boot.LegacyBoot = Prop->getString()->stringValue();
         }
       } else if (gFirmwareClover) {
         // default for CLOVER EFI boot
-        gSettings.LegacyBoot = "PBR"_XS8;
+        gSettings.Boot.LegacyBoot = "PBR"_XS8;
       } else {
         // default for UEFI boot
-        gSettings.LegacyBoot = "LegacyBiosDefault"_XS8;
+        gSettings.Boot.LegacyBoot = "LegacyBiosDefault"_XS8;
       }
 
       // Entry for LegacyBiosDefault
       Prop = BootDict->propertyForKey("LegacyBiosDefaultEntry");
       if (Prop != NULL) {
-        gSettings.LegacyBiosDefaultEntry = (UINT16)GetPropertyAsInteger(Prop, 0); // disabled by default
+        gSettings.Boot.LegacyBiosDefaultEntry = (UINT16)GetPropertyAsInteger(Prop, 0); // disabled by default
       }
 
       // Whether or not to draw boot screen
       Prop = BootDict->propertyForKey("CustomLogo");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.CustomBoot   = CUSTOM_BOOT_APPLE;
+          gSettings.Boot.CustomBoot   = CUSTOM_BOOT_APPLE;
         } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
           if (Prop->getString()->stringValue().equalIC("Apple")) {
-            gSettings.CustomBoot = CUSTOM_BOOT_APPLE;
+            gSettings.Boot.CustomBoot = CUSTOM_BOOT_APPLE;
           } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
-            gSettings.CustomBoot = CUSTOM_BOOT_ALT_APPLE;
+            gSettings.Boot.CustomBoot = CUSTOM_BOOT_ALT_APPLE;
           } else if (Prop->getString()->stringValue().equalIC("Theme")) {
-            gSettings.CustomBoot = CUSTOM_BOOT_THEME;
+            gSettings.Boot.CustomBoot = CUSTOM_BOOT_THEME;
           } else {
             XStringW customLogo = XStringW() = Prop->getString()->stringValue();
-            gSettings.CustomBoot = CUSTOM_BOOT_USER;
-            if (gSettings.CustomLogo != NULL) {
-              delete gSettings.CustomLogo;
+            gSettings.Boot.CustomBoot = CUSTOM_BOOT_USER;
+            if (gSettings.Boot.CustomLogo != NULL) {
+              delete gSettings.Boot.CustomLogo;
             }
-            gSettings.CustomLogo = new XImage;
-            gSettings.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
-            if (gSettings.CustomLogo->isEmpty()) {
+            gSettings.Boot.CustomLogo = new XImage;
+            gSettings.Boot.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
+            if (gSettings.Boot.CustomLogo->isEmpty()) {
               DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
-              gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
+              gSettings.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
             }
           }
         } else if ( Prop->isData()  && Prop->getData()->dataLenValue() > 0 ) {
-          gSettings.CustomBoot = CUSTOM_BOOT_USER;
-          if (gSettings.CustomLogo != NULL) {
-            delete gSettings.CustomLogo;
+          gSettings.Boot.CustomBoot = CUSTOM_BOOT_USER;
+          if (gSettings.Boot.CustomLogo != NULL) {
+            delete gSettings.Boot.CustomLogo;
           }
-          gSettings.CustomLogo = new XImage;
-          gSettings.CustomLogo->FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
-          if (gSettings.CustomLogo->isEmpty()) {
+          gSettings.Boot.CustomLogo = new XImage;
+          gSettings.Boot.CustomLogo->FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
+          if (gSettings.Boot.CustomLogo->isEmpty()) {
             DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
-            gSettings.CustomBoot = CUSTOM_BOOT_DISABLED;
+            gSettings.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
           }
         } else {
-          gSettings.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+          gSettings.Boot.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
         }
       } else {
-        gSettings.CustomBoot   = CUSTOM_BOOT_DISABLED;
+        gSettings.Boot.CustomBoot   = CUSTOM_BOOT_DISABLED;
       }
-      DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(gSettings.CustomBoot), (uintptr_t)gSettings.CustomLogo);
+      DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(gSettings.Boot.CustomBoot), (uintptr_t)gSettings.Boot.CustomLogo);
     }
 
     //*** SYSTEM ***
@@ -2584,11 +2584,11 @@ GetEarlyUserSettings (
     const TagDict* GUIDict = CfgDict->dictPropertyForKey("GUI");
     if (GUIDict != NULL) {
       const TagStruct* Prop = GUIDict->propertyForKey("Timezone");
-      GlobalConfig.Timezone = (INT32)GetPropertyAsInteger(Prop, GlobalConfig.Timezone);
+      gSettings.GUI.Timezone = (INT32)GetPropertyAsInteger(Prop, gSettings.GUI.Timezone);
       //initialize Daylight when we know timezone
       EFI_TIME          Now;
       gRT->GetTime(&Now, NULL);
-      INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+      INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
       if (NowHour <  0 ) NowHour += 24;
       if (NowHour >= 24 ) NowHour -= 24;
       ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
@@ -2596,12 +2596,12 @@ GetEarlyUserSettings (
       Prop = GUIDict->propertyForKey("Theme");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
         ThemeX.Theme.takeValueFrom(Prop->getString()->stringValue());
-        GlobalConfig.Theme.takeValueFrom(Prop->getString()->stringValue());
-        DBG("Default theme: %ls\n", GlobalConfig.Theme.wc_str());
+        gSettings.GUI.Theme.takeValueFrom(Prop->getString()->stringValue());
+        DBG("Default theme: %ls\n", gSettings.GUI.Theme.wc_str());
         OldChosenTheme = 0xFFFF; //default for embedded
         for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
           //now comparison is case sensitive
-          if ( GlobalConfig.Theme.equalIC(ThemeNameArray[i]) ) {
+          if ( gSettings.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
             OldChosenTheme = i;
             break;
           }
@@ -2626,16 +2626,16 @@ GetEarlyUserSettings (
 
       // CustomIcons
       Prop = GUIDict->propertyForKey("CustomIcons");
-      GlobalConfig.CustomIcons = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.CustomIcons = IsPropertyNotNullAndTrue(Prop);
       Prop = GUIDict->propertyForKey("TextOnly");
-      GlobalConfig.TextOnly = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.TextOnly = IsPropertyNotNullAndTrue(Prop);
       Prop = GUIDict->propertyForKey("ShowOptimus");
-      GlobalConfig.ShowOptimus = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.ShowOptimus = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GUIDict->propertyForKey("ScreenResolution");
       if (Prop != NULL) {
         if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-          GlobalConfig.ScreenResolution.takeValueFrom(Prop->getString()->stringValue());
+          gSettings.GUI.ScreenResolution.takeValueFrom(Prop->getString()->stringValue());
         }
       }
 
@@ -2645,20 +2645,20 @@ GetEarlyUserSettings (
       Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
         if (Prop->isInt64()) {
-          GlobalConfig.ConsoleMode = Prop->getInt64()->intValue();
+          gSettings.GUI.ConsoleMode = Prop->getInt64()->intValue();
         } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
           if ( Prop->getString()->stringValue().contains("Max") ) {
-            GlobalConfig.ConsoleMode = -1;
+            gSettings.GUI.ConsoleMode = -1;
             DBG("ConsoleMode will be set to highest mode\n");
           } else if ( Prop->getString()->stringValue().contains("Min") ) {
-            GlobalConfig.ConsoleMode = -2;
+            gSettings.GUI.ConsoleMode = -2;
             DBG("ConsoleMode will be set to lowest mode\n");
           } else {
-            GlobalConfig.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->getString()->stringValue());
+            gSettings.GUI.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->getString()->stringValue());
           }
         }
-        if (GlobalConfig.ConsoleMode > 0) {
-          DBG("ConsoleMode will be set to mode #%lld\n", GlobalConfig.ConsoleMode);
+        if (gSettings.GUI.ConsoleMode > 0) {
+          DBG("ConsoleMode will be set to mode #%lld\n", gSettings.GUI.ConsoleMode);
         }
       }
 
@@ -2667,16 +2667,16 @@ GetEarlyUserSettings (
         gSettings.Language = Prop->getString()->stringValue();
         if ( Prop->getString()->stringValue().contains("en") ) {
           gLanguage = english;
-          GlobalConfig.Codepage = 0xC0;
-          GlobalConfig.CodepageSize = 0;
+          gSettings.GUI.Codepage = 0xC0;
+          gSettings.GUI.CodepageSize = 0;
         } else if ( Prop->getString()->stringValue().contains("ru")) {
           gLanguage = russian;
-          GlobalConfig.Codepage = 0x410;
-          GlobalConfig.CodepageSize = 0x40;
+          gSettings.GUI.Codepage = 0x410;
+          gSettings.GUI.CodepageSize = 0x40;
         } else if ( Prop->getString()->stringValue().contains("ua")) {
           gLanguage = ukrainian;
-          GlobalConfig.Codepage = 0x400;
-          GlobalConfig.CodepageSize = 0x60;
+          gSettings.GUI.Codepage = 0x400;
+          gSettings.GUI.CodepageSize = 0x60;
         } else if ( Prop->getString()->stringValue().contains("fr")) {
           gLanguage = french; //default is extended latin
         } else if ( Prop->getString()->stringValue().contains("it")) {
@@ -2701,14 +2701,14 @@ GetEarlyUserSettings (
           gLanguage = indonesian;
         } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
           gLanguage = chinese;
-          GlobalConfig.Codepage = 0x3400;
-          GlobalConfig.CodepageSize = 0x19C0;
+          gSettings.GUI.Codepage = 0x3400;
+          gSettings.GUI.CodepageSize = 0x19C0;
         } else if ( Prop->getString()->stringValue().contains("ro")) {
           gLanguage = romanian;
         } else if ( Prop->getString()->stringValue().contains("ko")) {
           gLanguage = korean;
-          GlobalConfig.Codepage = 0x1100;
-          GlobalConfig.CodepageSize = 0x100;
+          gSettings.GUI.Codepage = 0x1100;
+          gSettings.GUI.CodepageSize = 0x100;
         }
       }
 
@@ -2769,7 +2769,7 @@ GetEarlyUserSettings (
         if (IsPropertyNotNullAndFalse(Prop)) {
           gSettings.DisableEntryScan = TRUE;
           gSettings.DisableToolScan  = TRUE;
-          GlobalConfig.NoLegacy      = TRUE;
+          gSettings.GUI.NoLegacy      = TRUE;
         } else if (Prop->isDict()) {
           const TagStruct* prop2 = Prop->getDict()->propertyForKey("Entries");
           if (IsPropertyNotNullAndFalse(prop2)) {
@@ -2784,12 +2784,12 @@ GetEarlyUserSettings (
           prop2 = Prop->getDict()->propertyForKey("Legacy");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
-              GlobalConfig.NoLegacy = TRUE;
+              gSettings.GUI.NoLegacy = TRUE;
             } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
               if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
-                GlobalConfig.NoLegacy = TRUE;
+                gSettings.GUI.NoLegacy = TRUE;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
-                GlobalConfig.LegacyFirst = TRUE;
+                gSettings.GUI.LegacyFirst = TRUE;
                }
             }
           }
@@ -3901,8 +3901,8 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
   ThemeX.Init();
   
   //initialize Daylight when we know timezone
-  if (GlobalConfig.Timezone != 0xFF) { // 0xFF:default=timezone not set
-    INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+  if (gSettings.GUI.Timezone != 0xFF) { // 0xFF:default=timezone not set
+    INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
     if (NowHour <  0 ) NowHour += 24;
     if (NowHour >= 24 ) NowHour -= 24;
     ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
@@ -3950,7 +3950,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
   ThemeX.GetThemeTagSettings(NULL);
 
   if (ThemeNameArray.size() > 0  &&
-      (GlobalConfig.Theme.isEmpty() || StriCmp(GlobalConfig.Theme.wc_str(), L"embedded") != 0)) {
+      (gSettings.GUI.Theme.isEmpty() || StriCmp(gSettings.GUI.Theme.wc_str(), L"embedded") != 0)) {
     // Try special theme first
       XStringW TestTheme;
  //   if (Time != NULL) {
@@ -3965,7 +3965,7 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
         if (ThemeDict != NULL) {
           DBG("special theme %ls found and %ls parsed\n", TestTheme.wc_str(), CONFIG_THEME_FILENAME);
 //          ThemeX.Theme.takeValueFrom(TestTheme);
-          GlobalConfig.Theme = TestTheme;
+          gSettings.GUI.Theme = TestTheme;
 
         } else { // special theme not loaded
           DBG("special theme %ls not found, skipping\n", TestTheme.wc_str()/*, CONFIG_THEME_FILENAME*/);
@@ -3991,10 +3991,10 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
           if (ThemeDict != NULL) {
             DBG("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
 //            ThemeX.Theme.takeValueFrom(TestTheme);
-            GlobalConfig.Theme = TestTheme;
+            gSettings.GUI.Theme = TestTheme;
           } else { // theme from nvram not loaded
-            if (GlobalConfig.Theme.notEmpty()) {
-              DBG("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, GlobalConfig.Theme.wc_str());
+            if (gSettings.GUI.Theme.notEmpty()) {
+              DBG("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, gSettings.GUI.Theme.wc_str());
             } else {
               DBG("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
             }
@@ -4007,18 +4007,18 @@ InitTheme(BOOLEAN UseThemeDefinedInNVRam)
     }
     // Try to get theme from settings
     if (ThemeDict == NULL) {
-      if (GlobalConfig.Theme.isEmpty()) {
+      if (gSettings.GUI.Theme.isEmpty()) {
         DBG("no default theme, get random theme %ls\n", ThemeNameArray[Rnd].wc_str());
         ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
       } else {
-        if (StriCmp(GlobalConfig.Theme.wc_str(), L"random") == 0) {
+        if (StriCmp(gSettings.GUI.Theme.wc_str(), L"random") == 0) {
           ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
         } else {
-          ThemeDict = ThemeX.LoadTheme(GlobalConfig.Theme);
+          ThemeDict = ThemeX.LoadTheme(gSettings.GUI.Theme);
           if (ThemeDict == NULL) {
-            DBG("GlobalConfig: %ls not found, get embedded theme\n", GlobalConfig.Theme.wc_str());
+            DBG("GlobalConfig: %ls not found, get embedded theme\n", gSettings.GUI.Theme.wc_str());
           } else {
-            DBG("chosen theme %ls\n", GlobalConfig.Theme.wc_str());
+            DBG("chosen theme %ls\n", gSettings.GUI.Theme.wc_str());
           }
         }
       }
@@ -4050,7 +4050,7 @@ finish:
     Status = StartupSoundPlay(&ThemeX.getThemeDir(), NULL);
   } else { // theme loaded successfully
     ThemeX.embedded = false;
-    ThemeX.Theme.takeValueFrom(GlobalConfig.Theme); //XStringW from CHAR16*)
+    ThemeX.Theme.takeValueFrom(gSettings.GUI.Theme); //XStringW from CHAR16*)
     // read theme settings
     if (!ThemeX.TypeSVG) {
       const TagDict* DictPointer = ThemeDict->dictPropertyForKey("Theme");
@@ -5088,8 +5088,8 @@ GetUserSettings(const TagDict* CfgDict)
     if (BootDict != NULL) {
 
       const TagStruct* Prop = BootDict->propertyForKey("Arguments");
-      if ( Prop != NULL  &&  Prop->isString()  &&  Prop->getString()->stringValue().notEmpty()  &&  !gSettings.BootArgs.contains(Prop->getString()->stringValue()) ) {
-        gSettings.BootArgs = Prop->getString()->stringValue();
+      if ( Prop != NULL  &&  Prop->isString()  &&  Prop->getString()->stringValue().notEmpty()  &&  !gSettings.Boot.BootArgs.contains(Prop->getString()->stringValue()) ) {
+        gSettings.Boot.BootArgs = Prop->getString()->stringValue();
         //gBootArgsChanged = TRUE;
         //gBootChanged = TRUE;
       }
@@ -6248,13 +6248,13 @@ GetUserSettings(const TagDict* CfgDict)
       //DBG("\n ConfigName: %ls n", gSettings.ConfigName);
     }
     if (gThemeChanged) {
-      GlobalConfig.Theme.setEmpty();
+      gSettings.GUI.Theme.setEmpty();
       const TagDict* GUIDict = CfgDict->dictPropertyForKey("GUI");
       if (GUIDict != NULL) {
         const TagStruct* Prop = GUIDict->propertyForKey("Theme");
         if ((Prop != NULL) && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-          GlobalConfig.Theme.takeValueFrom(Prop->getString()->stringValue());
-          DBG("Theme from new config: %ls\n", GlobalConfig.Theme.wc_str());
+          gSettings.GUI.Theme.takeValueFrom(Prop->getString()->stringValue());
+          DBG("Theme from new config: %ls\n", gSettings.GUI.Theme.wc_str());
         }
       }
     }
@@ -8436,7 +8436,7 @@ checkOffset(CpuType);
   xb.cat(SetTable132);
   xb.cat(TrustSMBIOS);
   xb.cat(InjectMemoryTables);
-  xb.cat(XMPDetection);
+  xb.cat(Boot.XMPDetection);
   xb.cat(UseARTFreq);
   // SMBIOS TYPE133
   xb.ncat(&pad18, sizeof(pad18));
@@ -8448,7 +8448,7 @@ checkOffset(CpuType);
   // OS parameters
   WriteOldFixLengthString(Language, 16);
 checkOffset(BootArgs);
-  WriteOldFixLengthString(BootArgs, 256);
+  WriteOldFixLengthString(Boot.BootArgs, 256);
   xb.memsetAtPos(xb.size(), 0, 1);
 checkOffset(CustomUuid);
   WriteOldFixLengthString(XStringW(CustomUuid), 40);
@@ -8458,8 +8458,8 @@ checkOffset(DefaultVolume);
   xb.cat(uintptr_t(0)); //DefaultLoader was CHAR16*
 //Boot
 checkOffset(LastBootedVolume);
-  xb.cat(LastBootedVolume);
-  xb.cat(SkipHibernateTimeout);
+  xb.cat(Boot.LastBootedVolume);
+  xb.cat(Boot.SkipHibernateTimeout);
 //Monitor
   xb.cat(IntelMaxBacklight);
   xb.ncat(&pad21, sizeof(pad21));
@@ -8576,15 +8576,15 @@ checkOffset(GraphicsInjector);
 
   // Secure boot white/black list
 checkOffset(SecureBootWhiteListCount);
-  xb.cat(SecureBootWhiteListCount);
-  xb.cat(SecureBootBlackListCount);
-  xb.cat(SecureBootWhiteList);
-  xb.cat(SecureBootBlackList);
+  xb.cat(Boot.SecureBootWhiteListCount);
+  xb.cat(Boot.SecureBootBlackListCount);
+  xb.cat(Boot.SecureBootWhiteList);
+  xb.cat(Boot.SecureBootBlackList);
 
   // Secure boot
-  xb.cat(SecureBoot);
-  xb.cat(SecureBootSetupMode);
-  xb.cat(SecureBootPolicy);
+  xb.cat(Boot.SecureBoot);
+  xb.cat(Boot.SecureBootSetupMode);
+  xb.cat(Boot.SecureBootPolicy);
 
   // HDA
   xb.cat(HDAInjection);
@@ -8604,8 +8604,8 @@ checkOffset(SecureBootWhiteListCount);
 
   // LegacyBoot
 checkOffset(LegacyBoot);
-  WriteOldFixLengthString(LegacyBoot, 32);
-  xb.cat(LegacyBiosDefaultEntry);
+  WriteOldFixLengthString(Boot.LegacyBoot, 32);
+  xb.cat(Boot.LegacyBiosDefaultEntry);
 
   //SkyLake
   xb.cat(HWP);
@@ -8634,9 +8634,9 @@ checkOffset(LegacyBoot);
 
 //  UINT8                   pad7[6]);
 checkOffset(CustomBoot);
-  xb.cat(CustomBoot);
+  xb.cat(Boot.CustomBoot);
   xb.ncat(&pad29, sizeof(pad29));
-  xb.cat(CustomLogo);
+  xb.cat(Boot.CustomLogo);
   xb.cat(RefCLK);
 
   // SysVariables
@@ -8650,7 +8650,7 @@ checkOffset(CsrActiveConfig);
   xb.cat(CsrActiveConfig);
   xb.cat(BooterConfig);
   WriteOldFixLengthString(BooterCfgStr, 64);
-  xb.cat(DisableCloverHotkeys);
+  xb.cat(Boot.DisableCloverHotkeys);
   xb.cat(NeverDoRecovery);
 
   // Multi-config

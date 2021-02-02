@@ -971,7 +971,7 @@ LoadLatestNvramPlist()
       continue;
     }
 //    DBG(" Status=%s\n", efiStrError(Status));
-    if (GlobalConfig.FastBoot) {
+    if (GlobalConfig.isFastBoot()) {
       VolumeWithLatestNvramPlist = Volume;
       break;
     }
@@ -1090,12 +1090,12 @@ PutNvramPlistToRtVars ()
     if ( keyTag->keyStringValue() == "Boot0082"_XS8 || keyTag->keyStringValue() == "BootNext"_XS8 ) {
       VendorGuid = &gEfiGlobalVariableGuid;
       // it may happen only in this case
-      GlobalConfig.HibernationFixup = TRUE;
+      gSettings.Boot.HibernationFixup = TRUE;
     }
 
 //    AsciiStrToUnicodeStrS(Tag.stringValue(), KeyBuf, 128);
     XStringW KeyBuf = keyTag->keyStringValue();
-    if (!GlobalConfig.DebugLog) {
+    if (!gSettings.Boot.DebugLog) {
       DBG(" Adding Key: %ls: ", KeyBuf.wc_str());
     }
     // process value tag
@@ -1105,7 +1105,7 @@ PutNvramPlistToRtVars ()
       // <string> element
       Value = (void*)valueTag->getString()->stringValue().c_str();
       Size  = valueTag->getString()->stringValue().length();
-      if (!GlobalConfig.DebugLog) {
+      if (!gSettings.Boot.DebugLog) {
         DBG("String: Size = %zu, Val = '%s'\n", Size, valueTag->getString()->stringValue().c_str());
       }
       
@@ -1114,13 +1114,13 @@ PutNvramPlistToRtVars ()
       // <data> element
       Size  = valueTag->getData()->getData()->dataLenValue();
       Value = valueTag->getData()->getData()->dataValue();
-      if (!GlobalConfig.DebugLog) {
+      if (!gSettings.Boot.DebugLog) {
       DBG("Size = %zu, Data: ", Size);
         for (size_t i = 0; i < Size; i++) {
           DBG("%02hhX ", *(((UINT8*)Value) + i));
         }
       }
-      if (!GlobalConfig.DebugLog) {
+      if (!gSettings.Boot.DebugLog) {
        DBG("\n");
       }
     } else {

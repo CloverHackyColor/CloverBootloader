@@ -123,7 +123,7 @@ void InitScreen(IN BOOLEAN SetMaxResolution)
 
 void SetupScreen(void)
 {
-    if (GlobalConfig.TextOnly) {
+    if (gSettings.GUI.TextOnly) {
         // switch to text mode if requested
         AllowGraphicsMode = FALSE;
         SwitchToText(FALSE);

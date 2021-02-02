@@ -63,7 +63,7 @@ void EnableSecureBoot(void)
   UINTN       CloverSignatureSize = 0;
   void       *CloverSignature = NULL;
   // Check in setup mode
-  if (gSettings.SecureBoot || !gSettings.SecureBootSetupMode) {
+  if (gSettings.Boot.SecureBoot || !gSettings.Boot.SecureBootSetupMode) {
     return;
   }
   // Ask user if they want to use default keys
@@ -148,12 +148,12 @@ CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
 STATIC void PrintSecureBootInfo(void)
 {
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.SecureBoot) {
-    DBG("Secure Boot: %s\n", (gSettings.SecureBootSetupMode ? "Setup" : "Disabled"));
+  if (!gSettings.Boot.SecureBoot) {
+    DBG("Secure Boot: %s\n", (gSettings.Boot.SecureBootSetupMode ? "Setup" : "Disabled"));
   } else {
     // Secure boot is enabled
-    DBG("Secure Boot: %s\n", (gSettings.SecureBootSetupMode ? "Forced" : "Enabled"));
-    DBG("Boot Policy: %ls\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+    DBG("Secure Boot: %s\n", (gSettings.Boot.SecureBootSetupMode ? "Forced" : "Enabled"));
+    DBG("Boot Policy: %ls\n", SecureBootPolicyToStr(gSettings.Boot.SecureBootPolicy));
   }
 }
 
@@ -178,7 +178,7 @@ void DisableSecureBoot(void)
   EFI_STATUS  Status;
   CHAR16     *ErrorString = NULL;
   // Check in user mode
-  if (gSettings.SecureBootSetupMode || !gSettings.SecureBoot) {
+  if (gSettings.Boot.SecureBootSetupMode || !gSettings.Boot.SecureBoot) {
     return;
   }
   UninstallSecureBoot();
@@ -221,7 +221,7 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
   if ((AuthenticationStatus == NULL) || (DevicePath == NULL)) {
     return FALSE;
   }
-  switch (gSettings.SecureBootPolicy) {
+  switch (gSettings.Boot.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_ALLOW:
     // Allow all images
     *AuthenticationStatus = EFI_SUCCESS;
@@ -233,9 +233,9 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     if (DevicePathStr == NULL) {
       return FALSE;
     }
-    for (Index = 0; Index < gSettings.SecureBootWhiteListCount; ++Index) {
-      if ((gSettings.SecureBootWhiteList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.SecureBootWhiteList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootWhiteListCount; ++Index) {
+      if ((gSettings.Boot.SecureBootWhiteList[Index] != NULL) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index]) != NULL)) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
         return TRUE;
@@ -249,9 +249,9 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     if (DevicePathStr == NULL) {
       return FALSE;
     }
-    for (Index = 0; Index < gSettings.SecureBootBlackListCount; ++Index) {
-      if ((gSettings.SecureBootBlackList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.SecureBootBlackList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootBlackListCount; ++Index) {
+      if ((gSettings.Boot.SecureBootBlackList[Index] != NULL) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index]) != NULL)) {
         // Black listed
         return TRUE;
       }
@@ -265,17 +265,17 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
       return FALSE;
     }
     // Check the black list for this image
-    for (Index = 0; Index < gSettings.SecureBootBlackListCount; ++Index) {
-      if ((gSettings.SecureBootBlackList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.SecureBootBlackList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootBlackListCount; ++Index) {
+      if ((gSettings.Boot.SecureBootBlackList[Index] != NULL) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index]) != NULL)) {
         // Black listed
         return TRUE;
       }
     }
     // Check the white list for this image
-    for (Index = 0; Index < gSettings.SecureBootWhiteListCount; ++Index) {
-      if ((gSettings.SecureBootWhiteList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.SecureBootWhiteList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootWhiteListCount; ++Index) {
+      if ((gSettings.Boot.SecureBootWhiteList[Index] != NULL) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index]) != NULL)) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
         return TRUE;
@@ -294,7 +294,7 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
                       IN     UINTN                           FileSize)
 {
   UINTN UserResponse = SECURE_BOOT_POLICY_DENY;
-  switch (gSettings.SecureBootPolicy) {
+  switch (gSettings.Boot.SecureBootPolicy) {
   case SECURE_BOOT_POLICY_QUERY:
   case SECURE_BOOT_POLICY_USER:
     // Query user to allow image or deny image or insert image signature
@@ -311,7 +311,7 @@ CheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationStatu
 
     case SECURE_BOOT_POLICY_INSERT:
       // If this is forced mode then no insert
-      if (gSettings.SecureBootSetupMode) {
+      if (gSettings.Boot.SecureBootSetupMode) {
         return TRUE;
       }
       break;
@@ -421,7 +421,7 @@ EFI_STATUS InstallSecureBoot(void)
   }
   PrintSecureBootInfo();
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.SecureBoot || gSettings.SecureBootSetupMode) {
+  if (!gSettings.Boot.SecureBoot || gSettings.Boot.SecureBootSetupMode) {
     return EFI_SUCCESS;
   }
   // Locate security protocols
@@ -471,16 +471,16 @@ void UninstallSecureBoot(void)
 void InitializeSecureBoot(void)
 {
   // Set secure boot variables to firmware values
-  UINTN Size = sizeof(gSettings.SecureBootSetupMode);
-  gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.SecureBootSetupMode);
-  Size = sizeof(gSettings.SecureBoot);
-  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.SecureBoot);
+  UINTN Size = sizeof(gSettings.Boot.SecureBootSetupMode);
+  gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBootSetupMode);
+  Size = sizeof(gSettings.Boot.SecureBoot);
+  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBoot);
   // Make sure that secure boot is disabled if in setup mode, this will
   //  allow us to specify later in settings that we want to override
   //  setup mode and pretend like we are in secure boot mode to enforce
   //  secure boot policy even when secure boot is not present/disabled.
-  if (gSettings.SecureBootSetupMode) {
-    gSettings.SecureBoot = 0;
+  if (gSettings.Boot.SecureBootSetupMode) {
+    gSettings.Boot.SecureBoot = 0;
   }
 }
 

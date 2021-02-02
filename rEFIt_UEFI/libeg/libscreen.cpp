@@ -173,8 +173,8 @@ void egDumpSetConsoleVideoModes(void)
         MsgLog(" - [%02llu]: %llux%llu%ls\n", i, Width, Height, (i-1==(UINTN)gST->ConOut->Mode->Mode)?L" (current mode)":L"");
         }
         // Select highest mode (-1) or lowest mode (-2) as/if requested
-        if ((GlobalConfig.ConsoleMode == -1 && (BestMode == 0 || Height > BestHeight || (Height == BestHeight && Width > BestWidth))) ||
-            (GlobalConfig.ConsoleMode == -2 && (BestMode == 0 || Height < BestHeight || (Height == BestHeight && Width < BestWidth)))) {
+        if ((gSettings.GUI.ConsoleMode == -1 && (BestMode == 0 || Height > BestHeight || (Height == BestHeight && Width > BestWidth))) ||
+            (gSettings.GUI.ConsoleMode == -2 && (BestMode == 0 || Height < BestHeight || (Height == BestHeight && Width < BestWidth)))) {
           BestMode = i;
           BestWidth = Width;
           BestHeight = Height;
@@ -187,9 +187,9 @@ void egDumpSetConsoleVideoModes(void)
     return;
   }
   
-  if (GlobalConfig.ConsoleMode > 0) {
+  if (gSettings.GUI.ConsoleMode > 0) {
     // Specific mode chosen, try to set it
-    BestMode = GlobalConfig.ConsoleMode;
+    BestMode = gSettings.GUI.ConsoleMode;
   }
   
   if (BestMode >= 1 && BestMode <= (UINTN)gST->ConOut->Mode->MaxMode) {
@@ -397,8 +397,8 @@ void egInitScreen(IN BOOLEAN SetMaxResolution)
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
  //       egDumpGOPVideoModes();
-        if (GlobalConfig.ScreenResolution.notEmpty()) {
-            if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution.wc_str()))) {
+        if (gSettings.GUI.ScreenResolution.notEmpty()) {
+            if (EFI_ERROR(egSetScreenResolution(gSettings.GUI.ScreenResolution.wc_str()))) {
                 if (SetMaxResolution) {
                     egSetMaxResolution();
                 }

@@ -721,7 +721,7 @@ void XImage::CopyRect(const XImage& Image, const EG_RECT& OwnPlace, const EG_REC
 //
 EFI_STATUS XImage::LoadIcns(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName, IN UINTN PixelSize)
 {
-  if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
+  if (gSettings.GUI.TextOnly)      // skip loading if it's not used anyway
     return EFI_SUCCESS;
   if (BaseDir) {
     EFI_STATUS  Status = EFI_NOT_FOUND;

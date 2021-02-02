@@ -763,7 +763,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
    DBG("HD path is not found\n"); //master volume!
    }*/
   
-  //  if (GlobalConfig.FastBoot) {
+  //  if (GlobalConfig.isFastBoot()) {
   //    return EFI_SUCCESS;
   //  }
   

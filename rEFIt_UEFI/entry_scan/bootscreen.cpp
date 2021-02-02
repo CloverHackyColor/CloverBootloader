@@ -748,9 +748,9 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   if (customBoot == CUSTOM_BOOT_USER) {
     logo = Entry->CustomLogo;
   } else if (customBoot == CUSTOM_BOOT_DISABLED) {
-    customBoot = gSettings.CustomBoot;
+    customBoot = gSettings.Boot.CustomBoot;
     if (customBoot == CUSTOM_BOOT_USER) {
-      logo = *gSettings.CustomLogo;
+      logo = *gSettings.Boot.CustomLogo;
     }
   }
   switch (customBoot) {

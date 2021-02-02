@@ -256,7 +256,7 @@ void EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
     printf("%s", LastMessage);
   }
   
-  if ((DebugMode >= 1) && GlobalConfig.DebugLog) {
+  if ((DebugMode >= 1) && gSettings.Boot.DebugLog) {
     SaveMessageToDebugLogFile(LastMessage);
   }
 }

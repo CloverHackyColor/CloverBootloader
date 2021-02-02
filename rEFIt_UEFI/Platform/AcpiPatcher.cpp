@@ -1905,7 +1905,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
 
     //patch for FACS included here
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
-    if (GlobalConfig.SignatureFixup) {
+    if (gSettings.Boot.SignatureFixup) {
 		DBG(" SignatureFixup: 0x%X -> 0x%llX\n", Facs->HardwareSignature, machineSignature);
       Facs->HardwareSignature = (UINT32)machineSignature;
     } else {

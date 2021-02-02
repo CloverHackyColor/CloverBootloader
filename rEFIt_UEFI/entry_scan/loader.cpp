@@ -600,7 +600,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
   if (OSFLAG_ISSET(Flags, OSFLAG_NODEFAULTARGS)) {
     Entry->LoadOptions  = LoaderOptions;
   }else{
-    Entry->LoadOptions = Split<XString8Array>(gSettings.BootArgs, " ");
+    Entry->LoadOptions = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
     Entry->LoadOptions.import(LoaderOptions);
   }
   //actions
@@ -740,7 +740,7 @@ if ( Entry->APFSTargetUUID.startWith("99999999") ) {
   Entry->ShortcutLetter = (Hotkey == 0) ? ShortcutLetter : Hotkey;
 
   // get custom volume icon if present
-  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
+  if (gSettings.GUI.CustomIcons && FileExists(Volume->RootDir, L"\\.VolumeIcon.icns")){
     Entry->Image.Image.LoadIcns(Volume->RootDir, L"\\.VolumeIcon.icns", 128);
     if (!Entry->Image.Image.isEmpty()) {
       Entry->Image.setFilled();

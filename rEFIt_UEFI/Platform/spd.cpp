@@ -477,7 +477,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
   if (xmpProfiles) {
     MsgLog("Found module with XMP version %d.%d\n", (xmpVersion >> 4) & 0xF, xmpVersion & 0xF);
 
-    switch (gSettings.XMPDetection) {
+    switch (gSettings.Boot.XMPDetection) {
       case 0:
         // Detect the better XMP profile
         if (xmpFrequency1 >= xmpFrequency2) {
@@ -516,14 +516,14 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
     }
   } else {
     // Print out XMP not detected
-    switch (gSettings.XMPDetection) {
+    switch (gSettings.Boot.XMPDetection) {
       case 0:
         DBG("Not using XMP because it is not present\n");
         break;
 
       case 1:
       case 2:
-        DBG("Not using XMP Profile%d because it is not present\n", gSettings.XMPDetection);
+        DBG("Not using XMP Profile%d because it is not present\n", gSettings.Boot.XMPDetection);
         break;
 
       default:

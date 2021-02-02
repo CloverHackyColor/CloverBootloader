@@ -1439,7 +1439,7 @@ void GetDefaultSettings()
     gSettings.BooterCfgStr.takeValueFrom(OldCfgStr);
     FreePool(OldCfgStr);
   }
-  gSettings.DisableCloverHotkeys = FALSE;
+  gSettings.Boot.DisableCloverHotkeys = FALSE;
   gSettings.UIScale              = 1;
   
   ResumeFromCoreStorage          = FALSE;

@@ -305,7 +305,7 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 #ifdef ENABLE_SECURE_BOOT
   // Verify secure boot policy
-  if (gSettings.SecureBoot && gSettings.SecureBootSetupMode) {
+  if (gSettings.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) {
     // Only verify if in forced secure boot mode
     EFI_STATUS Status = VerifySecureBootImage(DevicePath);
     if (EFI_ERROR(Status)) {
@@ -944,7 +944,7 @@ void LOADER_ENTRY::StartLoader()
 
 
 
-    if ( GlobalConfig.DebugLog ) {
+    if ( gSettings.Boot.DebugLog ) {
       mOpenCoreConfiguration.Misc.Debug.AppleDebug = true;
       mOpenCoreConfiguration.Misc.Debug.ApplePanic = true;
   //    mOpenCoreConfiguration.Misc.Debug.DisableWatchDog = true; // already done by Clover ?
@@ -1123,7 +1123,7 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
     #endif
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.ProvideConsoleGop;
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(GlobalConfig.ScreenResolution).c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
 
 
   // if OC is NOT initialized with OcMain, we need the following
@@ -1469,7 +1469,7 @@ void LOADER_ENTRY::StartLoader()
     //PauseForKey(L"continue");
   }
 
-  if (gSettings.LastBootedVolume) {
+  if (gSettings.Boot.LastBootedVolume) {
     if ( APFSTargetUUID.notEmpty() ) {
       // Jief : we need to LoaderPath. If not, GUI can't know which target was selected.
       SetStartupDiskVolume(Volume, LoaderPath);
@@ -1478,7 +1478,7 @@ void LOADER_ENTRY::StartLoader()
       //        Let's do it like it was before when not in case of APFSTargetUUID
       SetStartupDiskVolume(Volume, LoaderType == OSTYPE_OSX ? NullXStringW : LoaderPath);
     }
-  } else if (gSettings.DefaultVolume.notEmpty()) {
+  } else if (gSettings.Boot.DefaultVolume.notEmpty()) {
     // DefaultVolume specified in Config.plist or in Boot Option
     // we'll remove macOS Startup Disk vars which may be present if it is used
     // to reboot into another volume
@@ -1602,9 +1602,9 @@ void LEGACY_ENTRY::StartLegacy()
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
 
-    if (gSettings.LastBootedVolume) {
+    if (gSettings.Boot.LastBootedVolume) {
       SetStartupDiskVolume(Volume, NullXStringW);
-    } else if (gSettings.DefaultVolume.notEmpty()) {
+    } else if (gSettings.Boot.DefaultVolume.notEmpty()) {
       // DefaultVolume specified in Config.plist:
       // we'll remove macOS Startup Disk vars which may be present if it is used
       // to reboot into another volume
@@ -1628,11 +1628,11 @@ void LEGACY_ENTRY::StartLegacy()
           Status = bootMBR(Volume);
           break;
         case BOOTING_BY_PBR:
-          if (gSettings.LegacyBoot == "LegacyBiosDefault"_XS8) {
-            Status = bootLegacyBiosDefault(gSettings.LegacyBiosDefaultEntry);
-          } else if (gSettings.LegacyBoot == "PBRtest"_XS8) {
+          if (gSettings.Boot.LegacyBoot == "LegacyBiosDefault"_XS8) {
+            Status = bootLegacyBiosDefault(gSettings.Boot.LegacyBiosDefaultEntry);
+          } else if (gSettings.Boot.LegacyBoot == "PBRtest"_XS8) {
             Status = bootPBRtest(Volume);
-          } else if (gSettings.LegacyBoot == "PBRsata"_XS8) {
+          } else if (gSettings.Boot.LegacyBoot == "PBRsata"_XS8) {
             Status = bootPBR(Volume, TRUE);
           } else {
             // default
@@ -2183,17 +2183,17 @@ INTN FindDefaultEntry(void)
 
   //
   // if not found, then try DefaultVolume from config.plist
-  // if not null or empty, search volume that matches gSettings.DefaultVolume
+  // if not null or empty, search volume that matches gSettings.Boot.DefaultVolume
   //
-  if (gSettings.DefaultVolume.notEmpty()) {
+  if (gSettings.Boot.DefaultVolume.notEmpty()) {
 
-    // if not null or empty, also search for loader that matches gSettings.DefaultLoader
-    SearchForLoader = gSettings.DefaultLoader.notEmpty();
+    // if not null or empty, also search for loader that matches gSettings.Boot.DefaultLoader
+    SearchForLoader = gSettings.Boot.DefaultLoader.notEmpty();
 /*
     if (SearchForLoader) {
-      DBG("Searching for DefaultVolume '%ls', DefaultLoader '%ls' ...\n", gSettings.DefaultVolume, gSettings.DefaultLoader);
+      DBG("Searching for DefaultVolume '%ls', DefaultLoader '%ls' ...\n", gSettings.Boot.DefaultVolume, gSettings.Boot.DefaultLoader);
     } else {
-      DBG("Searching for DefaultVolume '%ls' ...\n", gSettings.DefaultVolume);
+      DBG("Searching for DefaultVolume '%ls' ...\n", gSettings.Boot.DefaultVolume);
     }
 */
     for (Index = 0; Index < (INTN)MainMenu.Entries.size()  &&  MainMenu.Entries[Index].getLOADER_ENTRY()  &&  MainMenu.Entries[Index].getLOADER_ENTRY()->Row == 0 ; Index++) {
@@ -2204,13 +2204,13 @@ INTN FindDefaultEntry(void)
       }
 
       Volume = Entry.Volume;
-      if ( (Volume->VolName.isEmpty() || Volume->VolName != gSettings.DefaultVolume)  &&
-           !Volume->DevicePathString.contains(gSettings.DefaultVolume) ) {
+      if ( (Volume->VolName.isEmpty() || Volume->VolName != gSettings.Boot.DefaultVolume)  &&
+           !Volume->DevicePathString.contains(gSettings.Boot.DefaultVolume) ) {
         continue;
       }
 
       //                       we alreday know that Entry.isLoader
-      if (SearchForLoader && (/*Entry.Tag != TAG_LOADER ||*/ !Entry.LoaderPath.containsIC(gSettings.DefaultLoader))) {
+      if (SearchForLoader && (/*Entry.Tag != TAG_LOADER ||*/ !Entry.LoaderPath.containsIC(gSettings.Boot.DefaultLoader))) {
         continue;
       }
 
@@ -2282,15 +2282,15 @@ void SetVariablesFromNvram()
         DBG("...ignoring arg:%s\n", arg);
         continue;
       }
-      if (!gSettings.BootArgs.contains(arg)) {
+      if (!gSettings.Boot.BootArgs.contains(arg)) {
         //this arg is not present will add
         DBG("...adding arg:%s\n", arg);
-        gSettings.BootArgs.trim();
-        gSettings.BootArgs += ' ';
+        gSettings.Boot.BootArgs.trim();
+        gSettings.Boot.BootArgs += ' ';
         for (i = 0; i < index2; i++) {
-          gSettings.BootArgs += arg[i];
+          gSettings.Boot.BootArgs += arg[i];
         }
-        gSettings.BootArgs += ' ';
+        gSettings.Boot.BootArgs += ' ';
       }
     }
     FreePool(arg);
@@ -2386,7 +2386,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // get TSC freq and init MemLog if needed
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
-  //GlobalConfig.TextOnly = TRUE;
+  //gSettings.GUI.TextOnly = TRUE;
 
   // bootstrap
   gST       = SystemTable;
@@ -2449,7 +2449,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
   } else {
     MsgLog("Now is %02d.%02d.%d,  %02d:%02d:%02d (GMT+%d)\n",
-      Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, GlobalConfig.Timezone);
+      Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, gSettings.GUI.Timezone);
   }
   //MsgLog("Starting Clover rev %ls on %ls EFI\n", gFirmwareRevision, gST->FirmwareVendor);
 	MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
@@ -2636,12 +2636,23 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
      */
   }
 #endif
-  if (!GlobalConfig.FastBoot) {
+  if (!GlobalConfig.isFastBoot()) {
     GetListOfThemes();
     GetListOfConfigs();
   }
 
 //  ThemeX.FillByEmbedded(); //init XTheme before EarlyUserSettings
+  {
+    void       *Value = NULL;
+    UINTN       Size = 0;
+    //read aptiofixflag from nvram for special boot
+    Status = GetVariable2(L"aptiofixflag", &gEfiAppleBootGuid, &Value, &Size);
+    if (!EFI_ERROR(Status)) {
+      GlobalConfig.SpecialBootMode = TRUE;
+      FreePool(Value);
+      DBG("Fast option enabled\n");
+    }
+  }
 
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
@@ -2657,7 +2668,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 #endif // ENABLE_SECURE_BOOT
 
-  MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
+  MainMenu.TimeoutSeconds = gSettings.Boot.Timeout >= 0 ? gSettings.Boot.Timeout : 0;
   //DBG("LoadDrivers() start\n");
   LoadDrivers();
   //DBG("LoadDrivers() end\n");
@@ -2683,7 +2694,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   DbgHeader("InitScreen");
 	
-  if (!GlobalConfig.FastBoot) {
+  if (!GlobalConfig.isFastBoot()) {
     // init screen and dump video modes to log
     if (gDriversFlags.VideoLoaded) {
       InitScreen(FALSE);
@@ -2709,7 +2720,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 	
   //  DBG("DBG: messages\n");
-  if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot  && GlobalConfig.Timeout>0) {
+  if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot()  && gSettings.Boot.Timeout>0) {
     XStringW Message = SWPrintf("   Welcome to Clover %ls   ", gFirmwareRevision);
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), UGAHeight >> 1, X_IS_CENTER);
     BootScreen.DrawTextXY(L"... testing hardware ..."_XSW, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2771,7 +2782,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       break;
   }
 
-  if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+  if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot() && gSettings.Boot.Timeout>0) {
     XStringW Message = SWPrintf("... user settings ...");
     BootScreen.EraseTextXY();
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2824,17 +2835,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 /*
   if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
-    if (GlobalConfig.StrictHibernate) {
+    if (gSettings.Boot.StrictHibernate) {
       DBG(" Don't use StrictHibernate with emulated NVRAM!\n");
     }
-    GlobalConfig.StrictHibernate = FALSE;    
+    gSettings.Boot.StrictHibernate = FALSE;    
   }
 */
-  HaveDefaultVolume = gSettings.DefaultVolume.notEmpty();
+  HaveDefaultVolume = gSettings.Boot.DefaultVolume.notEmpty();
   if (!gFirmwareClover &&
       !gDriversFlags.EmuVariableLoaded &&
       !HaveDefaultVolume &&
-      GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
+      gSettings.Boot.Timeout == 0 && !ReadAllKeyStrokes()) {
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
 // if present, ScanVolumes() will skip scanning other volumes
 // in the first run.
@@ -2842,7 +2853,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
      GetEfiBootDeviceFromNvram();
   }
 
-  if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+  if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot() && gSettings.Boot.Timeout>0) {
     XStringW Message = SWPrintf("...  scan entries  ...");
     BootScreen.EraseTextXY();
     BootScreen.DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2879,7 +2890,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
     
-    if (!GlobalConfig.FastBoot) {
+    if (!GlobalConfig.isFastBoot()) {
 //      CHAR16 *TmpArgs;
       if (gThemeNeedInit) {
         InitTheme(TRUE);
@@ -2898,20 +2909,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         DBG("Chosen theme %ls\n", ThemeX.Theme.wc_str());
       }
 
-//      DBG("initial boot-args=%s\n", gSettings.BootArgs);
+//      DBG("initial boot-args=%s\n", gSettings.Boot.BootArgs);
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
       
-    XString8Array TmpArgs = Split<XString8Array>(gSettings.BootArgs, " ");
-      DBG("after NVRAM boot-args=%s\n", gSettings.BootArgs.c_str());
+    XString8Array TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
+      DBG("after NVRAM boot-args=%s\n", gSettings.Boot.BootArgs.c_str());
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
 //      DBG("initial OptionsBits %X\n", gSettings.OptionsBits);
       FillInputs(TRUE);
 
       // scan for loaders and tools, add then to the menu
-      if (GlobalConfig.LegacyFirst){
+      if (gSettings.GUI.LegacyFirst){
         AddCustomLegacy();
-        if (!GlobalConfig.NoLegacy) {
+        if (!gSettings.GUI.NoLegacy) {
           ScanLegacy();
         }
       }
@@ -2926,10 +2937,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       ScanLoader();
     }
 
-    if (!GlobalConfig.FastBoot) {
-      if (!GlobalConfig.LegacyFirst) {
+    if (!GlobalConfig.isFastBoot()) {
+      if (!gSettings.GUI.LegacyFirst) {
         AddCustomLegacy();
-        if (!GlobalConfig.NoLegacy) {
+        if (!gSettings.GUI.NoLegacy) {
           ScanLegacy();
         }
       }
@@ -2949,30 +2960,30 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       MenuEntryOptions.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_OPTIONS);
 //      DBG("Options: IconID=%lld name=%s empty=%s\n", MenuEntryOptions.Image.Id, MenuEntryOptions.Image.Name.c_str(),
 //          MenuEntryOptions.Image.isEmpty()?"пусто":"нет");
-      if (gSettings.DisableCloverHotkeys)
+      if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryOptions.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryOptions, false);
       
       MenuEntryAbout.Image = ThemeX.GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
 //      DBG("About: IconID=%lld name=%s empty=%s\n", MenuEntryAbout.Image.Id, MenuEntryAbout.Image.Name.c_str(),
 //          MenuEntryAbout.Image.isEmpty()?"пусто":"нет");
-      if (gSettings.DisableCloverHotkeys)
+      if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.Entries.size() == 0) {
-        if (gSettings.DisableCloverHotkeys)
+        if (gSettings.Boot.DisableCloverHotkeys)
           MenuEntryReset.ShortcutLetter = 0x00;
         MenuEntryReset.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_RESET);
         MainMenu.AddMenuEntry(&MenuEntryReset, false);
-        if (gSettings.DisableCloverHotkeys)
+        if (gSettings.Boot.DisableCloverHotkeys)
           MenuEntryShutdown.ShortcutLetter = 0x00;
         MenuEntryShutdown.Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_EXIT);
         MainMenu.AddMenuEntry(&MenuEntryShutdown, false);
       }
 
 // font already changed and this message very quirky, clear line here
-//     if (!GlobalConfig.NoEarlyProgress && !GlobalConfig.FastBoot && GlobalConfig.Timeout>0) {
+//     if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot() && gSettings.Boot.Timeout>0) {
 //        XStringW Message = L"                          "_XSW;
 //        BootScreen.EraseTextXY();
 //        DrawTextXY(Message, (UGAWidth >> 1), (UGAHeight >> 1) + 20, X_IS_CENTER);
@@ -2993,9 +3004,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     MainLoopRunning = TRUE;
-    //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-    if (DefaultEntry && (GlobalConfig.FastBoot ||
-                         (gSettings.SkipHibernateTimeout &&
+    //    MainMenu.TimeoutSeconds = gSettings.Boot.Timeout >= 0 ? gSettings.Boot.Timeout : 0;
+    if (DefaultEntry && (GlobalConfig.isFastBoot() ||
+                         (gSettings.Boot.SkipHibernateTimeout &&
                            DefaultEntry->getLOADER_ENTRY()
                            && OSFLAG_ISSET(DefaultEntry->getLOADER_ENTRY()->Flags, OSFLAG_HIBERNATED)
                          )
@@ -3007,7 +3018,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else if (DefaultEntry->getLEGACY_ENTRY()){
         DefaultEntry->StartLegacy();
       }
-      GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
+      gSettings.Boot.FastBoot = FALSE; //Hmm... will never be here
     }
 //    BOOLEAN MainAnime = MainMenu.GetAnime();
 //    DBG("MainAnime=%d\n", MainAnime);
@@ -3015,7 +3026,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
  //     CHAR8 *LastChosenOS = NULL;
-      if (GlobalConfig.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
+      if (gSettings.Boot.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
         // go strait to DefaultVolume loading
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
@@ -3028,7 +3039,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 //		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
-      GlobalConfig.Timeout = -1;
+      gSettings.Boot.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
         if (DefaultEntry->getLOADER_ENTRY()) {
           DefaultEntry->StartLoader();

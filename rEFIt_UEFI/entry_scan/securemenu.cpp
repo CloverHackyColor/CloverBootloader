@@ -61,10 +61,10 @@ void AddSecureBootTool(void)
 {
   LOADER_ENTRY *Entry;
   // If in forced mode or no secure boot then don't add tool
-  if (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode) {
+  if (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode) {
     return;
   }
-  if (gSettings.SecureBoot) {
+  if (gSettings.Boot.SecureBoot) {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
     Entry->Title.SWPrintf("Clover Secure Boot Configuration");
 //    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
@@ -113,7 +113,7 @@ UINTN QuerySecureBootUser(IN CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath)
         UINTN              MenuExit;
         // Update the menu
         QueryUserMenu.InfoLines = Information;
-        QueryUserMenu.Entries.size() = gSettings.SecureBootSetupMode ? 2 : 3;
+        QueryUserMenu.Entries.size() = gSettings.Boot.SecureBootSetupMode ? 2 : 3;
         // Debug message
         DBG("VerifySecureBootImage: Query user for authentication action for %ls\n", Information[1]);
         // Because we may
@@ -412,14 +412,14 @@ BOOLEAN ConfigureSecureBoot(void)
     REFIT_MENU_ENTRY *ChosenEntry = NULL;
     EFI_DEVICE_PATH  *DevicePath = NULL;
     // Add the entry for secure boot policy
-    SecureBootPolicyEntry.Title.SPrintf("Secure boot policy: %ls", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+    SecureBootPolicyEntry.Title.SPrintf("Secure boot policy: %ls", SecureBootPolicyToStr(gSettings.Boot.SecureBootPolicy));
     if (SecureBootPolicyEntry.Title.isEmpty()) {
       break;
     }
     SecureBootPolicyMenu.Title = SecureBootPolicyEntry.Title;
     SecureBootMenu.Entries[Index++] = &SecureBootPolicyEntry;
     // Get the proper entries for the secure boot mode
-    if (!gSettings.SecureBootSetupMode) {
+    if (!gSettings.Boot.SecureBootSetupMode) {
       SecureBootMenu.Entries[Index++] = &InsertImageSignatureEntry;
       SecureBootMenu.Entries[Index++] = &RemoveImageSignatureEntry;
       SecureBootMenu.Entries[Index++] = &ClearImageSignatureEntry;
@@ -449,8 +449,8 @@ BOOLEAN ConfigureSecureBoot(void)
             case SECURE_BOOT_POLICY_BLACKLIST:
             case SECURE_BOOT_POLICY_USER:
               // Set a new policy
-              gSettings.SecureBootPolicy = (UINT8)ChosenEntry->Tag;
-              DBG("User changed secure boot policy: %ls\n", SecureBootPolicyToStr(gSettings.SecureBootPolicy));
+              gSettings.Boot.SecureBootPolicy = (UINT8)ChosenEntry->Tag;
+              DBG("User changed secure boot policy: %ls\n", SecureBootPolicyToStr(gSettings.Boot.SecureBootPolicy));
 
             default:
               MenuExit = MENU_EXIT_ESCAPE;
@@ -492,7 +492,7 @@ BOOLEAN ConfigureSecureBoot(void)
         if (YesNoMessage(L"Disable Secure Boot", L"Are you sure you want to disable secure boot?")) {
           DBG("User disabled secure boot\n");
           DisableSecureBoot();
-          if (!gSettings.SecureBoot) {
+          if (!gSettings.Boot.SecureBoot) {
             return TRUE;
           }
           AlertMessage(L"Disable Secure Boot", L"Disabling secure boot failed!\nClover does not appear to own the PK");

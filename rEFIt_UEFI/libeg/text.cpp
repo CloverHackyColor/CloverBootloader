@@ -303,7 +303,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   Bukva.YPos = 0;
   Bukva.Width = FontWidth;
   Bukva.Height = FontHeight;
-  DBG("codepage=%llx, asciiPage=%x\n", GlobalConfig.Codepage, AsciiPageSize);
+  DBG("codepage=%llx, asciiPage=%x\n", gSettings.GUI.Codepage, AsciiPageSize);
   for (UINTN i = 0; i < TextLength && c0 != 0; i++) {
     UINT16 c = Text.wc_str()[i]; //including UTF8 -> UTF16 conversion
     DBG("initial char to render 0x%hx\n", c); //good
@@ -312,7 +312,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
         //we have russian raster fonts with chars at 0xC0
         c -= 0x350;
       } else {
-        INTN c2 = (c >= GlobalConfig.Codepage) ? (c - GlobalConfig.Codepage + AsciiPageSize) : c; //International letters
+        INTN c2 = (c >= gSettings.GUI.Codepage) ? (c - gSettings.GUI.Codepage + AsciiPageSize) : c; //International letters
         c = c2 & 0xFF; //this maximum raster font size
       }
 //      DBG("char to render 0x%hhx\n", c);

@@ -50,7 +50,7 @@
 
 //
 //#define REFIT_DEBUG (2)
-//#define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
+//#define Print if ((!GlobalConfig.Quiet) || (gSettings.GUI.TextOnly)) Print
 ////#include "GenericBdsLib.h"
 
 

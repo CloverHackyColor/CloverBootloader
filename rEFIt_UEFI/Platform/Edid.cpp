@@ -82,7 +82,7 @@ void DebugDumpEDID(CONST CHAR8 *Message, INTN N)
 {
   INTN i,j;
   // Don't dump in the case of debug logging because of too slow output
-  if (GlobalConfig.DebugLog) {
+  if (gSettings.Boot.DebugLog) {
     return;
   }
 	DBG("%s size:%lld\n", Message, N);
@@ -114,7 +114,7 @@ EFI_STATUS GetEdidDiscovered(void)
     Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (void **)&EdidDiscovered);
     if (!EFI_ERROR(Status)) { //discovered
       N = EdidDiscovered->SizeOfEdid;
-      if (!GlobalConfig.DebugLog) {
+      if (!gSettings.Boot.DebugLog) {
 		  DBG("EdidDiscovered size=%llu\n", N);
       }
       if (N == 0) {

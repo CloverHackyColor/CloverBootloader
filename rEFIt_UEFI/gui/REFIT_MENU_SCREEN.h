@@ -286,8 +286,8 @@ public:
   {
     EFI_TIME          Now;
     gRT->GetTime(&Now, NULL);
-    if (GlobalConfig.Timezone != 0xFF) {
-      INT32 NowHour = Now.Hour + GlobalConfig.Timezone;
+    if (gSettings.GUI.Timezone != 0xFF) {
+      INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
       if (NowHour <  0 ) NowHour += 24;
       if (NowHour >= 24 ) NowHour -= 24;
       Daylight = (NowHour > 8) && (NowHour < 20);  //this is the screen member

@@ -402,7 +402,7 @@ EFI_STATUS SetSignedVariable(IN CHAR16   *DatabaseName,
   }
   DBG("Timestamp: %t\n", Timestamp);
   // In user mode we need to sign the database with exchange key
-  if (!gSettings.SecureBootSetupMode) {
+  if (!gSettings.Boot.SecureBootSetupMode) {
     // Initialize the cyphers and digests
     ERR_load_crypto_strings();
     OpenSSL_add_all_digests();
@@ -504,8 +504,8 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
 {
   EFI_STATUS Status;
   // Check is valid to set database
-  if ((gSettings.SecureBoot && gSettings.SecureBootSetupMode) ||
-      (!gSettings.SecureBoot && !gSettings.SecureBootSetupMode)) {
+  if ((gSettings.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) ||
+      (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode)) {
     return EFI_NOT_FOUND;
   }
   // Erase database

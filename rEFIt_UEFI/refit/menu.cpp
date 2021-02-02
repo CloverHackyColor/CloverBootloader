@@ -141,7 +141,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   // no need for extra space here, it is added by ApplyInputs()
-  InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.BootArgs);
+  InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.Boot.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
@@ -476,8 +476,8 @@ void ApplyInputs(void)
 
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
-	  gSettings.BootArgs = InputItems[i].SValue;
-	  gSettings.BootArgs.replaceAll('\\', '_');
+	  gSettings.Boot.BootArgs = InputItems[i].SValue;
+	  gSettings.Boot.BootArgs.replaceAll('\\', '_');
     gBootChanged = TRUE;
   }
   i++; //1
@@ -491,9 +491,9 @@ void ApplyInputs(void)
   i++; //3
   if (InputItems[i].Valid) {
     if (OldChosenTheme == 0xFFFF) {
-      GlobalConfig.Theme = L"embedded"_XSW;
+      gSettings.GUI.Theme = L"embedded"_XSW;
     } else {
-      GlobalConfig.Theme.takeValueFrom(ThemeNameArray[OldChosenTheme]);
+      gSettings.GUI.Theme.takeValueFrom(ThemeNameArray[OldChosenTheme]);
     }
 
     //will change theme after ESC
