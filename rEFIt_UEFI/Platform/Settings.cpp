@@ -3022,7 +3022,7 @@ GetEarlyUserSettings (
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectSecureBoot");
       gSettings.ocBooterQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectMemoryRegions? QUIRK_SECURE:0;
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectSecureBoot? QUIRK_SECURE:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
       gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
       gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
