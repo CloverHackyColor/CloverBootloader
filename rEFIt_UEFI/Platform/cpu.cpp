@@ -1401,7 +1401,9 @@ UINT16 GetAdvancedCpuType ()
               return 0x709; // Core i7 CoffeeLake
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-9"))
               return 0x1005; // Core i7 CoffeeLake
-            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+          if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7-1"))
+            return 0x070B; // Core i7 IceLake
+           if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
               return 0x705; // Core i7
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i9"))
               return 0x1009; // Core i7 CoffeeLake

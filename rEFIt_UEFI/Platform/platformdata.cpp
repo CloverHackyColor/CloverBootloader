@@ -349,7 +349,7 @@ PLATFORMDATA ApplePlatformData[] =
     "MacBook Air"_XS8, "1.0"_XS8, "C02PVHACGFWL"_XS8, "Air-Enclosure"_XS8,
     0x02, 0x26, 0x0f, 0, 0, 0x02, "j110"_XS8, "j110"_XS8, 0x7b007 },
   //MacBookAir7,2 / MacBook Air (13-inch, Early 2015)
-  { "MacBookAir7,2"_XS8, "MBA71.88Z.F000.B00.2004161539"_XS8, "194.0.0.0.0"_XS8, "Mac-937CB26E2E02BB01"_XS8, // Intel Core i7-5650U @ 2.20 GHz
+  { "MacBookAir7,2"_XS8, "MBA71.88Z.F000.B00.2004161539"_XS8, "426.0.0.0.0"_XS8, "Mac-937CB26E2E02BB01"_XS8, // Intel Core i7-5650U @ 2.20 GHz, i5-5250U CPU @ 1.60GHz
     "MacBook Air"_XS8, "1.0"_XS8, "C02Q1HACG940"_XS8, "Air-Enclosure"_XS8,
     0x02, 0x27, 0x0f, 0, 0, 0x02, "j113"_XS8, "j113"_XS8, 0xf0a008 },
   //MacBookAir8,1 / MacBook Air (Retina, 13-inch, 2018)
@@ -363,7 +363,7 @@ PLATFORMDATA ApplePlatformData[] =
   //MacBookAir9,1 / MacBook Air (Retina, 13-inch, 2020)
   { "MacBookAir9,1"_XS8, "MBA91.88Z.F000.B00.2005132117"_XS8, "1037.120.87.0.0"_XS8, "Mac-0CFF9C7C2B63DF8D"_XS8, // Intel Core i5-1030NG7 @ 1.10 GHz
     "MacBook Air"_XS8, "1.0"_XS8, "FVFCCHACMNHP"_XS8, "Air-Enclosure"_XS8,
-    0, 0, 0, 0, 0, 0, ""_XS8, "j230K"_XS8, 0 },
+    0, 0, 0, 0, 0, 0, ""_XS8, "j230k"_XS8, 0 },
   //Macmini1,1 / Mac mini (Early 2006)
   { "Macmini1,1"_XS8, "MM11.88Z.0055.B08.0610121326"_XS8, ""_XS8, "Mac-F4208EC8"_XS8, // Intel Core 2 Duo T2300 @ 1.67 GHz
     "Mac mini"_XS8, "1.0"_XS8, "W8702N1JU35"_XS8, "Mini-Aluminum"_XS8,
