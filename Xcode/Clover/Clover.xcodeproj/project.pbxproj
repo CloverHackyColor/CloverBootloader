@@ -98,7 +98,6 @@
 		A5456D8223FC5B40000BF18C /* screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D7B23FC5B3F000BF18C /* screen.cpp */; };
 		A5456D9023FC5B72000BF18C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8423FC5B6D000BF18C /* globals_dtor.cpp */; };
 		A5456D9123FC5B72000BF18C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8523FC5B6E000BF18C /* globals_ctor.cpp */; };
-		A5456D9323FC5B72000BF18C /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8A23FC5B70000BF18C /* memory.cpp */; };
 		A5456D9623FC5B72000BF18C /* operatorNewDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8E23FC5B71000BF18C /* operatorNewDelete.cpp */; };
 		A570FB0D240D626D0057F26D /* XPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A570FB0B240D626C0057F26D /* XPointer.cpp */; };
 		A5716F83235968BE000CEC60 /* Nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = A5716F82235968BE000CEC60 /* Nasm.inc */; };
@@ -117,6 +116,10 @@
 		A5816DF62418103A003BA66C /* menu_items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF52418103A003BA66C /* menu_items.cpp */; };
 		A5816DF924181050003BA66C /* REFIT_MENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5816DF72418104F003BA66C /* REFIT_MENU_SCREEN.cpp */; };
 		A59CB66921BC14AB0054A7CF /* SmbiosGen.c in Sources */ = {isa = PBXBuildFile; fileRef = A59CB66521BC14AA0054A7CF /* SmbiosGen.c */; };
+		A59F3B9825CC66170018CBCE /* Volumes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59F3B9725CC66170018CBCE /* Volumes.cpp */; };
+		A59F3B9B25CC69000018CBCE /* MacOsVersion_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59F3B9A25CC68FF0018CBCE /* MacOsVersion_test.cpp */; };
+		A59F3B9E25CC691D0018CBCE /* shared_ptr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59F3B9D25CC691D0018CBCE /* shared_ptr.cpp */; };
+		A59F3BA225CC69EB0018CBCE /* XIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59F3BA025CC69EA0018CBCE /* XIcon.cpp */; };
 		A5C219B7243ED7AA00036F7B /* XCinema.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C219B5243ED7AA00036F7B /* XCinema.cpp */; };
 		A5D12C22243A0B6500DFA98A /* LoadOptions_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C20243A0B6400DFA98A /* LoadOptions_test.cpp */; };
 		A5D12C2D243A0B7900DFA98A /* printlib-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C26243A0B7700DFA98A /* printlib-test.cpp */; };
@@ -865,9 +868,7 @@
 		A5456D7B23FC5B3F000BF18C /* screen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = screen.cpp; sourceTree = "<group>"; };
 		A5456D8423FC5B6D000BF18C /* globals_dtor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = globals_dtor.cpp; sourceTree = "<group>"; };
 		A5456D8523FC5B6E000BF18C /* globals_ctor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = globals_ctor.cpp; sourceTree = "<group>"; };
-		A5456D8623FC5B6E000BF18C /* memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		A5456D8723FC5B6E000BF18C /* globals_dtor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_dtor.h; sourceTree = "<group>"; };
-		A5456D8A23FC5B70000BF18C /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
 		A5456D8C23FC5B70000BF18C /* operatorNewDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operatorNewDelete.h; sourceTree = "<group>"; };
 		A5456D8E23FC5B71000BF18C /* operatorNewDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = operatorNewDelete.cpp; sourceTree = "<group>"; };
 		A5456D8F23FC5B72000BF18C /* globals_ctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_ctor.h; sourceTree = "<group>"; };
@@ -6160,6 +6161,15 @@
 		A59CB66621BC14AA0054A7CF /* SmbiosGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmbiosGen.h; sourceTree = "<group>"; };
 		A59CB66721BC14AA0054A7CF /* SmbiosGen.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGen.inf; sourceTree = "<group>"; };
 		A59CB66821BC14AA0054A7CF /* SmbiosGenStrings.uni */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmbiosGenStrings.uni; sourceTree = "<group>"; };
+		A59F3B9325CC66170018CBCE /* Volumes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Volumes.h; sourceTree = "<group>"; };
+		A59F3B9725CC66170018CBCE /* Volumes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Volumes.cpp; sourceTree = "<group>"; };
+		A59F3B9925CC68FF0018CBCE /* MacOsVersion_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOsVersion_test.h; sourceTree = "<group>"; };
+		A59F3B9A25CC68FF0018CBCE /* MacOsVersion_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacOsVersion_test.cpp; sourceTree = "<group>"; };
+		A59F3B9C25CC691C0018CBCE /* shared_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_ptr.h; sourceTree = "<group>"; };
+		A59F3B9D25CC691D0018CBCE /* shared_ptr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shared_ptr.cpp; sourceTree = "<group>"; };
+		A59F3B9F25CC69320018CBCE /* XStringAbstract.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
+		A59F3BA025CC69EA0018CBCE /* XIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XIcon.cpp; sourceTree = "<group>"; };
+		A59F3BA125CC69EB0018CBCE /* XIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XIcon.h; sourceTree = "<group>"; };
 		A59F76E422AEB6CD009DF043 /* ApfsDriverLoader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ApfsDriverLoader.c; sourceTree = "<group>"; };
 		A59F76E522AEB6CD009DF043 /* ApfsDriverLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApfsDriverLoader.h; sourceTree = "<group>"; };
 		A59F76E622AEB6CD009DF043 /* ApfsDriverLoader.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApfsDriverLoader.inf; sourceTree = "<group>"; };
@@ -7781,10 +7791,12 @@
 				A5456CF223FC5AB6000BF18C /* text.cpp */,
 				A5456CF523FC5AB7000BF18C /* VectorGraphics.cpp */,
 				A5D12C36243A0C2300DFA98A /* VectorGraphics.h */,
-				A571C28B240574D900B6A2C5 /* XImage.cpp */,
-				A571C28C240574D900B6A2C5 /* XImage.h */,
 				A5C219B5243ED7AA00036F7B /* XCinema.cpp */,
 				A5C219B8243ED7EA00036F7B /* XCinema.h */,
+				A59F3BA025CC69EA0018CBCE /* XIcon.cpp */,
+				A59F3BA125CC69EB0018CBCE /* XIcon.h */,
+				A571C28B240574D900B6A2C5 /* XImage.cpp */,
+				A571C28C240574D900B6A2C5 /* XImage.h */,
 				A570FB0B240D626C0057F26D /* XPointer.cpp */,
 				A570FB0C240D626D0057F26D /* XPointer.h */,
 				A57CF7B9241A8A12006DE51E /* XTheme.cpp */,
@@ -7888,6 +7900,8 @@
 				A523133A2448B3F400421FB2 /* usbfix.h */,
 				A52313392448B3F300421FB2 /* VersionString.cpp */,
 				A52313382448B3F200421FB2 /* VersionString.h */,
+				A59F3B9725CC66170018CBCE /* Volumes.cpp */,
+				A59F3B9325CC66170018CBCE /* Volumes.h */,
 			);
 			path = Platform;
 			sourceTree = "<group>";
@@ -9326,6 +9340,8 @@
 		A571C26E2405749900B6A2C5 /* cpp_foundation */ = {
 			isa = PBXGroup;
 			children = (
+				A59F3B9D25CC691D0018CBCE /* shared_ptr.cpp */,
+				A59F3B9C25CC691C0018CBCE /* shared_ptr.h */,
 				A52313112448B12A00421FB2 /* unicode_conversions.cpp */,
 				A52313102448B12A00421FB2 /* unicode_conversions.h */,
 				A571C2792405749900B6A2C5 /* XArray.h */,
@@ -9336,6 +9352,7 @@
 				A529342E24FB9265004241C3 /* XRBuffer.h */,
 				A57CF7C9241BE0D6006DE51E /* XString.cpp */,
 				A57CF7CA241BE0D6006DE51E /* XString.h */,
+				A59F3B9F25CC69320018CBCE /* XStringAbstract.h */,
 				A5D12C33243A0BD900DFA98A /* XStringArray.cpp */,
 				A5D12C32243A0BD900DFA98A /* XStringArray.h */,
 				A571C2702405749900B6A2C5 /* XToolsCommon.h */,
@@ -9352,6 +9369,8 @@
 				A5816DEF24180F82003BA66C /* global_test.h */,
 				A5D12C20243A0B6400DFA98A /* LoadOptions_test.cpp */,
 				A5D12C21243A0B6500DFA98A /* LoadOptions_test.h */,
+				A59F3B9A25CC68FF0018CBCE /* MacOsVersion_test.cpp */,
+				A59F3B9925CC68FF0018CBCE /* MacOsVersion_test.h */,
 				A529343224FB9292004241C3 /* plist_tests.cpp */,
 				A529343124FB9291004241C3 /* plist_tests.h */,
 				A5D12C25243A0B7600DFA98A /* printf_lite-test-cpp_conf.h */,
@@ -23261,8 +23280,6 @@
 				A5456D8F23FC5B72000BF18C /* globals_ctor.h */,
 				A5456D8423FC5B6D000BF18C /* globals_dtor.cpp */,
 				A5456D8723FC5B6E000BF18C /* globals_dtor.h */,
-				A5456D8A23FC5B70000BF18C /* memory.cpp */,
-				A5456D8623FC5B6E000BF18C /* memory.h */,
 				A5456D8E23FC5B71000BF18C /* operatorNewDelete.cpp */,
 				A5456D8C23FC5B70000BF18C /* operatorNewDelete.h */,
 				A529343D24FB92DF004241C3 /* pure_virtual.cpp */,
@@ -23591,10 +23608,12 @@
 				A571C28D240574DA00B6A2C5 /* XImage.cpp in Sources */,
 				A5456D6E23FC5B08000BF18C /* b64cdecode.cpp in Sources */,
 				A5716F83235968BE000CEC60 /* Nasm.inc in Sources */,
+				A59F3BA225CC69EB0018CBCE /* XIcon.cpp in Sources */,
 				A5456D5623FC5B08000BF18C /* platformdata.cpp in Sources */,
 				A5456CFB23FC5AB8000BF18C /* egemb_icons_dark.cpp in Sources */,
 				A5456CDE23FC5A88000BF18C /* tool.cpp in Sources */,
 				A5456CD823FC5A88000BF18C /* securemenu.cpp in Sources */,
+				A59F3B9825CC66170018CBCE /* Volumes.cpp in Sources */,
 				A529343E24FB92E0004241C3 /* pure_virtual.cpp in Sources */,
 				A5456D4D23FC5B08000BF18C /* cpu.cpp in Sources */,
 				A5456D6523FC5B08000BF18C /* BdsConnect.cpp in Sources */,
@@ -23609,7 +23628,6 @@
 				A52313212448B29300421FB2 /* BasicIO.cpp in Sources */,
 				A5D12C2E243A0B7900DFA98A /* printf_lite-test.cpp in Sources */,
 				A5456D4E23FC5B08000BF18C /* StateGenerator.cpp in Sources */,
-				A5456D9323FC5B72000BF18C /* memory.cpp in Sources */,
 				A529342D24FB9257004241C3 /* XBuffer.cpp in Sources */,
 				A5456D5323FC5B08000BF18C /* Events.cpp in Sources */,
 				A5456D6C23FC5B08000BF18C /* card_vlist.cpp in Sources */,
@@ -23673,6 +23691,7 @@
 				A5456D4C23FC5B08000BF18C /* StartupSound.cpp in Sources */,
 				A5456CE023FC5A88000BF18C /* common.cpp in Sources */,
 				A5456D9123FC5B72000BF18C /* globals_ctor.cpp in Sources */,
+				A59F3B9E25CC691D0018CBCE /* shared_ptr.cpp in Sources */,
 				A5456D7123FC5B08000BF18C /* device_inject.cpp in Sources */,
 				A5456D5F23FC5B08000BF18C /* BootLog.cpp in Sources */,
 				A529343024FB9266004241C3 /* XRBuffer.cpp in Sources */,
@@ -23681,6 +23700,7 @@
 				A5456CFA23FC5AB8000BF18C /* FloatLib.cpp in Sources */,
 				A5456CF823FC5AB8000BF18C /* load_icns.cpp in Sources */,
 				A5456D6B23FC5B08000BF18C /* sound.cpp in Sources */,
+				A59F3B9B25CC69000018CBCE /* MacOsVersion_test.cpp in Sources */,
 				A5456CDF23FC5A88000BF18C /* lockedgraphics.cpp in Sources */,
 				A5456D0223FC5AB8000BF18C /* lodepng.cpp in Sources */,
 				A5816DF024180F82003BA66C /* global_test.cpp in Sources */,
