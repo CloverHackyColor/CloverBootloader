@@ -352,6 +352,12 @@
 		9AC7809A24178F02005CDD5C /* menu_items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC7809924178F02005CDD5C /* menu_items.cpp */; };
 		9AC780B32417EE4B005CDD5C /* global_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AC780B22417EE4A005CDD5C /* global_test.cpp */; };
 		9AC780B52417EE53005CDD5C /* global_test.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AC780B42417EE53005CDD5C /* global_test.h */; };
+		9AD1F9B425CBBD3D00EC1BB3 /* Volumes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD1F9B225CBBD3C00EC1BB3 /* Volumes.h */; };
+		9AD1F9B525CBBD3D00EC1BB3 /* Volumes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD1F9B225CBBD3C00EC1BB3 /* Volumes.h */; };
+		9AD1F9B625CBBD3D00EC1BB3 /* Volumes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD1F9B225CBBD3C00EC1BB3 /* Volumes.h */; };
+		9AD1F9B725CBBD3D00EC1BB3 /* Volumes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1F9B325CBBD3C00EC1BB3 /* Volumes.cpp */; };
+		9AD1F9B825CBBD3D00EC1BB3 /* Volumes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1F9B325CBBD3C00EC1BB3 /* Volumes.cpp */; };
+		9AD1F9B925CBBD3D00EC1BB3 /* Volumes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD1F9B325CBBD3C00EC1BB3 /* Volumes.cpp */; };
 		9AD469502452B5A600D6D0DB /* Efi.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD4694C2452B5A600D6D0DB /* Efi.h */; };
 		9AD469512452B5A600D6D0DB /* Devices.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD4694D2452B5A600D6D0DB /* Devices.h */; };
 		9AD469522452B5A600D6D0DB /* Pci.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AD4694E2452B5A600D6D0DB /* Pci.h */; };
@@ -944,6 +950,8 @@
 		9AC7809924178F02005CDD5C /* menu_items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu_items.cpp; sourceTree = "<group>"; };
 		9AC780B22417EE4A005CDD5C /* global_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global_test.cpp; sourceTree = "<group>"; };
 		9AC780B42417EE53005CDD5C /* global_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global_test.h; sourceTree = "<group>"; };
+		9AD1F9B225CBBD3C00EC1BB3 /* Volumes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Volumes.h; sourceTree = "<group>"; };
+		9AD1F9B325CBBD3C00EC1BB3 /* Volumes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Volumes.cpp; sourceTree = "<group>"; };
 		9AD4694C2452B5A600D6D0DB /* Efi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Efi.h; sourceTree = "<group>"; };
 		9AD4694D2452B5A600D6D0DB /* Devices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Devices.h; sourceTree = "<group>"; };
 		9AD4694E2452B5A600D6D0DB /* Pci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pci.h; sourceTree = "<group>"; };
@@ -1147,6 +1155,8 @@
 		9AC77F1624176C04005CDD5C /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9AD1F9B325CBBD3C00EC1BB3 /* Volumes.cpp */,
+				9AD1F9B225CBBD3C00EC1BB3 /* Volumes.h */,
 				9AC77F2024176C04005CDD5C /* AcpiPatcher.cpp */,
 				9A105B4424483AE20006DE06 /* AcpiPatcher.h */,
 				9AC77F2324176C04005CDD5C /* AmlGenerator.cpp */,
@@ -1439,6 +1449,7 @@
 				9AC44EDD253AE78C00326488 /* MemoryOperation.h in Headers */,
 				9AC7805924176C04005CDD5C /* nanosvg.h in Headers */,
 				9AF41566242BAD5600D2644C /* printf_lite-test-cpp_conf.h in Headers */,
+				9AD1F9B425CBBD3D00EC1BB3 /* Volumes.h in Headers */,
 				9A105B7624483AE40006DE06 /* stdint.h in Headers */,
 				9AC7806124176C04005CDD5C /* CloverDB.h in Headers */,
 				9AD469532452B5A600D6D0DB /* OneLinerMacros.h in Headers */,
@@ -1571,6 +1582,7 @@
 				9AF415A0242CD75C00D2644C /* printlib-test-cpp_conf.h in Headers */,
 				9A36E5C324F5616F007A1107 /* TagFloat.h in Headers */,
 				9AF415A1242CD75C00D2644C /* XStringArray.h in Headers */,
+				9AD1F9B525CBBD3D00EC1BB3 /* Volumes.h in Headers */,
 				9A09863C2438A15400826276 /* shared_with_menu.h in Headers */,
 				9A4185B72439F29D00BEAFB8 /* LoadOptions_test.h in Headers */,
 				9AF415A3242CD75C00D2644C /* strcmp_test.h in Headers */,
@@ -1672,6 +1684,7 @@
 				9AF4167D242CDA5800D2644C /* printlib-test-cpp_conf.h in Headers */,
 				9A36E5C424F5616F007A1107 /* TagFloat.h in Headers */,
 				9AF4167E242CDA5800D2644C /* XStringArray.h in Headers */,
+				9AD1F9B625CBBD3D00EC1BB3 /* Volumes.h in Headers */,
 				9A09863D2438A15400826276 /* shared_with_menu.h in Headers */,
 				9A4185B82439F29D00BEAFB8 /* LoadOptions_test.h in Headers */,
 				9AF41680242CDA5800D2644C /* strcmp_test.h in Headers */,
@@ -1929,6 +1942,7 @@
 				9AC7800A24176C04005CDD5C /* StateGenerator.cpp in Sources */,
 				9AC7805C24176C04005CDD5C /* XImage.cpp in Sources */,
 				9A36E59224F5616F007A1107 /* TagBool.cpp in Sources */,
+				9AD1F9B725CBBD3D00EC1BB3 /* Volumes.cpp in Sources */,
 				9A014999244091B200B37399 /* printlib-test.cpp in Sources */,
 				9AC7802B24176C04005CDD5C /* platformdata.cpp in Sources */,
 				9AC7805724176C04005CDD5C /* XPointer.cpp in Sources */,
@@ -2069,6 +2083,7 @@
 				9AF41616242CD75C00D2644C /* load_icns.cpp in Sources */,
 				9AF41617242CD75C00D2644C /* egemb_font.cpp in Sources */,
 				9A4F68622449D4CB004B2F7E /* APFS.cpp in Sources */,
+				9AD1F9B825CBBD3D00EC1BB3 /* Volumes.cpp in Sources */,
 				9AF41618242CD75C00D2644C /* securemenu.cpp in Sources */,
 				9AF41619242CD75C00D2644C /* text.cpp in Sources */,
 				9AF4161A242CD75C00D2644C /* AmlGenerator.cpp in Sources */,
@@ -2191,6 +2206,7 @@
 				9AF416F3242CDA5800D2644C /* load_icns.cpp in Sources */,
 				9AF416F4242CDA5800D2644C /* egemb_font.cpp in Sources */,
 				9A4F68652449D533004B2F7E /* APFS.cpp in Sources */,
+				9AD1F9B925CBBD3D00EC1BB3 /* Volumes.cpp in Sources */,
 				9AF416F5242CDA5800D2644C /* securemenu.cpp in Sources */,
 				9AF416F6242CDA5800D2644C /* text.cpp in Sources */,
 				9AF416F7242CDA5800D2644C /* AmlGenerator.cpp in Sources */,

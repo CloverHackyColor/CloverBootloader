@@ -943,7 +943,9 @@ SetDevices (
 void
 SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *LoadedEntry);
 
+XString8 GetAuthRootDmg(const EFI_FILE& dir, const XStringW& path);
 
+MacOsVersion GetMacOSVersionFromFolder(const EFI_FILE& dir, const XStringW& path);
 MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr);
 
 inline MacOsVersion GetOSVersion (IN LOADER_ENTRY *Entry) { return GetOSVersion(Entry->LoaderType, Entry->APFSTargetUUID, Entry->Volume, &Entry->BuildVersion); };

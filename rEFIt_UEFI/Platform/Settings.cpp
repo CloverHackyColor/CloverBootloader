@@ -38,6 +38,7 @@
 #include "Net.h"
 #include "MacOsVersion.h"
 #include "../include/OsType.h"
+#include "../Platform/Volumes.h"
 
 
 #ifndef DEBUG_ALL
@@ -1836,6 +1837,7 @@ FillinCustomEntry (
         (Prop->getString()->stringValue().equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyNotNullAndTrue(Prop)) {
+      DBG("     hiding entry because Hidden flag is YES\n");
       Entry->Hidden = true;
     } else {
       Entry->Hidden = false;
@@ -2086,6 +2088,7 @@ FillingCustomLegacy (
         (Prop->getString()->stringValue().equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyNotNullAndTrue(Prop)) {
+      DBG("     hiding entry because Hidden flag is YES\n");
       Entry->Hidden = true;
     } else {
       Entry->Hidden = false;
@@ -2184,6 +2187,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
         (Prop->getString()->stringValue().equalIC("Always"))) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
     } else if (IsPropertyNotNullAndTrue(Prop)) {
+      DBG("     hiding entry because Hidden flag is YES\n");
       Entry->Hidden = true;
     } else {
       Entry->Hidden = false;
@@ -6283,6 +6287,84 @@ static CONST CHAR8 *SearchString(
   return NULL;
 }
 */
+
+XString8 GetAuthRootDmg(const EFI_FILE& dir, const XStringW& path)
+{
+  XString8 returnValue;
+
+  XStringW plist = SWPrintf("%ls\\com.apple.Boot.plist", path.wc_str());
+  if ( !FileExists(dir, plist) ) return NullXString8;
+
+  CHAR8*     PlistBuffer = NULL;
+  UINTN      PlistLen;
+  TagDict*     Dict        = NULL;
+  const TagStruct*     Prop        = NULL;
+
+  EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+  if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS)
+  {
+    Prop = Dict->propertyForKey("Kernel Flags");
+    if ( Prop != NULL ) {
+      if ( !Prop->isString() ) {
+        MsgLog("ATTENTION : Kernel Flags not string in ProductVersion\n");
+      }else{
+        if( Prop->getString()->stringValue().notEmpty() ) {
+          const XString8& kernelFlags = Prop->getString()->stringValue();
+          size_t idx = kernelFlags.indexOf("auth-root-dmg");
+          if ( idx == MAX_XSIZE ) return NullXString8;
+          idx += strlen("auth-root-dmg");
+          while ( idx < kernelFlags.length()  &&  IS_BLANK(kernelFlags[idx]) ) ++idx;
+          if ( kernelFlags[idx] == '=' ) ++idx;
+          else return NullXString8;
+          while ( idx < kernelFlags.length()  &&  IS_BLANK(kernelFlags[idx]) ) ++idx;
+          if ( kernelFlags.equalAtIC(idx, "file://"_XS8) ) idx += strlen("file://");
+          size_t idxEnd = idx;
+          while ( idxEnd < kernelFlags.length()  &&  !IS_BLANK(kernelFlags[idxEnd]) ) ++idxEnd;
+          returnValue = kernelFlags.subString(idx, idxEnd - idx);
+        }
+      }
+    }
+  }
+  if ( PlistBuffer ) FreePool(PlistBuffer);
+  return returnValue;
+}
+
+MacOsVersion GetMacOSVersionFromFolder(const EFI_FILE& dir, const XStringW& path)
+{
+  MacOsVersion macOSVersion;
+
+  XStringW plist = SWPrintf("%ls\\SystemVersion.plist", path.wc_str());
+  if ( !FileExists(dir, plist) ) {
+    plist = SWPrintf("%ls\\ServerVersion.plist", path.wc_str());
+    if ( !FileExists(dir, plist) ) {
+      plist.setEmpty();
+    }
+  }
+
+  if ( plist.notEmpty() ) { // found macOS System
+    CHAR8*     PlistBuffer = NULL;
+    UINTN      PlistLen;
+    TagDict*     Dict        = NULL;
+    const TagStruct*     Prop        = NULL;
+
+    EFI_STATUS Status = egLoadFile(&dir, plist.wc_str(), (UINT8 **)&PlistBuffer, &PlistLen);
+    if (!EFI_ERROR(Status) && PlistBuffer != NULL && ParseXML(PlistBuffer, &Dict, 0) == EFI_SUCCESS) {
+      Prop = Dict->propertyForKey("ProductVersion");
+      if ( Prop != NULL ) {
+        if ( !Prop->isString() ) {
+          MsgLog("ATTENTION : property not string in ProductVersion\n");
+        }else{
+          if( Prop->getString()->stringValue().notEmpty() ) {
+            macOSVersion = Prop->getString()->stringValue();
+          }
+        }
+      }
+    }
+    if ( PlistBuffer ) FreePool(PlistBuffer);
+  }
+  return macOSVersion;
+}
+
 MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const REFIT_VOLUME* Volume, XString8* BuildVersionPtr)
 {
   XString8   OSVersion;

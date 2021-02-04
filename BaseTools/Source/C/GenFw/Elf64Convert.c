@@ -552,8 +552,10 @@ ScanSections64 (
         // the alignment field is valid
         if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
           // if the section address is aligned we must align PE/COFF
+          UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-          /*debug*/NormalMsg("Text section %d %s size=%llu mCoffOffset=%d(0x%x)", i, sectName, shdr->sh_size, mCoffOffset, mCoffOffset);
+printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
+mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
         }
@@ -606,8 +608,10 @@ ScanSections64 (
         // the alignment field is valid
         if ((shdr->sh_addr & (shdr->sh_addralign - 1)) == 0) {
           // if the section address is aligned we must align PE/COFF
+          UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-          /*debug*/NormalMsg("Data section %d %s size=%llu mCoffOffset=%d(0x%x)", i, sectName, shdr->sh_size, mCoffOffset, mCoffOffset);
+printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
+mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
         }

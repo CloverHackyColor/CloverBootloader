@@ -32,6 +32,7 @@
 #define IS_ALFA(x) (((x >= 'a') && (x <='z')) || ((x >= 'A') && (x <='Z')))
 #define IS_ASCII(x) ((x>=0x20) && (x<=0x7F))
 #define IS_PUNCT(x) ((x == '.') || (x == '-'))
+#define IS_BLANK(x) ((x == ' ') || (x == '\t'))
 
 inline bool isPathSeparator(char32_t c) { return c == '/' || c == '\\'; }
 

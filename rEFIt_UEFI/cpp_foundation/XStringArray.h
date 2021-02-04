@@ -16,63 +16,6 @@
 
 
 
-template<typename T, typename Tdummy=void>
-struct _xstringarray__char_type;
-
-template<typename T>
-struct _xstringarray__char_type<T, enable_if_t(is___String(T))>
-{
-	static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
-};
-
-template<typename T>
-struct _xstringarray__char_type<T*, enable_if_t(is_char(T))>
-{
-    static const T* getCharPtr(T* t) { return t; }
-};
-
-//template<typename T>
-//struct _xstringarray__char_type<const T*, enable_if_t(is_char(T))>
-//{
-//    static const T* getCharPtr(const T* t) { return t; }
-//};
-
-template<typename T>
-struct _xstringarray__char_type<const T[]>
-{
-    static const T* getCharPtr(T* t) { return t; }
-};
-
-template<typename T, size_t _Np>
-struct _xstringarray__char_type<T[_Np]>
-{
-    static const T* getCharPtr(const T* t) { return t; }
-};
-
-
-
-#ifdef _MSC_VER
-// I don't know why it's needed with VS.
-
-template<typename T>
-struct _xstringarray__char_type<T, enable_if_t(is___LString(T))>
-{
-	static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
-};
-
-template<>
-struct _xstringarray__char_type<XString8, void>
-{
-	static const typename XString8::char_t* getCharPtr(const XString8& t) { return t.s(); }
-};
-
-template<>
-struct _xstringarray__char_type<XStringW, void>
-{
-	static const typename XStringW::char_t* getCharPtr(const XStringW& t) { return t.s(); }
-};
-
-#endif
 
 //#define XStringArraySuper XObjArray<XStringClass>
 

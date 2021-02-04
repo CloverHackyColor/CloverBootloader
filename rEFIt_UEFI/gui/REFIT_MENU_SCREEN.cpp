@@ -54,6 +54,7 @@
 #include "../refit/screen.h"
 #include "../Platform/Events.h"
 #include "Self.h"
+#include "../Platform/Volumes.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_MENU 1

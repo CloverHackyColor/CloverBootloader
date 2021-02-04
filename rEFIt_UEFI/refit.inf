@@ -259,8 +259,10 @@
   Platform/StartupSound.h
  # Platform/sse3_patcher.h
  # Platform/sse3_5_patcher.h
-	Platform/VersionString.cpp
-	Platform/VersionString.h
+  Platform/VersionString.cpp
+  Platform/VersionString.h
+  Platform/Volumes.cpp
+  Platform/Volumes.h
   ../Version.h
   cpp_util/globals_ctor.cpp
   cpp_util/globals_ctor.h

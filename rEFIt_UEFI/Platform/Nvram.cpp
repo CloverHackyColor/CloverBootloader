@@ -11,6 +11,7 @@
 #include "BootOptions.h"
 #include "guid.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../Platform/Volumes.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1

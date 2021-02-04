@@ -58,6 +58,7 @@
 // Experimental <--
 #include "../include/Efi.h"
 #include "../libeg/libeg.h"
+#include "../Platform/Volumes.h"
 
 #ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
@@ -258,21 +259,7 @@ typedef enum {
 #define SCREEN_EDGE_RIGHT   70000
 #define SCREEN_EDGE_BOTTOM  80000
 
-extern REFIT_VOLUME     *SelfVolume;
 
-#ifdef __cplusplus
-class VolumesArrayClass : public XObjArray<REFIT_VOLUME>
-{
-  public:
-//    REFIT_VOLUME* getApfsPartitionWithUUID(const XString8& ApfsContainerUUID, const XString8& APFSTargetUUID);
-
-};
-
-extern VolumesArrayClass Volumes;
-
-#endif
-
-//extern UINTN            VolumesCount;
 
 extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;

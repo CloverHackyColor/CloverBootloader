@@ -250,11 +250,11 @@ const XIcon& XTheme::LoadOSIcon(const XString8& Full)
   const XIcon *ReturnIcon;
   UINTN Comma = Full.indexOf(',');
   UINTN Size = Full.length();
-  DBG("    IconName=%s comma=%lld size=%lld\n", Full.c_str(), Comma, Size);
+  DBG("      IconName=%s comma=%lld size=%lld\n", Full.c_str(), Comma, Size);
   if (Comma != MAX_XSIZE) {  //Comma
     First = "os_"_XS8 + Full.subString(0, Comma);
     ReturnIcon = &GetIcon(First);
-    DBG("    first=%s\n", First.c_str());
+    DBG("      first=%s\n", First.c_str());
     if (!ReturnIcon->isEmpty()) return *ReturnIcon;
     //else search second name
     Second = "os_"_XS8 + Full.subString(Comma + 1, Size - Comma - 1);
@@ -271,11 +271,11 @@ const XIcon& XTheme::LoadOSIcon(const XString8& Full)
       ReturnIcon = &GetIcon(Third);
       if (!ReturnIcon->isEmpty()) return *ReturnIcon;
     }
-    DBG("    Second=%s\n", Second.c_str());
+    DBG("      Second=%s\n", Second.c_str());
     if (!ReturnIcon->isEmpty()) return *ReturnIcon;
   } else {
     ReturnIcon = &GetIcon("os_"_XS8 + Full);
-    DBG("    Full=%s\n", Full.c_str());
+    DBG("      Full=%s\n", Full.c_str());
     if (!ReturnIcon->isEmpty()) return *ReturnIcon;
   }
   // else something

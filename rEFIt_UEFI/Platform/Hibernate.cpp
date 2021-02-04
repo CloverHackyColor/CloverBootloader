@@ -14,6 +14,7 @@
 #include "APFS.h"
 #include "Nvram.h"
 #include "BootOptions.h"
+#include "../Platform/Volumes.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_HIB 1
@@ -397,13 +398,13 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
       if (EFI_ERROR(Status)) {
         Status = egLoadFile(Volume->RootDir, PrefName2, &PrefBuffer, &PrefBufferLen);
         if (!EFI_ERROR(Status)) {
-          DBG("    read prefs %ls status=%s\n", PrefName2, efiStrError(Status));
+          DBG("      read prefs %ls status=%s\n", PrefName2, efiStrError(Status));
         }
       } else {
-        DBG("    read prefs %ls status=%s\n", PrefName3.wc_str(), efiStrError(Status));
+        DBG("      read prefs %ls status=%s\n", PrefName3.wc_str(), efiStrError(Status));
       }
     } else {
-      DBG("    read prefs %ls status=%s\n", PrefName, efiStrError(Status));
+      DBG("      read prefs %ls status=%s\n", PrefName, efiStrError(Status));
     }
   }
   
@@ -462,7 +463,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
   
   if (SleepImageName.isEmpty()) {
     SleepImageName = SWPrintf("\\private\\var\\vm\\sleepimage");
-    DBG("    using default sleep image name = %ls\n", SleepImageName.wc_str());
+    DBG("      using default sleep image name = %ls\n", SleepImageName.wc_str());
   }
   if (PrefBuffer) {
     FreePool(PrefBuffer); //allocated by egLoadFile
@@ -495,7 +496,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   }
   
   if (Volume->WholeDiskBlockIO == NULL) {
-    DBG("    no disk BlockIo\n");
+    DBG("      no disk BlockIo\n");
     return 0;
   }
   
@@ -505,7 +506,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
       // Update caller's SleepImageVolume when requested
       GetSleepImageLocation(Volume, SleepImageVolume, &ImageName);
     }
-	  DBG("    returning previously calculated offset: %llx\n", Volume->SleepImageOffset);
+	  DBG("      returning previously calculated offset: %llx\n", Volume->SleepImageOffset);
     return Volume->SleepImageOffset;
   }
   
@@ -516,7 +517,7 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
     // Open sleepimage
     Status = ImageVolume->RootDir->Open(ImageVolume->RootDir, &File, ImageName.wc_str(), EFI_FILE_MODE_READ, 0);
     if (EFI_ERROR(Status)) {
-      DBG("    sleepimage not found -> %s\n", efiStrError(Status));
+      DBG("      cannot open sleepimage -> %s\n", efiStrError(Status));
       return 0;
     }
   }
@@ -525,14 +526,14 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   BufferSize = 512;
   Buffer = (__typeof__(Buffer))AllocatePool(BufferSize);
   if (Buffer == NULL) {
-    DBG("    could not allocate buffer for sleepimage\n");
+    DBG("      could not allocate buffer for sleepimage\n");
     return 0;
   }
   
   //  DBG("    Reading first %d bytes of sleepimage ...\n", BufferSize);
   
   if (!ImageVolume->WholeDiskBlockIO) {
-    DBG("     can not get whole disk\n");
+    DBG("       can not get whole disk\n");
     if (Buffer) {
       FreePool(Buffer);
     }
@@ -563,16 +564,16 @@ GetSleepImagePosition (IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume)
   }
   
   if (EFI_ERROR(Status)) {
-    DBG("     can not read sleepimage -> %s\n", efiStrError(Status));
+    DBG("       can not read sleepimage -> %s\n", efiStrError(Status));
     return 0;
   }
   
   // We store SleepImageOffset, in case our BlockIoRead does not execute again on next read due to driver caching.
   if (gSleepImageOffset != 0) {
-	  DBG("     sleepimage offset acquired successfully: %llx\n", gSleepImageOffset);
+	  DBG("       sleepimage offset acquired successfully: %llx\n", gSleepImageOffset);
     ImageVolume->SleepImageOffset = gSleepImageOffset;
   } else {
-    DBG("     sleepimage offset could not be acquired\n");
+    DBG("       sleepimage offset could not be acquired\n");
   }
   
   if (SleepImageVolume != NULL) {
@@ -658,7 +659,7 @@ IsSleepImageValidBySignature (IN REFIT_VOLUME *Volume)
   // We'll have to detect offset here also in case driver caches
   // some data and stops us from detecting offset later.
   // So, make first call to GetSleepImagePosition() now.
-  DBG("    Check sleep image 'by signature':\n");
+  DBG("      Check sleep image 'by signature':\n");
   return (GetSleepImagePosition (Volume, NULL) != 0);
 }
 
@@ -815,21 +816,21 @@ IsOsxHibernated (IN LOADER_ENTRY *Entry)
     return FALSE;
   }
   
-  DBG("    Check if volume Is Hibernated:\n");
+  DBG("      Check if volume Is Hibernated:\n");
   
   if (!gSettings.Boot.StrictHibernate) {
     // CloverEFI or UEFI with EmuVariable
     if (IsSleepImageValidBySignature(Volume)) {
       if ((gSleepTime == 0) || IsSleepImageValidBySleepTime(Volume)) {
-        DBG("    hibernated: yes\n");
+        DBG("      hibernated: yes\n");
         ret = TRUE;
       } else {
-        DBG("    hibernated: no - time\n");
+        DBG("      hibernated: no - time\n");
         return FALSE;
       }
       //    IsHibernate = TRUE;
     } else {
-      DBG("    hibernated: no - sign\n");
+      DBG("      hibernated: no - sign\n");
       return FALSE; //test
     }
   }

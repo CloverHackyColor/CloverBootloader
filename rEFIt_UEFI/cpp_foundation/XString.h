@@ -172,7 +172,7 @@ public:
 	const wchar_t* wc_str() const { return m_data; }
 
 protected:
-	static void transmitSPrintf(const wchar_t* buf, unsigned int nbchar, void* context)
+	static void transmitSWPrintf(const wchar_t* buf, unsigned int nbchar, void* context)
 	{
 		((XStringW*)(context))->strncat(buf, nbchar);
 	}
@@ -180,7 +180,7 @@ public:
 	void vSWPrintf(const char* format, va_list va)
 	{
 		setEmpty();
-		vwprintf_with_callback(format, va, transmitSPrintf, this);
+		vwprintf_with_callback(format, va, transmitSWPrintf, this);
 	}
 	void SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
 	{
@@ -190,6 +190,18 @@ public:
 		vSWPrintf(format, va);
 		va_end(va);
 	}
+  void vSWCatf(const char* format, va_list va)
+  {
+    vwprintf_with_callback(format, va, transmitSWPrintf, this);
+  }
+  void SWCatf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
+  {
+    va_list     va;
+
+    va_start (va, format);
+    vSWCatf(format, va);
+    va_end(va);
+  }
 };
 
 

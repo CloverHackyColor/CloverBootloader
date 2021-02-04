@@ -468,33 +468,6 @@ public:
 		return ThisXStringClass();
 	}
 
-//	void insert(const __String<T, ThisXStringClass>& Str, size_t pos);
-//{
-//	if ( pos < size() ) {
-//		CheckSize(size()+Str.size());
-//		memmove(_data(pos + Str.size()),  data(pos),  (size()-pos)*sizeof(T));
-//		memmove(_data(pos), Str.data(), Str.size()*sizeof(T));
-//		setLength(size()+Str.size());
-//	}else{
-//		StrCat(Str);
-//	}
-//}
-
-//	void ToLower(bool FirstCharIsCap = false);
-//	bool IsLetters() const;
-//	bool IsLettersNoAccent() const;
-//	bool IsDigits() const;
-//{
-//  const T *p;
-//
-//	p = data();
-//	if ( !*p ) return false;
-//	for ( ; *p ; p+=1 ) {
-//		if ( *p < '0' ) return false;
-//		if ( *p > '9' ) return false;
-//	}
-//	return true;
-//}
 //	bool IsDigits(size_t pos, size_t count) const;
 //{
 //  const T *p;
@@ -513,30 +486,6 @@ public:
 //		if ( *p > '9' ) return false;
 //	}
 //	return true;
-//}
-
-//	void Replace(T c1, T c2)
-//	{
-//		T* p;
-//
-//		p = s();
-//		while ( *p ) {
-//			if ( *p == c1 ) *p = c2;
-//			p += 1;
-//		}
-//	}
-//	__String SubStringReplace(T c1, T c2);
-//{
-//  T* p;
-//  __String Result;
-//
-//	p = s();
-//	while ( *p  ) {
-//		if ( *p == c1 ) Result += c2;
-//		else Result += *p;
-//		p++;
-//	}
-//	return Result;
 //}
 
 	//---------------------------------------------------------------------
@@ -563,6 +512,14 @@ public:
 	bool equalIC(const O* S) const { return XStringAbstract__compare(m_data, S, true) == 0; }
 
 //	bool SubStringEqual(size_t Pos, const T* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
+
+  template<typename IntegralType, typename O, class OtherXStringClass>
+  bool equalAtIC(IntegralType pos, const __String<O, OtherXStringClass>& S) const
+  {
+    if ( pos < 0 ) panic("XString::equalAtIC -> i < 0");
+    if ( (unsigned_type(IntegralType))pos > length() - S.length() ) return false;
+    return XStringAbstract__ncompare(m_data + (unsigned_type(IntegralType))pos, S.s(), S.length(), true) == 0;
+  }
 
 public:
 	// == operator
@@ -611,7 +568,7 @@ public:
 };
 
 
-//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  LString  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 template<class T, class ThisXStringClass>
 class LString : public __String<T, ThisXStringClass>
@@ -679,6 +636,67 @@ template <typename T1, typename T2>
 struct __string_class_or<T1, T2, enable_if_t(is___String(T1))> { typedef typename T1::xs_t type; };
 template <typename T1, typename T2>
 struct __string_class_or<T1, T2, enable_if_t(!is___String(T1) && is___String(T2))> { typedef typename T2::xs_t type; };
+
+
+/* ------------  get_char_ptr(x) --------------*/
+template<typename T, typename Tdummy=void>
+struct _xstringarray__char_type;
+
+template<typename T>
+struct _xstringarray__char_type<T, enable_if_t(is___String(T))>
+{
+  static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
+};
+
+template<typename T>
+struct _xstringarray__char_type<T*, enable_if_t(is_char(T))>
+{
+    static const T* getCharPtr(T* t) { return t; }
+};
+
+//template<typename T>
+//struct _xstringarray__char_type<const T*, enable_if_t(is_char(T))>
+//{
+//    static const T* getCharPtr(const T* t) { return t; }
+//};
+
+template<typename T>
+struct _xstringarray__char_type<const T[]>
+{
+    static const T* getCharPtr(T* t) { return t; }
+};
+
+template<typename T, size_t _Np>
+struct _xstringarray__char_type<T[_Np]>
+{
+    static const T* getCharPtr(const T* t) { return t; }
+};
+
+#ifdef _MSC_VER
+// I don't know why it's needed with VS.
+
+template<typename T>
+struct _xstringarray__char_type<T, enable_if_t(is___LString(T))>
+{
+  static const typename T::char_t* getCharPtr(const T& t) { return t.s(); }
+};
+
+template<>
+struct _xstringarray__char_type<XString8, void>
+{
+  static const typename XString8::char_t* getCharPtr(const XString8& t) { return t.s(); }
+};
+
+template<>
+struct _xstringarray__char_type<XStringW, void>
+{
+  static const typename XStringW::char_t* getCharPtr(const XStringW& t) { return t.s(); }
+};
+
+#endif
+
+#define get_char_ptr(x) _xstringarray__char_type<typeof(x)>::getCharPtr(x)
+
 
 
 //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

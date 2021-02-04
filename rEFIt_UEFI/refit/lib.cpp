@@ -45,6 +45,7 @@
 #include "Self.h"
 #include "SelfOem.h"
 #include "../include/OC.h"
+#include "../Platform/Volumes.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_LIB 1
@@ -68,15 +69,6 @@ BOOLEAN          gThemeChanged = FALSE;
 BOOLEAN          gBootChanged = FALSE;
 BOOLEAN          gThemeOptionsChanged = FALSE;
 
-
-REFIT_VOLUME     *SelfVolume = NULL;
-//REFIT_VOLUME     **Volumes = NULL;
-//UINTN            VolumesCount = 0;
-VolumesArrayClass Volumes;
-
-//REFIT_VOLUME* VolumesArrayClass::getApfsPartitionWithUUID(const XString8& ApfsContainerUUID, const XString8& APFSTargetUUID)
-//{
-//}
 
 //
 // Unicode collation protocol interface

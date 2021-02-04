@@ -37,6 +37,7 @@
 #include "../refit/screen.h"
 #include "../refit/menu.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../Platform/Volumes.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LEGACY 1
