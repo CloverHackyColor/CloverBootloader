@@ -4898,34 +4898,24 @@ static void getACPISettings(const TagDict *CfgDict)
       gSettings.EnableISS = IsPropertyNotNullAndTrue(Prop);
       
       Prop = SSDTDict->propertyForKey("EnableC7");
-      if (Prop != NULL) {
         gSettings.EnableC7 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC7: %s\n", gSettings.EnableC7 ? "yes" : "no");
-      }
       
       Prop = SSDTDict->propertyForKey("EnableC6");
-      if (Prop != NULL) {
         gSettings.EnableC6 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC6: %s\n", gSettings.EnableC6 ? "yes" : "no");
-      }
       
       Prop = SSDTDict->propertyForKey("EnableC4");
-      if (Prop != NULL) {
         gSettings.EnableC4 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC4: %s\n", gSettings.EnableC4 ? "yes" : "no");
-      }
       
       Prop = SSDTDict->propertyForKey("EnableC2");
-      if (Prop != NULL) {
         gSettings.EnableC2 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC2: %s\n", gSettings.EnableC2 ? "yes" : "no");
-      }
       
       Prop = SSDTDict->propertyForKey("C3Latency");
-      if (Prop != NULL) {
         gSettings.C3Latency = (UINT16)GetPropertyAsInteger(Prop, gSettings.C3Latency);
         DBG("C3Latency: %d\n", gSettings.C3Latency);
-      }
       
       Prop                       = SSDTDict->propertyForKey("PLimitDict");
       gSettings.PLimitDict       = (UINT8)GetPropertyAsInteger(Prop, 0);
@@ -4937,22 +4927,16 @@ static void getACPISettings(const TagDict *CfgDict)
       gSettings.DoubleFirstState = IsPropertyNotNullAndTrue(Prop);
       
       Prop = SSDTDict->propertyForKey("MinMultiplier");
-      if (Prop != NULL) {
         gSettings.MinMultiplier  = (UINT8)GetPropertyAsInteger(Prop, gSettings.MinMultiplier);
         DBG("MinMultiplier: %d\n", gSettings.MinMultiplier);
-      }
       
       Prop = SSDTDict->propertyForKey("MaxMultiplier");
-      if (Prop != NULL) {
         gSettings.MaxMultiplier = (UINT8)GetPropertyAsInteger(Prop, gSettings.MaxMultiplier);
         DBG("MaxMultiplier: %d\n", gSettings.MaxMultiplier);
-      }
       
       Prop = SSDTDict->propertyForKey("PluginType");
-      if (Prop != NULL) {
         gSettings.PluginType = (UINT8)GetPropertyAsInteger(Prop, gSettings.PluginType);
         DBG("PluginType: %d\n", gSettings.PluginType);
-      }
     }
     
     //     Prop               = GetProperty(DictPointer, "DropMCFG");
@@ -4973,10 +4957,8 @@ static void getACPISettings(const TagDict *CfgDict)
     }
     
     Prop = ACPIDict->propertyForKey("ResetValue");
-    if (Prop) {
       gSettings.ResetVal = (UINT8)GetPropertyAsInteger(Prop, gSettings.ResetVal);
       DBG("ResetVal: 0x%hhX\n", gSettings.ResetVal);
-    }
     //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
     
     Prop = ACPIDict->propertyForKey("HaltEnabler");
@@ -4994,10 +4976,8 @@ static void getACPISettings(const TagDict *CfgDict)
     gSettings.NoASPM = IsPropertyNotNullAndTrue(Prop);
     
     Prop = ACPIDict->propertyForKey("smartUPS");
-    if (Prop) {
       gSettings.smartUPS   = IsPropertyNotNullAndTrue(Prop);
       DBG("smartUPS: present\n");
-    }
     
     Prop               = ACPIDict->propertyForKey("PatchAPIC");
     gSettings.PatchNMI = IsPropertyNotNullAndTrue(Prop);

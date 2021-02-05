@@ -1391,16 +1391,9 @@ MACHINE_TYPES GetModelFromString(const XString8& ProductName)
 
 void GetDefaultSettings()
 {
-  MACHINE_TYPES  Model;
-  //UINT64         msr = 0;
-
   DbgHeader("GetDefaultSettings");
 
   //gLanguage         = english;
-  Model             = GetDefaultModel ();
-  gSettings.CpuType	= GetAdvancedCpuType ();
-
-  SetDMISettingsForModel (Model, TRUE);
 
   //default values will be overritten by config.plist
   //use explicitly settings TRUE or FALSE (Yes or No)
@@ -1443,7 +1436,17 @@ void GetDefaultSettings()
   gSettings.UIScale              = 1;
   
   ResumeFromCoreStorage          = FALSE;
+}
 
+void GetDefaultCpuSettings()
+{
+  DbgHeader("GetDefaultCpuSettings");
+  MACHINE_TYPES  Model;
+  //UINT64         msr = 0;
+  Model             = GetDefaultModel();
+  gSettings.CpuType  = GetAdvancedCpuType();
+  SetDMISettingsForModel(Model, TRUE);
+  
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates    = TRUE;
     gSettings.GenerateCStates    = TRUE;
@@ -1455,7 +1458,7 @@ void GetDefaultSettings()
     //  gSettings.EnableC2           = TRUE;
     gSettings.EnableC6           = TRUE;
     gSettings.PluginType         = 1;
-
+    
     if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
       gSettings.MinMultiplier    = 7;
     }
@@ -1463,19 +1466,6 @@ void GetDefaultSettings()
     //gSettings.DropSSDT           = TRUE;    //why drop all???
     gSettings.C3Latency          = 0x00FA;
   }
-  
-//CPU
-  //gSettings.EnableISS            = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo                = gCPUStructure.Turbo;
   gSettings.SavingMode           = 0xFF;  //means not set
-  //MsgLog ("Turbo default value: %s\n", gCPUStructure.Turbo ? "Yes" : "No");
-  //msr                            = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-  //force enable EIST
-  //msr                            |= (1<<16);
-  //AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
-  //gSettings.Turbo                = ((msr & (1ULL<<38)) == 0);
-  //gSettings.EnableISS            = ((msr & (1ULL<<16)) != 0);
-
-  //Fill ACPI table list
-  //  GetAcpiTablesList ();
 }

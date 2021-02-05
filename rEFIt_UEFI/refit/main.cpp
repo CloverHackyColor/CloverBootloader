@@ -1178,7 +1178,7 @@ void LOADER_ENTRY::StartLoader()
         0,
         &ImageHandle
         );
-    }else
+    } else
     {
       // NOTE : OpenCore ignore the name of the dmg.
       //        InternalLoadDmg calls InternalFindFirstDmgFileName to find the dmg file name.
@@ -2518,6 +2518,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("Running on: '%s' with board '%s'\n", gSettings.OEMProduct.c_str(), gSettings.OEMBoard.c_str());
 
   GetCPUProperties();
+  GetDefaultCpuSettings(); //split from GetDefaultSettings() because it should be after GetCPUProperties()
   GetDevices(); // Do this BEFORE SetOEMPath();
 
   // LoadOptions Parsing
