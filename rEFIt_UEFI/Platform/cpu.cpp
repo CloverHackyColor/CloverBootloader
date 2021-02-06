@@ -287,6 +287,8 @@ void GetCPUProperties (void)
     gCPUStructure.Turbo = ((gCPUStructure.CPUID[CPUID_6][EAX] & BIT1) != 0);
     DBG(" The CPU%s supported turbo\n", gCPUStructure.Turbo?"":" not");
     //get cores and threads
+    BOOLEAN PerfBias = (gCPUStructure.CPUID[CPUID_6][ECX] & BIT3) != 0;
+    DBG(" Energy PerfBias is %s visible:\n", PerfBias?"":" not");
     switch (gCPUStructure.Model)
     {
       case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
@@ -324,8 +326,10 @@ void GetCPUProperties (void)
       case CPU_MODEL_COMETLAKE_S:
       case CPU_MODEL_COMETLAKE_Y:
       case CPU_MODEL_COMETLAKE_U:
+      case CPU_MODEL_TIGERLAKE_C:
+      case CPU_MODEL_TIGERLAKE_D:
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
-			DBG("MSR 0x35    %16llX\n", msr);
+        DBG("MSR 0x35    %16llX\n", msr);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
@@ -515,7 +519,9 @@ void GetCPUProperties (void)
            case CPU_MODEL_COMETLAKE_S:
            case CPU_MODEL_COMETLAKE_Y:
            case CPU_MODEL_COMETLAKE_U:
-             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
+         case CPU_MODEL_TIGERLAKE_C:
+         case CPU_MODEL_TIGERLAKE_D:
+            gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
              
              
@@ -1393,6 +1399,8 @@ UINT16 GetAdvancedCpuType ()
           case CPU_MODEL_COMETLAKE_S:
           case CPU_MODEL_COMETLAKE_Y:
           case CPU_MODEL_COMETLAKE_U:
+        case CPU_MODEL_TIGERLAKE_C:
+        case CPU_MODEL_TIGERLAKE_D:
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
               return 0x905; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))

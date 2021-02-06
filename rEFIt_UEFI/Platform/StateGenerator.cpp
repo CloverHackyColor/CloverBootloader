@@ -267,7 +267,9 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
           case CPU_MODEL_COMETLAKE_S:
           case CPU_MODEL_COMETLAKE_Y:
           case CPU_MODEL_COMETLAKE_U:
-          {
+        case CPU_MODEL_TIGERLAKE_C:
+        case CPU_MODEL_TIGERLAKE_D:
+         {
             maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 8) & 0xff;
             if (gSettings.MaxMultiplier) {
               DBG("Using custom MaxMultiplier %d instead of automatic %d\n",
@@ -333,7 +335,9 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_ICELAKE_C) ||
                     (gCPUStructure.Model == CPU_MODEL_ICELAKE_D) ||
                     (gCPUStructure.Model == CPU_MODEL_ICELAKE) ||
-                    (gCPUStructure.Model == CPU_MODEL_COMETLAKE_S) ||
+                    (gCPUStructure.Model == CPU_MODEL_TIGERLAKE_C) ||
+                    (gCPUStructure.Model == CPU_MODEL_TIGERLAKE_D) ||
+                   (gCPUStructure.Model == CPU_MODEL_COMETLAKE_S) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_Y) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_U)) {
                     j = i << 8;

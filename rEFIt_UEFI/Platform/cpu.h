@@ -43,33 +43,35 @@
 //#define CPU_MODEL_HASWELL_H    0x??  // Haswell H
 #define CPU_MODEL_HASWELL_ULT   0x45  /* Haswell ULT */
 #define CPU_MODEL_CRYSTALWELL   0x46  /* Haswell ULX CPUID_MODEL_CRYSTALWELL */
-#define CPU_MODEL_BROADWELL_HQ  0x47  /* E3-1200 v4 */
+#define CPU_MODEL_BROADWELL_HQ  0x47  /* E3-1200 v4 5th */
 #define CPU_MODEL_MERRIFIELD    0x4A  /* Tangier */
 #define CPU_MODEL_AIRMONT       0x4C  /* CherryTrail / Braswell */
 #define CPU_MODEL_AVOTON        0x4D  /* Avaton/Rangely */
 #define CPU_MODEL_SKYLAKE_U     0x4E  /* Skylake Mobile */
-#define CPU_MODEL_BROADWELL_E5  0x4F  /* Xeon E5-2695 */
+#define CPU_MODEL_BROADWELL_E5  0x4F  /* Xeon E5-2695 5th */
 #define CPU_MODEL_SKYLAKE_S     0x55  /* Skylake Server, Cooper Lake */
-#define CPU_MODEL_BROADWELL_DE  0x56  /* Xeon BroadWell */
+#define CPU_MODEL_BROADWELL_DE  0x56  /* Xeon BroadWell 5th */
 #define CPU_MODEL_KNIGHT        0x57  /* Knights Landing */
 #define CPU_MODEL_MOOREFIELD    0x5A  /* Annidale */
 #define CPU_MODEL_GOLDMONT      0x5C  /* Apollo Lake */
 #define CPU_MODEL_ATOM_X3       0x5D  /* Silvermont */
 #define CPU_MODEL_SKYLAKE_D     0x5E  /* Skylake Desktop */
 #define CPU_MODEL_DENVERTON     0x5F  /* Goldmont Microserver */
-#define CPU_MODEL_CANNONLAKE    0x66
+#define CPU_MODEL_CANNONLAKE    0x66  /* 8h generation Cannon Lake */
 #define CPU_MODEL_ICELAKE_A     0x6A  /* Xeon Ice Lake */
 #define CPU_MODEL_ICELAKE_C     0x6C  /* Xeon Ice Lake */
 #define CPU_MODEL_ATOM_GM       0x7A  /* Goldmont Plus */
-#define CPU_MODEL_ICELAKE_D     0x7D
-#define CPU_MODEL_ICELAKE       0x7E
+#define CPU_MODEL_ICELAKE_D     0x7D  /* 10h Ice Lake */
+#define CPU_MODEL_ICELAKE       0x7E  /* 10h Ice Lake */
 #define CPU_MODEL_XEON_MILL     0x85  /* Knights Mill */
 #define CPU_MODEL_ATOM_TM       0x86  /* Tremont */
-#define CPU_MODEL_KABYLAKE1     0x8E  /* Kabylake Mobile */
-#define CPU_MODEL_KABYLAKE2     0x9E  /* Kabylake Dektop, CoffeeLake */
+#define CPU_MODEL_TIGERLAKE_C   0x8C  /* 11h generation Tiger Lake */
+#define CPU_MODEL_TIGERLAKE_D   0x8D  /* 11h generation Tiger Lake */
+#define CPU_MODEL_KABYLAKE1     0x8E  /* 7h Kabylake Mobile */
+#define CPU_MODEL_KABYLAKE2     0x9E  /* 7h CoffeeLake */
 #define CPU_MODEL_COMETLAKE_S   0x9F  /* desktop Comet Lake */
-#define CPU_MODEL_COMETLAKE_Y   0xA5  /* aka 10th generation Amber Lake Y */
-#define CPU_MODEL_COMETLAKE_U   0xA6
+#define CPU_MODEL_COMETLAKE_Y   0xA5  /* 10h Comet Lake */
+#define CPU_MODEL_COMETLAKE_U   0xA6  /* 10h Comet Lake */
 
 #define CPU_VENDOR_INTEL        0x756E6547
 #define CPU_VENDOR_AMD          0x68747541
@@ -214,9 +216,13 @@ const char CPU_STRING_UNKNOWN[] = "Unknown CPU Type";
 #define MSR_IA32_MISC_ENABLE        0x01A0
 #define MSR_THERMAL_TARGET          0x01A2   /* TjMax limited use - not for Penryn or older      */
 #define MSR_TURBO_RATIO_LIMIT       0x01AD   /* limited use - not for Penryn or older      */
+#define MSR_MISC_PWR_MGMT           0x01AA   /* EIST Hardware Coordination Disable (R/W) */
+/* defined for Goldmont, Nehalem, Sandy and up
+ * bit0=1 == disable
+ * bit1=1 == enable MSR 1B0
+ */
 
-
-#define IA32_ENERGY_PERF_BIAS       0x01B0
+#define IA32_ENERGY_PERF_BIAS       0x01B0  /* 0=fast 15=low energy If CPUID.6H:ECX[3] = 1 */
 //MSR 000001B0                                      0000-0000-0000-0005
 #define MSR_PACKAGE_THERM_STATUS    0x01B1
 //MSR 000001B1                                      0000-0000-8838-0000
