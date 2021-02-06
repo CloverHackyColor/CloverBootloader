@@ -20,6 +20,7 @@ extern "C" {
 #include <Library/OcVirtualFsLib.h>
 #include <Library/OcConfigurationLib.h>
 #include <Library/OcDevicePathLib.h>
+#include <Library/OcFileLib.h>
 //#include <Library/OcCpuLib.h> // OC_CPU_INFO
 //#include <Protocol/OcBootstrap.h> // OC_BOOTSTRAP_PROTOCOL
 #include <Library/OcBootManagementLib/BootManagementInternal.h>

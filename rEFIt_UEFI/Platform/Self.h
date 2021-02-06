@@ -9,6 +9,11 @@
 #define PLATFORM_SELF_H_
 
 #include <Platform.h>
+extern "C" {
+#include <Uefi/UefiSpec.h>
+#include <Protocol/LoadedImage.h>
+#include <Protocol/DevicePath.h>
+}
 
 class Self
 {

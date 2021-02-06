@@ -281,7 +281,7 @@ public:
       : ID(0), Title(), TitleImage(), InfoLines(), Entries(),
         TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
         OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
         BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {
     EFI_TIME          Now;
@@ -300,7 +300,7 @@ public:
       : ID(ID), Title(TTitle), TitleImage(), InfoLines(), Entries(),
         TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
         OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
         BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {};
 
@@ -309,7 +309,7 @@ public:
       : ID(ID), Title(), TitleImage(), InfoLines(), Entries(),
         TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
         OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
         BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {
     Title.takeValueFrom(TitleC);
@@ -320,7 +320,7 @@ public:
       : ID(ID), Title(TTitle), TitleImage(), InfoLines(), Entries(),
         TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
         OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
+        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
         BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
   {
     Entries.AddReference(entry1, false);

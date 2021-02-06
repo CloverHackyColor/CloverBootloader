@@ -1,13 +1,35 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
-#define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
-#define HEIGHT_2K 1100
-
+#include <Efi.h>
 #include "../gui/menu_items/menu_items.h"
+
 #include "../Platform/plist/plist.h"
 #include "../Platform/guid.h"
 #include "MacOsVersion.h"
+#include "KERNEL_AND_KEXT_PATCHES.h"
+#include "../libeg/XIcon.h"
+
+
+#define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
+
+
+#define QUIRK_DEFRAG  bit(0)
+#define QUIRK_MMIO    bit(1)
+#define QUIRK_SU      bit(2)
+#define QUIRK_VAR     bit(3)
+#define QUIRK_HIBER   bit(4)
+#define QUIRK_SAFE    bit(5)
+#define QUIRK_UNPROT  bit(6)
+#define QUIRK_EXIT    bit(7)
+#define QUIRK_REGION  bit(8)
+#define QUIRK_SECURE  bit(9)
+#define QUIRK_UEFI    bit(10)
+#define QUIRK_CUSTOM  bit(11)
+#define QUIRK_MAP     bit(12)
+#define QUIRK_VIRT    bit(13)
+#define QUIRK_OS      bit(14)
+#define QUIRK_PERM    bit(15)
 
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
@@ -18,16 +40,18 @@
 //  INPUT_ITEM        MenuItem;
 //};
 
+extern CONST CHAR8      *AudioOutputNames[];
+
 class HDA_OUTPUTS
 {
 public:
   XStringW        Name;
 //  CHAR8           *LineName;
   UINT8            Index;
-  EFI_HANDLE      Handle;
-  EFI_AUDIO_IO_PROTOCOL_DEVICE Device;
+  EFI_HANDLE      Handle = NULL;
+  EFI_AUDIO_IO_PROTOCOL_DEVICE Device = EfiAudioIoDeviceOther;
 
-  HDA_OUTPUTS() : Name(), Index(0), Handle(0), Device(EfiAudioIoDeviceOther) {}
+  HDA_OUTPUTS() : Name(), Index(0) {}
   HDA_OUTPUTS(const HDA_OUTPUTS& other) = delete; // Can be defined if needed
   const HDA_OUTPUTS& operator = ( const HDA_OUTPUTS & ) = delete; // Can be defined if needed
   ~HDA_OUTPUTS() {}
@@ -94,10 +118,10 @@ public:
   UINT32          Signature;
   UINT32          Length;
   UINT64          TableId;
-  INPUT_ITEM      MenuItem;
+  INPUT_ITEM      MenuItem = INPUT_ITEM();
   BOOLEAN         OtherOS;
 
-  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), MenuItem(), OtherOS(0) {}
+  ACPI_DROP_TABLE() : Next(0), Signature(0), Length(0), TableId(0), OtherOS(0) {}
   ACPI_DROP_TABLE(const ACPI_DROP_TABLE& other) = delete; // Can be defined if needed
   const ACPI_DROP_TABLE& operator = ( const ACPI_DROP_TABLE & ) = delete; // Can be defined if needed
   ~ACPI_DROP_TABLE() {}
@@ -108,8 +132,8 @@ class CUSTOM_LOADER_ENTRY
 public:
   CUSTOM_LOADER_ENTRY     *Next;
   CUSTOM_LOADER_ENTRY     *SubEntries;
-  XIcon                  Image;
-  XIcon                  DriveImage;
+  XIcon                  Image = XIcon();
+  XIcon                  DriveImage = XIcon();
   XStringW               ImagePath;
   XStringW               DriveImagePath;
   XStringW               Volume;
@@ -127,13 +151,13 @@ public:
   UINT8                   VolumeType;
   UINT8                   KernelScan;
   UINT8                   CustomBoot;
-  XImage                  CustomLogo;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor;
+  XImage                  CustomLogo = XImage();
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXEL({0,0,0,0});
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
 
-  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), Path(), LoadOptions(),
+  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(), DriveImagePath(), Volume(), Path(), LoadOptions(),
                           FullTitle(), Title(), Settings(), Hotkey(0), CommonSettings(0), Flags(0), Hidden(0), Type(0), VolumeType(0),
-                          KernelScan(0), CustomBoot(0), CustomLogo(), BootBgColor({0,0,0,0}), KernelAndKextPatches()
+                          KernelScan(0), CustomBoot(0), KernelAndKextPatches()
 						{ }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
@@ -146,8 +170,8 @@ class CUSTOM_LEGACY_ENTRY
 {
 public:
   CUSTOM_LEGACY_ENTRY* Next;
-  XIcon                Image;
-  XIcon                DriveImage;
+  XIcon                Image = XIcon();
+  XIcon                DriveImage = XIcon();
   XStringW             ImagePath;
   XStringW             DriveImagePath;
   XStringW             Volume;
@@ -159,7 +183,7 @@ public:
   UINT8                Type;
   UINT8                VolumeType;
 
-  CUSTOM_LEGACY_ENTRY() : Next(0), Image(), DriveImage(), ImagePath(), DriveImagePath(), Volume(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), Type(0), VolumeType(0) { }
+  CUSTOM_LEGACY_ENTRY() : Next(0), ImagePath(), DriveImagePath(), Volume(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), Type(0), VolumeType(0) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
@@ -170,7 +194,7 @@ class CUSTOM_TOOL_ENTRY
 {
 public:
   CUSTOM_TOOL_ENTRY *Next;
-  XIcon              Image;
+  XIcon              Image = XIcon();
   XStringW           ImagePath;
   XStringW           Volume;
   XStringW           Path;
@@ -182,7 +206,7 @@ public:
   bool               Hidden;
   UINT8              VolumeType;
 
-  CUSTOM_TOOL_ENTRY() : Next(0), Image(), ImagePath(), Volume(), Path(), LoadOptions(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), VolumeType(0) { }
+  CUSTOM_TOOL_ENTRY() : Next(0), ImagePath(), Volume(), Path(), LoadOptions(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), VolumeType(0) { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
@@ -193,17 +217,17 @@ class DEV_PROPERTY
 {
 public:
   UINT32        Device;
-  EFI_DEVICE_PATH_PROTOCOL* DevicePath;
+  EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
   CHAR8         *Key;
   UINT8         *Value;
   UINTN         ValueLen;
   DEV_PROPERTY  *Next;   //next device or next property
   DEV_PROPERTY  *Child;  // property list of the device
   CHAR8         *Label;
-  INPUT_ITEM    MenuItem;
-  TAG_TYPE      ValueType;
+  INPUT_ITEM    MenuItem = INPUT_ITEM();
+  TAG_TYPE      ValueType = kTagTypeNone;
 
-  DEV_PROPERTY() : Device(0), DevicePath(0), Key(0), Value(0), ValueLen(0), Next(0), Child(0), Label(0), MenuItem(), ValueType(kTagTypeNone) { }
+  DEV_PROPERTY() : Device(0), Key(0), Value(0), ValueLen(0), Next(0), Child(0), Label(0)  { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   DEV_PROPERTY(const DEV_PROPERTY&) = delete;
@@ -219,9 +243,9 @@ public :
   XBuffer<UINT8>   PatchDsdtReplace;
   XString8         PatchDsdtLabel;
   XBuffer<UINT8>   PatchDsdtTgt;
-  INPUT_ITEM       PatchDsdtMenuItem;
+  INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM();
 
-  DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt(), PatchDsdtMenuItem() { }
+  DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt() { }
 
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
   DSDT_Patch(const DSDT_Patch&) = delete;
@@ -665,7 +689,7 @@ public:
                     AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0}, mmioWhiteListArray(), ProvideConsoleGop(0)
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, mmioWhiteListArray(), ProvideConsoleGop(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
@@ -742,9 +766,9 @@ class ACPI_PATCHED_AML
 public:
   ACPI_PATCHED_AML  *Next;
   CHAR16            *FileName;
-  INPUT_ITEM        MenuItem;
+  INPUT_ITEM        MenuItem = INPUT_ITEM();
 
-  ACPI_PATCHED_AML() : Next(0), FileName(0), MenuItem() {};
+  ACPI_PATCHED_AML() : Next(0), FileName(0) {};
   ACPI_PATCHED_AML(const ACPI_PATCHED_AML& other) = delete; // Can be defined if needed
   const ACPI_PATCHED_AML& operator = ( const ACPI_PATCHED_AML & ) = delete; // Can be defined if needed
   ~ACPI_PATCHED_AML() { }
@@ -758,9 +782,9 @@ public:
   XStringW       FileName;
   XStringW       KextDirNameUnderOEMPath;
   XStringW       Version;
-  INPUT_ITEM     MenuItem;
+  INPUT_ITEM     MenuItem = INPUT_ITEM();
   
-  SIDELOAD_KEXT() : PlugInList(), FileName(), KextDirNameUnderOEMPath(), Version(), MenuItem() {};
+  SIDELOAD_KEXT() : PlugInList(), FileName(), KextDirNameUnderOEMPath(), Version() {};
   SIDELOAD_KEXT(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
   const SIDELOAD_KEXT& operator = ( const SIDELOAD_KEXT & ) = delete; // Can be defined if needed
   ~SIDELOAD_KEXT() { }
@@ -772,7 +796,7 @@ public:
   XStringW Name;
   EFI_GUID VarGuid;
 
-RT_VARIABLES() : Name(), VarGuid{0} {};
+RT_VARIABLES() : Name(), VarGuid{0,0,0,{0}} {};
   RT_VARIABLES(const RT_VARIABLES& other) = delete; // Can be defined if needed
   const RT_VARIABLES& operator = ( const RT_VARIABLES & ) = delete; // Can be defined if needed
   ~RT_VARIABLES() { }
@@ -829,8 +853,6 @@ extern TagDict*                          gConfigDict[];
 // ACPI/PATCHED/AML
 extern ACPI_PATCHED_AML                *ACPIPatchedAML;
 
-// Sideload/inject kext
-extern XObjArray<SIDELOAD_KEXT>         InjectKextList;
 
 // SysVariables
 //extern SYSVARIABLES                   *SysVariables;
@@ -877,12 +899,18 @@ public:
 //  XStringW    ScreenResolution;
 //  INTN        ConsoleMode;
 //  BOOLEAN     CustomIcons;
-  INTN        IconFormat;
+//  INTN        IconFormat = ICON_FORMAT_DEF; // not used anymore
 //  BOOLEAN     NoEarlyProgress;
 //  INT32       Timezone;
 //  BOOLEAN     ShowOptimus;
 //  INTN        Codepage;
 //  INTN        CodepageSize;
+
+  BOOLEAN       gBootChanged = FALSE;
+  BOOLEAN       gThemeChanged = FALSE;
+  BOOLEAN       NeedPMfix = FALSE;
+
+
 
   /*
    * Defqult ctor :
@@ -913,8 +941,7 @@ public:
    *
    */
   REFIT_CONFIG() : DisableFlags(0), Quiet(TRUE),
-                   SpecialBootMode(FALSE),
-                   IconFormat(ICON_FORMAT_DEF)
+                   SpecialBootMode(FALSE)
                     {};
   REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
@@ -951,14 +978,6 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
 inline MacOsVersion GetOSVersion (IN LOADER_ENTRY *Entry) { return GetOSVersion(Entry->LoaderType, Entry->APFSTargetUUID, Entry->Volume, &Entry->BuildVersion); };
 
 
-void GetListOfThemes(void);
-void GetListOfConfigs(void);
-void GetListOfACPI(void);
-void GetListOfDsdts(void);
-
-// syscl - get list of inject kext(s)
-void GetListOfInjectKext(CHAR16 *);
-
 UINT32
 GetCrc32 (
   UINT8 *Buffer,
@@ -981,17 +1000,12 @@ GetRootUUID (
 
 EFI_STATUS
 GetEarlyUserSettings (
-  const TagDict*   CfgDict
+  const TagDict*   CfgDict,
+  SETTINGS_DATA& gSettings
   );
 
 EFI_STATUS
-GetUserSettings (const TagDict* CfgDict);
-
-EFI_STATUS
-InitTheme (
-  BOOLEAN  UseThemeDefinedInNVRam //,
-//  EFI_TIME *Time
-  );
+GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
 
 XStringW
 GetOtherKextsDir (BOOLEAN On);
@@ -1015,9 +1029,6 @@ SaveSettings (void);
 
 
 
-/** Returns a boolean and then enable disable the patch if MachOSEntry have a match for the booted OS. */
-BOOLEAN IsPatchEnabledByBuildNumber(const XString8& MatchOSEntry, const XString8& Build);
-BOOLEAN IsPatchEnabled(const XString8& MatchOSEntry, const MacOsVersion& CurrOS);
 
 /** return true if a given os contains '.' as separator,
  and then match components of the current booted OS. Also allow 10.10.x format meaning all revisions
@@ -1027,8 +1038,6 @@ BOOLEAN IsPatchEnabled(const XString8& MatchOSEntry, const MacOsVersion& CurrOS)
 
 //get default boot
 void GetBootFromOption(void);
-void
-InitKextList(void);
 
 EFI_STATUS
 LoadUserSettings (

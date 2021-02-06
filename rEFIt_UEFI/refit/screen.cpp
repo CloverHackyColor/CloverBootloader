@@ -385,7 +385,7 @@ void REFIT_MENU_SCREEN::GetAnime()
 
 void REFIT_MENU_SCREEN::InitAnime()
 {
-  if (gThemeChanged) {
+  if (GlobalConfig.gThemeChanged) {
     FilmC = nullptr;
   }
   if (FilmC == nullptr) {

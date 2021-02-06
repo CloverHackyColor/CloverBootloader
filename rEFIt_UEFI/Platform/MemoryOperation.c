@@ -4,7 +4,7 @@
  */
 
 #include "MemoryOperation.h"
-#include <BootLog.h>
+#include "BootLog.h"
 
 #include <Library/BaseMemoryLib.h>
 

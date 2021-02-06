@@ -41,10 +41,14 @@
   include/Efi.h
   include/Handle.h
   include/OneLinerMacros.h
-  include/OsType.h
   include/Pci.h
   include/XToolsConf.h
   include/OC.h
+  include/printf_lite-test-cpp_conf.h
+  include/BootTypes.h
+  include/OSTypes.h
+  include/OSFlags.h
+  include/VolumeTypes.h
   refit/main.cpp
   refit/icns.cpp
   refit/lib.cpp
@@ -130,6 +134,8 @@
   Platform/Posix/wchar.cpp
   Platform/Posix/abort.h
   Platform/Posix/abort.cpp
+  Platform/Posix/posix_additions.h
+  Platform/Posix/posix_additions.cpp
   Platform/AcpiPatcher.h
   Platform/AcpiPatcher.cpp
 	Platform/APFS.h
@@ -175,8 +181,17 @@
 	Platform/hda.cpp
     Platform/HdaCodecDump.h
     Platform/HdaCodecDump.cpp
-	Platform/Injectors.h
-	Platform/Injectors.cpp
+  Platform/Injectors.h
+  Platform/Injectors.cpp
+  Platform/KERNEL_AND_KEXT_PATCHES.h
+  Platform/KERNEL_AND_KEXT_PATCHES.cpp
+  Platform/kernel_patcher.h
+  Platform/kernel_patcher.cpp
+  Platform/kext_inject.cpp
+  Platform/kext_inject.h
+  Platform/kext_patcher.cpp
+  Platform/KextList.h
+  Platform/KextList.cpp
 	Platform/LegacyBiosThunk.h
 	Platform/LegacyBiosThunk.cpp
 	Platform/LegacyBoot.h
@@ -247,11 +262,6 @@
 	Platform/b64cdecode.cpp
 #	Platform/MachO-loader.h
 #	Platform/LoaderUefi.h
-	Platform/kernel_patcher.h
-	Platform/kernel_patcher.cpp
-	Platform/kext_patcher.cpp
-	Platform/kext_inject.cpp
-	Platform/kext_inject.h
 	Platform/Hibernate.cpp
 	Platform/Hibernate.h
   Platform/sound.cpp
@@ -303,7 +313,6 @@
   cpp_unit_test/MacOsVersion_test.h
   cpp_unit_test/printf_lite-test.cpp
   cpp_unit_test/printf_lite-test.h
-  cpp_unit_test/printf_lite-test-cpp_conf.h
   cpp_unit_test/printlib-test.h
   cpp_unit_test/strlen_test.cpp
   cpp_unit_test/strlen_test.h
@@ -489,7 +498,10 @@
 [Pcd]
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -fsigned-char -fno-omit-frame-pointer -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
+//  XCODE:*_*_*_CC_FLAGS = -std=c11 -fsigned-char -fno-omit-frame-pointer -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
+//  XCODE:*_*_*_CXX_FLAGS = -std=c++11 -fsigned-char -fno-omit-frame-pointer -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
+  XCODE:*_*_*_CC_FLAGS = -fno-use-cxa-atexit -std=c11 -fsigned-char -fno-omit-frame-pointer -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
+  XCODE:*_*_*_CXX_FLAGS = -fno-use-cxa-atexit -std=c++11 -fsigned-char -fno-omit-frame-pointer -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
   GCC:*_*_*_CC_FLAGS = -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
   GCC:*_*_*_CXX_FLAGS = -std=c++11 -fno-omit-frame-pointer -maccumulate-outgoing-args -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable -Wno-pointer-arith -DJCONST=CONST
   MSFT:*_*_*_CC_FLAGS = /Os /wd4201 /D JCONST=const

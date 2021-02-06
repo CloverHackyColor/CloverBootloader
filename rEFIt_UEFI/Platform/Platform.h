@@ -11,7 +11,7 @@ Headers collection for procedures
 //#define DEBUG_ALL 2
 
 #include "Posix/posix.h"
-#include "../include/Efi.h"
+#include <Efi.h>
 
 #ifdef __cplusplus
 #include <Library/printf_lite.h>

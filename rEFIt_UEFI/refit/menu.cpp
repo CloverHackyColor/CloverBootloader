@@ -44,7 +44,7 @@
 
 #include "../libeg/nanosvg.h"
 #include "../libeg/FloatLib.h"
-#include "HdaCodecDump.h"
+#include "../Platform/HdaCodecDump.h"
 #include "menu.h"
 #include "screen.h"
 #include "../cpp_foundation/XString.h"
@@ -58,8 +58,10 @@
 #include "../include/Devices.h"
 #include "../Platform/boot.h"
 #include "../Platform/Injectors.h"
+#include "../Platform/KextList.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
-#include "Self.h"
+#include "../Platform/Self.h"
+#include "../Platform/VersionString.h"
 
 
 #ifndef DEBUG_ALL
@@ -74,7 +76,6 @@
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)
 #endif
 
-extern CONST CHAR8      *AudioOutputNames[];
 
 INTN LayoutMainMenuHeight = 376;
 INTN LayoutAnimMoveForMenuX = 0;
@@ -478,7 +479,7 @@ void ApplyInputs(void)
   if (InputItems[i].Valid) {
 	  gSettings.Boot.BootArgs = InputItems[i].SValue;
 	  gSettings.Boot.BootArgs.replaceAll('\\', '_');
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //1
   if (InputItems[i].Valid) {
@@ -497,7 +498,7 @@ void ApplyInputs(void)
     }
 
     //will change theme after ESC
-    gThemeChanged = TRUE;
+    GlobalConfig.gThemeChanged = TRUE;
   }
   i++; //4
   if (InputItems[i].Valid) {
@@ -634,27 +635,27 @@ void ApplyInputs(void)
   i = 44;
   if (InputItems[i].Valid) {
     gSettings.KextPatchesAllowed = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //45
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.EightApple = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //46
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPAppleIntelCPUPM = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //47
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPAppleRTC = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //48
   if (InputItems[i].Valid) {
      gSettings.KernelAndKextPatches.KPKernelPm = InputItems[i].BValue;
-     gBootChanged = TRUE;
+     GlobalConfig.gBootChanged = TRUE;
   }
   i++; //49
   if (InputItems[i].Valid) {
@@ -713,7 +714,7 @@ void ApplyInputs(void)
     gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue;
     // yes, we do need to change gRemapSmBiosIsRequire here as well
     gRemapSmBiosIsRequire = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //62
   if (InputItems[i].Valid) {
@@ -728,7 +729,7 @@ void ApplyInputs(void)
   i++; //64
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPDebug = InputItems[i].BValue;
- //   gBootChanged = TRUE;
+ //   GlobalConfig.gBootChanged = TRUE;
   }
 
   // CSR
@@ -858,9 +859,9 @@ void ApplyInputs(void)
     TagDict* dict;
     Status = LoadUserSettings(XStringW(ConfigsList[OldChosenConfig]), &dict);
     if (!EFI_ERROR(Status)) {
-      gBootChanged = TRUE;
-      gThemeChanged = TRUE;
-      Status = GetUserSettings(dict);
+      GlobalConfig.gBootChanged = TRUE;
+      GlobalConfig.gThemeChanged = TRUE;
+      Status = GetUserSettings(dict, gSettings);
       if (gConfigDict[2]) gConfigDict[2]->FreeTag();
       gConfigDict[2] = dict;
       snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);
@@ -871,7 +872,7 @@ void ApplyInputs(void)
   i++; //91
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPKernelLapic = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //92
   if (InputItems[i].Valid) {
@@ -945,14 +946,14 @@ void ApplyInputs(void)
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
     DBG("applied FakeCPUID=%06X\n", gSettings.KernelAndKextPatches.FakeCPUID);
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
 
   i++; //105
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPKernelXCPM = InputItems[i].BValue;
     DBG("applied KernelXCPM\n");
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
 
   i++; //106
@@ -968,7 +969,7 @@ void ApplyInputs(void)
   i++; //108
   if (InputItems[i].Valid) {
     gSettings.KernelPatchesAllowed = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
 
   i++; //109
@@ -1058,7 +1059,7 @@ void ApplyInputs(void)
   i++; //121
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPPanicNoKextDump = InputItems[i].BValue;
-    gBootChanged = TRUE;
+    GlobalConfig.gBootChanged = TRUE;
   }
   i++; //122
   if (InputItems[i].Valid) {

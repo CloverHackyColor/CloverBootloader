@@ -221,17 +221,33 @@ typedef struct {
 #define NET_MAC_IS_MULTICAST(Mac, BMac, Len) \
     (((*((UINT8 *) Mac) & 0x01) == 0x01) && (!NET_MAC_EQUAL (Mac, BMac, Len)))
 
+#ifndef NTOHL
 #define NTOHL(x)  SwapBytes32 (x)
+#endif
 
+#ifndef HTONL
 #define HTONL(x)  NTOHL(x)
+#endif
 
+#ifndef NTOHS
 #define NTOHS(x)  SwapBytes16 (x)
+#endif
 
+#ifndef HTONS
 #define HTONS(x)   NTOHS(x)
+#endif
+#ifndef NTOHLL
 #define NTOHLL(x)  SwapBytes64 (x)
+#endif
+#ifndef HTONLL
 #define HTONLL(x)  NTOHLL(x)
+#endif
+#ifndef NTOHLLL
 #define NTOHLLL(x) Ip6Swap128 (x)
+#endif
+#ifndef HTONLLL
 #define HTONLLL(x) NTOHLLL(x)
+#endif
 
 //
 // Test the IP's attribute, All the IPs are in host byte order.

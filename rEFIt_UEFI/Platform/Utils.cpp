@@ -21,7 +21,7 @@
 //--*/
 //
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-
+#include <Efi.h>
 //
 //void LowCase (IN OUT CHAR8 *Str)
 //{
@@ -75,7 +75,7 @@ UINT32 hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = n
 
 	for (i = 0; i < len; i++)
 	{
-		while ((*p == 0x20) || (*p == ',')) {
+		while ( *p == 0x20  ||  *p == ','  ||  *p == '\n'  ||  *p == '\r' ) {
 			p++; //skip spaces and commas
 		}
 		if (*p == 0) {
@@ -150,3 +150,5 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where)
 
     return TRUE;
 }
+
+

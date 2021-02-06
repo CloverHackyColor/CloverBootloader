@@ -6,12 +6,13 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-#include "../include/OsType.h"
+#include "../include/OSTypes.h"
 #include "Nvram.h"
 #include "BootOptions.h"
 #include "guid.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../Platform/Volumes.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1

@@ -120,7 +120,7 @@
 
     <Command.MSFT, Command.INTEL>
         @"echo" [CPP] ${s_base}
-        $(AT)"$(CC)" /Fo${dst} $(CC_FLAGS) $(INC) ${src}
+        $(AT)"$(CC)" /Fo${dst} $(CXX_FLAGS) $(INC) ${src}
 
     <Command.GCC, Command.RVCT>
         @"echo" [CPP] ${s_base}
@@ -129,7 +129,7 @@
 
     <Command.XCODE>
         @"echo" [CPP] ${s_base}
-        $(AT)"$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
+        $(AT)"$(CC)" $(CXX_FLAGS) -o ${dst} $(INC) ${src}
 
 [C-Code-File]
     <InputFile>
@@ -145,7 +145,7 @@
         $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
 
     <Command.MSFT, Command.INTEL>
-        @"echo" [CPP] ${s_base}
+        @"echo" [CC] ${s_base}
         $(AT)"$(CC)" /Fo${dst} $(CC_FLAGS) $(INC) ${src}
 
     <Command.GCC, Command.RVCT>

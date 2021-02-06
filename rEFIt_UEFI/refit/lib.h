@@ -56,15 +56,13 @@
 */
 
 // Experimental <--
-#include "../include/Efi.h"
-#include "../libeg/libeg.h"
+#include <Efi.h>
+#include "../libeg/libeg.h" // for REFIT_DIR_ITER
 #include "../Platform/Volumes.h"
 
 #ifdef __cplusplus
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
-#include "../libeg/XTheme.h"
-extern XTheme ThemeX; //global variable defined in lib.cpp
 #endif
 
 #define REFIT_DEBUG (2)
@@ -88,22 +86,6 @@ extern XTheme ThemeX; //global variable defined in lib.cpp
 #define BOOTING_BY_MBR          (4)
 #define BOOTING_BY_PBR          (5)
 #define BOOTING_BY_CD           (6)
-
-#define OSFLAG_ISSET(flags, flag) ((flags & flag) == flag)
-#define OSFLAG_ISUNSET(flags, flag) ((flags & flag) != flag)
-#define OSFLAG_SET(flags, flag) (flags | flag)
-#define OSFLAG_UNSET(flags, flag) (flags & (~flag))
-#define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
-#define OSFLAG_USEGRAPHICS    (1 << 0)
-#define OSFLAG_WITHKEXTS      (1 << 1)
-#define OSFLAG_CHECKFAKESMC   (1 << 2)
-#define OSFLAG_NOCACHES       (1 << 3)
-#define OSFLAG_NODEFAULTARGS  (1 << 4)
-#define OSFLAG_NODEFAULTMENU  (1 << 5)
-//#define OSFLAG_HIDDEN         (1 << 6)
-#define OSFLAG_DISABLED       (1 << 7)
-#define OSFLAG_HIBERNATED     (1 << 8)
-#define OSFLAG_NOSIP          (1 << 9)
 
 #define CUSTOM_BOOT_DISABLED       0
 #define CUSTOM_BOOT_USER_DISABLED  1
@@ -200,23 +182,6 @@ typedef enum {
 
 #define MAX_ANIME  41
 
-#define QUIRK_DEFRAG  bit(0)
-#define QUIRK_MMIO    bit(1)
-#define QUIRK_SU      bit(2)
-#define QUIRK_VAR     bit(3)
-#define QUIRK_HIBER   bit(4)
-#define QUIRK_SAFE    bit(5)
-#define QUIRK_UNPROT  bit(6)
-#define QUIRK_EXIT    bit(7)
-#define QUIRK_REGION  bit(8)
-#define QUIRK_SECURE  bit(9)
-#define QUIRK_UEFI    bit(10)
-#define QUIRK_CUSTOM  bit(11)
-#define QUIRK_MAP     bit(12)
-#define QUIRK_VIRT    bit(13)
-#define QUIRK_OS      bit(14)
-#define QUIRK_PERM    bit(15)
-
 
 //some unreal values
 #define FILM_CENTRE    40000
@@ -226,11 +191,6 @@ typedef enum {
 //#define FILM_BOTTOM   60000
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
-
-#define VOLTYPE_INTERNAL   (0x0001)
-#define VOLTYPE_EXTERNAL   (0x0002)
-#define VOLTYPE_OPTICAL    (0x0004)
-#define VOLTYPE_FIREWIRE   (0x0008)
 
 #define HIDEUI_FLAG_SHELL             (0x0010)
 #define HIDEUI_FLAG_TOOLS             (0x0020)
@@ -261,9 +221,7 @@ typedef enum {
 
 
 
-extern BOOLEAN          gThemeChanged;
 //extern BOOLEAN          gBootArgsChanged;
-extern BOOLEAN          gBootChanged;
 extern BOOLEAN          gThemeOptionsChanged;
 //extern POINTERS         gPointer;
 //extern EFI_GUID gEfiAppleBootGuid;
@@ -291,7 +249,8 @@ BOOLEAN FileExists(const EFI_FILE *BaseDir, const CHAR16 *RelativePath);
 BOOLEAN FileExists(const EFI_FILE *BaseDir, const XStringW& RelativePath);
 BOOLEAN FileExists(const EFI_FILE& Root, const XStringW& RelativePath);
 
-inline EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName) { return FileDevicePath(Device, FileName.wc_str()); }
+//inline EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName) { return FileDevicePath(Device, FileName.wc_str()); }
+EFI_DEVICE_PATH_PROTOCOL* FileDevicePath (IN EFI_HANDLE Device, IN CONST XStringW& FileName);
 
 BOOLEAN DeleteFile(const EFI_FILE *Root, IN CONST CHAR16 *RelativePath);
 
@@ -419,11 +378,11 @@ void DebugPause(void);
 #define X_IS_CENTER  1
 #define BADGE_DIMENSION 64
 
-// IconFormat
-#define ICON_FORMAT_DEF       (0)
-#define ICON_FORMAT_ICNS      (1)
-#define ICON_FORMAT_PNG       (2)
-#define ICON_FORMAT_BMP       (3)
+//// IconFormat
+//#define ICON_FORMAT_DEF       (0)
+//#define ICON_FORMAT_ICNS      (1)
+//#define ICON_FORMAT_PNG       (2)
+//#define ICON_FORMAT_BMP       (3)
 
 
 
@@ -440,8 +399,6 @@ extern BOOLEAN DumpVariable(CHAR16* Name, EFI_GUID* Guid, INTN DevicePathAt);
 
 void ReinitVolumes(void);
 
-
-void DbgHeader(CONST CHAR8 *str);
 
 UINTN
 NodeParser  (UINT8 *DevPath, UINTN PathSize, UINT8 Type);

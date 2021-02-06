@@ -93,10 +93,17 @@ typedef struct _BooterKextFileInfo {
     UINT32  bundlePathLength;
 } _BooterKextFileInfo;
 
-typedef struct _DeviceTreeBuffer {
-    uint32_t paddr;
-    uint32_t length;
-} _DeviceTreeBuffer;
+class _DeviceTreeBuffer
+{
+  public:
+    uint32_t paddr = 0;
+    uint32_t length = 0;
+
+    _DeviceTreeBuffer() { }
+    _DeviceTreeBuffer(const _DeviceTreeBuffer& other) = default; // default is fine if there is only native type and objects that have copy ctor
+    _DeviceTreeBuffer& operator = ( const _DeviceTreeBuffer & ) = default; // default is fine if there is only native type and objects that have copy ctor
+    ~_DeviceTreeBuffer() {}
+};
 
 typedef struct VTABLE {
   UINT32 NameOffset;
@@ -123,8 +130,6 @@ typedef struct SEGMENT {
   UINT32 AddrNames;   //0x50
   UINT32 SizeNamesTable;
 } SEGMENT;
-
-extern LIST_ENTRY gKextList; // Jief : globals variables... not great.
 
 //extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
 //extern BootArgs1    *bootArgs1;

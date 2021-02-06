@@ -11,8 +11,8 @@ Portion from XOM project
 Copyright (c) 2006 JLA 
 */
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
 #include "LegacyBiosThunk.h"
-//#include <Protocol/Bds.h>
 #include "AcpiPatcher.h"
 #include "Self.h"
 

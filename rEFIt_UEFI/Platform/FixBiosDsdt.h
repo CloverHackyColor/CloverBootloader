@@ -8,8 +8,11 @@
 #ifndef PLATFORM_FIXBIOSDSDT_H_
 #define PLATFORM_FIXBIOSDSDT_H_
 
+#include <OneLinerMacros.h>
 #include "../cpp_foundation/XBuffer.h"
 #include "../Platform/MacOsVersion.h"
+#include <IndustryStandard/Acpi20.h>
+
 
 //DSDT fixes MASK
 //0x00FF
@@ -85,8 +88,6 @@ INT32 FindBin (UINT8 *dsdt, size_t len, const XBuffer<UINT8>& bin);
 
 UINT32 FixAny (UINT8* dsdt, UINT32 len, const XBuffer<UINT8> ToFind, const XBuffer<UINT8> ToReplace);
 UINT32 FixRenameByBridge2 (UINT8* dsdt, UINT32 len, const XBuffer<UINT8>& TgtBrgName, const XBuffer<UINT8>& ToFind, const XBuffer<UINT8>& ToReplace);
-
-
 
 
 #endif /* PLATFORM_FIXBIOSDSDT_H_ */

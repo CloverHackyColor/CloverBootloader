@@ -17,6 +17,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
+
+#include "../libeg/BmLib.h"
 #include "StateGenerator.h"
 #include "AmlGenerator.h"
 #include "AcpiPatcher.h"
@@ -1593,7 +1597,7 @@ BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST C
   if (!EFI_ERROR(Status)) {
     if (buffer) {
       EFI_ACPI_DESCRIPTION_HEADER* TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-      if (TableHeader->Length > 500 * kilo) {
+      if (TableHeader->Length > 500 * Kilo) {
         DBG("wrong table\n");
         return FALSE;
       }

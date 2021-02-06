@@ -83,12 +83,18 @@ typedef struct
 
 } FAT_ARCH;
 
-typedef struct
+class KEXT_ENTRY
 {
-	UINT32				Signature;
-	LIST_ENTRY			Link;
-	_DeviceTreeBuffer	kext;
-} KEXT_ENTRY;
+  public:
+    UINT32				Signature = 0;
+    _DeviceTreeBuffer	kext = _DeviceTreeBuffer();
+
+    KEXT_ENTRY() { }
+    KEXT_ENTRY(const KEXT_ENTRY& other) = default; // default is fine if there is only native type and objects that have copy ctor
+    KEXT_ENTRY& operator = ( const KEXT_ENTRY & ) = default; // default is fine if there is only native type and objects that have copy ctor
+    ~KEXT_ENTRY() {}
+
+};
 
 
 ////////////////////

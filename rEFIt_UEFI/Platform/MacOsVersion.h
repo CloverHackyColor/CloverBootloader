@@ -2,6 +2,7 @@
 #define __MacOsVersion_H__
 
 #include "../cpp_foundation/XStringArray.h"
+#include "Utils.h"
 
 const XString8 getSuffixForMacOsVersion(int LoaderType);
 

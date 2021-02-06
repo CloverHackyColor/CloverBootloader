@@ -8,6 +8,10 @@
 #ifndef __LIBSAIO_DEVICE_INJECT_H
 #define __LIBSAIO_DEVICE_INJECT_H
 
+extern "C" {
+#include <Protocol/DevicePath.h>
+}
+
 #include "../include/Pci.h"
 
 /* No more used

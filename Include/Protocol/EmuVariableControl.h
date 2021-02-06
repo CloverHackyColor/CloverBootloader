@@ -55,3 +55,4 @@ extern EFI_GUID gEmuVariableControlProtocolGuid;
 
 
 #endif
+

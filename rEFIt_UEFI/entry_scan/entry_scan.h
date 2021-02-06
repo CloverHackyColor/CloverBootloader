@@ -72,7 +72,6 @@ void ScanTool(void);
 void AddCustomTool(void);
 
 // locked graphics
-CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode);
 EFI_STATUS LockBootScreen(void);
 EFI_STATUS UnlockBootScreen(void);
 

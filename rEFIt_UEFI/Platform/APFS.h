@@ -8,9 +8,11 @@
 #ifndef PLATFORM_APFS_H_
 #define PLATFORM_APFS_H_
 
+extern "C" {
+#include <Protocol/DevicePath.h>
+}
 
 constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842";
-
 
 /*
  * Function for obtaining unique part id from APFS partition

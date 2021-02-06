@@ -38,7 +38,7 @@
 #include "libegint.h"
 #include "lodepng.h"
 #include "../Platform/Settings.h"
-#include "Self.h"
+#include "../Platform/Self.h"
 
 
 // Console defines and variables

@@ -1,22 +1,15 @@
 #pragma once
 
+extern "C" {
+#include <Protocol/SimplePointer.h>
+}
 #include "XImage.h"
-//#include "../refit/IO.h"
 #include "libeg.h"
 
 class XImage;
 
 class XPointer
 {
-public:
-  XPointer() : SimplePointerProtocol(NULL), PointerImage(NULL),
-               oldImage(0, 0), newPlace(), oldPlace(), LastClickTime(0), State{0}, MouseEvent(NoEvents), Alive(false), night(false)
-             {}
-  XPointer(const XPointer&) = delete;
-  XPointer& operator=(const XPointer&) = delete;
-
-  ~XPointer() {};
-
 protected:
   EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
   XImage* PointerImage;
@@ -33,6 +26,18 @@ protected:
   bool night;
 
 public:
+  XPointer() : SimplePointerProtocol(NULL), PointerImage(NULL),
+               oldImage(0, 0), newPlace(), oldPlace(), LastClickTime(0), State{0,0,0,0,0}, MouseEvent(NoEvents), Alive(false), night(false)
+             {}
+  XPointer(const XPointer&) = delete;
+  XPointer& operator=(const XPointer&) = delete;
+
+  ~XPointer() {};
+
+
+public:
+
+
   void Hide();
   bool isAlive();
   EFI_STATUS MouseBirth();

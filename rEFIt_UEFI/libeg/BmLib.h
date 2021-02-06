@@ -8,9 +8,12 @@
 #ifndef LIBEG_BMLIB_H_
 #define LIBEG_BMLIB_H_
 
+extern "C" {
+#include <Protocol/DevicePath.h>
 #include <Guid/FileSystemVolumeLabelInfo.h>
 #include <Guid/FileInfo.h>
 #include <Guid/FileSystemInfo.h>
+}
 
 /**
 

@@ -1,0 +1,24 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+#echo `pwd`
+
+me=`basename "$0"`
+#echo me=$me
+
+name="${me##*-}"
+#echo name=$name
+
+prefix=${me%-$name}
+#echo prefix=$prefix
+
+source "$SCRIPT_DIR"/"$prefix"-path "$name"
+ps_dir="$SCRIPT_DIR"/../compilation_project_specific
+
+cmdArgs=()
+cmdArgs=( "$bin_path" $@ )
+
+echo ${cmdArgs[@]}
+
+exec ${cmdArgs[@]}

@@ -64,46 +64,37 @@
 #define DBG(...) DebugLog(DEBUG_CARD_VLIST, __VA_ARGS__)
 #endif
 
-LIST_ENTRY gCardList = INITIALIZE_LIST_HEAD_VARIABLE (gCardList);
+//LIST_ENTRY gCardList = INITIALIZE_LIST_HEAD_VARIABLE (gCardList);
+XObjArray<CARDLIST> gCardList;
 
 
 void AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
 {
-	CARDLIST* new_card;		
-	new_card = (__typeof__(new_card))AllocateZeroPool(sizeof(CARDLIST));
-	if (new_card) {	
-    new_card->Signature = CARDLIST_SIGNATURE;
-	  new_card->Id = Id;
-	  new_card->SubId = SubId;
-	  new_card->VideoRam = VideoRam;
-    new_card->VideoPorts = VideoPorts;
-    new_card->LoadVBios = LoadVBios;
-	  snprintf(new_card->Model, 64, "%s", Model);
-    InsertTailList (&gCardList, (LIST_ENTRY *)(((UINT8 *)new_card) + OFFSET_OF(CARDLIST, Link)));
-	}	
+	CARDLIST* new_card = new CARDLIST;
+  new_card->Signature = CARDLIST_SIGNATURE;
+  new_card->Id = Id;
+  new_card->SubId = SubId;
+  new_card->VideoRam = VideoRam;
+  new_card->VideoPorts = VideoPorts;
+  new_card->LoadVBios = LoadVBios;
+  new_card->Model.takeValueFrom(Model);
+  gCardList.AddReference(new_card, true);
 }
 
-CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
+const CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
 {
-  LIST_ENTRY		*Link;
-  CARDLIST      *entry;
-//  FillCardList(); //moved to GetUserSettings
-  
-  if(!IsListEmpty(&gCardList)) {
-    for (Link = gCardList.ForwardLink; Link != &gCardList; Link = Link->ForwardLink) {
-      entry = CR(Link, CARDLIST, Link, CARDLIST_SIGNATURE);
-      if(entry->Id == Id) {
-        return entry;
-      }	
+  for ( size_t idx = 0; idx < gCardList._Len; ++idx ) {
+    const CARDLIST& entry = gCardList[idx];
+    if(entry.Id == Id) {
+      return &entry;
     }
   }
-  
   return NULL;
 }
 
 void FillCardList(const TagDict* CfgDict)
 {
-  if (IsListEmpty(&gCardList) && (CfgDict != NULL)) {
+  if (gCardList.isEmpty() && (CfgDict != NULL)) {
     CONST CHAR8 *VEN[] = { "NVIDIA",  "ATI" };
     size_t Count = sizeof(VEN) / sizeof(VEN[0]);
     

@@ -8,6 +8,10 @@
 #ifndef PLATFORM_BOOTOPTIONS_H_
 #define PLATFORM_BOOTOPTIONS_H_
 
+extern "C" {
+#include <Protocol/DevicePath.h>
+}
+
 typedef struct {
     ///
     /// XXXX in BootXXXX.

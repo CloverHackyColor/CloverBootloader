@@ -330,6 +330,18 @@ EFI_STATUS SaveBooterLog(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *File
 }
 
 
+void DbgHeader(CONST CHAR8 *str)
+{
+  CHAR8 strLog[50];
+  INTN len;
+  UINTN end = snprintf(strLog, 50, "=== [ %s ] ", str);
+  len = 50 - end;
+
+  SetMem(&strLog[end], len , '=');
+  strLog[49] = '\0';
+  DebugLog (1, "%s\n", strLog);
+}
+
 
 
 /*

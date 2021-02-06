@@ -7,6 +7,7 @@
 
 extern "C" {
 
+#include <Uefi/UefiBaseType.h>
 #include <Library/BaseMemoryLib.h>
 
 /*

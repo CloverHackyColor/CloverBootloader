@@ -35,16 +35,16 @@ UINTN StrLen(const wchar_t* String)
   #if __WCHAR_MAX__ <= 0xFFFFu
     return wchar_size_of_utf16_string(String);
   #else
-    return wchar_size_of_utf32_string(String);
+    return wchar_size_of_utf32_string((char32_t*)String);
   #endif
 }
-
-#if __WCHAR_MAX__ > 0xFFFFu
-UINTN StrLen(const char16_t* String)
-{
-  return wchar_size_of_utf16_string(String);
-}
-#endif
+//
+//#if __WCHAR_MAX__ > 0xFFFFu
+//UINTN StrLen(const char16_t* String)
+//{
+//  return wchar_size_of_utf16_string(String);
+//}
+//#endif
 
 
 

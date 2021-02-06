@@ -20,7 +20,14 @@ extern "C" {
 
 size_t   wcslen_fixed(const wchar_t *s);
 int      wcsncmp_fixed(const wchar_t *s1, const wchar_t * s2, size_t n);
-const wchar_t* wcsstr_fixed(const wchar_t* s1, const wchar_t* s2);
+#ifdef _LIBCPP_WCHAR_H
+wchar_t* wcsstr_fixed(const wchar_t* haystack, const wchar_t* needle);
+#else
+wchar_t* wcsstr_fixed(const wchar_t* haystack, const wchar_t* needle);
+#endif
+
+void xcode_utf_fixed_tests(void);
+
 
 #ifdef __cplusplus
 }

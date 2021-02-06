@@ -18,16 +18,8 @@ extern "C" int main(int argc, const char * argv[])
 	(void)argv;
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
 
-printf("sizeof(wchar_t)=%zu\n", sizeof(wchar_t));
-printf("%lc\n", L'Ľ');
-printf("sizeof(size_t)=%zu\n", sizeof(size_t));
-printf("sizeof(long)=%zu\n", sizeof(long));
-printf("sizeof(long long)=%zu\n", sizeof(long long));
-printf("sizeof(size_t)=%zu\n", sizeof(size_t));
-#ifndef _MSC_VER
-//printf("%zu\n", (size_t)MAX_UINT64);
-//printf("%zd\n", (size_t)MAX_UINT64);
-#endif
-
+  xcode_utf_fixed_tests();
+  
+  
 	return all_tests() ? 0 : -1 ;
 }

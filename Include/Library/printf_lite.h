@@ -21,12 +21,17 @@ extern "C"
 #define DEFINE_SECTIONS 0
 #endif
 
-// To be able to compile on a platform where there are already std function snprintf, we need to change the name
-#ifndef PRINTF_CFUNCTION_PREFIX
-#define PRINTF_CFUNCTION_PREFIX
-#endif
-#ifndef PRINTF_CFUNCTION_SUFFIX
-#define PRINTF_CFUNCTION_SUFFIX fl
+// To be able to compile on a platform where there are already std function snprintf, we may need to change the name
+#if PRINTF_LITE_REPLACE_STANDARD_FUNCTION == 1
+# define PRINTF_CFUNCTION_PREFIX
+# define PRINTF_CFUNCTION_SUFFIX f
+#else
+# ifndef PRINTF_CFUNCTION_PREFIX
+#   define PRINTF_CFUNCTION_PREFIX
+# endif
+# ifndef PRINTF_CFUNCTION_SUFFIX
+#   define PRINTF_CFUNCTION_SUFFIX fl
+# endif
 #endif
 
 #define PRINTF_MAKE_FN_NAME(prefix, root, suffix) prefix##root##suffix
@@ -199,8 +204,10 @@ typedef union {
 //    vprintf_with_callback_timestamp_emitcr(format, valist, transmitBufCallBack, context, NULL, 0, 0);
 //  }
 # else
-  void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp);
-  void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
+#   if PRINTF_UTF8_OUTPUT_SUPPORT == 1
+      void vprintf_with_callback_timestamp(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp);
+      void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context);
+#   endif
 //  inline void vprintf_with_callback(const char* format, va_list valist, transmitBufCallBackType transmitBufCallBack, void* context) {
 //    vprintf_with_callback_timestamp(format, valist, transmitBufCallBack, context, NULL, 0);
 //  }
@@ -240,13 +247,15 @@ typedef union {
     va_end(va);
   }
 # else
-  void printf_with_callback_timestamp(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, ...);
-  inline void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...) {
-    va_list va;
-    va_start(va, context);
-    vprintf_with_callback_timestamp(format, va, transmitBufCallBack, context, NULL, 0);
-    va_end(va);
-  }
+#   if PRINTF_UTF8_OUTPUT_SUPPORT == 1
+      void printf_with_callback_timestamp(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, ...);
+      inline void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...) {
+        va_list va;
+        va_start(va, context);
+        vprintf_with_callback_timestamp(format, va, transmitBufCallBack, context, NULL, 0);
+        va_end(va);
+      }
+#   endif
 # endif
 #else
 # if PRINTF_EMIT_CR_SUPPORT == 1
@@ -269,9 +278,9 @@ void vwprintf_with_callback(const char* format, va_list valist, transmitWBufCall
 
 #if PRINTF_LITE_SNPRINTF_SUPPORT == 1
 	#if PRINTF_UTF8_OUTPUT_SUPPORT == 1
-		int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUFFIX)(char*, size_t, const char *__restrict, va_list valist);
-		// gcc-4.9.2-atmel3.5.4-arduino2 report snprintf to undefined. Change the name and it'll work. Strange isn't it ?
-		int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, snprint, PRINTF_CFUNCTION_SUFFIX)(char*, size_t len, const char *__restrict format, ...) __attribute__((__format__ (__printf__, 3, 4)));
+    int (PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUFFIX))(char*, size_t, const char *__restrict, va_list valist);
+    // gcc-4.9.2-atmel3.5.4-arduino2 report snprintf to undefined. Change the name and it'll work. Strange isn't it ?
+    int (PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, snprint, PRINTF_CFUNCTION_SUFFIX))(char*, size_t len, const char *__restrict format, ...) __attribute__((__format__ (__printf__, 3, 4)));
 	#endif
 	#if PRINTF_UNICODE_OUTPUT_SUPPORT == 1
 	    // ATTENTION : len is the number of wchar_t, NOT the number of bytes.

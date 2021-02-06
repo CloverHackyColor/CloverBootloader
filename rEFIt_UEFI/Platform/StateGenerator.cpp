@@ -8,6 +8,10 @@
 #include "smbios.h"
 #include "AcpiPatcher.h"
 
+extern "C" {
+#include <IndustryStandard/CpuId.h> // for CPUID_FEATURE_MSR
+}
+
 CONST UINT8 pss_ssdt_header[] =
 {
   0x53, 0x53, 0x44, 0x54, 0x7E, 0x00, 0x00, 0x00, /* SSDT.... */

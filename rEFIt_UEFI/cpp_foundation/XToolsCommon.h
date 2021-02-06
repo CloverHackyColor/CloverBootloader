@@ -9,6 +9,7 @@
 #ifndef XToolsCommon_h
 #define XToolsCommon_h
 
+#ifdef __cplusplus
 
 struct _xtools__false_type {
     static constexpr bool value = false;
@@ -178,5 +179,7 @@ struct _xtools__has_type_member<T, _xtools__void_t<typename T::char_t>> : _xtool
 #define is_char_ptr(x) _xtools__is_char_ptr_st<typename _xtools__remove_const<x>::type>::value
 #define enable_if_t(x) typename _xtools_enable_if_t<x>::type
 #define enable_if(x) typename enable_if_type = typename _xtools_enable_if_t<x>::type
+
+#endif // __cplusplus
 
 #endif /* XToolsCommon_h */

@@ -9,6 +9,10 @@ extern "C" {
 #include "libegint.h"
 #include "../refit/screen.h"
 #include "../refit/lib.h"
+#include "../Platform/plist/plist.h"
+#include "../Platform/Settings.h"
+//#include "../Platform/Nvram.h"
+#include "../Platform/StartupSound.h"
 
 #include "XTheme.h"
 #include "nanosvg.h"
@@ -24,6 +28,216 @@ extern "C" {
 #else
 #define DBG(...) DebugLog(DEBUG_XTHEME, __VA_ARGS__)
 #endif
+
+XTheme ThemeX;
+
+
+EFI_STATUS
+InitTheme(const CHAR8* ChosenTheme)
+{
+  EFI_STATUS Status       = EFI_NOT_FOUND;
+  UINTN      i;
+  TagDict*     ThemeDict    = NULL;
+//  CHAR8      *ChosenTheme = NULL;
+  UINTN      Rnd;
+  EFI_TIME   Now;
+
+  gRT->GetTime(&Now, NULL);
+  DbgHeader("InitXTheme");
+  ThemeX.Init();
+
+  //initialize Daylight when we know timezone
+  if (gSettings.GUI.Timezone != 0xFF) { // 0xFF:default=timezone not set
+    INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
+    if (NowHour <  0 ) NowHour += 24;
+    if (NowHour >= 24 ) NowHour -= 24;
+    ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+  } else {
+    ThemeX.Daylight = TRUE; // when timezone is not set
+  }
+  if (ThemeX.Daylight) {
+    DBG("use Daylight theme\n");
+  } else {
+    DBG("use night theme\n");
+  }
+
+  for (i = 0; i < 3; i++) {
+    //    DBG("validate %d face\n", i);
+    textFace[i].valid = FALSE;
+  }
+
+  NSVGfontChain *fontChain = fontsDB;
+  while (fontChain) {
+    NSVGfont *font = fontChain->font;
+    //    DBG("free font %s\n", font->fontFamily);
+    NSVGfontChain *nextChain = fontChain->next;
+    if (font) {
+      nsvg__deleteFont(font);
+      fontChain->font = NULL;
+    }
+    FreePool(fontChain);
+    fontChain = nextChain;
+  }
+  //as all font freed then free the chain
+  fontsDB = NULL;
+
+  /*
+   if (mainParser) {
+     nsvg__deleteParser(mainParser);
+     DBG("parser deleted\n");
+     mainParser = NULL;
+   }
+   */
+  ThemeX.FontImage.setEmpty();
+
+  Rnd = (ThemeNameArray.size() != 0) ? Now.Second % ThemeNameArray.size() : 0;
+
+  //  DBG("...done\n");
+  ThemeX.GetThemeTagSettings(NULL);
+
+  if (ThemeNameArray.size() > 0  &&
+      (gSettings.GUI.Theme.isEmpty() || StriCmp(gSettings.GUI.Theme.wc_str(), L"embedded") != 0)) {
+    // Try special theme first
+      XStringW TestTheme;
+ //   if (Time != NULL) {
+      if ((Now.Month == 12) && ((Now.Day >= 25) && (Now.Day <= 31))) {
+        TestTheme = L"christmas"_XSW;
+      } else if ((Now.Month == 1) && ((Now.Day >= 1) && (Now.Day <= 3))) {
+        TestTheme = L"newyear"_XSW;
+      }
+
+      if (TestTheme.notEmpty()) {
+        ThemeDict = ThemeX.LoadTheme(TestTheme);
+        if (ThemeDict != NULL) {
+          DBG("special theme %ls found and %ls parsed\n", TestTheme.wc_str(), CONFIG_THEME_FILENAME);
+//          ThemeX.Theme.takeValueFrom(TestTheme);
+          gSettings.GUI.Theme = TestTheme;
+
+        } else { // special theme not loaded
+          DBG("special theme %ls not found, skipping\n", TestTheme.wc_str()/*, CONFIG_THEME_FILENAME*/);
+        }
+        TestTheme.setEmpty();
+      }
+//    }
+    // Try theme from nvram
+    if (ThemeDict == NULL && ChosenTheme) {
+      if (AsciiStrCmp(ChosenTheme, "embedded") == 0) {
+        goto finish;
+      }
+      if (AsciiStrCmp(ChosenTheme, "random") == 0) {
+        ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
+        goto finish;
+      }
+
+      TestTheme.takeValueFrom(ChosenTheme);
+      if (TestTheme.notEmpty()) {
+        ThemeDict = ThemeX.LoadTheme (TestTheme);
+        if (ThemeDict != NULL) {
+          DBG("theme %s defined in NVRAM found and %ls parsed\n", ChosenTheme, CONFIG_THEME_FILENAME);
+//            ThemeX.Theme.takeValueFrom(TestTheme);
+          gSettings.GUI.Theme = TestTheme;
+        } else { // theme from nvram not loaded
+          if (gSettings.GUI.Theme.notEmpty()) {
+            DBG("theme %s chosen from nvram is absent, using theme defined in config: %ls\n", ChosenTheme, gSettings.GUI.Theme.wc_str());
+          } else {
+            DBG("theme %s chosen from nvram is absent, get first theme\n", ChosenTheme);
+          }
+        }
+        TestTheme.setEmpty();
+      }
+      FreePool(ChosenTheme);
+      ChosenTheme = NULL;
+    }
+    // Try to get theme from settings
+    if (ThemeDict == NULL) {
+      if (gSettings.GUI.Theme.isEmpty()) {
+        DBG("no default theme, get random theme %ls\n", ThemeNameArray[Rnd].wc_str());
+        ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
+      } else {
+        if (StriCmp(gSettings.GUI.Theme.wc_str(), L"random") == 0) {
+          ThemeDict = ThemeX.LoadTheme(XStringW(ThemeNameArray[Rnd]));
+        } else {
+          ThemeDict = ThemeX.LoadTheme(gSettings.GUI.Theme);
+          if (ThemeDict == NULL) {
+            DBG("GlobalConfig: %ls not found, get embedded theme\n", gSettings.GUI.Theme.wc_str());
+          } else {
+            DBG("chosen theme %ls\n", gSettings.GUI.Theme.wc_str());
+          }
+        }
+      }
+    }
+  } // ThemesNum>0
+
+finish:
+  if (!ThemeDict) {  // No theme could be loaded, use embedded
+    DBG(" using embedded theme\n");
+    if (ThemeX.DarkEmbedded) { // when using embedded, set Daylight according to darkembedded
+      ThemeX.Daylight = FALSE;
+    } else {
+      ThemeX.Daylight = TRUE;
+    }
+
+    ThemeX.FillByEmbedded();
+    OldChosenTheme = 0xFFFF;
+
+    ThemeX.closeThemeDir();
+//    if (ThemeX.ThemeDir != NULL) {
+//      ThemeX.ThemeDir->Close(ThemeX.ThemeDir);
+//      ThemeX.ThemeDir = NULL;
+//    }
+
+ //   ThemeX.GetThemeTagSettings(NULL); already done
+    //fill some fields
+    //ThemeX.Font = FONT_ALFA; //to be inverted later. At start we have FONT_GRAY
+    ThemeX.embedded = true;
+    Status = StartupSoundPlay(&ThemeX.getThemeDir(), NULL);
+  } else { // theme loaded successfully
+    ThemeX.embedded = false;
+    ThemeX.Theme.takeValueFrom(gSettings.GUI.Theme); //XStringW from CHAR16*)
+    // read theme settings
+    if (!ThemeX.TypeSVG) {
+      const TagDict* DictPointer = ThemeDict->dictPropertyForKey("Theme");
+      if (DictPointer != NULL) {
+        Status = ThemeX.GetThemeTagSettings(DictPointer);
+        if (EFI_ERROR(Status)) {
+          DBG("Config theme error: %s\n", efiStrError(Status));
+        } else {
+          ThemeX.FillByDir();
+        }
+      }
+    }
+    ThemeDict->FreeTag();
+
+    if (!ThemeX.Daylight) {
+      Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound_night.wav");
+      if (EFI_ERROR(Status)) {
+        Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound.wav");
+      }
+    } else {
+      Status = StartupSoundPlay(&ThemeX.getThemeDir(), L"sound.wav");
+    }
+
+  }
+  for (i = 0; i < ThemeNameArray.size(); i++) {
+    if ( ThemeX.Theme.equalIC(ThemeNameArray[i]) ) {
+      OldChosenTheme = i;
+      break;
+    }
+  }
+  if (ChosenTheme != NULL) {
+    FreePool(ChosenTheme);
+  }
+  if (!ThemeX.TypeSVG) {
+    ThemeX.PrepareFont();
+  }
+
+  //ThemeX.ClearScreen();
+  return Status;
+}
+
+
+
+
 
 
 //xtheme class
@@ -112,6 +326,437 @@ void XTheme::Init()
 
   Cinema.setEmpty();
 }
+TagDict* XTheme::LoadTheme(const XStringW& TestTheme)
+{
+  EFI_STATUS Status    = EFI_UNSUPPORTED;
+  TagDict*     ThemeDict = NULL;
+  CHAR8      *ThemePtr = NULL;
+  UINTN      Size      = 0;
+
+  if (TestTheme.isEmpty()) {
+    return NULL;
+  }
+  if (UGAHeight > HEIGHT_2K) {
+    m_ThemePath = SWPrintf("%ls@2x", TestTheme.wc_str());
+  } else {
+    m_ThemePath = SWPrintf("%ls", TestTheme.wc_str());
+  }
+  Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeDir, m_ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+  if (EFI_ERROR(Status)) {
+    if (ThemeDir != NULL) {
+      ThemeDir->Close (ThemeDir);
+      ThemeDir = NULL;
+    }
+    m_ThemePath = SWPrintf("%ls", TestTheme.wc_str());
+    Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeDir, m_ThemePath.wc_str(), EFI_FILE_MODE_READ, 0);
+  }
+
+  if (!EFI_ERROR(Status)) {
+    Status = egLoadFile(ThemeDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+    if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
+      Status = ParseSVGXTheme(ThemePtr);
+      if (EFI_ERROR(Status)) {
+        ThemeDict = NULL;
+      } else {
+        ThemeDict = TagDict::getEmptyTag();
+      }
+      if (ThemeDict == NULL) {
+        DBG("svg file %ls not parsed\n", CONFIG_THEME_SVG);
+      } else {
+        DBG("Using vector theme '%ls' (%ls)\n", TestTheme.wc_str(), m_ThemePath.wc_str());
+      }
+    } else {
+      Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+      if (!EFI_ERROR(Status) && (ThemePtr != NULL) && (Size != 0)) {
+        Status = ParseXML(ThemePtr, &ThemeDict, 0);
+        if (EFI_ERROR(Status)) {
+          ThemeDict = NULL;
+        }
+        if (ThemeDict == NULL) {
+          DBG("xml file %ls not parsed\n", CONFIG_THEME_FILENAME);
+        } else {
+          DBG("Using theme '%ls' (%ls)\n", TestTheme.wc_str(), m_ThemePath.wc_str());
+        }
+      }
+    }
+  }
+  if (ThemePtr != NULL) {
+    FreePool(ThemePtr);
+  }
+  return ThemeDict;
+}
+
+EFI_STATUS
+XTheme::GetThemeTagSettings(const TagDict* DictPointer)
+{
+  const TagDict* Dict;
+  const TagDict* Dict3;
+  const TagStruct* Prop;
+  const TagStruct* Prop2;
+
+  //fill default to have an ability change theme
+  //assume Xtheme is already inited by embedded values
+//theme variables
+  ScrollWidth                           = 16;
+  ScrollButtonsHeight                   = 20;
+  ScrollBarDecorationsHeight            = 5;
+  ScrollScrollDecorationsHeight         = 7;
+  Font                     = FONT_LOAD; //not default
+
+  // if NULL parameter, quit after setting default values, this is embedded theme
+  if (DictPointer == NULL) {
+    return EFI_SUCCESS;
+  }
+
+  Prop    = DictPointer->propertyForKey("BootCampStyle");
+  BootCampStyle = IsPropertyNotNullAndTrue(Prop);
+
+  Dict    = DictPointer->dictPropertyForKey("Background");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("Type");
+    if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+      if ((Prop->getString()->stringValue()[0] == 'S') || (Prop->getString()->stringValue()[0] == 's')) {
+        BackgroundScale = imScale;
+      } else if ((Prop->getString()->stringValue()[0] == 'T') || (Prop->getString()->stringValue()[0] == 't')) {
+        BackgroundScale = imTile;
+      }
+    }
+
+    Prop = Dict->propertyForKey("Path");
+    if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+      BackgroundName = Prop->getString()->stringValue();
+    }
+
+    Prop = Dict->propertyForKey("Sharp");
+    BackgroundSharp  = GetPropertyAsInteger(Prop, BackgroundSharp);
+
+    Prop = Dict->propertyForKey("Dark");
+    BackgroundDark   = IsPropertyNotNullAndTrue(Prop);
+  }
+
+  Prop = DictPointer->propertyForKey("Banner");
+  if (Prop != NULL) {
+    // retain for legacy themes.
+    if ( Prop->isString() && Prop->getString()->stringValue().notEmpty() ) {
+      BannerFileName = Prop->getString()->stringValue();
+    } else {
+      // for new placement settings
+      Dict = Prop->getDict();
+      Prop2 = Dict->propertyForKey("Path");
+      if (Prop2 != NULL) {
+        if ( Prop2->isString() && Prop2->getString()->stringValue().notEmpty() ) {
+          BannerFileName = Prop2->getString()->stringValue();
+        }
+      }
+
+      Prop2 = Dict->propertyForKey("ScreenEdgeX");
+      if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty() ) {
+        if (Prop2->getString()->stringValue().equal("left")) {
+          BannerEdgeHorizontal = SCREEN_EDGE_LEFT;
+        } else if (Prop2->getString()->stringValue().equal("right")) {
+          BannerEdgeHorizontal = SCREEN_EDGE_RIGHT;
+        }
+      }
+
+      Prop2 = Dict->propertyForKey("ScreenEdgeY");
+      if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty() ) {
+        if (Prop2->getString()->stringValue().equal("top")) {
+          BannerEdgeVertical = SCREEN_EDGE_TOP;
+        } else if (Prop2->getString()->stringValue().equal("bottom")) {
+          BannerEdgeVertical = SCREEN_EDGE_BOTTOM;
+        }
+      }
+
+      Prop2 = Dict->propertyForKey("DistanceFromScreenEdgeX%");
+      BannerPosX   = GetPropertyAsInteger(Prop2, 0);
+
+      Prop2 = Dict->propertyForKey("DistanceFromScreenEdgeY%");
+      BannerPosY   = GetPropertyAsInteger(Prop2, 0);
+
+      Prop2 = Dict->propertyForKey("NudgeX");
+      BannerNudgeX = GetPropertyAsInteger(Prop2, 0);
+
+      Prop2 = Dict->propertyForKey("NudgeY");
+      BannerNudgeY = GetPropertyAsInteger(Prop2, 0);
+    }
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Badges");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("Swap");
+    if (Prop != NULL && Prop->isTrue()) {
+      HideBadges |= HDBADGES_SWAP;
+      DBG("OS main and drive as badge\n");
+    }
+
+    Prop = Dict->propertyForKey("Show");
+    if (Prop != NULL && Prop->isTrue()) {
+      HideBadges |= HDBADGES_SHOW;
+    }
+
+    Prop = Dict->propertyForKey("Inline");
+    if (Prop != NULL && Prop->isTrue()) {
+      HideBadges |= HDBADGES_INLINE;
+    }
+
+    // blackosx added X and Y position for badge offset.
+    Prop = Dict->propertyForKey("OffsetX");
+    BadgeOffsetX = GetPropertyAsInteger(Prop, BadgeOffsetX);
+
+    Prop = Dict->propertyForKey("OffsetY");
+    BadgeOffsetY = GetPropertyAsInteger(Prop, BadgeOffsetY);
+
+    Prop = Dict->propertyForKey("Scale");
+    ThemeX.BadgeScale = GetPropertyAsInteger(Prop, BadgeScale);
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Origination");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("DesignWidth");
+    ThemeDesignWidth = GetPropertyAsInteger(Prop, ThemeDesignWidth);
+
+    Prop = Dict->propertyForKey("DesignHeight");
+    ThemeDesignHeight = GetPropertyAsInteger(Prop, ThemeDesignHeight);
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Layout");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("BannerOffset");
+    LayoutBannerOffset = GetPropertyAsInteger(Prop, LayoutBannerOffset);
+
+    Prop = Dict->propertyForKey("ButtonOffset");
+    LayoutButtonOffset = GetPropertyAsInteger(Prop, LayoutButtonOffset);
+
+    Prop = Dict->propertyForKey("TextOffset");
+    LayoutTextOffset = GetPropertyAsInteger(Prop, LayoutTextOffset);
+
+    Prop = Dict->propertyForKey("AnimAdjustForMenuX");
+    LayoutAnimMoveForMenuX = GetPropertyAsInteger(Prop, LayoutAnimMoveForMenuX);
+
+    Prop = Dict->propertyForKey("Vertical");
+    VerticalLayout = IsPropertyNotNullAndTrue(Prop);
+
+    // GlobalConfig.MainEntriesSize
+    Prop = Dict->propertyForKey("MainEntriesSize");
+    MainEntriesSize = GetPropertyAsInteger(Prop, MainEntriesSize);
+
+    Prop = Dict->propertyForKey("TileXSpace");
+    TileXSpace = GetPropertyAsInteger(Prop, TileXSpace);
+
+    Prop = Dict->propertyForKey("TileYSpace");
+    TileYSpace = GetPropertyAsInteger(Prop, TileYSpace);
+
+    Prop = Dict->propertyForKey("SelectionBigWidth");
+    row0TileSize = GetPropertyAsInteger(Prop, row0TileSize);
+
+    Prop = Dict->propertyForKey("SelectionSmallWidth");
+    row1TileSize = (INTN)GetPropertyAsInteger(Prop, row1TileSize);
+
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Components");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("Banner");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_BANNER;
+    }
+
+    Prop = Dict->propertyForKey("Functions");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_FUNCS;
+    }
+
+    Prop = Dict->propertyForKey("Tools");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_TOOLS;
+    }
+
+    Prop = Dict->propertyForKey("Label");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_LABEL;
+    }
+
+    Prop = Dict->propertyForKey("Revision");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_REVISION;
+    }
+
+    Prop = Dict->propertyForKey("Help");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_HELP;
+    }
+
+    Prop = Dict->propertyForKey("MenuTitle");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_MENU_TITLE;
+    }
+
+    Prop = Dict->propertyForKey("MenuTitleImage");
+    if (Prop && Prop->isFalse()) {
+      HideUIFlags |= HIDEUI_FLAG_MENU_TITLE_IMAGE;
+    }
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Selection");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("Color");
+    SelectionColor = (UINTN)GetPropertyAsInteger(Prop, SelectionColor);
+
+    Prop = Dict->propertyForKey("Small");
+    if ( Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      SelectionSmallFileName = Prop->getString()->stringValue();
+    }
+
+    Prop = Dict->propertyForKey("Big");
+    if ( Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      SelectionBigFileName = Prop->getString()->stringValue();
+    }
+
+    Prop = Dict->propertyForKey("Indicator");
+    if ( Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      SelectionIndicatorName = Prop->getString()->stringValue();
+    }
+
+    Prop = Dict->propertyForKey("OnTop");
+    SelectionOnTop = IsPropertyNotNullAndTrue(Prop);
+
+    Prop = Dict->propertyForKey("ChangeNonSelectedGrey");
+    NonSelectedGrey = IsPropertyNotNullAndTrue(Prop);
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Scroll");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("Width");
+    ScrollWidth = (UINTN)GetPropertyAsInteger(Prop, ScrollWidth);
+
+    Prop = Dict->propertyForKey("Height");
+    ScrollButtonsHeight = (UINTN)GetPropertyAsInteger(Prop, ScrollButtonsHeight);
+
+    Prop = Dict->propertyForKey("BarHeight");
+    ScrollBarDecorationsHeight = (UINTN)GetPropertyAsInteger(Prop, ScrollBarDecorationsHeight);
+
+    Prop = Dict->propertyForKey("ScrollHeight");
+    ScrollScrollDecorationsHeight = (UINTN)GetPropertyAsInteger(Prop,ScrollScrollDecorationsHeight);
+  }
+
+  Dict = DictPointer->dictPropertyForKey("Font");
+  if (Dict != NULL) {
+    Prop = Dict->propertyForKey("Type");
+    if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+      if ((Prop->getString()->stringValue()[0] == 'A') || (Prop->getString()->stringValue()[0] == 'B')) {
+        Font = FONT_ALFA;
+      } else if ((Prop->getString()->stringValue()[0] == 'G') || (Prop->getString()->stringValue()[0] == 'W')) {
+        Font = FONT_GRAY;
+      } else if ((Prop->getString()->stringValue()[0] == 'L') || (Prop->getString()->stringValue()[0] == 'l')) {
+        Font = FONT_LOAD;
+      }
+    }
+    if (Font == FONT_LOAD) {
+      Prop = Dict->propertyForKey("Path");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        FontFileName = Prop->getString()->stringValue();
+      }
+    }
+    Prop = Dict->propertyForKey("CharWidth");
+    CharWidth = (UINTN)GetPropertyAsInteger(Prop, CharWidth);
+    if (CharWidth & 1) {
+      MsgLog("Warning! Character width %lld should be even!\n", CharWidth);
+    }
+
+    Prop = Dict->propertyForKey("Proportional");
+    Proportional = IsPropertyNotNullAndTrue(Prop);
+  }
+
+  const TagArray* AnimeArray = DictPointer->arrayPropertyForKey("Anime"); // array of dict
+  if (AnimeArray != NULL) {
+    INTN   Count = AnimeArray->arrayContent().size();
+    for (INTN i = 0; i < Count; i++) {
+      Dict3 = AnimeArray->dictElementAt(i, "Anime"_XS8);
+      if ( !Dict3->isDict() ) {
+        MsgLog("MALFORMED PLIST : Anime must be an array of dict");
+        continue;
+      }
+
+      FILM *NewFilm = new FILM();
+
+      Prop = Dict3->propertyForKey("ID");
+      NewFilm->SetIndex((UINTN)GetPropertyAsInteger(Prop, 1)); //default=main screen
+
+      Prop = Dict3->propertyForKey("Path");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        NewFilm->Path = Prop->getString()->stringValue();
+      }
+
+      Prop = Dict3->propertyForKey("Frames");
+      NewFilm->NumFrames = (UINTN)GetPropertyAsInteger(Prop, 0);
+
+      Prop = Dict3->propertyForKey("FrameTime");
+      NewFilm->FrameTime = (UINTN)GetPropertyAsInteger(Prop, 50); //default will be 50ms
+
+      Prop = Dict3->propertyForKey("ScreenEdgeX");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+        if (Prop->getString()->stringValue().equal("left")) {
+          NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
+        } else if (Prop->getString()->stringValue().equal("right")) {
+          NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
+        }
+      }
+
+      Prop = Dict3->propertyForKey("ScreenEdgeY");
+      if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
+        if (Prop->getString()->stringValue().equal("top")) {
+          NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
+        } else if (Prop->getString()->stringValue().equal("bottom")) {
+          NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
+        }
+      }
+
+      //default values are centre
+
+      Prop = Dict3->propertyForKey("DistanceFromScreenEdgeX%");
+      NewFilm->FilmX = GetPropertyAsInteger(Prop, INITVALUE);
+
+      Prop = Dict3->propertyForKey("DistanceFromScreenEdgeY%");
+      NewFilm->FilmY = GetPropertyAsInteger(Prop, INITVALUE);
+
+      Prop = Dict3->propertyForKey("NudgeX");
+      NewFilm->NudgeX = GetPropertyAsInteger(Prop, INITVALUE);
+
+      Prop = Dict3->propertyForKey("NudgeY");
+      NewFilm->NudgeY = GetPropertyAsInteger(Prop, INITVALUE);
+
+      Prop = Dict3->propertyForKey("Once");
+      NewFilm->RunOnce = IsPropertyNotNullAndTrue(Prop);
+
+      NewFilm->GetFrames(ThemeX); //used properties: ID, Path, NumFrames
+      ThemeX.Cinema.AddFilm(NewFilm);
+ //     delete NewFilm; //looks like already deleted
+    }
+  }
+
+//not sure if it needed
+  if (BackgroundName.isEmpty()) {
+    BackgroundName.takeValueFrom("background");
+  }
+  if (BannerFileName.isEmpty()) {
+    BannerFileName.takeValueFrom("logo");
+  }
+  if (SelectionSmallFileName.isEmpty()) {
+    SelectionSmallFileName.takeValueFrom("selection_small");
+  }
+  if (SelectionBigFileName.isEmpty()) {
+    SelectionBigFileName.takeValueFrom("selection_big");
+  }
+  if (SelectionIndicatorName.isEmpty()) {
+    SelectionIndicatorName.takeValueFrom("selection_indicator");
+  }
+  if (FontFileName.isEmpty()) {
+    FontFileName.takeValueFrom("font");
+  }
+
+  return EFI_SUCCESS;
+}
+
 
 /*
  * what if the icon is not found or name is wrong?
@@ -608,7 +1253,5 @@ void XTheme::FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN 
   TmpBuffer.DrawWithoutCompose(X, YPos);
   //  TmpBuffer.Draw(X, YPos, 0, true);
 }
-
-
 
 

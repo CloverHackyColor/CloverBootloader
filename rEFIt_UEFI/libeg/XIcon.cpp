@@ -98,6 +98,9 @@ Empty = EFI_ERROR(Image.FromPNG(ACCESS_EMB_DATA(ico), ACCESS_EMB_SIZE(ico))); \
 ImageNight.FromPNG(ACCESS_EMB_DATA(dark), ACCESS_EMB_SIZE(dark)); \
 }
 
+
+XIcon::~XIcon() {}
+
 XIcon::XIcon(INTN Index, bool TakeEmbedded) : Id(Index), Name(), Image(), ImageNight(), Native(false),
   ImageSVG(nullptr), ImageSVGnight(nullptr), Empty(0)
 {
@@ -223,8 +226,6 @@ void XIcon::GetEmbedded()
   }
   //something to do else?
 }
-
-XIcon::~XIcon() {}
 
 //copy from XImage for our purpose
 EFI_STATUS XIcon::LoadXImage(const EFI_FILE *BaseDir, const char* IconName)

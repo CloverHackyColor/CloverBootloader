@@ -111,7 +111,7 @@ void nsvg_qsort(NSVGedge* Array, int Low, int High)
 }
 
 
-void qsort(void* Array, int Num, INTN Size,
+void nsvg_qsort(void* Array, int Num, INTN Size,
            int (*compare)(const void* a, const void* b))
 {
   //  QuickSort(Array, 0, Num - 1, Size, compare);
@@ -667,7 +667,7 @@ static int nsvg__curveDivs(float r, float arc, float tol)
 static void nsvg__expandStroke(NSVGrasterizer* r, NSVGpoint* points, int npoints, int closed, int lineJoin, int lineCap, float lineWidth)
 {
   int ncap = nsvg__curveDivs(lineWidth*0.5f, NSVG_PI, r->tessTol);  // Calculate divisions per half circle.
-  NSVGpoint left = {0,0,0,0,0,0,0,0}, right = {0,0,0,0,0,0,0,0}, firstLeft = {0,0,0,0,0,0,0,0}, firstRight = {0,0,0,0,0,0,0,0};
+  NSVGpoint left = {0,0,0,0,0,0,0,0,{0,0,0}}, right = {0,0,0,0,0,0,0,0,{0,0,0}}, firstLeft = {0,0,0,0,0,0,0,0,{0,0,0}}, firstRight = {0,0,0,0,0,0,0,0,{0,0,0}};
   NSVGpoint* p0, *p1;
   int j, s, e;
 
@@ -1700,7 +1700,7 @@ static void renderShape(NSVGrasterizer* r,
     }
 
     // Rasterize edges
-    qsort(r->edges, r->nedges, sizeof(NSVGedge), NULL);
+    nsvg_qsort(r->edges, r->nedges, sizeof(NSVGedge), NULL);
 
     // now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
     nsvg__initPaint(&cache, &shape->fill, shape, xform);
@@ -1720,7 +1720,7 @@ static void renderShape(NSVGrasterizer* r,
     }
 
     // Rasterize edges
-    qsort(r->edges, r->nedges, sizeof(NSVGedge), NULL);
+    nsvg_qsort(r->edges, r->nedges, sizeof(NSVGedge), NULL);
 
     // now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
     nsvg__initPaint(&cache, &shape->stroke, shape, xform);

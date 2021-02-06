@@ -38,6 +38,8 @@
 #include "../refit/menu.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../Platform/Volumes.h"
+#include "../libeg/XTheme.h"
+#include "../include/OSFlags.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LEGACY 1

@@ -93,7 +93,7 @@ SetMemLogCallback (
  **/
 MEM_LOG_CALLBACK
 EFIAPI
-GetMemLogCallback ();
+GetMemLogCallback (void);
 
 
 /**

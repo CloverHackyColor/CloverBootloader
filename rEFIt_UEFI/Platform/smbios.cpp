@@ -20,17 +20,13 @@
  **/
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
+
 #include "smbios.h"
 #include "cpu.h"
 #include "platformdata.h"
 #include "AcpiPatcher.h"
 #include "guid.h"
-
-#ifdef __cplusplus
-extern "C" {
-#include <Library/PrintLib.h>
-}
-#endif
 
 #ifndef DEBUG_ALL
 #define DEBUG_SMBIOS 1
@@ -814,8 +810,8 @@ void PatchTableType4()
     //      newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
     //    }
 
-    //DBG("insert ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
-    newSmbiosTable.Type4->ExternalClock = (UINT16)DivU64x32 (gCPUStructure.ExternalClock, kilo);
+    //DBG("insert ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
+    newSmbiosTable.Type4->ExternalClock = (UINT16)DivU64x32 (gCPUStructure.ExternalClock, Kilo);
     newSmbiosTable.Type4->EnabledCoreCount = gSettings.EnabledCores;
     //some verifications
     if ((newSmbiosTable.Type4->ThreadCount < newSmbiosTable.Type4->CoreCount) ||
@@ -1970,7 +1966,7 @@ void PatchTableType132()
   if(gSettings.QPI){
     newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.QPI;
   } else {
-    newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(gCPUStructure.ExternalClock, kilo), 2));
+    newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(gCPUStructure.ExternalClock, Kilo), 2));
   }
 
   Handle = LogSmbiosTable(newSmbiosTable);

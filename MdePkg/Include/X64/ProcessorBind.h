@@ -213,7 +213,9 @@
   #define CHAR16 wchar_t
 #else
   typedef unsigned short      CHAR16;
+  #if __WCHAR_MAX__ <= 0xFFFF
   typedef UINT16      wchar_t;
+  #endif
   typedef UINT16      char16_t;
   typedef UINT32      char32_t;
 #endif

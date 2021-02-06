@@ -8,6 +8,10 @@
 #ifndef PLATFORM_SMBIOS_H_
 #define PLATFORM_SMBIOS_H_
 
+extern "C" {
+#include <IndustryStandard/AppleSmBios.h>
+}
+
 // The maximum number of RAM slots to detect
 // even for 3-channels chipset X58 there are no more then 8 slots
 #define MAX_RAM_SLOTS 24
@@ -49,8 +53,8 @@ typedef struct
 } MEM_STRUCTURE;
 
 
-
 extern APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTable;
+
 extern MEM_STRUCTURE            gRAM;
 extern BOOLEAN                        gMobile;
 

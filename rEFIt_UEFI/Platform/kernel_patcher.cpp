@@ -20,6 +20,7 @@
 
 #include "kernel_patcher.h"
 #include "MemoryOperation.h"
+#include "../include/OSFlags.h"
 
 //#include "sse3_patcher.h"
 //#include "sse3_5_patcher.h"

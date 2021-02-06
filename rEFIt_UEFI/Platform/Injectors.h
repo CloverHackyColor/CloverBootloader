@@ -8,7 +8,6 @@
 #ifndef PLATFORM_INJECTORS_H_
 #define PLATFORM_INJECTORS_H_
 
-#include <Library/OcAfterBootCompatLib4Clover.h>
 
 extern UINT32               mPropSize;
 extern UINT8                *mProperties;

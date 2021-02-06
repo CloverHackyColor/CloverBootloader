@@ -14,6 +14,21 @@
 #include <printf_lite-conf.h>
 #include "../../Include/Library/printf_lite.h"
 
+#ifdef snprintf
+  /*
+   * snprintf is broken with short wchar and cannot print UTF-16 string (%ls).
+   * but it works for all UTF8. We use it to generate labels. So we can use the original version.
+   * printf is never redefined by printf_lite, so we can use the original version
+   */
+  #undef snprintf
+  // blank line to avoid clang warning : "No newline at end of file"
+  extern "C" int (snprintf)(char* buf, size_t len, const char *__restrict format, ...);
+#endif
+
+//#ifdef printf
+//#warning ifdef printf
+//#endif
+
 static int nbTestFailed = 0;
 #ifdef DISPLAY_ONLY_FAILED
 static bool displayOnlyFailed = true;
@@ -107,7 +122,7 @@ static int testWPrintf(const char* label, const wchar_t*  expectResult, int expe
 #define Test1arg(expectResult,format,c) \
 { \
 	/* char label[1024]; // Visual studio generates __chkstk if declared here */\
-	snprintf(label, sizeof(label), F("Test sprintf(" PRIF ", " PRIF ")"), F(#format), F(#c)); \
+	  snprintf(label, sizeof(label), F("Test sprintf(" PRIF ", " PRIF ")"), F(#format), F(#c)); \
     testPrintf(label,expectResult,(int)strlen(expectResult),format,c); \
     snprintf(label, sizeof(label), F("Test swprintf(" PRIF ", " PRIF ")"), F(#format), F(#c)); \
     testWPrintf(label,L##expectResult,(int)wcslen(L##expectResult),format,c); \
@@ -568,6 +583,7 @@ int test_printf_with_callback_timestamp()
     nbTestFailed += 1;
   }
   
+#if PRINTF_EMIT_CR_SUPPORT == 1
   test_printf_with_callback_timestamp_buf[0] = 0;
   printf_with_callback_timestamp_emitcr("Hello %s\n", test_printf_transmitS8Printf, nullptr, &printfNewline, 1, 1, "world");
   for ( i=0 ; i<sizeof(test_printf_with_callback_timestamp_buf) ; i++ ) {
@@ -591,5 +607,7 @@ int test_printf_with_callback_timestamp()
   if ( strcmp(&test_printf_with_callback_timestamp_buf[i], "Hello world\r\n") != 0) {
     nbTestFailed += 1;
   }
+#endif
+
   return 0;
 }

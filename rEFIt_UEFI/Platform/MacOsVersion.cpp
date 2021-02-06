@@ -4,7 +4,7 @@
 */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-#include "../include/OsType.h"
+#include "../include/OSTypes.h"
 #include "../cpp_foundation/XString.h"
 #include "MacOsVersion.h"
 

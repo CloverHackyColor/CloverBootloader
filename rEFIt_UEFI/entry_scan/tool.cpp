@@ -41,6 +41,8 @@
 #include "../gui/REFIT_MENU_SCREEN.h"
 #include "../Platform/Self.h"
 #include "../Platform/Volumes.h"
+#include "../libeg/XTheme.h"
+#include "../include/OSFlags.h"
 
 //
 // Clover File location to boot from on removable media devices

@@ -22,7 +22,7 @@
 #include "../refit/screen.h"
 #include "../cpp_foundation/XString.h"
 #include "../refit/lib.h"
-#include "Self.h"
+#include "../Platform/Self.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_VEC 1
@@ -37,7 +37,7 @@
 #endif
 
 #include "XTheme.h"
-extern XTheme ThemeX;
+
 extern const CHAR8* IconsNames[];
 extern const INTN IconsNamesSize;
 

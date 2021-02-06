@@ -1,5 +1,5 @@
 /*
- * OsType.h
+ * OSType.h
  *
  *  Created on: Nov 12, 2020
  *      Author: jief

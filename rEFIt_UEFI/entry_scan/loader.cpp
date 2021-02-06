@@ -33,6 +33,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <Platform.h>
+#include "../refit/lib.h"
+#include "../libeg/libeg.h"
 #include "loader.h"
 #include "../cpp_foundation/XString.h"
 #include "entry_scan.h"
@@ -40,16 +43,17 @@
 #include "../Platform/Hibernate.h"
 #include "../refit/screen.h"
 #include "../refit/menu.h"
-#include "common.h"
 #include "../Platform/Nvram.h"
 #include "../Platform/APFS.h"
 #include "../Platform/guid.h"
 #include "../refit/lib.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
-#include "Self.h"
-#include "../include/OsType.h"
+#include "../Platform/Self.h"
+#include "../include/OSTypes.h"
 #include "../Platform/BootOptions.h"
 #include "../Platform/Volumes.h"
+#include "../include/OSFlags.h"
+#include "../libeg/XTheme.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SCAN_LOADER 1
@@ -88,7 +92,7 @@ typedef struct LINUX_PATH_DATA
    CONST XStringW Path;
    CONST XStringW Title;
    CONST XStringW Icon;
-   CONST XString8  Issue;
+   CONST XString8 Issue;
 } LINUX_PATH_DATA;
 
 typedef struct LINUX_ICON_DATA
@@ -114,7 +118,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   //comment out all common names
 //  { L"\\EFI\\grub\\grubx64.efi", L"Grub EFI boot menu", L"grub,linux" },
 //  { L"\\EFI\\Gentoo\\grubx64.efi", L"Gentoo EFI boot menu", L"gentoo,linux", "Gentoo" },
-  { L"\\EFI\\Gentoo\\kernelx64.efi"_XSW, L"Gentoo EFI kernel"_XSW, L"gentoo,linux"_XSW },
+  { L"\\EFI\\Gentoo\\kernelx64.efi"_XSW, L"Gentoo EFI kernel"_XSW, L"gentoo,linux"_XSW, ""_XS8 },
 //  { L"\\EFI\\RedHat\\grubx64.efi", L"RedHat EFI boot menu", L"redhat,linux", "Redhat" },
 //  { L"\\EFI\\debian\\grubx64.efi", L"Debian EFI boot menu", L"debian,linux", "Debian" },
 //  { L"\\EFI\\kali\\grubx64.efi", L"Kali EFI boot menu", L"kali,linux", "Kali" },
@@ -169,7 +173,7 @@ STATIC LINUX_PATH_DATA LinuxEntryData[] = {
   { L"\\EFI\\MX19\\grub.efi", L"MX Linux EFI boot menu", L"mx,linux", "MX Linux" },
   { L"\\EFI\\parrot\\grub.efi", L"Parrot OS EFI boot menu", L"parrot,linux", "Parrot OS" },
 #endif
-  { L"\\EFI\\SuSe\\elilo.efi"_XSW, L"OpenSuse EFI boot menu"_XSW, L"suse,linux"_XSW },
+  { L"\\EFI\\SuSe\\elilo.efi"_XSW, L"OpenSuse EFI boot menu"_XSW, L"suse,linux"_XSW, ""_XS8 },
 };
 STATIC CONST UINTN LinuxEntryDataCount = (sizeof(LinuxEntryData) / sizeof(LinuxEntryData[0]));
 
@@ -1627,9 +1631,9 @@ void ScanLoader(void)
           rootDmg.replaceAll("%20"_XS8, " "_XS8);
 //          while ( rootDmg.notEmpty()  &&  rootDmg.startWith('/') ) rootDmg.deleteCharsAtPos(0, 1);
           rootDmg.replaceAll('/', '\\');
-          REFIT_VOLUME* targetVolume = Volumes.getVolumeWithApfsContainerUUIDAndFileSystemUUID(Volume->ApfsContainerUUID, Volume->ApfsTargetUUIDArray[i]);
-          if ( targetVolume ) {
-            if ( rootDmg.isEmpty()  ||  FileExists(*targetVolume->RootDir, rootDmg) ) { // rootDmg empty is accepted, to be compatible with previous code
+          REFIT_VOLUME* targetInstallVolume = Volumes.getVolumeWithApfsContainerUUIDAndFileSystemUUID(Volume->ApfsContainerUUID, Volume->ApfsTargetUUIDArray[i]);
+          if ( targetInstallVolume ) {
+            if ( rootDmg.isEmpty()  ||  FileExists(*targetInstallVolume->RootDir, rootDmg) ) { // rootDmg empty is accepted, to be compatible with previous code
               AddLoaderEntry(SWPrintf("\\%s\\com.apple.installer\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleInstaller, LoaderTitleInstaller, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
             }else{
               DBG("    Dead installer entry found (installer dmg boot file not found : '%s')\n", rootDmg.c_str());

@@ -7,6 +7,7 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_USB 1

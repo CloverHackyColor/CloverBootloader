@@ -3,6 +3,7 @@
 
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
+#include "XImage.h"
 #include "libeg.h"
 
 extern CONST CHAR8* IconsNames[];
@@ -35,11 +36,11 @@ public:
   EFI_STATUS LoadXImage(const EFI_FILE *Dir, const XStringW& FileName); //for example LoadImage(ThemeDir, L"icons\\" + Name);
   EFI_STATUS LoadXImage(const EFI_FILE *Dir, const wchar_t* LIconName);
   EFI_STATUS LoadXImage(const EFI_FILE *Dir, const char* IconName);
+  void GetEmbedded();
 
   // Default are not valid, as usual. We delete them. If needed, proper ones can be created
 //  Icon(const Icon&) = delete;
   XIcon& operator=(const XIcon&); // = delete;
-  void GetEmbedded();
   XImage* GetBest(bool night, bool *free = nullptr);
 };
 

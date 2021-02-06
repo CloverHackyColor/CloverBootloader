@@ -60,6 +60,8 @@ PrintBytes (
   );
 
 
+void DbgHeader(CONST CHAR8 *str);
+
 /*
  * OpenCore
  */

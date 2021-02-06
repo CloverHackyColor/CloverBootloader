@@ -11,11 +11,11 @@
 
 
 /* Decimal powers: */
-#define kilo (1000ULL)
-#define Mega (kilo * kilo)
-#define Giga (kilo * Mega)
-#define Tera (kilo * Giga)
-#define Peta (kilo * Tera)
+#define Kilo (1000ULL)
+#define Mega (Kilo * Kilo)
+#define Giga (Kilo * Mega)
+#define Tera (Kilo * Giga)
+#define Peta (Kilo * Tera)
 
 #define bit(n)                  (1UL << (n))
 #define _Bit(n)                 (1ULL << (n))
@@ -31,13 +31,16 @@
 #define REG32(base, reg)             (*(volatile UINT32 *)((UINTN)base + reg))
 #define WRITEREG32(base, reg, value) REG32((base), (reg)) = value
 
+#ifdef __cplusplus
+
+#include "../cpp_util/remove_ref.h"
 
 #ifdef _MSC_VER
 #define __typeof__(x) decltype(x)
 #endif
-#define __typeof_am__(x) remove_ref<decltype(x)>::type
+#define __typeof_am__(x) _typeofam_remove_ref<decltype(x)>::type
 
-
+#endif
 
 
 #endif /* INCLUDE_ONELINERMACROS_H_ */

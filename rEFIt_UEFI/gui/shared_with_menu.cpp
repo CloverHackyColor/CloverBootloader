@@ -42,7 +42,6 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../refit/lib.h"
 #include "menu_items/menu_items.h"
-//#include "../entry_scan/common.h"
 #include "../Platform/Settings.h"
 
 CONST XString8 ArgOptional[NUM_OPT] = {

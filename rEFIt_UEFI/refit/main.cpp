@@ -70,11 +70,15 @@
 #include "../Platform/BootOptions.h"
 #include "../Platform/boot.h"
 #include "../Platform/kext_inject.h"
+#include "../Platform/KextList.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
-#include "Self.h"
-#include "SelfOem.h"
+#include "../Platform/Self.h"
+#include "../Platform/SelfOem.h"
 #include "../Platform/Net.h"
-#include "../include/OsType.h"
+#include "../Platform/BasicIO.h"
+#include "../include/OSTypes.h"
+#include "../include/OSFlags.h"
+#include "../libeg/XTheme.h"
 
 #include "../include/OC.h"
 
@@ -121,16 +125,6 @@ EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
 EFI_KEY_DATA KeyData;
 
 EFI_HANDLE AudioDriverHandle;
-
-CONST CHAR8* AudioOutputNames[] = {
-  "LineOut",
-  "Speaker",
-  "Headphones",
-  "SPDIF",
-  "Garniture",
-  "HDMI",
-  "Other"
-};
 
 extern void HelpRefit(void);
 extern void AboutRefit(void);
@@ -192,7 +186,7 @@ static EFI_STATUS LoadEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 #ifdef JIEF_DEBUG
     EFI_LOADED_IMAGE_PROTOCOL* loadedBootImage = NULL;
     if (!EFI_ERROR(Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (void**)(&loadedBootImage)))) {
-		DBG("%S : Image base = 0x%llx", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
+    DBG("%S : Image base = 0x%llx", ImageTitle.wc_str(), (uintptr_t)loadedBootImage->ImageBase); // Jief : Do not change this, it's used by grep to feed the debugger
     }else{
       DBG("Can't get loaded image protocol");
     }
@@ -277,7 +271,7 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
   ReinitRefitLib();
   // control returns here when the child image calls Exit()
   if (ImageTitle.notEmpty()) {
-	  snwprintf(ErrorInfo, 512, "returned from %ls", ImageTitle.s());
+    snwprintf(ErrorInfo, 512, "returned from %ls", ImageTitle.s());
   }
 
   if (CheckError(Status, ErrorInfo)) {
@@ -443,12 +437,12 @@ void LOADER_ENTRY::FilterKextPatches()
       }
       KernelAndKextPatches.KextPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KextPatches[i].MatchBuild.notEmpty())) {
-        KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabledByBuildNumber(KernelAndKextPatches.KextPatches[i].MatchBuild, BuildVersion);
+        KernelAndKextPatches.KextPatches[i].MenuItem.BValue = KernelAndKextPatches.KextPatches[i].IsPatchEnabledByBuildNumber(BuildVersion);
         DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
-      KernelAndKextPatches.KextPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KextPatches[i].MatchOS, macOSVersion);
+      KernelAndKextPatches.KextPatches[i].MenuItem.BValue = KernelAndKextPatches.KextPatches[i].IsPatchEnabled(macOSVersion);
       DBG(" ==> %s\n", KernelAndKextPatches.KextPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
@@ -473,12 +467,12 @@ void LOADER_ENTRY::FilterKernelPatches()
       }
       KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.KernelPatches[i].MatchBuild.notEmpty())) {
-        KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabledByBuildNumber(KernelAndKextPatches.KernelPatches[i].MatchBuild, BuildVersion);
+        KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = KernelAndKextPatches.KernelPatches[i].IsPatchEnabledByBuildNumber(BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue; 
       }
 
-      KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.KernelPatches[i].MatchOS, macOSVersion);
+      KernelAndKextPatches.KernelPatches[i].MenuItem.BValue = KernelAndKextPatches.KernelPatches[i].IsPatchEnabled(macOSVersion);
       DBG(" ==> %s by OS\n", KernelAndKextPatches.KernelPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
     }
   }
@@ -502,12 +496,12 @@ void LOADER_ENTRY::FilterBootPatches()
       }
       KernelAndKextPatches.BootPatches[i].MenuItem.BValue = true;
       if ((BuildVersion.notEmpty()) && (KernelAndKextPatches.BootPatches[i].MatchBuild.notEmpty())) {
-        KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabledByBuildNumber(KernelAndKextPatches.BootPatches[i].MatchBuild, BuildVersion);
+        KernelAndKextPatches.BootPatches[i].MenuItem.BValue = KernelAndKextPatches.BootPatches[i].IsPatchEnabledByBuildNumber(BuildVersion);
         DBG(" ==> %s by build\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
         continue;
       }
  
-      KernelAndKextPatches.BootPatches[i].MenuItem.BValue = IsPatchEnabled(KernelAndKextPatches.BootPatches[i].MatchOS, macOSVersion);
+      KernelAndKextPatches.BootPatches[i].MenuItem.BValue = KernelAndKextPatches.BootPatches[i].IsPatchEnabled(macOSVersion);
       DBG(" ==> %s by OS\n", KernelAndKextPatches.BootPatches[i].MenuItem.BValue ? "allowed" : "not allowed");
   
     }
@@ -750,8 +744,8 @@ void LOADER_ENTRY::StartLoader()
     Status = LoadUserSettings(Settings, &dict);
     if (!EFI_ERROR(Status)) {
       DBG(" - found custom settings for this entry: %ls\n", Settings.wc_str());
-      gBootChanged = TRUE;
-      Status = GetUserSettings(dict);
+      GlobalConfig.gBootChanged = TRUE;
+      Status = GetUserSettings(dict, gSettings);
       if (EFI_ERROR(Status)) {
         DBG(" - ... but: %s\n", efiStrError(Status));
       } else {
@@ -768,15 +762,15 @@ void LOADER_ENTRY::StartLoader()
     }
   }
   
-	DBG("Finally: ExternalClock=%lluMHz BusSpeed=%llukHz CPUFreq=%uMHz",
-  				DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo),
-  				DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo),
+  DBG("Finally: ExternalClock=%lluMHz BusSpeed=%llukHz CPUFreq=%uMHz",
+          DivU64x32(gCPUStructure.ExternalClock + Kilo - 1, Kilo),
+          DivU64x32(gCPUStructure.FSBFrequency + Kilo - 1, Kilo),
           gCPUStructure.MaxSpeed);
   if (gSettings.QPI) {
-	  DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
+    DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
   } else {
     // to match the value of hw.busfrequency in the terminal
-	  DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + kilo - 1, kilo), 2), Mega));
+    DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + Kilo - 1, Kilo), 2), Mega));
   }
   
   //Free memory
@@ -1180,7 +1174,7 @@ void LOADER_ENTRY::StartLoader()
         0,
         &ImageHandle
         );
-    } else
+    }else
     {
       // NOTE : OpenCore ignore the name of the dmg.
       //        InternalLoadDmg calls InternalFindFirstDmgFileName to find the dmg file name.
@@ -1206,7 +1200,7 @@ void LOADER_ENTRY::StartLoader()
       EFI_DEVICE_PATH_PROTOCOL* DevicePathToDmgDir = AppendDevicePathNode(DevicePathCopy, LoaderPathBasenameNode);
       DBG("DevicePathToDmgDir = %ls\n", DevicePathToXStringW(DevicePathToDmgDir).wc_str());
 
-      INTERNAL_DMG_LOAD_CONTEXT DmgLoadContext = {0};
+      INTERNAL_DMG_LOAD_CONTEXT DmgLoadContext = {0,0,0};
       DmgLoadContext.DevicePath = DevicePathToDmgDir;
       EFI_DEVICE_PATH_PROTOCOL* BootEfiFromDmgDevicePath = InternalLoadDmg(&DmgLoadContext, OcDmgLoadingAnyImage);
       DBG("DevicePath of dmg = %ls\n", DevicePathToXStringW(BootEfiFromDmgDevicePath).wc_str());
@@ -1344,7 +1338,7 @@ void LOADER_ENTRY::StartLoader()
 
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
-	  CheckEmptyFB();
+    CheckEmptyFB();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Volume, macOSVersion);
@@ -1657,8 +1651,8 @@ void REFIT_MENU_ENTRY_LOADER_TOOL::StartTool()
 {
   DBG("Start Tool: %ls\n", LoaderPath.wc_str());
   egClearScreen(&MenuBackgroundPixel);
-	// assumes "Start <title>" as assigned below
-	BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
+  // assumes "Start <title>" as assigned below
+  BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
     StartEFIImage(DevicePath, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL, NULL);
     FinishExternalScreen();
 }
@@ -1755,7 +1749,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
     }
 #undef BOOLEAN_AT_INDEX
 
-	  XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), Path, DirEntry->FileName);
+    XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NullXString8Array, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
@@ -2125,7 +2119,7 @@ static void LoadDrivers(void)
 
   UninitRefitLib();
   if (DriversToConnectNum > 0) {
-	  DBG("%llu drivers needs connecting ...\n", DriversToConnectNum);
+    DBG("%llu drivers needs connecting ...\n", DriversToConnectNum);
     // note: our platform driver protocol
     // will use DriversToConnect - do not release it
     RegisterDriversToHighestPriority(DriversToConnect);
@@ -2175,7 +2169,7 @@ INTN FindDefaultEntry(void)
   Index = FindStartupDiskVolume(&MainMenu);
 
   if (Index >= 0) {
-	  DBG("Boot redirected to Entry %lld. '%ls'\n", Index, MainMenu.Entries[Index].Title.s());
+    DBG("Boot redirected to Entry %lld. '%ls'\n", Index, MainMenu.Entries[Index].Title.s());
     // we got boot-device-data, no need to keep emulating anymore
     if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -2216,7 +2210,7 @@ INTN FindDefaultEntry(void)
         continue;
       }
 
-		DBG(" - found entry %lld. '%ls', Volume '%ls', DevicePath '%ls'\n", Index, Entry.Title.s(), Volume->VolName.wc_str(), Entry.DevicePathString.wc_str());
+    DBG(" - found entry %lld. '%ls', Volume '%ls', DevicePath '%ls'\n", Index, Entry.Title.s(), Volume->VolName.wc_str(), Entry.DevicePathString.wc_str());
       // if first method failed and second succeeded - uninstall emulation
       if (gEmuVariableControl != NULL) {
         gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -2245,7 +2239,7 @@ void SetVariablesFromNvram()
 
   tmpString = (__typeof__(tmpString))GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
-	  DBG("found boot-args in NVRAM:%s, size=%llu\n", tmpString, Size);
+    DBG("found boot-args in NVRAM:%s, size=%llu\n", tmpString, Size);
     // use and forget old one
 //    DeleteNvramVariable(L"boot-args", &gEfiAppleBootGuid);
     Size = AsciiStrLen(tmpString); // some EFI implementations include '\0' in Size, and others don't, so update Size to string length
@@ -2313,22 +2307,22 @@ void SetVariablesFromNvram()
 
 //BOOLEAN SetOEMPathIfExists(const EFI_FILE *Root, const XStringW& path, const XStringW& ConfName)
 //{
-//	BOOLEAN res = FileExists(Root, path);
-//	if ( res ) {
-//	  CHAR16 ConfigPath[1024];
-//		snwprintf(ConfigPath, sizeof(ConfigPath), "%ls\\%ls.plist", path.wc_str(), ConfName.wc_str());
-//	  BOOLEAN res2 = FileExists(Root, ConfigPath);
-//	  if ( res2 ) {
-//	  	OEMPath = path;
-//	  	DBG("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath.wc_str());
-//	  	return 1;
-//	  }else{
-//	  	DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path.wc_str(), ConfName.wc_str());
-//	  }
-//	}else{
-//		DBG("CheckOEMPathExists tried %ls. Dir not exists\n", path.wc_str());
-//	}
-//	return 0;
+//  BOOLEAN res = FileExists(Root, path);
+//  if ( res ) {
+//    CHAR16 ConfigPath[1024];
+//    snwprintf(ConfigPath, sizeof(ConfigPath), "%ls\\%ls.plist", path.wc_str(), ConfName.wc_str());
+//    BOOLEAN res2 = FileExists(Root, ConfigPath);
+//    if ( res2 ) {
+//      OEMPath = path;
+//      DBG("CheckOEMPathExists: set OEMPath: %ls\n", OEMPath.wc_str());
+//      return 1;
+//    }else{
+//      DBG("CheckOEMPathExists tried %ls. '%ls.plist' not exists in dir\n", path.wc_str(), ConfName.wc_str());
+//    }
+//  }else{
+//    DBG("CheckOEMPathExists tried %ls. Dir not exists\n", path.wc_str());
+//  }
+//  return 0;
 //}
 //
 //void SetOEMPath(const XStringW& ConfName)
@@ -2351,6 +2345,180 @@ void SetVariablesFromNvram()
 //  }
 
 
+void
+GetListOfConfigs ()
+{
+  REFIT_DIR_ITER    DirIter;
+  EFI_FILE_INFO     *DirEntry;
+  INTN              NameLen;
+
+  ConfigsNum = 0;
+  OldChosenConfig = 0;
+
+  DirIterOpen(&selfOem.getConfigDir(), NULL, &DirIter);
+  DbgHeader("Found config plists");
+  while (DirIterNext(&DirIter, 2, L"config*.plist", &DirEntry)) {
+    if (DirEntry->FileName[0] == L'.') {
+      continue;
+    }
+      if (StriCmp(DirEntry->FileName, L"config.plist") == 0) {
+        OldChosenConfig = ConfigsNum;
+      }
+      NameLen = StrLen(DirEntry->FileName) - 6; //without ".plist"
+      ConfigsList[ConfigsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName);
+      ConfigsList[ConfigsNum++][NameLen] = L'\0';
+      DBG("- %ls\n", DirEntry->FileName);
+    }
+  DirIterClose(&DirIter);
+}
+
+void
+GetListOfDsdts()
+{
+  REFIT_DIR_ITER    DirIter;
+  EFI_FILE_INFO     *DirEntry;
+  INTN              NameLen;
+
+  if (DsdtsNum > 0) {
+    for (UINTN i = 0; i < DsdtsNum; i++) {
+      if (DsdtsList[DsdtsNum] != NULL) {
+        FreePool(DsdtsList[DsdtsNum]);
+      }
+    }
+  }
+  DsdtsNum = 0;
+  OldChosenDsdt = 0xFFFF;
+
+  DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
+  DbgHeader("Found DSDT tables");
+  while (DirIterNext(&DirIter, 2, L"DSDT*.aml", &DirEntry)) {
+    if (DirEntry->FileName[0] == L'.') {
+      continue;
+    }
+      if ( gSettings.DsdtName.equalIC(DirEntry->FileName) ) {
+        OldChosenDsdt = DsdtsNum;
+      }
+      NameLen = StrLen(DirEntry->FileName); //with ".aml"
+      DsdtsList[DsdtsNum] = (CHAR16*)AllocateCopyPool(NameLen * sizeof(CHAR16) + 2, DirEntry->FileName); // if changing, notice freepool above
+      DsdtsList[DsdtsNum++][NameLen] = L'\0';
+      DBG("- %ls\n", DirEntry->FileName);
+    }
+  DirIterClose(&DirIter);
+}
+
+void
+GetListOfACPI()
+{
+  REFIT_DIR_ITER    DirIter;
+  EFI_FILE_INFO     *DirEntry = NULL;
+  ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
+  INTN               Count = gSettings.DisabledAMLCount;
+//  XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
+//  DBG("Get list of ACPI at path %ls\n", AcpiPath.wc_str());
+  while (ACPIPatchedAML != NULL) {
+    if (ACPIPatchedAML->FileName) {
+      FreePool(ACPIPatchedAML->FileName);
+    }
+    ACPIPatchedAMLTmp = ACPIPatchedAML;
+    ACPIPatchedAML = ACPIPatchedAML->Next;
+    FreePool(ACPIPatchedAMLTmp);
+  }
+  ACPIPatchedAML = NULL;
+//  DBG("free acpi list done\n");
+  DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
+
+  while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
+//    DBG("next entry is %ls\n", DirEntry->FileName);
+    if (DirEntry->FileName[0] == L'.') {
+      continue;
+    }
+    if (StriStr(DirEntry->FileName, L"DSDT")) {
+      continue;
+    }
+//    DBG("Found name %ls\n", DirEntry->FileName);
+      BOOLEAN ACPIDisabled = FALSE;
+      ACPIPatchedAMLTmp = new ACPI_PATCHED_AML; // if changing, notice freepool above
+      ACPIPatchedAMLTmp->FileName = SWPrintf("%ls", DirEntry->FileName).forgetDataWithoutFreeing(); // if changing, notice freepool above
+
+      for (INTN i = 0; i < Count; i++) {
+        if ((gSettings.DisabledAML[i] != NULL) &&
+            (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
+            ) {
+          ACPIDisabled = TRUE;
+          break;
+        }
+      }
+      ACPIPatchedAMLTmp->MenuItem.BValue = ACPIDisabled;
+      ACPIPatchedAMLTmp->Next = ACPIPatchedAML;
+      ACPIPatchedAML = ACPIPatchedAMLTmp;
+    }
+
+  DirIterClose(&DirIter);
+}
+
+void
+GetListOfThemes ()
+{
+  EFI_STATUS     Status          = EFI_NOT_FOUND;
+  REFIT_DIR_ITER DirIter;
+  EFI_FILE_INFO  *DirEntry;
+  XStringW        ThemeTestPath;
+  EFI_FILE       *ThemeTestDir   = NULL;
+  CHAR8          *ThemePtr       = NULL;
+  UINTN          Size = 0;
+
+  DbgHeader("GetListOfThemes");
+
+  ThemeNameArray.setEmpty();
+  if ( !self.themesDirExists() ) {
+    DBG("No theme dir was discovered\n");
+    return;
+  }
+  DirIterOpen(&self.getThemesDir(), NULL, &DirIter);
+  while (DirIterNext(&DirIter, 1, L"*", &DirEntry)) {
+    if (DirEntry->FileName[0] == '.') {
+      //DBG("Skip theme: %ls\n", DirEntry->FileName);
+      continue;
+    }
+    //DBG("Found theme directory: %ls", DirEntry->FileName);
+    DBG("- [%02zu]: %ls", ThemeNameArray.size(), DirEntry->FileName);
+    Status = self.getThemesDir().Open(&self.getThemesDir(), &ThemeTestDir, DirEntry->FileName, EFI_FILE_MODE_READ, 0);
+    if (!EFI_ERROR(Status)) {
+      Status = egLoadFile(ThemeTestDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+      if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
+        Status = egLoadFile(ThemeTestDir, CONFIG_THEME_SVG, (UINT8**)&ThemePtr, &Size);
+        if (EFI_ERROR(Status)) {
+          Status = EFI_NOT_FOUND;
+          DBG(" - bad theme because %ls nor %ls can't be load", CONFIG_THEME_FILENAME, CONFIG_THEME_SVG);
+        }
+      }
+      if (!EFI_ERROR(Status)) {
+        //we found a theme
+        if ((StriCmp(DirEntry->FileName, L"embedded") == 0) ||
+            (StriCmp(DirEntry->FileName, L"random") == 0)) {
+          ThemePtr = NULL;
+        } else {
+          ThemeNameArray.Add(DirEntry->FileName);
+        }
+      }
+    }
+    DBG("\n");
+    if (ThemePtr) {
+      FreePool(ThemePtr);
+    }
+  }
+  DirIterClose(&DirIter);
+}
+
+#ifndef CLOVER_BUILD
+extern "C" {
+EFI_STATUS
+EFIAPI
+RefitMain (IN EFI_HANDLE           ImageHandle,
+           IN EFI_SYSTEM_TABLE     *SystemTable);
+}
+#endif
+
 //
 // main entry point
 //
@@ -2369,8 +2537,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             i;
-	//UINT64            TscDiv;
-	//UINT64            TscRemainder = 0;
+  //UINT64            TscDiv;
+  //UINT64            TscRemainder = 0;
 //  LOADER_ENTRY      *LoaderEntry;
   XStringW          ConfName;
   TagDict*          smbiosTags = NULL;
@@ -2425,8 +2593,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
   }
 
+#ifdef CLOVER_BUILD
   construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
-
+#endif
 
 #ifdef JIEF_DEBUG
 //  all_tests();
@@ -2454,9 +2623,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second, gSettings.GUI.Timezone);
   }
   //MsgLog("Starting Clover rev %ls on %ls EFI\n", gFirmwareRevision, gST->FirmwareVendor);
-	MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
+  MsgLog("Starting %s on %ls EFI\n", gRevisionStr, gST->FirmwareVendor);
   MsgLog("Build id: %s\n", gBuildId.c_str());
-	if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
+  if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
 
 
 
@@ -2558,7 +2727,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     Status = LoadUserSettings(L"config"_XSW, &gConfigDict[0]);
     DBG("%ls\\config.plist %ls loaded: %s\n", selfOem.getConfigDirFullPath().wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
   }
-	snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
+  snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
                                    gConfigDict[0] ? L"config": L"",
                                    (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
                                    !gConfigDict[1] ? L"": (ConfName.notEmpty() ? ConfName.wc_str() : L"Load Options"));
@@ -2659,7 +2828,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
-      GetEarlyUserSettings(gConfigDict[i]);
+      GetEarlyUserSettings(gConfigDict[i], gSettings);
     }
   }
 
@@ -2696,7 +2865,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
   DbgHeader("InitScreen");
-	
+
   if (!GlobalConfig.isFastBoot()) {
     // init screen and dump video modes to log
     if (gDriversFlags.VideoLoaded) {
@@ -2709,7 +2878,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     InitScreen(FALSE);
   }
-	
+
   //DBG("ReinitRefitLib\n");
   //Now we have to reinit handles
   Status = ReinitRefitLib();
@@ -2721,7 +2890,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif // ENABLE_SECURE_BOOT
     return Status;
   }
-	
+
   //  DBG("DBG: messages\n");
   if (!gSettings.Boot.NoEarlyProgress && !GlobalConfig.isFastBoot()  && gSettings.Boot.Timeout>0) {
     XStringW Message = SWPrintf("   Welcome to Clover %ls   ", gFirmwareRevision);
@@ -2746,7 +2915,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  GetDefaultSettings();
   GetAcpiTablesList();
 
-	DBG("Calibrated TSC Frequency = %llu = %lluMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
+  DBG("Calibrated TSC Frequency = %llu = %lluMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
@@ -2772,16 +2941,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
     case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
     case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo);
-      //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+      gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + Kilo - 1, Kilo);
+      //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
       break;
     default:
       //DBG(" Read TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.FSBFrequency, Mega)));
-	  
+
       // for sandy bridge or newer
       // to match ExternalClock 25 MHz like real mac, divide FSBFrequency by 4
-      gCPUStructure.ExternalClock = ((UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo) + 3) / 4;
-      //DBG(" Corrected TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+      gCPUStructure.ExternalClock = ((UINT32)DivU64x32(gCPUStructure.FSBFrequency + Kilo - 1, Kilo) + 3) / 4;
+      //DBG(" Corrected TSC ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
       break;
   }
 
@@ -2794,7 +2963,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Second step. Load config.plist into gSettings
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
-      Status = GetUserSettings(gConfigDict[i]);
+      Status = GetUserSettings(gConfigDict[i], gSettings);
       if (EFI_ERROR(Status)) {
         DBG("Error in Second part of settings %llu: %s\n", i, efiStrError(Status));
       }
@@ -2808,7 +2977,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!gSettings.UserChange) {
       gSettings.BusSpeed = 200000;
     }
-    gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCCalibr, gSettings.BusSpeed * kilo);
+    gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCCalibr, gSettings.BusSpeed * Kilo);
     DBG("Set MaxRatio for QEMU: %d\n", gCPUStructure.MaxRatio);
     gCPUStructure.MaxRatio *= 10;
     gCPUStructure.MinRatio = 60;
@@ -2820,7 +2989,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  */
     gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                            (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);
-    gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + kilo - 1, kilo);
+    gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency + Kilo - 1, Kilo);
   }
 
 //  dropDSM = 0xFFFF; //by default we drop all OEM _DSM. They have no sense for us.
@@ -2864,14 +3033,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   AfterTool = FALSE;
   gGuiIsReady = TRUE;
-  gBootChanged = TRUE;
-  gThemeChanged = TRUE;
+  GlobalConfig.gBootChanged = TRUE;
+  GlobalConfig.gThemeChanged = TRUE;
   do {
-    if (gBootChanged && gThemeChanged) { // config changed
+    if (GlobalConfig.gBootChanged && GlobalConfig.gThemeChanged) { // config changed
       GetListOfDsdts(); //only after GetUserSettings
       GetListOfACPI(); //ssdt and other tables
     }
-    gBootChanged = FALSE;
+    GlobalConfig.gBootChanged = FALSE;
     MainMenu.Entries.setEmpty();
     OptionMenu.Entries.setEmpty();
     InitKextList();
@@ -2889,18 +3058,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     for (i = 0; i < AudioList.size(); i++) {
       if (AudioList[i].Name.notEmpty()) {
         // Never change this log, otherwise clients will stop interprete the output.
-	  	  MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device], i);
+        MsgLog("Found Audio Device %ls (%s) at index %llu\n", AudioList[i].Name.wc_str(), AudioOutputNames[AudioList[i].Device], i);
       }
     }
     
     if (!GlobalConfig.isFastBoot()) {
 //      CHAR16 *TmpArgs;
       if (gThemeNeedInit) {
-        InitTheme(TRUE);
+        UINTN      Size         = 0;
+        InitTheme((CHAR8*)GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size));
         gThemeNeedInit = FALSE;
-      } else if (gThemeChanged) {
+      } else if (GlobalConfig.gThemeChanged) {
         DBG("change theme\n");
-        InitTheme(FALSE);
+        InitTheme(NULL);
         //OptionMenu.FreeMenu(); // it is already freed at loop beginning
         AboutMenu.Entries.setEmpty();
         HelpMenu.Entries.setEmpty();
@@ -2999,7 +3169,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
 
     DefaultIndex = FindDefaultEntry();
-//	  DBG("DefaultIndex=%lld and MainMenu.Entries.size()=%llu\n", DefaultIndex, MainMenu.Entries.size());
+//    DBG("DefaultIndex=%lld and MainMenu.Entries.size()=%llu\n", DefaultIndex, MainMenu.Entries.size());
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.Entries.size())) {
       DefaultEntry = &MainMenu.Entries[DefaultIndex];
     } else {
@@ -3034,13 +3204,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         MainMenu.GetAnime();
-        if (gThemeChanged) {
-          gThemeChanged = FALSE;
+        if (GlobalConfig.gThemeChanged) {
+          GlobalConfig.gThemeChanged = FALSE;
           ThemeX.ClearScreen();
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
-//		DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
+//    DBG("exit from MainMenu %llu\n", MenuExit); //MENU_EXIT_ENTER=(1) MENU_EXIT_DETAILS=3
       // disable default boot - have sense only in the first run
       gSettings.Boot.Timeout = -1;
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
@@ -3054,9 +3224,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
       if (MenuExit == MENU_EXIT_OPTIONS){
-        gBootChanged = FALSE;
+        GlobalConfig.gBootChanged = FALSE;
         OptionsMenu(&OptionEntry);
-        if (gBootChanged) {
+        if (GlobalConfig.gBootChanged) {
           AfterTool = TRUE;
           MainLoopRunning = FALSE;
           break;
@@ -3133,11 +3303,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         AfterTool = TRUE;
       }
       if ( ChosenEntry->getREFIT_MENU_ITEM_OPTIONS() ) {    // Options like KernelFlags, DSDTname etc.
-        gBootChanged = FALSE;
+        GlobalConfig.gBootChanged = FALSE;
         OptionsMenu(&OptionEntry);
-        if (gBootChanged)
+        if (GlobalConfig.gBootChanged)
           AfterTool = TRUE;
-        if (gBootChanged || gThemeChanged) // If theme has changed reinit the desktop
+        if (GlobalConfig.gBootChanged || GlobalConfig.gThemeChanged) // If theme has changed reinit the desktop
           MainLoopRunning = FALSE;
       }
       if ( ChosenEntry->getREFIT_MENU_ITEM_ABOUT() ) {    // About rEFIt
@@ -3266,7 +3436,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                     (UINT16*)&BootNum
                                     );
               if (!EFI_ERROR(Status)) {
-				  DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
+          DBG("Entry %lld assigned option %04llX\n", EntryIndex, BootNum);
                 Entry->BootNum = BootNum;
               }
               FreePool(OptionalData);
@@ -3328,7 +3498,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   UninitializeConsoleSim ();
 
+#ifdef CLOVER_BUILD
   destruct_globals_objects(NULL);
+#endif
 
   return EFI_SUCCESS;
 }

@@ -62,60 +62,61 @@ typedef UINT64	__uint64_t;
 // From xnu/osfmk/mach/i386/_structs.h:
 //
 
-#define	_STRUCT_X86_THREAD_STATE32	struct __darwin_i386_thread_state
-_STRUCT_X86_THREAD_STATE32
-{
-    // all fields are unsigned int in xnu rources
-	  UINT32	eax;
-    UINT32	ebx;
-    UINT32	ecx;
-    UINT32	edx;
-    UINT32	edi;
-    UINT32	esi;
-    UINT32	ebp;
-    UINT32	esp;
-    UINT32	ss;
-    UINT32	eflags;
-    UINT32	eip;
-    UINT32	cs;
-    UINT32	ds;
-    UINT32	es;
-    UINT32	fs;
-    UINT32	gs;
-};
-
-#define	_STRUCT_X86_THREAD_STATE64	struct __darwin_x86_thread_state64
-_STRUCT_X86_THREAD_STATE64
-{
-	__uint64_t	rax;
-	__uint64_t	rbx;
-	__uint64_t	rcx;
-	__uint64_t	rdx;
-	__uint64_t	rdi;
-	__uint64_t	rsi;
-	__uint64_t	rbp;
-	__uint64_t	rsp;
-	__uint64_t	r8;
-	__uint64_t	r9;
-	__uint64_t	r10;
-	__uint64_t	r11;
-	__uint64_t	r12;
-	__uint64_t	r13;
-	__uint64_t	r14;
-	__uint64_t	r15;
-	__uint64_t	rip;
-	__uint64_t	rflags;
-	__uint64_t	cs;
-	__uint64_t	fs;
-	__uint64_t	gs;
-};
-
 //
-// From xnu/osfmk/mach/i386/thread_status.h:
+//#define	_STRUCT_X86_THREAD_STATE32	struct __darwin_i386_thread_state
+//_STRUCT_X86_THREAD_STATE32
+//{
+//    // all fields are unsigned int in xnu rources
+//	  UINT32	eax;
+//    UINT32	ebx;
+//    UINT32	ecx;
+//    UINT32	edx;
+//    UINT32	edi;
+//    UINT32	esi;
+//    UINT32	ebp;
+//    UINT32	esp;
+//    UINT32	ss;
+//    UINT32	eflags;
+//    UINT32	eip;
+//    UINT32	cs;
+//    UINT32	ds;
+//    UINT32	es;
+//    UINT32	fs;
+//    UINT32	gs;
+//};
 //
-typedef _STRUCT_X86_THREAD_STATE32 i386_thread_state_t;
-typedef _STRUCT_X86_THREAD_STATE64 x86_thread_state64_t;
-
+//#define	_STRUCT_X86_THREAD_STATE64	struct __darwin_x86_thread_state64
+//_STRUCT_X86_THREAD_STATE64
+//{
+//	__uint64_t	rax;
+//	__uint64_t	rbx;
+//	__uint64_t	rcx;
+//	__uint64_t	rdx;
+//	__uint64_t	rdi;
+//	__uint64_t	rsi;
+//	__uint64_t	rbp;
+//	__uint64_t	rsp;
+//	__uint64_t	r8;
+//	__uint64_t	r9;
+//	__uint64_t	r10;
+//	__uint64_t	r11;
+//	__uint64_t	r12;
+//	__uint64_t	r13;
+//	__uint64_t	r14;
+//	__uint64_t	r15;
+//	__uint64_t	rip;
+//	__uint64_t	rflags;
+//	__uint64_t	cs;
+//	__uint64_t	fs;
+//	__uint64_t	gs;
+//};
+//
+////
+//// From xnu/osfmk/mach/i386/thread_status.h:
+////
+//typedef _STRUCT_X86_THREAD_STATE32 i386_thread_state_t;
+//typedef _STRUCT_X86_THREAD_STATE64 x86_thread_state64_t;
+//
 
 
 #endif /* _UEFI_MACHO_LOADER_H_ */

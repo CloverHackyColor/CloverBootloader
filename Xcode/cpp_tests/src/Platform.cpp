@@ -60,12 +60,19 @@ void CpuDeadLoop(void)
 
 void DebugLog(INTN DebugMode, const char *FormatString, ...)
 {
-	(void)DebugMode;
+  (void)DebugMode;
 
-	va_list va;
-	va_start(va, FormatString);
-	vprintf(FormatString, va);
-	va_end(va);
+  va_list va;
+  va_start(va, FormatString);
+  // on macOs, printf family function are broken with UTF-16
+  #if __WCHAR_MAX__ <= 0xFFFF
+    char buf[4095];
+    vsnprintfl(buf, sizeof(buf)-1, FormatString, va);
+    printf("%s", buf);
+  #else
+    vprintf(FormatString, va);
+  #endif
+  va_end(va);
 }
 
 void PauseForKey(const wchar_t* msg)

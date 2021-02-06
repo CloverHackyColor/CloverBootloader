@@ -3,18 +3,24 @@
 
 #include "../cpp_foundation/XObjArray.h"
 #include "../cpp_foundation/XString.h"
+#include "../Platform/Self.h"
 #include "libeg.h"
-//#include "nanosvg.h"
 #include "XImage.h"
 #include "XIcon.h"
 #include "XCinema.h"
-#include "Self.h"
+
 
 class TagDict;
-
 class TagStruct;
 
 #define INDICATOR_SIZE (52)
+#define CONFIG_THEME_FILENAME L"theme.plist"
+#define CONFIG_THEME_SVG L"theme.svg"
+#define HEIGHT_2K 1100
+
+
+EFI_STATUS InitTheme (const CHAR8* ChosenTheme);
+
 
 class XTheme
 {
@@ -177,7 +183,7 @@ public:
   void FillByEmbedded();
   void FillByDir();
   EFI_STATUS GetThemeTagSettings(const TagDict* DictPointer);
-  void parseTheme(void* p, const char** dict); //in nano project
+  void parseTheme(void* p, char** dict); //in nano project
   EFI_STATUS ParseSVGXTheme(const CHAR8* buffer); // in VectorTheme
   EFI_STATUS ParseSVGXIcon(INTN Id, const XString8& IconNameX, XImage* Image, void **SVGIcon);
   TagDict* LoadTheme(const XStringW& TestTheme); //return TagStruct* why?
@@ -193,4 +199,8 @@ protected:
   //internal layout variables instead of globals in menu.cpp
 
 };
+
+extern XTheme ThemeX;
+
+
 #endif

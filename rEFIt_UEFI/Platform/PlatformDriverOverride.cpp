@@ -9,7 +9,7 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-#include <Protocol/PlatformDriverOverride.h>
+#include <Efi.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_PLO 1

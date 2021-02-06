@@ -1504,7 +1504,7 @@ void transmitSPrintf(const char* buf, unsigned int nbchar, void* context)
 	SPrintfContext->printf_callback_vsnprintf_count += nbchar;
 }
 
-int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUFFIX)(char* buf, size_t len, const char *__restrict format, va_list valist)
+int (PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUFFIX))(char* buf, size_t len, const char *__restrict format, va_list valist)
 {
 	SPrintfContext_t SPrintfContext;
 	SPrintfContext.printf_callback_vsnprintf_buffer = buf;
@@ -1519,7 +1519,7 @@ int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUF
 	return SPrintfContext.printf_callback_vsnprintf_count;
 }
 
-int PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, snprint, PRINTF_CFUNCTION_SUFFIX)(char* buf, size_t len, const char *__restrict format, ...)
+int (PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, snprint, PRINTF_CFUNCTION_SUFFIX))(char* buf, size_t len, const char *__restrict format, ...)
 {
 	va_list valist;
 	va_start(valist, format);

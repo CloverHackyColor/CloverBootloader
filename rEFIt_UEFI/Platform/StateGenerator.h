@@ -6,6 +6,8 @@
 #ifndef __LIBSAIO_ACPI_PATCHER_H
 #define __LIBSAIO_ACPI_PATCHER_H
 
+#include <IndustryStandard/Acpi10.h>
+#include <IndustryStandard/Acpi20.h>
 #include "AmlGenerator.h"
 
 #ifndef DEBUG_AML

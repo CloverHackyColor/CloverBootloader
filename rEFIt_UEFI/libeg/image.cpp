@@ -34,6 +34,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
+
 #include "libegint.h"
 #include "lodepng.h"
 

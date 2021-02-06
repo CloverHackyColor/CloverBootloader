@@ -11,8 +11,9 @@ extern "C" {
 #include "../Platform/Settings.h"
 #include "../Platform/guid.h"
 #include "../Platform/SelfOem.h"
+#include "../Platform/KextList.h"
 #include "MemoryOperation.h"
-#include "../include/OsType.h"
+#include "../include/OSTypes.h"
 
 #ifndef DEBUG_ALL
 #define KEXT_INJECT_DEBUG 1
@@ -35,7 +36,8 @@ extern "C" {
 ////////////////////
 // globals
 ////////////////////
-LIST_ENTRY gKextList = INITIALIZE_LIST_HEAD_VARIABLE (gKextList);
+//LIST_ENTRY gKextList = INITIALIZE_LIST_HEAD_VARIABLE (gKextList);
+XObjArray<KEXT_ENTRY> gKextList;
 
 
 ////////////////////
@@ -295,13 +297,13 @@ EFI_STATUS LOADER_ENTRY::AddKext(const EFI_FILE *RootDir, const XString8& FileNa
   EFI_STATUS  Status;
   KEXT_ENTRY  *KextEntry;
 
-  KextEntry = (__typeof__(KextEntry))AllocatePool (sizeof(KEXT_ENTRY));
+  KextEntry = new KEXT_ENTRY();
   KextEntry->Signature = KEXT_SIGNATURE;
   Status = LoadKext(RootDir, FileName, archCpuType, &KextEntry->kext);
   if(EFI_ERROR(Status)) {
-    FreePool(KextEntry);
+    delete KextEntry;
   } else {
-    InsertTailList (&gKextList, &KextEntry->Link);
+    gKextList.AddReference(KextEntry, true);
   }
 
   return Status;
@@ -320,25 +322,20 @@ UINT32 GetListCount(LIST_ENTRY const* List)
   return Count;
 }
 
-UINT32 GetKextCount()
-{
-  return (UINT32)GetListCount(&gKextList);
-}
-
-UINT32 GetKextsSize()
-{
-  LIST_ENTRY    *Link;
-  KEXT_ENTRY    *KextEntry;
-  UINT32        kextsSize=0;
-
-  if(!IsListEmpty(&gKextList)) {
-    for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
-      KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
-      kextsSize += RoundPage(KextEntry->kext.length);
-    }
-  }
-  return kextsSize;
-}
+//UINT32 GetKextsSize()
+//{
+//  LIST_ENTRY    *Link;
+//  KEXT_ENTRY    *KextEntry;
+//  UINT32        kextsSize=0;
+//
+//  if(!IsListEmpty(&gKextList)) {
+//    for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
+//      KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
+//      kextsSize += RoundPage(KextEntry->kext.length);
+//    }
+//  }
+//  return kextsSize;
+//}
 
 void LOADER_ENTRY::LoadPlugInKexts(const EFI_FILE *RootDir, const XString8& DirName, IN cpu_type_t archCpuType, IN BOOLEAN Force)
 {
@@ -815,27 +812,23 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
   UINT8                             *drvPtr = 0;
   UINTN                             offset = 0;
 
-  LIST_ENTRY                        *Link;
-  KEXT_ENTRY                        *KextEntry;
   UINTN                             KextBase = 0;
   _DeviceTreeBuffer                 *mm;
   _BooterKextFileInfo               *drvinfo;
 
-  UINT32                            KextCount;
   UINTN                             Index;
 
 
   DBG_RT("\nInjectKexts: ");
   DBG("\nInjectKexts: ");
-  KextCount = GetKextCount();
-  if (KextCount == 0) {
+  if (gKextList.size() == 0) {
     DBG_RT("no kexts to inject.\nPausing 5 secs ...\n");
     if (KernelAndKextPatches.KPDebug) {
       gBS->Stall(5000000);
     }
     return EFI_NOT_FOUND;
   }
-  DBG_RT("%d kexts ...\n", KextCount);
+  DBG_RT("%zu kexts ...\n", gKextList.size());
 
   // kextsBase = Desc->PhysicalStart + (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
   // kextsPages = EFI_SIZE_TO_PAGES(kext.length);
@@ -893,10 +886,10 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
   *deviceTreeLength -= (UINT32)offset;
 
   KextBase = RoundPage(dtEntry + *deviceTreeLength);
-  if(!IsListEmpty(&gKextList)) {
+  if( gKextList.notEmpty() ) {
     Index = 1;
-    for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
-      KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
+    for (size_t gKextListIdx = 0; gKextListIdx < gKextList.size(); ++gKextListIdx) {
+      KEXT_ENTRY* KextEntry = &gKextList[gKextListIdx];
 
       CopyMem((void*) KextBase, (void*)(UINTN) KextEntry->kext.paddr, KextEntry->kext.length);
       drvinfo = (_BooterKextFileInfo*) KextBase;

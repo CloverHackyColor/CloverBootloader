@@ -2003,7 +2003,7 @@ typedef struct {
   EFI_ACPI_6_3_HARDWARE_ERROR_NOTIFICATION_STRUCTURE    NotificationStructure;
   UINT8                                                 NumberOfHardwareBanks;
   UINT8                                                 Reserved1[3];
-} EFI_ACPI_6_3_IA32_ARCHITECTURE_DEFERRED_MACHINE_CHECK_STRUCTURE;;
+} EFI_ACPI_6_3_IA32_ARCHITECTURE_DEFERRED_MACHINE_CHECK_STRUCTURE;
 
 ///
 /// HMAT - Heterogeneous Memory Attribute Table

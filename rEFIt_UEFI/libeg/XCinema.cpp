@@ -9,7 +9,9 @@
 
 #include "libegint.h"
 #include "XCinema.h"
-#include "../gui/REFIT_MENU_SCREEN.h"
+//#include "../gui/REFIT_MENU_SCREEN.h"
+#include "../libeg/XTheme.h"
+#include "../refit/lib.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_CINEMA 0
@@ -23,44 +25,6 @@
 #define DBG(...) DebugLog(DEBUG_CINEMA, __VA_ARGS__)
 #endif
 
-
-//Screen.UpdateAnime(); called from Menu cycle wait for event
-
-// object XCinema Cinema is a part of Theme
-// object FILM* FilmC is a part or current Screen. Must be initialized from Cinema somewhere on Screen init
-// assumed one Film per screen
-void REFIT_MENU_SCREEN::UpdateFilm()
-{
-  if (FilmC == nullptr || !FilmC->AnimeRun) {
-//    DBG("no anime -> run=%d\n", FilmC->AnimeRun?1:0);
-    return;
-  }
-  // here we propose each screen has own link to a Film
-  INT64      Now = AsmReadTsc();
-
-  if (FilmC->LastDraw == 0) {
-    DBG("=== Update Film ===\n");
-    DBG("FilmX=%lld\n", FilmC->FilmX);
-    DBG("ID=%lld\n", FilmC->GetIndex());
-    DBG("RunOnce=%d\n", FilmC->RunOnce?1:0);
-    DBG("NumFrames=%lld\n", FilmC->NumFrames);
-    DBG("FrameTime=%lld\n", FilmC->FrameTime);
-    DBG("Path=%ls\n", FilmC->Path.wc_str());
-    DBG("LastFrame=%lld\n\n", FilmC->LastFrameID());
-  }
-
-  if (TimeDiff(FilmC->LastDraw, Now) < (UINTN)FilmC->FrameTime) return;
-
-  XImage Frame = FilmC->GetImage(); //take current image
-  if (!Frame.isEmpty()) {
-    Frame.DrawOnBack(FilmC->FilmPlace.XPos, FilmC->FilmPlace.YPos, ThemeX.Background);
-  }
-  FilmC->Advance(); //next frame no matter if previous was not found
-  if (FilmC->Finished()) { //first loop finished
-    FilmC->AnimeRun = !FilmC->RunOnce; //will stop anime if it set as RunOnce
-  }
-  FilmC->LastDraw = Now;
-}
 
 FILM* XCinema::GetFilm(INTN Id)
 {
@@ -126,6 +90,7 @@ void FILM::AddFrame(XImage* Frame, INTN Index)
   }
 }
 
+
 void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path already exist as a member. Is it the same ?
 {
   const EFI_FILE *ThemeDir = &TheTheme.getThemeDir();
@@ -149,3 +114,5 @@ void FILM::GetFrames(XTheme& TheTheme /*, const XStringW& Path*/) // Path alread
     }
   }
 }
+
+

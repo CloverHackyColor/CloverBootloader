@@ -25,21 +25,9 @@
 #ifndef _EFI_HDA_CODEC_DUMP_H_
 #define _EFI_HDA_CODEC_DUMP_H_
 
-extern "C" {
-// Common UEFI includes and library classes.
-#include <Uefi.h>
-#include <Library/BaseLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiLib.h>
-
-#include <Library/HdaVerbs.h>
-
-// Consumed protocols.
-#include <Protocol/HdaCodecInfo.h>
-}
+//extern "C" {
+//// Common UEFI includes and library classes.
+//}
 
 #define HDA_MAX_CONNS		32
 #define HDA_MAX_NAMELEN		32

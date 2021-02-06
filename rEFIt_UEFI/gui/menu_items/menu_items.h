@@ -35,11 +35,15 @@
 #ifndef __menu_items_H__
 #define __menu_items_H__
 
-
+#include <Efi.h>
+#include "../../Platform/KERNEL_AND_KEXT_PATCHES.h"
+#include "../../Platform/plist/plist.h"
 #include "../../libeg/libeg.h"
+#include "../../libeg/XIcon.h"
 #include "../../refit/lib.h"
-#include <UefiLoader.h>
+#include <UefiLoader.h> // for cpu_type_t
 #include "../../Platform/boot.h"
+#include "../../Platform/Volumes.h"
 
 #include "../../cpp_foundation/XObjArray.h"
 #include "../../cpp_foundation/XStringArray.h"

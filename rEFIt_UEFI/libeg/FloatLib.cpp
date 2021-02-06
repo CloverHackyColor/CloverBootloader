@@ -298,7 +298,7 @@ AsciiStrToFloat(IN  CONST CHAR8              *String,
 
 /*
  //Slice - this is my replacement for standard
- qsort(void* Array, int Num, size_t Size,
+ nsvg_qsort(void* Array, int Num, size_t Size,
        int (*compare)(void* a, void* b))
  usage qsort(Array, Num, sizeof(*Array), compare);
  where for example

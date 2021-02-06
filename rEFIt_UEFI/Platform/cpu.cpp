@@ -39,6 +39,7 @@
 #include "smbios.h"
 #include "kernel_patcher.h"
 #include "../Platform/Settings.h"
+#include <Register/Intel/ArchitecturalMsr.h>
 
 #ifndef DEBUG_ALL
 #define DEBUG_CPU 1
@@ -65,7 +66,6 @@
 UINT8              gDefaultType; 
 CPU_STRUCTURE      gCPUStructure;
 UINT64            TurboMsr;
-BOOLEAN           NeedPMfix = FALSE;
 
 //this must not be defined at LegacyBios calls
 #define EAX 0
@@ -140,7 +140,7 @@ void GetCPUProperties (void)
   gCPUStructure.MinRatio = 10; //same
   gCPUStructure.SubDivider = 0;
   gSettings.CpuFreqMHz = 0;
-  gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
+  gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, Kilo); //kHz -> Hz
   gCPUStructure.ProcessorInterconnectSpeed = 0;
   gCPUStructure.Mobile = FALSE; //not same as gMobile
   
@@ -360,7 +360,7 @@ void GetCPUProperties (void)
     DoCpuid(7, gCPUStructure.CPUID[CPUID_7]);
     if ((gCPUStructure.CPUID[CPUID_7][EBX] & BIT1) != 0) {
       DBG(" IA32_TSC_ADJUST MSR is supported \n");
-      msr = AsmReadMsr64(IA32_TSC_ADJUST);  //0x3B
+      msr = AsmReadMsr64(MSR_IA32_TSC_ADJUST);  //0x3B
       DBG(" value to adjust = %llu\n", msr);
     }
   }
@@ -530,7 +530,7 @@ void GetCPUProperties (void)
              MsgLog("MSR 0xE2 before patch %08llX\n", msr);
              if (msr & 0x8000) {
                MsgLog("MSR 0xE2 is locked, PM patches will be turned on\n");
-               NeedPMfix = TRUE;
+               GlobalConfig.NeedPMfix = TRUE;
              }
              //   AsmWriteMsr64(MSR_PKG_CST_CONFIG_CONTROL, (msr & 0x8000000ULL));
              //   msr = AsmReadMsr64(MSR_PKG_CST_CONFIG_CONTROL);
@@ -1064,30 +1064,30 @@ void GetCPUProperties (void)
     case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
     case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
       ExternalClock = gCPUStructure.ExternalClock;
-      //DBG("Read original ExternalClock: %d MHz\n", (INT32)(DivU64x32(ExternalClock, kilo)));
+      //DBG("Read original ExternalClock: %d MHz\n", (INT32)(DivU64x32(ExternalClock, Kilo)));
       break;
     default:
       ExternalClock = gCPUStructure.ExternalClock;
-      //DBG("Read original ExternalClock: %d MHz\n", (INT32)(DivU64x32(ExternalClock, kilo)));
+      //DBG("Read original ExternalClock: %d MHz\n", (INT32)(DivU64x32(ExternalClock, Kilo)));
 
       // for sandy bridge or newer
       // to match ExternalClock 25 MHz like real mac, divide ExternalClock by 4
       gCPUStructure.ExternalClock = (ExternalClock + 3) / 4;
-      //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+      //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
       break;
   }
 
   // DBG("take FSB\n");
   tmpU = gCPUStructure.FSBFrequency;
   //  DBG("divide by 1000\n");
-  BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
-	DBG("FSBFrequency = %llu MHz, DMI FSBFrequency = %llu MHz, ", DivU64x32 (tmpU + Mega - 1, Mega), DivU64x32 (ExternalClock + 499, kilo));
+  BusSpeed = (UINT32)DivU64x32(tmpU, Kilo); //Hz -> kHz
+	DBG("FSBFrequency = %llu MHz, DMI FSBFrequency = %llu MHz, ", DivU64x32 (tmpU + Mega - 1, Mega), DivU64x32 (ExternalClock + 499, Kilo));
   //now check if SMBIOS has ExternalClock = 4xBusSpeed
-  if ((BusSpeed > 50*kilo) &&
-      ((ExternalClock > BusSpeed * 3) || (ExternalClock < 50*kilo))) { //khz
+  if ((BusSpeed > 50*Kilo) &&
+      ((ExternalClock > BusSpeed * 3) || (ExternalClock < 50*Kilo))) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
-    tmpU = MultU64x32(ExternalClock, kilo); //kHz -> Hz
+    tmpU = MultU64x32(ExternalClock, Kilo); //kHz -> Hz
     gCPUStructure.FSBFrequency = tmpU;
   }
   tmpU = gCPUStructure.FSBFrequency;
@@ -1147,12 +1147,12 @@ void GetCPUProperties (void)
     DBG("qpimult %d\n", qpimult);
     qpibusspeed = MultU64x32(gCPUStructure.ExternalClock, qpimult * 2); //kHz
 	  DBG("qpibusspeed %llukHz\n", qpibusspeed);
-    gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
+    gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, Kilo); //kHz->MHz
     // set QPI for Nehalem
     gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed;
     
   } else {
-    gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), kilo); //kHz->MHz
+    gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), Kilo); //kHz->MHz
   }
   gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.MaxRatio), Mega * 10)); //kHz->MHz
   
@@ -1167,7 +1167,7 @@ void GetCPUProperties (void)
   DBG("CPU: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)));
   DBG("TSC: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.TSCFrequency, Mega)));
   DBG("PIS: %d MHz\n", (INT32)gCPUStructure.ProcessorInterconnectSpeed);
-  DBG("ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock + 499, kilo)));
+  DBG("ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock + 499, Kilo)));
   //#if DEBUG_PCI
   
   //  WaitForKeyPress("waiting for key press...\n");

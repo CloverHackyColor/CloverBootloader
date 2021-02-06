@@ -40,6 +40,7 @@
 #include "../Platform/b64cdecode.h"
 #include "XImage.h"
 #include "../refit/lib.h"
+#include "../libeg/XTheme.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 0
@@ -120,6 +121,10 @@ void DumpFloat2 (CONST char* s, float* t, int N)
     DBG("%c%d.%06d ", ((b == 0) && sign)?'-':' ', b, (int)(fabsf((a-(float)b)*1.0e6f)));
   }
   DBG("\n");
+#else
+  (void)s;
+  (void)t;
+  (void)N;
 #endif
 }
 
@@ -202,11 +207,11 @@ static void nsvg__parseContent(char* s,
 }
 
 static void nsvg__parseElement(char* s,
-                               void (*startelCb)(void* ud, const char* el, const char** attr),
+                               void (*startelCb)(void* ud, const char* el, char** attr),
                                void (*endelCb)(void* ud, const char* el),
                                void* ud)
 {
-  const char* attr[NSVG_XML_MAX_ATTRIBS];
+  char* attr[NSVG_XML_MAX_ATTRIBS];
   int nattr = 0;
   char* tagname;
   int start = 0;
@@ -288,7 +293,7 @@ static void nsvg__parseElement(char* s,
 }
 
 void nsvg__parseXML(char* input,
-                    void (*startelCb)(void* ud, const char* el, const char** attr),
+                    void (*startelCb)(void* ud, const char* el, char** attr),
                     void (*endelCb)(void* ud, const char* el),
                     void (*contentCb)(void* ud, char* s),
                     void* ud)
@@ -1904,7 +1909,7 @@ static int substr(const char* aClass, char* style)
 
 static void nsvg__parseStyle(NSVGparser* p, const char* str);
 
-static int nsvg__parseAttr(NSVGparser* p, const char* name, const char* value)
+static int nsvg__parseAttr(NSVGparser* p, const char* name, char* value)
 {
   float xform[6];
   //  DBG("parse Name:%s Value:%s\n", name, value);
@@ -2450,7 +2455,7 @@ static void nsvg__pathArcTo(NSVGparser* p, float* cpx, float* cpy, float* args, 
   *cpy = y2;
 }
 
-static void nsvg__parsePath(NSVGparser* p, const char** attr)
+static void nsvg__parsePath(NSVGparser* p, char** attr)
 {
   const char* s = NULL;
   char cmd = '\0';
@@ -2578,7 +2583,7 @@ static void nsvg__parsePath(NSVGparser* p, const char** attr)
   }
 }
 
-static void nsvg__parseRect(NSVGparser* p, const char** attr)
+static void nsvg__parseRect(NSVGparser* p, char** attr)
 {
   float x = 0.0f;
   float y = 0.0f;
@@ -2630,7 +2635,7 @@ static void nsvg__parseRect(NSVGparser* p, const char** attr)
   }
 }
 
-static void nsvg__parseUse(NSVGparser* p, const char** dict)
+static void nsvg__parseUse(NSVGparser* p, char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
   NSVGshape* shape = NULL;
@@ -2745,7 +2750,7 @@ static void nsvg__parseUse(NSVGparser* p, const char** dict)
 }
 
 
-static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
+static void nsvg__parseTextSpan(NSVGparser* p, char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
   NSVGtext* text = p->text;
@@ -2799,7 +2804,7 @@ static void nsvg__parseTextSpan(NSVGparser* p, const char** dict)
 //static int once = 0;
 //static int once2 = 0;
 
-static void nsvg__parseText(NSVGparser* p, const char** dict)
+static void nsvg__parseText(NSVGparser* p, char** dict)
 {
   float x = 0.0f;
   float y = 0.0f;
@@ -2969,7 +2974,7 @@ static void nsvg__parseText(NSVGparser* p, const char** dict)
   p->isText = TRUE;
 }
 
-static void nsvg__parseCircle(NSVGparser* p, const char** attr)
+static void nsvg__parseCircle(NSVGparser* p, char** attr)
 {
   float cx = 0.0f;
   float cy = 0.0f;
@@ -2996,7 +3001,7 @@ static void nsvg__parseCircle(NSVGparser* p, const char** attr)
   }
 }
 
-static void nsvg__parseEllipse(NSVGparser* p, const char** attr)
+static void nsvg__parseEllipse(NSVGparser* p, char** attr)
 {
   float cx = 0.0f;
   float cy = 0.0f;
@@ -3025,7 +3030,7 @@ static void nsvg__parseEllipse(NSVGparser* p, const char** attr)
   }
 }
 
-static void nsvg__parseLine(NSVGparser* p, const char** attr)
+static void nsvg__parseLine(NSVGparser* p, char** attr)
 {
   float x1 = 0.0;
   float y1 = 0.0;
@@ -3048,7 +3053,7 @@ static void nsvg__parseLine(NSVGparser* p, const char** attr)
   nsvg__addShape(p);
 }
 
-static void nsvg__parsePoly(NSVGparser* p, const char** attr, int closeFlag)
+static void nsvg__parsePoly(NSVGparser* p, char** attr, int closeFlag)
 {
   int i;
   const char* s;
@@ -3164,7 +3169,7 @@ static void nsvg__parsePoly(NSVGparser* p, const char** attr, int closeFlag)
  */
 
 //parse embedded PNG image
-static void parseImage(NSVGparser* p, const char** dict)
+static void parseImage(NSVGparser* p, char** dict)
 {
   //  NSVGattrib* attr = nsvg__getAttr(p);
   NSVGpattern *pt = NULL;
@@ -3206,7 +3211,7 @@ static void parseImage(NSVGparser* p, const char** dict)
   }
 }
 
-static void parsePattern(NSVGparser* p, const char** dict)
+static void parsePattern(NSVGparser* p, char** dict)
 {
   NSVGattrib* attr = nsvg__getAttr(p);
   int i;
@@ -3231,7 +3236,7 @@ static void parsePattern(NSVGparser* p, const char** dict)
   p->patterns = pt;
 }
 
-static void nsvg__parseSVG(NSVGparser* p, const char** attr)
+static void nsvg__parseSVG(NSVGparser* p, char** attr)
 {
   int i;
   for (i = 0; attr[i]; i += 2) {
@@ -3275,7 +3280,7 @@ static void nsvg__parseSVG(NSVGparser* p, const char** attr)
   }
 }
 
-static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
+static void nsvg__parseGradient(NSVGparser* p, char** attr, char type)
 {
   int i;
   NSVGgradientData* grad = (NSVGgradientData*)AllocateZeroPool(sizeof(NSVGgradientData));
@@ -3361,7 +3366,7 @@ static void nsvg__parseGradient(NSVGparser* p, const char** attr, char type)
   p->gradients = grad;
 }
 
-static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
+static void nsvg__parseGradientStop(NSVGparser* p, char** dict)
 {
   NSVGattrib* curAttr = nsvg__getAttr(p);
   NSVGgradientData* grad;
@@ -3408,7 +3413,7 @@ static void nsvg__parseGradientStop(NSVGparser* p, const char** dict)
   stop->offset = curAttr->stopOffset;
 }
 
-static void nsvg__parseSymbol(NSVGparser* p, const char** dict)
+static void nsvg__parseSymbol(NSVGparser* p, char** dict)
 {
   NSVGsymbol* symbol;
   NSVGattrib* curAttr = nsvg__getAttr(p);
@@ -3429,7 +3434,7 @@ static void nsvg__parseSymbol(NSVGparser* p, const char** dict)
   p->symbols = symbol;
 }
 
-static void nsvg__parseGroup(NSVGparser* p, const char** dict)
+static void nsvg__parseGroup(NSVGparser* p, char** dict)
 {
   NSVGgroup* group;
   NSVGattrib* oldAttr = nsvg__getAttr(p);
@@ -3473,7 +3478,7 @@ static void nsvg__parseGroup(NSVGparser* p, const char** dict)
 }
 
 //parse Clover settings for theme
-void XTheme::parseTheme(void* parser, const char** dict)
+void XTheme::parseTheme(void* parser, char** dict)
 {
   NSVGparser* p = (NSVGparser*)parser;
   BOOLEAN found = FALSE;
@@ -3552,7 +3557,7 @@ void XTheme::parseTheme(void* parser, const char** dict)
 
 
 // parse embedded font
-static void nsvg__parseFont(NSVGparser* p, const char** dict)
+static void nsvg__parseFont(NSVGparser* p, char** dict)
 {
   int i;
   NSVGfont* font;
@@ -3587,7 +3592,7 @@ static void nsvg__parseFont(NSVGparser* p, const char** dict)
   fontsDB = fontChain;
 }
 
-static void nsvg__parseFontFace(NSVGparser* p, const char** dict)
+static void nsvg__parseFontFace(NSVGparser* p, char** dict)
 {
   int i;
   if (!p) {
@@ -3718,7 +3723,7 @@ CHAR16 nsvg__parseUnicode(const char *s)
   return A;
 }
 
-static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
+static void nsvg__parseGlyph(NSVGparser* p, char** dict, BOOLEAN missing)
 {
   //glyph-name="E_d" unicode="Ed" horiz-adv-x="1289" d="M679 ..."/>
   /*
@@ -3785,7 +3790,7 @@ static void nsvg__parseGlyph(NSVGparser* p, const char** dict, BOOLEAN missing)
   //  DBG("glyph %X parsed\n", glyph->unicode);
 }
 
-static void nsvg__startElement(void* ud, const char* el, const char** dict)
+static void nsvg__startElement(void* ud, const char* el, char** dict)
 {
   NSVGparser* p = (NSVGparser*)ud;
   if (!p) {

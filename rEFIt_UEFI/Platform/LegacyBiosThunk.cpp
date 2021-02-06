@@ -12,6 +12,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
+
 #include "LegacyBiosThunk.h"
 #include <posix.h>
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile

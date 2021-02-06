@@ -38,7 +38,7 @@
 
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-#include "../include/OsType.h"
+#include "../include/OSTypes.h"
 #include "Nvram.h"
 #include "platformdata.h"
 #include "smbios.h"
@@ -477,7 +477,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
   }
 
   // Save values into gSettings for the genconfig aim
-  gSettings.BusSpeed   = (UINT32)DivU64x32(FrontSideBus, kilo);
+  gSettings.BusSpeed   = (UINT32)DivU64x32(FrontSideBus, Kilo);
 
   CpuSpeed = gCPUStructure.CPUFrequency;
   gSettings.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);

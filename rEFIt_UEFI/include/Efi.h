@@ -17,21 +17,28 @@ extern "C" {
 #include <Library/printf_lite.h>
 
 #include <Uefi.h>
+#include <Uefi/UefiSpec.h>
 
 #include <Guid/Acpi.h>
 #include <Guid/EventGroup.h>
 #include <Guid/SmBios.h>
 #include <Guid/Mps.h>
 #include <Guid/FileInfo.h>
+#include <Guid/FileSystemInfo.h>
+#include <Guid/FileSystemVolumeLabelInfo.h>
 #include <Guid/GlobalVariable.h>
 
 #include <Pi/PiDxeCis.h>
+
+#include <Protocol/DevicePath.h> // before #include <Library/DevicePathLib.h>
 
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
-//#include <Library/DeviceTreeLib.h>
+#include <Uefi/UefiInternalFormRepresentation.h>
+#include <Protocol/SimpleTextIn.h>
+#include <Protocol/SimpleTextOut.h>
 #include <Library/GenericBdsLib.h>
 #include <Library/HiiLib.h>
 #include <Library/HdaModels.h>
@@ -54,6 +61,8 @@ extern "C" {
 #include <Library/DxeServicesTableLib.h>
 #include <Library/HobLib.h>
 #include <Library/SerialPortLib.h>
+#include <Library/HdaVerbs.h>
+#include <Library/NetLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 
@@ -89,6 +98,12 @@ extern "C" {
 #include <Protocol/ScsiIo.h>
 #include <Protocol/LegacyBios.h>
 #include <Protocol/EdidActive.h>
+#include <Protocol/PlatformDriverOverride.h>
+#include <Protocol/Legacy8259.h>
+#include <Protocol/Timer.h>
+#include <Protocol/OSInfo.h>
+#include <Protocol/AppleGraphConfig.h>
+#include <Protocol/KeyboardInfo.h>
 
 #include <Protocol/FSInjectProtocol.h>
 #include <Protocol/MsgLog.h>
@@ -96,6 +111,7 @@ extern "C" {
 #include <Protocol/EmuVariableControl.h>
 #include <Protocol/AppleSMC.h>
 #include <Protocol/AppleImageCodecProtocol.h>
+#include <Protocol/HdaCodecInfo.h>
 
 #include "../../OpenCorePkg/Include/Acidanthera/Library/OcConsoleLib.h"
 #ifdef __cplusplus

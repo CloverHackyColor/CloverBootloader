@@ -192,6 +192,12 @@
 		9AD0359525C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
 		9AD0359625C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
 		9AD0359725C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
+		9AFDD0CB25CE798300EEAF06 /* MemoryOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB325347C36008303F5 /* MemoryOperation.c */; };
+		9AFDD0CC25CE798300EEAF06 /* MemoryOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB325347C36008303F5 /* MemoryOperation.c */; };
+		9AFDD0CD25CE798300EEAF06 /* MemoryOperation.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB325347C36008303F5 /* MemoryOperation.c */; };
+		9AFDD0CE25CE799300EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */; };
+		9AFDD0CF25CE799300EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */; };
+		9AFDD0D025CE799400EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -354,7 +360,6 @@
 		9AD0359325C57C8A00E58351 /* PrintLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PrintLib.c; sourceTree = "<group>"; };
 		9AD469472452B33700D6D0DB /* shared_with_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shared_with_menu.cpp; sourceTree = "<group>"; };
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
-		9AF4156D242CBC4900D2644C /* printf_lite-conf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "printf_lite-conf.h"; path = "../../Include/Library/printf_lite-conf.h"; sourceTree = "<group>"; };
 		9AF4156F242CBE7500D2644C /* printlib-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test.h"; sourceTree = "<group>"; };
 		9AF41570242CBE7500D2644C /* printlib-test-cpp_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "printlib-test-cpp_conf.h"; sourceTree = "<group>"; };
 		9AF41573242CBE7600D2644C /* printlib-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "printlib-test.cpp"; sourceTree = "<group>"; };
@@ -417,18 +422,20 @@
 		9A0B084C2402FE9B00E2B470 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
+				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */,
 				9A838CA2253423F0008303F5 /* find_replace_mask_Clover_tests.h */,
 				9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */,
 				9A838CA1253423F0008303F5 /* find_replace_mask_OC_tests.h */,
-				9A36E52A24F3C845007A1107 /* plist_tests.cpp */,
-				9A36E52B24F3C846007A1107 /* plist_tests.h */,
-				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
-				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A0B08642403144C00E2B470 /* global_test.cpp */,
 				9A57C20A2418A1FD0029A39F /* global_test.h */,
 				9A4185AF2439E4D500BEAFB8 /* LoadOptions_test.cpp */,
 				9A4185B02439E4D600BEAFB8 /* LoadOptions_test.h */,
+				9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */,
+				9A4C576F255AB280004F0B21 /* MacOsVersion_test.h */,
+				9A36E52A24F3C845007A1107 /* plist_tests.cpp */,
+				9A36E52B24F3C846007A1107 /* plist_tests.h */,
 				9AF41574242CBE7600D2644C /* printf_lite-test-cpp_conf.h */,
 				9AA045892425F94D000D6970 /* printf_lite-test.cpp */,
 				9AA045882425F94D000D6970 /* printf_lite-test.h */,
@@ -443,6 +450,8 @@
 				9A28CD08241B8DD400F3D247 /* strncmp_test.h */,
 				9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */,
 				9A0B084E2402FE9B00E2B470 /* XArray_tests.h */,
+				9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */,
+				9A670D1A24E535AB00B5D780 /* XBuffer_tests.h */,
 				9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */,
 				9A0B08502402FE9B00E2B470 /* XObjArray_tests.h */,
 				9A4FFA802451C88D0050B38B /* XString_test.cpp */,
@@ -451,10 +460,6 @@
 				9A0B084D2402FE9B00E2B470 /* XStringArray_test.h */,
 				9A9EA7F7245AAB310076EC02 /* XToolsCommon_test.cpp */,
 				9A9EA7F6245AAB310076EC02 /* XToolsCommon_test.h */,
-				9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */,
-				9A670D1A24E535AB00B5D780 /* XBuffer_tests.h */,
-				9A4C5770255AB280004F0B21 /* MacOsVersion_test.cpp */,
-				9A4C576F255AB280004F0B21 /* MacOsVersion_test.h */,
 			);
 			path = cpp_unit_test;
 			sourceTree = "<group>";
@@ -462,7 +467,6 @@
 		9A1A3FD82424BC22008C89EB /* MemLogLibDefault */ = {
 			isa = PBXGroup;
 			children = (
-				9AF4156D242CBC4900D2644C /* printf_lite-conf.h */,
 				9ACAB1182426240C00BDB3CF /* printf_lite.h */,
 				9ACAB116242623EE00BDB3CF /* printf_lite.c */,
 				9A1A3FDC2424BC22008C89EB /* printf_lite.h */,
@@ -769,6 +773,7 @@
 			files = (
 				9A36E50524F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50124F3B537007A1107 /* TagDict.cpp in Sources */,
+				9AFDD0CB25CE798300EEAF06 /* MemoryOperation.c in Sources */,
 				9A36E50D24F3B537007A1107 /* TagData.cpp in Sources */,
 				9AD0358D25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */,
 				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
@@ -810,6 +815,7 @@
 				9A838CBB25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1D24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458B2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
+				9AFDD0CE25CE799300EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A36E51524F3B537007A1107 /* TagFloat.cpp in Sources */,
 				9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */,
 			);
@@ -821,6 +827,7 @@
 			files = (
 				9A36E50724F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50324F3B537007A1107 /* TagDict.cpp in Sources */,
+				9AFDD0CD25CE798300EEAF06 /* MemoryOperation.c in Sources */,
 				9A36E50F24F3B537007A1107 /* TagData.cpp in Sources */,
 				9AD0358F25C57AFB00E58351 /* MemoryAllocationLib.c in Sources */,
 				9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */,
@@ -862,6 +869,7 @@
 				9A838CBD25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9A2A7C7F24576CCE00422263 /* printf_lite-test.cpp in Sources */,
+				9AFDD0D025CE799400EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A36E51724F3B537007A1107 /* TagFloat.cpp in Sources */,
 				9A2A7C8024576CCE00422263 /* Platform.cpp in Sources */,
 			);
@@ -873,6 +881,7 @@
 			files = (
 				9A36E50624F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50224F3B537007A1107 /* TagDict.cpp in Sources */,
+				9AFDD0CC25CE798300EEAF06 /* MemoryOperation.c in Sources */,
 				9A36E50E24F3B537007A1107 /* TagData.cpp in Sources */,
 				9AD0358E25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */,
 				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
@@ -914,6 +923,7 @@
 				9A838CBC25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1E24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458C2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
+				9AFDD0CF25CE799300EEAF06 /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A36E51624F3B537007A1107 /* TagFloat.cpp in Sources */,
 				9A57C2282418B9A00029A39F /* Platform.cpp in Sources */,
 			);
@@ -984,7 +994,11 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"sprintf=__sprintf_is_disabled__",
+					"wcscmp=__wcsncmp_is_disabled__",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1004,7 +1018,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"sprintf=__sprintf_is_disabled__",
+					"wcscmp=__wcsncmp_is_disabled__",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1025,7 +1043,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"sprintf=__sprintf_is_disabled__",
+					"wcslen=wcslen_fixed",
+					"wcscmp=__wcsncmp_is_disabled__",
+					"wcsncmp=wcsncmp_fixed",
+					"snprintf=snprintfl",
+				);
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fshort-wchar",
@@ -1243,7 +1268,13 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"sprintf=__sprintf_is_disabled__",
+					"wcslen=wcslen_fixed",
+					"wcscmp=__wcsncmp_is_disabled__",
+					"wcsncmp=wcsncmp_fixed",
+				);
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fshort-wchar",

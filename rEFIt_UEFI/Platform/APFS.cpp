@@ -6,6 +6,8 @@
  */
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include <Efi.h>
+
 #include "guid.h"
 #include "APFS.h"
 
