@@ -1038,6 +1038,8 @@ void LOADER_ENTRY::StartLoader()
     pos = setKextAtPos(&kextArray, "VoodooI2CServices.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "VoodooI2C.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "VoodooI2CHID.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "VoodooSMBus.kext"_XS8, pos);
+    pos = setKextAtPos(&kextArray, "VoodooRMI.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "BrcmFirmwareData.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM2.kext"_XS8, pos);
     pos = setKextAtPos(&kextArray, "BrcmPatchRAM3.kext"_XS8, pos);
