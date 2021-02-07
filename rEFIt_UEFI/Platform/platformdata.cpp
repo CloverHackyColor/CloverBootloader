@@ -969,6 +969,8 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacBookPro121:
+    case MacBookAir71:
+    case MacBookAir72:
       gPlatformFeature        = 0x02;
       break;
     case MacMini71:
