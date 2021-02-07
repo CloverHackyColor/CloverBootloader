@@ -29,6 +29,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include "DataHubExt.h"
 
 #define DATA_HUB_INSTANCE_SIGNATURE SIGNATURE_32 ('D', 'H', 'u', 'b')
 typedef struct {
@@ -126,4 +127,11 @@ typedef struct {
 
 #define FILTER_ENTRY_FROM_LINK(link)  CR (link, DATA_HUB_FILTER_DRIVER, Link, EFI_DATA_HUB_FILTER_DRIVER_SIGNATURE)
 
+extern
+EFI_STATUS
+EFIAPI
+DataHubInstall (
+                IN EFI_HANDLE           ImageHandle,
+                IN EFI_SYSTEM_TABLE     *SystemTable
+                );
 #endif

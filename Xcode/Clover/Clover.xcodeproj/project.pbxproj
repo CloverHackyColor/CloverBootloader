@@ -133,6 +133,7 @@
 		A5D12C38243A0C4D00DFA98A /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C37243A0C4D00DFA98A /* abort.cpp */; };
 		A5D12C3B243A0C9E00DFA98A /* stdio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C39243A0C9D00DFA98A /* stdio.cpp */; };
 		A5D12C3F243A0CBB00DFA98A /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5D12C3D243A0CBA00DFA98A /* wchar.cpp */; };
+		A5F9AF9225D024C200706BC0 /* DataHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F9AF9125D024C200706BC0 /* DataHub.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -7707,6 +7708,9 @@
 		A5E284352347AE900068ED34 /* AIM.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AIM.c; sourceTree = "<group>"; };
 		A5E284362347AE900068ED34 /* AIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AIM.h; sourceTree = "<group>"; };
 		A5E284372347AE900068ED34 /* AptioInputFix.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AptioInputFix.inf; sourceTree = "<group>"; };
+		A5F9AF8D25D024C100706BC0 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
+		A5F9AF9125D024C200706BC0 /* DataHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHub.cpp; sourceTree = "<group>"; };
+		A5F9AF9325D025B600706BC0 /* DataHubExt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHubExt.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -7868,6 +7872,9 @@
 				A52313252448B2BE00421FB2 /* Console.h */,
 				A5456D0D23FC5AEF000BF18C /* cpu.cpp */,
 				A52313262448B2CA00421FB2 /* cpu.h */,
+				A5F9AF9125D024C200706BC0 /* DataHub.cpp */,
+				A5F9AF8D25D024C100706BC0 /* DataHub.h */,
+				A5F9AF9325D025B600706BC0 /* DataHubExt.h */,
 				A5456D4623FC5B07000BF18C /* DataHubCpu.cpp */,
 				A52313272448B2D200421FB2 /* DataHubCpu.h */,
 				A5456D4523FC5B07000BF18C /* device_inject.cpp */,
@@ -23726,6 +23733,7 @@
 				A57CF7D4241BE0FC006DE51E /* strcmp_test.cpp in Sources */,
 				A5456D4A23FC5B08000BF18C /* FixBiosDsdt.cpp in Sources */,
 				A5456CDB23FC5A88000BF18C /* legacy.cpp in Sources */,
+				A5F9AF9225D024C200706BC0 /* DataHub.cpp in Sources */,
 				A5D12C3B243A0C9E00DFA98A /* stdio.cpp in Sources */,
 				12A60F5C1DB610500068BF8B /* load_icns.c in Sources */,
 				12A60F5D1DB610500068BF8B /* picopng.c in Sources */,

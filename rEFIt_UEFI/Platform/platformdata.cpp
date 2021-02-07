@@ -1470,4 +1470,8 @@ void GetDefaultCpuSettings()
   }
   gSettings.Turbo                = gCPUStructure.Turbo;
   gSettings.SavingMode           = 0xFF;  //means not set
+  
+  if (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_D) {
+    gSettings.UseARTFreq = true;
+  }
 }

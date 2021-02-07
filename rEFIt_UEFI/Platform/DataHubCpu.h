@@ -1,5 +1,5 @@
 /*
- * Nvram.h
+ * DataHubCpu.h
  *
  *  Created on: 16 Apr 2020
  *      Author: jief
@@ -9,6 +9,7 @@
 #define PLATFORM_DATAHUBCPU_H_
 
 #include "../gui/menu_items/menu_items.h"
+#include "DataHubExt.h"
 
 EFI_STATUS
 EFIAPI

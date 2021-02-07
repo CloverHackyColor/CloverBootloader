@@ -2609,6 +2609,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!gFirmwareRevision) {
 //    gFirmwareRevision = P__oolPrint(L"%d", gST->FirmwareRevision);
   }
+  DataHubInstall (ImageHandle, SystemTable);
   InitializeConsoleSim();
   InitBooterLog();
   ZeroMem((void*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);

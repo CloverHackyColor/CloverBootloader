@@ -273,6 +273,9 @@
   Platform/VersionString.h
   Platform/Volumes.cpp
   Platform/Volumes.h
+  Platform/DataHub.cpp
+  Platform/DataHub.h
+  Platform/DataHubExt.h
   ../Version.h
   cpp_util/globals_ctor.cpp
   cpp_util/globals_ctor.h

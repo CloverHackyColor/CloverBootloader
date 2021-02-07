@@ -3783,20 +3783,28 @@ static void getACPISettings(const TagDict *CfgDict)
       gSettings.EnableISS = IsPropertyNotNullAndTrue(Prop);
       
       Prop = SSDTDict->propertyForKey("EnableC7");
+      if (Prop) {
         gSettings.EnableC7 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC7: %s\n", gSettings.EnableC7 ? "yes" : "no");
+      }
       
       Prop = SSDTDict->propertyForKey("EnableC6");
+      if (Prop) {
         gSettings.EnableC6 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC6: %s\n", gSettings.EnableC6 ? "yes" : "no");
+      }
       
       Prop = SSDTDict->propertyForKey("EnableC4");
+      if (Prop) {
         gSettings.EnableC4 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC4: %s\n", gSettings.EnableC4 ? "yes" : "no");
+      }
       
       Prop = SSDTDict->propertyForKey("EnableC2");
+      if (Prop) {
         gSettings.EnableC2 = IsPropertyNotNullAndTrue(Prop);
         DBG("EnableC2: %s\n", gSettings.EnableC2 ? "yes" : "no");
+      }
       
       Prop = SSDTDict->propertyForKey("C3Latency");
         gSettings.C3Latency = (UINT16)GetPropertyAsInteger(Prop, gSettings.C3Latency);
@@ -3861,8 +3869,10 @@ static void getACPISettings(const TagDict *CfgDict)
     gSettings.NoASPM = IsPropertyNotNullAndTrue(Prop);
     
     Prop = ACPIDict->propertyForKey("smartUPS");
+    if (Prop) {
       gSettings.smartUPS   = IsPropertyNotNullAndTrue(Prop);
       DBG("smartUPS: present\n");
+    }
     
     Prop               = ACPIDict->propertyForKey("PatchAPIC");
     gSettings.PatchNMI = IsPropertyNotNullAndTrue(Prop);
@@ -4831,7 +4841,9 @@ GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& settingsData)
       }
 
       Prop = CPUDict->propertyForKey("UseARTFrequency");
-      settingsData.UseARTFreq = IsPropertyNotNullAndTrue(Prop);
+      if (Prop != NULL) {
+        settingsData.UseARTFreq = IsPropertyNotNullAndTrue(Prop);
+      }
 
       settingsData.UserChange = FALSE;
       Prop = CPUDict->propertyForKey("BusSpeedkHz");

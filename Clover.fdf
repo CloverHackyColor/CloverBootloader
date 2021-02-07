@@ -117,7 +117,7 @@ INF  CloverEFI/CpuDxe/Cpu.inf
 
     # DataHub
 #INF  VBoxAppleSim/VBoxAppleSim.inf
-INF Protocols/DataHubDxe/DataHubDxe.inf
+#INF Protocols/DataHubDxe/DataHubDxe.inf
 #INF Protocols/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support

@@ -629,7 +629,7 @@
   #DataHub
   #VBoxAppleSim/VBoxAppleSim.inf
   #IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-  Protocols/DataHubDxe/DataHubDxe.inf
+  #Protocols/DataHubDxe/DataHubDxe.inf
   #Protocols/DataHubStdErrDxe/DataHubStdErrDxe.inf
 
   # foreign file system support
