@@ -36,9 +36,10 @@
 bool all_tests()
 {
   bool all_ok = true;
-  int ret;
+
 
 #if defined(JIEF_DEBUG)
+  int ret;
   ret = xml_lite_tests();
   if ( ret != 0 ) {
     printf("xml_lite_tests() failed at test %d\n", ret);

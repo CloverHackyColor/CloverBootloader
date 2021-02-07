@@ -105,6 +105,9 @@
 		A5456D9023FC5B72000BF18C /* globals_dtor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8423FC5B6D000BF18C /* globals_dtor.cpp */; };
 		A5456D9123FC5B72000BF18C /* globals_ctor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8523FC5B6E000BF18C /* globals_ctor.cpp */; };
 		A5456D9623FC5B72000BF18C /* operatorNewDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D8E23FC5B71000BF18C /* operatorNewDelete.cpp */; };
+		A569B69E25D038510001B011 /* strings.c in Sources */ = {isa = PBXBuildFile; fileRef = A569B69925D038500001B011 /* strings.c */; };
+		A569B6A125D038760001B011 /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A569B69F25D038760001B011 /* config-test.cpp */; };
+		A569B6A425D038970001B011 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A569B6A325D038970001B011 /* xml_lite-test.cpp */; };
 		A570FB0D240D626D0057F26D /* XPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A570FB0B240D626C0057F26D /* XPointer.cpp */; };
 		A5716F83235968BE000CEC60 /* Nasm.inc in Sources */ = {isa = PBXBuildFile; fileRef = A5716F82235968BE000CEC60 /* Nasm.inc */; };
 		A571C28D240574DA00B6A2C5 /* XImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A571C28B240574D900B6A2C5 /* XImage.cpp */; };
@@ -900,6 +903,13 @@
 		A5456D8C23FC5B70000BF18C /* operatorNewDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = operatorNewDelete.h; sourceTree = "<group>"; };
 		A5456D8E23FC5B71000BF18C /* operatorNewDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = operatorNewDelete.cpp; sourceTree = "<group>"; };
 		A5456D8F23FC5B72000BF18C /* globals_ctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = globals_ctor.h; sourceTree = "<group>"; };
+		A569B69925D038500001B011 /* strings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strings.c; sourceTree = "<group>"; };
+		A569B69D25D038510001B011 /* strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strings.h; sourceTree = "<group>"; };
+		A569B69F25D038760001B011 /* config-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "config-test.cpp"; sourceTree = "<group>"; };
+		A569B6A025D038760001B011 /* config-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "config-test.h"; sourceTree = "<group>"; };
+		A569B6A225D038970001B011 /* xml_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "xml_lite-test.h"; sourceTree = "<group>"; };
+		A569B6A325D038970001B011 /* xml_lite-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "xml_lite-test.cpp"; sourceTree = "<group>"; };
+		A569B6A525D038C10001B011 /* DsdtFixList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DsdtFixList.h; sourceTree = "<group>"; };
 		A570FAFE240BA4D00057F26D /* menu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu.h; sourceTree = "<group>"; };
 		A570FAFF240BA4DB0057F26D /* screen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = screen.h; sourceTree = "<group>"; };
 		A570FB02240BA5340057F26D /* menu_items.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = menu_items.h; sourceTree = "<group>"; };
@@ -7784,6 +7794,7 @@
 			children = (
 				A513868325CFB25300F3E345 /* BootTypes.h */,
 				A52313162448B1E500421FB2 /* Devices.h */,
+				A569B6A525D038C10001B011 /* DsdtFixList.h */,
 				A52313172448B1E500421FB2 /* Efi.h */,
 				126151491A15BBB000903E7B /* Handle.h */,
 				A513868425CFB26000F3E345 /* OC.h */,
@@ -9409,6 +9420,8 @@
 			children = (
 				A571C285240574A100B6A2C5 /* all_tests.cpp */,
 				A571C288240574A100B6A2C5 /* all_tests.h */,
+				A569B69F25D038760001B011 /* config-test.cpp */,
+				A569B6A025D038760001B011 /* config-test.h */,
 				A513868C25CFB2DD00F3E345 /* find_replace_mask_Clover_tests.cpp */,
 				A513868D25CFB2DD00F3E345 /* find_replace_mask_Clover_tests.h */,
 				A513868E25CFB2DD00F3E345 /* find_replace_mask_OC_tests.cpp */,
@@ -9435,6 +9448,8 @@
 				A571C27E240574A100B6A2C5 /* XArray_tests.h */,
 				A529343524FB92AD004241C3 /* XBuffer_tests.cpp */,
 				A529343424FB92AC004241C3 /* XBuffer_tests.h */,
+				A569B6A325D038970001B011 /* xml_lite-test.cpp */,
+				A569B6A225D038970001B011 /* xml_lite-test.h */,
 				A571C286240574A100B6A2C5 /* XObjArray_tests.cpp */,
 				A571C284240574A100B6A2C5 /* XObjArray_tests.h */,
 				A57CF7D6241BE111006DE51E /* XString_test.cpp */,
@@ -9465,6 +9480,8 @@
 				A57CF7BD241BE0A4006DE51E /* stdlib.h */,
 				A513868125CFB20C00F3E345 /* string.cpp */,
 				A5D12C3C243A0CAD00DFA98A /* string.h */,
+				A569B69925D038500001B011 /* strings.c */,
+				A569B69D25D038510001B011 /* strings.h */,
 				A57CF7C3241BE0A4006DE51E /* strlen.cpp */,
 				A5D12C3D243A0CBA00DFA98A /* wchar.cpp */,
 				A5D12C3E243A0CBB00DFA98A /* wchar.h */,
@@ -23668,6 +23685,7 @@
 				A529343E24FB92E0004241C3 /* pure_virtual.cpp in Sources */,
 				A5456D4D23FC5B08000BF18C /* cpu.cpp in Sources */,
 				A5456D6523FC5B08000BF18C /* BdsConnect.cpp in Sources */,
+				A569B6A125D038760001B011 /* config-test.cpp in Sources */,
 				A5456D6823FC5B08000BF18C /* AcpiPatcher.cpp in Sources */,
 				2C794E401A0AA85900D845B0 /* Test.c in Sources */,
 				A52313152448B1C500421FB2 /* shared_with_menu.cpp in Sources */,
@@ -23691,6 +23709,7 @@
 				A5456D5B23FC5B08000BF18C /* Edid.cpp in Sources */,
 				A57CF7C8241BE0A4006DE51E /* strlen.cpp in Sources */,
 				A513867F25CFB1E600F3E345 /* posix_additions.cpp in Sources */,
+				A569B69E25D038510001B011 /* strings.c in Sources */,
 				A5456D9023FC5B72000BF18C /* globals_dtor.cpp in Sources */,
 				A5456D8023FC5B40000BF18C /* lib.cpp in Sources */,
 				A5456D5D23FC5B08000BF18C /* gma.cpp in Sources */,
@@ -23730,6 +23749,7 @@
 				A5456D6A23FC5B08000BF18C /* Injectors.cpp in Sources */,
 				A529343324FB9293004241C3 /* plist_tests.cpp in Sources */,
 				A52313122448B12B00421FB2 /* unicode_conversions.cpp in Sources */,
+				A569B6A425D038970001B011 /* xml_lite-test.cpp in Sources */,
 				A57CF7D4241BE0FC006DE51E /* strcmp_test.cpp in Sources */,
 				A5456D4A23FC5B08000BF18C /* FixBiosDsdt.cpp in Sources */,
 				A5456CDB23FC5A88000BF18C /* legacy.cpp in Sources */,
