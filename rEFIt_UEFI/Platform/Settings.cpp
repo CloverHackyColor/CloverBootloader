@@ -30,7 +30,7 @@
 #include "gma.h"
 #include "Edid.h"
 #include "hda.h"
-
+#include "../../Version.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
