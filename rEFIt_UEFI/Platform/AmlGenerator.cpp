@@ -9,6 +9,7 @@
  */
 
 #include "AmlGenerator.h"
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node)
 {

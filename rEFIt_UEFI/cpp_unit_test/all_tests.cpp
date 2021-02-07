@@ -19,6 +19,8 @@
 #include "find_replace_mask_Clover_tests.h"
 #include "find_replace_mask_OC_tests.h"
 #include "MacOsVersion_test.h"
+#include "xml_lite-test.h"
+#include "config-test.h"
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
   #include "printlib-test.h"
@@ -36,45 +38,27 @@ bool all_tests()
   bool all_ok = true;
   int ret;
 
-//  ret = XString_tests();
+#if defined(JIEF_DEBUG)
+  ret = xml_lite_tests();
+  if ( ret != 0 ) {
+    printf("xml_lite_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+//  ret = config_plist_tests();
 //  if ( ret != 0 ) {
-//    printf("XString16_tests() failed at test %d\n", ret);
+//    printf("config_plist_tests() failed at test %d\n", ret);
 //    all_ok = false;
 //  }
-#if defined(JIEF_DEBUG)
-  ret = MacOsVersion_tests();
-  if ( ret != 0 ) {
-    printf("MacOsVersion_tests() failed at test %d\n", ret);
-    all_ok = false;
-  }
-  ret = find_replace_mask_Clover_tests();
-  if ( ret != 0 ) {
-    printf("xml_lite_tests() failed at test %d\n", ret);
-    all_ok = false;
-  }
-  ret = find_replace_mask_OC_tests();
-  if ( ret != 0 ) {
-    printf("xml_lite_tests() failed at test %d\n", ret);
-    all_ok = false;
-  }
-//  return 1;
-  ret = printf_lite_tests();
-  if ( ret != 0 ) {
-    printf("printf_lite_tests() failed at test %d\n", ret);
-    all_ok = false;
-  }
-//  ret = XBuffer_tests();
+//
+//  ret = XUINTN_tests();
 //  if ( ret != 0 ) {
-//      printf("XBuffer_tests() failed at test %d\n", ret);
+//      printf("XUINTN_tests() failed at test %d\n", ret);
 //      all_ok = false;
 //  }
-//return ret;
-//    ret = XUINTN_tests();
-//    if ( ret != 0 ) {
-//        printf("XUINTN_tests() failed at test %d\n", ret);
-//        all_ok = false;
-//    }
 #endif
+
+#if defined(JIEF_DEBUG)
+
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
     ret = printlib_tests();
       if ( ret != 0 ) {
@@ -149,6 +133,18 @@ bool all_tests()
     printf("xml_lite_tests() failed at test %d\n", ret);
     all_ok = false;
   }
+  ret = ParseXML_tests();
+  if ( ret != 0 ) {
+    printf("plist_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = MacOsVersion_tests();
+  if ( ret != 0 ) {
+    printf("MacOsVersion_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+
+#endif
 
   if ( !all_ok ) {
     printf("A test failed\n");

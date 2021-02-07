@@ -504,8 +504,8 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
 {
   EFI_STATUS Status;
   // Check is valid to set database
-  if ((gSettings.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) ||
-      (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode)) {
+  if ((GlobalConfig.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) ||
+      (!GlobalConfig.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode)) {
     return EFI_NOT_FOUND;
   }
   // Erase database

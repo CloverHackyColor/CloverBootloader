@@ -10,7 +10,6 @@
 #ifndef _AML_GENERATOR_H
 #define _AML_GENERATOR_H
 
-#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 /*
 static inline BOOLEAN aml_isvalidchar(char c)

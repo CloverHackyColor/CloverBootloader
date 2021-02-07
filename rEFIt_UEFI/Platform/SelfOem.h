@@ -8,7 +8,6 @@
 #ifndef PLATFORM_SELFOEM_H_
 #define PLATFORM_SELFOEM_H_
 
-#include <Platform.h>
 #include "Self.h"
 
 class SelfOem

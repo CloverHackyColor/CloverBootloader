@@ -2,6 +2,8 @@
  * a class to keep definitions for all theme settings
  */
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+
 extern "C" {
 #include <Protocol/GraphicsOutput.h>
 }

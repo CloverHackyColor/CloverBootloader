@@ -41,6 +41,9 @@
 #include "XImage.h"
 #include "../refit/lib.h"
 #include "../libeg/XTheme.h"
+//#include "../include/OneLinerMacros.h"
+#include "../Platform/Utils.h"
+#include "BmLib.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SVG 0

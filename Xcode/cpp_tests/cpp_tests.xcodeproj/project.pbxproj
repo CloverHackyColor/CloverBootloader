@@ -167,6 +167,110 @@
 		9A838CBD25348530008303F5 /* BaseMemoryLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CB925348237008303F5 /* BaseMemoryLib.c */; };
 		9A838CC0253485C8008303F5 /* BaseLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CBF253485C8008303F5 /* BaseLib.c */; };
 		9A838CC3253485DC008303F5 /* DebugLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A838CC2253485DC008303F5 /* DebugLib.c */; };
+		9A9037EC25D0010500F14179 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037E925D0010500F14179 /* xml_lite-test.cpp */; };
+		9A9037ED25D0010500F14179 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037E925D0010500F14179 /* xml_lite-test.cpp */; };
+		9A9037EE25D0010500F14179 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037E925D0010500F14179 /* xml_lite-test.cpp */; };
+		9A9037EF25D0010500F14179 /* xml_lite-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037E925D0010500F14179 /* xml_lite-test.cpp */; };
+		9A9037F025D0010500F14179 /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037EB25D0010500F14179 /* config-test.cpp */; };
+		9A9037F125D0010500F14179 /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037EB25D0010500F14179 /* config-test.cpp */; };
+		9A9037F225D0010500F14179 /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037EB25D0010500F14179 /* config-test.cpp */; };
+		9A9037F325D0010500F14179 /* config-test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037EB25D0010500F14179 /* config-test.cpp */; };
+		9A90382125D0024500F14179 /* Config_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F525D0024500F14179 /* Config_GUI.cpp */; };
+		9A90382225D0024500F14179 /* Config_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F525D0024500F14179 /* Config_GUI.cpp */; };
+		9A90382325D0024500F14179 /* Config_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F525D0024500F14179 /* Config_GUI.cpp */; };
+		9A90382425D0024500F14179 /* Config_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F525D0024500F14179 /* Config_GUI.cpp */; };
+		9A90382525D0024500F14179 /* Config_RtVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F625D0024500F14179 /* Config_RtVariables.cpp */; };
+		9A90382625D0024500F14179 /* Config_RtVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F625D0024500F14179 /* Config_RtVariables.cpp */; };
+		9A90382725D0024500F14179 /* Config_RtVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F625D0024500F14179 /* Config_RtVariables.cpp */; };
+		9A90382825D0024500F14179 /* Config_RtVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F625D0024500F14179 /* Config_RtVariables.cpp */; };
+		9A90382925D0024500F14179 /* Config_SMBIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F725D0024500F14179 /* Config_SMBIOS.cpp */; };
+		9A90382A25D0024500F14179 /* Config_SMBIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F725D0024500F14179 /* Config_SMBIOS.cpp */; };
+		9A90382B25D0024500F14179 /* Config_SMBIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F725D0024500F14179 /* Config_SMBIOS.cpp */; };
+		9A90382C25D0024500F14179 /* Config_SMBIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037F725D0024500F14179 /* Config_SMBIOS.cpp */; };
+		9A90382D25D0024500F14179 /* Config_Devices_Audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FA25D0024500F14179 /* Config_Devices_Audio.cpp */; };
+		9A90382E25D0024500F14179 /* Config_Devices_Audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FA25D0024500F14179 /* Config_Devices_Audio.cpp */; };
+		9A90382F25D0024500F14179 /* Config_Devices_Audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FA25D0024500F14179 /* Config_Devices_Audio.cpp */; };
+		9A90383025D0024500F14179 /* Config_Devices_Audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FA25D0024500F14179 /* Config_Devices_Audio.cpp */; };
+		9A90383125D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FD25D0024500F14179 /* Config_KernelAndKextPatches.cpp */; };
+		9A90383225D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FD25D0024500F14179 /* Config_KernelAndKextPatches.cpp */; };
+		9A90383325D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FD25D0024500F14179 /* Config_KernelAndKextPatches.cpp */; };
+		9A90383425D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FD25D0024500F14179 /* Config_KernelAndKextPatches.cpp */; };
+		9A90383525D0024500F14179 /* Config_Quirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FE25D0024500F14179 /* Config_Quirks.cpp */; };
+		9A90383625D0024500F14179 /* Config_Quirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FE25D0024500F14179 /* Config_Quirks.cpp */; };
+		9A90383725D0024500F14179 /* Config_Quirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FE25D0024500F14179 /* Config_Quirks.cpp */; };
+		9A90383825D0024500F14179 /* Config_Quirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9037FE25D0024500F14179 /* Config_Quirks.cpp */; };
+		9A90383925D0024500F14179 /* Config_CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380125D0024500F14179 /* Config_CPU.cpp */; };
+		9A90383A25D0024500F14179 /* Config_CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380125D0024500F14179 /* Config_CPU.cpp */; };
+		9A90383B25D0024500F14179 /* Config_CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380125D0024500F14179 /* Config_CPU.cpp */; };
+		9A90383C25D0024500F14179 /* Config_CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380125D0024500F14179 /* Config_CPU.cpp */; };
+		9A90383D25D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380425D0024500F14179 /* Config_Devices_FakeID.cpp */; };
+		9A90383E25D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380425D0024500F14179 /* Config_Devices_FakeID.cpp */; };
+		9A90383F25D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380425D0024500F14179 /* Config_Devices_FakeID.cpp */; };
+		9A90384025D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380425D0024500F14179 /* Config_Devices_FakeID.cpp */; };
+		9A90384125D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380725D0024500F14179 /* Config_ACPI_SSDT.cpp */; };
+		9A90384225D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380725D0024500F14179 /* Config_ACPI_SSDT.cpp */; };
+		9A90384325D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380725D0024500F14179 /* Config_ACPI_SSDT.cpp */; };
+		9A90384425D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380725D0024500F14179 /* Config_ACPI_SSDT.cpp */; };
+		9A90384525D0024500F14179 /* Config_Boot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380825D0024500F14179 /* Config_Boot.cpp */; };
+		9A90384625D0024500F14179 /* Config_Boot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380825D0024500F14179 /* Config_Boot.cpp */; };
+		9A90384725D0024500F14179 /* Config_Boot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380825D0024500F14179 /* Config_Boot.cpp */; };
+		9A90384825D0024500F14179 /* Config_Boot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380825D0024500F14179 /* Config_Boot.cpp */; };
+		9A90384925D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380925D0024500F14179 /* Config_Devices_AddProperties.cpp */; };
+		9A90384A25D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380925D0024500F14179 /* Config_Devices_AddProperties.cpp */; };
+		9A90384B25D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380925D0024500F14179 /* Config_Devices_AddProperties.cpp */; };
+		9A90384C25D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380925D0024500F14179 /* Config_Devices_AddProperties.cpp */; };
+		9A90384D25D0024500F14179 /* ConfigPlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380B25D0024500F14179 /* ConfigPlist.cpp */; };
+		9A90384E25D0024500F14179 /* ConfigPlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380B25D0024500F14179 /* ConfigPlist.cpp */; };
+		9A90384F25D0024500F14179 /* ConfigPlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380B25D0024500F14179 /* ConfigPlist.cpp */; };
+		9A90385025D0024500F14179 /* ConfigPlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380B25D0024500F14179 /* ConfigPlist.cpp */; };
+		9A90385125D0024500F14179 /* Config_Devices_USB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380C25D0024500F14179 /* Config_Devices_USB.cpp */; };
+		9A90385225D0024500F14179 /* Config_Devices_USB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380C25D0024500F14179 /* Config_Devices_USB.cpp */; };
+		9A90385325D0024500F14179 /* Config_Devices_USB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380C25D0024500F14179 /* Config_Devices_USB.cpp */; };
+		9A90385425D0024500F14179 /* Config_Devices_USB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380C25D0024500F14179 /* Config_Devices_USB.cpp */; };
+		9A90385525D0024500F14179 /* Config_Devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380D25D0024500F14179 /* Config_Devices.cpp */; };
+		9A90385625D0024500F14179 /* Config_Devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380D25D0024500F14179 /* Config_Devices.cpp */; };
+		9A90385725D0024500F14179 /* Config_Devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380D25D0024500F14179 /* Config_Devices.cpp */; };
+		9A90385825D0024500F14179 /* Config_Devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90380D25D0024500F14179 /* Config_Devices.cpp */; };
+		9A90385925D0024500F14179 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381025D0024500F14179 /* Config_ACPI.cpp */; };
+		9A90385A25D0024500F14179 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381025D0024500F14179 /* Config_ACPI.cpp */; };
+		9A90385B25D0024500F14179 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381025D0024500F14179 /* Config_ACPI.cpp */; };
+		9A90385C25D0024500F14179 /* Config_ACPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381025D0024500F14179 /* Config_ACPI.cpp */; };
+		9A90385D25D0024500F14179 /* Config_Devices_Properties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381125D0024500F14179 /* Config_Devices_Properties.cpp */; };
+		9A90385E25D0024500F14179 /* Config_Devices_Properties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381125D0024500F14179 /* Config_Devices_Properties.cpp */; };
+		9A90385F25D0024500F14179 /* Config_Devices_Properties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381125D0024500F14179 /* Config_Devices_Properties.cpp */; };
+		9A90386025D0024500F14179 /* Config_Devices_Properties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381125D0024500F14179 /* Config_Devices_Properties.cpp */; };
+		9A90386125D0024500F14179 /* Config_Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381325D0024500F14179 /* Config_Graphics.cpp */; };
+		9A90386225D0024500F14179 /* Config_Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381325D0024500F14179 /* Config_Graphics.cpp */; };
+		9A90386325D0024500F14179 /* Config_Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381325D0024500F14179 /* Config_Graphics.cpp */; };
+		9A90386425D0024500F14179 /* Config_Graphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381325D0024500F14179 /* Config_Graphics.cpp */; };
+		9A90386525D0024500F14179 /* Config_SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381625D0024500F14179 /* Config_SystemParameters.cpp */; };
+		9A90386625D0024500F14179 /* Config_SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381625D0024500F14179 /* Config_SystemParameters.cpp */; };
+		9A90386725D0024500F14179 /* Config_SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381625D0024500F14179 /* Config_SystemParameters.cpp */; };
+		9A90386825D0024500F14179 /* Config_SystemParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381625D0024500F14179 /* Config_SystemParameters.cpp */; };
+		9A90386D25D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381825D0024500F14179 /* Config_ACPI_DSDT.cpp */; };
+		9A90386E25D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381825D0024500F14179 /* Config_ACPI_DSDT.cpp */; };
+		9A90386F25D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381825D0024500F14179 /* Config_ACPI_DSDT.cpp */; };
+		9A90387025D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381825D0024500F14179 /* Config_ACPI_DSDT.cpp */; };
+		9A90387125D0024500F14179 /* Config_BootGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381925D0024500F14179 /* Config_BootGraphics.cpp */; };
+		9A90387225D0024500F14179 /* Config_BootGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381925D0024500F14179 /* Config_BootGraphics.cpp */; };
+		9A90387325D0024500F14179 /* Config_BootGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381925D0024500F14179 /* Config_BootGraphics.cpp */; };
+		9A90387425D0024500F14179 /* Config_BootGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381925D0024500F14179 /* Config_BootGraphics.cpp */; };
+		9A90387525D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381A25D0024500F14179 /* Config_Devices_Arbitrary.cpp */; };
+		9A90387625D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381A25D0024500F14179 /* Config_Devices_Arbitrary.cpp */; };
+		9A90387725D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381A25D0024500F14179 /* Config_Devices_Arbitrary.cpp */; };
+		9A90387825D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90381A25D0024500F14179 /* Config_Devices_Arbitrary.cpp */; };
+		9A90388025D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387C25D0026400F14179 /* XmlLiteCompositeTypes.cpp */; };
+		9A90388125D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387C25D0026400F14179 /* XmlLiteCompositeTypes.cpp */; };
+		9A90388225D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387C25D0026400F14179 /* XmlLiteCompositeTypes.cpp */; };
+		9A90388325D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387C25D0026400F14179 /* XmlLiteCompositeTypes.cpp */; };
+		9A90388425D0026400F14179 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387D25D0026400F14179 /* XmlLiteParser.cpp */; };
+		9A90388525D0026400F14179 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387D25D0026400F14179 /* XmlLiteParser.cpp */; };
+		9A90388625D0026400F14179 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387D25D0026400F14179 /* XmlLiteParser.cpp */; };
+		9A90388725D0026400F14179 /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387D25D0026400F14179 /* XmlLiteParser.cpp */; };
+		9A90388825D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387E25D0026400F14179 /* xmlLiteSimpleTypes.cpp */; };
+		9A90388925D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387E25D0026400F14179 /* xmlLiteSimpleTypes.cpp */; };
+		9A90388A25D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387E25D0026400F14179 /* xmlLiteSimpleTypes.cpp */; };
+		9A90388B25D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A90387E25D0026400F14179 /* xmlLiteSimpleTypes.cpp */; };
 		9A9223312402FD1000483CBA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9223302402FD1000483CBA /* main.cpp */; };
 		9A9AEB8D243F73CE00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
 		9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9AEB8C243F73CE00FBD7D8 /* unicode_conversions.cpp */; };
@@ -343,6 +447,60 @@
 		9A838CC425348610008303F5 /* OcMiscLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OcMiscLib.h; sourceTree = "<group>"; };
 		9A838CC52534933F008303F5 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		9A838CC62534946C008303F5 /* ProcessorBind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessorBind.h; sourceTree = "<group>"; };
+		9A9037E825D0010500F14179 /* config-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "config-test.h"; sourceTree = "<group>"; };
+		9A9037E925D0010500F14179 /* xml_lite-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "xml_lite-test.cpp"; sourceTree = "<group>"; };
+		9A9037EA25D0010500F14179 /* xml_lite-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "xml_lite-test.h"; sourceTree = "<group>"; };
+		9A9037EB25D0010500F14179 /* config-test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "config-test.cpp"; sourceTree = "<group>"; };
+		9A9037F525D0024500F14179 /* Config_GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_GUI.cpp; sourceTree = "<group>"; };
+		9A9037F625D0024500F14179 /* Config_RtVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_RtVariables.cpp; sourceTree = "<group>"; };
+		9A9037F725D0024500F14179 /* Config_SMBIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_SMBIOS.cpp; sourceTree = "<group>"; };
+		9A9037F825D0024500F14179 /* Config_KernelAndKextPatches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_KernelAndKextPatches.h; sourceTree = "<group>"; };
+		9A9037F925D0024500F14179 /* Config_Graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Graphics.h; sourceTree = "<group>"; };
+		9A9037FA25D0024500F14179 /* Config_Devices_Audio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices_Audio.cpp; sourceTree = "<group>"; };
+		9A9037FB25D0024500F14179 /* Config_ACPI_DSDT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_ACPI_DSDT.h; sourceTree = "<group>"; };
+		9A9037FC25D0024500F14179 /* ConfigPlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigPlist.h; sourceTree = "<group>"; };
+		9A9037FD25D0024500F14179 /* Config_KernelAndKextPatches.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_KernelAndKextPatches.cpp; sourceTree = "<group>"; };
+		9A9037FE25D0024500F14179 /* Config_Quirks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Quirks.cpp; sourceTree = "<group>"; };
+		9A9037FF25D0024500F14179 /* CompareSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompareSettings.h; sourceTree = "<group>"; };
+		9A90380025D0024500F14179 /* Config_Devices_Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_Audio.h; sourceTree = "<group>"; };
+		9A90380125D0024500F14179 /* Config_CPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_CPU.cpp; sourceTree = "<group>"; };
+		9A90380225D0024500F14179 /* Config_Quirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Quirks.h; sourceTree = "<group>"; };
+		9A90380325D0024500F14179 /* Config_ACPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_ACPI.h; sourceTree = "<group>"; };
+		9A90380425D0024500F14179 /* Config_Devices_FakeID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices_FakeID.cpp; sourceTree = "<group>"; };
+		9A90380525D0024500F14179 /* Config_Devices_Properties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_Properties.h; sourceTree = "<group>"; };
+		9A90380625D0024500F14179 /* Config_Boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Boot.h; sourceTree = "<group>"; };
+		9A90380725D0024500F14179 /* Config_ACPI_SSDT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_ACPI_SSDT.cpp; sourceTree = "<group>"; };
+		9A90380825D0024500F14179 /* Config_Boot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Boot.cpp; sourceTree = "<group>"; };
+		9A90380925D0024500F14179 /* Config_Devices_AddProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices_AddProperties.cpp; sourceTree = "<group>"; };
+		9A90380A25D0024500F14179 /* Config_Devices_Arbitrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_Arbitrary.h; sourceTree = "<group>"; };
+		9A90380B25D0024500F14179 /* ConfigPlist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigPlist.cpp; sourceTree = "<group>"; };
+		9A90380C25D0024500F14179 /* Config_Devices_USB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices_USB.cpp; sourceTree = "<group>"; };
+		9A90380D25D0024500F14179 /* Config_Devices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices.cpp; sourceTree = "<group>"; };
+		9A90380E25D0024500F14179 /* Config_SystemParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_SystemParameters.h; sourceTree = "<group>"; };
+		9A90380F25D0024500F14179 /* Config_SMBIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_SMBIOS.h; sourceTree = "<group>"; };
+		9A90381025D0024500F14179 /* Config_ACPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_ACPI.cpp; sourceTree = "<group>"; };
+		9A90381125D0024500F14179 /* Config_Devices_Properties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices_Properties.cpp; sourceTree = "<group>"; };
+		9A90381225D0024500F14179 /* Config_Devices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices.h; sourceTree = "<group>"; };
+		9A90381325D0024500F14179 /* Config_Graphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Graphics.cpp; sourceTree = "<group>"; };
+		9A90381425D0024500F14179 /* Config_CPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_CPU.h; sourceTree = "<group>"; };
+		9A90381525D0024500F14179 /* Config_BootGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_BootGraphics.h; sourceTree = "<group>"; };
+		9A90381625D0024500F14179 /* Config_SystemParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_SystemParameters.cpp; sourceTree = "<group>"; };
+		9A90381725D0024500F14179 /* CompareSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompareSettings.cpp; sourceTree = "<group>"; };
+		9A90381825D0024500F14179 /* Config_ACPI_DSDT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_ACPI_DSDT.cpp; sourceTree = "<group>"; };
+		9A90381925D0024500F14179 /* Config_BootGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_BootGraphics.cpp; sourceTree = "<group>"; };
+		9A90381A25D0024500F14179 /* Config_Devices_Arbitrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Devices_Arbitrary.cpp; sourceTree = "<group>"; };
+		9A90381B25D0024500F14179 /* Config_ACPI_SSDT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_ACPI_SSDT.h; sourceTree = "<group>"; };
+		9A90381C25D0024500F14179 /* Config_GUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_GUI.h; sourceTree = "<group>"; };
+		9A90381D25D0024500F14179 /* Config_RtVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_RtVariables.h; sourceTree = "<group>"; };
+		9A90381E25D0024500F14179 /* Config_Devices_FakeID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_FakeID.h; sourceTree = "<group>"; };
+		9A90381F25D0024500F14179 /* Config_Devices_USB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_USB.h; sourceTree = "<group>"; };
+		9A90382025D0024500F14179 /* Config_Devices_AddProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_AddProperties.h; sourceTree = "<group>"; };
+		9A90387A25D0026400F14179 /* XmlLiteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteParser.h; sourceTree = "<group>"; };
+		9A90387B25D0026400F14179 /* xmlLiteSimpleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlLiteSimpleTypes.h; sourceTree = "<group>"; };
+		9A90387C25D0026400F14179 /* XmlLiteCompositeTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteCompositeTypes.cpp; sourceTree = "<group>"; };
+		9A90387D25D0026400F14179 /* XmlLiteParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteParser.cpp; sourceTree = "<group>"; };
+		9A90387E25D0026400F14179 /* xmlLiteSimpleTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlLiteSimpleTypes.cpp; sourceTree = "<group>"; };
+		9A90387F25D0026400F14179 /* XmlLiteCompositeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteCompositeTypes.h; sourceTree = "<group>"; };
 		9A92232D2402FD1000483CBA /* cpp_tests UTF16 signed char */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF16 signed char"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A9223302402FD1000483CBA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		9A9AEB8B243F73CE00FBD7D8 /* unicode_conversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unicode_conversions.h; sourceTree = "<group>"; };
@@ -424,6 +582,8 @@
 			children = (
 				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
 				9A0B08542402FE9B00E2B470 /* all_tests.h */,
+				9A9037EB25D0010500F14179 /* config-test.cpp */,
+				9A9037E825D0010500F14179 /* config-test.h */,
 				9A838CA0253423F0008303F5 /* find_replace_mask_Clover_tests.cpp */,
 				9A838CA2253423F0008303F5 /* find_replace_mask_Clover_tests.h */,
 				9A838CA3253423F0008303F5 /* find_replace_mask_OC_tests.cpp */,
@@ -452,6 +612,8 @@
 				9A0B084E2402FE9B00E2B470 /* XArray_tests.h */,
 				9A670D1B24E535AB00B5D780 /* XBuffer_tests.cpp */,
 				9A670D1A24E535AB00B5D780 /* XBuffer_tests.h */,
+				9A9037E925D0010500F14179 /* xml_lite-test.cpp */,
+				9A9037EA25D0010500F14179 /* xml_lite-test.h */,
 				9A0B08522402FE9B00E2B470 /* XObjArray_tests.cpp */,
 				9A0B08502402FE9B00E2B470 /* XObjArray_tests.h */,
 				9A4FFA802451C88D0050B38B /* XString_test.cpp */,
@@ -478,6 +640,7 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A9037F425D0024500F14179 /* ConfigPlist */,
 				9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */,
 				9A4C576A255AAD07004F0B21 /* MacOsVersion.h */,
 				9A838CB325347C36008303F5 /* MemoryOperation.c */,
@@ -534,9 +697,10 @@
 		9A36E51C24F3B5B4007A1107 /* rEFIt_UEFI */ = {
 			isa = PBXGroup;
 			children = (
-				9A36E52324F3BB52007A1107 /* libeg */,
-				9A0B084C2402FE9B00E2B470 /* cpp_unit_test */,
 				9A0B08432402FE9300E2B470 /* cpp_foundation */,
+				9A0B084C2402FE9B00E2B470 /* cpp_unit_test */,
+				9A90387925D0026400F14179 /* cpp_lib */,
+				9A36E52324F3BB52007A1107 /* libeg */,
 				9AD469462452B30500D6D0DB /* gui */,
 				9A28CCAC241B816400F3D247 /* Platform */,
 			);
@@ -615,6 +779,70 @@
 				9AD0359325C57C8A00E58351 /* PrintLib.c */,
 			);
 			path = Library;
+			sourceTree = "<group>";
+		};
+		9A9037F425D0024500F14179 /* ConfigPlist */ = {
+			isa = PBXGroup;
+			children = (
+				9A90381725D0024500F14179 /* CompareSettings.cpp */,
+				9A9037FF25D0024500F14179 /* CompareSettings.h */,
+				9A90381825D0024500F14179 /* Config_ACPI_DSDT.cpp */,
+				9A9037FB25D0024500F14179 /* Config_ACPI_DSDT.h */,
+				9A90380725D0024500F14179 /* Config_ACPI_SSDT.cpp */,
+				9A90381B25D0024500F14179 /* Config_ACPI_SSDT.h */,
+				9A90381025D0024500F14179 /* Config_ACPI.cpp */,
+				9A90380325D0024500F14179 /* Config_ACPI.h */,
+				9A90380825D0024500F14179 /* Config_Boot.cpp */,
+				9A90380625D0024500F14179 /* Config_Boot.h */,
+				9A90381925D0024500F14179 /* Config_BootGraphics.cpp */,
+				9A90381525D0024500F14179 /* Config_BootGraphics.h */,
+				9A90380125D0024500F14179 /* Config_CPU.cpp */,
+				9A90381425D0024500F14179 /* Config_CPU.h */,
+				9A90380925D0024500F14179 /* Config_Devices_AddProperties.cpp */,
+				9A90382025D0024500F14179 /* Config_Devices_AddProperties.h */,
+				9A90381A25D0024500F14179 /* Config_Devices_Arbitrary.cpp */,
+				9A90380A25D0024500F14179 /* Config_Devices_Arbitrary.h */,
+				9A9037FA25D0024500F14179 /* Config_Devices_Audio.cpp */,
+				9A90380025D0024500F14179 /* Config_Devices_Audio.h */,
+				9A90380425D0024500F14179 /* Config_Devices_FakeID.cpp */,
+				9A90381E25D0024500F14179 /* Config_Devices_FakeID.h */,
+				9A90381125D0024500F14179 /* Config_Devices_Properties.cpp */,
+				9A90380525D0024500F14179 /* Config_Devices_Properties.h */,
+				9A90380C25D0024500F14179 /* Config_Devices_USB.cpp */,
+				9A90381F25D0024500F14179 /* Config_Devices_USB.h */,
+				9A90380D25D0024500F14179 /* Config_Devices.cpp */,
+				9A90381225D0024500F14179 /* Config_Devices.h */,
+				9A90381325D0024500F14179 /* Config_Graphics.cpp */,
+				9A9037F925D0024500F14179 /* Config_Graphics.h */,
+				9A9037F525D0024500F14179 /* Config_GUI.cpp */,
+				9A90381C25D0024500F14179 /* Config_GUI.h */,
+				9A9037FD25D0024500F14179 /* Config_KernelAndKextPatches.cpp */,
+				9A9037F825D0024500F14179 /* Config_KernelAndKextPatches.h */,
+				9A9037FE25D0024500F14179 /* Config_Quirks.cpp */,
+				9A90380225D0024500F14179 /* Config_Quirks.h */,
+				9A9037F625D0024500F14179 /* Config_RtVariables.cpp */,
+				9A90381D25D0024500F14179 /* Config_RtVariables.h */,
+				9A9037F725D0024500F14179 /* Config_SMBIOS.cpp */,
+				9A90380F25D0024500F14179 /* Config_SMBIOS.h */,
+				9A90381625D0024500F14179 /* Config_SystemParameters.cpp */,
+				9A90380E25D0024500F14179 /* Config_SystemParameters.h */,
+				9A90380B25D0024500F14179 /* ConfigPlist.cpp */,
+				9A9037FC25D0024500F14179 /* ConfigPlist.h */,
+			);
+			path = ConfigPlist;
+			sourceTree = "<group>";
+		};
+		9A90387925D0026400F14179 /* cpp_lib */ = {
+			isa = PBXGroup;
+			children = (
+				9A90387A25D0026400F14179 /* XmlLiteParser.h */,
+				9A90387B25D0026400F14179 /* xmlLiteSimpleTypes.h */,
+				9A90387C25D0026400F14179 /* XmlLiteCompositeTypes.cpp */,
+				9A90387D25D0026400F14179 /* XmlLiteParser.cpp */,
+				9A90387E25D0026400F14179 /* xmlLiteSimpleTypes.cpp */,
+				9A90387F25D0026400F14179 /* XmlLiteCompositeTypes.h */,
+			);
+			path = cpp_lib;
 			sourceTree = "<group>";
 		};
 		9A9223242402FD1000483CBA = {
@@ -773,44 +1001,70 @@
 			files = (
 				9A36E50524F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50124F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A90382E25D0024500F14179 /* Config_Devices_Audio.cpp in Sources */,
+				9A90383E25D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */,
 				9AFDD0CB25CE798300EEAF06 /* MemoryOperation.c in Sources */,
 				9A36E50D24F3B537007A1107 /* TagData.cpp in Sources */,
 				9AD0358D25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */,
+				9A90382225D0024500F14179 /* Config_GUI.cpp in Sources */,
 				9A4185B22439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
+				9A90388125D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A36E52D24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A0B08732403B08400E2B470 /* XObjArray_tests.cpp in Sources */,
+				9A90387625D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */,
 				9A36E53D24F3EDED007A1107 /* base64.cpp in Sources */,
+				9A90386E25D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */,
+				9A90384E25D0024500F14179 /* ConfigPlist.cpp in Sources */,
 				9AD0359025C57BF700E58351 /* BaseLib.c in Sources */,
+				9A90384625D0024500F14179 /* Config_Boot.cpp in Sources */,
+				9A90383A25D0024500F14179 /* Config_CPU.cpp in Sources */,
 				9A28CD20241BB61B00F3D247 /* abort.cpp in Sources */,
+				9A90383225D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */,
+				9A90388925D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */,
+				9A90385A25D0024500F14179 /* Config_ACPI.cpp in Sources */,
 				9A4FFA842451C9740050B38B /* XString.cpp in Sources */,
 				9A4FFA822451C88D0050B38B /* XString_test.cpp in Sources */,
 				9A36E51924F3B537007A1107 /* TagKey.cpp in Sources */,
+				9A90382625D0024500F14179 /* Config_RtVariables.cpp in Sources */,
 				9A9EA7F9245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52724F3BB6B007A1107 /* FloatLib.cpp in Sources */,
 				9A4C576C255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
 				9A4C5772255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
+				9A90386625D0024500F14179 /* Config_SystemParameters.cpp in Sources */,
+				9A90384225D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */,
 				9A838CB125345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD23241BB61B00F3D247 /* strlen.cpp in Sources */,
+				9A90384A25D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */,
+				9A90383625D0024500F14179 /* Config_Quirks.cpp in Sources */,
+				9A90385625D0024500F14179 /* Config_Devices.cpp in Sources */,
 				9A28CD4C241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
+				9A90385E25D0024500F14179 /* Config_Devices_Properties.cpp in Sources */,
 				9A0B08742403B08400E2B470 /* main.cpp in Sources */,
 				9A28CD17241BACBB00F3D247 /* strlen_test.cpp in Sources */,
 				9A28CD0D241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD0A241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A0B087A2403B08400E2B470 /* all_tests.cpp in Sources */,
 				9A9AEB8E243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */,
+				9A90385225D0024500F14179 /* Config_Devices_USB.cpp in Sources */,
+				9A90386225D0024500F14179 /* Config_Graphics.cpp in Sources */,
 				9A0B087B2403B08400E2B470 /* global_test.cpp in Sources */,
 				9A36E4FD24F3B537007A1107 /* TagBool.cpp in Sources */,
+				9A9037ED25D0010500F14179 /* xml_lite-test.cpp in Sources */,
 				9A36E4F524F3B537007A1107 /* plist.cpp in Sources */,
 				9ACAB1192426255C00BDB3CF /* printf_lite.c in Sources */,
 				9A838CA7253425A3008303F5 /* DataPatcher.c in Sources */,
 				9A36E4F924F3B537007A1107 /* xml.cpp in Sources */,
+				9A90388525D0026400F14179 /* XmlLiteParser.cpp in Sources */,
 				9A0B087D2403B08400E2B470 /* XStringArray_test.cpp in Sources */,
 				9A36E51124F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F124F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50924F3B537007A1107 /* TagDate.cpp in Sources */,
 				9AD0359525C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
+				9A9037F125D0010500F14179 /* config-test.cpp in Sources */,
 				9A36E52024F3B82A007A1107 /* b64cdecode.cpp in Sources */,
+				9A90382A25D0024500F14179 /* Config_SMBIOS.cpp in Sources */,
+				9A90387225D0024500F14179 /* Config_BootGraphics.cpp in Sources */,
 				9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */,
 				9A838CBB25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1D24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
@@ -827,44 +1081,70 @@
 			files = (
 				9A36E50724F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50324F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A90383025D0024500F14179 /* Config_Devices_Audio.cpp in Sources */,
+				9A90384025D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */,
 				9AFDD0CD25CE798300EEAF06 /* MemoryOperation.c in Sources */,
 				9A36E50F24F3B537007A1107 /* TagData.cpp in Sources */,
 				9AD0358F25C57AFB00E58351 /* MemoryAllocationLib.c in Sources */,
+				9A90382425D0024500F14179 /* Config_GUI.cpp in Sources */,
 				9A2A7C6C24576CCE00422263 /* LoadOptions_test.cpp in Sources */,
+				9A90388325D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A36E52F24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A2A7C6D24576CCE00422263 /* XObjArray_tests.cpp in Sources */,
+				9A90387825D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */,
 				9A36E53F24F3EDED007A1107 /* base64.cpp in Sources */,
+				9A90387025D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */,
+				9A90385025D0024500F14179 /* ConfigPlist.cpp in Sources */,
 				9AD0359225C57BF700E58351 /* BaseLib.c in Sources */,
+				9A90384825D0024500F14179 /* Config_Boot.cpp in Sources */,
+				9A90383C25D0024500F14179 /* Config_CPU.cpp in Sources */,
 				9A2A7C6E24576CCE00422263 /* abort.cpp in Sources */,
+				9A90383425D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */,
+				9A90388B25D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */,
+				9A90385C25D0024500F14179 /* Config_ACPI.cpp in Sources */,
 				9A2A7C6F24576CCE00422263 /* XString.cpp in Sources */,
 				9A2A7C7024576CCE00422263 /* XString_test.cpp in Sources */,
 				9A36E51B24F3B537007A1107 /* TagKey.cpp in Sources */,
+				9A90382825D0024500F14179 /* Config_RtVariables.cpp in Sources */,
 				9A9EA7FB245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52924F3BB6B007A1107 /* FloatLib.cpp in Sources */,
 				9A4C576E255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
 				9A4C5774255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
+				9A90386825D0024500F14179 /* Config_SystemParameters.cpp in Sources */,
+				9A90384425D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */,
 				9A838CB225345E94008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A2A7C7124576CCE00422263 /* strlen.cpp in Sources */,
+				9A90384C25D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */,
+				9A90383825D0024500F14179 /* Config_Quirks.cpp in Sources */,
+				9A90385825D0024500F14179 /* Config_Devices.cpp in Sources */,
 				9A2A7C7224576CCE00422263 /* xcode_utf_fixed.cpp in Sources */,
+				9A90386025D0024500F14179 /* Config_Devices_Properties.cpp in Sources */,
 				9A2A7C7324576CCE00422263 /* main.cpp in Sources */,
 				9A2A7C7424576CCE00422263 /* strlen_test.cpp in Sources */,
 				9A2A7C7524576CCE00422263 /* strcmp_test.cpp in Sources */,
 				9A2A7C7624576CCE00422263 /* strncmp_test.cpp in Sources */,
 				9A2A7C7724576CCE00422263 /* all_tests.cpp in Sources */,
 				9A2A7C7824576CCE00422263 /* unicode_conversions.cpp in Sources */,
+				9A90385425D0024500F14179 /* Config_Devices_USB.cpp in Sources */,
+				9A90386425D0024500F14179 /* Config_Graphics.cpp in Sources */,
 				9A2A7C7924576CCE00422263 /* global_test.cpp in Sources */,
 				9A36E4FF24F3B537007A1107 /* TagBool.cpp in Sources */,
+				9A9037EF25D0010500F14179 /* xml_lite-test.cpp in Sources */,
 				9A36E4F724F3B537007A1107 /* plist.cpp in Sources */,
 				9A2A7C7A24576CCE00422263 /* printf_lite.c in Sources */,
 				9A838CA9253425A4008303F5 /* DataPatcher.c in Sources */,
 				9A36E4FB24F3B537007A1107 /* xml.cpp in Sources */,
+				9A90388725D0026400F14179 /* XmlLiteParser.cpp in Sources */,
 				9A2A7C7B24576CCE00422263 /* XStringArray_test.cpp in Sources */,
 				9A36E51324F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F324F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50B24F3B537007A1107 /* TagDate.cpp in Sources */,
 				9AD0359725C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */,
+				9A9037F325D0010500F14179 /* config-test.cpp in Sources */,
 				9A36E52224F3B82A007A1107 /* b64cdecode.cpp in Sources */,
+				9A90382C25D0024500F14179 /* Config_SMBIOS.cpp in Sources */,
+				9A90387425D0024500F14179 /* Config_BootGraphics.cpp in Sources */,
 				9A2A7C7E24576CCE00422263 /* XArray_tests.cpp in Sources */,
 				9A838CBD25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1F24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
@@ -881,44 +1161,70 @@
 			files = (
 				9A36E50624F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50224F3B537007A1107 /* TagDict.cpp in Sources */,
+				9A90382F25D0024500F14179 /* Config_Devices_Audio.cpp in Sources */,
+				9A90383F25D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */,
 				9AFDD0CC25CE798300EEAF06 /* MemoryOperation.c in Sources */,
 				9A36E50E24F3B537007A1107 /* TagData.cpp in Sources */,
 				9AD0358E25C57AFA00E58351 /* MemoryAllocationLib.c in Sources */,
+				9A90382325D0024500F14179 /* Config_GUI.cpp in Sources */,
 				9A4185B32439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
+				9A90388225D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A36E52E24F3C846007A1107 /* plist_tests.cpp in Sources */,
 				9A57C21A2418B9A00029A39F /* XObjArray_tests.cpp in Sources */,
+				9A90387725D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */,
 				9A36E53E24F3EDED007A1107 /* base64.cpp in Sources */,
+				9A90386F25D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */,
+				9A90384F25D0024500F14179 /* ConfigPlist.cpp in Sources */,
 				9AD0359125C57BF700E58351 /* BaseLib.c in Sources */,
+				9A90384725D0024500F14179 /* Config_Boot.cpp in Sources */,
+				9A90383B25D0024500F14179 /* Config_CPU.cpp in Sources */,
 				9A28CD21241BB61B00F3D247 /* abort.cpp in Sources */,
+				9A90383325D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */,
+				9A90388A25D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */,
+				9A90385B25D0024500F14179 /* Config_ACPI.cpp in Sources */,
 				9A4FFA852451C9740050B38B /* XString.cpp in Sources */,
 				9A4FFA832451C88D0050B38B /* XString_test.cpp in Sources */,
 				9A36E51A24F3B537007A1107 /* TagKey.cpp in Sources */,
+				9A90382725D0024500F14179 /* Config_RtVariables.cpp in Sources */,
 				9A9EA7FA245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
 				9A36E52824F3BB6B007A1107 /* FloatLib.cpp in Sources */,
 				9A4C576D255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
 				9A4C5773255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
+				9A90386725D0024500F14179 /* Config_SystemParameters.cpp in Sources */,
+				9A90384325D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */,
 				9A838CB025345E93008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD24241BB61B00F3D247 /* strlen.cpp in Sources */,
+				9A90384B25D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */,
+				9A90383725D0024500F14179 /* Config_Quirks.cpp in Sources */,
+				9A90385725D0024500F14179 /* Config_Devices.cpp in Sources */,
 				9A28CD4D241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
+				9A90385F25D0024500F14179 /* Config_Devices_Properties.cpp in Sources */,
 				9A57C21B2418B9A00029A39F /* main.cpp in Sources */,
 				9A28CD18241BACBB00F3D247 /* strlen_test.cpp in Sources */,
 				9A28CD0E241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD0B241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A57C2222418B9A00029A39F /* all_tests.cpp in Sources */,
 				9A9AEB8F243F752C00FBD7D8 /* unicode_conversions.cpp in Sources */,
+				9A90385325D0024500F14179 /* Config_Devices_USB.cpp in Sources */,
+				9A90386325D0024500F14179 /* Config_Graphics.cpp in Sources */,
 				9A57C2232418B9A00029A39F /* global_test.cpp in Sources */,
 				9A36E4FE24F3B537007A1107 /* TagBool.cpp in Sources */,
+				9A9037EE25D0010500F14179 /* xml_lite-test.cpp in Sources */,
 				9A36E4F624F3B537007A1107 /* plist.cpp in Sources */,
 				9ACAB11A2426255C00BDB3CF /* printf_lite.c in Sources */,
 				9A838CA8253425A4008303F5 /* DataPatcher.c in Sources */,
 				9A36E4FA24F3B537007A1107 /* xml.cpp in Sources */,
+				9A90388625D0026400F14179 /* XmlLiteParser.cpp in Sources */,
 				9A57C2252418B9A00029A39F /* XStringArray_test.cpp in Sources */,
 				9A36E51224F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F224F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50A24F3B537007A1107 /* TagDate.cpp in Sources */,
 				9AD0359625C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
+				9A9037F225D0010500F14179 /* config-test.cpp in Sources */,
 				9A36E52124F3B82A007A1107 /* b64cdecode.cpp in Sources */,
+				9A90382B25D0024500F14179 /* Config_SMBIOS.cpp in Sources */,
+				9A90387325D0024500F14179 /* Config_BootGraphics.cpp in Sources */,
 				9A57C2272418B9A00029A39F /* XArray_tests.cpp in Sources */,
 				9A838CBC25348530008303F5 /* BaseMemoryLib.c in Sources */,
 				9A670D1E24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
@@ -936,21 +1242,38 @@
 				9A36E50424F3B537007A1107 /* TagInt64.cpp in Sources */,
 				9A36E50024F3B537007A1107 /* TagDict.cpp in Sources */,
 				9A4C576B255AAD07004F0B21 /* MacOsVersion.cpp in Sources */,
+				9A90383925D0024500F14179 /* Config_CPU.cpp in Sources */,
 				9A36E50C24F3B537007A1107 /* TagData.cpp in Sources */,
+				9A90385925D0024500F14179 /* Config_ACPI.cpp in Sources */,
 				9AD0358C25C57A4500E58351 /* MemoryAllocationLib.c in Sources */,
 				9A0B085A2402FF8400E2B470 /* XObjArray_tests.cpp in Sources */,
 				9A7D518424FC32F700FA1CC3 /* XBuffer.cpp in Sources */,
 				9A36E52C24F3C846007A1107 /* plist_tests.cpp in Sources */,
+				9A90385D25D0024500F14179 /* Config_Devices_Properties.cpp in Sources */,
+				9A90385125D0024500F14179 /* Config_Devices_USB.cpp in Sources */,
+				9A9037EC25D0010500F14179 /* xml_lite-test.cpp in Sources */,
+				9A90388825D0026400F14179 /* xmlLiteSimpleTypes.cpp in Sources */,
 				9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */,
 				9A36E53C24F3EDED007A1107 /* base64.cpp in Sources */,
+				9A90385525D0024500F14179 /* Config_Devices.cpp in Sources */,
 				9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */,
 				9A4FFA812451C88D0050B38B /* XString_test.cpp in Sources */,
+				9A90387525D0024500F14179 /* Config_Devices_Arbitrary.cpp in Sources */,
 				9A28CD22241BB61B00F3D247 /* strlen.cpp in Sources */,
+				9A90384525D0024500F14179 /* Config_Boot.cpp in Sources */,
 				9A838CA6253425A3008303F5 /* DataPatcher.c in Sources */,
+				9A90382525D0024500F14179 /* Config_RtVariables.cpp in Sources */,
+				9A90382125D0024500F14179 /* Config_GUI.cpp in Sources */,
 				9A36E51824F3B537007A1107 /* TagKey.cpp in Sources */,
+				9A90384125D0024500F14179 /* Config_ACPI_SSDT.cpp in Sources */,
 				9A9EA7F8245AAB310076EC02 /* XToolsCommon_test.cpp in Sources */,
+				9A90383125D0024500F14179 /* Config_KernelAndKextPatches.cpp in Sources */,
+				9A90383D25D0024500F14179 /* Config_Devices_FakeID.cpp in Sources */,
+				9A90388025D0026400F14179 /* XmlLiteCompositeTypes.cpp in Sources */,
 				9A36E52624F3BB6B007A1107 /* FloatLib.cpp in Sources */,
 				9A838CB425347C36008303F5 /* MemoryOperation.c in Sources */,
+				9A90387125D0024500F14179 /* Config_BootGraphics.cpp in Sources */,
+				9A90386525D0024500F14179 /* Config_SystemParameters.cpp in Sources */,
 				9A838CC0253485C8008303F5 /* BaseLib.c in Sources */,
 				9A838CA4253423F0008303F5 /* find_replace_mask_Clover_tests.cpp in Sources */,
 				9A28CD4B241F4CCE00F3D247 /* xcode_utf_fixed.cpp in Sources */,
@@ -959,10 +1282,14 @@
 				9A28CD0C241B8DD400F3D247 /* strcmp_test.cpp in Sources */,
 				9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */,
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
+				9A90384D25D0024500F14179 /* ConfigPlist.cpp in Sources */,
+				9A90383525D0024500F14179 /* Config_Quirks.cpp in Sources */,
+				9A9037F025D0010500F14179 /* config-test.cpp in Sources */,
 				9A0B08662403144C00E2B470 /* global_test.cpp in Sources */,
 				9A4185B12439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,
 				9ACAB117242623EE00BDB3CF /* printf_lite.c in Sources */,
 				9A36E4FC24F3B537007A1107 /* TagBool.cpp in Sources */,
+				9A90382D25D0024500F14179 /* Config_Devices_Audio.cpp in Sources */,
 				9A36E4F424F3B537007A1107 /* plist.cpp in Sources */,
 				9A0B08582402FF7F00E2B470 /* XStringArray_test.cpp in Sources */,
 				9A36E4F824F3B537007A1107 /* xml.cpp in Sources */,
@@ -970,9 +1297,12 @@
 				9A838CA5253423F0008303F5 /* find_replace_mask_OC_tests.cpp in Sources */,
 				9A7D518524FC32F700FA1CC3 /* XRBuffer.cpp in Sources */,
 				9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
+				9A90388425D0026400F14179 /* XmlLiteParser.cpp in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
+				9A90382925D0024500F14179 /* Config_SMBIOS.cpp in Sources */,
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A4C5771255AB280004F0B21 /* MacOsVersion_test.cpp in Sources */,
+				9A90386125D0024500F14179 /* Config_Graphics.cpp in Sources */,
 				9A36E50824F3B537007A1107 /* TagDate.cpp in Sources */,
 				9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */,
@@ -982,6 +1312,8 @@
 				9A670D1C24E535AB00B5D780 /* XBuffer_tests.cpp in Sources */,
 				9AA0458A2425F94D000D6970 /* printf_lite-test.cpp in Sources */,
 				9A36E51424F3B537007A1107 /* TagFloat.cpp in Sources */,
+				9A90386D25D0024500F14179 /* Config_ACPI_DSDT.cpp in Sources */,
+				9A90384925D0024500F14179 /* Config_Devices_AddProperties.cpp in Sources */,
 				9A0B085E240300E000E2B470 /* Platform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1129,7 +1461,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					JIEF_DEBUG,
-					UNIT_TESTS,
+					UNIT_TESTS_MACOS,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

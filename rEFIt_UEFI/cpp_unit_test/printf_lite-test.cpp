@@ -227,20 +227,21 @@ int printf_lite_tests(void)
 
 
 	// Check %s with width specifier
-    Test1arg(F("|a|"), F("|%.4s|"), "a");
-    Test1arg(F("|aa|"), F("|%.4s|"), "aa");
-    Test1arg(F("|aaa|"), F("|%.4s|"), "aaa");
-    Test1arg(F("|aaaa|"), F("|%.4s|"), "aaaa");
-    Test1arg(F("|aaaa|"), F("|%.4s|"), "aaaaa");
-    Test1arg(F("|aaaa|"), F("|%.4s|"), "aaaaaa");
+  // 2020-10 Doesn't work yet.
+//    Test1arg(F("|a|"), F("|%4s|"), "a");
+//    Test1arg(F("|aa|"), F("|%4s|"), "aa");
+//    Test1arg(F("|aaa|"), F("|%4s|"), "aaa");
+//    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaa");
+//    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaaa");
+//    Test1arg(F("|aaaa|"), F("|%4s|"), "aaaaaa");
 	
-	// Check %ls with width specifier
-    Test1arg(F("|a|"), F("|%.4ls|"), L"a");
-    Test1arg(F("|aa|"), F("|%.4ls|"), L"aa");
-    Test1arg(F("|aaa|"), F("|%.4ls|"), L"aaa");
-    Test1arg(F("|aaaa|"), F("|%.4ls|"), L"aaaa");
-    Test1arg(F("|aaaa|"), F("|%.4ls|"), L"aaaaa");
-    Test1arg(F("|aaaa|"), F("|%.4ls|"), L"aaaaaa");
+  // Check %s with precision specifier
+    Test1arg(F("|a|"), F("|%.2s|"), "a");
+    Test1arg(F("|aa|"), F("|%.2s|"), "aa");
+    Test1arg(F("|aa|"), F("|%.2s|"), "aaa");
+    Test1arg(F("|aa|"), F("|%.2s|"), "aaaa");
+    Test1arg(F("|aa|"), F("|%.2s|"), "aaaaa");
+    Test1arg(F("|aa|"), F("|%.2s|"), "aaaaaa");
 
 
     // These must always works. It also test that integer type are well defined
@@ -267,6 +268,7 @@ int printf_lite_tests(void)
     Test1arg(F("12.987654"), F("%lf"), 12.987654);
 
     // Test rounding
+    Test1arg(F("10.499900"), F("%1lf"), 10.4999); // no precision specifier means 6
     Test1arg(F("10"), F("%1.0lf"), 10.4999);
     Test1arg(F("11"), F("%1.0lf"), 10.5001);
     Test1arg(F("10.5"), F("%1.1lf"), 10.5499);

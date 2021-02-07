@@ -2193,6 +2193,10 @@ GetEarlyUserSettings (
       //      GetLegacyLanAddress = IsPropertyTrue(Prop);
 
       // Secure boot
+      /* this parameter, which should be called SecureBootSetupMode, is ignored if :
+       *   it is true
+       *   SecureBoot is already true.
+       */
       Prop = BootDict->propertyForKey("Secure");
       if (Prop != NULL) {
         if ( Prop->isFalse() ) {
@@ -2276,6 +2280,10 @@ GetEarlyUserSettings (
       }
 
       // XMP memory profiles
+      // -1 = do not detect
+      // 0 = Detect the better XMP profile
+      // 1 = Use first profile if present
+      // 2 = Use second profile
       Prop = BootDict->propertyForKey("XMPDetection");
       if (Prop != NULL) {
         settingsData.Boot.XMPDetection = 0;

@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#include <Library/printf_lite.h>
+//#include <Library/printf_lite.h>
 
 #include <Uefi.h>
 #include <Uefi/UefiSpec.h>

@@ -29,7 +29,7 @@
 #include <string>
 #include <codecvt>
 //#include "../../../Include/Library/printf_lite.h"
-
+#include "../../../rEFIt_UEFI/Platform/BootLog.h"
 
 /* few tests for debug purpose */
 extern "C" void xcode_utf_fixed_tests()
@@ -55,6 +55,9 @@ extern "C" void xcode_utf_fixed_tests()
     wprintf(L"%ls\n", L"Hello world൧楔");
   #endif
   
+  uint64_t uint64 = 1;
+  printf("Hello world൧楔 %llu error(s)\n", uint64);
+  DebugLog(2, "Hello world൧楔 %llu error(s)\n", uint64);
 
   size_t len1 = wcslen(L"Hell൧楔o world൧楔");
   size_t len1f = wcslen_fixed(L"Hell൧楔o world൧楔");
@@ -70,6 +73,8 @@ extern "C" void xcode_utf_fixed_tests()
     const wchar_t* strstr1f = wcsstr_fixed(str, L"ク");
     printf("strstr1 = %ld, strstr1f = %ld\n", strstr1-str, strstr1f-str);
   }
+
+  printf("\n\n\n");
 
 //  char32_t c32 = (int)-1;
 }
@@ -213,6 +218,18 @@ extern "C" int printf(const char* format, ...)
     va_start(va, format);
     ret = vprintf(format, va);
     va_end(va);
+  #endif
+  return ret;
+}
+extern "C" int vprintf(const char* format, va_list va)
+{
+  int ret;
+  #if __WCHAR_MAX__ <= 0xFFFF
+    char buf[4095];
+    ret = PRINTF_FUNCTION_NAME(PRINTF_CFUNCTION_PREFIX, vsnprint, PRINTF_CFUNCTION_SUFFIX)(buf, sizeof(buf)-1, format, va);
+    write(1, buf, strlen(buf));
+  #else
+    ret = vprintf(format, va);
   #endif
   return ret;
 }

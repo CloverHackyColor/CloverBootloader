@@ -1,3 +1,4 @@
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "XImage.h"
 #include "lodepng.h"
 #include "nanosvg.h"
@@ -383,17 +384,25 @@ void XImage::FlipRB()
  * The function converted plain array into XImage object
  * Error = 0 - Success
  * Error = 28 - invalid signature
+ * Image is emptied if there is an error.
  */
 EFI_STATUS XImage::FromPNG(const UINT8 * Data, UINTN Length)
 {
 //  DBG("XImage len=%llu\n", Length);
-  if (Data == NULL) return EFI_INVALID_PARAMETER;
+  if (Data == NULL) {
+    setEmpty(); // to be 100% sure
+    return EFI_INVALID_PARAMETER;
+  }
   UINT8 * PixelPtr; // = (UINT8 *)&PixelData[0];
   unsigned Error = eglodepng_decode(&PixelPtr, &Width, &Height, Data, Length);
   if (Error != 0 && Error != 28) {
+    setEmpty(); // to be 100% sure
     return EFI_NOT_FOUND;
   }
-  if ( !PixelPtr ) return EFI_UNSUPPORTED; // It's possible to get error 28 and PixelPtr == NULL
+  if ( !PixelPtr ) {
+    setEmpty(); // to be 100% sure
+    return EFI_UNSUPPORTED; // It's possible to get error 28 and PixelPtr == NULL
+  }
   setSizeInPixels(Width, Height);
   //now we have a new pointer and want to move data
   INTN NewLength = Width * Height * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL);

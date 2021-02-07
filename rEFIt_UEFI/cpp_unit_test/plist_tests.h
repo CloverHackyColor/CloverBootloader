@@ -1,1 +1,1 @@
-int plist_tests();
+int ParseXML_tests();

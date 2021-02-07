@@ -61,10 +61,10 @@ void AddSecureBootTool(void)
 {
   LOADER_ENTRY *Entry;
   // If in forced mode or no secure boot then don't add tool
-  if (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode) {
+  if (!GlobalConfig.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode) {
     return;
   }
-  if (gSettings.Boot.SecureBoot) {
+  if (GlobalConfig.Boot.SecureBoot) {
     Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
     Entry->Title.SWPrintf("Clover Secure Boot Configuration");
 //    Entry->Tag = TAG_SECURE_BOOT_CONFIG;
@@ -492,7 +492,7 @@ BOOLEAN ConfigureSecureBoot(void)
         if (YesNoMessage(L"Disable Secure Boot", L"Are you sure you want to disable secure boot?")) {
           DBG("User disabled secure boot\n");
           DisableSecureBoot();
-          if (!gSettings.Boot.SecureBoot) {
+          if (!GlobalConfig.Boot.SecureBoot) {
             return TRUE;
           }
           AlertMessage(L"Disable Secure Boot", L"Disabling secure boot failed!\nClover does not appear to own the PK");

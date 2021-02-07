@@ -16,6 +16,8 @@
 
 #include "../../../../../cpp_tests/Include/xcode_utf_fixed.h"
 #include "ConfigSample1.h"
+#include "../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlist.h"
+#include "../../../rEFIt_UEFI/Platform/ConfigPlist/CompareSettings.h"
 
 
 int test1()
@@ -23,19 +25,37 @@ int test1()
   TagDict* dict = NULL;
   EFI_STATUS Status = ParseXML(configSample1, &dict, (UINT32)strlen(configSample1));
   printf("ParseXML returns %s\n", efiStrError(Status));
-  if ( !EFI_ERROR(Status) ) {
+  if ( EFI_ERROR(Status) ) {
+    return Status;
+  }
 //    XString8 s;
 //    dict->sprintf(0, &s);
 //    printf("%s\n", s.c_str());
     
-    SETTINGS_DATA settings;
-    Status = GetEarlyUserSettings(dict, settings);
-    printf("GetEarlyUserSettings returns %s\n", efiStrError(Status));
-    Status = GetUserSettings(dict, settings);
-    printf("GetUserSettings returns %s\n", efiStrError(Status));
+  SETTINGS_DATA settings;
+  Status = GetEarlyUserSettings(dict, settings);
+  printf("GetEarlyUserSettings returns %s\n", efiStrError(Status));
+  Status = GetUserSettings(dict, settings);
+  printf("GetUserSettings returns %s\n", efiStrError(Status));
+
+  bool b;
+  ConfigPlist configPlist;
+  
+  XmlLiteParser xmlLiteParser;
+  xmlLiteParser.init(configSample1, strlen(configSample1));
+
+  b = configPlist.parse(&xmlLiteParser, LString8(""));
+//  for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
+//    const XmlParserMessage& xmlMsg = xmlLiteParser.getErrorsAndWarnings()[idx];
+//    printf("%s: %s\n", xmlMsg.isError ? "Error" : "Warning", xmlMsg.msg.c_str());
+//  }
+  if ( b ) {
+    if ( xmlLiteParser.getErrorsAndWarnings().size() == 0 ) {
+      printf("Your plist looks so wonderful. Well done!\n");
+    }
   }
 
-  return 0;
+  return CompareEarlyUserSettingsWithConfigPlist(settings, configPlist) ? 0 : -1;
 }
 
 
@@ -54,7 +74,8 @@ extern "C" int main(int argc, const char * argv[])
 
   xcode_utf_fixed_tests();
 
-  test1();
+
+  return test1();
   
-	return all_tests() ? 0 : -1 ;
+//	return all_tests() ? 0 : -1 ;
 }

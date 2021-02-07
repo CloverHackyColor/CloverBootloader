@@ -54,7 +54,7 @@
 #include "../Platform/platformdata.h"
 #include "../Platform/cpu.h"
 #include "../Platform/Nvram.h"
-#include "../Platform/FixBiosDsdt.h"
+#include "../include/DsdtFixList.h"
 #include "../include/Devices.h"
 #include "../Platform/boot.h"
 #include "../Platform/Injectors.h"

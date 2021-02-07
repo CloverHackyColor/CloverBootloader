@@ -5,6 +5,10 @@
 #   define __attribute__(x)
 #endif
 
+#ifndef __cplusplus // C doesn't know bool
+#define bool unsigned char
+#endif
+
 extern bool stop_at_panic;
 extern bool i_have_panicked;
 
