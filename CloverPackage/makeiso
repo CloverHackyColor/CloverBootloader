@@ -122,8 +122,8 @@ mkdir -p ${isoOffPath}
 find ${CLOVERROOT}/EFI/CLOVER/drivers -type f -name '*.efi' -exec cp -R {} "${isoOffPath}"/ \;
 
 # Mandatory UEFI
-cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/DataHubDxe.efi \
-      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
+#cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/DataHubDxe.efi \
+#      ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 cp -f ${CLOVERROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/FSInject.efi \
       ${IMGROOT}/EFI/CLOVER/drivers/$DRIVERS_UEFI/
 

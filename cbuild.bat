@@ -248,7 +248,7 @@ rem # setup build
 
   set "TARGETARCH=X64"
   set UEFI_DRV_LIST=(FSInject OsxFatBinaryDrv VBoxHfs)
-  set UEFI_OFF_DRV_LIST=(CsmVideoDxe DataHubDxe EmuVariableUefi OsxAptioFixDrv OsxAptioFix2Drv OsxLowMemFixDrv PartitionDxe)
+  set UEFI_OFF_DRV_LIST=(CsmVideoDxe EmuVariableUefi OsxAptioFixDrv OsxAptioFix2Drv OsxLowMemFixDrv PartitionDxe)
   set DRV_LIST=(NvmExpressDxe Ps2MouseDxe UsbMouseDxe VBoxIso9600 VBoxExt2 VBoxExt4 XhciDxe)
   goto startbuild
 
