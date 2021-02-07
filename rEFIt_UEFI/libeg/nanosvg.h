@@ -45,8 +45,6 @@
 extern "C" {
 #include <Library/BaseMemoryLib.h>
 }
-#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
-//TODO exclude intersection between libeg and platform
 #include "libeg.h"
 
 #define NANOSVG_ALL_COLOR_KEYWORDS 1

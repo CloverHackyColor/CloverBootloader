@@ -93,20 +93,16 @@ long base64_decode_block(const char* code_in, const int length_in, char* plainte
  * If DecodedSize != NULL, then size od decoded data is put there.
  * If return value is not NULL, DecodedSize IS > 0
  */
-UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
+UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UINTN *DecodedSize)
 {
-	UINTN				EncodedSize;
 	INTN				DecodedSizeInternal;
 	UINT8				*DecodedData;
 	base64_decodestate	state_in;
 
-	if (EncodedData == NULL) {
+  if (EncodedData == NULL || EncodedSize == 0 ) {
 		return NULL;
 	}
-	EncodedSize = strlen(EncodedData);
-	if (EncodedSize == 0) {
-		return NULL;
-	}
+
 	// to simplify, we'll allocate the same size, although smaller size is needed
 	DecodedData = (__typeof__(DecodedData))AllocateZeroPool(EncodedSize);
 
@@ -124,4 +120,18 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
 	}
 
 	return DecodedData;
+}
+
+
+/** UEFI interface to base54 decode.
+ * Decodes EncodedData into a new allocated buffer and returns it. Caller is responsible to FreePool() it.
+ * If DecodedSize != NULL, then size od decoded data is put there.
+ * If return value is not NULL, DecodedSize IS > 0
+ */
+UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT UINTN *DecodedSize)
+{
+	if (EncodedData == NULL) {
+		return NULL;
+	}
+	return Base64DecodeClover(EncodedData, strlen(EncodedData), DecodedSize);
 }

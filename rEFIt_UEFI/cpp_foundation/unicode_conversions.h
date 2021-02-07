@@ -1,5 +1,5 @@
 //
-//  utf8Conversion.hpp
+//  unicode_conversions.h
 //
 //  Created by jief the 24 Feb 2020.
 //
@@ -440,4 +440,4 @@ inline size_t utf_string_from_utf_string_len(wchar_t* dst, size_t dst_max_size, 
 
 #undef wchar_cast
 
-#endif /* utf816Conversion_hpp */
+#endif /* __unicode_conversions_h__ */

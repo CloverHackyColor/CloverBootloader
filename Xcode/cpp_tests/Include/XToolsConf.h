@@ -1,6 +1,9 @@
 #ifndef __XTOOLSCONF_H__
 #define __XTOOLSCONF_H__
 
+#include <posix.h>
+#include <stdarg.h>
+#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
 
 #define xsize size_t
 //#define xisize INTN
@@ -22,11 +25,5 @@
 #define __XTOOLS_CHECK_OVERFLOW__
 
 #define Xrealloc(ptr, newsize, oldsize) realloc(ptr, newsize)
-
-//#include <Platform.h>
-#include <posix.h>
-#include <inttypes.h>
-#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
-#include <Library/Base.h>
 
 #endif

@@ -7,8 +7,6 @@
  *  big thank to Islam M. Ahmed Zaid for the updating the collection
  */
 
-//#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile  //this include needed for Uefi types
-//#include "ati_reg.h"
 #include "../include/Pci.h"
 #include "device_inject.h"
 class LOADER_ENTRY;

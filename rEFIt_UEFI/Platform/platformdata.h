@@ -9,7 +9,7 @@
 #define PLATFORM_PLATFORMDATA_H_
 
 
-
+#include "../cpp_foundation/XString.h"
 
 typedef enum {
 

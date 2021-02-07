@@ -3,6 +3,7 @@
  * 2010 mojodojo, 2012 slice
  */
 
+#include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "StateGenerator.h"
 #include "cpu.h"
 #include "smbios.h"

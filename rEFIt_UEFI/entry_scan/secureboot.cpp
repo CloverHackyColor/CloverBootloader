@@ -63,7 +63,7 @@ void EnableSecureBoot(void)
   UINTN       CloverSignatureSize = 0;
   void       *CloverSignature = NULL;
   // Check in setup mode
-  if (gSettings.Boot.SecureBoot || !gSettings.Boot.SecureBootSetupMode) {
+  if (GlobalConfig.Boot.SecureBoot || !gSettings.Boot.SecureBootSetupMode) {
     return;
   }
   // Ask user if they want to use default keys
@@ -148,7 +148,7 @@ CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
 STATIC void PrintSecureBootInfo(void)
 {
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.Boot.SecureBoot) {
+  if (!GlobalConfig.Boot.SecureBoot) {
     DBG("Secure Boot: %s\n", (gSettings.Boot.SecureBootSetupMode ? "Setup" : "Disabled"));
   } else {
     // Secure boot is enabled
@@ -178,7 +178,7 @@ void DisableSecureBoot(void)
   EFI_STATUS  Status;
   CHAR16     *ErrorString = NULL;
   // Check in user mode
-  if (gSettings.Boot.SecureBootSetupMode || !gSettings.Boot.SecureBoot) {
+  if (gSettings.Boot.SecureBootSetupMode || !GlobalConfig.Boot.SecureBoot) {
     return;
   }
   UninstallSecureBoot();
@@ -421,7 +421,7 @@ EFI_STATUS InstallSecureBoot(void)
   }
   PrintSecureBootInfo();
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!gSettings.Boot.SecureBoot || gSettings.Boot.SecureBootSetupMode) {
+  if (!GlobalConfig.Boot.SecureBoot || gSettings.Boot.SecureBootSetupMode) {
     return EFI_SUCCESS;
   }
   // Locate security protocols
@@ -473,14 +473,14 @@ void InitializeSecureBoot(void)
   // Set secure boot variables to firmware values
   UINTN Size = sizeof(gSettings.Boot.SecureBootSetupMode);
   gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBootSetupMode);
-  Size = sizeof(gSettings.Boot.SecureBoot);
-  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBoot);
+  Size = sizeof(GlobalConfig.Boot.SecureBoot);
+  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.Boot.SecureBoot);
   // Make sure that secure boot is disabled if in setup mode, this will
   //  allow us to specify later in settings that we want to override
   //  setup mode and pretend like we are in secure boot mode to enforce
   //  secure boot policy even when secure boot is not present/disabled.
   if (gSettings.Boot.SecureBootSetupMode) {
-    gSettings.Boot.SecureBoot = 0;
+    GlobalConfig.Boot.SecureBoot = 0;
   }
 }
 

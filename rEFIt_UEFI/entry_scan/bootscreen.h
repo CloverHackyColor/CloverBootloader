@@ -13,3 +13,4 @@ InitBootScreen (
 //CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode);
 
 #endif //__bootscreen_h__
+

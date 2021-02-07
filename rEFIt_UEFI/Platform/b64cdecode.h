@@ -51,11 +51,8 @@ int base64_decode_value(char value_in);
 long base64_decode_block(const char* code_in, const int length_in, char* plaintext_out, base64_decodestate* state_in);
 
 
-UINT8
-*Base64DecodeClover (
-  IN CONST CHAR8 *EncodedData,
-     OUT  UINTN *DecodedSize
-  );
+UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UINTN *DecodedSize);
+UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, OUT  UINTN *DecodedSize);
 
 
 #endif /* BASE64_CDECODE_H */

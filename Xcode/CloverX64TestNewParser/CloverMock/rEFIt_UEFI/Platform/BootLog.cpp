@@ -59,19 +59,19 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 // DebugMode==2 Prints to msg log, DEBUG_LOG and display console
 void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
-  VA_LIST Marker;
-  //UINTN offset = 0;
-   
+//  VA_LIST Marker;
+  va_list Marker;
   // Make sure the buffer is intact for writing
   if (FormatString == NULL || DebugMode < 0) {
     return;
   }
 
   // Print message to log buffer
-  VA_START(Marker, FormatString);
+//  VA_START(Marker, FormatString);
+  va_start(Marker, FormatString);
   #if __WCHAR_MAX__ < 0xffff
   #else
-    printf(FormatString, Marker);
+    vprintf(FormatString, Marker);
   #endif
   VA_END(Marker);
 }
