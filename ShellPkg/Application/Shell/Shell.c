@@ -34,7 +34,8 @@ SHELL_INFO ShellInfoObject = {
       0,
       0,
       0,
-      0
+      0,
+      0,
     }},
     0,
     NULL,

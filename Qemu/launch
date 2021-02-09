@@ -55,8 +55,9 @@ then
 	  echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
 		ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
 
-		echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi
-		ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi || exit 1
+		#no need to replace BootX64.efi as it is BootLoaderChooser now
+		#echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi
+		#ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi || exit 1
 	else
 	  : # TODO : if it's a module, has to be copied in Drivers
 	fi

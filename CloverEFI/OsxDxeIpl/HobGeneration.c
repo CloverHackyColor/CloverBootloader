@@ -399,9 +399,39 @@ HOB_TEMPLATE  gHobTemplate = {
       EFI_ACPI_DESCRIPTION_GUID
     },
     {
-      {
-        0,
-      },
+      { 0, }, // PM_TMR_BLK
+      0,
+      0,
+      0,
+      0,
+      0,
+      { 0, 0, 0, 0, 0, }, // RESET_REG
+      0,
+      { 0, 0, 0, 0, 0, }, // PM1a_EVT_BLK
+      { 0, 0, 0, 0, 0, }, // PM1b_EVT_BLK
+      { 0, 0, 0, 0, 0, }, // PM1a_CNT_BLK
+      { 0, 0, 0, 0, 0, }, // PM1b_CNT_BLK
+      { 0, 0, 0, 0, 0, }, // PM2_CNT_BLK
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      { 0, 0, 0, 0, 0, }, // GPE0_BLK
+      { 0, 0, 0, 0, 0, }, // GPE1_BLK
+      0,
+      0,
+      0,
+      0,
+      0,
     }
   },
   { // NV Storage FV Resource

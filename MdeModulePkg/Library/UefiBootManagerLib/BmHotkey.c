@@ -21,7 +21,7 @@ UINTN                        mBmHotkeySupportCount    = 0;
 //
 // Set OptionNumber as unassigned value to indicate the option isn't initialized
 //
-EFI_BOOT_MANAGER_LOAD_OPTION mBmHotkeyBootOption      = { LoadOptionNumberUnassigned };
+EFI_BOOT_MANAGER_LOAD_OPTION mBmHotkeyBootOption      = { LoadOptionNumberUnassigned, 0, 0, 0, NULL, NULL, 0, {0}, 0, NULL, 0 };
 
 EFI_BOOT_MANAGER_KEY_OPTION  *mBmContinueKeyOption    = NULL;
 VOID                         *mBmTxtInExRegistration  = NULL;

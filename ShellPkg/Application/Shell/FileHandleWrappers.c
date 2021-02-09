@@ -950,7 +950,11 @@ EFI_FILE_PROTOCOL FileInterfaceStdIn = {
   FileInterfaceNopSetPosition,
   FileInterfaceNopGetInfo,
   FileInterfaceNopSetInfo,
-  FileInterfaceNopGeneric
+  FileInterfaceNopGeneric,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
 };
 
 EFI_FILE_PROTOCOL FileInterfaceStdOut = {
@@ -964,7 +968,11 @@ EFI_FILE_PROTOCOL FileInterfaceStdOut = {
   FileInterfaceNopSetPosition,
   FileInterfaceNopGetInfo,
   FileInterfaceNopSetInfo,
-  FileInterfaceNopGeneric
+  FileInterfaceNopGeneric,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
 };
 
 EFI_FILE_PROTOCOL FileInterfaceStdErr = {
@@ -978,7 +986,11 @@ EFI_FILE_PROTOCOL FileInterfaceStdErr = {
   FileInterfaceNopSetPosition,
   FileInterfaceNopGetInfo,
   FileInterfaceNopSetInfo,
-  FileInterfaceNopGeneric
+  FileInterfaceNopGeneric,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
 };
 
 EFI_FILE_PROTOCOL FileInterfaceNulFile = {
@@ -992,7 +1004,11 @@ EFI_FILE_PROTOCOL FileInterfaceNulFile = {
   FileInterfaceNopSetPosition,
   FileInterfaceNopGetInfo,
   FileInterfaceNopSetInfo,
-  FileInterfaceNopGeneric
+  FileInterfaceNopGeneric,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
 };
 
 

@@ -54,7 +54,8 @@ LOADED_IMAGE_PRIVATE_DATA mCorePrivateImage  = {
     NULL,                                         // ImageBase
     0,                                            // ImageSize
     EfiBootServicesCode,                          // ImageCodeType
-    EfiBootServicesData                           // ImageDataType
+    EfiBootServicesData,                           // ImageDataType
+    NULL,
   },
   (EFI_PHYSICAL_ADDRESS)0,    // ImageBasePage
   0,                          // NumberOfPages
@@ -68,7 +69,9 @@ LOADED_IMAGE_PRIVATE_DATA mCorePrivateImage  = {
   0,                          // Machine
   NULL,                       // Ebc
   NULL,                       // RuntimeData
-  NULL                        // LoadedImageDevicePath
+  NULL,                        // LoadedImageDevicePath
+  {0},
+  0,
 };
 //
 // The field is define for Loading modules at fixed address feature to tracker the PEI code

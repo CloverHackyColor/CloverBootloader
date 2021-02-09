@@ -1438,7 +1438,9 @@ EFI_EDITOR_GLOBAL_EDITOR      MainEditorConst = {
   NULL,
   NULL,
   FALSE,
-  NULL
+  NULL,
+  0,
+  0
 };
 
 /**

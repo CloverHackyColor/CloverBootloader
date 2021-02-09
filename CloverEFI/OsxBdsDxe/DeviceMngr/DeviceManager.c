@@ -29,7 +29,8 @@ DEVICE_MANAGER_CALLBACK_DATA  gDeviceManagerPrivate = {
     FakeExtractConfig,
     FakeRouteConfig,
     DriverHealthCallback
-  }
+  },
+  0,
 };
 
 #define  MAX_MAC_ADDRESS_NODE_LIST_LEN    10

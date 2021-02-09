@@ -58,7 +58,8 @@ OvrReadData (IN  APPLE_SMC_IO_PROTOCOL  *This,
   AsciiSPrint(Str, 512, "--> data=:");
   Ptr = &Str[10];
   *Ptr++ = ' ';
-  for (i=0; i<MIN(Size, 500); i++) {
+  ASSERT(Size < sizeof(Str)-15);
+  for (i=0; i<Size; i++) { // Jief : it was "MIN(Size, 500)", but it's always true because Size is 8 bits
     AsciiSPrint(StrSmall, 10, "%02x ", Value[i]);
     *Ptr++ = StrSmall[0];
     *Ptr++ = StrSmall[1];
@@ -88,7 +89,8 @@ OvrWriteValue (IN  APPLE_SMC_IO_PROTOCOL  *This,
   AsciiSPrint(Str, 512, "--> data=:");
   Ptr = &Str[10];
   *Ptr++ = ' ';
-  for (i=0; i<MIN(Size, 500); i++) {
+  ASSERT(Size < sizeof(Str)-15);
+  for (i=0; i<Size; i++) { // Jief : it was "MIN(Size, 500)", but it's always true because Size is 8 bits
     AsciiSPrint(StrSmall, 10, "%02x ", Value[i]);
     *Ptr++ = StrSmall[0];
     *Ptr++ = StrSmall[1];

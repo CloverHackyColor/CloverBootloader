@@ -31,8 +31,19 @@ HEFI_EDITOR_FILE_IMAGE            HFileImageBackupVar;
 //
 HEFI_EDITOR_BUFFER_IMAGE          HFileImageConst = {
   NULL,
+  NULL,
   0,
-  FALSE
+  NULL,
+  {0},
+  {0},
+  {0},
+  0,
+  0,
+  0,
+  0,
+  NULL ,
+  NULL,
+  NULL
 };
 
 /**

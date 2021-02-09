@@ -55,7 +55,7 @@ UINT32              mFlowControlValue[2] = {
 ///
 BM_MENU_OPTION      FsOptionMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 /*
@@ -64,7 +64,7 @@ BM_MENU_OPTION      FsOptionMenu = {
 ///
 BM_MENU_OPTION      ConsoleInpMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -73,7 +73,7 @@ BM_MENU_OPTION      ConsoleInpMenu = {
 ///
 BM_MENU_OPTION      ConsoleOutMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -82,7 +82,7 @@ BM_MENU_OPTION      ConsoleOutMenu = {
 ///
 BM_MENU_OPTION      ConsoleErrMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 */
@@ -91,7 +91,7 @@ BM_MENU_OPTION      ConsoleErrMenu = {
 ///
 BM_MENU_OPTION      BootOptionMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -100,7 +100,7 @@ BM_MENU_OPTION      BootOptionMenu = {
 ///
 BM_MENU_OPTION      DriverOptionMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -109,7 +109,7 @@ BM_MENU_OPTION      DriverOptionMenu = {
 ///
 BM_MENU_OPTION      LegacyFDMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -118,7 +118,7 @@ BM_MENU_OPTION      LegacyFDMenu = {
 ///
 BM_MENU_OPTION      LegacyHDMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -127,7 +127,7 @@ BM_MENU_OPTION      LegacyHDMenu = {
 ///
 BM_MENU_OPTION      LegacyCDMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -136,7 +136,7 @@ BM_MENU_OPTION      LegacyCDMenu = {
 ///
 BM_MENU_OPTION      LegacyNETMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -145,7 +145,7 @@ BM_MENU_OPTION      LegacyNETMenu = {
 ///
 BM_MENU_OPTION      LegacyBEVMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -154,7 +154,7 @@ BM_MENU_OPTION      LegacyBEVMenu = {
 ///
 BM_MENU_OPTION      DirectoryMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 
@@ -163,13 +163,13 @@ BM_MENU_OPTION      DirectoryMenu = {
 ///
 BM_MENU_OPTION      DriverMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 /*
 BM_MENU_OPTION      TerminalMenu = {
   BM_MENU_OPTION_SIGNATURE,
-  {NULL},
+  {NULL, NULL},
   0
 };
 

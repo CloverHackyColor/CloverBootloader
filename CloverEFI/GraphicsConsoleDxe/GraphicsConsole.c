@@ -46,12 +46,12 @@ GRAPHICS_CONSOLE_DEV    mGraphicsConsoleDevTemplate = {
 };
 
 GRAPHICS_CONSOLE_MODE_DATA mGraphicsConsoleModeData[] = {
-  {100, 31},
+  {100, 31, 0, 0, 0, 0, 0},
   //
   // New modes can be added here.
   // The last entry is specific for full screen mode.
   //
-  {0, 0}
+  {0, 0, 0, 0, 0, 0, 0}
 };
 
 EFI_HII_DATABASE_PROTOCOL   *mHiiDatabase;

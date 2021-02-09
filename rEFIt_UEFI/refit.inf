@@ -501,10 +501,14 @@
 [Pcd]
 
 [BuildOptions]
-//  XCODE:*_*_*_CC_FLAGS = -std=c11 -fsigned-char -fno-omit-frame-pointer -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
-//  XCODE:*_*_*_CXX_FLAGS = -std=c++11 -fsigned-char -fno-omit-frame-pointer -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
-  XCODE:*_*_*_CC_FLAGS = -fno-use-cxa-atexit -std=c11 -fsigned-char -fno-omit-frame-pointer -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
-  XCODE:*_*_*_CXX_FLAGS = -fno-use-cxa-atexit -std=c++11 -fsigned-char -fno-omit-frame-pointer -fno-rtti -fno-exceptions -Wno-deprecated -Wno-writable-strings -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
-  GCC:*_*_*_CC_FLAGS = -std=c99 -fno-omit-frame-pointer -maccumulate-outgoing-args
-  GCC:*_*_*_CXX_FLAGS = -std=c++11 -fno-omit-frame-pointer -maccumulate-outgoing-args -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-unused-const-variable -Wno-pointer-arith -DJCONST=CONST
+
+  XCODE:*_*_*_CC_FLAGS = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-rtti -fno-exceptions -Wno-deprecated -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
+  XCODE:*_*_*_CXX_FLAGS = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-rtti -fno-exceptions -Wno-deprecated -Wno-unused-const-variable -DJCONST=CONST -Wno-incompatible-ms-struct
+ 
+  
+  # -Wno-unused-const-variable, -maccumulate-outgoing-args is set in tools_def.template
+  GCC:*_*_*_CC_FLAGS = -fno-omit-frame-pointer -ffreestanding -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-pointer-arith -DJCONST=CONST
+  GCC:*_*_*_CXX_FLAGS = -fno-omit-frame-pointer -ffreestanding -fno-rtti -fno-exceptions -Wno-deprecated -Wno-write-strings -Wno-pointer-arith -DJCONST=CONST
+  
+  
   MSFT:*_*_*_CC_FLAGS = /Os /wd4201 /D JCONST=const

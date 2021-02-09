@@ -78,7 +78,8 @@ ATA_DEVICE gAtaDeviceTemplate = {
     0,                         // IoAlign
     0,                         // LastBlock
     0,                         // LowestAlignedLba
-    1                          // LogicalBlocksPerPhysicalBlock
+    1,                         // LogicalBlocksPerPhysicalBlock
+    0,
   },
   {                            // DiskInfo
     EFI_DISK_INFO_IDE_INTERFACE_GUID,
@@ -96,7 +97,7 @@ ATA_DEVICE gAtaDeviceTemplate = {
   0,                           // Port
   0,                           // PortMultiplierPort
   { 0, },                      // Packet
-  {{ 0}, },                    // Acb
+  {{0}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0} },                    // Acb
   NULL,                        // Asb
   FALSE,                       // UdmaValid
   FALSE,                       // Lba48Bit
