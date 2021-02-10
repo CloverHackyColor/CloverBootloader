@@ -3178,7 +3178,7 @@ static void parseImage(NSVGparser* p, char** dict)
   NSVGpattern *pt = NULL;
   int i;
   UINTN len = 0;
-  float w,h;
+//  float w,h;
   const char *href = NULL;
   UINT8 *tmpData = NULL;
 //  EG_IMAGE *NewImage = NULL;
@@ -3186,9 +3186,9 @@ static void parseImage(NSVGparser* p, char** dict)
 
   for (i = 0; dict[i]; i += 2) {
     if (strcmp(dict[i], "width") == 0) {
-      w = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualWidth(p));
+      /*w =*/ nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualWidth(p));
     } else if (strcmp(dict[i], "height") == 0) {
-      h = nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
+      /*h =*/ nsvg__parseCoordinate(p, dict[i+1], 0.0f, nsvg__actualHeight(p));
     } else if (strcmp(dict[i], "xlink:href") == 0) {
       href = dict[i+1];
     } else {

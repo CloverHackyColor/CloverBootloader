@@ -259,9 +259,6 @@ ParseLoadOptions (
   };
 
   UINTN PlistStringsLen;
-  CHAR8 *AsciiConf;
-
-  AsciiConf              = NULL;
   *Dict                  = NULL;
 
   XStringW& ConfName = *ConfNamePtr;

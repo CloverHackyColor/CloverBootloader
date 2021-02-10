@@ -24,8 +24,8 @@
 
 [Includes]
   Include
-  Library/OpensslLib/Include
-  Library/OpensslLib/openssl-$(OPENSSL_VERSION)/include
+  #Library/OpensslLib/Include
+  #Library/OpensslLib/openssl-$(OPENSSL_VERSION)/include
 
 [LibraryClasses]
   ##  @libraryclass  Provides MsgLog service

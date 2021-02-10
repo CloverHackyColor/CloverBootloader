@@ -318,6 +318,19 @@ DebugPrintLevelEnabled (
 #endif
 
 /**
+ *
+  */
+#define DONT_EVALUATE(expression)                                    \
+   do {                                                                 \
+      _Pragma("GCC diagnostic push") \
+      _Pragma("GCC diagnostic ignored \"-Wtautological-compare\"") \
+      _Pragma("GCC diagnostic ignored \"-Wunused\"") \
+      _Pragma("GCC diagnostic ignored \"-Wunused-value\"") \
+      TRUE ? (void)(0) : (void)((expression)); \
+      _Pragma("GCC diagnostic pop") \
+   } while (FALSE)
+
+/**
   Macro that calls DebugAssert() if an expression evaluates to FALSE.
 
   If MDEPKG_NDEBUG is not defined and the DEBUG_PROPERTY_DEBUG_ASSERT_ENABLED
@@ -340,7 +353,10 @@ DebugPrintLevelEnabled (
       }                             \
     } while (FALSE)
 #else
-  #define ASSERT(Expression)
+  #define ASSERT(Expression)        \
+    do {                            \
+      DONT_EVALUATE(Expression);    \
+    } while (FALSE)
 #endif
 
 /**
@@ -363,7 +379,10 @@ DebugPrintLevelEnabled (
       }                            \
     } while (FALSE)
 #else
-  #define DEBUG(Expression)
+  #define DEBUG(Expression)        \
+    do {                           \
+      DONT_EVALUATE(Expression);    \
+    } while (FALSE)
 #endif
 
 /**
@@ -389,7 +408,10 @@ DebugPrintLevelEnabled (
       }                                                                                  \
     } while (FALSE)
 #else
-  #define ASSERT_EFI_ERROR(StatusParameter)
+  #define ASSERT_EFI_ERROR(StatusParameter)    \
+    do {                                         \
+      DONT_EVALUATE(StatusParameter);    \
+    } while (FALSE)
 #endif
 
 /**
@@ -416,7 +438,10 @@ DebugPrintLevelEnabled (
       }                                                                 \
     } while (FALSE)
 #else
-  #define ASSERT_RETURN_ERROR(StatusParameter)
+  #define ASSERT_RETURN_ERROR(StatusParameter)   \
+    do {                                         \
+      DONT_EVALUATE(StatusParameter);    \
+    } while (FALSE)
 #endif
 
 /**
@@ -459,7 +484,11 @@ DebugPrintLevelEnabled (
       }                                                                                 \
     } while (FALSE)
 #else
-  #define ASSERT_PROTOCOL_ALREADY_INSTALLED(Handle, Guid)
+  #define ASSERT_PROTOCOL_ALREADY_INSTALLED(Handle, Guid)   \
+    do {                                                    \
+      DONT_EVALUATE(Handle);    \
+      DONT_EVALUATE(Guid);    \
+    } while (FALSE)
 #endif
 
 /**

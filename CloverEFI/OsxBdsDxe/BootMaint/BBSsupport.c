@@ -47,7 +47,7 @@ OrderLegacyBootOption4SameType (
   UINTN                    *DisBootOptionCount
   )
 {
-  EFI_STATUS               Status;
+//  EFI_STATUS               Status;
   UINT16                   *NewBootOption;
   UINT16                   *BootOrder;
   UINTN                    BootOrderSize;
@@ -142,7 +142,7 @@ OrderLegacyBootOption4SameType (
   // Overwrite the old BootOption
     //
   CopyMem(&BootOrder[StartPosition], NewBootOption, (*DisBootOptionCount + *EnBootOptionCount) * sizeof (UINT16));
-  Status = gRT->SetVariable (
+  /*Status =*/ gRT->SetVariable (
                   L"BootOrder",
                   &gEfiGlobalVariableGuid,
                   EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE,

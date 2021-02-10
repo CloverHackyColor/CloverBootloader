@@ -1383,8 +1383,8 @@ SimpleString testtrim_(const InitialValue& initialValue, const ExpectedValue& ex
 	XStringClass str;
 	str.takeValueFrom(initialValue.cha);
 	
-	char32_t expectedChar = 0;
-	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
+//	char32_t expectedChar = 0;
+//	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
 	
 	str.trim();
 	
@@ -1417,8 +1417,8 @@ SimpleString teststartWith_(const InitialValue& initialValue)
 	XStringClass initia__String;
 	initia__String.takeValueFrom(initialValue.cha);
 	
-	char32_t expectedChar = 0;
-	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
+//	char32_t expectedChar = 0;
+//	if ( initialValue.utf32_length > 0) expectedChar = initialValue.utf32[initialValue.utf32_length-1];
 
 	for ( size_t count = 0 ; count < initialValue.utf32_length+3 ; count+=1 )
 	{

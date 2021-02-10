@@ -413,8 +413,11 @@ GrubRead(EFI_GRUB_FILE *File, VOID *Data, UINTN *Len)
 	/* GRUB may return an error if we request more data than available */
 	Remaining = f->size - f->offset;
 
-	if (*Len > Remaining)
-		*Len = Remaining;
+  if ( Remaining < 0 ) {
+    *Len = 0;
+  }else	if (*Len > (UINTN)Remaining) {
+    *Len = Remaining;
+  }
 
 	len = p->read(f, (char *) Data, *Len);
 

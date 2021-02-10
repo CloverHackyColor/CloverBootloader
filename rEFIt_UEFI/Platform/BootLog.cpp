@@ -99,13 +99,13 @@ public:
 
 void closeDebugLog()
 {
-  EFI_STATUS          Status;
+//  EFI_STATUS          Status;
 
   if ( !gLogFile ) return;
 
   SuspendMemLogCallback smc;
 
-  Status = gLogFile->Close(gLogFile);
+  /*Status =*/ gLogFile->Close(gLogFile);
   gLogFile = NULL;
   //DGB_nbCallback("closeDebugLog() -> %s\n", efiStrError(Status));
 }

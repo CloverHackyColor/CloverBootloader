@@ -546,7 +546,7 @@ void ReadSIPCfg()
 // text output from boot.efi when booting in graphics mode
 //
 EFI_STATUS EFIAPI
-NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CONST CHAR16 *String) {
+NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *, IN CONST CHAR16 *) {
   return EFI_SUCCESS;
 }
 

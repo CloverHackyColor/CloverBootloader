@@ -60,30 +60,30 @@ protected:
 		((XString8*)(context))->strncat(buf, nbchar);
 	}
 public:
-	void vS8Printf(const char* format, va_list va)
+	void vS8Printf(const char* format, XTOOLS_VA_LIST va)
 	{
 		setEmpty();
 		vprintf_with_callback(format, va, transmitS8Printf, this);
 	}
 	void S8Printf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
 	{
-		va_list     va;
+		XTOOLS_VA_LIST     va;
 
-		va_start (va, format);
+		XTOOLS_VA_START (va, format);
 		vS8Printf(format, va);
-		va_end(va);
+		XTOOLS_VA_END(va);
 	}
-  void vS8Catf(const char* format, va_list va)
+  void vS8Catf(const char* format, XTOOLS_VA_LIST va)
   {
     vprintf_with_callback(format, va, transmitS8Printf, this);
   }
   void S8Catf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
   {
-    va_list     va;
+    XTOOLS_VA_LIST     va;
 
-    va_start (va, format);
+    XTOOLS_VA_START (va, format);
     vS8Catf(format, va);
-    va_end(va);
+    XTOOLS_VA_END(va);
   }
 };
 
@@ -177,30 +177,30 @@ protected:
 		((XStringW*)(context))->strncat(buf, nbchar);
 	}
 public:
-	void vSWPrintf(const char* format, va_list va)
+	void vSWPrintf(const char* format, XTOOLS_VA_LIST va)
 	{
 		setEmpty();
 		vwprintf_with_callback(format, va, transmitSWPrintf, this);
 	}
 	void SWPrintf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
 	{
-		va_list     va;
+		XTOOLS_VA_LIST     va;
 
-		va_start (va, format);
+		XTOOLS_VA_START (va, format);
 		vSWPrintf(format, va);
-		va_end(va);
+		XTOOLS_VA_END(va);
 	}
-  void vSWCatf(const char* format, va_list va)
+  void vSWCatf(const char* format, XTOOLS_VA_LIST va)
   {
     vwprintf_with_callback(format, va, transmitSWPrintf, this);
   }
   void SWCatf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
   {
-    va_list     va;
+    XTOOLS_VA_LIST     va;
 
-    va_start (va, format);
+    XTOOLS_VA_START (va, format);
     vSWCatf(format, va);
-    va_end(va);
+    XTOOLS_VA_END(va);
   }
 };
 

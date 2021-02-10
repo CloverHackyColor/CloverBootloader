@@ -129,7 +129,7 @@ static fsw_status_t fsw_reiserfs_volume_mount(struct fsw_reiserfs_volume *vol)
         return FSW_UNSUPPORTED;
     
     // check the superblock
-    if (vol->sb->s_v1.s_root_block == -1)   // unfinished 'reiserfsck --rebuild-tree'
+    if (vol->sb->s_v1.s_root_block == (__le32)-1)   // unfinished 'reiserfsck --rebuild-tree'
         return FSW_VOLUME_CORRUPTED;
     
     /*

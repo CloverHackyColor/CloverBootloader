@@ -61,7 +61,7 @@ PartitionInstallAppleChildHandles (
 {
   EFI_STATUS                Status;
   UINT32                    Lba;
-  EFI_BLOCK_IO_MEDIA       *Media;
+//  EFI_BLOCK_IO_MEDIA       *Media;
   VOID                     *Block;
   //UINTN                   MaxIndex;
   /** @todo: wrong, as this PT can be on both HDD or CD */
@@ -70,27 +70,27 @@ PartitionInstallAppleChildHandles (
   EFI_STATUS                Found;
   UINT32                    Partition;
   UINT32                    PartitionEntries;
-  UINT32                    VolSpaceSize;
+//  UINT32                    VolSpaceSize;
   UINT32                    SubBlockSize;
   UINT32                    BlkPerSec;
   UINT32                    MediaId;
   UINT32                    BlockSize;
-  EFI_LBA                   LastBlock;
+//  EFI_LBA                   LastBlock;
   EFI_DISK_IO2_TOKEN        DiskIo2Token;
 
   Found         = EFI_NOT_FOUND;
-  VolSpaceSize  = 0;
+//  VolSpaceSize  = 0;
 
   if (BlockIo2 != NULL)
   {
-    Media         = BlockIo2->Media;
+//    Media         = BlockIo2->Media;
     BlockSize     = BlockIo2->Media->BlockSize;
-    LastBlock     = BlockIo2->Media->LastBlock;
+//    LastBlock     = BlockIo2->Media->LastBlock;
     MediaId       = BlockIo2->Media->MediaId;
   } else {
-    Media         = BlockIo->Media;
+//    Media         = BlockIo->Media;
     BlockSize     = BlockIo->Media->BlockSize;
-    LastBlock     = BlockIo->Media->LastBlock;
+//    LastBlock     = BlockIo->Media->LastBlock;
     MediaId       = BlockIo->Media->MediaId;
   }
 

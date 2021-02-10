@@ -216,13 +216,13 @@ AppleImageCodecEntrypoint (
 )
 {
   EFI_STATUS              Status;
-  EFI_HANDLE              NewHandle;
+//  EFI_HANDLE              NewHandle;
   
   //
   // Install instance of Apple image codec protocol for
   // PNG files
   //
-  NewHandle = NULL;  // install to a new handle
+//  NewHandle = NULL;  // install to a new handle
 //  Status = gBS->InstallMultipleProtocolInterfaces(&NewHandle, &gAppleImageCodecProtocolGuid, &gAppleImageCodec, NULL);
   Status      = gBS->InstallProtocolInterface (
                                                &ImageHandle,

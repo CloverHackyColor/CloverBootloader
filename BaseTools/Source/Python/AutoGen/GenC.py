@@ -597,6 +597,7 @@ ProcessModuleUnloadList (
   IN EFI_HANDLE        ImageHandle
   )
 {
+  (void)ImageHandle;
   return EFI_SUCCESS;
 }
 """),
@@ -738,6 +739,8 @@ ProcessLibrary${Type}List (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
+  (void)ImageHandle;
+  (void)SystemTable;
 ${BEGIN}  EFI_STATUS  Status;
 ${FunctionCall}${END}
 }

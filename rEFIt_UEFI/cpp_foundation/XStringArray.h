@@ -161,7 +161,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<typename CharType>
   void AddStrings(const CharType* Val1, ...)
 	{
-		va_list va;
+		XTOOLS_VA_LIST va;
 		const wchar_t *p;
 		
 		{
@@ -169,7 +169,7 @@ class XStringArray_/* : public XStringArraySuper*/
 			newS->takeValueFrom(Val1);
 			AddReference(newS, true);
 		}
-		va_start(va, Val1);
+		XTOOLS_VA_START(va, Val1);
 		p = VA_ARG(va, const CharType*);
 		while ( p != nullptr ) {
 			XStringClass* newS = new XStringClass;
@@ -177,7 +177,7 @@ class XStringArray_/* : public XStringArraySuper*/
 			AddReference(newS, true);
 			p = VA_ARG(va, const CharType*);
 		}
-		va_end(va);
+		XTOOLS_VA_END(va);
 	}
 
 	void AddNoNull(const XStringClass &aString) { if ( !aString.isEmpty() ) array.AddCopy(aString); }

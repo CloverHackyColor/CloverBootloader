@@ -102,7 +102,7 @@ BmFindBootOptionInVariable (
   CHAR16                       OptionName[BM_OPTION_NAME_LEN];
   EFI_BOOT_MANAGER_LOAD_OPTION *BootOptions;
   UINTN                        BootOptionCount;
-  UINTN                        Index;
+  INTN                        Index;
 
   OptionNumber = LoadOptionNumberUnassigned;
 

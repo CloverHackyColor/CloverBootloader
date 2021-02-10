@@ -428,7 +428,7 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 e
 {
   EFI_STATUS  Status = EFI_SUCCESS;
   UINT32    pos;
-  TagStruct*    tagTail;
+//  TagStruct*    tagTail;
   UINT32    length = 0;
 
   if (isArray) {
@@ -436,7 +436,7 @@ EFI_STATUS __ParseTagList(bool isArray, CHAR8* buffer, TagStruct** tag, UINT32 e
   } else {
     DBG("parsing dict len=%d\n", *lenPtr);
   }
-  tagTail = NULL;
+//  tagTail = NULL;
   pos = 0;
 
   TagStruct* dictOrArrayTag;

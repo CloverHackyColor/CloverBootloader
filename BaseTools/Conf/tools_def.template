@@ -1980,7 +1980,7 @@ NOOPT_*_*_OBJCOPY_ADDDEBUGFLAG     = --add-gnu-debuglink=$(DEBUG_DIR)/$(MODULE_N
 
 DEFINE GCC_ALL_CC_FLAGS            = -fshort-wchar -fno-builtin -fno-strict-aliasing -Wall -Werror -Wno-array-bounds -include AutoGen.h -fno-common
 DEFINE GCC_IA32_CC_FLAGS           = DEF(GCC_ALL_CC_FLAGS) -m32 -malign-double -freorder-blocks -freorder-blocks-and-partition -O2 -mno-stack-arg-probe
-DEFINE GCC_X64_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mno-red-zone -Wno-address -mno-stack-arg-probe
+DEFINE GCC_X64_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mno-red-zone -mno-stack-arg-probe
 DEFINE GCC_ARM_CC_FLAGS            = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -mabi=aapcs -fno-short-enums -funsigned-char -ffunction-sections -fdata-sections -fomit-frame-pointer -Wno-address -mthumb -mfloat-abi=soft -fno-pic -fno-pie
 DEFINE GCC_ARM_CC_XIPFLAGS         = -mno-unaligned-access
 DEFINE GCC_AARCH64_CC_FLAGS        = DEF(GCC_ALL_CC_FLAGS) -mlittle-endian -fno-short-enums -fverbose-asm -funsigned-char  -ffunction-sections -fdata-sections -Wno-address -fno-asynchronous-unwind-tables -fno-unwind-tables -fno-pic -fno-pie -ffixed-x18
@@ -2008,10 +2008,10 @@ DEFINE GCC_X64_RC_FLAGS            = -I binary -O elf64-x86-64      -B i386 --re
 DEFINE GCC_ARM_RC_FLAGS            = -I binary -O elf32-littlearm     -B arm     --rename-section .data=.hii
 DEFINE GCC_AARCH64_RC_FLAGS        = -I binary -O elf64-littleaarch64 -B aarch64 --rename-section .data=.hii
 
-DEFINE GCC48_ALL_CC_FLAGS            = -fshort-wchar -fno-builtin -Wall -Werror -Wno-array-bounds  -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -nostdinc -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -DNO_MSABI_VA_FUNCS -fno-strict-aliasing
+DEFINE GCC48_ALL_CC_FLAGS            = -fshort-wchar -fno-builtin -Wall -ffunction-sections -fdata-sections -include AutoGen.h -fno-common -nostdinc -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -DNO_MSABI_VA_FUNCS -fno-strict-aliasing
 DEFINE GCC48_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x20
 DEFINE GCC48_IA32_CC_FLAGS           = DEF(GCC48_ALL_CC_FLAGS) -m32 -march=i586 -malign-double -fno-stack-protector -D EFI32 -fno-asynchronous-unwind-tables -Wno-address
-DEFINE GCC48_X64_CC_FLAGS            = DEF(GCC48_ALL_CC_FLAGS) -m64 -fno-stack-protector -mabi=ms "-DEFIAPI=__attribute__((ms_abi))" -maccumulate-outgoing-args -mno-red-zone -Wno-address -mcmodel=small -fpie -fno-asynchronous-unwind-tables
+DEFINE GCC48_X64_CC_FLAGS            = DEF(GCC48_ALL_CC_FLAGS) -m64 -fno-stack-protector -mabi=ms "-DEFIAPI=__attribute__((ms_abi))" -maccumulate-outgoing-args -mno-red-zone -mcmodel=small -fpie -fno-asynchronous-unwind-tables
 DEFINE GCC48_IA32_X64_ASLDLINK_FLAGS = DEF(GCC48_IA32_X64_DLINK_COMMON) -Wl,--entry,ReferenceAcpiTable -u ReferenceAcpiTable
 DEFINE GCC48_IA32_X64_DLINK_FLAGS    = DEF(GCC48_IA32_X64_DLINK_COMMON) -Wl,--entry,$(IMAGE_ENTRY_POINT) -u $(IMAGE_ENTRY_POINT) -Wl,-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map,--whole-archive
 DEFINE GCC48_IA32_DLINK2_FLAGS       = -Wl,--defsym=PECOFF_HEADER_SIZE=0x220 DEF(GCC_DLINK2_FLAGS_COMMON)
@@ -2032,8 +2032,8 @@ DEFINE GCC48_ARM_ASLDLINK_FLAGS      = DEF(GCC_ARM_ASLDLINK_FLAGS) -Wl,--oformat
 DEFINE GCC48_AARCH64_ASLDLINK_FLAGS  = DEF(GCC_AARCH64_ASLDLINK_FLAGS)
 DEFINE GCC48_ASLCC_FLAGS             = DEF(GCC_ASLCC_FLAGS)
 
-DEFINE GCC49_IA32_CC_FLAGS           = DEF(GCC48_IA32_CC_FLAGS) -Wno-unused-const-variable
-DEFINE GCC49_X64_CC_FLAGS            = DEF(GCC48_X64_CC_FLAGS) -Wno-unused-const-variable
+DEFINE GCC49_IA32_CC_FLAGS           = DEF(GCC48_IA32_CC_FLAGS) -fno-pic -fno-pie
+DEFINE GCC49_X64_CC_FLAGS            = DEF(GCC48_X64_CC_FLAGS)
 DEFINE GCC49_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections -z common-page-size=0x40
 DEFINE GCC49_IA32_X64_ASLDLINK_FLAGS = DEF(GCC49_IA32_X64_DLINK_COMMON) -Wl,--defsym=PECOFF_HEADER_SIZE=0 DEF(GCC_DLINK2_FLAGS_COMMON) -Wl,--entry,ReferenceAcpiTable -u ReferenceAcpiTable
 DEFINE GCC49_IA32_X64_DLINK_FLAGS    = DEF(GCC49_IA32_X64_DLINK_COMMON) -Wl,--entry,$(IMAGE_ENTRY_POINT) -u $(IMAGE_ENTRY_POINT) -Wl,-Map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map,--whole-archive
@@ -2079,7 +2079,7 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
 DEFINE GCC5_ASLCC_FLAGS              = DEF(GCC49_ASLCC_FLAGS) -fno-lto
 
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
-DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -Wno-unused-but-set-variable -fno-unwind-tables -Wno-incompatible-ms-struct -mms-bitfields -fno-ms-extensions -Wno-unused-parameter
+DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -mms-bitfields -fno-ms-extensions -ffreestanding -nostdinc
 DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
@@ -2416,9 +2416,9 @@ RELEASE_GCC48_AARCH64_CC_FLAGS   = DEF(GCC48_AARCH64_CC_FLAGS) -Wno-unused-but-s
 
 #Jief removed lto flag. It is set in CLover.dsc, from the env var 'DISABLE_LTO'
   DEBUG_GCC53_X64_CC_FLAGS       = DEF(GCC53_X64_CC_FLAGS) -g3 -O0
-RELEASE_GCC53_X64_CC_FLAGS       = DEF(GCC53_X64_CC_FLAGS) -Os
+RELEASE_GCC53_X64_CC_FLAGS       = DEF(GCC53_X64_CC_FLAGS)     -Os -Werror
   DEBUG_GCC53_X64_CXX_FLAGS      = DEF(GCC53_X64_CC_FLAGS) -g3 -O0
-RELEASE_GCC53_X64_CXX_FLAGS      = DEF(GCC53_X64_CC_FLAGS) -Os
+RELEASE_GCC53_X64_CXX_FLAGS      = DEF(GCC53_X64_CC_FLAGS)     -Os -Werror
 
 #
 #
@@ -2572,7 +2572,7 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
   DEBUGMACOS_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
      RELEASE_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
-           *_XCODE8_X64_SLINK_FLAGS      = -static -o
+           *_XCODE8_X64_SLINK_FLAGS      = -static -no_warning_for_no_symbols -o 
            
          DEBUG_XCODE8_X64_ASM_FLAGS      = -c -x assembler -arch x86_64 -g
     DEBUGMACOS_XCODE8_X64_ASM_FLAGS      = -c -x assembler -arch x86_64 -g
@@ -2587,7 +2587,7 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE8_COMMON_FLAGS      = -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -Wno-unused-parameter -Wno-sign-compare  -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -DNO_MSABI_VA_FUNCS -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small
+         DEFINE XCODE8_COMMON_FLAGS      =  -nostdinc -target x86_64-pc-win32-macho -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small -DNO_MSABI_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -fno-strict-aliasing -Wno-unused-parameter
  
 
 

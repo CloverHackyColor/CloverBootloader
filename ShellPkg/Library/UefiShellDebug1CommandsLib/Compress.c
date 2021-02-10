@@ -28,7 +28,7 @@
 //
 // Macro Definitions
 //
-typedef INT16             NODE;
+typedef UINT16             NODE;
 #define UINT8_MAX         0xff
 #define UINT8_BIT         8
 #define THRESHOLD         3

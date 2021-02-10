@@ -51,7 +51,8 @@ CHAR16 *DriverNameString = L"efifs " WIDEN(STRINGIFY(FS_DRIVER_VERSION_MAJOR)) L
 EFI_GUID *
 GetFSGuid(VOID)
 {
-	INTN i, j, k, Len = StrLen(WIDEN(STRINGIFY(DRIVERNAME)));
+	INTN i, k, Len = StrLen(WIDEN(STRINGIFY(DRIVERNAME)));
+  UINTN j;
 	static EFI_GUID Guid = { 0xEF1F5EF1, 0xF17E, 0x5857, { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
 	CHAR16 *FsName = WIDEN(STRINGIFY(DRIVERNAME));
 	const CHAR16 *PlusName = L"plus";

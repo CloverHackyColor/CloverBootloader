@@ -192,28 +192,28 @@ void XObjArrayNC<TYPE>::Init()
 template<class TYPE>
 XObjArray<TYPE>::XObjArray(bool FreeThem, TYPE* n1, ...)
 {
-  va_list     va;
+  XTOOLS_VA_LIST     va;
 
-  va_start (va, n1);
+  XTOOLS_VA_START (va, n1);
   size_t count = 0;
   TYPE* t = va_arg(va, TYPE*);
   while ( t != nullptr ) {
     count++;
     t = va_arg(va, TYPE*);
   }
-  va_end(va);
+  XTOOLS_VA_END(va);
 
   XObjArrayNC<TYPE>::Init();
   this->CheckSize(count+1, (size_t)0);
   XObjArrayNC<TYPE>::AddReference(n1, FreeThem);
 
-  va_start (va, n1);
+  XTOOLS_VA_START (va, n1);
   t = va_arg(va, TYPE*);
   while ( t != nullptr ) {
     XObjArrayNC<TYPE>::AddReference(t, FreeThem);
     t = va_arg(va, TYPE*);
   }
-  va_end(va);
+  XTOOLS_VA_END(va);
 }
 
 

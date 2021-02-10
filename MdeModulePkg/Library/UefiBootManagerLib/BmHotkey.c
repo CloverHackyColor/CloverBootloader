@@ -121,7 +121,7 @@ BmIsKeyOptionVariable (
   *OptionNumber = 0;
   for (Index = 3; Index < 7; Index++) {
     Uint = BmCharToUint (Name[Index]);
-    if (Uint == -1) {
+    if (Uint == (UINTN)-1 ) { // BmCharToUint returns (UINTN)-1
       return FALSE;
     } else {
       *OptionNumber = (UINT16) Uint + *OptionNumber * 0x10;

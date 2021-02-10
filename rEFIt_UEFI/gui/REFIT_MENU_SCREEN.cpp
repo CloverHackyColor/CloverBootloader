@@ -2038,12 +2038,12 @@ void REFIT_MENU_SCREEN::DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOL
   INTN CompWidth = (Entry->Row == 0) ? ThemeX.row0TileSize : ThemeX.row1TileSize;
   INTN CompHeight = CompWidth;
 
-  float fScale;
-  if (ThemeX.TypeSVG) {
-    fScale = (selected ? 1.f : -1.f);
-  } else {
-    fScale = ((Entry->Row == 0) ? (ThemeX.MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
-  }
+//  float fScale;
+//  if (ThemeX.TypeSVG) {
+//    fScale = (selected ? 1.f : -1.f);
+//  } else {
+//    fScale = ((Entry->Row == 0) ? (ThemeX.MainEntriesSize/128.f * (selected ? 1.f : -1.f)): 1.f) ;
+//  }
 
   if (Entry->Row == 0) {
     BadgeIcon = Entry->getBadgeImage();

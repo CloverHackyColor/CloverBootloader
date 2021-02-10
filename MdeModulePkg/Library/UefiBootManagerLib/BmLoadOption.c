@@ -822,7 +822,7 @@ EfiBootManagerIsValidLoadOptionVariableName (
   LocalOptionNumber = 0;
   for (Index = VariableNameLen - 4; Index < VariableNameLen; Index++) {
     Uint = BmCharToUint (VariableName[Index]);
-    if (Uint == -1) {
+    if (Uint == (UINTN)-1) { // BmCharToUint can return (UINTN)-1
       break;
     } else {
       LocalOptionNumber = (UINT16) Uint + LocalOptionNumber * 0x10;

@@ -32,7 +32,7 @@ Revision History
 // FAT entry values
 //
 #define FAT_CLUSTER_SPECIAL_EXT       (-1 & (~0xF))
-#define FAT_CLUSTER_SPECIAL           ((FAT_CLUSTER_SPECIAL_EXT) | 0x07)
+#define FAT_CLUSTER_SPECIAL           ((UINTN)((FAT_CLUSTER_SPECIAL_EXT) | 0x07))
 #define FAT_CLUSTER_FREE              0
 #define FAT_CLUSTER_RESERVED          (FAT_CLUSTER_SPECIAL)
 #define FAT_CLUSTER_BAD               (FAT_CLUSTER_SPECIAL)

@@ -17,7 +17,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 //
 
 #undef UINT8_MAX
-typedef INT16             NODE;
+typedef UINT16             NODE;
 #define UINT8_MAX         0xff
 #define UINT8_BIT         8
 #define THRESHOLD         3
