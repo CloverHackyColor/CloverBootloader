@@ -3752,12 +3752,13 @@ static void getACPISettings(const TagDict *CfgDict)
           
         } else if (Prop2->isDict()) {
           const TagStruct* Prop = Prop2->getDict()->propertyForKey("PStates");
-          gSettings.ACPI.SSDT.Generate.GeneratePStates = IsPropertyNotNullAndTrue(Prop);
-          gSettings.ACPI.SSDT.Generate.GenerateAPSN = gSettings.ACPI.SSDT.Generate.GeneratePStates;
-          gSettings.ACPI.SSDT.Generate.GenerateAPLF = gSettings.ACPI.SSDT.Generate.GeneratePStates;
-          gSettings.ACPI.SSDT.Generate.GeneratePluginType = gSettings.ACPI.SSDT.Generate.GeneratePStates;
+          if (Prop) {
+            gSettings.ACPI.SSDT.Generate.GeneratePStates = IsPropertyNotNullAndTrue(Prop);
+          }
           Prop = Prop2->getDict()->propertyForKey("CStates");
-          gSettings.ACPI.SSDT.Generate.GenerateCStates = IsPropertyNotNullAndTrue(Prop);
+          if (Prop) {
+            gSettings.ACPI.SSDT.Generate.GenerateCStates = IsPropertyNotNullAndTrue(Prop);
+          }
           Prop = Prop2->getDict()->propertyForKey("APSN");
           if (Prop) {
             gSettings.ACPI.SSDT.Generate.GenerateAPSN = IsPropertyNotNullAndTrue(Prop);
