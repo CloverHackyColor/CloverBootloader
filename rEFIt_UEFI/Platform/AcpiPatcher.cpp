@@ -249,8 +249,8 @@ void AddDropTable(EFI_ACPI_DESCRIPTION_HEADER* Table, UINT32 Index)
   DropTable->TableId = Table->OemTableId;
   DropTable->Length = Table->Length;
   DropTable->MenuItem.BValue = FALSE;
-  DropTable->Next = gSettings.ACPIDropTables;
-  gSettings.ACPIDropTables = DropTable;
+  DropTable->Next = GlobalConfig.ACPIDropTables;
+  GlobalConfig.ACPIDropTables = DropTable;
 }
 
 void GetAcpiTablesList()
@@ -258,7 +258,7 @@ void GetAcpiTablesList()
   DbgHeader("GetAcpiTablesList");
 
   GetFadt(); //this is a first call to acpi, we need it to make a pointer to Xsdt
-  gSettings.ACPIDropTables = NULL;
+  GlobalConfig.ACPIDropTables = NULL;
 
   DBG("Get Acpi Tables List ");
   if (Xsdt) {
@@ -398,7 +398,7 @@ BOOLEAN FixAsciiTableHeader(UINT8 *Str, UINTN Len)
 BOOLEAN PatchTableHeader(EFI_ACPI_DESCRIPTION_HEADER *Header)
 {
   BOOLEAN Ret1, Ret2, Ret3;
-  if (!(gSettings.FixDsdt & FIX_HEADERS) && !gSettings.FixHeaders) {
+  if (!(gSettings.ACPI.DSDT.FixDsdt & FIX_HEADERS) && !gSettings.ACPI.FixHeaders) {
     return FALSE;
   }
   Ret1 = FixAsciiTableHeader((UINT8*)&Header->CreatorId, 4);
@@ -437,7 +437,7 @@ void PatchAllTables()
     }
     EFI_ACPI_DESCRIPTION_HEADER* NewTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
     CopyMem(NewTable, Table, Len);
-    if ((gSettings.FixDsdt & FIX_HEADERS) || gSettings.FixHeaders) {
+    if ((gSettings.ACPI.DSDT.FixDsdt & FIX_HEADERS) || gSettings.ACPI.FixHeaders) {
       // Merged tables already have the header patched, so no need to do it again
       if (!IsXsdtEntryMerged(IndexFromXsdtEntryPtr(Ptr))) {
         // table header NOT already patched
@@ -445,31 +445,31 @@ void PatchAllTables()
       }
     }
     if (NewTable->Signature == EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-      if (gSettings.DSDTPatchArray.size() > 0) {
-        DBG("Patching SSDTs: %zu patches each\n", gSettings.DSDTPatchArray.size());
+      if (gSettings.ACPI.DSDT.DSDTPatchArray.size() > 0) {
+        DBG("Patching SSDTs: %zu patches each\n", gSettings.ACPI.DSDT.DSDTPatchArray.size());
 
 //        CHAR8  OTID[9];
 //        OTID[8] = 0;
 //        CopyMem(OTID, &NewTable->OemTableId, 8);
 //        DBG("Patching SSDT %s Length=%d\n",  OTID, (INT32)Len);
 
-        for (UINT32 i = 0; i < gSettings.DSDTPatchArray.size(); i++) {
-          if ( gSettings.DSDTPatchArray[i].PatchDsdtFind.isEmpty() ) {
+        for (UINT32 i = 0; i < gSettings.ACPI.DSDT.DSDTPatchArray.size(); i++) {
+          if ( gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind.isEmpty() ) {
             continue;
           }
 //          DBG("%d. [%s]:", i, gSettings.PatchDsdtLabel[i]);
-          if (!gSettings.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
+          if (!gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
 //            DBG(" disabled\n");
             continue;
           }
-          if ( gSettings.DSDTPatchArray[i].PatchDsdtTgt.isEmpty() ) {
+          if ( gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt.isEmpty() ) {
             Len = FixAny((UINT8*)NewTable, Len,
-                         gSettings.DSDTPatchArray[i].PatchDsdtFind,
-                         gSettings.DSDTPatchArray[i].PatchDsdtReplace);
+                         gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
+                         gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
             //DBG(" OK\n");
           }else{
             //DBG("Patching: renaming in bridge\n");
-            Len = FixRenameByBridge2((UINT8*)NewTable, Len, gSettings.DSDTPatchArray[i].PatchDsdtTgt, gSettings.DSDTPatchArray[i].PatchDsdtFind, gSettings.DSDTPatchArray[i].PatchDsdtReplace);
+            Len = FixRenameByBridge2((UINT8*)NewTable, Len, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind, gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
           }
         }
       }
@@ -479,7 +479,7 @@ void PatchAllTables()
       GetBiosRegions((UINT8*)NewTable);  //take Regions from SSDT even if they will be dropped
       Patched = TRUE;
     }
-    if (NewTable->Signature == MCFG_SIGN && gSettings.FixMCFG) {
+    if (NewTable->Signature == MCFG_SIGN && gSettings.ACPI.FixMCFG) {
       INTN Len1 = ((Len + 4 - 1) / 16 + 1) * 16 - 4;
       CopyMem(NewTable, Table, Len1); //Len increased but less than EFI_PAGE
       NewTable->Length = (UINT32)(UINTN)Len1;      Patched = TRUE;
@@ -863,7 +863,7 @@ static XStringW GenerateFileName(CONST CHAR16* FileNamePrefix, UINTN SsdtCount, 
 {
   XStringW FileName;
   CHAR8 Suffix[10]; // "-" + OemTableId + NUL
-  if (gSettings.NoOemTableId || 0 == OemTableId[0]) {
+  if (gSettings.ACPI.SSDT.NoOemTableId || 0 == OemTableId[0]) {
     Suffix[0] = 0;
   } else {
     Suffix[0] = '-';
@@ -894,7 +894,7 @@ void DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CONST CHAR16 *DirNam
   UINT8         *pacBody;
   INTN          ChildCount = 0;
 
-  if (gSettings.NoDynamicExtract) {
+  if (gSettings.ACPI.SSDT.NoDynamicExtract) {
     return;
   }
 
@@ -1507,16 +1507,16 @@ void SaveOemDsdt(BOOLEAN FullPatch)
   UINT8             *buffer = NULL;
   UINTN              DsdtLen = 0;
   XStringW           OriginDsdt      = SWPrintf("ACPI\\origin\\DSDT.aml");
-  XStringW           OriginDsdtFixed = SWPrintf("ACPI\\origin\\DSDT-%x.aml", gSettings.FixDsdt);
+  XStringW           OriginDsdtFixed = SWPrintf("ACPI\\origin\\DSDT-%x.aml", gSettings.ACPI.DSDT.FixDsdt);
 //  constexpr LStringW PathPatched     = L"\\EFI\\CL OVER\\ACPI\\patched";
 //  XStringW           PathDsdt;
 //  XStringW           AcpiOemPath     = SWPrintf("ACPI\\patched");
 
-//  PathDsdt.SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
+//  PathDsdt.SWPrintf("\\%ls", gSettings.ACPI.DSDT.FixDsdt.wc_str());
 
-  if (FileExists(selfOem.getConfigDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()))) {
-    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: \\%ls\\ACPI\\patched\\%ls\n", selfOem.getConfigDirFullPath().wc_str(), gSettings.DsdtName.wc_str());
-    Status = egLoadFile(&selfOem.getConfigDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str()).wc_str(), &buffer, &DsdtLen);
+  if (FileExists(selfOem.getConfigDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.ACPI.DSDT.DsdtName.wc_str()))) {
+    DBG("SaveOemDsdt: DSDT found in Clover volume OEM folder: \\%ls\\ACPI\\patched\\%ls\n", selfOem.getConfigDirFullPath().wc_str(), gSettings.ACPI.DSDT.DsdtName.wc_str());
+    Status = egLoadFile(&selfOem.getConfigDir(), SWPrintf("ACPI\\patched\\%ls", gSettings.ACPI.DSDT.DsdtName.wc_str()).wc_str(), &buffer, &DsdtLen);
   }
 
 //  Jief : Do not write outside OemPath
@@ -1582,7 +1582,7 @@ BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST C
   UINTN Index = IGNORE_INDEX;
   if (AUTOMERGE_PASS1 == Pass) {
     Index = IndexFromFileName(PartName);
-    // gSettings.AutoMerge always true in this case
+    // gSettings.ACPI.AutoMerge always true in this case
     // file names such as: ECDT.aml, SSDT-0.aml, SSDT-1-CpuPm.aml, attempt merge on pass1
     // others: no attempt for merge
     // special case for SSDT.aml: no attempt to merge
@@ -1603,7 +1603,7 @@ BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST C
       }
     }
     DBG("size=%lld ", (UINT64)bufferLen);
-    if (!gSettings.AutoMerge) {
+    if (!gSettings.ACPI.AutoMerge) {
       // Note: with AutoMerge=false, Pass is only AUTOMERGE_PASS2 here
       Status = InsertTable(buffer, bufferLen);
     } else {
@@ -1619,23 +1619,23 @@ BOOLEAN LoadPatchedAML(const EFI_FILE& dir, const XStringW& acpiOemPath, CONST C
 
 void LoadAllPatchedAML(const XStringW& acpiPathUnderOem, UINTN Pass)
 {
-  if (!gSettings.AutoMerge && AUTOMERGE_PASS1 == Pass) {
+  if (!gSettings.ACPI.AutoMerge && AUTOMERGE_PASS1 == Pass) {
     // nothing to do in this case, since AutoMerge=false -> no tables ever merged
     return;
   }
   if (ACPIPatchedAML) {
     DbgHeader("ACPIPatchedAML");
-    if (gSettings.AutoMerge) {
+    if (gSettings.ACPI.AutoMerge) {
 		DBG("AutoMerge pass %llu\n", Pass);
     }
     //DBG("Start: Processing Patched AML(s): ");
-    if (gSettings.SortedACPICount) {
+    if (gSettings.ACPI.SortedACPI.size()) {
       UINTN Index;
       DBG("Sorted\n");
-      for (Index = 0; Index < gSettings.SortedACPICount; Index++) {
+      for (Index = 0; Index < gSettings.ACPI.SortedACPI.size(); Index++) {
         ACPI_PATCHED_AML *ACPIPatchedAMLTmp;
         for (ACPIPatchedAMLTmp = ACPIPatchedAML; ACPIPatchedAMLTmp; ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next) {
-          if (0 == StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.SortedACPI[Index]) && ACPIPatchedAMLTmp->MenuItem.BValue) {
+          if (0 == StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.ACPI.SortedACPI[Index].wc_str()) && ACPIPatchedAMLTmp->MenuItem.BValue) {
             if (BVALUE_ATTEMPTED != ACPIPatchedAMLTmp->MenuItem.BValue)
               DBG("Disabled: %ls, skip\n", ACPIPatchedAMLTmp->FileName);
             ACPIPatchedAMLTmp->MenuItem.BValue = BVALUE_ATTEMPTED;
@@ -1643,11 +1643,11 @@ void LoadAllPatchedAML(const XStringW& acpiPathUnderOem, UINTN Pass)
           }
         }
         if (!ACPIPatchedAMLTmp) { // NULL when not disabled
-          DBG("Inserting table[%llu]:%ls from %ls\\%ls: ", Index, gSettings.SortedACPI[Index], selfOem.getConfigDirFullPath().wc_str(), acpiPathUnderOem.wc_str());
-          if (LoadPatchedAML(selfOem.getConfigDir(), acpiPathUnderOem, gSettings.SortedACPI[Index], Pass)) {
+          DBG("Inserting table[%llu]:%ls from %ls\\%ls: ", Index, gSettings.ACPI.SortedACPI[Index].wc_str(), selfOem.getConfigDirFullPath().wc_str(), acpiPathUnderOem.wc_str());
+          if (LoadPatchedAML(selfOem.getConfigDir(), acpiPathUnderOem, gSettings.ACPI.SortedACPI[Index].wc_str(), Pass)) {
             // avoid inserting table again on second pass
             for (ACPI_PATCHED_AML* temp2 = ACPIPatchedAML; temp2; temp2 = temp2->Next) {
-              if (0 == StriCmp(temp2->FileName, gSettings.SortedACPI[Index])) {
+              if (0 == StriCmp(temp2->FileName, gSettings.ACPI.SortedACPI[Index].wc_str())) {
                 temp2->MenuItem.BValue = BVALUE_ATTEMPTED;
                 break;
               }
@@ -1862,26 +1862,26 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     //should correct headers if needed and if asked
     PatchTableHeader((EFI_ACPI_DESCRIPTION_HEADER*)newFadt);
 
-    if (gSettings.smartUPS==TRUE) {
+    if (gSettings.ACPI.smartUPS==TRUE) {
       newFadt->PreferredPmProfile = 3;
     } else {
       newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
     }
-    if (gSettings.EnableC6 || gSettings.EnableISS) {
+    if (gSettings.ACPI.SSDT.EnableC6 || gSettings.ACPI.SSDT.EnableISS) {
       newFadt->CstCnt = 0x85; //as in Mac
     }
-    if (gSettings.EnableC2) newFadt->PLvl2Lat = 0x65;
-    if (gSettings.C3Latency > 0) {
-      newFadt->PLvl3Lat = gSettings.C3Latency;
-    } else if (gSettings.EnableC4) {
+    if (gSettings.ACPI.SSDT.EnableC2) newFadt->PLvl2Lat = 0x65;
+    if (gSettings.ACPI.SSDT.C3Latency > 0) {
+      newFadt->PLvl3Lat = gSettings.ACPI.SSDT.C3Latency;
+    } else if (gSettings.ACPI.SSDT.EnableC4) {
       newFadt->PLvl3Lat = 0x3E9;
     }
-    if (gSettings.C3Latency == 0) {
-      gSettings.C3Latency = newFadt->PLvl3Lat;
+    if (gSettings.ACPI.SSDT.C3Latency == 0) {
+      gSettings.ACPI.SSDT.C3Latency = newFadt->PLvl3Lat;
     }
     
     newFadt->IaPcBootArch = 0x3;
-    if (gSettings.NoASPM) {
+    if (gSettings.ACPI.NoASPM) {
       newFadt->IaPcBootArch |= 0x10;  // disable ASPM
     }
     newFadt->Flags |= 0x420; //Reset Register Supported and SleepButton active
@@ -1919,14 +1919,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     Facs->Flags = 0; //dont' support S4BIOS, as well as 64bit wake
     //
 
-    if ((gSettings.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
+    if ((gSettings.ACPI.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
       newFadt->ResetReg.Address   = 0x64;
       newFadt->ResetValue         = 0xFE;
-      gSettings.ResetAddr         = 0x64;
-      gSettings.ResetVal          = 0xFE;
-    } else if (gSettings.ResetAddr != 0) {
-      newFadt->ResetReg.Address    = gSettings.ResetAddr;
-      newFadt->ResetValue          = gSettings.ResetVal;
+      gSettings.ACPI.ResetAddr         = 0x64;
+      gSettings.ACPI.ResetVal          = 0xFE;
+    } else if (gSettings.ACPI.ResetAddr != 0) {
+      newFadt->ResetReg.Address    = gSettings.ACPI.ResetAddr;
+      newFadt->ResetValue          = gSettings.ACPI.ResetVal;
     }
     newFadt->XPm1aEvtBlk.Address = (UINT64)(newFadt->Pm1aEvtBlk);
     newFadt->XPm1bEvtBlk.Address = (UINT64)(newFadt->Pm1bEvtBlk);
@@ -1945,7 +1945,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
       Xsdt->Entry = (UINT64)((UINT32)(UINTN)newFadt);
     }
     FixChecksum(&FadtPointer->Header);
-    if (gSettings.SlpSmiEnable) {
+    if (gSettings.ACPI.SlpSmiEnable) {
       UINT32 *SlpSmiEn = (UINT32*)((UINTN)(newFadt->Pm1aEvtBlk) + 0x30);
       UINT32 Value = *SlpSmiEn;
       Value &= ~ bit(4);
@@ -1954,7 +1954,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   }
 
   //Get regions from BIOS DSDT
-  if ((gSettings.FixDsdt & FIX_REGIONS) != 0) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_REGIONS) != 0) {
     GetBiosRegions((UINT8*)(UINTN)(newFadt->Dsdt));
   }
   //  DBG("DSDT finding\n");
@@ -1966,7 +1966,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   Status = EFI_NOT_FOUND;
 
 
-  XStringW acpiPath = SWPrintf("ACPI\\patched\\%ls", gSettings.DsdtName.wc_str());
+  XStringW acpiPath = SWPrintf("ACPI\\patched\\%ls", gSettings.ACPI.DSDT.DsdtName.wc_str());
   
   if ( selfOem.oemDirExists() ) {
     if ( FileExists(&selfOem.getOemDir(), acpiPath) ) {
@@ -1981,7 +1981,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   // second priority is DSDT from OEM folder
   // third priority is /EFI/CLOVER/ACPI/patched/DSDT*.aml choosen from GUI.
   
-  XStringW PathDsdt = SWPrintf("\\%ls", gSettings.DsdtName.wc_str());
+  XStringW PathDsdt = SWPrintf("\\%ls", gSettings.ACPI.DSDT.DsdtName.wc_str());
   if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
     Status = egLoadFile(Volume->RootDir, PathDsdt.wc_str(), &buffer, &bufferLen);
@@ -2052,7 +2052,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
 //    dropDSM = gSettings.DropOEM_DSM;   //if set by user
 //  }
 
-  if (gSettings.DebugDSDT) {
+  if (gSettings.ACPI.DSDT.DebugDSDT) {
     TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->XDsdt;
     bufferLen = TableHeader->Length;
 
@@ -2060,11 +2060,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     Status = egSaveFile(&selfOem.getConfigDir(), L"ACPI\\origin\\DSDT-or.aml", (UINT8*)(UINTN)FadtPointer->XDsdt, bufferLen);
   }
   //native DSDT or loaded we want to apply autoFix to this
-  //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
-  DBG("Apply DsdtFixMask=0x%08X\n", gSettings.FixDsdt);
+  //  if (gSettings.ACPI.DSDT.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and count(?)
+  DBG("Apply DsdtFixMask=0x%08X\n", gSettings.ACPI.DSDT.FixDsdt);
 //  DBG("   drop _DSM mask=0x%04hX\n", dropDSM);
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->XDsdt, FadtPointer, OSVersion);
-  if (gSettings.DebugDSDT) {
+  if (gSettings.ACPI.DSDT.DebugDSDT) {
     for (Index=0; Index < 60; Index++) {
       XStringW DsdtPatchedName = SWPrintf("ACPI\\origin\\DSDT-pa%llu.aml", Index);
       if(!FileExists(&selfOem.getConfigDir(), DsdtPatchedName)){
@@ -2091,10 +2091,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
   LoadAllPatchedAML(L"ACPI\\patched"_XSW, AUTOMERGE_PASS1);
 
   // Drop tables
-  if (gSettings.ACPIDropTables) {
+  if (GlobalConfig.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable;
     DbgHeader("ACPIDropTables");
-    for (DropTable = gSettings.ACPIDropTables; DropTable; DropTable = DropTable->Next) {
+    for (DropTable = GlobalConfig.ACPIDropTables; DropTable; DropTable = DropTable->Next) {
       if (DropTable->MenuItem.BValue) {
         //DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);
         DropTableFromXSDT(DropTable->Signature, DropTable->TableId, DropTable->Length);
@@ -2103,7 +2103,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     }
   }
 
-  if (gSettings.DropSSDT) {
+  if (gSettings.ACPI.SSDT.DropSSDT) {
     DbgHeader("DropSSDT");
     //special case if we set into menu drop all SSDT
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
@@ -2152,7 +2152,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
 
 	  DBG("ApicCPUNum=%llu\n", ApicCPUNum);
     //reallocate table
-    if (gSettings.PatchNMI) {
+    if (gSettings.ACPI.PatchNMI) {
       BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
       Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
       if(!EFI_ERROR(Status)) {
@@ -2245,7 +2245,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     ApicCPUNum = acpi_cpu_count;
   }
 
-  if (gSettings.GeneratePStates || gSettings.GeneratePluginType) {
+  if (gSettings.ACPI.SSDT.Generate.GeneratePStates || gSettings.ACPI.SSDT.Generate.GeneratePluginType) {
     Status = EFI_NOT_FOUND;
     Ssdt = generate_pss_ssdt(ApicCPUNum);
     if (Ssdt) {
@@ -2256,7 +2256,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     }
   }
 
-  if (gSettings.GenerateCStates) {
+  if (gSettings.ACPI.SSDT.Generate.GenerateCStates) {
     Status = EFI_NOT_FOUND;
     Ssdt = generate_cst_ssdt(FadtPointer, ApicCPUNum);
     if (Ssdt) {
@@ -2323,11 +2323,11 @@ EFI_STATUS LoadAndInjectDSDT(CONST CHAR16 *PathPatched,
   EFI_PHYSICAL_ADDRESS  Dsdt;
 
   // load if exists
-  Status = LoadAcpiTable(PathPatched, gSettings.DsdtName.wc_str(), &Buffer, &BufferLen);
+  Status = LoadAcpiTable(PathPatched, gSettings.ACPI.DSDT.DsdtName.wc_str(), &Buffer, &BufferLen);
 
   if (!EFI_ERROR(Status)) {
     // loaded - allocate EfiACPIReclaim
-    DBG("Loaded DSDT at \\%ls\\%ls\\%ls\n", self.getCloverDirFullPath().wc_str(), PathPatched, gSettings.DsdtName.wc_str());
+    DBG("Loaded DSDT at \\%ls\\%ls\\%ls\n", self.getCloverDirFullPath().wc_str(), PathPatched, gSettings.ACPI.DSDT.DsdtName.wc_str());
     Dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -2517,10 +2517,10 @@ EFI_STATUS PatchACPI_OtherOS(CONST CHAR16* OsSubdir, BOOLEAN DropSSDT)
    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);
    }
    */
-  if (gSettings.ACPIDropTables) {
+  if (GlobalConfig.ACPIDropTables) {
     ACPI_DROP_TABLE *DropTable;
     DbgHeader("ACPIDropTables");
-    for (DropTable = gSettings.ACPIDropTables; DropTable; DropTable = DropTable->Next) {
+    for (DropTable = GlobalConfig.ACPIDropTables; DropTable; DropTable = DropTable->Next) {
       // only for tables that have OtherOS true
       if (DropTable->OtherOS && DropTable->MenuItem.BValue) {
         //DBG("Attempting to drop \"%4.4a\" (%8.8X) \"%8.8a\" (%16.16lX) L=%d\n", &(DropTable->Signature), DropTable->Signature, &(DropTable->TableId), DropTable->TableId, DropTable->Length);

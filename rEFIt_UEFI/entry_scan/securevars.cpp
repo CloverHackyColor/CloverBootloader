@@ -37,15 +37,18 @@
 
 #ifdef ENABLE_SECURE_BOOT
 
+#include <Platform.h>
+#include "../Platform/Settings.h"
 #include "entry_scan.h"
 
 #include <Guid/ImageAuthentication.h>
 
 #include "securebootkeys.h"
 
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include <openssl/sha.h>
+#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/err.h"
+#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/pem.h"
+#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/sha.h"
+#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/bio.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_VARS 1
@@ -504,8 +507,8 @@ EFI_STATUS SetSignatureDatabase(IN CHAR16   *DatabaseName,
 {
   EFI_STATUS Status;
   // Check is valid to set database
-  if ((GlobalConfig.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) ||
-      (!GlobalConfig.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode)) {
+  if ((gSettings.Boot.SecureBoot && gSettings.Boot.SecureBootSetupMode) ||
+      (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode)) {
     return EFI_NOT_FOUND;
   }
   // Erase database

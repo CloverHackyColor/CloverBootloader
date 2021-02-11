@@ -2395,7 +2395,7 @@ GetListOfDsdts()
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
-      if ( gSettings.DsdtName.equalIC(DirEntry->FileName) ) {
+      if ( gSettings.ACPI.DSDT.DsdtName.equalIC(DirEntry->FileName) ) {
         OldChosenDsdt = DsdtsNum;
       }
       NameLen = StrLen(DirEntry->FileName); //with ".aml"
@@ -2412,7 +2412,6 @@ GetListOfACPI()
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry = NULL;
   ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
-  INTN               Count = gSettings.DisabledAMLCount;
 //  XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 //  DBG("Get list of ACPI at path %ls\n", AcpiPath.wc_str());
   while (ACPIPatchedAML != NULL) {
@@ -2440,10 +2439,12 @@ GetListOfACPI()
       ACPIPatchedAMLTmp = new ACPI_PATCHED_AML; // if changing, notice freepool above
       ACPIPatchedAMLTmp->FileName = SWPrintf("%ls", DirEntry->FileName).forgetDataWithoutFreeing(); // if changing, notice freepool above
 
+      INTN Count = gSettings.ACPI.DisabledAML.size();
       for (INTN i = 0; i < Count; i++) {
-        if ((gSettings.DisabledAML[i] != NULL) &&
-            (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.DisabledAML[i]) == 0)
-            ) {
+        if ( gSettings.ACPI.DisabledAML[i].equalIC(ACPIPatchedAMLTmp->FileName) ) {
+//        if ((gSettings.ACPI.DisabledAML[i] != NULL) &&
+//            (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.ACPI.DisabledAML[i]) == 0)
+//            ) {
           ACPIDisabled = TRUE;
           break;
         }
@@ -2519,6 +2520,41 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 }
 #endif
 
+/*
+ * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
+ * and is passed by non-const reference.
+ * This temporary during the refactoring
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+void afterGetUserSettings(SETTINGS_DATA& gSettings)
+{
+  //set to drop
+  if (GlobalConfig.ACPIDropTables) {
+    for ( size_t idx = 0 ; idx < gSettings.ACPI.ACPIDropTablesArray.size() ; ++idx)
+    {
+      ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
+      DBG(" - [%02zd]: Drop table : %08X, %16llx : ", idx, gSettings.ACPI.ACPIDropTablesArray[idx].Signature, gSettings.ACPI.ACPIDropTablesArray[idx].TableId);
+      bool Dropped = FALSE;
+      while (DropTable) {
+        if (((gSettings.ACPI.ACPIDropTablesArray[idx].Signature == DropTable->Signature) &&
+             (!gSettings.ACPI.ACPIDropTablesArray[idx].TableId || (DropTable->TableId == gSettings.ACPI.ACPIDropTablesArray[idx].TableId)) &&
+             (!gSettings.ACPI.ACPIDropTablesArray[idx].TabLength || (DropTable->Length == gSettings.ACPI.ACPIDropTablesArray[idx].TabLength))) ||
+            (!gSettings.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable->TableId == gSettings.ACPI.ACPIDropTablesArray[idx].TableId))) {
+          DropTable->MenuItem.BValue = TRUE;
+          DropTable->OtherOS = gSettings.ACPI.ACPIDropTablesArray[idx].OtherOS;
+          gSettings.ACPI.SSDT.DropSSDT         = FALSE; //if one item=true then dropAll=false by default
+          //DBG(" true");
+          Dropped = TRUE;
+        }
+        DropTable = DropTable->Next;
+      }
+      DBG(" %s\n", Dropped ? "yes" : "no");
+    }
+  }
+}
+#pragma GCC diagnostic pop
+
 //
 // main entry point
 //
@@ -2581,14 +2617,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &LoadedImage);
 
 //    if ( !EFI_ERROR(Status) ) {
-//      XString8 msg = S8Printf("Clover : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+//      XString8 msg = S8Printf("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 //      SerialPortWrite((UINT8*)msg.c_str(), msg.length());
 //    }
     if ( !EFI_ERROR(Status) ) DBG("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 
 #ifdef JIEF_DEBUG
-    gBS->Stall(1500000); // to give time to gdb to connect
-//  gBS->Stall(0500000); // to give time to gdb to connect
+    gBS->Stall(2500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
   }
@@ -2965,6 +3000,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   for (i=0; i<2; i++) {
     if (gConfigDict[i]) {
       Status = GetUserSettings(gConfigDict[i], gSettings);
+      afterGetUserSettings(gSettings);
       if (EFI_ERROR(Status)) {
         DBG("Error in Second part of settings %llu: %s\n", i, efiStrError(Status));
       }
@@ -3356,16 +3392,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
 
   #ifdef ENABLE_SECURE_BOOT
-      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
-            EnableSecureBoot();
-            MainLoopRunning = FALSE;
-            AfterTool = TRUE;
-      }
-
-      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT_CONFIG() ) { // Configure secure boot
-            MainLoopRunning = !ConfigureSecureBoot();
-            AfterTool = TRUE;
-      }
+panic("not done yet");
+//      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT() ) { // Try to enable secure boot
+//            EnableSecureBoot();
+//            MainLoopRunning = FALSE;
+//            AfterTool = TRUE;
+//      }
+//
+//      if ( ChosenEntry->getREFIT_MENU_ENTRY_SECURE_BOOT_CONFIG() ) { // Configure secure boot
+//            MainLoopRunning = !ConfigureSecureBoot();
+//            AfterTool = TRUE;
+//      }
   #endif // ENABLE_SECURE_BOOT
 
       if ( ChosenEntry->getREFIT_MENU_ENTRY_CLOVER() ) {     // Clover options

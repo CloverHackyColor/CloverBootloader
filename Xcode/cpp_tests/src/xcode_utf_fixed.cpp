@@ -56,8 +56,8 @@ extern "C" void xcode_utf_fixed_tests()
   #endif
   
   uint64_t uint64 = 1;
-  printf("Hello world൧楔 %llu error(s)\n", uint64);
-  DebugLog(2, "Hello world൧楔 %llu error(s)\n", uint64);
+  printf("Hello world൧楔 %llu \n", uint64);
+  DebugLog(2, "Hello world൧楔 %llu \n", uint64);
 
   size_t len1 = wcslen(L"Hell൧楔o world൧楔");
   size_t len1f = wcslen_fixed(L"Hell൧楔o world൧楔");

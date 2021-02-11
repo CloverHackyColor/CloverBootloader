@@ -1885,7 +1885,7 @@ UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
   CONST UINT32  adr  = 0x24;
   DBG("Start Darwin Fix\n");
   ReplaceName(dsdt, len, "_OSI", "OOSI");
-  if (gSettings.FixDsdt & FIX_DARWIN) {
+  if (gSettings.ACPI.DSDT.FixDsdt & FIX_DARWIN) {
     darwin[42] = '9';  //windows 2009
   }
   len = move_data(adr, dsdt, len, sizeof(darwin));
@@ -1956,8 +1956,8 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   }
 
   //Slice - add custom UID
-  if (gSettings.PNLF_UID != 0xFF) {
-    ((CHAR8*)pnlf)[39] = gSettings.PNLF_UID;
+  if (gSettings.ACPI.DSDT.PNLF_UID != 0xFF) {
+    ((CHAR8*)pnlf)[39] = gSettings.ACPI.DSDT.PNLF_UID;
   }
 
   // _UID reworked by Sherlocks. 2018.10.08
@@ -2120,7 +2120,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
   for (i=adr+4; i<adr+rtcsize; i++) {
     // IO (Decode16, ((0x0070, 0x0070)) =>> find this
     if (dsdt[i] == 0x70 && dsdt[i+1] == 0x00 && dsdt[i+2] == 0x70 && dsdt[i+3] == 0x00) {
-      if (dsdt[i+5] == 0x08 && gSettings.Rtc8Allowed) {
+      if (dsdt[i+5] == 0x08 && gSettings.ACPI.DSDT.Rtc8Allowed) {
         MsgLog("CMOS reset not will be, patch length is not needed\n");
       } else {
         // First Fix RTC CMOS Reset Problem
@@ -2503,7 +2503,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
   BOOLEAN DISPLAYFIX = FALSE;
   BOOLEAN NonUsable = FALSE;
   BOOLEAN DsmFound = FALSE;
-  BOOLEAN NeedHDMI = !!(gSettings.FixDsdt & FIX_HDMI);
+  BOOLEAN NeedHDMI = !!(gSettings.ACPI.DSDT.FixDsdt & FIX_HDMI);
   AML_CHUNK *root = NULL;
   AML_CHUNK *gfx0, *peg0;
   AML_CHUNK *met, *met2;
@@ -2564,7 +2564,7 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
           }
           devsize1 = get_size(dsdt, devadr1); //13
           if (devsize1) {
-            if (gSettings.ReuseFFFF) {
+            if (gSettings.ACPI.DSDT.ReuseFFFF) {
               dsdt[j+10] = 0;
               dsdt[j+11] = 0;
               MsgLog("Found internal video device FFFF@%X, ReUse as 0\n", devadr1);
@@ -4867,7 +4867,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
     return len;
   }
 
-  if (gSettings.SuspendOverride) {
+  if (gSettings.ACPI.DSDT.SuspendOverride) {
     shutdown = &shutdown1[0];
     sizeoffset = sizeof(shutdown1);
   } else {
@@ -5248,7 +5248,7 @@ void RenameDevices(UINT8* table)
   CHAR8 *Replace;
   CHAR8 *Find;
 
-  if ( gSettings.DeviceRenameCount <= 0 ) return; // to avoid message "0 replacement"
+  if ( gSettings.ACPI.DeviceRename.size() <= 0 ) return; // to avoid message "0 replacement"
 
   INTN i;
   INTN k=0; // Clang complain about possible use uninitialised. Not true, but I don't like warnings.
@@ -5257,9 +5257,9 @@ void RenameDevices(UINT8* table)
   UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
   INTN adr, shift, Num = 0;
   BOOLEAN found;
-  for (index = 0; index < gSettings.DeviceRenameCount; index++) {
-    List = gSettings.DeviceRename[index].Next;
-    Replace = gSettings.DeviceRename[index].Name;
+  for (index = 0; index < gSettings.ACPI.DeviceRename.size(); index++) {
+    List = gSettings.ACPI.DeviceRename[index].Next;
+    Replace = gSettings.ACPI.DeviceRename[index].Name;
     Find = List->Name;
     Bridge = List->Next;
     MsgLog("Name: %s, Bridge: %s, Replace: %s\n", Find, Bridge->Name, Replace);
@@ -5327,7 +5327,7 @@ void RenameDevices(UINT8* table)
       }  //while find outer bridge
       adr += 5;
     } while (1); //next occurence
-  }   //DeviceRenameCount
+  }   //DeviceRename.size()
 	MsgLog("  %lld replacements\n", Num);
 }
 
@@ -5359,26 +5359,26 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   CheckHardware();
 
   //arbitrary fixes
-  if (gSettings.DSDTPatchArray.size() > 0) {
+  if (gSettings.ACPI.DSDT.DSDTPatchArray.size() > 0) {
     MsgLog("Patching DSDT:\n");
-    for (i = 0; i < gSettings.DSDTPatchArray.size(); i++) {
-      if ( gSettings.DSDTPatchArray[i].PatchDsdtFind.isEmpty() ) {
+    for (i = 0; i < gSettings.ACPI.DSDT.DSDTPatchArray.size(); i++) {
+      if ( gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind.isEmpty() ) {
         continue;
       }
 
-      MsgLog(" - [%s]:", gSettings.DSDTPatchArray[i].PatchDsdtLabel.c_str()); //yyyy
-      if (gSettings.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
-        if (gSettings.DSDTPatchArray[i].PatchDsdtTgt.isEmpty()) {
+      MsgLog(" - [%s]:", gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtLabel.c_str()); //yyyy
+      if (gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtMenuItem.BValue) {
+        if (gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt.isEmpty()) {
               DsdtLen = FixAny(temp, DsdtLen,
-                           gSettings.DSDTPatchArray[i].PatchDsdtFind,
-                           gSettings.DSDTPatchArray[i].PatchDsdtReplace);
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
 
         }else{
     //      DBG("Patching: renaming in bridge\n");
           DsdtLen = FixRenameByBridge2(temp, DsdtLen,
-                           gSettings.DSDTPatchArray[i].PatchDsdtTgt,
-                           gSettings.DSDTPatchArray[i].PatchDsdtFind,
-                           gSettings.DSDTPatchArray[i].PatchDsdtReplace);
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtTgt,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtFind,
+                           gSettings.ACPI.DSDT.DSDTPatchArray[i].PatchDsdtReplace);
 
         }
       } else {
@@ -5394,7 +5394,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   findCPU(temp, DsdtLen);
 
   // add Method (DTGP, 5, NotSerialized)
-  if ((gSettings.FixDsdt & FIX_DTGP)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_DTGP)) {
     if (!FindMethod(temp, DsdtLen, "DTGP")) {
       CopyMem((CHAR8 *)temp+DsdtLen, dtgp, sizeof(dtgp));
       DsdtLen += sizeof(dtgp);
@@ -5406,42 +5406,42 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   findPciRoot(temp, DsdtLen);
 
   // Fix RTC
-  if ((gSettings.FixDsdt & FIX_RTC)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_RTC)) {
  //   DBG("patch RTC in DSDT \n");
     DsdtLen = FixRTC(temp, DsdtLen);
   }
 
   // Fix TMR
-  if ((gSettings.FixDsdt & FIX_TMR))  {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_TMR))  {
 //    DBG("patch TMR in DSDT \n");
     DsdtLen = FixTMR(temp, DsdtLen);
   }
 
   // Fix PIC or IPIC
-  if ((gSettings.FixDsdt & FIX_IPIC) != 0) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_IPIC) != 0) {
 //    DBG("patch IPIC in DSDT \n");
     DsdtLen = FixPIC(temp, DsdtLen);
   }
 
   // Fix HPET
-  if ((gSettings.FixDsdt & FIX_HPET) != 0) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_HPET) != 0) {
 //    DBG("patch HPET in DSDT \n");
     DsdtLen = FixHPET(temp, DsdtLen);
   }
 
   // Fix LPC if don't had HPET don't need to inject LPC??
-  if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_LPC)) {
+  if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.ACPI.DSDT.FixDsdt & FIX_LPC)) {
 //    DBG("patch LPC in DSDT \n");
     DsdtLen = FIXLPCB(temp, DsdtLen);
   }
 
   // Fix Display
-  if ((gSettings.FixDsdt & FIX_DISPLAY) || (gSettings.FixDsdt & FIX_INTELGFX)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_DISPLAY) || (gSettings.ACPI.DSDT.FixDsdt & FIX_INTELGFX)) {
     INT32 j;
     for (j=0; j<4; ++j) {
       if (DisplayADR1[j]) {
-          if (((DisplayVendor[j] != 0x8086) && (gSettings.FixDsdt & FIX_DISPLAY)) ||
-              ((DisplayVendor[j] == 0x8086) && (gSettings.FixDsdt & FIX_INTELGFX))) {
+          if (((DisplayVendor[j] != 0x8086) && (gSettings.ACPI.DSDT.FixDsdt & FIX_DISPLAY)) ||
+              ((DisplayVendor[j] == 0x8086) && (gSettings.ACPI.DSDT.FixDsdt & FIX_INTELGFX))) {
             DsdtLen = FIXDisplay(temp, DsdtLen, j);
             MsgLog("patch Display #%d of Vendor=0x%4X\n", j, DisplayVendor[j]);
           }
@@ -5450,7 +5450,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   }
 
   // Fix Network
-  if ((gSettings.FixDsdt & FIX_LAN)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_LAN)) {
 //    DBG("patch LAN in DSDT \n");
     UINT32 j;
     for (j = 0; j <= net_count; ++j) {
@@ -5462,67 +5462,67 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
   }
 
   // Fix Airport
-  if (ArptADR1 && (gSettings.FixDsdt & FIX_WIFI)) {
+  if (ArptADR1 && (gSettings.ACPI.DSDT.FixDsdt & FIX_WIFI)) {
 //    DBG("patch Airport in DSDT \n");
     DsdtLen = FIXAirport(temp, DsdtLen);
   }
 
   // Fix SBUS
-  if (SBUSADR1  && (gSettings.FixDsdt & FIX_SBUS)) {
+  if (SBUSADR1  && (gSettings.ACPI.DSDT.FixDsdt & FIX_SBUS)) {
 //    DBG("patch SBUS in DSDT \n");
     DsdtLen = FIXSBUS(temp, DsdtLen);
   }
 
   // Fix IDE inject
-  if (IDEFIX && (IDEVENDOR == 0x8086 || IDEVENDOR == 0x11ab)  && (gSettings.FixDsdt & FIX_IDE)) {
+  if (IDEFIX && (IDEVENDOR == 0x8086 || IDEVENDOR == 0x11ab)  && (gSettings.ACPI.DSDT.FixDsdt & FIX_IDE)) {
 //    DBG("patch IDE in DSDT \n");
     DsdtLen = FIXIDE(temp, DsdtLen);
   }
 
   // Fix SATA AHCI orange icon
-  if (SATAAHCIADR1 && (SATAAHCIVENDOR == 0x8086)  && (gSettings.FixDsdt & FIX_SATA)) {
+  if (SATAAHCIADR1 && (SATAAHCIVENDOR == 0x8086)  && (gSettings.ACPI.DSDT.FixDsdt & FIX_SATA)) {
     DBG("patch AHCI in DSDT \n");
     DsdtLen = FIXSATAAHCI(temp, DsdtLen);
   }
 
   // Fix SATA inject
-  if (SATAFIX && (SATAVENDOR == 0x8086)  && (gSettings.FixDsdt & FIX_SATA)) {
+  if (SATAFIX && (SATAVENDOR == 0x8086)  && (gSettings.ACPI.DSDT.FixDsdt & FIX_SATA)) {
     DBG("patch SATA in DSDT \n");
     DsdtLen = FIXSATA(temp, DsdtLen);
   }
 
   // Fix Firewire
-  if (FirewireADR1  && (gSettings.FixDsdt & FIX_FIREWIRE)) {
+  if (FirewireADR1  && (gSettings.ACPI.DSDT.FixDsdt & FIX_FIREWIRE)) {
     DBG("patch FRWR in DSDT \n");
     DsdtLen = FIXFirewire(temp, DsdtLen);
   }
 
   // HDA HDEF
-  if (HDAFIX  && (gSettings.FixDsdt & FIX_HDA)) {
+  if (HDAFIX  && (gSettings.ACPI.DSDT.FixDsdt & FIX_HDA)) {
     DBG("patch HDEF in DSDT \n");
     DsdtLen = AddHDEF(temp, DsdtLen, OSVersion);
   }
 
   //Always add MCHC for PM
-  if ((gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_MCHC)) {
+  if ((gCPUStructure.Family == 0x06)  && (gSettings.ACPI.DSDT.FixDsdt & FIX_MCHC)) {
 //    DBG("patch MCHC in DSDT \n");
     DsdtLen = AddMCHC(temp, DsdtLen);
   }
   //add IMEI
-  if ((gSettings.FixDsdt & FIX_IMEI)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_IMEI)) {
     DsdtLen = AddIMEI(temp, DsdtLen);
   }
   //Add HDMI device
-  if ((gSettings.FixDsdt & FIX_HDMI)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_HDMI)) {
     DsdtLen = AddHDMI(temp, DsdtLen);
   }
 
   // Always Fix USB
-  if ((gSettings.FixDsdt & FIX_USB)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_USB)) {
     DsdtLen = FIXUSB(temp, DsdtLen);
   }
 
-  if ((gSettings.FixDsdt & FIX_WAK)){
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_WAK)){
     // Always Fix _WAK Return value
     DsdtLen = FIXWAK(temp, DsdtLen, fadt);
   }
@@ -5535,7 +5535,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
 
     // USB Device remove error Fix
    // DsdtLen = FIXGPE(temp, DsdtLen);
-  if ((gSettings.FixDsdt & FIX_UNUSED)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_UNUSED)) {
     //I want these fixes even if no Display fix. We have GraphicsInjector
     DsdtLen = DeleteDevice("CRT_"_XS8, temp, DsdtLen);
     DsdtLen = DeleteDevice("DVI_"_XS8, temp, DsdtLen);
@@ -5548,7 +5548,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
     DsdtLen = DeleteDevice("LPT1"_XS8, temp, DsdtLen);
   }
 
-  if ((gSettings.FixDsdt & FIX_ACST)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_ACST)) {
     ReplaceName(temp, DsdtLen, "ACST", "OCST");
     ReplaceName(temp, DsdtLen, "ACSS", "OCSS");
     ReplaceName(temp, DsdtLen, "APSS", "OPSS");
@@ -5556,32 +5556,32 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
     ReplaceName(temp, DsdtLen, "APLF", "OPLF");
   }
 
-  if ((gSettings.FixDsdt & FIX_PNLF)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_PNLF)) {
       DsdtLen = AddPNLF(temp, DsdtLen);
   }
 
-  if ((gSettings.FixDsdt & FIX_S3D)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_S3D)) {
     FixS3D(temp, DsdtLen);
   }
   //Fix OperationRegions
-  if ((gSettings.FixDsdt & FIX_REGIONS)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_REGIONS)) {
     FixRegions(temp, DsdtLen);
   }
 
   //RehabMan: Fix Mutex objects
-  if ((gSettings.FixDsdt & FIX_MUTEX)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_MUTEX)) {
     FixMutex(temp, DsdtLen);
   }
 
 
      // pwrb add _CID sleep button fix
-  if ((gSettings.FixDsdt & FIX_ADP1)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_ADP1)) {
       DsdtLen = FixADP1(temp, DsdtLen);
   }
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //     DsdtLen = FIXOTHER(temp, DsdtLen);
 
-  if ((gSettings.FixDsdt & FIX_WARNING) || (gSettings.FixDsdt & FIX_DARWIN)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_WARNING) || (gSettings.ACPI.DSDT.FixDsdt & FIX_DARWIN)) {
     if (!FindMethod(temp, DsdtLen, "GET9") &&
         !FindMethod(temp, DsdtLen, "STR9") &&
         !FindMethod(temp, DsdtLen, "OOSI")) {
@@ -5589,7 +5589,7 @@ void FixBiosDsdt(UINT8* temp, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, c
     }
   }
   // Fix SHUTDOWN For ASUS
-  if ((gSettings.FixDsdt & FIX_SHUTDOWN)) {
+  if ((gSettings.ACPI.DSDT.FixDsdt & FIX_SHUTDOWN)) {
     DsdtLen = FIXSHUTDOWN_ASUS(temp, DsdtLen); //safe to do twice
   }
 

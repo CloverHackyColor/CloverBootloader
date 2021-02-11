@@ -18,7 +18,7 @@ extern "C" int main(int argc, const char * argv[])
 	(void)argv;
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
 
-  xcode_utf_fixed_tests();
+//  xcode_utf_fixed_tests();
   
   
 	return all_tests() ? 0 : -1 ;

@@ -58,7 +58,7 @@ bool all_tests()
 //  }
 #endif
 
-#if defined(JIEF_DEBUG)
+#if defined(JIEF_DEBUGxxx)
 
 #if defined(JIEF_DEBUG) && defined(CLOVER_BUILD)
     ret = printlib_tests();

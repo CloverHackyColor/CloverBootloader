@@ -876,7 +876,7 @@ static const char* config_test =
 <!DOCTYPE plist PUBLIC\"-//Apple//DTD PLIST 1.0//EN\"\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\r\n\
 <plist version=\"1.0\">\r\n\
 <dict>\r\n\
-  <key>ACPI</key>\r\n\
+  <key>ACPIx</key>\r\n\
   <dict>\r\n\
     <key>AutoMerge</key>\r\n\
     <integer>0</integer>\r\n\

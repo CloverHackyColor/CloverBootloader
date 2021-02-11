@@ -39,7 +39,7 @@
 
 #include "entry_scan.h"
 
-#include <openssl/sha.h>
+#include "../../Library/OpensslLib/openssl-1.0.1e/include/openssl/sha.h"
 
 #include <Guid/ImageAuthentication.h>
 

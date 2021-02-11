@@ -1417,7 +1417,7 @@ void GetDefaultSettings()
   gSettings.HDAInjection         = FALSE;
   //gSettings.HDALayoutId          = 0;
   gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before
-  gSettings.DsdtName = L"DSDT.aml"_XSW;
+  gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
   gSettings.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
@@ -1450,23 +1450,23 @@ void GetDefaultCpuSettings()
   SetDMISettingsForModel(Model, TRUE);
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
-    gSettings.GeneratePStates    = TRUE;
-    gSettings.GenerateCStates    = TRUE;
+    gSettings.ACPI.SSDT.Generate.GeneratePStates    = TRUE;
+    gSettings.ACPI.SSDT.Generate.GenerateCStates    = TRUE;
     // backward compatibility, APFS, APLF, PluginType follow PStates
-    gSettings.GenerateAPSN = gSettings.GeneratePStates;
-    gSettings.GenerateAPLF = gSettings.GeneratePStates;
-    gSettings.GeneratePluginType = gSettings.GeneratePStates;
-    //  gSettings.EnableISS          = FALSE;
-    //  gSettings.EnableC2           = TRUE;
-    gSettings.EnableC6           = TRUE;
-    gSettings.PluginType         = 1;
+    gSettings.ACPI.SSDT.Generate.GenerateAPSN = gSettings.ACPI.SSDT.Generate.GeneratePStates;
+    gSettings.ACPI.SSDT.Generate.GenerateAPLF = gSettings.ACPI.SSDT.Generate.GeneratePStates;
+    gSettings.ACPI.SSDT.Generate.GeneratePluginType = gSettings.ACPI.SSDT.Generate.GeneratePStates;
+    //  gSettings.ACPI.SSDT.EnableISS          = FALSE;
+    //  gSettings.ACPI.SSDT.EnableC2           = TRUE;
+    gSettings.ACPI.SSDT.EnableC6           = TRUE;
+    gSettings.ACPI.SSDT.PluginType         = 1;
     
     if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
-      gSettings.MinMultiplier    = 7;
+      gSettings.ACPI.SSDT.MinMultiplier    = 7;
     }
-    //  gSettings.DoubleFirstState   = FALSE;
-    //gSettings.DropSSDT           = TRUE;    //why drop all???
-    gSettings.C3Latency          = 0x00FA;
+    //  gSettings.ACPI.SSDT.DoubleFirstState   = FALSE;
+    //gSettings.ACPI.SSDT.DropSSDT           = TRUE;    //why drop all???
+    gSettings.ACPI.SSDT.C3Latency          = 0x00FA;
   }
   gSettings.Turbo                = gCPUStructure.Turbo;
   gSettings.SavingMode           = 0xFF;  //means not set

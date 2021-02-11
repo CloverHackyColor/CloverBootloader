@@ -326,7 +326,7 @@ extern REFIT_MENU_ITEM_RETURN MenuEntryReturn;
 // it is not good to use Options menu style for messages and one line dialogs
 // it can be a semitransparent rectangular at the screen centre as it was in Clover v1.0
 STATIC REFIT_MENU_SCREEN  AlertMessageMenu(0, XStringW(), XStringW(), &MenuEntryReturn, NULL);
-void AlertMessage(IN XStringW& Title, IN CONST XStringW& Message)
+void AlertMessage(const XStringW& Title, const XStringW& Message)
 {
   CreateInfoLines(Message, &AlertMessageMenu.InfoLines);
   AlertMessageMenu.Title = Title;

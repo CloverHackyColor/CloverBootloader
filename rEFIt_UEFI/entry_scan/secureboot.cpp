@@ -37,10 +37,17 @@
 
 #ifdef ENABLE_SECURE_BOOT
 
+#include <Platform.h>
+#include "../Platform/Settings.h"
+#include "../Platform/Self.h"
 #include "entry_scan.h"
+#include "secureboot.h"
 
+extern "C" {
 #include <Protocol/Security.h>
 #include <Protocol/Security2.h>
+#include <Library/DxeServicesLib.h>
+}
 
 #ifndef DEBUG_ALL
 #define DEBUG_SECURE_BOOT 1
@@ -63,7 +70,7 @@ void EnableSecureBoot(void)
   UINTN       CloverSignatureSize = 0;
   void       *CloverSignature = NULL;
   // Check in setup mode
-  if (GlobalConfig.Boot.SecureBoot || !gSettings.Boot.SecureBootSetupMode) {
+  if (gSettings.Boot.SecureBoot || !gSettings.Boot.SecureBootSetupMode) {
     return;
   }
   // Ask user if they want to use default keys
@@ -73,7 +80,7 @@ void EnableSecureBoot(void)
   UINT32 AuthenticationStatus = 0;
   UINTN  FileSize = 0;
   // Open the file buffer
-  void  *FileBuffer = GetFileBufferByFilePath(FALSE, &self.getSelfFullPath(), &FileSize, &AuthenticationStatus);
+  void  *FileBuffer = GetFileBufferByFilePath(FALSE, &self.getCloverDirFullPath(), &FileSize, &AuthenticationStatus);
   if (FileBuffer != NULL) {
     if (FileSize > 0) {
       // Retrieve the certificates
@@ -92,10 +99,9 @@ void EnableSecureBoot(void)
   }
   // Check and alert about image not found
   if ((FileBuffer == NULL) || (FileSize == 0)) {
-    CHAR16 *FilePath = FileDevicePathToStr(&self.getSelfFullPath());
-    if (FilePath != NULL) {
-      DBG("Failed to load Clover image from %ls\n", FilePath);
-      FreePool(FilePath);
+    XStringW FilePath = FileDevicePathToXStringW(&self.getCloverDirFullPath());
+    if (FilePath.notEmpty()) {
+      DBG("Failed to load Clover image from %ls\n", FilePath.wc_str());
     } else {
       DBG("Failed to load Clover image\n");
     }
@@ -121,8 +127,8 @@ void EnableSecureBoot(void)
   }
   if (EFI_ERROR(Status)) {
     XStringW Str = SWPrintf("Enabling secure boot failed because\n%ls", ErrorString);
-    AlertMessage(L"Enable Secure Boot", Str);
-    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString.wc_str(), efiStrError(Status));
+    AlertMessage(L"Enable Secure Boot"_XSW, Str);
+    DBG("Enabling secure boot failed because %ls! Status: %s\n", ErrorString, efiStrError(Status));
     DisableSecureBoot();
   }
 }
@@ -148,7 +154,7 @@ CONST CHAR16 *SecureBootPolicyToStr(IN UINTN Policy)
 STATIC void PrintSecureBootInfo(void)
 {
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!GlobalConfig.Boot.SecureBoot) {
+  if (!gSettings.Boot.SecureBoot) {
     DBG("Secure Boot: %s\n", (gSettings.Boot.SecureBootSetupMode ? "Setup" : "Disabled"));
   } else {
     // Secure boot is enabled
@@ -164,12 +170,12 @@ STATIC void DisableMessage(IN EFI_STATUS  Status,
 {
   XStringW Str;
   if (ErrorString != NULL) {
-    Str = SWPrintf(L"%ls\n%ls\n%ls", String, ErrorString, efiStrError(Status));
+    Str = SWPrintf("%ls\n%ls\n%ls", String, ErrorString, efiStrError(Status));
   } else {
-    Str = SWPrintf(L"%s\n%s", String, efiStrError(Status));
+    Str = SWPrintf("%s\n%s", String, efiStrError(Status));
   }
   DBG("Secure Boot: %ls", Str.wc_str());
-  AlertMessage(L"Disable Secure Boot", Str);
+  AlertMessage(L"Disable Secure Boot"_XSW, Str);
 }
 
 // Disable secure boot
@@ -178,7 +184,7 @@ void DisableSecureBoot(void)
   EFI_STATUS  Status;
   CHAR16     *ErrorString = NULL;
   // Check in user mode
-  if (gSettings.Boot.SecureBootSetupMode || !GlobalConfig.Boot.SecureBoot) {
+  if (gSettings.Boot.SecureBootSetupMode || !gSettings.Boot.SecureBoot) {
     return;
   }
   UninstallSecureBoot();
@@ -233,9 +239,9 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     if (DevicePathStr == NULL) {
       return FALSE;
     }
-    for (Index = 0; Index < gSettings.Boot.SecureBootWhiteListCount; ++Index) {
-      if ((gSettings.Boot.SecureBootWhiteList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootWhiteList.size(); ++Index) {
+      if ((gSettings.Boot.SecureBootWhiteList[Index].notEmpty()) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index].wc_str()) != NULL)) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
         return TRUE;
@@ -249,9 +255,9 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
     if (DevicePathStr == NULL) {
       return FALSE;
     }
-    for (Index = 0; Index < gSettings.Boot.SecureBootBlackListCount; ++Index) {
-      if ((gSettings.Boot.SecureBootBlackList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootBlackList.size(); ++Index) {
+      if ((gSettings.Boot.SecureBootBlackList[Index].notEmpty()) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index].wc_str()) != NULL)) {
         // Black listed
         return TRUE;
       }
@@ -265,17 +271,17 @@ PrecheckSecureBootPolicy(IN OUT EFI_STATUS                     *AuthenticationSt
       return FALSE;
     }
     // Check the black list for this image
-    for (Index = 0; Index < gSettings.Boot.SecureBootBlackListCount; ++Index) {
-      if ((gSettings.Boot.SecureBootBlackList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootBlackList.size(); ++Index) {
+      if ((gSettings.Boot.SecureBootBlackList[Index].notEmpty()) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootBlackList[Index].wc_str()) != NULL)) {
         // Black listed
         return TRUE;
       }
     }
     // Check the white list for this image
-    for (Index = 0; Index < gSettings.Boot.SecureBootWhiteListCount; ++Index) {
-      if ((gSettings.Boot.SecureBootWhiteList[Index] != NULL) &&
-          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index]) != NULL)) {
+    for (Index = 0; Index < gSettings.Boot.SecureBootWhiteList.size(); ++Index) {
+      if ((gSettings.Boot.SecureBootWhiteList[Index].notEmpty()) &&
+          (StriStr(DevicePathStr, gSettings.Boot.SecureBootWhiteList[Index].wc_str()) != NULL)) {
         // White listed
         *AuthenticationStatus = EFI_SUCCESS;
         return TRUE;
@@ -421,7 +427,7 @@ EFI_STATUS InstallSecureBoot(void)
   }
   PrintSecureBootInfo();
   // Nothing to do if secure boot is disabled or in setup mode
-  if (!GlobalConfig.Boot.SecureBoot || gSettings.Boot.SecureBootSetupMode) {
+  if (!gSettings.Boot.SecureBoot || gSettings.Boot.SecureBootSetupMode) {
     return EFI_SUCCESS;
   }
   // Locate security protocols
@@ -473,14 +479,14 @@ void InitializeSecureBoot(void)
   // Set secure boot variables to firmware values
   UINTN Size = sizeof(gSettings.Boot.SecureBootSetupMode);
   gRT->GetVariable(L"SetupMode", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBootSetupMode);
-  Size = sizeof(GlobalConfig.Boot.SecureBoot);
-  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &GlobalConfig.Boot.SecureBoot);
+  Size = sizeof(gSettings.Boot.SecureBoot);
+  gRT->GetVariable(L"SecureBoot", &gEfiGlobalVariableGuid, NULL, &Size, &gSettings.Boot.SecureBoot);
   // Make sure that secure boot is disabled if in setup mode, this will
   //  allow us to specify later in settings that we want to override
   //  setup mode and pretend like we are in secure boot mode to enforce
   //  secure boot policy even when secure boot is not present/disabled.
   if (gSettings.Boot.SecureBootSetupMode) {
-    GlobalConfig.Boot.SecureBoot = 0;
+    gSettings.Boot.SecureBoot = 0;
   }
 }
 

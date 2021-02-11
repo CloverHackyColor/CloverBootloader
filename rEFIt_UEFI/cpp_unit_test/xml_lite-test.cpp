@@ -39,7 +39,7 @@ int getNextTag_tests()
   bool b;
 
   gXmlLiteParser.init("<key>");
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( !b ) return breakpoint(1);
   if ( !isOpeningTag ) return breakpoint(2);
   if ( isClosingTag ) return breakpoint(3);
@@ -47,7 +47,7 @@ int getNextTag_tests()
 
   
   gXmlLiteParser.init("</key>");
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( !b ) return breakpoint(5);
   if ( isOpeningTag ) return breakpoint(6);
   if ( !isClosingTag ) return breakpoint(7);
@@ -55,11 +55,11 @@ int getNextTag_tests()
 
   
   gXmlLiteParser.init("<key/>");
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( !b ) return breakpoint(10);
   if ( !isOpeningTag ) return breakpoint(11);
   if ( isClosingTag ) return breakpoint(12);
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( !b ) return breakpoint(13);
   if ( isOpeningTag ) return breakpoint(14);
   if ( !isClosingTag ) return breakpoint(15);
@@ -69,35 +69,35 @@ int getNextTag_tests()
   //
   gXmlLiteParser.init("foo1\n  foo2");
   gXmlLiteParser.moveForwardUntil(0);
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 2 col 7") ) return breakpoint(14);
 
   gXmlLiteParser.init("foo1\n  bar1");
   gXmlLiteParser.moveForwardUntil('b');
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 2 col 3") ) return breakpoint(14);
   
   gXmlLiteParser.init("foo1\n  </foo2/>");
   gXmlLiteParser.moveForwardUntil('<');
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 2 col 9") ) return breakpoint(14);
   
   gXmlLiteParser.init("foo1\n    </foo2");
   gXmlLiteParser.moveForwardUntil('<');
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 2 col 11") ) return breakpoint(14);
   
   gXmlLiteParser.init("foo1\n      </foo2 >");
   gXmlLiteParser.moveForwardUntil('<');
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 2 col 13") ) return breakpoint(14);
@@ -105,7 +105,7 @@ int getNextTag_tests()
   gXmlLiteParser.init("foo1\n\n<foo2/");
   gXmlLiteParser.moveForwardUntil('/');
   gXmlLiteParser.moveForwardUntilSignificant();
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 3 col 7") ) return breakpoint(14);
@@ -113,7 +113,7 @@ int getNextTag_tests()
   gXmlLiteParser.init("foo1\n\n  <foo2/a");
   gXmlLiteParser.moveForwardUntil('/');
   gXmlLiteParser.moveForwardUntilSignificant();
-  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag);
+  b = gXmlLiteParser.getNextTag(&tag, &tagLength, &isOpeningTag, &isClosingTag, true);
   if ( b ) return breakpoint(13);
   if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(13);
   if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("line 3 col 9") ) return breakpoint(14);
@@ -209,12 +209,14 @@ int getKey_tests()
 
   gXmlLiteParser.init("<key></key><string>v</string>");
   b = gXmlLiteParser.getKeyTagValue(&tag, &length, &xmlParserPosition, true);
-  if ( b ) return breakpoint(3);
-  
+  if ( !b ) return breakpoint(3);
+  if ( length != 0 ) return breakpoint(13);
+
   gXmlLiteParser.init("<key> </key><string>v</string>");
   b = gXmlLiteParser.getKeyTagValue(&tag, &length, &xmlParserPosition, true);
-  if ( b ) return breakpoint(4);
-  
+  if ( !b ) return breakpoint(3);
+  if ( length != 0 ) return breakpoint(13);
+
   gXmlLiteParser.init("<key>a</key><string>v</string>");
   b = gXmlLiteParser.getKeyTagValue(&tag, &length, &xmlParserPosition, true);
   if ( !b ) return breakpoint(5);
@@ -368,54 +370,128 @@ int xml_integer_tests()
   return 0;
 }
 
-class Dict1_Class : public XmlDict
+int validate_dict_tests()
 {
-public:
-  class Test1Bool: public XmlBool
+  bool b;
+
+  class Dict1_Class : public XmlDict
   {
-  public:
-    virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
-      RETURN_IF_FALSE( XmlBool::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
-      xmlLiteParser->addWarning(generateErrors, S8Printf("Test1Bool tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-      return false; // parsing can continue.
-    }
-  } test1Bool = Test1Bool();
+    public:
+      class Test1Bool: public XmlBool
+      {
+      public:
+        virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+          RETURN_IF_FALSE( XmlBool::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
+          xmlLiteParser->addWarning(generateErrors, S8Printf("Test1Bool tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+          return false; // parsing can continue.
+        }
+      } test1Bool = Test1Bool();
 
-  XmlDictField m_fields[1] = {
-    {"test1Bool", test1Bool},
+      XmlDictField m_fields[1] = {
+        {"test1Bool", test1Bool},
+      };
+      virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
   };
-  virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-};
 
-class MainDict_Class : public XmlDict
-{
-public:
-  Dict1_Class dict1 = Dict1_Class();
+  class Main1Dict_Class : public XmlDict
+  {
+    public:
+      Dict1_Class dict1 = Dict1_Class();
 
-  virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
-    RETURN_IF_FALSE( XmlDict::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
-    xmlLiteParser->addWarning(generateErrors, S8Printf("Test1Bool tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
-    return false; // parsing can continue.
-  }
+      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        RETURN_IF_FALSE( XmlDict::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
+        xmlLiteParser->addWarning(generateErrors, S8Printf("dict1 tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+        return false; // parsing can continue.
+      }
 
-  XmlDictField m_fields[1] = {
-    {"dict1", dict1},
-};
+      XmlDictField m_fields[1] = {
+        {"dict1", dict1},
+      };
 
-public:
-  MainDict_Class() {};
-  virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
-} mainDict;
+      Main1Dict_Class() {};
+      virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
+  } mainDict;
 
-static const char* config_test =
- "<dict>\r\n\
-    <key>dict1</key>\r\n\
-    <dict>\r\n\
-      <key>test1Bool</key>\r\n\
-      <true/>\r\n\
+
+  const char* config_test =
+   "<dict>\r\n\
+      <key>dict1</key>\r\n\
+      <dict>\r\n\
+        <key>test1Bool</key>\r\n\
+        <true/>\r\n\
+      </dict>\r\n\
     </dict>\r\n\
-  </dict>\r\n\
-</plist>";
+  </plist>";
+
+    gXmlLiteParser.init(config_test);
+    b = mainDict.parseFromXmlLite(&gXmlLiteParser, "/"_XS8, true);
+//gXmlLiteParser.printfErrorsAndWarnings();
+    if ( !b ) return breakpoint(1);
+    if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("Test1Bool tag") ) return breakpoint(14);
+
+    if ( !b ) return breakpoint(1);
+    gXmlLiteParser.init(config_test);
+    mainDict.validate(&gXmlLiteParser, "/"_XS8, XmlParserPosition(), true);
+//gXmlLiteParser.printfErrorsAndWarnings();
+    if ( !b ) return breakpoint(1);
+    if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("ict1 tag") ) return breakpoint(14);
+    
+  return 0;
+}
+
+int validate_array_tests()
+{
+  bool b;
+
+  class Main2Dict_Class : public XmlDict
+  {
+    public:
+      XmlArray<XmlBool> array = XmlArray<XmlBool>();
+
+      virtual bool validate(XmlLiteParser* xmlLiteParser, const XString8& xmlPath, const XmlParserPosition& keyPos, bool generateErrors) override {
+        RETURN_IF_FALSE( XmlDict::validate(xmlLiteParser, xmlPath, keyPos, generateErrors) );
+        xmlLiteParser->addWarning(generateErrors, S8Printf("dict2 tag '%s:%d'.", xmlPath.c_str(), keyPos.getLine()));
+        return false; // parsing can continue.
+      }
+
+      XmlDictField m_fields[1] = {
+        {"array1", array},
+      };
+
+      Main2Dict_Class() {};
+      virtual void getFields(XmlDictField** fields, size_t* nb) override { *fields = m_fields; *nb = sizeof(m_fields)/sizeof(m_fields[0]); };
+  } mainDict;
+
+
+  const char* config_test =
+   "<dict>\r\n\
+      <key>array1</key>\r\n\
+      <array>\r\n\
+        <true/>\r\n\
+        <true/>\r\n\
+        <string>a</string>\r\n\
+      </array>\r\n\
+    </dict>\r\n\
+  </plist>";
+
+    gXmlLiteParser.init(config_test);
+    b = mainDict.parseFromXmlLite(&gXmlLiteParser, "/"_XS8, true);
+//gXmlLiteParser.printfErrorsAndWarnings();
+    if ( !b ) return breakpoint(1);
+    if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("Expecting <true/> <false/>") ) return breakpoint(14);
+
+    gXmlLiteParser.init(config_test);
+    mainDict.validate(&gXmlLiteParser, "/"_XS8, XmlParserPosition(), true);
+//gXmlLiteParser.printfErrorsAndWarnings();
+    if ( !b ) return breakpoint(1);
+    if ( gXmlLiteParser.getErrorsAndWarnings().size() != 1 ) return breakpoint(1);
+    if ( !gXmlLiteParser.getErrorsAndWarnings()[0].msg.contains("dict2 tag") ) return breakpoint(14);
+    
+    return 0;
+}
 
 int xml_lite_tests()
 {
@@ -423,20 +499,16 @@ int xml_lite_tests()
   int ret;
   
 //  XmlLiteParser xmlLiteParser;
-  bool b;
-  
-    gXmlLiteParser.init(config_test);
-    b = mainDict.parseFromXmlLite(&gXmlLiteParser, ""_XS8, true);
-    for ( size_t idx = 0 ; idx < gXmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
-      if ( !gXmlLiteParser.getErrorsAndWarnings()[idx].isError) printf("Warning: %s\n", gXmlLiteParser.getErrorsAndWarnings()[idx].msg.c_str());
-      if ( gXmlLiteParser.getErrorsAndWarnings()[idx].isError) printf("Error: %s\n", gXmlLiteParser.getErrorsAndWarnings()[idx].msg.c_str());
-    }
-    if ( !b ) return breakpoint(1);
 
   
   
-  
-  
+  ret = validate_array_tests();
+  if ( ret ) return ret;
+
+
+  ret = validate_dict_tests();
+  if ( ret ) return ret;
+
   
   ret = xml_integer_tests();
   if ( ret ) return ret;

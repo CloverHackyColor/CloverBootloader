@@ -59,7 +59,7 @@
 #ifndef HEADER_MD2_H
 #define HEADER_MD2_H
 
-#include <openssl/opensslconf.h> /* OPENSSL_NO_MD2, MD2_INT */
+#include "opensslconf.h" /* OPENSSL_NO_MD2, MD2_INT */
 #ifdef OPENSSL_NO_MD2
 #error MD2 is disabled.
 #endif

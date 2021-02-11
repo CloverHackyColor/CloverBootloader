@@ -239,17 +239,15 @@ public:
 class DSDT_Patch
 {
 public :
-  XBuffer<UINT8>   PatchDsdtFind;
-  XBuffer<UINT8>   PatchDsdtReplace;
-  XString8         PatchDsdtLabel;
-  XBuffer<UINT8>   PatchDsdtTgt;
+  XBuffer<UINT8>   PatchDsdtFind = XBuffer<UINT8>();
+  XBuffer<UINT8>   PatchDsdtReplace = XBuffer<UINT8>();
+  XString8         PatchDsdtLabel = XString8();
+  XBuffer<UINT8>   PatchDsdtTgt = XBuffer<UINT8>();
   INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM();
 
-  DSDT_Patch() : PatchDsdtFind(), PatchDsdtReplace(), PatchDsdtLabel(), PatchDsdtTgt() { }
-
-  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  DSDT_Patch(const DSDT_Patch&) = delete;
-  DSDT_Patch& operator=(const DSDT_Patch&) = delete;
+  DSDT_Patch() = default; // default is fine if there is only native type and objects that have copy ctor
+  DSDT_Patch(const DSDT_Patch& other) = default; // default is fine if there is only native type and objects that have copy ctor
+  DSDT_Patch& operator = ( const DSDT_Patch & ) = default; // default is fine if there is only native type and objects that have copy ctor
 };
 
 class MMIOWhiteList
@@ -290,19 +288,85 @@ public:
       UINT8                   SecureBootSetupMode = 0;
       UINT8                   SecureBootPolicy = 0;
       // Secure boot white/black list
-      UINT32                  SecureBootWhiteListCount = 0;
-      UINT32                  SecureBootBlackListCount = 0;
-      CHAR16                  **SecureBootWhiteList = 0;
-      CHAR16                  **SecureBootBlackList = 0;
+      XStringWArray           SecureBootWhiteList = XStringWArray();
+      XStringWArray           SecureBootBlackList = XStringWArray();
       INT8                    XMPDetection = 0;
       // LegacyBoot
       XStringW                LegacyBoot = XStringW();
       UINT16                  LegacyBiosDefaultEntry = 0;
       UINT8                   CustomBoot = 0;
       XImage                  *CustomLogo = 0;
-
-      
   } Boot = BootClass();
+  
+  class ACPIClass
+  {
+    public:
+      class ACPIDropTablesClass
+      {
+        public:
+          UINT32   Signature = 0;
+          UINT64   TableId = 0;
+          UINT32   TabLength = 0;
+          bool     OtherOS = 0;
+      };
+      XObjArray<ACPIDropTablesClass> ACPIDropTablesArray = XObjArray<ACPIDropTablesClass>();
+      
+      class DSDTClass
+      {
+        public:
+          XStringW                DsdtName = XStringW();
+          BOOLEAN                 DebugDSDT = 0;
+          BOOLEAN                 Rtc8Allowed = 0;
+          UINT8                   PNLF_UID = 0;
+          UINT32                  FixDsdt = 0;
+          XObjArray<DSDT_Patch>   DSDTPatchArray = XObjArray<DSDT_Patch>();
+          BOOLEAN                 ReuseFFFF = 0;
+          BOOLEAN                 SuspendOverride = 0;
+      } DSDT = DSDTClass();
+      
+      class SSDTClass
+      {
+        public:
+          class GenerateClass
+          {
+            public:
+              BOOLEAN                 GeneratePStates = 0;
+              BOOLEAN                 GenerateCStates = 0;
+              BOOLEAN                 GenerateAPSN = 0;
+              BOOLEAN                 GenerateAPLF = 0;
+              BOOLEAN                 GeneratePluginType = 0;
+          } Generate = GenerateClass();
+          BOOLEAN                 DropSSDT = 0;
+          BOOLEAN                 NoOemTableId = 0;
+          BOOLEAN                 NoDynamicExtract = 0;
+          BOOLEAN                 EnableISS = 0;
+          BOOLEAN                 EnableC7 = 0;
+          BOOLEAN                 EnableC6 = 0;
+          BOOLEAN                 EnableC4 = 0;
+          BOOLEAN                 EnableC2 = 0;
+          UINT16                  C3Latency = 0;
+          UINT8                   PLimitDict = 0;
+          UINT8                   UnderVoltStep = 0;
+          BOOLEAN                 DoubleFirstState = 0;
+          UINT8                   MinMultiplier = 0;
+          UINT8                   MaxMultiplier = 0;
+          UINT8                   PluginType = 0;
+      } SSDT = SSDTClass();
+
+      UINT64                  ResetAddr = 0;
+      UINT8                   ResetVal = 0;
+      BOOLEAN                 SlpSmiEnable = 0;
+      BOOLEAN                 FixHeaders = 0;
+      BOOLEAN                 FixMCFG = 0;
+      BOOLEAN                 NoASPM = 0;
+      BOOLEAN                 smartUPS = 0;
+      BOOLEAN                 PatchNMI = 0;
+      XStringWArray           SortedACPI = XStringWArray();
+      BOOLEAN                 AutoMerge = 0;
+      XStringWArray           DisabledAML = XStringWArray();
+      XObjArray<ACPI_NAME_LIST> DeviceRename = XObjArray<ACPI_NAME_LIST>();
+
+  } ACPI = ACPIClass();
 
   class GUIClass {
     public:
@@ -411,51 +475,16 @@ public:
   UINT32                  DefaultBackgroundColor;
 
   //ACPI
-  UINT64                  ResetAddr;
-  UINT8                   ResetVal;
-  BOOLEAN                 NoASPM;
-  BOOLEAN                 DropSSDT;
-  BOOLEAN                 NoOemTableId;
-  BOOLEAN                 NoDynamicExtract;
-  BOOLEAN                 AutoMerge;
-  BOOLEAN                 GeneratePStates;
-  BOOLEAN                 GenerateCStates;
-  BOOLEAN                 GenerateAPSN;
-  BOOLEAN                 GenerateAPLF;
-  BOOLEAN                 GeneratePluginType;
-  UINT8                   PLimitDict;
-  UINT8                   UnderVoltStep;
-  BOOLEAN                 DoubleFirstState;
-  BOOLEAN                 SuspendOverride;
-  BOOLEAN                 EnableC2;
-  BOOLEAN                 EnableC4;
-  BOOLEAN                 EnableC6;
-  BOOLEAN                 EnableISS;
-  BOOLEAN                 SlpSmiEnable;
-  BOOLEAN                 FixHeaders;
   UINT8                   pad23[1];
-  UINT16                  C3Latency;
-  BOOLEAN                 smartUPS;
-  BOOLEAN                 PatchNMI;
-  BOOLEAN                 EnableC7;
   UINT8                   SavingMode;
 
-  XStringW                DsdtName;
-  UINT32                  FixDsdt;
-  UINT8                   MinMultiplier;
-  UINT8                   MaxMultiplier;
-  UINT8                   PluginType;
 //  BOOLEAN                 DropMCFG;
-  BOOLEAN                 FixMCFG;
 
-  UINT32                  DeviceRenameCount;
-  ACPI_NAME_LIST          *DeviceRename;
   //Injections
   BOOLEAN                 StringInjector;
   UINT8                   InjectSystemID_; // 0=false, 1=true, other value = default.
   BOOLEAN                 NoDefaultProperties;
 
-  BOOLEAN                 ReuseFFFF;
 
   //PCI devices
   UINT32                  FakeATI;    //97
@@ -578,7 +607,6 @@ public:
   UINT8                   REV[6];
 
   //other devices
-  BOOLEAN                 Rtc8Allowed;
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
   BOOLEAN                 PlayAsync;
@@ -586,7 +614,6 @@ public:
   UINT32                  DisableFunctions;
 
   //Patch DSDT arbitrary
-  XObjArray<DSDT_Patch>   DSDTPatchArray;
 //  UINT32                  PatchDsdtNum;
 //  UINT8                   **PatchDsdtFind;
 //  UINT32                  *LenToFind;
@@ -596,17 +623,14 @@ public:
 //  CHAR8                   **PatchDsdtTgt;
 //  INPUT_ITEM              *PatchDsdtMenuItem;
 
-  BOOLEAN                 DebugDSDT;
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
-  UINT8                   PNLF_UID;
 //  UINT8                   pad83[4];
 
 
   // Table dropping
   UINT8                   pad34[3];
-  ACPI_DROP_TABLE         *ACPIDropTables;
 
   // Custom entries
   BOOLEAN                 DisableEntryScan;
@@ -631,13 +655,9 @@ public:
 //  INPUT_ITEM              *InjectKextMenuItem;
 
   //ACPI tables
-  UINTN                   SortedACPICount;
-  CHAR16                  **SortedACPI;
 
   // ACPI/PATCHED/AML
-  UINT32                  DisabledAMLCount;
   UINT8                   pad36[4];
-  CHAR16                  **DisabledAML;
 
   //other
   UINT32                  IntelMaxValue;
@@ -670,11 +690,7 @@ public:
                     MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0),
                     UseARTFreq(0), PlatformFeature(0), NoRomInfo(0), Language(), CustomUuid(),
                     IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
-                    WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), ResetAddr(0), ResetVal(0), NoASPM(0),
-                    DropSSDT(0), NoOemTableId(0), NoDynamicExtract(0), AutoMerge(0), GeneratePStates(0), GenerateCStates(0), GenerateAPSN(0), GenerateAPLF(0), GeneratePluginType(0),
-                    PLimitDict(0), UnderVoltStep(0), DoubleFirstState(0), SuspendOverride(0), EnableC2(0), EnableC4(0), EnableC6(0), EnableISS(0), SlpSmiEnable(0),
-                    FixHeaders(0), C3Latency(0), smartUPS(0), PatchNMI(0), EnableC7(0), SavingMode(0), DsdtName(), FixDsdt(0), MinMultiplier(0),
-                    MaxMultiplier(0), PluginType(1), FixMCFG(0), DeviceRenameCount(0), DeviceRename(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0), ReuseFFFF(0),
+                    WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), SavingMode(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0),
                     FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
                     InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
                     LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
@@ -684,17 +700,16 @@ public:
                     HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0),
                     RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), NeverDoRecovery(0),
-                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0}, Rtc8Allowed(0),
-                    ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0), DSDTPatchArray(), DebugDSDT(0), SlpWak(0), UseIntelHDMI(0),
-                    AFGLowPowerState(0), PNLF_UID(0), ACPIDropTables(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
-                    CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0}, SortedACPICount(0), SortedACPI(0), DisabledAMLCount(0), DisabledAML(0),
+                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0},                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
+                    AFGLowPowerState(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
+                    CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
                     ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, mmioWhiteListArray(), ProvideConsoleGop(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
 
-  XBuffer<UINT8> serialize() const;
+//  XBuffer<UINT8> serialize() const;
 
   ~SETTINGS_DATA() {}
 
@@ -779,12 +794,12 @@ class SIDELOAD_KEXT
 {
 public:
   XObjArray<SIDELOAD_KEXT> PlugInList;
-  XStringW       FileName;
-  XStringW       KextDirNameUnderOEMPath;
-  XStringW       Version;
+  XStringW       FileName = XStringW();
+  XStringW       KextDirNameUnderOEMPath = XStringW();
+  XStringW       Version = XStringW();
   INPUT_ITEM     MenuItem = INPUT_ITEM();
   
-  SIDELOAD_KEXT() : PlugInList(), FileName(), KextDirNameUnderOEMPath(), Version() {};
+  SIDELOAD_KEXT() : PlugInList() {};
   SIDELOAD_KEXT(const SIDELOAD_KEXT& other) = delete; // Can be defined if needed
   const SIDELOAD_KEXT& operator = ( const SIDELOAD_KEXT & ) = delete; // Can be defined if needed
   ~SIDELOAD_KEXT() { }
@@ -909,6 +924,7 @@ public:
   BOOLEAN       gBootChanged = FALSE;
   BOOLEAN       gThemeChanged = FALSE;
   BOOLEAN       NeedPMfix = FALSE;
+  ACPI_DROP_TABLE         *ACPIDropTables = NULL;
 
 
 

@@ -269,7 +269,7 @@ typedef union {
       inline void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...) {
         PRINTF_VA_LIST va;
         va_start(va, context);
-        vprintf_with_callback_timestamp(foPRINTF_VA_ENDva, transmitBufCallBack, context, NULL, 0);
+        vprintf_with_callback_timestamp(format, va, transmitBufCallBack, context, NULL, 0);
         PRINTF_VA_END(va);
       }
 #   endif

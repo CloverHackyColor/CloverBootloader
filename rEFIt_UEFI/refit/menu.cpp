@@ -144,7 +144,7 @@ void FillInputs(BOOLEAN New)
   // no need for extra space here, it is added by ApplyInputs()
   InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.Boot.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
-  InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.DsdtName); // 1-> 2
+  InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.ACPI.DSDT.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
   InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.BlockKexts);
 
@@ -152,29 +152,29 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = 3;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //4
-  InputItems[InputItemsCount++].BValue = gSettings.DropSSDT;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.DropSSDT;
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
-  InputItems[InputItemsCount++].BValue = gSettings.GeneratePStates;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.Generate.GeneratePStates;
   InputItems[InputItemsCount].ItemType = BoolValue;  //6
-  InputItems[InputItemsCount++].BValue = gSettings.SlpSmiEnable;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SlpSmiEnable;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
-  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.PLimitDict);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.ACPI.SSDT.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
-  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.UnderVoltStep);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.ACPI.SSDT.UnderVoltStep);
   InputItems[InputItemsCount].ItemType = BoolValue; //9
-  InputItems[InputItemsCount++].BValue = gSettings.GenerateCStates;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.Generate.GenerateCStates;
   InputItems[InputItemsCount].ItemType = BoolValue; //10
-  InputItems[InputItemsCount++].BValue = gSettings.EnableC2;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC2;
   InputItems[InputItemsCount].ItemType = BoolValue; //11
-  InputItems[InputItemsCount++].BValue = gSettings.EnableC4;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC4;
   InputItems[InputItemsCount].ItemType = BoolValue; //12
-  InputItems[InputItemsCount++].BValue = gSettings.EnableC6;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC6;
   InputItems[InputItemsCount].ItemType = BoolValue; //13
-  InputItems[InputItemsCount++].BValue = gSettings.EnableISS;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableISS;
   InputItems[InputItemsCount].ItemType = Decimal;  //14
   InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
-  InputItems[InputItemsCount++].BValue = gSettings.PatchNMI;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.PatchNMI;
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount++].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount].ItemType = Decimal;  //17
@@ -255,7 +255,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //48
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelPm;
   InputItems[InputItemsCount].ItemType = BoolValue; //49
-  InputItems[InputItemsCount++].BValue = gSettings.FixMCFG;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.FixMCFG;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //50
   InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.RefCLK);
@@ -310,7 +310,7 @@ void FillInputs(BOOLEAN New)
 
 
   InputItems[InputItemsCount].ItemType = CheckBit; //67
-  InputItems[InputItemsCount++].IValue = gSettings.FixDsdt;
+  InputItems[InputItemsCount++].IValue = gSettings.ACPI.DSDT.FixDsdt;
   InputItems[InputItemsCount].ItemType = CheckBit; //68
   InputItems[InputItemsCount++].IValue = gSettings.OptionsBits;
   InputItems[InputItemsCount].ItemType = CheckBit; //69
@@ -330,7 +330,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.USBFixOwnership;
 
   InputItems[InputItemsCount].ItemType = Hex;  //75
-	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.C3Latency);
+	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.ACPI.SSDT.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.EnabledCores);
   InputItems[InputItemsCount].ItemType = Decimal;  //77
@@ -358,9 +358,9 @@ void FillInputs(BOOLEAN New)
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ReleaseDate.c_str());
 
   InputItems[InputItemsCount].ItemType = BoolValue; //88
-  InputItems[InputItemsCount++].BValue = gSettings.DoubleFirstState;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.DoubleFirstState;
   InputItems[InputItemsCount].ItemType = BoolValue; //89
-  InputItems[InputItemsCount++].BValue = gSettings.EnableC7;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC7;
   InputItems[InputItemsCount].ItemType = RadioSwitch; //90
   InputItems[InputItemsCount++].IValue = 90;
 
@@ -391,7 +391,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = gSettings.QuirksMask; //
 
   InputItems[InputItemsCount].ItemType = BoolValue; //102
-  InputItems[InputItemsCount++].BValue = gSettings.DebugDSDT;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.DSDT.DebugDSDT;
   InputItems[InputItemsCount].ItemType = Hex;  //103
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.FakeIMEI);
   InputItems[InputItemsCount].ItemType = Hex;  //104
@@ -420,7 +420,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%04X", gSettings.IntelMaxValue);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //113
-  InputItems[InputItemsCount++].BValue = gSettings.AutoMerge;
+  InputItems[InputItemsCount++].BValue = gSettings.ACPI.AutoMerge;
   InputItems[InputItemsCount].ItemType = BoolValue; //114
   InputItems[InputItemsCount++].BValue = gSettings.DeInit;
   InputItems[InputItemsCount].ItemType = BoolValue; //115
@@ -448,8 +448,8 @@ void FillInputs(BOOLEAN New)
 
 
   //menu for drop table
-  if (gSettings.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+  if (GlobalConfig.ACPIDropTables) {
+    ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
     while (DropTable) {
       DropTable->MenuItem.ItemType = BoolValue;
       DropTable = DropTable->Next;
@@ -483,7 +483,7 @@ void ApplyInputs(void)
   }
   i++; //1
   if (InputItems[i].Valid) {
-	  gSettings.DsdtName = InputItems[i].SValue;
+	  gSettings.ACPI.DSDT.DsdtName = InputItems[i].SValue;
   }
   i++; //2
   if (InputItems[i].Valid) {
@@ -502,46 +502,46 @@ void ApplyInputs(void)
   }
   i++; //4
   if (InputItems[i].Valid) {
-    gSettings.DropSSDT = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.DropSSDT = InputItems[i].BValue;
   }
   i++; //5
   if (InputItems[i].Valid) {
-    gSettings.GeneratePStates = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.Generate.GeneratePStates = InputItems[i].BValue;
   }
   i++; //6
   if (InputItems[i].Valid) {
-    gSettings.SlpSmiEnable = InputItems[i].BValue;
+    gSettings.ACPI.SlpSmiEnable = InputItems[i].BValue;
   }
   i++; //7
   if (InputItems[i].Valid) {
 //    DBG("InputItems[i]: %ls\n", InputItems[i].SValue);
-    gSettings.PLimitDict = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x7F);
-//    DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
+    gSettings.ACPI.SSDT.PLimitDict = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x7F);
+//    DBG("Item 7=PLimitDict %d\n", gSettings.ACPI.SSDT.PLimitDict);
  }
   i++; //8
   if (InputItems[i].Valid) {
-    gSettings.UnderVoltStep = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x3F);
-//    DBG("Item 8=UnderVoltStep %d\n", gSettings.UnderVoltStep);
+    gSettings.ACPI.SSDT.UnderVoltStep = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x3F);
+//    DBG("Item 8=UnderVoltStep %d\n", gSettings.ACPI.SSDT.UnderVoltStep);
   }
   i++; //9
   if (InputItems[i].Valid) {
-    gSettings.GenerateCStates = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.Generate.GenerateCStates = InputItems[i].BValue;
   }
   i++; //10
   if (InputItems[i].Valid) {
-    gSettings.EnableC2 = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableC2 = InputItems[i].BValue;
   }
   i++; //11
   if (InputItems[i].Valid) {
-    gSettings.EnableC4 = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableC4 = InputItems[i].BValue;
   }
   i++; //12
   if (InputItems[i].Valid) {
-    gSettings.EnableC6 = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableC6 = InputItems[i].BValue;
   }
   i++; //13
   if (InputItems[i].Valid) {
-    gSettings.EnableISS = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableISS = InputItems[i].BValue;
   }
   i++; //14
   if (InputItems[i].Valid) {
@@ -550,7 +550,7 @@ void ApplyInputs(void)
   }
   i++; //15
   if (InputItems[i].Valid) {
-    gSettings.PatchNMI = InputItems[i].BValue;
+    gSettings.ACPI.PatchNMI = InputItems[i].BValue;
   }
   i++; //16
   if (InputItems[i].Valid) {
@@ -659,7 +659,7 @@ void ApplyInputs(void)
   }
   i++; //49
   if (InputItems[i].Valid) {
-    gSettings.FixMCFG = InputItems[i].BValue;
+    gSettings.ACPI.FixMCFG = InputItems[i].BValue;
   }
 
   i++; //50
@@ -744,7 +744,7 @@ void ApplyInputs(void)
 
   i++; //67
   if (InputItems[i].Valid) {
-    gSettings.FixDsdt = InputItems[i].IValue;
+    gSettings.ACPI.DSDT.FixDsdt = InputItems[i].IValue;
   }
   i++; //68
   if (InputItems[i].Valid) {
@@ -785,7 +785,7 @@ void ApplyInputs(void)
   }
   i++; //75
   if (InputItems[i].Valid) {
-    gSettings.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
+    gSettings.ACPI.SSDT.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
   }
 
   i++; //76
@@ -847,11 +847,11 @@ void ApplyInputs(void)
 
   i++; //88
   if (InputItems[i].Valid) {
-    gSettings.DoubleFirstState = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.DoubleFirstState = InputItems[i].BValue;
   }
   i++; //89
   if (InputItems[i].Valid) {
-    gSettings.EnableC7 = InputItems[i].BValue;
+    gSettings.ACPI.SSDT.EnableC7 = InputItems[i].BValue;
   }
 
   i++; //90
@@ -935,7 +935,7 @@ void ApplyInputs(void)
   }
   i++; //102
   if (InputItems[i].Valid) {
-    gSettings.DebugDSDT = InputItems[i].BValue;
+    gSettings.ACPI.DSDT.DebugDSDT = InputItems[i].BValue;
   }
   i++; //103
   if (InputItems[i].Valid) {
@@ -993,7 +993,7 @@ void ApplyInputs(void)
   }
   i++; //113
   if (InputItems[i].Valid) {
-    gSettings.AutoMerge = InputItems[i].BValue;
+    gSettings.ACPI.AutoMerge = InputItems[i].BValue;
   }
   i++; //114
   if (InputItems[i].Valid) {
@@ -1006,9 +1006,9 @@ void ApplyInputs(void)
   i++; //116
   if (InputItems[i].Valid) {
     if (OldChosenDsdt == 0xFFFF) {
-      gSettings.DsdtName = L"BIOS.aml"_XSW;
+      gSettings.ACPI.DSDT.DsdtName = L"BIOS.aml"_XSW;
     } else {
-      gSettings.DsdtName.SWPrintf("%ls", DsdtsList[OldChosenDsdt]);
+      gSettings.ACPI.DSDT.DsdtName.SWPrintf("%ls", DsdtsList[OldChosenDsdt]);
     }
   }
   i++; //117
@@ -1558,7 +1558,7 @@ REFIT_MENU_ITEM_OPTIONS* newREFIT_MENU_ITEM_OPTIONS(REFIT_MENU_SCREEN **SubScree
 void ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
 {
   if (ChosenEntry->SubScreen->ID == SCREEN_DSDT) {
-    ChosenEntry->Title.SWPrintf("DSDT fix mask [0x%08x]->", gSettings.FixDsdt);
+    ChosenEntry->Title.SWPrintf("DSDT fix mask [0x%08x]->", gSettings.ACPI.DSDT.FixDsdt);
     //MsgLog("@ESC: %ls\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
@@ -1961,8 +1961,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_TABLES, "Tables dropping->"_XS8);
 
-  if (gSettings.ACPIDropTables) {
-    ACPI_DROP_TABLE *DropTable = gSettings.ACPIDropTables;
+  if (GlobalConfig.ACPIDropTables) {
+    ACPI_DROP_TABLE *DropTable = GlobalConfig.ACPIDropTables;
     while (DropTable) {
       CopyMem((CHAR8*)&sign, (CHAR8*)&(DropTable->Signature), 4);
       CopyMem((CHAR8*)&OTID, (CHAR8*)&(DropTable->TableId), 8);
@@ -2042,7 +2042,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDsdtFix()
 //  REFIT_INPUT_DIALOG *InputBootArgs;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT, NullXString8);
-  //  Entry->Title.SPrintf("DSDT fix mask [0x%08hhx]->", gSettings.FixDsdt);
+  //  Entry->Title.SPrintf("DSDT fix mask [0x%08hhx]->", gSettings.ACPI.DSDT.FixDsdt);
 
   SubScreen->AddMenuCheck("Add DTGP",     FIX_DTGP, 67);
   SubScreen->AddMenuCheck("Fix Darwin as WinXP",   FIX_WARNING, 67);
@@ -2089,17 +2089,17 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDSDTPatches()
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
 
-  size_t        PatchDsdtNum = gSettings.DSDTPatchArray.size();
+  size_t        PatchDsdtNum = gSettings.ACPI.DSDT.DSDTPatchArray.size();
 //  INPUT_ITEM*   DSDTPatchesMenu = gSettings.PatchDsdtMenuItem;
 
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DSDT_PATCHES, "Custom DSDT patches->"_XS8);
 
   for (size_t Index = 0; Index < PatchDsdtNum; Index++) {
     InputBootArgs = new REFIT_INPUT_DIALOG;
-    InputBootArgs->Title.SWPrintf("%90s", gSettings.DSDTPatchArray[Index].PatchDsdtLabel.c_str());
+    InputBootArgs->Title.SWPrintf("%90s", gSettings.ACPI.DSDT.DSDTPatchArray[Index].PatchDsdtLabel.c_str());
 //    InputBootArgs->Tag = TAG_INPUT;
     InputBootArgs->Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &gSettings.DSDTPatchArray[Index].PatchDsdtMenuItem;
+    InputBootArgs->Item = &gSettings.ACPI.DSDT.DSDTPatchArray[Index].PatchDsdtMenuItem;
     InputBootArgs->AtClick = ActionEnter;
     InputBootArgs->AtRightClick = ActionDetails;
     SubScreen->AddMenuEntry(InputBootArgs, true);

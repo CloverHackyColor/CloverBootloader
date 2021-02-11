@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9A0B085E240300E000E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
+		9A272A7F25D5062E00F03E19 /* DataHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A272A7D25D5062D00F03E19 /* DataHub.cpp */; };
 		9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1D241BB61B00F3D247 /* abort.cpp */; };
 		9A28CD22241BB61B00F3D247 /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1E241BB61B00F3D247 /* strlen.cpp */; };
 		9A358B2025CF115200A3850D /* Config_GUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358AF425CF115100A3850D /* Config_GUI.cpp */; };
@@ -269,6 +270,9 @@
 		9A0B084A2402FE9300E2B470 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
 		9A0B084B2402FE9300E2B470 /* XObjArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
 		9A0B085D240300E000E2B470 /* Platform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
+		9A272A7C25D5062D00F03E19 /* DataHubExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubExt.h; sourceTree = "<group>"; };
+		9A272A7D25D5062D00F03E19 /* DataHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHub.cpp; sourceTree = "<group>"; };
+		9A272A7E25D5062E00F03E19 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
 		9A28CD1D241BB61B00F3D247 /* abort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = abort.cpp; sourceTree = "<group>"; };
 		9A28CD1E241BB61B00F3D247 /* strlen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strlen.cpp; sourceTree = "<group>"; };
 		9A358AF425CF115100A3850D /* Config_GUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_GUI.cpp; sourceTree = "<group>"; };
@@ -5252,6 +5256,9 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				9A272A7D25D5062D00F03E19 /* DataHub.cpp */,
+				9A272A7E25D5062E00F03E19 /* DataHub.h */,
+				9A272A7C25D5062D00F03E19 /* DataHubExt.h */,
 				9A358AF325CF115100A3850D /* ConfigPlist */,
 				9AA9240D25CD5B2D00BD5E8B /* AcpiPatcher.cpp */,
 				9AA9240825CD5B2C00BD5E8B /* AcpiPatcher.h */,
@@ -16012,6 +16019,7 @@
 				9AA925CE25CD94C600BD5E8B /* BootLog.cpp in Sources */,
 				9A358B3025CF115200A3850D /* Config_Graphics.cpp in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
+				9A272A7F25D5062E00F03E19 /* DataHub.cpp in Sources */,
 				9AA918C125CD4B7900BD5E8B /* lib.cpp in Sources */,
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
 				9AFDD08D25CE731000EEAF06 /* plist_tests.cpp in Sources */,
@@ -16109,6 +16117,7 @@
 					"wcsncmp=wcsncmp_fixed",
 					"wcsstr=wcsstr_fixed",
 					"sprintf=__sprintf_is_disabled__",
+					"___NOT___ENABLE_SECURE_BOOT",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

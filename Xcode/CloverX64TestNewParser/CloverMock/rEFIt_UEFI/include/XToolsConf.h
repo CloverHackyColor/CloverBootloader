@@ -23,10 +23,10 @@
 
 #define Xrealloc(ptr, newsize, oldsize) realloc(ptr, newsize)
 
-//#include <Platform.h>
 #include "../Platform/Posix/posix.h"
-//#include <inttypes.h>
-//#include "../../../rEFIt_UEFI/Platform/Posix/abort.h"
-//#include <Library/Base.h>
+
+#define XTOOLS_VA_LIST va_list
+#define XTOOLS_VA_START va_start
+#define XTOOLS_VA_END va_end
 
 #endif

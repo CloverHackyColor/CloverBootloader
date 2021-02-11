@@ -55,7 +55,7 @@
 #ifndef HEADER_SAFESTACK_H
 #define HEADER_SAFESTACK_H
 
-#include <openssl/stack.h>
+#include "stack.h"
 
 #ifndef CHECKED_PTR_OF
 #define CHECKED_PTR_OF(type, p) \
