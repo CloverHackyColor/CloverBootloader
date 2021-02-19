@@ -2107,7 +2107,7 @@ EFI_STATUS GetEarlyUserSettings (
       const TagStruct* Prop = BootDict->propertyForKey("Timeout");
       if (Prop != NULL) {
         settingsData.Boot.Timeout = (INT32)GetPropertyAsInteger(Prop, settingsData.Boot.Timeout);
-      DBG("timeout set to %lld\n", settingsData.Boot.Timeout);
+        DBG("timeout set to %lld\n", settingsData.Boot.Timeout);
       }
 
       Prop = BootDict->propertyForKey("SkipHibernateTimeout");
