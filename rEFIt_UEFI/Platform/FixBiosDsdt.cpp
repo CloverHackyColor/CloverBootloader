@@ -5252,12 +5252,11 @@ void RenameDevices(UINT8* table)
 
   INTN i;
   INTN k=0; // Clang complain about possible use uninitialised. Not true, but I don't like warnings.
-  UINTN index;
   INTN size;
   UINTN len = ((EFI_ACPI_DESCRIPTION_HEADER*)table)->Length;
   INTN adr, shift, Num = 0;
   BOOLEAN found;
-  for (index = 0; index < gSettings.ACPI.DeviceRename.size(); index++) {
+  for (UINTN index = 0; index < gSettings.ACPI.DeviceRename.size(); index++) {
     List = gSettings.ACPI.DeviceRename[index].Next;
     Replace = gSettings.ACPI.DeviceRename[index].Name;
     Find = List->Name;
@@ -5266,7 +5265,6 @@ void RenameDevices(UINT8* table)
     adr = 0;
     do
     {
-
       shift = FindBin(table + adr, (UINT32)(len - adr), (const UINT8*)Find, 4); //next occurence
       if (shift < 0) {
         break; //not found
@@ -5315,7 +5313,7 @@ void RenameDevices(UINT8* table)
               if (CmpFullName(table + k, len - k, Bridge)) {
                 CopyMem(table + adr, Replace, 4);
                 adr += 5;
-				  DBG("found Bridge device begin=%llX end=%llX\n", k, k+size);
+                DBG("found Bridge device begin=%llX end=%llX\n", k, k+size);
     //            DBG("   name copied\n");
                 Num++;
                 break; //cancel search outer bridge, we found it.

@@ -523,7 +523,7 @@ GetSmcKeys (BOOLEAN WriteToSMC)
         Status = gAppleSmc->SmcAddKey(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, TypeFromName(Name), 0xC0);
         if (!EFI_ERROR(Status)) {
           Status = gAppleSmc->SmcWriteValue(gAppleSmc, KeyFromName(Name), (SMC_DATA_SIZE)DataSize, Data);
-          DBG("Write to AppleSMC status=%s\n", efiStrError(Status));
+ //         DBG("Write to AppleSMC status=%s\n", efiStrError(Status));
         }
         NumKey++;
       }
@@ -594,8 +594,8 @@ EFI_GUID
 
 
 /** detailed debug for BootVolumeDevicePathEqual */
-//#define DBG_DP(...)
-#define DBG_DP(...) DBG(__VA_ARGS__)
+#define DBG_DP(...)
+//#define DBG_DP(...) DBG(__VA_ARGS__)
 
 /** Returns TRUE if dev paths are equal. Ignores some differences. */
 BOOLEAN
@@ -617,7 +617,7 @@ BootVolumeDevicePathEqual (
 
 
 //  DBG_DP ("   BootVolumeDevicePathEqual:\n    %ls\n    %ls\n", FileDevicePathToStr (DevicePath1), FileDevicePathToStr (DevicePath2));
-  DBG_DP ("    N1: (Type, Subtype, Len) N2: (Type, Subtype, Len)\n");
+//  DBG_DP ("    N1: (Type, Subtype, Len) N2: (Type, Subtype, Len)\n");
   
   Equal = FALSE;
   while (TRUE) {
@@ -631,8 +631,8 @@ BootVolumeDevicePathEqual (
     
     ForceEqualNodes = FALSE;
     
-    DBG_DP ("    N1: (%d, %d, %lld)", Type1, SubType1, Len1);
-    DBG_DP (" N2: (%d, %d, %lld)", Type2, SubType2, Len2);
+//    DBG_DP ("    N1: (%d, %d, %lld)", Type1, SubType1, Len1);
+//    DBG_DP (" N2: (%d, %d, %lld)", Type2, SubType2, Len2);
     
  //    DBG_DP ("%ls\n", DevicePathToStr (DevicePath1));
  //    DBG_DP ("%ls\n", DevicePathToStr (DevicePath2));
@@ -667,7 +667,7 @@ BootVolumeDevicePathEqual (
     
     if (ForceEqualNodes) {
       // assume equal nodes
-      DBG_DP (" - forcing equal nodes\n");
+//      DBG_DP (" - forcing equal nodes\n");
       DevicePath1 = NextDevicePathNode (DevicePath1);
       DevicePath2 = NextDevicePathNode (DevicePath2);
       continue;
@@ -675,7 +675,7 @@ BootVolumeDevicePathEqual (
     
     if (Type1 != Type2 || SubType1 != SubType2 || Len1 != Len2) {
       // Not equal
-      DBG_DP (" - not equal\n");
+//      DBG_DP (" - not equal\n");
       break;
     }
     
@@ -685,7 +685,7 @@ BootVolumeDevicePathEqual (
     if (IsDevicePathEnd (DevicePath1)) {
       // END node - they are the same
       Equal = TRUE;
-      DBG_DP (" - END = equal\n");
+ //     DBG_DP (" - END = equal\n");
       break;
     }
     
@@ -700,23 +700,23 @@ BootVolumeDevicePathEqual (
       SataNode2 = (SATA_DEVICE_PATH *)DevicePath2;
       if (SataNode1->HBAPortNumber != SataNode2->HBAPortNumber) {
         // not equal
-        DBG_DP (" - not equal SataNode.HBAPortNumber\n");
+ //       DBG_DP (" - not equal SataNode.HBAPortNumber\n");
         break;
       }
 
       if (SataNode1->Lun != SataNode2->Lun) {
         // not equal
-        DBG_DP (" - not equal SataNode.Lun\n");
+//        DBG_DP (" - not equal SataNode.Lun\n");
         break;
       }
-      DBG_DP (" - forcing equal nodes");
+//      DBG_DP (" - forcing equal nodes");
     } else if (CompareMem (DevicePath1, DevicePath2, DevicePathNodeLength (DevicePath1)) != 0) {
         // Not equal
-        DBG_DP (" - not equal\n");
+//        DBG_DP (" - not equal\n");
         break;
     }
     
-    DBG_DP ("\n");
+//    DBG_DP ("\n");
     //
     // Advance to next node
     //
@@ -1097,23 +1097,23 @@ PutNvramPlistToRtVars ()
         // <string> element
         Value = (void*)valueTag->getString()->stringValue().c_str();
         Size  = valueTag->getString()->stringValue().length();
-        if (!gSettings.Boot.DebugLog) {
+//        if (!gSettings.Boot.DebugLog) {
           DBG("String: Size = %llu, Val = '%s'\n", Size, valueTag->getString()->stringValue().c_str());
-        }
+//        }
       } else if (valueTag->isData()) {
         
         // <data> element
         Size  = valueTag->getData()->dataLenValue();
         Value = valueTag->getData()->dataValue();
-        //      if (gSettings.Boot.DebugLog) {
+ //      if (gSettings.Boot.DebugLog) {
  //       DBG("Size = %llu, Data: ", Size);
  //       for ( i = 0; i < Size; i++) {
  //         DBG("%02hhX ", *(((UINT8*)Value) + i));
  //       }
-        //      }
-        //      if (!gSettings.Boot.DebugLog) {
- //       DBG("\n");
-        //
+ //      }
+ //      if (!gSettings.Boot.DebugLog) {
+        DBG("\n");
+ //
       } else {
         DBG("ERROR: Unsupported tag type: %s\n", valueTag->getTypeAsXString8().c_str());
         continue;

@@ -3923,19 +3923,19 @@ static void getACPISettings(const TagDict *CfgDict)
     
     const TagDict* RenameDevicesDict = ACPIDict->dictPropertyForKey("RenameDevices"); // dict of key/string
     if ( RenameDevicesDict ) {
-      INTN   i;
       INTN Count = RenameDevicesDict->dictKeyCount();
       if (Count > 0) {
         gSettings.ACPI.DeviceRename.setEmpty();
         DBG("Devices to rename %lld\n", Count);
-        for (i = 0; i < Count; i++) {
+        for (INTN i = 0; i < Count; i++) {
           const TagKey* key;
           const TagStruct* value;
           if ( !EFI_ERROR(RenameDevicesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {
             ACPI_NAME_LIST* List = ParseACPIName(key->keyStringValue());
-            ACPI_NAME_LIST* List2 = List;
+            ACPI_NAME_LIST* List2 = (__typeof__(List2))AllocateZeroPool(sizeof(ACPI_NAME_LIST));
+            List2->Next = List;
 //            gSettings.ACPI.DeviceRename[gSettings.ACPI.DeviceRename.size()].Next = List;
-            gSettings.ACPI.DeviceRename.AddReference(List, false);
+            gSettings.ACPI.DeviceRename.AddReference(List2, false);
             while (List) {
               DBG("%s:", List->Name);
               List = List->Next;
