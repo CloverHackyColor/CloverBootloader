@@ -1033,7 +1033,7 @@ PutNvramPlistToRtVars ()
 {
 //  EFI_STATUS Status;
 //  const TagStruct*     ValTag;
-  INTN       Size, i;
+  INTN       Size;
   const VOID       *Value;
   
   if (gNvramDict == NULL) {
