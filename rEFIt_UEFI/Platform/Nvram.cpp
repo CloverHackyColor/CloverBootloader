@@ -880,58 +880,58 @@ LoadNvramPlist(
   IN  CONST CHAR16* NVRAMPlistPath
   )
 {
-    EFI_STATUS Status;
-    CHAR8      *NvramPtr = NULL;
-    UINTN      Size = 0;
-    
-	DBG("  begin load gNvramDict=0x%llX\n", (uintptr_t)gNvramDict);
-    //
-    // skip loading if already loaded
-    //
-    if (gNvramDict != NULL) {
-        return EFI_SUCCESS;
-    }
-    
-    //
-    // load nvram.plist
-    //
-    Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
-    if(EFI_ERROR(Status)) {
-        DBG(" not present\n");
-        return Status;
-    }
-
-	DBG(" loaded, size=%llu\n", Size);
-    
-    //
-    // parse it into gNvramDict 
-    //
-    Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict, Size);
-    if(Status != EFI_SUCCESS) {
-        DBG(" parsing error\n");
-    }
-    
-    FreePool(NvramPtr);
-    // we will leave nvram.plist loaded and parsed for later processing
-    //FreeTag(gNvramDict);
-    
+  EFI_STATUS Status;
+  CHAR8      *NvramPtr = NULL;
+  UINTN      Size = 0;
+  
+  DBG("  begin load gNvramDict=0x%llX\n", (uintptr_t)gNvramDict);
+  //
+  // skip loading if already loaded
+  //
+  if (gNvramDict != NULL) {
+    return EFI_SUCCESS;
+  }
+  
+  //
+  // load nvram.plist
+  //
+  Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&NvramPtr, &Size);
+  if(EFI_ERROR(Status)) {
+    DBG(" not present\n");
     return Status;
+  }
+  
+  DBG(" loaded, size=%llu\n", Size);
+  
+  //
+  // parse it into gNvramDict
+  //
+  Status = ParseXML((const CHAR8*)NvramPtr, &gNvramDict, Size);
+  if(Status != EFI_SUCCESS) {
+    DBG(" parsing error\n");
+  }
+  
+  FreePool(NvramPtr);
+  // we will leave nvram.plist loaded and parsed for later processing
+  //FreeTag(gNvramDict);
+  
+  return Status;
 }
 
-
+#define SEARCH_ONLY_EFI 1
 /** Searches all volumes for the most recent nvram.plist and loads it into gNvramDict. */
 EFI_STATUS
 LoadLatestNvramPlist()
 {
   EFI_STATUS      Status;
-//  UINTN           Index;
-  REFIT_VOLUME    *Volume;
-//  EFI_GUID        *Guid;
-  EFI_FILE* FileHandle = NULL;
+  EFI_FILE*       FileHandle = NULL;
   EFI_FILE_INFO   *FileInfo = NULL;
   UINT64          LastModifTimeMs;
   UINT64          ModifTimeMs;
+#if !SEARCH_ONLY_EFI
+  REFIT_VOLUME    *Volume;
   REFIT_VOLUME    *VolumeWithLatestNvramPlist = NULL;
+#endif
   
 //there are debug messages not needed for users
   DBG("Searching volumes for latest nvram.plist ...");
@@ -950,7 +950,60 @@ LoadLatestNvramPlist()
   //
   
   LastModifTimeMs = 0;
+#if SEARCH_ONLY_EFI
+  UINTN               HandleCount = 0;
+  EFI_HANDLE          *Handles = NULL;
+  EFI_FILE*           RootDir;
+  EFI_FILE*           NewestRootDir = NULL;
+  UINTN         indexSuccess = 0;
+  
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPartTypeSystemPartGuid, NULL, &HandleCount, &Handles);
+  if (!EFI_ERROR(Status) && HandleCount > 0) {
+    for (UINTN indexHandle = 0; indexHandle < HandleCount; indexHandle++) {
+      RootDir = EfiLibOpenRoot(Handles[indexHandle]);
+      Status = RootDir->Open(RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
+      if (EFI_ERROR(Status)) {
+        DBG(" - [%lld] no nvram.plist - skipping!\n", indexHandle);
+        continue;
+      }
+      FileInfo = EfiLibFileInfo(FileHandle);
+      //    DBG("got FileInfo=0x%X\n", FileInfo);
+      if (FileInfo == NULL) {
+        DBG(" - no nvram.plist file info - skipping!\n");
+        FileHandle->Close(FileHandle);
+        continue;
+      }
+      DBG(" Modified = ");
+      ModifTimeMs = GetEfiTimeInMs (&(FileInfo->ModificationTime));
+      DBG("%d-%d-%d %d:%d:%d (%lld ms)\n",
+          FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
+          FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
+          ModifTimeMs);
+      FreePool(FileInfo);
+      FileHandle->Close(FileHandle);
+      
+      // check if newer
+      if (LastModifTimeMs < ModifTimeMs) {
+        DBG(" - newer - will use this one\n");
+        NewestRootDir = RootDir;
+        LastModifTimeMs = ModifTimeMs;
+        indexSuccess = indexHandle;
+      }
+    }
 
+    if (NewestRootDir == NULL) {
+      Status = EFI_NOT_FOUND;
+    } else {
+      //
+      // if we have nvram.plist - load it
+      //
+      DBG("Loading nvram.plist from EFI index %lld", indexSuccess);
+      Status = LoadNvramPlist(NewestRootDir, L"nvram.plist");
+    }
+    FreePool(Handles);
+  }
+
+#else
   // search all volumes
   for (UINTN Index = 0; Index < Volumes.size(); ++Index) {
     Volume = &Volumes[Index];
@@ -1020,6 +1073,7 @@ LoadLatestNvramPlist()
  // else {
  //   DBG(" nvram.plist not found!\n");
  // }
+#endif
   DBG("loaded Status=%s\n", efiStrError(Status));
   return Status;
 }
