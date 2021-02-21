@@ -1106,10 +1106,10 @@ PutNvramPlistToRtVars ()
         Size  = valueTag->getData()->dataLenValue();
         Value = valueTag->getData()->dataValue();
  //      if (gSettings.Boot.DebugLog) {
- //       DBG("Size = %llu, Data: ", Size);
- //       for ( i = 0; i < Size; i++) {
- //         DBG("%02hhX ", *(((UINT8*)Value) + i));
- //       }
+        DBG("Size = %llu, Data: ", Size);
+        for (INTN i = 0; i < Size; i++) {
+         DBG("%02hhX ", *(((UINT8*)Value) + i));
+        }
  //      }
  //      if (!gSettings.Boot.DebugLog) {
         DBG("\n");
