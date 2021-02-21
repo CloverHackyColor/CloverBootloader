@@ -145,7 +145,11 @@ LogDataHubXString8(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
            const XString8& s)
 {
+#ifdef DEBUG
   if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) panic("LogDataHub s.length > MAX_UINT32");
+#else
+  if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) return EFI_OUT_OF_RESOURCES;
+#endif
   return LogDataHub(TypeGuid, Name, (void*)s.c_str(), (UINT32)s.sizeInBytesIncludingTerminator());
 }
 
@@ -154,7 +158,11 @@ LogDataHubXStringW(IN  EFI_GUID *TypeGuid,
            IN  CONST CHAR16   *Name,
            const XStringW& s)
 {
+#ifdef DEBUG
   if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) panic("LogDataHub s.length > MAX_UINT32");
+#else
+  if ( s.sizeInBytesIncludingTerminator() > MAX_UINT32 ) return EFI_OUT_OF_RESOURCES;
+#endif
   return LogDataHub(TypeGuid, Name, (void*)s.wc_str(), (UINT32)s.sizeInBytesIncludingTerminator());
 }
 

@@ -184,7 +184,9 @@ void XArray<TYPE>::CheckSize(size_t nNewSize, size_t nGrowBy)
 		nNewSize += nGrowBy;
 		m_data = (TYPE *)Xrealloc((void *)m_data, nNewSize * sizeof(TYPE), m_allocatedSize * sizeof(TYPE) );
 		if ( !m_data ) {
+#ifdef DEBUG
 			panic("XArray<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %lu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, nNewSize*sizeof(TYPE), (uintptr_t)m_data);
+#endif
 		}
 //		memset(&_Data[_Size], 0, (nNewSize-_Size) * sizeof(TYPE)); // Could help for debugging, but zeroing in not needed.
 		m_allocatedSize = nNewSize;
@@ -216,11 +218,11 @@ void XArray<TYPE>::setSize(size_t l)
 template<class TYPE>
 TYPE &XArray<TYPE>::ElementAt(size_t index)
 {
-//	#ifdef _DEBUG
+	#ifdef DEBUG
 		if ( index >= m_len ) {
 			panic("XArray::ElementAt(size_t) -> Operator [] : index > m_len");
 		}
-//	#endif
+	#endif
 	return  m_data[index];
 }
 
@@ -228,11 +230,11 @@ TYPE &XArray<TYPE>::ElementAt(size_t index)
 template<class TYPE>
 const TYPE& XArray<TYPE>::ElementAt(size_t index) const
 {
-//	#ifdef _DEBUG
+	#ifdef DEBUG
 		if ( index >= m_len ) {
 			panic("XArray::ElementAt(size_t) const -> Operator [] : index > m_len");
 		}
-//	#endif
+	#endif
 	return  m_data[index];
 }
 
@@ -240,14 +242,14 @@ const TYPE& XArray<TYPE>::ElementAt(size_t index) const
 template<class TYPE>
 TYPE &XArray<TYPE>::ElementAt(int index)
 {
-//	#ifdef _DEBUG
+	#ifdef DEBUG
     if ( index < 0 ) {
 			panic("XArray::ElementAt(int) -> Operator [] : index < 0");
 		}
 		if ( (unsigned int)index >= m_len ) { // cast safe, index > 0
 			panic("XArray::ElementAt(int) -> Operator [] : index > m_len");
 		}
-//	#endif
+	#endif
 	return  m_data[index];
 }
 
@@ -255,14 +257,14 @@ TYPE &XArray<TYPE>::ElementAt(int index)
 template<class TYPE>
 const TYPE& XArray<TYPE>::ElementAt(int index) const
 {
-//	#ifdef _DEBUG
+	#ifdef DEBUG
     if ( index < 0 ) {
 			panic("XArray::ElementAt(int) const -> Operator [] : index < 0");
 		}
 		if ( (unsigned int)index >= m_len ) { // cast ok as index > 0. Ideally cast would be like '(unsigned __typeof__(index))'
 			panic("XArray::ElementAt(int) const -> Operator [] : index > m_len");
 		}
-//	#endif
+	#endif
 	return  m_data[index];
 }
 

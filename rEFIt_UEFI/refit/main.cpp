@@ -576,7 +576,11 @@ size_t setKextAtPos(XObjArray<SIDELOAD_KEXT>* kextArrayPtr, const XString8& kext
 
   for (size_t kextIdx = 0 ; kextIdx < kextArray.size() ; kextIdx++ ) {
     if ( kextArray[kextIdx].FileName.contains(kextName) ) {
+#ifdef DEBUG
       if ( pos >= kextArray.size() ) panic("pos >= kextArray.size()");
+#else
+      //it is impossible
+#endif
       if ( pos == kextIdx ) return pos+1;
       if ( pos > kextIdx ) pos -= 1;
       SIDELOAD_KEXT* kextToMove = &kextArray[kextIdx];
@@ -595,7 +599,7 @@ static XStringW getDriversPath()
     if (FileExists(&self.getCloverDir(), L"drivers\\BIOS")) {
       return L"drivers\\BIOS"_XSW;
     } else {
-      return L"drivers64"_XSW;
+      return L"drivers64"_XSW; //backward compatibility
     }
   } else
   if (FileExists(&self.getCloverDir(), L"drivers\\UEFI")) {
@@ -608,6 +612,7 @@ static XStringW getDriversPath()
 #endif
 }
 
+#ifdef DEBUG
 void debugStartImageWithOC()
 {
 MsgLog("debugStartImageWithOC\n");
@@ -677,7 +682,7 @@ MsgLog("debugStartImageWithOC\n");
     MsgLog("debugStartImageWithOC : not found\n");
   }
 }
-
+#endif
 void LOADER_ENTRY::DelegateKernelPatches()
 {
   XObjArray<KEXT_PATCH> selectedPathArray;
@@ -815,7 +820,11 @@ void LOADER_ENTRY::StartLoader()
       EFI_HANDLE Interface = NULL;
       Status = gBS->LocateProtocol(&gAptioMemoryFixProtocolGuid, NULL, &Interface );
       if ( !EFI_ERROR(Status) ) {
+#ifdef DEBUG
         panic("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
+#else
+        DBG("Remove AptioMemoryFix.efi and OcQuirks.efi from your driver folder\n");
+#endif
       }
     }
 

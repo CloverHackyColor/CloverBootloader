@@ -641,7 +641,7 @@ void PreCleanupRSDT()
   // trim the RSDT tail before the XSDT starts
   if ((UINTN)Rsdt < (UINTN)Xsdt && (UINTN)Rsdt + Rsdt->Header.Length > (UINTN)Xsdt) {
     UINTN v = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
-    if ( v > MAX_UINT32 ) panic("((UINTN)Xsdt - (UINTN)Rsdt) & ~3 > MAX_UINT32");
+//    if ( v > MAX_UINT32 ) panic("((UINTN)Xsdt - (UINTN)Rsdt) & ~3 > MAX_UINT32");
     Rsdt->Header.Length = (UINT32)v;
     DBG("Cropped Rsdt->Header.Length=%d\n", (UINT32)Rsdt->Header.Length);
   }

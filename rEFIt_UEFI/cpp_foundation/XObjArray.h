@@ -63,10 +63,18 @@ class XObjArrayNC
 	const TYPE &ElementAt(IntegralType nIndex) const
 	{
 		if (nIndex < 0) {
+#ifdef DEBUG
 			panic("XObjArrayNC::ElementAt() : i < 0. System halted\n");
+#else
+      nIndex = 0;
+#endif
 		}
 		if ( (unsigned_type(IntegralType))nIndex >= _Len ) {
+#ifdef DEBUG
 			panic("XObjArrayNC::ElementAt() -> operator []  -  index (%zu) greater than length (%zu)\n", (size_t)nIndex, _Len);
+#else
+      nIndex = 0;
+#endif
 		}
 		return  *((TYPE *)(_Data[nIndex].Object));
 	}
@@ -75,10 +83,19 @@ class XObjArrayNC
 	TYPE &ElementAt(IntegralType nIndex)
 	{
 		if (nIndex < 0) {
+#ifdef DEBUG
 			panic("XObjArrayNC::ElementAt() : i < 0. System halted\n");
+#else
+      nIndex = 0;
+#endif
 		}
-		if ( (unsigned_type(IntegralType))nIndex >= _Len ) {
+
+    if ( (unsigned_type(IntegralType))nIndex >= _Len ) {
+#ifdef DEBUG
 			panic("XObjArrayNC::ElementAt() const -> operator []  -  index (%zu) greater than length (%zu)\n", (size_t)nIndex, _Len);
+#else
+      nIndex = 0;
+#endif
 		}
 		return  *((TYPE *)(_Data[nIndex].Object));
 	}
@@ -449,7 +466,12 @@ void XObjArrayNC<TYPE>::CheckSize(size_t nNewSize, size_t nGrowBy)
 		nNewSize += nGrowBy + 1;
 		_Data = (XObjArrayEntry<TYPE> *)Xrealloc((void *)_Data, sizeof(XObjArrayEntry<TYPE>) * nNewSize, sizeof(XObjArrayEntry<TYPE>) * m_allocatedSize);
 		if ( !_Data ) {
+#ifdef DEBUG
 			panic("XObjArrayNC<TYPE>::CheckSize(nNewSize=%zu, nGrowBy=%zu) : Xrealloc(%zu, %zu, %" PRIuPTR ") returned NULL. System halted\n", nNewSize, nGrowBy, m_allocatedSize, sizeof(XObjArrayEntry<TYPE>) * nNewSize, (uintptr_t)_Data);
+#else
+      m_allocatedSize = 0;
+      return;
+#endif
 		}
 //		memset(&_Data[m_allocatedSize], 0, (nNewSize-m_allocatedSize) * sizeof(XObjArrayEntry<TYPE>));
 		m_allocatedSize = nNewSize;
@@ -668,7 +690,11 @@ template<class TYPE>
 void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex)
 {
   if ( nIndex >= XObjArrayNC<TYPE>::_Len ) {
+#if defined(_DEBUG)
     panic("void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex) : BUG nIndex (%zu) is > length(). System halted\n", nIndex);
+#else
+    return;
+#endif
   }
 	if ( _Data[nIndex].FreeIt )
 	{

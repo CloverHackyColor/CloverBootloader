@@ -45,20 +45,31 @@ EFI_STATUS Self::_initialize()
   EFI_STATUS Status;
 
   Status = gBS->HandleProtocol(m_SelfImageHandle, &gEfiLoadedImageProtocolGuid, (void **)&m_SelfLoadedImage);
+#ifdef DEBUG
   if ( EFI_ERROR(Status) ) panic("Cannot get SelfLoadedImage");
   if ( m_SelfLoadedImage->DeviceHandle == NULL ) panic("m_SelfLoadedImage->DeviceHandle == NULL");
-
   m_SelfDevicePath = DuplicateDevicePath(DevicePathFromHandle(m_SelfLoadedImage->DeviceHandle));
   if ( m_SelfDevicePath == NULL )  panic("m_SelfDevicePath == NULL");
+#else
+  if ( EFI_ERROR(Status) ) return Status;
+  if ( m_SelfLoadedImage->DeviceHandle == NULL ) return EFI_NOT_FOUND;
+  m_SelfDevicePath = DuplicateDevicePath(DevicePathFromHandle(m_SelfLoadedImage->DeviceHandle));
+  if ( m_SelfDevicePath == NULL ) return EFI_NOT_FOUND;
+#endif
+  
 #ifdef JIEF_DEBUG
   DBG("Self DevicePath()=%ls @%llX\n", FileDevicePathToXStringW(m_SelfDevicePath).wc_str(), (uintptr_t)m_SelfLoadedImage->DeviceHandle);
 #endif
   Status = gBS->HandleProtocol(m_SelfLoadedImage->DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (void**)&m_SelfSimpleVolume);
+#ifdef DEBUG
   if ( EFI_ERROR(Status) ) panic("Cannot get m_SelfSimpleVolume");
   Status = m_SelfSimpleVolume->OpenVolume(m_SelfSimpleVolume, &m_SelfVolumeRootDir);
   if ( EFI_ERROR(Status) ) panic("Cannot get m_SelfRootDir");
-
-
+#else
+  if ( EFI_ERROR(Status) ) return Status;
+  Status = m_SelfSimpleVolume->OpenVolume(m_SelfSimpleVolume, &m_SelfVolumeRootDir);
+  if ( EFI_ERROR(Status) ) return Status;
+#endif
   // find the current directory
   m_CloverDirFullPath = FileDevicePathToXStringW(m_SelfLoadedImage->FilePath);
 
@@ -77,13 +88,21 @@ EFI_STATUS Self::_initialize()
   if ( m_CloverDirFullPath.equalIC("\\EFI\\Boot\\BootX64.efi") ) {
     m_CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi");
   }
+#ifdef DEBUG
   if ( m_CloverDirFullPath.isEmpty() ) panic("m_CloverDirFullPath.isEmpty()");
-
+#else
+  if ( m_CloverDirFullPath.isEmpty() ) return EFI_NOT_FOUND;
+#endif
   m_SelfDevicePath = FileDevicePath(m_SelfLoadedImage->DeviceHandle, m_CloverDirFullPath);
   m_SelfDevicePathAsXStringW = FileDevicePathToXStringW(m_SelfDevicePath);
 
+#ifdef DEBUG
   if ( m_CloverDirFullPath.lastChar() == U'\\' ) panic("m_CloverDirFullPath.lastChar() == U'\\'");
 //if ( m_CloverDirFullPath.endsWith('\\') ) panic("m_CloverDirFullPath.endsWith('\\')");
+#else
+  if ( m_CloverDirFullPath.lastChar() == U'\\' ) return EFI_NOT_FOUND;
+#endif
+
 
   size_t i = m_CloverDirFullPath.rindexOf(U'\\', SIZE_T_MAX-1);
   if ( i != SIZE_T_MAX && i > 0 ) m_CloverDirFullPath.deleteCharsAtPos(i, SIZE_T_MAX);

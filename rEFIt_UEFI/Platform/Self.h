@@ -58,9 +58,11 @@ public:
   bool isInitialized() const { return m_CloverDir != NULL; }
   void checkInitialized() const
   {
+#ifdef DEBUG
     if ( !isInitialized() ) {
       panic("Self in not initialized");
     }
+#endif
   }
 
   EFI_HANDLE getSelfImageHandle() { checkInitialized(); return m_SelfImageHandle; }

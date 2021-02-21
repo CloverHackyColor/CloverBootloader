@@ -4736,7 +4736,11 @@ static unsigned readChunk_iCCP(LodePNGInfo* info, const LodePNGDecompressSetting
   if(!error) {
     if(decoded.size) {
       info->iccp_profile_size = (__typeof__(info->iccp_profile_size))decoded.size; // Unsafe cast
+#ifdef DEBUG
       if ( info->iccp_profile_size != decoded.size ) panic("info->iccp_profile_size != decoded.size"); // Check the cast
+#else
+      if ( info->iccp_profile_size != decoded.size ) return 100; /*invalid ICC profile size*/
+#endif
       info->iccp_profile = (unsigned char*)lodepng_malloc(decoded.size);
       if(info->iccp_profile) {
         lodepng_memcpy(info->iccp_profile, decoded.data, decoded.size);

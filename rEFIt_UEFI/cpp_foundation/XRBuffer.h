@@ -65,7 +65,11 @@ class XRBuffer
 	void setIndex(IntegralType Idx)
   {
     if (Idx < 0) {
-      panic("XBuffer::setIndex : Idx >= m_size. System halted\n");
+#ifdef DEBUG
+      panic("XBuffer::setIndex : Idx < 0. System halted\n");
+#else
+      return;
+#endif
     }
     _Index = Idx;
   }
@@ -82,10 +86,18 @@ class XRBuffer
 	T& operator [](IntegralType i)
 	{
     if (i < 0) {
+#ifdef DEBUG
       panic("XRBuffer::operator [] : i < 0. System halted\n");
+#else
+      return 0;
+#endif
     }
     if ( (unsigned_type(IntegralType))i >= m_size ) {
-      panic("XRBuffer::operator [] : index > len. System halted\n");
+#ifdef DEBUG
+      panic("XRBuffer::operator [] : index >= m_size. System halted\n");
+#else
+      return 0;
+#endif
     }
     return _RData[i];
   } // underflow ? overflow ?
@@ -93,10 +105,18 @@ class XRBuffer
   const T& operator [](IntegralType i) const
   {
     if (i < 0) {
+#ifdef DEBUG
       panic("XRBuffer::operator [] : i < 0. System halted\n");
-    }
+#else
+      return 0;
+#endif
+   }
     if ( (unsigned_type(IntegralType))i >= m_size ) {
+#ifdef DEBUG
       panic("XRBuffer::operator [] : index > len. System halted\n");
+#else
+      return 0;
+#endif
     }
     return _RData[i];
   } // underflow ? overflow ?

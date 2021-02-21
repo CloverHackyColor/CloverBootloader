@@ -70,7 +70,7 @@ public:
   virtual void sprintf(unsigned int ident, XString8* s) const = 0;
   void printf(unsigned int ident) const;
   virtual void printf() const { printf(0); }
-
+#ifdef DEBUG
   virtual const TagDict* getDict() const { panic("getDict() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
   virtual const TagKey* getKey() const { panic("getKey() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
   virtual const TagString* getString() const { panic("getString() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
@@ -90,6 +90,28 @@ public:
   virtual TagData* getData() { panic("getData() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
   virtual TagDate* getDate() { panic("getDate() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
   virtual TagArray* getArray() { panic("getArray() called on a tag of type %s.", this->getTypeAsXString8().c_str()); }
+#else
+  virtual const TagDict* getDict() const { return NULL; }
+  virtual const TagKey* getKey() const { return NULL;}
+  virtual const TagString* getString() const { return NULL; }
+  virtual const TagInt64* getInt64() const { return NULL; }
+  virtual const TagFloat* getFloat() const { return NULL; }
+  virtual const TagBool* getBool() const { return NULL; }
+  virtual const TagData* getData() const { return NULL; }
+  virtual const TagDate* getDate() const { return NULL; }
+  virtual const TagArray* getArray() const { return NULL; }
+  
+  virtual TagDict* getDict() { return NULL; }
+  virtual TagKey* getKey() { return NULL; }
+  virtual TagString* getString() { return NULL; }
+  virtual TagInt64* getInt64() { return NULL; }
+  virtual TagFloat* getFloat() { return NULL; }
+  virtual TagBool* getBool() { return NULL; }
+  virtual TagData* getData() { return NULL; }
+  virtual TagDate* getDate() { return NULL; }
+  virtual TagArray* getArray() { return NULL; }
+
+#endif
 
   virtual bool isDict() const { return false; }
   virtual bool isKey() const { return false; }

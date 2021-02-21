@@ -109,13 +109,13 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UI
 	base64_init_decodestate(&state_in);
 	DecodedSizeInternal = base64_decode_block(EncodedData, (const int)EncodedSize, (char*) DecodedData, &state_in);
 
-	if ( DecodedSizeInternal == 0 ) {
+	if ( DecodedSizeInternal <= 0 ) {
     FreePool(DecodedData);
     DecodedData = NULL;
   }
 
 	if (DecodedSize != NULL) {
-    if ( DecodedSizeInternal < 0 ) panic("Base64DecodeClover : DecodedSizeInternal < 0");
+//    if ( DecodedSizeInternal < 0 ) panic("Base64DecodeClover : DecodedSizeInternal < 0");
 		*DecodedSize = (UINTN)DecodedSizeInternal;
 	}
 

@@ -7801,11 +7801,26 @@ const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
 {
   if ( CustomUuid.notEmpty() ) {
     EFI_STATUS Status = StrToGuidLE(CustomUuid, uuid);
+#ifdef DEBUG
     if ( EFI_ERROR(Status) ) panic("CustomUuid(%s) is not valid", CustomUuid.c_str()); // we panic, because it's a bug. Validity is checked when imported from settings
+#else
+    if ( EFI_ERROR(Status) ) {
+      DBG("CustomUuid(%s) is not valid\n", CustomUuid.c_str());
+      return nullUUID;
+    }
+#endif
     return CustomUuid;
   }
   EFI_STATUS Status = StrToGuidLE(SmUUID, uuid);
-  if ( EFI_ERROR(Status) ) panic("CustomUuid(%s) is not valid", CustomUuid.c_str()); // same as before
+#ifdef DEBUG
+  if ( EFI_ERROR(Status) ) panic("SmUUID(%s) is not valid", SmUUID.c_str()); // same as before
+#else
+  if ( EFI_ERROR(Status) ) {
+    DBG("SmUUID(%s) is not valid\n", SmUUID.c_str());
+    return nullUUID;
+  }
+#endif
+
   return SmUUID;
 }
 

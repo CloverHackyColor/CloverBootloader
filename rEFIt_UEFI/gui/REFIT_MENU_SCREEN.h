@@ -95,7 +95,11 @@ public:
   {
     if ( includeHidden ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::operator [] (nIndex);
     if (nIndex < 0) {
+#ifdef DEBUG
       panic("EntryArray::operator[] : i < 0. System halted\n");
+#else
+      return 0;
+#endif
     }
     size_t size = 0;
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
@@ -104,7 +108,13 @@ public:
         size++;
       }
     }
+    
+#ifdef DEBUG
     panic("EntryArray::operator[] nIndex > size()");
+#else
+    return 0;
+#endif
+
   }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
@@ -112,7 +122,11 @@ public:
   {
     if ( includeHidden ) return XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::operator [] (nIndex);
     if (nIndex < 0) {
+#ifdef DEBUG
       panic("EntryArray::operator[] : i < 0. System halted\n");
+#else
+      return 0;
+#endif
     }
     size_t size = 0;
     for ( size_t i=0 ; i < XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size() ; i++ ) {
@@ -121,7 +135,11 @@ public:
         size++;
       }
     }
+#ifdef DEBUG
     panic("EntryArray::operator[] nIndex > size()");
+#else
+    return 0;
+#endif
   }
 
   size_t getIdx(const REFIT_ABSTRACT_MENU_ENTRY* entry)
@@ -201,10 +219,18 @@ public:
   template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
   void moveBefore(IntegralType1 idxFrom, IntegralType2 idxTo)
   {
+#ifdef DEBUG
     if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
     if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
     if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
     if ((unsigned_type(IntegralType2))idxTo >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
+#else
+    if (idxFrom < 0) return;
+    if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) return;
+    if (idxTo < 0) return;
+    if ((unsigned_type(IntegralType2))idxTo >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) return;
+#endif
+
 
     REFIT_ABSTRACT_MENU_ENTRY* entry = &ElementAt(idxFrom);
     RemoveWithoutFreeingAtIndex(idxFrom);
@@ -218,10 +244,17 @@ public:
   template<typename IntegralType1, typename IntegralType2, enable_if(is_integral(IntegralType1) && is_integral(IntegralType2))>
   void moveAfter(IntegralType1 idxFrom, IntegralType2 idxTo)
   {
+#ifdef DEBUG
     if (idxFrom < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom < 0. System halted\n");
     if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxFrom > size(). System halted\n");
     if (idxTo < 0) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo < 0. System halted\n");
     if ((unsigned_type(IntegralType2))idxTo >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) panic("EntryArray::move(IntegralType1, IntegralType2) : idxTo > size(). System halted\n");
+#else
+    if (idxFrom < 0) return;
+    if ((unsigned_type(IntegralType1))idxFrom >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) return;
+    if (idxTo < 0) return;
+    if ((unsigned_type(IntegralType2))idxTo >= XObjArray<REFIT_ABSTRACT_MENU_ENTRY>::size()) return;
+#endif
 
     REFIT_ABSTRACT_MENU_ENTRY* entry = &ElementAt(idxFrom);
     RemoveWithoutFreeingAtIndex(idxFrom);

@@ -244,7 +244,12 @@ protected:
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	T* _data(IntegralType pos) const
 	{
+#ifdef DEBUG
 		if ( pos<0 ) panic("T* data(int i) -> i < 0");
+#else
+    if ( pos<0 ) return 0;
+#endif
+
  		size_t offset = size_of_utf_string_len(m_data, (unsigned_type(IntegralType))pos); // If pos is too big, size_of_utf_string_len returns the end of the string
  		return m_data + offset;
 	}
@@ -293,7 +298,11 @@ public:
 	char32_t char32At(IntegralType i) const
 	{
 		if (i < 0) {
-			panic("__String<T>::char32At(size_t i) : i < 0. System halted\n");
+#ifdef DEBUG
+      panic("__String<T>::char32At(size_t i) : i < 0. System halted\n");
+#else
+      return 0;
+#endif
 		}
 		size_t nb = 0;
 		const T *p = m_data;
@@ -301,8 +310,12 @@ public:
 		do {
 			p = get_char32_from_string(p, &char32);
 			if (!char32) {
-				if ( (unsigned_type(IntegralType))i == nb ) return 0; // no panic if we want to access the null terminator
+#ifdef DEBUG
+        if ( (unsigned_type(IntegralType))i == nb ) return 0; // no panic if we want to access the null terminator
 				panic("__String::char32At(size_t i) : i >= length(). System halted\n");
+#else
+        return 0;
+#endif
 			}
 			nb += 1;
 		} while (nb <= (unsigned_type(IntegralType))i);
@@ -516,7 +529,13 @@ public:
   template<typename IntegralType, typename O, class OtherXStringClass>
   bool equalAtIC(IntegralType pos, const __String<O, OtherXStringClass>& S) const
   {
+    
+#ifdef DEBUG
     if ( pos < 0 ) panic("XString::equalAtIC -> i < 0");
+#else
+    if ( pos < 0 ) return false;
+#endif
+
     if ( (unsigned_type(IntegralType))pos > length() - S.length() ) return false;
     return XStringAbstract__ncompare(m_data + (unsigned_type(IntegralType))pos, S.s(), S.length(), true) == 0;
   }
@@ -728,7 +747,13 @@ class XStringAbstract : public __String<T, ThisXStringClass>
         m_data = (T*)Xrealloc(m_data, nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
       }
 			if ( !m_data ) {
-				panic("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, uintptr_t(m_data), nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
+
+#ifdef DEBUG
+        panic("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR ", %lu, %zd) returned NULL. System halted\n", nNewSize, uintptr_t(m_data), nNewSize*sizeof(T), m_allocatedSize*sizeof(T));
+#else
+        m_allocatedSize = 0;
+        return;
+#endif
 			}
 			m_allocatedSize = nNewSize;
 	}
@@ -822,7 +847,12 @@ public:
 protected:
 	ThisXStringClass& takeValueFromLiteral(const T* s)
 	{
+#ifdef DEBUG
 		if ( m_allocatedSize > 0 ) panic("XStringAbstract::takeValueFromLiteral -> m_allocatedSize > 0");
+#else
+    if ( m_allocatedSize < 0 ) return 0;
+#endif
+
 		m_data = (T*)s;
 		return *((ThisXStringClass*)this);
 	}
@@ -848,8 +878,14 @@ public:
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	T* dataSized(IntegralType size)
 	{
+#ifdef DEBUG
 		if ( size<0 ) panic("T* dataSized() -> i < 0");
 		if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) panic("T* dataSized() -> i > MAX_XSIZE");
+#else
+    if ( size<0 ) return 0;
+    if ( (unsigned_type(IntegralType))size > MAX_XSIZE )  return 0;
+#endif
+
 		CheckSize((unsigned_type(IntegralType))size);
 		return __String<T, ThisXStringClass>::_data(0);
 	}

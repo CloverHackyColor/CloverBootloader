@@ -73,7 +73,7 @@ void AddSecureBootTool(void)
   if (!gSettings.Boot.SecureBoot && !gSettings.Boot.SecureBootSetupMode) {
     return;
   }
-panic("not done yet");
+//panic("not done yet");
 //  if (gSettings.Boot.SecureBoot) {
 //    Entry = new REFIT_MENU_ENTRY_SECURE_BOOT();
 //    Entry->Title.SWPrintf("Clover Secure Boot Configuration");
@@ -86,12 +86,14 @@ panic("not done yet");
 ////    Entry->Tag = TAG_SECURE_BOOT;
 //    Entry->Image = ThemeX.GetIcon(BUILTIN_ICON_FUNC_SECURE_BOOT);
 //  }
-  Entry->Row = 1;
+  
+  //----- not done yet ----------
+//  Entry->Row = 1;
   //actions
-  Entry->AtClick = ActionSelect;
-  Entry->AtDoubleClick = ActionEnter;
-  Entry->AtRightClick = ActionHelp;
-  MainMenu.AddMenuEntry(Entry);
+//  Entry->AtClick = ActionSelect;
+//  Entry->AtDoubleClick = ActionEnter;
+//  Entry->AtRightClick = ActionHelp;
+//  MainMenu.AddMenuEntry(Entry);
 }
 
 

@@ -134,9 +134,11 @@ EFI_STATUS SelfOem::_initialize()
     assert( m_OemFulPath.notEmpty() );
   }
 
-
-
+#ifdef DEBUG
   if ( m_KextsDir != NULL ) panic("%s : Kexts dir != NULL.", __FUNCTION__);
+#else
+  if ( m_KextsDir != NULL ) return EFI_SUCCESS;
+#endif
   if ( oemDirExists() ) {
     Status = m_OemDir->Open(m_OemDir, &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( !EFI_ERROR(Status) ) {
@@ -200,8 +202,9 @@ EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, 
 void SelfOem::unInitialize()
 {
 //DBG("%s : enter.\n", __FUNCTION__);
+#ifdef DEBUG
   if ( m_ConfName.isEmpty() ) panic("%s : Already uninitiialized.", __FUNCTION__);
-
+#endif
   closeHandle();
   m_ConfName.setEmpty();
 //DBG("%s : leave.\n", __FUNCTION__);
@@ -210,15 +213,20 @@ void SelfOem::unInitialize()
 EFI_STATUS SelfOem::reInitialize()
 {
 //DBG("%s : enter.\n", __FUNCTION__);
+#ifdef DEBUG
   if ( m_ConfName.isEmpty() ) panic("%s : initialize() must called once first", __FUNCTION__);
-
+#endif
   closeHandle();
 
   // No need to call _setOemPathRelToSelfDir again, but need to open m_OemDir, if it exists
   if ( oemDirExists() ) {
     EFI_STATUS Status = self.getCloverDir().Open(&self.getCloverDir(), &m_OemDir, m_OemPathRelToSelfDir.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( EFI_ERROR(Status) ) {
+#ifdef DEBUG
       panic("Impossible to reopen dir '%ls\\%ls', although it was opened the first time : %s", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
+#else
+     return Status;
+#endif
     }
   }
   EFI_STATUS Status = _initialize();

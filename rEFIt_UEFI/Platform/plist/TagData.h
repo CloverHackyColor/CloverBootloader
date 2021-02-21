@@ -55,8 +55,13 @@ public:
   }
   void setDataValue(UINT8* data, UINTN dataLen)
   {
+#ifdef DEBUG
     if ( data == NULL && dataLen != 0 ) panic("TagData::setDataValue() : data == NULL && dataLen != 0 ");
     if ( data != NULL && dataLen == 0 ) panic("TagData::setDataValue() : data != NULL && dataLen == 0 ");
+#else
+    if ( data == NULL && dataLen != 0 ) return;
+    if ( data != NULL && dataLen == 0 ) return;
+#endif
     dataBuffer.stealValueFrom(data, dataLen);
   }
 
