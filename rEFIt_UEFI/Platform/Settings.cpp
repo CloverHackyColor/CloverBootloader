@@ -938,9 +938,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   // KextsToPatch is an array of dict
   arrayProp = DictPointer->arrayPropertyForKey("KextsToPatch");
   if (arrayProp != NULL) {
-    INTN i;
     INTN Count = arrayProp->arrayContent().size();
-    
     Patches->KextPatches.setEmpty();
     
     if (Count > 0) {
@@ -948,7 +946,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
       const TagStruct* Dict = NULL;
 
       DBG("KextsToPatch: %lld requested\n", Count);
-      for (i = 0; i < Count; i++) {
+      for (INTN i = 0; i < Count; i++) {
         UINTN FindLen = 0, ReplaceLen = 0, MaskLen = 0;
         Prop2 = arrayProp->dictElementAt(i);
         if ( !Prop2->isDict() ) {
@@ -2701,7 +2699,6 @@ EFI_STATUS GetEarlyUserSettings (
 
       const TagArray* Dict2 = GraphicsDict->arrayPropertyForKey("PatchVBiosBytes"); // array of dict
       if (Dict2 != NULL) {
-        INTN   i;
         INTN   Count = Dict2->arrayContent().size();
         if (Count > 0) {
           VBIOS_PATCH_BYTES *VBiosPatch;
@@ -2712,7 +2709,7 @@ EFI_STATUS GetEarlyUserSettings (
           settingsData.PatchVBiosBytes = (__typeof__(settingsData.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
 
           // get all entries
-          for (i = 0; i < Count; i++) {
+          for (INTN i = 0; i < Count; i++) {
             const TagDict* dict3 = Dict2->dictElementAt(i, "Graphics/PatchVBiosBytes"_XS8);
             Valid = TRUE;
             // read entry
@@ -3920,21 +3917,36 @@ static void getACPISettings(const TagDict *CfgDict)
         }
       }
     }
-    
-    const TagDict* RenameDevicesDict = ACPIDict->dictPropertyForKey("RenameDevices"); // dict of key/string
-    if ( RenameDevicesDict ) {
+    //arrayPropertyForKey
+    const TagDict* RenameDevicesDict = NULL;
+    INTN arraySize = 0;
+    const TagArray* RenameDevicesArray = ACPIDict->arrayPropertyForKey("RenameDevices");
+    bool RenDevIsArray = (RenameDevicesArray != NULL);
+    if (RenDevIsArray) {
+      arraySize = RenameDevicesArray->arrayContent().size();
+    } else {
+      RenameDevicesDict = ACPIDict->dictPropertyForKey("RenameDevices"); // dict of key/string
+      if (RenameDevicesDict) {
+        arraySize = 1;
+      }
+    }
+    if (arraySize > 0) {
+      gSettings.ACPI.DeviceRename.setEmpty(); //else will not change
+    }
+    for (INTN i = 0; i < arraySize; i++) {
+      if (RenDevIsArray) {
+        RenameDevicesDict = RenameDevicesArray->dictElementAt(i, "RenameDevices"_XS8);
+      }
+      if (!RenameDevicesDict) break;
       INTN Count = RenameDevicesDict->dictKeyCount();
       if (Count > 0) {
-        gSettings.ACPI.DeviceRename.setEmpty();
-        DBG("Devices to rename %lld\n", Count);
-        for (INTN i = 0; i < Count; i++) {
+        for (INTN j = 0; j < Count; j++) {
           const TagKey* key;
           const TagStruct* value;
-          if ( !EFI_ERROR(RenameDevicesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {
+          if ( !EFI_ERROR(RenameDevicesDict->getKeyAndValueAtIndex(j, &key, &value)) ) {
             ACPI_NAME_LIST* List = ParseACPIName(key->keyStringValue());
             ACPI_NAME_LIST* List2 = (__typeof__(List2))AllocateZeroPool(sizeof(ACPI_NAME_LIST));
             List2->Next = List;
-//            gSettings.ACPI.DeviceRename[gSettings.ACPI.DeviceRename.size()].Next = List;
             gSettings.ACPI.DeviceRename.AddReference(List2, false);
             while (List) {
               DBG("%s:", List->Name);
@@ -3945,9 +3957,9 @@ static void getACPISettings(const TagDict *CfgDict)
               DBG("->will be renamed to %s\n", List2->Name);
             }
           }
-        }
+        } //for j < dict size
       }
-    }
+    } //for i < array size
   }
 }
 

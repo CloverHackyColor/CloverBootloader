@@ -167,7 +167,8 @@ const TagDict* TagDict::dictPropertyForKey(const CHAR8* key) const
   const TagStruct* tag = propertyForKey(key);
   if ( tag == NULL ) return NULL;
   if ( !tag->isDict() ) {
-    panic("MALFORMED PLIST : Property value for key %s must be a dict\n", key);
+//    panic("MALFORMED PLIST : Property value for key %s must be a dict\n", key);
+    return NULL;
   }
   return tag->getDict();
 }
@@ -177,7 +178,8 @@ const TagArray* TagDict::arrayPropertyForKey(const CHAR8* key) const
   const TagStruct* tag = propertyForKey(key);
   if ( tag == NULL ) return NULL;
   if ( !tag->isArray() ) {
-    panic("MALFORMED PLIST : Property value for key %s must be an array\n", key);
+//    panic("MALFORMED PLIST : Property value for key %s must be an array\n", key);
+    return NULL;
   }
   return tag->getArray();
 }
