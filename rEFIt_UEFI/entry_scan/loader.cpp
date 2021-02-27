@@ -1588,9 +1588,9 @@ void ScanLoader(void)
             if ( FileExists(bootVolume->RootDir, targetNameFile) ) {
               EFI_STATUS Status = egLoadFile(bootVolume->RootDir, targetNameFile.wc_str(), (UINT8 **)&fileBuffer, &fileLen);
               if(!EFI_ERROR(Status)) {
-                FullTitle.SWPrintf("Boot Mac OS X from %.*s", (int)fileLen, fileBuffer);
-                FullTitleRecovery.SWPrintf("Boot Mac OS X Recovery for %.*s", (int)fileLen, fileBuffer);
-                FullTitleInstaller.SWPrintf("Boot Mac OS X Install for %.*s", (int)fileLen, fileBuffer);
+                FullTitle.SWPrintf("Boot Mac OS from %.*s", (int)fileLen, fileBuffer);
+                FullTitleRecovery.SWPrintf("Boot Mac OS Recovery for %.*s", (int)fileLen, fileBuffer);
+                FullTitleInstaller.SWPrintf("Boot Mac OS Install for %.*s", (int)fileLen, fileBuffer);
                 if ( fileLen < MAX_INT32 ) {
                   DBG("      contentDetails name:%.*s\n", (int)fileLen, fileBuffer);
                 }
@@ -1601,13 +1601,13 @@ void ScanLoader(void)
         }
         if ( FullTitle.isEmpty() ) {
           if ( targetVolume ) {
-            FullTitle.SWPrintf("Boot Mac OS X from %ls", targetVolume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
-            FullTitleRecovery.SWPrintf("Boot Mac OS X Recovery for %ls", targetVolume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
-            FullTitleInstaller.SWPrintf("Boot Mac OS X Install for %ls", targetVolume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
+            FullTitle.SWPrintf("Boot Mac OS from %ls", targetVolume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
+            FullTitleRecovery.SWPrintf("Boot Mac OS Recovery for %ls", targetVolume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
+            FullTitleInstaller.SWPrintf("Boot Mac OS Install for %ls", targetVolume->getVolLabelOrOSXVolumeNameOrVolName().wc_str());
           }else{
-            FullTitle.SWPrintf("Boot Mac OS X");
-            FullTitleRecovery.SWPrintf("Boot Mac OS X Recovery");
-            FullTitleInstaller.SWPrintf("Mac OS X Install");
+            FullTitle.SWPrintf("Boot Mac OS");
+            FullTitleRecovery.SWPrintf("Boot Mac OS Recovery");
+            FullTitleInstaller.SWPrintf("Mac OS Install");
           }
         }
         /*MacOsVersion macOSVersion = GetMacOSVersionFromFolder(*Volume->RootDir, SWPrintf("\\%s\\System\\Library\\CoreServices", ApfsTargetUUID.c_str()));
@@ -1709,7 +1709,9 @@ void ScanLoader(void)
       if ( loaderEntry1.LoaderType == OSTYPE_OSX  &&  (loaderEntry1.Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_PREBOOT) != 0 )
       {
         size_t prebootIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
+#ifdef DEBUG
         if ( prebootIdx == SIZE_T_MAX ) panic ("bug");
+#endif
         size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, OSTYPE_OSX);
         if ( idxMain != SIZE_T_MAX && idxMain != prebootIdx+1 ) {
           DBG("Move preboot entry %zu before system %zu\n", prebootIdx, idxMain);
@@ -1738,7 +1740,9 @@ void ScanLoader(void)
       if ( loaderEntry1.LoaderType == OSTYPE_OSX_INSTALLER )
       {
         size_t installerIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
+#ifdef DEBUG
         if ( installerIdx == SIZE_T_MAX ) panic ("bug");
+#endif
         size_t idxPreboot = MainMenu.Entries.getApfsPrebootLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, OSTYPE_OSX);
         if ( idxPreboot != SIZE_T_MAX ) {
           if ( idxPreboot != installerIdx + 1 ) {
@@ -1779,7 +1783,9 @@ void ScanLoader(void)
       if ( loaderEntry1.LoaderType == OSTYPE_RECOVERY  &&  (loaderEntry1.Volume->ApfsRole & APPLE_APFS_VOLUME_ROLE_RECOVERY) != 0 )
       {
         size_t recoveryIdx = MainMenu.Entries.getIdx(loaderEntry1Ptr);
+#ifdef DEBUG
         if ( recoveryIdx == SIZE_T_MAX ) panic ("bug");
+#endif
         size_t idxMain = MainMenu.Entries.getApfsLoaderIdx(loaderEntry1.Volume->ApfsContainerUUID, loaderEntry1.APFSTargetUUID, OSTYPE_OSX);
         if ( idxMain != SIZE_T_MAX ) {
           if ( idxMain + 1 != recoveryIdx ) {
