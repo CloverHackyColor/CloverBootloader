@@ -852,9 +852,15 @@ void LOADER_ENTRY::StartLoader()
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
-
-
+    
+    const XStringW& XFP = self.getCloverDirFullPath();
+    CONST CHAR16 *FPath = NULL;
+    if (XFP.isEmpty()) {
+      DBG("full path is empty\n");
+    } else {
+      FPath = XFP.wc_str();
+    }
+    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, FPath, NULL);
 
   /*
    * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
@@ -874,7 +880,7 @@ void LOADER_ENTRY::StartLoader()
   #if !defined(USE_OC_SECTION_Acpi) && !defined(USE_OC_SECTION_Booter) && !defined(USE_OC_SECTION_DeviceProperties) && !defined(USE_OC_SECTION_Kernel) && !defined(USE_OC_SECTION_Misc) && \
       !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
-    memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
+    ZeroMem(&mOpenCoreConfiguration, sizeof(mOpenCoreConfiguration));
     DBG("config-oc.plist isn't use at all\n");
 
   #else
