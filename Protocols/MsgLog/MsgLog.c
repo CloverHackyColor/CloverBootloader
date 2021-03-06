@@ -73,7 +73,7 @@ extern  MESSAGE_LOG_PROTOCOL *Msg;
 EFI_STATUS
 EFIAPI
 MsgLogEntrypoint (
-                    IN EFI_HANDLE           ImageHandle,
+                    IN EFI_HANDLE          ImageHandle,
                     IN EFI_SYSTEM_TABLE		*SystemTable
                     )
 {
