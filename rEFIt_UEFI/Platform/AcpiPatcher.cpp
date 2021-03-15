@@ -2103,7 +2103,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     }
   }
 
-  if (gSettings.ACPI.SSDT.DropSSDT) {
+  if (GlobalConfig.DropSSDT) {
     DbgHeader("DropSSDT");
     //special case if we set into menu drop all SSDT
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE, 0, 0);

@@ -152,7 +152,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = 3;
 
   InputItems[InputItemsCount].ItemType = BoolValue; //4
-  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.DropSSDT;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.DropSSDT;
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.Generate.GeneratePStates;
   InputItems[InputItemsCount].ItemType = BoolValue;  //6
@@ -502,7 +502,7 @@ void ApplyInputs(void)
   }
   i++; //4
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.DropSSDT = InputItems[i].BValue;
+    GlobalConfig.DropSSDT = InputItems[i].BValue;
   }
   i++; //5
   if (InputItems[i].Valid) {

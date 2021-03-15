@@ -26,4 +26,8 @@
 
 #define Xrealloc(ptr, newsize, oldsize) realloc(ptr, newsize)
 
+#define XTOOLS_VA_LIST va_list
+#define XTOOLS_VA_START va_start
+#define XTOOLS_VA_END va_end
+
 #endif

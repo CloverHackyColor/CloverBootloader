@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9A0B085E240300E000E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
+		9A0D113825FF58420040555F /* strcasecmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0D113625FF583F0040555F /* strcasecmp_test.cpp */; };
 		9A272A7F25D5062E00F03E19 /* DataHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A272A7D25D5062D00F03E19 /* DataHub.cpp */; };
 		9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1D241BB61B00F3D247 /* abort.cpp */; };
 		9A28CD22241BB61B00F3D247 /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1E241BB61B00F3D247 /* strlen.cpp */; };
@@ -270,6 +271,8 @@
 		9A0B084A2402FE9300E2B470 /* XArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XArray.h; sourceTree = "<group>"; };
 		9A0B084B2402FE9300E2B470 /* XObjArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XObjArray.h; sourceTree = "<group>"; };
 		9A0B085D240300E000E2B470 /* Platform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
+		9A0D113625FF583F0040555F /* strcasecmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcasecmp_test.cpp; sourceTree = "<group>"; };
+		9A0D113725FF58400040555F /* strcasecmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strcasecmp_test.h; sourceTree = "<group>"; };
 		9A272A7C25D5062D00F03E19 /* DataHubExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubExt.h; sourceTree = "<group>"; };
 		9A272A7D25D5062D00F03E19 /* DataHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHub.cpp; sourceTree = "<group>"; };
 		9A272A7E25D5062E00F03E19 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
@@ -15781,6 +15784,8 @@
 		9AFDD05825CE730F00EEAF06 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A0D113625FF583F0040555F /* strcasecmp_test.cpp */,
+				9A0D113725FF58400040555F /* strcasecmp_test.h */,
 				9AFDD07125CE730F00EEAF06 /* all_tests.cpp */,
 				9AFDD07A25CE730F00EEAF06 /* all_tests.h */,
 				9A9037E425CFE7D000F14179 /* config-test.cpp */,
@@ -16020,6 +16025,7 @@
 				9A358B3025CF115200A3850D /* Config_Graphics.cpp in Sources */,
 				9A36E51024F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A272A7F25D5062E00F03E19 /* DataHub.cpp in Sources */,
+				9A0D113825FF58420040555F /* strcasecmp_test.cpp in Sources */,
 				9AA918C125CD4B7900BD5E8B /* lib.cpp in Sources */,
 				9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */,
 				9AFDD08D25CE731000EEAF06 /* plist_tests.cpp in Sources */,

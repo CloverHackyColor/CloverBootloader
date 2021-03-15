@@ -19,7 +19,7 @@
 template <typename T>
 class XBuffer : public XBuffer_Super
 {
-  protected:
+protected:
 	T*_WData; // same as RData (see XRBuffer)
 	size_t m_allocatedSize;
 
@@ -46,11 +46,11 @@ class XBuffer : public XBuffer_Super
     if( _WData ) free(_WData);
     Initialize(p, count, 0);
   }
-
-
 	~XBuffer();
 
-  public:
+public:
+  static XBuffer<T> NullXBuffer;
+
 	void CheckSize(size_t nNewSize, size_t nGrowBy = XBufferGrowByDefault);
 
   void* vdata() const { return (void*)XBuffer_Super::data(); }
@@ -203,6 +203,8 @@ class XBuffer : public XBuffer_Super
 	bool ReadFromXRBuffer(XRBuffer<T> &unXBuffer);
 };
 
+template <typename T>
+XBuffer<T> XBuffer<T>::NullXBuffer = XBuffer<T>();
 
 
 

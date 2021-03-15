@@ -2543,9 +2543,26 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
-void afterGetUserSettings(SETTINGS_DATA& gSettings)
+void afterGetUserSettings(const SETTINGS_DATA& gSettings)
 {
+
+  // Secure boot
+  /* this parameter, which should be called SecureBootSetupMode, is ignored if :
+   *   it is true
+   *   SecureBoot is already true.
+   */
+  if ( gSettings.Boot.SecureSetting == 0 ) {
+    // Only disable setup mode, we want always secure boot
+    GlobalConfig.SecureBootSetupMode = 0;
+  } else if ( gSettings.Boot.SecureSetting == 1  &&  !GlobalConfig.SecureBoot  ) {
+    // This mode will force boot policy even when no secure boot or it is disabled
+    GlobalConfig.SecureBootSetupMode = 1;
+    GlobalConfig.SecureBoot          = 1;
+  }
+
+
   //set to drop
+  GlobalConfig.DropSSDT = gSettings.ACPI.SSDT.DropSSDTSetting;
   if (GlobalConfig.ACPIDropTables) {
     for ( size_t idx = 0 ; idx < gSettings.ACPI.ACPIDropTablesArray.size() ; ++idx)
     {
@@ -2559,7 +2576,7 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
             (!gSettings.ACPI.ACPIDropTablesArray[idx].Signature && (DropTable->TableId == gSettings.ACPI.ACPIDropTablesArray[idx].TableId))) {
           DropTable->MenuItem.BValue = TRUE;
           DropTable->OtherOS = gSettings.ACPI.ACPIDropTablesArray[idx].OtherOS;
-          gSettings.ACPI.SSDT.DropSSDT         = FALSE; //if one item=true then dropAll=false by default
+          GlobalConfig.DropSSDT         = FALSE; // if one item=true then dropAll=false by default
           //DBG(" true");
           Dropped = TRUE;
         }
@@ -2568,6 +2585,33 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
       DBG(" %s\n", Dropped ? "yes" : "no");
     }
   }
+
+  // Whether or not to draw boot screen
+  GlobalConfig.CustomBoot = gSettings.Boot.CustomBootSetting;
+  if ( gSettings.Boot.CustomLogoAsXString8.notEmpty() ) {
+    if (GlobalConfig.CustomLogo != NULL) {
+      delete GlobalConfig.CustomLogo;
+    }
+    GlobalConfig.CustomLogo = new XImage;
+    GlobalConfig.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), gSettings.Boot.CustomLogoAsXString8);
+    if (GlobalConfig.CustomLogo->isEmpty()) {
+      DBG("Custom boot logo not found at path '%s'!\n", gSettings.Boot.CustomLogoAsXString8.c_str());
+      GlobalConfig.CustomBoot = CUSTOM_BOOT_DISABLED;
+    }
+  } else if ( gSettings.Boot.CustomLogoAsData.notEmpty() ) {
+    if (GlobalConfig.CustomLogo != NULL) {
+      delete GlobalConfig.CustomLogo;
+    }
+    GlobalConfig.CustomLogo = new XImage;
+    GlobalConfig.CustomLogo->FromPNG(gSettings.Boot.CustomLogoAsData.data(), gSettings.Boot.CustomLogoAsData.size());
+    if (GlobalConfig.CustomLogo->isEmpty()) {
+      DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
+      GlobalConfig.CustomBoot = CUSTOM_BOOT_DISABLED;
+    }
+  }
+  DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(GlobalConfig.CustomBoot), (uintptr_t)GlobalConfig.CustomLogo);
+
+
 }
 #pragma GCC diagnostic pop
 

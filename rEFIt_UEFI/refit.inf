@@ -38,6 +38,7 @@
   ../Include/Library/printf_lite-conf.h
   ../Include/Library/printf_lite.h
   include/Devices.h
+  include/DsdtFixList.h
   include/Efi.h
   include/Handle.h
   include/OneLinerMacros.h
@@ -127,8 +128,10 @@
   Platform/Posix/stdlib.h
   Platform/Posix/stdio.h
   Platform/Posix/stdio.cpp
-  Platform/Posix/string.cpp
   Platform/Posix/string.h
+  Platform/Posix/string.cpp
+  Platform/Posix/strings.h
+  Platform/Posix/strings.cpp
   Platform/Posix/strlen.cpp
   Platform/Posix/wchar.h
   Platform/Posix/wchar.cpp
@@ -304,6 +307,8 @@
 #  cpp_foundation/XUINTN.h
   cpp_unit_test/all_tests.h
   cpp_unit_test/all_tests.cpp
+  cpp_unit_test/config-test.h
+  cpp_unit_test/config-test.cpp
   cpp_unit_test/find_replace_mask_Clover_tests.h
   cpp_unit_test/find_replace_mask_Clover_tests.cpp
   cpp_unit_test/find_replace_mask_OC_tests.h
@@ -327,6 +332,8 @@
   cpp_unit_test/XArray_tests.h
   cpp_unit_test/XBuffer_tests.cpp
   cpp_unit_test/XBuffer_tests.h
+  cpp_unit_test/xml_lite-test.cpp
+  cpp_unit_test/xml_lite-test.h
   cpp_unit_test/XObjArray_tests.cpp
   cpp_unit_test/XObjArray_tests.h
   cpp_unit_test/XString_test.cpp

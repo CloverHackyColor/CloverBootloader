@@ -11,6 +11,7 @@
 #include "strcmp_test.h"
 #include "strncmp_test.h"
 #include "strlen_test.h"
+#include "strcasecmp_test.h"
 #include "printf_lite-test.h"
 #include "LoadOptions_test.h"
 #include "XToolsCommon_test.h"
@@ -45,6 +46,11 @@ bool all_tests()
     printf("xml_lite_tests() failed at test %d\n", ret);
     all_ok = false;
   }
+ret = strcasecmp_tests();
+if ( ret != 0 ) {
+  printf("strncmp_tests() failed at test %d\n", ret);
+  all_ok = false;
+}
 //  ret = config_plist_tests();
 //  if ( ret != 0 ) {
 //    printf("config_plist_tests() failed at test %d\n", ret);
@@ -85,6 +91,11 @@ bool all_tests()
     all_ok = false;
   }
   ret = strncmp_tests();
+  if ( ret != 0 ) {
+    printf("strncmp_tests() failed at test %d\n", ret);
+    all_ok = false;
+  }
+  ret = strcasecmp_tests();
   if ( ret != 0 ) {
     printf("strncmp_tests() failed at test %d\n", ret);
     all_ok = false;

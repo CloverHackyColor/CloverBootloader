@@ -20,6 +20,10 @@
 		9A0B087D2403B08400E2B470 /* XStringArray_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B084F2402FE9B00E2B470 /* XStringArray_test.cpp */; };
 		9A0B087E2403B08400E2B470 /* XArray_tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B08532402FE9B00E2B470 /* XArray_tests.cpp */; };
 		9A0B087F2403B08400E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
+		9A0D113225FF506E0040555F /* strcasecmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0D113025FF506E0040555F /* strcasecmp_test.cpp */; };
+		9A0D113325FF506E0040555F /* strcasecmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0D113025FF506E0040555F /* strcasecmp_test.cpp */; };
+		9A0D113425FF506E0040555F /* strcasecmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0D113025FF506E0040555F /* strcasecmp_test.cpp */; };
+		9A0D113525FF506E0040555F /* strcasecmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0D113025FF506E0040555F /* strcasecmp_test.cpp */; };
 		9A28CD09241B8DD400F3D247 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */; };
 		9A28CD0A241B8DD400F3D247 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */; };
 		9A28CD0B241B8DD400F3D247 /* strncmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */; };
@@ -357,6 +361,8 @@
 		9A0B085D240300E000E2B470 /* Platform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9A0B08642403144C00E2B470 /* global_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global_test.cpp; sourceTree = "<group>"; };
 		9A0B08862403B08400E2B470 /* cpp_tests UTF32 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "cpp_tests UTF32"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A0D113025FF506E0040555F /* strcasecmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcasecmp_test.cpp; sourceTree = "<group>"; };
+		9A0D113125FF506E0040555F /* strcasecmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strcasecmp_test.h; sourceTree = "<group>"; };
 		9A1A3FDC2424BC22008C89EB /* printf_lite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = printf_lite.h; sourceTree = "<group>"; };
 		9A28CD05241B8DD400F3D247 /* strncmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strncmp_test.cpp; sourceTree = "<group>"; };
 		9A28CD06241B8DD400F3D247 /* strcmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcmp_test.cpp; sourceTree = "<group>"; };
@@ -580,6 +586,8 @@
 		9A0B084C2402FE9B00E2B470 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
+				9A0D113025FF506E0040555F /* strcasecmp_test.cpp */,
+				9A0D113125FF506E0040555F /* strcasecmp_test.h */,
 				9A0B08512402FE9B00E2B470 /* all_tests.cpp */,
 				9A0B08542402FE9B00E2B470 /* all_tests.h */,
 				9A9037EB25D0010500F14179 /* config-test.cpp */,
@@ -1059,6 +1067,7 @@
 				9A36E51124F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F124F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50924F3B537007A1107 /* TagDate.cpp in Sources */,
+				9A0D113325FF506E0040555F /* strcasecmp_test.cpp in Sources */,
 				9AD0359525C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A4185C12439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A9037F125D0010500F14179 /* config-test.cpp in Sources */,
@@ -1139,6 +1148,7 @@
 				9A36E51324F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F324F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50B24F3B537007A1107 /* TagDate.cpp in Sources */,
+				9A0D113525FF506E0040555F /* strcasecmp_test.cpp in Sources */,
 				9AD0359725C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A2A7C7D24576CCE00422263 /* XStringArray.cpp in Sources */,
 				9A9037F325D0010500F14179 /* config-test.cpp in Sources */,
@@ -1219,6 +1229,7 @@
 				9A36E51224F3B537007A1107 /* TagArray.cpp in Sources */,
 				9A36E4F224F3B537007A1107 /* TagString8.cpp in Sources */,
 				9A36E50A24F3B537007A1107 /* TagDate.cpp in Sources */,
+				9A0D113425FF506E0040555F /* strcasecmp_test.cpp in Sources */,
 				9AD0359625C57C8A00E58351 /* PrintLib.c in Sources */,
 				9A4185C22439F73A00BEAFB8 /* XStringArray.cpp in Sources */,
 				9A9037F225D0010500F14179 /* config-test.cpp in Sources */,
@@ -1284,6 +1295,7 @@
 				9A0B08592402FF8200E2B470 /* all_tests.cpp in Sources */,
 				9A90384D25D0024500F14179 /* ConfigPlist.cpp in Sources */,
 				9A90383525D0024500F14179 /* Config_Quirks.cpp in Sources */,
+				9A0D113225FF506E0040555F /* strcasecmp_test.cpp in Sources */,
 				9A9037F025D0010500F14179 /* config-test.cpp in Sources */,
 				9A0B08662403144C00E2B470 /* global_test.cpp in Sources */,
 				9A4185B12439E4D600BEAFB8 /* LoadOptions_test.cpp in Sources */,

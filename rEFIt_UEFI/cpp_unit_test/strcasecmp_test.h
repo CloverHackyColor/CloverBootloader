@@ -1,0 +1,1 @@
+int strcasecmp_tests();

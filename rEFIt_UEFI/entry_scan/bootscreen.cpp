@@ -733,9 +733,9 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   if (customBoot == CUSTOM_BOOT_USER) {
     logo = Entry->CustomLogo;
   } else if (customBoot == CUSTOM_BOOT_DISABLED) {
-    customBoot = gSettings.Boot.CustomBoot;
+    customBoot = GlobalConfig.CustomBoot;
     if (customBoot == CUSTOM_BOOT_USER) {
-      logo = *gSettings.Boot.CustomLogo;
+      logo = *GlobalConfig.CustomLogo;
     }
   }
   switch (customBoot) {
@@ -784,4 +784,23 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
     logo.Draw((UGAWidth - logo.GetWidth()) / 2, (UGAHeight - logo.GetHeight()) / 2);
   }
   return EFI_SUCCESS;
+}
+
+
+static CONST CHAR8 *CustomBootModeStr[] = {
+   "CUSTOM_BOOT_DISABLED",
+   "CUSTOM_BOOT_USER_DISABLED",
+   "CUSTOM_BOOT_NONE",
+   "CUSTOM_BOOT_APPLE",
+   "CUSTOM_BOOT_ALT_APPLE",
+   "CUSTOM_BOOT_THEME",
+   "CUSTOM_BOOT_USER",
+};
+
+CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode)
+{
+  if (Mode >= (sizeof(CustomBootModeStr) / sizeof(CustomBootModeStr[0]))) {
+    return CustomBootModeStr[0];
+  }
+  return CustomBootModeStr[Mode];
 }

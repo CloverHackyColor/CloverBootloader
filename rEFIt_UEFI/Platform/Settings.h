@@ -273,6 +273,7 @@ public:
       bool                    SkipHibernateTimeout = false;
       bool                    DisableCloverHotkeys = false;
       XString8                BootArgs = XString8();
+      bool                    NeverDoRecovery = 0;
       bool                    LastBootedVolume = false;
       XStringW                DefaultVolume = XStringW();
       XStringW                DefaultLoader = XStringW();
@@ -284,8 +285,9 @@ public:
       bool                    RtcHibernateAware = false;
       bool                    HibernationFixup = false;
       bool                    SignatureFixup = false;
-      UINT8                   SecureBoot = 0;
-      UINT8                   SecureBootSetupMode = 0;
+      INT8                   SecureSetting = 0; // 0 == false, 1 == true, -1 == undefined
+//      UINT8                   SecureBoot = 0;
+//      UINT8                   SecureBootSetupMode = 0;
       UINT8                   SecureBootPolicy = 0;
       // Secure boot white/black list
       XStringWArray           SecureBootWhiteList = XStringWArray();
@@ -294,8 +296,9 @@ public:
       // LegacyBoot
       XStringW                LegacyBoot = XStringW();
       UINT16                  LegacyBiosDefaultEntry = 0;
-      UINT8                   CustomBoot = 0;
-      XImage                  *CustomLogo = 0;
+      UINT8                   CustomBootSetting = 0;
+      XString8                CustomLogoAsXString8 = XString8();
+      XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
   } Boot = BootClass();
   
   class ACPIClass
@@ -336,7 +339,7 @@ public:
               BOOLEAN                 GenerateAPLF = 0;
               BOOLEAN                 GeneratePluginType = 0;
           } Generate = GenerateClass();
-          BOOLEAN                 DropSSDT = 0;
+          BOOLEAN                 DropSSDTSetting = 0;
           BOOLEAN                 NoOemTableId = 0;
           BOOLEAN                 NoDynamicExtract = 0;
           BOOLEAN                 EnableISS = 0;
@@ -590,7 +593,6 @@ public:
   UINT32                  CsrActiveConfig;
   UINT16                  BooterConfig;
   XString8                BooterCfgStr;
-  BOOLEAN                 NeverDoRecovery;
 
   // Multi-config
   CHAR16                  ConfigName[30];
@@ -699,7 +701,7 @@ public:
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
                     HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0),
-                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(), NeverDoRecovery(0),
+                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(),
                     ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0},                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
                     CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
@@ -926,7 +928,13 @@ public:
   BOOLEAN       NeedPMfix = FALSE;
   ACPI_DROP_TABLE         *ACPIDropTables = NULL;
 
+  UINT8                   CustomBoot = 0; // this will be initialized with gSettings.Boot.CustomBoot and set back to CUSTOM_BOOT_DISABLED if CustomLogo could not be loaded or decoded (see afterGetUserSettings)
+  XImage                  *CustomLogo = 0;
 
+  bool                    DropSSDT = 0; // init with gSettings.Boot.DropSSDTSetting. Put back to false is one table is dropped (see afterGetUserSettings)
+
+  UINT8                   SecureBoot = 0;
+  UINT8                   SecureBootSetupMode = 0;
 
   /*
    * Defqult ctor :

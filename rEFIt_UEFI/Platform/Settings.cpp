@@ -31,6 +31,7 @@
 #include "Edid.h"
 #include "hda.h"
 #include "../../Version.h"
+#include "../entry_scan/bootscreen.h"
 
 #ifndef DEBUG_ALL
 #define DEBUG_SET 1
@@ -1463,23 +1464,6 @@ static UINT8 GetVolumeType(const TagDict* DictPointer)
 }
 
 
-static CONST CHAR8 *CustomBootModeStr[] = {
-   "CUSTOM_BOOT_DISABLED",
-   "CUSTOM_BOOT_USER_DISABLED",
-   "CUSTOM_BOOT_NONE",
-   "CUSTOM_BOOT_APPLE",
-   "CUSTOM_BOOT_ALT_APPLE",
-   "CUSTOM_BOOT_THEME",
-   "CUSTOM_BOOT_USER",
-};
-static CONST CHAR8 *CustomBootModeToStr(IN UINT8 Mode)
-{
-  if (Mode >= (sizeof(CustomBootModeStr) / sizeof(CustomBootModeStr[0]))) {
-    return CustomBootModeStr[0];
-  }
-  return CustomBootModeStr[Mode];
-}
-
 STATIC
 BOOLEAN
 FillinCustomEntry (
@@ -2067,7 +2051,7 @@ GetEDIDSettings(const TagDict* DictPointer)
 #pragma GCC diagnostic ignored "-Wshadow"
 EFI_STATUS GetEarlyUserSettings (
                       const TagDict* CfgDict,
-                      SETTINGS_DATA& settingsData
+                      SETTINGS_DATA& gSettings
                       )
 {
   #pragma GCC diagnostic pop
@@ -2091,10 +2075,10 @@ EFI_STATUS GetEarlyUserSettings (
 //    }
 //  }
 
-  settingsData.KextPatchesAllowed              = TRUE;
-  settingsData.KernelAndKextPatches.KPAppleRTC = TRUE;
-  settingsData.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
-  settingsData.KernelPatchesAllowed            = TRUE;
+  gSettings.KextPatchesAllowed              = TRUE;
+  gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
+  gSettings.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
+  gSettings.KernelPatchesAllowed            = TRUE;
 
   if (CfgDict != NULL) {
     //DBG("Loading early settings\n");
@@ -2104,35 +2088,35 @@ EFI_STATUS GetEarlyUserSettings (
     if (BootDict != NULL) {
       const TagStruct* Prop = BootDict->propertyForKey("Timeout");
       if (Prop != NULL) {
-        settingsData.Boot.Timeout = (INT32)GetPropertyAsInteger(Prop, settingsData.Boot.Timeout);
-        DBG("timeout set to %lld\n", settingsData.Boot.Timeout);
+        gSettings.Boot.Timeout = (INT32)GetPropertyAsInteger(Prop, gSettings.Boot.Timeout);
+        DBG("timeout set to %lld\n", gSettings.Boot.Timeout);
       }
 
       Prop = BootDict->propertyForKey("SkipHibernateTimeout");
-      settingsData.Boot.SkipHibernateTimeout = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.SkipHibernateTimeout = IsPropertyNotNullAndTrue(Prop);
 
       //DisableCloverHotkeys
       Prop = BootDict->propertyForKey("DisableCloverHotkeys");
-      settingsData.Boot.DisableCloverHotkeys = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.DisableCloverHotkeys = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("Arguments");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-        settingsData.Boot.BootArgs = Prop->getString()->stringValue();
+        gSettings.Boot.BootArgs = Prop->getString()->stringValue();
       }
 
       // defaults if "DefaultVolume" is not present or is empty
-      settingsData.Boot.LastBootedVolume = FALSE;
+      gSettings.Boot.LastBootedVolume = FALSE;
       //     settingsData.Boot.DefaultVolume    = NULL;
 
       Prop = BootDict->propertyForKey("DefaultVolume");
       if (Prop != NULL) {
         if ( Prop->isString()  &&  Prop->getString()->stringValue().notEmpty() ) {
-          settingsData.Boot.DefaultVolume.setEmpty();
+          gSettings.Boot.DefaultVolume.setEmpty();
           // check for special value for remembering boot volume
           if (Prop->getString()->stringValue().equalIC("LastBootedVolume")) {
-            settingsData.Boot.LastBootedVolume = TRUE;
+            gSettings.Boot.LastBootedVolume = TRUE;
           } else {
-            settingsData.Boot.DefaultVolume = Prop->getString()->stringValue();
+            gSettings.Boot.DefaultVolume = Prop->getString()->stringValue();
           }
         }
       }
@@ -2142,28 +2126,28 @@ EFI_STATUS GetEarlyUserSettings (
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in DefaultLoader\n");
         }else{
-          settingsData.Boot.DefaultLoader = Prop->getString()->stringValue();
+          gSettings.Boot.DefaultLoader = Prop->getString()->stringValue();
         }
       }
 
       Prop = BootDict->propertyForKey("Debug");
       if ( Prop ) {
         if ( Prop->isString() ) {
-          if ( Prop->getString()->stringValue().equalIC("true") ) settingsData.Boot.DebugLog = true;
-          else if ( Prop->getString()->stringValue().equalIC("false") ) settingsData.Boot.DebugLog = false;
+          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.Boot.DebugLog = true;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.Boot.DebugLog = false;
           else MsgLog("MALFORMED config.plist : property Boot/Debug must be true, false, or scratch\n");
         }else if ( Prop->isBool() ) {
-          settingsData.Boot.DebugLog = Prop->getBool()->boolValue();
+          gSettings.Boot.DebugLog = Prop->getBool()->boolValue();
         }else{
           MsgLog("MALFORMED config.plist : property Boot/Debug must be a string (true, false) or <true/> or <false/>\n");
         }
       }
 
       Prop = BootDict->propertyForKey("Fast");
-      settingsData.Boot.FastBoot       = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.FastBoot       = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("NoEarlyProgress");
-      settingsData.Boot.NoEarlyProgress = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.NoEarlyProgress = IsPropertyNotNullAndTrue(Prop);
 
 //      if (SpecialBootMode) {
 //        GlobalConfig.isFastBoot()       = TRUE;
@@ -2171,21 +2155,21 @@ EFI_STATUS GetEarlyUserSettings (
 //      }
 
       Prop = BootDict->propertyForKey("NeverHibernate");
-      settingsData.Boot.NeverHibernate = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.NeverHibernate = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("StrictHibernate");
-      settingsData.Boot.StrictHibernate = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.StrictHibernate = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("RtcHibernateAware");
-      settingsData.Boot.RtcHibernateAware = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.RtcHibernateAware = IsPropertyNotNullAndTrue(Prop);
 
       Prop = BootDict->propertyForKey("HibernationFixup");
       if (Prop) {
-        settingsData.Boot.HibernationFixup = IsPropertyNotNullAndTrue(Prop); //it will be set automatically
+        gSettings.Boot.HibernationFixup = IsPropertyNotNullAndTrue(Prop); //it will be set automatically
       }
 
       Prop = BootDict->propertyForKey("SignatureFixup");
-      settingsData.Boot.SignatureFixup = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.SignatureFixup = IsPropertyNotNullAndTrue(Prop);
 
       //      Prop = GetProperty(DictPointer, "GetLegacyLanAddress");
       //      GetLegacyLanAddress = IsPropertyTrue(Prop);
@@ -2195,41 +2179,44 @@ EFI_STATUS GetEarlyUserSettings (
        *   it is true
        *   SecureBoot is already true.
        */
+      gSettings.Boot.SecureSetting = -1;
       Prop = BootDict->propertyForKey("Secure");
       if (Prop != NULL) {
-        if ( Prop->isFalse() ) {
-          // Only disable setup mode, we want always secure boot
-          settingsData.Boot.SecureBootSetupMode = 0;
-        } else if ( Prop->isTrue()  &&  !settingsData.Boot.SecureBoot ) {
-          // This mode will force boot policy even when no secure boot or it is disabled
-          settingsData.Boot.SecureBootSetupMode = 1;
-          settingsData.Boot.SecureBoot          = 1;
-        }
+        if ( Prop->isTrue() ) gSettings.Boot.SecureSetting = 1;
+        if ( Prop->isFalse() ) gSettings.Boot.SecureSetting = 0;
+//        if ( Prop->isFalse() ) {
+//          // Only disable setup mode, we want always secure boot
+//          settingsData.Boot.SecureBootSetupMode = 0;
+//        } else if ( Prop->isTrue()  &&  !settingsData.Boot.SecureBoot ) {
+//          // This mode will force boot policy even when no secure boot or it is disabled
+//          settingsData.Boot.SecureBootSetupMode = 1;
+//          settingsData.Boot.SecureBoot          = 1;
+//        }
       }
       // Secure boot policy
       Prop = BootDict->propertyForKey("Policy");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
         if ((Prop->getString()->stringValue()[0] == 'D') || (Prop->getString()->stringValue()[0] == 'd')) {
           // Deny all images
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_DENY;
         } else if ((Prop->getString()->stringValue()[0] == 'A') || (Prop->getString()->stringValue()[0] == 'a')) {
           // Allow all images
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_ALLOW;
         } else if ((Prop->getString()->stringValue()[0] == 'Q') || (Prop->getString()->stringValue()[0] == 'q')) {
           // Query user
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_QUERY;
         } else if ((Prop->getString()->stringValue()[0] == 'I') || (Prop->getString()->stringValue()[0] == 'i')) {
           // Insert
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_INSERT;
         } else if ((Prop->getString()->stringValue()[0] == 'W') || (Prop->getString()->stringValue()[0] == 'w')) {
           // White list
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_WHITELIST;
         } else if ((Prop->getString()->stringValue()[0] == 'B') || (Prop->getString()->stringValue()[0] == 'b')) {
           // Black list
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_BLACKLIST;
         } else if ((Prop->getString()->stringValue()[0] == 'U') || (Prop->getString()->stringValue()[0] == 'u')) {
           // User policy
-          settingsData.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
+          gSettings.Boot.SecureBootPolicy = SECURE_BOOT_POLICY_USER;
         }
       }
       // Secure boot white list
@@ -2238,7 +2225,7 @@ EFI_STATUS GetEarlyUserSettings (
         INTN   i;
         INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
-          settingsData.Boot.SecureBootWhiteList.setEmpty();
+          gSettings.Boot.SecureBootWhiteList.setEmpty();
           for (i = 0; i < Count; i++) {
             const TagStruct* prop2 = &arrayProp->arrayContent()[i];
             if ( !prop2->isString() ) {
@@ -2246,7 +2233,7 @@ EFI_STATUS GetEarlyUserSettings (
               continue;
             }
             if ( prop2->getString()->stringValue().notEmpty() ) {
-              settingsData.Boot.SecureBootWhiteList.AddNoNull(prop2->getString()->stringValue());
+              gSettings.Boot.SecureBootWhiteList.AddNoNull(prop2->getString()->stringValue());
             }
           }
         }
@@ -2257,7 +2244,7 @@ EFI_STATUS GetEarlyUserSettings (
         INTN   i;
         INTN   Count = arrayProp->arrayContent().size();
         if (Count > 0) {
-          settingsData.Boot.SecureBootBlackList.setEmpty();
+          gSettings.Boot.SecureBootBlackList.setEmpty();
           for (i = 0; i < Count; i++) {
             const TagStruct* prop2 = &arrayProp->arrayContent()[i];
             if ( !prop2->isString() ) {
@@ -2265,7 +2252,7 @@ EFI_STATUS GetEarlyUserSettings (
               continue;
             }
             if ( prop2->getString()->stringValue().notEmpty() ) {
-              settingsData.Boot.SecureBootBlackList.AddNoNull(prop2->getString()->stringValue());
+              gSettings.Boot.SecureBootBlackList.AddNoNull(prop2->getString()->stringValue());
             }
           }
         }
@@ -2278,23 +2265,23 @@ EFI_STATUS GetEarlyUserSettings (
       // 2 = Use second profile
       Prop = BootDict->propertyForKey("XMPDetection");
       if (Prop != NULL) {
-        settingsData.Boot.XMPDetection = 0;
+        gSettings.Boot.XMPDetection = 0;
         if ( Prop->isFalse() ) {
-          settingsData.Boot.XMPDetection = -1;
+          gSettings.Boot.XMPDetection = -1;
         } else if ( Prop->isString() ) {
           if ((Prop->getString()->stringValue()[0] == 'n') ||
               (Prop->getString()->stringValue()[0] == 'N') ||
               (Prop->getString()->stringValue()[0] == '-')) {
-            settingsData.Boot.XMPDetection = -1;
+            gSettings.Boot.XMPDetection = -1;
           } else {
-            settingsData.Boot.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->getString()->stringValue().c_str());
+            gSettings.Boot.XMPDetection = (INT8)AsciiStrDecimalToUintn(Prop->getString()->stringValue().c_str());
           }
         } else if (Prop->isInt64()) {
-          settingsData.Boot.XMPDetection = (INT8)Prop->getInt64()->intValue();
+          gSettings.Boot.XMPDetection = (INT8)Prop->getInt64()->intValue();
         }
         // Check that the setting value is sane
-        if ((settingsData.Boot.XMPDetection < -1) || (settingsData.Boot.XMPDetection > 2)) {
-          settingsData.Boot.XMPDetection   = -1;
+        if ((gSettings.Boot.XMPDetection < -1) || (gSettings.Boot.XMPDetection > 2)) {
+          gSettings.Boot.XMPDetection   = -1;
         }
       }
 
@@ -2304,87 +2291,90 @@ EFI_STATUS GetEarlyUserSettings (
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : Prop property not string in Legacy\n");
         }else{
-          settingsData.Boot.LegacyBoot = Prop->getString()->stringValue();
+          gSettings.Boot.LegacyBoot = Prop->getString()->stringValue();
         }
       } else if (gFirmwareClover) {
         // default for CLOVER EFI boot
-        settingsData.Boot.LegacyBoot = "PBR"_XS8;
+        gSettings.Boot.LegacyBoot = "PBR"_XS8;
       } else {
         // default for UEFI boot
-        settingsData.Boot.LegacyBoot = "LegacyBiosDefault"_XS8;
+        gSettings.Boot.LegacyBoot = "LegacyBiosDefault"_XS8;
       }
 
       // Entry for LegacyBiosDefault
       Prop = BootDict->propertyForKey("LegacyBiosDefaultEntry");
       if (Prop != NULL) {
-        settingsData.Boot.LegacyBiosDefaultEntry = (UINT16)GetPropertyAsInteger(Prop, 0); // disabled by default
+        gSettings.Boot.LegacyBiosDefaultEntry = (UINT16)GetPropertyAsInteger(Prop, 0); // disabled by default
       }
 
       // Whether or not to draw boot screen
+      gSettings.Boot.CustomLogoAsXString8.setEmpty();
+      gSettings.Boot.CustomLogoAsData.setEmpty();
       Prop = BootDict->propertyForKey("CustomLogo");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          settingsData.Boot.CustomBoot   = CUSTOM_BOOT_APPLE;
+          gSettings.Boot.CustomBootSetting   = CUSTOM_BOOT_APPLE;
         } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+          gSettings.Boot.CustomLogoAsXString8 = Prop->getString()->stringValue();
           if (Prop->getString()->stringValue().equalIC("Apple")) {
-            settingsData.Boot.CustomBoot = CUSTOM_BOOT_APPLE;
+            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_APPLE;
           } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
-            settingsData.Boot.CustomBoot = CUSTOM_BOOT_ALT_APPLE;
+            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_ALT_APPLE;
           } else if (Prop->getString()->stringValue().equalIC("Theme")) {
-            settingsData.Boot.CustomBoot = CUSTOM_BOOT_THEME;
+            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_THEME;
           } else {
-            XStringW customLogo = XStringW() = Prop->getString()->stringValue();
-            settingsData.Boot.CustomBoot = CUSTOM_BOOT_USER;
-            if (settingsData.Boot.CustomLogo != NULL) {
-              delete settingsData.Boot.CustomLogo;
-            }
-            settingsData.Boot.CustomLogo = new XImage;
-            settingsData.Boot.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
-            if (settingsData.Boot.CustomLogo->isEmpty()) {
-              DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
-              settingsData.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
-            }
+            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_USER;
+//            if (settingsData.Boot.CustomLogo != NULL) {
+//              delete settingsData.Boot.CustomLogo;
+//            }
+//            settingsData.Boot.CustomLogo = new XImage;
+//            settingsData.Boot.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
+//            if (settingsData.Boot.CustomLogo->isEmpty()) {
+//              DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
+//              settingsData.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
+//            }
           }
         } else if ( Prop->isData()  && Prop->getData()->dataLenValue() > 0 ) {
-          settingsData.Boot.CustomBoot = CUSTOM_BOOT_USER;
-          if (settingsData.Boot.CustomLogo != NULL) {
-            delete settingsData.Boot.CustomLogo;
-          }
-          settingsData.Boot.CustomLogo = new XImage;
-          settingsData.Boot.CustomLogo->FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
-          if (settingsData.Boot.CustomLogo->isEmpty()) {
-            DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
-            settingsData.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
-          }
+          gSettings.Boot.CustomLogoAsData = Prop->getData()->data();
+          gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_USER;
+//          if (settingsData.Boot.CustomLogo != NULL) {
+//            delete settingsData.Boot.CustomLogo;
+//          }
+//          settingsData.Boot.CustomLogo = new XImage;
+//          settingsData.Boot.CustomLogo->FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
+//          if (settingsData.Boot.CustomLogo->isEmpty()) {
+//            DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
+//            settingsData.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
+//          }
         } else {
-          settingsData.Boot.CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+          gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_USER_DISABLED;
         }
       } else {
-        settingsData.Boot.CustomBoot   = CUSTOM_BOOT_DISABLED;
+        gSettings.Boot.CustomBootSetting   = CUSTOM_BOOT_DISABLED;
       }
-      DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(settingsData.Boot.CustomBoot), (uintptr_t)settingsData.Boot.CustomLogo);
+
     }
 
     //*** SYSTEM ***
-    settingsData.WithKexts            = TRUE;  //default
+    gSettings.WithKexts            = TRUE;  //default
     const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
     if (SystemParametersDict != NULL) {
       // Inject kexts
       const TagStruct* Prop = SystemParametersDict->propertyForKey("InjectKexts");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          settingsData.WithKexts            = TRUE;
+          gSettings.WithKexts            = TRUE;
         } else if ((Prop->isString()) &&
                    (Prop->getString()->stringValue().equalIC("Detect"))) {
           //   settingsData.WithKexts            = TRUE;
-          settingsData.WithKextsIfNoFakeSMC = TRUE;
+          gSettings.WithKextsIfNoFakeSMC = TRUE;
         }
       }
 
       // No caches - obsolete
       Prop = SystemParametersDict->propertyForKey("NoCaches");
       if (IsPropertyNotNullAndTrue(Prop)) {
-        settingsData.NoCaches = TRUE;
+        gSettings.NoCaches = TRUE;
       }
       //test float - success
 //      Prop = SystemParametersDict->propertyForKey("BlueValue");
@@ -2396,18 +2386,18 @@ EFI_STATUS GetEarlyUserSettings (
     // KernelAndKextPatches
     const TagDict* KernelAndKextPatchesDict = CfgDict->dictPropertyForKey("KernelAndKextPatches");
     if (KernelAndKextPatchesDict != NULL) {
-      FillinKextPatches(&settingsData.KernelAndKextPatches, KernelAndKextPatchesDict);
+      FillinKextPatches(&gSettings.KernelAndKextPatches, KernelAndKextPatchesDict);
     }
 
     const TagDict* GUIDict = CfgDict->dictPropertyForKey("GUI");
     if (GUIDict != NULL) {
       const TagStruct* Prop = GUIDict->propertyForKey("Timezone");
-      settingsData.GUI.Timezone = (INT32)GetPropertyAsInteger(Prop, settingsData.GUI.Timezone);
+      gSettings.GUI.Timezone = (INT32)GetPropertyAsInteger(Prop, gSettings.GUI.Timezone);
       //initialize Daylight when we know timezone
 #ifdef CLOVER_BUILD
       EFI_TIME          Now;
       gRT->GetTime(&Now, NULL);
-      INT32 NowHour = Now.Hour + settingsData.GUI.Timezone;
+      INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
       if (NowHour <  0 ) NowHour += 24;
       if (NowHour >= 24 ) NowHour -= 24;
       ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
@@ -2416,12 +2406,12 @@ EFI_STATUS GetEarlyUserSettings (
       Prop = GUIDict->propertyForKey("Theme");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
         ThemeX.Theme.takeValueFrom(Prop->getString()->stringValue());
-        settingsData.GUI.Theme.takeValueFrom(Prop->getString()->stringValue());
-        DBG("Default theme: %ls\n", settingsData.GUI.Theme.wc_str());
+        gSettings.GUI.Theme.takeValueFrom(Prop->getString()->stringValue());
+        DBG("Default theme: %ls\n", gSettings.GUI.Theme.wc_str());
         OldChosenTheme = 0xFFFF; //default for embedded
         for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
           //now comparison is case sensitive
-          if ( settingsData.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
+          if ( gSettings.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
             OldChosenTheme = i;
             break;
           }
@@ -2442,61 +2432,61 @@ EFI_STATUS GetEarlyUserSettings (
         }
       }
       Prop = GUIDict->propertyForKey("PlayAsync"); //PlayAsync
-      settingsData.PlayAsync = IsPropertyNotNullAndTrue(Prop);
+      gSettings.PlayAsync = IsPropertyNotNullAndTrue(Prop);
 
       // CustomIcons
       Prop = GUIDict->propertyForKey("CustomIcons");
-      settingsData.GUI.CustomIcons = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.CustomIcons = IsPropertyNotNullAndTrue(Prop);
       Prop = GUIDict->propertyForKey("TextOnly");
-      settingsData.GUI.TextOnly = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.TextOnly = IsPropertyNotNullAndTrue(Prop);
       Prop = GUIDict->propertyForKey("ShowOptimus");
-      settingsData.GUI.ShowOptimus = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.ShowOptimus = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GUIDict->propertyForKey("ScreenResolution");
       if (Prop != NULL) {
         if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-          settingsData.GUI.ScreenResolution.takeValueFrom(Prop->getString()->stringValue());
+          gSettings.GUI.ScreenResolution.takeValueFrom(Prop->getString()->stringValue());
         }
       }
 
       Prop = GUIDict->propertyForKey("ProvideConsoleGop");
-      settingsData.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop); //default is true
+      gSettings.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop); //default is true
 
       Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
         if (Prop->isInt64()) {
-          settingsData.GUI.ConsoleMode = Prop->getInt64()->intValue();
+          gSettings.GUI.ConsoleMode = Prop->getInt64()->intValue();
         } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
           if ( Prop->getString()->stringValue().contains("Max") ) {
-            settingsData.GUI.ConsoleMode = -1;
+            gSettings.GUI.ConsoleMode = -1;
             DBG("ConsoleMode will be set to highest mode\n");
           } else if ( Prop->getString()->stringValue().contains("Min") ) {
-            settingsData.GUI.ConsoleMode = -2;
+            gSettings.GUI.ConsoleMode = -2;
             DBG("ConsoleMode will be set to lowest mode\n");
           } else {
-            settingsData.GUI.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->getString()->stringValue());
+            gSettings.GUI.ConsoleMode = (INT32)AsciiStrDecimalToUintn(Prop->getString()->stringValue());
           }
         }
-        if (settingsData.GUI.ConsoleMode > 0) {
-          DBG("ConsoleMode will be set to mode #%lld\n", settingsData.GUI.ConsoleMode);
+        if (gSettings.GUI.ConsoleMode > 0) {
+          DBG("ConsoleMode will be set to mode #%lld\n", gSettings.GUI.ConsoleMode);
         }
       }
 
       Prop = GUIDict->propertyForKey("Language");
       if (Prop != NULL) {
-        settingsData.Language = Prop->getString()->stringValue();
+        gSettings.Language = Prop->getString()->stringValue();
         if ( Prop->getString()->stringValue().contains("en") ) {
           gLanguage = english;
-          settingsData.GUI.Codepage = 0xC0;
-          settingsData.GUI.CodepageSize = 0;
+          gSettings.GUI.Codepage = 0xC0;
+          gSettings.GUI.CodepageSize = 0;
         } else if ( Prop->getString()->stringValue().contains("ru")) {
           gLanguage = russian;
-          settingsData.GUI.Codepage = 0x410;
-          settingsData.GUI.CodepageSize = 0x40;
+          gSettings.GUI.Codepage = 0x410;
+          gSettings.GUI.CodepageSize = 0x40;
         } else if ( Prop->getString()->stringValue().contains("ua")) {
           gLanguage = ukrainian;
-          settingsData.GUI.Codepage = 0x400;
-          settingsData.GUI.CodepageSize = 0x60;
+          gSettings.GUI.Codepage = 0x400;
+          gSettings.GUI.CodepageSize = 0x60;
         } else if ( Prop->getString()->stringValue().contains("fr")) {
           gLanguage = french; //default is extended latin
         } else if ( Prop->getString()->stringValue().contains("it")) {
@@ -2521,21 +2511,21 @@ EFI_STATUS GetEarlyUserSettings (
           gLanguage = indonesian;
         } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
           gLanguage = chinese;
-          settingsData.GUI.Codepage = 0x3400;
-          settingsData.GUI.CodepageSize = 0x19C0;
+          gSettings.GUI.Codepage = 0x3400;
+          gSettings.GUI.CodepageSize = 0x19C0;
         } else if ( Prop->getString()->stringValue().contains("ro")) {
           gLanguage = romanian;
         } else if ( Prop->getString()->stringValue().contains("ko")) {
           gLanguage = korean;
-          settingsData.GUI.Codepage = 0x1100;
-          settingsData.GUI.CodepageSize = 0x100;
+          gSettings.GUI.Codepage = 0x1100;
+          gSettings.GUI.CodepageSize = 0x100;
         }
       }
 
 //      if (settingsData.Language != NULL) { // settingsData.Language != NULL cannot be false because settingsData.Language is dclared as CHAR8 Language[16]; Must we replace by settingsData.Language[0] != NULL
       Prop = GUIDict->propertyForKey("KbdPrevLang");
       if (Prop != NULL) {
-        settingsData.KbdPrevLang = IsPropertyNotNullAndTrue(Prop);
+        gSettings.KbdPrevLang = IsPropertyNotNullAndTrue(Prop);
       }
 //      }
 
@@ -2543,23 +2533,23 @@ EFI_STATUS GetEarlyUserSettings (
       if (MouseDict != NULL) {
         const TagStruct* prop = MouseDict->propertyForKey("Speed");
         if (prop != NULL) {
-          settingsData.PointerSpeed = (INT32)GetPropertyAsInteger(prop, 0);
-          settingsData.PointerEnabled = (settingsData.PointerSpeed != 0);
+          gSettings.PointerSpeed = (INT32)GetPropertyAsInteger(prop, 0);
+          gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
         }
         //but we can disable mouse even if there was positive speed
         prop = MouseDict->propertyForKey("Enabled");
         if (IsPropertyNotNullAndFalse(prop)) {
-          settingsData.PointerEnabled = FALSE;
+          gSettings.PointerEnabled = FALSE;
         }
 
         prop = MouseDict->propertyForKey("Mirror");
         if (IsPropertyNotNullAndTrue(prop)) {
-          settingsData.PointerMirror = TRUE;
+          gSettings.PointerMirror = TRUE;
         }
 
         prop = MouseDict->propertyForKey("DoubleClickTime");
         if (prop != NULL) {
-          settingsData.DoubleClickTime = (UINT64)GetPropertyAsInteger(prop, 500);
+          gSettings.DoubleClickTime = (UINT64)GetPropertyAsInteger(prop, 500);
         }
       }
       // hide by name/uuid. Array of string
@@ -2568,7 +2558,7 @@ EFI_STATUS GetEarlyUserSettings (
         INTN   i;
         INTN   Count = HideArray->arrayContent().size();
         if (Count > 0) {
-          settingsData.HVHideStrings.setEmpty();
+          gSettings.HVHideStrings.setEmpty();
           for (i = 0; i < Count; i++) {
             const TagStruct* prop2 = &HideArray->arrayContent()[i];
             if ( !prop2->isString()) {
@@ -2576,60 +2566,60 @@ EFI_STATUS GetEarlyUserSettings (
               continue;
             }
             if ( prop2->getString()->stringValue().notEmpty() ) {
-              settingsData.HVHideStrings.Add(prop2->getString()->stringValue());
+              gSettings.HVHideStrings.Add(prop2->getString()->stringValue());
               DBG("Hiding entries with string %s\n", prop2->getString()->stringValue().c_str());
             }
           }
         }
       }
-      settingsData.LinuxScan = TRUE;
+      gSettings.LinuxScan = TRUE;
       // Disable loader scan
       Prop = GUIDict->propertyForKey("Scan");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndFalse(Prop)) {
-          settingsData.DisableEntryScan = TRUE;
-          settingsData.DisableToolScan  = TRUE;
-          settingsData.GUI.NoLegacy      = TRUE;
+          gSettings.DisableEntryScan = TRUE;
+          gSettings.DisableToolScan  = TRUE;
+          gSettings.GUI.NoLegacy      = TRUE;
         } else if (Prop->isDict()) {
           const TagStruct* prop2 = Prop->getDict()->propertyForKey("Entries");
           if (IsPropertyNotNullAndFalse(prop2)) {
-            settingsData.DisableEntryScan = TRUE;
+            gSettings.DisableEntryScan = TRUE;
           }
           prop2 = Prop->getDict()->propertyForKey("Tool");
           if (IsPropertyNotNullAndFalse(prop2)) {
-            settingsData.DisableToolScan = TRUE;
+            gSettings.DisableToolScan = TRUE;
           }
           prop2 = Prop->getDict()->propertyForKey("Linux");
-          settingsData.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
+          gSettings.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
           prop2 = Prop->getDict()->propertyForKey("Legacy");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
-              settingsData.GUI.NoLegacy = TRUE;
+              gSettings.GUI.NoLegacy = TRUE;
             } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
               if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
-                settingsData.GUI.NoLegacy = TRUE;
+                gSettings.GUI.NoLegacy = TRUE;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
-                settingsData.GUI.LegacyFirst = TRUE;
+                gSettings.GUI.LegacyFirst = TRUE;
                }
             }
           }
           prop2 = Prop->getDict()->propertyForKey("Kernel");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
-              settingsData.KernelScan = KERNEL_SCAN_NONE;
+              gSettings.KernelScan = KERNEL_SCAN_NONE;
             } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
               if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
-                settingsData.KernelScan = ( prop2->getString()->stringValue().length() > 1  &&  (prop2->getString()->stringValue()[1] == 'E' || prop2->getString()->stringValue()[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
+                gSettings.KernelScan = ( prop2->getString()->stringValue().length() > 1  &&  (prop2->getString()->stringValue()[1] == 'E' || prop2->getString()->stringValue()[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
               } else if ((prop2->getString()->stringValue()[0] == 'O') || (prop2->getString()->stringValue()[0] == 'o')) {
-                settingsData.KernelScan = KERNEL_SCAN_OLDEST;
+                gSettings.KernelScan = KERNEL_SCAN_OLDEST;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
-                settingsData.KernelScan = KERNEL_SCAN_FIRST;
+                gSettings.KernelScan = KERNEL_SCAN_FIRST;
               } else if ((prop2->getString()->stringValue()[0] == 'L') || (prop2->getString()->stringValue()[0] == 'l')) {
-                settingsData.KernelScan = KERNEL_SCAN_LAST;
+                gSettings.KernelScan = KERNEL_SCAN_LAST;
               } else if ((prop2->getString()->stringValue()[0] == 'M') || (prop2->getString()->stringValue()[0] == 'm')) {
-                settingsData.KernelScan = KERNEL_SCAN_MOSTRECENT;
+                gSettings.KernelScan = KERNEL_SCAN_MOSTRECENT;
               } else if ((prop2->getString()->stringValue()[0] == 'E') || (prop2->getString()->stringValue()[0] == 'e')) {
-                settingsData.KernelScan = KERNEL_SCAN_EARLIEST;
+                gSettings.KernelScan = KERNEL_SCAN_EARLIEST;
               }
             }
           }
@@ -2693,9 +2683,9 @@ EFI_STATUS GetEarlyUserSettings (
     if (GraphicsDict != NULL) {
 
       const TagStruct* Prop             = GraphicsDict->propertyForKey("PatchVBios");
-      settingsData.PatchVBios              = IsPropertyNotNullAndTrue(Prop);
+      gSettings.PatchVBios              = IsPropertyNotNullAndTrue(Prop);
 
-      settingsData.PatchVBiosBytesCount    = 0;
+      gSettings.PatchVBiosBytesCount    = 0;
 
       const TagArray* Dict2 = GraphicsDict->arrayPropertyForKey("PatchVBiosBytes"); // array of dict
       if (Dict2 != NULL) {
@@ -2706,14 +2696,14 @@ EFI_STATUS GetEarlyUserSettings (
           UINTN             ReplaceSize = 0;
           BOOLEAN           Valid;
           // alloc space for up to 16 entries
-          settingsData.PatchVBiosBytes = (__typeof__(settingsData.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
+          gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
 
           // get all entries
           for (INTN i = 0; i < Count; i++) {
             const TagDict* dict3 = Dict2->dictElementAt(i, "Graphics/PatchVBiosBytes"_XS8);
             Valid = TRUE;
             // read entry
-            VBiosPatch          = &settingsData.PatchVBiosBytes[settingsData.PatchVBiosBytesCount];
+            VBiosPatch          = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
             VBiosPatch->Find    = GetDataSetting (dict3, "Find",    &FindSize);
             VBiosPatch->Replace = GetDataSetting (dict3, "Replace", &ReplaceSize);
 
@@ -2735,7 +2725,7 @@ EFI_STATUS GetEarlyUserSettings (
             if (Valid) {
               VBiosPatch->NumberOfBytes = FindSize;
               // go to next entry
-              ++settingsData.PatchVBiosBytesCount;
+              ++gSettings.PatchVBiosBytesCount;
             } else {
               // error - release mem
               if (VBiosPatch->Find != NULL) {
@@ -2750,9 +2740,9 @@ EFI_STATUS GetEarlyUserSettings (
             }
           }
 
-          if (settingsData.PatchVBiosBytesCount == 0) {
-            FreePool(settingsData.PatchVBiosBytes);
-            settingsData.PatchVBiosBytes = NULL;
+          if (gSettings.PatchVBiosBytesCount == 0) {
+            FreePool(gSettings.PatchVBiosBytes);
+            gSettings.PatchVBiosBytes = NULL;
           }
         }
       }
@@ -2765,7 +2755,7 @@ EFI_STATUS GetEarlyUserSettings (
       INTN   i;
       INTN   Count = DisableDriversArray->arrayContent().size();
       if (Count > 0) {
-        settingsData.DisabledDriverArray.setEmpty();
+        gSettings.DisabledDriverArray.setEmpty();
 
         for (i = 0; i < Count; i++) {
           const TagStruct* Prop = &DisableDriversArray->arrayContent()[i];
@@ -2773,7 +2763,7 @@ EFI_STATUS GetEarlyUserSettings (
             MsgLog("MALFORMED PLIST : DisableDrivers must be an array of string");
             continue;
           }
-          settingsData.DisabledDriverArray.Add(Prop->getString()->stringValue());
+          gSettings.DisabledDriverArray.Add(Prop->getString()->stringValue());
         }
       }
     }
@@ -2784,7 +2774,7 @@ EFI_STATUS GetEarlyUserSettings (
       if (Dict2 != NULL) {
         // HDA
         const TagStruct* Prop = Dict2->propertyForKey("ResetHDA");
-        settingsData.ResetHDA = IsPropertyNotNullAndTrue(Prop);
+        gSettings.ResetHDA = IsPropertyNotNullAndTrue(Prop);
       }
     }
 
@@ -2803,7 +2793,7 @@ EFI_STATUS GetEarlyUserSettings (
       }
     }
 
-    settingsData.mmioWhiteListArray.setEmpty();
+    gSettings.mmioWhiteListArray.setEmpty();
  //   const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
 //if ( OcQuirksDict ) panic("config.plist/OcQuirks has been renamed Quirks. Update your config.plist");
 
@@ -2813,59 +2803,59 @@ EFI_STATUS GetEarlyUserSettings (
       const TagStruct* Prop;
       Prop               = OcQuirksDict->propertyForKey("AvoidRuntimeDefrag");
 //if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
-      settingsData.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop); //true if absent so no panic
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
+      gSettings.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop); //true if absent so no panic
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
       Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");
-      settingsData.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
+      gSettings.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
       Prop               = OcQuirksDict->propertyForKey( "DisableSingleUser");
-      settingsData.ocBooterQuirks.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.DisableSingleUser? QUIRK_SU:0;
+      gSettings.ocBooterQuirks.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DisableSingleUser? QUIRK_SU:0;
       Prop               = OcQuirksDict->propertyForKey( "DisableVariableWrite");
-      settingsData.ocBooterQuirks.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.DisableVariableWrite? QUIRK_VAR:0;
+      gSettings.ocBooterQuirks.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DisableVariableWrite? QUIRK_VAR:0;
       Prop               = OcQuirksDict->propertyForKey( "DiscardHibernateMap");
-      settingsData.ocBooterQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
+      gSettings.ocBooterQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
       Prop               = OcQuirksDict->propertyForKey( "EnableSafeModeSlide");
-      settingsData.ocBooterQuirks.EnableSafeModeSlide = !IsPropertyNotNullAndFalse(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
+      gSettings.ocBooterQuirks.EnableSafeModeSlide = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
       Prop               = OcQuirksDict->propertyForKey( "EnableWriteUnprotector");
-      settingsData.ocBooterQuirks.EnableWriteUnprotector = !IsPropertyNotNullAndFalse(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
+      gSettings.ocBooterQuirks.EnableWriteUnprotector = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
       Prop               = OcQuirksDict->propertyForKey( "ForceExitBootServices");
-      settingsData.ocBooterQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.ForceExitBootServices? QUIRK_EXIT:0;
+      gSettings.ocBooterQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ForceExitBootServices? QUIRK_EXIT:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectMemoryRegions");
-      settingsData.ocBooterQuirks.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
+      gSettings.ocBooterQuirks.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectSecureBoot");
-      settingsData.ocBooterQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.ProtectSecureBoot? QUIRK_SECURE:0;
+      gSettings.ocBooterQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectSecureBoot? QUIRK_SECURE:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
-      settingsData.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
+      gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
       //it is in GUI section
 //      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
 //      settingsData.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop);
       Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
-      settingsData.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
+      gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
       Prop               = OcQuirksDict->propertyForKey( "ProvideMaxSlide");
-      settingsData.ocBooterQuirks.ProvideMaxSlide = (UINT8)GetPropertyAsInteger(Prop, 0); // cast will be safe when the new parser will ensure that the value is UINT8
+      gSettings.ocBooterQuirks.ProvideMaxSlide = (UINT8)GetPropertyAsInteger(Prop, 0); // cast will be safe when the new parser will ensure that the value is UINT8
       Prop               = OcQuirksDict->propertyForKey( "RebuildAppleMemoryMap");
-      settingsData.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
+      gSettings.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
       Prop               = OcQuirksDict->propertyForKey( "SetupVirtualMap");
-      settingsData.ocBooterQuirks.SetupVirtualMap = !IsPropertyNotNullAndFalse(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.SetupVirtualMap? QUIRK_VIRT:0;
+      gSettings.ocBooterQuirks.SetupVirtualMap = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SetupVirtualMap? QUIRK_VIRT:0;
       Prop               = OcQuirksDict->propertyForKey( "SignalAppleOS");
-      settingsData.ocBooterQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.SignalAppleOS? QUIRK_OS:0;
+      gSettings.ocBooterQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SignalAppleOS? QUIRK_OS:0;
       Prop               = OcQuirksDict->propertyForKey( "SyncRuntimePermissions");
-      settingsData.ocBooterQuirks.SyncRuntimePermissions = !IsPropertyNotNullAndFalse(Prop);
-      settingsData.QuirksMask  |= settingsData.ocBooterQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
-      settingsData.mmioWhiteListArray.setEmpty();
+      gSettings.ocBooterQuirks.SyncRuntimePermissions = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
+      gSettings.mmioWhiteListArray.setEmpty();
 
       const TagArray* Dict2 = OcQuirksDict->arrayPropertyForKey("MmioWhitelist"); // array of dict
       if (Dict2 != NULL) {
@@ -2893,27 +2883,27 @@ EFI_STATUS GetEarlyUserSettings (
               Prop2 = Dict3->propertyForKey("Enabled");
               mmioWhiteList.enabled = IsPropertyNotNullAndTrue(Prop2);
             }
-            settingsData.mmioWhiteListArray.AddReference(mmioWhiteListPtr, true);
+            gSettings.mmioWhiteListArray.AddReference(mmioWhiteListPtr, true);
           }
         }
       }
 
       Prop = OcQuirksDict->propertyForKey("FuzzyMatch");
       if (Prop != NULL || GlobalConfig.gBootChanged) {
-        settingsData.KernelAndKextPatches.FuzzyMatch = !IsPropertyNotNullAndFalse(Prop);
+        gSettings.KernelAndKextPatches.FuzzyMatch = !IsPropertyNotNullAndFalse(Prop);
       }
 
       Prop = OcQuirksDict->propertyForKey("KernelCache");
       if (Prop != NULL || GlobalConfig.gBootChanged) {
         if ( Prop->isString() ) {
           if ( Prop->getString()->stringValue().notEmpty() ) {
-            settingsData.KernelAndKextPatches.OcKernelCache = Prop->getString()->stringValue();
+            gSettings.KernelAndKextPatches.OcKernelCache = Prop->getString()->stringValue();
           }else{
-            settingsData.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
+            gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
           }
         }else{
           MsgLog("MALFORMED PLIST : Quirks/KernelCache must be a string");
-          settingsData.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
+          gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
         }
       }
 
@@ -2921,17 +2911,17 @@ EFI_STATUS GetEarlyUserSettings (
       // Booter Quirks
 //      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
 //      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = settingsData.KernelAndKextPatches.KPAppleIntelCPUPM;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
 
 //      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock"); //
 //      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = settingsData.KernelAndKextPatches.KPKernelPm;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = gSettings.KernelAndKextPatches.KPKernelPm;
 
       Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
 
 // We can't use that Quirks because we don't delegate SMBios to OC.
 //      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
@@ -2939,40 +2929,40 @@ EFI_STATUS GetEarlyUserSettings (
 
       Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
 //if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forgot to merge your quirks into one section. Update your config.plist");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
 
  //     Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
  //     settingsData.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
-      settingsData.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = settingsData.KernelAndKextPatches.KPAppleRTC;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
 
       Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("ExternalDiskIcons");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
 
  //     Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
  //     settingsData.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
-      settingsData.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = settingsData.KernelAndKextPatches.KPKernelLapic;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
 
 //      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
 //      settingsData.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop); //KPPanicNoKextDump
-      settingsData.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = settingsData.KernelAndKextPatches.KPPanicNoKextDump;
+      gSettings.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
 
       Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("ThirdPartyDrives");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("XhciPortLimit");
-      settingsData.KernelAndKextPatches.OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
+      gSettings.KernelAndKextPatches.OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
     }
   }
 
@@ -3772,7 +3762,7 @@ static void getACPISettings(const TagDict *CfgDict)
       }
       
       const TagStruct* Prop = SSDTDict->propertyForKey("DropOem");
-      gSettings.ACPI.SSDT.DropSSDT  = IsPropertyNotNullAndTrue(Prop);
+      gSettings.ACPI.SSDT.DropSSDTSetting  = IsPropertyNotNullAndTrue(Prop);
       
       Prop = SSDTDict->propertyForKey("NoOemTableId"); // to disable OEM table ID on ACPI/orgin/SSDT file names
       gSettings.ACPI.SSDT.NoOemTableId = IsPropertyNotNullAndTrue(Prop);
@@ -3993,7 +3983,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       }
 
       Prop                     = BootDict->propertyForKey("NeverDoRecovery");
-      gSettings.NeverDoRecovery  = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Boot.NeverDoRecovery  = IsPropertyNotNullAndTrue(Prop);
     }
 
 

@@ -38,6 +38,11 @@ public:
   /*
    *  getters and setters
    */
+  const XBuffer<UINT8>& data() const
+  {
+//    if ( !isData() ) panic("TagData::dataValue() : !isData() ");
+    return dataBuffer;
+  }
   const UINT8* dataValue() const
   {
 //    if ( !isData() ) panic("TagData::dataValue() : !isData() ");
