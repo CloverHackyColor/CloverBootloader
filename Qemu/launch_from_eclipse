@@ -65,10 +65,6 @@ then
 	    	echo ditto "$project_dir"/"$executable_path"/"$executable_name_without_extension".efi /Volumes/QEMU_EFI/EFI/CLOVER/"$executable_name_without_extension".efi
 			     ditto "$project_dir"/"$executable_path"/"$executable_name_without_extension".efi /Volumes/QEMU_EFI/EFI/CLOVER/"$executable_name_without_extension".efi || exit 1
 		fi
-	fi
-
-#		echo ditto "$project_dir"/"$executable_name_without_extension".efi /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi
-#		     ditto "$project_dir"/"$executable_name_without_extension".efi /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi || exit 1
 	else
 	  : # if it's a module, has to be copied in Drivers
 	fi

@@ -5,20 +5,17 @@ SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
 OSTYPE=`uname -s`
 #echo $OSTYPE
 
-if [ -z "$1" ]
+if ! [ -z "$1" ]
 then
-	echo "Usage: $SCRIPT_ABS_FILENAME [Clover debug file]"
-	exit 1
+	clover_efi_file="${1%.*}".efi
+	if ! [ -f "$clover_efi_file" ]
+	then
+		echo Efi file "$clover_efi_file" doesn\'t exist
+		exit 1
+	fi
+	echo clover_efi_file="$clover_efi_file"
 fi
 
-clover_efi_file="${1%.*}".efi
-if ! [ -f "$clover_efi_file" ]
-then
-	echo Efi file "$clover_efi_file" doesn\'t exist
-	exit 1
-fi
-
-echo clover_efi_file="$clover_efi_file"
 
 set -x
 
@@ -46,25 +43,29 @@ then
 	fi
 	> "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
-	hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
-
-	shopt -s nocasematch
-
-	if [[ "$(basename "$clover_efi_file")" =~ "CloverX64"* ]]
+	if ! [ -z "$clover_efi_file" ]
 	then
-	  echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
-		ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
 
-		#no need to replace BootX64.efi as it is BootLoaderChooser now
-		#echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi
-		#ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/BOOT/BOOTX64.efi || exit 1
-	else
-	  : # TODO : if it's a module, has to be copied in Drivers
+		hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
+
+		shopt -s nocasematch
+
+		if [[ "$(basename "$clover_efi_file")" =~ "CloverX64"* ]]
+		then
+			echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
+			ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
+
+			#no need to replace BootX64.efi, it's not used in legacy boot
+		else
+		  : # TODO : if it's a module, has to be copied in Drivers
+		fi
+
+		shopt -u nocasematch
+
+		diskutil eject /Volumes/QEMU_EFI || exit 1
 	fi
 
-	shopt -u nocasematch
 
-	diskutil eject /Volumes/QEMU_EFI || exit 1
 	
   	sleep 1 # not 100% sure it's needed
 
@@ -77,14 +78,17 @@ then
 	    -cpu core2duo \
 	    -bios ./bios.bin-1.13.0 \
 	    -machine q35 \
-	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 	    -device ahci,id=ahi \
 	    -drive format=raw,id=hda,file=./disk_image_gpt.img \
 	    -usb \
 	    -device usb-mouse,bus=usb-bus.0,port=2 \
 	    -device usb-kbd,bus=usb-bus.0,port=1 \
-		-serial file:./serial0_qemu_out.log \
+	    -serial file:./serial0_qemu_out.log \
 	    -gdb tcp::9000
+
+#	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
+#	    -hdb "/JiefLand/Mac OS X 11.0.Beta10.vmwarevm/Virtual Disk.vmdk" \
+#	    -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
 
 
 fi
