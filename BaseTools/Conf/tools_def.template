@@ -2079,7 +2079,7 @@ DEFINE GCC5_AARCH64_ASLDLINK_FLAGS   = DEF(GCC49_AARCH64_ASLDLINK_FLAGS)
 DEFINE GCC5_ASLCC_FLAGS              = DEF(GCC49_ASLCC_FLAGS) -fno-lto
 
 DEFINE GCC53_IA32_CC_FLAGS           = DEF(GCC49_IA32_CC_FLAGS)
-DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -mms-bitfields -fno-ms-extensions -ffreestanding -nostdinc
+DEFINE GCC53_X64_CC_FLAGS            = DEF(GCC49_X64_CC_FLAGS) -fno-unwind-tables -Wno-incompatible-ms-struct -mms-bitfields -fno-ms-extensions -ffreestanding -fno-exceptions -nostdinc
 DEFINE GCC53_IA32_X64_DLINK_COMMON   = -nostdlib -Wl,-n,-q,--gc-sections,-z,common-page-size=0x40,--defsym=PECOFF_HEADER_SIZE=0x240,--script=$(EDK_TOOLS_PATH)/Scripts/GccBase.lds
 
 DEFINE GCC53_IA32_X64_ASLDLINK_FLAGS = DEF(GCC53_IA32_X64_DLINK_COMMON),--entry,ReferenceAcpiTable,-u,ReferenceAcpiTable
