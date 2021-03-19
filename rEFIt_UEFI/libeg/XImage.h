@@ -112,6 +112,8 @@ protected:
 
 };
 
+extern XImage NullXImage;
+
 class IndexedImage
 {
 public:

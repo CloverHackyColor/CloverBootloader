@@ -94,7 +94,7 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *PixelPtr;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL *FontPtr;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL FirstPixel;
-  BOOLEAN     isKorean = (gLanguage == korean);
+  BOOLEAN     isKorean = (gSettings.GUI.gLanguage == korean);
   XStringW    fontFilePath;
   const XStringW& commonFontDir = L"font"_XSW;
 
@@ -108,7 +108,7 @@ void XTheme::LoadFontImage(IN BOOLEAN UseEmbedded, IN INTN Rows, IN INTN Cols)
       CharWidth = 22; //standard for korean
     } else {
       MsgLog("...using english\n");
-      gLanguage = english;
+      gSettings.GUI.gLanguage = english;
     }
   }
 
@@ -308,7 +308,7 @@ INTN XTheme::RenderText(IN const XStringW& Text, OUT XImage* CompImage_ptr,
   for (UINTN i = 0; i < TextLength && c0 != 0; i++) {
     UINT16 c = Text.wc_str()[i]; //including UTF8 -> UTF16 conversion
     DBG("initial char to render 0x%hx\n", c); //good
-    if (gLanguage != korean) { //russian Codepage = 0x410
+    if (gSettings.GUI.gLanguage != korean) { //russian Codepage = 0x410
       if (c >= 0x410 && c < 0x450) {
         //we have russian raster fonts with chars at 0xC0
         c -= 0x350;

@@ -32,6 +32,28 @@
 #define QUIRK_OS      bit(14)
 #define QUIRK_PERM    bit(15)
 
+
+typedef enum {
+  english = 0,  //en
+  russian,    //ru
+  french,     //fr
+  german,     //de
+  dutch,      //nl
+  italian,    //it
+  spanish,    //es
+  portuguese, //pt
+  brasil,     //br
+  polish,     //pl
+  ukrainian,  //ua
+  croatian,   //hr
+  czech,      //cs
+  indonesian, //id
+  korean,     //ko
+  chinese,    //cn
+  romanian    //ro
+  //something else? add, please
+} LANGUAGES;
+
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
 //struct SYSVARIABLES
@@ -131,87 +153,81 @@ public:
 class CUSTOM_LOADER_ENTRY
 {
 public:
-  CUSTOM_LOADER_ENTRY     *Next;
-  CUSTOM_LOADER_ENTRY     *SubEntries;
+  XObjArray<CUSTOM_LOADER_ENTRY> SubEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
   XIcon                  Image = XIcon();
   XIcon                  DriveImage = XIcon();
-  XStringW               ImagePath;
-  XStringW               DriveImagePath;
-  XStringW               Volume;
-  XStringW               Path;
-  XString8Array           LoadOptions;
+  XStringW               ImagePath = XStringW();
+  XStringW               DriveImagePath = XStringW();
+  XStringW               Volume = XStringW();
+  XStringW               Path = XStringW();
+  XString8Array          LoadOptions = XString8Array();
 
-  XStringW FullTitle;
-  XStringW Title;
-  XStringW Settings;
-  CHAR16                  Hotkey;
-  BOOLEAN                 CommonSettings;
-  UINT8                   Flags;
-  bool                    Hidden;
-  UINT8                   Type;
-  UINT8                   VolumeType;
-  UINT8                   KernelScan;
-  UINT8                   CustomBoot;
+  XStringW FullTitle = XStringW();
+  XStringW Title = XStringW();
+  XStringW Settings = XStringW();
+  CHAR16                  Hotkey = 0;
+  BOOLEAN                 CommonSettings = 0;
+  UINT8                   Flags = 0;
+  bool                    Hidden = 0;
+  UINT8                   Type = 0;
+  UINT8                   VolumeType = 0;
+  UINT8                   KernelScan = 0;
+  UINT8                   CustomBoot = 0;
   XImage                  CustomLogo = XImage();
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXEL({0,0,0,0});
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
 
-  CUSTOM_LOADER_ENTRY() : Next(0), SubEntries(0), ImagePath(), DriveImagePath(), Volume(), Path(), LoadOptions(),
-                          FullTitle(), Title(), Settings(), Hotkey(0), CommonSettings(0), Flags(0), Hidden(0), Type(0), VolumeType(0),
-                          KernelScan(0), CustomBoot(0), KernelAndKextPatches()
-						{ }
-
-  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
-  CUSTOM_LOADER_ENTRY& operator=(const CUSTOM_LOADER_ENTRY&) = delete;
+//  CUSTOM_LOADER_ENTRY() {}
+//
+//  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+//  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
+//  CUSTOM_LOADER_ENTRY& operator=(const CUSTOM_LOADER_ENTRY&) = delete;
 
 };
 
 class CUSTOM_LEGACY_ENTRY
 {
 public:
-  CUSTOM_LEGACY_ENTRY* Next;
   XIcon                Image = XIcon();
   XIcon                DriveImage = XIcon();
-  XStringW             ImagePath;
-  XStringW             DriveImagePath;
-  XStringW             Volume;
-  XStringW             FullTitle;
-  XStringW             Title;
-  CHAR16               Hotkey;
-  UINT8                Flags;
-  bool                 Hidden;
-  UINT8                Type;
-  UINT8                VolumeType;
+  XStringW             ImagePath = XStringW();
+  XStringW             DriveImagePath = XStringW();
+  XStringW             Volume = XStringW();
+  XStringW             FullTitle = XStringW();
+  XStringW             Title = XStringW();
+  CHAR16               Hotkey = 0;
+  UINT8                Flags = 0;
+  bool                 Hidden = 0;
+  UINT8                Type = 0;
+  UINT8                VolumeType = 0;
 
-  CUSTOM_LEGACY_ENTRY() : Next(0), ImagePath(), DriveImagePath(), Volume(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), Type(0), VolumeType(0) { }
-
-  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
-  CUSTOM_LEGACY_ENTRY& operator=(const CUSTOM_LEGACY_ENTRY&) = delete;
+//  CUSTOM_LEGACY_ENTRY() {}
+//
+//  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+//  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
+//  CUSTOM_LEGACY_ENTRY& operator=(const CUSTOM_LEGACY_ENTRY&) = delete;
 };
 
 class CUSTOM_TOOL_ENTRY
 {
 public:
-  CUSTOM_TOOL_ENTRY *Next;
   XIcon              Image = XIcon();
-  XStringW           ImagePath;
-  XStringW           Volume;
-  XStringW           Path;
-  XString8Array       LoadOptions;
-  XStringW           FullTitle;
-  XStringW           Title;
-  CHAR16             Hotkey;
-  UINT8              Flags;
-  bool               Hidden;
-  UINT8              VolumeType;
+  XStringW           ImagePath = XStringW();
+  XStringW           Volume = XStringW();
+  XStringW           Path = XStringW();
+  XString8Array      LoadOptions = XString8Array();
+  XStringW           FullTitle = XStringW();
+  XStringW           Title = XStringW();
+  CHAR16             Hotkey = 0;
+  UINT8              Flags = 0;
+  bool               Hidden = 0;
+  UINT8              VolumeType = 0;
 
-  CUSTOM_TOOL_ENTRY() : Next(0), ImagePath(), Volume(), Path(), LoadOptions(), FullTitle(), Title(), Hotkey(0), Flags(0), Hidden(0), VolumeType(0) { }
-
-  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
-  CUSTOM_TOOL_ENTRY& operator=(const CUSTOM_TOOL_ENTRY&) = delete;
+//  CUSTOM_TOOL_ENTRY() {}
+//
+//  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+//  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
+//  CUSTOM_TOOL_ENTRY& operator=(const CUSTOM_TOOL_ENTRY&) = delete;
 };
 
 class DEV_PROPERTY
@@ -376,15 +392,39 @@ public:
     public:
       INT32                   Timezone = 0xFF;
       XStringW                Theme = XStringW();
+      bool                    DarkEmbedded = 0;
+      bool                    PlayAsync = 0;
       bool                    CustomIcons = false;
       bool                    TextOnly = false;
       bool                    ShowOptimus = false;
       XStringW                ScreenResolution = XStringW();
+      bool                    ProvideConsoleGop = 0;
       INTN                    ConsoleMode = 0;
+      LANGUAGES               gLanguage = english;
       INTN                    Codepage = 0xC0;
       INTN                    CodepageSize = 0xC0;
-      bool                    LegacyFirst = false;
-      bool                    NoLegacy = false;
+      BOOLEAN                 KbdPrevLang = 0;
+      class MouseClass {
+        public:
+          INTN                    PointerSpeed = 0;
+          BOOLEAN                 PointerEnabled = 0;
+          UINT64                  DoubleClickTime = 0;
+          BOOLEAN                 PointerMirror = 0;
+      } Mouse = MouseClass();
+      XString8Array           HVHideStrings = XString8Array();
+      class ScanClass {
+        public:
+          BOOLEAN                 DisableEntryScan = 0;
+          BOOLEAN                 DisableToolScan = 0;
+          UINT8                   KernelScan = 0;
+          BOOLEAN                 LinuxScan = 0;
+          bool                    LegacyFirst = false;
+          bool                    NoLegacy = false;
+      } Scan = ScanClass();
+      XObjArray<CUSTOM_LOADER_ENTRY> CustomEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
+      XObjArray<CUSTOM_LEGACY_ENTRY> CustomLegacy = XObjArray<CUSTOM_LEGACY_ENTRY>();
+      XObjArray<CUSTOM_TOOL_ENTRY>   CustomTool = XObjArray<CUSTOM_TOOL_ENTRY>();
+
   } GUI = GUIClass();
 
   class CPUClass {
@@ -586,7 +626,6 @@ public:
   //SkyLake
 
   //Volumes hiding
-  XString8Array           HVHideStrings;
 
   // KernelAndKextPatches
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
@@ -596,14 +635,9 @@ public:
   XString8                AirportBridgeDeviceName;
 
   // Pre-language
-  BOOLEAN                 KbdPrevLang;
 
   //Pointer
-  BOOLEAN                 PointerEnabled;
   UINT8                   pad28[7];
-  INTN                    PointerSpeed;
-  UINT64                  DoubleClickTime;
-  BOOLEAN                 PointerMirror;
 
 //  UINT8                   pad7[6];
   UINT8                   pad29[6];
@@ -636,7 +670,6 @@ public:
   //other devices
   BOOLEAN                 ForceHPET;
   BOOLEAN                 ResetHDA;
-  BOOLEAN                 PlayAsync;
   UINT8                   pad32[2];
   UINT32                  DisableFunctions;
 
@@ -660,14 +693,7 @@ public:
   UINT8                   pad34[3];
 
   // Custom entries
-  BOOLEAN                 DisableEntryScan;
-  BOOLEAN                 DisableToolScan;
-  UINT8                   KernelScan;
-  BOOLEAN                 LinuxScan;
   UINT8                   pad35[3];
-  CUSTOM_LOADER_ENTRY     *CustomEntries;
-  CUSTOM_LEGACY_ENTRY     *CustomLegacy;
-  CUSTOM_TOOL_ENTRY       *CustomTool;
 
   //Add custom properties
   UINTN                   NrAddProperties;
@@ -707,7 +733,6 @@ public:
   OC_BOOTER_QUIRKS   ocBooterQuirks;
   XObjArray<MMIOWhiteList> mmioWhiteListArray;
 
-  BOOLEAN ProvideConsoleGop;
 
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
@@ -724,14 +749,13 @@ public:
                     NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), NvidiaWeb(0), pad41{0}, DualLink(0),
                     IgPlatform(0), HDAInjection(0),
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
-                    HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
-                    KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0),
+                    KernelAndKextPatches(), KextPatchesAllowed(0),
+                    KernelPatchesAllowed(0), AirportBridgeDeviceName(),
                     RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(),
-                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0},                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
-                    AFGLowPowerState(0), DisableEntryScan(0), DisableToolScan(0), KernelScan(0), LinuxScan(0), CustomEntries(0),
-                    CustomLegacy(0), CustomTool(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
+                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0},                     ForceHPET(0), ResetHDA(0), DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
+                    AFGLowPowerState(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, mmioWhiteListArray(), ProvideConsoleGop(0)
+                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, mmioWhiteListArray()
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
@@ -756,27 +780,6 @@ public:
 };
 
 //#pragma GCC diagnostic ignored "-Wpadded"
-
-typedef enum {
-  english = 0,  //en
-  russian,    //ru
-  french,     //fr
-  german,     //de
-  dutch,      //nl
-  italian,    //it
-  spanish,    //es
-  portuguese, //pt
-  brasil,     //br
-  polish,     //pl
-  ukrainian,  //ua
-  croatian,   //hr
-  czech,      //cs
-  indonesian, //id
-  korean,     //ko
-  chinese,    //cn
-  romanian    //ro
-  //something else? add, please
-} LANGUAGES;
 
 typedef struct _DRIVERS_FLAGS {
   BOOLEAN EmuVariableLoaded;
@@ -876,7 +879,6 @@ extern UINTN                          NGFX;
 extern UINTN                          NHDA;
 //extern UINT16                         gCPUtype;
 extern SETTINGS_DATA                  gSettings;
-extern LANGUAGES                      gLanguage;
 extern BOOLEAN                        gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
 extern SLOT_DEVICE                    SlotDevices[];

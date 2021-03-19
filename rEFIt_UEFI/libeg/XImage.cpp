@@ -19,6 +19,7 @@
 #endif
 
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL NullColor = {0,0,0,0};
+XImage NullXImage;
 
 
 XImage::XImage(UINTN W, UINTN H) : Width(0), Height(0), PixelData() // initialisation of Width and Height and , PixelData() to avoid warning with -Weffc++

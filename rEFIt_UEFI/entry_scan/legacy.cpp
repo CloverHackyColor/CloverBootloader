@@ -145,26 +145,25 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
   
   // If this isn't a custom entry make sure it's not hidden by a custom entry
   if (!CustomEntry) {
-    CUSTOM_LEGACY_ENTRY *Custom = gSettings.CustomLegacy;
-    while (Custom) {
-      if ( OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)  ||  Custom->Hidden ) {
-        if (Custom->Volume.notEmpty()) {
-          if ( !Volume->DevicePathString.contains(Custom->Volume)  &&  !Volume->VolName.contains(Custom->Volume) ) {
-            if (Custom->Type != 0) {
-              if (Custom->Type == Volume->LegacyOS->Type) {
+    for (size_t CustomIndex = 0 ; CustomIndex < gSettings.GUI.CustomLegacy.size() ; ++CustomIndex ) {
+      CUSTOM_LEGACY_ENTRY& Custom = gSettings.GUI.CustomLegacy[CustomIndex];
+      if ( OSFLAG_ISSET(Custom.Flags, OSFLAG_DISABLED)  ||  Custom.Hidden ) {
+        if (Custom.Volume.notEmpty()) {
+          if ( !Volume->DevicePathString.contains(Custom.Volume)  &&  !Volume->VolName.contains(Custom.Volume) ) {
+            if (Custom.Type != 0) {
+              if (Custom.Type == Volume->LegacyOS->Type) {
                 Entry->Hidden = true;
               }
             } else {
               Entry->Hidden = true;
             }
           }
-        } else if (Custom->Type != 0) {
-          if (Custom->Type == Volume->LegacyOS->Type) {
+        } else if (Custom.Type != 0) {
+          if (Custom.Type == Volume->LegacyOS->Type) {
             Entry->Hidden = true;
           }
         }
       }
-      Custom = Custom->Next;
     }
   }
   
@@ -279,28 +278,27 @@ void AddCustomLegacy(void)
   UINTN                VolumeIndex, VolumeIndex2;
   BOOLEAN              ShowVolume, HideIfOthersFound;
   REFIT_VOLUME        *Volume;
-  CUSTOM_LEGACY_ENTRY *Custom;
   XIcon MainIcon;
   XIcon DriveIcon;
-  UINTN                i = 0;
   
 //  DBG("Custom legacy start\n");
-  if (gSettings.CustomLegacy) {
+  if (gSettings.GUI.CustomLegacy.notEmpty()) {
     DbgHeader("AddCustomLegacy");
   }
 
   // Traverse the custom entries
-  for (Custom = gSettings.CustomLegacy; Custom; ++i, Custom = Custom->Next) {
-    if (OSFLAG_ISSET(Custom->Flags, OSFLAG_DISABLED)) {
-      DBG("Custom legacy %llu skipped because it is disabled.\n", i);
+  for (size_t i = 0 ; i < gSettings.GUI.CustomLegacy.size() ; ++i ) {
+    CUSTOM_LEGACY_ENTRY& Custom = gSettings.GUI.CustomLegacy[i];
+    if (OSFLAG_ISSET(Custom.Flags, OSFLAG_DISABLED)) {
+      DBG("Custom legacy %zu skipped because it is disabled.\n", i);
       continue;
     }
-//    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom->Flags, OSFLAG_HIDDEN)) {
+//    if (!gSettings.ShowHiddenEntries && OSFLAG_ISSET(Custom.Flags, OSFLAG_HIDDEN)) {
 //      DBG("Custom legacy %llu skipped because it is hidden.\n", i);
 //      continue;
 //    }
-    if (Custom->Volume.notEmpty()) {
-      DBG("Custom legacy %llu matching \"%ls\" ...\n", i, Custom->Volume.wc_str());
+    if (Custom.Volume.notEmpty()) {
+      DBG("Custom legacy %zu matching \"%ls\" ...\n", i, Custom.Volume.wc_str());
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
       Volume = &Volumes[VolumeIndex];
@@ -314,8 +312,8 @@ void AddCustomLegacy(void)
         continue;
       }
       
-      if (Custom->VolumeType != 0) {
-        if (((1ull<<Volume->DiskKind) & Custom->VolumeType) == 0) {
+      if (Custom.VolumeType != 0) {
+        if (((1ull<<Volume->DiskKind) & Custom.VolumeType) == 0) {
           DBG("skipped because media is ignored\n");
           continue;
         }
@@ -359,34 +357,34 @@ void AddCustomLegacy(void)
       }
       
       // Check for exact volume matches
-      if (Custom->Volume.notEmpty()) {
-        if ((StrStr(Volume->DevicePathString.wc_str(), Custom->Volume.wc_str()) == NULL) &&
-            ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom->Volume.wc_str()) == NULL))) {
+      if (Custom.Volume.notEmpty()) {
+        if ((StrStr(Volume->DevicePathString.wc_str(), Custom.Volume.wc_str()) == NULL) &&
+            ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom.Volume.wc_str()) == NULL))) {
           DBG("skipped\n");
           continue;
         }
         // Check if the volume should be of certain os type
-        if ((Custom->Type != 0) && (Custom->Type != Volume->LegacyOS->Type)) {
+        if ((Custom.Type != 0) && (Custom.Type != Volume->LegacyOS->Type)) {
           DBG("skipped because wrong type\n");
           continue;
         }
-      } else if ((Custom->Type != 0) && (Custom->Type != Volume->LegacyOS->Type)) {
+      } else if ((Custom.Type != 0) && (Custom.Type != Volume->LegacyOS->Type)) {
         DBG("skipped because wrong type\n");
         continue;
       }
       // Change to custom image if needed
-      MainIcon = Custom->Image;
+      MainIcon = Custom.Image;
       if (MainIcon.Image.isEmpty()) {
-        MainIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom->ImagePath);
+        MainIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom.ImagePath);
       }
 
       // Change to custom drive image if needed
-      DriveIcon = Custom->DriveImage;
+      DriveIcon = Custom.DriveImage;
       if (DriveIcon.Image.isEmpty()) {
-        DriveIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom->DriveImagePath);
+        DriveIcon.Image.LoadXImage(&ThemeX.getThemeDir(), Custom.DriveImagePath);
       }
       // Create a legacy entry for this volume
-      if (AddLegacyEntry(Custom->FullTitle, Custom->Title, Volume, &MainIcon, &DriveIcon, Custom->Hotkey, TRUE))
+      if (AddLegacyEntry(Custom.FullTitle, Custom.Title, Volume, &MainIcon, &DriveIcon, Custom.Hotkey, TRUE))
       {
         DBG("match!\n");
       }

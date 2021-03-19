@@ -723,7 +723,7 @@ EFI_STATUS REFIT_MENU_SCREEN::WaitForInputEventPoll(UINTN TimeoutDefault)
       break;
     }
     UpdateFilm();
-    if (gSettings.PlayAsync) {
+    if (gSettings.GUI.PlayAsync) {
       CheckSyncSound(false);
     }
     TimeoutRemain--;

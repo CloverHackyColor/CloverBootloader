@@ -998,9 +998,9 @@ void ScanVolumes(void)
     Status = ScanVolume(Volume);
     if (!EFI_ERROR(Status)) {
       Volumes.AddReference(Volume, false);
-      for (size_t HVi = 0; HVi < gSettings.HVHideStrings.size(); HVi++) {
-        if ( Volume->DevicePathString.containsIC(gSettings.HVHideStrings[HVi]) ||
-             Volume->VolName.containsIC(gSettings.HVHideStrings[HVi])
+      for (size_t HVi = 0; HVi < gSettings.GUI.HVHideStrings.size(); HVi++) {
+        if ( Volume->DevicePathString.containsIC(gSettings.GUI.HVHideStrings[HVi]) ||
+             Volume->VolName.containsIC(gSettings.GUI.HVHideStrings[HVi])
            ) {
           Volume->Hidden = TRUE;
           DBG("        hiding this volume\n");

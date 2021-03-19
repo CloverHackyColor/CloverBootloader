@@ -74,7 +74,6 @@ CHAR16                          *IconFormat = NULL;
 TagDict*                          gConfigDict[NUM_OF_CONFIGS] = {NULL, NULL, NULL};
 
 SETTINGS_DATA                   gSettings;
-LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
 HDA_PROPERTIES                  gAudios[4]; //no more then 4 Audio Controllers
 //SLOT_DEVICE                     Arpt;
@@ -562,41 +561,15 @@ LoadUserSettings (
 
 STATIC BOOLEAN AddCustomLoaderEntry(IN CUSTOM_LOADER_ENTRY *Entry)
 {
-  if (Entry == NULL) {
-    return FALSE;
-  }
-  if (gSettings.CustomEntries) {
-    CUSTOM_LOADER_ENTRY *Entries = gSettings.CustomEntries;
-
-    while (Entries->Next != NULL) {
-      Entries = Entries->Next;
-    }
-    Entries->Next = Entry;
-
-  } else {
-    gSettings.CustomEntries = Entry;
-  }
-
+  if (Entry == NULL) return FALSE;
+  gSettings.GUI.CustomEntries.AddReference(Entry, true);
   return TRUE;
 }
 
 STATIC BOOLEAN AddCustomLegacyEntry (IN CUSTOM_LEGACY_ENTRY *Entry)
 {
-  if (Entry == NULL) {
-    return FALSE;
-  }
-
-  if (gSettings.CustomLegacy != NULL) {
-    CUSTOM_LEGACY_ENTRY *Entries = gSettings.CustomLegacy;
-
-    while (Entries->Next != NULL) {
-      Entries = Entries->Next;
-    }
-
-    Entries->Next = Entry;
-  } else {
-    gSettings.CustomLegacy = Entry;
-  }
+  if (Entry == NULL) return FALSE;
+  gSettings.GUI.CustomLegacy.AddReference(Entry, true);
   return TRUE;
 }
 STATIC
@@ -605,21 +578,8 @@ AddCustomToolEntry (
                     IN CUSTOM_TOOL_ENTRY *Entry
                     )
 {
-  if (Entry == NULL) {
-    return FALSE;
-  }
-
-  if (gSettings.CustomTool) {
-    CUSTOM_TOOL_ENTRY *Entries = gSettings.CustomTool;
-
-    while (Entries->Next != NULL) {
-      Entries = Entries->Next;
-    }
-
-    Entries->Next = Entry;
-  } else {
-    gSettings.CustomTool = Entry;
-  }
+  if (Entry == NULL) return FALSE;
+  gSettings.GUI.CustomTool.AddReference(Entry, true);
   return TRUE;
 }
 
@@ -629,22 +589,8 @@ AddCustomSubEntry (
                    IN OUT  CUSTOM_LOADER_ENTRY *Entry,
                    IN      CUSTOM_LOADER_ENTRY *SubEntry)
 {
-  if ((Entry == NULL) || (SubEntry == NULL)) {
-    return FALSE;
-  }
-
-  if (Entry->SubEntries != NULL) {
-    CUSTOM_LOADER_ENTRY *Entries = Entry->SubEntries;
-
-    while (Entries->Next != NULL) {
-      Entries                    = Entries->Next;
-    }
-
-    Entries->Next                = SubEntry;
-  } else {
-    Entry->SubEntries            = SubEntry;
-  }
-
+  if ((Entry == NULL) || (SubEntry == NULL)) return FALSE;
+  Entry->SubEntries.AddReference(Entry, true);
   return TRUE;
 }
 
@@ -2421,18 +2367,18 @@ EFI_STATUS GetEarlyUserSettings (
       Prop = GUIDict->propertyForKey("EmbeddedThemeType");
       if (Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
         if (Prop->getString()->stringValue().equalIC("Dark")) {
-          ThemeX.DarkEmbedded = TRUE;
+          gSettings.GUI.DarkEmbedded = TRUE;
           //ThemeX.Font = FONT_GRAY;
         } else if (Prop->getString()->stringValue().equalIC("Light")) {
-          ThemeX.DarkEmbedded = FALSE;
+          gSettings.GUI.DarkEmbedded = FALSE;
           //ThemeX.Font = FONT_ALFA;
         } else if (Prop->getString()->stringValue().equalIC("Daytime")) {
-          ThemeX.DarkEmbedded = !ThemeX.Daylight;
+          gSettings.GUI.DarkEmbedded = !ThemeX.Daylight;
           //ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
         }
       }
       Prop = GUIDict->propertyForKey("PlayAsync"); //PlayAsync
-      gSettings.PlayAsync = IsPropertyNotNullAndTrue(Prop);
+      gSettings.GUI.PlayAsync = IsPropertyNotNullAndTrue(Prop);
 
       // CustomIcons
       Prop = GUIDict->propertyForKey("CustomIcons");
@@ -2450,7 +2396,7 @@ EFI_STATUS GetEarlyUserSettings (
       }
 
       Prop = GUIDict->propertyForKey("ProvideConsoleGop");
-      gSettings.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop); //default is true
+      gSettings.GUI.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop); //default is true
 
       Prop = GUIDict->propertyForKey("ConsoleMode");
       if (Prop != NULL) {
@@ -2476,47 +2422,47 @@ EFI_STATUS GetEarlyUserSettings (
       if (Prop != NULL) {
         gSettings.Language = Prop->getString()->stringValue();
         if ( Prop->getString()->stringValue().contains("en") ) {
-          gLanguage = english;
+          gSettings.GUI.gLanguage = english;
           gSettings.GUI.Codepage = 0xC0;
           gSettings.GUI.CodepageSize = 0;
         } else if ( Prop->getString()->stringValue().contains("ru")) {
-          gLanguage = russian;
+          gSettings.GUI.gLanguage = russian;
           gSettings.GUI.Codepage = 0x410;
           gSettings.GUI.CodepageSize = 0x40;
         } else if ( Prop->getString()->stringValue().contains("ua")) {
-          gLanguage = ukrainian;
+          gSettings.GUI.gLanguage = ukrainian;
           gSettings.GUI.Codepage = 0x400;
           gSettings.GUI.CodepageSize = 0x60;
         } else if ( Prop->getString()->stringValue().contains("fr")) {
-          gLanguage = french; //default is extended latin
+          gSettings.GUI.gLanguage = french; //default is extended latin
         } else if ( Prop->getString()->stringValue().contains("it")) {
-          gLanguage = italian;
+          gSettings.GUI.gLanguage = italian;
         } else if ( Prop->getString()->stringValue().contains("es")) {
-          gLanguage = spanish;
+          gSettings.GUI.gLanguage = spanish;
         } else if ( Prop->getString()->stringValue().contains("pt")) {
-          gLanguage = portuguese;
+          gSettings.GUI.gLanguage = portuguese;
         } else if ( Prop->getString()->stringValue().contains("br")) {
-          gLanguage = brasil;
+          gSettings.GUI.gLanguage = brasil;
         } else if ( Prop->getString()->stringValue().contains("de")) {
-          gLanguage = german;
+          gSettings.GUI.gLanguage = german;
         } else if ( Prop->getString()->stringValue().contains("nl")) {
-          gLanguage = dutch;
+          gSettings.GUI.gLanguage = dutch;
         } else if ( Prop->getString()->stringValue().contains("pl")) {
-          gLanguage = polish;
+          gSettings.GUI.gLanguage = polish;
         } else if ( Prop->getString()->stringValue().contains("cz")) {
-          gLanguage = czech;
+          gSettings.GUI.gLanguage = czech;
         } else if ( Prop->getString()->stringValue().contains("hr")) {
-          gLanguage = croatian;
+          gSettings.GUI.gLanguage = croatian;
         } else if ( Prop->getString()->stringValue().contains("id")) {
-          gLanguage = indonesian;
+          gSettings.GUI.gLanguage = indonesian;
         } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
-          gLanguage = chinese;
+          gSettings.GUI.gLanguage = chinese;
           gSettings.GUI.Codepage = 0x3400;
           gSettings.GUI.CodepageSize = 0x19C0;
         } else if ( Prop->getString()->stringValue().contains("ro")) {
-          gLanguage = romanian;
+          gSettings.GUI.gLanguage = romanian;
         } else if ( Prop->getString()->stringValue().contains("ko")) {
-          gLanguage = korean;
+          gSettings.GUI.gLanguage = korean;
           gSettings.GUI.Codepage = 0x1100;
           gSettings.GUI.CodepageSize = 0x100;
         }
@@ -2525,7 +2471,7 @@ EFI_STATUS GetEarlyUserSettings (
 //      if (settingsData.Language != NULL) { // settingsData.Language != NULL cannot be false because settingsData.Language is dclared as CHAR8 Language[16]; Must we replace by settingsData.Language[0] != NULL
       Prop = GUIDict->propertyForKey("KbdPrevLang");
       if (Prop != NULL) {
-        gSettings.KbdPrevLang = IsPropertyNotNullAndTrue(Prop);
+        gSettings.GUI.KbdPrevLang = IsPropertyNotNullAndTrue(Prop);
       }
 //      }
 
@@ -2533,23 +2479,23 @@ EFI_STATUS GetEarlyUserSettings (
       if (MouseDict != NULL) {
         const TagStruct* prop = MouseDict->propertyForKey("Speed");
         if (prop != NULL) {
-          gSettings.PointerSpeed = (INT32)GetPropertyAsInteger(prop, 0);
-          gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
+          gSettings.GUI.Mouse.PointerSpeed = (INT32)GetPropertyAsInteger(prop, 0);
+          gSettings.GUI.Mouse.PointerEnabled = (gSettings.GUI.Mouse.PointerSpeed != 0);
         }
         //but we can disable mouse even if there was positive speed
         prop = MouseDict->propertyForKey("Enabled");
         if (IsPropertyNotNullAndFalse(prop)) {
-          gSettings.PointerEnabled = FALSE;
+          gSettings.GUI.Mouse.PointerEnabled = FALSE;
         }
 
         prop = MouseDict->propertyForKey("Mirror");
         if (IsPropertyNotNullAndTrue(prop)) {
-          gSettings.PointerMirror = TRUE;
+          gSettings.GUI.Mouse.PointerMirror = TRUE;
         }
 
         prop = MouseDict->propertyForKey("DoubleClickTime");
         if (prop != NULL) {
-          gSettings.DoubleClickTime = (UINT64)GetPropertyAsInteger(prop, 500);
+          gSettings.GUI.Mouse.DoubleClickTime = (UINT64)GetPropertyAsInteger(prop, 500);
         }
       }
       // hide by name/uuid. Array of string
@@ -2558,7 +2504,7 @@ EFI_STATUS GetEarlyUserSettings (
         INTN   i;
         INTN   Count = HideArray->arrayContent().size();
         if (Count > 0) {
-          gSettings.HVHideStrings.setEmpty();
+          gSettings.GUI.HVHideStrings.setEmpty();
           for (i = 0; i < Count; i++) {
             const TagStruct* prop2 = &HideArray->arrayContent()[i];
             if ( !prop2->isString()) {
@@ -2566,60 +2512,60 @@ EFI_STATUS GetEarlyUserSettings (
               continue;
             }
             if ( prop2->getString()->stringValue().notEmpty() ) {
-              gSettings.HVHideStrings.Add(prop2->getString()->stringValue());
+              gSettings.GUI.HVHideStrings.Add(prop2->getString()->stringValue());
               DBG("Hiding entries with string %s\n", prop2->getString()->stringValue().c_str());
             }
           }
         }
       }
-      gSettings.LinuxScan = TRUE;
+      gSettings.GUI.Scan.LinuxScan = TRUE;
       // Disable loader scan
       Prop = GUIDict->propertyForKey("Scan");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndFalse(Prop)) {
-          gSettings.DisableEntryScan = TRUE;
-          gSettings.DisableToolScan  = TRUE;
-          gSettings.GUI.NoLegacy      = TRUE;
+          gSettings.GUI.Scan.DisableEntryScan = TRUE;
+          gSettings.GUI.Scan.DisableToolScan  = TRUE;
+          gSettings.GUI.Scan.NoLegacy      = TRUE;
         } else if (Prop->isDict()) {
           const TagStruct* prop2 = Prop->getDict()->propertyForKey("Entries");
           if (IsPropertyNotNullAndFalse(prop2)) {
-            gSettings.DisableEntryScan = TRUE;
+            gSettings.GUI.Scan.DisableEntryScan = TRUE;
           }
           prop2 = Prop->getDict()->propertyForKey("Tool");
           if (IsPropertyNotNullAndFalse(prop2)) {
-            gSettings.DisableToolScan = TRUE;
+            gSettings.GUI.Scan.DisableToolScan = TRUE;
           }
           prop2 = Prop->getDict()->propertyForKey("Linux");
-          gSettings.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
+          gSettings.GUI.Scan.LinuxScan = !IsPropertyNotNullAndFalse(prop2);
           prop2 = Prop->getDict()->propertyForKey("Legacy");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
-              gSettings.GUI.NoLegacy = TRUE;
+              gSettings.GUI.Scan.NoLegacy = TRUE;
             } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
               if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
-                gSettings.GUI.NoLegacy = TRUE;
+                gSettings.GUI.Scan.NoLegacy = TRUE;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
-                gSettings.GUI.LegacyFirst = TRUE;
+                gSettings.GUI.Scan.LegacyFirst = TRUE;
                }
             }
           }
           prop2 = Prop->getDict()->propertyForKey("Kernel");
           if (prop2 != NULL) {
             if (prop2->isFalse()) {
-              gSettings.KernelScan = KERNEL_SCAN_NONE;
+              gSettings.GUI.Scan.KernelScan = KERNEL_SCAN_NONE;
             } else if ((prop2->isString()) && prop2->getString()->stringValue().notEmpty() ) {
               if ((prop2->getString()->stringValue()[0] == 'N') || (prop2->getString()->stringValue()[0] == 'n')) {
-                gSettings.KernelScan = ( prop2->getString()->stringValue().length() > 1  &&  (prop2->getString()->stringValue()[1] == 'E' || prop2->getString()->stringValue()[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
+                gSettings.GUI.Scan.KernelScan = ( prop2->getString()->stringValue().length() > 1  &&  (prop2->getString()->stringValue()[1] == 'E' || prop2->getString()->stringValue()[1] == 'e') ) ? KERNEL_SCAN_NEWEST : KERNEL_SCAN_NONE;
               } else if ((prop2->getString()->stringValue()[0] == 'O') || (prop2->getString()->stringValue()[0] == 'o')) {
-                gSettings.KernelScan = KERNEL_SCAN_OLDEST;
+                gSettings.GUI.Scan.KernelScan = KERNEL_SCAN_OLDEST;
               } else if ((prop2->getString()->stringValue()[0] == 'F') || (prop2->getString()->stringValue()[0] == 'f')) {
-                gSettings.KernelScan = KERNEL_SCAN_FIRST;
+                gSettings.GUI.Scan.KernelScan = KERNEL_SCAN_FIRST;
               } else if ((prop2->getString()->stringValue()[0] == 'L') || (prop2->getString()->stringValue()[0] == 'l')) {
-                gSettings.KernelScan = KERNEL_SCAN_LAST;
+                gSettings.GUI.Scan.KernelScan = KERNEL_SCAN_LAST;
               } else if ((prop2->getString()->stringValue()[0] == 'M') || (prop2->getString()->stringValue()[0] == 'm')) {
-                gSettings.KernelScan = KERNEL_SCAN_MOSTRECENT;
+                gSettings.GUI.Scan.KernelScan = KERNEL_SCAN_MOSTRECENT;
               } else if ((prop2->getString()->stringValue()[0] == 'E') || (prop2->getString()->stringValue()[0] == 'e')) {
-                gSettings.KernelScan = KERNEL_SCAN_EARLIEST;
+                gSettings.GUI.Scan.KernelScan = KERNEL_SCAN_EARLIEST;
               }
             }
           }

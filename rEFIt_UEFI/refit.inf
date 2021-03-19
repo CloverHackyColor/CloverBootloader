@@ -305,6 +305,7 @@
   cpp_foundation/XToolsCommon.h
 #  cpp_foundation/XUINTN.cpp
 #  cpp_foundation/XUINTN.h
+  cpp_lib/undefinable.h
   cpp_unit_test/all_tests.h
   cpp_unit_test/all_tests.cpp
 #  cpp_unit_test/config-test.h

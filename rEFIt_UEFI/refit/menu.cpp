@@ -317,11 +317,11 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = gSettings.FlagsBits;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //70
-	InputItems[InputItemsCount++].SValue.SWPrintf("%02lld", gSettings.PointerSpeed);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%02lld", gSettings.GUI.Mouse.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
-	InputItems[InputItemsCount++].SValue.SWPrintf("%04llu", gSettings.DoubleClickTime);
+	InputItems[InputItemsCount++].SValue.SWPrintf("%04llu", gSettings.GUI.Mouse.DoubleClickTime);
   InputItems[InputItemsCount].ItemType = BoolValue; //72
-  InputItems[InputItemsCount++].BValue = gSettings.PointerMirror;
+  InputItems[InputItemsCount++].BValue = gSettings.GUI.Mouse.PointerMirror;
 
   //reserve for mouse and continue
 
@@ -443,7 +443,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Decimal;  //122
   InputItems[InputItemsCount++].SValue.SWPrintf("%04lld", gSettings.MaxSlide);
   InputItems[InputItemsCount].ItemType = BoolValue; //123
-  InputItems[InputItemsCount++].BValue = gSettings.ProvideConsoleGop;
+  InputItems[InputItemsCount++].BValue = gSettings.GUI.ProvideConsoleGop;
 
 
 
@@ -762,20 +762,20 @@ void ApplyInputs(void)
     if (InputItems[i].SValue[0] == '-') {
       Minus = 1;
     }
-    gSettings.PointerSpeed = StrDecimalToUintn(InputItems[i].SValue.data(Minus));
+    gSettings.GUI.Mouse.PointerSpeed = StrDecimalToUintn(InputItems[i].SValue.data(Minus));
     if (Minus) {
-      gSettings.PointerSpeed = -gSettings.PointerSpeed;
+      gSettings.GUI.Mouse.PointerSpeed = -gSettings.GUI.Mouse.PointerSpeed;
     }
 //    DBG("Pointer Speed=%d\n", gSettings.PointerSpeed);
   }
   i++; //71
   if (InputItems[i].Valid) {
-    gSettings.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    gSettings.GUI.Mouse.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue.wc_str());
 //    DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
   }
   i++; //72
   if (InputItems[i].Valid) {
-    gSettings.PointerMirror = InputItems[i].BValue;
+    gSettings.GUI.Mouse.PointerMirror = InputItems[i].BValue;
   }
 
 
@@ -1068,8 +1068,8 @@ void ApplyInputs(void)
   }
   i++; //123
   if (InputItems[i].Valid) {
-    gSettings.ProvideConsoleGop = InputItems[i].BValue;
-    DBG("applied ConsoleGopEnable=%s\n", gSettings.ProvideConsoleGop ? "Y" : "N" );
+    gSettings.GUI.ProvideConsoleGop = InputItems[i].BValue;
+    DBG("applied ConsoleGopEnable=%s\n", gSettings.GUI.ProvideConsoleGop ? "Y" : "N" );
   }
 
 
@@ -1145,7 +1145,7 @@ void HelpRefit(void)
     //else {
     //  HelpMenu.TitleImage.setEmpty();
     //}
-    switch (gLanguage)
+    switch (gSettings.GUI.gLanguage)
     {
       case russian:
         HelpMenu.AddMenuInfo_f("ESC - Выход из подменю, обновление главного меню");

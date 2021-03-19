@@ -533,6 +533,8 @@
 							<string>arg2</string>
 							<key>FullTitle</key>
 							<string>title1</string>
+							<key>Settings</key>
+							<string>settingsSub</string>
 							<key>SubEntries</key>
 							<array>
 								<dict>

@@ -216,7 +216,7 @@ StartupSoundPlay(const EFI_FILE* Dir, CONST CHAR16* SoundFile)
   }
 //  DBG("playback set\n");
   // Start playback.
-  if (gSettings.PlayAsync) {
+  if (gSettings.GUI.PlayAsync) {
     Status = AudioIo->StartPlaybackAsync(AudioIo, WaveData.Samples, WaveData.SamplesLength, 0, NULL, NULL);
 //    DBG("async started, status=%s\n", efiStrError(Status));
   } else {
@@ -236,7 +236,7 @@ DONE_ERROR:
 //    DBG("free sound\n");
     FreePool(FileData);
   }
-  if (!gSettings.PlayAsync && WaveData.Samples) {
+  if (!gSettings.GUI.PlayAsync && WaveData.Samples) {
     //dont free sound when async play
     // here we have memory leak with WaveData.Samples
     // and we can't free memory up to stop AsyncPlay

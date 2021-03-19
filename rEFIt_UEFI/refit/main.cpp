@@ -1127,7 +1127,7 @@ void LOADER_ENTRY::StartLoader()
     #ifndef USE_OC_SECTION_PlatformInfo
       mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
     #endif
-    mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.ProvideConsoleGop;
+    mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
 
 
@@ -2626,6 +2626,7 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     }
   }
 
+  ThemeX.DarkEmbedded = gSettings.GUI.DarkEmbedded;
 }
 #pragma GCC diagnostic pop
 
@@ -2843,9 +2844,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                    !gConfigDict[1] ? L"": (ConfName.notEmpty() ? ConfName.wc_str() : L"Load Options"));
   //gSettings.MainConfigName.takeValueFrom(gSettings.ConfigName);
 
-  gSettings.PointerEnabled = TRUE;
-  gSettings.PointerSpeed = 2;
-  gSettings.DoubleClickTime = 500; //TODO - make it constant as nobody change it
+  gSettings.GUI.Mouse.PointerEnabled = TRUE;
+  gSettings.GUI.Mouse.PointerSpeed = 2;
+  gSettings.GUI.Mouse.DoubleClickTime = 500; //TODO - make it constant as nobody change it
 
 #ifdef ENABLE_SECURE_BOOT
   InitializeSecureBoot();
@@ -3204,9 +3205,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       FillInputs(TRUE);
 
       // scan for loaders and tools, add then to the menu
-      if (gSettings.GUI.LegacyFirst){
+      if (gSettings.GUI.Scan.LegacyFirst){
         AddCustomLegacy();
-        if (!gSettings.GUI.NoLegacy) {
+        if (!gSettings.GUI.Scan.NoLegacy) {
           ScanLegacy();
         }
       }
@@ -3215,16 +3216,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // Add custom entries
     AddCustomEntries();
-    if (gSettings.DisableEntryScan) {
+    if (gSettings.GUI.Scan.DisableEntryScan) {
       DBG("Entry scan disabled\n");
     } else {
       ScanLoader();
     }
 
     if (!GlobalConfig.isFastBoot()) {
-      if (!gSettings.GUI.LegacyFirst) {
+      if (!gSettings.GUI.Scan.LegacyFirst) {
         AddCustomLegacy();
-        if (!gSettings.GUI.NoLegacy) {
+        if (!gSettings.GUI.Scan.NoLegacy) {
           ScanLegacy();
         }
       }
@@ -3232,7 +3233,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       // fixed other menu entries
       if (!(ThemeX.HideUIFlags & HIDEUI_FLAG_TOOLS)) {
         AddCustomTool();
-        if (!gSettings.DisableToolScan) {
+        if (!gSettings.GUI.Scan.DisableToolScan) {
           ScanTool();
 #ifdef ENABLE_SECURE_BOOT
           // Check for secure boot setup mode
