@@ -45,6 +45,7 @@ UINT16                    *mCoffEntryRel;
 // Current offset in coff file.
 //
 UINT32 mCoffOffset;
+UINT32 mCoffOffsetMax;
 
 //
 // Offset in Coff file of headers and sections.

@@ -36,7 +36,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/JiefLand/5.Devel/Clover/Clover-projects/Clover--CloverHackyColor--master.2/Build/Clover/RELEASE_GCC53/X64/rEFIt_UEFI/refit/DEBUG"
+      customWorkingDirectory = "/JiefLand/5.Devel/Clover/Clover-projects/Clover--CloverHackyColor--master.2/RELEASE_GCC53"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"

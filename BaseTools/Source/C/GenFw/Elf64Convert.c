@@ -540,6 +540,7 @@ ScanSections64 (
   // First text sections.
   //
   mCoffOffset = CoffAlign(mCoffOffset);
+  mCoffOffsetMax = MAX(mCoffOffsetMax, mCoffOffset);
   mTextOffset = mCoffOffset;
   FoundSection = FALSE;
   SectionCount = 0;
@@ -554,7 +555,7 @@ ScanSections64 (
           // if the section address is aligned we must align PE/COFF
           UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
+printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llu\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
 mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
@@ -577,6 +578,7 @@ mCoffOffset=mCoffOffsetNew;
 
       mCoffSectionsOffset[i] = mCoffOffset;
       mCoffOffset += (UINT32) shdr->sh_size;
+      mCoffOffsetMax = MAX(mCoffOffsetMax, mCoffOffset);
       SectionCount ++;
     }
   }
@@ -610,7 +612,7 @@ mCoffOffset=mCoffOffsetNew;
           // if the section address is aligned we must align PE/COFF
           UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x)\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset);
+          printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llu\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
 mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");
@@ -626,6 +628,7 @@ mCoffOffset=mCoffOffsetNew;
       }
       mCoffSectionsOffset[i] = mCoffOffset;
       mCoffOffset += (UINT32) shdr->sh_size;
+      mCoffOffsetMax = MAX(mCoffOffsetMax, mCoffOffset);
       SectionCount ++;
     }
   }
@@ -673,6 +676,7 @@ mCoffOffset=mCoffOffsetNew;
         mCoffSectionsOffset[i] = mCoffOffset;
         mCoffOffset += (UINT32) shdr->sh_size;
         mCoffOffset = CoffAlign(mCoffOffset);
+        mCoffOffsetMax = MAX(mCoffOffsetMax, mCoffOffset);
         SetHiiResourceHeader ((UINT8*) mEhdr + shdr->sh_offset, mHiiRsrcOffset);
       }
       break;
@@ -685,7 +689,7 @@ mCoffOffset=mCoffOffsetNew;
   // Allocate base Coff file.  Will be expanded later for relocations.
   //
   NormalMsg("Allocate %d bytes for mCoffFile", mCoffOffset);
-  mCoffFile = (UINT8 *)malloc(mCoffOffset);
+  mCoffFile = (UINT8 *)malloc(mCoffOffsetMax);
   if (mCoffFile == NULL) {
     Error (NULL, 0, 4001, "Resource", "memory cannot be allocated!");
   }

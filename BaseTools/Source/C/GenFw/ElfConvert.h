@@ -18,6 +18,7 @@ SPDX-License-Identifier: BSD-2-Clause-Patent
 // Externally defined variables
 //
 extern UINT32 mCoffOffset;
+extern UINT32 mCoffOffsetMax;
 extern CHAR8  *mInImageName;
 extern UINT32 mImageTimeStamp;
 extern UINT8  *mCoffFile;
