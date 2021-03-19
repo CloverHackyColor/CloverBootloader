@@ -22,8 +22,44 @@
 
 int test1()
 {
+  char *source = NULL;
+  size_t newLen = 0;
+  FILE *fp = fopen("config-test1.plist", "r");
+  if (fp == NULL) {
+    fputs("Error fopen config plist", stderr);
+    exit(-1);
+  }
+  /* Go to the end of the file. */
+  if (fseek(fp, 0L, SEEK_END) == 0) {
+    /* Get the size of the file. */
+    long bufsize = ftell(fp);
+    if (bufsize == -1) {
+      fputs("Error ftell config plist", stderr);
+      exit(-1);
+    }
+
+    /* Allocate our buffer to that size. */
+    source = (char*)malloc(sizeof(char) * (bufsize + 1));
+
+    /* Go back to the start of the file. */
+    if (fseek(fp, 0L, SEEK_SET) != 0) {
+      fputs("Error fseek config plist", stderr);
+      exit(-1);
+    }
+
+    /* Read the entire file into memory. */
+    newLen = fread(source, sizeof(char), bufsize, fp);
+    if ( ferror( fp ) != 0 ) {
+        fputs("Error reading config plist", stderr);
+        exit(-1);
+    } else {
+        source[newLen++] = '\0'; /* Just to be safe. */
+    }
+  }
+  fclose(fp);
+
   TagDict* dict = NULL;
-  EFI_STATUS Status = ParseXML(configSample1, &dict, (UINT32)strlen(configSample1));
+  EFI_STATUS Status = ParseXML(source, &dict, (UINT32)newLen);
   printf("ParseXML returns %s\n", efiStrError(Status));
   if ( EFI_ERROR(Status) ) {
     return Status;
@@ -42,19 +78,23 @@ int test1()
   ConfigPlist configPlist;
   
   XmlLiteParser xmlLiteParser;
-  xmlLiteParser.init(configSample1, strlen(configSample1));
+  xmlLiteParser.init(source, newLen);
 
+  printf("\n");
+  printf("=== [ Parse ] ====================\n");
   b = configPlist.parse(&xmlLiteParser, LString8(""));
-//  for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
-//    const XmlParserMessage& xmlMsg = xmlLiteParser.getErrorsAndWarnings()[idx];
-//    printf("%s: %s\n", xmlMsg.isError ? "Error" : "Warning", xmlMsg.msg.c_str());
-//  }
+  for ( size_t idx = 0 ; idx < xmlLiteParser.getErrorsAndWarnings().size() ; idx++ ) {
+    const XmlParserMessage& xmlMsg = xmlLiteParser.getErrorsAndWarnings()[idx];
+    printf("%s: %s\n", xmlMsg.isError ? "Error" : "Warning", xmlMsg.msg.c_str());
+  }
   if ( b ) {
     if ( xmlLiteParser.getErrorsAndWarnings().size() == 0 ) {
       printf("Your plist looks so wonderful. Well done!\n");
     }
   }
 
+  printf("\n");
+  printf("=== [ CompareEarlyUserSettingsWithConfigPlist ] ====================\n");
   return CompareEarlyUserSettingsWithConfigPlist(settings, configPlist) ? 0 : -1;
 }
 

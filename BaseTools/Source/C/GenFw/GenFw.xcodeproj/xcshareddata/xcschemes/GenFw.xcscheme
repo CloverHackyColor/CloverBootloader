@@ -58,14 +58,18 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-e UEFI_APPLICATION"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o CloverX64.efi"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "CloverX64.dll"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-e DXE_DRIVER -o /JiefLand/5.Devel/Clover/Clover-projects/Clover--CloverHackyColor--master.3/Build/Clover/DEBUG_GCC53/X64/MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe/OUTPUT/HiiDatabase.efi /JiefLand/5.Devel/Clover/Clover-projects/Clover--CloverHackyColor--master.3/Build/Clover/DEBUG_GCC53/X64/MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe/DEBUG/HiiDatabase.dll"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

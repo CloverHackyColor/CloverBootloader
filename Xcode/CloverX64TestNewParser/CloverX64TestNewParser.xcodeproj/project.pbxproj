@@ -356,6 +356,7 @@
 		9A36E52524F3BB6B007A1107 /* FloatLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatLib.h; sourceTree = "<group>"; };
 		9A36E53A24F3EDED007A1107 /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		9A36E53B24F3EDED007A1107 /* base64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = "<group>"; };
+		9A4147662604F82900440186 /* undefinable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undefinable.h; sourceTree = "<group>"; };
 		9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XStringArray.cpp; sourceTree = "<group>"; };
 		9A4185BF2439F73A00BEAFB8 /* XStringArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringArray.h; sourceTree = "<group>"; };
 		9A4C5762255AAC0A004F0B21 /* XToolsConf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsConf.h; sourceTree = "<group>"; };
@@ -5433,6 +5434,7 @@
 		9A358B3625CF117A00A3850D /* cpp_lib */ = {
 			isa = PBXGroup;
 			children = (
+				9A4147662604F82900440186 /* undefinable.h */,
 				9A358B3725CF117A00A3850D /* XmlLiteParser.h */,
 				9A358B3825CF117A00A3850D /* xmlLiteSimpleTypes.h */,
 				9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */,

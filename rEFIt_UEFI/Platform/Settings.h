@@ -9,6 +9,7 @@
 #include "MacOsVersion.h"
 #include "KERNEL_AND_KEXT_PATCHES.h"
 #include "../libeg/XIcon.h"
+#include "../cpp_lib/undefinable.h"
 
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
@@ -344,10 +345,10 @@ public:
           BOOLEAN                 NoDynamicExtract = 0;
           BOOLEAN                 EnableISS = 0;
           BOOLEAN                 EnableC7 = 0;
-          BOOLEAN                 EnableC6 = 0;
-          BOOLEAN                 EnableC4 = 0;
-          BOOLEAN                 EnableC2 = 0;
-          UINT16                  C3Latency = 0;
+          BOOLEAN                 _EnableC6 = 0;
+          BOOLEAN                 _EnableC4 = 0;
+          BOOLEAN                 _EnableC2 = 0;
+          UINT16                  _C3Latency = 0;
           UINT8                   PLimitDict = 0;
           UINT8                   UnderVoltStep = 0;
           BOOLEAN                 DoubleFirstState = 0;
@@ -386,6 +387,43 @@ public:
       bool                    NoLegacy = false;
   } GUI = GUIClass();
 
+  class CPUClass {
+    public:
+      UINT16                  QPI = 0;
+      UINT32                  CpuFreqMHz = 0;
+      UINT16                  CpuType = 0;
+      BOOLEAN                 QEMU = 0;
+      BOOLEAN                 UseARTFreq = 0;
+      UINT32                  BusSpeed = 0; //in kHz
+      BOOLEAN                 UserChange = 0;
+      UINT8                   SavingMode = 0;
+      bool                    HWPEnable = false;
+      undefinable_uint32      HWPValue = undefinable_uint32();
+      UINT8                   TDP = 0;
+      BOOLEAN                 Turbo = 0;
+      undefinable_bool        _EnableC6 = undefinable_bool();
+      undefinable_bool        _EnableC4 = undefinable_bool();
+      undefinable_bool        _EnableC2 = undefinable_bool();
+      undefinable_uint16      _C3Latency = undefinable_uint16();
+  } CPU = CPUClass();
+
+  bool getEnableC6() const {
+    if ( CPU._EnableC6.isDefined() ) return CPU._EnableC6;
+    return ACPI.SSDT._EnableC6;
+  }
+  bool getEnableC4() const {
+    if ( CPU._EnableC4.isDefined() ) return CPU._EnableC4;
+    return ACPI.SSDT._EnableC4;
+  }
+  bool getEnableC2() const {
+    if ( CPU._EnableC2.isDefined() ) return CPU._EnableC2;
+    return ACPI.SSDT._EnableC2;
+  }
+  bool getC3Latency() const {
+    if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency;
+    return ACPI.SSDT._C3Latency;
+  }
+  
   // SMBIOS TYPE0
   XString8                VendorName;
   XString8                RomVersion;
@@ -418,12 +456,7 @@ public:
   XString8                   ChassisManufacturer;
   XString8                   ChassisAssetTag;
   // SMBIOS TYPE4
-  UINT32                  CpuFreqMHz;
-  UINT32                  BusSpeed; //in kHz
-  BOOLEAN                 Turbo;
   UINT8                   EnabledCores;
-  BOOLEAN                 UserChange;
-  BOOLEAN                 QEMU;
   // SMBIOS TYPE17
   UINT16                  SmbiosVersion;
   INT8                    Attribute;
@@ -433,12 +466,9 @@ public:
   XString8                   MemoryPartNumber;
   XString8                   MemorySpeed;
   // SMBIOS TYPE131
-  UINT16                  CpuType;
   // SMBIOS TYPE132
-  UINT16                  QPI;
-  BOOLEAN                 TrustSMBIOS;
+  BOOLEAN                 TrustSMBIOS = 0;
   BOOLEAN                 InjectMemoryTables;
-  BOOLEAN                 UseARTFreq;
   INT8                    pad18[3];
 
   // SMBIOS TYPE133
@@ -478,7 +508,6 @@ public:
 
   //ACPI
   UINT8                   pad23[1];
-  UINT8                   SavingMode;
 
 //  BOOLEAN                 DropMCFG;
 
@@ -555,9 +584,6 @@ public:
 
 
   //SkyLake
-  BOOLEAN                 HWP;
-  UINT8                   TDP;
-  UINT32                  HWPValue;
 
   //Volumes hiding
   XString8Array           HVHideStrings;
@@ -686,19 +712,19 @@ public:
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
                     pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
-                    BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(), CpuFreqMHz(0),
-                    BusSpeed(0), Turbo(0), EnabledCores(0), UserChange(0), QEMU(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
-                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), TrustSMBIOS(0), InjectMemoryTables(0),
-                    UseARTFreq(0), PlatformFeature(0), NoRomInfo(0), Language(), CustomUuid(),
+                    BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(),
+                    EnabledCores(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
+                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), InjectMemoryTables(0),
+                    PlatformFeature(0), NoRomInfo(0), Language(), CustomUuid(),
                     IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
-                    WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), SavingMode(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0),
+                    WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0),
                     FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
                     InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
                     LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
                     NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), NvidiaWeb(0), pad41{0}, DualLink(0),
                     IgPlatform(0), HDAInjection(0),
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
-                    HWP(0), TDP(0), HWPValue(0), HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
+                    HVHideStrings(), KernelAndKextPatches(), KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(), KbdPrevLang(0), PointerEnabled(0), PointerSpeed(0), DoubleClickTime(0), PointerMirror(0),
                     RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(),
                     ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0},                     ForceHPET(0), ResetHDA(0), PlayAsync(0), DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
@@ -936,6 +962,12 @@ public:
   UINT8                   SecureBootSetupMode = 0;
 
   BOOLEAN                 SetTable132 = 0;
+  BOOLEAN                 HWP = 0;
+
+  bool                EnableC6 = 0;
+  bool                EnableC4 = 0;
+  bool                EnableC2 = 0;
+  uint16_t              C3Latency = 0;
 
   /*
    * Defqult ctor :

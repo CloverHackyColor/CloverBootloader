@@ -164,15 +164,15 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //9
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.Generate.GenerateCStates;
   InputItems[InputItemsCount].ItemType = BoolValue; //10
-  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC2;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.EnableC2;
   InputItems[InputItemsCount].ItemType = BoolValue; //11
-  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC4;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.EnableC4;
   InputItems[InputItemsCount].ItemType = BoolValue; //12
-  InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableC6;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.EnableC6;
   InputItems[InputItemsCount].ItemType = BoolValue; //13
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.EnableISS;
   InputItems[InputItemsCount].ItemType = Decimal;  //14
-  InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.QPI);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.CPU.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.PatchNMI;
   InputItems[InputItemsCount].ItemType = BoolValue; //16
@@ -182,8 +182,8 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Hex;  //18
 	InputItems[InputItemsCount++].SValue.SWPrintf("0x%hX", gSettings.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
-  if (gSettings.BusSpeed > 20000) {
-    InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.BusSpeed);
+  if (gSettings.CPU.BusSpeed > 20000) {
+    InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.CPU.BusSpeed);
   } else {
 	  InputItems[InputItemsCount++].SValue.SWPrintf("%06llu", gCPUStructure.ExternalClock);
   }
@@ -330,11 +330,11 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.USBFixOwnership;
 
   InputItems[InputItemsCount].ItemType = Hex;  //75
-	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.ACPI.SSDT.C3Latency);
+	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", GlobalConfig.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
   InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.EnabledCores);
   InputItems[InputItemsCount].ItemType = Decimal;  //77
-  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.SavingMode);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.CPU.SavingMode);
 
   InputItems[InputItemsCount].ItemType = ASString;  //78
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ProductName.c_str());
@@ -529,15 +529,15 @@ void ApplyInputs(void)
   }
   i++; //10
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.EnableC2 = InputItems[i].BValue;
+    GlobalConfig.EnableC2 = InputItems[i].BValue;
   }
   i++; //11
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.EnableC4 = InputItems[i].BValue;
+    GlobalConfig.EnableC4 = InputItems[i].BValue;
   }
   i++; //12
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.EnableC6 = InputItems[i].BValue;
+    GlobalConfig.EnableC6 = InputItems[i].BValue;
   }
   i++; //13
   if (InputItems[i].Valid) {
@@ -545,8 +545,8 @@ void ApplyInputs(void)
   }
   i++; //14
   if (InputItems[i].Valid) {
-    gSettings.QPI = (UINT16)StrDecimalToUintn(InputItems[i].SValue.wc_str());
-    DBG("applied QPI=%d\n", gSettings.QPI);
+    gSettings.CPU.QPI = (UINT16)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    DBG("applied QPI=%d\n", gSettings.CPU.QPI);
   }
   i++; //15
   if (InputItems[i].Valid) {
@@ -568,8 +568,8 @@ void ApplyInputs(void)
   }
   i++; //19
   if (InputItems[i].Valid) {
-    gSettings.BusSpeed = (UINT32)StrDecimalToUintn(InputItems[i].SValue.wc_str());
-    DBG("applied BusSpeed=%d\n", gSettings.BusSpeed);
+    gSettings.CPU.BusSpeed = (UINT32)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    DBG("applied BusSpeed=%d\n", gSettings.CPU.BusSpeed);
   }
 
   i = 19;
@@ -785,7 +785,7 @@ void ApplyInputs(void)
   }
   i++; //75
   if (InputItems[i].Valid) {
-    gSettings.ACPI.SSDT.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
+    GlobalConfig.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
   }
 
   i++; //76
@@ -794,7 +794,7 @@ void ApplyInputs(void)
   }
   i++; //77
   if (InputItems[i].Valid) {
-    gSettings.SavingMode = (UINT8)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    gSettings.CPU.SavingMode = (UINT8)StrDecimalToUintn(InputItems[i].SValue.wc_str());
   }
 
   i++; //78

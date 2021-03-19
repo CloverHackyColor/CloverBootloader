@@ -1446,7 +1446,7 @@ void GetDefaultCpuSettings()
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
   Model             = GetDefaultModel();
-  gSettings.CpuType  = GetAdvancedCpuType();
+  gSettings.CPU.CpuType  = GetAdvancedCpuType();
   SetDMISettingsForModel(Model, TRUE);
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
@@ -1458,7 +1458,7 @@ void GetDefaultCpuSettings()
     gSettings.ACPI.SSDT.Generate.GeneratePluginType = gSettings.ACPI.SSDT.Generate.GeneratePStates;
     //  gSettings.ACPI.SSDT.EnableISS          = FALSE;
     //  gSettings.ACPI.SSDT.EnableC2           = TRUE;
-    gSettings.ACPI.SSDT.EnableC6           = TRUE;
+    gSettings.ACPI.SSDT._EnableC6           = TRUE;
     gSettings.ACPI.SSDT.PluginType         = 1;
     
     if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
@@ -1466,12 +1466,12 @@ void GetDefaultCpuSettings()
     }
     //  gSettings.ACPI.SSDT.DoubleFirstState   = FALSE;
     //gSettings.ACPI.SSDT.DropSSDT           = TRUE;    //why drop all???
-    gSettings.ACPI.SSDT.C3Latency          = 0x00FA;
+    gSettings.ACPI.SSDT._C3Latency          = 0x00FA;
   }
-  gSettings.Turbo                = gCPUStructure.Turbo;
-  gSettings.SavingMode           = 0xFF;  //means not set
+  gSettings.CPU.Turbo                = gCPUStructure.Turbo;
+  gSettings.CPU.SavingMode           = 0xFF;  //means not set
   
   if (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_D) {
-    gSettings.UseARTFreq = true;
+    gSettings.CPU.UseARTFreq = true;
   }
 }

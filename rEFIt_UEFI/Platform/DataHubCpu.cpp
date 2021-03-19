@@ -469,7 +469,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
     FrontSideBus = 100 * Mega;
   }
 
-  if (gSettings.QEMU) {
+  if (gSettings.CPU.QEMU) {
     FrontSideBus = gCPUStructure.TSCFrequency;
     switch (gCPUStructure.Model) {
       case CPU_MODEL_DOTHAN:
@@ -485,10 +485,10 @@ SetupDataForOSX(BOOLEAN Hibernate)
   }
 
   // Save values into gSettings for the genconfig aim
-  gSettings.BusSpeed   = (UINT32)DivU64x32(FrontSideBus, Kilo);
+  gSettings.CPU.BusSpeed   = (UINT32)DivU64x32(FrontSideBus, Kilo);
 
   CpuSpeed = gCPUStructure.CPUFrequency;
-  gSettings.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);
+  gSettings.CPU.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);
 
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (void**)&gDataHub);
@@ -501,7 +501,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
     LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency",     &FrontSideBus,        sizeof(UINT64));
 
-    if (gCPUStructure.ARTFrequency && gSettings.UseARTFreq) {
+    if (gCPUStructure.ARTFrequency && gSettings.CPU.UseARTFreq) {
       ARTFrequency = gCPUStructure.ARTFrequency;
       LogDataHub(&gEfiProcessorSubClassGuid, L"ARTFrequency",   &ARTFrequency,        sizeof(UINT64));
     }

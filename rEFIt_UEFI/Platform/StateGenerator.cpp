@@ -166,7 +166,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 						
             maximum.Control.Control = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
 			  DBG("Maximum control=0x%hX\n", maximum.Control.Control);
-            if (gSettings.Turbo) {
+            if (gSettings.CPU.Turbo) {
               maximum.Control.VID_FID.FID++;
               MsgLog("Turbo FID=0x%hhX\n", maximum.Control.VID_FID.FID);
             }
@@ -284,7 +284,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
             realMax = maximum.Control.Control;
             DBG("Maximum control=0x%hX\n", realMax);
-            if (gSettings.Turbo) {
+            if (gSettings.CPU.Turbo) {
               realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
               (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               maximum.Control.Control = realTurbo;
@@ -393,12 +393,12 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
       scop = aml_add_scope(root, name);
       
-      if (gSettings.ACPI.SSDT.Generate.GeneratePStates && !gSettings.HWP) {
+      if (gSettings.ACPI.SSDT.Generate.GeneratePStates && !GlobalConfig.HWP) {
         method = aml_add_name(scop, "PSS_");
         pack = aml_add_package(method);
 
-        if ((gSettings.TDP != 0) && (p_states[0].Frequency != 0)) {
-          TDPdiv = (gSettings.TDP * 1000) / p_states[0].Frequency;
+        if ((gSettings.CPU.TDP != 0) && (p_states[0].Frequency != 0)) {
+          TDPdiv = (gSettings.CPU.TDP * 1000) / p_states[0].Frequency;
         } else {
           TDPdiv = 8;
         }
@@ -481,7 +481,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
       aml_destroy_node(root);
 
-      if (gSettings.ACPI.SSDT.Generate.GeneratePStates && !gSettings.HWP) {
+      if (gSettings.ACPI.SSDT.Generate.GeneratePStates && !GlobalConfig.HWP) {
         if (gSettings.ACPI.SSDT.PluginType && gSettings.ACPI.SSDT.Generate.GeneratePluginType) {
           MsgLog ("SSDT with CPU P-States and plugin-type generated successfully\n");
         } else {
@@ -502,10 +502,10 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
 SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, UINTN Number)
 {
-  BOOLEAN c2_enabled = gSettings.ACPI.SSDT.EnableC2;
+  BOOLEAN c2_enabled = GlobalConfig.EnableC2;
   BOOLEAN c3_enabled;
-  BOOLEAN c4_enabled = gSettings.ACPI.SSDT.EnableC4;
-//  BOOLEAN c6_enabled = gSettings.ACPI.SSDT.EnableC6;
+  BOOLEAN c4_enabled = GlobalConfig.EnableC4;
+//  BOOLEAN c6_enabled = GlobalConfig.EnableC6;
   BOOLEAN cst_using_systemio = gSettings.ACPI.SSDT.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
   UINT8   cstates_count;
@@ -531,7 +531,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   c2_enabled = c2_enabled || (fadt->PLvl2Lat < 100);
   c3_enabled = (fadt->PLvl3Lat < 1000);
   cstates_count = 1 + (c2_enabled ? 1 : 0) + ((c3_enabled || c4_enabled)? 1 : 0)
-                  + (gSettings.ACPI.SSDT.EnableC6 ? 1 : 0) + (gSettings.ACPI.SSDT.EnableC7 ? 1 : 0);
+                  + (GlobalConfig.EnableC6 ? 1 : 0) + (gSettings.ACPI.SSDT.EnableC7 ? 1 : 0);
   
   root = aml_create_node(NULL);
   aml_add_buffer(root, cst_ssdt_header, sizeof(cst_ssdt_header)); // SSDT header
@@ -586,10 +586,10 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_systemio[12] = p_blk_hi; // C3
       aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
       aml_add_byte(tmpl, 0x03);			// C3
-      aml_add_word(tmpl, gSettings.ACPI.SSDT.C3Latency);			// Latency
+      aml_add_word(tmpl, GlobalConfig.C3Latency);			// Latency
       aml_add_dword(tmpl, 0x000001F4);	// Power
     }
-    if (gSettings.ACPI.SSDT.EnableC6) {       // C6
+    if (GlobalConfig.EnableC6) {       // C6
       p_blk_lo = (UINT8)(acpi_cpu_p_blk + 5);
       p_blk_hi = (UINT8)((acpi_cpu_p_blk + 5) >> 8);
       
@@ -598,7 +598,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_systemio[12] = p_blk_hi; // C6
       aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
       aml_add_byte(tmpl, 0x06);			// C6
-      aml_add_word(tmpl, gSettings.ACPI.SSDT.C3Latency + 3);			// Latency
+      aml_add_word(tmpl, GlobalConfig.C3Latency + 3);			// Latency
       aml_add_dword(tmpl, 0x0000015E);	// Power
     }
     if (gSettings.ACPI.SSDT.EnableC7) {       //C7
@@ -652,15 +652,15 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
       resource_template_register_fixedhw[11] = 0x20; // C3
       aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
       aml_add_byte(tmpl, 0x03);			// C3
-      aml_add_word(tmpl, gSettings.ACPI.SSDT.C3Latency);			// Latency as in MacPro6,1 = 0x0043
+      aml_add_word(tmpl, GlobalConfig.C3Latency);			// Latency as in MacPro6,1 = 0x0043
       aml_add_dword(tmpl, 0x000001F4);	// Power
     }
-    if (gSettings.ACPI.SSDT.EnableC6) {     // C6
+    if (GlobalConfig.EnableC6) {     // C6
       tmpl = aml_add_package(pack);
       resource_template_register_fixedhw[11] = 0x20; // C6
       aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
       aml_add_byte(tmpl, 0x06);			// C6
-      aml_add_word(tmpl, gSettings.ACPI.SSDT.C3Latency + 3);			// Latency as in MacPro6,1 = 0x0046
+      aml_add_word(tmpl, GlobalConfig.C3Latency + 3);			// Latency as in MacPro6,1 = 0x0046
       aml_add_dword(tmpl, 0x0000015E);	// Power
     }
     if (gSettings.ACPI.SSDT.EnableC7) {

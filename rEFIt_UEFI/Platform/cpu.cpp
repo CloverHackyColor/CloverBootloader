@@ -139,7 +139,7 @@ void GetCPUProperties (void)
   gCPUStructure.MaxRatio = 10; //keep it as K*10
   gCPUStructure.MinRatio = 10; //same
   gCPUStructure.SubDivider = 0;
-  gSettings.CpuFreqMHz = 0;
+  gSettings.CPU.CpuFreqMHz = 0;
   gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, Kilo); //kHz -> Hz
   gCPUStructure.ProcessorInterconnectSpeed = 0;
   gCPUStructure.Mobile = FALSE; //not same as gMobile
@@ -1149,7 +1149,7 @@ void GetCPUProperties (void)
 	  DBG("qpibusspeed %llukHz\n", qpibusspeed);
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, Kilo); //kHz->MHz
     // set QPI for Nehalem
-    gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed;
+    gSettings.CPU.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed;
     
   } else {
     gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), Kilo); //kHz->MHz
@@ -1181,8 +1181,8 @@ void SetCPUProperties (void)
   UINT64    msr = 0;
 
   if ((gCPUStructure.CPUID[CPUID_6][ECX] & (1 << 3)) != 0) {
-    if (gSettings.SavingMode != 0xFF) {
-      msr = gSettings.SavingMode;
+    if (gSettings.CPU.SavingMode != 0xFF) {
+      msr = gSettings.CPU.SavingMode;
       AsmWriteMsr64(IA32_ENERGY_PERF_BIAS, msr);
       msr = AsmReadMsr64(IA32_ENERGY_PERF_BIAS); //0x1B0
 		MsgLog("MSR 0x1B0   set to        %llX\n", msr);

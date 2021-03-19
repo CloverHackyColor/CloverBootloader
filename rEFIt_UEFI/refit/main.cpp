@@ -755,8 +755,8 @@ void LOADER_ENTRY::StartLoader()
       if (EFI_ERROR(Status)) {
         DBG(" - ... but: %s\n", efiStrError(Status));
       } else {
-        if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
-          gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
+        if ((gSettings.CPU.CpuFreqMHz > 100) && (gSettings.CPU.CpuFreqMHz < 20000)) {
+          gCPUStructure.MaxSpeed      = gSettings.CPU.CpuFreqMHz;
         }
         //CopyMem(KernelAndKextPatches,
         //         &gSettings.KernelAndKextPatches,
@@ -772,8 +772,8 @@ void LOADER_ENTRY::StartLoader()
           DivU64x32(gCPUStructure.ExternalClock + Kilo - 1, Kilo),
           DivU64x32(gCPUStructure.FSBFrequency + Kilo - 1, Kilo),
           gCPUStructure.MaxSpeed);
-  if (gSettings.QPI) {
-    DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.QPI, Mega));
+  if (gSettings.CPU.QPI) {
+    DBG(" QPI: hw.busfrequency=%lluHz\n", MultU64x32(gSettings.CPU.QPI, Mega));
   } else {
     // to match the value of hw.busfrequency in the terminal
     DBG(" PIS: hw.busfrequency=%lluHz\n", MultU64x32(LShiftU64(DivU64x32(gCPUStructure.ExternalClock + Kilo - 1, Kilo), 2), Mega));
@@ -2613,6 +2613,18 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   }
   DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(GlobalConfig.CustomBoot), (uintptr_t)GlobalConfig.CustomLogo);
 
+  GlobalConfig.EnableC6 = gSettings.getEnableC6();
+  GlobalConfig.EnableC4 = gSettings.getEnableC4();
+  GlobalConfig.EnableC2 = gSettings.getEnableC2();
+  GlobalConfig.C3Latency = gSettings.getEnableC6();
+
+  if (gSettings.CPU.HWPEnable && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
+    GlobalConfig.HWP = TRUE;
+    AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
+    if ( gSettings.CPU.HWPValue.isDefined() ) {
+      AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.CPU.HWPValue);
+    }
+  }
 
 }
 #pragma GCC diagnostic pop
@@ -3070,13 +3082,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   
 
-  if (gSettings.QEMU) {
+  if (gSettings.CPU.QEMU) {
 //    UINT64 Msrflex = 0ULL;
 
-    if (!gSettings.UserChange) {
-      gSettings.BusSpeed = 200000;
+    if (!gSettings.CPU.UserChange) {
+      gSettings.CPU.BusSpeed = 200000;
     }
-    gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCCalibr, gSettings.BusSpeed * Kilo);
+    gCPUStructure.MaxRatio = (UINT32)DivU64x32(gCPUStructure.TSCCalibr, gSettings.CPU.BusSpeed * Kilo);
     DBG("Set MaxRatio for QEMU: %d\n", gCPUStructure.MaxRatio);
     gCPUStructure.MaxRatio *= 10;
     gCPUStructure.MinRatio = 60;

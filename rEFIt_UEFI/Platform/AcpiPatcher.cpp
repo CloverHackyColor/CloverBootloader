@@ -1867,17 +1867,17 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     } else {
       newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
     }
-    if (gSettings.ACPI.SSDT.EnableC6 || gSettings.ACPI.SSDT.EnableISS) {
+    if (GlobalConfig.EnableC6 || gSettings.ACPI.SSDT.EnableISS) {
       newFadt->CstCnt = 0x85; //as in Mac
     }
-    if (gSettings.ACPI.SSDT.EnableC2) newFadt->PLvl2Lat = 0x65;
-    if (gSettings.ACPI.SSDT.C3Latency > 0) {
-      newFadt->PLvl3Lat = gSettings.ACPI.SSDT.C3Latency;
-    } else if (gSettings.ACPI.SSDT.EnableC4) {
+    if (GlobalConfig.EnableC2) newFadt->PLvl2Lat = 0x65;
+    if (GlobalConfig.C3Latency > 0) {
+      newFadt->PLvl3Lat = GlobalConfig.C3Latency;
+    } else if (GlobalConfig.EnableC4) {
       newFadt->PLvl3Lat = 0x3E9;
     }
-    if (gSettings.ACPI.SSDT.C3Latency == 0) {
-      gSettings.ACPI.SSDT.C3Latency = newFadt->PLvl3Lat;
+    if (GlobalConfig.C3Latency == 0) {
+      GlobalConfig.C3Latency = newFadt->PLvl3Lat;
     }
     
     newFadt->IaPcBootArch = 0x3;

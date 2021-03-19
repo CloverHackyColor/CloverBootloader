@@ -3781,25 +3781,25 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
       
       Prop = SSDTDict->propertyForKey("EnableC6");
       if (Prop) {
-        gSettings.ACPI.SSDT.EnableC6 = IsPropertyNotNullAndTrue(Prop);
-        DBG("EnableC6: %s\n", gSettings.ACPI.SSDT.EnableC6 ? "yes" : "no");
+        gSettings.ACPI.SSDT._EnableC6 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC6: %s\n", gSettings.ACPI.SSDT._EnableC6 ? "yes" : "no");
       }
       
       Prop = SSDTDict->propertyForKey("EnableC4");
       if (Prop) {
-        gSettings.ACPI.SSDT.EnableC4 = IsPropertyNotNullAndTrue(Prop);
-        DBG("EnableC4: %s\n", gSettings.ACPI.SSDT.EnableC4 ? "yes" : "no");
+        gSettings.ACPI.SSDT._EnableC4 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC4: %s\n", gSettings.ACPI.SSDT._EnableC4 ? "yes" : "no");
       }
       
       Prop = SSDTDict->propertyForKey("EnableC2");
       if (Prop) {
-        gSettings.ACPI.SSDT.EnableC2 = IsPropertyNotNullAndTrue(Prop);
-        DBG("EnableC2: %s\n", gSettings.ACPI.SSDT.EnableC2 ? "yes" : "no");
+        gSettings.ACPI.SSDT._EnableC2 = IsPropertyNotNullAndTrue(Prop);
+        DBG("EnableC2: %s\n", gSettings.ACPI.SSDT._EnableC2 ? "yes" : "no");
       }
       
       Prop = SSDTDict->propertyForKey("C3Latency");
-        gSettings.ACPI.SSDT.C3Latency = (UINT16)GetPropertyAsInteger(Prop, gSettings.ACPI.SSDT.C3Latency);
-        DBG("C3Latency: %d\n", gSettings.ACPI.SSDT.C3Latency);
+        gSettings.ACPI.SSDT._C3Latency = (UINT16)GetPropertyAsInteger(Prop, gSettings.ACPI.SSDT._C3Latency);
+        DBG("C3Latency: %d\n", gSettings.ACPI.SSDT._C3Latency);
       
       Prop                       = SSDTDict->propertyForKey("PLimitDict");
       gSettings.ACPI.SSDT.PLimitDict       = (UINT8)GetPropertyAsInteger(Prop, 0);
@@ -4821,93 +4821,98 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
     }
 
     //CPU
-    gSettings.CpuType = GetAdvancedCpuType(); //let it be default
-    gSettings.SavingMode = 0xFF; //default
+    gSettings.CPU.CpuType = GetAdvancedCpuType(); //let it be default
+    gSettings.CPU.SavingMode = 0xFF; //default
     const TagDict* CPUDict = CfgDict->dictPropertyForKey("CPU");
     if (CPUDict != NULL) {
       const TagStruct* Prop = CPUDict->propertyForKey("QPI");
       if (Prop != NULL) {
-        gSettings.QPI = (UINT16)GetPropertyAsInteger(Prop, gSettings.QPI);
-        DBG("QPI: %dMHz\n", gSettings.QPI);
+        gSettings.CPU.QPI = (UINT16)GetPropertyAsInteger(Prop, gSettings.CPU.QPI);
+        DBG("QPI: %dMHz\n", gSettings.CPU.QPI);
       }
 
       Prop = CPUDict->propertyForKey("FrequencyMHz");
       if (Prop != NULL) {
-        gSettings.CpuFreqMHz = (UINT32)GetPropertyAsInteger(Prop, gSettings.CpuFreqMHz);
-        DBG("CpuFreq: %dMHz\n", gSettings.CpuFreqMHz);
+        gSettings.CPU.CpuFreqMHz = (UINT32)GetPropertyAsInteger(Prop, gSettings.CPU.CpuFreqMHz);
+        DBG("CpuFreq: %dMHz\n", gSettings.CPU.CpuFreqMHz);
       }
 
       Prop = CPUDict->propertyForKey("Type");
       if (Prop != NULL) {
-        gSettings.CpuType = (UINT16)GetPropertyAsInteger(Prop, gSettings.CpuType);
-        DBG("CpuType: %hX\n", gSettings.CpuType);
+        gSettings.CPU.CpuType = (UINT16)GetPropertyAsInteger(Prop, gSettings.CPU.CpuType);
+        DBG("CpuType: %hX\n", gSettings.CPU.CpuType);
       }
 
       Prop = CPUDict->propertyForKey("QEMU");
-      gSettings.QEMU = IsPropertyNotNullAndTrue(Prop);
-      if (gSettings.QEMU) {
+      gSettings.CPU.QEMU = IsPropertyNotNullAndTrue(Prop);
+      if (gSettings.CPU.QEMU) {
         DBG("QEMU: true\n");
       }
 
       Prop = CPUDict->propertyForKey("UseARTFrequency");
       if (Prop != NULL) {
-        gSettings.UseARTFreq = IsPropertyNotNullAndTrue(Prop);
+        gSettings.CPU.UseARTFreq = IsPropertyNotNullAndTrue(Prop);
       }
 
-      gSettings.UserChange = FALSE;
+      gSettings.CPU.UserChange = FALSE;
       Prop = CPUDict->propertyForKey("BusSpeedkHz");
       if (Prop != NULL) {
-        gSettings.BusSpeed = (UINT32)GetPropertyAsInteger(Prop, gSettings.BusSpeed);
-        DBG("BusSpeed: %dkHz\n", gSettings.BusSpeed);
-        gSettings.UserChange = TRUE;
+        gSettings.CPU.BusSpeed = (UINT32)GetPropertyAsInteger(Prop, gSettings.CPU.BusSpeed);
+        DBG("BusSpeed: %dkHz\n", gSettings.CPU.BusSpeed);
+        gSettings.CPU.UserChange = TRUE;
       }
 
       Prop = CPUDict->propertyForKey("C6");
       if (Prop != NULL) {
-        gSettings.ACPI.SSDT.EnableC6 = IsPropertyNotNullAndTrue(Prop);
+//        gSettings.ACPI.SSDT.EnableC6 = IsPropertyNotNullAndTrue(Prop);
+        gSettings.CPU._EnableC6 = IsPropertyNotNullAndTrue(Prop);
       }
 
       Prop = CPUDict->propertyForKey("C4");
       if (Prop != NULL) {
-        gSettings.ACPI.SSDT.EnableC4 = IsPropertyNotNullAndTrue(Prop);
+//        gSettings.ACPI.SSDT.EnableC4 = IsPropertyNotNullAndTrue(Prop);
+        gSettings.CPU._EnableC4 = IsPropertyNotNullAndTrue(Prop);
       }
 
       Prop = CPUDict->propertyForKey("C2");
       if (Prop != NULL) {
-        gSettings.ACPI.SSDT.EnableC2 = IsPropertyNotNullAndTrue(Prop);
+//        gSettings.ACPI.SSDT.EnableC2 = IsPropertyNotNullAndTrue(Prop);
+        gSettings.CPU._EnableC2 = IsPropertyNotNullAndTrue(Prop);
       }
 
       //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
       Prop                 = CPUDict->propertyForKey("Latency");
-      gSettings.ACPI.SSDT.C3Latency  = (UINT16)GetPropertyAsInteger(Prop, gSettings.ACPI.SSDT.C3Latency);
+//      gSettings.ACPI.SSDT.C3Latency  = (UINT16)GetPropertyAsInteger(Prop, gSettings.ACPI.SSDT.C3Latency);
+      if ( Prop != NULL ) gSettings.CPU._C3Latency  = (UINT16)GetPropertyAsInteger(Prop, 0);
 
       Prop                 = CPUDict->propertyForKey("SavingMode");
-      gSettings.SavingMode = (UINT8)GetPropertyAsInteger(Prop, 0xFF); //the default value means not set
+      gSettings.CPU.SavingMode = (UINT8)GetPropertyAsInteger(Prop, 0xFF); //the default value means not set
 
       Prop                 = CPUDict->propertyForKey("HWPEnable");
-      if (Prop && IsPropertyNotNullAndTrue(Prop) && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
-        gSettings.HWP = TRUE;
-#ifdef CLOVER_BUILD
-        AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
-#endif
-      }
+      gSettings.CPU.HWPEnable = IsPropertyNotNullAndTrue(Prop);
+//      if (gSettings.CPU.HWPEnable && (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U)) {
+//        GlobalConfig.HWP = TRUE;
+//#ifdef CLOVER_BUILD
+//        AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
+//#endif
+//      }
       Prop                 = CPUDict->propertyForKey("HWPValue");
-      if (Prop && gSettings.HWP) {
-        gSettings.HWPValue = (UINT32)GetPropertyAsInteger(Prop, 0);
-#ifdef CLOVER_BUILD
-        AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.HWPValue);
-#endif
-      }
+      if ( Prop ) gSettings.CPU.HWPValue = (UINT32)GetPropertyAsInteger(Prop, 0);
+//      if (Prop && GlobalConfig.HWP) {
+//#ifdef CLOVER_BUILD
+//        AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.CPU.HWPValue);
+//#endif
+//      }
 
       Prop                 = CPUDict->propertyForKey("TDP");
-      gSettings.TDP  = (UINT8)GetPropertyAsInteger(Prop, 0);
+      gSettings.CPU.TDP  = (UINT8)GetPropertyAsInteger(Prop, 0);
 
       Prop                 = CPUDict->propertyForKey("TurboDisable");
       if (Prop && IsPropertyNotNullAndTrue(Prop)) {
 #ifdef CLOVER_BUILD
         UINT64 msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
 #endif
-        gSettings.Turbo = 0;
+        gSettings.CPU.Turbo = 0;
 #ifdef CLOVER_BUILD
         msr &= ~(1ULL<<38);
         AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
@@ -6910,7 +6915,7 @@ SetDevices (LOADER_ENTRY *Entry)
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
             MsgLog ("Initial PmCon value=%hX\n", PmCon);
 
-            if (gSettings.ACPI.SSDT.EnableC6) {
+            if (GlobalConfig.EnableC6) {
               PmCon |= 1 << 11;
               DBG("C6 enabled\n");
             } else {
@@ -6918,7 +6923,7 @@ SetDevices (LOADER_ENTRY *Entry)
               DBG("C6 disabled\n");
             }
             /*
-             if (gSettings.ACPI.SSDT.EnableC2) {
+             if (GlobalConfig.EnableC2) {
              PmCon |= 1 << 10;
              DBG("BIOS_PCIE enabled\n");
              } else {
@@ -6926,7 +6931,7 @@ SetDevices (LOADER_ENTRY *Entry)
              DBG("BIOS_PCIE disabled\n");
              }
              */
-            if (gSettings.ACPI.SSDT.EnableC4) {
+            if (GlobalConfig.EnableC4) {
               PmCon |= 1 << 7;
               DBG("C4 enabled\n");
             } else {
@@ -7080,7 +7085,7 @@ SaveSettings ()
   // here we can apply user settings instead of default one
   gMobile                       = gSettings.Mobile;
 
-  if ((gSettings.BusSpeed != 0) && (gSettings.BusSpeed > 10 * Kilo) && (gSettings.BusSpeed < 500 * Kilo)) {
+  if ((gSettings.CPU.BusSpeed != 0) && (gSettings.CPU.BusSpeed > 10 * Kilo) && (gSettings.CPU.BusSpeed < 500 * Kilo)) {
     switch (gCPUStructure.Model) {
       case CPU_MODEL_PENTIUM_M:
       case CPU_MODEL_ATOM://  Atom
@@ -7097,7 +7102,7 @@ SaveSettings ()
       case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
       case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
       case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-        gCPUStructure.ExternalClock = gSettings.BusSpeed;
+        gCPUStructure.ExternalClock = gSettings.CPU.BusSpeed;
         //DBG("Read ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
         break;
       default:
@@ -7105,21 +7110,21 @@ SaveSettings ()
 
         // for sandy bridge or newer
         // to match ExternalClock 25 MHz like real mac, divide BusSpeed by 4
-        gCPUStructure.ExternalClock = (gSettings.BusSpeed + 3) / 4;
+        gCPUStructure.ExternalClock = (gSettings.CPU.BusSpeed + 3) / 4;
         //DBG("Corrected ExternalClock: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, Kilo)));
         break;
     }
 
-    gCPUStructure.FSBFrequency  = MultU64x64 (gSettings.BusSpeed, Kilo); //kHz -> Hz
-    gCPUStructure.MaxSpeed      = (UINT32)(DivU64x32 ((UINT64)gSettings.BusSpeed * gCPUStructure.MaxRatio, 10000)); //kHz->MHz
+    gCPUStructure.FSBFrequency  = MultU64x64 (gSettings.CPU.BusSpeed, Kilo); //kHz -> Hz
+    gCPUStructure.MaxSpeed      = (UINT32)(DivU64x32 ((UINT64)gSettings.CPU.BusSpeed * gCPUStructure.MaxRatio, 10000)); //kHz->MHz
   }
 
-  if ((gSettings.CpuFreqMHz > 100) && (gSettings.CpuFreqMHz < 20000)) {
-    gCPUStructure.MaxSpeed      = gSettings.CpuFreqMHz;
+  if ((gSettings.CPU.CpuFreqMHz > 100) && (gSettings.CPU.CpuFreqMHz < 20000)) {
+    gCPUStructure.MaxSpeed      = gSettings.CPU.CpuFreqMHz;
   }
 
   // to determine the use of Table 132
-  if (gSettings.QPI) {
+  if (gSettings.CPU.QPI) {
     GlobalConfig.SetTable132 = TRUE;
     //DBG("QPI: use Table 132\n");
   }
