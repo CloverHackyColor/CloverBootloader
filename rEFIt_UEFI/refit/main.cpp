@@ -125,6 +125,7 @@ EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL* SimpleTextEx;
 EFI_KEY_DATA KeyData;
 
 EFI_HANDLE AudioDriverHandle;
+XStringW OpenRuntimeEfiName;
 
 extern void HelpRefit(void);
 extern void AboutRefit(void);
@@ -852,15 +853,7 @@ void LOADER_ENTRY::StartLoader()
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* FileSystem = LocateFileSystem(OcLoadedImage->DeviceHandle, OcLoadedImage->FilePath);
-    
-    const XStringW& XFP = self.getCloverDirFullPath();
-    CONST CHAR16 *FPath = NULL;
-    if (XFP.isEmpty()) {
-      DBG("full path is empty\n");
-    } else {
-      FPath = XFP.wc_str();
-    }
-    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, FPath, NULL);
+    Status = OcStorageInitFromFs(&mOpenCoreStorage, FileSystem, self.getCloverDirFullPath().wc_str(), NULL);
 
   /*
    * Define READ_FROM_OC to have mOpenCoreConfiguration initialized from config-oc.plist
@@ -880,7 +873,7 @@ void LOADER_ENTRY::StartLoader()
   #if !defined(USE_OC_SECTION_Acpi) && !defined(USE_OC_SECTION_Booter) && !defined(USE_OC_SECTION_DeviceProperties) && !defined(USE_OC_SECTION_Kernel) && !defined(USE_OC_SECTION_Misc) && \
       !defined(USE_OC_SECTION_Nvram) && !defined(USE_OC_SECTION_PlatformInfo) && !defined(USE_OC_SECTION_Uefi)
 
-    ZeroMem(&mOpenCoreConfiguration, sizeof(mOpenCoreConfiguration));
+    memset(&mOpenCoreConfiguration, 0, sizeof(mOpenCoreConfiguration));
     DBG("config-oc.plist isn't use at all\n");
 
   #else
@@ -1157,12 +1150,19 @@ void LOADER_ENTRY::StartLoader()
   //    );
 
 
-    XStringW FileName = SWPrintf("%ls\\%ls\\%s", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), "OpenRuntime.efi");
-    EFI_HANDLE DriverHandle;
-    Status = gBS->LoadImage(false, gImageHandle, FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NULL, 0, &DriverHandle);
-    DBG("Load OpenRuntime.efi : Status %s\n", efiStrError(Status));
-    Status = gBS->StartImage(DriverHandle, 0, 0);
-    DBG("Start OpenRuntime.efi : Status %s\n", efiStrError(Status));
+    if ( OpenRuntimeEfiName.notEmpty() ) {
+      XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), getDriversPath().wc_str(), OpenRuntimeEfiName.wc_str());
+      EFI_HANDLE DriverHandle;
+      Status = gBS->LoadImage(false, gImageHandle, FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NULL, 0, &DriverHandle);
+      if ( !EFI_ERROR(Status) ) {
+        Status = gBS->StartImage(DriverHandle, 0, 0);
+        DBG("Start '%ls' : Status %s\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
+      }else{
+        panic("Error when loading '%ls' : Status %s.\n", OpenRuntimeEfiName.wc_str(), efiStrError(Status));
+      }
+    }else{
+      DBG("No OpenRuntime driver. This is ok, OpenRuntime is not mandatory.\n");
+    }
 
     OcMain(&mOpenCoreStorage, NULL);
   //  {
@@ -1707,6 +1707,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
   DriversArrSize = 0;
   DriversArrNum = 0;
   DriversArr = NULL;
+  OpenRuntimeEfiName.setEmpty();
 
 //only one driver with highest priority will obtain status "Loaded"
   DirIterOpen(&self.getCloverDir(), Path, &DirIter);
@@ -1747,6 +1748,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
       continue;
     }
     if ( LStringW(DirEntry->FileName).containsIC("OpenRuntime") ) {
+      OpenRuntimeEfiName.takeValueFrom(DirEntry->FileName);
       continue;
     }
     {

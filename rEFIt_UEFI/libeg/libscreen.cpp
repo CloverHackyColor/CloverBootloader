@@ -576,15 +576,13 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
 //    UINTN       Index;
     EFI_HANDLE  *HandleBuffer = NULL;
     EFI_STATUS  Status;
- // return EFI_UNSUPPORTED;
+
     if (GraphicsOutput == NULL) {
         return EFI_UNSUPPORTED;
     }
- // MsgLog("test 1\n");
+
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
-//  MsgLog("test 2\n");
-  const char* strStatus = efiStrError(Status);
-    MsgLog("Video mode change to mode #%d: %s\n", ModeNumber, strStatus);
+    MsgLog("Video mode change to mode #%d: %s\n", ModeNumber, efiStrError(Status));
 
     if (gFirmwareClover && !EFI_ERROR(Status)) { 
         // When we change mode on GOP, we need to reconnect the drivers which produce simple text out
