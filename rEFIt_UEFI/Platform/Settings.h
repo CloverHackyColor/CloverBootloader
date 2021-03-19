@@ -436,7 +436,6 @@ public:
   UINT16                  CpuType;
   // SMBIOS TYPE132
   UINT16                  QPI;
-  BOOLEAN                 SetTable132;
   BOOLEAN                 TrustSMBIOS;
   BOOLEAN                 InjectMemoryTables;
   BOOLEAN                 UseARTFreq;
@@ -689,7 +688,7 @@ public:
                     pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
                     BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(), CpuFreqMHz(0),
                     BusSpeed(0), Turbo(0), EnabledCores(0), UserChange(0), QEMU(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
-                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), SetTable132(0), TrustSMBIOS(0), InjectMemoryTables(0),
+                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), CpuType(0), QPI(0), TrustSMBIOS(0), InjectMemoryTables(0),
                     UseARTFreq(0), PlatformFeature(0), NoRomInfo(0), Language(), CustomUuid(),
                     IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
                     WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), SavingMode(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0),
@@ -935,6 +934,8 @@ public:
 
   UINT8                   SecureBoot = 0;
   UINT8                   SecureBootSetupMode = 0;
+
+  BOOLEAN                 SetTable132 = 0;
 
   /*
    * Defqult ctor :

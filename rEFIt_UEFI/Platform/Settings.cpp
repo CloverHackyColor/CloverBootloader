@@ -107,7 +107,7 @@ BOOLEAN                         ResumeFromCoreStorage;
 BOOLEAN                         gRemapSmBiosIsRequire;
 
 // QPI
-BOOLEAN                         SetTable132                 = FALSE;
+//BOOLEAN                         SetTable132                 = FALSE;
 
 //EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //define in lib.h
 const INTN BCSMargin = 11;
@@ -1993,7 +1993,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
 
 // EDID reworked by Sherlocks
 static void
-GetEDIDSettings(const TagDict* DictPointer)
+GetEDIDSettings(const TagDict* DictPointer, SETTINGS_DATA& gSettings)
 {
   const TagStruct* Prop;
   const TagDict* Dict;
@@ -2747,7 +2747,7 @@ EFI_STATUS GetEarlyUserSettings (
         }
       }
 
-      GetEDIDSettings(GraphicsDict);
+      GetEDIDSettings(GraphicsDict, gSettings);
     }
 
     const TagArray* DisableDriversArray = CfgDict->arrayPropertyForKey("DisableDrivers"); // array of string
@@ -3426,7 +3426,7 @@ ParseSMBIOSSettings(
   }
 }
 
-static void getACPISettings(const TagDict *CfgDict)
+static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
 {
   const TagDict* ACPIDict = CfgDict->dictPropertyForKey("ACPI");
   if (ACPIDict) {
@@ -4085,7 +4085,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
       //InjectEDID - already done in earlysettings
       //No! Take again
-      GetEDIDSettings(GraphicsDict);
+      GetEDIDSettings(GraphicsDict, gSettings);
 
       // ErmaC: NvidiaGeneric
       Prop = GraphicsDict->propertyForKey("NvidiaGeneric");
@@ -4614,7 +4614,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
     //*** ACPI ***//
 
-    getACPISettings(CfgDict);
+    getACPISettings(CfgDict, gSettings);
 
     //*** SMBIOS ***//
     const TagDict* SMBIOSDict = CfgDict->dictPropertyForKey("SMBIOS");
@@ -7120,7 +7120,7 @@ SaveSettings ()
 
   // to determine the use of Table 132
   if (gSettings.QPI) {
-    gSettings.SetTable132 = TRUE;
+    GlobalConfig.SetTable132 = TRUE;
     //DBG("QPI: use Table 132\n");
   }
   else {
@@ -7129,7 +7129,7 @@ SaveSettings ()
       case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
       case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
       case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-        gSettings.SetTable132 = TRUE;
+        GlobalConfig.SetTable132 = TRUE;
         DBG("QPI: use Table 132\n");
         break;
       default:
@@ -7332,452 +7332,7 @@ EFI_STATUS LOADER_ENTRY::SetFSInjection()
 
   return Status;
 }
-//
-//namespace old {
-//#include "../../CloverApp/Clover/CloverOldHeaders.h"
-//}
-//
-//static void breakpoint()
-//{
-//  DBG("Bug\n");
-//}
-//
-#define WriteOldFixLengthString(str, strSize) xb.ncat(str.s(), MIN(str.sizeInBytes(), strSize*sizeof(*str.s()))); xb.memsetAtPos(xb.size(), 0, strSize*sizeof(*str.s())-MIN(str.sizeInBytes(), strSize*sizeof(*str.s())));
-#define checkOffset(w) \
-  { \
-    size_t offset = OFFSET_OF(old::SETTINGS_DATA, w) ; \
-    if ( offset != xb.size() ) { \
-      breakpoint(); \
-    } \
-  }
 
-//XBuffer<UINT8> SETTINGS_DATA::serialize() const
-//{
-//  XBuffer<UINT8> xb;
-//
-//  // SMBIOS TYPE0
-//  WriteOldFixLengthString(VendorName, 64);
-//checkOffset(RomVersion);
-//  WriteOldFixLengthString(RomVersion, 64);
-//  WriteOldFixLengthString(EfiVersion, 64);
-//  WriteOldFixLengthString(ReleaseDate, 64);
-//  // SMBIOS TYPE1
-//  WriteOldFixLengthString(ManufactureName, 64);
-//  WriteOldFixLengthString(ProductName, 64);
-//  WriteOldFixLengthString(VersionNr, 64);
-//  WriteOldFixLengthString(SerialNr, 64);
-//  xb.ncat(&SmUUID, sizeof(SmUUID));
-//  xb.cat((BOOLEAN)SmUUID.notEmpty());
-//  xb.ncat(&pad0, sizeof(pad0));
-////CHAR8                    Uuid[64]);
-////CHAR8                    SKUNumber[64]);
-//  WriteOldFixLengthString(FamilyName, 64);
-//  WriteOldFixLengthString(OEMProduct, 64);
-//  WriteOldFixLengthString(OEMVendor, 64);
-//  // SMBIOS TYPE2
-//  WriteOldFixLengthString(BoardManufactureName, 64);
-//  WriteOldFixLengthString(BoardSerialNumber, 64);
-//  WriteOldFixLengthString(BoardNumber, 64); //Board-ID
-//  WriteOldFixLengthString(LocationInChassis, 64);
-//  WriteOldFixLengthString(BoardVersion, 64);
-//  WriteOldFixLengthString(OEMBoard, 64);
-//checkOffset(BoardType);
-//  xb.cat(BoardType);
-//  xb.cat(pad1);
-//  // SMBIOS TYPE3
-//  xb.cat(Mobile);
-//  xb.cat(ChassisType);
-//  WriteOldFixLengthString(ChassisManufacturer, 64);
-//  WriteOldFixLengthString(ChassisAssetTag, 64);
-//  // SMBIOS TYPE4
-//  xb.cat(CpuFreqMHz);
-//  xb.cat(BusSpeed); //in kHz
-//  xb.cat(Turbo);
-//  xb.cat(EnabledCores);
-//  xb.cat(UserChange);
-//  xb.cat(QEMU);
-//  // SMBIOS TYPE17
-//  xb.cat(SmbiosVersion);
-//  xb.cat(Attribute);
-//  xb.ncat(&pad17, sizeof(pad17));
-//  WriteOldFixLengthString(MemoryManufacturer, 64);
-//  WriteOldFixLengthString(MemorySerialNumber, 64);
-//  WriteOldFixLengthString(MemoryPartNumber, 64);
-//  WriteOldFixLengthString(MemorySpeed, 64);
-//  // SMBIOS TYPE131
-//checkOffset(CpuType);
-//  xb.cat(CpuType);
-//  // SMBIOS TYPE132
-//  xb.cat(QPI);
-//  xb.cat(SetTable132);
-//  xb.cat(TrustSMBIOS);
-//  xb.cat(InjectMemoryTables);
-//  xb.cat(Boot.XMPDetection);
-//  xb.cat(UseARTFreq);
-//  // SMBIOS TYPE133
-//  xb.ncat(&pad18, sizeof(pad18));
-//  xb.cat(PlatformFeature);
-//
-//  // PatchTableType11
-//  xb.cat(NoRomInfo);
-//
-//  // OS parameters
-//  WriteOldFixLengthString(Language, 16);
-//checkOffset(BootArgs);
-//  WriteOldFixLengthString(Boot.BootArgs, 256);
-//  xb.memsetAtPos(xb.size(), 0, 1);
-//checkOffset(CustomUuid);
-//  WriteOldFixLengthString(XStringW(CustomUuid), 40);
-//  xb.ncat(&pad20, sizeof(pad20));
-//checkOffset(DefaultVolume);
-//  xb.cat(uintptr_t(0)); //DefaultVolume was CHAR16*
-//  xb.cat(uintptr_t(0)); //DefaultLoader was CHAR16*
-////Boot
-//checkOffset(LastBootedVolume);
-//  xb.cat(Boot.LastBootedVolume);
-//  xb.cat(Boot.SkipHibernateTimeout);
-////Monitor
-//  xb.cat(IntelMaxBacklight);
-//  xb.ncat(&pad21, sizeof(pad21));
-//  xb.cat(VendorEDID);
-//  xb.cat(ProductEDID);
-//  xb.cat(BacklightLevel);
-//  xb.cat(BacklightLevelConfig);
-//  xb.cat(IntelBacklight);
-////Boot options
-//  xb.cat(MemoryFix);
-//  xb.cat(WithKexts);
-//  xb.cat(WithKextsIfNoFakeSMC);
-//  xb.cat(FakeSMCFound);
-//  xb.cat(NoCaches);
-//
-//  // GUI parameters
-//  xb.cat(Debug);
-////  BOOLEAN                 Proportional); //never used
-//  xb.ncat(&pad22, sizeof(pad22));
-//  xb.cat(DefaultBackgroundColor);
-//
-//  //ACPI
-//checkOffset(ResetAddr);
-//  xb.cat(ACPI.ResetAddr);
-//  xb.cat(ACPI.ResetVal);
-//  xb.cat(ACPI.NoASPM);
-//  xb.cat(ACPI.SSDT.DropSSDT);
-//  xb.cat(ACPI.SSDT.NoOemTableId);
-//  xb.cat(ACPI.SSDT.NoDynamicExtract);
-//  xb.cat(ACPI.AutoMerge);
-//  xb.cat(ACPI.SSDT.Generate.GeneratePStates);
-//  xb.cat(ACPI.SSDT.Generate.GenerateCStates);
-//  xb.cat(ACPI.SSDT.Generate.GenerateAPSN);
-//  xb.cat(ACPI.SSDT.Generate.GenerateAPLF);
-//  xb.cat(ACPI.SSDT.Generate.GeneratePluginType);
-//  xb.cat(ACPI.SSDT.PLimitDict);
-//  xb.cat(ACPI.SSDT.UnderVoltStep);
-//  xb.cat(ACPI.SSDT.DoubleFirstState);
-//  xb.cat(ACPI.DSDT.SuspendOverride);
-//  xb.cat(ACPI.SSDT.EnableC2);
-//  xb.cat(ACPI.SSDT.EnableC4);
-//  xb.cat(ACPI.SSDT.EnableC6);
-//  xb.cat(ACPI.SSDT.EnableISS);
-//  xb.cat(ACPI.SlpSmiEnable);
-//  xb.cat(ACPI.FixHeaders);
-//  xb.ncat(&pad23, sizeof(pad23));
-//  xb.cat(ACPI.SSDT.C3Latency);
-//  xb.cat(ACPI.smartUPS);
-//  xb.cat(ACPI.PatchNMI);
-//  xb.cat(ACPI.SSDT.EnableC7);
-//  xb.cat(SavingMode);
-//  WriteOldFixLengthString(ACPI.DSDT.DsdtName, 28);
-//  xb.cat(ACPI.DSDT.FixDsdt);
-//  xb.cat(ACPI.SSDT.MinMultiplier);
-//  xb.cat(ACPI.SSDT.MaxMultiplier);
-//  xb.cat(ACPI.SSDT.PluginType);
-////  BOOLEAN                 DropMCFG);
-//checkOffset(FixMCFG);
-//  xb.cat(ACPI.FixMCFG);
-//  xb.cat((UINT32)ACPI.DeviceRename.size());
-//  xb.cat(uintptr_t(0));
-//  //Injections
-//  xb.cat(StringInjector);
-//  xb.cat(InjectSystemID_);
-//  xb.cat(NoDefaultProperties);
-//  xb.cat(ACPI.DSDT.ReuseFFFF);
-//
-//  //PCI devices
-//  xb.cat(FakeATI);    //97
-//  xb.cat(FakeNVidia);
-//  xb.cat(FakeIntel);
-//  xb.cat(FakeLAN);   //100
-//  xb.cat(FakeWIFI);
-//  xb.cat(FakeSATA);
-//  xb.cat(FakeXHCI);  //103
-//  xb.cat(FakeIMEI);  //106
-//
-//  //Graphics
-////  UINT16                  PCIRootUID);
-//checkOffset(GraphicsInjector);
-//  xb.cat(GraphicsInjector);
-//  xb.cat(InjectIntel);
-//  xb.cat(InjectATI);
-//  xb.cat(InjectNVidia);
-//  xb.cat(DeInit);
-//  xb.cat(LoadVBios);
-//  xb.cat(PatchVBios);
-//  xb.ncat(&pad24, sizeof(pad24));
-//  xb.cat(PatchVBiosBytes);
-//  xb.cat(PatchVBiosBytesCount);
-//  xb.cat(InjectEDID);
-//  xb.cat(LpcTune);
-//  xb.cat(DropOEM_DSM); //vacant
-//  xb.ncat(&pad25, sizeof(pad25));
-//  xb.cat(CustomEDID);
-//  xb.cat(CustomEDIDsize);
-//  xb.cat(EdidFixHorizontalSyncPulseWidth);
-//  xb.cat(EdidFixVideoInputSignal);
-//  xb.ncat(&pad26, sizeof(pad26));
-//  WriteOldFixLengthString(FBName, 16);
-//  xb.cat(VideoPorts);
-//  xb.cat(NvidiaGeneric);
-//  xb.cat(NvidiaNoEFI);
-//  xb.cat(NvidiaSingle);
-//  xb.ncat(&pad27, sizeof(pad27));
-//  xb.cat(VRAM);
-//  xb.ncat(&Dcfg, sizeof(Dcfg));
-//  xb.ncat(&NVCAP, sizeof(NVCAP));
-//  xb.cat(BootDisplay);
-//  xb.cat(NvidiaWeb);
-//  xb.ncat(&pad41, sizeof(pad41));
-//  xb.cat(DualLink);
-//  xb.cat(IgPlatform);
-//
-//  // Secure boot white/black list
-//checkOffset(SecureBootWhiteListCount);
-//  xb.cat((UINT32)Boot.SecureBootWhiteList.size());
-//  xb.cat((UINT32)Boot.SecureBootBlackList.size());
-//  xb.cat(uintptr_t(0));
-//  xb.cat(uintptr_t(0));
-//
-//  // Secure boot
-//  xb.cat(Boot.SecureBoot);
-//  xb.cat(Boot.SecureBootSetupMode);
-//  xb.cat(Boot.SecureBootPolicy);
-//
-//  // HDA
-//  xb.cat(HDAInjection);
-//  xb.cat(HDALayoutId);
-//
-//  // USB DeviceTree injection
-//  xb.cat(USBInjection);
-//  xb.cat(USBFixOwnership);
-//  xb.cat(InjectClockID);
-//  xb.cat(HighCurrent);
-//  xb.cat(NameEH00);
-//  xb.cat(NameXH00);
-//  xb.cat(LANInjection);
-//  xb.cat(HDMIInjection);
-//
-// // UINT8                   pad61[2]);
-//
-//  // LegacyBoot
-//checkOffset(LegacyBoot);
-//  WriteOldFixLengthString(Boot.LegacyBoot, 32);
-//  xb.cat(Boot.LegacyBiosDefaultEntry);
-//
-//  //SkyLake
-//  xb.cat(HWP);
-//  xb.cat(TDP);
-//  xb.cat(HWPValue);
-//
-//  //Volumes hiding
-//  xb.cat(uintptr_t(0)); // HVHideStrings was **
-//  xb.cat((INTN)0);
-//
-//  // KernelAndKextPatches
-//  xb.memsetAtPos(xb.size(), 0, 112);  //KernelAndKextPatches was 112 bytes
-//  xb.cat(KextPatchesAllowed);
-//  xb.cat(KernelPatchesAllowed); //From GUI: Only for user patches, not internal Clover
-//  WriteOldFixLengthString(AirportBridgeDeviceName, 5);
-//
-//  // Pre-language
-//  xb.cat(KbdPrevLang);
-//
-//  //Pointer
-//  xb.cat(PointerEnabled);
-//  xb.ncat(&pad28, sizeof(pad28));
-//  xb.cat(PointerSpeed);
-//  xb.cat(DoubleClickTime);
-//  xb.cat(PointerMirror);
-//
-////  UINT8                   pad7[6]);
-//checkOffset(CustomBoot);
-//  xb.cat(Boot.CustomBoot);
-//  xb.ncat(&pad29, sizeof(pad29));
-//  xb.cat(Boot.CustomLogo);
-//  xb.cat(RefCLK);
-//
-//  // SysVariables
-//  xb.ncat(&pad30, sizeof(pad30));
-//checkOffset(RtMLB);
-//  xb.cat(uintptr_t(0)); // RtMLB was CHAR8*
-//  xb.cat(uintptr_t(0)); // RtROM was UINT8*
-//checkOffset(RtROMLen);
-//  xb.cat(RtROM.size());
-//checkOffset(CsrActiveConfig);
-//  xb.cat(CsrActiveConfig);
-//  xb.cat(BooterConfig);
-//  WriteOldFixLengthString(BooterCfgStr, 64);
-//  xb.cat(Boot.DisableCloverHotkeys);
-//  xb.cat(NeverDoRecovery);
-//
-//  // Multi-config
-//  xb.ncat(&ConfigName, sizeof(ConfigName));
-//  xb.ncat(&pad31, sizeof(pad31));
-//  xb.cat(uintptr_t(0)); // MainConfigName was a CHAR16*
-//
-//  //Drivers
-//  xb.cat(DisabledDriverArray.size()); // BlackListCount
-//  xb.cat(uintptr_t(0));  // BlackList was a pointer
-//
-//  //SMC keys
-//  xb.ncat(&RPlt, sizeof(RPlt));
-//  xb.ncat(&RBr, sizeof(RBr));
-//  xb.ncat(&EPCI, sizeof(EPCI));
-//  xb.ncat(&REV, sizeof(REV));
-//
-//  //other devices
-//checkOffset(Rtc8Allowed);
-//  xb.cat(ACPI.DSDT.Rtc8Allowed);
-//  xb.cat(ForceHPET);
-//  xb.cat(ResetHDA);
-//  xb.cat(PlayAsync);
-//  xb.ncat(&pad32, sizeof(pad32));
-//  xb.cat(DisableFunctions);
-//
-//  //Patch DSDT arbitrary
-//  xb.cat((UINT32)ACPI.DSDT.DSDTPatchArray.size()); // PatchDsdtNum
-//  xb.cat(uintptr_t(0)); // PatchDsdtFind
-//  xb.cat(uintptr_t(0)); // LenToFind
-//  xb.cat(uintptr_t(0)); // PatchDsdtReplace
-//  xb.cat(uintptr_t(0)); // LenToReplace
-//checkOffset(DebugDSDT);
-//  xb.cat(ACPI.DSDT.DebugDSDT);
-//  xb.cat(SlpWak);
-//  xb.cat(UseIntelHDMI);
-//  xb.cat(AFGLowPowerState);
-//  xb.cat(ACPI.DSDT.PNLF_UID);
-////  UINT8                   pad83[4]);
-//
-//  // Table dropping
-//  xb.ncat(&pad34, sizeof(pad34));
-//  xb.cat(GlobalConfig.ACPIDropTables);
-//
-//  // Custom entries
-//  xb.cat(DisableEntryScan);
-//  xb.cat(DisableToolScan);
-//  xb.cat((BOOLEAN)0); // was ShowHiddenEntries (BOOLEAN)
-//  xb.cat(KernelScan);
-//  xb.cat(LinuxScan);
-////  UINT8                   pad84[3]);
-//  xb.ncat(&pad35, sizeof(pad35));
-//checkOffset(CustomEntries);
-//  xb.cat(CustomEntries);
-//  xb.cat(CustomLegacy);
-//  xb.cat(CustomTool);
-//
-//  //Add custom properties
-//  xb.cat(NrAddProperties);
-//  xb.cat(AddProperties);
-//
-//  //BlackListed kexts
-//  xb.ncat(&BlockKexts, sizeof(BlockKexts));
-//
-//  //ACPI tables
-//  xb.cat((UINTN)ACPI.SortedACPI.size());
-//  xb.cat(uintptr_t(0));
-//
-//  // ACPI/PATCHED/AML
-//  xb.cat((UINT32)ACPI.DisabledAML.size());
-//  xb.ncat(&pad36, sizeof(pad36));
-//  xb.cat(uintptr_t(0));
-//  xb.cat(uintptr_t(0)); // PatchDsdtLabel
-//  xb.cat(uintptr_t(0)); // PatchDsdtTgt
-//  xb.cat(uintptr_t(0)); // PatchDsdtMenuItem
-//
-//  //other
-//  xb.cat(IntelMaxValue);
-////  UINT32                  AudioVolume);
-//
-//  // boot.efi
-//checkOffset(OptionsBits);
-//  xb.cat(OptionsBits);
-//  xb.cat(FlagsBits);
-//  xb.cat(UIScale);
-//  xb.cat(EFILoginHiDPI);
-//  xb.ncat(&flagstate, sizeof(flagstate));
-//  xb.ncat(&pad37, sizeof(pad37));
-//  xb.cat(ArbProperties);
-////  xb.cat(QuirksMask);
-////  xb.ncat(&pad38, sizeof(pad38));
-////  xb.cat(MaxSlide);
-//
-////  if ( xb.size() != sizeof(old::SETTINGS_DATA) ) {
-//  if ( xb.size() != 3088 ) {
-//    panic("SETTINGS_DATA::serialize wrong size\n");
-//  }
-//  return xb;
-//}
-
-//TagDict* regenerateConfigPlist_addDictToDict(TagDict* dict)
-//{
-//  TagDict* tagDict = TagDict::getEmptyTag();
-//  dict->dictContent().AddReference(tagDict, true);
-//  return tagDict;
-//}
-//TagKey* regenerateConfigPlist_addKeyToDict(TagDict* dict, const XString8& key)
-//{
-//  TagKey* tagKey = TagKey::getEmptyTag();
-//  tagKey->setKeyValue(key);
-//  dict->dictContent().AddReference(tagKey, true);
-//  return tagKey;
-//}
-//TagBool* regenerateConfigPlist_addBoolToDict(TagDict* dict, const bool value)
-//{
-//  TagBool* tagBool = TagBool::getEmptyTag();
-//  tagBool->setBoolValue(value);
-//  dict->dictContent().AddReference(tagBool, true);
-//  return tagBool;
-//}
-//void regenerateConfigPlist_addKeyAndBoolToDict(TagDict* dict, const XString8& key, const bool value)
-//{
-//  regenerateConfigPlist_addKeyToDict(dict, key);
-//  regenerateConfigPlist_addBoolToDict(dict, value);
-//}
-//
-//void testConfigPlist()
-//{
-//  TagDict* plist = TagDict::getEmptyTag();
-//  regenerateConfigPlist_addKeyToDict(plist, "ACPI"_XS8);
-//  TagDict* ACPIDict = regenerateConfigPlist_addDictToDict(plist);
-//  regenerateConfigPlist_addKeyAndBoolToDict(ACPIDict, "AutoMerge"_XS8, gSettings.ACPI.AutoMerge);
-//  regenerateConfigPlist_addKeyToDict(ACPIDict, "DSDT"_XS8);
-//  TagDict* DSDTDict = regenerateConfigPlist_addDictToDict(ACPIDict);
-//  regenerateConfigPlist_addKeyToDict(DSDTDict, "Debug"_XS8);
-//  regenerateConfigPlist_addBoolToDict(DSDTDict, gSettings.KernelAndKextPatches.KPDebug);
-////  regenerateConfigPlist_addKeyToDict(DSDTDict, "DropOEM_DSM"_XS8);
-////  TagDict* DropOEM_DSMDict = regenerateConfigPlist_addDictToDict(DSDTDict);
-//  regenerateConfigPlist_addKeyToDict(DSDTDict, "Fixes"_XS8);
-//  TagDict* FixesDict = regenerateConfigPlist_addDictToDict(DSDTDict);
-//  for (size_t Index = 0; Index < sizeof(FixesConfig)/sizeof(FixesConfig[0]); Index++) {
-//    if ( gSettings.ACPI.DSDT.FixDsdt & FixesConfig[Index].bitData ) {
-//      regenerateConfigPlist_addKeyToDict(FixesDict, LString8(FixesConfig[Index].newName));
-//      regenerateConfigPlist_addBoolToDict(FixesDict, true);
-//    }
-//  }
-//  XString8 s;
-//  plist->sprintf(0, &s);
-//  MsgLog("%s\n", s.c_str());
-//}
-//
 
 EFI_GUID nullUUID = {0,0,0,{0}};
 

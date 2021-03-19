@@ -650,6 +650,7 @@ mCoffOffset=mCoffOffsetNew;
   if (SectionCount == 0) {
     mDataOffset = mCoffOffset;
   }
+  mCoffOffsetMax = MAX(mCoffOffsetMax, mCoffOffset);
 
   if (SectionCount > 1 && mOutImageType == FW_EFI_IMAGE) {
     Warning (NULL, 0, 0, NULL, "Multiple sections in %s are merged into 1 data section. Source level debug might not work correctly.", mInImageName);
@@ -688,13 +689,13 @@ mCoffOffset=mCoffOffsetNew;
   //
   // Allocate base Coff file.  Will be expanded later for relocations.
   //
-  NormalMsg("Allocate %d bytes for mCoffFile", mCoffOffset);
+  NormalMsg("Allocate %d bytes for mCoffFile", mCoffOffsetMax);
   mCoffFile = (UINT8 *)malloc(mCoffOffsetMax);
   if (mCoffFile == NULL) {
     Error (NULL, 0, 4001, "Resource", "memory cannot be allocated!");
   }
   assert (mCoffFile != NULL);
-  memset(mCoffFile, 0, mCoffOffset);
+  memset(mCoffFile, 0, mCoffOffsetMax);
 
   //
   // Fill headers.

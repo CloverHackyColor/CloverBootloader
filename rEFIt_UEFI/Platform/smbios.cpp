@@ -1945,7 +1945,7 @@ void PatchTableType131()
 
 void PatchTableType132()
 {
-  if (!gSettings.SetTable132) {
+  if (!GlobalConfig.SetTable132) {
     //DBG("disabled Table 132\n");
     return;
   }
