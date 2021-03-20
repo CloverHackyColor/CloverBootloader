@@ -93,6 +93,11 @@
 		9A4C5778255ACAE8004F0B21 /* MacOsVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4C5776255ACAE8004F0B21 /* MacOsVersion.h */; };
 		9A4F68622449D4CB004B2F7E /* APFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4624483AE30006DE06 /* APFS.cpp */; };
 		9A4F68652449D533004B2F7E /* APFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A105B4624483AE30006DE06 /* APFS.cpp */; };
+		9A54699B26063AB000CBC3DE /* XmlLiteParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A54699426063AB000CBC3DE /* XmlLiteParser.h */; };
+		9A54699C26063AB000CBC3DE /* XmlLiteSimpleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A54699526063AB000CBC3DE /* XmlLiteSimpleTypes.h */; };
+		9A54699E26063AB000CBC3DE /* undefinable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A54699726063AB000CBC3DE /* undefinable.h */; };
+		9A54699F26063AB000CBC3DE /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A54699826063AB000CBC3DE /* XmlLiteParser.cpp */; };
+		9A5469A126063AB000CBC3DE /* XmlLiteCompositeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A54699A26063AB000CBC3DE /* XmlLiteCompositeTypes.h */; };
 		9A61B3002522165100AEE0FA /* Self.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A61B2FE2522165100AEE0FA /* Self.cpp */; };
 		9A61B3012522165100AEE0FA /* Self.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A61B2FF2522165100AEE0FA /* Self.h */; };
 		9A637AE82430D927000B9474 /* XTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5E3262F2428F4EE002240E8 /* XTheme.cpp */; };
@@ -719,6 +724,13 @@
 		9A4185B52439F29D00BEAFB8 /* LoadOptions_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadOptions_test.cpp; sourceTree = "<group>"; };
 		9A4C5775255ACAE7004F0B21 /* MacOsVersion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacOsVersion.cpp; sourceTree = "<group>"; };
 		9A4C5776255ACAE8004F0B21 /* MacOsVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacOsVersion.h; sourceTree = "<group>"; };
+		9A54699426063AB000CBC3DE /* XmlLiteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteParser.h; sourceTree = "<group>"; };
+		9A54699526063AB000CBC3DE /* XmlLiteSimpleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteSimpleTypes.h; sourceTree = "<group>"; };
+		9A54699626063AB000CBC3DE /* XmlLiteCompositeTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteCompositeTypes.cpp; sourceTree = "<group>"; };
+		9A54699726063AB000CBC3DE /* undefinable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undefinable.h; sourceTree = "<group>"; };
+		9A54699826063AB000CBC3DE /* XmlLiteParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteParser.cpp; sourceTree = "<group>"; };
+		9A54699926063AB000CBC3DE /* XmlLiteSimpleTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteSimpleTypes.cpp; sourceTree = "<group>"; };
+		9A54699A26063AB000CBC3DE /* XmlLiteCompositeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteCompositeTypes.h; sourceTree = "<group>"; };
 		9A61B2FE2522165100AEE0FA /* Self.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Self.cpp; sourceTree = "<group>"; };
 		9A61B2FF2522165100AEE0FA /* Self.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Self.h; sourceTree = "<group>"; };
 		9A63C6CA24EBEF78000EB836 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Version.h; path = ../../Version.h; sourceTree = "<group>"; };
@@ -979,6 +991,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A54699326063AB000CBC3DE /* cpp_lib */ = {
+			isa = PBXGroup;
+			children = (
+				9A54699726063AB000CBC3DE /* undefinable.h */,
+				9A54699426063AB000CBC3DE /* XmlLiteParser.h */,
+				9A54699526063AB000CBC3DE /* XmlLiteSimpleTypes.h */,
+				9A54699626063AB000CBC3DE /* XmlLiteCompositeTypes.cpp */,
+				9A54699826063AB000CBC3DE /* XmlLiteParser.cpp */,
+				9A54699926063AB000CBC3DE /* XmlLiteSimpleTypes.cpp */,
+				9A54699A26063AB000CBC3DE /* XmlLiteCompositeTypes.h */,
+			);
+			path = cpp_lib;
+			sourceTree = "<group>";
+		};
 		9AA3912D25CC65820099DC1F /* Posix */ = {
 			isa = PBXGroup;
 			children = (
@@ -1068,6 +1094,7 @@
 		9AC77EC924176C04005CDD5C /* rEFIt_UEFI */ = {
 			isa = PBXGroup;
 			children = (
+				9A54699326063AB000CBC3DE /* cpp_lib */,
 				9AC77FAB24176C04005CDD5C /* cpp_foundation */,
 				9AC77ECA24176C04005CDD5C /* cpp_unit_test */,
 				9AC77F9F24176C04005CDD5C /* cpp_util */,
@@ -1423,6 +1450,7 @@
 				9AEFE64624E2A7D1005D56D8 /* XIcon.h in Headers */,
 				9A105B2D24464A830006DE06 /* BmLib.h in Headers */,
 				9AF4173F242F15CC00D2644C /* BootLog.h in Headers */,
+				9A5469A126063AB000CBC3DE /* XmlLiteCompositeTypes.h in Headers */,
 				9AC77FC024176C04005CDD5C /* XObjArray_tests.h in Headers */,
 				9AC7801D24176C04005CDD5C /* Events.h in Headers */,
 				9AF41562242BABC700D2644C /* printlib-test-cpp_conf.h in Headers */,
@@ -1465,6 +1493,7 @@
 				9AC7807A24176C04005CDD5C /* lib.h in Headers */,
 				9AC7803524176C04005CDD5C /* b64cdecode.h in Headers */,
 				9AC7805224176C04005CDD5C /* EfiFileLib.h in Headers */,
+				9A54699B26063AB000CBC3DE /* XmlLiteParser.h in Headers */,
 				9AEFE64D24E2C64B005D56D8 /* XRBuffer.h in Headers */,
 				9AC7807324176C04005CDD5C /* menu_globals.h in Headers */,
 				9AC7809824176C04005CDD5C /* XObjArray.h in Headers */,
@@ -1533,7 +1562,9 @@
 				9AD469552452B63300D6D0DB /* XToolsConf.h in Headers */,
 				9AD469512452B5A600D6D0DB /* Devices.h in Headers */,
 				9A28CC98241AB34800F3D247 /* XString_test.h in Headers */,
+				9A54699E26063AB000CBC3DE /* undefinable.h in Headers */,
 				9AA3917D25CC65830099DC1F /* plist.h in Headers */,
+				9A54699C26063AB000CBC3DE /* XmlLiteSimpleTypes.h in Headers */,
 				9A80B49F2540175E00E56B08 /* OC.h in Headers */,
 				9AA3916225CC65830099DC1F /* posix.h in Headers */,
 				9A61B3012522165100AEE0FA /* Self.h in Headers */,
@@ -2012,6 +2043,7 @@
 				9AC7804C24176C04005CDD5C /* VectorGraphics.cpp in Sources */,
 				9AC7805E24176C04005CDD5C /* common.cpp in Sources */,
 				9AA3917225CC65830099DC1F /* TagDict.cpp in Sources */,
+				9A54699F26063AB000CBC3DE /* XmlLiteParser.cpp in Sources */,
 				9AC7804924176C04005CDD5C /* egemb_icons.cpp in Sources */,
 				9AC7801124176C04005CDD5C /* Edid.cpp in Sources */,
 				9A61B3002522165100AEE0FA /* Self.cpp in Sources */,

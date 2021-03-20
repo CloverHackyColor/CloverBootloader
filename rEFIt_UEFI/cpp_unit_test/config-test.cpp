@@ -3,7 +3,7 @@
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/unicode_conversions.h"
 #include "../Platform/plist/plist.h"
-#include "../cpp_lib/xmlLiteSimpleTypes.h"
+#include "../cpp_lib/XmlLiteSimpleTypes.h"
 #include "../cpp_lib/XmlLiteParser.h"
 #include "../Platform/ConfigPlist/ConfigPlist.h"
 

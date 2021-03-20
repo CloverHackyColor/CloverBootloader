@@ -2587,16 +2587,16 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
 # -Wno-varargs
 # -Wno-unused-const-variable
 
-         DEFINE XCODE8_COMMON_FLAGS      =  -nostdinc -target x86_64-pc-win32-macho -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small -DNO_MSABI_VA_FUNCS "-DEFIAPI=__attribute__((ms_abi))" -fno-strict-aliasing -Wno-unused-parameter
+         DEFINE XCODE8_COMMON_FLAGS      =  -nostdinc -c -Wall -Wextra -include AutoGen.h -fno-ms-extensions -fno-stack-protector -fno-builtin -fshort-wchar -mms-bitfields -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings -mno-red-zone -fno-common -fdata-sections -ffreestanding -ffunction-sections -fno-asynchronous-unwind-tables -m64 -mabi=ms -mcmodel=small -DNO_MSABI_VA_FUNCS -fno-strict-aliasing -Wno-unused-parameter
  
 
 
-          DEBUG_XCODE8_X64_CC_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS)
+          DEBUG_XCODE8_X64_CC_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))"
      DEBUGMACOS_XCODE8_X64_CC_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS)
-        RELEASE_XCODE8_X64_CC_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS) -Werror
-         DEBUG_XCODE8_X64_CXX_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS)
+        RELEASE_XCODE8_X64_CC_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))" -Werror
+         DEBUG_XCODE8_X64_CXX_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))"
     DEBUGMACOS_XCODE8_X64_CXX_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS)
-       RELEASE_XCODE8_X64_CXX_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS) -Werror
+       RELEASE_XCODE8_X64_CXX_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))" -Werror
 
 *_XCODE8_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -c -include AutoGen.h
 *_XCODE8_*_ASLDLINK_FLAGS   = -nostdlib -Wl,-e,_ReferenceAcpiTable,-preload,-segalign,0x20,-pie,-seg1addr,0x260,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map

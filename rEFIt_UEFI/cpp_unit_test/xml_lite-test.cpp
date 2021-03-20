@@ -4,7 +4,7 @@
 //#include "../cpp_foundation/unicode_conversions.h"
 //#include "../Platform/plist/plist.h"
 
-#include "../cpp_lib/xmlLiteSimpleTypes.h"
+#include "../cpp_lib/XmlLiteSimpleTypes.h"
 #include "../cpp_lib/XmlLiteCompositeTypes.h"
 #include "../cpp_lib/XmlLiteParser.h"
 

@@ -512,6 +512,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
     // If this isn't a custom entry make sure it's not hidden by a custom entry
     for (size_t CustomIndex = 0 ; CustomIndex < gSettings.GUI.CustomEntries.size() ; ++CustomIndex ) {
       CUSTOM_LOADER_ENTRY& Custom = gSettings.GUI.CustomEntries[CustomIndex];
+      if ( Custom.Disabled ) continue; // before, disabled entries settings weren't loaded.
       // Check if the custom entry is hidden or disabled
       if ( OSFLAG_ISSET(Custom.Flags, OSFLAG_DISABLED)  || Custom.Hidden ) {
 
@@ -2030,35 +2031,36 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
       if (!IsSubEntry) {
         BOOLEAN              BetterMatch = FALSE;
         for (size_t i = 0 ; i < gSettings.GUI.CustomEntries.size() ; ++i ) {
-          CUSTOM_LOADER_ENTRY* Ptr = &gSettings.GUI.CustomEntries[i];
+          CUSTOM_LOADER_ENTRY& CustomEntry = gSettings.GUI.CustomEntries[i];
+          if ( CustomEntry.Disabled ) continue; // before, disabled entries settings weren't loaded.
           // Don't match against this custom
-          if (Ptr == &Custom) {
+          if (&CustomEntry == &Custom) {
             continue;
           }
           // Can only match the same types
-          if (Custom.Type != Ptr->Type) {
+          if (Custom.Type != CustomEntry.Type) {
             continue;
           }
           // Check if the volume string matches
-          if (Custom.Volume != Ptr->Volume) {
-            if (Ptr->Volume.isEmpty()) {
+          if (Custom.Volume != CustomEntry.Volume) {
+            if (CustomEntry.Volume.isEmpty()) {
               // Less precise volume match
-              if (Custom.Path != Ptr->Path) {
+              if (Custom.Path != CustomEntry.Path) {
                 // Better path match
-                BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
-                               ((Custom.VolumeType == Ptr->VolumeType) ||
+                BetterMatch = ((CustomEntry.Path.notEmpty()) && CustomPath.equal(CustomEntry.Path) &&
+                               ((Custom.VolumeType == CustomEntry.VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0));
               }
             } else if ((StrStr(Volume->DevicePathString.wc_str(), Custom.Volume.wc_str()) == NULL) &&
                        ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom.Volume.wc_str()) == NULL))) {
               if (Custom.Volume.isEmpty()) {
                 // More precise volume match
-                if (Custom.Path != Ptr->Path) {
+                if (Custom.Path != CustomEntry.Path) {
                   // Better path match
-                  BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
-                                 ((Custom.VolumeType == Ptr->VolumeType) ||
+                  BetterMatch = ((CustomEntry.Path.notEmpty()) && CustomPath.equal(CustomEntry.Path) &&
+                                 ((Custom.VolumeType == CustomEntry.VolumeType) ||
                                   ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0));
-                } else if (Custom.VolumeType != Ptr->VolumeType) {
+                } else if (Custom.VolumeType != CustomEntry.VolumeType) {
                   // More precise volume type match
                   BetterMatch = ((Custom.VolumeType == 0) &&
                                  ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0);
@@ -2067,13 +2069,13 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
                   BetterMatch = TRUE;
                 }
               // Duplicate volume match
-              } else if (Custom.Path != Ptr->Path) {
+              } else if (Custom.Path != CustomEntry.Path) {
                 // Better path match
-                BetterMatch = ((Ptr->Path.notEmpty()) && CustomPath.equal(Ptr->Path) &&
-                               ((Custom.VolumeType == Ptr->VolumeType) ||
+                BetterMatch = ((CustomEntry.Path.notEmpty()) && CustomPath.equal(CustomEntry.Path) &&
+                               ((Custom.VolumeType == CustomEntry.VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0));
               // Duplicate path match
-              } else if (Custom.VolumeType != Ptr->VolumeType) {
+              } else if (Custom.VolumeType != CustomEntry.VolumeType) {
                 // More precise volume type match
                 BetterMatch = ((Custom.VolumeType == 0) &&
                                ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0);
@@ -2083,17 +2085,17 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
               }
             }
           // Duplicate volume match
-          } else if (Custom.Path != Ptr->Path) {
-            if (Ptr->Path.isEmpty()) {
+          } else if (Custom.Path != CustomEntry.Path) {
+            if (CustomEntry.Path.isEmpty()) {
               // Less precise path match
-              BetterMatch = ((Custom.VolumeType != Ptr->VolumeType) &&
+              BetterMatch = ((Custom.VolumeType != CustomEntry.VolumeType) &&
                              ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0);
-            } else if (CustomPath.equal(Ptr->Path)) {
+            } else if (CustomPath.equal(CustomEntry.Path)) {
               if (Custom.Path.isEmpty()) {
                 // More precise path and volume type match
-                BetterMatch = ((Custom.VolumeType == Ptr->VolumeType) ||
+                BetterMatch = ((Custom.VolumeType == CustomEntry.VolumeType) ||
                                ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0);
-              } else if (Custom.VolumeType != Ptr->VolumeType) {
+              } else if (Custom.VolumeType != CustomEntry.VolumeType) {
                 // More precise volume type match
                 BetterMatch = ((Custom.VolumeType == 0) &&
                                ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0);
@@ -2103,7 +2105,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
               }
             }
           // Duplicate path match
-          } else if (Custom.VolumeType != Ptr->VolumeType) {
+          } else if (Custom.VolumeType != CustomEntry.VolumeType) {
             // More precise volume type match
             BetterMatch = ((Custom.VolumeType == 0) &&
                            ((1ull<<Volume->DiskKind) & Custom.VolumeType) != 0);
@@ -2125,7 +2127,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
       // Create an entry for this volume
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom.FullTitle, Custom.Title, Volume,
                                 (Image.isEmpty() ? NULL : &Image), (DriveImage.isEmpty() ? NULL : &DriveImage),            
-                                Custom.Type, newCustomFlags, Custom.Hotkey, Custom.BootBgColor, Custom.CustomBoot, Custom.CustomLogo,
+                                Custom.Type, newCustomFlags, Custom.Hotkey, Custom.BootBgColor, Custom.CustomLogoType, Custom.CustomLogoImage,
                                 /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
       if (Entry != NULL) {
         DBG("Custom settings: %ls.plist will %s be applied\n", Custom.Settings.wc_str(), Custom.CommonSettings?"not":"");
@@ -2190,6 +2192,7 @@ void AddCustomEntries(void)
   // Traverse the custom entries
   for (size_t i = 0 ; i < gSettings.GUI.CustomEntries.size(); ++i) {
     CUSTOM_LOADER_ENTRY& Custom = gSettings.GUI.CustomEntries[i];
+    if ( Custom.Disabled ) continue; // before, disabled entries settings weren't loaded.
     if ((Custom.Path.isEmpty()) && (Custom.Type != 0)) {
       if (OSTYPE_IS_OSX(Custom.Type)) {
         AddCustomEntry(i, MACOSX_LOADER_PATH, Custom, Custom.Settings, NULL);

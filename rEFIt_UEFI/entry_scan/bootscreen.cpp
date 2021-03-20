@@ -733,7 +733,7 @@ EFI_STATUS InitBootScreen(IN LOADER_ENTRY *Entry)
   if (customBoot == CUSTOM_BOOT_USER) {
     logo = Entry->CustomLogo;
   } else if (customBoot == CUSTOM_BOOT_DISABLED) {
-    customBoot = GlobalConfig.CustomBoot;
+    customBoot = GlobalConfig.CustomLogoType;
     if (customBoot == CUSTOM_BOOT_USER) {
       logo = *GlobalConfig.CustomLogo;
     }

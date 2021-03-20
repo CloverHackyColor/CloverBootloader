@@ -559,40 +559,40 @@ LoadUserSettings (
   return Status;
 }
 
-STATIC BOOLEAN AddCustomLoaderEntry(IN CUSTOM_LOADER_ENTRY *Entry)
-{
-  if (Entry == NULL) return FALSE;
-  gSettings.GUI.CustomEntries.AddReference(Entry, true);
-  return TRUE;
-}
+//STATIC BOOLEAN AddCustomLoaderEntry(IN CUSTOM_LOADER_ENTRY *Entry)
+//{
+//  if (Entry == NULL) return FALSE;
+//  gSettings.GUI.CustomEntries.AddReference(Entry, true);
+//  return TRUE;
+//}
 
-STATIC BOOLEAN AddCustomLegacyEntry (IN CUSTOM_LEGACY_ENTRY *Entry)
-{
-  if (Entry == NULL) return FALSE;
-  gSettings.GUI.CustomLegacy.AddReference(Entry, true);
-  return TRUE;
-}
-STATIC
-BOOLEAN
-AddCustomToolEntry (
-                    IN CUSTOM_TOOL_ENTRY *Entry
-                    )
-{
-  if (Entry == NULL) return FALSE;
-  gSettings.GUI.CustomTool.AddReference(Entry, true);
-  return TRUE;
-}
+//STATIC BOOLEAN AddCustomLegacyEntry (IN CUSTOM_LEGACY_ENTRY *Entry)
+//{
+//  if (Entry == NULL) return FALSE;
+//  gSettings.GUI.CustomLegacy.AddReference(Entry, true);
+//  return TRUE;
+//}
+//STATIC
+//BOOLEAN
+//AddCustomToolEntry (
+//                    IN CUSTOM_TOOL_ENTRY *Entry
+//                    )
+//{
+//  if (Entry == NULL) return FALSE;
+//  gSettings.GUI.CustomTool.AddReference(Entry, true);
+//  return TRUE;
+//}
 
-STATIC
-BOOLEAN
-AddCustomSubEntry (
-                   IN OUT  CUSTOM_LOADER_ENTRY *Entry,
-                   IN      CUSTOM_LOADER_ENTRY *SubEntry)
-{
-  if ((Entry == NULL) || (SubEntry == NULL)) return FALSE;
-  Entry->SubEntries.AddReference(Entry, true);
-  return TRUE;
-}
+//STATIC
+//BOOLEAN
+//AddCustomSubEntry (
+//                   IN OUT  CUSTOM_LOADER_ENTRY *Entry,
+//                   IN      CUSTOM_LOADER_ENTRY *SubEntry)
+//{
+//  if ((Entry == NULL) || (SubEntry == NULL)) return FALSE;
+//  Entry->SubEntries.AddReference(Entry, true);
+//  return TRUE;
+//}
 
 
 STATIC
@@ -622,8 +622,10 @@ CUSTOM_LOADER_ENTRY
     DuplicateEntry->Type             = Entry->Type;
     DuplicateEntry->VolumeType       = Entry->VolumeType;
     DuplicateEntry->KernelScan       = Entry->KernelScan;
-    DuplicateEntry->CustomBoot       = Entry->CustomBoot;
-    DuplicateEntry->CustomLogo       = Entry->CustomLogo;
+    DuplicateEntry->CustomLogoType       = Entry->CustomLogoType;
+    DuplicateEntry->CustomLogoAsXString8       = Entry->CustomLogoAsXString8;
+    DuplicateEntry->CustomLogoAsData       = Entry->CustomLogoAsData;
+    DuplicateEntry->CustomLogoImage       = Entry->CustomLogoImage;
 //    CopyKernelAndKextPatches (&DuplicateEntry->KernelAndKextPatches, &Entry->KernelAndKextPatches);
     DuplicateEntry->KernelAndKextPatches = Entry->KernelAndKextPatches;
   }
@@ -1420,14 +1422,11 @@ FillinCustomEntry (
 {
   const TagStruct* Prop;
 
-  if ((Entry == NULL) || (DictPointer == NULL)) {
-    return FALSE;
-  }
+  if ( Entry == NULL ) panic("Entry == NULL");
+  if ( DictPointer == NULL ) panic("DictPointer == NULL");
 
   Prop = DictPointer->propertyForKey("Disabled");
-  if (IsPropertyNotNullAndTrue(Prop)) {
-    return FALSE;
-  }
+  Entry->Disabled = IsPropertyNotNullAndTrue(Prop);
 
   Prop = DictPointer->propertyForKey("Volume");
   if (Prop != NULL && (Prop->isString())) {
@@ -1473,6 +1472,7 @@ FillinCustomEntry (
     Entry->FullTitle = Prop->getString()->stringValue();
   }
 
+  Entry->ImageData.setEmpty();
   Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
     Entry->ImagePath.setEmpty();
@@ -1485,13 +1485,15 @@ FillinCustomEntry (
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
+      Entry->ImageData.stealValueFrom(TmpData, DataLen);
+// TODO remove from settings
       if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
         Entry->Image.setFilled();
       }
-      FreePool(TmpData);
     }
   }
 
+  Entry->DriveImageData.setEmpty();
   Prop = DictPointer->propertyForKey("DriveImage");
   if (Prop != NULL) {
     Entry->DriveImagePath.setEmpty();
@@ -1504,6 +1506,8 @@ FillinCustomEntry (
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
     if (TmpData) {
+      Entry->DriveImageData.stealValueFrom(TmpData, DataLen);
+// TODO remove from settings
       if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
         Entry->DriveImage.setFilled();
       }
@@ -1522,36 +1526,40 @@ FillinCustomEntry (
   Prop = DictPointer->propertyForKey("CustomLogo");
   if (Prop != NULL) {
     if (IsPropertyNotNullAndTrue(Prop)) {
-      Entry->CustomBoot    = CUSTOM_BOOT_APPLE;
+      Entry->CustomLogoType    = CUSTOM_BOOT_APPLE;
     } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+      Entry->CustomLogoAsXString8 = Prop->getString()->stringValue();
       if (Prop->getString()->stringValue().equalIC("Apple")) {
-        Entry->CustomBoot  = CUSTOM_BOOT_APPLE;
+        Entry->CustomLogoType  = CUSTOM_BOOT_APPLE;
       } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
-        Entry->CustomBoot  = CUSTOM_BOOT_ALT_APPLE;
+        Entry->CustomLogoType  = CUSTOM_BOOT_ALT_APPLE;
       } else if (Prop->getString()->stringValue().equalIC("Theme")) {
-        Entry->CustomBoot  = CUSTOM_BOOT_THEME;
+        Entry->CustomLogoType  = CUSTOM_BOOT_THEME;
       } else {
         XStringW customLogo = XStringW() = Prop->getString()->stringValue();
-        Entry->CustomBoot  = CUSTOM_BOOT_USER;
-        Entry->CustomLogo.LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
-        if (Entry->CustomLogo.isEmpty()) {
+        Entry->CustomLogoType  = CUSTOM_BOOT_USER;
+// TODO : remove reading of image from settings
+        Entry->CustomLogoImage.LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
+        if (Entry->CustomLogoImage.isEmpty()) {
           DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
-          Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
+          Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
         }
       }
     } else if ( Prop->isData() && Prop->getData()->dataLenValue() > 0 ) {
-      Entry->CustomBoot = CUSTOM_BOOT_USER;
-      Entry->CustomLogo.FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
-      if (Entry->CustomLogo.isEmpty()) {
+      Entry->CustomLogoType = CUSTOM_BOOT_USER;
+      Entry->CustomLogoAsData = Prop->getData()->data();
+// TODO : remove reading of image from settings
+      Entry->CustomLogoImage.FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
+      if (Entry->CustomLogoImage.isEmpty()) {
         DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
-        Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
+        Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
       }
     } else {
-      Entry->CustomBoot = CUSTOM_BOOT_USER_DISABLED;
+      Entry->CustomLogoType = CUSTOM_BOOT_USER_DISABLED;
     }
-    DBG("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomBoot), Entry->CustomLogo.GetWidth());
+    DBG("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomLogoType), Entry->CustomLogoImage.GetWidth());
   } else {
-    Entry->CustomBoot = CUSTOM_BOOT_DISABLED;
+    Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
   }
 
   Prop = DictPointer->propertyForKey("BootBgColor");
@@ -1595,6 +1603,7 @@ FillinCustomEntry (
       Entry->Type = OSTYPE_WINEFI;
     } else if (Prop->getString()->stringValue().equalIC("Linux")) {
       Entry->Type = OSTYPE_LIN;
+// TODO remove from here
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     } else if (Prop->getString()->stringValue().equalIC("LinuxKernel")) {
       Entry->Type = OSTYPE_LINEFI;
@@ -1642,16 +1651,21 @@ FillinCustomEntry (
     Prop = DictPointer->propertyForKey("InjectKexts");
     if (Prop != NULL) {
       if ( Prop->isTrueOrYes() ) {
+        Entry->InjectKexts = 1;
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else if ( Prop->isFalseOrNn() ) {
+        Entry->InjectKexts = 0;
         // nothing to do
       } else if ( Prop->isString() && Prop->getString()->stringValue().equalIC("Detect") ) {
+        Entry->InjectKexts = 2;
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else {
+        Entry->InjectKexts = -1;
         DBG("** Warning: unknown custom entry InjectKexts value '%s'\n", Prop->getString()->stringValue().c_str());
       }
     } else {
+      Entry->InjectKexts = -1;
       // Use global settings
       if (gSettings.WithKexts) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
@@ -1733,10 +1747,10 @@ FillinCustomEntry (
         // Allocate a sub entry
         CustomSubEntry = DuplicateCustomEntry (Entry);
         if (CustomSubEntry) {
-          if (!FillinCustomEntry (CustomSubEntry, Dict, TRUE) || !AddCustomSubEntry (Entry, CustomSubEntry)) {
-            if (CustomSubEntry) {
-              FreePool(CustomSubEntry);
-            }
+          if ( FillinCustomEntry(CustomSubEntry, Dict, TRUE) ) {
+            Entry->SubEntries.AddReference(CustomSubEntry, true);
+          }else{
+            delete CustomSubEntry;
           }
         }
       }
@@ -1937,10 +1951,18 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
   return TRUE;
 }
 
+/*
+ * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
+ * and is passed by non-const reference.
+ * This temporary during the refactoring
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
 // EDID reworked by Sherlocks
 static void
 GetEDIDSettings(const TagDict* DictPointer, SETTINGS_DATA& gSettings)
 {
+  #pragma GCC diagnostic pop
   const TagStruct* Prop;
   const TagDict* Dict;
   UINTN  j = 128;
@@ -2259,17 +2281,17 @@ EFI_STATUS GetEarlyUserSettings (
       Prop = BootDict->propertyForKey("CustomLogo");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.Boot.CustomBootSetting   = CUSTOM_BOOT_APPLE;
+          gSettings.Boot.CustomLogoType   = CUSTOM_BOOT_APPLE;
         } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
           gSettings.Boot.CustomLogoAsXString8 = Prop->getString()->stringValue();
           if (Prop->getString()->stringValue().equalIC("Apple")) {
-            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_APPLE;
+            gSettings.Boot.CustomLogoType = CUSTOM_BOOT_APPLE;
           } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
-            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_ALT_APPLE;
+            gSettings.Boot.CustomLogoType = CUSTOM_BOOT_ALT_APPLE;
           } else if (Prop->getString()->stringValue().equalIC("Theme")) {
-            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_THEME;
+            gSettings.Boot.CustomLogoType = CUSTOM_BOOT_THEME;
           } else {
-            gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_USER;
+            gSettings.Boot.CustomLogoType = CUSTOM_BOOT_USER;
 //            if (settingsData.Boot.CustomLogo != NULL) {
 //              delete settingsData.Boot.CustomLogo;
 //            }
@@ -2282,7 +2304,7 @@ EFI_STATUS GetEarlyUserSettings (
           }
         } else if ( Prop->isData()  && Prop->getData()->dataLenValue() > 0 ) {
           gSettings.Boot.CustomLogoAsData = Prop->getData()->data();
-          gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_USER;
+          gSettings.Boot.CustomLogoType = CUSTOM_BOOT_USER;
 //          if (settingsData.Boot.CustomLogo != NULL) {
 //            delete settingsData.Boot.CustomLogo;
 //          }
@@ -2293,10 +2315,10 @@ EFI_STATUS GetEarlyUserSettings (
 //            settingsData.Boot.CustomBoot = CUSTOM_BOOT_DISABLED;
 //          }
         } else {
-          gSettings.Boot.CustomBootSetting = CUSTOM_BOOT_USER_DISABLED;
+          gSettings.Boot.CustomLogoType = CUSTOM_BOOT_USER_DISABLED;
         }
       } else {
-        gSettings.Boot.CustomBootSetting   = CUSTOM_BOOT_DISABLED;
+        gSettings.Boot.CustomLogoType   = CUSTOM_BOOT_DISABLED;
       }
 
     }
@@ -2583,7 +2605,9 @@ EFI_STATUS GetEarlyUserSettings (
               // Allocate an entry
               CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
               // Fill it in
-              if ( !FillinCustomEntry(Entry, Dict3, FALSE) || !AddCustomLoaderEntry(Entry) ) {
+              if ( FillinCustomEntry(Entry, Dict3, FALSE) ) {
+                gSettings.GUI.CustomEntries.AddReference(Entry, true);
+              }else{
                 delete Entry;
               }
             }
@@ -2600,7 +2624,9 @@ EFI_STATUS GetEarlyUserSettings (
               // Allocate an entry
               Entry = new CUSTOM_LEGACY_ENTRY;
               // Fill it in
-              if (!FillingCustomLegacy(Entry, Dict3) || !AddCustomLegacyEntry(Entry)) {
+              if ( FillingCustomLegacy(Entry, Dict3) ) {
+                gSettings.GUI.CustomLegacy.AddReference(Entry, true);
+              }else{
                 delete Entry;
               }
             }
@@ -2617,7 +2643,9 @@ EFI_STATUS GetEarlyUserSettings (
               // Allocate an entry
               Entry = new CUSTOM_TOOL_ENTRY;
               // Fill it in
-              if (!FillingCustomTool(Entry, Dict3) || !AddCustomToolEntry(Entry)) {
+              if ( FillingCustomTool(Entry, Dict3) ) {
+                gSettings.GUI.CustomTool.AddReference(Entry, true);
+              }else{
                 delete Entry;
               }
             }
@@ -3372,8 +3400,16 @@ ParseSMBIOSSettings(
   }
 }
 
+/*
+ * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
+ * and is passed by non-const reference.
+ * This temporary during the refactoring
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
 static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
 {
+  #pragma GCC diagnostic pop
   const TagDict* ACPIDict = CfgDict->dictPropertyForKey("ACPI");
   if (ACPIDict) {
     const TagArray* DropTablesArray = ACPIDict->arrayPropertyForKey("DropTables"); // array of dict

@@ -10,7 +10,7 @@
 #include "KERNEL_AND_KEXT_PATCHES.h"
 #include "../libeg/XIcon.h"
 #include "../cpp_lib/undefinable.h"
-
+#include "../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 
@@ -153,11 +153,14 @@ public:
 class CUSTOM_LOADER_ENTRY
 {
 public:
+  bool                   Disabled = 0;
   XObjArray<CUSTOM_LOADER_ENTRY> SubEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
-  XIcon                  Image = XIcon();
-  XIcon                  DriveImage = XIcon();
+  XIcon                  Image = XIcon(); // todo remove
   XStringW               ImagePath = XStringW();
+  XBuffer<UINT8>         ImageData = XBuffer<UINT8>();
+  XIcon                  DriveImage = XIcon();
   XStringW               DriveImagePath = XStringW();
+  XBuffer<UINT8>         DriveImageData = XBuffer<UINT8>();
   XStringW               Volume = XStringW();
   XStringW               Path = XStringW();
   XString8Array          LoadOptions = XString8Array();
@@ -171,12 +174,15 @@ public:
   bool                    Hidden = 0;
   UINT8                   Type = 0;
   UINT8                   VolumeType = 0;
-  UINT8                   KernelScan = 0;
-  UINT8                   CustomBoot = 0;
-  XImage                  CustomLogo = XImage();
+  UINT8                   KernelScan = KERNEL_SCAN_ALL;
+//  UINT8                   CustomBoot = 0;
+  UINT8                   CustomLogoType = 0;
+  XString8                CustomLogoAsXString8 = XString8();
+  XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
+  XImage                  CustomLogoImage = XImage(); // Todo : remove from settings.
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXEL({0,0,0,0});
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
-
+  INT8                    InjectKexts = -1;
 //  CUSTOM_LOADER_ENTRY() {}
 //
 //  // Not sure if default are valid. Delete them. If needed, proper ones can be created
@@ -313,7 +319,7 @@ public:
       // LegacyBoot
       XStringW                LegacyBoot = XStringW();
       UINT16                  LegacyBiosDefaultEntry = 0;
-      UINT8                   CustomBootSetting = 0;
+      UINT8                   CustomLogoType = 0;
       XString8                CustomLogoAsXString8 = XString8();
       XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
   } Boot = BootClass();
@@ -955,7 +961,7 @@ public:
   BOOLEAN       NeedPMfix = FALSE;
   ACPI_DROP_TABLE         *ACPIDropTables = NULL;
 
-  UINT8                   CustomBoot = 0; // this will be initialized with gSettings.Boot.CustomBoot and set back to CUSTOM_BOOT_DISABLED if CustomLogo could not be loaded or decoded (see afterGetUserSettings)
+  UINT8                   CustomLogoType = 0; // this will be initialized with gSettings.Boot.CustomBoot and set back to CUSTOM_BOOT_DISABLED if CustomLogo could not be loaded or decoded (see afterGetUserSettings)
   XImage                  *CustomLogo = 0;
 
   bool                    DropSSDT = 0; // init with gSettings.Boot.DropSSDTSetting. Put back to false is one table is dropped (see afterGetUserSettings)

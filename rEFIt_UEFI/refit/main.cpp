@@ -2589,7 +2589,7 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   }
 
   // Whether or not to draw boot screen
-  GlobalConfig.CustomBoot = gSettings.Boot.CustomBootSetting;
+  GlobalConfig.CustomLogoType = gSettings.Boot.CustomLogoType;
   if ( gSettings.Boot.CustomLogoAsXString8.notEmpty() ) {
     if (GlobalConfig.CustomLogo != NULL) {
       delete GlobalConfig.CustomLogo;
@@ -2598,7 +2598,7 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     GlobalConfig.CustomLogo->LoadXImage(&self.getSelfVolumeRootDir(), gSettings.Boot.CustomLogoAsXString8);
     if (GlobalConfig.CustomLogo->isEmpty()) {
       DBG("Custom boot logo not found at path '%s'!\n", gSettings.Boot.CustomLogoAsXString8.c_str());
-      GlobalConfig.CustomBoot = CUSTOM_BOOT_DISABLED;
+      GlobalConfig.CustomLogoType = CUSTOM_BOOT_DISABLED;
     }
   } else if ( gSettings.Boot.CustomLogoAsData.notEmpty() ) {
     if (GlobalConfig.CustomLogo != NULL) {
@@ -2608,10 +2608,10 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     GlobalConfig.CustomLogo->FromPNG(gSettings.Boot.CustomLogoAsData.data(), gSettings.Boot.CustomLogoAsData.size());
     if (GlobalConfig.CustomLogo->isEmpty()) {
       DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
-      GlobalConfig.CustomBoot = CUSTOM_BOOT_DISABLED;
+      GlobalConfig.CustomLogoType = CUSTOM_BOOT_DISABLED;
     }
   }
-  DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(GlobalConfig.CustomBoot), (uintptr_t)GlobalConfig.CustomLogo);
+  DBG("Custom boot %s (0x%llX)\n", CustomBootModeToStr(GlobalConfig.CustomLogoType), (uintptr_t)GlobalConfig.CustomLogo);
 
   GlobalConfig.EnableC6 = gSettings.getEnableC6();
   GlobalConfig.EnableC4 = gSettings.getEnableC4();
