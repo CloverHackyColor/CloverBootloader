@@ -2185,7 +2185,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 // Add custom entries
 void AddCustomEntries(void)
 {
-  if (!gSettings.GUI.CustomEntries.isEmpty()) return;
+  if (gSettings.GUI.CustomEntries.isEmpty()) return;
 
   //DBG("Custom entries start\n");
   DbgHeader("AddCustomEntries");
