@@ -2714,6 +2714,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gRT->GetTime(&Now, NULL);
 
+  Status = InitRefitLib(gImageHandle);
+  if (EFI_ERROR(Status))
+    return Status;
+
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   if (!gFirmwareRevision) {
@@ -2739,10 +2743,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if ( gBuildInfo ) DBG("Build with: [%s]\n", gBuildInfo);
 
 
-
-  Status = InitRefitLib(gImageHandle);
-  if (EFI_ERROR(Status))
-    return Status;
 
   //dumping SETTING structure
   // if you change something in Platform.h, please uncomment and test that all offsets

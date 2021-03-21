@@ -1008,7 +1008,7 @@ void LOADER_ENTRY::AddDefaultMenu()
 
   }
 
-  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+//  SubScreen->AddMenuEntry(&MenuEntryReturn, false); //one-way ticket to avoid confusion
   // DBG("    Added '%ls': OSType='%d', OSVersion='%s'\n",Title,LoaderType,OSVersion);
 }
 

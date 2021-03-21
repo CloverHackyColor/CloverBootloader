@@ -208,12 +208,6 @@ static UINTN GetDebugLogFile()
     EFI_FILE_PROTOCOL   *RootDir;
     EFI_FILE_PROTOCOL   *LogFile;
     
-    EFI_TIME          Now;
-    Status = gRT->GetTime(&Now, NULL);
-    if ( debugLogFileName.isEmpty() ) {
-      debugLogFileName = S8Printf("misc\\%d-%d-%d_%d-%d_%ls.log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute,  self.getCloverEfiFileName().wc_str());
-    }
-    
     // get RootDir from device we are loaded from
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &LoadedImage);
     if (EFI_ERROR(Status)) {
@@ -386,11 +380,28 @@ void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
    MemLogfVA(TRUE, DebugMode, FormatString, Marker);
    VA_END(Marker);
 }
-
+#if NEW_LOG
 void InitBooterLog(void)
 {
   SetMemLogCallback(MemLogCallback);
 }
+
+#else
+void InitBooterLog(void)
+{
+  EFI_TIME          Now;
+  EFI_STATUS        Status;
+  
+  Status = gRT->GetTime(&Now, NULL);
+  if (!EFI_ERROR(Status)) {
+    debugLogFileName = SWPrintf("misc\\%d-%d-%d_%d-%d-%d_%ls.log", Now.Year, Now.Month, Now.Day, Now.Hour, Now.Minute, Now.Second, self.getCloverEfiFileName().wc_str());
+  } else {
+    debugLogFileName = L"misc\\debug.log"_XSW;
+  }
+
+  SetMemLogCallback(MemLogCallback);
+}
+#endif
 
 EFI_STATUS SetupBooterLog(BOOLEAN AllowGrownSize)
 {
@@ -433,7 +444,6 @@ EFI_STATUS SaveBooterLog(const EFI_FILE* BaseDir OPTIONAL, IN CONST CHAR16 *File
   
   return egSaveFile(BaseDir, FileName, (UINT8*)MemLogBuffer, MemLogLen);
 }
-
 
 void DbgHeader(CONST CHAR8 *str)
 {
