@@ -135,7 +135,6 @@
   PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
-  #SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
   MtrrLib|CloverEFI/UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
   IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
   LocalApicLib|CloverEFI/UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
@@ -495,7 +494,7 @@
   }
 
 
-	#DuetPkg/BootSector/BootSector.inf
+  #DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
   CloverEFI/OsxDxeIpl/DxeIpl.inf {
@@ -508,8 +507,8 @@
       #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
- #MdeModulePkg/Core/Dxe/DxeMain.inf {
- CloverEFI/OsxDxeCore/DxeMain.inf {
+  #MdeModulePkg/Core/Dxe/DxeMain.inf {
+  CloverEFI/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -524,12 +523,10 @@
     <LibraryClasses>
       BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
       MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
-     # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
-     # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
-     DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
- 	 ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
- 	 PeCoffLib|Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
-
+      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
+      # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
+      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
 
   MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
@@ -769,14 +766,6 @@
       SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
   }
 
-!else
-
-  Protocols/DumpUefiCalls/DumpUefiCalls.inf {
-  	<LibraryClasses>
-  		PeCoffLib|Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
-  }
-
-
 !endif
 
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers/UEFI dir
@@ -813,12 +802,12 @@
   
   ShellPkg/Application/Shell/Shell.inf {
     <PcdsFixedAtBuild>
-	  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xFF
-	  gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
-	  gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|16000
-	!ifdef $(NO_SHELL_PROFILES)
-	  gEfiShellPkgTokenSpaceGuid.PcdShellProfileMask|0x00
-	!endif #$(NO_SHELL_PROFILES)
+    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xFF
+    gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
+    gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|16000
+  !ifdef $(NO_SHELL_PROFILES)
+    gEfiShellPkgTokenSpaceGuid.PcdShellProfileMask|0x00
+  !endif #$(NO_SHELL_PROFILES)
 
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -843,26 +832,15 @@
   }
 !endif
 
+rEFIt_UEFI/refit.inf {
+  #
+  # Enable debug output.
+  #
+  <PcdsFixedAtBuild>
+    gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+    gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+}
 
-!ifdef DEBUG_ON_SERIAL_PORT
-	rEFIt_UEFI/refit.inf {
-	#
-     # Enable debug output.
-     #
-	<PcdsFixedAtBuild>
-		gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
-		gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
-	<LibraryClasses>
-		SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-		DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-	  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
-	}
-!else
-	rEFIt_UEFI/refit.inf {
-    <LibraryClasses>
-      BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
-  }
-!endif
 
 [Components.X64]
 
@@ -888,7 +866,7 @@
 #      DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
 #  }
 # !else
-#	MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf
+# MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf
 # !endif
 
 ###################################################################################################
