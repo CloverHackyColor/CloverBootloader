@@ -6149,8 +6149,6 @@
 		A588C05D25265F100089BA4A /* Bootstrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Bootstrap.c; sourceTree = "<group>"; };
 		A588C05F25265F100089BA4A /* KeyTester.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeyTester.inf; sourceTree = "<group>"; };
 		A588C06025265F100089BA4A /* KeyTester.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = KeyTester.c; sourceTree = "<group>"; };
-		A588C06225265F100089BA4A /* VerifyMsrE2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VerifyMsrE2.inf; sourceTree = "<group>"; };
-		A588C06325265F100089BA4A /* VerifyMsrE2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VerifyMsrE2.c; sourceTree = "<group>"; };
 		A588C06525265F100089BA4A /* RtcRw.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = RtcRw.inf; sourceTree = "<group>"; };
 		A588C06625265F100089BA4A /* RtcRw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RtcRw.c; sourceTree = "<group>"; };
 		A588C06825265F100089BA4A /* GopStop.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GopStop.inf; sourceTree = "<group>"; };
@@ -7607,6 +7605,12 @@
 		A5C330D924B75A15004E20CC /* AppleDiskLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleDiskLabel.h; sourceTree = "<group>"; };
 		A5C330DD24B76102004E20CC /* ProcessorInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessorInfo.h; sourceTree = "<group>"; };
 		A5C330DE24B78048004E20CC /* GenericIch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericIch.h; sourceTree = "<group>"; };
+		A5C619C226071AFA001856DF /* ControlMsrE2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ControlMsrE2.c; sourceTree = "<group>"; };
+		A5C619C326071AFA001856DF /* ControlMsrE2Hii.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ControlMsrE2Hii.c; sourceTree = "<group>"; };
+		A5C619C426071AFA001856DF /* ControlMsrE2UI.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ControlMsrE2UI.c; sourceTree = "<group>"; };
+		A5C619C526071AFA001856DF /* ControlMsrE2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ControlMsrE2.inf; sourceTree = "<group>"; };
+		A5C619C626071AFA001856DF /* ControlMsrE2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ControlMsrE2.h; sourceTree = "<group>"; };
+		A5C619C726071AFA001856DF /* VerifyMsrE2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VerifyMsrE2.c; sourceTree = "<group>"; };
 		A5D12C1C243A0B0B00DFA98A /* bootscreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bootscreen.h; sourceTree = "<group>"; };
 		A5D12C1D243A0B1B00DFA98A /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		A5D12C1E243A0B2700DFA98A /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
@@ -20806,20 +20810,20 @@
 		A588C05025265F100089BA4A /* Application */ = {
 			isa = PBXGroup;
 			children = (
-				A588C05125265F100089BA4A /* HdaCodecDump */,
-				A588C05525265F100089BA4A /* VerifyMemOpt */,
 				A588C05825265F100089BA4A /* BootKicker */,
 				A588C05B25265F100089BA4A /* Bootstrap */,
-				A588C05E25265F100089BA4A /* KeyTester */,
-				A588C06125265F100089BA4A /* VerifyMsrE2 */,
-				A588C06425265F100089BA4A /* RtcRw */,
-				A588C06725265F100089BA4A /* GopStop */,
-				A588C06E25265F100089BA4A /* ResetSystem */,
 				A588C07125265F100089BA4A /* ChipTune */,
-				A588C07425265F100089BA4A /* PavpProvision */,
 				A588C07825265F100089BA4A /* CleanNvram */,
-				A588C07B25265F100089BA4A /* OpenControl */,
+				A5C619C126071AFA001856DF /* ControlMsrE2 */,
+				A588C06725265F100089BA4A /* GopStop */,
+				A588C05125265F100089BA4A /* HdaCodecDump */,
+				A588C05E25265F100089BA4A /* KeyTester */,
 				A588C07E25265F100089BA4A /* MmapDump */,
+				A588C07B25265F100089BA4A /* OpenControl */,
+				A588C07425265F100089BA4A /* PavpProvision */,
+				A588C06E25265F100089BA4A /* ResetSystem */,
+				A588C06425265F100089BA4A /* RtcRw */,
+				A588C05525265F100089BA4A /* VerifyMemOpt */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -20868,15 +20872,6 @@
 				A588C06025265F100089BA4A /* KeyTester.c */,
 			);
 			path = KeyTester;
-			sourceTree = "<group>";
-		};
-		A588C06125265F100089BA4A /* VerifyMsrE2 */ = {
-			isa = PBXGroup;
-			children = (
-				A588C06225265F100089BA4A /* VerifyMsrE2.inf */,
-				A588C06325265F100089BA4A /* VerifyMsrE2.c */,
-			);
-			path = VerifyMsrE2;
 			sourceTree = "<group>";
 		};
 		A588C06425265F100089BA4A /* RtcRw */ = {
@@ -23338,6 +23333,19 @@
 				A5C3309C24B6FAF6004E20CC /* AppleMacEfiSpec.h */,
 			);
 			path = AppleMacEfi;
+			sourceTree = "<group>";
+		};
+		A5C619C126071AFA001856DF /* ControlMsrE2 */ = {
+			isa = PBXGroup;
+			children = (
+				A5C619C226071AFA001856DF /* ControlMsrE2.c */,
+				A5C619C326071AFA001856DF /* ControlMsrE2Hii.c */,
+				A5C619C426071AFA001856DF /* ControlMsrE2UI.c */,
+				A5C619C526071AFA001856DF /* ControlMsrE2.inf */,
+				A5C619C626071AFA001856DF /* ControlMsrE2.h */,
+				A5C619C726071AFA001856DF /* VerifyMsrE2.c */,
+			);
+			path = ControlMsrE2;
 			sourceTree = "<group>";
 		};
 		A5DEBF3423BF687D00C41734 /* cpp_util */ = {

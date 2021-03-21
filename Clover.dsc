@@ -804,6 +804,7 @@
   #Sample/Application/Sample.inf
   #gptsync/gptsync.inf
   bdmesg_efi/bdmesg.inf
+  OpenCorePkg/Application/ControlMsrE2/ControlMsrE2.inf
   
 !ifndef NO_CLOVER_SHELL
   ShellPkg/Library/UefiShellNetwork1CommandsLib/UefiShellNetwork1CommandsLib.inf
