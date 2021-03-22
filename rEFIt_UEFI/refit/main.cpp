@@ -205,7 +205,7 @@ bailout:
 
 
 static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
-                                    IN CONST XString8Array& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                    IN CONST XString8Array& LoadOptions, IN CONST XStringW& LoadOptionsPrefix,
                                     IN CONST XStringW& ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
@@ -234,10 +234,10 @@ static EFI_STATUS StartEFILoadedImage(IN EFI_HANDLE ChildImageHandle,
       goto bailout_unload;
     }
 
-    if (LoadOptionsPrefix != NULL) {
+    if ( LoadOptionsPrefix.notEmpty() ) {
       // NOTE: That last space is also added by the EFI shell and seems to be significant
       //  when passing options to Apple's boot.efi...
-      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix, LoadOptions.ConcatAll(" "_XS8).c_str());
+      loadOptionsW = SWPrintf("%ls %s ", LoadOptionsPrefix.wc_str(), LoadOptions.ConcatAll(" "_XS8).c_str());
     }else{
       loadOptionsW = SWPrintf("%s ", LoadOptions.ConcatAll(" "_XS8).c_str()); // Jief : should we add a space ? Wasn't the case before big refactoring. Yes, a space required.
     }
@@ -318,7 +318,7 @@ static EFI_STATUS LoadEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
-                                IN CONST XString8Array& LoadOptions, IN CONST CHAR16 *LoadOptionsPrefix,
+                                IN CONST XString8Array& LoadOptions, IN CONST XStringW& LoadOptionsPrefix,
                                 IN CONST XStringW& ImageTitle,
                                 OUT UINTN *ErrorInStep,
                                 OUT EFI_HANDLE *NewImageHandle)
@@ -1594,7 +1594,7 @@ void LOADER_ENTRY::StartLoader()
 //                Basename(LoaderPath), Basename(LoaderPath), NULL, NULL);
 
 //  DBG("StartEFILoadedImage\n");
-  StartEFILoadedImage(ImageHandle, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL);
+  StartEFILoadedImage(ImageHandle, LoadOptions, NullXStringW, LoaderPath.basename(), NULL);
 }
   // Unlock boot screen
   if (EFI_ERROR(Status = UnlockBootScreen())) {
@@ -1677,8 +1677,8 @@ void REFIT_MENU_ENTRY_LOADER_TOOL::StartTool()
   egClearScreen(&MenuBackgroundPixel);
   // assumes "Start <title>" as assigned below
   BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
-    StartEFIImage(DevicePath, LoadOptions, Basename(LoaderPath.wc_str()), LoaderPath.basename(), NULL, NULL);
-    FinishExternalScreen();
+  StartEFIImage(DevicePath, LoadOptions, LoaderPath.basename(), LoaderPath.basename(), NULL, NULL);
+  FinishExternalScreen();
 }
 
 //
@@ -1776,7 +1776,7 @@ static void ScanDriverDir(IN CONST CHAR16 *Path, OUT EFI_HANDLE **DriversToConne
 #undef BOOLEAN_AT_INDEX
 
     XStringW FileName = SWPrintf("%ls\\%ls\\%ls", self.getCloverDirFullPath().wc_str(), Path, DirEntry->FileName);
-    Status = StartEFIImage(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NullXString8Array, DirEntry->FileName, XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
+    Status = StartEFIImage(FileDevicePath(self.getSelfLoadedImage().DeviceHandle, FileName), NullXString8Array, LStringW(DirEntry->FileName), XStringW().takeValueFrom(DirEntry->FileName), NULL, &DriverHandle);
     if (EFI_ERROR(Status)) {
       continue;
     }
