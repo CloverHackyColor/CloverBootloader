@@ -3,7 +3,8 @@
 
 #include <Efi.h>
 #include "../gui/menu_items/menu_items.h"
-
+#include "../include/OSFlags.h"
+#include "../include/OSTypes.h"
 #include "../Platform/plist/plist.h"
 #include "../Platform/guid.h"
 #include "MacOsVersion.h"
@@ -150,32 +151,78 @@ public:
   ~ACPI_DROP_TABLE() {}
 };
 
-class CUSTOM_LOADER_ENTRY
+class GUI_Custom_SubEntry_Class;
+template<class C> class XmlArray;
+//class XmlArray<GUI_Custom_SubEntry_Class>;
+
+class CUSTOM_LOADER_SUBENTRY_SETTINGS;
+void CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
+class CUSTOM_LOADER_SUBENTRY;
+BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+                   
+class CUSTOM_LOADER_SUBENTRY_SETTINGS
 {
 public:
   bool                   Disabled = 0;
-  XObjArray<CUSTOM_LOADER_ENTRY> SubEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
-  XIcon                  Image = XIcon(); // todo remove
-  XStringW               ImagePath = XStringW();
-  XBuffer<UINT8>         ImageData = XBuffer<UINT8>();
-  XIcon                  DriveImage = XIcon();
-  XStringW               DriveImagePath = XStringW();
-  XBuffer<UINT8>         DriveImageData = XBuffer<UINT8>();
-  XStringW               Volume = XStringW();
-  XStringW               Path = XStringW();
-  XString8Array          LoadOptions = XString8Array();
+protected:
+  // member defined with m_ prefix should not be accessed from outside. I left them public for now for CompareCustomEntries()
+  undefinable_XString8   m_Arguments = undefinable_XString8();
+  XString8               m_AddArguments = XString8();
 
-  XStringW FullTitle = XStringW();
-  XStringW Title = XStringW();
-  XStringW Settings = XStringW();
+  undefinable_XString8   m_FullTitle = undefinable_XString8();
+  undefinable_XString8   m_Title = undefinable_XString8();
+
+public:
+
+  friend void ::CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
+  friend BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+  friend class ::CUSTOM_LOADER_SUBENTRY;
+};
+
+class CUSTOM_LOADER_ENTRY;
+
+class CUSTOM_LOADER_SUBENTRY
+{
+public:
+  const CUSTOM_LOADER_ENTRY& parent;
+  const CUSTOM_LOADER_SUBENTRY_SETTINGS& settings = CUSTOM_LOADER_SUBENTRY_SETTINGS();
+
+  CUSTOM_LOADER_SUBENTRY(const CUSTOM_LOADER_ENTRY& _customLoaderEntry, const CUSTOM_LOADER_SUBENTRY_SETTINGS& _settings) : parent(_customLoaderEntry), settings(_settings) {}
+  
+  XString8Array getLoadOptions() const;
+  UINT8 getFlags(bool NoCachesDefault) const;
+
+  const XString8& getTitle() const;
+  const XString8& getFullTitle() const;
+};
+
+class CUSTOM_LOADER_ENTRY_SETTINGS
+{
+public:
+  bool                    Disabled = 0;
+  XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS> SubEntriesSettings = XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>();
+  XIcon                   Image = XIcon(); // todo remove
+  XStringW                ImagePath = XStringW();
+  XBuffer<UINT8>          ImageData = XBuffer<UINT8>();
+  XIcon                   DriveImage = XIcon();
+  XStringW                DriveImagePath = XStringW();
+  XBuffer<UINT8>          DriveImageData = XBuffer<UINT8>();
+  XStringW                Volume = XStringW();
+  XStringW                Path = XStringW();
+  undefinable_XString8    Arguments = undefinable_XString8();
+  XString8                AddArguments = XString8();
+//  XString8Array          LoadOptions = XString8Array();
+  XString8                FullTitle = XStringW();
+  XString8                Title = XStringW();
+  XStringW                Settings = XStringW(); // path of a config.plist that'll be read at the beginning of startloader
   CHAR16                  Hotkey = 0;
   BOOLEAN                 CommonSettings = 0;
-  UINT8                   Flags = 0;
+//  UINT8                   Flags = 0;
   bool                    Hidden = 0;
+  bool                    AlwaysHidden = 0;
   UINT8                   Type = 0;
   UINT8                   VolumeType = 0;
   UINT8                   KernelScan = KERNEL_SCAN_ALL;
-//  UINT8                   CustomBoot = 0;
   UINT8                   CustomLogoType = 0;
   XString8                CustomLogoAsXString8 = XString8();
   XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
@@ -183,12 +230,48 @@ public:
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXEL({0,0,0,0});
   KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
   INT8                    InjectKexts = -1;
+  undefinable_bool        NoCaches = undefinable_bool();
+
 //  CUSTOM_LOADER_ENTRY() {}
 //
 //  // Not sure if default are valid. Delete them. If needed, proper ones can be created
 //  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
 //  CUSTOM_LOADER_ENTRY& operator=(const CUSTOM_LOADER_ENTRY&) = delete;
 
+};
+
+class CUSTOM_LOADER_ENTRY
+{
+public:
+  const CUSTOM_LOADER_ENTRY_SETTINGS& settings = CUSTOM_LOADER_ENTRY_SETTINGS();
+  XObjArray<CUSTOM_LOADER_SUBENTRY> SubEntries = XObjArray<CUSTOM_LOADER_SUBENTRY>();
+
+  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _settings) : settings(_settings) {
+    for ( size_t idx = 0 ; idx < settings.SubEntriesSettings.size() ; ++idx ) {
+      const CUSTOM_LOADER_SUBENTRY_SETTINGS& CustomEntrySettings = settings.SubEntriesSettings[idx];
+      CUSTOM_LOADER_SUBENTRY* entry = new CUSTOM_LOADER_SUBENTRY(*this, CustomEntrySettings);
+      SubEntries.AddReference(entry, true);
+    }
+  }
+  XString8Array getLoadOptions() const;
+  UINT8 getFlags(bool NoCachesDefault) const {
+    UINT8 Flags = 0;
+    if ( settings.Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
+    if ( settings.AlwaysHidden ) Flags = OSFLAG_SET(Flags, OSFLAG_DISABLED);
+    if ( settings.Type == OSTYPE_LIN ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
+    if (OSTYPE_IS_OSX(settings.Type) || OSTYPE_IS_OSX_RECOVERY(settings.Type) || OSTYPE_IS_OSX_INSTALLER(settings.Type)) {
+      Flags = OSFLAG_UNSET(Flags, OSFLAG_NOCACHES);
+    }
+    if ( settings.NoCaches.isDefined() ) {
+      if ( settings.NoCaches ) Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
+    }else{
+      if (NoCachesDefault) {
+        Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
+      }
+    }
+    if ( SubEntries.notEmpty() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTMENU);
+    return Flags;
+  }
 };
 
 class CUSTOM_LEGACY_ENTRY
@@ -427,7 +510,7 @@ public:
           bool                    LegacyFirst = false;
           bool                    NoLegacy = false;
       } Scan = ScanClass();
-      XObjArray<CUSTOM_LOADER_ENTRY> CustomEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
+      XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS> CustomEntriesSettings = XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>();
       XObjArray<CUSTOM_LEGACY_ENTRY> CustomLegacy = XObjArray<CUSTOM_LEGACY_ENTRY>();
       XObjArray<CUSTOM_TOOL_ENTRY>   CustomTool = XObjArray<CUSTOM_TOOL_ENTRY>();
 
@@ -932,29 +1015,9 @@ extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 class REFIT_CONFIG
 {
 public:
-//  INTN        Timeout;
-  UINTN       DisableFlags; //to disable some volume types (optical, firewire etc)
-//  BOOLEAN     TextOnly;
-  BOOLEAN     Quiet;
-//  BOOLEAN     LegacyFirst;
-//  BOOLEAN     NoLegacy;
-//  BOOLEAN     DebugLog;
-  BOOLEAN     SpecialBootMode; // content of nvram var "aptiofixflag"
-//  BOOLEAN     NeverHibernate;
-//  BOOLEAN     StrictHibernate;
-//  BOOLEAN     RtcHibernateAware;
-//  BOOLEAN     HibernationFixup;
-//  BOOLEAN     SignatureFixup;
-//  XStringW    Theme;
-//  XStringW    ScreenResolution;
-//  INTN        ConsoleMode;
-//  BOOLEAN     CustomIcons;
-//  INTN        IconFormat = ICON_FORMAT_DEF; // not used anymore
-//  BOOLEAN     NoEarlyProgress;
-//  INT32       Timezone;
-//  BOOLEAN     ShowOptimus;
-//  INTN        Codepage;
-//  INTN        CodepageSize;
+  UINTN       DisableFlags = 0; //to disable some volume types (optical, firewire etc)
+  BOOLEAN     Quiet = true;
+  BOOLEAN     SpecialBootMode = false; // content of nvram var "aptiofixflag"
 
   BOOLEAN       gBootChanged = FALSE;
   BOOLEAN       gThemeChanged = FALSE;
@@ -977,37 +1040,10 @@ public:
   bool                EnableC2 = 0;
   uint16_t              C3Latency = 0;
 
-  /*
-   * Defqult ctor :
-   *   -1,             // INTN        Timeout;
-   *   0,              // UINTN       DisableFlags;
-   *   FALSE,          // BOOLEAN     TextOnly;
-   *   TRUE,           // BOOLEAN     Quiet;
-   *   FALSE,          // BOOLEAN     LegacyFirst;
-   *   FALSE,          // BOOLEAN     NoLegacy;
-   *   FALSE,          // BOOLEAN     DebugLog;
-   *   FALSE,          // BOOLEAN     FastBoot;
-   *   FALSE,          // BOOLEAN     NeverHibernate;
-   *   FALSE,          // BOOLEAN     StrictHibernate;
-   *   FALSE,          // BOOLEAN     RtcHibernateAware;
-   *   FALSE,          // BOOLEAN     HibernationFixup;
-   *   FALSE,          // BOOLEAN     SignatureFixup;
-   *   L""_XSW,        // XStringW    Theme;
-   *   L""_XSW,        // XStringW    ScreenResolution;
-   *   0,              // INTN        ConsoleMode;
-   *   FALSE,          // BOOLEAN     CustomIcons;
-   *   ICON_FORMAT_DEF, // INTN       IconFormat;
-   *   FALSE,          // BOOLEAN     NoEarlyProgress;
-   *   0xFF,           // INT32       Timezone; / 0xFF - not set
-   *   FALSE,          // BOOLEAN     ShowOptimus;
-   *   0xC0,           // INTN        Codepage;
-   *   0xC0,           // INTN        CodepageSize; //extended latin
-};
-   *
-   */
-  REFIT_CONFIG() : DisableFlags(0), Quiet(TRUE),
-                   SpecialBootMode(FALSE)
-                    {};
+  XObjArray<CUSTOM_LOADER_ENTRY> CustomEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
+
+
+  REFIT_CONFIG() {};
   REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
   const REFIT_CONFIG& operator = ( const REFIT_CONFIG & ) = delete; // Can be defined if needed
   ~REFIT_CONFIG() {  }

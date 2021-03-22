@@ -72,6 +72,7 @@
 #include "../Platform/kext_inject.h"
 #include "../Platform/KextList.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../gui/REFIT_MAINMENU_SCREEN.h"
 #include "../Platform/Self.h"
 #include "../Platform/SelfOem.h"
 #include "../Platform/Net.h"
@@ -1190,6 +1191,10 @@ void LOADER_ENTRY::StartLoader()
         0,
         &ImageHandle
         );
+      if ( EFI_ERROR(Status) ) {
+        DBG("LoadImage at '%ls' failed. Status = %s\n", DevicePathAsString.wc_str(), efiStrError(Status));
+        return;
+      }
     }else
     {
       // NOTE : OpenCore ignore the name of the dmg.
@@ -1230,8 +1235,11 @@ void LOADER_ENTRY::StartLoader()
         0,
         &ImageHandle
         );
+      if ( EFI_ERROR(Status) ) {
+        DBG("LoadImage at '%ls' failed. Status = %s\n", DevicePathToXStringW(BootEfiFromDmgDevicePath).wc_str(), efiStrError(Status));
+        return;
+      }
     }
-    if ( EFI_ERROR(Status) ) return; // TODO message ?
 
     EFI_STATUS OptionalStatus = gBS->HandleProtocol (
         ImageHandle,
@@ -2590,7 +2598,7 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
 
   // Whether or not to draw boot screen
   GlobalConfig.CustomLogoType = gSettings.Boot.CustomLogoType;
-  if ( gSettings.Boot.CustomLogoAsXString8.notEmpty() ) {
+  if ( gSettings.Boot.CustomLogoType == CUSTOM_BOOT_USER  &&  gSettings.Boot.CustomLogoAsXString8.notEmpty() ) {
     if (GlobalConfig.CustomLogo != NULL) {
       delete GlobalConfig.CustomLogo;
     }
@@ -2600,7 +2608,7 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
       DBG("Custom boot logo not found at path '%s'!\n", gSettings.Boot.CustomLogoAsXString8.c_str());
       GlobalConfig.CustomLogoType = CUSTOM_BOOT_DISABLED;
     }
-  } else if ( gSettings.Boot.CustomLogoAsData.notEmpty() ) {
+  } else if ( gSettings.Boot.CustomLogoType == CUSTOM_BOOT_USER  &&  gSettings.Boot.CustomLogoAsData.notEmpty() ) {
     if (GlobalConfig.CustomLogo != NULL) {
       delete GlobalConfig.CustomLogo;
     }
@@ -2627,6 +2635,12 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   }
 
   ThemeX.DarkEmbedded = gSettings.GUI.DarkEmbedded;
+
+  for ( size_t idx = 0 ; idx < gSettings.GUI.CustomEntriesSettings.size() ; ++idx ) {
+    const CUSTOM_LOADER_ENTRY_SETTINGS& CustomEntrySettings = gSettings.GUI.CustomEntriesSettings[idx];
+    CUSTOM_LOADER_ENTRY* entry = new CUSTOM_LOADER_ENTRY(CustomEntrySettings);
+    GlobalConfig.CustomEntries.AddReference(entry, true);
+  }
 }
 #pragma GCC diagnostic pop
 

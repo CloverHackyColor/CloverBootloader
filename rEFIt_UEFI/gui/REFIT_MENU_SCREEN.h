@@ -54,6 +54,38 @@
 #define __attribute__(x)
 #endif
 
+#define SCROLL_LINE_UP        (0)
+#define SCROLL_LINE_DOWN      (1)
+#define SCROLL_PAGE_UP        (2)
+#define SCROLL_PAGE_DOWN      (3)
+#define SCROLL_FIRST          (4)
+#define SCROLL_LAST           (5)
+#define SCROLL_NONE           (6)
+#define SCROLL_SCROLL_DOWN    (7)
+#define SCROLL_SCROLL_UP      (8)
+#define SCROLL_SCROLLBAR_MOVE (9)
+
+//
+#define TEXT_CORNER_REVISION  (1)
+#define TEXT_CORNER_HELP      (2)
+#define TEXT_CORNER_OPTIMUS   (3)
+//
+#define TITLE_MAX_LEN (SVALUE_MAX_SIZE / sizeof(CHAR16) + 128)
+
+//TODO spacing must be a part of layout in XTheme
+#define TITLEICON_SPACING (16)
+//#define ROW0__TILESIZE (144)
+//#define ROW1_TILESIZE (64)
+#define TILE1_XSPACING (8)
+//#define TILE_YSPACING (24)
+#define ROW0_SCROLLSIZE (100)
+
+#define MENU_FUNCTION_INIT            (0)
+#define MENU_FUNCTION_CLEANUP         (1)
+#define MENU_FUNCTION_PAINT_ALL       (2)
+#define MENU_FUNCTION_PAINT_SELECTION (3)
+#define MENU_FUNCTION_PAINT_TIMEOUT   (4)
+
 //some unreal values
 #define FILM_CENTRE   40000
 //#define FILM_LEFT     50000
@@ -62,6 +94,24 @@
 //#define FILM_BOTTOM   60000
 //#define FILM_PERCENT 100000
 #define INITVALUE       40000
+
+#define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
+#define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
+
+
+
+extern INTN row0Count, row0PosX;
+extern INTN row1Count, row1PosX;
+extern INTN row0PosY;
+
+extern INTN OldX, OldY;
+extern INTN OldTextWidth, OldTextHeight;
+extern UINTN OldRow;
+extern INTN MenuWidth , TimeoutPosY;
+extern UINTN MenuMaxTextLen;
+extern INTN EntriesPosX, EntriesPosY;
+
+
 
 class REFIT_MENU_ENTRY_ITEM_ABSTRACT;
 class REFIT_MENU_ENTRY;
@@ -271,52 +321,48 @@ class REFIT_MENU_SCREEN
 public:
   static   XPointer mPointer;
 //  XPointer mPointer;
-  UINTN             ID;
-  XStringW          Title;
-  XIcon             TitleImage;
-  XStringWArray     InfoLines;
+  UINTN             ID = 0;
+  XStringW          Title = XStringW();
+  XIcon             TitleImage = XIcon();
+  XStringWArray     InfoLines = XStringWArray();
 
-  EntryArray Entries;
+  EntryArray Entries = EntryArray();
   
-  INTN              TimeoutSeconds;
-  bool              Daylight;
-  XStringW          TimeoutText;
-  XStringW          ThemeName;  //?
-  EG_RECT           OldTextBufferRect;
-  XImage            OldTextBufferImage;
-  BOOLEAN           isBootScreen;
-  FILM              *FilmC;
+  INTN              TimeoutSeconds = 0;
+  bool              Daylight = true;
+  XStringW          TimeoutText = XStringW();
+  XStringW          ThemeName = XStringW();  //?
+  EG_RECT           OldTextBufferRect = EG_RECT();
+  XImage            OldTextBufferImage = XImage();
+  BOOLEAN           isBootScreen = 0;
+  FILM              *FilmC = 0;
 
-  ACTION          mAction;
-  UINTN           mItemID;
-  SCROLL_STATE    ScrollState;
-  BOOLEAN         ScrollEnabled;
-  INTN            TextStyle;
-  BOOLEAN         IsDragging;
+  ACTION          mAction = ActionNone;
+  UINTN           mItemID = 0;
+  SCROLL_STATE    ScrollState = {0,0,0,0,0,0,0,0,0,0,0};
+  BOOLEAN         ScrollEnabled = 0;
+  INTN            TextStyle = 0;
+  BOOLEAN         IsDragging = 0;
 
   //TODO scroll positions should depends on REFIT_SCREEN?
   // Or it just currently calculated to be global variables?
-  EG_RECT BarStart;
-  EG_RECT BarEnd;
-  EG_RECT ScrollStart;
-  EG_RECT ScrollEnd;
-  EG_RECT ScrollTotal;
-  EG_RECT UpButton;
-  EG_RECT DownButton;
-  EG_RECT ScrollbarBackground;
-  EG_RECT Scrollbar;
-  EG_RECT ScrollbarOldPointerPlace;
-  EG_RECT ScrollbarNewPointerPlace;
+  EG_RECT BarStart = EG_RECT();
+  EG_RECT BarEnd = EG_RECT();
+  EG_RECT ScrollStart = EG_RECT();
+  EG_RECT ScrollEnd = EG_RECT();
+  EG_RECT ScrollTotal = EG_RECT();
+  EG_RECT UpButton = EG_RECT();
+  EG_RECT DownButton = EG_RECT();
+  EG_RECT ScrollbarBackground = EG_RECT();
+  EG_RECT Scrollbar = EG_RECT();
+  EG_RECT ScrollbarOldPointerPlace = EG_RECT();
+  EG_RECT ScrollbarNewPointerPlace = EG_RECT();
 
 
-
-  REFIT_MENU_SCREEN()
-      : ID(0), Title(), TitleImage(), InfoLines(), Entries(),
-        TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
-        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
-        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
-  {
+  void common_init() {
+    if (AllowGraphicsMode) m_StyleFunc = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
+    else                   m_StyleFunc = &REFIT_MENU_SCREEN::TextMenuStyle;
+#ifdef CLOVER_BUILD
     EFI_TIME          Now;
     gRT->GetTime(&Now, NULL);
     if (gSettings.GUI.Timezone != 0xFF) {
@@ -327,35 +373,27 @@ public:
     } else {
       Daylight = true;
     }
+#endif
+  }
+
+  REFIT_MENU_SCREEN()
+  {
+    common_init();
   };
 
-  REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText)
-      : ID(ID), Title(TTitle), TitleImage(), InfoLines(), Entries(),
-        TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
-        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
-        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
-  {};
+  REFIT_MENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText) : ID(ID), Title(TTitle), TimeoutText(TTimeoutText) { common_init(); };
 
   //TODO exclude CHAR16
-  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC)
-      : ID(ID), Title(), TitleImage(), InfoLines(), Entries(),
-        TimeoutSeconds(0), Daylight(true), TimeoutText(), ThemeName(),
-        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
-        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
+  REFIT_MENU_SCREEN(UINTN ID, CONST CHAR16* TitleC, CONST CHAR16* TimeoutTextC) : ID(ID)
   {
+    common_init();
     Title.takeValueFrom(TitleC);
     TimeoutText.takeValueFrom(TimeoutTextC);
   };
 
-  REFIT_MENU_SCREEN(UINTN ID, XStringW  TTitle, XStringW  TTimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2)
-      : ID(ID), Title(TTitle), TitleImage(), InfoLines(), Entries(),
-        TimeoutSeconds(0), Daylight(true), TimeoutText(TTimeoutText), ThemeName(),
-        OldTextBufferRect(), OldTextBufferImage(), isBootScreen(false), FilmC(),
-        mAction(ActionNone), mItemID(0), ScrollState{0,0,0,0,0,0,0,0,0,0,0}, ScrollEnabled(0), TextStyle(0), IsDragging(0),
-        BarStart(), BarEnd(), ScrollStart(), ScrollEnd(), ScrollTotal(), UpButton(), DownButton(), ScrollbarBackground(), Scrollbar(), ScrollbarOldPointerPlace(), ScrollbarNewPointerPlace()
+  REFIT_MENU_SCREEN(UINTN ID, XStringW  TTitle, XStringW  TTimeoutText, REFIT_ABSTRACT_MENU_ENTRY* entry1, REFIT_ABSTRACT_MENU_ENTRY* entry2) : ID(ID), Title(TTitle), TimeoutText(TTimeoutText)
   {
+    common_init();
     Entries.AddReference(entry1, false);
     Entries.AddReference(entry2, false);
   };
@@ -389,14 +427,11 @@ public:
   void AddMenuItemInput(INTN Inx, CONST CHAR8 *Title, BOOLEAN Cursor);
   void FreeMenu();
   INTN FindMenuShortcutEntry(IN CHAR16 Shortcut);
-  UINTN RunGenericMenu(IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
+  UINTN RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
   UINTN RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
-  UINTN RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
-  UINTN InputDialog(IN MENU_STYLE_FUNC StyleFunc);
+  UINTN InputDialog();
 
 
-  void DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
-  void DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
   INTN DrawTextXY(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
   void EraseTextXY();
   void DrawTextCorner(UINTN TextC, UINT8 Align);
@@ -409,13 +444,20 @@ public:
 
   //Style functions
 
-  virtual void MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
-  virtual void MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual void GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual void TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
 
+  MENU_STYLE_FUNC  m_StyleFunc = NULL;
+
+  virtual void call_MENU_FUNCTION_INIT(IN CONST CHAR16 *ParamText)              { ((*this).*(m_StyleFunc))(MENU_FUNCTION_INIT, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_ALL(IN CONST CHAR16 *ParamText)         { ((*this).*(m_StyleFunc))(MENU_FUNCTION_PAINT_ALL, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_SELECTION(IN CONST CHAR16 *ParamText)   { ((*this).*(m_StyleFunc))(MENU_FUNCTION_PAINT_SELECTION, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_TIMEOUT(IN CONST CHAR16 *ParamText)     { ((*this).*(m_StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, ParamText); }
+  virtual void call_MENU_FUNCTION_CLEANUP(IN CONST CHAR16 *ParamText)           { ((*this).*(m_StyleFunc))(MENU_FUNCTION_CLEANUP, ParamText); }
+
   virtual ~REFIT_MENU_SCREEN() {};
 };
+
 
 #endif
 /*

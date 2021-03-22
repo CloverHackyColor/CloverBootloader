@@ -16,8 +16,8 @@
 #define OSFLAG_UNSET(flags, flag) (flags & (~flag))
 #define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
 #define OSFLAG_USEGRAPHICS    (1 << 0)
-#define OSFLAG_WITHKEXTS      (1 << 1)
-#define OSFLAG_CHECKFAKESMC   (1 << 2)
+//#define OSFLAG_WITHKEXTS      (1 << 1)  // Jief not used, maybe sincee OC integration
+//#define OSFLAG_CHECKFAKESMC   (1 << 2)  // Jief : not used since 4202, I think
 #define OSFLAG_NOCACHES       (1 << 3)
 #define OSFLAG_NODEFAULTARGS  (1 << 4)
 #define OSFLAG_NODEFAULTMENU  (1 << 5)

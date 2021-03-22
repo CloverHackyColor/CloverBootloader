@@ -2483,374 +2483,374 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
   return (y != 0);
 }
 
-void
-LOADER_ENTRY::KernelAndKextPatcherInit()
-{
-  if (PatcherInited) {
-    DBG("patcher inited\n");
-    return;
-  }
-
-  PatcherInited = TRUE;
-
-  // KernelRelocBase will normally be 0
-  // but if OsxAptioFixDrv is used, then it will be > 0
-  SetKernelRelocBase();
-	DBG("KernelRelocBase = %llx\n", KernelRelocBase);
-
-  // Find bootArgs - we need then for proper detection
-  // of kernel Mach-O header
-  FindBootArgs();
-  if (bootArgs1 == NULL && bootArgs2 == NULL) {
-    DBG_RT("BootArgs not found - skipping patches!\n");
-    return;
-  }
-
-  // Find kernel Mach-O header:
-  // for 10.4 - 10.5: 0x00111000
-  // for 10.6 - 10.7: 0x00200000
-  // for ML: bootArgs2->kslide + 0x00200000
-  // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
-
-//  UINT64 os_version = AsciiOSVersionToUint64(macOSVersion);
-    DBG("macOSVersion=%s\n", macOSVersion.asString().c_str());
-  
-//  if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.6")) {
-//    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
-//  } else {
-    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+//void
+//LOADER_ENTRY::KernelAndKextPatcherInit()
+//{
+//  if (PatcherInited) {
+//    DBG("patcher inited\n");
+//    return;
 //  }
-
-  // check that it is Mach-O header and detect architecture
-  if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {
-    DBG("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
-    is64BitKernel = FALSE;
-  } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
-    DBG( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
-//    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
-/*
-    KernelOffset = 0;
-    while (KernelOffset < KERNEL_MAX_SIZE) {
-      if ((MACH_GET_MAGIC(KernelData+KernelOffset) == MH_MAGIC_64 ) || (MACH_GET_MAGIC(KernelData+KernelOffset) == MH_CIGAM_64)) {
-        DBG("dump at offset 0x%x\n", KernelOffset);
-        for (int j = 0; j<20; ++j) {
-          DBG("%02x ", KernelData[KernelOffset+j]);
-        }
-        DBG("\n");
-        if ((((struct mach_header_64*)(KernelData+KernelOffset))->filetype) == MH_EXECUTE) {
-          DBG("execute found\n");
-          break;
-        }
-      }
-      KernelOffset += 4;
-    }
- */
-    if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
-      // BigSur
-      KernelOffset = GetTextExec();
-//      DBG("BigSur: KernelOffset =0x%X\n", KernelOffset);
-    }
-    is64BitKernel = TRUE;
-  } else {
-    // not valid Mach-O header - exiting
-    DBG( "Kernel not found at 0x%llx - skipping patches!\n", (UINTN)KernelData);
-    KernelData = NULL;
-    return;
-  }
-  DBG( " kernel offset at 0x%x\n", KernelOffset);
-  // find __PRELINK_TEXT and __PRELINK_INFO
-  if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
-    Get_PreLink(); // BigSur
-  } else {
-    Get_PreLink();
-  }
-  //find symbol tables
-  struct  symtab_command  *symCmd = NULL;
-  UINT32 symCmdOffset = Get_Symtab(&KernelData[KernelOffset]);
-  if (symCmdOffset != 0) {
-    symCmd = (struct symtab_command *)&KernelData[KernelOffset + symCmdOffset];
-    AddrVtable = symCmd->symoff; //this offset relative to KernelData+0
-    SizeVtable = symCmd->nsyms;
-    NamesTable = symCmd->stroff;
-    DBG("Kernel: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
-  }
-/*
-  for (UINTN i=0x00200000; i<0x30000000; i+=4) {
-    UINT32 *KD = (UINT32 *)i;
-    if ((KD[0] == MH_MAGIC_64) && (KD[0x0a] == 0x45545F5F)){
-      DBG_RT( "Found MAGIC at %llx, text=%s\n", i, (const char*)&KD[0x0a]);
-      DBG( "Found MAGIC at %llx, text=%s\n", i, (const char*)&KD[0x0a]);
-      KernelData = (UINT8*)KD;
-      DBG( "Found new kernel at 0x%llx\n", (UINTN)KernelData);
-      break;
-    }
-  }
-*/
-  if (EFI_ERROR(getVTable())) {
-    DBG("error getting vtable: \n");
-  }
-
-  isKernelcache = (PrelinkTextSize > 0) && (PrelinkInfoSize > 0);
-	DBG( "isKernelcache: %ls\n", isKernelcache ? L"Yes" : L"No");
-}
-
-void
-LOADER_ENTRY::KernelAndKextsPatcherStart()
-{
-  BOOLEAN KextPatchesNeeded, patchedOk;
-  /*
-   * it was intended for custom entries but not work if no custom entries used
-   * so set common until better solution invented
-   */
-  //KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
-//  CopyKernelAndKextPatches(&KernelAndKextPatches, &gSettings.KernelAndKextPatches);
-  KernelAndKextPatches = gSettings.KernelAndKextPatches;
-
-  PatcherInited = false;
-  KernelAndKextPatcherInit();
-
-  KextPatchesNeeded = (
-    KernelAndKextPatches.KPAppleIntelCPUPM ||
-    KernelAndKextPatches.KPAppleRTC ||
-    KernelAndKextPatches.EightApple ||
-    KernelAndKextPatches.KPDELLSMBIOS ||
-    KernelAndKextPatches.KPATIConnectorsPatch.notEmpty() ||
-    KernelAndKextPatches.KextPatches.size() > 0
-  );
-
-//  DBG_RT("\nKernelToPatch: ");
-//  DBG_RT("Kernels patches: %d\n", KernelAndKextPatches.KernelPatches.size());
-  if (gSettings.KernelPatchesAllowed && KernelAndKextPatches.KernelPatches.notEmpty()) {
-//    DBG_RT("Enabled: \n");
-    DBG("Kernels patches: enabled \n");
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    if (EFI_ERROR(getVTable())) {
-//      DBG_RT("error getting vtable: \n");
-      goto NoKernelData;
-    }
-    patchedOk = KernelUserPatch();
-//    DBG_RT(patchedOk ? " OK\n" : " FAILED!\n");
-//    gBS->Stall(5000000);
-  } else {
-//    DBG_RT("Disabled\n");
-  }
-/*
-  DBG_RT( "\nKernelCpu patch: ");
-  if (KernelAndKextPatches.KPKernelCpu) {
-    //
-    // Kernel patches
-    //
-    DBG_RT( "Enabled: \n");
-    KernelAndKextPatcherInit();
-    if (KernelData == NULL) goto NoKernelData;
-    if(is64BitKernel) {
-      DBG_RT( "64 bit patch ...\n");
-      KernelPatcher_64();
-    } else {
-      DBG_RT( "32 bit patch ...\n");
-      KernelPatcher_32();
-    }
-    DBG_RT( " OK\n");
-  } else {
-    DBG_RT( "Disabled\n");
-  }
-*/
-  //other method for KernelCPU patch is FakeCPUID
-  DBG_RT( "\nFakeCPUID patch: ");
-  if (KernelAndKextPatches.FakeCPUID) {
-    DBG_RT( "Enabled: 0x%06x\n", KernelAndKextPatches.FakeCPUID);
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    KernelCPUIDPatch();
-  } else {
-    DBG_RT( "Disabled\n");
-  }
-
-  // CPU power management patch for CPU with locked msr
-  DBG_RT( "\nKernelPm patch: ");
-  if (KernelAndKextPatches.KPKernelPm || KernelAndKextPatches.KPKernelXCPM) {
-    DBG_RT( "Enabled: \n");
-    DBG( "KernelPm patch: Enabled\n");
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    patchedOk = FALSE;
-    if (is64BitKernel) {
-      patchedOk = KernelPatchPm();
-    }
-    DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
-  } else {
-    DBG_RT( "Disabled\n");
-  }
-  
-  // Patch to not dump kext at panic (c)vit9696
-  DBG_RT( "\nPanicNoKextDump patch: ");
-  if (KernelAndKextPatches.KPPanicNoKextDump) {
-    DBG_RT( "Enabled: \n");
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    patchedOk = KernelPanicNoKextDump();
-    DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
-  } else {
-    DBG_RT( "Disabled\n");
-  }
-
-
-  // Lapic Panic Kernel Patch
-  DBG_RT( "\nKernelLapic patch: ");
-  if (KernelAndKextPatches.KPKernelLapic) {
-    DBG_RT( "Enabled: \n");
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    if(is64BitKernel) {
-      DBG_RT( "64-bit patch ...\n");
-      patchedOk = KernelLapicPatch_64();
-    } else {
-      DBG_RT( "32-bit patch ...\n");
-      patchedOk = KernelLapicPatch_32();
-    }
-    DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
-  } else {
-    DBG_RT( "Disabled\n");
-  }
-
-  if (KernelAndKextPatches.KPKernelXCPM) {
-    //
-    // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
-    //
-//    EnableExtCpuXCPM = NULL;
-    patchedOk = FALSE;
-//    BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    
-    // syscl - now enable extra Cpu's PowerManagement
-    // only Intel support this feature till now
-    // move below code outside the if condition if AMD supports
-    // XCPM later on
- 
-    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
-      switch (gCPUStructure.Model) {
-          case CPU_MODEL_JAKETOWN:
-            // SandyBridge-E LGA2011
-            patchedOk = SandyBridgeEPM();
-            gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
-            break;
-              
-          case CPU_MODEL_IVY_BRIDGE:
-            // IvyBridge
-            patchedOk = KernelIvyBridgeXCPM();
-            break;
-              
-          case CPU_MODEL_IVY_BRIDGE_E5:
-            // IvyBridge-E
-            patchedOk = KernelIvyE5XCPM();
-            break;
-
-          case CPU_MODEL_HASWELL_E:
-            // Haswell-E
-            patchedOk = HaswellEXCPM();
-            break;
-              
-          case CPU_MODEL_BROADWELL_E5:
-          case CPU_MODEL_BROADWELL_DE:
-            // Broadwell-E/EP
-            patchedOk = BroadwellEPM();
-            gBDWEIOPCIFixRequire = TRUE;
-            break;
-
-          default:
-            if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
-               (AsciiStrStr(gCPUStructure.BrandString, "Celeron") ||
-                AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
-              // Haswell+ low-end CPU
-              patchedOk = HaswellLowEndXCPM();
-            }
-            break;
-      }
-    }
-	  DBG_RT( "EnableExtCpuXCPM - %s!\n", patchedOk? "OK" : "FAILED");
-  }
-
-  Stall(2000000);
-  //
-  // Kext patches
-  //
-
-  // we need to scan kexts if "InjectKexts true and CheckFakeSMC"
-  if (/*OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS) || */
-      OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC)) {
-    DBG_RT( "\nAllowing kext patching to check if FakeSMC is present\n");
-    gSettings.KextPatchesAllowed = TRUE;
-    KextPatchesNeeded = TRUE;
-  }
-
-  DBG_RT( "\nKextPatches Needed: %c, Allowed: %c ... ",
-         (KextPatchesNeeded ? L'Y' : L'n'),
-         (gSettings.KextPatchesAllowed ? L'Y' : L'n')
-         );
-
-  if (KextPatchesNeeded && gSettings.KextPatchesAllowed) {
-//    DBG_RT( "\nKext patching INIT\n");
-//    KernelAndKextPatcherInit();
-//    if (KernelData == NULL) goto NoKernelData;
-    DBG_RT( "\nKext patching STARTED\n");
-    KextPatcherStart();  //is FakeSMC found in cache then inject will be disabled
-    DBG_RT( "\nKext patching ENDED\n");
-  } else {
-    DBG_RT( "Disabled\n");
-  }
-
-  Stall(1000000);
-
-  //
-  // Kext add
-  //
-//  if (KernelAndKextPatches.KPDebug) {
-//    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
-//        OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
-//    disabled kext injection if FakeSMC is already present
-//    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS); //Slice - we are already here
 //
-//      DBG_RT( "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
-//      gBS->Stall(500000);
+//  PatcherInited = TRUE;
+//
+//  // KernelRelocBase will normally be 0
+//  // but if OsxAptioFixDrv is used, then it will be > 0
+//  SetKernelRelocBase();
+//	DBG("KernelRelocBase = %llx\n", KernelRelocBase);
+//
+//  // Find bootArgs - we need then for proper detection
+//  // of kernel Mach-O header
+//  FindBootArgs();
+//  if (bootArgs1 == NULL && bootArgs2 == NULL) {
+//    DBG_RT("BootArgs not found - skipping patches!\n");
+//    return;
+//  }
+//
+//  // Find kernel Mach-O header:
+//  // for 10.4 - 10.5: 0x00111000
+//  // for 10.6 - 10.7: 0x00200000
+//  // for ML: bootArgs2->kslide + 0x00200000
+//  // for AptioFix booting - it's always at KernelRelocBase + 0x00200000
+//
+////  UINT64 os_version = AsciiOSVersionToUint64(macOSVersion);
+//    DBG("macOSVersion=%s\n", macOSVersion.asString().c_str());
+//
+////  if (macOSVersion.notEmpty() && macOSVersion < AsciiOSVersionToUint64("10.6")) {
+////    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00111000);
+////  } else {
+//    KernelData = (UINT8*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+////  }
+//
+//  // check that it is Mach-O header and detect architecture
+//  if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM) {
+//    DBG("Found 32 bit kernel at 0x%llx\n", (UINTN)KernelData);
+//    is64BitKernel = FALSE;
+//  } else if (MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64) {
+//    DBG( "Found 64 bit kernel at 0x%llx\n", (UINTN)KernelData);
+////    DBG_RT("text section is: %s\n", (const char*)&KernelData[0x28]);
+///*
+//    KernelOffset = 0;
+//    while (KernelOffset < KERNEL_MAX_SIZE) {
+//      if ((MACH_GET_MAGIC(KernelData+KernelOffset) == MH_MAGIC_64 ) || (MACH_GET_MAGIC(KernelData+KernelOffset) == MH_CIGAM_64)) {
+//        DBG("dump at offset 0x%x\n", KernelOffset);
+//        for (int j = 0; j<20; ++j) {
+//          DBG("%02x ", KernelData[KernelOffset+j]);
+//        }
+//        DBG("\n");
+//        if ((((struct mach_header_64*)(KernelData+KernelOffset))->filetype) == MH_EXECUTE) {
+//          DBG("execute found\n");
+//          break;
+//        }
+//      }
+//      KernelOffset += 4;
+//    }
+// */
+//    if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+//      // BigSur
+//      KernelOffset = GetTextExec();
+////      DBG("BigSur: KernelOffset =0x%X\n", KernelOffset);
+//    }
+//    is64BitKernel = TRUE;
+//  } else {
+//    // not valid Mach-O header - exiting
+//    DBG( "Kernel not found at 0x%llx - skipping patches!\n", (UINTN)KernelData);
+//    KernelData = NULL;
+//    return;
+//  }
+//  DBG( " kernel offset at 0x%x\n", KernelOffset);
+//  // find __PRELINK_TEXT and __PRELINK_INFO
+//  if ((((struct mach_header_64*)KernelData)->filetype) == MH_KERNEL_COLLECTION) {
+//    Get_PreLink(); // BigSur
+//  } else {
+//    Get_PreLink();
+//  }
+//  //find symbol tables
+//  struct  symtab_command  *symCmd = NULL;
+//  UINT32 symCmdOffset = Get_Symtab(&KernelData[KernelOffset]);
+//  if (symCmdOffset != 0) {
+//    symCmd = (struct symtab_command *)&KernelData[KernelOffset + symCmdOffset];
+//    AddrVtable = symCmd->symoff; //this offset relative to KernelData+0
+//    SizeVtable = symCmd->nsyms;
+//    NamesTable = symCmd->stroff;
+//    DBG("Kernel: AddrVtable=0x%x SizeVtable=0x%x NamesTable=0x%x\n", AddrVtable, SizeVtable, NamesTable);
+//  }
+///*
+//  for (UINTN i=0x00200000; i<0x30000000; i+=4) {
+//    UINT32 *KD = (UINT32 *)i;
+//    if ((KD[0] == MH_MAGIC_64) && (KD[0x0a] == 0x45545F5F)){
+//      DBG_RT( "Found MAGIC at %llx, text=%s\n", i, (const char*)&KD[0x0a]);
+//      DBG( "Found MAGIC at %llx, text=%s\n", i, (const char*)&KD[0x0a]);
+//      KernelData = (UINT8*)KD;
+//      DBG( "Found new kernel at 0x%llx\n", (UINTN)KernelData);
+//      break;
 //    }
 //  }
-
-  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
-    UINT32      deviceTreeP;
-    UINT32      *deviceTreeLength;
-    EFI_STATUS  Status;
-    UINTN       DataSize;
-
-    // check if FSInject already injected kexts
-    DataSize = 0;
-    Status = gRT->GetVariable (L"FSInject.KextsInjected", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
-    if (Status == EFI_BUFFER_TOO_SMALL) {
-      // var exists - just exit
-
-      DBG_RT( "\nInjectKexts: skipping, FSInject already injected them\n");
-      Stall(500000);
-      return;
-    }
-
+//*/
+//  if (EFI_ERROR(getVTable())) {
+//    DBG("error getting vtable: \n");
+//  }
+//
+//  isKernelcache = (PrelinkTextSize > 0) && (PrelinkInfoSize > 0);
+//	DBG( "isKernelcache: %ls\n", isKernelcache ? L"Yes" : L"No");
+//}
+//
+//void
+//LOADER_ENTRY::KernelAndKextsPatcherStart()
+//{
+//  BOOLEAN KextPatchesNeeded, patchedOk;
+//  /*
+//   * it was intended for custom entries but not work if no custom entries used
+//   * so set common until better solution invented
+//   */
+//  //KernelAndKextPatches = (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches));
+////  CopyKernelAndKextPatches(&KernelAndKextPatches, &gSettings.KernelAndKextPatches);
+//  KernelAndKextPatches = gSettings.KernelAndKextPatches;
+//
+//  PatcherInited = false;
+//  KernelAndKextPatcherInit();
+//
+//  KextPatchesNeeded = (
+//    KernelAndKextPatches.KPAppleIntelCPUPM ||
+//    KernelAndKextPatches.KPAppleRTC ||
+//    KernelAndKextPatches.EightApple ||
+//    KernelAndKextPatches.KPDELLSMBIOS ||
+//    KernelAndKextPatches.KPATIConnectorsPatch.notEmpty() ||
+//    KernelAndKextPatches.KextPatches.size() > 0
+//  );
+//
+////  DBG_RT("\nKernelToPatch: ");
+////  DBG_RT("Kernels patches: %d\n", KernelAndKextPatches.KernelPatches.size());
+//  if (gSettings.KernelPatchesAllowed && KernelAndKextPatches.KernelPatches.notEmpty()) {
+////    DBG_RT("Enabled: \n");
+//    DBG("Kernels patches: enabled \n");
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    if (EFI_ERROR(getVTable())) {
+////      DBG_RT("error getting vtable: \n");
+//      goto NoKernelData;
+//    }
+//    patchedOk = KernelUserPatch();
+////    DBG_RT(patchedOk ? " OK\n" : " FAILED!\n");
+////    gBS->Stall(5000000);
+//  } else {
+////    DBG_RT("Disabled\n");
+//  }
+///*
+//  DBG_RT( "\nKernelCpu patch: ");
+//  if (KernelAndKextPatches.KPKernelCpu) {
+//    //
+//    // Kernel patches
+//    //
+//    DBG_RT( "Enabled: \n");
 //    KernelAndKextPatcherInit();
 //    if (KernelData == NULL) goto NoKernelData;
-    if (bootArgs1 != NULL) {
-      deviceTreeP = bootArgs1->deviceTreeP;
-      deviceTreeLength = &bootArgs1->deviceTreeLength;
-    } else if (bootArgs2 != NULL) {
-      deviceTreeP = bootArgs2->deviceTreeP;
-      deviceTreeLength = &bootArgs2->deviceTreeLength;
-    } else return;
-
-    Status = InjectKexts(deviceTreeP, deviceTreeLength);
-    DBG_RT("Inject kexts done at 0x%llx\n", (UINTN)deviceTreeP);
-    if (!EFI_ERROR(Status)) KernelBooterExtensionsPatch();
-  }
-
-  return;
-
-NoKernelData:
-  Stall(5000000);
-}
+//    if(is64BitKernel) {
+//      DBG_RT( "64 bit patch ...\n");
+//      KernelPatcher_64();
+//    } else {
+//      DBG_RT( "32 bit patch ...\n");
+//      KernelPatcher_32();
+//    }
+//    DBG_RT( " OK\n");
+//  } else {
+//    DBG_RT( "Disabled\n");
+//  }
+//*/
+//  //other method for KernelCPU patch is FakeCPUID
+//  DBG_RT( "\nFakeCPUID patch: ");
+//  if (KernelAndKextPatches.FakeCPUID) {
+//    DBG_RT( "Enabled: 0x%06x\n", KernelAndKextPatches.FakeCPUID);
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    KernelCPUIDPatch();
+//  } else {
+//    DBG_RT( "Disabled\n");
+//  }
+//
+//  // CPU power management patch for CPU with locked msr
+//  DBG_RT( "\nKernelPm patch: ");
+//  if (KernelAndKextPatches.KPKernelPm || KernelAndKextPatches.KPKernelXCPM) {
+//    DBG_RT( "Enabled: \n");
+//    DBG( "KernelPm patch: Enabled\n");
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    patchedOk = FALSE;
+//    if (is64BitKernel) {
+//      patchedOk = KernelPatchPm();
+//    }
+//    DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
+//  } else {
+//    DBG_RT( "Disabled\n");
+//  }
+//
+//  // Patch to not dump kext at panic (c)vit9696
+//  DBG_RT( "\nPanicNoKextDump patch: ");
+//  if (KernelAndKextPatches.KPPanicNoKextDump) {
+//    DBG_RT( "Enabled: \n");
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    patchedOk = KernelPanicNoKextDump();
+//    DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
+//  } else {
+//    DBG_RT( "Disabled\n");
+//  }
+//
+//
+//  // Lapic Panic Kernel Patch
+//  DBG_RT( "\nKernelLapic patch: ");
+//  if (KernelAndKextPatches.KPKernelLapic) {
+//    DBG_RT( "Enabled: \n");
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    if(is64BitKernel) {
+//      DBG_RT( "64-bit patch ...\n");
+//      patchedOk = KernelLapicPatch_64();
+//    } else {
+//      DBG_RT( "32-bit patch ...\n");
+//      patchedOk = KernelLapicPatch_32();
+//    }
+//    DBG_RT( patchedOk ? " OK\n" : " FAILED!\n");
+//  } else {
+//    DBG_RT( "Disabled\n");
+//  }
+//
+//  if (KernelAndKextPatches.KPKernelXCPM) {
+//    //
+//    // syscl - EnableExtCpuXCPM: Enable unsupported CPU's PowerManagement
+//    //
+////    EnableExtCpuXCPM = NULL;
+//    patchedOk = FALSE;
+////    BOOLEAN apply_idle_patch = (gCPUStructure.Model >= CPU_MODEL_SKYLAKE_U) && gSettings.HWP;
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//
+//    // syscl - now enable extra Cpu's PowerManagement
+//    // only Intel support this feature till now
+//    // move below code outside the if condition if AMD supports
+//    // XCPM later on
+//
+//    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+//      switch (gCPUStructure.Model) {
+//          case CPU_MODEL_JAKETOWN:
+//            // SandyBridge-E LGA2011
+//            patchedOk = SandyBridgeEPM();
+//            gSNBEAICPUFixRequire = TRUE;       // turn on SandyBridge-E AppleIntelCPUPowerManagement Fix
+//            break;
+//
+//          case CPU_MODEL_IVY_BRIDGE:
+//            // IvyBridge
+//            patchedOk = KernelIvyBridgeXCPM();
+//            break;
+//
+//          case CPU_MODEL_IVY_BRIDGE_E5:
+//            // IvyBridge-E
+//            patchedOk = KernelIvyE5XCPM();
+//            break;
+//
+//          case CPU_MODEL_HASWELL_E:
+//            // Haswell-E
+//            patchedOk = HaswellEXCPM();
+//            break;
+//
+//          case CPU_MODEL_BROADWELL_E5:
+//          case CPU_MODEL_BROADWELL_DE:
+//            // Broadwell-E/EP
+//            patchedOk = BroadwellEPM();
+//            gBDWEIOPCIFixRequire = TRUE;
+//            break;
+//
+//          default:
+//            if (gCPUStructure.Model >= CPU_MODEL_HASWELL &&
+//               (AsciiStrStr(gCPUStructure.BrandString, "Celeron") ||
+//                AsciiStrStr(gCPUStructure.BrandString, "Pentium"))) {
+//              // Haswell+ low-end CPU
+//              patchedOk = HaswellLowEndXCPM();
+//            }
+//            break;
+//      }
+//    }
+//	  DBG_RT( "EnableExtCpuXCPM - %s!\n", patchedOk? "OK" : "FAILED");
+//  }
+//
+//  Stall(2000000);
+//  //
+//  // Kext patches
+//  //
+//
+//  // we need to scan kexts if "InjectKexts true and CheckFakeSMC"
+//  if (/*OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS) || */
+//      OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC)) {
+//    DBG_RT( "\nAllowing kext patching to check if FakeSMC is present\n");
+//    gSettings.KextPatchesAllowed = TRUE;
+//    KextPatchesNeeded = TRUE;
+//  }
+//
+//  DBG_RT( "\nKextPatches Needed: %c, Allowed: %c ... ",
+//         (KextPatchesNeeded ? L'Y' : L'n'),
+//         (gSettings.KextPatchesAllowed ? L'Y' : L'n')
+//         );
+//
+//  if (KextPatchesNeeded && gSettings.KextPatchesAllowed) {
+////    DBG_RT( "\nKext patching INIT\n");
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    DBG_RT( "\nKext patching STARTED\n");
+//    KextPatcherStart();  //is FakeSMC found in cache then inject will be disabled
+//    DBG_RT( "\nKext patching ENDED\n");
+//  } else {
+//    DBG_RT( "Disabled\n");
+//  }
+//
+//  Stall(1000000);
+//
+//  //
+//  // Kext add
+//  //
+////  if (KernelAndKextPatches.KPDebug) {
+////    if (OSFLAG_ISSET(Entry->Flags, OSFLAG_CHECKFAKESMC) &&
+////        OSFLAG_ISUNSET(Entry->Flags, OSFLAG_WITHKEXTS)) {
+////    disabled kext injection if FakeSMC is already present
+////    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS); //Slice - we are already here
+////
+////      DBG_RT( "\nInjectKexts: disabled because FakeSMC is already present and InjectKexts option set to Detect\n");
+////      gBS->Stall(500000);
+////    }
+////  }
+//
+//  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
+//    UINT32      deviceTreeP;
+//    UINT32      *deviceTreeLength;
+//    EFI_STATUS  Status;
+//    UINTN       DataSize;
+//
+//    // check if FSInject already injected kexts
+//    DataSize = 0;
+//    Status = gRT->GetVariable (L"FSInject.KextsInjected", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
+//    if (Status == EFI_BUFFER_TOO_SMALL) {
+//      // var exists - just exit
+//
+//      DBG_RT( "\nInjectKexts: skipping, FSInject already injected them\n");
+//      Stall(500000);
+//      return;
+//    }
+//
+////    KernelAndKextPatcherInit();
+////    if (KernelData == NULL) goto NoKernelData;
+//    if (bootArgs1 != NULL) {
+//      deviceTreeP = bootArgs1->deviceTreeP;
+//      deviceTreeLength = &bootArgs1->deviceTreeLength;
+//    } else if (bootArgs2 != NULL) {
+//      deviceTreeP = bootArgs2->deviceTreeP;
+//      deviceTreeLength = &bootArgs2->deviceTreeLength;
+//    } else return;
+//
+//    Status = InjectKexts(deviceTreeP, deviceTreeLength);
+//    DBG_RT("Inject kexts done at 0x%llx\n", (UINTN)deviceTreeP);
+//    if (!EFI_ERROR(Status)) KernelBooterExtensionsPatch();
+//  }
+//
+//  return;
+//
+//NoKernelData:
+//  Stall(5000000);
+//}

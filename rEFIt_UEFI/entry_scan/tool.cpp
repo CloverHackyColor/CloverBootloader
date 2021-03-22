@@ -40,6 +40,7 @@
 #include "../libeg/XImage.h"
 #include "../refit/lib.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../gui/REFIT_MAINMENU_SCREEN.h"
 #include "../Platform/Self.h"
 #include "../Platform/Volumes.h"
 #include "../libeg/XTheme.h"
@@ -299,7 +300,7 @@ void AddCustomTool(void)
       }
       // Check the tool exists on the volume
       if (!FileExists(Volume->RootDir, Custom.Path)) {
-        DBG("skipped because path does not exist\n");
+        DBG("skipped because path '%s' does not exist\n", Custom.Path.wc_str());
         continue;
       }
       // Change to custom image if needed

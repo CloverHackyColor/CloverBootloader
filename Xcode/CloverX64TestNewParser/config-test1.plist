@@ -511,7 +511,7 @@
 					<key>CustomLogo</key>
 					<string>Apple</string>
 					<key>Disabled</key>
-					<true/>
+					<false/>
 					<key>DriveImage</key>
 					<string>driveimage</string>
 					<key>FullTitle</key>
@@ -529,10 +529,12 @@
 					<key>SubEntries</key>
 					<array>
 						<dict>
+							<key>CustomLogo</key>
+							<string>WinRepairTool128x128.png</string>
 							<key>AddArguments</key>
 							<string>arg2</string>
 							<key>FullTitle</key>
-							<string>title1</string>
+							<string>title111</string>
 							<key>Settings</key>
 							<string>settingsSub</string>
 							<key>SubEntries</key>
@@ -560,7 +562,7 @@
 							<string>title2</string>
 						</dict>
 						<dict>
-							<key>AddArguments</key>
+							<key>Arguments</key>
 							<string>arg4</string>
 							<key>FullTitle</key>
 							<string>title3</string>

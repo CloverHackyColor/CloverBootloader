@@ -38,6 +38,7 @@
 #include "../refit/screen.h"
 #include "../refit/menu.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../gui/REFIT_MAINMENU_SCREEN.h"
 #include "../Platform/Volumes.h"
 #include "../libeg/XTheme.h"
 #include "../include/OSFlags.h"

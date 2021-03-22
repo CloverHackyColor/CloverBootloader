@@ -104,18 +104,18 @@ class SIDELOAD_KEXT;
 class REFIT_ABSTRACT_MENU_ENTRY
 {
   public:
-  XStringW           Title;
-  bool               Hidden;
-  UINTN              Row;
-  CHAR16             ShortcutDigit;
-  CHAR16             ShortcutLetter;
-  XIcon              Image;
-  EG_RECT            Place;
-  ACTION             AtClick;
-  ACTION             AtDoubleClick;
-  ACTION             AtRightClick;
-  ACTION             AtMouseOver;
-  REFIT_MENU_SCREEN *SubScreen;
+  XStringW           Title = XStringW();
+  bool               Hidden = 0;
+  UINTN              Row = 0;
+  CHAR16             ShortcutDigit = 0;
+  CHAR16             ShortcutLetter = 0;
+  XIcon              Image = 0;
+  EG_RECT            Place = EG_RECT();
+  ACTION             AtClick = ActionNone;
+  ACTION             AtDoubleClick = ActionNone;
+  ACTION             AtRightClick = ActionNone;
+  ACTION             AtMouseOver = ActionNone;
+  REFIT_MENU_SCREEN *SubScreen = NULL;
 
   virtual XIcon* getDriveImage() { return nullptr; };
   virtual XIcon* getBadgeImage() { return nullptr; };
@@ -142,30 +142,13 @@ class REFIT_ABSTRACT_MENU_ENTRY
   virtual void StartLegacy() {};
   virtual void StartTool() {};
 
-  REFIT_ABSTRACT_MENU_ENTRY()
-      : Title(), Hidden(0), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-      {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_)
-      : Title(Title_), Hidden(0), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(ActionNone), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-      {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_)
-      : Title(Title_), Hidden(0), Row(0), ShortcutDigit(0), ShortcutLetter(0), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-      {};
-  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_)
-      : Title(Title_), Hidden(0), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), Image(), Place(), AtClick(AtClick_), AtDoubleClick(ActionNone), AtRightClick(ActionNone), AtMouseOver(ActionNone), SubScreen(NULL)
-      {};
-//  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_,
-//                            CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, const XIcon& Icon_,
-//                            EG_RECT Place_, ACTION AtClick_, ACTION AtDoubleClick_, ACTION AtRightClick_, ACTION AtMouseOver_,
-//                            REFIT_MENU_SCREEN *SubScreen_)
-//              : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_),
-//                Image(Icon_), Place(Place_),
-//                AtClick(AtClick_), AtDoubleClick(AtDoubleClick_), AtRightClick(AtRightClick_), AtMouseOver(AtMouseOver_),
-//                SubScreen(SubScreen_)
-//              {};
+  REFIT_ABSTRACT_MENU_ENTRY() {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_) : Title(Title_) {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, ACTION AtClick_) : Title(Title_), AtClick(AtClick_) {};
+  REFIT_ABSTRACT_MENU_ENTRY(const XStringW& Title_, UINTN Row_, CHAR16 ShortcutDigit_, CHAR16 ShortcutLetter_, ACTION AtClick_) : Title(Title_), Row(Row_), ShortcutDigit(ShortcutDigit_), ShortcutLetter(ShortcutLetter_), AtClick(AtClick_) {};
 
-  REFIT_ABSTRACT_MENU_ENTRY(const REFIT_ABSTRACT_MENU_ENTRY&) = delete;
-  REFIT_ABSTRACT_MENU_ENTRY& operator=(const REFIT_ABSTRACT_MENU_ENTRY&) = delete;
+  REFIT_ABSTRACT_MENU_ENTRY(const REFIT_ABSTRACT_MENU_ENTRY&) { panic("not yet defined"); }
+  REFIT_ABSTRACT_MENU_ENTRY& operator=(const REFIT_ABSTRACT_MENU_ENTRY&) { panic("not yet defined"); }
 
   virtual ~REFIT_ABSTRACT_MENU_ENTRY() {}; // virtual destructor : this is vital
 };
@@ -441,8 +424,8 @@ class REFIT_ABSTRACT_MENU_ENTRY
         UINTN         searchProc(const XString8& procedure);
         UINTN         searchProcInDriver(UINT8 * driver, UINT32 driverLen, const XString8& procedure);
         UINT32        searchSectionByNum(UINT8 * Binary, UINT32 Num);
-        void          KernelAndKextsPatcherStart();
-        void          KernelAndKextPatcherInit();
+//        void          KernelAndKextsPatcherStart();
+//        void          KernelAndKextPatcherInit();
         BOOLEAN       KernelUserPatch();
         BOOLEAN       KernelPatchPm();
         BOOLEAN       KernelLapicPatch_32();

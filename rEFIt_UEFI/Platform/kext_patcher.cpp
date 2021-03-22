@@ -482,20 +482,20 @@ void LOADER_ENTRY::AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPl
 //
 // not used since 4242
 #if 0
-void LOADER_ENTRY::CheckForFakeSMC(CHAR8 *InfoPlist)
-{
-  if (OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC) &&
-      OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
-    if (AsciiStrStr(InfoPlist, "<string>org.netkas.driver.FakeSMC</string>") != NULL
-        || AsciiStrStr(InfoPlist, "<string>org.netkas.FakeSMC</string>") != NULL
-        || AsciiStrStr(InfoPlist, "<string>as.vit9696.VirtualSMC</string>") != NULL)
-    {
-      Flags = OSFLAG_UNSET(Flags, OSFLAG_WITHKEXTS);
-      DBG_RT("\nFakeSMC or VirtualSMC found, UNSET WITHKEXTS\n");
-      Stall(5000000);
-    }
-  }
-}
+//void LOADER_ENTRY::CheckForFakeSMC(CHAR8 *InfoPlist)
+//{
+//  if (OSFLAG_ISSET(Flags, OSFLAG_CHECKFAKESMC) &&
+//      OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
+//    if (AsciiStrStr(InfoPlist, "<string>org.netkas.driver.FakeSMC</string>") != NULL
+//        || AsciiStrStr(InfoPlist, "<string>org.netkas.FakeSMC</string>") != NULL
+//        || AsciiStrStr(InfoPlist, "<string>as.vit9696.VirtualSMC</string>") != NULL)
+//    {
+//      Flags = OSFLAG_UNSET(Flags, OSFLAG_WITHKEXTS);
+//      DBG_RT("\nFakeSMC or VirtualSMC found, UNSET WITHKEXTS\n");
+//      Stall(5000000);
+//    }
+//  }
+//}
 #endif
 
 

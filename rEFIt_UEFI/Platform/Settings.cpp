@@ -187,6 +187,58 @@ CONST CHAR8* AudioOutputNames[] = {
   "Other"
 };
 
+
+
+XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const
+{
+  if ( settings.m_Arguments.isDefined() ) return Split<XString8Array>(settings.m_Arguments.value(), " ");
+  XString8Array LoadOptions = parent.getLoadOptions();
+  LoadOptions.import(Split<XString8Array>(settings.m_AddArguments, " "));
+  if (LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(parent.settings.Type)) {
+    LoadOptions.Add("-s");
+    LoadOptions.Add("-h");
+  }
+
+  return LoadOptions;
+}
+
+UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(bool NoCachesDefault) const
+{
+  UINT8 Flags = parent.getFlags(NoCachesDefault);
+  if ( settings.m_Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
+  return Flags;
+}
+
+XString8Array CUSTOM_LOADER_ENTRY::getLoadOptions() const
+{
+  if ( settings.Arguments.isDefined() ) return Split<XString8Array>(settings.Arguments.value(), " ");
+  XString8Array LoadOptions;
+  LoadOptions.import(Split<XString8Array>(settings.AddArguments, " "));
+  if (LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(settings.Type)) {
+    LoadOptions.Add("-s");
+    LoadOptions.Add("-h");
+  }
+
+  return LoadOptions;
+}
+const XString8& CUSTOM_LOADER_SUBENTRY::getTitle() const {
+  if ( settings.m_Title.isDefined() ) return settings.m_Title.value();
+  if ( settings.m_FullTitle.isDefined() ) return NullXString8;
+  return parent.settings.Title;
+};
+const XString8& CUSTOM_LOADER_SUBENTRY::getFullTitle() const {
+  if ( settings.m_FullTitle.isDefined() ) return settings.m_FullTitle.value();
+  if ( settings.m_Title.isDefined() ) return NullXString8;
+  return parent.settings.FullTitle;
+};
+
+
+
+
+
+
+
+
 EFI_STATUS
 SaveSettings ();
 
@@ -594,44 +646,41 @@ LoadUserSettings (
 //  return TRUE;
 //}
 
-
-STATIC
-CUSTOM_LOADER_ENTRY
-*DuplicateCustomEntry (
-                       IN CUSTOM_LOADER_ENTRY *Entry
-                       )
-{
-  if (Entry == NULL) {
-    return NULL;
-  }
-
-  CUSTOM_LOADER_ENTRY* DuplicateEntry = new CUSTOM_LOADER_ENTRY;
-  if (DuplicateEntry != NULL) {
-    DuplicateEntry->Volume           = Entry->Volume;
-    DuplicateEntry->Path             = Entry->Path;
-    DuplicateEntry->LoadOptions      = Entry->LoadOptions;
-    DuplicateEntry->FullTitle        = Entry->FullTitle;
-    DuplicateEntry->Title            = Entry->Title;
-    DuplicateEntry->ImagePath        = Entry->ImagePath;
-    DuplicateEntry->DriveImagePath   = Entry->DriveImagePath;
-    DuplicateEntry->BootBgColor      = Entry->BootBgColor;
-    DuplicateEntry->Image            = Entry->Image;
-    DuplicateEntry->DriveImage       = Entry->DriveImage;
-    DuplicateEntry->Hotkey           = Entry->Hotkey;
-    DuplicateEntry->Flags            = Entry->Flags;
-    DuplicateEntry->Type             = Entry->Type;
-    DuplicateEntry->VolumeType       = Entry->VolumeType;
-    DuplicateEntry->KernelScan       = Entry->KernelScan;
-    DuplicateEntry->CustomLogoType       = Entry->CustomLogoType;
-    DuplicateEntry->CustomLogoAsXString8       = Entry->CustomLogoAsXString8;
-    DuplicateEntry->CustomLogoAsData       = Entry->CustomLogoAsData;
-    DuplicateEntry->CustomLogoImage       = Entry->CustomLogoImage;
-//    CopyKernelAndKextPatches (&DuplicateEntry->KernelAndKextPatches, &Entry->KernelAndKextPatches);
-    DuplicateEntry->KernelAndKextPatches = Entry->KernelAndKextPatches;
-  }
-
-  return DuplicateEntry;
-}
+//
+//STATIC
+//CUSTOM_LOADER_SUBENTRY_SETTINGS
+//*DuplicateCustomEntryToSubEntry (
+//                       IN CUSTOM_LOADER_ENTRY_SETTINGS *Entry
+//                       )
+//{
+//  if (Entry == NULL) {
+//    return NULL;
+//  }
+//
+//  CUSTOM_LOADER_SUBENTRY_SETTINGS* DuplicateEntry = new CUSTOM_LOADER_SUBENTRY_SETTINGS;
+//  if (DuplicateEntry != NULL) {
+////    DuplicateEntry->Volume           = Entry->Volume;          //ok
+////    DuplicateEntry->Path             = Entry->Path;            //ok
+////    DuplicateEntry->LoadOptions      = Entry->LoadOptions;
+//    DuplicateEntry->FullTitle        = Entry->FullTitle;       //ok
+//    DuplicateEntry->Title            = Entry->Title;           //ok
+////    DuplicateEntry->ImagePath        = Entry->ImagePath;       //ok
+////    DuplicateEntry->BootBgColor      = Entry->BootBgColor;     //ok
+////    DuplicateEntry->Image            = Entry->Image;
+////    DuplicateEntry->Hotkey           = Entry->Hotkey;          //ok
+////    DuplicateEntry->Flags            = Entry->Flags;
+////    DuplicateEntry->Type             = Entry->Type;            //ok
+////    DuplicateEntry->VolumeType       = Entry->VolumeType;      //ok
+////    DuplicateEntry->KernelScan       = Entry->KernelScan;      //ok
+////    DuplicateEntry->CustomLogoType   = Entry->CustomLogoType;
+////    DuplicateEntry->CustomLogoAsXString8 = Entry->CustomLogoAsXString8;  //ok
+////    DuplicateEntry->CustomLogoAsData = Entry->CustomLogoAsData;          //ok
+////    DuplicateEntry->CustomLogoImage  = Entry->CustomLogoImage;
+////    DuplicateEntry->KernelAndKextPatches = Entry->KernelAndKextPatches;
+//  }
+//
+//  return DuplicateEntry;
+//}
 
 STATIC
 BOOLEAN
@@ -1412,10 +1461,337 @@ static UINT8 GetVolumeType(const TagDict* DictPointer)
 }
 
 
+
+BOOLEAN
+FillinCustomSubEntry (
+                   UINT8 parentType,
+                   IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry,
+                   const TagDict* DictPointer,
+                   IN      BOOLEAN SubEntry
+                   )
+{
+  const TagStruct* Prop;
+
+  if ( Entry == NULL ) panic("Entry == NULL");
+  if ( DictPointer == NULL ) panic("DictPointer == NULL");
+
+  Prop = DictPointer->propertyForKey("Disabled");
+  Entry->Disabled = IsPropertyNotNullAndTrue(Prop);
+
+//  Prop = DictPointer->propertyForKey("Volume");
+//  if (Prop != NULL && (Prop->isString())) {
+//    Entry->Volume = Prop->getString()->stringValue();
+//  }
+
+//  Prop = DictPointer->propertyForKey("Path");
+//  if (Prop != NULL && (Prop->isString())) {
+//    Entry->Path = Prop->getString()->stringValue();
+//  }
+
+//  Prop = DictPointer->propertyForKey("Settings");
+//  if (Prop != NULL && (Prop->isString())) {
+//    Entry->Settings = Prop->getString()->stringValue();
+//  }
+
+//  Prop = DictPointer->propertyForKey("CommonSettings");
+//  Entry->CommonSettings = IsPropertyNotNullAndTrue(Prop);
+
+
+  Prop = DictPointer->propertyForKey("AddArguments");
+  if (Prop != NULL && (Prop->isString())) {
+//    if (Entry->LoadOptions.notEmpty()) {
+//      Entry->Options.SPrintf("%s %s", Entry->Options.c_str(), Prop->getString()->stringValue());
+//    } else {
+//      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
+//    }
+    Entry->m_AddArguments = Prop->getString()->stringValue();
+//    Entry->LoadOptions.import(Split<XString8Array>(Prop->getString()->stringValue(), " "));
+  } else {
+    Prop = DictPointer->propertyForKey("Arguments");
+    if (Prop != NULL && (Prop->isString())) {
+//      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
+      Entry->m_Arguments = Prop->getString()->stringValue();
+//      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
+//      Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
+    }
+  }
+  Prop = DictPointer->propertyForKey("Title");
+  if (Prop != NULL && (Prop->isString())) {
+    Entry->m_Title = Prop->getString()->stringValue();
+//    Entry->FullTitle.setEmpty(); // jief : erase the copy from the parent
+  }
+  Prop = DictPointer->propertyForKey("FullTitle");
+  if (Prop != NULL && (Prop->isString())) {
+    Entry->m_FullTitle = Prop->getString()->stringValue();
+//    Entry->Title.setEmpty(); // jief : erase the copy from the parent. Could also be the previous settings, but Title is not used when FullTitle exists.
+  }
+
+//  Entry->ImageData.setEmpty();
+//  Prop = DictPointer->propertyForKey("Image");
+//  if (Prop != NULL) {
+//    Entry->ImagePath.setEmpty();
+//    Entry->Image.setEmpty();
+//    if (Prop->isString()) {
+//      Entry->ImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
+//    }
+//    // we can't load the file yet, as ThemeDir is not initialized
+//  } else {
+//    UINTN DataLen = 0;
+//    UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
+//    if (TmpData) {
+//      Entry->ImageData.stealValueFrom(TmpData, DataLen);
+//// TODO remove from settings
+//      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+//        Entry->Image.setFilled();
+//      }
+//    }
+//  }
+//
+//  Prop = DictPointer->propertyForKey("Hotkey");
+//  if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+//    if ( Prop->getString()->stringValue()[0] < __WCHAR_MAX__ ) {
+//      Entry->Hotkey = (wchar_t)(Prop->getString()->stringValue()[0]);
+//    }
+//  }
+
+//  // Whether or not to draw boot screen
+//  Prop = DictPointer->propertyForKey("CustomLogo");
+//  if (Prop != NULL) {
+//    if (IsPropertyNotNullAndTrue(Prop)) {
+//      Entry->CustomLogoType    = CUSTOM_BOOT_APPLE;
+//    } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+//      Entry->CustomLogoAsXString8 = Prop->getString()->stringValue();
+//      if (Prop->getString()->stringValue().equalIC("Apple")) {
+//        Entry->CustomLogoType  = CUSTOM_BOOT_APPLE;
+//      } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
+//        Entry->CustomLogoType  = CUSTOM_BOOT_ALT_APPLE;
+//      } else if (Prop->getString()->stringValue().equalIC("Theme")) {
+//        Entry->CustomLogoType  = CUSTOM_BOOT_THEME;
+//      } else {
+//        XStringW customLogo = XStringW() = Prop->getString()->stringValue();
+//        Entry->CustomLogoType  = CUSTOM_BOOT_USER;
+//// TODO : remove reading of image from settings
+//        Entry->CustomLogoImage.LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
+//        if (Entry->CustomLogoImage.isEmpty()) {
+//          DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
+//          Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
+//        }
+//      }
+//    } else if ( Prop->isData() && Prop->getData()->dataLenValue() > 0 ) {
+//      Entry->CustomLogoType = CUSTOM_BOOT_USER;
+//      Entry->CustomLogoAsData = Prop->getData()->data();
+//// TODO : remove reading of image from settings
+//      Entry->CustomLogoImage.FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
+//      if (Entry->CustomLogoImage.isEmpty()) {
+//        DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
+//        Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
+//      }
+//    } else {
+//      Entry->CustomLogoType = CUSTOM_BOOT_USER_DISABLED;
+//    }
+//    DBG("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomLogoType), Entry->CustomLogoImage.GetWidth());
+//  } else {
+//    Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
+//  }
+
+//  Prop = DictPointer->propertyForKey("BootBgColor");
+//  if (Prop != NULL && Prop->isString()) {
+//    UINTN   Color;
+//    Color = AsciiStrHexToUintn(Prop->getString()->stringValue());
+//
+//    Entry->BootBgColor.Red = (Color >> 24) & 0xFF;
+//    Entry->BootBgColor.Green = (Color >> 16) & 0xFF;
+//    Entry->BootBgColor.Blue = (Color >> 8) & 0xFF;
+//    Entry->BootBgColor.Reserved = (Color >> 0) & 0xFF;
+//  }
+//
+//  // Hidden Property, Values:
+//  // - No (show the entry)
+//  // - Yes (hide the entry but can be show with F3)
+//  // - Always (always hide the entry)
+//  Prop = DictPointer->propertyForKey("Hidden");
+//  if (Prop != NULL) {
+//    if ((Prop->isString()) &&
+//        (Prop->getString()->stringValue().equalIC("Always"))) {
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+//    } else if (IsPropertyNotNullAndTrue(Prop)) {
+//      DBG("     hiding entry because Hidden flag is YES\n");
+//      Entry->Hidden = true;
+//    } else {
+//      Entry->Hidden = false;
+//    }
+//  }
+//
+//  Prop = DictPointer->propertyForKey("Type");
+//  if (Prop != NULL && (Prop->isString())) {
+//    if ((Prop->getString()->stringValue().equalIC("OSX")) ||
+//        (Prop->getString()->stringValue().equalIC("macOS"))) {
+//      Entry->Type = OSTYPE_OSX;
+//    } else if (Prop->getString()->stringValue().equalIC("OSXInstaller")) {
+//      Entry->Type = OSTYPE_OSX_INSTALLER;
+//    } else if (Prop->getString()->stringValue().equalIC("OSXRecovery")) {
+//      Entry->Type = OSTYPE_RECOVERY;
+//    } else if (Prop->getString()->stringValue().equalIC("Windows")) {
+//      Entry->Type = OSTYPE_WINEFI;
+//    } else if (Prop->getString()->stringValue().equalIC("Linux")) {
+//      Entry->Type = OSTYPE_LIN;
+//// TODO remove from here
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
+//    } else if (Prop->getString()->stringValue().equalIC("LinuxKernel")) {
+//      Entry->Type = OSTYPE_LINEFI;
+//    } else {
+//      DBG("** Warning: unknown custom entry Type '%s'\n", Prop->getString()->stringValue().c_str());
+//      Entry->Type = OSTYPE_OTHER;
+//    }
+//  } else {
+//    if (Entry->Type == 0 && Entry->Path.notEmpty()) {
+//      // Try to set Entry->type from Entry->Path
+//      Entry->Type = GetOSTypeFromPath(Entry->Path);
+//    }
+//  }
+
+//  Entry->VolumeType = GetVolumeType(DictPointer);
+
+//  if (Entry->LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(parentType)) {
+//    Entry->LoadOptions.Add("-s");
+//    Entry->LoadOptions.Add("-h");
+//  }
+  if (Entry->m_Title.dgetValue().isEmpty()) {
+    if (OSTYPE_IS_OSX_RECOVERY(parentType)) {
+      Entry->m_Title = "Recovery"_XS8;
+    } else if (OSTYPE_IS_OSX_INSTALLER(parentType)) {
+      Entry->m_Title = "Install macOS"_XS8;
+    }
+  }
+//  if (Entry->Image.isEmpty() && (Entry->ImagePath.isEmpty())) {
+//    if (OSTYPE_IS_OSX_RECOVERY(parentType)) {
+//      Entry->ImagePath = L"mac"_XSW;
+//    }
+//  }
+  // OS Specific flags
+  if (OSTYPE_IS_OSX(parentType) || OSTYPE_IS_OSX_RECOVERY(parentType) || OSTYPE_IS_OSX_INSTALLER(parentType)) {
+
+    // InjectKexts default values
+//    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+    //  Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
+
+//    Prop = DictPointer->propertyForKey("InjectKexts");
+//    if (Prop != NULL) {
+//      if ( Prop->isTrueOrYes() ) {
+//        Entry->InjectKexts = 1;
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//      } else if ( Prop->isFalseOrNn() ) {
+//        Entry->InjectKexts = 0;
+//        // nothing to do
+//      } else if ( Prop->isString() && Prop->getString()->stringValue().equalIC("Detect") ) {
+//        Entry->InjectKexts = 2;
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//      } else {
+//        Entry->InjectKexts = -1;
+//        DBG("** Warning: unknown custom entry InjectKexts value '%s'\n", Prop->getString()->stringValue().c_str());
+//      }
+//    } else {
+//      Entry->InjectKexts = -1;
+//      // Use global settings
+//      if (gSettings.WithKexts) {
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//      }
+//      if (gSettings.WithKextsIfNoFakeSMC) {
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//      }
+//    }
+
+    // NoCaches default value
+//    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
+
+    Prop = DictPointer->propertyForKey("NoCaches");
+    if (Prop != NULL) {
+      if (IsPropertyNotNullAndTrue(Prop)) {
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+      } else {
+        // Use global settings
+        if (gSettings.NoCaches) {
+//          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+        }
+      }
+    }
+
+//    // KernelAndKextPatches
+//    if (!SubEntry) { // CopyKernelAndKextPatches already in: DuplicateCustomEntry if SubEntry == TRUE
+//      //DBG("Copying global patch settings\n");
+////      CopyKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)),
+// //                               (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
+//
+////      CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, &gSettings.KernelAndKextPatches);
+//      Entry->KernelAndKextPatches = gSettings.KernelAndKextPatches;
+//
+//      //#ifdef DUMP_KERNEL_KEXT_PATCHES
+//      //    DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));
+//      //#endif
+//
+//    }
+
+  }
+
+//  if (Entry->Type == OSTYPE_LINEFI) {
+//    Prop = DictPointer->propertyForKey("Kernel");
+//    if (Prop != NULL) {
+//      if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+//        if ((Prop->getString()->stringValue()[0] == 'N') || (Prop->getString()->stringValue()[0] == 'n')) {
+//          Entry->KernelScan = KERNEL_SCAN_NEWEST;
+//        } else if ((Prop->getString()->stringValue()[0] == 'O') || (Prop->getString()->stringValue()[0] == 'o')) {
+//          Entry->KernelScan = KERNEL_SCAN_OLDEST;
+//        } else if ((Prop->getString()->stringValue()[0] == 'F') || (Prop->getString()->stringValue()[0] == 'f')) {
+//          Entry->KernelScan = KERNEL_SCAN_FIRST;
+//        } else if ((Prop->getString()->stringValue()[0] == 'L') || (Prop->getString()->stringValue()[0] == 'l')) {
+//          Entry->KernelScan = KERNEL_SCAN_LAST;
+//        } else if ((Prop->getString()->stringValue()[0] == 'M') || (Prop->getString()->stringValue()[0] == 'm')) {
+//          Entry->KernelScan = KERNEL_SCAN_MOSTRECENT;
+//        } else if ((Prop->getString()->stringValue()[0] == 'E') || (Prop->getString()->stringValue()[0] == 'e')) {
+//          Entry->KernelScan = KERNEL_SCAN_EARLIEST;
+//        }
+//      }
+//    }
+//  }
+
+//  /*
+//   * Sub entries
+//   * an array of dict OR a bool
+//  */
+//  Prop = DictPointer->propertyForKey("SubEntries");
+//  if (Prop != NULL) {
+//    if ( Prop->isBool() && Prop->getBool()->boolValue() ) {
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+//    } else if ( Prop->isArray() ) {
+//      CUSTOM_LOADER_SUBENTRY_SETTINGS *CustomSubEntry;
+//      INTN   i;
+//      INTN   Count = Prop->getArray()->arrayContent().size();
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+//      for (i = 0; i < Count; i++) {
+//        const TagDict* Dict = Prop->getArray()->dictElementAt(i, "SubEntries"_XS8);
+//        // Allocate a sub entry
+//        CustomSubEntry = DuplicateCustomSubEntry(Entry);
+//        if (CustomSubEntry) {
+//          if ( FillinCustomSubEntry(CustomSubEntry, Dict, TRUE) ) {
+//            Entry->SubEntriesSettings.AddReference(CustomSubEntry, true);
+//          }else{
+//            delete CustomSubEntry;
+//          }
+//        }
+//      }
+//    }else{
+//      MsgLog("MALFORMED PLIST : SubEntries must be a bool OR an array of dict");
+//    }
+//  }
+  return TRUE;
+}
+
 STATIC
 BOOLEAN
 FillinCustomEntry (
-                   IN OUT  CUSTOM_LOADER_ENTRY *Entry,
+                   IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry,
                    const TagDict* DictPointer,
                    IN      BOOLEAN SubEntry
                    )
@@ -1454,13 +1830,15 @@ FillinCustomEntry (
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
 //    }
-  Entry->LoadOptions.import(Split<XString8Array>(Prop->getString()->stringValue(), " "));
+    Entry->AddArguments = Prop->getString()->stringValue();
+//    Entry->LoadOptions.import(Split<XString8Array>(Prop->getString()->stringValue(), " "));
   } else {
     Prop = DictPointer->propertyForKey("Arguments");
     if (Prop != NULL && (Prop->isString())) {
+      Entry->Arguments = Prop->getString()->stringValue();
 //      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
-      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
-      Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
+//      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
+//      Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
   Prop = DictPointer->propertyForKey("Title");
@@ -1577,16 +1955,17 @@ FillinCustomEntry (
   // - No (show the entry)
   // - Yes (hide the entry but can be show with F3)
   // - Always (always hide the entry)
+  Entry->AlwaysHidden = false;
+  Entry->Hidden = false;
   Prop = DictPointer->propertyForKey("Hidden");
   if (Prop != NULL) {
     if ((Prop->isString()) &&
         (Prop->getString()->stringValue().equalIC("Always"))) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+      Entry->AlwaysHidden = true;
     } else if (IsPropertyNotNullAndTrue(Prop)) {
       DBG("     hiding entry because Hidden flag is YES\n");
       Entry->Hidden = true;
-    } else {
-      Entry->Hidden = false;
     }
   }
 
@@ -1604,7 +1983,7 @@ FillinCustomEntry (
     } else if (Prop->getString()->stringValue().equalIC("Linux")) {
       Entry->Type = OSTYPE_LIN;
 // TODO remove from here
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     } else if (Prop->getString()->stringValue().equalIC("LinuxKernel")) {
       Entry->Type = OSTYPE_LINEFI;
     } else {
@@ -1620,10 +1999,10 @@ FillinCustomEntry (
 
   Entry->VolumeType = GetVolumeType(DictPointer);
 
-  if (Entry->LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(Entry->Type)) {
-    Entry->LoadOptions.Add("-s");
-    Entry->LoadOptions.Add("-h");
-  }
+//  if (Entry->LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(Entry->Type)) {
+//    Entry->LoadOptions.Add("-s");
+//    Entry->LoadOptions.Add("-h");
+//  }
   if (Entry->Title.isEmpty()) {
     if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
       Entry->Title = L"Recovery"_XSW;
@@ -1645,48 +2024,49 @@ FillinCustomEntry (
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
 
     // InjectKexts default values
-    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+//    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_CHECKFAKESMC);
     //  Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_WITHKEXTS);
 
     Prop = DictPointer->propertyForKey("InjectKexts");
     if (Prop != NULL) {
       if ( Prop->isTrueOrYes() ) {
         Entry->InjectKexts = 1;
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else if ( Prop->isFalseOrNn() ) {
         Entry->InjectKexts = 0;
         // nothing to do
       } else if ( Prop->isString() && Prop->getString()->stringValue().equalIC("Detect") ) {
         Entry->InjectKexts = 2;
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       } else {
-        Entry->InjectKexts = -1;
+        Entry->InjectKexts = -2;
         DBG("** Warning: unknown custom entry InjectKexts value '%s'\n", Prop->getString()->stringValue().c_str());
       }
     } else {
       Entry->InjectKexts = -1;
       // Use global settings
       if (gSettings.WithKexts) {
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
       if (gSettings.WithKextsIfNoFakeSMC) {
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
     }
 
     // NoCaches default value
-    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
+//    Entry->Flags = OSFLAG_UNSET(Entry->Flags, OSFLAG_NOCACHES);
 
     Prop = DictPointer->propertyForKey("NoCaches");
     if (Prop != NULL) {
       if (IsPropertyNotNullAndTrue(Prop)) {
-        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+//        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+        Entry->NoCaches = true;
       } else {
         // Use global settings
         if (gSettings.NoCaches) {
-          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+//          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
         }
       }
     }
@@ -1735,27 +2115,26 @@ FillinCustomEntry (
   */
   Prop = DictPointer->propertyForKey("SubEntries");
   if (Prop != NULL) {
-    if ( Prop->isBool() && Prop->getBool()->boolValue() ) {
+    /*if ( Prop->isBool() && Prop->getBool()->boolValue() ) {
       Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
-    } else if ( Prop->isArray() ) {
-      CUSTOM_LOADER_ENTRY *CustomSubEntry;
-      INTN   i;
+    } else*/ if ( Prop->isArray() ) {
       INTN   Count = Prop->getArray()->arrayContent().size();
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
-      for (i = 0; i < Count; i++) {
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTMENU);
+      for (INTN i = 0; i < Count; i++) {
         const TagDict* Dict = Prop->getArray()->dictElementAt(i, "SubEntries"_XS8);
         // Allocate a sub entry
-        CustomSubEntry = DuplicateCustomEntry (Entry);
+//        CustomSubEntry = DuplicateCustomEntryToSubEntry(Entry);
+        CUSTOM_LOADER_SUBENTRY_SETTINGS* CustomSubEntry = new CUSTOM_LOADER_SUBENTRY_SETTINGS;
         if (CustomSubEntry) {
-          if ( FillinCustomEntry(CustomSubEntry, Dict, TRUE) ) {
-            Entry->SubEntries.AddReference(CustomSubEntry, true);
+          if ( FillinCustomSubEntry(Entry->Type, CustomSubEntry, Dict, TRUE) ) {
+            Entry->SubEntriesSettings.AddReference(CustomSubEntry, true);
           }else{
             delete CustomSubEntry;
           }
         }
       }
     }else{
-      MsgLog("MALFORMED PLIST : SubEntries must be a bool OR an array of dict");
+      MsgLog("MALFORMED PLIST : SubEntries must be an array of dict");
     }
   }
   return TRUE;
@@ -2603,10 +2982,10 @@ EFI_STATUS GetEarlyUserSettings (
             for (INTN i = 0; i < Count; i++) {
               const TagDict* Dict3 = arrayProp->dictElementAt(i, "Custom/Entries"_XS8);
               // Allocate an entry
-              CUSTOM_LOADER_ENTRY* Entry = new CUSTOM_LOADER_ENTRY;
+              CUSTOM_LOADER_ENTRY_SETTINGS* Entry = new CUSTOM_LOADER_ENTRY_SETTINGS;
               // Fill it in
               if ( FillinCustomEntry(Entry, Dict3, FALSE) ) {
-                gSettings.GUI.CustomEntries.AddReference(Entry, true);
+                gSettings.GUI.CustomEntriesSettings.AddReference(Entry, true);
               }else{
                 delete Entry;
               }
@@ -7188,137 +7567,138 @@ InjectKextsFromDir (
   return Status;
 }
 
-EFI_STATUS LOADER_ENTRY::SetFSInjection()
-{
-  EFI_STATUS           Status;
-  FSINJECTION_PROTOCOL *FSInject;
-  XStringW              SrcDir;
-  //BOOLEAN              InjectionNeeded = FALSE;
-  //BOOLEAN              BlockCaches     = FALSE;
-  FSI_STRING_LIST      *Blacklist      = 0;
-  FSI_STRING_LIST      *ForceLoadKexts = NULL;
-
-  MsgLog ("Beginning FSInjection\n");
-
-  // get FSINJECTION_PROTOCOL
-  Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
-  if (EFI_ERROR(Status)) {
-    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", efiStrError(Status));
-    MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
-    return EFI_NOT_STARTED;
-  }
-
-  // check if blocking of caches is needed
-  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES) || LoadOptions.contains("-f")  ) {
-    MsgLog ("Blocking kext caches\n");
-    //  BlockCaches = TRUE;
-    // add caches to blacklist
-    Blacklist = FSInject->CreateStringList();
-    if (Blacklist == NULL) {
-      MsgLog (" - ERROR: Not enough memory!\n");
-      return EFI_NOT_STARTED;
-    }
-
-    /*
-     From 10.7 to 10.9, status of directly restoring ESD files or update from Appstore cannot block kernel cache. because there are boot.efi and kernelcache file without kernel file.
-     After macOS installed, boot.efi can call kernel file from S/L/Kernels.
-     For this reason, long time ago, chameleon's user restored Base System.dmg to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
-     From 10.10+, boot.efi call only prelinkedkernel file without kernel file. we can never block only kernelcache.
-     The use of these block caches is meaningless in modern macOS. Unlike the old days, we do not have to do the tedious task of putting the files needed for booting into the S/L/E.
-     Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
-     by Sherlocks, 2017.11
-     */
-
-    // Installed/createinstallmedia
-    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4+
-
-    // Recovery
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel"); // 10.11+
-
-    // BaseSytem/InstallESD
-    //FSInject->AddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9/(10.7/10.8)
-
-    // 1st stage - createinstallmedia
-    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache"); // 10.9/10.10
-    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel"); // 10.11 - 10.13.3
-
-    // 2nd stage - InstallESD/AppStore/startosinstall
-    //FSInject->AddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache"); // 10.7
-    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache"); // 10.8 - 10.10
-    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel"); // 10.11
-    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel"); // 10.12 - 10.12.3
-    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");// 10.12.4+
-
-    // 2nd stage - Fusion Drive
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel"); // 10.12+
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
-    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
-
-    // NetInstall
-    //FSInject->AddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
-
-
-    // Block Caches list
-    // InstallDVD/Installed
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext"); // 10.6
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext"); // 10.6
-    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache"); // 10.6/10.6 - 10.9
-
-    if (gSettings.BlockKexts[0] != L'\0') {
-      FSInject->AddStringToList(Blacklist, SWPrintf("\\System\\Library\\Extensions\\%ls", gSettings.BlockKexts).wc_str());
-    }
-  }
-
-  // check if kext injection is needed
-  // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
-  //SrcDir = NULL;
-  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
-    SrcDir = GetOtherKextsDir(TRUE);
-    Status = FSInject->Install(
-                                Volume->DeviceHandle,
-                                L"\\System\\Library\\Extensions",
-                                SelfVolume->DeviceHandle,
-                                //GetOtherKextsDir (),
-                                SrcDir.wc_str(),
-                                Blacklist,
-                                ForceLoadKexts
-                                );
-    //InjectKextsFromDir(Status, GetOtherKextsDir());
-    InjectKextsFromDir(Status, SrcDir.wc_str());
-
-    SrcDir = GetOSVersionKextsDir(macOSVersion);
-    Status = FSInject->Install(
-                                Volume->DeviceHandle,
-                                L"\\System\\Library\\Extensions",
-                                SelfVolume->DeviceHandle,
-                                //GetOSVersionKextsDir(OSVersion),
-                                SrcDir.wc_str(),
-                                Blacklist,
-                                ForceLoadKexts
-                                );
-    //InjectKextsFromDir(Status, GetOSVersionKextsDir(OSVersion));
-    InjectKextsFromDir(Status, SrcDir.wc_str());
-  } else {
-    MsgLog("skipping kext injection (not requested)\n");
-  }
-
-  // prepare list of kext that will be forced to load
-  ForceLoadKexts = FSInject->CreateStringList();
-  if (ForceLoadKexts == NULL) {
-    MsgLog(" - Error: not enough memory!\n");
-    return EFI_NOT_STARTED;
-  }
-
-  KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
-
-  // reinit Volume->RootDir? it seems it's not needed.
-
-  return Status;
-}
+// Do we need that with OC ? For old version ?
+//EFI_STATUS LOADER_ENTRY::SetFSInjection()
+//{
+//  EFI_STATUS           Status;
+//  FSINJECTION_PROTOCOL *FSInject;
+//  XStringW              SrcDir;
+//  //BOOLEAN              InjectionNeeded = FALSE;
+//  //BOOLEAN              BlockCaches     = FALSE;
+//  FSI_STRING_LIST      *Blacklist      = 0;
+//  FSI_STRING_LIST      *ForceLoadKexts = NULL;
+//
+//  MsgLog ("Beginning FSInjection\n");
+//
+//  // get FSINJECTION_PROTOCOL
+//  Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
+//  if (EFI_ERROR(Status)) {
+//    //Print (L"- No FSINJECTION_PROTOCOL, Status = %s\n", efiStrError(Status));
+//    MsgLog (" - ERROR: gFSInjectProtocolGuid not found!\n");
+//    return EFI_NOT_STARTED;
+//  }
+//
+//  // check if blocking of caches is needed
+//  if (  OSFLAG_ISSET(Flags, OSFLAG_NOCACHES) || LoadOptions.contains("-f")  ) {
+//    MsgLog ("Blocking kext caches\n");
+//    //  BlockCaches = TRUE;
+//    // add caches to blacklist
+//    Blacklist = FSInject->CreateStringList();
+//    if (Blacklist == NULL) {
+//      MsgLog (" - ERROR: Not enough memory!\n");
+//      return EFI_NOT_STARTED;
+//    }
+//
+//    /*
+//     From 10.7 to 10.9, status of directly restoring ESD files or update from Appstore cannot block kernel cache. because there are boot.efi and kernelcache file without kernel file.
+//     After macOS installed, boot.efi can call kernel file from S/L/Kernels.
+//     For this reason, long time ago, chameleon's user restored Base System.dmg to made USB installer and added kernel file in root and custom kexts in S/L/E. then used "-f" option.
+//     From 10.10+, boot.efi call only prelinkedkernel file without kernel file. we can never block only kernelcache.
+//     The use of these block caches is meaningless in modern macOS. Unlike the old days, we do not have to do the tedious task of putting the files needed for booting into the S/L/E.
+//     Caution! Do not add this list. If add this list, will see "Kernel cache load error (0xe)". This is just a guideline.
+//     by Sherlocks, 2017.11
+//     */
+//
+//    // Installed/createinstallmedia
+//    //FSInject->AddStringToList(Blacklist, L"\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.10+/10.13.4+
+//
+//    // Recovery
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache"); // 10.7 - 10.10
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\prelinkedkernel"); // 10.11+
+//
+//    // BaseSytem/InstallESD
+//    //FSInject->AddStringToList(Blacklist, L"\\kernelcache"); // 10.7 - 10.9/(10.7/10.8)
+//
+//    // 1st stage - createinstallmedia
+//    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\kernelcache"); // 10.9/10.10
+//    //FSInject->AddStringToList(Blacklist, L"\\.IABootFiles\\prelinkedkernel"); // 10.11 - 10.13.3
+//
+//    // 2nd stage - InstallESD/AppStore/startosinstall
+//    //FSInject->AddStringToList(Blacklist, L"\\Mac OS X Install Data\\kernelcache"); // 10.7
+//    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\kernelcache"); // 10.8 - 10.10
+//    //FSInject->AddStringToList(Blacklist, L"\\OS X Install Data\\prelinkedkernel"); // 10.11
+//    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\prelinkedkernel"); // 10.12 - 10.12.3
+//    //FSInject->AddStringToList(Blacklist, L"\\macOS Install Data\\Locked Files\\Boot Files\\prelinkedkernel");// 10.12.4+
+//
+//    // 2nd stage - Fusion Drive
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\System\\Library\\PrelinkedKernels\\prelinkedkernel"); // 10.11
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.R\\prelinkedkernel"); // 10.12+
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.P\\prelinkedkernel"); // 10.12+
+//    //FSInject->AddStringToList(Blacklist, L"\\com.apple.boot.S\\prelinkedkernel"); // 10.12+
+//
+//    // NetInstall
+//    //FSInject->AddStringToList(Blacklist, L"\\NetInstall macOS High Sierra.nbi\\i386\\x86_64\\kernelcache");
+//
+//
+//    // Block Caches list
+//    // InstallDVD/Installed
+//    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext"); // 10.6
+//    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext"); // 10.6
+//    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache"); // 10.6/10.6 - 10.9
+//
+//    if (gSettings.BlockKexts[0] != L'\0') {
+//      FSInject->AddStringToList(Blacklist, SWPrintf("\\System\\Library\\Extensions\\%ls", gSettings.BlockKexts).wc_str());
+//    }
+//  }
+//
+//  // check if kext injection is needed
+//  // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
+//  //SrcDir = NULL;
+//  if (OSFLAG_ISSET(Flags, OSFLAG_WITHKEXTS)) {
+//    SrcDir = GetOtherKextsDir(TRUE);
+//    Status = FSInject->Install(
+//                                Volume->DeviceHandle,
+//                                L"\\System\\Library\\Extensions",
+//                                SelfVolume->DeviceHandle,
+//                                //GetOtherKextsDir (),
+//                                SrcDir.wc_str(),
+//                                Blacklist,
+//                                ForceLoadKexts
+//                                );
+//    //InjectKextsFromDir(Status, GetOtherKextsDir());
+//    InjectKextsFromDir(Status, SrcDir.wc_str());
+//
+//    SrcDir = GetOSVersionKextsDir(macOSVersion);
+//    Status = FSInject->Install(
+//                                Volume->DeviceHandle,
+//                                L"\\System\\Library\\Extensions",
+//                                SelfVolume->DeviceHandle,
+//                                //GetOSVersionKextsDir(OSVersion),
+//                                SrcDir.wc_str(),
+//                                Blacklist,
+//                                ForceLoadKexts
+//                                );
+//    //InjectKextsFromDir(Status, GetOSVersionKextsDir(OSVersion));
+//    InjectKextsFromDir(Status, SrcDir.wc_str());
+//  } else {
+//    MsgLog("skipping kext injection (not requested)\n");
+//  }
+//
+//  // prepare list of kext that will be forced to load
+//  ForceLoadKexts = FSInject->CreateStringList();
+//  if (ForceLoadKexts == NULL) {
+//    MsgLog(" - Error: not enough memory!\n");
+//    return EFI_NOT_STARTED;
+//  }
+//
+//  KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
+//
+//  // reinit Volume->RootDir? it seems it's not needed.
+//
+//  return Status;
+//}
 
 
 EFI_GUID nullUUID = {0,0,0,{0}};

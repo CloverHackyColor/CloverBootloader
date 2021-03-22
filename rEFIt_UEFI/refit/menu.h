@@ -3,6 +3,8 @@
 
 #include "../cpp_foundation/XString.h"
 #include "../gui/menu_items/menu_items.h"
+//#include "../gui/REFIT_MAINMENU_SCREEN.h"
+class REFIT_MAINMENU_SCREEN;
 
 //void AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CONST CHAR16 *InfoLine);
 //void AddMenuInfo(IN REFIT_MENU_SCREEN  *SubScreen, IN CONST CHAR16 *Line);
@@ -29,6 +31,7 @@ extern EG_RECT ScrollbarNewPointerPlace;
 extern INTN LayoutAnimMoveForMenuX;
 extern INTN LayoutMainMenuHeight;
 
+extern REFIT_MAINMENU_SCREEN MainMenu;
 
 void OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry);
 void FreeScrollBar(void);

@@ -60,6 +60,7 @@
 #include "../Platform/Injectors.h"
 #include "../Platform/KextList.h"
 #include "../gui/REFIT_MENU_SCREEN.h"
+#include "../gui/REFIT_MAINMENU_SCREEN.h"
 #include "../Platform/Self.h"
 #include "../Platform/VersionString.h"
 
@@ -119,7 +120,7 @@ REFIT_MENU_ITEM_RESET    MenuEntryReset   (L"Restart Computer"_XSW, 1, 0, 'R', A
 REFIT_MENU_ITEM_SHUTDOWN MenuEntryShutdown(L"Exit Clover"_XSW,      1, 0, 'U', ActionSelect);
 REFIT_MENU_ITEM_RETURN   MenuEntryReturn  (L"Return"_XSW,           0, 0,  0,  ActionEnter);
 
-REFIT_MENU_SCREEN MainMenu(1, L"Main Menu"_XSW, L"Automatic boot"_XSW);
+REFIT_MAINMENU_SCREEN MainMenu(1, L"Main Menu"_XSW, L"Automatic boot"_XSW);
 REFIT_MENU_SCREEN AboutMenu(2, L"About"_XSW, L""_XSW);
 REFIT_MENU_SCREEN HelpMenu(3, L"Help"_XSW, L""_XSW);
 REFIT_MENU_SCREEN OptionMenu(4, L"Options"_XSW, L""_XSW);
@@ -1523,11 +1524,6 @@ void HelpRefit(void)
     [2] checkbox
     [3] checkbox_checked
 */
-//
-// Scrolling functions
-//
-#define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
-#define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
 
 //
@@ -2501,7 +2497,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   UINTN               NextMenuExit;
   //CHAR16*           Flags;
 
-  MENU_STYLE_FUNC     Style = &REFIT_MENU_SCREEN::TextMenuStyle;
+//  MENU_STYLE_FUNC     Style = &REFIT_MENU_SCREEN::TextMenuStyle;
 
   INTN                EntryIndex = 0;
   INTN                SubEntryIndex = -1; //value -1 means old position to remember
@@ -2510,9 +2506,9 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   BOOLEAN             OldFontStyle = ThemeX.Proportional;
   ThemeX.Proportional = FALSE; //temporary disable proportional
 
-  if (AllowGraphicsMode) {
-    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
-  }
+//  if (AllowGraphicsMode) {
+//    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
+//  }
 
   // remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
@@ -2553,7 +2549,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
   }
 
   while (!MenuExit) {
-    MenuExit = OptionMenu.RunGenericMenu(Style, &EntryIndex, ChosenEntry);
+    MenuExit = OptionMenu.RunGenericMenu(&EntryIndex, ChosenEntry);
     if (MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->getREFIT_MENU_ITEM_RETURN())
       break;
     if (MenuExit == MENU_EXIT_ENTER || MenuExit == MENU_EXIT_DETAILS) {
@@ -2561,7 +2557,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
       if ((*ChosenEntry)->SubScreen != NULL) {
         SubMenuExit = 0;
         while (!SubMenuExit) {
-          SubMenuExit = (*ChosenEntry)->SubScreen->RunGenericMenu(Style, &SubEntryIndex, &TmpChosenEntry);
+          SubMenuExit = (*ChosenEntry)->SubScreen->RunGenericMenu(&SubEntryIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
             ApplyInputs();
             ModifyTitles(*ChosenEntry);
@@ -2571,7 +2567,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
             if (TmpChosenEntry->SubScreen != NULL) {
               NextMenuExit = 0;
               while (!NextMenuExit) {
-                NextMenuExit = TmpChosenEntry->SubScreen->RunGenericMenu(Style, &NextEntryIndex, &NextChosenEntry);
+                NextMenuExit = TmpChosenEntry->SubScreen->RunGenericMenu(&NextEntryIndex, &NextChosenEntry);
                 if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);

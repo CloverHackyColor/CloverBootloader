@@ -51,6 +51,8 @@
 		9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E51E24F3B82A007A1107 /* b64cdecode.cpp */; };
 		9A36E52624F3BB6B007A1107 /* FloatLib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E52424F3BB6B007A1107 /* FloatLib.cpp */; };
 		9A36E53C24F3EDED007A1107 /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E53B24F3EDED007A1107 /* base64.cpp */; };
+		9A414767260545FD00440186 /* OpenCore.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEFD25CD9DC100EEAF06 /* OpenCore.lib */; };
+		9A4147682605493600440186 /* BaseLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEB025CD9B7400EEAF06 /* BaseLib.lib */; };
 		9A4185C02439F73A00BEAFB8 /* XStringArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4185BE2439F73A00BEAFB8 /* XStringArray.cpp */; };
 		9A4C576B255AAD07004F0B21 /* MacOsVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4C5769255AAD07004F0B21 /* MacOsVersion.cpp */; };
 		9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A4FFA7C2451C8330050B38B /* XString.cpp */; };
@@ -151,13 +153,13 @@
 		9AA9E53D25CD306700BD5E8B /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA9E51B25CD306700BD5E8B /* loader.cpp */; };
 		9AD0358C25C57A4500E58351 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */; };
 		9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
+		9AD7B15026079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */; };
 		9AFDCEA325CD9A3300EEAF06 /* OcDevicePathLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */; };
 		9AFDCEA525CD9B1C00EEAF06 /* BaseCpuLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */; };
 		9AFDCEA725CD9B2C00EEAF06 /* BaseSerialPortLib16550.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA625CD9B2B00EEAF06 /* BaseSerialPortLib16550.lib */; };
 		9AFDCEA925CD9B3700EEAF06 /* FrameBufferBltLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA825CD9B3700EEAF06 /* FrameBufferBltLib.lib */; };
 		9AFDCEAD25CD9B5800EEAF06 /* BaseDebugPrintErrorLevelLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEAC25CD9B5700EEAF06 /* BaseDebugPrintErrorLevelLib.lib */; };
 		9AFDCEAF25CD9B6500EEAF06 /* BaseIoLibIntrinsic.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEAE25CD9B6500EEAF06 /* BaseIoLibIntrinsic.lib */; };
-		9AFDCEB125CD9B7400EEAF06 /* BaseLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEB025CD9B7400EEAF06 /* BaseLib.lib */; };
 		9AFDCEB625CD9BC400EEAF06 /* BasePciCf8Lib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEB525CD9BC400EEAF06 /* BasePciCf8Lib.lib */; };
 		9AFDCEC225CD9D0700EEAF06 /* BasePciLibCf8.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEC125CD9D0700EEAF06 /* BasePciLibCf8.lib */; };
 		9AFDCEC725CD9D1600EEAF06 /* PeCoffExtraActionLibNull.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEC625CD9D1500EEAF06 /* PeCoffExtraActionLibNull.lib */; };
@@ -170,7 +172,6 @@
 		9AFDCEEA25CD9D6B00EEAF06 /* UefiFileHandleLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEE925CD9D6B00EEAF06 /* UefiFileHandleLib.lib */; };
 		9AFDCEEF25CD9D7700EEAF06 /* UefiLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEEE25CD9D7700EEAF06 /* UefiLib.lib */; };
 		9AFDCEF925CD9D9500EEAF06 /* UefiRuntimeServicesTableLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEF825CD9D9500EEAF06 /* UefiRuntimeServicesTableLib.lib */; };
-		9AFDCEFE25CD9DC200EEAF06 /* OpenCore.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEFD25CD9DC100EEAF06 /* OpenCore.lib */; };
 		9AFDCF0425CD9DFA00EEAF06 /* OcXmlLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCF0325CD9DFA00EEAF06 /* OcXmlLib.lib */; };
 		9AFDCF0925CD9E0800EEAF06 /* OcVirtualFsLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCF0825CD9E0800EEAF06 /* OcVirtualFsLib.lib */; };
 		9AFDCF0E25CD9E2100EEAF06 /* OcUnicodeCollationEngGenericLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCF0D25CD9E2100EEAF06 /* OcUnicodeCollationEngGenericLib.lib */; };
@@ -5015,6 +5016,8 @@
 		9AD0359325C57C8A00E58351 /* PrintLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PrintLib.c; sourceTree = "<group>"; };
 		9AD469472452B33700D6D0DB /* shared_with_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shared_with_menu.cpp; sourceTree = "<group>"; };
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
+		9AD7B14E26079F5C00E850D1 /* REFIT_MAINMENU_SCREEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFIT_MAINMENU_SCREEN.h; sourceTree = "<group>"; };
+		9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MAINMENU_SCREEN.cpp; sourceTree = "<group>"; };
 		9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = OcDevicePathLib.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib/OUTPUT/OcDevicePathLib.lib; sourceTree = "<group>"; };
 		9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = BaseCpuLib.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib; sourceTree = "<group>"; };
 		9AFDCEA625CD9B2B00EEAF06 /* BaseSerialPortLib16550.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = BaseSerialPortLib16550.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550/OUTPUT/BaseSerialPortLib16550.lib; sourceTree = "<group>"; };
@@ -5159,7 +5162,6 @@
 				9AFDCFC425CDA04100EEAF06 /* OcAppleSecureBootLib.lib in Frameworks */,
 				9AFDCF4A25CD9F3500EEAF06 /* OcMemoryLib.lib in Frameworks */,
 				9AFDCF9C25CD9FFA00EEAF06 /* OcCryptoLib.lib in Frameworks */,
-				9AFDCEB125CD9B7400EEAF06 /* BaseLib.lib in Frameworks */,
 				9AFDCEE525CD9D6000EEAF06 /* UefiDevicePathLib.lib in Frameworks */,
 				9AFDCFE725CDA07F00EEAF06 /* OcAppleEventLib.lib in Frameworks */,
 				9AFDCFB525CDA02500EEAF06 /* OcBootManagementLib.lib in Frameworks */,
@@ -5172,8 +5174,8 @@
 				9AFDCEAF25CD9B6500EEAF06 /* BaseIoLibIntrinsic.lib in Frameworks */,
 				9AFDCFF125CDA09200EEAF06 /* OcAppleChunklistLib.lib in Frameworks */,
 				9AFDD02625CDA33800EEAF06 /* OpensslLib.lib in Frameworks */,
+				9A414767260545FD00440186 /* OpenCore.lib in Frameworks */,
 				9AFDCF0925CD9E0800EEAF06 /* OcVirtualFsLib.lib in Frameworks */,
-				9AFDCEFE25CD9DC200EEAF06 /* OpenCore.lib in Frameworks */,
 				9AFDCFC925CDA04900EEAF06 /* OcAppleRamDiskLib.lib in Frameworks */,
 				9AFDCFA125CDA00300EEAF06 /* OcCpuLib.lib in Frameworks */,
 				9AFDCFAB25CDA01500EEAF06 /* OcConfigurationLib.lib in Frameworks */,
@@ -5186,6 +5188,7 @@
 				9AFDCEE025CD9D5300EEAF06 /* UefiBootServicesTableLib.lib in Frameworks */,
 				9AFDCF7225CD9F8800EEAF06 /* OcDriverConnectionLib.lib in Frameworks */,
 				9AFDCF6825CD9F7500EEAF06 /* OcFirmwareVolumeLib.lib in Frameworks */,
+				9A4147682605493600440186 /* BaseLib.lib in Frameworks */,
 				9AFDCFEC25CDA08800EEAF06 /* OcAppleDiskImageLib.lib in Frameworks */,
 				9AFDD03725CDA3F900EEAF06 /* AutoGen.obj in Frameworks */,
 				9AFDCFA625CDA00C00EEAF06 /* OcConsoleLib.lib in Frameworks */,
@@ -15616,6 +15619,8 @@
 			isa = PBXGroup;
 			children = (
 				9AA9253525CD764800BD5E8B /* menu_items */,
+				9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */,
+				9AD7B14E26079F5C00E850D1 /* REFIT_MAINMENU_SCREEN.h */,
 				9AA9253925CD764800BD5E8B /* REFIT_MENU_SCREEN.cpp */,
 				9AA9253425CD764800BD5E8B /* REFIT_MENU_SCREEN.h */,
 				9AD469472452B33700D6D0DB /* shared_with_menu.cpp */,
@@ -16053,6 +16058,7 @@
 				9A358B2A25CF115200A3850D /* Config_Devices_AddProperties.cpp in Sources */,
 				9A36E51424F3B537007A1107 /* TagFloat.cpp in Sources */,
 				9AA9259525CD770F00BD5E8B /* image.cpp in Sources */,
+				9AD7B15026079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp in Sources */,
 				9A0B085E240300E000E2B470 /* Platform.cpp in Sources */,
 				9AFDD04725CDB0F900EEAF06 /* Globals.cpp in Sources */,
 				9AA9E4FA25CD283400BD5E8B /* XPointer.cpp in Sources */,
