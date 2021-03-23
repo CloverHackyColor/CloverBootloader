@@ -1677,7 +1677,7 @@ void REFIT_MENU_ENTRY_LOADER_TOOL::StartTool()
   egClearScreen(&MenuBackgroundPixel);
   // assumes "Start <title>" as assigned below
   BeginExternalScreen(OSFLAG_ISSET(Flags, OSFLAG_USEGRAPHICS)/*, &Entry->Title[6]*/); // Shouldn't we check that length of Title is at least 6 ?
-  StartEFIImage(DevicePath, LoadOptions, LoaderPath.basename(), LoaderPath.basename(), NULL, NULL);
+  StartEFIImage(DevicePath, LoadOptions, NullXStringW, LoaderPath.basename(), NULL, NULL);
   FinishExternalScreen();
 }
 
@@ -2629,6 +2629,18 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     const CUSTOM_LOADER_ENTRY_SETTINGS& CustomEntrySettings = gSettings.GUI.CustomEntriesSettings[idx];
     CUSTOM_LOADER_ENTRY* entry = new CUSTOM_LOADER_ENTRY(CustomEntrySettings);
     GlobalConfig.CustomEntries.AddReference(entry, true);
+  }
+
+  for ( size_t idx = 0 ; idx < gSettings.GUI.CustomLegacySettings.size() ; ++idx ) {
+    const CUSTOM_LEGACY_ENTRY_SETTINGS& CustomLegacySettings = gSettings.GUI.CustomLegacySettings[idx];
+    CUSTOM_LEGACY_ENTRY* entry = new CUSTOM_LEGACY_ENTRY(CustomLegacySettings, ThemeX.getThemeDir());
+    GlobalConfig.CustomLegacyEntries.AddReference(entry, true);
+  }
+
+  for ( size_t idx = 0 ; idx < gSettings.GUI.CustomToolSettings.size() ; ++idx ) {
+    const CUSTOM_TOOL_ENTRY_SETTINGS& CustomToolSettings = gSettings.GUI.CustomToolSettings[idx];
+    CUSTOM_TOOL_ENTRY* entry = new CUSTOM_TOOL_ENTRY(CustomToolSettings, ThemeX.getThemeDir());
+    GlobalConfig.CustomToolsEntries.AddReference(entry, true);
   }
 
   if ( gSettings.GUI.Theme.notEmpty() )

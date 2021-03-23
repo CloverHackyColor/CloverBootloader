@@ -319,7 +319,7 @@ public:
   XIcon                Image = XIcon();
   XIcon                DriveImage = XIcon();
 
-  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY_SETTINGS& _settings, EFI_FILE& ThemeDir) : settings(_settings)
+  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY_SETTINGS& _settings, const EFI_FILE& ThemeDir) : settings(_settings)
   {
     if ( settings.ImagePath.notEmpty() ) {
       Image.LoadXImage(&ThemeDir, settings.ImagePath);
@@ -371,7 +371,7 @@ public:
 
   const CUSTOM_TOOL_ENTRY_SETTINGS& settings = CUSTOM_TOOL_ENTRY_SETTINGS();
   
-  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY_SETTINGS& _settings, EFI_FILE& ThemeDir) : settings(_settings)
+  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY_SETTINGS& _settings, const EFI_FILE& ThemeDir) : settings(_settings)
   {
     if ( settings.ImagePath.notEmpty() ) {
       Image.LoadXImage(&ThemeDir, settings.ImagePath);
