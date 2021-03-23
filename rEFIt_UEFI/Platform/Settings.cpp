@@ -187,7 +187,48 @@ CONST CHAR8* AudioOutputNames[] = {
   "Other"
 };
 
+const XString8 defaultInstallTitle = "Install macOS"_XS8;
+const XString8 defaultRecoveryTitle = "Recovery"_XS8;
+const XStringW defaultRecoveryImagePath = L"mac"_XSW;
+const XStringW defaultRecoveryDriveImagePath = L"mac"_XSW;
 
+CUSTOM_LOADER_ENTRY::CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _settings) : settings(_settings)
+{
+  if ( settings.ImageData.notEmpty() ) {
+    if ( !EFI_ERROR(Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size())) ) {
+      Image.setFilled();
+    }
+  }
+  if ( settings.DriveImageData.notEmpty() ) {
+    if ( !EFI_ERROR(DriveImage.Image.FromPNG(settings.DriveImageData.data(), settings.DriveImageData.size())) ) {
+      DriveImage.setFilled();
+    }
+  }
+
+  if ( settings.CustomLogoTypeSettings == CUSTOM_BOOT_USER  &&  settings.CustomLogoAsXString8.notEmpty() ) {
+    CustomLogoImage.LoadXImage(&self.getSelfVolumeRootDir(), settings.CustomLogoAsXString8);
+    if (CustomLogoImage.isEmpty()) {
+      DBG("Custom boot logo not found at path '%s'!\n", settings.CustomLogoAsXString8.c_str());
+      CustomLogoType = CUSTOM_BOOT_DISABLED;
+    }
+  } else if ( settings.CustomLogoTypeSettings == CUSTOM_BOOT_USER  &&  settings.CustomLogoAsData.notEmpty() ) {
+    CustomLogoImage.FromPNG(settings.CustomLogoAsData.data(), settings.CustomLogoAsData.size());
+    if (CustomLogoImage.isEmpty()) {
+      DBG("Custom boot logo not decoded from data!\n");
+      CustomLogoType = CUSTOM_BOOT_DISABLED;
+    }
+  }
+  DBG("Sub entry custom boot %s (0x%llX)\n", CustomBootModeToStr(settings.CustomLogoTypeSettings), (uintptr_t)&CustomLogoImage);
+
+  for ( size_t idx = 0 ; idx < settings.SubEntriesSettings.size() ; ++idx ) {
+    const CUSTOM_LOADER_SUBENTRY_SETTINGS& CustomEntrySettings = settings.SubEntriesSettings[idx];
+    CUSTOM_LOADER_SUBENTRY* entry = new CUSTOM_LOADER_SUBENTRY(*this, CustomEntrySettings);
+    SubEntries.AddReference(entry, true);
+  }
+
+  KernelAndKextPatches = gSettings.KernelAndKextPatches; // Jief : why do we have a duplicated KernelAndKextPatches var inside CUSTOM_LOADER_ENTRY ?
+
+}
 
 XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const
 {
@@ -206,6 +247,10 @@ UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(bool NoCachesDefault) const
 {
   UINT8 Flags = parent.getFlags(NoCachesDefault);
   if ( settings.m_Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
+  if ( settings.m_NoCaches.isDefined() ) {
+    if ( settings.m_NoCaches.value() ) Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
+    else  Flags = OSFLAG_UNSET(Flags, OSFLAG_NOCACHES);
+  }
   return Flags;
 }
 
@@ -224,7 +269,7 @@ XString8Array CUSTOM_LOADER_ENTRY::getLoadOptions() const
 const XString8& CUSTOM_LOADER_SUBENTRY::getTitle() const {
   if ( settings.m_Title.isDefined() ) return settings.m_Title.value();
   if ( settings.m_FullTitle.isDefined() ) return NullXString8;
-  return parent.settings.Title;
+  return parent.settings.dgetTitle();
 };
 const XString8& CUSTOM_LOADER_SUBENTRY::getFullTitle() const {
   if ( settings.m_FullTitle.isDefined() ) return settings.m_FullTitle.value();
@@ -1710,10 +1755,12 @@ FillinCustomSubEntry (
     if (Prop != NULL) {
       if (IsPropertyNotNullAndTrue(Prop)) {
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+          Entry->m_NoCaches = true;
       } else {
         // Use global settings
         if (gSettings.NoCaches) {
 //          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
+          Entry->m_NoCaches = false;
         }
       }
     }
@@ -1788,7 +1835,7 @@ FillinCustomSubEntry (
   return TRUE;
 }
 
-STATIC
+
 BOOLEAN
 FillinCustomEntry (
                    IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry,
@@ -1843,20 +1890,21 @@ FillinCustomEntry (
   }
   Prop = DictPointer->propertyForKey("Title");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->Title = Prop->getString()->stringValue();
+    Entry->m_Title = Prop->getString()->stringValue();
   }
   Prop = DictPointer->propertyForKey("FullTitle");
   if (Prop != NULL && (Prop->isString())) {
     Entry->FullTitle = Prop->getString()->stringValue();
   }
 
+  Entry->m_ImagePath.setEmpty();
   Entry->ImageData.setEmpty();
   Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
-    Entry->ImagePath.setEmpty();
-    Entry->Image.setEmpty();
+    Entry->m_ImagePath.setEmpty();
+//    Entry->Image.setEmpty();
     if (Prop->isString()) {
-      Entry->ImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
+      Entry->m_ImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
     }
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
@@ -1864,20 +1912,19 @@ FillinCustomEntry (
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
       Entry->ImageData.stealValueFrom(TmpData, DataLen);
-// TODO remove from settings
-      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
-        Entry->Image.setFilled();
-      }
+//      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+//        Entry->Image.setFilled();
+//      }
     }
   }
 
+  Entry->m_DriveImagePath.setEmpty();
   Entry->DriveImageData.setEmpty();
   Prop = DictPointer->propertyForKey("DriveImage");
   if (Prop != NULL) {
-    Entry->DriveImagePath.setEmpty();
-    Entry->DriveImage.setEmpty();
+//    Entry->DriveImage.setEmpty();
     if (Prop->isString()) {
-      Entry->DriveImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
+      Entry->m_DriveImagePath = SWPrintf("%s", Prop->getString()->stringValue().c_str());
     }
     // we can't load the file yet, as ThemeDir is not initialized
   } else {
@@ -1885,11 +1932,10 @@ FillinCustomEntry (
     UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
     if (TmpData) {
       Entry->DriveImageData.stealValueFrom(TmpData, DataLen);
-// TODO remove from settings
-      if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
-        Entry->DriveImage.setFilled();
-      }
-      FreePool(TmpData);
+//      if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
+//        Entry->DriveImage.setFilled();
+//      }
+//      FreePool(TmpData);
     }
   }
 
@@ -1904,40 +1950,38 @@ FillinCustomEntry (
   Prop = DictPointer->propertyForKey("CustomLogo");
   if (Prop != NULL) {
     if (IsPropertyNotNullAndTrue(Prop)) {
-      Entry->CustomLogoType    = CUSTOM_BOOT_APPLE;
+      Entry->CustomLogoTypeSettings    = CUSTOM_BOOT_APPLE;
     } else if ((Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
       Entry->CustomLogoAsXString8 = Prop->getString()->stringValue();
       if (Prop->getString()->stringValue().equalIC("Apple")) {
-        Entry->CustomLogoType  = CUSTOM_BOOT_APPLE;
+        Entry->CustomLogoTypeSettings  = CUSTOM_BOOT_APPLE;
       } else if (Prop->getString()->stringValue().equalIC("Alternate")) {
-        Entry->CustomLogoType  = CUSTOM_BOOT_ALT_APPLE;
+        Entry->CustomLogoTypeSettings  = CUSTOM_BOOT_ALT_APPLE;
       } else if (Prop->getString()->stringValue().equalIC("Theme")) {
-        Entry->CustomLogoType  = CUSTOM_BOOT_THEME;
+        Entry->CustomLogoTypeSettings  = CUSTOM_BOOT_THEME;
       } else {
         XStringW customLogo = XStringW() = Prop->getString()->stringValue();
-        Entry->CustomLogoType  = CUSTOM_BOOT_USER;
-// TODO : remove reading of image from settings
-        Entry->CustomLogoImage.LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
-        if (Entry->CustomLogoImage.isEmpty()) {
-          DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
-          Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
-        }
+        Entry->CustomLogoTypeSettings  = CUSTOM_BOOT_USER;
+//        Entry->CustomLogoImage.LoadXImage(&self.getSelfVolumeRootDir(), customLogo);
+//        if (Entry->CustomLogoImage.isEmpty()) {
+//          DBG("Custom boot logo not found at path `%ls`!\n", customLogo.wc_str());
+//          Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
+//        }
       }
     } else if ( Prop->isData() && Prop->getData()->dataLenValue() > 0 ) {
-      Entry->CustomLogoType = CUSTOM_BOOT_USER;
+      Entry->CustomLogoTypeSettings = CUSTOM_BOOT_USER;
       Entry->CustomLogoAsData = Prop->getData()->data();
-// TODO : remove reading of image from settings
-      Entry->CustomLogoImage.FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
-      if (Entry->CustomLogoImage.isEmpty()) {
-        DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
-        Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
-      }
+//      Entry->CustomLogoImage.FromPNG(Prop->getData()->dataValue(), Prop->getData()->dataLenValue());
+//      if (Entry->CustomLogoImage.isEmpty()) {
+//        DBG("Custom boot logo not decoded from data!\n"/*, Prop->getString()->stringValue().c_str()*/);
+//        Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
+//      }
     } else {
-      Entry->CustomLogoType = CUSTOM_BOOT_USER_DISABLED;
+      Entry->CustomLogoTypeSettings = CUSTOM_BOOT_USER_DISABLED;
     }
-    DBG("Custom entry boot %s LogoWidth = (0x%lld)\n", CustomBootModeToStr(Entry->CustomLogoType), Entry->CustomLogoImage.GetWidth());
+    DBG("Custom entry boot %s\n", CustomBootModeToStr(Entry->CustomLogoTypeSettings));
   } else {
-    Entry->CustomLogoType = CUSTOM_BOOT_DISABLED;
+    Entry->CustomLogoTypeSettings = CUSTOM_BOOT_DISABLED;
   }
 
   Prop = DictPointer->propertyForKey("BootBgColor");
@@ -1982,7 +2026,6 @@ FillinCustomEntry (
       Entry->Type = OSTYPE_WINEFI;
     } else if (Prop->getString()->stringValue().equalIC("Linux")) {
       Entry->Type = OSTYPE_LIN;
-// TODO remove from here
 //      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     } else if (Prop->getString()->stringValue().equalIC("LinuxKernel")) {
       Entry->Type = OSTYPE_LINEFI;
@@ -2003,23 +2046,23 @@ FillinCustomEntry (
 //    Entry->LoadOptions.Add("-s");
 //    Entry->LoadOptions.Add("-h");
 //  }
-  if (Entry->Title.isEmpty()) {
-    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
-      Entry->Title = L"Recovery"_XSW;
-    } else if (OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
-      Entry->Title = L"Install macOS"_XSW;
-    }
-  }
-  if (Entry->Image.isEmpty() && (Entry->ImagePath.isEmpty())) {
-    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
-      Entry->ImagePath = L"mac"_XSW;
-    }
-  }
-  if (Entry->DriveImage.isEmpty() && (Entry->DriveImagePath.isEmpty())) {
-    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
-      Entry->DriveImagePath = L"recovery"_XSW;
-    }
-  }
+//  if (Entry->Title.isEmpty()) {
+//    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
+//      Entry->Title = L"Recovery"_XSW;
+//    } else if (OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
+//      Entry->Title = L"Install macOS"_XSW;
+//    }
+//  }
+//  if (Entry->Image.isEmpty() && (Entry->ImagePath.isEmpty())) {
+//    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
+//      Entry->ImagePath = L"mac"_XSW;
+//    }
+//  }
+//  if (Entry->DriveImage.isEmpty() && (Entry->DriveImagePath.isEmpty())) {
+//    if (OSTYPE_IS_OSX_RECOVERY(Entry->Type)) {
+//      Entry->DriveImagePath = L"recovery"_XSW;
+//    }
+//  }
   // OS Specific flags
   if (OSTYPE_IS_OSX(Entry->Type) || OSTYPE_IS_OSX_RECOVERY(Entry->Type) || OSTYPE_IS_OSX_INSTALLER(Entry->Type)) {
 
@@ -2078,7 +2121,7 @@ FillinCustomEntry (
  //                               (KERNEL_AND_KEXT_PATCHES *)(((UINTN)&gSettings) + OFFSET_OF(SETTINGS_DATA, KernelAndKextPatches)));
 
 //      CopyKernelAndKextPatches(&Entry->KernelAndKextPatches, &gSettings.KernelAndKextPatches);
-      Entry->KernelAndKextPatches = gSettings.KernelAndKextPatches;
+//      Entry->KernelAndKextPatches = gSettings.KernelAndKextPatches;
 
       //#ifdef DUMP_KERNEL_KEXT_PATCHES
       //    DumpKernelAndKextPatches ((KERNEL_AND_KEXT_PATCHES *)(((UINTN)Entry) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches)));

@@ -16132,6 +16132,7 @@
 					"wcsstr=wcsstr_fixed",
 					"sprintf=__sprintf_is_disabled__",
 					"___NOT___ENABLE_SECURE_BOOT",
+					_UINTPTR_T,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

@@ -2009,8 +2009,8 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 
   for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
     LOADER_ENTRY        *Entry = NULL;
-    XIcon Image = Custom.settings.Image;
-    XIcon DriveImage = Custom.settings.DriveImage;
+    XIcon Image = Custom.Image;
+    XIcon DriveImage = Custom.DriveImage;
 
     EFI_GUID            *Guid = NULL;
     UINT64               VolumeSize;
@@ -2098,16 +2098,16 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     }
 
     // Change to custom image if needed
-    if (Image.isEmpty() && Custom.settings.ImagePath.notEmpty()) {
-      Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.ImagePath);
+    if (Image.isEmpty() && Custom.settings.dgetImagePath().notEmpty()) {
+      Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.dgetImagePath());
       if (Image.isEmpty()) {
-        Image.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + Custom.settings.ImagePath);
+        Image.LoadXImage(&ThemeX.getThemeDir(), L"os_"_XSW + Custom.settings.dgetImagePath());
         if (Image.isEmpty()) {
-          Image.LoadXImage(&self.getCloverDir(), Custom.settings.ImagePath);
+          Image.LoadXImage(&self.getCloverDir(), Custom.settings.dgetImagePath());
           if (Image.isEmpty()) {
-            Image.LoadXImage(&self.getSelfVolumeRootDir(), Custom.settings.ImagePath);
+            Image.LoadXImage(&self.getSelfVolumeRootDir(), Custom.settings.dgetImagePath());
             if (Image.isEmpty()) {
-              Image.LoadXImage(Volume->RootDir, Custom.settings.ImagePath);
+              Image.LoadXImage(Volume->RootDir, Custom.settings.dgetImagePath());
             }
           }
         }
@@ -2115,14 +2115,14 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     }
 
     // Change to custom drive image if needed
-    if (DriveImage.isEmpty() && Custom.settings.DriveImagePath.notEmpty()) {
-      DriveImage.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.DriveImagePath);
+    if (DriveImage.isEmpty() && Custom.settings.dgetDriveImagePath().notEmpty()) {
+      DriveImage.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.dgetDriveImagePath());
       if (DriveImage.isEmpty()) {
-        DriveImage.LoadXImage(&self.getCloverDir(), Custom.settings.ImagePath);
+        DriveImage.LoadXImage(&self.getCloverDir(), Custom.settings.dgetImagePath());
         if (DriveImage.isEmpty()) {
-          DriveImage.LoadXImage(&self.getSelfVolumeRootDir(), Custom.settings.ImagePath);
+          DriveImage.LoadXImage(&self.getSelfVolumeRootDir(), Custom.settings.dgetImagePath());
           if (DriveImage.isEmpty()) {
-            DriveImage.LoadXImage(Volume->RootDir, Custom.settings.ImagePath);
+            DriveImage.LoadXImage(Volume->RootDir, Custom.settings.dgetImagePath());
           }
         }
       }
@@ -2258,9 +2258,9 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
 
       DBG("match!\n");
       // Create an entry for this volume
-      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom.settings.FullTitle, Custom.settings.Title, Volume,
+      Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom.settings.FullTitle, Custom.settings.dgetTitle(), Volume,
                                 (Image.isEmpty() ? NULL : &Image), (DriveImage.isEmpty() ? NULL : &DriveImage),            
-                                Custom.settings.Type, newCustomFlags, Custom.settings.Hotkey, Custom.settings.BootBgColor, Custom.settings.CustomLogoType, Custom.settings.CustomLogoImage,
+                                Custom.settings.Type, newCustomFlags, Custom.settings.Hotkey, Custom.settings.BootBgColor, Custom.CustomLogoType, Custom.CustomLogoImage,
                                 /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) + OFFSET_OF(CUSTOM_LOADER_ENTRY, KernelAndKextPatches))*/ NULL, TRUE);
       if (Entry != NULL) {
         if ( Custom.settings.Settings.notEmpty() ) DBG("Custom settings: %ls.plist will %s be applied\n", Custom.settings.Settings.wc_str(), Custom.settings.CommonSettings?"not":"");
@@ -2273,7 +2273,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
           UINTN CustomSubIndex = 0;
           // Add subscreen
           REFIT_MENU_SCREEN *SubScreen = new REFIT_MENU_SCREEN;
-          SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom.settings.Title.notEmpty()) ? XStringW(Custom.settings.Title).wc_str() : CustomPath.wc_str(), Entry->DisplayedVolName.wc_str());
+          SubScreen->Title.SWPrintf("Boot Options for %ls on %ls", (Custom.settings.dgetTitle().notEmpty()) ? XStringW(Custom.settings.dgetTitle()).wc_str() : CustomPath.wc_str(), Entry->DisplayedVolName.wc_str());
           SubScreen->TitleImage = Entry->Image;
           SubScreen->ID = Custom.settings.Type + 20;
           SubScreen->GetAnime();
@@ -2324,7 +2324,7 @@ void AddCustomEntries(void)
   // Traverse the custom entries
   for (size_t i = 0 ; i < GlobalConfig.CustomEntries.size(); ++i) {
     CUSTOM_LOADER_ENTRY& Custom = GlobalConfig.CustomEntries[i];
-    DBG("- [00]: '%s'\n", Custom.settings.FullTitle.isEmpty() ? Custom.settings.Title.c_str() : Custom.settings.FullTitle.c_str() );
+    DBG("- [00]: '%s'\n", Custom.settings.FullTitle.isEmpty() ? Custom.settings.dgetTitle().c_str() : Custom.settings.FullTitle.c_str() );
     if ( Custom.settings.Disabled ) {
       DBG("  Disabled\n");
       continue; // before, disabled entries settings weren't loaded.

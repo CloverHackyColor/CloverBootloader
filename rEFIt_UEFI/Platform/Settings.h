@@ -151,13 +151,13 @@ public:
   ~ACPI_DROP_TABLE() {}
 };
 
+class CUSTOM_LOADER_SUBENTRY_SETTINGS;
+class CUSTOM_LOADER_SUBENTRY;
+
 class GUI_Custom_SubEntry_Class;
 template<class C> class XmlArray;
-//class XmlArray<GUI_Custom_SubEntry_Class>;
 
-class CUSTOM_LOADER_SUBENTRY_SETTINGS;
 void CompareCustomSubEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_SubEntry_Class>& newCustomEntries);
-class CUSTOM_LOADER_SUBENTRY;
 BOOLEAN FillinCustomSubEntry(UINT8 parentType, IN OUT  CUSTOM_LOADER_SUBENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
                    
 class CUSTOM_LOADER_SUBENTRY_SETTINGS
@@ -171,6 +171,8 @@ protected:
 
   undefinable_XString8   m_FullTitle = undefinable_XString8();
   undefinable_XString8   m_Title = undefinable_XString8();
+
+  undefinable_bool       m_NoCaches = undefinable_bool();
 
 public:
 
@@ -196,24 +198,38 @@ public:
   const XString8& getFullTitle() const;
 };
 
+class GUI_Custom_Entry_Class;
+class CUSTOM_LOADER_ENTRY_SETTINGS;
+
+void CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
+BOOLEAN FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+
+extern const XString8 defaultInstallTitle;
+extern const XString8 defaultRecoveryTitle;
+extern const XStringW defaultRecoveryImagePath;
+extern const XStringW defaultRecoveryDriveImagePath;
+
 class CUSTOM_LOADER_ENTRY_SETTINGS
 {
 public:
   bool                    Disabled = 0;
   XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS> SubEntriesSettings = XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>();
-  XIcon                   Image = XIcon(); // todo remove
-  XStringW                ImagePath = XStringW();
+protected:
+  XStringW                m_ImagePath = XStringW();
+public:
   XBuffer<UINT8>          ImageData = XBuffer<UINT8>();
-  XIcon                   DriveImage = XIcon();
-  XStringW                DriveImagePath = XStringW();
+protected:
+  XStringW                m_DriveImagePath = XStringW();
+public:
   XBuffer<UINT8>          DriveImageData = XBuffer<UINT8>();
   XStringW                Volume = XStringW();
   XStringW                Path = XStringW();
   undefinable_XString8    Arguments = undefinable_XString8();
   XString8                AddArguments = XString8();
-//  XString8Array          LoadOptions = XString8Array();
   XString8                FullTitle = XStringW();
-  XString8                Title = XStringW();
+protected:
+  XString8                m_Title = XStringW();
+public:
   XStringW                Settings = XStringW(); // path of a config.plist that'll be read at the beginning of startloader
   CHAR16                  Hotkey = 0;
   BOOLEAN                 CommonSettings = 0;
@@ -223,20 +239,42 @@ public:
   UINT8                   Type = 0;
   UINT8                   VolumeType = 0;
   UINT8                   KernelScan = KERNEL_SCAN_ALL;
-  UINT8                   CustomLogoType = 0;
+protected:
+  UINT8                   CustomLogoTypeSettings = 0;
+public:
   XString8                CustomLogoAsXString8 = XString8();
   XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
-  XImage                  CustomLogoImage = XImage(); // Todo : remove from settings.
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXEL({0,0,0,0});
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
   INT8                    InjectKexts = -1;
   undefinable_bool        NoCaches = undefinable_bool();
 
-//  CUSTOM_LOADER_ENTRY() {}
-//
-//  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-//  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY&) = delete;
-//  CUSTOM_LOADER_ENTRY& operator=(const CUSTOM_LOADER_ENTRY&) = delete;
+  friend class ::CUSTOM_LOADER_ENTRY;
+  friend void ::CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
+  friend BOOLEAN FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
+
+
+  const XString8& dgetTitle() const {
+    if ( m_Title.notEmpty() ) return m_Title;
+    if (OSTYPE_IS_OSX_RECOVERY(Type)) {
+      return defaultRecoveryTitle;
+    } else if (OSTYPE_IS_OSX_INSTALLER(Type)) {
+      return defaultInstallTitle;
+    }
+    return NullXString8;
+  }
+
+  const XStringW& dgetImagePath() const {
+    if ( m_ImagePath.notEmpty() ) return m_ImagePath;
+    if ( ImageData.notEmpty() ) return NullXStringW;
+    if (OSTYPE_IS_OSX_RECOVERY(Type)) return defaultRecoveryImagePath;
+    return NullXStringW;
+  }
+  const XStringW& dgetDriveImagePath() const {
+    if ( m_DriveImagePath.notEmpty() ) return m_DriveImagePath;
+    if ( DriveImageData.notEmpty() ) return NullXStringW;
+    if (OSTYPE_IS_OSX_RECOVERY(Type)) return defaultRecoveryDriveImagePath;
+    return NullXStringW;
+  }
 
 };
 
@@ -245,15 +283,16 @@ class CUSTOM_LOADER_ENTRY
 public:
   const CUSTOM_LOADER_ENTRY_SETTINGS& settings = CUSTOM_LOADER_ENTRY_SETTINGS();
   XObjArray<CUSTOM_LOADER_SUBENTRY> SubEntries = XObjArray<CUSTOM_LOADER_SUBENTRY>();
+  XIcon                   Image = XIcon();
+  XIcon                   DriveImage = XIcon();
+  XImage                  CustomLogoImage = XImage(); // Todo : remove from settings.
+  UINT8                   CustomLogoType = 0;
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
 
-  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _settings) : settings(_settings) {
-    for ( size_t idx = 0 ; idx < settings.SubEntriesSettings.size() ; ++idx ) {
-      const CUSTOM_LOADER_SUBENTRY_SETTINGS& CustomEntrySettings = settings.SubEntriesSettings[idx];
-      CUSTOM_LOADER_SUBENTRY* entry = new CUSTOM_LOADER_SUBENTRY(*this, CustomEntrySettings);
-      SubEntries.AddReference(entry, true);
-    }
-  }
+  CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _settings);
+
   XString8Array getLoadOptions() const;
+  
   UINT8 getFlags(bool NoCachesDefault) const {
     UINT8 Flags = 0;
     if ( settings.Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
