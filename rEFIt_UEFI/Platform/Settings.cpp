@@ -67,7 +67,7 @@ INTN LayoutBannerOffset = 64;
 INTN LayoutTextOffset = 0;
 INTN LayoutButtonOffset = 0;
 
-ACPI_PATCHED_AML                *ACPIPatchedAML = NULL;
+XObjArray<ACPI_PATCHED_AML>     ACPIPatchedAML;
 //SYSVARIABLES                    *SysVariables;
 CHAR16                          *IconFormat = NULL;
 
@@ -278,6 +278,11 @@ const XString8& CUSTOM_LOADER_SUBENTRY::getFullTitle() const {
 };
 
 
+bool SETTINGS_DATA::GUIClass::getDarkEmbedded(bool isDaylight) const {
+  if ( EmbeddedThemeType.equalIC("Dark") ) return true;
+  if ( EmbeddedThemeType.equalIC("Daytime") ) return !isDaylight;
+  return false;
+}
 
 
 
@@ -663,7 +668,7 @@ LoadUserSettings (
 //  return TRUE;
 //}
 
-//STATIC BOOLEAN AddCustomLegacyEntry (IN CUSTOM_LEGACY_ENTRY *Entry)
+//STATIC BOOLEAN AddCustomLegacyEntry (IN CUSTOM_LEGACY_ENTRY_SETTINGS *Entry)
 //{
 //  if (Entry == NULL) return FALSE;
 //  gSettings.GUI.CustomLegacy.AddReference(Entry, true);
@@ -2185,7 +2190,7 @@ FillinCustomEntry (
 
 static BOOLEAN
 FillingCustomLegacy (
-                    IN OUT CUSTOM_LEGACY_ENTRY *Entry,
+                    IN OUT CUSTOM_LEGACY_ENTRY_SETTINGS *Entry,
                     const TagDict* DictPointer
                     )
 {
@@ -2196,7 +2201,7 @@ FillingCustomLegacy (
 
   Prop = DictPointer->propertyForKey("Disabled");
   if (IsPropertyNotNullAndTrue(Prop)) {
-    return FALSE;
+    Entry->Disabled = true;
   }
 
   Prop = DictPointer->propertyForKey("Volume");
@@ -2216,32 +2221,36 @@ FillingCustomLegacy (
   Prop = DictPointer->propertyForKey("Image");
   if (Prop != NULL) {
     if (Prop->isString()) {
-      Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Prop->getString()->stringValue());
+      Entry->ImagePath = Prop->getString()->stringValue();
+//      Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Prop->getString()->stringValue());
     }
   } else {
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
-      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
-        Entry->Image.setFilled();
-      }
-      FreePool(TmpData);
+      Entry->ImageData.stealValueFrom(TmpData, DataLen);
+//      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+//        Entry->Image.setFilled();
+//      }
+//      FreePool(TmpData);
     }
   }
 
   Prop = DictPointer->propertyForKey("DriveImage");
   if (Prop != NULL) {
     if (Prop->isString()) {
-      Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Prop->getString()->stringValue());
+      Entry->DriveImagePath = Prop->getString()->stringValue();
+//      Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Prop->getString()->stringValue());
     }
   } else {
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "DriveImageData", &DataLen);
     if (TmpData) {
-      if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
-        Entry->DriveImage.setFilled();
-      }
-      FreePool(TmpData);
+      Entry->DriveImageData.stealValueFrom(TmpData, DataLen);
+//      if (!EFI_ERROR(Entry->DriveImage.Image.FromPNG(TmpData, DataLen))) {
+//        Entry->DriveImage.setFilled();
+//      }
+//      FreePool(TmpData);
     }
   }
 
@@ -2260,7 +2269,8 @@ FillingCustomLegacy (
   if (Prop != NULL) {
     if ((Prop->isString()) &&
         (Prop->getString()->stringValue().equalIC("Always"))) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+      Entry->AlwaysHidden = true;
     } else if (IsPropertyNotNullAndTrue(Prop)) {
       DBG("     hiding entry because Hidden flag is YES\n");
       Entry->Hidden = true;
@@ -2285,7 +2295,7 @@ FillingCustomLegacy (
 }
 
 static BOOLEAN
-FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
+FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY_SETTINGS *Entry, const TagDict* DictPointer)
 {
   const TagStruct* Prop;
   if ((Entry == NULL) || (DictPointer == NULL)) {
@@ -2294,7 +2304,7 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
 
   Prop = DictPointer->propertyForKey("Disabled");
   if (IsPropertyNotNullAndTrue(Prop)) {
-    return FALSE;
+    Entry->Disabled = true;
   }
 
   Prop = DictPointer->propertyForKey("Volume");
@@ -2314,7 +2324,8 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
 //    }
-      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
+//      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
+    Entry->Arguments = Prop->getString()->stringValue();
   }
 
   Prop = DictPointer->propertyForKey("Title");
@@ -2333,15 +2344,16 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
     if (Prop->isString()) {
       Entry->ImagePath = Prop->getString()->stringValue();
     }
-    Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Entry->ImagePath);
+//    Entry->Image.LoadXImage(&ThemeX.getThemeDir(), Entry->ImagePath);
   } else {
     UINTN DataLen = 0;
     UINT8 *TmpData = GetDataSetting (DictPointer, "ImageData", &DataLen);
     if (TmpData) {
-      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
-        Entry->Image.setFilled();
-      }
-      FreePool(TmpData);
+      Entry->ImageData.stealValueFrom(TmpData, DataLen);
+//      if (!EFI_ERROR(Entry->Image.Image.FromPNG(TmpData, DataLen))) {
+//        Entry->Image.setFilled();
+//      }
+//      FreePool(TmpData);
     }
   }
   Prop = DictPointer->propertyForKey("Hotkey");
@@ -2359,7 +2371,8 @@ FillingCustomTool (IN OUT CUSTOM_TOOL_ENTRY *Entry, const TagDict* DictPointer)
   if (Prop != NULL) {
     if ((Prop->isString()) &&
         (Prop->getString()->stringValue().equalIC("Always"))) {
-      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+//      Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_DISABLED);
+      Entry->AlwaysHidden = true;
     } else if (IsPropertyNotNullAndTrue(Prop)) {
       DBG("     hiding entry because Hidden flag is YES\n");
       Entry->Hidden = true;
@@ -2404,7 +2417,7 @@ GetEDIDSettings(const TagDict* DictPointer, SETTINGS_DATA& gSettings)
         } else {
           DBG(" Custom EDID is ok\n");
           gSettings.CustomEDIDsize = (UINT16)j;
-          InitializeEdidOverride();
+//          InitializeEdidOverride();
         }
       }
 
@@ -2783,41 +2796,42 @@ EFI_STATUS GetEarlyUserSettings (
     if (GUIDict != NULL) {
       const TagStruct* Prop = GUIDict->propertyForKey("Timezone");
       gSettings.GUI.Timezone = (INT32)GetPropertyAsInteger(Prop, gSettings.GUI.Timezone);
-      //initialize Daylight when we know timezone
-#ifdef CLOVER_BUILD
-      EFI_TIME          Now;
-      gRT->GetTime(&Now, NULL);
-      INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
-      if (NowHour <  0 ) NowHour += 24;
-      if (NowHour >= 24 ) NowHour -= 24;
-      ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
-#endif
+//      //initialize Daylight when we know timezone
+//#ifdef CLOVER_BUILD
+//      EFI_TIME          Now;
+//      gRT->GetTime(&Now, NULL);
+//      INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
+//      if (NowHour <  0 ) NowHour += 24;
+//      if (NowHour >= 24 ) NowHour -= 24;
+//      ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+//#endif
 
       Prop = GUIDict->propertyForKey("Theme");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
-        ThemeX.Theme.takeValueFrom(Prop->getString()->stringValue());
+//        ThemeX.Theme.takeValueFrom(Prop->getString()->stringValue());
         gSettings.GUI.Theme.takeValueFrom(Prop->getString()->stringValue());
-        DBG("Default theme: %ls\n", gSettings.GUI.Theme.wc_str());
-        OldChosenTheme = 0xFFFF; //default for embedded
-        for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
-          //now comparison is case sensitive
-          if ( gSettings.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
-            OldChosenTheme = i;
-            break;
-          }
-        }
+//        DBG("Default theme: %ls\n", gSettings.GUI.Theme.wc_str());
+//        OldChosenTheme = 0xFFFF; //default for embedded
+//        for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
+//          //now comparison is case sensitive
+//          if ( gSettings.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
+//            OldChosenTheme = i;
+//            break;
+//          }
+//        }
       }
       // get embedded theme property even when starting with other themes, as they may be changed later
       Prop = GUIDict->propertyForKey("EmbeddedThemeType");
       if (Prop && (Prop->isString()) && Prop->getString()->stringValue().notEmpty()) {
+        gSettings.GUI.EmbeddedThemeType = Prop->getString()->stringValue();
         if (Prop->getString()->stringValue().equalIC("Dark")) {
-          gSettings.GUI.DarkEmbedded = TRUE;
+//          gSettings.GUI.DarkEmbedded = TRUE;
           //ThemeX.Font = FONT_GRAY;
         } else if (Prop->getString()->stringValue().equalIC("Light")) {
-          gSettings.GUI.DarkEmbedded = FALSE;
+//          gSettings.GUI.DarkEmbedded = FALSE;
           //ThemeX.Font = FONT_ALFA;
         } else if (Prop->getString()->stringValue().equalIC("Daytime")) {
-          gSettings.GUI.DarkEmbedded = !ThemeX.Daylight;
+//          gSettings.GUI.DarkEmbedded = !ThemeX.Daylight;
           //ThemeX.Font = ThemeX.Daylight?FONT_ALFA:FONT_GRAY;
         }
       }
@@ -2867,16 +2881,16 @@ EFI_STATUS GetEarlyUserSettings (
         gSettings.Language = Prop->getString()->stringValue();
         if ( Prop->getString()->stringValue().contains("en") ) {
           gSettings.GUI.gLanguage = english;
-          gSettings.GUI.Codepage = 0xC0;
-          gSettings.GUI.CodepageSize = 0;
+//          gSettings.GUI.Codepage = 0xC0;
+//          gSettings.GUI.CodepageSize = 0;
         } else if ( Prop->getString()->stringValue().contains("ru")) {
           gSettings.GUI.gLanguage = russian;
-          gSettings.GUI.Codepage = 0x410;
-          gSettings.GUI.CodepageSize = 0x40;
+//          gSettings.GUI.Codepage = 0x410;
+//          gSettings.GUI.CodepageSize = 0x40;
         } else if ( Prop->getString()->stringValue().contains("ua")) {
           gSettings.GUI.gLanguage = ukrainian;
-          gSettings.GUI.Codepage = 0x400;
-          gSettings.GUI.CodepageSize = 0x60;
+//          gSettings.GUI.Codepage = 0x400;
+//          gSettings.GUI.CodepageSize = 0x60;
         } else if ( Prop->getString()->stringValue().contains("fr")) {
           gSettings.GUI.gLanguage = french; //default is extended latin
         } else if ( Prop->getString()->stringValue().contains("it")) {
@@ -2901,14 +2915,14 @@ EFI_STATUS GetEarlyUserSettings (
           gSettings.GUI.gLanguage = indonesian;
         } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
           gSettings.GUI.gLanguage = chinese;
-          gSettings.GUI.Codepage = 0x3400;
-          gSettings.GUI.CodepageSize = 0x19C0;
+//          gSettings.GUI.Codepage = 0x3400;
+//          gSettings.GUI.CodepageSize = 0x19C0;
         } else if ( Prop->getString()->stringValue().contains("ro")) {
           gSettings.GUI.gLanguage = romanian;
         } else if ( Prop->getString()->stringValue().contains("ko")) {
           gSettings.GUI.gLanguage = korean;
-          gSettings.GUI.Codepage = 0x1100;
-          gSettings.GUI.CodepageSize = 0x100;
+//          gSettings.GUI.Codepage = 0x1100;
+//          gSettings.GUI.CodepageSize = 0x100;
         }
       }
 
@@ -3037,17 +3051,17 @@ EFI_STATUS GetEarlyUserSettings (
         }
         const TagArray* LegacyArray = CustomDict2->arrayPropertyForKey("Legacy"); // is an array of dict
         if (LegacyArray != NULL) {
-          CUSTOM_LEGACY_ENTRY *Entry;
+          CUSTOM_LEGACY_ENTRY_SETTINGS *Entry;
           INTN   i;
           INTN   Count = LegacyArray->arrayContent().size();
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
               const TagDict* Dict3 = LegacyArray->dictElementAt(i, "Legacy"_XS8);
               // Allocate an entry
-              Entry = new CUSTOM_LEGACY_ENTRY;
+              Entry = new CUSTOM_LEGACY_ENTRY_SETTINGS;
               // Fill it in
               if ( FillingCustomLegacy(Entry, Dict3) ) {
-                gSettings.GUI.CustomLegacy.AddReference(Entry, true);
+                gSettings.GUI.CustomLegacySettings.AddReference(Entry, true);
               }else{
                 delete Entry;
               }
@@ -3056,17 +3070,16 @@ EFI_STATUS GetEarlyUserSettings (
         }
         const TagArray* ToolArray = CustomDict2->arrayPropertyForKey("Tool"); // is an array of dict
         if (ToolArray != NULL) {
-          CUSTOM_TOOL_ENTRY *Entry;
           INTN   i;
           INTN   Count = ToolArray->arrayContent().size();
           if (Count > 0) {
             for (i = 0; i < Count; i++) {
               const TagDict* Dict3 = ToolArray->dictElementAt(i, "Tool"_XS8);
               // Allocate an entry
-              Entry = new CUSTOM_TOOL_ENTRY;
+              CUSTOM_TOOL_ENTRY_SETTINGS* Entry = new CUSTOM_TOOL_ENTRY_SETTINGS;
               // Fill it in
               if ( FillingCustomTool(Entry, Dict3) ) {
-                gSettings.GUI.CustomTool.AddReference(Entry, true);
+                gSettings.GUI.CustomToolSettings.AddReference(Entry, true);
               }else{
                 delete Entry;
               }

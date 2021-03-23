@@ -36,7 +36,6 @@
 		9A358B3525CF115200A3850D /* Config_Devices_Arbitrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358B1925CF115100A3850D /* Config_Devices_Arbitrary.cpp */; };
 		9A358B3D25CF117A00A3850D /* XmlLiteCompositeTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */; };
 		9A358B3E25CF117A00A3850D /* XmlLiteParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */; };
-		9A358B3F25CF117A00A3850D /* xmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A358B3B25CF117A00A3850D /* xmlLiteSimpleTypes.cpp */; };
 		9A36E4F024F3B537007A1107 /* TagString8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E4DB24F3B536007A1107 /* TagString8.cpp */; };
 		9A36E4F424F3B537007A1107 /* plist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E4DD24F3B536007A1107 /* plist.cpp */; };
 		9A36E4F824F3B537007A1107 /* xml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A36E4DF24F3B536007A1107 /* xml.cpp */; };
@@ -153,6 +152,7 @@
 		9AA9E53D25CD306700BD5E8B /* loader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AA9E51B25CD306700BD5E8B /* loader.cpp */; };
 		9AD0358C25C57A4500E58351 /* MemoryAllocationLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */; };
 		9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
+		9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */; };
 		9AD7B15026079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */; };
 		9AFDCEA325CD9A3300EEAF06 /* OcDevicePathLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */; };
 		9AFDCEA525CD9B1C00EEAF06 /* BaseCpuLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */; };
@@ -324,10 +324,8 @@
 		9A358B1E25CF115100A3850D /* Config_Devices_USB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_USB.h; sourceTree = "<group>"; };
 		9A358B1F25CF115100A3850D /* Config_Devices_AddProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config_Devices_AddProperties.h; sourceTree = "<group>"; };
 		9A358B3725CF117A00A3850D /* XmlLiteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteParser.h; sourceTree = "<group>"; };
-		9A358B3825CF117A00A3850D /* xmlLiteSimpleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlLiteSimpleTypes.h; sourceTree = "<group>"; };
 		9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteCompositeTypes.cpp; sourceTree = "<group>"; };
 		9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteParser.cpp; sourceTree = "<group>"; };
-		9A358B3B25CF117A00A3850D /* xmlLiteSimpleTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlLiteSimpleTypes.cpp; sourceTree = "<group>"; };
 		9A358B3C25CF117A00A3850D /* XmlLiteCompositeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteCompositeTypes.h; sourceTree = "<group>"; };
 		9A36E4DA24F3B536007A1107 /* TagBool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagBool.h; sourceTree = "<group>"; };
 		9A36E4DB24F3B536007A1107 /* TagString8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagString8.cpp; sourceTree = "<group>"; };
@@ -371,6 +369,7 @@
 		9A5022C125CC44C900E2099D /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		9A57C266241A799B0029A39F /* XString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XString.h; sourceTree = "<group>"; };
 		9A6BA73C2449977300BDA52C /* XStringAbstract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XStringAbstract.h; sourceTree = "<group>"; };
+		9A78DF7E260A531100FE811A /* Languages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Languages.h; sourceTree = "<group>"; };
 		9A7AEDE82459696C003AAD04 /* XToolsCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XToolsCommon.h; sourceTree = "<group>"; };
 		9A7D518024FC32F700FA1CC3 /* XBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBuffer.h; sourceTree = "<group>"; };
 		9A7D518124FC32F700FA1CC3 /* XBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XBuffer.cpp; sourceTree = "<group>"; };
@@ -5014,6 +5013,8 @@
 		9AD0358A25C579B200E58351 /* PrintLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintLib.h; sourceTree = "<group>"; };
 		9AD0358B25C57A4500E58351 /* MemoryAllocationLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemoryAllocationLib.c; sourceTree = "<group>"; };
 		9AD0359325C57C8A00E58351 /* PrintLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PrintLib.c; sourceTree = "<group>"; };
+		9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XmlLiteSimpleTypes.cpp; sourceTree = "<group>"; };
+		9AD0EB23260A497500093F23 /* XmlLiteSimpleTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XmlLiteSimpleTypes.h; sourceTree = "<group>"; };
 		9AD469472452B33700D6D0DB /* shared_with_menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shared_with_menu.cpp; sourceTree = "<group>"; };
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
 		9AD7B14E26079F5C00E850D1 /* REFIT_MAINMENU_SCREEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFIT_MAINMENU_SCREEN.h; sourceTree = "<group>"; };
@@ -5437,12 +5438,12 @@
 		9A358B3625CF117A00A3850D /* cpp_lib */ = {
 			isa = PBXGroup;
 			children = (
+				9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */,
+				9AD0EB23260A497500093F23 /* XmlLiteSimpleTypes.h */,
 				9A4147662604F82900440186 /* undefinable.h */,
 				9A358B3725CF117A00A3850D /* XmlLiteParser.h */,
-				9A358B3825CF117A00A3850D /* xmlLiteSimpleTypes.h */,
 				9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */,
 				9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */,
-				9A358B3B25CF117A00A3850D /* xmlLiteSimpleTypes.cpp */,
 				9A358B3C25CF117A00A3850D /* XmlLiteCompositeTypes.h */,
 			);
 			path = cpp_lib;
@@ -5658,19 +5659,20 @@
 			isa = PBXGroup;
 			children = (
 				9AB6EB9E25CF1FAD0001BDBB /* BootTypes.h */,
-				9AB6EB9F25CF1FAD0001BDBB /* OSFlags.h */,
-				9AB6EBA025CF1FAD0001BDBB /* OSTypes.h */,
-				9AB6EB9D25CF1FAC0001BDBB /* VolumeTypes.h */,
 				9AA3911A25CC56E60099DC1F /* Devices.h */,
 				9AA3912325CC56E60099DC1F /* Efi.h */,
 				9AA3911F25CC56E60099DC1F /* Handle.h */,
+				9A78DF7E260A531100FE811A /* Languages.h */,
 				9AA3912425CC56E60099DC1F /* OC.h */,
 				9AA3912025CC56E60099DC1F /* OneLinerMacros.h */,
+				9AB6EB9F25CF1FAD0001BDBB /* OSFlags.h */,
+				9AB6EBA025CF1FAD0001BDBB /* OSTypes.h */,
 				9AA3912225CC56E60099DC1F /* Pci.h */,
 				9AA3911D25CC56E60099DC1F /* printf_lite-test-cpp_conf.h */,
 				9AA3911B25CC56E60099DC1F /* printlib-test-cpp_conf.h */,
 				9AA3911E25CC56E60099DC1F /* rename_helper.h */,
 				9AA3911C25CC56E60099DC1F /* syslinux_mbr.h */,
+				9AB6EB9D25CF1FAC0001BDBB /* VolumeTypes.h */,
 				9AA3912525CC56E60099DC1F /* XToolsConf.h */,
 			);
 			path = include;
@@ -15915,6 +15917,7 @@
 				9A358B3D25CF117A00A3850D /* XmlLiteCompositeTypes.cpp in Sources */,
 				9AA9250325CD5B2E00BD5E8B /* StateGenerator.cpp in Sources */,
 				9AA9253125CD74CC00BD5E8B /* securemenu.cpp in Sources */,
+				9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */,
 				9AFDD0A525CE731000EEAF06 /* all_tests.cpp in Sources */,
 				9AFDD0AD25CE731000EEAF06 /* XArray_tests.cpp in Sources */,
 				9A4FFA7E2451C8330050B38B /* XString.cpp in Sources */,
@@ -15947,7 +15950,6 @@
 				9AA9247B25CD5B2E00BD5E8B /* platformdata.cpp in Sources */,
 				9AA9E4EA25CD283400BD5E8B /* XImage.cpp in Sources */,
 				9AA9241B25CD5B2E00BD5E8B /* Edid.cpp in Sources */,
-				9A358B3F25CF117A00A3850D /* xmlLiteSimpleTypes.cpp in Sources */,
 				9A358B3525CF115200A3850D /* Config_Devices_Arbitrary.cpp in Sources */,
 				9AA9252D25CD74CC00BD5E8B /* securehash.cpp in Sources */,
 				9AA9252E25CD74CC00BD5E8B /* legacy.cpp in Sources */,

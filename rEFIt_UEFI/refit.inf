@@ -41,6 +41,7 @@
   include/DsdtFixList.h
   include/Efi.h
   include/Handle.h
+  include/Languages.h
   include/OneLinerMacros.h
   include/Pci.h
   include/XToolsConf.h

@@ -2437,19 +2437,10 @@ GetListOfACPI()
 {
   REFIT_DIR_ITER    DirIter;
   EFI_FILE_INFO     *DirEntry = NULL;
-  ACPI_PATCHED_AML  *ACPIPatchedAMLTmp;
+
 //  XStringW           AcpiPath = SWPrintf("%ls\\ACPI\\patched", OEMPath.wc_str());
 //  DBG("Get list of ACPI at path %ls\n", AcpiPath.wc_str());
-  while (ACPIPatchedAML != NULL) {
-    if (ACPIPatchedAML->FileName) {
-      FreePool(ACPIPatchedAML->FileName);
-    }
-    ACPIPatchedAMLTmp = ACPIPatchedAML;
-    ACPIPatchedAML = ACPIPatchedAML->Next;
-    FreePool(ACPIPatchedAMLTmp);
-  }
-  ACPIPatchedAML = NULL;
-//  DBG("free acpi list done\n");
+  ACPIPatchedAML.setEmpty();
   DirIterOpen(&selfOem.getConfigDir(), L"ACPI\\patched", &DirIter);
 
   while (DirIterNext(&DirIter, 2, L"*.aml", &DirEntry)) {
@@ -2462,8 +2453,8 @@ GetListOfACPI()
     }
 //    DBG("Found name %ls\n", DirEntry->FileName);
       BOOLEAN ACPIDisabled = FALSE;
-      ACPIPatchedAMLTmp = new ACPI_PATCHED_AML; // if changing, notice freepool above
-      ACPIPatchedAMLTmp->FileName = SWPrintf("%ls", DirEntry->FileName).forgetDataWithoutFreeing(); // if changing, notice freepool above
+      ACPI_PATCHED_AML* ACPIPatchedAMLTmp = new ACPI_PATCHED_AML;
+      ACPIPatchedAMLTmp->FileName.takeValueFrom(DirEntry->FileName);
 
       INTN Count = gSettings.ACPI.DisabledAML.size();
       for (INTN i = 0; i < Count; i++) {
@@ -2476,8 +2467,7 @@ GetListOfACPI()
         }
       }
       ACPIPatchedAMLTmp->MenuItem.BValue = ACPIDisabled;
-      ACPIPatchedAMLTmp->Next = ACPIPatchedAML;
-      ACPIPatchedAML = ACPIPatchedAMLTmp;
+      ACPIPatchedAML.AddReference(ACPIPatchedAMLTmp, true);
     }
 
   DirIterClose(&DirIter);
@@ -2550,6 +2540,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
  * and is passed by non-const reference.
  * This temporary during the refactoring
+ * All code from this comes from settings.cpp. I am taking out all the init code from settings.cpp so I can replace the reading layer.
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -2634,13 +2625,60 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     }
   }
 
-  ThemeX.DarkEmbedded = gSettings.GUI.DarkEmbedded;
-
   for ( size_t idx = 0 ; idx < gSettings.GUI.CustomEntriesSettings.size() ; ++idx ) {
     const CUSTOM_LOADER_ENTRY_SETTINGS& CustomEntrySettings = gSettings.GUI.CustomEntriesSettings[idx];
     CUSTOM_LOADER_ENTRY* entry = new CUSTOM_LOADER_ENTRY(CustomEntrySettings);
     GlobalConfig.CustomEntries.AddReference(entry, true);
   }
+
+  if ( gSettings.GUI.Theme.notEmpty() )
+  {
+    ThemeX.Theme.takeValueFrom(gSettings.GUI.Theme);
+    DBG("Default theme: %ls\n", gSettings.GUI.Theme.wc_str());
+
+    OldChosenTheme = 0xFFFF; //default for embedded
+    for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
+      //now comparison is case sensitive
+      if ( gSettings.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
+        OldChosenTheme = i;
+        break;
+      }
+    }
+  }
+
+  EFI_TIME          Now;
+  gRT->GetTime(&Now, NULL);
+  INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
+  if (NowHour <  0 ) NowHour += 24;
+  if (NowHour >= 24 ) NowHour -= 24;
+  ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+
+  ThemeX.DarkEmbedded = gSettings.GUI.getDarkEmbedded(ThemeX.Daylight);
+
+  if ( gSettings.GUI.gLanguage == english ) {
+    GlobalConfig.Codepage = 0xC0;
+    GlobalConfig.CodepageSize = 0;
+  } else if ( gSettings.GUI.gLanguage == russian ) {
+    GlobalConfig.Codepage = 0x410;
+    GlobalConfig.CodepageSize = 0x40;
+  } else if ( gSettings.GUI.gLanguage == ukrainian ) {
+    GlobalConfig.Codepage = 0x400;
+    GlobalConfig.CodepageSize = 0x60;
+  } else if ( gSettings.GUI.gLanguage == chinese ) {
+    GlobalConfig.Codepage = 0x3400;
+    GlobalConfig.CodepageSize = 0x19C0;
+  } else if ( gSettings.GUI.gLanguage == korean ) {
+    GlobalConfig.Codepage = 0x1100;
+    GlobalConfig.CodepageSize = 0x100;
+  }
+
+  if (gSettings.InjectEDID){
+    //DBG("Inject EDID\n");
+    if ( gSettings.CustomEDIDsize > 0  &&  gSettings.CustomEDIDsize % 128 == 0 ) {
+      InitializeEdidOverride();
+    }
+  }
+
 }
 #pragma GCC diagnostic pop
 

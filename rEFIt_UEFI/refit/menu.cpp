@@ -457,12 +457,9 @@ void FillInputs(BOOLEAN New)
     }
   }
 
-  if (ACPIPatchedAML) {
-    ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
-    while (ACPIPatchedAMLTmp) {
-      ACPIPatchedAMLTmp->MenuItem.ItemType = BoolValue;
-      ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
-    }
+  for ( size_t idx = 0 ; idx < ACPIPatchedAML.size() ; ++idx) {
+    ACPI_PATCHED_AML& ACPIPatchedAMLTmp = ACPIPatchedAML[idx];
+    ACPIPatchedAMLTmp.MenuItem.ItemType = BoolValue;
   }
 }
 
@@ -1982,19 +1979,16 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuDropTables()
   SubScreen->AddMenuItemInput(4, "Drop all OEM SSDT", FALSE);
   SubScreen->AddMenuItemInput(113, "Automatic smart merge", FALSE);
 
-  if (ACPIPatchedAML) {
-    ACPI_PATCHED_AML *ACPIPatchedAMLTmp = ACPIPatchedAML;
-    while (ACPIPatchedAMLTmp) {
-      InputBootArgs = new REFIT_INPUT_DIALOG;
-      InputBootArgs->Title.SWPrintf("Drop \"%ls\"", ACPIPatchedAMLTmp->FileName);
+  for ( size_t idx = 0 ; idx < ACPIPatchedAML.size() ; ++idx) {
+    ACPI_PATCHED_AML& ACPIPatchedAMLTmp = ACPIPatchedAML[idx];
+    InputBootArgs = new REFIT_INPUT_DIALOG;
+    InputBootArgs->Title.SWPrintf("Drop \"%s\"", ACPIPatchedAMLTmp.FileName.c_str());
 //      InputBootArgs->Tag = TAG_INPUT;
-      InputBootArgs->Row = 0xFFFF; //cursor
-      InputBootArgs->Item = &(ACPIPatchedAMLTmp->MenuItem);
-      InputBootArgs->AtClick = ActionEnter;
-      InputBootArgs->AtRightClick = ActionDetails;
-      SubScreen->AddMenuEntry(InputBootArgs, true);
-      ACPIPatchedAMLTmp = ACPIPatchedAMLTmp->Next;
-    }
+    InputBootArgs->Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &(ACPIPatchedAMLTmp.MenuItem);
+    InputBootArgs->AtClick = ActionEnter;
+    InputBootArgs->AtRightClick = ActionDetails;
+    SubScreen->AddMenuEntry(InputBootArgs, true);
   }
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);

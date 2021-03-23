@@ -246,9 +246,9 @@ void AddCustomTool(void)
 //  DBG("Custom tool start\n");
   DbgHeader("AddCustomTool");
   // Traverse the custom entries
-  for (size_t i = 0 ; i < gSettings.GUI.CustomTool.size(); ++i) {
-    CUSTOM_TOOL_ENTRY& Custom = gSettings.GUI.CustomTool[i];
-    if (OSFLAG_ISSET(Custom.Flags, OSFLAG_DISABLED)) {
+  for (size_t i = 0 ; i < GlobalConfig.CustomToolsEntries.size(); ++i) {
+    CUSTOM_TOOL_ENTRY& Custom = GlobalConfig.CustomToolsEntries[i];
+    if (OSFLAG_ISSET(Custom.getFlags(), OSFLAG_DISABLED)) {
 		DBG("Custom tool %llu skipped because it is disabled.\n", i);
       continue;
     }
@@ -257,7 +257,7 @@ void AddCustomTool(void)
 //      continue;
 //    }
 
-    if (Custom.Volume.notEmpty()) {
+    if (Custom.settings.Volume.notEmpty()) {
 		DBG("Custom tool %llu matching \"%ls\" ...\n", i, Custom.Volume);
     }
     for (VolumeIndex = 0; VolumeIndex < Volumes.size(); ++VolumeIndex) {
@@ -278,8 +278,8 @@ void AddCustomTool(void)
         continue;
       }
 
-      if (Custom.VolumeType != 0) {
-        if (((1ull<<Volume->DiskKind) & Custom.VolumeType) == 0) {
+      if (Custom.settings.VolumeType != 0) {
+        if (((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) == 0) {
           DBG("skipped because media is ignored\n");
           continue;
         }
@@ -291,28 +291,28 @@ void AddCustomTool(void)
       }
 
       // Check for exact volume matches
-      if (Custom.Volume.notEmpty()) {
-        if ((StrStr(Volume->DevicePathString.wc_str(), Custom.Volume.wc_str()) == NULL) &&
-            ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom.Volume.wc_str()) == NULL))) {
+      if (Custom.settings.Volume.notEmpty()) {
+        if ((StrStr(Volume->DevicePathString.wc_str(), Custom.settings.Volume.wc_str()) == NULL) &&
+            ((Volume->VolName.isEmpty()) || (StrStr(Volume->VolName.wc_str(), Custom.settings.Volume.wc_str()) == NULL))) {
           DBG("skipped\n");
           continue;
         }
       }
       // Check the tool exists on the volume
-      if (!FileExists(Volume->RootDir, Custom.Path)) {
+      if (!FileExists(Volume->RootDir, Custom.settings.Path)) {
         DBG("skipped because path '%s' does not exist\n", Custom.Path.wc_str());
         continue;
       }
       // Change to custom image if needed
       Image = Custom.Image;
-      if (Image.isEmpty() && Custom.ImagePath.notEmpty()) {
-        Image.LoadXImage(&ThemeX.getThemeDir(), Custom.ImagePath);
+      if (Image.isEmpty() && Custom.settings.ImagePath.notEmpty()) {
+        Image.LoadXImage(&ThemeX.getThemeDir(), Custom.settings.ImagePath);
       }
       if (Image.isEmpty()) {
-        AddToolEntry(Custom.Path, Custom.FullTitle.wc_str(), Custom.Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom.Hotkey, Custom.LoadOptions);
+        AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, ThemeX.GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom.settings.Hotkey, Custom.getLoadOptions());
       } else {
       // Create a legacy entry for this volume
-        AddToolEntry(Custom.Path, Custom.FullTitle.wc_str(), Custom.Title.wc_str(), Volume, Image, Custom.Hotkey, Custom.LoadOptions);
+        AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, Image, Custom.settings.Hotkey, Custom.getLoadOptions());
       }
       DBG("match!\n");
 //      break; // break scan volumes, continue scan entries -- why?

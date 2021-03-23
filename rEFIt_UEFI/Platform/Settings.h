@@ -5,6 +5,7 @@
 #include "../gui/menu_items/menu_items.h"
 #include "../include/OSFlags.h"
 #include "../include/OSTypes.h"
+#include "../include/Languages.h"
 #include "../Platform/plist/plist.h"
 #include "../Platform/guid.h"
 #include "MacOsVersion.h"
@@ -33,27 +34,6 @@
 #define QUIRK_OS      bit(14)
 #define QUIRK_PERM    bit(15)
 
-
-typedef enum {
-  english = 0,  //en
-  russian,    //ru
-  french,     //fr
-  german,     //de
-  dutch,      //nl
-  italian,    //it
-  spanish,    //es
-  portuguese, //pt
-  brasil,     //br
-  polish,     //pl
-  ukrainian,  //ua
-  croatian,   //hr
-  czech,      //cs
-  indonesian, //id
-  korean,     //ko
-  chinese,    //cn
-  romanian    //ro
-  //something else? add, please
-} LANGUAGES;
 
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
@@ -313,49 +293,102 @@ public:
   }
 };
 
-class CUSTOM_LEGACY_ENTRY
+class CUSTOM_LEGACY_ENTRY_SETTINGS
 {
 public:
-  XIcon                Image = XIcon();
-  XIcon                DriveImage = XIcon();
+  bool                 Disabled = 0;
   XStringW             ImagePath = XStringW();
+  XBuffer<UINT8>       ImageData = XBuffer<UINT8>();
   XStringW             DriveImagePath = XStringW();
+  XBuffer<UINT8>       DriveImageData = XBuffer<UINT8>();
   XStringW             Volume = XStringW();
   XStringW             FullTitle = XStringW();
   XStringW             Title = XStringW();
   CHAR16               Hotkey = 0;
-  UINT8                Flags = 0;
+//  UINT8                Flags = 0;
   bool                 Hidden = 0;
+  bool                 AlwaysHidden = 0;
   UINT8                Type = 0;
   UINT8                VolumeType = 0;
+};
 
-//  CUSTOM_LEGACY_ENTRY() {}
-//
-//  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-//  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY&) = delete;
-//  CUSTOM_LEGACY_ENTRY& operator=(const CUSTOM_LEGACY_ENTRY&) = delete;
+class CUSTOM_LEGACY_ENTRY
+{
+public:
+  const CUSTOM_LEGACY_ENTRY_SETTINGS& settings = CUSTOM_LEGACY_ENTRY_SETTINGS();
+  XIcon                Image = XIcon();
+  XIcon                DriveImage = XIcon();
+
+  CUSTOM_LEGACY_ENTRY(const CUSTOM_LEGACY_ENTRY_SETTINGS& _settings, EFI_FILE& ThemeDir) : settings(_settings)
+  {
+    if ( settings.ImagePath.notEmpty() ) {
+      Image.LoadXImage(&ThemeDir, settings.ImagePath);
+    }else if ( settings.ImageData.notEmpty() ) {
+      if ( !EFI_ERROR(Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size())) ) {
+        Image.setFilled();
+      }
+    }
+    if ( settings.DriveImagePath.notEmpty() ) {
+      DriveImage.LoadXImage(&ThemeDir, settings.DriveImagePath);
+    }else if ( settings.DriveImageData.notEmpty() ) {
+      if ( !EFI_ERROR(DriveImage.Image.FromPNG(settings.DriveImageData.data(), settings.DriveImageData.size())) ) {
+        DriveImage.setFilled();
+      }
+    }
+  }
+  
+  UINT8 getFlags() const {
+    UINT8 Flags = 0;
+    if ( settings.Disabled || settings.AlwaysHidden ) Flags = OSFLAG_SET(Flags, OSFLAG_DISABLED);
+    return Flags;
+  }
+};
+
+class CUSTOM_TOOL_ENTRY_SETTINGS
+{
+public:
+  bool               Disabled = 0;
+  XStringW           ImagePath = XStringW();
+  XBuffer<UINT8>     ImageData = XBuffer<UINT8>();
+  XStringW           Volume = XStringW();
+  XStringW           Path = XStringW();
+//  XString8Array      LoadOptions = XString8Array();
+  XString8           Arguments = XString8();
+  XStringW           FullTitle = XStringW();
+  XStringW           Title = XStringW();
+  CHAR16             Hotkey = 0;
+//  UINT8              Flags = 0;
+  bool               Hidden = 0;
+  bool               AlwaysHidden = 0;
+  UINT8              VolumeType = 0;
+
 };
 
 class CUSTOM_TOOL_ENTRY
 {
 public:
   XIcon              Image = XIcon();
-  XStringW           ImagePath = XStringW();
-  XStringW           Volume = XStringW();
-  XStringW           Path = XStringW();
-  XString8Array      LoadOptions = XString8Array();
-  XStringW           FullTitle = XStringW();
-  XStringW           Title = XStringW();
-  CHAR16             Hotkey = 0;
-  UINT8              Flags = 0;
-  bool               Hidden = 0;
-  UINT8              VolumeType = 0;
 
-//  CUSTOM_TOOL_ENTRY() {}
-//
-//  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-//  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY&) = delete;
-//  CUSTOM_TOOL_ENTRY& operator=(const CUSTOM_TOOL_ENTRY&) = delete;
+  const CUSTOM_TOOL_ENTRY_SETTINGS& settings = CUSTOM_TOOL_ENTRY_SETTINGS();
+  
+  CUSTOM_TOOL_ENTRY(const CUSTOM_TOOL_ENTRY_SETTINGS& _settings, EFI_FILE& ThemeDir) : settings(_settings)
+  {
+    if ( settings.ImagePath.notEmpty() ) {
+      Image.LoadXImage(&ThemeDir, settings.ImagePath);
+    } else if ( settings.ImageData.notEmpty() ) {
+      if ( !EFI_ERROR(Image.Image.FromPNG(settings.ImageData.data(), settings.ImageData.size())) ) {
+        Image.setFilled();
+      }
+    }
+  }
+  UINT8 getFlags() const {
+    UINT8 Flags = 0;
+    if ( settings.Disabled || settings.AlwaysHidden ) Flags = OSFLAG_SET(Flags, OSFLAG_DISABLED);
+    return Flags;
+  }
+  XString8Array getLoadOptions() const {
+    return Split<XString8Array>(settings.Arguments, " ");
+  }
 };
 
 class DEV_PROPERTY
@@ -463,13 +496,13 @@ public:
       {
         public:
           XStringW                DsdtName = XStringW();
-          BOOLEAN                 DebugDSDT = 0;
-          BOOLEAN                 Rtc8Allowed = 0;
+          bool                 DebugDSDT = 0;
+          bool                 Rtc8Allowed = 0;
           UINT8                   PNLF_UID = 0;
           UINT32                  FixDsdt = 0;
           XObjArray<DSDT_Patch>   DSDTPatchArray = XObjArray<DSDT_Patch>();
-          BOOLEAN                 ReuseFFFF = 0;
-          BOOLEAN                 SuspendOverride = 0;
+          bool                 ReuseFFFF = 0;
+          bool                 SuspendOverride = 0;
       } DSDT = DSDTClass();
       
       class SSDTClass
@@ -478,24 +511,24 @@ public:
           class GenerateClass
           {
             public:
-              BOOLEAN                 GeneratePStates = 0;
-              BOOLEAN                 GenerateCStates = 0;
-              BOOLEAN                 GenerateAPSN = 0;
-              BOOLEAN                 GenerateAPLF = 0;
-              BOOLEAN                 GeneratePluginType = 0;
+              bool                 GeneratePStates = 0;
+              bool                 GenerateCStates = 0;
+              bool                 GenerateAPSN = 0;
+              bool                 GenerateAPLF = 0;
+              bool                 GeneratePluginType = 0;
           } Generate = GenerateClass();
-          BOOLEAN                 DropSSDTSetting = 0;
-          BOOLEAN                 NoOemTableId = 0;
-          BOOLEAN                 NoDynamicExtract = 0;
-          BOOLEAN                 EnableISS = 0;
-          BOOLEAN                 EnableC7 = 0;
-          BOOLEAN                 _EnableC6 = 0;
-          BOOLEAN                 _EnableC4 = 0;
-          BOOLEAN                 _EnableC2 = 0;
+          bool                 DropSSDTSetting = 0;
+          bool                 NoOemTableId = 0;
+          bool                 NoDynamicExtract = 0;
+          bool                 EnableISS = 0;
+          bool                 EnableC7 = 0;
+          bool                 _EnableC6 = 0;
+          bool                 _EnableC4 = 0;
+          bool                 _EnableC2 = 0;
           UINT16                  _C3Latency = 0;
           UINT8                   PLimitDict = 0;
           UINT8                   UnderVoltStep = 0;
-          BOOLEAN                 DoubleFirstState = 0;
+          bool                 DoubleFirstState = 0;
           UINT8                   MinMultiplier = 0;
           UINT8                   MaxMultiplier = 0;
           UINT8                   PluginType = 0;
@@ -503,14 +536,14 @@ public:
 
       UINT64                  ResetAddr = 0;
       UINT8                   ResetVal = 0;
-      BOOLEAN                 SlpSmiEnable = 0;
-      BOOLEAN                 FixHeaders = 0;
-      BOOLEAN                 FixMCFG = 0;
-      BOOLEAN                 NoASPM = 0;
-      BOOLEAN                 smartUPS = 0;
-      BOOLEAN                 PatchNMI = 0;
-      XStringWArray           SortedACPI = XStringWArray();
-      BOOLEAN                 AutoMerge = 0;
+      bool                 SlpSmiEnable = 0;
+      bool                 FixHeaders = 0;
+      bool                 FixMCFG = 0;
+      bool                 NoASPM = 0;
+      bool                 smartUPS = 0;
+      bool                 PatchNMI = 0;
+      XString8Array           SortedACPI = XString8Array();
+      bool                 AutoMerge = 0;
       XStringWArray           DisabledAML = XStringWArray();
       XObjArray<ACPI_NAME_LIST> DeviceRename = XObjArray<ACPI_NAME_LIST>();
 
@@ -518,9 +551,10 @@ public:
 
   class GUIClass {
     public:
-      INT32                   Timezone = 0xFF;
+      INT32                   Timezone = -1;
       XStringW                Theme = XStringW();
-      bool                    DarkEmbedded = 0;
+//      bool                    DarkEmbedded = 0;
+      XString8                EmbeddedThemeType = XString8();
       bool                    PlayAsync = 0;
       bool                    CustomIcons = false;
       bool                    TextOnly = false;
@@ -529,29 +563,29 @@ public:
       bool                    ProvideConsoleGop = 0;
       INTN                    ConsoleMode = 0;
       LANGUAGES               gLanguage = english;
-      INTN                    Codepage = 0xC0;
-      INTN                    CodepageSize = 0xC0;
-      BOOLEAN                 KbdPrevLang = 0;
+      bool                 KbdPrevLang = 0;
       class MouseClass {
         public:
           INTN                    PointerSpeed = 0;
-          BOOLEAN                 PointerEnabled = 0;
+          bool                 PointerEnabled = 0;
           UINT64                  DoubleClickTime = 0;
-          BOOLEAN                 PointerMirror = 0;
+          bool                 PointerMirror = 0;
       } Mouse = MouseClass();
       XString8Array           HVHideStrings = XString8Array();
       class ScanClass {
         public:
-          BOOLEAN                 DisableEntryScan = 0;
-          BOOLEAN                 DisableToolScan = 0;
-          UINT8                   KernelScan = 0;
-          BOOLEAN                 LinuxScan = 0;
-          bool                    LegacyFirst = false;
-          bool                    NoLegacy = false;
+          bool                 DisableEntryScan = 0;
+          bool                 DisableToolScan = 0;
+          UINT8                KernelScan = 0;
+          bool                 LinuxScan = 0;
+          bool                 LegacyFirst = false;
+          bool                 NoLegacy = false;
       } Scan = ScanClass();
       XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS> CustomEntriesSettings = XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>();
-      XObjArray<CUSTOM_LEGACY_ENTRY> CustomLegacy = XObjArray<CUSTOM_LEGACY_ENTRY>();
-      XObjArray<CUSTOM_TOOL_ENTRY>   CustomTool = XObjArray<CUSTOM_TOOL_ENTRY>();
+      XObjArray<CUSTOM_LEGACY_ENTRY_SETTINGS> CustomLegacySettings = XObjArray<CUSTOM_LEGACY_ENTRY_SETTINGS>();
+      XObjArray<CUSTOM_TOOL_ENTRY_SETTINGS>   CustomToolSettings = XObjArray<CUSTOM_TOOL_ENTRY_SETTINGS>();
+
+    bool getDarkEmbedded(bool isDaylight) const;
 
   } GUI = GUIClass();
 
@@ -937,11 +971,10 @@ typedef struct {
 class ACPI_PATCHED_AML
 {
 public:
-  ACPI_PATCHED_AML  *Next;
-  CHAR16            *FileName;
-  INPUT_ITEM        MenuItem = INPUT_ITEM();
+  XString8         FileName = XString8();
+  INPUT_ITEM       MenuItem = INPUT_ITEM();
 
-  ACPI_PATCHED_AML() : Next(0), FileName(0) {};
+  ACPI_PATCHED_AML() {};
   ACPI_PATCHED_AML(const ACPI_PATCHED_AML& other) = delete; // Can be defined if needed
   const ACPI_PATCHED_AML& operator = ( const ACPI_PATCHED_AML & ) = delete; // Can be defined if needed
   ~ACPI_PATCHED_AML() { }
@@ -1023,7 +1056,7 @@ extern UINT16                          gBacklightLevel;
 extern TagDict*                          gConfigDict[];
 
 // ACPI/PATCHED/AML
-extern ACPI_PATCHED_AML                *ACPIPatchedAML;
+extern XObjArray<ACPI_PATCHED_AML>       ACPIPatchedAML;
 
 
 // SysVariables
@@ -1080,6 +1113,11 @@ public:
   uint16_t              C3Latency = 0;
 
   XObjArray<CUSTOM_LOADER_ENTRY> CustomEntries = XObjArray<CUSTOM_LOADER_ENTRY>();
+  XObjArray<CUSTOM_LEGACY_ENTRY> CustomLegacyEntries = XObjArray<CUSTOM_LEGACY_ENTRY>();
+  XObjArray<CUSTOM_TOOL_ENTRY> CustomToolsEntries = XObjArray<CUSTOM_TOOL_ENTRY>();
+
+  INTN                    Codepage = 0xC0;
+  INTN                    CodepageSize = 0xC0;
 
 
   REFIT_CONFIG() {};

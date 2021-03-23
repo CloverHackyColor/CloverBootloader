@@ -231,8 +231,6 @@
 		<string>Apple</string>
 		<key>Debug</key>
 		<true/>
-		<key>EmptyDebugLogAtStart</key>
-		<true/>
 		<key>DefaultLoader</key>
 		<string>ii</string>
 		<key>DefaultVolume</key>
@@ -497,6 +495,17 @@
 		<string>Dark</string>
 		<key>ConsoleMode</key>
 		<string>Max</string>
+		<key>Mouse</key>
+		<dict>
+			<key>DoubleClickTime</key>
+			<integer>501</integer>
+			<key>Enabled</key>
+			<true/>
+			<key>Mirror</key>
+			<true/>
+			<key>Speed</key>
+			<integer>5</integer>
+		</dict>
 		<key>Custom</key>
 		<dict>
 			<key>Entries</key>
@@ -504,7 +513,7 @@
 				<dict>
 					<key>AddArguments</key>
 					<string>addarg</string>
-					<key>Arguments</key>
+					<key>#Arguments</key>
 					<string>arg</string>
 					<key>BootBgColor</key>
 					<string>bootbgcolor</string>
@@ -529,31 +538,10 @@
 					<key>SubEntries</key>
 					<array>
 						<dict>
-							<key>CustomLogo</key>
-							<string>WinRepairTool128x128.png</string>
 							<key>AddArguments</key>
 							<string>arg2</string>
 							<key>FullTitle</key>
 							<string>title111</string>
-							<key>Settings</key>
-							<string>settingsSub</string>
-							<key>SubEntries</key>
-							<array>
-								<dict>
-									<key>Disabled</key>
-									<false/>
-									<key>Title</key>
-									<string>GDiskSub</string>
-									<key>Path</key>
-									<string>\EFI\GDISK\gdisk_x64.efi</string>
-									<key>Type</key>
-									<string>Windows</string>
-									<key>Image</key>
-									<string>\EFI\GDISK\GDisk.png</string>
-									<key>Hidden</key>
-									<false/>
-								</dict>
-							</array>
 						</dict>
 						<dict>
 							<key>AddArguments</key>
@@ -592,7 +580,7 @@
 					<key>Hidden</key>
 					<true/>
 					<key>Hotkey</key>
-					<string></string>
+					<string>I</string>
 					<key>Type</key>
 					<string>Windows</string>
 					<key>Volume</key>
@@ -628,29 +616,18 @@
 		</array>
 		<key>Language</key>
 		<string>es</string>
-		<key>Mouse</key>
-		<dict>
-			<key>DoubleClickTime</key>
-			<integer>501</integer>
-			<key>Enabled</key>
-			<true/>
-			<key>Mirror</key>
-			<true/>
-			<key>Speed</key>
-			<integer>5</integer>
-		</dict>
 		<key>Scan</key>
 		<dict>
 			<key>Entries</key>
-			<true/>
-			<key>Kernel</key>
-			<string>First</string>
-			<key>Legacy</key>
-			<string>First</string>
-			<key>Linux</key>
-			<true/>
+			<false/>
 			<key>Tool</key>
-			<true/>
+			<false/>
+			<key>Linux</key>
+			<false/>
+			<key>Legacy</key>
+			<false/>
+			<key>Kernel</key>
+			<false/>
 		</dict>
 		<key>ScreenResolution</key>
 		<string>1366x768</string>
@@ -659,7 +636,7 @@
 		<key>TextOnly</key>
 		<true/>
 		<key>Theme</key>
-		<string></string>
+		<string>theme</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>
@@ -700,7 +677,7 @@
 		<integer>1</integer>
 		<key>EDID</key>
 		<dict>
-			<key>#Custom</key>
+			<key>Custom</key>
 			<data>AP///////wBMo0cwAAAAAAAUAQOAHBB46h2FkVZZjyYYUFQAAAABAQEBAQEBAQEBAQEBAQEBOB1W1FAAFjAwICUAFZwQAAAZAAAADwAAAAAAAAAAACXZBmoAAAAA/gBTQU1TVU5HCiBMo0FUAAAA/gBMVE4xMjVBVDAxNDAxAF0=</data>
 			<key>Inject</key>
 			<true/>
