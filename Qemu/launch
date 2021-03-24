@@ -23,12 +23,7 @@ if [ "$OSTYPE" = "Darwin" ]
 then
 	if ! [ -f ./Qemu/qemu_portable/qemu-system-x86_64 ]
 	then
-	if ! [ -f /usr/local/bin/qemu-system-x86_64 ]
-	then
-			echo "You must install Qemu with \"brew install qemu\"", or restore the folder \'qemu_portable\'
-			exit 1
-		fi
-		echo "You must install Qemu with \"brew install qemu\""
+		echo "You must restore the folder \'qemu_portable\'"
 		exit 1
 	fi
 	if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]

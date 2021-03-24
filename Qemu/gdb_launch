@@ -39,9 +39,9 @@ set -x
 
 if [ "$OSTYPE" = "Darwin" ]
 then
-	if ! [ -f /usr/local/bin/qemu-system-x86_64 ]
+	if ! [ -f ./Qemu/qemu_portable/qemu-system-x86_64 ]
 	then
-		echo "You must install Qemu with \"brew install qemu\""
+		echo "You must restore the folder \'qemu_portable\'"
 		exit 1
 	fi
 	if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
@@ -79,19 +79,19 @@ then
 
     set -m
 
-	/usr/local/bin/qemu-system-x86_64 \
-	    -L "$SCRIPT_DIR" \
+	cd "$SCRIPT_DIR"
+	./qemu_portable/qemu-system-x86_64 \
+	    -L qemu_portable \
 	    -m 2048 \
-	    -cpu core2duo \
-	    -bios "$SCRIPT_DIR"/bios.bin-1.13.0 \
+	    -cpu Penryn \
+	    -bios ./bios.bin-1.13.0 \
 	    -machine q35 \
-	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
 	    -device ahci,id=ahi \
-	    -drive format=raw,id=hda,file="$SCRIPT_DIR"/disk_image_gpt.img \
+	    -drive format=raw,id=hda,file=./disk_image_gpt.img \
 	    -usb \
 	    -device usb-mouse,bus=usb-bus.0,port=2 \
 	    -device usb-kbd,bus=usb-bus.0,port=1 \
-		-serial file:"$SCRIPT_DIR"/serial0_qemu_out.log \
+	    -serial file:./serial0_qemu_out.log \
 	    -gdb tcp::9000 &
 	    [[ $? == 0 ]] || exit 1
 
@@ -99,9 +99,9 @@ then
 
 	count=1
 	timeout=60
-	image_base_str="Clover : Image base = "
+	image_base_str="CloverX64 : Image base = "
 
-    getImageBase() {
+	getImageBase() {
 		[ -f "$SCRIPT_DIR"/serial0_qemu_out.log ] || return 1
 		grep "$image_base_str" "$SCRIPT_DIR"/serial0_qemu_out.log
 		return $?
@@ -120,10 +120,16 @@ then
 	  exit 1
 	fi
 
-	adr="$(grep "$image_base_str" "$SCRIPT_DIR"/serial0_qemu_out.log | awk '{printf "0x%x",$8/NR}')"
+	adr="$(grep "$image_base_str" ./serial0_qemu_out.log | awk '{printf "0x%x",$6}')"
     echo adr="$adr"
 
-    gdb --eval-command="file "$clover_debug_file" -o $adr" \
+	GDB=gdb
+	if [ -f ../../../toolchain.gdb/gdb ]
+	then
+		GDB=../../../toolchain.gdb/gdb
+	fi
+
+    "$GDB" --eval-command="file "$clover_debug_file" -o $adr" \
       --eval-command="target remote localhost:9000" \
 	  --eval-command="rwatch *0" \
 	  --eval-command="br panic_" \
