@@ -752,7 +752,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
     MenuExit = RunGenericMenu(&DefaultEntryIndex, &MainChosenEntry);
     TimeoutSeconds = 0;
 
-    if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
+    if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL && MainChosenEntry->SubScreen->Entries.size() > 0) { // if MainChosenEntry->SubScreen->Entries.size() == 0, we got a crash in GraphicsMenuStyle
       XString8Array TmpArgs;
       if ( gSettings.Boot.BootArgs.length() > 0) {
         TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
@@ -865,6 +865,8 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
         }
         //---------
       }
+    }else{
+      MenuExit = 0; // loop on main menu
     }
   }
 
