@@ -486,17 +486,17 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
   }
 
   // Force kexts to load
-  if ( KernelAndKextPatches.ForceKexts.notEmpty() ) {
-    for (size_t i = 0; i < KernelAndKextPatches.ForceKexts.size(); ++i) {
-      MsgLog("  Force kext: %ls\n", KernelAndKextPatches.ForceKexts[i].wc_str());
+  if ( KernelAndKextPatches.ForceKextsToLoad.notEmpty() ) {
+    for (size_t i = 0; i < KernelAndKextPatches.ForceKextsToLoad.size(); ++i) {
+      MsgLog("  Force kext: %ls\n", KernelAndKextPatches.ForceKextsToLoad[i].wc_str());
       if (Volume && Volume->RootDir) {
         // Check if the entry is a directory
-        if (StrStr(KernelAndKextPatches.ForceKexts[i].wc_str(), L".kext") == NULL) {
-          DirIterOpen(Volume->RootDir, KernelAndKextPatches.ForceKexts[i].wc_str(), &PlugInIter);
+        if (StrStr(KernelAndKextPatches.ForceKextsToLoad[i].wc_str(), L".kext") == NULL) {
+          DirIterOpen(Volume->RootDir, KernelAndKextPatches.ForceKextsToLoad[i].wc_str(), &PlugInIter);
           while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
             if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
               continue;   // skip this
-            FileName = SWPrintf("%ls\\%ls", KernelAndKextPatches.ForceKexts[i].wc_str(), PlugInFile->FileName);
+            FileName = SWPrintf("%ls\\%ls", KernelAndKextPatches.ForceKextsToLoad[i].wc_str(), PlugInFile->FileName);
             //    snwprintf(FileName, 512, "%s\\%s", KernelAndKextPatches.ForceKexts[i], PlugInFile->FileName);
             MsgLog("  Force kext: %s\n", FileName.c_str());
             AddKext( Volume->RootDir, FileName, archCpuType);
@@ -506,8 +506,8 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
           }
           DirIterClose(&PlugInIter);
         } else {
-          AddKext( Volume->RootDir, KernelAndKextPatches.ForceKexts[i], archCpuType);
-          PlugIns = SWPrintf("%ls\\Contents\\PlugIns", KernelAndKextPatches.ForceKexts[i].wc_str());
+          AddKext( Volume->RootDir, KernelAndKextPatches.ForceKextsToLoad[i], archCpuType);
+          PlugIns = SWPrintf("%ls\\Contents\\PlugIns", KernelAndKextPatches.ForceKextsToLoad[i].wc_str());
           //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", KernelAndKextPatches.ForceKexts[i]);
           LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
         }

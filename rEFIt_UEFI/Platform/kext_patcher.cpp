@@ -18,6 +18,7 @@ extern "C" {
 
 #include <UefiLoader.h>
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
+#include "Settings.h"
 #include "kernel_patcher.h"
 #include "kext_inject.h"
 #include "../gui/menu_items/menu_items.h"
@@ -1069,7 +1070,7 @@ void LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist,
   
   ExtractKextBundleIdentifier(InfoPlist);
   
-  if (KernelAndKextPatches.KPAppleIntelCPUPM &&
+  if ( (GlobalConfig.KPAppleIntelCPUPM) &&
       (AsciiStrStr(InfoPlist,
                    "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)) {
     //

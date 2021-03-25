@@ -69,54 +69,46 @@ const XMLEntity ents[] = {
   {"amp;"_XS8, '&'}
 };
 
-/* Replace XML entities by their value */
-CHAR8*
-XMLDecode(CHAR8* src)
+/*
+ * Replace XML entities by their value
+ * out can be src
+ */
+
+size_t XMLDecode(const char* src, size_t srclen, char* out, size_t outlen)
 {
-  UINTN len;
-  CONST CHAR8 *s;
-  CHAR8 *out, *o;
+  const char* s;
+  char* o;
 
   if (!src) {
     return 0;
   }
 
-  len = strlen(src);
-
-#if 0
-  out = (__typeof__(out))AllocateZeroPool(len+1);
-  if (!out)
-    return 0;
-#else // unsafe
   // out is always <= src, let's overwrite src
-  out = src;
-#endif
-
-
-  o = out;
   s = src;
-  while (s <= src+len) /* Make sure the terminator is also copied */
+  o = out;
+  while (s < src+srclen) /* Make sure the terminator is also copied */
   {
     if ( *s == '&' ) {
-      BOOLEAN entFound = FALSE;
       UINTN i;
       s++;
       for (i = 0; i < sizeof(ents)/sizeof(ents[0]); i++) {
         if ( ents[i].name.strncmp(s, ents[i].nameLen) == 0 ) {
-          entFound = TRUE;
+          if ( uintptr_t(o)-uintptr_t(out) >= outlen ) return uintptr_t(o)-uintptr_t(out);
+          *o++ = ents[i].value;
+          s += ents[i].nameLen;
           break;
         }
       }
-      if ( entFound ) {
-        *o++ = ents[i].value;
-        s += ents[i].nameLen;
-        continue;
-      }
     }
-
+    if ( uintptr_t(o)-uintptr_t(out) >= outlen ) return uintptr_t(o)-uintptr_t(out);
     *o++ = *s++;
   }
-
-  return out;
+  if ( uintptr_t(o)-uintptr_t(out) < outlen ) *o = 0;
+  return uintptr_t(o)-uintptr_t(out);
 }
 
+char* XMLDecode(char* src)
+{
+  XMLDecode(src, strlen(src), src, strlen(src)+1);
+  return src;
+}

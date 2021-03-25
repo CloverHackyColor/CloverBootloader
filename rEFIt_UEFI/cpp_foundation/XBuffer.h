@@ -35,7 +35,7 @@ protected:
 	const XBuffer &operator =(const XBuffer &aBuffer);
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	void stealValueFrom(T* p, IntegralType count) {
+  void stealValueFrom(T* p, IntegralType count) {
     if ( count < 0 ) {
 #ifdef DEBUG
       panic("XBuffer::stealValueFrom : count < 0. System halted\n");
@@ -44,7 +44,25 @@ protected:
 #endif
     }
     if( _WData ) free(_WData);
-    Initialize(p, count, 0);
+    m_allocatedSize = count;
+    XRBuffer<T>::_RData = _WData = p;
+    XRBuffer<T>::m_size = count;
+    XRBuffer<T>::_Index = 0;
+  }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  void stealValueFrom(T* p, IntegralType count, IntegralType allocatedSize) {
+    if ( count < 0 ) {
+      panic("XBuffer::stealValueFrom : count < 0. System halted\n");
+    }
+    if ( allocatedSize < count ) {
+      panic("XBuffer::stealValueFrom : allocatedSize < count. System halted\n");
+    }
+    if( _WData ) free(_WData);
+    m_allocatedSize = allocatedSize;
+    XRBuffer<T>::_RData = _WData = p;
+    XRBuffer<T>::m_size = count;
+    XRBuffer<T>::_Index = 0;
   }
 	~XBuffer();
 
@@ -113,26 +131,27 @@ public:
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   T& operator [](IntegralType i)
   {
-#ifdef DEBUG
+//#ifdef DEBUG
     if (i < 0) panic("XBuffer::[] : i < 0. System halted\n");
     if ( (unsigned_type(IntegralType))i >= size() ) panic("XBuffer::[] : i > _Len. System halted\n");
-#else
-    if (i < 0) return 0;
-    if ( (unsigned_type(IntegralType))i >= size() ) return 0;
-
-#endif
+//#else
+//    // Cannot return 0, return value type is T, unknown at this stage.
+//    if (i < 0) return 0;
+//    if ( (unsigned_type(IntegralType))i >= size() ) return 0;
+//#endif
     return _WData[(unsigned_type(IntegralType))i];
   }
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
   const T& operator [](IntegralType i) const
   {
-#ifdef DEBUG
+//#ifdef DEBUG
     if (i < 0) panic("XBuffer::[] : i < 0. System halted\n");
     if ( (unsigned_type(IntegralType))i >= size() ) panic("XBuffer::[] : i > _Len. System halted\n");
-#else
-    if (i < 0) return 0;
-    if ( (unsigned_type(IntegralType))i >= size() ) return 0;
-#endif
+//#else
+//    // Cannot return 0, return value type is T, unknown at this stage.
+//    if (i < 0) return 0;
+//    if ( (unsigned_type(IntegralType))i >= size() ) return 0;
+//#endif
     return _WData[(unsigned_type(IntegralType))i];
   }
 

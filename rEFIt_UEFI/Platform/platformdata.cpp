@@ -1418,8 +1418,8 @@ void GetDefaultSettings()
   //gSettings.HDALayoutId          = 0;
   gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before
   gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
-  gSettings.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
-  gSettings.BacklightLevelConfig = FALSE;
+  gSettings.SystemParameters.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
+  gSettings.SystemParameters.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
 
   gSettings.SmUUID = nullGuid;

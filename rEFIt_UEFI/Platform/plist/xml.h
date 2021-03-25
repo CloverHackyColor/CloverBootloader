@@ -25,9 +25,7 @@
 #define kXMLTagFloat     "real"
 
 
-CHAR8*
-XMLDecode (
-  CHAR8 *src
-  );
+size_t XMLDecode (const char* src, size_t srclen, char* out, size_t outlen);
+char* XMLDecode (char* src);
 
 #endif /* __xml_h__ */

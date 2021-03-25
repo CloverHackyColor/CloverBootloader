@@ -442,6 +442,12 @@ public :
   MMIOWhiteList& operator=(const MMIOWhiteList&) = delete;
 };
 
+class SETTINGS_DATA;
+class ConfigPlist;
+class TagDict;
+bool CompareEarlyUserSettingsWithConfigPlist(const SETTINGS_DATA& olDSettings, const ConfigPlist& configPlist);
+EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
+
 class SETTINGS_DATA {
 public:
 
@@ -609,6 +615,32 @@ public:
       undefinable_uint16      _C3Latency = undefinable_uint16();
   } CPU = CPUClass();
 
+  class SystemParametersClass {
+    public:
+      bool                 WithKexts = true;
+      bool                 WithKextsIfNoFakeSMC = 0;
+      bool                 NoCaches = 0;
+      uint16_t   BacklightLevel = 0xFFFF;
+      bool BacklightLevelConfig = false;
+      XString8             CustomUuid = XString8();
+    protected:
+      UINT8                InjectSystemID = 2; // 0=false, 1=true, other value = default.
+    public:
+      bool                 NvidiaWeb = 0;
+      
+      friend class ::SETTINGS_DATA;
+      friend bool ::CompareEarlyUserSettingsWithConfigPlist(const SETTINGS_DATA& olDSettings, const ConfigPlist& configPlist);
+      friend unsigned long long ::GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
+
+  } SystemParameters = SystemParametersClass();
+
+  class QuirksClass {
+    public:
+      bool FuzzyMatch = bool();
+      XString8 OcKernelCache = XString8();
+      OC_KERNEL_QUIRKS OcKernelQuirks = OC_KERNEL_QUIRKS();
+  } Quirks = QuirksClass();
+
   bool getEnableC6() const {
     if ( CPU._EnableC6.isDefined() ) return CPU._EnableC6;
     return ACPI.SSDT._EnableC6;
@@ -683,7 +715,6 @@ public:
   INT8                    pad181[7];
   XString8                Language;
   INT8                    pad19[2];
-  XString8                CustomUuid;
 
   INT8                    pad20[6];
 
@@ -692,15 +723,10 @@ public:
   UINT8                   pad21[1];
   UINT16                  VendorEDID;
   UINT16                  ProductEDID;
-  UINT16                  BacklightLevel;
-  BOOLEAN                 BacklightLevelConfig;
   BOOLEAN                 IntelBacklight;
 //Boot options
   BOOLEAN                 MemoryFix;
-  BOOLEAN                 WithKexts;
-  BOOLEAN                 WithKextsIfNoFakeSMC;
   BOOLEAN                 FakeSMCFound;
-  BOOLEAN                 NoCaches;
 
   // GUI parameters
   BOOLEAN                 Debug;
@@ -715,7 +741,6 @@ public:
 
   //Injections
   BOOLEAN                 StringInjector;
-  UINT8                   InjectSystemID_; // 0=false, 1=true, other value = default.
   BOOLEAN                 NoDefaultProperties;
 
 
@@ -761,7 +786,6 @@ public:
   UINT8                   Dcfg[8];
   UINT8                   NVCAP[20];
   INT8                    BootDisplay;
-  BOOLEAN                 NvidiaWeb;
   UINT8                   pad41[2];
   UINT32                  DualLink;
   UINT32                  IgPlatform;
@@ -902,13 +926,13 @@ public:
                     BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(),
                     EnabledCores(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
                     MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), InjectMemoryTables(0),
-                    PlatformFeature(0), NoRomInfo(0), Language(), CustomUuid(),
-                    IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), BacklightLevel(0), BacklightLevelConfig(0), IntelBacklight(0), MemoryFix(0), WithKexts(0),
-                    WithKextsIfNoFakeSMC(0), FakeSMCFound(0), NoCaches(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), StringInjector(0), InjectSystemID_(0), NoDefaultProperties(0),
+                    PlatformFeature(0), NoRomInfo(0), Language(),
+                    IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), IntelBacklight(0), MemoryFix(0),
+                    FakeSMCFound(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), StringInjector(0), NoDefaultProperties(0),
                     FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
                     InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
                     LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
-                    NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), NvidiaWeb(0), pad41{0}, DualLink(0),
+                    NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), pad41{0}, DualLink(0),
                     IgPlatform(0), HDAInjection(0),
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
                     KernelAndKextPatches(), KextPatchesAllowed(0),
@@ -931,13 +955,13 @@ public:
   // If CustomUuid is defined, return false by default
   // If SmUUID is defined, return true by default.
   bool ShouldInjectSystemID() {
-    if ( CustomUuid.notEmpty() &&  CustomUuid != nullGuid ) {
-      if ( InjectSystemID_ == 2 ) return false;
-      else return InjectSystemID_;
+    if ( SystemParameters.CustomUuid.notEmpty() &&  SystemParameters.CustomUuid != nullGuid ) {
+      if ( SystemParameters.InjectSystemID == 2 ) return false;
+      else return SystemParameters.InjectSystemID;
     }
     if ( SmUUID.isEmpty() || SmUUID == nullGuid ) return false;
-    if ( InjectSystemID_ == 2 ) return true;
-    return InjectSystemID_;
+    if ( SystemParameters.InjectSystemID == 2 ) return true;
+    return SystemParameters.InjectSystemID;
   }
 };
 
@@ -1075,7 +1099,7 @@ extern const LString8  gBuildIdGrepTag;
 
 
 extern BOOLEAN                        ResumeFromCoreStorage;
-extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
+//extern BOOLEAN                        gRemapSmBiosIsRequire;  // syscl: pass argument for Dell SMBIOS here
 
 extern EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl;
 
@@ -1118,6 +1142,9 @@ public:
 
   INTN                    Codepage = 0xC0;
   INTN                    CodepageSize = 0xC0;
+
+  bool KPKernelPm = bool();
+  bool KPAppleIntelCPUPM = bool();
 
 
   REFIT_CONFIG() {};

@@ -1295,7 +1295,7 @@ static unsigned int nsvg__parseColorHex(const char* str)
   while(str[n] && IsHexDigit(str[n]))
     n++;
   if (n == 6) {
-    n = hex2bin((CHAR8*)str, (UINT8*)&c, 3); //big endian
+    n = hex2bin((CHAR8*)str, 6, (UINT8*)&c, 3); //big endian
     b = (c >> 16) & 0xff;
     g = (c >> 8) & 0xff;
     r = c & 0xff;

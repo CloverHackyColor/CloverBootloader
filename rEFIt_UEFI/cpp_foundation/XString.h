@@ -57,7 +57,7 @@ class XString8 : public XStringAbstract<char, XString8>
 protected:
 	static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context)
 	{
-		((XString8*)(context))->strncat(buf, nbchar);
+		((XString8*)(context))->strsicat(buf, nbchar);
 	}
 public:
 	void vS8Printf(const char* format, XTOOLS_VA_LIST va)
@@ -174,7 +174,7 @@ public:
 protected:
 	static void transmitSWPrintf(const wchar_t* buf, unsigned int nbchar, void* context)
 	{
-		((XStringW*)(context))->strncat(buf, nbchar);
+		((XStringW*)(context))->strsicat(buf, nbchar);
 	}
 public:
 	void vSWPrintf(const char* format, XTOOLS_VA_LIST va)

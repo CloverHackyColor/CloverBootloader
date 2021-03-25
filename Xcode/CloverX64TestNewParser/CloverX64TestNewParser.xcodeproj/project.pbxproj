@@ -5438,13 +5438,13 @@
 		9A358B3625CF117A00A3850D /* cpp_lib */ = {
 			isa = PBXGroup;
 			children = (
+				9A4147662604F82900440186 /* undefinable.h */,
+				9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */,
+				9A358B3C25CF117A00A3850D /* XmlLiteCompositeTypes.h */,
+				9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */,
+				9A358B3725CF117A00A3850D /* XmlLiteParser.h */,
 				9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */,
 				9AD0EB23260A497500093F23 /* XmlLiteSimpleTypes.h */,
-				9A4147662604F82900440186 /* undefinable.h */,
-				9A358B3725CF117A00A3850D /* XmlLiteParser.h */,
-				9A358B3925CF117A00A3850D /* XmlLiteCompositeTypes.cpp */,
-				9A358B3A25CF117A00A3850D /* XmlLiteParser.cpp */,
-				9A358B3C25CF117A00A3850D /* XmlLiteCompositeTypes.h */,
 			);
 			path = cpp_lib;
 			sourceTree = "<group>";
@@ -15793,8 +15793,6 @@
 		9AFDD05825CE730F00EEAF06 /* cpp_unit_test */ = {
 			isa = PBXGroup;
 			children = (
-				9A0D113625FF583F0040555F /* strcasecmp_test.cpp */,
-				9A0D113725FF58400040555F /* strcasecmp_test.h */,
 				9AFDD07125CE730F00EEAF06 /* all_tests.cpp */,
 				9AFDD07A25CE730F00EEAF06 /* all_tests.h */,
 				9A9037E425CFE7D000F14179 /* config-test.cpp */,
@@ -15815,6 +15813,8 @@
 				9AFDD07625CE730F00EEAF06 /* printf_lite-test.h */,
 				9AFDD06B25CE730F00EEAF06 /* printlib-test.cpp */,
 				9AFDD07225CE730F00EEAF06 /* printlib-test.h */,
+				9A0D113625FF583F0040555F /* strcasecmp_test.cpp */,
+				9A0D113725FF58400040555F /* strcasecmp_test.h */,
 				9AFDD06A25CE730F00EEAF06 /* strcmp_test.cpp */,
 				9AFDD05F25CE730F00EEAF06 /* strcmp_test.h */,
 				9AFDD07B25CE730F00EEAF06 /* strlen_test.cpp */,
@@ -15826,6 +15826,7 @@
 				9AFDD06025CE730F00EEAF06 /* XBuffer_tests.cpp */,
 				9AFDD05E25CE730F00EEAF06 /* XBuffer_tests.h */,
 				9A9037E325CFE7CD00F14179 /* xml_lite-test.cpp */,
+				9A9037E525CFE7D000F14179 /* xml_lite-test.h */,
 				9AFDD07325CE730F00EEAF06 /* XObjArray_tests.cpp */,
 				9AFDD06D25CE730F00EEAF06 /* XObjArray_tests.h */,
 				9AFDD07725CE730F00EEAF06 /* XString_test.cpp */,
@@ -15833,7 +15834,6 @@
 				9AFDD06C25CE730F00EEAF06 /* XStringArray_test.cpp */,
 				9AFDD06725CE730F00EEAF06 /* XStringArray_test.h */,
 				9AFDD07925CE730F00EEAF06 /* XToolsCommon_test.cpp */,
-				9A9037E525CFE7D000F14179 /* xml_lite-test.h */,
 				9AFDD05925CE730F00EEAF06 /* XToolsCommon_test.h */,
 			);
 			path = cpp_unit_test;

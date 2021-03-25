@@ -112,6 +112,12 @@ extern "C" int main(int argc, const char * argv[])
 	(void)argv;
 	setlocale(LC_ALL, "en_US"); // to allow printf unicode char
 
+
+char buf[] = { 'a', '\xef', '\xbb', '\xbf', 'b', 0};
+XString8 s5 = S8Printf("01234567890123456789");
+s5.S8Printf("%s", buf);
+//const char* buf2 = s5.c_str();
+
   xcode_utf_fixed_tests();
 
 

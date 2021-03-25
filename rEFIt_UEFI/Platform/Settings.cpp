@@ -103,7 +103,7 @@ UINT16                          gBacklightLevel;
 
 BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;
-BOOLEAN                         gRemapSmBiosIsRequire;
+//BOOLEAN                         gRemapSmBiosIsRequire;
 
 // QPI
 //BOOLEAN                         SetTable132                 = FALSE;
@@ -586,7 +586,7 @@ static UINT8
       // assume data in hex encoded string property
       UINT32 Len = (UINT32)Prop->getString()->stringValue().length() >> 1; // number of hex digits
       Data = (__typeof__(Data))AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
-      Len  = hex2bin(Prop->getString()->stringValue().c_str(), Data, Len);
+      Len  = hex2bin(Prop->getString()->stringValue(), Data, Len);
 
       if (DataLen != NULL) *DataLen = Len;
       /*
@@ -879,7 +879,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
   Prop = DictPointer->propertyForKey("KernelPm");
   if (Prop != NULL || GlobalConfig.gBootChanged) {
-    Patches->KPKernelPm = IsPropertyNotNullAndTrue(Prop);
+    Patches->_KPKernelPm = IsPropertyNotNullAndTrue(Prop);
   }
   
   Prop = DictPointer->propertyForKey("PanicNoKextDump");
@@ -889,13 +889,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
   Prop = DictPointer->propertyForKey("AppleIntelCPUPM");
   if (Prop != NULL || GlobalConfig.gBootChanged) {
-    Patches->KPAppleIntelCPUPM = IsPropertyNotNullAndTrue(Prop);
+    Patches->_KPAppleIntelCPUPM = IsPropertyNotNullAndTrue(Prop);
   }
- //anyway
-  if (GlobalConfig.NeedPMfix) {
-    Patches->KPKernelPm = TRUE;
-    Patches->KPAppleIntelCPUPM = TRUE;
-  }
+// //anyway
+//  if (GlobalConfig.NeedPMfix) {
+//    Patches->KPKernelPm = TRUE;
+//    Patches->KPAppleIntelCPUPM = TRUE;
+//  }
 
   Prop = DictPointer->propertyForKey("AppleRTC");
   if (Prop != NULL || GlobalConfig.gBootChanged) {
@@ -915,7 +915,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
   // but the major target is to make code clean
   Prop = DictPointer->propertyForKey("DellSMBIOSPatch");
   Patches->KPDELLSMBIOS = IsPropertyNotNullAndTrue(Prop); // default == FALSE
-  gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
+//  gRemapSmBiosIsRequire = Patches->KPDELLSMBIOS;
 
   Prop = DictPointer->propertyForKey("FakeCPUID");
   if (Prop != NULL || GlobalConfig.gBootChanged) {
@@ -937,15 +937,13 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
     if (Patches->KPATIConnectorsData.isEmpty()
         || Patches->KPATIConnectorsPatch.isEmpty()
-        || Patches->KPATIConnectorsData.size() == 0
-        || Patches->KPATIConnectorsData.size() != i) {
+        || Patches->KPATIConnectorsData.size() != Patches->KPATIConnectorsPatch.size()) {
       // invalid params - no patching
       DBG("ATIConnectors patch: invalid parameters!\n");
 
       Patches->KPATIConnectorsController.setEmpty();
       Patches->KPATIConnectorsData.setEmpty();
       Patches->KPATIConnectorsPatch.setEmpty();
-      Patches->KPATIConnectorsController.setEmpty();
     }
   }
 
@@ -975,8 +973,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           }
 
           if (strlen(p) > 1) {
-            Patches->ForceKexts.Add(p);
-            DBG(" - [%zu]: %ls\n", Patches->ForceKexts.size(), Patches->ForceKexts[Patches->ForceKexts.size()-1].wc_str());
+            Patches->ForceKextsToLoad.Add(p);
+            DBG(" - [%zu]: %ls\n", Patches->ForceKextsToLoad.size(), Patches->ForceKextsToLoad[Patches->ForceKextsToLoad.size()-1].wc_str());
           }
         }
       }
@@ -1013,26 +1011,27 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        KEXT_PATCH* newPatchPtr = new KEXT_PATCH();
-        KEXT_PATCH& newPatch = *newPatchPtr;
+        KEXT_PATCH* newKextPatchPtr = new KEXT_PATCH();
+        KEXT_PATCH& newKextPatch = *newKextPatchPtr;
         
-        newPatch.Name = Dict->getString()->stringValue();
-        newPatch.Label.takeValueFrom(newPatch.Name);
+        newKextPatch.Name = Dict->getString()->stringValue();
+        newKextPatch.Label.takeValueFrom(newKextPatch.Name);
 
         Dict = Prop2->propertyForKey("Comment");
         if (Dict != NULL) {
-          newPatch.Label += " (";
-          newPatch.Label += Dict->getString()->stringValue();
-          newPatch.Label += ")";
+          newKextPatch.Label += " (";
+          newKextPatch.Label += Dict->getString()->stringValue();
+          newKextPatch.Label += ")";
 
         } else {
-          newPatch.Label += " (NoLabel)";
+          newKextPatch.Label += " (NoLabel)";
         }
-        DBG(" %s", newPatch.Label.c_str());
+        DBG(" %s", newKextPatch.Label.c_str());
 
      //   newPatch.MenuItem.BValue     = TRUE;
         Dict = Prop2->propertyForKey("Disabled");
-        newPatch.MenuItem.BValue = !IsPropertyNotNullAndTrue(Dict); //if absent then false, BValue = !Disabled
+        newKextPatch.Disabled = IsPropertyNotNullAndTrue(Dict); //if absent then false, BValue = !Disabled
+        newKextPatch.MenuItem.BValue = !IsPropertyNotNullAndTrue(Dict); //if absent then false, BValue = !Disabled
         
      //   if ((Dict != NULL) && IsPropertyNotNullAndTrue(Dict)) {
      //     newPatch.MenuItem.BValue     = FALSE;
@@ -1040,22 +1039,22 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         
         
         Dict = Prop2->propertyForKey("RangeFind");
-        newPatch.SearchLen = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
+        newKextPatch.SearchLen = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
 
         Dict = Prop2->propertyForKey("Skip");
-        newPatch.Skip = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
+        newKextPatch.Skip = GetPropertyAsInteger(Dict, 0); //default 0 will be calculated later
 
         UINT8* TmpData = GetDataSetting(Prop2, "StartPattern", &FindLen);
         if (TmpData != NULL) {
-          newPatch.StartPattern.stealValueFrom(TmpData, FindLen);
+          newKextPatch.StartPattern.stealValueFrom(TmpData, FindLen);
         }
         
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          newPatch.StartMask.memset(0xFF, FindLen);
+          newKextPatch.StartMask.memset(0xFF, FindLen);
           if (TmpData != NULL) {
-            newPatch.StartMask.ncpy(TmpData, ReplaceLen);
+            newKextPatch.StartMask.ncpy(TmpData, ReplaceLen);
           }
         }
         if (TmpData != NULL) {
@@ -1073,28 +1072,28 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         Dict = Prop2->propertyForKey("Procedure");
         if ( Dict != NULL ) {
           if ( Dict->isString() ) {
-            newPatch.ProcedureName = Dict->getString()->stringValue();
+            newKextPatch.ProcedureName = Dict->getString()->stringValue();
           }else{
             MsgLog("ATTENTION : Procedure property not string in KextsToPatch\n");
           }
         }
 
 
-        newPatch.Data.stealValueFrom(TmpData, FindLen);
+        newKextPatch.Data.stealValueFrom(TmpData, FindLen);
         
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
 
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newPatch.MaskFind.memset(0xFF, FindLen);
-          newPatch.MaskFind.ncpy(TmpData, MaskLen);
+          newKextPatch.MaskFind.memset(0xFF, FindLen);
+          newKextPatch.MaskFind.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
         // take into account a possibility to set ReplaceLen < FindLen. In this case assumes MaskReplace = 0 for the rest of bytes 
-        newPatch.Patch.memset(0, FindLen);
+        newKextPatch.Patch.memset(0, FindLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        newPatch.Patch.ncpy(TmpPatch, ReplaceLen);
+        newKextPatch.Patch.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         
         MaskLen = 0;
@@ -1102,45 +1101,45 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         MaskLen = MIN(ReplaceLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newPatch.MaskReplace.memset(0, FindLen);
-          newPatch.MaskReplace.ncpy(TmpData, MaskLen); //other bytes are zeros, means no replace
+          newKextPatch.MaskReplace.memset(0, FindLen);
+          newKextPatch.MaskReplace.ncpy(TmpData, MaskLen); //other bytes are zeros, means no replace
         }
         FreePool(TmpData);
         
-        newPatch.Count = 1;
+        newKextPatch.Count = 1;
         Dict = Prop2->propertyForKey("Count");
         if (Dict != NULL) {
-          newPatch.Count = GetPropertyAsInteger(Dict, 1);
+          newKextPatch.Count = GetPropertyAsInteger(Dict, 1);
         }
 
         // check enable/disabled patch (OS based) by Micky1979
         Dict = Prop2->propertyForKey("MatchOS");
         if ((Dict != NULL) && (Dict->isString())) {
-          newPatch.MatchOS = Dict->getString()->stringValue();
-          DBG(" :: MatchOS: %s", newPatch.MatchOS.c_str());
+          newKextPatch.MatchOS = Dict->getString()->stringValue();
+          DBG(" :: MatchOS: %s", newKextPatch.MatchOS.c_str());
         }
 
         Dict = Prop2->propertyForKey("MatchBuild");
         if ((Dict != NULL) && (Dict->isString())) {
-          newPatch.MatchBuild = Dict->getString()->stringValue();
-          DBG(" :: MatchBuild: %s", newPatch.MatchBuild.c_str());
+          newKextPatch.MatchBuild = Dict->getString()->stringValue();
+          DBG(" :: MatchBuild: %s", newKextPatch.MatchBuild.c_str());
         }
 
         // check if this is Info.plist patch or kext binary patch
         Dict = Prop2->propertyForKey("InfoPlistPatch");
-        newPatch.IsPlistPatch = IsPropertyNotNullAndTrue(Dict);
+        newKextPatch.IsPlistPatch = IsPropertyNotNullAndTrue(Dict);
 
-        if (newPatch.IsPlistPatch) {
+        if (newKextPatch.IsPlistPatch) {
           DBG(" :: PlistPatch");
         } else {
           DBG(" :: BinPatch");
         }
 
-        DBG(" :: data len: %zu\n", newPatch.Data.size());
-        if (!newPatch.MenuItem.BValue) {
-          DBG(" - patch disabled at config\n");
+        DBG(" :: data len: %zu\n", newKextPatch.Data.size());
+        if (!newKextPatch.MenuItem.BValue) {
+          DBG("        patch disabled at config\n");
         }
-        Patches->KextPatches.AddReference(newPatchPtr, true);
+        Patches->KextPatches.AddReference(newKextPatchPtr, true);
       }
     }
 
@@ -1171,8 +1170,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         DBG(" - [%02lld]:", i);
 
-        KEXT_PATCH* newKernelPatchPtr = new KEXT_PATCH;
-        KEXT_PATCH& newKernelPatch = *newKernelPatchPtr;
+        KERNEL_PATCH* newKernelPatchPtr = new KERNEL_PATCH;
+        KERNEL_PATCH& newKernelPatch = *newKernelPatchPtr;
 
         newKernelPatch.Label = "NoLabel"_XS8;
         prop3 = Prop2->propertyForKey("Comment");
@@ -1188,6 +1187,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         newKernelPatch.Name = "kernel"_XS8;
 
         prop3 = Prop2->propertyForKey("Disabled");
+        newKernelPatch.Disabled   = IsPropertyNotNullAndTrue(prop3);
         newKernelPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(prop3);
         
         prop3 = Prop2->propertyForKey("RangeFind");
@@ -1303,8 +1303,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         DBG(" - [%02lld]:", i);
 
-        KEXT_PATCH* newBootPatchPtr = new KEXT_PATCH;
-        KEXT_PATCH& newBootPatch = *newBootPatchPtr;
+        BOOT_PATCH* newBootPatchPtr = new BOOT_PATCH;
+        BOOT_PATCH& newBootPatch = *newBootPatchPtr;
 
         newBootPatch.Label = "NoLabel"_XS8;
         prop3 = Prop2->propertyForKey("Comment");
@@ -1320,6 +1320,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         newBootPatch.Name = "boot.efi"_XS8;
 
         prop3 = Prop2->propertyForKey("Disabled");
+        newBootPatch.Disabled   = IsPropertyNotNullAndTrue(prop3);
         newBootPatch.MenuItem.BValue   = !IsPropertyNotNullAndTrue(prop3);
         newBootPatch.MenuItem.ItemType = BoolValue;
         
@@ -1763,7 +1764,7 @@ FillinCustomSubEntry (
           Entry->m_NoCaches = true;
       } else {
         // Use global settings
-        if (gSettings.NoCaches) {
+        if (gSettings.SystemParameters.NoCaches) {
 //          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
           Entry->m_NoCaches = false;
         }
@@ -2094,10 +2095,10 @@ FillinCustomEntry (
     } else {
       Entry->InjectKexts = -1;
       // Use global settings
-      if (gSettings.WithKexts) {
+      if (gSettings.SystemParameters.WithKexts) {
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
-      if (gSettings.WithKextsIfNoFakeSMC) {
+      if (gSettings.SystemParameters.WithKextsIfNoFakeSMC) {
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
       }
@@ -2113,7 +2114,7 @@ FillinCustomEntry (
         Entry->NoCaches = true;
       } else {
         // Use global settings
-        if (gSettings.NoCaches) {
+        if (gSettings.SystemParameters.NoCaches) {
 //          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
         }
       }
@@ -2759,25 +2760,25 @@ EFI_STATUS GetEarlyUserSettings (
     }
 
     //*** SYSTEM ***
-    gSettings.WithKexts            = TRUE;  //default
+    gSettings.SystemParameters.WithKexts            = TRUE;  //default
     const TagDict* SystemParametersDict = CfgDict->dictPropertyForKey("SystemParameters");
     if (SystemParametersDict != NULL) {
       // Inject kexts
       const TagStruct* Prop = SystemParametersDict->propertyForKey("InjectKexts");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.WithKexts            = TRUE;
+          gSettings.SystemParameters.WithKexts            = TRUE;
         } else if ((Prop->isString()) &&
                    (Prop->getString()->stringValue().equalIC("Detect"))) {
           //   settingsData.WithKexts            = TRUE;
-          gSettings.WithKextsIfNoFakeSMC = TRUE;
+          gSettings.SystemParameters.WithKextsIfNoFakeSMC = TRUE;
         }
       }
 
       // No caches - obsolete
       Prop = SystemParametersDict->propertyForKey("NoCaches");
       if (IsPropertyNotNullAndTrue(Prop)) {
-        gSettings.NoCaches = TRUE;
+        gSettings.SystemParameters.NoCaches = TRUE;
       }
       //test float - success
 //      Prop = SystemParametersDict->propertyForKey("BlueValue");
@@ -3088,6 +3089,14 @@ EFI_STATUS GetEarlyUserSettings (
         }
       }
     }
+
+
+
+    //done until here
+
+
+
+
     const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
     if (GraphicsDict != NULL) {
 
@@ -3299,20 +3308,20 @@ EFI_STATUS GetEarlyUserSettings (
 
       Prop = OcQuirksDict->propertyForKey("FuzzyMatch");
       if (Prop != NULL || GlobalConfig.gBootChanged) {
-        gSettings.KernelAndKextPatches.FuzzyMatch = !IsPropertyNotNullAndFalse(Prop);
+        gSettings.Quirks.FuzzyMatch = !IsPropertyNotNullAndFalse(Prop);
       }
 
       Prop = OcQuirksDict->propertyForKey("KernelCache");
       if (Prop != NULL || GlobalConfig.gBootChanged) {
         if ( Prop->isString() ) {
           if ( Prop->getString()->stringValue().notEmpty() ) {
-            gSettings.KernelAndKextPatches.OcKernelCache = Prop->getString()->stringValue();
+            gSettings.Quirks.OcKernelCache = Prop->getString()->stringValue();
           }else{
-            gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
+            gSettings.Quirks.OcKernelCache = "Auto"_XS8;
           }
         }else{
           MsgLog("MALFORMED PLIST : Quirks/KernelCache must be a string");
-          gSettings.KernelAndKextPatches.OcKernelCache = "Auto"_XS8;
+          gSettings.Quirks.OcKernelCache = "Auto"_XS8;
         }
       }
 
@@ -3320,17 +3329,17 @@ EFI_STATUS GetEarlyUserSettings (
       // Booter Quirks
 //      Prop = OcQuirksDict->propertyForKey("AppleCpuPmCfgLock");
 //      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleCpuPmCfgLock = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
+//      gSettings.Quirks.OcKernelQuirks.AppleCpuPmCfgLock = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM || GlobalConfig.NeedPMfix;
 
 //      Prop = OcQuirksDict->propertyForKey("AppleXcpmCfgLock"); //
 //      settingsData.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = IsPropertyNotNullAndTrue(Prop);
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmCfgLock = gSettings.KernelAndKextPatches.KPKernelPm;
+//      gSettings.Quirks.OcKernelQuirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm || GlobalConfig.NeedPMfix;
 
       Prop = OcQuirksDict->propertyForKey("AppleXcpmExtraMsrs");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("AppleXcpmForceBoost");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.AppleXcpmForceBoost = IsPropertyNotNullAndTrue(Prop);
 
 // We can't use that Quirks because we don't delegate SMBios to OC.
 //      Prop = OcQuirksDict->propertyForKey("CustomSMBIOSGuid");
@@ -3338,40 +3347,40 @@ EFI_STATUS GetEarlyUserSettings (
 
       Prop = OcQuirksDict->propertyForKey("DisableIoMapper");
 //if ( !Prop ) panic("Cannot find DisableIoMapper in config.plist/Quirks. You forgot to merge your quirks into one section. Update your config.plist");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.DisableIoMapper = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("DisableLinkeditJettison");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.DisableLinkeditJettison = IsPropertyNotNullAndTrue(Prop);
 
  //     Prop = OcQuirksDict->propertyForKey("DisableRtcChecksum");
  //     settingsData.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = IsPropertyNotNullAndTrue(Prop);
-      gSettings.KernelAndKextPatches.OcKernelQuirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
+      gSettings.Quirks.OcKernelQuirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
 
       Prop = OcQuirksDict->propertyForKey("DummyPowerManagement");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.DummyPowerManagement = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("ExternalDiskIcons");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("IncreasePciBarSize");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize = IsPropertyNotNullAndTrue(Prop);
 
  //     Prop = OcQuirksDict->propertyForKey("LapicKernelPanic");
  //     settingsData.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = IsPropertyNotNullAndTrue(Prop);
-      gSettings.KernelAndKextPatches.OcKernelQuirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
+      gSettings.Quirks.OcKernelQuirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
 
 //      Prop = OcQuirksDict->propertyForKey("PanicNoKextDump");
 //      settingsData.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = IsPropertyNotNullAndTrue(Prop); //KPPanicNoKextDump
-      gSettings.KernelAndKextPatches.OcKernelQuirks.PanicNoKextDump = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
+      gSettings.Quirks.OcKernelQuirks.PanicNoKextDump = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
 
       Prop = OcQuirksDict->propertyForKey("PowerTimeoutKernelPanic");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.PowerTimeoutKernelPanic = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("ThirdPartyDrives");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.ThirdPartyDrives = IsPropertyNotNullAndTrue(Prop);
 
       Prop = OcQuirksDict->propertyForKey("XhciPortLimit");
-      gSettings.KernelAndKextPatches.OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.OcKernelQuirks.XhciPortLimit = IsPropertyNotNullAndTrue(Prop);
     }
   }
 
@@ -4476,7 +4485,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in NVCAP\n");
         }else{
-          hex2bin (Prop->getString()->stringValue().c_str(), (UINT8*)&gSettings.NVCAP[0], 20);
+          hex2bin (Prop->getString()->stringValue(), (UINT8*)&gSettings.NVCAP[0], sizeof(gSettings.NVCAP));
           DBG("Read NVCAP:");
 
           for (i = 0; i<20; i++) {
@@ -4493,7 +4502,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in display-cfg\n");
         }else{
-          hex2bin (Prop->getString()->stringValue().c_str(), (UINT8*)&gSettings.Dcfg[0], 8);
+          hex2bin (Prop->getString()->stringValue(), (UINT8*)&gSettings.Dcfg[0], sizeof(gSettings.Dcfg));
         }
       }
 
@@ -4558,7 +4567,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
           if (!EFI_ERROR(Status)) {
             cProperties = (UINT8*)(UINTN)BufferPtr;
             cPropSize   = (UINT32)(cDeviceProperties.length() >> 1);
-            cPropSize = hex2bin(cDeviceProperties.c_str(), cProperties, cPropSize);
+            cPropSize = hex2bin(cDeviceProperties, cProperties, EFI_PAGES_TO_SIZE(EFI_SIZE_TO_PAGES (cDeviceProperties.sizeInBytes()) + 1));
             DBG("Injected EFIString of length %d\n", cPropSize);
           }
           //---------
@@ -5395,8 +5404,8 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
         RT_VARIABLES* RtVariablePtr = new RT_VARIABLES();
         RT_VARIABLES& RtVariable = *RtVariablePtr;
         for (i = 0; i < Count; i++) {
-          CfgDict = BlockArray->dictElementAt(i, "Block"_XS8);
-          const TagStruct* Prop2 = CfgDict->propertyForKey("Comment");
+          const TagDict* BlockDict = BlockArray->dictElementAt(i, "Block"_XS8);
+          const TagStruct* Prop2 = BlockDict->propertyForKey("Comment");
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
               MsgLog("ATTENTION : property not string in Block/Comment\n");
@@ -5406,11 +5415,11 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               }
             }
           }
-          Prop2 = CfgDict->propertyForKey("Disabled");
+          Prop2 = BlockDict->propertyForKey("Disabled");
           if (IsPropertyNotNullAndFalse(Prop2)) {
             continue;
           }
-          Prop2 = CfgDict->propertyForKey("Guid");
+          Prop2 = BlockDict->propertyForKey("Guid");
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
               MsgLog("ATTENTION : property not string in Block/Guid\n");
@@ -5425,7 +5434,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             }
           }
 
-          Prop2 = CfgDict->propertyForKey("Name");
+          Prop2 = BlockDict->propertyForKey("Name");
           RtVariable.Name.setEmpty();
           if ( Prop2 != NULL ) {
             if ( !Prop2->isString() ) {
@@ -5462,8 +5471,8 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       //BacklightLevel
       const TagStruct* Prop = SystemParametersDict->propertyForKey("BacklightLevel");
       if (Prop != NULL) {
-        gSettings.BacklightLevel       = (UINT16)GetPropertyAsInteger(Prop, gSettings.BacklightLevel);
-        gSettings.BacklightLevelConfig = TRUE;
+        gSettings.SystemParameters.BacklightLevel       = (UINT16)GetPropertyAsInteger(Prop, gSettings.SystemParameters.BacklightLevel);
+        gSettings.SystemParameters.BacklightLevelConfig = TRUE;
       }
 
       Prop = SystemParametersDict->propertyForKey("CustomUUID");
@@ -5472,31 +5481,31 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
           MsgLog("ATTENTION : property not string in SystemParameters/CustomUUID\n");
         }else{
           if (IsValidGuidString(Prop->getString()->stringValue())) {
-          gSettings.CustomUuid = Prop->getString()->stringValue();
+          gSettings.SystemParameters.CustomUuid = Prop->getString()->stringValue();
             // if CustomUUID specified, then default for InjectSystemID=FALSE
             // to stay compatibile with previous Clover behaviour
             DBG("The UUID is valid\n");
           }else{
             DBG("Error: invalid CustomUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
-            gSettings.CustomUuid = {0};
+            gSettings.SystemParameters.CustomUuid = {0};
           }
         }
       }
       //else gUuid value from SMBIOS
       //     DBG("Finally use %s\n", strguid(&gUuid));
 
-      gSettings.InjectSystemID_ = 2;
+      gSettings.SystemParameters.InjectSystemID = 2;
       Prop                     = SystemParametersDict->propertyForKey("InjectSystemID");
       if ( Prop ) {
-        if ( Prop->isBool() ) gSettings.InjectSystemID_ = Prop->getBool()->boolValue();
+        if ( Prop->isBool() ) gSettings.SystemParameters.InjectSystemID = Prop->getBool()->boolValue();
         else if (  Prop->isString() ) {
           // TODO a function that takes a string and return if it's true or false
-          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.InjectSystemID_ = 1;
-          else if ( Prop->getString()->stringValue()[0] == 'y' ) gSettings.InjectSystemID_ = 1;
-          else if ( Prop->getString()->stringValue()[0] == 'Y' ) gSettings.InjectSystemID_ = 1;
-          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.InjectSystemID_ = 0;
-          else if ( Prop->getString()->stringValue().equalIC("n") ) gSettings.InjectSystemID_ = 0;
-          else if ( Prop->getString()->stringValue().equalIC("N") ) gSettings.InjectSystemID_ = 0;
+          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.SystemParameters.InjectSystemID = 1;
+          else if ( Prop->getString()->stringValue()[0] == 'y' ) gSettings.SystemParameters.InjectSystemID = 1;
+          else if ( Prop->getString()->stringValue()[0] == 'Y' ) gSettings.SystemParameters.InjectSystemID = 1;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.SystemParameters.InjectSystemID = 0;
+          else if ( Prop->getString()->stringValue().equalIC("n") ) gSettings.SystemParameters.InjectSystemID = 0;
+          else if ( Prop->getString()->stringValue().equalIC("N") ) gSettings.SystemParameters.InjectSystemID = 0;
           else {
             DBG("MALFORMED PLIST : SMBIOS/InjectSystemID must be true, yes, false, no, or non existant");
           }
@@ -5506,7 +5515,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       }
 
       Prop                     = SystemParametersDict->propertyForKey("NvidiaWeb");
-      gSettings.NvidiaWeb      = IsPropertyNotNullAndTrue(Prop);
+      gSettings.SystemParameters.NvidiaWeb      = IsPropertyNotNullAndTrue(Prop);
 
     }
 
@@ -7423,10 +7432,11 @@ SetDevices (LOADER_ENTRY *Entry)
     DBG("stringlength = %d\n", device_inject_stringlength);
     // gDeviceProperties = (__typeof__(gDeviceProperties))AllocateAlignedPages EFI_SIZE_TO_PAGES (device_inject_stringlength + 1), 64);
 
+    UINTN nbPages = EFI_SIZE_TO_PAGES (device_inject_stringlength + 1);
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
                                  EfiACPIReclaimMemory,
-                                 EFI_SIZE_TO_PAGES ((UINTN)device_inject_stringlength + 1),
+                                 nbPages,
                                  &BufferPtr
                                  );
 
@@ -7440,7 +7450,7 @@ SetDevices (LOADER_ENTRY *Entry)
       //-------
       mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
       //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
-      mPropSize = hex2bin (gDeviceProperties, mProperties, mPropSize);
+      mPropSize = hex2bin (gDeviceProperties, AsciiStrLen(gDeviceProperties), mProperties, EFI_PAGES_TO_SIZE(nbPages));
       //     DBG("Final size of mProperties=%d\n", mPropSize);
       //---------
       //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirFullPath().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
@@ -7761,23 +7771,24 @@ EFI_GUID nullUUID = {0,0,0,{0}};
 
 const XString8& SETTINGS_DATA::getUUID()
 {
-  if ( CustomUuid.notEmpty() ) return CustomUuid;
+  if ( SystemParameters.CustomUuid.notEmpty() ) return SystemParameters.CustomUuid;
   return SmUUID;
 }
 
 const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
 {
-  if ( CustomUuid.notEmpty() ) {
-    EFI_STATUS Status = StrToGuidLE(CustomUuid, uuid);
+  if ( SystemParameters.CustomUuid.notEmpty() ) {
+    EFI_STATUS Status = StrToGuidLE(SystemParameters.CustomUuid, uuid);
 #ifdef DEBUG
-    if ( EFI_ERROR(Status) ) panic("CustomUuid(%s) is not valid", CustomUuid.c_str()); // we panic, because it's a bug. Validity is checked when imported from settings
+    if ( EFI_ERROR(Status) ) panic("CustomUuid(%s) is not valid", SystemParameters.CustomUuid.c_str()); // we panic, because it's a bug. Validity is checked when imported from settings
 #else
     if ( EFI_ERROR(Status) ) {
       DBG("CustomUuid(%s) is not valid\n", CustomUuid.c_str());
+      memset(uuid, 0, sizeof(uuid));
       return nullUUID;
     }
 #endif
-    return CustomUuid;
+    return SystemParameters.CustomUuid;
   }
   EFI_STATUS Status = StrToGuidLE(SmUUID, uuid);
 #ifdef DEBUG
@@ -7785,6 +7796,7 @@ const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
 #else
   if ( EFI_ERROR(Status) ) {
     DBG("SmUUID(%s) is not valid\n", SmUUID.c_str());
+    memset(uuid, 0, sizeof(uuid));
     return nullUUID;
   }
 #endif

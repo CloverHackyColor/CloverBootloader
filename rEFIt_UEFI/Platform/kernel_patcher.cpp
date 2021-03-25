@@ -2476,10 +2476,9 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
       j++; curs++;
     }
   }
-//  if (KernelAndKextPatches.KPDebug) {
-//    gBS->Stall(2000000);
-//  }
-  Stall(2000000);
+  if (KernelAndKextPatches.KPDebug) {
+    gBS->Stall(2000000);
+  }
   return (y != 0);
 }
 
@@ -2610,7 +2609,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //  KernelAndKextPatcherInit();
 //
 //  KextPatchesNeeded = (
-//    KernelAndKextPatches.KPAppleIntelCPUPM ||
+//    KernelAndKextPatches.KPAppleIntelCPUPM || GlobalConfig.NeedPMfix ||
 //    KernelAndKextPatches.KPAppleRTC ||
 //    KernelAndKextPatches.EightApple ||
 //    KernelAndKextPatches.KPDELLSMBIOS ||
@@ -2669,7 +2668,7 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 //
 //  // CPU power management patch for CPU with locked msr
 //  DBG_RT( "\nKernelPm patch: ");
-//  if (KernelAndKextPatches.KPKernelPm || KernelAndKextPatches.KPKernelXCPM) {
+//  if (KernelAndKextPatches.KPKernelPm||GlobalConfig.NeedPMfix || KernelAndKextPatches.KPKernelXCPM) {
 //    DBG_RT( "Enabled: \n");
 //    DBG( "KernelPm patch: Enabled\n");
 ////    KernelAndKextPatcherInit();

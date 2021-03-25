@@ -181,7 +181,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Decimal;  //17
 	InputItems[InputItemsCount++].SValue.SWPrintf("0x%llX", gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
-	InputItems[InputItemsCount++].SValue.SWPrintf("0x%hX", gSettings.BacklightLevel);
+	InputItems[InputItemsCount++].SValue.SWPrintf("0x%hX", gSettings.SystemParameters.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
   if (gSettings.CPU.BusSpeed > 20000) {
     InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.CPU.BusSpeed);
@@ -250,11 +250,11 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.EightApple;
   InputItems[InputItemsCount].ItemType = BoolValue; //46
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleIntelCPUPM;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.KPAppleIntelCPUPM;
   InputItems[InputItemsCount].ItemType = BoolValue; //47
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPAppleRTC;
   InputItems[InputItemsCount].ItemType = BoolValue; //48
-  InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPKernelPm;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.KPKernelPm;
   InputItems[InputItemsCount].ItemType = BoolValue; //49
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.FixMCFG;
 
@@ -277,7 +277,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //55
   InputItems[InputItemsCount++].BValue = gSettings.NvidiaGeneric;
   InputItems[InputItemsCount].ItemType = BoolValue; //56
-  InputItems[InputItemsCount++].BValue = gSettings.NvidiaWeb;
+  InputItems[InputItemsCount++].BValue = gSettings.SystemParameters.NvidiaWeb;
   InputItems[InputItemsCount].ItemType = BoolValue; //57
   InputItems[InputItemsCount++].BValue = gSettings.ResetHDA;
   InputItems[InputItemsCount].ItemType = BoolValue; //58
@@ -425,7 +425,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //114
   InputItems[InputItemsCount++].BValue = gSettings.DeInit;
   InputItems[InputItemsCount].ItemType = BoolValue; //115
-  InputItems[InputItemsCount++].BValue = gSettings.NoCaches;
+  InputItems[InputItemsCount++].BValue = gSettings.SystemParameters.NoCaches;
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //116 - DSDT chooser
   InputItems[InputItemsCount++].IValue = 116;
 
@@ -471,7 +471,6 @@ void ApplyInputs(void)
   BOOLEAN NeedSave = TRUE;
   INTN i = 0;
   UINTN j;
-  CHAR8  AString[256];
 
 //  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
@@ -561,8 +560,8 @@ void ApplyInputs(void)
   }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
-    gSettings.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
-    gSettings.BacklightLevelConfig = TRUE;
+    gSettings.SystemParameters.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
+    gSettings.SystemParameters.BacklightLevelConfig = TRUE;
   }
   i++; //19
   if (InputItems[i].Valid) {
@@ -591,9 +590,7 @@ void ApplyInputs(void)
       if (gGraphics[j].Vendor == Ati) {
 		  gSettings.FBName = InputItems[i].SValue;
       } else if (gGraphics[j].Vendor == Nvidia) {
-        ZeroMem(AString, 256);
-        snprintf(AString, 255, "%ls", InputItems[i].SValue.wc_str());
-        hex2bin(AString, (UINT8*)&gSettings.Dcfg[0], 8);
+        hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.Dcfg[0], sizeof(gSettings.Dcfg));
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
         gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
@@ -613,10 +610,8 @@ void ApplyInputs(void)
     i++; //24
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Nvidia) {
-        ZeroMem(AString, 256);
         if ( InputItems[i].SValue.notEmpty() ) {
-          snprintf(AString, 255, "%ls", InputItems[i].SValue.wc_str());
-          hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
+          hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.NVCAP[0], sizeof(gSettings.NVCAP));
         }
       } else {
         gGraphics[j].Connectors = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
@@ -642,7 +637,7 @@ void ApplyInputs(void)
   }
   i++; //46
   if (InputItems[i].Valid) {
-    gSettings.KernelAndKextPatches.KPAppleIntelCPUPM = InputItems[i].BValue;
+    GlobalConfig.KPAppleIntelCPUPM = InputItems[i].BValue;
     GlobalConfig.gBootChanged = TRUE;
   }
   i++; //47
@@ -652,7 +647,7 @@ void ApplyInputs(void)
   }
   i++; //48
   if (InputItems[i].Valid) {
-     gSettings.KernelAndKextPatches.KPKernelPm = InputItems[i].BValue;
+     GlobalConfig.KPKernelPm = InputItems[i].BValue;
      GlobalConfig.gBootChanged = TRUE;
   }
   i++; //49
@@ -689,7 +684,7 @@ void ApplyInputs(void)
   }
   i++; //56
   if (InputItems[i].Valid) {
-    gSettings.NvidiaWeb = InputItems[i].BValue;
+    gSettings.SystemParameters.NvidiaWeb = InputItems[i].BValue;
   }
   i++; //57
   if (InputItems[i].Valid) {
@@ -710,8 +705,8 @@ void ApplyInputs(void)
   i++; //61
   if (InputItems[i].Valid) {
     gSettings.KernelAndKextPatches.KPDELLSMBIOS = InputItems[i].BValue;
-    // yes, we do need to change gRemapSmBiosIsRequire here as well
-    gRemapSmBiosIsRequire = InputItems[i].BValue;
+//    // yes, we do need to change gRemapSmBiosIsRequire here as well
+//    gRemapSmBiosIsRequire = InputItems[i].BValue;
     GlobalConfig.gBootChanged = TRUE;
   }
   i++; //62
@@ -999,7 +994,7 @@ void ApplyInputs(void)
   }
   i++; //115
   if (InputItems[i].Valid) {
-    gSettings.NoCaches = InputItems[i].BValue;
+    gSettings.SystemParameters.NoCaches = InputItems[i].BValue;
   }
   i++; //116
   if (InputItems[i].Valid) {

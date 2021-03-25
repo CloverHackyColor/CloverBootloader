@@ -59,40 +59,55 @@ BOOLEAN IsHexDigit (CHAR8 c) {
 
 //out value is a number of byte.  out = len
 
-UINT32 hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
+// get rid of this one
+//UINT32 hex2bin(IN const CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
+//{
+//	CHAR8	*p;
+//	UINT32	i, outlen = 0;
+//	CHAR8	buf[3];
+//
+//	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
+//    //		DBG("[ERROR] bin2hex input error\n"); //this is not error, this is empty value
+//		return FALSE;
+//	}
+//
+//	buf[2] = '\0';
+//	p = (CHAR8 *) hex;
+//
+//	for (i = 0; i < len; i++)
+//	{
+//		while ( *p == 0x20  ||  *p == ','  ||  *p == '\n'  ||  *p == '\r' ) {
+//			p++; //skip spaces and commas
+//		}
+//		if (*p == 0) {
+//			break;
+//		}
+//		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
+//			MsgLog("[ERROR] bin2hex '%s' syntax error\n", hex);
+//			return 0;
+//		}
+//		buf[0] = *p++;
+//		buf[1] = *p++;
+//		bin[i] = hexstrtouint8(buf);
+//		outlen++;
+//	}
+//	//bin[outlen] = 0;
+//	return outlen;
+//}
+
+#ifdef __cplusplus
+
+
+size_t hex2bin(const XString8& s, uint8_t *out, size_t outlen)
 {
-	CHAR8	*p;
-	UINT32	i, outlen = 0;
-	CHAR8	buf[3];
-
-	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
-    //		DBG("[ERROR] bin2hex input error\n"); //this is not error, this is empty value
-		return FALSE;
-	}
-
-	buf[2] = '\0';
-	p = (CHAR8 *) hex;
-
-	for (i = 0; i < len; i++)
-	{
-		while ( *p == 0x20  ||  *p == ','  ||  *p == '\n'  ||  *p == '\r' ) {
-			p++; //skip spaces and commas
-		}
-		if (*p == 0) {
-			break;
-		}
-		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
-			MsgLog("[ERROR] bin2hex '%s' syntax error\n", hex);
-			return 0;
-		}
-		buf[0] = *p++;
-		buf[1] = *p++;
-		bin[i] = hexstrtouint8(buf);
-		outlen++;
-	}
-	//bin[outlen] = 0;
-	return outlen;
+  return hex2bin(s.c_str(), s.length(), out, outlen);
 }
+
+size_t hex2bin(const XStringW& s, uint8_t *out, size_t outlen)
+{
+  return hex2bin(s.wc_str(), s.length(), out, outlen);
+}
+#endif
 
 XString8 Bytes2HexStr(UINT8 *data, UINTN len)
 {

@@ -333,10 +333,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   // Download-Fritz: Do not mess with BacklightLevel; it's OS X's business
   if (gMobile) {
-    if (gSettings.BacklightLevelConfig) {
-      SetNvramVariable(L"backlight-level", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BacklightLevel), &gSettings.BacklightLevel);
+    if (gSettings.SystemParameters.BacklightLevelConfig) {
+      SetNvramVariable(L"backlight-level", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.SystemParameters.BacklightLevel), &gSettings.SystemParameters.BacklightLevel);
     } else {
-      AddNvramVariable(L"backlight-level", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BacklightLevel), &gSettings.BacklightLevel);
+      AddNvramVariable(L"backlight-level", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.SystemParameters.BacklightLevel), &gSettings.SystemParameters.BacklightLevel);
     }
   }
 
@@ -388,7 +388,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   } else {
     DeleteNvramVariable(L"bootercfg", &gEfiAppleBootGuid);
   }
-  if (gSettings.NvidiaWeb) {
+  if (gSettings.SystemParameters.NvidiaWeb) {
     NvidiaWebValue = "1";
     SetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, Attributes, 2, (void*)NvidiaWebValue);
   } else {

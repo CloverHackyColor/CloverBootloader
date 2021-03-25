@@ -812,21 +812,105 @@
 		<key>KernelToPatch</key>
 		<array>
 			<dict>
-				<key>Comment</key>
-				<string>c2</string>
+				<key>#Comment</key>
+				<string>Disable panic kext logging on 10.14 Release kernel</string>
 				<key>Disabled</key>
 				<true/>
 				<key>Find</key>
 				<data>
-				ISI=
+				igKEwHRC
 				</data>
-				<key>MatchBuild</key>
-				<string>10.13.6</string>
+				<key>MaskFind</key>
+				<data>
+				////////
+				</data>
+				<key>MaskReplace</key>
+				<data>
+				AAAAAP8A
+				</data>
+				<key>MatchOS</key>
+				<string>10.14</string>
+				<key>Replace</key>
+				<data>
+				igKEwOtC
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Disable panic kext logging on 10.13 Release kernel</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				igKEwHRE
+				</data>
 				<key>MatchOS</key>
 				<string>10.13</string>
 				<key>Replace</key>
 				<data>
-				IyQ=
+				igKEwOtE
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Lapic panic patch example</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				6AAA//+DAAAAAAAA
+				</data>
+				<key>MaskFind</key>
+				<data>
+				/wAA////AAAAAP//
+				</data>
+				<key>MaskReplace</key>
+				<data>
+				/wAA////////////
+				</data>
+				<key>MaskStart</key>
+				<data>
+				/////wA=
+				</data>
+				<key>MatchOS</key>
+				<string>All</string>
+				<key>RangeFind</key>
+				<integer>200</integer>
+				<key>Replace</key>
+				<data>
+				6AAA//8xwJCQkJCQ
+				</data>
+				<key>StartPattern</key>
+				<data>
+				ACnHeAAx241H+oM=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Symbolic patch example got lapic panic</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				6AAA//+DAAAAAAAA
+				</data>
+				<key>MaskFind</key>
+				<data>
+				/wAA////AAAAAP//
+				</data>
+				<key>MaskReplace</key>
+				<data>
+				/wAA////////////
+				</data>
+				<key>MatchOS</key>
+				<string>All</string>
+				<key>Procedure</key>
+				<string>_lapic_interrupt</string>
+				<key>RangeFind</key>
+				<integer>200</integer>
+				<key>Replace</key>
+				<data>
+				6AAA//8xwJCQkJCQ
 				</data>
 			</dict>
 		</array>
@@ -836,24 +920,134 @@
 		<array>
 			<dict>
 				<key>Comment</key>
-				<string>c1</string>
+				<string>Enable TRIM for SSD</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				AEFQUExFIFNTRAA=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>Name</key>
+				<string>com.apple.iokit.IOAHCIBlockStorage</string>
+				<key>Replace</key>
+				<data>
+				AAAAAAAAAAAAAAA=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>External icons patch</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				RXh0ZXJuYWw=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.11.x,10.12.x,10.13.x,10.14.x,10.15.x</string>
+				<key>Name</key>
+				<string>com.apple.driver.AppleAHCIPort</string>
+				<key>Replace</key>
+				<data>
+				SW50ZXJuYWw=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>framebuffer4K</string>
 				<key>Disabled</key>
 				<true/>
 				<key>Find</key>
 				<data>
-				AQ==
+				AwAiDQADAwMAAAACAAAwAQ==
 				</data>
 				<key>InfoPlistPatch</key>
-				<true/>
-				<key>MatchBuild</key>
-				<string>10.14.6</string>
-				<key>MatchOS</key>
-				<string>10.14</string>
+				<false/>
 				<key>Name</key>
-				<string>k1</string>
+				<string>AppleIntelFramebufferAzul</string>
 				<key>Replace</key>
 				<data>
-				Ag==
+				AwAiDQADAwMAAAAEAAAAAw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Disable NVDARequiredOS</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				TlZEQVJlcXVpcmVkT1MA
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>Name</key>
+				<string>NVDAStartupWeb</string>
+				<key>Replace</key>
+				<data>
+				AAAAAAAAAAAAAAAAAAAA
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Disable ﻿board-id check﻿ to prevent no signal﻿﻿﻿</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				SI01qjQ=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>Name</key>
+				<string>com.apple.driver.AppleGraphicsDevicePolicy</string>
+				<key>Replace</key>
+				<data>
+				Dx+AAAA=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Prevent AGDP from loading</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				ugUAAAA=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.15.x</string>
+				<key>Name</key>
+				<string>com.apple.driver.AppleGraphicsDevicePolicy</string>
+				<key>Replace</key>
+				<data>
+				ugAAAAA=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>Atheros Locale Fix</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				g/g3
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>AirPortAtheros40</string>
+				<key>Replace</key>
+				<data>
+				g/gh
 				</data>
 			</dict>
 			<dict>
@@ -867,11 +1061,415 @@
 				</data>
 				<key>InfoPlistPatch</key>
 				<true/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
 				<key>Name</key>
 				<string>IONVMeFamily</string>
 				<key>Replace</key>
 				<data>
 				PHN0cmluZz5wY2kxNDRkLGE4MDI8L3N0cmluZz4=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#1 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				ibPoAgAAweAMBQAQAACJgw==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				ibPoAgAAweAJBQAQAACJgw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#2 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				D7aMiIIAAACD+QwPhTIBAA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				D7aMiIIAAACD+QkPhTIBAA==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#3 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				AMeDpAAAAAAQAABIi0gISA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				AMeDpAAAAAACAABIi0gISA==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#4 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				SYnGTYX2dGFBwecMSWP/vg==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				SYnGTYX2dGFBwecJSWP/vg==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#5 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				hv8PAABIwegMD7cPgeH/Dw==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				hv8PAABIwegJD7cPgeH/Dw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#6_7 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				icGB4f8PAABIAdFIgfn/DwAAdzs=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				icGB4f8BAABIAdFIgfn/AQAAdzs=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#8 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				SYHF/w8AAEnB7QxJiwQkSA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				SYHF/w8AAEnB7QlJiwQkSA==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#9_10 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				BgIAAEyNuAAQAABMiflIgeEA8P//SYmGGgEAAEmJjiIB
+				AABBvAAQAABJKfQ=
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				BgIAAEyNuAACAABMiflIgeEA8P//SYmGGgEAAEmJjiIB
+				AABBvAACAABJKfQ=
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#11 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				AABJiY4iAQAAugAQAABIKQ==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				AABJiY4iAQAAugACAABIKQ==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#12 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				yAAAAEkp17gAEAAATYskJA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				yAAAAEkp17gAAgAATYskJA==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#13 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				4b+AQBUGTYnWugAQAABFMQ==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				4b+AQBUGTYnWugACAABFMQ==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#14 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				iWTY+EmBxAAQAABJgccA8A==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				iWTY+EmBxAACAABJgccA8A==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#15 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				Bf8PAABIwegMZvfB/w8PlQ==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				Bf8PAABIwegJZvfB/w8PlQ==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#16 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				weIIQQ+2wcHgDEQJ0EQJwA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				weIIQQ+2wcHgCUQJ0EQJwA==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>IONVMeFamily Pike R. Alpha Patch#17 (Sierra)</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Find</key>
+				<data>
+				RYTJD5XAD7bAweAMRAnYRA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>IONVMeFamily</string>
+				<key>Replace</key>
+				<data>
+				RYTJD5XAD7bAweAJRAnYRA==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>change 15 port limit to 26 in XHCI kext (100-series)</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				g32MEA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>AppleUSBXHCIPCI</string>
+				<key>Replace</key>
+				<data>
+				g32MGw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>change 15 port limit to 26 in XHCI kext (100-series)</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				g710////EA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.x</string>
+				<key>Name</key>
+				<string>AppleUSBXHCISPT</string>
+				<key>Replace</key>
+				<data>
+				g710////Gw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>15 to 20 port limit (9-series)</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				g710////EA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.6</string>
+				<key>Name</key>
+				<string>AppleUSBXHCIPCI</string>
+				<key>Replace</key>
+				<data>
+				g710////FQ==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>15 to 26 port limit (100-series)</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				g710////EA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.12.6</string>
+				<key>Name</key>
+				<string>AppleUSBXHCIPCI</string>
+				<key>Replace</key>
+				<data>
+				g710////Gw==
+				</data>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string>USB 10.13.6 by PMHeart</string>
+				<key>Disabled</key>
+				<true/>
+				<key>Find</key>
+				<data>
+				g32IDw+DpwQAAA==
+				</data>
+				<key>InfoPlistPatch</key>
+				<false/>
+				<key>MatchOS</key>
+				<string>10.13.6</string>
+				<key>Name</key>
+				<string>com.apple.driver.usb.AppleUSBXHCI</string>
+				<key>Replace</key>
+				<data>
+				g32ID5CQkJCQkA==
 				</data>
 			</dict>
 		</array>

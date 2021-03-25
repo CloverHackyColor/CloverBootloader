@@ -2198,7 +2198,7 @@ void FinalizeSmbios() //continue
   //
   // to fix Dell's SMBIOS truncate credit David Passmore
   //
-  if (gRemapSmBiosIsRequire)
+  if (gSettings.KernelAndKextPatches.KPDELLSMBIOS)
   {
     //
     // syscl: remap smbios table 1 guid

@@ -399,11 +399,11 @@ void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
   DBG("\tFakeCPUID: 0x%X\n", Patches->FakeCPUID);
   DBG("\tATIController: %s\n", Patches->KPATIConnectorsController.isEmpty() ? "(null)": Patches->KPATIConnectorsController.c_str());
   DBG("\tATIDataLength: %zu\n", Patches->KPATIConnectorsData.size());
-  DBG("\t%zu Kexts to load\n", Patches->ForceKexts.size());
-  if (Patches->ForceKexts.size()) {
+  DBG("\t%zu Kexts to load\n", Patches->ForceKextsToLoad.size());
+  if (Patches->ForceKextsToLoad.size()) {
     size_t i = 0;
-    for (; i < Patches->ForceKexts.size(); ++i) {
-       DBG("\t  KextToLoad[%zu]: %ls\n", i, Patches->ForceKexts[i].wc_str());
+    for (; i < Patches->ForceKextsToLoad.size(); ++i) {
+       DBG("\t  KextToLoad[%zu]: %ls\n", i, Patches->ForceKextsToLoad[i].wc_str());
     }
   }
   DBG("\t%zu Kexts to patch\n", Patches->KextPatches.size());
@@ -687,7 +687,7 @@ MsgLog("debugStartImageWithOC\n");
 #endif
 void LOADER_ENTRY::DelegateKernelPatches()
 {
-  XObjArray<KEXT_PATCH> selectedPathArray;
+  XObjArray<ABSTRACT_KEXT_OR_KERNEL_PATCH> selectedPathArray;
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < KernelAndKextPatches.KextPatches.size() ; kextPatchIdx++ )
   {
     if ( KernelAndKextPatches.KextPatches[kextPatchIdx].MenuItem.BValue )
@@ -706,7 +706,7 @@ void LOADER_ENTRY::DelegateKernelPatches()
 
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
   {
-    const KEXT_PATCH& kextPatch = selectedPathArray[kextPatchIdx];  //as well as kernel patches
+    const ABSTRACT_KEXT_OR_KERNEL_PATCH& kextPatch = selectedPathArray[kextPatchIdx];  //as well as kernel patches
     DBG("Bridge %s patch to OC : %s\n", kextPatch.Name.c_str(), kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
@@ -1014,9 +1014,11 @@ void LOADER_ENTRY::StartLoader()
 
 
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "x86_64");
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.KernelAndKextPatches.OcKernelCache.c_str());
-    mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.KernelAndKextPatches.FuzzyMatch;
-    memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.KernelAndKextPatches.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.Quirks.OcKernelCache.c_str());
+    mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.Quirks.FuzzyMatch;
+    memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.Quirks.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
+    gSettings.Quirks.OcKernelQuirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
+    gSettings.Quirks.OcKernelQuirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
 
     mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
     mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
@@ -1118,9 +1120,9 @@ void LOADER_ENTRY::StartLoader()
 
   //DelegateKernelPatches();
 
-    for (size_t forceKextIdx = 0 ; forceKextIdx < KernelAndKextPatches.ForceKexts.size() ; forceKextIdx++ )
+    for (size_t forceKextIdx = 0 ; forceKextIdx < KernelAndKextPatches.ForceKextsToLoad.size() ; forceKextIdx++ )
     {
-      const XStringW& forceKext = KernelAndKextPatches.ForceKexts[forceKextIdx];
+      const XStringW& forceKext = KernelAndKextPatches.ForceKextsToLoad[forceKextIdx];
       DBG("TODO !!!!!!!! Bridge force kext to OC : %ls\n", forceKext.wc_str());
     }
   #endif
@@ -2323,7 +2325,7 @@ void SetVariablesFromNvram()
   
   tmpString = (__typeof__(tmpString))GetNvramVariable(L"nvda_drv", &gEfiAppleBootGuid, NULL, NULL);
   if (tmpString && AsciiStrCmp(tmpString, "1") == 0) {
-    gSettings.NvidiaWeb = TRUE;
+    gSettings.SystemParameters.NvidiaWeb = TRUE;
   }
   if (tmpString) {
     FreePool(tmpString);
@@ -2690,6 +2692,9 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
       InitializeEdidOverride();
     }
   }
+
+  GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm || GlobalConfig.NeedPMfix;
+  GlobalConfig.KPAppleIntelCPUPM = gSettings.KernelAndKextPatches._KPAppleIntelCPUPM || GlobalConfig.NeedPMfix;
 
 }
 #pragma GCC diagnostic pop

@@ -352,7 +352,7 @@ public:
 ////	template<class O>
 ////	ThisXStringClass& operator =(const O* S)	{ strcpy(S); return *this; }
 
-	//--------------------------------------------------------------------- indexOf, rindexOf, contains, subString
+	//--------------------------------------------------------------------- indexOf, rindexOf, contains, subString, startWith
 	
 	/* indexOf */
 	size_t indexOf(char32_t char32Searched, size_t Pos = 0) const
@@ -501,7 +501,7 @@ public:
 //	return true;
 //}
 
-	//---------------------------------------------------------------------
+	//--------------------------------------------------------------------- strcmp, equal, comparison operator
 
 	template<typename O>
 	int strcmp(const O* S) const { return XStringAbstract__compare(m_data, S, false); }
@@ -997,7 +997,8 @@ public:
 	{
 		if ( other && *other && other_len > 0 ) {
 			size_t currentSize = size_of_utf_string(m_data);
-			size_t newSize = currentSize + utf_size_of_utf_string_len(m_data, other, other_len);
+			size_t other_size = utf_size_of_utf_string_len(m_data, other, other_len);
+			size_t newSize = currentSize + other_size;
 			CheckSize(newSize, 0);
 			utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, other, other_len);
 			m_data[newSize] = 0;
@@ -1005,7 +1006,21 @@ public:
 			// nothing to do
 		}
 	}
-    
+  /* strsicat */
+  template<typename O>
+  void strsicat(const O* other, size_t other_size)
+  {
+    if ( other && *other && other_size > 0 ) {
+      size_t currentSize = size_of_utf_string(m_data);
+      size_t newSize = currentSize + other_size;
+      CheckSize(newSize, 0);
+      utf_string_from_utf_string_len(m_data+currentSize, m_allocatedSize, other, other_size);
+      m_data[newSize] = 0;
+    }else{
+      // nothing to do
+    }
+  }
+
   /* insert char* */
   template<typename O>
   ThisXStringClass&  insertAtPos(const O* other, size_t other_len, size_t pos)
@@ -1188,6 +1203,13 @@ public:
     }
   }
 
+  /* size is in number of technical chars, NOT in bytes */
+  ThisXStringClass& stealValueFrom(T* S, size_t size) {
+    if ( m_allocatedSize > 0 ) free((void*)m_data);
+    m_data = S;
+    m_allocatedSize = size;
+    return *((ThisXStringClass*)this);
+  }
 
   ThisXStringClass& stealValueFrom(T* S) {
     if ( m_allocatedSize > 0 ) free((void*)m_data);

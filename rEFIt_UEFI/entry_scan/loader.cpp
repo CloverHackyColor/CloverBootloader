@@ -515,7 +515,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
       CUSTOM_LOADER_ENTRY& Custom = GlobalConfig.CustomEntries[CustomIndex];
       if ( Custom.settings.Disabled ) continue; // before, disabled entries settings weren't loaded.
       // Check if the custom entry is hidden or disabled
-      if ( OSFLAG_ISSET(Custom.getFlags(gSettings.NoCaches), OSFLAG_DISABLED)  || Custom.settings.Hidden ) {
+      if ( OSFLAG_ISSET(Custom.getFlags(gSettings.SystemParameters.NoCaches), OSFLAG_DISABLED)  || Custom.settings.Hidden ) {
 
         INTN volume_match=0;
         INTN volume_type_match=0;
@@ -1055,7 +1055,7 @@ LOADER_ENTRY* AddLoaderEntry(IN CONST XStringW& LoaderPath, IN CONST XString8Arr
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_CHECKFAKESMC);
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_WITHKEXTS);
 //      }
-      if (gSettings.NoCaches) {
+      if (gSettings.SystemParameters.NoCaches) {
         Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
       }
     }
@@ -1894,7 +1894,7 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME   *Volume,
 //    do { // when not scanning for kernels, this loop will execute only once
       XString8Array CustomOptions = Custom.getLoadOptions();
 
-      UINT8 newCustomFlags = Custom.getFlags(gSettings.NoCaches);
+      UINT8 newCustomFlags = Custom.getFlags(gSettings.SystemParameters.NoCaches);
 
       // Create an entry for this volume
       Entry = CreateLoaderEntry(CustomPath, CustomOptions, Custom.getFullTitle(), Custom.getTitle(), Volume,
@@ -1975,7 +1975,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
     return;
   }
 
-  if (OSFLAG_ISSET(Custom.getFlags(gSettings.NoCaches), OSFLAG_DISABLED)) {
+  if (OSFLAG_ISSET(Custom.getFlags(gSettings.SystemParameters.NoCaches), OSFLAG_DISABLED)) {
 //    DBG("Custom %lsentry %llu skipped because it is disabled.\n", IsSubEntry ? L"sub " : L"", CustomIndex);
     return;
   }
@@ -2151,13 +2151,13 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
         break;
       }
 
-      UINT8 newCustomFlags = Custom.getFlags(gSettings.NoCaches);
+      UINT8 newCustomFlags = Custom.getFlags(gSettings.SystemParameters.NoCaches);
 
       // Check to make sure if we should update linux custom options or not
-      if (FindCustomPath && Custom.settings.Type == OSTYPE_LINEFI && OSFLAG_ISUNSET(Custom.getFlags(gSettings.NoCaches), OSFLAG_NODEFAULTARGS)) {
+      if (FindCustomPath && Custom.settings.Type == OSTYPE_LINEFI && OSFLAG_ISUNSET(Custom.getFlags(gSettings.SystemParameters.NoCaches), OSFLAG_NODEFAULTARGS)) {
         // Find the init ram image and select root
         CustomOptions = LinuxKernelOptions(Iter->DirHandle, Basename(CustomPath.wc_str()) + LINUX_LOADER_PATH.length(), PartUUID, Custom.getLoadOptions());
-        newCustomFlags = OSFLAG_SET(Custom.getFlags(gSettings.NoCaches), OSFLAG_NODEFAULTARGS);
+        newCustomFlags = OSFLAG_SET(Custom.getFlags(gSettings.SystemParameters.NoCaches), OSFLAG_NODEFAULTARGS);
       }
 
       // Check to make sure that this entry is not hidden or disabled by another custom entry
