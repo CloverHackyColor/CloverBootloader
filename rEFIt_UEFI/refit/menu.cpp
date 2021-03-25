@@ -1138,7 +1138,7 @@ void HelpRefit(void)
     //else {
     //  HelpMenu.TitleImage.setEmpty();
     //}
-    switch (gSettings.GUI.gLanguage)
+    switch (gSettings.GUI.Language)
     {
       case russian:
         HelpMenu.AddMenuInfo_f("ESC - Выход из подменю, обновление главного меню");

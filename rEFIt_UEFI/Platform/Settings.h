@@ -417,9 +417,10 @@ public:
 class DSDT_Patch
 {
 public :
+  bool             Disabled = bool();
+  XString8         PatchDsdtLabel = XString8();
   XBuffer<UINT8>   PatchDsdtFind = XBuffer<UINT8>();
   XBuffer<UINT8>   PatchDsdtReplace = XBuffer<UINT8>();
-  XString8         PatchDsdtLabel = XString8();
   XBuffer<UINT8>   PatchDsdtTgt = XBuffer<UINT8>();
   INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM();
 
@@ -502,13 +503,13 @@ public:
       {
         public:
           XStringW                DsdtName = XStringW();
-          bool                 DebugDSDT = 0;
-          bool                 Rtc8Allowed = 0;
+          bool                    DebugDSDT = 0;
+          bool                    Rtc8Allowed = 0;
           UINT8                   PNLF_UID = 0;
           UINT32                  FixDsdt = 0;
+          bool                    ReuseFFFF = 0;
+          bool                    SuspendOverride = 0;
           XObjArray<DSDT_Patch>   DSDTPatchArray = XObjArray<DSDT_Patch>();
-          bool                 ReuseFFFF = 0;
-          bool                 SuspendOverride = 0;
       } DSDT = DSDTClass();
       
       class SSDTClass
@@ -548,9 +549,9 @@ public:
       bool                 NoASPM = 0;
       bool                 smartUPS = 0;
       bool                 PatchNMI = 0;
-      XString8Array           SortedACPI = XString8Array();
       bool                 AutoMerge = 0;
       XStringWArray           DisabledAML = XStringWArray();
+      XString8Array           SortedACPI = XString8Array();
       XObjArray<ACPI_NAME_LIST> DeviceRename = XObjArray<ACPI_NAME_LIST>();
 
   } ACPI = ACPIClass();
@@ -568,7 +569,7 @@ public:
       XStringW                ScreenResolution = XStringW();
       bool                    ProvideConsoleGop = 0;
       INTN                    ConsoleMode = 0;
-      LANGUAGES               gLanguage = english;
+      LANGUAGES               Language = english;
       bool                 KbdPrevLang = 0;
       class MouseClass {
         public:

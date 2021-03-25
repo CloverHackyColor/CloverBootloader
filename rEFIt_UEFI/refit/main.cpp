@@ -2669,19 +2669,19 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
 
   ThemeX.DarkEmbedded = gSettings.GUI.getDarkEmbedded(ThemeX.Daylight);
 
-  if ( gSettings.GUI.gLanguage == english ) {
+  if ( gSettings.GUI.Language == english ) {
     GlobalConfig.Codepage = 0xC0;
     GlobalConfig.CodepageSize = 0;
-  } else if ( gSettings.GUI.gLanguage == russian ) {
+  } else if ( gSettings.GUI.Language == russian ) {
     GlobalConfig.Codepage = 0x410;
     GlobalConfig.CodepageSize = 0x40;
-  } else if ( gSettings.GUI.gLanguage == ukrainian ) {
+  } else if ( gSettings.GUI.Language == ukrainian ) {
     GlobalConfig.Codepage = 0x400;
     GlobalConfig.CodepageSize = 0x60;
-  } else if ( gSettings.GUI.gLanguage == chinese ) {
+  } else if ( gSettings.GUI.Language == chinese ) {
     GlobalConfig.Codepage = 0x3400;
     GlobalConfig.CodepageSize = 0x19C0;
-  } else if ( gSettings.GUI.gLanguage == korean ) {
+  } else if ( gSettings.GUI.Language == korean ) {
     GlobalConfig.Codepage = 0x1100;
     GlobalConfig.CodepageSize = 0x100;
   }
@@ -2771,6 +2771,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  PauseForKey(L"press\n");
 #endif
   }
+    gBS->Stall(2500000); // to give time to gdb to connect
 
 #ifdef CLOVER_BUILD
   construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
