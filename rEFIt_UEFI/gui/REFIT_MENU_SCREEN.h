@@ -360,8 +360,6 @@ public:
 
 
   void common_init() {
-    if (AllowGraphicsMode) m_StyleFunc = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
-    else                   m_StyleFunc = &REFIT_MENU_SCREEN::TextMenuStyle;
 #ifdef CLOVER_BUILD
     EFI_TIME          Now;
     gRT->GetTime(&Now, NULL);
@@ -446,14 +444,18 @@ public:
 
   virtual void GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
   virtual void TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText);
+  virtual void MenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText) {
+    if (AllowGraphicsMode) GraphicsMenuStyle(Function, ParamText);
+    else                   TextMenuStyle(Function, ParamText);
+  }
 
-  MENU_STYLE_FUNC  m_StyleFunc = NULL;
+//  MENU_STYLE_FUNC  m_StyleFunc = NULL;
 
-  virtual void call_MENU_FUNCTION_INIT(IN CONST CHAR16 *ParamText)              { ((*this).*(m_StyleFunc))(MENU_FUNCTION_INIT, ParamText); }
-  virtual void call_MENU_FUNCTION_PAINT_ALL(IN CONST CHAR16 *ParamText)         { ((*this).*(m_StyleFunc))(MENU_FUNCTION_PAINT_ALL, ParamText); }
-  virtual void call_MENU_FUNCTION_PAINT_SELECTION(IN CONST CHAR16 *ParamText)   { ((*this).*(m_StyleFunc))(MENU_FUNCTION_PAINT_SELECTION, ParamText); }
-  virtual void call_MENU_FUNCTION_PAINT_TIMEOUT(IN CONST CHAR16 *ParamText)     { ((*this).*(m_StyleFunc))(MENU_FUNCTION_PAINT_TIMEOUT, ParamText); }
-  virtual void call_MENU_FUNCTION_CLEANUP(IN CONST CHAR16 *ParamText)           { ((*this).*(m_StyleFunc))(MENU_FUNCTION_CLEANUP, ParamText); }
+  virtual void call_MENU_FUNCTION_INIT(IN CONST CHAR16 *ParamText)              { MenuStyle(MENU_FUNCTION_INIT, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_ALL(IN CONST CHAR16 *ParamText)         { MenuStyle(MENU_FUNCTION_PAINT_ALL, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_SELECTION(IN CONST CHAR16 *ParamText)   { MenuStyle(MENU_FUNCTION_PAINT_SELECTION, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_TIMEOUT(IN CONST CHAR16 *ParamText)     { MenuStyle(MENU_FUNCTION_PAINT_TIMEOUT, ParamText); }
+  virtual void call_MENU_FUNCTION_CLEANUP(IN CONST CHAR16 *ParamText)           { MenuStyle(MENU_FUNCTION_CLEANUP, ParamText); }
 
   virtual ~REFIT_MENU_SCREEN() {};
 };

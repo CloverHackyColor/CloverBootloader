@@ -13,6 +13,7 @@
 #include "../libeg/XIcon.h"
 #include "../cpp_lib/undefinable.h"
 #include "../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
+//#include "card_vlist.h"
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 
@@ -443,6 +444,37 @@ public :
   MMIOWhiteList& operator=(const MMIOWhiteList&) = delete;
 };
 
+
+/**
+  Set of Search & replace bytes for VideoBiosPatchBytes().
+  this is supposed to be a replacement of VBIOS_PATCH_BYTES, but that would need VbiosPatchLibrary to be update to C++. Quite easy, but need cpp_fundation to become a library. TODO
+**/
+class VBIOS_PATCH {
+public:
+  XBuffer<uint8_t> Find = XBuffer<uint8_t>();
+  XBuffer<uint8_t> Replace = XBuffer<uint8_t>();
+};
+
+class PatchVBiosBytesNewClass : public XObjArray<VBIOS_PATCH>
+{
+  mutable XArray<VBIOS_PATCH_BYTES> VBIOS_PATCH_BYTES_array = XArray<VBIOS_PATCH_BYTES>();
+public:
+  // Temporary bridge to old struct.
+  const VBIOS_PATCH_BYTES* getVBIOS_PATCH_BYTES() {
+    VBIOS_PATCH_BYTES_array.setSize(size());
+    for ( size_t idx = 0 ; idx < size() ; ++idx ) {
+      VBIOS_PATCH_BYTES_array[idx].Find = ElementAt(idx).Find.data();
+      VBIOS_PATCH_BYTES_array[idx].Replace = ElementAt(idx).Replace.data();
+      VBIOS_PATCH_BYTES_array[idx].NumberOfBytes = ElementAt(idx).Replace.size();
+    }
+    return VBIOS_PATCH_BYTES_array;
+  }
+  size_t getVBIOS_PATCH_BYTES_count() const {
+    return size();
+  }
+};
+
+
 class SETTINGS_DATA;
 class ConfigPlist;
 class TagDict;
@@ -601,15 +633,15 @@ public:
       UINT16                  QPI = 0;
       UINT32                  CpuFreqMHz = 0;
       UINT16                  CpuType = 0;
-      BOOLEAN                 QEMU = 0;
-      BOOLEAN                 UseARTFreq = 0;
+      bool                    QEMU = 0;
+      bool                    UseARTFreq = 0;
       UINT32                  BusSpeed = 0; //in kHz
-      BOOLEAN                 UserChange = 0;
+      bool                    UserChange = 0;
       UINT8                   SavingMode = 0;
       bool                    HWPEnable = false;
       undefinable_uint32      HWPValue = undefinable_uint32();
       UINT8                   TDP = 0;
-      BOOLEAN                 Turbo = 0;
+      bool                    TurboDisabled = 0;
       undefinable_bool        _EnableC6 = undefinable_bool();
       undefinable_bool        _EnableC4 = undefinable_bool();
       undefinable_bool        _EnableC2 = undefinable_bool();
@@ -635,27 +667,129 @@ public:
 
   } SystemParameters = SystemParametersClass();
 
+  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
+
+  class GraphicsClass {
+    public:
+      bool                     PatchVBios = bool();
+      PatchVBiosBytesNewClass  PatchVBiosBytesNew = PatchVBiosBytesNewClass();
+      
+      class EDIDClass {
+        public:
+          bool                    InjectEDID = bool();
+          XBuffer<UINT8>          CustomEDID = XBuffer<UINT8> ();
+          UINT16                  VendorEDID = UINT16();
+          UINT16                  ProductEDID = UINT16();
+          UINT16                  EdidFixHorizontalSyncPulseWidth = UINT16();
+          UINT8                   EdidFixVideoInputSignal = UINT8();
+      } EDID = EDIDClass();
+      
+      undefinable_bool InjectAsBool = undefinable_bool();
+      class InjectAsDictClass {
+        public:
+          bool InjectIntel = bool();
+          bool InjectATI = bool();
+          bool InjectNVidia = bool();
+      } InjectAsDict = InjectAsDictClass();
+      
+      bool                 RadeonDeInit = bool();
+      bool                 LoadVBios = bool();
+      UINT64               VRAM = bool();
+      UINT32               RefCLK = UINT32();
+      XStringW             FBName = XStringW();
+      UINT16               VideoPorts = UINT16();
+      bool                 NvidiaGeneric = bool();
+      bool                 NvidiaNoEFI = bool();
+      bool                 NvidiaSingle = bool();
+      UINT8                Dcfg[8] = {0};
+      UINT8                NVCAP[20] = {0};
+      INT8                 BootDisplay = INT8();
+      UINT32               DualLink = UINT32();
+      UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
+
+
+      class GRAPHIC_CARD {
+        public:
+          UINT32            Signature = 0;
+          XString8          Model = XString8();
+          UINT32            Id = 0;
+          UINT32            SubId = 0;
+          UINT64            VideoRam = 0;
+          UINTN             VideoPorts = 0;
+          bool           LoadVBios = 0;
+      };
+      XObjArray<GRAPHIC_CARD> gCardList = XObjArray<GRAPHIC_CARD>();
+
+      
+//      bool getGraphicsInjector() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.GraphicsInjector; }
+      bool InjectIntel() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectIntel; }
+      bool InjectATI() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectATI; }
+      bool InjectNVidia() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectNVidia; }
+
+    
+
+  } Graphics = GraphicsClass();
+  
+  class DevicesClass {
+    public:
+      
+      class AudioClass {
+        public:
+          bool                     ResetHDA = bool();
+      } Audio = AudioClass();
+
+  } Devices = DevicesClass();
+
   class QuirksClass {
     public:
       bool FuzzyMatch = bool();
       XString8 OcKernelCache = XString8();
       OC_KERNEL_QUIRKS OcKernelQuirks = OC_KERNEL_QUIRKS();
   } Quirks = QuirksClass();
+  
+  XStringWArray           DisabledDriverArray = XStringWArray();
+  
+  class RtVariablesClass {
+    public:
+      
+    XString8                RtROMAsString = XString8();
+    XBuffer<UINT8>          RtROMAsData = XBuffer<UINT8>();
+    XString8                RtMLBSetting = XString8();
+    UINT32                  CsrActiveConfig = UINT32();
+    UINT16                  BooterConfig = UINT16();
+    XString8                BooterCfgStr = XString8();
+
+    class RT_VARIABLES
+    {
+      public:
+        XString8 Comment = XStringW();
+        XStringW Name = XStringW();
+        EFI_GUID VarGuid = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}};
+    };
+    XObjArray<RT_VARIABLES>         BlockRtVariableArray = XObjArray<RT_VARIABLES>();
+
+    bool GetLegacyLanAddress() const {
+      return RtROMAsString.equalIC("UseMacAddr0") || RtROMAsString.equalIC("UseMacAddr1");
+    }
+
+  } RtVariables = RtVariablesClass();
+
+
 
   bool getEnableC6() const {
-    if ( CPU._EnableC6.isDefined() ) return CPU._EnableC6;
+    if ( CPU._EnableC6.isDefined() ) return CPU._EnableC6.value();
     return ACPI.SSDT._EnableC6;
   }
   bool getEnableC4() const {
-    if ( CPU._EnableC4.isDefined() ) return CPU._EnableC4;
+    if ( CPU._EnableC4.isDefined() ) return CPU._EnableC4.value();
     return ACPI.SSDT._EnableC4;
   }
   bool getEnableC2() const {
-    if ( CPU._EnableC2.isDefined() ) return CPU._EnableC2;
+    if ( CPU._EnableC2.isDefined() ) return CPU._EnableC2.value();
     return ACPI.SSDT._EnableC2;
   }
   bool getC3Latency() const {
-    if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency;
+    if ( CPU._C3Latency.isDefined() ) return CPU._C3Latency.value();
     return ACPI.SSDT._C3Latency;
   }
   
@@ -670,7 +804,6 @@ public:
   XString8                   VersionNr;
   XString8                   SerialNr;
   XString8                SmUUID;
-  CHAR8                   pad0[7];
 //CHAR8                    Uuid;
 //CHAR8                    SKUNumber;
   XString8                   FamilyName;
@@ -684,7 +817,6 @@ public:
   XString8                   BoardVersion;
   XString8                   OEMBoard;
   UINT8                   BoardType;
-  UINT8                   pad1;
   // SMBIOS TYPE3
   BOOLEAN                 Mobile;
   UINT8                   ChassisType;
@@ -695,7 +827,6 @@ public:
   // SMBIOS TYPE17
   UINT16                  SmbiosVersion;
   INT8                    Attribute;
-  INT8                    pad17[1];
   XString8                   MemoryManufacturer;
   XString8                   MemorySerialNumber;
   XString8                   MemoryPartNumber;
@@ -704,7 +835,6 @@ public:
   // SMBIOS TYPE132
   BOOLEAN                 TrustSMBIOS = 0;
   BOOLEAN                 InjectMemoryTables;
-  INT8                    pad18[3];
 
   // SMBIOS TYPE133
   UINT64                  PlatformFeature;
@@ -713,17 +843,11 @@ public:
   BOOLEAN                 NoRomInfo;
 
   // OS parameters
-  INT8                    pad181[7];
   XString8                Language;
-  INT8                    pad19[2];
 
-  INT8                    pad20[6];
 
 //Monitor
   BOOLEAN                 IntelMaxBacklight;
-  UINT8                   pad21[1];
-  UINT16                  VendorEDID;
-  UINT16                  ProductEDID;
   BOOLEAN                 IntelBacklight;
 //Boot options
   BOOLEAN                 MemoryFix;
@@ -731,12 +855,9 @@ public:
 
   // GUI parameters
   BOOLEAN                 Debug;
-//  BOOLEAN                 Proportional; //never used
-  UINT8                   pad22[2];
   UINT32                  DefaultBackgroundColor;
 
   //ACPI
-  UINT8                   pad23[1];
 
 //  BOOLEAN                 DropMCFG;
 
@@ -757,39 +878,9 @@ public:
 
   //Graphics
 //  UINT16                  PCIRootUID;
-  BOOLEAN                 GraphicsInjector;
-  BOOLEAN                 InjectIntel;
-  BOOLEAN                 InjectATI;
-  BOOLEAN                 InjectNVidia;
-  BOOLEAN                 DeInit;
-  BOOLEAN                 LoadVBios;
-  BOOLEAN                 PatchVBios;
-  UINT8                   pad24[5];
-  VBIOS_PATCH_BYTES       *PatchVBiosBytes;
-  UINTN                   PatchVBiosBytesCount;
-  BOOLEAN                 InjectEDID;
   BOOLEAN                 LpcTune;
   UINT16                  DropOEM_DSM; //vacant
-  UINT8                   pad25[4];
-  UINT8                   *CustomEDID;
-  UINT16                  CustomEDIDsize;
-  UINT16                  EdidFixHorizontalSyncPulseWidth;
-  UINT8                   EdidFixVideoInputSignal;
 
-  UINT8                   pad26[1];
-  XStringW                FBName;
-  UINT16                  VideoPorts;
-  BOOLEAN                 NvidiaGeneric;
-  BOOLEAN                 NvidiaNoEFI;
-  BOOLEAN                 NvidiaSingle;
-  UINT8                   pad27[5];
-  UINT64                  VRAM;
-  UINT8                   Dcfg[8];
-  UINT8                   NVCAP[20];
-  INT8                    BootDisplay;
-  UINT8                   pad41[2];
-  UINT32                  DualLink;
-  UINT32                  IgPlatform;
 
 
   // HDA
@@ -807,15 +898,12 @@ public:
   BOOLEAN                 LANInjection;
   BOOLEAN                 HDMIInjection;
 
- // UINT8                   pad61[2];
-
 
   //SkyLake
 
   //Volumes hiding
 
   // KernelAndKextPatches
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches;
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
@@ -823,30 +911,17 @@ public:
 
   // Pre-language
 
-  //Pointer
-  UINT8                   pad28[7];
 
-//  UINT8                   pad7[6];
-  UINT8                   pad29[6];
 
-  UINT32                  RefCLK;
 
   // SysVariables
-  UINT8                   pad30[4];
-  XString8                RtMLB;
-  XBuffer<UINT8>          RtROM;
 
-  UINT32                  CsrActiveConfig;
-  UINT16                  BooterConfig;
-  XString8                BooterCfgStr;
 
   // Multi-config
   CHAR16                  ConfigName[30];
-  UINT8                   pad31[4];
 //  XString8                MainConfigName;
 
   //Drivers
-  XStringWArray           DisabledDriverArray;
 
   //SMC keys
   CHAR8                   RPlt[8];
@@ -856,31 +931,13 @@ public:
 
   //other devices
   BOOLEAN                 ForceHPET;
-  BOOLEAN                 ResetHDA;
-  UINT8                   pad32[2];
   UINT32                  DisableFunctions;
 
-  //Patch DSDT arbitrary
-//  UINT32                  PatchDsdtNum;
-//  UINT8                   **PatchDsdtFind;
-//  UINT32                  *LenToFind;
-//  UINT8                   **PatchDsdtReplace;
-//  UINT32                  *LenToReplace;
-//  CHAR8                   **PatchDsdtLabel;
-//  CHAR8                   **PatchDsdtTgt;
-//  INPUT_ITEM              *PatchDsdtMenuItem;
 
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
   UINT8                   AFGLowPowerState;
-//  UINT8                   pad83[4];
 
-
-  // Table dropping
-  UINT8                   pad34[3];
-
-  // Custom entries
-  UINT8                   pad35[3];
 
   //Add custom properties
   UINTN                   NrAddProperties;
@@ -896,9 +953,6 @@ public:
 
   //ACPI tables
 
-  // ACPI/PATCHED/AML
-  UINT8                   pad36[4];
-
   //other
   UINT32                  IntelMaxValue;
 //  UINT32                  AudioVolume;
@@ -910,11 +964,9 @@ public:
   UINT32 EFILoginHiDPI;
   UINT8  flagstate[32];
 
-  UINT8                   pad37[4];
   DEV_PROPERTY            *ArbProperties;
   
   UINT32 QuirksMask;
-  UINT8                   pad38[4];
   UINTN MaxSlide;
 
   OC_BOOTER_QUIRKS   ocBooterQuirks;
@@ -923,23 +975,21 @@ public:
 
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
-                    pad0{0}, FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
-                    BoardVersion(), OEMBoard(), BoardType(0), pad1(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(),
-                    EnabledCores(0), SmbiosVersion(0), Attribute(0), pad17{0}, MemoryManufacturer(),
+                    FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
+                    BoardVersion(), OEMBoard(), BoardType(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(),
+                    EnabledCores(0), SmbiosVersion(0), Attribute(0), MemoryManufacturer(),
                     MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), InjectMemoryTables(0),
                     PlatformFeature(0), NoRomInfo(0), Language(),
-                    IntelMaxBacklight(0), VendorEDID(0), ProductEDID(0), IntelBacklight(0), MemoryFix(0),
-                    FakeSMCFound(0), Debug(0), pad22{0}, DefaultBackgroundColor(0), StringInjector(0), NoDefaultProperties(0),
-                    FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0), GraphicsInjector(0),
-                    InjectIntel(0), InjectATI(0), InjectNVidia(0), DeInit(0), LoadVBios(0), PatchVBios(0), PatchVBiosBytes(0), PatchVBiosBytesCount(0), InjectEDID(0),
-                    LpcTune(0), DropOEM_DSM(0), CustomEDID(0), CustomEDIDsize(0), EdidFixHorizontalSyncPulseWidth(0), EdidFixVideoInputSignal(0), FBName(), VideoPorts(0), NvidiaGeneric(0),
-                    NvidiaNoEFI(0), NvidiaSingle(0), VRAM(0), Dcfg{0}, NVCAP{0}, BootDisplay(0), pad41{0}, DualLink(0),
-                    IgPlatform(0), HDAInjection(0),
+                    IntelMaxBacklight(0), IntelBacklight(0), MemoryFix(0),
+                    FakeSMCFound(0), Debug(0), DefaultBackgroundColor(0), StringInjector(0), NoDefaultProperties(0),
+                    FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0),
+                    LpcTune(0), DropOEM_DSM(0),
+                    HDAInjection(0),
                     HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
-                    KernelAndKextPatches(), KextPatchesAllowed(0),
+                    KextPatchesAllowed(0),
                     KernelPatchesAllowed(0), AirportBridgeDeviceName(),
-                    RefCLK(0), RtMLB(), RtROM(), CsrActiveConfig(0), BooterConfig(0), BooterCfgStr(),
-                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ DisabledDriverArray(), RPlt{0}, RBr{0}, EPCI{0}, REV{0},                     ForceHPET(0), ResetHDA(0), DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
+                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ RPlt{0}, RBr{0}, EPCI{0}, REV{0},
+                    ForceHPET(0),  DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
                     ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, mmioWhiteListArray()
@@ -1021,21 +1071,9 @@ public:
   ~SIDELOAD_KEXT() { }
 };
 
-class RT_VARIABLES
-{
-public:
-  XStringW Name;
-  EFI_GUID VarGuid;
-
-RT_VARIABLES() : Name(), VarGuid{0,0,0,{0}} {};
-  RT_VARIABLES(const RT_VARIABLES& other) = delete; // Can be defined if needed
-  const RT_VARIABLES& operator = ( const RT_VARIABLES & ) = delete; // Can be defined if needed
-  ~RT_VARIABLES() { }
-};
 
 
-
-extern XObjArray<RT_VARIABLES> BlockRtVariableArray;
+//extern XObjArray<RT_VARIABLES> gSettings.RtVariables.BlockRtVariableArray;
 extern XObjArray<HDA_OUTPUTS> AudioList;
 
 extern XStringWArray ThemeNameArray;
@@ -1147,6 +1185,10 @@ public:
   bool KPKernelPm = bool();
   bool KPAppleIntelCPUPM = bool();
 
+  XBuffer<UINT8>          RtROM = XBuffer<UINT8>();
+  XString8                RtMLB = XString8();
+
+  bool Turbo;
 
   REFIT_CONFIG() {};
   REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed

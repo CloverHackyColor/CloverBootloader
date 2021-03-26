@@ -898,7 +898,7 @@ void LOADER_ENTRY::AddDefaultMenu()
 //    SubScreen->AddMenuCheck("Disable AppleALC (-alcoff)",                 OPT_APPLEALC, 68);
 //    SubScreen->AddMenuCheck("Disable Shiki (-shikioff)",                  OPT_SHIKI, 68);
 
-    if (gSettings.CsrActiveConfig == 0) {
+    if (gSettings.RtVariables.CsrActiveConfig == 0) {
       SubScreen->AddMenuCheck("No SIP", OSFLAG_NOSIP, 69);
     }
     

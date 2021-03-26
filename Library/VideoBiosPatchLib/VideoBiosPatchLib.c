@@ -202,7 +202,7 @@ VideoBiosLock (
 EFI_STATUS
 EFIAPI
 VideoBiosPatchBytes (
-  IN  VBIOS_PATCH_BYTES   *FindAndReplace,
+  IN JCONST VBIOS_PATCH_BYTES   *FindAndReplace,
   IN  UINTN               FindAndReplaceCount
   )
 {

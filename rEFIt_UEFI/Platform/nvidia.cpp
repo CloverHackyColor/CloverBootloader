@@ -2012,14 +2012,14 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
   return (has_lvds ? PATCH_ROM_SUCCESS_HAS_LVDS : PATCH_ROM_SUCCESS);
 }
 
-CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, const CARDLIST * nvcard)
+CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD * nvcard)
 {
   UINTN i, j;
   //DBG("get_nvidia_model for (%08X, %08X)\n", device_id, subsys_id);
 
   //ErmaC added selector for nVidia "old" style in System Profiler
-  //DBG("NvidiaGeneric = %ls\n", gSettings.NvidiaGeneric?L"YES":L"NO");
-  if (gSettings.NvidiaGeneric == FALSE) {
+  //DBG("NvidiaGeneric = %ls\n", gSettings.Graphics.NvidiaGeneric?L"YES":L"NO");
+  if (gSettings.Graphics.NvidiaGeneric == FALSE) {
     // First check in the plist, (for e.g this can override any hardcoded devices)
     //CARDLIST * nvcard = FindCardWithIds(device_id, subsys_id);
     if (nvcard && (nvcard->Id == device_id) && (nvcard->SubId == subsys_id)) {
@@ -2042,7 +2042,7 @@ CONST CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id, const CARDLIST
     if (nvidia_card_generic[i].device == device_id) {
       //--
       //ErmaC added selector for nVidia "old" style in System Profiler
-      if (gSettings.NvidiaGeneric) {
+      if (gSettings.Graphics.NvidiaGeneric) {
         DBG("Apply NvidiaGeneric\n");
 		  snprintf(generic_name, 128, "NVIDIA %s", nvidia_card_generic[i].name_model);
         return &generic_name[0]; // generic_name;
@@ -2094,9 +2094,9 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device, INTN n_ports)
 
 	  snprintf(nkey, 24, "@%lld,display-cfg", pnum);
     if (pnum == 0) {
-      devprop_add_value(device, nkey, (gSettings.Dcfg[0] != 0) ? &gSettings.Dcfg[0] : default_dcfg_0, DCFG0_LEN);
+      devprop_add_value(device, nkey, (gSettings.Graphics.Dcfg[0] != 0) ? &gSettings.Graphics.Dcfg[0] : default_dcfg_0, DCFG0_LEN);
     } else {
-      devprop_add_value(device, nkey, (gSettings.Dcfg[1] != 0) ? &gSettings.Dcfg[4] : default_dcfg_1, DCFG1_LEN);
+      devprop_add_value(device, nkey, (gSettings.Graphics.Dcfg[1] != 0) ? &gSettings.Graphics.Dcfg[4] : default_dcfg_1, DCFG1_LEN);
     }
   }
 
@@ -2182,7 +2182,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   EFI_STATUS    Status = EFI_NOT_FOUND;
   DevPropDevice *device = NULL;
   XString8      devicepath;
-  BOOLEAN       load_vbios = gSettings.LoadVBios;
+  BOOLEAN       load_vbios = gSettings.Graphics.LoadVBios;
   BOOLEAN       Injected = FALSE;
   UINT8         *rom = NULL;
   UINT16        nvCardType = 0;
@@ -2201,7 +2201,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   XString8      version_str;
   BOOLEAN       RomAssigned = FALSE;
   UINT32        device_id, subsys_id;
-  const CARDLIST      *nvcard;
+  const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD      *nvcard;
 
   devicepath = get_pci_dev_path(nvda_dev);
   bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
@@ -2229,14 +2229,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
 
     // Amount of VRAM in Mb
-    if (gSettings.VRAM != 0) {
-      videoRam = gSettings.VRAM << 20;
+    if (gSettings.Graphics.VRAM != 0) {
+      videoRam = gSettings.Graphics.VRAM << 20;
     } else {
       videoRam = mem_detect(nvCardType, nvda_dev);
     }
   }
 
-  if (gSettings.NvidiaGeneric) {
+  if (gSettings.Graphics.NvidiaGeneric) {
     // Get Model from the PCI
     //    model = get_nvidia_model(((nvda_dev->vendor_id << 16) | nvda_dev->device_id), subsystem);
     if (model == NULL) { // !nvcard->Model
@@ -2409,20 +2409,20 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   DBG("Nvidia: VideoPorts:");
   if (n_ports > 0) {
 	  DBG(" user defined (GUI-menu): %llu\n", n_ports);
-  } else if (gSettings.VideoPorts > 0) {
-    n_ports = gSettings.VideoPorts;
+  } else if (gSettings.Graphics.VideoPorts > 0) {
+    n_ports = gSettings.Graphics.VideoPorts;
 	  DBG(" user defined from config.plist: %llu\n", n_ports);
   } else {
     n_ports = 2; //default
 	  DBG(" undefined, default to: %llu\n", n_ports);
   }
 
-  if (gSettings.NvidiaNoEFI) {
+  if (gSettings.Graphics.NvidiaNoEFI) {
     devprop_add_value(device, "NVDA,noEFI", (UINT8*)"true", 5);
   }
 
   //There are custom properties, injected if set by user
-  if (gSettings.NvidiaSingle && (devices_number >=1)) {
+  if (gSettings.Graphics.NvidiaSingle && (devices_number >=1)) {
     DBG("NVidia: NvidiaSingle :: skip injecting other then first card\n");
     goto done;
   }
@@ -2458,26 +2458,26 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
 
-  if (gSettings.NVCAP[0] != 0) {
-    devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
+  if (gSettings.Graphics.NVCAP[0] != 0) {
+    devprop_add_value(device, "NVCAP", &gSettings.Graphics.NVCAP[0], NVCAP_LEN);
     DBG("set NVCAP: %02hhX%02hhX%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX\n",
-        gSettings.NVCAP[0], gSettings.NVCAP[1], gSettings.NVCAP[2], gSettings.NVCAP[3],
-        gSettings.NVCAP[4], gSettings.NVCAP[5], gSettings.NVCAP[6], gSettings.NVCAP[7],
-        gSettings.NVCAP[8], gSettings.NVCAP[9], gSettings.NVCAP[10], gSettings.NVCAP[11],
-        gSettings.NVCAP[12], gSettings.NVCAP[13], gSettings.NVCAP[14], gSettings.NVCAP[15],
-        gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);
+        gSettings.Graphics.NVCAP[0], gSettings.Graphics.NVCAP[1], gSettings.Graphics.NVCAP[2], gSettings.Graphics.NVCAP[3],
+        gSettings.Graphics.NVCAP[4], gSettings.Graphics.NVCAP[5], gSettings.Graphics.NVCAP[6], gSettings.Graphics.NVCAP[7],
+        gSettings.Graphics.NVCAP[8], gSettings.Graphics.NVCAP[9], gSettings.Graphics.NVCAP[10], gSettings.Graphics.NVCAP[11],
+        gSettings.Graphics.NVCAP[12], gSettings.Graphics.NVCAP[13], gSettings.Graphics.NVCAP[14], gSettings.Graphics.NVCAP[15],
+        gSettings.Graphics.NVCAP[16], gSettings.Graphics.NVCAP[17], gSettings.Graphics.NVCAP[18], gSettings.Graphics.NVCAP[19]);
   }
 
-  if (gSettings.InjectEDID && gSettings.CustomEDID) {
-    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+  if (gSettings.Graphics.EDID.InjectEDID && gSettings.Graphics.EDID.CustomEDID.notEmpty()) {
+    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.Graphics.EDID.CustomEDID.data(), 128);
   }
 
   if ((devices_number == 1) &&
-      ((gSettings.BootDisplay >= 0) && (gSettings.BootDisplay < (INT8)n_ports))) {
+      ((gSettings.Graphics.BootDisplay >= 0) && (gSettings.Graphics.BootDisplay < (INT8)n_ports))) {
     CHAR8 nkey[24];
-    snprintf(nkey, 24, "@%d,AAPL,boot-display", gSettings.BootDisplay);
+    snprintf(nkey, 24, "@%d,AAPL,boot-display", gSettings.Graphics.BootDisplay);
     devprop_add_value(device, nkey, (UINT8*)&boot_display, 4);
-    DBG("Nvidia: BootDisplay: %d\n", gSettings.BootDisplay);
+    DBG("Nvidia: BootDisplay: %d\n", gSettings.Graphics.BootDisplay);
   }
 
   //there are default or calculated properties, can be skipped
@@ -2486,11 +2486,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
  //   goto done;
   //}
 
-  if (gSettings.BootDisplay < 0) {
+  if (gSettings.Graphics.BootDisplay < 0) {
     // if not set this is default property
     devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
   }/* else {
-    DBG("Nvidia: BootDisplay: %hhX\n", gSettings.BootDisplay);
+    DBG("Nvidia: BootDisplay: %hhX\n", gSettings.Graphics.BootDisplay);
     }*/
 
   if (gSettings.UseIntelHDMI) {

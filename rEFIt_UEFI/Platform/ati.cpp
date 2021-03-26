@@ -1247,8 +1247,8 @@ BOOLEAN get_dual_link_val(value_t *val, INTN index, BOOLEAN Sier)
     return FALSE;
   }
 
-  if ((gSettings.DualLink == 0) || (gSettings.DualLink == 1)) {
-    v = gSettings.DualLink;
+  if ((gSettings.Graphics.DualLink == 0) || (gSettings.Graphics.DualLink == 1)) {
+    v = gSettings.Graphics.DualLink;
   } else {
     v = DualLink;
   }
@@ -1269,7 +1269,7 @@ BOOLEAN get_vrammemory_val(value_t *val, INTN index, BOOLEAN Sier)
 BOOLEAN get_edid_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   static UINT32 v = 0;
-  if (!gSettings.InjectEDID) {
+  if (!gSettings.Graphics.EDID.InjectEDID) {
     return FALSE;
   }
 
@@ -1277,13 +1277,13 @@ BOOLEAN get_edid_val(value_t *val, INTN index, BOOLEAN Sier)
     return FALSE;
   }
 //CustomEDID will point to user EDID if set else to EdidDiscovered
-  if (!gSettings.CustomEDID) {
+  if (gSettings.Graphics.EDID.CustomEDID.isEmpty()) {
     return FALSE;
   }
   v = 1;
   val->type = kPtr;
   val->size = 128;
-  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, gSettings.CustomEDID);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, gSettings.Graphics.EDID.CustomEDID.data());
   return TRUE;
 }
 
@@ -1445,7 +1445,7 @@ BOOLEAN get_binimage_val(value_t *val, INTN index, BOOLEAN Sier)
 
 BOOLEAN get_binimage_owr(value_t *val, INTN index, BOOLEAN Sier)
 {
-  if (!gSettings.LoadVBios) {
+  if (!gSettings.Graphics.LoadVBios) {
     return FALSE;
   }
   val->type = kCst;
@@ -1498,13 +1498,13 @@ BOOLEAN get_sclk_val(value_t *val, INTN index, BOOLEAN Sier)
 
 BOOLEAN get_refclk_val(value_t *val, INTN index, BOOLEAN Sier)
 {
-  if (!gSettings.RefCLK) {
+  if (!gSettings.Graphics.RefCLK) {
     return FALSE;
   }
   //
   val->type = kCst;
   val->size = 4;
-  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&gSettings.RefCLK);
+  val->data = (__typeof__(val->data))AllocateCopyPool(val->size, (UINT8 *)&gSettings.Graphics.RefCLK);
   return TRUE;
 }
 
@@ -1688,9 +1688,9 @@ void get_vram_size(void)
   ati_chip_family_t chip_family = card->info->chip_family;
 
   card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
-  if (gSettings.VRAM != 0) {
-    card->vram_size = gSettings.VRAM << 20;
-	  DBG("Set VRAM from config=%lluMb\n", gSettings.VRAM);
+  if (gSettings.Graphics.VRAM != 0) {
+    card->vram_size = gSettings.Graphics.VRAM << 20;
+	  DBG("Set VRAM from config=%lluMb\n", gSettings.Graphics.VRAM);
     //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
@@ -1712,7 +1712,7 @@ void get_vram_size(void)
 	  DBG("Set VRAM for %s =%lluMb\n", chip_family_name[card->info->chip_family], (UINT64)RShiftU64(card->vram_size, 20));
 
   }
-  gSettings.VRAM = (UINT64)RShiftU64(card->vram_size, 20);
+  gSettings.Graphics.VRAM = (UINT64)RShiftU64(card->vram_size, 20);
 	DBG("ATI: get_vram_size returned 0x%llX\n", card->vram_size);
 }
 
@@ -1924,7 +1924,7 @@ BOOLEAN devprop_add_pci_config_space(void)
 
 static BOOLEAN init_card(pci_dt_t *pci_dev)
 {
-  BOOLEAN add_vbios = gSettings.LoadVBios;
+  BOOLEAN add_vbios = gSettings.Graphics.LoadVBios;
   CHAR8  *name;
   CHAR8  *name_parent;
   //    CHAR8   *model;
@@ -2027,9 +2027,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 
   card->flags |= FLAGNOTFAKE;
 
-  NameLen = gSettings.FBName.length();
+  NameLen = gSettings.Graphics.FBName.length();
   if (NameLen > 2) {  //fool proof: cfg_name is 3 character or more.
-    card->cfg_name = S8Printf("%ls", gSettings.FBName.wc_str()).forgetDataWithoutFreeing();
+    card->cfg_name = S8Printf("%ls", gSettings.Graphics.FBName.wc_str()).forgetDataWithoutFreeing();
     DBG("Users config name %s\n", card->cfg_name);
   } else {
     // use cfg_name on radeon_cards, to retrive the default name from card_configs,
@@ -2040,8 +2040,8 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	  DBG(" N ports defaults to %lld\n", n_ports);
   }
 
-  if (gSettings.VideoPorts != 0) {
-    n_ports = gSettings.VideoPorts;
+  if (gSettings.Graphics.VideoPorts != 0) {
+    n_ports = gSettings.Graphics.VideoPorts;
 	  DBG(" use N ports setting from config.plist: %lld\n", n_ports);
   }
 

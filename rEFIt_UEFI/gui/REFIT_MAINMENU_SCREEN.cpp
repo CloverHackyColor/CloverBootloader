@@ -735,16 +735,16 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
   OldRow = 0;
   OldTimeoutTextWidth = 0;
 
-  if (AllowGraphicsMode) {
-//    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
-    if (ThemeX.VerticalLayout) {
-      m_MainStyle = &REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle;
-    } else {
-      m_MainStyle = &REFIT_MAINMENU_SCREEN::MainMenuStyle;
-    }
-  }else{
-    m_MainStyle = &REFIT_MAINMENU_SCREEN::TextMenuStyle;
-  }
+//  if (AllowGraphicsMode) {
+////    Style = &REFIT_MENU_SCREEN::GraphicsMenuStyle;
+//    if (ThemeX.VerticalLayout) {
+//      m_MainStyle = &REFIT_MAINMENU_SCREEN::MainMenuVerticalStyle;
+//    } else {
+//      m_MainStyle = &REFIT_MAINMENU_SCREEN::MainMenuStyle;
+//    }
+//  }else{
+//    m_MainStyle = &REFIT_MAINMENU_SCREEN::TextMenuStyle;
+//  }
 
   while (!MenuExit) {
     GetAnime();
@@ -752,121 +752,129 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
     MenuExit = RunGenericMenu(&DefaultEntryIndex, &MainChosenEntry);
     TimeoutSeconds = 0;
 
-    if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL && MainChosenEntry->SubScreen->Entries.size() > 0) { // if MainChosenEntry->SubScreen->Entries.size() == 0, we got a crash in GraphicsMenuStyle
-      XString8Array TmpArgs;
-      if ( gSettings.Boot.BootArgs.length() > 0) {
-        TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
-      }
-      SubMenuIndex = -1;
+    if (MenuExit == MENU_EXIT_DETAILS && MainChosenEntry->SubScreen != NULL) {
+      if ( MainChosenEntry->SubScreen->Entries.size() > 0 ) { // if MainChosenEntry->SubScreen->Entries.size() == 0, we got a crash in GraphicsMenuStyle
+        XString8Array TmpArgs;
+        if ( gSettings.Boot.BootArgs.length() > 0) {
+          TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
+        }
+        SubMenuIndex = -1;
 
-      gSettings.OptionsBits = EncodeOptions(TmpArgs);
-      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
+        gSettings.OptionsBits = EncodeOptions(TmpArgs);
+  //      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
 
-      if (MainChosenEntry->getLOADER_ENTRY()) {
-        gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-        DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
-      }
-
-      if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()) {
-        DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()); 
-      }
- //     DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions.c_str());
-      DBG(" enter menu with LoadOptions: \n");
-      if (MainChosenEntry->getLOADER_ENTRY()) {
-        // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
-        gSettings.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
-      }
-      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
-
-      SubMenuExit = 0;
-      while (!SubMenuExit) {
-        //
-        //running details menu
-        //
-        SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(&SubMenuIndex, &TempChosenEntry);
-        DBG("SubMenuExit=%lld\n", SubMenuExit);
-        if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
-          SubMenuExit = MENU_EXIT_ENTER;
-          MenuExit = 0;
-          break;
+        if (MainChosenEntry->getLOADER_ENTRY()) {
+          gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
+  //        DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
         }
 
-        if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
-          MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = (((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
+        if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()) {
+          DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM());
         }
-        DBG("got options\n");
-        if (SubMenuExit == MENU_EXIT_DETAILS) {
-          SubMenuExit = 0;
-          continue;
+  //      DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+
+        if (MainChosenEntry->getLOADER_ENTRY()) {
+          // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
+          gSettings.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
         }
- //       DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions.c_str());
-        DBG(" exit menu with LoadOptions: \n");
-        if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
-          // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags/Options
-          MainChosenEntry->getLOADER_ENTRY()->Flags = TempChosenEntry->getLOADER_ENTRY()->Flags;
-          DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
-          if (OSFLAG_ISUNSET(TempChosenEntry->getLOADER_ENTRY()->Flags, OSFLAG_NODEFAULTARGS)) {
-            DecodeOptions(TempChosenEntry->getLOADER_ENTRY());
-            DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
-            DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
+  //      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
+
+        SubMenuExit = 0;
+        while (!SubMenuExit) {
+          //
+          //running details menu
+          //
+          SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(&SubMenuIndex, &TempChosenEntry);
+
+          if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
+            SubMenuExit = MENU_EXIT_ENTER;
+            MenuExit = 0;
+            break;
           }
-          // copy also loadoptions from subentry to mainentry
-          MainChosenEntry->getLOADER_ENTRY()->LoadOptions = TempChosenEntry->getLOADER_ENTRY()->LoadOptions;
-        }
 
-        if (/*MenuExit == MENU_EXIT_ENTER &&*/ TempChosenEntry->getLOADER_ENTRY()) {
-          if (TempChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
-            gSettings.Boot.BootArgs = TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8);
-          } else {
-            gSettings.Boot.BootArgs.setEmpty();
+          if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
+            MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = (((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
           }
-          DBG(" boot with args: %s\n", gSettings.Boot.BootArgs.c_str());
-        }
 
-        //---- Details submenu (kexts disabling etc)
-        if (SubMenuExit == MENU_EXIT_ENTER /*|| MenuExit == MENU_EXIT_DETAILS*/) {
-          if (TempChosenEntry->SubScreen != NULL) {
-            UINTN NextMenuExit = 0;
-            INTN NextEntryIndex = -1;
-            while (!NextMenuExit) {
-              //
-              // running submenu
-              //
-              NextMenuExit = TempChosenEntry->SubScreen->RunGenericMenu(&NextEntryIndex, &NextChosenEntry);
-              if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
-                SubMenuExit = 0;
-                NextMenuExit = MENU_EXIT_ENTER;
-                break;
-              }
-              DBG(" get NextChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
-              //---- Details submenu (kexts disabling etc) second level
-              if (NextMenuExit == MENU_EXIT_ENTER /*|| MenuExit == MENU_EXIT_DETAILS*/) {
-                if (NextChosenEntry->SubScreen != NULL) {
-                  UINTN DeepMenuExit = 0;
-                  INTN DeepEntryIndex = -1;
-                  REFIT_ABSTRACT_MENU_ENTRY    *DeepChosenEntry  = NULL;
-                  while (!DeepMenuExit) {
-                    //
-                    // run deep submenu
-                    //
-                    DeepMenuExit = NextChosenEntry->SubScreen->RunGenericMenu(&DeepEntryIndex, &DeepChosenEntry);
-                    if (DeepMenuExit == MENU_EXIT_ESCAPE || DeepChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
-                      DeepMenuExit = MENU_EXIT_ENTER;
-                      NextMenuExit = 0;
-                      break;
-                    }
-                    DBG(" get DeepChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
-                  } //while(!DeepMenuExit)
+          if (SubMenuExit == MENU_EXIT_DETAILS) {
+            SubMenuExit = 0;
+            continue;
+          }
+   //       DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
+
+          if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
+            // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags/Options
+            MainChosenEntry->getLOADER_ENTRY()->Flags = TempChosenEntry->getLOADER_ENTRY()->Flags;
+            DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
+            if (OSFLAG_ISUNSET(TempChosenEntry->getLOADER_ENTRY()->Flags, OSFLAG_NODEFAULTARGS)) {
+              DecodeOptions(TempChosenEntry->getLOADER_ENTRY());
+  //            DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
+  //            DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
+            }
+            // copy also loadoptions from subentry to mainentry
+            MainChosenEntry->getLOADER_ENTRY()->LoadOptions = TempChosenEntry->getLOADER_ENTRY()->LoadOptions;
+          }
+
+          if (/*MenuExit == MENU_EXIT_ENTER &&*/ TempChosenEntry->getLOADER_ENTRY()) {
+            if (TempChosenEntry->getLOADER_ENTRY()->LoadOptions.notEmpty()) {
+              gSettings.Boot.BootArgs = TempChosenEntry->getLOADER_ENTRY()->LoadOptions.ConcatAll(" "_XS8);
+            } else {
+              gSettings.Boot.BootArgs.setEmpty();
+            }
+            DBG(" boot with args: %s\n", gSettings.Boot.BootArgs.c_str());
+          }
+
+          //---- Details submenu (kexts disabling etc)
+          if (SubMenuExit == MENU_EXIT_ENTER /*|| MenuExit == MENU_EXIT_DETAILS*/) {
+            if (TempChosenEntry->SubScreen != NULL) {
+              UINTN NextMenuExit = 0;
+              INTN NextEntryIndex = -1;
+              while (!NextMenuExit) {
+                //
+                // running submenu
+                //
+                NextMenuExit = TempChosenEntry->SubScreen->RunGenericMenu(&NextEntryIndex, &NextChosenEntry);
+                if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
+                  SubMenuExit = 0;
+                  NextMenuExit = MENU_EXIT_ENTER;
+                  break;
                 }
-              }
+                DBG(" get NextChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)NextChosenEntry)->Flags);
+                //---- Details submenu (kexts disabling etc) second level
+                if (NextMenuExit == MENU_EXIT_ENTER /*|| MenuExit == MENU_EXIT_DETAILS*/) {
+                  if (NextChosenEntry->SubScreen != NULL) {
+                    UINTN DeepMenuExit = 0;
+                    INTN DeepEntryIndex = -1;
+                    REFIT_ABSTRACT_MENU_ENTRY    *DeepChosenEntry  = NULL;
+                    while (!DeepMenuExit) {
+                      //
+                      // run deep submenu
+                      //
+                      DeepMenuExit = NextChosenEntry->SubScreen->RunGenericMenu(&DeepEntryIndex, &DeepChosenEntry);
+                      if (DeepMenuExit == MENU_EXIT_ESCAPE || DeepChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
+                        DeepMenuExit = MENU_EXIT_ENTER;
+                        NextMenuExit = 0;
+                        break;
+                      }
+                      DBG(" get DeepChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)DeepChosenEntry)->Flags);
+                    } //while(!DeepMenuExit)
+                  }
+                }
 
-            } //while(!NextMenuExit)
+              } //while(!NextMenuExit)
+            }
           }
+          //---------
         }
-        //---------
+      }else{
+        // Here, it means MainChosenEntry->SubScreen != null, but MainChosenEntry->SubScreen->Entries.size() == 0.
+        // This is a technical bug. GraphicsMenuStyle would crash.
+        #ifdef DEBUG
+          panic("A sub menu doesn't have any entries");
+        #else
+          MenuExit = 0; // loop on main menu
+        #endif
       }
-    }else{
-      MenuExit = 0; // loop on main menu
     }
   }
 

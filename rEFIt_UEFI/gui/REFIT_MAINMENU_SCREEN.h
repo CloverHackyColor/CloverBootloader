@@ -36,7 +36,7 @@
 #define __REFIT_MAINMENU_SCREEN_H__
 
 #include "REFIT_MENU_SCREEN.h"
-
+#include "../libeg/XTheme.h"
 //#include "../Platform/Settings.h"
 //#include "../libeg/libegint.h"
 ////#include "../libeg/libeg.h"
@@ -60,7 +60,7 @@ class REFIT_MAINMENU_SCREEN : public REFIT_MENU_SCREEN
 {
 public:
   typedef void (REFIT_MAINMENU_SCREEN::*MAINMENU_STYLE_FUNC)(IN UINTN Function, IN CONST CHAR16 *ParamText);
-  MAINMENU_STYLE_FUNC m_MainStyle = NULL;
+//  MAINMENU_STYLE_FUNC m_MainStyle = NULL;
 
   REFIT_MAINMENU_SCREEN(UINTN ID, XStringW TTitle, XStringW TTimeoutText);
 
@@ -69,15 +69,26 @@ public:
   virtual void TextMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText) { REFIT_MENU_SCREEN::TextMenuStyle(Function, ParamText); }
   virtual void MainMenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText); // cannot remove from here because the use of pointer to member function
   virtual void MainMenuVerticalStyle(IN UINTN Function, IN CONST CHAR16 *ParamText); // cannot remove from here because the use of pointer to member function
+  virtual void MenuStyle(IN UINTN Function, IN CONST CHAR16 *ParamText) {
+    if (AllowGraphicsMode) {
+      if (ThemeX.VerticalLayout) {
+        MainMenuVerticalStyle(Function, ParamText);
+      } else {
+        MainMenuStyle(Function, ParamText);
+      }
+    }else {
+      TextMenuStyle(Function, ParamText);
+    }
+  }
 
   void DrawMainMenuEntry(REFIT_ABSTRACT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos);
   void DrawMainMenuLabel(IN CONST XStringW& Text, IN INTN XPos, IN INTN YPos);
 
-  virtual void call_MENU_FUNCTION_INIT(IN CONST CHAR16 *ParamText)              { ((*this).*(m_MainStyle))(MENU_FUNCTION_INIT, ParamText); }
-  virtual void call_MENU_FUNCTION_PAINT_ALL(IN CONST CHAR16 *ParamText)         { ((*this).*(m_MainStyle))(MENU_FUNCTION_PAINT_ALL, ParamText); }
-  virtual void call_MENU_FUNCTION_PAINT_SELECTION(IN CONST CHAR16 *ParamText)   { ((*this).*(m_MainStyle))(MENU_FUNCTION_PAINT_SELECTION, ParamText); }
-  virtual void call_MENU_FUNCTION_PAINT_TIMEOUT(IN CONST CHAR16 *ParamText)     { ((*this).*(m_MainStyle))(MENU_FUNCTION_PAINT_TIMEOUT, ParamText); }
-  virtual void call_MENU_FUNCTION_CLEANUP(IN CONST CHAR16 *ParamText)           { ((*this).*(m_MainStyle))(MENU_FUNCTION_CLEANUP, ParamText); }
+  virtual void call_MENU_FUNCTION_INIT(IN CONST CHAR16 *ParamText)              { MenuStyle(MENU_FUNCTION_INIT, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_ALL(IN CONST CHAR16 *ParamText)         { MenuStyle(MENU_FUNCTION_PAINT_ALL, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_SELECTION(IN CONST CHAR16 *ParamText)   { MenuStyle(MENU_FUNCTION_PAINT_SELECTION, ParamText); }
+  virtual void call_MENU_FUNCTION_PAINT_TIMEOUT(IN CONST CHAR16 *ParamText)     { MenuStyle(MENU_FUNCTION_PAINT_TIMEOUT, ParamText); }
+  virtual void call_MENU_FUNCTION_CLEANUP(IN CONST CHAR16 *ParamText)           { MenuStyle(MENU_FUNCTION_CLEANUP, ParamText); }
 };
 
 #endif

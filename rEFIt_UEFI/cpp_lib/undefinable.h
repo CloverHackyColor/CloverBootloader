@@ -28,7 +28,7 @@ public:
   }
   const T& dgetValue() const { return m_value; } // if !m_defined, m_value = T()
 
-  operator const T&() const {
+  explicit operator const T&() const {
     if ( !isDefined() ) panic("get value of an undefined undefinable type");
     return m_value;
   }
@@ -43,6 +43,8 @@ class undefinable_bool : public undefinable<bool>
 {
   using super = undefinable<bool>;
 public:
+    undefinable_bool() { }
+    undefinable_bool(bool newValue) { super::operator=(newValue); }
     undefinable_bool& operator = (bool newValue) { super::operator=(newValue); return *this; }
 };
 
@@ -50,6 +52,8 @@ class undefinable_uint16 : public undefinable<uint16_t>
 {
   using super = undefinable<uint16_t>;
 public:
+    undefinable_uint16() { }
+    undefinable_uint16(uint32_t newValue) { super::operator=(newValue); }
     undefinable_uint16& operator = (uint16_t newValue) { super::operator=(newValue); return *this; }
 };
 
@@ -57,6 +61,8 @@ class undefinable_uint32 : public undefinable<uint32_t>
 {
   using super = undefinable<uint32_t>;
 public:
+    undefinable_uint32() { }
+    undefinable_uint32(uint32_t newValue) { super::operator=(newValue); }
     undefinable_uint32& operator = (uint32_t newValue) { super::operator=(newValue); return *this; }
 };
 

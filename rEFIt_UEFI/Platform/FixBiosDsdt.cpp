@@ -2634,9 +2634,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     (
       !NeedHDMI &&
       (
-        ((DisplayVendor[VCard] == 0x8086) && (gSettings.InjectIntel   || !gSettings.FakeIntel)) ||
-        ((DisplayVendor[VCard] == 0x10DE) && (gSettings.InjectNVidia  || !gSettings.FakeNVidia)) ||
-        ((DisplayVendor[VCard] == 0x1002) && (gSettings.InjectATI     || !gSettings.FakeATI))
+        ((DisplayVendor[VCard] == 0x8086) && (gSettings.Graphics.InjectAsDict.InjectIntel   || !gSettings.FakeIntel)) ||
+        ((DisplayVendor[VCard] == 0x10DE) && (gSettings.Graphics.InjectAsDict.InjectNVidia  || !gSettings.FakeNVidia)) ||
+        ((DisplayVendor[VCard] == 0x1002) && (gSettings.Graphics.InjectAsDict.InjectATI     || !gSettings.FakeATI))
       )
     )
   ) {

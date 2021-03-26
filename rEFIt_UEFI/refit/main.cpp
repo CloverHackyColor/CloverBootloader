@@ -512,7 +512,7 @@ void LOADER_ENTRY::FilterBootPatches()
 /*
 void ReadSIPCfg()
 {
-  UINT32 csrCfg = gSettings.CsrActiveConfig & CSR_VALID_FLAGS;
+  UINT32 csrCfg = gSettings.RtVariables.CsrActiveConfig & CSR_VALID_FLAGS;
   CHAR16 *csrLog = (__typeof__(csrLog))AllocateZeroPool(SVALUE_MAX_SIZE);
 
   if (csrCfg & CSR_ALLOW_UNTRUSTED_KEXTS)
@@ -559,12 +559,12 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *, IN CONST CHAR16 *) 
 
 void CheckEmptyFB()
 {
-  BOOLEAN EmptyFB = (gSettings.IgPlatform == 0x00050000) ||
-  (gSettings.IgPlatform == 0x01620007) ||
-  (gSettings.IgPlatform == 0x04120004) ||
-  (gSettings.IgPlatform == 0x19120001) ||
-  (gSettings.IgPlatform == 0x59120003) ||
-  (gSettings.IgPlatform == 0x3E910003);
+  BOOLEAN EmptyFB = (gSettings.Graphics.IgPlatform == 0x00050000) ||
+  (gSettings.Graphics.IgPlatform == 0x01620007) ||
+  (gSettings.Graphics.IgPlatform == 0x04120004) ||
+  (gSettings.Graphics.IgPlatform == 0x19120001) ||
+  (gSettings.Graphics.IgPlatform == 0x59120003) ||
+  (gSettings.Graphics.IgPlatform == 0x3E910003);
   if (EmptyFB) {
     gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
   } else {
@@ -1329,8 +1329,8 @@ void LOADER_ENTRY::StartLoader()
 
     if ( macOSVersion >= MacOsVersion("10.11"_XS8) ) {
       if (OSFLAG_ISSET(Flags, OSFLAG_NOSIP)) {
-        gSettings.CsrActiveConfig = (UINT32)0xB7F;
-        gSettings.BooterConfig = 0x28;
+        gSettings.RtVariables.CsrActiveConfig = (UINT32)0xB7F;
+        gSettings.RtVariables.BooterConfig = 0x28;
       }
 //      ReadSIPCfg();
     }
@@ -2083,11 +2083,11 @@ void DisconnectSomeDevices(void)
 void PatchVideoBios(UINT8 *Edid)
 {
 
-  if (gSettings.PatchVBiosBytesCount > 0 && gSettings.PatchVBiosBytes != NULL) {
-    VideoBiosPatchBytes(gSettings.PatchVBiosBytes, gSettings.PatchVBiosBytesCount);
+  if ( gSettings.Graphics.PatchVBiosBytesNew.notEmpty() ) {
+    VideoBiosPatchBytes(gSettings.Graphics.PatchVBiosBytesNew.getVBIOS_PATCH_BYTES(), gSettings.Graphics.PatchVBiosBytesNew.getVBIOS_PATCH_BYTES_count());
   }
 
-  if (gSettings.PatchVBios) {
+  if (gSettings.Graphics.PatchVBios) {
     VideoBiosPatchNativeFromEdid(Edid);
   }
 }
@@ -2122,7 +2122,7 @@ static void LoadDrivers(void)
   ScanDriverDir(L"drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
 
-  VBiosPatchNeeded = gSettings.PatchVBios || (gSettings.PatchVBiosBytesCount > 0 && gSettings.PatchVBiosBytes != NULL);
+  VBiosPatchNeeded = gSettings.Graphics.PatchVBios || gSettings.Graphics.PatchVBiosBytesNew.getVBIOS_PATCH_BYTES_count() > 0;
   if (VBiosPatchNeeded) {
     // check if it is already done in CloverEFI BiosVideo
     Status = gRT->GetVariable (
@@ -2138,7 +2138,7 @@ static void LoadDrivers(void)
     }
   }
 
-  if (((gSettings.CustomEDID != NULL) && gFirmwareClover) || (VBiosPatchNeeded && !gDriversFlags.VideoLoaded)) {
+  if ( (gSettings.Graphics.EDID.CustomEDID.notEmpty() && gFirmwareClover) || (VBiosPatchNeeded && !gDriversFlags.VideoLoaded)) {
     // we have video bios patch - force video driver reconnect
     DBG("Video bios patch requested or CustomEDID - forcing video reconnect\n");
     gDriversFlags.VideoLoaded = TRUE;
@@ -2152,14 +2152,14 @@ static void LoadDrivers(void)
     // will use DriversToConnect - do not release it
     RegisterDriversToHighestPriority(DriversToConnect);
     if (VBiosPatchNeeded) {
-      if (gSettings.CustomEDID != NULL) {
-        Edid = gSettings.CustomEDID;
+      if (gSettings.Graphics.EDID.CustomEDID.notEmpty()) {
+        Edid = gSettings.Graphics.EDID.CustomEDID.data();
       } else {
         Edid = getCurrentEdid();
       }
       DisconnectSomeDevices();
       PatchVideoBios(Edid);
-      if (gSettings.CustomEDID == NULL) {
+      if (gSettings.Graphics.EDID.CustomEDID.isEmpty()) {
         FreePool(Edid);
       }
     } else {
@@ -2623,7 +2623,7 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     GlobalConfig.HWP = TRUE;
     AsmWriteMsr64 (MSR_IA32_PM_ENABLE, 1);
     if ( gSettings.CPU.HWPValue.isDefined() ) {
-      AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.CPU.HWPValue);
+      AsmWriteMsr64 (MSR_IA32_HWP_REQUEST, gSettings.CPU.HWPValue.value());
     }
   }
 
@@ -2686,9 +2686,9 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
     GlobalConfig.CodepageSize = 0x100;
   }
 
-  if (gSettings.InjectEDID){
+  if (gSettings.Graphics.EDID.InjectEDID){
     //DBG("Inject EDID\n");
-    if ( gSettings.CustomEDIDsize > 0  &&  gSettings.CustomEDIDsize % 128 == 0 ) {
+    if ( gSettings.Graphics.EDID.CustomEDID.size() > 0  &&  gSettings.Graphics.EDID.CustomEDID.size() % 128 == 0 ) {
       InitializeEdidOverride();
     }
   }
@@ -2696,6 +2696,32 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm || GlobalConfig.NeedPMfix;
   GlobalConfig.KPAppleIntelCPUPM = gSettings.KernelAndKextPatches._KPAppleIntelCPUPM || GlobalConfig.NeedPMfix;
 
+  if ( gSettings.RtVariables.RtROMAsString.equalIC("UseMacAddr0") ) {
+    GlobalConfig.RtROM.ncpy(&gLanMac[0][0], 6);
+  } else if ( gSettings.RtVariables.RtROMAsString.equalIC("UseMacAddr1") ) {
+    GlobalConfig.RtROM.ncpy(&gLanMac[1][0], 6);
+  }else{
+    GlobalConfig.RtROM = gSettings.RtVariables.RtROMAsData;
+  }
+  if ( GlobalConfig.RtROM.isEmpty() ) {
+    EFI_GUID uuid;
+    StrToGuidLE(gSettings.SmUUID, &uuid);
+    GlobalConfig.RtROM.ncpy(&uuid.Data4[2], 6);
+  }
+  GlobalConfig.RtMLB = gSettings.RtVariables.RtMLBSetting;
+  if ( GlobalConfig.RtMLB.isEmpty() ) {
+    GlobalConfig.RtMLB = gSettings.BoardSerialNumber;
+  }
+
+  for (size_t i = 0; i < NGFX; i++) {
+    gGraphics[i].LoadVBios = gSettings.Graphics.LoadVBios; //default
+  }
+
+  if ( gSettings.CPU.TurboDisabled ) {
+    GlobalConfig.Turbo = false;
+  }else{
+    GlobalConfig.Turbo = gCPUStructure.Turbo;
+  }
 }
 #pragma GCC diagnostic pop
 

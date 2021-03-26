@@ -184,11 +184,11 @@ OvrSetVariable(
   EFI_STATUS			Status;
   UINTN i;
 
-  for (i = 0; i < BlockRtVariableArray.size(); i++) {
-    if (!CompareGuid(&BlockRtVariableArray[i].VarGuid, VendorGuid)) {
+  for (i = 0; i < gSettings.RtVariables.BlockRtVariableArray.size(); i++) {
+    if (!CompareGuid(&gSettings.RtVariables.BlockRtVariableArray[i].VarGuid, VendorGuid)) {
       continue;
     }
-    if (BlockRtVariableArray[i].Name.isEmpty() || BlockRtVariableArray[i].Name[0] == L'*' || BlockRtVariableArray[i].Name == LStringW(VariableName) ) {
+    if (gSettings.RtVariables.BlockRtVariableArray[i].Name.isEmpty() || gSettings.RtVariables.BlockRtVariableArray[i].Name[0] == L'*' || gSettings.RtVariables.BlockRtVariableArray[i].Name == LStringW(VariableName) ) {
       return EFI_SUCCESS;
     }
   }
@@ -230,7 +230,7 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   //
   // firmware Variables
   //
-  if (BlockRtVariableArray.size() > 0) {
+  if (gSettings.RtVariables.BlockRtVariableArray.size() > 0) {
     OvrRuntimeServices(gRT);
   }
   
@@ -243,23 +243,23 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
 
   Attributes     = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
 
-  if (gSettings.RtMLB.notEmpty()) {
-    if ( gSettings.RtMLB.length() != 17 ) {
+  if (GlobalConfig.RtMLB.notEmpty()) {
+    if ( GlobalConfig.RtMLB.length() != 17 ) {
       DBG("** Warning: Your MLB is not suitable for iMessage(must be 17 chars long) !\n");
     }
 
     SetNvramXString8(L"MLB",
                      &gEfiAppleNvramGuid,
                      Attributes,
-                     gSettings.RtMLB);
+                     GlobalConfig.RtMLB);
   }
 
-  if (gSettings.RtROM.notEmpty()) {
+  if (GlobalConfig.RtROM.notEmpty()) {
     SetNvramVariable(L"ROM",
                      &gEfiAppleNvramGuid,
                      Attributes,
-                     gSettings.RtROM.size(),
-                     gSettings.RtROM.vdata());
+                     GlobalConfig.RtROM.size(),
+                     GlobalConfig.RtROM.vdata());
   }
 
   SetNvramVariable(L"FirmwareFeatures",
@@ -375,16 +375,16 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
 
   // Hack for recovery by Asgorath
-  if (gSettings.CsrActiveConfig != 0xFFFF) {
-    SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.CsrActiveConfig), &gSettings.CsrActiveConfig);
+  if (gSettings.RtVariables.CsrActiveConfig != 0xFFFF) {
+    SetNvramVariable(L"csr-active-config", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.RtVariables.CsrActiveConfig), &gSettings.RtVariables.CsrActiveConfig);
   }
 /*
-  if (gSettings.BooterConfig != 0) {
-    SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.BooterConfig), &gSettings.BooterConfig);
+  if (gSettings.RtVariables.BooterConfig != 0) {
+    SetNvramVariable(L"bootercfg", &gEfiAppleBootGuid, Attributes, sizeof(gSettings.RtVariables.BooterConfig), &gSettings.RtVariables.BooterConfig);
   }
 */
-  if ( gSettings.BooterCfgStr.notEmpty() ) {
-    SetNvramXString8(L"bootercfg", &gEfiAppleBootGuid, Attributes, gSettings.BooterCfgStr);
+  if ( gSettings.RtVariables.BooterCfgStr.notEmpty() ) {
+    SetNvramXString8(L"bootercfg", &gEfiAppleBootGuid, Attributes, gSettings.RtVariables.BooterCfgStr);
   } else {
     DeleteNvramVariable(L"bootercfg", &gEfiAppleBootGuid);
   }

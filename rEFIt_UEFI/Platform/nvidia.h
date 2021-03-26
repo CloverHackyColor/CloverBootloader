@@ -186,7 +186,7 @@ CONST CHAR8
 *get_nvidia_model (
   UINT32 device_id,
   UINT32 subsys_id,
-  const CARDLIST * nvcard
+                   const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD * nvcard
   );
 
 #endif /* !__LIBSAIO_NVIDIA_H */
