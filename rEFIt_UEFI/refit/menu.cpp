@@ -177,7 +177,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.PatchNMI;
   InputItems[InputItemsCount].ItemType = BoolValue; //16
-  InputItems[InputItemsCount++].BValue = gSettings.PatchVBios;
+  InputItems[InputItemsCount++].BValue = gSettings.Graphics.PatchVBios;
   InputItems[InputItemsCount].ItemType = Decimal;  //17
 	InputItems[InputItemsCount++].SValue.SWPrintf("0x%llX", gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
@@ -195,35 +195,35 @@ void FillInputs(BOOLEAN New)
 
     if (gGraphics[i].Vendor == Ati) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
-      InputItems[InputItemsCount++].BValue = gSettings.InjectATI;
+      InputItems[InputItemsCount++].BValue = gSettings.Graphics.InjectAsDict.InjectATI;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
-      if ( gSettings.FBName.length() > 2 ) { //fool proof: cfg_name is 3 character or more.
-		    InputItems[InputItemsCount++].SValue.SWPrintf("%ls", gSettings.FBName.wc_str());
+      if ( gSettings.Graphics.FBName.length() > 2 ) { //fool proof: cfg_name is 3 character or more.
+		    InputItems[InputItemsCount++].SValue.SWPrintf("%ls", gSettings.Graphics.FBName.wc_str());
       } else {
 		    InputItems[InputItemsCount++].SValue.SWPrintf("%s", gGraphics[i].Config);
       }
     } else if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
-      InputItems[InputItemsCount++].BValue = gSettings.InjectNVidia;
+      InputItems[InputItemsCount++].BValue = gSettings.Graphics.InjectAsDict.InjectNVidia;
       InputItems[InputItemsCount].ItemType = ASString; //22+6i
       for (j=0; j<8; j++) {
-        snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.Dcfg[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.Graphics.Dcfg[j]);
       }
 		  InputItems[InputItemsCount++].SValue.SWPrintf("%s", tmp);
 
-      //InputItems[InputItemsCount++].SValue = P__oolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
+      //InputItems[InputItemsCount++].SValue = P__oolPrint(L"%08x",*(UINT64*)&gSettings.Graphics.Dcfg[0]);
     } else /*if (gGraphics[i].Vendor == Intel) */ {
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
-      InputItems[InputItemsCount++].BValue = gSettings.InjectIntel;
+      InputItems[InputItemsCount++].BValue = gSettings.Graphics.InjectAsDict.InjectIntel;
       InputItems[InputItemsCount].ItemType = Hex; //22+6i
-		  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.IgPlatform);
+		  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.Graphics.IgPlatform);
  //     InputItemsCount += 3;
  //     continue;
     }
 
     InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
-    if (gSettings.VideoPorts > 0) {
-      InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.VideoPorts);
+    if (gSettings.Graphics.VideoPorts > 0) {
+      InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.Graphics.VideoPorts);
     } else {
       InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gGraphics[i].Ports);
     }
@@ -231,7 +231,7 @@ void FillInputs(BOOLEAN New)
     if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = ASString; //24+6i
       for (j=0; j<20; j++) {
-        snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.NVCAP[j]);
+        snprintf((CHAR8*)&tmp[2*j], 3, "%02hhX", gSettings.Graphics.NVCAP[j]);
       }
 	    InputItems[InputItemsCount++].SValue.SWPrintf("%s", tmp);
     } else { //ATI and others there will be connectors
@@ -259,27 +259,27 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.FixMCFG;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //50
-  InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.RefCLK);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%06d", gSettings.Graphics.RefCLK);
 
   InputItems[InputItemsCount].ItemType = ASString;  //51 OS version if non-detected
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s ", NonDetected.c_str());
 
   InputItems[InputItemsCount].ItemType = BoolValue; //52
-  InputItems[InputItemsCount++].BValue = gSettings.InjectEDID;
+  InputItems[InputItemsCount++].BValue = gSettings.Graphics.EDID.InjectEDID;
 
   //VendorEDID & ProductEDID 53, 54
   InputItems[InputItemsCount].ItemType = Decimal;  //53
-	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.VendorEDID);
+	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.Graphics.EDID.VendorEDID);
   InputItems[InputItemsCount].ItemType = Decimal;  //54
-	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.ProductEDID);
+	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", gSettings.Graphics.EDID.ProductEDID);
 
   // ErmaC: NvidiaGeneric menu selector y/n
   InputItems[InputItemsCount].ItemType = BoolValue; //55
-  InputItems[InputItemsCount++].BValue = gSettings.NvidiaGeneric;
+  InputItems[InputItemsCount++].BValue = gSettings.Graphics.NvidiaGeneric;
   InputItems[InputItemsCount].ItemType = BoolValue; //56
   InputItems[InputItemsCount++].BValue = gSettings.SystemParameters.NvidiaWeb;
   InputItems[InputItemsCount].ItemType = BoolValue; //57
-  InputItems[InputItemsCount++].BValue = gSettings.ResetHDA;
+  InputItems[InputItemsCount++].BValue = gSettings.Devices.Audio.ResetHDA;
   InputItems[InputItemsCount].ItemType = BoolValue; //58
   InputItems[InputItemsCount++].BValue = gSettings.AFGLowPowerState;
   InputItems[InputItemsCount].ItemType = BoolValue; //59
@@ -305,9 +305,9 @@ void FillInputs(BOOLEAN New)
 
   // CSR - aka System Integrity Protection configuration
   InputItems[InputItemsCount].ItemType = CheckBit; //65
-  InputItems[InputItemsCount++].IValue = gSettings.BooterConfig;
+  InputItems[InputItemsCount++].IValue = gSettings.RtVariables.BooterConfig;
   InputItems[InputItemsCount].ItemType = CheckBit; //66
-  InputItems[InputItemsCount++].IValue = gSettings.CsrActiveConfig;
+  InputItems[InputItemsCount++].IValue = gSettings.RtVariables.CsrActiveConfig;
 
 
   InputItems[InputItemsCount].ItemType = CheckBit; //67
@@ -410,12 +410,12 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].BValue = gSettings.KernelPatchesAllowed;
 
   InputItems[InputItemsCount].ItemType = Hex; //109
-  InputItems[InputItemsCount++].SValue.SWPrintf("%01X", gSettings.DualLink);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%01X", gSettings.Graphics.DualLink);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //110
-  InputItems[InputItemsCount++].BValue = gSettings.NvidiaNoEFI;
+  InputItems[InputItemsCount++].BValue = gSettings.Graphics.NvidiaNoEFI;
   InputItems[InputItemsCount].ItemType = BoolValue; //111
-  InputItems[InputItemsCount++].BValue = gSettings.NvidiaSingle;
+  InputItems[InputItemsCount++].BValue = gSettings.Graphics.NvidiaSingle;
 
   InputItems[InputItemsCount].ItemType = Hex;  //112
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%04X", gSettings.IntelMaxValue);
@@ -423,7 +423,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //113
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.AutoMerge;
   InputItems[InputItemsCount].ItemType = BoolValue; //114
-  InputItems[InputItemsCount++].BValue = gSettings.DeInit;
+  InputItems[InputItemsCount++].BValue = gSettings.Graphics.RadeonDeInit;
   InputItems[InputItemsCount].ItemType = BoolValue; //115
   InputItems[InputItemsCount++].BValue = gSettings.SystemParameters.NoCaches;
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //116 - DSDT chooser
@@ -432,7 +432,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = ASString;  //117
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.EfiVersion.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //118
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BooterCfgStr.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.RtVariables.BooterCfgStr.c_str());
 
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //119 - Audio chooser
   InputItems[InputItemsCount++].IValue = 119;
@@ -551,7 +551,7 @@ void ApplyInputs(void)
   }
   i++; //16
   if (InputItems[i].Valid) {
-    gSettings.PatchVBios = InputItems[i].BValue;
+    gSettings.Graphics.PatchVBios = InputItems[i].BValue;
   }
   i++; //17
   if (InputItems[i].Valid) {
@@ -578,23 +578,23 @@ void ApplyInputs(void)
     i++; //21
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
-        gSettings.InjectATI = InputItems[i].BValue;
+        gSettings.Graphics.InjectAsDict.InjectATI = InputItems[i].BValue;
       } else if (gGraphics[j].Vendor == Nvidia) {
-        gSettings.InjectNVidia = InputItems[i].BValue;
+        gSettings.Graphics.InjectAsDict.InjectNVidia = InputItems[i].BValue;
       } else if (gGraphics[j].Vendor == Intel) {
-        gSettings.InjectIntel = InputItems[i].BValue;
+        gSettings.Graphics.InjectAsDict.InjectIntel = InputItems[i].BValue;
       }
     }
     i++; //22
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
-		  gSettings.FBName = InputItems[i].SValue;
+		  gSettings.Graphics.FBName = InputItems[i].SValue;
       } else if (gGraphics[j].Vendor == Nvidia) {
-        hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.Dcfg[0], sizeof(gSettings.Dcfg));
+        hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.Graphics.Dcfg[0], sizeof(gSettings.Graphics.Dcfg));
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
-        gSettings.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
-        DBG("applied *-platform-id=0x%X\n", gSettings.IgPlatform);
+        gSettings.Graphics.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
+        DBG("applied *-platform-id=0x%X\n", gSettings.Graphics.IgPlatform);
       }
     }
 
@@ -611,7 +611,7 @@ void ApplyInputs(void)
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Nvidia) {
         if ( InputItems[i].SValue.notEmpty() ) {
-          hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.NVCAP[0], sizeof(gSettings.NVCAP));
+          hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.Graphics.NVCAP[0], sizeof(gSettings.Graphics.NVCAP));
         }
       } else {
         gGraphics[j].Connectors = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
@@ -657,7 +657,7 @@ void ApplyInputs(void)
 
   i++; //50
   if (InputItems[i].Valid) {
-    gSettings.RefCLK = (UINT32)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    gSettings.Graphics.RefCLK = (UINT32)StrDecimalToUintn(InputItems[i].SValue.wc_str());
   }
 
   i++; //51
@@ -667,20 +667,20 @@ void ApplyInputs(void)
 
   i++; //52
   if (InputItems[i].Valid) {
-    gSettings.InjectEDID = InputItems[i].BValue;
+    gSettings.Graphics.EDID.InjectEDID = InputItems[i].BValue;
   }
   i++; //53
   if (InputItems[i].Valid) {
-    gSettings.VendorEDID = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
+    gSettings.Graphics.EDID.VendorEDID = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
   }
   i++; //54
   if (InputItems[i].Valid) {
-    gSettings.ProductEDID = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
+    gSettings.Graphics.EDID.ProductEDID = (UINT16)StrHexToUint64(InputItems[i].SValue.wc_str());
   }
   i++; //55
   // ErmaC: NvidiaGeneric bool(Y/N)
   if (InputItems[i].Valid) {
-    gSettings.NvidiaGeneric = InputItems[i].BValue;
+    gSettings.Graphics.NvidiaGeneric = InputItems[i].BValue;
   }
   i++; //56
   if (InputItems[i].Valid) {
@@ -688,7 +688,7 @@ void ApplyInputs(void)
   }
   i++; //57
   if (InputItems[i].Valid) {
-    gSettings.ResetHDA = InputItems[i].BValue;
+    gSettings.Devices.Audio.ResetHDA = InputItems[i].BValue;
   }
   i++; //58
   if (InputItems[i].Valid) {
@@ -728,11 +728,11 @@ void ApplyInputs(void)
   // CSR
   i = 65;
   if (InputItems[i].Valid) {
-    gSettings.BooterConfig = InputItems[i].IValue & 0x7F;
+    gSettings.RtVariables.BooterConfig = InputItems[i].IValue & 0x7F;
   }
   i++; //66
   if (InputItems[i].Valid) {
-    gSettings.CsrActiveConfig = InputItems[i].IValue;
+    gSettings.RtVariables.CsrActiveConfig = InputItems[i].IValue;
   }
 
   i++; //67
@@ -967,18 +967,18 @@ void ApplyInputs(void)
 
   i++; //109
   if (InputItems[i].Valid) {
-    gSettings.DualLink = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
-    DBG("applied DualLink=%X\n", gSettings.DualLink);
+    gSettings.Graphics.DualLink = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
+    DBG("applied DualLink=%X\n", gSettings.Graphics.DualLink);
   }
 
   i++; //110
   if (InputItems[i].Valid) {
-    gSettings.NvidiaNoEFI = InputItems[i].BValue;
+    gSettings.Graphics.NvidiaNoEFI = InputItems[i].BValue;
   }
 
   i++; //111
   if (InputItems[i].Valid) {
-    gSettings.NvidiaSingle = InputItems[i].BValue;
+    gSettings.Graphics.NvidiaSingle = InputItems[i].BValue;
   }
   i++; //112
   if (InputItems[i].Valid) {
@@ -990,7 +990,7 @@ void ApplyInputs(void)
   }
   i++; //114
   if (InputItems[i].Valid) {
-    gSettings.DeInit = InputItems[i].BValue;
+    gSettings.Graphics.RadeonDeInit = InputItems[i].BValue;
   }
   i++; //115
   if (InputItems[i].Valid) {
@@ -1010,7 +1010,7 @@ void ApplyInputs(void)
   }
   i++; //118
   if (InputItems[i].Valid) {
-	  gSettings.BooterCfgStr = InputItems[i].SValue;
+	  gSettings.RtVariables.BooterCfgStr = InputItems[i].SValue;
   }
   i++; //119
   if (InputItems[i].Valid) {
@@ -1550,14 +1550,14 @@ void ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     //MsgLog("@ESC: %ls\n", (*ChosenEntry)->Title);
   } else if (ChosenEntry->SubScreen->ID == SCREEN_CSR) {
     // CSR
-    ChosenEntry->Title.SWPrintf("System Integrity Protection [0x%04x]->", gSettings.CsrActiveConfig);
+    ChosenEntry->Title.SWPrintf("System Integrity Protection [0x%04x]->", gSettings.RtVariables.CsrActiveConfig);
     // check for the right booter flag to allow the application
     // of the new System Integrity Protection configuration.
-    if (gSettings.CsrActiveConfig != 0 && gSettings.BooterConfig == 0) {
-      gSettings.BooterConfig = 0x28;
+    if (gSettings.RtVariables.CsrActiveConfig != 0 && gSettings.RtVariables.BooterConfig == 0) {
+      gSettings.RtVariables.BooterConfig = 0x28;
     }
   } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.BooterConfig);
+	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.RtVariables.BooterConfig);
   }
 }
 
@@ -2369,7 +2369,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBLC()
 
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_BLC, NullXString8);
-//  Entry->Title.SPrintf("boot_args->flags [0x%02hhx]->", gSettings.BooterConfig);
+//  Entry->Title.SPrintf("boot_args->flags [0x%02hhx]->", gSettings.RtVariables.BooterConfig);
 
   // submenu description
   SubScreen->AddMenuInfoLine_f("Modify flags for boot.efi");

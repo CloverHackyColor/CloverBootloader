@@ -5,7 +5,7 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "nvidia.h"
-
+#include "../Platform/Settings.h"
 
 /*
  injection for NVIDIA card usage e.g (to be placed in the config.plist, under graphics tag): 
@@ -65,26 +65,25 @@
 #endif
 
 //LIST_ENTRY gCardList = INITIALIZE_LIST_HEAD_VARIABLE (gCardList);
-XObjArray<CARDLIST> gCardList;
 
 
-void AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
+//void AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam, UINTN VideoPorts, BOOLEAN LoadVBios)
+//{
+//	CARDLIST* new_card = new CARDLIST;
+//  new_card->Signature = CARDLIST_SIGNATURE;
+//  new_card->Id = Id;
+//  new_card->SubId = SubId;
+//  new_card->VideoRam = VideoRam;
+//  new_card->VideoPorts = VideoPorts;
+//  new_card->LoadVBios = LoadVBios;
+//  new_card->Model.takeValueFrom(Model);
+//  gCardList.AddReference(new_card, true);
+//}
+
+const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD* FindCardWithIds(UINT32 Id, UINT32 SubId)
 {
-	CARDLIST* new_card = new CARDLIST;
-  new_card->Signature = CARDLIST_SIGNATURE;
-  new_card->Id = Id;
-  new_card->SubId = SubId;
-  new_card->VideoRam = VideoRam;
-  new_card->VideoPorts = VideoPorts;
-  new_card->LoadVBios = LoadVBios;
-  new_card->Model.takeValueFrom(Model);
-  gCardList.AddReference(new_card, true);
-}
-
-const CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
-{
-  for ( size_t idx = 0; idx < gCardList._Len; ++idx ) {
-    const CARDLIST& entry = gCardList[idx];
+  for ( size_t idx = 0; idx < gSettings.Graphics.gCardList.size(); ++idx ) {
+    const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD& entry = gSettings.Graphics.gCardList[idx];
     if(entry.Id == Id) {
       return &entry;
     }
@@ -94,7 +93,7 @@ const CARDLIST* FindCardWithIds(UINT32 Id, UINT32 SubId)
 
 void FillCardList(const TagDict* CfgDict)
 {
-  if (gCardList.isEmpty() && (CfgDict != NULL)) {
+  if (gSettings.Graphics.gCardList.isEmpty() && (CfgDict != NULL)) {
     CONST CHAR8 *VEN[] = { "NVIDIA",  "ATI" };
     size_t Count = sizeof(VEN) / sizeof(VEN[0]);
     
@@ -109,13 +108,16 @@ void FillCardList(const TagDict* CfgDict)
         const TagStruct*		prop2		= 0;
         const TagStruct*    element    = 0;
         count = prop->arrayContent().size();
-        for (i = 0; i < count; i++) {
-          CONST CHAR8     *model_name = NULL;
-          UINT32		dev_id		= 0;
-          UINT32		subdev_id	= 0;
-          UINT64		VramSize	= 0;
-          UINTN     VideoPorts  = 0;
-          BOOLEAN   LoadVBios = FALSE;
+        for (i = 0; i < count; i++)
+        {
+          SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD* new_card = new SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD;
+
+//          CONST CHAR8     *model_name = NULL;
+//          UINT32		dev_id		= 0;
+//          UINT32		subdev_id	= 0;
+//          UINT64		VramSize	= 0;
+//          UINTN     VideoPorts  = 0;
+//          BOOLEAN   LoadVBios = FALSE;
           element = &prop->arrayContent()[i];
           if ( !element->isDict()) {
             MsgLog("MALFORMED PLIST in FillCardList() : element is not a dict");
@@ -125,31 +127,39 @@ void FillCardList(const TagDict* CfgDict)
           
           prop2 = dictElement->propertyForKey("Model");
           if ( prop2->isString() && prop2->getString()->stringValue().notEmpty() ) {
-            model_name = prop2->getString()->stringValue().c_str();
+            new_card->Model = prop2->getString()->stringValue();
           } else {
-            model_name = "VideoCard";
+            new_card->Model = "VideoCard"_XS8;
           }
           
           prop2 = dictElement->propertyForKey("IOPCIPrimaryMatch");
-          dev_id = (UINT32)GetPropertyAsInteger(prop2, 0);
+          new_card->Id = (UINT32)GetPropertyAsInteger(prop2, 0);
           
           prop2 = dictElement->propertyForKey("IOPCISubDevId");
-          subdev_id = (UINT32)GetPropertyAsInteger(prop2, 0);
+          new_card->SubId = (UINT32)GetPropertyAsInteger(prop2, 0);
           
           prop2 = dictElement->propertyForKey("VRAM");
-          VramSize = LShiftU64((UINTN)GetPropertyAsInteger(prop2, (INTN)VramSize), 20); //Mb -> bytes
+          new_card->VideoRam = LShiftU64((UINTN)GetPropertyAsInteger(prop2, 0), 20); //Mb -> bytes
           
           prop2 = dictElement->propertyForKey("VideoPorts");
-          VideoPorts = (UINT16)GetPropertyAsInteger(prop2, VideoPorts);
+          new_card->VideoPorts = (UINT16)GetPropertyAsInteger(prop2, 0);
           
           prop2 = dictElement->propertyForKey("LoadVBios");
           if (prop2 != NULL && IsPropertyNotNullAndTrue(prop2)) {
-            LoadVBios = TRUE;
+            new_card->LoadVBios = TRUE;
           }
           
-          DBG("FillCardList :: %s : \"%s\" (%08X, %08X)\n", key, model_name, dev_id, subdev_id);
+          DBG("FillCardList :: %s : \"%s\" (%08X, %08X)\n", key, new_card->Model.c_str(), new_card->Id, new_card->SubId);
           
-          AddCard(model_name, dev_id, subdev_id, VramSize, VideoPorts, LoadVBios);
+//          AddCard(model_name, dev_id, subdev_id, VramSize, VideoPorts, LoadVBios);
+          new_card->Signature = CARDLIST_SIGNATURE;
+//          new_card->Id = dev_id;
+//          new_card->SubId = subdev_id;
+//          new_card->VideoRam = VramSize;
+//          new_card->VideoPorts = VideoPorts;
+//          new_card->LoadVBios = LoadVBios;
+//          new_card->Model.takeValueFrom(model_name);
+          gSettings.Graphics.gCardList.AddReference(new_card, true);
         }
       }
     }

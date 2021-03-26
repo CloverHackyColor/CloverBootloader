@@ -2386,6 +2386,12 @@
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
+				WARNING_CFLAGS = (
+					"-Wno-c99-extensions",
+					"-Wno-gnu-zero-variadic-macro-arguments",
+					"-Wignored-qualifiers",
+					"-Wreorder",
+				);
 			};
 			name = Debug;
 		};
@@ -2472,6 +2478,12 @@
 				SUPPORTED_PLATFORMS = macosx;
 				USE_HEADERMAP = NO;
 				VALID_ARCHS = x86_64;
+				WARNING_CFLAGS = (
+					"-Wno-c99-extensions",
+					"-Wno-gnu-zero-variadic-macro-arguments",
+					"-Wignored-qualifiers",
+					"-Wreorder",
+				);
 			};
 			name = Release;
 		};

@@ -34,7 +34,7 @@ class XObjArrayEntry
 template<class TYPE>
 class XObjArrayNC
 {
-  public:
+  protected:
 	XObjArrayEntry<TYPE> *_Data;
 	size_t _Len;
 	size_t m_allocatedSize;

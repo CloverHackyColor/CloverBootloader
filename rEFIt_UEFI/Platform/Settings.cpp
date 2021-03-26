@@ -92,7 +92,6 @@ CHAR16                          *ConfigsList[20];
 UINTN                           DsdtsNum = 0;
 CHAR16                          *DsdtsList[20];
 XObjArray<HDA_OUTPUTS>          AudioList;
-XObjArray<RT_VARIABLES>         BlockRtVariableArray;
 
 // firmware
 BOOLEAN                         gFirmwareClover             = FALSE;
@@ -101,7 +100,6 @@ UINT16                          gBacklightLevel;
 //BOOLEAN                         defDSM;
 //UINT16                          dropDSM;
 
-BOOLEAN                         GetLegacyLanAddress;
 BOOLEAN                         ResumeFromCoreStorage;
 //BOOLEAN                         gRemapSmBiosIsRequire;
 
@@ -2406,44 +2404,46 @@ GetEDIDSettings(const TagDict* DictPointer, SETTINGS_DATA& gSettings)
   Dict = DictPointer->dictPropertyForKey("EDID");
   if (Dict != NULL) {
     Prop = Dict->propertyForKey("Inject");
-    gSettings.InjectEDID = IsPropertyNotNullAndTrue(Prop); // default = false!
+    gSettings.Graphics.EDID.InjectEDID = IsPropertyNotNullAndTrue(Prop); // default = false!
 
-    if (gSettings.InjectEDID){
+    if (gSettings.Graphics.EDID.InjectEDID){
       //DBG("Inject EDID\n");
       Prop = Dict->propertyForKey("Custom");
       if (Prop != NULL) {
-        gSettings.CustomEDID   = GetDataSetting(Dict, "Custom", &j);
+        UINT8* Data = GetDataSetting(Dict, "Custom", &j);
+        gSettings.Graphics.EDID.CustomEDID.stealValueFrom(Data, j);
         if ((j % 128) != 0) {
           DBG(" Custom EDID has wrong length=%llu\n", j);
+          gSettings.Graphics.EDID.CustomEDID.setEmpty();
         } else {
           DBG(" Custom EDID is ok\n");
-          gSettings.CustomEDIDsize = (UINT16)j;
+//          gSettings.CustomEDIDsize = (UINT16)j;
 //          InitializeEdidOverride();
         }
       }
 
       Prop = Dict->propertyForKey("VendorID");
       if (Prop) {
-        gSettings.VendorEDID = (UINT16)GetPropertyAsInteger(Prop, gSettings.VendorEDID);
-        //DBG("  VendorID = 0x%04lx\n", gSettings.VendorEDID);
+        gSettings.Graphics.EDID.VendorEDID = (UINT16)GetPropertyAsInteger(Prop, gSettings.Graphics.EDID.VendorEDID);
+        //DBG("  VendorID = 0x%04lx\n", gSettings.Graphics.EDID.VendorEDID);
       }
 
       Prop = Dict->propertyForKey("ProductID");
       if (Prop) {
-        gSettings.ProductEDID = (UINT16)GetPropertyAsInteger(Prop, gSettings.ProductEDID);
-        //DBG("  ProductID = 0x%04lx\n", gSettings.ProductEDID);
+        gSettings.Graphics.EDID.ProductEDID = (UINT16)GetPropertyAsInteger(Prop, gSettings.Graphics.EDID.ProductEDID);
+        //DBG("  ProductID = 0x%04lx\n", gSettings.Graphics.EDID.ProductEDID);
       }
 
       Prop = Dict->propertyForKey("HorizontalSyncPulseWidth");
       if (Prop) {
-        gSettings.EdidFixHorizontalSyncPulseWidth = (UINT16)GetPropertyAsInteger(Prop, gSettings.EdidFixHorizontalSyncPulseWidth);
-        //DBG("  EdidFixHorizontalSyncPulseWidth = 0x%02lx\n", gSettings.EdidFixHorizontalSyncPulseWidth);
+        gSettings.Graphics.EDID.EdidFixHorizontalSyncPulseWidth = (UINT16)GetPropertyAsInteger(Prop, gSettings.Graphics.EDID.EdidFixHorizontalSyncPulseWidth);
+        //DBG("  EdidFixHorizontalSyncPulseWidth = 0x%02lx\n", gSettings.Graphics.EDID.EdidFixHorizontalSyncPulseWidth);
       }
 
       Prop = Dict->propertyForKey("VideoInputSignal");
       if (Prop) {
-        gSettings.EdidFixVideoInputSignal = (UINT8)GetPropertyAsInteger(Prop, gSettings.EdidFixVideoInputSignal);
-        //DBG("  EdidFixVideoInputSignal = 0x%02lx\n", gSettings.EdidFixVideoInputSignal);
+        gSettings.Graphics.EDID.EdidFixVideoInputSignal = (UINT8)GetPropertyAsInteger(Prop, gSettings.Graphics.EDID.EdidFixVideoInputSignal);
+        //DBG("  EdidFixVideoInputSignal = 0x%02lx\n", gSettings.Graphics.EDID.EdidFixVideoInputSignal);
       }
     } else {
       //DBG("Not Inject EDID\n");
@@ -2479,10 +2479,10 @@ EFI_STATUS GetEarlyUserSettings (
 //    }
 //  }
 
-  gSettings.KextPatchesAllowed              = TRUE;
+  gSettings.KextPatchesAllowed              = TRUE; // todo move to GlobalConfig
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
   gSettings.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
-  gSettings.KernelPatchesAllowed            = TRUE;
+  gSettings.KernelPatchesAllowed            = TRUE; // todo move to GlobalConfig
 
   if (CfgDict != NULL) {
     //DBG("Loading early settings\n");
@@ -3089,7 +3089,81 @@ EFI_STATUS GetEarlyUserSettings (
         }
       }
     }
+    const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
+    if (GraphicsDict != NULL) {
 
+      const TagStruct* Prop             = GraphicsDict->propertyForKey("PatchVBios");
+      gSettings.Graphics.PatchVBios              = IsPropertyNotNullAndTrue(Prop);
+
+      gSettings.Graphics.PatchVBiosBytesNew.setEmpty();
+
+      const TagArray* Dict2 = GraphicsDict->arrayPropertyForKey("PatchVBiosBytes"); // array of dict
+      if (Dict2 != NULL) {
+        INTN   Count = Dict2->arrayContent().size();
+        if (Count > 0) {
+          UINTN             FindSize    = 0;
+          UINTN             ReplaceSize = 0;
+          BOOLEAN           Valid;
+          // alloc space for up to 16 entries
+//          gSettings.Graphics.PatchVBiosBytes = (__typeof__(gSettings.Graphics.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
+
+          // get all entries
+          for (INTN i = 0; i < Count; i++) {
+            const TagDict* dict3 = Dict2->dictElementAt(i, "Graphics/PatchVBiosBytes"_XS8);
+            Valid = TRUE;
+            // read entry
+            VBIOS_PATCH* VBiosPatchPtr = new VBIOS_PATCH;
+            VBIOS_PATCH& VBiosPatch = *VBiosPatchPtr;
+//            VBiosPatch          = &gSettings.Graphics.PatchVBiosBytes[gSettings.Graphics.PatchVBiosBytesCount];
+            UINT8* DataSetting = GetDataSetting (dict3, "Find",    &FindSize);
+            VBiosPatch.Find.stealValueFrom(DataSetting, FindSize);
+            DataSetting = GetDataSetting (dict3, "Replace", &ReplaceSize);
+            VBiosPatch.Replace.stealValueFrom(DataSetting, ReplaceSize);
+
+            if ( VBiosPatch.Find.size() == 0 ) {
+              Valid = FALSE;
+              DBG("PatchVBiosBytes[%lld]: missing Find data\n", i);
+            }
+
+            if ( VBiosPatch.Replace.size() == 0 ) {
+              Valid = FALSE;
+              DBG("PatchVBiosBytes[%lld]: missing Replace data\n", i);
+            }
+
+            if (VBiosPatch.Find.size() != VBiosPatch.Replace.size()) {
+              Valid = FALSE;
+              DBG("PatchVBiosBytes[%lld]: Find and Replace data are not the same size\n", i);
+            }
+
+            if (Valid) {
+//              VBiosPatch->NumberOfBytes = FindSize;
+              // go to next entry
+//              ++gSettings.Graphics.PatchVBiosBytesCount;
+              gSettings.Graphics.PatchVBiosBytesNew.AddReference(VBiosPatchPtr, true);
+            } else {
+              // error - release mem
+              delete VBiosPatchPtr;
+//              if (VBiosPatch->Find != NULL) {
+//                FreePool(VBiosPatch->Find);
+//                VBiosPatch->Find = NULL;
+//              }
+//              if (VBiosPatch->Replace != NULL) {
+//                FreePool(VBiosPatch->Replace);
+//                VBiosPatch->Replace = NULL;
+//              }
+            }
+          }
+
+//          if (gSettings.Graphics.PatchVBiosBytesCount == 0) {
+//            FreePool(gSettings.Graphics.PatchVBiosBytes);
+//            gSettings.Graphics.PatchVBiosBytes = NULL;
+//          }
+        }
+      }
+
+      GetEDIDSettings(GraphicsDict, gSettings);
+    }
+    
 
 
     //done until here
@@ -3097,76 +3171,6 @@ EFI_STATUS GetEarlyUserSettings (
 
 
 
-    const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
-    if (GraphicsDict != NULL) {
-
-      const TagStruct* Prop             = GraphicsDict->propertyForKey("PatchVBios");
-      gSettings.PatchVBios              = IsPropertyNotNullAndTrue(Prop);
-
-      gSettings.PatchVBiosBytesCount    = 0;
-
-      const TagArray* Dict2 = GraphicsDict->arrayPropertyForKey("PatchVBiosBytes"); // array of dict
-      if (Dict2 != NULL) {
-        INTN   Count = Dict2->arrayContent().size();
-        if (Count > 0) {
-          VBIOS_PATCH_BYTES *VBiosPatch;
-          UINTN             FindSize    = 0;
-          UINTN             ReplaceSize = 0;
-          BOOLEAN           Valid;
-          // alloc space for up to 16 entries
-          gSettings.PatchVBiosBytes = (__typeof__(gSettings.PatchVBiosBytes))AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
-
-          // get all entries
-          for (INTN i = 0; i < Count; i++) {
-            const TagDict* dict3 = Dict2->dictElementAt(i, "Graphics/PatchVBiosBytes"_XS8);
-            Valid = TRUE;
-            // read entry
-            VBiosPatch          = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
-            VBiosPatch->Find    = GetDataSetting (dict3, "Find",    &FindSize);
-            VBiosPatch->Replace = GetDataSetting (dict3, "Replace", &ReplaceSize);
-
-            if (VBiosPatch->Find == NULL || FindSize == 0) {
-              Valid = FALSE;
-              DBG("PatchVBiosBytes[%lld]: missing Find data\n", i);
-            }
-
-            if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
-              Valid = FALSE;
-              DBG("PatchVBiosBytes[%lld]: missing Replace data\n", i);
-            }
-
-            if (FindSize != ReplaceSize) {
-              Valid = FALSE;
-              DBG("PatchVBiosBytes[%lld]: Find and Replace data are not the same size\n", i);
-            }
-
-            if (Valid) {
-              VBiosPatch->NumberOfBytes = FindSize;
-              // go to next entry
-              ++gSettings.PatchVBiosBytesCount;
-            } else {
-              // error - release mem
-              if (VBiosPatch->Find != NULL) {
-                FreePool(VBiosPatch->Find);
-                VBiosPatch->Find = NULL;
-              }
-
-              if (VBiosPatch->Replace != NULL) {
-                FreePool(VBiosPatch->Replace);
-                VBiosPatch->Replace = NULL;
-              }
-            }
-          }
-
-          if (gSettings.PatchVBiosBytesCount == 0) {
-            FreePool(gSettings.PatchVBiosBytes);
-            gSettings.PatchVBiosBytes = NULL;
-          }
-        }
-      }
-
-      GetEDIDSettings(GraphicsDict, gSettings);
-    }
 
     const TagArray* DisableDriversArray = CfgDict->arrayPropertyForKey("DisableDrivers"); // array of string
     if (DisableDriversArray != NULL) {
@@ -3192,7 +3196,7 @@ EFI_STATUS GetEarlyUserSettings (
       if (Dict2 != NULL) {
         // HDA
         const TagStruct* Prop = Dict2->propertyForKey("ResetHDA");
-        gSettings.ResetHDA = IsPropertyNotNullAndTrue(Prop);
+        gSettings.Devices.Audio.ResetHDA = IsPropertyNotNullAndTrue(Prop);
       }
     }
 
@@ -3205,7 +3209,7 @@ EFI_STATUS GetEarlyUserSettings (
         }else{
           if ((Prop->getString()->stringValue().equalIC("UseMacAddr0")) ||
               (Prop->getString()->stringValue().equalIC("UseMacAddr1"))) {
-            GetLegacyLanAddress = TRUE;
+//            gSettings.RtVariables.GetLegacyLanAddress = TRUE;
           }
         }
       }
@@ -4422,62 +4426,63 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       const TagStruct* Prop     = GraphicsDict->propertyForKey("Inject");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.GraphicsInjector = TRUE;
-          gSettings.InjectIntel      = TRUE;
-          gSettings.InjectATI        = TRUE;
-          gSettings.InjectNVidia     = TRUE;
+          gSettings.Graphics.InjectAsBool = true;
+//          gSettings.GraphicsInjector = TRUE;
+//          gSettings.InjectIntel      = TRUE;
+//          gSettings.InjectATI        = TRUE;
+//          gSettings.InjectNVidia     = TRUE;
         } else if (Prop->isDict()) {
           const TagDict* Dict2 = Prop->getDict();
           const TagStruct* Prop2 = Dict2->propertyForKey("Intel");
           if (Prop2 != NULL) {
-            gSettings.InjectIntel = IsPropertyNotNullAndTrue(Prop2);
+            gSettings.Graphics.InjectAsDict.InjectIntel = IsPropertyNotNullAndTrue(Prop2);
           }
 
           Prop2 = Dict2->propertyForKey("ATI");
           if (Prop2 != NULL) {
-            gSettings.InjectATI = IsPropertyNotNullAndTrue(Prop2);
+            gSettings.Graphics.InjectAsDict.InjectATI = IsPropertyNotNullAndTrue(Prop2);
           }
 
           Prop2 = Dict2->propertyForKey("NVidia");
           if (Prop2 != NULL) {
-            gSettings.InjectNVidia = IsPropertyNotNullAndTrue(Prop2);
+            gSettings.Graphics.InjectAsDict.InjectNVidia = IsPropertyNotNullAndTrue(Prop2);
           }
         } else {
-          gSettings.GraphicsInjector = FALSE;
-          gSettings.InjectIntel      = FALSE;
-          gSettings.InjectATI        = FALSE;
-          gSettings.InjectNVidia     = FALSE;
+//          gSettings.GraphicsInjector = FALSE;
+//          gSettings.InjectIntel      = FALSE;
+//          gSettings.InjectATI        = FALSE;
+//          gSettings.InjectNVidia     = FALSE;
         }
       }
 
       Prop = GraphicsDict->propertyForKey("RadeonDeInit");
-      gSettings.DeInit = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Graphics.RadeonDeInit = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GraphicsDict->propertyForKey("VRAM");
-      gSettings.VRAM = (UINTN)GetPropertyAsInteger(Prop, (INTN)gSettings.VRAM); //Mb
+      gSettings.Graphics.VRAM = (UINTN)GetPropertyAsInteger(Prop, (INTN)gSettings.Graphics.VRAM); //Mb
       //
       Prop = GraphicsDict->propertyForKey("RefCLK");
-      gSettings.RefCLK = (UINT16)GetPropertyAsInteger(Prop, 0);
+      gSettings.Graphics.RefCLK = (UINT16)GetPropertyAsInteger(Prop, 0);
 
       Prop = GraphicsDict->propertyForKey("LoadVBios");
-      gSettings.LoadVBios = IsPropertyNotNullAndTrue(Prop);
-
-      for (i = 0; i < (INTN)NGFX; i++) {
-        gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
-      }
+      gSettings.Graphics.LoadVBios = IsPropertyNotNullAndTrue(Prop);
+//
+//      for (i = 0; i < (INTN)NGFX; i++) {
+//        gGraphics[i].LoadVBios = gSettings.Graphics.LoadVBios; //default
+//      }
 
       Prop = GraphicsDict->propertyForKey("VideoPorts");
-      gSettings.VideoPorts   = (UINT16)GetPropertyAsInteger(Prop, gSettings.VideoPorts);
+      gSettings.Graphics.VideoPorts   = (UINT16)GetPropertyAsInteger(Prop, gSettings.Graphics.VideoPorts);
 
       Prop = GraphicsDict->propertyForKey("BootDisplay");
-      gSettings.BootDisplay = (INT8)GetPropertyAsInteger(Prop, -1);
+      gSettings.Graphics.BootDisplay = (INT8)GetPropertyAsInteger(Prop, -1);
 
       Prop = GraphicsDict->propertyForKey("FBName");
       if (Prop != NULL) {
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in FBName\n");
         }else{
-          gSettings.FBName = Prop->getString()->stringValue();
+          gSettings.Graphics.FBName = Prop->getString()->stringValue();
         }
       }
 
@@ -4486,11 +4491,11 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in NVCAP\n");
         }else{
-          hex2bin (Prop->getString()->stringValue(), (UINT8*)&gSettings.NVCAP[0], sizeof(gSettings.NVCAP));
+          hex2bin (Prop->getString()->stringValue(), (UINT8*)&gSettings.Graphics.NVCAP[0], sizeof(gSettings.Graphics.NVCAP));
           DBG("Read NVCAP:");
 
           for (i = 0; i<20; i++) {
-            DBG("%02hhX", gSettings.NVCAP[i]);
+            DBG("%02hhX", gSettings.Graphics.NVCAP[i]);
           }
 
           DBG("\n");
@@ -4503,12 +4508,12 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
         if ( !Prop->isString() ) {
           MsgLog("ATTENTION : property not string in display-cfg\n");
         }else{
-          hex2bin (Prop->getString()->stringValue(), (UINT8*)&gSettings.Dcfg[0], sizeof(gSettings.Dcfg));
+          hex2bin (Prop->getString()->stringValue(), (UINT8*)&gSettings.Graphics.Dcfg[0], sizeof(gSettings.Graphics.Dcfg));
         }
       }
 
       Prop = GraphicsDict->propertyForKey("DualLink");
-      gSettings.DualLink = (UINT32)GetPropertyAsInteger(Prop, gSettings.DualLink);
+      gSettings.Graphics.DualLink = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics.DualLink);
 
       //InjectEDID - already done in earlysettings
       //No! Take again
@@ -4516,19 +4521,19 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
       // ErmaC: NvidiaGeneric
       Prop = GraphicsDict->propertyForKey("NvidiaGeneric");
-      gSettings.NvidiaGeneric = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Graphics.NvidiaGeneric = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GraphicsDict->propertyForKey("NvidiaNoEFI");
-      gSettings.NvidiaNoEFI = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Graphics.NvidiaNoEFI = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GraphicsDict->propertyForKey("NvidiaSingle");
-      gSettings.NvidiaSingle = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Graphics.NvidiaSingle = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GraphicsDict->propertyForKey("ig-platform-id");
-      gSettings.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.IgPlatform);
+      gSettings.Graphics.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics.IgPlatform);
 
       Prop = GraphicsDict->propertyForKey("snb-platform-id");
-      gSettings.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.IgPlatform);
+      gSettings.Graphics.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics.IgPlatform);
 
       FillCardList(GraphicsDict); //#@ Getcardslist
     }
@@ -4810,7 +4815,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
                 //Special case. In future there must be more such cases
                 if ((AsciiStrStr(gSettings.ArbProperties->Key, "-platform-id") != NULL)) {
-                  CopyMem((CHAR8*)&gSettings.IgPlatform, gSettings.ArbProperties->Value, 4);
+                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, gSettings.ArbProperties->Value, 4);
                 }
               }   //for() device properties
             }
@@ -5343,7 +5348,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 #ifdef CLOVER_BUILD
         UINT64 msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
 #endif
-        gSettings.CPU.Turbo = 0;
+        gSettings.CPU.TurboDisabled = 1;
 #ifdef CLOVER_BUILD
         msr &= ~(1ULL<<38);
         AsmWriteMsr64 (MSR_IA32_MISC_ENABLE, msr);
@@ -5352,20 +5357,20 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
     }
 
     // RtVariables
-    gSettings.RtROM.setEmpty();
+    gSettings.RtVariables.RtROMAsData.setEmpty();
     const TagDict* RtVariablesDict = CfgDict->dictPropertyForKey("RtVariables");
     if (RtVariablesDict != NULL) {
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
       const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
         if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr0") ) {
-          gSettings.RtROM.ncpy(&gLanMac[0][0], 6);
+          gSettings.RtVariables.RtROMAsString = Prop->getString()->stringValue();
         } else if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr1") ) {
-          gSettings.RtROM.ncpy(&gLanMac[1][0], 6);
+          gSettings.RtVariables.RtROMAsString = Prop->getString()->stringValue();
         } else if ( Prop->isString()  ||  Prop->isData() ) { // GetDataSetting accept both
           UINTN ROMLength         = 0;
-          void* ROM = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
-          gSettings.RtROM.ncpy(ROM, ROMLength);
+          uint8_t* ROM = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
+          gSettings.RtVariables.RtROMAsData.stealValueFrom(ROM, ROMLength);
         } else {
           MsgLog("MALFORMED PLIST : property not string or data in RtVariables/ROM\n");
         }
@@ -5378,17 +5383,17 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
           MsgLog("ATTENTION : property not string in RtVariables/MLB\n");
         }else{
           if( Prop->getString()->stringValue().notEmpty() ) {
-            gSettings.RtMLB = Prop->getString()->stringValue();
+            gSettings.RtVariables.RtMLBSetting = Prop->getString()->stringValue();
           }
         }
       }
       // CsrActiveConfig
       Prop = RtVariablesDict->propertyForKey("CsrActiveConfig");
-      gSettings.CsrActiveConfig = (UINT32)GetPropertyAsInteger(Prop, 0x2E7); //the value 0xFFFF means not set
+      gSettings.RtVariables.CsrActiveConfig = (UINT32)GetPropertyAsInteger(Prop, 0x2E7); //the value 0xFFFF means not set
 
       //BooterConfig
       Prop = RtVariablesDict->propertyForKey("BooterConfig");
-      gSettings.BooterConfig = (UINT16)GetPropertyAsInteger(Prop, 0); //the value 0 means not set
+      gSettings.RtVariables.BooterConfig = (UINT16)GetPropertyAsInteger(Prop, 0); //the value 0 means not set
       //let it be string like "log=0"
       Prop = RtVariablesDict->propertyForKey("BooterCfg");
       if ( Prop != NULL ) {
@@ -5396,7 +5401,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
           MsgLog("ATTENTION : property not string in RtVariables/BooterCfg\n");
         }else{
           if( Prop->getString()->stringValue().notEmpty() ) {
-            gSettings.BooterCfgStr = Prop->getString()->stringValue();
+            gSettings.RtVariables.BooterCfgStr = Prop->getString()->stringValue();
           }
         }
       }
@@ -5405,9 +5410,9 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       if (BlockArray != NULL) {
         INTN   i;
         INTN Count = BlockArray->arrayContent().size();
-        BlockRtVariableArray.setEmpty();
-        RT_VARIABLES* RtVariablePtr = new RT_VARIABLES();
-        RT_VARIABLES& RtVariable = *RtVariablePtr;
+        gSettings.RtVariables.BlockRtVariableArray.setEmpty();
+        SETTINGS_DATA::RtVariablesClass::RT_VARIABLES* RtVariablePtr = new SETTINGS_DATA::RtVariablesClass::RT_VARIABLES();
+        SETTINGS_DATA::RtVariablesClass::RT_VARIABLES& RtVariable = *RtVariablePtr;
         for (i = 0; i < Count; i++) {
           const TagDict* BlockDict = BlockArray->dictElementAt(i, "Block"_XS8);
           const TagStruct* Prop2 = BlockDict->propertyForKey("Comment");
@@ -5417,6 +5422,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             }else{
               if( Prop2->getString()->stringValue().notEmpty() ) {
                 DBG(" %s\n", Prop2->getString()->stringValue().c_str());
+                RtVariable.Comment = Prop2->getString()->stringValue();
               }
             }
           }
@@ -5450,20 +5456,20 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               }
             }
           }
-          BlockRtVariableArray.AddReference(RtVariablePtr, true);
+          gSettings.RtVariables.BlockRtVariableArray.AddReference(RtVariablePtr, true);
         }
       }
     }
 
-    if (gSettings.RtROM.isEmpty()) {
-      EFI_GUID uuid;
-      StrToGuidLE(gSettings.SmUUID, &uuid);
-      gSettings.RtROM.ncpy(&uuid.Data4[2], 6);
-    }
+//    if (gSettings.RtVariables.RtROM.isEmpty()) {
+//      EFI_GUID uuid;
+//      StrToGuidLE(gSettings.SmUUID, &uuid);
+//      gSettings.RtVariables.RtROM.ncpy(&uuid.Data4[2], 6);
+//    }
 
-    if (gSettings.RtMLB.isEmpty()) {
-      gSettings.RtMLB       = gSettings.BoardSerialNumber;
-    }
+//    if (gSettings.RtVariables.RtMLB.isEmpty()) {
+//      gSettings.RtVariables.RtMLB       = gSettings.BoardSerialNumber;
+//    }
 
     // if CustomUUID and InjectSystemID are not specified
     // then use InjectSystemID=TRUE and SMBIOS UUID
@@ -6568,7 +6574,7 @@ GetDevices ()
             SlotDevice->SlotID          = 5;
             SlotDevice->SlotType        = SlotTypePciExpressX4;
           }
-          if (gSettings.ResetHDA) {
+          if (gSettings.Devices.Audio.ResetHDA) {
             //Slice method from VoodooHDA
             //PCI_HDA_TCSEL_OFFSET = 0x44
             UINT8 Value = 0;
@@ -6632,15 +6638,15 @@ SetDevices (LOADER_ENTRY *Entry)
     while (Prop2) {
       if (Prop2->MenuItem.BValue) {
         if (AsciiStrStr(Prop2->Key, "-platform-id") != NULL) {
-          if (gSettings.IgPlatform == 0 && Prop2->Value) {
-            CopyMem((UINT8*)&gSettings.IgPlatform, (UINT8*)Prop2->Value, Prop2->ValueLen);
+          if (gSettings.Graphics.IgPlatform == 0 && Prop2->Value) {
+            CopyMem((UINT8*)&gSettings.Graphics.IgPlatform, (UINT8*)Prop2->Value, Prop2->ValueLen);
           }
-          devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.IgPlatform, 4);
+          devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.Graphics.IgPlatform, 4);
           DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
         } else if ((AsciiStrStr(Prop2->Key, "override-no-edid") || AsciiStrStr(Prop2->Key, "override-no-connect"))
-          && gSettings.InjectEDID && gSettings.CustomEDID) {
+          && gSettings.Graphics.EDID.InjectEDID && gSettings.Graphics.EDID.CustomEDID.notEmpty()) {
           // special case for EDID properties
-          devprop_add_value(device, Prop2->Key, gSettings.CustomEDID, 128);
+          devprop_add_value(device, Prop2->Key, gSettings.Graphics.EDID.CustomEDID.data(), 128);
           DBG("   Add key=%s from custom EDID\n", Prop2->Key);
         } else {
           devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
@@ -6706,7 +6712,7 @@ SetDevices (LOADER_ENTRY *Entry)
           //special corrections
           if (Prop->MenuItem.BValue) {
             if (AsciiStrStr(Prop->Key, "-platform-id") != NULL) {
-              devprop_add_value(device, Prop->Key, (UINT8*)&gSettings.IgPlatform, 4);
+              devprop_add_value(device, Prop->Key, (UINT8*)&gSettings.Graphics.IgPlatform, 4);
             } else {
               devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
             }
@@ -6731,7 +6737,7 @@ SetDevices (LOADER_ENTRY *Entry)
 
           switch (Pci.Hdr.VendorId) {
             case 0x1002:
-              if (gSettings.InjectATI) {
+              if (gSettings.Graphics.InjectAsDict.InjectATI) {
                 //can't do this in one step because of C-conventions
                 TmpDirty    = setup_ati_devprop(Entry, &PCIdevice);
                 StringDirty |=  TmpDirty;
@@ -6748,7 +6754,7 @@ SetDevices (LOADER_ENTRY *Entry)
                 }
               }
 
-              if (gSettings.DeInit) {
+              if (gSettings.Graphics.RadeonDeInit) {
                 for (j = 0; j < 4; j++) {
                   if (gGraphics[j].Handle == PCIdevice.DeviceHandle) {
                     *(UINT32*)(gGraphics[j].Mmio + 0x6848) = 0; //EVERGREEN_GRPH_FLIP_CONTROL, 1<<0 SURFACE_UPDATE_H_RETRACE_EN
@@ -6765,7 +6771,7 @@ SetDevices (LOADER_ENTRY *Entry)
               break;
 
             case 0x8086:
-              if (gSettings.InjectIntel) {
+              if (gSettings.Graphics.InjectAsDict.InjectIntel) {
                 TmpDirty    = setup_gma_devprop(Entry, &PCIdevice);
                 StringDirty |=  TmpDirty;
                 MsgLog ("Intel GFX revision  = 0x%hhX\n", PCIdevice.revision);
@@ -6871,8 +6877,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0116: // "Intel HD Graphics 3000"
                   case 0x0122: // "Intel HD Graphics 3000"
                   case 0x0126: // "Intel HD Graphics 3000"
-                    if (gSettings.IgPlatform) {
-                      switch (gSettings.IgPlatform) {
+                    if (gSettings.Graphics.IgPlatform) {
+                      switch (gSettings.Graphics.IgPlatform) {
                         case (UINT32)0x00030010:
                         case (UINT32)0x00050000:
                           FBLEVX = 0xFFFF;
@@ -6917,8 +6923,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0D2A: // "Intel Iris Pro Graphics 5200"
                   case 0x0D2B: // "Intel Iris Pro Graphics 5200"
                   case 0x0D2E: // "Intel Iris Pro Graphics 5200"
-                    if (gSettings.IgPlatform) {
-                      switch (gSettings.IgPlatform) {
+                    if (gSettings.Graphics.IgPlatform) {
+                      switch (gSettings.Graphics.IgPlatform) {
                         case (UINT32)0x04060000:
                         case (UINT32)0x0c060000:
                         case (UINT32)0x04160000:
@@ -6978,8 +6984,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x162D: // "Intel Iris Pro Graphics P6300"
                   case 0x1622: // "Intel Iris Pro Graphics 6200"
                   case 0x162A: // "Intel Iris Pro Graphics P6300"
-                    if (gSettings.IgPlatform) {
-                      switch (gSettings.IgPlatform) {
+                    if (gSettings.Graphics.IgPlatform) {
+                      switch (gSettings.Graphics.IgPlatform) {
                         case (UINT32)0x16060000:
                         case (UINT32)0x160e0000:
                         case (UINT32)0x16160000:
@@ -7045,8 +7051,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x193A: // "Intel Iris Pro Graphics P580"
                   case 0x193B: // "Intel Iris Pro Graphics 580"
                   case 0x193D: // "Intel Iris Pro Graphics P580"
-                    if (gSettings.IgPlatform) {
-                      switch (gSettings.IgPlatform) {
+                    if (gSettings.Graphics.IgPlatform) {
+                      switch (gSettings.Graphics.IgPlatform) {
                         case (UINT32)0x19120001:
                         FBLEVX = 0xFFFF;
                         break;
@@ -7284,7 +7290,7 @@ SetDevices (LOADER_ENTRY *Entry)
               break;
 
             case 0x10de:
-              if (gSettings.InjectNVidia) {
+              if (gSettings.Graphics.InjectAsDict.InjectNVidia) {
                 TmpDirty    = setup_nvidia_devprop(&PCIdevice);
                 StringDirty |=  TmpDirty;
               } else {
@@ -7323,7 +7329,7 @@ SetDevices (LOADER_ENTRY *Entry)
             TmpDirty    = setup_hda_devprop (PciIo, &PCIdevice, Entry->macOSVersion);
             StringDirty |= TmpDirty;
           }
-          if (gSettings.ResetHDA) {
+          if (gSettings.Devices.Audio.ResetHDA) {
             
             //PCI_HDA_TCSEL_OFFSET = 0x44
             UINT8 Value = 0;

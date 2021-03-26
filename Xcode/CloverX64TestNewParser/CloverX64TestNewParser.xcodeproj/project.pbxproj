@@ -16192,7 +16192,12 @@
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "-Wno-c99-extensions";
+				WARNING_CFLAGS = (
+					"-Wno-c99-extensions",
+					"-Wno-gnu-zero-variadic-macro-arguments",
+					"-Wignored-qualifiers",
+					"-Wreorder",
+				);
 			};
 			name = Debug;
 		};
@@ -16304,7 +16309,12 @@
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = "-Wno-c99-extensions";
+				WARNING_CFLAGS = (
+					"-Wno-c99-extensions",
+					"-Wno-gnu-zero-variadic-macro-arguments",
+					"-Wignored-qualifiers",
+					"-Wreorder",
+				);
 			};
 			name = Release;
 		};

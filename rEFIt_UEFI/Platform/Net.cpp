@@ -3,6 +3,7 @@
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../refit/lib.h"
 #include "Net.h"
+#include "../Platform/Settings.h"
 
 #ifndef DEBUG_MAC
 #ifndef DEBUG_ALL
@@ -24,8 +25,6 @@ UINT8                           *gLanMmio[4];     // their MMIO regions
 UINT8                           gLanMac[4][6];    // their MAC addresses
 UINTN                           nLanPaths;        // number of UEFI LAN
 
-
-extern BOOLEAN                         GetLegacyLanAddress;
 
 //Marvell Yukon
 #define B2_MAC_1    0x0100    /* NA reg MAC Address 1 */
@@ -152,7 +151,7 @@ GetMacAddress()
   if (HandleBuffer != NULL) {
     FreePool(HandleBuffer);
   }
-  if (!Found && GetLegacyLanAddress) {
+  if (!Found && gSettings.RtVariables.GetLegacyLanAddress()) {
     ////
     //
     //  Legacy boot. Get MAC-address from hardwaredirectly

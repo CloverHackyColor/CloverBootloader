@@ -12,6 +12,7 @@
 #define __XARRAY_H__
 
 #include <XToolsConf.h>
+#include "XToolsCommon.h"
 
 
 #if 0
@@ -57,19 +58,27 @@ class XArray
  
 //--------------------------------------------------
 
-	const TYPE& ElementAt(size_t nIndex) const;
-	TYPE& ElementAt(size_t nIndex);
-	const TYPE& ElementAt(int nIndex) const;
-	TYPE& ElementAt(int nIndex);
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	const TYPE& ElementAt(IntegralType index) const
+  {
+    #ifdef DEBUG
+      if ( index < 0 ) {
+        panic("XArray::ElementAt(int) -> Operator [] : index < 0");
+      }
+      if ( (unsigned int)index >= m_len ) { // cast safe, index > 0
+        panic("XArray::ElementAt(int) -> Operator [] : index > m_len");
+      }
+    #endif
+    return  m_data[index];
+  }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	TYPE& ElementAt(IntegralType index) { return const_cast<TYPE&>(const_cast<const XArray<TYPE>*>(this)->ElementAt(index)); }
 
-//	const TYPE& operator[](size_t nIndex) const { return ElementAt(nIndex); }
-//	      TYPE& operator[](size_t nIndex)       { return ElementAt(nIndex); }
-//	const TYPE& operator[]( int nIndex)  const { return ElementAt(nIndex); }
-	      TYPE& operator[]( int nIndex)        { return ElementAt(nIndex); }
-//	const TYPE& operator[]( unsigned long long nIndex)  const { return ElementAt((size_t)nIndex); }
-//	const TYPE& operator[]( long long nIndex)  const { return ElementAt((size_t)nIndex); }
-	      TYPE& operator[]( unsigned long long nIndex)        { return ElementAt((size_t)nIndex); }
-	      TYPE& operator[]( long long nIndex)        { return ElementAt((size_t)nIndex); }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  const TYPE &operator[](IntegralType nIndex) const { return ElementAt(nIndex); }
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  TYPE &operator[](IntegralType nIndex) { return ElementAt(nIndex); }
+
 
 	operator const void *() const { return m_data; };
 	operator       void *()       { return m_data; };
@@ -213,60 +222,6 @@ void XArray<TYPE>::setSize(size_t l)
 	#endif
 }
 
-
-/* ElementAt() */
-template<class TYPE>
-TYPE &XArray<TYPE>::ElementAt(size_t index)
-{
-	#ifdef DEBUG
-		if ( index >= m_len ) {
-			panic("XArray::ElementAt(size_t) -> Operator [] : index > m_len");
-		}
-	#endif
-	return  m_data[index];
-}
-
-/* ElementAt() */
-template<class TYPE>
-const TYPE& XArray<TYPE>::ElementAt(size_t index) const
-{
-	#ifdef DEBUG
-		if ( index >= m_len ) {
-			panic("XArray::ElementAt(size_t) const -> Operator [] : index > m_len");
-		}
-	#endif
-	return  m_data[index];
-}
-
-/* ElementAt() */
-template<class TYPE>
-TYPE &XArray<TYPE>::ElementAt(int index)
-{
-	#ifdef DEBUG
-    if ( index < 0 ) {
-			panic("XArray::ElementAt(int) -> Operator [] : index < 0");
-		}
-		if ( (unsigned int)index >= m_len ) { // cast safe, index > 0
-			panic("XArray::ElementAt(int) -> Operator [] : index > m_len");
-		}
-	#endif
-	return  m_data[index];
-}
-
-/* ElementAt() */
-template<class TYPE>
-const TYPE& XArray<TYPE>::ElementAt(int index) const
-{
-	#ifdef DEBUG
-    if ( index < 0 ) {
-			panic("XArray::ElementAt(int) const -> Operator [] : index < 0");
-		}
-		if ( (unsigned int)index >= m_len ) { // cast ok as index > 0. Ideally cast would be like '(unsigned __typeof__(index))'
-			panic("XArray::ElementAt(int) const -> Operator [] : index > m_len");
-		}
-	#endif
-	return  m_data[index];
-}
 
 /* Add(size_t) */
 template<class TYPE>

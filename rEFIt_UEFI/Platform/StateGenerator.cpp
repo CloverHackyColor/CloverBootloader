@@ -166,7 +166,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 						
             maximum.Control.Control = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
 			  DBG("Maximum control=0x%hX\n", maximum.Control.Control);
-            if (gSettings.CPU.Turbo) {
+            if (GlobalConfig.Turbo) {
               maximum.Control.VID_FID.FID++;
               MsgLog("Turbo FID=0x%hhX\n", maximum.Control.VID_FID.FID);
             }
@@ -284,7 +284,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
 
             realMax = maximum.Control.Control;
             DBG("Maximum control=0x%hX\n", realMax);
-            if (gSettings.CPU.Turbo) {
+            if (GlobalConfig.Turbo) {
               realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
               (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               maximum.Control.Control = realTurbo;
