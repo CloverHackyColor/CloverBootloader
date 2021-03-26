@@ -1844,6 +1844,7 @@ void REFIT_MENU_SCREEN::GraphicsMenuStyle(IN UINTN Function, IN CONST CHAR16 *Pa
 UINTN REFIT_MENU_SCREEN::RunMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
 {
   INTN Index = -1;
+
   return RunGenericMenu(&Index, ChosenEntry);
 }
 

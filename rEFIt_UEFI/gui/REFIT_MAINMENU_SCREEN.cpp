@@ -760,23 +760,23 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
       SubMenuIndex = -1;
 
       gSettings.OptionsBits = EncodeOptions(TmpArgs);
-//      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
+      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
 
       if (MainChosenEntry->getLOADER_ENTRY()) {
         gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-//        DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
+        DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
       }
 
       if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()) {
         DecodeOptions(MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()); 
       }
-//      DBG(" enter menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-
+ //     DBG(" enter menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions.c_str());
+      DBG(" enter menu with LoadOptions: \n");
       if (MainChosenEntry->getLOADER_ENTRY()) {
         // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
         gSettings.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
       }
-//      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
+      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
 
       SubMenuExit = 0;
       while (!SubMenuExit) {
@@ -784,7 +784,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
         //running details menu
         //
         SubMenuExit = MainChosenEntry->SubScreen->RunGenericMenu(&SubMenuIndex, &TempChosenEntry);
-
+        DBG("SubMenuExit=%lld\n", SubMenuExit);
         if (SubMenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->getREFIT_MENU_ITEM_RETURN() ) {
           SubMenuExit = MENU_EXIT_ENTER;
           MenuExit = 0;
@@ -794,21 +794,21 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
         if (MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()) {
           MainChosenEntry->getREFIT_MENU_ENTRY_CLOVER()->LoadOptions = (((REFIT_MENU_ENTRY_CLOVER*)TempChosenEntry)->LoadOptions);
         }
-        
+        DBG("got options\n");
         if (SubMenuExit == MENU_EXIT_DETAILS) {
           SubMenuExit = 0;
           continue;
         }
- //       DBG(" exit menu with LoadOptions: %ls\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions);
-
+ //       DBG(" exit menu with LoadOptions: %s\n", ((LOADER_ENTRY*)MainChosenEntry)->LoadOptions.c_str());
+        DBG(" exit menu with LoadOptions: \n");
         if (SubMenuExit == MENU_EXIT_ENTER && MainChosenEntry->getLOADER_ENTRY() && TempChosenEntry->getLOADER_ENTRY()) {
           // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags/Options
           MainChosenEntry->getLOADER_ENTRY()->Flags = TempChosenEntry->getLOADER_ENTRY()->Flags;
           DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
           if (OSFLAG_ISUNSET(TempChosenEntry->getLOADER_ENTRY()->Flags, OSFLAG_NODEFAULTARGS)) {
             DecodeOptions(TempChosenEntry->getLOADER_ENTRY());
-//            DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
-//            DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
+            DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
+            DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
           }
           // copy also loadoptions from subentry to mainentry
           MainChosenEntry->getLOADER_ENTRY()->LoadOptions = TempChosenEntry->getLOADER_ENTRY()->LoadOptions;

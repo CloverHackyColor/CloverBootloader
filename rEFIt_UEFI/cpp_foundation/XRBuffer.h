@@ -68,7 +68,7 @@ class XRBuffer
 #ifdef DEBUG
       panic("XBuffer::setIndex : Idx < 0. System halted\n");
 #else
-      return;
+      _Index = 0;
 #endif
     }
     _Index = Idx;
