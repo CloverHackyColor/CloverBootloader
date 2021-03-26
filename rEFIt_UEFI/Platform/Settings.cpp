@@ -584,7 +584,7 @@ static UINT8
        */
     } else if ( Prop->isString() ) {
       // assume data in hex encoded string property
-      UINT32 Len = (UINT32)Prop->getString()->stringValue().length() >> 1; // number of hex digits
+      size_t Len = (UINT32)Prop->getString()->stringValue().length() >> 1; // number of hex digits
       Data = (__typeof__(Data))AllocateZeroPool(Len); // 2 chars per byte, one more byte for odd number
       Len  = hex2bin(Prop->getString()->stringValue(), Data, Len);
 
@@ -4555,6 +4555,10 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
         if (Prop->isString()) {
 
           cDeviceProperties = Prop->getString()->stringValue();
+          if ( cDeviceProperties.sizeInBytesIncludingTerminator() > MAX_UINT32-1 ) {
+            MsgLog("cDeviceProperties is too big");
+            cDeviceProperties.setEmpty();
+          }
           //-------
 #ifdef CLOVER_BUILD
           EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
@@ -4567,8 +4571,8 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
           if (!EFI_ERROR(Status)) {
             cProperties = (UINT8*)(UINTN)BufferPtr;
-            cPropSize   = (UINT32)(cDeviceProperties.length() >> 1);
-            cPropSize = hex2bin(cDeviceProperties, cProperties, EFI_PAGES_TO_SIZE(EFI_SIZE_TO_PAGES (cDeviceProperties.sizeInBytes()) + 1));
+            //cPropSize   = (UINT32)(cDeviceProperties.length() >> 1);
+            cPropSize = (UINT32)hex2bin(cDeviceProperties, cProperties, EFI_PAGES_TO_SIZE(EFI_SIZE_TO_PAGES (cDeviceProperties.sizeInBytesIncludingTerminator()))); // cast should be safe cDeviceProperties.sizeInBytesIncludingTerminator() <= MAX_UINT32-1
             DBG("Injected EFIString of length %d\n", cPropSize);
           }
           //---------
@@ -7429,75 +7433,79 @@ SetDevices (LOADER_ENTRY *Entry)
 
   if (StringDirty) {
     EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-    device_inject_stringlength                   = device_inject_string->length * 2;
-    DBG("stringlength = %d\n", device_inject_stringlength);
-    // gDeviceProperties = (__typeof__(gDeviceProperties))AllocateAlignedPages EFI_SIZE_TO_PAGES (device_inject_stringlength + 1), 64);
+    if ( device_inject_string->length > MAX_UINT32/2-1 ) {
+      MsgLog("device_inject_string is too big\n");
+    }else{
+      device_inject_stringlength                   = device_inject_string->length * 2;
+      DBG("stringlength = %d\n", device_inject_stringlength);
+      // gDeviceProperties = (__typeof__(gDeviceProperties))AllocateAlignedPages EFI_SIZE_TO_PAGES (device_inject_stringlength + 1), 64);
 
-    UINTN nbPages = EFI_SIZE_TO_PAGES (device_inject_stringlength + 1);
-    Status = gBS->AllocatePages (
-                                 AllocateMaxAddress,
-                                 EfiACPIReclaimMemory,
-                                 nbPages,
-                                 &BufferPtr
-                                 );
+      UINTN nbPages = EFI_SIZE_TO_PAGES (device_inject_stringlength + 1);
+      Status = gBS->AllocatePages (
+                                   AllocateMaxAddress,
+                                   EfiACPIReclaimMemory,
+                                   nbPages,
+                                   &BufferPtr
+                                   );
 
-    if (!EFI_ERROR(Status)) {
-      mProperties       = (UINT8*)(UINTN)BufferPtr;
-      gDeviceProperties = devprop_generate_string (device_inject_string);
-      gDeviceProperties[device_inject_stringlength] = 0;
-      //     DBG(gDeviceProperties);
-      //     DBG("\n");
-      //     StringDirty = FALSE;
-      //-------
-      mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
-      //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
-      mPropSize = hex2bin (gDeviceProperties, AsciiStrLen(gDeviceProperties), mProperties, EFI_PAGES_TO_SIZE(nbPages));
-      //     DBG("Final size of mProperties=%d\n", mPropSize);
-      //---------
-      //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirFullPath().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
-      //and now we can free memory?
-      if (gSettings.AddProperties) {
-        FreePool(gSettings.AddProperties);
-      }
-      if (gSettings.ArbProperties) {
-        DEV_PROPERTY *Props;
-        DEV_PROPERTY *Next;
-        Prop = gSettings.ArbProperties;
-        while (Prop) {
-          Props = Prop->Child;
-          if (Prop->Label) {
-            FreePool(Prop->Label);
-          }
-          if (Prop->Key) {
-            FreePool(Prop->Key);
-          }
-          if (Prop->Value) {
-            FreePool(Prop->Value);
-          }
-          if (Prop->DevicePath) {
-            FreePool(Prop->DevicePath);
-          }
-          while (Props) {
-            if (Props->Label) {
-              FreePool(Props->Label);
+      if (!EFI_ERROR(Status)) {
+        mProperties       = (UINT8*)(UINTN)BufferPtr;
+        gDeviceProperties = devprop_generate_string (device_inject_string);
+        gDeviceProperties[device_inject_stringlength] = 0;
+        //     DBG(gDeviceProperties);
+        //     DBG("\n");
+        //     StringDirty = FALSE;
+        //-------
+        //mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
+        //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
+        mPropSize = (UINT32)hex2bin (gDeviceProperties, AsciiStrLen(gDeviceProperties), mProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe as device_inject_string->length <= MAX_UINT32/2-1
+        //     DBG("Final size of mProperties=%d\n", mPropSize);
+        //---------
+        //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirFullPath().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
+        //and now we can free memory?
+        if (gSettings.AddProperties) {
+          FreePool(gSettings.AddProperties);
+        }
+        if (gSettings.ArbProperties) {
+          DEV_PROPERTY *Props;
+          DEV_PROPERTY *Next;
+          Prop = gSettings.ArbProperties;
+          while (Prop) {
+            Props = Prop->Child;
+            if (Prop->Label) {
+              FreePool(Prop->Label);
             }
-            if (Props->Key) {
-              FreePool(Props->Key);
+            if (Prop->Key) {
+              FreePool(Prop->Key);
             }
-            if (Props->Value) {
-              FreePool(Props->Value);
+            if (Prop->Value) {
+              FreePool(Prop->Value);
             }
-            if (Props->DevicePath) {
-              FreePool(Props->DevicePath);
+            if (Prop->DevicePath) {
+              FreePool(Prop->DevicePath);
             }
-            Next = Props->Next;
-            FreePool(Props);
-            //delete Props;
-            Props = Next;
+            while (Props) {
+              if (Props->Label) {
+                FreePool(Props->Label);
+              }
+              if (Props->Key) {
+                FreePool(Props->Key);
+              }
+              if (Props->Value) {
+                FreePool(Props->Value);
+              }
+              if (Props->DevicePath) {
+                FreePool(Props->DevicePath);
+              }
+              Next = Props->Next;
+              FreePool(Props);
+              //delete Props;
+              Props = Next;
+            }
+            Next = Prop->Next;
+            FreePool(Prop);
+            Prop = Next;
           }
-          Next = Prop->Next;
-          FreePool(Prop);
-          Prop = Next;
         }
       }
     }
