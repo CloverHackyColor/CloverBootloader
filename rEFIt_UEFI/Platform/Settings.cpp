@@ -2881,47 +2881,47 @@ EFI_STATUS GetEarlyUserSettings (
       if (Prop != NULL) {
         gSettings.Language = Prop->getString()->stringValue();
         if ( Prop->getString()->stringValue().contains("en") ) {
-          gSettings.GUI.gLanguage = english;
+          gSettings.GUI.Language = english;
 //          gSettings.GUI.Codepage = 0xC0;
 //          gSettings.GUI.CodepageSize = 0;
         } else if ( Prop->getString()->stringValue().contains("ru")) {
-          gSettings.GUI.gLanguage = russian;
+          gSettings.GUI.Language = russian;
 //          gSettings.GUI.Codepage = 0x410;
 //          gSettings.GUI.CodepageSize = 0x40;
         } else if ( Prop->getString()->stringValue().contains("ua")) {
-          gSettings.GUI.gLanguage = ukrainian;
+          gSettings.GUI.Language = ukrainian;
 //          gSettings.GUI.Codepage = 0x400;
 //          gSettings.GUI.CodepageSize = 0x60;
         } else if ( Prop->getString()->stringValue().contains("fr")) {
-          gSettings.GUI.gLanguage = french; //default is extended latin
+          gSettings.GUI.Language = french; //default is extended latin
         } else if ( Prop->getString()->stringValue().contains("it")) {
-          gSettings.GUI.gLanguage = italian;
+          gSettings.GUI.Language = italian;
         } else if ( Prop->getString()->stringValue().contains("es")) {
-          gSettings.GUI.gLanguage = spanish;
+          gSettings.GUI.Language = spanish;
         } else if ( Prop->getString()->stringValue().contains("pt")) {
-          gSettings.GUI.gLanguage = portuguese;
+          gSettings.GUI.Language = portuguese;
         } else if ( Prop->getString()->stringValue().contains("br")) {
-          gSettings.GUI.gLanguage = brasil;
+          gSettings.GUI.Language = brasil;
         } else if ( Prop->getString()->stringValue().contains("de")) {
-          gSettings.GUI.gLanguage = german;
+          gSettings.GUI.Language = german;
         } else if ( Prop->getString()->stringValue().contains("nl")) {
-          gSettings.GUI.gLanguage = dutch;
+          gSettings.GUI.Language = dutch;
         } else if ( Prop->getString()->stringValue().contains("pl")) {
-          gSettings.GUI.gLanguage = polish;
+          gSettings.GUI.Language = polish;
         } else if ( Prop->getString()->stringValue().contains("cz")) {
-          gSettings.GUI.gLanguage = czech;
+          gSettings.GUI.Language = czech;
         } else if ( Prop->getString()->stringValue().contains("hr")) {
-          gSettings.GUI.gLanguage = croatian;
+          gSettings.GUI.Language = croatian;
         } else if ( Prop->getString()->stringValue().contains("id")) {
-          gSettings.GUI.gLanguage = indonesian;
+          gSettings.GUI.Language = indonesian;
         } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
-          gSettings.GUI.gLanguage = chinese;
+          gSettings.GUI.Language = chinese;
 //          gSettings.GUI.Codepage = 0x3400;
 //          gSettings.GUI.CodepageSize = 0x19C0;
         } else if ( Prop->getString()->stringValue().contains("ro")) {
-          gSettings.GUI.gLanguage = romanian;
+          gSettings.GUI.Language = romanian;
         } else if ( Prop->getString()->stringValue().contains("ko")) {
-          gSettings.GUI.gLanguage = korean;
+          gSettings.GUI.Language = korean;
 //          gSettings.GUI.Codepage = 0x1100;
 //          gSettings.GUI.CodepageSize = 0x100;
         }
@@ -4027,6 +4027,7 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
             DBG(" (%s)", dsdtPatch.PatchDsdtLabel.c_str());
             
             Prop3 = Prop2->propertyForKey("Disabled");
+            dsdtPatch.Disabled = IsPropertyNotNullAndTrue(Prop3);
             dsdtPatch.PatchDsdtMenuItem.BValue = !IsPropertyNotNullAndTrue(Prop3);
             
             //DBG(" DSDT bin patch #%d ", i);

@@ -846,34 +846,26 @@ void LOADER_ENTRY::AddDefaultMenu()
 
     if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
       SubEntry = getPartiallyDuplicatedEntry();
-      if (SubEntry) {
-        SubEntry->Title.takeValueFrom("Cancel hibernate wake");
-        SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
-        SubScreen->AddMenuEntry(SubEntry, true);
-      }
+       SubEntry->Title.takeValueFrom("Cancel hibernate wake");
+       SubEntry->Flags     = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
+       SubScreen->AddMenuEntry(SubEntry, true);
     }
 
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.SWPrintf("Boot %s with selected options", macOS);
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.SWPrintf("Boot %s with selected options", macOS);
+    SubScreen->AddMenuEntry(SubEntry, true);
 #if 0
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.SWPrintf("Boot %s with injected kexts", macOS);
-      SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
-      SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.SWPrintf("Boot %s with injected kexts", macOS);
+    SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
+    SubEntry->Flags       = OSFLAG_SET(SubEntry->Flags, OSFLAG_WITHKEXTS);
+    SubScreen->AddMenuEntry(SubEntry, true);
 
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.SWPrintf("Boot %s without injected kexts", macOS);
-      SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
-      SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.SWPrintf("Boot %s without injected kexts", macOS);
+    SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_CHECKFAKESMC);
+    SubEntry->Flags       = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_WITHKEXTS);
+    SubScreen->AddMenuEntry(SubEntry, true);
 #endif
     SubScreen->AddMenuEntry(SubMenuKextInjectMgmt(), true);
     SubScreen->AddMenuInfo_f("=== boot-args ===");
@@ -916,58 +908,50 @@ void LOADER_ENTRY::AddDefaultMenu()
     
     // default entry
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
+    SubScreen->AddMenuEntry(SubEntry, true);
 
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
+    if (Quiet) {
+      SubEntry->Title.SWPrintf("%ls verbose", Title.s());
+      SubEntry->LoadOptions.removeIC(quietLitteral);
+    } else {
+      SubEntry->Title.SWPrintf("%ls quiet", Title.s());
+      SubEntry->LoadOptions.AddID(quietLitteral);
+    }
+    SubScreen->AddMenuEntry(SubEntry, true);
+
+    SubEntry = getPartiallyDuplicatedEntry();
+    if (WithSplash) {
+      SubEntry->Title.SWPrintf("%ls without splash", Title.s());
+      SubEntry->LoadOptions.removeIC(splashLitteral);
+    } else {
+      SubEntry->Title.SWPrintf("%ls with splash", Title.s());
+      SubEntry->LoadOptions.AddID(splashLitteral);
+    }
+    SubScreen->AddMenuEntry(SubEntry, true);
+
+    SubEntry = getPartiallyDuplicatedEntry();
+    if (WithSplash) {
       if (Quiet) {
-        SubEntry->Title.SWPrintf("%ls verbose", Title.s());
+        SubEntry->Title.SWPrintf("%ls verbose without splash", Title.s());
+        SubEntry->LoadOptions.removeIC(splashLitteral);
         SubEntry->LoadOptions.removeIC(quietLitteral);
       } else {
-        SubEntry->Title.SWPrintf("%ls quiet", Title.s());
-        SubEntry->LoadOptions.AddID(quietLitteral);
-      }
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
-
-    SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      if (WithSplash) {
-        SubEntry->Title.SWPrintf("%ls without splash", Title.s());
+        SubEntry->Title.SWPrintf("%ls quiet without splash",Title.s());
         SubEntry->LoadOptions.removeIC(splashLitteral);
-      } else {
-        SubEntry->Title.SWPrintf("%ls with splash", Title.s());
-        SubEntry->LoadOptions.AddID(splashLitteral);
+        SubEntry->LoadOptions.Add(quietLitteral);
       }
-      SubScreen->AddMenuEntry(SubEntry, true);
+    } else if (Quiet) {
+      SubEntry->Title.SWPrintf("%ls verbose with splash",Title.s());
+      SubEntry->LoadOptions.removeIC(quietLitteral); //
+      SubEntry->LoadOptions.AddID(splashLitteral);
+    } else {
+      SubEntry->Title.SWPrintf("%ls quiet with splash",Title.s());
+      SubEntry->LoadOptions.AddID(quietLitteral);
+      SubEntry->LoadOptions.AddID(splashLitteral);
     }
-
-    SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      if (WithSplash) {
-        if (Quiet) {
-          SubEntry->Title.SWPrintf("%ls verbose without splash", Title.s());
-          SubEntry->LoadOptions.removeIC(splashLitteral);
-          SubEntry->LoadOptions.removeIC(quietLitteral);
-        } else {
-          SubEntry->Title.SWPrintf("%ls quiet without splash",Title.s());
-          SubEntry->LoadOptions.removeIC(splashLitteral);
-          SubEntry->LoadOptions.Add(quietLitteral);
-        }
-      } else if (Quiet) {
-        SubEntry->Title.SWPrintf("%ls verbose with splash",Title.s());
-        SubEntry->LoadOptions.removeIC(quietLitteral); //
-        SubEntry->LoadOptions.AddID(splashLitteral);
-      } else {
-        SubEntry->Title.SWPrintf("%ls quiet with splash",Title.s());
-        SubEntry->LoadOptions.AddID(quietLitteral);
-        SubEntry->LoadOptions.AddID(splashLitteral);
-      }
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubScreen->AddMenuEntry(SubEntry, true);
 
   } else if ((LoaderType == OSTYPE_WIN) || (LoaderType == OSTYPE_WINEFI)) {
     // by default, skip the built-in selection and boot from hard disk only
@@ -977,36 +961,33 @@ void LOADER_ENTRY::AddDefaultMenu()
     
     // default entry
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
+    SubScreen->AddMenuEntry(SubEntry, true);
 
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.takeValueFrom("Boot Windows from Hard Disk");
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.takeValueFrom("Boot Windows from Hard Disk");
+    SubScreen->AddMenuEntry(SubEntry, true);
 
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
-      LoadOptions.setEmpty();
-      LoadOptions.Add("-s"_XS8);
-      LoadOptions.Add("-c"_XS8);
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.takeValueFrom("Boot Windows from CD-ROM");
+    LoadOptions.setEmpty();
+    LoadOptions.Add("-s"_XS8);
+    LoadOptions.Add("-c"_XS8);
+    SubScreen->AddMenuEntry(SubEntry, true);
 
     SubEntry = getPartiallyDuplicatedEntry();
-    if (SubEntry) {
-      SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
-      SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
-      LoadOptions.setEmpty();
-      LoadOptions.Add("-v"_XS8);
-      SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
-      SubScreen->AddMenuEntry(SubEntry, true);
-    }
+    SubEntry->Title.SWPrintf("Run %ls in text mode", FileName.wc_str());
+    SubEntry->Flags           = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_USEGRAPHICS);
+    LoadOptions.setEmpty();
+    LoadOptions.Add("-v"_XS8);
+    SubEntry->LoaderType      = OSTYPE_OTHER; // Sothor - Why are we using OSTYPE_OTHER here?
+    SubScreen->AddMenuEntry(SubEntry, true);
 
+  }else{
+    // default entry
+    SubEntry = getPartiallyDuplicatedEntry();
+    SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
+    SubScreen->AddMenuEntry(SubEntry, true);
   }
 
 //  SubScreen->AddMenuEntry(&MenuEntryReturn, false); //one-way ticket to avoid confusion
