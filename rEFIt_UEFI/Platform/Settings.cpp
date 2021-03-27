@@ -230,9 +230,9 @@ CUSTOM_LOADER_ENTRY::CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _se
 
 XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const
 {
-  if ( settings.m_Arguments.isDefined() ) return Split<XString8Array>(settings.m_Arguments.value(), " ");
+  if ( settings._Arguments.isDefined() ) return Split<XString8Array>(settings._Arguments.value(), " ");
   XString8Array LoadOptions = parent.getLoadOptions();
-  LoadOptions.import(Split<XString8Array>(settings.m_AddArguments, " "));
+  LoadOptions.import(Split<XString8Array>(settings._AddArguments, " "));
   if (LoadOptions.isEmpty() && OSTYPE_IS_WINDOWS(parent.settings.Type)) {
     LoadOptions.Add("-s");
     LoadOptions.Add("-h");
@@ -244,9 +244,9 @@ XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const
 UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(bool NoCachesDefault) const
 {
   UINT8 Flags = parent.getFlags(NoCachesDefault);
-  if ( settings.m_Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
-  if ( settings.m_NoCaches.isDefined() ) {
-    if ( settings.m_NoCaches.value() ) Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
+  if ( settings._Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
+  if ( settings._NoCaches.isDefined() ) {
+    if ( settings._NoCaches.value() ) Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
     else  Flags = OSFLAG_UNSET(Flags, OSFLAG_NOCACHES);
   }
   return Flags;
@@ -265,13 +265,13 @@ XString8Array CUSTOM_LOADER_ENTRY::getLoadOptions() const
   return LoadOptions;
 }
 const XString8& CUSTOM_LOADER_SUBENTRY::getTitle() const {
-  if ( settings.m_Title.isDefined() ) return settings.m_Title.value();
-  if ( settings.m_FullTitle.isDefined() ) return NullXString8;
+  if ( settings._Title.isDefined() ) return settings._Title.value();
+  if ( settings._FullTitle.isDefined() ) return NullXString8;
   return parent.settings.dgetTitle();
 };
 const XString8& CUSTOM_LOADER_SUBENTRY::getFullTitle() const {
-  if ( settings.m_FullTitle.isDefined() ) return settings.m_FullTitle.value();
-  if ( settings.m_Title.isDefined() ) return NullXString8;
+  if ( settings._FullTitle.isDefined() ) return settings._FullTitle.value();
+  if ( settings._Title.isDefined() ) return NullXString8;
   return parent.settings.FullTitle;
 };
 
@@ -1553,25 +1553,25 @@ FillinCustomSubEntry (
 //    } else {
 //      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
 //    }
-    Entry->m_AddArguments = Prop->getString()->stringValue();
+    Entry->_AddArguments = Prop->getString()->stringValue();
 //    Entry->LoadOptions.import(Split<XString8Array>(Prop->getString()->stringValue(), " "));
   } else {
     Prop = DictPointer->propertyForKey("Arguments");
     if (Prop != NULL && (Prop->isString())) {
 //      Entry->Options.SPrintf("%s", Prop->getString()->stringValue());
-      Entry->m_Arguments = Prop->getString()->stringValue();
+      Entry->_Arguments = Prop->getString()->stringValue();
 //      Entry->LoadOptions = Split<XString8Array>(Prop->getString()->stringValue(), " ");
 //      Entry->Flags       = OSFLAG_SET(Entry->Flags, OSFLAG_NODEFAULTARGS);
     }
   }
   Prop = DictPointer->propertyForKey("Title");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->m_Title = Prop->getString()->stringValue();
+    Entry->_Title = Prop->getString()->stringValue();
 //    Entry->FullTitle.setEmpty(); // jief : erase the copy from the parent
   }
   Prop = DictPointer->propertyForKey("FullTitle");
   if (Prop != NULL && (Prop->isString())) {
-    Entry->m_FullTitle = Prop->getString()->stringValue();
+    Entry->_FullTitle = Prop->getString()->stringValue();
 //    Entry->Title.setEmpty(); // jief : erase the copy from the parent. Could also be the previous settings, but Title is not used when FullTitle exists.
   }
 
@@ -1705,11 +1705,11 @@ FillinCustomSubEntry (
 //    Entry->LoadOptions.Add("-s");
 //    Entry->LoadOptions.Add("-h");
 //  }
-  if (Entry->m_Title.dgetValue().isEmpty()) {
+  if (Entry->_Title.dgetValue().isEmpty()) {
     if (OSTYPE_IS_OSX_RECOVERY(parentType)) {
-      Entry->m_Title = "Recovery"_XS8;
+      Entry->_Title = "Recovery"_XS8;
     } else if (OSTYPE_IS_OSX_INSTALLER(parentType)) {
-      Entry->m_Title = "Install macOS"_XS8;
+      Entry->_Title = "Install macOS"_XS8;
     }
   }
 //  if (Entry->Image.isEmpty() && (Entry->ImagePath.isEmpty())) {
@@ -1759,12 +1759,12 @@ FillinCustomSubEntry (
     if (Prop != NULL) {
       if (IsPropertyNotNullAndTrue(Prop)) {
 //        Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
-          Entry->m_NoCaches = true;
+          Entry->_NoCaches = true;
       } else {
         // Use global settings
         if (gSettings.SystemParameters.NoCaches) {
 //          Entry->Flags = OSFLAG_SET(Entry->Flags, OSFLAG_NOCACHES);
-          Entry->m_NoCaches = false;
+          Entry->_NoCaches = false;
         }
       }
     }
@@ -2492,7 +2492,7 @@ EFI_STATUS GetEarlyUserSettings (
     if (BootDict != NULL) {
       const TagStruct* Prop = BootDict->propertyForKey("Timeout");
       if (Prop != NULL) {
-        gSettings.Boot.Timeout = (INT32)GetPropertyAsInteger(Prop, gSettings.Boot.Timeout);
+        gSettings.Boot.Timeout = GetPropertyAsInteger(Prop, gSettings.Boot.Timeout);
         DBG("timeout set to %lld\n", gSettings.Boot.Timeout);
       }
 
@@ -3095,7 +3095,7 @@ EFI_STATUS GetEarlyUserSettings (
       const TagStruct* Prop             = GraphicsDict->propertyForKey("PatchVBios");
       gSettings.Graphics.PatchVBios              = IsPropertyNotNullAndTrue(Prop);
 
-      gSettings.Graphics.PatchVBiosBytesNew.setEmpty();
+      gSettings.Graphics.PatchVBiosBytes.setEmpty();
 
       const TagArray* Dict2 = GraphicsDict->arrayPropertyForKey("PatchVBiosBytes"); // array of dict
       if (Dict2 != NULL) {
@@ -3139,7 +3139,7 @@ EFI_STATUS GetEarlyUserSettings (
 //              VBiosPatch->NumberOfBytes = FindSize;
               // go to next entry
 //              ++gSettings.Graphics.PatchVBiosBytesCount;
-              gSettings.Graphics.PatchVBiosBytesNew.AddReference(VBiosPatchPtr, true);
+              gSettings.Graphics.PatchVBiosBytes.AddReference(VBiosPatchPtr, true);
             } else {
               // error - release mem
               delete VBiosPatchPtr;
@@ -3185,6 +3185,7 @@ EFI_STATUS GetEarlyUserSettings (
             MsgLog("MALFORMED PLIST : DisableDrivers must be an array of string");
             continue;
           }
+          if ( Prop->getString()->stringValue().notEmpty() )
           gSettings.DisabledDriverArray.Add(Prop->getString()->stringValue());
         }
       }
@@ -4014,8 +4015,8 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
           gSettings.ACPI.DSDT.DSDTPatchArray.setEmpty();
           for (i = 0; i < Count; i++)
           {
-            DSDT_Patch* dsdtPatchPtr = new DSDT_Patch();
-            DSDT_Patch& dsdtPatch = *dsdtPatchPtr;
+            SETTINGS_DATA::ACPIClass::DSDTClass::DSDT_Patch* dsdtPatchPtr = new SETTINGS_DATA::ACPIClass::DSDTClass::DSDT_Patch();
+            SETTINGS_DATA::ACPIClass::DSDTClass::DSDT_Patch& dsdtPatch = *dsdtPatchPtr;
             UINTN Size = 0;
             const TagDict* Prop2 = PatchesArray->dictElementAt(i,"DSDT/Patches"_XS8);
             DBG(" - [%02lld]:", i);
@@ -5505,18 +5506,18 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       //else gUuid value from SMBIOS
       //     DBG("Finally use %s\n", strguid(&gUuid));
 
-      gSettings.SystemParameters.InjectSystemID = 2;
+      gSettings.SystemParameters._InjectSystemID = 2;
       Prop                     = SystemParametersDict->propertyForKey("InjectSystemID");
       if ( Prop ) {
-        if ( Prop->isBool() ) gSettings.SystemParameters.InjectSystemID = Prop->getBool()->boolValue();
+        if ( Prop->isBool() ) gSettings.SystemParameters._InjectSystemID = Prop->getBool()->boolValue();
         else if (  Prop->isString() ) {
           // TODO a function that takes a string and return if it's true or false
-          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.SystemParameters.InjectSystemID = 1;
-          else if ( Prop->getString()->stringValue()[0] == 'y' ) gSettings.SystemParameters.InjectSystemID = 1;
-          else if ( Prop->getString()->stringValue()[0] == 'Y' ) gSettings.SystemParameters.InjectSystemID = 1;
-          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.SystemParameters.InjectSystemID = 0;
-          else if ( Prop->getString()->stringValue().equalIC("n") ) gSettings.SystemParameters.InjectSystemID = 0;
-          else if ( Prop->getString()->stringValue().equalIC("N") ) gSettings.SystemParameters.InjectSystemID = 0;
+          if ( Prop->getString()->stringValue().equalIC("true") ) gSettings.SystemParameters._InjectSystemID = 1;
+          else if ( Prop->getString()->stringValue()[0] == 'y' ) gSettings.SystemParameters._InjectSystemID = 1;
+          else if ( Prop->getString()->stringValue()[0] == 'Y' ) gSettings.SystemParameters._InjectSystemID = 1;
+          else if ( Prop->getString()->stringValue().equalIC("false") ) gSettings.SystemParameters._InjectSystemID = 0;
+          else if ( Prop->getString()->stringValue().equalIC("n") ) gSettings.SystemParameters._InjectSystemID = 0;
+          else if ( Prop->getString()->stringValue().equalIC("N") ) gSettings.SystemParameters._InjectSystemID = 0;
           else {
             DBG("MALFORMED PLIST : SMBIOS/InjectSystemID must be true, yes, false, no, or non existant");
           }

@@ -1609,11 +1609,15 @@ void ScanLoader(void)
           rootDmg.replaceAll('/', '\\');
           REFIT_VOLUME* targetInstallVolume = Volumes.getVolumeWithApfsContainerUUIDAndFileSystemUUID(Volume->ApfsContainerUUID, Volume->ApfsTargetUUIDArray[i]);
           if ( targetInstallVolume ) {
-            if ( rootDmg.isEmpty()  ||  FileExists(*targetInstallVolume->RootDir, rootDmg) ) { // rootDmg empty is accepted, to be compatible with previous code
+            EFI_FILE_PROTOCOL* TestFile;
+            EFI_STATUS Status = targetInstallVolume->RootDir->Open(targetInstallVolume->RootDir, &TestFile, L"\\", EFI_FILE_MODE_READ, 0);
+            if ( EFI_ERROR(Status) ) TestFile = NULL; // if the root of the volume can't be opened (most likely encrypted), add the installer anyway.
+            if ( rootDmg.isEmpty()  ||  EFI_ERROR(Status)  ||  FileExists(*targetInstallVolume->RootDir, rootDmg) ) { // rootDmg empty is accepted, to be compatible with previous code
               AddLoaderEntry(SWPrintf("\\%s\\com.apple.installer\\boot.efi", Volume->ApfsTargetUUIDArray[i].c_str()), NullXString8Array, FullTitleInstaller, LoaderTitleInstaller, Volume, NULL, OSTYPE_OSX_INSTALLER, 0);
             }else{
               DBG("    Dead installer entry found (installer dmg boot file not found : '%s')\n", rootDmg.c_str());
             }
+            if ( TestFile != NULL ) TestFile->Close(TestFile);
           }else{
             DBG("    Dead installer entry found (target volume not found : '%s')\n", Volume->ApfsTargetUUIDArray[i].c_str());
           }

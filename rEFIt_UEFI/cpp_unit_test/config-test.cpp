@@ -5,7 +5,7 @@
 #include "../Platform/plist/plist.h"
 #include "../cpp_lib/XmlLiteSimpleTypes.h"
 #include "../cpp_lib/XmlLiteParser.h"
-#include "../Platform/ConfigPlist/ConfigPlist.h"
+#include "../Platform/ConfigPlist/ConfigPlistClass.h"
 
 
 static const char* config_all = "\n\n\n\n\n\n\n\n\n\n\n"
@@ -902,7 +902,7 @@ int config_plist_tests()
 //  size_t length;
 //  bool isOpeningTag, isClosingTag;
   bool b;
-  ConfigPlist configPlistTest;
+  ConfigPlistClass configPlistTest;
   
   XmlLiteParser xmlLiteParser;
 //  xmlLiteParser.init(config_all, strlen(config_all));

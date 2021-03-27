@@ -16,7 +16,7 @@
 
 #include "../../../../../cpp_tests/Include/xcode_utf_fixed.h"
 #include "ConfigSample1.h"
-#include "../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlist.h"
+#include "../../../rEFIt_UEFI/Platform/ConfigPlist/ConfigPlistClass.h"
 #include "../../../rEFIt_UEFI/Platform/ConfigPlist/CompareSettings.h"
 
 
@@ -75,7 +75,7 @@ int test1()
   printf("GetUserSettings returns %s\n", efiStrError(Status));
 
   bool b;
-  ConfigPlist configPlist;
+  ConfigPlistClass configPlist;
   
   XmlLiteParser xmlLiteParser;
   xmlLiteParser.init(source, newLen);
@@ -94,8 +94,8 @@ int test1()
   }
 
   printf("\n");
-  printf("=== [ CompareEarlyUserSettingsWithConfigPlist ] ====================\n");
-  return CompareEarlyUserSettingsWithConfigPlist(settings, configPlist) ? 0 : -1;
+  printf("=== [ CompareOldNewSettings ] ====================\n");
+  return CompareOldNewSettings(settings, configPlist) ? 0 : -1;
 }
 
 

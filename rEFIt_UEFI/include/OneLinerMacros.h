@@ -31,6 +31,12 @@
 #define REG32(base, reg)             (*(volatile UINT32 *)((UINTN)base + reg))
 #define WRITEREG32(base, reg, value) REG32((base), (reg)) = value
 
+
+#define CONCAT2(x, y) x ## y
+#define CONCAT(x, y) CONCAT2(x, y)
+#define STRINGIZE(x) #x
+
+
 #ifdef __cplusplus
 
 #include "../cpp_util/remove_ref.h"

@@ -44,7 +44,7 @@ class undefinable_bool : public undefinable<bool>
   using super = undefinable<bool>;
 public:
     undefinable_bool() { }
-    undefinable_bool(bool newValue) { super::operator=(newValue); }
+    explicit undefinable_bool(bool newValue) { super::operator=(newValue); }
     undefinable_bool& operator = (bool newValue) { super::operator=(newValue); return *this; }
 };
 
@@ -53,7 +53,7 @@ class undefinable_uint16 : public undefinable<uint16_t>
   using super = undefinable<uint16_t>;
 public:
     undefinable_uint16() { }
-    undefinable_uint16(uint32_t newValue) { super::operator=(newValue); }
+    explicit undefinable_uint16(uint32_t newValue) { super::operator=(newValue); }
     undefinable_uint16& operator = (uint16_t newValue) { super::operator=(newValue); return *this; }
 };
 
@@ -62,7 +62,7 @@ class undefinable_uint32 : public undefinable<uint32_t>
   using super = undefinable<uint32_t>;
 public:
     undefinable_uint32() { }
-    undefinable_uint32(uint32_t newValue) { super::operator=(newValue); }
+    explicit undefinable_uint32(uint32_t newValue) { super::operator=(newValue); }
     undefinable_uint32& operator = (uint32_t newValue) { super::operator=(newValue); return *this; }
 };
 
@@ -70,6 +70,8 @@ class undefinable_XString8 : public undefinable<XString8>
 {
   using super = undefinable<XString8>;
 public:
+    undefinable_XString8() { }
+    explicit undefinable_XString8(const XString8& newValue) { super::operator=(newValue); }
     undefinable_XString8& operator = (XString8 newValue) { super::operator=(newValue); return *this; }
 };
 

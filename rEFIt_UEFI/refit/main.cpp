@@ -1016,9 +1016,9 @@ void LOADER_ENTRY::StartLoader()
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "x86_64");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.Quirks.OcKernelCache.c_str());
     mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.Quirks.FuzzyMatch;
-    memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.Quirks.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
     gSettings.Quirks.OcKernelQuirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
     gSettings.Quirks.OcKernelQuirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
+    memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.Quirks.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
 
     mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
     mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
@@ -1577,6 +1577,24 @@ void LOADER_ENTRY::StartLoader()
   LoadedImage->LoadOptions = (void*)LoadOptionsAsXStringW.wc_str();
   LoadedImage->LoadOptionsSize = (UINT32)LoadOptionsAsXStringW.sizeInBytesIncludingTerminator();
 
+  DBG("Kernel quirks\n");
+  DBG("ACPCL %d AXCL %d AXEM %d AXFB %d CSG %d DIM %d DLJ %d DRC %d DPM %d EDI %d IPBS %d LKP %d PNKD %d PTKP %d TPD %d XPL %d\n",
+      mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock,
+      mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock,
+      mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs,
+      mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmForceBoost,
+      mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid,
+      mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapper,
+      mOpenCoreConfiguration.Kernel.Quirks.DisableLinkeditJettison,
+      mOpenCoreConfiguration.Kernel.Quirks.DisableRtcChecksum,
+      mOpenCoreConfiguration.Kernel.Quirks.DummyPowerManagement,
+      mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons,
+      mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize,
+      mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic,
+      mOpenCoreConfiguration.Kernel.Quirks.PanicNoKextDump,
+      mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic,
+      mOpenCoreConfiguration.Kernel.Quirks.ThirdPartyDrives,
+      mOpenCoreConfiguration.Kernel.Quirks.XhciPortLimit);
   
   DBG("Closing log\n");
   if (SavePreBootLog) {
@@ -2083,8 +2101,8 @@ void DisconnectSomeDevices(void)
 void PatchVideoBios(UINT8 *Edid)
 {
 
-  if ( gSettings.Graphics.PatchVBiosBytesNew.notEmpty() ) {
-    VideoBiosPatchBytes(gSettings.Graphics.PatchVBiosBytesNew.getVBIOS_PATCH_BYTES(), gSettings.Graphics.PatchVBiosBytesNew.getVBIOS_PATCH_BYTES_count());
+  if ( gSettings.Graphics.PatchVBiosBytes.notEmpty() ) {
+    VideoBiosPatchBytes(gSettings.Graphics.PatchVBiosBytes.getVBIOS_PATCH_BYTES(), gSettings.Graphics.PatchVBiosBytes.getVBIOS_PATCH_BYTES_count());
   }
 
   if (gSettings.Graphics.PatchVBios) {
@@ -2122,7 +2140,7 @@ static void LoadDrivers(void)
   ScanDriverDir(L"drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
 
-  VBiosPatchNeeded = gSettings.Graphics.PatchVBios || gSettings.Graphics.PatchVBiosBytesNew.getVBIOS_PATCH_BYTES_count() > 0;
+  VBiosPatchNeeded = gSettings.Graphics.PatchVBios || gSettings.Graphics.PatchVBiosBytes.getVBIOS_PATCH_BYTES_count() > 0;
   if (VBiosPatchNeeded) {
     // check if it is already done in CloverEFI BiosVideo
     Status = gRT->GetVariable (

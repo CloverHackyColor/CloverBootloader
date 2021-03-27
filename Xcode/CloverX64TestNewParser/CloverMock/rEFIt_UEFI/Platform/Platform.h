@@ -26,6 +26,7 @@ extern "C" {
 #include <Library/MemoryAllocationLib.h>
 #include "../../../../../rEFIt_UEFI/Platform/BootLog.h"
 //#include "BootLog.h"
+#include <Library/DebugLib.h> // this is just to define DEBUG, because Slice wrongly did some #ifdef DEBUG
 
 #ifdef __cplusplus
 }
