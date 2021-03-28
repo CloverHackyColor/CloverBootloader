@@ -185,7 +185,10 @@ OvrSetVariable(
   UINTN i;
 
   for (i = 0; i < gSettings.RtVariables.BlockRtVariableArray.size(); i++) {
-    if (!CompareGuid(&gSettings.RtVariables.BlockRtVariableArray[i].VarGuid, VendorGuid)) {
+    if ( gSettings.RtVariables.BlockRtVariableArray[i].Disabled ) {
+      continue;
+    }
+    if (!CompareGuid(&gSettings.RtVariables.BlockRtVariableArray[i].Guid, VendorGuid)) {
       continue;
     }
     if (gSettings.RtVariables.BlockRtVariableArray[i].Name.isEmpty() || gSettings.RtVariables.BlockRtVariableArray[i].Name[0] == L'*' || gSettings.RtVariables.BlockRtVariableArray[i].Name == LStringW(VariableName) ) {

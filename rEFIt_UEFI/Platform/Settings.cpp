@@ -3163,14 +3163,6 @@ EFI_STATUS GetEarlyUserSettings (
 
       GetEDIDSettings(GraphicsDict, gSettings);
     }
-    
-
-
-    //done until here
-
-
-
-
 
     const TagArray* DisableDriversArray = CfgDict->arrayPropertyForKey("DisableDrivers"); // array of string
     if (DisableDriversArray != NULL) {
@@ -3215,6 +3207,14 @@ EFI_STATUS GetEarlyUserSettings (
         }
       }
     }
+
+
+
+    //done until here
+
+
+
+
 
     gSettings.mmioWhiteListArray.setEmpty();
  //   const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
@@ -5429,7 +5429,8 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
           }
           Prop2 = BlockDict->propertyForKey("Disabled");
           if (IsPropertyNotNullAndFalse(Prop2)) {
-            continue;
+            RtVariable.Disabled = true;
+//            continue;
           }
           Prop2 = BlockDict->propertyForKey("Guid");
           if ( Prop2 != NULL ) {
@@ -5438,8 +5439,9 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             }else{
               if( Prop2->getString()->stringValue().notEmpty() ) {
                 if (IsValidGuidString(Prop2->getString()->stringValue())) {
-                  StrToGuidLE(Prop2->getString()->stringValue(), &RtVariable.VarGuid);
+                  StrToGuidLE(Prop2->getString()->stringValue(), &RtVariable.Guid);
                 }else{
+                  StrToGuidLE(nullGuidAsString, &RtVariable.Guid);
                  DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
                 }
               }

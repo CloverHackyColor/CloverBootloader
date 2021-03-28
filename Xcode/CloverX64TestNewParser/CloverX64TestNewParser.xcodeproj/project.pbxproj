@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9A0B085E240300E000E2B470 /* Platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0B085D240300E000E2B470 /* Platform.cpp */; };
 		9A0D113825FF58420040555F /* strcasecmp_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A0D113625FF583F0040555F /* strcasecmp_test.cpp */; };
+		9A13D98E2610569300863C91 /* CompareSettingsDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A13D98D2610569300863C91 /* CompareSettingsDevices.cpp */; };
+		9A13D99126105B2200863C91 /* CompareSettingsQuirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A13D99026105B2200863C91 /* CompareSettingsQuirks.cpp */; };
 		9A272A7F25D5062E00F03E19 /* DataHub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A272A7D25D5062D00F03E19 /* DataHub.cpp */; };
 		9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1D241BB61B00F3D247 /* abort.cpp */; };
 		9A28CD22241BB61B00F3D247 /* strlen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A28CD1E241BB61B00F3D247 /* strlen.cpp */; };
@@ -146,6 +148,7 @@
 		9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0359325C57C8A00E58351 /* PrintLib.c */; };
 		9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */; };
 		9AD7B15026079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */; };
+		9AFB5F78261060CB0078E53D /* CompareSettingsRtVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB5F76261060CB0078E53D /* CompareSettingsRtVariables.cpp */; };
 		9AFDCEA325CD9A3300EEAF06 /* OcDevicePathLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */; };
 		9AFDCEA525CD9B1C00EEAF06 /* BaseCpuLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */; };
 		9AFDCEA725CD9B2C00EEAF06 /* BaseSerialPortLib16550.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA625CD9B2B00EEAF06 /* BaseSerialPortLib16550.lib */; };
@@ -266,6 +269,10 @@
 		9A0B085D240300E000E2B470 /* Platform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Platform.cpp; sourceTree = "<group>"; };
 		9A0D113625FF583F0040555F /* strcasecmp_test.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = strcasecmp_test.cpp; sourceTree = "<group>"; };
 		9A0D113725FF58400040555F /* strcasecmp_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strcasecmp_test.h; sourceTree = "<group>"; };
+		9A13D98C2610569300863C91 /* CompareSettingsDevices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompareSettingsDevices.h; sourceTree = "<group>"; };
+		9A13D98D2610569300863C91 /* CompareSettingsDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompareSettingsDevices.cpp; sourceTree = "<group>"; };
+		9A13D98F26105B2200863C91 /* CompareSettingsQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompareSettingsQuirks.h; sourceTree = "<group>"; };
+		9A13D99026105B2200863C91 /* CompareSettingsQuirks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompareSettingsQuirks.cpp; sourceTree = "<group>"; };
 		9A272A7C25D5062D00F03E19 /* DataHubExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubExt.h; sourceTree = "<group>"; };
 		9A272A7D25D5062D00F03E19 /* DataHub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataHub.cpp; sourceTree = "<group>"; };
 		9A272A7E25D5062E00F03E19 /* DataHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHub.h; sourceTree = "<group>"; };
@@ -5011,6 +5018,8 @@
 		9AD469482452B33700D6D0DB /* shared_with_menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shared_with_menu.h; sourceTree = "<group>"; };
 		9AD7B14E26079F5C00E850D1 /* REFIT_MAINMENU_SCREEN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = REFIT_MAINMENU_SCREEN.h; sourceTree = "<group>"; };
 		9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MAINMENU_SCREEN.cpp; sourceTree = "<group>"; };
+		9AFB5F76261060CB0078E53D /* CompareSettingsRtVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompareSettingsRtVariables.cpp; sourceTree = "<group>"; };
+		9AFB5F77261060CB0078E53D /* CompareSettingsRtVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompareSettingsRtVariables.h; sourceTree = "<group>"; };
 		9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = OcDevicePathLib.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib/OUTPUT/OcDevicePathLib.lib; sourceTree = "<group>"; };
 		9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = BaseCpuLib.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib; sourceTree = "<group>"; };
 		9AFDCEA625CD9B2B00EEAF06 /* BaseSerialPortLib16550.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = BaseSerialPortLib16550.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550/OUTPUT/BaseSerialPortLib16550.lib; sourceTree = "<group>"; };
@@ -5397,6 +5406,12 @@
 				9AA316DD260F27790033D29F /* CompareSettingsKernelAndKextPatches.h */,
 				9AA316E0260F2BE50033D29F /* CompareSettingsGraphics.cpp */,
 				9AA316E1260F2BE60033D29F /* CompareSettingsGraphics.h */,
+				9A13D98D2610569300863C91 /* CompareSettingsDevices.cpp */,
+				9A13D98C2610569300863C91 /* CompareSettingsDevices.h */,
+				9A13D99026105B2200863C91 /* CompareSettingsQuirks.cpp */,
+				9A13D98F26105B2200863C91 /* CompareSettingsQuirks.h */,
+				9AFB5F76261060CB0078E53D /* CompareSettingsRtVariables.cpp */,
+				9AFB5F77261060CB0078E53D /* CompareSettingsRtVariables.h */,
 				9A358B1725CF115100A3850D /* Config_ACPI_DSDT.cpp */,
 				9A358AFA25CF115100A3850D /* Config_ACPI_DSDT.h */,
 				9A358B1A25CF115100A3850D /* Config_ACPI_SSDT.h */,
@@ -15904,6 +15919,7 @@
 				9A28CD1F241BB61B00F3D247 /* abort.cpp in Sources */,
 				9AA924DF25CD5B2E00BD5E8B /* Console.cpp in Sources */,
 				9AA9246F25CD5B2E00BD5E8B /* KextList.cpp in Sources */,
+				9A13D98E2610569300863C91 /* CompareSettingsDevices.cpp in Sources */,
 				9A36E53C24F3EDED007A1107 /* base64.cpp in Sources */,
 				9AFDD0BD25CE731000EEAF06 /* strlen_test.cpp in Sources */,
 				9A358B3D25CF117A00A3850D /* XmlLiteCompositeTypes.cpp in Sources */,
@@ -15954,6 +15970,7 @@
 				9AFDD0A925CE731000EEAF06 /* XObjArray_tests.cpp in Sources */,
 				9AA924CF25CD5B2E00BD5E8B /* hda.cpp in Sources */,
 				9AA9249725CD5B2E00BD5E8B /* Hibernate.cpp in Sources */,
+				9AFB5F78261060CB0078E53D /* CompareSettingsRtVariables.cpp in Sources */,
 				9AFDD0B925CE731000EEAF06 /* XToolsCommon_test.cpp in Sources */,
 				9AA316D6260F0CBE0033D29F /* CompareSettingsGUI.cpp in Sources */,
 				9AA9E4F625CD283400BD5E8B /* XCinema.cpp in Sources */,
@@ -16034,6 +16051,7 @@
 				9A36E50824F3B537007A1107 /* TagDate.cpp in Sources */,
 				9AFDD08925CE731000EEAF06 /* printf_lite-test.cpp in Sources */,
 				9AD0359425C57C8A00E58351 /* PrintLib.c in Sources */,
+				9A13D99126105B2200863C91 /* CompareSettingsQuirks.cpp in Sources */,
 				9AFDD09D25CE731000EEAF06 /* XStringArray_test.cpp in Sources */,
 				9AA3918F25CC75420099DC1F /* Settings.cpp in Sources */,
 				9A36E51F24F3B82A007A1107 /* b64cdecode.cpp in Sources */,

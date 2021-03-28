@@ -1,7 +1,8 @@
 /**
- guid.c
+ guid.cpp
  **/
 
+#include "guid.h"
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 
 //this is standard
@@ -141,6 +142,19 @@ F0 00 00 00                                     | ....
  * @APPLE_LICENSE_HEADER_END@
  */
 
+const XString8 nullGuidAsString = "00000000-0000-0000-0000-000000000000"_XS8;
+
+class _GUID_H__asserts
+{
+public:
+  _GUID_H__asserts() {
+    // Jief : I know it's a panic, even in a release version. But it's about constants !
+    if ( !IsValidGuidString(nullGuidAsString) ) panic("!IsValidGuidString(nullGuidAsString)");
+  }
+} _GUID_H__asserts_obj;
+
+
+EFI_GUID nullGuid = {0,0,0,{0,0,0,0,0,0,0,0}};
 
 //Slice - I need GuidBEToStr :(
 XStringW GuidBeToStr(const EFI_GUID& Guid)

@@ -741,9 +741,10 @@ public:
       class RT_VARIABLES
       {
         public:
+          bool     Disabled = bool();
           XString8 Comment = XStringW();
           XStringW Name = XStringW();
-          EFI_GUID VarGuid = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}};
+          EFI_GUID Guid = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}};
       };
         
       XString8                RtROMAsString = XString8();
@@ -752,7 +753,7 @@ public:
       UINT32                  CsrActiveConfig = UINT32();
       UINT16                  BooterConfig = UINT16();
       XString8                BooterCfgStr = XString8();
-      XObjArray<RT_VARIABLES>         BlockRtVariableArray = XObjArray<RT_VARIABLES>();
+      XObjArray<RT_VARIABLES> BlockRtVariableArray = XObjArray<RT_VARIABLES>();
 
       bool GetLegacyLanAddress() const {
         return RtROMAsString.equalIC("UseMacAddr0") || RtROMAsString.equalIC("UseMacAddr1");
@@ -986,11 +987,11 @@ public:
   // If CustomUuid is defined, return false by default
   // If SmUUID is defined, return true by default.
   bool ShouldInjectSystemID() {
-    if ( SystemParameters.CustomUuid.notEmpty() &&  SystemParameters.CustomUuid != nullGuid ) {
+    if ( SystemParameters.CustomUuid.notEmpty() &&  SystemParameters.CustomUuid != nullGuidAsString ) {
       if ( SystemParameters._InjectSystemID == 2 ) return false;
       else return SystemParameters._InjectSystemID;
     }
-    if ( SmUUID.isEmpty() || SmUUID == nullGuid ) return false;
+    if ( SmUUID.isEmpty() || SmUUID == nullGuidAsString ) return false;
     if ( SystemParameters._InjectSystemID == 2 ) return true;
     return SystemParameters._InjectSystemID;
   }

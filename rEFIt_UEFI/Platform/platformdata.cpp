@@ -1422,7 +1422,7 @@ void GetDefaultSettings()
   gSettings.SystemParameters.BacklightLevelConfig = FALSE;
   gSettings.TrustSMBIOS          = TRUE;
 
-  gSettings.SmUUID = nullGuid;
+  gSettings.SmUUID = nullGuidAsString;
   gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
   GlobalConfig.RtROM.setEmpty();
   gSettings.RtVariables.CsrActiveConfig      = 0xFFFF;

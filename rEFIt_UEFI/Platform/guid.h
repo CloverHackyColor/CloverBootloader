@@ -14,7 +14,8 @@
 
 extern "C" EFI_GUID  gEfiMiscSubClassGuid;
 
-constexpr const LString8 nullGuid = "00000000-0000-0000-0000-000000000000";
+extern const XString8 nullGuidAsString;
+extern EFI_GUID nullGuid;
 
 /** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
 template <typename T, typename IntegralType, enable_if( is_char(T) && is_integral(IntegralType) ) >
