@@ -13,8 +13,6 @@
 #include "../libeg/XIcon.h"
 #include "../cpp_lib/undefinable.h"
 #include "../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
-//#include "card_vlist.h"
-#include "ConfigPlist/ConfigPlistClass.h"
 
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
