@@ -47,6 +47,7 @@
   include/XToolsConf.h
   include/OC.h
   include/printf_lite-test-cpp_conf.h
+  include/QuirksCodes.h
   include/BootTypes.h
   include/OSTypes.h
   include/OSFlags.h

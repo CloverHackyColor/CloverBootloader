@@ -9,6 +9,7 @@
 #include "../include/OSFlags.h"
 #include "../include/OSTypes.h"
 #include "../include/BootTypes.h"
+#include "../include/QuirksCodes.h"
 #include "../entry_scan/loader.h"
 #include "../Platform/BootLog.h"
 #include "../entry_scan/secureboot.h"
@@ -2451,6 +2452,7 @@ GetEDIDSettings(const TagDict* DictPointer, SETTINGS_DATA& gSettings)
   }
 }
 
+// Jief : GetEarlyUserSettings is ready to disappear...
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 EFI_STATUS GetEarlyUserSettings (
@@ -3208,15 +3210,7 @@ EFI_STATUS GetEarlyUserSettings (
       }
     }
 
-
-
-    //done until here
-
-
-
-
-
-    gSettings.mmioWhiteListArray.setEmpty();
+    gSettings.Quirks.mmioWhiteListArray.setEmpty();
  //   const TagDict* OcQuirksDict = CfgDict->dictPropertyForKey("OcQuirks");
 //if ( OcQuirksDict ) panic("config.plist/OcQuirks has been renamed Quirks. Update your config.plist");
 
@@ -3226,59 +3220,59 @@ EFI_STATUS GetEarlyUserSettings (
       const TagStruct* Prop;
       Prop               = OcQuirksDict->propertyForKey("AvoidRuntimeDefrag");
 //if ( !Prop ) panic("Cannot find AvoidRuntimeDefrag in OcQuirks under root (OC booter quirks)");
-      gSettings.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop); //true if absent so no panic
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
+      gSettings.Quirks.ocBooterQuirks.AvoidRuntimeDefrag = !IsPropertyNotNullAndFalse(Prop); //true if absent so no panic
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.AvoidRuntimeDefrag? QUIRK_DEFRAG:0;
       Prop               = OcQuirksDict->propertyForKey( "DevirtualiseMmio");
-      gSettings.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
+      gSettings.Quirks.ocBooterQuirks.DevirtualiseMmio   = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.DevirtualiseMmio? QUIRK_MMIO:0;
       Prop               = OcQuirksDict->propertyForKey( "DisableSingleUser");
-      gSettings.ocBooterQuirks.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DisableSingleUser? QUIRK_SU:0;
+      gSettings.Quirks.ocBooterQuirks.DisableSingleUser  = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.DisableSingleUser? QUIRK_SU:0;
       Prop               = OcQuirksDict->propertyForKey( "DisableVariableWrite");
-      gSettings.ocBooterQuirks.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DisableVariableWrite? QUIRK_VAR:0;
+      gSettings.Quirks.ocBooterQuirks.DisableVariableWrite = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.DisableVariableWrite? QUIRK_VAR:0;
       Prop               = OcQuirksDict->propertyForKey( "DiscardHibernateMap");
-      gSettings.ocBooterQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
+      gSettings.Quirks.ocBooterQuirks.DiscardHibernateMap = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.DiscardHibernateMap? QUIRK_HIBER:0;
       Prop               = OcQuirksDict->propertyForKey( "EnableSafeModeSlide");
-      gSettings.ocBooterQuirks.EnableSafeModeSlide = !IsPropertyNotNullAndFalse(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
+      gSettings.Quirks.ocBooterQuirks.EnableSafeModeSlide = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.EnableSafeModeSlide? QUIRK_SAFE:0;
       Prop               = OcQuirksDict->propertyForKey( "EnableWriteUnprotector");
-      gSettings.ocBooterQuirks.EnableWriteUnprotector = !IsPropertyNotNullAndFalse(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
+      gSettings.Quirks.ocBooterQuirks.EnableWriteUnprotector = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.EnableWriteUnprotector? QUIRK_UNPROT:0;
       Prop               = OcQuirksDict->propertyForKey( "ForceExitBootServices");
-      gSettings.ocBooterQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ForceExitBootServices? QUIRK_EXIT:0;
+      gSettings.Quirks.ocBooterQuirks.ForceExitBootServices = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.ForceExitBootServices? QUIRK_EXIT:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectMemoryRegions");
-      gSettings.ocBooterQuirks.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
+      gSettings.Quirks.ocBooterQuirks.ProtectMemoryRegions = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.ProtectMemoryRegions? QUIRK_REGION:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectSecureBoot");
-      gSettings.ocBooterQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectSecureBoot? QUIRK_SECURE:0;
+      gSettings.Quirks.ocBooterQuirks.ProtectSecureBoot = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.ProtectSecureBoot? QUIRK_SECURE:0;
       Prop               = OcQuirksDict->propertyForKey( "ProtectUefiServices");
-      gSettings.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
+      gSettings.Quirks.ocBooterQuirks.ProtectUefiServices = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.ProtectUefiServices? QUIRK_UEFI:0;
       //it is in GUI section
 //      Prop               = OcQuirksDict->propertyForKey( "ProvideConsoleGopEnable");
 //      settingsData.ProvideConsoleGop = !IsPropertyNotNullAndFalse(Prop);
       Prop               = OcQuirksDict->propertyForKey( "ProvideCustomSlide");
-      gSettings.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
+      gSettings.Quirks.ocBooterQuirks.ProvideCustomSlide = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.ProvideCustomSlide? QUIRK_CUSTOM:0;
       Prop               = OcQuirksDict->propertyForKey( "ProvideMaxSlide");
-      gSettings.ocBooterQuirks.ProvideMaxSlide = (UINT8)GetPropertyAsInteger(Prop, 0); // cast will be safe when the new parser will ensure that the value is UINT8
+      gSettings.Quirks.ocBooterQuirks.ProvideMaxSlide = (UINT8)GetPropertyAsInteger(Prop, 0); // cast will be safe when the new parser will ensure that the value is UINT8
       Prop               = OcQuirksDict->propertyForKey( "RebuildAppleMemoryMap");
-      gSettings.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
+      gSettings.Quirks.ocBooterQuirks.RebuildAppleMemoryMap = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.RebuildAppleMemoryMap? QUIRK_MAP:0;
       Prop               = OcQuirksDict->propertyForKey( "SetupVirtualMap");
-      gSettings.ocBooterQuirks.SetupVirtualMap = !IsPropertyNotNullAndFalse(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SetupVirtualMap? QUIRK_VIRT:0;
+      gSettings.Quirks.ocBooterQuirks.SetupVirtualMap = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.SetupVirtualMap? QUIRK_VIRT:0;
       Prop               = OcQuirksDict->propertyForKey( "SignalAppleOS");
-      gSettings.ocBooterQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SignalAppleOS? QUIRK_OS:0;
+      gSettings.Quirks.ocBooterQuirks.SignalAppleOS = IsPropertyNotNullAndTrue(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.SignalAppleOS? QUIRK_OS:0;
       Prop               = OcQuirksDict->propertyForKey( "SyncRuntimePermissions");
-      gSettings.ocBooterQuirks.SyncRuntimePermissions = !IsPropertyNotNullAndFalse(Prop);
-      gSettings.QuirksMask  |= gSettings.ocBooterQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
-      gSettings.mmioWhiteListArray.setEmpty();
+      gSettings.Quirks.ocBooterQuirks.SyncRuntimePermissions = !IsPropertyNotNullAndFalse(Prop);
+      gSettings.Quirks.QuirksMask  |= gSettings.Quirks.ocBooterQuirks.SyncRuntimePermissions? QUIRK_PERM:0;
+      gSettings.Quirks.mmioWhiteListArray.setEmpty();
 
       const TagArray* Dict2 = OcQuirksDict->arrayPropertyForKey("MmioWhitelist"); // array of dict
       if (Dict2 != NULL) {
@@ -3290,8 +3284,8 @@ EFI_STATUS GetEarlyUserSettings (
           for (INTN i = 0; i < Count; i++)
           {
             const TagDict* Dict3 = Dict2->dictElementAt(i, "MmioWhitelist"_XS8);
-            MMIOWhiteList* mmioWhiteListPtr = new MMIOWhiteList();
-            MMIOWhiteList& mmioWhiteList = *mmioWhiteListPtr;
+            SETTINGS_DATA::QuirksClass::MMIOWhiteList* mmioWhiteListPtr = new SETTINGS_DATA::QuirksClass::MMIOWhiteList();
+            SETTINGS_DATA::QuirksClass::MMIOWhiteList& mmioWhiteList = *mmioWhiteListPtr;
 
             const TagStruct* Prop2 = Dict3->propertyForKey("Comment");
             if (Prop2 != NULL && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
@@ -3306,7 +3300,7 @@ EFI_STATUS GetEarlyUserSettings (
               Prop2 = Dict3->propertyForKey("Enabled");
               mmioWhiteList.enabled = IsPropertyNotNullAndTrue(Prop2);
             }
-            gSettings.mmioWhiteListArray.AddReference(mmioWhiteListPtr, true);
+            gSettings.Quirks.mmioWhiteListArray.AddReference(mmioWhiteListPtr, true);
           }
         }
       }
@@ -4418,7 +4412,6 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       gSettings.Boot.NeverDoRecovery  = IsPropertyNotNullAndTrue(Prop);
     }
 
-
     //Graphics
 
     const TagDict* GraphicsDict = CfgDict->dictPropertyForKey("Graphics");
@@ -4427,11 +4420,10 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       const TagStruct* Prop     = GraphicsDict->propertyForKey("Inject");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.Graphics.InjectAsBool = true;
-//          gSettings.GraphicsInjector = TRUE;
-//          gSettings.InjectIntel      = TRUE;
-//          gSettings.InjectATI        = TRUE;
-//          gSettings.InjectNVidia     = TRUE;
+          gSettings.Graphics.InjectAsDict.GraphicsInjector = TRUE;
+          gSettings.Graphics.InjectAsDict.InjectIntel      = TRUE;
+          gSettings.Graphics.InjectAsDict.InjectATI        = TRUE;
+          gSettings.Graphics.InjectAsDict.InjectNVidia     = TRUE;
         } else if (Prop->isDict()) {
           const TagDict* Dict2 = Prop->getDict();
           const TagStruct* Prop2 = Dict2->propertyForKey("Intel");
@@ -4449,10 +4441,10 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             gSettings.Graphics.InjectAsDict.InjectNVidia = IsPropertyNotNullAndTrue(Prop2);
           }
         } else {
-//          gSettings.GraphicsInjector = FALSE;
-//          gSettings.InjectIntel      = FALSE;
-//          gSettings.InjectATI        = FALSE;
-//          gSettings.InjectNVidia     = FALSE;
+          gSettings.Graphics.InjectAsDict.GraphicsInjector = FALSE;
+          gSettings.Graphics.InjectAsDict.InjectIntel      = FALSE;
+          gSettings.Graphics.InjectAsDict.InjectATI        = FALSE;
+          gSettings.Graphics.InjectAsDict.InjectNVidia     = FALSE;
         }
       }
 
@@ -4536,8 +4528,18 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       Prop = GraphicsDict->propertyForKey("snb-platform-id");
       gSettings.Graphics.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics.IgPlatform);
 
-      FillCardList(GraphicsDict); //#@ Getcardslist
+      FillCardList(GraphicsDict, gSettings); //#@ Getcardslist
     }
+    
+
+
+
+    //done until here
+
+
+
+
+
 
     const TagDict* DevicesDict = CfgDict->dictPropertyForKey("Devices");
     if (DevicesDict != NULL) {

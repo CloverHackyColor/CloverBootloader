@@ -82,8 +82,14 @@
 
 const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD* FindCardWithIds(UINT32 Id, UINT32 SubId)
 {
-  for ( size_t idx = 0; idx < gSettings.Graphics.gCardList.size(); ++idx ) {
-    const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD& entry = gSettings.Graphics.gCardList[idx];
+  for ( size_t idx = 0; idx < gSettings.Graphics.ATICardList.size(); ++idx ) {
+    const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD& entry = gSettings.Graphics.ATICardList[idx];
+    if(entry.Id == Id) {
+      return &entry;
+    }
+  }
+  for ( size_t idx = 0; idx < gSettings.Graphics.NVIDIACardList.size(); ++idx ) {
+    const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD& entry = gSettings.Graphics.NVIDIACardList[idx];
     if(entry.Id == Id) {
       return &entry;
     }
@@ -91,10 +97,19 @@ const SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD* FindCardWithIds(UINT32 Id, UIN
   return NULL;
 }
 
-void FillCardList(const TagDict* CfgDict)
+/*
+* To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
+* and is passed by non-const reference.
+* This temporary during the refactoring
+*/
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+void FillCardList(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 {
-  if (gSettings.Graphics.gCardList.isEmpty() && (CfgDict != NULL)) {
-    CONST CHAR8 *VEN[] = { "NVIDIA",  "ATI" };
+#pragma GCC diagnostic pop
+  if (gSettings.Graphics.ATICardList.isEmpty() && gSettings.Graphics.NVIDIACardList.isEmpty() && (CfgDict != NULL)) {
+    CONST CHAR8 *VEN[] = { "ATI", "NVIDIA" };
+    XObjArray<SETTINGS_DATA::GraphicsClass::GRAPHIC_CARD>* cardlist[] = { &gSettings.Graphics.ATICardList, &gSettings.Graphics.NVIDIACardList };
     size_t Count = sizeof(VEN) / sizeof(VEN[0]);
     
     for (size_t Index = 0; Index < Count; Index++) {
@@ -120,13 +135,13 @@ void FillCardList(const TagDict* CfgDict)
 //          BOOLEAN   LoadVBios = FALSE;
           element = &prop->arrayContent()[i];
           if ( !element->isDict()) {
-            MsgLog("MALFORMED PLIST in FillCardList() : element is not a dict");
+            MsgLog("MALFORMED PLIST in FillCardList() : element[%lld] is not a dict\n", i);
             continue;
           }
           const TagDict* dictElement = element->getDict();
           
           prop2 = dictElement->propertyForKey("Model");
-          if ( prop2->isString() && prop2->getString()->stringValue().notEmpty() ) {
+          if ( prop2 && prop2->isString() && prop2->getString()->stringValue().notEmpty() ) {
             new_card->Model = prop2->getString()->stringValue();
           } else {
             new_card->Model = "VideoCard"_XS8;
@@ -159,7 +174,7 @@ void FillCardList(const TagDict* CfgDict)
 //          new_card->VideoPorts = VideoPorts;
 //          new_card->LoadVBios = LoadVBios;
 //          new_card->Model.takeValueFrom(model_name);
-          gSettings.Graphics.gCardList.AddReference(new_card, true);
+          cardlist[Index]->AddReference(new_card, true);
         }
       }
     }

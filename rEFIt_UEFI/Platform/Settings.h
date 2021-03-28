@@ -18,24 +18,6 @@
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 
 
-#define QUIRK_DEFRAG  bit(0)
-#define QUIRK_MMIO    bit(1)
-#define QUIRK_SU      bit(2)
-#define QUIRK_VAR     bit(3)
-#define QUIRK_HIBER   bit(4)
-#define QUIRK_SAFE    bit(5)
-#define QUIRK_UNPROT  bit(6)
-#define QUIRK_EXIT    bit(7)
-#define QUIRK_REGION  bit(8)
-#define QUIRK_SECURE  bit(9)
-#define QUIRK_UEFI    bit(10)
-#define QUIRK_CUSTOM  bit(11)
-#define QUIRK_MAP     bit(12)
-#define QUIRK_VIRT    bit(13)
-#define QUIRK_OS      bit(14)
-#define QUIRK_PERM    bit(15)
-
-
 //// SysVariables
 //typedef struct SYSVARIABLES SYSVARIABLES;
 //struct SYSVARIABLES
@@ -408,21 +390,6 @@ public:
   DEV_PROPERTY& operator=(const DEV_PROPERTY&) = delete;
 };
 
-class MMIOWhiteList
-{
-public :
-  UINTN        address;
-  XString8     comment;
-  bool         enabled;
-
-  MMIOWhiteList() : address(0), comment(), enabled(false) { }
-
-  // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  MMIOWhiteList(const MMIOWhiteList&) = delete;
-  MMIOWhiteList& operator=(const MMIOWhiteList&) = delete;
-};
-
-
 /**
   Set of Search & replace bytes for VideoBiosPatchBytes().
   this is supposed to be a replacement of VBIOS_PATCH_BYTES, but that would need VbiosPatchLibrary to be update to C++. Quite easy, but need cpp_fundation to become a library. TODO
@@ -674,6 +641,7 @@ public:
       
       class InjectAsDictClass {
         public:
+          bool GraphicsInjector = bool();
           bool InjectIntel = bool();
           bool InjectATI = bool();
           bool InjectNVidia = bool();
@@ -692,7 +660,7 @@ public:
 
       bool                     PatchVBios = bool();
       PatchVBiosBytesNewClass  PatchVBiosBytes = PatchVBiosBytesNewClass();
-      undefinable_bool InjectAsBool = undefinable_bool();
+//      undefinable_bool InjectAsBool = undefinable_bool();
       bool                 RadeonDeInit = bool();
       bool                 LoadVBios = bool();
       UINT64               VRAM = bool();
@@ -709,13 +677,14 @@ public:
       UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
       EDIDClass            EDID = EDIDClass();
       InjectAsDictClass    InjectAsDict = InjectAsDictClass();
-      XObjArray<GRAPHIC_CARD> gCardList = XObjArray<GRAPHIC_CARD>();
+      XObjArray<GRAPHIC_CARD> ATICardList = XObjArray<GRAPHIC_CARD>();
+      XObjArray<GRAPHIC_CARD> NVIDIACardList = XObjArray<GRAPHIC_CARD>();
 
       
       //bool getGraphicsInjector() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.GraphicsInjector; }
-      bool InjectIntel() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectIntel; }
-      bool InjectATI() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectATI; }
-      bool InjectNVidia() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectNVidia; }
+      //bool InjectIntel() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectIntel; }
+      //bool InjectATI() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectATI; }
+      //bool InjectNVidia() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectNVidia; }
 
   };
   
@@ -731,11 +700,23 @@ public:
 
   class QuirksClass {
     public:
+      class MMIOWhiteList
+      {
+        public :
+          UINTN        address = 0;
+          XString8     comment = XString8();
+          bool         enabled = 0;
+      };
+    
       bool FuzzyMatch = bool();
       XString8 OcKernelCache = XString8();
+//      UINTN MaxSlide;
       OC_KERNEL_QUIRKS OcKernelQuirks = OC_KERNEL_QUIRKS();
+      OC_BOOTER_QUIRKS ocBooterQuirks = OC_BOOTER_QUIRKS();
+      XObjArray<MMIOWhiteList> mmioWhiteListArray = XObjArray<MMIOWhiteList>();
+      UINT32 QuirksMask;
   };
-  
+
   class RtVariablesClass {
     public:
       class RT_VARIABLES
@@ -947,12 +928,6 @@ public:
 
   DEV_PROPERTY            *ArbProperties;
   
-  UINT32 QuirksMask;
-  UINTN MaxSlide;
-
-  OC_BOOTER_QUIRKS   ocBooterQuirks;
-  XObjArray<MMIOWhiteList> mmioWhiteListArray;
-
 
 
   SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
@@ -973,7 +948,7 @@ public:
                     ForceHPET(0),  DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
                     AFGLowPowerState(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
                     IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0), QuirksMask(0), MaxSlide(0), ocBooterQuirks{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, mmioWhiteListArray()
+                    ArbProperties(0)
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed

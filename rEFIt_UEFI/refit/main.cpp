@@ -976,7 +976,7 @@ void LOADER_ENTRY::StartLoader()
 
   #ifndef USE_OC_SECTION_Booter
 
-    mOpenCoreConfiguration.Booter.MmioWhitelist.Count = (UINT32)gSettings.mmioWhiteListArray.size();
+    mOpenCoreConfiguration.Booter.MmioWhitelist.Count = (UINT32)gSettings.Quirks.mmioWhiteListArray.size();
     mOpenCoreConfiguration.Booter.MmioWhitelist.AllocCount = mOpenCoreConfiguration.Booter.MmioWhitelist.Count;
     mOpenCoreConfiguration.Booter.MmioWhitelist.ValueSize = sizeof(__typeof_am__(**mOpenCoreConfiguration.Booter.MmioWhitelist.Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
     if ( mOpenCoreConfiguration.Booter.MmioWhitelist.Count > 0 ) {
@@ -984,8 +984,8 @@ void LOADER_ENTRY::StartLoader()
     }else{
       mOpenCoreConfiguration.Booter.MmioWhitelist.Values = NULL;
     }
-    for ( size_t idx = 0 ; idx < gSettings.mmioWhiteListArray.size() ; idx++ ) {
-      const MMIOWhiteList& entry = gSettings.mmioWhiteListArray[idx];
+    for ( size_t idx = 0 ; idx < gSettings.Quirks.mmioWhiteListArray.size() ; idx++ ) {
+      const SETTINGS_DATA::QuirksClass::MMIOWhiteList& entry = gSettings.Quirks.mmioWhiteListArray[idx];
       DBG("Bridge mmioWhiteList[%zu] to OC : comment=%s\n", idx, entry.comment.c_str());
       mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx] = (__typeof_am__(*mOpenCoreConfiguration.Booter.MmioWhitelist.Values))AllocatePool(mOpenCoreConfiguration.Booter.MmioWhitelist.ValueSize);
       mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Address = entry.address;
@@ -993,8 +993,8 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Enabled = entry.enabled;
     }
 
-    static_assert(sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks), "sizeof(gSettings.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks)");
-    memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
+    static_assert(sizeof(gSettings.Quirks.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks), "sizeof(gSettings.Quirks.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks)");
+    memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.Quirks.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
 
   #endif
 

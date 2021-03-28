@@ -56,6 +56,7 @@
 #include "../Platform/Nvram.h"
 #include "../include/DsdtFixList.h"
 #include "../include/Devices.h"
+#include "../include/QuirksCodes.h"
 #include "../Platform/boot.h"
 #include "../Platform/Injectors.h"
 #include "../Platform/KextList.h"
@@ -389,7 +390,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Hex;  //100
   InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.FakeXHCI);
   InputItems[InputItemsCount].ItemType = CheckBit;  //101 - Quirks
-  InputItems[InputItemsCount++].IValue = gSettings.QuirksMask; //
+  InputItems[InputItemsCount++].IValue = gSettings.Quirks.QuirksMask; //
 
   InputItems[InputItemsCount].ItemType = BoolValue; //102
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.DSDT.DebugDSDT;
@@ -442,7 +443,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //121
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
   InputItems[InputItemsCount].ItemType = Decimal;  //122
-  InputItems[InputItemsCount++].SValue.SWPrintf("%04lld", gSettings.MaxSlide);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%04hhu", gSettings.Quirks.ocBooterQuirks.ProvideMaxSlide);
   InputItems[InputItemsCount].ItemType = BoolValue; //123
   InputItems[InputItemsCount++].BValue = gSettings.GUI.ProvideConsoleGop;
 
@@ -907,24 +908,24 @@ void ApplyInputs(void)
 
   i++; //101  - Quirks
   if (InputItems[i].Valid) {
-    gSettings.QuirksMask = InputItems[i].IValue;
-    gSettings.ocBooterQuirks.AvoidRuntimeDefrag     = ((gSettings.QuirksMask & QUIRK_DEFRAG) != 0); //1
-    gSettings.ocBooterQuirks.DevirtualiseMmio       = ((gSettings.QuirksMask & QUIRK_MMIO) != 0);   //0
-    gSettings.ocBooterQuirks.DisableSingleUser      = ((gSettings.QuirksMask & QUIRK_SU) != 0);     //0
-    gSettings.ocBooterQuirks.DisableVariableWrite   = ((gSettings.QuirksMask & QUIRK_VAR) != 0);    //0
-    gSettings.ocBooterQuirks.DiscardHibernateMap    = ((gSettings.QuirksMask & QUIRK_HIBER) != 0);  //0
-    gSettings.ocBooterQuirks.EnableSafeModeSlide    = ((gSettings.QuirksMask & QUIRK_SAFE) != 0);   //1
-    gSettings.ocBooterQuirks.EnableWriteUnprotector = ((gSettings.QuirksMask & QUIRK_UNPROT) != 0); //1
-    gSettings.ocBooterQuirks.ForceExitBootServices  = ((gSettings.QuirksMask & QUIRK_EXIT) != 0);   //0
-    gSettings.ocBooterQuirks.ProtectMemoryRegions   = ((gSettings.QuirksMask & QUIRK_REGION) != 0); //0
-    gSettings.ocBooterQuirks.ProtectSecureBoot      = ((gSettings.QuirksMask & QUIRK_SECURE) != 0); //0
-    gSettings.ocBooterQuirks.ProtectUefiServices    = ((gSettings.QuirksMask & QUIRK_UEFI) != 0);   //0
-    gSettings.ocBooterQuirks.ProvideCustomSlide     = ((gSettings.QuirksMask & QUIRK_CUSTOM) != 0); //1
-    gSettings.ocBooterQuirks.RebuildAppleMemoryMap  = ((gSettings.QuirksMask & QUIRK_MAP) != 0);    //0
-    gSettings.ocBooterQuirks.SetupVirtualMap        = ((gSettings.QuirksMask & QUIRK_VIRT) != 0);   //1
-    gSettings.ocBooterQuirks.SignalAppleOS          = ((gSettings.QuirksMask & QUIRK_OS) != 0);     //0
-    gSettings.ocBooterQuirks.SyncRuntimePermissions = ((gSettings.QuirksMask & QUIRK_PERM) != 0);   //1
-	  DBG("applied Quirks mask:%x\n", gSettings.QuirksMask); //default is 0xA861
+    gSettings.Quirks.QuirksMask = InputItems[i].IValue;
+    gSettings.Quirks.ocBooterQuirks.AvoidRuntimeDefrag     = ((gSettings.Quirks.QuirksMask & QUIRK_DEFRAG) != 0); //1
+    gSettings.Quirks.ocBooterQuirks.DevirtualiseMmio       = ((gSettings.Quirks.QuirksMask & QUIRK_MMIO) != 0);   //0
+    gSettings.Quirks.ocBooterQuirks.DisableSingleUser      = ((gSettings.Quirks.QuirksMask & QUIRK_SU) != 0);     //0
+    gSettings.Quirks.ocBooterQuirks.DisableVariableWrite   = ((gSettings.Quirks.QuirksMask & QUIRK_VAR) != 0);    //0
+    gSettings.Quirks.ocBooterQuirks.DiscardHibernateMap    = ((gSettings.Quirks.QuirksMask & QUIRK_HIBER) != 0);  //0
+    gSettings.Quirks.ocBooterQuirks.EnableSafeModeSlide    = ((gSettings.Quirks.QuirksMask & QUIRK_SAFE) != 0);   //1
+    gSettings.Quirks.ocBooterQuirks.EnableWriteUnprotector = ((gSettings.Quirks.QuirksMask & QUIRK_UNPROT) != 0); //1
+    gSettings.Quirks.ocBooterQuirks.ForceExitBootServices  = ((gSettings.Quirks.QuirksMask & QUIRK_EXIT) != 0);   //0
+    gSettings.Quirks.ocBooterQuirks.ProtectMemoryRegions   = ((gSettings.Quirks.QuirksMask & QUIRK_REGION) != 0); //0
+    gSettings.Quirks.ocBooterQuirks.ProtectSecureBoot      = ((gSettings.Quirks.QuirksMask & QUIRK_SECURE) != 0); //0
+    gSettings.Quirks.ocBooterQuirks.ProtectUefiServices    = ((gSettings.Quirks.QuirksMask & QUIRK_UEFI) != 0);   //0
+    gSettings.Quirks.ocBooterQuirks.ProvideCustomSlide     = ((gSettings.Quirks.QuirksMask & QUIRK_CUSTOM) != 0); //1
+    gSettings.Quirks.ocBooterQuirks.RebuildAppleMemoryMap  = ((gSettings.Quirks.QuirksMask & QUIRK_MAP) != 0);    //0
+    gSettings.Quirks.ocBooterQuirks.SetupVirtualMap        = ((gSettings.Quirks.QuirksMask & QUIRK_VIRT) != 0);   //1
+    gSettings.Quirks.ocBooterQuirks.SignalAppleOS          = ((gSettings.Quirks.QuirksMask & QUIRK_OS) != 0);     //0
+    gSettings.Quirks.ocBooterQuirks.SyncRuntimePermissions = ((gSettings.Quirks.QuirksMask & QUIRK_PERM) != 0);   //1
+	  DBG("applied Quirks mask:%x\n", gSettings.Quirks.QuirksMask); //default is 0xA861
   }
   i++; //102
   if (InputItems[i].Valid) {
@@ -1056,8 +1057,8 @@ void ApplyInputs(void)
   }
   i++; //122
   if (InputItems[i].Valid) {
-    gSettings.MaxSlide = (UINTN)StrDecimalToUintn(InputItems[i].SValue.wc_str());
-    DBG(" set MaxSlide = %lld\n", gSettings.MaxSlide);
+    gSettings.Quirks.ocBooterQuirks.ProvideMaxSlide = (UINTN)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    DBG(" set MaxSlide = %hhu\n", gSettings.Quirks.ocBooterQuirks.ProvideMaxSlide);
   }
   i++; //123
   if (InputItems[i].Valid) {
@@ -2445,7 +2446,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuQuirks()
   
   // create the entry in the main menu
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_QUIRKS, NullXString8);
-  Entry->Title.SWPrintf("Quirks mask [0x%04x]->", gSettings.QuirksMask);
+  Entry->Title.SWPrintf("Quirks mask [0x%04x]->", gSettings.Quirks.QuirksMask);
   
   // submenu description
   SubScreen->AddMenuInfoLine_f("Choose options to fix memory");
