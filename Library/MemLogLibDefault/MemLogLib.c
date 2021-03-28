@@ -541,20 +541,25 @@ MemLogfVA (
 #else
   vprintf_with_callback_timestamp_emitcr(Format, Marker, transmitS8Printf, NULL, &printfNewline, Timing, 1);
 #endif
+  
+#ifdef DEBUG_ON_SERIAL_PORT
   size_t DataWritten = mMemLog->Cursor - mMemLog->Buffer - LastMessage;
-
+#endif
   //
   // Check driver debug mask value and global mask
   //
-  if ((DebugMode & GetDebugPrintErrorLevel ()) == 0) {
-    return;
-  }
+//  DebugMode is not same as PrintErrorLevel
+//  if ((DebugMode & GetDebugPrintErrorLevel ()) == 0) {
+//    return;
+//  }
   //
   // Write to standard debug device also
   //
   // Jief : use SerialPortWrite instead of DebugPrint to avoid 256 chars message length limitation.
   // Jief : do this before CallBack to preserve order of messages sent from inside callback.
+#ifdef DEBUG_ON_SERIAL_PORT
   SerialPortWrite((UINT8*)(mMemLog->Buffer + LastMessage), DataWritten);
+#endif
 //  DebugPrint(DEBUG_INFO, "%a", LastMessage);
 
   //

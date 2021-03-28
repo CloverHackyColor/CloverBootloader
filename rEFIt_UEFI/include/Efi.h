@@ -35,6 +35,7 @@ extern "C" {
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/DebugPrintErrorLevelLib.h>
 #include <Library/DevicePathLib.h>
 #include <Uefi/UefiInternalFormRepresentation.h>
 #include <Protocol/SimpleTextIn.h>

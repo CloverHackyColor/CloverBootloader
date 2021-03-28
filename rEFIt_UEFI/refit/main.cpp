@@ -2808,8 +2808,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //      XString8 msg = S8Printf("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 //      SerialPortWrite((UINT8*)msg.c_str(), msg.length());
 //    }
-    if ( !EFI_ERROR(Status) ) DBG("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
-
+    if ( !EFI_ERROR(Status) ) {
+      DBG("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+    } else {
+      DBG("CloverX64 : Image base = 0\n");
+    }
 #ifdef JIEF_DEBUG
     gBS->Stall(2500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
@@ -3144,7 +3147,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
-
+  DBG("print error level mask = %x\n", GetDebugPrintErrorLevel() );
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);

@@ -167,6 +167,7 @@
   # Our libs
   #
   MemLogLib|Library/MemLogLibDefault/MemLogLibDefault.inf
+
   VideoBiosPatchLib|Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
   WaveLib|Library/WaveLib/WaveLib.inf
   HdaDevicesLib|Library/HdaDevicesLib/HdaDevicesLib.inf

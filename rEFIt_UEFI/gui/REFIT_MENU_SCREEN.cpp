@@ -961,17 +961,22 @@ UINTN REFIT_MENU_SCREEN::RunGenericMenu(IN OUT INTN *DefaultEntryIndex, OUT REFI
         break;
 */
       case SCAN_F7:
+//      DBG("scan_f7\n");
+        if (AudioList.isEmpty()) break;
+//      DBG("not empty\n");
         if (OldChosenAudio >= AudioList.size()) {
               OldChosenAudio = 0; //security correction
         }
-        Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (void**)&AudioIo);
-			  DBG("open %llu audio handle status=%s\n", OldChosenAudio, efiStrError(Status));
-        if (!EFI_ERROR(Status)) {
-          StartupSoundPlay(&self.getCloverDir(), NULL); //play embedded sound
-        }
+//       DBG("OldChosenAudio=%llu\n", OldChosenAudio);
+          Status = gBS->HandleProtocol(AudioList[OldChosenAudio].Handle, &gEfiAudioIoProtocolGuid, (void**)&AudioIo);
+          DBG("open %llu audio handle status=%s\n", OldChosenAudio, efiStrError(Status));
+          if (!EFI_ERROR(Status)) {
+            StartupSoundPlay(&self.getCloverDir(), NULL); //play embedded sound
+          }
+        
         break;
       case SCAN_F8:
- //       testSVG();
+        testSVG();
         SaveHdaDumpBin();
         SaveHdaDumpTxt();
         break;
