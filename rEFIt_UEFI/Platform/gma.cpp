@@ -1336,21 +1336,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     return FALSE;
   }
 
-  if (gSettings.NrAddProperties != 0xFFFE) {
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_INTEL) {
+  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+      if (gSettings.Devices.AddProperties[i].Device != DEV_INTEL) {
         continue;
       }
       Injected = TRUE;
 
-      if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       } else {
-        devprop_add_value(device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       }
     }
   }
@@ -1359,7 +1356,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     MsgLog("  Additional Intel GFX properties injected, continue\n");
   }
 
-  if (gSettings.UseIntelHDMI) {
+  if (gSettings.Devices.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
     MsgLog("  IntelHDMI: used\n");
   }
@@ -1464,13 +1461,13 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       break;
   }
 
-  if (gSettings.FakeIntel) {
-    FakeID = gSettings.FakeIntel >> 16;
+  if (gSettings.Devices.FakeID.FakeIntel) {
+    FakeID = gSettings.Devices.FakeID.FakeIntel >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-    FakeID = gSettings.FakeIntel & 0xFFFF;
+    FakeID = gSettings.Devices.FakeID.FakeIntel & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
     SetFake = TRUE;
-	  MsgLog("  FakeID Intel GFX = 0x%08x\n", gSettings.FakeIntel);
+	  MsgLog("  FakeID Intel GFX = 0x%08x\n", gSettings.Devices.FakeID.FakeIntel);
   } else {
     DBG("  FakeID Intel GFX: not set\n");
   }
@@ -1503,7 +1500,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
       break;
   }
 
-  if (gSettings.NoDefaultProperties) {
+  if (gSettings.Devices.NoDefaultProperties) {
     MsgLog("  Intel: no default properties\n");
     return TRUE;
   }

@@ -2427,21 +2427,18 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     goto done;
   }
 
-  if (gSettings.NrAddProperties != 0xFFFE) {
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_NVIDIA) {
+  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+      if (gSettings.Devices.AddProperties[i].Device != DEV_NVIDIA) {
         continue;
       }
       Injected = TRUE;
 
-      if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       } else {
-        devprop_add_value(device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       }
     }
     if (Injected) {
@@ -2450,11 +2447,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     }
   }
 
-  if (gSettings.FakeNVidia) {
-    UINT32 FakeID = gSettings.FakeNVidia >> 16;
-	  DBG("NVidia: FakeID %X:%X\n",gSettings.FakeNVidia & 0xFFFF, FakeID);
+  if (gSettings.Devices.FakeID.FakeNVidia) {
+    UINT32 FakeID = gSettings.Devices.FakeID.FakeNVidia >> 16;
+	  DBG("NVidia: FakeID %X:%X\n",gSettings.Devices.FakeID.FakeNVidia & 0xFFFF, FakeID);
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-    FakeID = gSettings.FakeNVidia & 0xFFFF;
+    FakeID = gSettings.Devices.FakeID.FakeNVidia & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
 
@@ -2481,7 +2478,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   }
 
   //there are default or calculated properties, can be skipped
-  //if (gSettings.NoDefaultProperties) {
+  //if (gSettings.Devices.NoDefaultProperties) {
   //  DBG("Nvidia: no default properties injected\n");
  //   goto done;
   //}
@@ -2493,13 +2490,13 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     DBG("Nvidia: BootDisplay: %hhX\n", gSettings.Graphics.BootDisplay);
     }*/
 
-  if (gSettings.UseIntelHDMI) {
+  if (gSettings.Devices.UseIntelHDMI) {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
   } else {
     devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
   }
 
-  if (!gSettings.NoDefaultProperties) {
+  if (!gSettings.Devices.NoDefaultProperties) {
 	  if (videoRam != 0) {
 		  devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 8);
 	  }

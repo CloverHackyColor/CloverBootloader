@@ -163,7 +163,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
     device_inject_string = devprop_create_string();
   }
   if (IsHDMIAudio(hda_dev->DeviceHandle)) {
-    if (!gSettings.HDMIInjection) {
+    if (!gSettings.Devices.HDMIInjection) {
       return FALSE;
     }
 
@@ -175,21 +175,18 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
       return FALSE;
     }
 
-    if (gSettings.NrAddProperties != 0xFFFE) {
-      for (i = 0; i < gSettings.NrAddProperties; i++) {
-        if (gSettings.AddProperties[i].Device != DEV_HDMI) {
+    if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+      for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+        if (gSettings.Devices.AddProperties[i].Device != DEV_HDMI) {
           continue;
         }
         Injected = TRUE;
 
-        if (!gSettings.AddProperties[i].MenuItem.BValue) {
-          //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+          //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
         } else {
-          devprop_add_value(device,
-                            gSettings.AddProperties[i].Key,
-                            (UINT8*)gSettings.AddProperties[i].Value,
-                            gSettings.AddProperties[i].ValueLen);
-          //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+          devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+          //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
         }
       }
     }
@@ -197,7 +194,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
       DBG("Additional HDMI properties injected, continue\n");
       //return TRUE;
     } else {
-      if (gSettings.UseIntelHDMI) {
+      if (gSettings.Devices.UseIntelHDMI) {
         DBG(" HDMI Audio, used with HDA setting hda-gfx=onboard-2\n");
         devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-2", 10);
       } else {
@@ -206,7 +203,7 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
       }
     }
   } else {
-    if (!gSettings.HDAInjection) {
+    if (!gSettings.Devices.Audio.HDAInjection) {
       return FALSE;
     }
     if (hda_dev && !hda_dev->used) {
@@ -217,41 +214,38 @@ BOOLEAN setup_hda_devprop(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev, const M
       return FALSE;
     }
     // HDA - determine layout-id
-    if (gSettings.HDALayoutId > 0) {
+    if (gSettings.Devices.Audio.HDALayoutId > 0) {
       // layoutId is specified - use it
-      layoutId = (UINT32)gSettings.HDALayoutId;
+      layoutId = (UINT32)gSettings.Devices.Audio.HDALayoutId;
       DBG(" setting specified layout-id=%d (0x%X)\n", layoutId, layoutId);
     } else {
       layoutId = 12;
     }
-    if (gSettings.NrAddProperties != 0xFFFE) {
-      for (i = 0; i < gSettings.NrAddProperties; i++) {
-        if (gSettings.AddProperties[i].Device != DEV_HDA) {
+    if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+      for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+        if (gSettings.Devices.AddProperties[i].Device != DEV_HDA) {
           continue;
         }
         Injected = TRUE;
 
-        if (!gSettings.AddProperties[i].MenuItem.BValue) {
-          //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+          //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
         } else {
-          devprop_add_value(device,
-                            gSettings.AddProperties[i].Key,
-                            (UINT8*)gSettings.AddProperties[i].Value,
-                            gSettings.AddProperties[i].ValueLen);
-          //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+          devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+          //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
         }
       }
     }
     if (!Injected) {
-      if ( (OSVersion.notEmpty()  &&  OSVersion < MacOsVersion("10.8"_XS8)) || gSettings.HDALayoutId > 0 ) {
+      if ( (OSVersion.notEmpty()  &&  OSVersion < MacOsVersion("10.8"_XS8)) || gSettings.Devices.Audio.HDALayoutId > 0 ) {
         devprop_add_value(device, "layout-id", (UINT8 *)&layoutId, 4);
       }
       layoutId = 0; // reuse variable
-      if (gSettings.UseIntelHDMI) {
+      if (gSettings.Devices.UseIntelHDMI) {
         devprop_add_value(device, "hda-gfx", (UINT8 *)"onboard-1", 10);
       }
       codecId = 1; // reuse variable again
-      if (gSettings.AFGLowPowerState) {
+      if (gSettings.Devices.Audio.AFGLowPowerState) {
         devprop_add_value(device, "AFGLowPowerState", (UINT8 *)&codecId, 4);
       }
 

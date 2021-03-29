@@ -372,22 +372,30 @@ public:
 class DEV_PROPERTY
 {
 public:
-  UINT32        Device;
-  EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
-  CHAR8         *Key;
-  UINT8         *Value;
-  UINTN         ValueLen;
-  DEV_PROPERTY  *Next;   //next device or next property
-  DEV_PROPERTY  *Child;  // property list of the device
-  CHAR8         *Label;
-  INPUT_ITEM    MenuItem = INPUT_ITEM();
-  TAG_TYPE      ValueType = kTagTypeNone;
+  UINT32                       Device = 0;
+  EFI_DEVICE_PATH_PROTOCOL*    DevicePath = NULL;
+  CHAR8*                       Key = 0;
+  UINT8*                       Value = 0;
+  UINTN                        ValueLen = 0;
+  DEV_PROPERTY*                Next = 0;   //next device or next property
+  DEV_PROPERTY*                Child = 0;  // property list of the device
+  CHAR8*                       Label = 0;
+  INPUT_ITEM                   MenuItem = INPUT_ITEM();
+  TAG_TYPE                     ValueType = kTagTypeNone;
 
-  DEV_PROPERTY() : Device(0), Key(0), Value(0), ValueLen(0), Next(0), Child(0), Label(0)  { }
-
+  DEV_PROPERTY() {};
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  DEV_PROPERTY(const DEV_PROPERTY&) = delete;
-  DEV_PROPERTY& operator=(const DEV_PROPERTY&) = delete;
+  DEV_PROPERTY(const DEV_PROPERTY&) { panic("nope"); };
+  DEV_PROPERTY& operator=(const DEV_PROPERTY&) { panic("nope"); };
+};
+
+class DEV_ADDPROPERTY
+{
+public:
+  UINT32                       Device = 0;
+  XString8                     Key = XString8();
+  XBuffer<uint8_t>             Value = XBuffer<uint8_t>();
+  INPUT_ITEM                   MenuItem = INPUT_ITEM();
 };
 
 /**
@@ -693,8 +701,58 @@ public:
       
       class AudioClass {
         public:
-          bool                     ResetHDA = bool();
-      } Audio = AudioClass();
+          bool                    ResetHDA = bool();
+          bool                 HDAInjection = bool();
+          INT32                   HDALayoutId = INT32();
+          UINT8                   AFGLowPowerState = UINT8();
+      };
+      class USBClass {
+        public:
+          bool                 USBInjection = bool();
+          bool                 USBFixOwnership = bool();
+          bool                 InjectClockID = bool();
+          bool                 HighCurrent = bool();
+          bool                 NameEH00 = bool();
+          bool                 NameXH00 = bool();
+      };
+      class PropertiesClass {
+        public:
+          XString8 cDeviceProperties = XString8();
+      };
+
+      class FakeIDClass {
+        public:
+          //PCI devices
+          UINT32                  FakeATI = UINT32();    //97
+          UINT32                  FakeNVidia = UINT32();
+          UINT32                  FakeIntel = UINT32();
+          UINT32                  FakeLAN = UINT32();   //100
+          UINT32                  FakeWIFI = UINT32();
+          UINT32                  FakeSATA = UINT32();
+          UINT32                  FakeXHCI = UINT32();  //103
+          UINT32                  FakeIMEI = UINT32();  //106
+      };
+
+      bool                 StringInjector = bool();
+      bool                 IntelMaxBacklight = bool();
+      bool                 IntelBacklight = bool();
+      UINT32               IntelMaxValue = UINT32();
+      bool                 LANInjection = bool();
+      bool                 HDMIInjection = bool();
+      bool                 NoDefaultProperties = bool();
+      bool                 UseIntelHDMI = bool();
+      bool                 ForceHPET = bool();
+      UINT32               DisableFunctions = UINT32();
+      XString8             AirportBridgeDeviceName = XString8();
+      AudioClass           Audio = AudioClass();
+      USBClass             USB = USBClass();
+      PropertiesClass      Properties = PropertiesClass();
+      FakeIDClass          FakeID = FakeIDClass();
+      
+//      UINTN                NrAddProperties;
+//      DEV_PROPERTY        *AddProperties;
+      XObjArray<DEV_ADDPROPERTY>   AddProperties = XObjArray<DEV_ADDPROPERTY>();
+      DEV_PROPERTY                *ArbProperties = 0;
 
   };
 
@@ -708,13 +766,13 @@ public:
           bool         enabled = 0;
       };
     
-      bool FuzzyMatch = bool();
-      XString8 OcKernelCache = XString8();
+      bool                     FuzzyMatch = bool();
+      XString8                 OcKernelCache = XString8();
 //      UINTN MaxSlide;
-      OC_KERNEL_QUIRKS OcKernelQuirks = OC_KERNEL_QUIRKS();
-      OC_BOOTER_QUIRKS ocBooterQuirks = OC_BOOTER_QUIRKS();
+      OC_KERNEL_QUIRKS         OcKernelQuirks = OC_KERNEL_QUIRKS();
+      OC_BOOTER_QUIRKS         ocBooterQuirks = OC_BOOTER_QUIRKS();
       XObjArray<MMIOWhiteList> mmioWhiteListArray = XObjArray<MMIOWhiteList>();
-      UINT32 QuirksMask;
+      UINT32                   QuirksMask = 0;
   };
 
   class RtVariablesClass {
@@ -809,8 +867,6 @@ public:
 
 
 //Monitor
-  BOOLEAN                 IntelMaxBacklight;
-  BOOLEAN                 IntelBacklight;
 //Boot options
   BOOLEAN                 MemoryFix;
   BOOLEAN                 FakeSMCFound;
@@ -824,19 +880,8 @@ public:
 //  BOOLEAN                 DropMCFG;
 
   //Injections
-  BOOLEAN                 StringInjector;
-  BOOLEAN                 NoDefaultProperties;
 
 
-  //PCI devices
-  UINT32                  FakeATI;    //97
-  UINT32                  FakeNVidia;
-  UINT32                  FakeIntel;
-  UINT32                  FakeLAN;   //100
-  UINT32                  FakeWIFI;
-  UINT32                  FakeSATA;
-  UINT32                  FakeXHCI;  //103
-  UINT32                  FakeIMEI;  //106
 
   //Graphics
 //  UINT16                  PCIRootUID;
@@ -845,20 +890,9 @@ public:
 
 
 
-  // HDA
-  BOOLEAN                 HDAInjection;
-  INT32                   HDALayoutId;
 
   // USB DeviceTree injection
-  BOOLEAN                 USBInjection;
-  BOOLEAN                 USBFixOwnership;
-  BOOLEAN                 InjectClockID;
-  BOOLEAN                 HighCurrent;
-  BOOLEAN                 NameEH00;
-  BOOLEAN                 NameXH00;
 	
-  BOOLEAN                 LANInjection;
-  BOOLEAN                 HDMIInjection;
 
 
   //SkyLake
@@ -869,7 +903,6 @@ public:
   BOOLEAN                 KextPatchesAllowed;
   BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
 
-  XString8                AirportBridgeDeviceName;
 
   // Pre-language
 
@@ -892,18 +925,13 @@ public:
   UINT8                   REV[6];
 
   //other devices
-  BOOLEAN                 ForceHPET;
-  UINT32                  DisableFunctions;
 
 
   BOOLEAN                 SlpWak;
   BOOLEAN                 UseIntelHDMI;
-  UINT8                   AFGLowPowerState;
 
 
   //Add custom properties
-  UINTN                   NrAddProperties;
-  DEV_PROPERTY            *AddProperties;
 
   //BlackListed kexts
   CHAR16                  BlockKexts[64];
@@ -916,7 +944,6 @@ public:
   //ACPI tables
 
   //other
-  UINT32                  IntelMaxValue;
 //  UINT32                  AudioVolume;
 
   // boot.efi
@@ -926,7 +953,6 @@ public:
   UINT32 EFILoginHiDPI;
   UINT8  flagstate[32];
 
-  DEV_PROPERTY            *ArbProperties;
   
 
 
@@ -936,19 +962,15 @@ public:
                     EnabledCores(0), SmbiosVersion(0), Attribute(0), MemoryManufacturer(),
                     MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), InjectMemoryTables(0),
                     PlatformFeature(0), NoRomInfo(0), Language(),
-                    IntelMaxBacklight(0), IntelBacklight(0), MemoryFix(0),
-                    FakeSMCFound(0), Debug(0), DefaultBackgroundColor(0), StringInjector(0), NoDefaultProperties(0),
-                    FakeATI(0), FakeNVidia(0), FakeIntel(0), FakeLAN(0), FakeWIFI(0), FakeSATA(0), FakeXHCI(0), FakeIMEI(0),
+                    MemoryFix(0),
+                    FakeSMCFound(0), Debug(0), DefaultBackgroundColor(0),
                     LpcTune(0), DropOEM_DSM(0),
-                    HDAInjection(0),
-                    HDALayoutId(0), USBInjection(0), USBFixOwnership(0), InjectClockID(0), HighCurrent(0), NameEH00(0), NameXH00(0), LANInjection(0), HDMIInjection(0),
                     KextPatchesAllowed(0),
-                    KernelPatchesAllowed(0), AirportBridgeDeviceName(),
+                    KernelPatchesAllowed(0),
                     ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ RPlt{0}, RBr{0}, EPCI{0}, REV{0},
-                    ForceHPET(0),  DisableFunctions(0),   SlpWak(0), UseIntelHDMI(0),
-                    AFGLowPowerState(0), NrAddProperties(0), AddProperties(0), BlockKexts{0},
-                    IntelMaxValue(0), OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0},
-                    ArbProperties(0)
+                     SlpWak(0), UseIntelHDMI(0),
+                    BlockKexts{0},
+                    OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0}
                   {};
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed

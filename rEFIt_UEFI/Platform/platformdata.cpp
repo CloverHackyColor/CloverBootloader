@@ -1414,9 +1414,9 @@ void GetDefaultSettings()
   CopyMem(&gSettings.Graphics.Dcfg[4], default_dcfg_1, 4);
   //gSettings.Graphics.EDID.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.Graphics.DualLink             = 0xA; // A(auto): DualLink auto-detection
-  gSettings.HDAInjection         = FALSE;
-  //gSettings.HDALayoutId          = 0;
-  gSettings.USBInjection         = TRUE; // enabled by default to have the same behavior as before
+  gSettings.Devices.Audio.HDAInjection         = FALSE;
+  //gSettings.Devices.Audio.HDALayoutId          = 0;
+  gSettings.Devices.USB.USBInjection         = TRUE; // enabled by default to have the same behavior as before
   gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
   gSettings.SystemParameters.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.SystemParameters.BacklightLevelConfig = FALSE;

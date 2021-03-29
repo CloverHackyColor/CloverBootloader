@@ -91,7 +91,7 @@ UINT32 aml_write_size(UINT32 size, CHAR8* buffer, UINT32 offset);
 
 // add by pcj
 AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* string);
-AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, /* CONST*/ UINT8* data,UINT32 size);
+AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST UINT8* data,UINT32 size);
 AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* string);
 AML_CHUNK* aml_add_device(AML_CHUNK* parent, CONST CHAR8* name);
 AML_CHUNK* aml_add_local0(AML_CHUNK* parent);

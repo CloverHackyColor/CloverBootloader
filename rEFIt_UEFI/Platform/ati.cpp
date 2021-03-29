@@ -1325,11 +1325,11 @@ BOOLEAN get_name_pci_val(value_t *val, INTN index, BOOLEAN Sier)
 {
   CHAR8* pciName = (__typeof__(pciName))AllocateZeroPool(15);
 
-  if (!card->info->model_name || !gSettings.FakeATI) {
+  if (!card->info->model_name || !gSettings.Devices.FakeID.FakeATI) {
     return FALSE;
   }
 
-  snprintf(pciName, 15, "pci1002,%x", gSettings.FakeATI >> 16);
+  snprintf(pciName, 15, "pci1002,%x", gSettings.Devices.FakeID.FakeATI >> 16);
   val->type = kStr;
   val->size = 13;
   val->data = (UINT8 *)pciName;
@@ -2110,28 +2110,28 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   }
   // -------------------------------------------------
 
-  if (gSettings.FakeATI) {
+  if (gSettings.Devices.FakeID.FakeATI) {
     card->flags &= ~FLAGNOTFAKE;
     card->flags |= FLAGOLD;
 
-    FakeID = gSettings.FakeATI >> 16;
+    FakeID = gSettings.Devices.FakeID.FakeATI >> 16;
     devprop_add_value(card->device, "device-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,DeviceID", (UINT8*)&FakeID, 2);
     snprintf(compatible, 64, "pci1002,%x", FakeID);
     devprop_add_value(card->device, "@0,compatible", (UINT8*)&compatible[0], 12);
-    FakeID = gSettings.FakeATI & 0xFFFF;
+    FakeID = gSettings.Devices.FakeID.FakeATI & 0xFFFF;
     devprop_add_value(card->device, "vendor-id", (UINT8*)&FakeID, 4);
     devprop_add_value(card->device, "ATY,VendorID", (UINT8*)&FakeID, 2);
   }
 
-  if (gSettings.NoDefaultProperties) {
+  if (gSettings.Devices.NoDefaultProperties) {
     card->flags &= ~FLAGTRUE;
     DBG("ATI: No default properties injected\n");
   }
 
   devprop_add_list(ati_devprop_list, Entry->macOSVersion);
-  if (!gSettings.NoDefaultProperties) {
-    if (gSettings.UseIntelHDMI) {
+  if (!gSettings.Devices.NoDefaultProperties) {
+    if (gSettings.Devices.UseIntelHDMI) {
       devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-2", 10);
     } else {
       devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
@@ -2139,20 +2139,17 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   }
 
 
-  if (gSettings.NrAddProperties != 0xFFFE) {
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_ATI) {
+  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+      if (gSettings.Devices.AddProperties[i].Device != DEV_ATI) {
         continue;
       }
 
-      if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       } else {
-        devprop_add_value(card->device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        devprop_add_value(card->device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       }
     }
   }

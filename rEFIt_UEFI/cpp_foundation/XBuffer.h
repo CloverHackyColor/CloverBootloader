@@ -19,6 +19,9 @@
 template <typename T>
 class XBuffer : public XBuffer_Super
 {
+public:
+  static XBuffer<T> NullXBuffer;
+
 protected:
 	T*_WData; // same as RData (see XRBuffer)
 	size_t m_allocatedSize;
@@ -30,7 +33,7 @@ protected:
   XBuffer(const XBuffer<T>& aBuffer) : _WData(NULL), m_allocatedSize(0) { Initialize(aBuffer.data(), aBuffer.size(), aBuffer.index()); }
   XBuffer(XRBuffer<T> &aBuffer, size_t pos = 0, size_t count = MAX_XSIZE);
 //	XBuffer(XBuffer &aBuffer, size_t pos = 0, size_t count = MAX_XSIZE);
-	XBuffer(void *p, size_t count);
+	XBuffer(const void *p, size_t count);
 	const XBuffer &operator =(const XRBuffer<T> &aBuffer);
 	const XBuffer &operator =(const XBuffer &aBuffer);
 
@@ -67,7 +70,6 @@ protected:
 	~XBuffer();
 
 public:
-  static XBuffer<T> NullXBuffer;
 
 	void CheckSize(size_t nNewSize, size_t nGrowBy = XBufferGrowByDefault);
 
@@ -306,7 +308,7 @@ XBuffer<T>::XBuffer(XRBuffer<T> &aXRBuffer, size_t pos, size_t count) : _WData(N
 //}
 
 template <typename T>
-XBuffer<T>::XBuffer(void *p, size_t count) : _WData(NULL), m_allocatedSize(0) // initialisation to avoid effc++ warning
+XBuffer<T>::XBuffer(const void *p, size_t count) : _WData(NULL), m_allocatedSize(0) // initialisation to avoid effc++ warning
 {
   Initialize((const unsigned char*)p, count, 0);
 }

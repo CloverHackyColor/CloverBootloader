@@ -12,6 +12,7 @@ extern "C" {
 #include <Protocol/DevicePath.h>
 }
 
+#include "../cpp_foundation/XBuffer.h"
 #include "../include/Pci.h"
 
 /* No more used
@@ -119,7 +120,8 @@ extern UINT32 device_inject_stringlength;
 DevPropString	*devprop_create_string(void);
 //DevPropDevice	*devprop_add_device(DevPropString *string, char *path);
 DevPropDevice	*devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt, EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-BOOLEAN			devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UINTN len);
+BOOLEAN			devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl, UINTN len); // to be removed
+bool        devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<uint8_t>& vl);
 CHAR8			*devprop_generate_string(DevPropString *string);
 void			devprop_free_string(DevPropString *string);
 

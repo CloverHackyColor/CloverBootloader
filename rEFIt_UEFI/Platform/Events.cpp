@@ -337,7 +337,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN void *Context)
 	}
 #endif
   
-	if (gSettings.USBFixOwnership) {
+	if (gSettings.Devices.USB.USBFixOwnership) {
     FixOwnership();
 	}
 }

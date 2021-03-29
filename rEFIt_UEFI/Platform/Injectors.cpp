@@ -45,7 +45,6 @@ CHAR8* gDeviceProperties = NULL;
 
 UINT32 cPropSize = 0;
 UINT8* cProperties = NULL;
-XString8 cDeviceProperties;
 CHAR8* BootOSName = NULL;
 
 UINT16 KeyboardVendor = 0x05ac; //Apple inc.
@@ -154,7 +153,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN OUT UINT32                  *BufferSize)
 { 
 
-  if(!gSettings.StringInjector && (mProperties != NULL) && (mPropSize > 1)) {
+  if(!gSettings.Devices.StringInjector && (mProperties != NULL) && (mPropSize > 1)) {
     if (*BufferSize < mPropSize) {
       *BufferSize = mPropSize;
       return EFI_BUFFER_TOO_SMALL;

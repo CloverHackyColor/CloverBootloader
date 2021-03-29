@@ -213,7 +213,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt,
 
 
 
-BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UINTN len)
+BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, const UINT8 *vl, UINTN len)
 {
   UINT32 offset;
   UINT32 off;
@@ -274,6 +274,11 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CONST CHAR8 *nm, UINT8 *vl, UIN
 
   FreePool(data);
   return TRUE;
+}
+
+bool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<uint8_t>& vl)
+{
+  return devprop_add_value(device, nm.data(), vl.data(), vl.size());
 }
 
 CHAR8 *devprop_generate_string(DevPropString *StringBuf)
@@ -358,7 +363,7 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
   UINTN           i;
   CHAR8           compatible[64];
   
-  if (!gSettings.LANInjection) {
+  if (!gSettings.Devices.LANInjection) {
     return FALSE;
   }
 
@@ -383,21 +388,18 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
  		builtin = 0x01;
   }
 
-  if (gSettings.NrAddProperties != 0xFFFE) {
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_LAN) {
+  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+      if (gSettings.Devices.AddProperties[i].Device != DEV_LAN) {
         continue;
       }
       Injected = TRUE;
 
-      if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       } else {
-        devprop_add_value(device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       }
     }
   }
@@ -408,12 +410,12 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 
   //  DBG("Setting dev.prop built-in=0x%X\n", builtin);
 //  devprop_add_value(device, "device_type", (UINT8*)"Ethernet", 9);
-  if (gSettings.FakeLAN) {
-    UINT32 FakeID = gSettings.FakeLAN >> 16;
+  if (gSettings.Devices.FakeID.FakeLAN) {
+    UINT32 FakeID = gSettings.Devices.FakeID.FakeLAN >> 16;
     devprop_add_value(device, "device-id", (UINT8*)&FakeID, 4);
-    snprintf(compatible, 64, "pci%x,%x", (gSettings.FakeLAN & 0xFFFF), FakeID);
+    snprintf(compatible, 64, "pci%x,%x", (gSettings.Devices.FakeID.FakeLAN & 0xFFFF), FakeID);
     devprop_add_value(device, "compatible", (UINT8*)&compatible[0], 12);
-    FakeID = gSettings.FakeLAN & 0xFFFF;
+    FakeID = gSettings.Devices.FakeID.FakeLAN & 0xFFFF;
     devprop_add_value(device, "vendor-id", (UINT8*)&FakeID, 4);
   }
   else if (eth_dev->vendor_id == 0x11AB && eth_dev->device_id == 0x4364)
@@ -465,21 +467,18 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
  // DBG("USB Controller [%04X:%04X] :: %s\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
  // DBG("Setting dev.prop built-in=0x%X\n", builtin);
 
-  if (gSettings.NrAddProperties != 0xFFFE) {
-    for (i = 0; i < gSettings.NrAddProperties; i++) {
-      if (gSettings.AddProperties[i].Device != DEV_USB) {
+  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+      if (gSettings.Devices.AddProperties[i].Device != DEV_USB) {
         continue;
       }
       Injected = TRUE;
 
-      if (!gSettings.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       } else {
-        devprop_add_value(device,
-                          gSettings.AddProperties[i].Key,
-                          (UINT8*)gSettings.AddProperties[i].Value,
-                          gSettings.AddProperties[i].ValueLen);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+        devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
       }
     }
   }
@@ -488,7 +487,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
     //    return TRUE;
   }
 
-  if (gSettings.InjectClockID) {
+  if (gSettings.Devices.USB.InjectClockID) {
     devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
     clock_id++;
   }
@@ -509,7 +508,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       break;
     case PCI_IF_EHCI:
       devprop_add_value(device, "device_type", (UINT8*)"EHCI", 4);
-      if (gSettings.HighCurrent) {
+      if (gSettings.Devices.USB.HighCurrent) {
         devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available_high, 2);
         devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra_high, 2);
       } else {
@@ -520,7 +519,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       break;
     case PCI_IF_XHCI:
       devprop_add_value(device, "device_type", (UINT8*)"XHCI", 4);
-      if (gSettings.HighCurrent) {
+      if (gSettings.Devices.USB.HighCurrent) {
         devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available_high, 2);
         devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra_high, 2);
       } else {

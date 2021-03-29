@@ -1437,7 +1437,7 @@ void LOADER_ENTRY::StartLoader()
       }
     }
 
-//    DBG("Set FakeCPUID: 0x%X\n", gSettings.FakeCPUID);
+//    DBG("Set FakeCPUID: 0x%X\n", gSettings.Devices.FakeID.FakeCPUID);
 //    DBG("LoadKexts\n");
     // LoadKexts writes to DataHub, where large writes can prevent hibernate wake (happens when several kexts present in Clover's kexts dir)
 

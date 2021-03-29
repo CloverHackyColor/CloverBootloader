@@ -793,9 +793,9 @@ void CheckHardware()
       //      if ((Pci.Hdr.VendorId == 0x8086) &&
       //          ((Pci.Hdr.DeviceId & 0xFF00) != 0x0C00)) { //0x0C0C is HDMI sound
               GetPciADR(DevicePath, &HDAADR1, NULL, NULL);
-              if (gSettings.HDALayoutId > 0) {
+              if (gSettings.Devices.Audio.HDALayoutId > 0) {
                 // layoutId is specified - use it
-                layoutId = (UINT32)gSettings.HDALayoutId;
+                layoutId = (UINT32)gSettings.Devices.Audio.HDALayoutId;
                 DBG("Audio HDA (addr:0x%X) setting specified layout-id=%d (0x%X)\n", HDAADR1, layoutId, layoutId);
               }
 
@@ -1581,22 +1581,21 @@ BOOLEAN CustProperties(AML_CHUNK* pack, UINT32 Dev)
 {
   UINTN i;
   BOOLEAN Injected = FALSE;
-  if (gSettings.NrAddProperties == 0xFFFE) {
+  if (gSettings.Devices.AddProperties.size() == 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
     return FALSE; // not do this for Arbitrary properties?
   }
-  for (i = 0; i < gSettings.NrAddProperties; i++) {
-    if (gSettings.AddProperties[i].Device != Dev) {
+  for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
+    if (gSettings.Devices.AddProperties[i].Device != Dev) {
       continue;
     }
     Injected = TRUE;
 
-    if (!gSettings.AddProperties[i].MenuItem.BValue) {
-      //DBG("  disabled property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+    if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
+      //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
     } else {
-      aml_add_string(pack, gSettings.AddProperties[i].Key);
-      aml_add_byte_buffer(pack, gSettings.AddProperties[i].Value,
-                          (UINT32)gSettings.AddProperties[i].ValueLen);
-      //DBG("  added property Key: %s, len: %d\n", gSettings.AddProperties[i].Key, gSettings.AddProperties[i].ValueLen);
+      aml_add_string(pack, gSettings.Devices.AddProperties[i].Key.c_str());
+      aml_add_byte_buffer(pack, gSettings.Devices.AddProperties[i].Value.data(), (UINT32)gSettings.Devices.AddProperties[i].Value.size()); // unsafe cast
+      //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
     }
   }
   return Injected;
@@ -2634,9 +2633,9 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
     (
       !NeedHDMI &&
       (
-        ((DisplayVendor[VCard] == 0x8086) && (gSettings.Graphics.InjectAsDict.InjectIntel   || !gSettings.FakeIntel)) ||
-        ((DisplayVendor[VCard] == 0x10DE) && (gSettings.Graphics.InjectAsDict.InjectNVidia  || !gSettings.FakeNVidia)) ||
-        ((DisplayVendor[VCard] == 0x1002) && (gSettings.Graphics.InjectAsDict.InjectATI     || !gSettings.FakeATI))
+        ((DisplayVendor[VCard] == 0x8086) && (gSettings.Graphics.InjectAsDict.InjectIntel   || !gSettings.Devices.FakeID.FakeIntel)) ||
+        ((DisplayVendor[VCard] == 0x10DE) && (gSettings.Graphics.InjectAsDict.InjectNVidia  || !gSettings.Devices.FakeID.FakeNVidia)) ||
+        ((DisplayVendor[VCard] == 0x1002) && (gSettings.Graphics.InjectAsDict.InjectATI     || !gSettings.Devices.FakeID.FakeATI))
       )
     )
   ) {
@@ -2651,38 +2650,38 @@ UINT32 FIXDisplay (UINT8 *dsdt, UINT32 len, INT32 VCard)
 
   if (NeedHDMI) {
     aml_add_string(pack, "hda-gfx");
-    aml_add_string_buffer(pack, (gSettings.UseIntelHDMI && DisplayVendor[VCard] !=  0x8086) ? "onboard-2" : "onboard-1");
+    aml_add_string_buffer(pack, (gSettings.Devices.UseIntelHDMI && DisplayVendor[VCard] !=  0x8086) ? "onboard-2" : "onboard-1");
   }
 
   switch (DisplayVendor[VCard]) {
     case 0x8086:
-      if (gSettings.FakeIntel) {
-        FakeID = gSettings.FakeIntel >> 16;
+      if (gSettings.Devices.FakeID.FakeIntel) {
+        FakeID = gSettings.Devices.FakeID.FakeIntel >> 16;
         aml_add_string(pack, "device-id");
         aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
-        FakeVen = gSettings.FakeIntel & 0xFFFF;
+        FakeVen = gSettings.Devices.FakeID.FakeIntel & 0xFFFF;
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
       }
       break;
     case 0x10DE:
-      if (gSettings.FakeNVidia) {
-        FakeID = gSettings.FakeNVidia >> 16;
+      if (gSettings.Devices.FakeID.FakeNVidia) {
+        FakeID = gSettings.Devices.FakeID.FakeNVidia >> 16;
         aml_add_string(pack, "device-id");
         aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
-        FakeVen = gSettings.FakeNVidia & 0xFFFF;
+        FakeVen = gSettings.Devices.FakeID.FakeNVidia & 0xFFFF;
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
       }
       break;
     case 0x1002:
-      if (gSettings.FakeATI) {
-        FakeID = gSettings.FakeATI >> 16;
+      if (gSettings.Devices.FakeID.FakeATI) {
+        FakeID = gSettings.Devices.FakeID.FakeATI >> 16;
         aml_add_string(pack, "device-id");
         aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
         aml_add_string(pack, "ATY,DeviceID");
         aml_add_byte_buffer(pack, (UINT8*)&FakeID, 2);
-        FakeVen = gSettings.FakeATI & 0xFFFF;
+        FakeVen = gSettings.Devices.FakeID.FakeATI & 0xFFFF;
         aml_add_string(pack, "vendor-id");
         aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
         aml_add_string(pack, "ATY,VendorID");
@@ -2902,9 +2901,9 @@ UINT32 AddHDMI (UINT8 *dsdt, UINT32 len)
 
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (!gSettings.NoDefaultProperties) {
+  if (!gSettings.Devices.NoDefaultProperties) {
     aml_add_string(pack, "hda-gfx");
-    if (gSettings.UseIntelHDMI) {
+    if (gSettings.Devices.UseIntelHDMI) {
       aml_add_string_buffer(pack, "onboard-2");
     } else {
       aml_add_string_buffer(pack, "onboard-1");
@@ -2973,9 +2972,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   if (!NetworkADR1[card]) return len;
   DBG("Start NetWork %d Fix\n", card);
 
-  if (gSettings.FakeLAN) {
-    FakeID = gSettings.FakeLAN >> 16;
-    FakeVen = gSettings.FakeLAN & 0xFFFF;
+  if (gSettings.Devices.FakeID.FakeLAN) {
+    FakeID = gSettings.Devices.FakeID.FakeLAN >> 16;
+    FakeVen = gSettings.Devices.FakeID.FakeLAN & 0xFFFF;
     snprintf(NameCard, 32, "pci%x,%x", FakeVen, FakeID);
     Netmodel[card] = get_net_model((FakeVen << 16) + FakeID);
   }
@@ -3082,7 +3081,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
   }
 
   // add Method(_DSM,4,NotSerialized) for network
-  if (gSettings.FakeLAN || !gSettings.NoDefaultProperties) {
+  if (gSettings.Devices.FakeID.FakeLAN || !gSettings.Devices.NoDefaultProperties) {
     met = aml_add_method(dev, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
@@ -3093,7 +3092,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     aml_add_string_buffer(pack, Netmodel[card]);
 //    aml_add_string(pack, "device_type");
 //    aml_add_string_buffer(pack, "Ethernet");
-    if (gSettings.FakeLAN) {
+    if (gSettings.Devices.FakeID.FakeLAN) {
       //    aml_add_string(pack, "model");
       //    aml_add_string_buffer(pack, "Apple LAN card");
       aml_add_string(pack, "device-id");
@@ -3108,8 +3107,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
 
     // Could we just comment this part? (Until remember what was the purposes?)
 /*  if (!CustProperties(pack, DEV_LAN) &&
-        !gSettings.FakeLAN &&
-      !gSettings.NoDefaultProperties) {
+        !gSettings.Devices.FakeID.FakeLAN &&
+      !gSettings.Devices.NoDefaultProperties) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   } */
@@ -3169,14 +3168,14 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   CHAR8 NameCard[32];
 
   if (!ArptADR1) return len; // no device - no patch
-  if ( gSettings.AirportBridgeDeviceName.notEmpty() && gSettings.AirportBridgeDeviceName.length() != 4 ) {
+  if ( gSettings.Devices.AirportBridgeDeviceName.notEmpty() && gSettings.Devices.AirportBridgeDeviceName.length() != 4 ) {
     MsgLog("AirportBridgeDeviceName must be 4 char long : ignored");
-    gSettings.AirportBridgeDeviceName.setEmpty();
+    gSettings.Devices.AirportBridgeDeviceName.setEmpty();
   }
 
-  if (gSettings.FakeWIFI) {
-    FakeID = gSettings.FakeWIFI >> 16;
-    FakeVen = gSettings.FakeWIFI & 0xFFFF;
+  if (gSettings.Devices.FakeID.FakeWIFI) {
+    FakeID = gSettings.Devices.FakeID.FakeWIFI >> 16;
+    FakeVen = gSettings.Devices.FakeID.FakeWIFI & 0xFFFF;
     snprintf(NameCard, 32, "pci%x,%x", FakeVen, FakeID);
   }
 
@@ -3190,7 +3189,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   ArptName = FALSE;
   for (i=0x20; len >= 10 && i < len - 10; i++) {
     // AirPort Address
-    if ( CmpAdr(dsdt, i, ArptADR1)  ||  (gSettings.AirportBridgeDeviceName.notEmpty() && CmpDev(dsdt, i, gSettings.AirportBridgeDeviceName))   ) {
+    if ( CmpAdr(dsdt, i, ArptADR1)  ||  (gSettings.Devices.AirportBridgeDeviceName.notEmpty() && CmpDev(dsdt, i, gSettings.Devices.AirportBridgeDeviceName))   ) {
       BrdADR = devFind(dsdt, i);
       if (!BrdADR) {
         continue;
@@ -3275,11 +3274,11 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   }
 
   // add Method(_DSM,4,NotSerialized) for network
-  if (gSettings.FakeWIFI || !gSettings.NoDefaultProperties) {
+  if (gSettings.Devices.FakeID.FakeWIFI || !gSettings.Devices.NoDefaultProperties) {
     met = aml_add_method(dev, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
-    if (!gSettings.NoDefaultProperties) {
+    if (!gSettings.Devices.NoDefaultProperties) {
       aml_add_string(pack, "built-in");
       aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
       aml_add_string(pack, "model");
@@ -3290,7 +3289,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       //    aml_add_string_buffer(pack, "AirPort");
     }
 
-    if (gSettings.FakeWIFI) {
+    if (gSettings.Devices.FakeID.FakeWIFI) {
       //aml_add_string(pack, "device-id");
       //aml_add_byte_buffer(pack, (CHAR8 *)&FakeID, 4);
       //aml_add_string(pack, "vendor-id");
@@ -3301,8 +3300,8 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       aml_add_string_buffer(pack, (CHAR8 *)&NameCard[0]);
     }
     if (!CustProperties(pack, DEV_WIFI) &&
-        !gSettings.NoDefaultProperties &&
-        !gSettings.FakeWIFI) {
+        !gSettings.Devices.NoDefaultProperties &&
+        !gSettings.Devices.FakeID.FakeWIFI) {
       aml_add_string(pack, "empty");
       aml_add_byte(pack, 0);
     }
@@ -3524,9 +3523,9 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   UINT32 FakeID;
   UINT32 FakeVen;
 
-  if (gSettings.FakeIMEI) {
-    FakeID = gSettings.FakeIMEI >> 16;
-    FakeVen = gSettings.FakeIMEI & 0xFFFF;
+  if (gSettings.Devices.FakeID.FakeIMEI) {
+    FakeID = gSettings.Devices.FakeID.FakeIMEI >> 16;
+    FakeVen = gSettings.Devices.FakeID.FakeIMEI & 0xFFFF;
   }
 
   PCIADR = GetPciDevice(dsdt, len);
@@ -3565,7 +3564,7 @@ UINT32 AddIMEI (UINT8 *dsdt, UINT32 len)
   aml_add_name(device, "_ADR");
   aml_add_dword(device, IMEIADR1);
   // add Method(_DSM,4,NotSerialized)
-  if (gSettings.FakeIMEI) {
+  if (gSettings.Devices.FakeID.FakeIMEI) {
     met = aml_add_method(device, "_DSM", 4);
     met2 = aml_add_store(met);
     pack = aml_add_package(met2);
@@ -3815,18 +3814,18 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len, const MacOsVersion& OSVersion)
         }
         met2 = aml_add_store(met);
         pack = aml_add_package(met2);
-        if (gSettings.UseIntelHDMI) {
+        if (gSettings.Devices.UseIntelHDMI) {
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
         }
         if (!CustProperties(pack, DEV_HDA)) {
-        if ( ( OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.8") ) || gSettings.HDALayoutId > 0 ) {
+        if ( ( OSVersion.notEmpty() && OSVersion < AsciiOSVersionToUint64("10.8") ) || gSettings.Devices.Audio.HDALayoutId > 0 ) {
         aml_add_string(pack, "layout-id");
         aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
         }
         aml_add_string(pack, "MaximumBootBeepVolume");
         aml_add_byte_buffer(pack, (CHAR8*)&dataBuiltin1[0], 1);
-        if (gSettings.AFGLowPowerState) {
+        if (gSettings.Devices.Audio.AFGLowPowerState) {
         aml_add_string(pack, "AFGLowPowerState");
         aml_add_byte_buffer(pack, Yes, 4);
         }
@@ -3902,7 +3901,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
     } else if (USBNForce) {
       aml_add_string_buffer(pack, "OHCI");
     }
-    if (gSettings.InjectClockID) {
+    if (gSettings.Devices.USB.InjectClockID) {
       aml_add_string(pack, "AAPL,clock-id");
       aml_add_byte_buffer(pack, dataBuiltin, 1);
     }
@@ -3930,19 +3929,19 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack1, "device_type");
     aml_add_string_buffer(pack1, "EHCI");
-    if (gSettings.InjectClockID) {
+    if (gSettings.Devices.USB.InjectClockID) {
       aml_add_string(pack1, "AAPL,clock-id");
       aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
     }
     if (USBIntel) {
       aml_add_string(pack1, "AAPL,current-available");
-      if (gSettings.HighCurrent) {
+      if (gSettings.Devices.USB.HighCurrent) {
         aml_add_word(pack1, 0x0834);
       } else {
         aml_add_word(pack1, 0x05DC);
       }
       aml_add_string(pack1, "AAPL,current-extra");
-      if (gSettings.HighCurrent) {
+      if (gSettings.Devices.USB.HighCurrent) {
         aml_add_word(pack1, 0x0C80);
       } else {
         aml_add_word(pack1, 0x03E8);
@@ -4013,7 +4012,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
     aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
     aml_add_string(pack1, "device_type");
     aml_add_string_buffer(pack1, "XHCI");
-    if (gSettings.InjectClockID) {
+    if (gSettings.Devices.USB.InjectClockID) {
       aml_add_string(pack1, "AAPL,clock-id");
       aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
     }
@@ -4072,13 +4071,13 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
                 DBG("found USB device [%08X:%X] at %X and Name was %s ->",
                     USBADR[i], USBADR2[i], k, device_name[10]);
                 if (USB30[i]) {
-                  if (gSettings.NameXH00) {
+                  if (gSettings.Devices.USB.NameXH00) {
                     snprintf(UsbName[i], 5, "XH%02x", XhciCount++);
                   } else {
                     snprintf(UsbName[i], 5, "XHC%01x", XhciCount++);
                   }
                 } else if (USB20[i]) {
-                  if (gSettings.NameEH00) {
+                  if (gSettings.Devices.USB.NameEH00) {
                     snprintf(UsbName[i], 5, "EH%02x", EhciCount++);
                   } else {
                     snprintf(UsbName[i], 5, "EHC%01x", EhciCount++);
@@ -4137,8 +4136,8 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             } else {
               continue;
             }
-            if (gSettings.FakeXHCI) {
-              USBID[i] = gSettings.FakeXHCI >> 16;
+            if (gSettings.Devices.FakeID.FakeXHCI) {
+              USBID[i] = gSettings.Devices.FakeID.FakeXHCI >> 16;
             }
             CopyMem(USBDATA3+k, (void*)&USBID[i], 4);
             sizeoffset = size3;
@@ -4425,9 +4424,9 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   UINT32 FakeID;
   UINT32 FakeVen;
 
-  if (gSettings.FakeSATA) {
-    FakeID = gSettings.FakeSATA >> 16;
-    FakeVen = gSettings.FakeSATA & 0xFFFF;
+  if (gSettings.Devices.FakeID.FakeSATA) {
+    FakeID = gSettings.Devices.FakeID.FakeSATA >> 16;
+    FakeVen = gSettings.Devices.FakeID.FakeSATA & 0xFFFF;
   }
 
   if (!SATAAHCIADR1) return len;
@@ -4465,19 +4464,19 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   root = aml_create_node(NULL);
 
   // add Method(_DSM,4,NotSerialized)
-  if (gSettings.FakeSATA || !gSettings.NoDefaultProperties) {
+  if (gSettings.Devices.FakeID.FakeSATA || !gSettings.Devices.NoDefaultProperties) {
   met = aml_add_method(root, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (gSettings.FakeSATA) {
+  if (gSettings.Devices.FakeID.FakeSATA) {
     aml_add_string(pack, "device-id");
     aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
   }
   if (!CustProperties(pack, DEV_SATA) &&
-        !gSettings.NoDefaultProperties &&
-        !gSettings.FakeSATA) {
+        !gSettings.Devices.NoDefaultProperties &&
+        !gSettings.Devices.FakeID.FakeSATA) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
@@ -4519,9 +4518,9 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   UINT32 FakeID;
   UINT32 FakeVen;
 
-  if (gSettings.FakeSATA) {
-    FakeID = gSettings.FakeSATA >> 16;
-    FakeVen = gSettings.FakeSATA & 0xFFFF;
+  if (gSettings.Devices.FakeID.FakeSATA) {
+    FakeID = gSettings.Devices.FakeID.FakeSATA >> 16;
+    FakeVen = gSettings.Devices.FakeID.FakeSATA & 0xFFFF;
   }
 
   if (!SATAADR1) return len;
@@ -4556,19 +4555,19 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 
   root = aml_create_node(NULL);
   // add Method(_DSM,4,NotSerialized)
-  if (gSettings.FakeSATA || !gSettings.NoDefaultProperties) {
+  if (gSettings.Devices.FakeID.FakeSATA || !gSettings.Devices.NoDefaultProperties) {
   met = aml_add_method(root, "_DSM", 4);
   met2 = aml_add_store(met);
   pack = aml_add_package(met2);
-  if (gSettings.FakeSATA) {
+  if (gSettings.Devices.FakeID.FakeSATA) {
     aml_add_string(pack, "device-id");
     aml_add_byte_buffer(pack, (UINT8*)&FakeID, 4);
     aml_add_string(pack, "vendor-id");
     aml_add_byte_buffer(pack, (UINT8*)&FakeVen, 4);
   }
   if (!CustProperties(pack, DEV_SATA) &&
-        !gSettings.NoDefaultProperties &&
-        !gSettings.FakeSATA) {
+        !gSettings.Devices.NoDefaultProperties &&
+        !gSettings.Devices.FakeID.FakeSATA) {
     aml_add_string(pack, "empty");
     aml_add_byte(pack, 0);
   }
