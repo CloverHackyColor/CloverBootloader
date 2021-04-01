@@ -962,7 +962,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume, BOOLEAN SataReset)
     Regs.X.SI = (UINT16)(UINTN)pMBR;
   }
 
-	DBG("mbr: %hhX index: %llX pointer: %llX dx: %hX si: %hX\n", volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
+	DBG("mbr: %d index: %llX pointer: %llX dx: %hX si: %hX\n", volume->IsMbrPartition, volume->MbrPartitionIndex, (uintptr_t)volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
 	DBG("pmbr: %llX start: %X size: %X\n", (uintptr_t)&pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
 
   //

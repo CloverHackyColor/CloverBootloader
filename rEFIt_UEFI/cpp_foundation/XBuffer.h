@@ -190,11 +190,24 @@ public:
   }
 
 	void ncpy(const void *buf, size_t len);
+  void cpy(bool b) { ncpy(&b, sizeof(b)); };
+  void cpy(char c) { ncpy(&c, sizeof(c)); };
+  void cpy(unsigned char c) { ncpy(&c, sizeof(c)); };
+  void cpy(signed char c) { ncpy(&c, sizeof(c)); };
+  void cpy(signed short s) { ncpy(&s, sizeof(s)); };
+  void cpy(unsigned short us) { ncpy(&us, sizeof(us)); };
+  void cpy(signed int i) { ncpy(&i, sizeof(i)); };
+  void cpy(unsigned int ui) { ncpy(&ui, sizeof(ui)); };
+  void cpy(signed long l) { ncpy(&l, sizeof(l)); };
+  void cpy(unsigned long ul) { ncpy(&ul, sizeof(ul)); };
+  void cpy(signed long long ull) { ncpy(&ull, sizeof(ull)); };
+  void cpy(unsigned long long ull) { ncpy(&ull, sizeof(ull)); };
+  void cpy(float f) { ncpy(&f, sizeof(f)); };
+  void cpy(double d) { ncpy(&d, sizeof(d)); };
+  void cpy(void* p) { ncpy(&p, sizeof(p)); };
 	// Cat
 	void ncat(const void *buf, size_t len);
-
   void cat(bool b) { ncat(&b, sizeof(b)); };
-
   void cat(char c) { ncat(&c, sizeof(c)); };
   void cat(unsigned char c) { ncat(&c, sizeof(c)); };
   void cat(signed char c) { ncat(&c, sizeof(c)); };
@@ -206,10 +219,8 @@ public:
 	void cat(unsigned long ul) { ncat(&ul, sizeof(ul)); };
   void cat(signed long long ull) { ncat(&ull, sizeof(ull)); };
   void cat(unsigned long long ull) { ncat(&ull, sizeof(ull)); };
-
   void cat(float f) { ncat(&f, sizeof(f)); };
   void cat(double d) { ncat(&d, sizeof(d)); };
-
   void cat(void* p) { ncat(&p, sizeof(p)); };
 
 //	void cat(const XString8 &aXString8);

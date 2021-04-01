@@ -2740,6 +2740,31 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   }else{
     GlobalConfig.Turbo = gCPUStructure.Turbo;
   }
+
+  // Jief : Shouldn't this injection made at StartLoader only ? And only for macOS ?
+  if ( gSettings.Devices.Properties.propertiesAsString.notEmpty() )
+  {
+    size_t binaryPropSize = hex2bin(gSettings.Devices.Properties.propertiesAsString, NULL, 0); // check of correct length is supposed to have been done when reading settings.
+    UINTN nbPages = EFI_SIZE_TO_PAGES(binaryPropSize);
+    EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
+    EFI_STATUS Status = gBS->AllocatePages (
+                                 AllocateMaxAddress,
+                                 EfiACPIReclaimMemory,
+                                 nbPages,
+                                 &BufferPtr
+                                 );
+
+    if (!EFI_ERROR(Status)) {
+      cProperties = (UINT8*)(UINTN)BufferPtr;
+      cPropSize = (UINT32)hex2bin(gSettings.Devices.Properties.propertiesAsString, cProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe hex2bin return  < MAX_UINT32
+
+      DBG("Injected EFIString of length %d\n", cPropSize);
+    }else{
+      MsgLog("AllocatePages failed (%s), Properties not injected", efiStrError(Status));
+    }
+  }
+  //---------
+
 }
 #pragma GCC diagnostic pop
 

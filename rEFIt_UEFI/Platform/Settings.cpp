@@ -556,7 +556,7 @@ SetBootCurrent(REFIT_MENU_ITEM_BOOTNUM *Entry)
 // data can be specified in <data></data> base64 encoded
 // or in <string></string> hex encoded
 //
-static UINT8
+UINT8
 *GetDataSetting (
                  IN      const TagDict* Dict,
                  IN      CONST CHAR8  *PropName,
@@ -4380,6 +4380,257 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
 }
 
 /*
+ * 2021-04, Jief : this is untouched old code (except a small bug when name starts with '#') to create ArbProperties the old way
+ * Old way = only one structure DEV_PROPERTY, Properties and ArbProperties are mixed together, no objetcs (XString, XBuffer).
+ * This is temporary and is used to check that new code gives the same result as the old. To be remove in a while
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+void SETTINGS_DATA::DevicesClass::FillDevicePropertiesOld(SETTINGS_DATA& gSettings, const TagDict* DevicesDict)
+{
+#pragma GCC diagnostic pop
+      /*
+       * Properties is a single string, or a dict
+       */
+      const TagStruct* Prop = DevicesDict->propertyForKey("Properties");
+      if (Prop != NULL) {
+        if (Prop->isString()) {
+        }
+        else if ( Prop->isDict() ) {
+          INTN i;
+          const TagDict* PropertiesDict = Prop->getDict();
+          INTN Count = PropertiesDict->dictKeyCount(); //ok
+          //gSettings.Devices.AddProperties = new DEV_PROPERTY[Count]; // seems bug, only ArbProperties is used in this block
+          DEV_PROPERTY *DevPropDevice;
+          DEV_PROPERTY *DevProps;
+          DEV_PROPERTY **Child;
+
+          if (Count > 0) {
+            DBG("Add %lld devices (kTagTypeDict):\n", Count);
+
+            for (i = 0; i < Count; i++) {
+              const TagKey* key;
+              const TagStruct* value;
+              EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
+              if ( !EFI_ERROR(PropertiesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {  //take a <key> with DevicePath. If GetKeyValueAtIndex return success, key and value != NULL
+                XStringW DevicePathStr = key->keyStringValue();
+                //         DBG("Device: %ls\n", DevicePathStr);
+
+                // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
+#ifdef CLOVER_BUILD
+                if ( DevicePathStr.equalIC("PrimaryGPU") ) {
+                  DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
+                } else if ( DevicePathStr.equalIC("SecondaryGPU") && NGFX > 1) {
+                  DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
+                } else {
+                  DevicePath = ConvertTextToDevicePath(DevicePathStr.wc_str()); //TODO
+                }
+                if (DevicePath == NULL) {
+                  continue;
+                }
+#endif
+                //Create Device node
+                DevPropDevice = gSettings.Devices.ArbProperties;
+                gSettings.Devices.ArbProperties = new DEV_PROPERTY;
+                gSettings.Devices.ArbProperties->Next = DevPropDevice; //next device
+                gSettings.Devices.ArbProperties->Child = NULL;
+                gSettings.Devices.ArbProperties->Device = 0; //to differ from arbitrary
+                gSettings.Devices.ArbProperties->DevicePath = DevicePath; //this is pointer
+                gSettings.Devices.ArbProperties->Label = S8Printf("%s", key->keyStringValue().c_str()).forgetDataWithoutFreeing();
+                Child = &(gSettings.Devices.ArbProperties->Child);
+
+                if ((value != NULL) && (value->isDict())) {
+                  INTN PropCount = 0;
+                  const TagDict* valueDict = value->getDict();
+                  PropCount = valueDict->dictKeyCount();
+                  //         DBG("Add %d properties:\n", PropCount);
+                  for (INTN j = 0; j < PropCount; j++) {
+                    DevProps = *Child;
+                    *Child = new DEV_PROPERTY;
+                  //  *Child = new (__typeof_am__(**Child))();
+                    (*Child)->Next = DevProps;
+
+                    const TagKey* key2;
+                    const TagStruct* value2;
+                    if (EFI_ERROR(valueDict->getKeyAndValueAtIndex(j, &key2, &value2))) {
+                      continue;
+                    }
+                    if (key2->keyStringValue()[0] != '#') {
+                      (*Child)->MenuItem.BValue = TRUE;
+                      (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str()).forgetDataWithoutFreeing();
+                    }
+                    else {
+                      (*Child)->MenuItem.BValue = FALSE;
+                      (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str() + 1).forgetDataWithoutFreeing();
+                    }
+
+                    //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
+                    if (value2 && (value2->isString()) && value2->getString()->stringValue().notEmpty()) {
+                      //first suppose it is Ascii string
+                      (*Child)->Value = (UINT8*)S8Printf("%s", value2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                      (*Child)->ValueLen = value2->getString()->stringValue().sizeInBytesIncludingTerminator();
+                      (*Child)->ValueType = kTagTypeString;
+                    }
+                    else if (value2 && (value2->isInt64())) {
+                      if ( value2->getInt64()->intValue() < MIN_INT32  ||  value2->getInt64()->intValue() > MAX_INT32 ) {
+                        MsgLog("Invalid int value for key %s\n", key2->keyStringValue().c_str());
+                      }else{
+                        INT32 intValue = (INT32)value2->getInt64()->intValue();
+                        (*Child)->Value = (__typeof__((*Child)->Value))AllocatePool(sizeof(intValue));
+                        *(INT32*)((*Child)->Value) = intValue;
+                        (*Child)->ValueLen = sizeof(intValue);
+                        (*Child)->ValueType = kTagTypeInteger;
+                      }
+                    }
+                    else if (value2 && value2->isTrue() ) {
+                      (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
+                      (*Child)->Value[0] = TRUE;
+                      (*Child)->ValueLen = 1;
+                      (*Child)->ValueType = kTagTypeTrue;
+                    }
+                    else if ( value2 && value2->isFalse() ) {
+                      (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
+                      //(*Child)->Value[0] = FALSE;
+                      (*Child)->ValueLen = 1;
+                      (*Child)->ValueType = kTagTypeFalse;
+                    }
+                    else if (value2 && (value2->isData())) {
+                      UINTN Size = value2->getData()->dataLenValue();
+                      //     (*Child)->Value = GetDataSetting(value2, "Value", &Size);  //TODO
+                      UINT8* Data = (__typeof__(Data))AllocateZeroPool(Size);
+                      CopyMem(Data, value2->getData()->dataValue(), Size);
+                      (*Child)->Value = Data;
+                      (*Child)->ValueLen = Size;
+                      (*Child)->ValueType = kTagTypeData;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const TagArray* ArbitraryTagArray = DevicesDict->arrayPropertyForKey("Arbitrary"); // array of dict
+      if (ArbitraryTagArray != NULL) {
+        INTN Index;
+        INTN   Count = ArbitraryTagArray->arrayContent().size();
+        DEV_PROPERTY *DevProp;
+
+        if (Count > 0) {
+          DBG("Add %lld devices (Arbitrary):\n", Count);
+          for (Index = 0; Index < Count; Index++) {
+            UINTN DeviceAddr = 0U;
+            XString8 Label;
+            DBG(" - [%02lld]:", Index);
+            const TagDict* Dict2 = ArbitraryTagArray->dictElementAt(Index, "Arbitrary"_XS8);
+            const TagStruct*     Prop3;
+            Prop3 = Dict2->propertyForKey("PciAddr");
+            if (Prop3 != NULL) {
+              UINT8 Bus, Dev, Func;
+
+              if ( !Prop3->isString() ) {
+                MsgLog("ATTENTION : property not string in PciAddr\n");
+                continue;
+              }
+              if ( Prop3->getString()->stringValue().length() < 2  ||  Prop3->getString()->stringValue()[2] != ':') {
+                DBG(" wrong PciAddr string: %s\n", Prop3->getString()->stringValue().c_str());
+                continue;
+              }
+              CONST CHAR8* Str = Prop3->getString()->stringValue().c_str();
+              Bus   = hexstrtouint8(Str);
+              Dev   = hexstrtouint8(&Str[3]);
+              Func  = hexstrtouint8(&Str[6]);
+              DeviceAddr = PCIADDR(Bus, Dev, Func);
+              Label.S8Printf("[%02hhX:%02hhX.%02hhX] ", Bus, Dev, Func);
+              DBG(" %s", Label.c_str());
+            } else {
+              DBG(" no PciAddr\n");
+              continue;
+            }
+
+            Prop3 = Dict2->propertyForKey("Comment");
+            if (Prop3 != NULL) {
+              if ( !Prop3->isString() ) {
+                MsgLog("ATTENTION : property not string in Comment\n");
+              }else{
+                Label += Prop3->getString()->stringValue();
+                DBG(" (%s)", Prop3->getString()->stringValue().c_str());
+              }
+            }
+            DBG("\n");
+            const TagArray* CustomPropertiesArray = Dict2->arrayPropertyForKey("CustomProperties"); // array of dict
+            if (CustomPropertiesArray != NULL) {
+              const TagDict* Dict3;
+              INTN PropIndex;
+              INTN PropCount = CustomPropertiesArray->arrayContent().size();
+
+              for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
+                Dict3 = CustomPropertiesArray->dictElementAt(PropIndex, "CustomProperties"_XS8);
+                DevProp = gSettings.Devices.ArbProperties;
+                gSettings.Devices.ArbProperties = new DEV_PROPERTY;
+                gSettings.Devices.ArbProperties->Next = DevProp;
+
+                gSettings.Devices.ArbProperties->Device = (UINT32)DeviceAddr;
+                gSettings.Devices.ArbProperties->Label = (__typeof__(gSettings.Devices.ArbProperties->Label))AllocateCopyPool(Label.sizeInBytesIncludingTerminator(), Label.c_str());
+
+                const TagStruct* DisabledProp = Dict3->propertyForKey("Disabled");
+                gSettings.Devices.ArbProperties->MenuItem.BValue = !IsPropertyNotNullAndTrue(DisabledProp);
+
+                DisabledProp = Dict3->propertyForKey("Key");
+                if (DisabledProp && (DisabledProp->isString()) && DisabledProp->getString()->stringValue().notEmpty()) {
+                  gSettings.Devices.ArbProperties->Key = S8Printf("%s", DisabledProp->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                }
+
+                DisabledProp = Dict3->propertyForKey("Value");
+                if (DisabledProp && (DisabledProp->isString()) && DisabledProp->getString()->stringValue().notEmpty()) {
+                  //first suppose it is Ascii string
+                  gSettings.Devices.ArbProperties->Value = (UINT8*)S8Printf("%s", DisabledProp->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                  gSettings.Devices.ArbProperties->ValueLen = DisabledProp->getString()->stringValue().sizeInBytesIncludingTerminator();
+                  gSettings.Devices.ArbProperties->ValueType = kTagTypeString;
+                } else if (DisabledProp && (DisabledProp->isInt64())) {
+                  if ( DisabledProp->getInt64()->intValue() < MIN_INT32  ||  DisabledProp->getInt64()->intValue() > MAX_INT32 ) {
+                    MsgLog("Invalid int value for key 'Value'\n");
+                  }else{
+                    INT32 intValue = (INT32)DisabledProp->getInt64()->intValue();
+                    gSettings.Devices.ArbProperties->Value = (__typeof__(gSettings.Devices.ArbProperties->Value))AllocatePool(sizeof(intValue));
+  //                    CopyMem(settingsData.ArbProperties->Value, &Prop3->intValue, 4);
+                    *(INT32*)(gSettings.Devices.ArbProperties->Value) = intValue;
+                    gSettings.Devices.ArbProperties->ValueLen = sizeof(intValue);
+                    gSettings.Devices.ArbProperties->ValueType = kTagTypeInteger;
+                  }
+                } else if ( DisabledProp && DisabledProp->isTrue() ) {
+                  gSettings.Devices.ArbProperties->Value = (__typeof__(gSettings.Devices.ArbProperties->Value))AllocateZeroPool(4);
+                  gSettings.Devices.ArbProperties->Value[0] = TRUE;
+                  gSettings.Devices.ArbProperties->ValueLen = 1;
+                  gSettings.Devices.ArbProperties->ValueType = kTagTypeTrue;
+                } else if ( DisabledProp && DisabledProp->isFalse() ) {
+                  gSettings.Devices.ArbProperties->Value = (__typeof__(gSettings.Devices.ArbProperties->Value))AllocateZeroPool(4);
+                  //settingsData.ArbProperties->Value[0] = FALSE;
+                  gSettings.Devices.ArbProperties->ValueLen = 1;
+                  gSettings.Devices.ArbProperties->ValueType = kTagTypeFalse;
+                } else {
+                  //else  data
+                  UINTN Size = 0;
+                  gSettings.Devices.ArbProperties->Value = GetDataSetting (Dict3, "Value", &Size);
+                  gSettings.Devices.ArbProperties->ValueLen = Size;
+                  gSettings.Devices.ArbProperties->ValueType = kTagTypeData;
+                }
+
+                //Special case. In future there must be more such cases
+                if ((AsciiStrStr(gSettings.Devices.ArbProperties->Key, "-platform-id") != NULL)) {
+                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, gSettings.Devices.ArbProperties->Value, 4);
+                }
+              }   //for() device properties
+            }
+          } //for() devices
+        }
+      //        settingsData.NrAddProperties = 0xFFFE;
+    }
+}
+
+
+/*
  * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
  * and is passed by non-const reference.
  * This temporary during the refactoring
@@ -4530,16 +4781,6 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
       FillCardList(GraphicsDict, gSettings); //#@ Getcardslist
     }
-    
-
-
-
-    //done until here
-
-
-
-
-
 
     const TagDict* DevicesDict = CfgDict->dictPropertyForKey("Devices");
     if (DevicesDict != NULL) {
@@ -4555,45 +4796,26 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       Prop = DevicesDict->propertyForKey("IntelMaxValue");
       gSettings.Devices.IntelMaxValue = (UINT16)GetPropertyAsInteger(Prop, gSettings.Devices.IntelMaxValue);
 
+
+      gSettings.Devices.FillDevicePropertiesOld(gSettings, DevicesDict);
+
       /*
        * Properties is a single string, or a dict
        */
       Prop = DevicesDict->propertyForKey("Properties");
       if (Prop != NULL) {
         if (Prop->isString()) {
-
-          gSettings.Devices.Properties.cDeviceProperties = Prop->getString()->stringValue();
-          if ( gSettings.Devices.Properties.cDeviceProperties.sizeInBytesIncludingTerminator() > MAX_UINT32-1 ) {
+          gSettings.Devices.Properties.propertiesAsString = Prop->getString()->stringValue();
+          size_t binaryPropSize = hex2bin(gSettings.Devices.Properties.propertiesAsString, NULL, 0);
+          if ( binaryPropSize > MAX_UINT32 ) {
             MsgLog("gSettings.Devices.Properties.cDeviceProperties is too big");
-            gSettings.Devices.Properties.cDeviceProperties.setEmpty();
+            gSettings.Devices.Properties.propertiesAsString.setEmpty();
           }
-          //-------
-#ifdef CLOVER_BUILD
-          EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-          EFI_STATUS Status = gBS->AllocatePages (
-                                       AllocateMaxAddress,
-                                       EfiACPIReclaimMemory,
-                                       EFI_SIZE_TO_PAGES (gSettings.Devices.Properties.cDeviceProperties.sizeInBytes()) + 1,
-                                       &BufferPtr
-                                       );
-
-          if (!EFI_ERROR(Status)) {
-            cProperties = (UINT8*)(UINTN)BufferPtr;
-            //cPropSize   = (UINT32)(gSettings.Devices.Properties.cDeviceProperties.length() >> 1);
-            cPropSize = (UINT32)hex2bin(gSettings.Devices.Properties.cDeviceProperties, cProperties, EFI_PAGES_TO_SIZE(EFI_SIZE_TO_PAGES (gSettings.Devices.Properties.cDeviceProperties.sizeInBytesIncludingTerminator()))); // cast should be safe gSettings.Devices.Properties.cDeviceProperties.sizeInBytesIncludingTerminator() <= MAX_UINT32-1
-            DBG("Injected EFIString of length %d\n", cPropSize);
-          }
-          //---------
-#endif
         }
         else if ( Prop->isDict() ) {
           INTN i;
           const TagDict* PropertiesDict = Prop->getDict();
           INTN Count = PropertiesDict->dictKeyCount(); //ok
-          //gSettings.Devices.AddProperties = new DEV_PROPERTY[Count]; // seems bug, only ArbProperties is used in this block
-          DEV_PROPERTY *DevPropDevice;
-          DEV_PROPERTY *DevProps;
-          DEV_PROPERTY **Child;
 
           if (Count > 0) {
             DBG("Add %lld devices (kTagTypeDict):\n", Count);
@@ -4601,33 +4823,49 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             for (i = 0; i < Count; i++) {
               const TagKey* key;
               const TagStruct* value;
-              EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
+//              EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
               if ( !EFI_ERROR(PropertiesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {  //take a <key> with DevicePath. If GetKeyValueAtIndex return success, key and value != NULL
+              
+                if ( key->keyStringValue().startWithOrEqualTo('#') ) continue; // Commented out, ignored. This is a tempororay litle change of behavior because that's how the new parser will works.
+                if ( key->keyStringValue().equal("!") ) {
+                  // '!' means disabled. If Label is only '!', means an empty disabled label...
+                  continue;
+                }
+
                 XStringW DevicePathStr = key->keyStringValue();
                 //         DBG("Device: %ls\n", DevicePathStr);
 
                 // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
-#ifdef CLOVER_BUILD
-                if ( DevicePathStr.equalIC("PrimaryGPU") ) {
-                  DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
-                } else if ( DevicePathStr.equalIC("SecondaryGPU") && NGFX > 1) {
-                  DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
-                } else {
-                  DevicePath = ConvertTextToDevicePath(DevicePathStr.wc_str()); //TODO
-                }
-                if (DevicePath == NULL) {
-                  continue;
-                }
-#endif
+//#ifdef CLOVER_BUILD
+//                if ( DevicePathStr.equalIC("PrimaryGPU") ) {
+//                  DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
+//                } else if ( DevicePathStr.equalIC("SecondaryGPU") && NGFX > 1) {
+//                  DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
+//                } else {
+//                  DevicePath = ConvertTextToDevicePath(DevicePathStr.wc_str()); //TODO
+//                }
+//                if (DevicePath == NULL) {
+//                  continue;
+//                }
+//#endif
                 //Create Device node
-                DevPropDevice = gSettings.Devices.ArbProperties;
-                gSettings.Devices.ArbProperties = new DEV_PROPERTY;
-                gSettings.Devices.ArbProperties->Next = DevPropDevice; //next device
-                gSettings.Devices.ArbProperties->Child = NULL;
-                gSettings.Devices.ArbProperties->Device = 0; //to differ from arbitrary
-                gSettings.Devices.ArbProperties->DevicePath = DevicePath; //this is pointer
-                gSettings.Devices.ArbProperties->Label = S8Printf("%s", key->keyStringValue().c_str()).forgetDataWithoutFreeing();
-                Child = &(gSettings.Devices.ArbProperties->Child);
+//                DevPropDevice = gSettings.Devices.ArbProperties;
+                SETTINGS_DATA::DevicesClass::PropertiesClass::PropertyClass* devProperty = new SETTINGS_DATA::DevicesClass::PropertiesClass::PropertyClass;
+//                devProperty->DevicePath = DevicePath; //this is pointer TODO ?
+                devProperty->DevicePathAsString.SWPrintf("%s", key->keyStringValue().c_str());
+                if ( key->keyStringValue().startWith('!') ) {
+                  // '!' means disabled. If Label is only '!', means an empty disabled label...
+                  devProperty->DevicePathAsString = key->keyStringValue().subString(1, MAX_XSIZE);
+                  devProperty->Enabled = false;
+//                  devProperty->MenuItem.BValue = true;
+                }else{
+                  devProperty->DevicePathAsString = key->keyStringValue();
+                  devProperty->Enabled = true;
+//                  devProperty->MenuItem.BValue = false;
+                }
+
+//                gSettings.Devices.ArbProperties.InsertRef(devProperty, 0, false); // TODO
+                gSettings.Devices.Properties.PropertyArray.AddReference(devProperty, true);
 
                 if ((value != NULL) && (value->isDict())) {
                   INTN PropCount = 0;
@@ -4635,64 +4873,57 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
                   PropCount = valueDict->dictKeyCount();
                   //         DBG("Add %d properties:\n", PropCount);
                   for (INTN j = 0; j < PropCount; j++) {
-                    DevProps = *Child;
-                    *Child = new DEV_PROPERTY;
-                  //  *Child = new (__typeof_am__(**Child))();
-                    (*Child)->Next = DevProps;
-
                     const TagKey* key2;
                     const TagStruct* value2;
                     if (EFI_ERROR(valueDict->getKeyAndValueAtIndex(j, &key2, &value2))) {
                       continue;
                     }
-                    if (key2->keyStringValue()[0] != '#') {
-                      (*Child)->MenuItem.BValue = TRUE;
-                      (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str()).forgetDataWithoutFreeing();
+                    if ( key2->keyStringValue().startWithOrEqualTo('#') ) continue;
+                    if ( key2->keyStringValue().equal("!") ) continue;
+
+                    SETTINGS_DATA::DevicesClass::SimplePropertyClass* ChildPtr = new SETTINGS_DATA::DevicesClass::SimplePropertyClass;
+                    SETTINGS_DATA::DevicesClass::SimplePropertyClass& Child = *ChildPtr;
+
+                    if ( key2->keyStringValue().startWith('!') ) { // startWaith return false if XString == '#'
+                      Child.MenuItem.BValue = FALSE;
+                      Child.Key = key2->keyStringValue().subString(1, MAX_XSIZE);
                     }
                     else {
-                      (*Child)->MenuItem.BValue = FALSE;
-                      (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str() - 1).forgetDataWithoutFreeing();
+                      Child.MenuItem.BValue = devProperty->Enabled;
+                      Child.Key = key2->keyStringValue();
                     }
 
-                    //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
+
+                    //    DBG("<key>%s\n  <value> type %d\n", Child.Key, Prop3->type);
                     if (value2 && (value2->isString()) && value2->getString()->stringValue().notEmpty()) {
                       //first suppose it is Ascii string
-                      (*Child)->Value = (UINT8*)S8Printf("%s", value2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
-                      (*Child)->ValueLen = value2->getString()->stringValue().sizeInBytesIncludingTerminator();
-                      (*Child)->ValueType = kTagTypeString;
+                      Child.Value.ncpy(value2->getString()->stringValue().c_str(), value2->getString()->stringValue().sizeInBytesIncludingTerminator());
+                      Child.ValueType = kTagTypeString;
                     }
                     else if (value2 && (value2->isInt64())) {
                       if ( value2->getInt64()->intValue() < MIN_INT32  ||  value2->getInt64()->intValue() > MAX_INT32 ) {
                         MsgLog("Invalid int value for key %s\n", key2->keyStringValue().c_str());
                       }else{
                         INT32 intValue = (INT32)value2->getInt64()->intValue();
-                        (*Child)->Value = (__typeof__((*Child)->Value))AllocatePool(sizeof(intValue));
-                        *(INT32*)((*Child)->Value) = intValue;
-                        (*Child)->ValueLen = sizeof(intValue);
-                        (*Child)->ValueType = kTagTypeInteger;
+                        Child.Value.cpy(intValue);
+                        Child.ValueType = kTagTypeInteger;
                       }
                     }
                     else if (value2 && value2->isTrue() ) {
-                      (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
-                      (*Child)->Value[0] = TRUE;
-                      (*Child)->ValueLen = 1;
-                      (*Child)->ValueType = kTagTypeTrue;
+                      uint8_t b = 1;
+                      Child.Value.cpy(b);
+                      Child.ValueType = kTagTypeTrue;
                     }
                     else if ( value2 && value2->isFalse() ) {
-                      (*Child)->Value = (__typeof__((*Child)->Value))AllocateZeroPool(4);
-                      //(*Child)->Value[0] = FALSE;
-                      (*Child)->ValueLen = 1;
-                      (*Child)->ValueType = kTagTypeFalse;
+                      uint8_t b = 0;
+                      Child.Value.cpy(b);
+                      Child.ValueType = kTagTypeFalse;
                     }
                     else if (value2 && (value2->isData())) {
-                      UINTN Size = value2->getData()->dataLenValue();
-                      //     (*Child)->Value = GetDataSetting(value2, "Value", &Size);  //TODO
-                      UINT8* Data = (__typeof__(Data))AllocateZeroPool(Size);
-                      CopyMem(Data, value2->getData()->dataValue(), Size);
-                      (*Child)->Value = Data;
-                      (*Child)->ValueLen = Size;
-                      (*Child)->ValueType = kTagTypeData;
+                      Child.Value = value2->getData()->data();
+                      Child.ValueType = kTagTypeData;
                     }
+                    devProperty->propertiesArray.AddReference(ChildPtr, true);
                   }
                 }
               }
@@ -4714,7 +4945,6 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       if (ArbitraryArray != NULL) {
         INTN Index;
         INTN   Count = ArbitraryArray->arrayContent().size();
-        DEV_PROPERTY *DevProp;
 
         if (Count > 0) {
           DBG("Add %lld devices (Arbitrary):\n", Count);
@@ -4763,63 +4993,58 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               const TagDict* Dict3;
               INTN PropIndex;
               INTN PropCount = CustomPropertiesArray->arrayContent().size();
+              SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass* arbProp = NULL;
 
               for (PropIndex = 0; PropIndex < PropCount; PropIndex++) {
                 Dict3 = CustomPropertiesArray->dictElementAt(PropIndex, "CustomProperties"_XS8);
-                DevProp = gSettings.Devices.ArbProperties;
-                gSettings.Devices.ArbProperties = new DEV_PROPERTY;
-                gSettings.Devices.ArbProperties->Next = DevProp;
-
-                gSettings.Devices.ArbProperties->Device = (UINT32)DeviceAddr;
-                gSettings.Devices.ArbProperties->Label = (__typeof__(gSettings.Devices.ArbProperties->Label))AllocateCopyPool(Label.sizeInBytesIncludingTerminator(), Label.c_str());
+                SETTINGS_DATA::DevicesClass::SimplePropertyClass* newDevProp = new SETTINGS_DATA::DevicesClass::SimplePropertyClass;
 
                 const TagStruct* DisabledProp = Dict3->propertyForKey("Disabled");
-                gSettings.Devices.ArbProperties->MenuItem.BValue = !IsPropertyNotNullAndTrue(DisabledProp);
+                newDevProp->MenuItem.BValue = !IsPropertyNotNullAndTrue(DisabledProp);
 
                 DisabledProp = Dict3->propertyForKey("Key");
                 if (DisabledProp && (DisabledProp->isString()) && DisabledProp->getString()->stringValue().notEmpty()) {
-                  gSettings.Devices.ArbProperties->Key = S8Printf("%s", DisabledProp->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+                  newDevProp->Key = DisabledProp->getString()->stringValue();
                 }
 
                 DisabledProp = Dict3->propertyForKey("Value");
                 if (DisabledProp && (DisabledProp->isString()) && DisabledProp->getString()->stringValue().notEmpty()) {
                   //first suppose it is Ascii string
-                  gSettings.Devices.ArbProperties->Value = (UINT8*)S8Printf("%s", DisabledProp->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
-                  gSettings.Devices.ArbProperties->ValueLen = DisabledProp->getString()->stringValue().sizeInBytesIncludingTerminator();
-                  gSettings.Devices.ArbProperties->ValueType = kTagTypeString;
+                  newDevProp->Value.ncpy(DisabledProp->getString()->stringValue().c_str(), DisabledProp->getString()->stringValue().sizeInBytesIncludingTerminator());
+                  newDevProp->ValueType = kTagTypeString;
                 } else if (DisabledProp && (DisabledProp->isInt64())) {
                   if ( DisabledProp->getInt64()->intValue() < MIN_INT32  ||  DisabledProp->getInt64()->intValue() > MAX_INT32 ) {
                     MsgLog("Invalid int value for key 'Value'\n");
                   }else{
                     INT32 intValue = (INT32)DisabledProp->getInt64()->intValue();
-                    gSettings.Devices.ArbProperties->Value = (__typeof__(gSettings.Devices.ArbProperties->Value))AllocatePool(sizeof(intValue));
-  //                    CopyMem(settingsData.ArbProperties->Value, &Prop3->intValue, 4);
-                    *(INT32*)(gSettings.Devices.ArbProperties->Value) = intValue;
-                    gSettings.Devices.ArbProperties->ValueLen = sizeof(intValue);
-                    gSettings.Devices.ArbProperties->ValueType = kTagTypeInteger;
+                    newDevProp->Value.cpy(intValue);
+                    newDevProp->ValueType = kTagTypeInteger;
                   }
                 } else if ( DisabledProp && DisabledProp->isTrue() ) {
-                  gSettings.Devices.ArbProperties->Value = (__typeof__(gSettings.Devices.ArbProperties->Value))AllocateZeroPool(4);
-                  gSettings.Devices.ArbProperties->Value[0] = TRUE;
-                  gSettings.Devices.ArbProperties->ValueLen = 1;
-                  gSettings.Devices.ArbProperties->ValueType = kTagTypeTrue;
+                  newDevProp->Value.cpy((uint32_t)1);
+                  newDevProp->ValueType = kTagTypeTrue;
                 } else if ( DisabledProp && DisabledProp->isFalse() ) {
-                  gSettings.Devices.ArbProperties->Value = (__typeof__(gSettings.Devices.ArbProperties->Value))AllocateZeroPool(4);
-                  //settingsData.ArbProperties->Value[0] = FALSE;
-                  gSettings.Devices.ArbProperties->ValueLen = 1;
-                  gSettings.Devices.ArbProperties->ValueType = kTagTypeFalse;
+                  newDevProp->Value.cpy((uint32_t)0);
+                  newDevProp->ValueType = kTagTypeFalse;
                 } else {
                   //else  data
                   UINTN Size = 0;
-                  gSettings.Devices.ArbProperties->Value = GetDataSetting (Dict3, "Value", &Size);
-                  gSettings.Devices.ArbProperties->ValueLen = Size;
-                  gSettings.Devices.ArbProperties->ValueType = kTagTypeData;
+                  uint8_t* Data = GetDataSetting (Dict3, "Value", &Size);
+                  newDevProp->Value.stealValueFrom(Data, Size);
+                  newDevProp->ValueType = kTagTypeData;
                 }
 
                 //Special case. In future there must be more such cases
-                if ((AsciiStrStr(gSettings.Devices.ArbProperties->Key, "-platform-id") != NULL)) {
-                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, gSettings.Devices.ArbProperties->Value, 4);
+                if ( newDevProp->Key.contains("-platform-id") ) {
+                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, newDevProp->Value.data(), 4);
                 }
+                if ( arbProp == NULL ) {
+                  arbProp = new SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass();
+                  arbProp->Device = (UINT32)DeviceAddr;
+                  arbProp->Label = Label;
+                  gSettings.Devices.ArbitraryArray.AddReference(arbProp, true);
+                }
+                arbProp->CustomPropertyArray.AddReference(newDevProp, true);
               }   //for() device properties
             }
           } //for() devices
@@ -4835,14 +5060,14 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 //count = 0x1F1E1D1C1B1A1918
         if (Count > 0) {
       DBG("Add %lld properties:\n", Count);
-          gSettings.Devices.AddProperties.setEmpty();
+          gSettings.Devices.AddPropertyArray.setEmpty();
 
           for (i = 0; i < Count; i++) {
             UINTN Size = 0;
         DBG(" - [%02lld]:", i);
             const TagDict* Dict2 = AddPropertiesArray->dictElementAt(i, "AddProperties"_XS8);
             const TagStruct* DeviceProp = Dict2->propertyForKey("Device");
-            DEV_ADDPROPERTY *Property = new DEV_ADDPROPERTY();
+            SETTINGS_DATA::DevicesClass::AddPropertyClass* Property = new SETTINGS_DATA::DevicesClass::AddPropertyClass();
 
             if (DeviceProp && (DeviceProp->isString()) && DeviceProp->getString()->stringValue().notEmpty()) {
               if (DeviceProp->getString()->stringValue().equalIC("ATI")) {
@@ -4897,6 +5122,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               }else{
                 INT32 intValue = (INT32)Prop2->getInt64()->intValue();
                 Property->Value.cat(intValue);
+                Property->ValueType = kTagTypeInteger;
 //                Property->Value = (__typeof__(Property->Value))AllocatePool (sizeof(intValue));
 //  //              CopyMem(settingsData.AddProperties[Index].Value, &Prop2->intValue, 4);
 //                *(INT32*)(Property->Value) = intValue;
@@ -4906,6 +5132,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               //else  data
               uint8_t* Data = GetDataSetting (Dict2, "Value", &Size);
               Property->Value.stealValueFrom(Data, Size);
+              Property->ValueType = kTagTypeData;
             }
 
             DBG("Key: %s, len: %zu\n", Property->Key.c_str(), Property->Value.size());
@@ -4914,11 +5141,11 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               DBG("  property disabled at config\n");
             }
 
-            gSettings.Devices.AddProperties.AddReference(Property, true);
+            gSettings.Devices.AddPropertyArray.AddReference(Property, true);
             ++Index;
           }
 
-//          gSettings.Devices.AddProperties.size() = Index;
+//          gSettings.Devices.AddPropertyArray.size() = Index;
         }
       }
       //end AddProperties
@@ -5056,10 +5283,22 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
     getACPISettings(CfgDict, gSettings);
 
+
+
+
+    //done until here
+
+
+
+
+
+
     //*** SMBIOS ***//
     const TagDict* SMBIOSDict = CfgDict->dictPropertyForKey("SMBIOS");
     if (SMBIOSDict != NULL) {
+
       ParseSMBIOSSettings(SMBIOSDict);
+
       const TagStruct* Prop = SMBIOSDict->propertyForKey("Trust");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndFalse(Prop)) {
@@ -6621,50 +6860,51 @@ SetDevices (LOADER_ENTRY *Entry)
   UINT16              PmCon;
   UINT32              Rcba;
   UINT32              Hptc;
-  DEV_PROPERTY *Prop = NULL;
-  DEV_PROPERTY *Prop2 = NULL;
   DevPropDevice *device = NULL;
 
   GetEdidDiscovered ();
 
   //First make string from Device->Properties
-  Prop = gSettings.Devices.ArbProperties;
   device = NULL;
   if (!device_inject_string) {
     device_inject_string = devprop_create_string();
   }
-  while (Prop) {
-    if (Prop->Device != 0) {
-      Prop = Prop->Next; //skip CustomProperties
+  for ( size_t idx = 0 ; idx < gSettings.Devices.Properties.PropertyArray.size() ; ++idx ) {
+    const SETTINGS_DATA::DevicesClass::PropertiesClass::PropertyClass& Prop = gSettings.Devices.Properties.PropertyArray[idx];
+//    if (Prop->Device != 0) {
+//      Prop = Prop->Next; //skip CustomProperties
+//      continue;
+//    }
+    EFI_DEVICE_PATH_PROTOCOL* DevicePath = Prop.getDevicePath();
+    if ( DevicePath == NULL ) {
+      MsgLog("Properties with Label=%ls ignored because getDevicePath() return NULL\n", Prop.DevicePathAsString.wc_str());
       continue;
     }
-    device = devprop_add_device_pci(device_inject_string, NULL, Prop->DevicePath);
-    DBG("add device: %ls\n", DevicePathToXStringW(Prop->DevicePath).wc_str());
-    Prop2 = Prop->Child;
-    while (Prop2) {
-      if (Prop2->MenuItem.BValue) {
-        if (AsciiStrStr(Prop2->Key, "-platform-id") != NULL) {
-          if (gSettings.Graphics.IgPlatform == 0 && Prop2->Value) {
-            CopyMem((UINT8*)&gSettings.Graphics.IgPlatform, (UINT8*)Prop2->Value, Prop2->ValueLen);
+    device = devprop_add_device_pci(device_inject_string, NULL, DevicePath);
+    DBG("add device: %ls\n", Prop.DevicePathAsString.wc_str());
+    for ( size_t jdx = 0 ; jdx < Prop.propertiesArray.size() ; ++jdx ) {
+      const SETTINGS_DATA::DevicesClass::SimplePropertyClass& Prop2 = Prop.propertiesArray[jdx];
+      if (Prop2.MenuItem.BValue) {
+        if ( Prop2.Key.contains("-platform-id") ) {
+          if ( gSettings.Graphics.IgPlatform == 0 && Prop2.Value.size() == sizeof(gSettings.Graphics.IgPlatform) ) {
+            CopyMem((UINT8*)&gSettings.Graphics.IgPlatform, Prop2.Value.data(), sizeof(gSettings.Graphics.IgPlatform));
           }
-          devprop_add_value(device, Prop2->Key, (UINT8*)&gSettings.Graphics.IgPlatform, 4);
-          DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
-        } else if ((AsciiStrStr(Prop2->Key, "override-no-edid") || AsciiStrStr(Prop2->Key, "override-no-connect"))
+          devprop_add_value(device, Prop2.Key.c_str(), (UINT8*)&gSettings.Graphics.IgPlatform, 4);
+          DBG("   Add key=%s valuelen=%zu\n", Prop2.Key.c_str(), Prop2.Value.size());
+        } else if ( (Prop2.Key.contains("override-no-edid") || Prop2.Key.contains("override-no-connect"))
           && gSettings.Graphics.EDID.InjectEDID && gSettings.Graphics.EDID.CustomEDID.notEmpty()) {
           // special case for EDID properties
-          devprop_add_value(device, Prop2->Key, gSettings.Graphics.EDID.CustomEDID.data(), 128);
-          DBG("   Add key=%s from custom EDID\n", Prop2->Key);
+          devprop_add_value(device, Prop2.Key.c_str(), gSettings.Graphics.EDID.CustomEDID.data(), 128);
+          DBG("   Add key=%s from custom EDID\n", Prop2.Key.c_str());
         } else {
-          devprop_add_value(device, Prop2->Key, (UINT8*)Prop2->Value, Prop2->ValueLen);
-          DBG("   Add key=%s valuelen=%llu\n", Prop2->Key, Prop2->ValueLen);
+          devprop_add_value(device, Prop2.Key, Prop2.Value);
+          DBG("   Add key=%s valuelen=%zu\n", Prop2.Key.c_str(), Prop2.Value.size());
         }
+      }else{
+        DBG("Skip disabled properties with Path=%ls, Key=%s\n", Prop.DevicePathAsString.wc_str(), Prop2.Key.c_str());
       }
-
       StringDirty = TRUE;
-      Prop2 = Prop2->Next;
-
     }
-    Prop = Prop->Next;
   }
 
   devices_number = 1; //should initialize for reentering GUI
@@ -6699,33 +6939,33 @@ SetDevices (LOADER_ENTRY *Entry)
         PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
         PCIdevice.used                       = FALSE;
 
-        //if (gSettings.Devices.AddProperties.size() == 0xFFFE) {  //yyyy it means Arbitrary  // Looks like NrAddProperties == 0xFFFE is not used anymore
+        //if (gSettings.Devices.AddPropertyArray.size() == 0xFFFE) {  //yyyy it means Arbitrary  // Looks like NrAddProperties == 0xFFFE is not used anymore
         //------------------
-        Prop = gSettings.Devices.ArbProperties;  //check for additional properties
         device = NULL;
         /*       if (!string) {
          string = devprop_create_string();
          } */
-        while (Prop) {
-          if (Prop->Device != PCIdevice.dev.addr) {
-            Prop = Prop->Next;
+        for ( size_t idx = 0 ; idx < gSettings.Devices.ArbitraryArray.size() ; ++idx ) {
+          const SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& Prop = gSettings.Devices.ArbitraryArray[idx];
+          if (Prop.Device != PCIdevice.dev.addr) {
             continue;
           }
           if (!PCIdevice.used) {
             device = devprop_add_device_pci(device_inject_string, &PCIdevice, NULL);
             PCIdevice.used = TRUE;
           }
+          for ( size_t jdx = 0 ; jdx < Prop.CustomPropertyArray.size() ; ++jdx ) {
+            const SETTINGS_DATA::DevicesClass::SimplePropertyClass& Prop2 = Prop.CustomPropertyArray[jdx];
           //special corrections
-          if (Prop->MenuItem.BValue) {
-            if (AsciiStrStr(Prop->Key, "-platform-id") != NULL) {
-              devprop_add_value(device, Prop->Key, (UINT8*)&gSettings.Graphics.IgPlatform, 4);
-            } else {
-              devprop_add_value(device, Prop->Key, (UINT8*)Prop->Value, Prop->ValueLen);
+            if (Prop2.MenuItem.BValue) {
+              if ( Prop2.Key.contains("-platform-id") ) {
+                devprop_add_value(device, Prop2.Key.c_str(), (UINT8*)&gSettings.Graphics.IgPlatform, sizeof(gSettings.Graphics.IgPlatform));
+              } else {
+                devprop_add_value(device, Prop2.Key, Prop2.Value);
+              }
             }
+            StringDirty = TRUE;
           }
-
-          StringDirty = TRUE;
-          Prop = Prop->Next;
         }
         //------------------
         if (PCIdevice.used) {
@@ -7445,14 +7685,17 @@ SetDevices (LOADER_ENTRY *Entry)
 
   if (StringDirty) {
     EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-    if ( device_inject_string->length > MAX_UINT32/2-1 ) {
-      MsgLog("device_inject_string is too big\n");
-    }else{
-      device_inject_stringlength                   = device_inject_string->length * 2;
-      DBG("stringlength = %d\n", device_inject_stringlength);
-      // gDeviceProperties = (__typeof__(gDeviceProperties))AllocateAlignedPages EFI_SIZE_TO_PAGES (device_inject_stringlength + 1), 64);
+    
+    XString8 newDeviceProperties = devprop_generate_string(device_inject_string);
 
-      UINTN nbPages = EFI_SIZE_TO_PAGES (device_inject_stringlength + 1);
+    size_t binaryPropSize = hex2bin(newDeviceProperties, NULL, 0);
+    if ( binaryPropSize > MAX_UINT32 ) {
+      MsgLog("devprop_generate_string(device_inject_string) is too big");
+      newDeviceProperties.setEmpty();
+    }else{
+      DBG("stringlength = %zu\n", newDeviceProperties.length());
+
+      UINTN nbPages = EFI_SIZE_TO_PAGES(binaryPropSize);
       Status = gBS->AllocatePages (
                                    AllocateMaxAddress,
                                    EfiACPIReclaimMemory,
@@ -7461,64 +7704,18 @@ SetDevices (LOADER_ENTRY *Entry)
                                    );
 
       if (!EFI_ERROR(Status)) {
-//        mProperties       = (UINT8*)(UINTN)BufferPtr;
-//        gDeviceProperties = devprop_generate_string (device_inject_string);
-//        gDeviceProperties[device_inject_stringlength] = 0;
-//        //     DBG(gDeviceProperties);
-//        //     DBG("\n");
-//        //     StringDirty = FALSE;
-//        //-------
-//        //mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
-//        //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
-//        mPropSize = (UINT32)hex2bin (gDeviceProperties, AsciiStrLen(gDeviceProperties), mProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe as device_inject_string->length <= MAX_UINT32/2-1
-//        //     DBG("Final size of mProperties=%d\n", mPropSize);
-//        //---------
-//        //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirFullPath().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
-//        //and now we can free memory?
-//        if (gSettings.Devices.AddProperties) {
-//          FreePool(gSettings.Devices.AddProperties);
-//        }
-        if (gSettings.Devices.ArbProperties) {
-          DEV_PROPERTY *Props;
-          DEV_PROPERTY *Next;
-          Prop = gSettings.Devices.ArbProperties;
-          while (Prop) {
-            Props = Prop->Child;
-            if (Prop->Label) {
-              FreePool(Prop->Label);
-            }
-            if (Prop->Key) {
-              FreePool(Prop->Key);
-            }
-            if (Prop->Value) {
-              FreePool(Prop->Value);
-            }
-            if (Prop->DevicePath) {
-              FreePool(Prop->DevicePath);
-            }
-            while (Props) {
-              if (Props->Label) {
-                FreePool(Props->Label);
-              }
-              if (Props->Key) {
-                FreePool(Props->Key);
-              }
-              if (Props->Value) {
-                FreePool(Props->Value);
-              }
-              if (Props->DevicePath) {
-                FreePool(Props->DevicePath);
-              }
-              Next = Props->Next;
-              FreePool(Props);
-              //delete Props;
-              Props = Next;
-            }
-            Next = Prop->Next;
-            FreePool(Prop);
-            Prop = Next;
-          }
-        }
+        mProperties       = (UINT8*)(UINTN)BufferPtr;
+        //     DBG(gDeviceProperties);
+        //     DBG("\n");
+        //     StringDirty = FALSE;
+        //-------
+        mPropSize = (UINT32)hex2bin(newDeviceProperties, mProperties, EFI_PAGES_TO_SIZE(nbPages)); // cast should be safe as hex2bin return <= MAXUINT32
+        gDeviceProperties = newDeviceProperties.forgetDataWithoutFreeing(); // do this AFTER hex2bin
+        //     DBG("Final size of mProperties=%d\n", mPropSize);
+        //---------
+        //      Status = egSaveFile(&self.getSelfRootDir(),  SWPrintf("%ls\\misc\\devprop.bin", self.getCloverDirFullPath().wc_str()).wc_str()    , (UINT8*)mProperties, mPropSize);
+      }else{
+        MsgLog("AllocatePages failed (%s), device_inject_string not injected\n", efiStrError(Status));
       }
     }
   }

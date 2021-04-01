@@ -51,6 +51,7 @@
   include/BootTypes.h
   include/OSTypes.h
   include/OSFlags.h
+  include/TagTypes.h
   include/VolumeTypes.h
   refit/main.cpp
   refit/icns.cpp

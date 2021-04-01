@@ -116,7 +116,7 @@ class INPUT_ITEM {
 public:
   ITEM_TYPE ItemType; //string, value, boolean
   BOOLEAN Valid;
-  BOOLEAN BValue;
+  UINT8 BValue; // was BOOLEAN, but value 2 is sometimes assigned.
   UINT8   Pad8;
   UINT32  IValue;
   //  UINT64  UValue;

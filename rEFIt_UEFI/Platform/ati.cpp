@@ -2139,17 +2139,17 @@ BOOLEAN setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   }
 
 
-  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
-    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
-      if (gSettings.Devices.AddProperties[i].Device != DEV_ATI) {
+  if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
+      if (gSettings.Devices.AddPropertyArray[i].Device != DEV_ATI) {
         continue;
       }
 
-      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
       } else {
-        devprop_add_value(card->device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+        devprop_add_value(card->device, gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
       }
     }
   }

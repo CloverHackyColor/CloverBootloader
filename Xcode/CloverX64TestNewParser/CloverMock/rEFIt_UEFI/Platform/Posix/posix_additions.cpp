@@ -35,7 +35,11 @@ XString8 stdio_static_buf = XString8().takeValueFrom("XXXXXXXX-XXXX-XXXX-XXXX-XX
 static char efiStrError_buf[40];
 const char* efiStrError(EFI_STATUS Status)
 {
-  snprintf(efiStrError_buf, sizeof(efiStrError_buf), "efi error %llu(0x%llx)", Status, Status);
+  if ( !EFI_ERROR(Status) ) {
+    snprintf(efiStrError_buf, sizeof(efiStrError_buf), "efi success (%llu,0x%llx)", Status, Status);
+  }else{
+    snprintf(efiStrError_buf, sizeof(efiStrError_buf), "efi error (%llu,0x%llx)", Status, Status);
+  }
   return efiStrError_buf;
 }
 

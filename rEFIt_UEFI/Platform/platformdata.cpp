@@ -12,6 +12,20 @@
 /* Machine Default Data */
 
 
+#ifndef DEBUG_PLATFORMDATA
+#ifndef DEBUG_ALL
+#define DEBUG_PLATFORMDATA 1
+#else
+#define DEBUG_PLATFORMDATA DEBUG_ALL
+#endif
+#endif
+
+#if DEBUG_PLATFORMDATA==0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_PLATFORMDATA, __VA_ARGS__)
+#endif
+
 UINT32  gFwFeatures;
 UINT32  gFwFeaturesMask;
 UINT64  gPlatformFeature;

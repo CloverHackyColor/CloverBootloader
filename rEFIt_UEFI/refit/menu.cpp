@@ -2174,12 +2174,12 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   return Entry;
 }
 
-void CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
+void CreateMenuProps(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::SimplePropertyClass* Prop)
 {
 	REFIT_INPUT_DIALOG  *InputBootArgs;
 
-    InputBootArgs = new REFIT_INPUT_DIALOG;
-	InputBootArgs->Title.SWPrintf("  key: %s", Prop->Key);
+  InputBootArgs = new REFIT_INPUT_DIALOG;
+	InputBootArgs->Title.SWPrintf("  key: %s", Prop->Key.c_str());
 	InputBootArgs->Row = 0xFFFF; //cursor
 	InputBootArgs->Item = &Prop->MenuItem;
 	InputBootArgs->AtClick = ActionEnter;
@@ -2187,10 +2187,10 @@ void CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 	SubScreen->AddMenuEntry(InputBootArgs, true);
 	switch (Prop->ValueType) {
 	case kTagTypeInteger:
-			SubScreen->AddMenuInfo_f("     value: 0x%08llx", *(UINT64*)Prop->Value);
+			SubScreen->AddMenuInfo_f("     value: 0x%08llx", *(UINT64*)Prop->Value.data());
 		break;
 	case kTagTypeString:
-			SubScreen->AddMenuInfo_f("     value: %90s", Prop->Value);
+			SubScreen->AddMenuInfo_f("     value: %90s", Prop->Value.data());
 		break;
 	case   kTagTypeFalse:
 		SubScreen->AddMenuInfo_f(("     value: false"));
@@ -2199,56 +2199,142 @@ void CreateMenuProps(REFIT_MENU_SCREEN   *SubScreen, DEV_PROPERTY *Prop)
 		SubScreen->AddMenuInfo_f(("     value: true"));
 		break;
   case   kTagTypeFloat:
-    SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value);
+    SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value.data());
     break;
 	default: //type data, print first 24 bytes
 			 //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
-			SubScreen->AddMenuInfo_f("     value[%llu]: %24s", Prop->ValueLen, Bytes2HexStr((UINT8*)Prop->Value, MIN(24, Prop->ValueLen)).c_str());
+			SubScreen->AddMenuInfo_f("     value[%zu]: %24s", Prop->Value.size(), Bytes2HexStr((UINT8*)Prop->Value.data(), MIN(24, Prop->Value.size())).c_str());
 		break;
 	}
-
 }
 
-REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
+void CreateMenuAddProp(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::AddPropertyClass* Prop)
+{
+  REFIT_INPUT_DIALOG  *InputBootArgs;
+
+  InputBootArgs = new REFIT_INPUT_DIALOG;
+  InputBootArgs->Title.SWPrintf("  key: %s", Prop->Key.c_str());
+  InputBootArgs->Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &Prop->MenuItem;
+  InputBootArgs->AtClick = ActionEnter;
+  InputBootArgs->AtRightClick = ActionDetails;
+  SubScreen->AddMenuEntry(InputBootArgs, true);
+  switch (Prop->ValueType) {
+  case kTagTypeInteger:
+      SubScreen->AddMenuInfo_f("     value: 0x%08llx", *(UINT64*)Prop->Value.data());
+    break;
+  case kTagTypeString:
+      SubScreen->AddMenuInfo_f("     value: %90s", Prop->Value.data());
+    break;
+  case   kTagTypeFalse:
+    SubScreen->AddMenuInfo_f(("     value: false"));
+    break;
+  case   kTagTypeTrue:
+    SubScreen->AddMenuInfo_f(("     value: true"));
+    break;
+  case   kTagTypeFloat:
+    SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value.data());
+    break;
+  default: //type data, print first 24 bytes
+       //CHAR8* Bytes2HexStr(UINT8 *data, UINTN len)
+      SubScreen->AddMenuInfo_f("     value[%zu]: %24s", Prop->Value.size(), Bytes2HexStr((UINT8*)Prop->Value.data(), MIN(24, Prop->Value.size())).c_str());
+    break;
+  }
+}
+//
+//REFIT_ABSTRACT_MENU_ENTRY* SubMenuCustomDevices()
+//{
+//  REFIT_MENU_ITEM_OPTIONS    *Entry;
+//  REFIT_MENU_SCREEN   *SubScreen;
+//
+//  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Old Custom properties->"_XS8);
+//
+//  for ( size_t idx = 0 ; idx < gSettings.Devices.newProperties.array.size(); ++idx)
+//  {
+//    SETTINGS_DATA::DevicesClass::PropertiesClass::PropertyDict& Prop = gSettings.Devices.newProperties.array[idx];
+//
+//    SubScreen->AddMenuInfo_f("------------");
+//    SubScreen->AddMenuInfo_f("%ls", Prop.DevicePathAsString.wc_str());
+//    for ( size_t idxChild = 0 ; idxChild < Prop.propertiesArray.size(); ++idxChild) {
+//      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.propertiesArray[idxChild];
+//      CreateMenuProps(SubScreen, &Props);
+//    }
+//  }
+//  for ( size_t idx = 0 ; idx < gSettings.Devices.newArbitrary.size()  ; ++idx) {
+//    SETTINGS_DATA::DevicesClass::ArbitraryProperty& Prop = gSettings.Devices.newArbitrary[idx];
+//    SubScreen->AddMenuInfo_f("------------");
+//    for ( size_t idxChild = 0 ; idxChild < Prop.CustomPropertyArray.size(); ++idxChild) {
+//      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.CustomPropertyArray[idxChild];
+//      SubScreen->AddMenuInfo_f("%s", Prop.Label.c_str());
+//      CreateMenuProps(SubScreen, &Props);
+//    }
+//  }
+//  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+//  Entry->SubScreen = SubScreen;
+//  return Entry;
+//}
+
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
 {
   REFIT_MENU_ITEM_OPTIONS    *Entry;
   REFIT_MENU_SCREEN   *SubScreen;
 
-  UINT32              DevAddr, OldDevAddr = 0;
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Properties->"_XS8);
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Custom properties->"_XS8);
+  for ( size_t idx = 0 ; idx < gSettings.Devices.Properties.PropertyArray.size(); ++idx)
+  {
+    SETTINGS_DATA::DevicesClass::PropertiesClass::PropertyClass& Prop = gSettings.Devices.Properties.PropertyArray[idx];
 
-  if (gSettings.Devices.ArbProperties) {
-    DEV_PROPERTY *Prop = gSettings.Devices.ArbProperties;
-    if (Prop && (Prop->Device == 0))
-    {
-      DEV_PROPERTY *Props = NULL;
-      while (Prop) {
-        SubScreen->AddMenuInfo_f("------------");
-        SubScreen->AddMenuInfo_f("%s", Prop->Label);
-        Props = Prop->Child;
-        while (Props) {
-          CreateMenuProps(SubScreen, Props);
-          Props = Props->Next;
-        }
-        Prop = Prop->Next;
-      }
+    if ( idx > 0 ) SubScreen->AddMenuInfo_f("------------");
+    SubScreen->AddMenuInfo_f("%ls", Prop.DevicePathAsString.wc_str());
+    for ( size_t idxChild = 0 ; idxChild < Prop.propertiesArray.size(); ++idxChild) {
+      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.propertiesArray[idxChild];
+      CreateMenuProps(SubScreen, &Props);
     }
-      while (Prop) {
-        DevAddr = Prop->Device;
-        if (DevAddr != 0 && DevAddr != OldDevAddr) {
-          OldDevAddr = DevAddr;
-          SubScreen->AddMenuInfo_f("------------");
-        SubScreen->AddMenuInfo_f("%s", Prop->Label);
-          CreateMenuProps(SubScreen, Prop);
-        }
-        Prop = Prop->Next;
-      }
-    }
-    SubScreen->AddMenuEntry(&MenuEntryReturn, false);
-    Entry->SubScreen = SubScreen;
-    return Entry;
   }
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuArbProperties()
+{
+  REFIT_MENU_ITEM_OPTIONS    *Entry;
+  REFIT_MENU_SCREEN   *SubScreen;
+
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Arbitrary properties->"_XS8);
+
+  for ( size_t idx = 0 ; idx < gSettings.Devices.ArbitraryArray.size()  ; ++idx) {
+    SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& Prop = gSettings.Devices.ArbitraryArray[idx];
+    if ( idx > 0 ) SubScreen->AddMenuInfo_f("------------");
+    for ( size_t idxChild = 0 ; idxChild < Prop.CustomPropertyArray.size(); ++idxChild) {
+      SETTINGS_DATA::DevicesClass::SimplePropertyClass& Props = Prop.CustomPropertyArray[idxChild];
+      SubScreen->AddMenuInfo_f("%s", Prop.Label.c_str());
+      CreateMenuProps(SubScreen, &Props);
+    }
+  }
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
+REFIT_ABSTRACT_MENU_ENTRY* SubMenuAddProperties()
+{
+  REFIT_MENU_ITEM_OPTIONS    *Entry;
+  REFIT_MENU_SCREEN   *SubScreen;
+
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_DEVICES, "Add properties->"_XS8);
+
+  for ( size_t idx = 0 ; idx < gSettings.Devices.AddPropertyArray.size()  ; ++idx) {
+    SETTINGS_DATA::DevicesClass::AddPropertyClass& Prop = gSettings.Devices.AddPropertyArray[idx];
+    SubScreen->AddMenuInfo_f("%s", Prop.Label.c_str());
+    CreateMenuAddProp(SubScreen, &Prop);
+  }
+  SubScreen->AddMenuEntry(&MenuEntryReturn, false);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
 
 
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
@@ -2268,7 +2354,10 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuPCI()
   SubScreen->AddMenuItemInput(99,  "FakeID SATA:", TRUE);
   SubScreen->AddMenuItemInput(100, "FakeID XHCI:", TRUE);
   SubScreen->AddMenuItemInput(103, "FakeID IMEI:", TRUE);
-  SubScreen->AddMenuEntry(SubMenuCustomDevices(), true);
+//  SubScreen->AddMenuEntry(SubMenuCustomDevices(), true);
+  SubScreen->AddMenuEntry(SubMenuProperties(), true);
+  SubScreen->AddMenuEntry(SubMenuArbProperties(), true);
+  SubScreen->AddMenuEntry(SubMenuAddProperties(), true);
 
   SubScreen->AddMenuEntry(&MenuEntryReturn, false);
   Entry->SubScreen = SubScreen;

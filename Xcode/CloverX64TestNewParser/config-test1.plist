@@ -313,58 +313,56 @@
 	</dict>
 	<key>Devices</key>
 	<dict>
-		<key>AddProperties</key>
-		<array>
+		<key>Properties</key>
+		<dict>
+			<key>!Properties_key1</key>
 			<dict>
-				<key>Device</key>
-				<string>SATA</string>
-				<key>Disabled</key>
-				<false/>
-				<key>Key</key>
-				<string>10</string>
-				<key>Value</key>
-				<integer>11</integer>
-			</dict>
-			<dict>
-				<key>Device</key>
-				<string>LPC</string>
-				<key>Disabled</key>
-				<true/>
-				<key>Key</key>
-				<string>12</string>
-				<key>Value</key>
-				<integer>13</integer>
-			</dict>
-			<dict>
-				<key>Device</key>
-				<string>SmBUS</string>
-				<key>Disabled</key>
-				<false/>
-				<key>Key</key>
-				<string>kk</string>
-				<key>Value</key>
-				<string>ll</string>
-			</dict>
-			<dict>
-				<key>Device</key>
-				<string>Firewire</string>
-				<key>Disabled</key>
-				<false/>
-				<key>Key</key>
-				<string>14</string>
-				<key>Value</key>
+            	<key>﻿pci-aspm-defaul﻿t﻿</key>
+            	<integer>0</integer>
+				<key>AAPL,GfxYTile</key>
 				<data>
-				FQ==
+				AQAAAA==
+				</data>
+				<key>AAPL,ig-platform-id</key>
+				<data>
+				AAAbWQ==
+				</data>
+				<key>AAPL,slot-name</key>
+				<string>Internal@0,2,0</string>
+				<key>device-id</key>
+				<data>
+				G1kAAA==
 				</data>
 			</dict>
-		</array>
-		<key>AirportBridgeDeviceName</key>
-		<string>airp</string>
+			<key>Test2</key>
+			<dict>
+				<key>Test2Key1</key>
+				<data>AQAAAA==</data>
+				<key>Test2Key2</key>
+				<string>Test2Value2</string>
+			</dict>
+			<key>!PrimaryGPU</key>
+			<dict>
+				<key>TestPrimaryGPU</key>
+				<data>AQAAAA==</data>
+				<key>Test2Key2</key>
+				<string>Test2Value2</string>
+			</dict>
+			<key>SecondaryGPU</key>
+			<dict>
+				<key>Test2SecondaryGPU</key>
+				<data>AQAAAA==</data>
+				<key>Test2Key2</key>
+				<string>Test2Value2</string>
+			</dict>
+		</dict>
 		<key>Arbitrary</key>
 		<array>
 			<dict>
 				<key>Comment</key>
 				<string>C1</string>
+				<key>PciAddr</key>
+				<string>00:00.01</string>
 				<key>CustomProperties</key>
 				<array>
 					<dict>
@@ -394,10 +392,23 @@
 						</data>
 					</dict>
 				</array>
-				<key>PciAddr</key>
-				<string>00:00.01</string>
 			</dict>
 		</array>
+		<key>AddProperties</key>
+		<array>
+			<dict>
+				<key>Device</key>
+				<string>SATA</string>
+				<key>Disabled</key>
+				<false/>
+				<key>Key</key>
+				<string>10</string>
+				<key>Value</key>
+				<integer>11</integer>
+			</dict>
+		</array>
+		<key>AirportBridgeDeviceName</key>
+		<string>airp</string>
 		<key>Audio</key>
 		<dict>
 			<key>AFGLowPowerState</key>
@@ -436,35 +447,6 @@
 		<string>0x710</string>
 		<key>NoDefaultProperties</key>
 		<true/>
-		<key>Properties</key>
-		<dict>
-			<key>PciRoot(0x0)/Pci(0x2,0x0)</key>
-			<dict>
-            	<key>﻿pci-aspm-defaul﻿t﻿</key>
-            	<integer>0</integer>
-				<key>AAPL,GfxYTile</key>
-				<data>
-				AQAAAA==
-				</data>
-				<key>AAPL,ig-platform-id</key>
-				<data>
-				AAAbWQ==
-				</data>
-				<key>AAPL,slot-name</key>
-				<string>Internal@0,2,0</string>
-				<key>device-id</key>
-				<data>
-				G1kAAA==
-				</data>
-			</dict>
-			<key>Test2</key>
-			<dict>
-				<key>Test2Key1</key>
-				<data>AQAAAA==</data>
-				<key>Test2Key2</key>
-				<string>Test2Value2</string>
-			</dict>
-		</dict>
 		<key>SetIntelBacklight</key>
 		<true/>
 		<key>SetIntelMaxBacklight</key>
@@ -671,36 +653,6 @@
 				<integer>3</integer>
 			</dict>
 		</array>
-		<key>BootDisplay</key>
-		<integer>12</integer>
-		<key>DualLink</key>
-		<integer>1</integer>
-		<key>EDID</key>
-		<dict>
-			<key>Custom</key>
-			<data>AP///////wBMo0cwAAAAAAAUAQOAHBB46h2FkVZZjyYYUFQAAAABAQEBAQEBAQEBAQEBAQEBOB1W1FAAFjAwICUAFZwQAAAZAAAADwAAAAAAAAAAACXZBmoAAAAA/gBTQU1TVU5HCiBMo0FUAAAA/gBMVE4xMjVBVDAxNDAxAF0=</data>
-			<key>Inject</key>
-			<true/>
-			<key>ProductID</key>
-			<string>0x9777</string>
-			<key>VendorID</key>
-			<string>0x1007</string>
-		</dict>
-		<key>FBName</key>
-		<string>Exmoor</string>
-		<key>Inject</key>
-		<dict>
-			<key>ATI</key>
-			<true/>
-			<key>Intel</key>
-			<true/>
-			<key>NVidia</key>
-			<true/>
-		</dict>
-		<key>LoadVBios</key>
-		<true/>
-		<key>NVCAP</key>
-		<string>0304</string>
 		<key>NVIDIA</key>
 		<array>
 			<dict>
@@ -732,6 +684,29 @@
 				<integer>2</integer>
 			</dict>
 		</array>
+		<key>BootDisplay</key>
+		<integer>12</integer>
+		<key>DualLink</key>
+		<integer>1</integer>
+		<key>EDID</key>
+		<dict>
+			<key>Custom</key>
+			<data>AP///////wBMo0cwAAAAAAAUAQOAHBB46h2FkVZZjyYYUFQAAAABAQEBAQEBAQEBAQEBAQEBOB1W1FAAFjAwICUAFZwQAAAZAAAADwAAAAAAAAAAACXZBmoAAAAA/gBTQU1TVU5HCiBMo0FUAAAA/gBMVE4xMjVBVDAxNDAxAF0=</data>
+			<key>Inject</key>
+			<true/>
+			<key>ProductID</key>
+			<string>0x9777</string>
+			<key>VendorID</key>
+			<string>0x1007</string>
+		</dict>
+		<key>FBName</key>
+		<string>Exmoor</string>
+		<key>Inject</key>
+		<true/>
+		<key>LoadVBios</key>
+		<true/>
+		<key>NVCAP</key>
+		<string>0304</string>
 		<key>NvidiaGeneric</key>
 		<true/>
 		<key>NvidiaNoEFI</key>
@@ -1616,6 +1591,98 @@
 		<true/>
 		<key>NvidiaWeb</key>
 		<true/>
+	</dict>
+	<key>Quirks</key>
+	<dict>
+		<key>AvoidRuntimeDefrag</key>
+		<false/>
+		<key>DevirtualiseMmio</key>
+		<false/>
+		<key>DisableSingleUser</key>
+		<false/>
+		<key>DisableVariableWrite</key>
+		<false/>
+		<key>DiscardHibernateMap</key>
+		<false/>
+		<key>EnableSafeModeSlide</key>
+		<false/>
+		<key>EnableWriteUnprotector</key>
+		<true/>
+		<key>ForceExitBootServices</key>
+		<false/>
+		<key>MmioWhitelist</key>
+		<array>
+			<dict>
+				<key>Comment</key>
+				<string>c1</string>
+				<key>Address</key>
+				<string>12345678</string>
+				<key>Enabled</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Comment</key>
+				<string></string>
+				<key>Address</key>
+				<string>12345678</string>
+				<key>Enabled</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>#Comment</key>
+				<string>c1</string>
+				<key>Address</key>
+				<string>abcde</string>
+				<key>Enabled</key>
+				<false/>
+			</dict>
+		</array>
+		<key>ProtectMemoryRegions</key>
+		<false/>
+		<key>ProtectSecureBoot</key>
+		<false/>
+		<key>ProtectUefiServices</key>
+		<false/>
+		<key>ProvideConsoleGopEnable</key>
+		<false/>
+		<key>ProvideCustomSlide</key>
+		<true/>
+		<key>ProvideMaxSlide</key>
+		<integer>0</integer>
+		<key>RebuildAppleMemoryMap</key>
+		<false/>
+		<key>SetupVirtualMap</key>
+		<false/>
+		<key>SignalAppleOS</key>
+		<false/>
+		<key>SyncRuntimePermissions</key>
+		<false/>
+
+
+		<key>FuzzyMatch</key>
+		<false/>
+		<key>KernelCache</key>
+		<string>Auto</string>
+		<key>AppleXcpmExtraMsrs</key>
+		<false/>
+		<key>AppleXcpmForceBoost</key>
+		<false/>
+		<key>DisableIoMapper</key>
+		<false/>
+		<key>DisableLinkeditJettison</key>
+		<false/>
+		<key>DummyPowerManagement</key>
+		<false/>
+		<key>ExternalDiskIcons</key>
+		<false/>
+		<key>IncreasePciBarSize</key>
+		<false/>
+		<key>PowerTimeoutKernelPanic</key>
+		<false/>
+		<key>ThirdPartyDrives</key>
+		<false/>
+		<key>XhciPortLimit</key>
+		<false/>
 	</dict>
 </dict>
 </plist>

@@ -952,6 +952,17 @@ public:
 			setEmpty();
 		}
 	}
+  template<typename O>
+  void strsicpy(const O* other, size_t other_size)
+  {
+    if ( other && *other && other_size > 0 ) {
+      CheckSize(other_size, 0);
+      utf_string_from_utf_string_len(m_data, m_allocatedSize, other, other_size);
+      m_data[other_size] = 0;
+    }else{
+      setEmpty();
+    }
+  }
 
 	/* strcat char */
 	template<typename O, enable_if(is_char(O))>

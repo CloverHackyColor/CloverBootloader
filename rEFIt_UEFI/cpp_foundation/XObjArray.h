@@ -40,6 +40,8 @@ class XObjArrayNC
 	size_t m_allocatedSize;
 
   public:
+  typedef TYPE type;
+
 	void Init();
 	XObjArrayNC() : _Data(0), _Len(0), m_allocatedSize(0) { Init(); }
 	virtual ~XObjArrayNC();

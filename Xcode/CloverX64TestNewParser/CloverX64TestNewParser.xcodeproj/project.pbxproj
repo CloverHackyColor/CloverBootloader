@@ -149,6 +149,7 @@
 		9AD0EB24260A497600093F23 /* XmlLiteSimpleTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD0EB22260A497500093F23 /* XmlLiteSimpleTypes.cpp */; };
 		9AD7B15026079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */; };
 		9AFB5F78261060CB0078E53D /* CompareSettingsRtVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB5F76261060CB0078E53D /* CompareSettingsRtVariables.cpp */; };
+		9AFB5F7A2610EDD50078E53D /* Config_Quirks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AFB5F792610EDD50078E53D /* Config_Quirks.cpp */; };
 		9AFDCEA325CD9A3300EEAF06 /* OcDevicePathLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */; };
 		9AFDCEA525CD9B1C00EEAF06 /* BaseCpuLib.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */; };
 		9AFDCEA725CD9B2C00EEAF06 /* BaseSerialPortLib16550.lib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AFDCEA625CD9B2B00EEAF06 /* BaseSerialPortLib16550.lib */; };
@@ -5020,6 +5021,7 @@
 		9AD7B14F26079F5D00E850D1 /* REFIT_MAINMENU_SCREEN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = REFIT_MAINMENU_SCREEN.cpp; sourceTree = "<group>"; };
 		9AFB5F76261060CB0078E53D /* CompareSettingsRtVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompareSettingsRtVariables.cpp; sourceTree = "<group>"; };
 		9AFB5F77261060CB0078E53D /* CompareSettingsRtVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompareSettingsRtVariables.h; sourceTree = "<group>"; };
+		9AFB5F792610EDD50078E53D /* Config_Quirks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Config_Quirks.cpp; sourceTree = "<group>"; };
 		9AFDCEA225CD9A3200EEAF06 /* OcDevicePathLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = OcDevicePathLib.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib/OUTPUT/OcDevicePathLib.lib; sourceTree = "<group>"; };
 		9AFDCEA425CD9B1C00EEAF06 /* BaseCpuLib.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = BaseCpuLib.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/MdePkg/Library/BaseCpuLib/BaseCpuLib/OUTPUT/BaseCpuLib.lib; sourceTree = "<group>"; };
 		9AFDCEA625CD9B2B00EEAF06 /* BaseSerialPortLib16550.lib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = BaseSerialPortLib16550.lib; path = ../../../../Build/Clover/DEBUGMACOS_XCODE8/X64/MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550/OUTPUT/BaseSerialPortLib16550.lib; sourceTree = "<group>"; };
@@ -5265,10 +5267,6 @@
 		9A28CCAC241B816400F3D247 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				9A272A7D25D5062D00F03E19 /* DataHub.cpp */,
-				9A272A7E25D5062E00F03E19 /* DataHub.h */,
-				9A272A7C25D5062D00F03E19 /* DataHubExt.h */,
-				9A358AF325CF115100A3850D /* ConfigPlist */,
 				9AA9240D25CD5B2D00BD5E8B /* AcpiPatcher.cpp */,
 				9AA9240825CD5B2C00BD5E8B /* AcpiPatcher.h */,
 				9AA923FB25CD5B2900BD5E8B /* AmlGenerator.cpp */,
@@ -5288,12 +5286,16 @@
 				9AA923DE25CD5B2600BD5E8B /* BootOptions.h */,
 				9AA9E4D425CD1C9400BD5E8B /* card_vlist.cpp */,
 				9AA9E4D525CD1C9400BD5E8B /* card_vlist.h */,
+				9A358AF325CF115100A3850D /* ConfigPlist */,
 				9AA9240025CD5B2A00BD5E8B /* Console.cpp */,
 				9AA9239725CD5B1B00BD5E8B /* Console.h */,
 				9AA923FE25CD5B2A00BD5E8B /* cpu.cpp */,
 				9AA923CB25CD5B2100BD5E8B /* cpu.h */,
+				9A272A7D25D5062D00F03E19 /* DataHub.cpp */,
+				9A272A7E25D5062E00F03E19 /* DataHub.h */,
 				9AA923D825CD5B2500BD5E8B /* DataHubCpu.cpp */,
 				9AA923DC25CD5B2600BD5E8B /* DataHubCpu.h */,
+				9A272A7C25D5062D00F03E19 /* DataHubExt.h */,
 				9AA9240725CD5B2C00BD5E8B /* device_inject.cpp */,
 				9AA923C625CD5B2000BD5E8B /* device_inject.h */,
 				9AA9240925CD5B2C00BD5E8B /* DevicePath.cpp */,
@@ -5388,6 +5390,7 @@
 		9A358AF325CF115100A3850D /* ConfigPlist */ = {
 			isa = PBXGroup;
 			children = (
+				9AFB5F792610EDD50078E53D /* Config_Quirks.cpp */,
 				9AA316CE260EF7750033D29F /* CompareField.cpp */,
 				9AA316CF260EF7760033D29F /* CompareField.h */,
 				9A358B1625CF115100A3850D /* CompareSettings.cpp */,
@@ -15961,6 +15964,7 @@
 				9AA9252E25CD74CC00BD5E8B /* legacy.cpp in Sources */,
 				9AA924A725CD5B2E00BD5E8B /* Self.cpp in Sources */,
 				9AA925A125CD770F00BD5E8B /* VectorGraphics.cpp in Sources */,
+				9AFB5F7A2610EDD50078E53D /* Config_Quirks.cpp in Sources */,
 				9A9223312402FD1000483CBA /* main.cpp in Sources */,
 				9AA316D3260EFC410033D29F /* CompareSettingsACPI.cpp in Sources */,
 				9AA924D725CD5B2E00BD5E8B /* cpu.cpp in Sources */,

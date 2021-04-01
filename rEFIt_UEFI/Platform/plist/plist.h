@@ -24,20 +24,7 @@
 #define kXMLTagIDREF     "IDREF="
 #define kXMLTagFloat     "real"
 
-
-typedef enum {
-  kTagTypeNone,
-  kTagTypeDict,   // 1
-  kTagTypeKey,    // 2
-  kTagTypeString, // 3
-  kTagTypeInteger,// 4
-  kTagTypeData,   // 5
-  kTagTypeDate,   // 6
-  kTagTypeFalse,  // 7
-  kTagTypeTrue,   // 8
-  kTagTypeArray,  // 9
-  kTagTypeFloat   // 10
-} TAG_TYPE;
+#include "../../include/TagTypes.h"
 
 class TagDict;
 class TagKey;

@@ -1581,21 +1581,21 @@ BOOLEAN CustProperties(AML_CHUNK* pack, UINT32 Dev)
 {
   UINTN i;
   BOOLEAN Injected = FALSE;
-  if (gSettings.Devices.AddProperties.size() == 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+  if (gSettings.Devices.AddPropertyArray.size() == 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
     return FALSE; // not do this for Arbitrary properties?
   }
-  for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
-    if (gSettings.Devices.AddProperties[i].Device != Dev) {
+  for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
+    if (gSettings.Devices.AddPropertyArray[i].Device != Dev) {
       continue;
     }
     Injected = TRUE;
 
-    if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
-      //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+    if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
+      //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
     } else {
-      aml_add_string(pack, gSettings.Devices.AddProperties[i].Key.c_str());
-      aml_add_byte_buffer(pack, gSettings.Devices.AddProperties[i].Value.data(), (UINT32)gSettings.Devices.AddProperties[i].Value.size()); // unsafe cast
-      //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+      aml_add_string(pack, gSettings.Devices.AddPropertyArray[i].Key.c_str());
+      aml_add_byte_buffer(pack, gSettings.Devices.AddPropertyArray[i].Value.data(), (UINT32)gSettings.Devices.AddPropertyArray[i].Value.size()); // unsafe cast
+      //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
     }
   }
   return Injected;

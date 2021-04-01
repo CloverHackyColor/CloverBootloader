@@ -29,6 +29,13 @@
 
 extern CONST CHAR8      *AudioOutputNames[];
 
+UINT8
+*GetDataSetting (
+                 IN      const TagDict* Dict,
+                 IN      CONST CHAR8  *PropName,
+                 OUT     UINTN  *DataLen
+                 );
+
 class HDA_OUTPUTS
 {
 public:
@@ -75,6 +82,9 @@ typedef struct {
   UINT32            Connectors;
   BOOLEAN           ConnChanged;
 } GFX_PROPERTIES;
+
+extern GFX_PROPERTIES    gGraphics[4]; //no more then 4 graphics cards
+extern UINTN             NGFX;         // number of GFX
 
 typedef struct {
     HRDW_MANUFACTERER  Vendor;
@@ -369,34 +379,33 @@ public:
   }
 };
 
+/*
+ * From config.plist,
+ * /Devices/Properties will construct a XObjArray<DEV_PROPERTY>, stored in ArbProperties
+ * /Devices/Arbitrary/CustomProperties will construct a XObjArray<DEV_PROPERTY>, stored in ArbProperties
+ */
+// 2021-04 Jief : this is the old structure. Kept here for be able to compare old and new code.
 class DEV_PROPERTY
 {
 public:
-  UINT32                       Device = 0;
-  EFI_DEVICE_PATH_PROTOCOL*    DevicePath = NULL;
-  CHAR8*                       Key = 0;
-  UINT8*                       Value = 0;
-  UINTN                        ValueLen = 0;
-  DEV_PROPERTY*                Next = 0;   //next device or next property
-  DEV_PROPERTY*                Child = 0;  // property list of the device
-  CHAR8*                       Label = 0;
-  INPUT_ITEM                   MenuItem = INPUT_ITEM();
-  TAG_TYPE                     ValueType = kTagTypeNone;
+  UINT32        Device = 0;
+  EFI_DEVICE_PATH_PROTOCOL* DevicePath = NULL;
+  CHAR8         *Key = 0;
+  UINT8         *Value = 0;
+  UINTN         ValueLen = 0;
+  DEV_PROPERTY  *Next = 0;   //next device or next property
+  DEV_PROPERTY  *Child = 0;  // property list of the device
+  CHAR8         *Label = 0;
+  INPUT_ITEM    MenuItem = INPUT_ITEM();
+  TAG_TYPE      ValueType = kTagTypeNone;
 
-  DEV_PROPERTY() {};
+  DEV_PROPERTY() { }
+
   // Not sure if default are valid. Delete them. If needed, proper ones can be created
-  DEV_PROPERTY(const DEV_PROPERTY&) { panic("nope"); };
-  DEV_PROPERTY& operator=(const DEV_PROPERTY&) { panic("nope"); };
+  DEV_PROPERTY(const DEV_PROPERTY&) { panic("nope"); }
+  DEV_PROPERTY& operator=(const DEV_PROPERTY&) = delete;
 };
 
-class DEV_ADDPROPERTY
-{
-public:
-  UINT32                       Device = 0;
-  XString8                     Key = XString8();
-  XBuffer<uint8_t>             Value = XBuffer<uint8_t>();
-  INPUT_ITEM                   MenuItem = INPUT_ITEM();
-};
 
 /**
   Set of Search & replace bytes for VideoBiosPatchBytes().
@@ -715,9 +724,65 @@ public:
           bool                 NameEH00 = bool();
           bool                 NameXH00 = bool();
       };
+
+      class AddPropertyClass
+      {
+      public:
+        uint32_t                     Device = 0;
+        XString8                     Key = XString8();
+        XBuffer<uint8_t>             Value = XBuffer<uint8_t>();
+        TAG_TYPE                     ValueType = kTagTypeNone;
+        INPUT_ITEM                   MenuItem = INPUT_ITEM();
+        XString8                     DevicePathAsString = XString8();
+        XString8                     Label = XString8();
+      };
+
+      // This is shared by PropertiesClass and ArbitraryClass
+      class SimplePropertyClass
+      {
+      public:
+        XString8                     Key = XString8();
+        XBuffer<uint8_t>             Value = XBuffer<uint8_t>();
+        TAG_TYPE                     ValueType = kTagTypeNone; // only used in CreateMenuProps()
+        INPUT_ITEM                   MenuItem = INPUT_ITEM();  // Will get the Disabled value
+      };
+
+      // Property don't have Device. Before it was always Device = 0 to differentiate from Arbitrary properties.
       class PropertiesClass {
         public:
-          XString8 cDeviceProperties = XString8();
+
+          class PropertyClass
+          {
+          public:
+            
+            bool                            Enabled = true;
+            XStringW                        DevicePathAsString = XStringW();
+            // XString8                     Label = XString8(); // Label is the same as DevicePathAsString, so it's not needed.
+            XObjArray<SimplePropertyClass>  propertiesArray = XObjArray<SimplePropertyClass>();
+
+            EFI_DEVICE_PATH_PROTOCOL* getDevicePath() const
+            {
+              EFI_DEVICE_PATH_PROTOCOL* DevicePath;
+              if ( DevicePathAsString.equalIC("PrimaryGPU") ) {
+                DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
+              } else if ( DevicePathAsString.equalIC("SecondaryGPU") && NGFX > 1) {
+                DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
+              } else {
+                DevicePath = ConvertTextToDevicePath(DevicePathAsString.wc_str()); //TODO
+              }
+              return DevicePath;
+            }
+          };
+
+          XString8 propertiesAsString = XString8();
+          XObjArray<PropertyClass> PropertyArray = XObjArray<PropertyClass>();
+      };
+
+      class ArbitraryPropertyClass {
+        public:
+          uint32_t                     Device = 0;
+          XString8                     Label = XString8();
+          XObjArray<SimplePropertyClass>   CustomPropertyArray = XObjArray<SimplePropertyClass> ();
       };
 
       class FakeIDClass {
@@ -746,14 +811,178 @@ public:
       XString8             AirportBridgeDeviceName = XString8();
       AudioClass           Audio = AudioClass();
       USBClass             USB = USBClass();
-      PropertiesClass      Properties = PropertiesClass();
       FakeIDClass          FakeID = FakeIDClass();
       
-//      UINTN                NrAddProperties;
-//      DEV_PROPERTY        *AddProperties;
-      XObjArray<DEV_ADDPROPERTY>   AddProperties = XObjArray<DEV_ADDPROPERTY>();
-      DEV_PROPERTY                *ArbProperties = 0;
+      XObjArray<AddPropertyClass> AddPropertyArray = XObjArray<AddPropertyClass>();
+      PropertiesClass Properties = PropertiesClass();
+      XObjArray<ArbitraryPropertyClass> ArbitraryArray = XObjArray<ArbitraryPropertyClass>();
 
+
+      // 2021-04 : Following is temporary to compare with old way of storing properties.
+      // Let's keep it few months until I am sure the refactoring isomorphic
+    private:
+      DEV_PROPERTY                *ArbProperties = 0; // the old version.
+    public:
+      void FillDevicePropertiesOld(SETTINGS_DATA& gSettings, const TagDict* DevicesDict);
+      
+      bool compareDevProperty(const XString8& label, const DEV_PROPERTY& devProp, const DEV_PROPERTY& newDev) const
+      {
+        if ( newDev.Device != devProp.Device )
+        {
+          printf("%s.Device\n", label.c_str());
+          return false;
+        }
+        if ( newDev.Key || devProp.Key ) {
+          if ( !newDev.Key || !devProp.Key ) {
+            printf("%s.Key\n", label.c_str());
+            return false;
+          }
+#ifdef JIEF_DEBUG
+if ( strcmp(devProp.Key, "10") == 0 ) {
+printf("%s", "");
+}
+#endif
+          if ( strcmp(newDev.Key, devProp.Key) != 0 )
+          {
+            printf("%s.Key\n", label.c_str());
+            return false;
+          }
+        }
+        if ( newDev.ValueLen != devProp.ValueLen )
+        {
+          printf("%s.Value.ValueLen\n", label.c_str());
+          return false;
+        } else
+        {
+          if ( newDev.ValueLen > 0 ) {
+            if ( memcmp(newDev.Value, devProp.Value, devProp.ValueLen) != 0 )
+            {
+              printf("%s.Value\n", label.c_str());
+              return false;
+            }
+          }
+        }
+        if ( newDev.ValueType != devProp.ValueType )
+        {
+          printf("%s.ValueType\n", label.c_str());
+          return false;
+        }
+        if ( newDev.Label || devProp.Label ) {
+          if ( !newDev.Label || !devProp.Label ) {
+            printf("%s.Label\n", label.c_str());
+            return false;
+          }
+          if ( strcmp(newDev.Label, devProp.Label) != 0 )
+          {
+            printf("%s.Label : old:%s new:%s\n", label.c_str(), devProp.Label, newDev.Label);
+            return false;
+          }
+        }
+        if ( newDev.MenuItem.BValue != devProp.MenuItem.BValue )
+        {
+          printf("%s.MenuItem.BValue\n", label.c_str());
+          return false;
+        }
+        DEV_PROPERTY *oldChild = devProp.Child;
+        DEV_PROPERTY *newChild = newDev.Child;
+        size_t jdx = 0;
+        while ( oldChild && newChild )
+        {
+          compareDevProperty(S8Printf("%s.child[%zu]", label.c_str(), jdx), *oldChild, *newChild);
+          oldChild = oldChild->Next;
+          newChild = newChild->Next;
+          jdx++;
+        }
+        if ( oldChild != newChild )
+        {
+          printf("%s.Child count\n", label.c_str());
+          return false;
+        }
+        return true;
+      }
+      
+      bool compareOldAndCompatibleArb()
+      {
+        {
+          size_t oldArbIdx = 0;
+          const DEV_PROPERTY* arb = ArbProperties;
+          while ( arb ) {
+            printf("ArbProperties[%zu].Key = %s\n", oldArbIdx++, arb->Key);
+            arb = arb->Next;
+          }
+        }
+        const XObjArray<DEV_PROPERTY> compatibleArbProperties = getCompatibleArbProperty();
+        size_t oldArbIdx = 0;
+        for ( size_t idx = 0 ; idx < compatibleArbProperties.size() ; ++idx )
+        {
+          if ( ArbProperties == NULL ) {
+            printf("ArbProperties.size < compatibleArbProperties.size()");
+            return false;
+          }
+          if ( !compareDevProperty(S8Printf("ArbProperties[%zu]", idx), *ArbProperties, compatibleArbProperties[idx]) ) {
+            return false;
+          }
+          ++oldArbIdx;
+          ArbProperties = ArbProperties->Next;
+        }
+        if ( ArbProperties != NULL ) {
+          printf("ArbProperties.size > compatibleArbProperties.size()");
+          return false;
+        }
+        return true;
+      }
+
+    public:
+      XObjArray<DEV_PROPERTY> getCompatibleArbProperty() const
+      {
+        XObjArray<DEV_PROPERTY> arb;
+        for ( size_t idx = ArbitraryArray.size() ; idx-- > 0  ; ) {
+          const ArbitraryPropertyClass& newArb = ArbitraryArray[idx];
+          for ( size_t jdx = newArb.CustomPropertyArray.size() ; jdx-- > 0 ;  ) {
+            const SimplePropertyClass& newArbProp = newArb.CustomPropertyArray[jdx];
+            DEV_PROPERTY* newProp = new DEV_PROPERTY();
+            newProp->Device = newArb.Device;
+            newProp->Key = const_cast<char*>(newArbProp.Key.c_str()); // const_cast !!! So ugly. It is just because it's temporary. If ArbProperties is modified after this, a lot a memory problem will happen. I could have done some strdup, but that way I don't use memory and don't have to free it.
+            newProp->Value = const_cast<unsigned char*>(newArbProp.Value.data());
+            newProp->ValueLen = newArbProp.Value.size();
+            newProp->ValueType = newArbProp.ValueType;
+            newProp->MenuItem.BValue = newArbProp.MenuItem.BValue ;
+            newProp->Label = const_cast<char*>(newArb.Label.c_str());
+            arb.AddReference(newProp, true);
+//            printf("Add prop key=%s label=%s at index %zu\n", newProp->Key.c_str(), newProp->Label.c_str(), arb.size()-1);
+          }
+        }
+        // Non arb : device = 0
+        for ( size_t idx = Properties.PropertyArray.size() ; idx-- > 0 ;  ) {
+          const PropertiesClass::PropertyClass& Prop = Properties.PropertyArray[idx];
+          DEV_PROPERTY* newProp = new DEV_PROPERTY();
+          newProp->Device = 0;
+          newProp->Key = 0;
+          if ( Prop.Enabled ) newProp->Label = XString8(Prop.DevicePathAsString).forgetDataWithoutFreeing();
+          else newProp->Label = S8Printf("!%ls", Prop.DevicePathAsString.wc_str()).forgetDataWithoutFreeing();
+          newProp->Child = NULL;
+          for ( size_t jdx = Properties.PropertyArray[idx].propertiesArray.size() ; jdx-- > 0  ; ) {
+            const SimplePropertyClass& SubProp = Prop.propertiesArray[jdx];
+            DEV_PROPERTY* newSubProp = new DEV_PROPERTY();
+            newSubProp->Device = 0;
+            newSubProp->Key = const_cast<char*>(SubProp.Key.c_str());
+            newSubProp->Value = const_cast<unsigned char*>(SubProp.Value.data());
+            newSubProp->ValueLen = SubProp.Value.size();
+            newSubProp->ValueType = SubProp.ValueType;
+            newSubProp->MenuItem.BValue = SubProp.MenuItem.BValue;
+            if ( newProp->Child ) {
+              DEV_PROPERTY* childs;
+              for ( childs = newProp->Child ; childs->Next ; childs = childs->Next );
+              childs->Next = newSubProp;
+            }else{
+              newProp->Child = newSubProp;
+            }
+          }
+          arb.AddReference(newProp, true);
+//          printf("Add prop %s at index %zu\n", newProp->Key.c_str(), arb.size()-1);
+        }
+        return arb;
+      };
   };
 
   class QuirksClass {

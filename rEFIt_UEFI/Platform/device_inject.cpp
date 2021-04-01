@@ -281,56 +281,45 @@ bool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<
   return devprop_add_value(device, nm.data(), vl.data(), vl.size());
 }
 
-CHAR8 *devprop_generate_string(DevPropString *StringBuf)
+XString8 devprop_generate_string(DevPropString *StringBuf)
 {
-  UINTN len = StringBuf->length * 2;
   INT32 i = 0;
   UINT32 x = 0;
-  CHAR8 *buffer = (CHAR8*)AllocatePool(len + 1);
-  CHAR8 *ptr = buffer;
+  XString8 buffer;
 
   //   DBG("devprop_generate_string\n");
-  if(!buffer)
-    return NULL;
 
-	snprintf(buffer, len, "%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2,
-              SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
-  buffer += 24;
+	buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
 
   while(i < StringBuf->numentries) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
-	  snprintf(buffer, len, "%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
+	  buffer.S8Catf("%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
                 SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 
-    buffer += 16;
-	  snprintf(buffer, len, "%02hhX%02hhX%04hX%08X%08X", StringBuf->entries[i]->acpi_dev_path.type,
+	  buffer.S8Catf("%02hhX%02hhX%04hX%08X%08X", StringBuf->entries[i]->acpi_dev_path.type,
                 StringBuf->entries[i]->acpi_dev_path.subtype,
                 SwapBytes16(StringBuf->entries[i]->acpi_dev_path.length),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._UID));
 
-    buffer += 24;
     for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
-		snprintf(buffer, len, "%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
+		buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
                   StringBuf->entries[i]->pci_dev_path[x].subtype,
                   SwapBytes16(StringBuf->entries[i]->pci_dev_path[x].length),
                   StringBuf->entries[i]->pci_dev_path[x].function,
                   StringBuf->entries[i]->pci_dev_path[x].device);
-      buffer += 12;
     }
 
-	  snprintf(buffer, len, "%02hhX%02hhX%04hX", StringBuf->entries[i]->path_end.type,
+	  buffer.S8Catf("%02hhX%02hhX%04hX", StringBuf->entries[i]->path_end.type,
                 StringBuf->entries[i]->path_end.subtype,
                 SwapBytes16(StringBuf->entries[i]->path_end.length));
 
-    buffer += 8;
     for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++) {
-      snprintf(buffer, len, "%02hhX", *dataptr++);
-      buffer += 2;
+      buffer.S8Catf("%02hhX", *dataptr++);
     }
     i++;
   }
-  return ptr;
+  return buffer;
 }
 
 void devprop_free_string(DevPropString *StringBuf)
@@ -388,18 +377,18 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
  		builtin = 0x01;
   }
 
-  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
-    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
-      if (gSettings.Devices.AddProperties[i].Device != DEV_LAN) {
+  if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
+      if (gSettings.Devices.AddPropertyArray[i].Device != DEV_LAN) {
         continue;
       }
       Injected = TRUE;
 
-      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
       } else {
-        devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+        devprop_add_value(device, gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
       }
     }
   }
@@ -467,18 +456,18 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
  // DBG("USB Controller [%04X:%04X] :: %s\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
  // DBG("Setting dev.prop built-in=0x%X\n", builtin);
 
-  if (gSettings.Devices.AddProperties.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
-    for (i = 0; i < gSettings.Devices.AddProperties.size(); i++) {
-      if (gSettings.Devices.AddProperties[i].Device != DEV_USB) {
+  if (gSettings.Devices.AddPropertyArray.size() != 0xFFFE) { // Looks like NrAddProperties == 0xFFFE is not used anymore
+    for (i = 0; i < gSettings.Devices.AddPropertyArray.size(); i++) {
+      if (gSettings.Devices.AddPropertyArray[i].Device != DEV_USB) {
         continue;
       }
       Injected = TRUE;
 
-      if (!gSettings.Devices.AddProperties[i].MenuItem.BValue) {
-        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+      if (!gSettings.Devices.AddPropertyArray[i].MenuItem.BValue) {
+        //DBG("  disabled property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
       } else {
-        devprop_add_value(device, gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].Value);
-        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddProperties[i].Key, gSettings.Devices.AddProperties[i].ValueLen);
+        devprop_add_value(device, gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].Value);
+        //DBG("  added property Key: %s, len: %d\n", gSettings.Devices.AddPropertyArray[i].Key, gSettings.Devices.AddPropertyArray[i].ValueLen);
       }
     }
   }
