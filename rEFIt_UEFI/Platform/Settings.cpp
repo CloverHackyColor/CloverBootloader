@@ -3199,13 +3199,16 @@ EFI_STATUS GetEarlyUserSettings (
     if (RtVariablesDict != NULL) {
       const TagStruct* Prop = RtVariablesDict->propertyForKey("ROM");
       if (Prop != NULL) {
-        if ( !Prop->isString() ) {
-          // that's ok. Property can be data, but not when the value is 'UseMacAddr0' or 'UseMacAddr1';
-        }else{
-          if ((Prop->getString()->stringValue().equalIC("UseMacAddr0")) ||
-              (Prop->getString()->stringValue().equalIC("UseMacAddr1"))) {
-//            gSettings.RtVariables.GetLegacyLanAddress = TRUE;
-          }
+        if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr0") ) {
+          gSettings.RtVariables.RtROMAsString = Prop->getString()->stringValue();
+        } else if ( Prop->isString()  &&  Prop->getString()->stringValue().equalIC("UseMacAddr1") ) {
+          gSettings.RtVariables.RtROMAsString = Prop->getString()->stringValue();
+        } else if ( Prop->isString()  ||  Prop->isData() ) { // GetDataSetting accept both
+          UINTN ROMLength         = 0;
+          uint8_t* ROM = GetDataSetting(RtVariablesDict, "ROM", &ROMLength);
+          gSettings.RtVariables.RtROMAsData.stealValueFrom(ROM, ROMLength);
+        } else {
+          MsgLog("MALFORMED PLIST : property not string or data in RtVariables/ROM\n");
         }
       }
     }
