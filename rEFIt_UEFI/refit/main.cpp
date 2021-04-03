@@ -36,8 +36,8 @@
 
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "../cpp_foundation/XString.h"
-#include "../cpp_util/globals_ctor.h"
-#include "../cpp_util/globals_dtor.h"
+#include <cpp_util/globals_ctor.h>
+#include <cpp_util/globals_dtor.h>
 #include "../cpp_unit_test/all_tests.h"
 
 #include "../entry_scan/entry_scan.h"
@@ -2546,15 +2546,6 @@ GetListOfThemes ()
   }
   DirIterClose(&DirIter);
 }
-
-#ifndef CLOVER_BUILD
-extern "C" {
-EFI_STATUS
-EFIAPI
-RefitMain (IN EFI_HANDLE           ImageHandle,
-           IN EFI_SYSTEM_TABLE     *SystemTable);
-}
-#endif
 
 /*
  * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global

@@ -41,11 +41,11 @@ bool all_tests()
 
 #if defined(JIEF_DEBUG)
   int ret;
-  ret = xml_lite_tests();
-  if ( ret != 0 ) {
-    printf("xml_lite_tests() failed at test %d\n", ret);
-    all_ok = false;
-  }
+//  ret = xml_lite_tests();
+//  if ( ret != 0 ) {
+//    printf("xml_lite_tests() failed at test %d\n", ret);
+//    all_ok = false;
+//  }
 ret = strcasecmp_tests();
 if ( ret != 0 ) {
   printf("strncmp_tests() failed at test %d\n", ret);

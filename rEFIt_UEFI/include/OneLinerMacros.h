@@ -39,7 +39,7 @@
 
 #ifdef __cplusplus
 
-#include "../cpp_util/remove_ref.h"
+#include "remove_ref.h"
 
 #ifdef _MSC_VER
 #define __typeof__(x) decltype(x)

@@ -53,7 +53,7 @@ class undefinable_uint16 : public undefinable<uint16_t>
   using super = undefinable<uint16_t>;
 public:
     undefinable_uint16() { }
-    explicit undefinable_uint16(uint32_t newValue) { super::operator=(newValue); }
+    explicit undefinable_uint16(uint16_t newValue) { super::operator=(newValue); }
     undefinable_uint16& operator = (uint16_t newValue) { super::operator=(newValue); return *this; }
 };
 

@@ -208,13 +208,25 @@
   /// UTF-16 encoding format as defined by Unicode 2.1 and ISO/IEC 10646 standards.
   ///
 #ifdef __cplusplus
-  // So this MUST be compiled with short wchar
-  // I am considering switching to char16_t, to be independant of sizeof wchar_t
-  #define CHAR16 wchar_t
-#else
-  typedef unsigned short      CHAR16;
   #if __WCHAR_MAX__ <= 0xFFFF
+    #define CHAR16 wchar_t
+  #else
+  // Here, we are compiling with wchar_t as 4 bytes. So CHAR16 is equivalent to wchar_t.
+  // To work with edk2 library, you need to compile them without -short-wchar.
+  // And of course that cannot be used to create a launchable efi file !
+  // But that works for unit tests that run on macOS, Linux, Windows...
+    #define CHAR16 wchar_t
+  #endif
+#else
+  #if __WCHAR_MAX__ <= 0xFFFF
+  typedef unsigned short      CHAR16;
   typedef UINT16      wchar_t;
+  #else
+  // Here, we are compiling with wchar_t as 4 bytes. So CHAR16 is equivalent to wchar_t.
+  // To work with edk2 library, you need to compile them without -short-wchar.
+  // And of course that cannot be used to create a launchable efi file !
+  // But that works for unit tests that run on macOS, Linux, Windows...
+  typedef int         CHAR16;
   #endif
   typedef UINT16      char16_t;
   typedef UINT32      char32_t;

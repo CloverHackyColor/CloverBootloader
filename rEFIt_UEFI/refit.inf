@@ -37,20 +37,41 @@
   Platform/BdsConnect.cpp #included into GenericBdsLib
   ../Include/Library/printf_lite-conf.h
   ../Include/Library/printf_lite.h
+  PlatformEFI/include/printf_lite-test-cpp_conf.h
+  PlatformEFI/include/Platform.h
+  PlatformEFI/include/XToolsConf.h
+  PlatformEFI/posix/posix.h
+  PlatformEFI/posix/limits.h
+  PlatformEFI/posix/stdarg.h
+  PlatformEFI/posix/stddef.h
+  PlatformEFI/posix/stdint.h
+  PlatformEFI/posix/stdlib.h
+  PlatformEFI/posix/stdio.h
+  PlatformEFI/posix/stdio.cpp
+  PlatformEFI/posix/string.h
+  PlatformEFI/posix/string.cpp
+  PlatformEFI/posix/strings.h
+  PlatformEFI/posix/strings.cpp
+  PlatformEFI/posix/strlen.cpp
+  PlatformEFI/posix/wchar.h
+  PlatformEFI/posix/wchar.cpp
+  PlatformEFI/posix/abort.h
+  PlatformEFI/posix/abort.cpp
+  PlatformEFI/posix/posix_additions.h
+  PlatformEFI/posix/posix_additions.cpp
+  include/BootTypes.h
   include/Devices.h
   include/DsdtFixList.h
   include/Efi.h
   include/Handle.h
   include/Languages.h
-  include/OneLinerMacros.h
-  include/Pci.h
-  include/XToolsConf.h
   include/OC.h
-  include/printf_lite-test-cpp_conf.h
-  include/QuirksCodes.h
-  include/BootTypes.h
-  include/OSTypes.h
+  include/OneLinerMacros.h
   include/OSFlags.h
+  include/OSTypes.h
+  include/Pci.h
+  include/QuirksCodes.h
+  include/remove_ref.h
   include/TagTypes.h
   include/VolumeTypes.h
   refit/main.cpp
@@ -125,25 +146,6 @@
   libeg/XTheme.h
   libeg/XCinema.cpp
   libeg/XCinema.h
-  Platform/Posix/posix.h
-  Platform/Posix/limits.h
-  Platform/Posix/stdarg.h
-  Platform/Posix/stddef.h
-  Platform/Posix/stdint.h
-  Platform/Posix/stdlib.h
-  Platform/Posix/stdio.h
-  Platform/Posix/stdio.cpp
-  Platform/Posix/string.h
-  Platform/Posix/string.cpp
-  Platform/Posix/strings.h
-  Platform/Posix/strings.cpp
-  Platform/Posix/strlen.cpp
-  Platform/Posix/wchar.h
-  Platform/Posix/wchar.cpp
-  Platform/Posix/abort.h
-  Platform/Posix/abort.cpp
-  Platform/Posix/posix_additions.h
-  Platform/Posix/posix_additions.cpp
   Platform/AcpiPatcher.h
   Platform/AcpiPatcher.cpp
 	Platform/APFS.h
@@ -153,12 +155,12 @@
 	Platform/AmlGenerator.h
 	Platform/ati.cpp
 	Platform/ati.h
-	Platform/BasicIO.cpp
+	PlatformEFI/BasicIO.cpp
 	Platform/BasicIO.h
 #	Platform/BiosVideo.h
 #	Platform/Bmp.h
 	Platform/boot.h
-	Platform/BootLog.cpp
+	PlatformEFI/BootLog.cpp
 	Platform/BootLog.h
 	Platform/BootOptions.h
 	Platform/BootOptions.cpp
@@ -215,7 +217,6 @@
     Platform/Net.cpp
 	Platform/Nvram.h
 	Platform/Nvram.cpp
-	Platform/Platform.h
 	Platform/platformdata.h
 	Platform/platformdata.cpp
     Platform/PlatformDriverOverride.h
@@ -285,14 +286,13 @@
   Platform/DataHub.h
   Platform/DataHubExt.h
   ../Version.h
-  cpp_util/globals_ctor.cpp
-  cpp_util/globals_ctor.h
-  cpp_util/globals_dtor.cpp
-  cpp_util/globals_dtor.h
-  cpp_util/operatorNewDelete.cpp
-  cpp_util/operatorNewDelete.h
-  cpp_util/remove_ref.h
-  cpp_util/pure_virtual.cpp
+  PlatformEFI/cpp_util/globals_ctor.cpp
+  PlatformEFI/cpp_util/globals_ctor.h
+  PlatformEFI/cpp_util/globals_dtor.cpp
+  PlatformEFI/cpp_util/globals_dtor.h
+  PlatformEFI/cpp_util/operatorNewDelete.cpp
+  PlatformEFI/cpp_util/operatorNewDelete.h
+  PlatformEFI/cpp_util/pure_virtual.cpp
   cpp_foundation/unicode_conversions.cpp
   cpp_foundation/unicode_conversions.h
   cpp_foundation/XArray.h
@@ -354,7 +354,7 @@
 #  cpp_unit_test/XUINTN_test.h
 
 [Sources.IA32]
-  libeg/ftol.asm | MSFT
+  PlatformIA32/ftol.asm | MSFT
 
 [Packages]
   CloverPkg.dec
