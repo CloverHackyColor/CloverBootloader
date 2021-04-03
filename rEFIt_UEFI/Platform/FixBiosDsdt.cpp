@@ -3071,11 +3071,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len, UINT32 card)
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(dev, "_SUN");
-      aml_add_dword(dev, SlotDevices[5].SlotID);
+      aml_add_dword(dev, gSettings.Smbios.SlotDevices[5].SlotID);
     } else {
       //we have name sun, set the number
       if (dsdt[k + 4] == 0x0A) {
-        dsdt[k + 5] = SlotDevices[5].SlotID;
+        dsdt[k + 5] = gSettings.Smbios.SlotDevices[5].SlotID;
       }
     }
   }
@@ -3262,11 +3262,11 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(dev, "_SUN");
-      aml_add_dword(dev, SlotDevices[6].SlotID);
+      aml_add_dword(dev, gSettings.Smbios.SlotDevices[6].SlotID);
     } else {
       //we have name sun, set the number
       if (dsdt[k + 4] == 0x0A) {
-        dsdt[k + 5] = SlotDevices[6].SlotID;
+        dsdt[k + 5] = gSettings.Smbios.SlotDevices[6].SlotID;
       }
     }
   } else {
@@ -3700,11 +3700,11 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     k = FindName(dsdt + i, Size, "_SUN");
     if (k == 0) {
       aml_add_name(device, "_SUN");
-      aml_add_dword(device, SlotDevices[12].SlotID);
+      aml_add_dword(device, gSettings.Smbios.SlotDevices[12].SlotID);
     } else {
       //we have name sun, set the number
       if (dsdt[k + 4] == 0x0A) {
-         dsdt[k + 5] = SlotDevices[12].SlotID;
+         dsdt[k + 5] = gSettings.Smbios.SlotDevices[12].SlotID;
       }
     }
   } else {

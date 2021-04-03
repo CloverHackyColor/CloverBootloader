@@ -26,10 +26,6 @@
 #define DBG(...) DebugLog(DEBUG_PLATFORMDATA, __VA_ARGS__)
 #endif
 
-UINT32  gFwFeatures;
-UINT32  gFwFeaturesMask;
-UINT64  gPlatformFeature;
-
 // All SMBIOS data were updated by Sherlocks, PMheart.
 // FredWst supported SmcExtract.
 
@@ -598,12 +594,22 @@ PLATFORMDATA ApplePlatformData[] =
     0x01, 0x43, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
 };
 
-void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
+/*
+ * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
+ * and is passed by non-const reference.
+ * This temporary during the refactoring
+ * All code from this comes from settings.cpp. I am taking out all the init code from settings.cpp so I can replace the reading layer.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLEAN Redefine)
 {
+#pragma GCC diagnostic pop
+
   const CHAR8  *i;
 
-  gSettings.VendorName = BiosVendor;
-  gSettings.RomVersion = ApplePlatformData[Model].firmwareVersion;
+  gSettings.Smbios.BiosVendor = AppleBiosVendor;
+  GlobalConfig.RomVersionUsed = ApplePlatformData[Model].firmwareVersion;
 
   // AppleReleaseDate
   switch (Model) {
@@ -668,7 +674,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       while (*i != '.') {
         i--;
       }
-      gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
+      GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
       break;
 
     default:
@@ -678,26 +684,25 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
       while (*i != '.') {
         i--;
       }
-      gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
+      GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c", i[3], i[4], i[5], i[6], i[1], i[2]);
       break;
   }
 
-  gSettings.EfiVersion.takeValueFrom(ApplePlatformData[Model].efiversion);
-  gSettings.EfiVersion.trim();
-  gSettings.ManufactureName = BiosVendor;
+  GlobalConfig.EfiVersionUsed.takeValueFrom(ApplePlatformData[Model].efiversion);
+  gSettings.Smbios.ManufactureName = gSettings.Smbios.BiosVendor;
   if (Redefine) {
-    gSettings.ProductName = ApplePlatformData[Model].productName;
+    gSettings.Smbios.ProductName = ApplePlatformData[Model].productName;
   }
-  gSettings.VersionNr = ApplePlatformData[Model].systemVersion;
-  gSettings.SerialNr = ApplePlatformData[Model].serialNumber;
-  gSettings.FamilyName = ApplePlatformData[Model].productFamily;
-  gSettings.BoardManufactureName = BiosVendor;
-  gSettings.BoardSerialNumber = AppleBoardSN;
-  gSettings.BoardNumber = ApplePlatformData[Model].boardID;
-  gSettings.BoardVersion = ApplePlatformData[Model].productName;
-  gSettings.LocationInChassis = AppleBoardLocation;
-  gSettings.ChassisManufacturer = BiosVendor;
-  gSettings.ChassisAssetTag = ApplePlatformData[Model].chassisAsset;
+  gSettings.Smbios.VersionNr = ApplePlatformData[Model].systemVersion;
+  gSettings.Smbios.SerialNr = ApplePlatformData[Model].serialNumber;
+  gSettings.Smbios.FamilyName = ApplePlatformData[Model].productFamily;
+  gSettings.Smbios.BoardManufactureName = gSettings.Smbios.BiosVendor;
+  gSettings.Smbios.BoardSerialNumber = AppleBoardSN;
+  gSettings.Smbios.BoardNumber = ApplePlatformData[Model].boardID;
+  gSettings.Smbios.BoardVersion = ApplePlatformData[Model].productName;
+  gSettings.Smbios.LocationInChassis = AppleBoardLocation;
+  gSettings.Smbios.ChassisManufacturer = gSettings.Smbios.BiosVendor;
+  gSettings.Smbios.ChassisAssetTag = ApplePlatformData[Model].chassisAsset;
 
   // Firmware info for 10.13+
   // by Sherlocks
@@ -706,14 +711,14 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     // Verified list from Firmware
     case MacBookPro91:
     case MacBookPro92:
-      gFwFeatures             = 0xC00DE137;
+      gSettings.Smbios.gFwFeatures             = 0xC00DE137;
       break;
     case MacBookAir41:
     case MacBookAir42:
     case MacMini51:
     case MacMini52:
     case MacMini53:
-      gFwFeatures             = 0xD00DE137;
+      gSettings.Smbios.gFwFeatures             = 0xD00DE137;
       break;
     case MacBookPro101:
     case MacBookPro102:
@@ -724,30 +729,30 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac131:
     case iMac132:
     case iMac133:
-      gFwFeatures             = 0xE00DE137;
+      gSettings.Smbios.gFwFeatures             = 0xE00DE137;
       break;
     case MacMini81:
-      gFwFeatures             = 0xFD8FF466;
+      gSettings.Smbios.gFwFeatures             = 0xFD8FF466;
       break;
     case MacBookAir61:
     case MacBookAir62:
     case iMac141:
     case iMac142:
     case iMac143:
-      gFwFeatures             = 0xE00FE137;
+      gSettings.Smbios.gFwFeatures             = 0xE00FE137;
       break;
     case MacBookPro111:
     case MacBookPro112:
     case MacBookPro113:
     case MacBookPro114:
     case MacBookPro115:
-      gFwFeatures             = 0xE80FE137;
+      gSettings.Smbios.gFwFeatures             = 0xE80FE137;
       break;
     case iMac144:
-      gFwFeatures             = 0xF00FE177;
+      gSettings.Smbios.gFwFeatures             = 0xF00FE177;
       break;
     case iMac151:
-      gFwFeatures             = 0xF80FE177;
+      gSettings.Smbios.gFwFeatures             = 0xF80FE177;
       break;
     case MacBookPro131:
     case MacBookPro132:
@@ -757,41 +762,41 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac181:
     case iMac182:
     case iMac183:
-      gFwFeatures             = 0xFC0FE176;
+      gSettings.Smbios.gFwFeatures             = 0xFC0FE176;
       break;
     case MacBook91:
     case MacBook101:
     case MacBookPro133:
     case MacBookPro143:
-      gFwFeatures             = 0xFC0FE17E;
+      gSettings.Smbios.gFwFeatures             = 0xFC0FE17E;
       break;
     case iMacPro11:
-      gFwFeatures             = 0xFD8FF53F;
+      gSettings.Smbios.gFwFeatures             = 0xFD8FF53F;
       break;
     case MacBookAir91:
-      gFwFeatures             = 0xFD8FF42E;
+      gSettings.Smbios.gFwFeatures             = 0xFD8FF42E;
       break;
     case iMac191:
     case iMac192:
     case iMac201:
     case iMac202:
-      gFwFeatures             = 0xFD8FF576;
+      gSettings.Smbios.gFwFeatures             = 0xFD8FF576;
       break;
     case MacBookPro162:
     case MacBookPro163:
     case MacBookPro164:
-      gFwFeatures             = 0xFDAFF066;
+      gSettings.Smbios.gFwFeatures             = 0xFDAFF066;
       break;
 
     // Verified list from Users
     case MacBookAir31:
     case MacBookAir32:
     case MacMini41:
-      gFwFeatures             = 0xD00DE137;
+      gSettings.Smbios.gFwFeatures             = 0xD00DE137;
       break;
     case MacBookAir71:
     case MacBookAir72:
-      gFwFeatures             = 0xE00FE137;
+      gSettings.Smbios.gFwFeatures             = 0xE00FE137;
       break;
     case iMac101:
     case iMac111:
@@ -800,16 +805,16 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac121:
     case iMac122:
     case MacMini71:
-      gFwFeatures             = 0xE00DE137;
+      gSettings.Smbios.gFwFeatures             = 0xE00DE137;
       break;
     case MacPro51:
-      gFwFeatures             = 0xE80FE137;
+      gSettings.Smbios.gFwFeatures             = 0xE80FE137;
       break;
     case MacPro61:
-      gFwFeatures             = 0xE80FE176;
+      gSettings.Smbios.gFwFeatures             = 0xE80FE176;
       break;
     case MacPro71:
-      gFwFeatures             = 0xFD8FF53F;
+      gSettings.Smbios.gFwFeatures             = 0xFD8FF53F;
       break;
     case MacBookPro61:
     case MacBookPro62:
@@ -817,7 +822,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro81:
     case MacBookPro82:
     case MacBookPro83:
-      gFwFeatures             = 0xC00DE137;
+      gSettings.Smbios.gFwFeatures             = 0xC00DE137;
       break;
     case MacBookPro121:
     case MacBookPro151:
@@ -829,16 +834,16 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookAir82:
     case iMac161:
     case iMac162:
-      gFwFeatures             = 0xFC0FE137;
+      gSettings.Smbios.gFwFeatures             = 0xFC0FE137;
       break;
     case MacBook61:
     case MacBook71:
     case MacBook81:
-      gFwFeatures             = 0xFC0FE13F;
+      gSettings.Smbios.gFwFeatures             = 0xFC0FE13F;
       break;
 
     default:
-      gFwFeatures             = 0xE907F537; //unknown - use oem SMBIOS value to be default
+      gSettings.Smbios.gFwFeatures             = 0xE907F537; //unknown - use oem SMBIOS value to be default
       break;
   }
 
@@ -871,7 +876,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac141:
     case iMac142:
     case iMac143:
-      gFwFeaturesMask         = 0xFF1FFF3F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFF1FFF3F;
       break;
           
     case MacBook91:
@@ -889,23 +894,23 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac182:
     case iMac183:
     case MacPro61:
-      gFwFeaturesMask         = 0xFF1FFF7F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFF1FFF7F;
       break;
     case iMacPro11:
     case MacBookAir91:
-      gFwFeaturesMask         = 0xFF9FFF3F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFF9FFF3F;
       break;
     case iMac191:
     case iMac192:
     case iMac201:
     case iMac202:
     case MacMini81:
-      gFwFeaturesMask         = 0xFFDFFF7F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFFDFFF7F;
       break;
     case MacBookPro162:
     case MacBookPro163:
     case MacBookPro164:
-      gFwFeaturesMask         = 0xFFFFFF7F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFFFFFF7F;
       break;
 
     // Verified list from Users
@@ -941,15 +946,15 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac161:
     case iMac162:
     case MacPro51:
-      gFwFeaturesMask         = 0xFF1FFF3F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFF1FFF3F;
       break;
 
     case MacPro71:
-      gFwFeaturesMask         = 0xFF9FFF3F;
+      gSettings.Smbios.gFwFeaturesMask         = 0xFF9FFF3F;
       break;
 
     default:
-      gFwFeaturesMask         = 0xFFFFFFFF; //unknown - use oem SMBIOS value to be default
+      gSettings.Smbios.gFwFeaturesMask         = 0xFFFFFFFF; //unknown - use oem SMBIOS value to be default
       break;
   }
   
@@ -963,7 +968,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac182:
     case iMac183:
     case MacPro71:
-      gPlatformFeature        = 0x00;
+      gSettings.Smbios.gPlatformFeature        = 0x00;
       break;
     case MacMini61:
     case MacMini62:
@@ -975,7 +980,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
     case iMac144:
     case iMac151:
-      gPlatformFeature        = 0x01;
+      gSettings.Smbios.gPlatformFeature        = 0x01;
       break;
     case MacBookPro111:
     case MacBookPro112:
@@ -985,15 +990,15 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro121:
     case MacBookAir71:
     case MacBookAir72:
-      gPlatformFeature        = 0x02;
+      gSettings.Smbios.gPlatformFeature        = 0x02;
       break;
     case MacMini71:
     case iMac161:
     case iMac162:
-      gPlatformFeature        = 0x03;
+      gSettings.Smbios.gPlatformFeature        = 0x03;
       break;
     case MacPro61:
-      gPlatformFeature        = 0x04;
+      gSettings.Smbios.gPlatformFeature        = 0x04;
       break;
     case MacBook81:
     case MacBook91:
@@ -1004,7 +1009,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro141:
     case MacBookPro142:
     case MacBookPro143:
-      gPlatformFeature        = 0x1A;
+      gSettings.Smbios.gPlatformFeature        = 0x1A;
       break;
     case iMacPro11:
     case MacMini81:
@@ -1012,7 +1017,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac192:
     case iMac201:
     case iMac202:
-      gPlatformFeature        = 0x20;
+      gSettings.Smbios.gPlatformFeature        = 0x20;
       break;
     case MacBookPro151:
     case MacBookPro152:
@@ -1022,12 +1027,12 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro162:
     case MacBookPro163:
     case MacBookPro164:
-      gPlatformFeature        = 0x32;
+      gSettings.Smbios.gPlatformFeature        = 0x32;
       break;
     case MacBookAir81:
     case MacBookAir82:
     case MacBookAir91:
-      gPlatformFeature        = 0x3A;
+      gSettings.Smbios.gPlatformFeature        = 0x3A;
       break;
           
    // It is nonsense, ASCII code сharacter "2" = 0x32 != 0x02. Don't use ioreg, so that not to be confused. Use dmidecode dump.
@@ -1035,18 +1040,18 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
    // case MacBookPro153:
    // case MacBookPro154:
    // case MacBookPro161:
-   //   gPlatformFeature        = 0x02;
+   //   gSettings.Smbios.gPlatformFeature        = 0x02;
    //   break;
 
     default:
-      gPlatformFeature        = 0xFFFF; // disabled
+      gSettings.Smbios.gPlatformFeature        = 0xFFFF; // disabled
       break;
   }
 
   if ((Model > MacPro31) && (Model < MacPro71)) {
-    gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
+    gSettings.Smbios.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
   } else {
-    gSettings.BoardType = BaseBoardTypeMotherBoard; //0xA;
+    gSettings.Smbios.BoardType = BaseBoardTypeMotherBoard; //0xA;
   }
 
   // MiscChassisType
@@ -1083,13 +1088,13 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro114:
     case MacBookPro115:
     case MacMini71:
-      gSettings.ChassisType = MiscChassisTypeNotebook; //0x0A;
+      gSettings.Smbios.ChassisType = MiscChassisTypeNotebook; //0x0A;
       switch (Model) {
         case MacMini71:
-          gSettings.Mobile      = FALSE;
+          gSettings.Smbios.Mobile      = FALSE;
           break;
         default:
-          gSettings.Mobile      = TRUE;
+          gSettings.Smbios.Mobile      = TRUE;
           break;
       }
       break;
@@ -1129,7 +1134,7 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac201:
     case iMac202:
     case iMacPro11:
-      gSettings.ChassisType = MiscChassisTypeLapTop; //0x09;
+      gSettings.Smbios.ChassisType = MiscChassisTypeLapTop; //0x09;
       switch (Model) {
         case MacMini81:
         case iMac161:
@@ -1143,10 +1148,10 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
         case iMac201:
         case iMac202:
         case iMacPro11:
-          gSettings.Mobile      = FALSE;
+          gSettings.Smbios.Mobile      = FALSE;
           break;
         default:
-          gSettings.Mobile      = TRUE;
+          gSettings.Smbios.Mobile      = TRUE;
           break;
       }
       break;
@@ -1165,8 +1170,8 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacBookPro61:
     case MacBookPro62:
     case MacBookPro71:
-      gSettings.ChassisType = MiscChassisTypePortable; //0x08;
-      gSettings.Mobile      = TRUE;
+      gSettings.Smbios.ChassisType = MiscChassisTypePortable; //0x08;
+      gSettings.Smbios.Mobile      = TRUE;
       break;
 
     case iMac41:
@@ -1191,14 +1196,14 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case iMac143:
     case iMac144:
     case iMac151:
-      gSettings.ChassisType = MiscChassisTypeAllInOne; //0x0D;
-      gSettings.Mobile      = FALSE;
+      gSettings.Smbios.ChassisType = MiscChassisTypeAllInOne; //0x0D;
+      gSettings.Smbios.Mobile      = FALSE;
       break;
 
     case MacMini11:
     case MacMini21:
-      gSettings.ChassisType = MiscChassisTypeLowProfileDesktop; //0x04;
-      gSettings.Mobile      = FALSE;
+      gSettings.Smbios.ChassisType = MiscChassisTypeLowProfileDesktop; //0x04;
+      gSettings.Smbios.Mobile      = FALSE;
       break;
 
     case MacMini31:
@@ -1208,188 +1213,188 @@ void SetDMISettingsForModel(MACHINE_TYPES Model, BOOLEAN Redefine)
     case MacMini53:
     case MacMini61:
     case MacMini62:
-      gSettings.ChassisType = MiscChassisTypeLunchBox; //0x10;
-      gSettings.Mobile      = FALSE;
+      gSettings.Smbios.ChassisType = MiscChassisTypeLunchBox; //0x10;
+      gSettings.Smbios.Mobile      = FALSE;
       break;
 
     case MacPro41:
     case MacPro51:
     case MacPro71:
-      gSettings.ChassisType = MiscChassisTypeTower; //0x07;
-      gSettings.Mobile      = FALSE;
+      gSettings.Smbios.ChassisType = MiscChassisTypeTower; //0x07;
+      gSettings.Smbios.Mobile      = FALSE;
       break;
 
     case MacPro11:
     case MacPro21:
     case MacPro31:
     case MacPro61:
-      gSettings.ChassisType = MiscChassisTypeUnknown; //0x02; this is a joke but think different!
-      gSettings.Mobile      = FALSE;
+      gSettings.Smbios.ChassisType = MiscChassisTypeUnknown; //0x02; this is a joke but think different!
+      gSettings.Smbios.Mobile      = FALSE;
       break;
           
     case Xserve11:
     case Xserve21:
     case Xserve31:
-      gSettings.ChassisType = MiscChassisTypeRackMountChassis; //0x17;
-      gSettings.Mobile      = FALSE;
+      gSettings.Smbios.ChassisType = MiscChassisTypeRackMountChassis; //0x17;
+      gSettings.Smbios.Mobile      = FALSE;
       break;
 
     default: //unknown - use oem SMBIOS value to be default
-      gSettings.Mobile      = gMobile;
-      gSettings.ChassisType = 0; //let SMBIOS value to be
+      gSettings.Smbios.Mobile      = gMobile;
+      gSettings.Smbios.ChassisType = 0; //let SMBIOS value to be
       /*if (gMobile) {
-        gSettings.ChassisType = 10; //notebook
+        gSettings.Smbios.ChassisType = 10; //notebook
       } else {
-        gSettings.ChassisType = MiscChassisTypeDeskTop; //0x03;
+        gSettings.Smbios.ChassisType = MiscChassisTypeDeskTop; //0x03;
       }*/
       break;
   }
 
   //RBr helper
   if (ApplePlatformData[Model].smcBranch[0] != 'N') {
-    AsciiStrCpyS(gSettings.RBr, 8, ApplePlatformData[Model].smcBranch.c_str());
+    AsciiStrCpyS(gSettings.Smbios.RBr, 8, ApplePlatformData[Model].smcBranch.c_str());
   } else {
     switch (gCPUStructure.Model) {
       case CPU_MODEL_PENTIUM_M:
       case CPU_MODEL_CELERON:
-        AsciiStrCpyS (gSettings.RBr, 8, "m70");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "m70");
         break;
                 
       case CPU_MODEL_YONAH:
-        AsciiStrCpyS (gSettings.RBr, 8, "k22");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k22");
         break;
                 
       case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpyS (gSettings.RBr, 8, "m75");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "m75");
         break;
                 
       case CPU_MODEL_PENRYN:
-        if (gSettings.Mobile) {
-          AsciiStrCpyS (gSettings.RBr, 8, "m82");
+        if (gSettings.Smbios.Mobile) {
+          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "m82");
         } else {
-          AsciiStrCpyS (gSettings.RBr, 8, "k36");
+          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k36");
         }
         break;
                 
       case CPU_MODEL_SANDY_BRIDGE:
-        if (gSettings.Mobile) {
-          AsciiStrCpyS (gSettings.RBr, 8, "k90i");
+        if (gSettings.Smbios.Mobile) {
+          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k90i");
         } else {
-          AsciiStrCpyS (gSettings.RBr, 8, "k60");
+          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k60");
         }
         break;
                 
       case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpyS (gSettings.RBr, 8, "j30");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j30");
         break;
                 
       case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpyS (gSettings.RBr, 8, "j90");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j90");
         break;
                 
       case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpyS (gSettings.RBr, 8, "j44");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j44");
         break;
                 
       case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
-        AsciiStrCpyS (gSettings.RBr, 8, "j52");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j52");
         break;
                 
       case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpyS (gSettings.RBr, 8, "j95j95am");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j95j95am");
         break;
                 
       case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpyS (gSettings.RBr, 8, "2016mb");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "2016mb");
         break;
                 
       case CPU_MODEL_KABYLAKE1: //Mobile
-        AsciiStrCpyS (gSettings.RBr, 8, "2017mbp");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "2017mbp");
         break;
                 
       case CPU_MODEL_KABYLAKE2: //Desktop
-        AsciiStrCpyS (gSettings.RBr, 8, "j133_4_5");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j133_4_5");
         break;
                 
       default:
-        AsciiStrCpyS (gSettings.RBr, 8, "t9");
+        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "t9");
         break;
     }
   }
 
   //RPlt helper
   if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
-    AsciiStrCpyS(gSettings.RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
+    AsciiStrCpyS(gSettings.Smbios.RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
   } else {
     switch (gCPUStructure.Model) {
       case CPU_MODEL_PENTIUM_M:
       case CPU_MODEL_CELERON:
-        AsciiStrCpyS (gSettings.RPlt, 8, "m70");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "m70");
         break;
 
       case CPU_MODEL_YONAH:
-        AsciiStrCpyS (gSettings.RPlt, 8, "k22");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k22");
         break;
 
       case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpyS (gSettings.RPlt, 8, "m75");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "m75");
         break;
 
       case CPU_MODEL_PENRYN:
-        if (gSettings.Mobile) {
-          AsciiStrCpyS (gSettings.RPlt, 8, "m82");
+        if (gSettings.Smbios.Mobile) {
+          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "m82");
         } else {
-          AsciiStrCpyS (gSettings.RPlt, 8, "k36");
+          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k36");
         }
         break;
 
       case CPU_MODEL_SANDY_BRIDGE:
-        if (gSettings.Mobile) {
-          AsciiStrCpyS (gSettings.RPlt, 8, "k90i");
+        if (gSettings.Smbios.Mobile) {
+          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k90i");
         } else {
-          AsciiStrCpyS (gSettings.RPlt, 8, "k60");
+          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k60");
         }
         break;
 
       case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpyS (gSettings.RPlt, 8, "j30");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j30");
         break;
 
       case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpyS (gSettings.RPlt, 8, "j90");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j90");
         break;
 
       case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpyS (gSettings.RPlt, 8, "j44");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j44");
         break;
 
       case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
-        AsciiStrCpyS (gSettings.RPlt, 8, "j52");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j52");
         break;
 
       case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpyS (gSettings.RPlt, 8, "j95");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j95");
         break;
 
       case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpyS (gSettings.RPlt, 8, "j79");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j79");
         break;
 
       case CPU_MODEL_KABYLAKE1: //Mobile
-        AsciiStrCpyS (gSettings.RPlt, 8, "j130a");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j130a");
         break;
 
       case CPU_MODEL_KABYLAKE2: //Desktop
-        AsciiStrCpyS (gSettings.RPlt, 8, "j135");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j135");
         break;
 
       default:
-        AsciiStrCpyS (gSettings.RPlt, 8, "t9");
+        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "t9");
         break;
     }
   }
-  CopyMem(gSettings.REV,  ApplePlatformData[Model].smcRevision, 6);
-  CopyMem(gSettings.EPCI, &ApplePlatformData[Model].smcConfig,  4);
+  CopyMem(gSettings.Smbios.REV,  ApplePlatformData[Model].smcRevision, 6);
+  CopyMem(gSettings.Smbios.EPCI, &ApplePlatformData[Model].smcConfig,  4);
 }
 
 MACHINE_TYPES GetModelFromString(const XString8& ProductName)
@@ -1434,10 +1439,10 @@ void GetDefaultSettings()
   gSettings.ACPI.DSDT.DsdtName   = L"DSDT.aml"_XSW;
   gSettings.SystemParameters.BacklightLevel       = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.SystemParameters.BacklightLevelConfig = FALSE;
-  gSettings.TrustSMBIOS          = TRUE;
+  gSettings.Smbios.TrustSMBIOS          = TRUE;
 
-  gSettings.SmUUID = nullGuidAsString;
-  gSettings.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
+  gSettings.Smbios.SmUUID = nullGuidAsString;
+  gSettings.BootGraphics.DefaultBackgroundColor = 0x80000000; //the value to delete the variable
   GlobalConfig.RtROM.setEmpty();
   gSettings.RtVariables.CsrActiveConfig      = 0xFFFF;
   gSettings.RtVariables.BooterConfig         = 0;
@@ -1449,19 +1454,28 @@ void GetDefaultSettings()
     FreePool(OldCfgStr);
   }
   gSettings.Boot.DisableCloverHotkeys = FALSE;
-  gSettings.UIScale              = 1;
+  gSettings.BootGraphics.UIScale              = 1;
   
   ResumeFromCoreStorage          = FALSE;
 }
 
-void GetDefaultCpuSettings()
+/*
+ * To ease copy/paste and text replacement from GetUserSettings, the parameter has the same name as the global
+ * and is passed by non-const reference.
+ * This temporary during the refactoring
+ * All code from this comes from settings.cpp. I am taking out all the init code from settings.cpp so I can replace the reading layer.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
+void GetDefaultCpuSettings(SETTINGS_DATA& gSettings)
 {
+#pragma GCC diagnostic pop
   DbgHeader("GetDefaultCpuSettings");
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
   Model             = GetDefaultModel();
   gSettings.CPU.CpuType  = GetAdvancedCpuType();
-  SetDMISettingsForModel(Model, TRUE);
+  SetDMISettingsForModel(gSettings, Model, TRUE);
   
   if (gCPUStructure.Model >= CPU_MODEL_IVY_BRIDGE) {
     gSettings.ACPI.SSDT.Generate.GeneratePStates    = TRUE;

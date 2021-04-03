@@ -3,7 +3,7 @@
 //  cpp_tests
 //
 //  Created by jief on 25.04.20.
-//  Copyright © 2020 JF Knudsen. All rights reserved.
+//  Copyright © 2020 jief_machack. All rights reserved.
 //
 
 #ifndef XToolsCommon_h

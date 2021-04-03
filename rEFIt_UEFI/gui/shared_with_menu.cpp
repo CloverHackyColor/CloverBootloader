@@ -97,13 +97,13 @@ void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
     return;
   }
   for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
-    if (gSettings.OptionsBits & (1 << Index)) {
+    if (GlobalConfig.OptionsBits & (1 << Index)) {
       Entry->LoadOptions.AddID(ArgOptional[Index]);
     }
   }
   //remove unchecked options
   for (Index = 0; Index < INX_NVWEBON; Index++) { //not including INX_NVWEBON
-    if ((gSettings.OptionsBits & (1 << Index)) == 0) {
+    if ((GlobalConfig.OptionsBits & (1 << Index)) == 0) {
       Entry->LoadOptions.remove(ArgOptional[Index]);
     }
   }
@@ -111,7 +111,7 @@ void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
   if (Entry->getLOADER_ENTRY()) {
     LOADER_ENTRY* loaderEntry = Entry->getLOADER_ENTRY();
     // Only for non-legacy entries, as LEGACY_ENTRY doesn't have OSVersion
-    if (gSettings.OptionsBits & OPT_NVWEBON) {
+    if (GlobalConfig.OptionsBits & OPT_NVWEBON) {
       if ( loaderEntry->macOSVersion >= MacOsVersion("10.12"_XS8) ) {
         gSettings.SystemParameters.NvidiaWeb = TRUE;
       } else {
@@ -120,7 +120,7 @@ void DecodeOptions(REFIT_MENU_ITEM_BOOTNUM *Entry)
         Entry->LoadOptions.AddID(ArgOptional[INX_NVWEBON]);
       }
     }
-    if ((gSettings.OptionsBits & OPT_NVWEBON) == 0) {
+    if ((GlobalConfig.OptionsBits & OPT_NVWEBON) == 0) {
       if ( loaderEntry->macOSVersion >= MacOsVersion("10.12"_XS8)) {
         gSettings.SystemParameters.NvidiaWeb = FALSE;
       } else {

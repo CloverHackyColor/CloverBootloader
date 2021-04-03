@@ -1855,7 +1855,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume, const MacOsVersion& OSVersion)
     DBG("old FADT length=%X\n", oldLength);
     CopyMem(newFadt, FadtPointer, oldLength); //old data
     newFadt->Header.Length = 0xF4;
-    CopyMem(newFadt->Header.OemId, BiosVendor.c_str(), 6);
+    CopyMem(newFadt->Header.OemId, AppleBiosVendor.c_str(), 6);
     if (newFadt->Header.Revision < EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
       newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
     }

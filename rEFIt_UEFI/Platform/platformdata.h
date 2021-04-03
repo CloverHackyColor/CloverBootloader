@@ -10,6 +10,7 @@
 
 
 #include "../cpp_foundation/XString.h"
+#include "../Platform/Settings.h"
 
 typedef enum {
 
@@ -142,19 +143,14 @@ typedef enum {
 
 constexpr LString8 DefaultMemEntry        = "N/A";
 constexpr LString8 DefaultSerial          = "CT288GT9VT6";
-constexpr LString8 BiosVendor             = "Apple Inc.";
+constexpr LString8 AppleBiosVendor        = "Apple Inc.";
 constexpr LString8 AppleManufacturer      = "Apple Computer, Inc."; //Old name, before 2007
 constexpr LString8 AppleBoardSN           = "C02140302D5DMT31M";
 constexpr LString8 AppleBoardLocation     = "Part Component";
 
-extern UINT32                         gFwFeatures;
-extern UINT32                         gFwFeaturesMask;
-extern UINT64                         gPlatformFeature;
-
-
 
 void
-SetDMISettingsForModel (
+SetDMISettingsForModel (SETTINGS_DATA& gSettings, 
   MACHINE_TYPES Model,
   BOOLEAN Redefine
   );
@@ -167,6 +163,6 @@ void
 GetDefaultSettings(void);
 
 void
-GetDefaultCpuSettings(void);
+GetDefaultCpuSettings(SETTINGS_DATA& gSettings);
 
 #endif /* PLATFORM_PLATFORMDATA_H_ */

@@ -3,7 +3,7 @@
 //  cpp_tests
 //
 //  Created by Jief on 24/08/2020.
-//  Copyright © 2020 JF Knudsen. All rights reserved.
+//  Copyright © 2020 jief_machack. All rights reserved.
 //
 
 #ifndef base64_h

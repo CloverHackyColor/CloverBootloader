@@ -148,7 +148,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.ACPI.DSDT.DsdtName); // 1-> 2
   InputItems[InputItemsCount].ItemType = UNIString; //2
-  InputItems[InputItemsCount++].SValue.takeValueFrom(gSettings.BlockKexts);
+  InputItems[InputItemsCount++].SValue = GlobalConfig.BlockKexts;
 
   InputItems[InputItemsCount].ItemType = RadioSwitch;  //3 - Themes chooser
   InputItems[InputItemsCount++].IValue = 3;
@@ -180,7 +180,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount++].BValue = gSettings.Graphics.PatchVBios;
   InputItems[InputItemsCount].ItemType = Decimal;  //17
-	InputItems[InputItemsCount++].SValue.SWPrintf("0x%llX", gPlatformFeature);
+	InputItems[InputItemsCount++].SValue.SWPrintf("0x%llX", gSettings.Smbios.gPlatformFeature);
   InputItems[InputItemsCount].ItemType = Hex;  //18
 	InputItems[InputItemsCount++].SValue.SWPrintf("0x%hX", gSettings.SystemParameters.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
@@ -247,7 +247,7 @@ void FillInputs(BOOLEAN New)
 
   InputItemsCount = 44;
   InputItems[InputItemsCount].ItemType = BoolValue; //44
-  InputItems[InputItemsCount++].BValue = gSettings.KextPatchesAllowed;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.KextPatchesAllowed;
   InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount++].BValue = gSettings.KernelAndKextPatches.EightApple;
   InputItems[InputItemsCount].ItemType = BoolValue; //46
@@ -294,10 +294,10 @@ void FillInputs(BOOLEAN New)
   // end of change
 
   InputItems[InputItemsCount].ItemType = Hex;  //62
-  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gFwFeatures);
+  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.Smbios.gFwFeatures);
 
   InputItems[InputItemsCount].ItemType = Hex;  //63
-  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gFwFeaturesMask);
+  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.Smbios.gFwFeaturesMask);
 
   // Debug for KernelAndKextPatches
   InputItems[InputItemsCount].ItemType = BoolValue; //64
@@ -314,9 +314,9 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = CheckBit; //67
   InputItems[InputItemsCount++].IValue = gSettings.ACPI.DSDT.FixDsdt;
   InputItems[InputItemsCount].ItemType = CheckBit; //68
-  InputItems[InputItemsCount++].IValue = gSettings.OptionsBits;
+  InputItems[InputItemsCount++].IValue = GlobalConfig.OptionsBits;
   InputItems[InputItemsCount].ItemType = CheckBit; //69
-  InputItems[InputItemsCount++].IValue = gSettings.FlagsBits;
+  InputItems[InputItemsCount++].IValue = GlobalConfig.FlagsBits;
 
   InputItems[InputItemsCount].ItemType = Decimal;  //70
 	InputItems[InputItemsCount++].SValue.SWPrintf("%02lld", gSettings.GUI.Mouse.PointerSpeed);
@@ -334,30 +334,30 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = Hex;  //75
 	InputItems[InputItemsCount++].SValue.SWPrintf("0x%04hX", GlobalConfig.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
-  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.EnabledCores);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%02d", GlobalConfig.EnabledCores);
   InputItems[InputItemsCount].ItemType = Decimal;  //77
   InputItems[InputItemsCount++].SValue.SWPrintf("%02d", gSettings.CPU.SavingMode);
 
   InputItems[InputItemsCount].ItemType = ASString;  //78
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ProductName.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.ProductName.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //79
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.VersionNr.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.VersionNr.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //80
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.SerialNr.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.SerialNr.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //81
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardNumber.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.BoardNumber.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //82
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardSerialNumber.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.BoardSerialNumber.c_str());
   InputItems[InputItemsCount].ItemType = Decimal;  //83
-  InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.BoardType);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.Smbios.BoardType);
   InputItems[InputItemsCount].ItemType = ASString;  //84
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.BoardVersion.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.Smbios.BoardVersion.c_str());
   InputItems[InputItemsCount].ItemType = Decimal;  //85
-  InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.ChassisType);
+  InputItems[InputItemsCount++].SValue.SWPrintf("%d", gSettings.Smbios.ChassisType);
   InputItems[InputItemsCount].ItemType = ASString;  //86
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.RomVersion.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", GlobalConfig.RomVersionUsed.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //87
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.ReleaseDate.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", GlobalConfig.ReleaseDateUsed.c_str());
 
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount++].BValue = gSettings.ACPI.SSDT.DoubleFirstState;
@@ -408,7 +408,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount].ItemType = BoolValue; //107
   InputItems[InputItemsCount++].BValue = gSettings.Devices.NoDefaultProperties;
   InputItems[InputItemsCount].ItemType = BoolValue; //108
-  InputItems[InputItemsCount++].BValue = gSettings.KernelPatchesAllowed;
+  InputItems[InputItemsCount++].BValue = GlobalConfig.KernelPatchesAllowed;
 
   InputItems[InputItemsCount].ItemType = Hex; //109
   InputItems[InputItemsCount++].SValue.SWPrintf("%01X", gSettings.Graphics.DualLink);
@@ -431,7 +431,7 @@ void FillInputs(BOOLEAN New)
   InputItems[InputItemsCount++].IValue = 116;
 
   InputItems[InputItemsCount].ItemType = ASString;  //117
-	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.EfiVersion.c_str());
+	InputItems[InputItemsCount++].SValue.SWPrintf("%s", GlobalConfig.EfiVersionUsed.c_str());
   InputItems[InputItemsCount].ItemType = ASString;  //118
 	InputItems[InputItemsCount++].SValue.SWPrintf("%s", gSettings.RtVariables.BooterCfgStr.c_str());
 
@@ -485,7 +485,7 @@ void ApplyInputs(void)
   }
   i++; //2
   if (InputItems[i].Valid) {
-	  snwprintf(gSettings.BlockKexts, sizeof(gSettings.BlockKexts), "%ls", InputItems[i].SValue.wc_str());
+	  GlobalConfig.BlockKexts = InputItems[i].SValue;
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -556,8 +556,8 @@ void ApplyInputs(void)
   }
   i++; //17
   if (InputItems[i].Valid) {
-    gPlatformFeature = (UINT64)StrHexToUint64(InputItems[i].SValue.wc_str());
-	  DBG("applied PlatformFeature=0x%llX\n", gPlatformFeature);
+    gSettings.Smbios.gPlatformFeature = (UINT64)StrHexToUint64(InputItems[i].SValue.wc_str());
+	  DBG("applied PlatformFeature=0x%llX\n", gSettings.Smbios.gPlatformFeature);
   }
   i++; //18 | Download-Fritz: There is no GUI element for BacklightLevel; please revise
   if (InputItems[i].Valid) {
@@ -628,7 +628,7 @@ void ApplyInputs(void)
 
   i = 44;
   if (InputItems[i].Valid) {
-    gSettings.KextPatchesAllowed = InputItems[i].BValue;
+    GlobalConfig.KextPatchesAllowed = InputItems[i].BValue;
     GlobalConfig.gBootChanged = TRUE;
   }
   i++; //45
@@ -712,13 +712,13 @@ void ApplyInputs(void)
   }
   i++; //62
   if (InputItems[i].Valid) {
-    gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
-    DBG("applied FirmwareFeatures=0x%X\n", gFwFeatures);
+    gSettings.Smbios.gFwFeatures = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
+    DBG("applied FirmwareFeatures=0x%X\n", gSettings.Smbios.gFwFeatures);
   }
   i++; //63
   if (InputItems[i].Valid) {
-    gFwFeaturesMask = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
-    DBG("applied FirmwareFeaturesMask=0x%X\n", gFwFeaturesMask);
+    gSettings.Smbios.gFwFeaturesMask = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
+    DBG("applied FirmwareFeaturesMask=0x%X\n", gSettings.Smbios.gFwFeaturesMask);
   }
   i++; //64
   if (InputItems[i].Valid) {
@@ -742,11 +742,11 @@ void ApplyInputs(void)
   }
   i++; //68
   if (InputItems[i].Valid) {
-    gSettings.OptionsBits = InputItems[i].IValue;
+    GlobalConfig.OptionsBits = InputItems[i].IValue;
   }
   i++; //69
   if (InputItems[i].Valid) {
-    gSettings.FlagsBits = InputItems[i].IValue;
+    GlobalConfig.FlagsBits = InputItems[i].IValue;
   }
 
 
@@ -784,7 +784,7 @@ void ApplyInputs(void)
 
   i++; //76
   if (InputItems[i].Valid) {
-    gSettings.EnabledCores = (UINT8)StrDecimalToUintn(InputItems[i].SValue.wc_str());
+    GlobalConfig.EnabledCores = (UINT8)StrDecimalToUintn(InputItems[i].SValue.wc_str());
   }
   i++; //77
   if (InputItems[i].Valid) {
@@ -793,50 +793,50 @@ void ApplyInputs(void)
 
   i++; //78
   if (InputItems[i].Valid) {
-	  gSettings.ProductName = InputItems[i].SValue;
+	  gSettings.Smbios.ProductName = InputItems[i].SValue;
     // let's fill all other fields based on this ProductName
     // to serve as default
-    Model = GetModelFromString(gSettings.ProductName);
+    Model = GetModelFromString(gSettings.Smbios.ProductName);
     if (Model != MaxMachineType) {
-      SetDMISettingsForModel(Model, FALSE);
+      SetDMISettingsForModel(gSettings, Model, FALSE);
     }
   }
 
   i++; //79
   if (InputItems[i].Valid) {
-	  gSettings.VersionNr = InputItems[i].SValue;
+	  gSettings.Smbios.VersionNr = InputItems[i].SValue;
   }
   i++; //80
   if (InputItems[i].Valid) {
-	  gSettings.SerialNr = InputItems[i].SValue;
+	  gSettings.Smbios.SerialNr = InputItems[i].SValue;
   }
   i++; //81
   if (InputItems[i].Valid) {
-	  gSettings.BoardNumber = InputItems[i].SValue;
+	  gSettings.Smbios.BoardNumber = InputItems[i].SValue;
   }
   i++; //82
   if (InputItems[i].Valid) {
-	  gSettings.BoardSerialNumber = InputItems[i].SValue;
+	  gSettings.Smbios.BoardSerialNumber = InputItems[i].SValue;
   }
   i++; //83
   if (InputItems[i].Valid) {
-    gSettings.BoardType = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x0F);
+    gSettings.Smbios.BoardType = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x0F);
   }
   i++; //84
   if (InputItems[i].Valid) {
-	  gSettings.BoardVersion = InputItems[i].SValue;
+	  gSettings.Smbios.BoardVersion = InputItems[i].SValue;
   }
   i++; //85
   if (InputItems[i].Valid) {
-    gSettings.ChassisType = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x0F);
+    gSettings.Smbios.ChassisType = (UINT8)(StrDecimalToUintn(InputItems[i].SValue.wc_str()) & 0x0F);
   }
   i++; //86
   if (InputItems[i].Valid) {
-	  gSettings.RomVersion = InputItems[i].SValue;
+	  GlobalConfig.RomVersionUsed = InputItems[i].SValue;
   }
   i++; //87
   if (InputItems[i].Valid) {
-	  gSettings.ReleaseDate = InputItems[i].SValue;
+	  GlobalConfig.ReleaseDateUsed = InputItems[i].SValue;
   }
 
   i++; //88
@@ -858,7 +858,7 @@ void ApplyInputs(void)
       Status = GetUserSettings(dict, gSettings);
       if (gConfigDict[2]) gConfigDict[2]->FreeTag();
       gConfigDict[2] = dict;
-      snwprintf(gSettings.ConfigName, 64, "%ls", ConfigsList[OldChosenConfig]);
+//      GlobalConfig.ConfigName.takeValueFrom(ConfigsList[OldChosenConfig]);
     }
     FillInputs(FALSE);
     NeedSave = FALSE;
@@ -962,7 +962,7 @@ void ApplyInputs(void)
 
   i++; //108
   if (InputItems[i].Valid) {
-    gSettings.KernelPatchesAllowed = InputItems[i].BValue;
+    GlobalConfig.KernelPatchesAllowed = InputItems[i].BValue;
     GlobalConfig.gBootChanged = TRUE;
   }
 
@@ -1007,7 +1007,7 @@ void ApplyInputs(void)
   }
   i++; //117
   if (InputItems[i].Valid) {
-	  gSettings.EfiVersion = InputItems[i].SValue;
+	  GlobalConfig.EfiVersionUsed = InputItems[i].SValue;
   }
   i++; //118
   if (InputItems[i].Valid) {
@@ -1139,7 +1139,7 @@ void HelpRefit(void)
     //else {
     //  HelpMenu.TitleImage.setEmpty();
     //}
-    switch (gSettings.GUI.Language)
+    switch (gSettings.GUI.languageCode)
     {
       case russian:
         HelpMenu.AddMenuInfo_f("ESC - Выход из подменю, обновление главного меню");
@@ -1999,8 +1999,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuSmbios()
   Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_SMBIOS, "SMBIOS->"_XS8);
 
 	SubScreen->AddMenuInfoLine_f("%s", gCPUStructure.BrandString);
-	SubScreen->AddMenuInfoLine_f("%s", gSettings.OEMProduct.c_str());
-	SubScreen->AddMenuInfoLine_f("with board %s", gSettings.OEMBoard.c_str());
+	SubScreen->AddMenuInfoLine_f("%s", GlobalConfig.OEMProductFromSmbios.c_str());
+	SubScreen->AddMenuInfoLine_f("with board %s", GlobalConfig.OEMBoardFromSmbios.c_str());
 
   SubScreen->AddMenuItemInput(78,  "Product Name:", TRUE);
   SubScreen->AddMenuItemInput(79,  "Product Version:", TRUE);

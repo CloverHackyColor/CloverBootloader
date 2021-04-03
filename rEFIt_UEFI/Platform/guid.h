@@ -11,6 +11,9 @@
 #include "../cpp_foundation/XStringArray.h"
 #include "../cpp_foundation/unicode_conversions.h"
 
+extern "C" {
+#include <Uefi/UefiBaseType.h> // for EFI_GUID
+}
 
 extern "C" EFI_GUID  gEfiMiscSubClassGuid;
 

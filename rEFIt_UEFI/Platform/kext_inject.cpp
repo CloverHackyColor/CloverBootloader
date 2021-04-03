@@ -909,7 +909,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
       KextBase = RoundPage(KextBase + KextEntry->kext.length);
       DBG_RT(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
       DBG(" %llu - %s\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
-      if (gSettings.KextPatchesAllowed) {
+      if (GlobalConfig.KextPatchesAllowed) {
         CHAR8  SavedValue;
         CHAR8 *InfoPlist = (CHAR8*)(UINTN)drvinfo->infoDictPhysAddr;
         SavedValue = InfoPlist[drvinfo->infoDictLength];

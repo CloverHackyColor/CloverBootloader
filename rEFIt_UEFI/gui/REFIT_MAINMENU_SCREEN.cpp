@@ -760,12 +760,12 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
         }
         SubMenuIndex = -1;
 
-        gSettings.OptionsBits = EncodeOptions(TmpArgs);
-  //      DBG("main OptionsBits = 0x%X\n", gSettings.OptionsBits);
+        GlobalConfig.OptionsBits = EncodeOptions(TmpArgs);
+  //      DBG("main OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
 
         if (MainChosenEntry->getLOADER_ENTRY()) {
-          gSettings.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
-  //        DBG("add OptionsBits = 0x%X\n", gSettings.OptionsBits);
+          GlobalConfig.OptionsBits |= EncodeOptions(MainChosenEntry->getLOADER_ENTRY()->LoadOptions);
+  //        DBG("add OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
         }
 
         if (MainChosenEntry->getREFIT_MENU_ITEM_BOOTNUM()) {
@@ -775,9 +775,9 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
 
         if (MainChosenEntry->getLOADER_ENTRY()) {
           // Only for non-legacy entries, as LEGACY_ENTRY doesn't have Flags
-          gSettings.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
+          GlobalConfig.FlagsBits = MainChosenEntry->getLOADER_ENTRY()->Flags;
         }
-  //      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", gSettings.FlagsBits);
+  //      DBG(" MainChosenEntry with FlagsBits = 0x%X\n", GlobalConfig.FlagsBits);
 
         SubMenuExit = 0;
         while (!SubMenuExit) {
@@ -808,7 +808,7 @@ UINTN REFIT_MAINMENU_SCREEN::RunMainMenu(IN INTN DefaultSelection, OUT REFIT_ABS
             DBG(" get MainChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)MainChosenEntry)->Flags);
             if (OSFLAG_ISUNSET(TempChosenEntry->getLOADER_ENTRY()->Flags, OSFLAG_NODEFAULTARGS)) {
               DecodeOptions(TempChosenEntry->getLOADER_ENTRY());
-  //            DBG("get OptionsBits = 0x%X\n", gSettings.OptionsBits);
+  //            DBG("get OptionsBits = 0x%X\n", GlobalConfig.OptionsBits);
   //            DBG(" TempChosenEntry FlagsBits = 0x%X\n", ((LOADER_ENTRY*)TempChosenEntry)->Flags);
             }
             // copy also loadoptions from subentry to mainentry

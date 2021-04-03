@@ -384,7 +384,7 @@ CONST CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 s
     }
   }
   /* OK there is no vendor id here lets try to match the partnum if it exists */
-  if (AsciiStrStr(slot->PartNo,"GU332") == slot->PartNo) { // Unifosa fingerprint
+  if ( slot->PartNo.startWithOrEqualTo("GU332") ) { // Unifosa fingerprint
     return "Unifosa";
   }
   return "NoName";
@@ -808,9 +808,15 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
     if (gRAM.SPD[i].ModuleSize == 0) continue;
     //spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
     //gRAM Type = spd_mem_to_smbios[spd_type];
-    gRAM.SPD[i].PartNo = getDDRPartNum(spdbuf, base, i);
-    gRAM.SPD[i].Vendor = getVendorName(&(gRAM.SPD[i]), spdbuf, base, i);
-    gRAM.SPD[i].SerialNo = getDDRSerial(spdbuf);
+    gRAM.SPD[i].PartNo.takeValueFrom(getDDRPartNum(spdbuf, base, i));
+    gRAM.SPD[i].PartNo.trim();
+    gRAM.SPD[i].PartNo.deleteCharsAtPos(gRAM.SPD[i].PartNo.indexOf(' '), MAX_XSIZE);
+    gRAM.SPD[i].Vendor.takeValueFrom(getVendorName(&(gRAM.SPD[i]), spdbuf, base, i));
+    gRAM.SPD[i].Vendor.trim();
+    gRAM.SPD[i].Vendor.deleteCharsAtPos(gRAM.SPD[i].Vendor.indexOf(' '), MAX_XSIZE);
+    gRAM.SPD[i].SerialNo.takeValueFrom(getDDRSerial(spdbuf));
+    gRAM.SPD[i].SerialNo.trim();
+    gRAM.SPD[i].SerialNo.deleteCharsAtPos(gRAM.SPD[i].SerialNo.indexOf(' '), MAX_XSIZE);
     //XXX - when we can FreePool allocated for these buffers? No this is pointer copy
     // determine spd speed
     speed = getDDRspeedMhz(spdbuf);
@@ -840,9 +846,9 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
            (int)gRAM.SPD[i].Type,
            gRAM.SPD[i].ModuleSize,
            gRAM.SPD[i].Frequency,
-           gRAM.SPD[i].Vendor,
-           gRAM.SPD[i].PartNo,
-           gRAM.SPD[i].SerialNo);
+           gRAM.SPD[i].Vendor.c_str(),
+           gRAM.SPD[i].PartNo.c_str(),
+           gRAM.SPD[i].SerialNo.c_str());
 
     gRAM.SPD[i].InUse = TRUE;
     ++(gRAM.SPDInUse);

@@ -386,7 +386,7 @@ void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
     return;
   }
   DBG("Kernel and Kext Patches at %llx:\n", (uintptr_t)Patches);
-  DBG("\tAllowed: %c\n", gSettings.KextPatchesAllowed ? 'y' : 'n');
+  DBG("\tAllowed: %c\n", GlobalConfig.KextPatchesAllowed ? 'y' : 'n');
   DBG("\tDebug: %c\n", Patches->KPDebug ? 'y' : 'n');
 //  DBG("\tKernelCpu: %c\n", Patches->KPKernelCpu ? 'y' : 'n');
   DBG("\tKernelLapic: %c\n", Patches->KPKernelLapic ? 'y' : 'n');
@@ -421,7 +421,7 @@ void DumpKernelAndKextPatches(KERNEL_AND_KEXT_PATCHES *Patches)
 #endif
 void LOADER_ENTRY::FilterKextPatches()
 {
-  if ( gSettings.KextPatchesAllowed && KernelAndKextPatches.KextPatches.size() > 0 ) {
+  if ( GlobalConfig.KextPatchesAllowed && KernelAndKextPatches.KextPatches.size() > 0 ) {
     DBG("Filtering KextPatches:\n");
     for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
       DBG(" - [%02zu]: %s :: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
@@ -452,7 +452,7 @@ void LOADER_ENTRY::FilterKextPatches()
 
 void LOADER_ENTRY::FilterKernelPatches()
 {
-  if ( gSettings.KernelPatchesAllowed && KernelAndKextPatches.KernelPatches.notEmpty() ) {
+  if ( GlobalConfig.KernelPatchesAllowed && KernelAndKextPatches.KernelPatches.notEmpty() ) {
     DBG("Filtering KernelPatches:\n");
     for (size_t i = 0; i < KernelAndKextPatches.KernelPatches.size(); ++i) {
       DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s | MatchBuild: %s]",
@@ -566,9 +566,9 @@ void CheckEmptyFB()
   (gSettings.Graphics.IgPlatform == 0x59120003) ||
   (gSettings.Graphics.IgPlatform == 0x3E910003);
   if (EmptyFB) {
-    gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
+    gSettings.Smbios.gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
   } else {
-    gPlatformFeature &= ~PT_FEATURE_HAS_HEADLESS_GPU;
+    gSettings.Smbios.gPlatformFeature &= ~PT_FEATURE_HAS_HEADLESS_GPU;
   }
 }
 
@@ -2376,15 +2376,15 @@ void SetVariablesFromNvram()
 //    OEMPath.takeValueFrom("EFI\\CLOVER");
 //    if ( ConfName.isEmpty() ) {
 //      DBG("set OEMPath (ConfName == NULL): %ls\n", OEMPath.wc_str());
-//    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
-//    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
-//    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
-//    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", gSettings.OEMProduct.c_str(), gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
-//    } else if (!gFirmwareClover && SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s\\UEFI", gSettings.OEMBoard.c_str()), ConfName)) {
-//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMProduct.c_str()), ConfName)) {
-//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMProduct.c_str(), (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
-//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s", gSettings.OEMBoard.c_str()), ConfName)) {
-//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", gSettings.OEMBoard.c_str(), (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
+//    } else if ( nLanCards > 0   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", GlobalConfig.OEMProductFromSmbios.c_str(), gLanMac[0][0], gLanMac[0][1], gLanMac[0][2], gLanMac[0][3], gLanMac[0][4], gLanMac[0][5]), ConfName)) {
+//    } else if ( nLanCards > 1   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", GlobalConfig.OEMProductFromSmbios.c_str(), gLanMac[1][0], gLanMac[1][1], gLanMac[1][2], gLanMac[1][3], gLanMac[1][4], gLanMac[1][5]), ConfName)) {
+//    } else if ( nLanCards > 2   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", GlobalConfig.OEMProductFromSmbios.c_str(), gLanMac[2][0], gLanMac[2][1], gLanMac[2][2], gLanMac[2][3], gLanMac[2][4], gLanMac[2][5]), ConfName)) {
+//    } else if ( nLanCards > 3   &&  SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s--%02X-%02X-%02X-%02X-%02X-%02X", GlobalConfig.OEMProductFromSmbios.c_str(), gLanMac[3][0], gLanMac[3][1], gLanMac[3][2], gLanMac[3][3], gLanMac[3][4], gLanMac[3][5]), ConfName)) {
+//    } else if (!gFirmwareClover && SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s\\UEFI", GlobalConfig.OEMBoardFromSmbios.c_str()), ConfName)) {
+//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s", GlobalConfig.OEMProductFromSmbios.c_str()), ConfName)) {
+//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", GlobalConfig.OEMProductFromSmbios.c_str(), (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)) {
+//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s", GlobalConfig.OEMBoardFromSmbios.c_str()), ConfName)) {
+//    } else if (SetOEMPathIfExists(&self.getSelfRootDir(), SWPrintf("EFI\\CLOVER\\OEM\\%s-%d", GlobalConfig.OEMBoardFromSmbios.c_str(), (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega))), ConfName)  ) {
 //    } else {
 //      DBG("set OEMPath by default: %ls\n", OEMPath.wc_str());
 //    }
@@ -2555,8 +2555,9 @@ GetListOfThemes ()
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
-void afterGetUserSettings(const SETTINGS_DATA& gSettings)
+void afterGetUserSettings(SETTINGS_DATA& gSettings)
 {
+#pragma GCC diagnostic pop
 
   // Secure boot
   /* this parameter, which should be called SecureBootSetupMode, is ignored if :
@@ -2678,19 +2679,19 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
 
   ThemeX.DarkEmbedded = gSettings.GUI.getDarkEmbedded(ThemeX.Daylight);
 
-  if ( gSettings.GUI.Language == english ) {
+  if ( gSettings.GUI.languageCode == english ) {
     GlobalConfig.Codepage = 0xC0;
     GlobalConfig.CodepageSize = 0;
-  } else if ( gSettings.GUI.Language == russian ) {
+  } else if ( gSettings.GUI.languageCode == russian ) {
     GlobalConfig.Codepage = 0x410;
     GlobalConfig.CodepageSize = 0x40;
-  } else if ( gSettings.GUI.Language == ukrainian ) {
+  } else if ( gSettings.GUI.languageCode == ukrainian ) {
     GlobalConfig.Codepage = 0x400;
     GlobalConfig.CodepageSize = 0x60;
-  } else if ( gSettings.GUI.Language == chinese ) {
+  } else if ( gSettings.GUI.languageCode == chinese ) {
     GlobalConfig.Codepage = 0x3400;
     GlobalConfig.CodepageSize = 0x19C0;
-  } else if ( gSettings.GUI.Language == korean ) {
+  } else if ( gSettings.GUI.languageCode == korean ) {
     GlobalConfig.Codepage = 0x1100;
     GlobalConfig.CodepageSize = 0x100;
   }
@@ -2714,12 +2715,12 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   }
   if ( GlobalConfig.RtROM.isEmpty() ) {
     EFI_GUID uuid;
-    StrToGuidLE(gSettings.SmUUID, &uuid);
+    StrToGuidLE(gSettings.Smbios.SmUUID, &uuid);
     GlobalConfig.RtROM.ncpy(&uuid.Data4[2], 6);
   }
   GlobalConfig.RtMLB = gSettings.RtVariables.RtMLBSetting;
   if ( GlobalConfig.RtMLB.isEmpty() ) {
-    GlobalConfig.RtMLB = gSettings.BoardSerialNumber;
+    GlobalConfig.RtMLB = gSettings.Smbios.BoardSerialNumber;
   }
 
   for (size_t i = 0; i < NGFX; i++) {
@@ -2757,7 +2758,6 @@ void afterGetUserSettings(const SETTINGS_DATA& gSettings)
   //---------
 
 }
-#pragma GCC diagnostic pop
 
 //
 // main entry point
@@ -2923,17 +2923,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
 //debugStartImageWithOC(); // ok BS_I
 
-  GetDefaultSettings(); // do this before PrepatchSmbios() because PrepatchSmbios() change gSettings.SmUUID.
+  GetDefaultSettings(); // do this before PrepatchSmbios() because PrepatchSmbios() change gSettings.Smbios.SmUUID.
                         // TODO : there is a mixup between SmUUID read from the platform and the SmUUID set by the user. They should be read in 2 different vars.
   PrepatchSmbios();
 
   //replace / with _
-  gSettings.OEMProduct.replaceAll(U'/', U'_');
-  gSettings.OEMBoard.replaceAll(U'/', U'_');
-  DBG("Running on: '%s' with board '%s'\n", gSettings.OEMProduct.c_str(), gSettings.OEMBoard.c_str());
+  GlobalConfig.OEMProductFromSmbios.replaceAll(U'/', U'_');
+  GlobalConfig.OEMBoardFromSmbios.replaceAll(U'/', U'_');
+  DBG("Running on: '%s' with board '%s'\n", GlobalConfig.OEMProductFromSmbios.c_str(), GlobalConfig.OEMBoardFromSmbios.c_str());
 
   GetCPUProperties();
-  GetDefaultCpuSettings(); //split from GetDefaultSettings() because it should be after GetCPUProperties()
+  GetDefaultCpuSettings(gSettings); //split from GetDefaultSettings() because it should be after GetCPUProperties()
   GetDevices(); // Do this BEFORE SetOEMPath();
 
   // LoadOptions Parsing
@@ -2947,7 +2947,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (ConfName.isEmpty()) {
         gConfigDict[1] = NULL;
       } else {
-        selfOem.initialize(ConfName, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
+        selfOem.initialize(ConfName, gFirmwareClover, GlobalConfig.OEMBoardFromSmbios, GlobalConfig.OEMProductFromSmbios, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
         Status = LoadUserSettings(ConfName, &gConfigDict[1]);
         DBG("%ls\\%ls.plist %ls loaded with name from LoadOptions: %s\n", selfOem.getConfigDirFullPath().wc_str(), ConfName.wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
         if (EFI_ERROR(Status)) {
@@ -2965,16 +2965,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
   if (!gConfigDict[1] || UniteConfigs) {
-    selfOem.initialize("config"_XS8, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
+    selfOem.initialize("config"_XS8, gFirmwareClover, GlobalConfig.OEMBoardFromSmbios, GlobalConfig.OEMProductFromSmbios, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
 //    selfOem.unInitialize();
-//    selfOem.initialize("config"_XS8, gFirmwareClover, gSettings.OEMBoard, gSettings.OEMProduct, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
+//    selfOem.initialize("config"_XS8, gFirmwareClover, GlobalConfig.OEMBoardFromSmbios, GlobalConfig.OEMProductFromSmbios, (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)), nLanCards, gLanMac);
     Status = LoadUserSettings(L"config"_XSW, &gConfigDict[0]);
     DBG("%ls\\config.plist %ls loaded: %s\n", selfOem.getConfigDirFullPath().wc_str(), EFI_ERROR(Status) ? L" not" : L"", efiStrError(Status));
   }
-  snwprintf(gSettings.ConfigName, 64, "%ls%ls%ls",
-                                   gConfigDict[0] ? L"config": L"",
-                                   (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
-                                   !gConfigDict[1] ? L"": (ConfName.notEmpty() ? ConfName.wc_str() : L"Load Options"));
+//  GlobalConfig.ConfigName.SWPrintf("%ls%ls%ls",
+//                                   gConfigDict[0] ? L"config": L"",
+//                                   (gConfigDict[0] && gConfigDict[1]) ? L" + ": L"",
+//                                   !gConfigDict[1] ? L"": (ConfName.notEmpty() ? ConfName.wc_str() : L"Load Options"));
   //gSettings.MainConfigName.takeValueFrom(gSettings.ConfigName);
 
   gSettings.GUI.Mouse.PointerEnabled = TRUE;
@@ -3146,8 +3146,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   GuiEventsInitialize();
 
-  if (!gSettings.EnabledCores) {
-    gSettings.EnabledCores = gCPUStructure.Cores;
+  if (!GlobalConfig.EnabledCores) {
+    GlobalConfig.EnabledCores = gCPUStructure.Cores;
   }
 
   GetMacAddress();
@@ -3245,7 +3245,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!EFI_ERROR(LoadUserSettings(L"smbios"_XSW, &smbiosTags)) && (smbiosTags != NULL)) {
     const TagDict* dictPointer = smbiosTags->dictPropertyForKey("SMBIOS");
     if (dictPointer) {
-      ParseSMBIOSSettings(dictPointer);
+      ParseSMBIOSSettings(gSettings, dictPointer);
     } else {
       DBG("Invalid smbios.plist, not overriding config.plist!\n");
     }
@@ -3333,8 +3333,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       
     XString8Array TmpArgs = Split<XString8Array>(gSettings.Boot.BootArgs, " ");
       DBG("after NVRAM boot-args=%s\n", gSettings.Boot.BootArgs.c_str());
-      gSettings.OptionsBits = EncodeOptions(TmpArgs);
-//      DBG("initial OptionsBits %X\n", gSettings.OptionsBits);
+      GlobalConfig.OptionsBits = EncodeOptions(TmpArgs);
+//      DBG("initial OptionsBits %X\n", GlobalConfig.OptionsBits);
       FillInputs(TRUE);
 
       // scan for loaders and tools, add then to the menu

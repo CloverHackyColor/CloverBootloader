@@ -78,7 +78,6 @@ SETTINGS_DATA                   gSettings;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
 HDA_PROPERTIES                  gAudios[4]; //no more then 4 Audio Controllers
 //SLOT_DEVICE                     Arpt;
-SLOT_DEVICE                     SlotDevices[16]; //assume DEV_XXX, Arpt=6
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //UINT8                           *gEDID = NULL;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
@@ -2481,10 +2480,10 @@ EFI_STATUS GetEarlyUserSettings (
 //    }
 //  }
 
-  gSettings.KextPatchesAllowed              = TRUE; // todo move to GlobalConfig
+  GlobalConfig.KextPatchesAllowed              = TRUE;
+  GlobalConfig.KernelPatchesAllowed            = TRUE;
   gSettings.KernelAndKextPatches.KPAppleRTC = TRUE;
   gSettings.KernelAndKextPatches.KPDELLSMBIOS = FALSE; // default is false
-  gSettings.KernelPatchesAllowed            = TRUE; // todo move to GlobalConfig
 
   if (CfgDict != NULL) {
     //DBG("Loading early settings\n");
@@ -2881,49 +2880,49 @@ EFI_STATUS GetEarlyUserSettings (
 
       Prop = GUIDict->propertyForKey("Language");
       if (Prop != NULL) {
-        gSettings.Language = Prop->getString()->stringValue();
+        gSettings.GUI.Language = Prop->getString()->stringValue();
         if ( Prop->getString()->stringValue().contains("en") ) {
-          gSettings.GUI.Language = english;
+          gSettings.GUI.languageCode = english;
 //          gSettings.GUI.Codepage = 0xC0;
 //          gSettings.GUI.CodepageSize = 0;
         } else if ( Prop->getString()->stringValue().contains("ru")) {
-          gSettings.GUI.Language = russian;
+          gSettings.GUI.languageCode = russian;
 //          gSettings.GUI.Codepage = 0x410;
 //          gSettings.GUI.CodepageSize = 0x40;
         } else if ( Prop->getString()->stringValue().contains("ua")) {
-          gSettings.GUI.Language = ukrainian;
+          gSettings.GUI.languageCode = ukrainian;
 //          gSettings.GUI.Codepage = 0x400;
 //          gSettings.GUI.CodepageSize = 0x60;
         } else if ( Prop->getString()->stringValue().contains("fr")) {
-          gSettings.GUI.Language = french; //default is extended latin
+          gSettings.GUI.languageCode = french; //default is extended latin
         } else if ( Prop->getString()->stringValue().contains("it")) {
-          gSettings.GUI.Language = italian;
+          gSettings.GUI.languageCode = italian;
         } else if ( Prop->getString()->stringValue().contains("es")) {
-          gSettings.GUI.Language = spanish;
+          gSettings.GUI.languageCode = spanish;
         } else if ( Prop->getString()->stringValue().contains("pt")) {
-          gSettings.GUI.Language = portuguese;
+          gSettings.GUI.languageCode = portuguese;
         } else if ( Prop->getString()->stringValue().contains("br")) {
-          gSettings.GUI.Language = brasil;
+          gSettings.GUI.languageCode = brasil;
         } else if ( Prop->getString()->stringValue().contains("de")) {
-          gSettings.GUI.Language = german;
+          gSettings.GUI.languageCode = german;
         } else if ( Prop->getString()->stringValue().contains("nl")) {
-          gSettings.GUI.Language = dutch;
+          gSettings.GUI.languageCode = dutch;
         } else if ( Prop->getString()->stringValue().contains("pl")) {
-          gSettings.GUI.Language = polish;
+          gSettings.GUI.languageCode = polish;
         } else if ( Prop->getString()->stringValue().contains("cz")) {
-          gSettings.GUI.Language = czech;
+          gSettings.GUI.languageCode = czech;
         } else if ( Prop->getString()->stringValue().contains("hr")) {
-          gSettings.GUI.Language = croatian;
+          gSettings.GUI.languageCode = croatian;
         } else if ( Prop->getString()->stringValue().contains("id")) {
-          gSettings.GUI.Language = indonesian;
+          gSettings.GUI.languageCode = indonesian;
         } else if ( Prop->getString()->stringValue().contains("zh_CN")) {
-          gSettings.GUI.Language = chinese;
+          gSettings.GUI.languageCode = chinese;
 //          gSettings.GUI.Codepage = 0x3400;
 //          gSettings.GUI.CodepageSize = 0x19C0;
         } else if ( Prop->getString()->stringValue().contains("ro")) {
-          gSettings.GUI.Language = romanian;
+          gSettings.GUI.languageCode = romanian;
         } else if ( Prop->getString()->stringValue().contains("ko")) {
-          gSettings.GUI.Language = korean;
+          gSettings.GUI.languageCode = korean;
 //          gSettings.GUI.Codepage = 0x1100;
 //          gSettings.GUI.CodepageSize = 0x100;
         }
@@ -3389,14 +3388,19 @@ EFI_STATUS GetEarlyUserSettings (
   return Status;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshadow"
 
 void
-ParseSMBIOSSettings(
-                    const TagDict* DictPointer
-                    )
+ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
 {
+#pragma GCC diagnostic pop
+
   const TagStruct* Prop;
   const TagStruct* Prop1;
+  
+  
+  // TODO!!!
   BOOLEAN Default = FALSE;
 
 
@@ -3406,24 +3410,24 @@ ParseSMBIOSSettings(
       MsgLog("ATTENTION : property not string in ProductName\n");
     }else{
       MACHINE_TYPES Model;
-      gSettings.ProductName = Prop->getString()->stringValue();
+      gSettings.Smbios.ProductName = Prop->getString()->stringValue();
       // let's fill all other fields based on this ProductName
       // to serve as default
-      Model = GetModelFromString(gSettings.ProductName);
+      Model = GetModelFromString(gSettings.Smbios.ProductName);
       if (Model != MaxMachineType) {
-        SetDMISettingsForModel (Model, FALSE);
+        SetDMISettingsForModel(gSettings, Model, FALSE);
         Default = TRUE;
       } else {
         //if new model then fill at least as iMac13,2, except custom ProductName
         // something else?
-        SetDMISettingsForModel (iMac132, FALSE);
+        SetDMISettingsForModel(gSettings, iMac132, FALSE);
       }
     }
   }
-  DBG("Using ProductName from config: %s\n", gSettings.ProductName.c_str());
+  DBG("Using ProductName from config: %s\n", gSettings.Smbios.ProductName.c_str());
 
   Prop = DictPointer->propertyForKey("SmbiosVersion");
-  gSettings.SmbiosVersion = (UINT16)GetPropertyAsInteger(Prop, 0x204);
+  gSettings.Smbios.SmbiosVersion = (UINT16)GetPropertyAsInteger(Prop, 0x204);
 
   // Check for BiosVersion and BiosReleaseDate by Sherlocks
   Prop = DictPointer->propertyForKey("BiosVersion");
@@ -3431,7 +3435,9 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       DBG("BiosVersion: not set, Using BiosVersion from clover\n");
     }else{
-      const CHAR8* i = gSettings.RomVersion.c_str();
+      gSettings.Smbios._RomVersion = Prop->getString()->stringValue();
+
+      const CHAR8* i = GlobalConfig.RomVersionUsed.c_str();
       const CHAR8* j = Prop->getString()->stringValue().c_str();
 
       i += AsciiStrLen(i);
@@ -3456,22 +3462,22 @@ ParseSMBIOSSettings(
           } else if ((i[5] == j[5]) && (i[6] == j[6])) {
             DBG("Found same BiosVersion in clover and config\n");
           } else {
-            gSettings.RomVersion = Prop->getString()->stringValue();
+            GlobalConfig.RomVersionUsed = Prop->getString()->stringValue();
             DBG("Using latest BiosVersion from config\n");
           }
         } else {
-          gSettings.RomVersion = Prop->getString()->stringValue();
+          GlobalConfig.RomVersionUsed = Prop->getString()->stringValue();
           DBG("Using latest BiosVersion from config\n");
         }
       } else {
-        gSettings.RomVersion = Prop->getString()->stringValue();
+        GlobalConfig.RomVersionUsed = Prop->getString()->stringValue();
         DBG("Using latest BiosVersion from config\n");
       }
     }
   } else {
     DBG("BiosVersion: not set, Using BiosVersion from clover\n");
   }
-  DBG("BiosVersion: %s\n", gSettings.RomVersion.c_str());
+  DBG("BiosVersion: %s\n", GlobalConfig.RomVersionUsed.c_str());
 
   Prop1 = DictPointer->propertyForKey("BiosReleaseDate");
   if (Prop1 != NULL) {
@@ -3479,8 +3485,9 @@ ParseSMBIOSSettings(
       MsgLog("ATTENTION : property not string in BiosReleaseDate\n");
     }else{
       if (Prop != NULL) {
-        const CHAR8* i = gSettings.ReleaseDate.c_str();
-        const CHAR8* j = Prop1->getString()->stringValue().c_str();
+        gSettings.Smbios._ReleaseDate = Prop1->getString()->stringValue();
+        const CHAR8* i = GlobalConfig.ReleaseDateUsed.c_str();
+        const CHAR8* j = gSettings.Smbios._ReleaseDate.c_str();
 
         if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 8)) {
           if (((i[6] > '0') && (j[6] == '0')) || ((i[6] >= j[6]) && (i[7] > j[7]))) {
@@ -3498,15 +3505,15 @@ ParseSMBIOSSettings(
               } else if ((i[3] == j[3]) && (i[4] == j[4])) {
                 //DBG("Found same BiosReleaseDate in clover and config\n");
               } else {
-                gSettings.ReleaseDate = Prop1->getString()->stringValue();
+                GlobalConfig.ReleaseDateUsed = gSettings.Smbios._ReleaseDate;
                 //DBG("Using latest BiosReleaseDate from config\n");
               }
             } else {
-              gSettings.ReleaseDate = Prop1->getString()->stringValue();
+              GlobalConfig.ReleaseDateUsed = gSettings.Smbios._ReleaseDate;
               //DBG("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            gSettings.ReleaseDate = Prop1->getString()->stringValue();
+            GlobalConfig.ReleaseDateUsed = gSettings.Smbios._ReleaseDate;
             //DBG("Using latest BiosReleaseDate from config\n");
           }
         } else if ((AsciiStrLen(i) == 8) && (AsciiStrLen(j) == 10)) {
@@ -3525,15 +3532,15 @@ ParseSMBIOSSettings(
               } else if ((i[3] == j[3]) && (i[4] == j[4])) {
                 //DBG("Found same BiosReleaseDate in clover and config\n");
               } else {
-                gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+                GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
                 //DBG("Using latest BiosReleaseDate from config\n");
               }
             } else {
-              gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+              GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
               //DBG("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
+            GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c\n", j[0], j[1], j[3], j[4], j[8], j[9]);
             //DBG("Using latest BiosReleaseDate from config\n");
           }
         } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 10)) {
@@ -3552,15 +3559,15 @@ ParseSMBIOSSettings(
               } else if ((i[3] == j[3]) && (i[4] == j[4])) {
                 //DBG("Found same BiosReleaseDate in clover and config\n");
               } else {
-                gSettings.ReleaseDate = Prop1->getString()->stringValue();
+                GlobalConfig.ReleaseDateUsed = Prop1->getString()->stringValue();
                 //DBG("Using latest BiosReleaseDate from config\n");
               }
             } else {
-              gSettings.ReleaseDate = Prop1->getString()->stringValue();
+              GlobalConfig.ReleaseDateUsed = Prop1->getString()->stringValue();
               //DBG("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            gSettings.ReleaseDate = Prop1->getString()->stringValue();
+            GlobalConfig.ReleaseDateUsed = Prop1->getString()->stringValue();
             //DBG("Using latest BiosReleaseDate from config\n");
           }
         } else if ((AsciiStrLen(i) == 10) && (AsciiStrLen(j) == 8)) {
@@ -3579,22 +3586,22 @@ ParseSMBIOSSettings(
               } else if ((i[3] == j[3]) && (i[4] == j[4])) {
                 //DBG("Found same BiosReleaseDate in clover and config\n");
               } else {
-                gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+                GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
                 //DBG("Using latest BiosReleaseDate from config\n");
               }
             } else {
-              gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+              GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
               //DBG("Using latest BiosReleaseDate from config\n");
             }
           } else {
-            gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
+            GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c\n", j[0], j[1], j[3], j[4], j[6], j[7]);
             //DBG("Using latest BiosReleaseDate from config\n");
           }
         } else {
           //DBG("Found unknown date format from config\n");
           if (Prop != NULL) {
-            i = gSettings.ReleaseDate.c_str();
-            j = gSettings.RomVersion.c_str();
+            i = GlobalConfig.ReleaseDateUsed.c_str();
+            j = GlobalConfig.RomVersionUsed.c_str();
 
             j += AsciiStrLen(j);
             while (*j != '.') {
@@ -3602,10 +3609,10 @@ ParseSMBIOSSettings(
             }
 
             if ((AsciiStrLen(i) == 8)) {
-              gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+              GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
               //DBG("Using the date of used BiosVersion\n");
             } else if ((AsciiStrLen(i) == 10)) {
-              gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+              GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
               //DBG("Using the date of used BiosVersion\n");
             }
           } else {
@@ -3619,8 +3626,8 @@ ParseSMBIOSSettings(
     }
   } else {
     if (Prop != NULL) {
-      const CHAR8* i = gSettings.ReleaseDate.c_str();
-      const CHAR8* j = gSettings.RomVersion.c_str();
+      const CHAR8* i = GlobalConfig.ReleaseDateUsed.c_str();
+      const CHAR8* j = GlobalConfig.RomVersionUsed.c_str();
 
       j += AsciiStrLen(j);
       while (*j != '.') {
@@ -3628,64 +3635,65 @@ ParseSMBIOSSettings(
       }
 
       if ((AsciiStrLen(i) == 8)) {
-        gSettings.ReleaseDate.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
         //DBG("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       } else if ((AsciiStrLen(i) == 10)) {
-        gSettings.ReleaseDate.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
+        GlobalConfig.ReleaseDateUsed.S8Printf("%c%c/%c%c/20%c%c\n", j[3], j[4], j[5], j[6], j[1], j[2]);
         //DBG("BiosReleaseDate: not set, Using the date of used BiosVersion\n");
       }
     } else {
       //DBG("BiosReleaseDate: not set, Using BiosReleaseDate from clover\n");
     }
   }
-  DBG("BiosReleaseDate: %s\n", gSettings.ReleaseDate.c_str());
+  DBG("BiosReleaseDate: %s\n", GlobalConfig.ReleaseDateUsed.c_str());
 
   Prop = DictPointer->propertyForKey("EfiVersion");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in EfiVersion\n");
-      if ( gSettings.EfiVersion.notEmpty() ) {
-        DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
+      if ( GlobalConfig.EfiVersionUsed.notEmpty() ) {
+        DBG("Using EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
       }
     }else{
-      if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) > AsciiStrVersionToUint64(Prop->getString()->stringValue(), 4, 5)) {
-        DBG("Using latest EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
-      } else if (AsciiStrVersionToUint64(gSettings.EfiVersion, 4, 5) < AsciiStrVersionToUint64(Prop->getString()->stringValue(), 4, 5)) {
-        gSettings.EfiVersion = Prop->getString()->stringValue();
-        gSettings.EfiVersion.trim();
-        DBG("Using latest EfiVersion from config: %s\n", gSettings.EfiVersion.c_str());
+      gSettings.Smbios._EfiVersion = Prop->getString()->stringValue();
+      gSettings.Smbios._EfiVersion.trim();
+      if (AsciiStrVersionToUint64(GlobalConfig.EfiVersionUsed, 4, 5) > AsciiStrVersionToUint64(gSettings.Smbios._EfiVersion, 4, 5)) {
+        DBG("Using latest EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
+      } else if (AsciiStrVersionToUint64(GlobalConfig.EfiVersionUsed, 4, 5) < AsciiStrVersionToUint64(gSettings.Smbios._EfiVersion, 4, 5)) {
+        GlobalConfig.EfiVersionUsed = gSettings.Smbios._EfiVersion;
+        DBG("Using latest EfiVersion from config: %s\n", GlobalConfig.EfiVersionUsed.c_str());
       } else {
-        DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
+        DBG("Using EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
       }
     }
-  } else if ( gSettings.EfiVersion.notEmpty() ) {
-    DBG("Using EfiVersion from clover: %s\n", gSettings.EfiVersion.c_str());
+  } else if ( GlobalConfig.EfiVersionUsed.notEmpty() ) {
+    DBG("Using EfiVersion from clover: %s\n", GlobalConfig.EfiVersionUsed.c_str());
   }
 
   Prop = DictPointer->propertyForKey("FirmwareFeatures");
   if (Prop != NULL) {
-    gFwFeatures = (UINT32)GetPropertyAsInteger(Prop, gFwFeatures);
-    DBG("Using FirmwareFeatures from config: 0x%08X\n", gFwFeatures);
+    gSettings.Smbios.gFwFeatures = (UINT32)GetPropertyAsInteger(Prop, gSettings.Smbios.gFwFeatures);
+    DBG("Using FirmwareFeatures from config: 0x%08X\n", gSettings.Smbios.gFwFeatures);
   } else {
-    DBG("Using FirmwareFeatures from clover: 0x%08X\n", gFwFeatures);
+    DBG("Using FirmwareFeatures from clover: 0x%08X\n", gSettings.Smbios.gFwFeatures);
   }
 
   Prop = DictPointer->propertyForKey("FirmwareFeaturesMask");
   if (Prop != NULL) {
-    gFwFeaturesMask = (UINT32)GetPropertyAsInteger(Prop, gFwFeaturesMask);
-    DBG("Using FirmwareFeaturesMask from config: 0x%08X\n", gFwFeaturesMask);
+    gSettings.Smbios.gFwFeaturesMask = (UINT32)GetPropertyAsInteger(Prop, gSettings.Smbios.gFwFeaturesMask);
+    DBG("Using FirmwareFeaturesMask from config: 0x%08X\n", gSettings.Smbios.gFwFeaturesMask);
   } else {
-    DBG("Using FirmwareFeaturesMask from clover: 0x%08X\n", gFwFeaturesMask);
+    DBG("Using FirmwareFeaturesMask from clover: 0x%08X\n", gSettings.Smbios.gFwFeaturesMask);
   }
 
   Prop = DictPointer->propertyForKey("PlatformFeature");
   if (Prop != NULL) {
-    gPlatformFeature = (UINT64)GetPropertyAsInteger(Prop, (INTN)gPlatformFeature);
+    gSettings.Smbios.gPlatformFeature = (UINT64)GetPropertyAsInteger(Prop, (INTN)gSettings.Smbios.gPlatformFeature);
   } else {
-    if (gPlatformFeature == 0xFFFF) {
+    if (gSettings.Smbios.gPlatformFeature == 0xFFFF) {
       DBG("PlatformFeature will not set in SMBIOS\n");
     } else {
-    DBG("Using PlatformFeature from clover: 0x%llX\n", gPlatformFeature);
+    DBG("Using PlatformFeature from clover: 0x%llX\n", gSettings.Smbios.gPlatformFeature);
     }
   }
 
@@ -3694,7 +3702,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in BiosVendor\n");
     }else{
-      gSettings.VendorName = Prop->getString()->stringValue();
+      gSettings.Smbios.BiosVendor = Prop->getString()->stringValue();
     }
   }
 
@@ -3703,7 +3711,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Manufacturer\n");
     }else{
-      gSettings.ManufactureName = Prop->getString()->stringValue();
+      gSettings.Smbios.ManufactureName = Prop->getString()->stringValue();
     }
   }
 
@@ -3712,7 +3720,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Version\n");
     }else{
-      gSettings.VersionNr = Prop->getString()->stringValue();
+      gSettings.Smbios.VersionNr = Prop->getString()->stringValue();
     }
   }
 
@@ -3721,7 +3729,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Family\n");
     }else{
-      gSettings.FamilyName = Prop->getString()->stringValue();
+      gSettings.Smbios.FamilyName = Prop->getString()->stringValue();
     }
   }
 
@@ -3730,7 +3738,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in SerialNumber\n");
     }else{
-      gSettings.SerialNr = Prop->getString()->stringValue();
+      gSettings.Smbios.SerialNr = Prop->getString()->stringValue();
     }
   }
 
@@ -3740,7 +3748,7 @@ ParseSMBIOSSettings(
       MsgLog("ATTENTION : property not string in SmUUID\n");
     }else{
       if (IsValidGuidString(Prop->getString()->stringValue())) {
-        gSettings.SmUUID = Prop->getString()->stringValue();
+        gSettings.Smbios.SmUUID = Prop->getString()->stringValue();
       } else {
         DBG("Error: invalid SmUUID '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
       }
@@ -3753,7 +3761,7 @@ ParseSMBIOSSettings(
       MsgLog("ATTENTION : property not string in BoardManufacturer\n");
     }else{
       if( Prop->getString()->stringValue().notEmpty() ) {
-        gSettings.BoardManufactureName = Prop->getString()->stringValue();
+        gSettings.Smbios.BoardManufactureName = Prop->getString()->stringValue();
       }
     }
   }
@@ -3764,7 +3772,7 @@ ParseSMBIOSSettings(
       MsgLog("ATTENTION : property not string in BoardSerialNumber\n");
     }else{
       if( Prop->getString()->stringValue().notEmpty() ) {
-        gSettings.BoardSerialNumber = Prop->getString()->stringValue();
+        gSettings.Smbios.BoardSerialNumber = Prop->getString()->stringValue();
       }
     }
   }
@@ -3774,37 +3782,37 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in Board-ID\n");
     }else{
-      gSettings.BoardNumber = Prop->getString()->stringValue();
-      DBG("Board-ID set from config as %s\n", gSettings.BoardNumber.c_str());
+      gSettings.Smbios.BoardNumber = Prop->getString()->stringValue();
+      DBG("Board-ID set from config as %s\n", gSettings.Smbios.BoardNumber.c_str());
     }
   }
 
   if (!Default) {
-    gSettings.BoardVersion = gSettings.ProductName;
+    gSettings.Smbios.BoardVersion = gSettings.Smbios.ProductName;
   }
   Prop = DictPointer->propertyForKey("BoardVersion");
   if (Prop != NULL) {
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in BoardVersion\n");
     }else{
-      gSettings.BoardVersion = Prop->getString()->stringValue();
+      gSettings.Smbios.BoardVersion = Prop->getString()->stringValue();
     }
   }
 
   Prop = DictPointer->propertyForKey("BoardType");
   if (Prop != NULL) {
-    gSettings.BoardType = (UINT8)GetPropertyAsInteger(Prop, gSettings.BoardType);
-    DBG("BoardType: 0x%hhX\n", gSettings.BoardType);
+    gSettings.Smbios.BoardType = (UINT8)GetPropertyAsInteger(Prop, gSettings.Smbios.BoardType);
+    DBG("BoardType: 0x%hhX\n", gSettings.Smbios.BoardType);
   }
 
   Prop = DictPointer->propertyForKey("Mobile");
   if (Prop != NULL) {
     if (IsPropertyNotNullAndFalse(Prop))
-      gSettings.Mobile = FALSE;
+      gSettings.Smbios.Mobile = FALSE;
     else if (IsPropertyNotNullAndTrue(Prop))
-      gSettings.Mobile = TRUE;
+      gSettings.Smbios.Mobile = TRUE;
   } else if (!Default) {
-    gSettings.Mobile = gSettings.ProductName.contains("MacBook");
+    gSettings.Smbios.Mobile = gSettings.Smbios.ProductName.contains("MacBook");
   }
 
   Prop = DictPointer->propertyForKey("LocationInChassis");
@@ -3812,7 +3820,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in LocationInChassis\n");
     }else{
-      gSettings.LocationInChassis = Prop->getString()->stringValue();
+      gSettings.Smbios.LocationInChassis = Prop->getString()->stringValue();
     }
   }
 
@@ -3821,7 +3829,7 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in ChassisManufacturer\n");
     }else{
-      gSettings.ChassisManufacturer = Prop->getString()->stringValue();
+      gSettings.Smbios.ChassisManufacturer = Prop->getString()->stringValue();
     }
   }
 
@@ -3830,19 +3838,19 @@ ParseSMBIOSSettings(
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in ChassisAssetTag\n");
     }else{
-      gSettings.ChassisAssetTag = Prop->getString()->stringValue();
+      gSettings.Smbios.ChassisAssetTag = Prop->getString()->stringValue();
     }
   }
 
   Prop = DictPointer->propertyForKey("ChassisType");
   if (Prop != NULL) {
-    gSettings.ChassisType = (UINT8)GetPropertyAsInteger(Prop, gSettings.ChassisType);
-    DBG("ChassisType: 0x%hhX\n", gSettings.ChassisType);
+    gSettings.Smbios.ChassisType = (UINT8)GetPropertyAsInteger(Prop, gSettings.Smbios.ChassisType);
+    DBG("ChassisType: 0x%hhX\n", gSettings.Smbios.ChassisType);
   }
 
   Prop = DictPointer->propertyForKey("NoRomInfo");
   if (Prop != NULL) {
-    gSettings.NoRomInfo = IsPropertyNotNullAndTrue(Prop);
+    gSettings.Smbios.NoRomInfo = IsPropertyNotNullAndTrue(Prop);
   }
 }
 
@@ -4418,6 +4426,9 @@ void SETTINGS_DATA::DevicesClass::FillDevicePropertiesOld(SETTINGS_DATA& gSettin
               if ( !EFI_ERROR(PropertiesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {  //take a <key> with DevicePath. If GetKeyValueAtIndex return success, key and value != NULL
                 XStringW DevicePathStr = key->keyStringValue();
                 //         DBG("Device: %ls\n", DevicePathStr);
+if (key->keyStringValue().startWithOrEqualTo("#")) {
+                      continue;
+}
 
                 // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
 #ifdef CLOVER_BUILD
@@ -4459,6 +4470,7 @@ void SETTINGS_DATA::DevicesClass::FillDevicePropertiesOld(SETTINGS_DATA& gSettin
                       continue;
                     }
                     if (key2->keyStringValue()[0] != '#') {
+                      continue;
                       (*Child)->MenuItem.BValue = TRUE;
                       (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str()).forgetDataWithoutFreeing();
                     }
@@ -5300,38 +5312,38 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
     const TagDict* SMBIOSDict = CfgDict->dictPropertyForKey("SMBIOS");
     if (SMBIOSDict != NULL) {
 
-      ParseSMBIOSSettings(SMBIOSDict);
+      ParseSMBIOSSettings(gSettings, SMBIOSDict);
 
       const TagStruct* Prop = SMBIOSDict->propertyForKey("Trust");
       if (Prop != NULL) {
         if (IsPropertyNotNullAndFalse(Prop)) {
-          gSettings.TrustSMBIOS = FALSE;
+          gSettings.Smbios.TrustSMBIOS = FALSE;
         } else if (IsPropertyNotNullAndTrue(Prop)) {
-          gSettings.TrustSMBIOS = TRUE;
+          gSettings.Smbios.TrustSMBIOS = TRUE;
         }
       }
       Prop = SMBIOSDict->propertyForKey("MemoryRank");
-      gSettings.Attribute = (INT8)GetPropertyAsInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
+      gSettings.Smbios.Attribute = (INT8)GetPropertyAsInteger(Prop, -1); //1==Single Rank, 2 == Dual Rank, 0==undefined -1 == keep as is
 
       // Delete the user memory when a new config is selected
       INTN i = 0;
-      for (i = 0; i < gRAM.UserInUse && i < MAX_RAM_SLOTS; i++) {
-        gRAM.User[i].ModuleSize = 0;
-        gRAM.User[i].InUse = 0;
+      for (i = 0; i < gSettings.Smbios.Memory.SlotCounts && i < MAX_RAM_SLOTS; i++) {
+        gSettings.Smbios.Memory.User[i].ModuleSize = 0;
+        gSettings.Smbios.Memory.User[i].InUse = 0;
       }
-      gRAM.UserInUse = 0;
-      gRAM.UserChannels = 0;
-      gSettings.InjectMemoryTables = FALSE;
+      gSettings.Smbios.Memory.SlotCounts = 0;
+      gSettings.Smbios.Memory.UserChannels = 0;
+      gSettings.Smbios.InjectMemoryTables = FALSE;
 
       // Inject memory tables into SMBIOS
       const TagDict* MemoryDict = SMBIOSDict->dictPropertyForKey("Memory");
       if (MemoryDict != NULL){
         // Get memory table count
         const TagStruct* Prop2   = MemoryDict->propertyForKey("SlotCount");
-        gRAM.UserInUse = (UINT8)GetPropertyAsInteger(Prop2, 0);
+        gSettings.Smbios.Memory.SlotCounts = (UINT8)GetPropertyAsInteger(Prop2, 0);
         // Get memory channels
         Prop2             = MemoryDict->propertyForKey("Channels");
-        gRAM.UserChannels = (UINT8)GetPropertyAsInteger(Prop2, 0);
+        gSettings.Smbios.Memory.UserChannels = (UINT8)GetPropertyAsInteger(Prop2, 0);
         // Get memory tables
         const TagArray* ModulesArray = MemoryDict->arrayPropertyForKey("Modules"); // array of dict
         if (ModulesArray != NULL) {
@@ -5358,7 +5370,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
               continue;
             }
 
-            SlotPtr = &gRAM.User[Slot];
+            SlotPtr = &gSettings.Smbios.Memory.User[Slot];
 
             // Get memory size
             Prop2 = Prop3->propertyForKey("Size");
@@ -5369,17 +5381,17 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             // Get memory vendor
             Prop2 = Prop3->propertyForKey("Vendor");
             if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
-              SlotPtr->Vendor   = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+              SlotPtr->Vendor.S8Printf("%s", Prop2->getString()->stringValue().c_str());
             }
             // Get memory part number
             Prop2 = Prop3->propertyForKey("Part");
             if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
-              SlotPtr->PartNo   = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+              SlotPtr->PartNo.S8Printf("%s", Prop2->getString()->stringValue().c_str());
             }
             // Get memory serial number
             Prop2 = Prop3->propertyForKey("Serial");
             if (Prop2 && Prop2->isString() && Prop2->getString()->stringValue().notEmpty()) {
-              SlotPtr->SerialNo = S8Printf("%s", Prop2->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
+              SlotPtr->SerialNo.S8Printf("%s", Prop2->getString()->stringValue().c_str());
             }
             // Get memory type
             SlotPtr->Type = MemoryTypeDdr3;
@@ -5398,14 +5410,14 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
             SlotPtr->InUse = (SlotPtr->ModuleSize > 0);
             if (SlotPtr->InUse) {
-              if (gRAM.UserInUse <= Slot) {
-                gRAM.UserInUse = Slot + 1;
+              if (gSettings.Smbios.Memory.SlotCounts <= Slot) {
+                gSettings.Smbios.Memory.SlotCounts = Slot + 1;
               }
             }
           }
 
-          if (gRAM.UserInUse > 0) {
-            gSettings.InjectMemoryTables = TRUE;
+          if (gSettings.Smbios.Memory.SlotCounts > 0) {
+            gSettings.Smbios.InjectMemoryTables = TRUE;
           }
         }
       }
@@ -5452,7 +5464,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
           }
 
           if (DeviceN >= 0) {
-            SLOT_DEVICE *SlotDevice = &SlotDevices[DeviceN];
+            SLOT_DEVICE *SlotDevice = &gSettings.Smbios.SlotDevices[DeviceN];
             Prop2                   = SlotsDict->propertyForKey("ID");
             SlotDevice->SlotID      = (UINT8)GetPropertyAsInteger(Prop2, DeviceN);
             SlotDevice->SlotType    = SlotTypePci;
@@ -5491,12 +5503,12 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             }
             Prop2 = SlotsDict->propertyForKey("Name");
             if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
-              snprintf (SlotDevice->SlotName, 31, "%s", Prop2->getString()->stringValue().c_str());
+              SlotDevice->SlotName = Prop2->getString()->stringValue();
             } else {
-              snprintf (SlotDevice->SlotName, 31, "PCI Slot %lld", DeviceN);
+              SlotDevice->SlotName.S8Printf("PCI Slot %lld", DeviceN);
             }
 
-            DBG(" - %s\n", SlotDevice->SlotName);
+            DBG(" - %s\n", SlotDevice->SlotName.c_str());
           }
         }
       }
@@ -5711,12 +5723,12 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 
 //    if (gSettings.RtVariables.RtROM.isEmpty()) {
 //      EFI_GUID uuid;
-//      StrToGuidLE(gSettings.SmUUID, &uuid);
+//      StrToGuidLE(gSettings.Smbios.SmUUID, &uuid);
 //      gSettings.RtVariables.RtROM.ncpy(&uuid.Data4[2], 6);
 //    }
 
 //    if (gSettings.RtVariables.RtMLB.isEmpty()) {
-//      gSettings.RtVariables.RtMLB       = gSettings.BoardSerialNumber;
+//      gSettings.RtVariables.RtMLB       = gSettings.Smbios.BoardSerialNumber;
 //    }
 
     // if CustomUUID and InjectSystemID are not specified
@@ -5782,16 +5794,16 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
     const TagDict* BootGraphicsDict = CfgDict->dictPropertyForKey("BootGraphics");
     if (BootGraphicsDict != NULL) {
       const TagStruct* Prop = BootGraphicsDict->propertyForKey("DefaultBackgroundColor");
-      gSettings.DefaultBackgroundColor = (UINT32)GetPropertyAsInteger(Prop, 0x80000000); //the value 0x80000000 means not set
+      gSettings.BootGraphics.DefaultBackgroundColor = (UINT32)GetPropertyAsInteger(Prop, 0x80000000); //the value 0x80000000 means not set
 
       Prop = BootGraphicsDict->propertyForKey("UIScale");
-      gSettings.UIScale = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
+      gSettings.BootGraphics.UIScale = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
 
       Prop = BootGraphicsDict->propertyForKey("EFILoginHiDPI");
-      gSettings.EFILoginHiDPI = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
+      gSettings.BootGraphics.EFILoginHiDPI = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
 
       Prop = BootGraphicsDict->propertyForKey("flagstate");
-      *(UINT32*)&gSettings.flagstate[0] = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
+      *(UINT32*)&gSettings.BootGraphics.flagstate[0] = (UINT32)GetPropertyAsInteger(Prop, 0x80000000);
 
     }
     /*
@@ -6611,12 +6623,12 @@ GetDevices ()
               //           DBG(" - RADEON_BIOS_0_SCRATCH = 0x%08X\n", gfx->Connectors);
               gfx->ConnChanged = FALSE;
 
-              SlotDevice                  = &SlotDevices[0];
+              SlotDevice                  = &gSettings.Smbios.SlotDevices[0];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
               SlotDevice->BusNum          = (UINT8)Bus;
               SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
               SlotDevice->Valid           = TRUE;
-              snprintf (SlotDevice->SlotName, 31, "PCI Slot 0");
+              SlotDevice->SlotName        = "PCI Slot 0"_XS8;
               SlotDevice->SlotID          = 1;
               SlotDevice->SlotType        = SlotTypePciExpressX16;
               break;
@@ -6678,12 +6690,12 @@ GetDevices ()
             DBG(" - GFX: Model=%s family %hX (%s)\n", gfx->Model, gfx->Family, CardFamily);
               gfx->Ports                  = 0;
 
-              SlotDevice                  = &SlotDevices[1];
+              SlotDevice                  = &gSettings.Smbios.SlotDevices[1];
               SlotDevice->SegmentGroupNum = (UINT16)Segment;
               SlotDevice->BusNum          = (UINT8)Bus;
               SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
               SlotDevice->Valid           = TRUE;
-              snprintf (SlotDevice->SlotName, 31, "PCI Slot 0");
+              SlotDevice->SlotName = "PCI Slot 0"_XS8;
               SlotDevice->SlotID          = 1;
               SlotDevice->SlotType        = SlotTypePciExpressX16;
               break;
@@ -6703,12 +6715,12 @@ GetDevices ()
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
-          SlotDevice                  = &SlotDevices[6];
+          SlotDevice                  = &gSettings.Smbios.SlotDevices[6];
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevice->Valid           = TRUE;
-          snprintf (SlotDevice->SlotName, 31, "AirPort");
+          SlotDevice->SlotName = "AirPort"_XS8;
           SlotDevice->SlotID          = 0;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
           DBG(" - WIFI: Vendor= ");
@@ -6741,12 +6753,12 @@ GetDevices ()
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-          SlotDevice                  = &SlotDevices[5];
+          SlotDevice                  = &gSettings.Smbios.SlotDevices[5];
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevice->Valid           = TRUE;
-          snprintf (SlotDevice->SlotName, 31, "Ethernet");
+          SlotDevice->SlotName = "Ethernet"_XS8;
           SlotDevice->SlotID          = 2;
           SlotDevice->SlotType        = SlotTypePciExpressX1;
           gLanVendor[nLanCards]       = Pci.Hdr.VendorId;
@@ -6786,12 +6798,12 @@ GetDevices ()
 
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE)) {
-          SlotDevice = &SlotDevices[12];
+          SlotDevice = &gSettings.Smbios.SlotDevices[12];
           SlotDevice->SegmentGroupNum = (UINT16)Segment;
           SlotDevice->BusNum          = (UINT8)Bus;
           SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
           SlotDevice->Valid           = TRUE;
-          snprintf (SlotDevice->SlotName, 31, "FireWire");
+          SlotDevice->SlotName = "FireWire"_XS8;
           SlotDevice->SlotID          = 3;
           SlotDevice->SlotType        = SlotTypePciExpressX4;
         }
@@ -6813,12 +6825,12 @@ GetDevices ()
           if (IsHDMIAudio(HandleArray[Index])) {
             DBG(" - HDMI Audio: \n");
 
-            SlotDevice = &SlotDevices[4];
+            SlotDevice = &gSettings.Smbios.SlotDevices[4];
             SlotDevice->SegmentGroupNum = (UINT16)Segment;
             SlotDevice->BusNum          = (UINT8)Bus;
             SlotDevice->DevFuncNum      = (UINT8)((Device << 3) | (Function & 0x07));
             SlotDevice->Valid           = TRUE;
-            snprintf (SlotDevice->SlotName, 31, "HDMI port");
+            SlotDevice->SlotName = "HDMI port"_XS8;
             SlotDevice->SlotID          = 5;
             SlotDevice->SlotType        = SlotTypePciExpressX4;
           }
@@ -6860,7 +6872,6 @@ SetDevices (LOADER_ENTRY *Entry)
   UINTN               Function;
   BOOLEAN             StringDirty = FALSE;
   BOOLEAN             TmpDirty    = FALSE;
-  UINT16              PmCon;
   UINT32              Rcba;
   UINT32              Hptc;
   DevPropDevice *device = NULL;
@@ -7597,48 +7608,50 @@ SetDevices (LOADER_ENTRY *Entry)
         else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
         {
-          if (gSettings.LpcTune) {
-            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
-            MsgLog ("Initial PmCon value=%hX\n", PmCon);
-
-            if (GlobalConfig.EnableC6) {
-              PmCon |= 1 << 11;
-              DBG("C6 enabled\n");
-            } else {
-              PmCon &= ~(1 << 11);
-              DBG("C6 disabled\n");
-            }
-            /*
-             if (GlobalConfig.EnableC2) {
-             PmCon |= 1 << 10;
-             DBG("BIOS_PCIE enabled\n");
-             } else {
-             PmCon &= ~(1 << 10);
-             DBG("BIOS_PCIE disabled\n");
-             }
-             */
-            if (GlobalConfig.EnableC4) {
-              PmCon |= 1 << 7;
-              DBG("C4 enabled\n");
-            } else {
-              PmCon &= ~(1 << 7);
-              DBG("C4 disabled\n");
-            }
-
-            if (gSettings.ACPI.SSDT.EnableISS) {
-              PmCon |= 1 << 3;
-              DBG("SpeedStep enabled\n");
-            } else {
-              PmCon &= ~(1 << 3);
-              DBG("SpeedStep disabled\n");
-            }
-
-            PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
-
-            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16,GEN_PMCON_1, 1, &PmCon);
-            MsgLog ("Set PmCon value=%hX\n", PmCon);
-
-          }
+// 2021-04 Jief : LpcTune doesn't exist in Settings.cpp. Never set to true.
+//          if (gSettings.LpcTune) {
+//            UINT16 PmCon;
+//            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
+//            MsgLog ("Initial PmCon value=%hX\n", PmCon);
+//
+//            if (GlobalConfig.EnableC6) {
+//              PmCon |= 1 << 11;
+//              DBG("C6 enabled\n");
+//            } else {
+//              PmCon &= ~(1 << 11);
+//              DBG("C6 disabled\n");
+//            }
+//            /*
+//             if (GlobalConfig.EnableC2) {
+//             PmCon |= 1 << 10;
+//             DBG("BIOS_PCIE enabled\n");
+//             } else {
+//             PmCon &= ~(1 << 10);
+//             DBG("BIOS_PCIE disabled\n");
+//             }
+//             */
+//            if (GlobalConfig.EnableC4) {
+//              PmCon |= 1 << 7;
+//              DBG("C4 enabled\n");
+//            } else {
+//              PmCon &= ~(1 << 7);
+//              DBG("C4 disabled\n");
+//            }
+//
+//            if (gSettings.ACPI.SSDT.EnableISS) {
+//              PmCon |= 1 << 3;
+//              DBG("SpeedStep enabled\n");
+//            } else {
+//              PmCon &= ~(1 << 3);
+//              DBG("SpeedStep disabled\n");
+//            }
+//
+//            PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, GEN_PMCON_1, 1, &PmCon);
+//
+//            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint16,GEN_PMCON_1, 1, &PmCon);
+//            MsgLog ("Set PmCon value=%hX\n", PmCon);
+//
+//          }
           Rcba   = 0;
           /* Scan Port */
           Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0xF0, 1, &Rcba);
@@ -7731,7 +7744,7 @@ SaveSettings ()
 {
   // TODO: SetVariable()..
   // here we can apply user settings instead of default one
-  gMobile                       = gSettings.Mobile;
+  gMobile                       = gSettings.Smbios.Mobile;
 
   if ((gSettings.CPU.BusSpeed != 0) && (gSettings.CPU.BusSpeed > 10 * Kilo) && (gSettings.CPU.BusSpeed < 500 * Kilo)) {
     switch (gCPUStructure.Model) {
@@ -7935,8 +7948,8 @@ InjectKextsFromDir (
 //    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext"); // 10.6
 //    FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache"); // 10.6/10.6 - 10.9
 //
-//    if (gSettings.BlockKexts[0] != L'\0') {
-//      FSInject->AddStringToList(Blacklist, SWPrintf("\\System\\Library\\Extensions\\%ls", gSettings.BlockKexts).wc_str());
+//    if (gSettings.BlockKexts.notEmpty()) {
+//      FSInject->AddStringToList(Blacklist, SWPrintf("\\System\\Library\\Extensions\\%ls", gSettings.BlockKexts.wc_str()).wc_str());
 //    }
 //  }
 //
@@ -7993,7 +8006,7 @@ EFI_GUID nullUUID = {0,0,0,{0}};
 const XString8& SETTINGS_DATA::getUUID()
 {
   if ( SystemParameters.CustomUuid.notEmpty() ) return SystemParameters.CustomUuid;
-  return SmUUID;
+  return Smbios.SmUUID;
 }
 
 const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
@@ -8011,9 +8024,9 @@ const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
 #endif
     return SystemParameters.CustomUuid;
   }
-  EFI_STATUS Status = StrToGuidLE(SmUUID, uuid);
+  EFI_STATUS Status = StrToGuidLE(Smbios.SmUUID, uuid);
 #ifdef DEBUG
-  if ( EFI_ERROR(Status) ) panic("SmUUID(%s) is not valid", SmUUID.c_str()); // same as before
+  if ( EFI_ERROR(Status) ) panic("SmUUID(%s) is not valid", Smbios.SmUUID.c_str()); // same as before
 #else
   if ( EFI_ERROR(Status) ) {
     DBG("SmUUID(%s) is not valid\n", SmUUID.c_str());
@@ -8022,7 +8035,7 @@ const XString8& SETTINGS_DATA::getUUID(EFI_GUID *uuid)
   }
 #endif
 
-  return SmUUID;
+  return Smbios.SmUUID;
 }
 
 

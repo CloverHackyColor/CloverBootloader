@@ -975,7 +975,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   BOOLEAN         SetSnb = FALSE;
   BOOLEAN         SetIg = FALSE;
 
-  MACHINE_TYPES   MacModel = GetModelFromString(gSettings.ProductName);
+  MACHINE_TYPES   MacModel = GetModelFromString(gSettings.Smbios.ProductName);
 
   devicepath = get_pci_dev_path(gma_dev);
 
@@ -1509,7 +1509,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
   //devprop_add_value(device, "device_type", (UINT8*)"display", 7);  // this key displays two intel graphics cards in system report on 10.13.4+
   devprop_add_value(device, "subsystem-vendor-id", common_vals[2], 4);
   devprop_add_value(device, "class-code", (UINT8*)ClassFix, 4);
-  /*if (gSettings.Mobile) {
+  /*if (gSettings.Smbios.Mobile) {
     UINT32    IntelDisplay = 1;
     // these are not reference keys for all. why add these keys?
     devprop_add_value(device, "AAPL,backlight-control", (UINT8*)&IntelDisplay, 4);
@@ -2023,7 +2023,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         default:
           if (!SetIg) {
-            if (gSettings.Mobile) {
+            if (gSettings.Smbios.Mobile) {
               devprop_add_value(device, "AAPL,ig-platform-id", ivy_bridge_ig_vals[7], 4);
               DBG("  Found ig-platform-id = 0x01660004\n");
             } else {
@@ -2501,7 +2501,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         default:
           if (!SetIg) {
-            if (gSettings.Mobile) {
+            if (gSettings.Smbios.Mobile) {
               devprop_add_value(device, "AAPL,ig-platform-id", skylake_ig_vals[1], 4);
               DBG("  Found ig-platform-id = 0x19120000\n");
             } else {
@@ -2859,7 +2859,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         default:
           if (!SetIg) {
-            if (gSettings.Mobile) {
+            if (gSettings.Smbios.Mobile) {
               devprop_add_value(device, "AAPL,ig-platform-id", kabylake_ig_vals[0], 4);
               DBG("  Found ig-platform-id = 0x59120000\n");
             } else {
@@ -3106,7 +3106,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           break;
         default:
           if (!SetIg) {
-            if (gSettings.Mobile) {
+            if (gSettings.Smbios.Mobile) {
               devprop_add_value(device, "AAPL,ig-platform-id", coffeelake_ig_vals[6], 4);
               DBG("  Found ig-platform-id = 0x3E9B0000\n");
             } else {

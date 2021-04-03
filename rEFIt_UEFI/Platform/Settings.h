@@ -13,7 +13,7 @@
 #include "../libeg/XIcon.h"
 #include "../cpp_lib/undefinable.h"
 #include "../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
-
+#include "../Platform/smbios.h"
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 
@@ -437,6 +437,20 @@ public:
 };
 
 
+class SLOT_DEVICE
+{
+public:
+  UINT16            SegmentGroupNum; // assigned by GetDevices
+  UINT8             BusNum;          // assigned by GetDevices
+  UINT8             DevFuncNum;      // assigned by GetDevices
+  bool              Valid;           // assigned by GetDevices
+//UINT8             DeviceN;
+  UINT8             SlotID;
+  MISC_SLOT_TYPE    SlotType;
+  XString8          SlotName;
+} ;
+
+
 class SETTINGS_DATA;
 class ConfigPlistClass;
 class TagDict;
@@ -594,7 +608,8 @@ public:
       XStringW                ScreenResolution = XStringW();
       bool                    ProvideConsoleGop = 0;
       INTN                    ConsoleMode = 0;
-      LANGUAGES               Language = english;
+      XString8                Language;
+      LanguageCode            languageCode = english;
       bool                    KbdPrevLang = 0;
       XString8Array           HVHideStrings = XString8Array();
       ScanClass Scan =        ScanClass();
@@ -903,14 +918,14 @@ printf("%s", "");
       
       bool compareOldAndCompatibleArb()
       {
-        {
-          size_t oldArbIdx = 0;
-          const DEV_PROPERTY* arb = ArbProperties;
-          while ( arb ) {
-            printf("ArbProperties[%zu].Key = %s\n", oldArbIdx++, arb->Key);
-            arb = arb->Next;
-          }
-        }
+//        {
+//          size_t oldArbIdx = 0;
+//          const DEV_PROPERTY* arb = ArbProperties;
+//          while ( arb ) {
+//            printf("ArbProperties[%zu].Key = %s\n", oldArbIdx++, arb->Key);
+//            arb = arb->Next;
+//          }
+//        }
         const XObjArray<DEV_PROPERTY> compatibleArbProperties = getCompatibleArbProperty();
         size_t oldArbIdx = 0;
         for ( size_t idx = 0 ; idx < compatibleArbProperties.size() ; ++idx )
@@ -1029,6 +1044,78 @@ printf("%s", "");
 
   };
 
+  class SmbiosClass {
+    public:
+
+      class MemoryClass {
+        public:
+          UINT8         SlotCounts;
+          UINT8         UserChannels;
+          RAM_SLOT_INFO User[MAX_RAM_SLOTS * 4];
+      };
+
+  // SMBIOS TYPE0
+      XString8                BiosVendor;
+      XString8                _RomVersion;
+      XString8                _EfiVersion;
+      XString8                _ReleaseDate;
+  // SMBIOS TYPE1
+      XString8                ManufactureName;
+      XString8                ProductName;
+      XString8                VersionNr;
+      XString8                SerialNr;
+      XString8                SmUUID;
+      XString8                FamilyName;
+  // SMBIOS TYPE2
+      XString8                BoardManufactureName;
+      XString8                BoardSerialNumber;
+      XString8                BoardNumber; //Board-ID
+      XString8                LocationInChassis;
+      XString8                BoardVersion;
+      UINT8                   BoardType;
+  // SMBIOS TYPE3
+      bool                    Mobile;
+      UINT8                   ChassisType;
+      XString8                ChassisManufacturer;
+      XString8                ChassisAssetTag;
+  // SMBIOS TYPE4
+  // SMBIOS TYPE17
+      UINT16                  SmbiosVersion;
+      INT8                    Attribute;
+// These were set but never used.
+//      XString8                   MemoryManufacturer;
+//      XString8                   MemorySerialNumber;
+//      XString8                   MemoryPartNumber;
+//      XString8                   MemorySpeed;
+  // SMBIOS TYPE131
+  // SMBIOS TYPE132
+      bool                    TrustSMBIOS = 0;
+      bool                    InjectMemoryTables; // same as Memory.SlotCounts
+  // SMBIOS TYPE133
+      UINT64                  gPlatformFeature;
+  // PatchTableType11
+      bool                    NoRomInfo;
+
+      UINT32                  gFwFeatures;
+      UINT32                  gFwFeaturesMask;
+      MemoryClass             Memory = MemoryClass();
+      SLOT_DEVICE             SlotDevices[16]; //assume DEV_XXX, Arpt=6
+
+      // These are calculated from ApplePlatformData
+      CHAR8                   RPlt[8] = {0};
+      CHAR8                   RBr[8] = {0};
+      UINT8                   EPCI[4] = {0};
+      UINT8                   REV[6] = {0};
+
+
+  };
+  class BootGraphicsClass {
+    public:
+    UINT32 DefaultBackgroundColor = 0;
+    UINT32 UIScale = 0;
+    UINT32 EFILoginHiDPI = 0;
+    UINT8  flagstate[32] = {0};
+  };
 
   BootClass Boot = BootClass();
   ACPIClass ACPI = ACPIClass();
@@ -1041,170 +1128,17 @@ printf("%s", "");
   QuirksClass Quirks = QuirksClass();
   RtVariablesClass RtVariables = RtVariablesClass();
   DevicesClass Devices = DevicesClass();
-
-  // SMBIOS TYPE0
-  XString8                VendorName;
-  XString8                RomVersion;
-  XString8                EfiVersion;
-  XString8                ReleaseDate;
-  // SMBIOS TYPE1
-  XString8                   ManufactureName;
-  XString8                ProductName;
-  XString8                   VersionNr;
-  XString8                   SerialNr;
-  XString8                SmUUID;
-//CHAR8                    Uuid;
-//CHAR8                    SKUNumber;
-  XString8                   FamilyName;
-  XString8                   OEMProduct;
-  XString8                   OEMVendor;
-  // SMBIOS TYPE2
-  XString8                   BoardManufactureName;
-  XString8                   BoardSerialNumber;
-  XString8                   BoardNumber; //Board-ID
-  XString8                   LocationInChassis;
-  XString8                   BoardVersion;
-  XString8                   OEMBoard;
-  UINT8                   BoardType;
-  // SMBIOS TYPE3
-  BOOLEAN                 Mobile;
-  UINT8                   ChassisType;
-  XString8                   ChassisManufacturer;
-  XString8                   ChassisAssetTag;
-  // SMBIOS TYPE4
-  UINT8                   EnabledCores;
-  // SMBIOS TYPE17
-  UINT16                  SmbiosVersion;
-  INT8                    Attribute;
-  XString8                   MemoryManufacturer;
-  XString8                   MemorySerialNumber;
-  XString8                   MemoryPartNumber;
-  XString8                   MemorySpeed;
-  // SMBIOS TYPE131
-  // SMBIOS TYPE132
-  BOOLEAN                 TrustSMBIOS = 0;
-  BOOLEAN                 InjectMemoryTables;
-
-  // SMBIOS TYPE133
-  UINT64                  PlatformFeature;
-	
-  // PatchTableType11
-  BOOLEAN                 NoRomInfo;
-
-  // OS parameters
-  XString8                Language;
+  SmbiosClass Smbios = SmbiosClass();
+  BootGraphicsClass BootGraphics = BootGraphicsClass();
 
 
-//Monitor
-//Boot options
-  BOOLEAN                 MemoryFix;
-  BOOLEAN                 FakeSMCFound;
+//other
+//  UINT16                  DropOEM_DSM; // not used anymore.
+//  BOOLEAN                 LpcTune; // never set to true.
 
-  // GUI parameters
-  BOOLEAN                 Debug;
-  UINT32                  DefaultBackgroundColor;
-
-  //ACPI
-
-//  BOOLEAN                 DropMCFG;
-
-  //Injections
-
-
-
-  //Graphics
-//  UINT16                  PCIRootUID;
-  BOOLEAN                 LpcTune;
-  UINT16                  DropOEM_DSM; //vacant
-
-
-
-
-  // USB DeviceTree injection
-	
-
-
-  //SkyLake
-
-  //Volumes hiding
-
-  // KernelAndKextPatches
-  BOOLEAN                 KextPatchesAllowed;
-  BOOLEAN                 KernelPatchesAllowed; //From GUI: Only for user patches, not internal Clover
-
-
-  // Pre-language
-
-
-
-
-  // SysVariables
-
-
-  // Multi-config
-  CHAR16                  ConfigName[30];
-//  XString8                MainConfigName;
-
-  //Drivers
-
-  //SMC keys
-  CHAR8                   RPlt[8];
-  CHAR8                   RBr[8];
-  UINT8                   EPCI[4];
-  UINT8                   REV[6];
-
-  //other devices
-
-
-  BOOLEAN                 SlpWak;
-  BOOLEAN                 UseIntelHDMI;
-
-
-  //Add custom properties
-
-  //BlackListed kexts
-  CHAR16                  BlockKexts[64];
-
-  // Disable inject kexts
-//  UINT32                  DisableInjectKextCount;
-//  CHAR16                  **DisabledInjectKext;
-//  INPUT_ITEM              *InjectKextMenuItem;
-
-  //ACPI tables
-
-  //other
-//  UINT32                  AudioVolume;
-
-  // boot.efi
-  UINT32 OptionsBits;
-  UINT32 FlagsBits;
-  UINT32 UIScale;
-  UINT32 EFILoginHiDPI;
-  UINT8  flagstate[32];
-
-  
-
-
-  SETTINGS_DATA() : VendorName(), RomVersion(), EfiVersion(), ReleaseDate(), ManufactureName(), ProductName(), VersionNr(), SerialNr(), SmUUID(),
-                    FamilyName(), OEMProduct(), OEMVendor(), BoardManufactureName(), BoardSerialNumber(), BoardNumber(), LocationInChassis(),
-                    BoardVersion(), OEMBoard(), BoardType(0), Mobile(0), ChassisType(0), ChassisManufacturer(), ChassisAssetTag(),
-                    EnabledCores(0), SmbiosVersion(0), Attribute(0), MemoryManufacturer(),
-                    MemorySerialNumber(), MemoryPartNumber(), MemorySpeed(), InjectMemoryTables(0),
-                    PlatformFeature(0), NoRomInfo(0), Language(),
-                    MemoryFix(0),
-                    FakeSMCFound(0), Debug(0), DefaultBackgroundColor(0),
-                    LpcTune(0), DropOEM_DSM(0),
-                    KextPatchesAllowed(0),
-                    KernelPatchesAllowed(0),
-                    ConfigName{0}, /*MainConfigName(0),*/ /*BlackListCount(0),*/ RPlt{0}, RBr{0}, EPCI{0}, REV{0},
-                     SlpWak(0), UseIntelHDMI(0),
-                    BlockKexts{0},
-                    OptionsBits(0), FlagsBits(0), UIScale(0), EFILoginHiDPI(0), flagstate{0}
-                  {};
+  SETTINGS_DATA() {}
   SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
   const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
-
-//  XBuffer<UINT8> serialize() const;
 
   ~SETTINGS_DATA() {}
 
@@ -1217,7 +1151,7 @@ printf("%s", "");
       if ( SystemParameters._InjectSystemID == 2 ) return false;
       else return SystemParameters._InjectSystemID;
     }
-    if ( SmUUID.isEmpty() || SmUUID == nullGuidAsString ) return false;
+    if ( Smbios.SmUUID.isEmpty() || Smbios.SmUUID == nullGuidAsString ) return false;
     if ( SystemParameters._InjectSystemID == 2 ) return true;
     return SystemParameters._InjectSystemID;
   }
@@ -1255,17 +1189,6 @@ typedef struct _DRIVERS_FLAGS {
   BOOLEAN HFSLoaded;
   BOOLEAN APFSLoaded;
 } DRIVERS_FLAGS;
-
-typedef struct {
-  UINT16            SegmentGroupNum;
-  UINT8             BusNum;
-  UINT8             DevFuncNum;
-  BOOLEAN           Valid;
-//UINT8             DeviceN;
-  UINT8             SlotID;
-  UINT8             SlotType;
-  CHAR8             SlotName[31];
-} SLOT_DEVICE;
 
 // ACPI/PATCHED/AML
 class ACPI_PATCHED_AML
@@ -1330,7 +1253,6 @@ extern UINTN                          NHDA;
 extern SETTINGS_DATA                  gSettings;
 extern BOOLEAN                        gFirmwareClover;
 extern DRIVERS_FLAGS                  gDriversFlags;
-extern SLOT_DEVICE                    SlotDevices[];
 extern EFI_EDID_DISCOVERED_PROTOCOL   *EdidDiscovered;
 //extern UINT8                          *gEDID;
 
@@ -1414,6 +1336,25 @@ public:
   XString8                RtMLB = XString8();
 
   bool Turbo = true;
+
+  XString8                   OEMProductFromSmbios = XString8();
+  XString8                   OEMVendorFromSmbios = XString8();
+  XString8                   OEMBoardFromSmbios = XString8();
+  UINT8                      EnabledCores = 0;
+
+//  XStringW                   ConfigName; // Set but never used
+
+  UINT32 OptionsBits = 0;
+  UINT32 FlagsBits = 0;
+
+  XStringW                    BlockKexts;
+  // KernelAndKextPatches
+  BOOLEAN                 KextPatchesAllowed = 0;
+  BOOLEAN                 KernelPatchesAllowed = 0; //From GUI: Only for user patches, not internal Clover
+
+  XString8 RomVersionUsed = XString8();
+  XString8 EfiVersionUsed = XString8();
+  XString8 ReleaseDateUsed = XString8();
 
   REFIT_CONFIG() {};
   REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed
@@ -1518,10 +1459,7 @@ LoadUserSettings (
     TagDict** dict
   );
 
-void
-ParseSMBIOSSettings (
-  const TagDict* dictPointer
-  );
+void ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer);
 
 
 void testConfigPlist();

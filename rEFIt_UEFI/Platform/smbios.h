@@ -19,15 +19,13 @@ extern "C" {
 #define MAX_RAM_FREQUENCY 5000
 
 typedef struct {
-  BOOLEAN  InUse;
-  UINT8   Type;
-  UINT16  pad0;
-  UINT32  pad1;
   UINT32  ModuleSize;
   UINT32  Frequency;
-  CONST CHAR8*  Vendor;
-  CHAR8*  PartNo;
-  CHAR8*  SerialNo;
+  XString8 Vendor;
+  XString8 PartNo;
+  XString8 SerialNo;
+  UINT8   Type;
+  bool  InUse;
 } RAM_SLOT_INFO;
 
 typedef struct
@@ -42,13 +40,10 @@ typedef struct
   UINT8         Type;
   UINT8         SPDInUse;
   UINT8         SMBIOSInUse;
-  UINT8         UserInUse;
-  UINT8         UserChannels;
   UINT8         pad[2];
 
   RAM_SLOT_INFO SPD[MAX_RAM_SLOTS * 4];
   RAM_SLOT_INFO SMBIOS[MAX_RAM_SLOTS * 4];
-  RAM_SLOT_INFO User[MAX_RAM_SLOTS * 4];
 
 } MEM_STRUCTURE;
 

@@ -29,7 +29,7 @@ typedef enum {
   chinese,    //cn
   romanian    //ro
   //something else? add, please
-} LANGUAGES;
+} LanguageCode;
 
 
 #endif /* Languages_h */
