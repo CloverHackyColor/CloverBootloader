@@ -126,7 +126,23 @@ class XObjArrayNC
 	void Remove(const TYPE &Element);
 	void RemoveAtIndex(size_t nIndex);
 	void RemoveAtIndex(int nIndex);
-	void RemoveWithoutFreeingAtIndex(size_t nIndex); // If you use this, there might be a design problem somewhere ???
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	TYPE* RemoveWithoutFreeingAtIndex(IntegralType nIndex)
+  {
+    if (nIndex < 0) {
+        panic("XObjArrayNC::ElementAt() : i < 0. System halted\n");
+    }
+    unsigned_type(IntegralType) uIndex = (unsigned_type(IntegralType))nIndex;
+    if ( uIndex >= _Len ) {
+        panic("XObjArrayNC::ElementAt() -> operator []  -  index (%zu) greater than length (%zu)\n", (size_t)nIndex, _Len);
+    }
+    TYPE* tmp = _Data[uIndex].Object;
+    if ( uIndex < _Len-1 ) memcpy(&_Data[nIndex], &_Data[uIndex+1], (_Len-uIndex-1)*sizeof(XObjArrayEntry<TYPE>));
+    _Len -= 1;
+    return tmp;
+  }
+
 	//void Remove(int nIndex);
 	void RemoveAllBut(const TYPE *Element);
 
@@ -710,23 +726,6 @@ void XObjArrayNC<TYPE>::RemoveAtIndex(size_t nIndex)
 	return;
 }
 
-//-------------------------------------------------------------------------------------------------
-//                                               
-//-------------------------------------------------------------------------------------------------
-/* RemoveWithoutFreeing(size_t) */
-template<class TYPE>
-void XObjArrayNC<TYPE>::RemoveWithoutFreeingAtIndex(size_t nIndex)
-{
-	if ( nIndex < _Len )
-	{
-		if ( nIndex<_Len-1 ) memcpy(&_Data[nIndex], &_Data[nIndex+1], (_Len-nIndex-1)*sizeof(XObjArrayEntry<TYPE>));
-		_Len -= 1;
-		return;
-	}
-	#if defined(_DEBUG)
-		panic("XObjArray::RemoveWithoutFreeing(size_t) -> nIndex > _Len");
-	#endif
-}
 
 //-------------------------------------------------------------------------------------------------
 //                                               

@@ -11,6 +11,8 @@
 
 #ifdef __cplusplus
 
+#include <stddef.h> // size_t
+
 struct _xtools__false_type {
     static constexpr bool value = false;
     bool v() const { return false; }

@@ -102,10 +102,37 @@ typedef struct {
     CHAR16            *codec_name;
 } HDA_PROPERTIES;
 
-typedef struct ACPI_NAME_LIST ACPI_NAME_LIST;
-struct ACPI_NAME_LIST {
-	ACPI_NAME_LIST *Next;
-	CHAR8          *Name;
+class ACPI_NAME
+{
+public:
+	XString8 Name = XString8();
+  XString8Array getSplittedName() const {
+    XString8Array splittedName = Split<XString8Array>(Name, ".");
+    for ( size_t idx = 0 ; idx < splittedName.size() ; ++idx) {
+      XString8& name = splittedName[idx];
+      while ( name.length() > 4 ) name.deleteCharsAtPos(name.length()-1);
+      while ( name.length() < 4 ) name.strcat('_');
+    }
+    for ( size_t idx = 1 ; idx < splittedName.size() ; ++idx) {
+      splittedName.insertReferenceAtPos(splittedName.ExtractFromPos(idx), 0, true); // A swap method in XObjARray would be slightly better to avoid memcpy in XObjArray when an object is removed.
+    }
+    return splittedName;
+  }
+};
+
+class ACPI_RENAME_DEVICE
+{
+public:
+  ACPI_NAME Name = ACPI_NAME();
+  XString8 renameTo = XString8();
+  XString8 getRenameTo() const {
+    if ( renameTo.length() == 4 ) return renameTo;
+    XString8 newName =  renameTo;
+    while ( newName.length() > 4 ) newName.deleteCharsAtPos(newName.length()-1);
+    while ( newName.length() < 4 ) newName.strcat('_');
+    return newName;
+  }
+
 };
 
 class ACPI_DROP_TABLE
@@ -440,14 +467,14 @@ public:
 class SLOT_DEVICE
 {
 public:
-  UINT16            SegmentGroupNum; // assigned by GetDevices
-  UINT8             BusNum;          // assigned by GetDevices
-  UINT8             DevFuncNum;      // assigned by GetDevices
-  bool              Valid;           // assigned by GetDevices
+  UINT16            SegmentGroupNum = UINT16(); // assigned by GetDevices
+  UINT8             BusNum = UINT8();          // assigned by GetDevices
+  UINT8             DevFuncNum = UINT8();      // assigned by GetDevices
+  bool              Valid = bool();           // assigned by GetDevices
 //UINT8             DeviceN;
-  UINT8             SlotID;
-  MISC_SLOT_TYPE    SlotType;
-  XString8          SlotName;
+  UINT8             SlotID = UINT8();
+  MISC_SLOT_TYPE    SlotType = MISC_SLOT_TYPE();
+  XString8          SlotName = XString8();
 } ;
 
 
@@ -517,7 +544,7 @@ public:
             XBuffer<UINT8>   PatchDsdtFind = XBuffer<UINT8>();
             XBuffer<UINT8>   PatchDsdtReplace = XBuffer<UINT8>();
             XBuffer<UINT8>   PatchDsdtTgt = XBuffer<UINT8>();
-            INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM();
+            INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM(); // Not read from config.plist. Should be moved out.
           };
 
           XStringW                DsdtName = XStringW();
@@ -572,7 +599,7 @@ public:
       bool                              AutoMerge = 0;
       XStringWArray                     DisabledAML = XStringWArray();
       XString8Array                     SortedACPI = XString8Array();
-      XObjArray<ACPI_NAME_LIST>         DeviceRename = XObjArray<ACPI_NAME_LIST>();
+      XObjArray<ACPI_RENAME_DEVICE>         DeviceRename = XObjArray<ACPI_RENAME_DEVICE>();
       XObjArray<ACPIDropTablesClass>    ACPIDropTablesArray = XObjArray<ACPIDropTablesClass>();
       DSDTClass DSDT =                  DSDTClass();
       SSDTClass SSDT =                  SSDTClass();
@@ -608,7 +635,7 @@ public:
       XStringW                ScreenResolution = XStringW();
       bool                    ProvideConsoleGop = 0;
       INTN                    ConsoleMode = 0;
-      XString8                Language;
+      XString8                Language = XString8();
       LanguageCode            languageCode = english;
       bool                    KbdPrevLang = 0;
       XString8Array           HVHideStrings = XString8Array();
@@ -1049,39 +1076,39 @@ printf("%s", "");
 
       class MemoryClass {
         public:
-          UINT8         SlotCounts;
-          UINT8         UserChannels;
+          UINT8         SlotCounts = UINT8();
+          UINT8         UserChannels = UINT8();
           RAM_SLOT_INFO User[MAX_RAM_SLOTS * 4];
       };
 
   // SMBIOS TYPE0
-      XString8                BiosVendor;
-      XString8                _RomVersion;
-      XString8                _EfiVersion;
-      XString8                _ReleaseDate;
+      XString8                BiosVendor = XString8();
+      XString8                _RomVersion = XString8();
+      XString8                _EfiVersion = XString8();
+      XString8                _ReleaseDate = XString8();
   // SMBIOS TYPE1
-      XString8                ManufactureName;
-      XString8                ProductName;
-      XString8                VersionNr;
-      XString8                SerialNr;
-      XString8                SmUUID;
-      XString8                FamilyName;
+      XString8                ManufactureName = XString8();
+      XString8                ProductName = XString8();
+      XString8                VersionNr = XString8();
+      XString8                SerialNr = XString8();
+      XString8                SmUUID = XString8();
+      XString8                FamilyName = XString8();
   // SMBIOS TYPE2
-      XString8                BoardManufactureName;
-      XString8                BoardSerialNumber;
-      XString8                BoardNumber; //Board-ID
-      XString8                LocationInChassis;
-      XString8                BoardVersion;
-      UINT8                   BoardType;
+      XString8                BoardManufactureName = XString8();
+      XString8                BoardSerialNumber = XString8();
+      XString8                BoardNumber = XString8(); //Board-ID
+      XString8                LocationInChassis = XString8();
+      XString8                BoardVersion = XString8();
+      UINT8                   BoardType = UINT8();
   // SMBIOS TYPE3
-      bool                    Mobile;
-      UINT8                   ChassisType;
-      XString8                ChassisManufacturer;
-      XString8                ChassisAssetTag;
+      bool                    Mobile = bool();
+      UINT8                   ChassisType = UINT8();
+      XString8                ChassisManufacturer = XString8();
+      XString8                ChassisAssetTag = XString8();
   // SMBIOS TYPE4
   // SMBIOS TYPE17
-      UINT16                  SmbiosVersion;
-      INT8                    Attribute;
+      UINT16                  SmbiosVersion = UINT16();
+      INT8                    Attribute = INT8();
 // These were set but never used.
 //      XString8                   MemoryManufacturer;
 //      XString8                   MemorySerialNumber;
@@ -1090,14 +1117,14 @@ printf("%s", "");
   // SMBIOS TYPE131
   // SMBIOS TYPE132
       bool                    TrustSMBIOS = 0;
-      bool                    InjectMemoryTables; // same as Memory.SlotCounts
+      bool                    InjectMemoryTables = bool(); // same as Memory.SlotCounts
   // SMBIOS TYPE133
-      UINT64                  gPlatformFeature;
+      UINT64                  gPlatformFeature = UINT64();
   // PatchTableType11
-      bool                    NoRomInfo;
+      bool                    NoRomInfo = bool();
 
-      UINT32                  gFwFeatures;
-      UINT32                  gFwFeaturesMask;
+      UINT32                  gFwFeatures = UINT32();
+      UINT32                  gFwFeaturesMask = UINT32();
       MemoryClass             Memory = MemoryClass();
       SLOT_DEVICE             SlotDevices[16]; //assume DEV_XXX, Arpt=6
 
@@ -1347,7 +1374,7 @@ public:
   UINT32 OptionsBits = 0;
   UINT32 FlagsBits = 0;
 
-  XStringW                    BlockKexts;
+  XStringW                    BlockKexts = XStringW();
   // KernelAndKextPatches
   BOOLEAN                 KextPatchesAllowed = 0;
   BOOLEAN                 KernelPatchesAllowed = 0; //From GUI: Only for user patches, not internal Clover

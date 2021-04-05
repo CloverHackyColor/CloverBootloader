@@ -303,41 +303,44 @@ GetCrc32 (
   while (Size--) x+= *Fake++;
   return x;
 }
-
-ACPI_NAME_LIST *
-ParseACPIName(const XString8& String)
-{
-  ACPI_NAME_LIST* List = NULL;
-  ACPI_NAME_LIST* Next = NULL;
-  INTN i, j, Len, pos0, pos1;
-  Len = String.length();
-  //  DBG("parse ACPI name: %s\n", String);
-  if (Len > 0)   {
-    //Parse forward but put in stack LIFO "_SB.PCI0.RP02.PXSX"  -1,3,8,13,18
-    pos0 = -1;
-    while (pos0 < Len) {
-      List = (__typeof__(List))AllocateZeroPool(sizeof(ACPI_NAME_LIST));
-      List->Next = Next;
-      List->Name = (__typeof__(List->Name))AllocateZeroPool(5);
-      pos1 = pos0 + 1;
-      while ((pos1 < Len) && String[pos1] != '.') pos1++; // 3,8,13,18
-      //    if ((pos1 == Len) || (String[pos1] == ',')) { //always
-      for (i = pos0 + 1, j = 0; i < pos1; i++) {
-        List->Name[j++] = String.data()[i]; // String[i] return a char32_t. what if there is an utf8 char ?
-      }
-      // extend by '_' up to 4 symbols
-      if (j < 4) {
-        SetMem(List->Name + j, 4 - j, '_');
-      }
-      List->Name[4] = '\0';
-      //    }
-      //      DBG("string between [%d,%d]: %s\n", pos0, pos1, List->Name);
-      pos0 = pos1; //comma or zero@end
-      Next = List;
-    }
-  }
-  return List;
-}
+//
+//ACPI_NAME_LIST *
+//ParseACPIName(const XString8& String)
+//{
+//  ACPI_NAME_LIST* List = NULL;
+//  ACPI_NAME_LIST* Next = NULL;
+//  INTN i, j, Len, pos0, pos1;
+//  Len = String.length();
+//  //  DBG("parse ACPI name: %s\n", String);
+//  if (Len > 0)   {
+//    //Parse forward but put in stack LIFO "_SB.PCI0.RP02.PXSX"  -1,3,8,13,18
+//    pos0 = -1;
+//    while (pos0 < Len) {
+//      List = (__typeof__(List))AllocateZeroPool(sizeof(ACPI_NAME_LIST));
+//      List->Next = Next;
+//      List->Name = (__typeof__(List->Name))AllocateZeroPool(5);
+//      pos1 = pos0 + 1;
+//      while ((pos1 < Len) && String[pos1] != '.') pos1++; // 3,8,13,18
+//      //    if ((pos1 == Len) || (String[pos1] == ',')) { //always
+//      for (i = pos0 + 1, j = 0; i < pos1; i++) {
+//        List->Name[j++] = String.data()[i]; // String[i] return a char32_t. what if there is an utf8 char ?
+//                                            // Jief : if it's an utf8 multibytes char, it'll be properly converted to the corresponding UTF32 char.
+//                                            //        So this is an unsafe downcast !
+//                                            //        Plus : this can write more than 5 bytes in List->Name !!
+//      }
+//      // extend by '_' up to 4 symbols
+//      if (j < 4) {
+//        SetMem(List->Name + j, 4 - j, '_');
+//      }
+//      List->Name[4] = '\0';
+//      //    }
+//      //      DBG("string between [%d,%d]: %s\n", pos0, pos1, List->Name);
+//      pos0 = pos1; //comma or zero@end
+//      Next = List;
+//    }
+//  }
+//  return List;
+//}
 
 void
 ParseLoadOptions (
@@ -3409,12 +3412,16 @@ ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
     if ( !Prop->isString() ) {
       MsgLog("ATTENTION : property not string in ProductName\n");
     }else{
+ DBG("ProductName SETTINGS_DATA=%s\n", gSettings.Smbios.ProductName.c_str());
+ DBG("ProductName setting=%s\n", Prop->getString()->stringValue().c_str());
       MACHINE_TYPES Model;
       gSettings.Smbios.ProductName = Prop->getString()->stringValue();
+ DBG("ProductName new SETTINGS_DATA=%s\n", gSettings.Smbios.ProductName.c_str());
       // let's fill all other fields based on this ProductName
       // to serve as default
       Model = GetModelFromString(gSettings.Smbios.ProductName);
       if (Model != MaxMachineType) {
+ DBG("SetDMISettingsForModel=%d\n", Model);
         SetDMISettingsForModel(gSettings, Model, FALSE);
         Default = TRUE;
       } else {
@@ -3424,7 +3431,7 @@ ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
       }
     }
   }
-  DBG("Using ProductName from config: %s\n", gSettings.Smbios.ProductName.c_str());
+  DBG("Using ProductName : %s\n", gSettings.Smbios.ProductName.c_str());
 
   Prop = DictPointer->propertyForKey("SmbiosVersion");
   gSettings.Smbios.SmbiosVersion = (UINT16)GetPropertyAsInteger(Prop, 0x204);
@@ -3693,7 +3700,7 @@ ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
     if (gSettings.Smbios.gPlatformFeature == 0xFFFF) {
       DBG("PlatformFeature will not set in SMBIOS\n");
     } else {
-    DBG("Using PlatformFeature from clover: 0x%llX\n", gSettings.Smbios.gPlatformFeature);
+DBG("Using PlatformFeature from clover: 0x%llX\n", gSettings.Smbios.gPlatformFeature);
     }
   }
 
@@ -3739,6 +3746,7 @@ ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
       MsgLog("ATTENTION : property not string in SerialNumber\n");
     }else{
       gSettings.Smbios.SerialNr = Prop->getString()->stringValue();
+DBG("gSettings.Smbios.SerialNr: %s\n", gSettings.Smbios.SerialNr.c_str());
     }
   }
 
@@ -3796,6 +3804,7 @@ ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
       MsgLog("ATTENTION : property not string in BoardVersion\n");
     }else{
       gSettings.Smbios.BoardVersion = Prop->getString()->stringValue();
+DBG("%s : BoardVersion: %s\n",__PRETTY_FUNCTION__, gSettings.Smbios.BoardVersion.c_str());
     }
   }
 
@@ -4371,17 +4380,16 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
           const TagKey* key;
           const TagStruct* value;
           if ( !EFI_ERROR(RenameDevicesDict->getKeyAndValueAtIndex(j, &key, &value)) ) {
-            ACPI_NAME_LIST* List = ParseACPIName(key->keyStringValue());
-            ACPI_NAME_LIST* List2 = (__typeof__(List2))AllocateZeroPool(sizeof(ACPI_NAME_LIST));
-            List2->Next = List;
-            gSettings.ACPI.DeviceRename.AddReference(List2, false);
-            while (List) {
-              DBG("%s:", List->Name);
-              List = List->Next;
-            }
             if (value->isString()) {
-              List2->Name = S8Printf("%s", value->getString()->stringValue().c_str()).forgetDataWithoutFreeing();
-              DBG("->will be renamed to %s\n", List2->Name);
+              ACPI_RENAME_DEVICE* List2 = new ACPI_RENAME_DEVICE();
+              List2->Name.Name = key->keyStringValue();
+              List2->renameTo = value->getString()->stringValue();
+              DBG("->will be renamed to %s\n", List2->renameTo.c_str());
+              gSettings.ACPI.DeviceRename.AddReference(List2, false);
+              const XString8Array List2Name = List2->Name.getSplittedName();
+              for (size_t idx = 0 ; idx < List2Name.size() ; ++idx ) {
+                DBG("%s:", List2Name[idx].c_str());
+              }
             }
           }
         } //for j < dict size

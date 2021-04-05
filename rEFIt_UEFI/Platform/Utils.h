@@ -121,9 +121,6 @@ inline UINTN EFIAPI AsciiStrDecimalToUintn(const XString8& String)
 extern BOOLEAN haveError;
 
 
-BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
-BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
-
 #endif // __cplusplus
 
 #endif // _UTILS_H_

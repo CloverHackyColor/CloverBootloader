@@ -18,34 +18,35 @@ extern "C" {
 // The maximum sane frequency for a RAM module
 #define MAX_RAM_FREQUENCY 5000
 
-typedef struct {
-  UINT32  ModuleSize;
-  UINT32  Frequency;
-  XString8 Vendor;
-  XString8 PartNo;
-  XString8 SerialNo;
-  UINT8   Type;
-  bool  InUse;
-} RAM_SLOT_INFO;
+class RAM_SLOT_INFO {
+public:
+  UINT32  ModuleSize = UINT32();
+  UINT32  Frequency = UINT32();
+  XString8 Vendor = XString8();
+  XString8 PartNo = XString8();
+  XString8 SerialNo = XString8();
+  UINT8   Type = UINT8();
+  bool  InUse = bool();
+};
 
-typedef struct
+class MEM_STRUCTURE
 {
-  UINT32        Frequency;
-  UINT32        Divider;
-  UINT8         TRC;
-  UINT8         TRP;
-  UINT8         RAS;
-  UINT8         Channels;
-  UINT8         Slots;
-  UINT8         Type;
-  UINT8         SPDInUse;
-  UINT8         SMBIOSInUse;
-  UINT8         pad[2];
+public:
+  UINT32        Frequency = UINT32();
+  UINT32        Divider = UINT32();
+  UINT8         TRC = UINT8();
+  UINT8         TRP = UINT8();
+  UINT8         RAS = UINT8();
+  UINT8         Channels = UINT8();
+  UINT8         Slots = UINT8();
+  UINT8         Type = UINT8();
+  UINT8         SPDInUse = UINT8();
+  UINT8         SMBIOSInUse = UINT8();
 
   RAM_SLOT_INFO SPD[MAX_RAM_SLOTS * 4];
   RAM_SLOT_INFO SMBIOS[MAX_RAM_SLOTS * 4];
 
-} MEM_STRUCTURE;
+};
 
 
 extern APPLE_SMBIOS_STRUCTURE_POINTER SmbiosTable;

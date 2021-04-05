@@ -1,6 +1,7 @@
 #ifndef __XTOOLSCONF_H__
 #define __XTOOLSCONF_H__
 
+#include <posix/posix.h>
 
 #define xsize size_t
 //#define xisize INTN

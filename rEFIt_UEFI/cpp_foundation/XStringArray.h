@@ -197,8 +197,11 @@ class XStringArray_/* : public XStringArraySuper*/
   template<typename XStringClass1, enable_if(is___String(XStringClass1))>
   void insertAtPos(const XStringClass1 &aString, size_t pos) { array.InsertRef(new XStringClass1(aString), pos, true); }
 
-  void AddReference(XStringClass *newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
-  void insertReferenceAtPos(XStringClass *newElement, size_t pos, bool FreeIt) { array.InsertRef(newElement, pos, FreeIt); }
+  void AddReference(XStringClass* newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
+  void insertReferenceAtPos(XStringClass* newElement, size_t pos, bool FreeIt) { array.InsertRef(newElement, pos, FreeIt); }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  XStringClass* ExtractFromPos(IntegralType i) { return array.RemoveWithoutFreeingAtIndex(i); }
 
 	template<class OtherXStringClass, class OtherXStringArrayClass>
 	void import(const XStringArray_<OtherXStringClass, OtherXStringArrayClass> &aStrings)

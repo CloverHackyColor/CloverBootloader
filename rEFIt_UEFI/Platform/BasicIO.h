@@ -16,5 +16,8 @@ void PauseForKey(CONST CHAR16* msg);
 void EndlessIdleLoop(void);
 
 
+BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
+BOOLEAN CheckError(IN EFI_STATUS Status, IN CONST CHAR16 *where);
+
 
 #endif /* PLATFORM_BASICIO_H_ */

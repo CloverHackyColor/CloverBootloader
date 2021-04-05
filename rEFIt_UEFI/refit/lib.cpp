@@ -39,6 +39,7 @@
 #include "../include/OSTypes.h"
 #include "lib.h"
 #include "screen.h"
+#include "../Platform/BasicIO.h"
 #include "../Platform/BootLog.h"
 #include "../Platform/guid.h"
 #include "../Platform/APFS.h"

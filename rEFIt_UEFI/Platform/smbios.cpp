@@ -469,14 +469,21 @@ void PatchTableType0()
   GlobalConfig.RomVersionUsed.trim();
   if( GlobalConfig.RomVersionUsed.notEmpty() ) {
     if( GlobalConfig.EfiVersionUsed.notEmpty() ) {
+      DBG("UpdateSmbiosString : BiosVersion=EfiVersion=%s\n", GlobalConfig.EfiVersionUsed.c_str());
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, GlobalConfig.EfiVersionUsed);
     } else {
+      DBG("UpdateSmbiosString : BiosVersion=RomVersion=%s\n", GlobalConfig.RomVersionUsed.c_str());
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosVersion, GlobalConfig.RomVersionUsed);
     }
+  }else{
+      DBG("UpdateSmbiosString : BiosVersion no update\n");
   }
   GlobalConfig.ReleaseDateUsed.trim();
   if( GlobalConfig.ReleaseDateUsed.notEmpty() ) {
+    DBG("UpdateSmbiosString : ReleaseDate=%s\n", GlobalConfig.ReleaseDateUsed.c_str());
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->BiosReleaseDate, GlobalConfig.ReleaseDateUsed);
+  }else{
+    DBG("UpdateSmbiosString : ReleaseDate no update\n");
   }
   Handle = LogSmbiosTable(newSmbiosTable);
 }
@@ -535,6 +542,7 @@ void PatchTableType1()
   }
   gSettings.Smbios.ProductName.trim();
   if( gSettings.Smbios.ProductName.notEmpty() ){
+DBG("%s : UpdateSmbiosString ProductName=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.ProductName.c_str());
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->ProductName, gSettings.Smbios.ProductName);
   }
   gSettings.Smbios.VersionNr.trim();
@@ -544,6 +552,7 @@ void PatchTableType1()
   gSettings.Smbios.SerialNr.trim();
   if( gSettings.Smbios.SerialNr.notEmpty() ){
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SerialNumber, gSettings.Smbios.SerialNr);
+DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
   }
   gSettings.Smbios.BoardNumber.trim();
   if( gSettings.Smbios.BoardNumber.notEmpty() ){
@@ -620,10 +629,12 @@ void PatchTableType2()
   }
   gSettings.Smbios.BoardNumber.trim();
   if( gSettings.Smbios.BoardNumber.notEmpty() ){
+DBG("%s : UpdateSmbiosString ProductName=BoardNumber=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.BoardNumber.c_str());
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->ProductName, gSettings.Smbios.BoardNumber);
   }
   gSettings.Smbios.BoardVersion.trim();
   if(  gSettings.Smbios.BoardVersion.notEmpty() ){
+DBG("%s : UpdateSmbiosString Version=BoardVersion=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.BoardVersion.c_str());
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, gSettings.Smbios.BoardVersion); //iMac17,1 - there is ProductName
   }
   gSettings.Smbios.BoardSerialNumber.trim();
@@ -714,6 +725,7 @@ void PatchTableType3()
   gSettings.Smbios.SerialNr.trim();
   if( gSettings.Smbios.SerialNr.notEmpty() ){
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->SerialNumber, gSettings.Smbios.SerialNr);
+DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
   }
   gSettings.Smbios.ChassisAssetTag.trim();
   if( gSettings.Smbios.ChassisAssetTag.notEmpty() ){
@@ -1285,13 +1297,10 @@ void GetTableType17()
       ++(gRAM.SMBIOSInUse);
       gRAM.SMBIOS[Index].Vendor.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer));
       gRAM.SMBIOS[Index].Vendor.trim();
-      gRAM.SMBIOS[Index].Vendor.deleteCharsAtPos(gRAM.SMBIOS[Index].Vendor.indexOf(' '), MAX_XSIZE);
       gRAM.SMBIOS[Index].SerialNo.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber));
       gRAM.SMBIOS[Index].SerialNo.trim();
-      gRAM.SMBIOS[Index].SerialNo.deleteCharsAtPos(gRAM.SMBIOS[Index].SerialNo.indexOf(' '), MAX_XSIZE);
       gRAM.SMBIOS[Index].PartNo.takeValueFrom(GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber));
       gRAM.SMBIOS[Index].PartNo.trim();
-      gRAM.SMBIOS[Index].PartNo.deleteCharsAtPos(gRAM.SMBIOS[Index].PartNo.indexOf(' '), MAX_XSIZE);
     }
     //    DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
     //    DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)

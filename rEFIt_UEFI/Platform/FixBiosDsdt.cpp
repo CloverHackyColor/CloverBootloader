@@ -5218,7 +5218,8 @@ BOOLEAN isACPI_Char(CHAR8 C)
     (C == '_'));
 }
 
-BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
+// all string in Bridge is supposed to be 4 chars long.
+BOOLEAN CmpFullName(UINT8* Table, UINTN Len, const XString8Array& Bridge)
 {
   // "RP02" NameLen=4
   // "_SB_PCI0RP02" NameLen=12
@@ -5234,13 +5235,12 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
   Name = (__typeof__(Name))AllocateCopyPool(NameLen + 1, Table);
   Name[NameLen] = '\0';
   i = NameLen - 4;
-  while (Bridge && (i >= 0)) {
-    if (AsciiStrStr(Name + i, Bridge->Name) == NULL) { //compare Bridge->Name with RP02, Next->Name with PCI0 then _SB_
+  for (size_t idx = 0 ; idx < Bridge.size() && i >= 0 ; ++idx ) {
+    if (AsciiStrStr(Name + i, Bridge[idx].c_str()) == NULL) { //compare Bridge->Name with RP02, Next->Name with PCI0 then _SB_
       FreePool(Name);
       return FALSE;
     }
     i -= 4;
-    Bridge = Bridge->Next;
   }
   FreePool(Name);
   return TRUE;
@@ -5248,11 +5248,8 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, ACPI_NAME_LIST *Bridge)
 
 void RenameDevices(UINT8* table)
 {
-  ACPI_NAME_LIST *List;
-  ACPI_NAME_LIST *Bridge;
-  CHAR8 *Replace;
-  CHAR8 *Find;
 
+DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
   if ( gSettings.ACPI.DeviceRename.size() <= 0 ) return; // to avoid message "0 replacement"
 
   INTN i;
@@ -5262,24 +5259,30 @@ void RenameDevices(UINT8* table)
   INTN adr, shift, Num = 0;
   BOOLEAN found;
   for (UINTN index = 0; index < gSettings.ACPI.DeviceRename.size(); index++) {
-    List = gSettings.ACPI.DeviceRename[index].Next;
-    Replace = gSettings.ACPI.DeviceRename[index].Name;
-    Find = List->Name;
-    Bridge = List->Next;
-    MsgLog("Name: %s, Bridge: %s, Replace: %s\n", Find, Bridge->Name, Replace);
+    const ACPI_RENAME_DEVICE& deviceRename = gSettings.ACPI.DeviceRename[index];
+    XString8Array FindList = deviceRename.Name.getSplittedName();
+    XString8 Replace = deviceRename.getRenameTo();
+    XString8 LastComponentFind;
+    if( FindList.notEmpty() )  LastComponentFind = FindList[0];
+    XString8Array BridgeList = FindList;
+    if( BridgeList.notEmpty() ) BridgeList.removeAtPos(0);
+    XString8 Bridge;
+    if( BridgeList.notEmpty() ) Bridge = BridgeList[0];
+
+    MsgLog("Name: %s, Bridge: %s, Replace: %s\n", LastComponentFind.c_str(), Bridge.c_str(), Replace.c_str());
     adr = 0;
     do
     {
-      shift = FindBin(table + adr, (UINT32)(len - adr), (const UINT8*)Find, 4); //next occurence
+      shift = FindBin(table + adr, (UINT32)(len - adr), (const UINT8*)LastComponentFind.c_str(), 4); //next occurence
       if (shift < 0) {
         break; //not found
       }
       adr += shift;
 //      DBG("found Name @ 0x%X\n", adr);
-      if (!Bridge || (FindBin(table + adr - 4, 5, (const UINT8*)(Bridge->Name), 4) == 0)) { // long name like "RP02.PXSX"
-        CopyMem(table + adr, Replace, 4);
+      if (Bridge.isEmpty() || (FindBin(table + adr - 4, 5, (const UINT8*)(Bridge.c_str()), 4) == 0)) { // long name like "RP02.PXSX"
+        DBG("replace without bridge %.*s by %s at table+%llu\n", 4, table + adr, Replace.c_str(), adr);
+        CopyMem(table + adr, Replace.c_str(), 4);
         adr += 5; //at least, it is impossible to see  PXSXPXSX
-//        DBG("replaced\n");
         Num++;
         continue;
       }
@@ -5315,10 +5318,11 @@ void RenameDevices(UINT8* table)
               else if ((table[k] & 0x80) != 0) {
                 k += 3;
               } //now k points to the outer name
-              if (CmpFullName(table + k, len - k, Bridge)) {
-                CopyMem(table + adr, Replace, 4);
-                adr += 5;
+              if (CmpFullName(table + k, len - k, BridgeList)) {
                 DBG("found Bridge device begin=%llX end=%llX\n", k, k+size);
+                DBG("replace with bridge %.*s by %s at table+%llu\n", 4, table + adr, Replace.c_str(), adr);
+                CopyMem(table + adr, Replace.c_str(), 4);
+                adr += 5;
     //            DBG("   name copied\n");
                 Num++;
                 break; //cancel search outer bridge, we found it.

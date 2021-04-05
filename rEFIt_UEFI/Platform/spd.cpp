@@ -810,13 +810,10 @@ STATIC void read_smb(EFI_PCI_IO_PROTOCOL *PciIo, UINT16	vid, UINT16	did)
     //gRAM Type = spd_mem_to_smbios[spd_type];
     gRAM.SPD[i].PartNo.takeValueFrom(getDDRPartNum(spdbuf, base, i));
     gRAM.SPD[i].PartNo.trim();
-    gRAM.SPD[i].PartNo.deleteCharsAtPos(gRAM.SPD[i].PartNo.indexOf(' '), MAX_XSIZE);
     gRAM.SPD[i].Vendor.takeValueFrom(getVendorName(&(gRAM.SPD[i]), spdbuf, base, i));
     gRAM.SPD[i].Vendor.trim();
-    gRAM.SPD[i].Vendor.deleteCharsAtPos(gRAM.SPD[i].Vendor.indexOf(' '), MAX_XSIZE);
     gRAM.SPD[i].SerialNo.takeValueFrom(getDDRSerial(spdbuf));
     gRAM.SPD[i].SerialNo.trim();
-    gRAM.SPD[i].SerialNo.deleteCharsAtPos(gRAM.SPD[i].SerialNo.indexOf(' '), MAX_XSIZE);
     //XXX - when we can FreePool allocated for these buffers? No this is pointer copy
     // determine spd speed
     speed = getDDRspeedMhz(spdbuf);
