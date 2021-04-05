@@ -116,7 +116,7 @@ then
 	  exit 1
 	fi
 
-	adr="$(grep "$image_base_str" ./serial0_qemu_out.log | awk '{printf "0x%x",$6}')"
+	adr="$(grep "$image_base_str" ./serial0_qemu_out.log | awk '{printf "0x%x",$NF}')"
   echo adr="$adr"
 
 

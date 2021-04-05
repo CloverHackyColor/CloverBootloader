@@ -612,7 +612,7 @@ mCoffOffset=mCoffOffsetNew;
           // if the section address is aligned we must align PE/COFF
           UINT32 mCoffOffsetNew = (UINT32) ((shdr->sh_addr + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
           mCoffOffset = (UINT32) ((mCoffOffset + shdr->sh_addralign - 1) & ~(shdr->sh_addralign - 1));
-          printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llu\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
+printf("Section %d %s mCoffOffset=%d(0x%x) mCoffOffsetNew=%d(0x%x) diff=%d(0x%x), size=%llu\n", i, sectName, mCoffOffset, mCoffOffset, mCoffOffsetNew, mCoffOffsetNew, mCoffOffsetNew-mCoffOffset, mCoffOffsetNew-mCoffOffset, shdr->sh_size);
 mCoffOffset=mCoffOffsetNew;
         } else {
           Error (NULL, 0, 3000, "Invalid", "Section address not aligned to its own alignment.");

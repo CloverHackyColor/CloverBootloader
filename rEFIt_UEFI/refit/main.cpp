@@ -2826,15 +2826,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    }
     if ( !EFI_ERROR(Status) ) {
       DBG("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
-    } else {
-      DBG("CloverX64 : Image base = 0\n");
     }
 #ifdef JIEF_DEBUG
     gBS->Stall(2500000); // to give time to gdb to connect
 //  PauseForKey(L"press\n");
 #endif
   }
-    gBS->Stall(2500000); // to give time to gdb to connect
 
 #ifdef CLOVER_BUILD
   construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
