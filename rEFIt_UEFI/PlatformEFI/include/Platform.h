@@ -38,13 +38,6 @@ Headers collection for procedures
 #endif
 
 
-#ifndef DEBUG_ALL
-#define MsgLog(...)  DebugLog(1, __VA_ARGS__)
-#else
-#define MsgLog(...)  DebugLog(DEBUG_ALL, __VA_ARGS__)
-#endif
-
-
 
 // Jief : temporary rename
 #define AllocateZeroPool AllocateZeroPool

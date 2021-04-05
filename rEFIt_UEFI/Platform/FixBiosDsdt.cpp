@@ -5260,7 +5260,7 @@ DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
   BOOLEAN found;
   for (UINTN index = 0; index < gSettings.ACPI.DeviceRename.size(); index++) {
     const ACPI_RENAME_DEVICE& deviceRename = gSettings.ACPI.DeviceRename[index];
-    XString8Array FindList = deviceRename.Name.getSplittedName();
+    XString8Array FindList = deviceRename.acpiName.getSplittedName();
     XString8 Replace = deviceRename.getRenameTo();
     XString8 LastComponentFind;
     if( FindList.notEmpty() )  LastComponentFind = FindList[0];

@@ -52,6 +52,8 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 	}
 }
 
+bool disabledLog = false;
+
 // Changed MsgLog(...) it now calls this function
 //  with DebugMode == 0. - apianti
 // DebugMode==0 Prints to msg log, only output to log on SaveBooterLog
@@ -59,16 +61,16 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 // DebugMode==2 Prints to msg log, DEBUG_LOG and display console
 void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
-//  VA_LIST Marker;
-  va_list Marker;
+  if ( disabledLog ) return;
+  
+  VA_LIST Marker;
   // Make sure the buffer is intact for writing
   if (FormatString == NULL || DebugMode < 0) {
     return;
   }
 
   // Print message to log buffer
-//  VA_START(Marker, FormatString);
-  va_start(Marker, FormatString);
+  VA_START(Marker, FormatString);
   #if __WCHAR_MAX__ < 0xffff
   #else
     vprintf(FormatString, Marker);

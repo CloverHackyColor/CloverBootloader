@@ -4380,16 +4380,13 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
           const TagKey* key;
           const TagStruct* value;
           if ( !EFI_ERROR(RenameDevicesDict->getKeyAndValueAtIndex(j, &key, &value)) ) {
-            if (value->isString()) {
+            if ( value->isString() && value->getString()->stringValue().notEmpty() ) {
               ACPI_RENAME_DEVICE* List2 = new ACPI_RENAME_DEVICE();
-              List2->Name.Name = key->keyStringValue();
+              List2->acpiName.Name = key->keyStringValue();
               List2->renameTo = value->getString()->stringValue();
-              DBG("->will be renamed to %s\n", List2->renameTo.c_str());
               gSettings.ACPI.DeviceRename.AddReference(List2, false);
-              const XString8Array List2Name = List2->Name.getSplittedName();
-              for (size_t idx = 0 ; idx < List2Name.size() ; ++idx ) {
-                DBG("%s:", List2Name[idx].c_str());
-              }
+              // Debug print. We use getSplittedName() and then ConcatAll because getSplittedName() format components (trim or expand to 4 chars).
+              DBG("'%s' -> will be renamed to '%s'\n", List2->acpiName.getSplittedName().ConcatAll(":").c_str(), List2->renameTo.c_str());
             }
           }
         } //for j < dict size
@@ -4468,24 +4465,29 @@ if (key->keyStringValue().startWithOrEqualTo("#")) {
                   //         DBG("Add %d properties:\n", PropCount);
                   for (INTN j = 0; j < PropCount; j++) {
                     DevProps = *Child;
-                    *Child = new DEV_PROPERTY;
-                  //  *Child = new (__typeof_am__(**Child))();
-                    (*Child)->Next = DevProps;
 
                     const TagKey* key2;
                     const TagStruct* value2;
                     if (EFI_ERROR(valueDict->getKeyAndValueAtIndex(j, &key2, &value2))) {
                       continue;
                     }
-                    if (key2->keyStringValue()[0] != '#') {
+                    if (key2->keyStringValue().isEmpty()) {
                       continue;
+                    }
+                    if (key2->keyStringValue()[0] == '#') {
+                      continue;
+                    }
+
+                    *Child = new DEV_PROPERTY;
+                    (*Child)->Next = DevProps;
+//                    if (key2->keyStringValue()[0] != '#') {
                       (*Child)->MenuItem.BValue = TRUE;
                       (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str()).forgetDataWithoutFreeing();
-                    }
-                    else {
-                      (*Child)->MenuItem.BValue = FALSE;
-                      (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str() + 1).forgetDataWithoutFreeing();
-                    }
+//                    }
+//                    else {
+//                      (*Child)->MenuItem.BValue = FALSE;
+//                      (*Child)->Key = S8Printf("%s", key2->keyStringValue().c_str() + 1).forgetDataWithoutFreeing();
+//                    }
 
                     //    DBG("<key>%s\n  <value> type %d\n", (*Child)->Key, Prop3->type);
                     if (value2 && (value2->isString()) && value2->getString()->stringValue().notEmpty()) {

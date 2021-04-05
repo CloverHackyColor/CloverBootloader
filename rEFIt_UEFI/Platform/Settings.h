@@ -106,6 +106,7 @@ class ACPI_NAME
 {
 public:
 	XString8 Name = XString8();
+  
   XString8Array getSplittedName() const {
     XString8Array splittedName = Split<XString8Array>(Name, ".");
     for ( size_t idx = 0 ; idx < splittedName.size() ; ++idx) {
@@ -123,8 +124,9 @@ public:
 class ACPI_RENAME_DEVICE
 {
 public:
-  ACPI_NAME Name = ACPI_NAME();
+  ACPI_NAME acpiName = ACPI_NAME();
   XString8 renameTo = XString8();
+  
   XString8 getRenameTo() const {
     if ( renameTo.length() == 4 ) return renameTo;
     XString8 newName =  renameTo;
@@ -867,66 +869,66 @@ public:
     public:
       void FillDevicePropertiesOld(SETTINGS_DATA& gSettings, const TagDict* DevicesDict);
       
-      bool compareDevProperty(const XString8& label, const DEV_PROPERTY& devProp, const DEV_PROPERTY& newDev) const
+      bool compareDevProperty(const XString8& label, const DEV_PROPERTY& oldProp, const DEV_PROPERTY& newProp) const
       {
-        if ( newDev.Device != devProp.Device )
+        if ( newProp.Device != oldProp.Device )
         {
-          printf("%s.Device\n", label.c_str());
+          printf("%s.Device !=\n", label.c_str());
           return false;
         }
-        if ( newDev.Key || devProp.Key ) {
-          if ( !newDev.Key || !devProp.Key ) {
-            printf("%s.Key\n", label.c_str());
+        if ( newProp.Key || oldProp.Key ) {
+          if ( !newProp.Key || !oldProp.Key ) {
+            printf("%s.Key !=\n", label.c_str());
             return false;
           }
 #ifdef JIEF_DEBUG
-if ( strcmp(devProp.Key, "10") == 0 ) {
+if ( strcmp(oldProp.Key, "10") == 0 ) {
 printf("%s", "");
 }
 #endif
-          if ( strcmp(newDev.Key, devProp.Key) != 0 )
+          if ( strcmp(newProp.Key, oldProp.Key) != 0 )
           {
-            printf("%s.Key\n", label.c_str());
+            printf("%s.Key !=\n", label.c_str());
             return false;
           }
         }
-        if ( newDev.ValueLen != devProp.ValueLen )
+        if ( newProp.ValueLen != oldProp.ValueLen )
         {
-          printf("%s.Value.ValueLen\n", label.c_str());
+          printf("%s.Value.ValueLen %lld != %lld\n", label.c_str(), oldProp.ValueLen, newProp.ValueLen);
           return false;
         } else
         {
-          if ( newDev.ValueLen > 0 ) {
-            if ( memcmp(newDev.Value, devProp.Value, devProp.ValueLen) != 0 )
+          if ( newProp.ValueLen > 0 ) {
+            if ( memcmp(newProp.Value, oldProp.Value, oldProp.ValueLen) != 0 )
             {
-              printf("%s.Value\n", label.c_str());
+              printf("%s.Value !=\n", label.c_str());
               return false;
             }
           }
         }
-        if ( newDev.ValueType != devProp.ValueType )
+        if ( newProp.ValueType != oldProp.ValueType )
         {
-          printf("%s.ValueType\n", label.c_str());
+          printf("%s.ValueType !=\n", label.c_str());
           return false;
         }
-        if ( newDev.Label || devProp.Label ) {
-          if ( !newDev.Label || !devProp.Label ) {
-            printf("%s.Label\n", label.c_str());
+        if ( newProp.Label || oldProp.Label ) {
+          if ( !newProp.Label || !oldProp.Label ) {
+            printf("%s.Label !=\n", label.c_str());
             return false;
           }
-          if ( strcmp(newDev.Label, devProp.Label) != 0 )
+          if ( strcmp(newProp.Label, oldProp.Label) != 0 )
           {
-            printf("%s.Label : old:%s new:%s\n", label.c_str(), devProp.Label, newDev.Label);
+            printf("%s.Label != : old:%s new:%s\n", label.c_str(), oldProp.Label, newProp.Label);
             return false;
           }
         }
-        if ( newDev.MenuItem.BValue != devProp.MenuItem.BValue )
+        if ( newProp.MenuItem.BValue != oldProp.MenuItem.BValue )
         {
-          printf("%s.MenuItem.BValue\n", label.c_str());
+          printf("%s.MenuItem.BValue !=\n", label.c_str());
           return false;
         }
-        DEV_PROPERTY *oldChild = devProp.Child;
-        DEV_PROPERTY *newChild = newDev.Child;
+        DEV_PROPERTY *oldChild = oldProp.Child;
+        DEV_PROPERTY *newChild = newProp.Child;
         size_t jdx = 0;
         while ( oldChild && newChild )
         {
@@ -1008,10 +1010,11 @@ printf("%s", "");
             DEV_PROPERTY* newSubProp = new DEV_PROPERTY();
             newSubProp->Device = 0;
             newSubProp->Key = const_cast<char*>(SubProp.Key.c_str());
+//            newSubProp->Key = NULL;
             newSubProp->Value = const_cast<unsigned char*>(SubProp.Value.data());
             newSubProp->ValueLen = SubProp.Value.size();
             newSubProp->ValueType = SubProp.ValueType;
-            newSubProp->MenuItem.BValue = SubProp.MenuItem.BValue;
+            newSubProp->MenuItem.BValue = true;
             if ( newProp->Child ) {
               DEV_PROPERTY* childs;
               for ( childs = newProp->Child ; childs->Next ; childs = childs->Next );
@@ -1021,7 +1024,7 @@ printf("%s", "");
             }
           }
           arb.AddReference(newProp, true);
-//          printf("Add prop %s at index %zu\n", newProp->Key.c_str(), arb.size()-1);
+//          MsgLog("Add prop %s at index %zu\n", newProp->Label, arb.size()-1);
         }
         return arb;
       };

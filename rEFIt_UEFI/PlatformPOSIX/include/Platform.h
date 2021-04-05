@@ -62,26 +62,23 @@ typedef unsigned long long  uintptr_t;
 
 #ifdef __cplusplus
 #include "../../../rEFIt_UEFI/cpp_foundation/XString.h"
+#include "../../../rEFIt_UEFI/cpp_foundation/XArray.h"
 #include "../../../rEFIt_UEFI/cpp_foundation/XObjArray.h"
+#include "../include/remove_ref.h"
+#include "../cpp_lib/undefinable.h"
+
+#include "../include/OneLinerMacros.h"
+
 #include "../../../rEFIt_UEFI/entry_scan/common.h"
 #include "../../../rEFIt_UEFI/libeg/BmLib.h"
-#endif
+#include "../Platform/BootLog.h"
+#include "../Platform/BasicIO.h"
+#include "../Platform/VersionString.h"
+#include "../Platform/Utils.h"
 #include "../../../rEFIt_UEFI/Platform/Utils.h"
 
-//#include "../../../../../cpp_tests/Include/xcode_utf_fixed.h"
+#endif
 
-
-void CpuDeadLoop(void);
-
-void PauseForKey(const wchar_t* msg);
-
-const char* efiStrError(EFI_STATUS Status);
-
-
-//#define DEBUG_VERBOSE 0
-//#define DEBUG( expression )
-
-#define MsgLog ::printf
 
 // to be able to compile AutoGen.c
 #ifdef __cplusplus

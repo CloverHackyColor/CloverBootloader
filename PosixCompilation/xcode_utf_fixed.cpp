@@ -175,7 +175,7 @@ int wcsncmp_fixed(const wchar_t *s1, const wchar_t * s2, size_t n)
 #ifdef _LIBCPP_WCHAR_H
 wchar_t* wcsstr_fixed(const wchar_t* haystack, const wchar_t* needle)
 #else
-const wchar_t* wcsstr_fixed(const wchar_t* haystack, const wchar_t* needle)
+wchar_t* wcsstr_fixed(const wchar_t* haystack, const wchar_t* needle)
 #endif
 {
 #if __WCHAR_MAX__ >= 0x10000

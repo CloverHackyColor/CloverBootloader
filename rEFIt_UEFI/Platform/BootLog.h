@@ -24,6 +24,12 @@ extern "C" {
 //#define PREWAKE_LOG  L"misc\\prewake.log"
 
 
+#ifndef DEBUG_ALL
+#define MsgLog(...)  DebugLog(1, __VA_ARGS__)
+#else
+#define MsgLog(...)  DebugLog(DEBUG_ALL, __VA_ARGS__)
+#endif
+
 
 void
 InitBooterLog (void);
