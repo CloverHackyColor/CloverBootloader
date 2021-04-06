@@ -57,7 +57,7 @@ class XStringArray_/* : public XStringArraySuper*/
   XStringClass ConcatAll(const Type1& Separator, const Type2& Prefix, const Type3& Suffix) const
   {
       size_t i;
-      XStringClass s;
+      remove_const(XStringClass) s;
 
       if ( array.size() > 0 ) {
           s.takeValueFrom(Prefix);
@@ -165,15 +165,15 @@ class XStringArray_/* : public XStringArraySuper*/
 		const wchar_t *p;
 		
 		{
-			XStringClass* newS = new XStringClass;
+			remove_const(XStringClass)* newS = new remove_const(XStringClass);
 			newS->takeValueFrom(Val1);
 			AddReference(newS, true);
 		}
 		XTOOLS_VA_START(va, Val1);
 		p = VA_ARG(va, const CharType*);
 		while ( p != nullptr ) {
-			XStringClass* newS = new XStringClass;
-			newS->takeValueFrom(Val1);
+      remove_const(XStringClass)* newS = new remove_const(XStringClass);
+			newS->takeValueFrom(p);
 			AddReference(newS, true);
 			p = VA_ARG(va, const CharType*);
 		}
@@ -186,7 +186,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	template<typename CharType, enable_if(is_char(CharType))>
 	void Add(const CharType* s)
 	{
-		XStringClass* xstr = new XStringClass;
+		remove_const(XStringClass)* xstr = new remove_const(XStringClass);
 		xstr->strcpy(s);
 		array.AddReference(xstr, true);
 	}
@@ -195,7 +195,7 @@ class XStringArray_/* : public XStringArraySuper*/
   void Add(const XStringClass1 &aString) { Add(aString.s()); }
 
   template<typename XStringClass1, enable_if(is___String(XStringClass1))>
-  void insertAtPos(const XStringClass1 &aString, size_t pos) { array.InsertRef(new XStringClass1(aString), pos, true); }
+  void insertAtPos(const XStringClass1 &aString, size_t pos) { array.InsertRef(new remove_const(XStringClass1)(aString), pos, true); }
 
   void AddReference(XStringClass* newElement, bool FreeIt) { array.AddReference(newElement, FreeIt); }
   void insertReferenceAtPos(XStringClass* newElement, size_t pos, bool FreeIt) { array.InsertRef(newElement, pos, FreeIt); }
@@ -286,6 +286,17 @@ class XStringWArray : public XStringArray_<XStringW, XStringWArray>
 {
 };
 extern const XStringWArray NullXStringWArray;
+
+
+class ConstXString8Array : public XStringArray_<const XString8, ConstXString8Array>
+{
+};
+extern const ConstXString8Array NullConstXString8Array;
+
+class ConstXStringWArray : public XStringArray_<const XStringW, ConstXStringWArray>
+{
+};
+extern const ConstXStringWArray NullConstXStringWArray;
 
 
 //

@@ -10,3 +10,6 @@
 
 const XString8Array NullXString8Array;
 const XStringWArray NullXStringWArray;
+
+const ConstXString8Array NullConstXString8Array;
+const ConstXStringWArray NullConstXStringWArray;

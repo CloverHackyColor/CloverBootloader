@@ -980,10 +980,10 @@ void LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
 
         Num = SearchAndReplaceMask(curs,
                                    procLen,
-                                   kextpatch.Data.data(),
+                                   kextpatch.Find.data(),
                                    kextpatch.MaskFind.data(),
-                                   kextpatch.Data.size(),
-                                   kextpatch.Patch.data(),
+                                   kextpatch.Find.size(),
+                                   kextpatch.Replace.data(),
                                    kextpatch.MaskReplace.data(),
                                    kextpatch.Count,
                                    kextpatch.Skip);
@@ -1000,21 +1000,21 @@ void LOADER_ENTRY::AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPli
   } else {
     // Info plist patch
     DBG_RT("Info.plist data : '");
-    for (size_t Ind = 0; Ind < kextpatch.Data.size(); Ind++) {
-      DBG_RT("%c", kextpatch.Data[Ind]);
+    for (size_t Ind = 0; Ind < kextpatch.Find.size(); Ind++) {
+      DBG_RT("%c", kextpatch.Find[Ind]);
     }
     DBG_RT("' ->\n");
     DBG_RT("Info.plist patch: '");
-    for (size_t Ind = 0; Ind < kextpatch.Data.size(); Ind++) {
-      DBG_RT("%c", kextpatch.Patch[Ind]);
+    for (size_t Ind = 0; Ind < kextpatch.Find.size(); Ind++) {
+      DBG_RT("%c", kextpatch.Replace[Ind]);
     }
     DBG_RT("' \n");
     
     Num = SearchAndReplaceTxt((UINT8*)InfoPlist,
                            InfoPlistSize,
-                           kextpatch.Data.data(),
-                           kextpatch.Data.size(),
-                           kextpatch.Patch.data(),
+                           kextpatch.Find.data(),
+                           kextpatch.Find.size(),
+                           kextpatch.Replace.data(),
                            -1);
   }
   
@@ -1123,7 +1123,7 @@ void LOADER_ENTRY::PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist,
     for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
       XString8& Name = KernelAndKextPatches.KextPatches[i].Name;
       BOOLEAN   isBundle = Name.contains(".");
-      if ((KernelAndKextPatches.KextPatches[i].Data.size() > 0) &&
+      if ((KernelAndKextPatches.KextPatches[i].Find.size() > 0) &&
           isBundle?(AsciiStrCmp(gKextBundleIdentifier, Name.c_str()) == 0):(AsciiStrStr(gKextBundleIdentifier, Name.c_str()) != NULL)) {
       //    (AsciiStrStr(InfoPlist, KernelAndKextPatches.KextPatches[i].Name) != NULL)) {
         DBG_RT("\n\nPatch kext: %s\n", KernelAndKextPatches.KextPatches[i].Name.c_str());

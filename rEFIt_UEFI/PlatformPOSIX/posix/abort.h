@@ -23,6 +23,7 @@ void panic(void)
 ;
 #endif
 
+#if !defined(_MACH_H_)
 #if !defined(PANIC_CAN_RETURN) && defined(_MSC_VER)
 __declspec(noreturn)
 #endif
@@ -31,6 +32,7 @@ void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2))
     __attribute__ ((noreturn))
 #endif
 ;
+#endif
 
 #ifdef _MSC_VER
 # define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __FUNCSIG__)

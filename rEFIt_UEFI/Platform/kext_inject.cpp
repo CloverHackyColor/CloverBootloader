@@ -202,6 +202,7 @@ XString8  LOADER_ENTRY::getKextExecPath(const XStringW& dirPath, const SIDELOAD_
 }
 
 //it seems no more used? Or???
+// FileName is better as a XString8 instead of XStringW because _BooterKextFileInfo will need an utf8.
 EFI_STATUS LOADER_ENTRY::LoadKext(const EFI_FILE *RootDir, const XString8& FileName, IN cpu_type_t archCpuType, IN OUT void *kext_v)
 {
   EFI_STATUS  Status;
@@ -451,8 +452,8 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
   XStringW                SrcDir;
   REFIT_DIR_ITER          PlugInIter;
   EFI_FILE_INFO          *PlugInFile;
-  XString8                FileName;
-  XString8                PlugIns;
+//  XString8                FileName;
+//  XString8                PlugIns;
 //  CONST CHAR16                  *Arch = NULL;
 //  CONST CHAR16                  *Ptr = NULL;
 
@@ -491,24 +492,25 @@ void LOADER_ENTRY::AddKextsInArray(XObjArray<SIDELOAD_KEXT>* kextArray)
       MsgLog("  Force kext: %ls\n", KernelAndKextPatches.ForceKextsToLoad[i].wc_str());
       if (Volume && Volume->RootDir) {
         // Check if the entry is a directory
-        if (StrStr(KernelAndKextPatches.ForceKextsToLoad[i].wc_str(), L".kext") == NULL) {
-          DirIterOpen(Volume->RootDir, KernelAndKextPatches.ForceKextsToLoad[i].wc_str(), &PlugInIter);
+        const wchar_t* p;
+        if ( KernelAndKextPatches.ForceKextsToLoad[i].startWith('\\') ) p = KernelAndKextPatches.ForceKextsToLoad[i].wc_str(1);
+        else p = KernelAndKextPatches.ForceKextsToLoad[i].wc_str();
+        if (StrStr(p, L".kext") == NULL) {
+          DirIterOpen(Volume->RootDir, p, &PlugInIter);
           while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
             if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
               continue;   // skip this
-            FileName = SWPrintf("%ls\\%ls", KernelAndKextPatches.ForceKextsToLoad[i].wc_str(), PlugInFile->FileName);
-            //    snwprintf(FileName, 512, "%s\\%s", KernelAndKextPatches.ForceKexts[i], PlugInFile->FileName);
+            XString8 FileName = S8Printf("%ls\\%ls", p, PlugInFile->FileName);
             MsgLog("  Force kext: %s\n", FileName.c_str());
             AddKext( Volume->RootDir, FileName, archCpuType);
-            PlugIns = SWPrintf("%s\\Contents\\PlugIns", FileName.c_str());
-            //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", FileName);
+            XString8 PlugIns = S8Printf("%s\\Contents\\PlugIns", FileName.c_str());
             LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
           }
           DirIterClose(&PlugInIter);
         } else {
-          AddKext( Volume->RootDir, KernelAndKextPatches.ForceKextsToLoad[i], archCpuType);
-          PlugIns = SWPrintf("%ls\\Contents\\PlugIns", KernelAndKextPatches.ForceKextsToLoad[i].wc_str());
-          //  snwprintf(PlugIns, 512, "%s\\Contents\\PlugIns", KernelAndKextPatches.ForceKexts[i]);
+          XString8 Path = S8Printf("%ls", p);
+          AddKext( Volume->RootDir, Path, archCpuType);
+          XString8 PlugIns = S8Printf("%s\\Contents\\PlugIns", Path.c_str());
           LoadPlugInKexts(Volume->RootDir, PlugIns, archCpuType, TRUE);
         }
       }
@@ -916,7 +918,7 @@ EFI_STATUS LOADER_ENTRY::InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTre
         InfoPlist[drvinfo->infoDictLength] = '\0';
  //       KernelAndKextPatcherInit();
         for (size_t i = 0; i < KernelAndKextPatches.KextPatches.size(); i++) {
-          if ((KernelAndKextPatches.KextPatches[i].Data.size() > 0) &&
+          if ((KernelAndKextPatches.KextPatches[i].Find.size() > 0) &&
               (AsciiStrStr(InfoPlist, KernelAndKextPatches.KextPatches[i].Name.c_str()) != NULL)) {
             AnyKextPatch(
                          (UINT8*)(UINTN)drvinfo->executablePhysAddr,

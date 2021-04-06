@@ -2395,10 +2395,10 @@ LOADER_ENTRY::KernelUserPatch()
         DBG( " StartPattern found\n");
         Num = SearchAndReplaceMask(curs,
                                    procLen,
-                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Data.data(),
+                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Find.data(),
                                    (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskFind.data(),
-                                   KernelAndKextPatches.KernelPatches[i].Data.size(),
-                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Patch.data(),
+                                   KernelAndKextPatches.KernelPatches[i].Find.size(),
+                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Replace.data(),
                                    (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskReplace.data(),
                                    KernelAndKextPatches.KernelPatches[i].Count,
                                    KernelAndKextPatches.KernelPatches[i].Skip);
@@ -2455,10 +2455,10 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
 
         Num = SearchAndReplaceMask(curs,
                                    SearchLen,
-                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Data.data(),
+                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Find.data(),
                                    (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskFind.data(),
-                                   KernelAndKextPatches.BootPatches[i].Data.size(),
-                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Patch.data(),
+                                   KernelAndKextPatches.BootPatches[i].Find.size(),
+                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Replace.data(),
                                    (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskReplace.data(),
                                    KernelAndKextPatches.BootPatches[i].Count,
                                    KernelAndKextPatches.BootPatches[i].Skip);

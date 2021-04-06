@@ -169,7 +169,10 @@ public:
 
 	using XStringAbstract<wchar_t, XStringW>::operator =;
 
-	const wchar_t* wc_str() const { return m_data; }
+  const wchar_t* wc_str() const { return m_data; }
+
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+	const wchar_t* wc_str(IntegralType idx) const { return data(idx); }
 
 protected:
 	static void transmitSWPrintf(const wchar_t* buf, unsigned int nbchar, void* context)

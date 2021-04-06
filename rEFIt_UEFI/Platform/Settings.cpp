@@ -967,16 +967,9 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
 
-        if (Prop2->getString()->stringValue().notEmpty()) {
-          const CHAR8* p = Prop2->getString()->stringValue().c_str();
-          if (*p == '\\') {
-            ++p;
-          }
-
-          if (strlen(p) > 1) {
-            Patches->ForceKextsToLoad.Add(p);
-            DBG(" - [%zu]: %ls\n", Patches->ForceKextsToLoad.size(), Patches->ForceKextsToLoad[Patches->ForceKextsToLoad.size()-1].wc_str());
-          }
+        if ( Prop2->getString()->stringValue().notEmpty() && Prop2->getString()->stringValue() != "\\"_XS8 ) {
+          Patches->ForceKextsToLoad.Add(Prop2->getString()->stringValue());
+          DBG(" - [%zu]: %ls\n", Patches->ForceKextsToLoad.size(), Patches->ForceKextsToLoad[Patches->ForceKextsToLoad.size()-1].wc_str());
         }
       }
     }
@@ -1080,7 +1073,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
 
-        newKextPatch.Data.stealValueFrom(TmpData, FindLen);
+        newKextPatch.Find.stealValueFrom(TmpData, FindLen);
         
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
@@ -1092,9 +1085,9 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
         FreePool(TmpData);
         // take into account a possibility to set ReplaceLen < FindLen. In this case assumes MaskReplace = 0 for the rest of bytes 
-        newKextPatch.Patch.memset(0, FindLen);
+        newKextPatch.Replace.memset(0, FindLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        newKextPatch.Patch.ncpy(TmpPatch, ReplaceLen);
+        newKextPatch.Replace.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         
         MaskLen = 0;
@@ -1136,7 +1129,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG(" :: BinPatch");
         }
 
-        DBG(" :: data len: %zu\n", newKextPatch.Data.size());
+        DBG(" :: data len: %zu\n", newKextPatch.Find.size());
         if (!newKextPatch.MenuItem.BValue) {
           DBG("        patch disabled at config\n");
         }
@@ -1233,7 +1226,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         }
 
 
-        newKernelPatch.Data.stealValueFrom(TmpData, FindLen);
+        newKernelPatch.Find.stealValueFrom(TmpData, FindLen);
 
         TmpData    = GetDataSetting (Prop2, "MaskFind", &MaskLen);
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
@@ -1245,8 +1238,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         FreePool(TmpData);
         // this is "Replace" string len of ReplaceLen
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        newKernelPatch.Patch.memset(0, FindLen);
-        newKernelPatch.Patch.ncpy(TmpPatch, ReplaceLen);
+        newKernelPatch.Replace.memset(0, FindLen);
+        newKernelPatch.Replace.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
         TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen); //reuse MaskLen
@@ -1276,7 +1269,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           newKernelPatch.MatchBuild = prop3->getString()->stringValue();
           DBG(" :: MatchBuild: %s", newKernelPatch.MatchBuild.c_str());
         }
-        DBG(" :: data len: %zu\n", newKernelPatch.Data.size());
+        DBG(" :: data len: %zu\n", newKernelPatch.Find.size());
         Patches->KernelPatches.AddReference(newKernelPatchPtr, true);
       }
     }
@@ -1356,7 +1349,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           continue;
         }
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        newBootPatch.Data.stealValueFrom(TmpData, FindLen);
+        newBootPatch.Find.stealValueFrom(TmpData, FindLen);
 
         MaskLen = 0;
         TmpData    = GetDataSetting(Prop2, "MaskFind", &MaskLen);
@@ -1367,8 +1360,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           newBootPatch.MaskFind.ncpy(TmpData, MaskLen);
         }
         FreePool(TmpData);
-        newBootPatch.Patch.memset(0, FindLen);
-        newBootPatch.Patch.ncpy(TmpPatch, ReplaceLen);
+        newBootPatch.Replace.memset(0, FindLen);
+        newBootPatch.Replace.ncpy(TmpPatch, ReplaceLen);
         FreePool(TmpPatch);
         MaskLen = 0;
         TmpData    = GetDataSetting(Prop2, "MaskReplace", &MaskLen);
@@ -1398,7 +1391,7 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
           DBG(" :: MatchBuild: %s", newBootPatch.MatchBuild.c_str());
         }
 
-        DBG(" :: data len: %zu\n", newBootPatch.Data.size());
+        DBG(" :: data len: %zu\n", newBootPatch.Find.size());
         Patches->BootPatches.AddReference(newBootPatchPtr, true);
       }
     }

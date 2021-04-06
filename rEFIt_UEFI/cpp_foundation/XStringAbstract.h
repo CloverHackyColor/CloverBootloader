@@ -452,6 +452,9 @@ public:
   template<typename O>
   bool startWithOrEqualToIC(const O* other) const { return XStringAbstract__startWithOrEqualTo(m_data, other, true); }
 
+  template<typename O, class OtherXStringClass>
+  bool endWithOrEqualToIC(const __String<O, OtherXStringClass>& otherS) const { if ( length() < otherS.length() ) return false; return XStringAbstract__rindexOf(m_data, SIZE_T_MAX-1, otherS.data(), true) == length() - otherS.length(); }
+
 	//---------------------------------------------------------------------
 
 	ThisXStringClass basename() const

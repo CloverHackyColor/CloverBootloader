@@ -149,20 +149,52 @@ constexpr LString8 AppleBoardSN           = "C02140302D5DMT31M";
 constexpr LString8 AppleBoardLocation     = "Part Component";
 
 
-void
-SetDMISettingsForModel (SETTINGS_DATA& gSettings, 
-  MACHINE_TYPES Model,
-  BOOLEAN Redefine
-  );
+class PLATFORMDATA
+{
+public:
+  const LString8 productName;
+  const LString8 firmwareVersion;
+  const LString8 efiversion;
+  const LString8 boardID;
+  const LString8 productFamily;
+  const LString8 systemVersion;
+  const XString8 serialNumber;
+  const LString8 chassisAsset;
+  UINT8 smcRevision[6];
+  const LString8 smcBranch;
+  const LString8 smcPlatform;
+  UINT32 smcConfig;
+  
+  //PLATFORMDATA() : productName(), firmwareVersion(), efiversion(), boardID(), productFamily(), systemVersion(), serialNumber(), chassisAsset(), smcRevision{0,0,0,0,0,0}, smcBranch(), smcPlatform(), smcConfig() { }
+  PLATFORMDATA(const LString8& _productName, const LString8& _firmwareVersion, const LString8& _efiversion, const LString8& _boardID, const LString8& _productFamily,
+               const LString8& _systemVersion, const LString8& _serialNumber, const LString8& _chassisAsset,
+               UINT8 _smcRevision0, UINT8 _smcRevision1, UINT8 _smcRevision2, UINT8 _smcRevision3, UINT8 _smcRevision4, UINT8 _smcRevision5,
+               const LString8& _smcBranch, const LString8& _smcPlatform, UINT32 _smcConfig)
+            :  productName(_productName), firmwareVersion(_firmwareVersion), efiversion(_efiversion), boardID(_boardID), productFamily(_productFamily),
+               systemVersion(_systemVersion), serialNumber(_serialNumber), chassisAsset(_chassisAsset), smcRevision{0},
+               smcBranch(_smcBranch), smcPlatform(_smcPlatform), smcConfig(_smcConfig)
+            {
+              smcRevision[0] = _smcRevision0;
+              smcRevision[1] = _smcRevision1;
+              smcRevision[2] = _smcRevision2;
+              smcRevision[3] = _smcRevision3;
+              smcRevision[4] = _smcRevision4;
+              smcRevision[5] = _smcRevision5;
+            }
 
-MACHINE_TYPES GetModelFromString (
-  const XString8& ProductName
-  );
+  // Not sure if default are valid. Delete them. If needed, proper ones can be created
+  PLATFORMDATA(const PLATFORMDATA&) = delete;
+  PLATFORMDATA& operator=(const PLATFORMDATA&) = delete;
+} ;
 
-void
-GetDefaultSettings(void);
 
-void
-GetDefaultCpuSettings(SETTINGS_DATA& gSettings);
+extern PLATFORMDATA ApplePlatformData[];
+
+void SetDMISettingsForModel (SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLEAN Redefine);
+MACHINE_TYPES GetModelFromString (const XString8& ProductName);
+void GetDefaultSettings(void);
+void GetDefaultCpuSettings(SETTINGS_DATA& gSettings);
+uint8_t GetChassisTypeFromModel(MACHINE_TYPES Model);
+uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model);
 
 #endif /* PLATFORM_PLATFORMDATA_H_ */

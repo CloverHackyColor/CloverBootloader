@@ -22,8 +22,8 @@ class ABSTRACT_PATCH
 public:
   bool             Disabled = bool();
 //  XString8         Comment = XString8();
-  XBuffer<UINT8>   Data = XBuffer<UINT8> ();
-  XBuffer<UINT8>   Patch = XBuffer<UINT8> ();
+  XBuffer<UINT8>   Find = XBuffer<UINT8> ();
+  XBuffer<UINT8>   Replace = XBuffer<UINT8> ();
   XBuffer<UINT8>   MaskFind = XBuffer<UINT8> ();
   XBuffer<UINT8>   MaskReplace = XBuffer<UINT8> ();
   XBuffer<UINT8>   StartPattern = XBuffer<UINT8> ();

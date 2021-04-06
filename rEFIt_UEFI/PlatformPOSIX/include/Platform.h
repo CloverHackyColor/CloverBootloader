@@ -9,6 +9,8 @@
 #ifndef Platform_h_h
 #define Platform_h_h
 
+#define _UINTPTR_T
+
 #ifdef _MSC_VER
 #include <Windows.h>
 #endif
@@ -77,6 +79,15 @@ typedef unsigned long long  uintptr_t;
 #include "../Platform/Utils.h"
 #include "../../../rEFIt_UEFI/Platform/Utils.h"
 
+#endif
+
+
+
+#ifdef __OBJC__
+#define _MACH_H_
+#define __DEBUGGING__
+#import <Foundation/Foundation.h>
+#undef CMASK
 #endif
 
 
