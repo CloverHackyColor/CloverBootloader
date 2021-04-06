@@ -100,6 +100,7 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UI
 	base64_decodestate	state_in;
 
   if (EncodedData == NULL || EncodedSize == 0 ) {
+    if (DecodedSize != NULL) *DecodedSize = 0;
 		return NULL;
 	}
 
@@ -115,8 +116,12 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UI
   }
 
 	if (DecodedSize != NULL) {
-//    if ( DecodedSizeInternal < 0 ) panic("Base64DecodeClover : DecodedSizeInternal < 0");
-		*DecodedSize = (UINTN)DecodedSizeInternal;
+    if ( DecodedSizeInternal < 0 ) {
+      panic_ask("Base64DecodeClover : DecodedSizeInternal < 0");
+      *DecodedSize = 0; // better 0 than a cast of a negative number
+    }else{
+      *DecodedSize = (UINTN)DecodedSizeInternal;
+    }
 	}
 
 	return DecodedData;

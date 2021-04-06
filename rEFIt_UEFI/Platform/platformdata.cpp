@@ -554,6 +554,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "Xserve3,1"_XS8, "XS31.88Z.0081.B06.0908061300"_XS8, ""_XS8, "Mac-F223BEC8"_XS8, // Intel Xeon E5520 @ 2.26 GHz
     "Xserve"_XS8, "1.0"_XS8, "CK933YJ16HS"_XS8, "Xserve"_XS8,
     0x01, 0x43, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
+  //MaxMachineType : empty default value
+  { ""_XS8, ""_XS8, ""_XS8, ""_XS8,
+    ""_XS8, ""_XS8, ""_XS8, ""_XS8,
+    0x00, 0x00, 0x00, 0, 0, 0x00, ""_XS8, ""_XS8, 0x0 },
 };
 
 /*
@@ -564,6 +568,380 @@ PLATFORMDATA ApplePlatformData[] =
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
+
+uint32_t GetFwFeatures(MACHINE_TYPES Model)
+{
+  // Firmware info for 10.13+
+  // by Sherlocks
+  // FirmwareFeatures
+  switch ( Model )
+    {
+    // Verified list from Firmware
+    case MacBookPro91:
+    case MacBookPro92:
+      return 0xC00DE137;
+      break;
+    case MacBookAir41:
+    case MacBookAir42:
+    case MacMini51:
+    case MacMini52:
+    case MacMini53:
+      return 0xD00DE137;
+      break;
+    case MacBookPro101:
+    case MacBookPro102:
+    case MacBookAir51:
+    case MacBookAir52:
+    case MacMini61:
+    case MacMini62:
+    case iMac131:
+    case iMac132:
+    case iMac133:
+      return 0xE00DE137;
+      break;
+    case MacMini81:
+      return 0xFD8FF466;
+      break;
+    case MacBookAir61:
+    case MacBookAir62:
+    case iMac141:
+    case iMac142:
+    case iMac143:
+      return 0xE00FE137;
+      break;
+    case MacBookPro111:
+    case MacBookPro112:
+    case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
+      return 0xE80FE137;
+      break;
+    case iMac144:
+      return 0xF00FE177;
+      break;
+    case iMac151:
+      return 0xF80FE177;
+      break;
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro141:
+    case MacBookPro142:
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+      return 0xFC0FE176;
+      break;
+    case MacBook91:
+    case MacBook101:
+    case MacBookPro133:
+    case MacBookPro143:
+      return 0xFC0FE17E;
+      break;
+    case iMacPro11:
+      return 0xFD8FF53F;
+      break;
+    case MacBookAir91:
+      return 0xFD8FF42E;
+      break;
+    case iMac191:
+    case iMac192:
+    case iMac201:
+    case iMac202:
+      return 0xFD8FF576;
+      break;
+    case MacBookPro162:
+    case MacBookPro163:
+    case MacBookPro164:
+      return 0xFDAFF066;
+      break;
+      // Verified list from Users
+    case MacBookAir31:
+    case MacBookAir32:
+    case MacMini41:
+      return 0xD00DE137;
+      break;
+    case MacBookAir71:
+    case MacBookAir72:
+      return 0xE00FE137;
+      break;
+    case iMac101:
+    case iMac111:
+    case iMac112:
+    case iMac113:
+    case iMac121:
+    case iMac122:
+    case MacMini71:
+      return 0xE00DE137;
+      break;
+    case MacPro51:
+      return 0xE80FE137;
+      break;
+    case MacPro61:
+      return 0xE80FE176;
+      break;
+    case MacPro71:
+      return 0xFD8FF53F;
+      break;
+    case MacBookPro61:
+    case MacBookPro62:
+    case MacBookPro71:
+    case MacBookPro81:
+    case MacBookPro82:
+    case MacBookPro83:
+      return 0xC00DE137;
+      break;
+    case MacBookPro121:
+    case MacBookPro151:
+    case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
+    case MacBookPro161:
+    case MacBookAir81:
+    case MacBookAir82:
+    case iMac161:
+    case iMac162:
+      return 0xFC0FE137;
+      break;
+    case MacBook61:
+    case MacBook71:
+    case MacBook81:
+      return 0xFC0FE13F;
+      break;
+    default:
+      return 0xE907F537; //unknown - use oem SMBIOS value to be default
+      break;
+    }
+}
+
+bool GetMobile(MACHINE_TYPES Model, bool defaultValue)
+{
+  // Mobile: the battery tab in Energy Saver
+  switch ( Model )
+    {
+    case MacBook11:
+    case MacBook21:
+    case MacBook31:
+    case MacBook41:
+    case MacBook51:
+    case MacBook52:
+    case MacBook61:
+    case MacBook71:
+    case MacBook81:
+    case MacBook91:
+    case MacBook101:
+    case MacBookAir11:
+    case MacBookAir21:
+    case MacBookAir31:
+    case MacBookAir32:
+    case MacBookAir41:
+    case MacBookAir42:
+    case MacBookAir51:
+    case MacBookAir52:
+    case MacBookAir61:
+    case MacBookAir62:
+    case MacBookPro11:
+    case MacBookPro12:
+    case MacBookPro21:
+    case MacBookPro22:
+    case MacBookPro31:
+    case MacBookPro41:
+    case MacBookPro51:
+    case MacBookPro52:
+    case MacBookPro53:
+    case MacBookPro54:
+    case MacBookPro55:
+    case MacBookPro61:
+    case MacBookPro62:
+    case MacBookPro71:
+    case MacBookPro81:
+    case MacBookPro82:
+    case MacBookPro83:
+    case MacBookPro91:
+    case MacBookPro92:
+    case MacBookPro101:
+    case MacBookPro102:
+    case MacBookPro111:
+    case MacBookPro112:
+    case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
+    case MacBookPro121:
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro133:
+    case MacBookPro141:
+    case MacBookPro142:
+    case MacBookPro143:
+    case MacBookPro151:
+    case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
+    case MacBookPro161:
+    case MacBookPro162:
+    case MacBookPro163:
+    case MacBookPro164:
+    case MacBookAir71:
+    case MacBookAir72:
+    case MacBookAir81:
+    case MacBookAir82:
+    case MacBookAir91:
+      return TRUE;
+    case iMac41:
+    case iMac42:
+    case iMac51:
+    case iMac52:
+    case iMac61:
+    case iMac71:
+    case iMac81:
+    case iMac91:
+    case iMac101:
+    case iMac111:
+    case iMac112:
+    case iMac113:
+    case iMac121:
+    case iMac122:
+    case iMac131:
+    case iMac132:
+    case iMac133:
+    case iMac141:
+    case iMac142:
+    case iMac143:
+    case iMac144:
+    case iMac151:
+    case iMac161:
+    case iMac162:
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+    case iMac191:
+    case iMac192:
+    case iMac201:
+    case iMac202:
+    case iMacPro11:
+      return FALSE;
+    case MacMini11:
+    case MacMini21:
+    case MacMini31:
+    case MacMini41:
+    case MacMini51:
+    case MacMini52:
+    case MacMini53:
+    case MacMini61:
+    case MacMini62:
+    case MacMini71:
+    case MacMini81:
+      return FALSE;
+    case MacPro41:
+    case MacPro51:
+    case MacPro71:
+    case MacPro11:
+    case MacPro21:
+    case MacPro31:
+    case MacPro61:
+      return FALSE;
+    case Xserve11:
+    case Xserve21:
+    case Xserve31:
+      return FALSE;
+    default: //unknown - use oem SMBIOS value to be default
+      return defaultValue;
+    }
+}
+
+UINT64 GetPlatformFeature(MACHINE_TYPES Model)
+{
+  // PlatformFeature
+  // the memory tab in About This Mac
+  // by TheRacerMaster
+  switch ( Model )
+    {
+    // Verified list from ioreg
+    case iMac171:
+    case iMac181:
+    case iMac182:
+    case iMac183:
+    case MacPro71:
+      return 0x00;
+      break;
+    case MacMini61:
+    case MacMini62:
+    case iMac131:
+    case iMac132:
+    case iMac133:
+    case iMac141:
+    case iMac142:
+    case iMac143:
+    case iMac144:
+    case iMac151:
+      return 0x01;
+      break;
+    case MacBookPro111:
+    case MacBookPro112:
+    case MacBookPro113:
+    case MacBookPro114:
+    case MacBookPro115:
+    case MacBookPro121:
+    case MacBookAir71:
+    case MacBookAir72:
+      return 0x02;
+      break;
+    case MacMini71:
+    case iMac161:
+    case iMac162:
+      return 0x03;
+      break;
+    case MacPro61:
+      return 0x04;
+      break;
+    case MacBook81:
+    case MacBook91:
+    case MacBook101:
+    case MacBookPro131:
+    case MacBookPro132:
+    case MacBookPro133:
+    case MacBookPro141:
+    case MacBookPro142:
+    case MacBookPro143:
+      return 0x1A;
+      break;
+    case iMacPro11:
+    case MacMini81:
+    case iMac191:
+    case iMac192:
+    case iMac201:
+    case iMac202:
+      return 0x20;
+      break;
+    case MacBookPro151:
+    case MacBookPro152:
+    case MacBookPro153:
+    case MacBookPro154:
+    case MacBookPro161:
+    case MacBookPro162:
+    case MacBookPro163:
+    case MacBookPro164:
+      return 0x32;
+      break;
+    case MacBookAir81:
+    case MacBookAir82:
+    case MacBookAir91:
+      return 0x3A;
+      break;
+      // It is nonsense, ASCII code сharacter "2" = 0x32 != 0x02. Don't use ioreg, so that not to be confused. Use dmidecode dump.
+      // Verified list from Users
+      // case MacBookPro153:
+      // case MacBookPro154:
+      // case MacBookPro161:
+      //   gSettings.Smbios.gPlatformFeature        = 0x02;
+      //   break;
+    default:
+      return 0xFFFF; // disabled
+      break;
+    }
+}
+
 void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLEAN Redefine)
 {
 #pragma GCC diagnostic pop
@@ -669,145 +1047,7 @@ void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLE
   // Firmware info for 10.13+
   // by Sherlocks
   // FirmwareFeatures
-  switch (Model) {
-    // Verified list from Firmware
-    case MacBookPro91:
-    case MacBookPro92:
-      gSettings.Smbios.gFwFeatures             = 0xC00DE137;
-      break;
-    case MacBookAir41:
-    case MacBookAir42:
-    case MacMini51:
-    case MacMini52:
-    case MacMini53:
-      gSettings.Smbios.gFwFeatures             = 0xD00DE137;
-      break;
-    case MacBookPro101:
-    case MacBookPro102:
-    case MacBookAir51:
-    case MacBookAir52:
-    case MacMini61:
-    case MacMini62:
-    case iMac131:
-    case iMac132:
-    case iMac133:
-      gSettings.Smbios.gFwFeatures             = 0xE00DE137;
-      break;
-    case MacMini81:
-      gSettings.Smbios.gFwFeatures             = 0xFD8FF466;
-      break;
-    case MacBookAir61:
-    case MacBookAir62:
-    case iMac141:
-    case iMac142:
-    case iMac143:
-      gSettings.Smbios.gFwFeatures             = 0xE00FE137;
-      break;
-    case MacBookPro111:
-    case MacBookPro112:
-    case MacBookPro113:
-    case MacBookPro114:
-    case MacBookPro115:
-      gSettings.Smbios.gFwFeatures             = 0xE80FE137;
-      break;
-    case iMac144:
-      gSettings.Smbios.gFwFeatures             = 0xF00FE177;
-      break;
-    case iMac151:
-      gSettings.Smbios.gFwFeatures             = 0xF80FE177;
-      break;
-    case MacBookPro131:
-    case MacBookPro132:
-    case MacBookPro141:
-    case MacBookPro142:
-    case iMac171:
-    case iMac181:
-    case iMac182:
-    case iMac183:
-      gSettings.Smbios.gFwFeatures             = 0xFC0FE176;
-      break;
-    case MacBook91:
-    case MacBook101:
-    case MacBookPro133:
-    case MacBookPro143:
-      gSettings.Smbios.gFwFeatures             = 0xFC0FE17E;
-      break;
-    case iMacPro11:
-      gSettings.Smbios.gFwFeatures             = 0xFD8FF53F;
-      break;
-    case MacBookAir91:
-      gSettings.Smbios.gFwFeatures             = 0xFD8FF42E;
-      break;
-    case iMac191:
-    case iMac192:
-    case iMac201:
-    case iMac202:
-      gSettings.Smbios.gFwFeatures             = 0xFD8FF576;
-      break;
-    case MacBookPro162:
-    case MacBookPro163:
-    case MacBookPro164:
-      gSettings.Smbios.gFwFeatures             = 0xFDAFF066;
-      break;
-
-    // Verified list from Users
-    case MacBookAir31:
-    case MacBookAir32:
-    case MacMini41:
-      gSettings.Smbios.gFwFeatures             = 0xD00DE137;
-      break;
-    case MacBookAir71:
-    case MacBookAir72:
-      gSettings.Smbios.gFwFeatures             = 0xE00FE137;
-      break;
-    case iMac101:
-    case iMac111:
-    case iMac112:
-    case iMac113:
-    case iMac121:
-    case iMac122:
-    case MacMini71:
-      gSettings.Smbios.gFwFeatures             = 0xE00DE137;
-      break;
-    case MacPro51:
-      gSettings.Smbios.gFwFeatures             = 0xE80FE137;
-      break;
-    case MacPro61:
-      gSettings.Smbios.gFwFeatures             = 0xE80FE176;
-      break;
-    case MacPro71:
-      gSettings.Smbios.gFwFeatures             = 0xFD8FF53F;
-      break;
-    case MacBookPro61:
-    case MacBookPro62:
-    case MacBookPro71:
-    case MacBookPro81:
-    case MacBookPro82:
-    case MacBookPro83:
-      gSettings.Smbios.gFwFeatures             = 0xC00DE137;
-      break;
-    case MacBookPro121:
-    case MacBookPro151:
-    case MacBookPro152:
-    case MacBookPro153:
-    case MacBookPro154:
-    case MacBookPro161:
-    case MacBookAir81:
-    case MacBookAir82:
-    case iMac161:
-    case iMac162:
-      gSettings.Smbios.gFwFeatures             = 0xFC0FE137;
-      break;
-    case MacBook61:
-    case MacBook71:
-    case MacBook81:
-      gSettings.Smbios.gFwFeatures             = 0xFC0FE13F;
-      break;
-
-    default:
-      gSettings.Smbios.gFwFeatures             = 0xE907F537; //unknown - use oem SMBIOS value to be default
-      break;
-  }
+  gSettings.Smbios.gFwFeatures = GetFwFeatures(Model);
 
   // FirmwareFeaturesMask
   gSettings.Smbios.gFwFeaturesMask = GetFwFeaturesMaskFromModel(Model);
@@ -815,92 +1055,7 @@ void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLE
   // PlatformFeature
   // the memory tab in About This Mac
   // by TheRacerMaster
-  switch (Model) {
-    // Verified list from ioreg
-    case iMac171:
-    case iMac181:
-    case iMac182:
-    case iMac183:
-    case MacPro71:
-      gSettings.Smbios.gPlatformFeature        = 0x00;
-      break;
-    case MacMini61:
-    case MacMini62:
-    case iMac131:
-    case iMac132:
-    case iMac133:
-    case iMac141:
-    case iMac142:
-    case iMac143:
-    case iMac144:
-    case iMac151:
-      gSettings.Smbios.gPlatformFeature        = 0x01;
-      break;
-    case MacBookPro111:
-    case MacBookPro112:
-    case MacBookPro113:
-    case MacBookPro114:
-    case MacBookPro115:
-    case MacBookPro121:
-    case MacBookAir71:
-    case MacBookAir72:
-      gSettings.Smbios.gPlatformFeature        = 0x02;
-      break;
-    case MacMini71:
-    case iMac161:
-    case iMac162:
-      gSettings.Smbios.gPlatformFeature        = 0x03;
-      break;
-    case MacPro61:
-      gSettings.Smbios.gPlatformFeature        = 0x04;
-      break;
-    case MacBook81:
-    case MacBook91:
-    case MacBook101:
-    case MacBookPro131:
-    case MacBookPro132:
-    case MacBookPro133:
-    case MacBookPro141:
-    case MacBookPro142:
-    case MacBookPro143:
-      gSettings.Smbios.gPlatformFeature        = 0x1A;
-      break;
-    case iMacPro11:
-    case MacMini81:
-    case iMac191:
-    case iMac192:
-    case iMac201:
-    case iMac202:
-      gSettings.Smbios.gPlatformFeature        = 0x20;
-      break;
-    case MacBookPro151:
-    case MacBookPro152:
-    case MacBookPro153:
-    case MacBookPro154:
-    case MacBookPro161:
-    case MacBookPro162:
-    case MacBookPro163:
-    case MacBookPro164:
-      gSettings.Smbios.gPlatformFeature        = 0x32;
-      break;
-    case MacBookAir81:
-    case MacBookAir82:
-    case MacBookAir91:
-      gSettings.Smbios.gPlatformFeature        = 0x3A;
-      break;
-          
-   // It is nonsense, ASCII code сharacter "2" = 0x32 != 0x02. Don't use ioreg, so that not to be confused. Use dmidecode dump.
-   // Verified list from Users
-   // case MacBookPro153:
-   // case MacBookPro154:
-   // case MacBookPro161:
-   //   gSettings.Smbios.gPlatformFeature        = 0x02;
-   //   break;
-
-    default:
-      gSettings.Smbios.gPlatformFeature        = 0xFFFF; // disabled
-      break;
-  }
+  gSettings.Smbios.gPlatformFeature = GetPlatformFeature(Model);
 
   if ((Model > MacPro31) && (Model < MacPro71)) {
     gSettings.Smbios.BoardType = BaseBoardTypeProcessorMemoryModule; //0xB;
@@ -911,149 +1066,7 @@ void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLE
   gSettings.Smbios.ChassisType = GetChassisTypeFromModel(Model);
 
   // Mobile: the battery tab in Energy Saver
-  switch (Model) {
-    case MacBook11:
-    case MacBook21:
-    case MacBook31:
-    case MacBook41:
-    case MacBook51:
-    case MacBook52:
-    case MacBook61:
-    case MacBook71:
-    case MacBook81:
-    case MacBook91:
-    case MacBook101:
-
-    case MacBookAir11:
-    case MacBookAir21:
-    case MacBookAir31:
-    case MacBookAir32:
-    case MacBookAir41:
-    case MacBookAir42:
-    case MacBookAir51:
-    case MacBookAir52:
-    case MacBookAir61:
-    case MacBookAir62:
-
-    case MacBookPro11:
-    case MacBookPro12:
-    case MacBookPro21:
-    case MacBookPro22:
-    case MacBookPro31:
-    case MacBookPro41:
-    case MacBookPro51:
-    case MacBookPro52:
-    case MacBookPro53:
-    case MacBookPro54:
-    case MacBookPro55:
-    case MacBookPro61:
-    case MacBookPro62:
-    case MacBookPro71:
-    case MacBookPro81:
-    case MacBookPro82:
-    case MacBookPro83:
-    case MacBookPro91:
-    case MacBookPro92:
-    case MacBookPro101:
-    case MacBookPro102:
-    case MacBookPro111:
-    case MacBookPro112:
-    case MacBookPro113:
-    case MacBookPro114:
-    case MacBookPro115:
-    case MacBookPro121:
-    case MacBookPro131:
-    case MacBookPro132:
-    case MacBookPro133:
-    case MacBookPro141:
-    case MacBookPro142:
-    case MacBookPro143:
-    case MacBookPro151:
-    case MacBookPro152:
-    case MacBookPro153:
-    case MacBookPro154:
-    case MacBookPro161:
-    case MacBookPro162:
-    case MacBookPro163:
-    case MacBookPro164:
-    case MacBookAir71:
-    case MacBookAir72:
-    case MacBookAir81:
-    case MacBookAir82:
-    case MacBookAir91:
-      gSettings.Smbios.Mobile      = TRUE;
-      break;
-
-    case iMac41:
-    case iMac42:
-    case iMac51:
-    case iMac52:
-    case iMac61:
-    case iMac71:
-    case iMac81:
-    case iMac91:
-    case iMac101:
-    case iMac111:
-    case iMac112:
-    case iMac113:
-    case iMac121:
-    case iMac122:
-    case iMac131:
-    case iMac132:
-    case iMac133:
-    case iMac141:
-    case iMac142:
-    case iMac143:
-    case iMac144:
-    case iMac151:
-    case iMac161:
-    case iMac162:
-    case iMac171:
-    case iMac181:
-    case iMac182:
-    case iMac183:
-    case iMac191:
-    case iMac192:
-    case iMac201:
-    case iMac202:
-    case iMacPro11:
-      gSettings.Smbios.Mobile      = FALSE;
-      break;
-
-    case MacMini11:
-    case MacMini21:
-    case MacMini31:
-    case MacMini41:
-    case MacMini51:
-    case MacMini52:
-    case MacMini53:
-    case MacMini61:
-    case MacMini62:
-    case MacMini71:
-    case MacMini81:
-      gSettings.Smbios.Mobile      = FALSE;
-      break;
-
-    case MacPro41:
-    case MacPro51:
-    case MacPro71:
-    case MacPro11:
-    case MacPro21:
-    case MacPro31:
-    case MacPro61:
-      gSettings.Smbios.Mobile      = FALSE;
-      break;
-          
-    case Xserve11:
-    case Xserve21:
-    case Xserve31:
-      gSettings.Smbios.Mobile      = FALSE;
-      break;
-
-    default: //unknown - use oem SMBIOS value to be default
-      gSettings.Smbios.Mobile      = gMobile;
-      break;
-  }
+  gSettings.Smbios.Mobile = GetMobile(Model, gMobile);
 
   //RBr helper
   if (ApplePlatformData[Model].smcBranch[0] != 'N') {

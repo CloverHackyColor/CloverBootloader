@@ -36,6 +36,8 @@
 #define CONCAT(x, y) CONCAT2(x, y)
 #define STRINGIZE(x) #x
 
+#define NOP do { int i=0 ; (void)i; } while (0) // for debugging
+
 
 #ifdef __cplusplus
 

@@ -72,6 +72,29 @@ void panic(const char* format, ...)
 #endif
 }
 
+/*
+ * Future version to warn about problem but offer the possibility to try to continue
+ * It's not done yes. So far, it's just panic
+ * TODO:
+ */
+void panic_ask(const char* format, ...)
+{
+#ifdef PANIC_CAN_RETURN
+  if ( stop_at_panic ) {
+    VA_LIST va;
+    VA_START(va, format);
+    panic_(format, va); // panic doesn't return
+//    VA_END(va);
+  }else{
+    i_have_panicked = true;
+  }
+#else
+  VA_LIST va;
+  VA_START(va, format);
+  panic_(format, va); // panic doesn't return
+#endif
+}
+
 
 void panic(void)
 {

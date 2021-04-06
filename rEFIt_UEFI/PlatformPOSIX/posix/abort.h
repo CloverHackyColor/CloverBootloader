@@ -32,6 +32,10 @@ void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2))
     __attribute__ ((noreturn))
 #endif
 ;
+
+void panic_ask(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+
+
 #endif
 
 #ifdef _MSC_VER

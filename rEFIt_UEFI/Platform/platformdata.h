@@ -196,5 +196,8 @@ void GetDefaultSettings(void);
 void GetDefaultCpuSettings(SETTINGS_DATA& gSettings);
 uint8_t GetChassisTypeFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model);
+uint32_t GetFwFeatures(MACHINE_TYPES Model);
+bool GetMobile(MACHINE_TYPES Model, bool defaultValue);
+UINT64 GetPlatformFeature(MACHINE_TYPES Model);
 
 #endif /* PLATFORM_PLATFORMDATA_H_ */

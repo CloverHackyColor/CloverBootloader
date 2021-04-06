@@ -32,6 +32,10 @@ void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2))
 #endif
 ;
 
+
+void panic_ask(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+
+
 #ifdef _MSC_VER
 # define assert(expr) _assert(expr, "Expression \"%s\" failed in %s", #expr, __FUNCSIG__)
 #else

@@ -246,8 +246,13 @@ UINT8 CUSTOM_LOADER_SUBENTRY::getFlags(bool NoCachesDefault) const
   UINT8 Flags = parent.getFlags(NoCachesDefault);
   if ( settings._Arguments.isDefined() ) Flags = OSFLAG_SET(Flags, OSFLAG_NODEFAULTARGS);
   if ( settings._NoCaches.isDefined() ) {
-    if ( settings._NoCaches.value() ) Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
-    else  Flags = OSFLAG_UNSET(Flags, OSFLAG_NOCACHES);
+    if ( settings._NoCaches.value() ) {
+      Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
+    } else {
+      if (NoCachesDefault) {
+        Flags = OSFLAG_SET(Flags, OSFLAG_NOCACHES);
+      }
+    }
   }
   return Flags;
 }
@@ -3484,8 +3489,8 @@ ParseSMBIOSSettings(SETTINGS_DATA& gSettings, const TagDict* DictPointer)
     if ( !Prop1->isString() ) {
       MsgLog("ATTENTION : property not string in BiosReleaseDate\n");
     }else{
-      if (Prop != NULL) {
-        gSettings.Smbios._ReleaseDate = Prop1->getString()->stringValue();
+      gSettings.Smbios._ReleaseDate = Prop1->getString()->stringValue();
+      if (Prop != NULL) { // Prop is BiosVersion
         const CHAR8* i = GlobalConfig.ReleaseDateUsed.c_str();
         const CHAR8* j = gSettings.Smbios._ReleaseDate.c_str();
 
