@@ -1514,13 +1514,12 @@ XStringClass xstr2 = initia__String.basename();
 // U'𐄔' = 0x10114 : this is 2 utf16 chars (codepoint > 0xFFFF)
 // U'𐅃' = 0x10143 : this is 2 utf16 chars (codepoint > 0xFFFF)
 
+#include "../cpp_foundation/XBuffer.h"
 int XString_tests()
 {
 #ifdef JIEF_DEBUG
 //	printf("XString_tests -> Enter\n");
 #endif
-
-
 
 //char c = 'a';
 //int ii = sizeof(size_t);
@@ -1554,6 +1553,31 @@ int XString_tests()
 //SetConsoleOutputCP(65001);
 #endif
 
+//  {
+//    NSDate *methodStart = [NSDate date];
+//
+//    XString8 xs8;
+//    for ( size_t i = 0 ; i < 300000 ; ++i ) {
+//      xs8.S8Catf("foo");
+//    }
+//
+//    NSDate *methodFinish = [NSDate date];
+//    NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
+//    NSLog(@"executionTime = %f", executionTime);
+//  }
+//  {
+//    NSDate *methodStart = [NSDate date];
+//
+//    XBuffer<char> xs8;
+//    for ( size_t i = 0 ; i < 300000 ; ++i ) {
+//      xs8.S8Catf("foo");
+//    }
+//
+//    NSDate *methodFinish = [NSDate date];
+//    NSTimeInterval executionTime = [methodFinish timeIntervalSinceDate:methodStart];
+//    NSLog(@"executionTime = %f", executionTime);
+//  }
+//exit(1);
 //teststrncpy_<XString>("utf8", testStringMultiCodedArray[1].utf8, testStringMultiCodedArray[1].wchar);
 //testindexOf(XString, utf8, utf16);
 //testCompare(XString, utf8, utf16);
@@ -1567,7 +1591,7 @@ int XString_tests()
   xsw.insertAtPos(L'A', 2);
   
   XStringW xsw2;
-  xsw2.takeValueFrom(xsw, 1);
+  xsw2.strncpy(xsw.s(), 1);
   
   {
     XString8 xs8 = "  to TRIM  "_XS8;
