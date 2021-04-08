@@ -7710,14 +7710,14 @@ SetDevices (LOADER_ENTRY *Entry)
   if (StringDirty) {
     EFI_PHYSICAL_ADDRESS BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     
-    XString8 newDeviceProperties = devprop_generate_string(device_inject_string);
+    XBuffer<char> newDeviceProperties = devprop_generate_string(device_inject_string);
 
     size_t binaryPropSize = hex2bin(newDeviceProperties, NULL, 0);
     if ( binaryPropSize > MAX_UINT32 ) {
       MsgLog("devprop_generate_string(device_inject_string) is too big");
       newDeviceProperties.setEmpty();
     }else{
-      DBG("stringlength = %zu\n", newDeviceProperties.length());
+      DBG("stringlength = %zu\n", newDeviceProperties.size());
 
       UINTN nbPages = EFI_SIZE_TO_PAGES(binaryPropSize);
       Status = gBS->AllocatePages (

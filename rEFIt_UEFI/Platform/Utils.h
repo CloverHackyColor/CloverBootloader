@@ -47,6 +47,7 @@ UINT8       hexstrtouint8 (CONST CHAR8* buf); //one or two hex letters to one by
 #ifdef __cplusplus
 
 #include "../cpp_foundation/XString.h"
+#include "../cpp_foundation/XBuffer.h"
 
 template <typename T, enable_if( is_char_ptr(T)  ||  is___String(T) )>
 size_t hex2bin(const T hex, size_t hexlen, uint8_t *out, size_t outlen)
@@ -98,6 +99,7 @@ size_t hex2bin(const T hex, size_t hexlen, uint8_t *out, size_t outlen)
 }
 
 size_t hex2bin(const XString8& s, uint8_t *out, size_t outlen);
+size_t hex2bin(const XBuffer<char>& buffer, uint8_t *out, size_t outlen);
 size_t hex2bin(const XStringW& s, uint8_t *out, size_t outlen);
 
 

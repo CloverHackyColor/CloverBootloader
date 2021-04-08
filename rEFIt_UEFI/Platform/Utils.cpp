@@ -97,6 +97,10 @@ BOOLEAN IsHexDigit (CHAR8 c) {
 
 #ifdef __cplusplus
 
+size_t hex2bin(const XBuffer<char>& buffer, uint8_t *out, size_t outlen)
+{
+  return hex2bin(buffer.data(), buffer.size(), out, outlen);
+}
 
 size_t hex2bin(const XString8& s, uint8_t *out, size_t outlen)
 {

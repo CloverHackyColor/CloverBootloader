@@ -223,6 +223,36 @@ public:
   void cat(double d) { ncat(&d, sizeof(d)); };
   void cat(void* p) { ncat(&p, sizeof(p)); };
 
+protected:
+  static void transmitS8Printf(const char* buf, unsigned int nbchar, void* context)
+  {
+    ((XBuffer<T>*)(context))->ncat(buf, nbchar);
+  }
+public:
+  void vS8Catf(const char* format, XTOOLS_VA_LIST va)
+  {
+    vprintf_with_callback(format, va, transmitS8Printf, this);
+  }
+  void S8Catf(const char* format, ...) __attribute__((__format__(__printf__, 2, 3)))
+  {
+    XTOOLS_VA_LIST     va;
+
+    XTOOLS_VA_START (va, format);
+    vS8Catf(format, va);
+    XTOOLS_VA_END(va);
+  }
+
+  T* forgetDataWithoutFreeing()
+  {
+    T* ret = data();
+    m_allocatedSize = 0;
+    XRBuffer<T>::_RData = _WData = NULL;
+    XRBuffer<T>::m_size = 0;
+    XRBuffer<T>::_Index = 0;
+    return ret;
+  }
+
+
 //	void cat(const XString8 &aXString8);
 	void cat(const XBuffer &unXBuffer) { ncat(unXBuffer.Length()); ncat(unXBuffer.Data(), unXBuffer.Length()); }
 	void deleteAtPos(unsigned int pos, unsigned int count=1);
@@ -247,7 +277,7 @@ void XBuffer<T>::Initialize(const T* p, size_t count, size_t index)
   if ( p!=NULL && count>0 )
   {
     m_allocatedSize = count;
-    _WData = (unsigned char*)malloc(m_allocatedSize);
+    _WData = (T*)malloc(m_allocatedSize);
     if ( !_WData ) {
 #ifdef DEBUG
       panic("XBuffer<T>::Initialize(%zu) : malloc returned NULL. System halted\n", count);
@@ -278,7 +308,7 @@ void XBuffer<T>::CheckSize(size_t nNewSize, size_t nGrowBy)
   if ( m_allocatedSize < nNewSize )
   {
     nNewSize += nGrowBy;
-    _WData = (unsigned char*)Xrealloc(_WData, nNewSize, m_allocatedSize);
+    _WData = (T*)Xrealloc(_WData, nNewSize*sizeof(T), m_allocatedSize);
     if ( !_WData ) {
 #ifdef DEBUG
       panic("XBuffer<T>::CheckSize(%zu, %zu) : Xrealloc(%" PRIuPTR " %zu, %zu) returned NULL. System halted\n", nNewSize, nGrowBy, uintptr_t(_WData), nNewSize, m_allocatedSize);
@@ -489,7 +519,5 @@ bool XBuffer<T>::ReadFromBuf(const char *buf, size_t *idx, size_t count)
     return false;
   }
 }
-
-
 
 #endif

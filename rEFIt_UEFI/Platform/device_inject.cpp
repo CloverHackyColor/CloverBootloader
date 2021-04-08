@@ -281,36 +281,37 @@ bool devprop_add_value(DevPropDevice *device, const XString8& nm, const XBuffer<
   return devprop_add_value(device, nm.data(), vl.data(), vl.size());
 }
 
-XString8 devprop_generate_string(DevPropString *StringBuf)
+XBuffer<char> devprop_generate_string(DevPropString *StringBuf)
 {
+  UINTN len = StringBuf->length * 2;
   INT32 i = 0;
   UINT32 x = 0;
-  XString8 buffer;
+  XBuffer<char> buffer;
+  buffer.dataSized(len+1);
 
   //   DBG("devprop_generate_string\n");
 
-	buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
-
+  buffer.S8Catf("%08X%08X%04hX%04hX", SwapBytes32(StringBuf->length), StringBuf->WHAT2, SwapBytes16(StringBuf->numentries), StringBuf->WHAT3);
   while(i < StringBuf->numentries) {
     UINT8 *dataptr = StringBuf->entries[i]->data;
-	  buffer.S8Catf("%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
+    buffer.S8Catf("%08X%04hX%04hX", SwapBytes32(StringBuf->entries[i]->length),
                 SwapBytes16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 
-	  buffer.S8Catf("%02hhX%02hhX%04hX%08X%08X", StringBuf->entries[i]->acpi_dev_path.type,
+    buffer.S8Catf("%02hhX%02hhX%04hX%08X%08X", StringBuf->entries[i]->acpi_dev_path.type,
                 StringBuf->entries[i]->acpi_dev_path.subtype,
                 SwapBytes16(StringBuf->entries[i]->acpi_dev_path.length),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._HID),
                 SwapBytes32(StringBuf->entries[i]->acpi_dev_path._UID));
 
     for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++) {
-		buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
+    buffer.S8Catf("%02hhX%02hhX%04hX%02hhX%02hhX", StringBuf->entries[i]->pci_dev_path[x].type,
                   StringBuf->entries[i]->pci_dev_path[x].subtype,
                   SwapBytes16(StringBuf->entries[i]->pci_dev_path[x].length),
                   StringBuf->entries[i]->pci_dev_path[x].function,
                   StringBuf->entries[i]->pci_dev_path[x].device);
     }
 
-	  buffer.S8Catf("%02hhX%02hhX%04hX", StringBuf->entries[i]->path_end.type,
+    buffer.S8Catf("%02hhX%02hhX%04hX", StringBuf->entries[i]->path_end.type,
                 StringBuf->entries[i]->path_end.subtype,
                 SwapBytes16(StringBuf->entries[i]->path_end.length));
 
@@ -321,6 +322,7 @@ XString8 devprop_generate_string(DevPropString *StringBuf)
   }
   return buffer;
 }
+
 
 void devprop_free_string(DevPropString *StringBuf)
 {
