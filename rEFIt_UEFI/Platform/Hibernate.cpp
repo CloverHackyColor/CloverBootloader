@@ -446,13 +446,7 @@ GetSleepImageLocation(IN REFIT_VOLUME *Volume, REFIT_VOLUME **SleepImageVolume, 
             } else {
               SleepImageName = SWPrintf("%s", prop->getString()->stringValue().c_str());
             }
-            wchar_t* p = SleepImageName.data(0);
-            while (*p) {
-              if (*p == L'/') {
-                *p = L'\\';
-              }
-              p++;
-            }
+            SleepImageName.replaceAll('/', '\\');
             DBG("    SleepImage name from pref: ImageVolume = '%ls', ImageName = '%ls'\n", ImageVolume->VolName.wc_str(), SleepImageName.wc_str());
           }
         }

@@ -29,6 +29,8 @@ void* memcpy(void *dst, const void *src, size_t len);
 //	return CopyMem(dst,src,len);
 //}
 
+size_t strlen(const char *str);
+
 inline char* strcat(char* s1, const char* s2)
 {
 	AsciiStrCatS(s1, AsciiStrLen(s1)+1, s2);

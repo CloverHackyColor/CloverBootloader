@@ -4,6 +4,7 @@
 #include <stdlib.h> // for abort
 #include <stddef.h> // for size_t
 #include <limits.h> // for SIZE_T_MAX
+#include <string.h> // for strlen definition
 
 #ifdef MAP_TO_EDK_STRLEN
 extern "C" UINTN EFIAPI AsciiStrLen(IN CONST CHAR8 *String);

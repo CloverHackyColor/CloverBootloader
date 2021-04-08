@@ -24,7 +24,7 @@
 
 Self self;
 
-constexpr const LStringW THEMES_DIRNAME(L"Themes");
+constexpr const LStringW THEMES_DIRNAME = L"Themes"_XSW;
 
 EFI_STATUS Self::_openDir(const XStringW& path, bool* b, EFI_FILE** efiDir)
 {

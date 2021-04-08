@@ -12,8 +12,8 @@
 #endif
 //#define MAX_XISIZE MAX_INTN
 
-#define XStringGrowByDefault 10
-#define XArrayGrowByDefault 8
+#define XStringGrowByDefault 16
+#define XArrayGrowByDefault 16
 #define XBufferGrowByDefault 16
 
 /* For convience, operator [] is define with int parameter.

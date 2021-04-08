@@ -13,4 +13,6 @@ const char* strguid(EFI_GUID* guid);
 
 //int snwprintf(wchar_t*, size_t len, const char *__restrict format, ...) __attribute__((__format__ (__printf__, 3, 4)));
 
+size_t clover_strlen(const char *str);
+
 #endif /* PLATFORM_POSIX_POSIX_ADDITIONS_H_ */

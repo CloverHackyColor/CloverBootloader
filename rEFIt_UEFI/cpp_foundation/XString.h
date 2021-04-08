@@ -27,13 +27,19 @@ class LString8 : public LString<char, XString8>
 {
   public:
 	constexpr LString8() = delete;
-	constexpr LString8(const char* s) : LString<char, XString8>(s) {};
+  #ifdef XSTRING_CACHING_OF_SIZE
+    LString8(const char* s) : LString<char, XString8>(s, utf8_size_of_utf8_string(s)) {};
+    constexpr LString8(const char* s, size_t size) : LString<char, XString8>(s, size) {};
+  #else
+    constexpr LString8(const char* s) : LString<char, XString8>(s) {};
+    constexpr LString8(const char* s, size_t size) : LString<char, XString8>(s) {};
+  #endif
 
 	// no assignement, no destructor
 
-	friend constexpr LString8 operator "" _XS8 ( const char* s, size_t) { return LString8(s); }
+	friend constexpr LString8 operator "" _XS8 ( const char* s, size_t size) { return LString8(s, size); }
 
-  const char* c_str() const { return m_data; }
+  const char* c_str() const { return data(); }
 
 };
 
@@ -51,7 +57,7 @@ class XString8 : public XStringAbstract<char, XString8>
 
 	using XStringAbstract<char, XString8>::operator =;
 
-  const char* c_str() const { return m_data; }
+  const char* c_str() const { return data(); }
 //  char* copy_str() const { return (char*)AllocateCopyPool(length()+1, m_data); }
 
 protected:
@@ -92,9 +98,13 @@ public:
 class XString16;
 class LString16 : public LString<char16_t, XString16>
 {
-	constexpr LString16(const char16_t* s) : LString<char16_t, XString16>(s) {};
+  #ifdef XSTRING_CACHING_OF_SIZE
+    constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16>(s, size) {};
+  #else
+    constexpr LString16(const char16_t* s, size_t size) : LString<char16_t, XString16>(s) {};
+  #endif
 	
-	friend constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t) { return LString16(s); }
+	friend constexpr LString16 operator "" _XS16 ( const char16_t* s, size_t size) { return LString16(s, size); }
 };
 
 class XString16 : public XStringAbstract<char16_t, XString16>
@@ -119,9 +129,13 @@ class XString16 : public XStringAbstract<char16_t, XString16>
 class XString32;
 class LString32 : public LString<char32_t, XString32>
 {
-	constexpr LString32(const char32_t* s) : LString<char32_t, XString32>(s) {};
+  #ifdef XSTRING_CACHING_OF_SIZE
+    constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32>(s, size) {};
+  #else
+    constexpr LString32(const char32_t* s, size_t size) : LString<char32_t, XString32>(s) {};
+  #endif
 	
-	friend constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t) { return LString32(s); }
+	friend constexpr LString32 operator "" _XS32 ( const char32_t* s, size_t size) { return LString32(s, size); }
 };
 
 class XString32 : public XStringAbstract<char32_t, XString32>
@@ -147,11 +161,18 @@ class LStringW : public LString<wchar_t, XStringW>
 {
   public:
 	constexpr LStringW() = delete;
-	constexpr LStringW(const wchar_t* s) : LString<wchar_t, XStringW>(s) {};
-	
-	friend constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t) { return LStringW(s); }
+  
+  #ifdef XSTRING_CACHING_OF_SIZE
+    LStringW(const wchar_t* s) : LString<wchar_t, XStringW>(s, wchar_size_of_wchar_string(s)) {};
+    constexpr LStringW(const wchar_t* s, size_t size) : LString<wchar_t, XStringW>(s, size) {};
+  #else
+    constexpr LStringW(const wchar_t* s) : LString<wchar_t, XStringW>(s) {};
+    constexpr LStringW(const wchar_t* s, size_t size) : LString<wchar_t, XStringW>(s) {};
+  #endif
 
-  const wchar_t* wc_str() const { return m_data; }
+	friend constexpr LStringW operator "" _XSW ( const wchar_t* s, size_t size) { return LStringW(s, size); }
+
+  const wchar_t* wc_str() const { return data(); }
 };
 
 class XStringW : public XStringAbstract<wchar_t, XStringW>
@@ -169,7 +190,7 @@ public:
 
 	using XStringAbstract<wchar_t, XStringW>::operator =;
 
-  const wchar_t* wc_str() const { return m_data; }
+  const wchar_t* wc_str() const { return data(); }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	const wchar_t* wc_str(IntegralType idx) const { return data(idx); }

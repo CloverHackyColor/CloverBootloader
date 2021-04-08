@@ -141,12 +141,12 @@ typedef enum {
 } MACHINE_TYPES;
 
 
-constexpr LString8 DefaultMemEntry        = "N/A";
-constexpr LString8 DefaultSerial          = "CT288GT9VT6";
-constexpr LString8 AppleBiosVendor        = "Apple Inc.";
-constexpr LString8 AppleManufacturer      = "Apple Computer, Inc."; //Old name, before 2007
-constexpr LString8 AppleBoardSN           = "C02140302D5DMT31M";
-constexpr LString8 AppleBoardLocation     = "Part Component";
+constexpr LString8 DefaultMemEntry        = "N/A"_XS8;
+constexpr LString8 DefaultSerial          = "CT288GT9VT6"_XS8;
+constexpr LString8 AppleBiosVendor        = "Apple Inc."_XS8;
+constexpr LString8 AppleManufacturer      = "Apple Computer, Inc."_XS8; //Old name, before 2007
+constexpr LString8 AppleBoardSN           = "C02140302D5DMT31M"_XS8;
+constexpr LString8 AppleBoardLocation     = "Part Component"_XS8;
 
 
 class PLATFORMDATA

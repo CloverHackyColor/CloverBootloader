@@ -364,8 +364,8 @@ BOOLEAN YesNoMessage(IN XStringW& Title, IN CONST XStringW& Message)
   return Result;
 }
 // Ask user for file path from directory menu
-BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
-                                  IN CHAR16 *ParentPath OPTIONAL, const EFI_FILE *Dir,
+BOOLEAN AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
+                                  const CHAR16 *ParentPath OPTIONAL, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result)
 {
   //REFIT_MENU_SCREEN   Menu = { 0, L"Please Select File...", NULL, 0, NULL, 0, NULL,
@@ -456,7 +456,7 @@ BOOLEAN AskUserForFilePath(IN CHAR16 *Title OPTIONAL, IN EFI_DEVICE_PATH_PROTOCO
         // If the path begins with this volumes path it matches
         if (StrniCmp(DevicePathStr.wc_str(), Volume->DevicePathString.wc_str(), Volume->DevicePathString.length())) {
           // Need to
-          CHAR16 *FilePath = DevicePathStr.data(Volume->DevicePathString.length());
+          const CHAR16 *FilePath = DevicePathStr.data(Volume->DevicePathString.length());
           UINTN   FileLength = StrLen(FilePath);
           if (FileLength == 0) {
             // If there is no path left then open the root

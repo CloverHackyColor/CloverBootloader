@@ -32,7 +32,7 @@ extern "C" {
 XString8 stdio_static_buf = XString8().takeValueFrom("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX  "); // prealloc stdio_static_buf. It has to be at least 2 chars because of 'while ( n > size - 2 )' in strguid and efiStrError
 
 
-static char efiStrError_buf[40];
+static char efiStrError_buf[90];
 const char* efiStrError(EFI_STATUS Status)
 {
   if ( !EFI_ERROR(Status) ) {

@@ -1,0 +1,46 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+
+
+
+find RELEASE_Libs -type l -print0 |
+while read -d $'\0' file
+do
+  #echo "$file"
+  rm "$file"
+done
+
+
+
+
+
+
+
+find DEBUG_Libs -type l -print0 |
+while read -d $'\0' file
+do
+  #echo "$file"
+  target="$(stat -f %Y "$file")"
+  if [[ "$file" == *BaseDebugLibSerialPort* ]]
+  then
+  	file="${file//BaseDebugLibSerialPort/BaseDebugLibNull}"
+  	target="${target//BaseDebugLibSerialPort/BaseDebugLibNull}"
+  fi
+  if [[ "$file" == *BaseSerialPortLib16550* ]]
+  then
+  	file="${file//BaseSerialPortLib16550/BaseSerialPortLibNull}"
+  	target="${target//BaseSerialPortLib16550/BaseSerialPortLibNull}"
+  	file="${file//MdeModulePkg/MdePkg}"
+  	target="${target//MdeModulePkg/MdePkg}"
+  fi
+  cmdArgs=()
+  cmdArgs=( ln -s "${target//DEBUGMACOS_XCODE8/RELEASEMACOS_XCODE8}" "${file//DEBUG_Libs/RELEASE_Libs}" )
+  echo "${cmdArgs[@]}"
+  "${cmdArgs[@]}"
+done
+
+
+
+# xargs -0 echo '$(stat -f %Y {})' \;

@@ -107,6 +107,12 @@ size_t XMLDecode(const char* src, size_t srclen, char* out, size_t outlen)
   return uintptr_t(o)-uintptr_t(out);
 }
 
+char* XMLDecode(char* src, size_t size)
+{
+  XMLDecode(src, size, src, size+1);
+  return src;
+}
+
 char* XMLDecode(char* src)
 {
   XMLDecode(src, strlen(src), src, strlen(src)+1);

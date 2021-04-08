@@ -798,8 +798,8 @@ void LOADER_ENTRY::AddDefaultMenu()
   BOOLEAN           KernelIs64BitOnly;
 //  UINT64            os_version = AsciiOSVersionToUint64(OSVersion);
 
-  constexpr LString8 quietLitteral = "quiet";
-  constexpr LString8 splashLitteral = "splash";
+  constexpr LString8 quietLitteral = "quiet"_XS8;
+  constexpr LString8 splashLitteral = "splash"_XS8;
 
   // Only kernels up to 10.7 have 32-bit mode
   KernelIs64BitOnly = (macOSVersion.isEmpty() ||

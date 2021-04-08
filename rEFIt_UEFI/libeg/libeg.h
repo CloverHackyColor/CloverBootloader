@@ -114,20 +114,13 @@ typedef enum {
 
 class INPUT_ITEM {
 public:
-  ITEM_TYPE ItemType; //string, value, boolean
-  BOOLEAN Valid;
-  UINT8 BValue; // was BOOLEAN, but value 2 is sometimes assigned.
-  UINT8   Pad8;
-  UINT32  IValue;
-  //  UINT64  UValue;
-  //  CHAR8*  AValue;
-  XStringW SValue;
-  UINTN   LineShift;
-
-  INPUT_ITEM() : ItemType(BoolValue), Valid(0), BValue(0), Pad8(0), IValue(0), SValue(0), LineShift(0) {};
-  INPUT_ITEM(const INPUT_ITEM& other) = default; // default is fine if there is only native type and objects that have copy ctor
-  INPUT_ITEM& operator = ( const INPUT_ITEM & ) = default; // default is fine if there is only native type and objects that have copy ctor
-  ~INPUT_ITEM() { }
+  ITEM_TYPE     ItemType = BoolValue; //string, value, boolean
+  BOOLEAN       Valid = 0;
+  UINT8         BValue = 0; // was BOOLEAN, but value 2 is sometimes assigned.
+  //UINT8         Pad8;
+  UINT32        IValue = 0;
+  XStringW      SValue = XStringW();
+  UINTN         LineShift = 0;
 };
 
 typedef struct {

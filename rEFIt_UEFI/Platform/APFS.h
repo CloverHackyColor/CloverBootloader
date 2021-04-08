@@ -12,7 +12,7 @@ extern "C" {
 #include <Protocol/DevicePath.h>
 }
 
-constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842";
+constexpr LString8 ApfsSignatureUUID = "BE74FCF7-0B7C-49F3-9147-01F4042E6842"_XS8;
 
 /*
  * Function for obtaining unique part id from APFS partition

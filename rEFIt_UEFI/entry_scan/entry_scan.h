@@ -48,8 +48,8 @@ const XIcon& ScanVolumeDefaultIcon(REFIT_VOLUME *Volume, IN UINT8 OSType, const 
 
 
 // Ask user for file path from directory menu
-BOOLEAN AskUserForFilePathFromDir(IN CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
-                                  IN CHAR16 *ParentPath, const EFI_FILE *Dir,
+BOOLEAN AskUserForFilePathFromDir(const CHAR16 *Title OPTIONAL, IN REFIT_VOLUME *Volume,
+                                  const CHAR16 *ParentPath, const EFI_FILE *Dir,
                                   OUT EFI_DEVICE_PATH_PROTOCOL **Result);
 // Ask user for file path from volumes menu
 BOOLEAN AskUserForFilePathFromVolumes(IN CHAR16 *Title OPTIONAL, OUT EFI_DEVICE_PATH_PROTOCOL **Result);

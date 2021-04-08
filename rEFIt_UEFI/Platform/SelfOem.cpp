@@ -22,7 +22,7 @@
 #define DBG(...) DebugLog(DEBUG_SELF, __VA_ARGS__)
 #endif
 
-constexpr const LStringW KEXTS_DIRNAME(L"Kexts");
+constexpr const LStringW KEXTS_DIRNAME = L"Kexts"_XSW;
 
 
 SelfOem selfOem;

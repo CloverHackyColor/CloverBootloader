@@ -38,7 +38,6 @@
 
 void abort(void);
 
-size_t strlen(const char *str);
 
 
 inline float fabsf(float x) {

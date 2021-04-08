@@ -50,7 +50,7 @@
 
 EFI_GUID            *gTableGuidArray[] = {&gEfiSmbiosTableGuid, &gEfiSmbios3TableGuid};
 
-constexpr LString8 unknown("unknown");
+constexpr LString8 unknown = "unknown"_XS8;
 //
 // syscl: implement Dell truncate fix
 // remap EFI_SMBIOS_TABLE_1 to new guid to fix Dell

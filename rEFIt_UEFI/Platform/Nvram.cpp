@@ -169,7 +169,8 @@ XString8 GetNvramVariableAsXString8(
   if (DataSize != NULL) {
     *DataSize = IntDataSize;
   }
-  *returnValue.data(IntDataSize) = 0;
+  returnValue.dataSized(IntDataSize+1)[IntDataSize] = 0;
+  returnValue.updateSize();
   return returnValue;
 }
 

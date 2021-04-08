@@ -2571,12 +2571,14 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
        DEBUG_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
   DEBUGMACOS_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x800,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
      RELEASE_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x260,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
+RELEASEMACOS_XCODE8_X64_DLINK_FLAGS      = -arch x86_64 -nostdlib -Wl,-u,_$(IMAGE_ENTRY_POINT),-e,_$(IMAGE_ENTRY_POINT),-preload,-segalign,0x20,-pie,-all_load,-dead_strip,-seg1addr,0x800,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
            *_XCODE8_X64_SLINK_FLAGS      = -static -no_warning_for_no_symbols -o 
            
          DEBUG_XCODE8_X64_ASM_FLAGS      = -c -x assembler -arch x86_64 -g
     DEBUGMACOS_XCODE8_X64_ASM_FLAGS      = -c -x assembler -arch x86_64 -g
        RELEASE_XCODE8_X64_ASM_FLAGS      = -c -x assembler -arch x86_64
+  RELEASEMACOS_XCODE8_X64_ASM_FLAGS      = -c -x assembler -arch x86_64
        
             *_XCODE8_X64_NASM_FLAGS      = -f macho64
                 *_XCODE8_*_PP_FLAGS      = DEF(GCC_PP_FLAGS)
@@ -2594,9 +2596,11 @@ RELEASE_XCODE8_*_MTOC_FLAGS = -align 0x20
           DEBUG_XCODE8_X64_CC_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))"
      DEBUGMACOS_XCODE8_X64_CC_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS)
         RELEASE_XCODE8_X64_CC_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))" -Werror
+   RELEASEMACOS_XCODE8_X64_CC_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS)
          DEBUG_XCODE8_X64_CXX_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))"
     DEBUGMACOS_XCODE8_X64_CXX_FLAGS      = -g -gdwarf -O0 DEF(XCODE8_COMMON_FLAGS)
        RELEASE_XCODE8_X64_CXX_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS) -target x86_64-pc-win32-macho "-DEFIAPI=__attribute__((ms_abi))" -Werror
+  RELEASEMACOS_XCODE8_X64_CXX_FLAGS      =            -Os DEF(XCODE8_COMMON_FLAGS)
 
 *_XCODE8_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -c -include AutoGen.h
 *_XCODE8_*_ASLDLINK_FLAGS   = -nostdlib -Wl,-e,_ReferenceAcpiTable,-preload,-segalign,0x20,-pie,-seg1addr,0x260,-read_only_relocs,suppress,-map,$(DEST_DIR_DEBUG)/$(BASE_NAME).map

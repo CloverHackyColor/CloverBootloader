@@ -124,7 +124,7 @@ CONST CHAR8* gFirmwareBuildDate = "unknown";
 CONST CHAR8* gBuildInfo = NULL;
 #endif
 #ifdef BUILD_ID
-const LString8 gBuildId __attribute__((used)) = BUILD_ID;
+const LString8 gBuildId __attribute__((used)) = LString8(BUILD_ID);
 const LString8 gBuildIdGrepTag __attribute__((used)) = "CloverBuildIdGrepTag: " BUILD_ID;
 #else
 const LString8 gBuildId __attribute__((used)) = "unknown";
@@ -4038,7 +4038,7 @@ static void getACPISettings(const TagDict *CfgDict, SETTINGS_DATA& gSettings)
             if (Prop3 != NULL && (Prop3->isString()) && Prop3->getString()->stringValue().notEmpty()) {
               DSDTPatchesLabel = Prop3->getString()->stringValue();
             } else {
-              DSDTPatchesLabel = " (NoLabel)"_XS8;
+              DSDTPatchesLabel = "(NoLabel)"_XS8;
             }
             dsdtPatch.PatchDsdtLabel = DSDTPatchesLabel;
             DBG(" (%s)", dsdtPatch.PatchDsdtLabel.c_str());
@@ -5139,6 +5139,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
             if (Prop2 && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty()) {
               //first suppose it is Ascii string
               Property->Value.ncpy(Prop2->getString()->stringValue().c_str(), Prop2->getString()->stringValue().sizeInBytesIncludingTerminator());
+              Property->ValueType = kTagTypeString;
             } else if (Prop2 && (Prop2->isInt64())) {
               if ( Prop2->getInt64()->intValue() < MIN_INT32  ||  Prop2->getInt64()->intValue() > MAX_INT32 ) {
                 MsgLog("Invalid int value for key 'Value'\n");
@@ -5707,7 +5708,7 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
                   StrToGuidLE(Prop2->getString()->stringValue(), &RtVariable.Guid);
                 }else{
                   StrToGuidLE(nullGuidAsString, &RtVariable.Guid);
-                 DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop->getString()->stringValue().c_str());
+                  DBG("Error: invalid GUID for RT var '%s' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", Prop2->getString()->stringValue().c_str());
                 }
               }
             }

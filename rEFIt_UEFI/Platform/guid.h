@@ -56,7 +56,7 @@ template <typename T, enable_if( is___String(T) )>
 BOOLEAN IsValidGuidString(const T& Str)
 {
   if ( Str.isEmpty() ) return false;
-  return IsValidGuidString(Str.data(0), Str.length());
+  return IsValidGuidString(Str.data(), Str.length());
 }
 
 ///** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */

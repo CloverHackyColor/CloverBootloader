@@ -52,7 +52,7 @@ PrintBytes(IN void *Bytes, IN UINTN Number)
 	}
 }
 
-bool disabledLog = false;
+bool gEnableCloverLog = false;
 
 // Changed MsgLog(...) it now calls this function
 //  with DebugMode == 0. - apianti
@@ -61,7 +61,7 @@ bool disabledLog = false;
 // DebugMode==2 Prints to msg log, DEBUG_LOG and display console
 void EFIAPI DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
-  if ( disabledLog ) return;
+  if ( !gEnableCloverLog ) return;
   
   VA_LIST Marker;
   // Make sure the buffer is intact for writing

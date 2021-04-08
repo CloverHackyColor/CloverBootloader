@@ -94,13 +94,15 @@ DebugCodeEnabled (
   return TRUE;
 }
 
+BOOLEAN gDebugPrintEnabled = 0;
+
 BOOLEAN
 EFIAPI
 DebugPrintEnabled (
   VOID
   )
 {
-  return TRUE;
+  return gDebugPrintEnabled;
 }
 
 BOOLEAN

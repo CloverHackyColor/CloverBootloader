@@ -9,7 +9,9 @@
 #ifndef Platform_h_h
 #define Platform_h_h
 
-#define _UINTPTR_T
+#ifndef _UINTPTR_T
+#define _UINTPTR_T // to prevent macOS definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+#endif
 
 #ifdef _MSC_VER
 #include <Windows.h>

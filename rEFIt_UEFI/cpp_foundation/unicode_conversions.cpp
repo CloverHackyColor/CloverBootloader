@@ -5,6 +5,7 @@
 //
 
 #include "unicode_conversions.h"
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -697,6 +698,29 @@ size_t utf16_string_from_utf8_string_len(char16_t* dst, size_t dst_max_size, con
 	return (size_t)(p-dst);
 }
 
+size_t utf16_string_from_utf8_string_size(char16_t* dst, size_t dst_max_size, const char* s, size_t size)
+{
+  if ( dst_max_size <= 0 ) return 0;
+  if ( !s  || size <= 0 ) {
+    *dst = 0;
+    return 0;
+  }
+  dst_max_size -= 1;
+
+//  size_t dst_len = 0;
+  const char* s_start = s;
+  char16_t* p = dst;
+//  char16_t* p_max = dst + dst_max_size;
+
+  char32_t char32 = 1;
+  while ( char32  &&  dst_max_size > 0  && uintptr_t(s)-uintptr_t(s_start) < size ) {
+    s = get_char32_from_utf8_string(s, &char32);
+    p = get_utf16_from_char32(p, &dst_max_size, char32);
+  }
+  *p = 0;
+  return (size_t)(p-dst);
+}
+
 
 /*************************************************************   utf16 - utf32   *********************************************************/
 
@@ -1247,16 +1271,22 @@ char32_t get_char32_from_wchar_string_at_pos(const char16_t* s, size_t pos)
 size_t utf8_size_of_utf8_string(const char* s)
 {
 	if ( !s ) return 0;
-	char32_t char32 = 1;
-	const char* p = s; // = get_char32_from_utf8_string(s, &char32);
-	while ( char32 ) {
-		p = get_char32_from_utf8_string(p, &char32);
-	}
-	return (uintptr_t)p - (uintptr_t)s;
-//
-//	const char* p = s;
-//	while ( *p++ );
-//	return (size_t)(p-s-1);
+////2021 : tested on macOS. With this version, test took 8 seconds.
+//	char32_t char32 = 1;
+//	const char* p = s; // = get_char32_from_utf8_string(s, &char32);
+//	while ( char32 ) {
+//		p = get_char32_from_utf8_string(p, &char32);
+//	}
+//  return (uintptr_t)p - (uintptr_t)s;
+
+    return strlen(s);// With this version, test took 0.2 seconds. strlen on macOs is optimized for SSE.
+
+//    return clover_strlen(s); // With this version, test took 0.4 seconds.
+
+//// 2021 : // With this version, test took 2.2 seconds.
+//  const char* p = s;
+//  while ( *p++ );
+//  return (uintptr_t)p - (uintptr_t)s - 1;
 }
 
 size_t utf8_size_of_utf8_string_len(const char* s, size_t len)
@@ -1381,21 +1411,32 @@ size_t utf8_string_from_utf8_string(char* dst, size_t dst_max_size, const char *
 
 size_t utf8_string_from_utf8_string_len(char* dst, size_t dst_max_size, const char *s, size_t len)
 {
-	if ( !s  || len <= 0 || dst_max_size <= 1 ) {
-		if ( dst_max_size > 0 ) *dst = 0;
-		return 0;
-	}
-	dst_max_size -= 1;
-	char* p = dst;
-	char32_t char32;
-	s = get_char32_from_utf8_string(s, &char32);
-	while ( char32 && dst_max_size > 0  && len > 0) {
-		p = get_utf8_from_char32(p, &dst_max_size, char32);
-		s = get_char32_from_utf8_string(s, &char32);
-		len--;
-	}
-	*p = 0;
-	return (uintptr_t)p - (uintptr_t)dst - 1;
+  if ( !s  || len <= 0 || dst_max_size <= 1 ) {
+    if ( dst_max_size > 0 ) *dst = 0;
+    return 0;
+  }
+  dst_max_size -= 1;
+  char* p = dst;
+  char32_t char32;
+  s = get_char32_from_utf8_string(s, &char32);
+  while ( char32 && dst_max_size > 0  && len > 0) {
+    p = get_utf8_from_char32(p, &dst_max_size, char32);
+    s = get_char32_from_utf8_string(s, &char32);
+    len--;
+  }
+  *p = 0;
+  return (uintptr_t)p - (uintptr_t)dst - 1;
+}
+
+size_t utf8_string_from_utf8_string_size(char* dst, size_t dst_max_size, const char *s, size_t size)
+{
+  if ( !s  || size <= 0 || dst_max_size <= 1 ) {
+    if ( dst_max_size > 0 ) *dst = 0;
+    return 0;
+  }
+  memmove(dst, s, MIN(size, dst_max_size-1));
+  dst[MIN(size, dst_max_size-1)] = 0;
+  return MIN(size, dst_max_size-1);
 }
 
 size_t utf16_stringnn_from_utf16_string(char16_t* dst, size_t dst_max_size, const char16_t *s)
@@ -1471,6 +1512,17 @@ size_t utf16_string_from_utf16_string_len(char16_t* dst, size_t dst_max_size, co
 	return (uintptr_t)p - (uintptr_t)dst - 1;
 }
 
+size_t utf16_string_from_utf16_string_size(char16_t* dst, size_t dst_max_size, const char16_t *s, size_t size)
+{
+  if ( !s  || size <= 0 || dst_max_size <= 1 ) {
+    if ( dst_max_size > 0 ) *dst = 0;
+    return 0;
+  }
+  memmove(dst, s, MIN(size, dst_max_size-1)*sizeof(char16_t));
+  dst[MIN(size, dst_max_size-1)] = 0;
+  return MIN(size, dst_max_size);
+}
+
 size_t utf32_stringnn_from_utf32_string(char32_t* dst, size_t dst_max_size, const char32_t *s)
 {
   if ( !s  ||  dst_max_size <= 0 ) {
@@ -1521,6 +1573,17 @@ size_t utf32_string_from_utf32_string_len(char32_t* dst, size_t dst_max_size, co
 	memcpy((void*)dst, (void*)s, dst_max_size * sizeof(char32_t));
 	dst[dst_max_size] = 0;
 	return dst_max_size * sizeof(char32_t);
+}
+
+size_t utf32_string_from_utf32_string_size(char32_t* dst, size_t dst_max_size, const char32_t *s, size_t size)
+{
+  if ( !s  || size <= 0 || dst_max_size <= 1 ) {
+    if ( dst_max_size > 0 ) *dst = 0;
+    return 0;
+  }
+  memmove(dst, s, MIN(size, dst_max_size-1)*sizeof(char32_t));
+  dst[MIN(size, dst_max_size-1)] = 0;
+  return MIN(size, dst_max_size);
 }
 
 size_t wchar_stringnn_from_wchar_string(wchar_t* dst, size_t dst_max_size, const wchar_t *s)

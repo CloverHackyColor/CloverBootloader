@@ -554,10 +554,10 @@ PLATFORMDATA ApplePlatformData[] =
   { "Xserve3,1"_XS8, "XS31.88Z.0081.B06.0908061300"_XS8, ""_XS8, "Mac-F223BEC8"_XS8, // Intel Xeon E5520 @ 2.26 GHz
     "Xserve"_XS8, "1.0"_XS8, "CK933YJ16HS"_XS8, "Xserve"_XS8,
     0x01, 0x43, 0x0f, 0, 0, 0x04, "NA"_XS8, "NA"_XS8, 0x79001 }, // need rBR RPlt EPCI
-  //MaxMachineType : empty default value
-  { ""_XS8, ""_XS8, ""_XS8, ""_XS8,
-    ""_XS8, ""_XS8, ""_XS8, ""_XS8,
-    0x00, 0x00, 0x00, 0, 0, 0x00, ""_XS8, ""_XS8, 0x0 },
+  //MaxMachineType : default to iMac132
+  { "iMac13,2"_XS8, "IM131.88Z.F000.B00.2004121616"_XS8, "291.0.0.0.0"_XS8, "Mac-FC02E91DDD3FA6A4"_XS8, // Intel Core i5-3470 @ 3.20 GHz
+    "iMac"_XS8, "1.0"_XS8, "C02JB041DNCW"_XS8, "iMac-Aluminum"_XS8,
+    0x02, 0x11, 0x0f, 0, 0, 0x16, "d8"_XS8, "d8"_XS8, 0x79006 },
 };
 
 /*
