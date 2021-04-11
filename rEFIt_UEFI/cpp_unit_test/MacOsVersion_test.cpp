@@ -35,7 +35,7 @@
 //        ret = TRUE;
 //      } else if ( macthOsToc[0] == currOStoc[0]
 //                 && macthOsToc[1] == currOStoc[1]
-//                 && macthOsToc[2].equalIC("x") ) {
+//                 && macthOsToc[2].isEqualIC("x") ) {
 //        ret = TRUE;
 //      }
 //    } else if (currOStoc.size() == 2) {
@@ -44,7 +44,7 @@
 //        ret = TRUE;
 //      } else if ( macthOsToc[0] == currOStoc[0]
 //                 && macthOsToc[1] ==  currOStoc[1]
-//                 && macthOsToc[2].equalIC("x") == 0 ) {
+//                 && macthOsToc[2].isEqualIC("x") == 0 ) {
 //        ret = TRUE;
 //      }
 //    }
@@ -75,7 +75,7 @@ static BOOLEAN IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
   if ( osToc.size() > 0 && currOStoc.size() > 0 && osToc[0] == "11"_XS8 && currOStoc[0] == "11"_XS8 ) {
     if (osToc.size() == 1 ) return true;
     if (osToc.size() == 2 ) {
-      if ( osToc[1].equalIC("x") ) return true;
+      if ( osToc[1].isEqualIC("x") ) return true;
       if ( currOStoc.size() == 2 && osToc[1] == currOStoc[1] ) return true;
     }
   }
@@ -93,7 +93,7 @@ static BOOLEAN IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
         ret = TRUE;
       } else if ( osToc[0] == currOStoc[0]
                  && osToc[1] == currOStoc[1]
-                 && osToc[2].equalIC("x") ) {
+                 && osToc[2].isEqualIC("x") ) {
         ret = TRUE;
       }
     } else if (currOStoc.size() == 2) {
@@ -102,7 +102,7 @@ static BOOLEAN IsOSValid_OLD(const XString8& MatchOS, const XString8& CurrOS)
         ret = TRUE;
       } else if ( osToc[0] == currOStoc[0]
                  && osToc[1] ==  currOStoc[1]
-                 && osToc[2].equalIC("x") == 0 ) {
+                 && osToc[2].isEqualIC("x") == 0 ) {
         ret = TRUE;
       }
     }
