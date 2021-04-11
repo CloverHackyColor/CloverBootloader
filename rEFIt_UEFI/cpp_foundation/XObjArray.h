@@ -113,6 +113,26 @@ class XObjArrayNC
 	template<typename IntegralType, enable_if(is_integral(IntegralType))>
 	TYPE &operator[](IntegralType nIndex) { return ElementAt(nIndex); }
 
+  bool operator==(const XObjArrayNC<TYPE>& other) const
+  {
+    if ( size() != other.size() ) return false;
+    for ( size_t idx = 0 ; idx < other.size() ; ++idx ) {
+      if ( !( ElementAt(idx) == other.ElementAt(idx) ) ) return false;
+    }
+    return true;
+  }
+  bool operator!=(const XObjArrayNC<TYPE>& other) const {return !(*this == other); }
+
+  bool isEqual(const XObjArrayNC<TYPE>& other) const
+  {
+    if ( size() != other.size() ) return false;
+    for ( size_t idx = 0 ; idx < other.size() ; ++idx ) {
+      if ( ! ElementAt(idx).isEqual(other.ElementAt(idx)) ) return false;
+    }
+    return true;
+  }
+
+
 	size_t AddReference(TYPE *newElement, bool FreeIt);
 
 //	size_t InsertRef(TYPE *newElement, size_t pos, bool FreeIt = false);

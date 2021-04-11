@@ -942,6 +942,156 @@ UINT64 GetPlatformFeature(MACHINE_TYPES Model)
     }
 }
 
+void getRBr(MACHINE_TYPES Model, char RBr[8])
+{
+  memset(RBr, 0, 8);
+  if (ApplePlatformData[Model].smcBranch[0] != 'N') {
+    snprintf(RBr, 8, "%s", ApplePlatformData[Model].smcBranch.c_str());
+  } else {
+    switch (gCPUStructure.Model) {
+    case CPU_MODEL_PENTIUM_M:
+    case CPU_MODEL_CELERON:
+      snprintf(RBr, 8, "%s", "m70");
+      break;
+      
+    case CPU_MODEL_YONAH:
+      snprintf(RBr, 8, "%s", "k22");
+      break;
+      
+    case CPU_MODEL_MEROM: //TODO check for mobile
+      snprintf(RBr, 8, "%s", "m75");
+      break;
+      
+    case CPU_MODEL_PENRYN:
+      if (gSettings.Smbios.Mobile) {
+        snprintf(RBr, 8, "%s", "m82");
+      } else {
+        snprintf(RBr, 8, "%s", "k36");
+      }
+      break;
+      
+    case CPU_MODEL_SANDY_BRIDGE:
+      if (gSettings.Smbios.Mobile) {
+        snprintf(RBr, 8, "%s", "k90i");
+      } else {
+        snprintf(RBr, 8, "%s", "k60");
+      }
+      break;
+      
+    case CPU_MODEL_IVY_BRIDGE:
+      snprintf(RBr, 8, "%s", "j30");
+      break;
+      
+    case CPU_MODEL_IVY_BRIDGE_E5:
+      snprintf(RBr, 8, "%s", "j90");
+      break;
+      
+    case CPU_MODEL_HASWELL_ULT:
+      snprintf(RBr, 8, "%s", "j44");
+      break;
+      
+    case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
+      snprintf(RBr, 8, "%s", "j52");
+      break;
+      
+    case CPU_MODEL_SKYLAKE_D:
+      snprintf(RBr, 8, "%s", "j95j95am");
+      break;
+      
+    case CPU_MODEL_SKYLAKE_U:
+      snprintf(RBr, 8, "%s", "2016mb");
+      break;
+      
+    case CPU_MODEL_KABYLAKE1: //Mobile
+      snprintf(RBr, 8, "%s", "2017mbp");
+      break;
+      
+    case CPU_MODEL_KABYLAKE2: //Desktop
+      snprintf(RBr, 8, "%s", "j133_4_5");
+      break;
+      
+    default:
+      snprintf(RBr, 8, "%s", "t9");
+      break;
+    }
+  }
+}
+
+void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
+{
+  memset(RPlt, 0, 8);
+  if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
+    AsciiStrCpyS(RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
+  } else {
+    switch (gCPUStructure.Model) {
+    case CPU_MODEL_PENTIUM_M:
+    case CPU_MODEL_CELERON:
+      AsciiStrCpyS (RPlt, 8, "m70");
+      break;
+      
+    case CPU_MODEL_YONAH:
+      AsciiStrCpyS (RPlt, 8, "k22");
+      break;
+      
+    case CPU_MODEL_MEROM: //TODO check for mobile
+      AsciiStrCpyS (RPlt, 8, "m75");
+      break;
+      
+    case CPU_MODEL_PENRYN:
+      if (Mobile) {
+        AsciiStrCpyS (RPlt, 8, "m82");
+      } else {
+        AsciiStrCpyS (RPlt, 8, "k36");
+      }
+      break;
+      
+    case CPU_MODEL_SANDY_BRIDGE:
+      if (Mobile) {
+        AsciiStrCpyS (RPlt, 8, "k90i");
+      } else {
+        AsciiStrCpyS (RPlt, 8, "k60");
+      }
+      break;
+      
+    case CPU_MODEL_IVY_BRIDGE:
+      AsciiStrCpyS (RPlt, 8, "j30");
+      break;
+      
+    case CPU_MODEL_IVY_BRIDGE_E5:
+      AsciiStrCpyS (RPlt, 8, "j90");
+      break;
+      
+    case CPU_MODEL_HASWELL_ULT:
+      AsciiStrCpyS (RPlt, 8, "j44");
+      break;
+      
+    case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
+      AsciiStrCpyS (RPlt, 8, "j52");
+      break;
+      
+    case CPU_MODEL_SKYLAKE_D:
+      AsciiStrCpyS (RPlt, 8, "j95");
+      break;
+      
+    case CPU_MODEL_SKYLAKE_U:
+      AsciiStrCpyS (RPlt, 8, "j79");
+      break;
+      
+    case CPU_MODEL_KABYLAKE1: //Mobile
+      AsciiStrCpyS (RPlt, 8, "j130a");
+      break;
+      
+    case CPU_MODEL_KABYLAKE2: //Desktop
+      AsciiStrCpyS (RPlt, 8, "j135");
+      break;
+      
+    default:
+      AsciiStrCpyS (RPlt, 8, "t9");
+      break;
+    }
+  }
+}
+
 void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLEAN Redefine)
 {
 #pragma GCC diagnostic pop
@@ -1068,151 +1218,14 @@ void SetDMISettingsForModel(SETTINGS_DATA& gSettings, MACHINE_TYPES Model, BOOLE
   // Mobile: the battery tab in Energy Saver
   gSettings.Smbios.Mobile = GetMobile(Model, gMobile);
 
-  //RBr helper
-  if (ApplePlatformData[Model].smcBranch[0] != 'N') {
-    AsciiStrCpyS(gSettings.Smbios.RBr, 8, ApplePlatformData[Model].smcBranch.c_str());
-  } else {
-    switch (gCPUStructure.Model) {
-      case CPU_MODEL_PENTIUM_M:
-      case CPU_MODEL_CELERON:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "m70");
-        break;
-                
-      case CPU_MODEL_YONAH:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k22");
-        break;
-                
-      case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "m75");
-        break;
-                
-      case CPU_MODEL_PENRYN:
-        if (gSettings.Smbios.Mobile) {
-          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "m82");
-        } else {
-          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k36");
-        }
-        break;
-                
-      case CPU_MODEL_SANDY_BRIDGE:
-        if (gSettings.Smbios.Mobile) {
-          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k90i");
-        } else {
-          AsciiStrCpyS (gSettings.Smbios.RBr, 8, "k60");
-        }
-        break;
-                
-      case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j30");
-        break;
-                
-      case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j90");
-        break;
-                
-      case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j44");
-        break;
-                
-      case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j52");
-        break;
-                
-      case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j95j95am");
-        break;
-                
-      case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "2016mb");
-        break;
-                
-      case CPU_MODEL_KABYLAKE1: //Mobile
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "2017mbp");
-        break;
-                
-      case CPU_MODEL_KABYLAKE2: //Desktop
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "j133_4_5");
-        break;
-                
-      default:
-        AsciiStrCpyS (gSettings.Smbios.RBr, 8, "t9");
-        break;
-    }
-  }
-
-  //RPlt helper
-  if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
-    AsciiStrCpyS(gSettings.Smbios.RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
-  } else {
-    switch (gCPUStructure.Model) {
-      case CPU_MODEL_PENTIUM_M:
-      case CPU_MODEL_CELERON:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "m70");
-        break;
-
-      case CPU_MODEL_YONAH:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k22");
-        break;
-
-      case CPU_MODEL_MEROM: //TODO check for mobile
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "m75");
-        break;
-
-      case CPU_MODEL_PENRYN:
-        if (gSettings.Smbios.Mobile) {
-          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "m82");
-        } else {
-          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k36");
-        }
-        break;
-
-      case CPU_MODEL_SANDY_BRIDGE:
-        if (gSettings.Smbios.Mobile) {
-          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k90i");
-        } else {
-          AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "k60");
-        }
-        break;
-
-      case CPU_MODEL_IVY_BRIDGE:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j30");
-        break;
-
-      case CPU_MODEL_IVY_BRIDGE_E5:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j90");
-        break;
-
-      case CPU_MODEL_HASWELL_ULT:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j44");
-        break;
-
-      case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j52");
-        break;
-
-      case CPU_MODEL_SKYLAKE_D:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j95");
-        break;
-
-      case CPU_MODEL_SKYLAKE_U:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j79");
-        break;
-
-      case CPU_MODEL_KABYLAKE1: //Mobile
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j130a");
-        break;
-
-      case CPU_MODEL_KABYLAKE2: //Desktop
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "j135");
-        break;
-
-      default:
-        AsciiStrCpyS (gSettings.Smbios.RPlt, 8, "t9");
-        break;
-    }
-  }
-  CopyMem(gSettings.Smbios.REV,  ApplePlatformData[Model].smcRevision, 6);
-  CopyMem(gSettings.Smbios.EPCI, &ApplePlatformData[Model].smcConfig,  4);
+//  //RBr helper
+//  getRBr(Model, gSettings.Smbios.RBr);
+//
+//  //RPlt helper
+//  getRPlt(Model, gSettings.Smbios.RPlt);
+//
+//  CopyMem(gSettings.Smbios.REV,  ApplePlatformData[Model].smcRevision, 6);
+//  CopyMem(gSettings.Smbios.EPCI, &ApplePlatformData[Model].smcConfig,  4);
 }
 
 MACHINE_TYPES GetModelFromString(const XString8& ProductName)
@@ -1246,8 +1259,8 @@ void GetDefaultSettings()
                                     ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].Family < 0xE0)));
 
 //  gSettings.GraphicsInjector     = gSettings.InjectATI || gSettings.InjectNVidia;
-  CopyMem(gSettings.Graphics.NVCAP, default_NVCAP, 20); 
-  CopyMem(gSettings.Graphics.Dcfg, default_dcfg_0, 4);
+  CopyMem(gSettings.Graphics.NVCAP.data(), default_NVCAP, 20);
+  CopyMem(gSettings.Graphics.Dcfg.data(), default_dcfg_0, 4);
   CopyMem(&gSettings.Graphics.Dcfg[4], default_dcfg_1, 4);
   //gSettings.Graphics.EDID.CustomEDID           = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.Graphics.DualLink             = 0xA; // A(auto): DualLink auto-detection

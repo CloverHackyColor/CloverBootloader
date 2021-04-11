@@ -8,6 +8,23 @@ For details, see http://sourceforge.net/projects/libb64
 #include <Platform.h> // Only use angled for Platform, else, xcode project won't compile
 #include "b64cdecode.h"
 
+typedef enum
+{
+	step_a, step_b, step_c, step_d
+}
+base64_decodestep;
+
+
+
+typedef struct
+{
+
+	base64_decodestep step;
+	char plainchar;
+}
+base64_decodestate;
+
+
 int base64_decode_value(char value_in)
 {
 	static const signed char decoding[] = {62,-1,-1,-1,63,52,53,54,55,56,57,58,59,60,61,-1,-1,-1,-2,-1,-1,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,-1,-1,-1,-1,-1,-1,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51};
@@ -23,7 +40,7 @@ void base64_init_decodestate(base64_decodestate* state_in)
 	state_in->plainchar = 0;
 }
 
-long base64_decode_block(const char* code_in, const int length_in, char* plaintext_out, base64_decodestate* state_in)
+long base64_decode_block(const char* code_in, const size_t length_in, char* plaintext_out, base64_decodestate* state_in)
 {
 	const char* codechar = code_in;
 	char* plainchar = plaintext_out;
@@ -93,7 +110,7 @@ long base64_decode_block(const char* code_in, const int length_in, char* plainte
  * If DecodedSize != NULL, then size od decoded data is put there.
  * If return value is not NULL, DecodedSize IS > 0
  */
-UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UINTN *DecodedSize)
+UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, size_t EncodedSize, OUT UINTN *DecodedSize)
 {
 	INTN				DecodedSizeInternal;
 	UINT8				*DecodedData;
@@ -108,7 +125,7 @@ UINT8 *Base64DecodeClover(IN CONST CHAR8 *EncodedData, UINTN EncodedSize, OUT UI
 	DecodedData = (__typeof__(DecodedData))AllocateZeroPool(EncodedSize);
 
 	base64_init_decodestate(&state_in);
-	DecodedSizeInternal = base64_decode_block(EncodedData, (const int)EncodedSize, (char*) DecodedData, &state_in);
+	DecodedSizeInternal = base64_decode_block(EncodedData, EncodedSize, (char*) DecodedData, &state_in);
 
 	if ( DecodedSizeInternal <= 0 ) {
     FreePool(DecodedData);

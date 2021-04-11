@@ -203,7 +203,7 @@ bool TagStruct::isTrueOrYy() const
 bool TagStruct::isTrueOrYes() const
 {
   if ( isBool() ) return getBool()->boolValue();
-  if ( isString() && getString()->stringValue().equal("Yes"_XS8) ) return true;
+  if ( isString() && getString()->stringValue().isEqual("Yes"_XS8) ) return true;
   return false;
 }
 bool TagStruct::isFalseOrNn() const

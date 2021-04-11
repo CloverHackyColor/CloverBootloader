@@ -10,7 +10,9 @@
 
 
 #include "../cpp_foundation/XString.h"
-#include "../Platform/Settings.h"
+//#include "../Platform/Settings.h"
+
+class SETTINGS_DATA;
 
 typedef enum {
 
@@ -199,5 +201,7 @@ uint32_t GetFwFeaturesMaskFromModel(MACHINE_TYPES Model);
 uint32_t GetFwFeatures(MACHINE_TYPES Model);
 bool GetMobile(MACHINE_TYPES Model, bool defaultValue);
 UINT64 GetPlatformFeature(MACHINE_TYPES Model);
+void getRBr(MACHINE_TYPES Model, char RBr[8]);
+void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8]);
 
 #endif /* PLATFORM_PLATFORMDATA_H_ */

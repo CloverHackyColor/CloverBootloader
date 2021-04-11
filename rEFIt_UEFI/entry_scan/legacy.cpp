@@ -74,7 +74,7 @@ BOOLEAN AddLegacyEntry(IN const XStringW& FullTitle, IN const XStringW& LoaderTi
 //      DBG("entry %lld\n", i);
       // Only want legacy
       if (MainEntry.getLEGACY_ENTRY()) {
-        if ( MainEntry.getLEGACY_ENTRY()->DevicePathString.equalIC(Volume->DevicePathString) ) {
+        if ( MainEntry.getLEGACY_ENTRY()->DevicePathString.isEqualIC(Volume->DevicePathString) ) {
           return  true;
         }
       }

@@ -222,7 +222,7 @@ finish:
 
   }
   for (i = 0; i < ThemeNameArray.size(); i++) {
-    if ( ThemeX.Theme.equalIC(ThemeNameArray[i]) ) {
+    if ( ThemeX.Theme.isEqualIC(ThemeNameArray[i]) ) {
       OldChosenTheme = i;
       break;
     }
@@ -454,18 +454,18 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
 
       Prop2 = Dict->propertyForKey("ScreenEdgeX");
       if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty() ) {
-        if (Prop2->getString()->stringValue().equal("left")) {
+        if (Prop2->getString()->stringValue().isEqual("left")) {
           BannerEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Prop2->getString()->stringValue().equal("right")) {
+        } else if (Prop2->getString()->stringValue().isEqual("right")) {
           BannerEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
       Prop2 = Dict->propertyForKey("ScreenEdgeY");
       if (Prop2 != NULL && (Prop2->isString()) && Prop2->getString()->stringValue().notEmpty() ) {
-        if (Prop2->getString()->stringValue().equal("top")) {
+        if (Prop2->getString()->stringValue().isEqual("top")) {
           BannerEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Prop2->getString()->stringValue().equal("bottom")) {
+        } else if (Prop2->getString()->stringValue().isEqual("bottom")) {
           BannerEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }
@@ -698,18 +698,18 @@ XTheme::GetThemeTagSettings(const TagDict* DictPointer)
 
       Prop = Dict3->propertyForKey("ScreenEdgeX");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
-        if (Prop->getString()->stringValue().equal("left")) {
+        if (Prop->getString()->stringValue().isEqual("left")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Prop->getString()->stringValue().equal("right")) {
+        } else if (Prop->getString()->stringValue().isEqual("right")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
       Prop = Dict3->propertyForKey("ScreenEdgeY");
       if (Prop != NULL && (Prop->isString()) && Prop->getString()->stringValue().notEmpty() ) {
-        if (Prop->getString()->stringValue().equal("top")) {
+        if (Prop->getString()->stringValue().isEqual("top")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Prop->getString()->stringValue().equal("bottom")) {
+        } else if (Prop->getString()->stringValue().isEqual("bottom")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }

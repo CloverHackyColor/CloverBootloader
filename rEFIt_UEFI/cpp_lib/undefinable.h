@@ -37,6 +37,14 @@ public:
     m_value = value;
     return *this;
   }
+  
+  bool operator ==(const undefinable<T>& other) const
+  {
+    if ( !(m_defined == other.m_defined ) ) return false;
+    if ( m_defined && !(m_value == other.m_value ) ) return false; // we don't test value if this is not defined.
+    return true;
+  }
+  bool operator !=(const undefinable<T>& other) const { return !(*this == other); }
 };
 
 class undefinable_bool : public undefinable<bool>
