@@ -646,7 +646,7 @@ UINTN REFIT_MENU_SCREEN::InputDialog()
       break;
 
     case MENU_EXIT_ESCAPE:
-      if ( !Item->SValue.equal(Backup) ) {
+      if ( !Item->SValue.isEqual(Backup) ) {
         Item->SValue = Backup;
         if (Item->ItemType != BoolValue) {
           Item->LineShift = BackupShift;

@@ -121,6 +121,18 @@ public:
   UINT32        IValue = 0;
   XStringW      SValue = XStringW();
   UINTN         LineShift = 0;
+  
+  bool operator == (const INPUT_ITEM& other) const
+  {
+    if ( !(ItemType == other.ItemType ) ) return false;
+    if ( !(Valid == other.Valid ) ) return false;
+    if ( !(BValue == other.BValue ) ) return false;
+    if ( !(IValue == other.IValue ) ) return false;
+    if ( !(SValue == other.SValue ) ) return false;
+    if ( !(LineShift == other.LineShift ) ) return false;
+    return true;
+  }
+  bool operator != (const INPUT_ITEM& other) const { return !(*this == other); }
 };
 
 typedef struct {

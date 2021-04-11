@@ -539,19 +539,19 @@ public:
   int strncmp(const O* S, size_t n) const { return XStringAbstract__ncompare(data(), S, n, false); }
 
 	template<typename O, class OtherXStringClass>
-	bool equal(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(data(), S.s(), false) == 0; }
+	bool isEqual(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(data(), S.s(), false) == 0; }
 	template<typename O>
-	bool equal(const O* S) const { return XStringAbstract__compare(data(), S, false) == 0; }
+	bool isEqual(const O* S) const { return XStringAbstract__compare(data(), S, false) == 0; }
 
 	template<typename O, class OtherXStringClass>
-	bool equalIC(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(data(), S.s(), true) == 0; }
+	bool isEqualIC(const __String<O, OtherXStringClass>& S) const { return XStringAbstract__compare(data(), S.s(), true) == 0; }
 	template<typename O>
-	bool equalIC(const O* S) const { return XStringAbstract__compare(data(), S, true) == 0; }
+	bool isEqualIC(const O* S) const { return XStringAbstract__compare(data(), S, true) == 0; }
 
 //	bool SubStringEqual(size_t Pos, const T* S) const { return (memcmp(data(Pos), S, wcslen(S)) == 0); }
 
   template<typename IntegralType, typename O, class OtherXStringClass>
-  bool equalAtIC(IntegralType pos, const __String<O, OtherXStringClass>& S) const
+  bool isEqualAtIC(IntegralType pos, const __String<O, OtherXStringClass>& S) const
   {
     
 #ifdef DEBUG

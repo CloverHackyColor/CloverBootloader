@@ -707,7 +707,7 @@ void LOADER_ENTRY::DelegateKernelPatches()
   for (size_t kextPatchIdx = 0 ; kextPatchIdx < selectedPathArray.size() ; kextPatchIdx++ )
   {
     const ABSTRACT_KEXT_OR_KERNEL_PATCH& kextPatch = selectedPathArray[kextPatchIdx];  //as well as kernel patches
-    DBG("Bridge %s patch to OC : %s\n", kextPatch.Name.c_str(), kextPatch.Label.c_str());
+    DBG("Bridge %s patch to OC : %s\n", kextPatch.getName().c_str(), kextPatch.Label.c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx] = (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values))AllocateZeroPool(mOpenCoreConfiguration.Kernel.Patch.ValueSize); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Arch, OC_BLOB_GET(&mOpenCoreConfiguration.Kernel.Scheme.KernelArch));
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Base, kextPatch.ProcedureName.c_str());
@@ -716,7 +716,7 @@ void LOADER_ENTRY::DelegateKernelPatches()
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Enabled = 1;
     
     OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Find, kextPatch.Find.data(), kextPatch.Find.size());
-    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.Name.c_str());
+    OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Identifier, kextPatch.getName().c_str());
     mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Limit = (UINT32)kextPatch.SearchLen;
     OC_STRING_ASSIGN_N(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->Mask, kextPatch.MaskFind.vdata(), kextPatch.MaskFind.size());
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Patch.Values[kextPatchIdx]->MaxKernel, ""); // it has been filtered, so we don't need to set Min and MaxKernel
@@ -993,8 +993,26 @@ void LOADER_ENTRY::StartLoader()
       mOpenCoreConfiguration.Booter.MmioWhitelist.Values[idx]->Enabled = entry.enabled;
     }
 
-    static_assert(sizeof(gSettings.Quirks.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks), "sizeof(gSettings.Quirks.ocBooterQuirks) == sizeof(mOpenCoreConfiguration.Booter.Quirks)");
-    memcpy(&mOpenCoreConfiguration.Booter.Quirks, &gSettings.Quirks.ocBooterQuirks, sizeof(mOpenCoreConfiguration.Booter.Quirks));
+    // It's possible to memcpy the whole struct instead of assigning individual member. But that would be relying on internel C++ binary structure,
+    // and worse, if a field is added by OC, everything could be shifted.
+    memset(&mOpenCoreConfiguration.Booter.Quirks, 0, sizeof(mOpenCoreConfiguration.Booter.Quirks));
+    mOpenCoreConfiguration.Booter.Quirks.AvoidRuntimeDefrag = gSettings.Quirks.OcBooterQuirks.AvoidRuntimeDefrag;
+    mOpenCoreConfiguration.Booter.Quirks.DevirtualiseMmio = gSettings.Quirks.OcBooterQuirks.DevirtualiseMmio;
+    mOpenCoreConfiguration.Booter.Quirks.DisableSingleUser = gSettings.Quirks.OcBooterQuirks.DisableSingleUser;
+    mOpenCoreConfiguration.Booter.Quirks.DisableVariableWrite = gSettings.Quirks.OcBooterQuirks.DisableVariableWrite;
+    mOpenCoreConfiguration.Booter.Quirks.DiscardHibernateMap = gSettings.Quirks.OcBooterQuirks.DiscardHibernateMap;
+    mOpenCoreConfiguration.Booter.Quirks.EnableSafeModeSlide = gSettings.Quirks.OcBooterQuirks.EnableSafeModeSlide;
+    mOpenCoreConfiguration.Booter.Quirks.EnableWriteUnprotector = gSettings.Quirks.OcBooterQuirks.EnableWriteUnprotector;
+    mOpenCoreConfiguration.Booter.Quirks.ForceExitBootServices = gSettings.Quirks.OcBooterQuirks.ForceExitBootServices;
+    mOpenCoreConfiguration.Booter.Quirks.ProtectMemoryRegions = gSettings.Quirks.OcBooterQuirks.ProtectMemoryRegions;
+    mOpenCoreConfiguration.Booter.Quirks.ProtectSecureBoot = gSettings.Quirks.OcBooterQuirks.ProtectSecureBoot;
+    mOpenCoreConfiguration.Booter.Quirks.ProtectUefiServices = gSettings.Quirks.OcBooterQuirks.ProtectUefiServices;
+    mOpenCoreConfiguration.Booter.Quirks.ProvideCustomSlide = gSettings.Quirks.OcBooterQuirks.ProvideCustomSlide;
+    mOpenCoreConfiguration.Booter.Quirks.ProvideMaxSlide = gSettings.Quirks.OcBooterQuirks.ProvideMaxSlide;
+    mOpenCoreConfiguration.Booter.Quirks.RebuildAppleMemoryMap = gSettings.Quirks.OcBooterQuirks.RebuildAppleMemoryMap;
+    mOpenCoreConfiguration.Booter.Quirks.SetupVirtualMap = gSettings.Quirks.OcBooterQuirks.SetupVirtualMap;
+    mOpenCoreConfiguration.Booter.Quirks.SignalAppleOS = gSettings.Quirks.OcBooterQuirks.SignalAppleOS;
+    mOpenCoreConfiguration.Booter.Quirks.SyncRuntimePermissions = gSettings.Quirks.OcBooterQuirks.SyncRuntimePermissions;
 
   #endif
 
@@ -1016,9 +1034,27 @@ void LOADER_ENTRY::StartLoader()
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelArch, "x86_64");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Kernel.Scheme.KernelCache, gSettings.Quirks.OcKernelCache.c_str());
     mOpenCoreConfiguration.Kernel.Scheme.FuzzyMatch = gSettings.Quirks.FuzzyMatch;
-    gSettings.Quirks.OcKernelQuirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
-    gSettings.Quirks.OcKernelQuirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
-    memcpy(&mOpenCoreConfiguration.Kernel.Quirks, &gSettings.Quirks.OcKernelQuirks, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
+
+    memset(&mOpenCoreConfiguration.Kernel.Quirks, 0, sizeof(mOpenCoreConfiguration.Kernel.Quirks));
+    mOpenCoreConfiguration.Kernel.Quirks.AppleCpuPmCfgLock = GlobalConfig.KPAppleIntelCPUPM;
+    mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmCfgLock = GlobalConfig.KPKernelPm;
+    mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmExtraMsrs = gSettings.Quirks.OcKernelQuirks.AppleXcpmExtraMsrs;
+    mOpenCoreConfiguration.Kernel.Quirks.AppleXcpmForceBoost = gSettings.Quirks.OcKernelQuirks.AppleXcpmForceBoost;
+    #ifndef USE_OC_SECTION_PlatformInfo
+      mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
+    #endif
+    mOpenCoreConfiguration.Kernel.Quirks.DisableIoMapper = gSettings.Quirks.OcKernelQuirks.DisableIoMapper;
+    mOpenCoreConfiguration.Kernel.Quirks.DisableLinkeditJettison = gSettings.Quirks.OcKernelQuirks.DisableLinkeditJettison;
+    mOpenCoreConfiguration.Kernel.Quirks.DisableRtcChecksum = gSettings.KernelAndKextPatches.KPAppleRTC;
+    mOpenCoreConfiguration.Kernel.Quirks.DummyPowerManagement = gSettings.Quirks.OcKernelQuirks.DummyPowerManagement;
+    mOpenCoreConfiguration.Kernel.Quirks.ExternalDiskIcons = gSettings.Quirks.OcKernelQuirks.ExternalDiskIcons;
+    mOpenCoreConfiguration.Kernel.Quirks.IncreasePciBarSize = gSettings.Quirks.OcKernelQuirks.IncreasePciBarSize;
+    mOpenCoreConfiguration.Kernel.Quirks.LapicKernelPanic = gSettings.KernelAndKextPatches.KPKernelLapic;
+    mOpenCoreConfiguration.Kernel.Quirks.PanicNoKextDump = gSettings.KernelAndKextPatches.KPPanicNoKextDump;
+    mOpenCoreConfiguration.Kernel.Quirks.PowerTimeoutKernelPanic = gSettings.Quirks.OcKernelQuirks.PowerTimeoutKernelPanic;
+    mOpenCoreConfiguration.Kernel.Quirks.ThirdPartyDrives = gSettings.Quirks.OcKernelQuirks.ThirdPartyDrives;
+    mOpenCoreConfiguration.Kernel.Quirks.XhciPortLimit = gSettings.Quirks.OcKernelQuirks.XhciPortLimit;
+
 
     mOpenCoreConfiguration.Kernel.Add.Count = (UINT32)kextArray.size();
     mOpenCoreConfiguration.Kernel.Add.AllocCount = mOpenCoreConfiguration.Kernel.Add.Count;
@@ -1127,9 +1163,6 @@ void LOADER_ENTRY::StartLoader()
     }
   #endif
 
-    #ifndef USE_OC_SECTION_PlatformInfo
-      mOpenCoreConfiguration.Kernel.Quirks.CustomSmbiosGuid = gSettings.KernelAndKextPatches.KPDELLSMBIOS;
-    #endif
     mOpenCoreConfiguration.Uefi.Output.ProvideConsoleGop = gSettings.GUI.ProvideConsoleGop;
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Uefi.Output.Resolution, XString8(gSettings.GUI.ScreenResolution).c_str());
 
@@ -2441,7 +2474,7 @@ GetListOfDsdts()
     if (DirEntry->FileName[0] == L'.') {
       continue;
     }
-      if ( gSettings.ACPI.DSDT.DsdtName.equalIC(DirEntry->FileName) ) {
+      if ( gSettings.ACPI.DSDT.DsdtName.isEqualIC(DirEntry->FileName) ) {
         OldChosenDsdt = DsdtsNum;
       }
       NameLen = StrLen(DirEntry->FileName); //with ".aml"
@@ -2478,7 +2511,7 @@ GetListOfACPI()
 
       INTN Count = gSettings.ACPI.DisabledAML.size();
       for (INTN i = 0; i < Count; i++) {
-        if ( gSettings.ACPI.DisabledAML[i].equalIC(ACPIPatchedAMLTmp->FileName) ) {
+        if ( gSettings.ACPI.DisabledAML[i].isEqualIC(ACPIPatchedAMLTmp->FileName) ) {
 //        if ((gSettings.ACPI.DisabledAML[i] != NULL) &&
 //            (StriCmp(ACPIPatchedAMLTmp->FileName, gSettings.ACPI.DisabledAML[i]) == 0)
 //            ) {
@@ -2663,7 +2696,7 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
     OldChosenTheme = 0xFFFF; //default for embedded
     for (UINTN i = 0; i < ThemeNameArray.size(); i++) {
       //now comparison is case sensitive
-      if ( gSettings.GUI.Theme.equalIC(ThemeNameArray[i]) ) {
+      if ( gSettings.GUI.Theme.isEqualIC(ThemeNameArray[i]) ) {
         OldChosenTheme = i;
         break;
       }
@@ -2706,9 +2739,9 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
   GlobalConfig.KPKernelPm = gSettings.KernelAndKextPatches._KPKernelPm || GlobalConfig.NeedPMfix;
   GlobalConfig.KPAppleIntelCPUPM = gSettings.KernelAndKextPatches._KPAppleIntelCPUPM || GlobalConfig.NeedPMfix;
 
-  if ( gSettings.RtVariables.RtROMAsString.equalIC("UseMacAddr0") ) {
+  if ( gSettings.RtVariables.RtROMAsString.isEqualIC("UseMacAddr0") ) {
     GlobalConfig.RtROM.ncpy(&gLanMac[0][0], 6);
-  } else if ( gSettings.RtVariables.RtROMAsString.equalIC("UseMacAddr1") ) {
+  } else if ( gSettings.RtVariables.RtROMAsString.isEqualIC("UseMacAddr1") ) {
     GlobalConfig.RtROM.ncpy(&gLanMac[1][0], 6);
   }else{
     GlobalConfig.RtROM = gSettings.RtVariables.RtROMAsData;

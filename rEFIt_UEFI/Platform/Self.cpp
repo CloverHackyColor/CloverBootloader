@@ -85,7 +85,7 @@ EFI_STATUS Self::_initialize()
   m_efiFileName = m_CloverDirFullPath.basename();
 
   // History : if this Clover was started as BootX64.efi, redirect to /EFI/CLOVER
-  if ( m_CloverDirFullPath.equalIC("\\EFI\\Boot\\BootX64.efi") ) {
+  if ( m_CloverDirFullPath.isEqualIC("\\EFI\\Boot\\BootX64.efi") ) {
     m_CloverDirFullPath.takeValueFrom("\\EFI\\CLOVER\\CloverX64.efi");
   }
 #ifdef DEBUG

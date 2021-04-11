@@ -379,18 +379,18 @@ EFI_STATUS XTheme::ParseSVGXTheme(CONST CHAR8* buffer)
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeX");
       if (Dict2 != NULL && (Dict2->isString()) && Dict2->getString()->stringValue().notEmpty() ) {
-        if (Dict2->getString()->stringValue().equal("left")) {
+        if (Dict2->getString()->stringValue().isEqual("left")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_LEFT;
-        } else if (Dict2->getString()->stringValue().equal("right")) {
+        } else if (Dict2->getString()->stringValue().isEqual("right")) {
           NewFilm->ScreenEdgeHorizontal = SCREEN_EDGE_RIGHT;
         }
       }
 
       Dict2 = GetProperty(Dict3, "ScreenEdgeY");
       if (Dict2 != NULL && (Dict2->isString()) && Dict2->getString()->stringValue().notEmpty() ) {
-        if (Dict2->getString()->stringValue().equal("top")) {
+        if (Dict2->getString()->stringValue().isEqual("top")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_TOP;
-        } else if (Dict2->getString()->stringValue().equal("bottom")) {
+        } else if (Dict2->getString()->stringValue().isEqual("bottom")) {
           NewFilm->ScreenEdgeVertical = SCREEN_EDGE_BOTTOM;
         }
       }

@@ -14,6 +14,7 @@
 #include "../cpp_lib/undefinable.h"
 #include "../entry_scan/loader.h" // for KERNEL_SCAN_xxx constants
 #include "../Platform/smbios.h"
+#include "../Platform/platformdata.h"
 
 #define CLOVER_SIGN             SIGNATURE_32('C','l','v','r')
 
@@ -107,6 +108,15 @@ class ACPI_NAME
 public:
 	XString8 Name = XString8();
   
+	#if __cplusplus > 201703L
+		bool operator == (const ACPI_NAME&) const = default;
+	#endif
+  bool isEqual(const ACPI_NAME& other) const
+  {
+    if ( !(Name == other.Name) ) return false;
+    return true;
+  }
+
   XString8Array getSplittedName() const {
     XString8Array splittedName = Split<XString8Array>(Name, ".");
     for ( size_t idx = 0 ; idx < splittedName.size() ; ++idx) {
@@ -127,6 +137,16 @@ public:
   ACPI_NAME acpiName = ACPI_NAME();
   XString8 renameTo = XString8();
   
+	#if __cplusplus > 201703L
+		bool operator == (const ACPI_RENAME_DEVICE&) const = default;
+	#endif
+  bool isEqual(const ACPI_RENAME_DEVICE& other) const
+  {
+    if ( !acpiName.isEqual(other.acpiName) ) return false;
+    if ( !(renameTo == other.renameTo) ) return false;
+    return true;
+  }
+
   XString8 getRenameTo() const {
     if ( renameTo.length() == 4 ) return renameTo;
     XString8 newName =  renameTo;
@@ -176,6 +196,20 @@ public: // temporary, must be protected:
   undefinable_XString8   _Title = undefinable_XString8();
 
   undefinable_bool       _NoCaches = undefinable_bool();
+  
+	#if __cplusplus > 201703L
+		bool operator == (const CUSTOM_LOADER_SUBENTRY_SETTINGS&) const = default;
+	#endif
+  bool isEqual(const CUSTOM_LOADER_SUBENTRY_SETTINGS& other) const
+  {
+    if ( !(Disabled == other.Disabled) ) return false;
+    if ( !(_Arguments == other._Arguments) ) return false;
+    if ( !(_AddArguments == other._AddArguments) ) return false;
+    if ( !(_FullTitle == other._FullTitle) ) return false;
+    if ( !(_Title == other._Title) ) return false;
+    if ( !(_NoCaches == other._NoCaches) ) return false;
+    return true;
+  }
 
 public:
 
@@ -212,6 +246,20 @@ extern const XString8 defaultRecoveryTitle;
 extern const XStringW defaultRecoveryImagePath;
 extern const XStringW defaultRecoveryDriveImagePath;
 
+class EFI_GRAPHICS_OUTPUT_BLT_PIXELClass : public EFI_GRAPHICS_OUTPUT_BLT_PIXEL
+{
+public:
+	EFI_GRAPHICS_OUTPUT_BLT_PIXELClass() { Blue = 0; Green = 0; Red = 0; Reserved = 0; }
+
+	bool operator == (const EFI_GRAPHICS_OUTPUT_BLT_PIXELClass& other) const {
+		if ( !(Blue == other.Blue) ) return false;
+		if ( !(Green == other.Green) ) return false;
+		if ( !(Red == other.Red) ) return false;
+		if ( !(Reserved == other.Reserved) ) return false;
+		return true;
+	}
+};
+
 class CUSTOM_LOADER_ENTRY_SETTINGS
 {
 public:
@@ -234,7 +282,7 @@ public:
   UINT8                   KernelScan = KERNEL_SCAN_ALL;
   XString8                CustomLogoAsXString8 = XString8();
   XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXEL({0,0,0,0});
+  EFI_GRAPHICS_OUTPUT_BLT_PIXELClass BootBgColor = EFI_GRAPHICS_OUTPUT_BLT_PIXELClass();
   INT8                    InjectKexts = -1;
   undefinable_bool        NoCaches = undefinable_bool();
   XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS> SubEntriesSettings = XObjArray<CUSTOM_LOADER_SUBENTRY_SETTINGS>();
@@ -245,6 +293,41 @@ public: // temporary, must be protected:
   XStringW                m_ImagePath = XStringW();
 
 public:
+  
+	#if __cplusplus > 201703L
+		bool operator == (const CUSTOM_LOADER_ENTRY_SETTINGS&) const = default;
+	#endif
+  bool isEqual(const CUSTOM_LOADER_ENTRY_SETTINGS& other) const
+  {
+    if ( !(Disabled == other.Disabled) ) return false;
+    if ( !(ImageData == other.ImageData) ) return false;
+    if ( !(DriveImageData == other.DriveImageData) ) return false;
+    if ( !(Volume == other.Volume) ) return false;
+    if ( !(Path == other.Path) ) return false;
+    if ( !(Arguments == other.Arguments) ) return false;
+    if ( !(AddArguments == other.AddArguments) ) return false;
+    if ( !(FullTitle == other.FullTitle) ) return false;
+    if ( !(Settings == other.Settings) ) return false;
+    if ( !(Hotkey == other.Hotkey) ) return false;
+    if ( !(CommonSettings == other.CommonSettings) ) return false;
+    if ( !(Hidden == other.Hidden) ) return false;
+    if ( !(AlwaysHidden == other.AlwaysHidden) ) return false;
+    if ( !(Type == other.Type) ) return false;
+    if ( !(VolumeType == other.VolumeType) ) return false;
+    if ( !(KernelScan == other.KernelScan) ) return false;
+    if ( !(CustomLogoAsXString8 == other.CustomLogoAsXString8) ) return false;
+    if ( !(CustomLogoAsData == other.CustomLogoAsData) ) return false;
+    if ( memcmp(&BootBgColor, &other.BootBgColor, sizeof(BootBgColor)) != 0 ) return false;
+    if ( !(InjectKexts == other.InjectKexts) ) return false;
+    if ( !(NoCaches == other.NoCaches) ) return false;
+    if ( !SubEntriesSettings.isEqual(other.SubEntriesSettings) ) return false;
+    if ( !(m_DriveImagePath == other.m_DriveImagePath) ) return false;
+    if ( !(m_Title == other.m_Title) ) return false;
+    if ( !(CustomLogoTypeSettings == other.CustomLogoTypeSettings) ) return false;
+    if ( !(m_ImagePath == other.m_ImagePath) ) return false;
+    return true;
+  }
+
   friend class ::CUSTOM_LOADER_ENTRY;
 //  friend void ::CompareCustomEntries(const XString8& label, const XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>& olDCustomEntries, const XmlArray<GUI_Custom_Entry_Class>& newCustomEntries);
   friend BOOLEAN FillinCustomEntry(IN OUT  CUSTOM_LOADER_ENTRY_SETTINGS *Entry, const TagDict* DictPointer, IN BOOLEAN SubEntry);
@@ -327,6 +410,27 @@ public:
   bool                 AlwaysHidden = 0;
   UINT8                Type = 0;
   UINT8                VolumeType = 0;
+  
+	#if __cplusplus > 201703L
+		bool operator == (const CUSTOM_LEGACY_ENTRY_SETTINGS&) const = default;
+	#endif
+  bool isEqual(const CUSTOM_LEGACY_ENTRY_SETTINGS& other) const
+  {
+    if ( !(Disabled == other.Disabled) ) return false;
+    if ( !(ImagePath == other.ImagePath) ) return false;
+    if ( !(ImageData == other.ImageData) ) return false;
+    if ( !(DriveImagePath == other.DriveImagePath) ) return false;
+    if ( !(DriveImageData == other.DriveImageData) ) return false;
+    if ( !(Volume == other.Volume) ) return false;
+    if ( !(FullTitle == other.FullTitle) ) return false;
+    if ( !(Title == other.Title) ) return false;
+    if ( !(Hotkey == other.Hotkey) ) return false;
+    if ( !(Hidden == other.Hidden) ) return false;
+    if ( !(AlwaysHidden == other.AlwaysHidden) ) return false;
+    if ( !(Type == other.Type) ) return false;
+    if ( !(VolumeType == other.VolumeType) ) return false;
+    return true;
+  }
 };
 
 class CUSTOM_LEGACY_ENTRY
@@ -378,6 +482,26 @@ public:
   bool               Hidden = 0;
   bool               AlwaysHidden = 0;
   UINT8              VolumeType = 0;
+  
+	#if __cplusplus > 201703L
+		bool operator == (const CUSTOM_TOOL_ENTRY_SETTINGS&) const = default;
+	#endif
+  bool isEqual(const CUSTOM_TOOL_ENTRY_SETTINGS& other) const
+  {
+    if ( !(Disabled == other.Disabled) ) return false;
+    if ( !(ImagePath == other.ImagePath) ) return false;
+    if ( !(ImageData == other.ImageData) ) return false;
+    if ( !(Volume == other.Volume) ) return false;
+    if ( !(Path == other.Path) ) return false;
+    if ( !(Arguments == other.Arguments) ) return false;
+    if ( !(FullTitle == other.FullTitle) ) return false;
+    if ( !(Title == other.Title) ) return false;
+    if ( !(Hotkey == other.Hotkey) ) return false;
+    if ( !(Hidden == other.Hidden) ) return false;
+    if ( !(AlwaysHidden == other.AlwaysHidden) ) return false;
+    if ( !(VolumeType == other.VolumeType) ) return false;
+    return true;
+  }
 
 };
 
@@ -444,14 +568,29 @@ class VBIOS_PATCH {
 public:
   XBuffer<uint8_t> Find = XBuffer<uint8_t>();
   XBuffer<uint8_t> Replace = XBuffer<uint8_t>();
+
+	#if __cplusplus > 201703L
+		bool operator == (const VBIOS_PATCH&) const = default;
+	#endif
+    bool isEqual(const VBIOS_PATCH& other) const
+    {
+      if ( !(Find == other.Find) ) return false;
+      if ( !(Replace == other.Replace) ) return false;
+      return true;
+    }
 };
 
 class PatchVBiosBytesNewClass : public XObjArray<VBIOS_PATCH>
 {
   mutable XArray<VBIOS_PATCH_BYTES> VBIOS_PATCH_BYTES_array = XArray<VBIOS_PATCH_BYTES>();
 public:
+  
+	#if __cplusplus > 201703L
+		bool operator == (const PatchVBiosBytesNewClass& other) const { return XObjArray<VBIOS_PATCH>::operator ==(other); }
+	#endif
+
   // Temporary bridge to old struct.
-  const VBIOS_PATCH_BYTES* getVBIOS_PATCH_BYTES() {
+  const VBIOS_PATCH_BYTES* getVBIOS_PATCH_BYTES() const {
     VBIOS_PATCH_BYTES_array.setSize(size());
     for ( size_t idx = 0 ; idx < size() ; ++idx ) {
       VBIOS_PATCH_BYTES_array[idx].Find = ElementAt(idx).Find.data();
@@ -463,6 +602,20 @@ public:
   size_t getVBIOS_PATCH_BYTES_count() const {
     return size();
   }
+
+  bool isEqual(const PatchVBiosBytesNewClass& other) const
+  {
+  	return XObjArray<VBIOS_PATCH>::isEqual(other);
+//  	getVBIOS_PATCH_BYTES();
+//    if ( VBIOS_PATCH_BYTES_array.size() != other.VBIOS_PATCH_BYTES_array.size() ) return false;
+//    for ( size_t idx = 0 ; idx < VBIOS_PATCH_BYTES_array.size() ; ++idx ) {
+//      if ( VBIOS_PATCH_BYTES_array[idx].NumberOfBytes != other[idx].Find.size() ) return false;
+//      if ( memcmp(VBIOS_PATCH_BYTES_array[idx].Find, other.VBIOS_PATCH_BYTES_array[idx].Find, VBIOS_PATCH_BYTES_array[idx].NumberOfBytes) != 0 ) return false;
+//      if ( memcmp(VBIOS_PATCH_BYTES_array[idx].Replace, other.VBIOS_PATCH_BYTES_array[idx].Replace, VBIOS_PATCH_BYTES_array[idx].NumberOfBytes) != 0 ) return false;
+//    }
+//    return true;
+  }
+
 };
 
 
@@ -477,6 +630,22 @@ public:
   UINT8             SlotID = UINT8();
   MISC_SLOT_TYPE    SlotType = MISC_SLOT_TYPE();
   XString8          SlotName = XString8();
+  
+	#if __cplusplus > 201703L
+		bool operator == (const SLOT_DEVICE&) const = default;
+	#endif
+  bool isEqual(const SLOT_DEVICE& other) const
+  {
+    if ( !(SegmentGroupNum == other.SegmentGroupNum) ) return false;
+    if ( !(BusNum == other.BusNum) ) return false;
+    if ( !(DevFuncNum == other.DevFuncNum) ) return false;
+    if ( !(Valid == other.Valid) ) return false;
+    //if ( !(DeviceN == other.DeviceN) ) return false;
+    if ( !(SlotID == other.SlotID) ) return false;
+    if ( !(SlotType == other.SlotType) ) return false;
+    if ( !(SlotName == other.SlotName) ) return false;
+    return true;
+  }
 } ;
 
 
@@ -521,6 +690,40 @@ public:
       UINT8                   CustomLogoType = 0;
       XString8                CustomLogoAsXString8 = XString8();
       XBuffer<UINT8>          CustomLogoAsData = XBuffer<UINT8>();
+      
+	#if __cplusplus > 201703L
+		bool operator == (const BootClass&) const = default;
+	#endif
+      bool isEqual(const BootClass& other) const
+      {
+        if ( !(Timeout == other.Timeout) ) return false;
+        if ( !(SkipHibernateTimeout == other.SkipHibernateTimeout) ) return false;
+        if ( !(DisableCloverHotkeys == other.DisableCloverHotkeys) ) return false;
+        if ( !(BootArgs == other.BootArgs) ) return false;
+        if ( !(NeverDoRecovery == other.NeverDoRecovery) ) return false;
+        if ( !(LastBootedVolume == other.LastBootedVolume) ) return false;
+        if ( !(DefaultVolume == other.DefaultVolume) ) return false;
+        if ( !(DefaultLoader == other.DefaultLoader) ) return false;
+        if ( !(DebugLog == other.DebugLog) ) return false;
+        if ( !(FastBoot == other.FastBoot) ) return false;
+        if ( !(NoEarlyProgress == other.NoEarlyProgress) ) return false;
+        if ( !(NeverHibernate == other.NeverHibernate) ) return false;
+        if ( !(StrictHibernate == other.StrictHibernate) ) return false;
+        if ( !(RtcHibernateAware == other.RtcHibernateAware) ) return false;
+        if ( !(HibernationFixup == other.HibernationFixup) ) return false;
+        if ( !(SignatureFixup == other.SignatureFixup) ) return false;
+        if ( !(SecureSetting == other.SecureSetting) ) return false;
+        if ( !(SecureBootPolicy == other.SecureBootPolicy) ) return false;
+        if ( !(SecureBootWhiteList == other.SecureBootWhiteList) ) return false;
+        if ( !(SecureBootBlackList == other.SecureBootBlackList) ) return false;
+        if ( !(XMPDetection == other.XMPDetection) ) return false;
+        if ( !(LegacyBoot == other.LegacyBoot) ) return false;
+        if ( !(LegacyBiosDefaultEntry == other.LegacyBiosDefaultEntry) ) return false;
+        if ( !(CustomLogoType == other.CustomLogoType) ) return false;
+        if ( !(CustomLogoAsXString8 == other.CustomLogoAsXString8) ) return false;
+        if ( !(CustomLogoAsData == other.CustomLogoAsData) ) return false;
+        return true;
+      }
   };
   
   class ACPIClass
@@ -533,6 +736,18 @@ public:
           UINT64   TableId = 0;
           UINT32   TabLength = 0;
           bool     OtherOS = 0;
+          
+	#if __cplusplus > 201703L
+		bool operator == (const ACPIDropTablesClass&) const = default;
+	#endif
+          bool isEqual(const ACPIDropTablesClass& other) const
+          {
+            if ( !(Signature == other.Signature) ) return false;
+            if ( !(TableId == other.TableId) ) return false;
+            if ( !(TabLength == other.TabLength) ) return false;
+            if ( !(OtherOS == other.OtherOS) ) return false;
+            return true;
+          }
       };
       
       class DSDTClass
@@ -547,6 +762,20 @@ public:
             XBuffer<UINT8>   PatchDsdtReplace = XBuffer<UINT8>();
             XBuffer<UINT8>   PatchDsdtTgt = XBuffer<UINT8>();
             INPUT_ITEM       PatchDsdtMenuItem = INPUT_ITEM(); // Not read from config.plist. Should be moved out.
+
+	#if __cplusplus > 201703L
+		bool operator == (const DSDT_Patch&) const = default;
+	#endif
+            bool isEqual(const DSDT_Patch& other) const
+            {
+              if ( !(Disabled == other.Disabled) ) return false;
+              if ( !(PatchDsdtLabel == other.PatchDsdtLabel) ) return false;
+              if ( !(PatchDsdtFind == other.PatchDsdtFind) ) return false;
+              if ( !(PatchDsdtReplace == other.PatchDsdtReplace) ) return false;
+              if ( !(PatchDsdtTgt == other.PatchDsdtTgt) ) return false;
+              if ( !(PatchDsdtMenuItem == other.PatchDsdtMenuItem) ) return false;
+              return true;
+            }
           };
 
           XStringW                DsdtName = XStringW();
@@ -557,6 +786,22 @@ public:
           bool                    ReuseFFFF = 0;
           bool                    SuspendOverride = 0;
           XObjArray<DSDT_Patch>   DSDTPatchArray = XObjArray<DSDT_Patch>();
+
+	#if __cplusplus > 201703L
+		bool operator == (const DSDTClass&) const = default;
+	#endif
+          bool isEqual(const DSDTClass& other) const
+          {
+            if ( !(DsdtName == other.DsdtName) ) return false;
+            if ( !(DebugDSDT == other.DebugDSDT) ) return false;
+            if ( !(Rtc8Allowed == other.Rtc8Allowed) ) return false;
+            if ( !(PNLF_UID == other.PNLF_UID) ) return false;
+            if ( !(FixDsdt == other.FixDsdt) ) return false;
+            if ( !(ReuseFFFF == other.ReuseFFFF) ) return false;
+            if ( !(SuspendOverride == other.SuspendOverride) ) return false;
+            if ( !DSDTPatchArray.isEqual(other.DSDTPatchArray) ) return false;
+            return true;
+          }
       };
       
       class SSDTClass
@@ -570,6 +815,19 @@ public:
               bool                 GenerateAPSN = 0;
               bool                 GenerateAPLF = 0;
               bool                 GeneratePluginType = 0;
+
+	#if __cplusplus > 201703L
+		bool operator == (const GenerateClass&) const = default;
+	#endif
+              bool isEqual(const GenerateClass& other) const
+              {
+                if ( !(GeneratePStates == other.GeneratePStates) ) return false;
+                if ( !(GenerateCStates == other.GenerateCStates) ) return false;
+                if ( !(GenerateAPSN == other.GenerateAPSN) ) return false;
+                if ( !(GenerateAPLF == other.GenerateAPLF) ) return false;
+                if ( !(GeneratePluginType == other.GeneratePluginType) ) return false;
+                return true;
+              }
           };
 
           bool                    DropSSDTSetting = 0;
@@ -588,6 +846,30 @@ public:
           UINT8                   MaxMultiplier = 0;
           UINT8                   PluginType = 0;
           GenerateClass           Generate = GenerateClass();
+          
+	#if __cplusplus > 201703L
+		bool operator == (const SSDTClass&) const = default;
+	#endif
+          bool isEqual(const SSDTClass& other) const
+          {
+            if ( !(DropSSDTSetting == other.DropSSDTSetting) ) return false;
+            if ( !(NoOemTableId == other.NoOemTableId) ) return false;
+            if ( !(NoDynamicExtract == other.NoDynamicExtract) ) return false;
+            if ( !(EnableISS == other.EnableISS) ) return false;
+            if ( !(EnableC7 == other.EnableC7) ) return false;
+            if ( !(_EnableC6 == other._EnableC6) ) return false;
+            if ( !(_EnableC4 == other._EnableC4) ) return false;
+            if ( !(_EnableC2 == other._EnableC2) ) return false;
+            if ( !(_C3Latency == other._C3Latency) ) return false;
+            if ( !(PLimitDict == other.PLimitDict) ) return false;
+            if ( !(UnderVoltStep == other.UnderVoltStep) ) return false;
+            if ( !(DoubleFirstState == other.DoubleFirstState) ) return false;
+            if ( !(MinMultiplier == other.MinMultiplier) ) return false;
+            if ( !(MaxMultiplier == other.MaxMultiplier) ) return false;
+            if ( !(PluginType == other.PluginType) ) return false;
+            if ( !Generate.isEqual(other.Generate) ) return false;
+            return true;
+          }
       };
 
       UINT64                            ResetAddr = 0;
@@ -605,16 +887,51 @@ public:
       XObjArray<ACPIDropTablesClass>    ACPIDropTablesArray = XObjArray<ACPIDropTablesClass>();
       DSDTClass DSDT =                  DSDTClass();
       SSDTClass SSDT =                  SSDTClass();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const ACPIClass&) const = default;
+	#endif
+      bool isEqual(const ACPIClass& other) const
+      {
+        if ( !(ResetAddr == other.ResetAddr) ) return false;
+        if ( !(ResetVal == other.ResetVal) ) return false;
+        if ( !(SlpSmiEnable == other.SlpSmiEnable) ) return false;
+        if ( !(FixHeaders == other.FixHeaders) ) return false;
+        if ( !(FixMCFG == other.FixMCFG) ) return false;
+        if ( !(NoASPM == other.NoASPM) ) return false;
+        if ( !(smartUPS == other.smartUPS) ) return false;
+        if ( !(PatchNMI == other.PatchNMI) ) return false;
+        if ( !(AutoMerge == other.AutoMerge) ) return false;
+        if ( !(DisabledAML == other.DisabledAML) ) return false;
+        if ( !(SortedACPI == other.SortedACPI) ) return false;
+        if ( !DeviceRename.isEqual(other.DeviceRename) ) return false;
+        if ( !ACPIDropTablesArray.isEqual(other.ACPIDropTablesArray) ) return false;
+        if ( !DSDT.isEqual(other.DSDT) ) return false;
+        if ( !SSDT.isEqual(other.SSDT) ) return false;
+        return true;
+      }
   };
 
   class GUIClass {
     public:
       class MouseClass {
         public:
-          INTN                    PointerSpeed = 0;
+          INTN                 PointerSpeed = 0;
           bool                 PointerEnabled = 0;
-          UINT64                  DoubleClickTime = 0;
+          UINT64               DoubleClickTime = 0;
           bool                 PointerMirror = 0;
+          
+	#if __cplusplus > 201703L
+		bool operator == (const MouseClass&) const = default;
+	#endif
+          bool isEqual(const MouseClass& other) const
+          {
+            if ( !(PointerSpeed == other.PointerSpeed) ) return false;
+            if ( !(PointerEnabled == other.PointerEnabled) ) return false;
+            if ( !(DoubleClickTime == other.DoubleClickTime) ) return false;
+            if ( !(PointerMirror == other.PointerMirror) ) return false;
+            return true;
+          }
       } ;
       class ScanClass {
         public:
@@ -624,6 +941,20 @@ public:
           bool                 LinuxScan = 0;
           bool                 LegacyFirst = false;
           bool                 NoLegacy = false;
+          
+	#if __cplusplus > 201703L
+		bool operator == (const ScanClass&) const = default;
+	#endif
+          bool isEqual(const ScanClass& other) const
+          {
+            if ( !(DisableEntryScan == other.DisableEntryScan) ) return false;
+            if ( !(DisableToolScan == other.DisableToolScan) ) return false;
+            if ( !(KernelScan == other.KernelScan) ) return false;
+            if ( !(LinuxScan == other.LinuxScan) ) return false;
+            if ( !(LegacyFirst == other.LegacyFirst) ) return false;
+            if ( !(NoLegacy == other.NoLegacy) ) return false;
+            return true;
+          }
       };
 
       INT32                   Timezone = -1;
@@ -641,13 +972,40 @@ public:
       LanguageCode            languageCode = english;
       bool                    KbdPrevLang = 0;
       XString8Array           HVHideStrings = XString8Array();
-      ScanClass Scan =        ScanClass();
-      MouseClass Mouse =      MouseClass();
+      ScanClass               Scan =        ScanClass();
+      MouseClass              Mouse =      MouseClass();
       XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS> CustomEntriesSettings = XObjArray<CUSTOM_LOADER_ENTRY_SETTINGS>();
       XObjArray<CUSTOM_LEGACY_ENTRY_SETTINGS> CustomLegacySettings = XObjArray<CUSTOM_LEGACY_ENTRY_SETTINGS>();
       XObjArray<CUSTOM_TOOL_ENTRY_SETTINGS>   CustomToolSettings = XObjArray<CUSTOM_TOOL_ENTRY_SETTINGS>();
 
       bool getDarkEmbedded(bool isDaylight) const;
+    
+			#if __cplusplus > 201703L
+				bool operator == (const GUIClass&) const = default;
+			#endif
+      bool isEqual(const GUIClass& other) const
+      {
+        if ( !(Timezone == other.Timezone) ) return false;
+        if ( !(Theme == other.Theme) ) return false;
+        if ( !(EmbeddedThemeType == other.EmbeddedThemeType) ) return false;
+        if ( !(PlayAsync == other.PlayAsync) ) return false;
+        if ( !(CustomIcons == other.CustomIcons) ) return false;
+        if ( !(TextOnly == other.TextOnly) ) return false;
+        if ( !(ShowOptimus == other.ShowOptimus) ) return false;
+        if ( !(ScreenResolution == other.ScreenResolution) ) return false;
+        if ( !(ProvideConsoleGop == other.ProvideConsoleGop) ) return false;
+        if ( !(ConsoleMode == other.ConsoleMode) ) return false;
+        if ( !(Language == other.Language) ) return false;
+        if ( !(languageCode == other.languageCode) ) return false;
+        if ( !(KbdPrevLang == other.KbdPrevLang) ) return false;
+        if ( !(HVHideStrings == other.HVHideStrings) ) return false;
+        if ( !Scan.isEqual(other.Scan) ) return false;
+        if ( !Mouse.isEqual(other.Mouse) ) return false;
+        if ( !CustomEntriesSettings.isEqual(other.CustomEntriesSettings) ) return false;
+        if ( !CustomLegacySettings.isEqual(other.CustomLegacySettings) ) return false;
+        if ( !CustomToolSettings.isEqual(other.CustomToolSettings) ) return false;
+        return true;
+      }
 
   };
 
@@ -669,6 +1027,30 @@ public:
       undefinable_bool        _EnableC4 = undefinable_bool();
       undefinable_bool        _EnableC2 = undefinable_bool();
       undefinable_uint16      _C3Latency = undefinable_uint16();
+      
+	#if __cplusplus > 201703L
+		bool operator == (const CPUClass&) const = default;
+	#endif
+    bool isEqual(const CPUClass& other) const
+    {
+      if ( !(QPI == other.QPI) ) return false;
+      if ( !(CpuFreqMHz == other.CpuFreqMHz) ) return false;
+      if ( !(CpuType == other.CpuType) ) return false;
+      if ( !(QEMU == other.QEMU) ) return false;
+      if ( !(UseARTFreq == other.UseARTFreq) ) return false;
+      if ( !(BusSpeed == other.BusSpeed) ) return false;
+      if ( !(UserChange == other.UserChange) ) return false;
+      if ( !(SavingMode == other.SavingMode) ) return false;
+      if ( !(HWPEnable == other.HWPEnable) ) return false;
+      if ( !(HWPValue == other.HWPValue) ) return false;
+      if ( !(TDP == other.TDP) ) return false;
+      if ( !(TurboDisabled == other.TurboDisabled) ) return false;
+      if ( !(_EnableC6 == other._EnableC6) ) return false;
+      if ( !(_EnableC4 == other._EnableC4) ) return false;
+      if ( !(_EnableC2 == other._EnableC2) ) return false;
+      if ( !(_C3Latency == other._C3Latency) ) return false;
+      return true;
+    }
   };
 
   class SystemParametersClass {
@@ -686,6 +1068,22 @@ public:
       
       friend class ::SETTINGS_DATA;
       friend unsigned long long ::GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings);
+        
+	#if __cplusplus > 201703L
+		bool operator == (const SystemParametersClass&) const = default;
+	#endif
+      bool isEqual(const SystemParametersClass& other) const
+      {
+        if ( !(WithKexts == other.WithKexts) ) return false;
+        if ( !(WithKextsIfNoFakeSMC == other.WithKextsIfNoFakeSMC) ) return false;
+        if ( !(NoCaches == other.NoCaches) ) return false;
+        if ( !(BacklightLevel == other.BacklightLevel) ) return false;
+        if ( !(BacklightLevelConfig == other.BacklightLevelConfig) ) return false;
+        if ( !(CustomUuid == other.CustomUuid) ) return false;
+        if ( !(_InjectSystemID == other._InjectSystemID) ) return false;
+        if ( !(NvidiaWeb == other.NvidiaWeb) ) return false;
+        return true;
+      }
   };
 
   class GraphicsClass {
@@ -698,6 +1096,20 @@ public:
           UINT16                  ProductEDID = UINT16();
           UINT16                  EdidFixHorizontalSyncPulseWidth = UINT16();
           UINT8                   EdidFixVideoInputSignal = UINT8();
+          
+	#if __cplusplus > 201703L
+		bool operator == (const EDIDClass&) const = default;
+	#endif
+          bool isEqual(const EDIDClass& other) const
+          {
+            if ( !(InjectEDID == other.InjectEDID) ) return false;
+            if ( !(CustomEDID == other.CustomEDID) ) return false;
+            if ( !(VendorEDID == other.VendorEDID) ) return false;
+            if ( !(ProductEDID == other.ProductEDID) ) return false;
+            if ( !(EdidFixHorizontalSyncPulseWidth == other.EdidFixHorizontalSyncPulseWidth) ) return false;
+            if ( !(EdidFixVideoInputSignal == other.EdidFixVideoInputSignal) ) return false;
+            return true;
+          }
       };
       
       class InjectAsDictClass {
@@ -706,6 +1118,18 @@ public:
           bool InjectIntel = bool();
           bool InjectATI = bool();
           bool InjectNVidia = bool();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const InjectAsDictClass&) const = default;
+	#endif
+        bool isEqual(const InjectAsDictClass& other) const
+        {
+          if ( !(GraphicsInjector == other.GraphicsInjector) ) return false;
+          if ( !(InjectIntel == other.InjectIntel) ) return false;
+          if ( !(InjectATI == other.InjectATI) ) return false;
+          if ( !(InjectNVidia == other.InjectNVidia) ) return false;
+          return true;
+        }
       };
 
       class GRAPHIC_CARD {
@@ -717,6 +1141,21 @@ public:
           UINT64            VideoRam = 0;
           UINTN             VideoPorts = 0;
           bool           LoadVBios = 0;
+        
+	#if __cplusplus > 201703L
+		bool operator == (const GRAPHIC_CARD&) const = default;
+	#endif
+        bool isEqual(const GRAPHIC_CARD& other) const
+        {
+          if ( !(Signature == other.Signature) ) return false;
+          if ( !(Model == other.Model) ) return false;
+          if ( !(Id == other.Id) ) return false;
+          if ( !(SubId == other.SubId) ) return false;
+          if ( !(VideoRam == other.VideoRam) ) return false;
+          if ( !(VideoPorts == other.VideoPorts) ) return false;
+          if ( !(LoadVBios == other.LoadVBios) ) return false;
+          return true;
+        }
       };
 
       bool                     PatchVBios = bool();
@@ -731,8 +1170,8 @@ public:
       bool                 NvidiaGeneric = bool();
       bool                 NvidiaNoEFI = bool();
       bool                 NvidiaSingle = bool();
-      UINT8                Dcfg[8] = {0};
-      UINT8                NVCAP[20] = {0};
+      XArray<UINT8>        Dcfg = XArray<UINT8>();
+      XArray<UINT8>        NVCAP = XArray<UINT8>();
       INT8                 BootDisplay = INT8();
       UINT32               DualLink = UINT32();
       UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
@@ -741,7 +1180,41 @@ public:
       XObjArray<GRAPHIC_CARD> ATICardList = XObjArray<GRAPHIC_CARD>();
       XObjArray<GRAPHIC_CARD> NVIDIACardList = XObjArray<GRAPHIC_CARD>();
 
+      GraphicsClass() {
+        Dcfg.setSize(8);
+        memset(Dcfg.data(), 0, 8);
+        NVCAP.setSize(20);
+        memset(NVCAP.data(), 0, 20);
+      }
       
+	#if __cplusplus > 201703L
+		bool operator == (const GraphicsClass&) const = default;
+	#endif
+      bool isEqual(const GraphicsClass& other) const
+      {
+        if ( !(PatchVBios == other.PatchVBios) ) return false;
+        if ( !PatchVBiosBytes.isEqual(other.PatchVBiosBytes) ) return false;
+        if ( !(RadeonDeInit == other.RadeonDeInit) ) return false;
+        if ( !(LoadVBios == other.LoadVBios) ) return false;
+        if ( !(VRAM == other.VRAM) ) return false;
+        if ( !(RefCLK == other.RefCLK) ) return false;
+        if ( !(FBName == other.FBName) ) return false;
+        if ( !(VideoPorts == other.VideoPorts) ) return false;
+        if ( !(NvidiaGeneric == other.NvidiaGeneric) ) return false;
+        if ( !(NvidiaNoEFI == other.NvidiaNoEFI) ) return false;
+        if ( !(NvidiaSingle == other.NvidiaSingle) ) return false;
+        if ( !(Dcfg == other.Dcfg) ) return false;
+        if ( !(NVCAP == other.NVCAP) ) return false;
+        if ( !(BootDisplay == other.BootDisplay) ) return false;
+        if ( !(DualLink == other.DualLink) ) return false;
+        if ( !(IgPlatform == other.IgPlatform) ) return false;
+        if ( !EDID.isEqual(other.EDID) ) return false;
+        if ( !InjectAsDict.isEqual(other.InjectAsDict) ) return false;
+        if ( !ATICardList.isEqual(other.ATICardList) ) return false;
+        if ( !NVIDIACardList.isEqual(other.NVIDIACardList) ) return false;
+        return true;
+      }
+
       //bool getGraphicsInjector() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.GraphicsInjector; }
       //bool InjectIntel() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectIntel; }
       //bool InjectATI() const { return InjectAsBool.isDefined() ? InjectAsBool.value() : InjectAsDict.InjectATI; }
@@ -755,9 +1228,21 @@ public:
       class AudioClass {
         public:
           bool                    ResetHDA = bool();
-          bool                 HDAInjection = bool();
+          bool                    HDAInjection = bool();
           INT32                   HDALayoutId = INT32();
-          UINT8                   AFGLowPowerState = UINT8();
+          bool                    AFGLowPowerState = bool();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const AudioClass&) const = default;
+	#endif
+        bool isEqual(const AudioClass& other) const
+        {
+          if ( !(ResetHDA == other.ResetHDA) ) return false;
+          if ( !(HDAInjection == other.HDAInjection) ) return false;
+          if ( !(HDALayoutId == other.HDALayoutId) ) return false;
+          if ( !(AFGLowPowerState == other.AFGLowPowerState) ) return false;
+          return true;
+        }
       };
       class USBClass {
         public:
@@ -767,6 +1252,20 @@ public:
           bool                 HighCurrent = bool();
           bool                 NameEH00 = bool();
           bool                 NameXH00 = bool();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const USBClass&) const = default;
+	#endif
+        bool isEqual(const USBClass& other) const
+        {
+          if ( !(USBInjection == other.USBInjection) ) return false;
+          if ( !(USBFixOwnership == other.USBFixOwnership) ) return false;
+          if ( !(InjectClockID == other.InjectClockID) ) return false;
+          if ( !(HighCurrent == other.HighCurrent) ) return false;
+          if ( !(NameEH00 == other.NameEH00) ) return false;
+          if ( !(NameXH00 == other.NameXH00) ) return false;
+          return true;
+        }
       };
 
       class AddPropertyClass
@@ -779,6 +1278,21 @@ public:
         INPUT_ITEM                   MenuItem = INPUT_ITEM();
         XString8                     DevicePathAsString = XString8();
         XString8                     Label = XString8();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const AddPropertyClass&) const = default;
+	#endif
+        bool isEqual(const AddPropertyClass& other) const
+        {
+          if ( !(Device == other.Device) ) return false;
+          if ( !(Key == other.Key) ) return false;
+          if ( !(Value == other.Value) ) return false;
+          if ( !(ValueType == other.ValueType) ) return false;
+          if ( !(MenuItem == other.MenuItem) ) return false;
+          if ( !(DevicePathAsString == other.DevicePathAsString) ) return false;
+          if ( !(Label == other.Label) ) return false;
+          return true;
+        }
       };
 
       // This is shared by PropertiesClass and ArbitraryClass
@@ -789,6 +1303,18 @@ public:
         XBuffer<uint8_t>             Value = XBuffer<uint8_t>();
         TAG_TYPE                     ValueType = kTagTypeNone; // only used in CreateMenuProps()
         INPUT_ITEM                   MenuItem = INPUT_ITEM();  // Will get the Disabled value
+        
+	#if __cplusplus > 201703L
+		bool operator == (const SimplePropertyClass&) const = default;
+	#endif
+        bool isEqual(const SimplePropertyClass& other) const
+        {
+          if ( !(Key == other.Key) ) return false;
+          if ( !(Value == other.Value) ) return false;
+          if ( !(ValueType == other.ValueType) ) return false;
+          if ( !(MenuItem == other.MenuItem) ) return false;
+          return true;
+        }
       };
 
       // Property don't have Device. Before it was always Device = 0 to differentiate from Arbitrary properties.
@@ -807,19 +1333,41 @@ public:
             EFI_DEVICE_PATH_PROTOCOL* getDevicePath() const
             {
               EFI_DEVICE_PATH_PROTOCOL* DevicePath;
-              if ( DevicePathAsString.equalIC("PrimaryGPU") ) {
+              if ( DevicePathAsString.isEqualIC("PrimaryGPU") ) {
                 DevicePath = DevicePathFromHandle(gGraphics[0].Handle); // first gpu
-              } else if ( DevicePathAsString.equalIC("SecondaryGPU") && NGFX > 1) {
+              } else if ( DevicePathAsString.isEqualIC("SecondaryGPU") && NGFX > 1) {
                 DevicePath = DevicePathFromHandle(gGraphics[1].Handle); // second gpu
               } else {
                 DevicePath = ConvertTextToDevicePath(DevicePathAsString.wc_str()); //TODO
               }
               return DevicePath;
             }
+            
+	#if __cplusplus > 201703L
+		bool operator == (const PropertyClass&) const = default;
+	#endif
+            bool isEqual(const PropertyClass& other) const
+            {
+              if ( !(Enabled == other.Enabled) ) return false;
+              if ( !(DevicePathAsString == other.DevicePathAsString) ) return false;
+//              if ( !(Label == other.Label) ) return false;
+              if ( !propertiesArray.isEqual(other.propertiesArray) ) return false;
+              return true;
+            }
           };
 
           XString8 propertiesAsString = XString8();
           XObjArray<PropertyClass> PropertyArray = XObjArray<PropertyClass>();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const PropertiesClass&) const = default;
+	#endif
+          bool isEqual(const PropertiesClass& other) const
+          {
+            if ( !(propertiesAsString == other.propertiesAsString) ) return false;
+            if ( !PropertyArray.isEqual(other.PropertyArray) ) return false;
+            return true;
+          }
       };
 
       class ArbitraryPropertyClass {
@@ -827,6 +1375,17 @@ public:
           uint32_t                     Device = 0;
           XString8                     Label = XString8();
           XObjArray<SimplePropertyClass>   CustomPropertyArray = XObjArray<SimplePropertyClass> ();
+        
+	#if __cplusplus > 201703L
+		bool operator == (const ArbitraryPropertyClass&) const = default;
+	#endif
+          bool isEqual(const ArbitraryPropertyClass& other) const
+          {
+            if ( !(Device == other.Device) ) return false;
+            if ( !(Label == other.Label) ) return false;
+            if ( !CustomPropertyArray.isEqual(other.CustomPropertyArray) ) return false;
+            return true;
+          }
       };
 
       class FakeIDClass {
@@ -840,6 +1399,22 @@ public:
           UINT32                  FakeSATA = UINT32();
           UINT32                  FakeXHCI = UINT32();  //103
           UINT32                  FakeIMEI = UINT32();  //106
+        
+	#if __cplusplus > 201703L
+		bool operator == (const FakeIDClass&) const = default;
+	#endif
+        bool isEqual(const FakeIDClass& other) const
+        {
+          if ( !(FakeATI == other.FakeATI) ) return false;
+          if ( !(FakeNVidia == other.FakeNVidia) ) return false;
+          if ( !(FakeIntel == other.FakeIntel) ) return false;
+          if ( !(FakeLAN == other.FakeLAN) ) return false;
+          if ( !(FakeWIFI == other.FakeWIFI) ) return false;
+          if ( !(FakeSATA == other.FakeSATA) ) return false;
+          if ( !(FakeXHCI == other.FakeXHCI) ) return false;
+          if ( !(FakeIMEI == other.FakeIMEI) ) return false;
+          return true;
+        }
       };
 
       bool                 StringInjector = bool();
@@ -861,6 +1436,31 @@ public:
       PropertiesClass Properties = PropertiesClass();
       XObjArray<ArbitraryPropertyClass> ArbitraryArray = XObjArray<ArbitraryPropertyClass>();
 
+    
+	#if __cplusplus > 201703L
+		bool operator == (const DevicesClass&) const = default;
+	#endif
+    bool isEqual(const DevicesClass& other) const
+    {
+      if ( !(StringInjector == other.StringInjector) ) return false;
+      if ( !(IntelMaxBacklight == other.IntelMaxBacklight) ) return false;
+      if ( !(IntelBacklight == other.IntelBacklight) ) return false;
+      if ( !(IntelMaxValue == other.IntelMaxValue) ) return false;
+      if ( !(LANInjection == other.LANInjection) ) return false;
+      if ( !(HDMIInjection == other.HDMIInjection) ) return false;
+      if ( !(NoDefaultProperties == other.NoDefaultProperties) ) return false;
+      if ( !(UseIntelHDMI == other.UseIntelHDMI) ) return false;
+      if ( !(ForceHPET == other.ForceHPET) ) return false;
+      if ( !(DisableFunctions == other.DisableFunctions) ) return false;
+      if ( !(AirportBridgeDeviceName == other.AirportBridgeDeviceName) ) return false;
+      if ( !Audio.isEqual(other.Audio) ) return false;
+      if ( !USB.isEqual(other.USB) ) return false;
+      if ( !FakeID.isEqual(other.FakeID) ) return false;
+      if ( !AddPropertyArray.isEqual(other.AddPropertyArray) ) return false;
+      if ( !Properties.isEqual(other.Properties) ) return false;
+      if ( !ArbitraryArray.isEqual(other.ArbitraryArray) ) return false;
+      return true;
+    }
 
       // 2021-04 : Following is temporary to compare with old way of storing properties.
       // Let's keep it few months until I am sure the refactoring isomorphic
@@ -1038,16 +1638,127 @@ printf("%s", "");
           UINTN        address = 0;
           XString8     comment = XString8();
           bool         enabled = 0;
+          
+	#if __cplusplus > 201703L
+		bool operator == (const MMIOWhiteList&) const = default;
+	#endif
+          bool isEqual(const MMIOWhiteList& other) const
+          {
+            if ( !(address == other.address) ) return false;
+            if ( !(comment == other.comment) ) return false;
+            if ( !(enabled == other.enabled) ) return false;
+            return true;
+          }
+      };
+      class OcKernelQuirksClass
+      {
+        public:
+        //  bool AppleCpuPmCfgLock = false;
+        //  bool AppleXcpmCfgLock = false;
+          bool AppleXcpmExtraMsrs = false;
+          bool AppleXcpmForceBoost = false;
+        //  bool CustomSmbiosGuid = false;
+          bool DisableIoMapper = false;
+          bool DisableLinkeditJettison = false;
+        //  bool DisableRtcChecksum = false;
+          bool DummyPowerManagement = false;
+          bool ExternalDiskIcons = false;
+          bool IncreasePciBarSize = false;
+        //  bool LapicKernelPanic = false;
+        //  bool PanicNoKextDump = false;
+          bool PowerTimeoutKernelPanic = false;
+          bool ThirdPartyDrives = false;
+          bool XhciPortLimit = false;
+          
+          #if __cplusplus > 201703L
+            bool operator == (const OcKernelQuirksClass&) const = default;
+          #endif
+        bool isEqual(const OcKernelQuirksClass& other) const
+        {
+          if ( !(AppleXcpmExtraMsrs == other.AppleXcpmExtraMsrs) ) return false;
+          if ( !(AppleXcpmForceBoost == other.AppleXcpmForceBoost) ) return false;
+          if ( !(DisableIoMapper == other.DisableIoMapper) ) return false;
+          if ( !(DisableLinkeditJettison == other.DisableLinkeditJettison) ) return false;
+          if ( !(DummyPowerManagement == other.DummyPowerManagement) ) return false;
+          if ( !(ExternalDiskIcons == other.ExternalDiskIcons) ) return false;
+          if ( !(IncreasePciBarSize == other.IncreasePciBarSize) ) return false;
+          if ( !(PowerTimeoutKernelPanic == other.PowerTimeoutKernelPanic) ) return false;
+          if ( !(ThirdPartyDrives == other.ThirdPartyDrives) ) return false;
+          if ( !(XhciPortLimit == other.XhciPortLimit) ) return false;
+          return true;
+        }
       };
     
+      class OcBooterQuirksClass
+      {
+       public:
+        bool AvoidRuntimeDefrag = false;
+        bool DevirtualiseMmio = false;
+        bool DisableSingleUser = false;
+        bool DisableVariableWrite = false;
+        bool DiscardHibernateMap = false;
+        bool EnableSafeModeSlide = false;
+        bool EnableWriteUnprotector = false;
+        bool ForceExitBootServices = false;
+        bool ProtectMemoryRegions = false;
+        bool ProtectSecureBoot = false;
+        bool ProtectUefiServices = false;
+        bool ProvideCustomSlide = false;
+        uint8_t ProvideMaxSlide = false;
+        bool RebuildAppleMemoryMap = false;
+        bool SetupVirtualMap = false;
+        bool SignalAppleOS = false;
+        bool SyncRuntimePermissions = false;
+        
+        #if __cplusplus > 201703L
+          bool operator == (const OcBooterQuirksClass&) const = default;
+        #endif
+        bool isEqual(const OcBooterQuirksClass& other) const
+        {
+          if ( !(AvoidRuntimeDefrag == other.AvoidRuntimeDefrag) ) return false;
+          if ( !(DevirtualiseMmio == other.DevirtualiseMmio) ) return false;
+          if ( !(DisableSingleUser == other.DisableSingleUser) ) return false;
+          if ( !(DisableVariableWrite == other.DisableVariableWrite) ) return false;
+          if ( !(DiscardHibernateMap == other.DiscardHibernateMap) ) return false;
+          if ( !(EnableSafeModeSlide == other.EnableSafeModeSlide) ) return false;
+          if ( !(EnableWriteUnprotector == other.EnableWriteUnprotector) ) return false;
+          if ( !(ForceExitBootServices == other.ForceExitBootServices) ) return false;
+          if ( !(ProtectSecureBoot == other.ProtectSecureBoot) ) return false;
+          if ( !(ProtectUefiServices == other.ProtectUefiServices) ) return false;
+          if ( !(ProtectUefiServices == other.ProtectUefiServices) ) return false;
+          if ( !(ProvideCustomSlide == other.ProvideCustomSlide) ) return false;
+          if ( !(ProvideMaxSlide == other.ProvideMaxSlide) ) return false;
+          if ( !(RebuildAppleMemoryMap == other.RebuildAppleMemoryMap) ) return false;
+          if ( !(SetupVirtualMap == other.SetupVirtualMap) ) return false;
+          if ( !(SignalAppleOS == other.SignalAppleOS) ) return false;
+          if ( !(SyncRuntimePermissions == other.SyncRuntimePermissions) ) return false;
+          return true;
+        }
+
+      };
+      
       bool                     FuzzyMatch = bool();
       XString8                 OcKernelCache = XString8();
 //      UINTN MaxSlide;
-      OC_KERNEL_QUIRKS         OcKernelQuirks = OC_KERNEL_QUIRKS();
-      OC_BOOTER_QUIRKS         ocBooterQuirks = OC_BOOTER_QUIRKS();
+      OcKernelQuirksClass         OcKernelQuirks = OcKernelQuirksClass();
+      OcBooterQuirksClass         OcBooterQuirks = OcBooterQuirksClass();
       XObjArray<MMIOWhiteList> mmioWhiteListArray = XObjArray<MMIOWhiteList>();
       UINT32                   QuirksMask = 0;
-  };
+    
+      #if __cplusplus > 201703L
+        bool operator == (const QuirksClass&) const = default;
+      #endif
+      bool isEqual(const QuirksClass& other) const
+      {
+        if ( !(FuzzyMatch == other.FuzzyMatch) ) return false;
+        if ( !(OcKernelCache == other.OcKernelCache) ) return false;
+        if ( !(OcKernelQuirks.isEqual(other.OcKernelQuirks)) ) return false;
+        if ( !(OcBooterQuirks.isEqual(other.OcBooterQuirks)) ) return false;
+        if ( !mmioWhiteListArray.isEqual(other.mmioWhiteListArray) ) return false;
+        if ( !(QuirksMask == other.QuirksMask) ) return false;
+        return true;
+      }
+};
 
   class RtVariablesClass {
     public:
@@ -1058,6 +1769,25 @@ printf("%s", "");
           XString8 Comment = XStringW();
           XStringW Name = XStringW();
           EFI_GUID Guid = {0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}};
+          
+					#if __cplusplus > 201703L
+						//bool operator == (const RT_VARIABLES&) const = default;
+						bool operator == (const RT_VARIABLES& other) const { // no default... YET, because of EFI_GUID. // TODO: create a class wrapper around EFI_GUID, take the occasion to put conversion method in that new class
+							if ( !(Disabled == other.Disabled) ) return false;
+							if ( !(Comment == other.Comment) ) return false;
+							if ( !(Name == other.Name) ) return false;
+							if ( memcmp(&Guid, &other.Guid, sizeof(Guid)) != 0 ) return false;
+							return true;
+						}
+					#endif
+          bool isEqual(const RT_VARIABLES& other) const
+          {
+            if ( !(Disabled == other.Disabled) ) return false;
+            if ( !(Comment == other.Comment) ) return false;
+            if ( !(Name == other.Name) ) return false;
+            if ( memcmp(&Guid, &other.Guid, sizeof(Guid)) != 0 ) return false;
+            return true;
+          }
       };
         
       XString8                RtROMAsString = XString8();
@@ -1069,8 +1799,23 @@ printf("%s", "");
       XObjArray<RT_VARIABLES> BlockRtVariableArray = XObjArray<RT_VARIABLES>();
 
       bool GetLegacyLanAddress() const {
-        return RtROMAsString.equalIC("UseMacAddr0") || RtROMAsString.equalIC("UseMacAddr1");
+        return RtROMAsString.isEqualIC("UseMacAddr0") || RtROMAsString.isEqualIC("UseMacAddr1");
       }
+    
+	#if __cplusplus > 201703L
+		bool operator == (const RtVariablesClass&) const = default;
+	#endif
+    bool isEqual(const RtVariablesClass& other) const
+    {
+      if ( !(RtROMAsString == other.RtROMAsString) ) return false;
+      if ( !(RtROMAsData == other.RtROMAsData) ) return false;
+      if ( !(RtMLBSetting == other.RtMLBSetting) ) return false;
+      if ( !(CsrActiveConfig == other.CsrActiveConfig) ) return false;
+      if ( !(BooterConfig == other.BooterConfig) ) return false;
+      if ( !(BooterCfgStr == other.BooterCfgStr) ) return false;
+      if ( !BlockRtVariableArray.isEqual(other.BlockRtVariableArray) ) return false;
+      return true;
+    }
 
   };
 
@@ -1081,7 +1826,24 @@ printf("%s", "");
         public:
           UINT8         SlotCounts = UINT8();
           UINT8         UserChannels = UINT8();
-          RAM_SLOT_INFO User[MAX_RAM_SLOTS * 4];
+          XObjArray<RAM_SLOT_INFO> User = XObjArray<RAM_SLOT_INFO>();
+          
+          MemoryClass() {
+            for (size_t idx = 0 ; idx < MAX_RAM_SLOTS ; ++idx ) { // TODO: refactor this. We don't need to store all invalid slot info
+              User.AddReference(new RAM_SLOT_INFO(), true);
+            }
+          }
+          
+					#if __cplusplus > 201703L
+						bool operator == (const MemoryClass&) const = default;
+					#endif
+          bool isEqual(const MemoryClass& other) const
+          {
+            if ( !(SlotCounts == other.SlotCounts) ) return false;
+            if ( !(UserChannels == other.UserChannels) ) return false;
+            if ( !(User.isEqual(other.User)) ) return false;
+            return true;
+          }
       };
 
   // SMBIOS TYPE0
@@ -1129,22 +1891,96 @@ printf("%s", "");
       UINT32                  gFwFeatures = UINT32();
       UINT32                  gFwFeaturesMask = UINT32();
       MemoryClass             Memory = MemoryClass();
-      SLOT_DEVICE             SlotDevices[16]; //assume DEV_XXX, Arpt=6
+      XObjArray<SLOT_DEVICE>     SlotDevices = XObjArray<SLOT_DEVICE>(); //assume DEV_XXX, Arpt=6
 
       // These are calculated from ApplePlatformData
-      CHAR8                   RPlt[8] = {0};
-      CHAR8                   RBr[8] = {0};
-      UINT8                   EPCI[4] = {0};
-      UINT8                   REV[6] = {0};
+//      CHAR8                   RPlt[8] = {0};
+//      CHAR8                   RBr[8] = {0};
+//      UINT8                   EPCI[4] = {0};
+//      UINT8                   REV[6] = {0};
 
+    SmbiosClass() {
+      for (size_t idx = 0 ; idx < 16 ; ++idx ) {
+        SlotDevices.AddReference(new SLOT_DEVICE(), true);
+      }
+    }
+    
+		#if __cplusplus > 201703L
+			bool operator == (const SmbiosClass&) const = default;
+		#endif
+    bool isEqual(const SmbiosClass& other) const
+    {
+      // SMBIOS TYPE0
+      if ( !(BiosVendor == other.BiosVendor) ) return false;
+      if ( !(_RomVersion == other._RomVersion) ) return false;
+      if ( !(_EfiVersion == other._EfiVersion) ) return false;
+      if ( !(_ReleaseDate == other._ReleaseDate) ) return false;
+      // SMBIOS TYPE1
+      if ( !(ManufactureName == other.ManufactureName) ) return false;
+      if ( !(ProductName == other.ProductName) ) return false;
+      if ( !(VersionNr == other.VersionNr) ) return false;
+      if ( !(SerialNr == other.SerialNr) ) return false;
+      if ( !(SmUUID == other.SmUUID) ) return false;
+      if ( !(FamilyName == other.FamilyName) ) return false;
+      // SMBIOS TYPE2
+      if ( !(BoardManufactureName == other.BoardManufactureName) ) return false;
+      if ( !(BoardSerialNumber == other.BoardSerialNumber) ) return false;
+      if ( !(BoardNumber == other.BoardNumber) ) return false;
+      if ( !(LocationInChassis == other.LocationInChassis) ) return false;
+      if ( !(BoardVersion == other.BoardVersion) ) return false;
+      if ( !(BoardType == other.BoardType) ) return false;
+      // SMBIOS TYPE3
+      if ( !(Mobile == other.Mobile) ) return false;
+      if ( !(ChassisType == other.ChassisType) ) return false;
+      if ( !(ChassisManufacturer == other.ChassisManufacturer) ) return false;
+      if ( !(ChassisAssetTag == other.ChassisAssetTag) ) return false;
+      // SMBIOS TYPE17
+      if ( !(SmbiosVersion == other.SmbiosVersion) ) return false;
+      if ( !(Attribute == other.Attribute) ) return false;
+      // SMBIOS TYPE132
+      if ( !(TrustSMBIOS == other.TrustSMBIOS) ) return false;
+      if ( !(InjectMemoryTables == other.InjectMemoryTables) ) return false;
+      // SMBIOS TYPE133
+      if ( !(gPlatformFeature == other.gPlatformFeature) ) return false;
+      // PatchTableType11
+      if ( !(NoRomInfo == other.NoRomInfo) ) return false;
+
+      if ( !(gFwFeatures == other.gFwFeatures) ) return false;
+      if ( !(gFwFeaturesMask == other.gFwFeaturesMask) ) return false;
+      if ( !Memory.isEqual(other.Memory) ) return false;
+      if ( !SlotDevices.isEqual(other.SlotDevices) ) return false;
+
+//      if ( memcmp(RPlt, other.RPlt, sizeof(RPlt)) != 0 ) return false;
+//      if ( memcmp(RBr, other.RBr, sizeof(RBr)) != 0 ) return false;
+//      if ( memcmp(EPCI, other.EPCI, sizeof(EPCI)) != 0 ) return false;
+//      if ( memcmp(REV, other.REV, sizeof(REV)) != 0 ) return false;
+      return true;
+    }
 
   };
   class BootGraphicsClass {
     public:
-    UINT32 DefaultBackgroundColor = 0;
-    UINT32 UIScale = 0;
-    UINT32 EFILoginHiDPI = 0;
-    UINT8  flagstate[32] = {0};
+      UINT32 DefaultBackgroundColor = 0;
+      UINT32 UIScale = 0;
+      UINT32 EFILoginHiDPI = 0;
+//      UINT8  flagstate[32] = {0};
+      uint32_t _flagstate = uint32_t();
+
+      BootGraphicsClass() {
+//      	flagstate.memset(0, 32);
+      }
+      
+			#if __cplusplus > 201703L
+      	bool operator == (const BootGraphicsClass&) const = default;
+      #endif
+      bool isEqual(const BootGraphicsClass& other) const
+      {
+        if ( !(DefaultBackgroundColor == other.DefaultBackgroundColor) ) return false;
+        if ( !(UIScale == other.UIScale) ) return false;
+        if ( !(EFILoginHiDPI == other.EFILoginHiDPI) ) return false;
+        if ( _flagstate != other._flagstate ) return false;
+        return true;
+      }
   };
 
   BootClass Boot = BootClass();
@@ -1167,8 +2003,29 @@ printf("%s", "");
 //  BOOLEAN                 LpcTune; // never set to true.
 
   SETTINGS_DATA() {}
-  SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
-  const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
+//  SETTINGS_DATA(const SETTINGS_DATA& other) = delete; // Can be defined if needed
+//  const SETTINGS_DATA& operator = ( const SETTINGS_DATA & ) = delete; // Can be defined if needed
+
+	#if __cplusplus > 201703L
+		bool operator == (const SETTINGS_DATA&) const = default;
+	#endif
+  bool isEqual(const SETTINGS_DATA& other) const
+  {
+    if ( !Boot.isEqual(other.Boot) ) return false;
+    if ( !ACPI.isEqual(other.ACPI) ) return false;
+    if ( !GUI.isEqual(other.GUI) ) return false;
+    if ( !CPU.isEqual(other.CPU) ) return false;
+    if ( !SystemParameters.isEqual(other.SystemParameters) ) return false;
+    if ( !KernelAndKextPatches.isEqual(other.KernelAndKextPatches) ) return false;
+    if ( !Graphics.isEqual(other.Graphics) ) return false;
+    if ( !(DisabledDriverArray == other.DisabledDriverArray) ) return false;
+    if ( !Quirks.isEqual(other.Quirks) ) return false;
+    if ( !RtVariables.isEqual(other.RtVariables) ) return false;
+    if ( !Devices.isEqual(other.Devices) ) return false;
+    if ( !Smbios.isEqual(other.Smbios) ) return false;
+    if ( !BootGraphics.isEqual(other.BootGraphics) ) return false;
+    return true;
+  }
 
   ~SETTINGS_DATA() {}
 
@@ -1385,6 +2242,10 @@ public:
   XString8 RomVersionUsed = XString8();
   XString8 EfiVersionUsed = XString8();
   XString8 ReleaseDateUsed = XString8();
+  
+  UINT8  flagstate[32] = {0};
+  MACHINE_TYPES CurrentModel = MaxMachineType;
+
 
   REFIT_CONFIG() {};
   REFIT_CONFIG(const REFIT_CONFIG& other) = delete; // Can be defined if needed

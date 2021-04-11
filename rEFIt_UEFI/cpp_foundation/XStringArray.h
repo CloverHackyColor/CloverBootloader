@@ -104,7 +104,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	bool contains(const CharType* s) const
 	{
 		for ( size_t i=0 ; i<array.size() ; i+=1 ) {
-			if ( array.ElementAt(i).equal(s) ) return true;
+			if ( array.ElementAt(i).isEqual(s) ) return true;
 		}
 		return false;
 	}
@@ -118,7 +118,7 @@ class XStringArray_/* : public XStringArraySuper*/
 	bool containsIC(const CharType* s) const
 	{
 		for ( size_t i=0 ; i<array.size() ; i+=1 ) {
-			if ( array.ElementAt(i).equalIC(s) ) return true;
+			if ( array.ElementAt(i).isEqualIC(s) ) return true;
 		}
 		return false;
 	}
@@ -250,7 +250,7 @@ class XStringArray_/* : public XStringArraySuper*/
 			size_t i = array.size();
 			do {
 				i--;
-				if ( array[i].equalIC(aString) ) {
+				if ( array[i].isEqualIC(aString) ) {
 					array.RemoveAtIndex(i);
 					break;
 				}

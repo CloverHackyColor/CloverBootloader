@@ -27,6 +27,21 @@ public:
   XString8 SerialNo = XString8();
   UINT8   Type = UINT8();
   bool  InUse = bool();
+  
+  #if __cplusplus > 201703L
+    bool operator == (const RAM_SLOT_INFO&) const = default;
+  #endif
+  bool isEqual(const RAM_SLOT_INFO& other) const
+  {
+    if ( !(ModuleSize == other.ModuleSize ) ) return false;
+    if ( !(Frequency == other.Frequency ) ) return false;
+    if ( !(Vendor == other.Vendor ) ) return false;
+    if ( !(PartNo == other.PartNo ) ) return false;
+    if ( !(SerialNo == other.SerialNo ) ) return false;
+    if ( !(Type == other.Type ) ) return false;
+    if ( !(InUse == other.InUse ) ) return false;
+    return true;
+  }
 };
 
 class MEM_STRUCTURE

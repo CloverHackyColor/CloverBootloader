@@ -10,7 +10,10 @@
 #define Platform_h_h
 
 #ifndef _UINTPTR_T
-#define _UINTPTR_T // to prevent macOS definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+#define _UINTPTR_T // to prevent macOS/Clang definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
+#endif
+#ifndef _PTRDIFF_T_DECLARED
+#define _PTRDIFF_T_DECLARED // to prevent macOS/GCC definition of uintptr_t (map to a long). We prefer long long so we can use %llu on all platform (including microsoft)
 #endif
 
 #ifdef _MSC_VER
@@ -84,14 +87,14 @@ typedef unsigned long long  uintptr_t;
 #endif
 
 
-
-#ifdef __OBJC__
-#define _MACH_H_
-#define __DEBUGGING__
-#import <Foundation/Foundation.h>
-#undef CMASK
+#if defined(__clang__) // it works to include <Foundation/Foundation.h> and that allows to use NS... objects. Could be useful for a tool running on macOS.
+//#ifdef __OBJC__
+//#define _MACH_H_
+//#define __DEBUGGING__
+//#import <Foundation/Foundation.h>
+//#undef CMASK
+//#endif
 #endif
-
 
 // to be able to compile AutoGen.c
 #ifdef __cplusplus

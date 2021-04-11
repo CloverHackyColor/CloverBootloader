@@ -49,7 +49,7 @@ EFI_GUID *APFSPartitionUUIDExtract(
   }
   if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType (DevicePath) == MEDIA_VENDOR_DP) {
     //Check that vendor-assigned GUID defines APFS Container Partition
-    if ( GuidLEToXString8(*(EFI_GUID *)((UINT8 *)DevicePath+0x04)).equalIC(ApfsSignatureUUID) ) {
+    if ( GuidLEToXString8(*(EFI_GUID *)((UINT8 *)DevicePath+0x04)).isEqualIC(ApfsSignatureUUID) ) {
       return (EFI_GUID *)((UINT8 *)DevicePath+0x14);
     }
   }

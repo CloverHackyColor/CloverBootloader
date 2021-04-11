@@ -261,25 +261,25 @@ UINT8 GetOSTypeFromPath(IN CONST XStringW& Path)
   if (Path.isEmpty()) {
     return OSTYPE_OTHER;
   }
-  if ( Path.equalIC(MACOSX_LOADER_PATH)) {
+  if ( Path.isEqualIC(MACOSX_LOADER_PATH)) {
     return OSTYPE_OSX;
-  } else if ( Path.equalIC(OSXInstallerPaths[0]) ||
-             ( Path.equalIC(OSXInstallerPaths[1])) ||
-             ( Path.equalIC(OSXInstallerPaths[2])) ||
-             ( Path.equalIC(OSXInstallerPaths[3])) ||
-             ( Path.equalIC(OSXInstallerPaths[4])) ||
-             ( Path.equalIC(RockBoot)) || ( Path.equalIC(PaperBoot)) || ( Path.equalIC(ScissorBoot)) ||
-             (! Path.equalIC(L"\\.IABootFiles\\boot.efi") &&  Path.equalIC(L"\\.IAPhysicalMedia") &&  Path.equalIC(MACOSX_LOADER_PATH))
+  } else if ( Path.isEqualIC(OSXInstallerPaths[0]) ||
+             ( Path.isEqualIC(OSXInstallerPaths[1])) ||
+             ( Path.isEqualIC(OSXInstallerPaths[2])) ||
+             ( Path.isEqualIC(OSXInstallerPaths[3])) ||
+             ( Path.isEqualIC(OSXInstallerPaths[4])) ||
+             ( Path.isEqualIC(RockBoot)) || ( Path.isEqualIC(PaperBoot)) || ( Path.isEqualIC(ScissorBoot)) ||
+             (! Path.isEqualIC(L"\\.IABootFiles\\boot.efi") &&  Path.isEqualIC(L"\\.IAPhysicalMedia") &&  Path.isEqualIC(MACOSX_LOADER_PATH))
              ) {
     return OSTYPE_OSX_INSTALLER;
-  } else if ( Path.equalIC(L"\\com.apple.recovery.boot\\boot.efi")) {
+  } else if ( Path.isEqualIC(L"\\com.apple.recovery.boot\\boot.efi")) {
     return OSTYPE_RECOVERY;
-  } else if (( Path.equalIC(L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi")) || //test first as orig
-             ( Path.equalIC(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi")) ||      //it can be Clover
-    //         ( Path.equalIC(L"\\bootmgr.efi")) || //never worked, just extra icon in menu
-             ( Path.equalIC(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi"))) {
+  } else if (( Path.isEqualIC(L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi")) || //test first as orig
+             ( Path.isEqualIC(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi")) ||      //it can be Clover
+    //         ( Path.isEqualIC(L"\\bootmgr.efi")) || //never worked, just extra icon in menu
+             ( Path.isEqualIC(L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi"))) {
     return OSTYPE_WINEFI;
-  } else if (LINUX_FULL_LOADER_PATH.equalIC(Path)) {
+  } else if (LINUX_FULL_LOADER_PATH.isEqualIC(Path)) {
     return OSTYPE_LINEFI;
   } else if ( Path.containsIC("grubx64.efi") ) {
     return OSTYPE_LINEFI;
@@ -288,7 +288,7 @@ UINT8 GetOSTypeFromPath(IN CONST XStringW& Path)
 #if defined(ANDX86)
     Index = 0;
     while (Index < AndroidEntryDataCount) {
-      if ( Path.equalIC(AndroidEntryData[Index].Path) ) {
+      if ( Path.isEqualIC(AndroidEntryData[Index].Path) ) {
         return OSTYPE_LIN;
       }
       ++Index;
@@ -296,7 +296,7 @@ UINT8 GetOSTypeFromPath(IN CONST XStringW& Path)
 #endif
     Index = 0;
     while (Index < LinuxEntryDataCount) {
-      if ( Path.equalIC(LinuxEntryData[Index].Path) ) {
+      if ( Path.isEqualIC(LinuxEntryData[Index].Path) ) {
         return OSTYPE_LIN;
       }
       ++Index;
@@ -314,7 +314,7 @@ STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
 #if defined(ANDX86)
   Index = 0;
   while (Index < AndroidEntryDataCount) {
-    if ( Path.equalIC(AndroidEntryData[Index].Path) ) {
+    if ( Path.isEqualIC(AndroidEntryData[Index].Path) ) {
       return AndroidEntryData[Index].Icon;
     }
     ++Index;
@@ -324,14 +324,14 @@ STATIC CONST XStringW& LinuxIconNameFromPath(IN CONST XStringW& Path,
   //check not common names
   Index = 0;
   while (Index < LinuxEntryDataCount) {
-    if ( Path.equalIC(LinuxEntryData[Index].Path) ) {
+    if ( Path.isEqualIC(LinuxEntryData[Index].Path) ) {
       return LinuxEntryData[Index].Icon;
     }
     ++Index;
   }
   
   // Try to open the linux issue
-  if ((RootDir != NULL) && LINUX_FULL_LOADER_PATH.equalIC(Path)) {
+  if ((RootDir != NULL) && LINUX_FULL_LOADER_PATH.isEqualIC(Path)) {
     CHAR8 *Issue = NULL;
     UINTN  IssueLen = 0;
     if (!EFI_ERROR(egLoadFile(RootDir, LINUX_ISSUE_PATH.wc_str(), (UINT8 **)&Issue, &IssueLen)) && (Issue != NULL)) {
@@ -538,7 +538,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(IN CONST XStringW& LoaderPath,
         // Check if the path match
         if (Custom.settings.Path.notEmpty()) {
           // Check if the loader path match
-          path_match = (Custom.settings.Path.equalIC(LoaderPath)) ? 1 : -1;
+          path_match = (Custom.settings.Path.isEqualIC(LoaderPath)) ? 1 : -1;
         }
 
         // Check if the type match
@@ -2165,7 +2165,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
               // Less precise volume match
               if (Custom.settings.Path != CustomEntry.settings.Path) {
                 // Better path match
-                BetterMatch = ((CustomEntry.settings.Path.notEmpty()) && CustomPath.equal(CustomEntry.settings.Path) &&
+                BetterMatch = ((CustomEntry.settings.Path.notEmpty()) && CustomPath.isEqual(CustomEntry.settings.Path) &&
                                ((Custom.settings.VolumeType == CustomEntry.settings.VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) != 0));
               }
@@ -2175,7 +2175,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
                 // More precise volume match
                 if (Custom.settings.Path != CustomEntry.settings.Path) {
                   // Better path match
-                  BetterMatch = ((CustomEntry.settings.Path.notEmpty()) && CustomPath.equal(CustomEntry.settings.Path) &&
+                  BetterMatch = ((CustomEntry.settings.Path.notEmpty()) && CustomPath.isEqual(CustomEntry.settings.Path) &&
                                  ((Custom.settings.VolumeType == CustomEntry.settings.VolumeType) ||
                                   ((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) != 0));
                 } else if (Custom.settings.VolumeType != CustomEntry.settings.VolumeType) {
@@ -2189,7 +2189,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
               // Duplicate volume match
               } else if (Custom.settings.Path != CustomEntry.settings.Path) {
                 // Better path match
-                BetterMatch = ((CustomEntry.settings.Path.notEmpty()) && CustomPath.equal(CustomEntry.settings.Path) &&
+                BetterMatch = ((CustomEntry.settings.Path.notEmpty()) && CustomPath.isEqual(CustomEntry.settings.Path) &&
                                ((Custom.settings.VolumeType == CustomEntry.settings.VolumeType) ||
                                 ((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) != 0));
               // Duplicate path match
@@ -2208,7 +2208,7 @@ STATIC void AddCustomEntry(IN UINTN                       CustomIndex,
               // Less precise path match
               BetterMatch = ((Custom.settings.VolumeType != CustomEntry.settings.VolumeType) &&
                              ((1ull<<Volume->DiskKind) & Custom.settings.VolumeType) != 0);
-            } else if (CustomPath.equal(CustomEntry.settings.Path)) {
+            } else if (CustomPath.isEqual(CustomEntry.settings.Path)) {
               if (Custom.settings.Path.isEmpty()) {
                 // More precise path and volume type match
                 BetterMatch = ((Custom.settings.VolumeType == CustomEntry.settings.VolumeType) ||

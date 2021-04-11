@@ -371,10 +371,10 @@ SetVariablesForOSX(LOADER_ENTRY *Entry)
   }
 
   // ->GetVariable(flagstate, gEfiAppleBootGuid, 0/0, 20, 10FE110) = Not Found
-  if (gSettings.BootGraphics.flagstate[3] == 0x80) {
+  if (GlobalConfig.flagstate[3] == 0x80) {
     DeleteNvramVariable(L"flagstate", &gEfiAppleBootGuid);
   } else {
-    SetNvramVariable(L"flagstate", &gEfiAppleBootGuid, Attributes, 32, &gSettings.BootGraphics.flagstate);
+    SetNvramVariable(L"flagstate", &gEfiAppleBootGuid, Attributes, 32, &GlobalConfig.flagstate);
   }
 
   // Hack for recovery by Asgorath
@@ -456,12 +456,12 @@ SetupDataForOSX(BOOLEAN Hibernate)
   UINT64     ARTFrequency;
   UINTN      Revision;
   UINT16     Zero = 0;
-  BOOLEAN    isRevLess = (gSettings.Smbios.REV[0] == 0 &&
-                          gSettings.Smbios.REV[1] == 0 &&
-                          gSettings.Smbios.REV[2] == 0 &&
-                          gSettings.Smbios.REV[3] == 0 &&
-                          gSettings.Smbios.REV[4] == 0 &&
-                          gSettings.Smbios.REV[5] == 0);
+  BOOLEAN    isRevLess = (ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[0] == 0 &&
+                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[1] == 0 &&
+                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[2] == 0 &&
+                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[3] == 0 &&
+                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[4] == 0 &&
+                          ApplePlatformData[GlobalConfig.CurrentModel].smcRevision[5] == 0);
 
   Revision = StrDecimalToUintn(gFirmwareRevision);
 
@@ -492,6 +492,11 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
   CpuSpeed = gCPUStructure.CPUFrequency;
   gSettings.CPU.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed,     Mega);
+
+  char RBr[8];
+  getRBr(GlobalConfig.CurrentModel, RBr);
+  char RPlt[8];
+  getRPlt(GlobalConfig.CurrentModel, gSettings.Smbios.Mobile, RPlt);
 
   // Locate DataHub Protocol
   Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (void**)&gDataHub);
@@ -538,11 +543,11 @@ SetupDataForOSX(BOOLEAN Hibernate)
 
     // SMC helper
     if (!isRevLess) {
-      LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.Smbios.RBr,    8);
-      LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.Smbios.EPCI,   4);
-      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.Smbios.REV,    6);
+      LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &RBr,    8);
+      LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &ApplePlatformData[GlobalConfig.CurrentModel].smcConfig,   4);
+      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  ApplePlatformData[GlobalConfig.CurrentModel].smcRevision,    6);
     }
-    LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.Smbios.RPlt,   8);
+    LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", RPlt,   8);
     LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Smbios.Mobile, 1);
 
     // all current settings
@@ -555,11 +560,11 @@ SetupDataForOSX(BOOLEAN Hibernate)
     return;
   }
   if (!isRevLess) {
-    AddSMCkey(SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.Smbios.RBr);
-    AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&gSettings.Smbios.EPCI);
-    AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.Smbios.REV);
+    AddSMCkey(SMC_MAKE_KEY('R','B','r',' '), 8, SmcKeyTypeCh8, (SMC_DATA *)&RBr);
+    AddSMCkey(SMC_MAKE_KEY('E','P','C','I'), 4, SmcKeyTypeUint32, (SMC_DATA *)&ApplePlatformData[GlobalConfig.CurrentModel].smcConfig);
+    AddSMCkey(SMC_MAKE_KEY('R','E','V',' '), 6, SmcKeyTypeCh8, (SMC_DATA *)&ApplePlatformData[GlobalConfig.CurrentModel].smcRevision);
   }
-  AddSMCkey(SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, (SMC_DATA *)&gSettings.Smbios.RPlt);
+  AddSMCkey(SMC_MAKE_KEY('R','P','l','t'), 8, SmcKeyTypeCh8, (SMC_DATA *)&RPlt);
   AddSMCkey(SMC_MAKE_KEY('B','E','M','B'), 1, SmcKeyTypeFlag, (SMC_DATA *)&gSettings.Smbios.Mobile);
   //laptop battery keys will be better to import from nvram.plist or read from ACPI(?)
   //they are needed for FileVault2 who want to draw battery status

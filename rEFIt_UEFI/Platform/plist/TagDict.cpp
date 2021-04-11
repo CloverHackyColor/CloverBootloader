@@ -156,7 +156,7 @@ const TagStruct* TagDict::propertyForKey(const CHAR8* key) const
   const XObjArray<TagStruct>& tagList = _dictContent;
   for (size_t tagIdx = 0 ; tagIdx < tagList.size() ; tagIdx++ )
   {
-    if ( tagList[tagIdx].isKey()  &&  tagList[tagIdx].getKey()->keyStringValue().equalIC(key) ) {
+    if ( tagList[tagIdx].isKey()  &&  tagList[tagIdx].getKey()->keyStringValue().isEqualIC(key) ) {
       if ( tagIdx+1 >= tagList.size() ) return NULL;
       if ( tagList[tagIdx+1].isKey() ) return NULL;
       return &tagList[tagIdx+1];
