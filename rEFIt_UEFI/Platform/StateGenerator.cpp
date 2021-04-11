@@ -342,7 +342,7 @@ SSDT_TABLE *generate_pss_ssdt(UINTN Number)
                     (gCPUStructure.Model == CPU_MODEL_ICELAKE) ||
                     (gCPUStructure.Model == CPU_MODEL_TIGERLAKE_C) ||
                     (gCPUStructure.Model == CPU_MODEL_TIGERLAKE_D) ||
-                   (gCPUStructure.Model == CPU_MODEL_COMETLAKE_S) ||
+                    (gCPUStructure.Model == CPU_MODEL_COMETLAKE_S) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_Y) ||
                     (gCPUStructure.Model == CPU_MODEL_COMETLAKE_U)) {
                     j = i << 8;

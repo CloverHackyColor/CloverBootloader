@@ -626,7 +626,7 @@ public:
           bool                 NoLegacy = false;
       };
 
-      INT32                   Timezone = -1;
+      INT32                   Timezone = 0xFF;
       XStringW                Theme = XStringW();
       //bool                    DarkEmbedded = 0;
       XString8                EmbeddedThemeType = XString8();

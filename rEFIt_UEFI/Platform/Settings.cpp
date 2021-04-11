@@ -4429,9 +4429,9 @@ void SETTINGS_DATA::DevicesClass::FillDevicePropertiesOld(SETTINGS_DATA& gSettin
               if ( !EFI_ERROR(PropertiesDict->getKeyAndValueAtIndex(i, &key, &value)) ) {  //take a <key> with DevicePath. If GetKeyValueAtIndex return success, key and value != NULL
                 XStringW DevicePathStr = key->keyStringValue();
                 //         DBG("Device: %ls\n", DevicePathStr);
-if (key->keyStringValue().startWithOrEqualTo("#")) {
+                if (key->keyStringValue().startWithOrEqualTo("#")) {
                       continue;
-}
+                }
 
                 // when key in Devices/Properties is one of the strings "PrimaryGPU" / "SecondaryGPU", use device path of first / second gpu accordingly
 #ifdef CLOVER_BUILD

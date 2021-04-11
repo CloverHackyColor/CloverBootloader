@@ -51,6 +51,7 @@ InitTheme(const CHAR8* ChosenTheme)
   //initialize Daylight when we know timezone
   if (gSettings.GUI.Timezone != 0xFF) { // 0xFF:default=timezone not set
     INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
+ //   DBG("now is %d, zone is %d\n", Now.Hour, gSettings.GUI.Timezone);
     if (NowHour <  0 ) NowHour += 24;
     if (NowHour >= 24 ) NowHour -= 24;
     ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);

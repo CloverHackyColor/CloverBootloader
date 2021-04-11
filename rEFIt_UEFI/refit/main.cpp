@@ -2672,10 +2672,14 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
 
   EFI_TIME          Now;
   gRT->GetTime(&Now, NULL);
-  INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
-  if (NowHour <  0 ) NowHour += 24;
-  if (NowHour >= 24 ) NowHour -= 24;
-  ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+  if (gSettings.GUI.Timezone != 0xFF) {
+    INT32 NowHour = Now.Hour + gSettings.GUI.Timezone;
+    if (NowHour <  0 ) NowHour += 24;
+    if (NowHour >= 24 ) NowHour -= 24;
+    ThemeX.Daylight = (NowHour > 8) && (NowHour < 20);
+  } else {
+    ThemeX.Daylight = TRUE;
+  }
 
   ThemeX.DarkEmbedded = gSettings.GUI.getDarkEmbedded(ThemeX.Daylight);
 
@@ -3160,7 +3164,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
-  DBG("print error level mask = %x\n", GetDebugPrintErrorLevel() );
+//  DBG("print error level mask = %x\n", GetDebugPrintErrorLevel() );
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                          (gCPUStructure.MaxRatio == 0) ? 1 : gCPUStructure.MaxRatio);

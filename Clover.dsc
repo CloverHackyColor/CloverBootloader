@@ -839,7 +839,7 @@ rEFIt_UEFI/refit.inf {
   #
   <PcdsFixedAtBuild>
     gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
-    gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+    gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
 }
 
 
