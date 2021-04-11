@@ -12,8 +12,6 @@
 			<false/>
 			<key>#UseSystemIO</key>
 			<false/>
-			<key>#PluginType</key>
-			<integer>0</integer>
 			<key>#DoubleFirstState</key>
 			<true/>
 			<key>#EnableC2</key>
@@ -257,7 +255,7 @@
 				<false/>
 				<key>Comment</key>
 				<string>Dell variables</string>
-				<key>UUID</key>
+				<key>Guid</key>
 				<string>FF2E9FC7-D16F-434A-A24E-C99519B7EB93</string>
 				<key>Name</key>
 				<string>*</string>
@@ -302,8 +300,6 @@
 		<false/>
 		<key>#ig-platform-id</key>
 		<string>0x01620005</string>
-		<key>#Connectors</key>
-		<array/>
 		<key>#PatchVBios</key>
 		<false/>
 		<key>#FBName</key>
@@ -372,6 +368,8 @@
 		<key>#DefaultLoader</key>
 		<string>boot.efi</string>
 		<key>Fast</key>
+		<false/>
+		<key>NoEarlyProgress</key>
 		<false/>
 		<key>#XMPDetection</key>
 		<string>-1</string>
@@ -569,7 +567,7 @@
 				<data>VUiJ</data>
 				<key>Replace</key>
 				<data>sAHD</data>
-				<key>FindMask</key>
+				<key>MaskFind</key>
 				<data>AAAA</data>
 				<key>RangeFind</key>
 				<integer>10</integer>
@@ -796,6 +794,8 @@
 		</dict>
 		<key>#TextOnly</key>
 		<false/>
+		<key>ProvideConsoleGop</key>
+		<true/>
 		<key>#ConsoleMode</key>
 		<string>0</string>
 		<key>#Custom</key>
@@ -1104,15 +1104,30 @@
 		<key>ForceExitBootServices</key>
 		<false/>
 		<key>MmioWhitelist</key>
-		<array/>
+		<array>
+			<dict>
+				<key>Address</key>
+				<integer>4275159040</integer>
+				<key>Comment</key>
+				<string>Haswell: SB_RCBA is a 0x4 page memory region, containing SPI_BASE at 0x3800 (SPI_BASE_ADDRESS)</string>
+				<key>Enabled</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>Address</key>
+				<integer>4278190080</integer>
+				<key>Comment</key>
+				<string>Generic: PCI root is a 0x1000 page memory region used by some firmwares</string>
+				<key>Enabled</key>
+				<false/>
+			</dict>
+		</array>
 		<key>ProtectMemoryRegions</key>
 		<false/>
 		<key>ProtectSecureBoot</key>
 		<false/>
 		<key>ProtectUefiServices</key>
 		<false/>
-		<key>ProvideConsoleGopEnable</key>
-		<true/>
 		<key>ProvideCustomSlide</key>
 		<false/>
 		<key>ProvideMaxSlide</key>
@@ -1125,6 +1140,30 @@
 		<false/>
 		<key>SyncRuntimePermissions</key>
 		<true/>
+		<key>FuzzyMatch</key>
+		<true/>
+		<key>KernelCache</key>
+		<string>Auto</string>
+		<key>AppleXcpmExtraMsrs</key>
+		<false/>
+		<key>AppleXcpmForceBoost</key>
+		<false/>
+		<key>DisableIoMapper</key>
+		<true/>
+		<key>DisableLinkeditJettison</key>
+		<true/>
+		<key>DummyPowerManagement</key>
+		<false/>
+		<key>ExternalDiskIcons</key>
+		<false/>
+		<key>IncreasePciBarSize</key>
+		<false/>
+		<key>PowerTimeoutKernelPanic</key>
+		<false/>
+		<key>ThirdPartyDrives</key>
+		<false/>
+		<key>XhciPortLimit</key>
+		<false/>
 	</dict>
 </dict>
 </plist>
