@@ -175,7 +175,7 @@ void XImage::Fill(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL& Color)
 
 void XImage::Fill(const EG_PIXEL* Color)
 {
-  Fill((const EFI_GRAPHICS_OUTPUT_BLT_PIXEL&)Color);
+  Fill( *(const EFI_GRAPHICS_OUTPUT_BLT_PIXEL*)Color );
 }
 
 void XImage::FillArea(const EG_PIXEL* Color, EG_RECT& Rect)

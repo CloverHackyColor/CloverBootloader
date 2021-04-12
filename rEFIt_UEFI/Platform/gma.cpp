@@ -1481,18 +1481,18 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
     case 0x0116: // "Intel HD Graphics 3000"
     case 0x0122: // "Intel HD Graphics 3000"
     case 0x0126: // "Intel HD Graphics 3000"
-      if (gSettings.Graphics.IgPlatform != 0) {
-        devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&gSettings.Graphics.IgPlatform, 4);
-		  MsgLog("  snb-platform-id = 0x%08x\n", gSettings.Graphics.IgPlatform);
+      if (GlobalConfig.IgPlatform != 0) {
+        devprop_add_value(device, "AAPL,snb-platform-id", (UINT8*)&GlobalConfig.IgPlatform, 4);
+		  MsgLog("  snb-platform-id = 0x%08x\n", GlobalConfig.IgPlatform);
         SetSnb = TRUE;
       } else {
         DBG("  snb-platform-id: not set\n");
       }
       break;
     default:
-      if (gSettings.Graphics.IgPlatform != 0) {
-        devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&gSettings.Graphics.IgPlatform, 4);
-		  MsgLog("  ig-platform-id = 0x%08x\n", gSettings.Graphics.IgPlatform);
+      if (GlobalConfig.IgPlatform != 0) {
+        devprop_add_value(device, "AAPL,ig-platform-id", (UINT8*)&GlobalConfig.IgPlatform, 4);
+		  MsgLog("  ig-platform-id = 0x%08x\n", GlobalConfig.IgPlatform);
         SetIg = TRUE;
       } else {
         DBG("  ig-platform-id: not set\n");
@@ -1909,7 +1909,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
             break;
         }
       }
-      switch (gSettings.Graphics.IgPlatform) {
+      switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x00030030:
         case (UINT32)0x00050000:
           break;
@@ -2033,7 +2033,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
       }
-      switch (gSettings.Graphics.IgPlatform) {
+      switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x01620006:
         case (UINT32)0x01620007:
           break;
@@ -2194,7 +2194,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
             break;
         }
       }
-      switch (gSettings.Graphics.IgPlatform) {
+      switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x04120004:
         case (UINT32)0x0412000B:
           break;
@@ -2511,7 +2511,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
       }
-      switch (gSettings.Graphics.IgPlatform) {
+      switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x19020001:
         case (UINT32)0x19120001:
         case (UINT32)0x19170001:
@@ -2869,7 +2869,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
       }
-      switch (gSettings.Graphics.IgPlatform) {
+      switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x59120003:
         case (UINT32)0x59180002:
           break;
@@ -3116,7 +3116,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
           }
           break;
       }
-      switch (gSettings.Graphics.IgPlatform) {
+      switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x3E910003:
         case (UINT32)0x3E920003:
         case (UINT32)0x3E980003:
@@ -3284,7 +3284,7 @@ BOOLEAN setup_gma_devprop(LOADER_ENTRY *Entry, pci_dt_t *gma_dev)
         default:
           break;
       }
-      /*switch (gSettings.Graphics.IgPlatform) {
+      /*switch (GlobalConfig.IgPlatform) {
         case (UINT32)0x5A510003:
         case (UINT32)0x5A520003:
           break;

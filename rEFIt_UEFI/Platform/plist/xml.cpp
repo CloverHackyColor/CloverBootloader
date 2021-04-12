@@ -80,6 +80,7 @@ size_t XMLDecode(const char* src, size_t srclen, char* out, size_t outlen)
   char* o;
 
   if (!src) {
+    if ( outlen > 0 ) *out = 0;
     return 0;
   }
 
@@ -89,8 +90,8 @@ size_t XMLDecode(const char* src, size_t srclen, char* out, size_t outlen)
   while (s < src+srclen) /* Make sure the terminator is also copied */
   {
     if ( *s == '&' ) {
-      UINTN i;
       s++;
+      size_t i;
       for (i = 0; i < sizeof(ents)/sizeof(ents[0]); i++) {
         if ( ents[i].name.strncmp(s, ents[i].nameLen) == 0 ) {
           if ( uintptr_t(o)-uintptr_t(out) >= outlen ) return uintptr_t(o)-uintptr_t(out);
@@ -99,6 +100,7 @@ size_t XMLDecode(const char* src, size_t srclen, char* out, size_t outlen)
           break;
         }
       }
+      if ( i < sizeof(ents)/sizeof(ents[0]) ) continue; // if entity is found, let's go up to the beginning of the loop and avoid inserting thenext char without checking if it's another entity
     }
     if ( uintptr_t(o)-uintptr_t(out) >= outlen ) return uintptr_t(o)-uintptr_t(out);
     *o++ = *s++;

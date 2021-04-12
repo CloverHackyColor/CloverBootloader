@@ -1051,10 +1051,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          newKextPatch.StartMask.memset(0xFF, FindLen);
-          if (TmpData != NULL) {
-            newKextPatch.StartMask.ncpy(TmpData, ReplaceLen);
-          }
+          if (TmpData != NULL) newKextPatch.StartMask.ncpy(TmpData, ReplaceLen); // KextsToPatch
+          newKextPatch.StartMask.setSize(FindLen, 0xFF);
         }
         if (TmpData != NULL) {
           FreePool(TmpData);
@@ -1085,14 +1083,14 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
 
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newKextPatch.MaskFind.memset(0xFF, FindLen);
           newKextPatch.MaskFind.ncpy(TmpData, MaskLen);
+          newKextPatch.MaskFind.setSize(FindLen, 0xFF);
         }
         FreePool(TmpData);
         // take into account a possibility to set ReplaceLen < FindLen. In this case assumes MaskReplace = 0 for the rest of bytes 
-        newKextPatch.Replace.memset(0, FindLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         newKextPatch.Replace.ncpy(TmpPatch, ReplaceLen);
+        newKextPatch.Replace.setSize(FindLen, 0);
         FreePool(TmpPatch);
         
         MaskLen = 0;
@@ -1100,8 +1098,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         MaskLen = MIN(ReplaceLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newKextPatch.MaskReplace.memset(0, FindLen);
           newKextPatch.MaskReplace.ncpy(TmpData, MaskLen); //other bytes are zeros, means no replace
+          newKextPatch.MaskReplace.setSize(FindLen, 0);
         }
         FreePool(TmpData);
         
@@ -1203,10 +1201,8 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          newKernelPatch.StartMask.memset(0xFF, FindLen);
-          if (TmpData != NULL) {
-            newKernelPatch.StartMask.ncpy(TmpData, ReplaceLen);
-          }
+          if (TmpData != NULL) newKernelPatch.StartMask.ncpy(TmpData, ReplaceLen); // KernelToPatch
+          newKernelPatch.StartMask.setSize(FindLen, 0xFF);
         }
         if (TmpData != NULL) {
           FreePool(TmpData);
@@ -1237,22 +1233,22 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         MaskLen = (MaskLen > FindLen)? FindLen : MaskLen;
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newKernelPatch.MaskFind.memset(0xFF, FindLen);
           newKernelPatch.MaskFind.ncpy(TmpData, MaskLen);
+          newKernelPatch.MaskFind.setSize(FindLen, 0xFF);
         }
         FreePool(TmpData);
         // this is "Replace" string len of ReplaceLen
         ReplaceLen = MIN(ReplaceLen, FindLen);
-        newKernelPatch.Replace.memset(0, FindLen);
         newKernelPatch.Replace.ncpy(TmpPatch, ReplaceLen);
+        newKernelPatch.Replace.setSize(FindLen, 0);
         FreePool(TmpPatch);
         MaskLen = 0;
         TmpData    = GetDataSetting (Prop2, "MaskReplace", &MaskLen); //reuse MaskLen
         MaskLen = MIN(ReplaceLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newKernelPatch.MaskReplace.memset(0, FindLen);
           newKernelPatch.MaskReplace.ncpy(TmpData, MaskLen);
+          newKernelPatch.MaskReplace.setSize(FindLen, 0);
         }
         FreePool(TmpData);
         newKernelPatch.Count        = 0;
@@ -1337,10 +1333,10 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         TmpData    = GetDataSetting (Prop2, "MaskStart", &ReplaceLen);
         ReplaceLen = MIN(ReplaceLen, FindLen);
         if (FindLen != 0) {
-          newBootPatch.StartMask.memset(0xFF, FindLen);
           if (TmpData != NULL) {
             newBootPatch.StartMask.ncpy(TmpData, ReplaceLen);
           }
+          newBootPatch.StartMask.setSize(FindLen, 0xFF);
         }
         if (TmpData != NULL) {
           FreePool(TmpData);
@@ -1361,20 +1357,20 @@ FillinKextPatches (IN OUT KERNEL_AND_KEXT_PATCHES *Patches,
         MaskLen = MIN(FindLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newBootPatch.MaskFind.memset(0xFF, FindLen);
           newBootPatch.MaskFind.ncpy(TmpData, MaskLen);
+          newBootPatch.MaskFind.setSize(FindLen, 0xFF);
         }
         FreePool(TmpData);
-        newBootPatch.Replace.memset(0, FindLen);
         newBootPatch.Replace.ncpy(TmpPatch, ReplaceLen);
+        newBootPatch.Replace.setSize(FindLen, 0);
         FreePool(TmpPatch);
         MaskLen = 0;
         TmpData    = GetDataSetting(Prop2, "MaskReplace", &MaskLen);
         MaskLen = MIN(ReplaceLen, MaskLen);
         if (TmpData == NULL || MaskLen == 0) {
         } else {
-          newBootPatch.MaskReplace.memset(0, FindLen);
           newBootPatch.MaskReplace.ncpy(TmpData, MaskLen);
+          newBootPatch.MaskReplace.setSize(FindLen, 0);
         }
         FreePool(TmpData);
         newBootPatch.Count        = 0;
@@ -4644,7 +4640,7 @@ void SETTINGS_DATA::DevicesClass::FillDevicePropertiesOld(SETTINGS_DATA& gSettin
 
                 //Special case. In future there must be more such cases
                 if ((AsciiStrStr(gSettings.Devices.ArbProperties->Key, "-platform-id") != NULL)) {
-                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, gSettings.Devices.ArbProperties->Value, 4);
+                  CopyMem((CHAR8*)&gSettings.Graphics._IgPlatform, gSettings.Devices.ArbProperties->Value, 4);
                 }
               }   //for() device properties
             }
@@ -4799,10 +4795,10 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
       gSettings.Graphics.NvidiaSingle = IsPropertyNotNullAndTrue(Prop);
 
       Prop = GraphicsDict->propertyForKey("ig-platform-id");
-      gSettings.Graphics.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics.IgPlatform);
+      gSettings.Graphics._IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics._IgPlatform);
 
       Prop = GraphicsDict->propertyForKey("snb-platform-id");
-      gSettings.Graphics.IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics.IgPlatform);
+      gSettings.Graphics._IgPlatform = (UINT32)GetPropertyAsInteger(Prop, gSettings.Graphics._IgPlatform);
 
       FillCardList(GraphicsDict, gSettings); //#@ Getcardslist
     }
@@ -5060,9 +5056,9 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
                 }
 
                 //Special case. In future there must be more such cases
-                if ( newDevProp->Key.contains("-platform-id") ) {
-                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, newDevProp->Value.data(), 4);
-                }
+//                if ( newDevProp->Key.contains("-platform-id") ) {
+//                  CopyMem((CHAR8*)&gSettings.Graphics.IgPlatform, newDevProp->Value.data(), 4);
+//                }
                 if ( arbProp == NULL ) {
                   arbProp = new SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass();
                   arbProp->Device = (UINT32)DeviceAddr;
@@ -6911,10 +6907,10 @@ SetDevices (LOADER_ENTRY *Entry)
       const SETTINGS_DATA::DevicesClass::SimplePropertyClass& Prop2 = Prop.propertiesArray[jdx];
       if (Prop2.MenuItem.BValue) {
         if ( Prop2.Key.contains("-platform-id") ) {
-          if ( gSettings.Graphics.IgPlatform == 0 && Prop2.Value.size() == sizeof(gSettings.Graphics.IgPlatform) ) {
-            CopyMem((UINT8*)&gSettings.Graphics.IgPlatform, Prop2.Value.data(), sizeof(gSettings.Graphics.IgPlatform));
+          if ( GlobalConfig.IgPlatform == 0 && Prop2.Value.size() == sizeof(GlobalConfig.IgPlatform) ) {
+            CopyMem((UINT8*)&GlobalConfig.IgPlatform, Prop2.Value.data(), sizeof(GlobalConfig.IgPlatform));
           }
-          devprop_add_value(device, Prop2.Key.c_str(), (UINT8*)&gSettings.Graphics.IgPlatform, 4);
+          devprop_add_value(device, Prop2.Key.c_str(), (UINT8*)&GlobalConfig.IgPlatform, 4);
           DBG("   Add key=%s valuelen=%zu\n", Prop2.Key.c_str(), Prop2.Value.size());
         } else if ( (Prop2.Key.contains("override-no-edid") || Prop2.Key.contains("override-no-connect"))
           && gSettings.Graphics.EDID.InjectEDID && gSettings.Graphics.EDID.CustomEDID.notEmpty()) {
@@ -6984,7 +6980,7 @@ SetDevices (LOADER_ENTRY *Entry)
           //special corrections
             if (Prop2.MenuItem.BValue) {
               if ( Prop2.Key.contains("-platform-id") ) {
-                devprop_add_value(device, Prop2.Key.c_str(), (UINT8*)&gSettings.Graphics.IgPlatform, sizeof(gSettings.Graphics.IgPlatform));
+                devprop_add_value(device, Prop2.Key.c_str(), (UINT8*)&GlobalConfig.IgPlatform, sizeof(GlobalConfig.IgPlatform));
               } else {
                 devprop_add_value(device, Prop2.Key, Prop2.Value);
               }
@@ -7148,8 +7144,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0116: // "Intel HD Graphics 3000"
                   case 0x0122: // "Intel HD Graphics 3000"
                   case 0x0126: // "Intel HD Graphics 3000"
-                    if (gSettings.Graphics.IgPlatform) {
-                      switch (gSettings.Graphics.IgPlatform) {
+                    if (GlobalConfig.IgPlatform) {
+                      switch (GlobalConfig.IgPlatform) {
                         case (UINT32)0x00030010:
                         case (UINT32)0x00050000:
                           FBLEVX = 0xFFFF;
@@ -7194,8 +7190,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x0D2A: // "Intel Iris Pro Graphics 5200"
                   case 0x0D2B: // "Intel Iris Pro Graphics 5200"
                   case 0x0D2E: // "Intel Iris Pro Graphics 5200"
-                    if (gSettings.Graphics.IgPlatform) {
-                      switch (gSettings.Graphics.IgPlatform) {
+                    if (GlobalConfig.IgPlatform) {
+                      switch (GlobalConfig.IgPlatform) {
                         case (UINT32)0x04060000:
                         case (UINT32)0x0c060000:
                         case (UINT32)0x04160000:
@@ -7255,8 +7251,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x162D: // "Intel Iris Pro Graphics P6300"
                   case 0x1622: // "Intel Iris Pro Graphics 6200"
                   case 0x162A: // "Intel Iris Pro Graphics P6300"
-                    if (gSettings.Graphics.IgPlatform) {
-                      switch (gSettings.Graphics.IgPlatform) {
+                    if (GlobalConfig.IgPlatform) {
+                      switch (GlobalConfig.IgPlatform) {
                         case (UINT32)0x16060000:
                         case (UINT32)0x160e0000:
                         case (UINT32)0x16160000:
@@ -7322,8 +7318,8 @@ SetDevices (LOADER_ENTRY *Entry)
                   case 0x193A: // "Intel Iris Pro Graphics P580"
                   case 0x193B: // "Intel Iris Pro Graphics 580"
                   case 0x193D: // "Intel Iris Pro Graphics P580"
-                    if (gSettings.Graphics.IgPlatform) {
-                      switch (gSettings.Graphics.IgPlatform) {
+                    if (GlobalConfig.IgPlatform) {
+                      switch (GlobalConfig.IgPlatform) {
                         case (UINT32)0x19120001:
                         FBLEVX = 0xFFFF;
                         break;

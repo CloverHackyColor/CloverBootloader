@@ -1174,7 +1174,7 @@ public:
       XArray<UINT8>        NVCAP = XArray<UINT8>();
       INT8                 BootDisplay = INT8();
       UINT32               DualLink = UINT32();
-      UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
+      UINT32               _IgPlatform = UINT32(); //could also be snb-platform-id
       EDIDClass            EDID = EDIDClass();
       InjectAsDictClass    InjectAsDict = InjectAsDictClass();
       XObjArray<GRAPHIC_CARD> ATICardList = XObjArray<GRAPHIC_CARD>();
@@ -1207,7 +1207,7 @@ public:
         if ( !(NVCAP == other.NVCAP) ) return false;
         if ( !(BootDisplay == other.BootDisplay) ) return false;
         if ( !(DualLink == other.DualLink) ) return false;
-        if ( !(IgPlatform == other.IgPlatform) ) return false;
+        if ( !(_IgPlatform == other._IgPlatform) ) return false;
         if ( !EDID.isEqual(other.EDID) ) return false;
         if ( !InjectAsDict.isEqual(other.InjectAsDict) ) return false;
         if ( !ATICardList.isEqual(other.ATICardList) ) return false;
@@ -2245,6 +2245,8 @@ public:
   
   UINT8  flagstate[32] = {0};
   MACHINE_TYPES CurrentModel = MaxMachineType;
+
+  UINT32               IgPlatform = UINT32(); //could also be snb-platform-id
 
 
   REFIT_CONFIG() {};

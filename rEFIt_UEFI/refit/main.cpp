@@ -559,12 +559,12 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *, IN CONST CHAR16 *) 
 
 void CheckEmptyFB()
 {
-  BOOLEAN EmptyFB = (gSettings.Graphics.IgPlatform == 0x00050000) ||
-  (gSettings.Graphics.IgPlatform == 0x01620007) ||
-  (gSettings.Graphics.IgPlatform == 0x04120004) ||
-  (gSettings.Graphics.IgPlatform == 0x19120001) ||
-  (gSettings.Graphics.IgPlatform == 0x59120003) ||
-  (gSettings.Graphics.IgPlatform == 0x3E910003);
+  BOOLEAN EmptyFB = (GlobalConfig.IgPlatform == 0x00050000) ||
+  (GlobalConfig.IgPlatform == 0x01620007) ||
+  (GlobalConfig.IgPlatform == 0x04120004) ||
+  (GlobalConfig.IgPlatform == 0x19120001) ||
+  (GlobalConfig.IgPlatform == 0x59120003) ||
+  (GlobalConfig.IgPlatform == 0x3E910003);
   if (EmptyFB) {
     gSettings.Smbios.gPlatformFeature |= PT_FEATURE_HAS_HEADLESS_GPU;
   } else {
@@ -2793,7 +2793,16 @@ void afterGetUserSettings(SETTINGS_DATA& gSettings)
     }
   }
   //---------
-
+  GlobalConfig.IgPlatform = gSettings.Graphics._IgPlatform;
+  for ( size_t idx = 0 ; idx < gSettings.Devices.ArbitraryArray.size() ; ++idx ) {
+    const SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass& arbitraryProperty = gSettings.Devices.ArbitraryArray[idx];
+    for ( size_t jdx = 0 ; jdx < arbitraryProperty.CustomPropertyArray.size() ; ++jdx ) {
+      const SETTINGS_DATA::DevicesClass::SimplePropertyClass& customProperty = arbitraryProperty.CustomPropertyArray[jdx];
+      if ( customProperty.Key.contains("-platform-id") ) {
+        memcpy(&GlobalConfig.IgPlatform, customProperty.Key.data(), 4);
+      }
+    }
+  }
 }
 
 //
@@ -2843,10 +2852,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   /*Status = */EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (void **) &gDS);
   
   ConsoleInHandle = SystemTable->ConsoleInHandle;
-
+//#define DEBUG_ERALY_CRASH
 #ifdef DEBUG_ERALY_CRASH
-  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Start");
-  PauseForKey(L"1) press any key\n");
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step1");
+  PauseForKey(L"press any key\n");
 #endif
 
 #ifdef DEBUG_ON_SERIAL_PORT
@@ -2857,12 +2866,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     EFI_LOADED_IMAGE* LoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (void **) &LoadedImage);
 
+#ifdef DEBUG_ERALY_CRASH
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step2");
+  PauseForKey(L"press any key\n");
+#endif
+
 //    if ( !EFI_ERROR(Status) ) {
 //      XString8 msg = S8Printf("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
 //      SerialPortWrite((UINT8*)msg.c_str(), msg.length());
 //    }
     if ( !EFI_ERROR(Status) ) {
       DBG("CloverX64 : Image base = 0x%llX\n", (uintptr_t)LoadedImage->ImageBase); // do not change, it's used by grep to feed the debugger
+#ifdef DEBUG_ERALY_CRASH
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step3");
+  PauseForKey(L"press any key\n");
+#endif
     }
 #ifdef JIEF_DEBUG
     gBS->Stall(2500000); // to give time to gdb to connect
@@ -2870,8 +2888,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #endif
   }
 
+#ifdef DEBUG_ERALY_CRASH
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step4");
+  PauseForKey(L"press any key\n");
+#endif
+
 #ifdef CLOVER_BUILD
   construct_globals_objects(gImageHandle); // do this after self.getSelfLoadedImage() is initialized
+#endif
+
+#ifdef DEBUG_ERALY_CRASH
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step5");
+  PauseForKey(L"press any key\n");
 #endif
 
 #ifdef JIEF_DEBUG
@@ -2881,9 +2909,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   gRT->GetTime(&Now, NULL);
 
-  Status = InitRefitLib(gImageHandle);
+  Status = InitRefitLib(gImageHandle); // From here, debug.log starts to be saved because InitRefitLib call self.initialize()
   if (EFI_ERROR(Status))
     return Status;
+
+#ifdef DEBUG_ERALY_CRASH
+  SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Step6");
+  PauseForKey(L"press any key\n");
+#endif
 
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
@@ -3137,10 +3170,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
-
-#ifdef DEBUG_ERALY_CRASH
-  PauseForKey(L"2) press any key\n");
-#endif
 
   DbgHeader("InitScreen");
 

@@ -217,7 +217,7 @@ void FillInputs(BOOLEAN New)
       InputItems[InputItemsCount].ItemType = BoolValue; //21+i*6
       InputItems[InputItemsCount++].BValue = gSettings.Graphics.InjectAsDict.InjectIntel;
       InputItems[InputItemsCount].ItemType = Hex; //22+6i
-		  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", gSettings.Graphics.IgPlatform);
+		  InputItems[InputItemsCount++].SValue.SWPrintf("0x%08X", GlobalConfig.IgPlatform);
  //     InputItemsCount += 3;
  //     continue;
     }
@@ -594,12 +594,12 @@ void ApplyInputs(void)
         hex2bin(InputItems[i].SValue, (UINT8*)&gSettings.Graphics.Dcfg[0], sizeof(gSettings.Graphics.Dcfg));
       } else if (gGraphics[j].Vendor == Intel) {
         //ig-platform-id for Ivy+ and snb-platform-id for Sandy
-        gSettings.Graphics.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
-        DBG("applied *-platform-id=0x%X\n", gSettings.Graphics.IgPlatform);
+        GlobalConfig.IgPlatform = (UINT32)StrHexToUint64(InputItems[i].SValue.wc_str());
+        DBG("applied *-platform-id=0x%X\n", GlobalConfig.IgPlatform);
       }
     }
 
-    if (gGraphics[i].Vendor == Intel) {
+    if (gGraphics[j].Vendor == Intel) {
       i += 3;
       continue;
     }
