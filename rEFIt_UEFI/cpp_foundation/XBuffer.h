@@ -71,7 +71,7 @@ protected:
 
 public:
 
-	void CheckSize(size_t nNewSize, size_t nGrowBy = XBufferGrowByDefault);
+	void CheckAllocatedSize(size_t nNewSize, size_t nGrowBy = XBufferGrowByDefault);
 
   void* vdata() const { return (void*)XBuffer_Super::data(); }
   const T* data() const { return _WData; }
@@ -91,35 +91,44 @@ public:
       return NULL;
 #endif
     }
-    CheckSize(size, 0);
+    CheckAllocatedSize(size, 0);
     return data();
   }
 
 //	void *Data(size_t ui=0) { return _WData+ui; }
-//	void *DataWithSizeMin(size_t ui, size_t size, size_t nGrowBy=XBufferGrowByDefault) { CheckSize(size, nGrowBy); return Data(ui); }
+//	void *DataWithSizeMin(size_t ui, size_t size, size_t nGrowBy=XBufferGrowByDefault) { CheckAllocatedSize(size, nGrowBy); return Data(ui); }
 //
 //	char *CData(size_t ui=0) { return (char *)(_WData+ui); }
-//	char *CDataWithSizeMin(size_t ui, size_t size, size_t nGrowBy=XBufferGrowByDefault) { CheckSize(size, nGrowBy); return CData(ui); }
+//	char *CDataWithSizeMin(size_t ui, size_t size, size_t nGrowBy=XBufferGrowByDefault) { CheckAllocatedSize(size, nGrowBy); return CData(ui); }
 //
 //	unsigned char *UCData(size_t ui=0) { return _WData+ui; }
-//	void *UCDataWithSizeMin(size_t ui, unsigned int size, size_t nGrowBy=XBufferGrowByDefault) { CheckSize(size, nGrowBy); return UCData(ui); }
+//	void *UCDataWithSizeMin(size_t ui, unsigned int size, size_t nGrowBy=XBufferGrowByDefault) { CheckAllocatedSize(size, nGrowBy); return UCData(ui); }
 
 	size_t size() const { return XRBuffer<T>::size(); }
 
   template<typename IntegralType, enable_if(is_integral(IntegralType))>
-	void setSize(IntegralType size) {
-#ifdef DEBUG
-    if ( size<0 ) panic("XBuffer::setSize() -> i < 0");
-    if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) panic("XBuffer::setSize() -> i > MAX_XSIZE");
-#else
-    if ( size<0 ) return;
-    if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) return;
-#endif
-    CheckSize((unsigned_type(IntegralType))size);
+	void __setSize(IntegralType size) {
+    if ( size<0 ) { panic_ask("XBuffer::setSize() -> i < 0"); return; }
+    if ( (unsigned_type(IntegralType))size > MAX_XSIZE ) { panic_ask("XBuffer::setSize() -> i > MAX_XSIZE"); return; }
+    CheckAllocatedSize((unsigned_type(IntegralType))size);
     XBuffer_Super::m_size = (unsigned_type(IntegralType))size;
   };
 
-	void setEmpty() { setSize(0); };
+  /* add value 0 until size is reached */
+  template<typename IntegralType, enable_if(is_integral(IntegralType))>
+  void setSize(IntegralType size, const T& elementToCopy) {
+    if ( size<0 ) { panic_ask("XBuffer::setSize() -> i < 0"); return; }
+    unsigned_type(IntegralType) usize = (unsigned_type(IntegralType))size;
+    if ( usize > MAX_XSIZE ) { panic_ask("XBuffer::setSize() -> i > MAX_XSIZE"); return; }
+    CheckAllocatedSize(usize);
+    for ( size_t idx = XBuffer_Super::m_size ; idx < usize ; ++idx ) {
+      _WData[idx] = elementToCopy;
+    }
+    XBuffer_Super::m_size = usize;
+  };
+
+
+	void setEmpty() { __setSize(0); };
 
   bool operator == (const XBuffer<T>& other) const {
     if ( size() != other.size() ) return false;
@@ -171,7 +180,7 @@ public:
 #else
     if (count < 0) return;
 #endif
-    if ( (unsigned_type(IntegralType))count >= size() ) setSize(count);
+    if ( (unsigned_type(IntegralType))count >= size() ) __setSize(count);
     ::memset(_WData, c, count);
   }
 
@@ -300,10 +309,10 @@ void XBuffer<T>::Initialize(const T* p, size_t count, size_t index)
 }
 
 //-------------------------------------------------------------------------------------------------
-//                                               CheckSize
+//                                               CheckAllocatedSize
 //-------------------------------------------------------------------------------------------------
 template <typename T>
-void XBuffer<T>::CheckSize(size_t nNewSize, size_t nGrowBy)
+void XBuffer<T>::CheckAllocatedSize(size_t nNewSize, size_t nGrowBy)
 {
   if ( m_allocatedSize < nNewSize )
   {
@@ -311,7 +320,7 @@ void XBuffer<T>::CheckSize(size_t nNewSize, size_t nGrowBy)
     _WData = (T*)Xrealloc(_WData, nNewSize*sizeof(T), m_allocatedSize);
     if ( !_WData ) {
 #ifdef DEBUG
-      panic("XBuffer<T>::CheckSize(%zu, %zu) : Xrealloc(%" PRIuPTR " %zu, %zu) returned NULL. System halted\n", nNewSize, nGrowBy, uintptr_t(_WData), nNewSize, m_allocatedSize);
+      panic("XBuffer<T>::CheckAllocatedSize(%zu, %zu) : Xrealloc(%" PRIuPTR " %zu, %zu) returned NULL. System halted\n", nNewSize, nGrowBy, uintptr_t(_WData), nNewSize, m_allocatedSize);
 #else
       m_allocatedSize = 0;
       return;
@@ -396,7 +405,7 @@ template <typename T>
 void XBuffer<T>::ncpy(const void *buf, size_t len)
 {
   if ( buf && len > 0 ) {
-    setSize(len);
+    __setSize(len);
     memcpy(data(), buf, len);
   }
 }
@@ -405,9 +414,9 @@ template <typename T>
 void XBuffer<T>::ncat(const void *buf, size_t len)
 {
   if ( buf && len > 0 ) {
-    CheckSize(size()+len);
+    CheckAllocatedSize(size()+len);
     memcpy(data(size()), buf, len);
-    setSize(size()+len);
+    __setSize(size()+len);
   }
 }
 //
@@ -422,11 +431,11 @@ template <typename T>
 void XBuffer<T>::deleteAtPos(unsigned int pos, unsigned int count)
 {
   if ( pos < size() ) {
-    if ( pos + count < size() ) {
+    if ( size() - pos <= count ) {
       memmove( _WData+pos, _WData+pos+count, size()-pos-count);
-      setSize(size()-count);
+      __setSize(size()-count);
     }else{
-      setSize(pos);
+      __setSize(pos);
     }
   }
 }
