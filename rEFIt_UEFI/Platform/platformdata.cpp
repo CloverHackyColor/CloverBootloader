@@ -1024,7 +1024,7 @@ void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
 {
   memset(RPlt, 0, 8);
   if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
-    snprintf(RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
+    snprintf(RPlt, 8, "%s", ApplePlatformData[Model].smcPlatform.c_str());
 //    memcpy(RPlt, ApplePlatformData[Model].smcPlatform.c_str(), 8);
   } else {
     switch (gCPUStructure.Model) {
