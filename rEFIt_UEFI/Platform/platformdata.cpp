@@ -946,7 +946,8 @@ void getRBr(MACHINE_TYPES Model, char RBr[8])
 {
   memset(RBr, 0, 8);
   if (ApplePlatformData[Model].smcBranch[0] != 'N') {
-    snprintf(RBr, 8, "%s", ApplePlatformData[Model].smcBranch.c_str());
+//    snprintf(RBr, 8, "%s", ApplePlatformData[Model].smcBranch.c_str());
+    memcpy(RBr, ApplePlatformData[Model].smcBranch.c_str(), MIN(8, ApplePlatformData[Model].smcBranch.sizeInBytesIncludingTerminator()));
   } else {
     switch (gCPUStructure.Model) {
     case CPU_MODEL_PENTIUM_M:
@@ -995,7 +996,8 @@ void getRBr(MACHINE_TYPES Model, char RBr[8])
       break;
       
     case CPU_MODEL_SKYLAKE_D:
-      snprintf(RBr, 8, "%s", "j95j95am");
+//      snprintf(RBr, 8, "%s", "j95j95am");
+      memcpy(RBr, "j95j95am", 8);
       break;
       
     case CPU_MODEL_SKYLAKE_U:
@@ -1021,72 +1023,73 @@ void getRPlt(MACHINE_TYPES Model, bool Mobile, char RPlt[8])
 {
   memset(RPlt, 0, 8);
   if (ApplePlatformData[Model].smcPlatform[0] != 'N') {
-    AsciiStrCpyS(RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
+    snprintf(RPlt, 8, ApplePlatformData[Model].smcPlatform.c_str());
+//    memcpy(RPlt, ApplePlatformData[Model].smcPlatform.c_str(), 8);
   } else {
     switch (gCPUStructure.Model) {
     case CPU_MODEL_PENTIUM_M:
     case CPU_MODEL_CELERON:
-      AsciiStrCpyS (RPlt, 8, "m70");
+      snprintf(RPlt, 8, "m70");
       break;
       
     case CPU_MODEL_YONAH:
-      AsciiStrCpyS (RPlt, 8, "k22");
+      snprintf(RPlt, 8, "k22");
       break;
       
     case CPU_MODEL_MEROM: //TODO check for mobile
-      AsciiStrCpyS (RPlt, 8, "m75");
+      snprintf(RPlt, 8, "m75");
       break;
       
     case CPU_MODEL_PENRYN:
       if (Mobile) {
-        AsciiStrCpyS (RPlt, 8, "m82");
+        snprintf(RPlt, 8, "m82");
       } else {
-        AsciiStrCpyS (RPlt, 8, "k36");
+        snprintf(RPlt, 8, "k36");
       }
       break;
       
     case CPU_MODEL_SANDY_BRIDGE:
       if (Mobile) {
-        AsciiStrCpyS (RPlt, 8, "k90i");
+        snprintf(RPlt, 8, "k90i");
       } else {
-        AsciiStrCpyS (RPlt, 8, "k60");
+        snprintf(RPlt, 8, "k60");
       }
       break;
       
     case CPU_MODEL_IVY_BRIDGE:
-      AsciiStrCpyS (RPlt, 8, "j30");
+      snprintf(RPlt, 8, "j30");
       break;
       
     case CPU_MODEL_IVY_BRIDGE_E5:
-      AsciiStrCpyS (RPlt, 8, "j90");
+      snprintf(RPlt, 8, "j90");
       break;
       
     case CPU_MODEL_HASWELL_ULT:
-      AsciiStrCpyS (RPlt, 8, "j44");
+      snprintf(RPlt, 8, "j44");
       break;
       
     case CPU_MODEL_HASWELL_U5: //Mobile - Broadwell
-      AsciiStrCpyS (RPlt, 8, "j52");
+      snprintf(RPlt, 8, "j52");
       break;
       
     case CPU_MODEL_SKYLAKE_D:
-      AsciiStrCpyS (RPlt, 8, "j95");
+      snprintf(RPlt, 8, "j95");
       break;
       
     case CPU_MODEL_SKYLAKE_U:
-      AsciiStrCpyS (RPlt, 8, "j79");
+      snprintf(RPlt, 8, "j79");
       break;
       
     case CPU_MODEL_KABYLAKE1: //Mobile
-      AsciiStrCpyS (RPlt, 8, "j130a");
+      snprintf(RPlt, 8, "j130a");
       break;
       
     case CPU_MODEL_KABYLAKE2: //Desktop
-      AsciiStrCpyS (RPlt, 8, "j135");
+      snprintf(RPlt, 8, "j135");
       break;
       
     default:
-      AsciiStrCpyS (RPlt, 8, "t9");
+      snprintf(RPlt, 8, "t9");
       break;
     }
   }
