@@ -1009,7 +1009,8 @@ void getRBr(MACHINE_TYPES Model, char RBr[8])
       break;
       
     case CPU_MODEL_KABYLAKE2: //Desktop
-      snprintf(RBr, 8, "%s", "j133_4_5");
+//      snprintf(RBr, 8, "%s", "j133_4_5");
+      memcpy(RBr, "j133_4_5", 8);
       break;
       
     default:
