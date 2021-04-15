@@ -5061,9 +5061,9 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 //                }
                 if ( arbProp == NULL ) {
                   arbProp = new SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass();
-DBG("new=%lld\n", uintptr_t(arbProp));
-                  arbProp->Device = (UINT32)DeviceAddr;
+DBG("new ArbitraryPropertyClass()=%lld\n", uintptr_t(arbProp));
                   arbProp->Label = Label;
+                  arbProp->Device = (UINT32)DeviceAddr;
                   gSettings.Devices.ArbitraryArray.AddReference(arbProp, true);
                 }
                 arbProp->CustomPropertyArray.AddReference(newDevProp, true);
