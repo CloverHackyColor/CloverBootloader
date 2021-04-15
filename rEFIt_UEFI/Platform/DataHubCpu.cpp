@@ -545,7 +545,7 @@ SetupDataForOSX(BOOLEAN Hibernate)
     if (!isRevLess) {
       LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &RBr,    8);
       LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &ApplePlatformData[GlobalConfig.CurrentModel].smcConfig,   4);
-      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  ApplePlatformData[GlobalConfig.CurrentModel].smcRevision,    6);
+      LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &ApplePlatformData[GlobalConfig.CurrentModel].smcRevision, 6);
     }
     LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", RPlt,   8);
     LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Smbios.Mobile, 1);

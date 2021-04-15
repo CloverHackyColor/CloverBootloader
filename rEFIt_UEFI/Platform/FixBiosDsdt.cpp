@@ -5249,7 +5249,7 @@ BOOLEAN CmpFullName(UINT8* Table, UINTN Len, const XString8Array& Bridge)
 void RenameDevices(UINT8* table)
 {
 
-DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
+  DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
   if ( gSettings.ACPI.DeviceRename.size() <= 0 ) return; // to avoid message "0 replacement"
 
   INTN i;
@@ -5278,9 +5278,9 @@ DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
         break; //not found
       }
       adr += shift;
-//      DBG("found Name @ 0x%X\n", adr);
+      DBG("found Name @ 0x%llX\n", adr);
       if (Bridge.isEmpty() || (FindBin(table + adr - 4, 5, (const UINT8*)(Bridge.c_str()), 4) == 0)) { // long name like "RP02.PXSX"
-        DBG("replace without bridge %.*s by %s at table+%llu\n", 4, table + adr, Replace.c_str(), adr);
+//        DBG("replace without bridge %.*s by %s at table+%llu\n", 4, table + adr, Replace.c_str(), adr);
         CopyMem(table + adr, Replace.c_str(), 4);
         adr += 5; //at least, it is impossible to see  PXSXPXSX
         Num++;
@@ -5290,7 +5290,7 @@ DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
       i = adr;
       while ((i > 0) && isACPI_Char(table[i])) i--; //skip attached name
       i -= 6;  //skip size and device field
- //     DBG("search for bridge since %d\n", adr);
+ //     DBG("search for bridge since %lld\n", adr);
       while (i > 0x20) {  //find devices that previous to adr
         found = FALSE;
         //check device
@@ -5305,10 +5305,11 @@ DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
           found = TRUE;
         }
         if (found) {  // i points to Device or Scope
-          size = get_size(table, (UINT32)(UINTN)k); //k points to size  //        DBG("found bridge candidate 0x%X size %d\n", table[i], size);
+          size = get_size(table, (UINT32)(UINTN)k); //k points to size  //
+ //         DBG("found bridge candidate 0x%X size %lld\n", table[i], size);
           if (size) {
             if ((k + size) > (adr + 4)) {  //Yes - it is outer
-     //            DBG("found Bridge device begin=%X end=%X\n", k, k+size);
+  //            DBG("found Bridge device begin=%llX end=%llX\n", k, k+size);
               if (table[k] < 0x40) {
                 k += 1;
               }
@@ -5323,7 +5324,7 @@ DBG("RenameDevices %zu\n", gSettings.ACPI.DeviceRename.size());
                 DBG("replace with bridge %.*s by %s at table+%llu\n", 4, table + adr, Replace.c_str(), adr);
                 CopyMem(table + adr, Replace.c_str(), 4);
                 adr += 5;
-    //            DBG("   name copied\n");
+                DBG("   name copied\n");
                 Num++;
                 break; //cancel search outer bridge, we found it.
               }

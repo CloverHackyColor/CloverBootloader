@@ -617,7 +617,7 @@ static XStringW getDriversPath()
 #ifdef DEBUG
 void debugStartImageWithOC()
 {
-MsgLog("debugStartImageWithOC\n");
+  MsgLog("debugStartImageWithOC\n");
   UINT64 CPUFrequencyFromART;
   InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
 
@@ -848,8 +848,8 @@ void LOADER_ENTRY::StartLoader()
 
   DBG("Beginning OC\n");
 
-    UINT64 CPUFrequencyFromART;
-    InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
+//    UINT64 CPUFrequencyFromART;
+//    InternalCalculateARTFrequencyIntel(&CPUFrequencyFromART, NULL, 1);
 
     EFI_LOADED_IMAGE* OcLoadedImage;
     Status = gBS->HandleProtocol(gImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &OcLoadedImage);
