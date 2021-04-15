@@ -2,6 +2,10 @@
  Slice 2012
  */
 
+#if defined(__clang__)
+#pragma clang optimize off
+#endif
+
 #include <Platform.h>
 #include "Settings.h"
 #include "FixBiosDsdt.h"
