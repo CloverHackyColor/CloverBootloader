@@ -631,6 +631,8 @@ public:
   MISC_SLOT_TYPE    SlotType = MISC_SLOT_TYPE();
   XString8          SlotName = XString8();
   
+  SLOT_DEVICE() {}
+
 	#if __cplusplus > 201703L
 		bool operator == (const SLOT_DEVICE&) const = default;
 	#endif
@@ -1279,6 +1281,8 @@ public:
         XString8                     DevicePathAsString = XString8();
         XString8                     Label = XString8();
         
+        AddPropertyClass() {}
+
 	#if __cplusplus > 201703L
 		bool operator == (const AddPropertyClass&) const = default;
 	#endif
@@ -1304,6 +1308,8 @@ public:
         TAG_TYPE                     ValueType = kTagTypeNone; // only used in CreateMenuProps()
         INPUT_ITEM                   MenuItem = INPUT_ITEM();  // Will get the Disabled value
         
+        SimplePropertyClass() {}
+
 	#if __cplusplus > 201703L
 		bool operator == (const SimplePropertyClass&) const = default;
 	#endif
@@ -1329,6 +1335,8 @@ public:
             XStringW                        DevicePathAsString = XStringW();
             // XString8                     Label = XString8(); // Label is the same as DevicePathAsString, so it's not needed.
             XObjArray<SimplePropertyClass>  propertiesArray = XObjArray<SimplePropertyClass>();
+
+            PropertyClass() {}
 
             EFI_DEVICE_PATH_PROTOCOL* getDevicePath() const
             {
@@ -1376,6 +1384,7 @@ public:
           XString8                     Label = XString8();
           XObjArray<SimplePropertyClass>   CustomPropertyArray = XObjArray<SimplePropertyClass> ();
         
+          ArbitraryPropertyClass() {}
 	#if __cplusplus > 201703L
 		bool operator == (const ArbitraryPropertyClass&) const = default;
 	#endif

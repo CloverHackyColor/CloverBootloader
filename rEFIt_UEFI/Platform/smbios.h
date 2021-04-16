@@ -27,7 +27,9 @@ public:
   XString8 SerialNo = XString8();
   UINT8   Type = UINT8();
   bool  InUse = bool();
-  
+
+  RAM_SLOT_INFO() {}
+
   #if __cplusplus > 201703L
     bool operator == (const RAM_SLOT_INFO&) const = default;
   #endif

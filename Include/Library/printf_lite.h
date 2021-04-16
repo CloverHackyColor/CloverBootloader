@@ -182,7 +182,7 @@ typedef union {
 #define PRINTF_VA_ARG va_arg
 #endif
 #ifndef PRINTF_VA_END
-#define PRINTF_VA_END VA_END
+#define PRINTF_VA_END va_end
 #endif
 
 
@@ -268,7 +268,7 @@ typedef union {
       void printf_with_callback_timestamp(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, int* newline, int timestamp, ...);
       inline void printf_with_callback(const char* format, transmitBufCallBackType transmitBufCallBack, void* context, ...) {
         PRINTF_VA_LIST va;
-        va_start(va, context);
+        PRINTF_VA_START(va, context);
         vprintf_with_callback_timestamp(format, va, transmitBufCallBack, context, NULL, 0);
         PRINTF_VA_END(va);
       }

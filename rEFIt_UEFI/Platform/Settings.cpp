@@ -2,10 +2,6 @@
  Slice 2012
  */
 
-#if defined(__clang__)
-#pragma clang optimize off
-#endif
-
 #include <Platform.h>
 #include "Settings.h"
 #include "FixBiosDsdt.h"
@@ -5065,9 +5061,8 @@ EFI_STATUS GetUserSettings(const TagDict* CfgDict, SETTINGS_DATA& gSettings)
 //                }
                 if ( arbProp == NULL ) {
                   arbProp = new SETTINGS_DATA::DevicesClass::ArbitraryPropertyClass();
-DBG("new ArbitraryPropertyClass()=%lld\n", uintptr_t(arbProp));
-                  arbProp->Label = Label;
                   arbProp->Device = (UINT32)DeviceAddr;
+                  arbProp->Label = Label;
                   gSettings.Devices.ArbitraryArray.AddReference(arbProp, true);
                 }
                 arbProp->CustomPropertyArray.AddReference(newDevProp, true);
