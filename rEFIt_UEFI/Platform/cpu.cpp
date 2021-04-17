@@ -1276,7 +1276,7 @@ UINT16 GetStandardCpuType()
   return 0x301;   // Core 2 Duo
 }
 
-UINT16 GetAdvancedCpuType ()
+UINT16 GetAdvancedCpuType()
 {  
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {  
     switch (gCPUStructure.Family) {  
@@ -1438,7 +1438,7 @@ MACHINE_TYPES GetDefaultModel()
 {
   MACHINE_TYPES DefaultType = iMac132;
   if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
-    return MacPro31;
+    return MacPro61;
   }
   // TODO: Add more CPU models and configure the correct machines per CPU/GFX model
   if(gMobile) {
@@ -1632,4 +1632,52 @@ MACHINE_TYPES GetDefaultModel()
     }
   }
   return DefaultType;
+}
+
+void FillOCCpuInfo(OC_CPU_INFO* CpuInfo)
+{
+  //take values from gCPUStructure and put into CpuInfo
+  CpuInfo->Vendor[0] = gCPUStructure.Vendor;
+  memcpy(&CpuInfo->BrandString, &gCPUStructure.BrandString, 48);
+  CpuInfo->MicrocodeRevision = (UINT32)gCPUStructure.MicroCode;
+  CpuInfo->Hypervisor = gSettings.CPU.QEMU;
+  CpuInfo->Type = (UINT8)gCPUStructure.Type;
+  CpuInfo->Family = (UINT8)gCPUStructure.Family;
+  CpuInfo->Model = (UINT8)gCPUStructure.Model;
+  CpuInfo->ExtModel = (UINT8)gCPUStructure.Extmodel;
+  CpuInfo->ExtFamily = (UINT8)gCPUStructure.Extfamily;
+  CpuInfo->Stepping = (UINT8)gCPUStructure.Stepping;
+  CpuInfo->Features = gCPUStructure.Features;
+  CpuInfo->ExtFeatures = gCPUStructure.ExtFeatures;
+  CpuInfo->Signature = gCPUStructure.Signature;
+  CpuInfo->CstConfigLock = GlobalConfig.NeedPMfix;
+  CpuInfo->AppleProcessorType = gSettings.CPU.CpuType;
+  CpuInfo->CpuidVerEax.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_1][EAX];
+  CpuInfo->CpuidVerEbx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_1][EBX];
+  CpuInfo->CpuidVerEcx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_1][ECX];
+  CpuInfo->CpuidVerEdx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_1][EDX];
+  CpuInfo->CpuidExtSigEcx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_81][ECX];
+  CpuInfo->CpuidExtSigEdx.Uint32 = (UINT32)gCPUStructure.CPUID[CPUID_81][EDX];
+  CpuInfo->Brand = (UINT8)CpuInfo->CpuidVerEbx.Bits.BrandIndex;
+  CpuInfo->MaxDiv = gCPUStructure.SubDivider;
+  //there is a fault in OC as it can't handle non-integer values. Clover does by *10.
+  CpuInfo->MinBusRatio = gCPUStructure.MinRatio / 10;
+  CpuInfo->MaxBusRatio = gCPUStructure.MaxRatio / 10;
+  CpuInfo->TurboBusRatio1 = gCPUStructure.Turbo1 /10;
+  CpuInfo->TurboBusRatio2 = gCPUStructure.Turbo2 /10;
+  CpuInfo->TurboBusRatio3 = gCPUStructure.Turbo3 /10;
+  CpuInfo->TurboBusRatio4 = gCPUStructure.Turbo4 /10;
+  CpuInfo->PackageCount = 1; //number of started cores. Intel always start with one core.
+  CpuInfo->CoreCount = gCPUStructure.Cores;
+  CpuInfo->ThreadCount = gCPUStructure.Threads;
+  CpuInfo->ExternalClock = (UINT16)(gCPUStructure.ExternalClock / 1000); //kHz -> MHz
+  CpuInfo->ARTFrequency = gCPUStructure.ARTFrequency;  //Hz
+  CpuInfo->CPUFrequency = gCPUStructure.CPUFrequency;
+  CpuInfo->CPUFrequencyFromTSC = gCPUStructure.TSCFrequency;
+  CpuInfo->CPUFrequencyFromART = 0; //not present
+  CpuInfo->TscAdjust = 0;
+  CpuInfo->CPUFrequencyFromVMT = 0;
+  CpuInfo->FSBFrequency = gCPUStructure.FSBFrequency;
+  CpuInfo->MaxId    = (UINT32)gCPUStructure.CPUID[CPUID_0][EAX];
+  CpuInfo->MaxExtId = (UINT32)gCPUStructure.CPUID[CPUID_80][EAX];
 }

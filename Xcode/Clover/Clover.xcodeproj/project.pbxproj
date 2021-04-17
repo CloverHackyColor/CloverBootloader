@@ -24,7 +24,6 @@
 		A52313122448B12B00421FB2 /* unicode_conversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52313112448B12A00421FB2 /* unicode_conversions.cpp */; };
 		A52313152448B1C500421FB2 /* shared_with_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52313132448B1C400421FB2 /* shared_with_menu.cpp */; };
 		A523131E2448B27B00421FB2 /* APFS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A523131C2448B27A00421FB2 /* APFS.cpp */; };
-		A52313212448B29300421FB2 /* BasicIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A523131F2448B29200421FB2 /* BasicIO.cpp */; };
 		A523133B2448B3F400421FB2 /* VersionString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52313392448B3F300421FB2 /* VersionString.cpp */; };
 		A529342D24FB9257004241C3 /* XBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A529342C24FB9256004241C3 /* XBuffer.cpp */; };
 		A529343024FB9266004241C3 /* XRBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A529342F24FB9266004241C3 /* XRBuffer.cpp */; };
@@ -76,7 +75,6 @@
 		A5456D5C23FC5B08000BF18C /* AmlGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2123FC5AF8000BF18C /* AmlGenerator.cpp */; };
 		A5456D5D23FC5B08000BF18C /* gma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2223FC5AF8000BF18C /* gma.cpp */; };
 		A5456D5E23FC5B08000BF18C /* smbios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2323FC5AF9000BF18C /* smbios.cpp */; };
-		A5456D5F23FC5B08000BF18C /* BootLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2523FC5AF9000BF18C /* BootLog.cpp */; };
 		A5456D6023FC5B08000BF18C /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2723FC5AFA000BF18C /* Console.cpp */; };
 		A5456D6123FC5B08000BF18C /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2823FC5AFB000BF18C /* Settings.cpp */; };
 		A5456D6223FC5B08000BF18C /* spd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5456D2A23FC5AFC000BF18C /* spd.cpp */; };
@@ -724,7 +722,6 @@
 		A523131B2448B26E00421FB2 /* AcpiPatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiPatcher.h; sourceTree = "<group>"; };
 		A523131C2448B27A00421FB2 /* APFS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APFS.cpp; sourceTree = "<group>"; };
 		A523131D2448B27B00421FB2 /* APFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APFS.h; sourceTree = "<group>"; };
-		A523131F2448B29200421FB2 /* BasicIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BasicIO.cpp; sourceTree = "<group>"; };
 		A52313202448B29200421FB2 /* BasicIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicIO.h; sourceTree = "<group>"; };
 		A52313222448B29D00421FB2 /* BootLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootLog.h; sourceTree = "<group>"; };
 		A52313232448B2A800421FB2 /* BootOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootOptions.h; sourceTree = "<group>"; };
@@ -853,7 +850,6 @@
 		A5456D2123FC5AF8000BF18C /* AmlGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AmlGenerator.cpp; sourceTree = "<group>"; };
 		A5456D2223FC5AF8000BF18C /* gma.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gma.cpp; sourceTree = "<group>"; };
 		A5456D2323FC5AF9000BF18C /* smbios.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smbios.cpp; sourceTree = "<group>"; };
-		A5456D2523FC5AF9000BF18C /* BootLog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootLog.cpp; sourceTree = "<group>"; };
 		A5456D2623FC5AFA000BF18C /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
 		A5456D2723FC5AFA000BF18C /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
 		A5456D2823FC5AFB000BF18C /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Settings.cpp; sourceTree = "<group>"; };
@@ -864,7 +860,6 @@
 		A5456D2F23FC5AFE000BF18C /* gma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gma.h; sourceTree = "<group>"; };
 		A5456D3023FC5AFE000BF18C /* BdsConnect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BdsConnect.cpp; sourceTree = "<group>"; };
 		A5456D3123FC5AFE000BF18C /* Hibernate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hibernate.cpp; sourceTree = "<group>"; };
-		A5456D3223FC5AFF000BF18C /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		A5456D3323FC5AFF000BF18C /* kext_patcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kext_patcher.cpp; sourceTree = "<group>"; };
 		A5456D3423FC5B00000BF18C /* AcpiPatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AcpiPatcher.cpp; sourceTree = "<group>"; };
 		A5456D3523FC5B00000BF18C /* BootOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BootOptions.cpp; sourceTree = "<group>"; };
@@ -7922,11 +7917,9 @@
 				A5456D2C23FC5AFC000BF18C /* ati.h */,
 				A5456D3F23FC5B04000BF18C /* b64cdecode.cpp */,
 				A5456D3923FC5B02000BF18C /* b64cdecode.h */,
-				A523131F2448B29200421FB2 /* BasicIO.cpp */,
 				A52313202448B29200421FB2 /* BasicIO.h */,
 				A5456D3023FC5AFE000BF18C /* BdsConnect.cpp */,
 				A5456D0623FC5AEB000BF18C /* boot.h */,
-				A5456D2523FC5AF9000BF18C /* BootLog.cpp */,
 				A52313222448B29D00421FB2 /* BootLog.h */,
 				A5456D3523FC5B00000BF18C /* BootOptions.cpp */,
 				A52313232448B2A800421FB2 /* BootOptions.h */,
@@ -7982,7 +7975,6 @@
 				A5456D1023FC5AF1000BF18C /* nvidia.h */,
 				A5456D1823FC5AF4000BF18C /* Nvram.cpp */,
 				A52313312448B36E00421FB2 /* Nvram.h */,
-				A5456D3223FC5AFF000BF18C /* Platform.h */,
 				A5456D1A23FC5AF5000BF18C /* platformdata.cpp */,
 				A52313322448B37A00421FB2 /* platformdata.h */,
 				A5456D0B23FC5AEE000BF18C /* PlatformDriverOverride.cpp */,
@@ -23869,7 +23861,6 @@
 				A529343B24FB92BD004241C3 /* XStringArray_test.cpp in Sources */,
 				A5456D5223FC5B08000BF18C /* ati.cpp in Sources */,
 				A5456D6623FC5B08000BF18C /* Hibernate.cpp in Sources */,
-				A52313212448B29300421FB2 /* BasicIO.cpp in Sources */,
 				A5D12C2E243A0B7900DFA98A /* printf_lite-test.cpp in Sources */,
 				A5456D4E23FC5B08000BF18C /* StateGenerator.cpp in Sources */,
 				A529342D24FB9257004241C3 /* XBuffer.cpp in Sources */,
@@ -23940,7 +23931,6 @@
 				A5456CE023FC5A88000BF18C /* common.cpp in Sources */,
 				A59F3B9E25CC691D0018CBCE /* shared_ptr.cpp in Sources */,
 				A5456D7123FC5B08000BF18C /* device_inject.cpp in Sources */,
-				A5456D5F23FC5B08000BF18C /* BootLog.cpp in Sources */,
 				A529343024FB9266004241C3 /* XRBuffer.cpp in Sources */,
 				A57CF7BB241A8A13006DE51E /* XTheme.cpp in Sources */,
 				A5456D5023FC5B08000BF18C /* kernel_patcher.cpp in Sources */,

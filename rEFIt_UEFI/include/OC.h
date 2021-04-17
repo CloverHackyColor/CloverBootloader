@@ -21,7 +21,7 @@ extern "C" {
 #include <Library/OcConfigurationLib.h>
 #include <Library/OcDevicePathLib.h>
 #include <Library/OcFileLib.h>
-//#include <Library/OcCpuLib.h> // OC_CPU_INFO
+#include <Library/OcCpuLib.h> // OC_CPU_INFO
 //#include <Protocol/OcBootstrap.h> // OC_BOOTSTRAP_PROTOCOL
 #include <Library/OcBootManagementLib/BootManagementInternal.h>
 
@@ -29,7 +29,7 @@ extern "C" {
 
 extern OC_GLOBAL_CONFIG mOpenCoreConfiguration;
 extern OC_STORAGE_CONTEXT mOpenCoreStorage;
-//extern OC_CPU_INFO mOpenCoreCpuInfo;
+extern OC_CPU_INFO mOpenCoreCpuInfo;
 //extern OC_BOOTSTRAP_PROTOCOL mOpenCoreBootStrap;
 //extern OC_RSA_PUBLIC_KEY* mOpenCoreVaultKey;
 //extern EFI_HANDLE mLoadHandle;

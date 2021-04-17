@@ -966,11 +966,11 @@ void LOADER_ENTRY::StartLoader()
   #endif
     }
 
-    #ifndef USE_OC_SECTION_Misc
+  #ifndef USE_OC_SECTION_Misc
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.SecureBootModel, "Disabled");
     OC_STRING_ASSIGN(mOpenCoreConfiguration.Misc.Security.Vault, "Optional");
-    #endif
-    #ifdef USE_OC_SECTION_Nvram
+  #endif
+  #ifdef USE_OC_SECTION_Nvram
     mOpenCoreConfiguration.Nvram.WriteFlash = true;
   #endif
 
@@ -1016,6 +1016,7 @@ void LOADER_ENTRY::StartLoader()
 
   #endif
 
+    FillOCCpuInfo(&mOpenCoreCpuInfo);
 
   // if OC is NOT initialized with OcMain, we need the following
   //  OcLoadBooterUefiSupport(&mOpenCoreConfiguration);
@@ -1423,7 +1424,7 @@ void LOADER_ENTRY::StartLoader()
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
 
-    SetCPUProperties();
+    SetCPUProperties(); //very special procedure
 
     if (OSFLAG_ISSET(Flags, OSFLAG_HIBERNATED)) {
       DoHibernateWake = PrepareHibernation(Volume);
