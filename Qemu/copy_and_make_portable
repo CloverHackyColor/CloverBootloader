@@ -1,0 +1,171 @@
+#!/bin/bash
+SCRIPT_ABS_FILENAME=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
+SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
+
+#set -x 
+#sudo chown -R $(id -F)  "$SCRIPT_DIR"
+#sudo chmod -R u+w  "$SCRIPT_DIR"
+
+
+if [ -z "$1" ]
+then
+  echo "Usage: $0 executable_file [dest dir] [dylib dir name]"
+  exit 1
+fi
+file="$1"
+filebasename="$(basename "$file")"
+filedir="$(dirname "$file")"
+
+if [ -z "$2" ]
+then
+  dir="."
+else
+  dir="$2"
+fi
+
+if [ -z "$3" ]
+then
+  dylib_dir_name="$filebasename".dylibs
+else
+  dylib_dir_name="$3"
+fi
+
+
+
+process_a_file ()
+{
+
+  echo '------------------------------------------> Checking file ' \'"$1"\'
+  #otool -L "$1"
+
+  #set -x
+  if false && [ -L "$1" ]
+  then
+    #We don't process symlinks. We'll process the original instead
+    :
+    echo Symlink : nothing to do. Process the original instead.
+    return 1
+
+  else
+
+
+    current_file="$1"
+    local libbasename=`basename "$1"`
+    #echo libbasename=$libbasename
+    local libdirname=`dirname "$1"`
+    #echo libdirname=$libdirname
+    local destdir="$2"
+
+    #cd "$libdirname"
+    local returnValue=0
+
+    local nbline=$(otool -D "$libdirname"/"$libbasename" | wc -l)
+    if [ $nbline -gt 1 ]
+    then
+        local firstline_is_id=1
+    else
+        local firstline_is_id=0
+    fi
+
+    while read -r line;
+    do
+      # line would be something like "/usr/lib/libiconv.2.dylib (compatibility version 7.0.0, current version 7.0.0)"
+      #echo line=$line \(firstline_is_id=$firstline_is_id\)
+
+      ex='^(.*) \(.*\)$'
+      if [[ "$line" =~ $ex ]]
+      then
+    		local dependent_lib_path="${BASH_REMATCH[1]}" #this could be a path starting with @loader_path/
+    		local dependent_lib_realpath="${dependent_lib_path/@loader_path/$filedir}" #this could be a path starting with @loader_path/
+    		#echo dependent_lib_path="$dependent_lib_path"
+    		#echo dependent_lib_realpath="$dependent_lib_realpath"
+
+        ex2='^/System/Library/Frameworks/.*$'
+        ex3='^/usr/lib/.*$'
+        if ! [[ "$dependent_lib_path" =~ $ex2 ]] && ! [[ "$dependent_lib_path" =~ $ex3 ]]
+        then
+      		local dependent_lib_basename=$(basename "$dependent_lib_path")
+          #echo libbasename=$libbasename
+
+
+          if [ $firstline_is_id -eq 1 ]
+          then
+            local libabsolutepath=$(cd "$libdirname"; pwd)/"$libbasename"
+        		if [ "$dependent_lib_path" = "$libabsolutepath" ]
+        		then
+        			:
+              echo already correct
+        			# Do nothing, ID is already correct
+        		else
+        			#CMD="install_name_tool -id "$libabsolutepath" "$libdirname"/"$libbasename""
+              cmd=()
+              cmd=( install_name_tool -id "$libabsolutepath" "$libdirname"/"$libbasename" )
+      				#echo issuing cmd : "${cmd[@]}"
+      				"${cmd[@]}"
+        		fi
+            firstline_is_id=0
+          else
+            local dependent_lib_newpath="$destdir"/"$dependent_lib_basename"
+
+            #echo Copy and process : "$dependent_lib_realpath" to "$dependent_lib_newpath"
+            rm -f "$dependent_lib_newpath"
+            cp "$dependent_lib_realpath" "$dependent_lib_newpath" || exit 1
+            chmod u+w "$dependent_lib_newpath"
+
+            local cd_bak="$(pwd)"
+            #echo cd "$destdir"
+            cd "$destdir"
+            process_a_file "$dependent_lib_basename" .
+            local ret=$?
+            cd "$cd_bak"
+
+            if ! [ $? -eq 0 ]
+            then
+              echo Processing "$dependent_lib_newpath" failed.
+              return -1
+            fi
+
+
+            #echo '----------------------------> Back in file ' \'"$1"\'
+            if [[ "$destdir" == "." ]]
+            then
+      				local new_lib_relative_path="@loader_path"/"$dependent_lib_basename"
+            else
+    				  local new_lib_relative_path="@loader_path"/"$destdir"/"$dependent_lib_basename"
+            fi
+    				if [ "$dependent_lib_path" != "$dependent_lib_newpath" ]
+            then
+              cmd=()
+              cmd=( install_name_tool -change "$dependent_lib_path" "$new_lib_relative_path" "$libdirname"/"$libbasename" )
+  						#echo issuing cmd : "${cmd[@]}"
+  						"${cmd[@]}"
+            fi
+          fi
+        else
+          :
+          #echo  "$libfullpath" failed at =~ $ex2 =~ $ex3
+        fi
+      else
+        :
+        #echo  "$libfullpath" failed at '^(.*) \(.*\)$'
+      fi
+    done <<< "$(otool -XL "$libdirname"/"$libbasename")"
+  fi
+}
+
+
+
+  
+#otool -L "$file"
+
+cd "$dir"
+
+rm -f "$filebasename"
+cp "$file" .
+chmod u+w "$filebasename"
+
+mkdir -p "$dir"/"$dylib_dir_name"
+
+process_a_file "$filebasename" "$dylib_dir_name"
+
+#echo $?

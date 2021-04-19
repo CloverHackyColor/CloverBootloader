@@ -1,89 +1,90 @@
+#!/bin/bash
 SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
 SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
 
+cd "$SCRIPT_DIR"
 
 OSTYPE=`uname -s`
 #echo $OSTYPE
 
 if ! [ -z "$1" ]
 then
-	clover_efi_file="${1%.*}".efi
-	if ! [ -f "$clover_efi_file" ]
-	then
-		echo Efi file "$clover_efi_file" doesn\'t exist
-		exit 1
-	fi
-	echo clover_efi_file="$clover_efi_file"
+  clover_efi_file="${1%.*}".efi
+  if ! [ -f "$clover_efi_file" ]
+  then
+    echo Efi file "$clover_efi_file" doesn\'t exist
+    exit 1
+  fi
+  echo clover_efi_file="$clover_efi_file"
 fi
 
-
-set -x
+qemu_path=./qemu_portable-v4.2.0/qemu-system-x86_64
+qemu_path=./qemu_portable-v5.2.0/qemu-system-x86_64
+#set -x
 
 if [ "$OSTYPE" = "Darwin" ]
 then
-	if ! [ -f ./Qemu/qemu_portable/qemu-system-x86_64 ]
-	then
-		echo "You must restore the folder \'qemu_portable\'"
-		exit 1
-	fi
-	if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
-	then
-		unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip
-		rm -rf "$SCRIPT_DIR"/__MACOSX
-	fi
+  if ! [ -f "$qemu_path" ]
+  then
+    echo "You must restore the folder \'"$(dirname "$qemu_path")"\'"
+    exit 1
+  fi
+  if ! [ -f ./disk_image_gpt.img ]
+  then
+    unzip -o ./disk_image_gpt.img.zip
+    rm -rf ./__MACOSX
+  fi
 
-	if pgrep qemu
-	then
-	  killall qemu-system-x86_64
-	fi
-	> "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
+  if pgrep qemu
+  then
+    killall qemu-system-x86_64
+  fi
+  > ./serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
-	if ! [ -z "$clover_efi_file" ]
-	then
+  if ! [ -z "$clover_efi_file" ]
+  then
 
-		hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
+    hdiutil attach ./disk_image_gpt.img || exit 1
 
-		shopt -s nocasematch
+    shopt -s nocasematch
 
-		if [[ "$(basename "$clover_efi_file")" =~ "CloverX64"* ]]
-		then
-			echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
-			ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
+    if [[ "$(basename "$clover_efi_file")" =~ "CloverX64"* ]]
+    then
+      echo ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi
+      ditto "$clover_efi_file" /Volumes/QEMU_EFI/EFI/CLOVER/CLOVERX64.efi || exit 1
 
-			#no need to replace BootX64.efi, it's not used in legacy boot
-		else
-		  : # TODO : if it's a module, has to be copied in Drivers
-		fi
+      #no need to replace BootX64.efi, it's not used in legacy boot
+    else
+      : # TODO : if it's a module, has to be copied in Drivers
+    fi
 
-		shopt -u nocasematch
+    shopt -u nocasematch
 
-		diskutil eject /Volumes/QEMU_EFI || exit 1
-	fi
+    diskutil eject /Volumes/QEMU_EFI || exit 1
+  fi
+  
+  sleep 1 # not 100% sure it's needed
+        set -m
 
+  bios_file=("$(dirname "$qemu_path")"/bios*)
 
-	
-  	sleep 1 # not 100% sure it's needed
+  "$qemu_path" \
+    -L "$(dirname "$qemu_path")" \
+    -m 2048 \
+    -cpu Penryn \
+    -bios "$bios_file" \
+    -machine q35 \
+    -device ahci,id=ahi \
+    -drive format=raw,id=hda,file=./disk_image_gpt.img \
+    -usb \
+    -device usb-mouse,bus=usb-bus.0,port=2 \
+    -device usb-kbd,bus=usb-bus.0,port=1 \
+    -serial file:./serial0_qemu_out.log \
+    -gdb tcp::9000
 
-    set -m
-
-	cd "$SCRIPT_DIR"
-	./qemu_portable/qemu-system-x86_64 \
-	    -L qemu_portable \
-	    -m 2048 \
-	    -cpu Penryn \
-	    -bios ./bios.bin-1.13.0 \
-	    -machine q35 \
-	    -device ahci,id=ahi \
-	    -drive format=raw,id=hda,file=./disk_image_gpt.img \
-	    -usb \
-	    -device usb-mouse,bus=usb-bus.0,port=2 \
-	    -device usb-kbd,bus=usb-bus.0,port=1 \
-	    -serial file:./serial0_qemu_out.log \
-	    -gdb tcp::9000
-
-#	    -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
-#	    -hdb "/JiefLand/Mac OS X 11.0.Beta10.vmwarevm/Virtual Disk.vmdk" \
-#	    -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
+#      -device VGA,vgamem_mb=64,edid=on,xres=1024,yres=768 \
+#      -hdb "/JiefLand/Mac OS X 11.0.Beta10.vmwarevm/Virtual Disk.vmdk" \
+#      -hdc /JiefLand/5.Devel/Clover/CloverEfi.vmw/ElCapitan.vmdk \
 
 
 fi
