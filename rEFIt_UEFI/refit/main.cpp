@@ -2930,7 +2930,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((void*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   ZeroMem((void*)&gAudios[0], sizeof(HDA_PROPERTIES) * 4);
 
-  DBG("\n");
+  DbgHeader("Starting Clover");
   if (Now.TimeZone < -1440 || Now.TimeZone > 1440) {
     MsgLog("Now is %02d.%02d.%d,  %02d:%02d:%02d (GMT)\n",
            Now.Day, Now.Month, Now.Year, Now.Hour, Now.Minute, Now.Second);
@@ -2988,8 +2988,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     SimpleTextEx = NULL;
   }
   DBG("SimpleTextEx Status=%s\n", efiStrError(Status));
-
-//debugStartImageWithOC(); // ok BS_I
 
   GetDefaultSettings(); // do this before PrepatchSmbios() because PrepatchSmbios() change gSettings.Smbios.SmUUID.
                         // TODO : there is a mixup between SmUUID read from the platform and the SmUUID set by the user. They should be read in 2 different vars.

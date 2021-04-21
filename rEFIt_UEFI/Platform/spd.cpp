@@ -478,15 +478,18 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
     MsgLog("Found module with XMP version %d.%d\n", (xmpVersion >> 4) & 0xF, xmpVersion & 0xF);
 
     switch (gSettings.Boot.XMPDetection) {
+      case -1:
+        MsgLog("XMPDetection deactivated in config.plist\n");
+        break;
       case 0:
         // Detect the better XMP profile
         if (xmpFrequency1 >= xmpFrequency2) {
           if (xmpFrequency1 >= frequency) {
-            DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
+            MsgLog("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
             frequency = xmpFrequency1;
           }
         } else if (xmpFrequency2 >= frequency) {
-          DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
+          MsgLog("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
           frequency = xmpFrequency2;
         }
         break;
@@ -495,9 +498,9 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         // Use first profile if present
         if ((xmpProfiles & 1) == 1) {
           frequency = xmpFrequency1;
-          DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
+          MsgLog("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
         } else {
-          DBG("Not using XMP Profile1 because it is not present\n");
+          MsgLog("Not using XMP Profile1 because it is not present\n");
         }
         break;
 
@@ -505,28 +508,34 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         // Use second profile
         if ((xmpProfiles & 2) == 2) {
           frequency = xmpFrequency2;
-          DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
+          MsgLog("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
         } else {
-          DBG("Not using XMP Profile2 because it is not present\n");
+          MsgLog("Not using XMP Profile2 because it is not present\n");
         }
         break;
 
       default:
+        MsgLog("XMPDetection invalid value '%d' in config.plist\n", gSettings.Boot.XMPDetection);
         break;
     }
   } else {
     // Print out XMP not detected
     switch (gSettings.Boot.XMPDetection) {
+      case -1:
+        MsgLog("XMP is not present, XMPDetection deactivated in config.plist\n");
+        break;
+
       case 0:
-        DBG("Not using XMP because it is not present\n");
+        MsgLog("Not using XMP because it is not present\n");
         break;
 
       case 1:
       case 2:
-        DBG("Not using XMP Profile%d because it is not present\n", gSettings.Boot.XMPDetection);
+        MsgLog("Not using XMP Profile%d because it is not present\n", gSettings.Boot.XMPDetection);
         break;
 
       default:
+        MsgLog("XMP is not present, XMPDetection has invalid value '%d' config.plist, \n", gSettings.Boot.XMPDetection);
         break;
     }
   }

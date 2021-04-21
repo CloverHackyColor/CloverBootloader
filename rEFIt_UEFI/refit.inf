@@ -515,13 +515,12 @@
 
 [BuildOptions]
 
-  XCODE:*_*_*_CC_FLAGS  = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-rtti -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
-  XCODE:*_*_*_CXX_FLAGS = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-rtti -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
- 
+  # -fno-rtti is only for C++
   
-  # -Wno-unused-const-variable, -maccumulate-outgoing-args is set in tools_def.template
+  XCODE:*_*_*_CC_FLAGS  = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
+  XCODE:*_*_*_CXX_FLAGS = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-rtti -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
+  
   GCC:*_*_*_CC_FLAGS = -fno-omit-frame-pointer -DJCONST=CONST
   GCC:*_*_*_CXX_FLAGS = -fno-omit-frame-pointer -fno-rtti -DJCONST=CONST
-  
   
   MSFT:*_*_*_CC_FLAGS = /Os /wd4201 /D JCONST=const

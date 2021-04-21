@@ -9,6 +9,23 @@ int XStringArray_tests()
 #endif
 
     {
+        ConstXStringWArray constArray;
+        constArray.Add(L"aa");
+        XStringW ws = L"bb"_XSW;
+        constArray.AddReference(&ws, false);
+        const XStringW ws2 = L"cc"_XSW;
+        constArray.AddReference(&ws2, false);
+        
+        XStringWArray array;
+        array.Add(L"aa");
+        array.AddReference(&ws, false);
+        array.Add(L"cc");
+
+        bool b = array == constArray;
+        if ( !b ) return 5;
+    }
+
+    {
         XStringWArray array1;
 
         if ( !array1.isEmpty() ) return 1;
