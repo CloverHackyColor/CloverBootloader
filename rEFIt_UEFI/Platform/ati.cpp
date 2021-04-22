@@ -504,6 +504,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x7300,  CHIP_FAMILY_FIJI, "AMD Radeon R9 Fury",        kNull },
 
   { 0x731F,  CHIP_FAMILY_NAVI10, "AMD Radeon RX5700",        kNull },
+  { 0x73BF,  CHIP_FAMILY_NAVI20, "AMD Radeon RX6800XT",        kNull },
   /*
    6900 Topaz XT [Radeon R7 M260/M265]
    6901 Topaz PRO [Radeon R5 M255]
