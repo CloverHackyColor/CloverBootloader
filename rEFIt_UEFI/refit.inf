@@ -50,18 +50,6 @@
   cpp_foundation/XStringArray.h
   cpp_foundation/XToolsCommon.h
   cpp_lib/undefinable.h
-  cpp_lib/XmlLiteArrayTypes.cpp
-  cpp_lib/XmlLiteArrayTypes.h
-  cpp_lib/XmlLiteCompositeTypes.cpp
-  cpp_lib/XmlLiteCompositeTypes.h
-  cpp_lib/XmlLiteDictTypes.cpp
-  cpp_lib/XmlLiteDictTypes.h
-  cpp_lib/XmlLiteParser.cpp
-  cpp_lib/XmlLiteParser.h
-  cpp_lib/XmlLiteSimpleTypes.cpp
-  cpp_lib/XmlLiteSimpleTypes.h
-  cpp_lib/XmlLiteUnionTypes.cpp
-  cpp_lib/XmlLiteUnionTypes.h
   cpp_unit_test/all_tests.cpp
   cpp_unit_test/all_tests.h
   cpp_unit_test/find_replace_mask_Clover_tests.cpp
