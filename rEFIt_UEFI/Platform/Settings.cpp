@@ -295,19 +295,6 @@ bool SETTINGS_DATA::GUIClass::getDarkEmbedded(bool isDaylight) const {
 EFI_STATUS
 SaveSettings ();
 
-UINT32
-GetCrc32 (
-          UINT8 *Buffer,
-          UINTN Size
-          )
-{
-  UINT32 x = 0;
-  UINT32 *Fake = (UINT32*)Buffer;
-  if (!Fake) return 0;
-  Size >>= 2;
-  while (Size--) x+= *Fake++;
-  return x;
-}
 //
 //ACPI_NAME_LIST *
 //ParseACPIName(const XString8& String)

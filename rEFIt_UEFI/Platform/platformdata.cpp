@@ -1308,7 +1308,7 @@ void GetDefaultCpuSettings(SETTINGS_DATA& gSettings)
   DbgHeader("GetDefaultCpuSettings");
   MACHINE_TYPES  Model;
   //UINT64         msr = 0;
-  Model             = GetDefaultModel();
+  Model             = GetDefaultModel(gMobile);
   gSettings.CPU.CpuType  = GetAdvancedCpuType();
   SetDMISettingsForModel(gSettings, Model, TRUE);
   

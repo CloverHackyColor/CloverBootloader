@@ -31,34 +31,107 @@
 #
 
 [Sources]
-#  EfiLib/GenericBdsLib.h
-#  EfiLib/BmLib.c
-#  Platform/DevicePath.c #included into GenericBdsLib
-  Platform/BdsConnect.cpp #included into GenericBdsLib
   ../Include/Library/printf_lite-conf.h
   ../Include/Library/printf_lite.h
-  PlatformEFI/include/printf_lite-test-cpp_conf.h
-  PlatformEFI/include/Platform.h
-  PlatformEFI/include/XToolsConf.h
-  PlatformEFI/posix/posix.h
-  PlatformEFI/posix/limits.h
-  PlatformEFI/posix/stdarg.h
-  PlatformEFI/posix/stddef.h
-  PlatformEFI/posix/stdint.h
-  PlatformEFI/posix/stdlib.h
-  PlatformEFI/posix/stdio.h
-  PlatformEFI/posix/stdio.cpp
-  PlatformEFI/posix/string.h
-  PlatformEFI/posix/string.cpp
-  PlatformEFI/posix/strings.h
-  PlatformEFI/posix/strings.cpp
-  PlatformEFI/posix/strlen.cpp
-  PlatformEFI/posix/wchar.h
-  PlatformEFI/posix/wchar.cpp
-  PlatformEFI/posix/abort.h
-  PlatformEFI/posix/abort.cpp
-  PlatformEFI/posix/posix_additions.h
-  PlatformEFI/posix/posix_additions.cpp
+  cpp_foundation/shared_ptr.cpp
+  cpp_foundation/shared_ptr.h
+  cpp_foundation/unicode_conversions.cpp
+  cpp_foundation/unicode_conversions.h
+  cpp_foundation/XArray.h
+  cpp_foundation/XBuffer.cpp
+  cpp_foundation/XBuffer.h
+  cpp_foundation/XObjArray.h
+  cpp_foundation/XRBuffer.cpp
+  cpp_foundation/XRBuffer.h
+  cpp_foundation/XString.cpp
+  cpp_foundation/XString.h
+  cpp_foundation/XStringAbstract.h
+  cpp_foundation/XStringArray.cpp
+  cpp_foundation/XStringArray.h
+  cpp_foundation/XToolsCommon.h
+  cpp_lib/undefinable.h
+  cpp_lib/XmlLiteArrayTypes.cpp
+  cpp_lib/XmlLiteArrayTypes.h
+  cpp_lib/XmlLiteCompositeTypes.cpp
+  cpp_lib/XmlLiteCompositeTypes.h
+  cpp_lib/XmlLiteDictTypes.cpp
+  cpp_lib/XmlLiteDictTypes.h
+  cpp_lib/XmlLiteParser.cpp
+  cpp_lib/XmlLiteParser.h
+  cpp_lib/XmlLiteSimpleTypes.cpp
+  cpp_lib/XmlLiteSimpleTypes.h
+  cpp_lib/XmlLiteUnionTypes.cpp
+  cpp_lib/XmlLiteUnionTypes.h
+  cpp_unit_test/all_tests.cpp
+  cpp_unit_test/all_tests.h
+  cpp_unit_test/find_replace_mask_Clover_tests.cpp
+  cpp_unit_test/find_replace_mask_Clover_tests.h
+  cpp_unit_test/find_replace_mask_OC_tests.cpp
+  cpp_unit_test/find_replace_mask_OC_tests.h
+  cpp_unit_test/global_test.cpp
+  cpp_unit_test/global_test.h
+  cpp_unit_test/LoadOptions_test.cpp
+  cpp_unit_test/LoadOptions_test.h
+  cpp_unit_test/MacOsVersion_test.cpp
+  cpp_unit_test/MacOsVersion_test.h
+  cpp_unit_test/plist_tests.cpp
+  cpp_unit_test/plist_tests.h
+  cpp_unit_test/printf_lite-test.cpp
+  cpp_unit_test/printf_lite-test.h
+  cpp_unit_test/printlib-test.cpp
+  cpp_unit_test/printlib-test.h
+  cpp_unit_test/strcasecmp_test.cpp
+  cpp_unit_test/strcasecmp_test.h
+  cpp_unit_test/strcmp_test.cpp
+  cpp_unit_test/strcmp_test.h
+  cpp_unit_test/strlen_test.cpp
+  cpp_unit_test/strlen_test.h
+  cpp_unit_test/strncmp_test.cpp
+  cpp_unit_test/strncmp_test.h
+  cpp_unit_test/XArray_tests.cpp
+  cpp_unit_test/XArray_tests.h
+  cpp_unit_test/XBuffer_tests.cpp
+  cpp_unit_test/XBuffer_tests.h
+  cpp_unit_test/XObjArray_tests.cpp
+  cpp_unit_test/XObjArray_tests.h
+  cpp_unit_test/XStringArray_test.cpp
+  cpp_unit_test/XStringArray_test.h
+  cpp_unit_test/XString_test.cpp
+  cpp_unit_test/XString_test.h
+  cpp_unit_test/XToolsCommon_test.cpp
+  cpp_unit_test/XToolsCommon_test.h
+  entry_scan/bootscreen.cpp
+  entry_scan/bootscreen.h
+  entry_scan/CanonicalDB.h
+  entry_scan/CloverDB.h
+  entry_scan/CloverKEK.h
+  entry_scan/common.cpp
+  entry_scan/common.h
+  entry_scan/entry_scan.h
+  entry_scan/legacy.cpp
+  entry_scan/loader.cpp
+  entry_scan/loader.h
+  entry_scan/lockedgraphics.cpp
+  entry_scan/MSKEK.h
+  entry_scan/MSPCADB.h
+  entry_scan/MSUEFICADB.h
+  entry_scan/secureboot.cpp
+  entry_scan/secureboot.h
+  entry_scan/securebootkeys.h
+  entry_scan/securehash.cpp
+  entry_scan/securemenu.cpp
+  entry_scan/securevars.cpp
+  entry_scan/tool.cpp
+  entry_scan/tool.h
+  gui/menu_items/menu_globals.h
+  gui/menu_items/menu_items.cpp
+  gui/menu_items/menu_items.h
+  gui/REFIT_MAINMENU_SCREEN.cpp
+  gui/REFIT_MAINMENU_SCREEN.h
+  gui/REFIT_MENU_SCREEN.cpp
+  gui/REFIT_MENU_SCREEN.h
+  gui/shared_with_menu.cpp
+  gui/shared_with_menu.h
   include/BootTypes.h
   include/Devices.h
   include/DsdtFixList.h
@@ -72,220 +145,171 @@
   include/Pci.h
   include/QuirksCodes.h
   include/remove_ref.h
+  include/rename_helper.h
+  include/syslinux_mbr.h
   include/TagTypes.h
   include/VolumeTypes.h
-  refit/main.cpp
-  refit/icns.cpp
-  refit/lib.cpp
-  refit/lib.h
-  refit/menu.cpp
-  refit/menu.h
-  refit/screen.cpp
-  refit/screen.h
-  entry_scan/common.cpp
-  entry_scan/common.h
-  entry_scan/legacy.cpp
-  entry_scan/loader.h
-  entry_scan/loader.cpp
-  entry_scan/tool.cpp
-  entry_scan/secureboot.h
-  entry_scan/secureboot.cpp
-  entry_scan/securehash.cpp
-  entry_scan/securemenu.cpp
-  entry_scan/securevars.cpp
-  entry_scan/bootscreen.cpp
-  entry_scan/bootscreen.h
-  entry_scan/lockedgraphics.cpp
-  entry_scan/CanonicalDB.h
-  entry_scan/CloverDB.h
-  entry_scan/CloverKEK.h
-  entry_scan/MSKEK.h
-  entry_scan/MSPCADB.h
-  entry_scan/MSUEFICADB.h
-  entry_scan/entry_scan.h
-  entry_scan/securebootkeys.h
-  gui/menu_items/menu_items.h
-  gui/menu_items/menu_items.cpp
-  gui/menu_items/menu_globals.h
-  gui/REFIT_MENU_SCREEN.cpp
-  gui/REFIT_MENU_SCREEN.h
-  gui/REFIT_MAINMENU_SCREEN.cpp
-  gui/REFIT_MAINMENU_SCREEN.h
-  gui/shared_with_menu.cpp
-  gui/shared_with_menu.h
+  libeg/BmLib.cpp
+  libeg/BmLib.h
+  libeg/EfiFileLib.h
+  libeg/egemb_font.cpp
   libeg/egemb_icons.cpp
   libeg/egemb_icons_dark.cpp
-  libeg/egemb_font.cpp
-  libeg/scroll_images.cpp
-  libeg/BmLib.h
-  libeg/BmLib.cpp
-  libeg/image.h
-  libeg/image.cpp
-#  libeg/load_bmp.cpp
-  libeg/load_icns.cpp
-  libeg/libscreen.cpp
-  libeg/lodepng.cpp
-  libeg/lodepng.h
-  libeg/text.cpp
   libeg/FloatLib.cpp
   libeg/FloatLib.h
+  libeg/image.cpp
+  libeg/image.h
+  libeg/libeg.h
+  libeg/libegint.h
+  libeg/libscreen.cpp
+  libeg/load_icns.cpp
+  libeg/lodepng.cpp
+  libeg/lodepng.h
   libeg/nanosvg.cpp
   libeg/nanosvg.h
   libeg/nanosvgrast.cpp
-  libeg/VectorGraphics.h
+  libeg/scroll_images.cpp
+  libeg/text.cpp
   libeg/VectorGraphics.cpp
-  libeg/libeg.h
-  libeg/libegint.h
-  libeg/XImage.cpp
-  libeg/XImage.h
+  libeg/VectorGraphics.h
+  libeg/XCinema.cpp
+  libeg/XCinema.h
   libeg/XIcon.cpp
   libeg/XIcon.h
+  libeg/XImage.cpp
+  libeg/XImage.h
   libeg/XPointer.cpp
   libeg/XPointer.h
   libeg/XTheme.cpp
   libeg/XTheme.h
-  libeg/XCinema.cpp
-  libeg/XCinema.h
-  Platform/AcpiPatcher.h
   Platform/AcpiPatcher.cpp
-	Platform/APFS.h
-	Platform/APFS.cpp
-	Platform/ati_reg.h
-	Platform/AmlGenerator.cpp
-	Platform/AmlGenerator.h
-	Platform/ati.cpp
-	Platform/ati.h
-	PlatformEFI/BasicIO.cpp
-	Platform/BasicIO.h
-#	Platform/BiosVideo.h
-#	Platform/Bmp.h
-	Platform/boot.h
-	PlatformEFI/BootLog.cpp
-	Platform/BootLog.h
-	Platform/BootOptions.h
-	Platform/BootOptions.cpp
-    Platform/card_vlist.h
-    Platform/card_vlist.cpp
-	Platform/Console.h
-	Platform/Console.cpp
-	Platform/cpu.h
-	Platform/cpu.cpp
-	Platform/DataHubCpu.h
-	Platform/DataHubCpu.cpp
-#	Platform/DataHubRecords.h
-	Platform/device_inject.cpp
-	Platform/device_inject.h
-#	Platform/device_tree.cpp
-#	Platform/device_tree.h
-	Platform/Edid.h
-	Platform/Edid.cpp
-	Platform/Events.cpp
-	Platform/Events.h
-	Platform/FixBiosDsdt.h
-	Platform/FixBiosDsdt.cpp
-	Platform/gma.h
-	Platform/gma.cpp
-	Platform/guid.h
-	Platform/guid.cpp
-	Platform/hda.h
-	Platform/hda.cpp
-    Platform/HdaCodecDump.h
-    Platform/HdaCodecDump.cpp
-  Platform/Injectors.h
+  Platform/AcpiPatcher.h
+  Platform/AmlGenerator.cpp
+  Platform/AmlGenerator.h
+  Platform/APFS.cpp
+  Platform/APFS.h
+  Platform/ati.cpp
+  Platform/ati.h
+  Platform/ati_reg.h
+  Platform/b64cdecode.cpp
+  Platform/b64cdecode.h
+  Platform/BasicIO.h
+  Platform/BdsConnect.cpp
+  Platform/boot.h
+  Platform/BootLog.h
+  Platform/BootOptions.cpp
+  Platform/BootOptions.h
+  Platform/card_vlist.cpp
+  Platform/card_vlist.h
+  Platform/Console.cpp
+  Platform/Console.h
+  Platform/cpu.cpp
+  Platform/cpu.h
+  Platform/DataHub.cpp
+  Platform/DataHub.h
+  Platform/DataHubCpu.cpp
+  Platform/DataHubCpu.h
+  Platform/DataHubExt.h
+  Platform/DevicePath.cpp
+  Platform/device_inject.cpp
+  Platform/device_inject.h
+  Platform/Edid.cpp
+  Platform/Edid.h
+  Platform/Events.cpp
+  Platform/Events.h
+  Platform/FixBiosDsdt.cpp
+  Platform/FixBiosDsdt.h
+  Platform/gma.cpp
+  Platform/gma.h
+  Platform/guid.cpp
+  Platform/guid.h
+  Platform/hda.cpp
+  Platform/hda.h
+  Platform/HdaCodecDump.cpp
+  Platform/HdaCodecDump.h
+  Platform/Hibernate.cpp
+  Platform/Hibernate.h
   Platform/Injectors.cpp
-  Platform/KERNEL_AND_KEXT_PATCHES.h
+  Platform/Injectors.h
   Platform/KERNEL_AND_KEXT_PATCHES.cpp
-  Platform/kernel_patcher.h
+  Platform/KERNEL_AND_KEXT_PATCHES.h
   Platform/kernel_patcher.cpp
+  Platform/kernel_patcher.h
+  Platform/KextList.cpp
+  Platform/KextList.h
   Platform/kext_inject.cpp
   Platform/kext_inject.h
   Platform/kext_patcher.cpp
-  Platform/KextList.h
-  Platform/KextList.cpp
-	Platform/LegacyBiosThunk.h
-	Platform/LegacyBiosThunk.cpp
-	Platform/LegacyBoot.h
-	Platform/LegacyBoot.cpp
+  Platform/LegacyBiosThunk.cpp
+  Platform/LegacyBiosThunk.h
+  Platform/LegacyBoot.cpp
+  Platform/LegacyBoot.h
   Platform/MacOsVersion.cpp
   Platform/MacOsVersion.h
-  Platform/MemoryOperation.h
   Platform/MemoryOperation.c
+  Platform/MemoryOperation.h
   Platform/memvendors.h
-	Platform/nvidia.h
-	Platform/nvidia.cpp
-    Platform/Net.h
-    Platform/Net.cpp
-	Platform/Nvram.h
-	Platform/Nvram.cpp
-	Platform/platformdata.h
-	Platform/platformdata.cpp
-    Platform/PlatformDriverOverride.h
-    Platform/PlatformDriverOverride.cpp
-  Platform/plist/base64.h
+  Platform/Net.cpp
+  Platform/Net.h
+  Platform/nvidia.cpp
+  Platform/nvidia.h
+  Platform/Nvram.cpp
+  Platform/Nvram.h
+  Platform/platformdata.cpp
+  Platform/platformdata.h
+  Platform/PlatformDriverOverride.cpp
+  Platform/PlatformDriverOverride.h
   Platform/plist/base64.cpp
-  Platform/plist/plist.h
+  Platform/plist/base64.h
   Platform/plist/plist.cpp
-  Platform/plist/TagArray.h
+  Platform/plist/plist.h
   Platform/plist/TagArray.cpp
-  Platform/plist/TagBool.h
+  Platform/plist/TagArray.h
   Platform/plist/TagBool.cpp
-  Platform/plist/TagData.h
+  Platform/plist/TagBool.h
   Platform/plist/TagData.cpp
-  Platform/plist/TagDate.h
+  Platform/plist/TagData.h
   Platform/plist/TagDate.cpp
-  Platform/plist/TagDict.h
+  Platform/plist/TagDate.h
   Platform/plist/TagDict.cpp
-  Platform/plist/TagFloat.h
+  Platform/plist/TagDict.h
   Platform/plist/TagFloat.cpp
-  Platform/plist/TagInt64.h
+  Platform/plist/TagFloat.h
   Platform/plist/TagInt64.cpp
-  Platform/plist/TagKey.h
+  Platform/plist/TagInt64.h
   Platform/plist/TagKey.cpp
-  Platform/plist/TagString8.h
+  Platform/plist/TagKey.h
   Platform/plist/TagString8.cpp
-  Platform/plist/xml.h
+  Platform/plist/TagString8.h
   Platform/plist/xml.cpp
-# Platform/Pointer.cpp
+  Platform/plist/xml.h
   Platform/Self.cpp
   Platform/Self.h
   Platform/SelfOem.cpp
   Platform/SelfOem.h
   Platform/Settings.cpp
   Platform/Settings.h
-	Platform/smbios.h
-	Platform/smbios.cpp
-	Platform/spd.cpp
-	Platform/spd.h
-	Platform/StateGenerator.cpp
-	Platform/StateGenerator.h
-#	Platform/stringTable.cpp
-	Platform/usbfix.h
-	Platform/usbfix.cpp
-  Platform/Utils.cpp
-  Platform/Utils.h
-#	Platform/UsbMass.h
-#	Platform/UsbMassBoot.h
-#	Platform/UsbMassImpl.h
-#	Platform/VesaBiosExtensions.h
-	Platform/b64cdecode.h
-	Platform/b64cdecode.cpp
-#	Platform/MachO-loader.h
-#	Platform/LoaderUefi.h
-	Platform/Hibernate.cpp
-	Platform/Hibernate.h
+  Platform/smbios.cpp
+  Platform/smbios.h
   Platform/sound.cpp
+  Platform/spd.cpp
+  Platform/spd.h
+  Platform/sse3_5_patcher.h
+  Platform/sse3_patcher.h
   Platform/StartupSound.cpp
   Platform/StartupSound.h
- # Platform/sse3_patcher.h
- # Platform/sse3_5_patcher.h
+  Platform/StateGenerator.cpp
+  Platform/StateGenerator.h
+  Platform/usbfix.cpp
+  Platform/usbfix.h
+  Platform/Utils.cpp
+  Platform/Utils.h
   Platform/VersionString.cpp
   Platform/VersionString.h
   Platform/Volumes.cpp
   Platform/Volumes.h
-  Platform/DataHub.cpp
-  Platform/DataHub.h
-  Platform/DataHubExt.h
-  ../Version.h
+  PlatformEFI/BasicIO.cpp
+  PlatformEFI/BootLog.cpp
   PlatformEFI/cpp_util/globals_ctor.cpp
   PlatformEFI/cpp_util/globals_ctor.h
   PlatformEFI/cpp_util/globals_dtor.cpp
@@ -293,65 +317,38 @@
   PlatformEFI/cpp_util/operatorNewDelete.cpp
   PlatformEFI/cpp_util/operatorNewDelete.h
   PlatformEFI/cpp_util/pure_virtual.cpp
-  cpp_foundation/unicode_conversions.cpp
-  cpp_foundation/unicode_conversions.h
-  cpp_foundation/XArray.h
-  cpp_foundation/XBuffer.cpp
-  cpp_foundation/XBuffer.h
-  cpp_foundation/XRBuffer.cpp
-  cpp_foundation/XRBuffer.h
-  cpp_foundation/XObjArray.h
-  cpp_foundation/XStringAbstract.h
-  cpp_foundation/XString.cpp
-  cpp_foundation/XString.h
-  cpp_foundation/XStringArray.cpp
-  cpp_foundation/XStringArray.h
-  cpp_foundation/XStringArray.cpp
-  cpp_foundation/XToolsCommon.h
-#  cpp_foundation/XUINTN.cpp
-#  cpp_foundation/XUINTN.h
-  cpp_lib/undefinable.h
-  cpp_unit_test/all_tests.h
-  cpp_unit_test/all_tests.cpp
-#  cpp_unit_test/config-test.h
-#  cpp_unit_test/config-test.cpp
-  cpp_unit_test/find_replace_mask_Clover_tests.h
-  cpp_unit_test/find_replace_mask_Clover_tests.cpp
-  cpp_unit_test/find_replace_mask_OC_tests.h
-  cpp_unit_test/find_replace_mask_OC_tests.cpp
-  cpp_unit_test/global_test.h
-  cpp_unit_test/global_test.cpp
-  cpp_unit_test/LoadOptions_test.cpp
-  cpp_unit_test/LoadOptions_test.h
-  cpp_unit_test/MacOsVersion_test.cpp
-  cpp_unit_test/MacOsVersion_test.h
-  cpp_unit_test/printf_lite-test.cpp
-  cpp_unit_test/printf_lite-test.h
-  cpp_unit_test/printlib-test.h
-  cpp_unit_test/strlen_test.cpp
-  cpp_unit_test/strlen_test.h
-  cpp_unit_test/strcmp_test.cpp
-  cpp_unit_test/strcmp_test.h
-  cpp_unit_test/strncmp_test.cpp
-  cpp_unit_test/strncmp_test.h
-  cpp_unit_test/XArray_tests.cpp
-  cpp_unit_test/XArray_tests.h
-  cpp_unit_test/XBuffer_tests.cpp
-  cpp_unit_test/XBuffer_tests.h
-#  cpp_unit_test/xml_lite-test.cpp
-#  cpp_unit_test/xml_lite-test.h
-  cpp_unit_test/XObjArray_tests.cpp
-  cpp_unit_test/XObjArray_tests.h
-  cpp_unit_test/XString_test.cpp
-  cpp_unit_test/XString_test.h
-  cpp_unit_test/XStringArray_test.cpp
-  cpp_unit_test/XStringArray_test.h
-  cpp_unit_test/plist_tests.cpp
-  cpp_unit_test/plist_tests.h
-  cpp_unit_test/XToolsCommon_test.cpp
-  cpp_unit_test/XToolsCommon_test.h
-#  cpp_unit_test/XUINTN_test.cpp
-#  cpp_unit_test/XUINTN_test.h
+  PlatformEFI/include/Platform.h
+  PlatformEFI/include/printf_lite-test-cpp_conf.h
+  PlatformEFI/include/printlib-test-cpp_conf.h
+  PlatformEFI/include/XToolsConf.h
+  PlatformEFI/posix/abort.cpp
+  PlatformEFI/posix/abort.h
+  PlatformEFI/posix/limits.h
+  PlatformEFI/posix/posix.h
+  PlatformEFI/posix/posix_additions.cpp
+  PlatformEFI/posix/posix_additions.h
+  PlatformEFI/posix/stdarg.h
+  PlatformEFI/posix/stdbool.h
+  PlatformEFI/posix/stddef.h
+  PlatformEFI/posix/stdint.h
+  PlatformEFI/posix/stdio.cpp
+  PlatformEFI/posix/stdio.h
+  PlatformEFI/posix/stdlib.h
+  PlatformEFI/posix/string.cpp
+  PlatformEFI/posix/string.h
+  PlatformEFI/posix/strings.cpp
+  PlatformEFI/posix/strings.h
+  PlatformEFI/posix/strlen.cpp
+  PlatformEFI/posix/wchar.cpp
+  PlatformEFI/posix/wchar.h
+  refit/icns.cpp
+  refit/lib.cpp
+  refit/lib.h
+  refit/main.cpp
+  refit/menu.cpp
+  refit/menu.h
+  refit/screen.cpp
+  refit/screen.h
 
 [Sources.IA32]
   PlatformIA32/ftol.asm | MSFT

@@ -26,7 +26,7 @@ if [[ "$SYSNAME" == Linux ]]; then
 else
   declare -r NUMBER_OF_CPUS=$(sysctl -n hw.logicalcpu)
 fi
-declare -a EDK2_BUILD_OPTIONS=
+declare -a EDK2_BUILD_OPTIONS=--cmd-len=50000
 print_option_help_wc=
 have_fmt=
 PLATFORMFILE=

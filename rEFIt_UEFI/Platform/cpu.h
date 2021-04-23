@@ -403,7 +403,7 @@ void
 GetCPUProperties (void);
 
 MACHINE_TYPES
-GetDefaultModel (void);
+GetDefaultModel (bool gMobile);
 
 UINT16
 GetAdvancedCpuType (void);

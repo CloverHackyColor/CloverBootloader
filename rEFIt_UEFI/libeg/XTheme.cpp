@@ -926,10 +926,14 @@ const XIcon& XTheme::LoadOSIcon(const XString8& Full)
     DBG("      Full=%s\n", Full.c_str());
     if (!ReturnIcon->isEmpty()) return *ReturnIcon;
   }
-  // else something
-  if (DummyIcon.isEmpty()) { //initialize once per session    
-    DummyIcon.Image.DummyImage(MainEntriesSize);
-    DummyIcon.setFilled();
+  if ( Full !="unknown"_XS8 ) {
+    return LoadOSIcon("unknown"_XS8);
+  }else{
+    // else something
+    if (DummyIcon.isEmpty()) { //initialize once per session
+      DummyIcon.Image.DummyImage(MainEntriesSize);
+      DummyIcon.setFilled();
+    }
   }
   return DummyIcon;
 }

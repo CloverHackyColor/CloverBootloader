@@ -96,6 +96,30 @@ void panic_ask(const char* format, ...)
 }
 
 
+/*
+ * Future version to log about pontential technical bugs
+ * It's not done yes. So far, it's just panic
+ * TODO:
+ */
+void log_technical_bug(const char* format, ...)
+{
+#ifdef PANIC_CAN_RETURN
+  if ( stop_at_panic ) {
+    VA_LIST va;
+    VA_START(va, format);
+    panic_(format, va); // panic doesn't return
+//    VA_END(va);
+  }else{
+    i_have_panicked = true;
+  }
+#else
+  VA_LIST va;
+  VA_START(va, format);
+  panic_(format, va); // panic doesn't return
+#endif
+}
+
+
 void panic(void)
 {
   panic(nullptr);

@@ -128,6 +128,16 @@ XString8 Bytes2HexStr(UINT8 *data, UINTN len)
   return result;
 }
 
+UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
+{
+  UINT32 x = 0;
+  UINT32 *Fake = (UINT32*)Buffer;
+  if (!Fake) return 0;
+  Size >>= 2;
+  while (Size--) x+= *Fake++;
+  return x;
+}
+
 
 BOOLEAN haveError = FALSE;
 

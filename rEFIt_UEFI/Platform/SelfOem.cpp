@@ -114,7 +114,6 @@ bool SelfOem::_setOemPathRelToSelfDir(bool isFirmwareClover, const XString8& OEM
 
 EFI_STATUS SelfOem::_initialize()
 {
-//DBG("%s : enter.\n", __FUNCTION__);
   EFI_STATUS Status;
 
   if ( oemDirExists() ) {
@@ -134,11 +133,10 @@ EFI_STATUS SelfOem::_initialize()
     assert( m_OemFulPath.notEmpty() );
   }
 
-#ifdef DEBUG
-  if ( m_KextsDir != NULL ) panic("%s : Kexts dir != NULL.", __FUNCTION__);
-#else
-  if ( m_KextsDir != NULL ) return EFI_SUCCESS;
-#endif
+  if ( m_KextsDir != NULL ) {
+    log_technical_bug("%s : Kexts dir != NULL.", __PRETTY_FUNCTION__);
+    m_KextsDir = NULL;
+  }
   if ( oemDirExists() ) {
     Status = m_OemDir->Open(m_OemDir, &m_KextsDir, KEXTS_DIRNAME.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( !EFI_ERROR(Status) ) {
@@ -167,11 +165,11 @@ EFI_STATUS SelfOem::_initialize()
   }else{
   }
   if ( m_KextsDir == NULL ) {
-    assert( m_KextsPathRelToSelfDir.isEmpty() );
-    assert( m_KextsFullPath.isEmpty() );
+    if ( m_KextsPathRelToSelfDir.notEmpty() ) log_technical_bug("%s : m_KextsPathRelToSelfDir.notEmpty()", __PRETTY_FUNCTION__);
+    if ( m_KextsFullPath.notEmpty() ) log_technical_bug("%s : m_KextsFullPath.notEmpty()", __PRETTY_FUNCTION__);
   }else{
-    assert( m_KextsPathRelToSelfDir.notEmpty() );
-    assert( m_KextsFullPath.notEmpty() );
+    if ( m_KextsPathRelToSelfDir.isEmpty() ) log_technical_bug("%s : m_KextsPathRelToSelfDir.isEmpty()", __PRETTY_FUNCTION__);
+    if ( m_KextsFullPath.isEmpty() ) log_technical_bug("%s : m_KextsFullPath.isEmpty()", __PRETTY_FUNCTION__);
   }
 #ifdef JIEF_DEBUG
   if ( isKextsDirFound() ) {
@@ -180,14 +178,21 @@ EFI_STATUS SelfOem::_initialize()
     DBG("Kexts dir = none\n");
   }
 #endif
-//DBG("%s : leave.\n", __FUNCTION__);
   return EFI_SUCCESS;
 }
 
 EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, const XString8& OEMBoard, const XString8& OEMProduct, INT32 frequency, UINTN nLanCards, UINT8 gLanMac[4][6])
 {
-//DBG("%s : enter.\n", __FUNCTION__);
-  if ( m_ConfName.notEmpty() ) panic("%s : cannot be called twice. Use reinitialize.", __FUNCTION__);
+  if ( m_ConfName.notEmpty() ) {
+    log_technical_bug("%s : cannot be called twice. Use reinitialize.", __PRETTY_FUNCTION__);
+    return EFI_SUCCESS;
+  }
+  // confName must not be empty as it serves as a flag to know if it's initialized or not.
+  // {confName}.plist will also be used to detect OEM dir.
+  if ( confName.isEmpty() ) {
+    log_technical_bug("%s : cannot be called with empty config name.", __PRETTY_FUNCTION__);
+    return EFI_SUCCESS;
+  }
 
   m_ConfName = confName;
 
@@ -195,42 +200,38 @@ EFI_STATUS SelfOem::initialize(const XString8& confName, bool isFirmwareClover, 
   _setOemPathRelToSelfDir(isFirmwareClover, OEMBoard, OEMProduct, frequency, nLanCards, gLanMac);
 
   EFI_STATUS Status = _initialize();
-//DBG("%s : leave. Status=%s.\n", __FUNCTION__, efiStrError(Status));
   return Status;
 }
 
 void SelfOem::unInitialize()
 {
-//DBG("%s : enter.\n", __FUNCTION__);
-#ifdef DEBUG
-  if ( m_ConfName.isEmpty() ) panic("%s : Already uninitiialized.", __FUNCTION__);
-#endif
+  if ( m_ConfName.isEmpty() ) {
+    log_technical_bug("%s : Already uninitialized.", __PRETTY_FUNCTION__);
+    return;
+  }
+
   closeHandle();
   m_ConfName.setEmpty();
-//DBG("%s : leave.\n", __FUNCTION__);
 }
 
 EFI_STATUS SelfOem::reInitialize()
 {
-//DBG("%s : enter.\n", __FUNCTION__);
-#ifdef DEBUG
-  if ( m_ConfName.isEmpty() ) panic("%s : initialize() must called once first", __FUNCTION__);
-#endif
+  if ( m_ConfName.isEmpty() ) {
+    log_technical_bug("%s : initialize() must called once first", __PRETTY_FUNCTION__);
+    return EFI_LOAD_ERROR;
+  }
+
   closeHandle();
 
   // No need to call _setOemPathRelToSelfDir again, but need to open m_OemDir, if it exists
   if ( oemDirExists() ) {
     EFI_STATUS Status = self.getCloverDir().Open(&self.getCloverDir(), &m_OemDir, m_OemPathRelToSelfDir.wc_str(), EFI_FILE_MODE_READ, 0);
     if ( EFI_ERROR(Status) ) {
-#ifdef DEBUG
-      panic("Impossible to reopen dir '%ls\\%ls', although it was opened the first time : %s", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
-#else
-     return Status;
-#endif
+      log_technical_bug("Impossible to reopen dir '%ls\\%ls', although it was opened the first time : %s", self.getCloverDirFullPath().wc_str(), m_OemPathRelToSelfDir.wc_str(), efiStrError(Status));
+      return Status;
     }
   }
   EFI_STATUS Status = _initialize();
-//DBG("%s : leave. Status=%s.\n", __FUNCTION__, efiStrError(Status));
   return Status;
 }
 

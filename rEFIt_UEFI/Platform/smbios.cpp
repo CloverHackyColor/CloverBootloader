@@ -552,7 +552,7 @@ DBG("%s : UpdateSmbiosString ProductName=%s\n", __PRETTY_FUNCTION__, gSettings.S
   gSettings.Smbios.SerialNr.trim();
   if( gSettings.Smbios.SerialNr.notEmpty() ){
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type1->SerialNumber, gSettings.Smbios.SerialNr);
-DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
+//DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
   }
   gSettings.Smbios.BoardNumber.trim();
   if( gSettings.Smbios.BoardNumber.notEmpty() ){
@@ -725,7 +725,7 @@ void PatchTableType3()
   gSettings.Smbios.SerialNr.trim();
   if( gSettings.Smbios.SerialNr.notEmpty() ){
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->SerialNumber, gSettings.Smbios.SerialNr);
-DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
+//DBG("%s : UpdateSmbiosString SerialNr=%s\n", __PRETTY_FUNCTION__, gSettings.Smbios.SerialNr.c_str());
   }
   gSettings.Smbios.ChassisAssetTag.trim();
   if( gSettings.Smbios.ChassisAssetTag.notEmpty() ){

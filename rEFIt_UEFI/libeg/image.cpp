@@ -79,11 +79,11 @@ EFI_STATUS egLoadFile(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName,
   FileInfo = EfiLibFileInfo(FileHandle);
   if (FileInfo == NULL) {
     FileHandle->Close(FileHandle);
+    Status = EFI_NOT_READY;
     goto Error;
   }
   ReadSize = FileInfo->FileSize;
-  if (ReadSize > MAX_FILE_SIZE)
-    ReadSize = MAX_FILE_SIZE;
+  if (ReadSize > MAX_FILE_SIZE) ReadSize = MAX_FILE_SIZE;
   FreePool(FileInfo);
 
   BufferSize = (UINTN)ReadSize;   // was limited to 1 GB above, so this is safe
@@ -107,6 +107,11 @@ EFI_STATUS egLoadFile(const EFI_FILE* BaseDir, IN CONST CHAR16 *FileName,
   if (FileDataLength) {
     *FileDataLength = BufferSize;
   }
+  // be 100% sure that we don't return EFI_SUCCESS with *FileData == NULL
+  if ( !EFI_ERROR(Status) && *FileData == NULL ) {
+    log_technical_bug("%s : EFI_ERROR(Status) && ConfigPtr", __PRETTY_FUNCTION__);
+    return EFI_COMPROMISED_DATA;
+  }
   return Status;
 Error:
   if (FileData) {
@@ -114,6 +119,11 @@ Error:
   }
   if (FileDataLength) {
     *FileDataLength = 0;
+  }
+  // be 100% sure that we don't return EFI_SUCCESS with *FileData == NULL
+  if ( !EFI_ERROR(Status) && *FileData == NULL ) {
+    log_technical_bug("%s : EFI_ERROR(Status) && ConfigPtr", __PRETTY_FUNCTION__);
+    return EFI_COMPROMISED_DATA;
   }
   return Status;
 }

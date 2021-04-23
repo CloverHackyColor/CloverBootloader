@@ -120,6 +120,12 @@ inline UINTN EFIAPI AsciiStrDecimalToUintn(const XString8& String)
   return AsciiStrDecimalToUintn(String.c_str());
 }
 
+
+UINT32 GetCrc32(UINT8 *Buffer, UINTN Size);
+
+
+
+
 extern BOOLEAN haveError;
 
 

@@ -2294,12 +2294,6 @@ MacOsVersion GetOSVersion(int LoaderType, const XStringW& APFSTargetUUID, const 
 inline MacOsVersion GetOSVersion (IN LOADER_ENTRY *Entry) { return GetOSVersion(Entry->LoaderType, Entry->APFSTargetUUID, Entry->Volume, &Entry->BuildVersion); };
 
 
-UINT32
-GetCrc32 (
-  UINT8 *Buffer,
-  UINTN Size
-  );
-
 void
 GetDevices(void);
 

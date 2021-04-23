@@ -2,7 +2,7 @@
 SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
 SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
 
-cd "$SCRIPT_DIR"
+# we can't cd "$SCRIPT_DIR" because the 1st arg maybe a relative path to the current dir (and NOT relative to the SCRIPT_DIR)
 
 OSTYPE=`uname -s`
 #echo $OSTYPE
@@ -18,8 +18,8 @@ then
   echo clover_efi_file="$clover_efi_file"
 fi
 
-qemu_path=./qemu_portable-v4.2.0/qemu-system-x86_64
-qemu_path=./qemu_portable-v5.2.0/qemu-system-x86_64
+qemu_path="$SCRIPT_DIR"/qemu_portable-v4.2.0/qemu-system-x86_64
+qemu_path="$SCRIPT_DIR"/qemu_portable-v5.2.0/qemu-system-x86_64
 #set -x
 
 if [ "$OSTYPE" = "Darwin" ]
@@ -29,22 +29,22 @@ then
     echo "You must restore the folder \'"$(dirname "$qemu_path")"\'"
     exit 1
   fi
-  if ! [ -f ./disk_image_gpt.img ]
+  if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
   then
-    unzip -o ./disk_image_gpt.img.zip
-    rm -rf ./__MACOSX
+    unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip -d "$SCRIPT_DIR"
+    rm -rf "$SCRIPT_DIR"/__MACOSX
   fi
 
   if pgrep qemu
   then
     killall qemu-system-x86_64
   fi
-  > ./serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
+  > "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
   if ! [ -z "$clover_efi_file" ]
   then
 
-    hdiutil attach ./disk_image_gpt.img || exit 1
+    hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
 
     shopt -s nocasematch
 
@@ -64,7 +64,9 @@ then
   fi
   
   sleep 1 # not 100% sure it's needed
-        set -m
+  set -m
+
+  cd "$SCRIPT_DIR"
 
   bios_file=("$(dirname "$qemu_path")"/bios*)
 

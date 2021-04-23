@@ -1434,14 +1434,14 @@ UINT16 GetAdvancedCpuType()
   return GetStandardCpuType();
 }
 
-MACHINE_TYPES GetDefaultModel()
+MACHINE_TYPES GetDefaultModel(bool isMobile)
 {
   MACHINE_TYPES DefaultType = iMac132;
   if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
     return MacPro61;
   }
   // TODO: Add more CPU models and configure the correct machines per CPU/GFX model
-  if(gMobile) {
+  if(isMobile) {
     switch (gCPUStructure.Model)
     {
       case CPU_MODEL_ATOM:

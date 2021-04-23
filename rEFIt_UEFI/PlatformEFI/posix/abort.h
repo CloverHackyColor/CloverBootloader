@@ -34,6 +34,7 @@ void panic(const char* format, ...) __attribute__((__format__(__printf__, 1, 2))
 
 
 void panic_ask(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
+void log_technical_bug(const char* format, ...) __attribute__((__format__(__printf__, 1, 2)));
 
 
 #ifdef _MSC_VER

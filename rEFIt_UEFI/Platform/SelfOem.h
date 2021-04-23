@@ -45,6 +45,8 @@ public:
   EFI_STATUS reInitialize();
   void closeHandle();
 
+  bool isInitialized() const { return m_ConfName.notEmpty(); }
+
   const XString8& getConfName() { return m_ConfName; }
 
   bool oemDirExists() { return m_OemPathRelToSelfDir.notEmpty(); }

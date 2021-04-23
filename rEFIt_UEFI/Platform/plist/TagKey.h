@@ -49,11 +49,7 @@ public:
   }
   void setKeyValue(const XString8& xstring)
   {
-#ifdef DEBUG
-    if ( xstring.isEmpty() ) panic("TagKey::setKeyValue() : xstring.isEmpty() ");
-#else
-    if ( xstring.isEmpty() ) return; //don't change
-#endif
+    if ( xstring.isEmpty() ) log_technical_bug("TagKey::setKeyValue() : xstring.isEmpty() ");
     _string = xstring;
   }
 

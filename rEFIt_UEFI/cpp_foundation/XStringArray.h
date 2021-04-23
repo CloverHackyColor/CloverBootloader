@@ -22,13 +22,26 @@
 template<class XStringClass_, class XStringArrayClass>
 class XStringArray_/* : public XStringArraySuper*/
 {
-  protected:
+protected:
 	XObjArray<XStringClass_> array;
 	
-  public:
+public:
 	typedef XStringClass_ XStringClass;
 
 	XStringArray_() : array() {};
+ 
+  XStringArray_(const XStringArray_& other) : array() {
+    array = other.array;
+  }
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  XStringArray_(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : array() {
+    for ( size_t idx = 0 ; idx < other.size() ; ++idx ) {
+      array.AddCopy(other[idx]);
+    }
+  }
+
+//  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+//  XStringArrayClass& operator =(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other)  { array = other.array; return *((XStringArrayClass*)this); }
 
 	size_t size() const { return array.size(); }
 	void setEmpty() { array.setEmpty(); }
@@ -269,32 +282,77 @@ class XStringArray_/* : public XStringArraySuper*/
 
 class XString8Array : public XStringArray_<XString8, XString8Array>
 {
+public:
+  using super = XStringArray_<XString8, XString8Array>;
+  
+  XString8Array() : super() {}
+
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  XString8Array(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : super(other) {}
+
+//  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+//  XStringArrayClass& operator =(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other)  { array = other.array; return *((XStringArrayClass*)this); }
 };
 extern const XString8Array NullXString8Array;
 
 class XString16Array : public XStringArray_<XString16, XString16Array>
 {
+public:
+  using super = XStringArray_<XString16, XString16Array>;
+
+  XString16Array() : super() {}
+
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  XString16Array(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : super(other) {}
 };
 extern const XString16Array NullXString16Array;
 
 class XString32Array : public XStringArray_<XString32, XString32Array>
 {
+public:
+  using super = XStringArray_<XString32, XString32Array>;
+  
+  XString32Array() : super() {}
+
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  XString32Array(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : super(other) {}
 };
 extern const XString32Array NullXString32Array;
 
 class XStringWArray : public XStringArray_<XStringW, XStringWArray>
 {
+public:
+  using super = XStringArray_<XStringW, XStringWArray>;
+  
+  XStringWArray() : super() {}
+
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  XStringWArray(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : super(other) {}
 };
 extern const XStringWArray NullXStringWArray;
 
 
 class ConstXString8Array : public XStringArray_<const XString8, ConstXString8Array>
 {
+public:
+  using super = XStringArray_<const XString8, ConstXString8Array>;
+  
+  ConstXString8Array() : super() {}
+
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  ConstXString8Array(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : super(other) {}
 };
 extern const ConstXString8Array NullConstXString8Array;
 
 class ConstXStringWArray : public XStringArray_<const XStringW, ConstXStringWArray>
 {
+public:
+  using super = XStringArray_<const XStringW, ConstXStringWArray>;
+  
+  ConstXStringWArray() : super() {}
+
+  template<typename OtherXStringClass_, class OtherXStringArrayClass>
+  ConstXStringWArray(const XStringArray_<OtherXStringClass_, OtherXStringArrayClass>& other) : super(other) {}
 };
 extern const ConstXStringWArray NullConstXStringWArray;
 

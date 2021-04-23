@@ -1,18 +1,17 @@
 #!/bin/bash
 SCRIPT_ABS_FILENAME=`LC_ALL=en_US.ISO8859-1 perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"`
 SCRIPT_DIR=`dirname "$SCRIPT_ABS_FILENAME"`
-SHELL_PWD=$PWD
 
-cd "$SCRIPT_DIR"
+# we can't cd "$SCRIPT_DIR" because the 1st arg maybe a relative path to the current dir (and NOT relative to the SCRIPT_DIR)
 
 OSTYPE=`uname -s`
 #echo $OSTYPE
 
 if [ -z "$1" ]
 then
-  if [ -f ../Build/Clover/DEBUG_GCC53/X64/CLOVERX64.debug ]
+  if [ -f "$SCRIPT_DIR"/../Build/Clover/DEBUG_GCC53/X64/CLOVERX64.debug ]
   then
-    clover_debug_file=../Build/Clover/DEBUG_GCC53/X64/CLOVERX64.debug
+    clover_debug_file="$SCRIPT_DIR"/../Build/Clover/DEBUG_GCC53/X64/CLOVERX64.debug
     echo Using default file "$clover_debug_file"
   else
     echo "Usage: $SCRIPT_ABS_FILENAME [Clover debug file]"
@@ -20,11 +19,6 @@ then
   fi
 else
   clover_debug_file="${1%.*}".debug
-fi
-
-if [[ "$clover_debug_file" != '/'* ]]
-then
-  clover_debug_file="$SHELL_PWD"/"$clover_debug_file"
 fi
 
 if ! [ -f "$clover_debug_file" ]
@@ -43,8 +37,8 @@ fi
 echo clover_debug_file="$clover_debug_file"
 echo clover_efi_file="$clover_efi_file"
 
-qemu_path=./qemu_portable-v4.2.0/qemu-system-x86_64
-qemu_path=./qemu_portable-v5.2.0/qemu-system-x86_64
+qemu_path="$SCRIPT_DIR"/qemu_portable-v4.2.0/qemu-system-x86_64
+qemu_path="$SCRIPT_DIR"/qemu_portable-v5.2.0/qemu-system-x86_64
 #set -x
 
 if [ "$OSTYPE" = "Darwin" ]
@@ -54,19 +48,19 @@ then
     echo "You must restore the folder \'"$(dirname "$qemu_path")"\'"
     exit 1
   fi
-  if ! [ -f ./disk_image_gpt.img ]
+  if ! [ -f "$SCRIPT_DIR"/disk_image_gpt.img ]
   then
-    unzip -o ./disk_image_gpt.img.zip -d .
-    rm -rf ./__MACOSX
+    unzip -o "$SCRIPT_DIR"/disk_image_gpt.img.zip -d "$SCRIPT_DIR"
+    rm -rf "$SCRIPT_DIR"/__MACOSX
   fi
 
   if pgrep qemu
   then
     killall qemu-system-x86_64
   fi
-  > ./serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
+  > "$SCRIPT_DIR"/serial0_qemu_out.log # empty file without erasing it. Useful for editor for refreshing and reloading.
 
-  hdiutil attach ./disk_image_gpt.img || exit 1
+  hdiutil attach "$SCRIPT_DIR"/disk_image_gpt.img || exit 1
 
   shopt -s nocasematch
 
@@ -87,7 +81,8 @@ then
   sleep 1 # not 100% sure it's needed
   set -m
 
-  cd .
+  cd "$SCRIPT_DIR"
+
   bios_file=("$(dirname "$qemu_path")"/bios*)
 
   "$qemu_path" \
@@ -131,7 +126,7 @@ then
   fi
 
   adr="$(grep "$image_base_str" ./serial0_qemu_out.log | awk '{printf "0x%x",$NF}')"
-    echo adr="$adr"
+  echo adr="$adr"
 
   GDB=gdb
   if [ -f ../../../toolchain.gdb/gdb ]

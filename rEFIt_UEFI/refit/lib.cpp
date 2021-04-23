@@ -482,37 +482,37 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->LegacyOS->Name = L"FreeDOS"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
-/*
+
       } else if (FindMem(SectorBuffer, 512, "OS2LDR", 6) >= 0 ||
                  FindMem(SectorBuffer, 512, "OS2BOOT", 7) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"ecomstation";
-        Volume->LegacyOS->Name = L"eComStation";
+        Volume->LegacyOS->IconName = L"ecomstation"_XSW;
+        Volume->LegacyOS->Name = L"eComStation"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "Be Boot Loader", 14) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"beos";
-        Volume->LegacyOS->Name = L"BeOS";
+        Volume->LegacyOS->IconName = L"beos"_XSW;
+        Volume->LegacyOS->Name = L"BeOS"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "yT Boot Loader", 14) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"zeta";
-        Volume->LegacyOS->Name = L"ZETA";
+        Volume->LegacyOS->IconName = L"zeta"_XSW;
+        Volume->LegacyOS->Name = L"ZETA"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
         
       } else if (FindMem(SectorBuffer, 512, "\x04" "beos\x06" "system\x05" "zbeos", 18) >= 0 ||
                  FindMem(SectorBuffer, 512, "haiku_loader", 12) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->LegacyOS->IconName = L"haiku";
-        Volume->LegacyOS->Name = L"Haiku";
+        Volume->LegacyOS->IconName = L"haiku"_XSW;
+        Volume->LegacyOS->Name = L"Haiku"_XSW;
         Volume->LegacyOS->Type = OSTYPE_VAR;
         Volume->BootType = BOOTING_BY_PBR;
- */
+
       } 
     }
     
@@ -530,10 +530,10 @@ static void ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       Volume->HasBootCode = FALSE;
 
 #ifdef JIEF_DEBUG
-//*Bootable = TRUE;
+////*Bootable = TRUE;
 //Volume->HasBootCode = TRUE;
-//Volume->LegacyOS->IconName = L"win";
-//Volume->LegacyOS->Name = L"Windows";
+//Volume->LegacyOS->IconName = L"win"_XSW;
+//Volume->LegacyOS->Name = L"Windows"_XSW;
 //Volume->LegacyOS->Type = OSTYPE_WIN;
 //Volume->BootType = BOOTING_BY_PBR;
 #endif
