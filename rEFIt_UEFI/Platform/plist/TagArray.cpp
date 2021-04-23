@@ -144,7 +144,7 @@ const TagArray* TagArray::arrayElementAt(size_t idx, const XString8& currentTag)
   const TagStruct* tag = elementAt(idx);
   if ( !tag->isArray() ) {
 #ifdef DEBUG
-    panic("MALFORMED PLIST in '%s' : TagArray::dictElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
+    panic("MALFORMED PLIST in '%s' : TagArray::arrayElementAt(%zu) -> trying to get a array element at %zu, but element is %s\n", currentTag.c_str(), idx, idx, tag->getTypeAsXString8().c_str());
 #else
     return 0;
 #endif
